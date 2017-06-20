@@ -18,7 +18,7 @@ SELECT dli.incident_id
       ,dlip.IsSuspension
       ,dlip.IncidentID            
       ,dlip.NumDays
-FROM [gabby].[deanslist].[incidents] dli
+FROM [deanslist].[incidents] dli
 CROSS APPLY OPENJSON(dli.penalties, N'$')
   WITH (
     StartDate DATE N'$.StartDate',

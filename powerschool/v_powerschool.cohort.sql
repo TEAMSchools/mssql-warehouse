@@ -24,8 +24,8 @@ SELECT studentid
       ,MIN(prev_grade_level) OVER(PARTITION BY studentid, yearid ORDER BY yearid ASC) AS prev_grade_level
       ,CASE
         WHEN grade_level != 99 
-               AND sub.grade_level <= MIN(prev_grade_level) OVER(PARTITION BY studentid, yearid ORDER BY yearid ASC) 
-                 THEN 1
+         AND sub.grade_level <= MIN(prev_grade_level) OVER(PARTITION BY studentid, yearid ORDER BY yearid ASC) 
+             THEN 1
         ELSE 0
        END AS is_retained_year
 FROM
@@ -79,7 +79,7 @@ FROM
                 ,s.lunchstatus
                 ,terms.yearid
           FROM powerschool.students s WITH(NOLOCK)
-          LEFT OUTER JOIN powerschool.terms terms WITH(NOLOCK)
+          JOIN powerschool.terms terms WITH(NOLOCK)
             ON s.schoolid = terms.schoolid 
            AND s.entrydate BETWEEN terms.firstday AND terms.lastday
            AND terms.portion = 1
@@ -99,7 +99,7 @@ FROM
                 ,NULL AS lunchstatus
                 ,terms.yearid
           FROM powerschool.students s WITH(NOLOCK)
-          LEFT OUTER JOIN powerschool.terms terms WITH(NOLOCK)
+          JOIN powerschool.terms terms WITH(NOLOCK)
             ON s.schoolid = terms.schoolid
            AND s.entrydate <= terms.firstday
            AND terms.portion = 1
@@ -119,10 +119,9 @@ FROM
                 ,re.lunchstatus            
                 ,terms.yearid
           FROM powerschool.reenrollments re WITH(NOLOCK)       
-          LEFT OUTER JOIN powerschool.terms terms WITH(NOLOCK)
+          JOIN powerschool.terms terms WITH(NOLOCK)
             ON re.schoolid = terms.schoolid       
            AND re.entrydate BETWEEN terms.firstday AND terms.lastday
            AND terms.portion = 1     
-          WHERE re.entrydate IS NOT NULL /* temporary */
          ) sub
     ) sub

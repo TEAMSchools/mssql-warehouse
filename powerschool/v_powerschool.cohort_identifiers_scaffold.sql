@@ -26,8 +26,8 @@ SELECT co.academic_year
       ,NULL AS term
       --,dt.alt_name AS term
       ,CASE WHEN CONVERT(DATE,rd.date) BETWEEN co.entrydate AND co.exitdate THEN 1 ELSE 0 END AS is_enrolled
-FROM gabby.powerschool.cohort_identifiers co
-JOIN gabby.utilities.reporting_days rd
+FROM powerschool.cohort_identifiers co
+JOIN utilities.reporting_days rd
   ON co.academic_year = rd.academic_year
  AND co.exitdate >= rd.date
 --LEFT OUTER JOIN KIPP_NJ..REPORTING$dates dt WITH(NOLOCK)
@@ -37,3 +37,4 @@ JOIN gabby.utilities.reporting_days rd
 -- AND rd.date BETWEEN dt.start_date AND dt.end_date
 WHERE co.schoolid != 999999
   AND co.rn_year = 1
+  --AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()

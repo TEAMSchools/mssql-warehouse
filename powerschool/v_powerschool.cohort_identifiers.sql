@@ -30,7 +30,7 @@ SELECT co.studentid
         WHEN co.prev_grade_level > co.grade_level THEN 'Demoted'                
        END AS boy_status
       ,CASE 
-        WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() THEN NULL
+        WHEN co.academic_year = utilities.GLOBAL_ACADEMIC_YEAR() THEN NULL
         WHEN co.exitcode = 'G1' THEN 'Graduated'
         WHEN co.exitcode LIKE 'T%' THEN 'Transferred'        
         WHEN co.prev_grade_level < co.grade_level THEN 'Promoted'
@@ -78,17 +78,12 @@ SELECT co.studentid
       ,suf.release_3_phone
       ,suf.release_4_phone
       ,suf.release_5_phone      
-      
-      --,logins.student_web_id
-      --,logins.STUDENT_WEB_PASSWORD
-      --,logins.student_web_id + '.fam' AS FAMILY_WEB_ID
-      --,logins.STUDENT_WEB_PASSWORD AS FAMILY_WEB_PASSWORD
 
       ,CASE
-        WHEN gen.name = 'Out of District' THEN sp.programid
+        WHEN sp.specprog_name = 'Out of District' THEN sp.programid
         ELSE CONVERT(INT,CONCAT(co.schoolid, sp.programid)) 
        END AS reporting_schoolid
-      ,COALESCE(gen.name, sch.abbreviation) AS school_name
+      ,COALESCE(sp.specprog_name, sch.abbreviation) AS school_name
       ,CASE
         WHEN sch.high_grade = 12 THEN 'HS'
         WHEN sch.high_grade = 8 THEN 'MS'
@@ -97,7 +92,7 @@ SELECT co.studentid
 
       ,CASE 
         WHEN co.schoolid = 73253 THEN adv.advisory_name
-        WHEN co.schoolid IN (179902, 133570965) THEN gabby.utilities.STRIP_CHARACTERS(s.team,'0-9')
+        WHEN co.schoolid IN (179902, 133570965) THEN utilities.STRIP_CHARACTERS(s.team,'0-9')
         ELSE adv.advisory_name
        END AS team
       ,CASE WHEN co.schoolid = 179902 THEN suf.advisor ELSE adv.advisor_name END AS advisor_name
@@ -117,11 +112,11 @@ SELECT co.studentid
       --  ELSE co.lunchstatus 
       -- END AS lunch_app_status                 
       ,CASE 
-        WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() THEN ISNULL(scf.spedlep, 'No IEP') 
+        WHEN co.academic_year = utilities.GLOBAL_ACADEMIC_YEAR() THEN ISNULL(scf.spedlep, 'No IEP') 
         --ELSE ISNULL(sped.SPEDLEP,'No IEP') 
        END AS iep_status
       ,CASE 
-        WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() THEN nj.specialed_classification
+        WHEN co.academic_year = utilities.GLOBAL_ACADEMIC_YEAR() THEN nj.specialed_classification
         --ELSE sped.SPEDCODE
        END AS specialed_classification
       ,CASE 
@@ -129,39 +124,37 @@ SELECT co.studentid
         WHEN nj.lependdate < co.entrydate THEN NULL
         WHEN nj.lepbegindate <= co.exitdate THEN 1       
        END AS lep_status      
-FROM gabby.powerschool.cohort co
-LEFT OUTER JOIN gabby.powerschool.students s
+FROM powerschool.cohort co
+JOIN powerschool.students s
   ON co.studentid = s.ID
-LEFT OUTER JOIN gabby.powerschool.u_studentsuserfields suf
+LEFT OUTER JOIN powerschool.u_studentsuserfields suf
   ON s.dcid = suf.studentsdcid
-LEFT OUTER JOIN gabby.powerschool.studentcorefields scf
+LEFT OUTER JOIN powerschool.studentcorefields scf
   ON s.dcid = scf.studentsdcid
-LEFT OUTER JOIN gabby.powerschool.s_nj_stu_x nj
+LEFT OUTER JOIN powerschool.s_nj_stu_x nj
   ON s.dcid = nj.studentsdcid
-LEFT OUTER JOIN gabby.powerschool.schools sch
+JOIN powerschool.schools sch
   ON co.schoolid = sch.school_number
-LEFT OUTER JOIN gabby.powerschool.spenrollments sp --WITH(NOEXPAND)
+LEFT OUTER JOIN powerschool.spenrollments_gen sp WITH(NOEXPAND)
   ON co.studentid = sp.studentid
  AND co.exitdate BETWEEN sp.enter_date AND sp.exit_date
  AND sp.programid IN (4573, 5074, 5075, 5173) 
- /* ProgramIDs for schools within schools 
-     * 4573 = Pathways (ES)
-     * 5074 = Pathways (MS)
-     * 5075 = Whittier (ES)
-     * 5713 = Out-of-District
+ /* 
+-- ProgramIDs for schools within schools 
+--  * 4573 = Pathways (ES)
+--  * 5074 = Pathways (MS)
+--  * 5075 = Whittier (ES)
+--  * 5713 = Out-of-District
  */
-LEFT OUTER JOIN gabby.powerschool.gen
-  ON sp.programid = gen.id
- AND gen.cat = 'specprog'
-LEFT OUTER JOIN gabby.powerschool.advisory adv WITH(NOLOCK)
+LEFT OUTER JOIN powerschool.advisory adv
   ON co.studentid = adv.studentid
  AND co.yearid = adv.yearid
  AND adv.rn_year = 1
 
---LEFT OUTER JOIN KIPP_NJ..ROSTERS$PS_access_accounts logins WITH(NOLOCK)
---  ON co.STUDENT_NUMBER = logins.STUDENT_NUMBER
---LEFT OUTER JOIN gabby.powerschool.SPED#ARCHIVE sped WITH(NOLOCK)
---  ON co.studentid = sped.studentid
--- AND co.academic_year  = sped.academic_year
---LEFT OUTER JOIN KIPP_NJ..MCS$lunch_info mcs WITH(NOLOCK)
---  ON co.STUDENT_NUMBER = mcs.StudentNumber
+/*
+LEFT OUTER JOIN gabby.powerschool.SPED#ARCHIVE sped WITH(NOLOCK)
+  ON co.studentid = sped.studentid
+ AND co.academic_year  = sped.academic_year
+LEFT OUTER JOIN KIPP_NJ..MCS$lunch_info mcs WITH(NOLOCK)
+  ON co.STUDENT_NUMBER = mcs.StudentNumber
+*/

@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW powerschool.course_enrollments AS
+ALTER VIEW powerschool.course_enrollments WITH SCHEMABINDING AS
 
 SELECT cc.studentid
       ,cc.schoolid
@@ -14,23 +14,23 @@ SELECT cc.studentid
       ,cc.lastgradeupdate
       ,cc.sectionid
       ,cc.expression
-
+      ,RIGHT(cc.studyear, 2) AS yearid
+      
       ,cou.credittype
       ,cou.course_name
       ,cou.credit_hours
       ,cou.gradescaleid
       ,cou.excludefromgpa
-      ,cou.excludefromstoredgrades
-      ,REPLACE(ROUND(cc.termid, -2), '00', '') AS yearid
+      ,cou.excludefromstoredgrades      
 
       ,sec.dcid AS sections_dcid
 
-      ,t.teachernumber
-      ,t.lastfirst AS teacher_name
+      ,u.teachernumber
+      ,u.lastfirst AS teacher_name
       
-      ,SUM(CASE WHEN cc.sectionid < 0 THEN 1 ELSE 0 END) OVER(PARTITION BY cc.studentid, ROUND(ABS(cc.termid), -2), cc.course_number)
-         / COUNT(cc.sectionid) OVER(PARTITION BY cc.studentid, ROUND(ABS(cc.termid), -2), cc.course_number) AS course_enroll_status
-      ,CASE WHEN cc.sectionid < 0 THEN 1 ELSE 0 END AS section_enroll_status
+      --,SUM(CASE WHEN cc.sectionid < 0 THEN 1 ELSE 0 END) OVER(PARTITION BY cc.studentid, ROUND(ABS(cc.termid), -2), cc.course_number)
+      --   / COUNT(cc.sectionid) OVER(PARTITION BY cc.studentid, ROUND(ABS(cc.termid), -2), cc.course_number) AS course_enroll_status
+      --,CASE WHEN cc.sectionid < 0 THEN 1 ELSE 0 END AS section_enroll_status
       
       ,CASE
         WHEN cou.credittype IN ('ENG','READ') THEN 'Reading'
@@ -39,10 +39,10 @@ SELECT cc.studentid
         WHEN cou.credittype = 'SCI' THEN 'Science - General Science'
        END AS map_measurementscale
       ,CASE
-        WHEN sec.grade_level <= 8 AND cou.CREDITTYPE = 'ENG' THEN 'Text Study'
-        WHEN sec.grade_level <= 8 AND cou.CREDITTYPE = 'MATH' THEN 'Mathematics'
-        WHEN sec.grade_level <= 8 AND cou.CREDITTYPE = 'SCI' THEN 'Science'
-        WHEN sec.grade_level <= 8 AND cou.CREDITTYPE = 'SOC' THEN 'Social Studies'
+        WHEN sec.grade_level <= 8 AND cou.credittype = 'ENG' THEN 'Text Study'
+        WHEN sec.grade_level <= 8 AND cou.credittype = 'MATH' THEN 'Mathematics'
+        WHEN sec.grade_level <= 8 AND cou.credittype = 'SCI' THEN 'Science'
+        WHEN sec.grade_level <= 8 AND cou.credittype = 'SOC' THEN 'Social Studies'
         WHEN cc.course_number IN ('ENG10') THEN 'English 100'
         WHEN cc.course_number IN ('ENG20', 'ENG25') THEN 'English 200'
         WHEN cc.course_number IN ('ENG30', 'ENG35') THEN 'English 300'
@@ -87,5 +87,7 @@ JOIN powerschool.courses cou
   ON cc.course_number = cou.course_number
 JOIN powerschool.sections sec
   ON ABS(cc.sectionid) = sec.id
-JOIN powerschool.teachers t WITH(NOEXPAND)
-  ON cc.teacherid = t.id
+JOIN powerschool.schoolstaff s
+  ON cc.teacherid = s.id
+JOIN powerschool.users u
+  ON s.users_dcid = u.dcid

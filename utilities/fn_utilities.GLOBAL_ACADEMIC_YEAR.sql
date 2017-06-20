@@ -7,7 +7,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 ALTER FUNCTION utilities.Global_Academic_Year()
-    RETURNS int
+    RETURNS INT
   AS
 
 BEGIN		

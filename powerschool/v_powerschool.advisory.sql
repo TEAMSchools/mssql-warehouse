@@ -22,11 +22,11 @@ FROM
            ,enr.dateleft           
            ,enr.teachernumber
            ,enr.teacher_name
-           ,gabby.utilities.STRIP_CHARACTERS(enr.section_number,'0-9') AS advisory_name
-     FROM gabby.powerschool.course_enrollments enr
+           ,utilities.STRIP_CHARACTERS(enr.section_number,'0-9') AS advisory_name
+     FROM powerschool.course_enrollments enr
      WHERE enr.course_number = 'HR'
        AND enr.schoolid NOT IN (133570965, 73253)
-       AND enr.section_enroll_status = 0
+       AND enr.sectionid > 0
 
      UNION ALL
 
@@ -36,13 +36,13 @@ FROM
            ,enr.dateleft           
            ,enr.teachernumber
            ,enr.teacher_name
-           ,gabby.utilities.STRIP_CHARACTERS(enr.section_number,'0-9') AS advisory_name
-     FROM gabby.powerschool.course_enrollments enr
+           ,utilities.STRIP_CHARACTERS(enr.section_number,'0-9') AS advisory_name
+     FROM powerschool.course_enrollments enr
      WHERE enr.course_number = 'ADV'
        AND enr.schoolid IN (133570965, 73253)
-       AND enr.section_enroll_status = 0
+       AND enr.sectionid > 0
     ) sub
-/* future use when ADP/AD is setup */
+/* future use when ADP & AD is setup */
 --LEFT OUTER JOIN KIPP_NJ..AUTOLOAD$GDOCS_PEOPLE_teachernumber_associateid_link link WITH(NOLOCK)
 --  ON advisory.teachernumber = LTRIM(RTRIM(STR(link.teachernumber)))
 -- AND link.is_master = 1

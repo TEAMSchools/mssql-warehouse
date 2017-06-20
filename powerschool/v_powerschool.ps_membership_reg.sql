@@ -8,22 +8,22 @@ SELECT ev.studentid
       ,cd.date_value AS calendardate
   		  ,(CASE 
 			      WHEN ((ev.track='A' AND cd.a = 1) 
-			              OR (ev.track='B' AND cd.b = 1) 
-			              OR (ev.track='C' AND cd.c = 1) 
-			              OR (ev.track='D' AND cd.d = 1) 
-			              OR (ev.track='E' AND cd.e = 1) 
-			              OR (ev.track='F' AND cd.f = 1)) THEN ev.membershipshare         
-			      WHEN (ev.track is null) THEN ev.membershipshare         
+			         OR (ev.track='B' AND cd.b = 1) 
+			         OR (ev.track='C' AND cd.c = 1) 
+			         OR (ev.track='D' AND cd.d = 1) 
+			         OR (ev.track='E' AND cd.e = 1) 
+			         OR (ev.track='F' AND cd.f = 1)) THEN ev.membershipshare         
+			      WHEN (ev.track IS NULL) THEN ev.membershipshare         
 			      ELSE 0         
 		      END) AS studentmembership
 		    ,(CASE 
 			      WHEN ((ev.track='A' AND cd.a = 1) 
-			              OR (ev.track='B' AND cd.b = 1) 
-			              OR (ev.track='C' AND cd.c = 1) 
-			              OR (ev.track='D' AND cd.d = 1) 
-			              OR (ev.track='E' AND cd.e = 1) 
-			              OR (ev.track='F' AND cd.f = 1)) THEN cd.membershipvalue         
-			      WHEN (ev.track is null) THEN cd.membershipvalue         
+			         OR (ev.track='B' AND cd.b = 1) 
+			         OR (ev.track='C' AND cd.c = 1) 
+			         OR (ev.track='D' AND cd.d = 1) 
+			         OR (ev.track='E' AND cd.e = 1) 
+			         OR (ev.track='F' AND cd.f = 1)) THEN cd.membershipvalue         
+			      WHEN (ev.track IS NULL) THEN cd.membershipvalue         
 			      ELSE 0         
 		      END) AS calendarmembership
       ,ev.track AS student_track
@@ -41,22 +41,22 @@ SELECT ev.studentid
       ,ev.ATT_IntervalDuration
 		    ,(CASE 
 			      WHEN ((ev.track='A' AND cd.a = 1) 
-			              OR (ev.track='B' AND cd.b = 1) 
-			              OR (ev.track='C' AND cd.c = 1) 
-			              OR (ev.track='D' AND cd.d = 1) 
-			              OR (ev.track='E' AND cd.e = 1) 
-			              OR (ev.track='F' AND cd.f = 1)) THEN 1         
-			      WHEN (ev.track is null) THEN 1         
+			         OR (ev.track='B' AND cd.b = 1) 
+			         OR (ev.track='C' AND cd.c = 1) 
+			         OR (ev.track='D' AND cd.d = 1) 
+			         OR (ev.track='E' AND cd.e = 1) 
+			         OR (ev.track='F' AND cd.f = 1)) THEN 1         
+			      WHEN (ev.track IS NULL) THEN 1         
 			      ELSE 0         
 		      END) AS ontrack
 		    ,(CASE 
 		       WHEN ((ev.track='A' AND cd.a = 1) 
-			              OR (ev.track='B' AND cd.b = 1) 
-			              OR (ev.track='C' AND cd.c = 1) 
-			              OR (ev.track='D' AND cd.d = 1) 
-			              OR (ev.track='E' AND cd.e = 1) 
-			              OR (ev.track='F' AND cd.f = 1)) THEN 0         
-			      WHEN (ev.track is null) THEN 0         
+			         OR (ev.track='B' AND cd.b = 1) 
+			         OR (ev.track='C' AND cd.c = 1) 
+			         OR (ev.track='D' AND cd.d = 1) 
+			         OR (ev.track='E' AND cd.e = 1) 
+			         OR (ev.track='F' AND cd.f = 1)) THEN 0         
+			      WHEN (ev.track IS NULL) THEN 0         
 			      ELSE 1         
 	       END) AS offtrack
       ,ev.grade_level
