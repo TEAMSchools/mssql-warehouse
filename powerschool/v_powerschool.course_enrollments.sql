@@ -28,9 +28,9 @@ SELECT cc.studentid
       ,u.teachernumber
       ,u.lastfirst AS teacher_name
       
-      --,SUM(CASE WHEN cc.sectionid < 0 THEN 1 ELSE 0 END) OVER(PARTITION BY cc.studentid, ROUND(ABS(cc.termid), -2), cc.course_number)
-      --   / COUNT(cc.sectionid) OVER(PARTITION BY cc.studentid, ROUND(ABS(cc.termid), -2), cc.course_number) AS course_enroll_status
-      --,CASE WHEN cc.sectionid < 0 THEN 1 ELSE 0 END AS section_enroll_status
+      ,SUM(CASE WHEN cc.sectionid < 0 THEN 1 ELSE 0 END) OVER(PARTITION BY cc.studentid, RIGHT(cc.studyear, 2), cc.course_number)
+         / COUNT(cc.sectionid) OVER(PARTITION BY cc.studentid, RIGHT(cc.studyear, 2), cc.course_number) AS course_enroll_status
+      ,CASE WHEN cc.sectionid < 0 THEN 1 ELSE 0 END AS section_enroll_status
       
       ,CASE
         WHEN cou.credittype IN ('ENG','READ') THEN 'Reading'
