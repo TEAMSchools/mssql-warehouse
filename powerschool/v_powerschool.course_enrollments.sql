@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW powerschool.course_enrollments WITH SCHEMABINDING AS
+ALTER VIEW powerschool.course_enrollments AS
 
 SELECT cc.studentid
       ,cc.schoolid

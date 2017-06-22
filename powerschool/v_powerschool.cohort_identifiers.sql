@@ -124,7 +124,7 @@ SELECT co.studentid
         WHEN nj.lependdate < co.entrydate THEN NULL
         WHEN nj.lepbegindate <= co.exitdate THEN 1       
        END AS lep_status      
-FROM powerschool.cohort co
+FROM powerschool.cohort_static co
 JOIN powerschool.students s
   ON co.studentid = s.ID
 LEFT OUTER JOIN powerschool.u_studentsuserfields suf
