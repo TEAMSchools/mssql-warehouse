@@ -12,7 +12,9 @@ AS
 DECLARE @schema_name NVARCHAR(MAX)
        ,@view_name NVARCHAR(MAX)
        ,@is_referenced_table INT
-       ,@update_status INT;
+       ,@update_status INT
+       ,@email_subject NVARCHAR(MAX)
+       ,@email_body NVARCHAR(MAX);
 
 SET @schema_name = 'powerschool'
 SET @view_name = 'cohort'
@@ -72,7 +74,14 @@ BEGIN
       EXEC utilities.cache_view @schema_name, @view_name
     END TRY
     BEGIN CATCH
-      WAITFOR DELAY '00:00:00'
+      SET @email_subject = @view_name + ' static refresh failed'
+      SET @email_body = 'During the trigger, the refresh procedure for ' + @view_name + 'failed.';
+      
+      EXEC msdb.dbo.sp_send_dbmail  
+        @profile_name = 'datarobot',  
+        @recipients = 'u7c1r1b1c5n4p0q0@kippnj.slack.com',  
+        @subject = @email_subject,
+        @body = @email_body;        
     END CATCH
   END
 
