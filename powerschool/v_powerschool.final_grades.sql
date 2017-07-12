@@ -27,18 +27,18 @@ WITH roster AS (
         ,enr.credittype
         ,enr.credit_hours                
         ,enr.teacher_name
-  FROM gabby.powerschool.cohort_identifiers co
+  FROM gabby.powerschool.cohort_identifiers_static co
   JOIN gabby.reporting.terms
     ON co.schoolid = terms.schoolid
    AND co.academic_year = terms.academic_year
    AND terms.identifier = 'RT'
    AND terms.alt_name != 'Summer School'     
-  JOIN gabby.powerschool.course_section_scaffold css
+  JOIN gabby.powerschool.course_section_scaffold_static css
     ON co.studentid = css.studentid
    AND co.yearid = css.yearid
    AND terms.alt_name = css.term_name
    AND css.course_number != 'ALL'
-  JOIN gabby.powerschool.course_enrollments enr
+  LEFT OUTER JOIN gabby.powerschool.course_enrollments_static enr
     ON co.studentid = enr.studentid
    AND css.sectionid = enr.sectionid
   WHERE co.rn_year = 1
@@ -83,6 +83,7 @@ WITH roster AS (
               END AS pgf_letter      
              ,CASE 
                WHEN enr.sectionid < 0 AND sg.[percent] IS NULL THEN NULL                
+               WHEN pgf.grade = '--' THEN NULL
                ELSE ROUND(pgf.[percent], 0)
               END AS pgf_pct        
              ,CASE 
@@ -93,19 +94,19 @@ WITH roster AS (
              ,ROW_NUMBER() OVER(
                 PARTITION BY enr.studentid, enr.yearid, enr.course_number, pgf.finalgradename
                   ORDER BY sg.[percent] DESC, enr.section_enroll_status, enr.dateleft DESC) AS rn
-       FROM gabby.powerschool.course_enrollments enr
+       FROM gabby.powerschool.course_enrollments_static enr
        JOIN gabby.powerschool.pgfinalgrades pgf
          ON enr.studentid = pgf.studentid       
         AND ABS(enr.sectionid) = pgf.sectionid
         AND (pgf.finalgradename LIKE 'T%' OR pgf.finalgradename LIKE 'Q%')  
-       LEFT OUTER JOIN gabby.powerschool.gradescaleitem_lookup scale
+       LEFT OUTER JOIN gabby.powerschool.gradescaleitem_lookup_static scale
          ON enr.gradescaleid = scale.gradescaleid
         AND pgf.[percent] BETWEEN scale.min_cutoffpercentage AND scale.max_cutoffpercentage
        LEFT OUTER JOIN gabby.powerschool.storedgrades sg
          ON enr.studentid = sg.studentid 
         AND ABS(enr.sectionid) = sg.sectionid
         AND pgf.finalgradename = sg.storecode        
-       LEFT OUTER JOIN gabby.powerschool.gradescaleitem_lookup sg_scale
+       LEFT OUTER JOIN gabby.powerschool.gradescaleitem_lookup_static sg_scale
          ON enr.gradescaleid = sg_scale.gradescaleid
         AND sg.[percent] BETWEEN sg_scale.min_cutoffpercentage AND sg_scale.max_cutoffpercentage
        WHERE enr.course_enroll_status = 0       
@@ -196,9 +197,7 @@ WITH roster AS (
         ,CASE          
           WHEN r.grade_level <= 8 THEN 1.0 / CONVERT(FLOAT,COUNT(r.student_number) OVER(PARTITION BY r.student_number, r.academic_year, gr.course_number))
           WHEN r.grade_level >= 9 THEN .225
-         END AS term_grade_weight_possible
-        --,CASE WHEN r.grade_level >= 9 AND r.term_name = 'Q2' THEN 0.05 END AS E1_grade_weight_possible
-        --,CASE WHEN r.grade_level >= 9 AND r.term_name = 'Q4' THEN 0.05 END AS E2_grade_weight_possible
+         END AS term_grade_weight_possible        
   FROM roster r
   LEFT OUTER JOIN enr_grades gr
     ON r.studentid = gr.studentid
@@ -208,7 +207,7 @@ WITH roster AS (
   LEFT OUTER JOIN exams e
     ON r.studentid = e.studentid
    AND r.academic_year = e.academic_year
-   AND gr.course_number = e.course_number
+   AND r.course_number = e.course_number
  )
 
 SELECT sub.student_number
@@ -287,9 +286,11 @@ SELECT sub.student_number
                  / (term_grade_weight_possible + ISNULL(E1_grade_weight,0) + ISNULL(E2_grade_weight,0))) /* divide by current term weights */
              ,0) AS need_65
 
-      --,ROW_NUMBER() OVER(
-      --   PARTITION BY sub.student_number, sub.academic_year, sub.course_number
-      --     ORDER BY sub.term_name DESC) AS rn_curterm
+      /*
+      ,ROW_NUMBER() OVER(
+         PARTITION BY sub.student_number, sub.academic_year, sub.course_number
+           ORDER BY sub.term_name DESC) AS rn_curterm
+      */
 FROM
     (
      SELECT student_number
@@ -386,15 +387,15 @@ FROM
           FROM grades_long               
          ) sub
     ) sub
-LEFT OUTER JOIN gabby.powerschool.storedgrades y1
+JOIN gabby.powerschool.storedgrades y1
   ON sub.studentid = y1.STUDENTID
  AND sub.academic_year = (LEFT(y1.termid, 2) + 1990)
  AND sub.course_number = y1.course_number
  AND y1.storecode = 'Y1'
-LEFT OUTER JOIN gabby.powerschool.gradescaleitem_lookup y1_scale WITH(NOLOCK)
+LEFT OUTER JOIN gabby.powerschool.gradescaleitem_lookup_static y1_scale WITH(NOLOCK)
   ON sub.gradescaleid = y1_scale.gradescaleid
  AND sub.y1_grade_percent_adjusted BETWEEN y1_scale.min_cutoffpercentage AND y1_scale.max_cutoffpercentage
-LEFT OUTER JOIN gabby.powerschool.gradescaleitem_lookup y1_scale_unweighted WITH(NOLOCK)
+LEFT OUTER JOIN gabby.powerschool.gradescaleitem_lookup_static y1_scale_unweighted WITH(NOLOCK)
   ON sub.y1_grade_percent_adjusted BETWEEN y1_scale_unweighted.min_cutoffpercentage AND y1_scale_unweighted.max_cutoffpercentage
  AND CASE
       WHEN sub.schoolid != 73253 THEN sub.gradescaleid

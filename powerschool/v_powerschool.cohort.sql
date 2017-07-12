@@ -78,12 +78,13 @@ FROM
                 ,s.exitcomment
                 ,s.lunchstatus
                 ,terms.yearid
-          FROM powerschool.students s WITH(NOLOCK)
-          JOIN powerschool.terms terms WITH(NOLOCK)
+          FROM gabby.powerschool.students s WITH(NOLOCK)
+          JOIN gabby.powerschool.terms terms WITH(NOLOCK)
             ON s.schoolid = terms.schoolid 
            AND s.entrydate BETWEEN terms.firstday AND terms.lastday
            AND terms.portion = 1
           WHERE s.enroll_status IN (0, 2)            
+            AND s.exitdate > s.entrydate
      
           UNION ALL
 
@@ -98,12 +99,13 @@ FROM
                 ,NULL AS exitcomment
                 ,NULL AS lunchstatus
                 ,terms.yearid
-          FROM powerschool.students s WITH(NOLOCK)
-          JOIN powerschool.terms terms WITH(NOLOCK)
+          FROM gabby.powerschool.students s WITH(NOLOCK)
+          JOIN gabby.powerschool.terms terms WITH(NOLOCK)
             ON s.schoolid = terms.schoolid
            AND s.entrydate <= terms.firstday
            AND terms.portion = 1
-          WHERE s.enroll_status = 3    
+          WHERE s.enroll_status = 3                
+            AND s.id NOT IN (171, 141, 45) /* 3 students back in the Dark Ages graduated 8th, didn't go to NCA in 9th, but came back and graduated from NCA with a different student record */
 
           UNION ALL
 
@@ -118,10 +120,12 @@ FROM
                 ,re.exitcomment           
                 ,re.lunchstatus            
                 ,terms.yearid
-          FROM powerschool.reenrollments re WITH(NOLOCK)       
-          JOIN powerschool.terms terms WITH(NOLOCK)
+          FROM gabby.powerschool.reenrollments re WITH(NOLOCK)       
+          JOIN gabby.powerschool.terms terms WITH(NOLOCK)
             ON re.schoolid = terms.schoolid       
            AND re.entrydate BETWEEN terms.firstday AND terms.lastday
            AND terms.portion = 1     
+          WHERE re.schoolid != 12345 /* filter out summer school */
+            AND re.exitdate > re.entrydate            
          ) sub
     ) sub

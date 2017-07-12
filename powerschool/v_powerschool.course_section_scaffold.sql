@@ -1,7 +1,7 @@
-USE [gabby]
+USE gabby
 GO
 
-ALTER VIEW [powerschool].[course_section_scaffold] AS 
+ALTER VIEW powerschool.course_section_scaffold AS 
 
 WITH course_scaffold AS (
   SELECT DISTINCT 
@@ -10,19 +10,20 @@ WITH course_scaffold AS (
       
         ,terms.alt_name AS term_name
                    
-        ,cc.course_number
-  FROM gabby.powerschool.cohort_static co  
+        ,enr.course_number
+  FROM gabby.powerschool.cohort co  
   JOIN gabby.reporting.terms
     ON co.schoolid = terms.schoolid   
    AND co.academic_year = terms.academic_year
    AND terms.identifier = 'RT'
    AND terms.alt_name != 'Summer School'
-  JOIN gabby.powerschool.cc
-    ON CONCAT(co.studentid, co.yearid) = cc.studyear   
-   AND cc.sectionid > 0
-   AND cc.dateenrolled <= CONVERT(DATE,GETDATE())
+  JOIN gabby.powerschool.course_enrollments_static enr
+    ON co.studentid = enr.studentid
+   AND co.yearid = enr.yearid
+   --AND enr.course_enroll_status = 0
+   --AND enr.section_enroll_status = 0
+   AND enr.dateenrolled <= CONVERT(DATE,GETDATE())
   WHERE co.rn_year = 1
-    AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
  )
 
 ,section_scaffold AS (
@@ -43,7 +44,6 @@ WITH course_scaffold AS (
    AND cc.dateenrolled BETWEEN terms.start_date AND terms.end_date
    AND terms.identifier = 'RT'
   WHERE cc.dateenrolled <= CONVERT(DATE,GETDATE())
-    AND ABS(cc.termid) >= ((gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990) * 100)
  )
 
 SELECT cs.studentid

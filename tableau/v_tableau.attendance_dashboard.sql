@@ -22,7 +22,6 @@ SELECT co.academic_year
       ,mem.membershipvalue
       ,mem.attendancevalue AS is_present
       ,ABS(mem.attendancevalue - 1) AS is_absent
-      --,mem.last_updated
       
       ,att.att_code
       ,CASE WHEN att.att_code IN ('T','T10','ET','TE') THEN 1 ELSE 0 END AS is_tardy
@@ -74,15 +73,15 @@ SELECT co.academic_year
             + CASE WHEN att.att_code = 'ISS' THEN 1 ELSE 0 END) 
          OVER(PARTITION BY co.student_number, co.academic_year
               ORDER BY mem.calendardate) AS is_suspended_running
-FROM gabby.powerschool.cohort_identifiers co
-JOIN gabby.powerschool.ps_adaadm_daily_ctod mem
+FROM gabby.powerschool.cohort_identifiers_static co
+JOIN gabby.powerschool.ps_adaadm_daily_ctod_static mem
   ON co.studentid = mem.studentid
  AND co.schoolid = mem.schoolid
  AND mem.calendardate BETWEEN co.entrydate AND co.exitdate
  AND mem.calendardate <= CONVERT(DATE,GETDATE()) 
  AND mem.membershipvalue > 0
  AND mem.attendancevalue IS NOT NULL
-LEFT OUTER JOIN gabby.powerschool.ps_attendance_daily att
+LEFT OUTER JOIN gabby.powerschool.ps_attendance_daily att WITH(NOEXPAND)
   ON co.studentid = att.studentid
  AND mem.calendardate = att.att_date
 --LEFT OUTER JOIN KIPP_NJ..REPORTING$dates dt WITH(NOLOCK) 
@@ -90,8 +89,7 @@ LEFT OUTER JOIN gabby.powerschool.ps_attendance_daily att
 -- AND co.year = dt.academic_year
 -- AND mem.CALENDARDATE BETWEEN dt.start_date AND dt.end_date
 -- AND dt.identifier = 'RT'
-LEFT OUTER JOIN gabby.powerschool.course_enrollments enr WITH(NOLOCK)
+LEFT OUTER JOIN gabby.powerschool.course_enrollments_static enr
   ON co.studentid = enr.studentid
  AND mem.calendardate BETWEEN enr.dateenrolled AND enr.dateleft
  AND enr.course_number = 'HR' 
---WHERE co.academic_year = gabby.utility.GLOBAL_ACADEMIC_YEAR()
