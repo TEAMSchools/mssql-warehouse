@@ -73,12 +73,9 @@ FROM
            ,co.gender            
            ,co.rn_year
 
-           ,NULL AS target_enrollment
-           ,NULL AS target_enrollment_sped
-           ,NULL AS target_enrollment_fr
-           --,t.target_enrollment
-           --,t.sped_enrollment AS target_enrollment_sped
-           --,t.fr_enrollment AS target_enrollment_fr      
+           ,t.target_enrollment
+           ,t.sped_enrollment AS target_enrollment_sped
+           ,t.f_r_enrollment AS target_enrollment_fr      
 
            ,iep.referral_date
            ,iep.parental_consent_eval_date
@@ -98,12 +95,12 @@ FROM
            ,iep.physical_therapy_services_yn
            ,iep.speech_lang_theapy_services_yn
            ,iep.other_related_services_yn
-     FROM gabby.powerschool.cohort_identifiers_static co WITH(NOLOCK)            
-     LEFT OUTER JOIN gabby.powerschool.s_nj_stu_x iep WITH(NOLOCK)
+     FROM gabby.powerschool.cohort_identifiers_static co
+     LEFT OUTER JOIN gabby.powerschool.s_nj_stu_x iep
        ON co.students_dcid = iep.studentsdcid
       AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-     --LEFT OUTER JOIN KIPP_NJ..AUTOLOAD$GDOCS_FINANCE_enrollment_targets t WITH(NOLOCK)
-     --  ON co.academic_year = t.academic_year
-     -- AND co.reporting_schoolid = t.schoolid
-     -- AND co.grade_level = t.grade_level
+     LEFT OUTER JOIN gabby.finance.enrollment_targets t
+       ON co.academic_year = t.academic_year
+      AND co.reporting_schoolid = t.schoolid
+      AND co.grade_level = t.grade_level
     ) sub

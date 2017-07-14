@@ -102,13 +102,13 @@ SELECT co.studentid
       
       ,CASE 
         WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() AND co.rn_year = 1 THEN mcs.MealBenefitStatus 
-        WHEN s.ENROLL_STATUS = 2 AND co.academic_year = MAX(co.academic_year) OVER(PARTITION BY co.studentid) THEN UPPER(LEFT(s.LUNCHSTATUS,1))
-        ELSE UPPER(LEFT(co.LUNCHSTATUS,1)) 
+        WHEN s.ENROLL_STATUS = 2 AND co.academic_year = MAX(co.academic_year) OVER(PARTITION BY co.studentid) THEN s.LUNCHSTATUS
+        ELSE co.LUNCHSTATUS
        END AS lunchstatus      
       ,CASE 
         WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() AND co.rn_year = 1 THEN mcs.description 
-        WHEN s.ENROLL_STATUS = 2 AND co.academic_year = MAX(co.academic_year) OVER(PARTITION BY co.studentid) THEN UPPER(LEFT(s.LUNCHSTATUS,1))
-        ELSE UPPER(LEFT(co.LUNCHSTATUS,1)) 
+        WHEN s.ENROLL_STATUS = 2 AND co.academic_year = MAX(co.academic_year) OVER(PARTITION BY co.studentid) THEN s.LUNCHSTATUS
+        ELSE co.LUNCHSTATUS
        END AS lunch_app_status                 
       
       ,CASE 
@@ -137,7 +137,7 @@ JOIN gabby.powerschool.schools sch
   ON co.schoolid = sch.school_number
 LEFT OUTER JOIN gabby.powerschool.spenrollments_gen sp WITH(NOEXPAND)
   ON co.studentid = sp.studentid
- AND co.exitdate BETWEEN sp.enter_date AND sp.exit_date
+ AND co.academic_year = gabby.utilities.DATE_TO_SY(sp.enter_date)
  AND sp.programid IN (4573, 5074, 5075, 5173) 
  /* 
 -- ProgramIDs for schools within schools 
