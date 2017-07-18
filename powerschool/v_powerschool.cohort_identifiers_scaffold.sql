@@ -7,6 +7,7 @@ SELECT co.academic_year
       ,co.schoolid
       ,co.reporting_schoolid
       ,co.school_name
+      ,co.school_level
       ,co.grade_level
       ,co.studentid
       ,co.student_number
@@ -21,20 +22,22 @@ SELECT co.academic_year
       ,co.enroll_status
       ,co.entrydate
       ,co.exitdate
-      ,CONVERT(DATE,rd.date) AS date
-      ,rd.reporting_hash
-      ,NULL AS term
-      --,dt.alt_name AS term
+      
+      ,rd.reporting_hash      
+      ,CONVERT(DATE,rd.date) AS date      
+      
+      ,dt.alt_name AS term
+      
       ,CASE WHEN CONVERT(DATE,rd.date) BETWEEN co.entrydate AND co.exitdate THEN 1 ELSE 0 END AS is_enrolled
-FROM powerschool.cohort_identifiers co
+FROM powerschool.cohort_identifiers_static co
 JOIN utilities.reporting_days rd
   ON co.academic_year = rd.academic_year
  AND co.exitdate >= rd.date
---LEFT OUTER JOIN KIPP_NJ..REPORTING$dates dt WITH(NOLOCK)
---  ON co.schoolid = dt.schoolid
--- AND co.year = dt.academic_year
--- AND dt.identifier = 'RT'
--- AND rd.date BETWEEN dt.start_date AND dt.end_date
+LEFT OUTER JOIN gabby.reporting.reporting_terms dt
+  ON co.schoolid = dt.schoolid
+ AND co.academic_year = dt.academic_year
+ AND dt.identifier = 'RT'
+ AND rd.date BETWEEN dt.start_date AND dt.end_date
 WHERE co.schoolid != 999999
   AND co.rn_year = 1
   --AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()

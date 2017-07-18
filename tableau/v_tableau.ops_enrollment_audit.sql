@@ -46,6 +46,20 @@ WITH caredox_enrollment AS (
     AND event = 'create'
  )
 
+,residency_verification AS (
+  SELECT NEN
+  FROM
+      (
+       SELECT subject_line AS NEN      
+             ,ROW_NUMBER() OVER(
+                PARTITION BY subject_line
+                  ORDER BY CONVERT(DATETIME,REPLACE(date, ' at ', ' ')) DESC) AS rn_recent
+       FROM gabby.enrollment.residency_verification
+       WHERE ISNUMERIC(subject_line) = 1
+      ) sub
+  WHERE rn_recent = 1
+ )
+
 ,all_data AS (
   SELECT co.student_number
         ,co.lastfirst
@@ -61,9 +75,9 @@ WITH caredox_enrollment AS (
         ,ISNULL(CONVERT(NVARCHAR(MAX),co.lunch_app_status),'') AS lunch_app_status
         ,CONVERT(NVARCHAR(MAX),CONVERT(MONEY,ISNULL(co.lunch_balance,0))) AS lunch_balance
       
-        ,ISNULL(CONVERT(NVARCHAR(MAX),uxs.residency_proof_1),'') AS residency_proof_1
-        ,ISNULL(CONVERT(NVARCHAR(MAX),uxs.residency_proof_2),'') AS residency_proof_2
-        ,ISNULL(CONVERT(NVARCHAR(MAX),uxs.residency_proof_3),'') AS residency_proof_3
+        ,ISNULL(CONVERT(NVARCHAR(MAX),uxs.residency_proof_1),'N') AS residency_proof_1
+        ,ISNULL(CONVERT(NVARCHAR(MAX),uxs.residency_proof_2),'N') AS residency_proof_2
+        ,ISNULL(CONVERT(NVARCHAR(MAX),uxs.residency_proof_3),'N') AS residency_proof_3
         ,CONVERT(NVARCHAR(MAX),CASE
           WHEN CONCAT(ISNULL(uxs.residency_proof_1,'')
                      ,ISNULL(uxs.residency_proof_2,'')
@@ -71,7 +85,8 @@ WITH caredox_enrollment AS (
           ELSE 'N'
          END) AS residency_proof_all
         ,ISNULL(CONVERT(NVARCHAR(MAX),uxs.reverification_date),'1900-07-01') AS reverification_date
-        ,ISNULL(CONVERT(NVARCHAR(MAX),uxs.birth_certificate_proof),'') AS birth_certificate_proof
+        ,ISNULL(CONVERT(NVARCHAR(MAX),uxs.birth_certificate_proof),'N') AS birth_certificate_proof        
+        ,ISNULL(CONVERT(NVARCHAR(MAX),CASE WHEN rv.NEN IS NOT NULL THEN 'Y' END),'N') AS residency_verification_scanned
            
         ,ISNULL(CONVERT(NVARCHAR(MAX),uxs.iep_registration_followup),'') AS iep_registration_followup_required
         ,CONVERT(NVARCHAR(MAX),CASE 
@@ -90,9 +105,11 @@ WITH caredox_enrollment AS (
         ,ISNULL(CONVERT(NVARCHAR(MAX),cdi.status),'') AS caredox_immunization_status
         ,ISNULL(CONVERT(NVARCHAR(MAX),cds.status),'') AS caredox_screenings_status
         ,ISNULL(CONVERT(NVARCHAR(MAX),cdm.medication),'') AS caredox_medication_status
-  FROM gabby.powerschool.cohort_identifiers_static co
+  FROM gabby.powerschool.cohort_identifiers_static co  
   LEFT OUTER JOIN gabby.powerschool.u_def_ext_students uxs
     ON co.students_dcid = uxs.studentsdcid
+  LEFT OUTER JOIN gabby.powerschool.u_studentsuserfields suf
+    ON co.students_dcid = suf.studentsdcid
   LEFT OUTER JOIN caredox_enrollment cde
     ON co.student_number = cde.student_id
    AND cde.rn_last_updated = 1
@@ -105,6 +122,8 @@ WITH caredox_enrollment AS (
   LEFT OUTER JOIN caredox_medications cdm
     ON co.student_number = cdm.student_id
    AND cdm.rn_last_updated = 1
+  LEFT OUTER JOIN residency_verification rv
+    ON suf.newark_enrollment_number = rv.NEN
   WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
     AND co.schoolid != 999999    
     AND co.rn_year = 1
@@ -133,7 +152,8 @@ WITH caredox_enrollment AS (
                  ,caredox_immunization_status
                  ,caredox_screenings_status
                  ,caredox_medication_status
-                 ,residency_proof_all)
+                 ,residency_proof_all
+                 ,residency_verification_scanned)
    ) u
  )
 
@@ -150,8 +170,9 @@ SELECT a.student_number
       ,a.residency_proof_2
       ,a.residency_proof_3
       ,a.residency_proof_all
-      ,a.reverification_date
+      ,a.reverification_date      
       ,a.birth_certificate_proof
+      ,a.residency_verification_scanned
       ,a.iep_registration_followup_required
       ,a.iep_registration_followup_complete
       ,a.lep_registration_followup_required
@@ -195,6 +216,8 @@ SELECT a.student_number
         WHEN u.field = 'residency_proof_all' AND u.value = 'N' THEN -1
         WHEN u.field = 'reverification_date' AND CONVERT(DATE,u.value) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1) THEN 1
         WHEN u.field = 'reverification_date' AND CONVERT(DATE,u.value) < DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1) THEN -1
+        WHEN u.field = 'residency_verification_scanned' AND u.value = 'Y' THEN 1
+        WHEN u.field = 'residency_verification_scanned' AND u.value IN ('','N') THEN -1
        END AS audit_status
 FROM all_data a
 JOIN unpivoted u

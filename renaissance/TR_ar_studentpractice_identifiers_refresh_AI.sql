@@ -1,11 +1,11 @@
 USE gabby
 GO
-
-IF OBJECT_ID ('powerschool.TR_course_section_scaffold_refresh_AI','TR') IS NOT NULL
-   DROP TRIGGER powerschool.TR_course_section_scaffold_refresh_AI;
+  
+IF OBJECT_ID ('renaissance.TR_ar_studentpractice_identifiers_refresh_AI','TR') IS NOT NULL
+   DROP TRIGGER renaissance.TR_ar_studentpractice_identifiers_refresh_AI;
 GO
 
-CREATE TRIGGER powerschool.TR_course_section_scaffold_refresh_AI ON powerschool.fivetran_audit
+CREATE TRIGGER renaissance.TR_ar_studentpractice_identifiers_refresh_AI ON renaissance.fivetran_audit
   AFTER INSERT
 AS
 
@@ -17,8 +17,8 @@ DECLARE @schema_name NVARCHAR(MAX)
        ,@email_body NVARCHAR(MAX)
        ,@stage NVARCHAR(MAX);
 
-SET @schema_name = 'powerschool'
-SET @view_name = 'course_section_scaffold'
+SET @schema_name = 'renaissance'
+SET @view_name = 'ar_studentpractice_identifiers'
 
 BEGIN
   BEGIN TRY
@@ -58,7 +58,7 @@ BEGIN
              ,DependentObjectType 
              ,1 AS Level
        FROM DependentObjects a
-       WHERE a.DependentSchemaName = @schema_name /* manual change, depends on reporting_terms lookup table in different schema */
+       WHERE a.UsedBySchemaName = @schema_name
          AND a.UsedByObjectName = @view_name
 
        UNION ALL 
@@ -90,7 +90,7 @@ BEGIN
 
     SELECT [table] AS table_name
     INTO #updated_tables
-    FROM powerschool.fivetran_audit /* change schema name for each trigger */
+    FROM renaissance.fivetran_audit
     WHERE update_started >= DATETIMEFROMPARTS(DATEPART(YEAR,GETUTCDATE()), DATEPART(MONTH,GETUTCDATE()), DATEPART(DAY,GETUTCDATE())
                                              ,DATEPART(HOUR,GETUTCDATE()), 0, 0, 0);
   
@@ -123,7 +123,7 @@ BEGIN
     SET @stage = 'refresh'
     PRINT('Running refresh')
     BEGIN
-        EXEC utilities.cache_view @schema_name, @view_name    
+        EXEC utilities.cache_view @schema_name, @view_name      
     END
   END TRY
 
