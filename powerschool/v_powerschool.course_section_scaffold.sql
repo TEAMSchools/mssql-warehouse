@@ -12,7 +12,7 @@ WITH course_scaffold AS (
                    
         ,enr.course_number
   FROM gabby.powerschool.cohort co  
-  JOIN gabby.reporting.terms
+  JOIN gabby.reporting.reporting_terms terms
     ON co.schoolid = terms.schoolid   
    AND co.academic_year = terms.academic_year
    AND terms.identifier = 'RT'
@@ -38,7 +38,7 @@ WITH course_scaffold AS (
            PARTITION BY cc.studyear, cc.course_number, CASE WHEN terms.alt_name = 'Summer School' THEN 'Q1' ELSE terms.alt_name END
              ORDER BY cc.dateleft DESC, cc.sectionid DESC) AS rn_term
   FROM gabby.powerschool.cc
-  JOIN gabby.reporting.terms
+  JOIN gabby.reporting.reporting_terms terms
     ON cc.schoolid = terms.schoolid      
    AND RIGHT(cc.studyear, 2) = terms.yearid   
    AND cc.dateenrolled BETWEEN terms.start_date AND terms.end_date

@@ -28,7 +28,7 @@ WITH roster AS (
         ,enr.credit_hours                
         ,enr.teacher_name
   FROM gabby.powerschool.cohort_identifiers_static co
-  JOIN gabby.reporting.terms
+  JOIN gabby.reporting.reporting_terms terms
     ON co.schoolid = terms.schoolid
    AND co.academic_year = terms.academic_year
    AND terms.identifier = 'RT'

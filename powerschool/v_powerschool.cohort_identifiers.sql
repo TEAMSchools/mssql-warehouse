@@ -137,7 +137,7 @@ JOIN gabby.powerschool.schools sch
   ON co.schoolid = sch.school_number
 LEFT OUTER JOIN gabby.powerschool.spenrollments_gen sp WITH(NOEXPAND)
   ON co.studentid = sp.studentid
- AND co.academic_year = gabby.utilities.DATE_TO_SY(sp.enter_date)
+ AND co.entrydate BETWEEN sp.enter_date AND sp.exit_date
  AND sp.programid IN (4573, 5074, 5075, 5173) 
  /* 
 -- ProgramIDs for schools within schools 
@@ -151,7 +151,7 @@ LEFT OUTER JOIN gabby.powerschool.advisory adv
  AND co.yearid = adv.yearid
  AND adv.rn_year = 1
 LEFT OUTER JOIN gabby.mcs.lunch_info mcs
-  ON s.student_number = mcs.studentnumber
+  ON CONVERT(VARCHAR,s.student_number) = CONVERT(VARCHAR,mcs.studentnumber)
 /*
 LEFT OUTER JOIN gabby.powerschool.SPED#ARCHIVE sped WITH(NOLOCK)
   ON co.studentid = sped.studentid

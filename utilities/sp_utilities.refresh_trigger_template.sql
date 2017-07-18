@@ -139,7 +139,7 @@ SET @sql_2 = '
     SET @stage = ''refresh''
     PRINT(''Running refresh'')
     BEGIN
-        EXEC utilities.cache_view @schema_name, @view_name    
+        EXEC utilities.cache_view @schema_name, @view_name      
     END
   END TRY
 

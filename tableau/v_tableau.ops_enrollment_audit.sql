@@ -183,14 +183,14 @@ SELECT a.student_number
         WHEN u.field = 'lunch_app_status' AND u.value NOT IN ('Free (Income)','Free (SNAP)','Denied (High Income)','Reduced','Zero Income','Free (TANF)') THEN -1
         WHEN u.field = 'lunch_balance' AND CONVERT(MONEY,u.value) >= 0 THEN 1
         WHEN u.field = 'lunch_balance' AND CONVERT(MONEY,u.value) < 0 THEN -1
-        WHEN u.field = 'birth_certificate_proof' AND u.value != '' THEN 1
-        WHEN u.field = 'birth_certificate_proof' AND u.value = '' THEN -1
-        WHEN u.field = 'residency_proof_1' AND u.value != '' THEN 1
-        WHEN u.field = 'residency_proof_1' AND u.value = '' THEN -1
-        WHEN u.field = 'residency_proof_2' AND u.value != '' THEN 1
-        WHEN u.field = 'residency_proof_2' AND u.value = '' THEN -1
-        WHEN u.field = 'residency_proof_3' AND u.value != '' THEN 1
-        WHEN u.field = 'residency_proof_3' AND u.value = '' THEN -1
+        WHEN u.field = 'birth_certificate_proof' AND u.value NOT IN ('','N') THEN 1
+        WHEN u.field = 'birth_certificate_proof' AND u.value IN ('','N') THEN -1
+        WHEN u.field = 'residency_proof_1' AND u.value NOT IN ('','N') THEN 1
+        WHEN u.field = 'residency_proof_1' AND u.value IN ('','N') THEN -1
+        WHEN u.field = 'residency_proof_2' AND u.value NOT IN ('','N') THEN 1
+        WHEN u.field = 'residency_proof_2' AND u.value IN ('','N') THEN -1
+        WHEN u.field = 'residency_proof_3' AND u.value NOT IN ('','N') THEN 1
+        WHEN u.field = 'residency_proof_3' AND u.value IN ('','N') THEN -1
         WHEN u.field = 'residency_proof_all' AND u.value = 'Y' THEN 1
         WHEN u.field = 'residency_proof_all' AND u.value = 'N' THEN -1
         WHEN u.field = 'reverification_date' AND CONVERT(DATE,u.value) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1) THEN 1

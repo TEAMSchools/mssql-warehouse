@@ -17,7 +17,9 @@ BEGIN
 DECLARE @sql NVARCHAR(MAX)
        ,@source_view NVARCHAR(MAX)
        ,@temp_table_name NVARCHAR(MAX)
-       ,@destination_table_name NVARCHAR(MAX);
+       ,@destination_table_name NVARCHAR(MAX)
+       ,@email_subject NVARCHAR(MAX)
+       ,@email_body NVARCHAR(MAX);
 
 SET @source_view = @schema_name + '.' + @view_name
 SET @temp_table_name = '#' + @view_name + '_temp'
@@ -42,7 +44,7 @@ SET @destination_table_name = @source_view + '_static';
   /* truncate destination table... */
   /* insert into destination table */
   ELSE 
-    BEGIN
+    BEGIN TRY
       SET @sql = N'
         IF OBJECT_ID(N''' + @temp_table_name + ''') IS NOT NULL
 		      BEGIN
@@ -58,8 +60,26 @@ SET @destination_table_name = @source_view + '_static';
         INSERT INTO ' + @destination_table_name + '
         SELECT *
         FROM ' + @temp_table_name + ';
+        
+        INSERT INTO [utilities].[cache_view_log]
+         ([view_name]
+         ,[timestamp])
+        VALUES
+              (''' + @source_view + '''
+              ,GETDATE());        
       '
       PRINT(@sql);
       EXEC(@sql);
-    END
+    END TRY
+    
+    BEGIN CATCH
+      SET @email_subject = @view_name + ' static refresh failed'
+      SET @email_body = 'During the trigger, the refresh procedure for ' + @view_name + 'failed during the refresh stage.';
+      
+      EXEC msdb.dbo.sp_send_dbmail  
+        @profile_name = 'datarobot',  
+        @recipients = 'u7c1r1b1c5n4p0q0@kippnj.slack.com',  
+        @subject = @email_subject,
+        @body = @email_body;        
+    END CATCH
 END
