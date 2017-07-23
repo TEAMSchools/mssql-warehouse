@@ -48,9 +48,11 @@ WITH caredox_enrollment AS (
 
 ,residency_verification AS (
   SELECT NEN
+        ,verification_date
   FROM
       (
        SELECT subject_line AS NEN      
+             ,CONVERT(DATE,REPLACE(date, ' at ', ' ')) AS verification_date
              ,ROW_NUMBER() OVER(
                 PARTITION BY subject_line
                   ORDER BY CONVERT(DATETIME,REPLACE(date, ' at ', ' ')) DESC) AS rn_recent
@@ -76,17 +78,23 @@ WITH caredox_enrollment AS (
         ,CONVERT(NVARCHAR(MAX),CONVERT(MONEY,ISNULL(co.lunch_balance,0))) AS lunch_balance
       
         ,ISNULL(CONVERT(NVARCHAR(MAX),uxs.residency_proof_1),'N') AS residency_proof_1
-        ,ISNULL(CONVERT(NVARCHAR(MAX),uxs.residency_proof_2),'N') AS residency_proof_2
-        ,ISNULL(CONVERT(NVARCHAR(MAX),uxs.residency_proof_3),'N') AS residency_proof_3
+        ,CONVERT(NVARCHAR(MAX),CASE WHEN co.year_in_network = 1 THEN ISNULL(uxs.residency_proof_2,'N') END) AS residency_proof_2
+        ,CONVERT(NVARCHAR(MAX),CASE WHEN co.year_in_network = 1 THEN ISNULL(uxs.residency_proof_3,'N') END) AS residency_proof_3
         ,CONVERT(NVARCHAR(MAX),CASE
-          WHEN CONCAT(ISNULL(uxs.residency_proof_1,'')
-                     ,ISNULL(uxs.residency_proof_2,'')
-                     ,ISNULL(uxs.residency_proof_3,'')) = 'YYY' THEN 'Y'
+          WHEN year_in_network = 1 AND CONCAT(ISNULL(uxs.residency_proof_1,'N')
+                                             ,ISNULL(uxs.residency_proof_2,'N')
+                                             ,ISNULL(uxs.residency_proof_3,'N')) NOT LIKE '%N%' 
+                 THEN 'Y'
+          WHEN year_in_network > 1 
+           AND ISNULL(uxs.residency_proof_1,'N') != 'N' 
+           AND rv.verification_date IS NOT NULL
+                 THEN 'Y'
           ELSE 'N'
          END) AS residency_proof_all
-        ,ISNULL(CONVERT(NVARCHAR(MAX),uxs.reverification_date),'1900-07-01') AS reverification_date
+        --,ISNULL(CONVERT(NVARCHAR(MAX),uxs.reverification_date),'1900-07-01') AS reverification_date
         ,ISNULL(CONVERT(NVARCHAR(MAX),uxs.birth_certificate_proof),'N') AS birth_certificate_proof        
         ,ISNULL(CONVERT(NVARCHAR(MAX),CASE WHEN rv.NEN IS NOT NULL THEN 'Y' END),'N') AS residency_verification_scanned
+        ,CONVERT(NVARCHAR(MAX),CASE WHEN co.year_in_network > 1 THEN ISNULL(rv.verification_date,'1900-07-01') END) AS reverification_date
            
         ,ISNULL(CONVERT(NVARCHAR(MAX),uxs.iep_registration_followup),'') AS iep_registration_followup_required
         ,CONVERT(NVARCHAR(MAX),CASE 
@@ -202,7 +210,8 @@ SELECT a.student_number
         WHEN u.field = 'lep_registration_followup_complete' AND u.value = 'N' THEN -1
         WHEN u.field = 'lunch_app_status' AND u.value IN ('Free (Income)','Free (SNAP)','Denied (High Income)','Reduced','Zero Income','Free (TANF)') THEN 1
         WHEN u.field = 'lunch_app_status' AND u.value NOT IN ('Free (Income)','Free (SNAP)','Denied (High Income)','Reduced','Zero Income','Free (TANF)') THEN -1
-        WHEN u.field = 'lunch_balance' AND CONVERT(MONEY,u.value) >= 0 THEN 1
+        WHEN u.field = 'lunch_balance' AND CONVERT(MONEY,u.value) > 0 THEN 1
+        WHEN u.field = 'lunch_balance' AND CONVERT(MONEY,u.value) = 0 THEN 0
         WHEN u.field = 'lunch_balance' AND CONVERT(MONEY,u.value) < 0 THEN -1
         WHEN u.field = 'birth_certificate_proof' AND u.value NOT IN ('','N') THEN 1
         WHEN u.field = 'birth_certificate_proof' AND u.value IN ('','N') THEN -1
@@ -214,8 +223,9 @@ SELECT a.student_number
         WHEN u.field = 'residency_proof_3' AND u.value IN ('','N') THEN -1
         WHEN u.field = 'residency_proof_all' AND u.value = 'Y' THEN 1
         WHEN u.field = 'residency_proof_all' AND u.value = 'N' THEN -1
-        WHEN u.field = 'reverification_date' AND CONVERT(DATE,u.value) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1) THEN 1
-        WHEN u.field = 'reverification_date' AND CONVERT(DATE,u.value) < DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1) THEN -1
+        /* UPDATE ANNUALLY WITH VERIFICATION DATE CUTOFF */
+        WHEN u.field = 'reverification_date' AND CONVERT(DATE,u.value) >= DATEFROMPARTS(2017, 5, 17) THEN 1
+        WHEN u.field = 'reverification_date' AND CONVERT(DATE,u.value) < DATEFROMPARTS(2017, 5, 17) THEN -1
         WHEN u.field = 'residency_verification_scanned' AND u.value = 'Y' THEN 1
         WHEN u.field = 'residency_verification_scanned' AND u.value IN ('','N') THEN -1
        END AS audit_status

@@ -1,25 +1,11 @@
 USE gabby
 GO
-
-ALTER PROCEDURE utilities.refresh_trigger_template(
-  @schema_name NVARCHAR(MAX)
- ,@view_name NVARCHAR(MAX))
-AS
-
-BEGIN
-
-DECLARE @sql_1 NVARCHAR(MAX)
-       ,@sql_2 NVARCHAR(MAX);
-
-SET @sql_1 = '
-USE gabby
-GO
   
-IF OBJECT_ID (''' + @schema_name + '.TR_' + @view_name + '_refresh_AI'',''TR'') IS NOT NULL
-   DROP TRIGGER ' + @schema_name + '.TR_' + @view_name + '_refresh_AI;
+IF OBJECT_ID ('steptool.TR_component_scores_refresh_AI','TR') IS NOT NULL
+   DROP TRIGGER steptool.TR_component_scores_refresh_AI;
 GO
 
-CREATE TRIGGER ' + @schema_name + '.TR_' + @view_name + '_refresh_AI ON ' + @schema_name + '.fivetran_audit
+CREATE TRIGGER steptool.TR_component_scores_refresh_AI ON steptool.fivetran_audit
   AFTER INSERT
 AS
 
@@ -31,15 +17,15 @@ DECLARE @schema_name NVARCHAR(MAX)
        ,@email_body NVARCHAR(MAX)
        ,@stage NVARCHAR(MAX);
 
-SET @schema_name = ''' + @schema_name + '''
-SET @view_name = ''' + @view_name + '''
+SET @schema_name = 'steptool'
+SET @view_name = 'component_scores'
 
 BEGIN
   BEGIN TRY
     /* get list of tables referenced by view */  
     /* only include non-static table objects */
-    SET @stage = ''referenced tables''
-    IF OBJECT_ID(N''tempdb..#referenced_tables'') IS NOT NULL
+    SET @stage = 'referenced tables'
+    IF OBJECT_ID(N'tempdb..#referenced_tables') IS NOT NULL
 		    BEGIN
 		      DROP TABLE #referenced_tables;
 		    END;
@@ -59,8 +45,8 @@ BEGIN
          ON a.id = b.object_id
       INNER JOIN sys.objects c 
          ON a.depid = c.object_id
-        AND c.type IN (''U'', ''P'', ''V'', ''FN'')
-      WHERE b.type IN (''P'',''V'', ''FN'')
+        AND c.type IN ('U', 'P', 'V', 'FN')
+      WHERE b.type IN ('P','V', 'FN')
      )
  
     ,dependentobjects2 AS (
@@ -92,39 +78,36 @@ BEGIN
     SELECT DISTINCT dependentobjectname AS table_name  
     INTO #referenced_tables
     FROM dependentobjects2
-    WHERE dependentobjecttype = ''U''
-      AND dependentobjectname NOT LIKE ''%_static''
-      AND dependentobjectname NOT LIKE ''%_archive'';
+    WHERE dependentobjecttype = 'U'
+      AND dependentobjectname NOT LIKE '%_static';
 
     /* get list of tables updated during current hour */  
-    SET @stage = ''updated tables''
-    IF OBJECT_ID(N''tempdb..#updated_tables'') IS NOT NULL
+    SET @stage = 'updated tables'
+    IF OBJECT_ID(N'tempdb..#updated_tables') IS NOT NULL
 		    BEGIN
 		      DROP TABLE #updated_tables;
 		    END
 
     SELECT [table] AS table_name
     INTO #updated_tables
-    FROM ' + @schema_name + '.fivetran_audit
+    FROM steptool.fivetran_audit
     WHERE update_started >= DATETIMEFROMPARTS(DATEPART(YEAR,GETUTCDATE()), DATEPART(MONTH,GETUTCDATE()), DATEPART(DAY,GETUTCDATE())
                                              ,DATEPART(HOUR,GETUTCDATE()), 0, 0, 0);
   
     /* check if updated table is included in view */  
-    SET @stage = ''referenced table check''
+    SET @stage = 'referenced table check'
     SELECT @is_referenced_table = CASE WHEN COUNT([table]) > 0 THEN 1 ELSE 0 END
     FROM INSERTED
     WHERE [table] IN (SELECT table_name FROM #referenced_tables);
     
     IF @is_referenced_table = 0 
       BEGIN
-        PRINT(''INSERTED table is not included in target view'');
+        PRINT('INSERTED table is not included in target view');
         RETURN    
       END
-'
 
-SET @sql_2 = '
     /* check if all tables included in view has been updated */  
-    SET @stage = ''updated table check''
+    SET @stage = 'updated table check'
     SELECT @update_status = CASE WHEN  COUNT(rt.table_name) = COUNT(ut.table_name) THEN 1 ELSE 0 END
     FROM #referenced_tables rt
     LEFT OUTER JOIN #updated_tables ut
@@ -132,35 +115,28 @@ SET @sql_2 = '
 
     IF @update_status = 0
       BEGIN
-        PRINT(''All tables referenced by view have not yet been updated this hour'');
+        PRINT('All tables referenced by view have not yet been updated this hour');
         RETURN    
       END
 
     /* run refresh */
-    SET @stage = ''refresh''
-    PRINT(''Running refresh'')
+    SET @stage = 'refresh'
+    PRINT('Running refresh')
     BEGIN
         EXEC utilities.cache_view @schema_name, @view_name      
     END
   END TRY
 
   BEGIN CATCH
-    SET @email_subject = @view_name + '' static refresh failed''
-    SET @email_body = ''During the trigger, the refresh procedure for '' + @view_name + ''failed during the '' + @stage + ''stage.'';
+    SET @email_subject = @view_name + ' static refresh failed'
+    SET @email_body = 'During the trigger, the refresh procedure for ' + @view_name + 'failed during the ' + @stage + 'stage.';
       
     EXEC msdb.dbo.sp_send_dbmail  
-      @profile_name = ''datarobot'',  
-      @recipients = ''u7c1r1b1c5n4p0q0@kippnj.slack.com'',  
+      @profile_name = 'datarobot',  
+      @recipients = 'u7c1r1b1c5n4p0q0@kippnj.slack.com',  
       @subject = @email_subject,
       @body = @email_body;        
   END CATCH
-
-END
-GO
-'
-
-PRINT(@sql_1);
-PRINT(@sql_2);
 
 END
 GO

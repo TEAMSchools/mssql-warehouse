@@ -15,6 +15,9 @@ SELECT cc.studentid
       ,cc.sectionid
       ,cc.expression
       ,RIGHT(cc.studyear, 2) AS yearid
+      ,RIGHT(cc.studyear, 2) + 1990 AS academic_year
+
+      ,s.student_number
       
       ,cou.credittype
       ,cou.course_name
@@ -82,12 +85,14 @@ SELECT cc.studentid
       --             ,cc.course_number DESC
       --             ,cc.dateenrolled DESC
       --             ,cc.dateleft DESC) AS rn_subject    
-FROM powerschool.cc
-JOIN powerschool.courses cou
+FROM gabby.powerschool.cc
+JOIN gabby.powerschool.students s 
+  ON cc.studentid = s.id
+JOIN gabby.powerschool.courses cou
   ON cc.course_number = cou.course_number
-JOIN powerschool.sections sec
+JOIN gabby.powerschool.sections sec
   ON ABS(cc.sectionid) = sec.id
-JOIN powerschool.schoolstaff s
-  ON cc.teacherid = s.id
-JOIN powerschool.users u
-  ON s.users_dcid = u.dcid
+JOIN gabby.powerschool.schoolstaff ss
+  ON cc.teacherid = ss.id
+JOIN gabby.powerschool.users u
+  ON ss.users_dcid = u.dcid

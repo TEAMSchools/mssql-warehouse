@@ -12,6 +12,11 @@ SELECT sp.studentid
       ,sp.programid
       ,sp.sp_comment
       ,sp.gradelevel
+      ,CASE 
+        WHEN DATEPART(MONTH,sp.enter_date) < 7 THEN (DATEPART(YEAR,sp.enter_date) - 1) 
+        ELSE DATEPART(YEAR,sp.enter_date) 
+       END AS academic_year
+
       ,gen.name AS specprog_name
 FROM powerschool.spenrollments sp
 JOIN powerschool.gen

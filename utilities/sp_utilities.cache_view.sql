@@ -66,7 +66,7 @@ SET @destination_table_name = @source_view + '_static';
          ,[timestamp])
         VALUES
               (''' + @source_view + '''
-              ,GETDATE());        
+              ,GETUTCDATE());        
       '
       PRINT(@sql);
       EXEC(@sql);
