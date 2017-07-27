@@ -25,6 +25,14 @@ SET @source_view = @schema_name + '.' + @view_name
 SET @temp_table_name = '#' + @view_name + '_temp'
 SET @destination_table_name = @source_view + '_static';
 
+  /* if source view does not exist, exit */
+		IF OBJECT_ID(@source_view) IS NULL
+		  BEGIN    
+      PRINT('View does not exist')
+
+      RETURN
+    END
+  
   /* if destination table does not exist, create and exit */
 		IF OBJECT_ID(@destination_table_name) IS NULL
 		  BEGIN
@@ -73,8 +81,10 @@ SET @destination_table_name = @source_view + '_static';
     END TRY
     
     BEGIN CATCH
+      PRINT(ERROR_MESSAGE());
+      
       SET @email_subject = @view_name + ' static refresh failed'
-      SET @email_body = 'During the trigger, the refresh procedure for ' + @view_name + 'failed during the refresh stage.';
+      SET @email_body = 'During the trigger, the refresh procedure for ' + @view_name + 'failed during the refresh stage.' + CHAR(10) + ERROR_MESSAGE();
       
       EXEC msdb.dbo.sp_send_dbmail  
         @profile_name = 'datarobot',  

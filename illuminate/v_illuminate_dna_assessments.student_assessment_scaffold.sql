@@ -27,6 +27,8 @@ SELECT DISTINCT
       ,dsa.code_translation AS subject_area
 
       ,ssa.student_id
+      
+      ,0 AS is_replacement
 FROM gabby.illuminate_dna_assessments.assessments a  
 JOIN gabby.illuminate_codes.dna_scopes ds
   ON a.code_scope_id = ds.code_id
@@ -65,6 +67,8 @@ SELECT DISTINCT
       ,dsa.code_translation AS subject_area
 
       ,ssa.student_id
+
+      ,1 AS is_replacement
 FROM gabby.illuminate_dna_assessments.assessments a  
 JOIN gabby.illuminate_codes.dna_scopes ds
   ON a.code_scope_id = ds.code_id
@@ -88,13 +92,15 @@ SELECT a.assessment_id
       ,a.administered_at        
       ,a.performance_band_set_id
       ,(a.academic_year - 1) AS academic_year
-      ,NULL AS module_type
+      ,ds.code_translation AS module_type
       ,NULL AS module_number
            
       ,ds.code_translation AS scope           
       ,dsa.code_translation AS subject_area
 
       ,sa.student_id
+
+      ,0 AS is_replacement
 FROM gabby.illuminate_dna_assessments.assessments a  
 LEFT OUTER JOIN gabby.illuminate_codes.dna_scopes ds
   ON a.code_scope_id = ds.code_id
@@ -104,3 +110,4 @@ LEFT OUTER JOIN gabby.illuminate_codes.dna_subject_areas dsa
 LEFT OUTER JOIN gabby.illuminate_dna_assessments.students_assessments sa
   ON a.assessment_id = sa.assessment_id
  --AND sa.student_assessment_id NOT IN (SELECT student_assessment_id FROM gabby.illuminate_dna_assessments.students_assessments_archive)
+WHERE (ds.code_translation NOT IN ('CMA - End-of-Module', 'CMA - Mid-Module') OR a.code_scope_id IS NULL)

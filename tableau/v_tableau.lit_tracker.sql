@@ -25,6 +25,7 @@ SELECT co.school_name
         ELSE REPLACE(term.ar,'AR','Hex ') 
        END AS AR_term
       
+      ,achv.reporting_term
       ,achv.start_date AS lit_term_start_date
       ,achv.is_curterm
       ,achv.read_lvl

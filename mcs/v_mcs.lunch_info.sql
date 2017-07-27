@@ -6,45 +6,51 @@ ALTER VIEW mcs.lunch_info AS
 SELECT c.studentnumber
       ,c.reimbursableonlybalance
       ,c.unallocatedbalance
-      ,c.reimbursableonlybalance + c.unallocatedbalance AS [balance]
+      ,c.reimbursableonlybalance + c.unallocatedbalance AS [balance]      
+
       ,LEFT(cat.shortdesc, 1) AS mealbenefitstatus /* returns f, r, p */
       ,cat.shortdesc
+      
+      ,s.currentapplicationid
+
       ,e.description
-      --,ROW_NUMBER() OVER(
-      --   PARTITION BY c.studentnumber
-      --     ORDER BY c.permanentstatusdate DESC) AS rn
 FROM [winsql06\han].[newton].[dbo].[customer] c
-INNER JOIN [winsql06\han].[newton].[dbo].[student_guid_link] g
+LEFT OUTER JOIN [winsql06\han].[newton].[dbo].[student_guid_link] g
   ON c.[customer_recid] = g.[customerid]
-INNER JOIN [winsql06\han].[newton].[dbo].[customer_category] cat
+LEFT OUTER JOIN [winsql06\han].[newton].[dbo].[customer_category] cat
   ON c.[customer_categoryid] = cat.[customer_category_recid]
-INNER JOIN [winsql06\han].[franklin].[dbo].student s
+LEFT OUTER JOIN [winsql06\han].[franklin].[dbo].student s
   ON g.studentguid = s.globaluid
-INNER JOIN [winsql06\han].[franklin].[dbo].[eligibility] e
+LEFT OUTER JOIN [winsql06\han].[franklin].[dbo].[eligibility] e
   ON s.[eligibilityid] = e.[eligibility_recid]
 WHERE cat.[isstudent] = 1 /* only students */
   AND ISNUMERIC(c.[studentnumber]) = 1
-
+  AND c.studentnumber IN (SELECT student_number FROM gabby.powerschool.students WHERE schoolid NOT LIKE '1799%')
+  AND c.inactive = 0
+  
 UNION ALL
 
 SELECT c.studentnumber
       ,c.reimbursableonlybalance
       ,c.unallocatedbalance
       ,c.reimbursableonlybalance + c.unallocatedbalance AS balance
+      
       ,LEFT(cat.shortdesc, 1) AS mealbenefitstatus /* returns f, r, p */
       ,cat.shortdesc
+      
+      ,s.currentapplicationid
+
       ,e.description
-      --,ROW_NUMBER() OVER(
-      --   PARTITION BY C.STUDENTNUMBER
-      --     ORDER BY C.PERMANENTSTATUSDATE DESC) AS RN
 FROM [winsql06\yoda].[newton].[dbo].[customer] c 
-INNER JOIN [winsql06\yoda].[newton].[dbo].[student_guid_link] g 
+LEFT OUTER JOIN [winsql06\yoda].[newton].[dbo].[student_guid_link] g 
   ON c.[customer_recid] = g.[customerid]
-INNER JOIN [winsql06\yoda].[newton].[dbo].[customer_category] cat 
+LEFT OUTER JOIN [winsql06\yoda].[newton].[dbo].[customer_category] cat 
   ON c.[customer_categoryid] = cat.[customer_category_recid]
-INNER JOIN [winsql06\yoda].[franklin].[dbo].student s 
+LEFT OUTER JOIN [winsql06\yoda].[franklin].[dbo].student s 
   ON g.studentguid = s.globaluid
-INNER JOIN [winsql06\yoda].[franklin].[dbo].[eligibility] e 
+LEFT OUTER JOIN [winsql06\yoda].[franklin].[dbo].[eligibility] e 
   ON s.[eligibilityid] = e.[eligibility_recid]
 WHERE cat.[isstudent] = 1 /* only students */
   AND ISNUMERIC(c.[studentnumber]) = 1
+  AND c.studentnumber IN (SELECT student_number FROM gabby.powerschool.students WHERE schoolid LIKE '1799%')
+  AND c.inactive = 0

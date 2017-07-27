@@ -6,13 +6,10 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-ALTER TRIGGER illuminate_dna_repositories.repository_row_ids_merge
-   ON  illuminate_dna_repositories.fivetran_audit
-   AFTER INSERT
-AS 
+ALTER PROCEDURE illuminate_dna_repositories.repository_row_ids_merge AS 
+
 BEGIN
-	 -- SET NOCOUNT ON added to prevent extra result sets from
-	 -- interfering with SELECT statements.
+	 /* SET NOCOUNT ON added to prevent extra result sets from interfering with SELECT statements */
 	 SET NOCOUNT ON;
 
   /* 1.) Drop and recreate the temp table */

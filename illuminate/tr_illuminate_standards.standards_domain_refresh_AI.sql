@@ -1,11 +1,11 @@
 USE gabby
 GO
-
-IF OBJECT_ID ('powerschool.TR_cohort_identifiers_refresh_AI','TR') IS NOT NULL
-   DROP TRIGGER powerschool.TR_cohort_identifiers_refresh_AI;
+  
+IF OBJECT_ID ('illuminate_standards.TR_standards_domain_refresh_AI','TR') IS NOT NULL
+   DROP TRIGGER illuminate_standards.TR_standards_domain_refresh_AI;
 GO
 
-CREATE TRIGGER powerschool.TR_cohort_identifiers_refresh_AI ON powerschool.fivetran_audit
+CREATE TRIGGER illuminate_standards.TR_standards_domain_refresh_AI ON illuminate_standards.fivetran_audit
   AFTER INSERT
 AS
 
@@ -17,8 +17,8 @@ DECLARE @schema_name NVARCHAR(MAX)
        ,@email_body NVARCHAR(MAX)
        ,@stage NVARCHAR(MAX);
 
-SET @schema_name = 'powerschool'
-SET @view_name = 'cohort_identifiers'
+SET @schema_name = 'illuminate_standards'
+SET @view_name = 'standards_domain'
 
 BEGIN
   BEGIN TRY
@@ -80,7 +80,7 @@ BEGIN
     FROM dependentobjects2
     WHERE dependentobjecttype = 'U'
       AND dependentobjectname NOT LIKE '%_static'
-      AND dependentobjectname NOT IN ('njsmart_powerschool_kcna','njsmart_powerschool_team'); /* manual override */
+      AND dependentobjectname NOT LIKE '%_archive';
 
     /* get list of tables updated during current hour */  
     SET @stage = 'updated tables'
@@ -91,7 +91,7 @@ BEGIN
 
     SELECT [table] AS table_name
     INTO #updated_tables
-    FROM powerschool.fivetran_audit /* change schema name for each trigger */
+    FROM illuminate_standards.fivetran_audit
     WHERE update_started >= DATETIMEFROMPARTS(DATEPART(YEAR,GETUTCDATE()), DATEPART(MONTH,GETUTCDATE()), DATEPART(DAY,GETUTCDATE())
                                              ,DATEPART(HOUR,GETUTCDATE()), 0, 0, 0);
   
@@ -124,7 +124,7 @@ BEGIN
     SET @stage = 'refresh'
     PRINT('Running refresh')
     BEGIN
-        EXEC gabby.utilities.cache_view @schema_name, @view_name    
+        EXEC utilities.cache_view @schema_name, @view_name      
     END
   END TRY
 

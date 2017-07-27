@@ -208,7 +208,7 @@ SELECT a.student_number
         WHEN u.field = 'lep_registration_followup_required' AND u.value = '1' THEN 0
         WHEN u.field = 'lep_registration_followup_complete' AND u.value = 'Y' THEN 1
         WHEN u.field = 'lep_registration_followup_complete' AND u.value = 'N' THEN -1
-        WHEN u.field = 'lunch_app_status' AND u.value IN ('Free (Income)','Free (SNAP)','Denied (High Income)','Reduced','Zero Income','Free (TANF)') THEN 1
+        WHEN u.field = 'lunch_app_status' AND u.value IN ('F','R','P','Free (Income)','Free (SNAP)','Denied (High Income)','Reduced','Zero Income','Free (TANF)') THEN 1
         WHEN u.field = 'lunch_app_status' AND u.value NOT IN ('Free (Income)','Free (SNAP)','Denied (High Income)','Reduced','Zero Income','Free (TANF)') THEN -1
         WHEN u.field = 'lunch_balance' AND CONVERT(MONEY,u.value) > 0 THEN 1
         WHEN u.field = 'lunch_balance' AND CONVERT(MONEY,u.value) = 0 THEN 0

@@ -76,15 +76,16 @@ SELECT cc.studentid
         WHEN cc.course_number IN ('SPAN10', 'SPAN11', 'SPAN20', 'SPAN30', 'SPAN12', 'SPAN40') THEN 'Spanish'
         WHEN cc.course_number IN ('ARAB20') THEN 'Arabic'
        END AS illuminate_subject
-      --,ROW_NUMBER() OVER(
-      --   PARTITION BY cou.credittype
-      --               ,cc.studentid                     
-      --               ,ABS(cc.termid)
-      --               ,CASE WHEN cc.termid < 0 THEN 1 ELSE 0 END
-      --     ORDER BY cc.termid DESC
-      --             ,cc.course_number DESC
-      --             ,cc.dateenrolled DESC
-      --             ,cc.dateleft DESC) AS rn_subject    
+      
+      ,ROW_NUMBER() OVER(
+         PARTITION BY cou.credittype
+                     ,cc.studentid                     
+                     ,ABS(cc.termid)
+                     ,CASE WHEN cc.sectionid < 0 THEN 1 ELSE 0 END
+           ORDER BY cc.termid DESC
+                   ,cc.course_number DESC
+                   ,cc.dateenrolled DESC
+                   ,cc.dateleft DESC) AS rn_subject    
 FROM gabby.powerschool.cc
 JOIN gabby.powerschool.students s 
   ON cc.studentid = s.id

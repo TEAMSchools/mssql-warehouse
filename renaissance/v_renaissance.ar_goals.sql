@@ -48,15 +48,15 @@ WITH roster AS (
                ) AS indep_lvl_num /* Q1 & Q2 are set by BOY, carry them forward for setting goals at beginning of year */
        FROM gabby.lit.achieved_by_round_static achv
        LEFT OUTER JOIN (
-             SELECT 'RT1' AS time_per_name
+             SELECT 'AR1' AS time_per_name
              UNION
-             SELECT 'RT2'             
+             SELECT 'AR2'             
             ) boy
          ON achv.test_round IN ('BOY','DR')
        LEFT OUTER JOIN (
-             SELECT 'RT3' AS time_per_name
+             SELECT 'AR3' AS time_per_name
              UNION
-             SELECT 'RT4'             
+             SELECT 'AR4'             
             ) moy
          ON achv.test_round IN ('MOY','Q2')
        WHERE achv.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()

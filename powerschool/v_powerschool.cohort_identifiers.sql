@@ -101,23 +101,30 @@ SELECT co.studentid
       ,CASE WHEN co.schoolid = 179902 THEN suf.advisor_email ELSE adv.advisor_email END AS advisor_email
       
       ,CASE 
-        WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() AND co.rn_year = 1 THEN mcs.MealBenefitStatus 
-        WHEN s.ENROLL_STATUS = 2 AND co.academic_year = MAX(co.academic_year) OVER(PARTITION BY co.studentid) THEN s.LUNCHSTATUS
-        ELSE co.LUNCHSTATUS
+        WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() AND co.rn_year = 1 THEN mcs.mealbenefitstatus 
+        WHEN s.enroll_status = 2 AND co.academic_year = MAX(co.academic_year) OVER(PARTITION BY co.studentid) THEN s.lunchstatus
+        ELSE co.lunchstatus
        END AS lunchstatus      
       ,CASE 
-        WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() AND co.rn_year = 1 THEN mcs.description 
-        WHEN s.ENROLL_STATUS = 2 AND co.academic_year = MAX(co.academic_year) OVER(PARTITION BY co.studentid) THEN s.LUNCHSTATUS
-        ELSE co.LUNCHSTATUS
+        WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
+         AND co.rn_year = 1 
+         AND mcs.currentapplicationid IS NOT NULL 
+               THEN mcs.mealbenefitstatus
+        WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
+         AND co.rn_year = 1 
+         AND mcs.currentapplicationid IS NULL 
+               THEN mcs.description
+        WHEN s.enroll_status = 2 AND co.academic_year = MAX(co.academic_year) OVER(PARTITION BY co.studentid) THEN s.lunchstatus
+        ELSE co.lunchstatus
        END AS lunch_app_status                 
       
       ,CASE 
         WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() THEN ISNULL(scf.spedlep, 'No IEP') 
-        --ELSE ISNULL(sped.SPEDLEP,'No IEP') 
+        ELSE ISNULL(sped.spedlep,'No IEP') 
        END AS iep_status
       ,CASE 
         WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() THEN nj.specialed_classification
-        --ELSE sped.SPEDCODE
+        ELSE sped.special_education_code
        END AS specialed_classification
       ,CASE 
         WHEN nj.lepbegindate IS NULL THEN NULL
@@ -152,8 +159,6 @@ LEFT OUTER JOIN gabby.powerschool.advisory adv
  AND adv.rn_year = 1
 LEFT OUTER JOIN gabby.mcs.lunch_info mcs
   ON CONVERT(VARCHAR,s.student_number) = CONVERT(VARCHAR,mcs.studentnumber)
-/*
-LEFT OUTER JOIN gabby.powerschool.SPED#ARCHIVE sped WITH(NOLOCK)
-  ON co.studentid = sped.studentid
+LEFT OUTER JOIN gabby.easyiep.njsmart_powerschool sped
+  ON s.student_number = sped.student_number
  AND co.academic_year  = sped.academic_year
-*/

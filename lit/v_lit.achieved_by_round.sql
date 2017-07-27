@@ -7,21 +7,24 @@ WITH roster_scaffold AS (
   SELECT r.student_number
         ,r.schoolid
         ,r.grade_level
-        ,r.academic_year
+        ,r.academic_year        
+        
+        ,terms.time_per_name AS reporting_term
+        ,CASE 
+          WHEN terms.school_level = 'MS' AND terms.alt_name = 'DR' THEN 'BOY' 
+          ELSE REPLACE(terms.alt_name, 'Diagnostic', 'DR')
+         END AS test_round
         ,CONVERT(DATE,terms.start_date) AS start_date
         ,CONVERT(DATE,terms.end_date) AS end_date
         ,CASE 
-          WHEN terms.school_level = 'MS' AND terms.time_per_name = 'DR' THEN 'BOY' 
-          ELSE REPLACE(terms.time_per_name, 'Diagnostic', 'DR')
-         END AS test_round
-        ,CASE 
           WHEN CONVERT(DATE,GETDATE()) BETWEEN CONVERT(DATE,terms.start_date) AND CONVERT(DATE,terms.end_date) THEN 1 
-          WHEN MAX(CASE WHEN CONVERT(DATE,terms.start_date) <= CONVERT(DATE,GETDATE()) THEN CONVERT(DATE,terms.start_date) END) OVER(
-                 PARTITION BY r.schoolid, r.academic_year) = terms.start_date 
+          WHEN MAX(CASE 
+                    WHEN CONVERT(DATE,terms.start_date) <= CONVERT(DATE,GETDATE()) THEN CONVERT(DATE,terms.start_date) 
+                   END) OVER(PARTITION BY r.schoolid, r.academic_year) = terms.start_date 
                  THEN 1
           ELSE 0 
          END AS is_curterm
-        ,ROW_NUMBER() OVER (
+        ,ROW_NUMBER() OVER(
            PARTITION BY r.student_number, r.academic_year
              ORDER BY CONVERT(DATE,terms.start_date) ASC) AS round_num        
   FROM gabby.powerschool.cohort_identifiers_static r
@@ -39,6 +42,7 @@ WITH roster_scaffold AS (
         ,academic_year
         ,schoolid
         ,grade_level
+        ,reporting_term
         ,test_round
         ,round_num
         ,start_date
@@ -66,6 +70,7 @@ WITH roster_scaffold AS (
              ,r.schoolid
              ,r.grade_level
              ,r.academic_year
+             ,r.reporting_term
              ,r.test_round
              ,r.round_num
              ,r.start_date    
@@ -113,6 +118,7 @@ WITH roster_scaffold AS (
              ,r.schoolid
              ,r.grade_level
              ,r.academic_year
+             ,r.reporting_term
              ,r.test_round
              ,r.round_num
              ,r.start_date
@@ -154,6 +160,7 @@ WITH roster_scaffold AS (
              ,r.schoolid
              ,r.grade_level
              ,r.academic_year
+             ,r.reporting_term
              ,r.test_round
              ,r.round_num
              ,r.start_date
@@ -204,10 +211,11 @@ WITH roster_scaffold AS (
  )
 
 ,achieved AS (
-  SELECT tests.academic_year
+  SELECT tests.student_number
+        ,tests.academic_year
         ,tests.schoolid
-        ,tests.grade_level        
-        ,tests.student_number
+        ,tests.grade_level                
+        ,tests.reporting_term
         ,tests.test_round 
         ,tests.round_num     
         ,tests.start_date
@@ -260,6 +268,7 @@ SELECT academic_year
       ,schoolid
       ,grade_level
       ,student_number      
+      ,reporting_term
       ,test_round
       ,start_date
       ,end_date
@@ -326,6 +335,7 @@ FROM
            ,sub.schoolid
            ,sub.grade_level
            ,sub.student_number           
+           ,sub.reporting_term
            ,sub.test_round
            ,sub.start_date
            ,sub.end_date
@@ -369,6 +379,7 @@ FROM
                 ,achieved.schoolid
                 ,achieved.grade_level
                 ,achieved.student_number                      
+                ,achieved.reporting_term
                 ,achieved.test_round 
                 ,achieved.round_num     
                 ,achieved.start_date
