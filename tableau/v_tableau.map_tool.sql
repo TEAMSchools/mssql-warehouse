@@ -45,7 +45,7 @@ WITH map_long AS (
          END) AS lexile_score
         ,map.test_duration_minutes
   FROM gabby.nwea.best_baseline base
-  LEFT OUTER JOIN nwea.assessment_result_identifiers map
+  LEFT OUTER JOIN gabby.nwea.assessment_result_identifiers map
     ON base.student_number = map.student_id
    AND base.academic_year = map.academic_year
    AND base.measurementscale = map.measurement_scale

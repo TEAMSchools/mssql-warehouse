@@ -20,6 +20,7 @@ SELECT DISTINCT
        END AS module_type
       ,CASE
         WHEN PATINDEX('%[MU][0-9]/[0-9]%', a.title) > 0 THEN SUBSTRING(a.title, PATINDEX('%[MU][0-9]/[0-9]%', a.title), 4)
+        WHEN PATINDEX('%QA[0-9]%', a.title) > 0 THEN SUBSTRING(a.title, PATINDEX('%QA[0-9]%', a.title), 3)
         WHEN PATINDEX('%[MU][0-9]%', a.title) > 0 THEN SUBSTRING(a.title, PATINDEX('%[MU][0-9]%', a.title), 2)
        END AS module_number
            
@@ -40,6 +41,7 @@ JOIN gabby.illuminate_dna_assessments.assessment_grade_levels agl
 JOIN gabby.illuminate_public.student_session_aff ssa
   ON a.administered_at BETWEEN ssa.entry_date AND ssa.leave_date
  AND agl.grade_level_id = ssa.grade_level_id
+WHERE a.deleted_at IS NULL
 
 UNION ALL
 
@@ -60,6 +62,7 @@ SELECT DISTINCT
        END AS module_type
       ,CASE
         WHEN PATINDEX('%[MU][0-9]/[0-9]%', a.title) > 0 THEN SUBSTRING(a.title, PATINDEX('%[MU][0-9]/[0-9]%', a.title), 4)
+        WHEN PATINDEX('%QA[0-9]%', a.title) > 0 THEN SUBSTRING(a.title, PATINDEX('%QA[0-9]%', a.title), 3)
         WHEN PATINDEX('%[MU][0-9]%', a.title) > 0 THEN SUBSTRING(a.title, PATINDEX('%[MU][0-9]%', a.title), 2)
        END AS module_number
            
@@ -83,6 +86,7 @@ JOIN gabby.illuminate_public.student_session_aff ssa
 JOIN gabby.illuminate_dna_assessments.students_assessments sa
   ON a.assessment_id = sa.assessment_id
  AND ssa.student_id = sa.student_id
+WHERE a.deleted_at IS NULL
 
 UNION ALL
 
@@ -109,5 +113,5 @@ LEFT OUTER JOIN gabby.illuminate_codes.dna_subject_areas dsa
   ON a.code_subject_area_id = dsa.code_id    
 LEFT OUTER JOIN gabby.illuminate_dna_assessments.students_assessments sa
   ON a.assessment_id = sa.assessment_id
- --AND sa.student_assessment_id NOT IN (SELECT student_assessment_id FROM gabby.illuminate_dna_assessments.students_assessments_archive)
 WHERE (ds.code_translation NOT IN ('CMA - End-of-Module', 'CMA - Mid-Module') OR a.code_scope_id IS NULL)
+  AND a.deleted_at IS NULL

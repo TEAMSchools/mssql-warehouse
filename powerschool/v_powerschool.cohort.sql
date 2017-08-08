@@ -78,8 +78,8 @@ FROM
                 ,s.exitcomment
                 ,s.lunchstatus
                 ,terms.yearid
-          FROM gabby.powerschool.students s WITH(NOLOCK)
-          JOIN gabby.powerschool.terms terms WITH(NOLOCK)
+          FROM gabby.powerschool.students s
+          JOIN gabby.powerschool.terms terms
             ON s.schoolid = terms.schoolid 
            AND s.entrydate BETWEEN terms.firstday AND terms.lastday
            AND terms.portion = 1
@@ -99,8 +99,8 @@ FROM
                 ,NULL AS exitcomment
                 ,NULL AS lunchstatus
                 ,terms.yearid
-          FROM gabby.powerschool.students s WITH(NOLOCK)
-          JOIN gabby.powerschool.terms terms WITH(NOLOCK)
+          FROM gabby.powerschool.students s
+          JOIN gabby.powerschool.terms terms
             ON s.schoolid = terms.schoolid
            AND s.entrydate <= terms.firstday
            AND terms.portion = 1
@@ -120,8 +120,8 @@ FROM
                 ,re.exitcomment           
                 ,re.lunchstatus            
                 ,terms.yearid
-          FROM gabby.powerschool.reenrollments re WITH(NOLOCK)       
-          JOIN gabby.powerschool.terms terms WITH(NOLOCK)
+          FROM gabby.powerschool.reenrollments re       
+          JOIN gabby.powerschool.terms terms
             ON re.schoolid = terms.schoolid       
            AND re.entrydate BETWEEN terms.firstday AND terms.lastday
            AND terms.portion = 1     

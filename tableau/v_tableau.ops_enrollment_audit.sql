@@ -77,16 +77,16 @@ WITH caredox_enrollment AS (
         ,ISNULL(CONVERT(NVARCHAR(MAX),co.lunch_app_status),'') AS lunch_app_status
         ,CONVERT(NVARCHAR(MAX),CONVERT(MONEY,ISNULL(co.lunch_balance,0))) AS lunch_balance
       
-        ,ISNULL(CONVERT(NVARCHAR(MAX),uxs.residency_proof_1),'N') AS residency_proof_1
-        ,CONVERT(NVARCHAR(MAX),CASE WHEN co.year_in_network = 1 THEN ISNULL(uxs.residency_proof_2,'N') END) AS residency_proof_2
-        ,CONVERT(NVARCHAR(MAX),CASE WHEN co.year_in_network = 1 THEN ISNULL(uxs.residency_proof_3,'N') END) AS residency_proof_3
+        ,ISNULL(CONVERT(NVARCHAR(MAX),uxs.residency_proof_1),'Missing') AS residency_proof_1
+        ,CONVERT(NVARCHAR(MAX),CASE WHEN co.year_in_network = 1 THEN ISNULL(uxs.residency_proof_2,'Missing') END) AS residency_proof_2
+        ,CONVERT(NVARCHAR(MAX),CASE WHEN co.year_in_network = 1 THEN ISNULL(uxs.residency_proof_3,'Missing') END) AS residency_proof_3
         ,CONVERT(NVARCHAR(MAX),CASE
-          WHEN year_in_network = 1 AND CONCAT(ISNULL(uxs.residency_proof_1,'N')
-                                             ,ISNULL(uxs.residency_proof_2,'N')
-                                             ,ISNULL(uxs.residency_proof_3,'N')) NOT LIKE '%N%' 
+          WHEN year_in_network = 1 AND CONCAT(ISNULL(uxs.residency_proof_1,'Missing')
+                                             ,ISNULL(uxs.residency_proof_2,'Missing')
+                                             ,ISNULL(uxs.residency_proof_3,'Missing')) NOT LIKE '%Missing%' 
                  THEN 'Y'
           WHEN year_in_network > 1 
-           AND ISNULL(uxs.residency_proof_1,'N') != 'N' 
+           AND ISNULL(uxs.residency_proof_1,'Missing') != 'N' 
            AND rv.verification_date IS NOT NULL
                  THEN 'Y'
           ELSE 'N'
@@ -208,19 +208,19 @@ SELECT a.student_number
         WHEN u.field = 'lep_registration_followup_required' AND u.value = '1' THEN 0
         WHEN u.field = 'lep_registration_followup_complete' AND u.value = 'Y' THEN 1
         WHEN u.field = 'lep_registration_followup_complete' AND u.value = 'N' THEN -1
-        WHEN u.field = 'lunch_app_status' AND u.value IN ('F','R','P','Free (Income)','Free (SNAP)','Denied (High Income)','Reduced','Zero Income','Free (TANF)') THEN 1
-        WHEN u.field = 'lunch_app_status' AND u.value NOT IN ('Free (Income)','Free (SNAP)','Denied (High Income)','Reduced','Zero Income','Free (TANF)') THEN -1
+        WHEN u.field = 'lunch_app_status' AND u.value IN ('F','R','P','Free (Income)','Free (SNAP)','Denied (High Income)','Reduced','Zero Income','Free (TANF)','Direct Certification') THEN 1
+        WHEN u.field = 'lunch_app_status' AND u.value NOT IN ('F','R','P','Free (Income)','Free (SNAP)','Denied (High Income)','Reduced','Zero Income','Free (TANF)','Direct Certification') THEN -1
         WHEN u.field = 'lunch_balance' AND CONVERT(MONEY,u.value) > 0 THEN 1
         WHEN u.field = 'lunch_balance' AND CONVERT(MONEY,u.value) = 0 THEN 0
         WHEN u.field = 'lunch_balance' AND CONVERT(MONEY,u.value) < 0 THEN -1
         WHEN u.field = 'birth_certificate_proof' AND u.value NOT IN ('','N') THEN 1
         WHEN u.field = 'birth_certificate_proof' AND u.value IN ('','N') THEN -1
-        WHEN u.field = 'residency_proof_1' AND u.value NOT IN ('','N') THEN 1
-        WHEN u.field = 'residency_proof_1' AND u.value IN ('','N') THEN -1
-        WHEN u.field = 'residency_proof_2' AND u.value NOT IN ('','N') THEN 1
-        WHEN u.field = 'residency_proof_2' AND u.value IN ('','N') THEN -1
-        WHEN u.field = 'residency_proof_3' AND u.value NOT IN ('','N') THEN 1
-        WHEN u.field = 'residency_proof_3' AND u.value IN ('','N') THEN -1
+        WHEN u.field = 'residency_proof_1' AND u.value NOT IN ('','Missing') THEN 1
+        WHEN u.field = 'residency_proof_1' AND u.value IN ('','Missing') THEN -1
+        WHEN u.field = 'residency_proof_2' AND u.value NOT IN ('','Missing') THEN 1
+        WHEN u.field = 'residency_proof_2' AND u.value IN ('','Missing') THEN -1
+        WHEN u.field = 'residency_proof_3' AND u.value NOT IN ('','Missing') THEN 1
+        WHEN u.field = 'residency_proof_3' AND u.value IN ('','Missing') THEN -1
         WHEN u.field = 'residency_proof_all' AND u.value = 'Y' THEN 1
         WHEN u.field = 'residency_proof_all' AND u.value = 'N' THEN -1
         /* UPDATE ANNUALLY WITH VERIFICATION DATE CUTOFF */
