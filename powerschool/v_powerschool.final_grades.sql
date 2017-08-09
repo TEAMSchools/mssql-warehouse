@@ -13,20 +13,21 @@ WITH roster AS (
         ,CONVERT(VARCHAR,CONCAT('RT',RIGHT(terms.alt_name, 1))) AS reporting_term
         ,terms.alt_name AS term_name
         ,CASE 
-          WHEN CONVERT(DATE,GETDATE()) BETWEEN terms.start_date AND terms.end_date THEN 1 
-          WHEN co.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() AND terms.alt_name IN ('Q4','T3') THEN 1
+          WHEN CONVERT(DATE,GETDATE()) BETWEEN CONVERT(DATE,terms.start_date) AND CONVERT(DATE,terms.end_date) THEN 1 
+          WHEN co.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() AND terms.start_date = MAX(CONVERT(DATE,terms.start_date)) OVER(PARTITION BY terms.schoolid, terms.academic_year) THEN 1
           ELSE 0 
          END AS is_curterm
 
         ,css.course_number        
         ,css.sectionid
         
-        ,enr.gradescaleid
-        ,enr.excludefromgpa        
-        ,enr.course_name
-        ,enr.credittype
-        ,enr.credit_hours                
-        ,enr.teacher_name
+        ,cou.gradescaleid
+        ,cou.excludefromgpa        
+        ,cou.course_name
+        ,cou.credittype
+        ,cou.credit_hours                
+        
+        ,t.lastfirst AS teacher_name
   FROM gabby.powerschool.cohort_identifiers_static co
   JOIN gabby.reporting.reporting_terms terms
     ON co.schoolid = terms.schoolid
@@ -38,9 +39,12 @@ WITH roster AS (
    AND co.yearid = css.yearid
    AND terms.alt_name = css.term_name
    AND css.course_number != 'ALL'
-  LEFT OUTER JOIN gabby.powerschool.course_enrollments_static enr
-    ON co.studentid = enr.studentid
-   AND css.sectionid = enr.sectionid
+  JOIN gabby.powerschool.courses cou
+    ON css.course_number = cou.course_number
+  JOIN gabby.powerschool.sections sec
+    ON css.sectionid = sec.id
+  JOIN gabby.powerschool.teachers t
+    ON sec.teacher = t.id
   WHERE co.rn_year = 1
     AND co.schoolid != 999999
     AND co.school_level IN ('MS','HS')
@@ -79,7 +83,7 @@ WITH roster AS (
              
              ,CASE
                WHEN enr.sectionid < 0 AND sg.[percent] IS NULL THEN NULL                
-               ELSE pgf.GRADE 
+               ELSE pgf.grade 
               END AS pgf_letter      
              ,CASE 
                WHEN enr.sectionid < 0 AND sg.[percent] IS NULL THEN NULL                
@@ -110,7 +114,7 @@ WITH roster AS (
          ON enr.gradescaleid = sg_scale.gradescaleid
         AND sg.[percent] BETWEEN sg_scale.min_cutoffpercentage AND sg_scale.max_cutoffpercentage
        WHERE enr.course_enroll_status = 0       
-         AND enr.yearid = (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990)                  
+         AND enr.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 
        UNION ALL
 
@@ -147,8 +151,8 @@ WITH roster AS (
              ,storecode
              ,[percent]
        FROM gabby.powerschool.storedgrades
-       WHERE SCHOOLID = 73253
-         AND STORECODE LIKE 'E%'
+       WHERE schoolid = 73253
+         AND storecode LIKE 'E%'
       ) sub
   PIVOT(
     MAX([percent])
@@ -186,17 +190,19 @@ WITH roster AS (
         ,CASE WHEN r.term_name = 'Q4' THEN e.E2 ELSE NULL END AS E2
         ,CASE WHEN r.term_name = 'Q4' THEN e.E2_adjusted ELSE NULL END AS E2_adjusted
 
+        /* prior to 2016-2017, NCA used exam terms as 10% of the final grade */
         ,CASE
           WHEN gr.term_grade_percent IS NULL THEN NULL
           WHEN r.grade_level <= 8 THEN 1.0 / CONVERT(FLOAT,COUNT(r.student_number) OVER(PARTITION BY r.student_number, r.academic_year, gr.course_number))
-          WHEN r.grade_level >= 9 THEN .225
+          WHEN r.academic_year <= 2015 AND r.grade_level >= 9 THEN .225
+          WHEN r.academic_year >= 2016 AND r.grade_level >= 9 THEN .250
          END AS term_grade_weight                 
-        ,CASE WHEN r.grade_level >= 9 AND r.term_name = 'Q2' AND e.E1 IS NOT NULL THEN 0.05 END AS E1_grade_weight
-        ,CASE WHEN r.grade_level >= 9 AND r.term_name = 'Q4' AND e.E2 IS NOT NULL THEN 0.05 END AS E2_grade_weight
-
+        ,CASE WHEN r.academic_year <= 2015 AND r.grade_level >= 9 AND r.term_name = 'Q2' AND e.E1 IS NOT NULL THEN 0.05 END AS E1_grade_weight
+        ,CASE WHEN r.academic_year <= 2015 AND r.grade_level >= 9 AND r.term_name = 'Q4' AND e.E2 IS NOT NULL THEN 0.05 END AS E2_grade_weight
         ,CASE          
           WHEN r.grade_level <= 8 THEN 1.0 / CONVERT(FLOAT,COUNT(r.student_number) OVER(PARTITION BY r.student_number, r.academic_year, gr.course_number))
-          WHEN r.grade_level >= 9 THEN .225
+          WHEN r.academic_year <= 2015 AND r.grade_level >= 9 THEN .225
+          WHEN r.academic_year >= 2016 AND r.grade_level >= 9 THEN .250
          END AS term_grade_weight_possible        
   FROM roster r
   LEFT OUTER JOIN enr_grades gr
