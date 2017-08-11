@@ -33,6 +33,7 @@ SELECT co.student_number
       ,co.enroll_status
       ,co.academic_year
       ,co.iep_status
+      ,co.cohort
             
       ,gr.credittype
       ,gr.course_number
@@ -82,6 +83,7 @@ SELECT co.student_number
       ,co.enroll_status
       ,co.academic_year
       ,co.iep_status
+      ,co.cohort
 
       ,gr.credittype
       ,gr.course_number
@@ -123,15 +125,16 @@ WHERE co.rn_year = 1
 UNION ALL
 
 /* transfer grades */
-SELECT s.student_number
-      ,s.lastfirst
-      ,s.schoolid
-      ,s.grade_level
-      ,s.team
+SELECT COALESCE(co.student_number, e1.student_number) AS student_number
+      ,COALESCE(co.lastfirst, e1.lastfirst) AS lastfirst
+      ,COALESCE(co.schoolid, e1.schoolid) AS schoolid
+      ,COALESCE(co.grade_level, e1.grade_level) AS grade_level
+      ,COALESCE(co.team, e1.team) AS team
       ,NULL AS advisor_name
-      ,s.enroll_status
+      ,COALESCE(co.enroll_status, e1.enroll_status) AS enroll_status
       ,LEFT(gr.termid,2) + 1990 AS academic_year
-      ,cs.spedlep AS iep_status
+      ,COALESCE(co.iep_status, e1.iep_status) AS iep_status
+      ,COALESCE(co.cohort, e1.cohort) AS cohort
       
       ,'TRANSFER' AS credittype
       ,CONCAT('TRANSFER', gr.termid, gr._line) AS course_number
@@ -157,11 +160,15 @@ SELECT s.student_number
       ,NULL AS need_80
       ,NULL AS need_90
 FROM gabby.powerschool.storedgrades gr
-JOIN gabby.powerschool.students s
-  ON gr.studentid = s.id 
- AND gr.schoolid = s.schoolid
-LEFT OUTER JOIN gabby.powerschool.studentcorefields cs
-  ON s.dcid = cs.studentsdcid
+LEFT OUTER JOIN gabby.powerschool.cohort_identifiers_static co
+  ON gr.studentid = co.studentid
+ AND gr.schoolid = co.schoolid
+ AND (LEFT(gr.termid,2) + 1990) = co.academic_year
+ AND co.rn_year = 1
+LEFT OUTER JOIN gabby.powerschool.cohort_identifiers_static e1
+  ON gr.studentid = e1.studentid
+ AND gr.schoolid = e1.schoolid
+ AND e1.year_in_school = 1
 WHERE gr.storecode = 'Y1'
   AND gr.course_number IS NULL
 
@@ -177,6 +184,7 @@ SELECT co.student_number
       ,co.enroll_status
       ,co.academic_year
       ,co.iep_status      
+      ,co.cohort
       
       ,gr.credittype
       ,gr.course_number
@@ -233,6 +241,7 @@ SELECT co.student_number
       ,co.enroll_status
       ,co.academic_year
       ,co.iep_status      
+      ,co.cohort
       
       ,gr.credittype
       ,gr.course_number
@@ -288,6 +297,7 @@ SELECT co.student_number
       ,co.enroll_status
       ,co.academic_year
       ,co.iep_status      
+      ,co.cohort
       
       ,gr.credittype
       ,gr.course_number

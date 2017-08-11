@@ -26,7 +26,7 @@ SET @temp_table_name = '#' + @view_name + '_temp'
 SET @destination_table_name = @source_view + '_static';
 
   /* if source view does not exist, exit */
-		IF OBJECT_ID(@source_view) IS NULL
+		IF OBJECTPROPERTYEX(OBJECT_ID(@source_view), 'IsTable') != 0
 		  BEGIN    
       PRINT('View does not exist')
 

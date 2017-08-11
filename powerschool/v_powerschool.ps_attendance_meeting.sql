@@ -16,7 +16,7 @@ SELECT att.id
       ,att.programid
       ,att.total_minutes
 
-		    ,ac.att_code	    
+		    ,CASE WHEN ac.att_code = 'true' THEN 'T' ELSE ac.att_code END AS att_code 
       ,ac.calculate_ada_yn
 		    ,ac.presence_status_cd
       ,ac.course_credit_points

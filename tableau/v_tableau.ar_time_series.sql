@@ -25,10 +25,7 @@ WITH ar_long AS (
 ,last_book AS (
   SELECT student_number
         ,academic_year
-        ,CASE 
-          WHEN academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() THEN DATEDIFF(DAY, dt_taken, CONVERT(DATE,CONCAT(academic_year,'-06-30')))
-          ELSE DATEDIFF(DAY, dt_taken, GETDATE())
-         END AS n_days_ago
+        ,DATEDIFF(DAY, dt_taken, GETDATE()) AS n_days_ago
         ,CASE 
           WHEN rn_quiz > 1 THEN 'RETAKE - ' + vch_content_title
           ELSE vch_content_title 

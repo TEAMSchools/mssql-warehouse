@@ -13,7 +13,11 @@ SELECT co.studentid
       ,co.entrycode
       ,co.exitcode
       ,co.exitcomment      
-      ,co.cohort
+      ,CASE        
+        WHEN co.grade_level = 99 THEN MAX(CASE WHEN co.exitcode = 'G1' THEN co.yearid + 2003 + (-1 * co.grade_level) END) OVER(PARTITION BY co.studentid)
+        WHEN co.grade_level >= 9 THEN MAX(CASE WHEN co.year_in_school = 1 THEN co.yearid + 2003 + (-1 * co.grade_level) END) OVER(PARTITION BY co.studentid, co.schoolid)
+        ELSE co.yearid + 2003 + (-1 * co.grade_level)
+       END AS cohort
       ,co.is_retained_year      
       ,co.year_in_network      
       ,co.year_in_school    

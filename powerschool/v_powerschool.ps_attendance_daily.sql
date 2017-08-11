@@ -13,7 +13,7 @@ SELECT att.id
       ,att.programid
       ,att.total_minutes
 
-      ,ac.att_code
+      ,CASE WHEN ac.att_code = 'true' THEN 'T' ELSE ac.att_code END AS att_code 
       ,ac.calculate_ada_yn AS count_for_ada
       ,ac.presence_status_cd
       ,ac.calculate_adm_yn AS count_for_adm

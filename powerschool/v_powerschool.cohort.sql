@@ -14,7 +14,7 @@ SELECT studentid
       ,lunchstatus
       ,yearid
       ,academic_year
-      ,cohort
+      ,NULL AS cohort
       ,rn_year
       ,rn_school
       ,rn_undergrad
@@ -41,10 +41,6 @@ FROM
            ,sub.lunchstatus      
            ,sub.yearid
            ,(sub.yearid + 1990) AS academic_year            
-           ,CASE
-             WHEN sub.grade_level > 12 THEN NULL
-             ELSE sub.yearid + 2003 + (-1 * sub.grade_level)
-            END AS cohort
            ,LAG(grade_level, 1) OVER(PARTITION BY sub.studentid ORDER BY sub.yearid ASC) AS prev_grade_level
 
            ,ROW_NUMBER() OVER(

@@ -83,6 +83,7 @@ WITH roster AS (
              
              ,CASE
                WHEN enr.sectionid < 0 AND sg.[percent] IS NULL THEN NULL                
+               WHEN pgf.grade = 'false' THEN 'F'
                ELSE pgf.grade 
               END AS pgf_letter      
              ,CASE 
@@ -122,7 +123,7 @@ WITH roster AS (
              ,sg.course_number             
              ,LEFT(sg.termid,2) + 1990 AS academic_year      
              ,sg.storecode AS term_name
-             ,sg.grade AS stored_letter      
+             ,CASE WHEN sg.grade = 'false' THEN 'F' ELSE sg.grade END AS stored_letter      
              ,sg.[percent] AS stored_pct
              ,NULL AS pgf_letter
              ,NULL AS pgf_pct      
