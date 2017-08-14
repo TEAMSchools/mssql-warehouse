@@ -35,9 +35,35 @@ JOIN utilities.reporting_days rd
  AND co.exitdate >= rd.date
 LEFT OUTER JOIN gabby.reporting.reporting_terms dt
   ON co.schoolid = dt.schoolid
- AND co.academic_year = dt.academic_year
  AND dt.identifier = 'RT'
  AND rd.date BETWEEN dt.start_date AND dt.end_date
 WHERE co.schoolid != 999999
   AND co.rn_year = 1
-  --AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+  AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+
+UNION ALL
+
+SELECT academic_year
+      ,schoolid
+      ,reporting_schoolid
+      ,school_name
+      ,school_level
+      ,grade_level
+      ,studentid
+      ,student_number
+      ,lastfirst
+      ,team
+      ,advisor_name
+      ,gender
+      ,ethnicity
+      ,lunchstatus
+      ,iep_status
+      ,lep_status
+      ,enroll_status
+      ,entrydate
+      ,exitdate      
+      ,reporting_hash      
+      ,date      
+      ,term      
+      ,is_enrolled
+FROM powerschool.cohort_identifiers_scaffold_archive

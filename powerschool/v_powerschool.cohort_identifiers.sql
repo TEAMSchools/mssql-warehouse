@@ -22,7 +22,10 @@ SELECT co.studentid
       ,co.year_in_network      
       ,co.year_in_school    
       ,co.rn_year
-      ,co.rn_all  
+      ,co.rn_school
+      ,co.rn_undergrad
+      ,co.rn_all
+  
       ,MIN(CASE WHEN co.year_in_network = 1 THEN co.schoolid END) OVER(PARTITION BY co.studentid) AS entry_schoolid
       ,MIN(CASE WHEN co.year_in_network = 1 THEN co.grade_level END) OVER(PARTITION BY co.studentid) AS entry_grade_level      
       ,MAX(co.is_retained_year) OVER(PARTITION BY co.studentid) AS is_retained_ever

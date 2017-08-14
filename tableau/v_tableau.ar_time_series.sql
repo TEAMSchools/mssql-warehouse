@@ -16,7 +16,6 @@ WITH ar_long AS (
         ,AVG(CASE WHEN rn_quiz = 1 THEN d_percent_correct END) AS avg_pct_correct
         ,ROUND(AVG(CASE WHEN rn_quiz = 1 THEN fl_lexile_calc END),0) AS avg_lexile
   FROM gabby.renaissance.ar_studentpractice_identifiers_static
-  WHERE academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
   GROUP BY student_number
           ,academic_year      
           ,CONVERT(DATE,dt_taken)
@@ -37,50 +36,10 @@ WITH ar_long AS (
            PARTITION BY student_number, academic_year
              ORDER BY dt_taken DESC) AS rn
   FROM gabby.renaissance.ar_studentpractice_identifiers_static
-  WHERE academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
+  WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
  )
 
-SELECT student_number
-      ,lastfirst
-      ,academic_year
-      ,schoolid
-      ,grade_level
-      ,team
-      ,advisor_name
-      ,iep_status
-      ,term
-      ,date
-      ,is_current_week
-      ,is_curterm
-      ,course_name
-      ,course_number
-      ,section_number
-      ,teacher_name
-      ,homeroom_section
-      ,homeroom_teacher
-      ,words_goal_yr
-      ,points_goal_yr
-      ,goal_term
-      ,words_goal_term
-      ,points_goal_term
-      ,n_words_read
-      ,n_points_earned
-      ,n_books_read
-      ,n_fiction
-      ,avg_lexile
-      ,avg_pct_correct
-      ,last_book_title
-      ,last_book_days_ago
-      ,last_book_lexile
-      ,last_book_pct_correct
-      ,ontrack_words_yr
-      ,NULL AS ontrack_points_yr
-      ,ontrack_words_term
-      ,NULL AS ontrack_points_term
-      ,n_words_read_running_term
-      ,n_words_read_running_yr
-      ,NULL AS n_points_earned_running_term
-      ,NULL AS n_points_earned_running_yr
+SELECT *      
       ,CASE 
         WHEN ontrack_words_term IS NULL THEN NULL
         WHEN schoolid != 73253 AND n_words_read_running_term >= ontrack_words_term THEN 1
@@ -93,154 +52,146 @@ SELECT student_number
        END AS is_ontrack_yr
 FROM
     (
-     SELECT co.student_number
-           ,co.lastfirst
-           ,co.academic_year
-           ,co.reporting_schoolid AS schoolid
-           ,co.grade_level
-           ,co.team
-           ,co.advisor_name
-           ,co.iep_status
-           ,dts.alt_name AS term
-           ,co.date           
+     SELECT student_number
+           ,lastfirst
+           ,academic_year
+           ,schoolid
+           ,grade_level
+           ,team
+           ,advisor_name
+           ,iep_status
+           ,term
+           ,date      
+           ,course_name
+           ,course_number
+           ,section_number
+           ,teacher_name
+           ,homeroom_section
+           ,homeroom_teacher
+           ,words_goal_yr
+           ,points_goal_yr
+           ,goal_term
+           ,words_goal_term
+           ,points_goal_term
+           ,n_words_read
+           ,n_points_earned
+           ,n_books_read
+           ,n_fiction
+           ,avg_lexile
+           ,avg_pct_correct
+           ,last_book_title
+           ,last_book_days_ago
+           ,last_book_lexile
+           ,last_book_pct_correct
+
+           ,words_goal_yr * (CONVERT(FLOAT,DATEDIFF(DAY, y1_start_date, date)) / DATEDIFF(DAY, y1_start_date, y1_end_date)) AS ontrack_words_yr           
+           ,words_goal_term * (CONVERT(FLOAT,DATEDIFF(DAY, term_start_date, date)) / DATEDIFF(DAY, term_start_date, term_end_date)) AS ontrack_words_term           
+           
            ,CASE 
-             WHEN DATEPART(WEEK,co.date) = DATEPART(WEEK,CONVERT(DATE,GETDATE())) THEN 1 
-             WHEN DATEPART(WEEK,co.date) = DATEPART(WEEK,MAX(co.date) OVER(PARTITION BY co.schoolid, co.academic_year, co.student_number)) THEN 1 
+             WHEN DATEPART(WEEK,date) = DATEPART(WEEK,CONVERT(DATE,GETDATE())) THEN 1 
+             WHEN DATEPART(WEEK,date) = DATEPART(WEEK,MAX(date) OVER(PARTITION BY schoolid, academic_year, student_number)) THEN 1 
              ELSE 0 
             END AS is_current_week
            ,CASE 
-             WHEN CONVERT(DATE,GETDATE()) BETWEEN CONVERT(DATE,dts.start_date) AND CONVERT(DATE,dts.end_date) THEN 1 
-             WHEN MAX(co.date) OVER(PARTITION BY co.schoolid, co.academic_year, co.student_number) BETWEEN CONVERT(DATE,dts.start_date) AND CONVERT(DATE,dts.end_date) THEN 1 
+             WHEN CONVERT(DATE,GETDATE()) BETWEEN term_start_date AND term_end_date THEN 1 
+             WHEN MAX(date) OVER(PARTITION BY schoolid, academic_year, student_number) BETWEEN term_start_date AND term_end_date THEN 1 
              ELSE 0 
-            END AS is_curterm
-      
-           ,enr.course_name
-           ,enr.course_number
-           ,enr.section_number
-           ,enr.teacher_name           
-           
-           ,hr.section_number AS homeroom_section
-           ,hr.teacher_name AS homeroom_teacher
-      
-           ,dts.time_per_name AS goal_term
+            END AS is_curterm           
+           ,SUM(n_words_read) OVER(
+              PARTITION BY student_number, academic_year, term
+                ORDER BY date) AS n_words_read_running_term
+           ,SUM(n_words_read) OVER(
+              PARTITION BY student_number, academic_year
+                ORDER BY date) AS n_words_read_running_yr
+     FROM
+         (
+          SELECT co.student_number
+                ,co.lastfirst
+                ,co.academic_year
+                ,co.reporting_schoolid AS schoolid
+                ,co.grade_level
+                ,co.team
+                ,co.advisor_name
+                ,co.iep_status           
+                ,co.date                      
 
-           ,y1_goal.words_goal AS words_goal_yr
-           ,y1_goal.points_goal AS points_goal_yr
-           
-           ,term_goal.words_goal AS words_goal_term
-           ,term_goal.points_goal AS points_goal_term           
-      
-           ,ar.n_words_read
-           ,ar.n_points_earned
-           ,ar.n_books_read
-           ,ar.n_fiction
-           ,ar.avg_lexile
-           ,ar.avg_pct_correct
-           
-           ,bk.book_title AS last_book_title
-           ,bk.n_days_ago AS last_book_days_ago 
-           ,bk.book_lexile AS last_book_lexile
-           ,bk.book_pct_correct AS last_book_pct_correct
-           ,bk.word_count AS last_book_word_count
+                ,dts.alt_name AS term
+                ,dts.time_per_name AS goal_term
+                ,CONVERT(DATE,dts.start_date) AS term_start_date
+                ,CONVERT(DATE,dts.end_date) AS term_end_date
 
-           ,y1_goal.words_goal * (CONVERT(FLOAT,DATEDIFF(DAY, CONVERT(DATE,y1dts.start_date), co.date)) / DATEDIFF(DAY, CONVERT(DATE,y1dts.start_date), y1dts.end_date)) AS ontrack_words_yr           
-           ,term_goal.words_goal * (CONVERT(FLOAT,DATEDIFF(DAY, CONVERT(DATE,dts.start_date), co.date)) / DATEDIFF(DAY, CONVERT(DATE,dts.start_date), dts.end_date)) AS ontrack_words_term           
-           ,SUM(ar.n_words_read) OVER(
-              PARTITION BY co.student_number, co.academic_year, dts.time_per_name
-                ORDER BY co.date) AS n_words_read_running_term
-           ,SUM(ar.n_words_read) OVER(
-              PARTITION BY co.student_number, co.academic_year
-                ORDER BY co.date) AS n_words_read_running_yr
-     FROM gabby.powerschool.cohort_identifiers_scaffold co
-     LEFT OUTER JOIN gabby.reporting.reporting_terms dts
-       ON co.academic_year = dts.academic_year
-      AND co.schoolid = dts.schoolid
-      AND co.date BETWEEN CONVERT(DATE,dts.start_date) AND CONVERT(DATE,dts.end_date)
-      AND dts.identifier = 'AR'
-      AND dts.time_per_name != 'ARY'
-     LEFT OUTER JOIN gabby.reporting.reporting_terms y1dts
-       ON co.academic_year = y1dts.academic_year
-      AND co.schoolid = y1dts.schoolid      
-      AND y1dts.identifier = 'AR'
-      AND y1dts.time_per_name = 'ARY'
-     LEFT OUTER JOIN gabby.powerschool.course_enrollments_static enr 
-       ON co.student_number = enr.student_number
-      AND co.academic_year = enr.academic_year
-      AND enr.credittype = 'ENG'
-      AND enr.section_enroll_status = 0
-      AND enr.rn_subject = 1
-     LEFT OUTER JOIN gabby.powerschool.course_enrollments_static hr
-       ON co.student_number = hr.student_number
-      AND co.academic_year = hr.academic_year
-      AND hr.course_number = 'HR'
-      AND hr.section_enroll_status = 0      
-      AND hr.rn_subject = 1
-     LEFT OUTER JOIN gabby.renaissance.ar_goals y1_goal
-       ON co.student_number = y1_goal.student_number
-      AND co.academic_year = y1_goal.academic_year
-      AND y1_goal.reporting_term = 'ARY'
-     LEFT OUTER JOIN gabby.renaissance.ar_goals term_goal
-       ON co.student_number = term_goal.student_number   
-      AND dts.time_per_name = term_goal.reporting_term      
-     LEFT OUTER JOIN ar_long ar
-       ON co.student_number = ar.student_number
-      AND co.date = ar.date_taken
-     LEFT OUTER JOIN last_book bk
-       ON co.student_number = bk.student_number
-      AND co.academic_year = bk.academic_year
-      AND bk.rn = 1
-     WHERE co.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
-       AND co.reporting_schoolid NOT IN (999999, 5173)
-       AND ((co.grade_level >= 5)
-            OR (co.schoolid IN (73252, 179901) AND co.grade_level >= 3)
-            OR (co.schoolid IN (73255) AND co.grade_level >= 2))
-       AND co.date <= CONVERT(DATE,GETDATE())
-       AND co.enroll_status = 0       
+                ,CONVERT(DATE,y1dts.start_date) AS y1_start_date
+                ,CONVERT(DATE,y1dts.end_date) AS y1_end_date
+           
+                ,enr.course_name
+                ,enr.course_number
+                ,enr.section_number
+                ,enr.teacher_name           
+           
+                ,hr.section_number AS homeroom_section
+                ,hr.teacher_name AS homeroom_teacher
+
+                ,y1_goal.words_goal AS words_goal_yr
+                ,y1_goal.points_goal AS points_goal_yr
+           
+                ,term_goal.words_goal AS words_goal_term
+                ,term_goal.points_goal AS points_goal_term           
+      
+                ,ar.n_words_read
+                ,ar.n_points_earned
+                ,ar.n_books_read
+                ,ar.n_fiction
+                ,ar.avg_lexile
+                ,ar.avg_pct_correct
+           
+                ,bk.book_title AS last_book_title
+                ,bk.n_days_ago AS last_book_days_ago 
+                ,bk.book_lexile AS last_book_lexile
+                ,bk.book_pct_correct AS last_book_pct_correct
+                ,bk.word_count AS last_book_word_count
+          FROM gabby.powerschool.cohort_identifiers_scaffold co
+          LEFT OUTER JOIN gabby.reporting.reporting_terms dts
+            ON co.schoolid = dts.schoolid
+           AND co.date BETWEEN CONVERT(DATE,dts.start_date) AND CONVERT(DATE,dts.end_date)
+           AND dts.identifier = 'AR'
+           AND dts.time_per_name != 'ARY'
+          LEFT OUTER JOIN gabby.reporting.reporting_terms y1dts
+            ON co.academic_year = y1dts.academic_year
+           AND co.schoolid = y1dts.schoolid      
+           AND y1dts.identifier = 'AR'
+           AND y1dts.time_per_name = 'ARY'
+          LEFT OUTER JOIN gabby.powerschool.course_enrollments_static enr 
+            ON co.student_number = enr.student_number
+           AND co.academic_year = enr.academic_year
+           AND enr.credittype = 'ENG'
+           AND enr.section_enroll_status = 0
+           AND enr.rn_subject = 1
+          LEFT OUTER JOIN gabby.powerschool.course_enrollments_static hr
+            ON co.student_number = hr.student_number
+           AND co.academic_year = hr.academic_year
+           AND hr.course_number = 'HR'
+           AND hr.section_enroll_status = 0      
+           AND hr.rn_subject = 1
+          LEFT OUTER JOIN gabby.renaissance.ar_goals y1_goal
+            ON co.student_number = y1_goal.student_number
+           AND co.academic_year = y1_goal.academic_year
+           AND y1_goal.reporting_term = 'ARY'
+          LEFT OUTER JOIN gabby.renaissance.ar_goals term_goal
+            ON co.student_number = term_goal.student_number   
+           AND dts.time_per_name = term_goal.reporting_term      
+          LEFT OUTER JOIN ar_long ar
+            ON co.student_number = ar.student_number
+           AND co.date = ar.date_taken
+          LEFT OUTER JOIN last_book bk
+            ON co.student_number = bk.student_number
+           AND co.academic_year = bk.academic_year
+           AND bk.rn = 1
+          WHERE co.reporting_schoolid NOT IN (999999, 5173)
+            AND co.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
+            AND co.date <= CONVERT(DATE,GETDATE())
+            AND co.enroll_status = 0       
+            AND ((co.grade_level >= 5)
+                 OR (co.schoolid IN (73252, 179901) AND co.grade_level >= 3)
+                 OR (co.schoolid IN (73255) AND co.grade_level >= 2))       
+         ) sub
     ) sub
-
---UNION ALL
-
---SELECT student_number
---      ,lastfirst
---      ,year
---      ,schoolid
---      ,grade_level
---      ,team
---      ,advisor
---      ,SPEDLEP
---      ,term
---      ,date
---      ,is_current_week
---      ,is_curterm
---      ,COURSE_NAME
---      ,COURSE_NUMBER
---      ,SECTION_NUMBER
---      ,teacher_name
---      ,homeroom_section
---      ,homeroom_teacher
---      ,words_goal_yr
---      ,points_goal_yr
---      ,goal_term
---      ,words_goal_term
---      ,points_goal_term
---      ,n_words_read
---      ,n_points_earned
---      ,n_books_read
---      ,n_fiction
---      ,avg_lexile
---      ,avg_pct_correct
---      ,last_book_title
---      ,last_book_days_ago
---      ,last_book_lexile
---      ,last_book_pct_correct
---      ,ontrack_words_yr
---      ,ontrack_points_yr
---      ,ontrack_words_term
---      ,ontrack_points_term
---      ,n_words_read_running_term
---      ,n_words_read_running_yr
---      ,n_points_earned_running_term
---      ,n_points_earned_running_yr
---      ,is_ontrack_term
---      ,is_ontrack_yr
---FROM KIPP_NJ..TABLEAU$AR_time_series#ARCHIVE WITH(NOLOCK)

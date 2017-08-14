@@ -10,10 +10,7 @@ WITH roster_scaffold AS (
         ,r.academic_year        
         
         ,terms.time_per_name AS reporting_term
-        ,CASE 
-          WHEN terms.school_level = 'MS' AND terms.alt_name = 'DR' THEN 'BOY' 
-          ELSE REPLACE(terms.alt_name, 'Diagnostic', 'DR')
-         END AS test_round
+        ,terms.alt_name AS test_round
         ,CONVERT(DATE,terms.start_date) AS start_date
         ,CONVERT(DATE,terms.end_date) AS end_date
         ,CASE 
@@ -48,6 +45,7 @@ WITH roster_scaffold AS (
         ,start_date
         ,end_date
         ,is_curterm
+        ,is_fp
         ,achv_unique_id
         ,read_lvl
         ,lvl_num
@@ -77,6 +75,7 @@ WITH roster_scaffold AS (
              ,r.end_date            
              ,r.is_curterm
         
+             ,COALESCE(achv.is_fp, ps.is_fp) AS is_fp
              ,COALESCE(achv.read_lvl, ps.read_lvl) AS read_lvl
              ,COALESCE(achv.lvl_num, ps.lvl_num) AS lvl_num
              ,COALESCE(achv.indep_lvl, ps.indep_lvl) AS indep_lvl
@@ -125,6 +124,7 @@ WITH roster_scaffold AS (
              ,r.end_date
              ,r.is_curterm
 
+             ,achv.is_fp
              ,achv.read_lvl
              ,achv.lvl_num
              ,achv.indep_lvl
@@ -167,6 +167,7 @@ WITH roster_scaffold AS (
              ,r.end_date
              ,r.is_curterm
 
+             ,fp.is_fp
              ,CASE WHEN fp.status = 'Achieved' THEN COALESCE(fp.read_lvl, fp.indep_lvl) ELSE fp.indep_lvl END AS read_lvl
              ,CASE WHEN fp.status = 'Achieved' THEN COALESCE(fp.lvl_num, fp.indep_lvl_num) ELSE fp.indep_lvl_num END AS lvl_num
              ,CASE WHEN fp.status = 'Achieved' THEN COALESCE(fp.read_lvl, fp.indep_lvl) ELSE fp.indep_lvl END AS indep_lvl
@@ -220,8 +221,9 @@ WITH roster_scaffold AS (
         ,tests.round_num     
         ,tests.start_date
         ,tests.end_date
-        ,tests.is_curterm
+        ,tests.is_curterm        
                 
+        ,COALESCE(tests.is_fp,achv_prev.is_fp) AS is_fp
         ,COALESCE(tests.read_lvl,achv_prev.read_lvl) AS read_lvl
         ,COALESCE(tests.lvl_num,achv_prev.lvl_num) AS lvl_num
         ,COALESCE(tests.indep_lvl,achv_prev.indep_lvl) AS indep_lvl
@@ -290,8 +292,8 @@ SELECT academic_year
       ,goal_num         
       ,default_goal_lvl      
       ,default_goal_num         
-      ,natl_goal_lvl
-      ,natl_goal_num 
+      ,NULL AS natl_goal_lvl
+      ,NULL AS natl_goal_num 
       ,levels_behind
       ,achv_unique_id
       ,dna_unique_id
@@ -307,11 +309,7 @@ SELECT academic_year
         WHEN lvl_num >= default_goal_num THEN 1 
         WHEN lvl_num < default_goal_num THEN 0
        END AS met_default_goal
-      ,CASE 
-        WHEN lvl_num >= 26 THEN 1
-        WHEN lvl_num >= natl_goal_num THEN 1 
-        WHEN lvl_num < natl_goal_num THEN 0
-       END AS met_natl_goal
+      ,NULL AS met_natl_goal
       ,CASE
         WHEN lvl_num >= 26 THEN 'On Track'
         WHEN lvl_num >= goal_num THEN 'On Track'
@@ -354,20 +352,36 @@ FROM
            ,sub.achv_unique_id      
            ,sub.dna_unique_id      
 
-           ,goals.read_lvl AS default_goal_lvl
-           ,goals.natl_read_lvl AS natl_goal_lvl         
-           ,goals.lvl_num AS default_goal_num                      
-           ,goals.natl_lvl_num AS natl_goal_num
+           ,CASE
+             WHEN sub.is_fp = 1 THEN goals.fp_read_lvl
+             WHEN sub.is_fp = 0 THEN goals.step_read_lvl
+            END AS default_goal_lvl
+           ,CASE
+             WHEN sub.is_fp = 1 THEN goals.fp_lvl_num
+             WHEN sub.is_fp = 0 THEN goals.step_lvl_num
+            END AS default_goal_num           
 
            ,indiv.goal AS indiv_goal_lvl
            ,indiv.lvl_num AS indiv_lvl_num
 
            ,LAG(sub.read_lvl, 1) OVER(PARTITION BY sub.student_number ORDER BY sub.academic_year ASC, sub.start_date ASC) AS prev_read_lvl
            ,LAG(sub.lvl_num, 1) OVER(PARTITION BY sub.student_number ORDER BY sub.academic_year ASC, sub.start_date ASC) AS prev_lvl_num           
-           ,COALESCE(indiv.goal, goals.read_lvl) AS goal_lvl
-           ,COALESCE(indiv.lvl_num, goals.lvl_num) AS goal_num                                      
+           ,COALESCE(indiv.goal
+                    ,CASE
+                      WHEN sub.is_fp = 1 THEN goals.fp_read_lvl
+                      WHEN sub.is_fp = 0 THEN goals.step_read_lvl
+                     END) AS goal_lvl
+           ,COALESCE(indiv.lvl_num
+                    ,CASE
+                      WHEN sub.is_fp = 1 THEN goals.fp_lvl_num
+                      WHEN sub.is_fp = 0 THEN goals.step_lvl_num
+                     END) AS goal_num                                      
            
-           ,sub.lvl_num - COALESCE(indiv.lvl_num, goals.lvl_num) AS levels_behind
+           ,sub.lvl_num - COALESCE(indiv.lvl_num
+                                  ,CASE
+                                    WHEN sub.is_fp = 1 THEN goals.fp_lvl_num
+                                    WHEN sub.is_fp = 0 THEN goals.step_lvl_num
+                                   END) AS levels_behind
            
            ,CASE 
              WHEN sub.academic_year = lit.academic_year AND sub.round_num = lit.round_num THEN 1 
@@ -385,7 +399,7 @@ FROM
                 ,achieved.start_date
                 ,achieved.end_date
                 ,achieved.is_curterm
-                
+                ,achieved.is_fp                
                 ,achieved.read_lvl
                 ,achieved.lvl_num
                 ,achieved.indep_lvl
@@ -399,8 +413,7 @@ FROM
                 
                 ,dna.dna_lvl
                 ,dna.dna_lvl_num
-                ,dna.dna_unique_id
-                
+                ,dna.dna_unique_id                
           FROM achieved
           LEFT OUTER JOIN dna
             ON achieved.student_number = dna.student_number
@@ -412,7 +425,7 @@ FROM
      LEFT OUTER JOIN gabby.lit.network_goals goals 
        ON sub.grade_level = goals.grade_level
       AND sub.test_round = goals.test_round
-      AND goals.norms_year = 2015
+      AND goals.norms_year = 2017
      LEFT OUTER JOIN gabby.lit.individualized_goals indiv 
        ON sub.student_number = indiv.student_number
       AND sub.test_round = indiv.test_round

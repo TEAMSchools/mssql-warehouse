@@ -120,22 +120,46 @@ SELECT rs.unique_id
       ,rs.coaching_code
       ,rs.test_administered_by
 
-      ,goals.read_lvl AS default_goal_lvl
-      ,goals.lvl_num AS default_goal_num
-      ,goals.natl_read_lvl AS natl_goal_lvl
-      ,goals.natl_lvl_num AS natl_goal_num
+      ,CASE
+        WHEN rs.is_fp = 1 THEN goals.fp_read_lvl
+        WHEN rs.is_fp = 0 THEN goals.step_read_lvl
+       END AS default_goal_lvl
+      ,CASE
+        WHEN rs.is_fp = 1 THEN goals.fp_lvl_num
+        WHEN rs.is_fp = 0 THEN goals.fp_lvl_num
+       END AS default_goal_num      
       
       ,indiv.goal AS indiv_goal_lvl
       ,indiv.lvl_num indiv_lvl_num
       
-      ,COALESCE(indiv.goal, goals.read_lvl) AS goal_lvl
-      ,COALESCE(indiv.lvl_num, goals.lvl_num) AS goal_num
+      ,COALESCE(indiv.goal
+               ,CASE
+                 WHEN rs.is_fp = 1 THEN goals.fp_read_lvl
+                 WHEN rs.is_fp = 0 THEN goals.step_read_lvl
+                END) AS goal_lvl
+      ,COALESCE(indiv.lvl_num
+               ,CASE
+                 WHEN rs.is_fp = 1 THEN goals.fp_lvl_num
+                 WHEN rs.is_fp = 0 THEN goals.fp_lvl_num
+                END) AS goal_num
       
       ,CASE 
-        WHEN rs.lvl_num >= COALESCE(indiv.lvl_num, goals.lvl_num) THEN 1 
-        WHEN rs.lvl_num < COALESCE(indiv.lvl_num, goals.lvl_num) THEN 0
+        WHEN rs.lvl_num >= COALESCE(indiv.lvl_num
+                                   ,CASE
+                                     WHEN rs.is_fp = 1 THEN goals.fp_lvl_num
+                                     WHEN rs.is_fp = 0 THEN goals.fp_lvl_num
+                                    END) THEN 1 
+        WHEN rs.lvl_num < COALESCE(indiv.lvl_num
+                                  ,CASE
+                                    WHEN rs.is_fp = 1 THEN goals.fp_lvl_num
+                                    WHEN rs.is_fp = 0 THEN goals.fp_lvl_num
+                                   END) THEN 0
        END AS met_goal
-      ,rs.lvl_num - COALESCE(indiv.lvl_num, goals.lvl_num) AS levels_behind                       
+      ,rs.lvl_num - COALESCE(indiv.lvl_num
+                            ,CASE
+                              WHEN rs.is_fp = 1 THEN goals.fp_lvl_num
+                              WHEN rs.is_fp = 0 THEN goals.fp_lvl_num
+                             END) AS levels_behind                       
 
       --/* test sequence identifiers */      
       --/* base letter for the round */
@@ -178,6 +202,6 @@ LEFT OUTER JOIN gabby.lit.network_goals goals
  AND co.grade_level = goals.grade_level
  AND goals.norms_year = 2017
 LEFT OUTER JOIN gabby.lit.individualized_goals indiv
-  ON rs.STUDENT_NUMBER = indiv.student_number
+  ON rs.student_number = indiv.student_number
  AND rs.academic_year = indiv.academic_year
  AND rs.test_round = indiv.test_round
