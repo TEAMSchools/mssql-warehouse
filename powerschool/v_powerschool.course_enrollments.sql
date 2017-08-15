@@ -78,14 +78,11 @@ SELECT cc.studentid
        END AS illuminate_subject
       
       ,ROW_NUMBER() OVER(
-         PARTITION BY cou.credittype
-                     ,cc.studentid                     
-                     ,ABS(cc.termid)
-                     ,CASE WHEN cc.sectionid < 0 THEN 1 ELSE 0 END
-           ORDER BY cc.termid DESC
-                   ,cc.course_number DESC
-                   ,cc.dateenrolled DESC
-                   ,cc.dateleft DESC) AS rn_subject    
+         PARTITION BY cou.credittype, cc.studentid, ABS(cc.termid), CASE WHEN cc.sectionid < 0 THEN 1 ELSE 0 END
+           ORDER BY cc.termid DESC, cc.course_number DESC, cc.dateenrolled DESC, cc.dateleft DESC) AS rn_subject    
+      ,ROW_NUMBER() OVER(
+         PARTITION BY cc.studentid, cc.course_number, (RIGHT(cc.studyear, 2) + 1990)
+           ORDER BY cc.termid DESC, cc.dateenrolled DESC, cc.dateleft DESC) AS rn_course_yr
 FROM gabby.powerschool.cc
 JOIN gabby.powerschool.students s 
   ON cc.studentid = s.id

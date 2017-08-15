@@ -91,5 +91,6 @@ LEFT OUTER JOIN gabby.reporting.reporting_terms dt WITH(NOLOCK)
  AND dt.identifier = 'RT'
 LEFT OUTER JOIN gabby.powerschool.course_enrollments_static enr
   ON co.studentid = enr.studentid
- AND mem.calendardate BETWEEN enr.dateenrolled AND enr.dateleft
+ AND co.academic_year = enr.academic_year 
  AND enr.course_number = 'HR' 
+ AND enr.rn_course_yr = 1

@@ -14,7 +14,8 @@ WITH long_data AS (
         ,ovr.student_id AS illuminate_student_id
         ,ovr.performance_band_level AS overall_performance_band                      
         ,ovr.percent_correct AS overall_percent_correct
-        ,CONVERT(INT,ROUND(((ovr.percent_correct / 100) * ovr.number_of_questions),0)) AS overall_number_correct
+        ,ovr.number_of_questions
+        ,ROUND(((ovr.percent_correct / 100) * ovr.number_of_questions), 0) AS overall_number_correct
 
         ,s.local_student_id AS student_number        
 
@@ -38,7 +39,7 @@ WITH long_data AS (
     ON ovr.student_id = s.student_id
   JOIN gabby.powerschool.cohort_identifiers_static co
     ON s.local_student_id = co.student_number
-   AND a.academic_year = co.academic_year
+   AND (a.academic_year - 1) = co.academic_year
    AND co.rn_year = 1
   LEFT OUTER JOIN gabby.reporting.reporting_terms d
     ON a.administered_at BETWEEN CONVERT(DATE,d.start_date) AND CONVERT(DATE,d.end_date)
@@ -50,16 +51,17 @@ WITH long_data AS (
         ,d.illuminate_student_id
         ,d.academic_year                
         ,d.time_per_name
-        ,d.subject_area
-        ,d.overall_number_correct
+        ,d.subject_area        
         ,d.assessment_id        
         ,d.assessment_title        
         ,d.administration_round      
         ,d.administered_at                
+        ,d.number_of_questions
+        ,d.overall_number_correct
         ,d.overall_percent_correct        
         ,d.overall_performance_band
-
-        ,CONVERT(FLOAT,act.scale_score) AS scale_score
+        
+        ,act.scale_score
   FROM long_data d
   LEFT OUTER JOIN gabby.act.scale_score_key act
     ON d.academic_year = act.academic_year
@@ -75,13 +77,14 @@ WITH long_data AS (
         ,illuminate_student_id
         ,academic_year
         ,time_per_name
-        ,'Composite' AS subject_area
-        ,NULL AS overall_number_correct
+        ,'Composite' AS subject_area        
         ,NULL AS assessment_id
         ,NULL AS assessment_title        
         ,administration_round
         ,MIN(administered_at) AS administered_at        
-        ,NULL AS overall_percent_correct        
+        ,SUM(number_of_questions) AS number_of_questions
+        ,SUM(overall_number_correct) AS overall_number_correct
+        ,ROUND((SUM(overall_number_correct) / SUM(number_of_questions)) * 100, 0) AS overall_percent_correct        
         ,NULL AS overall_performance_band            
 
         ,CASE WHEN COUNT(scale_score) = 4 THEN ROUND(AVG(scale_score),0) END AS scale_score
@@ -95,7 +98,10 @@ WITH long_data AS (
              ,d.administration_round                   
              ,d.administered_at
              ,d.subject_area   
-             ,CONVERT(FLOAT,act.scale_score) AS scale_score           
+             ,d.number_of_questions
+             ,d.overall_number_correct             
+             
+             ,act.scale_score
        FROM long_data d
        LEFT OUTER JOIN gabby.act.scale_score_key act
          ON d.academic_year = act.academic_year
@@ -120,8 +126,9 @@ SELECT sub.student_number
       ,sub.administration_round      
       ,sub.administered_at
       ,sub.subject_area
-      ,sub.overall_percent_correct
+      ,sub.number_of_questions
       ,sub.overall_number_correct
+      ,sub.overall_percent_correct      
       ,sub.overall_performance_band
       ,sub.scale_score
       ,sub.prev_scale_score
@@ -130,7 +137,10 @@ SELECT sub.student_number
       
       ,s.custom_code AS standard_code
       ,s.description AS standard_description
+      
       ,CONVERT(FLOAT,std.percent_correct) AS standard_percent_correct      
+      ,std.mastered AS standard_mastered
+      
       ,COALESCE(ps2.state_num, ps.state_num) AS standard_strand
       
       ,ROW_NUMBER() OVER(
@@ -150,8 +160,9 @@ FROM
            ,administration_round
            ,administered_at
            ,subject_area
-           ,overall_percent_correct
+           ,number_of_questions
            ,overall_number_correct
+           ,overall_percent_correct
            ,overall_performance_band
            ,scale_score
            ,LAG(scale_score) OVER(PARTITION BY student_number, academic_year, subject_area ORDER BY administered_at) AS prev_scale_score

@@ -38,15 +38,17 @@ SELECT co.academic_year
       ,act.subject_area
       ,act.overall_percent_correct
       ,act.overall_number_correct
+      ,act.number_of_questions
       ,act.scale_score      
       ,act.prev_scale_score
       ,act.pretest_scale_score
       ,act.growth_from_pretest
       ,act.overall_performance_band
+      ,act.standard_strand      
       ,act.standard_code
       ,act.standard_description
       ,act.standard_percent_correct      
-      ,act.standard_strand      
+      ,act.standard_mastered      
       ,act.rn_dupe AS rn_assessment /* 1 row per student, per test (overall) */      
       
       ,ROW_NUMBER() OVER(
@@ -80,16 +82,17 @@ SELECT co.academic_year
       ,r.act_subject AS subject_area
       ,NULL AS overall_percent_correct
       ,NULL AS overall_number_correct
+      ,NULL AS number_of_questions
       ,r.scale_score
       ,NULL AS prev_scale_score
       ,NULL AS pretest_scale_score
       ,NULL AS growth_from_pretest
       ,NULL AS overall_performance_band
+      ,NULL AS standard_strand
       ,NULL AS standard_code
       ,NULL AS standard_description
       ,NULL AS standard_percent_correct      
-      ,NULL AS standard_strand
-      
+      ,NULL AS standard_mastered      
       ,1 AS rn_assessment
       ,1 AS rn_assessment_standard
 FROM gabby.powerschool.cohort_identifiers_static co
