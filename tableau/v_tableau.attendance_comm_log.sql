@@ -21,16 +21,19 @@ WITH commlog AS (
   WHERE reason LIKE 'att:%'
  )
 
-SELECT s.student_number
-      ,s.lastfirst
-      ,s.grade_level
-      ,s.team
+SELECT co.student_number
+      ,co.lastfirst
+      ,co.grade_level
+      ,co.team
+      ,co.region
+      ,co.reporting_schoolid
       
       ,att.att_date
+      ,att.att_comment
       ,CASE WHEN ac.att_code = 'true' THEN 'T' ELSE ac.att_code END AS att_code 
       
       ,CASE
-        WHEN att.schoolid = 73253 THEN suf.advisor
+        WHEN att.schoolid = 73253 THEN co.advisor_name
         ELSE cc.section_number
        END AS homeroom
 
@@ -40,22 +43,19 @@ SELECT s.student_number
       ,cl.followup_staff_name
       ,cl.followup_init_notes
       ,cl.followup_close_notes
-FROM gabby.powerschool.attendance att WITH(NOLOCK)
-JOIN gabby.powerschool.attendance_code ac WITH(NOLOCK)
+FROM gabby.powerschool.attendance att
+JOIN gabby.powerschool.attendance_code ac
   ON att.attendance_codeid = ac.id
  AND ac.att_code LIKE 'A%'
-JOIN gabby.powerschool.students s
-  ON att.studentid = s.id
 LEFT OUTER JOIN gabby.powerschool.cc
   ON att.studentid = cc.studentid
  AND att.att_date BETWEEN cc.dateenrolled AND cc.dateleft
  AND cc.course_number = 'HR'
-LEFT OUTER JOIN gabby.powerschool.u_studentsuserfields suf
-  ON s.dcid = suf.studentsdcid
+JOIN gabby.powerschool.cohort_identifiers_static co
+  ON att.studentid = co.studentid
+ AND att.att_date BETWEEN co.entrydate AND co.exitdate
 LEFT OUTER JOIN commlog cl
-  ON s.student_number = cl.student_school_id
+  ON co.student_number = cl.student_school_id
  AND att.att_date = cl.commlog_date
-WHERE att.att_date >= '2017-06-01'
+WHERE att.att_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1, 07, 01)
   AND att.att_mode_code = 'ATT_ModeDaily'
-  AND att.schoolid = 73254
-  AND s.grade_level < 5

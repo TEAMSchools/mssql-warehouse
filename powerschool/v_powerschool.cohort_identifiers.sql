@@ -87,6 +87,7 @@ SELECT co.studentid
       ,suf.release_4_phone
       ,suf.release_5_phone      
 
+      ,CASE WHEN co.schoolid LIKE '1799%' THEN 'KCNA' ELSE 'TEAM' END AS region
       ,CASE
         WHEN sp.specprog_name = 'Out of District' THEN sp.programid
         ELSE CONVERT(INT,CONCAT(co.schoolid, sp.programid)) 
