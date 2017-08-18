@@ -3,17 +3,19 @@ GO
 
 ALTER VIEW powerschool.advisory AS
 
-SELECT studentid
-      ,yearid
-      ,advisory_name
-      ,teachernumber
-      ,teacher_name AS advisor_name
-      ,N'' AS advisor_phone
-      ,N'' AS advisor_email
+SELECT sub.studentid
+      ,sub.yearid
+      ,sub.advisory_name
+      ,sub.teachernumber
+      ,sub.teacher_name AS advisor_name
+      
+      ,adp.personal_contact_personal_mobile AS advisor_phone
+      
+      ,dir.mail AS advisor_email
 
       ,ROW_NUMBER() OVER(
-         PARTITION BY studentid, yearid
-           ORDER BY dateleft DESC) AS rn_year
+         PARTITION BY sub.studentid, sub.yearid
+           ORDER BY sub.dateleft DESC) AS rn_year
 FROM
     (
      SELECT enr.studentid           
@@ -42,13 +44,12 @@ FROM
        AND enr.schoolid IN (133570965, 73253)
        AND enr.sectionid > 0
     ) sub
-/* future use when ADP & AD is setup */
---LEFT OUTER JOIN KIPP_NJ..AUTOLOAD$GDOCS_PEOPLE_teachernumber_associateid_link link WITH(NOLOCK)
---  ON advisory.teachernumber = LTRIM(RTRIM(STR(link.teachernumber)))
--- AND link.is_master = 1
---LEFT OUTER JOIN KIPP_NJ..PEOPLE$ADP_detail adp WITH(NOLOCK)
---  ON COALESCE(link.associate_id, advisory.teachernumber) = adp.associate_id
--- AND adp.rn_curr = 1
---LEFT OUTER JOIN KIPP_NJ..PEOPLE$AD_users dir WITH(NOLOCK)
---  ON adp.position_id = dir.employeenumber
--- AND dir.is_active = 1
+LEFT OUTER JOIN gabby.people.adp_ps_id_link link
+  ON sub.teachernumber = CONVERT(NVARCHAR(MAX),link.teachernumber)
+ AND link.is_master = 1
+LEFT OUTER JOIN gabby.adp.staff_roster adp
+  ON COALESCE(link.associate_id, sub.teachernumber) = adp.associate_id
+ AND adp.rn_curr = 1
+LEFT OUTER JOIN gabby.adsi.user_attributes dir
+  ON adp.position_id = dir.employeenumber
+ AND dir.is_active = 1
