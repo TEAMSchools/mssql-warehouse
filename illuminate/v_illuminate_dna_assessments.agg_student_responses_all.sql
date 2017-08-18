@@ -47,8 +47,7 @@ WITH response_rollup AS (
        FROM gabby.illuminate_dna_assessments.student_assessment_scaffold_static a
        LEFT OUTER JOIN gabby.illuminate_dna_assessments.students_assessments sa
          ON a.student_id = sa.student_id
-        AND a.assessment_id = sa.assessment_id
-        --AND sa.student_assessment_id NOT IN (SELECT student_assessment_id FROM gabby.illuminate_dna_assessments.students_assessments_archive)
+        AND a.assessment_id = sa.assessment_id        
        LEFT OUTER JOIN gabby.illuminate_dna_assessments.agg_student_responses asr
          ON sa.student_assessment_id = asr.student_assessment_id
         AND asr.points_possible > 0
@@ -80,8 +79,7 @@ WITH response_rollup AS (
        FROM gabby.illuminate_dna_assessments.student_assessment_scaffold_static a
        JOIN gabby.illuminate_dna_assessments.students_assessments sa
          ON a.student_id = sa.student_id
-        AND a.assessment_id = sa.assessment_id
-        --AND sa.student_assessment_id NOT IN (SELECT student_assessment_id FROM gabby.illuminate_dna_assessments.students_assessments_archive)
+        AND a.assessment_id = sa.assessment_id        
        JOIN gabby.illuminate_dna_assessments.agg_student_responses_standard asrs
          ON sa.student_assessment_id = asrs.student_assessment_id
         AND asrs.points_possible > 0
@@ -124,8 +122,7 @@ WITH response_rollup AS (
        FROM gabby.illuminate_dna_assessments.student_assessment_scaffold_static a
        JOIN gabby.illuminate_dna_assessments.students_assessments sa
          ON a.student_id = sa.student_id
-        AND a.assessment_id = sa.assessment_id
-        --AND sa.student_assessment_id NOT IN (SELECT student_assessment_id FROM gabby.illuminate_dna_assessments.students_assessments_archive)
+        AND a.assessment_id = sa.assessment_id        
        JOIN gabby.illuminate_dna_assessments.agg_student_responses_group asrg
          ON sa.student_assessment_id = asrg.student_assessment_id
         AND asrg.reporting_group_id IN (5287, 274) /* 'Open-Ended Response', 'Multiple Choice' */
@@ -176,11 +173,15 @@ JOIN gabby.illuminate_public.students s
 LEFT OUTER JOIN gabby.illuminate_dna_assessments.performance_band_lookup_static pbl
   ON rr.performance_band_set_id = pbl.performance_band_set_id
  AND rr.percent_correct BETWEEN pbl.minimum_value AND pbl.maximum_value
+JOIN gabby.powerschool.cohort_identifiers_static co 
+  ON s.local_student_id = co.student_number
+ AND rr.academic_year = co.academic_year
+ AND co.rn_year = 1
 LEFT OUTER JOIN gabby.reporting.reporting_terms rta
   ON rr.administered_at BETWEEN CONVERT(DATE,rta.start_date) AND CONVERT(DATE,rta.end_date)
- AND rta.identifier = 'RT'
- AND rta.schoolid = 0
+ AND co.schoolid = rta.schoolid
+ AND rta.identifier = 'RT' 
 LEFT OUTER JOIN gabby.reporting.reporting_terms rtt
   ON rr.date_taken BETWEEN CONVERT(DATE,rtt.start_date) AND CONVERT(DATE,rtt.end_date)
+ AND co.schoolid = rtt.schoolid
  AND rtt.identifier = 'RT'
- AND rtt.schoolid = 0

@@ -18,10 +18,11 @@ SELECT sub.student_number
       ,ROUND(AVG(sub.grade_category_pct) OVER(
          PARTITION BY sub.student_number, sub.academic_year, sub.course_number, sub.grade_category 
            ORDER BY sub.startdate), 0) AS grade_category_pct_y1
+      
       ,CASE 
         WHEN CONVERT(DATE,GETDATE()) BETWEEN sub.startdate AND sub.enddate THEN 1 
         WHEN sub.academic_year <= gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
-         AND sub.startdate = MAX(sub.startdate) OVER(PARTITION BY sub.student_number, sub.academic_year, sub.course_number, sub.grade_category)
+         AND sub.startdate = MAX(sub.startdate) OVER(PARTITION BY student_number, sub.academic_year, sub.course_number)
                THEN 1
         ELSE 0
        END AS is_curterm

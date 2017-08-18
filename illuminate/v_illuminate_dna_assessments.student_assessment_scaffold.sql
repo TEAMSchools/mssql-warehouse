@@ -97,7 +97,11 @@ SELECT a.assessment_id
       ,a.performance_band_set_id
       ,(a.academic_year - 1) AS academic_year
       ,ds.code_translation AS module_type
-      ,NULL AS module_number
+      ,CASE
+        WHEN PATINDEX('%[MU][0-9]/[0-9]%', a.title) > 0 THEN SUBSTRING(a.title, PATINDEX('%[MU][0-9]/[0-9]%', a.title), 4)
+        WHEN PATINDEX('%QA[0-9]%', a.title) > 0 THEN SUBSTRING(a.title, PATINDEX('%QA[0-9]%', a.title), 3)
+        WHEN PATINDEX('%[MU][0-9]%', a.title) > 0 THEN SUBSTRING(a.title, PATINDEX('%[MU][0-9]%', a.title), 2)
+       END AS module_number
            
       ,ds.code_translation AS scope           
       ,dsa.code_translation AS subject_area

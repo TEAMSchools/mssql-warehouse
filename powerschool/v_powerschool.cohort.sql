@@ -72,7 +72,7 @@ FROM
                 ,s.entrycode
                 ,s.exitcode
                 ,s.exitcomment
-                ,s.lunchstatus
+                ,CASE WHEN s.lunchstatus = 'false' THEN 'F' ELSE s.lunchstatus END AS lunchstatus
                 ,terms.yearid
           FROM gabby.powerschool.students s
           JOIN gabby.powerschool.terms terms
@@ -114,7 +114,7 @@ FROM
                 ,re.entrycode
                 ,re.exitcode
                 ,re.exitcomment           
-                ,re.lunchstatus            
+                ,CASE WHEN re.lunchstatus = 'false' THEN 'F' ELSE re.lunchstatus END AS lunchstatus
                 ,terms.yearid
           FROM gabby.powerschool.reenrollments re       
           JOIN gabby.powerschool.terms terms

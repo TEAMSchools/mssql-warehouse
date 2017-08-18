@@ -110,8 +110,8 @@ SELECT co.studentid
       
       ,CASE 
         WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() AND co.rn_year = 1 THEN mcs.mealbenefitstatus 
-        WHEN s.enroll_status = 2 AND co.academic_year = MAX(co.academic_year) OVER(PARTITION BY co.studentid) THEN s.lunchstatus
-        ELSE co.lunchstatus
+        WHEN s.enroll_status = 2 AND co.academic_year = MAX(co.academic_year) OVER(PARTITION BY co.studentid) THEN REPLACE(s.lunchstatus,'false','F')
+        ELSE REPLACE(co.lunchstatus,'false','F')
        END AS lunchstatus      
       ,CASE 
         WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() 

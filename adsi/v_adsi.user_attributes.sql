@@ -5,34 +5,34 @@ ALTER VIEW adsi.user_attributes AS
 
 SELECT cn
       ,company
-      ,createTimeStamp
+      ,createtimestamp
       ,department
-      ,displayName
+      ,displayname
       ,distinguishedname
-      ,employeeID
+      ,employeeid
       ,employeenumber
-      ,givenName
-      ,homePhone
-      ,homePostalAddress
-      ,idautoPersonALternateID
+      ,givenname
+      ,homephone
+      ,homepostaladdress
+      ,idautopersonalternateid
       ,idautostatus      
       ,l
-      ,logonCount
+      ,logoncount
       ,mail
       ,manager
-      ,middleName
+      ,middlename
       ,mobile
-      ,modifyTimeStamp
+      ,modifytimestamp
       ,name
-      ,objectCategory
-      ,physicalDeliveryOfficeName      
-      ,sAMAccountName
+      ,objectcategory
+      ,physicaldeliveryofficename      
+      ,samaccountname
       ,sn
-      ,telephoneNumber
-      ,textEncodedORAddress
+      ,telephonenumber
+      ,textencodedoraddress
       ,title
       ,useraccountcontrol
-      ,userPrincipalName
+      ,userprincipalname
       ,DATEADD(MINUTE
               /* number of 10 minute intervals (in microseconds) since last reset, offset by time zone...holy shit */
               ,(CONVERT(BIGINT,pwdlastset) / 600000000) + DATEDIFF(MINUTE,GETUTCDATE(),GETDATE())
