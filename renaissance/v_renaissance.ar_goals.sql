@@ -25,6 +25,7 @@ WITH roster AS (
          ON co.schoolid = dts.schoolid
         AND co.date BETWEEN dts.start_date AND dts.end_date
         AND dts.identifier = 'AR'          
+        AND dts.time_per_name != 'ARY'
        WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()                       
       ) sub
   GROUP BY student_number	

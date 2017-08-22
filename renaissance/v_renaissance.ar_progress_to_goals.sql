@@ -201,7 +201,7 @@ FROM
                      WHEN arsp.ch_fiction_non_fiction = 'F' 
                       AND arsp.rn_quiz = 1 
                             THEN arsp.i_questions_correct 
-                     END) 
+                    END) 
                   / SUM(CASE 
                          WHEN arsp.ch_fiction_non_fiction = 'F' 
                           AND arsp.rn_quiz = 1
@@ -213,7 +213,7 @@ FROM
                      WHEN arsp.ch_fiction_non_fiction != 'F' 
                       AND arsp.rn_quiz = 1
                             THEN arsp.i_questions_correct 
-                     END)
+                    END)
                   / SUM(CASE 
                          WHEN arsp.ch_fiction_non_fiction != 'F' 
                           AND arsp.rn_quiz = 1
@@ -259,13 +259,13 @@ FROM
       LEFT OUTER JOIN gabby.renaissance.ar_studentpractice_identifiers arsp
         ON co.student_number = arsp.student_number
        AND CONVERT(DATE,arsp.dt_taken) BETWEEN CONVERT(DATE,rt.start_date) AND CONVERT(DATE,rt.end_date)
-     WHERE co.rn_year = 1    
-       AND co.schoolid != 999999    
-     GROUP BY co.student_number             
-             ,co.academic_year              
-             ,rt.time_per_name
-             ,CONVERT(DATE,rt.start_date)
-             ,CONVERT(DATE,rt.end_date) 
-             ,goals.words_goal
-             ,goals.points_goal              
+      WHERE co.rn_year = 1    
+        AND co.schoolid != 999999    
+      GROUP BY co.student_number             
+              ,co.academic_year              
+              ,rt.time_per_name
+              ,CONVERT(DATE,rt.start_date)
+              ,CONVERT(DATE,rt.end_date) 
+              ,goals.words_goal
+              ,goals.points_goal              
      ) sub
