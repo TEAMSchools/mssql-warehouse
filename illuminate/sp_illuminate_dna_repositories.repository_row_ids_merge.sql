@@ -81,7 +81,7 @@ BEGIN
   /* 
   -- 5.) UPSERT: matching on repo, row number, studentid, and field name.  DELETE if on TARGET but not MATCHED by SOURCE 
   */  
-  IF OBJECT_ID(N'illuminate.repository_row_ids') IS NULL        
+  IF OBJECT_ID(N'illuminate_dna_repositories.repository_row_ids') IS NULL        
     BEGIN
       SET @message = 'Creating destination table'
       RAISERROR(@message, 0, 1)
