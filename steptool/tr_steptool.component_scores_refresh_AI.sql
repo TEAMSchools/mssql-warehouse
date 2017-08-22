@@ -1,11 +1,11 @@
 USE gabby
 GO
   
-IF OBJECT_ID ('powerschool.TR_final_grades_refresh_AI','TR') IS NOT NULL
-   DROP TRIGGER powerschool.TR_final_grades_refresh_AI;
+IF OBJECT_ID ('steptool.TR_component_scores_refresh_AI','TR') IS NOT NULL
+   DROP TRIGGER steptool.TR_component_scores_refresh_AI;
 GO
 
-CREATE TRIGGER powerschool.TR_final_grades_refresh_AI ON powerschool.fivetran_audit
+CREATE TRIGGER steptool.TR_component_scores_refresh_AI ON steptool.fivetran_audit
   AFTER INSERT
 AS
 
@@ -17,8 +17,8 @@ DECLARE @schema_name NVARCHAR(MAX)
        ,@email_body NVARCHAR(MAX)
        ,@stage NVARCHAR(MAX);
 
-SET @schema_name = 'powerschool'
-SET @view_name = 'final_grades'
+SET @schema_name = 'steptool'
+SET @view_name = 'component_scores'
 
 BEGIN
   BEGIN TRY
@@ -34,8 +34,7 @@ BEGIN
     INTO #referenced_tables
     FROM utilities.dependent_objects
     WHERE usedbyschemaname = @schema_name
-      AND usedbyobjectname = @view_name
-      AND table_name NOT IN ('reporting_terms'); /* manual exclude */
+      AND usedbyobjectname = @view_name;
 
     /* get list of tables updated during current hour */  
     SET @stage = 'updated tables'
@@ -46,7 +45,7 @@ BEGIN
 
     SELECT [table] AS table_name
     INTO #updated_tables
-    FROM powerschool.fivetran_audit WITH(NOLOCK)
+    FROM steptool.fivetran_audit WITH(NOLOCK)
     WHERE update_started >= DATETIMEFROMPARTS(DATEPART(YEAR,GETUTCDATE()), DATEPART(MONTH,GETUTCDATE()), DATEPART(DAY,GETUTCDATE())
                                              ,DATEPART(HOUR,GETUTCDATE()), 0, 0, 0);
   

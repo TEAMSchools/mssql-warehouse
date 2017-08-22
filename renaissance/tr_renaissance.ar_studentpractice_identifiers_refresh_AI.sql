@@ -28,58 +28,13 @@ BEGIN
     IF OBJECT_ID(N'tempdb..#referenced_tables') IS NOT NULL
 		    BEGIN
 		      DROP TABLE #referenced_tables;
-		    END;
-      
-    WITH dependentobjects AS (
-      SELECT DISTINCT 
-             b.object_id AS UsedByObjectId        
-            ,SCHEMA_NAME(b.schema_id) AS UsedBySchemaName
-            ,b.name AS UsedByObjectName
-            ,b.type AS UsedByObjectType
-            ,c.object_id AS DependentObjectId
-            ,SCHEMA_NAME(c.schema_id) AS DependentSchemaName
-            ,c.name AS DependentObjectName
-            ,c.type AS DependentObjectType        
-      FROM  sys.sysdepends a
-      INNER JOIN sys.objects b 
-         ON a.id = b.object_id
-      INNER JOIN sys.objects c 
-         ON a.depid = c.object_id
-        AND c.type IN ('U', 'P', 'V', 'FN')
-      WHERE b.type IN ('P','V', 'FN')
-     )
- 
-    ,dependentobjects2 AS (
-       SELECT UsedByObjectId
-             ,UsedByObjectName
-             ,UsedByObjectType
-             ,DependentObjectId
-             ,DependentObjectName
-             ,DependentObjectType 
-             ,1 AS Level
-       FROM DependentObjects a
-       WHERE a.UsedBySchemaName = @schema_name
-         AND a.UsedByObjectName = @view_name
-
-       UNION ALL 
-
-       SELECT a.UsedByObjectId, 
-              a.UsedByObjectName, 
-              a.UsedByObjectType,
-              a.DependentObjectId, 
-              a.DependentObjectName, 
-              a.DependentObjectType, 
-              (b.Level + 1) AS Level
-       FROM DependentObjects a
-       INNER JOIN DependentObjects2 b 
-          ON a.UsedByObjectId = b.DependentObjectId
-    )
-
-    SELECT DISTINCT dependentobjectname AS table_name  
+		    END;      
+    
+    SELECT table_name  
     INTO #referenced_tables
-    FROM dependentobjects2
-    WHERE dependentobjecttype = 'U'
-      AND dependentobjectname NOT LIKE '%_static';
+    FROM utilities.dependent_objects
+    WHERE usedbyschemaname = @schema_name
+      AND usedbyobjectname = @view_name;
 
     /* get list of tables updated during current hour */  
     SET @stage = 'updated tables'
@@ -90,7 +45,7 @@ BEGIN
 
     SELECT [table] AS table_name
     INTO #updated_tables
-    FROM renaissance.fivetran_audit
+    FROM renaissance.fivetran_audit WITH(NOLOCK)
     WHERE update_started >= DATETIMEFROMPARTS(DATEPART(YEAR,GETUTCDATE()), DATEPART(MONTH,GETUTCDATE()), DATEPART(DAY,GETUTCDATE())
                                              ,DATEPART(HOUR,GETUTCDATE()), 0, 0, 0);
   
@@ -108,7 +63,7 @@ BEGIN
 
     /* check if all tables included in view has been updated */  
     SET @stage = 'updated table check'
-    SELECT @update_status = CASE WHEN  COUNT(rt.table_name) = COUNT(ut.table_name) THEN 1 ELSE 0 END
+    SELECT @update_status = CASE WHEN COUNT(DISTINCT rt.table_name) = SUM(CASE WHEN rt.table_name = ut.table_name THEN 1 ELSE 0 END) THEN 1 ELSE 0 END
     FROM #referenced_tables rt
     LEFT OUTER JOIN #updated_tables ut
       ON rt.table_name = ut.table_name;
@@ -120,10 +75,17 @@ BEGIN
       END
 
     /* run refresh */
-    SET @stage = 'refresh'
-    PRINT('Running refresh')
+    SET @stage = 'queue'
+    PRINT('Adding to cache_view queue')
     BEGIN
-        EXEC utilities.cache_view @schema_name, @view_name      
+      INSERT INTO [utilities].[cache_view_queue]
+       (schema_name
+       ,view_name
+       ,timestamp)
+      VALUES
+       (@schema_name
+       ,@view_name
+       ,GETUTCDATE());                 
     END
   END TRY
 
