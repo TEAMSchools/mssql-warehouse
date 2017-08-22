@@ -1,7 +1,7 @@
-USE KIPP_NJ
+USE gabby
 GO
 
-ALTER VIEW DL$transcript_gpas#extract AS
+ALTER VIEW extracts.deanslist_transcript_gpas AS
 
 SELECT student_number
       ,academic_year            
@@ -16,24 +16,26 @@ FROM
            ,CASE WHEN SUM(CONVERT(FLOAT,potentialcrhrs)) = 0 THEN NULL ELSE SUM(CONVERT(FLOAT,potentialcrhrs)) END AS credit_hours
      FROM
          (
-          SELECT s.student_number
-                ,sg.academic_year
-                ,sg.potentialcrhrs           
+          SELECT sg.potentialcrhrs           
+                ,(LEFT(sg.termid, 2) + 1990) AS academic_year
                 ,(sg.potentialcrhrs * sg.gpa_points) AS weighted_points      
-                ,(sg.potentialcrhrs * scale_unweighted.grade_points) AS unweighted_points
-          FROM KIPP_NJ..GRADES$STOREDGRADES#static sg WITH(NOLOCK)
-          JOIN KIPP_NJ..PS$STUDENTS#static s WITH(NOLOCK)
-            ON sg.STUDENTID = s.ID
-          LEFT OUTER JOIN KIPP_NJ..GRADES$grade_scales#static scale_unweighted WITH(NOLOCK)
-            ON sg.[percent] >= scale_unweighted.low_cut
-           AND sg.[percent] < scale_unweighted.high_cut
+                
+                ,s.student_number
+                
+                ,(sg.potentialcrhrs * scale_unweighted.grade_points) AS unweighted_points                
+          FROM gabby.powerschool.storedgrades sg
+          JOIN gabby.powerschool.students s
+            ON sg.studentid = s.id
+          LEFT OUTER JOIN gabby.powerschool.gradescaleitem_lookup_static scale_unweighted
+            ON sg.[percent] BETWEEN scale_unweighted.min_cutoffpercentage AND scale_unweighted.max_cutoffpercentage
            AND CASE
-                WHEN sg.schoolid != 73253 THEN sg.GRADESCALE_NAME
-                WHEN sg.academic_year <= 2015 THEN 'NCA 2011' /* default pre-2016 */
-                WHEN sg.academic_year >= 2016 THEN 'KIPP NJ 2016 (5-12)' /* default 2016+ */
-               END = scale_unweighted.scale_name
-          WHERE sg.academic_year < KIPP_NJ.dbo.fn_Global_Academic_Year()
-            AND sg.EXCLUDEFROMGPA = 0
+                WHEN sg.schoolid != 73253 THEN sg.gradescale_name
+                WHEN (LEFT(sg.termid, 2) + 1990) <= 2015 THEN 'NCA 2011' /* default pre-2016 */
+                WHEN (LEFT(sg.termid, 2) + 1990) >= 2016 THEN 'KIPP NJ 2016 (5-12)' /* default 2016+ */
+               END = scale_unweighted.gradescale_name
+          WHERE (LEFT(sg.termid, 2) + 1990) < gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+            AND sg.storecode = 'Y1'
+            AND sg.excludefromgpa = 0
          ) sub
      GROUP BY student_number     
              ,academic_year
@@ -42,12 +44,12 @@ FROM
 UNION ALL
 
 SELECT co.student_number
-      ,co.year AS academic_year
+      ,co.academic_year AS academic_year
       ,sg.cumulative_y1_gpa AS GPA_Y1_weighted
       ,sg.cumulative_y1_gpa_unweighted AS GPA_Y1_unweighted
-FROM KIPP_NJ..COHORT$identifiers_long#static co WITH(NOLOCK)
-JOIN KIPP_NJ..GRADES$GPA_cumulative#static sg WITH(NOLOCK)
+FROM gabby.powerschool.cohort_identifiers_static co
+JOIN gabby.powerschool.gpa_cumulative sg
   ON co.studentid = sg.studentid
  AND co.schoolid = sg.schoolid
-WHERE co.year = KIPP_NJ.dbo.fn_Global_Academic_Year()
-  AND co.rn = 1
+WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+  AND co.rn_year = 1

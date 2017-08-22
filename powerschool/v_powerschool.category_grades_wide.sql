@@ -30,7 +30,7 @@ WITH grades_long AS (
         ,cat.reporting_term AS rt
         ,cat.is_curterm
         ,cat.grade_category
-        ,ROUND(AVG(cat.grade_category_pct), 0)        
+        ,ROUND(AVG(cat.grade_category_pct), 0) AS grade_category_pct   
   FROM gabby.powerschool.category_grades_static cat
   WHERE cat.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1
   GROUP BY cat.student_number

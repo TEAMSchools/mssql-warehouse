@@ -1,63 +1,51 @@
-USE KIPP_NJ
+USE gabby
 GO
 
-ALTER VIEW DL$transcript_grades#extract AS
+ALTER VIEW extracts.deanslist_transcript_grades AS
 
 WITH all_grades AS (
-  SELECT CONVERT(INT,o.student_number) AS student_number        
-        ,o.schoolid
-        ,o.academic_year
-        ,'Y1' AS term      
-        ,o.course_number
-        ,o.course_name      
-        ,o.credit_hours      
-      
-        /* final grades */      
+  SELECT fg.student_number
+        ,fg.schoolid
+        ,fg.academic_year
+        ,'Y1' AS term              
+        ,fg.course_number                
+        ,fg.course_name      
+        ,fg.credit_hours            
         ,fg.y1_grade_percent_adjusted AS y1_grade_percent
         ,fg.y1_grade_letter
-
         ,CASE
-          WHEN o.schoolid = 73252 THEN 'Rise Academy'
-          WHEN o.schoolid = 73253 THEN 'Newark Collegiate Academy'
-          WHEN o.schoolid = 73258 THEN 'BOLD Academy'
-          WHEN o.schoolid = 179902 THEN 'Lanning Sq Middle School'
-          WHEN o.schoolid = 179903 THEN 'Whittier Middle School'
-          WHEN o.schoolid = 133570965 THEN 'TEAM Academy'
-         END AS schoolname
+          WHEN fg.schoolid = 73252 THEN 'Rise Academy'
+          WHEN fg.schoolid = 73253 THEN 'Newark Collegiate Academy'
+          WHEN fg.schoolid = 73258 THEN 'BOLD Academy'
+          WHEN fg.schoolid = 179902 THEN 'Lanning Sq Middle School'
+          WHEN fg.schoolid = 179903 THEN 'Whittier Middle School'
+          WHEN fg.schoolid = 133570965 THEN 'TEAM Academy'
+         END AS schoolname        
         ,0 AS is_stored
-  FROM KIPP_NJ..PS$course_order_scaffold#static o WITH(NOLOCK)
-  LEFT OUTER JOIN KIPP_NJ..GRADES$final_grades_long#static fg WITH(NOLOCK)
-    ON o.student_number = fg.student_number
-   AND o.academic_year = fg.academic_year
-   AND o.course_number = fg.course_number
-   AND o.term = fg.term
-  WHERE o.academic_year = KIPP_NJ.dbo.fn_Global_Academic_Year()
-    AND o.course_number != 'ALL'
-    AND o.is_curterm = 1
-    AND ISNULL(o.EXCLUDEFROMGPA, 0) = 0
+  FROM gabby.powerschool.final_grades_static fg 
+  WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1
+    AND is_curterm = 1
+    AND ISNULL(excludefromgpa, 0) = 0
 
   UNION ALL
 
-  SELECT CONVERT(INT,s.student_number) AS student_number
+  SELECT s.student_number
         ,sg.schoolid
-        ,sg.academic_year
+        ,(LEFT(sg.termid, 2) + 1990) AS academic_year
         ,'Y1' AS term      
         ,sg.course_number
         ,sg.course_name      
-        ,sg.EARNEDCRHRS AS credit_hours
-      
-        /* final grades */      
-        ,sg.[PERCENT] AS y1_grade_percent
-        ,sg.GRADE AS y1_grade_letter
-
+        ,sg.earnedcrhrs AS credit_hours      
+        ,sg.[percent] AS y1_grade_percent
+        ,sg.grade AS y1_grade_letter
         ,sg.schoolname
         ,1 AS is_stored
-  FROM KIPP_NJ..GRADES$STOREDGRADES#static sg
-  JOIN KIPP_NJ..PS$STUDENTS#static s 
+  FROM gabby.powerschool.storedgrades sg
+  JOIN gabby.powerschool.students s
     ON sg.studentid = s.id
-  WHERE ISNULL(sg.EXCLUDEFROMGPA,0) = 0
-    AND ISNULL(sg.EXCLUDEFROMTRANSCRIPTS,0) = 0
-    AND sg.STORECODE = 'Y1'
+  WHERE ISNULL(sg.excludefromgpa, 0) = 0
+    AND ISNULL(sg.excludefromtranscripts, 0) = 0
+    AND sg.storecode = 'Y1'
  )
 
 SELECT student_number
