@@ -4,21 +4,24 @@ GO
 ALTER VIEW tableau.attendance_comm_log AS
 
 WITH commlog AS (
-  SELECT c.student_school_id        
-        ,CONVERT(DATE,c.call_date_time) AS commlog_date
-        ,CONCAT(u.first_name, ' ', u.last_name) AS commlog_staff_name
+  SELECT c.student_school_id
         ,c.reason AS commlog_reason
-        ,c.response AS commlog_notes
-        ,CONCAT(f.c_first, ' ', f.c_last) AS followup_staff_name      
+        ,c.response AS commlog_notes        
+        ,c.call_topic AS commlog_topic
+        ,CONVERT(DATE,c.call_date_time) AS commlog_date
+        
+        ,CONCAT(u.first_name, ' ', u.last_name) AS commlog_staff_name
+        
         ,f.init_notes AS followup_init_notes
         ,f.followup_notes AS followup_close_notes
         ,f.outstanding
+        ,CONCAT(f.c_first, ' ', f.c_last) AS followup_staff_name      
   FROM gabby.deanslist.communication c
   JOIN gabby.deanslist.users u
     ON c.dluser_id = u.dluser_id
   JOIN gabby.deanslist.followups f
     ON c.followup_id = f.followup_id
-  WHERE reason LIKE 'att:%'
+  WHERE c.reason LIKE 'att:%'
  )
 
 SELECT co.student_number
@@ -40,6 +43,7 @@ SELECT co.student_number
       ,cl.commlog_staff_name
       ,cl.commlog_reason
       ,cl.commlog_notes
+      ,cl.commlog_topic
       ,cl.followup_staff_name
       ,cl.followup_init_notes
       ,cl.followup_close_notes

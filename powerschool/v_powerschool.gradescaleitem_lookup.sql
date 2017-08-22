@@ -4,7 +4,7 @@ GO
 ALTER VIEW powerschool.gradescaleitem_lookup AS
 
 SELECT parent.id AS gradescaleid
-      --,parent.name AS gradescale_name      
+      ,parent.name AS gradescale_name      
       
       ,items.name AS letter_grade
       ,items.grade_points

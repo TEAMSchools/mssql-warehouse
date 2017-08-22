@@ -12,6 +12,9 @@ SELECT mv.studentid
       ,mv.ontrack
       ,mv.offtrack
       ,mv.student_track          
+
+      ,t.yearid
+
       ,(CASE 
          WHEN ada_0.id IS NOT NULL THEN 0
          ELSE aci_real.attendance_value  				        
@@ -24,7 +27,7 @@ SELECT mv.studentid
       ,(CASE 
          WHEN ada_1.id IS NOT NULL THEN 0
          ELSE aci_potential.attendance_value			   	         
-			     END) * mv.ontrack AS potential_attendancevalue
+			     END) * mv.ontrack AS potential_attendancevalue      
 FROM gabby.powerschool.ps_membership_reg mv
 LEFT OUTER JOIN gabby.powerschool.terms t
   ON mv.calendardate BETWEEN t.firstday AND t.lastday 
