@@ -19,7 +19,7 @@ WITH commlog AS (
   FROM gabby.deanslist.communication c
   JOIN gabby.deanslist.users u
     ON c.dluser_id = u.dluser_id
-  JOIN gabby.deanslist.followups f
+  LEFT OUTER JOIN gabby.deanslist.followups f
     ON c.followup_id = f.followup_id
   WHERE c.reason LIKE 'att:%'
  )
