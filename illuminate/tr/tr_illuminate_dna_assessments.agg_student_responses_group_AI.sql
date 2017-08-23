@@ -17,11 +17,12 @@ BEGIN
   IF (EXISTS(SELECT 1 FROM INSERTED))
   BEGIN
     DELETE FROM [illuminate_dna_assessments].[agg_student_responses_group]
-    WHERE CONCAT([agg_student_responses_group].student_assessment_id, '_', [agg_student_responses_group].reporting_group_id) IN (SELECT CONCAT(student_assessment_id, '_', reporting_group_id) FROM INSERTED)
+    WHERE CONCAT([agg_student_responses_group].student_assessment_id, '_', [agg_student_responses_group].reporting_group_id) 
+            IN (SELECT CONCAT(student_assessment_id, '_', reporting_group_id) FROM INSERTED);
 
-    INSERT INTO [illuminate_dna_assessments].[agg_student_responses_group]
-    SELECT * FROM INSERTED
+    --INSERT INTO [illuminate_dna_assessments].[agg_student_responses_group]
+    --SELECT * FROM INSERTED
 
-    OUTPUT SELECT * FROM INSERTED;
+    --OUTPUT SELECT * FROM INSERTED;
   END;
 END
