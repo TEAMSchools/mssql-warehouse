@@ -15,13 +15,16 @@ WITH caredox_enrollment AS (
  )
 
 ,caredox_immunization AS (
-  SELECT student_id
-        ,CONCAT(status, ' - ' + status_notes) AS status
-        ,ROW_NUMBER() OVER(
-           PARTITION BY student_id
-             ORDER BY CONVERT(DATETIME,last_updated_at) DESC) AS rn_last_updated
-  FROM gabby.caredox.immunization
-  WHERE ISNUMERIC(student_id) = 1
+  SELECT NULL AS student_id
+        ,NULL AS status
+        ,NULL AS rn_last_updated
+  --SELECT student_id
+  --      ,CONCAT(status, ' - ' + status_notes) AS status
+  --      ,ROW_NUMBER() OVER(
+  --         PARTITION BY student_id
+  --           ORDER BY CONVERT(DATETIME,last_updated_at) DESC) AS rn_last_updated
+  --FROM gabby.caredox.immunization
+  --WHERE ISNUMERIC(student_id) = 1
  )
 
 ,caredox_screenings AS (
