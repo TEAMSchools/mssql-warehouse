@@ -47,8 +47,7 @@ BEGIN
     SELECT [table] AS table_name
     INTO #updated_tables
     FROM powerschool.fivetran_audit WITH(NOLOCK)
-    WHERE update_started >= DATETIMEFROMPARTS(DATEPART(YEAR,GETUTCDATE()), DATEPART(MONTH,GETUTCDATE()), DATEPART(DAY,GETUTCDATE())
-                                             ,DATEPART(HOUR,GETUTCDATE()), 0, 0, 0);
+    WHERE update_started >= DATEADD(HOUR, -1, GETUTCDATE());
   
     /* check if updated table is included in view */  
     SET @stage = 'referenced table check'
