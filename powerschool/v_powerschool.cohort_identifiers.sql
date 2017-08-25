@@ -150,7 +150,7 @@ LEFT OUTER JOIN gabby.powerschool.s_nj_stu_x nj
   ON s.dcid = nj.studentsdcid
 JOIN gabby.powerschool.schools sch
   ON co.schoolid = sch.school_number
-LEFT OUTER JOIN gabby.powerschool.spenrollments_gen sp WITH(NOEXPAND)
+LEFT OUTER JOIN gabby.powerschool.spenrollments_gen sp
   ON co.studentid = sp.studentid
  AND co.entrydate BETWEEN sp.enter_date AND sp.exit_date
  AND sp.programid IN (4573, 5074, 5075, 5173) 

@@ -35,6 +35,7 @@ LEFT OUTER JOIN gabby.powerschool.prefs p2
   ON p2.schoolid = s.schoolid 
  AND p2.name = 'ATT_IntervalDuration' 
  AND p2.yearid = t.yearid
+WHERE s.entrydate IS NOT NULL
 
 UNION 
 
@@ -70,3 +71,4 @@ LEFT OUTER JOIN gabby.powerschool.prefs p2
   ON p2.schoolid = r.schoolid 
  AND p2.name = 'ATT_IntervalDuration' 
  AND p2.yearid = t.yearid
+WHERE r.entrydate IS NOT NULL

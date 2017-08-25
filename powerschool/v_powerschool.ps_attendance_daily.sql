@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW powerschool.ps_attendance_daily WITH SCHEMABINDING AS 
+ALTER VIEW powerschool.ps_attendance_daily AS 
 
 SELECT att.id
       ,att.studentid
@@ -28,8 +28,8 @@ SELECT att.id
       ,cd.cycle_day_id      
   
       ,cy.abbreviation           
-FROM powerschool.attendance att
-JOIN powerschool.attendance_code ac
+FROM powerschool.attendance att 
+JOIN powerschool.attendance_code ac 
   ON att.attendance_codeid = ac.id
 JOIN powerschool.calendar_day cd
   ON att.calendar_dayid = cd.id

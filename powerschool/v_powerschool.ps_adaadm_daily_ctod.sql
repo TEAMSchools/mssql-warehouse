@@ -28,7 +28,7 @@ SELECT mv.studentid
          WHEN ada_1.id IS NOT NULL THEN 0
          ELSE aci_potential.attendance_value			   	         
 			     END) * mv.ontrack AS potential_attendancevalue      
-FROM gabby.powerschool.ps_membership_reg mv WITH(NOEXPAND)
+FROM gabby.powerschool.ps_membership_reg_static mv
 LEFT OUTER JOIN gabby.powerschool.terms t
   ON mv.calendardate BETWEEN t.firstday AND t.lastday 
  AND mv.schoolid = t.schoolid
@@ -38,15 +38,15 @@ LEFT OUTER JOIN gabby.powerschool.attendance_code ac
  AND t.yearid = ac.yearid
  AND ac.att_code IS NULL
 	AND ac.presence_status_cd = 'Present'
-LEFT OUTER JOIN gabby.powerschool.ps_attendance_daily ada_0 WITH(NOEXPAND)
+LEFT OUTER JOIN gabby.powerschool.ps_attendance_daily_static ada_0
   ON mv.studentid = ada_0.studentid
  AND mv.calendardate = ada_0.att_date
  AND ada_0.count_for_ada = 0
-LEFT OUTER JOIN gabby.powerschool.ps_attendance_daily ada_1 WITH(NOEXPAND)
+LEFT OUTER JOIN gabby.powerschool.ps_attendance_daily_static ada_1
   ON mv.studentid = ada_1.studentid
  AND mv.calendardate = ada_1.att_date
  AND ada_1.count_for_ada = 1
-LEFT OUTER JOIN gabby.powerschool.ps_attendance_daily adm_0 WITH(NOEXPAND)
+LEFT OUTER JOIN gabby.powerschool.ps_attendance_daily_static adm_0
   ON mv.studentid = adm_0.studentid
  AND mv.calendardate = adm_0.att_date
  AND adm_0.count_for_adm = 0

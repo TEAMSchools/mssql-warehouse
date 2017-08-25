@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW powerschool.spenrollments_gen WITH SCHEMABINDING AS
+ALTER VIEW powerschool.spenrollments_gen AS
 
 SELECT sp.studentid
       ,sp.dcid

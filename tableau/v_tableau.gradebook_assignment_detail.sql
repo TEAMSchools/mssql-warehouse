@@ -47,7 +47,7 @@ LEFT OUTER JOIN gabby.powerschool.gradebook_assignments a
   ON sec.id = a.sectionid
  AND gb.assignmentcategoryid = a.assignmentcategoryid
  AND a.assign_date between gb.startdate and gb.enddate
-LEFT OUTER JOIN gabby.powerschool.gradebook_assignments_scores scores WITH(NOEXPAND)
+LEFT OUTER JOIN gabby.powerschool.gradebook_assignments_scores scores
   ON a.assignmentsectionid = scores.assignmentsectionid
  AND s.student_number = scores.student_number
 WHERE (LEFT(sec.termid, 2) + 1990) = 2016 --gabby.utilities.GLOBAL_ACADEMIC_YEAR()
@@ -97,7 +97,7 @@ JOIN gabby.powerschool.gradebook_setup gb
 LEFT OUTER JOIN gabby.powerschool.gradebook_assignments a 
   ON sec.id = a.sectionid 
  AND a.assign_date between gb.startdate and gb.enddate
-LEFT OUTER JOIN gabby.powerschool.gradebook_assignments_scores scores WITH(NOEXPAND)
+LEFT OUTER JOIN gabby.powerschool.gradebook_assignments_scores scores
   ON a.assignmentsectionid = scores.assignmentsectionid
  AND s.student_number = scores.student_number
 WHERE (LEFT(sec.termid, 2) + 1990) = 2016 --gabby.utilities.GLOBAL_ACADEMIC_YEAR()

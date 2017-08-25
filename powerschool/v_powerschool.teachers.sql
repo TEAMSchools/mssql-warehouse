@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW powerschool.teachers WITH SCHEMABINDING AS
+ALTER VIEW powerschool.teachers AS
 
 SELECT s.dcid
       ,s.id

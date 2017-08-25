@@ -81,7 +81,7 @@ JOIN gabby.powerschool.ps_adaadm_daily_ctod_static mem
  AND mem.calendardate <= CONVERT(DATE,GETDATE()) 
  AND mem.membershipvalue > 0
  AND mem.attendancevalue IS NOT NULL
-LEFT OUTER JOIN gabby.powerschool.ps_attendance_daily att WITH(NOEXPAND)
+LEFT OUTER JOIN gabby.powerschool.ps_attendance_daily_static att
   ON co.studentid = att.studentid
  AND mem.calendardate = att.att_date
 LEFT OUTER JOIN gabby.reporting.reporting_terms dt WITH(NOLOCK) 

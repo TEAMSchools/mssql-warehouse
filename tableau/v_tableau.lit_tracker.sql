@@ -3,7 +3,6 @@ GO
 
 ALTER VIEW tableau.lit_tracker AS
 
-/* student identifiers */
 SELECT co.school_name
       ,co.school_level
       ,co.student_number
@@ -94,7 +93,7 @@ SELECT co.school_name
          PARTITION BY co.student_number, co.academic_year, term.lit, term.ar, achv.achv_unique_id
            ORDER BY achv.achv_unique_id) AS rn_test
 FROM gabby.powerschool.cohort_identifiers_static co
-LEFT OUTER JOIN gabby.powerschool.spenrollments_gen sp WITH(NOEXPAND)
+LEFT OUTER JOIN gabby.powerschool.spenrollments_gen sp
   ON co.studentid = sp.studentid
  AND co.academic_year = sp.academic_year
  AND sp.programid = 5224

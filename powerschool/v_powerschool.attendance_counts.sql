@@ -58,7 +58,7 @@ WITH scaffold AS (
                   
              ,dates.academic_year                  
              ,dates.time_per_name AS reporting_term     
-       FROM gabby.powerschool.ps_attendance_daily att WITH(NOEXPAND)
+       FROM gabby.powerschool.ps_attendance_daily_static att
        JOIN gabby.reporting.reporting_terms dates
          ON att.att_date BETWEEN CONVERT(DATE,dates.start_date) AND CONVERT(DATE,dates.end_date)             
         AND att.schoolid = dates.schoolid
