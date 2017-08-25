@@ -36,9 +36,9 @@ BEGIN
     WHERE usedbyschemaname = @schema_name
       AND usedbyobjectname = @view_name
       AND table_name NOT IN ('njsmart_powerschool_kcna'
-                            ,'njsmart_powerschool_team'
-                            ,'adp_ps_id_link'
-                            ,'export_people_details'); /* manual override */;
+                      ,'njsmart_powerschool_team'
+                      ,'adp_ps_id_link'
+                      ,'export_people_details'); /* manual exclude */
 
     /* get list of tables updated during current hour */  
     SET @stage = 'updated tables'
@@ -50,7 +50,14 @@ BEGIN
     SELECT [table] AS table_name
     INTO #updated_tables
     FROM powerschool.fivetran_audit WITH(NOLOCK)
-    WHERE done >= DATEADD(MINUTE, -75, GETUTCDATE());
+    WHERE update_started BETWEEN DATETIMEFROMPARTS(
+                                   DATEPART(YEAR, DATEADD(MINUTE, -60, GETUTCDATE()))
+                                  ,DATEPART(MONTH, DATEADD(MINUTE, -60, GETUTCDATE()))
+                                  ,DATEPART(DAY, DATEADD(MINUTE, -60, GETUTCDATE()))
+                                  ,DATEPART(HOUR, DATEADD(MINUTE, -60, GETUTCDATE()))
+                                  ,30, 0, 0
+                                  ) 
+                             AND GETUTCDATE();
   
     /* check if updated table is included in view */  
     SET @stage = 'referenced table check'
@@ -66,7 +73,7 @@ BEGIN
 
     /* check if all tables included in view has been updated */  
     SET @stage = 'updated table check'
-    SELECT @update_status = CASE WHEN COUNT(DISTINCT rt.table_name) = SUM(CASE WHEN rt.table_name = ut.table_name THEN 1 ELSE 0 END) THEN 1 ELSE 0 END
+    SELECT @update_status = CASE WHEN COUNT(rt.table_name) = COUNT(ut.table_name) THEN 1 ELSE 0 END
     FROM #referenced_tables rt
     LEFT OUTER JOIN #updated_tables ut
       ON rt.table_name = ut.table_name;

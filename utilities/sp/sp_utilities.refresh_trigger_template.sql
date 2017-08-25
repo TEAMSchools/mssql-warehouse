@@ -9,7 +9,10 @@ ALTER PROCEDURE utilities.refresh_trigger_template(
 BEGIN
 
 DECLARE @sql_1 NVARCHAR(MAX)
-       ,@sql_2 NVARCHAR(MAX);
+       ,@sql_2 NVARCHAR(MAX)
+       ,@minute_offset NVARCHAR(MAX);
+
+SET @minute_offset = '-60';
 
 SET @sql_1 = '
 USE gabby
@@ -60,7 +63,14 @@ BEGIN
     SELECT [table] AS table_name
     INTO #updated_tables
     FROM ' + @schema_name + '.fivetran_audit WITH(NOLOCK)
-    WHERE update_started >= DATEADD(MINUTE, -75, GETUTCDATE());
+    WHERE update_started BETWEEN DATETIMEFROMPARTS(
+                                   DATEPART(YEAR, DATEADD(MINUTE, ' + @minute_offset + ', GETUTCDATE()))
+                                  ,DATEPART(MONTH, DATEADD(MINUTE, ' + @minute_offset + ', GETUTCDATE()))
+                                  ,DATEPART(DAY, DATEADD(MINUTE, ' + @minute_offset + ', GETUTCDATE()))
+                                  ,DATEPART(HOUR, DATEADD(MINUTE, ' + @minute_offset + ', GETUTCDATE()))
+                                  ,30, 0, 0
+                                  ) 
+                             AND GETUTCDATE();
   
     /* check if updated table is included in view */  
     SET @stage = ''referenced table check''
@@ -78,7 +88,7 @@ BEGIN
 SET @sql_2 = '
     /* check if all tables included in view has been updated */  
     SET @stage = ''updated table check''
-    SELECT @update_status = CASE WHEN COUNT(DISTINCT rt.table_name) = SUM(CASE WHEN rt.table_name = ut.table_name THEN 1 ELSE 0 END) THEN 1 ELSE 0 END
+    SELECT @update_status = CASE WHEN COUNT(rt.table_name) = COUNT(ut.table_name) THEN 1 ELSE 0 END
     FROM #referenced_tables rt
     LEFT OUTER JOIN #updated_tables ut
       ON rt.table_name = ut.table_name;
