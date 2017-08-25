@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW powerschool.ps_membership_reg AS 
+ALTER VIEW powerschool.ps_membership_reg WITH SCHEMABINDING AS 
 
 SELECT ev.studentid
       ,ev.schoolid 
@@ -63,11 +63,11 @@ SELECT ev.studentid
       ,cd.bell_schedule_id
       ,cd.cycle_day_id
       ,ev.yearid                                                                  
-FROM gabby.powerschool.ps_enrollment_all ev
-JOIN gabby.powerschool.calendar_day cd
+FROM powerschool.ps_enrollment_all_static ev
+JOIN powerschool.calendar_day cd
   ON ev.schoolid = cd.schoolid
  AND cd.insession = 1
 	AND cd.date_value >= ev.entrydate
 	AND cd.date_value < ev.exitdate
-JOIN gabby.powerschool.bell_schedule bs
+JOIN powerschool.bell_schedule bs
   ON cd.bell_schedule_id = bs.id
