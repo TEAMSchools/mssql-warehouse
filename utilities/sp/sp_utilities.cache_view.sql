@@ -84,7 +84,7 @@ SET @destination_table_name = @source_view + '_static';
       PRINT(ERROR_MESSAGE());
       
       SET @email_subject = @view_name + ' static refresh failed'
-      SET @email_body = 'During the trigger, the refresh procedure for ' + @view_name + 'failed during the refresh stage.' + CHAR(10) + ERROR_MESSAGE();
+      SET @email_body = 'The refresh procedure for ' + @view_name + 'failed.' + CHAR(10) + ERROR_MESSAGE();
       
       EXEC msdb.dbo.sp_send_dbmail  
         @profile_name = 'datarobot',  
