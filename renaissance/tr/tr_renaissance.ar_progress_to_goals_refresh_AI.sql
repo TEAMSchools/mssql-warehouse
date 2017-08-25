@@ -47,7 +47,7 @@ BEGIN
     SELECT [table] AS table_name
     INTO #updated_tables
     FROM renaissance.fivetran_audit WITH(NOLOCK)
-    WHERE update_started >= DATEADD(MINUTE, -75, GETUTCDATE());
+    WHERE done >= DATEADD(MINUTE, -75, GETUTCDATE());
   
     /* check if updated table is included in view */  
     SET @stage = 'referenced table check'
