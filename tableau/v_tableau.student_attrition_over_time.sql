@@ -50,7 +50,7 @@ SELECT y1.student_number
       ,NULL AS is_graduation
 FROM enrolled_oct1 y1
 LEFT OUTER JOIN gabby.powerschool.cohort_identifiers_static y2
-  ON y1.STUDENT_NUMBER = y2.STUDENT_NUMBER
+  ON y1.student_number = y2.student_number
  AND y1.academic_year = (y2.academic_year - 1)
  AND DATEFROMPARTS(y2.academic_year, 10, 01) BETWEEN y2.entrydate AND y2.exitdate
 JOIN attrition_dates d
