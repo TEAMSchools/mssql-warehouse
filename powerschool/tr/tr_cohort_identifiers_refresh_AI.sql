@@ -50,7 +50,7 @@ BEGIN
     SELECT [table] AS table_name
     INTO #updated_tables
     FROM powerschool.fivetran_audit WITH(NOLOCK)
-    WHERE update_started >= DATEADD(HOUR, -1, GETUTCDATE());
+    WHERE update_started >= DATEADD(MINUTE, -75, GETUTCDATE());
   
     /* check if updated table is included in view */  
     SET @stage = 'referenced table check'
