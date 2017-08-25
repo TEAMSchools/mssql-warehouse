@@ -25,7 +25,7 @@ FROM
            ,enr.teachernumber
            ,enr.teacher_name
            ,utilities.STRIP_CHARACTERS(enr.section_number,'0-9') AS advisory_name
-     FROM powerschool.course_enrollments enr
+     FROM powerschool.course_enrollments_static enr
      WHERE enr.course_number = 'HR'
        AND enr.schoolid NOT IN (133570965, 73253)
        AND enr.sectionid > 0
@@ -39,7 +39,7 @@ FROM
            ,enr.teachernumber
            ,enr.teacher_name
            ,utilities.STRIP_CHARACTERS(enr.section_number,'0-9') AS advisory_name
-     FROM powerschool.course_enrollments enr
+     FROM powerschool.course_enrollments_static enr
      WHERE enr.course_number = 'ADV'
        AND enr.schoolid IN (133570965, 73253)
        AND enr.sectionid > 0
