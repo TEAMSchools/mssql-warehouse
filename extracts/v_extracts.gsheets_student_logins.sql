@@ -3,15 +3,16 @@ GO
 
 ALTER VIEW extracts.gsheets_student_logins AS
 
-SELECT co.student_number AS SN 
-      ,co.lastfirst AS [Last First] 
-      ,co.grade_level AS [Gr] 
+SELECT co.student_number
+      ,co.lastfirst
+      ,co.grade_level
       ,co.team
-      ,co.school_name AS [School] 
-      ,s.student_web_id AS [Core Username] 
-      ,s.student_web_password AS [Core Password] 
-      ,s.student_web_id + '@teamstudents.org' AS [Google Email] 
-      ,co.entrydate AS [Date Enrolled] 
+      ,co.school_name
+      ,CONVERT(NVARCHAR,co.entrydate) AS entrydate
+
+      ,s.student_web_id
+      ,s.student_web_password
+      ,s.student_web_id + '@teamstudents.org' AS student_email      
 FROM gabby.powerschool.cohort_identifiers_static co
 JOIN gabby.powerschool.student_access_accounts s
   ON co.student_number = s.student_number

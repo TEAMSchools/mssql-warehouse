@@ -14,8 +14,8 @@ WITH ug_school AS (
 ,enroll_dates AS (
   SELECT student_number
         ,schoolid
-        ,MIN(entrydate) AS school_entrydate
-        ,MAX(exitdate) AS school_exitdate
+        ,CONVERT(NVARCHAR,MIN(entrydate)) AS school_entrydate
+        ,CONVERT(NVARCHAR,MAX(exitdate)) AS school_exitdate
   FROM gabby.powerschool.cohort_identifiers_static s  
   GROUP BY student_number, schoolid
  )
