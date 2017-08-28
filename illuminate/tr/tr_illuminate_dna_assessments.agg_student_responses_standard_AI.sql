@@ -20,8 +20,8 @@ BEGIN
     WHERE CONCAT([agg_student_responses_standard].student_assessment_id, '_', [agg_student_responses_standard].standard_id) 
             IN (SELECT CONCAT(student_assessment_id, '_', standard_id) FROM INSERTED);
 
-    --INSERT INTO [illuminate_dna_assessments].[agg_student_responses_standard]
-    --SELECT * FROM INSERTED
+    INSERT INTO [illuminate_dna_assessments].[agg_student_responses_standard]
+    SELECT * FROM INSERTED
 
     --OUTPUT SELECT * FROM INSERTED;
   END;

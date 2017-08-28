@@ -19,8 +19,8 @@ BEGIN
     DELETE FROM [illuminate_dna_assessments].[agg_student_responses]
     WHERE [agg_student_responses].student_assessment_id IN (SELECT student_assessment_id FROM INSERTED);
 
-    --INSERT INTO [illuminate_dna_assessments].[agg_student_responses]
-    --SELECT * FROM INSERTED
+    INSERT INTO [illuminate_dna_assessments].[agg_student_responses]
+    SELECT * FROM INSERTED
 
     --OUTPUT SELECT * FROM INSERTED;
   END;
