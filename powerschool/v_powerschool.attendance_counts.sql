@@ -39,8 +39,7 @@ WITH scaffold AS (
   SELECT studentid
         ,academic_year
         ,reporting_term      
-        ,att_code
-             
+        ,att_code             
         ,COUNT(studentid) AS count_term
   FROM
       (
@@ -133,7 +132,7 @@ WITH scaffold AS (
 
                   ,'MEM' AS att_code
             FROM gabby.powerschool.cohort_identifiers_static co            
-            LEFT OUTER JOIN gabby.powerschool.ps_adaadm_daily_ctod_static mem
+            JOIN gabby.powerschool.ps_adaadm_daily_ctod_static mem
               ON co.studentid = mem.studentid                          
              AND co.yearid = mem.yearid
             JOIN gabby.reporting.reporting_terms d
