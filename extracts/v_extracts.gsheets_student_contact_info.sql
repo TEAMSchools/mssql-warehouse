@@ -3,13 +3,15 @@ GO
 
 ALTER VIEW extracts.gsheets_student_contact_info AS
 
-SELECT co.schoolid
-      ,co.student_number
+SELECT co.student_number
+      ,co.newark_enrollment_number
       ,co.state_studentnumber
       ,co.lastfirst
-      ,co.grade_level      
-      ,co.advisor_name
+      ,co.schoolid
+      ,co.school_name
+      ,CASE WHEN co.grade_level = 0 THEN 'K' ELSE CONVERT(NVARCHAR,co.grade_level) END AS grade_level      
       ,co.team
+      ,co.advisor_name
       ,co.home_phone
       ,co.mother_cell
       ,co.father_cell
@@ -17,10 +19,10 @@ SELECT co.schoolid
       ,co.father      
       ,co.gender      
       ,co.street
-      ,co.city
-      ,co.zip
+      ,co.city      
+      ,co.state
+      ,CONCAT('''', co.zip) AS zip
       ,co.guardianemail      
-      ,co.newark_enrollment_number
       ,CONVERT(MONEY,co.lunch_balance) AS lunch_balance
       ,CONVERT(NVARCHAR,co.dob) AS dob
 
