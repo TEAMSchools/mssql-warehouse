@@ -23,7 +23,7 @@ WITH ug_school AS (
 SELECT co.student_number
       ,co.state_studentnumber AS SID
       ,co.team
-      ,co.dob
+      ,CONVERT(NVARCHAR,co.dob) AS dob
       ,co.home_phone
       ,co.mother AS parent1_name
       ,co.father AS parent2_name
