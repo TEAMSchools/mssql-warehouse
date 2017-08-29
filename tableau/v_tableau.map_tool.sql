@@ -11,16 +11,10 @@ WITH map_long AS (
         ,base.test_id
         ,base.test_ritscore AS base_rit
         ,base.testpercentile AS base_pct        
-        ,CONVERT(INT,CASE
-          WHEN base.lexile_score IN ('BR','<100') THEN 0
-          ELSE base.lexile_score
-         END) AS base_lexile_score
+        ,base.lexile_score AS base_lexile_score
         ,base.testpercentile AS pct
         ,base.test_ritscore AS rit      
-        ,CONVERT(INT,CASE
-          WHEN base.lexile_score IN ('BR','<100') THEN 0
-          ELSE base.lexile_score
-         END) AS lexile_score
+        ,base.lexile_score
         ,NULL AS testdurationminutes
   FROM gabby.nwea.best_baseline base
   
@@ -33,16 +27,10 @@ WITH map_long AS (
         ,map.test_id
         ,base.test_ritscore AS base_rit
         ,base.testpercentile AS base_pct
-        ,CONVERT(INT,CASE
-          WHEN base.lexile_score IN ('BR','<100') THEN 0
-          ELSE base.lexile_score
-         END) AS base_lexile_score
+        ,base.lexile_score AS base_lexile_score
         ,map.percentile_2015_norms AS pct
         ,map.test_ritscore AS rit      
-        ,CONVERT(INT,CASE
-          WHEN map.ritto_reading_score IN ('BR','<100') THEN 0
-          ELSE map.ritto_reading_score
-         END) AS lexile_score
+        ,map.ritto_reading_score AS lexile_score
         ,map.test_duration_minutes
   FROM gabby.nwea.best_baseline base
   LEFT OUTER JOIN gabby.nwea.assessment_result_identifiers map
@@ -73,17 +61,23 @@ SELECT r.academic_year
       ,map_long.rit       
       ,map_long.pct       
       ,map_long.lexile_score
-      ,map_long.testdurationminutes                 
+      ,map_long.testdurationminutes          
+      ,CASE 
+        WHEN map_long.pct BETWEEN 0 AND 24 THEN 1
+        WHEN map_long.pct BETWEEN 25 AND 49 THEN 2
+        WHEN map_long.pct BETWEEN 50 AND 74 THEN 3
+        WHEN map_long.pct >= 75 THEN 4                
+       END AS term_quartile       
            
       ,pct50.testritscore AS testritscore_50th_percentile
       ,pct75.testritscore AS testritscore_75th_percentile
 
-      ,domain.test_name AS domain_testname
-      ,ISNULL(domain.goal_number, 1) AS goal_number
+      ,domain.test_name AS domain_testname      
       ,domain.name AS domain_name
       ,domain.ritscore
       ,domain.range      
       ,domain.adjective
+      ,ISNULL(domain.goal_number, 1) AS goal_number
 
       ,PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY map_long.rit)
          OVER(PARTITION BY r.reporting_schoolid
@@ -97,12 +91,6 @@ SELECT r.academic_year
                           ,r.academic_year
                           ,map_long.term
                           ,map_long.measurementscale) AS median_pct
-      ,CASE 
-        WHEN map_long.pct BETWEEN 0 AND 24 THEN 1
-        WHEN map_long.pct BETWEEN 25 AND 49 THEN 2
-        WHEN map_long.pct BETWEEN 50 AND 74 THEN 3
-        WHEN map_long.pct >= 75 THEN 4                
-       END AS term_quartile
 FROM gabby.powerschool.cohort_identifiers_static r
 LEFT OUTER JOIN map_long
   ON r.student_number = map_long.student_number
