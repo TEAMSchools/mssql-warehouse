@@ -24,13 +24,13 @@ WITH schooldays AS (
 
 ,att_mem AS (
   SELECT studentid
-        ,gabby.utilities.DATE_TO_SY(calendardate) AS academic_year
+        ,yearid + 1990 AS academic_year
         ,SUM(CONVERT(INT,attendancevalue)) AS N_att
         ,SUM(CONVERT(INT,membershipvalue)) AS N_mem
   FROM gabby.powerschool.ps_adaadm_daily_ctod_static
   WHERE membershipvalue = 1
   GROUP BY studentid
-          ,gabby.utilities.DATE_TO_SY(calendardate)
+          ,yearid
  )
 
 SELECT sub.academic_year      
@@ -39,7 +39,7 @@ SELECT sub.academic_year
       ,co.lastfirst
       ,co.schoolid
       ,co.reporting_schoolid
-      ,CASE WHEN co.schoolid LIKE '1799%' THEN 'KCNA' ELSE 'TEAM' END AS region      
+      ,co.region      
       ,co.grade_level
       ,co.entrydate
       ,co.exitdate
@@ -81,4 +81,4 @@ LEFT OUTER JOIN gabby.powerschool.s_nj_stu_x nj
   ON co.students_dcid = nj.studentsdcid
 JOIN schooldays d
   ON sub.academic_year = d.academic_year
- AND CASE WHEN co.schoolid LIKE '1799%' THEN 'KCNA' ELSE 'TEAM' END = d.region
+ AND co.region = d.region
