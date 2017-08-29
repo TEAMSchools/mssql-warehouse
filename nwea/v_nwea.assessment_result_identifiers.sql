@@ -230,7 +230,6 @@ FROM
            ,projected_proficiency_study_3
            ,ritto_reading_max
            ,ritto_reading_min
-           ,ritto_reading_score
            ,spring_to_spring_conditional_growth_index
            ,spring_to_spring_conditional_growth_percentile
            ,spring_to_spring_met_projected_growth
@@ -275,6 +274,11 @@ FROM
              ELSE NULL
             END term_numeric      
            ,CASE WHEN measurement_scale LIKE 'Language%' THEN 'Language Usage' ELSE measurement_scale END AS measurement_scale            
+           ,CASE
+             WHEN ritto_reading_score IN ('BR','<100') THEN 0
+             ELSE CONVERT(FLOAT,ritto_reading_score) 
+            END AS ritto_reading_score
+           
            ,ROW_NUMBER() OVER(
               PARTITION BY student_id, term_name, measurement_scale
                 ORDER BY growth_measure_yn DESC
