@@ -40,14 +40,14 @@ SELECT sub.student_number
         ELSE map_spr.term_name
        END AS term_name
       ,CASE
-        WHEN map_fall.test_ritscore > map_spr.test_ritscore THEN CAST(map_fall.test_ritscore AS INT)
-        WHEN map_spr.test_ritscore IS NULL THEN CAST(map_fall.test_ritscore AS INT)
-        ELSE CAST(map_spr.test_ritscore AS INT)
+        WHEN map_fall.test_ritscore > map_spr.test_ritscore THEN map_fall.test_ritscore
+        WHEN map_spr.test_ritscore IS NULL THEN map_fall.test_ritscore
+        ELSE map_spr.test_ritscore
        END AS test_ritscore
       ,CASE 
-        WHEN map_fall.test_ritscore > map_spr.test_ritscore THEN CAST(map_fall.percentile_2015_norms AS INT)
-        WHEN map_spr.test_ritscore IS NULL THEN CAST(map_fall.percentile_2015_norms AS INT)
-        ELSE CAST(map_spr.percentile_2015_norms AS INT)
+        WHEN map_fall.test_ritscore > map_spr.test_ritscore THEN map_fall.percentile_2015_norms
+        WHEN map_spr.test_ritscore IS NULL THEN map_fall.percentile_2015_norms
+        ELSE map_spr.percentile_2015_norms
        END AS testpercentile
       ,CASE 
         WHEN map_fall.test_ritscore > map_spr.test_ritscore THEN map_fall.fall_to_spring_projected_growth
