@@ -12,7 +12,7 @@ WITH prev_week_time AS (
           PARTITION BY username, gabby.utilities.DATE_TO_SY(date)
             ORDER BY date DESC) AS rn
   FROM gabby.lexia.units_to_target
-  --WHERE DATEPART(WEEKDAY,date) = 1
+  WHERE DATEPART(WEEKDAY,date) = 1
  )
 
 SELECT co.student_number
@@ -49,6 +49,7 @@ SELECT co.student_number
       ,lex.week_time
       ,lex.weekly_target
       ,lex.meeting_target_usage            
+      ,lex.struggling_indicator
 
       ,ISNULL(g.target_units,0) - ISNULL(lex.units_to_target,0) AS units_completed
       ,CONVERT(FLOAT,(ISNULL(g.target_units,0.0) - ISNULL(lex.units_to_target,0.0))) / CONVERT(FLOAT,g.target_units) AS pct_to_target      
