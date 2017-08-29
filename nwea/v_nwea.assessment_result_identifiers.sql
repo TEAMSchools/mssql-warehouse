@@ -280,7 +280,7 @@ FROM
                 ORDER BY growth_measure_yn DESC
                         ,CONVERT(DATE,test_start_date) DESC
                         ,test_standard_error ASC) AS rn_term_subj
-     FROM gabby.nwea.assessment_result
+     FROM gabby.nwea.assessmentresult
     ) sub
 JOIN gabby.powerschool.cohort_identifiers_static co
   ON sub.student_id = co.student_number
