@@ -37,15 +37,15 @@ SELECT sec.id AS sectionid
       ,ROW_NUMBER() OVER(
          PARTITION BY sec.id, gb.reportingterm_name, gb.assignmentcategoryid
            ORDER BY a.assign_date ASC) AS rn_category
-FROM gabby.powerschool.sections sec
-JOIN gabby.powerschool.teachers t
+FROM gabby.powerschool.sections sec WITH(NOLOCK)
+JOIN gabby.powerschool.teachers t WITH(NOLOCK)
   ON sec.teacher = t.id
-JOIN gabby.powerschool.courses cou
+JOIN gabby.powerschool.courses cou WITH(NOLOCK)
   ON sec.course_number = cou.course_number
-JOIN gabby.powerschool.gradebook_setup gb
+JOIN gabby.powerschool.gradebook_setup gb WITH(NOLOCK)
   ON sec.dcid = gb.sectionsdcid  
  AND gb.startdate <= CONVERT(DATE,GETDATE())
-LEFT OUTER JOIN gabby.powerschool.gradebook_assignments a
+LEFT OUTER JOIN gabby.powerschool.gradebook_assignments a WITH(NOLOCK)
   ON sec.id = a.sectionid
  AND gb.assignmentcategoryid = a.assignmentcategoryid
  AND a.assign_date between gb.startdate and gb.enddate
