@@ -1,4 +1,15 @@
 WITH raw_files AS (
+  SELECT 'gabby.njsmart.njask' AS _file
+        ,test_id AS _line
+        ,sid AS state_student_id
+        ,local_student_id
+        ,first_name
+        ,last_name
+        ,'gabby.njsmart.njask' AS table_name
+  FROM gabby.njsmart.njask
+
+  UNION ALL
+
   SELECT _file
         ,_line
         ,state_student_id
@@ -183,22 +194,44 @@ FROM
 WHERE max_rn = 1  
 --*/
 
---SELECT *
---      ,CONCAT('UPDATE ', table_name, ' SET local_student_id = ', sid_student_number, ' WHERE _file = ''', _file, ''' AND _line = ', _line, '; /*', first_name, ' ', last_name,'*/') AS update_statement
---FROM that
---WHERE local_student_id IS NULL
---ORDER BY _file, _line
+/* manual
+SELECT *
+      ,CONCAT('UPDATE ', table_name, ' SET local_student_id = ', sid_student_number, ' WHERE _file = ''', _file, ''' AND _line = ', _line, '; /*', first_name, ' ', last_name,'*/') AS update_statement
+FROM that
+WHERE local_student_id IS NULL
+ORDER BY _file, _line
+--*/
 
---SELECT n.state_student_id
---      ,n.local_student_id
---      ,n.first_name
---      ,n.last_name
+/* final SN check on njask_archive 
+SELECT n.state_student_id
+      ,n.local_student_id
+      ,n.first_name
+      ,n.last_name
       
---      ,s.state_studentnumber
---      ,s.lastfirst
+      ,s.state_studentnumber
+      ,s.lastfirst
       
---      ,CONCAT('UPDATE gabby.njsmart.njask_archive SET local_student_id =  WHERE _file = ''', n._file, ''' AND _line = ', n._line, '; /*', n.first_name, ' ', n.last_name,'*/') AS update_statement
---FROM gabby.njsmart.njask_archive n
---LEFT OUTER JOIN gabby.powerschool.students s
---  ON n.local_student_id = s.student_number
---WHERE s.student_number IS NULL
+      ,CONCAT('UPDATE gabby.njsmart.njask_archive SET local_student_id =  WHERE _file = ''', n._file, ''' AND _line = ', n._line, '; /*', n.first_name, ' ', n.last_name,'*/') AS update_statement
+FROM gabby.njsmart.njask_archive n
+LEFT OUTER JOIN gabby.powerschool.students s
+  ON n.local_student_id = s.student_number
+WHERE s.student_number IS NULL
+*/
+
+/* final SN check on njask
+SELECT n.sid
+      ,n.local_student_id
+      ,n.first_name
+      ,n.last_name
+
+      ,sid.student_number
+
+      ,sn.state_studentnumber
+      ,sn.lastfirst
+FROM gabby.njsmart.njask n
+LEFT OUTER JOIN gabby.powerschool.students sid
+  ON n.sid = sid.state_studentnumber
+LEFT OUTER JOIN gabby.powerschool.students sn
+  ON n.local_student_id = sn.student_number
+WHERE sn.lastfirst IS NULL
+*/
