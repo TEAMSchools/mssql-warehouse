@@ -198,7 +198,7 @@ JOIN gabby.powerschool.cohort_identifiers_static co
  AND rs.academic_year = co.academic_year
  AND co.rn_year = 1
 LEFT OUTER JOIN gabby.lit.network_goals goals
-  ON rs.test_round = goals.test_round 
+  ON rs.round_num = goals.round_num
  AND co.grade_level = goals.grade_level
  AND goals.norms_year = 2017
 LEFT OUTER JOIN gabby.lit.individualized_goals indiv

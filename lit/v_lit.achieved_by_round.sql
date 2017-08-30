@@ -90,19 +90,19 @@ WITH roster_scaffold AS (
              ,COALESCE(achv.unique_id, ps.unique_id) AS achv_unique_id
              ,COALESCE(dna.unique_id, ps.unique_id) AS dna_unique_id
        FROM roster_scaffold r
-       LEFT OUTER JOIN gabby.lit.all_test_events ps
+       LEFT OUTER JOIN gabby.lit.all_test_events_static ps
          ON r.student_number = ps.student_number      
         AND r.academic_year = ps.academic_year
         AND r.test_round = ps.test_round
         AND ps.status = 'Mixed'
         AND ps.curr_round = 1
-       LEFT OUTER JOIN gabby.lit.all_test_events achv 
+       LEFT OUTER JOIN gabby.lit.all_test_events_static achv 
          ON r.student_number = achv.student_number      
         AND r.academic_year = achv.academic_year
         AND r.test_round = achv.test_round
         AND achv.status = 'Achieved'
         AND achv.curr_round = 1
-       LEFT OUTER JOIN gabby.lit.all_test_events dna 
+       LEFT OUTER JOIN gabby.lit.all_test_events_static dna 
          ON r.student_number = dna.student_number      
         AND r.academic_year = dna.academic_year
         AND r.test_round = dna.test_round
@@ -139,13 +139,13 @@ WITH roster_scaffold AS (
              ,achv.unique_id AS achv_unique_id
              ,dna.unique_id AS dna_unique_id
        FROM roster_scaffold r  
-       LEFT OUTER JOIN gabby.lit.all_test_events achv
+       LEFT OUTER JOIN gabby.lit.all_test_events_static achv
          ON r.student_number = achv.student_number      
         AND r.academic_year = achv.academic_year
         AND r.test_round = achv.test_round
         AND achv.status = 'Achieved'
         AND achv.curr_round = 1
-       LEFT OUTER JOIN gabby.lit.all_test_events dna
+       LEFT OUTER JOIN gabby.lit.all_test_events_static dna
          ON r.student_number = dna.student_number      
         AND r.academic_year = dna.academic_year
         AND r.test_round = dna.test_round
@@ -198,7 +198,7 @@ WITH roster_scaffold AS (
              ,fp.unique_id AS achv_unique_id
              ,fp.unique_id AS dna_unique_id            
        FROM roster_scaffold r  
-       JOIN gabby.lit.all_test_events fp        
+       JOIN gabby.lit.all_test_events_static fp        
          ON r.student_number = fp.student_number
         AND r.academic_year = fp.academic_year
         AND fp.recent_yr = 1    
@@ -248,6 +248,7 @@ WITH roster_scaffold AS (
 ,dna AS (
   SELECT tests.academic_year        
         ,tests.student_number        
+        ,tests.test_round
         ,tests.round_num                             
         
         ,COALESCE(tests.dna_lvl, dna_prev.dna_lvl) AS dna_lvl
@@ -320,7 +321,7 @@ SELECT academic_year
         WHEN lvl_num <= prev_lvl_num THEN 0        
        END AS moved_levels
       ,SUM(CASE             
-            WHEN test_round IN ('DR','BOY') THEN 0 
+            WHEN round_num = 1 THEN 0 
             WHEN lvl_num > prev_lvl_num THEN 1 
             WHEN lvl_num <= prev_lvl_num THEN 0        
            END) OVER(PARTITION BY student_number, academic_year ORDER BY start_date ASC) AS n_levels_moved_y1
@@ -335,6 +336,7 @@ FROM
            ,sub.student_number           
            ,sub.reporting_term
            ,sub.test_round
+           ,sub.round_num
            ,sub.start_date
            ,sub.end_date
            ,sub.is_curterm
@@ -418,19 +420,19 @@ FROM
           LEFT OUTER JOIN dna
             ON achieved.student_number = dna.student_number
            AND achieved.academic_year = dna.academic_year
-           AND achieved.round_num = dna.round_num
+           AND achieved.test_round = dna.test_round
            AND dna.rn = 1
           WHERE achieved.rn = 1
          ) sub
      LEFT OUTER JOIN gabby.lit.network_goals goals 
        ON sub.grade_level = goals.grade_level
-      AND sub.test_round = goals.test_round
+      AND sub.round_num = goals.round_num
       AND goals.norms_year = 2017
      LEFT OUTER JOIN gabby.lit.individualized_goals indiv 
        ON sub.student_number = indiv.student_number
       AND sub.test_round = indiv.test_round
       AND sub.academic_year = indiv.academic_year
-     LEFT OUTER JOIN gabby.lit.all_test_events lit 
+     LEFT OUTER JOIN gabby.lit.all_test_events_static lit 
        ON sub.achv_unique_id = lit.unique_id
       AND lit.status != 'Did Not Achieve'     
     ) sub

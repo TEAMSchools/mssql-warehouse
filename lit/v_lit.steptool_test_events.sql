@@ -40,18 +40,7 @@ SELECT CONCAT('UC', gabby.utilities.DATE_TO_SY(step.date), step.[_line]) AS uniq
       ,co.grade_level      
 
       ,dt.alt_name AS test_round
-      ,CASE
-        /* ES */
-        WHEN dt.time_per_name = 'DR' THEN 1
-        WHEN dt.time_per_name = 'Q1' THEN 2
-        WHEN dt.time_per_name = 'Q2' THEN 3
-        WHEN dt.time_per_name = 'Q3' THEN 4
-        WHEN dt.time_per_name = 'Q4' THEN 5
-        /* MS */
-        WHEN dt.time_per_name = 'BOY' THEN 1
-        WHEN dt.time_per_name = 'MOY' THEN 2
-        WHEN dt.time_per_name = 'EOY' THEN 3
-       END AS round_num     
+      ,CONVERT(INT,RIGHT(dt.time_per_name, 1)) AS round_num     
 FROM gabby.steptool.all_steps step
 JOIN gabby.lit.gleq
   ON step.step = gleq.lvl_num
@@ -62,7 +51,7 @@ JOIN gabby.powerschool.cohort_identifiers_static co
  AND co.rn_year = 1
 JOIN gabby.reporting.reporting_terms dt
   ON co.schoolid = dt.schoolid
- AND CONVERT(DATE,step.date) BETWEEN dt.start_date AND dt.end_date
+ AND CONVERT(DATE,step.date) BETWEEN CONVERT(DATE,dt.start_date) AND CONVERT(DATE,dt.end_date)
  AND dt.identifier = 'LIT'
 
 UNION ALL
@@ -90,7 +79,7 @@ SELECT CONCAT('UC', gabby.utilities.DATE_TO_SY(step.date), step.[_line]) AS uniq
       ,co.grade_level      
 
       ,dt.alt_name AS test_round
-      ,CONVERT(INT,RIGHT(dt.time_per_name,1)) AS round_num     
+      ,CONVERT(INT,RIGHT(dt.time_per_name, 1)) AS round_num     
 FROM gabby.steptool.all_steps step
 JOIN gabby.powerschool.cohort_identifiers_static co
   ON CONVERT(INT,CONVERT(FLOAT,step.student_id)) = co.student_number
@@ -98,7 +87,7 @@ JOIN gabby.powerschool.cohort_identifiers_static co
  AND co.rn_year = 1
 JOIN gabby.reporting.reporting_terms dt
   ON co.schoolid = dt.schoolid
- AND CONVERT(DATE,step.date) BETWEEN dt.start_date AND dt.end_date
+ AND CONVERT(DATE,step.date) BETWEEN CONVERT(DATE,dt.start_date) AND CONVERT(DATE,dt.end_date)
  AND dt.identifier = 'LIT'
 WHERE step.step = 0
   AND step.passed = 0
