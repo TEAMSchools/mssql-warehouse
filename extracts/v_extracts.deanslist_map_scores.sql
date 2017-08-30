@@ -40,7 +40,7 @@ CROSS JOIN (
   SELECT 'Science - General Science' UNION
   SELECT 'Language Usage'
  ) subjects (subject)
-LEFT OUTER JOIN gabby.nwea.assessment_result_identifiers map 
+LEFT OUTER JOIN gabby.nwea.assessment_result_identifiers_static map 
   ON co.student_number = map.student_id
  AND co.academic_year  = map.student_id
  AND terms.term = map.term
