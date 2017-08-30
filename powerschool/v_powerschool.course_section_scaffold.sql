@@ -18,29 +18,27 @@ WITH course_scaffold AS (
   FROM
       (
        SELECT DISTINCT 
-              co.studentid
-             ,co.student_number
-             ,co.yearid      
-      
+              enr.studentid
+             ,enr.student_number
+             ,enr.yearid           
+             ,enr.course_number
+             ,enr.excludefromgpa
+
              ,terms.alt_name AS term_name        
              ,CONVERT(DATE,terms.start_date) AS term_start_date
              ,CONVERT(DATE,terms.end_date) AS term_end_date
-                            
-             ,enr.course_number
-             ,enr.excludefromgpa
-       FROM gabby.powerschool.cohort_identifiers_static co  
-       JOIN gabby.reporting.reporting_terms terms
-         ON co.schoolid = terms.schoolid   
-        AND co.academic_year = terms.academic_year
+       FROM gabby.powerschool.course_enrollments_static enr
+       JOIN gabby.powerschool.schools
+         ON enr.schoolid = schools.school_number
+        AND schools.high_grade >= 8
+       JOIN gabby.reporting.reporting_terms terms  
+         ON enr.yearid = terms.yearid
+        AND enr.schoolid = terms.schoolid
         AND terms.identifier = 'RT'
-        AND terms.alt_name != 'Summer School'
-       JOIN gabby.powerschool.course_enrollments_static enr
-         ON co.studentid = enr.studentid
-        AND co.yearid = enr.yearid
-        --AND enr.course_enroll_status = 0
-        --AND enr.section_enroll_status = 0
-        AND enr.dateenrolled <= CONVERT(DATE,GETDATE())
-       WHERE co.rn_year = 1
+        AND terms.alt_name NOT IN ('Summer School','Capstone','EOY')
+       WHERE enr.dateenrolled <= CONVERT(DATE,GETDATE())
+         AND enr.course_enroll_status = 0
+         AND enr.section_enroll_status = 0
       ) sub
  )
 
@@ -57,10 +55,10 @@ WITH course_scaffold AS (
              ORDER BY cc.dateleft DESC, cc.sectionid DESC) AS rn_term
   FROM gabby.powerschool.cc
   JOIN gabby.reporting.reporting_terms terms
-    ON cc.schoolid = terms.schoolid      
-   AND RIGHT(cc.studyear, 2) = terms.yearid   
+    ON cc.schoolid = terms.schoolid         
    AND cc.dateenrolled BETWEEN CONVERT(DATE,terms.start_date) AND CONVERT(DATE,terms.end_date)
-   AND terms.identifier = 'RT'
+   AND terms.identifier = 'RT'   
+   AND terms.school_level IN ('MS','HS')
   WHERE cc.dateenrolled <= CONVERT(DATE,GETDATE())
  )
 
