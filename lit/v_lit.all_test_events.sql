@@ -95,7 +95,7 @@ WITH all_systems AS (
   FROM gabby.lit.illuminate_test_events ill
  )
 
-SELECT rs.unique_id
+SELECT CONVERT(NVARCHAR,rs.unique_id) AS unique_id
       ,rs.testid
       ,rs.is_fp
       ,rs.academic_year

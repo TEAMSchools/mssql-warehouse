@@ -57,7 +57,7 @@ JOIN gabby.reporting.reporting_terms dt
 UNION ALL
 
 /* ACHIEVED PRE DNA */
-SELECT CONCAT('UC', gabby.utilities.DATE_TO_SY(step.date), step.[_line]) AS unique_id      
+SELECT CONCAT('UC', gabby.utilities.DATE_TO_SY(step.date), step.[_line],'PDNA') AS unique_id      
       ,CONVERT(INT,CONVERT(FLOAT,step.student_id)) AS student_number      
       ,gabby.utilities.DATE_TO_SY(step.date) AS academic_year      
       ,CONVERT(DATE,step.date) AS test_date

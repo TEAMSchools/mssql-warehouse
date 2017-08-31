@@ -64,6 +64,7 @@ WITH roster_scaffold AS (
              ORDER BY sub.academic_year DESC, sub.round_num DESC) AS meta_achv_round
   FROM
       (
+       /* 2015+ */
        SELECT r.student_number
              ,r.schoolid
              ,r.grade_level
@@ -112,7 +113,7 @@ WITH roster_scaffold AS (
 
        UNION ALL
 
-       /* historical data */
+       /* pre-2015 */
        SELECT r.student_number
              ,r.schoolid
              ,r.grade_level
@@ -420,13 +421,13 @@ FROM
           LEFT OUTER JOIN dna
             ON achieved.student_number = dna.student_number
            AND achieved.academic_year = dna.academic_year
-           AND achieved.test_round = dna.test_round
+           AND achieved.round_num = dna.round_num
            AND dna.rn = 1
           WHERE achieved.rn = 1
          ) sub
      LEFT OUTER JOIN gabby.lit.network_goals goals 
        ON sub.grade_level = goals.grade_level
-      AND sub.round_num = goals.round_num
+      AND sub.test_round = goals.test_round
       AND goals.norms_year = 2017
      LEFT OUTER JOIN gabby.lit.individualized_goals indiv 
        ON sub.student_number = indiv.student_number
