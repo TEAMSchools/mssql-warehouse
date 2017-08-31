@@ -19,8 +19,8 @@ BEGIN
     DELETE FROM deanslist.behavior
     WHERE behavior.dlsaid IN (SELECT dlsaid FROM INSERTED);
 
-    --INSERT INTO deanslist.behavior
-    --SELECT * FROM INSERTED
+    INSERT INTO deanslist.behavior
+    SELECT * FROM INSERTED
 
     --OUTPUT SELECT * FROM INSERTED;
   END;
