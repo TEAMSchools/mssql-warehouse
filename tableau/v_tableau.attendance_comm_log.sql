@@ -47,6 +47,10 @@ SELECT co.student_number
       ,cl.followup_staff_name
       ,cl.followup_init_notes
       ,cl.followup_close_notes
+
+      ,ROW_NUMBER() OVER(
+         PARTITION BY att.studentid, att.att_date
+           ORDER BY cl.student_school_id DESC) AS rn_date
 FROM gabby.powerschool.attendance att
 JOIN gabby.powerschool.attendance_code ac
   ON att.attendance_codeid = ac.id
