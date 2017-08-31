@@ -1,4 +1,15 @@
 WITH raw_files AS (
+  SELECT 'gabby.njsmart.njbct' AS _file
+        ,test_id AS _line
+        ,sid AS state_student_id
+        ,local_student_id
+        ,first_name
+        ,last_name
+        ,'gabby.njsmart.njbct' AS table_name
+  FROM gabby.njsmart.njbct
+
+  UNION ALL
+
   SELECT 'gabby.njsmart.njask' AS _file
         ,test_id AS _line
         ,sid AS state_student_id
@@ -111,6 +122,7 @@ ORDER BY _file, _line
 /* missing SN
 SELECT *
       ,CONCAT('UPDATE ', table_name, ' SET local_student_id = ', sid_student_number, ' WHERE _file = ''', _file, ''' AND _line = ', _line, ';') AS update_statement
+      ,CONCAT('UPDATE ', table_name, ' SET local_student_id = ', sid_student_number, ' WHERE sid = ', STR(state_student_id), ';') AS no_file_line
 FROM that
 WHERE is_dupe = 0
   AND local_student_id IS NULL

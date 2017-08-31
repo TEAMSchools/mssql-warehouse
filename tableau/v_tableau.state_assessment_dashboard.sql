@@ -38,6 +38,7 @@ SELECT co.student_number
       ,co.school_level     
       ,co.reporting_schoolid AS schoolid           
       ,co.grade_level 
+      ,co.cohort
       ,co.enroll_status
       ,co.iep_status
       ,co.lep_status
@@ -75,6 +76,7 @@ SELECT co.student_number
       ,co.school_level     
       ,co.reporting_schoolid AS schoolid           
       ,co.grade_level 
+      ,co.cohort
       ,co.enroll_status
       ,co.iep_status
       ,co.lep_status
