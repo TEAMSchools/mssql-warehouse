@@ -193,31 +193,31 @@ FROM
                  END) AS points
             
             ,ROUND(
-               (SUM(CASE WHEN arsp.rn_quiz = 1 THEN arsp.i_questions_correct END) 
-                  / SUM(CASE WHEN arsp.rn_quiz = 1 THEN arsp.i_questions_presented END)) 
+               (SUM(CASE WHEN arsp.rn_quiz = 1 THEN CONVERT(FLOAT,arsp.i_questions_correct) END) 
+                  / SUM(CASE WHEN arsp.rn_quiz = 1 THEN CONVERT(FLOAT,arsp.i_questions_presented) END)) 
                   * 100, 0) AS mastery
             ,ROUND(
                (SUM(CASE 
                      WHEN arsp.ch_fiction_non_fiction = 'F' 
                       AND arsp.rn_quiz = 1 
-                            THEN arsp.i_questions_correct 
+                            THEN CONVERT(FLOAT,arsp.i_questions_correct)
                     END) 
                   / SUM(CASE 
                          WHEN arsp.ch_fiction_non_fiction = 'F' 
                           AND arsp.rn_quiz = 1
-                                THEN arsp.i_questions_presented 
+                                THEN CONVERT(FLOAT,arsp.i_questions_presented)
                         END))
                   * 100, 0) AS mastery_fiction
             ,ROUND(
                (SUM(CASE 
                      WHEN arsp.ch_fiction_non_fiction != 'F' 
                       AND arsp.rn_quiz = 1
-                            THEN arsp.i_questions_correct 
+                            THEN CONVERT(FLOAT,arsp.i_questions_correct)
                     END)
                   / SUM(CASE 
                          WHEN arsp.ch_fiction_non_fiction != 'F' 
                           AND arsp.rn_quiz = 1
-                                THEN arsp.i_questions_presented                           
+                                THEN CONVERT(FLOAT,arsp.i_questions_presented)
                         END)) 
                   * 100, 0) AS mastery_nonfiction
             
@@ -236,10 +236,10 @@ FROM
                (SUM(CASE 
                      WHEN arsp.ch_fiction_non_fiction = 'F' 
                       AND arsp.rn_quiz = 1
-                            THEN arsp.i_word_count 
+                            THEN CONVERT(FLOAT,arsp.i_word_count)
                      ELSE 0 
                     END) 
-                  / SUM(CASE WHEN arsp.rn_quiz = 1 THEN arsp.i_word_count END)) 
+                  / SUM(CASE WHEN arsp.rn_quiz = 1 THEN CONVERT(FLOAT,arsp.i_word_count) END)) 
                   * 100, 0) AS pct_fiction
             
             ,ROUND(AVG(CASE WHEN arsp.rn_quiz = 1 THEN fl_lexile_calc END), 0) AS avg_lexile
@@ -268,4 +268,4 @@ FROM
               ,CONVERT(DATE,rt.end_date) 
               ,goals.words_goal
               ,goals.points_goal              
-     ) sub
+     ) sub 
