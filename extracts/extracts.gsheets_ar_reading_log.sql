@@ -1,20 +1,9 @@
 USE gabby
 GO
 
---ALTER VIEW REPORTING$reading_log AS
+ALTER VIEW extracts.gsheets_ar_reading_log AS
 
-WITH curhex AS (
-  SELECT schoolid
-        ,time_per_name AS reporting_term
-        ,alt_name
-        ,CONVERT(DATE,start_date) AS start_date
-        ,CONVERT(DATE,end_date) AS end_date
-  FROM gabby.reporting.reporting_terms
-  WHERE CONVERT(DATE,GETDATE()) BETWEEN CONVERT(DATE,start_date) AND CONVERT(DATE,end_date)
-    AND identifier = 'AR'
- )
-
-,fp AS (
+WITH fp AS (
   SELECT student_number
         ,read_lvl
         ,fp_wpmrate
@@ -91,7 +80,7 @@ WITH curhex AS (
                   ,CONVERT(NVARCHAR,mastery_fiction) AS accuracy_fiction
                   ,CONVERT(NVARCHAR,mastery_nonfiction) AS accuracy_nonfiction
                   ,CONVERT(NVARCHAR,mastery) AS accuracy_all           
-                  ,CONVERT(NVARCHAR,ROUND((CONVERT(FLOAT,N_passed) / CONVERT(FLOAT,N_total) * 100),1)) AS pct_passing
+                  ,CONVERT(NVARCHAR,ROUND((CONVERT(FLOAT,n_passed) / CONVERT(FLOAT,n_total) * 100),1)) AS pct_passing
                   ,CONVERT(NVARCHAR,CASE
                     WHEN CONVERT(FLOAT,ROUND((words / words_goal * 100),1)) > 100 THEN 100 
                     ELSE CONVERT(FLOAT,ROUND((words / words_goal * 100),1))
@@ -159,6 +148,93 @@ WITH curhex AS (
    ) p
 )
 
+,map_wide AS (
+  SELECT student_id AS student_number
+        ,academic_year
+        ,[base_rit_score]
+        ,[base_percentile_score]
+        ,[base_lexile_score]
+        ,[fall_rit_score]
+        ,[fall_percentile_score]
+        ,[fall_lexile_score]
+        ,[winter_rit_score]
+        ,[winter_percentile_score]
+        ,[winter_lexile_score]
+        ,[spring_rit_score]
+        ,[spring_percentile_score]
+        ,[spring_lexile_score]      
+        ,[cur_rit_score]
+        ,[cur_percentile_score]
+        ,[cur_lexile_score]      
+  FROM
+      (
+       SELECT student_id
+             ,academic_year
+             ,CONCAT(term, '_', field) AS pivot_field
+             ,value
+       FROM
+           (
+            SELECT student_id
+                  ,academic_year
+                  ,LOWER(term) AS term
+                  ,CONVERT(FLOAT,test_ritscore) AS rit_score
+                  ,CONVERT(FLOAT,percentile_2015_norms) AS percentile_score
+                  ,CONVERT(FLOAT,ritto_reading_score) AS lexile_score
+            FROM gabby.nwea.assessment_result_identifiers_static   
+            WHERE measurement_scale = 'Reading'  
+              AND rn_term_subj = 1
+              AND academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+
+            UNION ALL
+
+            SELECT student_number
+                  ,academic_year
+                  ,'base' AS term
+                  ,CONVERT(FLOAT,test_ritscore)
+                  ,CONVERT(FLOAT,testpercentile)
+                  ,CONVERT(FLOAT,lexile_score)
+            FROM gabby.nwea.best_baseline_static
+            WHERE measurementscale = 'Reading'         
+              AND academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
+
+            UNION ALL
+
+            SELECT student_id
+                  ,academic_year
+                  ,'cur' AS term
+                  ,CONVERT(FLOAT,test_ritscore)
+                  ,CONVERT(FLOAT,percentile_2015_norms)
+                  ,CONVERT(FLOAT,ritto_reading_score)
+            FROM gabby.nwea.assessment_result_identifiers_static
+            WHERE measurement_scale = 'Reading'  
+              AND rn_curr_yr = 1
+              AND academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+           ) sub
+       UNPIVOT(
+         value
+         FOR field IN (rit_score, percentile_score, lexile_score)
+        ) u
+      ) sub
+  PIVOT(
+    MAX(value)
+    FOR pivot_field IN ([winter_rit_score]
+                       ,[winter_percentile_score]
+                       ,[winter_lexile_score]
+                       ,[spring_rit_score]
+                       ,[spring_percentile_score]
+                       ,[spring_lexile_score]
+                       ,[fall_rit_score]
+                       ,[fall_percentile_score]
+                       ,[fall_lexile_score]
+                       ,[cur_rit_score]
+                       ,[cur_percentile_score]
+                       ,[cur_lexile_score]
+                       ,[base_rit_score]
+                       ,[base_percentile_score]
+                       ,[base_lexile_score])
+   ) p
+ )
+
 SELECT co.student_number
       ,co.lastfirst
       ,co.schoolid
@@ -167,50 +243,21 @@ SELECT co.student_number
       ,co.team
       ,CONCAT(co.first_name, ' ', co.last_name) AS name
       
-      ,enr.course_name + '|' + enr.section_number AS enr_hash
-      ,enr.course_number
-      ,enr.course_name
-
-      /* grades */
-      ,gr.term_grade_percent AS cur_term_rdg_gr
-      ,gr.y1_grade_percent_adjusted AS y1_rdg_gr
-      
-      ,ele.H_CUR AS cur_term_rdg_hw_avg
-      ,ele.H_Y1 AS y1_rdg_hw_avg
-      
-      /* F&P */
-      ,fp_base.read_lvl AS fp_base_letter
-      ,fp_base.fp_wpmrate AS starting_fluency
-
-      ,fp_curr.read_lvl AS fp_cur_letter      
-      ,fp_curr.fp_wpmrate AS cur_fluency      
-
-      /* MAP */
-      ,base.test_ritscore AS map_baseline
-      ,base.lexile_score AS lexile_baseline_MAP      
-      
-      ,map_fall.ritto_reading_score AS lexile_fall
-      
-      ,map_winter.ritto_reading_score AS lexile_winter       
-
-      ,COALESCE(cur_rit.test_ritscore, base.test_ritscore) AS cur_RIT
-      ,COALESCE(cur_rit.percentile_2015_norms, base.testpercentile) AS cur_RIT_percentile             
- 
-       /* AR curterm */      
-      ,ar_cur.stu_status_words AS term_on_track     
-      ,ar_cur.N_passed
-      ,ar_cur.N_total      
+      /* AR curterm */            
+      ,ar_cur.n_passed
+      ,ar_cur.n_total      
       ,ar_cur.mastery AS cur_accuracy
       ,ar_cur.mastery_fiction AS cur_accuracy_fiction
-      ,ar_cur.mastery_nonfiction AS cur_accuracy_nonfiction
-      --,ar_cur.rank_words_grade_in_school AS term_rank_words
-      ,NULL AS term_rank_words
-      ,REPLACE(CONVERT(NVARCHAR,CONVERT(MONEY, ar_cur.words),1),'.00','') AS term_words
-      ,REPLACE(CONVERT(NVARCHAR,CONVERT(MONEY, ar_cur.words_goal),1),'.00','') AS term_goal
+      ,ar_cur.mastery_nonfiction AS cur_accuracy_nonfiction      
+      ,REPLACE(CONVERT(NVARCHAR,CONVERT(MONEY, ar_cur.words),1),'.00','') AS hex_words
+      ,REPLACE(CONVERT(NVARCHAR,CONVERT(MONEY, ar_cur.words_goal),1),'.00','') AS hex_goal
       ,CASE
         WHEN ar_cur.ontrack_words - ar_cur.words < 0 THEN '0'
         ELSE REPLACE(CONVERT(NVARCHAR,CONVERT(MONEY, ar_cur.ontrack_words - ar_cur.words),1),'.00','')
-       END AS term_needed
+       END AS hex_needed
+      ,ar_cur.stu_status_words AS hex_on_track     
+      --,ar_cur.rank_words_grade_in_school AS term_rank_words
+      ,NULL AS hex_rank_words
 
        /* AR yr */      
       ,ar_year.mastery AS accuracy
@@ -223,54 +270,100 @@ SELECT co.student_number
       ,NULL AS year_rank_words      
       ,REPLACE(CONVERT(NVARCHAR,CONVERT(MONEY,ar_year.words),1),'.00','') AS year_words
       ,REPLACE(CONVERT(NVARCHAR,CONVERT(MONEY,ar_year.words_goal),1),'.00','') AS year_goal
-      ,ROUND((CONVERT(FLOAT,ar_year.N_passed) / CONVERT(FLOAT,ar_year.N_total) * 100), 1) AS pct_passing_yr
+      ,ROUND((CONVERT(FLOAT,ar_year.n_passed) / CONVERT(FLOAT,ar_year.n_total) * 100), 1) AS pct_passing_yr
       
       /* AR by term */
-      ,ar_wide.ar1_accuracy_all
-      ,ar_wide.ar1_accuracy_fiction
-      ,ar_wide.ar1_accuracy_nonfiction
-      ,ar_wide.ar1_goal
-      ,ar_wide.ar1_pct_goal
-      ,ar_wide.ar1_pct_passing
-      ,ar_wide.ar1_words
-      ,ar_wide.ar2_accuracy_all
-      ,ar_wide.ar2_accuracy_fiction
-      ,ar_wide.ar2_accuracy_nonfiction
-      ,ar_wide.ar2_goal
-      ,ar_wide.ar2_pct_goal
-      ,ar_wide.ar2_pct_passing
-      ,ar_wide.ar2_words
-      ,ar_wide.ar3_accuracy_all
-      ,ar_wide.ar3_accuracy_fiction
-      ,ar_wide.ar3_accuracy_nonfiction
-      ,ar_wide.ar3_goal
-      ,ar_wide.ar3_pct_goal
-      ,ar_wide.ar3_pct_passing
-      ,ar_wide.ar3_words
-      ,ar_wide.ar4_accuracy_all
-      ,ar_wide.ar4_accuracy_fiction
-      ,ar_wide.ar4_accuracy_nonfiction
-      ,ar_wide.ar4_goal
-      ,ar_wide.ar4_pct_goal
-      ,ar_wide.ar4_pct_passing
-      ,ar_wide.ar4_words
-      ,ar_wide.ar5_accuracy_all
-      ,ar_wide.ar5_accuracy_fiction
-      ,ar_wide.ar5_accuracy_nonfiction
-      ,ar_wide.ar5_goal
-      ,ar_wide.ar5_pct_goal
-      ,ar_wide.ar5_pct_passing
-      ,ar_wide.ar5_words
-      ,ar_wide.ar6_accuracy_all
-      ,ar_wide.ar6_accuracy_fiction
-      ,ar_wide.ar6_accuracy_nonfiction
-      ,ar_wide.ar6_goal
-      ,ar_wide.ar6_pct_goal
-      ,ar_wide.ar6_pct_passing
-      ,ar_wide.ar6_words        
+      ,ar_wide.ar1_accuracy_all AS hex1_accuracy_all
+      ,ar_wide.ar1_accuracy_fiction AS hex1_accuracy_fiction
+      ,ar_wide.ar1_accuracy_nonfiction AS hex1_accuracy_nonfiction
+      ,ar_wide.ar1_goal AS hex1_goal
+      ,ar_wide.ar1_pct_goal AS hex1_pct_goal
+      ,ar_wide.ar1_pct_passing AS hex1_pct_passing
+      ,ar_wide.ar1_words AS hex1_words
+      ,ar_wide.ar2_accuracy_all AS hex2_accuracy_all
+      ,ar_wide.ar2_accuracy_fiction AS hex2_accuracy_fiction
+      ,ar_wide.ar2_accuracy_nonfiction AS hex2_accuracy_nonfiction
+      ,ar_wide.ar2_goal AS hex2_goal
+      ,ar_wide.ar2_pct_goal AS hex2_pct_goal
+      ,ar_wide.ar2_pct_passing AS hex2_pct_passing
+      ,ar_wide.ar2_words AS hex2_words
+      ,ar_wide.ar3_accuracy_all AS hex3_accuracy_all
+      ,ar_wide.ar3_accuracy_fiction AS hex3_accuracy_fiction
+      ,ar_wide.ar3_accuracy_nonfiction AS hex3_accuracy_nonfiction
+      ,ar_wide.ar3_goal AS hex3_goal
+      ,ar_wide.ar3_pct_goal AS hex3_pct_goal
+      ,ar_wide.ar3_pct_passing AS hex3_pct_passing
+      ,ar_wide.ar3_words AS hex3_words
+      ,ar_wide.ar4_accuracy_all AS hex4_accuracy_all
+      ,ar_wide.ar4_accuracy_fiction AS hex4_accuracy_fiction
+      ,ar_wide.ar4_accuracy_nonfiction AS hex4_accuracy_nonfiction
+      ,ar_wide.ar4_goal AS hex4_goal
+      ,ar_wide.ar4_pct_goal AS hex4_pct_goal
+      ,ar_wide.ar4_pct_passing AS hex4_pct_passing
+      ,ar_wide.ar4_words AS hex4_words
+      ,ar_wide.ar5_accuracy_all AS hex5_accuracy_all
+      ,ar_wide.ar5_accuracy_fiction AS hex5_accuracy_fiction
+      ,ar_wide.ar5_accuracy_nonfiction AS hex5_accuracy_nonfiction
+      ,ar_wide.ar5_goal AS hex5_goal
+      ,ar_wide.ar5_pct_goal AS hex5_pct_goal
+      ,ar_wide.ar5_pct_passing AS hex5_pct_passing
+      ,ar_wide.ar5_words AS hex5_words
+      ,ar_wide.ar6_accuracy_all AS hex6_accuracy_all
+      ,ar_wide.ar6_accuracy_fiction AS hex6_accuracy_fiction
+      ,ar_wide.ar6_accuracy_nonfiction AS hex6_accuracy_nonfiction
+      ,ar_wide.ar6_goal AS hex6_goal
+      ,ar_wide.ar6_pct_goal AS hex6_pct_goal
+      ,ar_wide.ar6_pct_passing AS hex6_pct_passing
+      ,ar_wide.ar6_words  AS hex6_words 
+      
+      /* F&P */
+      ,fp_base.read_lvl AS fp_base_letter
+      ,fp_base.fp_wpmrate AS starting_fluency
+
+      ,fp_curr.read_lvl AS fp_cur_letter      
+      ,fp_curr.fp_wpmrate AS cur_fluency     
+      
+      /* course enrollments */      
+      ,enr.course_number
+      ,enr.course_name
+      ,enr.course_name + ' | ' + enr.section_number AS enr_hash
+
+      /* gradebook grades */
+      ,gr.term_grade_percent AS cur_term_rdg_gr
+      ,gr.y1_grade_percent_adjusted AS y1_rdg_gr
+      
+      ,ele.h_cur AS cur_term_rdg_hw_avg
+      ,ele.h_y1 AS y1_rdg_hw_avg 
+
+      /* MAP */
+      ,map_wide.base_rit_score AS map_baseline
+      ,map_wide.base_lexile_score AS lexile_baseline_map                 
+      ,map_wide.fall_lexile_score AS lexile_fall      
+      ,map_wide.winter_lexile_score AS lexile_winter       
+      ,COALESCE(map_wide.cur_rit_score, map_wide.base_rit_score) AS cur_rit
+      ,COALESCE(map_wide.cur_percentile_score, map_wide.base_percentile_score) AS cur_rit_percentile      
 FROM gabby.powerschool.cohort_identifiers_static co
-LEFT OUTER JOIN curhex
+LEFT OUTER JOIN gabby.reporting.reporting_terms curhex
   ON co.schoolid = curhex.schoolid  
+ AND CONVERT(DATE,GETDATE()) BETWEEN CONVERT(DATE,curhex.start_date) AND CONVERT(DATE,curhex.end_date)
+ AND curhex.identifier = 'AR'
+ AND curhex.time_per_name != 'ARY'
+LEFT OUTER JOIN gabby.renaissance.ar_progress_to_goals_static ar_cur 
+  ON co.student_number = ar_cur.student_number
+ AND co.academic_year = ar_cur.academic_year
+ AND curhex.time_per_name = ar_cur.reporting_term
+LEFT OUTER JOIN gabby.renaissance.ar_progress_to_goals_static  ar_year
+  ON co.student_number = ar_year.student_number
+ AND co.academic_year = ar_year.academic_year
+ AND ar_year.reporting_term = 'ARY' 
+LEFT OUTER JOIN ar_wide 
+  ON co.student_number = ar_wide.student_number
+LEFT OUTER JOIN fp fp_base
+  ON co.student_number = fp_base.student_number
+ AND fp_base.rn_base = 1
+LEFT OUTER JOIN fp fp_curr
+  ON co.student_number = fp_curr.student_number
+ AND fp_curr.rn_curr = 1
 LEFT OUTER JOIN gabby.powerschool.course_enrollments_static enr
   ON co.studentid = enr.studentid
  AND co.academic_year = enr.academic_year
@@ -285,50 +378,9 @@ LEFT OUTER JOIN gabby.powerschool.category_grades_wide ele
  AND co.academic_year = ele.academic_year 
  AND gr.course_number = ele.course_number   
  AND ele.is_curterm = 1
-LEFT OUTER JOIN fp fp_base
-  ON co.student_number = fp_base.student_number
- AND fp_base.rn_base = 1
-LEFT OUTER JOIN fp fp_curr
-  ON co.student_number = fp_curr.student_number
- AND fp_curr.rn_curr = 1
-LEFT OUTER JOIN gabby.renaissance.ar_progress_to_goals_static ar_cur 
-  ON co.student_number = ar_cur.student_number
- AND co.academic_year = ar_cur.academic_year
- AND curhex.reporting_term = ar_cur.reporting_term
-LEFT OUTER JOIN gabby.renaissance.ar_progress_to_goals_static  ar_year
-  ON co.student_number = ar_year.student_number
- AND co.academic_year = ar_year.academic_year
- AND ar_year.reporting_term = 'ARY' 
-LEFT OUTER JOIN ar_wide 
-  ON co.student_number = ar_wide.student_number
-LEFT OUTER JOIN gabby.nwea.best_baseline_static base
-  ON co.student_number = base.student_number
- AND co.academic_year = base.academic_year
- AND base.measurementscale = 'Reading'
-LEFT OUTER JOIN gabby.nwea.assessment_result_identifiers_static map_fall
-  ON co.student_number = map_fall.student_id
- AND co.academic_year = map_fall.academic_year
- AND map_fall.measurement_scale = 'Reading' 
- AND map_fall.term = 'Fall'
- AND map_fall.rn_term_subj = 1
-LEFT OUTER JOIN gabby.nwea.assessment_result_identifiers_static map_winter
-  ON co.studentid = map_winter.student_id
- AND co.academic_year = map_winter.academic_year
- AND map_winter.measurement_scale = 'Reading' 
- AND map_winter.term = 'Winter'
- AND map_winter.rn_term_subj = 1
-LEFT OUTER JOIN gabby.nwea.assessment_result_identifiers_static map_spr 
-  ON co.studentid = map_spr.student_id
- AND co.academic_year - 1 = map_spr.academic_year
- AND map_spr.measurement_scale = 'Reading' 
- AND map_spr.term = 'Spring'
- AND map_spr.rn_term_subj = 1
-LEFT OUTER JOIN gabby.nwea.assessment_result_identifiers_static cur_rit
-  ON co.studentid = cur_rit.student_id 
- AND co.academic_year = cur_rit.academic_year
- AND cur_rit.measurement_scale = 'Reading'    
- AND cur_rit.rn_curr_yr = 1
-WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-  AND co.reporting_schoolid IN (73252, 133570965, 73258, 73255, 179902, 179903, 1799015075)
+LEFT OUTER JOIN map_wide
+  ON co.student_number = map_wide.student_number
+WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()  
+  AND co.school_level = 'MS'
   AND co.enroll_status = 0    
-  AND co.rn_year = 1    
+  AND co.rn_year = 1
