@@ -119,6 +119,7 @@ LEFT OUTER JOIN dlrosters r
 JOIN gabby.deanslist.behavior dlb 
   ON co.student_number = dlb.student_school_id
  AND co.academic_year = gabby.utilities.DATE_TO_SY(behavior_date)
+ AND dlb.is_deleted = 0
 JOIN gabby.reporting.reporting_terms d
   ON co.schoolid = d.schoolid
  AND CONVERT(DATE,dlb.behavior_date) BETWEEN d.start_date AND d.end_date 
