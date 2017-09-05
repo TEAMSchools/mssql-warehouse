@@ -3,7 +3,25 @@ GO
 
 ALTER VIEW tableau.state_assessment_dashboard AS
 
-WITH external_prof AS (
+WITH promo AS (
+  SELECT student_number
+        ,CASE WHEN [ES] IS NOT NULL THEN 1 ELSE 0 END AS attended_es
+        ,CASE WHEN [MS] IS NOT NULL THEN 1 ELSE 0 END AS attended_ms
+  FROM
+      (
+       SELECT student_number
+             ,school_level
+             ,grade_level
+       FROM gabby.powerschool.cohort_identifiers_static
+       WHERE rn_school = 1
+      ) sub
+  PIVOT(
+    MAX(grade_level)
+    FOR school_level IN ([ES],[MS])
+   ) p
+ )
+
+,external_prof AS (
   SELECT academic_year        
         ,test_code
         ,grade_level
@@ -39,6 +57,8 @@ SELECT co.student_number
       ,co.reporting_schoolid AS schoolid           
       ,co.grade_level 
       ,co.cohort
+      ,co.entry_schoolid
+      ,co.entry_grade_level
       ,co.enroll_status
       ,co.iep_status
       ,co.lep_status
@@ -58,6 +78,9 @@ SELECT co.student_number
       ,ext.nps AS pct_prof_nps
       ,ext.cps AS pct_prof_cps
       ,ext.parcc AS pct_prof_parcc       
+
+      ,promo.attended_es
+      ,promo.attended_ms
 FROM gabby.powerschool.cohort_identifiers_static co
 JOIN gabby.parcc.summative_record_file_clean parcc
   ON co.student_number = parcc.local_student_identifier
@@ -65,6 +88,8 @@ JOIN gabby.parcc.summative_record_file_clean parcc
 LEFT OUTER JOIN external_prof ext
   ON co.academic_year = ext.academic_year
  AND parcc.test_code = ext.test_code
+LEFT OUTER JOIN promo
+  ON co.student_number = promo.student_number
 WHERE co.rn_year = 1
 
 UNION ALL
@@ -77,6 +102,8 @@ SELECT co.student_number
       ,co.reporting_schoolid AS schoolid           
       ,co.grade_level 
       ,co.cohort
+      ,co.entry_schoolid
+      ,co.entry_grade_level
       ,co.enroll_status
       ,co.iep_status
       ,co.lep_status
@@ -101,6 +128,9 @@ SELECT co.student_number
       ,ext.nps AS pct_prof_nps
       ,ext.cps AS pct_prof_cps
       ,ext.parcc AS pct_prof_parcc       
+
+      ,promo.attended_es
+      ,promo.attended_ms
 FROM gabby.powerschool.cohort_identifiers_static co
 JOIN gabby.njsmart.all_state_assessments asa
   ON co.student_number = asa.local_student_id
@@ -108,4 +138,6 @@ JOIN gabby.njsmart.all_state_assessments asa
 LEFT OUTER JOIN external_prof ext
   ON co.academic_year = ext.academic_year
  AND CONCAT(LEFT(asa.subject, 3), RIGHT(CONCAT('0', co.grade_level), 2)) = ext.test_code
+LEFT OUTER JOIN promo
+  ON co.student_number = promo.student_number
 WHERE co.rn_year = 1
