@@ -428,7 +428,7 @@ FROM
      LEFT OUTER JOIN gabby.lit.network_goals goals 
        ON sub.grade_level = goals.grade_level
       AND sub.test_round = goals.test_round
-      AND goals.norms_year = 2017
+      AND sub.academic_year = goals.norms_year
      LEFT OUTER JOIN gabby.lit.individualized_goals indiv 
        ON sub.student_number = indiv.student_number
       AND sub.test_round = indiv.test_round
