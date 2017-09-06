@@ -116,7 +116,7 @@ WITH scaffold AS (
              ,start_date
              ,end_date
              ,att_code
-             ,count_term
+             ,count_term 
              ,SUM(count_term) OVER(PARTITION BY studentid, academic_year ORDER BY start_date) AS count_year
        FROM
            (
@@ -157,8 +157,8 @@ WITH scaffold AS (
 
 SELECT studentid
       ,academic_year
-      ,reporting_term
-      ,term_name
+      ,CONVERT(NVARCHAR,reporting_term) AS reporting_term
+      ,CONVERT(NVARCHAR,term_name) AS term_name
       ,is_curterm
       
       ,a_count_term

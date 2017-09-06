@@ -29,7 +29,7 @@ WITH attendance AS (
              ,att.tdy_all_count_y1        
              ,ROUND(att.abs_unexcused_count_y1 + (att.tdy_all_count_y1 / 3), 1, 1) AS att_pts
              ,ROUND(((att.mem_count_y1 - (att.abs_unexcused_count_y1 + FLOOR(att.tdy_all_count_y1 / 3))) / att.mem_count_y1) * 100, 0) AS att_pts_pct
-       FROM gabby.powerschool.attendance_counts att
+       FROM gabby.powerschool.attendance_counts_static att
        WHERE att.mem_count_y1 > 0
       ) sub
  )
