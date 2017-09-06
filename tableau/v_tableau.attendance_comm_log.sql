@@ -9,6 +9,7 @@ WITH commlog AS (
         ,c.response AS commlog_notes        
         ,c.call_topic AS commlog_topic
         ,CONVERT(DATE,c.call_date_time) AS commlog_date
+		,NULL AS 'Laszlo'
         
         ,CONCAT(u.first_name, ' ', u.last_name) AS commlog_staff_name
         
