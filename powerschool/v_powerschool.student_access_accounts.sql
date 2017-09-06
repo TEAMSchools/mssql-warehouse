@@ -41,11 +41,13 @@ WITH clean_names AS (
     ON s.id = adv.studentid
    AND adv.yearid = (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990)
    AND adv.rn_year = 1
-  WHERE s.enroll_status != -1          
+  WHERE s.enroll_status != -1
+    AND s.dob IS NOT NULL
  )
 
 SELECT student_number
       ,schoolid
+      ,enroll_status
       ,team
       ,base_username
       ,alt_username
