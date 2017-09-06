@@ -6,12 +6,12 @@ ALTER VIEW illuminate_dna_assessments.student_assessment_scaffold AS
 /* standard curriculum */
 SELECT DISTINCT 
        a.assessment_id
-      ,NULL AS title
+      ,a.title
       ,a.administered_at        
       ,a.performance_band_set_id
       ,(a.academic_year - 1) AS academic_year
       ,CASE
-        WHEN ds.code_translation NOT IN ('CMA - End-of-Module', 'CMA - Mid-Module') THEN NULL
+        WHEN ds.code_translation NOT IN ('CMA - End-of-Module', 'CMA - Mid-Module', 'CGI Quiz', 'Cold Read Quizzes', 'Cummulative Review Quizzes') THEN NULL
         WHEN ds.code_translation = 'CMA - End-of-Module' THEN 'End-of-Module'
         WHEN ds.code_translation = 'CMA - Mid-Module' 
          AND PATINDEX('%Checkpoint [0-9]%', a.title) = 0
@@ -33,7 +33,7 @@ SELECT DISTINCT
 FROM gabby.illuminate_dna_assessments.assessments a  
 JOIN gabby.illuminate_codes.dna_scopes ds
   ON a.code_scope_id = ds.code_id
- AND ds.code_translation IN ('CMA - End-of-Module', 'CMA - Mid-Module')
+ AND ds.code_translation IN ('CMA - End-of-Module', 'CMA - Mid-Module', 'CGI Quiz', 'Cold Read Quizzes', 'Cummulative Review Quizzes')
 JOIN gabby.illuminate_codes.dna_subject_areas dsa
   ON a.code_subject_area_id = dsa.code_id    
 JOIN gabby.illuminate_dna_assessments.assessment_grade_levels agl
@@ -48,12 +48,12 @@ UNION ALL
 /* replacement curriculum */
 SELECT DISTINCT 
        a.assessment_id
-      ,NULL AS title
+      ,a.title
       ,a.administered_at        
       ,a.performance_band_set_id
       ,(a.academic_year - 1) AS academic_year
       ,CASE
-        WHEN ds.code_translation NOT IN ('CMA - End-of-Module', 'CMA - Mid-Module') THEN NULL
+        WHEN ds.code_translation NOT IN ('CMA - End-of-Module', 'CMA - Mid-Module', 'CGI Quiz', 'Cold Read Quizzes', 'Cummulative Review Quizzes') THEN NULL
         WHEN ds.code_translation = 'CMA - End-of-Module' THEN 'End-of-Module'
         WHEN ds.code_translation = 'CMA - Mid-Module' 
          AND PATINDEX('%Checkpoint [0-9]%', a.title) = 0
@@ -75,7 +75,7 @@ SELECT DISTINCT
 FROM gabby.illuminate_dna_assessments.assessments a  
 JOIN gabby.illuminate_codes.dna_scopes ds
   ON a.code_scope_id = ds.code_id
- AND ds.code_translation IN ('CMA - End-of-Module', 'CMA - Mid-Module')
+ AND ds.code_translation IN ('CMA - End-of-Module', 'CMA - Mid-Module', 'CGI Quiz', 'Cold Read Quizzes', 'Cummulative Review Quizzes')
 JOIN gabby.illuminate_codes.dna_subject_areas dsa
   ON a.code_subject_area_id = dsa.code_id    
 JOIN gabby.illuminate_dna_assessments.assessment_grade_levels agl
@@ -112,10 +112,10 @@ SELECT a.assessment_id
 FROM gabby.illuminate_dna_assessments.assessments a  
 LEFT OUTER JOIN gabby.illuminate_codes.dna_scopes ds
   ON a.code_scope_id = ds.code_id
- AND ds.code_translation NOT IN ('CMA - End-of-Module', 'CMA - Mid-Module')
+ AND ds.code_translation NOT IN ('CMA - End-of-Module', 'CMA - Mid-Module', 'CGI Quiz', 'Cold Read Quizzes', 'Cummulative Review Quizzes')
 LEFT OUTER JOIN gabby.illuminate_codes.dna_subject_areas dsa
   ON a.code_subject_area_id = dsa.code_id    
 LEFT OUTER JOIN gabby.illuminate_dna_assessments.students_assessments sa
   ON a.assessment_id = sa.assessment_id
-WHERE (ds.code_translation NOT IN ('CMA - End-of-Module', 'CMA - Mid-Module') OR a.code_scope_id IS NULL)
+WHERE (ds.code_translation NOT IN ('CMA - End-of-Module', 'CMA - Mid-Module', 'CGI Quiz', 'Cold Read Quizzes', 'Cummulative Review Quizzes') OR a.code_scope_id IS NULL)
   AND a.deleted_at IS NULL
