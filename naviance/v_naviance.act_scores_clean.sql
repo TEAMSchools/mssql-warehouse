@@ -6,6 +6,7 @@ ALTER VIEW naviance.act_scores_clean AS
 SELECT naviance_studentid	
       ,student_number	
       ,test_type	
+      ,academic_year
       ,test_date	
       ,composite	
       ,english	
@@ -54,7 +55,7 @@ FROM
          (
           SELECT studentid AS naviance_studentid
                 ,hs_student_id AS student_number                
-                ,test_type                
+                ,REPLACE(test_type,' (Legacy)','') AS test_type
                 
                 ,CASE
                   WHEN test_date = '0000-00-00' THEN NULL
