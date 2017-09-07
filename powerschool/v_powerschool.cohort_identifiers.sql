@@ -99,14 +99,10 @@ SELECT co.studentid
         WHEN sch.high_grade = 4 THEN 'ES'
        END AS school_level
 
-      ,CASE 
-        WHEN co.schoolid = 73253 THEN adv.advisory_name
-        WHEN co.schoolid IN (179902, 133570965) THEN gabby.utilities.STRIP_CHARACTERS(s.team,'0-9')
-        ELSE adv.advisory_name
-       END AS team
-      ,CASE WHEN co.schoolid = 179902 THEN suf.advisor ELSE adv.advisor_name END AS advisor_name
-      ,CASE WHEN co.schoolid = 179902 THEN suf.advisor_cell ELSE adv.advisor_phone END AS advisor_phone
-      ,CASE WHEN co.schoolid = 179902 THEN suf.advisor_email ELSE adv.advisor_email END AS advisor_email
+      ,adv.advisory_name AS team
+      ,adv.advisor_name
+      ,adv.advisor_phone
+      ,adv.advisor_email
       
       ,CASE 
         WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() AND co.rn_year = 1 THEN mcs.mealbenefitstatus 
@@ -141,7 +137,7 @@ SELECT co.studentid
        END AS lep_status      
 FROM gabby.powerschool.cohort co
 JOIN gabby.powerschool.students s
-  ON co.studentid = s.ID
+  ON co.studentid = s.id
 LEFT OUTER JOIN gabby.powerschool.u_studentsuserfields suf
   ON s.dcid = suf.studentsdcid
 LEFT OUTER JOIN gabby.powerschool.studentcorefields scf
@@ -163,7 +159,7 @@ LEFT OUTER JOIN gabby.powerschool.spenrollments_gen sp
  */
 LEFT OUTER JOIN gabby.powerschool.advisory adv
   ON co.studentid = adv.studentid
- AND co.yearid = adv.yearid
+ AND co.academic_year = adv.academic_year
  AND adv.rn_year = 1
 LEFT OUTER JOIN gabby.mcs.lunch_info mcs
   ON CONVERT(VARCHAR,s.student_number) = CONVERT(VARCHAR,mcs.studentnumber)

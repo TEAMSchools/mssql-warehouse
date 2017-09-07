@@ -4,8 +4,8 @@ GO
 ALTER VIEW powerschool.student_access_accounts AS 
 
 WITH clean_names AS (
-  SELECT CONVERT(INT,s.student_number) AS student_number
-        ,CONVERT(INT,s.schoolid) AS schoolid
+  SELECT s.student_number
+        ,s.schoolid
         ,s.grade_level        
         ,s.first_name
         ,s.last_name
@@ -29,26 +29,16 @@ WITH clean_names AS (
             WHEN CHARINDEX('-',s.last_name) > 0 THEN LEFT(s.last_name,CHARINDEX('-',s.last_name) - 1)
             ELSE REPLACE(s.last_name, ' JR', '')
            END), '^A-Z') AS last_name_clean        
-        ,LEFT(CASE 
-               WHEN s.schoolid = 73253 THEN adv.advisory_name
-               WHEN s.schoolid IN (179902, 133570965) THEN gabby.utilities.STRIP_CHARACTERS(s.team,'0-9')
-               ELSE adv.advisory_name
-              END, 10) AS team
   FROM gabby.powerschool.students s 
   JOIN gabby.powerschool.schools sch
     ON s.schoolid = sch.school_number  
-  LEFT OUTER JOIN gabby.powerschool.advisory adv
-    ON s.id = adv.studentid
-   AND adv.yearid = (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990)
-   AND adv.rn_year = 1
   WHERE s.enroll_status != -1
     AND s.dob IS NOT NULL
- )
+ ) 
 
 SELECT student_number
       ,schoolid
       ,enroll_status
-      ,team
       ,base_username
       ,alt_username
       
@@ -71,10 +61,9 @@ FROM
     (
      SELECT student_number
            ,schoolid
-           ,grade_level
-           ,enroll_status
            ,school_name
-           ,team
+           ,grade_level         
+           ,enroll_status           
            ,first_name_clean
            ,first_init
            ,last_name_clean
@@ -83,8 +72,7 @@ FROM
            ,dob_year
            ,base_username
            ,alt_username
-           ,base_dupe_audit
-           
+           ,base_dupe_audit           
            ,CASE 
              WHEN base_dupe_audit > 1 THEN 1 
              WHEN LEN(base_username) > 16 THEN 1 
@@ -98,10 +86,9 @@ FROM
          (         
           SELECT student_number
                 ,schoolid
+                ,school_name                
+                ,grade_level              
                 ,enroll_status
-                ,grade_level
-                ,team
-                ,school_name
                 ,first_name_clean
                 ,first_init
                 ,last_name_clean
@@ -110,6 +97,7 @@ FROM
                 ,dob_year
                 ,last_name_clean + dob_month + dob_day AS base_username
                 ,first_name_clean + dob_month + dob_day AS alt_username
+                
                 ,ROW_NUMBER() OVER(
                    PARTITION BY last_name_clean + dob_month + dob_day
                      ORDER BY student_number) AS base_dupe_audit           
