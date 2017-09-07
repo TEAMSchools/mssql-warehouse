@@ -21,7 +21,7 @@ WITH commlog AS (
     ON c.dluser_id = u.dluser_id
   LEFT OUTER JOIN gabby.deanslist.followups f
     ON c.followup_id = f.followup_id
-  WHERE c.reason LIKE 'att:%'
+  WHERE (c.reason LIKE 'att:%' OR c.reason LIKE 'chronic%')
  )
 
 SELECT co.student_number
