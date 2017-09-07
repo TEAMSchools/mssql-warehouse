@@ -77,17 +77,26 @@ WITH attendance AS (
              ,lit.goal_num             
              ,lit.is_new_test
              ,CASE 
-               WHEN lit.test_round = 'DR' AND is_curterm = 1 THEN 'Q1' 
+               WHEN lit.test_round = 'DR' AND lit.is_curterm = 1 THEN 'Q1' 
                ELSE lit.test_round 
-              END AS term_name
+              END AS term_name             
              
-             ,MAX(CASE WHEN lit.rn_round_asc = 1 THEN lit.read_lvl END) OVER(PARTITION BY lit.student_number, lit.academic_year) AS base_read_lvl
-             ,LAG(lit.goal_num, 1) OVER(PARTITION BY lit.student_number, lit.academic_year ORDER BY lit.start_date ASC) AS prev_goal_num                          
+             ,lit_prev.goal_num AS prev_goal_num                          
+             ,lit.lvl_num - lit_prev.lvl_num AS lvls_grown_term
+
+             ,lit_base.read_lvl AS base_read_lvl
+             ,lit.lvl_num - lit_base.lvl_num AS lvls_grown_yr
              
-             ,COUNT(CASE WHEN lit.end_date <= CONVERT(DATE,GETDATE()) THEN lit.read_lvl END) OVER(PARTITION BY lit.student_number, lit.academic_year ORDER BY lit.end_date ASC) - 1 AS n_growth_rounds             
-             ,lit.lvl_num - LAG(lit.lvl_num, 1) OVER(PARTITION BY lit.student_number, lit.academic_year ORDER BY lit.rn_round_asc) AS lvls_grown_term       
-             ,lit.lvl_num - MAX(CASE WHEN lit.rn_round_asc = 1 THEN lit.lvl_num END) OVER(PARTITION BY lit.student_number, lit.academic_year) AS lvls_grown_yr                    
+             ,COUNT(CASE WHEN lit.end_date <= CONVERT(DATE,GETDATE()) THEN lit.read_lvl END) OVER(PARTITION BY lit.student_number, lit.academic_year ORDER BY lit.end_date ASC) - 1 AS n_growth_rounds                                       
        FROM gabby.lit.achieved_by_round_static lit
+       LEFT OUTER JOIN gabby.lit.achieved_by_round_static lit_base
+         ON lit.student_number = lit_base.student_number
+        AND lit.academic_year = lit_base.academic_year
+        AND lit_base.rn_round_asc = 1
+       LEFT OUTER JOIN gabby.lit.achieved_by_round_static lit_prev
+         ON lit.student_number = lit_prev.student_number
+        AND lit.academic_year = lit_prev.academic_year
+        AND (lit.rn_round_asc - 1) = lit_prev.rn_round_asc
       ) sub
  )
 
@@ -96,7 +105,6 @@ WITH attendance AS (
         ,academic_year
         ,term_name
         ,N_below_60
-        ,N_below_65
         ,N_below_70
         ,CASE
           WHEN N_below_60 > 0 THEN 'Off Track'
@@ -109,7 +117,6 @@ WITH attendance AS (
              ,gr.academic_year
              ,gr.term_name
              ,SUM(CASE WHEN gr.y1_grade_percent_adjusted < 70 THEN 1 ELSE 0 END) AS N_below_70
-             ,SUM(CASE WHEN gr.y1_grade_percent_adjusted < 65 THEN 1 ELSE 0 END) AS N_below_65
              ,SUM(CASE WHEN gr.y1_grade_percent_adjusted < 60 THEN 1 ELSE 0 END) AS N_below_60
        FROM gabby.powerschool.final_grades_static gr
        WHERE gr.excludefromgpa = 0
@@ -176,7 +183,6 @@ SELECT studentid
       ,promo_status_lit
       ,promo_status_grades
       ,N_below_60
-      ,N_below_65
       ,N_below_70
       ,credits_enrolled_cum
       ,credits_enrolled_y1
@@ -247,7 +253,6 @@ FROM
            /* final grades */
            ,fg.promo_status_grades
            ,fg.N_below_60
-           ,fg.N_below_65
            ,fg.N_below_70
 
            /* credits */
