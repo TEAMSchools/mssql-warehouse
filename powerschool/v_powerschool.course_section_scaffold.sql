@@ -24,7 +24,7 @@ WITH course_scaffold AS (
              ,enr.course_number
              ,enr.excludefromgpa
 
-             ,terms.alt_name AS term_name        
+             ,CONVERT(NVARCHAR,terms.alt_name) AS term_name        
              ,CONVERT(DATE,terms.start_date) AS term_start_date
              ,CONVERT(DATE,terms.end_date) AS term_end_date
        FROM gabby.powerschool.course_enrollments_static enr
@@ -42,24 +42,34 @@ WITH course_scaffold AS (
       ) sub
  )
 
-,section_scaffold AS (
-  SELECT cc.studentid            
-        ,cc.course_number            
-        ,LEFT(ABS(cc.termid), 2) AS yearid      
-        ,ABS(cc.sectionid) AS abs_sectionid
-      
-        ,CASE WHEN terms.alt_name = 'Summer School' THEN 'Q1' ELSE terms.alt_name END AS term_name
-
+,section_scaffold AS (  
+  SELECT studentid
+        ,course_number
+        ,yearid
+        ,abs_sectionid
+        ,term_name
         ,ROW_NUMBER() OVER(
-           PARTITION BY cc.studyear, cc.course_number, CASE WHEN terms.alt_name = 'Summer School' THEN 'Q1' ELSE terms.alt_name END
-             ORDER BY cc.dateleft DESC, cc.sectionid DESC) AS rn_term
-  FROM gabby.powerschool.cc
-  JOIN gabby.reporting.reporting_terms terms
-    ON cc.schoolid = terms.schoolid         
-   AND cc.dateenrolled BETWEEN CONVERT(DATE,terms.start_date) AND CONVERT(DATE,terms.end_date)
-   AND terms.identifier = 'RT'   
-   AND terms.school_level IN ('MS','HS')
-  WHERE cc.dateenrolled <= CONVERT(DATE,GETDATE())
+           PARTITION BY studyear, course_number, term_name
+             ORDER BY dateleft DESC, sectionid DESC) AS rn_term
+  FROM
+      (
+       SELECT cc.studentid            
+             ,cc.studyear
+             ,cc.course_number            
+             ,cc.sectionid             
+             ,cc.dateleft
+             ,LEFT(ABS(cc.termid), 2) AS yearid      
+             ,ABS(cc.sectionid) AS abs_sectionid
+      
+             ,CASE WHEN terms.alt_name = 'Summer School' THEN 'Q1' ELSE CONVERT(NVARCHAR,terms.alt_name) END AS term_name        
+       FROM gabby.powerschool.cc
+       JOIN gabby.reporting.reporting_terms terms
+         ON cc.schoolid = terms.schoolid         
+        AND cc.dateenrolled BETWEEN CONVERT(DATE,terms.start_date) AND CONVERT(DATE,terms.end_date)
+        AND terms.identifier = 'RT'   
+        AND terms.school_level IN ('MS','HS')
+       WHERE cc.dateenrolled <= CONVERT(DATE,GETDATE())
+      ) sub
  )
 
 SELECT cs.studentid
