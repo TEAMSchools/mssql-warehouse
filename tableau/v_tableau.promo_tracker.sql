@@ -1,7 +1,7 @@
 USE gabby
 GO
 
---ALTER VIEW tableau.promo_tracker AS 
+ALTER VIEW tableau.promo_tracker AS 
 
 WITH roster AS (
   SELECT co.studentid
@@ -17,7 +17,7 @@ WITH roster AS (
         ,co.iep_status
         ,co.enroll_status
 
-        ,CONVERT(NVARCHAR,dt.alt_name) AS term
+        ,CONVERT(NVARCHAR,dt.alt_name) AS term_name
         ,CONVERT(NVARCHAR,dt.time_per_name) AS reporting_term
         ,CONVERT(DATE,dt.start_date) AS term_start_date
         ,CONVERT(DATE,dt.end_date) AS term_end_date
@@ -791,20 +791,20 @@ WITH roster AS (
    ) u
  )
 
-,blended AS (
+,instructional_tech AS (
   SELECT student_number
         ,academic_year        
         ,words AS progress
         ,words_goal AS goal
         ,stu_status_words AS goal_status
-        ,CASE WHEN reporting_term = 'ARY' THEN 'Y1' ELSE REPLACE(reporting_term, 'AR', 'Q') END AS reporting_term
+        ,CASE WHEN reporting_term = 'ARY' THEN 'Y1' ELSE REPLACE(reporting_term, 'AR', 'Q') END AS term_name
         ,'BLENDED LEARNING' AS domain
         ,'AR' AS subdomain      
   FROM gabby.renaissance.ar_progress_to_goals_static
   WHERE academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
  )
 
-/*
+--/*
 SELECT r.studentid
       ,r.student_number
       ,r.lastfirst
@@ -816,7 +816,7 @@ SELECT r.studentid
       ,r.advisor_name
       ,r.iep_status
       ,r.enroll_status
-      ,r.term
+      ,r.term_name
       ,r.reporting_term      
       ,gr.domain
       ,gr.subdomain      
@@ -835,7 +835,7 @@ LEFT OUTER JOIN grades gr
 
 UNION ALL
 --*/
-/*
+--/*
 SELECT r.studentid
       ,r.student_number
       ,r.lastfirst
@@ -847,7 +847,7 @@ SELECT r.studentid
       ,r.advisor_name
       ,r.iep_status
       ,r.enroll_status
-      ,r.term
+      ,r.term_name
       ,r.reporting_term      
       ,att.domain
       ,att.subdomain      
@@ -866,7 +866,7 @@ LEFT OUTER JOIN attendance att
 
 UNION ALL
 --*/
-/*
+--/*
 SELECT r.studentid
       ,r.student_number
       ,r.lastfirst
@@ -893,11 +893,11 @@ FROM roster r
 LEFT OUTER JOIN modules cma
   ON r.student_number = cma.student_number
  AND r.academic_year = cma.academic_year
-WHERE r.term = 'Y1' 
+WHERE r.term_name = 'Y1' 
 
 UNION ALL
 --*/
-/*
+--/*
 SELECT r.studentid
       ,r.student_number
       ,r.lastfirst
@@ -909,7 +909,7 @@ SELECT r.studentid
       ,r.advisor_name
       ,r.iep_status
       ,r.enroll_status
-      ,r.term
+      ,r.term_name
       ,r.reporting_term      
       ,gpa.domain
       ,gpa.subdomain      
@@ -956,337 +956,350 @@ FROM roster r
 LEFT OUTER JOIN lit
   ON r.student_number = lit.student_number
  AND r.academic_year >= lit.academic_year
-WHERE r.term = 'Y1'
+WHERE r.term_name = 'Y1'
 
---UNION ALL
+UNION ALL
 --*/
 --/*
---SELECT r.studentid
---      ,r.student_number
---      ,r.lastfirst
---      ,map.test_year AS year
---      ,r.reporting_schoolid AS schoolid
---      ,r.grade_level
---      ,r.cohort
---      ,r.team
---      ,r.advisor_name
---      ,r.iep_status
---      ,r.enroll_status
---      ,map.term
---      ,r.reporting_term      
---      ,map.domain
---      ,map.subdomain      
---      ,map.measurementscale AS subject
---      ,NULL AS course_name
---      ,CONVERT(VARCHAR,map.testritscore) AS measure_name
---      ,map.testpercentile AS measure_value
---      ,NULL AS measure_date
---      ,NULL AS performance_level
---      ,NULL AS performance_level_label
---FROM roster r
---LEFT OUTER JOIN map
---  ON r.student_number = map.student_number
--- AND r.academic_year >= map.academic_year
---WHERE r.reporting_term = 'Y1' 
+SELECT r.studentid
+      ,r.student_number
+      ,r.lastfirst
+      ,map.test_year AS year
+      ,r.reporting_schoolid AS schoolid
+      ,r.grade_level
+      ,r.cohort
+      ,r.team
+      ,r.advisor_name
+      ,r.iep_status
+      ,r.enroll_status
+      ,map.term
+      ,r.reporting_term      
+      ,map.domain
+      ,map.subdomain      
+      ,map.measurement_scale AS subject
+      ,NULL AS course_name
+      ,CONVERT(VARCHAR,map.test_ritscore) AS measure_name
+      ,map.testpercentile AS measure_value
+      ,NULL AS measure_date
+      ,NULL AS performance_level
+      ,NULL AS performance_level_label
+FROM roster r
+LEFT OUTER JOIN map
+  ON r.student_number = map.student_number
+ AND r.academic_year >= map.academic_year
+WHERE r.term_name = 'Y1' 
 
---UNION ALL
+UNION ALL
+--*/
+--/*
+SELECT r.studentid
+      ,r.student_number
+      ,r.lastfirst
+      ,std.academic_year AS year
+      ,r.reporting_schoolid AS schoolid
+      ,r.grade_level
+      ,r.cohort
+      ,r.team
+      ,r.advisor_name
+      ,r.iep_status
+      ,r.enroll_status
+      ,r.term_name
+      ,r.reporting_term      
+      ,'STANDARDIZED TESTS' AS domain
+      ,std.test_name AS subdomain
+      ,std.subject AS subject
+      ,NULL AS course_name
+      ,CONVERT(NVARCHAR(256),NEWID()) AS measure_name
+      ,std.test_scale_score AS measure_value
+      ,std.test_date AS measure_date
+      ,std.test_performance_level AS performance_level
+      ,std.performance_level_label
+FROM roster r
+LEFT OUTER JOIN standardized_tests std
+  ON r.student_number = std.student_number
+WHERE r.term_name = 'Y1'
 
---SELECT r.studentid
---      ,r.student_number
---      ,r.lastfirst
---      ,std.academic_year AS year
---      ,r.reporting_schoolid AS schoolid
---      ,r.grade_level
---      ,r.cohort
---      ,r.team
---      ,r.advisor_name
---      ,r.iep_status
---      ,r.enroll_status
---      ,r.term
---      ,r.reporting_term      
---      ,'STANDARDIZED TESTS' AS domain
---      ,std.test_name AS subdomain
---      ,std.subject AS subject
---      ,NULL AS course_name
---      ,CONVERT(VARCHAR,std.BINI_ID) AS measure_name
---      ,std.scale_score AS measure_value
---      ,std.test_date AS measure_date
---      ,std.performance_level
---      ,std.performance_level_label
---FROM roster r
---LEFT OUTER JOIN standardized_tests std
---  ON r.student_number = std.student_number
---WHERE r.reporting_term = 'Y1'
+UNION ALL
+--*/
+--/*
+SELECT r.studentid
+      ,r.student_number
+      ,r.lastfirst
+      ,r.academic_year
+      ,r.reporting_schoolid AS schoolid
+      ,r.grade_level
+      ,r.cohort
+      ,r.team
+      ,r.advisor_name
+      ,r.iep_status
+      ,r.enroll_status
+      ,r.term_name
+      ,r.reporting_term      
+      ,'COLLEGE APPS' AS domain
+      ,apps.level AS subdomain
+      ,apps.result_code AS subject
+      ,apps.collegename AS course_name
+      ,NULL AS measure_name
+      ,NULL AS measure_value
+      ,NULL AS measure_date
+      ,apps.competitiveness_ranking AS performance_level
+      ,apps.value AS performance_level_label
+FROM roster r
+LEFT OUTER JOIN collegeapps apps
+  ON r.student_number = apps.student_number
+WHERE r.term_name = 'Y1'
 
---UNION ALL
+UNION ALL
+--*/
+--/*
+SELECT r.studentid
+      ,r.student_number
+      ,r.lastfirst
+      ,r.academic_year
+      ,r.reporting_schoolid AS schoolid
+      ,r.grade_level
+      ,r.cohort
+      ,r.team
+      ,r.advisor_name
+      ,r.iep_status
+      ,r.enroll_status
+      ,r.term_name
+      ,r.reporting_term      
+      ,promo.domain
+      ,promo.subdomain
+      ,NULL AS subject
+      ,NULL AS course_name
+      ,NULL AS measure_name
+      ,NULL AS measure_value
+      ,NULL AS measure_date
+      ,promo.numeric_value AS performance_level
+      ,promo.text_value AS performance_level_label
+FROM roster r
+LEFT OUTER JOIN promo_status promo
+  ON r.student_number = promo.student_number 
+ AND r.academic_year = promo.academic_year
+WHERE r.term_name = 'Y1'
 
---SELECT r.studentid
---      ,r.student_number
---      ,r.lastfirst
---      ,r.academic_year
---      ,r.reporting_schoolid AS schoolid
---      ,r.grade_level
---      ,r.cohort
---      ,r.team
---      ,r.advisor_name
---      ,r.iep_status
---      ,r.enroll_status
---      ,r.term
---      ,r.reporting_term      
---      ,'COLLEGE APPS' AS domain
---      ,apps.level AS subdomain
---      ,apps.result_code AS subject
---      ,apps.collegename AS course_name
---      ,NULL AS measure_name
---      ,NULL AS measure_value
---      ,NULL AS measure_date
---      ,apps.competitiveness_index__c AS performance_level
---      ,apps.value AS performance_level_label
---FROM roster r
---LEFT OUTER JOIN collegeapps apps
---  ON r.student_number = apps.student_number
---WHERE r.reporting_term = 'Y1'
+UNION ALL
+--*/
+--/*
+SELECT r.studentid
+      ,r.student_number
+      ,r.lastfirst
+      ,r.academic_year
+      ,r.reporting_schoolid AS schoolid
+      ,r.grade_level
+      ,r.cohort
+      ,r.team
+      ,r.advisor_name
+      ,r.iep_status
+      ,r.enroll_status
+      ,r.term_name
+      ,r.reporting_term      
+      ,c.domain
+      ,c.type AS subdomain
+      ,c.person AS subject
+      ,NULL AS course_name
+      ,c.value AS measure_name
+      ,NULL AS measure_value
+      ,NULL AS measure_date
+      ,NULL AS performance_level
+      ,NULL AS performance_level_label
+FROM roster r
+LEFT OUTER JOIN contact c
+  ON r.student_number = c.student_number  
+WHERE r.term_name = 'Y1'
 
---UNION ALL
+UNION ALL
+--*/
+--/*
+SELECT r.studentid
+      ,r.student_number
+      ,r.lastfirst
+      ,r.academic_year
+      ,r.reporting_schoolid AS schoolid
+      ,r.grade_level
+      ,r.cohort
+      ,r.team
+      ,r.advisor_name
+      ,r.iep_status
+      ,r.enroll_status
+      ,r.term_name
+      ,r.reporting_term      
+      ,b.domain
+      ,b.subdomain
+      ,NULL AS subject
+      ,NULL AS course_name
+      ,NULL AS measure_name
+      ,b.progress AS measure_value
+      ,NULL AS measure_date
+      ,b.goal AS performance_level
+      ,b.goal_status AS performance_level_label
+FROM roster r
+JOIN instructional_tech b
+  ON r.student_number = b.student_number
+ AND r.academic_year = b.academic_year
+ AND r.term_name = b.term_name
 
---SELECT r.studentid
---      ,r.student_number
---      ,r.lastfirst
---      ,r.academic_year
---      ,r.reporting_schoolid AS schoolid
---      ,r.grade_level
---      ,r.cohort
---      ,r.team
---      ,r.advisor_name
---      ,r.iep_status
---      ,r.enroll_status
---      ,r.term
---      ,r.reporting_term      
---      ,logs.domain
---      ,logs.logtype AS subdomain
---      ,NULL AS subject
---      ,NULL AS course_name
---      ,logs.subtype AS measure_name
---      ,logs.n_counts AS measure_value
---      ,NULL AS measure_date
---      ,NULL AS performance_level
---      ,NULL AS performance_level_label
---FROM roster r
---LEFT OUTER JOIN disc_logs logs
---  ON r.studentid = logs.studentid
--- AND r.academic_year = logs.academic_year
--- AND r.reporting_term = logs.reporting_term
---WHERE r.term != 'Y1'
+UNION ALL
+--*/
+--/*
+/* blank row for default */
+SELECT DISTINCT 
+       NULL AS studentid
+      ,NULL AS student_number
+      ,' Choose a student...' AS lastfirst
+      ,academic_year
+      ,reporting_schoolid AS schoolid
+      ,grade_level
+      ,NULL AS cohort
+      ,NULL AS team
+      ,advisor_name      
+      ,'No IEP' AS spedlep
+      ,0 AS enroll_status
+      ,NULL AS term
+      ,NULL AS reporting_term      
+      ,'CONTACT' AS domain
+      ,NULL AS subdomain
+      ,NULL AS subject
+      ,NULL AS course_name
+      ,NULL AS measure_name
+      ,NULL AS measure_value
+      ,NULL AS measure_date
+      ,NULL AS performance_level
+      ,NULL AS performance_level_label
+FROM gabby.powerschool.cohort_identifiers_static 
+WHERE academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
+  AND reporting_schoolid NOT IN (999999, 5173)
+--*/
 
---UNION ALL
+/* no longer used */
+/*
+UNION ALL
 
---SELECT r.studentid
---      ,r.student_number
---      ,r.lastfirst
---      ,r.academic_year
---      ,r.reporting_schoolid AS schoolid
---      ,r.grade_level
---      ,r.cohort
---      ,r.team
---      ,r.advisor_name
---      ,r.iep_status
---      ,r.enroll_status
---      ,r.term
---      ,r.reporting_term      
---      ,daily.domain
---      ,daily.field AS subdomain
---      ,daily.time_of_day AS subject
---      ,NULL AS course_name
---      ,NULL AS measure_name
---      ,daily.n_counts AS measure_value
---      ,NULL AS measure_date
---      ,NULL AS performance_level
---      ,NULL AS performance_level_label
---FROM roster r
---LEFT OUTER JOIN daily_tracking daily
---  ON r.studentid = daily.studentid
--- AND r.academic_year = daily.academic_year
--- AND r.term = daily.term
---WHERE r.term != 'Y1'
+SELECT r.studentid
+      ,r.student_number
+      ,r.lastfirst
+      ,r.academic_year
+      ,r.reporting_schoolid AS schoolid
+      ,r.grade_level
+      ,r.cohort
+      ,r.team
+      ,r.advisor_name
+      ,r.iep_status
+      ,r.enroll_status
+      ,r.term_name
+      ,r.reporting_term      
+      ,logs.domain
+      ,logs.logtype AS subdomain
+      ,NULL AS subject
+      ,NULL AS course_name
+      ,logs.subtype AS measure_name
+      ,logs.n_counts AS measure_value
+      ,NULL AS measure_date
+      ,NULL AS performance_level
+      ,NULL AS performance_level_label
+FROM roster r
+LEFT OUTER JOIN disc_logs logs
+  ON r.studentid = logs.studentid
+ AND r.academic_year = logs.academic_year
+ AND r.reporting_term = logs.reporting_term
+WHERE r.term_name != 'Y1'
 
---UNION ALL
+UNION ALL
+--*/
+/*
+SELECT r.studentid
+      ,r.student_number
+      ,r.lastfirst
+      ,r.academic_year
+      ,r.reporting_schoolid AS schoolid
+      ,r.grade_level
+      ,r.cohort
+      ,r.team
+      ,r.advisor_name
+      ,r.iep_status
+      ,r.enroll_status
+      ,r.term_name
+      ,r.reporting_term      
+      ,daily.domain
+      ,daily.field AS subdomain
+      ,daily.time_of_day AS subject
+      ,NULL AS course_name
+      ,NULL AS measure_name
+      ,daily.n_counts AS measure_value
+      ,NULL AS measure_date
+      ,NULL AS performance_level
+      ,NULL AS performance_level_label
+FROM roster r
+LEFT OUTER JOIN daily_tracking daily
+  ON r.studentid = daily.studentid
+ AND r.academic_year = daily.academic_year
+ AND r.term_name = daily.term
+WHERE r.term_name != 'Y1'
 
---SELECT r.studentid
---      ,r.student_number
---      ,r.lastfirst
---      ,r.academic_year
---      ,r.reporting_schoolid AS schoolid
---      ,r.grade_level
---      ,r.cohort
---      ,r.team
---      ,r.advisor_name
---      ,r.iep_status
---      ,r.enroll_status
---      ,r.term
---      ,r.reporting_term      
---      ,promo.domain
---      ,promo.subdomain
---      ,NULL AS subject
---      ,NULL AS course_name
---      ,NULL AS measure_name
---      ,NULL AS measure_value
---      ,NULL AS measure_date
---      ,promo.numeric_value AS performance_level
---      ,promo.text_value AS performance_level_label
---FROM roster r
---LEFT OUTER JOIN promo_status promo
---  ON r.student_number = promo.student_number 
--- AND r.academic_year = promo.academic_year
---WHERE r.term = 'Y1'
+UNION ALL
+--*/
+/*
+SELECT r.studentid
+      ,r.student_number
+      ,r.lastfirst
+      ,r.academic_year
+      ,r.reporting_schoolid AS schoolid
+      ,r.grade_level
+      ,r.cohort
+      ,r.team
+      ,r.advisor_name
+      ,r.iep_status
+      ,r.enroll_status
+      ,ss.term
+      ,r.reporting_term      
+      ,'SOCIAL SKILLS' AS domain
+      ,NULL AS subdomain
+      ,NULL AS subject
+      ,NULL AS course_name
+      ,ss.social_skill AS measure_name
+      ,CONVERT(FLOAT,ss.score) AS measure_value
+      ,NULL AS measure_date
+      ,NULL AS performance_level
+      ,NULL AS performance_level_label
+FROM roster r
+JOIN KIPP_NJ..REPORTING$social_skills#ES ss WITH(NOLOCK)
+  ON r.student_number = ss.student_number 
+ AND r.academic_year = ss.academic_year
+ AND r.term_name = ss.term
+ AND ISNUMERIC(ss.score) = 1
+WHERE r.term_name != 'Y1'
+  AND r.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
 
---UNION ALL
-
---SELECT r.studentid
---      ,r.student_number
---      ,r.lastfirst
---      ,r.academic_year
---      ,r.reporting_schoolid AS schoolid
---      ,r.grade_level
---      ,r.cohort
---      ,r.team
---      ,r.advisor_name
---      ,r.iep_status
---      ,r.enroll_status
---      ,ss.term
---      ,r.reporting_term      
---      ,'SOCIAL SKILLS' AS domain
---      ,NULL AS subdomain
---      ,NULL AS subject
---      ,NULL AS course_name
---      ,ss.social_skill AS measure_name
---      ,CONVERT(FLOAT,ss.score) AS measure_value
---      ,NULL AS measure_date
---      ,NULL AS performance_level
---      ,NULL AS performance_level_label
---FROM roster r
---JOIN KIPP_NJ..REPORTING$social_skills#ES ss WITH(NOLOCK)
---  ON r.student_number = ss.student_number 
--- AND r.academic_year = ss.academic_year
--- AND r.term = ss.term
--- AND ISNUMERIC(ss.score) = 1
---WHERE r.term != 'Y1'
---  AND r.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
-
---UNION ALL
-
---SELECT r.studentid
---      ,r.student_number
---      ,r.lastfirst
---      ,r.academic_year
---      ,r.reporting_schoolid AS schoolid
---      ,r.grade_level
---      ,r.cohort
---      ,r.team
---      ,r.advisor_name
---      ,r.iep_status
---      ,r.enroll_status
---      ,r.term
---      ,r.reporting_term      
---      ,c.domain
---      ,c.type AS subdomain
---      ,c.person AS subject
---      ,NULL AS course_name
---      ,c.value AS measure_name
---      ,NULL AS measure_value
---      ,NULL AS measure_date
---      ,NULL AS performance_level
---      ,NULL AS performance_level_label
---FROM roster r
---LEFT OUTER JOIN contact c
---  ON r.STUDENTID = c.STUDENTID  
---WHERE r.term = 'Y1'
-
---UNION ALL
-
---SELECT r.studentid
---      ,r.student_number
---      ,r.lastfirst
---      ,r.academic_year
---      ,r.reporting_schoolid AS schoolid
---      ,r.grade_level
---      ,r.cohort
---      ,r.team
---      ,r.advisor_name
---      ,r.iep_status
---      ,r.enroll_status
---      ,CONVERT(VARCHAR,ww.listweek_num) AS term
---      ,r.reporting_term      
---      ,ww.domain
---      ,ww.subdomain
---      ,NULL AS subject
---      ,NULL AS course_name
---      ,ww.word AS measure_name
---      ,ww.score AS measure_value
---      ,NULL AS measure_date
---      ,NULL AS performance_level
---      ,NULL AS performance_level_label
---FROM roster r
---JOIN wordwork ww
---  ON r.student_number = ww.student_number
--- AND r.academic_year = ww.academic_year
---WHERE r.term = 'Y1'
-
---UNION ALL
-
---SELECT r.studentid
---      ,r.student_number
---      ,r.lastfirst
---      ,r.academic_year
---      ,r.reporting_schoolid AS schoolid
---      ,r.grade_level
---      ,r.cohort
---      ,r.team
---      ,r.advisor_name
---      ,r.iep_status
---      ,r.enroll_status
---      ,r.term
---      ,r.reporting_term      
---      ,b.domain
---      ,b.subdomain
---      ,NULL AS subject
---      ,NULL AS course_name
---      ,NULL AS measure_name
---      ,b.progress AS measure_value
---      ,NULL AS measure_date
---      ,b.goal AS performance_level
---      ,b.goal_status AS performance_level_label
---FROM roster r
---JOIN blended b
---  ON r.student_number = b.student_number
--- AND r.academic_year = b.academic_year
--- AND r.reporting_term = b.reporting_term
-
---/* blank row for default */
---UNION ALL
-
---SELECT DISTINCT 
---       NULL AS studentid
---      ,NULL AS student_number
---      ,' Choose a student...' AS lastfirst
---      ,year
---      ,reporting_schoolid AS schoolid
---      ,grade_level
---      ,NULL AS cohort
---      ,NULL AS team
---      ,advisor      
---      ,'No IEP' AS spedlep
---      ,0 AS enroll_status
---      ,NULL AS term
---      ,NULL AS reporting_term      
---      ,'CONTACT' AS domain
---      ,NULL AS subdomain
---      ,NULL AS subject
---      ,NULL AS course_name
---      ,NULL AS measure_name
---      ,NULL AS measure_value
---      ,NULL AS measure_date
---      ,NULL AS performance_level
---      ,NULL AS performance_level_label
---FROM KIPP_NJ..COHORT$identifiers_long#static WITH(NOLOCK)
---WHERE year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
---  AND schoolid != 999999
+UNION ALL
+--*/
+/*
+SELECT r.studentid
+      ,r.student_number
+      ,r.lastfirst
+      ,r.academic_year
+      ,r.reporting_schoolid AS schoolid
+      ,r.grade_level
+      ,r.cohort
+      ,r.team
+      ,r.advisor_name
+      ,r.iep_status
+      ,r.enroll_status
+      ,CONVERT(VARCHAR,ww.listweek_num) AS term
+      ,r.reporting_term      
+      ,ww.domain
+      ,ww.subdomain
+      ,NULL AS subject
+      ,NULL AS course_name
+      ,ww.word AS measure_name
+      ,ww.score AS measure_value
+      ,NULL AS measure_date
+      ,NULL AS performance_level
+      ,NULL AS performance_level_label
+FROM roster r
+JOIN wordwork ww
+  ON r.student_number = ww.student_number
+ AND r.academic_year = ww.academic_year
+WHERE r.term_name = 'Y1'
+--*/
