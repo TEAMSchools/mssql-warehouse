@@ -19,7 +19,7 @@ WITH enrolled_oct1 AS (
  )
 
 ,attrition_dates AS (
-  SELECT date
+  SELECT CONVERT(DATE,date) AS date
         ,CASE 
           WHEN DATEPART(MONTH,date) >= 10 THEN DATEPART(YEAR,date)
           ELSE DATEPART(YEAR,date) - 1
@@ -38,10 +38,12 @@ SELECT y1.student_number
       ,y1.exitcomment
       ,y1.enroll_status
 
+      ,d.date
+      
       ,y2.entrydate AS next_entrydate
       ,y2.exitdate AS next_exitdate
+
       ,COALESCE(y2.exitdate, y1.exitdate) AS transferdate
-      ,d.date
       ,CASE
         WHEN y1.exitcode = 'G1' THEN 0 /* graduates != attrition */
         WHEN y1.exitdate <= d.date AND y2.entrydate IS NULL THEN 1 /* was not enrolled on 10/1 next year */
@@ -49,10 +51,10 @@ SELECT y1.student_number
        END AS is_attrition
       ,NULL AS is_graduation
 FROM enrolled_oct1 y1
+JOIN attrition_dates d
+  ON y1.academic_year = d.attrition_year
+ AND d.date <= CONVERT(DATE,GETDATE())
 LEFT OUTER JOIN gabby.powerschool.cohort_identifiers_static y2
   ON y1.student_number = y2.student_number
  AND y1.academic_year = (y2.academic_year - 1)
  AND DATEFROMPARTS(y2.academic_year, 10, 01) BETWEEN y2.entrydate AND y2.exitdate
-JOIN attrition_dates d
-  ON y1.academic_year = d.attrition_year
- AND d.date <= CONVERT(DATE,GETDATE())
