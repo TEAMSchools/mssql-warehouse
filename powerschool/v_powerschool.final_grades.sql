@@ -394,8 +394,8 @@ FROM
           FROM grades_long               
          ) sub
     ) sub
-JOIN gabby.powerschool.storedgrades y1
-  ON sub.studentid = y1.STUDENTID
+LEFT OUTER JOIN gabby.powerschool.storedgrades y1
+  ON sub.studentid = y1.studentid
  AND sub.academic_year = (LEFT(y1.termid, 2) + 1990)
  AND sub.course_number = y1.course_number
  AND y1.storecode = 'Y1'
