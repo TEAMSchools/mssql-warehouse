@@ -26,6 +26,7 @@ SELECT co.reporting_schoolid AS schoolid
 FROM gabby.powerschool.cohort_identifiers_static co 
 JOIN gabby.illuminate_dna_assessments.agg_student_responses_all asr
   ON co.student_number = asr.local_student_id
+ AND co.academic_year = asr.academic_year
  AND asr.scope IN ('CMA - End-of-Module','CMA - Mid-Module')
  AND asr.subject_area IN ('Text Study','Mathematics')
  AND asr.is_replacement = 0
