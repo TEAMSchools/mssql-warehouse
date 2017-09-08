@@ -53,6 +53,7 @@ WITH roster AS (
   FROM gabby.powerschool.cohort_identifiers_static co
   JOIN gabby.reporting.reporting_terms dt
     ON co.academic_year = dt.academic_year   
+   AND dt.schoolid = 0
    AND dt.identifier = 'SY'   
   WHERE co.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
     AND co.reporting_schoolid NOT IN (999999, 5173)
