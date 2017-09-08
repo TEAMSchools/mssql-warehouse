@@ -7,7 +7,7 @@ WITH grades_unpivot AS (
   SELECT student_number
         ,studentid
         ,academic_year
-        ,CONVERT(VARCHAR,term_name) AS term_name
+        ,CONVERT(NVARCHAR,term_name) AS term_name
         ,reporting_term
         ,is_curterm
         ,course_number
@@ -49,15 +49,15 @@ WITH grades_unpivot AS (
              ,fg.y1_grade_letter AS y1_grade_letter
              
              /* empty strings preserve term_name structure when there aren't any grades */
-             ,ISNULL(CONVERT(VARCHAR(64),fg.term_grade_letter),'') AS term_grade_letter
-             ,ISNULL(CONVERT(VARCHAR(64),fg.term_grade_percent),'') AS term_grade_percent
-             ,ISNULL(CONVERT(VARCHAR(64),fg.term_grade_letter_adjusted),'') AS term_grade_letter_adjusted
-             ,ISNULL(CONVERT(VARCHAR(64),fg.term_grade_percent_adjusted),'') AS term_grade_percent_adjusted                          
+             ,ISNULL(CONVERT(NVARCHAR(64),fg.term_grade_letter),'') AS term_grade_letter
+             ,ISNULL(CONVERT(NVARCHAR(64),fg.term_grade_percent),'') AS term_grade_percent
+             ,ISNULL(CONVERT(NVARCHAR(64),fg.term_grade_letter_adjusted),'') AS term_grade_letter_adjusted
+             ,ISNULL(CONVERT(NVARCHAR(64),fg.term_grade_percent_adjusted),'') AS term_grade_percent_adjusted                          
 
-             ,ISNULL(CONVERT(VARCHAR(64),fg.need_90),'') AS need_90
-             ,ISNULL(CONVERT(VARCHAR(64),fg.need_80),'') AS need_80
-             ,ISNULL(CONVERT(VARCHAR(64),fg.need_70),'') AS need_70
-             ,ISNULL(CONVERT(VARCHAR(64),fg.need_65),'') AS need_65
+             ,ISNULL(CONVERT(NVARCHAR(64),fg.need_90),'') AS need_90
+             ,ISNULL(CONVERT(NVARCHAR(64),fg.need_80),'') AS need_80
+             ,ISNULL(CONVERT(NVARCHAR(64),fg.need_70),'') AS need_70
+             ,ISNULL(CONVERT(NVARCHAR(64),fg.need_65),'') AS need_65
        FROM gabby.powerschool.final_grades_static fg 
        WHERE fg.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1
 
@@ -83,15 +83,15 @@ WITH grades_unpivot AS (
              ,fg.y1_grade_letter AS y1_grade_letter
              
              /* empty strings preserve term_name structure when there aren't any grades */
-             ,ISNULL(CONVERT(VARCHAR(64),fg.term_grade_letter),'') AS term_grade_letter
-             ,ISNULL(CONVERT(VARCHAR(64),fg.term_grade_percent),'') AS term_grade_percent
-             ,ISNULL(CONVERT(VARCHAR(64),fg.term_grade_letter_adjusted),'') AS term_grade_letter_adjusted
-             ,ISNULL(CONVERT(VARCHAR(64),fg.term_grade_percent_adjusted),'') AS term_grade_percent_adjusted                          
+             ,ISNULL(CONVERT(NVARCHAR(64),fg.term_grade_letter),'') AS term_grade_letter
+             ,ISNULL(CONVERT(NVARCHAR(64),fg.term_grade_percent),'') AS term_grade_percent
+             ,ISNULL(CONVERT(NVARCHAR(64),fg.term_grade_letter_adjusted),'') AS term_grade_letter_adjusted
+             ,ISNULL(CONVERT(NVARCHAR(64),fg.term_grade_percent_adjusted),'') AS term_grade_percent_adjusted                          
 
-             ,ISNULL(CONVERT(VARCHAR(64),fg.need_90),'') AS need_90
-             ,ISNULL(CONVERT(VARCHAR(64),fg.need_80),'') AS need_80
-             ,ISNULL(CONVERT(VARCHAR(64),fg.need_70),'') AS need_70
-             ,ISNULL(CONVERT(VARCHAR(64),fg.need_65),'') AS need_65
+             ,ISNULL(CONVERT(NVARCHAR(64),fg.need_90),'') AS need_90
+             ,ISNULL(CONVERT(NVARCHAR(64),fg.need_80),'') AS need_80
+             ,ISNULL(CONVERT(NVARCHAR(64),fg.need_70),'') AS need_70
+             ,ISNULL(CONVERT(NVARCHAR(64),fg.need_65),'') AS need_65
        FROM gabby.powerschool.final_grades_static fg 
        WHERE fg.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1
       ) sub

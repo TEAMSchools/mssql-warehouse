@@ -10,8 +10,8 @@ WITH roster AS (
         ,co.schoolid      
         ,co.grade_level      
         
-        ,CONVERT(VARCHAR,CONCAT('RT',RIGHT(terms.alt_name, 1))) AS reporting_term
-        ,terms.alt_name AS term_name
+        ,CONVERT(NVARCHAR,CONCAT('RT',RIGHT(terms.alt_name, 1))) AS reporting_term
+        ,CONVERT(NVARCHAR,terms.alt_name) AS term_name
         ,CASE 
           WHEN CONVERT(DATE,GETDATE()) BETWEEN CONVERT(DATE,terms.start_date) AND CONVERT(DATE,terms.end_date) THEN 1 
           WHEN co.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() AND terms.start_date = MAX(CONVERT(DATE,terms.start_date)) OVER(PARTITION BY terms.schoolid, terms.academic_year) THEN 1
