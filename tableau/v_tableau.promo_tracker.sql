@@ -28,7 +28,7 @@ WITH roster AS (
    AND dt.identifier = 'RT'
    AND dt.alt_name != 'Summer School'
   WHERE co.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
-    AND co.schoolid != 999999
+    AND co.reporting_schoolid NOT IN (999999, 5173)
     AND co.rn_year = 1    
   
   UNION ALL
@@ -55,7 +55,7 @@ WITH roster AS (
     ON co.academic_year = dt.academic_year   
    AND dt.identifier = 'SY'   
   WHERE co.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
-    AND co.schoolid != 999999
+    AND co.reporting_schoolid NOT IN (999999, 5173)
     AND co.rn_year = 1
  )
 
