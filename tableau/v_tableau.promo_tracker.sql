@@ -587,7 +587,8 @@ WITH roster AS (
         ,overall_performance_band AS performance_level
         ,NULL AS performance_level_label
   FROM gabby.act.test_prep_scores 
-  WHERE rn_dupe = 1
+  WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+    AND rn_dupe = 1
 
   UNION ALL
   
