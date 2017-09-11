@@ -110,7 +110,7 @@ LEFT OUTER JOIN gabby.lit.all_test_events_static atid
 LEFT OUTER JOIN gabby.lit.all_test_events_static dtid
   ON co.student_number = dtid.student_number
  AND achv.dna_unique_id = dtid.unique_id 
-LEFT OUTER JOIN gabby.lit.component_proficiency_long long
+LEFT OUTER JOIN gabby.lit.component_proficiency_long_static long
   ON co.student_number = long.student_number
  AND achv.dna_unique_id = long.unique_id
  AND long.status != 'Achieved'
@@ -119,6 +119,6 @@ LEFT OUTER JOIN gabby.renaissance.ar_progress_to_goals_static ar
  AND co.academic_year = ar.academic_year
  AND term.ar = ar.reporting_term 
  AND ar.start_date <= CONVERT(DATE,GETDATE())
- AND ar.N_total > 0
+ AND ar.n_total > 0
 WHERE co.rn_year = 1
   AND co.schoolid != 999999
