@@ -191,7 +191,7 @@ WITH roster AS (
 
   SELECT gr.student_number        
         ,gr.academic_year      
-        ,'Y1' AS reporting_term        
+        ,'SY1' AS reporting_term        
         ,gr.credittype
         ,gr.course_name
         ,gr.y1_grade_percent_adjusted AS term_grade_percent_adjusted        
@@ -207,7 +207,7 @@ WITH roster AS (
   /* category grades */
   SELECT gr.student_number        
         ,gr.academic_year            
-        ,'Y1' AS reporting_term        
+        ,'SY1' AS reporting_term        
         ,gr.credittype
         ,gr.course_name
         ,ROUND(AVG(gr.grade_category_pct), 0) AS term_grade_percent_adjusted        
