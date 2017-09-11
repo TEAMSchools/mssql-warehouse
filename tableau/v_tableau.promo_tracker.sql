@@ -62,7 +62,6 @@ WITH roster AS (
 
 ,contact AS (
   SELECT student_number
-        ,'CONTACT' AS domain      
         ,LEFT(field, CHARINDEX('_',field) - 1) AS person
         ,RIGHT(field, LEN(field) - CHARINDEX('_',field)) AS type
         ,value      
@@ -181,8 +180,7 @@ WITH roster AS (
         ,gr.reporting_term        
         ,gr.credittype
         ,gr.course_name
-        ,gr.term_grade_percent_adjusted
-        ,'GRADES' AS domain
+        ,gr.term_grade_percent_adjusted        
         ,'TERM' AS subdomain
         ,'Term' AS finalgradename
   FROM gabby.powerschool.final_grades_static gr
@@ -196,8 +194,7 @@ WITH roster AS (
         ,'Y1' AS reporting_term        
         ,gr.credittype
         ,gr.course_name
-        ,gr.y1_grade_percent_adjusted AS term_grade_percent_adjusted
-        ,'GRADES' AS domain
+        ,gr.y1_grade_percent_adjusted AS term_grade_percent_adjusted        
         ,'TERM' AS subdomain
         ,'Y1' AS finalgradename
   FROM gabby.powerschool.final_grades_static gr
@@ -213,8 +210,7 @@ WITH roster AS (
         ,'Y1' AS reporting_term        
         ,gr.credittype
         ,gr.course_name
-        ,ROUND(AVG(gr.grade_category_pct), 0) AS term_grade_percent_adjusted
-        ,'GRADES' AS domain
+        ,ROUND(AVG(gr.grade_category_pct), 0) AS term_grade_percent_adjusted        
         ,'CATEGORY' AS subdomain
         ,gr.grade_category AS finalgradename
   FROM gabby.powerschool.category_grades_static gr
@@ -231,8 +227,7 @@ WITH roster AS (
         ,academic_year
         ,reporting_term
         ,UPPER(LEFT(field, CHARINDEX('_', field) - 1)) AS att_code
-        ,value AS att_counts
-        ,'ATTENDANCE' AS domain
+        ,value AS att_counts        
         ,CASE
           WHEN field = 'presentpct_term' THEN 'ABSENT'
           WHEN field = 'ontimepct_term' THEN 'TARDY'
@@ -347,7 +342,6 @@ WITH roster AS (
           WHEN a.performance_band_number = 2 THEN 'Below'
           WHEN a.performance_band_number = 1 THEN 'Far Below'
          END AS proficiency_label
-        ,'MODULES' AS domain
         ,CASE
           WHEN a.subject_area = 'Writing' THEN 'WRITING RUBRIC'
           WHEN a.response_type = 'O' THEN 'OVERALL' 
@@ -366,7 +360,6 @@ WITH roster AS (
         ,reporting_term
         ,schoolid
         ,gpa_y1 AS gpa
-        ,'GPA' AS domain
         ,'GPA Y1 - TERM' AS subdomain
   FROM gabby.powerschool.gpa_detail
   WHERE academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
@@ -378,7 +371,6 @@ WITH roster AS (
         ,'Y1' AS reporting_term
         ,schoolid
         ,gpa_y1 AS GPA
-        ,'GPA' AS domain
         ,'GPA Y1' AS subdomain
   FROM gabby.powerschool.gpa_detail
   WHERE academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
@@ -391,7 +383,6 @@ WITH roster AS (
         ,'Y1' AS reporting_Term
         ,gpa.schoolid           
         ,gpa.cumulative_Y1_gpa AS gpa
-        ,'GPA' AS domain
         ,'GPA CUMULATIVE' AS subdomain
   FROM gabby.powerschool.gpa_cumulative gpa
   JOIN gabby.powerschool.students s
@@ -404,7 +395,6 @@ WITH roster AS (
         ,'Y1' AS reporting_Term
         ,gpa.schoolid           
         ,gpa.earned_credits_cum AS gpa
-        ,'GPA' AS domain
         ,'CREDITS EARNED' AS subdomain
   FROM gabby.powerschool.gpa_cumulative gpa
   JOIN gabby.powerschool.students s
@@ -418,8 +408,7 @@ WITH roster AS (
         ,academic_year        
         ,test_round      
         ,read_lvl
-        ,lvl_num       
-        ,'LIT' AS domain
+        ,lvl_num               
         ,'ACHIEVED' AS subdomain 
   FROM gabby.lit.achieved_by_round_static
   WHERE read_lvl IS NOT NULL
@@ -431,7 +420,6 @@ WITH roster AS (
         ,test_round      
         ,goal_lvl
         ,goal_num
-        ,'LIT' AS domain
         ,'GOAL' AS subdomain
   FROM gabby.lit.achieved_by_round_static
   WHERE read_lvl IS NOT NULL
@@ -461,7 +449,6 @@ WITH roster AS (
           WHEN ritto_reading_score BETWEEN 1100 AND 1200 THEN 30
           WHEN ritto_reading_score >= 1200 THEN 31
          END AS lvl_num        
-        ,'LIT' AS domain
         ,'ACHIEVED' AS subdomain
   FROM gabby.nwea.assessment_result_identifiers_static
   WHERE measurement_scale = 'Reading'
@@ -483,7 +470,6 @@ WITH roster AS (
           WHEN s.grade_level = 11 THEN 30
           WHEN s.grade_level = 12 THEN 31
          END AS goal_num
-        ,'LIT' AS domain
         ,'GOAL' AS subdomain
   FROM gabby.nwea.assessment_result_identifiers_static map
   JOIN gabby.powerschool.students s
@@ -501,7 +487,6 @@ WITH roster AS (
         ,measurement_scale
         ,test_ritscore
         ,percentile_2015_norms AS testpercentile
-        ,'MAP' AS domain
         ,NULL AS subdomain                        
   FROM gabby.nwea.assessment_result_identifiers_static
   WHERE rn_term_subj = 1
@@ -731,7 +716,6 @@ WITH roster AS (
 ,promo_status AS (
   SELECT student_number
         ,academic_year
-        ,'PROMO STATUS' AS domain
         ,field AS subdomain
         ,CASE WHEN field LIKE '%status%' THEN value ELSE NULL END AS text_value
         ,CASE WHEN field LIKE '%status%' THEN NULL ELSE CONVERT(FLOAT,value) END AS numeric_value
@@ -800,7 +784,6 @@ WITH roster AS (
         ,words_goal AS goal
         ,stu_status_words AS goal_status
         ,CASE WHEN reporting_term = 'ARY' THEN 'Y1' ELSE REPLACE(reporting_term, 'AR', 'Q') END AS term_name
-        ,'BLENDED LEARNING' AS domain
         ,'AR' AS subdomain      
   FROM gabby.renaissance.ar_progress_to_goals_static
   WHERE academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
@@ -820,7 +803,7 @@ SELECT r.studentid
       ,r.enroll_status
       ,r.term_name
       ,r.reporting_term      
-      ,gr.domain
+      ,'GRADES' AS domain
       ,gr.subdomain      
       ,gr.credittype AS subject
       ,gr.course_name
@@ -851,7 +834,7 @@ SELECT r.studentid
       ,r.enroll_status
       ,r.term_name
       ,r.reporting_term      
-      ,att.domain
+      ,'ATTENDANCE' AS domain
       ,att.subdomain      
       ,NULL AS subject
       ,NULL AS course_name
@@ -882,7 +865,7 @@ SELECT r.studentid
       ,r.enroll_status
       ,cma.scope AS term
       ,r.reporting_term      
-      ,cma.domain
+      ,'MODULES' AS domain
       ,cma.subdomain      
       ,cma.subject_area AS subject
       ,cma.title AS course_name
@@ -913,7 +896,7 @@ SELECT r.studentid
       ,r.enroll_status
       ,r.term_name
       ,r.reporting_term      
-      ,gpa.domain
+      ,'GPA'
       ,gpa.subdomain      
       ,NULL AS subject
       ,NULL AS course_name
@@ -945,7 +928,7 @@ SELECT r.studentid
       ,r.enroll_status
       ,lit.test_round AS term
       ,r.reporting_term      
-      ,lit.domain
+      ,'LIT'
       ,lit.subdomain      
       ,NULL AS subject
       ,NULL AS course_name
@@ -976,7 +959,7 @@ SELECT r.studentid
       ,r.enroll_status
       ,map.term
       ,r.reporting_term      
-      ,map.domain
+      ,'MAP' AS domain
       ,map.subdomain      
       ,map.measurement_scale AS subject
       ,NULL AS course_name
@@ -1067,7 +1050,7 @@ SELECT r.studentid
       ,r.enroll_status
       ,r.term_name
       ,r.reporting_term      
-      ,promo.domain
+      ,'PROMO STATUS' AS domain
       ,promo.subdomain
       ,NULL AS subject
       ,NULL AS course_name
@@ -1098,7 +1081,7 @@ SELECT r.studentid
       ,r.enroll_status
       ,r.term_name
       ,r.reporting_term      
-      ,c.domain
+      ,'CONTACT' AS domain
       ,c.type AS subdomain
       ,c.person AS subject
       ,NULL AS course_name
@@ -1128,7 +1111,7 @@ SELECT r.studentid
       ,r.enroll_status
       ,r.term_name
       ,r.reporting_term      
-      ,b.domain
+      ,'BLENDED LEARNING' AS domain
       ,b.subdomain
       ,NULL AS subject
       ,NULL AS course_name
