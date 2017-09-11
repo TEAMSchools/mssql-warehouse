@@ -297,8 +297,8 @@ SELECT academic_year
       ,NULL AS natl_goal_lvl
       ,NULL AS natl_goal_num 
       ,levels_behind
-      ,achv_unique_id
-      ,dna_unique_id
+      ,CONVERT(NVARCHAR(64),achv_unique_id) AS achv_unique_id
+      ,CONVERT(NVARCHAR(64),dna_unique_id) AS dna_unique_id
       ,is_new_test
 
       ,CASE         
