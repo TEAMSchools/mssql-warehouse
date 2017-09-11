@@ -16,7 +16,7 @@ SELECT co.academic_year
       ,co.gender
       ,co.ethnicity
       
-      ,dt.alt_name AS term
+      ,CONVERT(NVARCHAR,dt.alt_name) AS term
 
       ,mem.calendardate
       ,mem.membershipvalue
@@ -87,7 +87,7 @@ LEFT OUTER JOIN gabby.powerschool.ps_attendance_daily_static att
 LEFT OUTER JOIN gabby.reporting.reporting_terms dt WITH(NOLOCK) 
   ON co.schoolid = dt.schoolid
  AND co.academic_year = dt.academic_year
- AND mem.calendardate BETWEEN dt.start_date AND dt.end_date
+ AND mem.calendardate BETWEEN CONVERT(DATE,dt.start_date) AND CONVERT(DATE,dt.end_date)
  AND dt.identifier = 'RT'
 LEFT OUTER JOIN gabby.powerschool.course_enrollments_static enr
   ON co.studentid = enr.studentid
