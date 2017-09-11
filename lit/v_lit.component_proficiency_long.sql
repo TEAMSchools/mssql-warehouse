@@ -83,7 +83,7 @@ WITH illuminate_fp AS (
   FROM illuminate_fp rs     
  )
 
-SELECT sub.unique_id
+SELECT CONVERT(NVARCHAR(256),sub.unique_id) AS unique_id
       ,sub.testid
       ,sub.student_number
       ,sub.read_lvl
@@ -94,7 +94,7 @@ SELECT sub.unique_id
       ,sub.strand
       ,sub.label
       ,sub.specific_label
-      ,sub.field
+      ,CONVERT(NVARCHAR(256),sub.field) AS field
       ,sub.score
       ,sub.benchmark
       ,sub.is_prof
