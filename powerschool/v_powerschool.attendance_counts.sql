@@ -4,25 +4,15 @@ GO
 ALTER VIEW powerschool.attendance_counts AS
 
 WITH scaffold AS (
-  SELECT DISTINCT 
-         co.studentid        
+  SELECT co.studentid        
         ,co.academic_year
         
-        ,d.time_per_name AS reporting_term
-        ,d.alt_name AS term_name
+        ,CONVERT(NVARCHAR,d.time_per_name) AS reporting_term
+        ,CONVERT(NVARCHAR,d.alt_name) AS term_name
         ,CONVERT(DATE,d.start_date) AS start_date
         ,CONVERT(DATE,d.end_date) AS end_date
         
-        ,CASE
-          WHEN att.att_code IN ('A','X') THEN 'A'
-          WHEN att.att_code IN ('AD','A-E','D') THEN 'AD'
-          WHEN att.att_code IN ('AE','E','EA') THEN 'AE'
-          WHEN att.att_code IN ('ISS','Q','S') THEN 'ISS'
-          WHEN att.att_code IN ('OS','OSS','OSSP') THEN 'OSS'
-          WHEN att.att_code IN ('TLE','true','T') THEN 'T'
-          WHEN att.att_code = 'T10' THEN 'T10'
-          ELSE NULL
-         END AS att_code
+        ,CASE WHEN att.att_code = 'true' THEN 'T' ELSE att.att_code END AS att_code
   FROM gabby.powerschool.cohort_identifiers_static co 
   JOIN gabby.reporting.reporting_terms d
     ON co.schoolid = d.schoolid
@@ -52,11 +42,10 @@ WITH scaffold AS (
                WHEN att.att_code IN ('OS','OSS','OSSP') THEN 'OSS'
                WHEN att.att_code IN ('TLE','true','T') THEN 'T'
                WHEN att.att_code = 'T10' THEN 'T10'
-               ELSE NULL
               END AS att_code
                   
              ,dates.academic_year                  
-             ,dates.time_per_name AS reporting_term     
+             ,CONVERT(NVARCHAR,dates.time_per_name) AS reporting_term     
        FROM gabby.powerschool.ps_attendance_daily_static att
        JOIN gabby.reporting.reporting_terms dates
          ON att.att_date BETWEEN CONVERT(DATE,dates.start_date) AND CONVERT(DATE,dates.end_date)             
@@ -120,31 +109,26 @@ WITH scaffold AS (
              ,SUM(count_term) OVER(PARTITION BY studentid, academic_year ORDER BY start_date) AS count_year
        FROM
            (
-            SELECT co.studentid
-                  ,co.academic_year
+            SELECT mem.studentid
+                  ,(mem.yearid + 1990) AS academic_year
+                  ,SUM(ISNULL(mem.membershipvalue, 0)) AS count_term      
 
-                  ,d.time_per_name AS reporting_term
-                  ,d.alt_name AS term_name
+                  ,CONVERT(NVARCHAR,d.time_per_name) AS reporting_term
+                  ,CONVERT(NVARCHAR,d.alt_name) AS term_name
                   ,CONVERT(DATE,d.start_date) AS start_date
                   ,CONVERT(DATE,d.end_date) AS end_date
-                  
-                  ,SUM(CONVERT(FLOAT,ISNULL(mem.membershipvalue,0))) AS count_term      
 
                   ,'MEM' AS att_code
-            FROM gabby.powerschool.cohort_identifiers_static co            
-            JOIN gabby.powerschool.ps_adaadm_daily_ctod_static mem
-              ON co.studentid = mem.studentid                          
-             AND co.yearid = mem.yearid
+            FROM gabby.powerschool.ps_adaadm_daily_ctod_static mem              
             JOIN gabby.reporting.reporting_terms d
-              ON co.schoolid = d.schoolid 
+              ON mem.schoolid = d.schoolid 
              AND mem.calendardate BETWEEN CONVERT(DATE,d.start_date) AND CONVERT(DATE,d.end_date)
              AND d.identifier = 'RT'
-            WHERE co.rn_year = 1
-              AND co.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1
-            GROUP BY co.studentid
-                    ,co.academic_year
-                    ,d.time_per_name
-                    ,d.alt_name
+            WHERE (mem.yearid + 1990) >= gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1
+            GROUP BY mem.studentid
+                    ,(mem.yearid + 1990)
+                    ,CONVERT(NVARCHAR,d.time_per_name)
+                    ,CONVERT(NVARCHAR,d.alt_name)
                     ,CONVERT(DATE,d.start_date)
                     ,CONVERT(DATE,d.end_date)
            ) sub
