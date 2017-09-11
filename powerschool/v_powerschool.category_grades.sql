@@ -48,10 +48,6 @@ FROM
            ,LEFT(pgf.finalgradename,1) AS grade_category
            ,CONCAT('RT', RIGHT(pgf.finalgradename,1)) AS reporting_term            
            ,ROUND(pgf.[percent],0) AS grade_category_pct               
-      
-           ,ROW_NUMBER() OVER(
-              PARTITION BY enr.student_number, enr.academic_year, enr.course_number, pgf.finalgradename
-                ORDER BY enr.dateenrolled DESC, enr.dateleft DESC) AS rn
      FROM gabby.powerschool.course_enrollments_static enr
      JOIN gabby.powerschool.pgfinalgrades pgf
        ON enr.studentid = pgf.studentid
@@ -85,10 +81,6 @@ FROM
             END AS grade_category
            ,CONCAT('RT', RIGHT(pgf.finalgradename,1)) AS reporting_term            
            ,ROUND(pgf.[percent],0) AS grade_category_pct               
-      
-           ,ROW_NUMBER() OVER(
-              PARTITION BY enr.student_number, enr.academic_year, enr.course_number, pgf.finalgradename
-                ORDER BY enr.dateenrolled DESC, enr.dateleft DESC) AS rn
      FROM gabby.powerschool.course_enrollments_static enr
      JOIN gabby.powerschool.pgfinalgrades pgf
        ON enr.studentid = pgf.studentid       
@@ -100,4 +92,3 @@ FROM
        AND enr.section_enroll_status = 0
        AND enr.schoolid != 73253
     ) sub
-WHERE sub.rn = 1
