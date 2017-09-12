@@ -28,11 +28,11 @@ SELECT att.id
       ,cd.cycle_day_id      
   
       ,cy.abbreviation           
-FROM powerschool.attendance att 
-JOIN powerschool.attendance_code ac 
+FROM gabby.powerschool.attendance att 
+JOIN gabby.powerschool.attendance_code ac 
   ON att.attendance_codeid = ac.id
-JOIN powerschool.calendar_day cd
+JOIN gabby.powerschool.calendar_day cd
   ON att.calendar_dayid = cd.id
-JOIN powerschool.cycle_day cy
+JOIN gabby.powerschool.cycle_day cy
   ON cd.cycle_day_id = cy.id
 WHERE att.att_mode_code = 'ATT_ModeDaily'

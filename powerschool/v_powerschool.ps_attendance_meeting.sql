@@ -40,19 +40,19 @@ SELECT att.id
 		    ,cd.cycle_day_id
 
 		    ,cy.abbreviation
-FROM powerschool.attendance att
-JOIN powerschool.cc 
+FROM gabby.powerschool.attendance att
+JOIN gabby.powerschool.cc 
   ON att.ccid = cc.id 
  AND att.studentid = cc.studentid
-JOIN powerschool.sections s 
+JOIN gabby.powerschool.sections s 
   ON ABS(cc.sectionid) = s.id
-JOIN powerschool.calendar_day cd 
+JOIN gabby.powerschool.calendar_day cd 
   ON att.calendar_dayid = cd.id
-JOIN powerschool.attendance_code ac 
+JOIN gabby.powerschool.attendance_code ac 
   ON att.attendance_codeid = ac.id
-JOIN powerschool.cycle_day cy 
+JOIN gabby.powerschool.cycle_day cy 
   ON cd.cycle_day_id = cy.id
-JOIN powerschool.period per 
+JOIN gabby.powerschool.period per 
   ON att.periodid = per.id
 WHERE att.att_date >= cc.dateenrolled 
 	 AND att.att_date < cc.dateleft
