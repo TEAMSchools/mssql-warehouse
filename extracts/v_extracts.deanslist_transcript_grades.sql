@@ -23,7 +23,7 @@ WITH all_grades AS (
          END AS schoolname        
         ,0 AS is_stored
   FROM gabby.powerschool.final_grades_static fg 
-  WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1
+  WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
     AND is_curterm = 1
     AND ISNULL(excludefromgpa, 0) = 0
 

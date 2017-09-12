@@ -56,6 +56,7 @@ SELECT co.student_number
       ,cat.H_Y1 AS HWQ_Y1
       
       ,gpa.GPA_Y1      
+      ,gpa.gpa_term
 FROM gabby.powerschool.cohort_identifiers_static co
 JOIN ug_school ug
   ON co.student_number = ug.student_number
@@ -78,5 +79,5 @@ LEFT OUTER JOIN gabby.powerschool.gpa_detail gpa
   ON co.student_number = gpa.student_number
  AND co.academic_year = gpa.academic_year
  AND gpa.is_curterm = 1
-WHERE co.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1
+WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.rn_year = 1

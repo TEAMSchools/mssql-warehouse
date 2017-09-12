@@ -20,7 +20,7 @@ FROM
            ,scale_score
      FROM gabby.act.test_prep_scores
      WHERE subject_area = 'Composite'
-       AND academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1
+       AND academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
     ) sub
 PIVOT(
   MAX(scale_score)

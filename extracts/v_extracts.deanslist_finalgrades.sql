@@ -59,7 +59,7 @@ LEFT OUTER JOIN gabby.powerschool.pgfinalgrades comm WITH(NOLOCK)
   ON fg.studentid = comm.studentid
  AND fg.sectionid = comm.sectionid
  AND fg.term_name = comm.finalgradename
-WHERE (o.yearid + 1990) >= gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1
+WHERE (o.yearid + 1990) = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 
 UNION ALL
 
@@ -95,4 +95,4 @@ SELECT comm.student_number
 
       ,REPLACE(comm.comment,'"','''') AS comment_value      
 FROM gabby.reporting.illuminate_report_card_comments comm WITH(NOLOCK)
-WHERE comm.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1
+WHERE comm.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()

@@ -15,7 +15,7 @@ SELECT student_number
       ,words_goal AS goal
       ,stu_status_words AS goal_status
 FROM gabby.renaissance.ar_progress_to_goals_static
-WHERE academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1
+WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 
 UNION ALL
 
@@ -33,7 +33,7 @@ SELECT school_student_id AS student_number
         WHEN ROUND(SUM(k_5_progress), 0) < ROUND((MAX(days_elapsed) / MAX(total_days)) * 100, 0) THEN 'Off Track'
        END AS goal_status
 FROM gabby.stmath.progress_completion_report_clean
-WHERE start_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1
+WHERE start_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND rn_gcd = 1
 GROUP BY school_student_id
         ,start_year
@@ -75,6 +75,6 @@ FROM
      JOIN gabby.reporting.reporting_terms dt 
        ON lex.academic_year = dt.academic_year
       AND dt.identifier = 'SY'
-     WHERE lex.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1
+     WHERE lex.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
        AND lex.rn_curr = 1
     ) sub
