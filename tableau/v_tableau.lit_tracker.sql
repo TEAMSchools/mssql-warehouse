@@ -64,10 +64,7 @@ SELECT co.school_name
         WHEN atid.test_date >= dtid.test_date THEN atid.test_date 
         ELSE dtid.test_date 
        END AS test_date      
-      ,CASE 
-        WHEN atid.test_date >= dtid.test_date THEN atid.test_administered_by 
-        ELSE dtid.test_administered_by 
-       END AS test_administered_by
+      ,atid.test_administered_by
       
       /* component data */      
       ,long.domain AS component_domain
