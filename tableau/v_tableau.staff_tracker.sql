@@ -66,21 +66,6 @@ WITH prof_calendar AS (
       ) sub
  )
 
-,clean_trackers AS (
-  SELECT SUBSTRING(staff_name
-                  ,(CHARINDEX('[', staff_name) + 1)
-                  ,(LEN(staff_name) - CHARINDEX('[', staff_name) - 1)) AS associate_id
-        ,CONVERT(DATE,date) AS date
-        ,CONVERT(NVARCHAR,present) AS present
-        ,CONVERT(NVARCHAR,on_time) AS on_time
-        ,CONVERT(NVARCHAR,attire_optional_) AS attire
-        ,CONVERT(NVARCHAR,lp_optional_) AS lp
-        ,CONVERT(NVARCHAR,gr_lp_optional_) AS gr_lp
-        ,CONVERT(NVARCHAR(MAX),notes_optional_) AS notes
-  FROM gabby.pm.teacher_tracker
-  WHERE ISDATE(date) = 1
- )
-
 ,tracking_long AS (
   SELECT associate_id
         ,date
@@ -89,15 +74,19 @@ WITH prof_calendar AS (
         ,CASE WHEN value = '' THEN NULL ELSE value END AS value
   FROM
       (
-       SELECT associate_id
-             ,date
-             ,notes
-             ,ISNULL(present,'') AS present
-             ,ISNULL(on_time,'') AS on_time
-             ,ISNULL(attire,'') AS attire
-             ,ISNULL(lp,'') AS lp
-             ,ISNULL(gr_lp,'') AS gr_lp
-       FROM clean_trackers
+       SELECT SUBSTRING(staff_name
+                       ,(CHARINDEX('[', staff_name) + 1)
+                       ,(LEN(staff_name) - CHARINDEX('[', staff_name) - 1)) AS associate_id
+             ,CONVERT(DATE,date) AS date
+             ,CONVERT(NVARCHAR(MAX),notes_optional_) AS notes
+
+             ,ISNULL(CONVERT(NVARCHAR,present),'') AS present
+             ,ISNULL(CONVERT(NVARCHAR,on_time),'') AS on_time
+             ,ISNULL(CONVERT(NVARCHAR,attire_optional_),'') AS attire
+             ,ISNULL(CONVERT(NVARCHAR,lp_optional_),'') AS lp
+             ,ISNULL(CONVERT(NVARCHAR,gr_lp_optional_),'') AS gr_lp             
+       FROM gabby.pm.teacher_tracker
+       WHERE ISDATE(date) = 1
       ) sub
   UNPIVOT(
     value
