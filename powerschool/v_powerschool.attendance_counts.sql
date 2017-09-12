@@ -3,32 +3,13 @@ GO
 
 ALTER VIEW powerschool.attendance_counts AS
 
-WITH scaffold AS (
-  SELECT co.studentid        
-        ,co.academic_year
-        
-        ,CONVERT(NVARCHAR,d.time_per_name) AS reporting_term
-        ,CONVERT(NVARCHAR,d.alt_name) AS term_name
-        ,CONVERT(DATE,d.start_date) AS start_date
-        ,CONVERT(DATE,d.end_date) AS end_date
-        
-        ,CASE WHEN att.att_code = 'true' THEN 'T' ELSE att.att_code END AS att_code
-  FROM gabby.powerschool.cohort_identifiers_static co 
-  JOIN gabby.reporting.reporting_terms d
-    ON co.schoolid = d.schoolid
-   AND co.academic_year = d.academic_year
-   AND d.identifier = 'RT'
-  JOIN gabby.powerschool.attendance_code att
-    ON co.schoolid  = att.schoolid   
-   AND d.yearid = att.yearid
-  WHERE co.rn_year = 1
-    AND co.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1
- )
-
-,att_counts AS (
+WITH att_counts AS (
   SELECT studentid
         ,academic_year
         ,reporting_term      
+        ,term_name
+        ,start_date
+        ,end_date
         ,att_code             
         ,COUNT(studentid) AS count_term
   FROM
@@ -46,10 +27,13 @@ WITH scaffold AS (
                   
              ,dates.academic_year                  
              ,CONVERT(NVARCHAR,dates.time_per_name) AS reporting_term     
+             ,CONVERT(NVARCHAR,dates.alt_name) AS term_name
+             ,CONVERT(DATE,dates.start_date) AS start_date
+             ,CONVERT(DATE,dates.end_date) AS end_date
        FROM gabby.powerschool.ps_attendance_daily_static att
        JOIN gabby.reporting.reporting_terms dates
-         ON att.att_date BETWEEN CONVERT(DATE,dates.start_date) AND CONVERT(DATE,dates.end_date)             
-        AND att.schoolid = dates.schoolid
+         ON att.schoolid = dates.schoolid
+        AND att.att_date BETWEEN CONVERT(DATE,dates.start_date) AND CONVERT(DATE,dates.end_date)             
         AND dates.identifier = 'RT' 
        WHERE att.att_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1, 7, 1)
       ) sub
@@ -58,6 +42,9 @@ WITH scaffold AS (
           ,academic_year            
           ,reporting_term        
           ,att_code
+          ,term_name
+          ,start_date
+          ,end_date
  )
 
 
@@ -78,24 +65,17 @@ WITH scaffold AS (
          END AS is_curterm
   FROM
       (
-       SELECT s.studentid
-             ,s.academic_year
-             ,s.reporting_term
-             ,s.term_name
-             ,s.start_date
-             ,s.end_date
-             ,s.att_code
-             
-             ,ISNULL(a.count_term, 0) AS count_term
-             ,SUM(ISNULL(a.count_term, 0)) OVER(PARTITION BY s.studentid, s.academic_year, s.att_code ORDER BY s.start_date) AS count_y1
-       FROM scaffold s
-       LEFT OUTER JOIN att_counts a
-         ON s.studentid = a.studentid
-        AND s.academic_year = a.academic_year
-        AND s.reporting_term = a.reporting_term
-        AND s.att_code = a.att_code
-       WHERE s.att_code IS NOT NULL
-
+       SELECT studentid
+             ,academic_year
+             ,reporting_term
+             ,term_name
+             ,start_date
+             ,end_date
+             ,att_code             
+             ,count_term
+             ,SUM(count_term) OVER(PARTITION BY studentid, academic_year, att_code ORDER BY start_date) AS count_y1
+       FROM att_counts
+       
        UNION ALL
 
        SELECT studentid
@@ -106,7 +86,7 @@ WITH scaffold AS (
              ,end_date
              ,att_code
              ,count_term 
-             ,SUM(count_term) OVER(PARTITION BY studentid, academic_year ORDER BY start_date) AS count_year
+             ,SUM(count_term) OVER(PARTITION BY studentid, academic_year ORDER BY start_date) AS count_y1
        FROM
            (
             SELECT mem.studentid
