@@ -65,5 +65,5 @@ JOIN gabby.powerschool.cohort_identifiers_static co
 LEFT OUTER JOIN commlog cl
   ON co.student_number = cl.student_school_id
  AND att.att_date = cl.commlog_date
-WHERE att.att_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1, 07, 01)
+WHERE att.att_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 07, 01)
   AND att.att_mode_code = 'ATT_ModeDaily'
