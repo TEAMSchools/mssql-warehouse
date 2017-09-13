@@ -8,7 +8,7 @@ WITH roster AS (
         ,preferred_first
         ,preferred_last
         ,LEFT(position_id,3) AS entity
-        ,location_custom
+        ,location --changing to location so that we can pull historic info. Budget location will suffice for SY17-18.
         ,position_start_date
         ,termination_date        
         ,benefits_eligibility_class_description
@@ -28,7 +28,7 @@ WITH roster AS (
         ,preferred_first
         ,preferred_last
         ,entity
-        ,location_custom
+        ,location
         ,benefits_eligibility_class_description
         ,academic_year
         ,termination_date
@@ -40,7 +40,7 @@ WITH roster AS (
              ,r.entity
              ,r.preferred_first
              ,r.preferred_last                          
-             ,r.location_custom
+             ,r.location
              ,r.benefits_eligibility_class_description
              ,CASE WHEN r.end_academic_year =  y.academic_year THEN r.termination_date END AS termination_date
       
@@ -64,7 +64,7 @@ WITH roster AS (
 SELECT d.associate_id      
       ,d.preferred_first
       ,d.preferred_last
-      ,d.location_custom
+      ,d.location
       ,d.entity
       ,d.benefits_eligibility_class_description
       ,d.academic_year      
