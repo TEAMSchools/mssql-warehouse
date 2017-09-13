@@ -13,6 +13,8 @@ WITH roster_scaffold AS (
         ,terms.alt_name AS test_round
         ,CONVERT(DATE,terms.start_date) AS start_date
         ,CONVERT(DATE,terms.end_date) AS end_date
+        ,CONVERT(INT,RIGHT(terms.time_per_name, 1)) AS round_num        
+        
         ,CASE 
           WHEN CONVERT(DATE,GETDATE()) BETWEEN CONVERT(DATE,terms.start_date) AND CONVERT(DATE,terms.end_date) THEN 1 
           WHEN MAX(CASE 
@@ -20,18 +22,14 @@ WITH roster_scaffold AS (
                    END) OVER(PARTITION BY r.schoolid, r.academic_year) = terms.start_date 
                  THEN 1
           ELSE 0 
-         END AS is_curterm
-        ,ROW_NUMBER() OVER(
-           PARTITION BY r.student_number, r.academic_year
-             ORDER BY CONVERT(DATE,terms.start_date) ASC) AS round_num        
+         END AS is_curterm        
   FROM gabby.powerschool.cohort_identifiers_static r
   JOIN gabby.reporting.reporting_terms terms
     ON r.academic_year = terms.academic_year 
    AND r.schoolid = terms.schoolid
    AND r.exitdate > CONVERT(DATE,terms.start_date)
    AND terms.identifier = 'LIT'          
-  WHERE r.grade_level <= 8
-    AND r.rn_year = 1  
+  WHERE r.rn_year = 1
  )
 
 ,tests AS (
