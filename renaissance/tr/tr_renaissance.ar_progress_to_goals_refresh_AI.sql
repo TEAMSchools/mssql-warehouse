@@ -48,13 +48,13 @@ BEGIN
     INTO #updated_tables
     FROM renaissance.fivetran_audit WITH(NOLOCK)
     WHERE update_started BETWEEN DATETIMEFROMPARTS(
-                                   DATEPART(YEAR, DATEADD(MINUTE, -1440, GETUTCDATE()))
-                                  ,DATEPART(MONTH, DATEADD(MINUTE, -1440, GETUTCDATE()))
-                                  ,DATEPART(DAY, DATEADD(MINUTE, -1440, GETUTCDATE()))
-                                  ,DATEPART(HOUR, DATEADD(MINUTE, -1440, GETUTCDATE()))
-                                  ,0, 0, 0
+                                   DATEPART(YEAR, DATEADD(MINUTE, -60, GETUTCDATE()))
+                                  ,DATEPART(MONTH, DATEADD(MINUTE, -60, GETUTCDATE()))
+                                  ,DATEPART(DAY, DATEADD(MINUTE, -60, GETUTCDATE()))
+                                  ,DATEPART(HOUR, DATEADD(MINUTE, -60, GETUTCDATE()))
+                                  ,30, 0, 0
                                   ) 
-                             AND GETUTCDATE(); /* manual update to 1 day */
+                             AND GETUTCDATE();
   
     /* check if updated table is included in view */  
     SET @stage = 'referenced table check'
