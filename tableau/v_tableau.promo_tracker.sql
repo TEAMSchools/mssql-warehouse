@@ -476,6 +476,7 @@ WITH roster AS (
     ON map.student_id = s.student_number
    AND s.schoolid = 73253
   WHERE map.measurement_scale = 'Reading'    
+    AND map.school_name = 'Newark Collegiate Academy'
     AND map.rn_term_subj = 1
  )
 
