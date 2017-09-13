@@ -39,7 +39,43 @@ WITH ar_long AS (
   WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
  )
 
-SELECT *      
+SELECT student_number
+      ,lastfirst
+      ,academic_year
+      ,schoolid
+      ,grade_level
+      ,team
+      ,advisor_name
+      ,iep_status
+      ,term
+      ,date      
+      ,course_name
+      ,course_number
+      ,section_number
+      ,teacher_name
+      ,homeroom_section
+      ,homeroom_teacher
+      ,words_goal_yr
+      ,points_goal_yr
+      ,goal_term
+      ,words_goal_term
+      ,points_goal_term
+      ,n_words_read
+      ,n_points_earned
+      ,n_books_read
+      ,n_fiction
+      ,avg_lexile
+      ,avg_pct_correct
+      ,last_book_title
+      ,last_book_days_ago
+      ,last_book_lexile
+      ,last_book_pct_correct
+      ,ontrack_words_yr           
+      ,ontrack_words_term
+      ,is_current_week
+      ,is_curterm           
+      ,n_words_read_running_term
+      ,n_words_read_running_yr
       ,CASE 
         WHEN ontrack_words_term IS NULL THEN NULL
         WHEN schoolid != 73253 AND n_words_read_running_term >= ontrack_words_term THEN 1
@@ -178,6 +214,7 @@ FROM
            AND y1_goal.reporting_term = 'ARY'
           LEFT OUTER JOIN gabby.renaissance.ar_goals term_goal
             ON co.student_number = term_goal.student_number   
+           AND co.academic_year = term_goal.academic_year
            AND dts.time_per_name = term_goal.reporting_term      
           LEFT OUTER JOIN ar_long ar
             ON co.student_number = ar.student_number
@@ -191,7 +228,7 @@ FROM
             AND co.date <= CONVERT(DATE,GETDATE())
             AND co.enroll_status = 0       
             AND ((co.grade_level >= 5)
-                 OR (co.schoolid IN (73252, 179901) AND co.grade_level >= 3)
-                 OR (co.schoolid IN (73255) AND co.grade_level >= 2))       
+                   OR (co.schoolid IN (73252, 179901) AND co.grade_level >= 3)
+                   OR (co.schoolid IN (73255) AND co.grade_level >= 2))       
          ) sub
     ) sub
