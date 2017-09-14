@@ -16,7 +16,7 @@ SELECT enr.studentid
 
       ,ROW_NUMBER() OVER(
          PARTITION BY enr.student_number, enr.academic_year
-           ORDER BY enr.dateleft DESC) AS rn_year
+           ORDER BY enr.dateleft DESC, enr.dateenrolled DESC) AS rn_year
 FROM gabby.powerschool.course_enrollments_static enr           
 LEFT OUTER JOIN gabby.people.adp_ps_id_link link
   ON enr.teachernumber = CONVERT(NVARCHAR(MAX),link.teachernumber)
