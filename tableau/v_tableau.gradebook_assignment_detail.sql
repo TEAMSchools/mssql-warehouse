@@ -33,24 +33,24 @@ SELECT sec.id AS sectionid
       ,scores.islate AS turnedinlate
       ,scores.isexempt AS exempt
       ,scores.ismissing
-FROM gabby.powerschool.sections sec WITH(NOLOCK)
-JOIN gabby.powerschool.teachers t WITH(NOLOCK)
+FROM gabby.powerschool.sections sec 
+JOIN gabby.powerschool.teachers t 
   ON sec.teacher = t.id
-LEFT OUTER JOIN gabby.powerschool.cc cc WITH(NOLOCK)
+LEFT OUTER JOIN gabby.powerschool.cc cc 
   ON sec.id = cc.sectionid
-LEFT OUTER JOIN gabby.powerschool.students s WITH(NOLOCK)
+LEFT OUTER JOIN gabby.powerschool.students s 
   ON cc.studentid = s.id
-JOIN gabby.powerschool.gradebook_setup gb WITH(NOLOCK)
+JOIN gabby.powerschool.gradebook_setup gb 
   ON sec.dcid = gb.sectionsdcid
  AND gb.finalgradesetuptype != 'Total_Points'
-LEFT OUTER JOIN gabby.powerschool.gradebook_assignments a WITH(NOLOCK)
+LEFT OUTER JOIN gabby.powerschool.gradebook_assignments a 
   ON sec.id = a.sectionid
  AND gb.assignmentcategoryid = a.assignmentcategoryid
  AND a.assign_date between gb.startdate and gb.enddate
-LEFT OUTER JOIN gabby.powerschool.gradebook_assignments_scores scores WITH(NOLOCK)
+LEFT OUTER JOIN gabby.powerschool.gradebook_assignments_scores scores 
   ON a.assignmentsectionid = scores.assignmentsectionid
  AND s.student_number = scores.student_number
-WHERE (LEFT(sec.termid, 2) + 1990) = 2016 --gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+WHERE (LEFT(sec.termid, 2) + 1990) = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 
 UNION ALL
 
@@ -84,20 +84,20 @@ SELECT sec.id AS sectionid
       ,scores.islate AS turnedinlate
       ,scores.isexempt AS exempt
       ,scores.ismissing
-FROM gabby.powerschool.sections sec WITH(NOLOCK)
-JOIN gabby.powerschool.teachers t WITH(NOLOCK)
+FROM gabby.powerschool.sections sec 
+JOIN gabby.powerschool.teachers t 
   ON sec.teacher = t.id
-LEFT OUTER JOIN gabby.powerschool.cc cc WITH(NOLOCK)
+LEFT OUTER JOIN gabby.powerschool.cc cc 
   ON sec.id = cc.sectionid
-LEFT OUTER JOIN gabby.powerschool.students s WITH(NOLOCK)
+LEFT OUTER JOIN gabby.powerschool.students s 
   ON cc.studentid = s.id
-JOIN gabby.powerschool.gradebook_setup gb WITH(NOLOCK)
+JOIN gabby.powerschool.gradebook_setup gb 
   ON sec.dcid = gb.sectionsdcid
  AND gb.finalgradesetuptype = 'Total_Points'
-LEFT OUTER JOIN gabby.powerschool.gradebook_assignments a WITH(NOLOCK)
+LEFT OUTER JOIN gabby.powerschool.gradebook_assignments a 
   ON sec.id = a.sectionid 
  AND a.assign_date between gb.startdate and gb.enddate
-LEFT OUTER JOIN gabby.powerschool.gradebook_assignments_scores scores WITH(NOLOCK)
+LEFT OUTER JOIN gabby.powerschool.gradebook_assignments_scores scores 
   ON a.assignmentsectionid = scores.assignmentsectionid
  AND s.student_number = scores.student_number
-WHERE (LEFT(sec.termid, 2) + 1990) = 2016 --gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+WHERE (LEFT(sec.termid, 2) + 1990) = gabby.utilities.GLOBAL_ACADEMIC_YEAR()

@@ -16,10 +16,10 @@ WITH section_teacher AS (
         ,ROW_NUMBER() OVER(
            PARTITION BY scaff.studentid, scaff.yearid, scaff.course_number
              ORDER BY scaff.term_name DESC) AS rn        
-  FROM gabby.powerschool.course_section_scaffold_static scaff WITH(NOLOCK)
-  JOIN gabby.powerschool.sections sec WITH(NOLOCK)
+  FROM gabby.powerschool.course_section_scaffold_static scaff 
+  JOIN gabby.powerschool.sections sec 
     ON scaff.sectionid = sec.id
-  JOIN gabby.powerschool.teachers t WITH(NOLOCK)
+  JOIN gabby.powerschool.teachers t 
     ON sec.teacher = t.id 
  )
 
@@ -59,8 +59,8 @@ SELECT co.student_number
       ,MAX(CASE WHEN gr.is_curterm = 1 THEN gr.need_70 ELSE NULL END) OVER(PARTITION BY co.student_number, co.academic_year, gr.course_number) AS need_70
       ,MAX(CASE WHEN gr.is_curterm = 1 THEN gr.need_80 ELSE NULL END) OVER(PARTITION BY co.student_number, co.academic_year, gr.course_number) AS need_80
       ,MAX(CASE WHEN gr.is_curterm = 1 THEN gr.need_90 ELSE NULL END) OVER(PARTITION BY co.student_number, co.academic_year, gr.course_number) AS need_90
-FROM gabby.powerschool.cohort_identifiers_static co WITH(NOLOCK)
-JOIN gabby.powerschool.final_grades_static gr WITH(NOLOCK)
+FROM gabby.powerschool.cohort_identifiers_static co 
+JOIN gabby.powerschool.final_grades_static gr 
   ON co.student_number = gr.student_number
  AND co.academic_year = gr.academic_year 
 JOIN section_teacher st 
@@ -109,8 +109,8 @@ SELECT co.student_number
       ,MAX(CASE WHEN gr.is_curterm = 1 THEN gr.need_70 ELSE NULL END) OVER(PARTITION BY co.student_number, co.academic_year, gr.course_number) AS need_70
       ,MAX(CASE WHEN gr.is_curterm = 1 THEN gr.need_80 ELSE NULL END) OVER(PARTITION BY co.student_number, co.academic_year, gr.course_number) AS need_80
       ,MAX(CASE WHEN gr.is_curterm = 1 THEN gr.need_90 ELSE NULL END) OVER(PARTITION BY co.student_number, co.academic_year, gr.course_number) AS need_90
-FROM gabby.powerschool.cohort_identifiers_static co WITH(NOLOCK)
-JOIN gabby.powerschool.final_grades_static gr WITH(NOLOCK)
+FROM gabby.powerschool.cohort_identifiers_static co 
+JOIN gabby.powerschool.final_grades_static gr 
   ON co.student_number = gr.student_number
  AND co.academic_year = gr.academic_year 
  AND gr.is_curterm = 1
@@ -159,13 +159,13 @@ SELECT COALESCE(co.student_number, e1.student_number) AS student_number
       ,NULL AS need_70
       ,NULL AS need_80
       ,NULL AS need_90
-FROM gabby.powerschool.storedgrades gr WITH(NOLOCK)
-LEFT OUTER JOIN gabby.powerschool.cohort_identifiers_static co WITH(NOLOCK)
+FROM gabby.powerschool.storedgrades gr 
+LEFT OUTER JOIN gabby.powerschool.cohort_identifiers_static co 
   ON gr.studentid = co.studentid
  AND gr.schoolid = co.schoolid
  AND (LEFT(gr.termid,2) + 1990) = co.academic_year
  AND co.rn_year = 1
-LEFT OUTER JOIN gabby.powerschool.cohort_identifiers_static e1 WITH(NOLOCK)
+LEFT OUTER JOIN gabby.powerschool.cohort_identifiers_static e1 
   ON gr.studentid = e1.studentid
  AND gr.schoolid = e1.schoolid
  AND e1.year_in_school = 1
@@ -216,8 +216,8 @@ SELECT co.student_number
       ,NULL AS need_70
       ,NULL AS need_80
       ,NULL AS need_90
-FROM gabby.powerschool.cohort_identifiers_static co WITH(NOLOCK)
-JOIN gabby.powerschool.final_grades_static gr WITH(NOLOCK)
+FROM gabby.powerschool.cohort_identifiers_static co 
+JOIN gabby.powerschool.final_grades_static gr 
   ON co.student_number = gr.student_number
  AND co.academic_year = gr.academic_year
  AND (gr.e1 IS NOT NULL OR gr.e2 IS NOT NULL)
@@ -271,8 +271,8 @@ SELECT co.student_number
       ,NULL AS need_70
       ,NULL AS need_80
       ,NULL AS need_90
-FROM gabby.powerschool.cohort_identifiers_static co WITH(NOLOCK)
-JOIN gabby.powerschool.category_grades_static gr WITH(NOLOCK)
+FROM gabby.powerschool.cohort_identifiers_static co 
+JOIN gabby.powerschool.category_grades_static gr 
   ON co.student_number = gr.student_number
  AND co.academic_year = gr.academic_year 
 JOIN section_teacher st
@@ -280,7 +280,7 @@ JOIN section_teacher st
  AND co.academic_year = st.academic_year
  AND gr.course_number = st.COURSE_NUMBER
  AND st.rn = 1
-JOIN gabby.powerschool.courses cou WITH(NOLOCK)
+JOIN gabby.powerschool.courses cou 
   ON gr.course_number = cou.course_number
 WHERE co.rn_year = 1
   AND co.school_level IN ('MS','HS')
@@ -327,8 +327,8 @@ SELECT co.student_number
       ,NULL AS need_70
       ,NULL AS need_80
       ,NULL AS need_90
-FROM gabby.powerschool.cohort_identifiers_static co WITH(NOLOCK)
-JOIN gabby.powerschool.category_grades_static gr WITH(NOLOCK)
+FROM gabby.powerschool.cohort_identifiers_static co 
+JOIN gabby.powerschool.category_grades_static gr 
   ON co.student_number = gr.student_number
  AND co.academic_year = gr.academic_year 
  AND gr.is_curterm = 1
@@ -337,7 +337,7 @@ JOIN section_teacher st
  AND co.academic_year = st.academic_year
  AND gr.course_number = st.COURSE_NUMBER
  AND st.rn = 1
-JOIN gabby.powerschool.courses cou WITH(NOLOCK)
+JOIN gabby.powerschool.courses cou 
   ON gr.course_number = cou.course_number
 WHERE co.rn_year = 1
   AND co.school_level IN ('MS','HS')
