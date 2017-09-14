@@ -412,7 +412,6 @@ WITH roster AS (
         ,'ACHIEVED' AS subdomain 
   FROM gabby.lit.achieved_by_round_static
   WHERE read_lvl IS NOT NULL
-    AND goal_lvl IS NOT NULL
     AND start_date <= CONVERT(DATE,GETDATE())
   UNION ALL
   SELECT student_number        
@@ -422,8 +421,7 @@ WITH roster AS (
         ,goal_num
         ,'GOAL' AS subdomain
   FROM gabby.lit.achieved_by_round_static
-  WHERE read_lvl IS NOT NULL
-    AND goal_lvl IS NOT NULL
+  WHERE goal_lvl IS NOT NULL
     AND start_date <= CONVERT(DATE,GETDATE())
   
   UNION ALL
