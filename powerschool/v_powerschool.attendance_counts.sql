@@ -47,8 +47,6 @@ WITH att_counts AS (
           ,end_date
  )
 
-
-
 ,counts_long AS (
   SELECT studentid
         ,academic_year
@@ -105,6 +103,7 @@ WITH att_counts AS (
              AND mem.calendardate BETWEEN CONVERT(DATE,d.start_date) AND CONVERT(DATE,d.end_date)
              AND d.identifier = 'RT'
             WHERE (mem.yearid + 1990) >= gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1
+              AND mem.calendardate <= CONVERT(DATE,GETDATE())
             GROUP BY mem.studentid
                     ,(mem.yearid + 1990)
                     ,CONVERT(NVARCHAR,d.time_per_name)
