@@ -356,10 +356,12 @@ FROM
            ,CASE
              WHEN sub.is_fp = 1 THEN goals.fp_read_lvl
              WHEN sub.is_fp = 0 THEN goals.step_read_lvl
+             ELSE COALESCE(goals.fp_read_lvl, goals.step_read_lvl)
             END AS default_goal_lvl
            ,CASE
              WHEN sub.is_fp = 1 THEN goals.fp_lvl_num
              WHEN sub.is_fp = 0 THEN goals.step_lvl_num
+             ELSE COALESCE(goals.fp_lvl_num, goals.step_lvl_num)
             END AS default_goal_num           
 
            ,indiv.goal AS indiv_goal_lvl
@@ -371,17 +373,20 @@ FROM
                     ,CASE
                       WHEN sub.is_fp = 1 THEN goals.fp_read_lvl
                       WHEN sub.is_fp = 0 THEN goals.step_read_lvl
+                      ELSE COALESCE(goals.fp_read_lvl, goals.step_read_lvl)
                      END) AS goal_lvl
            ,COALESCE(indiv.lvl_num
                     ,CASE
                       WHEN sub.is_fp = 1 THEN goals.fp_lvl_num
                       WHEN sub.is_fp = 0 THEN goals.step_lvl_num
+                      ELSE COALESCE(goals.fp_lvl_num, goals.step_lvl_num)
                      END) AS goal_num                                      
            
            ,sub.lvl_num - COALESCE(indiv.lvl_num
                                   ,CASE
                                     WHEN sub.is_fp = 1 THEN goals.fp_lvl_num
                                     WHEN sub.is_fp = 0 THEN goals.step_lvl_num
+                                    ELSE COALESCE(goals.fp_lvl_num, goals.step_lvl_num)
                                    END) AS levels_behind
            
            ,CASE 
@@ -425,7 +430,7 @@ FROM
          ) sub
      LEFT OUTER JOIN gabby.lit.network_goals goals 
        ON sub.grade_level = goals.grade_level
-      AND sub.test_round = goals.test_round
+      AND sub.round_num = goals.round_num
       AND sub.academic_year = goals.norms_year
      LEFT OUTER JOIN gabby.lit.individualized_goals indiv 
        ON sub.student_number = indiv.student_number
