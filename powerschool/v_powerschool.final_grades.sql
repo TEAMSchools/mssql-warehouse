@@ -236,7 +236,7 @@ SELECT sub.student_number
        END AS excludefromgpa
       ,sub.gradescaleid
       ,CASE
-        WHEN y1.potentialcrhrs IS NOT NULL THEN y1.POTENTIALCRHRS
+        WHEN y1.potentialcrhrs IS NOT NULL THEN y1.potentialcrhrs
         WHEN sub.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() THEN NULL
         ELSE sub.credit_hours
        END AS credit_hours
@@ -262,12 +262,12 @@ SELECT sub.student_number
         WHEN sub.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() THEN NULL
         ELSE sub.y1_grade_percent_adjusted
        END AS y1_grade_percent_adjusted      
-      ,CASE
-        WHEN y1.GRADE IS NOT NULL THEN y1.GRADE
-        WHEN sub.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() THEN NULL
-        WHEN sub.y1_grade_percent_adjusted = 50 AND sub.y1_grade_percent < 50 THEN 'F*'        
-        ELSE y1_scale.letter_grade 
-       END AS y1_grade_letter
+      ,REPLACE(CASE
+                WHEN y1.grade IS NOT NULL THEN y1.grade
+                WHEN sub.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() THEN NULL
+                WHEN sub.y1_grade_percent_adjusted = 50 AND sub.y1_grade_percent < 50 THEN 'F*'        
+                ELSE y1_scale.letter_grade 
+               END, 'false', 'F') AS y1_grade_letter
       ,CASE
         WHEN y1.gpa_points IS NOT NULL THEN y1.gpa_points
         WHEN sub.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() THEN NULL
