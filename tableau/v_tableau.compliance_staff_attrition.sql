@@ -8,7 +8,7 @@ WITH roster AS (
         ,preferred_first
         ,preferred_last
         ,LEFT(position_id,3) AS entity
-        ,location --changing to location so that we can pull historic info. Budget location will suffice for SY17-18.
+        ,location
         ,position_start_date
         ,termination_date        
         ,benefits_eligibility_class_description
