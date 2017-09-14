@@ -352,6 +352,7 @@ WITH roster AS (
     AND a.scope IN ('CMA - End-of-Module','CMA - Mid-Module','CMA - Checkpoint 1','CMA - Checkpoint 2','Process Piece')
     AND a.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
     AND a.response_type IN ('O','S')
+    AND a.is_replacement = 0
  )
 
 ,gpa AS (
@@ -368,7 +369,7 @@ WITH roster AS (
 
   SELECT student_number        
         ,academic_year      
-        ,'Y1' AS reporting_term
+        ,'SY1' AS reporting_term
         ,schoolid
         ,gpa_y1 AS GPA
         ,'GPA Y1' AS subdomain
@@ -380,7 +381,7 @@ WITH roster AS (
 
   SELECT s.student_number
         ,gabby.utilities.GLOBAL_ACADEMIC_YEAR()  AS academic_year
-        ,'Y1' AS reporting_Term
+        ,'SY1' AS reporting_Term
         ,gpa.schoolid           
         ,gpa.cumulative_Y1_gpa AS gpa
         ,'GPA CUMULATIVE' AS subdomain
@@ -392,7 +393,7 @@ WITH roster AS (
 
   SELECT s.student_number        
         ,gabby.utilities.GLOBAL_ACADEMIC_YEAR()  AS academic_year
-        ,'Y1' AS reporting_Term
+        ,'SY1' AS reporting_Term
         ,gpa.schoolid           
         ,gpa.earned_credits_cum AS gpa
         ,'CREDITS EARNED' AS subdomain
@@ -905,11 +906,12 @@ SELECT r.studentid
       ,NULL AS performance_level
       ,NULL AS performance_level_label
 FROM roster r
-LEFT OUTER JOIN gpa
+JOIN gpa
   ON r.student_number = gpa.student_number 
  AND r.schoolid = gpa.schoolid
  AND r.academic_year >= gpa.academic_year
  AND r.reporting_term = gpa.reporting_term
+ AND r.term_start_date <= CONVERT(DATE,GETDATE())
 
 UNION ALL
 --*/
