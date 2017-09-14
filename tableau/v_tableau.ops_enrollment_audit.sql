@@ -111,16 +111,16 @@ WITH caredox_enrollment AS (
         ,CONVERT(NVARCHAR(MAX),CASE WHEN co.year_in_network = 1 THEN ISNULL(uxs.residency_proof_2,'Missing') END) AS residency_proof_2
         ,CONVERT(NVARCHAR(MAX),CASE WHEN co.year_in_network = 1 THEN ISNULL(uxs.residency_proof_3,'Missing') END) AS residency_proof_3
         ,CONVERT(NVARCHAR(MAX),CASE
-          WHEN year_in_network = 1 AND CONCAT(ISNULL(uxs.residency_proof_1,'Missing')
-                                             ,ISNULL(uxs.residency_proof_2,'Missing')
-                                             ,ISNULL(uxs.residency_proof_3,'Missing')) NOT LIKE '%Missing%' 
-                 THEN 'Y'
-          WHEN year_in_network > 1 
-           AND ISNULL(uxs.residency_proof_1,'Missing') != 'N' 
-           AND rv.verification_date IS NOT NULL
-                 THEN 'Y'
-          ELSE 'N'
-         END) AS residency_proof_all
+                                WHEN year_in_network = 1 AND CONCAT(ISNULL(uxs.residency_proof_1,'Missing')
+									                                ,ISNULL(uxs.residency_proof_2,'Missing')
+									                                ,ISNULL(uxs.residency_proof_3,'Missing')) NOT LIKE '%Missing%' 
+		                                THEN 'Y'
+                                WHEN year_in_network > 1 
+                                AND ISNULL(uxs.residency_proof_1,'Missing') != 'N' 
+                                AND rv.verification_date IS NOT NULL
+		                                THEN 'Y'
+                                ELSE 'N'
+                                END) AS residency_proof_all
         --,ISNULL(CONVERT(NVARCHAR(MAX),uxs.reverification_date),'1900-07-01') AS reverification_date
         ,ISNULL(CONVERT(NVARCHAR(MAX),uxs.birth_certificate_proof),'N') AS birth_certificate_proof        
         ,ISNULL(CONVERT(NVARCHAR(MAX),CASE WHEN rv.NEN IS NOT NULL THEN 'Y' END),'N') AS residency_verification_scanned
@@ -252,10 +252,9 @@ SELECT a.student_number
         WHEN u.field = 'residency_proof_3' AND u.value NOT IN ('','Missing') THEN 1
         WHEN u.field = 'residency_proof_3' AND u.value IN ('','Missing') THEN -1
         WHEN u.field = 'residency_proof_all' AND u.value = 'Y' THEN 1
-        WHEN u.field = 'residency_proof_all' AND u.value = 'N' THEN -1
-        /* UPDATE ANNUALLY WITH VERIFICATION DATE CUTOFF */
-        WHEN u.field = 'reverification_date' AND CONVERT(DATE,u.value) >= DATEFROMPARTS(2017, 5, 17) THEN 1
-        WHEN u.field = 'reverification_date' AND CONVERT(DATE,u.value) < DATEFROMPARTS(2017, 5, 17) THEN -1
+        WHEN u.field = 'residency_proof_all' AND u.value = 'N' THEN -1        
+        WHEN u.field = 'reverification_date' AND CONVERT(DATE,u.value) >= DATEFROMPARTS(2017, 5, 17) THEN 1 /* UPDATE ANNUALLY WITH VERIFICATION DATE CUTOFF */
+        WHEN u.field = 'reverification_date' AND CONVERT(DATE,u.value) < DATEFROMPARTS(2017, 5, 17) THEN -1 /* UPDATE ANNUALLY WITH VERIFICATION DATE CUTOFF */
         WHEN u.field = 'residency_verification_scanned' AND u.value = 'Y' THEN 1
         WHEN u.field = 'residency_verification_scanned' AND u.value IN ('','N') THEN -1
        END AS audit_status
