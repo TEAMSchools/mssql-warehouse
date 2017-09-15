@@ -8,7 +8,7 @@ WITH roster AS (
         ,preferred_first
         ,preferred_last
         ,LEFT(position_id,3) AS entity
-        ,location
+        ,location_description AS location
         ,position_start_date
         ,termination_date        
         ,benefits_eligibility_class_description
