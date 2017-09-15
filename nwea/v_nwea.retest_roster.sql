@@ -44,7 +44,7 @@ WITH map_long AS (
                 
              ,COUNT(m.student_id) OVER(PARTITION BY m.student_id, m.measurement_scale) AS student_N                                
        FROM gabby.nwea.assessment_result_identifiers m 
-       JOIN gabby.powerschool.cohort_identifiers_static co WITH(NOLOCK)
+       JOIN gabby.powerschool.cohort_identifiers_static co
          ON m.student_id = co.student_number
         AND m.academic_year = co.academic_year
         AND co.rn_year = 1
