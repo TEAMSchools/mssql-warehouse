@@ -165,6 +165,7 @@ WITH caredox_enrollment AS (
   WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
     AND co.schoolid != 999999    
     AND co.rn_year = 1
+    AND co.enroll_status IN (-1, 0)
  )
 
 ,unpivoted AS (
