@@ -21,6 +21,9 @@ SET @schema_name = 'renaissance'
 SET @view_name = 'ar_studentpractice_identifiers'
 
 BEGIN
+  
+  WAITFOR DELAY '00:01:00'; /* manually added minute wait */
+  
   BEGIN TRY
     /* get list of tables referenced by view */  
     /* only include non-static table objects */
