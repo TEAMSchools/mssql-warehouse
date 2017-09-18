@@ -15,7 +15,7 @@ WITH ar_long AS (
         ,SUM(CASE WHEN ch_fiction_non_fiction = 'F' AND rn_quiz = 1 THEN 1 ELSE 0 END) AS n_fiction        
         ,AVG(CASE WHEN rn_quiz = 1 THEN d_percent_correct END) AS avg_pct_correct
         ,ROUND(AVG(CASE WHEN rn_quiz = 1 THEN fl_lexile_calc END),0) AS avg_lexile
-  FROM gabby.renaissance.ar_studentpractice_identifiers_static
+  FROM gabby.renaissance.ar_studentpractice_identifiers
   GROUP BY student_number
           ,academic_year      
           ,CONVERT(DATE,dt_taken)
@@ -35,7 +35,7 @@ WITH ar_long AS (
         ,ROW_NUMBER() OVER(
            PARTITION BY student_number, academic_year
              ORDER BY dt_taken DESC) AS rn
-  FROM gabby.renaissance.ar_studentpractice_identifiers_static
+  FROM gabby.renaissance.ar_studentpractice_identifiers
   WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
  )
 

@@ -31,7 +31,7 @@ SELECT co.student_number
            
       ,hr.teacher_name AS homeroom_teacher
 FROM gabby.powerschool.cohort_identifiers_static co
-JOIN gabby.renaissance.ar_studentpractice_identifiers_static ar
+JOIN gabby.renaissance.ar_studentpractice_identifiers ar
   ON co.student_number = ar.student_number
  AND co.academic_year = ar.academic_year
  AND ar.ti_passed = 1
