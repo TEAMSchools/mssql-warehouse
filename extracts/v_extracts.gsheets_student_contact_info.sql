@@ -30,6 +30,12 @@ SELECT co.student_number
       ,aa.student_web_password
       ,aa.web_id AS family_web_id
       ,aa.web_password AS family_web_password      
+
+      ,CONCAT(co.release_1_name, ' | ', co.release_1_phone) AS release_1
+      ,CONCAT(co.release_2_name, ' | ', co.release_2_phone) AS release_2
+      ,CONCAT(co.release_3_name, ' | ', co.release_3_phone) AS release_3
+      ,CONCAT(co.release_4_name, ' | ', co.release_4_phone) AS release_4
+      ,CONCAT(co.release_5_name, ' | ', co.release_5_phone) AS release_5
 FROM gabby.powerschool.cohort_identifiers_static co
 LEFT OUTER JOIN gabby.extracts.powerschool_autocomm_students_accessaccounts aa
   ON co.student_number = aa.student_number
