@@ -12,7 +12,7 @@ SELECT co.student_number
       ,CASE WHEN co.grade_level = 0 THEN 'K' ELSE CONVERT(NVARCHAR,co.grade_level) END AS grade_level      
       ,co.team
       ,co.advisor_name      
-      ,co.entrydate
+      ,CONVERT(NVARCHAR,co.entrydate) AS entrydate
       ,co.boy_status
       ,CONVERT(NVARCHAR,co.dob) AS dob
       ,co.gender                        
