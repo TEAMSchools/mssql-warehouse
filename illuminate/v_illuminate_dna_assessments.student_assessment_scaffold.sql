@@ -50,8 +50,12 @@ SELECT sub.assessment_id
         WHEN PATINDEX('%[MU][0-9]/[0-9]%', sub.title) > 0 THEN SUBSTRING(sub.title, PATINDEX('%[MU][0-9]/[0-9]%', sub.title), 4)
         WHEN PATINDEX('%[MU][0-9]%', sub.title) > 0 THEN SUBSTRING(sub.title, PATINDEX('%[MU][0-9]%', sub.title), 2)
         WHEN PATINDEX('%QA[0-9]%', sub.title) > 0 THEN SUBSTRING(sub.title, PATINDEX('%QA[0-9]%', sub.title), 3)
-        WHEN PATINDEX('%CGI[0-9]%', sub.title) > 0 THEN SUBSTRING(sub.title, PATINDEX('%CGI[0-9]%', sub.title), 4)        
-        WHEN PATINDEX('%CRQ[0-9]%', sub.title) > 0 THEN LTRIM(RTRIM(SUBSTRING(sub.title, PATINDEX('%CRQ[0-9]%', sub.title), 5)))
+        WHEN PATINDEX('%CGI[0-9][0-9]%', sub.title) > 0 THEN LTRIM(RTRIM(SUBSTRING(sub.title, PATINDEX('%CGI[0-9]%', sub.title), 5)))
+        WHEN PATINDEX('%CGI[0-9]%', sub.title) > 0 THEN LTRIM(RTRIM(SUBSTRING(sub.title, PATINDEX('%CGI[0-9]%', sub.title), 4)))
+        WHEN PATINDEX('%CRQ[0-9][0-9]%', sub.title) > 0 THEN LTRIM(RTRIM(SUBSTRING(sub.title, PATINDEX('%CRQ[0-9]%', sub.title), 5)))
+        WHEN PATINDEX('%CRQ[0-9]%', sub.title) > 0 THEN LTRIM(RTRIM(SUBSTRING(sub.title, PATINDEX('%CRQ[0-9]%', sub.title), 4)))
+        WHEN PATINDEX('%MFCJ[0-9][0-9]%', sub.title) > 0 THEN LTRIM(RTRIM(SUBSTRING(sub.title, PATINDEX('%MFCJ[0-9]%', sub.title), 6)))
+        WHEN PATINDEX('%MFCJ[0-9]%', sub.title) > 0 THEN LTRIM(RTRIM(SUBSTRING(sub.title, PATINDEX('%MFCJ[0-9]%', sub.title), 5)))
        END AS module_number
       ,sub.scope
       ,sub.subject_area
