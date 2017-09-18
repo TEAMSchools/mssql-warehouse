@@ -123,15 +123,6 @@ WITH roster AS (
 SELECT student_number
       ,academic_year
       ,reporting_term
-      ,words_goal
-      ,points_goal
-FROM gabby.renaissance.ar_goals_archive
-
-UNION ALL
-
-SELECT student_number
-      ,academic_year
-      ,reporting_term
       ,CASE WHEN words_goal < 0 THEN -1 ELSE words_goal END AS words_goal
       ,CASE WHEN points_goal < 0 THEN -1 ELSE points_goal END AS points_goal
 
@@ -157,3 +148,12 @@ FROM
      GROUP BY student_number
              ,academic_year
     ) sub
+
+UNION ALL
+
+SELECT student_number
+      ,academic_year
+      ,reporting_term
+      ,words_goal
+      ,points_goal
+FROM gabby.renaissance.ar_goals_archive
