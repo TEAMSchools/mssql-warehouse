@@ -3,6 +3,30 @@ GO
 
 ALTER VIEW illuminate_dna_assessments.student_assessment_scaffold AS
 
+WITH advanced_math AS (
+  SELECT ssc.student_id
+        ,ssc.academic_year      
+        ,ssc.grade_level_id
+
+        ,CASE
+          WHEN c.school_course_id IN ('MATH10','MATH15','MATH71','MATH10ICS','MATH12','MATH12ICS','MATH14','MATH16','M415') THEN 'Algebra I'        
+          WHEN c.school_course_id IN ('MATH20','MATH25','MATH31','MATH73','MATH20ICS') THEN 'Geometry'
+          WHEN c.school_course_id IN ('MATH32','MATH35','MATH32A','MATH32B','MATH32HA') THEN 'Algebra II'
+         END AS subject_area
+        
+        ,ROW_NUMBER() OVER(        
+           PARTITION BY ssc.student_id, ssc.academic_year, CASE
+                                                            WHEN c.school_course_id IN ('MATH10','MATH15','MATH71','MATH10ICS','MATH12','MATH12ICS','MATH14','MATH16','M415') THEN 'Algebra I'        
+                                                            WHEN c.school_course_id IN ('MATH20','MATH25','MATH31','MATH73','MATH20ICS') THEN 'Geometry'
+                                                            WHEN c.school_course_id IN ('MATH32','MATH35','MATH32A','MATH32B','MATH32HA') THEN 'Algebra II'
+                                                           END
+             ORDER BY entry_date DESC, leave_date DESC) AS rn
+  FROM gabby.illuminate_matviews.ss_cube ssc  
+  JOIN gabby.illuminate_public.courses c
+    ON ssc.course_id = c.course_id 
+   AND c.department_id = 1   
+ )
+
 SELECT sub.assessment_id
       ,sub.title
       ,sub.administered_at
@@ -35,7 +59,7 @@ SELECT sub.assessment_id
       ,sub.is_replacement
 FROM
     (
-     /* standard curriculum */
+     /* standard curriculum -- not math */
      SELECT DISTINCT 
             a.assessment_id
            ,a.title
@@ -55,11 +79,75 @@ FROM
       AND ds.code_translation IN (SELECT scope FROM gabby.illuminate_dna_assessments.normed_scopes)
      JOIN gabby.illuminate_codes.dna_subject_areas dsa
        ON a.code_subject_area_id = dsa.code_id    
+      AND dsa.code_translation NOT IN ('Mathematics','Algebra I','Geometry','Algebra II')
      JOIN gabby.illuminate_dna_assessments.assessment_grade_levels agl
        ON a.assessment_id = agl.assessment_id
      JOIN gabby.illuminate_public.student_session_aff ssa
        ON a.administered_at BETWEEN ssa.entry_date AND ssa.leave_date
       AND agl.grade_level_id = ssa.grade_level_id
+     WHERE a.deleted_at IS NULL
+
+     UNION ALL
+
+     /* standard curriculum -- K-8 math */
+     SELECT DISTINCT 
+            a.assessment_id
+           ,a.title
+           ,a.administered_at        
+           ,a.performance_band_set_id
+           ,(a.academic_year - 1) AS academic_year
+           
+           ,ds.code_translation AS scope           
+           ,dsa.code_translation AS subject_area
+
+           ,ssa.student_id
+      
+           ,0 AS is_replacement
+     FROM gabby.illuminate_dna_assessments.assessments a  
+     JOIN gabby.illuminate_codes.dna_scopes ds
+       ON a.code_scope_id = ds.code_id
+      AND ds.code_translation IN (SELECT scope FROM gabby.illuminate_dna_assessments.normed_scopes)
+     JOIN gabby.illuminate_codes.dna_subject_areas dsa
+       ON a.code_subject_area_id = dsa.code_id    
+      AND dsa.code_translation = 'Mathematics'
+     JOIN gabby.illuminate_dna_assessments.assessment_grade_levels agl
+       ON a.assessment_id = agl.assessment_id
+     JOIN gabby.illuminate_public.student_session_aff ssa
+       ON a.administered_at BETWEEN ssa.entry_date AND ssa.leave_date
+      AND agl.grade_level_id = ssa.grade_level_id     
+      AND ssa.student_id NOT IN (SELECT student_id FROM advanced_math WHERE rn = 1)
+     WHERE a.deleted_at IS NULL
+
+     UNION ALL
+
+     /* standard curriculum -- advanced math */
+     SELECT DISTINCT 
+            a.assessment_id
+           ,a.title
+           ,a.administered_at        
+           ,a.performance_band_set_id
+           ,(a.academic_year - 1) AS academic_year
+           
+           ,ds.code_translation AS scope           
+           ,dsa.code_translation AS subject_area
+
+           ,am.student_id
+      
+           ,0 AS is_replacement
+     FROM gabby.illuminate_dna_assessments.assessments a  
+     JOIN gabby.illuminate_codes.dna_scopes ds
+       ON a.code_scope_id = ds.code_id
+      AND ds.code_translation IN (SELECT scope FROM gabby.illuminate_dna_assessments.normed_scopes)
+     JOIN gabby.illuminate_codes.dna_subject_areas dsa
+       ON a.code_subject_area_id = dsa.code_id    
+      AND dsa.code_translation IN ('Algebra I','Geometry','Algebra II')
+     JOIN gabby.illuminate_dna_assessments.assessment_grade_levels agl
+       ON a.assessment_id = agl.assessment_id
+     JOIN advanced_math am
+       ON a.academic_year = am.academic_year
+      AND agl.grade_level_id = am.grade_level_id
+      AND dsa.code_translation = am.subject_area
+      AND am.rn = 1
      WHERE a.deleted_at IS NULL
 
      UNION ALL
