@@ -111,7 +111,7 @@ WITH responses_long AS (
         ,SUM(points) AS points
         ,ROUND((SUM(points) / SUM(points_possible)) * 100, 0) AS percent_correct
   FROM responses_long
-  WHERE scope IN ('CMA - End-of-Module', 'CMA - Mid-Module', 'CGI Quiz','Cold Read Quizzes','Cummulative Review Quizzes')
+  WHERE scope IN (SELECT scope FROM gabby.illuminate_dna_assessments.normed_scopes)
   GROUP BY student_id             
           ,academic_year                   
           ,scope
@@ -141,7 +141,7 @@ WITH responses_long AS (
         ,points
         ,percent_correct
   FROM responses_long
-  WHERE scope NOT IN ('CMA - End-of-Module', 'CMA - Mid-Module', 'CGI Quiz','Cold Read Quizzes','Cummulative Review Quizzes')
+  WHERE scope NOT IN (SELECT scope FROM gabby.illuminate_dna_assessments.normed_scopes)
  )
 
 SELECT rr.assessment_id
