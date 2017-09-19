@@ -278,7 +278,7 @@ JOIN gabby.powerschool.category_grades_static gr
 JOIN section_teacher st
   ON co.studentid = st.studentid
  AND co.academic_year = st.academic_year
- AND gr.course_number = st.COURSE_NUMBER
+ AND gr.course_number = st.course_number
  AND st.rn = 1
 JOIN gabby.powerschool.courses cou 
   ON gr.course_number = cou.course_number
@@ -335,7 +335,7 @@ JOIN gabby.powerschool.category_grades_static gr
 JOIN section_teacher st
   ON co.studentid = st.studentid
  AND co.academic_year = st.academic_year
- AND gr.course_number = st.COURSE_NUMBER
+ AND gr.course_number = st.course_number
  AND st.rn = 1
 JOIN gabby.powerschool.courses cou 
   ON gr.course_number = cou.course_number
