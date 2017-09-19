@@ -101,6 +101,7 @@ JOIN gabby.lit.achieved_by_round_static achv
   ON co.student_number = achv.student_number
  AND co.academic_year = achv.academic_year
  AND term.lit = achv.test_round
+ AND achv.start_date <= CONVERT(DATE,GETDATE())
 LEFT OUTER JOIN gabby.lit.all_test_events_static atid
   ON co.student_number = atid.student_number
  AND achv.achv_unique_id = atid.unique_id 
@@ -118,4 +119,4 @@ LEFT OUTER JOIN gabby.renaissance.ar_progress_to_goals_static ar
  AND ar.start_date <= CONVERT(DATE,GETDATE())
  AND ar.n_total > 0
 WHERE co.rn_year = 1
-  AND co.schoolid != 999999
+  AND co.reporting_schoolid NOT IN (999999, 5173)

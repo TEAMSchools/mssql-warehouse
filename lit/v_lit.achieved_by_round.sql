@@ -354,15 +354,23 @@ FROM
            ,sub.dna_unique_id      
 
            ,CASE
-             WHEN sub.is_fp = 1 THEN goals.fp_read_lvl
-             WHEN sub.is_fp = 0 THEN goals.step_read_lvl
+             WHEN (goals.fp_read_lvl IS NOT NULL AND goals.step_read_lvl IS NOT NULL)
+              AND sub.is_fp = 1 
+                    THEN goals.fp_read_lvl
+             WHEN (goals.fp_read_lvl IS NOT NULL AND goals.step_read_lvl IS NOT NULL)
+              AND sub.is_fp = 0 
+                    THEN goals.step_read_lvl
              ELSE COALESCE(goals.fp_read_lvl, goals.step_read_lvl)
             END AS default_goal_lvl
            ,CASE
-             WHEN sub.is_fp = 1 THEN goals.fp_lvl_num
-             WHEN sub.is_fp = 0 THEN goals.step_lvl_num
+             WHEN (goals.fp_lvl_num IS NOT NULL AND goals.step_lvl_num IS NOT NULL)
+              AND sub.is_fp = 1 
+                    THEN goals.fp_lvl_num
+             WHEN (goals.fp_lvl_num IS NOT NULL AND goals.step_lvl_num IS NOT NULL)
+              AND sub.is_fp = 0 
+                    THEN goals.step_lvl_num
              ELSE COALESCE(goals.fp_lvl_num, goals.step_lvl_num)
-            END AS default_goal_num           
+            END AS default_goal_num            
 
            ,indiv.goal AS indiv_goal_lvl
            ,indiv.lvl_num AS indiv_lvl_num
@@ -371,28 +379,35 @@ FROM
            ,LAG(sub.lvl_num, 1) OVER(PARTITION BY sub.student_number ORDER BY sub.academic_year ASC, sub.start_date ASC) AS prev_lvl_num           
            ,COALESCE(indiv.goal
                     ,CASE
-                      WHEN sub.is_fp = 1 THEN goals.fp_read_lvl
-                      WHEN sub.is_fp = 0 THEN goals.step_read_lvl
+                      WHEN (goals.fp_read_lvl IS NOT NULL AND goals.step_read_lvl IS NOT NULL)
+                       AND sub.is_fp = 1 
+                             THEN goals.fp_read_lvl
+                      WHEN (goals.fp_read_lvl IS NOT NULL AND goals.step_read_lvl IS NOT NULL)
+                       AND sub.is_fp = 0 
+                             THEN goals.step_read_lvl
                       ELSE COALESCE(goals.fp_read_lvl, goals.step_read_lvl)
                      END) AS goal_lvl
            ,COALESCE(indiv.lvl_num
                     ,CASE
-                      WHEN sub.is_fp = 1 THEN goals.fp_lvl_num
-                      WHEN sub.is_fp = 0 THEN goals.step_lvl_num
+                      WHEN (goals.fp_lvl_num IS NOT NULL AND goals.step_lvl_num IS NOT NULL)
+                       AND sub.is_fp = 1 
+                             THEN goals.fp_lvl_num
+                      WHEN (goals.fp_lvl_num IS NOT NULL AND goals.step_lvl_num IS NOT NULL)
+                       AND sub.is_fp = 0 
+                             THEN goals.step_lvl_num
                       ELSE COALESCE(goals.fp_lvl_num, goals.step_lvl_num)
-                     END) AS goal_num                                      
-           
+                     END) AS goal_num                                                 
            ,sub.lvl_num - COALESCE(indiv.lvl_num
                                   ,CASE
-                                    WHEN sub.is_fp = 1 THEN goals.fp_lvl_num
-                                    WHEN sub.is_fp = 0 THEN goals.step_lvl_num
+                                    WHEN (goals.fp_lvl_num IS NOT NULL AND goals.step_lvl_num IS NOT NULL)
+                                     AND sub.is_fp = 1 
+                                           THEN goals.fp_lvl_num
+                                    WHEN (goals.fp_lvl_num IS NOT NULL AND goals.step_lvl_num IS NOT NULL)
+                                     AND sub.is_fp = 0 
+                                           THEN goals.step_lvl_num
                                     ELSE COALESCE(goals.fp_lvl_num, goals.step_lvl_num)
-                                   END) AS levels_behind
-           
-           ,CASE 
-             WHEN sub.academic_year = lit.academic_year AND sub.round_num = lit.round_num THEN 1 
-             ELSE 0
-            END AS is_new_test
+                                   END) AS levels_behind           
+           ,CASE WHEN sub.academic_year = atid.academic_year AND sub.round_num = atid.round_num THEN 1 ELSE 0 END AS is_new_test
      FROM
          (
           SELECT achieved.academic_year
@@ -436,7 +451,7 @@ FROM
        ON sub.student_number = indiv.student_number
       AND sub.test_round = indiv.test_round
       AND sub.academic_year = indiv.academic_year
-     LEFT OUTER JOIN gabby.lit.all_test_events_static lit 
-       ON sub.achv_unique_id = lit.unique_id
-      AND lit.status != 'Did Not Achieve'     
+     LEFT OUTER JOIN gabby.lit.all_test_events_static atid 
+       ON sub.achv_unique_id = atid.unique_id
+      AND atid.status != 'Did Not Achieve'     
     ) sub

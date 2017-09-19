@@ -174,15 +174,19 @@ SELECT cd.unique_id
       ,cd.key_lever
       ,cd.fiction_nonfiction
       ,cd.test_administered_by      
-      ,CASE
-        WHEN test_round = 'BOY' THEN 1
-        WHEN test_round = 'MOY' THEN 2
-        WHEN test_round = 'EOY' THEN 3
-        WHEN test_round = 'DR' THEN 1
-        WHEN test_round = 'Q1' THEN 2
-        WHEN test_round = 'Q2' THEN 3
-        WHEN test_round = 'Q3' THEN 4
-        WHEN test_round = 'Q4' THEN 5
+      ,CASE        
+        WHEN cd.academic_year <= 2016 AND test_round = 'BOY' THEN 1
+        WHEN cd.academic_year <= 2016 AND test_round = 'MOY' THEN 2
+        WHEN cd.academic_year <= 2016 AND test_round = 'EOY' THEN 3
+        WHEN cd.academic_year <= 2016 AND test_round = 'DR' THEN 1
+        WHEN cd.academic_year <= 2016 AND test_round = 'Q1' THEN 2
+        WHEN cd.academic_year <= 2016 AND test_round = 'Q2' THEN 3
+        WHEN cd.academic_year <= 2016 AND test_round = 'Q3' THEN 4
+        WHEN cd.academic_year <= 2016 AND test_round = 'Q4' THEN 5
+        WHEN cd.academic_year >= 2017 AND test_round = 'Q1' THEN 1
+        WHEN cd.academic_year >= 2017 AND test_round = 'Q2' THEN 2
+        WHEN cd.academic_year >= 2017 AND test_round = 'Q3' THEN 3
+        WHEN cd.academic_year >= 2017 AND test_round = 'Q4' THEN 4
        END AS round_num
       ,CASE 
         WHEN cd.about_the_text IS NULL AND cd.beyond_the_text IS NULL AND cd.within_the_text IS NULL THEN NULL
@@ -191,6 +195,7 @@ SELECT cd.unique_id
       
       ,achv.GLEQ
       ,achv.fp_lvl_num AS indep_lvl_num
+
       ,instr.fp_lvl_num AS instr_lvl_num
 FROM clean_data cd
 LEFT OUTER JOIN gabby.lit.gleq achv
