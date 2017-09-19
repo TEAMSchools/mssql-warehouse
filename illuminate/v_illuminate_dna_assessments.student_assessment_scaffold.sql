@@ -54,8 +54,10 @@ SELECT sub.assessment_id
         WHEN PATINDEX('%CGI[0-9]%', sub.title) > 0 THEN LTRIM(RTRIM(SUBSTRING(sub.title, PATINDEX('%CGI[0-9]%', sub.title), 4)))
         WHEN PATINDEX('%CRQ[0-9][0-9]%', sub.title) > 0 THEN LTRIM(RTRIM(SUBSTRING(sub.title, PATINDEX('%CRQ[0-9]%', sub.title), 5)))
         WHEN PATINDEX('%CRQ[0-9]%', sub.title) > 0 THEN LTRIM(RTRIM(SUBSTRING(sub.title, PATINDEX('%CRQ[0-9]%', sub.title), 4)))
-        WHEN PATINDEX('%MFCJ[0-9][0-9]%', sub.title) > 0 THEN LTRIM(RTRIM(SUBSTRING(sub.title, PATINDEX('%MFCJ[0-9]%', sub.title), 6)))
-        WHEN PATINDEX('%MFCJ[0-9]%', sub.title) > 0 THEN LTRIM(RTRIM(SUBSTRING(sub.title, PATINDEX('%MFCJ[0-9]%', sub.title), 5)))
+        WHEN PATINDEX('%MF[0-9][0-9]%', sub.title) > 0 THEN LTRIM(RTRIM(SUBSTRING(sub.title, PATINDEX('%MF[0-9]%', sub.title), 4)))
+        WHEN PATINDEX('%MF[0-9]%', sub.title) > 0 THEN LTRIM(RTRIM(SUBSTRING(sub.title, PATINDEX('%MF[0-9]%', sub.title), 3)))
+        WHEN PATINDEX('%CJ[0-9][0-9]%', sub.title) > 0 THEN LTRIM(RTRIM(SUBSTRING(sub.title, PATINDEX('%CJ[0-9]%', sub.title), 4)))
+        WHEN PATINDEX('%CJ[0-9]%', sub.title) > 0 THEN LTRIM(RTRIM(SUBSTRING(sub.title, PATINDEX('%CJ[0-9]%', sub.title), 3)))
        END AS module_number
       ,sub.scope
       ,sub.subject_area
@@ -119,7 +121,7 @@ FROM
      JOIN gabby.illuminate_public.student_session_aff ssa
        ON a.administered_at BETWEEN ssa.entry_date AND ssa.leave_date
       AND agl.grade_level_id = ssa.grade_level_id     
-      AND ssa.student_id NOT IN (SELECT student_id FROM advanced_math WHERE rn = 1)
+      AND ssa.student_id NOT IN (SELECT student_id FROM advanced_math WHERE rn = 1 AND subject_area IS NOT NULL)
      WHERE a.deleted_at IS NULL
 
      UNION ALL
