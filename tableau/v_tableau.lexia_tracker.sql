@@ -67,16 +67,16 @@ LEFT OUTER JOIN gabby.powerschool.course_enrollments_static enr
  AND enr.section_enroll_status = 0
 LEFT OUTER JOIN gabby.lexia.student_goals g
   ON co.student_number = g.student_number
- AND co.academic_year = g.academic_year
+ --AND co.academic_year = g.academic_year
 LEFT OUTER JOIN prev_week_time pw
   ON s.student_web_id = pw.username
  AND co.academic_year = pw.academic_year
  AND pw.rn = 1
-JOIN gabby.lexia.student_progress lex 
+LEFT OUTER JOIN gabby.lexia.student_progress lex 
   ON s.student_web_id = lex.username
- AND (lex.activity_start_time BETWEEN co.entrydate AND co.exitdate
-        OR lex.activity_end_time BETWEEN co.entrydate AND co.exitdate)
-WHERE co.academic_year >= 2015
+ --AND (lex.activity_start_time BETWEEN co.entrydate AND co.exitdate
+ --       OR lex.activity_end_time BETWEEN co.entrydate AND co.exitdate)
+WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.grade_level <= 8
   AND co.enroll_status = 0
   AND co.rn_year = 1
