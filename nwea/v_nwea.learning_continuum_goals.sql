@@ -53,7 +53,7 @@ WITH long_data AS (
              --,CONVERT(NVARCHAR(64), goal_8_name) AS goal_8_name
              --,CONVERT(NVARCHAR(64), goal_8_range) AS goal_8_range
              --,CONVERT(NVARCHAR(64), goal_8_rit_score) AS goal_8_rit_score
-       FROM gabby.nwea.assessment_result_identifiers_static
+       FROM gabby.nwea.assessment_result_identifiers
       ) sub
   UNPIVOT(
     value

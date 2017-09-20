@@ -102,10 +102,10 @@ JOIN gabby.lit.achieved_by_round_static achv
  AND co.academic_year = achv.academic_year
  AND term.lit = achv.test_round
  AND achv.start_date <= CONVERT(DATE,GETDATE())
-LEFT OUTER JOIN gabby.lit.all_test_events_static atid
+LEFT OUTER JOIN gabby.lit.all_test_events atid
   ON co.student_number = atid.student_number
  AND achv.achv_unique_id = atid.unique_id 
-LEFT OUTER JOIN gabby.lit.all_test_events_static dtid
+LEFT OUTER JOIN gabby.lit.all_test_events dtid
   ON co.student_number = dtid.student_number
  AND achv.dna_unique_id = dtid.unique_id 
 LEFT OUTER JOIN gabby.lit.component_proficiency_long_static long

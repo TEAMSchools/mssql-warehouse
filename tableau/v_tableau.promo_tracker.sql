@@ -449,7 +449,7 @@ WITH roster AS (
           WHEN ritto_reading_score >= 1200 THEN 31
          END AS lvl_num        
         ,'ACHIEVED' AS subdomain
-  FROM gabby.nwea.assessment_result_identifiers_static
+  FROM gabby.nwea.assessment_result_identifiers
   WHERE measurement_scale = 'Reading'
     AND school_name = 'Newark Collegiate Academy'
     AND rn_term_subj = 1
@@ -470,7 +470,7 @@ WITH roster AS (
           WHEN s.grade_level = 12 THEN 31
          END AS goal_num
         ,'GOAL' AS subdomain
-  FROM gabby.nwea.assessment_result_identifiers_static map
+  FROM gabby.nwea.assessment_result_identifiers map
   JOIN gabby.powerschool.students s
     ON map.student_id = s.student_number
    AND s.schoolid = 73253
@@ -488,7 +488,7 @@ WITH roster AS (
         ,test_ritscore
         ,percentile_2015_norms AS testpercentile
         ,NULL AS subdomain                        
-  FROM gabby.nwea.assessment_result_identifiers_static
+  FROM gabby.nwea.assessment_result_identifiers
   WHERE rn_term_subj = 1
  )
 
