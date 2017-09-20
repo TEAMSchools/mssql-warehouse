@@ -4,34 +4,36 @@ GO
 ALTER VIEW renaissance.ar_goals AS
 
 WITH roster AS (
-  SELECT student_number	
-        ,academic_year	
-        ,grade_level	
-        ,enroll_status	
+  SELECT student_number
+        ,academic_year
+        ,grade_level
+        ,enroll_status
         ,reporting_term
         ,MAX(is_enrolled) AS is_enrolled
   FROM
       (
-       SELECT DISTINCT 
-              co.student_number        
+       SELECT co.student_number        
              ,co.academic_year             
              ,co.grade_level             
              ,co.enroll_status
-             ,co.is_enrolled
+             ,CASE 
+               WHEN co.exitdate <= CONVERT(DATE,dts.start_date) THEN 0
+               WHEN co.entrydate <= CONVERT(DATE,dts.end_date) THEN 1 
+               ELSE 0 
+              END AS is_enrolled
              
              ,dts.time_per_name AS reporting_term                          
-       FROM gabby.powerschool.cohort_identifiers_scaffold co
+       FROM gabby.powerschool.cohort_identifiers_static co
        JOIN gabby.reporting.reporting_terms dts
          ON co.schoolid = dts.schoolid
-        AND co.date BETWEEN dts.start_date AND dts.end_date
+        AND co.academic_year = dts.academic_year
         AND dts.identifier = 'AR'          
-        AND dts.time_per_name != 'ARY'
-       WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()                       
-      ) sub
-  GROUP BY student_number	
-          ,academic_year	
-          ,grade_level	
-          ,enroll_status	
+        AND dts.time_per_name != 'ARY'  
+       ) sub
+  GROUP BY student_number
+          ,academic_year
+          ,grade_level
+          ,enroll_status
           ,reporting_term
  )
 

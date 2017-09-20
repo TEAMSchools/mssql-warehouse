@@ -16,7 +16,7 @@ WITH map_long AS (
         ,base.test_ritscore AS rit      
         ,base.lexile_score
         ,NULL AS testdurationminutes
-  FROM gabby.nwea.best_baseline_static base
+  FROM gabby.nwea.best_baseline base
   
   UNION ALL
   
@@ -32,8 +32,8 @@ WITH map_long AS (
         ,map.test_ritscore AS rit      
         ,map.ritto_reading_score AS lexile_score
         ,map.test_duration_minutes
-  FROM gabby.nwea.best_baseline_static base
-  LEFT OUTER JOIN gabby.nwea.assessment_result_identifiers_static map
+  FROM gabby.nwea.best_baseline base
+  LEFT OUTER JOIN gabby.nwea.assessment_result_identifiers map
     ON base.student_number = map.student_id
    AND base.academic_year = map.academic_year
    AND base.measurementscale = map.measurement_scale

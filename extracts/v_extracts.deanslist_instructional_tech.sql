@@ -14,7 +14,7 @@ SELECT student_number
       ,words AS progress
       ,words_goal AS goal
       ,stu_status_words AS goal_status
-FROM gabby.renaissance.ar_progress_to_goals_static
+FROM gabby.renaissance.ar_progress_to_goals
 WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 
 UNION ALL

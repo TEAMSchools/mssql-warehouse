@@ -106,12 +106,12 @@ FROM
            
            ,COUNT(map.student_id) OVER(PARTITION BY map.student_id, map.academic_year, map.term, map.measurement_scale) AS n_tests
      FROM scaffold r
-     LEFT OUTER JOIN gabby.nwea.assessment_result_identifiers_static map
+     LEFT OUTER JOIN gabby.nwea.assessment_result_identifiers map
        ON r.student_number = map.student_id
       AND r.academic_year = map.academic_year
       AND r.measurement_scale = map.measurement_scale
       AND r.term_name = map.term
-     LEFT OUTER JOIN gabby.nwea.best_baseline_static base 
+     LEFT OUTER JOIN gabby.nwea.best_baseline base 
        ON r.student_number = base.student_number
       AND r.academic_year = base.academic_year
       AND r.measurement_scale = base.measurementscale

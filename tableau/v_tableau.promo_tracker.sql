@@ -785,7 +785,7 @@ WITH roster AS (
         ,stu_status_words AS goal_status
         ,CASE WHEN reporting_term = 'ARY' THEN 'Y1' ELSE REPLACE(reporting_term, 'AR', 'Q') END AS term_name
         ,'AR' AS subdomain      
-  FROM gabby.renaissance.ar_progress_to_goals_static
+  FROM gabby.renaissance.ar_progress_to_goals
   WHERE academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
  )
 
