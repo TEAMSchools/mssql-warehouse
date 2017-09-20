@@ -13,9 +13,9 @@ WITH schooldays AS (
              ,schoolid
              ,CASE WHEN schoolid LIKE '1799%' THEN 'KCNA' ELSE 'TEAM' END AS region
              ,SUM(membershipvalue) AS N_days
-       FROM gabby.powerschool.calendar_day
-       WHERE CONVERT(DATE,date_value) <= CONVERT(DATE,GETDATE())
-         AND schoolid != 12345 /* exclude summer school */
+       FROM gabby.powerschool.calendar_day       
+       WHERE schoolid NOT IN (12345, 0, 999999) /* exclude summer school, grads, district */
+         AND CONVERT(DATE,date_value) <= CONVERT(DATE,GETDATE())
        GROUP BY gabby.utilities.DATE_TO_SY(date_value)
                ,schoolid
       ) sub
