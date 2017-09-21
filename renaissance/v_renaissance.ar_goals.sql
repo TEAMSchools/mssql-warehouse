@@ -29,6 +29,7 @@ WITH roster AS (
         AND co.academic_year = dts.academic_year
         AND dts.identifier = 'AR'          
         AND dts.time_per_name != 'ARY'  
+       WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
        ) sub
   GROUP BY student_number
           ,academic_year
@@ -90,7 +91,7 @@ WITH roster AS (
         ,words_goal
         ,points_goal
         ,ROW_NUMBER() OVER(
-           PARTITION BY student_number, reporting_term
+           PARTITION BY student_number, academic_year, reporting_term
              ORDER BY words_goal DESC, points_goal DESC) AS rn_dupe
   FROM
       (
