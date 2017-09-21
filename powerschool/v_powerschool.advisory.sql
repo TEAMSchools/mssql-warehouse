@@ -29,3 +29,4 @@ LEFT OUTER JOIN gabby.adsi.user_attributes dir
  AND dir.is_active = 1
 WHERE enr.course_number = 'HR'
   AND enr.sectionid > 0
+  AND enr.schoolid != 179902
