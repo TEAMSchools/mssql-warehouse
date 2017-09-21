@@ -1,17 +1,3 @@
-
-/*
-Purpose: create a comprehensive view joining core zendesk tables together to enable tableau reporting for upcoming projects re: zendesk analysis across Ops teams
-
-Issues: 
-	- might need to limit characters on t.subject and t.description as they may have carriage returns or bad characters
-
-Need Help:
-	- create a calculation to show amount of time between t.created_at and t.updated_at
-
-Notes:
-	- the CTE is meant to allow us to see # of updates/responses for single ticket. We can explore longer views of ticket update history later but not core to tableau reporting needs
-*/
-
 USE gabby
 GO
 
