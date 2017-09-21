@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW act.test_prep_scores AS
+CREATE OR ALTER VIEW act.test_prep_scores AS
 
 WITH long_data AS (
   SELECT a.assessment_id

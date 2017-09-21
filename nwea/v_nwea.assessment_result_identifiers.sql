@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW nwea.assessment_result_identifiers AS
+CREATE OR ALTER VIEW nwea.assessment_result_identifiers AS
 
 SELECT sub.student_id
       ,sub.term_name

@@ -6,7 +6,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-ALTER TRIGGER [illuminate_dna_assessments].[TR_agg_student_responses_AI]
+CREATE OR ALTER TRIGGER [illuminate_dna_assessments].[TR_agg_student_responses_AI]
    ON  [illuminate_dna_assessments].[agg_student_responses]
    AFTER INSERT
 AS 

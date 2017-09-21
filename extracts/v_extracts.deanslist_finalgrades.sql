@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW extracts.deanslist_finalgrades AS
+CREATE OR ALTER VIEW extracts.deanslist_finalgrades AS
 
 SELECT o.student_number
       ,(o.yearid + 1990) AS academic_year

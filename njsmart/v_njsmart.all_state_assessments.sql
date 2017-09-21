@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW njsmart.all_state_assessments AS
+CREATE OR ALTER VIEW njsmart.all_state_assessments AS
 
 WITH combined_unpivot AS (
   SELECT local_student_id        

@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW powerschool.student_access_accounts AS 
+CREATE OR ALTER VIEW powerschool.student_access_accounts AS 
 
 WITH clean_names AS (
   SELECT s.student_number

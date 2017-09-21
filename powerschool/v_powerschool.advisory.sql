@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW powerschool.advisory AS
+CREATE OR ALTER VIEW powerschool.advisory AS
 
 SELECT enr.studentid
       ,enr.student_number                      

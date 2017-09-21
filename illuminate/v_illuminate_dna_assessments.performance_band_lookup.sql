@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW illuminate_dna_assessments.performance_band_lookup AS 
+CREATE OR ALTER VIEW illuminate_dna_assessments.performance_band_lookup AS 
 
 SELECT performance_band_set_id
       ,description

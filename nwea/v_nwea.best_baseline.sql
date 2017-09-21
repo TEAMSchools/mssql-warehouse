@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW nwea.best_baseline AS
+CREATE OR ALTER VIEW nwea.best_baseline AS
 
 WITH roster AS (
   SELECT student_number

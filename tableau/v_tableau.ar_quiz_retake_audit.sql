@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW tableau.ar_quiz_retake_audit AS
+CREATE OR ALTER VIEW tableau.ar_quiz_retake_audit AS
 
 SELECT co.student_number
       ,co.lastfirst

@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW extracts.gsheets_ar_reading_log AS
+CREATE OR ALTER VIEW extracts.gsheets_ar_reading_log AS
 
 WITH fp AS (
   SELECT student_number

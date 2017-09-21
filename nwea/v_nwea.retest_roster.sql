@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW nwea.retest_roster AS
+CREATE OR ALTER VIEW nwea.retest_roster AS
 
 WITH map_long AS (
   SELECT sub.*      

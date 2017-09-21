@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW tableau.ops_enrollment_audit AS
+CREATE OR ALTER VIEW tableau.ops_enrollment_audit AS
 
 WITH caredox_enrollment AS (
   SELECT student_id

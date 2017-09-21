@@ -6,7 +6,7 @@ IF OBJECT_ID ('illuminate_dna_assessments.TR_performance_band_lookup_refresh_AI'
    DROP TRIGGER illuminate_dna_assessments.TR_performance_band_lookup_refresh_AI;
 GO
 
-CREATE TRIGGER illuminate_dna_assessments.TR_performance_band_lookup_refresh_AI ON illuminate_dna_assessments.fivetran_audit
+CREATE OR ALTER TRIGGER illuminate_dna_assessments.TR_performance_band_lookup_refresh_AI ON illuminate_dna_assessments.fivetran_audit
   AFTER INSERT
 AS
 

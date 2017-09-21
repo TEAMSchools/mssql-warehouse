@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW extracts.gsheets_staff_roster AS
+CREATE OR ALTER VIEW extracts.gsheets_staff_roster AS
 
 SELECT adp.associate_id
       ,adp.preferred_first AS preferred_first_name

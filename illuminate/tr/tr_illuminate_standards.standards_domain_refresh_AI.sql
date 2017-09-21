@@ -5,7 +5,7 @@ IF OBJECT_ID ('illuminate_standards.TR_standards_domain_refresh_AI','TR') IS NOT
    DROP TRIGGER illuminate_standards.TR_standards_domain_refresh_AI;
 GO
 
-CREATE TRIGGER illuminate_standards.TR_standards_domain_refresh_AI ON illuminate_standards.fivetran_audit
+CREATE OR ALTER TRIGGER illuminate_standards.TR_standards_domain_refresh_AI ON illuminate_standards.fivetran_audit
   AFTER INSERT
 AS
 

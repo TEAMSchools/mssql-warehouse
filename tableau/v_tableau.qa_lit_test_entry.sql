@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW tableau.qa_lit_test_entry AS
+CREATE OR ALTER VIEW tableau.qa_lit_test_entry AS
 
 /* student identifiers */
 SELECT co.school_name

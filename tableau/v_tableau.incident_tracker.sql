@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW tableau.incident_tracker AS
+CREATE OR ALTER VIEW tableau.incident_tracker AS
 
 WITH dlrosters AS (
   SELECT student_school_id

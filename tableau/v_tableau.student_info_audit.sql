@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW tableau.student_info_audit AS 
+CREATE OR ALTER VIEW tableau.student_info_audit AS 
 
 SELECT schoolid
       ,school_name

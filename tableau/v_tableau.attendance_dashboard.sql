@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW tableau.attendance_dashboard AS
+CREATE OR ALTER VIEW tableau.attendance_dashboard AS
 
 SELECT sub.academic_year
       ,sub.schoolid

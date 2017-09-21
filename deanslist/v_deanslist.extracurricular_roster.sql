@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW deanslist.extracurricular_roster AS
+CREATE OR ALTER VIEW deanslist.extracurricular_roster AS
 
 SELECT ra.student_school_id AS student_number
       ,ra.roster_name

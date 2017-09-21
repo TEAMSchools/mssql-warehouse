@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW powerschool.category_grades AS
+CREATE OR ALTER VIEW powerschool.category_grades AS
 
 SELECT sub.student_number
       ,sub.schoolid

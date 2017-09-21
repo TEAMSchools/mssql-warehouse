@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW mcs.lunch_info AS
+CREATE OR ALTER VIEW mcs.lunch_info AS
 
 SELECT c.studentnumber
       ,c.reimbursableonlybalance

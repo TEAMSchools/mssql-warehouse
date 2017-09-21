@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW extracts.deanslist_map_scores AS
+CREATE OR ALTER VIEW extracts.deanslist_map_scores AS
 
 SELECT co.student_number      
       

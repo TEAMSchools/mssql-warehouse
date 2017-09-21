@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW extracts.idauto_staff_roster AS
+CREATE OR ALTER VIEW extracts.idauto_staff_roster AS
 
 SELECT QUOTENAME(ISNULL(preferred_name, ''), '"') AS ["Preferred Name"]
       ,QUOTENAME(ISNULL(payroll_company_code, ''), '"') AS ["Company Code"]

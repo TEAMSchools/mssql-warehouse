@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW powerschool.attendance_counts AS
+CREATE OR ALTER VIEW powerschool.attendance_counts AS
 
 WITH att_counts AS (
   SELECT studentid

@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW extracts.deanslist_state_test_scores AS
+CREATE OR ALTER VIEW extracts.deanslist_state_test_scores AS
 
 SELECT student_number      
       ,test_type

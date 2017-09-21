@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW extracts.deanslist_transcript_grades AS
+CREATE OR ALTER VIEW extracts.deanslist_transcript_grades AS
 
 WITH all_grades AS (
   SELECT fg.student_number

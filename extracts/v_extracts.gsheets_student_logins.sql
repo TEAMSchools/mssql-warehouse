@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW extracts.gsheets_student_logins AS
+CREATE OR ALTER VIEW extracts.gsheets_student_logins AS
 
 SELECT co.student_number
       ,co.lastfirst

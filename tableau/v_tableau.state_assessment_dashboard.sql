@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW tableau.state_assessment_dashboard AS
+CREATE OR ALTER VIEW tableau.state_assessment_dashboard AS
 
 WITH promo AS (
   SELECT student_number

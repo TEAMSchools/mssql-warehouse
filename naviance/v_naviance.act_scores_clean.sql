@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW naviance.act_scores_clean AS
+CREATE OR ALTER VIEW naviance.act_scores_clean AS
 
 SELECT naviance_studentid	
       ,student_number	

@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW lit.individualized_goals AS
+CREATE OR ALTER VIEW lit.individualized_goals AS
 
 WITH gdoc_long AS (
   SELECT student_number

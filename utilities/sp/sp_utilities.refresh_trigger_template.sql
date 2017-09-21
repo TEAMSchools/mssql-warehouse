@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER PROCEDURE utilities.refresh_trigger_template(
+CREATE OR ALTER PROCEDURE utilities.refresh_trigger_template(
    @schema_name NVARCHAR(MAX)
   ,@view_name NVARCHAR(MAX)
  ) AS

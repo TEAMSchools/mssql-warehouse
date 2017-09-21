@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW adsi.user_attributes AS
+CREATE OR ALTER VIEW adsi.user_attributes AS
 
 SELECT cn
       ,company

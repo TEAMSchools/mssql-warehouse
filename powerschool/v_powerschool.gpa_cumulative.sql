@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW powerschool.gpa_cumulative AS
+CREATE OR ALTER VIEW powerschool.gpa_cumulative AS
 
 SELECT studentid
       ,schoolid

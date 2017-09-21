@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW tableau.student_attrition_over_time AS
+CREATE OR ALTER VIEW tableau.student_attrition_over_time AS
 
 WITH enrolled_oct1 AS (
   SELECT student_number

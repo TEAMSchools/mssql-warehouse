@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW extracts.powerschool_autocomm_students_accessaccounts AS
+CREATE OR ALTER VIEW extracts.powerschool_autocomm_students_accessaccounts AS
 
 SELECT saa.student_number          
       ,saa.student_web_id

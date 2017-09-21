@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW steptool.component_scores AS
+CREATE OR ALTER VIEW steptool.component_scores AS
 
 SELECT unique_id
       ,student_id

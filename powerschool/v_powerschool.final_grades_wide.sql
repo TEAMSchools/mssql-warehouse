@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW powerschool.final_grades_wide AS
+CREATE OR ALTER VIEW powerschool.final_grades_wide AS
 
 WITH grades_unpivot AS (
   SELECT student_number

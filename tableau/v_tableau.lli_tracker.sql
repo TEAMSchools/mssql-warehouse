@@ -1,7 +1,7 @@
 USE gabby 
 GO
 
-ALTER VIEW tableau.lli_tracker AS 
+CREATE OR ALTER VIEW tableau.lli_tracker AS 
 
 SELECT 54 AS repository_id
       ,r.repository_row_id             

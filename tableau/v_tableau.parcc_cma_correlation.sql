@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW tableau.parcc_cma_correlation AS
+CREATE OR ALTER VIEW tableau.parcc_cma_correlation AS
 
 SELECT co.reporting_schoolid AS schoolid
       ,co.academic_year

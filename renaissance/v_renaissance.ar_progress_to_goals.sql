@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW renaissance.ar_progress_to_goals AS
+CREATE OR ALTER VIEW renaissance.ar_progress_to_goals AS
 
 WITH progress_rollup AS (
   SELECT co.student_number        

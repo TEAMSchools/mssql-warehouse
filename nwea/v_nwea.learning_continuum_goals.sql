@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW nwea.learning_continuum_goals AS
+CREATE OR ALTER VIEW nwea.learning_continuum_goals AS
 
 WITH long_data AS (
   SELECT student_id

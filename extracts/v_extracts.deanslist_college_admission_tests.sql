@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW extracts.deanslist_college_admission_tests AS
+CREATE OR ALTER VIEW extracts.deanslist_college_admission_tests AS
 
 SELECT student_number
       ,'ACT' AS test_type

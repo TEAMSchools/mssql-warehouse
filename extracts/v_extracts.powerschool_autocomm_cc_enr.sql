@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW extracts.powerschool_autocomm_cc_enr AS
+CREATE OR ALTER VIEW extracts.powerschool_autocomm_cc_enr AS
 
 SELECT co.schoolid
 	     ,co.student_number

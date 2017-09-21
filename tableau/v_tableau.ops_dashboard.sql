@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW tableau.ops_dashboard AS
+CREATE OR ALTER VIEW tableau.ops_dashboard AS
 
 SELECT student_number
       ,lastfirst

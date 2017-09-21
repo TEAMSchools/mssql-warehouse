@@ -5,7 +5,7 @@ IF OBJECT_ID ('steptool.TR_component_scores_refresh_AI','TR') IS NOT NULL
    DROP TRIGGER steptool.TR_component_scores_refresh_AI;
 GO
 
-CREATE TRIGGER steptool.TR_component_scores_refresh_AI ON steptool.fivetran_audit
+CREATE OR ALTER TRIGGER steptool.TR_component_scores_refresh_AI ON steptool.fivetran_audit
   AFTER INSERT
 AS
 

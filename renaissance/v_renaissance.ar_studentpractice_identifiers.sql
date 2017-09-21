@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW renaissance.ar_studentpractice_identifiers AS
+CREATE OR ALTER VIEW renaissance.ar_studentpractice_identifiers AS
 
 SELECT ar.ch_content_version
       ,ar.ch_fiction_non_fiction

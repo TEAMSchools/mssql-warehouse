@@ -6,7 +6,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-ALTER TRIGGER deanslist.TR_behavior_AI
+CREATE OR ALTER TRIGGER deanslist.TR_behavior_AI
     ON  deanslist.behavior
     AFTER INSERT
   AS 

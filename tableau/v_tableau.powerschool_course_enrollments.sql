@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW tableau.powerschool_course_enrollments AS
+CREATE OR ALTER VIEW tableau.powerschool_course_enrollments AS
 
 SELECT student_number
       ,schoolid      

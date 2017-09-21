@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW powerschool.ps_attendance_daily AS 
+CREATE OR ALTER VIEW powerschool.ps_attendance_daily AS 
 
 SELECT att.id
       ,att.studentid

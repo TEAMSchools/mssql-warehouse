@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW powerschool.course_section_scaffold AS 
+CREATE OR ALTER VIEW powerschool.course_section_scaffold AS 
 
 WITH course_scaffold AS (
   SELECT studentid

@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW powerschool.category_grades_wide AS
+CREATE OR ALTER VIEW powerschool.category_grades_wide AS
 
 WITH grades_long AS (
   SELECT cat.student_number

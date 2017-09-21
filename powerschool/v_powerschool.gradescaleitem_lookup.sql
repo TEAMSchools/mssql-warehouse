@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW powerschool.gradescaleitem_lookup AS
+CREATE OR ALTER VIEW powerschool.gradescaleitem_lookup AS
 
 SELECT parent.id AS gradescaleid
       ,parent.name AS gradescale_name      

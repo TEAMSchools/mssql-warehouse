@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW extracts.deanslist_reading_levels AS
+CREATE OR ALTER VIEW extracts.deanslist_reading_levels AS
 
 SELECT student_number
       ,academic_year

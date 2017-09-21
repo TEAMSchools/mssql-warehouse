@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW powerschool.spenrollments_gen AS
+CREATE OR ALTER VIEW powerschool.spenrollments_gen AS
 
 SELECT sp.studentid
       ,sp.dcid

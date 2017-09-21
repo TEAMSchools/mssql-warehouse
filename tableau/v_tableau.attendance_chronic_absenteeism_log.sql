@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW tableau.attendance_chronic_absenteeism_log AS
+CREATE OR ALTER VIEW tableau.attendance_chronic_absenteeism_log AS
 
 WITH commlog AS (
   SELECT c.student_school_id

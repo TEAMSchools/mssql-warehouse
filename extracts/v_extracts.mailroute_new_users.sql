@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW extracts.mailroute_new_users AS
+CREATE OR ALTER VIEW extracts.mailroute_new_users AS
 
 SELECT REPLACE(mail,'kippnj','teamschools') AS email_addr
 FROM gabby.adsi.user_attributes

@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW powerschool.gradebook_assignments_scores AS
+CREATE OR ALTER VIEW powerschool.gradebook_assignments_scores AS
 
 SELECT s.student_number
       

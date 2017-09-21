@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW powerschool.gradebook_setup AS
+CREATE OR ALTER VIEW powerschool.gradebook_setup AS
 
 WITH default_gfs AS (
   SELECT DISTINCT 

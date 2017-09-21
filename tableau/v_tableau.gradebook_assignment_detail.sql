@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW tableau.gradebook_assignment_detail AS
+CREATE OR ALTER VIEW tableau.gradebook_assignment_detail AS
 
 SELECT sec.id AS sectionid
       ,(LEFT(sec.termid, 2) + 1990) AS academic_year            

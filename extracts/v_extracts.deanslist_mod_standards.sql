@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW extracts.deanslist_mod_standards AS
+CREATE OR ALTER VIEW extracts.deanslist_mod_standards AS
 
 SELECT asr.local_student_id AS student_number
       ,asr.academic_year

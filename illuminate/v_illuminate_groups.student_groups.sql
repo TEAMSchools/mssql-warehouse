@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW illuminate_groups.student_groups AS
+CREATE OR ALTER VIEW illuminate_groups.student_groups AS
       
 SELECT s.local_student_id
       

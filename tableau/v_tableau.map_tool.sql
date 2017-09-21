@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW tableau.map_tool AS
+CREATE OR ALTER VIEW tableau.map_tool AS
 
 WITH map_long AS (  
   SELECT base.student_number

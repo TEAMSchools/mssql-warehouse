@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW utilities.row_generator AS
+CREATE OR ALTER VIEW utilities.row_generator AS
 
 WITH Nbrs_4(n) AS (
   SELECT 1 

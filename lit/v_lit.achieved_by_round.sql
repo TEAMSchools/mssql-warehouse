@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW lit.achieved_by_round AS
+CREATE OR ALTER VIEW lit.achieved_by_round AS
 
 WITH roster_scaffold AS (
   SELECT r.student_number

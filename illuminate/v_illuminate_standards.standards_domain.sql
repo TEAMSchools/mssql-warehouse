@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW illuminate_standards.standards_domain AS
+CREATE OR ALTER VIEW illuminate_standards.standards_domain AS
 
 SELECT s2.standard_id AS domain_standard_id
       ,s2.custom_code AS domain_custom_code

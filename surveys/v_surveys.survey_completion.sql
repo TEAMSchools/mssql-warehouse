@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW surveys.survey_completion AS
+CREATE OR ALTER VIEW surveys.survey_completion AS
 
 SELECT _created AS date_completed
       ,email AS responder

@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW tableau.lexia_tracker AS 
+CREATE OR ALTER VIEW tableau.lexia_tracker AS 
 
 WITH prev_week_time AS (
   SELECT username

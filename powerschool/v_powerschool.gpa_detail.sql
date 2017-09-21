@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW powerschool.gpa_detail AS
+CREATE OR ALTER VIEW powerschool.gpa_detail AS
 
 SELECT student_number
       ,schoolid

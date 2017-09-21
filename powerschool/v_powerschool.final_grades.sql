@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW powerschool.final_grades AS
+CREATE OR ALTER VIEW powerschool.final_grades AS
 
 WITH roster AS (
   SELECT co.student_number

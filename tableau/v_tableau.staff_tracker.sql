@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW tableau.staff_tracker AS
+CREATE OR ALTER VIEW tableau.staff_tracker AS
 
 WITH prof_calendar AS (
   SELECT cal.schoolid

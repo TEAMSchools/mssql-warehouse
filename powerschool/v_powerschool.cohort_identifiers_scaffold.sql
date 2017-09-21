@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW powerschool.cohort_identifiers_scaffold AS
+CREATE OR ALTER VIEW powerschool.cohort_identifiers_scaffold AS
 
 SELECT co.academic_year
       ,co.schoolid

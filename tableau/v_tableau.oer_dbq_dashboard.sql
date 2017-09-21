@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW tableau.oer_dbq_dashboard AS
+CREATE OR ALTER VIEW tableau.oer_dbq_dashboard AS
 
 WITH enrollments AS (
   SELECT enr.student_number

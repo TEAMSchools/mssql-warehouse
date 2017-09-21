@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW tableau.ktc_basic_contact_dump AS
+CREATE OR ALTER VIEW tableau.ktc_basic_contact_dump AS
 
 WITH attending_enrollment AS (
   SELECT e.Id AS enrollment_id

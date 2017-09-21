@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW lit.steptool_test_events AS
+CREATE OR ALTER VIEW lit.steptool_test_events AS
 
 SELECT CONCAT('UC', gabby.utilities.DATE_TO_SY(step.date), step.[_line]) AS unique_id      
       ,CONVERT(INT,CONVERT(FLOAT,step.student_id)) AS student_number      

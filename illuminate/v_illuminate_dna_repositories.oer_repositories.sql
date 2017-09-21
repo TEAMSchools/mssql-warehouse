@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW illuminate_dna_repositories.oer_repositories AS
+CREATE OR ALTER VIEW illuminate_dna_repositories.oer_repositories AS
 
 SELECT ur.repository_id
       ,ur.repository_row_id

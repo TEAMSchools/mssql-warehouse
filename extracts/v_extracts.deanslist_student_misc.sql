@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW extracts.deanslist_student_misc AS
+CREATE OR ALTER VIEW extracts.deanslist_student_misc AS
 
 WITH ug_school AS (
   SELECT student_number

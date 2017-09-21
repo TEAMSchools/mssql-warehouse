@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW compliance.student_membership AS
+CREATE OR ALTER VIEW compliance.student_membership AS
 
 SELECT co.student_number      
       ,co.state_studentnumber

@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW stmath.progress_completion_report_clean AS
+CREATE OR ALTER VIEW stmath.progress_completion_report_clean AS
 
 SELECT iid
       ,institution_name

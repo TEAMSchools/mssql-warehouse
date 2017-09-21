@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER FUNCTION utilities.STRIP_CHARACTERS(
+CREATE OR ALTER FUNCTION utilities.STRIP_CHARACTERS(
     @string NVARCHAR(MAX)
    ,@match_expression VARCHAR(255)
   )

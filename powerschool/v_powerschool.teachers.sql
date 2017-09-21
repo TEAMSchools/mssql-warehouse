@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW powerschool.teachers AS
+CREATE OR ALTER VIEW powerschool.teachers AS
 
 SELECT s.dcid
       ,s.id

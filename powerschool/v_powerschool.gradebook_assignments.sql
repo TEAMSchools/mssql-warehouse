@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW powerschool.gradebook_assignments AS
+CREATE OR ALTER VIEW powerschool.gradebook_assignments AS
 
 SELECT sec.schoolid
       ,sec.id AS sectionid

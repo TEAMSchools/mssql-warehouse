@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW utilities.fivetran_audit AS
+CREATE OR ALTER VIEW utilities.fivetran_audit AS
 
 SELECT * FROM alumni.fivetran_audit UNION
 SELECT * FROM illuminate_groups.fivetran_audit UNION

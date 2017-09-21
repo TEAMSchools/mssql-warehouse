@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW extracts.deanslist_transcript_gpas AS
+CREATE OR ALTER VIEW extracts.deanslist_transcript_gpas AS
 
 SELECT student_number
       ,academic_year            

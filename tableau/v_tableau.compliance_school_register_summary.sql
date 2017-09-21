@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW tableau.compliance_school_register_summary AS
+CREATE OR ALTER VIEW tableau.compliance_school_register_summary AS
 
 WITH schooldays AS (
   SELECT academic_year

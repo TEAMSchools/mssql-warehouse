@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW illuminate_dna_assessments.agg_student_responses_all AS
+CREATE OR ALTER VIEW illuminate_dna_assessments.agg_student_responses_all AS
 
 WITH responses_long AS (                  
   SELECT a.student_id

@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW extracts.deanslist_writing_rubric AS
+CREATE OR ALTER VIEW extracts.deanslist_writing_rubric AS
 
 SELECT student_number
       ,academic_year

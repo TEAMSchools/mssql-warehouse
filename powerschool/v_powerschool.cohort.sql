@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW powerschool.cohort AS
+CREATE OR ALTER VIEW powerschool.cohort AS
 
 SELECT studentid
       ,schoolid

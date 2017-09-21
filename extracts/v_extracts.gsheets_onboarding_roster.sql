@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW extracts.gsheets_onboarding_roster AS 
+CREATE OR ALTER VIEW extracts.gsheets_onboarding_roster AS 
 
 SELECT jp.name AS job_position_name        
       ,jp.position_name_c AS salesforce_position_name                    

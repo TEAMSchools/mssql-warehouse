@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW powerschool.ps_enrollment_all AS 
+CREATE OR ALTER VIEW powerschool.ps_enrollment_all AS 
 
 SELECT s.id AS studentid
       ,s.schoolid 

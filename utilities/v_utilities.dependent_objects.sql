@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW utilities.dependent_objects AS
+CREATE OR ALTER VIEW utilities.dependent_objects AS
 
 WITH dependentobjects AS (
   SELECT DISTINCT 

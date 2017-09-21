@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW lit.all_test_events AS
+CREATE OR ALTER VIEW lit.all_test_events AS
 
 SELECT CONVERT(NVARCHAR(64),rs.unique_id) AS unique_id
       ,rs.testid

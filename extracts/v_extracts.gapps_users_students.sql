@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW extracts.gapps_users_students AS
+CREATE OR ALTER VIEW extracts.gapps_users_students AS
 
 SELECT co.student_number
       ,co.schoolid

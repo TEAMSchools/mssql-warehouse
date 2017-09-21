@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW tableau.act_prep_scores AS
+CREATE OR ALTER VIEW tableau.act_prep_scores AS
 
 WITH real_tests AS (
   SELECT student_number      

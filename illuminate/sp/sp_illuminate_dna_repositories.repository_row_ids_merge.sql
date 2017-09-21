@@ -6,7 +6,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-ALTER PROCEDURE illuminate_dna_repositories.repository_row_ids_merge AS 
+CREATE OR ALTER PROCEDURE illuminate_dna_repositories.repository_row_ids_merge AS 
 
 BEGIN
 	 /* SET NOCOUNT ON added to prevent extra result sets from interfering with SELECT statements */

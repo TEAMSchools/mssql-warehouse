@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW deanslist.incidents_actions AS
+CREATE OR ALTER VIEW deanslist.incidents_actions AS
 
 SELECT dli.incident_id
       ,dli.actions AS actions_json

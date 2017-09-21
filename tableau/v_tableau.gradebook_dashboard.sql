@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW tableau.gradebook_dashboard AS
+CREATE OR ALTER VIEW tableau.gradebook_dashboard AS
 
 WITH section_teacher AS (
   SELECT scaff.studentid

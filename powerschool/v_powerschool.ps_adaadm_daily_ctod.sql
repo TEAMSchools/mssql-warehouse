@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW powerschool.ps_adaadm_daily_ctod AS 
+CREATE OR ALTER VIEW powerschool.ps_adaadm_daily_ctod AS 
 
 SELECT mv.studentid
       ,mv.schoolid

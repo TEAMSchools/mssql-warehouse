@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW tableau.student_roster AS
+CREATE OR ALTER VIEW tableau.student_roster AS
 
 SELECT co.student_number
       ,co.lastfirst

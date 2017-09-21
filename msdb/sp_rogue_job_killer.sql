@@ -1,7 +1,7 @@
 USE msdb
 GO
 
-ALTER PROCEDURE rogue_job_killer AS
+CREATE OR ALTER PROCEDURE rogue_job_killer AS
 
 DECLARE	@delay_time DATETIME
        ,@job_id NVARCHAR(MAX)

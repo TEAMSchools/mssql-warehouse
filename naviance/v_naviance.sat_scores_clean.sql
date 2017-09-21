@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW naviance.sat_scores_clean AS
+CREATE OR ALTER VIEW naviance.sat_scores_clean AS
 
 WITH unioned_tables AS (
   SELECT [student_id]

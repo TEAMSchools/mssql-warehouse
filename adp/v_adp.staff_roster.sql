@@ -1,7 +1,7 @@
 USE gabby
 GO
  
-ALTER VIEW adp.staff_roster AS
+CREATE OR ALTER VIEW adp.staff_roster AS
 
 SELECT associate_id
       ,first_name

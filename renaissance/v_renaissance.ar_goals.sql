@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW renaissance.ar_goals AS
+CREATE OR ALTER VIEW renaissance.ar_goals AS
 
 WITH roster AS (
   SELECT student_number

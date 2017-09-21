@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW extracts.deanslist_promo_status AS 
+CREATE OR ALTER VIEW extracts.deanslist_promo_status AS 
 
 SELECT student_number
       ,academic_year

@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW powerschool.ps_membership_reg AS 
+CREATE OR ALTER VIEW powerschool.ps_membership_reg AS 
 
 SELECT ev.studentid
       ,ev.schoolid 

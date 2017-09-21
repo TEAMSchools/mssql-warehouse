@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW tableau.compliance_staff_attrition AS
+CREATE OR ALTER VIEW tableau.compliance_staff_attrition AS
 
 WITH roster AS (
   SELECT associate_id        

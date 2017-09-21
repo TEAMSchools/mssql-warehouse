@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW tableau.assessment_dashboard AS
+CREATE OR ALTER VIEW tableau.assessment_dashboard AS
 
 SELECT co.reporting_schoolid AS schoolid
       ,co.academic_year

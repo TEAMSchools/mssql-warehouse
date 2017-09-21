@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW act.test_prep_scores_wide AS
+CREATE OR ALTER VIEW act.test_prep_scores_wide AS
 
 SELECT student_number
       ,academic_year

@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW lit.illuminate_test_events AS
+CREATE OR ALTER VIEW lit.illuminate_test_events AS
 
 WITH clean_data AS (
   SELECT student_number

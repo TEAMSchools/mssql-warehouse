@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW extracts.powerschool_autocomm_teachers_accounts AS
+CREATE OR ALTER VIEW extracts.powerschool_autocomm_teachers_accounts AS
 
 WITH managers AS (
   SELECT DISTINCT reports_to_position_id

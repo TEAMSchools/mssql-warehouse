@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW reporting.promotional_status AS
+CREATE OR ALTER VIEW reporting.promotional_status AS
 
 WITH attendance AS (
   SELECT studentid

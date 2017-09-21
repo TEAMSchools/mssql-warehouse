@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW lit.component_proficiency_long AS
+CREATE OR ALTER VIEW lit.component_proficiency_long AS
 
 WITH illuminate_fp AS (
   SELECT unique_id

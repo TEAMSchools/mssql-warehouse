@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW tableau.stmath_tracker AS 
+CREATE OR ALTER VIEW tableau.stmath_tracker AS 
 
 WITH enrollments AS (
   SELECT enr.student_number

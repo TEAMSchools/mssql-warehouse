@@ -7,7 +7,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-ALTER PROCEDURE utilities.cache_view 
+CREATE OR ALTER PROCEDURE utilities.cache_view 
   @schema_name NVARCHAR(MAX),
   @view_name NVARCHAR(MAX)
 AS

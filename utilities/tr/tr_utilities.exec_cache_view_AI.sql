@@ -6,7 +6,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-ALTER TRIGGER utilities.TR_exec_cache_view_AI
+CREATE OR ALTER TRIGGER utilities.TR_exec_cache_view_AI
    ON  utilities.cache_view_queue
    AFTER INSERT
 AS 

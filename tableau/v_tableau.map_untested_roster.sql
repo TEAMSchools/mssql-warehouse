@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW tableau.map_untested_roster AS
+CREATE OR ALTER VIEW tableau.map_untested_roster AS
 
 WITH roster AS (
   SELECT co.student_number

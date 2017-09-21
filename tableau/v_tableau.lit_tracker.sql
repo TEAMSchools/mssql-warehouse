@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW tableau.lit_tracker AS
+CREATE OR ALTER VIEW tableau.lit_tracker AS
 
 SELECT co.school_name
       ,co.school_level

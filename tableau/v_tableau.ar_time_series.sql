@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW tableau.ar_time_series AS
+CREATE OR ALTER VIEW tableau.ar_time_series AS
 
 WITH ar_long AS (
   SELECT student_number

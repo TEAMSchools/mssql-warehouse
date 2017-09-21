@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW extracts.gsheets_student_contact_info AS
+CREATE OR ALTER VIEW extracts.gsheets_student_contact_info AS
 
 SELECT co.student_number
       ,co.newark_enrollment_number
@@ -33,6 +33,8 @@ SELECT co.student_number
       ,co.city      
       ,co.state
       ,CONCAT('''', co.zip) AS zip      
+      ,co.first_name
+      ,co.last_name
 
       ,aa.student_web_id
       ,aa.student_web_password

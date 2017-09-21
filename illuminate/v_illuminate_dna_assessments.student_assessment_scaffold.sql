@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW illuminate_dna_assessments.student_assessment_scaffold AS
+CREATE OR ALTER VIEW illuminate_dna_assessments.student_assessment_scaffold AS
 
 WITH advanced_math AS (
   SELECT ssc.student_id

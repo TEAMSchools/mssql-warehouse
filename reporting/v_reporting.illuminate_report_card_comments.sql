@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW reporting.illuminate_report_card_comments AS
+CREATE OR ALTER VIEW reporting.illuminate_report_card_comments AS
 
 WITH comm_unpivot AS (
   SELECT repository_id

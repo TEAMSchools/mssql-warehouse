@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-ALTER VIEW tableau.promo_tracker AS 
+CREATE OR ALTER VIEW tableau.promo_tracker AS 
 
 WITH roster AS (
   SELECT co.studentid
