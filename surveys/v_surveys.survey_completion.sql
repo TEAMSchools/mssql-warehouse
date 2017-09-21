@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE VIEW AS surveys.survey_completion_feed
+CREATE VIEW surveys.survey_completion AS
 
 SELECT _created AS date_completed
 	   ,email AS responder
