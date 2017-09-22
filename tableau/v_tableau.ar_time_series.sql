@@ -227,8 +227,8 @@ FROM
             AND co.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
             AND co.date <= CONVERT(DATE,GETDATE())
             AND co.enroll_status = 0       
-            AND ((co.grade_level >= 5)
-                   OR (co.schoolid IN (73252, 179901) AND co.grade_level >= 3)
+            AND ((co.grade_level BETWEEN 5 AND 8)
+                   OR (co.schoolid IN (179901) AND co.grade_level >= 3)
                    OR (co.schoolid IN (73255) AND co.grade_level >= 2))       
          ) sub
     ) sub
