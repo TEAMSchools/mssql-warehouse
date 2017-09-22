@@ -62,7 +62,7 @@ SELECT co.school_name
       ,COALESCE(achv.fp_keylever, dtid.fp_keylever) AS fp_keylever      
       ,CASE 
         WHEN atid.test_date >= dtid.test_date THEN atid.test_date 
-        ELSE dtid.test_date 
+        ELSE COALESCE(dtid.test_date, atid.test_date)
        END AS test_date      
       ,atid.test_administered_by
       
