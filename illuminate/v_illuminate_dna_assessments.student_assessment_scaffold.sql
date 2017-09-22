@@ -186,6 +186,7 @@ FROM
      JOIN gabby.illuminate_dna_assessments.students_assessments sa
        ON a.assessment_id = sa.assessment_id
       AND ssa.student_id = sa.student_id
+      AND ssa.student_id NOT IN (SELECT student_id FROM advanced_math WHERE rn = 1 AND subject_area IS NOT NULL)
      WHERE a.deleted_at IS NULL
 
      UNION ALL
