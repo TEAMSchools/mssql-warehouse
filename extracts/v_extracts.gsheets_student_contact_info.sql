@@ -29,10 +29,7 @@ SELECT co.student_number
       ,CONCAT(co.release_4_name, ' | ', co.release_4_phone) AS release_4
       ,CONCAT(co.release_5_name, ' | ', co.release_5_phone) AS release_5
       ,co.guardianemail      
-      ,co.street
-      ,co.city      
-      ,co.state
-      ,CONCAT('''', co.zip) AS zip      
+      ,CONCAT(co.street, ', ', co.city, ', ', co.state, ' ', co.zip) AS address
       ,co.first_name
       ,co.last_name
 
