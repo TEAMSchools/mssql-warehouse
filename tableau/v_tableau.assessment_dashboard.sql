@@ -33,15 +33,15 @@ SELECT co.reporting_schoolid AS schoolid
       ,asr.is_replacement
             
       ,CASE
-        WHEN (co.grade_level <= 4 OR co.schoolid = 73258) THEN hr.teacher_name
+        WHEN (co.grade_level <= 4 OR co.reporting_schoolid = 732585074) THEN hr.teacher_name
         ELSE enr.teacher_name
        END AS teacher_name      
       ,CASE
-        WHEN (co.grade_level <= 4 OR co.schoolid = 73258) THEN hr.expression
+        WHEN (co.grade_level <= 4 OR co.reporting_schoolid = 732585074) THEN hr.expression
         ELSE enr.expression
        END AS expression
       ,CASE
-        WHEN (co.grade_level <= 4 OR co.schoolid = 73258) THEN hr.section_number
+        WHEN (co.grade_level <= 4 OR co.reporting_schoolid = 732585074) THEN hr.section_number
         ELSE enr.section_number
        END AS section_number       
       
