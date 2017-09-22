@@ -42,19 +42,19 @@ SELECT cc.studentid
         WHEN cou.credittype = 'SCI' THEN 'Science - General Science'
        END AS map_measurementscale
       ,CASE
-        WHEN sec.grade_level <= 8 AND cou.credittype = 'ENG' THEN 'Text Study'
-        WHEN sec.grade_level <= 8 AND cou.credittype = 'MATH' THEN 'Mathematics'
-        WHEN sec.grade_level <= 8 AND cou.credittype = 'SCI' THEN 'Science'
-        WHEN sec.grade_level <= 8 AND cou.credittype = 'SOC' THEN 'Social Studies'
+        WHEN s.grade_level <= 8 AND cou.credittype = 'ENG' THEN 'Text Study'        
+        WHEN s.grade_level <= 8 AND cou.credittype = 'SCI' THEN 'Science'
+        WHEN s.grade_level <= 8 AND cou.credittype = 'SOC' THEN 'Social Studies'        
+        WHEN cc.course_number IN ('MATH10','MATH15','MATH71','MATH10ICS','MATH12','MATH12ICS','MATH14','MATH16','M415') THEN 'Algebra I'        
+        WHEN cc.course_number IN ('MATH20','MATH25','MATH31','MATH73','MATH20ICS') THEN 'Geometry'        
+        WHEN cc.course_number IN ('MATH32','MATH35','MATH32A','MATH32B','MATH32HA') THEN 'Algebra II'
+        WHEN s.grade_level <= 8 AND cou.credittype = 'MATH' THEN 'Mathematics'
         WHEN cc.course_number IN ('ENG10') THEN 'English 100'
         WHEN cc.course_number IN ('ENG20', 'ENG25') THEN 'English 200'
         WHEN cc.course_number IN ('ENG30', 'ENG35') THEN 'English 300'
         WHEN cc.course_number IN ('ENG40', 'ENG45') THEN 'English 400 / 450'
         WHEN cc.course_number IN ('ENG75', 'ENG78') THEN 'English Foundations'
-        WHEN cc.course_number IN ('MATH13') THEN 'Pre-Algebra'
-        WHEN cc.course_number IN ('MATH10') THEN 'Algebra'        
-        WHEN cc.course_number IN ('MATH20', 'MATH22', 'MATH25', 'MATH73') THEN 'Geometry'        
-        WHEN cc.course_number IN ('MATH32', 'MATH35') THEN 'Algebra II'
+        WHEN cc.course_number IN ('MATH13') THEN 'Pre-Algebra'        
         WHEN cc.course_number IN ('MATH40') THEN 'Pre Calculus'
         WHEN cc.course_number IN ('MATH33') THEN 'Discrete Math'
         WHEN cc.course_number IN ('MATH45') THEN 'Statistics AP'
@@ -74,7 +74,7 @@ SELECT cc.studentid
         WHEN cc.course_number IN ('HIST41') THEN 'Sociology'
         WHEN cc.course_number IN ('FREN10', 'FREN11', 'FREN12', 'FREN20', 'FREN30') THEN 'French'
         WHEN cc.course_number IN ('SPAN10', 'SPAN11', 'SPAN20', 'SPAN30', 'SPAN12', 'SPAN40') THEN 'Spanish'
-        WHEN cc.course_number IN ('ARAB20') THEN 'Arabic'
+        WHEN cc.course_number IN ('ARAB20') THEN 'Arabic'        
        END AS illuminate_subject
       
       ,ROW_NUMBER() OVER(
