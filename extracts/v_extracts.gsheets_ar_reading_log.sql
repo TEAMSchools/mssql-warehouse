@@ -162,8 +162,9 @@ WITH fp AS (
                                     END) AS pct_goal
             FROM gabby.renaissance.ar_progress_to_goals
             WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-              AND words_goal > 0
               AND CONVERT(DATE,GETDATE()) BETWEEN start_date AND end_date
+              AND reporting_term != 'ARY'
+              AND words_goal > 0              
            ) sub
        UNPIVOT(
          value
