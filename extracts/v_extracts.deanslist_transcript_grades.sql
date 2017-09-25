@@ -37,7 +37,7 @@ WITH all_grades AS (
         ,sg.course_name      
         ,sg.earnedcrhrs AS credit_hours      
         ,sg.[percent] AS y1_grade_percent
-        ,sg.grade AS y1_grade_letter
+        ,CASE WHEN sg.grade = 'false' THEN 'F' ELSE sg.grade END AS y1_grade_letter
         ,sg.schoolname
         ,1 AS is_stored
   FROM gabby.powerschool.storedgrades sg
