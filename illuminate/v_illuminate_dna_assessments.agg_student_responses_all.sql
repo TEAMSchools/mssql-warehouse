@@ -232,4 +232,4 @@ SELECT assessment_id
       ,term_taken      
       ,performance_band_number
       ,is_mastery
-FROM illuminate_dna_assessments.agg_student_responses_all_archive
+FROM gabby.illuminate_dna_assessments.agg_student_responses_all_archive
