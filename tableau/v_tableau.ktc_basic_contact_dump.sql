@@ -113,14 +113,14 @@ WITH attending_enrollment AS (
        SELECT a.Student_c        
              ,a.Status_c        
              ,CASE 
-               WHEN DATEPART(MONTH, a.Date_c) BETWEEN 7 AND 11 THEN 'F'
+               WHEN DATEPART(MONTH, a.Date_c) BETWEEN 7 AND 12 THEN 'F'
                ELSE 'S'
-              END AS semester
-             --,a.Date_c
+              END AS semester             
              --,a.Amount_c
        FROM gabby.alumni.kipp_aid_c a 
-       WHERE Type_c = 'College Book Stipend Program'
-         AND is_deleted = 0
+       WHERE a.type_c = 'College Book Stipend Program'
+         AND a.is_deleted = 0
+         AND a.date_c >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
       ) sub
   PIVOT(
     MAX(status_c)
