@@ -122,14 +122,8 @@ SELECT co.studentid
         ELSE co.lunchstatus
        END AS lunch_app_status                 
       
-      ,CASE 
-        WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() THEN ISNULL(scf.spedlep, 'No IEP') 
-        ELSE ISNULL(sped.spedlep,'No IEP') 
-       END AS iep_status
-      ,CASE 
-        WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() THEN nj.specialed_classification
-        ELSE sped.special_education_code
-       END AS specialed_classification
+      ,ISNULL(sped.spedlep,'No IEP') AS iep_status
+      ,sped.special_education_code AS specialed_classification
       ,CASE 
         WHEN nj.lepbegindate IS NULL THEN NULL
         WHEN nj.lependdate < co.entrydate THEN NULL
