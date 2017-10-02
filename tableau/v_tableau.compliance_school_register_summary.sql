@@ -15,7 +15,7 @@ WITH schooldays AS (
              ,SUM(membershipvalue) AS N_days
        FROM gabby.powerschool.calendar_day       
        WHERE schoolid NOT IN (12345, 0, 999999) /* exclude summer school, grads, district */
-         AND CONVERT(DATE,date_value) <= CONVERT(DATE,GETDATE())
+         --AND CONVERT(DATE,date_value) <= CONVERT(DATE,GETDATE())
        GROUP BY gabby.utilities.DATE_TO_SY(date_value)
                ,schoolid
       ) sub
@@ -34,6 +34,7 @@ WITH schooldays AS (
  )
 
 SELECT sub.academic_year      
+      
       ,co.student_number
       ,co.state_studentnumber AS SID
       ,co.lastfirst
@@ -43,7 +44,10 @@ SELECT sub.academic_year
       ,co.grade_level
       ,co.entrydate
       ,co.exitdate
-      ,co.specialed_classification AS sped_code
+      ,co.specialed_classification AS sped_code      
+      ,co.ethnicity
+      ,ISNULL(co.ethnicity,'B') AS race_status
+	     ,co.lunchstatus
       ,CASE
         WHEN nj.programtypecode IS NOT NULL 
          AND nj.special_education_placement IN ('04','11')
@@ -51,9 +55,6 @@ SELECT sub.academic_year
         WHEN co.grade_level = 0 THEN 'K'
         ELSE CONVERT(VARCHAR,co.grade_level)
        END AS report_grade_level      
-      ,co.ethnicity
-      ,ISNULL(co.ethnicity,'B') AS race_status
-	     ,co.lunchstatus
       ,CASE
         WHEN co.lunchstatus IN ('F','R') THEN 'Low Income'
         WHEN co.lunchstatus = 'P' THEN 'Not Low Income'
@@ -69,7 +70,9 @@ SELECT sub.academic_year
         WHEN co.lep_status = 1 THEN 'LEP' 
         WHEN co.lep_status IS NULL THEN 'Not LEP'        
        END AS LEP_status
+      
       ,d.N_days AS N_days_open
+      
       ,CASE WHEN sub.N_mem > d.N_days THEN d.N_days ELSE sub.N_mem END AS N_days_possible
       ,CASE WHEN sub.N_att > d.N_days THEN d.N_days ELSE sub.N_att END AS N_days_present 
 FROM att_mem sub
