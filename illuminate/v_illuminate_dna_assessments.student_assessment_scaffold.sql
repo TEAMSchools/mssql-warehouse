@@ -39,6 +39,7 @@ SELECT sub.assessment_id
         WHEN sub.scope IN ('Cold Read Quizzes', 'Cumulative Review Quizzes') THEN 'CRQ'
         WHEN sub.scope = 'CGI Quiz' THEN 'CGI'
         WHEN sub.scope = 'Math Facts and Counting Jar' THEN 'MFCJ'
+        WHEN sub.scope = 'Checkpoint' THEN 'CP'
         WHEN sub.scope = 'CMA - Mid-Module'
          AND PATINDEX('%Checkpoint [0-9]%', sub.title) = 0
          AND sub.academic_year <= 2016
