@@ -5,83 +5,70 @@ CREATE OR ALTER VIEW tableau.compliance_school_register_summary AS
 
 WITH schooldays AS (
   SELECT academic_year
+        ,schoolid
         ,region
-        ,MIN(n_days) AS n_days
+        ,n_days_school
+        ,MIN(n_days_school) OVER(PARTITION BY academic_year, region) n_days_region_min
   FROM
       (
-       SELECT gabby.utilities.DATE_TO_SY(date_value) AS academic_year
-             ,schoolid
-             ,CASE WHEN schoolid LIKE '1799%' THEN 'KCNA' ELSE 'TEAM' END AS region
-             ,SUM(membershipvalue) AS N_days
-       FROM gabby.powerschool.calendar_day       
-       WHERE schoolid NOT IN (12345, 0, 999999) /* exclude summer school, grads, district */
-         --AND CONVERT(DATE,date_value) <= CONVERT(DATE,GETDATE())
+       SELECT schoolid
+             ,CASE 
+               WHEN schoolid LIKE '1799%' THEN 'KCNA' 
+               WHEN schoolid LIKE '7325%' THEN 'TEAM' 
+               WHEN schoolid = 133570965 THEN 'TEAM' 
+              END AS region
+             ,gabby.utilities.DATE_TO_SY(date_value) AS academic_year
+             ,SUM(membershipvalue) AS n_days_school
+       FROM gabby.powerschool.calendar_day              
        GROUP BY gabby.utilities.DATE_TO_SY(date_value)
                ,schoolid
       ) sub
-  GROUP BY academic_year, region
+  GROUP BY academic_year, region, schoolid, n_days_school
  )
 
 ,att_mem AS (
   SELECT studentid
         ,yearid + 1990 AS academic_year
-        ,SUM(CONVERT(INT,attendancevalue)) AS N_att
-        ,SUM(CONVERT(INT,membershipvalue)) AS N_mem
+        ,SUM(CONVERT(INT,attendancevalue)) AS n_att
+        ,SUM(CONVERT(INT,membershipvalue)) AS n_mem
   FROM gabby.powerschool.ps_adaadm_daily_ctod_static
   WHERE membershipvalue = 1
   GROUP BY studentid
           ,yearid
  )
 
-SELECT sub.academic_year      
-      
-      ,co.student_number
-      ,co.state_studentnumber AS SID
+SELECT co.student_number
+      ,co.state_studentnumber
       ,co.lastfirst
+      ,co.academic_year
+      ,co.region      
       ,co.schoolid
       ,co.reporting_schoolid
-      ,co.region      
       ,co.grade_level
       ,co.entrydate
-      ,co.exitdate
-      ,co.specialed_classification AS sped_code      
-      ,co.ethnicity
-      ,ISNULL(co.ethnicity,'B') AS race_status
+      ,co.exitdate      
+      ,co.ethnicity      
 	     ,co.lunchstatus
-      ,CASE
-        WHEN nj.programtypecode IS NOT NULL 
-         AND nj.special_education_placement IN ('04','11')
-               THEN CONVERT(VARCHAR,nj.programtypecode)
-        WHEN co.grade_level = 0 THEN 'K'
-        ELSE CONVERT(VARCHAR,co.grade_level)
-       END AS report_grade_level      
-      ,CASE
-        WHEN co.lunchstatus IN ('F','R') THEN 'Low Income'
-        WHEN co.lunchstatus = 'P' THEN 'Not Low Income'
-        WHEN co.lunchstatus IS NULL THEN 'Not Low Income'
-       END AS low_income_status
-      ,co.iep_status AS sped
-      ,CASE
-        WHEN co.iep_status LIKE '%SPED%' THEN 'IEP'
-        ELSE 'Not IEP'
-       END AS IEP_status
-      ,co.lep_status AS lep
-      ,CASE 
-        WHEN co.lep_status = 1 THEN 'LEP' 
-        WHEN co.lep_status IS NULL THEN 'Not LEP'        
-       END AS LEP_status
+      ,co.iep_status
+      ,co.specialed_classification
+      ,co.lep_status
+      ,COUNT(co.student_number) OVER(PARTITION BY co.schoolid, co.academic_year) AS n_students
       
-      ,d.N_days AS N_days_open
+      ,nj.programtypecode
+      ,nj.special_education_placement        
       
-      ,CASE WHEN sub.N_mem > d.N_days THEN d.N_days ELSE sub.N_mem END AS N_days_possible
-      ,CASE WHEN sub.N_att > d.N_days THEN d.N_days ELSE sub.N_att END AS N_days_present 
-FROM att_mem sub
-JOIN gabby.powerschool.cohort_identifiers_static co
-  ON sub.studentid = co.studentid
- AND sub.academic_year = co.academic_year
- AND co.rn_year = 1
+      ,d.n_days_school
+      ,d.n_days_region_min
+      
+      ,sub.n_mem
+      ,sub.n_att            
+FROM gabby.powerschool.cohort_identifiers_static co
 LEFT OUTER JOIN gabby.powerschool.s_nj_stu_x nj
   ON co.students_dcid = nj.studentsdcid
 JOIN schooldays d
-  ON sub.academic_year = d.academic_year
- AND co.region = d.region
+  ON co.schoolid = d.schoolid
+ AND co.academic_year = d.academic_year
+JOIN att_mem sub
+  ON co.studentid = sub.studentid
+ AND co.academic_year = sub.academic_year
+WHERE co.rn_year = 1
