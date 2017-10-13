@@ -4,27 +4,32 @@ GO
 CREATE OR ALTER VIEW illuminate_dna_assessments.student_assessment_scaffold AS
 
 WITH advanced_math AS (
-  SELECT ssc.student_id
-        ,ssc.academic_year      
-        ,ssc.grade_level_id
-
-        ,CASE
-          WHEN c.school_course_id IN ('MATH10','MATH15','MATH71','MATH10ICS','MATH12','MATH12ICS','MATH14','MATH16','M415') THEN 'Algebra I'        
-          WHEN c.school_course_id IN ('MATH20','MATH25','MATH31','MATH73','MATH20ICS') THEN 'Geometry'
-          WHEN c.school_course_id IN ('MATH32','MATH35','MATH32A','MATH32B','MATH32HA') THEN 'Algebra II'
-         END AS subject_area
-        
+  SELECT student_id
+        ,academic_year
+        ,grade_level_id
+        ,subject_area
         ,ROW_NUMBER() OVER(        
-           PARTITION BY ssc.student_id, ssc.academic_year, CASE
-                                                            WHEN c.school_course_id IN ('MATH10','MATH15','MATH71','MATH10ICS','MATH12','MATH12ICS','MATH14','MATH16','M415') THEN 'Algebra I'        
-                                                            WHEN c.school_course_id IN ('MATH20','MATH25','MATH31','MATH73','MATH20ICS') THEN 'Geometry'
-                                                            WHEN c.school_course_id IN ('MATH32','MATH35','MATH32A','MATH32B','MATH32HA') THEN 'Algebra II'
-                                                           END
+           PARTITION BY student_id, academic_year, subject_area
              ORDER BY entry_date DESC, leave_date DESC) AS rn
-  FROM gabby.illuminate_matviews.ss_cube ssc  
-  JOIN gabby.illuminate_public.courses c
-    ON ssc.course_id = c.course_id 
-   AND c.department_id = 1   
+  FROM
+      (
+       SELECT ssc.student_id
+             ,ssc.academic_year      
+             ,ssc.grade_level_id
+             ,ssc.entry_date
+             ,ssc.leave_date
+
+             ,CASE
+               WHEN c.school_course_id IN ('MATH10','MATH15','MATH71','MATH10ICS','MATH12','MATH12ICS','MATH14','MATH16','M415') THEN 'Algebra I'        
+               WHEN c.school_course_id IN ('MATH20','MATH25','MATH31','MATH73','MATH20ICS') THEN 'Geometry'
+               WHEN c.school_course_id IN ('MATH32','MATH35','MATH32A','MATH32HA') THEN 'Algebra IIA'
+               WHEN c.school_course_id IN ('MATH32B') THEN 'Algebra IIB'
+              END AS subject_area
+       FROM gabby.illuminate_matviews.ss_cube ssc  
+       JOIN gabby.illuminate_public.courses c
+         ON ssc.course_id = c.course_id 
+        AND c.department_id = 1   
+      ) sub
  )
 
 SELECT sub.assessment_id
@@ -86,7 +91,7 @@ FROM
       AND ds.code_translation IN (SELECT scope FROM gabby.illuminate_dna_assessments.normed_scopes)
      JOIN gabby.illuminate_codes.dna_subject_areas dsa
        ON a.code_subject_area_id = dsa.code_id    
-      AND dsa.code_translation NOT IN ('Mathematics','Algebra I','Geometry','Algebra II')
+      AND dsa.code_translation NOT IN ('Mathematics','Algebra I','Geometry','Algebra IIA','Algebra IIB')
      JOIN gabby.illuminate_dna_assessments.assessment_grade_levels agl
        ON a.assessment_id = agl.assessment_id
      JOIN gabby.illuminate_public.student_session_aff ssa
@@ -149,7 +154,7 @@ FROM
       AND ds.code_translation IN (SELECT scope FROM gabby.illuminate_dna_assessments.normed_scopes)
      JOIN gabby.illuminate_codes.dna_subject_areas dsa
        ON a.code_subject_area_id = dsa.code_id    
-      AND dsa.code_translation IN ('Algebra I','Geometry','Algebra II')
+      AND dsa.code_translation IN ('Algebra I','Geometry','Algebra IIA','Algebra IIB')
      JOIN gabby.illuminate_dna_assessments.assessment_grade_levels agl
        ON a.assessment_id = agl.assessment_id
      JOIN advanced_math am
