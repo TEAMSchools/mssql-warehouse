@@ -21,7 +21,7 @@ SELECT asr.local_student_id AS student_number
        END AS proficiency_label
       ,SUBSTRING(asr.module_number, PATINDEX('%[0-9]%', asr.module_number), 1) AS rn_unit
 FROM gabby.illuminate_dna_assessments.agg_student_responses_all asr
-WHERE asr.scope IN ('CMA - End-of-Module','CMA - Mid-Module')
+WHERE asr.scope IN ('CMA - End-of-Module','Checkpoint')
   AND asr.subject_area IN ('Text Study','Mathematics')
   AND asr.response_type = 'O'
   AND asr.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()

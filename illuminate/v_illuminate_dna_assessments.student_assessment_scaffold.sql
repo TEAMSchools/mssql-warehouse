@@ -39,6 +39,7 @@ SELECT sub.assessment_id
         WHEN sub.scope IN ('Cold Read Quizzes', 'Cumulative Review Quizzes') THEN 'CRQ'
         WHEN sub.scope = 'CGI Quiz' THEN 'CGI'
         WHEN sub.scope = 'Math Facts and Counting Jar' THEN 'MFCJ'
+        WHEN sub.scope = 'Checkpoint' THEN 'CP'
         WHEN sub.scope = 'CMA - Mid-Module'
          AND PATINDEX('%Checkpoint [0-9]%', sub.title) = 0
          AND sub.academic_year <= 2016
@@ -91,6 +92,7 @@ FROM
      JOIN gabby.illuminate_public.student_session_aff ssa
        ON a.administered_at BETWEEN ssa.entry_date AND ssa.leave_date
       AND agl.grade_level_id = ssa.grade_level_id
+      AND ssa.stu_sess_id IN (SELECT stu_sess_id FROM gabby.illuminate_public.student_session_aff_validation_static)
      WHERE a.deleted_at IS NULL
 
      UNION ALL
@@ -121,7 +123,8 @@ FROM
      JOIN gabby.illuminate_public.student_session_aff ssa
        ON a.administered_at BETWEEN ssa.entry_date AND ssa.leave_date
       AND agl.grade_level_id = ssa.grade_level_id     
-      AND ssa.student_id NOT IN (SELECT student_id FROM advanced_math WHERE rn = 1 AND subject_area IS NOT NULL)
+      AND ssa.stu_sess_id IN (SELECT stu_sess_id FROM gabby.illuminate_public.student_session_aff_validation_static)
+      AND ssa.student_id NOT IN (SELECT student_id FROM advanced_math WHERE rn = 1 AND subject_area IS NOT NULL)      
      WHERE a.deleted_at IS NULL
 
      UNION ALL
@@ -183,6 +186,7 @@ FROM
      JOIN gabby.illuminate_public.student_session_aff ssa
        ON a.administered_at BETWEEN ssa.entry_date AND ssa.leave_date
       AND agl.grade_level_id != ssa.grade_level_id
+      AND ssa.stu_sess_id IN (SELECT stu_sess_id FROM gabby.illuminate_public.student_session_aff_validation_static)
      JOIN gabby.illuminate_dna_assessments.students_assessments sa
        ON a.assessment_id = sa.assessment_id
       AND ssa.student_id = sa.student_id

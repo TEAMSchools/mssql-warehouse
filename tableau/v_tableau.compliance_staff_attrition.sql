@@ -10,7 +10,8 @@ WITH roster AS (
         ,LEFT(position_id,3) AS entity
         ,location_description AS location
         ,position_start_date
-        ,termination_date        
+        ,termination_date
+        ,termination_reason_description        
         ,benefits_eligibility_class_description
         ,gabby.utilities.DATE_TO_SY(position_start_date) AS start_academic_year
         ,gabby.utilities.DATE_TO_SY(termination_date) AS end_academic_year
@@ -32,6 +33,7 @@ WITH roster AS (
         ,benefits_eligibility_class_description
         ,academic_year
         ,termination_date
+        ,termination_reason_description    
         ,academic_year_entrydate
         ,academic_year_exitdate
   FROM
@@ -54,6 +56,7 @@ WITH roster AS (
              ,ROW_NUMBER() OVER(
                 PARTITION BY r.associate_id, y.academic_year
                   ORDER BY r.position_start_date DESC, COALESCE(r.termination_date,CONVERT(DATE,GETDATE())) DESC) AS rn_dupe_academic_year
+              ,termination_reason_description    
        FROM roster r
        JOIN years y
          ON y.academic_year BETWEEN r.start_academic_year AND COALESCE(r.end_academic_year, gabby.utilities.GLOBAL_ACADEMIC_YEAR())
@@ -70,6 +73,7 @@ SELECT d.associate_id
       ,d.academic_year      
       ,d.academic_year_entrydate      
       ,d.academic_year_exitdate
+      ,d.termination_reason_description 
       ,CASE 
         WHEN d.academic_year_entrydate <= DATEFROMPARTS((d.academic_year + 1), 4, 30) AND d.academic_year_exitdate >= DATEFROMPARTS(d.academic_year, 9, 1) THEN 1         
         ELSE 0 

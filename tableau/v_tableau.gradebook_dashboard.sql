@@ -50,6 +50,8 @@ SELECT co.student_number
       ,gr.y1_grade_letter           
       ,gr.y1_gpa_points
       
+      ,NULL AS earnedcrhrs
+
       ,st.sectionid
       ,st.teacher_name
       ,st.section_number       
@@ -92,13 +94,15 @@ SELECT co.student_number
       ,'Y1' AS finalgradename      
       ,gr.is_curterm            
       ,gr.excludefromgpa
-      ,gr.credit_hours      
+      ,gr.credit_hours            
       ,gr.y1_grade_percent_adjusted AS term_grade_percent_adjusted
       ,gr.y1_grade_letter AS term_grade_letter_adjusted
       ,gr.y1_gpa_points AS term_gpa_points
       ,gr.y1_grade_percent_adjusted
       ,gr.y1_grade_letter           
-      ,gr.y1_gpa_points      
+      ,gr.y1_gpa_points     
+      
+      ,y1.earnedcrhrs
       
       ,st.sectionid
       ,st.teacher_name
@@ -114,6 +118,11 @@ JOIN gabby.powerschool.final_grades_static gr
   ON co.student_number = gr.student_number
  AND co.academic_year = gr.academic_year 
  AND gr.is_curterm = 1
+LEFT OUTER JOIN gabby.powerschool.storedgrades y1
+  ON co.studentid = y1.studentid
+ AND co.academic_year = (LEFT(y1.termid, 2) + 1990)
+ AND gr.course_number = y1.course_number
+ AND y1.storecode = 'Y1'
 JOIN section_teacher st
   ON co.studentid = st.studentid
  AND co.academic_year = st.academic_year
@@ -151,6 +160,8 @@ SELECT COALESCE(co.student_number, e1.student_number) AS student_number
       ,gr.grade AS y1_grade_letter           
       ,gr.gpa_points AS y1_gpa_points            
       
+      ,NULL AS earnedcrhrs
+
       ,gr.sectionid
       ,'TRANSFER' AS teacher_name    
       ,'TRANSFER' AS section_number       
@@ -207,6 +218,8 @@ SELECT co.student_number
       ,NULL AS y1_grade_letter           
       ,NULL AS y1_gpa_points      
       
+      ,NULL AS earnedcrhrs
+
       ,st.sectionid
       ,st.teacher_name
       ,st.section_number       
@@ -261,6 +274,8 @@ SELECT co.student_number
       ,gr.grade_category_pct_y1 AS y1_grade_percent_adjusted
       ,NULL AS y1_grade_letter            
       ,NULL AS y1_gpa_points      
+
+      ,NULL AS earnedcrhrs
 
       ,st.sectionid
       ,st.teacher_name
@@ -317,6 +332,8 @@ SELECT co.student_number
       ,gr.grade_category_pct_y1 AS y1_grade_percent_adjusted
       ,NULL AS y1_grade_letter            
       ,NULL AS y1_gpa_points      
+
+      ,NULL AS earnedcrhrs
 
       ,st.sectionid
       ,st.teacher_name

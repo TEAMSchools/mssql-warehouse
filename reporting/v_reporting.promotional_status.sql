@@ -322,10 +322,11 @@ FROM
        ON co.student_number = lit.student_number
       AND co.academic_year = lit.academic_year
       AND dt.alt_name = lit.term_name
+      AND co.school_level = 'ES'
      LEFT OUTER JOIN final_grades fg
        ON co.student_number = fg.student_number
       AND co.academic_year = fg.academic_year
-      AND dt.alt_name = fg.term_name
+      AND dt.alt_name = fg.term_name      
      LEFT OUTER JOIN gabby.powerschool.category_grades_wide cat
        ON co.student_number = cat.student_number
       AND co.academic_year = cat.academic_year 

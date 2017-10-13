@@ -3,58 +3,29 @@ GO
 
 CREATE OR ALTER VIEW naviance.sat_scores_clean AS
 
-WITH unioned_tables AS (
-  SELECT [student_id]
-        ,[hs_student_id]                  
-        ,[evidence_based_reading_writing]
-        ,[math]              
-        ,[total]      
-        ,[reading_test]
-        ,[writing_test]      
-        ,[math_test]
-        ,NULL AS writing
-        ,NULL AS [essay_subscore]
-        ,CONVERT(FLOAT,[math_test]) + CONVERT(FLOAT,[reading_test]) AS [mc_subscore]
-        ,DATEFROMPARTS(RIGHT(test_date, 4), LEFT(test_date, CHARINDEX('/',test_date) - 1), 1) AS test_date
-  FROM gabby.naviance.sat_scores
-
-  UNION ALL
-
-  SELECT [studentid]
-        ,[hs_student_id]            
-        ,[verbal]
-        ,[math]                    
-        ,[total]
-        ,NULL AS [reading_test]
-        ,[essay_subscore] AS [writing_test]      
-        ,NULL AS [math_test]
-        ,[writing]
-        ,[essay_subscore]
-        ,[mc_subscore]
-        ,CASE
-          WHEN test_date = '0000-00-00' THEN NULL
-          WHEN RIGHT(test_date,2) = '00' THEN DATEFROMPARTS(LEFT(test_date,4), SUBSTRING(test_date, 6, 2), 01)
-          ELSE CONVERT(DATE,test_date)
-         END AS test_date
-  FROM gabby.naviance.sat_scores_before_mar_2016
- )
-
-SELECT sub1.nav_studentid
-      ,sub1.student_number           
-      ,sub1.verbal
-      ,sub1.math
-      ,sub1.writing
-      ,sub1.essay_subscore
-      ,sub1.mc_subscore
-      ,sub1.math_verbal_total
-      ,sub1.all_tests_total
-      ,sub1.test_date
-      ,sub1.test_date_flag
-      ,sub1.total_flag
-      ,gabby.utilities.DATE_TO_SY(sub1.test_date) AS academic_year
+SELECT sub.nav_studentid
+      ,sub.student_number           
+      ,sub.test_date
+      ,sub.sat_scale
+      ,sub.is_old_sat
+      ,sub.verbal
+      ,sub.math
+      ,sub.writing
+      ,sub.essay_subscore
+      ,sub.mc_subscore
+      ,sub.math_verbal_total
+      ,sub.all_tests_total      
+      ,sub.test_date_flag
+      ,sub.total_flag
+      
+      ,gabby.utilities.DATE_TO_SY(sub.test_date) AS academic_year
+      
       ,ROW_NUMBER() OVER(
-         PARTITION BY sub1.student_number, test_date
-             ORDER BY sub1.test_date) AS dupe_audit
+        PARTITION BY sub.student_number
+            ORDER BY sub.all_tests_total DESC) AS rn_highest
+      ,ROW_NUMBER() OVER(
+         PARTITION BY sub.student_number, test_date
+             ORDER BY sub.test_date) AS dupe_audit
       ,ROW_NUMBER() OVER(
          PARTITION BY student_number
              ORDER BY test_date ASC) AS n_attempt
@@ -62,6 +33,8 @@ FROM
     (
      SELECT sat.student_id AS nav_studentid
            ,sat.hs_student_id AS student_number                
+           ,sat.sat_scale
+           ,sat.is_old_sat
            ,CONVERT(DATE,test_date) AS test_date
            ,CASE WHEN sat.test_date > CONVERT(DATE,GETDATE()) THEN 1 END AS test_date_flag
            ,CONVERT(FLOAT,CASE WHEN evidence_based_reading_writing BETWEEN 200 AND 800 THEN evidence_based_reading_writing END) AS verbal
@@ -79,5 +52,43 @@ FROM
                   THEN 1 
              WHEN total NOT BETWEEN 400 AND 2400 THEN 1
             END AS total_flag                
-     FROM unioned_tables sat    
-    ) sub1
+     FROM (
+           SELECT [student_id]
+                 ,[hs_student_id]                  
+                 ,[evidence_based_reading_writing]
+                 ,[math]              
+                 ,[total]      
+                 ,[reading_test]
+                 ,[writing_test]      
+                 ,[math_test]
+                 ,NULL AS writing
+                 ,NULL AS [essay_subscore]
+                 ,CONVERT(FLOAT,[math_test]) + CONVERT(FLOAT,[reading_test]) AS [mc_subscore]
+                 ,DATEFROMPARTS(RIGHT(test_date, 4), LEFT(test_date, CHARINDEX('/',test_date) - 1), 1) AS test_date
+                 ,1600 AS sat_scale
+                 ,0 AS is_old_sat
+           FROM gabby.naviance.sat_scores
+
+           UNION ALL
+
+           SELECT [studentid]
+                 ,[hs_student_id]            
+                 ,[verbal]
+                 ,[math]                    
+                 ,[total]
+                 ,NULL AS [reading_test]
+                 ,[essay_subscore] AS [writing_test]      
+                 ,NULL AS [math_test]
+                 ,[writing]
+                 ,[essay_subscore]
+                 ,[mc_subscore]
+                 ,CASE
+                   WHEN test_date = '0000-00-00' THEN NULL
+                   WHEN RIGHT(test_date,2) = '00' THEN DATEFROMPARTS(LEFT(test_date,4), SUBSTRING(test_date, 6, 2), 01)
+                   ELSE CONVERT(DATE,test_date)
+                  END AS test_date
+                 ,2400 AS sat_scale
+                 ,1 AS is_old_sat
+           FROM gabby.naviance.sat_scores_before_mar_2016
+          ) sat
+    ) sub

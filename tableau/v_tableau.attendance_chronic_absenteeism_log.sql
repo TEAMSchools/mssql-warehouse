@@ -14,7 +14,7 @@ WITH commlog AS (
         
         ,f.init_notes AS followup_init_notes
         ,f.followup_notes AS followup_close_notes
-        ,f.outstanding
+        ,f.outstanding AS followup_outstanding
         ,CONCAT(f.c_first, ' ', f.c_last) AS followup_staff_name      
   FROM gabby.deanslist.communication c
   JOIN gabby.deanslist.users u
@@ -40,6 +40,7 @@ SELECT sub.student_number
       ,cl.followup_staff_name
       ,cl.followup_init_notes
       ,cl.followup_close_notes
+      ,cl.followup_outstanding
 FROM 
     (
      SELECT co.student_number

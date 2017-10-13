@@ -42,7 +42,10 @@ WITH attending_enrollment AS (
 
 ,checkins AS (
   SELECT contact_id        
-        ,AAS
+        ,AAS1F
+        ,AAS2F
+        ,AAS1S
+        ,AAS2S
         ,PSC1
         ,PSC2
         ,REM        
@@ -50,24 +53,29 @@ WITH attending_enrollment AS (
       (
        SELECT c.Contact_c AS contact_id
              ,CASE 
-               WHEN c.subject_c LIKE 'AAS_' THEN 'AAS'               
+               WHEN c.category_c = 'Benchmark' AND MONTH(c.date_c) >= 7 THEN 'AAS1F'
+               WHEN c.category_c = 'Benchmark' AND MONTH(c.date_c) < 7 THEN 'AAS1S'
+               WHEN c.category_c = 'Benchmark Follow-Up' AND MONTH(c.date_c) >= 7 THEN 'AAS2F'
+               WHEN c.category_c = 'Benchmark Follow-Up' AND MONTH(c.date_c) < 7 THEN 'AAS2S'               
                WHEN c.subject_c = 'PSC' AND MONTH(c.date_c) >= 7 THEN 'PSC1'
                WHEN c.subject_c = 'PSC' AND MONTH(c.date_c) < 7 THEN 'PSC2'
                ELSE c.subject_c
               END AS contact_subject
              ,c.Date_c AS contact_date             
        FROM gabby.alumni.Contact_Note_c c WITH(NOLOCK)       
-       WHERE (c.Subject_c LIKE 'AAS_' OR c.Subject_c = 'PSC' OR c.Subject_c = 'REM')
+       WHERE ((c.Subject_c = 'PSC' OR c.Subject_c = 'REM') OR (c.category_c IN ('Benchmark','Benchmark Follow-Up')))
          AND gabby.utilities.DATE_TO_SY(c.Date_c) = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
          AND c.is_deleted = 0
       ) sub
   PIVOT(
     COUNT(contact_date)
-    FOR contact_subject IN ([AAS]
+    FOR contact_subject IN ([AAS1F]
+                           ,[AAS2F]
+                           ,[AAS1S]
+                           ,[AAS2S]
                            ,[PSC1]
                            ,[PSC2]
-                           ,[REM]
-                           )
+                           ,[REM])
    ) p
  )
 
@@ -81,12 +89,12 @@ WITH attending_enrollment AS (
        FROM
            (
             SELECT enrollment_c
-                  ,school_year_c
+                  --,school_year_c
                   ,number_c
                   ,CONVERT(FLOAT,report_card_transcript_received_c) AS transcript_collected
                   ,GPA_c AS GPA                
             FROM gabby.alumni.marking_period_c
-            WHERE school_year_c = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+            WHERE ((school_year_c = (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1) AND number_c = 2) OR (school_year_c = gabby.utilities.GLOBAL_ACADEMIC_YEAR() AND number_c = 1))
               AND is_deleted = 0
            ) sub
        UNPIVOT(
@@ -210,7 +218,7 @@ SELECT c.id AS contact_id
       ,c.first_name AS FirstName
       ,c.last_name AS LastName
       ,c.kipp_hs_class_c
-      ,(gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1) - DATEPART(YEAR, c.expected_hs_graduation_c) AS years_out_of_HS
+      ,(gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1) - DATEPART(YEAR, c.actual_hs_graduation_date_c) AS years_out_of_HS
       ,c.currently_enrolled_school_c
       ,c.kipp_ms_graduate_c
       ,c.middle_school_attended_c
@@ -271,12 +279,18 @@ SELECT c.id AS contact_id
       ,e.NCESid_c
       ,e.date_last_verified_c
 
-      ,cn.AAS
+      ,cn.AAS1F
+      ,cn.AAS2F
+      ,cn.AAS1S
+      ,cn.AAS2S
       ,cn.PSC1
       ,cn.PSC2
       ,cn.REM      
            
-      ,mp.transcript_collected_MP1
+      ,CASE 
+        WHEN (gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1) - DATEPART(YEAR, c.actual_hs_graduation_date_c) = 1 THEN NULL /* ignore freshmen */
+        ELSE mp.transcript_collected_MP1 
+       END AS transcript_collected_MP1
       ,mp.transcript_collected_MP2
       ,mp.GPA_MP1
       ,mp.GPA_MP2      

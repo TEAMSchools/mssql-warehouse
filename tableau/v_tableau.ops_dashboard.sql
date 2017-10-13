@@ -12,6 +12,7 @@ SELECT student_number
       ,entrydate_year
       ,exitdate_year
       ,exitcode
+      ,region
       ,school_level
       ,schoolid
       ,grade_level
@@ -60,6 +61,7 @@ FROM
            ,MIN(co.entrydate) OVER(PARTITION BY co.student_number, co.academic_year) AS entrydate_year
            ,MIN(co.exitdate) OVER(PARTITION BY co.student_number, co.academic_year) AS exitdate_year
            ,co.exitcode
+           ,co.region
            ,co.school_level
            ,co.reporting_schoolid AS schoolid
            ,co.grade_level

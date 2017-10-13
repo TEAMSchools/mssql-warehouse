@@ -51,6 +51,6 @@ FROM
            ,pay_date
 	          
            ,CONCAT(company, file_) AS position_id
-           ,LEAD(total_reg_earnings, 1, 0) OVER(PARTITION BY CONCAT(company, file_) ORDER BY pay_date DESC) AS total_reg_earnings_prev
+           ,LAG(total_reg_earnings, 1, 0) OVER(PARTITION BY CONCAT(company, file_) ORDER BY pay_date) AS total_reg_earnings_prev
      FROM gabby.adp.pr_employeesummary
     ) sub
