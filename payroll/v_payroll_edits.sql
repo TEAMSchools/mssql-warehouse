@@ -7,34 +7,36 @@ WITH edits_union AS
 (
 SELECT entity AS entity
 	  ,salesforce_position_number AS sf_position_id
-	  ,'' AS associate_id
-	  ,'' AS position_id
-	  ,preferred_name AS name
+	  ,r.associate_id AS associate_id
+	  ,r.position_id AS position_id
+	  ,p.preferred_name AS name
 	  ,CONVERT(varchar,salary) + ' (salary)' AS salary
 	  ,CONVERT(varchar,leadership_stipend) + ' (Leadership, )' + CONVERT(varchar,relocation_stipend) + ' (Relocation, )' + CONVERT(varchar,other_stipend) + ' (Other, )' AS stipend
 	  ,'' AS notes
 	  ,start_date AS effective_date
 	  ,'New Hire' AS source
-FROM gabby.payroll.new_hire_tracker 
+FROM gabby.payroll.new_hire_tracker p LEFT OUTER JOIN gabby.adp.staff_roster r
+	  ON  p.salesforce_position_number = r.salesforce_job_position_name_custom
 
 UNION ALL
 
 SELECT entity AS entity
-	  ,'' AS sf_position_id
-	  ,associate_id AS associate_id
-	  ,position_id AS position_id
+	  ,r.salesforce_job_position_name_custom AS sf_position_id
+	  ,e.associate_id AS associate_id
+	  ,e.position_id AS position_id
 	  ,employee_name AS name
 	  ,CONVERT(varchar,amount_of_edit) + ' (amount of edit)' AS salary
 	  ,'' AS stipend
 	  ,description AS notes
 	  ,CONVERT(datetime,LEFT(payroll_date,10)) AS effective_date
 	  ,'Pay Edits' AS source
-FROM gabby.payroll.payroll_edit_tracker
+FROM gabby.payroll.payroll_edit_tracker e LEFT OUTER JOIN gabby.adp.staff_roster r
+      ON e.associate_id = r.associate_id
 
 UNION ALL
 
 SELECT entity AS entity
-	  ,'' AS sf_position_id
+	  ,r.salesforce_job_position_name_custom AS sf_position_id
 	  ,employee_associate_id AS associate_id
 	  ,employee_position_id AS position_id
 	  ,employee_name AS name
@@ -44,7 +46,8 @@ SELECT entity AS entity
 	  ,effective_date_of_change AS effective_date
 	  ,'Status Change' AS source
 	   
-FROM gabby.payroll.status_change
+FROM gabby.payroll.status_change s LEFT OUTER JOIN gabby.adp.staff_roster r
+      ON s.employee_associate_id = r.associate_id
 WHERE effective_date_of_change != NULL
 	OR effective_date_of_change != 'varies'
 
