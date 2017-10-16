@@ -164,14 +164,14 @@ SELECT rr.assessment_id
            
       ,CASE
         WHEN rr.response_type = 'O' THEN 'Overall'
-        WHEN rr.response_type = 'G' AND rr.standard_id = 5287 THEN 'OER'
-        WHEN rr.response_type = 'G' AND rr.standard_id = 274 THEN 'MC'
+        WHEN rr.response_type = 'G' AND rr.standard_id = 26978 THEN 'OER'
+        WHEN rr.response_type = 'G' AND rr.standard_id = 21769 THEN 'MC'
         ELSE std.custom_code 
        END AS standard_code
       ,CASE
         WHEN rr.response_type = 'O' THEN 'Overall'
-        WHEN rr.response_type = 'G' AND rr.standard_id = 5287 THEN 'Open-Ended Response'
-        WHEN rr.response_type = 'G' AND rr.standard_id = 274 THEN 'Multiple Choice'
+        WHEN rr.response_type = 'G' AND rr.standard_id = 26978 THEN 'Open-Ended Response'
+        WHEN rr.response_type = 'G' AND rr.standard_id = 21769 THEN 'Multiple Choice'
         ELSE std.description
        END AS standard_description
       
