@@ -43,12 +43,7 @@ SELECT co.reporting_schoolid AS schoolid
       ,CASE
         WHEN (co.grade_level <= 4 OR co.reporting_schoolid = 732585074) THEN hr.section_number
         ELSE enr.section_number
-       END AS section_number       
-      
-      ,1 AS overall_rn      
-      ,NULL AS individualized_mastery_goal
-      ,NULL AS n_valid_results
-      ,NULL AS n_poss_results      
+       END AS section_number
 FROM gabby.powerschool.cohort_identifiers_static co 
 JOIN gabby.illuminate_dna_assessments.agg_student_responses_all asr
   ON co.student_number = asr.local_student_id
