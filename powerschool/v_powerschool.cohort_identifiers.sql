@@ -99,7 +99,8 @@ SELECT co.studentid
         WHEN sch.high_grade = 4 THEN 'ES'
        END AS school_level
 
-      ,adv.advisory_name AS team
+      ,t.team
+
       ,adv.advisor_name
       ,adv.advisor_phone
       ,adv.advisor_email
@@ -151,6 +152,10 @@ LEFT OUTER JOIN gabby.powerschool.spenrollments_gen sp
 --  * 5075 = Whittier (ES)
 --  * 5713 = Out-of-District
  */
+LEFT OUTER JOIN gabby.powerschool.team_roster t
+  ON co.studentid = t.studentid
+ AND co.academic_year = t.academic_year
+ AND t.rn_year = 1
 LEFT OUTER JOIN gabby.powerschool.advisory adv
   ON co.studentid = adv.studentid
  AND co.academic_year = adv.academic_year

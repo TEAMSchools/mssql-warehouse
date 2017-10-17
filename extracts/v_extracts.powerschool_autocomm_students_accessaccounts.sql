@@ -10,9 +10,10 @@ SELECT saa.student_number
       ,saa.student_web_id + '.fam' AS web_id
       ,saa.student_web_password AS web_password
       ,CASE WHEN saa.enroll_status = 0 THEN 1 ELSE 0 END AS allowwebaccess
-      ,LEFT(gabby.utilities.STRIP_CHARACTERS(adv.advisory_name,'0-9'), 10) AS team
+      
+      ,LEFT(gabby.utilities.STRIP_CHARACTERS(adv.team,'0-9'), 10) AS team
 FROM gabby.powerschool.student_access_accounts saa
-LEFT OUTER JOIN gabby.powerschool.advisory adv
+LEFT OUTER JOIN gabby.powerschool.team_roster adv
   ON saa.student_number = adv.student_number
  AND adv.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
  AND adv.rn_year = 1

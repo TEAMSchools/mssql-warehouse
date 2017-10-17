@@ -8,7 +8,6 @@ SELECT enr.studentid
       ,enr.academic_year           
       ,enr.teachernumber
       ,enr.teacher_name AS advisor_name
-      ,gabby.utilities.STRIP_CHARACTERS(enr.section_number,'0-9') AS advisory_name
 
       ,adp.personal_contact_personal_mobile AS advisor_phone
       
@@ -38,7 +37,6 @@ SELECT enr.studentid
       ,enr.academic_year           
       ,enr.teachernumber
       ,enr.teacher_name AS advisor_name
-      ,gabby.utilities.STRIP_CHARACTERS(enr.section_number,'0-9') AS advisory_name
 
       ,adp.personal_contact_personal_mobile AS advisor_phone
       
