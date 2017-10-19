@@ -46,8 +46,7 @@ SELECT sub.assessment_id
         WHEN sub.scope = 'Math Facts and Counting Jar' THEN 'MFCJ'
         WHEN sub.scope = 'Checkpoint' THEN 'CP'
         WHEN sub.scope = 'CMA - Mid-Module'
-         AND PATINDEX('%Checkpoint [0-9]%', sub.title) = 0
-         AND sub.academic_year <= 2016
+         AND PATINDEX('%Checkpoint [0-9]%', sub.title) = 0         
              THEN 'Mid-Module'        
         WHEN sub.scope = 'CMA - Mid-Module' THEN SUBSTRING(sub.title, PATINDEX('%Checkpoint [0-9]%', sub.title), 12)
        END AS module_type
