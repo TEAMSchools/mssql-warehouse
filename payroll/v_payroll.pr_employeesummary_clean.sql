@@ -20,7 +20,7 @@ SELECT sub.position_id
       ,sub.total_taxes	
       ,sub.total_deductions	
       ,sub.total_deposits	
-      ,sub.net_pay	     
+      ,sub.net_pay
       ,sub.total_reg_earnings	
 	     ,sub.total_reg_earnings_prev
       ,sub.total_reg_earnings_prev - sub.total_reg_earnings AS total_reg_earnings_diff
@@ -29,6 +29,22 @@ SELECT sub.position_id
         ELSE 0
        END AS total_reg_earnings_diff_flag
 
+      ,total_ot_earnings
+      ,total_ot_earnings_prev
+      ,total_ot_earnings_prev - total_ot_earnings AS total_ot_earnings_diff
+	     ,CASE
+        WHEN total_ot_earnings_prev - total_ot_earnings != 0 THEN 1
+        ELSE 0
+       END AS total_ot_earnings_diff_flag
+     
+      ,total_earnings_3_4_5
+      ,total_earnings_3_4_5_prev
+      ,total_earnings_3_4_5_prev - total_earnings_3_4_5 AS total_earnings_3_4_5_diff
+	     ,CASE
+        WHEN total_earnings_3_4_5_prev - total_earnings_3_4_5 != 0 THEN 1
+        ELSE 0
+       END AS total_earnings_3_4_5_diff_flag
+       
       ,sr.associate_id
 FROM
     (
@@ -53,6 +69,9 @@ FROM
 	          
            ,CONCAT(pr.company, pr.file_) AS position_id
            ,LAG(pr.total_reg_earnings, 1, 0) OVER(PARTITION BY CONCAT(pr.company, pr.file_) ORDER BY pr.pay_date) AS total_reg_earnings_prev
+           ,LAG(total_ot_earnings, 1, 0) OVER(PARTITION BY CONCAT(company, file_) ORDER BY pay_date) AS total_ot_earnings_prev
+           ,LAG(total_earnings_3_4_5, 1, 0) OVER(PARTITION BY CONCAT(company, file_) ORDER BY pay_date) AS total_earnings_3_4_5_prev           
+           
      FROM gabby.adp.pr_employeesummary pr
     ) sub
 JOIN gabby.adp.staff_roster sr
