@@ -3,7 +3,7 @@ GO
 
 CREATE OR ALTER VIEW extracts.gsheets_staff_roster AS
 
-SELECT adp.associate_id
+SELECT CONVERT(NVARCHAR,adp.associate_id) AS associate_id
       ,adp.preferred_first AS preferred_first_name
       ,adp.preferred_last AS preferred_last_name
       ,CONCAT(adp.preferred_last, ', ', adp.preferred_first) AS preferred_lastfirst
@@ -16,7 +16,7 @@ SELECT adp.associate_id
       ,adp.reports_to_name AS reports_to
       ,adp.manager_custom_assoc_id
       ,adp.position_status
-      ,adp.termination_date
+      ,CONVERT(NVARCHAR,adp.termination_date) AS termination_date
        
       ,dir.mail AS email_addr 
 FROM gabby.adp.staff_roster adp
