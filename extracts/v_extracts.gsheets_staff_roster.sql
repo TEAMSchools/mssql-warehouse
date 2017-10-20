@@ -15,10 +15,11 @@ SELECT adp.associate_id
       ,adp.job_title_custom
       ,adp.reports_to_name AS reports_to
       ,adp.manager_custom_assoc_id
+      ,adp.position_status
+      ,adp.termination_date
        
       ,dir.mail AS email_addr 
 FROM gabby.adp.staff_roster adp
 LEFT OUTER JOIN gabby.adsi.user_attributes dir
   ON adp.associate_id = dir.idautopersonalternateid
-WHERE position_status != 'Terminated' 
-  AND rn_curr = 1 
+WHERE rn_curr = 1 
