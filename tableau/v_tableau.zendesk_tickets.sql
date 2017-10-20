@@ -10,7 +10,7 @@ WITH comments_count AS (
 	 GROUP BY c.ticket_id
  )
 
-,closed AS (
+,solved AS (
   SELECT ticket_id
         ,timestamp
         ,ROW_NUMBER() OVER(
@@ -18,7 +18,7 @@ WITH comments_count AS (
             ORDER BY timestamp DESC) AS rn
   FROM gabby.zendesk.ticket_history
   WHERE property = 'status'
-    AND new_value = 'closed'
+    AND new_value = 'solved'
  )
 
 SELECT t.id AS ticket_id
@@ -42,7 +42,7 @@ SELECT t.id AS ticket_id
 
 	     ,c.comments_count	       
       
-      ,cl.timestamp AS closed_timestamp            
+      ,slv.timestamp AS solved_timestamp            
 FROM gabby.zendesk.tickets t
 JOIN gabby.zendesk.users s
   ON t.submitter_id = s.id
@@ -52,7 +52,7 @@ LEFT OUTER JOIN gabby.zendesk.groups g
   ON t.group_id = g.id
 JOIN comments_count c
   ON t.id = c.ticket_id
-LEFT OUTER JOIN closed cl
-  ON t.id = cl.ticket_id
- AND cl.rn = 1
+LEFT OUTER JOIN solved slv
+  ON t.id = slv.ticket_id
+ AND slv.rn = 1
 WHERE t.status != 'deleted'

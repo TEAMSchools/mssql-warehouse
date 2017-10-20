@@ -37,6 +37,10 @@ SELECT co.reporting_schoolid AS schoolid
         ELSE enr.teacher_name
        END AS teacher_name      
       ,CASE
+        WHEN (co.grade_level <= 4 OR co.reporting_schoolid = 732585074) THEN hr.course_name
+        ELSE enr.course_name
+       END AS course_name
+      ,CASE
         WHEN (co.grade_level <= 4 OR co.reporting_schoolid = 732585074) THEN hr.expression
         ELSE enr.expression
        END AS expression

@@ -14,7 +14,7 @@ WITH comm_unpivot AS (
   FROM
       (
        SELECT 46 AS repository_id
-             ,2016 AS academic_year
+             ,gabby.utilities.GLOBAL_ACADEMIC_YEAR() AS academic_year
 
              ,r.repository_row_id
              ,r.field_term
@@ -32,6 +32,27 @@ WITH comm_unpivot AS (
        JOIN gabby.illuminate_public.students s
          ON r.student_id = s.student_id
        WHERE CONCAT(46, '_', r.repository_row_id) IN (SELECT CONCAT(repository_id, '_', repository_row_id) FROM gabby.illuminate_dna_repositories.repository_row_ids)
+
+       UNION ALL
+
+       SELECT 46 AS repository_id
+             ,2016 AS academic_year
+
+             ,ROW_NUMBER() OVER(ORDER BY s.local_student_id) AS repository_row_id
+             ,r.term
+             ,r.math_comment_1
+             ,r.math_comment_2
+             ,r.writing_comment_1
+             ,r.writing_comment_2
+             ,r.reading_comment_1
+             ,r.reading_comment_2
+             ,r.character_comment_1
+             ,r.character_comment_2
+      
+             ,s.local_student_id
+       FROM gabby.reporting.illuminate_report_card_comments_archive r
+       JOIN gabby.illuminate_public.students s
+         ON r.student_id = s.student_id       
       ) sub
   UNPIVOT(
     comment_code
