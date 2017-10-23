@@ -58,7 +58,7 @@ LEFT OUTER JOIN gabby.powerschool.course_enrollments_static enr
  AND asr.subject_area = enr.illuminate_subject
  AND enr.course_enroll_status = 0 
  AND enr.section_enroll_status = 0 
- AND enr.rn_subject = 1
+ AND enr.rn_illuminate_subject = 1
 LEFT OUTER JOIN gabby.powerschool.course_enrollments_static hr
   ON co.studentid = hr.studentid
  AND co.yearid = hr.yearid
