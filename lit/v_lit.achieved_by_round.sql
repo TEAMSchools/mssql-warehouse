@@ -375,8 +375,8 @@ FROM
            ,indiv.goal AS indiv_goal_lvl
            ,indiv.lvl_num AS indiv_lvl_num
 
-           ,LAG(sub.read_lvl, 1) OVER(PARTITION BY sub.student_number ORDER BY sub.academic_year ASC, sub.start_date ASC) AS prev_read_lvl
-           ,LAG(sub.lvl_num, 1) OVER(PARTITION BY sub.student_number ORDER BY sub.academic_year ASC, sub.start_date ASC) AS prev_lvl_num           
+           ,LAG(sub.read_lvl, 1) OVER(PARTITION BY sub.student_number ORDER BY sub.start_date ASC) AS prev_read_lvl
+           ,LAG(sub.lvl_num, 1) OVER(PARTITION BY sub.student_number ORDER BY sub.start_date ASC) AS prev_lvl_num           
            ,COALESCE(indiv.goal
                     ,CASE
                       WHEN (goals.fp_read_lvl IS NOT NULL AND goals.step_read_lvl IS NOT NULL)
