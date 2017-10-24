@@ -19,8 +19,18 @@ SELECT studentid
       ,rn_school
       ,rn_undergrad
       ,rn_all
-      ,year_in_school
-      ,year_in_network                  
+      ,CASE
+        WHEN rn_year > 1 THEN NULL
+        ELSE ROW_NUMBER() OVER(
+               PARTITION BY sub.studentid, sub.schoolid, sub.rn_year
+                 ORDER BY sub.yearid ASC, sub.exitdate ASC) 
+       END AS year_in_school
+      ,CASE
+        WHEN rn_year > 1 THEN NULL
+        ELSE ROW_NUMBER() OVER(
+               PARTITION BY sub.studentid, sub.rn_year
+                 ORDER BY sub.yearid ASC, sub.exitdate ASC) 
+       END AS year_in_network
       ,MIN(prev_grade_level) OVER(PARTITION BY studentid, yearid ORDER BY yearid ASC) AS prev_grade_level
       ,CASE
         WHEN grade_level != 99 
@@ -55,12 +65,6 @@ FROM
            ,ROW_NUMBER() OVER(
               PARTITION BY sub.studentid
                 ORDER BY sub.yearid DESC, sub.exitdate DESC) AS rn_all
-           ,ROW_NUMBER() OVER(
-              PARTITION BY sub.studentid, sub.schoolid
-                ORDER BY sub.yearid ASC, sub.exitdate ASC) AS year_in_school
-           ,ROW_NUMBER() OVER(
-              PARTITION BY sub.studentid
-                ORDER BY sub.yearid ASC, sub.exitdate ASC) AS year_in_network
      FROM
          (
           /* terminal (current & transfers) */

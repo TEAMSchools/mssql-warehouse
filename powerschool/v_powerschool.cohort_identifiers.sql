@@ -19,8 +19,8 @@ SELECT co.studentid
         ELSE co.yearid + 2003 + (-1 * co.grade_level)
        END AS cohort
       ,co.is_retained_year      
-      ,co.year_in_network      
-      ,co.year_in_school    
+      ,MAX(co.year_in_network) OVER(PARTITION BY co.studentid, co.academic_year) AS year_in_network
+      ,MAX(co.year_in_school) OVER(PARTITION BY co.studentid, co.academic_year) AS year_in_school
       ,co.rn_year
       ,co.rn_school
       ,co.rn_undergrad
