@@ -19,16 +19,19 @@ WITH advanced_math AS (
              ,ssc.entry_date
              ,ssc.leave_date
 
-             ,CASE
-               WHEN c.school_course_id IN ('MATH10','MATH15','MATH71','MATH10ICS','MATH12','MATH12ICS','MATH14','MATH16','M415') THEN 'Algebra I'        
-               WHEN c.school_course_id IN ('MATH20','MATH25','MATH31','MATH73','MATH20ICS') THEN 'Geometry'
-               WHEN c.school_course_id IN ('MATH32','MATH35','MATH32A','MATH32HA') THEN 'Algebra IIA'
-               WHEN c.school_course_id IN ('MATH32B') THEN 'Algebra IIB'
-              END AS subject_area
-       FROM gabby.illuminate_matviews.ss_cube ssc  
+             ,enr.illuminate_subject AS subject_area
+       FROM gabby.powerschool.course_enrollments_static enr
+       JOIN gabby.illuminate_public.students ils
+         ON enr.student_number = ils.local_student_id
        JOIN gabby.illuminate_public.courses c
-         ON ssc.course_id = c.course_id 
-        AND c.department_id = 1   
+         ON enr.course_number = c.school_course_id
+       JOIN gabby.illuminate_matviews.ss_cube ssc
+         ON ils.student_id = ssc.student_id
+        AND c.course_id = ssc.course_id
+        AND (enr.academic_year + 1) = ssc.academic_year
+       WHERE enr.course_enroll_status = 0
+         AND enr.section_enroll_status = 0
+         AND enr.illuminate_subject IN ('Algebra I', 'Geometry', 'Algebra IIA', 'Algebra IIB') 
       ) sub
  )
 
