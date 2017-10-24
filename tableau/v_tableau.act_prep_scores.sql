@@ -18,7 +18,6 @@ WITH real_act AS (
                        ,Science
                        ,Composite)
    ) u
-  WHERE rn_highest = 1
  )
 
 ,real_sat_conversion AS (
@@ -74,12 +73,12 @@ WITH real_act AS (
        UNION ALL
 
        SELECT student_number
-             ,administration_round
+             ,CONCAT(LEFT(DATENAME(MONTH,test_date),3), ' ''', RIGHT(DATEPART(YEAR,test_date),2)) AS administration_round
              ,test_date        
              ,act_subject
              ,scale_score
              ,1 AS is_converted_sat
-       FROM real_sat_conversion
+       FROM gabby.naviance.sat_act_conversion
       ) sub
  )
 
