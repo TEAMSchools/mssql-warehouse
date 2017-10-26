@@ -21,6 +21,56 @@ WITH course_enrollments AS (
              ,ssc.entry_date
              ,ssc.leave_date
              
+             ,'Text Study' AS subject_area
+             ,'ENG' AS credittype
+             ,0 AS is_advanced_math
+       FROM gabby.powerschool.course_enrollments_static enr
+       JOIN gabby.illuminate_public.students ils
+         ON enr.student_number = ils.local_student_id
+       JOIN gabby.illuminate_public.courses c
+         ON enr.course_number = c.school_course_id
+       JOIN gabby.illuminate_matviews.ss_cube ssc
+         ON ils.student_id = ssc.student_id
+        AND c.course_id = ssc.course_id
+        AND (enr.academic_year + 1) = ssc.academic_year
+        AND ssc.grade_level_id <= 9
+       WHERE enr.course_enroll_status = 0
+         AND enr.section_enroll_status = 0
+         AND enr.course_number = 'HR'
+       
+       UNION ALL
+       
+       SELECT ssc.student_id
+             ,ssc.academic_year      
+             ,ssc.grade_level_id
+             ,ssc.entry_date
+             ,ssc.leave_date
+             
+             ,'Mathematics' AS subject_area
+             ,'MATH' AS credittype
+             ,0 AS is_advanced_math
+       FROM gabby.powerschool.course_enrollments_static enr
+       JOIN gabby.illuminate_public.students ils
+         ON enr.student_number = ils.local_student_id
+       JOIN gabby.illuminate_public.courses c
+         ON enr.course_number = c.school_course_id
+       JOIN gabby.illuminate_matviews.ss_cube ssc
+         ON ils.student_id = ssc.student_id
+        AND c.course_id = ssc.course_id
+        AND (enr.academic_year + 1) = ssc.academic_year
+        AND ssc.grade_level_id <= 9
+       WHERE enr.course_enroll_status = 0
+         AND enr.section_enroll_status = 0
+         AND enr.course_number = 'HR'
+       
+       UNION ALL
+
+       SELECT ssc.student_id
+             ,ssc.academic_year      
+             ,ssc.grade_level_id
+             ,ssc.entry_date
+             ,ssc.leave_date
+             
              ,enr.illuminate_subject AS subject_area
              ,CASE
                WHEN enr.illuminate_subject IN ('Mathematics','Algebra I', 'Geometry', 'Algebra IIA', 'Algebra IIB') THEN 'MATH'
