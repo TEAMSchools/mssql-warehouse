@@ -15,6 +15,7 @@ WITH course_enrollments AS (
              ORDER BY entry_date DESC, leave_date DESC) AS rn
   FROM
       (
+       /* K-4 enrollments */
        SELECT ssc.student_id
              ,ssc.academic_year      
              ,ssc.grade_level_id
@@ -33,13 +34,11 @@ WITH course_enrollments AS (
          ON ils.student_id = ssc.student_id
         AND c.course_id = ssc.course_id
         AND (enr.academic_year + 1) = ssc.academic_year
-        AND ssc.grade_level_id <= 9
+        AND ssc.grade_level_id <= 5
        WHERE enr.course_enroll_status = 0
          AND enr.section_enroll_status = 0
-         AND enr.course_number = 'HR'
-       
-       UNION ALL
-       
+         AND enr.course_number = 'HR'       
+       UNION ALL       
        SELECT ssc.student_id
              ,ssc.academic_year      
              ,ssc.grade_level_id
@@ -58,13 +57,14 @@ WITH course_enrollments AS (
          ON ils.student_id = ssc.student_id
         AND c.course_id = ssc.course_id
         AND (enr.academic_year + 1) = ssc.academic_year
-        AND ssc.grade_level_id <= 9
+        AND ssc.grade_level_id <= 5
        WHERE enr.course_enroll_status = 0
          AND enr.section_enroll_status = 0
          AND enr.course_number = 'HR'
        
        UNION ALL
 
+       /* 5-12 enrollments */
        SELECT ssc.student_id
              ,ssc.academic_year      
              ,ssc.grade_level_id
@@ -72,10 +72,7 @@ WITH course_enrollments AS (
              ,ssc.leave_date
              
              ,enr.illuminate_subject AS subject_area
-             ,CASE
-               WHEN enr.illuminate_subject IN ('Mathematics','Algebra I', 'Geometry', 'Algebra IIA', 'Algebra IIB') THEN 'MATH'
-               WHEN enr.illuminate_subject IN ('Text Study','English 100','English 200','English 300','English 400') THEN 'ENG'
-              END AS credittype
+             ,enr.credittype             
              ,CASE WHEN enr.illuminate_subject IN ('Algebra I', 'Geometry', 'Algebra IIA', 'Algebra IIB') THEN 1 ELSE 0 END AS is_advanced_math
        FROM gabby.powerschool.course_enrollments_static enr
        JOIN gabby.illuminate_public.students ils
@@ -89,7 +86,8 @@ WITH course_enrollments AS (
        WHERE enr.course_enroll_status = 0
          AND enr.section_enroll_status = 0
          AND enr.illuminate_subject IN ('Mathematics','Algebra I','Geometry','Algebra IIA','Algebra IIB'
-                                       ,'Text Study','English 100','English 200','English 300','English 400') 
+                                       ,'Text Study','English 100','English 200','English 300','English 400'
+                                       ,'Science','Social Studies') 
       ) sub
  )
 
@@ -150,7 +148,7 @@ FROM
       AND ds.code_translation IN (SELECT scope FROM gabby.illuminate_dna_assessments.normed_scopes)
      JOIN gabby.illuminate_codes.dna_subject_areas dsa
        ON a.code_subject_area_id = dsa.code_id    
-      AND dsa.code_translation IN ('Text Study','Mathematics')
+      AND dsa.code_translation IN ('Text Study','Mathematics','Social Studies','Science')
      JOIN gabby.illuminate_dna_assessments.assessment_grade_levels agl
        ON a.assessment_id = agl.assessment_id
      JOIN gabby.illuminate_public.student_session_aff ssa
@@ -213,7 +211,7 @@ FROM
            ,ds.code_translation AS scope           
            ,dsa.code_translation AS subject_area
 
-           ,ssa.student_id
+           ,sa.student_id
 
            ,1 AS is_replacement
      FROM gabby.illuminate_dna_assessments.assessments a  
@@ -222,20 +220,18 @@ FROM
       AND ds.code_translation IN (SELECT scope FROM gabby.illuminate_dna_assessments.normed_scopes)
      JOIN gabby.illuminate_codes.dna_subject_areas dsa
        ON a.code_subject_area_id = dsa.code_id    
+      AND dsa.code_translation NOT IN ('Algebra I','Geometry','Algebra IIA','Algebra IIB'
+                                      ,'English 100','English 200','English 300','English 400')
      JOIN gabby.illuminate_dna_assessments.assessment_grade_levels agl
        ON a.assessment_id = agl.assessment_id
+     JOIN gabby.illuminate_dna_assessments.students_assessments sa
+       ON a.assessment_id = sa.assessment_id
      JOIN gabby.illuminate_public.student_session_aff ssa
-       ON a.administered_at BETWEEN ssa.entry_date AND ssa.leave_date
-      AND agl.grade_level_id != ssa.grade_level_id
+       ON sa.date_taken BETWEEN ssa.entry_date AND ssa.leave_date
+      AND sa.student_id = ssa.student_id
+      AND agl.grade_level_id != ssa.grade_level_id      
       AND ssa.stu_sess_id IN (SELECT stu_sess_id FROM gabby.illuminate_public.student_session_aff_validation_static)
-     LEFT OUTER JOIN course_enrollments ce
-       ON ssa.student_id = ce.student_id  
-      AND a.academic_year = ce.academic_year 
-      AND dsa.code_translation = ce.subject_area
-      AND ce.is_advanced_math_student = 0
-      AND ce.rn = 1
-     WHERE a.deleted_at IS NULL
-       AND ce.student_id IS NOT NULL
+     WHERE a.deleted_at IS NULL       
 
      UNION ALL
 
