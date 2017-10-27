@@ -97,6 +97,7 @@ SELECT sub.assessment_id
       ,sub.performance_band_set_id
       ,sub.academic_year
       ,CASE
+        WHEN sub.scope = 'Process Piece' THEN 'PP'
         WHEN sub.scope NOT IN (SELECT scope FROM gabby.illuminate_dna_assessments.normed_scopes) THEN NULL
         WHEN sub.scope = 'CMA - End-of-Module' AND sub.academic_year <= 2016 THEN 'EOM'
         WHEN sub.scope = 'CMA - End-of-Module' AND sub.academic_year > 2016 THEN 'QA'
@@ -109,6 +110,8 @@ SELECT sub.assessment_id
                THEN 'CP' + SUBSTRING(sub.title, PATINDEX('%Checkpoint [0-9]%', sub.title) + 11, 1)
        END AS module_type
       ,CASE
+        WHEN sub.scope = 'Process Piece' AND PATINDEX('%QA[0-9]%', sub.title) > 0 THEN SUBSTRING(sub.title, PATINDEX('%QA[0-9]%', sub.title), 3)
+        WHEN sub.scope = 'Process Piece' AND PATINDEX('%[MU][0-9]%', sub.title) > 0 THEN SUBSTRING(sub.title, PATINDEX('%[MU][0-9]%', sub.title), 2)
         WHEN sub.scope NOT IN (SELECT scope FROM gabby.illuminate_dna_assessments.normed_scopes) THEN NULL
         WHEN PATINDEX('%[MU][0-9]/[0-9]%', sub.title) > 0 THEN SUBSTRING(sub.title, PATINDEX('%[MU][0-9]/[0-9]%', sub.title), 4)
         WHEN PATINDEX('%[MU][0-9]%', sub.title) > 0 THEN SUBSTRING(sub.title, PATINDEX('%[MU][0-9]%', sub.title), 2)
@@ -150,7 +153,8 @@ FROM
        ON a.code_subject_area_id = dsa.code_id    
       AND dsa.code_translation IN ('Text Study','Mathematics','Social Studies','Science')
      JOIN gabby.illuminate_dna_assessments.assessment_grade_levels agl
-       ON a.assessment_id = agl.assessment_id
+       ON a.assessment_id = agl.assessment_id 
+      AND agl.assessment_grade_level_id IN (SELECT assessment_grade_level_id FROM gabby.illuminate_dna_assessments.assessment_grade_levels_validation_static) 
      JOIN gabby.illuminate_public.student_session_aff ssa
        ON a.administered_at BETWEEN ssa.entry_date AND ssa.leave_date
       AND agl.grade_level_id = ssa.grade_level_id
@@ -191,6 +195,7 @@ FROM
                                   ,'English 100','English 200','English 300','English 400')
      JOIN gabby.illuminate_dna_assessments.assessment_grade_levels agl
        ON a.assessment_id = agl.assessment_id
+      AND agl.assessment_grade_level_id IN (SELECT assessment_grade_level_id FROM gabby.illuminate_dna_assessments.assessment_grade_levels_validation_static) 
      JOIN course_enrollments ce
        ON a.academic_year = ce.academic_year 
       AND agl.grade_level_id = ce.grade_level_id
@@ -224,6 +229,7 @@ FROM
                                       ,'English 100','English 200','English 300','English 400')
      JOIN gabby.illuminate_dna_assessments.assessment_grade_levels agl
        ON a.assessment_id = agl.assessment_id
+      AND agl.assessment_grade_level_id IN (SELECT assessment_grade_level_id FROM gabby.illuminate_dna_assessments.assessment_grade_levels_validation_static) 
      JOIN gabby.illuminate_dna_assessments.students_assessments sa
        ON a.assessment_id = sa.assessment_id
      JOIN gabby.illuminate_public.student_session_aff ssa

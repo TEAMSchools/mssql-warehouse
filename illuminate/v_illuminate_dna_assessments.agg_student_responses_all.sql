@@ -88,8 +88,7 @@ WITH responses_long AS (
     ON a.student_id = sa.student_id
    AND a.assessment_id = sa.assessment_id        
   JOIN gabby.illuminate_dna_assessments.agg_student_responses_group asrg
-    ON sa.student_assessment_id = asrg.student_assessment_id
-   --AND asrg.reporting_group_id IN (5287, 274) /* 'Open-Ended Response', 'Multiple Choice' */
+    ON sa.student_assessment_id = asrg.student_assessment_id   
    AND asrg.reporting_group_id IN (21769, 26978) /* Item Type: Multiple Choice / Selected Response (one correct), Open Ended Response */   
    AND asrg.points_possible > 0       
  )
