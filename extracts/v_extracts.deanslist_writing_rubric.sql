@@ -8,11 +8,11 @@ SELECT student_number
       ,composition_type
       ,rubric_type
       ,rubric_strand
-      ,[M1]
-      ,[M2]
-      ,[M3]
-      ,[M4]
-      ,[M5]
+      ,[QA1]
+      ,[QA2]
+      ,[QA3]
+      ,[QA4]
+      ,[QA5]
 FROM
     (     
      SELECT (a.academic_year - 1) AS academic_year
@@ -64,9 +64,9 @@ FROM
     ) sub
 PIVOT(
   MAX(rubric_score)
-  FOR module_num IN ([M1]
-                    ,[M2]
-                    ,[M3]
-                    ,[M4]
-                    ,[M5])
+  FOR module_num IN ([QA1]
+                    ,[QA2]
+                    ,[QA3]
+                    ,[QA4]
+                    ,[QA5])
  ) p
