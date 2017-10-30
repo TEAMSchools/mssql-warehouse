@@ -15,43 +15,13 @@ WITH caredox_enrollment AS (
  )
 
 ,caredox_immunization AS (
-  --SELECT student_id
-  --      ,CONCAT(status, ' - ' + status_notes) AS status
-  --      ,ROW_NUMBER() OVER(
-  --         PARTITION BY student_id
-  --           ORDER BY CONVERT(DATETIME,last_updated_at) DESC) AS rn_last_updated
-  SELECT student_id      
-        ,last_updated_at
-        ,SUBSTRING(fml, status_position_start + 1, CHARINDEX(',', fml, status_position_start + 1) - status_position_start - 1) AS status
+  SELECT student_id
+        ,status
         ,ROW_NUMBER() OVER(
            PARTITION BY student_id
-             ORDER BY CONVERT(DATETIME,last_updated_at) DESC) AS rn_last_updated
-  FROM
-      (
-       SELECT LEFT(fml, CHARINDEX(',', fml) - 1) AS student_id      
-             ,CHARINDEX(',', fml,
-                CHARINDEX(',', fml,
-                CHARINDEX(',', fml,
-                CHARINDEX(',', fml,
-                CHARINDEX(',', fml,
-                CHARINDEX(',', fml,
-                CHARINDEX(',', fml,
-                CHARINDEX(',', fml,
-                CHARINDEX(',', fml, 
-                CHARINDEX(',', fml) + 1) + 1) + 1) + 1) + 1) + 1) + 1) + 1) + 1) AS status_position_start
-             ,CASE 
-               WHEN ISDATE(REVERSE(LEFT(REVERSE(fml), CHARINDEX(',', REVERSE(fml)) - 1))) = 1
-                      THEN CONVERT(DATETIME,REVERSE(LEFT(REVERSE(fml), CHARINDEX(',', REVERSE(fml)) - 1)))
-               ELSE GETDATE()
-              END AS last_updated_at
-             ,fml
-       FROM
-           (
-            SELECT student_id_health_record_id_health_record_instance_id_full_name_health_profile_birth_date_age_program_id_session_grade_status_s AS fml
-            FROM gabby.caredox.immunization
-           ) sub
-       WHERE ISNUMERIC(LEFT(fml,1)) = 1
-      ) sub
+             ORDER BY CONVERT(DATETIME,last_updated_at) DESC) AS rn_last_updated  
+  FROM gabby.caredox.immunization       
+  WHERE ISNUMERIC(student_id) = 1
  )
 
 ,caredox_screenings AS (
