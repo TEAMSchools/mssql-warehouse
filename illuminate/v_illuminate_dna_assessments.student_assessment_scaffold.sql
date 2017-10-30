@@ -33,12 +33,14 @@ WITH course_enrollments AS (
        JOIN gabby.illuminate_matviews.ss_cube ssc
          ON ils.student_id = ssc.student_id
         AND c.course_id = ssc.course_id
-        AND (enr.academic_year + 1) = ssc.academic_year
-        AND ssc.grade_level_id <= 5
+        AND (enr.academic_year + 1) = ssc.academic_year        
        WHERE enr.course_enroll_status = 0
          AND enr.section_enroll_status = 0
          AND enr.course_number = 'HR'       
+         AND (ssc.grade_level_id <= 5 OR (enr.schoolid = 73258 AND enr.section_number LIKE 'W%')) /* Pathways MS students only enrolled in HR */
+       
        UNION ALL       
+       
        SELECT ssc.student_id
              ,ssc.academic_year      
              ,ssc.grade_level_id
@@ -61,6 +63,7 @@ WITH course_enrollments AS (
        WHERE enr.course_enroll_status = 0
          AND enr.section_enroll_status = 0
          AND enr.course_number = 'HR'
+         AND (ssc.grade_level_id <= 5 OR (enr.schoolid = 73258 AND enr.section_number LIKE 'W%')) /* Pathways MS students only enrolled in HR */
        
        UNION ALL
 
