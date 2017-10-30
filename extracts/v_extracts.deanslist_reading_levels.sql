@@ -18,6 +18,9 @@ SELECT student_number
         ELSE prev_lvl_num
        END AS read_lvl_num
       ,goal_num AS goal_lvl_num
-      ,met_goal      
+      ,CASE
+        WHEN met_goal = 1 THEN 'On Track'
+        WHEN met_goal = 0 THEN 'Off Track'
+       END AS met_goal
 FROM gabby.lit.achieved_by_round_static
-WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()  
