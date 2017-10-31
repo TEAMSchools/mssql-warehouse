@@ -3,11 +3,13 @@ GO
 
 CREATE OR ALTER VIEW payroll.salary AS
 
-SELECT r.position_id
+SELECT a.position_id
       ,a.associate_id
+      
       ,o.name
       ,o.most_recent_paydate
       ,o.most_recent_salary
+      
       ,r.snapshot_pay_date
       ,r.snapshot_salary
 FROM (
