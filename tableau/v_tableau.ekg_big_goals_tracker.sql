@@ -143,11 +143,30 @@ WITH act AS (
 ,suspensions AS (
   SELECT student_number
         ,academic_year
-        ,COUNT(student_number) AS n_suspensions
-  FROM gabby.powerschool.attendance_streak
-  WHERE att_code IN ('OS','OSS','OSSP')
-  GROUP BY student_number
-          ,academic_year
+        ,[OSS]
+        ,[ISS]
+  FROM
+      (
+       SELECT student_number
+             ,academic_year
+             ,CASE 
+               WHEN att_code IN ('OS','OSS','OSSP') THEN 'OSS'
+               WHEN att_code IN ('ISS','S') THEN 'ISS'
+              END AS att_code
+             ,COUNT(student_number) AS N
+       FROM gabby.powerschool.attendance_streak
+       WHERE att_code IN ('OS','OSS','OSSP','ISS','S')
+       GROUP BY student_number
+               ,academic_year
+               ,CASE 
+                 WHEN att_code IN ('OS','OSS','OSSP') THEN 'OSS'
+                 WHEN att_code IN ('ISS','S') THEN 'ISS'
+                END
+      ) sub
+  PIVOT(
+    MAX(N)
+    FOR att_code IN ([OSS],[ISS])
+   ) p
  )
 
 ,student_attrition AS (
@@ -205,7 +224,7 @@ WITH act AS (
   SELECT reporting_schoolid
         ,academic_year
         ,[ICI Percentile] AS ici_percentile
-        ,[Learning Environment Score] AS learning_environment_score
+        ,CASE WHEN [Learning Environment Score] >= [Learning Environment Score: Top-Quartile] THEN 1 ELSE 0 END AS is_top_quartile_learning_environment_score
 
         ,ROW_NUMBER() OVER(
            PARTITION BY reporting_schoolid, academic_year
@@ -230,13 +249,44 @@ WITH act AS (
              ,academic_year
              ,survey_round      
              ,field
-             ,value
+             ,value      
        FROM gabby.tntp.teacher_survey_school_sorter
        WHERE field IN ('Learning Environment Score', 'ICI Percentile')
+
+       UNION ALL
+
+       SELECT CASE
+               WHEN school IN ('KIPP Rise Academy', 'Rise Academy') THEN 73252
+               WHEN school IN ('KIPP Newark Collegiate Academy', 'Newark Collegiate Academy') THEN 73253
+               WHEN school IN ('KIPP SPARK Academy', 'SPARK Academy') THEN 73254
+               WHEN school IN ('KIPP THRIVE Academy', 'THRIVE Academy') THEN 73255
+               WHEN school IN ('KIPP Seek Academy', 'Seek Academy') THEN 73256
+               WHEN school IN ('KIPP Life Academy', 'Life Academy - Lower', 'Life Academy - Upper', 'Life Academy at Bragaw') THEN 73257
+               WHEN school IN ('BOLD Academy', 'KIPP BOLD Academy') THEN 73258
+               WHEN school IN ('KIPP Lanning Square Primary', 'KIPP Lanning Square Primary School', 'Revolution Primary') THEN 179901
+               WHEN school IN ('KIPP TEAM Academy', 'TEAM Academy') THEN 133570965
+               WHEN school = 'KIPP Lanning Square Middle School' THEN 179902
+               WHEN school = 'KIPP Whittier Middle School' THEN 179903
+               WHEN school = 'KIPP Whittier Elementary' THEN 1799015075        
+               WHEN school = 'KIPP Pathways' THEN 732574573
+              END AS reporting_schoolid
+             ,academic_year
+             ,survey_round      
+             ,CONCAT(field, ': Top-Quartile')
+             ,MAX(CASE 
+                   WHEN school IN ('National Charter Top-Quartile Average'
+                                  ,'National Charters Top Quartile Average'
+                                  ,'KIPP Foundation Top Quartile'
+                                  ,'KIPP Top Quartile Schools'
+                                  ,'KIPP Network Top Quartile')
+                          THEN value 
+                  END) OVER(PARTITION BY academic_year, survey_round, field) AS value
+       FROM gabby.tntp.teacher_survey_school_sorter
+       WHERE field = 'Learning Environment Score'
       ) sub
   PIVOT(
     MAX(value)
-    FOR field IN ([ICI Percentile], [Learning Environment Score])
+    FOR field IN ([ICI Percentile], [Learning Environment Score], [Learning Environment Score: Top-Quartile])
    ) p
   WHERE reporting_schoolid IS NOT NULL
  )
@@ -306,6 +356,48 @@ WITH act AS (
   GROUP BY reporting_schoolid, academic_year, reporting_term
  )
 
+,hsr AS (
+  SELECT schoolid
+        ,academic_year
+        ,[parent] AS parent_pct_responded_positive
+        ,[student] AS student_pct_responded_positive
+  FROM
+      (
+       SELECT schoolid
+             ,academic_year
+             ,role      
+             ,SUM(school_responsed_positive) / SUM(school_responded) AS pct_responded_positive
+       FROM
+           (
+            SELECT CASE
+                    WHEN school IN ('KIPP Rise Academy','Rise Academy, a KIPP school') THEN 73252
+                    WHEN school IN ('KIPP Newark Collegiate Academy','Newark Collegiate Academy, a KIPP school') THEN 73253
+                    WHEN school IN ('KIPP SPARK Academy','SPARK Academy, a KIPP school') THEN 73254
+                    WHEN school IN ('KIPP THRIVE Academy','THRIVE Academy, a KIPP school') THEN 73255
+                    WHEN school IN ('KIPP Seek Academy','Seek Academy, a KIPP school') THEN 73256
+                    WHEN school IN ('KIPP Life Academy','Life Academy at Bragaw, a KIPP school') THEN 73257
+                    WHEN school IN ('KIPP BOLD Academy') THEN 73258
+                    WHEN school IN ('KIPP Lanning Square Primary','Revolution Primary, a KIPP school') THEN 179901
+                    WHEN school IN ('KIPP Lanning Square Middle School') THEN 179902
+                    WHEN school IN ('KIPP TEAM Academy','TEAM Academy, a KIPP school') THEN 133570965
+                   END AS schoolid
+                  ,CONVERT(INT,LEFT(school_year, 4)) AS academic_year
+                  ,role                  
+                  ,school_responded
+                  ,ROUND((likert_4_ * school_responded) + (likert_5_ * school_responded), 0) AS school_responsed_positive      
+            FROM gabby.surveys.hsr_surveys
+            WHERE role IN ('Parent','Student')
+           ) sub
+       GROUP BY schoolid
+               ,academic_year
+               ,role
+      ) sub
+  PIVOT(
+    MAX(pct_responded_positive)
+    FOR role IN ([parent],[student])
+   ) p
+ )
+
 SELECT co.student_number      
       ,co.academic_year
       ,co.region
@@ -315,9 +407,11 @@ SELECT co.student_number
       ,co.iep_status
       ,CASE WHEN co.lunchstatus IN ('F', 'R') THEN 1.0 ELSE 0.0 END AS is_free_or_reduced
       
+      /* ACT */
       ,CASE WHEN co.grade_level = 12 THEN act.composite END AS highest_act_composite_seniors
       ,CASE WHEN co.grade_level = 11 THEN act.composite END AS highest_act_composite_juniors
 
+      /* PARCC */
       ,CASE WHEN parcc.ela_performance_level >= 4 THEN 1.0 ELSE 0.0 END AS parcc_ela_proficient
       ,CASE WHEN parcc.math_performance_level >= 4 THEN 1.0 ELSE 0.0 END AS parcc_math_proficient
       ,CASE 
@@ -337,6 +431,7 @@ SELECT co.student_number
         WHEN co.iep_status = 'SPED' AND parcc.math_performance_level < 3 THEN 0.0 
        END AS parcc_math_approaching_iep      
 
+      /* T&L assessments */
       ,modules.ela_is_mastery AS module_ela_is_mastery 
       ,modules.math_is_mastery AS module_math_is_mastery 
       ,CASE 
@@ -348,14 +443,31 @@ SELECT co.student_number
         WHEN modules.math_percent_correct < 65 THEN 0.0 
        END AS module_math_is_parcc_predictive
 
+      /*Literacy */
       ,la.met_goal AS lit_meeting_goal
 
       ,lg.is_making_1yr_growth AS lit_making_1yr_growth
 
+      /* Attendance */
       ,ada.n_days_attendance
       ,ada.n_days_membership
 
-      ,oss.n_suspensions
+      ,sus.OSS AS n_OSS
+      ,sus.ISS AS n_ISS
+
+      /* Attrition */
+      ,sa.is_attrition AS is_student_attrition
+
+      ,ta.pct_attrition AS pct_teacher_attrition
+
+      /* Surveys */
+      ,q12.avg_response_value
+      
+      ,hsr.parent_pct_responded_positive
+      ,hsr.student_pct_responded_positive
+
+      ,tntp.ici_percentile
+      ,tntp.is_top_quartile_learning_environment_score
 FROM gabby.powerschool.cohort_identifiers_static co
 LEFT OUTER JOIN act
   ON co.student_number = act.student_number
@@ -376,8 +488,25 @@ LEFT OUTER JOIN lit_growth lg
 LEFT OUTER JOIN ada
   ON co.studentid = ada.studentid
  AND co.academic_year = ada.academic_year
-LEFT OUTER JOIN suspensions oss
-  ON co.student_number = oss.student_number
- AND co.academic_year = oss.academic_year
+LEFT OUTER JOIN suspensions sus
+  ON co.student_number = sus.student_number
+ AND co.academic_year = sus.academic_year
+LEFT OUTER JOIN student_attrition sa
+  ON co.student_number = sa.denominator_student_number
+ AND co.academic_year = sa.denominator_academic_year
+LEFT OUTER JOIN teacher_attrition ta
+  ON co.reporting_schoolid = ta.reporting_schoolid
+ AND co.academic_year = ta.academic_year
+LEFT OUTER JOIN q12
+  ON co.reporting_schoolid = q12.reporting_schoolid
+ AND co.academic_year = q12.academic_year
+ AND q12.rn_most_recent = 1
+LEFT OUTER JOIN hsr
+  ON co.reporting_schoolid = hsr.schoolid
+ AND co.academic_year = hsr.academic_year
+LEFT OUTER JOIN tntp
+  ON co.reporting_schoolid = tntp.reporting_schoolid
+ AND co.academic_year = tntp.academic_year
+ AND tntp.rn_most_recent = 1
 WHERE co.schoolid != 999999
   AND co.rn_year = 1
