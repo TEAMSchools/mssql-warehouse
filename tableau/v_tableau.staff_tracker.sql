@@ -21,13 +21,14 @@ WITH prof_calendar AS (
  )
 
 ,staff_roster AS (
-  SELECT associate_id
-        ,CONCAT(preferred_last_name, ', ', preferred_first_name) AS preferred_lastfirst
+  SELECT associate_id        
         ,location
         ,job_title
         ,manager
         ,email_address
         ,position_start_date
+        ,position_status
+        ,CONCAT(preferred_last_name, ', ', preferred_first_name) AS preferred_lastfirst
         ,CASE
           WHEN reporting_location IN ('KIPP NJ','TEAM Schools') THEN 7325
           WHEN reporting_location = 'TEAM Academy' THEN 133570965
@@ -56,6 +57,7 @@ WITH prof_calendar AS (
              ,adp.manager_custom_assoc_id AS manager
              ,adp.position_start_date
              ,adp.location_description AS reporting_location             
+             ,adp.position_status
              
              ,dir.mail AS email_address             
        FROM gabby.adp.staff_roster adp
@@ -107,6 +109,7 @@ WITH prof_calendar AS (
        ,r.location AS school_name
        ,r.job_title       
        ,r.manager
+       ,r.position_status
 
        ,cal.academic_year
        ,cal.term
