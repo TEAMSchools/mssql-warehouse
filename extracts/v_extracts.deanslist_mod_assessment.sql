@@ -133,4 +133,4 @@ FROM
     ) sub
 JOIN gabby.illuminate_dna_assessments.performance_band_lookup_static pbl
   ON sub.avg_pct_correct BETWEEN pbl.minimum_value AND pbl.maximum_value
- AND pbl.performance_band_set_id = 24674
+ AND pbl.performance_band_set_id = 24674 /* KIPP NJ Default 1718 */
