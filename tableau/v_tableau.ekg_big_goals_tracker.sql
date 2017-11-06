@@ -136,6 +136,7 @@ WITH act AS (
         ,SUM(CONVERT(FLOAT,membershipvalue)) AS n_days_membership
   FROM gabby.powerschool.ps_adaadm_daily_ctod_static
   WHERE membershipvalue > 0
+    AND calendardate <= CONVERT(DATE,GETDATE())
   GROUP BY studentid
           ,(yearid + 1990)
  )
@@ -173,11 +174,17 @@ WITH act AS (
   SELECT d.student_number AS denominator_student_number
         ,d.academic_year AS denominator_academic_year
       
-        ,CASE WHEN n.student_number IS NULL THEN 1.0 ELSE 0.0 END AS is_attrition
+        ,CASE 
+          WHEN d.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() AND n.student_number IS NULL THEN 1.0 
+          WHEN d.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() AND CONVERT(DATE,GETDATE()) >= d.exitdate THEN 1.0          
+          ELSE 0.0 
+         END AS is_attrition
   FROM
       (
        SELECT student_number     
              ,academic_year
+             ,entrydate
+             ,exitdate
        FROM gabby.powerschool.cohort_identifiers_static
        WHERE DATEFROMPARTS(academic_year, 10, 1) BETWEEN entrydate AND exitdate
       ) d
@@ -385,6 +392,33 @@ WITH act AS (
    ) p
  )
 
+,ekg_walkthrough AS (
+  SELECT reporting_schoolid
+        ,region
+        ,school_level
+        ,academic_year
+        ,reporting_term
+        ,[threecsaverage]
+        ,[overallaverage]  
+  FROM
+      (
+       SELECT reporting_schoolid
+             ,region
+             ,school_level
+             ,academic_year
+             ,reporting_term
+             ,rubric_strand_field
+             ,pct_of_classrooms_proficient      
+       FROM gabby.ekg.walkthrough_scores_detail
+       WHERE rubric_strand_field IN ('threecsaverage','overallaverage')
+         AND rn_most_recent_yr = 1
+      ) sub
+  PIVOT(
+    MAX(pct_of_classrooms_proficient)
+    FOR rubric_strand_field IN ([threecsaverage],[overallaverage])
+    ) p
+ )
+
 ,student_level_rollup AS (  
   SELECT sub.academic_year
         ,ISNULL(sub.region,'All') AS region
@@ -513,33 +547,6 @@ WITH act AS (
       ) sub
   GROUP BY sub.academic_year                              
           ,ROLLUP(sub.school_level, sub.region, sub.reporting_schoolid)
- )
-
-,ekg_walkthrough AS (
-  SELECT reporting_schoolid
-        ,region
-        ,school_level
-        ,academic_year
-        ,reporting_term
-        ,[threecsaverage]
-        ,[overallaverage]  
-  FROM
-      (
-       SELECT reporting_schoolid
-             ,region
-             ,school_level
-             ,academic_year
-             ,reporting_term
-             ,rubric_strand_field
-             ,pct_of_classrooms_proficient      
-       FROM gabby.ekg.walkthrough_scores_detail
-       WHERE rubric_strand_field IN ('threecsaverage','overallaverage')
-         AND rn_most_recent_yr = 1
-      ) sub
-  PIVOT(
-    MAX(pct_of_classrooms_proficient)
-    FOR rubric_strand_field IN ([threecsaverage],[overallaverage])
-    ) p
  )
 
 ,rollup_unpivoted AS (
