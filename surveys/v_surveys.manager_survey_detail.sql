@@ -62,6 +62,30 @@ SELECT 'MGR' AS survey_type
       ,CONCAT(adp.preferred_first, ' ', adp.preferred_last) AS subject_name
       ,adp.location_custom AS subject_location
       ,adp.manager_custom_assoc_id AS subject_manager_name
+      ,CASE
+        WHEN adp.location_custom = 'Rise Academy' THEN 73252
+        WHEN adp.location_custom = 'Newark Collegiate Academy' THEN 73253
+        WHEN adp.location_custom = 'SPARK Academy' THEN 73254
+        WHEN adp.location_custom = 'THRIVE Academy' THEN 73255
+        WHEN adp.location_custom = 'Seek Academy' THEN 73256
+        WHEN adp.location_custom = 'Life Academy' THEN 73257
+        WHEN adp.location_custom = 'Bold Academy' THEN 73258
+        WHEN adp.location_custom = 'Lanning Square Primary' THEN 179901
+        WHEN adp.location_custom = 'Lanning Square MS' THEN 179902
+        WHEN adp.location_custom = 'Whittier Middle' THEN 179903
+        WHEN adp.location_custom = 'TEAM Academy' THEN 133570965
+        WHEN adp.location_custom = 'Pathways' THEN 732574573
+       END AS reporting_schoolid
+      ,CASE
+        WHEN adp.location_custom IN ('SPARK Academy','THRIVE Academy','Seek Academy','Life Academy','Lanning Square Primary','Pathways') THEN 'ES'
+        WHEN adp.location_custom IN ('Rise Academy','Lanning Square MS','Whittier Middle','TEAM Academy','Bold Academy') THEN 'MS'
+        WHEN adp.location_custom IN ('Newark Collegiate Academy') THEN 'HS'
+       END AS school_level
+      ,CASE
+        WHEN adp.location_custom IN ('SPARK Academy','THRIVE Academy','Seek Academy','Life Academy','Pathways'
+                                    ,'Rise Academy','TEAM Academy','Bold Academy','Newark Collegiate Academy') THEN 'TEAM'
+        WHEN adp.location_custom IN ('Lanning Square Primary','Lanning Square MS','Whittier Middle') THEN 'KCNA'
+       END AS region
 
       ,ad.samaccountname AS subject_username
 

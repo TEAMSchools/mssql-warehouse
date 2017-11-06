@@ -507,6 +507,27 @@ WITH survey_unpivoted AS (
        ,su.n
        ,su.question_code
        ,su.response_value
+       ,CASE 
+         WHEN location = 'TEAM' THEN 133570965
+         WHEN location = 'Life Lower' THEN 73257
+         WHEN location = 'Life Upper' THEN 73257
+         WHEN location = 'NCA' THEN 73253
+         WHEN location = 'Revolution' THEN 179901
+         WHEN location = 'Rise' THEN 73252
+         WHEN location = 'Seek' THEN 73256
+         WHEN location = 'SPARK' THEN 73254
+         WHEN location = 'TEAM' THEN 133570965
+         WHEN location = 'THRIVE' THEN 73255
+        END AS reporting_schoolid
+       ,CASE 
+         WHEN location IN ('TEAM','Life Lower','Life Upper','NCA','Rise','Seek','SPARK','TEAM','THRIVE') THEN 'TEAM'
+         WHEN location IN ('Revolution') THEN 'KCNA'
+        END AS region
+       ,CASE 
+         WHEN location IN ('Life Lower','Life Upper','Revolution','Seek','SPARK','THRIVE') THEN 'ES'
+         WHEN location IN ('TEAM','Rise') THEN 'MS'
+         WHEN location IN ('NCA') THEN 'HS'
+        END AS school_level
 
        ,qk.survey_type
        ,qk.competency
