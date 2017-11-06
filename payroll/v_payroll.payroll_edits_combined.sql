@@ -83,5 +83,5 @@ SELECT LEFT(r.position_id,3) AS entity
 	     ,NULL AS notes
 FROM gabby.adp.staff_roster r
 WHERE r.rn_curr = 1
-   AND position_status = 'Terminated'
- AND CONVERT(DATE,termination_date) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(),7,1)
+  AND position_status = 'Terminated'
+  AND CONVERT(DATE,termination_date) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
