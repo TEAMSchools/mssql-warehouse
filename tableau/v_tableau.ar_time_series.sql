@@ -13,8 +13,8 @@ WITH ar_long AS (
         ,SUM(CASE WHEN ti_passed = 1 AND rn_quiz = 1 THEN d_points_earned END) AS n_points_earned
         ,SUM(CASE WHEN ti_passed = 1 AND rn_quiz = 1 THEN i_word_count END) AS n_words_read        
         ,SUM(CASE WHEN ch_fiction_non_fiction = 'F' AND rn_quiz = 1 THEN 1 ELSE 0 END) AS n_fiction        
-        ,AVG(CASE WHEN rn_quiz = 1 THEN d_percent_correct END) AS avg_pct_correct
-        ,ROUND(AVG(CASE WHEN rn_quiz = 1 THEN fl_lexile_calc END),0) AS avg_lexile
+        ,SUM(CASE WHEN rn_quiz = 1 THEN d_percent_correct END) AS total_pct_correct
+        ,SUM(CASE WHEN rn_quiz = 1 THEN fl_lexile_calc END) AS total_lexile
   FROM gabby.renaissance.ar_studentpractice_identifiers
   GROUP BY student_number
           ,academic_year      
@@ -64,8 +64,8 @@ SELECT student_number
       ,n_points_earned
       ,n_books_read
       ,n_fiction
-      ,avg_lexile
-      ,avg_pct_correct
+      ,total_lexile
+      ,total_pct_correct
       ,last_book_title
       ,last_book_days_ago
       ,last_book_lexile
@@ -113,8 +113,8 @@ FROM
            ,n_points_earned
            ,n_books_read
            ,n_fiction
-           ,avg_lexile
-           ,avg_pct_correct
+           ,total_lexile
+           ,total_pct_correct
            ,last_book_title
            ,last_book_days_ago
            ,last_book_lexile
@@ -177,8 +177,8 @@ FROM
                 ,ar.n_points_earned
                 ,ar.n_books_read
                 ,ar.n_fiction
-                ,ar.avg_lexile
-                ,ar.avg_pct_correct
+                ,ar.total_lexile
+                ,ar.total_pct_correct
            
                 ,bk.book_title AS last_book_title
                 ,bk.n_days_ago AS last_book_days_ago 
