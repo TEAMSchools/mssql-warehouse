@@ -37,6 +37,8 @@ SELECT a.assessment_id
         WHEN PATINDEX('%[MU][0-9]/[0-9]%', a.title) > 0 THEN SUBSTRING(a.title, PATINDEX('%[MU][0-9]/[0-9]%', a.title), 4)
         WHEN PATINDEX('%[MU][0-9]%', a.title) > 0 THEN SUBSTRING(a.title, PATINDEX('%[MU][0-9]%', a.title), 2)
         WHEN PATINDEX('%QA[0-9]%', a.title) > 0 THEN SUBSTRING(a.title, PATINDEX('%QA[0-9]%', a.title), 3)
+        WHEN PATINDEX('%CP[0-9]%', a.title) > 0 THEN SUBSTRING(a.title, PATINDEX('%CP[0-9]%', a.title), 3)
+        WHEN PATINDEX('%MQ[0-9]%', a.title) > 0 THEN SUBSTRING(a.title, PATINDEX('%MQ[0-9]%', a.title), 3)
         WHEN PATINDEX('%CGI[0-9][0-9]%', a.title) > 0 THEN LTRIM(RTRIM(SUBSTRING(a.title, PATINDEX('%CGI[0-9]%', a.title), 5)))
         WHEN PATINDEX('%CGI[0-9]%', a.title) > 0 THEN LTRIM(RTRIM(SUBSTRING(a.title, PATINDEX('%CGI[0-9]%', a.title), 4)))
         WHEN PATINDEX('%CRQ[0-9][0-9]%', a.title) > 0 THEN LTRIM(RTRIM(SUBSTRING(a.title, PATINDEX('%CRQ[0-9]%', a.title), 5)))
