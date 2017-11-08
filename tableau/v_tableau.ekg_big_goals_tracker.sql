@@ -97,9 +97,12 @@ WITH act AS (
 ,lit_achievement AS (
   SELECT student_number
         ,academic_year
-        ,met_goal
+        ,met_goal        
+        ,ROW_NUMBER() OVER(
+           PARTITION BY student_number, academic_year
+             ORDER BY end_date DESC) AS rn_most_recent
   FROM gabby.lit.achieved_by_round_static
-  WHERE is_curterm = 1
+  WHERE end_date <= CONVERT(DATE,GETDATE())
  )
 
 ,lit_growth AS (
@@ -122,7 +125,7 @@ WITH act AS (
                   ORDER BY start_date DESC) AS rn_curr
        FROM gabby.lit.achieved_by_round_static
        WHERE gleq IS NOT NULL    
-         AND start_date <= CONVERT(DATE,GETDATE())
+         AND end_date <= CONVERT(DATE,GETDATE())
       ) sub
   GROUP BY student_number
           ,academic_year
@@ -527,9 +530,11 @@ WITH act AS (
        LEFT OUTER JOIN modules
          ON co.student_number = modules.student_number
         AND co.academic_year = modules.academic_year
+        AND co.grade_level <= 2
        LEFT OUTER JOIN lit_achievement la
          ON co.student_number = la.student_number
         AND co.academic_year = la.academic_year
+        AND la.rn_most_recent = 1
        LEFT OUTER JOIN lit_growth lg
          ON co.student_number = lg.student_number
         AND co.academic_year = lg.academic_year
