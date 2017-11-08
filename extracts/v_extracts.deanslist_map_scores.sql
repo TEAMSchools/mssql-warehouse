@@ -42,7 +42,7 @@ CROSS JOIN (
  ) subjects (subject)
 LEFT OUTER JOIN gabby.nwea.assessment_result_identifiers map 
   ON co.student_number = map.student_id
- AND co.academic_year  = map.student_id
+ AND co.academic_year  = map.academic_year
  AND terms.term = map.term
  AND subjects.subject = map.measurement_scale
  AND map.rn_term_subj = 1
