@@ -50,15 +50,30 @@ FROM
            ,SUM((credit_hours * term_gpa_points)) AS weighted_gpa_points_term      
            ,SUM(CASE WHEN term_grade_percent IS NULL THEN NULL ELSE credit_hours END) AS credit_hours_term
            /* when no term_name pct, then exclude credit hours */
-           ,CONVERT(FLOAT,ROUND(CONVERT(DECIMAL(4,3),SUM((credit_hours * term_gpa_points)) / SUM(CASE WHEN term_grade_percent IS NULL THEN NULL ELSE credit_hours END)),2)) AS gpa_term
+           ,CONVERT(FLOAT,ROUND(CONVERT(DECIMAL(4,3),
+              SUM(credit_hours * term_gpa_points)
+                / CASE 
+                   WHEN SUM(CASE WHEN term_grade_percent IS NULL THEN NULL ELSE credit_hours END) = 0 THEN NULL
+                   ELSE SUM(CASE WHEN term_grade_percent IS NULL THEN NULL ELSE credit_hours END)
+                  END), 2)) AS gpa_term
            
            /* GPA Y1 */
            ,ROUND(AVG(y1_grade_percent_adjusted),0) AS grade_avg_y1      
            ,SUM(y1_gpa_points) AS gpa_points_total_y1
            ,SUM((credit_hours * y1_gpa_points)) AS weighted_gpa_points_y1
            /* when no y1 pct, then exclude credit hours */
-           ,CONVERT(FLOAT,ROUND(CONVERT(DECIMAL(4,3),SUM((credit_hours * y1_gpa_points)) / SUM(CASE WHEN y1_grade_percent_adjusted IS NULL THEN NULL ELSE credit_hours END)),2)) AS gpa_y1
-           ,CONVERT(FLOAT,ROUND(CONVERT(DECIMAL(4,3),SUM((credit_hours * y1_gpa_points_unweighted)) / SUM(CASE WHEN y1_grade_percent_adjusted IS NULL THEN NULL ELSE credit_hours END)),2)) AS gpa_y1_unweighted
+           ,CONVERT(FLOAT,ROUND(CONVERT(DECIMAL(4,3),
+              SUM((credit_hours * y1_gpa_points)) 
+                / CASE
+                   WHEN SUM(CASE WHEN y1_grade_percent_adjusted IS NULL THEN NULL ELSE credit_hours END) = 0 THEN NULL
+                   ELSE SUM(CASE WHEN y1_grade_percent_adjusted IS NULL THEN NULL ELSE credit_hours END)
+                  END), 2)) AS gpa_y1
+           ,CONVERT(FLOAT,ROUND(CONVERT(DECIMAL(4,3),
+              SUM((credit_hours * y1_gpa_points_unweighted)) 
+                / CASE
+                   WHEN SUM(CASE WHEN y1_grade_percent_adjusted IS NULL THEN NULL ELSE credit_hours END) = 0 THEN NULL
+                   ELSE SUM(CASE WHEN y1_grade_percent_adjusted IS NULL THEN NULL ELSE credit_hours END)
+                  END), 2)) AS gpa_y1_unweighted
            
            /* other */
            ,SUM(CASE WHEN y1_grade_percent_adjusted IS NULL THEN NULL ELSE credit_hours END) AS total_credit_hours
