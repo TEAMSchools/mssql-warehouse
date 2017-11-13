@@ -27,9 +27,6 @@ SELECT sub.student_number
         ELSE 0
        END AS is_curterm
       ,NULL AS rn_curterm
-      --,ROW_NUMBER() OVER(
-      --   PARTITION BY sub.student_number, sub.academic_year, sub.course_number, sub.grade_category
-      --     ORDER BY sub.startdate DESC) AS rn_curterm
 FROM
     (
      /* NCA */
@@ -47,7 +44,7 @@ FROM
       
            ,LEFT(pgf.finalgradename,1) AS grade_category
            ,CONCAT('RT', RIGHT(pgf.finalgradename,1)) AS reporting_term            
-           ,ROUND(pgf.[percent],0) AS grade_category_pct               
+           ,ROUND(CASE WHEN pgf.grade = '--' THEN NULL ELSE pgf.[percent] END, 0) AS grade_category_pct               
      FROM gabby.powerschool.course_enrollments_static enr
      JOIN gabby.powerschool.pgfinalgrades pgf
        ON enr.studentid = pgf.studentid
@@ -74,20 +71,16 @@ FROM
            ,pgf.startdate
            ,pgf.enddate
       
-           ,CASE
-             WHEN pgf.startdate <= '2015-06-30' AND LEFT(pgf.finalgradename,1) = 'E' THEN 'X'
-             WHEN pgf.startdate <= '2015-06-30' AND LEFT(pgf.finalgradename,1) = 'Q' THEN 'E'
-             ELSE LEFT(pgf.finalgradename,1)
-            END AS grade_category
+           ,LEFT(pgf.finalgradename,1) AS grade_category
            ,CONCAT('RT', RIGHT(pgf.finalgradename,1)) AS reporting_term            
-           ,ROUND(pgf.[percent],0) AS grade_category_pct               
+           ,ROUND(CASE WHEN pgf.grade = '--' THEN NULL ELSE pgf.[percent] END, 0) AS grade_category_pct               
      FROM gabby.powerschool.course_enrollments_static enr
      JOIN gabby.powerschool.pgfinalgrades pgf
        ON enr.studentid = pgf.studentid       
       AND enr.sectionid = pgf.sectionid 
       AND pgf.finalgradename != 'Y1'       
-      AND ((pgf.startdate <= '2015-06-30' AND pgf.FINALGRADENAME NOT LIKE 'T%') 
-              OR (pgf.startdate >= '2015-07-01' AND pgf.FINALGRADENAME NOT LIKE 'Q%'))
+      AND pgf.finalgradename NOT LIKE 'T%'
+      AND pgf.finalgradename NOT LIKE 'Q%'
      WHERE enr.course_enroll_status = 0
        AND enr.section_enroll_status = 0
        AND enr.schoolid != 73253
