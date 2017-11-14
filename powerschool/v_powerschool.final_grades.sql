@@ -94,7 +94,7 @@ WITH roster AS (
              ,CASE 
                WHEN enr.sectionid < 0 AND sg.[percent] IS NULL THEN NULL                
                ELSE COALESCE(sg_scale.grade_points, scale.grade_points) 
-              END AS term_gpa_points /* temp fix until stored grades are updated for honors courses */
+              END AS term_gpa_points
              
              ,ROW_NUMBER() OVER(
                 PARTITION BY enr.studentid, enr.yearid, enr.course_number, pgf.finalgradename
@@ -103,7 +103,7 @@ WITH roster AS (
        JOIN gabby.powerschool.pgfinalgrades pgf
          ON enr.studentid = pgf.studentid       
         AND ABS(enr.sectionid) = pgf.sectionid
-        AND (pgf.finalgradename LIKE 'T%' OR pgf.finalgradename LIKE 'Q%')  
+        AND LEFT(pgf.finalgradename, 1) IN ('T','Q')
        LEFT OUTER JOIN gabby.powerschool.gradescaleitem_lookup_static scale
          ON enr.gradescaleid = scale.gradescaleid
         AND pgf.[percent] BETWEEN scale.min_cutoffpercentage AND scale.max_cutoffpercentage
@@ -131,7 +131,7 @@ WITH roster AS (
              ,1 AS rn
        FROM gabby.powerschool.storedgrades sg
        WHERE sg.termid < ((gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990) * 100)
-         AND (sg.storecode LIKE 'T%' OR sg.storecode LIKE 'Q%')
+         AND LEFT(sg.storecode, 1) IN ('T', 'Q')
       ) sub
   WHERE rn = 1
  )
@@ -153,7 +153,7 @@ WITH roster AS (
              ,[percent]
        FROM gabby.powerschool.storedgrades
        WHERE schoolid = 73253
-         AND storecode LIKE 'E%'
+         AND LEFT(storecode, 1) = 'E'
       ) sub
   PIVOT(
     MAX([percent])
