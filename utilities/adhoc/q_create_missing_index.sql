@@ -7,8 +7,7 @@ SELECT *
                                                      WHEN inequality_columns IS NULL THEN equality_columns
                                                      WHEN equality_columns IS NULL THEN inequality_columns
                                                     END
-                            ,' I: ' + included_columns)
-                            , '[', ''), ']', '')), 128), ']')
+                                                   ,' I: ' + included_columns), '[', ''), ']', '')), 128), ']')
         + ' ON ' 
         + statement
         + ' ('
