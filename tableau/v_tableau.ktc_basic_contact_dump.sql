@@ -35,7 +35,7 @@ WITH attending_enrollment AS (
   FROM gabby.alumni.enrollment_c
   WHERE type_c = 'College'
     AND pursuing_degree_type_c IN ('Associate''s (2 year)','Bachelor''s (4-year)')
-    AND start_date_c >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1, 7, 1)
+    AND start_date_c >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1, 1, 1)
     AND status_c IN ('Attending','Matriculated')
     AND is_deleted = 0
  )
