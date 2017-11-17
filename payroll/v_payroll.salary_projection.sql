@@ -7,7 +7,7 @@ WITH o AS (
   SELECT c.position_id
         ,c.name        
         ,c.pay_date
-        ,c.gross_pay * 24 AS most_recent_salary
+        ,c.total_reg_earnings * 24 AS most_recent_salary
         
         ,ROW_NUMBER() OVER(
            PARTITION BY c.position_id
@@ -17,7 +17,7 @@ WITH o AS (
 
 SELECT r.position_id
       ,r.pay_date AS snapshot_pay_date
-      ,(r.gross_pay * 24) AS snapshot_salary      
+      ,(r.total_reg_earnings * 24) AS snapshot_salary      
 
       ,o.pay_date AS most_recent_paydate
       ,o.most_recent_salary     
