@@ -26,15 +26,15 @@ FROM
            ,REPLACE(std.description,'"','''') AS rubric_strand           
            ,CASE
              WHEN std.custom_code LIKE 'TES.W.KIPP.N%' THEN 'Narrative'
-             WHEN std.custom_code LIKE 'TES.W.KIPP.C%' THEN 'Expository'
-             WHEN std.custom_code LIKE 'TES.W.KIPP.L%' THEN 'Expository'
+             WHEN std.custom_code IN ('TES.W.KIPP.C.C','TES.W.KIPP.C.D','TES.W.KIPP.C.F','TES.W.KIPP.C.L','TES.W.KIPP.C.O_1') THEN 'Narrative'
+             ELSE 'Expository'
             END AS composition_type
            ,CASE
-             WHEN std.custom_code = 'TES.W.KIPP.C.G' THEN 'Language'
              WHEN std.custom_code LIKE 'TES.W.KIPP.N%' THEN 'Narrative'
-             WHEN std.custom_code LIKE 'TES.W.KIPP.C%' THEN 'Content'
-             WHEN std.custom_code LIKE 'TES.W.KIPP.L%' THEN 'Language'
-            END AS rubric_type                      
+             WHEN std.custom_code IN ('TES.W.KIPP.C.C','TES.W.KIPP.C.D','TES.W.KIPP.C.F','TES.W.KIPP.C.L','TES.W.KIPP.C.O_1') THEN 'Narrative'
+             WHEN std.custom_code IN ('TES.W.KIPP.C.G','TES.W.KIPP.L.SF','TES.W.KIPP.C.S_1') THEN 'Language'
+             ELSE 'Content'             
+            END AS rubric_type                         
            
            ,CASE
              WHEN asrs.answered = 0 THEN NULL 
