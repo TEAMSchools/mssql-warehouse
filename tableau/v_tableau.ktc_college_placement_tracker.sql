@@ -5,8 +5,8 @@ CREATE OR ALTER VIEW tableau.ktc_college_placement_tracker AS
 
 WITH nav_applications AS (
   SELECT hs_student_id
-        ,SUM(award) AS n_award_letters_collected
-        ,SUM(decis) AS n_decision_letters_collected
+        ,SUM(CASE WHEN result_code = 'accepted' THEN award ELSE 0 END) AS n_award_letters_collected
+        ,MAX(CASE WHEN result_code = 'accepted' THEN decis ELSE 0 END) AS is_acceptance_letter_collected
   FROM gabby.naviance.college_applications
   WHERE stage != 'cancelled'
   GROUP BY hs_student_id
@@ -155,7 +155,7 @@ WITH nav_applications AS (
              ,CASE WHEN a.application_status_c != 'Unknown' THEN 1.0 ELSE 0.0 END AS is_closed_application
              ,CASE WHEN a.efc_from_fafsa_c IS NOT NULL THEN 1.0 ELSE 0.0 END AS is_efc_entered
              ,CASE
-               WHEN a.application_status_c = 'Accepted' 
+               WHEN a.matriculation_decision_c = 'Matriculated (Intent to Enroll)'
                 AND a.unmet_need_c IS NOT NULL THEN 1.0 
                ELSE 0.0 
               END AS is_award_information_entered
@@ -243,7 +243,7 @@ SELECT co.student_number
       --register for March SAT      
       
       ,na.n_award_letters_collected
-      ,na.n_decision_letters_collected
+      ,na.is_acceptance_letter_collected
 
       ,act.composite AS act_composite_highest
       
@@ -259,11 +259,11 @@ SELECT co.student_number
       ,ca.n_applications_submitted
       ,ca.n_ltr_applications      
       ,ca.n_efc_entered      
-      ,ca.n_closed_applications
-      ,ca.is_eaed_applicant
+      ,ca.n_closed_applications      
       ,ca.is_accepted_4yr
       ,ca.is_award_information_entered
       ,ca.avg_unmet_need
+      ,COALESCE(ca.is_eaed_applicant, 0) AS is_eaed_applicant
 
       ,ei.ecc_adjusted_6_year_minority_graduation_rate AS ecc_rate
       ,CASE 
