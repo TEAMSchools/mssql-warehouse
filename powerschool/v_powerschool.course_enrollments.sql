@@ -84,6 +84,7 @@ FROM
              WHEN cc.course_number IN ('MATH20','MATH25','MATH31','MATH73','MATH20ICS') THEN 'Geometry'
              WHEN cc.course_number IN ('MATH32','MATH35','MATH32A','MATH32HA') THEN 'Algebra IIA'
              WHEN cc.course_number IN ('MATH32B') THEN 'Algebra IIB'
+             WHEN cc.course_number = 'M315' THEN NULL
              WHEN s.grade_level <= 8 AND cou.credittype = 'MATH' THEN 'Mathematics'             
              WHEN cc.course_number IN ('ENG10','ENG12','ENG15','NCCSE0010') THEN 'English 100'             
              WHEN cc.course_number IN ('ENG20','ENG22','ENG25','NCCSE0020') THEN 'English 200'
