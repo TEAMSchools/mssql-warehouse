@@ -57,7 +57,7 @@ FROM
            ,CONCAT(field, ': Top-Quartile') AS field
            ,MAX(CASE 
                  WHEN school IN ('National Charter Top-Quartile Average','National Charters Top Quartile Average'
-                                ,'KIPP Foundation Top Quartile','KIPP Top Quartile Schools','KIPP Network Top Quartile') 
+                                ,'KIPP Foundation Top Quartile','KIPP Top Quartile Schools','KIPP Network Top Quartile','KIPP Top Quartile Average - Aggregated by School') 
                       THEN value 
                 END) OVER(PARTITION BY academic_year, survey_round, field) AS value
      FROM gabby.tntp.teacher_survey_school_sorter
