@@ -62,7 +62,7 @@ FROM (
       ON e.pay_date BETWEEN COALESCE(p.rehire_date, p.hire_date) AND COALESCE(DATEADD(day,16,p.termination_date),DATEADD(day,16,GETDATE()))
 
       WHERE p.termination_date IS NULL
-            OR p.termination_date >= DATEADD(day,30,GETDATE())
+            OR p.termination_date >= DATEADD(day,-30,GETDATE())
             
            ) dates
 
@@ -138,8 +138,7 @@ FROM
 JOIN gabby.adp.staff_roster sr
   ON sub.position_id = sr.position_id) pay
   
-
-ON dates.position_id = pay.position_id
+ON dates.position_id = pay.position_id   
    AND dates.pay_date = pay.pay_date
 
 WHERE dates.position_id IS NOT NULL
