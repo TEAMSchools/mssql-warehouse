@@ -22,7 +22,7 @@ SELECT sub.student_number
       ,CASE 
         WHEN CONVERT(DATE,GETDATE()) BETWEEN sub.startdate AND sub.enddate THEN 1 
         WHEN sub.academic_year <= gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
-         AND sub.startdate = MAX(sub.startdate) OVER(PARTITION BY student_number, sub.academic_year, sub.course_number)
+         AND sub.startdate = MAX(sub.startdate) OVER(PARTITION BY student_number, sub.academic_year)
                THEN 1
         ELSE 0
        END AS is_curterm
