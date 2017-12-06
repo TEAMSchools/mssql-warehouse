@@ -3,7 +3,69 @@ GO
 
 CREATE OR ALTER VIEW tableau.ktc_college_placement_tracker AS
 
-WITH nav_applications AS (
+WITH roster AS (
+  SELECT co.student_number
+        ,co.studentid
+        ,co.academic_year
+        ,co.schoolid
+        ,co.lastfirst      
+        ,co.reporting_schoolid
+        ,co.grade_level        
+        ,co.enroll_status
+        
+        ,c.id AS contact_id
+        ,c.latest_fafsa_date_c
+        ,c.latest_state_financial_aid_app_date_c              
+        ,c.ytd_gpa_c
+        ,c.highest_act_score_c
+
+        ,n.counselor_name
+        ,COALESCE(n.class_year, co.cohort) AS cohort
+
+        ,0 AS is_taf
+  FROM gabby.powerschool.cohort_identifiers_static co
+  LEFT OUTER JOIN gabby.alumni.contact c
+    ON co.student_number = c.school_specific_id_c 
+   AND c.is_deleted = 0
+  LEFT OUTER JOIN gabby.naviance.students n
+    ON co.student_number = n.hs_student_id
+  WHERE co.rn_undergrad = 1
+    AND co.grade_level BETWEEN 9 AND 12
+    AND co.enroll_status IN (0, 3)
+
+  UNION ALL
+
+  SELECT taf.student_number
+        ,taf.studentid
+        ,gabby.utilities.GLOBAL_ACADEMIC_YEAR() AS academic_year
+        ,taf.schoolid
+        ,taf.lastfirst      
+        ,999999 AS reporting_schoolid
+        ,taf.approx_grade_level        
+        ,CASE           
+          WHEN c.kipp_hs_class_c > gabby.utilities.GLOBAL_ACADEMIC_YEAR() THEN 2
+          WHEN c.post_hs_simple_admin_c IS NOT NULL THEN 23
+         END AS enroll_status
+        
+        ,c.id AS contact_id
+        ,c.latest_fafsa_date_c
+        ,c.latest_state_financial_aid_app_date_c              
+        ,c.ytd_gpa_c
+        ,c.highest_act_score_c
+        
+        ,u.name
+        ,c.kipp_hs_class_c AS cohort
+        
+        ,1 AS is_taf
+  FROM gabby.alumni.taf_roster taf
+  LEFT OUTER JOIN gabby.alumni.contact c
+    ON taf.student_number = c.school_specific_id_c 
+   AND c.is_deleted = 0
+  LEFT OUTER JOIN gabby.alumni.[user] u
+    ON c.owner_id = u.id
+)
+
+,nav_applications AS (
   SELECT hs_student_id
         ,SUM(CASE WHEN result_code = 'accepted' THEN award ELSE 0 END) AS n_award_letters_collected
         ,MAX(CASE WHEN result_code = 'accepted' THEN decis ELSE 0 END) AS is_acceptance_letter_collected
@@ -119,10 +181,7 @@ WITH nav_applications AS (
  )
 
 ,college_apps AS (
-  SELECT contact_id
-        ,school_specific_id_c AS student_number
-        ,latest_fafsa_date_c
-        ,latest_state_financial_aid_app_date_c
+  SELECT applicant_c        
         ,application_submission_status_c
         ,COUNT(id) AS n_applications_submitted
         ,SUM(is_ltr_match) AS n_ltr_applications        
@@ -135,6 +194,7 @@ WITH nav_applications AS (
   FROM
       (
        SELECT a.id
+             ,a.applicant_c
              ,a.name
              ,a.application_status_c
              ,a.application_submission_status_c
@@ -163,42 +223,32 @@ WITH nav_applications AS (
                WHEN a.application_status_c = 'Accepted' 
                 AND SUBSTRING(s.type, PATINDEX('%[24] yr%', s.type), 1) = '4' THEN 1.0 
                ELSE 0.0 
-              END AS is_accepted_4yr                          
-      
-             ,c.id AS contact_id
-             ,c.school_specific_id_c      
-             ,c.latest_fafsa_date_c
-             ,c.latest_state_financial_aid_app_date_c
+              END AS is_accepted_4yr
 
              ,s.type        
-       FROM gabby.alumni.application_c a
-       JOIN gabby.alumni.contact c
-         ON a.applicant_c = c.id
-        AND c.is_deleted = 0
+       FROM gabby.alumni.application_c a       
        JOIN gabby.alumni.account s
          ON a.school_c = s.id
         AND s.is_deleted = 0
        WHERE a.is_deleted = 0
       ) sub
-  GROUP BY contact_id
-          ,school_specific_id_c
+  GROUP BY applicant_c
           ,application_submission_status_c
-          ,latest_fafsa_date_c
-          ,latest_state_financial_aid_app_date_c
  )
 
 SELECT co.student_number
       ,co.lastfirst      
       ,co.reporting_schoolid
-      ,co.grade_level
-      ,co.cohort
+      ,co.grade_level      
       ,co.enroll_status
+      ,co.counselor_name
+      ,co.is_taf      
+      ,co.cohort
+      ,co.latest_fafsa_date_c
+      ,co.latest_state_financial_aid_app_date_c              
       
-      ,gpa.cumulative_Y1_gpa
-            
-      ,n.counselor_name
+      ,COALESCE(gpa.cumulative_Y1_gpa, co.ytd_gpa_c) cumulative_Y1_gpa      
 
-      ,ctcs.grade_class_year
       ,ctcs.attended_2018_junior_kickoff      
       --scholarships
       ,ctcs.fafsa_4_caster_complete
@@ -245,17 +295,15 @@ SELECT co.student_number
       ,na.n_award_letters_collected
       ,na.is_acceptance_letter_collected
 
-      ,act.composite AS act_composite_highest
+      ,COALESCE(act.composite, highest_act_score_c) AS act_composite_highest
       
       ,ap.composite AS act_composite_highest_presenior_year
       
       ,am.act_dec
       ,am.act_oct
       ,am.act_apr
-      ,CASE WHEN CONCAT(am.sat2_ch, am.sat2_fl, am.sat2_lr, am.sat2_m1, am.sat2_m2, am.sat2_sp) != '' THEN 1.0 ELSE 0.0 END AS took_sat2
+      ,CASE WHEN CONCAT(am.sat2_ch, am.sat2_fl, am.sat2_lr, am.sat2_m1, am.sat2_m2, am.sat2_sp) != '' THEN 1.0 ELSE 0.0 END AS took_sat2      
 
-      ,ca.latest_fafsa_date_c
-      ,ca.latest_state_financial_aid_app_date_c
       ,ca.n_applications_submitted
       ,ca.n_ltr_applications      
       ,ca.n_efc_entered      
@@ -278,12 +326,10 @@ SELECT co.student_number
         WHEN SUBSTRING(ei.ugrad_pursuing_degree_type, PATINDEX('%[24]%year%', ei.ugrad_pursuing_degree_type), 1) = '4' THEN 1.0         
         ELSE 0.0
        END AS is_attending_4yr
-FROM gabby.powerschool.cohort_identifiers_static co
+FROM roster co
 LEFT OUTER JOIN gabby.powerschool.gpa_cumulative gpa
   ON co.studentid = gpa.studentid
  AND co.schoolid = gpa.schoolid
-LEFT OUTER JOIN gabby.naviance.students n
-  ON co.student_number = n.hs_student_id
 LEFT OUTER JOIN gabby.naviance.current_task_completion_status ctcs
   ON co.student_number = ctcs.student_id
 LEFT OUTER JOIN nav_applications na
@@ -298,9 +344,7 @@ LEFT OUTER JOIN act_month am
   ON co.student_number = am.student_number
  AND co.academic_year = am.academic_year
 LEFT OUTER JOIN college_apps ca
-  ON co.student_number = ca.student_number
+  ON co.contact_id = ca.applicant_c
  AND ca.application_submission_status_c = 'Submitted'
 LEFT OUTER JOIN gabby.alumni.enrollment_identifiers ei
-  ON ca.contact_id = ei.student_c
-WHERE co.rn_undergrad = 1
-  AND co.grade_level BETWEEN 9 AND 12
+  ON co.contact_id = ei.student_c

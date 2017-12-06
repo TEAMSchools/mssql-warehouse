@@ -6,7 +6,7 @@ CREATE OR ALTER VIEW alumni.taf_roster AS
 WITH hs_grads AS (
   SELECT student_number        
   FROM gabby.powerschool.cohort_identifiers_static
-  WHERE grade_level = 12
+  WHERE grade_level >= 9
     AND exitcode = 'G1'               
  ) 
 
@@ -123,8 +123,9 @@ WITH hs_grads AS (
  )
 
 SELECT r.student_number
+      ,r.studentid
       ,r.lastfirst
-      --,r.schoolid
+      ,r.schoolid
       ,r.school_name
       ,r.curr_grade_level AS approx_grade_level
       ,r.first_name
