@@ -16,10 +16,10 @@ WITH roster AS (
         ,c.id AS contact_id
         ,c.latest_fafsa_date_c
         ,c.latest_state_financial_aid_app_date_c              
-        ,c.ytd_gpa_c
+        ,c.college_match_display_gpa_c AS ytd_gpa_c
         ,c.highest_act_score_c
 
-        ,n.counselor_name
+        ,COALESCE(n.counselor_name, u.name) AS counselor_name
         ,COALESCE(n.class_year, co.cohort) AS cohort
 
         ,0 AS is_taf
@@ -29,6 +29,8 @@ WITH roster AS (
    AND c.is_deleted = 0
   LEFT OUTER JOIN gabby.naviance.students n
     ON co.student_number = n.hs_student_id
+  LEFT OUTER JOIN gabby.alumni.[user] u
+    ON c.owner_id = u.id
   WHERE co.rn_undergrad = 1
     AND co.grade_level BETWEEN 9 AND 12
     AND co.enroll_status IN (0, 3)
@@ -50,7 +52,7 @@ WITH roster AS (
         ,c.id AS contact_id
         ,c.latest_fafsa_date_c
         ,c.latest_state_financial_aid_app_date_c              
-        ,c.ytd_gpa_c
+        ,c.college_match_display_gpa_c AS ytd_gpa_c
         ,c.highest_act_score_c
         
         ,u.name
@@ -247,7 +249,10 @@ SELECT co.student_number
       ,co.latest_fafsa_date_c
       ,co.latest_state_financial_aid_app_date_c              
       
-      ,COALESCE(gpa.cumulative_Y1_gpa, co.ytd_gpa_c) cumulative_Y1_gpa      
+      ,CASE 
+        WHEN co.is_taf = 0 THEN gpa.cumulative_Y1_gpa
+        WHEN co.is_taf = 1 THEN co.ytd_gpa_c
+       END cumulative_Y1_gpa      
 
       ,ctcs.attended_2018_junior_kickoff      
       --scholarships
