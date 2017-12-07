@@ -27,6 +27,8 @@ WITH dates AS (
 
 SELECT sub.associate_id
       ,sub.position_id      
+      ,sub.position_start_date
+      ,sub.termination_date
       ,sub.pay_date
       ,sub.company	
       ,sub.file_	
@@ -70,6 +72,8 @@ FROM
     (
      SELECT s.associate_id
            ,s.position_id           
+           ,s.position_start_date
+           ,s.termination_date
            ,s.pay_date
            ,LEFT(s.position_id, 3) AS company           
            ,RIGHT(s.position_id, LEN(s.position_id) - 3) AS file_
