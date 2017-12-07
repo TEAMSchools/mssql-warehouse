@@ -5,7 +5,7 @@ CREATE OR ALTER VIEW payroll.pr_employeesummary_clean AS
 
 WITH dates AS (
   SELECT DISTINCT pay_date
-  FROM gabby.payroll.pr_employeesummary_clean
+  FROM gabby.adp.pr_employeesummary
  )
 
 ,scaffold AS (
