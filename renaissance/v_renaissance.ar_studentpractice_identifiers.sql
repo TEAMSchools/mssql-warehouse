@@ -27,11 +27,11 @@ SELECT student_number
         /* for failing attempts, valid row should be most recent */
         WHEN ti_passed = 0 THEN ROW_NUMBER() OVER(
                                   PARTITION BY student_number, i_quiz_number, ti_passed
-                                    ORDER BY i_retake_count DESC) 
+                                    ORDER BY dt_taken DESC) 
         /* for passing attempts, valid row should be first */
         WHEN ti_passed = 1 THEN ROW_NUMBER() OVER(
                                   PARTITION BY student_number, i_quiz_number, ti_passed
-                                    ORDER BY dt_taken_original ASC) 
+                                    ORDER BY dt_taken ASC) 
        END AS rn_quiz
 FROM
     (
