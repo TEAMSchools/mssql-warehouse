@@ -25,7 +25,8 @@ WITH dates AS (
     ON d.pay_date BETWEEN sr.position_start_date AND DATEADD(DAY, 16, COALESCE(sr.termination_date, CONVERT(DATE,GETDATE())))  
  )
 
-SELECT sub.position_id      
+SELECT sub.associate_id
+      ,sub.position_id      
       ,sub.pay_date
       ,sub.company	
       ,sub.file_	
