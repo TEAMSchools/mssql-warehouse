@@ -89,7 +89,7 @@ WITH responses_long AS (
    AND a.assessment_id = sa.assessment_id        
   JOIN gabby.illuminate_dna_assessments.agg_student_responses_group asrg
     ON sa.student_assessment_id = asrg.student_assessment_id   
-   AND asrg.reporting_group_id IN (SELECT reporting_group_id FROM gabby.illuminate_dna_assessments.reporting_groups WHERE label IN ('Multiple Choice','Open Ended Response'))
+   AND asrg.reporting_group_id IN (SELECT reporting_group_id FROM gabby.illuminate_dna_assessments.reporting_groups WHERE label IN ('Multiple Choice','Open Ended Response', 'Open-Ended Response'))
    AND asrg.points_possible > 0       
  )
 
@@ -163,13 +163,13 @@ SELECT rr.assessment_id
            
       ,CASE
         WHEN rr.response_type = 'O' THEN 'Overall'
-        WHEN rr.response_type = 'G' AND rr.standard_id = 26978 THEN 'OER'
+        WHEN rr.response_type = 'G' AND rr.standard_id IN (26978, 5287) THEN 'OER'
         WHEN rr.response_type = 'G' AND rr.standard_id IN (274, 2766, 2776, 2796) THEN 'MC'
         ELSE std.custom_code 
        END AS standard_code
       ,CASE
         WHEN rr.response_type = 'O' THEN 'Overall'
-        WHEN rr.response_type = 'G' AND rr.standard_id = 26978 THEN 'Open-Ended Response'
+        WHEN rr.response_type = 'G' AND rr.standard_id IN (26978, 5287) THEN 'Open-Ended Response'
         WHEN rr.response_type = 'G' AND rr.standard_id IN (274, 2766, 2776, 2796) THEN 'Multiple Choice'
         ELSE std.description
        END AS standard_description
