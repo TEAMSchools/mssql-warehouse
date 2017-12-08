@@ -46,6 +46,7 @@ SELECT co.school_name
       ,dna.test_round AS dnatest_test_round
       ,dna.test_date AS dna_date
       ,CASE                      
+        WHEN achv.lvl_num IS NULL THEN 3
         WHEN achv.lvl_num >= 26 THEN 1
         WHEN achv.test_round IN ('BOY','DR') 
          AND testid.test_round IN ('EOY','Q4','T3')
