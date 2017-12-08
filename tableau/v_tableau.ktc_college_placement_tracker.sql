@@ -16,7 +16,7 @@ WITH roster AS (
         ,c.id AS contact_id
         ,c.latest_fafsa_date_c
         ,c.latest_state_financial_aid_app_date_c              
-        ,c.college_match_display_gpa_c AS ytd_gpa_c
+        ,c.college_match_display_gpa_c
         ,c.highest_act_score_c
 
         ,COALESCE(n.counselor_name, u.name) AS counselor_name
@@ -52,7 +52,7 @@ WITH roster AS (
         ,c.id AS contact_id
         ,c.latest_fafsa_date_c
         ,c.latest_state_financial_aid_app_date_c              
-        ,c.college_match_display_gpa_c AS ytd_gpa_c
+        ,c.college_match_display_gpa_c
         ,c.highest_act_score_c
         
         ,u.name
@@ -250,8 +250,9 @@ SELECT co.student_number
       ,co.latest_state_financial_aid_app_date_c              
       
       ,CASE 
-        WHEN co.is_taf = 0 THEN gpa.cumulative_Y1_gpa
-        WHEN co.is_taf = 1 THEN co.ytd_gpa_c
+        WHEN co.is_taf = 0 AND co.grade_level = 12 THEN gpa.cumulative_Y1_gpa
+        WHEN co.is_taf = 0 AND co.grade_level = 11 THEN gpa.cumulative_Y1_gpa_projected
+        WHEN co.is_taf = 1 THEN co.college_match_display_gpa_c
        END cumulative_Y1_gpa      
 
       ,ctcs.attended_2018_junior_kickoff      
