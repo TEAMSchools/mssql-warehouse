@@ -65,8 +65,8 @@ SELECT a.assessment_id
       ,f.is_rubric AS question_is_rubric
       
       ,CASE
-        WHEN frg.reporting_group_id = 21769 THEN 'MC'
         WHEN frg.reporting_group_id = 26978 THEN 'OER'
+        WHEN frg.reporting_group_id IN (274, 2766, 2776, 2796) THEN 'MC'
        END AS question_reporting_group
 
       ,sg.standard_codes AS question_standard_codes
@@ -89,7 +89,7 @@ JOIN gabby.illuminate_dna_assessments.fields f
  AND f.deleted_at IS NULL
 LEFT OUTER JOIN gabby.illuminate_dna_assessments.fields_reporting_groups frg
   ON f.field_id = frg.field_id
- AND frg.reporting_group_id IN (21769, 26978)
+ AND frg.reporting_group_id IN (SELECT reporting_group_id FROM gabby.illuminate_dna_assessments.reporting_groups WHERE label IN ('Multiple Choice','Open Ended Response'))
 LEFT OUTER JOIN standards_grouped sg
   ON f.field_id = sg.field_id
 WHERE a.deleted_at IS NULL
