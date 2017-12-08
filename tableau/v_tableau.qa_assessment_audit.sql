@@ -59,6 +59,7 @@ SELECT a.assessment_id
 
       ,gr.short_name AS assessment_grade_level
 
+      ,f.field_id
       ,f.sheet_label AS question_number
       ,f.maximum AS question_points_possible
       ,f.extra_credit AS question_extra_credit
@@ -86,6 +87,7 @@ LEFT OUTER JOIN gabby.illuminate_public.grade_levels gr
   ON agl.grade_level_id = gr.grade_level_id 
 JOIN gabby.illuminate_dna_assessments.fields f
   ON a.assessment_id = f.assessment_id
+ AND f.field_id IN (SELECT field_id FROM gabby.illuminate_dna_assessments.fields_validation_static)
  AND f.deleted_at IS NULL
 LEFT OUTER JOIN gabby.illuminate_dna_assessments.fields_reporting_groups frg
   ON f.field_id = frg.field_id
