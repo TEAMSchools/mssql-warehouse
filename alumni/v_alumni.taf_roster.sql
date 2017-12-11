@@ -37,7 +37,6 @@ WITH hs_grads AS (
     AND co.rn_year = 1
     AND co.enroll_status != 0
     AND co.student_number NOT IN (SELECT student_number FROM hs_grads)
-    --AND co.student_number NOT IN (2026,3049,3012)
  )
 
 ,transfers AS (

@@ -18,6 +18,8 @@ WITH roster AS (
         ,c.latest_state_financial_aid_app_date_c              
         ,c.college_match_display_gpa_c
         ,c.highest_act_score_c
+        ,c.informed_consent_c
+        ,c.latest_transcript_c
 
         ,COALESCE(n.counselor_name, u.name) AS counselor_name
         ,COALESCE(n.class_year, co.cohort) AS cohort
@@ -54,6 +56,8 @@ WITH roster AS (
         ,c.latest_state_financial_aid_app_date_c              
         ,c.college_match_display_gpa_c
         ,c.highest_act_score_c
+        ,c.informed_consent_c
+        ,c.latest_transcript_c
         
         ,u.name
         ,c.kipp_hs_class_c AS cohort
@@ -246,8 +250,10 @@ SELECT co.student_number
       ,co.counselor_name
       ,co.is_taf      
       ,co.cohort
+      ,co.informed_consent_c
       ,co.latest_fafsa_date_c
-      ,co.latest_state_financial_aid_app_date_c              
+      ,co.latest_state_financial_aid_app_date_c                    
+      ,co.latest_transcript_c      
       
       ,CASE 
         WHEN co.is_taf = 0 AND co.grade_level = 12 THEN gpa.cumulative_Y1_gpa
@@ -255,19 +261,10 @@ SELECT co.student_number
         WHEN co.is_taf = 1 THEN co.college_match_display_gpa_c
        END cumulative_Y1_gpa      
 
-      ,ctcs.attended_2018_junior_kickoff      
-      --scholarships
-      ,ctcs.fafsa_4_caster_complete
-      --complete CTE survey
-      ,ctcs.matriculation_checklist_complete_transfer_to_persistence_counselor      
-      --resume
-      --brag sheet      
-      ,ctcs.college_decision_meeting_complete_with_parent_and_persistence_      
-      --Juniors requested LOR & Common App eval
-      --Junior wishlist
-      --parents attending RC conference Q2
-      --parents attending RC conference Q3
-      --parents attending RC conference Q4      
+      ,ctcs.attended_2018_junior_kickoff            
+      ,ctcs.fafsa_4_caster_complete      
+      ,ctcs.matriculation_checklist_complete_transfer_to_persistence_counselor            
+      ,ctcs.college_decision_meeting_complete_with_parent_and_persistence_                  
       ,ctcs.submit_most_recent_taxes_income      
       ,ctcs.submit_most_recent_tax_transcripts
       ,ctcs.submit_previous_year_s_taxes      
@@ -289,9 +286,18 @@ SELECT co.student_number
       ,ctcs._4_q_counselor_meeting_1_of_2
       ,ctcs._4_q_counselor_meeting_2_of_2
       ,ctcs.senior_parent_meeting_1_of_2
-      ,ctcs.senior_parent_meeting_2_of_2 
-      --register for July ACT      
+      ,ctcs.senior_parent_meeting_2_of_2       
       ,ctcs.registered_for_october_act
+      --scholarships
+      --complete CTE survey
+      --resume
+      --brag sheet      
+      --Juniors requested LOR & Common App eval
+      --Junior wishlist
+      --parents attending RC conference Q2
+      --parents attending RC conference Q3
+      --parents attending RC conference Q4
+      --register for July ACT      
       --register for December ACT      
       --completing test release application      
       --submitting test release report      
@@ -301,7 +307,7 @@ SELECT co.student_number
       ,na.n_award_letters_collected
       ,na.is_acceptance_letter_collected
 
-      ,COALESCE(act.composite, highest_act_score_c) AS act_composite_highest
+      ,COALESCE(act.composite, co.highest_act_score_c) AS act_composite_highest
       
       ,ap.composite AS act_composite_highest_presenior_year
       
