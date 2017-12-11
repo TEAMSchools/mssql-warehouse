@@ -41,7 +41,9 @@ SELECT student_number
       ,enroll_status
       ,base_username
       ,alt_username
-      
+      ,uses_alt
+      ,base_dupe_audit
+      ,alt_dupe_audit      
       ,CASE         
         WHEN alt_dupe_audit > 1 THEN first_init + last_name_clean + dob_month + dob_day        
         WHEN uses_alt = 1 THEN alt_username 
@@ -49,14 +51,10 @@ SELECT student_number
        END AS student_web_id      
       ,CASE
         WHEN student_number IN (11085, 10611) THEN first_name_clean + dob_month /* manual override of passwords */        
-        WHEN student_number IN (15343, 18022, 16702,17556) THEN first_name_clean + CONVERT(VARCHAR(20),student_number) /* manual override of passwords */		      
+        WHEN student_number IN (15343, 18022, 16702, 17556) THEN first_name_clean + CONVERT(VARCHAR,student_number) /* manual override of passwords */		      
         WHEN grade_level >= 2 THEN last_name_clean + dob_year 
         ELSE LOWER(school_name) + '1'
        END AS student_web_password
-      
-      ,uses_alt
-      ,base_dupe_audit
-      ,alt_dupe_audit
 FROM
     (
      SELECT student_number
