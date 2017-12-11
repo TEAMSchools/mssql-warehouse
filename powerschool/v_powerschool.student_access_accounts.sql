@@ -49,7 +49,7 @@ SELECT student_number
        END AS student_web_id      
       ,CASE
         WHEN student_number IN (11085, 10611) THEN first_name_clean + dob_month /* manual override of passwords */        
-        WHEN student_number IN (15343, 18022, 16702) THEN first_name_clean + CONVERT(VARCHAR(20),student_number) /* manual override of passwords */		      
+        WHEN student_number IN (15343, 18022, 16702,17556) THEN first_name_clean + CONVERT(VARCHAR(20),student_number) /* manual override of passwords */		      
         WHEN grade_level >= 2 THEN last_name_clean + dob_year 
         ELSE LOWER(school_name) + '1'
        END AS student_web_password
