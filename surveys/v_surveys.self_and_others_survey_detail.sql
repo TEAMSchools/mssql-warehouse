@@ -62,7 +62,9 @@ SELECT 'SO' AS survey_type
       
       ,CONCAT(adp.preferred_first, ' ', adp.preferred_last) AS subject_name
       ,adp.location_custom AS subject_location
-      ,adp.manager_custom_assoc_id AS subject_manager_name
+      ,adp.manager_custom_assoc_id AS subject_manager_id
+      ,adp.mgr_name AS subject_manager_name
+      ,adp.mgr_username AS subject_manager_username
 
       ,ad.samaccountname AS subject_username
 
