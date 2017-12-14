@@ -16,7 +16,7 @@ WITH fp AS (
   FROM gabby.lit.achieved_by_round_static
   WHERE read_lvl IS NOT NULL
     AND academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-    AND start_date <= CONVERT(DATE,GETDATE())
+    AND start_date <= GETDATE()
 )
 
 SELECT co.student_number
@@ -72,7 +72,7 @@ LEFT OUTER JOIN gabby.powerschool.course_enrollments_static enr
   ON co.studentid = enr.studentid
  AND co.academic_year = enr.academic_year
  AND enr.credittype = 'ENG'
- AND CONVERT(DATE,GETDATE()) BETWEEN enr.dateenrolled AND enr.dateleft
+ AND GETDATE() BETWEEN enr.dateenrolled AND enr.dateleft
 LEFT OUTER JOIN gabby.powerschool.final_grades_static gr
   ON co.student_number = gr.student_number
  AND co.academic_year = gr.academic_year
@@ -86,7 +86,7 @@ LEFT OUTER JOIN gabby.powerschool.category_grades_static ele
  AND ele.is_curterm = 1
 LEFT OUTER JOIN gabby.renaissance.ar_progress_to_goals ar_cur
   ON co.student_number = ar_cur.student_number
- AND CONVERT(DATE,GETDATE()) BETWEEN ar_cur.start_date AND ar_cur.end_date
+ AND GETDATE() BETWEEN ar_cur.start_date AND ar_cur.end_date
  AND ar_cur.reporting_term != 'ARY'
  AND ar_cur.words_goal > 0           
 LEFT OUTER JOIN gabby.renaissance.ar_progress_to_goals ar_y1

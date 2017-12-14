@@ -95,9 +95,9 @@ FROM
            ,u.vch_previous_idnum AS student_number                
      FROM gabby.renaissance.ar_studentpractice ar
      JOIN gabby.renaissance.rl_user u
-       ON ar.i_user_id = u.i_user_id
-      AND ISNUMERIC(u.vch_previous_idnum) = 1
+       ON ar.i_user_id = u.i_user_id      
      WHERE ar.i_content_type_id = 31
        AND ar.ch_status != 'U'
        AND ar.ti_row_status = 1
     ) sub
+WHERE ISNUMERIC(sub.student_number) = 1
