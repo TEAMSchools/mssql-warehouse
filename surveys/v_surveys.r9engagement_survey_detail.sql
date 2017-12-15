@@ -8,6 +8,8 @@ WITH survey_unpivoted AS (
         ,reporting_term
         ,term_name
         ,participant_id
+        ,associate_id
+        ,email
         ,location
         ,n
         ,REPLACE(question_code, '_', '') AS question_code
@@ -18,6 +20,8 @@ WITH survey_unpivoted AS (
              ,reporting_term
              ,term_name
              ,participant_id
+             ,associate_id
+             ,email
              ,location
              ,n
              ,CONVERT(FLOAT,academicsupportdataanalyticsandstudentinformation_1_s) AS academicsupportdataanalyticsandstudentinformation_1_s
@@ -257,6 +261,326 @@ WITH survey_unpivoted AS (
              ,CONVERT(FLOAT,technologyschoolleadersonly_3) AS technologyschoolleadersonly_3
              ,CONVERT(FLOAT,technologysl) AS technologysl
        FROM gabby.surveys.r9engagement_survey_archive
+
+       UNION ALL
+
+       SELECT academic_year
+             ,reporting_term
+             ,term_name
+             ,participant_id
+             ,associate_id
+             ,email
+             ,location
+             ,NULL AS n
+             ,NULL AS academicsupportdataanalyticsandstudentinformation_1_s
+             ,NULL AS academicsupportdataanalyticsandstudentinformation_2_s
+             ,NULL AS academicsupportdataanalyticsandstudentinformation_3_s
+             ,NULL AS academicsupportdataanalyticsandstudentinformation_4_s
+             ,NULL AS academicsupportdataanalyticsandstudentinformation_5_s
+             ,NULL AS academicsupportdataanalyticsandstudentinformation_6_s
+             ,NULL AS academicsupportdataanalyticsandstudentinformation_7_s
+             ,NULL AS academicsupportdataanalyticsandstudentinformation_8_s
+             ,NULL AS academicsupportdataanalyticsandstudentinformation_9_s
+             ,NULL AS academicsupportteam_1
+             ,NULL AS academicsupportteam_10
+             ,NULL AS academicsupportteam_11
+             ,NULL AS academicsupportteam_2
+             ,NULL AS academicsupportteam_3
+             ,NULL AS academicsupportteam_4
+             ,NULL AS academicsupportteam_5
+             ,NULL AS academicsupportteam_6
+             ,NULL AS academicsupportteam_7
+             ,NULL AS academicsupportteam_8
+             ,NULL AS academicsupportteam_9
+             ,NULL AS advocacysl_1
+             ,NULL AS advocacysl_2
+             ,NULL AS advocacysl_3
+             ,NULL AS benefits_1
+             ,NULL AS benefits_2
+             ,NULL AS benefits_3
+             ,NULL AS blendedlearning_1
+             ,NULL AS blendedlearning_2
+             ,NULL AS blendedlearning_3
+             ,NULL AS dataandanalysis_1
+             ,NULL AS dataandanalysis_2
+             ,NULL AS enrollmentschoolleadersonly_1
+             ,NULL AS enrollmentschoolleadersonly_2
+             ,NULL AS enrollmentschoolleadersonly_3
+             ,NULL AS enrollmentschoolleadersonly_4
+             ,NULL AS enrollmentschoolleadersonly_5
+             ,NULL AS enrollmentschoolleadersonly_6
+             ,NULL AS facilities_1
+             ,NULL AS facilities_1_s
+             ,NULL AS facilities_2
+             ,NULL AS facilities_2_s
+             ,NULL AS facilities_3
+             ,NULL AS facilities_3_s
+             ,NULL AS facilities_4
+             ,NULL AS facilities_4_s
+             ,NULL AS facilities_5
+             ,NULL AS facilities_6
+             ,NULL AS facilitiesschoolleadersonly_1
+             ,NULL AS facilitiesschoolleadersonly_2
+             ,NULL AS facilitiesschoolleadersonly_3
+             ,NULL AS facilitiessl
+             ,NULL AS financeaccounting_1_s
+             ,NULL AS financeaccounting_2_s
+             ,NULL AS financeaccounting_3_s
+             ,NULL AS financeaccounting_4_s
+             ,NULL AS financeaccountingschoolleadersonly_1_s
+             ,NULL AS financeaccountingschoolleadersonly_2_s
+             ,NULL AS financeaccountingschoolleadersonly_3_s
+             ,NULL AS financeaccountingsl_1
+             ,NULL AS financeaccountingsl_2
+             ,NULL AS financeaccountingsl_3
+             ,NULL AS financeaccountingsl_4
+             ,NULL AS financeaccountingsl_5
+             ,NULL AS financeaccountingsl_6
+             ,NULL AS financeaccountingsl_7
+             ,NULL AS hasl
+             ,NULL AS humanassets_1
+             ,NULL AS humanassets_1_s
+             ,NULL AS humanassets_10
+             ,NULL AS humanassets_11
+             ,NULL AS humanassets_12
+             ,NULL AS humanassets_13
+             ,NULL AS humanassets_14
+             ,NULL AS humanassets_15
+             ,NULL AS humanassets_16
+             ,NULL AS humanassets_2
+             ,NULL AS humanassets_2_s
+             ,NULL AS humanassets_3
+             ,NULL AS humanassets_3_s
+             ,NULL AS humanassets_4
+             ,NULL AS humanassets_4_s
+             ,NULL AS humanassets_5
+             ,NULL AS humanassets_5_s
+             ,NULL AS humanassets_6
+             ,NULL AS humanassets_6_s
+             ,NULL AS humanassets_7
+             ,NULL AS humanassets_8
+             ,NULL AS humanassets_9
+             ,NULL AS humanassetsschoolleadersonly_1
+             ,NULL AS humanassetsschoolleadersonly_2
+             ,NULL AS humanassetsschoolleadersonly_3
+             ,NULL AS kippsharefrequency_5_s
+             ,NULL AS kippthroughcollege_1
+             ,NULL AS maintenance_1
+             ,NULL AS maintenance_11
+             ,NULL AS maintenance_12
+             ,NULL AS maintenance_13
+             ,NULL AS maintenance_14
+             ,NULL AS maintenance_15
+             ,NULL AS maintenance_2
+             ,NULL AS maintenance_21
+             ,NULL AS maintenance_22
+             ,NULL AS maintenance_23
+             ,NULL AS maintenance_3
+             ,NULL AS maintenance_4
+             ,NULL AS maintenance_5
+             ,NULL AS maintenance_6
+             ,NULL AS maintenance_7
+             ,NULL AS maintenance_8
+             ,NULL AS maintenance_9_a
+             ,NULL AS maintenance_9_b
+             ,NULL AS maintenance_9_c
+             ,NULL AS maintenance_9_d
+             ,NULL AS maintenance_9_e
+             ,NULL AS marketing_1
+             ,NULL AS marketing_2
+             ,NULL AS marketingschoolleadersonly_1
+             ,NULL AS marketingschoolleadersonly_2
+             ,NULL AS noninstructionalhiringdsor_9_directors_1
+             ,NULL AS noninstructionalhiringdsor_9_directors_2
+             ,NULL AS noninstructionalhiringdsor_9_directors_3
+             ,NULL AS noninstructionalhiringdsor_9_directors_4
+             ,NULL AS noninstructionalhiringdsor_9_directors_5
+             ,NULL AS noninstructionalhiringdsor_9_directors_6
+             ,NULL AS noninstructionalhiringdsor_9_directors_7
+             ,NULL AS nutritionprogramfoodservice_1
+             ,NULL AS nutritionprogramfoodservice_1_s
+             ,NULL AS nutritionprogramfoodservice_2
+             ,NULL AS nutritionprogramfoodservice_3
+             ,NULL AS nutritionprogramfoodservice_4
+             ,NULL AS nutritionprogramfoodservice_5
+             ,NULL AS nutritionprogramfoodservice_6
+             ,NULL AS nutritionprogramfoodservice_7
+             ,NULL AS nutritionprogramfoodserviceschoolleadersonly_1
+             ,NULL AS nutritionprogramfoodserviceschoolleadersonly_2
+             ,NULL AS nutritionprogramfoodserviceschoolleadersonly_3
+             ,NULL AS nutritionschoolleadersonly_1
+             ,NULL AS nutritionschoolleadersonly_2
+             ,NULL AS nutritionschoolleadersonly_3
+             ,NULL AS nutritionschoolleadersonly_4
+             ,NULL AS purchasing_1
+             ,NULL AS purchasing_1_s
+             ,NULL AS purchasing_2
+             ,NULL AS purchasing_2_s
+             ,NULL AS purchasing_3
+             ,NULL AS purchasing_3_s
+             ,NULL AS purchasing_4
+             ,NULL AS purchasing_4_s
+             ,NULL AS purchasing_5
+             ,NULL AS purchasing_5_s
+             ,NULL AS purchasing_6
+             ,NULL AS purchasing_7
+             ,NULL AS purchasing_8
+             ,NULL AS purchasingsl
+             ,CASE
+               WHEN r_9_q_1201 = 'Strongly agree' THEN 5.0	
+               WHEN r_9_q_1201 = 'Agree' THEN 4.0	
+               WHEN r_9_q_1201 = 'Neutral' THEN 3.0	
+               WHEN r_9_q_1201 = 'Disagree' THEN 2.0	
+               WHEN r_9_q_1201 = 'Strongly disagree' THEN 1.0
+              END AS r_9_q_1201
+             ,CASE
+               WHEN r_9_q_1202 = 'Strongly agree' THEN 5.0	
+               WHEN r_9_q_1202 = 'Agree' THEN 4.0	
+               WHEN r_9_q_1202 = 'Neutral' THEN 3.0	
+               WHEN r_9_q_1202 = 'Disagree' THEN 2.0	
+               WHEN r_9_q_1202 = 'Strongly disagree' THEN 1.0
+              END AS r_9_q_1202 
+             ,CASE
+               WHEN r_9_q_1203 = 'Strongly agree' THEN 5.0	
+               WHEN r_9_q_1203 = 'Agree' THEN 4.0	
+               WHEN r_9_q_1203 = 'Neutral' THEN 3.0	
+               WHEN r_9_q_1203 = 'Disagree' THEN 2.0	
+               WHEN r_9_q_1203 = 'Strongly disagree' THEN 1.0
+              END AS r_9_q_1203 
+             ,CASE
+               WHEN r_9_q_1204 = 'Strongly agree' THEN 5.0	
+               WHEN r_9_q_1204 = 'Agree' THEN 4.0	
+               WHEN r_9_q_1204 = 'Neutral' THEN 3.0	
+               WHEN r_9_q_1204 = 'Disagree' THEN 2.0	
+               WHEN r_9_q_1204 = 'Strongly disagree' THEN 1.0
+              END AS r_9_q_1204 
+             ,CASE
+               WHEN r_9_q_1205 = 'Strongly agree' THEN 5.0	
+               WHEN r_9_q_1205 = 'Agree' THEN 4.0	
+               WHEN r_9_q_1205 = 'Neutral' THEN 3.0	
+               WHEN r_9_q_1205 = 'Disagree' THEN 2.0	
+               WHEN r_9_q_1205 = 'Strongly disagree' THEN 1.0
+              END AS r_9_q_1205 
+             ,CASE
+               WHEN r_9_q_1206 = 'Strongly agree' THEN 5.0	
+               WHEN r_9_q_1206 = 'Agree' THEN 4.0	
+               WHEN r_9_q_1206 = 'Neutral' THEN 3.0	
+               WHEN r_9_q_1206 = 'Disagree' THEN 2.0	
+               WHEN r_9_q_1206 = 'Strongly disagree' THEN 1.0
+              END AS r_9_q_1206 
+             ,CASE
+               WHEN r_9_q_1207 = 'Strongly agree' THEN 5.0	
+               WHEN r_9_q_1207 = 'Agree' THEN 4.0	
+               WHEN r_9_q_1207 = 'Neutral' THEN 3.0	
+               WHEN r_9_q_1207 = 'Disagree' THEN 2.0	
+               WHEN r_9_q_1207 = 'Strongly disagree' THEN 1.0
+              END AS r_9_q_1207 
+             ,CASE
+               WHEN r_9_q_1208 = 'Strongly agree' THEN 5.0	
+               WHEN r_9_q_1208 = 'Agree' THEN 4.0	
+               WHEN r_9_q_1208 = 'Neutral' THEN 3.0	
+               WHEN r_9_q_1208 = 'Disagree' THEN 2.0	
+               WHEN r_9_q_1208 = 'Strongly disagree' THEN 1.0
+              END AS r_9_q_1208 
+             ,CASE
+               WHEN r_9_q_1209 = 'Strongly agree' THEN 5.0	
+               WHEN r_9_q_1209 = 'Agree' THEN 4.0	
+               WHEN r_9_q_1209 = 'Neutral' THEN 3.0	
+               WHEN r_9_q_1209 = 'Disagree' THEN 2.0	
+               WHEN r_9_q_1209 = 'Strongly disagree' THEN 1.0
+              END AS r_9_q_1209 
+             ,CASE
+               WHEN r_9_q_1210 = 'Strongly agree' THEN 5.0	
+               WHEN r_9_q_1210 = 'Agree' THEN 4.0	
+               WHEN r_9_q_1210 = 'Neutral' THEN 3.0	
+               WHEN r_9_q_1210 = 'Disagree' THEN 2.0	
+               WHEN r_9_q_1210 = 'Strongly disagree' THEN 1.0
+              END AS r_9_q_1210 
+             ,CASE
+               WHEN r_9_q_1211 = 'Strongly agree' THEN 5.0	
+               WHEN r_9_q_1211 = 'Agree' THEN 4.0	
+               WHEN r_9_q_1211 = 'Neutral' THEN 3.0	
+               WHEN r_9_q_1211 = 'Disagree' THEN 2.0	
+               WHEN r_9_q_1211 = 'Strongly disagree' THEN 1.0
+              END AS r_9_q_1211 
+             ,CASE
+               WHEN r_9_q_1212 = 'Strongly agree' THEN 5.0	
+               WHEN r_9_q_1212 = 'Agree' THEN 4.0	
+               WHEN r_9_q_1212 = 'Neutral' THEN 3.0	
+               WHEN r_9_q_1212 = 'Disagree' THEN 2.0	
+               WHEN r_9_q_1212 = 'Strongly disagree' THEN 1.0
+              END AS r_9_q_1212
+             ,NULL AS recruitingschoolleadersonly_1_s
+             ,NULL AS recruitingschoolleadersonly_10_s
+             ,NULL AS recruitingschoolleadersonly_2_s
+             ,NULL AS recruitingschoolleadersonly_3_s
+             ,NULL AS recruitingschoolleadersonly_4_s
+             ,NULL AS recruitingschoolleadersonly_5_s
+             ,NULL AS recruitingschoolleadersonly_6_s
+             ,NULL AS recruitingschoolleadersonly_7_s
+             ,NULL AS recruitingschoolleadersonly_8_s
+             ,NULL AS recruitingschoolleadersonly_9_s
+             ,NULL AS recruitmentschoolleadersonly_1
+             ,NULL AS recruitmentschoolleadersonly_10
+             ,NULL AS recruitmentschoolleadersonly_11
+             ,NULL AS recruitmentschoolleadersonly_2
+             ,NULL AS recruitmentschoolleadersonly_3
+             ,NULL AS recruitmentschoolleadersonly_4
+             ,NULL AS recruitmentschoolleadersonly_5
+             ,NULL AS recruitmentschoolleadersonly_6
+             ,NULL AS recruitmentschoolleadersonly_7
+             ,NULL AS recruitmentschoolleadersonly_8
+             ,NULL AS recruitmentschoolleadersonly_9
+             ,NULL AS schooloperations_1
+             ,NULL AS schooloperations_10
+             ,NULL AS schooloperations_2
+             ,NULL AS schooloperations_3
+             ,NULL AS schooloperations_4
+             ,NULL AS schooloperations_5
+             ,NULL AS schooloperations_6
+             ,NULL AS schooloperations_7
+             ,NULL AS schooloperations_8
+             ,NULL AS schooloperations_9
+             ,NULL AS sharing_1_s
+             ,NULL AS sharing_2_s
+             ,NULL AS sharing_3_s
+             ,NULL AS sharing_4_s
+             ,NULL AS specialed_1
+             ,NULL AS specialeducation_1
+             ,NULL AS specialeducation_1_s
+             ,NULL AS specialeducation_2
+             ,NULL AS specialeducation_2_s
+             ,NULL AS specialeducation_3
+             ,NULL AS specialeducation_4
+             ,NULL AS specialeducation_5
+             ,NULL AS studentinformation_1
+             ,NULL AS studentinformation_2
+             ,NULL AS studentinformation_3
+             ,NULL AS teachinglearning_1
+             ,NULL AS teachinglearning_10
+             ,NULL AS teachinglearning_2
+             ,NULL AS teachinglearning_3
+             ,NULL AS teachinglearning_4
+             ,NULL AS teachinglearning_5
+             ,NULL AS teachinglearning_6
+             ,NULL AS teachinglearning_7
+             ,NULL AS teachinglearning_8
+             ,NULL AS teachinglearning_9
+             ,NULL AS technology_1
+             ,NULL AS technology_1_s
+             ,NULL AS technology_2
+             ,NULL AS technology_2_s
+             ,NULL AS technology_3
+             ,NULL AS technology_3_s
+             ,NULL AS technology_4
+             ,NULL AS technology_4_s
+             ,NULL AS technology_5
+             ,NULL AS technology_6
+             ,NULL AS technologyschoolleadersonly_1
+             ,NULL AS technologyschoolleadersonly_2
+             ,NULL AS technologyschoolleadersonly_3
+             ,NULL AS technologysl
+       FROM gabby.surveys.r9engagement_survey_final
       ) sub
   UNPIVOT(
     response_value
@@ -499,41 +823,121 @@ WITH survey_unpivoted AS (
    ) u
  )
 
- SELECT su.academic_year
-       ,su.reporting_term
-       ,su.term_name
-       ,su.participant_id
-       ,su.location
-       ,su.n
-       ,su.question_code
-       ,su.response_value
-       ,CASE 
-         WHEN location = 'TEAM' THEN 133570965
-         WHEN location = 'Life Lower' THEN 73257
-         WHEN location = 'Life Upper' THEN 73257
-         WHEN location = 'NCA' THEN 73253
-         WHEN location = 'Revolution' THEN 179901
-         WHEN location = 'Rise' THEN 73252
-         WHEN location = 'Seek' THEN 73256
-         WHEN location = 'SPARK' THEN 73254
-         WHEN location = 'TEAM' THEN 133570965
-         WHEN location = 'THRIVE' THEN 73255
-        END AS reporting_schoolid
-       ,CASE 
-         WHEN location IN ('TEAM','Life Lower','Life Upper','NCA','Rise','Seek','SPARK','TEAM','THRIVE') THEN 'TEAM'
-         WHEN location IN ('Revolution') THEN 'KCNA'
-        END AS region
-       ,CASE 
-         WHEN location IN ('Life Lower','Life Upper','Revolution','Seek','SPARK','THRIVE') THEN 'ES'
-         WHEN location IN ('TEAM','Rise') THEN 'MS'
-         WHEN location IN ('NCA') THEN 'HS'
-        END AS school_level
+SELECT su.academic_year
+      ,su.reporting_term
+      ,su.term_name
+      ,su.participant_id
+      ,su.associate_id
+      ,su.email
+      ,su.location
+      ,su.n
+      ,su.question_code
+      ,su.response_value
+      ,CASE 
+        WHEN su.location = 'Rise' THEN 73252
+        WHEN su.location = 'Rise Academy' THEN 73252
+        WHEN su.location = 'NCA' THEN 73253
+        WHEN su.location = 'Newark Collegiate Academy' THEN 73253
+        WHEN su.location = 'SPARK' THEN 73254
+        WHEN su.location = 'SPARK Academy' THEN 73254
+        WHEN su.location = 'THRIVE' THEN 73255
+        WHEN su.location = 'THRIVE Academy' THEN 73255
+        WHEN su.location = 'Seek' THEN 73256
+        WHEN su.location = 'Seek Academy' THEN 73256
+        WHEN su.location = 'Life Upper' THEN 73257
+        WHEN su.location = 'Life Lower' THEN 73257
+        WHEN su.location = 'Life' THEN 73257
+        WHEN su.location = 'Life Academy' THEN 73257
+        WHEN su.location = 'Bold' THEN 73258
+        WHEN su.location = 'Bold Academy' THEN 73258
+        WHEN su.location = 'Revolution' THEN 179901
+        WHEN su.location = 'LSP' THEN 179901
+        WHEN su.location = 'Lanning Square Primary' THEN 179901
+        WHEN su.location = 'Lanning Square MS' THEN 179902
+        WHEN su.location = 'LSMS' THEN 179902
+        WHEN su.location = 'Whittier Elementary' THEN 179903
+        WHEN su.location = 'Whittier Middle' THEN 179903
+        WHEN su.location = 'Whitter MS' THEN 179903
+        WHEN su.location = 'TEAM' THEN 133570965
+        WHEN su.location = 'TEAM Academy' THEN 133570965
+        WHEN su.location = 'Pathways' THEN 732574573
+        WHEN su.location = 'Whitter ES' THEN 1799015075
+       END AS reporting_schoolid
+      ,CASE 
+        WHEN su.location = 'Revolution' THEN 'KCNA'
+        WHEN su.location = 'LSP' THEN 'KCNA'
+        WHEN su.location = 'Lanning Square Primary' THEN 'KCNA'
+        WHEN su.location = 'Lanning Square MS' THEN 'KCNA'
+        WHEN su.location = 'LSMS' THEN 'KCNA'
+        WHEN su.location = 'Whittier Elementary' THEN 'KCNA'
+        WHEN su.location = 'Whittier Middle' THEN 'KCNA'
+        WHEN su.location = 'Whitter MS' THEN 'KCNA'
+        WHEN su.location = 'Whitter ES' THEN 'KCNA'
+        WHEN su.location = 'Lanning Square Campus' THEN 'KCNA'
+        WHEN su.location = 'KCNA' THEN 'KCNA'
+        WHEN su.location = 'KIPP NJ' THEN 'KNJ'
+        WHEN su.location = 'SL''s' THEN 'KNJ'
+        WHEN su.location = 'Room9' THEN 'KNJ'
+        WHEN su.location = 'Overall' THEN 'KNJ'
+        WHEN su.location = 'Room 9' THEN 'KNJ'
+        WHEN su.location = 'Rise' THEN 'TEAM'
+        WHEN su.location = 'Rise Academy' THEN 'TEAM'
+        WHEN su.location = 'NCA' THEN 'TEAM'
+        WHEN su.location = 'Newark Collegiate Academy' THEN 'TEAM'
+        WHEN su.location = 'SPARK' THEN 'TEAM'
+        WHEN su.location = 'SPARK Academy' THEN 'TEAM'
+        WHEN su.location = 'THRIVE' THEN 'TEAM'
+        WHEN su.location = 'THRIVE Academy' THEN 'TEAM'
+        WHEN su.location = 'Seek' THEN 'TEAM'
+        WHEN su.location = 'Seek Academy' THEN 'TEAM'
+        WHEN su.location = 'Life Upper' THEN 'TEAM'
+        WHEN su.location = 'Life Lower' THEN 'TEAM'
+        WHEN su.location = 'Life' THEN 'TEAM'
+        WHEN su.location = 'Life Academy' THEN 'TEAM'
+        WHEN su.location = 'Bold' THEN 'TEAM'
+        WHEN su.location = 'Bold Academy' THEN 'TEAM'
+        WHEN su.location = 'TEAM' THEN 'TEAM'
+        WHEN su.location = 'TEAM Academy' THEN 'TEAM'
+        WHEN su.location = 'Pathways' THEN 'TEAM'
+        WHEN su.location = 'TEAM Schools' THEN 'TEAM'
+        WHEN su.location = '18th Avenue Campus' THEN 'TEAM'
+       END AS region
+      ,CASE 
+        WHEN su.location = 'Revolution' THEN 'ES'
+        WHEN su.location = 'LSP' THEN 'ES'
+        WHEN su.location = 'Lanning Square Primary' THEN 'ES'
+        WHEN su.location = 'Whitter ES' THEN 'ES'
+        WHEN su.location = 'SPARK' THEN 'ES'
+        WHEN su.location = 'SPARK Academy' THEN 'ES'
+        WHEN su.location = 'THRIVE' THEN 'ES'
+        WHEN su.location = 'THRIVE Academy' THEN 'ES'
+        WHEN su.location = 'Seek' THEN 'ES'
+        WHEN su.location = 'Seek Academy' THEN 'ES'
+        WHEN su.location = 'Life Upper' THEN 'ES'
+        WHEN su.location = 'Life Lower' THEN 'ES'
+        WHEN su.location = 'Life' THEN 'ES'
+        WHEN su.location = 'Life Academy' THEN 'ES'
+        WHEN su.location = 'Pathways' THEN 'ES'
+        WHEN su.location = 'NCA' THEN 'HS'
+        WHEN su.location = 'Newark Collegiate Academy' THEN 'HS'
+        WHEN su.location = 'Lanning Square MS' THEN 'MS'
+        WHEN su.location = 'LSMS' THEN 'MS'
+        WHEN su.location = 'Whittier Elementary' THEN 'MS'
+        WHEN su.location = 'Whittier Middle' THEN 'MS'
+        WHEN su.location = 'Whitter MS' THEN 'MS'
+        WHEN su.location = 'Rise' THEN 'MS'
+        WHEN su.location = 'Rise Academy' THEN 'MS'
+        WHEN su.location = 'Bold' THEN 'MS'
+        WHEN su.location = 'Bold Academy' THEN 'MS'
+        WHEN su.location = 'TEAM' THEN 'MS'
+        WHEN su.location = 'TEAM Academy' THEN 'MS'
+       END AS school_level
 
-       ,qk.survey_type
-       ,qk.competency
-       ,qk.question_text
- FROM survey_unpivoted su
- LEFT OUTER JOIN gabby.surveys.question_key qk
-   ON su.question_code = qk.question_code
-  AND su.academic_year = ISNULL(qk.academic_year, su.academic_year)
-  AND qk.survey_type = 'R9'
+      ,qk.survey_type
+      ,qk.competency
+      ,qk.question_text
+FROM survey_unpivoted su
+LEFT OUTER JOIN gabby.surveys.question_key qk
+  ON su.question_code = qk.question_code
+ AND su.academic_year = ISNULL(qk.academic_year, su.academic_year)
+ AND qk.survey_type = 'R9'
