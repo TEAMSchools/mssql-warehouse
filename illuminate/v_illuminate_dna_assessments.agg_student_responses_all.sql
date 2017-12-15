@@ -199,11 +199,11 @@ JOIN gabby.powerschool.cohort_identifiers_static co
  AND rr.academic_year = co.academic_year
  AND co.rn_year = 1
 LEFT OUTER JOIN gabby.reporting.reporting_terms rta
-  ON rr.administered_at BETWEEN CONVERT(DATE,rta.start_date) AND CONVERT(DATE,rta.end_date)
+  ON rr.administered_at BETWEEN rta.start_date AND rta.end_date
  AND co.schoolid = rta.schoolid
  AND rta.identifier = 'RT' 
 LEFT OUTER JOIN gabby.reporting.reporting_terms rtt
-  ON rr.date_taken BETWEEN CONVERT(DATE,rtt.start_date) AND CONVERT(DATE,rtt.end_date)
+  ON rr.date_taken BETWEEN rtt.start_date AND rtt.end_date
  AND co.schoolid = rtt.schoolid
  AND rtt.identifier = 'RT'
 WHERE rr.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()

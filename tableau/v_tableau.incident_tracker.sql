@@ -41,7 +41,7 @@ JOIN gabby.deanslist.incidents dli
  AND co.academic_year = gabby.utilities.DATE_TO_SY(CONVERT(DATE,JSON_VALUE(dli.create_ts, '$.date')))
 JOIN gabby.reporting.reporting_terms d
   ON co.schoolid = d.schoolid
- AND CONVERT(DATE,JSON_VALUE(dli.create_ts, '$.date')) BETWEEN CONVERT(DATE,d.start_date) AND CONVERT(DATE,d.end_date)
+ AND JSON_VALUE(dli.create_ts, '$.date') BETWEEN d.start_date AND d.end_date
  AND d.identifier = 'RT'
 WHERE co.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
   AND co.schoolid != 999999
@@ -82,7 +82,7 @@ JOIN gabby.deanslist.incidents_penalties dlip
   ON dli.incident_id = dlip.IncidentID
 JOIN gabby.reporting.reporting_terms d
   ON co.schoolid = d.schoolid
- AND CONVERT(DATE,ISNULL(dlip.startdate, JSON_VALUE(dli.close_ts, '$.date'))) BETWEEN d.start_date AND d.end_date 
+ AND ISNULL(dlip.startdate, JSON_VALUE(dli.close_ts, '$.date')) BETWEEN d.start_date AND d.end_date 
  AND d.identifier = 'RT'
 WHERE co.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
   AND co.schoolid != 999999
@@ -122,7 +122,7 @@ JOIN gabby.deanslist.behavior dlb
  AND dlb.is_deleted = 0
 JOIN gabby.reporting.reporting_terms d
   ON co.schoolid = d.schoolid
- AND CONVERT(DATE,dlb.behavior_date) BETWEEN d.start_date AND d.end_date 
+ AND dlb.behavior_date BETWEEN d.start_date AND d.end_date 
  AND d.identifier = 'RT'
 WHERE co.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
   AND co.rn_year = 1

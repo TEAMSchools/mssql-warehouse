@@ -42,7 +42,10 @@ WITH enrollments AS (
   GROUP BY student_c
  )
 
-SELECT e.*
+SELECT e.student_c
+      ,e.recent_ugrad_enrollment_c
+      ,e.ecc_enrollment_c
+      ,e.hs_enrollment_c
 
       ,ug.name AS ugrad_school_name      
       ,ug.pursuing_degree_type_c AS ugrad_pursuing_degree_type

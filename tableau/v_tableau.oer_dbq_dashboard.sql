@@ -108,7 +108,7 @@ WITH enrollments AS (
        JOIN gabby.illuminate_dna_repositories.repositories r
          ON ur.repository_id = r.repository_id
        LEFT OUTER JOIN gabby.reporting.reporting_terms rt
-         ON r.date_administered BETWEEN CONVERT(DATE,rt.start_date) AND CONVERT(DATE,rt.end_date)
+         ON r.date_administered BETWEEN rt.start_date AND rt.end_date
         AND rt.schoolid = 73253
         AND rt.identifier = 'RT'
       ) sub
@@ -225,7 +225,7 @@ FROM
        ON a.code_subject_area_id = dsu.code_id
       AND dsu.code_translation = 'History'
      JOIN gabby.reporting.reporting_terms dts
-       ON a.administered_at BETWEEN CONVERT(DATE,dts.start_date) AND CONVERT(DATE,dts.end_date)
+       ON a.administered_at BETWEEN dts.start_date AND dts.end_date
       AND dts.schoolid = 73253
       AND dts.identifier = 'RT'     
      JOIN gabby.illuminate_dna_assessments.agg_student_responses_standard r

@@ -13,10 +13,9 @@ WITH prof_calendar AS (
   FROM gabby.powerschool.calendar_day cal
   JOIN gabby.reporting.reporting_terms dt
     ON cal.schoolid = dt.schoolid
-   AND cal.date_value BETWEEN CONVERT(DATE,dt.start_date) AND CONVERT(DATE,dt.end_date)
+   AND cal.date_value BETWEEN dt.start_date AND dt.end_date
    AND dt.identifier = 'RT'   
-  WHERE cal.date_value >= CONVERT(DATE,CONCAT(gabby.utilities.GLOBAL_ACADEMIC_YEAR(),'-07-01'))
-    AND cal.date_value <= CONVERT(DATE,GETDATE())       
+  WHERE cal.date_value BETWEEN DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1) AND GETDATE()
     AND (cal.insession = 1 OR cal.type = 'PD')  
  )
 

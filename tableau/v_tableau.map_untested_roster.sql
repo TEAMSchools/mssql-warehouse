@@ -30,7 +30,7 @@ WITH roster AS (
         ,CONVERT(DATE,start_date) AS term_start_date
   FROM gabby.reporting.reporting_terms
   WHERE identifier = 'MAP'
-    AND CONVERT(DATE,start_date) <= CONVERT(DATE,GETDATE())
+    AND start_date <= GETDATE()
  )
 
 ,scaffold AS (

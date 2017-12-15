@@ -38,7 +38,7 @@ JOIN gabby.renaissance.ar_studentpractice_identifiers ar
  AND ar.rn_quiz > 1
 LEFT OUTER JOIN gabby.reporting.reporting_terms dts
   ON co.schoolid = dts.schoolid
- AND CONVERT(DATE,ar.dt_taken) BETWEEN CONVERT(DATE,dts.start_date) AND CONVERT(DATE,dts.end_date)
+ AND ar.dt_taken BETWEEN dts.start_date AND dts.end_date
  AND dts.identifier = 'AR'
  AND dts.time_per_name != 'ARY'
 LEFT OUTER JOIN gabby.powerschool.course_enrollments_static enr 

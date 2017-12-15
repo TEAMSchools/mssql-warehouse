@@ -51,7 +51,7 @@ JOIN gabby.powerschool.cohort_identifiers_static co
  AND co.rn_year = 1
 JOIN gabby.reporting.reporting_terms dt
   ON co.schoolid = dt.schoolid
- AND CONVERT(DATE,step.date) BETWEEN CONVERT(DATE,dt.start_date) AND CONVERT(DATE,dt.end_date)
+ AND CONVERT(DATE,step.date) BETWEEN dt.start_date AND dt.end_date
  AND dt.identifier = 'LIT'
 
 UNION ALL
@@ -87,7 +87,7 @@ JOIN gabby.powerschool.cohort_identifiers_static co
  AND co.rn_year = 1
 JOIN gabby.reporting.reporting_terms dt
   ON co.schoolid = dt.schoolid
- AND CONVERT(DATE,step.date) BETWEEN CONVERT(DATE,dt.start_date) AND CONVERT(DATE,dt.end_date)
+ AND CONVERT(DATE,step.date) BETWEEN dt.start_date AND dt.end_date
  AND dt.identifier = 'LIT'
 WHERE step.step = 0
   AND step.passed = 0

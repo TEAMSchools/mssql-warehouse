@@ -42,7 +42,7 @@ WITH long_data AS (
    AND (a.academic_year - 1) = co.academic_year
    AND co.rn_year = 1
   LEFT OUTER JOIN gabby.reporting.reporting_terms d
-    ON a.administered_at BETWEEN CONVERT(DATE,d.start_date) AND CONVERT(DATE,d.end_date)
+    ON a.administered_at BETWEEN d.start_date AND d.end_date
    AND d.identifier = 'ACT'
  )
 

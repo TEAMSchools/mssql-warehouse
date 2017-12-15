@@ -65,7 +65,7 @@ WITH course_scaffold AS (
        FROM gabby.powerschool.cc
        JOIN gabby.reporting.reporting_terms terms
          ON cc.schoolid = terms.schoolid         
-        AND cc.dateenrolled BETWEEN CONVERT(DATE,terms.start_date) AND CONVERT(DATE,terms.end_date)
+        AND cc.dateenrolled BETWEEN terms.start_date AND terms.end_date
         AND terms.identifier = 'RT'   
         AND terms.school_level IN ('MS','HS')
        WHERE cc.dateenrolled <= CONVERT(DATE,GETDATE())
