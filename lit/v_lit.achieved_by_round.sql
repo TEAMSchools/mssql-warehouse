@@ -352,6 +352,7 @@ FROM
            ,sub.fp_keylever
            ,sub.achv_unique_id      
            ,sub.dna_unique_id      
+           ,sub.is_new_test
 
            ,CASE
              WHEN (goals.fp_read_lvl IS NOT NULL AND goals.step_read_lvl IS NOT NULL)
@@ -406,8 +407,7 @@ FROM
                                      AND sub.is_fp = 0 
                                            THEN goals.step_lvl_num
                                     ELSE COALESCE(goals.fp_lvl_num, goals.step_lvl_num)
-                                   END) AS levels_behind           
-           ,CASE WHEN sub.academic_year = atid.academic_year AND sub.round_num = atid.round_num THEN 1 ELSE 0 END AS is_new_test
+                                   END) AS levels_behind                      
      FROM
          (
           SELECT achieved.academic_year
@@ -430,12 +430,21 @@ FROM
                 ,achieved.gleq
                 ,achieved.fp_wpmrate
                 ,achieved.fp_keylever                
-                ,achieved.achv_unique_id
-                
+                ,achieved.achv_unique_id               
+
                 ,dna.dna_lvl
                 ,dna.dna_lvl_num
-                ,dna.dna_unique_id                
+                ,dna.dna_unique_id                                
+
+                ,CASE 
+                  WHEN achieved.academic_year = atid.academic_year AND achieved.round_num = atid.round_num THEN 1 
+                  WHEN achieved.academic_year = dna.academic_year AND achieved.round_num = dna.round_num THEN 1 
+                  ELSE 0 
+                 END AS is_new_test
           FROM achieved
+          LEFT OUTER JOIN gabby.lit.all_test_events atid 
+            ON achieved.achv_unique_id = atid.unique_id
+           AND atid.status != 'Did Not Achieve'     
           LEFT OUTER JOIN dna
             ON achieved.student_number = dna.student_number
            AND achieved.academic_year = dna.academic_year
@@ -450,8 +459,5 @@ FROM
      LEFT OUTER JOIN gabby.lit.individualized_goals indiv 
        ON sub.student_number = indiv.student_number
       AND sub.test_round = indiv.test_round
-      AND sub.academic_year = indiv.academic_year
-     LEFT OUTER JOIN gabby.lit.all_test_events atid 
-       ON sub.achv_unique_id = atid.unique_id
-      AND atid.status != 'Did Not Achieve'     
+      AND sub.academic_year = indiv.academic_year     
     ) sub
