@@ -23,8 +23,6 @@ SELECT adp.associate_id
       ,CONVERT(DATE,adp.birth_date) AS birth_date
       ,CONVERT(DATE,adp.hire_date) AS hire_date
       ,CONVERT(DATE,adp.rehire_date) AS rehire_date
-
-
       ,adp.position_id
       ,adp.salesforce_job_position_name_custom
       ,adp.job_title_description
@@ -52,7 +50,6 @@ SELECT adp.associate_id
       ,CONVERT(DATE,adp.position_start_date) AS position_start_date      
       ,CONVERT(DATE,adp.termination_date) AS termination_date                  
       ,CONVERT(DATE,adp.spin_off_merge_date) AS spin_off_merge_date
-
       ,CASE 
         WHEN adp.this_is_a_management_position = 'Yes' THEN 1
         WHEN adp.this_is_a_management_position = 'No' THEN 0
@@ -61,7 +58,6 @@ SELECT adp.associate_id
         WHEN adp.spun_off_merged_employee = 'Yes' THEN 1 
         WHEN adp.spun_off_merged_employee = 'No' THEN 0
        END AS is_merged      
-      
       ,COALESCE(
          LTRIM(RTRIM(CASE
                       WHEN CHARINDEX(',',adp.preferred_name) = 0 AND CHARINDEX(' ',adp.preferred_name) = 0 THEN SUBSTRING(adp.preferred_name, 1, LEN(adp.preferred_name))
@@ -87,9 +83,9 @@ SELECT adp.associate_id
            ORDER BY adp.position_status DESC
                    ,CONVERT(DATE,adp.position_start_date) ASC
                    ,CONVERT(DATE,adp.termination_date) ASC) AS rn_base
-       ,mgr.displayname AS mgr_name
-       ,mgr.samaccountname AS mgr_username
-                   
+      
+      ,mgr.displayname AS manager_name
+      ,mgr.samaccountname AS manager_username
 FROM gabby.adp.export_people_details adp
-     LEFT OUTER JOIN gabby.adsi.user_attributes mgr
-     ON adp.manager_custom_assoc_id = mgr.idautopersonalternateid
+LEFT OUTER JOIN gabby.adsi.user_attributes mgr
+  ON adp.manager_custom_assoc_id = mgr.idautopersonalternateid

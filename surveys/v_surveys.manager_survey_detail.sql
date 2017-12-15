@@ -62,8 +62,8 @@ SELECT 'MGR' AS survey_type
       ,CONCAT(adp.preferred_first, ' ', adp.preferred_last) AS subject_name
       ,adp.location_custom AS subject_location
       ,adp.manager_custom_assoc_id AS subject_manager_id
-      ,adp.mgr_name AS subject_manager_name
-      ,adp.mgr_username AS subject_manager_username
+      ,adp.manager_name AS subject_manager_name
+      ,adp.manager_username AS subject_manager_username
       ,CASE
         WHEN adp.location_custom = 'Rise Academy' THEN 73252
         WHEN adp.location_custom = 'Newark Collegiate Academy' THEN 73253
