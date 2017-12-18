@@ -50,8 +50,8 @@ SELECT student_number
         ELSE base_username 
        END AS student_web_id      
       ,CASE
-        WHEN student_number IN (11085, 10611) THEN first_name_clean + dob_month /* manual override of passwords */        
-        WHEN student_number IN (15343, 18022, 16702, 17556) THEN first_name_clean + CONVERT(VARCHAR,student_number) /* manual override of passwords */		      
+        WHEN student_number IN (SELECT student_numbers_variation_1 FROM gabby.extracts.student_account_override) THEN first_name_clean + dob_month /* manual override of passwords */        
+        WHEN student_number IN (SELECT student_numbers_variation_2 FROM gabby.extracts.student_account_override) THEN CONCAT(first_name_clean, student_number) /* manual override of passwords */		      
         WHEN grade_level >= 2 THEN last_name_clean + dob_year 
         ELSE LOWER(school_name) + '1'
        END AS student_web_password
