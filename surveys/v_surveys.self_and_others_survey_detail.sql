@@ -62,11 +62,12 @@ SELECT 'SO' AS survey_type
       
       ,CONCAT(adp.preferred_first, ' ', adp.preferred_last) AS subject_name
       ,adp.location_custom AS subject_location
-      ,adp.manager_custom_assoc_id AS subject_manager_id
-      ,adp.manager_name AS subject_manager_name
-      ,adp.manager_username AS subject_manager_username
+      ,adp.manager_custom_assoc_id AS subject_manager_id      
 
       ,ad.samaccountname AS subject_username
+
+      ,mgr.displayname AS subject_manager_name
+      ,mgr.samaccountname AS subject_manager_username
 
       ,qk.question_text
       ,qk.open_ended
@@ -79,6 +80,8 @@ JOIN gabby.adp.staff_roster adp
  AND adp.rn_curr = 1
 JOIN gabby.adsi.user_attributes ad
   ON adp.associate_id = ad.idautopersonalternateid
+LEFT OUTER JOIN gabby.adsi.user_attributes mgr
+  ON adp.manager_custom_assoc_id = mgr.idautopersonalternateid
 JOIN gabby.surveys.question_key qk
   ON so.question_code = qk.question_code
  AND qk.survey_type = 'SO'

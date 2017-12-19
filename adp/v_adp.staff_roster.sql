@@ -83,9 +83,4 @@ SELECT adp.associate_id
            ORDER BY adp.position_status DESC
                    ,CONVERT(DATE,adp.position_start_date) ASC
                    ,CONVERT(DATE,adp.termination_date) ASC) AS rn_base
-      
-      ,mgr.displayname AS manager_name
-      ,mgr.samaccountname AS manager_username
 FROM gabby.adp.export_people_details adp
-LEFT OUTER JOIN gabby.adsi.user_attributes mgr
-  ON adp.manager_custom_assoc_id = mgr.idautopersonalternateid
