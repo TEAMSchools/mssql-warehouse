@@ -4,7 +4,7 @@
 
 SQL style guide by [Simon Holywell][simon] is licensed under a [Creative Commons
 Attribution-ShareAlike 4.0 International License][licence].
-Based on a work at [http://www.sqlstyle.guide][sqlstyleguide].
+Based on a work at [http://www.sqlstyle.guide][sqlstyleguide] and the [Kickstarter SQL Style Guide][kickstarter].
 
 ## General
 
@@ -1233,3 +1233,5 @@ ZONE
     "Creative Commons Attribution-ShareAlike 4.0 International License"
 [snake_case]: https://en.wikipedia.org/wiki/Snake_case
     "snake_case"
+[kickstarter]: https://gist.github.com/fredbenenson/7bb92718e19138c20591
+  "Kickstarter SQL Style Guide"
