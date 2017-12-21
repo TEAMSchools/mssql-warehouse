@@ -1,20 +1,6 @@
-# SQL style guide
+# KIPP NJ SQL style guide
 
 ## Overview
-
-You can use this set of guidelines, [fork them][fork] or make your own - the
-key here is that you pick a style and stick to it. To suggest changes
-or fix bugs please open an [issue][issue] or [pull request][pull] on GitHub.
-
-These guidelines are designed to be compatible with Joe Celko's [SQL Programming
-Style][celko] book to make adoption for teams who have already read that book
-easier. This guide is a little more opinionated in some areas and in others a
-little more relaxed. It is certainly more succinct where [Celko's book][celko]
-contains anecdotes and reasoning behind each rule as thoughtful prose.
-
-It is easy to include this guide in [Markdown format][dl-md] as a part of a
-project's code base or reference it here for anyone on the project to freely
-read—much harder with a physical book.
 
 SQL style guide by [Simon Holywell][simon] is licensed under a [Creative Commons
 Attribution-ShareAlike 4.0 International License][licence].
@@ -24,6 +10,7 @@ Based on a work at [http://www.sqlstyle.guide][sqlstyleguide].
 
 ### Do
 
+* Use [snake_case][snake_case] for all identifiers.
 * Use consistent and descriptive identifiers and names.
 * Make judicious use of white space and indentation to make code easier to read.
 * Store [ISO-8601][iso-8601] compliant time and date information
@@ -55,9 +42,7 @@ UPDATE file_system
 * Descriptive prefixes or Hungarian notation such as `sp_` or `tbl`.
 * Plurals—use the more natural collective term where possible instead. For example
   `staff` instead of `employees` or `people` instead of `individuals`.
-* Quoted identifiers—if you must use them then stick to SQL92 double quotes for
-  portability (you may need to configure your SQL server to support this depending
-  on vendor).
+* Quoted identifiers.
 * Object oriented design principles should not be applied to SQL or database
   structures.
 
@@ -65,17 +50,13 @@ UPDATE file_system
 
 ### General
 
-* Ensure the name is unique and does not exist as a
-  [reserved keyword][reserved-keywords].
-* Keep the length to a maximum of 30 bytes—in practice this is 30 characters
-  unless you are using multi-byte character set.
+* Ensure the name is unique and does not exist as a [reserved keyword][reserved-keywords].
+* Avoid abbreviations and if you have to use them make sure they are commonly understood.
 * Names must begin with a letter and may not end with an underscore.
 * Only use letters, numbers and underscores in names.
 * Avoid the use of multiple consecutive underscores—these can be hard to read.
-* Use underscores where you would naturally include a space in the name (first
-  name becomes `first_name`).
-* Avoid abbreviations and if you have to use them make sure they are commonly
-  understood.
+* Use underscores where you would naturally include a space in the name (first name becomes `first_name`).
+* Keep the length to a maximum of 30 bytes—in practice this is 30 characters unless you are using multi-byte character set.
 
 ```sql
 SELECT first_name
@@ -84,28 +65,25 @@ SELECT first_name
 
 ### Tables
 
-* Use a collective name or, less ideally, a plural form. For example (in order of
-  preference) `staff` and `employees`.
-* Do not prefix with `tbl` or any other such descriptive prefix or Hungarian
-  notation.
+* 
+* Use a collective name or, less ideally, a plural form. For example (in order of preference) `staff` and `employees`.
 * Never give a table the same name as one of its columns and vice versa.
-* Avoid, where possible, concatenating two table names together to create the name
-  of a relationship table. Rather than `cars_mechanics` prefer `services`.
+* Do not prefix with `tbl` or any other such descriptive prefix or Hungarian notation.
 
 ### Columns
 
 * Always use the singular name.
 * Where possible avoid simply using `id` as the primary identifier for the table.
 * Do not add a column with the same name as its table and vice versa.
-* Always use lowercase except where it may make sense not to such as proper nouns.
+* Always use lowercase except in rare cases where it may make sense not to.
 
-### Aliasing or correlations
+### Aliasing
 
-* Should relate in some way to the object or expression they are aliasing.
-* As a rule of thumb the correlation name should be the first letter of each word
-  in the object's name.
-* If there is already a correlation with the same name then append a number.
 * Always include the `AS` keyword—makes it easier to read as it is explicit.
+* Should relate in some way to the object or expression they are aliasing.
+* As a rule of thumb, a table alias should be the first letter of each word
+  in the object's name.
+* If there is already a table alias with the same name then append a number.
 * For computed data (`SUM()` or `AVG()`) use the name you would give it were it
   a column defined in the schema.
 
@@ -132,8 +110,7 @@ The following suffixes have a universal meaning ensuring the columns can be read
 and understood easily from SQL code. Use the correct suffix where appropriate.
 
 * `_id`—a unique identifier such as a column that is a primary key.
-* `_status`—flag value or some other status of any type such as
-  `publication_status`.
+* `_status`—flag value or some other status of any type such as `publication_status`.
 * `_total`—the total or sum of a collection of values.
 * `_num`—denotes the field contains any kind of number.
 * `_name`—signifies a name such as `first_name`.
@@ -141,8 +118,7 @@ and understood easily from SQL code. Use the correct suffix where appropriate.
 * `_date`—denotes a column that contains the date of something.
 * `_tally`—a count.
 * `_size`—the size of something such as a file size or clothing.
-* `_addr`—an address for the record could be physical or intangible such as
-  `ip_addr`.
+* `_addr`—an address for the record could be physical or intangible such as `ip_addr`.
 
 ## Query syntax
 
@@ -208,8 +184,8 @@ Although not exhaustive always include spaces:
 ```sql
 SELECT a.title, a.release_date, a.recording_date
   FROM albums AS a
- WHERE a.title = 'Charcoal Lane'
-    OR a.title = 'The New Danger';
+ WHERE (a.title = 'Charcoal Lane'
+          OR a.title = 'The New Danger');
 ```
 
 #### Line spacing
@@ -218,7 +194,7 @@ Always include newlines/vertical space:
 
 * before `AND` or `OR`
 * after semicolons to separate queries for easier reading
-* after each keyword definition
+* after each column identifier
 * after a comma when separating multiple columns into logical groups
 * to separate code into related sections, which helps to ease the readability of
   large chunks of code.
@@ -243,38 +219,27 @@ UPDATE albums
 SELECT a.title,
        a.release_date, a.recording_date, a.production_date -- grouped dates together
   FROM albums AS a
- WHERE a.title = 'Charcoal Lane'
-    OR a.title = 'The New Danger';
+ WHERE (a.title = 'Charcoal Lane'
+          OR a.title = 'The New Danger');
 ```
 
-### Indentation
+### Joins
 
-To ensure that SQL is readable it is important that standards of indentation
-are followed.
+* Do not `JOIN` to a subquery.  Instead, use a CTE and join to that to the main clause.
+* Explicitly use `INNER JOIN` not just `JOIN`, making multiple lines of `INNER JOIN`s easier to scan.
+* The `ON` keyword and condition goes on a new indented line.
+* Additional filters in the `INNER JOIN` go on new indented lines.
+* Begin with `INNER JOIN`s and then list `LEFT JOIN`s, order them semantically, and do not intermingle them unless necessary.
 
-#### Joins
-
-Joins should be indented to the other side of the river and grouped with a new
-line where necessary.
-
-```sql
-SELECT r.last_name
-  FROM riders AS r
-       INNER JOIN bikes AS b
-       ON r.bike_vin_num = b.vin_num
-          AND b.engines > 2
-
-       INNER JOIN crew AS c
-       ON r.crew_chief_last_name = c.last_name
-          AND c.chief = 'Y';
+```
+example...
 ```
 
-#### Subqueries
+### Subqueries
 
-Subqueries should also be aligned to the right side of the river and then laid
-out using the same style as any other query. Sometimes it will make sense to have
-the closing parenthesis on a new line at the same character position as its
-opening partner—this is especially true where you have nested subqueries.
+* Subqueries should be aligned to the right side of the river and then laid out using the same style as any other query.
+* The opening and closing parentheses should both be on new lines, at the same character position.
+* Avoid going more than one level deep for subqueries.  If you need to do major transformations before the main clause, use a CTE.
 
 ```sql
 SELECT r.last_name,
@@ -292,14 +257,10 @@ SELECT r.last_name,
 
 ### Preferred formalisms
 
-* Make use of `BETWEEN` where possible instead of combining multiple statements
-  with `AND`.
-* Similarly use `IN()` instead of multiple `OR` clauses.
-* Where a value needs to be interpreted before leaving the database use the `CASE`
-  expression. `CASE` statements can be nested to form more complex logical structures.
-* Avoid the use of `UNION` clauses and temporary tables where possible. If the
-  schema can be optimised to remove the reliance on these features then it most
-  likely should be.
+* Make use of `BETWEEN` where possible instead of combining multiple statements with `AND`.
+* Similarly, use `IN()` instead of multiple `OR` clauses.
+* Where a value needs to be interpreted before leaving the database use the `CASE` expression. `CASE` statements can be nested to form more complex logical structures.
+* Avoid the use of `UNION` clauses and temporary tables where possible. If the schema can be optimised to remove the reliance on these features then it most likely should be.
 
 ```sql
 SELECT CASE postcode
@@ -322,18 +283,12 @@ Indent column definitions by four (4) spaces within the `CREATE` definition.
 
 ### Choosing data types
 
-* Where possible do not use vendor specific data types—these are not portable and
-  may not be available in older versions of the same vendor's software.
-* Only use `REAL` or `FLOAT` types where it is strictly necessary for floating
-  point mathematics otherwise prefer `NUMERIC` and `DECIMAL` at all times. Floating
-  point rounding errors are a nuisance!
+* Where possible do not use vendor specific data types—these are not portable and may not be available in older versions of the same vendor's software.
 
 ### Specifying default values
 
-* The default value must be the same type as the column—if a column is declared
-  a `DECIMAL` do not provide an `INTEGER` default value.
-* Default values must follow the data type declaration and come before any
-  `NOT NULL` statement.
+* The default value must be the same type as the column—if a column is declared a `DECIMAL` do not provide an `INTEGER` default value.
+* Default values must follow the data type declaration and come before any `NOT NULL` statement.
 
 ### Constraints and keys
 
@@ -411,18 +366,11 @@ CREATE TABLE staff (
 
 ### Designs to avoid
 
-* Object oriented design principles do not effectively translate to relational
-  database designs—avoid this pitfall.
-* Placing the value in one column and the units in another column. The column
-  should make the units self evident to prevent the requirement to combine
-  columns again later in the application. Use `CHECK()` to ensure valid data is
-  inserted into the column.
-* [EAV (Entity Attribute Value)][eav] tables—use a specialist product intended for
-  handling such schema-less data instead.
-* Splitting up data that should be in one table across many because of arbitrary
-  concerns such as time-based archiving or location in a multi-national
-  organisation. Later queries must then work across multiple tables with `UNION`
-  rather than just simply querying one table.
+* Object oriented design principles do not effectively translate to relational database designs—avoid this pitfall.
+* Placing the value in one column and the units in another column. The column should make the units self evident to prevent the requirement to combine
+  columns again later in the application. Use `CHECK()` to ensure valid data is inserted into the column.
+* [EAV (Entity Attribute Value)][eav] tables—use a specialist product intended for handling such schema-less data instead.
+* Splitting up data that should be in one table across many because of arbitrary concerns such as time-based archiving or location in a multi-national organisation. Later queries must then work across multiple tables with `UNION` rather than just simply querying one table.
 
 
 ## Appendix
@@ -1283,3 +1231,5 @@ ZONE
     "SQL style guide by Simon Holywell"
 [licence]: http://creativecommons.org/licenses/by-sa/4.0/
     "Creative Commons Attribution-ShareAlike 4.0 International License"
+[snake_case]: https://en.wikipedia.org/wiki/Snake_case
+    "snake_case"
