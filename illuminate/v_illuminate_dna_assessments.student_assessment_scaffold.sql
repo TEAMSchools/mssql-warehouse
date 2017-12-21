@@ -34,6 +34,7 @@ WITH course_enrollments AS (
          ON ils.student_id = ssc.student_id
         AND c.course_id = ssc.course_id
         AND (enr.academic_year + 1) = ssc.academic_year        
+        AND CONCAT(ssc.student_id, '_', ssc.user_id, '_', ssc.section_id, '_', ssc.entry_date, '_', ssc.leave_date) IN (SELECT CONCAT(student_id, '_', user_id, '_', section_id, '_', entry_date, '_', leave_date) FROM gabby.illuminate_matviews.ss_cube_validation_static)
        WHERE enr.course_enroll_status = 0
          AND enr.section_enroll_status = 0
          AND enr.course_number = 'HR'       
@@ -60,6 +61,7 @@ WITH course_enrollments AS (
         AND c.course_id = ssc.course_id
         AND (enr.academic_year + 1) = ssc.academic_year
         AND ssc.grade_level_id <= 5
+        AND CONCAT(ssc.student_id, '_', ssc.user_id, '_', ssc.section_id, '_', ssc.entry_date, '_', ssc.leave_date) IN (SELECT CONCAT(student_id, '_', user_id, '_', section_id, '_', entry_date, '_', leave_date) FROM gabby.illuminate_matviews.ss_cube_validation_static)
        WHERE enr.course_enroll_status = 0
          AND enr.section_enroll_status = 0
          AND enr.course_number = 'HR'
@@ -86,6 +88,7 @@ WITH course_enrollments AS (
          ON ils.student_id = ssc.student_id
         AND c.course_id = ssc.course_id
         AND (enr.academic_year + 1) = ssc.academic_year
+        AND CONCAT(ssc.student_id, '_', ssc.user_id, '_', ssc.section_id, '_', ssc.entry_date, '_', ssc.leave_date) IN (SELECT CONCAT(student_id, '_', user_id, '_', section_id, '_', entry_date, '_', leave_date) FROM gabby.illuminate_matviews.ss_cube_validation_static)
        WHERE enr.course_enroll_status = 0
          AND enr.section_enroll_status = 0
          AND enr.illuminate_subject IN ('Mathematics','Algebra I','Geometry','Algebra IIA','Algebra IIB'
