@@ -2,8 +2,6 @@
 
 ## Overview
 
-SQL style guide by [Simon Holywell][simon] is licensed under a [Creative Commons
-Attribution-ShareAlike 4.0 International License][licence].
 Based on a work at [http://www.sqlstyle.guide][sqlstyleguide] and the [Kickstarter SQL Style Guide][kickstarter].
 
 ## General
