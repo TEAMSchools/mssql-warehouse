@@ -83,4 +83,9 @@ SELECT adp.associate_id
            ORDER BY adp.position_status DESC
                    ,CONVERT(DATE,adp.position_start_date) ASC
                    ,CONVERT(DATE,adp.termination_date) ASC) AS rn_base
-FROM gabby.adp.export_people_details adp
+      
+      ,m.last_name + ', ' + m.first_name AS manager_name
+      
+FROM gabby.adp.export_people_details AS adp
+      LEFT OUTER JOIN gabby.adp.export_people_details AS m
+      ON adp.manager_custom_assoc_id = m.associate_id
