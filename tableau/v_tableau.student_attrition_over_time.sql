@@ -16,10 +16,11 @@ WITH enrolled_oct1 AS (
         ,enroll_status
   FROM gabby.powerschool.cohort_identifiers_static
   WHERE DATEFROMPARTS(academic_year, 10, 01) BETWEEN entrydate AND exitdate
+    AND academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
  )
 
 ,attrition_dates AS (
-  SELECT CONVERT(DATE,date) AS date
+  SELECT date
         ,CASE 
           WHEN DATEPART(MONTH,date) >= 10 THEN DATEPART(YEAR,date)
           ELSE DATEPART(YEAR,date) - 1
@@ -46,6 +47,7 @@ SELECT y1.student_number
       ,COALESCE(y2.exitdate, y1.exitdate) AS transferdate
       ,CASE
         WHEN y1.exitcode = 'G1' THEN 0 /* graduates != attrition */
+        WHEN s.exitdate >= y1.exitdate AND s.exitdate >= d.date THEN 0 /* handles re-enrollments during the year */
         WHEN y1.exitdate <= d.date AND y2.entrydate IS NULL THEN 1 /* was not enrolled on 10/1 next year */
         ELSE 0
        END AS is_attrition
@@ -53,7 +55,9 @@ SELECT y1.student_number
 FROM enrolled_oct1 y1
 JOIN attrition_dates d
   ON y1.academic_year = d.attrition_year
- AND d.date <= CONVERT(DATE,GETDATE())
+ AND d.date <= GETDATE()
+LEFT OUTER JOIN gabby.powerschool.students s
+  ON y1.student_number = s.student_number
 LEFT OUTER JOIN gabby.powerschool.cohort_identifiers_static y2
   ON y1.student_number = y2.student_number
  AND y1.academic_year = (y2.academic_year - 1)
