@@ -15,17 +15,17 @@ SELECT student_number
       ,CASE WHEN [composite] >= 25 THEN 1.0 ELSE 0.0 END AS is_25
       ,ROW_NUMBER() OVER(
          PARTITION BY student_number, academic_year
-           ORDER BY administered_at DESC) AS rn_curr
+           ORDER BY time_per_name DESC) AS rn_curr
 FROM
     (
      SELECT student_number
            ,academic_year
            ,administration_round
-           ,administered_at
+           ,time_per_name
            ,subject_area
            ,scale_score
      FROM gabby.act.test_prep_scores 
-     WHERE rn_dupe = 1
+     WHERE rn_dupe = 1    
     ) sub
 PIVOT(
   MAX(scale_score)
