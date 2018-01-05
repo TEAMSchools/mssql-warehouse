@@ -85,7 +85,6 @@ SELECT adp.associate_id
                    ,CONVERT(DATE,adp.termination_date) ASC) AS rn_base
       
       ,m.last_name + ', ' + m.first_name AS manager_name
-      
 FROM gabby.adp.export_people_details AS adp
-      LEFT OUTER JOIN gabby.adp.export_people_details AS m
-      ON adp.manager_custom_assoc_id = m.associate_id
+LEFT OUTER JOIN gabby.adp.export_people_details AS m
+  ON adp.manager_custom_assoc_id = m.associate_id
