@@ -9,14 +9,18 @@ SELECT co.student_number
       ,co.lastfirst
       ,co.schoolid
       ,co.school_name
-      ,CASE WHEN co.grade_level = 0 THEN 'K' ELSE CONVERT(NVARCHAR,co.grade_level) END AS grade_level      
+      ,CASE WHEN co.grade_level = 0 THEN 'K' ELSE CONVERT(VARCHAR,co.grade_level) END AS grade_level      
       ,co.team
       ,co.advisor_name      
-      ,CONVERT(NVARCHAR,co.entrydate) AS entrydate
+      ,CONVERT(VARCHAR,co.entrydate) AS entrydate
       ,co.boy_status
-      ,CONVERT(NVARCHAR,co.dob) AS dob
+      ,CONVERT(VARCHAR,co.dob) AS dob
       ,co.gender                        
       ,co.lunchstatus
+      ,CASE
+        WHEN co.lunch_app_status IS NULL OR co.lunch_app_status = 'No Application' THEN 'N'
+        ELSE 'Y'
+       END AS lunch_app_status 
       ,CONVERT(MONEY,co.lunch_balance) AS lunch_balance
       ,co.home_phone
       ,co.mother_cell
@@ -37,9 +41,13 @@ SELECT co.student_number
       ,aa.student_web_password
       ,aa.web_id AS family_web_id
       ,aa.web_password AS family_web_password      
+
+      ,suf.media_release
 FROM gabby.powerschool.cohort_identifiers_static co
-LEFT OUTER JOIN gabby.extracts.powerschool_autocomm_students_accessaccounts aa
+LEFT JOIN gabby.extracts.powerschool_autocomm_students_accessaccounts aa
   ON co.student_number = aa.student_number
+LEFT JOIN gabby.powerschool.u_studentsuserfields suf
+  ON co.students_dcid = suf.studentsdcid
 WHERE co.enroll_status = 0
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.rn_year = 1 
