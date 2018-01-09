@@ -42,7 +42,7 @@ FROM gabby.payroll.payroll_edit_tracker e
 LEFT OUTER JOIN gabby.adp.staff_roster r
   ON e.associate_id = r.associate_id
  AND r.rn_curr = 1
- AND _fivetran_deleted IS NULL
+WHERE e._fivetran_deleted IS NULL
 
 UNION ALL
 
