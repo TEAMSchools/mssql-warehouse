@@ -160,7 +160,6 @@ WITH contacts_unpivot AS (
         ,gabby.dbo.GROUP_CONCAT_D(DISTINCT home, CHAR(10)) AS home
         ,gabby.dbo.GROUP_CONCAT_D(DISTINCT day, CHAR(10)) AS day
         ,gabby.dbo.GROUP_CONCAT_D(DISTINCT email, CHAR(10)) AS email
-        ,MAX(registeredtovote) AS registeredtovote
   FROM contacts_repivot
   WHERE family_ident IS NOT NULL
   GROUP BY family_ident
@@ -179,11 +178,11 @@ SELECT co.student_number
       
       ,s.family_ident
       
-      ,suf.infosnap_opt_in
+      ,suf.infosnap_opt_in      
 
       ,c.person AS contact_type
       ,c.name AS contact_name
-      ,c.registeredtovote AS contact_registered_to_vote
+      ,c.registeredtovote AS contact_registered_to_vote      
       ,ISNULL(c.relation, c.person) AS contact_relation
       
       ,cg.cell AS contact_cell_phone
