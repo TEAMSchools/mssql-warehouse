@@ -21,6 +21,7 @@ WITH gdoc_long AS (
              --,NULL AS moy_goal
              --,NULL AS eoy_goal
        FROM gabby.lit.individualized_goal_entry       
+       WHERE _fivetran_deleted IS NULL
       ) sub
   UNPIVOT (
     goal
