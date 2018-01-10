@@ -12,9 +12,9 @@ WITH current_trans AS (
         
         ,transaction_types.[trans_description] AS [Last Transaction]
 
-	       ,employees.[employee_number] AS [Assignee Employee ID]
-	       ,employees.[first_name] AS [Assignee First Name]
-	       ,employees.[last_name] AS [Assignee Last Name]
+        ,employees.[employee_number] AS [Assignee Employee ID]
+        ,employees.[first_name] AS [Assignee First Name]
+        ,employees.[last_name] AS [Assignee Last Name]
         
         ,ROW_NUMBER() OVER(
            PARTITION BY asset.asset_id
@@ -58,10 +58,10 @@ SELECT asset.[asset_id] AS [Asset ID]
       ,sites.[site_name] AS [Site]
    
       ,ct.[Last Transaction]
-	     ,ct.[Assignee Employee ID]
-	     ,ct.[Assignee First Name]
-	     ,ct.[Assignee Last Name]
-	     ,ct.[entry_date] AS [Last Transaction Time]
+      ,ct.[Assignee Employee ID]
+      ,ct.[Assignee First Name]
+      ,ct.[Assignee Last Name]
+      ,ct.[entry_date] AS [Last Transaction Time]
 FROM [WaspTrackAsset].[dbo].[asset]
 INNER JOIN [WaspTrackAsset].[dbo].[item]
   ON asset.item_id = item.item_id  
