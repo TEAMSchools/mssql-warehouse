@@ -28,24 +28,25 @@ SELECT co.student_number
       ,co.team
       ,co.region
       ,co.reporting_schoolid
-	     ,co.school_name    
-	     ,co.enroll_status
-	     ,co.is_retained_ever
-	     ,co.is_retained_year
-	     ,co.advisor_name
-	     ,co.advisor_phone
-	     ,co.mother_cell
-	     ,co.home_phone
-	     ,co.father_cell
-	     ,co.mother
-	     ,co.father
-	     ,co.guardianemail
-	     ,co.street + ', ' + co.city + ', ' + co.zip AS address
-	     ,co.specialed_classification
-	     ,co.iep_status
-	     ,co.boy_status
+      ,co.school_name    
+      ,co.enroll_status
+      ,co.is_retained_ever
+      ,co.is_retained_year
+      ,co.advisor_name
+      ,co.advisor_phone
+      ,co.mother_cell
+      ,co.home_phone
+      ,co.father_cell
+      ,co.mother
+      ,co.father
+      ,co.guardianemail
+      ,co.street + ', ' + co.city + ', ' + co.zip AS address
+      ,co.specialed_classification
+      ,co.iep_status
+      ,co.boy_status
 
-	     ,cl.commlog_staff_name
+      ,cl.commlog_date
+      ,cl.commlog_staff_name
       ,cl.commlog_reason
       ,cl.commlog_notes
       ,cl.commlog_topic
