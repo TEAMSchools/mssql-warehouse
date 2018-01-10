@@ -22,7 +22,7 @@ WITH current_trans AS (
   FROM [WaspTrackAsset].[dbo].[asset]
   JOIN [WaspTrackAsset].[dbo].[asset_transactions] ats
     ON asset.asset_id = ats.asset_id
-   AND ats.trans_type IN (300, 350)
+   AND ats.trans_type IN (300, 350) /* Check In & Check Out */
   JOIN [WaspTrackAsset].[dbo].[transaction_types]
     ON ats.trans_type = transaction_types.trans_type_no
   JOIN [WaspTrackAsset].[dbo].[employees]
