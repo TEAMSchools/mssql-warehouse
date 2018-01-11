@@ -57,13 +57,13 @@ WITH attending_enrollment AS (
                WHEN c.category_c = 'Benchmark' AND MONTH(c.date_c) < 7 THEN 'AAS1S'
                WHEN c.category_c = 'Benchmark Follow-Up' AND MONTH(c.date_c) >= 7 THEN 'AAS2F'
                WHEN c.category_c = 'Benchmark Follow-Up' AND MONTH(c.date_c) < 7 THEN 'AAS2S'               
-               WHEN c.subject_c = 'PSC' AND MONTH(c.date_c) >= 7 THEN 'PSC1'
-               WHEN c.subject_c = 'PSC' AND MONTH(c.date_c) < 7 THEN 'PSC2'
+               WHEN c.subject_c LIKE 'PSC%' AND MONTH(c.date_c) >= 7 THEN 'PSC1'
+               WHEN c.subject_c LIKE 'PSC%' AND MONTH(c.date_c) < 7 THEN 'PSC2'
                ELSE c.subject_c
               END AS contact_subject
              ,c.Date_c AS contact_date             
        FROM gabby.alumni.Contact_Note_c c WITH(NOLOCK)       
-       WHERE ((c.Subject_c = 'PSC' OR c.Subject_c = 'REM') OR (c.category_c IN ('Benchmark','Benchmark Follow-Up')))
+       WHERE ((c.Subject_c LIKE 'PSC%' OR c.Subject_c = 'REM') OR (c.category_c IN ('Benchmark','Benchmark Follow-Up')))
          AND gabby.utilities.DATE_TO_SY(c.Date_c) = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
          AND c.is_deleted = 0
       ) sub
@@ -301,11 +301,11 @@ SELECT c.id AS contact_id
       ,cn.PSC2
       ,cn.REM      
            
+      ,mp.transcript_collected_MP1
       ,CASE 
         WHEN (gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1) - DATEPART(YEAR, c.actual_hs_graduation_date_c) = 1 THEN NULL /* ignore freshmen */
-        ELSE mp.transcript_collected_MP1 
-       END AS transcript_collected_MP1
-      ,mp.transcript_collected_MP2
+        ELSE mp.transcript_collected_mp2 
+       END AS transcript_collected_mp2
       ,mp.GPA_MP1
       ,mp.GPA_MP2      
       ,COALESCE(mp.GPA_MP2, mp.GPA_MP1) AS GPA_recent      
