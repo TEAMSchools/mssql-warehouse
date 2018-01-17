@@ -5,14 +5,13 @@ CREATE OR ALTER VIEW extracts.deanslist_writing_rubric AS
 
 SELECT student_number
       ,academic_year
-      ,composition_type
-      ,rubric_type
+      ,NULL AS composition_type
+      ,NULL AS rubric_type
       ,rubric_strand
       ,[QA1]
       ,[QA2]
       ,[QA3]
       ,[QA4]
-      ,[QA5]
 FROM
     (     
      SELECT (a.academic_year - 1) AS academic_year
@@ -20,22 +19,16 @@ FROM
              WHEN PATINDEX('%[MU][0-9]/[0-9]%', a.title) > 0 THEN SUBSTRING(a.title, PATINDEX('%[MU][0-9]/[0-9]%', a.title), 4)
              WHEN PATINDEX('%QA[0-9]%', a.title) > 0 THEN SUBSTRING(a.title, PATINDEX('%QA[0-9]%', a.title), 3)
              WHEN PATINDEX('%[MU][0-9]%', a.title) > 0 THEN SUBSTRING(a.title, PATINDEX('%[MU][0-9]%', a.title), 2)
-            END AS module_num
-  
-           ,std.custom_code AS standard_code           
-           ,REPLACE(std.description,'"','''') AS rubric_strand           
-           ,CASE
-             WHEN std.custom_code LIKE 'TES.W.KIPP.N%' THEN 'Narrative'
-             WHEN std.custom_code IN ('TES.W.KIPP.C.C','TES.W.KIPP.C.D','TES.W.KIPP.C.F','TES.W.KIPP.C.L','TES.W.KIPP.C.O_1') THEN 'Narrative'
-             ELSE 'Expository'
-            END AS composition_type
-           ,CASE
-             WHEN std.custom_code LIKE 'TES.W.KIPP.N%' THEN 'Narrative'
-             WHEN std.custom_code IN ('TES.W.KIPP.C.C','TES.W.KIPP.C.D','TES.W.KIPP.C.F','TES.W.KIPP.C.L','TES.W.KIPP.C.O_1') THEN 'Narrative'
-             WHEN std.custom_code IN ('TES.W.KIPP.C.G','TES.W.KIPP.L.SF','TES.W.KIPP.C.S_1') THEN 'Language'
-             ELSE 'Content'             
-            END AS rubric_type                         
+            END AS module_num  
            
+           ,CASE
+             WHEN std.custom_code IN ('TES.W.KIPP.C.TP','TES.W.KIPP.C','TES.W.KIPP.C.I','TES.W.KIPP.N.FTT','TES.W.KIPP.C.F') THEN 'Focus on Task and Text'
+             WHEN std.custom_code IN ('TES.W.KIPP.C.O','TES.W.KIPP.N.O','TES.W.KIPP.C.O_1') THEN 'Organization'
+             WHEN std.custom_code IN ('TES.W.KIPP.C.AJ','TES.W.KIPP.C.S','TES.W.KIPP.N.DS','TES.W.KIPP.C.D') THEN 'Development and Support'
+             WHEN std.custom_code IN ('TES.W.KIPP.C.L','TES.W.KIPP.N.L','TES.W.KIPP.L.SF') THEN 'Language'
+             WHEN std.custom_code IN ('TES.W.KIPP.C.C','TES.W.KIPP.N.C','TES.W.KIPP.C.G','TES.W.KIPP.C.S_1') THEN 'Conventions'             
+            END AS rubric_strand
+                                  
            ,CASE
              WHEN asrs.answered = 0 THEN NULL 
              ELSE asrs.points 
@@ -63,10 +56,9 @@ FROM
      WHERE (a.academic_year - 1) = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
     ) sub
 PIVOT(
-  MAX(rubric_score)
+  AVG(rubric_score)
   FOR module_num IN ([QA1]
                     ,[QA2]
                     ,[QA3]
-                    ,[QA4]
-                    ,[QA5])
+                    ,[QA4])
  ) p

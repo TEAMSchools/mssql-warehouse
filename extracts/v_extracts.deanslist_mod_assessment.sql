@@ -39,7 +39,7 @@ FROM
               PARTITION BY asr.local_student_id, asr.subject_area, asr.module_number
                 ORDER BY asr.is_replacement DESC, asr.percent_correct DESC) AS rn_subj_modnum
      FROM gabby.illuminate_dna_assessments.agg_student_responses_all asr
-     WHERE asr.module_type = 'QA'
+     WHERE asr.module_type IN ('QA','CP')
        AND asr.subject_area IN ('Text Study','Mathematics')
        AND asr.response_type = 'O'
        AND asr.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
