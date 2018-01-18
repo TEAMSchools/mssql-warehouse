@@ -4,26 +4,27 @@ GO
 CREATE OR ALTER VIEW tableau.ktc_basic_contact_dump AS
 
 WITH attending_enrollment AS (
-  SELECT e.Id AS enrollment_id
-        ,e.Student_c
-        ,e.School_c
-        ,e.Status_c
-        ,e.Start_Date_c
-        ,e.Actual_End_Date_c
-        ,e.Major_c              
-        ,e.Pursuing_Degree_Type_c        
+  SELECT e.id AS enrollment_id
+        ,e.student_c
+        ,e.school_c
+        ,e.status_c
+        ,e.start_date_c
+        ,e.actual_end_date_c
+        ,e.major_c              
+        ,e.pursuing_degree_type_c        
         ,e.date_last_verified_c
 
-        ,a.NCESid_c
+        ,a.ncesid_c
         ,a.name AS account_name
         ,a.type AS account_type    
+        ,a.billing_state
 
         ,ROW_NUMBER() OVER(
-           PARTITION BY e.Student_c
-             ORDER BY e.Start_Date_c DESC) AS rn  
-  FROM gabby.alumni.Enrollment_c e WITH(NOLOCK)
-  LEFT OUTER JOIN gabby.alumni.Account a WITH(NOLOCK)
-    ON e.School_c = a.Id   
+           PARTITION BY e.student_c
+             ORDER BY e.start_date_c DESC) AS rn  
+  FROM gabby.alumni.enrollment_c e
+  LEFT OUTER JOIN gabby.alumni.account a
+    ON e.school_c = a.id   
   WHERE e.status_c IN ('Attending','Matriculated')
     AND e.start_date_c < DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1, 7, 1)
     AND e.is_deleted = 0
@@ -62,7 +63,7 @@ WITH attending_enrollment AS (
                ELSE c.subject_c
               END AS contact_subject
              ,c.Date_c AS contact_date             
-       FROM gabby.alumni.Contact_Note_c c WITH(NOLOCK)       
+       FROM gabby.alumni.Contact_Note_c c
        WHERE ((c.Subject_c LIKE 'PSC%' OR c.Subject_c = 'REM') OR (c.category_c IN ('Benchmark','Benchmark Follow-Up')))
          AND gabby.utilities.DATE_TO_SY(c.Date_c) = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
          AND c.is_deleted = 0
@@ -79,36 +80,40 @@ WITH attending_enrollment AS (
    ) p
  )
 
-,marking_period AS (
-  SELECT *
+,gpa AS (
+  SELECT student_c        
+        ,[fall_semester_gpa]
+        ,[fall_academic_status]
+        ,[spring_semester_gpa]
+        ,[spring_academic_status]
   FROM
       (
-       SELECT enrollment_c
-             ,CONCAT(field, '_MP', number_c) AS pivot_field
+       SELECT student_c             
+             ,semester + '_' + field AS pivot_field
              ,value
        FROM
            (
-            SELECT enrollment_c
-                  --,school_year_c
-                  ,number_c
-                  ,CONVERT(FLOAT,report_card_transcript_received_c) AS transcript_collected
-                  ,GPA_c AS GPA                
-            FROM gabby.alumni.marking_period_c
-            WHERE ((school_year_c = (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1) AND number_c = 2) OR (school_year_c = gabby.utilities.GLOBAL_ACADEMIC_YEAR() AND number_c = 1))
-              AND is_deleted = 0
+            SELECT student_c                  
+                  ,CASE
+                    WHEN MONTH(transcript_date_c) = 8 AND DAY(transcript_date_c) = 31 THEN 'spring'
+                    WHEN MONTH(transcript_date_c) = 12 AND DAY(transcript_date_c) = 31 THEN 'fall'
+                   END AS semester
+                  ,CONVERT(VARCHAR,semester_gpa_c) AS semester_gpa
+                  ,CONVERT(VARCHAR,academic_status_c) AS academic_status
+            FROM gabby.alumni.gpa_c
+            WHERE transcript_date_c >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
            ) sub
        UNPIVOT(
          value
-         FOR field IN (transcript_collected
-                      ,GPA)
+         FOR field IN (semester_gpa, academic_status)
         ) u
       ) sub
   PIVOT(
     MAX(value)
-    FOR pivot_field IN ([GPA_MP1] 
-                       ,[GPA_MP2]
-                       ,[transcript_collected_MP1] 
-                       ,[transcript_collected_MP2])
+    FOR pivot_field IN ([fall_semester_gpa]
+                       ,[fall_academic_status]
+                       ,[spring_semester_gpa]
+                       ,[spring_academic_status])
    ) p
  )
 
@@ -164,11 +169,10 @@ WITH attending_enrollment AS (
              ,DATEDIFF(MONTH
                       ,Date_c
                       ,COALESCE(LEAD(Date_c, 1) OVER(PARTITION BY Contact_c ORDER BY Date_c), GETDATE())) AS n_months_elapsed
-       FROM gabby.alumni.Contact_Note_c c WITH(NOLOCK)
+       FROM gabby.alumni.contact_note_c c
        WHERE Status_c = 'Successful'
          AND is_deleted = 0
       ) sub
-  --WHERE n_months_elapsed >= 12
  ) 
 
 ,counselor_changes AS (
@@ -256,41 +260,36 @@ SELECT c.id AS contact_id
       ,rt.name AS record_type
 
       ,oot.n_months_elapsed
-      ,CASE 
-        --WHEN c.Post_HS_Simple_Admin_c IN ('College Grad - BA') THEN 0 /* exclude grads */
-        --WHEN c.college_graduated_from_c IS NOT NULL THEN 0
+      ,CASE         
         WHEN (oot.n_months_elapsed >= 12 OR oot.contact_id IS NULL) THEN 1
         ELSE 0 
        END AS is_oot_baseline
-      ,CASE 
-        --WHEN c.Post_HS_Simple_Admin_c IN ('College Grad - BA') THEN 0 /* exclude grads */
-        --WHEN c.college_graduated_from_c IS NOT NULL THEN 0
+      ,CASE         
         WHEN (oot.n_months_elapsed >= 12 OR oot.contact_id IS NULL)
          AND oot.is_still_missing = 1 THEN 1
         ELSE 0 
        END AS is_out_of_touch            
-      ,CASE 
-        --WHEN c.Post_HS_Simple_Admin_c IN ('College Grad - BA') THEN 0 /* exclude grads */
+      ,CASE         
         WHEN (oot.n_months_elapsed >= 12 OR oot.contact_id IS NULL)
          AND u.name = cc.new_value 
              THEN 1 
         ELSE 0 
        END AS is_oot_assigned
-      ,CASE 
-        --WHEN c.Post_HS_Simple_Admin_c IN ('College Grad - BA') THEN 0 /* exclude grads */
+      ,CASE         
         WHEN oot.found_date IS NOT NULL THEN 1 
         ELSE 0 
        END AS is_found_this_term      
       
       ,u.name AS ktc_manager
 
-      ,e.Major_c
-      ,e.Pursuing_Degree_Type_c
-      ,e.Start_Date_c
-      ,e.Status_c AS enrollment_status
+      ,e.major_c
+      ,e.pursuing_degree_type_c
+      ,e.start_date_c
+      ,e.status_c AS enrollment_status
       ,e.account_name
       ,e.account_type  
-      ,e.NCESid_c
+      ,e.billing_state
+      ,e.ncesid_c
       ,e.date_last_verified_c
 
       ,cn.AAS1F
@@ -299,16 +298,21 @@ SELECT c.id AS contact_id
       ,cn.AAS2S
       ,cn.PSC1
       ,cn.PSC2
-      ,cn.REM      
-           
-      ,mp.transcript_collected_MP1
-      ,CASE 
-        WHEN (gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1) - DATEPART(YEAR, c.actual_hs_graduation_date_c) = 1 THEN NULL /* ignore freshmen */
-        ELSE mp.transcript_collected_mp2 
+      ,cn.REM                 
+      
+      ,gpa.fall_academic_status 
+      ,gpa.spring_academic_status
+      ,gpa.fall_semester_gpa AS gpa_mp1
+      ,gpa.spring_semester_gpa AS gpa_mp2      
+      ,COALESCE(gpa.fall_academic_status, gpa.spring_academic_status) AS gpa_recent
+      ,CASE
+        WHEN gpa.fall_semester_gpa IS NOT NULL THEN 1        
+        ELSE 0
+       END AS transcript_collected_mp1
+      ,CASE
+        WHEN gpa.spring_semester_gpa IS NOT NULL THEN 1
+        ELSE 0
        END AS transcript_collected_mp2
-      ,mp.GPA_MP1
-      ,mp.GPA_MP2      
-      ,COALESCE(mp.GPA_MP2, mp.GPA_MP1) AS GPA_recent      
 
       ,s.stipend_status_fall
       ,s.stipend_status_spr           
@@ -329,9 +333,9 @@ LEFT OUTER JOIN attending_enrollment e
   ON c.id = e.student_c 
  AND e.rn = 1 
 LEFT OUTER JOIN checkins cn
-  ON c.Id = cn.contact_id
-LEFT OUTER JOIN marking_period mp
-  ON e.enrollment_id = mp.enrollment_c
+  ON c.id = cn.contact_id
+LEFT OUTER JOIN gpa
+  ON c.id = gpa.student_c
 LEFT OUTER JOIN stipends s
   ON c.id = s.student_c
 LEFT OUTER JOIN oot_roster oot
