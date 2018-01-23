@@ -59,7 +59,7 @@ WITH attending_enrollment AS (
                WHEN c.category_c = 'Benchmark Follow-Up' AND MONTH(c.date_c) >= 7 THEN 'AAS2F'
                WHEN c.category_c = 'Benchmark Follow-Up' AND MONTH(c.date_c) < 7 THEN 'AAS2S'               
                WHEN c.subject_c LIKE 'PSC%' AND MONTH(c.date_c) >= 7 THEN 'PSC1'
-               WHEN c.subject_c LIKE 'PSC%' AND MONTH(c.date_c) < 7 THEN 'PSC2'
+               WHEN c.subject_c LIKE 'PSC 2.25%' AND MONTH(c.date_c) < 7 THEN 'PSC2'
                ELSE c.subject_c
               END AS contact_subject
              ,c.Date_c AS contact_date             
