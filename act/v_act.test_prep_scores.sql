@@ -41,7 +41,7 @@ WITH long_data AS (
     ON s.local_student_id = co.student_number
    AND (a.academic_year - 1) = co.academic_year
    AND co.rn_year = 1
-  LEFT OUTER JOIN gabby.reporting.reporting_terms d
+  JOIN gabby.reporting.reporting_terms d
     ON a.administered_at BETWEEN d.start_date AND d.end_date
    AND d.identifier = 'ACT'
  )
