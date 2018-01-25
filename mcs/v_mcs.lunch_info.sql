@@ -3,7 +3,7 @@ GO
 
 CREATE OR ALTER VIEW mcs.lunch_info AS
 
-SELECT c.studentnumber
+SELECT CONVERT(INT,c.studentnumber) AS studentnumber
       ,c.reimbursableonlybalance
       ,c.unallocatedbalance
       ,c.reimbursableonlybalance + c.unallocatedbalance AS [balance]      
@@ -30,7 +30,7 @@ WHERE cat.[isstudent] = 1 /* only students */
   
 UNION ALL
 
-SELECT c.studentnumber
+SELECT CONVERT(INT,c.studentnumber) AS studentnumber
       ,c.reimbursableonlybalance
       ,c.unallocatedbalance
       ,c.reimbursableonlybalance + c.unallocatedbalance AS balance

@@ -13,8 +13,7 @@ SELECT studentid
       ,exitcomment
       ,lunchstatus
       ,yearid
-      ,academic_year
-      ,NULL AS cohort
+      ,academic_year      
       ,rn_year
       ,rn_school
       ,rn_undergrad
@@ -68,16 +67,17 @@ FROM
      FROM
          (
           /* terminal (current & transfers) */
-          SELECT s.id AS studentid
-                ,s.grade_level
-                ,s.schoolid
+          SELECT CONVERT(INT,s.id) AS studentid
+                ,CONVERT(INT,s.grade_level) AS grade_level
+                ,CONVERT(INT,s.schoolid) AS schoolid
                 ,s.entrydate
                 ,s.exitdate
-                ,s.entrycode
-                ,s.exitcode
-                ,s.exitcomment
-                ,CASE WHEN s.lunchstatus = 'false' THEN 'F' ELSE s.lunchstatus END AS lunchstatus
-                ,terms.yearid
+                ,CONVERT(VARCHAR,s.entrycode) AS entrycode
+                ,CONVERT(VARCHAR,s.exitcode) AS exitcode
+                ,CONVERT(VARCHAR(250),s.exitcomment) AS exitcomment
+                ,CONVERT(VARCHAR,CASE WHEN s.lunchstatus = 'false' THEN 'F' ELSE s.lunchstatus END) AS lunchstatus
+                
+                ,CONVERT(INT,terms.yearid) AS yearid
           FROM gabby.powerschool.students s
           JOIN gabby.powerschool.terms terms
             ON s.schoolid = terms.schoolid 
@@ -89,16 +89,17 @@ FROM
           UNION ALL
 
           /* terminal (grads) */
-          SELECT s.id AS studentid
-                ,s.grade_level
-                ,s.schoolid           
+          SELECT CONVERT(INT,s.id) AS studentid
+                ,CONVERT(INT,s.grade_level) AS grade_level
+                ,CONVERT(INT,s.schoolid) AS schoolid        
                 ,NULL AS entrydate
                 ,NULL AS exitdate        
                 ,NULL AS entrycode
                 ,NULL AS exitcode
                 ,NULL AS exitcomment
                 ,NULL AS lunchstatus
-                ,terms.yearid
+                
+                ,CONVERT(INT,terms.yearid) AS yearid
           FROM gabby.powerschool.students s
           JOIN gabby.powerschool.terms terms
             ON s.schoolid = terms.schoolid
@@ -110,16 +111,17 @@ FROM
           UNION ALL
 
           /* re-enrollments */
-          SELECT re.studentid
-                ,re.grade_level
-                ,re.schoolid
+          SELECT CONVERT(INT,re.studentid) AS studentid
+                ,CONVERT(INT,re.grade_level) AS grade_level
+                ,CONVERT(INT,re.schoolid) AS schoolid
                 ,re.entrydate
-                ,re.exitdate 
-                ,re.entrycode
-                ,re.exitcode
-                ,re.exitcomment           
-                ,CASE WHEN re.lunchstatus = 'false' THEN 'F' ELSE re.lunchstatus END AS lunchstatus
-                ,terms.yearid
+                ,re.exitdate
+                ,CONVERT(VARCHAR,re.entrycode) AS entrycode
+                ,CONVERT(VARCHAR,re.exitcode) AS exitcode
+                ,CONVERT(VARCHAR(250),re.exitcomment) AS exitcomment
+                ,CONVERT(VARCHAR,CASE WHEN re.lunchstatus = 'false' THEN 'F' ELSE re.lunchstatus END) AS lunchstatus
+                
+                ,CONVERT(INT,terms.yearid) AS yearid
           FROM gabby.powerschool.reenrollments re       
           JOIN gabby.powerschool.terms terms
             ON re.schoolid = terms.schoolid       

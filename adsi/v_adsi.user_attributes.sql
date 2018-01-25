@@ -10,15 +10,15 @@ SELECT cn
       ,displayname
       ,distinguishedname
       ,employeeid
-      ,employeenumber
+      ,CONVERT(VARCHAR(125),employeenumber) AS employeenumber
       ,givenname
       ,homephone
       ,homepostaladdress
-      ,idautopersonalternateid
+      ,CONVERT(VARCHAR(125),idautopersonalternateid) AS idautopersonalternateid
       ,idautostatus      
       ,l
       ,logoncount
-      ,mail
+      ,CONVERT(VARCHAR(125),mail) AS mail
       ,manager
       ,middlename
       ,mobile

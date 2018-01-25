@@ -3,16 +3,16 @@ GO
 
 CREATE OR ALTER VIEW powerschool.spenrollments_gen AS
 
-SELECT sp.studentid
+SELECT CONVERT(INT,sp.studentid) AS studentid
       ,sp.dcid
       ,sp.enter_date
       ,sp.exit_date
       ,sp.id
       ,sp.exitcode
-      ,sp.programid
+      ,CONVERT(INT,sp.programid) AS programid
       ,sp.sp_comment
       ,sp.gradelevel
-      ,CASE 
+      ,CASE
         WHEN DATEPART(MONTH,sp.enter_date) < 7 THEN (DATEPART(YEAR,sp.enter_date) - 1) 
         ELSE DATEPART(YEAR,sp.enter_date) 
        END AS academic_year

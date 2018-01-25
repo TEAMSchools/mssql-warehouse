@@ -6,10 +6,10 @@ CREATE OR ALTER VIEW powerschool.team_roster AS
 SELECT enr.studentid
       ,enr.student_number                      
       ,enr.academic_year                       
-      ,CASE
+      ,CONVERT(VARCHAR(25),CASE
         WHEN gabby.utilities.STRIP_CHARACTERS(enr.section_number,'0-9') = '' THEN enr.teacher_name
         ELSE gabby.utilities.STRIP_CHARACTERS(enr.section_number,'0-9')
-       END AS team
+       END) AS team
 
       ,ROW_NUMBER() OVER(
          PARTITION BY enr.student_number, enr.academic_year
