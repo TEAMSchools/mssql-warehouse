@@ -5,7 +5,7 @@ CREATE OR ALTER VIEW illuminate_standards.standards_domain AS
 
 SELECT s2.standard_id AS domain_standard_id
       ,s2.custom_code AS domain_custom_code
-      ,s2.description AS domain_description
+      ,CONVERT(VARCHAR(2000),s2.description) AS domain_description
       ,s2.label AS domain_label
       ,s1.standard_id
       ,s1.custom_code

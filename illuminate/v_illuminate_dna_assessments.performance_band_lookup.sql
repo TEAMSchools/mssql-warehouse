@@ -12,7 +12,7 @@ SELECT performance_band_set_id
 FROM
     (
      SELECT pbs.performance_band_set_id
-           ,pbs.description
+           ,CONVERT(VARCHAR(125),pbs.description) AS description
       
            ,pb.minimum_value           
            ,pb.label_number
