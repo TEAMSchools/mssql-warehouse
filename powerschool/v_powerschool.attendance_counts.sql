@@ -25,15 +25,15 @@ WITH att_counts AS (
                WHEN att.att_code = 'T10' THEN 'T10'
               END AS att_code
                   
-             ,dates.academic_year                  
-             ,CONVERT(NVARCHAR,dates.time_per_name) AS reporting_term     
-             ,CONVERT(NVARCHAR,dates.alt_name) AS term_name
+             ,CONVERT(INT,dates.academic_year) AS academic_year
+             ,CONVERT(VARCHAR,dates.time_per_name) AS reporting_term     
+             ,CONVERT(VARCHAR,dates.alt_name) AS term_name
              ,CONVERT(DATE,dates.start_date) AS start_date
              ,CONVERT(DATE,dates.end_date) AS end_date
        FROM gabby.powerschool.ps_attendance_daily_static att
        JOIN gabby.reporting.reporting_terms dates
          ON att.schoolid = dates.schoolid
-        AND att.att_date BETWEEN CONVERT(DATE,dates.start_date) AND CONVERT(DATE,dates.end_date)             
+        AND att.att_date BETWEEN dates.start_date AND dates.end_date
         AND dates.identifier = 'RT' 
        WHERE att.att_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1, 7, 1)
       ) sub
@@ -91,8 +91,8 @@ WITH att_counts AS (
                   ,(mem.yearid + 1990) AS academic_year
                   ,SUM(ISNULL(mem.membershipvalue, 0)) AS count_term      
 
-                  ,CONVERT(NVARCHAR,d.time_per_name) AS reporting_term
-                  ,CONVERT(NVARCHAR,d.alt_name) AS term_name
+                  ,CONVERT(VARCHAR,d.time_per_name) AS reporting_term
+                  ,CONVERT(VARCHAR,d.alt_name) AS term_name
                   ,CONVERT(DATE,d.start_date) AS start_date
                   ,CONVERT(DATE,d.end_date) AS end_date
 
@@ -100,16 +100,16 @@ WITH att_counts AS (
             FROM gabby.powerschool.ps_adaadm_daily_ctod_static mem              
             JOIN gabby.reporting.reporting_terms d
               ON mem.schoolid = d.schoolid 
-             AND mem.calendardate BETWEEN CONVERT(DATE,d.start_date) AND CONVERT(DATE,d.end_date)
+             AND mem.calendardate BETWEEN d.start_date AND d.end_date
              AND d.identifier = 'RT'
             WHERE (mem.yearid + 1990) >= gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1
-              AND mem.calendardate <= CONVERT(DATE,GETDATE())
+              AND mem.calendardate <= GETDATE()
             GROUP BY mem.studentid
-                    ,(mem.yearid + 1990)
-                    ,CONVERT(NVARCHAR,d.time_per_name)
-                    ,CONVERT(NVARCHAR,d.alt_name)
-                    ,CONVERT(DATE,d.start_date)
-                    ,CONVERT(DATE,d.end_date)
+                    ,mem.yearid
+                    ,d.time_per_name
+                    ,d.alt_name
+                    ,d.start_date
+                    ,d.end_date
            ) sub
       ) sub
   UNPIVOT(
@@ -120,8 +120,8 @@ WITH att_counts AS (
 
 SELECT studentid
       ,academic_year
-      ,CONVERT(NVARCHAR,reporting_term) AS reporting_term
-      ,CONVERT(NVARCHAR,term_name) AS term_name
+      ,reporting_term
+      ,term_name
       ,is_curterm
       
       ,a_count_term
