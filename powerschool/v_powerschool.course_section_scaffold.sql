@@ -12,7 +12,7 @@ WITH course_scaffold AS (
         ,excludefromgpa
         ,CASE 
           WHEN CONVERT(DATE,GETDATE()) BETWEEN term_start_date AND term_end_date THEN 1
-          WHEN term_end_date <= CONVERT(DATE,GETDATE()) AND term_start_date = MAX(CONVERT(DATE,term_start_date)) OVER(PARTITION BY studentid, yearid, course_number) THEN 1
+          WHEN term_end_date <= CONVERT(DATE,GETDATE()) AND term_start_date = MAX(term_start_date) OVER(PARTITION BY studentid, yearid, course_number) THEN 1
           ELSE 0
          END AS is_curterm
   FROM
@@ -24,9 +24,9 @@ WITH course_scaffold AS (
              ,enr.course_number
              ,enr.excludefromgpa
 
-             ,CONVERT(NVARCHAR,terms.alt_name) AS term_name        
-             ,CONVERT(DATE,terms.start_date) AS term_start_date
-             ,CONVERT(DATE,terms.end_date) AS term_end_date
+             ,CONVERT(VARCHAR,terms.alt_name) AS term_name        
+             ,terms.start_date AS term_start_date
+             ,terms.end_date AS term_end_date
        FROM gabby.powerschool.course_enrollments_static enr
        JOIN gabby.powerschool.schools
          ON enr.schoolid = schools.school_number
@@ -53,15 +53,15 @@ WITH course_scaffold AS (
              ORDER BY dateleft DESC, sectionid DESC) AS rn_term
   FROM
       (
-       SELECT cc.studentid            
-             ,cc.studyear
-             ,cc.course_number            
-             ,cc.sectionid             
+       SELECT CONVERT(INT,cc.studentid) AS studentid
+             ,CONVERT(INT,cc.studyear) AS studyear
+             ,CONVERT(VARCHAR(25),cc.course_number) AS course_number
+             ,CONVERT(INT,cc.sectionid) AS sectionid
              ,cc.dateleft
-             ,LEFT(ABS(cc.termid), 2) AS yearid      
-             ,ABS(cc.sectionid) AS abs_sectionid
+             ,CONVERT(INT,LEFT(ABS(cc.termid), 2)) AS yearid      
+             ,CONVERT(INT,ABS(cc.sectionid)) AS abs_sectionid
       
-             ,CASE WHEN terms.alt_name = 'Summer School' THEN 'Q1' ELSE CONVERT(NVARCHAR,terms.alt_name) END AS term_name        
+             ,CASE WHEN terms.alt_name = 'Summer School' THEN 'Q1' ELSE CONVERT(VARCHAR,terms.alt_name) END AS term_name        
        FROM gabby.powerschool.cc
        JOIN gabby.reporting.reporting_terms terms
          ON cc.schoolid = terms.schoolid         
