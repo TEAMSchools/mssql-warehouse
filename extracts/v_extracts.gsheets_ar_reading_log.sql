@@ -17,7 +17,86 @@ WITH fp AS (
   WHERE read_lvl IS NOT NULL
     AND academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
     AND start_date <= GETDATE()
-)
+ )
+
+,ar_wide AS (
+  SELECT student_number
+        ,[cur_words]
+        ,[cur_words_goal]
+        ,[cur_stu_status_words]
+        ,[cur_mastery]
+        ,[cur_mastery_fiction]
+        ,[cur_pct_nonfiction]
+        ,[cur_words_needed]
+        ,[cur_mastery_nonfiction]
+        ,[y1_words]
+        ,[y1_words_goal]
+        ,[y1_stu_status_words]
+        ,[y1_mastery]
+        ,[y1_mastery_fiction]
+        ,[y1_pct_nonfiction]
+        ,[y1_words_needed]
+        ,[y1_mastery_nonfiction]
+  FROM
+      (
+       SELECT student_number      
+             ,CONCAT(reporting_term, '_', field) AS pivot_field
+             ,value
+       FROM
+           (
+            SELECT student_number
+                  ,CASE
+                    WHEN reporting_term = 'ARY' THEN 'y1'
+                    ELSE 'cur'
+                   END AS reporting_term
+
+                  ,CONVERT(VARCHAR,words) AS words
+                  ,CONVERT(VARCHAR,words_goal) AS words_goal
+                  ,CONVERT(VARCHAR,stu_status_words) AS stu_status_words
+                  ,CONVERT(VARCHAR,mastery) AS mastery
+                  ,CONVERT(VARCHAR,mastery_fiction) AS mastery_fiction
+                  ,CONVERT(VARCHAR,mastery_nonfiction) AS mastery_nonfiction
+                  ,CONVERT(VARCHAR,100 - pct_fiction) AS pct_nonfiction            
+                  ,CONVERT(VARCHAR,CASE
+                    WHEN CONVERT(INT,ontrack_words) - CONVERT(INT,words) < 0 THEN 0
+                    ELSE CONVERT(INT,ontrack_words) - CONVERT(INT,words)
+                   END) AS words_needed
+            FROM gabby.renaissance.ar_progress_to_goals
+            WHERE words_goal > 0
+              AND (CONVERT(DATE,GETDATE()) BETWEEN start_date AND end_date)
+           ) sub
+       UNPIVOT (
+         value
+         FOR field IN (words
+                      ,words_goal
+                      ,stu_status_words
+                      ,mastery
+                      ,mastery_fiction
+                      ,mastery_nonfiction
+                      ,pct_nonfiction
+                      ,words_needed)
+        ) u
+      ) sub
+  PIVOT(
+    MAX(value)
+    FOR pivot_field IN ([cur_words]
+                       ,[cur_words_goal]
+                       ,[cur_stu_status_words]
+                       ,[cur_mastery]
+                       ,[cur_mastery_fiction]
+                       ,[cur_pct_nonfiction]
+                       ,[cur_words_needed]
+                       ,[cur_mastery_nonfiction]
+                       ,[y1_words]
+                       ,[y1_words_goal]
+                       ,[y1_stu_status_words]
+                       ,[y1_mastery]
+                       ,[y1_mastery_fiction]
+                       ,[y1_pct_nonfiction]
+                       ,[y1_words_needed]
+                       ,[y1_mastery_nonfiction])
+   ) p
+ )
 
 SELECT co.student_number
       ,co.lastfirst
@@ -26,24 +105,17 @@ SELECT co.student_number
       ,co.grade_level
       ,co.team
       
-      /* AR curterm */            
-      
-      ,ar_cur.mastery AS cur_accuracy      
-      ,ar_cur.words AS hex_words
-      ,ar_cur.words_goal AS hex_goal
-      ,ar_cur.stu_status_words AS hex_on_track     
-      ,CASE
-        WHEN CONVERT(INT,ar_cur.ontrack_words) - CONVERT(INT,ar_cur.words) < 0 THEN 0
-        ELSE CONVERT(INT,ar_cur.ontrack_words) - CONVERT(INT,ar_cur.words)
-       END AS hex_needed
+      ,ar_wide.cur_mastery AS cur_accuracy      
+      ,ar_wide.cur_words AS hex_words
+      ,ar_wide.cur_words_goal AS hex_goal
+      ,ar_wide.cur_stu_status_words AS hex_on_track     
+      ,ar_wide.cur_words_needed AS hex_needed
+      ,ar_wide.y1_mastery_fiction AS accuracy_fiction
+      ,ar_wide.y1_mastery_nonfiction AS accuracy_nonfiction
+      ,ar_wide.y1_words AS year_words
+      ,ar_wide.y1_words_goal AS year_goal
+      ,ar_wide.y1_pct_nonfiction AS year_pct_nf
 
-       /* AR yr */      
-      ,ar_y1.mastery_fiction AS accuracy_fiction
-      ,ar_y1.mastery_nonfiction AS accuracy_nonfiction            
-      ,ar_y1.words AS year_words
-      ,ar_y1.words_goal AS year_goal
-      ,100 - ar_y1.pct_fiction AS year_pct_nf 
-      
       /* F&P */
       ,fp_base.read_lvl AS fp_base_letter
       ,fp_base.fp_wpmrate AS starting_fluency
@@ -69,10 +141,10 @@ LEFT OUTER JOIN fp fp_curr
   ON co.student_number = fp_curr.student_number
  AND fp_curr.rn_curr = 1
 LEFT OUTER JOIN gabby.powerschool.course_enrollments_static enr
-  ON co.studentid = enr.studentid
- AND co.academic_year = enr.academic_year
+  ON co.studentid = enr.studentid 
  AND enr.credittype = 'ENG'
- AND GETDATE() BETWEEN enr.dateenrolled AND enr.dateleft
+ AND CONVERT(DATE,GETDATE()) BETWEEN enr.dateenrolled AND enr.dateleft
+ AND enr.rn_subject = 1
 LEFT OUTER JOIN gabby.powerschool.final_grades_static gr
   ON co.student_number = gr.student_number
  AND co.academic_year = gr.academic_year
@@ -81,19 +153,11 @@ LEFT OUTER JOIN gabby.powerschool.final_grades_static gr
 LEFT OUTER JOIN gabby.powerschool.category_grades_static ele
   ON co.student_number = ele.student_number
  AND co.academic_year = ele.academic_year 
- AND gr.course_number = ele.course_number   
+ AND enr.course_number = ele.course_number   
  AND ele.grade_category = 'H'
  AND ele.is_curterm = 1
-LEFT OUTER JOIN gabby.renaissance.ar_progress_to_goals ar_cur
-  ON co.student_number = ar_cur.student_number
- AND GETDATE() BETWEEN ar_cur.start_date AND ar_cur.end_date
- AND ar_cur.reporting_term != 'ARY'
- AND ar_cur.words_goal > 0           
-LEFT OUTER JOIN gabby.renaissance.ar_progress_to_goals ar_y1
-  ON co.student_number = ar_y1.student_number
- AND co.academic_year = ar_y1.academic_year
- AND ar_y1.reporting_term = 'ARY'
- AND ar_y1.words_goal > 0           
+LEFT OUTER JOIN ar_wide
+  ON co.student_number = ar_wide.student_number
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()  
   AND co.school_level = 'MS'
   AND co.enroll_status = 0    

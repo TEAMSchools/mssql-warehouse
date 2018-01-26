@@ -9,25 +9,24 @@ WITH roster_scaffold AS (
         ,r.grade_level
         ,r.academic_year        
         
-        ,terms.time_per_name AS reporting_term
-        ,terms.alt_name AS test_round
-        ,CONVERT(DATE,terms.start_date) AS start_date
-        ,CONVERT(DATE,terms.end_date) AS end_date
+        ,CONVERT(VARCHAR(25),terms.time_per_name) AS reporting_term
+        ,CONVERT(VARCHAR(25),terms.alt_name) AS test_round
+        ,terms.start_date
+        ,terms.end_date
         ,CONVERT(INT,RIGHT(terms.time_per_name, 1)) AS round_num        
         
         ,CASE 
-          WHEN CONVERT(DATE,GETDATE()) BETWEEN CONVERT(DATE,terms.start_date) AND CONVERT(DATE,terms.end_date) THEN 1 
-          WHEN MAX(CASE 
-                    WHEN CONVERT(DATE,terms.start_date) <= CONVERT(DATE,GETDATE()) THEN CONVERT(DATE,terms.start_date) 
-                   END) OVER(PARTITION BY r.schoolid, r.academic_year) = terms.start_date 
-                 THEN 1
+          WHEN CONVERT(DATE,GETDATE()) BETWEEN terms.start_date AND terms.end_date THEN 1 
+          WHEN MAX(CASE WHEN terms.start_date <= CONVERT(DATE,GETDATE()) THEN terms.start_date END) 
+                 OVER(PARTITION BY r.schoolid, r.academic_year) = terms.start_date 
+                   THEN 1
           ELSE 0 
          END AS is_curterm        
   FROM gabby.powerschool.cohort_identifiers_static r
   JOIN gabby.reporting.reporting_terms terms
     ON r.academic_year = terms.academic_year 
    AND r.schoolid = terms.schoolid
-   AND r.exitdate > CONVERT(DATE,terms.start_date)
+   AND r.exitdate > terms.start_date
    AND terms.identifier = 'LIT'          
   WHERE r.rn_year = 1
  )
@@ -171,29 +170,29 @@ WITH roster_scaffold AS (
              ,CASE WHEN fp.status = 'Achieved' THEN COALESCE(fp.lvl_num, fp.indep_lvl_num) ELSE fp.indep_lvl_num END AS lvl_num
              ,CASE WHEN fp.status = 'Achieved' THEN COALESCE(fp.read_lvl, fp.indep_lvl) ELSE fp.indep_lvl END AS indep_lvl
              ,CASE WHEN fp.status = 'Achieved' THEN COALESCE(fp.lvl_num, fp.indep_lvl_num) ELSE fp.indep_lvl_num END AS indep_lvl_num        
-             ,CASE
+             ,CONVERT(VARCHAR(1),CASE
                WHEN fp.status = 'Did Not Achieve' AND fp.instruct_lvl = fp.indep_lvl THEN fp.read_lvl
                WHEN fp.status = 'Achieved' AND fp.instruct_lvl = fp.indep_lvl THEN gleq.instruct_lvl
                ELSE COALESCE(fp.instruct_lvl, gleq.instruct_lvl)
-              END AS instruct_lvl
-             ,CASE
+              END) AS instruct_lvl
+             ,CONVERT(INT,CASE
                WHEN fp.status = 'Did Not Achieve' AND fp.instruct_lvl = fp.indep_lvl THEN fp.lvl_num
                WHEN fp.status = 'Achieved' AND fp.instruct_lvl = fp.indep_lvl THEN (gleq.fp_lvl_num + 1)
                ELSE COALESCE(fp.instruct_lvl_num, (gleq.fp_lvl_num + 1))
-              END AS instruct_lvl_num
-             ,gleq.GLEQ        
+              END) AS instruct_lvl_num
+             ,gleq.gleq        
              ,fp.fp_wpmrate
              ,fp.fp_keylever
-             ,CASE
+             ,CONVERT(VARCHAR(1),CASE
                WHEN fp.status = 'Did Not Achieve' AND fp.instruct_lvl = fp.indep_lvl THEN fp.read_lvl
                WHEN fp.status = 'Achieved' AND fp.instruct_lvl = fp.indep_lvl THEN gleq.instruct_lvl
                ELSE COALESCE(fp.instruct_lvl, gleq.instruct_lvl)
-              END AS dna_lvl
-             ,CASE
+              END) AS dna_lvl
+             ,CONVERT(INT,CASE
                WHEN fp.status = 'Did Not Achieve' AND fp.instruct_lvl = fp.indep_lvl THEN fp.lvl_num
                WHEN fp.status = 'Achieved' AND fp.instruct_lvl = fp.indep_lvl THEN (gleq.fp_lvl_num + 1)
                ELSE COALESCE(fp.instruct_lvl_num, (gleq.fp_lvl_num + 1))
-              END AS dna_lvl_num
+              END) AS dna_lvl_num
              ,fp.unique_id AS achv_unique_id
              ,fp.unique_id AS dna_unique_id            
        FROM roster_scaffold r  
@@ -295,8 +294,8 @@ SELECT academic_year
       ,NULL AS natl_goal_lvl
       ,NULL AS natl_goal_num 
       ,levels_behind
-      ,CONVERT(NVARCHAR(64),achv_unique_id) AS achv_unique_id
-      ,CONVERT(NVARCHAR(64),dna_unique_id) AS dna_unique_id
+      ,achv_unique_id
+      ,dna_unique_id
       ,is_new_test
 
       ,CASE         
@@ -355,58 +354,58 @@ FROM
            ,sub.is_new_test
 
            ,CASE
-             WHEN (goals.fp_read_lvl IS NOT NULL AND goals.step_read_lvl IS NOT NULL)
+             WHEN (sub.fp_read_lvl IS NOT NULL AND sub.step_read_lvl IS NOT NULL)
               AND sub.is_fp = 1 
-                    THEN goals.fp_read_lvl
-             WHEN (goals.fp_read_lvl IS NOT NULL AND goals.step_read_lvl IS NOT NULL)
+                    THEN sub.fp_read_lvl
+             WHEN (sub.fp_read_lvl IS NOT NULL AND sub.step_read_lvl IS NOT NULL)
               AND sub.is_fp = 0 
-                    THEN goals.step_read_lvl
-             ELSE COALESCE(goals.fp_read_lvl, goals.step_read_lvl)
+                    THEN sub.step_read_lvl
+             ELSE COALESCE(sub.fp_read_lvl, sub.step_read_lvl)
             END AS default_goal_lvl
            ,CASE
-             WHEN (goals.fp_lvl_num IS NOT NULL AND goals.step_lvl_num IS NOT NULL)
+             WHEN (sub.fp_lvl_num IS NOT NULL AND sub.step_lvl_num IS NOT NULL)
               AND sub.is_fp = 1 
-                    THEN goals.fp_lvl_num
-             WHEN (goals.fp_lvl_num IS NOT NULL AND goals.step_lvl_num IS NOT NULL)
+                    THEN sub.fp_lvl_num
+             WHEN (sub.fp_lvl_num IS NOT NULL AND sub.step_lvl_num IS NOT NULL)
               AND sub.is_fp = 0 
-                    THEN goals.step_lvl_num
-             ELSE COALESCE(goals.fp_lvl_num, goals.step_lvl_num)
+                    THEN sub.step_lvl_num
+             ELSE COALESCE(sub.fp_lvl_num, sub.step_lvl_num)
             END AS default_goal_num            
 
-           ,indiv.goal AS indiv_goal_lvl
-           ,indiv.lvl_num AS indiv_lvl_num
+           ,sub.indiv_goal_lvl
+           ,sub.indiv_lvl_num
 
            ,LAG(sub.read_lvl, 1) OVER(PARTITION BY sub.student_number ORDER BY sub.start_date ASC) AS prev_read_lvl
            ,LAG(sub.lvl_num, 1) OVER(PARTITION BY sub.student_number ORDER BY sub.start_date ASC) AS prev_lvl_num           
-           ,COALESCE(indiv.goal
+           ,COALESCE(sub.indiv_goal_lvl
                     ,CASE
-                      WHEN (goals.fp_read_lvl IS NOT NULL AND goals.step_read_lvl IS NOT NULL)
+                      WHEN (sub.fp_read_lvl IS NOT NULL AND sub.step_read_lvl IS NOT NULL)
                        AND sub.is_fp = 1 
-                             THEN goals.fp_read_lvl
-                      WHEN (goals.fp_read_lvl IS NOT NULL AND goals.step_read_lvl IS NOT NULL)
+                             THEN sub.fp_read_lvl
+                      WHEN (sub.fp_read_lvl IS NOT NULL AND sub.step_read_lvl IS NOT NULL)
                        AND sub.is_fp = 0 
-                             THEN goals.step_read_lvl
-                      ELSE COALESCE(goals.fp_read_lvl, goals.step_read_lvl)
+                             THEN sub.step_read_lvl
+                      ELSE COALESCE(sub.fp_read_lvl, sub.step_read_lvl)
                      END) AS goal_lvl
-           ,COALESCE(indiv.lvl_num
+           ,COALESCE(sub.indiv_lvl_num
                     ,CASE
-                      WHEN (goals.fp_lvl_num IS NOT NULL AND goals.step_lvl_num IS NOT NULL)
+                      WHEN (sub.fp_lvl_num IS NOT NULL AND sub.step_lvl_num IS NOT NULL)
                        AND sub.is_fp = 1 
-                             THEN goals.fp_lvl_num
-                      WHEN (goals.fp_lvl_num IS NOT NULL AND goals.step_lvl_num IS NOT NULL)
+                             THEN sub.fp_lvl_num
+                      WHEN (sub.fp_lvl_num IS NOT NULL AND sub.step_lvl_num IS NOT NULL)
                        AND sub.is_fp = 0 
-                             THEN goals.step_lvl_num
-                      ELSE COALESCE(goals.fp_lvl_num, goals.step_lvl_num)
+                             THEN sub.step_lvl_num
+                      ELSE COALESCE(sub.fp_lvl_num, sub.step_lvl_num)
                      END) AS goal_num                                                 
-           ,sub.lvl_num - COALESCE(indiv.lvl_num
+           ,sub.lvl_num - COALESCE(sub.lvl_num
                                   ,CASE
-                                    WHEN (goals.fp_lvl_num IS NOT NULL AND goals.step_lvl_num IS NOT NULL)
+                                    WHEN (sub.fp_lvl_num IS NOT NULL AND sub.step_lvl_num IS NOT NULL)
                                      AND sub.is_fp = 1 
-                                           THEN goals.fp_lvl_num
-                                    WHEN (goals.fp_lvl_num IS NOT NULL AND goals.step_lvl_num IS NOT NULL)
+                                           THEN sub.fp_lvl_num
+                                    WHEN (sub.fp_lvl_num IS NOT NULL AND sub.step_lvl_num IS NOT NULL)
                                      AND sub.is_fp = 0 
-                                           THEN goals.step_lvl_num
-                                    ELSE COALESCE(goals.fp_lvl_num, goals.step_lvl_num)
+                                           THEN sub.step_lvl_num
+                                    ELSE COALESCE(sub.fp_lvl_num, sub.step_lvl_num)
                                    END) AS levels_behind                      
      FROM
          (
@@ -436,6 +435,14 @@ FROM
                 ,dna.dna_lvl_num
                 ,dna.dna_unique_id                                
 
+                ,CONVERT(VARCHAR(5),goals.fp_read_lvl) AS fp_read_lvl
+                ,CONVERT(VARCHAR(5),goals.step_read_lvl) AS step_read_lvl
+                ,CONVERT(INT,goals.fp_lvl_num) AS fp_lvl_num                
+                ,CONVERT(INT,goals.step_lvl_num) AS step_lvl_num
+
+                ,CONVERT(VARCHAR(5),indiv.goal) AS indiv_goal_lvl
+                ,CONVERT(INT,indiv.lvl_num) AS indiv_lvl_num
+
                 ,CASE 
                   WHEN achieved.academic_year = atid.academic_year AND achieved.round_num = atid.round_num THEN 1 
                   WHEN achieved.academic_year = dna.academic_year AND achieved.round_num = dna.round_num THEN 1 
@@ -450,14 +457,14 @@ FROM
            AND achieved.academic_year = dna.academic_year
            AND achieved.round_num = dna.round_num
            AND dna.rn = 1
+          LEFT OUTER JOIN gabby.lit.network_goals goals 
+            ON achieved.grade_level = goals.grade_level
+           AND achieved.round_num = goals.round_num
+           AND achieved.academic_year = goals.norms_year
+          LEFT OUTER JOIN gabby.lit.individualized_goals indiv 
+            ON achieved.student_number = indiv.student_number
+           AND achieved.test_round = indiv.test_round
+           AND achieved.academic_year = indiv.academic_year 
           WHERE achieved.rn = 1
-         ) sub
-     LEFT OUTER JOIN gabby.lit.network_goals goals 
-       ON sub.grade_level = goals.grade_level
-      AND sub.round_num = goals.round_num
-      AND sub.academic_year = goals.norms_year
-     LEFT OUTER JOIN gabby.lit.individualized_goals indiv 
-       ON sub.student_number = indiv.student_number
-      AND sub.test_round = indiv.test_round
-      AND sub.academic_year = indiv.academic_year     
+         ) sub    
     ) sub

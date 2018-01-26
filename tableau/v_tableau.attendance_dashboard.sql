@@ -66,24 +66,24 @@ FROM
            ,co.reporting_schoolid AS schoolid
            ,co.studentid
            ,co.student_number
-           ,CONVERT(VARCHAR(256),co.lastfirst) AS lastfirst
+           ,co.lastfirst
            ,co.grade_level
            ,co.school_level
-           ,CONVERT(VARCHAR(32),co.team) AS team
+           ,co.team
            ,co.enroll_status
-           ,CONVERT(VARCHAR(64),co.iep_status) AS iep_status
+           ,co.iep_status
            ,co.gender
-           ,CONVERT(VARCHAR(16),co.ethnicity) AS ethnicity            
+           ,co.ethnicity
 
-           ,CONVERT(VARCHAR(64),enr.section_number) AS section_number
-           ,CONVERT(VARCHAR(256),enr.teacher_name) AS teacher_name
+           ,enr.section_number
+           ,enr.teacher_name
 
            ,mem.calendardate
            ,mem.membershipvalue
            ,mem.attendancevalue AS is_present
            ,ABS(mem.attendancevalue - 1) AS is_absent
 
-           ,CONVERT(VARCHAR(16),att.att_code) AS att_code
+           ,att.att_code
            ,CASE WHEN att.att_code IN ('T','T10','ET','TE') THEN 1 ELSE 0 END AS is_tardy
            ,CASE WHEN att.att_code IN ('OSS','ISS') THEN 1 ELSE 0 END AS suspension_all
            ,CASE WHEN att.att_code = 'A' THEN 1 ELSE 0 END AS n_A
@@ -113,7 +113,7 @@ FROM
            ,CASE WHEN att.att_code = 'U' THEN 1 ELSE 0 END AS n_U
            ,CASE WHEN att.att_code = 'X' THEN 1 ELSE 0 END AS n_X
 
-           ,CONVERT(VARCHAR(32),dt.alt_name) AS term     
+           ,CONVERT(VARCHAR(25),dt.alt_name) AS term     
      FROM gabby.powerschool.cohort_identifiers_static co
      LEFT OUTER JOIN gabby.powerschool.course_enrollments_static enr
        ON co.studentid = enr.studentid
@@ -140,25 +140,25 @@ FROM
 
 UNION ALL
 
-SELECT academic_year
-      ,schoolid
-      ,studentid
-      ,student_number
-      ,lastfirst
-      ,grade_level
+SELECT CONVERT(INT,academic_year) AS academic_year
+      ,CONVERT(INT,schoolid) AS schoolid
+      ,CONVERT(INT,studentid) AS studentid
+      ,CONVERT(INT,student_number) AS student_number
+      ,CONVERT(VARCHAR(125),lastfirst) AS lastfirst
+      ,CONVERT(INT,grade_level) AS grade_level
       ,school_level
-      ,team
-      ,enroll_status
-      ,iep_status
-      ,gender
-      ,ethnicity
-      ,section_number
-      ,teacher_name
+      ,CONVERT(VARCHAR(25),team) AS team
+      ,CONVERT(INT,enroll_status) AS enroll_status
+      ,CONVERT(VARCHAR(25),iep_status) AS iep_status
+      ,CONVERT(VARCHAR(1),gender) AS gender
+      ,CONVERT(VARCHAR(1),ethnicity) AS ethnicity
+      ,CONVERT(VARCHAR(25),section_number) AS section_number
+      ,CONVERT(VARCHAR(125),teacher_name) AS teacher_name
       ,calendardate
-      ,membershipvalue
-      ,is_present
-      ,is_absent
-      ,att_code
+      ,CONVERT(INT,membershipvalue) AS membershipvalue
+      ,CONVERT(INT,is_present) AS is_present
+      ,CONVERT(INT,is_absent) AS is_absent
+      ,CONVERT(VARCHAR(5),att_code) AS att_code
       ,is_tardy
       ,suspension_all
       ,n_A
@@ -187,7 +187,7 @@ SELECT academic_year
       ,n_TLE
       ,n_U
       ,n_X
-      ,term
+      ,CONVERT(VARCHAR(5),term) AS term
       ,is_oss_running
       ,is_iss_running
       ,is_suspended_running

@@ -17,12 +17,12 @@ WITH roster AS (
              ,co.grade_level             
              ,co.enroll_status
              ,CASE 
-               WHEN co.exitdate <= CONVERT(DATE,dts.start_date) THEN 0
-               WHEN co.entrydate <= CONVERT(DATE,dts.end_date) THEN 1 
+               WHEN co.exitdate <= dts.start_date THEN 0
+               WHEN co.entrydate <= dts.end_date THEN 1 
                ELSE 0 
               END AS is_enrolled
              
-             ,dts.time_per_name AS reporting_term                          
+             ,CONVERT(VARCHAR(5),dts.time_per_name) AS reporting_term                          
        FROM gabby.powerschool.cohort_identifiers_static co
        JOIN gabby.reporting.reporting_terms dts
          ON co.schoolid = dts.schoolid
@@ -41,7 +41,7 @@ WITH roster AS (
 ,ms_goals AS (
   SELECT sub.student_number
         ,sub.term      
-        ,tiers.words_goal
+        ,CONVERT(INT,tiers.words_goal) AS words_goal
   FROM
       (
        SELECT achv.student_number           
@@ -74,9 +74,9 @@ WITH roster AS (
  )
 
 ,indiv_goals AS (
-  SELECT student_number
+  SELECT CONVERT(INT,student_number) AS student_number
         ,REPLACE(reporting_term, 'q_', 'AR') AS reporting_term
-        ,adjusted_goal
+        ,CONVERT(INT,adjusted_goal) AS adjusted_goal
   FROM gabby.renaissance.ar_individualized_goals
   UNPIVOT(
     adjusted_goal
@@ -102,13 +102,13 @@ WITH roster AS (
                WHEN r.is_enrolled = 0 THEN NULL
                WHEN r.grade_level >= 9 THEN NULL
                WHEN r.enroll_status != 0 THEN -1
-               ELSE COALESCE(g.adjusted_goal, ms.words_goal, df.words_goal) 
+               ELSE COALESCE(g.adjusted_goal, ms.words_goal, CONVERT(INT,df.words_goal))
               END AS words_goal
              ,CASE
                WHEN r.is_enrolled = 0 THEN NULL
                WHEN r.grade_level <= 8 THEN NULL
                WHEN r.enroll_status != 0 THEN -1
-               ELSE COALESCE(g.adjusted_goal, df.points_goal)
+               ELSE COALESCE(g.adjusted_goal, CONVERT(INT,df.points_goal))
               END AS points_goal             
        FROM roster r
        LEFT OUTER JOIN ms_goals ms
@@ -154,9 +154,9 @@ FROM
 
 UNION ALL
 
-SELECT student_number
-      ,academic_year
-      ,reporting_term
-      ,words_goal
-      ,points_goal
+SELECT CONVERT(INT,student_number) AS student_number
+      ,CONVERT(INT,academic_year) AS academic_year
+      ,CONVERT(VARCHAR(5),reporting_term) AS reporting_term
+      ,CONVERT(INT,words_goal) AS words_goal
+      ,CONVERT(INT,points_goal) AS points_goal
 FROM gabby.renaissance.ar_goals_archive

@@ -13,11 +13,11 @@ SELECT mv.studentid
       ,mv.offtrack
       ,mv.student_track          
 
-      ,t.yearid
+      ,CONVERT(INT,t.yearid) AS yearid
 
       ,(CASE 
          WHEN ada_0.id IS NOT NULL THEN 0
-         ELSE aci_real.attendance_value  				        
+         ELSE CONVERT(INT,aci_real.attendance_value)
         END) * mv.ontrack AS attendancevalue
       ,(CASE
          WHEN adm_0.id IS NOT NULL THEN 0
@@ -26,7 +26,7 @@ SELECT mv.studentid
         END) * mv.ontrack AS membershipvalue       
       ,(CASE 
          WHEN ada_1.id IS NOT NULL THEN 0
-         ELSE aci_potential.attendance_value			   	         
+         ELSE CONVERT(INT,aci_potential.attendance_value)
 			     END) * mv.ontrack AS potential_attendancevalue      
 FROM gabby.powerschool.ps_membership_reg_static mv
 LEFT OUTER JOIN gabby.powerschool.terms t

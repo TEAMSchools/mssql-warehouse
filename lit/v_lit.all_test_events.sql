@@ -3,7 +3,7 @@ GO
 
 CREATE OR ALTER VIEW lit.all_test_events AS
 
-SELECT CONVERT(NVARCHAR(64),rs.unique_id) AS unique_id
+SELECT rs.unique_id AS unique_id
       ,rs.testid
       ,rs.is_fp
       ,rs.academic_year
@@ -35,29 +35,29 @@ SELECT CONVERT(NVARCHAR(64),rs.unique_id) AS unique_id
          PARTITION BY rs.student_number, rs.academic_year
            ORDER BY rs.round_num DESC, rs.test_date DESC, rs.lvl_num DESC) AS recent_yr 
 FROM (
-      SELECT ps.unique_id
-            ,ps.student_number        
-            ,ps.academic_year
-            ,ps.test_round
-            ,ps.round_num
+      SELECT CONVERT(VARCHAR(25),ps.unique_id) AS unique_id
+            ,CONVERT(INT,ps.student_number) AS student_number
+            ,CONVERT(INT,ps.academic_year) AS academic_year
+            ,CONVERT(VARCHAR(5),ps.test_round) AS test_round
+            ,CONVERT(INT,ps.round_num) AS round_num
             ,ps.test_date
-            ,ps.testid
-            ,ps.is_fp                
-            ,ps.status
-            ,ps.read_lvl
-            ,ps.lvl_num
-            ,ps.GLEQ
-            ,ps.color
-            ,ps.genre        
-            ,ps.dna_lvl
-            ,ps.dna_lvl_num
-            ,ps.instruct_lvl
-            ,ps.instruct_lvl_num
-            ,ps.indep_lvl
-            ,ps.indep_lvl_num                      
-            ,ps.fp_wpmrate
-            ,ps.fp_keylever
-            ,ps.coaching_code
+            ,CONVERT(INT,ps.testid) AS testid
+            ,CONVERT(INT,ps.is_fp) AS is_fp
+            ,CONVERT(VARCHAR(25),ps.status) AS status
+            ,CONVERT(VARCHAR(25),ps.read_lvl) AS read_lvl
+            ,CONVERT(INT,ps.lvl_num) AS lvl_num
+            ,CONVERT(INT,ps.gleq) AS gleq
+            ,CONVERT(VARCHAR(25),ps.color) AS color
+            ,CONVERT(VARCHAR(25),ps.genre) AS genre
+            ,CONVERT(VARCHAR(5),ps.dna_lvl) AS dna_lvl
+            ,CONVERT(INT,ps.dna_lvl_num) AS dna_lvl_num
+            ,CONVERT(VARCHAR(5),ps.instruct_lvl) AS instruct_lvl
+            ,CONVERT(INT,ps.instruct_lvl_num) AS instruct_lvl_num
+            ,CONVERT(VARCHAR(25),ps.indep_lvl) AS indep_lvl
+            ,CONVERT(INT,ps.indep_lvl_num) AS indep_lvl_num
+            ,CONVERT(INT,ps.fp_wpmrate) AS fp_wpmrate
+            ,CONVERT(VARCHAR(25),ps.fp_keylever) AS fp_keylever
+            ,CONVERT(VARCHAR(5),ps.coaching_code) AS coaching_code
             ,NULL AS test_administered_by        
       FROM gabby.lit.powerschool_test_events_archive ps  
 

@@ -8,7 +8,7 @@ WITH illuminate_fp AS (
         ,student_number
         ,testid
         ,status
-        ,field
+        ,CONVERT(VARCHAR(25),field) AS field
         ,score           
         ,read_lvl
         ,lvl_num           
@@ -17,13 +17,13 @@ WITH illuminate_fp AS (
        SELECT rs.unique_id
              ,rs.student_number             
              ,rs.status      
-             ,CONVERT(FLOAT,rs.about_the_text) AS fp_comp_about   
-             ,CONVERT(FLOAT,rs.beyond_the_text) AS fp_comp_beyond
-             ,CONVERT(FLOAT,rs.within_the_text) AS fp_comp_within
-             ,CONVERT(FLOAT,rs.accuracy) AS fp_accuracy
-             ,CONVERT(FLOAT,rs.fluency) AS fp_fluency
-             ,CONVERT(FLOAT,rs.reading_rate_wpm) AS fp_wpmrate    
-             ,CONVERT(FLOAT,rs.comp_overall) AS fp_comp_prof                          
+             ,rs.about_the_text AS fp_comp_about   
+             ,rs.beyond_the_text AS fp_comp_beyond
+             ,rs.within_the_text AS fp_comp_within
+             ,rs.accuracy AS fp_accuracy
+             ,rs.fluency AS fp_fluency
+             ,rs.reading_rate_wpm AS fp_wpmrate    
+             ,rs.comp_overall AS fp_comp_prof                          
              ,CASE 
                WHEN rs.status = 'Did Not Achieve' THEN rs.instr_lvl_num
                ELSE rs.indep_lvl_num
@@ -48,14 +48,14 @@ WITH illuminate_fp AS (
  )
 
 ,all_scores AS (
-  SELECT rs.unique_id
-        ,rs.student_number
-        ,rs.testid
-        ,CASE WHEN rs.status != '' THEN rs.status END AS status
-        ,rs.field
-        ,rs.score           
-        ,CASE WHEN rs.read_lvl != '' THEN rs.read_lvl END AS read_lvl
-        ,rs.lvl_num           
+  SELECT CONVERT(VARCHAR(25),rs.unique_id) AS unique_id
+        ,CONVERT(INT,rs.student_number) AS student_number
+        ,CONVERT(INT,rs.testid) AS testid
+        ,CASE WHEN rs.status != '' THEN CONVERT(VARCHAR(25),rs.status) END AS status
+        ,CONVERT(VARCHAR(25),rs.field) AS field
+        ,CONVERT(FLOAT,rs.score) AS score
+        ,CASE WHEN rs.read_lvl != '' THEN CONVERT(VARCHAR(5),rs.read_lvl) END AS read_lvl
+        ,CONVERT(INT,rs.lvl_num) AS lvl_num
   FROM gabby.lit.powerschool_component_scores_archive rs    
 
   UNION ALL
@@ -83,7 +83,18 @@ WITH illuminate_fp AS (
   FROM illuminate_fp rs     
  )
 
-SELECT CONVERT(NVARCHAR(256),sub.unique_id) AS unique_id
+,prof_clean AS (
+  SELECT CONVERT(INT,testid) AS testid
+        ,CONVERT(INT,lvl_num) AS lvl_num
+        ,CONVERT(VARCHAR(125),field_name) AS field_name
+        ,CONVERT(VARCHAR(25),domain) AS domain
+        ,CONVERT(VARCHAR(25),subdomain) AS subdomain
+        ,CONVERT(VARCHAR(125),strand) AS strand
+        ,CONVERT(INT,score) AS score
+  FROM gabby.lit.component_proficiency_targets
+)
+
+SELECT sub.unique_id
       ,sub.testid
       ,sub.student_number
       ,sub.read_lvl
@@ -94,7 +105,7 @@ SELECT CONVERT(NVARCHAR(256),sub.unique_id) AS unique_id
       ,sub.strand
       ,sub.label
       ,sub.specific_label
-      ,CONVERT(NVARCHAR(256),sub.field) AS field
+      ,sub.field
       ,sub.score
       ,sub.benchmark
       ,sub.is_prof
@@ -129,7 +140,7 @@ FROM
            ,prof.domain
            ,prof.subdomain
            ,prof.strand           
-           ,CONVERT(FLOAT,prof.score) AS benchmark
+           ,prof.score AS benchmark
            ,CASE
              WHEN prof.strand LIKE '%overall%' THEN ISNULL(prof.domain + ': ', '') + prof.strand
              ELSE ISNULL(prof.subdomain + ': ', '') + prof.strand 
@@ -144,32 +155,30 @@ FROM
            ,CASE 
              WHEN prof.score IS NULL THEN NULL
              WHEN prof.field_name NOT IN ('ra_errors','accuracy_1a','accuracy_2b','reading_accuracy_2_','reading_accuracy_2_2_') 
-              AND rs.score >= CONVERT(FLOAT,prof.score) 
+              AND rs.score >= prof.score
                     THEN 1
              WHEN prof.field_name IN ('ra_errors','accuracy_1a','accuracy_2b','reading_accuracy_2_','reading_accuracy_2_2_') 
-               AND rs.score <= CONVERT(FLOAT,prof.score) 
+               AND rs.score <= prof.score
                     THEN 1
              ELSE 0
             END AS is_prof
            ,CASE 
              WHEN prof.score IS NULL THEN NULL
              WHEN prof.field_name NOT IN ('ra_errors','accuracy_1a','accuracy_2b','reading_accuracy_2_','reading_accuracy_2_2_') 
-              AND rs.score < CONVERT(FLOAT,prof.score) 
+              AND rs.score < prof.score
                     THEN 1
              WHEN prof.field_name IN ('ra_errors','accuracy_1a','accuracy_2b','reading_accuracy_2_','reading_accuracy_2_2_') 
-              AND rs.score > CONVERT(FLOAT,prof.score) 
+              AND rs.score > prof.score
                     THEN 1
              ELSE 0
             END AS is_dna
+
            ,ROW_NUMBER() OVER(
               PARTITION BY rs.unique_id, prof.domain
                 ORDER BY rs.score ASC, prof.strand DESC) AS score_order
      FROM all_scores rs
-     JOIN gabby.lit.component_proficiency_targets prof
+     JOIN prof_clean prof
        ON rs.testid = prof.testid
       AND rs.field = prof.field_name
-      AND CASE 
-           WHEN rs.testid = 3273 THEN rs.lvl_num 
-           ELSE prof.lvl_num 
-          END = prof.lvl_num
+      AND rs.lvl_num = prof.lvl_num
     ) sub

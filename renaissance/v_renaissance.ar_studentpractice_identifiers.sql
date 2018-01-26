@@ -35,24 +35,24 @@ SELECT student_number
        END AS rn_quiz
 FROM
     (
-     SELECT ar.ch_fiction_non_fiction
+     SELECT CONVERT(VARCHAR(2),ar.ch_fiction_non_fiction) AS ch_fiction_non_fiction
            ,ar.d_percent_correct
            ,ar.d_points_earned
-           ,ar.dt_taken
-           ,ar.dt_taken_original            
+           ,CONVERT(DATE,ar.dt_taken) AS dt_taken
+           ,CONVERT(DATE,ar.dt_taken_original) AS dt_taken_original
            ,ar.fl_lexile_calc
-           ,ar.i_lexile 
-           ,ar.i_questions_correct
-           ,ar.i_questions_presented
-           ,ar.i_quiz_number                 
-           ,ar.i_retake_count
-           ,ar.i_student_practice_id                      
-           ,ar.i_user_id
-           ,ar.i_word_count           
-           ,ar.ti_book_rating
-           ,ar.ti_passed           
-           ,ar.vch_content_title
-           ,ar.vch_lexile_display      
+           ,CONVERT(INT,ar.i_lexile) AS i_lexile
+           ,CONVERT(FLOAT,ar.i_questions_correct) AS i_questions_correct
+           ,CONVERT(FLOAT,ar.i_questions_presented) AS i_questions_presented
+           ,CONVERT(INT,ar.i_quiz_number) AS i_quiz_number
+           ,CONVERT(INT,ar.i_retake_count) AS i_retake_count
+           ,CONVERT(INT,ar.i_student_practice_id) AS i_student_practice_id
+           ,CONVERT(INT,ar.i_user_id) AS i_user_id
+           ,CONVERT(FLOAT,ar.i_word_count) AS i_word_count
+           ,CONVERT(INT,ar.ti_book_rating) AS ti_book_rating
+           ,CONVERT(INT,ar.ti_passed) AS ti_passed
+           ,CONVERT(VARCHAR(250),ar.vch_content_title) AS vch_content_title
+           ,CONVERT(VARCHAR(25),ar.vch_lexile_display) AS vch_lexile_display
            /*
            ,ar.ch_content_version      
            ,ar.ch_status
@@ -92,12 +92,36 @@ FROM
            ,ar.vch_sort_title
            */
 
-           ,u.vch_previous_idnum AS student_number                
+           ,CONVERT(INT,u.vch_previous_idnum) AS student_number                
      FROM gabby.renaissance.ar_studentpractice ar
      JOIN gabby.renaissance.rl_user u
        ON ar.i_user_id = u.i_user_id      
+      AND ISNUMERIC(u.vch_previous_idnum) = 1
      WHERE ar.i_content_type_id = 31
        AND ar.ch_status != 'U'
        AND ar.ti_row_status = 1
+       AND CONVERT(DATE,ar.dt_taken) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
     ) sub
-WHERE ISNUMERIC(sub.student_number) = 1
+
+UNION ALL
+
+SELECT student_number
+      ,ch_fiction_non_fiction
+      ,d_percent_correct
+      ,d_points_earned
+      ,dt_taken
+      ,fl_lexile_calc
+      ,i_lexile
+      ,i_questions_correct
+      ,i_questions_presented
+      ,i_quiz_number
+      ,i_student_practice_id
+      ,i_user_id
+      ,i_word_count
+      ,ti_book_rating
+      ,ti_passed
+      ,vch_content_title
+      ,vch_lexile_display
+      ,academic_year
+      ,rn_quiz
+FROM gabby.renaissance.ar_studentpractice_identifiers_archive
