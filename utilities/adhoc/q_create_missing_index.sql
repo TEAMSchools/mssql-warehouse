@@ -20,4 +20,4 @@ SELECT *
         + ISNULL('INCLUDE (' + included_columns + ')','')
         + ' WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY];' AS create_index_script
 FROM sys.dm_db_missing_index_details
-ORDER BY statement
+ORDER BY statement, equality_columns, inequality_columns, included_columns

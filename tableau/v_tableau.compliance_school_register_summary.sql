@@ -11,14 +11,14 @@ WITH schooldays AS (
         ,MIN(n_days_school) OVER(PARTITION BY academic_year, region) n_days_region_min
   FROM
       (
-       SELECT schoolid
+       SELECT CONVERT(INT,schoolid) AS schoolid
              ,CASE 
                WHEN schoolid LIKE '1799%' THEN 'KCNA' 
                WHEN schoolid LIKE '7325%' THEN 'TEAM' 
                WHEN schoolid = 133570965 THEN 'TEAM' 
               END AS region
              ,gabby.utilities.DATE_TO_SY(date_value) AS academic_year
-             ,SUM(membershipvalue) AS n_days_school
+             ,CONVERT(INT,SUM(membershipvalue)) AS n_days_school
        FROM gabby.powerschool.calendar_day              
        GROUP BY gabby.utilities.DATE_TO_SY(date_value)
                ,schoolid
@@ -27,10 +27,10 @@ WITH schooldays AS (
  )
 
 ,att_mem AS (
-  SELECT studentid
-        ,yearid + 1990 AS academic_year
-        ,SUM(CONVERT(INT,attendancevalue)) AS n_att
-        ,SUM(CONVERT(INT,membershipvalue)) AS n_mem
+  SELECT CONVERT(INT,studentid) AS studentid
+        ,CONVERT(INT,yearid) + 1990 AS academic_year
+        ,CONVERT(INT,SUM(attendancevalue)) AS n_att
+        ,CONVERT(INT,SUM(membershipvalue)) AS n_mem
   FROM gabby.powerschool.ps_adaadm_daily_ctod_static
   WHERE membershipvalue = 1
   GROUP BY studentid

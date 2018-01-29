@@ -10,11 +10,11 @@ WITH roster AS (
         ,co.schoolid      
         ,co.grade_level      
         
-        ,CONVERT(NVARCHAR,CONCAT('RT',RIGHT(terms.alt_name, 1))) AS reporting_term
-        ,CONVERT(NVARCHAR,terms.alt_name) AS term_name
+        ,CONVERT(VARCHAR,CONCAT('RT',RIGHT(terms.alt_name, 1))) AS reporting_term
+        ,CONVERT(VARCHAR,terms.alt_name) AS term_name
         ,CASE 
-          WHEN CONVERT(DATE,GETDATE()) BETWEEN CONVERT(DATE,terms.start_date) AND CONVERT(DATE,terms.end_date) THEN 1 
-          WHEN co.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() AND terms.start_date = MAX(CONVERT(DATE,terms.start_date)) OVER(PARTITION BY terms.schoolid, terms.academic_year) THEN 1
+          WHEN CONVERT(DATE,GETDATE()) BETWEEN terms.start_date AND terms.end_date THEN 1 
+          WHEN co.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() AND terms.start_date = MAX(terms.start_date) OVER(PARTITION BY terms.schoolid, terms.academic_year) THEN 1
           ELSE 0 
          END AS is_curterm
 

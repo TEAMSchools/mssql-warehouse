@@ -49,6 +49,22 @@ WITH promo AS (
    ) p
  ) 
 
+,ms_grad AS (
+  SELECT student_number
+        ,ms_attended
+  FROM
+      (
+       SELECT student_number
+             ,school_name AS ms_attended
+             ,ROW_NUMBER() OVER(
+                PARTITION BY student_number
+                  ORDER BY exitdate DESC) AS rn
+       FROM gabby.powerschool.cohort_identifiers_static
+       WHERE school_level = 'MS'
+      ) sub
+  WHERE rn = 1
+ )
+
 SELECT co.student_number
       ,co.lastfirst
       ,co.academic_year
@@ -81,6 +97,8 @@ SELECT co.student_number
 
       ,promo.attended_es
       ,promo.attended_ms
+
+      ,ms.ms_attended
 FROM gabby.powerschool.cohort_identifiers_static co
 JOIN gabby.parcc.summative_record_file_clean parcc
   ON co.student_number = parcc.local_student_identifier
@@ -90,6 +108,8 @@ LEFT OUTER JOIN external_prof ext
  AND parcc.test_code = ext.test_code
 LEFT OUTER JOIN promo
   ON co.student_number = promo.student_number
+LEFT JOIN ms_grad ms
+  ON co.student_number = ms.student_number
 WHERE co.rn_year = 1
 
 UNION ALL
@@ -131,13 +151,17 @@ SELECT co.student_number
 
       ,promo.attended_es
       ,promo.attended_ms
+
+      ,ms.ms_attended
 FROM gabby.powerschool.cohort_identifiers_static co
 JOIN gabby.njsmart.all_state_assessments asa
   ON co.student_number = asa.local_student_id
  AND co.academic_year = asa.academic_year
-LEFT OUTER JOIN external_prof ext
+LEFT JOIN external_prof ext
   ON co.academic_year = ext.academic_year
  AND CONCAT(LEFT(asa.subject, 3), RIGHT(CONCAT('0', co.grade_level), 2)) = ext.test_code
-LEFT OUTER JOIN promo
+LEFT JOIN promo
   ON co.student_number = promo.student_number
+LEFT JOIN ms_grad ms
+  ON co.student_number = ms.student_number
 WHERE co.rn_year = 1

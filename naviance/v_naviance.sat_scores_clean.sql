@@ -35,35 +35,35 @@ FROM
            ,sat.hs_student_id AS student_number                
            ,sat.sat_scale
            ,sat.is_old_sat
-           ,CONVERT(DATE,test_date) AS test_date
+           ,test_date
            ,CASE WHEN sat.test_date > CONVERT(DATE,GETDATE()) THEN 1 END AS test_date_flag
-           ,CONVERT(FLOAT,CASE WHEN evidence_based_reading_writing BETWEEN 200 AND 800 THEN evidence_based_reading_writing END) AS verbal
-           ,CONVERT(FLOAT,CASE WHEN math BETWEEN 200 AND 800 THEN math END) AS math
-           ,CONVERT(FLOAT,CASE WHEN writing BETWEEN 200 AND 800 THEN writing END) AS writing
+           ,CASE WHEN evidence_based_reading_writing BETWEEN 200 AND 800 THEN evidence_based_reading_writing END AS verbal
+           ,CASE WHEN math BETWEEN 200 AND 800 THEN math END AS math
+           ,CASE WHEN writing BETWEEN 200 AND 800 THEN writing END AS writing
            ,CASE WHEN essay_subscore = 0 THEN NULL ELSE essay_subscore END AS essay_subscore 
            ,CASE WHEN mc_subscore = 0 THEN NULL ELSE mc_subscore END AS mc_subscore
-           ,CONVERT(FLOAT,evidence_based_reading_writing) + CONVERT(FLOAT,math) AS math_verbal_total                
-           ,CONVERT(FLOAT,CASE WHEN total < 200 THEN NULL ELSE total END) AS all_tests_total
+           ,evidence_based_reading_writing + math AS math_verbal_total                
+           ,CASE WHEN total < 200 THEN NULL ELSE total END AS all_tests_total
            ,CASE
-             WHEN (ISNULL(CASE WHEN CONVERT(FLOAT,evidence_based_reading_writing) BETWEEN 200 AND 800 THEN CONVERT(FLOAT,evidence_based_reading_writing) END, 0)
-                    + ISNULL(CASE WHEN CONVERT(FLOAT,math) BETWEEN 200 AND 800 THEN CONVERT(FLOAT,math) END, 0)
-                    + ISNULL(CASE WHEN CONVERT(FLOAT,writing) BETWEEN 200 AND 800 THEN CONVERT(FLOAT,writing) END, 0))
+             WHEN (ISNULL(CASE WHEN evidence_based_reading_writing BETWEEN 200 AND 800 THEN evidence_based_reading_writing END, 0)
+                    + ISNULL(CASE WHEN math BETWEEN 200 AND 800 THEN math END, 0)
+                    + ISNULL(CASE WHEN writing BETWEEN 200 AND 800 THEN writing END, 0))
                       != total 
                   THEN 1 
              WHEN total NOT BETWEEN 400 AND 2400 THEN 1
             END AS total_flag                
      FROM (
-           SELECT [student_id]
-                 ,[hs_student_id]                  
-                 ,[evidence_based_reading_writing]
-                 ,[math]              
-                 ,[total]      
-                 ,[reading_test]
-                 ,[writing_test]      
-                 ,[math_test]
+           SELECT CONVERT(INT,[student_id]) AS student_id
+                 ,CONVERT(INT,[hs_student_id]) AS hs_student_id
+                 ,CONVERT(FLOAT,[evidence_based_reading_writing]) AS evidence_based_reading_writing
+                 ,CONVERT(FLOAT,[math]) AS math
+                 ,CONVERT(FLOAT,[total]) AS total
+                 ,CONVERT(FLOAT,[reading_test]) AS reading_test
+                 ,CONVERT(FLOAT,[writing_test]) AS writing_test
+                 ,CONVERT(FLOAT,[math_test]) AS math_test
                  ,NULL AS writing
-                 ,NULL AS [essay_subscore]
-                 ,CONVERT(FLOAT,[math_test]) + CONVERT(FLOAT,[reading_test]) AS [mc_subscore]
+                 ,NULL AS essay_subscore
+                 ,CONVERT(FLOAT,[math_test]) + CONVERT(FLOAT,[reading_test]) AS mc_subscore
                  ,DATEFROMPARTS(RIGHT(test_date, 4), LEFT(test_date, CHARINDEX('/',test_date) - 1), 1) AS test_date
                  ,1600 AS sat_scale
                  ,0 AS is_old_sat
@@ -71,17 +71,17 @@ FROM
 
            UNION ALL
 
-           SELECT [studentid]
-                 ,[hs_student_id]            
-                 ,[verbal]
-                 ,[math]                    
-                 ,[total]
+           SELECT CONVERT(INT,[studentid]) AS student_id
+                 ,CONVERT(INT,[hs_student_id]) AS hs_student_id
+                 ,CONVERT(FLOAT,[verbal])
+                 ,CONVERT(FLOAT,[math])
+                 ,CONVERT(FLOAT,[total])
                  ,NULL AS [reading_test]
-                 ,[essay_subscore] AS [writing_test]      
+                 ,CONVERT(FLOAT,[essay_subscore]) AS writing_test
                  ,NULL AS [math_test]
-                 ,[writing]
-                 ,[essay_subscore]
-                 ,[mc_subscore]
+                 ,CONVERT(FLOAT,[writing])
+                 ,CONVERT(FLOAT,[essay_subscore])
+                 ,CONVERT(FLOAT,[mc_subscore])
                  ,CASE
                    WHEN test_date = '0000-00-00' THEN NULL
                    WHEN RIGHT(test_date,2) = '00' THEN DATEFROMPARTS(LEFT(test_date,4), SUBSTRING(test_date, 6, 2), 01)

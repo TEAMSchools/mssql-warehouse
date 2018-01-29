@@ -5,15 +5,21 @@ CREATE OR ALTER VIEW powerschool.attendance_streak AS
 
 WITH valid_dates AS (
   SELECT schoolid
-        ,date_value
-        ,gabby.utilities.DATE_TO_SY(date_value) AS academic_year
+        ,academic_year
+        ,date_value        
         ,ROW_NUMBER() OVER(
-           PARTITION BY schoolid, gabby.utilities.DATE_TO_SY(date_value)
+           PARTITION BY schoolid, academic_year
              ORDER BY date_value ASC) AS day_number
-  FROM gabby.powerschool.calendar_day
-  WHERE date_value >= DATEFROMPARTS((gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1), 7, 1)
-    AND membershipvalue = 1
-    AND insession = 1
+  FROM
+      (
+       SELECT CONVERT(INT,schoolid) AS schoolid
+             ,date_value
+             ,gabby.utilities.DATE_TO_SY(date_value) AS academic_year        
+       FROM gabby.powerschool.calendar_day
+       WHERE date_value >= DATEFROMPARTS((gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1), 7, 1)
+         AND membershipvalue = 1
+         AND insession = 1
+      ) sub
  )
 
 SELECT student_number

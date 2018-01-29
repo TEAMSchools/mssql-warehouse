@@ -53,9 +53,9 @@ FROM
                   ORDER BY composite DESC) AS dupe_audit
      FROM
          (
-          SELECT studentid AS naviance_studentid
-                ,hs_student_id AS student_number                
-                ,REPLACE(test_type,' (Legacy)','') AS test_type
+          SELECT CONVERT(INT,studentid) AS naviance_studentid
+                ,CONVERT(INT,hs_student_id) AS student_number                
+                ,CONVERT(VARCHAR(5),REPLACE(test_type,' (Legacy)','')) AS test_type
                 
                 ,CASE
                   WHEN test_date = '0000-00-00' THEN NULL
@@ -63,16 +63,16 @@ FROM
                   ELSE CONVERT(DATE,test_date)
                  END AS test_date
                 
-                ,CASE WHEN composite BETWEEN 1 AND 36 THEN composite END AS composite                
-                ,CASE WHEN english BETWEEN 1 AND 36 THEN english END AS english
-                ,CASE WHEN math BETWEEN 1 AND 36 THEN math END AS math
-                ,CASE WHEN reading BETWEEN 1 AND 36 THEN reading END AS reading
-                ,CASE WHEN science BETWEEN 1 AND 36 THEN science END AS science
-                ,CASE WHEN writing BETWEEN 1 AND 36 THEN writing END AS writing                
-                ,CASE WHEN ela = 0 THEN NULL ELSE ela END AS ela                
-                ,CASE WHEN writing_sub BETWEEN 2 AND 12 THEN writing_sub END AS writing_sub                                                
-                ,CASE WHEN comb_eng_write = 0 THEN NULL ELSE comb_eng_write END AS comb_eng_write                
-                ,CASE WHEN stem = 0 THEN NULL ELSE stem END AS stem
+                ,CONVERT(INT,CASE WHEN composite BETWEEN 1 AND 36 THEN composite END) AS composite                
+                ,CONVERT(INT,CASE WHEN english BETWEEN 1 AND 36 THEN english END) AS english
+                ,CONVERT(INT,CASE WHEN math BETWEEN 1 AND 36 THEN math END) AS math
+                ,CONVERT(INT,CASE WHEN reading BETWEEN 1 AND 36 THEN reading END) AS reading
+                ,CONVERT(INT,CASE WHEN science BETWEEN 1 AND 36 THEN science END) AS science
+                ,CONVERT(INT,CASE WHEN writing BETWEEN 1 AND 36 THEN writing END) AS writing                
+                ,CONVERT(INT,CASE WHEN ela = 0 THEN NULL ELSE ela END) AS ela                
+                ,CONVERT(INT,CASE WHEN writing_sub BETWEEN 2 AND 12 THEN writing_sub END) AS writing_sub                                                
+                ,CONVERT(INT,CASE WHEN comb_eng_write = 0 THEN NULL ELSE comb_eng_write END) AS comb_eng_write                
+                ,CONVERT(INT,CASE WHEN stem = 0 THEN NULL ELSE stem END) AS stem
           FROM gabby.naviance.act_scores act           
           WHERE act.test_type LIKE 'ACT%'          
          ) sub1    

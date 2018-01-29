@@ -24,7 +24,7 @@ WITH course_scaffold AS (
              ,enr.course_number
              ,enr.excludefromgpa
 
-             ,CONVERT(VARCHAR,terms.alt_name) AS term_name        
+             ,CONVERT(VARCHAR(25),terms.alt_name) AS term_name
              ,terms.start_date AS term_start_date
              ,terms.end_date AS term_end_date
        FROM gabby.powerschool.course_enrollments_static enr

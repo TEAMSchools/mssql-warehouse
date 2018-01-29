@@ -218,9 +218,9 @@ FROM
            ,dt.time_per_name AS reporting_term
            
            ,CASE 
-             WHEN CONVERT(DATE,GETDATE()) BETWEEN CONVERT(DATE,dt.start_date) AND CONVERT(DATE,dt.end_date) THEN 1 
+             WHEN CONVERT(DATE,GETDATE()) BETWEEN dt.start_date AND dt.end_date THEN 1 
              WHEN co.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
-              AND CONVERT(DATE,dt.start_date) = MAX(CONVERT(DATE,dt.start_date)) OVER(PARTITION BY co.studentid, co.academic_year) THEN 1
+              AND dt.start_date = MAX(dt.start_date) OVER(PARTITION BY co.studentid, co.academic_year) THEN 1
              ELSE 0
             END AS is_curterm
 
