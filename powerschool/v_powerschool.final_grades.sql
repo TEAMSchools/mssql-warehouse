@@ -5,39 +5,29 @@ CREATE OR ALTER VIEW powerschool.final_grades AS
 
 WITH roster AS (
   SELECT co.student_number
-        ,co.studentid      
+        ,co.studentid
         ,co.academic_year
-        ,co.schoolid      
-        ,co.grade_level      
+        ,co.schoolid
+        ,co.grade_level        
         
-        ,CONVERT(VARCHAR,CONCAT('RT',RIGHT(terms.alt_name, 1))) AS reporting_term
-        ,CONVERT(VARCHAR,terms.alt_name) AS term_name
-        ,CASE 
-          WHEN CONVERT(DATE,GETDATE()) BETWEEN terms.start_date AND terms.end_date THEN 1 
-          WHEN co.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() AND terms.start_date = MAX(terms.start_date) OVER(PARTITION BY terms.schoolid, terms.academic_year) THEN 1
-          ELSE 0 
-         END AS is_curterm
-
-        ,css.course_number        
+        ,css.term_name
+        ,css.is_curterm
+        ,css.course_number
         ,css.sectionid
+        ,css.excludefromgpa
+        ,CONCAT('RT',RIGHT(css.term_name, 1)) AS reporting_term
         
-        ,cou.gradescaleid
-        ,cou.excludefromgpa        
-        ,cou.course_name
-        ,cou.credittype
-        ,cou.credit_hours                
+        ,CONVERT(VARCHAR(125),cou.course_name) AS course_name
+        ,CONVERT(VARCHAR(25),cou.credittype) AS credittype
+        ,cou.credit_hours        
         
         ,t.lastfirst AS teacher_name
-  FROM gabby.powerschool.cohort_identifiers_static co
-  JOIN gabby.reporting.reporting_terms terms
-    ON co.schoolid = terms.schoolid
-   AND co.academic_year = terms.academic_year
-   AND terms.identifier = 'RT'
-   AND terms.alt_name != 'Summer School'     
+
+        ,CASE WHEN sec.gradescaleid = 0 THEN CONVERT(INT,cou.gradescaleid) ELSE CONVERT(INT,sec.gradescaleid) END AS gradescaleid
+  FROM gabby.powerschool.cohort_identifiers_static co  
   JOIN gabby.powerschool.course_section_scaffold_static css
     ON co.studentid = css.studentid
-   AND co.yearid = css.yearid
-   AND terms.alt_name = css.term_name
+   AND co.yearid = css.yearid   
    AND css.course_number != 'ALL'
   JOIN gabby.powerschool.courses cou
     ON css.course_number = cou.course_number
@@ -76,15 +66,15 @@ WITH roster AS (
              ,enr.course_number             
              ,(enr.yearid + 1990) academic_year
              
-             ,pgf.finalgradename AS term_name                          
+             ,CONVERT(VARCHAR(5),pgf.finalgradename) AS term_name                          
       
-             ,sg.grade AS stored_letter           
+             ,CONVERT(VARCHAR(5),sg.grade) AS stored_letter           
              ,ROUND(sg.[percent], 0) AS stored_pct             
              
              ,CASE
                WHEN enr.sectionid < 0 AND sg.[percent] IS NULL THEN NULL                
                WHEN pgf.grade = 'false' THEN 'F'
-               ELSE pgf.grade 
+               ELSE CONVERT(VARCHAR(5),pgf.grade)
               END AS pgf_letter      
              ,CASE 
                WHEN enr.sectionid < 0 AND sg.[percent] IS NULL THEN NULL                
@@ -119,11 +109,11 @@ WITH roster AS (
 
        UNION ALL
 
-       SELECT sg.studentid                   
-             ,sg.course_number             
-             ,LEFT(sg.termid,2) + 1990 AS academic_year      
-             ,sg.storecode AS term_name
-             ,CASE WHEN sg.grade = 'false' THEN 'F' ELSE sg.grade END AS stored_letter      
+       SELECT CONVERT(INT,sg.studentid) AS studentid
+             ,CONVERT(VARCHAR(125),sg.course_number) AS course_number
+             ,CONVERT(INT,LEFT(sg.termid,2) + 1990) AS academic_year      
+             ,CONVERT(VARCHAR(5),sg.storecode) AS term_name
+             ,CASE WHEN sg.grade = 'false' THEN 'F' ELSE CONVERT(VARCHAR(5),sg.grade) END AS stored_letter      
              ,sg.[percent] AS stored_pct
              ,NULL AS pgf_letter
              ,NULL AS pgf_pct      
@@ -146,10 +136,10 @@ WITH roster AS (
         ,CASE WHEN E2 < 50 THEN 50 ELSE E2 END AS E2_adjusted
   FROM
       (
-       SELECT studentid
-             ,LEFT(termid, 2) + 1990 AS academic_year      
-             ,course_number           
-             ,storecode
+       SELECT CONVERT(INT,studentid) AS studentid
+             ,CONVERT(INT,LEFT(termid, 2) + 1990) AS academic_year      
+             ,CONVERT(VARCHAR(25),course_number) AS course_number
+             ,CONVERT(VARCHAR(5),storecode) AS storecode
              ,[percent]
        FROM gabby.powerschool.storedgrades
        WHERE schoolid = 73253
@@ -231,7 +221,7 @@ SELECT sub.student_number
       ,sub.sectionid
       ,sub.teacher_name
       ,CASE
-        WHEN sub.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() THEN y1.EXCLUDEFROMGPA
+        WHEN sub.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() THEN CONVERT(INT,y1.excludefromgpa)
         ELSE sub.excludefromgpa
        END AS excludefromgpa
       ,sub.gradescaleid
@@ -262,12 +252,12 @@ SELECT sub.student_number
         WHEN sub.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() THEN NULL
         ELSE sub.y1_grade_percent_adjusted
        END AS y1_grade_percent_adjusted      
-      ,REPLACE(CASE
+      ,CONVERT(VARCHAR(5),REPLACE(CASE
                 WHEN y1.grade IS NOT NULL THEN y1.grade
                 WHEN sub.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() THEN NULL
-                WHEN sub.y1_grade_percent_adjusted = 50 AND sub.y1_grade_percent < 50 THEN 'F*'        
-                ELSE y1_scale.letter_grade 
-               END, 'false', 'F') AS y1_grade_letter
+                WHEN sub.y1_grade_percent_adjusted = 50 AND sub.y1_grade_percent < 50 THEN 'F*'
+                ELSE y1_scale.letter_grade
+               END, 'false', 'F')) AS y1_grade_letter
       ,CASE
         WHEN y1.gpa_points IS NOT NULL THEN y1.gpa_points
         WHEN sub.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() THEN NULL
