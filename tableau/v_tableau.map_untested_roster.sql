@@ -27,7 +27,7 @@ WITH roster AS (
 ,terms AS (
   SELECT academic_year        
         ,alt_name AS term_name
-        ,CONVERT(DATE,start_date) AS term_start_date
+        ,start_date AS term_start_date
   FROM gabby.reporting.reporting_terms
   WHERE identifier = 'MAP'
     AND start_date <= GETDATE()

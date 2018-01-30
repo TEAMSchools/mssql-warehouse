@@ -4,7 +4,28 @@ GO
 CREATE OR ALTER VIEW nwea.retest_roster AS
 
 WITH map_long AS (
-  SELECT sub.*      
+  SELECT sub.student_id
+        ,sub.academic_year
+        ,sub.term
+        ,sub.measurement_scale
+        ,sub.test_ritscore
+        ,sub.npr
+        ,sub.test_start_date
+        ,sub.test_duration_minutes
+        ,sub.lastfirst
+        ,sub.reporting_schoolid
+        ,sub.grade_level
+        ,sub.student_testdurationminutes
+        ,sub.prev_academic_year
+        ,sub.prev_term
+        ,sub.prev_rit
+        ,sub.prev_npr
+        ,sub.next_academic_year
+        ,sub.next_term
+        ,sub.next_rit
+        ,sub.next_npr
+        ,sub.student_N
+
         ,AVG(CONVERT(FLOAT,test_duration_minutes)) OVER(PARTITION BY grade_level, measurement_scale) AS global_mean_testdurationminutes
         ,STDEV(CONVERT(FLOAT,test_duration_minutes)) OVER(PARTITION BY grade_level, measurement_scale) AS global_stdev_testdurationminutes             
         ,AVG(CONVERT(FLOAT,student_testdurationminutes)) OVER(PARTITION BY student_id, measurement_scale) AS student_mean_testdurationminutes

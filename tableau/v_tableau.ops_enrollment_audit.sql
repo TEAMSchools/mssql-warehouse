@@ -74,13 +74,13 @@ WITH caredox_enrollment AS (
           ELSE 'Returning Student'
          END AS entry_status                 
            
-        ,ISNULL(CONVERT(NVARCHAR(MAX),co.lunch_app_status),'') AS lunch_app_status
-        ,CONVERT(NVARCHAR(MAX),CONVERT(MONEY,ISNULL(co.lunch_balance,0))) AS lunch_balance
+        ,ISNULL(CONVERT(VARCHAR(500),co.lunch_app_status),'') AS lunch_app_status
+        ,CONVERT(VARCHAR(500),CONVERT(MONEY,ISNULL(co.lunch_balance,0))) AS lunch_balance
       
-        ,ISNULL(CONVERT(NVARCHAR(MAX),uxs.residency_proof_1),'Missing') AS residency_proof_1
-        ,CONVERT(NVARCHAR(MAX),CASE WHEN co.year_in_network = 1 THEN ISNULL(uxs.residency_proof_2,'Missing') END) AS residency_proof_2
-        ,CONVERT(NVARCHAR(MAX),CASE WHEN co.year_in_network = 1 THEN ISNULL(uxs.residency_proof_3,'Missing') END) AS residency_proof_3
-        ,CONVERT(NVARCHAR(MAX),CASE
+        ,ISNULL(CONVERT(VARCHAR(500),uxs.residency_proof_1),'Missing') AS residency_proof_1
+        ,CONVERT(VARCHAR(500),CASE WHEN co.year_in_network = 1 THEN ISNULL(uxs.residency_proof_2,'Missing') END) AS residency_proof_2
+        ,CONVERT(VARCHAR(500),CASE WHEN co.year_in_network = 1 THEN ISNULL(uxs.residency_proof_3,'Missing') END) AS residency_proof_3
+        ,CONVERT(VARCHAR(500),CASE
                                 WHEN year_in_network = 1 AND CONCAT(ISNULL(uxs.residency_proof_1,'Missing')
 									                                ,ISNULL(uxs.residency_proof_2,'Missing')
 									                                ,ISNULL(uxs.residency_proof_3,'Missing')) NOT LIKE '%Missing%' 
@@ -91,28 +91,28 @@ WITH caredox_enrollment AS (
 		                                THEN 'Y'
                                 ELSE 'N'
                                 END) AS residency_proof_all
-        --,ISNULL(CONVERT(NVARCHAR(MAX),uxs.reverification_date),'1900-07-01') AS reverification_date
-        ,ISNULL(CONVERT(NVARCHAR(MAX),uxs.birth_certificate_proof),'N') AS birth_certificate_proof        
-        ,ISNULL(CONVERT(NVARCHAR(MAX),CASE WHEN rv.NEN IS NOT NULL THEN 'Y' END),'N') AS residency_verification_scanned
-        ,CONVERT(NVARCHAR(MAX),CASE WHEN co.year_in_network > 1 THEN ISNULL(rv.verification_date,'1900-07-01') END) AS reverification_date
+        --,ISNULL(CONVERT(VARCHAR(500),uxs.reverification_date),'1900-07-01') AS reverification_date
+        ,ISNULL(CONVERT(VARCHAR(500),uxs.birth_certificate_proof),'N') AS birth_certificate_proof        
+        ,ISNULL(CONVERT(VARCHAR(500),CASE WHEN rv.NEN IS NOT NULL THEN 'Y' END),'N') AS residency_verification_scanned
+        ,CONVERT(VARCHAR(500),CASE WHEN co.year_in_network > 1 THEN ISNULL(rv.verification_date,'1900-07-01') END) AS reverification_date
            
-        ,ISNULL(CONVERT(NVARCHAR(MAX),uxs.iep_registration_followup),'') AS iep_registration_followup_required
-        ,CONVERT(NVARCHAR(MAX),CASE 
+        ,ISNULL(CONVERT(VARCHAR(500),uxs.iep_registration_followup),'') AS iep_registration_followup_required
+        ,CONVERT(VARCHAR(500),CASE 
           WHEN uxs.iep_registration_followup IS NULL THEN ''
           WHEN uxs.iep_registration_followup = 1 AND co.specialed_classification IS NOT NULL THEN 'Y'
           ELSE 'N'
          END) AS iep_registration_followup_complete
-        ,ISNULL(CONVERT(NVARCHAR(MAX),uxs.lep_registration_followup),'') AS lep_registration_followup_required
-        ,CONVERT(NVARCHAR(MAX),CASE 
+        ,ISNULL(CONVERT(VARCHAR(500),uxs.lep_registration_followup),'') AS lep_registration_followup_required
+        ,CONVERT(VARCHAR(500),CASE 
           WHEN uxs.lep_registration_followup IS NULL THEN ''
           WHEN uxs.lep_registration_followup = 1 AND co.lep_status IS NOT NULL THEN 'Y'
           ELSE 'N'
          END) AS lep_registration_followup_complete
 
-        ,ISNULL(CONVERT(NVARCHAR(MAX),cde.status),'') AS caredox_enrollment_status
-        ,ISNULL(CONVERT(NVARCHAR(MAX),cdi.status),'') AS caredox_immunization_status
-        ,ISNULL(CONVERT(NVARCHAR(MAX),cds.status),'') AS caredox_screenings_status
-        ,ISNULL(CONVERT(NVARCHAR(MAX),cdm.medication),'') AS caredox_medication_status
+        ,ISNULL(CONVERT(VARCHAR(500),cde.status),'') AS caredox_enrollment_status
+        ,ISNULL(CONVERT(VARCHAR(500),cdi.status),'') AS caredox_immunization_status
+        ,ISNULL(CONVERT(VARCHAR(500),cds.status),'') AS caredox_screenings_status
+        ,ISNULL(CONVERT(VARCHAR(500),cdm.medication),'') AS caredox_medication_status
   FROM gabby.powerschool.cohort_identifiers_static co  
   LEFT OUTER JOIN gabby.powerschool.u_def_ext_students uxs
     ON co.students_dcid = uxs.studentsdcid

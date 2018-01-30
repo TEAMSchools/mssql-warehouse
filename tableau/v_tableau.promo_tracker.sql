@@ -17,10 +17,10 @@ WITH roster AS (
         ,co.iep_status
         ,co.enroll_status
 
-        ,CONVERT(NVARCHAR,dt.alt_name) AS term_name
-        ,CONVERT(NVARCHAR,dt.time_per_name) AS reporting_term
-        ,CONVERT(DATE,dt.start_date) AS term_start_date
-        ,CONVERT(DATE,dt.end_date) AS term_end_date
+        ,CONVERT(VARCHAR,dt.alt_name) AS term_name
+        ,CONVERT(VARCHAR,dt.time_per_name) AS reporting_term
+        ,dt.start_date AS term_start_date
+        ,dt.end_date AS term_end_date
   FROM gabby.powerschool.cohort_identifiers_static co
   JOIN gabby.reporting.reporting_terms dt
     ON co.academic_year = dt.academic_year
@@ -47,7 +47,7 @@ WITH roster AS (
         ,co.enroll_status
 
         ,'Y1' AS term
-        ,CONVERT(NVARCHAR,dt.time_per_name) AS reporting_term
+        ,CONVERT(VARCHAR,dt.time_per_name) AS reporting_term
         ,CONVERT(DATE,dt.start_date) AS term_start_date
         ,CONVERT(DATE,dt.end_date) AS term_end_date
   FROM gabby.powerschool.cohort_identifiers_static co
@@ -68,55 +68,55 @@ WITH roster AS (
   FROM
       (
        SELECT con.student_number      
-             ,CONVERT(NVARCHAR,con.home_phone) AS home_phone
-             ,CONVERT(NVARCHAR,con.guardianemail) AS home_email
-             ,CONVERT(NVARCHAR,con.mother) AS parent1_name            
-             ,CONVERT(NVARCHAR,con.father) AS parent2_name            
-             ,CONVERT(NVARCHAR,con.doctor_name) AS doctor_name      
-             ,CONVERT(NVARCHAR,con.doctor_phone) AS doctor_phone
-             ,CONVERT(NVARCHAR,con.emerg_contact_1) AS emerg1_name      
-             ,CONVERT(NVARCHAR,con.emerg_phone_1) AS emerg1_phone
-             ,CONVERT(NVARCHAR,con.emerg_contact_2) AS emerg2_name      
-             ,CONVERT(NVARCHAR,con.emerg_phone_2) AS emerg2_phone            
-             ,CONVERT(NVARCHAR,'Home') AS home_name           
+             ,CONVERT(VARCHAR,con.home_phone) AS home_phone
+             ,CONVERT(VARCHAR,con.guardianemail) AS home_email
+             ,CONVERT(VARCHAR,con.mother) AS parent1_name            
+             ,CONVERT(VARCHAR,con.father) AS parent2_name            
+             ,CONVERT(VARCHAR,con.doctor_name) AS doctor_name      
+             ,CONVERT(VARCHAR,con.doctor_phone) AS doctor_phone
+             ,CONVERT(VARCHAR,con.emerg_contact_1) AS emerg1_name      
+             ,CONVERT(VARCHAR,con.emerg_phone_1) AS emerg1_phone
+             ,CONVERT(VARCHAR,con.emerg_contact_2) AS emerg2_name      
+             ,CONVERT(VARCHAR,con.emerg_phone_2) AS emerg2_phone            
+             ,CONVERT(VARCHAR,'Home') AS home_name           
 
-             ,CONVERT(NVARCHAR,scf.mother_home_phone) AS parent1_home      
-             ,CONVERT(NVARCHAR,scf.motherdayphone) AS parent1_day
-             ,CONVERT(NVARCHAR,scf.father_home_phone) AS parent2_home      
-             ,CONVERT(NVARCHAR,scf.fatherdayphone) AS parent2_day
-             ,CONVERT(NVARCHAR,scf.emerg_1_rel) AS emerg1_relation
-             ,CONVERT(NVARCHAR,scf.emerg_2_rel) AS emerg2_relation
-             ,CONVERT(NVARCHAR,scf.emerg_contact_3) AS emerg3_name
-             ,CONVERT(NVARCHAR,scf.emerg_3_rel) AS emerg3_relation
-             ,CONVERT(NVARCHAR,scf.emerg_3_phone) AS emerg3_phone
+             ,CONVERT(VARCHAR,scf.mother_home_phone) AS parent1_home      
+             ,CONVERT(VARCHAR,scf.motherdayphone) AS parent1_day
+             ,CONVERT(VARCHAR,scf.father_home_phone) AS parent2_home      
+             ,CONVERT(VARCHAR,scf.fatherdayphone) AS parent2_day
+             ,CONVERT(VARCHAR,scf.emerg_1_rel) AS emerg1_relation
+             ,CONVERT(VARCHAR,scf.emerg_2_rel) AS emerg2_relation
+             ,CONVERT(VARCHAR,scf.emerg_contact_3) AS emerg3_name
+             ,CONVERT(VARCHAR,scf.emerg_3_rel) AS emerg3_relation
+             ,CONVERT(VARCHAR,scf.emerg_3_phone) AS emerg3_phone
       
-             ,CONVERT(NVARCHAR,suf.emerg_4_name) AS emerg4_name
-             ,CONVERT(NVARCHAR,suf.emerg_4_rel) AS emerg4_relation
-             ,CONVERT(NVARCHAR,suf.emerg_4_phone) AS emerg4_phone
-             ,CONVERT(NVARCHAR,suf.emerg_5_name) AS emerg5_name
-             ,CONVERT(NVARCHAR,suf.emerg_5_rel) AS emerg5_relation
-             ,CONVERT(NVARCHAR,suf.emerg_5_phone) AS emerg5_phone
-             ,CONVERT(NVARCHAR,suf.mother_cell) AS parent1_cell
-             ,CONVERT(NVARCHAR,suf.father_cell) AS parent2_cell
-             ,CONVERT(NVARCHAR,suf.release_1_name) AS release1_name
-             ,CONVERT(NVARCHAR,suf.release_1_relation) AS release1_relation
-             ,CONVERT(NVARCHAR,suf.release_1_phone) AS release1_phone           
-             ,CONVERT(NVARCHAR,suf.release_2_name) AS release2_name
-             ,CONVERT(NVARCHAR,suf.release_2_relation) AS release2_relation
-             ,CONVERT(NVARCHAR,suf.release_2_phone) AS release2_phone           
-             ,CONVERT(NVARCHAR,suf.release_3_name) AS release3_name
-             ,CONVERT(NVARCHAR,suf.release_3_relation) AS release3_relation
-             ,CONVERT(NVARCHAR,suf.release_3_phone) AS release3_phone           
-             ,CONVERT(NVARCHAR,suf.release_4_name) AS release4_name
-             ,CONVERT(NVARCHAR,suf.release_4_relation) AS release4_relation
-             ,CONVERT(NVARCHAR,suf.release_4_phone) AS release4_phone           
-             ,CONVERT(NVARCHAR,suf.release_5_name) AS release5_name
-             ,CONVERT(NVARCHAR,suf.release_5_relation) AS release5_relation
-             ,CONVERT(NVARCHAR,suf.release_5_phone) AS release5_phone                      
+             ,CONVERT(VARCHAR,suf.emerg_4_name) AS emerg4_name
+             ,CONVERT(VARCHAR,suf.emerg_4_rel) AS emerg4_relation
+             ,CONVERT(VARCHAR,suf.emerg_4_phone) AS emerg4_phone
+             ,CONVERT(VARCHAR,suf.emerg_5_name) AS emerg5_name
+             ,CONVERT(VARCHAR,suf.emerg_5_rel) AS emerg5_relation
+             ,CONVERT(VARCHAR,suf.emerg_5_phone) AS emerg5_phone
+             ,CONVERT(VARCHAR,suf.mother_cell) AS parent1_cell
+             ,CONVERT(VARCHAR,suf.father_cell) AS parent2_cell
+             ,CONVERT(VARCHAR,suf.release_1_name) AS release1_name
+             ,CONVERT(VARCHAR,suf.release_1_relation) AS release1_relation
+             ,CONVERT(VARCHAR,suf.release_1_phone) AS release1_phone           
+             ,CONVERT(VARCHAR,suf.release_2_name) AS release2_name
+             ,CONVERT(VARCHAR,suf.release_2_relation) AS release2_relation
+             ,CONVERT(VARCHAR,suf.release_2_phone) AS release2_phone           
+             ,CONVERT(VARCHAR,suf.release_3_name) AS release3_name
+             ,CONVERT(VARCHAR,suf.release_3_relation) AS release3_relation
+             ,CONVERT(VARCHAR,suf.release_3_phone) AS release3_phone           
+             ,CONVERT(VARCHAR,suf.release_4_name) AS release4_name
+             ,CONVERT(VARCHAR,suf.release_4_relation) AS release4_relation
+             ,CONVERT(VARCHAR,suf.release_4_phone) AS release4_phone           
+             ,CONVERT(VARCHAR,suf.release_5_name) AS release5_name
+             ,CONVERT(VARCHAR,suf.release_5_relation) AS release5_relation
+             ,CONVERT(VARCHAR,suf.release_5_phone) AS release5_phone                      
 
-             ,CASE WHEN CONCAT(scf.mother_home_phone, suf.mother_cell, scf.motherdayphone)!= '' THEN CONVERT(NVARCHAR,'Mother') END AS parent1_relation
-             ,CASE WHEN CONCAT(scf.father_home_phone, suf.father_cell, scf.fatherdayphone) != '' THEN CONVERT(NVARCHAR,'Father') END AS parent2_relation
-             ,CASE WHEN CONCAT(con.doctor_name, con.doctor_phone) != '' THEN CONVERT(NVARCHAR,'Doctor') END AS doctor_relation
+             ,CASE WHEN CONCAT(scf.mother_home_phone, suf.mother_cell, scf.motherdayphone)!= '' THEN CONVERT(VARCHAR,'Mother') END AS parent1_relation
+             ,CASE WHEN CONCAT(scf.father_home_phone, suf.father_cell, scf.fatherdayphone) != '' THEN CONVERT(VARCHAR,'Father') END AS parent2_relation
+             ,CASE WHEN CONCAT(con.doctor_name, con.doctor_phone) != '' THEN CONVERT(VARCHAR,'Doctor') END AS doctor_relation
        FROM gabby.powerschool.students con      
        JOIN gabby.powerschool.studentcorefields scf
          ON con.dcid = scf.studentsdcid
@@ -708,7 +708,7 @@ WITH roster AS (
                       END DESC) AS competitiveness_ranking 
   FROM gabby.naviance.college_applications app
   LEFT OUTER JOIN gabby.alumni.account a 
-    ON app.ceeb_code = CONVERT(NVARCHAR,a.ceeb_code_c)
+    ON app.ceeb_code = CONVERT(VARCHAR,a.ceeb_code_c)
    AND a.record_type_id = '01280000000BQEkAAO'
    AND a.competitiveness_ranking_c IS NOT NULL
  )
@@ -726,31 +726,31 @@ WITH roster AS (
              ,schoolid             
 
              /* overall */
-             ,CONVERT(NVARCHAR,promo_status_overall) AS promo_status_overall             
+             ,CONVERT(VARCHAR,promo_status_overall) AS promo_status_overall             
              
              /* attendance */
-             ,CONVERT(NVARCHAR,promo_status_attendance) AS promo_status_att
-             ,CONVERT(NVARCHAR,att_pts) AS att_pts
-             ,CONVERT(NVARCHAR,att_pts_pct) AS att_pts_pct
-             ,CONVERT(NVARCHAR,days_to_90_pts) AS days_to_90
-             ,CONVERT(NVARCHAR,days_to_90_abs_only) AS days_to_90_abs_only
+             ,CONVERT(VARCHAR,promo_status_attendance) AS promo_status_att
+             ,CONVERT(VARCHAR,att_pts) AS att_pts
+             ,CONVERT(VARCHAR,att_pts_pct) AS att_pts_pct
+             ,CONVERT(VARCHAR,days_to_90_pts) AS days_to_90
+             ,CONVERT(VARCHAR,days_to_90_abs_only) AS days_to_90_abs_only
              
              /* lit */
-             ,CONVERT(NVARCHAR,promo_status_lit) AS lit_ARFR_status                   
-             ,CONVERT(NVARCHAR,cur_read_lvl) AS read_lvl_status
-             ,CONVERT(NVARCHAR,goal_lvl) AS goal_lvl_status      
+             ,CONVERT(VARCHAR,promo_status_lit) AS lit_ARFR_status                   
+             ,CONVERT(VARCHAR,cur_read_lvl) AS read_lvl_status
+             ,CONVERT(VARCHAR,goal_lvl) AS goal_lvl_status      
              
              /* grades */
-             ,CONVERT(NVARCHAR,promo_status_grades) AS promo_status_grades /* # failing */                          
-             ,CONVERT(NVARCHAR,N_below_60) AS n_failing       
-             ,CONVERT(NVARCHAR,gpa_y1) AS gpa_y1_promo                   
+             ,CONVERT(VARCHAR,promo_status_grades) AS promo_status_grades /* # failing */                          
+             ,CONVERT(VARCHAR,N_below_60) AS n_failing       
+             ,CONVERT(VARCHAR,gpa_y1) AS gpa_y1_promo                   
 
              /* credits */
-             ,CONVERT(NVARCHAR,promo_status_credits) AS promo_status_credits
-             ,CONVERT(NVARCHAR,credits_enrolled_y1) AS credits_enrolled
-             ,CONVERT(NVARCHAR,projected_credits_earned_cum) AS projected_credits_earned
-             ,CONVERT(NVARCHAR,earned_credits_cum) AS earned_credits_cum
-             ,CONVERT(NVARCHAR,credits_needed) AS credits_needed
+             ,CONVERT(VARCHAR,promo_status_credits) AS promo_status_credits
+             ,CONVERT(VARCHAR,credits_enrolled_y1) AS credits_enrolled
+             ,CONVERT(VARCHAR,projected_credits_earned_cum) AS projected_credits_earned
+             ,CONVERT(VARCHAR,earned_credits_cum) AS earned_credits_cum
+             ,CONVERT(VARCHAR,credits_needed) AS credits_needed
        FROM gabby.reporting.promotional_status
        WHERE academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
          AND is_curterm = 1       
@@ -995,7 +995,7 @@ SELECT r.studentid
       ,std.test_name AS subdomain
       ,std.subject AS subject
       ,NULL AS course_name
-      ,CONVERT(NVARCHAR(256),NEWID()) AS measure_name
+      ,CONVERT(VARCHAR(256),NEWID()) AS measure_name
       ,std.test_scale_score AS measure_value
       ,std.test_date AS measure_date
       ,std.test_performance_level AS performance_level
