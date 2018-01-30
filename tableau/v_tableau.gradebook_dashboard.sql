@@ -9,13 +9,13 @@ WITH section_teacher AS (
         ,scaff.course_number        
         ,scaff.sectionid        
         
-        ,sec.section_number 
+        ,CONVERT(VARCHAR(125),sec.section_number) AS section_number
         
         ,t.lastfirst AS teacher_name               
         
         ,ROW_NUMBER() OVER(
            PARTITION BY scaff.studentid, scaff.yearid, scaff.course_number
-             ORDER BY scaff.term_name DESC) AS rn        
+             ORDER BY scaff.term_name DESC) AS rn
   FROM gabby.powerschool.course_section_scaffold_static scaff 
   JOIN gabby.powerschool.sections sec 
     ON scaff.sectionid = sec.id
@@ -141,28 +141,28 @@ SELECT COALESCE(co.student_number, e1.student_number) AS student_number
       ,COALESCE(co.team, e1.team) AS team
       ,NULL AS advisor_name
       ,COALESCE(co.enroll_status, e1.enroll_status) AS enroll_status
-      ,LEFT(gr.termid,2) + 1990 AS academic_year
+      ,CONVERT(INT,LEFT(gr.termid,2) + 1990) AS academic_year
       ,COALESCE(co.iep_status, e1.iep_status) AS iep_status
       ,COALESCE(co.cohort, e1.cohort) AS cohort
       
       ,'TRANSFER' AS credittype
-      ,CONCAT('TRANSFER', gr.termid, gr._line) AS course_number
-      ,gr.course_name              
+      ,CONVERT(VARCHAR(125),CONCAT('TRANSFER', gr.termid, gr._line)) AS course_number
+      ,CONVERT(VARCHAR(125),gr.course_name) AS course_name
       ,'Y1' AS reporting_term
       ,'Y1' AS finalgradename            
       ,1 AS is_curterm
-      ,gr.excludefromgpa
+      ,CONVERT(INT,gr.excludefromgpa) AS excludefromgpa
       ,gr.potentialcrhrs AS credit_hours      
       ,gr.[percent] AS term_grade_percent_adjusted
-      ,gr.grade AS term_grade_letter_adjusted
+      ,CONVERT(VARCHAR(5),gr.grade) AS term_grade_letter_adjusted
       ,gr.gpa_points AS term_gpa_points
       ,gr.[percent] AS y1_grade_percent_adjusted
-      ,gr.grade AS y1_grade_letter           
+      ,CONVERT(VARCHAR(5),gr.grade) AS y1_grade_letter           
       ,gr.gpa_points AS y1_gpa_points            
       
       ,NULL AS earnedcrhrs
 
-      ,gr.sectionid
+      ,CONVERT(INT,gr.sectionid) AS sectionid
       ,'TRANSFER' AS teacher_name    
       ,'TRANSFER' AS section_number       
       ,NULL AS period
@@ -258,7 +258,7 @@ SELECT co.student_number
       
       ,gr.credittype
       ,gr.course_number
-      ,cou.course_name         
+      ,CONVERT(VARCHAR(125),cou.course_name) AS course_name
       ,REPLACE(gr.reporting_term,'RT','Q') AS term_name
       ,CASE 
         WHEN co.schoolid != 73253 AND gr.grade_category = 'E' THEN 'HWQ'
@@ -316,7 +316,7 @@ SELECT co.student_number
       
       ,gr.credittype
       ,gr.course_number
-      ,cou.course_name         
+      ,CONVERT(VARCHAR(125),cou.course_name) AS course_name
       ,'Y1' AS term_name
       ,CONCAT(CASE 
                WHEN co.schoolid != 73253 AND gr.grade_category = 'E' THEN 'HWQ'

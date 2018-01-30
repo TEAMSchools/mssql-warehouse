@@ -148,36 +148,36 @@ SELECT rr.assessment_id
       ,rr.academic_year    
       ,rr.administered_at
       ,rr.date_taken
-      ,rr.title
-      ,rr.scope
-      ,rr.subject_area
-      ,rr.module_type
-      ,rr.module_number           
+      ,CONVERT(VARCHAR(250),rr.title) AS title
+      ,CONVERT(VARCHAR(25),rr.scope) AS scope
+      ,CONVERT(VARCHAR(25),rr.subject_area) AS subject_area
+      ,CONVERT(VARCHAR(25),rr.module_type) AS module_type
+      ,CONVERT(VARCHAR(5),rr.module_number) AS module_number    
       ,rr.response_type
       ,rr.standard_id      
       ,rr.points
       ,rr.percent_correct
       ,rr.is_replacement
 
-      ,s.local_student_id
+      ,CONVERT(INT,s.local_student_id) AS local_student_id
            
       ,CASE
         WHEN rr.response_type = 'O' THEN 'Overall'
         WHEN rr.response_type = 'G' AND rr.standard_id IN (26978, 5287) THEN 'OER'
         WHEN rr.response_type = 'G' AND rr.standard_id IN (274, 2766, 2776, 2796) THEN 'MC'
-        ELSE std.custom_code 
+        ELSE CONVERT(VARCHAR(125),std.custom_code)
        END AS standard_code
       ,CASE
         WHEN rr.response_type = 'O' THEN 'Overall'
         WHEN rr.response_type = 'G' AND rr.standard_id IN (26978, 5287) THEN 'Open-Ended Response'
         WHEN rr.response_type = 'G' AND rr.standard_id IN (274, 2766, 2776, 2796) THEN 'Multiple Choice'
-        ELSE std.description
+        ELSE CONVERT(VARCHAR(2000),std.description)
        END AS standard_description
       
       ,dom.domain_description
 
-      ,rta.alt_name AS term_administered
-      ,rtt.alt_name AS term_taken
+      ,CONVERT(VARCHAR(5),rta.alt_name) AS term_administered
+      ,CONVERT(VARCHAR(5),rtt.alt_name) AS term_taken
       
       ,pbl.label_number AS performance_band_number
       ,pbl.is_mastery
@@ -214,22 +214,22 @@ SELECT assessment_id
       ,academic_year    
       ,administered_at
       ,date_taken
-      ,title
-      ,scope
-      ,subject_area
-      ,module_type
-      ,module_number           
+      ,CONVERT(VARCHAR(250),title) AS title
+      ,CONVERT(VARCHAR(25),scope) AS scope
+      ,CONVERT(VARCHAR(25),subject_area) AS subject_area
+      ,CONVERT(VARCHAR(25),module_type) AS module_type
+      ,CONVERT(VARCHAR(5),module_number) AS module_number    
       ,response_type
       ,standard_id      
       ,points
       ,percent_correct
       ,is_replacement           
       ,local_student_id
-      ,standard_code  
-      ,standard_description
-      ,domain_description
-      ,term_administered
-      ,term_taken      
+      ,CONVERT(VARCHAR(250),standard_code) AS standard_code
+      ,CONVERT(VARCHAR(2000),standard_description) AS standard_description
+      ,CONVERT(VARCHAR(2000),domain_description) AS domain_description
+      ,CONVERT(VARCHAR(25),term_administered) AS term_administered
+      ,CONVERT(VARCHAR(25),term_taken) AS term_taken
       ,performance_band_number
       ,is_mastery
 FROM gabby.illuminate_dna_assessments.agg_student_responses_all_archive

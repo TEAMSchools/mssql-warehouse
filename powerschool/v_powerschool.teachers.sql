@@ -3,36 +3,25 @@ GO
 
 CREATE OR ALTER VIEW powerschool.teachers AS
 
-SELECT s.dcid
-      ,s.id
-      ,u.lastfirst
+SELECT CONVERT(VARCHAR(125),u.lastfirst) AS lastfirst
       ,u.first_name
       ,u.middle_name
       ,u.last_name
-      ,s.schoolid
-      ,s.status
-      ,u.photo
-      --,s.balance1
+      ,u.photo      
       ,u.title
       ,u.homeroom
       ,u.email_addr
       ,u.password
-      ,u.numlogins
-      --,u.ipaddrrestrict
+      ,u.numlogins      
       ,u.allowloginstart
       ,u.allowloginend
-      ,u.psaccess
-      --,u.accessvalue
+      ,u.psaccess      
       ,u.homepage
       ,u.loginid
-      --,s.classpua
-      ,s.noofcurclasses
-      ,u.defaultstudscrn
-      --,s.custom
+      ,u.defaultstudscrn      
       ,u.groupvalue
-      ,u.teachernumber
-      ,u.lunch_id
-      --,s.balance2
+      ,CONVERT(VARCHAR(25),u.teachernumber) AS teachernumber
+      ,u.lunch_id      
       ,u.ssn
       ,u.home_phone
       ,u.school_phone
@@ -43,53 +32,17 @@ SELECT s.dcid
       ,u.periodsavail
       ,u.powergradepw
       ,u.canchangeschool
-      ,s.log
       ,u.teacherloginpw
       ,u.nameasimported
       ,u.teacherloginid
       ,u.teacherloginip
       ,u.supportcontact
-      --,s.balance3
-      --,s.balance4
-      --,u.wm_status
-      --,u.wm_statusdate
       ,u.wm_tier
-      --,u.wm_address
-      --,u.wm_password
-      --,u.wm_createdate
-      ,u.wm_createtime
-      --,u.wm_ta_flag
-      --,u.wm_ta_date
-      ,u.wm_exclude
-      ,s.staffstatus
-      --,s.sched_gender
-      ,s.sched_classroom
-      --,s.sched_homeroom
-      ,s.sched_department
-      ,s.sched_maximumcourses
-      ,s.sched_maximumduty
-      ,s.sched_maximumfree
-      ,s.sched_totalcourses
-      ,s.sched_maximumconsecutive
-      ,s.sched_isteacherfree
-      --,s.sched_housecode
-      --,s.sched_buildingcode
-      --,s.sched_activitystatuscode
-      --,s.sched_primaryschoolcode
-      ,s.sched_teachermoreoneschool
-      ,s.sched_substitute
-      ,s.sched_scheduled
-      --,u.wm_alias
-      ,s.sched_usebuilding
-      ,s.sched_usehouse
+      ,u.wm_createtime      
+      ,u.wm_exclude      
       ,u.ethnicity
-      --,s.sched_team
-      ,u.preferredname
-      --,u.lastmeal
-      ,s.sched_lunch
+      ,u.preferredname      
       ,u.staffpers_guid
-      ,s.sched_maxpers
-      ,s.sched_maxpreps
       ,u.adminldapenabled
       ,u.teacherldapenabled
       ,u.sif_stateprid
@@ -97,10 +50,59 @@ SELECT s.dcid
       ,u.gradebooktype
       ,u.fedethnicity
       ,u.fedracedecline
-      ,u.homeschoolid
-      --,s.notes
+      ,CONVERT(INT,u.homeschoolid) AS homeschoolid
       ,u.ptaccess
-      ,s.users_dcid
+
+      ,s.dcid
+      ,CONVERT(INT,s.id) AS id
+      ,CONVERT(INT,s.schoolid) AS schoolid
+      ,s.status
+      ,s.noofcurclasses      
+      ,s.log      
+      ,s.staffstatus      
+      ,s.sched_classroom      
+      ,s.sched_department
+      ,s.sched_maximumcourses
+      ,s.sched_maximumduty
+      ,s.sched_maximumfree
+      ,s.sched_totalcourses
+      ,s.sched_maximumconsecutive
+      ,s.sched_isteacherfree      
+      ,s.sched_teachermoreoneschool
+      ,s.sched_substitute
+      ,s.sched_scheduled      
+      ,s.sched_usebuilding
+      ,s.sched_usehouse      
+      ,s.sched_lunch
+      ,s.sched_maxpers
+      ,s.sched_maxpreps      
+      ,s.sched_housecode
+      ,s.users_dcid      
+      
+      --,s.classpua
+      --,s.custom
+      --,s.balance1      
+      --,s.balance2
+      --,s.balance3
+      --,s.balance4
+      --,s.notes
+      --,s.sched_gender
+      --,s.sched_homeroom      
+      --,s.sched_buildingcode
+      --,s.sched_activitystatuscode
+      --,s.sched_primaryschoolcode
+      --,s.sched_team     
+      --,u.wm_ta_flag
+      --,u.wm_ta_date
+      --,u.wm_status
+      --,u.wm_statusdate
+      --,u.wm_address
+      --,u.wm_password
+      --,u.wm_createdate
+      --,u.ipaddrrestrict
+      --,u.accessvalue
+      --,u.lastmeal
+      --,u.wm_alias 
 FROM powerschool.users u
 JOIN powerschool.schoolstaff s
   ON u.dcid = s.users_dcid

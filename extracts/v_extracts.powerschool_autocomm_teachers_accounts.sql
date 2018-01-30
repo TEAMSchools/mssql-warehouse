@@ -12,21 +12,14 @@ WITH managers AS (
     AND reports_to_position_id IS NOT NULL
  )
 
-,current_teachers AS (
-  SELECT teachernumber
-        ,schoolid
-        ,CASE WHEN homeschoolid = 999999 THEN 0 ELSE homeschoolid END AS homeschoolid
-  FROM gabby.powerschool.teachers
- )
-
 SELECT sub.teachernumber
       ,sub.first_name
       ,sub.last_name
       ,CASE WHEN sub.status = 1 THEN sub.loginid ELSE '' END AS loginid
       ,CASE WHEN sub.status = 1 THEN sub.teacherloginid ELSE '' END AS teacherloginid
       ,sub.email_addr      
-      ,CONVERT(INT,COALESCE(t.schoolid,sub.homeschoolid,0)) AS schoolid -- temp fix until we clean up ADP
-      ,CONVERT(INT,COALESCE(t.homeschoolid,sub.homeschoolid,0)) AS homeschoolid -- temp fix until we clean up ADP
+      ,CONVERT(INT,COALESCE(t.schoolid, sub.homeschoolid, 0)) AS schoolid -- temp fix until we clean up ADP
+      ,CONVERT(INT,COALESCE(t.homeschoolid, sub.homeschoolid, 0)) AS homeschoolid -- temp fix until we clean up ADP
       ,sub.status      
       ,CASE WHEN sub.status = 1 THEN 1 ELSE 0 END AS teacherldapenabled
       ,CASE WHEN sub.status = 1 THEN 1 ELSE 0 END AS adminldapenabled      
@@ -184,5 +177,5 @@ FROM
      WHERE adp.rn_curr = 1     
        AND adp.associate_id NOT IN ('OJOCGAWIL','B8IZPXIOF','CLB53DM3M') /* data team */       
     ) sub
-LEFT OUTER JOIN current_teachers t
+LEFT OUTER JOIN gabby.powerschool.teachers t
   ON sub.teachernumber = t.teachernumber

@@ -60,8 +60,7 @@ FROM
            ,sub.student_number
            ,sub.credittype
            ,sub.course_name
-           ,sub.credit_hours
-           ,sub.gradescaleid
+           ,sub.credit_hours           
            ,sub.excludefromgpa
            ,sub.excludefromstoredgrades      
            ,sub.teachernumber
@@ -75,6 +74,8 @@ FROM
               / COUNT(sub.sectionid) OVER(PARTITION BY sub.studentid, sub.yearid, sub.course_number) AS course_enroll_status
       
            ,CONVERT(INT,sec.dcid) AS sections_dcid
+           
+           ,CASE WHEN sec.gradescaleid = 0 THEN sub.gradescaleid ELSE CONVERT(INT,sec.gradescaleid) END AS gradescaleid
      FROM
          (
           SELECT CONVERT(INT,cc.studentid) AS studentid

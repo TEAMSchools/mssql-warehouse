@@ -114,7 +114,7 @@ FROM
           FROM gabby.powerschool.final_grades_static gr 
           LEFT OUTER JOIN gabby.powerschool.storedgrades sg 
             ON gr.studentid = sg.studentid
-           AND gr.course_number = sg.COURSE_NUMBER
+           AND gr.course_number = sg.course_number
            AND gr.academic_year = (LEFT(sg.termid, 2) + 1990)
            AND sg.storecode = 'Y1'           
           WHERE gr.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()

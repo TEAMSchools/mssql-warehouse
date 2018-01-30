@@ -42,8 +42,8 @@ FROM
            ,pgf.startdate
            ,pgf.enddate
       
-           ,LEFT(pgf.finalgradename,1) AS grade_category
-           ,CONCAT('RT', RIGHT(pgf.finalgradename,1)) AS reporting_term            
+           ,CONVERT(VARCHAR(1),LEFT(pgf.finalgradename,1)) AS grade_category
+           ,CONVERT(VARCHAR(5),CONCAT('RT', RIGHT(pgf.finalgradename,1))) AS reporting_term            
            ,ROUND(CASE WHEN pgf.grade = '--' THEN NULL ELSE pgf.[percent] END, 0) AS grade_category_pct               
      FROM gabby.powerschool.course_enrollments_static enr
      JOIN gabby.powerschool.pgfinalgrades pgf
@@ -71,8 +71,8 @@ FROM
            ,pgf.startdate
            ,pgf.enddate
       
-           ,LEFT(pgf.finalgradename,1) AS grade_category
-           ,CONCAT('RT', RIGHT(pgf.finalgradename,1)) AS reporting_term            
+           ,CONVERT(VARCHAR(1),LEFT(pgf.finalgradename,1)) AS grade_category
+           ,CONVERT(VARCHAR(5),CONCAT('RT', RIGHT(pgf.finalgradename,1))) AS reporting_term            
            ,ROUND(CASE WHEN pgf.grade = '--' THEN NULL ELSE pgf.[percent] END, 0) AS grade_category_pct               
      FROM gabby.powerschool.course_enrollments_static enr
      JOIN gabby.powerschool.pgfinalgrades pgf

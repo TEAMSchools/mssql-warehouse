@@ -7,7 +7,7 @@ WITH grades_unpivot AS (
   SELECT student_number
         ,studentid
         ,academic_year
-        ,CONVERT(NVARCHAR,term_name) AS term_name
+        ,term_name
         ,reporting_term
         ,is_curterm
         ,course_number
@@ -49,15 +49,15 @@ WITH grades_unpivot AS (
              ,fg.y1_grade_letter AS y1_grade_letter
              
              /* empty strings preserve term_name structure when there aren't any grades */
-             ,ISNULL(CONVERT(NVARCHAR(64),fg.term_grade_letter),'') AS term_grade_letter
-             ,ISNULL(CONVERT(NVARCHAR(64),fg.term_grade_percent),'') AS term_grade_percent
-             ,ISNULL(CONVERT(NVARCHAR(64),fg.term_grade_letter_adjusted),'') AS term_grade_letter_adjusted
-             ,ISNULL(CONVERT(NVARCHAR(64),fg.term_grade_percent_adjusted),'') AS term_grade_percent_adjusted                          
+             ,ISNULL(CONVERT(VARCHAR(25),fg.term_grade_letter),'') AS term_grade_letter
+             ,ISNULL(CONVERT(VARCHAR(25),fg.term_grade_percent),'') AS term_grade_percent
+             ,ISNULL(CONVERT(VARCHAR(25),fg.term_grade_letter_adjusted),'') AS term_grade_letter_adjusted
+             ,ISNULL(CONVERT(VARCHAR(25),fg.term_grade_percent_adjusted),'') AS term_grade_percent_adjusted                          
 
-             ,ISNULL(CONVERT(NVARCHAR(64),fg.need_90),'') AS need_90
-             ,ISNULL(CONVERT(NVARCHAR(64),fg.need_80),'') AS need_80
-             ,ISNULL(CONVERT(NVARCHAR(64),fg.need_70),'') AS need_70
-             ,ISNULL(CONVERT(NVARCHAR(64),fg.need_65),'') AS need_65
+             ,fg.need_90
+             ,fg.need_80
+             ,fg.need_70
+             ,fg.need_65
        FROM gabby.powerschool.final_grades_static fg 
        WHERE fg.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1
 
@@ -83,15 +83,15 @@ WITH grades_unpivot AS (
              ,fg.y1_grade_letter AS y1_grade_letter
              
              /* empty strings preserve term_name structure when there aren't any grades */
-             ,ISNULL(CONVERT(NVARCHAR(64),fg.term_grade_letter),'') AS term_grade_letter
-             ,ISNULL(CONVERT(NVARCHAR(64),fg.term_grade_percent),'') AS term_grade_percent
-             ,ISNULL(CONVERT(NVARCHAR(64),fg.term_grade_letter_adjusted),'') AS term_grade_letter_adjusted
-             ,ISNULL(CONVERT(NVARCHAR(64),fg.term_grade_percent_adjusted),'') AS term_grade_percent_adjusted                          
+             ,ISNULL(CONVERT(VARCHAR(25),fg.term_grade_letter),'') AS term_grade_letter
+             ,ISNULL(CONVERT(VARCHAR(25),fg.term_grade_percent),'') AS term_grade_percent
+             ,ISNULL(CONVERT(VARCHAR(25),fg.term_grade_letter_adjusted),'') AS term_grade_letter_adjusted
+             ,ISNULL(CONVERT(VARCHAR(25),fg.term_grade_percent_adjusted),'') AS term_grade_percent_adjusted                          
 
-             ,ISNULL(CONVERT(NVARCHAR(64),fg.need_90),'') AS need_90
-             ,ISNULL(CONVERT(NVARCHAR(64),fg.need_80),'') AS need_80
-             ,ISNULL(CONVERT(NVARCHAR(64),fg.need_70),'') AS need_70
-             ,ISNULL(CONVERT(NVARCHAR(64),fg.need_65),'') AS need_65
+             ,fg.need_90
+             ,fg.need_80
+             ,fg.need_70
+             ,fg.need_65
        FROM gabby.powerschool.final_grades_static fg 
        WHERE fg.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1
       ) sub
@@ -146,10 +146,10 @@ SELECT student_number
       ,MAX(RT4_term_grade_percent) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS RT4_term_grade_percent
       ,MAX(RT4_term_grade_percent_adjusted) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS RT4_term_grade_percent_adjusted
 
-      ,[CUR_term_grade_letter]
-      ,[CUR_term_grade_letter_adjusted]
-      ,[CUR_term_grade_percent]
-      ,[CUR_term_grade_percent_adjusted]
+      ,[cur_term_grade_letter]
+      ,[cur_term_grade_letter_adjusted]
+      ,[cur_term_grade_percent]
+      ,[cur_term_grade_percent_adjusted]
 
       ,ROW_NUMBER() OVER(
          PARTITION BY student_number, academic_year, term_name, credittype
@@ -157,24 +157,24 @@ SELECT student_number
 FROM grades_unpivot gr
 PIVOT(
   MAX(value)
-  FOR pivot_field IN ([RT1_term_grade_letter]
-                     ,[RT1_term_grade_letter_adjusted]
-                     ,[RT1_term_grade_percent]
-                     ,[RT1_term_grade_percent_adjusted]                     
-                     ,[RT2_term_grade_letter]
-                     ,[RT2_term_grade_letter_adjusted]
-                     ,[RT2_term_grade_percent]
-                     ,[RT2_term_grade_percent_adjusted]                     
-                     ,[RT3_term_grade_letter]
-                     ,[RT3_term_grade_letter_adjusted]
-                     ,[RT3_term_grade_percent]
-                     ,[RT3_term_grade_percent_adjusted]                     
-                     ,[RT4_term_grade_letter]
-                     ,[RT4_term_grade_letter_adjusted]
-                     ,[RT4_term_grade_percent]
-                     ,[RT4_term_grade_percent_adjusted]
-                     ,[CUR_term_grade_letter]
-                     ,[CUR_term_grade_letter_adjusted]
-                     ,[CUR_term_grade_percent]
-                     ,[CUR_term_grade_percent_adjusted])
+  FOR pivot_field IN ([rt1_term_grade_letter]
+                     ,[rt1_term_grade_letter_adjusted]
+                     ,[rt1_term_grade_percent]
+                     ,[rt1_term_grade_percent_adjusted]                     
+                     ,[rt2_term_grade_letter]
+                     ,[rt2_term_grade_letter_adjusted]
+                     ,[rt2_term_grade_percent]
+                     ,[rt2_term_grade_percent_adjusted]                     
+                     ,[rt3_term_grade_letter]
+                     ,[rt3_term_grade_letter_adjusted]
+                     ,[rt3_term_grade_percent]
+                     ,[rt3_term_grade_percent_adjusted]                     
+                     ,[rt4_term_grade_letter]
+                     ,[rt4_term_grade_letter_adjusted]
+                     ,[rt4_term_grade_percent]
+                     ,[rt4_term_grade_percent_adjusted]
+                     ,[cur_term_grade_letter]
+                     ,[cur_term_grade_letter_adjusted]
+                     ,[cur_term_grade_percent]
+                     ,[cur_term_grade_percent_adjusted])
  ) p
