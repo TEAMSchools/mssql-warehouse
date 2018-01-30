@@ -23,10 +23,9 @@ SELECT co.academic_year
       ,co.entrydate
       ,co.exitdate
       
-      ,rd.reporting_hash      
       ,CONVERT(DATE,rd.date) AS date      
       
-      ,dt.alt_name AS term
+      ,CONVERT(VARCHAR(25),dt.alt_name) AS term
       
       ,CASE WHEN CONVERT(DATE,rd.date) BETWEEN co.entrydate AND co.exitdate THEN 1 ELSE 0 END AS is_enrolled
 FROM powerschool.cohort_identifiers_static co
@@ -43,27 +42,26 @@ WHERE co.schoolid != 999999
 
 UNION ALL
 
-SELECT academic_year
-      ,schoolid
-      ,reporting_schoolid
-      ,school_name
-      ,school_level
-      ,grade_level
-      ,studentid
-      ,student_number
-      ,lastfirst
-      ,team
-      ,advisor_name
-      ,gender
-      ,ethnicity
-      ,lunchstatus
-      ,iep_status
+SELECT CONVERT(INT,academic_year) AS academic_year
+      ,CONVERT(INT,schoolid) AS schoolid
+      ,CONVERT(INT,reporting_schoolid) AS reporting_schoolid
+      ,CONVERT(VARCHAR(25),school_name) AS school_name
+      ,CONVERT(VARCHAR(5),school_level) AS school_level
+      ,CONVERT(INT,grade_level) AS grade_level
+      ,CONVERT(INT,studentid) AS studentid
+      ,CONVERT(INT,student_number) AS student_number
+      ,CONVERT(VARCHAR(125),lastfirst) AS lastfirst
+      ,CONVERT(VARCHAR(25),team) AS team
+      ,CONVERT(VARCHAR(125),advisor_name) AS advisor_name
+      ,CONVERT(VARCHAR(1),gender) AS gender
+      ,CONVERT(VARCHAR(1),ethnicity) AS ethnicity
+      ,CONVERT(VARCHAR(25),lunchstatus) AS lunchstatus
+      ,CONVERT(VARCHAR(25),iep_status) AS iep_status
       ,lep_status
-      ,enroll_status
+      ,CONVERT(INT,enroll_status) AS enroll_status
       ,entrydate
       ,exitdate      
-      ,reporting_hash      
-      ,date      
-      ,term      
+      ,date
+      ,CONVERT(VARCHAR(25),term) AS term
       ,is_enrolled
 FROM powerschool.cohort_identifiers_scaffold_archive

@@ -151,13 +151,13 @@ FROM
                 ,co.iep_status           
                 ,co.date                      
 
-                ,dts.alt_name AS term
-                ,dts.time_per_name AS goal_term
-                ,CONVERT(DATE,dts.start_date) AS term_start_date
-                ,CONVERT(DATE,dts.end_date) AS term_end_date
+                ,CONVERT(VARCHAR(25),dts.alt_name) AS term
+                ,CONVERT(VARCHAR(25),dts.time_per_name) AS goal_term
+                ,dts.start_date AS term_start_date
+                ,dts.end_date AS term_end_date
 
-                ,CONVERT(DATE,y1dts.start_date) AS y1_start_date
-                ,CONVERT(DATE,y1dts.end_date) AS y1_end_date
+                ,y1dts.start_date AS y1_start_date
+                ,y1dts.end_date AS y1_end_date
            
                 ,enr.course_name
                 ,enr.course_number
@@ -188,7 +188,7 @@ FROM
           FROM gabby.powerschool.cohort_identifiers_scaffold co
           LEFT OUTER JOIN gabby.reporting.reporting_terms dts
             ON co.schoolid = dts.schoolid
-           AND co.date BETWEEN CONVERT(DATE,dts.start_date) AND CONVERT(DATE,dts.end_date)
+           AND co.date BETWEEN dts.start_date AND dts.end_date
            AND dts.identifier = 'AR'
            AND dts.time_per_name != 'ARY'
           LEFT OUTER JOIN gabby.reporting.reporting_terms y1dts
