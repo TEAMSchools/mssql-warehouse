@@ -28,8 +28,8 @@ WITH att_counts AS (
              ,CONVERT(INT,dates.academic_year) AS academic_year
              ,CONVERT(VARCHAR,dates.time_per_name) AS reporting_term     
              ,CONVERT(VARCHAR,dates.alt_name) AS term_name
-             ,CONVERT(DATE,dates.start_date) AS start_date
-             ,CONVERT(DATE,dates.end_date) AS end_date
+             ,dates.start_date
+             ,dates.end_date
        FROM gabby.powerschool.ps_attendance_daily_static att
        JOIN gabby.reporting.reporting_terms dates
          ON att.schoolid = dates.schoolid
@@ -93,8 +93,8 @@ WITH att_counts AS (
 
                   ,CONVERT(VARCHAR,d.time_per_name) AS reporting_term
                   ,CONVERT(VARCHAR,d.alt_name) AS term_name
-                  ,CONVERT(DATE,d.start_date) AS start_date
-                  ,CONVERT(DATE,d.end_date) AS end_date
+                  ,d.start_date
+                  ,d.end_date
 
                   ,'MEM' AS att_code
             FROM gabby.powerschool.ps_adaadm_daily_ctod_static mem              

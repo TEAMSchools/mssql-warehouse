@@ -35,7 +35,7 @@ WITH act AS (
   FROM
       (
        SELECT local_student_identifier AS student_number
-             ,LEFT(assessment_year, 4) AS academic_year
+             ,academic_year
              ,CASE
                WHEN subject = 'English Language Arts/Literacy' THEN 'ela'
                ELSE 'math'
@@ -141,7 +141,7 @@ WITH act AS (
   WHERE membershipvalue > 0
     AND calendardate <= CONVERT(DATE,GETDATE())
   GROUP BY studentid
-          ,(yearid + 1990)
+          ,yearid
  )
 
 ,suspensions AS (

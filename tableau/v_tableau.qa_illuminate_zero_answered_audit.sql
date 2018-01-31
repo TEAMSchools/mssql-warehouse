@@ -38,16 +38,16 @@ JOIN gabby.illuminate_dna_assessments.agg_student_responses ovr
 JOIN gabby.illuminate_dna_assessments.assessments a
   ON a.assessment_id = ovr.assessment_id  
  AND co.academic_year = (a.academic_year - 1)
-LEFT OUTER JOIN gabby.illuminate_codes.dna_scopes dsc
+LEFT JOIN gabby.illuminate_codes.dna_scopes dsc
   ON a.code_scope_id = dsc.code_id
-LEFT OUTER JOIN gabby.illuminate_codes.dna_subject_areas dsu
+LEFT JOIN gabby.illuminate_codes.dna_subject_areas dsu
   ON a.code_subject_area_id = dsu.code_id
-LEFT OUTER JOIN gabby.reporting.reporting_terms dt
+LEFT JOIN gabby.reporting.reporting_terms dt
   ON co.schoolid = dt.schoolid
  AND co.academic_year = dt.academic_year
  AND a.administered_at BETWEEN dt.start_date AND dt.end_date
  AND dt.identifier = 'RT' 
-LEFT OUTER JOIN gabby.powerschool.ps_attendance_daily_static att
+LEFT JOIN gabby.powerschool.ps_attendance_daily_static att
   ON co.studentid = att.studentid
  AND ovr.date_taken = att.att_date
  AND att.att_code LIKE 'A%'

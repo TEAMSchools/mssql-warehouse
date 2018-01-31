@@ -12,11 +12,11 @@ SELECT studentid AS naviance_studentid
       ,gabby.utilities.DATE_TO_SY(test_date) AS academic_year
 FROM
     (
-     SELECT studentid
-           ,hs_student_id
-           ,test_code
-           ,test_name
-           ,score
+     SELECT CONVERT(INT,studentid) AS studentid
+           ,CONVERT(INT,hs_student_id) AS hs_student_id
+           ,CONVERT(VARCHAR(5),test_code) AS test_code
+           ,CONVERT(VARCHAR(25),test_name) AS test_name
+           ,CONVERT(INT,score) AS score
            ,CASE
              WHEN test_date = '0000-00-00' THEN NULL
              WHEN RIGHT(test_date,2) = '00' THEN DATEFROMPARTS(LEFT(test_date,4), SUBSTRING(test_date, 6, 2), 01)

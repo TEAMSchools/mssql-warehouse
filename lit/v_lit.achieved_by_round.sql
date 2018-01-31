@@ -88,19 +88,19 @@ WITH roster_scaffold AS (
              ,COALESCE(achv.unique_id, ps.unique_id) AS achv_unique_id
              ,COALESCE(dna.unique_id, ps.unique_id) AS dna_unique_id
        FROM roster_scaffold r
-       LEFT OUTER JOIN gabby.lit.all_test_events ps
+       LEFT OUTER JOIN gabby.lit.all_test_events_static ps
          ON r.student_number = ps.student_number      
         AND r.academic_year = ps.academic_year
         AND r.test_round = ps.test_round
         AND ps.status = 'Mixed'
         AND ps.curr_round = 1
-       LEFT OUTER JOIN gabby.lit.all_test_events achv 
+       LEFT OUTER JOIN gabby.lit.all_test_events_static achv 
          ON r.student_number = achv.student_number      
         AND r.academic_year = achv.academic_year
         AND r.test_round = achv.test_round
         AND achv.status = 'Achieved'
         AND achv.curr_round = 1
-       LEFT OUTER JOIN gabby.lit.all_test_events dna 
+       LEFT OUTER JOIN gabby.lit.all_test_events_static dna 
          ON r.student_number = dna.student_number      
         AND r.academic_year = dna.academic_year
         AND r.test_round = dna.test_round
@@ -137,13 +137,13 @@ WITH roster_scaffold AS (
              ,achv.unique_id AS achv_unique_id
              ,dna.unique_id AS dna_unique_id
        FROM roster_scaffold r  
-       LEFT OUTER JOIN gabby.lit.all_test_events achv
+       LEFT OUTER JOIN gabby.lit.all_test_events_static achv
          ON r.student_number = achv.student_number      
         AND r.academic_year = achv.academic_year
         AND r.test_round = achv.test_round
         AND achv.status = 'Achieved'
         AND achv.curr_round = 1
-       LEFT OUTER JOIN gabby.lit.all_test_events dna
+       LEFT OUTER JOIN gabby.lit.all_test_events_static dna
          ON r.student_number = dna.student_number      
         AND r.academic_year = dna.academic_year
         AND r.test_round = dna.test_round
@@ -196,7 +196,7 @@ WITH roster_scaffold AS (
              ,fp.unique_id AS achv_unique_id
              ,fp.unique_id AS dna_unique_id            
        FROM roster_scaffold r  
-       JOIN gabby.lit.all_test_events fp        
+       JOIN gabby.lit.all_test_events_static fp        
          ON r.student_number = fp.student_number
         AND r.academic_year = fp.academic_year
         AND fp.recent_yr = 1    
@@ -449,7 +449,7 @@ FROM
                   ELSE 0 
                  END AS is_new_test
           FROM achieved
-          LEFT OUTER JOIN gabby.lit.all_test_events atid 
+          LEFT OUTER JOIN gabby.lit.all_test_events_static atid 
             ON achieved.achv_unique_id = atid.unique_id
            AND atid.status != 'Did Not Achieve'     
           LEFT OUTER JOIN dna

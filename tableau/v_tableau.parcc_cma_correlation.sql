@@ -33,7 +33,7 @@ JOIN gabby.illuminate_dna_assessments.agg_student_responses_all asr
  AND asr.response_type = 'O' 
 JOIN gabby.parcc.summative_record_file_clean parcc
   ON co.student_number = parcc.local_student_identifier
- AND co.academic_year = LEFT(parcc.assessment_year, 4)
+ AND co.academic_year = parcc.academic_year
  AND asr.subject_area = CASE WHEN parcc.subject = 'English Language Arts/Literacy' THEN 'Text Study' ELSE 'Mathematics' END
 WHERE co.rn_year = 1 
   AND co.academic_year >= 2015

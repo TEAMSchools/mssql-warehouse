@@ -10,10 +10,14 @@ SELECT co.school_name
       ,co.grade_level      
       ,co.team      
       ,co.academic_year            
-      ,co.IEP_status      
-      ,co.enroll_status            
-      ,term.alt_name AS lit_term
-      ,CASE WHEN achv.start_date >= CONVERT(DATE,GETDATE()) THEN NULL ELSE co.student_number END AS student_number      
+      ,co.iep_status      
+      ,co.enroll_status      
+            
+      ,CONVERT(VARCHAR(5),term.alt_name) AS lit_term
+      ,CASE 
+        WHEN achv.start_date >= CONVERT(DATE,GETDATE()) THEN NULL 
+        ELSE co.student_number 
+       END AS student_number      
       
       /* test identifiers */      
       ,achv.read_lvl
@@ -82,16 +86,16 @@ JOIN gabby.reporting.reporting_terms term
   ON co.schoolid = term.schoolid
  AND co.academic_year = term.academic_year
  AND term.identifier = 'LIT'
- AND CONVERT(DATE,term.start_date) <= CONVERT(DATE,GETDATE())
-LEFT OUTER JOIN gabby.lit.achieved_by_round_static achv
+ AND term.start_date <= CONVERT(DATE,GETDATE())
+LEFT JOIN gabby.lit.achieved_by_round_static achv
   ON co.student_number = achv.student_number
  AND co.academic_year = achv.academic_year
  AND term.alt_name = achv.test_round
  AND achv.start_date <= CONVERT(DATE,GETDATE())
-LEFT OUTER JOIN gabby.lit.all_test_events testid 
+LEFT JOIN gabby.lit.all_test_events_static testid 
   ON co.student_number = testid.student_number
  AND achv.achv_unique_id = testid.unique_id 
-LEFT OUTER JOIN gabby.lit.all_test_events dna 
+LEFT JOIN gabby.lit.all_test_events_static dna 
   ON co.student_number = dna.student_number
  AND achv.dna_unique_id = dna.unique_id 
 WHERE co.rn_year = 1

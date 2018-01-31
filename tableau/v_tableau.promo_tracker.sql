@@ -48,8 +48,8 @@ WITH roster AS (
 
         ,'Y1' AS term
         ,CONVERT(VARCHAR,dt.time_per_name) AS reporting_term
-        ,CONVERT(DATE,dt.start_date) AS term_start_date
-        ,CONVERT(DATE,dt.end_date) AS term_end_date
+        ,dt.start_date AS term_start_date
+        ,dt.end_date AS term_end_date
   FROM gabby.powerschool.cohort_identifiers_static co
   JOIN gabby.reporting.reporting_terms dt
     ON co.academic_year = dt.academic_year   
@@ -62,12 +62,12 @@ WITH roster AS (
 
 ,contact AS (
   SELECT student_number
-        ,LEFT(field, CHARINDEX('_',field) - 1) AS person
-        ,RIGHT(field, LEN(field) - CHARINDEX('_',field)) AS type
+        ,CONVERT(VARCHAR(25),LEFT(field, CHARINDEX('_',field) - 1)) AS person
+        ,CONVERT(VARCHAR(25),RIGHT(field, LEN(field) - CHARINDEX('_',field))) AS type
         ,value      
   FROM
       (
-       SELECT con.student_number      
+       SELECT CONVERT(INT,con.student_number) AS student_number
              ,CONVERT(VARCHAR,con.home_phone) AS home_phone
              ,CONVERT(VARCHAR,con.guardianemail) AS home_email
              ,CONVERT(VARCHAR,con.mother) AS parent1_name            
@@ -379,7 +379,7 @@ WITH roster AS (
 
   UNION ALL
 
-  SELECT s.student_number
+  SELECT CONVERT(INT,s.student_number) AS student_number
         ,gabby.utilities.GLOBAL_ACADEMIC_YEAR()  AS academic_year
         ,'SY1' AS reporting_Term
         ,gpa.schoolid           
@@ -391,8 +391,8 @@ WITH roster AS (
 
   UNION ALL
 
-  SELECT s.student_number        
-        ,gabby.utilities.GLOBAL_ACADEMIC_YEAR()  AS academic_year
+  SELECT CONVERT(INT,s.student_number) AS student_number
+        ,gabby.utilities.GLOBAL_ACADEMIC_YEAR() AS academic_year
         ,'SY1' AS reporting_Term
         ,gpa.schoolid           
         ,gpa.earned_credits_cum AS gpa
@@ -414,7 +414,9 @@ WITH roster AS (
   FROM gabby.lit.achieved_by_round_static
   WHERE read_lvl IS NOT NULL
     AND start_date <= CONVERT(DATE,GETDATE())
+
   UNION ALL
+
   SELECT student_number        
         ,academic_year        
         ,test_round      
@@ -453,7 +455,9 @@ WITH roster AS (
   WHERE measurement_scale = 'Reading'
     AND school_name = 'Newark Collegiate Academy'
     AND rn_term_subj = 1
+
   UNION ALL
+
   SELECT map.student_id        
         ,map.academic_year        
         ,map.term AS test_round        
@@ -495,7 +499,7 @@ WITH roster AS (
 ,standardized_tests AS (
   /* PARCC */
   SELECT local_student_identifier AS student_number        
-        ,LEFT(assessment_year, 4) AS academic_year
+        ,academic_year
         ,NULL AS test_date
         ,'PARCC' AS test_name
         ,subject                 
@@ -534,7 +538,7 @@ WITH roster AS (
         ,academic_year
         ,test_date
         ,test_name
-        ,subject
+        ,CONVERT(VARCHAR(25),subject) AS subject
         ,scale_score
         ,NULL AS performance_level
         ,NULL AS performance_level_label
@@ -582,7 +586,7 @@ WITH roster AS (
         ,academic_year
         ,test_date      
         ,'SAT' AS test_name
-        ,subject
+        ,CONVERT(VARCHAR(25),subject) AS subject
         ,scale_score
         ,NULL AS performance_level
         ,NULL AS performance_level_label
@@ -598,26 +602,20 @@ WITH roster AS (
   UNION ALL
 
   /* SAT II */
-  SELECT hs_student_id AS student_number
-        ,gabby.utilities.DATE_TO_SY(CONVERT(DATE,CASE 
-                                                  WHEN test_date = '0000-00-00' THEN NULL 
-                                                  ELSE REPLACE(test_date,'-00','-01') 
-                                                 END)) AS academic_year
-        ,CONVERT(DATE,CASE 
-                       WHEN test_date = '0000-00-00' THEN NULL 
-                       ELSE REPLACE(test_date,'-00','-01') 
-                      END) AS test_date
-        ,'SAT II' AS test_name      
+  SELECT student_number
+        ,academic_year
+        ,test_date
+        ,'SAT II' test_name      
         ,test_name AS subject
         ,score AS scale_score
         ,NULL AS performance_level
         ,NULL AS performance_level_label
-  FROM gabby.naviance.sat_2_scores
+  FROM gabby.naviance.sat_2_scores_clean
 
   UNION ALL  
 
   /* AP */
-  SELECT hs_student_id AS student_number        
+  SELECT CONVERT(INT,hs_student_id) AS student_number        
         ,gabby.utilities.DATE_TO_SY(CONVERT(DATE,CASE 
                                                   WHEN test_date = '0000-00-00' THEN NULL 
                                                   ELSE REPLACE(test_date,'-00','-01') 
@@ -627,8 +625,8 @@ WITH roster AS (
                        ELSE REPLACE(test_date,'-00','-01') 
                       END) AS test_date     
         ,'AP' AS test_name      
-        ,test_name AS subject
-        ,score AS scale_score
+        ,CONVERT(VARCHAR(125),test_name) AS subject
+        ,CONVERT(INT,score) AS scale_score
         ,NULL AS performance_level
         ,NULL AS performance_level_label
   FROM gabby.naviance.ap_scores 
@@ -636,7 +634,7 @@ WITH roster AS (
   UNION ALL
 
   /* EXPLORE */
-  SELECT hs_student_id
+  SELECT CONVERT(INT,hs_student_id) AS hs_student_id
         ,gabby.utilities.DATE_TO_SY(CONVERT(DATE,CASE 
                                                   WHEN test_date = '0000-00-00' THEN NULL 
                                                   ELSE REPLACE(test_date,'-00','-01') 
@@ -646,8 +644,8 @@ WITH roster AS (
                        ELSE REPLACE(test_date,'-00','-01') 
                       END) AS test_date     
         ,'EXPLORE' AS test_name
-        ,subject
-        ,scale_score
+        ,CONVERT(VARCHAR(25),subject) AS subject
+        ,CONVERT(INT,scale_score) AS scale_score
         ,NULL AS performance_level
         ,NULL AS performance_level_label
   FROM gabby.naviance.explore_scores
@@ -662,7 +660,7 @@ WITH roster AS (
 
   UNION ALL
 
-  SELECT hs_student_id AS student_number
+  SELECT CONVERT(INT,hs_student_id) AS student_number
         ,gabby.utilities.DATE_TO_SY(CONVERT(DATE,CASE 
                                                   WHEN test_date = '0000-00-00' THEN NULL 
                                                   ELSE REPLACE(test_date,'-00','-01') 
@@ -672,8 +670,8 @@ WITH roster AS (
                        ELSE REPLACE(test_date,'-00','-01') 
                       END) AS test_date 
         ,'PSAT' AS test_name
-        ,subject
-        ,scale_score
+        ,CONVERT(VARCHAR(25),subject) AS subject
+        ,CONVERT(INT,scale_score) AS scale_score
         ,NULL AS performance_level
         ,NULL AS performance_level_label
   FROM gabby.naviance.psat_scores
@@ -687,36 +685,51 @@ WITH roster AS (
  )
 
 ,collegeapps AS (
-  SELECT app.hs_student_id AS student_number
-        ,app.collegename              
-        ,app.level       
-        ,CASE WHEN app.result_code IN ('unknown') OR app.result_code IS NULL THEN app.stage ELSE app.result_code END AS result_code
-        ,CONCAT('Type:', CHAR(9), REPLACE(app.inst_control,'p','P'), CHAR(10)
-               ,'Attending:', CHAR(9), app.attending, CHAR(10)               
-               ,app.comments) AS value
-        
+  SELECT sub.student_number
+        ,sub.collegename
+        ,sub.level
+        ,sub.result_code
+        ,sub.value        
         ,ROW_NUMBER() OVER(                                
-           PARTITION BY app.hs_student_id
-             ORDER BY CASE
-                       WHEN a.competitiveness_ranking_c = 'Most Competitive+' THEN 7
-                       WHEN a.competitiveness_ranking_c = 'Most Competitive' THEN 6
-                       WHEN a.competitiveness_ranking_c = 'Highly Competitive' THEN 5
-                       WHEN a.competitiveness_ranking_c = 'Very Competitive' THEN 4
-                       WHEN a.competitiveness_ranking_c = 'Noncompetitive' THEN 1
-                       WHEN a.competitiveness_ranking_c = 'Competitive' THEN 3
-                       WHEN a.competitiveness_ranking_c = 'Less Competitive' THEN 2
-                      END DESC) AS competitiveness_ranking 
-  FROM gabby.naviance.college_applications app
-  LEFT OUTER JOIN gabby.alumni.account a 
-    ON app.ceeb_code = CONVERT(VARCHAR,a.ceeb_code_c)
-   AND a.record_type_id = '01280000000BQEkAAO'
-   AND a.competitiveness_ranking_c IS NOT NULL
+           PARTITION BY sub.student_number
+             ORDER BY sub.competitiveness_ranking_int DESC) AS competitiveness_ranking 
+  FROM
+      ( 
+       SELECT CONVERT(INT,app.hs_student_id) AS student_number
+             ,CONVERT(VARCHAR(125),app.collegename) AS collegename
+             ,CONVERT(VARCHAR(25),app.level) AS level
+             ,CONVERT(VARCHAR(125),CASE 
+               WHEN app.result_code IN ('unknown') 
+                 OR app.result_code IS NULL 
+                      THEN app.stage 
+               ELSE app.result_code 
+              END) AS result_code
+             ,CONVERT(VARCHAR(250),
+                CONCAT('Type:', CHAR(9), REPLACE(app.inst_control,'p','P'), CHAR(10)
+                      ,'Attending:', CHAR(9), app.attending, CHAR(10)               
+                      ,app.comments)) AS value
+        
+             ,CASE
+               WHEN a.competitiveness_ranking_c = 'Most Competitive+' THEN 7
+               WHEN a.competitiveness_ranking_c = 'Most Competitive' THEN 6
+               WHEN a.competitiveness_ranking_c = 'Highly Competitive' THEN 5
+               WHEN a.competitiveness_ranking_c = 'Very Competitive' THEN 4
+               WHEN a.competitiveness_ranking_c = 'Noncompetitive' THEN 1
+               WHEN a.competitiveness_ranking_c = 'Competitive' THEN 3
+               WHEN a.competitiveness_ranking_c = 'Less Competitive' THEN 2
+              END competitiveness_ranking_int
+       FROM gabby.naviance.college_applications app
+       LEFT OUTER JOIN gabby.alumni.account a
+         ON app.ceeb_code = CONVERT(VARCHAR,a.ceeb_code_c)
+        AND a.record_type_id = '01280000000BQEkAAO'
+        AND a.competitiveness_ranking_c IS NOT NULL
+      ) sub
  )
 
 ,promo_status AS (
   SELECT student_number
         ,academic_year
-        ,field AS subdomain
+        ,CONVERT(VARCHAR,field) AS subdomain
         ,CASE WHEN field LIKE '%status%' THEN value ELSE NULL END AS text_value
         ,CASE WHEN field LIKE '%status%' THEN NULL ELSE CONVERT(FLOAT,value) END AS numeric_value
   FROM
@@ -995,7 +1008,7 @@ SELECT r.studentid
       ,std.test_name AS subdomain
       ,std.subject AS subject
       ,NULL AS course_name
-      ,CONVERT(VARCHAR(256),NEWID()) AS measure_name
+      ,CONVERT(VARCHAR(250),NEWID()) AS measure_name
       ,std.test_scale_score AS measure_value
       ,std.test_date AS measure_date
       ,std.test_performance_level AS performance_level

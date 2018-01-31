@@ -163,7 +163,7 @@ SELECT co.schoolid
 	     ,co.lastfirst
 	     ,co.grade_level
 	     ,'Missing SID' AS element
-	     ,CONVERT(NVARCHAR,co.state_studentnumber) AS detail
+	     ,CONVERT(VARCHAR,co.state_studentnumber) AS detail
 	     ,CASE WHEN co.state_studentnumber IS NULL THEN 1 ELSE 0 END AS flag
 FROM gabby.powerschool.cohort_identifiers_static co
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
@@ -178,7 +178,7 @@ SELECT co.schoolid
 	     ,co.lastfirst
 	     ,co.grade_level
 	     ,'Missing FTEID' AS element
-	     ,CONVERT(NVARCHAR,s.fteid) AS detail
+	     ,CONVERT(VARCHAR,s.fteid) AS detail
 	     ,CASE 
 		      WHEN s.fteid IS NULL THEN 1
 		      WHEN s.fteid = 0 THEN 1

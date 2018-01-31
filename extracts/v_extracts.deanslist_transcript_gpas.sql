@@ -30,8 +30,8 @@ FROM
             ON sg.[percent] BETWEEN scale_unweighted.min_cutoffpercentage AND scale_unweighted.max_cutoffpercentage
            AND CASE
                 WHEN sg.schoolid != 73253 THEN sg.gradescale_name
-                WHEN (LEFT(sg.termid, 2) + 1990) <= 2015 THEN 'NCA 2011' /* default pre-2016 */
-                WHEN (LEFT(sg.termid, 2) + 1990) >= 2016 THEN 'KIPP NJ 2016 (5-12)' /* default 2016+ */
+                WHEN sg.termid < 2600 THEN 'NCA 2011' /* default pre-2016 */
+                WHEN sg.termid >= 2600 THEN 'KIPP NJ 2016 (5-12)' /* default 2016+ */
                END = scale_unweighted.gradescale_name
           WHERE (LEFT(sg.termid, 2) + 1990) < gabby.utilities.GLOBAL_ACADEMIC_YEAR()
             AND sg.storecode = 'Y1'

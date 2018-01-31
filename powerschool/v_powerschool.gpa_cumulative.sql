@@ -37,10 +37,10 @@ FROM
            ,SUM(earnedcrhrs_projected_s1) AS earned_credits_cum_projected_s1
      FROM 
          (
-          SELECT sg.studentid                
+          SELECT CONVERT(INT,sg.studentid) AS studentid
                 ,(LEFT(sg.termid, 2) + 1990) AS academic_year
-                ,sg.schoolid                   
-                ,sg.COURSE_NUMBER
+                ,CONVERT(INT,sg.schoolid) AS schoolid
+                ,sg.course_number
                 ,sg.potentialcrhrs                   
                 ,sg.earnedcrhrs                   
                 ,(sg.potentialcrhrs * sg.gpa_points) AS weighted_points
@@ -54,19 +54,19 @@ FROM
                 ,sg.earnedcrhrs AS earnedcrhrs_projected_s1
                 ,(sg.potentialcrhrs * sg.gpa_points) AS weighted_points_projected_s1
           FROM gabby.powerschool.storedgrades sg
-          LEFT OUTER JOIN gabby.powerschool.gradescaleitem_lookup_static scale_unweighted 
+          LEFT JOIN gabby.powerschool.gradescaleitem_lookup_static scale_unweighted 
             ON sg.[percent] BETWEEN scale_unweighted.min_cutoffpercentage AND scale_unweighted.max_cutoffpercentage
            AND CASE
                 WHEN sg.schoolid != 73253 THEN sg.gradescale_name
-                WHEN (LEFT(sg.termid, 2) + 1990) <= 2015 THEN 'NCA 2011' /* default pre-2016 */
-                WHEN (LEFT(sg.termid, 2) + 1990) >= 2016 THEN 'KIPP NJ 2016 (5-12)' /* default 2016+ */
+                WHEN sg.termid < 2600 THEN 'NCA 2011' /* default pre-2016 */
+                WHEN sg.termid >= 2600 THEN 'KIPP NJ 2016 (5-12)' /* default 2016+ */
                END = scale_unweighted.gradescale_name
           WHERE sg.storecode = 'Y1'
             AND sg.excludefromgpa = 0
           
           UNION ALL
 
-          SELECT gr.studentid
+          SELECT CONVERT(INT,gr.studentid) AS studentid
                 ,gr.academic_year
                 ,gr.schoolid
                 ,gr.course_number
@@ -83,7 +83,7 @@ FROM
                 ,NULL AS earnedcrhrs_projected_s1
                 ,NULL AS weighted_points_projected_s1
           FROM gabby.powerschool.final_grades_static gr 
-          LEFT OUTER JOIN gabby.powerschool.storedgrades sg 
+          LEFT JOIN gabby.powerschool.storedgrades sg 
              ON gr.studentid = sg.studentid
             AND gr.course_number = sg.course_number
             AND gr.academic_year = (LEFT(sg.termid, 2) + 1990)
@@ -95,7 +95,7 @@ FROM
 
           UNION ALL
 
-          SELECT gr.studentid
+          SELECT CONVERT(INT,gr.studentid) AS studentid
                 ,gr.academic_year
                 ,gr.schoolid
                 ,gr.course_number
@@ -112,7 +112,7 @@ FROM
                 ,CASE WHEN gr.y1_grade_letter NOT LIKE 'F%' THEN gr.credit_hours ELSE 0 END AS earnedcrhrs_projected_s1
                 ,(gr.credit_hours * gr.y1_gpa_points) AS weighted_points_projected_s1
           FROM gabby.powerschool.final_grades_static gr 
-          LEFT OUTER JOIN gabby.powerschool.storedgrades sg 
+          LEFT JOIN gabby.powerschool.storedgrades sg 
             ON gr.studentid = sg.studentid
            AND gr.course_number = sg.course_number
            AND gr.academic_year = (LEFT(sg.termid, 2) + 1990)

@@ -9,7 +9,7 @@ WITH prof_calendar AS (
         ,cal.date_value
         ,gabby.utilities.DATE_TO_SY(cal.date_value) AS academic_year
              
-        ,CONVERT(NVARCHAR,dt.alt_name) AS term
+        ,CONVERT(VARCHAR,dt.alt_name) AS term
   FROM gabby.powerschool.calendar_day cal
   JOIN gabby.reporting.reporting_terms dt
     ON cal.schoolid = dt.schoolid
@@ -79,13 +79,13 @@ WITH prof_calendar AS (
                        ,(CHARINDEX('[', staff_name) + 1)
                        ,(LEN(staff_name) - CHARINDEX('[', staff_name) - 1)) AS associate_id
              ,CONVERT(DATE,date) AS date
-             ,CONVERT(NVARCHAR(MAX),notes_optional_) AS notes
+             ,CONVERT(VARCHAR(250),notes_optional_) AS notes
 
-             ,ISNULL(CONVERT(NVARCHAR,present),'') AS present
-             ,ISNULL(CONVERT(NVARCHAR,on_time),'') AS on_time
-             ,ISNULL(CONVERT(NVARCHAR,attire_optional_),'') AS attire
-             ,ISNULL(CONVERT(NVARCHAR,lp_optional_),'') AS lp
-             ,ISNULL(CONVERT(NVARCHAR,gr_lp_optional_),'') AS gr_lp             
+             ,ISNULL(CONVERT(VARCHAR,present),'') AS present
+             ,ISNULL(CONVERT(VARCHAR,on_time),'') AS on_time
+             ,ISNULL(CONVERT(VARCHAR,attire_optional_),'') AS attire
+             ,ISNULL(CONVERT(VARCHAR,lp_optional_),'') AS lp
+             ,ISNULL(CONVERT(VARCHAR,gr_lp_optional_),'') AS gr_lp             
        FROM gabby.pm.teacher_tracker
        WHERE ISDATE(date) = 1
       ) sub

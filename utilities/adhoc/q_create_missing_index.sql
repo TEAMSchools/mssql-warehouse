@@ -1,13 +1,14 @@
 SELECT *
      ,'CREATE NONCLUSTERED INDEX ' 
         + CONCAT('['
+                --,object_id, ' '
                 ,LEFT(CONCAT('K: '
                             ,REPLACE(REPLACE(CASE 
                                               WHEN equality_columns + inequality_columns IS NOT NULL THEN CONCAT(equality_columns, ', ', inequality_columns)
                                               WHEN inequality_columns IS NULL THEN equality_columns
                                               WHEN equality_columns IS NULL THEN inequality_columns
                                              END, '[', ''), ']', '')), 128), ']')
- + ' ON ' 
+        + ' ON ' 
         + statement
         + ' ('
         + CASE 

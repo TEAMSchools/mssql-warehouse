@@ -38,7 +38,7 @@ FROM
      FROM gabby.powerschool.cohort_identifiers_static co 
      JOIN gabby.parcc.summative_record_file_clean parcc
        ON co.state_studentnumber = parcc.state_student_identifier
-      AND co.academic_year = LEFT(parcc.assessment_year,4)   
+      AND co.academic_year = parcc.academic_year
      WHERE co.academic_year >= 2014  
        AND co.rn_year = 1
 

@@ -149,8 +149,8 @@ SELECT rr.assessment_id
       ,rr.administered_at
       ,rr.date_taken
       ,CONVERT(VARCHAR(250),rr.title) AS title
-      ,CONVERT(VARCHAR(25),rr.scope) AS scope
-      ,CONVERT(VARCHAR(25),rr.subject_area) AS subject_area
+      ,CONVERT(VARCHAR(125),rr.scope) AS scope
+      ,CONVERT(VARCHAR(125),rr.subject_area) AS subject_area
       ,CONVERT(VARCHAR(25),rr.module_type) AS module_type
       ,CONVERT(VARCHAR(5),rr.module_number) AS module_number    
       ,rr.response_type
@@ -214,22 +214,22 @@ SELECT assessment_id
       ,academic_year    
       ,administered_at
       ,date_taken
-      ,CONVERT(VARCHAR(250),title) AS title
-      ,CONVERT(VARCHAR(25),scope) AS scope
-      ,CONVERT(VARCHAR(25),subject_area) AS subject_area
-      ,CONVERT(VARCHAR(25),module_type) AS module_type
-      ,CONVERT(VARCHAR(5),module_number) AS module_number    
+      ,title
+      ,scope
+      ,subject_area
+      ,module_type
+      ,module_number    
       ,response_type
       ,standard_id      
       ,points
       ,percent_correct
       ,is_replacement           
       ,local_student_id
-      ,CONVERT(VARCHAR(250),standard_code) AS standard_code
-      ,CONVERT(VARCHAR(2000),standard_description) AS standard_description
-      ,CONVERT(VARCHAR(2000),domain_description) AS domain_description
-      ,CONVERT(VARCHAR(25),term_administered) AS term_administered
-      ,CONVERT(VARCHAR(25),term_taken) AS term_taken
+      ,standard_code
+      ,standard_description
+      ,domain_description
+      ,term_administered
+      ,term_taken
       ,performance_band_number
       ,is_mastery
 FROM gabby.illuminate_dna_assessments.agg_student_responses_all_archive

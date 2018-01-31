@@ -102,7 +102,7 @@ SELECT co.student_number
 FROM gabby.powerschool.cohort_identifiers_static co
 JOIN gabby.parcc.summative_record_file_clean parcc
   ON co.student_number = parcc.local_student_identifier
- AND co.academic_year = LEFT(parcc.assessment_year, 4)
+ AND co.academic_year = parcc.academic_year
 LEFT OUTER JOIN external_prof ext
   ON co.academic_year = ext.academic_year
  AND parcc.test_code = ext.test_code

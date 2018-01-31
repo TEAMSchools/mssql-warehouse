@@ -46,22 +46,23 @@ WITH course_scaffold AS (
   SELECT studentid
         ,course_number
         ,yearid
-        ,abs_sectionid
+        ,ABS(sectionid) AS abs_sectionid
         ,term_name
         ,ROW_NUMBER() OVER(
-           PARTITION BY studyear, course_number, term_name
+           PARTITION BY studentid, yearid, course_number, term_name
              ORDER BY dateleft DESC, sectionid DESC) AS rn_term
   FROM
       (
        SELECT CONVERT(INT,cc.studentid) AS studentid
-             ,CONVERT(INT,cc.studyear) AS studyear
              ,CONVERT(VARCHAR(25),cc.course_number) AS course_number
              ,CONVERT(INT,cc.sectionid) AS sectionid
              ,cc.dateleft
-             ,CONVERT(INT,LEFT(ABS(cc.termid), 2)) AS yearid      
-             ,CONVERT(INT,ABS(cc.sectionid)) AS abs_sectionid
+             ,CONVERT(INT,LEFT(ABS(cc.termid), 2)) AS yearid                   
       
-             ,CASE WHEN terms.alt_name = 'Summer School' THEN 'Q1' ELSE CONVERT(VARCHAR,terms.alt_name) END AS term_name        
+             ,CASE 
+               WHEN terms.alt_name = 'Summer School' THEN 'Q1' 
+               ELSE CONVERT(VARCHAR,terms.alt_name) 
+              END AS term_name        
        FROM gabby.powerschool.cc
        JOIN gabby.reporting.reporting_terms terms
          ON cc.schoolid = terms.schoolid         

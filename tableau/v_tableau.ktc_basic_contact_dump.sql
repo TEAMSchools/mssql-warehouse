@@ -52,7 +52,7 @@ WITH attending_enrollment AS (
         ,REM        
   FROM
       (
-       SELECT c.Contact_c AS contact_id
+       SELECT c.contact_c AS contact_id
              ,CASE 
                WHEN c.category_c = 'Benchmark' AND MONTH(c.date_c) >= 7 THEN 'AAS1F'
                WHEN c.category_c = 'Benchmark' AND MONTH(c.date_c) < 7 THEN 'AAS1S'
@@ -63,7 +63,7 @@ WITH attending_enrollment AS (
                ELSE c.subject_c
               END AS contact_subject
              ,c.Date_c AS contact_date             
-       FROM gabby.alumni.Contact_Note_c c
+       FROM gabby.alumni.contact_note_c c
        WHERE ((c.Subject_c LIKE 'PSC%' OR c.Subject_c = 'REM') OR (c.category_c IN ('Benchmark','Benchmark Follow-Up')))
          AND gabby.utilities.DATE_TO_SY(c.Date_c) = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
          AND c.is_deleted = 0
@@ -259,6 +259,8 @@ SELECT c.id AS contact_id
 
       ,rt.name AS record_type
 
+      ,u.name AS ktc_manager
+
       ,oot.n_months_elapsed
       ,CASE         
         WHEN (oot.n_months_elapsed >= 12 OR oot.contact_id IS NULL) THEN 1
@@ -278,9 +280,7 @@ SELECT c.id AS contact_id
       ,CASE         
         WHEN oot.found_date IS NOT NULL THEN 1 
         ELSE 0 
-       END AS is_found_this_term      
-      
-      ,u.name AS ktc_manager
+       END AS is_found_this_term
 
       ,e.major_c
       ,e.pursuing_degree_type_c
@@ -339,7 +339,7 @@ LEFT OUTER JOIN gpa
 LEFT OUTER JOIN stipends s
   ON c.id = s.student_c
 LEFT OUTER JOIN oot_roster oot
-  ON c.Id = oot.contact_id
+  ON c.id = oot.contact_id
  AND gabby.utilities.GLOBAL_ACADEMIC_YEAR() BETWEEN oot.missing_academic_year AND oot.found_academic_year
  AND oot.rn = 1
 LEFT OUTER JOIN counselor_changes cc
