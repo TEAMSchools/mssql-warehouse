@@ -11,7 +11,7 @@ DECLARE	@delay_time DATETIME
        ,@email_body NVARCHAR(MAX);
 
 BEGIN
-  SET @delay_time = '00:45:00'
+  SET @delay_time = '00:30:00'
   WAITFOR DELAY @delay_time;
   
   DECLARE job_killer CURSOR FOR  
