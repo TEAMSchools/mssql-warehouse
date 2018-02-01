@@ -14,8 +14,8 @@ WITH ug_school AS (
 ,enroll_dates AS (
   SELECT student_number
         ,schoolid
-        ,CONVERT(NVARCHAR,MIN(entrydate)) AS school_entrydate
-        ,CONVERT(NVARCHAR,MAX(exitdate)) AS school_exitdate
+        ,CONVERT(VARCHAR,MIN(entrydate)) AS school_entrydate
+        ,CONVERT(VARCHAR,MAX(exitdate)) AS school_exitdate
   FROM gabby.powerschool.cohort_identifiers_static s  
   GROUP BY student_number, schoolid
  )
@@ -23,7 +23,7 @@ WITH ug_school AS (
 SELECT co.student_number
       ,co.state_studentnumber AS SID
       ,co.team
-      ,CONVERT(NVARCHAR,co.dob) AS dob
+      ,CONVERT(VARCHAR,co.dob) AS dob
       ,co.home_phone
       ,co.mother AS parent1_name
       ,co.father AS parent2_name

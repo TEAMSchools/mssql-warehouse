@@ -8,13 +8,13 @@ SELECT co.student_number
       ,co.grade_level
       ,co.team
       ,co.school_name
-      ,CONVERT(NVARCHAR,co.entrydate) AS entrydate
+      ,CONVERT(VARCHAR,co.entrydate) AS entrydate
 
       ,s.student_web_id
       ,s.student_web_password
       ,s.student_web_id + '@teamstudents.org' AS student_email      
-FROM gabby.powerschool.cohort_identifiers_static co WITH(NOLOCK)
-JOIN gabby.powerschool.student_access_accounts s WITH(NOLOCK)
+FROM gabby.powerschool.cohort_identifiers_static co
+JOIN gabby.powerschool.student_access_accounts s
   ON co.student_number = s.student_number
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.rn_year = 1 

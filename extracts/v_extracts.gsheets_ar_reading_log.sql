@@ -14,9 +14,8 @@ WITH fp AS (
            PARTITION BY student_number, academic_year
              ORDER BY start_date DESC) AS rn_curr
   FROM gabby.lit.achieved_by_round_static
-  WHERE read_lvl IS NOT NULL
-    AND academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-    AND start_date <= GETDATE()
+  WHERE read_lvl IS NOT NULL    
+    AND start_date BETWEEN DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1) AND GETDATE()
  )
 
 ,ar_wide AS (
