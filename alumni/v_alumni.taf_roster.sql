@@ -45,15 +45,21 @@ WITH hs_grads AS (
         ,sub.first_name
         ,sub.last_name
         ,sub.lastfirst                
-        ,sub.DOB
+        ,sub.dob
         ,sub.curr_grade_level
         ,sub.cohort
         ,sub.highest_achieved        
         ,sub.final_exitdate
         ,sub.guardianemail
 
-        ,CASE WHEN s.graduated_schoolid = 0 THEN s.schoolid ELSE s.graduated_schoolid END AS schoolid       
-        ,CASE WHEN s.graduated_schoolid = 0 THEN sch2.abbreviation ELSE sch.abbreviation END AS school_name                         
+        ,CONVERT(INT,CASE 
+          WHEN s.graduated_schoolid = 0 THEN s.schoolid 
+          ELSE s.graduated_schoolid 
+         END) AS schoolid       
+        ,CONVERT(VARCHAR(25),CASE 
+          WHEN s.graduated_schoolid = 0 THEN sch2.abbreviation 
+          ELSE sch.abbreviation 
+         END) AS school_name                         
   FROM
       (
        SELECT co.studentid             
@@ -93,33 +99,84 @@ WITH hs_grads AS (
  )
 
 ,enrollments AS (
-  SELECT s.id AS salesforce_contact_id
-        ,s.school_specific_id_c AS student_number        
-        ,s.mobile_phone AS sf_mobile_phone
-        ,s.home_phone AS sf_home_phone
-        ,s.other_phone AS sf_other_phone
-        ,s.email AS sf_email
-        ,s.kipp_hs_class_c
-        ,s.expected_hs_graduation_c
-        
-        ,u.id AS contact_owner_id
-        ,u.name AS ktc_counselor
-        
-        ,enr.type_c AS enrollment_type
-        ,enr.status_c AS enrollment_status
-        ,enr.name AS enrollment_name        
-        
+  SELECT salesforce_contact_id
+        ,student_number
+        ,sf_mobile_phone
+        ,sf_home_phone
+        ,sf_other_phone
+        ,sf_email
+        ,kipp_hs_class_c
+        ,expected_hs_graduation_c
+        ,contact_owner_id
+        ,ktc_counselor
+        ,enrollment_type
+        ,enrollment_status
+        ,enrollment_name
+        ,start_date_c
         ,ROW_NUMBER() OVER(
-          PARTITION BY s.school_specific_id_c
-            ORDER BY enr.start_date_c DESC) AS rn
-  FROM gabby.alumni.contact s
-  JOIN gabby.alumni.[user] u
-    ON s.owner_id = u.id
-  JOIN gabby.alumni.enrollment_c enr
-    ON s.id = enr.student_c
-  WHERE s.is_deleted = 0
-    AND s.school_specific_id_c IS NOT NULL
+          PARTITION BY student_number
+            ORDER BY start_date_c DESC) AS rn
+  FROM
+      (
+       SELECT CONVERT(VARCHAR(25),s.id) AS salesforce_contact_id
+             ,CONVERT(INT,s.school_specific_id_c) AS student_number        
+             ,CONVERT(VARCHAR(125),s.mobile_phone) AS sf_mobile_phone
+             ,CONVERT(VARCHAR(125),s.home_phone) AS sf_home_phone
+             ,CONVERT(VARCHAR(125),s.other_phone) AS sf_other_phone
+             ,CONVERT(VARCHAR(125),s.email) AS sf_email
+             ,CONVERT(INT,s.kipp_hs_class_c) AS kipp_hs_class_c
+             ,s.expected_hs_graduation_c
+        
+             ,CONVERT(VARCHAR(25),u.id) AS contact_owner_id
+             ,CONVERT(VARCHAR(125),u.name) AS ktc_counselor
+        
+             ,CONVERT(VARCHAR(25),enr.type_c) AS enrollment_type
+             ,CONVERT(VARCHAR(25),enr.status_c) AS enrollment_status
+             ,CONVERT(VARCHAR(125),enr.name) AS enrollment_name    
+             ,enr.start_date_c    
+       FROM gabby.alumni.contact s
+       JOIN gabby.alumni.[user] u
+         ON s.owner_id = u.id
+       JOIN gabby.alumni.enrollment_c enr
+         ON s.id = enr.student_c
+       WHERE s.is_deleted = 0
+         AND s.school_specific_id_c IS NOT NULL
+      ) sub
  )
+
+,roster_union AS (
+  SELECT studentid
+        ,student_number
+        ,first_name
+        ,last_name
+        ,lastfirst
+        ,dob
+        ,exitdate
+        ,schoolid
+        ,school_name
+        ,curr_grade_level
+        ,cohort
+        ,highest_achieved        
+        ,guardianemail
+  FROM ms_grads  
+
+  UNION  
+
+  SELECT studentid
+        ,student_number
+        ,first_name
+        ,last_name           
+        ,lastfirst
+        ,dob
+        ,final_exitdate
+        ,schoolid
+        ,school_name
+        ,curr_grade_level
+        ,cohort
+        ,highest_achieved        
+        ,guardianemail
+  FROM transfers    
+ ) 
 
 SELECT r.student_number
       ,r.studentid
@@ -131,11 +188,10 @@ SELECT r.student_number
       ,r.last_name
       ,r.dob
       ,r.exitdate      
+      ,r.guardianemail AS ps_email
       ,CASE WHEN r.highest_achieved = 99 THEN 1 ELSE 0 END AS is_grad
 
-      ,enr.kipp_hs_class_c AS cohort
-      --,enr.contact_owner_id
-      --,enr.salesforce_contact_id
+      ,enr.kipp_hs_class_c AS cohort      
       ,enr.expected_hs_graduation_c AS expected_hs_graduation_date
       ,enr.ktc_counselor
       ,enr.enrollment_type
@@ -145,83 +201,51 @@ SELECT r.student_number
       ,enr.sf_mobile_phone
       ,enr.sf_other_phone
       ,enr.sf_email
+      
+      ,CONVERT(VARCHAR(125),s.home_phone) AS ps_home_phone
+      ,CONVERT(VARCHAR(125),s.mother) AS ps_mother
+      ,CONVERT(VARCHAR(125),s.father) AS ps_father
+      ,CONVERT(VARCHAR(125),s.doctor_name) AS ps_doctor_name
+      ,CONVERT(VARCHAR(125),s.doctor_phone) AS ps_doctor_phone
+      ,CONVERT(VARCHAR(125),s.emerg_contact_1) AS ps_emerg_contact_1
+      ,CONVERT(VARCHAR(125),s.emerg_phone_1) AS ps_emerg_phone_1
+      ,CONVERT(VARCHAR(125),s.emerg_contact_2) AS ps_emerg_contact_2
+      ,CONVERT(VARCHAR(125),s.emerg_phone_2) AS ps_emerg_phone_2
 
-      ,r.guardianemail AS ps_email
-      ,s.home_phone AS ps_home_phone
-      ,s.mother AS ps_mother
-      ,scf.mother_home_phone AS ps_mother_home
-      ,suf.mother_cell AS ps_mother_cell
-      ,suf.parent_motherdayphone AS ps_mother_day      
-      ,s.father AS ps_father
-      ,scf.father_home_phone AS ps_father_home
-      ,suf.father_cell AS ps_father_cell
-      ,suf.parent_fatherdayphone AS ps_father_day      
-      ,s.doctor_name AS ps_doctor_name
-      ,s.doctor_phone AS ps_doctor_phone
-      ,s.emerg_contact_1 AS ps_emerg_contact_1
-      ,scf.emerg_1_rel AS ps_emerg_1_rel
-      ,s.emerg_phone_1 AS ps_emerg_phone_1
-      ,s.emerg_contact_2 AS ps_emerg_contact_2
-      ,scf.emerg_2_rel AS ps_emerg_2_rel
-      ,s.emerg_phone_2 AS ps_emerg_phone_2
-      ,scf.emerg_contact_3 AS ps_emerg_contact_3
-      ,scf.emerg_3_rel AS ps_emerg_3_rel
-      ,scf.emerg_3_phone AS ps_emerg_3_phone
-      ,suf.emerg_4_name AS ps_emerg_4_name
-      ,suf.emerg_4_rel AS ps_emerg_4_rel
-      ,suf.emerg_4_phone AS ps_emerg_4_phone
-      ,suf.emerg_5_name AS ps_emerg_5_name
-      ,suf.emerg_5_rel AS ps_emerg_5_rel
-      ,suf.emerg_5_phone AS ps_emerg_5_phone
-      ,suf.release_1_name AS ps_release_1_name
-      ,suf.release_1_phone AS ps_release_1_phone
-      ,suf.release_1_relation AS ps_release_1_relation
-      ,suf.release_2_name AS ps_release_2_name
-      ,suf.release_2_phone AS ps_release_2_phone
-      ,suf.release_2_relation AS ps_release_2_relation
-      ,suf.release_3_name AS ps_release_3_name
-      ,suf.release_3_phone AS ps_release_3_phone
-      ,suf.release_3_relation AS ps_release_3_relation
-      ,suf.release_4_name AS ps_release_4_name
-      ,suf.release_4_phone AS ps_release_4_phone
-      ,suf.release_4_relation AS ps_release_4_relation
-      ,suf.release_5_name AS ps_release_5_name
-      ,suf.release_5_phone AS ps_release_5_phone
-      ,suf.release_5_relation AS ps_release_5_relation
-FROM
-    (
-     SELECT studentid
-           ,student_number
-           ,first_name
-           ,last_name
-           ,lastfirst
-           ,dob
-           ,exitdate
-           ,schoolid
-           ,school_name
-           ,curr_grade_level
-           ,cohort
-           ,highest_achieved        
-           ,guardianemail
-     FROM ms_grads  
-
-     UNION  
-
-     SELECT studentid
-           ,student_number
-           ,first_name
-           ,last_name           
-           ,lastfirst
-           ,dob
-           ,final_exitdate
-           ,schoolid
-           ,school_name
-           ,curr_grade_level
-           ,cohort
-           ,highest_achieved        
-           ,guardianemail
-     FROM transfers    
-    ) r
+      ,CONVERT(VARCHAR(125),scf.mother_home_phone) AS ps_mother_home
+      ,CONVERT(VARCHAR(125),scf.father_home_phone) AS ps_father_home
+      ,CONVERT(VARCHAR(125),scf.emerg_1_rel) AS ps_emerg_1_rel
+      ,CONVERT(VARCHAR(125),scf.emerg_2_rel) AS ps_emerg_2_rel
+      ,CONVERT(VARCHAR(125),scf.emerg_contact_3) AS ps_emerg_contact_3
+      ,CONVERT(VARCHAR(125),scf.emerg_3_rel) AS ps_emerg_3_rel
+      ,CONVERT(VARCHAR(125),scf.emerg_3_phone) AS ps_emerg_3_phone
+            
+      ,CONVERT(VARCHAR(125),suf.mother_cell) AS ps_mother_cell
+      ,CONVERT(VARCHAR(125),suf.parent_motherdayphone) AS ps_mother_day
+      ,CONVERT(VARCHAR(125),suf.father_cell) AS ps_father_cell
+      ,CONVERT(VARCHAR(125),suf.parent_fatherdayphone) AS ps_father_day      
+      ,CONVERT(VARCHAR(125),suf.emerg_4_name) AS ps_emerg_4_name
+      ,CONVERT(VARCHAR(125),suf.emerg_4_rel) AS ps_emerg_4_rel
+      ,CONVERT(VARCHAR(125),suf.emerg_4_phone) AS ps_emerg_4_phone
+      ,CONVERT(VARCHAR(125),suf.emerg_5_name) AS ps_emerg_5_name
+      ,CONVERT(VARCHAR(125),suf.emerg_5_rel) AS ps_emerg_5_rel
+      ,CONVERT(VARCHAR(125),suf.emerg_5_phone) AS ps_emerg_5_phone
+      ,CONVERT(VARCHAR(125),suf.release_1_name) AS ps_release_1_name
+      ,CONVERT(VARCHAR(125),suf.release_1_phone) AS ps_release_1_phone
+      ,CONVERT(VARCHAR(125),suf.release_1_relation) AS ps_release_1_relation
+      ,CONVERT(VARCHAR(125),suf.release_2_name) AS ps_release_2_name
+      ,CONVERT(VARCHAR(125),suf.release_2_phone) AS ps_release_2_phone
+      ,CONVERT(VARCHAR(125),suf.release_2_relation) AS ps_release_2_relation
+      ,CONVERT(VARCHAR(125),suf.release_3_name) AS ps_release_3_name
+      ,CONVERT(VARCHAR(125),suf.release_3_phone) AS ps_release_3_phone
+      ,CONVERT(VARCHAR(125),suf.release_3_relation) AS ps_release_3_relation
+      ,CONVERT(VARCHAR(125),suf.release_4_name) AS ps_release_4_name
+      ,CONVERT(VARCHAR(125),suf.release_4_phone) AS ps_release_4_phone
+      ,CONVERT(VARCHAR(125),suf.release_4_relation) AS ps_release_4_relation
+      ,CONVERT(VARCHAR(125),suf.release_5_name) AS ps_release_5_name
+      ,CONVERT(VARCHAR(125),suf.release_5_phone) AS ps_release_5_phone
+      ,CONVERT(VARCHAR(125),suf.release_5_relation) AS ps_release_5_relation
+FROM roster_union r
 LEFT OUTER JOIN enrollments enr
   ON r.student_number = enr.student_number
  AND enr.rn = 1

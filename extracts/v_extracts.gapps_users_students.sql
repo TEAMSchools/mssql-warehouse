@@ -14,6 +14,7 @@ SELECT co.student_number
                        WHEN co.school_name = 'Out of District' THEN 'Disabled'
                        ELSE co.school_name 
                       END AS org
+
       ,acct.student_web_id + '@teamstudents.org' AS email
       ,acct.student_web_password AS password
 FROM gabby.powerschool.cohort_identifiers_static co
