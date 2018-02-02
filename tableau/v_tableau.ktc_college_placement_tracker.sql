@@ -288,22 +288,20 @@ SELECT co.student_number
       ,ctcs.senior_parent_meeting_1_of_2
       ,ctcs.senior_parent_meeting_2_of_2       
       ,ctcs.registered_for_october_act
-      --scholarships
-      --complete CTE survey
-      --resume
-      --brag sheet      
-      --Juniors requested LOR & Common App eval
-      --Junior wishlist
-      --parents attending RC conference Q2
-      --parents attending RC conference Q3
-      --parents attending RC conference Q4
-      --register for July ACT      
-      --register for December ACT      
-      --completing test release application      
-      --submitting test release report      
-      --register for June SAT
-      --register for March SAT      
-      
+      ,ctcs.scholarship_1_submitted
+      ,ctcs.scholarship_2_submitted
+      ,ctcs.cte_survey_complete
+      ,ctcs.resume_complete
+      ,ctcs.brag_sheet_complete
+      ,ctcs.lor_requests_complete_2_      
+      ,ctcs.parent_attended_q_3_parent_night
+      ,ctcs.parent_attended_q_4_parent_conferences
+      ,ctcs.registered_for_july_act
+      ,ctcs.registered_for_december_act
+      ,ctcs.registered_for_april_act
+      ,ctcs.act_test_release_report_submitted
+      -- registered for May subject tests
+
       ,na.n_award_letters_collected
       ,na.is_acceptance_letter_collected
 
