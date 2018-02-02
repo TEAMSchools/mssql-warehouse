@@ -68,55 +68,55 @@ WITH roster AS (
   FROM
       (
        SELECT CONVERT(INT,con.student_number) AS student_number
-             ,CONVERT(VARCHAR,con.home_phone) AS home_phone
-             ,CONVERT(VARCHAR,con.guardianemail) AS home_email
-             ,CONVERT(VARCHAR,con.mother) AS parent1_name            
-             ,CONVERT(VARCHAR,con.father) AS parent2_name            
-             ,CONVERT(VARCHAR,con.doctor_name) AS doctor_name      
-             ,CONVERT(VARCHAR,con.doctor_phone) AS doctor_phone
-             ,CONVERT(VARCHAR,con.emerg_contact_1) AS emerg1_name      
-             ,CONVERT(VARCHAR,con.emerg_phone_1) AS emerg1_phone
-             ,CONVERT(VARCHAR,con.emerg_contact_2) AS emerg2_name      
-             ,CONVERT(VARCHAR,con.emerg_phone_2) AS emerg2_phone            
-             ,CONVERT(VARCHAR,'Home') AS home_name           
+             ,CONVERT(VARCHAR(250),con.home_phone) AS home_phone
+             ,CONVERT(VARCHAR(250),con.guardianemail) AS home_email
+             ,CONVERT(VARCHAR(250),con.mother) AS parent1_name            
+             ,CONVERT(VARCHAR(250),con.father) AS parent2_name            
+             ,CONVERT(VARCHAR(250),con.doctor_name) AS doctor_name      
+             ,CONVERT(VARCHAR(250),con.doctor_phone) AS doctor_phone
+             ,CONVERT(VARCHAR(250),con.emerg_contact_1) AS emerg1_name      
+             ,CONVERT(VARCHAR(250),con.emerg_phone_1) AS emerg1_phone
+             ,CONVERT(VARCHAR(250),con.emerg_contact_2) AS emerg2_name      
+             ,CONVERT(VARCHAR(250),con.emerg_phone_2) AS emerg2_phone            
+             ,CONVERT(VARCHAR(250),'Home') AS home_name           
 
-             ,CONVERT(VARCHAR,scf.mother_home_phone) AS parent1_home      
-             ,CONVERT(VARCHAR,scf.motherdayphone) AS parent1_day
-             ,CONVERT(VARCHAR,scf.father_home_phone) AS parent2_home      
-             ,CONVERT(VARCHAR,scf.fatherdayphone) AS parent2_day
-             ,CONVERT(VARCHAR,scf.emerg_1_rel) AS emerg1_relation
-             ,CONVERT(VARCHAR,scf.emerg_2_rel) AS emerg2_relation
-             ,CONVERT(VARCHAR,scf.emerg_contact_3) AS emerg3_name
-             ,CONVERT(VARCHAR,scf.emerg_3_rel) AS emerg3_relation
-             ,CONVERT(VARCHAR,scf.emerg_3_phone) AS emerg3_phone
+             ,CONVERT(VARCHAR(250),scf.mother_home_phone) AS parent1_home      
+             ,CONVERT(VARCHAR(250),scf.motherdayphone) AS parent1_day
+             ,CONVERT(VARCHAR(250),scf.father_home_phone) AS parent2_home      
+             ,CONVERT(VARCHAR(250),scf.fatherdayphone) AS parent2_day
+             ,CONVERT(VARCHAR(250),scf.emerg_1_rel) AS emerg1_relation
+             ,CONVERT(VARCHAR(250),scf.emerg_2_rel) AS emerg2_relation
+             ,CONVERT(VARCHAR(250),scf.emerg_contact_3) AS emerg3_name
+             ,CONVERT(VARCHAR(250),scf.emerg_3_rel) AS emerg3_relation
+             ,CONVERT(VARCHAR(250),scf.emerg_3_phone) AS emerg3_phone
       
-             ,CONVERT(VARCHAR,suf.emerg_4_name) AS emerg4_name
-             ,CONVERT(VARCHAR,suf.emerg_4_rel) AS emerg4_relation
-             ,CONVERT(VARCHAR,suf.emerg_4_phone) AS emerg4_phone
-             ,CONVERT(VARCHAR,suf.emerg_5_name) AS emerg5_name
-             ,CONVERT(VARCHAR,suf.emerg_5_rel) AS emerg5_relation
-             ,CONVERT(VARCHAR,suf.emerg_5_phone) AS emerg5_phone
-             ,CONVERT(VARCHAR,suf.mother_cell) AS parent1_cell
-             ,CONVERT(VARCHAR,suf.father_cell) AS parent2_cell
-             ,CONVERT(VARCHAR,suf.release_1_name) AS release1_name
-             ,CONVERT(VARCHAR,suf.release_1_relation) AS release1_relation
-             ,CONVERT(VARCHAR,suf.release_1_phone) AS release1_phone           
-             ,CONVERT(VARCHAR,suf.release_2_name) AS release2_name
-             ,CONVERT(VARCHAR,suf.release_2_relation) AS release2_relation
-             ,CONVERT(VARCHAR,suf.release_2_phone) AS release2_phone           
-             ,CONVERT(VARCHAR,suf.release_3_name) AS release3_name
-             ,CONVERT(VARCHAR,suf.release_3_relation) AS release3_relation
-             ,CONVERT(VARCHAR,suf.release_3_phone) AS release3_phone           
-             ,CONVERT(VARCHAR,suf.release_4_name) AS release4_name
-             ,CONVERT(VARCHAR,suf.release_4_relation) AS release4_relation
-             ,CONVERT(VARCHAR,suf.release_4_phone) AS release4_phone           
-             ,CONVERT(VARCHAR,suf.release_5_name) AS release5_name
-             ,CONVERT(VARCHAR,suf.release_5_relation) AS release5_relation
-             ,CONVERT(VARCHAR,suf.release_5_phone) AS release5_phone                      
+             ,CONVERT(VARCHAR(250),suf.emerg_4_name) AS emerg4_name
+             ,CONVERT(VARCHAR(250),suf.emerg_4_rel) AS emerg4_relation
+             ,CONVERT(VARCHAR(250),suf.emerg_4_phone) AS emerg4_phone
+             ,CONVERT(VARCHAR(250),suf.emerg_5_name) AS emerg5_name
+             ,CONVERT(VARCHAR(250),suf.emerg_5_rel) AS emerg5_relation
+             ,CONVERT(VARCHAR(250),suf.emerg_5_phone) AS emerg5_phone
+             ,CONVERT(VARCHAR(250),suf.mother_cell) AS parent1_cell
+             ,CONVERT(VARCHAR(250),suf.father_cell) AS parent2_cell
+             ,CONVERT(VARCHAR(250),suf.release_1_name) AS release1_name
+             ,CONVERT(VARCHAR(250),suf.release_1_relation) AS release1_relation
+             ,CONVERT(VARCHAR(250),suf.release_1_phone) AS release1_phone           
+             ,CONVERT(VARCHAR(250),suf.release_2_name) AS release2_name
+             ,CONVERT(VARCHAR(250),suf.release_2_relation) AS release2_relation
+             ,CONVERT(VARCHAR(250),suf.release_2_phone) AS release2_phone           
+             ,CONVERT(VARCHAR(250),suf.release_3_name) AS release3_name
+             ,CONVERT(VARCHAR(250),suf.release_3_relation) AS release3_relation
+             ,CONVERT(VARCHAR(250),suf.release_3_phone) AS release3_phone           
+             ,CONVERT(VARCHAR(250),suf.release_4_name) AS release4_name
+             ,CONVERT(VARCHAR(250),suf.release_4_relation) AS release4_relation
+             ,CONVERT(VARCHAR(250),suf.release_4_phone) AS release4_phone           
+             ,CONVERT(VARCHAR(250),suf.release_5_name) AS release5_name
+             ,CONVERT(VARCHAR(250),suf.release_5_relation) AS release5_relation
+             ,CONVERT(VARCHAR(250),suf.release_5_phone) AS release5_phone                      
 
-             ,CASE WHEN CONCAT(scf.mother_home_phone, suf.mother_cell, scf.motherdayphone)!= '' THEN CONVERT(VARCHAR,'Mother') END AS parent1_relation
-             ,CASE WHEN CONCAT(scf.father_home_phone, suf.father_cell, scf.fatherdayphone) != '' THEN CONVERT(VARCHAR,'Father') END AS parent2_relation
-             ,CASE WHEN CONCAT(con.doctor_name, con.doctor_phone) != '' THEN CONVERT(VARCHAR,'Doctor') END AS doctor_relation
+             ,CASE WHEN CONCAT(scf.mother_home_phone, suf.mother_cell, scf.motherdayphone)!= '' THEN CONVERT(VARCHAR(250),'Mother') END AS parent1_relation
+             ,CASE WHEN CONCAT(scf.father_home_phone, suf.father_cell, scf.fatherdayphone) != '' THEN CONVERT(VARCHAR(250),'Father') END AS parent2_relation
+             ,CASE WHEN CONCAT(con.doctor_name, con.doctor_phone) != '' THEN CONVERT(VARCHAR(250),'Doctor') END AS doctor_relation
        FROM gabby.powerschool.students con      
        JOIN gabby.powerschool.studentcorefields scf
          ON con.dcid = scf.studentsdcid
@@ -327,10 +327,10 @@ WITH roster AS (
         ,a.assessment_id
         ,a.scope        
         ,a.date_taken AS measure_date
-        ,CASE 
+        ,CONVERT(VARCHAR(250),CASE 
           WHEN a.subject_area = 'Writing' THEN a.standard_description
           ELSE a.standard_code 
-         END AS standards
+         END) AS standards
         ,CASE
           WHEN a.subject_area = 'Writing' THEN a.points
           ELSE a.percent_correct        
