@@ -194,9 +194,11 @@ WITH roster AS (
         ,SUM(is_closed_application) AS n_closed_applications
         ,SUM(is_efc_entered) AS n_efc_entered
         ,MAX(is_eaed_application) AS is_eaed_applicant
+        ,SUM(is_accepted) AS n_accepted
         ,MAX(is_accepted_4yr) AS is_accepted_4yr
         ,MAX(is_award_information_entered) AS is_award_information_entered
         ,AVG(unmet_need_c) AS avg_unmet_need
+        ,SUM(accepted_app_closed_with_reason_not_attending) AS n_closed_with_reason
   FROM
       (
        SELECT a.id
@@ -225,11 +227,26 @@ WITH roster AS (
                 AND a.unmet_need_c IS NOT NULL THEN 1.0 
                ELSE 0.0 
               END AS is_award_information_entered
+             ,CASE WHEN a.application_status_c = 'Accepted' THEN 1.0 ELSE 0.0 END AS is_accepted
              ,CASE 
                WHEN a.application_status_c = 'Accepted' 
                 AND SUBSTRING(s.type, PATINDEX('%[24] yr%', s.type), 1) = '4' THEN 1.0 
                ELSE 0.0 
               END AS is_accepted_4yr
+             ,CASE
+               WHEN a.application_status_c != 'Accepted' THEN NULL
+               WHEN a.application_status_c = 'Accepted' 
+                AND a.matriculation_decision_c = 'Matriculated (Intent to Enroll)'                
+                      THEN 1
+               WHEN a.application_status_c = 'Accepted' 
+                AND a.matriculation_decision_c != 'Matriculated (Intent to Enroll)'
+                AND a.primary_reason_for_not_attending_c IS NOT NULL
+                      THEN 1
+               WHEN a.application_status_c = 'Accepted' 
+                AND a.matriculation_decision_c != 'Matriculated (Intent to Enroll)'
+                AND a.primary_reason_for_not_attending_c IS NULL
+                      THEN 0
+              END AS accepted_app_closed_with_reason_not_attending
 
              ,s.type        
        FROM gabby.alumni.application_c a       
@@ -300,7 +317,7 @@ SELECT co.student_number
       ,ctcs.registered_for_december_act
       ,ctcs.registered_for_april_act
       ,ctcs.act_test_release_report_submitted
-      -- registered for May subject tests
+      ,NULL AS registered_for_may_subject_tests
 
       ,na.n_award_letters_collected
       ,na.is_acceptance_letter_collected
@@ -318,9 +335,11 @@ SELECT co.student_number
       ,ca.n_ltr_applications      
       ,ca.n_efc_entered      
       ,ca.n_closed_applications      
+      ,ca.n_accepted
       ,ca.is_accepted_4yr
       ,ca.is_award_information_entered
       ,ca.avg_unmet_need
+      ,ca.n_closed_with_reason
       ,COALESCE(ca.is_eaed_applicant, 0) AS is_eaed_applicant
 
       ,ei.ecc_adjusted_6_year_minority_graduation_rate AS ecc_rate
