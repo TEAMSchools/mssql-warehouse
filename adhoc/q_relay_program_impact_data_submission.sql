@@ -75,11 +75,22 @@ WHERE academic_year BETWEEN 2014 AND 2016
   AND percent_correct IS NOT NULL
 --*/
 
-/*
+--/*
 --Teacher-Student Data Linkages 
 ----Student identifier  (can be scrambled if scrambled same way each year) linked to courses
 ----Teacher identifier linked to courses
 ----Courses linked to assessment content area
+SELECT student_number
+      ,teachernumber
+      ,academic_year
+      ,course_name
+      ,credittype
+      ,illuminate_subject AS parcc_subject
+      ,illuminate_subject AS interim_subject
+      ,map_measurementscale
+FROM gabby.powerschool.course_enrollments_static
+WHERE academic_year BETWEEN 2014 AND 2016
+  AND illuminate_subject IS NOT NULL  
 --*/
 
 /*
