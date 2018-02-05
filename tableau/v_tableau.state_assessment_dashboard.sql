@@ -85,6 +85,7 @@ SELECT co.student_number
       ,parcc.subject      
       ,parcc.test_scale_score
       ,parcc.test_performance_level
+      ,parcc.test_reading_csem AS test_standard_error
       ,CASE
         WHEN parcc.test_performance_level >= 4 THEN 1
         WHEN parcc.test_performance_level < 4 THEN 0
@@ -138,6 +139,7 @@ SELECT co.student_number
         WHEN asa.performance_level = 'Proficient' THEN 4
         WHEN asa.performance_level = 'Partially Proficient' THEN 1
        END AS performance_level
+      ,NULL AS test_standard_error
       ,CASE
         WHEN asa.scaled_score = 0 THEN NULL
         WHEN asa.scaled_score >= 200 THEN 1

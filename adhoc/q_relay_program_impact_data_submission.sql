@@ -31,6 +31,48 @@ WHERE academic_year BETWEEN 2014 AND 2016
 ----Test characteristics data, such as standard errors of measurement (SEMs)
 ----Regents exam scores in all subjects
 ----Interim assessment scores (e.g. MAP data)
+SELECT student_number
+      ,academic_year
+      ,test_type      
+      ,subject
+      ,test_code
+      ,test_scale_score      
+      ,NULL AS test_percentile
+      ,test_standard_error
+      ,test_performance_level
+FROM gabby.tableau.state_assessment_dashboard
+WHERE academic_year BETWEEN 2014 AND 2016
+
+UNION ALL
+
+SELECT student_id  AS student_number
+      ,academic_year
+      ,'MAP' AS test_type
+      ,measurement_scale AS subject
+      ,NULL AS test_code
+      ,test_ritscore AS test_scale_score
+      ,test_percentile
+      ,test_standard_error
+      ,NULL AS test_performance_level      
+FROM gabby.nwea.assessment_result_identifiers
+WHERE academic_year BETWEEN 2014 AND 2016
+
+UNION ALL
+
+SELECT local_student_id AS student_number
+      ,academic_year
+      ,'KIPP NJ Interim Assessment' AS test_type
+      ,subject_area AS subject
+      ,COALESCE(module_number, term_administered) AS test_code
+      ,percent_correct AS test_scale_score
+      ,NULL AS test_percentile
+      ,NULL AS test_standard_error
+      ,performance_band_number AS test_performance_level      
+FROM gabby.illuminate_dna_assessments.agg_student_responses_all
+WHERE academic_year BETWEEN 2014 AND 2016
+  AND scope = 'CMA - End-of-Module'
+  AND response_type = 'O'
+  AND percent_correct IS NOT NULL
 --*/
 
 /*
@@ -40,7 +82,7 @@ WHERE academic_year BETWEEN 2014 AND 2016
 ----Courses linked to assessment content area
 --*/
 
---/*
+/*
 --Teacher Data
 ----ID crosswalk from HR data to Linkage data
 ----Teacher Name
