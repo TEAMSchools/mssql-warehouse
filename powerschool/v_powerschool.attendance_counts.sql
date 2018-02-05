@@ -54,7 +54,7 @@ WITH att_counts AS (
         ,term_name
         ,start_date
         ,end_date                
-        ,N
+        ,CONVERT(FLOAT,n) AS n
         ,CONCAT(att_code,'_',field) AS pivot_field        
         ,CASE 
           WHEN CONVERT(DATE,GETDATE()) BETWEEN start_date AND end_date THEN 1 
