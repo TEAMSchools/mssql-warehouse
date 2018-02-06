@@ -6,7 +6,7 @@ CREATE OR ALTER VIEW illuminate_dna_assessments.performance_band_lookup AS
 SELECT performance_band_set_id
       ,description
       ,minimum_value
-      ,LEAD(minimum_value, 1, 1001) OVER(PARTITION BY performance_band_set_id ORDER BY label_number) - 1 AS maximum_value
+      ,LEAD(minimum_value, 1, 1001) OVER(PARTITION BY performance_band_set_id ORDER BY label_number) - .1 AS maximum_value
       ,label_number
       ,is_mastery
 FROM
@@ -14,7 +14,7 @@ FROM
      SELECT pbs.performance_band_set_id
            ,CONVERT(VARCHAR(125),pbs.description) AS description
       
-           ,pb.minimum_value           
+           ,CONVERT(FLOAT,pb.minimum_value) AS minimum_value
            ,pb.label_number
            ,pb.is_mastery
            ,pb._fivetran_deleted

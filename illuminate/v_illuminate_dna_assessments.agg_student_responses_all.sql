@@ -109,7 +109,7 @@ WITH responses_long AS (
         ,standard_id
         ,MIN(date_taken) AS date_taken
         ,SUM(points) AS points
-        ,ROUND((SUM(points) / SUM(points_possible)) * 100, 0) AS percent_correct
+        ,ROUND((SUM(points) / SUM(points_possible)) * 100, 1) AS percent_correct
   FROM responses_long
   WHERE scope IN (SELECT scope FROM gabby.illuminate_dna_assessments.normed_scopes)
   GROUP BY student_id             
