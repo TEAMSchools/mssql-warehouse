@@ -110,8 +110,7 @@ FROM
       AND ds.code_translation IN (SELECT scope FROM gabby.illuminate_dna_assessments.normed_scopes)
      JOIN gabby.illuminate_codes.dna_subject_areas dsa
        ON a.code_subject_area_id = dsa.code_id    
-      AND dsa.code_translation IN ('Algebra I','Geometry','Algebra IIA','Algebra IIB'
-                                  ,'English 100','English 200','English 300','English 400')
+      AND dsa.code_translation IN ('Algebra I','Geometry','Algebra IIA','Algebra IIB','English 100','English 200','English 300','English 400')
      JOIN gabby.illuminate_dna_assessments.assessment_grade_levels agl
        ON a.assessment_id = agl.assessment_id      
      JOIN gabby.illuminate_dna_assessments.course_enrollment_scaffold_static ce
@@ -142,8 +141,7 @@ FROM
       AND ds.code_translation IN (SELECT scope FROM gabby.illuminate_dna_assessments.normed_scopes)
      JOIN gabby.illuminate_codes.dna_subject_areas dsa
        ON a.code_subject_area_id = dsa.code_id    
-      AND dsa.code_translation NOT IN ('Algebra I','Geometry','Algebra IIA','Algebra IIB'
-                                      ,'English 100','English 200','English 300','English 400')
+      AND dsa.code_translation NOT IN ('Algebra I','Geometry','Algebra IIA','Algebra IIB','English 100','English 200','English 300','English 400')
      JOIN gabby.illuminate_dna_assessments.assessment_grade_levels agl
        ON a.assessment_id = agl.assessment_id      
      JOIN gabby.illuminate_dna_assessments.students_assessments sa
