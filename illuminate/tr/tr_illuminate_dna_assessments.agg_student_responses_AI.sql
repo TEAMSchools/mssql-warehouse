@@ -21,7 +21,5 @@ BEGIN
 
     INSERT INTO [illuminate_dna_assessments].[agg_student_responses]
     SELECT * FROM INSERTED
-
-    --OUTPUT SELECT * FROM INSERTED;
   END;
 END
