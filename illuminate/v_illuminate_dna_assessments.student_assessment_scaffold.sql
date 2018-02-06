@@ -3,6 +3,16 @@ GO
 
 CREATE OR ALTER VIEW illuminate_dna_assessments.student_assessment_scaffold AS
 
+WITH ssa AS (
+  SELECT student_id
+        ,(gabby.utilities.DATE_TO_SY(entry_date) + 1) AS academic_year
+        ,grade_level_id      
+        ,ROW_NUMBER() OVER(
+           PARTITION BY student_id, grade_level_id, gabby.utilities.DATE_TO_SY(entry_date)
+             ORDER BY entry_date DESC) AS rn
+  FROM gabby.illuminate_public.student_session_aff ssa 
+)
+
 SELECT sub.assessment_id
       ,sub.title
       ,sub.administered_at
@@ -46,8 +56,7 @@ SELECT sub.assessment_id
 FROM
     (
      /* standard curriculum -- K-8 */
-     SELECT DISTINCT
-            a.assessment_id
+     SELECT a.assessment_id
            ,a.title
            ,a.administered_at        
            ,a.performance_band_set_id
@@ -68,9 +77,10 @@ FROM
       AND dsa.code_translation IN ('Text Study','Mathematics','Social Studies','Science')
      JOIN gabby.illuminate_dna_assessments.assessment_grade_levels agl
        ON a.assessment_id = agl.assessment_id       
-     JOIN gabby.illuminate_public.student_session_aff ssa
-       ON a.administered_at BETWEEN ssa.entry_date AND ssa.leave_date
-      AND agl.grade_level_id = ssa.grade_level_id      
+     JOIN ssa
+       ON a.academic_year = ssa.academic_year
+      AND agl.grade_level_id = ssa.grade_level_id
+      AND ssa.rn = 1
      JOIN gabby.illuminate_dna_assessments.course_enrollment_scaffold_static ce
        ON ssa.student_id = ce.student_id  
       AND a.academic_year = ce.academic_year 
@@ -81,8 +91,7 @@ FROM
      UNION ALL
 
      /* standard curriculum -- HS */
-     SELECT DISTINCT 
-            a.assessment_id
+     SELECT a.assessment_id
            ,a.title
            ,a.administered_at        
            ,a.performance_band_set_id
@@ -114,8 +123,7 @@ FROM
      UNION ALL
 
      /* replacement curriculum */
-     SELECT DISTINCT 
-            a.assessment_id
+     SELECT a.assessment_id
            ,a.title
            ,a.administered_at        
            ,a.performance_band_set_id
@@ -138,11 +146,12 @@ FROM
      JOIN gabby.illuminate_dna_assessments.assessment_grade_levels agl
        ON a.assessment_id = agl.assessment_id      
      JOIN gabby.illuminate_dna_assessments.students_assessments sa
-       ON a.assessment_id = sa.assessment_id
-     JOIN gabby.illuminate_public.student_session_aff ssa
-       ON sa.date_taken BETWEEN ssa.entry_date AND ssa.leave_date
-      AND sa.student_id = ssa.student_id
+       ON a.assessment_id = sa.assessment_id     
+     JOIN ssa
+       ON sa.student_id = ssa.student_id
+      AND a.academic_year = ssa.academic_year
       AND agl.grade_level_id != ssa.grade_level_id            
+      AND ssa.rn = 1
      WHERE a.deleted_at IS NULL       
 
      UNION ALL
