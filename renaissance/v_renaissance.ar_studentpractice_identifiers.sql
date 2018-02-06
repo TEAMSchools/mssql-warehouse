@@ -52,45 +52,7 @@ FROM
            ,CONVERT(INT,ar.ti_book_rating) AS ti_book_rating
            ,CONVERT(INT,ar.ti_passed) AS ti_passed
            ,CONVERT(VARCHAR(250),ar.vch_content_title) AS vch_content_title
-           ,CONVERT(VARCHAR(25),ar.vch_lexile_display) AS vch_lexile_display
-           /*
-           ,ar.ch_content_version      
-           ,ar.ch_status
-           ,ar.ch_twi
-           ,ar.d_alternate_book_level_1
-           ,ar.d_book_level
-           ,ar.d_passing_percentage
-           ,ar.d_points_possible      
-           ,ar.device_applet_id
-           ,ar.device_type
-           ,ar.device_unique_id      
-           ,ar.dt_edit_date
-           ,ar.dt_insert_date                 
-           ,ar.i_alternate_book_level_2
-           ,ar.i_class_id
-           ,ar.i_content_type_id
-           ,ar.i_edit_by_id
-           ,ar.i_insert_by_id
-           ,ar.i_questions_correct
-           ,ar.i_questions_presented                 
-           ,ar.i_rlid
-           ,ar.i_school_id      
-           ,ar.i_teacher_user_id
-           ,ar.i_user_id      
-           ,ar.s_data_origination      
-           ,ar.ti_book_rating
-           ,ar.ti_csimport_version      
-           ,ar.ti_practice_detail
-           ,ar.ti_row_status
-           ,ar.ti_teacher_modified
-           ,ar.ti_used_audio      
-           ,ar.vch_author
-           ,ar.vch_content_language      
-           ,ar.vch_interest_level      
-           ,ar.vch_second_try_author
-           ,ar.vch_second_try_title
-           ,ar.vch_sort_title
-           */
+           ,CONVERT(VARCHAR(25),ar.vch_lexile_display) AS vch_lexile_display    
 
            ,CONVERT(INT,u.vch_previous_idnum) AS student_number                
      FROM gabby.renaissance.ar_studentpractice ar

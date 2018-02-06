@@ -3,100 +3,6 @@ GO
 
 CREATE OR ALTER VIEW illuminate_dna_assessments.student_assessment_scaffold AS
 
-WITH course_enrollments AS (
-  SELECT student_id
-        ,academic_year
-        ,grade_level_id
-        ,credittype
-        ,subject_area
-        ,MAX(is_advanced_math) OVER(PARTITION BY student_id, academic_year, credittype) AS is_advanced_math_student
-        ,ROW_NUMBER() OVER(        
-           PARTITION BY student_id, academic_year, credittype, subject_area
-             ORDER BY entry_date DESC, leave_date DESC) AS rn
-  FROM
-      (
-       /* K-4 enrollments */
-       SELECT ssc.student_id
-             ,ssc.academic_year      
-             ,ssc.grade_level_id
-             ,ssc.entry_date
-             ,ssc.leave_date
-             
-             ,'Text Study' AS subject_area
-             ,'ENG' AS credittype
-             ,0 AS is_advanced_math
-       FROM gabby.powerschool.course_enrollments_static enr
-       JOIN gabby.illuminate_public.students ils
-         ON enr.student_number = ils.local_student_id
-       JOIN gabby.illuminate_public.courses c
-         ON enr.course_number = c.school_course_id
-       JOIN gabby.illuminate_matviews.ss_cube ssc
-         ON ils.student_id = ssc.student_id
-        AND c.course_id = ssc.course_id
-        AND (enr.academic_year + 1) = ssc.academic_year        
-        AND CONCAT(ssc.student_id, '_', ssc.user_id, '_', ssc.section_id, '_', ssc.entry_date, '_', ssc.leave_date) IN (SELECT CONCAT(student_id, '_', user_id, '_', section_id, '_', entry_date, '_', leave_date) FROM gabby.illuminate_matviews.ss_cube_validation_static)
-       WHERE enr.course_enroll_status = 0
-         AND enr.section_enroll_status = 0
-         AND enr.course_number = 'HR'       
-         AND (ssc.grade_level_id <= 5 OR (enr.schoolid = 73258 AND enr.section_number LIKE 'W%')) /* Pathways MS students only enrolled in HR */
-       
-       UNION ALL       
-       
-       SELECT ssc.student_id
-             ,ssc.academic_year      
-             ,ssc.grade_level_id
-             ,ssc.entry_date
-             ,ssc.leave_date
-             
-             ,'Mathematics' AS subject_area
-             ,'MATH' AS credittype
-             ,0 AS is_advanced_math
-       FROM gabby.powerschool.course_enrollments_static enr
-       JOIN gabby.illuminate_public.students ils
-         ON enr.student_number = ils.local_student_id
-       JOIN gabby.illuminate_public.courses c
-         ON enr.course_number = c.school_course_id
-       JOIN gabby.illuminate_matviews.ss_cube ssc
-         ON ils.student_id = ssc.student_id
-        AND c.course_id = ssc.course_id
-        AND (enr.academic_year + 1) = ssc.academic_year
-        AND ssc.grade_level_id <= 5
-        AND CONCAT(ssc.student_id, '_', ssc.user_id, '_', ssc.section_id, '_', ssc.entry_date, '_', ssc.leave_date) IN (SELECT CONCAT(student_id, '_', user_id, '_', section_id, '_', entry_date, '_', leave_date) FROM gabby.illuminate_matviews.ss_cube_validation_static)
-       WHERE enr.course_enroll_status = 0
-         AND enr.section_enroll_status = 0
-         AND enr.course_number = 'HR'
-         AND (ssc.grade_level_id <= 5 OR (enr.schoolid = 73258 AND enr.section_number LIKE 'W%')) /* Pathways MS students only enrolled in HR */
-       
-       UNION ALL
-
-       /* 5-12 enrollments */
-       SELECT ssc.student_id
-             ,ssc.academic_year      
-             ,ssc.grade_level_id
-             ,ssc.entry_date
-             ,ssc.leave_date
-             
-             ,enr.illuminate_subject AS subject_area
-             ,enr.credittype             
-             ,CASE WHEN enr.illuminate_subject IN ('Algebra I', 'Geometry', 'Algebra IIA', 'Algebra IIB') THEN 1 ELSE 0 END AS is_advanced_math
-       FROM gabby.powerschool.course_enrollments_static enr
-       JOIN gabby.illuminate_public.students ils
-         ON enr.student_number = ils.local_student_id
-       JOIN gabby.illuminate_public.courses c
-         ON enr.course_number = c.school_course_id
-       JOIN gabby.illuminate_matviews.ss_cube ssc
-         ON ils.student_id = ssc.student_id
-        AND c.course_id = ssc.course_id
-        AND (enr.academic_year + 1) = ssc.academic_year
-        AND CONCAT(ssc.student_id, '_', ssc.user_id, '_', ssc.section_id, '_', ssc.entry_date, '_', ssc.leave_date) IN (SELECT CONCAT(student_id, '_', user_id, '_', section_id, '_', entry_date, '_', leave_date) FROM gabby.illuminate_matviews.ss_cube_validation_static)
-       WHERE enr.course_enroll_status = 0
-         AND enr.section_enroll_status = 0
-         AND enr.illuminate_subject IN ('Mathematics','Algebra I','Geometry','Algebra IIA','Algebra IIB'
-                                       ,'Text Study','English 100','English 200','English 300','English 400'
-                                       ,'Science','Social Studies') 
-      ) sub
- )
-
 SELECT sub.assessment_id
       ,sub.title
       ,sub.administered_at
@@ -161,20 +67,16 @@ FROM
        ON a.code_subject_area_id = dsa.code_id    
       AND dsa.code_translation IN ('Text Study','Mathematics','Social Studies','Science')
      JOIN gabby.illuminate_dna_assessments.assessment_grade_levels agl
-       ON a.assessment_id = agl.assessment_id 
-      AND agl.assessment_grade_level_id IN (SELECT assessment_grade_level_id FROM gabby.illuminate_dna_assessments.assessment_grade_levels_validation_static) 
+       ON a.assessment_id = agl.assessment_id       
      JOIN gabby.illuminate_public.student_session_aff ssa
        ON a.administered_at BETWEEN ssa.entry_date AND ssa.leave_date
-      AND agl.grade_level_id = ssa.grade_level_id
-      AND ssa.stu_sess_id IN (SELECT stu_sess_id FROM gabby.illuminate_public.student_session_aff_validation_static) 
-     LEFT OUTER JOIN course_enrollments ce
+      AND agl.grade_level_id = ssa.grade_level_id      
+     JOIN gabby.illuminate_dna_assessments.course_enrollment_scaffold_static ce
        ON ssa.student_id = ce.student_id  
       AND a.academic_year = ce.academic_year 
       AND dsa.code_translation = ce.subject_area
-      AND ce.is_advanced_math_student = 0
-      AND ce.rn = 1
-     WHERE a.deleted_at IS NULL  
-       AND ce.student_id IS NOT NULL
+      AND ce.is_advanced_math_student = 0      
+     WHERE a.deleted_at IS NULL       
 
      UNION ALL
 
@@ -202,13 +104,11 @@ FROM
       AND dsa.code_translation IN ('Algebra I','Geometry','Algebra IIA','Algebra IIB'
                                   ,'English 100','English 200','English 300','English 400')
      JOIN gabby.illuminate_dna_assessments.assessment_grade_levels agl
-       ON a.assessment_id = agl.assessment_id
-      AND agl.assessment_grade_level_id IN (SELECT assessment_grade_level_id FROM gabby.illuminate_dna_assessments.assessment_grade_levels_validation_static) 
-     JOIN course_enrollments ce
+       ON a.assessment_id = agl.assessment_id      
+     JOIN gabby.illuminate_dna_assessments.course_enrollment_scaffold_static ce
        ON a.academic_year = ce.academic_year 
       AND agl.grade_level_id = ce.grade_level_id
-      AND dsa.code_translation = ce.subject_area 
-      AND ce.rn = 1
+      AND dsa.code_translation = ce.subject_area       
      WHERE a.deleted_at IS NULL
 
      UNION ALL
@@ -236,15 +136,13 @@ FROM
       AND dsa.code_translation NOT IN ('Algebra I','Geometry','Algebra IIA','Algebra IIB'
                                       ,'English 100','English 200','English 300','English 400')
      JOIN gabby.illuminate_dna_assessments.assessment_grade_levels agl
-       ON a.assessment_id = agl.assessment_id
-      AND agl.assessment_grade_level_id IN (SELECT assessment_grade_level_id FROM gabby.illuminate_dna_assessments.assessment_grade_levels_validation_static) 
+       ON a.assessment_id = agl.assessment_id      
      JOIN gabby.illuminate_dna_assessments.students_assessments sa
        ON a.assessment_id = sa.assessment_id
      JOIN gabby.illuminate_public.student_session_aff ssa
        ON sa.date_taken BETWEEN ssa.entry_date AND ssa.leave_date
       AND sa.student_id = ssa.student_id
-      AND agl.grade_level_id != ssa.grade_level_id      
-      AND ssa.stu_sess_id IN (SELECT stu_sess_id FROM gabby.illuminate_public.student_session_aff_validation_static)
+      AND agl.grade_level_id != ssa.grade_level_id            
      WHERE a.deleted_at IS NULL       
 
      UNION ALL
