@@ -162,7 +162,7 @@ LEFT OUTER JOIN gabby.powerschool.advisory adv
   ON co.studentid = adv.studentid
  AND co.academic_year = adv.academic_year
  AND adv.rn_year = 1
-LEFT OUTER JOIN gabby.mcs.lunch_info mcs
+LEFT OUTER JOIN gabby.mcs.lunch_info_static mcs
   ON s.student_number = mcs.studentnumber
 LEFT OUTER JOIN gabby.easyiep.njsmart_powerschool sped
   ON s.student_number = sped.student_number

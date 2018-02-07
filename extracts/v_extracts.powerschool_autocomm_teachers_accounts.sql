@@ -169,7 +169,7 @@ FROM
            ,adp.[benefits_elig_class]                  
            -- */           
      FROM gabby.adp.staff_roster adp
-     JOIN gabby.adsi.user_attributes dir
+     JOIN gabby.adsi.user_attributes_static dir
        ON adp.position_id = dir.employeenumber
       AND dir.is_active = 1
      LEFT OUTER JOIN gabby.people.adp_ps_id_link link

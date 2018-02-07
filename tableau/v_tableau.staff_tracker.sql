@@ -60,7 +60,7 @@ WITH prof_calendar AS (
              
              ,dir.mail AS email_address             
        FROM gabby.adp.staff_roster adp
-       LEFT OUTER JOIN gabby.adsi.user_attributes dir
+       LEFT OUTER JOIN gabby.adsi.user_attributes_static dir
          ON adp.position_id = dir.employeenumber        
        WHERE rn_curr = 1
          AND adp.position_status != 'Terminated'

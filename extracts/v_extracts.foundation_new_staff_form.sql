@@ -20,7 +20,7 @@ WITH adp AS (
 
 	       ,NULL AS years_teaching	
   FROM gabby.adp.staff_roster e 
-  LEFT OUTER JOIN gabby.adsi.user_attributes a
+  LEFT OUTER JOIN gabby.adsi.user_attributes_static a
     ON e.associate_id = a.idautopersonalternateid
   WHERE e.hire_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
     AND e.rn_curr = 1

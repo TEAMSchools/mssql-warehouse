@@ -38,14 +38,12 @@ FROM
      SELECT CONVERT(VARCHAR(2),ar.ch_fiction_non_fiction) AS ch_fiction_non_fiction
            ,ar.d_percent_correct
            ,ar.d_points_earned
-           ,CONVERT(DATE,ar.dt_taken) AS dt_taken
-           ,CONVERT(DATE,ar.dt_taken_original) AS dt_taken_original
+           ,CONVERT(DATE,ar.dt_taken) AS dt_taken           
            ,ar.fl_lexile_calc
            ,CONVERT(INT,ar.i_lexile) AS i_lexile
            ,CONVERT(FLOAT,ar.i_questions_correct) AS i_questions_correct
            ,CONVERT(FLOAT,ar.i_questions_presented) AS i_questions_presented
-           ,CONVERT(INT,ar.i_quiz_number) AS i_quiz_number
-           ,CONVERT(INT,ar.i_retake_count) AS i_retake_count
+           ,CONVERT(INT,ar.i_quiz_number) AS i_quiz_number           
            ,CONVERT(INT,ar.i_student_practice_id) AS i_student_practice_id
            ,CONVERT(INT,ar.i_user_id) AS i_user_id
            ,CONVERT(FLOAT,ar.i_word_count) AS i_word_count
@@ -63,27 +61,25 @@ FROM
        AND ar.ch_status != 'U'
        AND ar.ti_row_status = 1
        AND CONVERT(DATE,ar.dt_taken) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
+
+     UNION ALL
+
+     SELECT ch_fiction_non_fiction
+           ,d_percent_correct
+           ,d_points_earned
+           ,dt_taken
+           ,fl_lexile_calc
+           ,i_lexile
+           ,i_questions_correct
+           ,i_questions_presented
+           ,i_quiz_number
+           ,i_student_practice_id
+           ,i_user_id
+           ,i_word_count
+           ,ti_book_rating
+           ,ti_passed
+           ,vch_content_title
+           ,vch_lexile_display
+           ,student_number
+     FROM gabby.renaissance.ar_studentpractice_identifiers_archive
     ) sub
-
-UNION ALL
-
-SELECT student_number
-      ,ch_fiction_non_fiction
-      ,d_percent_correct
-      ,d_points_earned
-      ,dt_taken
-      ,fl_lexile_calc
-      ,i_lexile
-      ,i_questions_correct
-      ,i_questions_presented
-      ,i_quiz_number
-      ,i_student_practice_id
-      ,i_user_id
-      ,i_word_count
-      ,ti_book_rating
-      ,ti_passed
-      ,vch_content_title
-      ,vch_lexile_display
-      ,academic_year
-      ,rn_quiz
-FROM gabby.renaissance.ar_studentpractice_identifiers_archive

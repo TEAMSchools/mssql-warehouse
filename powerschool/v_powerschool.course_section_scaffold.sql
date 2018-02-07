@@ -36,7 +36,7 @@ WITH course_scaffold AS (
         AND enr.schoolid = terms.schoolid
         AND terms.identifier = 'RT'
         AND terms.alt_name NOT IN ('Summer School','Capstone','EOY')
-       WHERE enr.dateenrolled <= CONVERT(DATE,GETDATE())
+       WHERE enr.dateenrolled BETWEEN DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1) AND CONVERT(DATE,GETDATE())
          AND enr.course_enroll_status = 0
          AND enr.section_enroll_status = 0
       ) sub
@@ -69,7 +69,7 @@ WITH course_scaffold AS (
         AND cc.dateenrolled BETWEEN terms.start_date AND terms.end_date
         AND terms.identifier = 'RT'   
         AND terms.school_level IN ('MS','HS')
-       WHERE cc.dateenrolled <= CONVERT(DATE,GETDATE())
+       WHERE cc.dateenrolled BETWEEN DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1) AND CONVERT(DATE,GETDATE())
       ) sub
  )
 
@@ -92,3 +92,15 @@ LEFT OUTER JOIN section_scaffold ss
  AND cs.term_name = ss.term_name
  AND cs.course_number = ss.course_number
  AND ss.rn_term = 1
+
+UNION ALL
+
+SELECT studentid
+      ,student_number
+      ,yearid
+      ,term_name
+      ,is_curterm
+      ,course_number
+      ,excludefromgpa
+      ,sectionid
+FROM gabby.powerschool.course_section_scaffold_archive

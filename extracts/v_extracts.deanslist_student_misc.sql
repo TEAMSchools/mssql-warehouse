@@ -68,7 +68,7 @@ LEFT OUTER JOIN gabby.naviance.students nav
 LEFT OUTER JOIN gabby.adp.staff_roster adp 
   ON nav.counselor_name = CONCAT(adp.preferred_first, ' ', adp.preferred_last)
  AND adp.rn_curr = 1
-LEFT OUTER JOIN gabby.adsi.user_attributes ad
+LEFT OUTER JOIN gabby.adsi.user_attributes_static ad
   ON adp.associate_id = ad.idautopersonalternateid
 LEFT OUTER JOIN gabby.powerschool.category_grades_wide cat
   ON co.student_number = cat.student_number

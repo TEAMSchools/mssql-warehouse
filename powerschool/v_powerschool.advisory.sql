@@ -59,6 +59,6 @@ FROM
 LEFT OUTER JOIN gabby.adp.staff_roster adp
   ON sub.associate_id = adp.associate_id
  AND adp.rn_curr = 1
-LEFT OUTER JOIN gabby.adsi.user_attributes dir
+LEFT OUTER JOIN gabby.adsi.user_attributes_static dir
   ON adp.position_id = dir.employeenumber
  AND dir.is_active = 1

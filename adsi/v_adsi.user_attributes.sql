@@ -7,15 +7,15 @@ SELECT cn
       ,company
       ,createtimestamp
       ,department
-      ,displayname
+      ,CONVERT(VARCHAR(125),displayname) AS displayname
       ,distinguishedname
       ,employeeid
       ,CONVERT(VARCHAR(125),employeenumber) AS employeenumber
-      ,givenname
+      ,CONVERT(VARCHAR(125),givenname) AS givenname
       ,homephone
       ,homepostaladdress
       ,CONVERT(VARCHAR(125),idautopersonalternateid) AS idautopersonalternateid
-      ,idautostatus      
+      ,CONVERT(VARCHAR(1),idautostatus) AS idautostatus
       ,l
       ,logoncount
       ,CONVERT(VARCHAR(125),mail) AS mail
@@ -25,14 +25,14 @@ SELECT cn
       ,modifytimestamp
       ,name
       ,objectcategory
-      ,physicaldeliveryofficename      
-      ,samaccountname
-      ,sn
+      ,CONVERT(VARCHAR(125),physicaldeliveryofficename) AS physicaldeliveryofficename
+      ,CONVERT(VARCHAR(125),samaccountname) AS samaccountname
+      ,CONVERT(VARCHAR(125),sn) AS sn
       ,telephonenumber
       ,textencodedoraddress
-      ,title
+      ,CONVERT(VARCHAR(125),title) AS title
       ,useraccountcontrol
-      ,userprincipalname
+      ,CONVERT(VARCHAR(125),userprincipalname) AS userprincipalname
       ,DATEADD(MINUTE
               /* number of 10 minute intervals (in microseconds) since last reset, offset by time zone...holy shit */
               ,(CONVERT(BIGINT,pwdlastset) / 600000000) + DATEDIFF(MINUTE,GETUTCDATE(),GETDATE())

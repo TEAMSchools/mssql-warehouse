@@ -9,11 +9,11 @@ SELECT CONVERT(INT,c.studentnumber) AS studentnumber
       ,c.reimbursableonlybalance + c.unallocatedbalance AS [balance]      
 
       ,LEFT(cat.shortdesc, 1) AS mealbenefitstatus /* returns f, r, p */
-      ,cat.shortdesc
+      ,CONVERT(VARCHAR(25),cat.shortdesc) AS shortdesc
       
       ,s.currentapplicationid
 
-      ,e.description
+      ,CONVERT(VARCHAR(125),e.description) AS description
 FROM [winsql06\han].[newton].[dbo].[customer] c
 LEFT OUTER JOIN [winsql06\han].[newton].[dbo].[student_guid_link] g
   ON c.[customer_recid] = g.[customerid]
@@ -36,11 +36,11 @@ SELECT CONVERT(INT,c.studentnumber) AS studentnumber
       ,c.reimbursableonlybalance + c.unallocatedbalance AS balance
       
       ,LEFT(cat.shortdesc, 1) AS mealbenefitstatus /* returns f, r, p */
-      ,cat.shortdesc
+      ,CONVERT(VARCHAR(25),cat.shortdesc) AS shortdesc
       
       ,s.currentapplicationid
 
-      ,e.description
+      ,CONVERT(VARCHAR(125),e.description) AS description
 FROM [winsql06\yoda].[newton].[dbo].[customer] c 
 LEFT OUTER JOIN [winsql06\yoda].[newton].[dbo].[student_guid_link] g 
   ON c.[customer_recid] = g.[customerid]

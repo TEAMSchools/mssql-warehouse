@@ -19,18 +19,6 @@ WITH terms_attendance_code AS (
   WHERE t.isyearrec = 1
  )
 
-,ada_adm AS (
-  SELECT id        
-        ,studentid
-        ,att_date
-        ,attendance_codeid
-        ,count_for_ada
-        ,count_for_adm        
-  FROM gabby.powerschool.ps_attendance_daily_static ada_0  
-  WHERE count_for_ada IN (0, 1) 
-    OR count_for_adm = 0
- )
-
 ,aci AS (
   SELECT CONVERT(INT,attendance_value) AS attendance_value
         ,CONVERT(INT,fteid) AS fteid
@@ -69,15 +57,15 @@ FROM gabby.powerschool.ps_membership_reg_static mv
 LEFT JOIN terms_attendance_code tac
   ON mv.calendardate BETWEEN tac.firstday AND tac.lastday 
  AND mv.schoolid = tac.schoolid
-LEFT JOIN ada_adm ada_0
+LEFT JOIN gabby.powerschool.ps_attendance_daily_static ada_0
   ON mv.studentid = ada_0.studentid
  AND mv.calendardate = ada_0.att_date
  AND ada_0.count_for_ada = 0
-LEFT JOIN ada_adm ada_1
+LEFT JOIN gabby.powerschool.ps_attendance_daily_static ada_1
   ON mv.studentid = ada_1.studentid
  AND mv.calendardate = ada_1.att_date
  AND ada_1.count_for_ada = 1
-LEFT JOIN ada_adm adm_0
+LEFT JOIN gabby.powerschool.ps_attendance_daily_static adm_0
   ON mv.studentid = adm_0.studentid
  AND mv.calendardate = adm_0.att_date
  AND adm_0.count_for_adm = 0

@@ -101,9 +101,9 @@ FROM
      JOIN gabby.adp.staff_roster adp
        ON so.subject_associate_id = adp.associate_id
       AND adp.rn_curr = 1
-     JOIN gabby.adsi.user_attributes ad
+     JOIN gabby.adsi.user_attributes_static ad
        ON adp.associate_id = ad.idautopersonalternateid
-     LEFT OUTER JOIN gabby.adsi.user_attributes mgr
+     LEFT OUTER JOIN gabby.adsi.user_attributes_static mgr
        ON adp.manager_custom_assoc_id = mgr.idautopersonalternateid
      JOIN gabby.surveys.question_key qk
        ON so.question_code = qk.question_code
