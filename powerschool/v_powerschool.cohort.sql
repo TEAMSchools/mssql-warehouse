@@ -12,6 +12,7 @@ SELECT studentid
       ,exitcode
       ,exitcomment
       ,lunchstatus
+      ,fteid
       ,yearid
       ,academic_year      
       ,rn_year
@@ -47,7 +48,8 @@ FROM
            ,sub.entrycode
            ,sub.exitcode      
            ,sub.exitcomment
-           ,sub.lunchstatus      
+           ,sub.lunchstatus
+           ,sub.fteid      
            ,sub.yearid
            ,(sub.yearid + 1990) AS academic_year            
            ,LAG(grade_level, 1) OVER(PARTITION BY sub.studentid ORDER BY sub.yearid ASC) AS prev_grade_level
@@ -76,6 +78,7 @@ FROM
                 ,CONVERT(VARCHAR,s.exitcode) AS exitcode
                 ,CONVERT(VARCHAR(250),s.exitcomment) AS exitcomment
                 ,CONVERT(VARCHAR,CASE WHEN s.lunchstatus = 'false' THEN 'F' ELSE s.lunchstatus END) AS lunchstatus
+                ,CONVERT(INT,s.fteid) AS fteid
                 
                 ,CONVERT(INT,terms.yearid) AS yearid
           FROM gabby.powerschool.students s
@@ -98,6 +101,7 @@ FROM
                 ,NULL AS exitcode
                 ,NULL AS exitcomment
                 ,NULL AS lunchstatus
+                ,NULL AS fteid
                 
                 ,CONVERT(INT,terms.yearid) AS yearid
           FROM gabby.powerschool.students s
@@ -120,6 +124,7 @@ FROM
                 ,CONVERT(VARCHAR,re.exitcode) AS exitcode
                 ,CONVERT(VARCHAR(250),re.exitcomment) AS exitcomment
                 ,CONVERT(VARCHAR,CASE WHEN re.lunchstatus = 'false' THEN 'F' ELSE re.lunchstatus END) AS lunchstatus
+                ,CONVERT(INT,re.fteid) AS fteid
                 
                 ,CONVERT(INT,terms.yearid) AS yearid
           FROM gabby.powerschool.reenrollments re       
