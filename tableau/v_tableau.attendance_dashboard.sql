@@ -140,25 +140,25 @@ FROM
 
 UNION ALL
 
-SELECT CONVERT(INT,academic_year) AS academic_year
-      ,CONVERT(INT,schoolid) AS schoolid
-      ,CONVERT(INT,studentid) AS studentid
-      ,CONVERT(INT,student_number) AS student_number
-      ,CONVERT(VARCHAR(125),lastfirst) AS lastfirst
-      ,CONVERT(INT,grade_level) AS grade_level
+SELECT academic_year
+      ,schoolid
+      ,studentid
+      ,student_number
+      ,lastfirst
+      ,grade_level
       ,school_level
-      ,CONVERT(VARCHAR(25),team) AS team
-      ,CONVERT(INT,enroll_status) AS enroll_status
-      ,CONVERT(VARCHAR(25),iep_status) AS iep_status
-      ,CONVERT(VARCHAR(1),gender) AS gender
-      ,CONVERT(VARCHAR(1),ethnicity) AS ethnicity
-      ,CONVERT(VARCHAR(25),section_number) AS section_number
-      ,CONVERT(VARCHAR(125),teacher_name) AS teacher_name
+      ,team
+      ,enroll_status
+      ,iep_status
+      ,gender
+      ,ethnicity
+      ,section_number
+      ,teacher_name
       ,calendardate
-      ,CONVERT(INT,membershipvalue) AS membershipvalue
-      ,CONVERT(INT,is_present) AS is_present
-      ,CONVERT(INT,is_absent) AS is_absent
-      ,CONVERT(VARCHAR(5),att_code) AS att_code
+      ,membershipvalue
+      ,is_present
+      ,is_absent
+      ,att_code
       ,is_tardy
       ,suspension_all
       ,n_A
@@ -187,7 +187,7 @@ SELECT CONVERT(INT,academic_year) AS academic_year
       ,n_TLE
       ,n_U
       ,n_X
-      ,CONVERT(VARCHAR(5),term) AS term
+      ,term
       ,is_oss_running
       ,is_iss_running
       ,is_suspended_running

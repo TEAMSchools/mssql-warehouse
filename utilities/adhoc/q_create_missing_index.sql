@@ -1,3 +1,6 @@
+USE gabby
+GO
+
 SELECT *
      ,'CREATE NONCLUSTERED INDEX ' 
         + CONCAT(LEFT(CONCAT('[K: '
@@ -14,4 +17,5 @@ SELECT *
           END
         + ') WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY];' AS create_index_script
 FROM sys.dm_db_missing_index_details
+WHERE database_id = DB_ID()
 ORDER BY statement, equality_columns, inequality_columns, included_columns

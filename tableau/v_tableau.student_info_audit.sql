@@ -177,15 +177,18 @@ SELECT co.schoolid
 	     ,co.student_number
 	     ,co.lastfirst
 	     ,co.grade_level
-	     ,'Missing FTEID' AS element
-	     ,CONVERT(VARCHAR,s.fteid) AS detail
+	     ,'Missing or Incorrect FTEID' AS element
+	     ,CONVERT(VARCHAR,co.fteid) AS detail
 	     ,CASE 
-		      WHEN s.fteid IS NULL THEN 1
-		      WHEN s.fteid = 0 THEN 1
+		      WHEN co.fteid != fte.id THEN 1
+        WHEN co.fteid IS NULL THEN 1
+		      WHEN co.fteid = 0 THEN 1
 		      ELSE 0
 	      END AS flag
 FROM gabby.powerschool.cohort_identifiers_static co
-JOIN gabby.powerschool.students s
-	 ON co.studentid = s.id
+JOIN gabby.powerschool.fte
+  ON co.schoolid = fte.schoolid
+ AND co.yearid = fte.yearid
+ AND fte.name = 'Full Time Students'
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-	 AND co.schoolid != 999999
+	 AND co.schoolid != 999999  
