@@ -11,13 +11,15 @@ DECLARE	@delay_time DATETIME
        ,@email_body NVARCHAR(MAX);
 
 BEGIN
-  SET @delay_time = '00:20:00'
+  SET @delay_time = '00:35:00'
   WAITFOR DELAY @delay_time;
   
   DECLARE job_killer CURSOR FOR  
-    SELECT '2E8F379D-3606-46B8-8C18-0359B7FD3800' AS job_id UNION /* Scheduled | Refresh Static Views | PS Attendance | Hourly (45s) */ 
-    SELECT 'B8EF30A2-5EEE-4F15-9F33-89A4DB81FE95' AS job_id UNION /* Scheduled | Refresh Static Views | PS Grades | Hourly (45s) */
-    SELECT '2242F09A-6757-4B77-A363-DB59D9AB06C3' AS job_id;      /* Scheduled | Refresh Static Views | Illuminate | Hourly (45s) */
+    SELECT '2E8F379D-3606-46B8-8C18-0359B7FD3800' AS job_id UNION /* Data | Refresh Static Views | PS Grades | Hourly (45s) */ 
+    SELECT 'B8EF30A2-5EEE-4F15-9F33-89A4DB81FE95' UNION           /* Data | Refresh Static Views | PS Attendance | Hourly (45s) */
+    SELECT '2242F09A-6757-4B77-A363-DB59D9AB06C3' UNION           /* Data | Refresh Static Views | Illuminate | Hourly (45s) */
+    SELECT '733F62A0-7478-44A3-8FCF-F28A12402970' UNION           /* Data | Refresh Static Views | Remote Queries | Hourly (30's) */
+    SELECT 'C61A77C9-7635-45FA-BDCB-C53C564F98CB';                /* Data | Refresh Static Views | Lit | Daily (12:30 AM) */    
 
   OPEN job_killer   
   FETCH NEXT FROM job_killer INTO @job_id   

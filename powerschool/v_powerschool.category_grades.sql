@@ -49,9 +49,7 @@ FROM
      JOIN gabby.powerschool.pgfinalgrades pgf
        ON enr.studentid = pgf.studentid
       AND enr.sectionid = pgf.sectionid
-      AND pgf.finalgradename != 'Y1'       
-      AND pgf.finalgradename NOT LIKE 'Q%'
-      AND pgf.finalgradename NOT LIKE 'E%'
+      AND LEFT(pgf.finalgradename, 1) NOT IN ('Y','T','Q')
      WHERE enr.course_enroll_status = 0
        AND enr.section_enroll_status = 0
        AND enr.schoolid = 73253
@@ -77,10 +75,8 @@ FROM
      FROM gabby.powerschool.course_enrollments_static enr
      JOIN gabby.powerschool.pgfinalgrades pgf
        ON enr.studentid = pgf.studentid       
-      AND enr.sectionid = pgf.sectionid 
-      AND pgf.finalgradename != 'Y1'       
-      AND pgf.finalgradename NOT LIKE 'T%'
-      AND pgf.finalgradename NOT LIKE 'Q%'
+      AND enr.sectionid = pgf.sectionid       
+      AND LEFT(pgf.finalgradename, 1) NOT IN ('Y','T','Q')
      WHERE enr.course_enroll_status = 0
        AND enr.section_enroll_status = 0
        AND enr.schoolid != 73253

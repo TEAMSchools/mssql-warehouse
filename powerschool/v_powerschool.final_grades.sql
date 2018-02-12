@@ -35,8 +35,7 @@ WITH roster AS (
     ON css.sectionid = sec.id
   JOIN gabby.powerschool.teachers t
     ON sec.teacher = t.id
-  WHERE co.rn_year = 1
-    AND co.schoolid != 999999
+  WHERE co.rn_year = 1    
     AND co.school_level IN ('MS','HS')
  )     
 
@@ -64,7 +63,7 @@ WITH roster AS (
       (
        SELECT enr.studentid             
              ,enr.course_number             
-             ,(enr.yearid + 1990) academic_year
+             ,enr.academic_year
              
              ,CONVERT(VARCHAR(5),pgf.finalgradename) AS term_name                          
       
@@ -92,16 +91,16 @@ WITH roster AS (
        FROM gabby.powerschool.course_enrollments_static enr
        JOIN gabby.powerschool.pgfinalgrades pgf
          ON enr.studentid = pgf.studentid       
-        AND ABS(enr.sectionid) = pgf.sectionid
+        AND enr.abs_sectionid = pgf.sectionid
         AND LEFT(pgf.finalgradename, 1) IN ('T','Q')
-       LEFT OUTER JOIN gabby.powerschool.gradescaleitem_lookup_static scale
-         ON enr.gradescaleid = scale.gradescaleid
-        AND pgf.[percent] BETWEEN scale.min_cutoffpercentage AND scale.max_cutoffpercentage
        LEFT OUTER JOIN gabby.powerschool.storedgrades sg
          ON enr.studentid = sg.studentid 
-        AND ABS(enr.sectionid) = sg.sectionid
-        AND pgf.finalgradename = sg.storecode        
-       LEFT OUTER JOIN gabby.powerschool.gradescaleitem_lookup_static sg_scale
+        AND enr.abs_sectionid = sg.sectionid
+        AND pgf.finalgradename = sg.storecode  
+       LEFT OUTER JOIN gabby.powerschool.gradescaleitem_lookup_static scale WITH(NOLOCK)
+         ON enr.gradescaleid = scale.gradescaleid
+        AND pgf.[percent] BETWEEN scale.min_cutoffpercentage AND scale.max_cutoffpercentage      
+       LEFT OUTER JOIN gabby.powerschool.gradescaleitem_lookup_static sg_scale WITH(NOLOCK)
          ON enr.gradescaleid = sg_scale.gradescaleid
         AND sg.[percent] BETWEEN sg_scale.min_cutoffpercentage AND sg_scale.max_cutoffpercentage
        WHERE enr.course_enroll_status = 0       

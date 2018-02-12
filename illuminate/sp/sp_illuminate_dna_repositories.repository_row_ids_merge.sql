@@ -40,7 +40,7 @@ BEGIN
       AND repository_id <= (SELECT MAX(CONVERT(INT,RIGHT(name, LEN(name) - CHARINDEX('_', name))))
                             FROM sys.tables
                             WHERE schema_id = SCHEMA_ID(N'illuminate_dna_repositories')
-                              AND ISNUMERIC(RIGHT(name, LEN(name) - CHARINDEX('_', name))) = 1)
+                              AND ISNUMERIC(RIGHT(name, 1)) = 1)
     ORDER BY repository_id DESC;
   		    
   /* 4.) Do work son */  
