@@ -38,7 +38,7 @@ WITH clean_data AS (
         ,sub.rate_proficiency
         ,sub.key_lever
         ,sub.fiction_nonfiction
-        ,sub.test_administered_by
+        ,NULL AS test_administered_by
         ,sub.academic_year        
         ,sub.unique_id
         ,sub.test_round
@@ -60,7 +60,7 @@ WITH clean_data AS (
              ,CONVERT(VARCHAR(25),rate_proficiency) AS rate_proficiency
              ,CONVERT(VARCHAR(25),key_lever) AS key_lever
              ,CONVERT(VARCHAR(5),fiction_nonfiction) AS fiction_nonfiction
-             ,CONVERT(VARCHAR(125),test_administered_by) AS test_administered_by             
+             --,CONVERT(VARCHAR(125),test_administered_by) AS test_administered_by             
              ,CONCAT('IL', repository_id, repository_row_id) AS unique_id                     
              ,CASE
                WHEN LTRIM(RTRIM([status])) LIKE '%Did Not Achieve%' THEN 'Did Not Achieve'
@@ -87,7 +87,7 @@ WITH clean_data AS (
                   ,repo.field_reading_level AS reading_level
                   ,repo.field_words_per_minute AS reading_rate_wpm
                   ,repo.field_status AS status
-                  ,repo.field_test_administered_by AS test_administered_by
+                  --,repo.field_test_administered_by AS test_administered_by
                   ,repo.field_comprehension AS within_the_text
                   ,repo.field_writing_optional AS writing
             FROM [gabby].[illuminate_dna_repositories].[repository_194] repo       
@@ -111,7 +111,7 @@ WITH clean_data AS (
                   ,repo.field_reading_level AS reading_level
                   ,repo.field_words_per_minute AS reading_rate_wpm
                   ,repo.field_status AS status
-                  ,repo.field_test_administered_by AS test_administered_by
+                  --,repo.field_test_administered_by AS test_administered_by
                   ,repo.field_within_the_text AS within_the_text
                   ,repo.field_writing_optional AS writing
             FROM [gabby].[illuminate_dna_repositories].[repository_195] repo       
@@ -135,7 +135,7 @@ WITH clean_data AS (
                   ,repo.field_reading_level AS reading_level
                   ,repo.field_words_per_minute AS reading_rate_wpm
                   ,repo.field_status AS status
-                  ,repo.field_test_administered_by AS test_administered_by
+                  --,repo.field_test_administered_by AS test_administered_by
                   ,repo.field_within_the_text AS within_the_text
                   ,repo.field_writing_optional AS writing
             FROM [gabby].[illuminate_dna_repositories].[repository_196] repo       
@@ -159,7 +159,7 @@ WITH clean_data AS (
                   ,repo.field_reading_level AS reading_level
                   ,repo.field_words_per_minute AS reading_rate_wpm
                   ,repo.field_status AS status
-                  ,repo.field_test_administered_by AS test_administered_by
+                  --,repo.field_test_administered_by AS test_administered_by
                   ,repo.field_within_the_text AS within_the_text
                   ,repo.field_writing_optional AS writing
             FROM [gabby].[illuminate_dna_repositories].[repository_193] repo       
@@ -187,20 +187,20 @@ SELECT cd.unique_id
       ,cd.rate_proficiency
       ,cd.key_lever
       ,cd.fiction_nonfiction
-      ,cd.test_administered_by      
+      ,COALESCE(cd.test_administered_by, gr.gr_teacher) AS test_administered_by
       ,CASE        
-        WHEN cd.academic_year <= 2016 AND test_round = 'BOY' THEN 1
-        WHEN cd.academic_year <= 2016 AND test_round = 'MOY' THEN 2
-        WHEN cd.academic_year <= 2016 AND test_round = 'EOY' THEN 3
-        WHEN cd.academic_year <= 2016 AND test_round = 'DR' THEN 1
-        WHEN cd.academic_year <= 2016 AND test_round = 'Q1' THEN 2
-        WHEN cd.academic_year <= 2016 AND test_round = 'Q2' THEN 3
-        WHEN cd.academic_year <= 2016 AND test_round = 'Q3' THEN 4
-        WHEN cd.academic_year <= 2016 AND test_round = 'Q4' THEN 5
-        WHEN cd.academic_year >= 2017 AND test_round = 'Q1' THEN 1
-        WHEN cd.academic_year >= 2017 AND test_round = 'Q2' THEN 2
-        WHEN cd.academic_year >= 2017 AND test_round = 'Q3' THEN 3
-        WHEN cd.academic_year >= 2017 AND test_round = 'Q4' THEN 4
+        WHEN cd.academic_year <= 2016 AND cd.test_round = 'BOY' THEN 1
+        WHEN cd.academic_year <= 2016 AND cd.test_round = 'MOY' THEN 2
+        WHEN cd.academic_year <= 2016 AND cd.test_round = 'EOY' THEN 3
+        WHEN cd.academic_year <= 2016 AND cd.test_round = 'DR' THEN 1
+        WHEN cd.academic_year <= 2016 AND cd.test_round = 'Q1' THEN 2
+        WHEN cd.academic_year <= 2016 AND cd.test_round = 'Q2' THEN 3
+        WHEN cd.academic_year <= 2016 AND cd.test_round = 'Q3' THEN 4
+        WHEN cd.academic_year <= 2016 AND cd.test_round = 'Q4' THEN 5
+        WHEN cd.academic_year >= 2017 AND cd.test_round = 'Q1' THEN 1
+        WHEN cd.academic_year >= 2017 AND cd.test_round = 'Q2' THEN 2
+        WHEN cd.academic_year >= 2017 AND cd.test_round = 'Q3' THEN 3
+        WHEN cd.academic_year >= 2017 AND cd.test_round = 'Q4' THEN 4
        END AS round_num
       ,CASE 
         WHEN cd.about_the_text IS NULL AND cd.beyond_the_text IS NULL AND cd.within_the_text IS NULL THEN NULL
@@ -216,3 +216,7 @@ LEFT OUTER JOIN gabby.lit.gleq achv
   ON cd.achieved_independent_level = achv.read_lvl
 LEFT OUTER JOIN gabby.lit.gleq instr
   ON cd.instructional_level_tested = instr.read_lvl
+LEFT OUTER JOIN gabby.lit.guided_reading_roster gr
+  ON cd.student_number = gr.student_number
+ AND cd.academic_year = gr.academic_year
+ AND cd.test_round = gr.test_round
