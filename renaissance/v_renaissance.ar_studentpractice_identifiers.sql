@@ -59,27 +59,5 @@ FROM
       AND ISNUMERIC(u.vch_previous_idnum) = 1
      WHERE ar.i_content_type_id = 31
        AND ar.ch_status != 'U'
-       AND ar.ti_row_status = 1
-       AND CONVERT(DATE,ar.dt_taken) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
-
-     UNION ALL
-
-     SELECT ch_fiction_non_fiction
-           ,d_percent_correct
-           ,d_points_earned
-           ,dt_taken
-           ,fl_lexile_calc
-           ,i_lexile
-           ,i_questions_correct
-           ,i_questions_presented
-           ,i_quiz_number
-           ,i_student_practice_id
-           ,i_user_id
-           ,i_word_count
-           ,ti_book_rating
-           ,ti_passed
-           ,vch_content_title
-           ,vch_lexile_display
-           ,student_number
-     FROM gabby.renaissance.ar_studentpractice_identifiers_archive
+       AND ar.ti_row_status = 1       
     ) sub
