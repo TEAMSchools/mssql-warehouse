@@ -26,6 +26,7 @@ SELECT co.school_name
       
       ,achv.reporting_term
       ,achv.start_date AS lit_term_start_date
+      ,achv.end_date AS lit_term_end_date
       ,achv.is_curterm
       ,achv.read_lvl
       ,achv.lvl_num
@@ -101,7 +102,7 @@ JOIN gabby.lit.achieved_by_round_static achv
   ON co.student_number = achv.student_number
  AND co.academic_year = achv.academic_year
  AND term.lit = achv.test_round
- AND achv.start_date <= CONVERT(DATE,GETDATE())
+ AND achv.start_date <= GETDATE()
 LEFT OUTER JOIN gabby.lit.all_test_events_static atid
   ON co.student_number = atid.student_number
  AND achv.achv_unique_id = atid.unique_id 
@@ -116,7 +117,7 @@ LEFT OUTER JOIN gabby.renaissance.ar_progress_to_goals ar
   ON co.student_number = ar.student_number
  AND co.academic_year = ar.academic_year
  AND term.ar = ar.reporting_term 
- AND ar.start_date <= CONVERT(DATE,GETDATE())
+ AND ar.start_date <= GETDATE()
  AND ar.n_total > 0
 WHERE co.rn_year = 1
   AND co.reporting_schoolid NOT IN (999999, 5173)
