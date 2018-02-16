@@ -16,7 +16,8 @@ WITH clean_data AS (
         ,CASE WHEN rate_proficiency != '' THEN CONVERT(VARCHAR(25),rate_proficiency) END AS rate_proficiency
         ,CASE WHEN key_lever != '' THEN CONVERT(VARCHAR(25),key_lever) END AS key_lever
         ,CASE WHEN fiction_nonfiction != '' THEN CONVERT(VARCHAR(5),fiction_nonfiction) END AS fiction_nonfiction
-        ,CASE WHEN test_administered_by != '' THEN CONVERT(VARCHAR(125),test_administered_by) END AS test_administered_by
+        ,NULL AS test_administered_by
+        --,CASE WHEN test_administered_by != '' THEN CONVERT(VARCHAR(125),test_administered_by) END AS test_administered_by
         ,CONVERT(INT,academic_year) AS academic_year
         ,CONVERT(VARCHAR(125),unique_id) AS unique_id
         ,CASE WHEN test_round != '' THEN CONVERT(VARCHAR(25),test_round) END AS test_round
@@ -187,7 +188,8 @@ SELECT cd.unique_id
       ,cd.rate_proficiency
       ,cd.key_lever
       ,cd.fiction_nonfiction
-      ,COALESCE(cd.test_administered_by, gr.gr_teacher) AS test_administered_by
+      ,cd.test_administered_by AS test_administered_by
+      --,COALESCE(cd.test_administered_by, gr.gr_teacher) AS test_administered_by      
       ,CASE        
         WHEN cd.academic_year <= 2016 AND cd.test_round = 'BOY' THEN 1
         WHEN cd.academic_year <= 2016 AND cd.test_round = 'MOY' THEN 2
@@ -216,7 +218,7 @@ LEFT OUTER JOIN gabby.lit.gleq achv
   ON cd.achieved_independent_level = achv.read_lvl
 LEFT OUTER JOIN gabby.lit.gleq instr
   ON cd.instructional_level_tested = instr.read_lvl
-LEFT OUTER JOIN gabby.lit.guided_reading_roster gr
-  ON cd.student_number = gr.student_number
- AND cd.academic_year = gr.academic_year
- AND cd.test_round = gr.test_round
+--LEFT OUTER JOIN gabby.lit.guided_reading_roster gr
+--  ON cd.student_number = gr.student_number
+-- AND cd.academic_year = gr.academic_year
+-- AND cd.test_round = gr.test_round

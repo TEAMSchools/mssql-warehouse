@@ -122,6 +122,6 @@ FROM (
             ,reading_rate_wpm AS fp_wpmrate
             ,key_lever AS fp_keylever
             ,NULL AS coaching_code
-            ,test_administered_by
+            ,NULL AS test_administered_by
       FROM gabby.lit.illuminate_test_events ill
      ) rs

@@ -96,9 +96,9 @@ WITH prof_calendar AS (
  )
 
 ,tracker_fields AS (
- SELECT DISTINCT
-        field
- FROM tracking_long
+  SELECT DISTINCT
+         field
+  FROM tracking_long
  )
 
  SELECT r.associate_id

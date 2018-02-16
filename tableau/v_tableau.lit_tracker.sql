@@ -65,7 +65,7 @@ SELECT co.school_name
         WHEN atid.test_date >= dtid.test_date THEN atid.test_date 
         ELSE COALESCE(dtid.test_date, atid.test_date)
        END AS test_date      
-      ,atid.test_administered_by
+      ,COALESCE(atid.test_administered_by, gr.gr_teacher) AS test_administered_by
       
       /* component data */      
       ,long.domain AS component_domain
@@ -119,5 +119,9 @@ LEFT OUTER JOIN gabby.renaissance.ar_progress_to_goals ar
  AND term.ar = ar.reporting_term 
  AND ar.start_date <= GETDATE()
  AND ar.n_total > 0
+LEFT OUTER JOIN gabby.lit.guided_reading_roster gr
+  ON co.student_number = gr.student_number
+ AND co.academic_year = gr.academic_year
+ AND term.lit = gr.test_round
 WHERE co.rn_year = 1
   AND co.reporting_schoolid NOT IN (999999, 5173)
