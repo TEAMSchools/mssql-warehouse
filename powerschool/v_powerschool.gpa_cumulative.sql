@@ -6,8 +6,8 @@ CREATE OR ALTER VIEW powerschool.gpa_cumulative AS
 SELECT studentid
       ,schoolid
       
-      ,CONVERT(FLOAT,ROUND(CONVERT(DECIMAL(4,3),(weighted_points / credit_hours)), 2)) AS cumulative_Y1_gpa
-      ,CONVERT(FLOAT,ROUND(CONVERT(DECIMAL(4,3),(unweighted_points / credit_hours)), 2)) AS cumulative_Y1_gpa_unweighted
+      ,CONVERT(FLOAT,ROUND(CONVERT(DECIMAL(4,3),(weighted_points / potentialcrhrs)), 2)) AS cumulative_Y1_gpa
+      ,CONVERT(FLOAT,ROUND(CONVERT(DECIMAL(4,3),(unweighted_points / potentialcrhrs)), 2)) AS cumulative_Y1_gpa_unweighted
       ,earned_credits_cum      
       ,potential_credits_cum
 
@@ -25,7 +25,7 @@ FROM
            ,ROUND(SUM(CONVERT(FLOAT,unweighted_points)),3) AS unweighted_points
 
            ,ROUND(SUM(CONVERT(FLOAT,weighted_points)),3) AS weighted_points           
-           ,CASE WHEN SUM(CONVERT(FLOAT,potentialcrhrs)) = 0 THEN NULL ELSE SUM(CONVERT(FLOAT,potentialcrhrs)) END AS credit_hours
+           ,CASE WHEN SUM(CONVERT(FLOAT,potentialcrhrs)) = 0 THEN NULL ELSE SUM(CONVERT(FLOAT,potentialcrhrs)) END AS potentialcrhrs
            ,SUM(earnedcrhrs) AS earned_credits_cum           
 
            ,ROUND(SUM(CONVERT(FLOAT,weighted_points_projected)),3) AS weighted_points_projected
