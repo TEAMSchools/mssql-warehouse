@@ -158,9 +158,8 @@ SELECT COALESCE(co.student_number, e1.student_number) AS student_number
       ,gr.gpa_points AS term_gpa_points
       ,gr.[percent] AS y1_grade_percent_adjusted
       ,CONVERT(VARCHAR(5),gr.grade) AS y1_grade_letter           
-      ,gr.gpa_points AS y1_gpa_points            
-      
-      ,NULL AS earnedcrhrs
+      ,gr.gpa_points AS y1_gpa_points                  
+      ,gr.earnedcrhrs
 
       ,CONVERT(INT,gr.sectionid) AS sectionid
       ,'TRANSFER' AS teacher_name    
