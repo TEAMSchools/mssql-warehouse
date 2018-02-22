@@ -75,7 +75,9 @@ SELECT d.associate_id
       ,d.academic_year_exitdate
       ,d.termination_reason_description 
       ,CASE 
-        WHEN d.academic_year_entrydate <= DATEFROMPARTS((d.academic_year + 1), 4, 30) AND d.academic_year_exitdate >= DATEFROMPARTS(d.academic_year, 9, 1) THEN 1         
+        WHEN d.academic_year_exitdate >= DATEFROMPARTS(d.academic_year, 9, 1) 
+         AND d.academic_year_entrydate <= DATEFROMPARTS((d.academic_year + 1), 4, 30) 
+               THEN 1         
         ELSE 0 
        END AS is_denominator      
 

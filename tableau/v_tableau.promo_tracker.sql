@@ -349,7 +349,7 @@ WITH roster AS (
          END AS subdomain        
   FROM gabby.illuminate_dna_assessments.agg_student_responses_all a  
   WHERE a.subject_area IN ('Text Study','Mathematics','Writing')
-    AND a.scope IN ('CMA - End-of-Module','CMA - Mid-Module','CMA - Checkpoint 1','CMA - Checkpoint 2','Process Piece')
+    AND a.scope IN (SELECT scope FROM gabby.illuminate_dna_assessments.normed_scopes)
     AND a.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
     AND a.response_type IN ('O','S')
     AND a.is_replacement = 0
