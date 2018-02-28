@@ -13,9 +13,9 @@ SELECT dli.incident_id
 FROM [gabby].[deanslist].[incidents] dli
 CROSS APPLY OPENJSON(dli.actions, N'$')
   WITH (
-    sourceid BIGINT N'$.SourceID',
-    actionname NVARCHAR(MAX) N'$.ActionName',
-    said BIGINT N'$.SAID',
-    actionid BIGINT N'$.ActionID'
+    sourceid INT N'$.SourceID',
+    actionname VARCHAR(125) N'$.ActionName',
+    said INT N'$.SAID',
+    actionid INT N'$.ActionID'
    ) AS dlia
 WHERE dli.actions != '[]'

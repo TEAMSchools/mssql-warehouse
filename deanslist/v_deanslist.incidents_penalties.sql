@@ -18,21 +18,21 @@ SELECT dli.incident_id
       ,dlip.IsSuspension
       ,dlip.IncidentID            
       ,dlip.NumDays
-FROM [deanslist].[incidents] dli
+FROM gabby.[deanslist].[incidents] dli
 CROSS APPLY OPENJSON(dli.penalties, N'$')
   WITH (
     StartDate DATE N'$.StartDate',
     EndDate DATE N'$.EndDate',
-    SAID BIGINT N'$.SAID',    
+    SAID INT N'$.SAID',    
     NumPeriods FLOAT N'$.NumPeriods',
-    IncidentPenaltyID BIGINT N'$.IncidentPenaltyID',
-    PenaltyID BIGINT N'$.PenaltyID',
-    [Print] NVARCHAR(MAX) N'$.Print',
-    StudentID BIGINT N'$.StudentID',
-    PenaltyName NVARCHAR(MAX) N'$.PenaltyName',
+    IncidentPenaltyID INT N'$.IncidentPenaltyID',
+    PenaltyID INT N'$.PenaltyID',
+    [Print] VARCHAR(5) N'$.Print',
+    StudentID INT N'$.StudentID',
+    PenaltyName VARCHAR(125) N'$.PenaltyName',
     SchoolID INT N'$.SchoolID',    
-    IsSuspension NVARCHAR(MAX) N'$.IsSuspension',
-    IncidentID BIGINT N'$.IncidentID',
+    IsSuspension VARCHAR(5) N'$.IsSuspension',
+    IncidentID INT N'$.IncidentID',
     NumDays FLOAT N'$.NumDays'
    ) AS dlip
 WHERE dli.penalties != '[]'
