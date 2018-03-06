@@ -3,19 +3,18 @@ GO
 
 CREATE OR ALTER VIEW deanslist.incidents_actions AS
 
-SELECT dli.incident_id
-      ,dli.actions AS actions_json
+SELECT CONVERT(INT,dli.incident_id) AS incident_id
+      ,CONVERT(VARCHAR(1000),dli.actions) AS actions_json      
       
-      ,dlia.sourceid
-      ,dlia.actionname
-      ,dlia.said
+      ,dlia.said      
       ,dlia.actionid
+      ,dlia.actionname      
 FROM [gabby].[deanslist].[incidents] dli
 CROSS APPLY OPENJSON(dli.actions, N'$')
   WITH (
-    sourceid INT N'$.SourceID',
+    said INT N'$.SAID',    
+    actionid INT N'$.ActionID',
     actionname VARCHAR(125) N'$.ActionName',
-    said INT N'$.SAID',
-    actionid INT N'$.ActionID'
+    sourceid INT N'$.SourceID'    
    ) AS dlia
 WHERE dli.actions != '[]'
