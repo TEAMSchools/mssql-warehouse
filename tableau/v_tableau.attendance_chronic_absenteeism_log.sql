@@ -4,7 +4,7 @@ GO
 CREATE OR ALTER VIEW tableau.attendance_chronic_absenteeism_log AS
 
 WITH commlog AS (
-  SELECT c.student_school_id
+  SELECT CONVERT(INT,c.student_school_id) AS student_school_id
         ,c.reason AS commlog_reason
         ,c.response AS commlog_notes        
         ,c.call_topic AS commlog_topic
@@ -56,7 +56,7 @@ FROM
             END AS homeroom
 
            ,COUNT(att.id) AS n_absences
-     FROM gabby.powerschool.attendance att
+     FROM gabby.powerschool.attendance_clean_static att
      JOIN gabby.powerschool.attendance_code ac
        ON att.attendance_codeid = ac.id
       AND ac.att_code IN ('A','AD')
