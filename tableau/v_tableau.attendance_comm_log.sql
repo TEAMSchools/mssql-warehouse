@@ -51,7 +51,7 @@ SELECT co.student_number
       ,ROW_NUMBER() OVER(
          PARTITION BY att.studentid, att.att_date
            ORDER BY cl.student_school_id DESC) AS rn_date
-FROM gabby.powerschool.attendance att
+FROM gabby.powerschool.attendance_clean_static att
 JOIN gabby.powerschool.attendance_code ac
   ON att.attendance_codeid = ac.id
  AND ac.att_code LIKE 'A%'

@@ -19,6 +19,9 @@ SELECT CONVERT(VARCHAR,adp.associate_id) AS associate_id
       ,CONVERT(VARCHAR,adp.termination_date) AS termination_date
        
       ,dir.mail AS email_addr 
+
+      ,CONVERT(VARCHAR,adp.hire_date) AS hire_date
+      ,CONVERT(VARCHAR,adp.position_start_date) AS position_start_date
 FROM gabby.adp.staff_roster adp
 LEFT OUTER JOIN gabby.adsi.user_attributes_static dir
   ON adp.associate_id = dir.idautopersonalternateid
