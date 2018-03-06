@@ -69,7 +69,7 @@ FROM
      JOIN gabby.powerschool.termbins tb
        ON sec.schoolid = tb.schoolid
       AND sec.termid = tb.termid   
-     JOIN gabby.powerschool.terms rt
+     JOIN gabby.powerschool.terms rt WITH(NOLOCK)
        ON tb.termid = rt.id
       AND sec.schoolid = rt.schoolid
      JOIN default_gfs d
