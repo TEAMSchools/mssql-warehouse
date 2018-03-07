@@ -20,7 +20,7 @@ SELECT sec.schoolid
       ,COALESCE(tc.districtteachercategoryid, tc.teachercategoryid) AS assignmentcategoryid
       ,COALESCE(dtc.name, tc.name) AS category
 FROM gabby.powerschool.assignmentsection asec
-JOIN gabby.powerschool.sections sec
+JOIN gabby.powerschool.sections sec WITH(NOLOCK)
   ON asec.sectionsdcid = sec.dcid
 LEFT OUTER JOIN gabby.powerschool.assignmentcategoryassoc aca
   ON asec.assignmentsectionid = aca.assignmentsectionid      
