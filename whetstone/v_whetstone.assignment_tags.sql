@@ -4,7 +4,8 @@ GO
 CREATE OR ALTER VIEW whetstone.assignment_tags AS
 
 SELECT wa._id AS assignment_id
-      ,wa.[tags] AS assignment_tags_json
+      ,wa.type
+      ,wa.tags AS assignment_tags_json
       
       ,wt.tag_id
       ,wt.tag_name
