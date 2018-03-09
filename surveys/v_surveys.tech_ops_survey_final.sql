@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW survey.tech_ops_survey_final AS
+CREATE OR ALTER VIEW surveys.tech_ops_survey_final AS
 
 WITH to_survey AS (
   SELECT sur.please_confirm_your_email_address_please_use_your_kippnj_org_address_for_tracking_purposes_only_ AS email
