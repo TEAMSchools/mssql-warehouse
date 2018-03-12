@@ -92,4 +92,5 @@ SELECT term_name
         WHEN question = 'tech_submit_tickets' THEN 'frequency'
         ELSE 'likert'
        END AS response_type
+      ,associate_id
 FROM to_long
