@@ -23,7 +23,7 @@ SELECT co.academic_year
       ,co.entrydate
       ,co.exitdate
       
-      ,CONVERT(DATE,rd.date) AS date      
+      ,rd.date
       
       ,CONVERT(VARCHAR(25),dt.alt_name) AS term
       
