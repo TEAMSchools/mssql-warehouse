@@ -43,10 +43,10 @@ WITH to_survey AS (
  )
 
 ,to_long AS (
-  SELECT term_name
+  SELECT associate_id
+        ,email        
         ,academic_year
-        ,email
-        ,associate_id
+        ,term_name
         ,location
         ,question
         ,response
@@ -75,8 +75,10 @@ WITH to_survey AS (
   ) u
  )
  
-SELECT term_name
+SELECT associate_id      
+      ,email
       ,academic_year
+      ,term_name
       ,location
       ,question
       ,response AS response_text
