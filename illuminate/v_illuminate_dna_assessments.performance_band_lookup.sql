@@ -16,9 +16,7 @@ FROM
       
            ,CONVERT(FLOAT,pb.minimum_value) AS minimum_value
            ,pb.label_number
-           ,pb.is_mastery
-           ,pb._fivetran_deleted
-           ,pb._fivetran_synced
+           ,pb.is_mastery           
 
            ,ROW_NUMBER() OVER(
               PARTITION BY pbs.performance_band_set_id, pb.label_number

@@ -128,7 +128,7 @@ FROM
                   WHEN cc.course_number IN ('ENG30','ENG32','ENG35','NCCSE0030') THEN 'English 300'
                   WHEN cc.course_number IN ('ENG40','ENG42','ENG45') THEN 'English 400'
                  END AS illuminate_subject
-          FROM gabby.powerschool.cc
+          FROM gabby.powerschool.cc WITH(NOLOCK)
           JOIN gabby.powerschool.students s 
             ON cc.studentid = s.id
           JOIN gabby.powerschool.courses cou
