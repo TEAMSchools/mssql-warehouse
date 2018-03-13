@@ -47,15 +47,15 @@ WITH caredox_enrollment AS (
  )
 
 ,residency_verification AS (
-  SELECT NEN
+  SELECT nen
         ,verification_date
   FROM
       (
-       SELECT subject_line AS NEN      
+       SELECT subject_line AS nen
              ,CONVERT(DATE,REPLACE(date, ' at ', ' ')) AS verification_date
              ,ROW_NUMBER() OVER(
                 PARTITION BY subject_line
-                  ORDER BY CONVERT(DATETIME,REPLACE(date, ' at ', ' ')) DESC) AS rn_recent
+                  ORDER BY _row DESC) AS rn_recent
        FROM gabby.enrollment.residency_verification
        WHERE ISNUMERIC(subject_line) = 1
       ) sub
@@ -72,30 +72,14 @@ WITH caredox_enrollment AS (
           WHEN co.year_in_network = 1 THEN 'New to KIPP NJ'
           WHEN co.year_in_school = 1 THEN 'New to School'
           ELSE 'Returning Student'
-         END AS entry_status                 
-           
+         END AS entry_status           
         ,ISNULL(CONVERT(VARCHAR(500),co.lunch_app_status),'') AS lunch_app_status
         ,CONVERT(VARCHAR(500),CONVERT(MONEY,ISNULL(co.lunch_balance,0))) AS lunch_balance
       
         ,ISNULL(CONVERT(VARCHAR(500),uxs.residency_proof_1),'Missing') AS residency_proof_1
         ,CONVERT(VARCHAR(500),CASE WHEN co.year_in_network = 1 THEN ISNULL(uxs.residency_proof_2,'Missing') END) AS residency_proof_2
-        ,CONVERT(VARCHAR(500),CASE WHEN co.year_in_network = 1 THEN ISNULL(uxs.residency_proof_3,'Missing') END) AS residency_proof_3
-        ,CONVERT(VARCHAR(500),CASE
-                                WHEN year_in_network = 1 AND CONCAT(ISNULL(uxs.residency_proof_1,'Missing')
-									                                ,ISNULL(uxs.residency_proof_2,'Missing')
-									                                ,ISNULL(uxs.residency_proof_3,'Missing')) NOT LIKE '%Missing%' 
-		                                THEN 'Y'
-                                WHEN year_in_network > 1 
-                                AND ISNULL(uxs.residency_proof_1,'Missing') != 'N' 
-                                AND rv.verification_date IS NOT NULL
-		                                THEN 'Y'
-                                ELSE 'N'
-                                END) AS residency_proof_all
-        --,ISNULL(CONVERT(VARCHAR(500),uxs.reverification_date),'1900-07-01') AS reverification_date
+        ,CONVERT(VARCHAR(500),CASE WHEN co.year_in_network = 1 THEN ISNULL(uxs.residency_proof_3,'Missing') END) AS residency_proof_3        
         ,ISNULL(CONVERT(VARCHAR(500),uxs.birth_certificate_proof),'N') AS birth_certificate_proof        
-        ,ISNULL(CONVERT(VARCHAR(500),CASE WHEN rv.NEN IS NOT NULL THEN 'Y' END),'N') AS residency_verification_scanned
-        ,CONVERT(VARCHAR(500),CASE WHEN co.year_in_network > 1 THEN ISNULL(rv.verification_date,'1900-07-01') END) AS reverification_date
-           
         ,ISNULL(CONVERT(VARCHAR(500),uxs.iep_registration_followup),'') AS iep_registration_followup_required
         ,CONVERT(VARCHAR(500),CASE 
           WHEN uxs.iep_registration_followup IS NULL THEN ''
@@ -108,30 +92,46 @@ WITH caredox_enrollment AS (
           WHEN uxs.lep_registration_followup = 1 AND co.lep_status IS NOT NULL THEN 'Y'
           ELSE 'N'
          END) AS lep_registration_followup_complete
+        ,CONVERT(VARCHAR(500),CASE
+                               WHEN co.year_in_network = 1 
+                                AND CONCAT(ISNULL(uxs.residency_proof_1,'Missing')
+									                                 ,ISNULL(uxs.residency_proof_2,'Missing')
+									                                 ,ISNULL(uxs.residency_proof_3,'Missing')) NOT LIKE '%Missing%' 
+		                                    THEN 'Y'
+                               WHEN co.year_in_network > 1 
+                                AND ISNULL(uxs.residency_proof_1,'Missing') != 'N' 
+                                AND rv.verification_date IS NOT NULL
+		                                    THEN 'Y'
+                               ELSE 'N'
+                              END) AS residency_proof_all
+
+        ,ISNULL(CONVERT(VARCHAR(500),CASE WHEN rv.NEN IS NOT NULL THEN 'Y' END),'N') AS residency_verification_scanned
+        ,CONVERT(VARCHAR(500),CASE WHEN co.year_in_network > 1 THEN ISNULL(rv.verification_date,'1900-07-01') END) AS reverification_date
 
         ,ISNULL(CONVERT(VARCHAR(500),cde.status),'') AS caredox_enrollment_status
+        
         ,ISNULL(CONVERT(VARCHAR(500),cdi.status),'') AS caredox_immunization_status
+        
         ,ISNULL(CONVERT(VARCHAR(500),cds.status),'') AS caredox_screenings_status
+        
         ,ISNULL(CONVERT(VARCHAR(500),cdm.medication),'') AS caredox_medication_status
   FROM gabby.powerschool.cohort_identifiers_static co  
-  LEFT OUTER JOIN gabby.powerschool.u_def_ext_students uxs
+  LEFT JOIN gabby.powerschool.u_def_ext_students uxs
     ON co.students_dcid = uxs.studentsdcid
-  LEFT OUTER JOIN gabby.powerschool.u_studentsuserfields suf
-    ON co.students_dcid = suf.studentsdcid
-  LEFT OUTER JOIN caredox_enrollment cde
+  LEFT JOIN residency_verification rv
+    ON co.newark_enrollment_number = rv.nen  
+  LEFT JOIN caredox_enrollment cde
     ON co.student_number = cde.student_id
    AND cde.rn_last_updated = 1
-  LEFT OUTER JOIN caredox_immunization cdi
+  LEFT JOIN caredox_immunization cdi
     ON co.student_number = cdi.student_id
    AND cdi.rn_last_updated = 1
-  LEFT OUTER JOIN caredox_screenings cds
+  LEFT JOIN caredox_screenings cds
     ON co.student_number = cds.student_id
    AND cds.rn_last_updated = 1
-  LEFT OUTER JOIN caredox_medications cdm
+  LEFT JOIN caredox_medications cdm
     ON co.student_number = cdm.student_id
-   AND cdm.rn_last_updated = 1
-  LEFT OUTER JOIN residency_verification rv
-    ON suf.newark_enrollment_number = rv.NEN
+   AND cdm.rn_last_updated = 1  
   WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
     AND co.schoolid != 999999    
     AND co.rn_year = 1
@@ -190,6 +190,7 @@ SELECT a.student_number
       ,a.caredox_immunization_status
       ,a.caredox_screenings_status
       ,a.caredox_medication_status
+
       ,u.field AS audit_field
       ,u.value AS audit_value
       ,CASE
@@ -230,6 +231,6 @@ SELECT a.student_number
         WHEN u.field = 'residency_verification_scanned' AND u.value IN ('','N') THEN -1
        END AS audit_status
 FROM all_data a
-JOIN unpivoted u
-  ON a.student_number = u.student_number
- AND a.academic_year = u.academic_year
+INNER JOIN unpivoted u
+   ON a.student_number = u.student_number
+  AND a.academic_year = u.academic_year

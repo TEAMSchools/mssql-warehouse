@@ -82,26 +82,26 @@ FROM
            ,iep.referral_date
            ,iep.parental_consent_eval_date
            ,iep.eligibility_determ_date
-           ,iep.early_intervention_yn
            ,iep.initial_iep_meeting_date
-           ,iep.parent_consent_obtain_code
            ,iep.parent_consent_intial_iep_date
            ,iep.annual_iep_review_meeting_date
            ,iep.reevaluation_date
-           ,iep.initial_process_delay_reason
-           ,iep.special_education_placement
-           ,iep.determined_ineligible_yn
-           ,iep.time_in_regular_program
-           ,iep.counseling_services_yn
-           ,iep.occupational_therapy_serv_yn
-           ,iep.physical_therapy_services_yn
-           ,iep.speech_lang_theapy_services_yn
-           ,iep.other_related_services_yn
+           ,CONVERT(VARCHAR(1),parent_consent_obtain_code) AS parent_consent_obtain_code
+           ,CONVERT(VARCHAR(5),initial_process_delay_reason) AS initial_process_delay_reason
+           ,CONVERT(VARCHAR(5),special_education_placement) AS special_education_placement
+           ,CONVERT(VARCHAR(5),time_in_regular_program) AS time_in_regular_program
+           ,CONVERT(VARCHAR(1),early_intervention_yn) AS early_intervention_yn
+           ,CONVERT(VARCHAR(1),determined_ineligible_yn) AS determined_ineligible_yn
+           ,CONVERT(VARCHAR(1),counseling_services_yn) AS counseling_services_yn
+           ,CONVERT(VARCHAR(1),occupational_therapy_serv_yn) AS occupational_therapy_serv_yn
+           ,CONVERT(VARCHAR(1),physical_therapy_services_yn) AS physical_therapy_services_yn
+           ,CONVERT(VARCHAR(1),speech_lang_theapy_services_yn) AS speech_lang_theapy_services_yn
+           ,CONVERT(VARCHAR(1),other_related_services_yn) AS other_related_services_yn
      FROM gabby.powerschool.cohort_identifiers_static co
-     LEFT OUTER JOIN gabby.powerschool.s_nj_stu_x iep
+     LEFT JOIN gabby.powerschool.s_nj_stu_x iep
        ON co.students_dcid = iep.studentsdcid
       AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-     LEFT OUTER JOIN gabby.finance.enrollment_targets t
+     LEFT JOIN gabby.finance.enrollment_targets t
        ON co.academic_year = t.academic_year
       AND co.reporting_schoolid = t.schoolid
       AND co.grade_level = t.grade_level
