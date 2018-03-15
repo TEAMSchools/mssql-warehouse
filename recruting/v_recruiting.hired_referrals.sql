@@ -4,17 +4,16 @@ USE Gabby
 GO
 
 WITH all_hires AS (
-     SELECT A.contact_id_c AS 'id'
-           ,A.name AS 'Job_app'
-           ,A.hired_status_date_c AS 'Hire_date'
-           ,stage_c AS 'selection_stage'
-           ,selection_status_c AS 'selection_status'
-           ,job_position_c AS 'Job_Position'
-           ,cultivation_owner_c AS 'Recruiter'
-     FROM recruiting.job_application_c A LEFT JOIN recruiting.profile_application_c P
-          ON A.contact_id_c = P.id
+     SELECT a.contact_id_c AS 'id'
+           ,a.name AS 'job_app'
+           ,a.hired_status_date_c AS 'hire_date'
+           ,a.stage_c AS 'selection_stage'
+           ,a.selection_status_c AS 'selection_status'
+           ,a.job_position_c AS 'job_position'
+           ,a.cultivation_owner_c AS 'recruiter'
+     FROM recruiting.job_application_c a
 
-     WHERE A.stage_c = 'Hired'
+     WHERE a.stage_c = 'Hired'
 )
 ,job_positions AS (
      SELECT id
@@ -49,5 +48,3 @@ LEFT OUTER JOIN job_positions p
 WHERE (c.cultivation_stage_c = 'Hired'
        OR h.selection_stage = 'Hired')
        AND c.regional_source_c = 'Referral' 
-       
-ORDER BY Hire_date DESC
