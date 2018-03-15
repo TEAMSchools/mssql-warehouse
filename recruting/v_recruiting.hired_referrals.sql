@@ -19,8 +19,9 @@ WITH all_hires AS (
 )
 ,job_positions AS (
      SELECT id
-           ,name AS position_name
+           ,name AS position_number
            ,status_c
+           ,position_name_c AS position_name
            
      FROM recruiting.job_position_c
 ) 
@@ -47,7 +48,7 @@ SELECT c.created_date
       ,h.selection_stage
       ,h.selection_status
       ,h.Recruiter
-      ,p.position_name
+      ,p.position_number
       ,p.status_c AS position_status
       ,p.position_name
       ,adp.associate_id
