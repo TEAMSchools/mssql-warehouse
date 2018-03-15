@@ -15,9 +15,6 @@ WITH all_hires AS (
           ON A.contact_id_c = P.id
 
      WHERE A.stage_c = 'Hired'
-                 AND A.selection_status_c NOT LIKE 'Withdrew'
-                 AND A.selection_status_c NOT LIKE 'Rejected'
-                 --AND A.hired_status_date_c > '8/1/16'
 )
 ,job_positions AS (
      SELECT id
