@@ -62,7 +62,7 @@ LEFT OUTER JOIN all_hires h
 LEFT OUTER JOIN job_positions p
  ON h.Job_Position = p.id
 LEFT OUTER JOIN adp
- ON p.position_name = adp.salesforce_job_position_name_custom
+ ON p.position_number = adp.salesforce_job_position_name_custom
 
 WHERE (c.cultivation_stage_c = 'Hired'
        OR h.selection_stage = 'Hired')
