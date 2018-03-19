@@ -110,8 +110,8 @@ FROM
                   WHEN cou.credittype = 'SCI' THEN 'Science - General Science'
                  END AS map_measurementscale
 
-                ,CONVERT(VARCHAR(25),u.teachernumber) AS teachernumber
-                ,CONVERT(VARCHAR(125),u.lastfirst) AS teacher_name      
+                ,CONVERT(VARCHAR(25),t.teachernumber) AS teachernumber
+                ,CONVERT(VARCHAR(125),t.lastfirst) AS teacher_name      
            
                 ,CASE
                   WHEN s.grade_level <= 8 AND cou.credittype = 'ENG' THEN 'Text Study'        
@@ -133,10 +133,8 @@ FROM
             ON cc.studentid = s.id
           JOIN gabby.powerschool.courses cou
             ON cc.course_number = cou.course_number     
-          JOIN gabby.powerschool.schoolstaff ss
-            ON cc.teacherid = ss.id
-          JOIN gabby.powerschool.users u
-            ON ss.users_dcid = u.dcid
+          JOIN gabby.powerschool.teachers t
+            ON cc.teacherid = t.id          
          ) sub
      JOIN gabby.powerschool.sections sec
        ON sub.abs_sectionid = sec.id

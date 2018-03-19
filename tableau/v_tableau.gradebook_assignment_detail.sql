@@ -44,13 +44,13 @@ JOIN gabby.powerschool.gradebook_setup gb WITH(NOLOCK)
   ON sec.dcid = gb.sectionsdcid
  AND gb.finalgradesetuptype != 'Total_Points'
 LEFT OUTER JOIN gabby.powerschool.gradebook_assignments a WITH(NOLOCK)
-  ON sec.id = a.sectionid
- AND gb.assignmentcategoryid = a.assignmentcategoryid
+  ON sec.dcid = a.sectionsdcid
+ AND gb.assignmentcategoryid = a.categoryid
  AND a.assign_date between gb.startdate and gb.enddate
 LEFT OUTER JOIN gabby.powerschool.gradebook_assignments_scores scores WITH(NOLOCK)
   ON a.assignmentsectionid = scores.assignmentsectionid
  AND s.dcid = scores.studentsdcid
-WHERE (LEFT(sec.termid, 2) + 1990) = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+WHERE sec.termid >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990) * 100
 
 UNION ALL
 
@@ -95,9 +95,9 @@ JOIN gabby.powerschool.gradebook_setup gb WITH(NOLOCK)
   ON sec.dcid = gb.sectionsdcid
  AND gb.finalgradesetuptype = 'Total_Points'
 LEFT OUTER JOIN gabby.powerschool.gradebook_assignments a WITH(NOLOCK)
-  ON sec.id = a.sectionid 
+  ON sec.dcid = a.sectionsdcid
  AND a.assign_date between gb.startdate and gb.enddate
 LEFT OUTER JOIN gabby.powerschool.gradebook_assignments_scores scores WITH(NOLOCK)
   ON a.assignmentsectionid = scores.assignmentsectionid
  AND s.dcid = scores.studentsdcid
-WHERE (LEFT(sec.termid, 2) + 1990) = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+WHERE sec.termid >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990) * 100

@@ -133,7 +133,7 @@ WITH clean_people AS (
                WHEN adp.spun_off_merged_employee = 'Yes' THEN 1 
                WHEN adp.spun_off_merged_employee = 'No' THEN 0
               END AS is_merged                   
-       FROM gabby.adp.export_people_details adp
+       FROM gabby.adp.export_people_details adp WITH(NOLOCK)
       ) sub
  )
 

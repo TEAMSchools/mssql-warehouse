@@ -3,11 +3,7 @@ GO
 
 CREATE OR ALTER VIEW powerschool.gradebook_assignments AS
 
-SELECT sec.schoolid
-      ,sec.id AS sectionid
-      ,sec.section_number
-
-      ,asec.assignmentsectionid
+SELECT asec.assignmentsectionid
       ,asec.sectionsdcid
       ,asec.assignmentid
       ,asec.duedate AS assign_date
@@ -17,14 +13,13 @@ SELECT sec.schoolid
       ,asec.extracreditpoints
       ,asec.iscountedinfinalgrade AS isfinalscorecalculated        
 
-      ,COALESCE(tc.districtteachercategoryid, tc.teachercategoryid) AS assignmentcategoryid
-      ,COALESCE(dtc.name, tc.name) AS category
+      ,COALESCE(tc.districtteachercategoryid, tc.teachercategoryid) AS categoryid
+
+      ,COALESCE(dtc.name, tc.name) AS category_name
 FROM gabby.powerschool.assignmentsection asec
-JOIN gabby.powerschool.sections sec WITH(NOLOCK)
-  ON asec.sectionsdcid = sec.dcid
-LEFT OUTER JOIN gabby.powerschool.assignmentcategoryassoc aca
+LEFT JOIN gabby.powerschool.assignmentcategoryassoc aca
   ON asec.assignmentsectionid = aca.assignmentsectionid      
-LEFT OUTER JOIN gabby.powerschool.teachercategory tc
+LEFT JOIN gabby.powerschool.teachercategory tc
   ON aca.teachercategoryid = tc.teachercategoryid
-LEFT OUTER JOIN gabby.powerschool.districtteachercategory dtc
+LEFT JOIN gabby.powerschool.districtteachercategory dtc
   ON tc.districtteachercategoryid = dtc.districtteachercategoryid

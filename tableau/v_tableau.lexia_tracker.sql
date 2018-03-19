@@ -5,14 +5,13 @@ CREATE OR ALTER VIEW tableau.lexia_tracker AS
 
 WITH prev_week_time AS (
   SELECT username
-        ,gabby.utilities.DATE_TO_SY(date) AS academic_year
+        ,academic_year
         ,date
         ,week_time
         ,ROW_NUMBER() OVER(
-          PARTITION BY username, gabby.utilities.DATE_TO_SY(date)
+          PARTITION BY username, academic_year
             ORDER BY date DESC) AS rn
-  FROM gabby.lexia.units_to_target
-  WHERE DATEPART(WEEKDAY,date) = 1
+  FROM gabby.lexia.units_to_target  
  )
 
 SELECT co.student_number
@@ -66,16 +65,13 @@ LEFT OUTER JOIN gabby.powerschool.course_enrollments_static enr
  AND enr.course_number = 'HR'
  AND enr.section_enroll_status = 0
 LEFT OUTER JOIN gabby.lexia.student_goals g
-  ON co.student_number = g.student_number
- --AND co.academic_year = g.academic_year
+  ON co.student_number = g.student_number 
 LEFT OUTER JOIN prev_week_time pw
   ON s.student_web_id = pw.username
  AND co.academic_year = pw.academic_year
  AND pw.rn = 1
 LEFT OUTER JOIN gabby.lexia.student_progress lex 
-  ON s.student_web_id = lex.username
- --AND (lex.activity_start_time BETWEEN co.entrydate AND co.exitdate
- --       OR lex.activity_end_time BETWEEN co.entrydate AND co.exitdate)
+  ON s.student_web_id = lex.username 
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.grade_level <= 8
   AND co.enroll_status = 0

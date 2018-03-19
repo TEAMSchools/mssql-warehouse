@@ -3,14 +3,7 @@ GO
 
 CREATE OR ALTER VIEW alumni.taf_roster AS 
 
-WITH hs_grads AS (
-  SELECT student_number        
-  FROM gabby.powerschool.cohort_identifiers_static
-  WHERE grade_level >= 9
-    AND exitcode = 'G1'               
- ) 
-
-,ms_grads AS (
+WITH ms_grads AS (
   SELECT co.studentid
         ,co.student_number
         ,co.first_name
@@ -33,10 +26,10 @@ WITH hs_grads AS (
              ORDER BY co.exitdate DESC) AS rn
   FROM gabby.powerschool.cohort_identifiers_static co
   WHERE co.grade_level = 8
-    AND co.exitcode IN ('G1','T2')    
+    AND co.exitcode IN ('G1','T2')        
     AND co.rn_year = 1
     AND co.enroll_status != 0
-    AND co.student_number NOT IN (SELECT student_number FROM hs_grads)
+    AND co.student_number NOT IN (SELECT student_number FROM gabby.powerschool.cohort_identifiers_static WHERE grade_level >= 9 AND exitcode = 'G1') /* exclude hs grads */
  )
 
 ,transfers AS (
@@ -53,13 +46,13 @@ WITH hs_grads AS (
         ,sub.guardianemail
 
         ,CONVERT(INT,CASE 
-          WHEN s.graduated_schoolid = 0 THEN s.schoolid 
-          ELSE s.graduated_schoolid 
-         END) AS schoolid       
+                      WHEN s.graduated_schoolid = 0 THEN s.schoolid 
+                      ELSE s.graduated_schoolid 
+                     END) AS schoolid       
         ,CONVERT(VARCHAR(25),CASE 
-          WHEN s.graduated_schoolid = 0 THEN sch2.abbreviation 
-          ELSE sch.abbreviation 
-         END) AS school_name                         
+                              WHEN s.graduated_schoolid = 0 THEN sch2.abbreviation 
+                              ELSE sch.abbreviation 
+                             END) AS school_name                         
   FROM
       (
        SELECT co.studentid             
@@ -78,7 +71,7 @@ WITH hs_grads AS (
              ,(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - MAX(co.academic_year)) + MAX(co.grade_level) AS curr_grade_level
        FROM gabby.powerschool.cohort_identifiers_static co
        WHERE co.grade_level >= 9
-         AND co.enroll_status NOT IN (0, 3)
+         AND co.enroll_status = 2
          AND co.studentid NOT IN (SELECT studentid FROM ms_grads) 
        GROUP BY co.studentid
                ,co.student_number
