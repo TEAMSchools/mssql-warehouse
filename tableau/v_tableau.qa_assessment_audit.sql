@@ -72,24 +72,24 @@ SELECT a.assessment_id
 
       ,sg.standard_codes AS question_standard_codes
 FROM gabby.illuminate_dna_assessments.assessments a
-LEFT OUTER JOIN gabby.illuminate_codes.dna_scopes dsc
+LEFT JOIN gabby.illuminate_codes.dna_scopes dsc
   ON a.code_scope_id = dsc.code_id
-LEFT OUTER JOIN gabby.illuminate_codes.dna_subject_areas dsu
+LEFT JOIN gabby.illuminate_codes.dna_subject_areas dsu
   ON a.code_subject_area_id = dsu.code_id
-LEFT OUTER JOIN gabby.illuminate_public.users u
+LEFT JOIN gabby.illuminate_public.users u
   ON a.user_id = u.user_id
 LEFT OUTER JOIN gabby.illuminate_dna_assessments.performance_band_sets pbs
   ON a.performance_band_set_id = pbs.performance_band_set_id
-LEFT OUTER JOIN gabby.illuminate_dna_assessments.assessment_grade_levels agl
+LEFT JOIN gabby.illuminate_dna_assessments.assessment_grade_levels agl
   ON a.assessment_id = agl.assessment_id 
-LEFT OUTER JOIN gabby.illuminate_public.grade_levels gr
+LEFT JOIN gabby.illuminate_public.grade_levels gr
   ON agl.grade_level_id = gr.grade_level_id 
 JOIN gabby.illuminate_dna_assessments.fields f
   ON a.assessment_id = f.assessment_id
  AND f.deleted_at IS NULL
-LEFT OUTER JOIN gabby.illuminate_dna_assessments.fields_reporting_groups frg
-  ON f.field_id = frg.field_id
- AND frg.reporting_group_id IN (SELECT reporting_group_id FROM gabby.illuminate_dna_assessments.reporting_groups WHERE label IN ('Multiple Choice','Open Ended Response','Open-Ended Response'))
-LEFT OUTER JOIN standards_grouped sg
+LEFT JOIN gabby.illuminate_dna_assessments.fields_reporting_groups frg
+  ON f.field_id = frg.field_id 
+LEFT JOIN standards_grouped sg
   ON f.field_id = sg.field_id
 WHERE a.deleted_at IS NULL
+  AND frg.reporting_group_id IN (SELECT reporting_group_id FROM gabby.illuminate_dna_assessments.reporting_groups WHERE label IN ('Multiple Choice','Open Ended Response','Open-Ended Response'))
