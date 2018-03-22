@@ -51,6 +51,7 @@ WITH roster_scaffold AS (
         ,instruct_lvl
         ,instruct_lvl_num
         ,gleq
+        ,gleq_lvl_num
         ,fp_wpmrate
         ,fp_keylever
         ,dna_unique_id
@@ -80,7 +81,8 @@ WITH roster_scaffold AS (
              ,COALESCE(achv.indep_lvl_num, ps.indep_lvl_num) AS indep_lvl_num
              ,COALESCE(dna.instruct_lvl, ps.instruct_lvl) AS instruct_lvl
              ,COALESCE(dna.instruct_lvl_num, ps.instruct_lvl_num) AS instruct_lvl_num
-             ,COALESCE(achv.GLEQ, ps.GLEQ) AS GLEQ
+             ,COALESCE(achv.gleq, ps.gleq) AS gleq
+             ,COALESCE(achv.gleq_lvl_num, ps.gleq_lvl_num) AS gleq_lvl_num
              ,COALESCE(achv.fp_wpmrate, ps.fp_wpmrate) AS fp_wpmrate
              ,COALESCE(achv.fp_keylever, ps.fp_keylever) AS fp_keylever
              ,COALESCE(dna.read_lvl, ps.dna_lvl) AS dna_lvl
@@ -130,6 +132,7 @@ WITH roster_scaffold AS (
              ,achv.instruct_lvl
              ,achv.instruct_lvl_num
              ,achv.gleq
+             ,achv.gleq_lvl_num
              ,achv.fp_wpmrate
              ,achv.fp_keylever
              ,dna.read_lvl AS dna_lvl
@@ -181,6 +184,7 @@ WITH roster_scaffold AS (
                ELSE COALESCE(fp.instruct_lvl_num, (gleq.fp_lvl_num + 1))
               END) AS instruct_lvl_num
              ,gleq.gleq        
+             ,gleq.lvl_num AS gleq_lvl_num
              ,fp.fp_wpmrate
              ,fp.fp_keylever
              ,CONVERT(VARCHAR(1),CASE
@@ -228,7 +232,8 @@ WITH roster_scaffold AS (
         ,COALESCE(tests.indep_lvl_num,achv_prev.indep_lvl_num) AS indep_lvl_num
         ,COALESCE(tests.instruct_lvl,achv_prev.instruct_lvl) AS instruct_lvl
         ,COALESCE(tests.instruct_lvl_num,achv_prev.instruct_lvl_num) AS instruct_lvl_num
-        ,COALESCE(tests.GLEQ,achv_prev.GLEQ) AS GLEQ
+        ,COALESCE(tests.gleq,achv_prev.gleq) AS gleq
+        ,COALESCE(tests.gleq_lvl_num,achv_prev.gleq_lvl_num) AS gleq_lvl_num
         ,COALESCE(tests.fp_wpmrate,achv_prev.fp_wpmrate) AS fp_wpmrate
         ,COALESCE(tests.fp_keylever,achv_prev.fp_keylever) AS fp_keylever                
         ,COALESCE(tests.achv_unique_id, achv_prev.achv_unique_id) AS achv_unique_id                
@@ -283,7 +288,7 @@ SELECT academic_year
       ,dna_lvl_num
       ,prev_read_lvl
       ,prev_lvl_num      
-      ,GLEQ      
+      ,gleq      
       ,lvl_num      
       ,fp_wpmrate
       ,fp_keylever
@@ -315,13 +320,16 @@ SELECT academic_year
         WHEN lvl_num < goal_num THEN 'Off Track'        
        END AS goal_status
       ,CASE 
-        WHEN lvl_num > prev_lvl_num THEN 1 
-        WHEN lvl_num <= prev_lvl_num THEN 0        
+        WHEN gleq = prev_gleq THEN 0
+        WHEN gleq_lvl_num > prev_gleq_lvl_num THEN 1 
+        WHEN gleq_lvl_num <= prev_gleq_lvl_num THEN 0        
        END AS moved_levels
       ,SUM(CASE             
             WHEN round_num = 1 THEN 0 
-            WHEN lvl_num > prev_lvl_num THEN 1 
-            WHEN lvl_num <= prev_lvl_num THEN 0        
+            WHEN gleq = prev_gleq THEN 0
+            ELSE gleq_lvl_num - prev_gleq_lvl_num
+            --WHEN lvl_num > prev_lvl_num THEN 1 
+            --WHEN lvl_num <= prev_lvl_num THEN 0        
            END) OVER(PARTITION BY student_number, academic_year ORDER BY start_date ASC) AS n_levels_moved_y1
       ,ROW_NUMBER() OVER(
          PARTITION BY student_number, academic_year
@@ -346,7 +354,8 @@ FROM
            ,sub.indep_lvl_num
            ,sub.dna_lvl
            ,sub.dna_lvl_num
-           ,sub.GLEQ           
+           ,sub.gleq   
+           ,sub.gleq_lvl_num        
            ,sub.fp_wpmrate
            ,sub.fp_keylever
            ,sub.achv_unique_id      
@@ -377,6 +386,8 @@ FROM
 
            ,LAG(sub.read_lvl, 1) OVER(PARTITION BY sub.student_number ORDER BY sub.start_date ASC) AS prev_read_lvl
            ,LAG(sub.lvl_num, 1) OVER(PARTITION BY sub.student_number ORDER BY sub.start_date ASC) AS prev_lvl_num           
+           ,LAG(sub.gleq, 1) OVER(PARTITION BY sub.student_number ORDER BY sub.start_date ASC) AS prev_gleq
+           ,LAG(sub.gleq_lvl_num, 1) OVER(PARTITION BY sub.student_number ORDER BY sub.start_date ASC) AS prev_gleq_lvl_num           
            ,COALESCE(sub.indiv_goal_lvl
                     ,CASE
                       WHEN (sub.fp_read_lvl IS NOT NULL AND sub.step_read_lvl IS NOT NULL)
@@ -427,9 +438,10 @@ FROM
                 ,achieved.instruct_lvl
                 ,achieved.instruct_lvl_num
                 ,achieved.gleq
+                ,achieved.gleq_lvl_num    
                 ,achieved.fp_wpmrate
                 ,achieved.fp_keylever                
-                ,achieved.achv_unique_id               
+                ,achieved.achv_unique_id
 
                 ,dna.dna_lvl
                 ,dna.dna_lvl_num

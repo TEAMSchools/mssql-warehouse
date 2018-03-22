@@ -210,6 +210,7 @@ SELECT cd.unique_id
        END AS comp_overall
       
       ,achv.gleq
+      ,CONVERT(INT,achv.lvl_num) AS gleq_lvl_num
       ,CONVERT(INT,achv.fp_lvl_num) AS indep_lvl_num
 
       ,CONVERT(INT,instr.fp_lvl_num) AS instr_lvl_num

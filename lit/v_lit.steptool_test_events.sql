@@ -15,6 +15,7 @@ SELECT sub.unique_id
       ,sub.notes
       ,sub.recorder
       ,sub.gleq
+      ,sub.gleq_lvl_num
 
       ,co.studentid
       ,co.lastfirst      
@@ -55,6 +56,7 @@ FROM
            ,CONVERT(VARCHAR(125),step.recorder) AS recorder
 
            ,gleq.gleq
+           ,CONVERT(INT,gleq.lvl_num) AS gleq_lvl_num
      FROM gabby.steptool.all_steps step
      JOIN gabby.lit.gleq
        ON step.step = gleq.lvl_num
@@ -75,6 +77,7 @@ FROM
            ,CONVERT(VARCHAR(1000),step.notes) AS notes
            ,CONVERT(VARCHAR(125),step.recorder) AS recorder
            ,-1 AS gleq
+           ,-1 AS gleq_lvl_num
      FROM gabby.steptool.all_steps step
      WHERE step.step = 0
        AND step.passed = 0

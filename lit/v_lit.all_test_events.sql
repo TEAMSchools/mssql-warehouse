@@ -21,6 +21,7 @@ SELECT rs.unique_id AS unique_id
       ,rs.indep_lvl
       ,rs.indep_lvl_num
       ,rs.GLEQ
+      ,rs.gleq_lvl_num
       ,rs.color
       ,rs.genre
       ,rs.fp_wpmrate
@@ -55,6 +56,7 @@ FROM (
             ,CONVERT(INT,ps.instruct_lvl_num) AS instruct_lvl_num
             ,CONVERT(VARCHAR(25),ps.indep_lvl) AS indep_lvl
             ,CONVERT(INT,ps.indep_lvl_num) AS indep_lvl_num
+            ,NULL AS gleq_lvl_num
             ,CONVERT(INT,ps.fp_wpmrate) AS fp_wpmrate
             ,CONVERT(VARCHAR(25),ps.fp_keylever) AS fp_keylever
             ,CONVERT(VARCHAR(5),ps.coaching_code) AS coaching_code
@@ -83,6 +85,7 @@ FROM (
             ,NULL AS instruct_lvl_num
             ,NULL AS indep_lvl
             ,NULL AS indep_lvl_num              
+            ,gleq_lvl_num
             ,NULL AS fp_wpmrate
             ,NULL AS fp_keylever
             ,NULL AS coaching_code
@@ -118,6 +121,7 @@ FROM (
             ,instr_lvl_num AS instruct_lvl_num
             ,achieved_independent_level AS indep_lvl
             ,indep_lvl_num 
+            ,gleq_lvl_num
         
             ,reading_rate_wpm AS fp_wpmrate
             ,key_lever AS fp_keylever
