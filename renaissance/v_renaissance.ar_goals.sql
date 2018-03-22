@@ -62,9 +62,9 @@ WITH roster AS (
              UNION
              SELECT 'AR4'             
             ) moy
-         ON achv.test_round = 'Q3'
+         ON achv.test_round = 'Q2'
        WHERE achv.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-         AND achv.test_round IN ('Q1','Q3')
+         AND achv.test_round IN ('Q1','Q2')
       ) sub
   LEFT OUTER JOIN gabby.renaissance.ar_goal_criteria goal
     ON sub.indep_lvl_num BETWEEN goal.min AND goal.max
