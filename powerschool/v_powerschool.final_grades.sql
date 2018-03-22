@@ -30,7 +30,7 @@ WITH roster AS (
    AND co.yearid = css.yearid   
    AND css.course_number != 'ALL'
   JOIN gabby.powerschool.courses cou
-    ON css.course_number = cou.course_number
+    ON css.course_number = cou.course_number_clean
   JOIN gabby.powerschool.sections sec
     ON css.sectionid = sec.id
   JOIN gabby.powerschool.teachers t

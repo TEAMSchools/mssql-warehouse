@@ -33,4 +33,4 @@ JOIN gabby.powerschool.cohort_identifiers_static co
   ON s.local_student_id = co.student_number
  AND gabby.utilities.DATE_TO_SY(CONVERT(DATE,r.field_date_administered)) = co.academic_year
  AND co.rn_year = 1
-WHERE CONCAT(54, '_', r.repository_row_id) IN (SELECT CONCAT(repository_id, '_', repository_row_id) FROM gabby.illuminate_dna_repositories.repository_row_ids)
+WHERE CONCAT(54, '_', r.repository_row_id) IN (SELECT row_hash FROM gabby.illuminate_dna_repositories.repository_row_ids)
