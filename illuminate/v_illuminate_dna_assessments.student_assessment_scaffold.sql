@@ -3,24 +3,14 @@ GO
 
 CREATE OR ALTER VIEW illuminate_dna_assessments.student_assessment_scaffold AS
 
-WITH ssa AS (
-  SELECT student_id
-        ,(gabby.utilities.DATE_TO_SY(entry_date) + 1) AS academic_year
-        ,grade_level_id      
-        ,ROW_NUMBER() OVER(
-           PARTITION BY student_id, grade_level_id, gabby.utilities.DATE_TO_SY(entry_date)
-             ORDER BY entry_date DESC) AS rn
-  FROM gabby.illuminate_public.student_session_aff ssa 
-)
-
 SELECT sub.assessment_id
       ,sub.title
       ,sub.administered_at
       ,sub.performance_band_set_id
       ,sub.academic_year
-      ,CASE
-        WHEN sub.scope = 'Process Piece' THEN 'PP'
-        WHEN sub.scope NOT IN (SELECT scope FROM gabby.illuminate_dna_assessments.normed_scopes) THEN NULL
+      ,CASE        
+        WHEN sub.scope = 'Process Piece' THEN 'PP'        
+        WHEN sub.normed_scope IS NULL THEN NULL
         WHEN sub.scope = 'CMA - End-of-Module' AND sub.academic_year <= 2016 THEN 'EOM'
         WHEN sub.scope = 'CMA - End-of-Module' AND sub.academic_year > 2016 THEN 'QA'
         WHEN sub.scope IN ('Cold Read Quizzes', 'Cumulative Review Quizzes') THEN 'CRQ'
@@ -34,7 +24,7 @@ SELECT sub.assessment_id
       ,CASE
         WHEN sub.scope = 'Process Piece' AND PATINDEX('%QA[0-9]%', sub.title) > 0 THEN SUBSTRING(sub.title, PATINDEX('%QA[0-9]%', sub.title), 3)
         WHEN sub.scope = 'Process Piece' AND PATINDEX('%[MU][0-9]%', sub.title) > 0 THEN SUBSTRING(sub.title, PATINDEX('%[MU][0-9]%', sub.title), 2)
-        WHEN sub.scope NOT IN (SELECT scope FROM gabby.illuminate_dna_assessments.normed_scopes) THEN NULL
+        WHEN sub.normed_scope IS NULL THEN NULL
         WHEN PATINDEX('%[MU][0-9]/[0-9]%', sub.title) > 0 THEN SUBSTRING(sub.title, PATINDEX('%[MU][0-9]/[0-9]%', sub.title), 4)
         WHEN PATINDEX('%[MU][0-9]%', sub.title) > 0 THEN SUBSTRING(sub.title, PATINDEX('%[MU][0-9]%', sub.title), 2)
         WHEN PATINDEX('%QA[0-9]%', sub.title) > 0 THEN SUBSTRING(sub.title, PATINDEX('%QA[0-9]%', sub.title), 3)
@@ -63,21 +53,25 @@ FROM
            ,(a.academic_year - 1) AS academic_year
            
            ,ds.code_translation AS scope           
+           
+           ,ns.scope AS normed_scope
+
            ,dsa.code_translation AS subject_area
 
-           ,ssa.student_id
+           ,ssa.student_id           
       
            ,0 AS is_replacement
      FROM gabby.illuminate_dna_assessments.assessments a  
      JOIN gabby.illuminate_codes.dna_scopes ds
-       ON a.code_scope_id = ds.code_id
-      AND ds.code_translation IN (SELECT scope FROM gabby.illuminate_dna_assessments.normed_scopes)
+       ON a.code_scope_id = ds.code_id      
+     JOIN gabby.illuminate_dna_assessments.normed_scopes ns
+       ON ds.code_translation = ns.scope
      JOIN gabby.illuminate_codes.dna_subject_areas dsa
        ON a.code_subject_area_id = dsa.code_id    
       AND dsa.code_translation IN ('Text Study','Mathematics','Social Studies','Science')
      JOIN gabby.illuminate_dna_assessments.assessment_grade_levels agl
        ON a.assessment_id = agl.assessment_id       
-     JOIN ssa
+     JOIN gabby.illuminate_public.student_session_aff_clean_static ssa
        ON a.academic_year = ssa.academic_year
       AND agl.grade_level_id = ssa.grade_level_id
       AND ssa.rn = 1
@@ -98,6 +92,8 @@ FROM
            ,(a.academic_year - 1) AS academic_year
            
            ,ds.code_translation AS scope           
+
+           ,ns.scope AS normed_scope
       
            ,dsa.code_translation AS subject_area
 
@@ -107,7 +103,8 @@ FROM
      FROM gabby.illuminate_dna_assessments.assessments a  
      JOIN gabby.illuminate_codes.dna_scopes ds
        ON a.code_scope_id = ds.code_id
-      AND ds.code_translation IN (SELECT scope FROM gabby.illuminate_dna_assessments.normed_scopes)
+     JOIN gabby.illuminate_dna_assessments.normed_scopes ns
+       ON ds.code_translation = ns.scope
      JOIN gabby.illuminate_codes.dna_subject_areas dsa
        ON a.code_subject_area_id = dsa.code_id    
       AND dsa.code_translation IN ('Algebra I','Geometry','Algebra IIA','Algebra IIB','English 100','English 200','English 300','English 400')
@@ -130,6 +127,9 @@ FROM
            ,(a.academic_year - 1) AS academic_year
            
            ,ds.code_translation AS scope           
+           
+           ,ns.scope AS normed_scope
+
            ,dsa.code_translation AS subject_area
 
            ,sa.student_id
@@ -138,7 +138,8 @@ FROM
      FROM gabby.illuminate_dna_assessments.assessments a  
      JOIN gabby.illuminate_codes.dna_scopes ds
        ON a.code_scope_id = ds.code_id
-      AND ds.code_translation IN (SELECT scope FROM gabby.illuminate_dna_assessments.normed_scopes)
+     JOIN gabby.illuminate_dna_assessments.normed_scopes ns
+       ON ds.code_translation = ns.scope
      JOIN gabby.illuminate_codes.dna_subject_areas dsa
        ON a.code_subject_area_id = dsa.code_id    
       AND dsa.code_translation NOT IN ('Algebra I','Geometry','Algebra IIA','Algebra IIB','English 100','English 200','English 300','English 400')
@@ -146,7 +147,7 @@ FROM
        ON a.assessment_id = agl.assessment_id      
      JOIN gabby.illuminate_dna_assessments.students_assessments sa
        ON a.assessment_id = sa.assessment_id     
-     JOIN ssa
+     JOIN gabby.illuminate_public.student_session_aff_clean_static ssa
        ON sa.student_id = ssa.student_id
       AND a.academic_year = ssa.academic_year
       AND agl.grade_level_id != ssa.grade_level_id            
@@ -163,18 +164,23 @@ FROM
            ,(a.academic_year - 1) AS academic_year
 
            ,ds.code_translation AS scope           
+
+           ,NULL AS normed_scope
+
            ,dsa.code_translation AS subject_area
 
            ,sa.student_id
 
            ,0 AS is_replacement
      FROM gabby.illuminate_dna_assessments.assessments a  
-     LEFT OUTER JOIN gabby.illuminate_codes.dna_scopes ds
+     LEFT JOIN gabby.illuminate_codes.dna_scopes ds
        ON a.code_scope_id = ds.code_id
-     LEFT OUTER JOIN gabby.illuminate_codes.dna_subject_areas dsa
+     LEFT JOIN gabby.illuminate_dna_assessments.normed_scopes ns
+       ON ds.code_translation = ns.scope
+     LEFT JOIN gabby.illuminate_codes.dna_subject_areas dsa
        ON a.code_subject_area_id = dsa.code_id    
-     LEFT OUTER JOIN gabby.illuminate_dna_assessments.students_assessments sa
+     LEFT JOIN gabby.illuminate_dna_assessments.students_assessments sa
        ON a.assessment_id = sa.assessment_id
-     WHERE (ds.code_translation NOT IN (SELECT scope FROM gabby.illuminate_dna_assessments.normed_scopes) OR a.code_scope_id IS NULL)
+     WHERE ns.scope IS NULL OR a.code_scope_id IS NULL
        AND a.deleted_at IS NULL
     ) sub

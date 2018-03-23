@@ -82,7 +82,7 @@ FROM
                 ,CONVERT(INT,cc.schoolid) AS schoolid
                 ,CONVERT(INT,cc.termid) AS termid           
                 ,CONVERT(INT,cc.id) AS cc_id
-                ,CONVERT(VARCHAR(25),cc.course_number) AS course_number
+                ,cc.course_number_clean AS course_number
                 ,CONVERT(VARCHAR(25),cc.section_number) AS section_number
                 ,cc.dateenrolled
                 ,cc.dateleft
@@ -90,9 +90,9 @@ FROM
                 ,CONVERT(INT,cc.sectionid) AS sectionid
                 ,CONVERT(VARCHAR(25),cc.expression) AS expression
                 ,ABS(CONVERT(INT,cc.termid)) AS abs_termid
-                ,ABS(CONVERT(INT,cc.sectionid)) AS abs_sectionid
-                ,CONVERT(INT,RIGHT(cc.studyear, 2)) AS yearid
-                ,RIGHT(cc.studyear, 2) + 1990 AS academic_year
+                ,cc.abs_sectionid AS abs_sectionid
+                ,cc.yearid
+                ,cc.academic_year
                 ,CASE WHEN cc.sectionid < 0 THEN 1 ELSE 0 END AS section_enroll_status
 
                 ,CONVERT(INT,s.student_number) AS student_number
@@ -117,22 +117,22 @@ FROM
                   WHEN s.grade_level <= 8 AND cou.credittype = 'ENG' THEN 'Text Study'        
                   WHEN s.grade_level <= 8 AND cou.credittype = 'SCI' THEN 'Science'
                   WHEN s.grade_level <= 8 AND cou.credittype = 'SOC' THEN 'Social Studies'        
-                  WHEN cc.course_number IN ('MATH10','MATH15','MATH71','MATH10ICS','MATH12','MATH12ICS','MATH14','MATH16','M415') THEN 'Algebra I'        
-                  WHEN cc.course_number IN ('MATH20','MATH25','MATH31','MATH73','MATH20ICS') THEN 'Geometry'
-                  WHEN cc.course_number IN ('MATH32','MATH35','MATH32A','MATH32HA') THEN 'Algebra IIA'
-                  WHEN cc.course_number IN ('MATH32B') THEN 'Algebra IIB'
-                  WHEN cc.course_number = 'M315' THEN NULL
+                  WHEN cc.course_number_clean IN ('MATH10','MATH15','MATH71','MATH10ICS','MATH12','MATH12ICS','MATH14','MATH16','M415') THEN 'Algebra I'        
+                  WHEN cc.course_number_clean IN ('MATH20','MATH25','MATH31','MATH73','MATH20ICS') THEN 'Geometry'
+                  WHEN cc.course_number_clean IN ('MATH32','MATH35','MATH32A','MATH32HA') THEN 'Algebra IIA'
+                  WHEN cc.course_number_clean IN ('MATH32B') THEN 'Algebra IIB'
+                  WHEN cc.course_number_clean = 'M315' THEN NULL
                   WHEN s.grade_level <= 8 AND cou.credittype = 'MATH' THEN 'Mathematics'             
-                  WHEN cc.course_number IN ('ENG10','ENG12','ENG15','NCCSE0010') THEN 'English 100'             
-                  WHEN cc.course_number IN ('ENG20','ENG22','ENG25','NCCSE0020') THEN 'English 200'
-                  WHEN cc.course_number IN ('ENG30','ENG32','ENG35','NCCSE0030') THEN 'English 300'
-                  WHEN cc.course_number IN ('ENG40','ENG42','ENG45') THEN 'English 400'
+                  WHEN cc.course_number_clean IN ('ENG10','ENG12','ENG15','NCCSE0010') THEN 'English 100'             
+                  WHEN cc.course_number_clean IN ('ENG20','ENG22','ENG25','NCCSE0020') THEN 'English 200'
+                  WHEN cc.course_number_clean IN ('ENG30','ENG32','ENG35','NCCSE0030') THEN 'English 300'
+                  WHEN cc.course_number_clean IN ('ENG40','ENG42','ENG45') THEN 'English 400'
                  END AS illuminate_subject
           FROM gabby.powerschool.cc WITH(NOLOCK)
           JOIN gabby.powerschool.students s 
             ON cc.studentid = s.id
           JOIN gabby.powerschool.courses cou
-            ON cc.course_number = cou.course_number     
+            ON cc.course_number_clean = cou.course_number_clean
           JOIN gabby.powerschool.teachers t
             ON cc.teacherid = t.id          
          ) sub
