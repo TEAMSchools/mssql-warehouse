@@ -91,8 +91,8 @@ FROM
                 ,CONVERT(VARCHAR(25),cc.expression) AS expression
                 ,ABS(CONVERT(INT,cc.termid)) AS abs_termid
                 ,cc.abs_sectionid AS abs_sectionid
-                ,cc.yearid
-                ,cc.academic_year
+                ,CONVERT(INT,RIGHT(cc.studyear, 2)) AS yearid
+                ,RIGHT(cc.studyear, 2) + 1990 AS academic_year
                 ,CASE WHEN cc.sectionid < 0 THEN 1 ELSE 0 END AS section_enroll_status
 
                 ,CONVERT(INT,s.student_number) AS student_number

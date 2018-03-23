@@ -36,8 +36,8 @@ WITH att_counts AS (
         AND att.att_date BETWEEN dates.start_date AND dates.end_date
         AND dates.identifier = 'RT' 
        WHERE att.att_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1, 7, 1)
-      ) sub
-  WHERE att_code IS NOT NULL
+         AND att.att_code IN ('A','AD','AE','A-E','D','E','EA','ISS','OS','OSS','OSSP','Q','S','T','T10','TLE','X','true')
+      ) sub  
   GROUP BY studentid
           ,academic_year            
           ,reporting_term        
@@ -45,6 +45,42 @@ WITH att_counts AS (
           ,term_name
           ,start_date
           ,end_date
+ )
+
+,mem_counts AS (
+  SELECT sub.studentid
+        ,sub.academic_year
+        ,sub.reporting_term
+        ,sub.term_name
+        ,sub.start_date
+        ,sub.end_date
+        ,SUM(sub.membershipvalue) AS count_term
+
+        ,'MEM' AS att_code
+  FROM
+      (
+       SELECT mem.studentid             
+             ,mem.membershipvalue
+             ,(mem.yearid + 1990) AS academic_year
+
+             ,CONVERT(VARCHAR,d.time_per_name) AS reporting_term
+             ,CONVERT(VARCHAR,d.alt_name) AS term_name
+             ,d.start_date
+             ,d.end_date             
+       FROM gabby.powerschool.ps_adaadm_daily_ctod_static mem              
+       JOIN gabby.reporting.reporting_terms d
+         ON mem.schoolid = d.schoolid 
+        AND mem.calendardate BETWEEN d.start_date AND d.end_date
+        AND d.identifier = 'RT'
+       WHERE mem.yearid >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990 - 1)
+         AND mem.calendardate <= GETDATE()
+      ) sub
+  GROUP BY sub.studentid
+          ,sub.academic_year
+          ,sub.reporting_term
+          ,sub.term_name
+          ,sub.start_date
+          ,sub.end_date
  )
 
 ,counts_long AS (
@@ -85,32 +121,7 @@ WITH att_counts AS (
              ,att_code
              ,count_term 
              ,SUM(count_term) OVER(PARTITION BY studentid, academic_year ORDER BY start_date) AS count_y1
-       FROM
-           (
-            SELECT mem.studentid
-                  ,(mem.yearid + 1990) AS academic_year
-                  ,SUM(ISNULL(mem.membershipvalue, 0)) AS count_term      
-
-                  ,CONVERT(VARCHAR,d.time_per_name) AS reporting_term
-                  ,CONVERT(VARCHAR,d.alt_name) AS term_name
-                  ,d.start_date
-                  ,d.end_date
-
-                  ,'MEM' AS att_code
-            FROM gabby.powerschool.ps_adaadm_daily_ctod_static mem              
-            JOIN gabby.reporting.reporting_terms d
-              ON mem.schoolid = d.schoolid 
-             AND mem.calendardate BETWEEN d.start_date AND d.end_date
-             AND d.identifier = 'RT'
-            WHERE (mem.yearid + 1990) >= gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1
-              AND mem.calendardate <= GETDATE()
-            GROUP BY mem.studentid
-                    ,mem.yearid
-                    ,d.time_per_name
-                    ,d.alt_name
-                    ,d.start_date
-                    ,d.end_date
-           ) sub
+       FROM mem_counts
       ) sub
   UNPIVOT(
     N
