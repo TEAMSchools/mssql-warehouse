@@ -56,7 +56,7 @@ FROM
             END AS homeroom
 
            ,COUNT(att.id) AS n_absences
-     FROM gabby.powerschool.attendance_clean_static att
+     FROM gabby.powerschool.attendance_clean att
      JOIN gabby.powerschool.attendance_code ac
        ON att.attendance_codeid = ac.id
       AND ac.att_code IN ('A','AD')

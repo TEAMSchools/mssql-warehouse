@@ -28,7 +28,7 @@ SELECT att.id
       ,CONVERT(INT,cd.cycle_day_id) AS cycle_day_id
   
       ,CONVERT(VARCHAR(25),cy.abbreviation) AS abbreviation
-FROM gabby.powerschool.attendance_clean_static att 
+FROM gabby.powerschool.attendance_clean att 
 JOIN gabby.powerschool.attendance_code ac 
   ON att.attendance_codeid = ac.id
 JOIN gabby.powerschool.calendar_day cd
