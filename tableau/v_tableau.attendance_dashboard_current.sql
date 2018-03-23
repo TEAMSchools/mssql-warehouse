@@ -120,7 +120,7 @@ FROM
       AND co.academic_year = enr.academic_year 
       AND enr.course_number = 'HR' 
       AND enr.rn_course_yr = 1
-     JOIN gabby.powerschool.ps_adaadm_daily_ctod_static mem
+     JOIN gabby.powerschool.ps_adaadm_daily_ctod mem
        ON co.studentid = mem.studentid
       AND co.schoolid = mem.schoolid
       AND mem.calendardate BETWEEN co.entrydate AND co.exitdate

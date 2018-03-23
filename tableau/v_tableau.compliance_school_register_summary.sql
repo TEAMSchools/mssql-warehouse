@@ -31,7 +31,7 @@ WITH schooldays AS (
         ,CONVERT(INT,yearid) + 1990 AS academic_year
         ,CONVERT(INT,SUM(attendancevalue)) AS n_att
         ,CONVERT(INT,SUM(membershipvalue)) AS n_mem
-  FROM gabby.powerschool.ps_adaadm_daily_ctod_static
+  FROM gabby.powerschool.ps_adaadm_daily_ctod
   WHERE membershipvalue = 1
   GROUP BY studentid
           ,yearid

@@ -3,74 +3,56 @@ GO
 
 CREATE OR ALTER VIEW powerschool.ps_membership_reg AS 
 
-SELECT ev.studentid
-      ,ev.schoolid 
-      ,ev.track AS student_track
-      ,ev.fteid 
-      ,ev.dflt_att_mode_code
-      ,ev.dflt_conversion_mode_code
-      ,ev.att_calccntpresentabsent      
-      ,ev.att_intervalduration
-      ,ev.grade_level
-      ,ev.yearid      
+SELECT pmrc.studentid
+      ,pmrc.schoolid 
+      ,pmrc.student_track
+      ,pmrc.fteid 
+      ,pmrc.dflt_att_mode_code
+      ,pmrc.dflt_conversion_mode_code
+      ,pmrc.att_calccntpresentabsent      
+      ,pmrc.att_intervalduration
+      ,pmrc.grade_level
+      ,pmrc.yearid
+      ,pmrc.calendardate
+      ,pmrc.a
+      ,pmrc.b
+      ,pmrc.c
+      ,pmrc.d
+      ,pmrc.e
+      ,pmrc.f
+      ,pmrc.bell_schedule_id
+      ,pmrc.cycle_day_id  		  
+      ,pmrc.attendance_conversion_id
+		    ,pmrc.studentmembership
+      ,pmrc.calendarmembership
+		    ,pmrc.ontrack
+		    ,pmrc.offtrack
+FROM gabby.powerschool.ps_membership_reg_current_static pmrc
 
-      ,cd.date_value AS calendardate
-      ,CONVERT(INT,cd.a) AS a
-      ,CONVERT(INT,cd.b) AS b
-      ,CONVERT(INT,cd.c) AS c
-      ,CONVERT(INT,cd.d) AS d
-      ,CONVERT(INT,cd.e) AS e
-      ,CONVERT(INT,cd.f) AS f
-      ,CONVERT(INT,cd.bell_schedule_id) AS bell_schedule_id
-      ,CONVERT(INT,cd.cycle_day_id) AS cycle_day_id
-  		  
-      ,CONVERT(INT,bs.attendance_conversion_id) AS attendance_conversion_id
+UNION ALL
 
-		    ,(CASE 
-			      WHEN ((ev.track='A' AND cd.a = 1) 
-			         OR (ev.track='B' AND cd.b = 1) 
-			         OR (ev.track='C' AND cd.c = 1) 
-			         OR (ev.track='D' AND cd.d = 1) 
-			         OR (ev.track='E' AND cd.e = 1) 
-			         OR (ev.track='F' AND cd.f = 1)) THEN ev.membershipshare         
-			      WHEN (ev.track IS NULL) THEN ev.membershipshare         
-			      ELSE 0         
-		      END) AS studentmembership
-      ,(CASE 
-			      WHEN ((ev.track='A' AND cd.a = 1) 
-			         OR (ev.track='B' AND cd.b = 1) 
-			         OR (ev.track='C' AND cd.c = 1) 
-			         OR (ev.track='D' AND cd.d = 1) 
-			         OR (ev.track='E' AND cd.e = 1) 
-			         OR (ev.track='F' AND cd.f = 1)) THEN CONVERT(INT,cd.membershipvalue)
-			      WHEN (ev.track IS NULL) THEN CONVERT(INT,cd.membershipvalue)
-			      ELSE 0         
-		      END) AS calendarmembership
-		    ,(CASE 
-			      WHEN ((ev.track='A' AND cd.a = 1) 
-			         OR (ev.track='B' AND cd.b = 1) 
-			         OR (ev.track='C' AND cd.c = 1) 
-			         OR (ev.track='D' AND cd.d = 1) 
-			         OR (ev.track='E' AND cd.e = 1) 
-			         OR (ev.track='F' AND cd.f = 1)) THEN 1         
-			      WHEN (ev.track IS NULL) THEN 1         
-			      ELSE 0         
-		      END) AS ontrack
-		    ,(CASE 
-		       WHEN ((ev.track='A' AND cd.a = 1) 
-			         OR (ev.track='B' AND cd.b = 1) 
-			         OR (ev.track='C' AND cd.c = 1) 
-			         OR (ev.track='D' AND cd.d = 1) 
-			         OR (ev.track='E' AND cd.e = 1) 
-			         OR (ev.track='F' AND cd.f = 1)) THEN 0         
-			      WHEN (ev.track IS NULL) THEN 0         
-			      ELSE 1         
-	       END) AS offtrack
-FROM gabby.powerschool.ps_enrollment_all_static ev 
-JOIN gabby.powerschool.calendar_day cd 
-  ON ev.schoolid = cd.schoolid
- AND cd.insession = 1
-	AND cd.date_value >= ev.entrydate
-	AND cd.date_value < ev.exitdate
-JOIN gabby.powerschool.bell_schedule bs
-  ON cd.bell_schedule_id = bs.id
+SELECT pmra.studentid
+      ,pmra.schoolid 
+      ,pmra.student_track
+      ,pmra.fteid 
+      ,pmra.dflt_att_mode_code
+      ,pmra.dflt_conversion_mode_code
+      ,pmra.att_calccntpresentabsent      
+      ,pmra.att_intervalduration
+      ,pmra.grade_level
+      ,pmra.yearid
+      ,pmra.calendardate
+      ,pmra.a
+      ,pmra.b
+      ,pmra.c
+      ,pmra.d
+      ,pmra.e
+      ,pmra.f
+      ,pmra.bell_schedule_id
+      ,pmra.cycle_day_id  		  
+      ,pmra.attendance_conversion_id
+		    ,pmra.studentmembership
+      ,pmra.calendarmembership
+		    ,pmra.ontrack
+		    ,pmra.offtrack
+FROM gabby.powerschool.ps_membership_reg_archive pmra
