@@ -91,7 +91,7 @@ SELECT co.school_name
          PARTITION BY co.student_number, co.academic_year, term.lit, term.ar, achv.achv_unique_id
            ORDER BY achv.achv_unique_id) AS rn_test
 FROM gabby.powerschool.cohort_identifiers_static co
-LEFT OUTER JOIN gabby.powerschool.spenrollments_gen sp
+LEFT JOIN gabby.powerschool.spenrollments_gen sp
   ON co.studentid = sp.studentid
  AND co.academic_year = sp.academic_year
  AND sp.programid = 5224
@@ -103,23 +103,25 @@ JOIN gabby.lit.achieved_by_round_static achv
  AND co.academic_year = achv.academic_year
  AND term.lit = achv.test_round
  AND achv.start_date <= GETDATE()
-LEFT OUTER JOIN gabby.lit.all_test_events_static atid
+LEFT JOIN gabby.lit.all_test_events_static atid
   ON co.student_number = atid.student_number
  AND achv.achv_unique_id = atid.unique_id 
-LEFT OUTER JOIN gabby.lit.all_test_events_static dtid
+ AND atid.status = 'Achieved'
+LEFT JOIN gabby.lit.all_test_events_static dtid
   ON co.student_number = dtid.student_number
  AND achv.dna_unique_id = dtid.unique_id 
-LEFT OUTER JOIN gabby.lit.component_proficiency_long_static long
+ AND dtid.status = 'Did Not Achieve'
+LEFT JOIN gabby.lit.component_proficiency_long_static long
   ON co.student_number = long.student_number
  AND achv.dna_unique_id = long.unique_id
  AND long.status != 'Achieved'
-LEFT OUTER JOIN gabby.renaissance.ar_progress_to_goals ar
+LEFT JOIN gabby.renaissance.ar_progress_to_goals ar
   ON co.student_number = ar.student_number
  AND co.academic_year = ar.academic_year
  AND term.ar = ar.reporting_term 
  AND ar.start_date <= GETDATE()
  AND ar.n_total > 0
-LEFT OUTER JOIN gabby.lit.guided_reading_roster gr
+LEFT JOIN gabby.lit.guided_reading_roster gr
   ON co.student_number = gr.student_number
  AND co.academic_year = gr.academic_year
  AND term.lit = gr.test_round
