@@ -28,8 +28,7 @@ SELECT sub.student_number
        END AS is_curterm
       ,NULL AS rn_curterm
 FROM
-    (
-     /* NCA */
+    (     
      SELECT enr.student_number                   
            ,enr.schoolid
            ,enr.academic_year
@@ -51,33 +50,5 @@ FROM
       AND enr.sectionid = pgf.sectionid
       AND LEFT(pgf.finalgradename, 1) NOT IN ('Y','T','Q')
      WHERE enr.course_enroll_status = 0
-       AND enr.section_enroll_status = 0
-       AND enr.schoolid = 73253
-
-     UNION ALL
-
-     /* MS */
-     SELECT enr.student_number                   
-           ,enr.schoolid
-           ,enr.academic_year
-           ,enr.credittype      
-           ,enr.course_number      
-           ,enr.course_name
-           ,enr.sectionid           
-           ,enr.teacher_name            
-
-           ,pgf.startdate
-           ,pgf.enddate
-      
-           ,CONVERT(VARCHAR(1),LEFT(pgf.finalgradename,1)) AS grade_category
-           ,CONVERT(VARCHAR(5),CONCAT('RT', RIGHT(pgf.finalgradename,1))) AS reporting_term            
-           ,ROUND(CASE WHEN pgf.grade = '--' THEN NULL ELSE pgf.[percent] END, 0) AS grade_category_pct               
-     FROM gabby.powerschool.course_enrollments_static enr
-     JOIN gabby.powerschool.pgfinalgrades pgf
-       ON enr.studentid = pgf.studentid       
-      AND enr.sectionid = pgf.sectionid       
-      AND LEFT(pgf.finalgradename, 1) NOT IN ('Y','T','Q')
-     WHERE enr.course_enroll_status = 0
-       AND enr.section_enroll_status = 0
-       AND enr.schoolid != 73253
+       AND enr.section_enroll_status = 0       
     ) sub

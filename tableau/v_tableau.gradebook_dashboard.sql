@@ -295,7 +295,7 @@ JOIN section_teacher st
  AND gr.course_number = st.course_number
  AND st.rn = 1
 JOIN gabby.powerschool.courses cou 
-  ON gr.course_number = cou.course_number
+  ON gr.course_number = cou.course_number_clean
 WHERE co.rn_year = 1
   AND co.school_level IN ('MS','HS')
   
@@ -354,6 +354,6 @@ JOIN section_teacher st
  AND gr.course_number = st.course_number
  AND st.rn = 1
 JOIN gabby.powerschool.courses cou 
-  ON gr.course_number = cou.course_number
+  ON gr.course_number = cou.course_number_clean
 WHERE co.rn_year = 1
   AND co.school_level IN ('MS','HS')

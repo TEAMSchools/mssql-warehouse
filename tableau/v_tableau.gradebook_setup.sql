@@ -39,7 +39,7 @@ FROM gabby.powerschool.sections sec WITH(NOLOCK)
 JOIN gabby.powerschool.teachers t WITH(NOLOCK)
   ON sec.teacher = t.id
 JOIN gabby.powerschool.courses cou WITH(NOLOCK)
-  ON sec.course_number = cou.course_number
+  ON sec.course_number_clean = cou.course_number_clean
 JOIN gabby.powerschool.gradebook_setup gb WITH(NOLOCK)
   ON sec.dcid = gb.sectionsdcid  
  AND gb.startdate <= GETDATE()

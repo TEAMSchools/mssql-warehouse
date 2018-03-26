@@ -74,7 +74,7 @@ FROM
       AND sec.schoolid = rt.schoolid
      JOIN default_gfs d
        ON sec.schoolid = d.school_number
-      AND LEFT(sec.termid, 2) = d.yearid
+      AND sec.yearid = d.yearid
       AND tb.storecode = d.storecode
       AND rt.abbreviation = d.abbreviation
      LEFT OUTER JOIN gabby.powerschool.gradeformulaset gfs WITH(NOLOCK)
