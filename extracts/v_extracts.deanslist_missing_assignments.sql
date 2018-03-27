@@ -17,8 +17,8 @@ JOIN gabby.powerschool.sections sec
 JOIN gabby.powerschool.teachers t
   ON sec.teacher = t.id
 JOIN gabby.powerschool.courses c
-  ON sec.course_number = c.course_number
+  ON sec.course_number_clean = c.course_number_clean
 WHERE a.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND a.ismissing = 1
   AND a.finalgrade_category = 'Q'
-  AND ISNULL(a.score,0) = 0
+  AND ISNULL(a.score, 0) = 0

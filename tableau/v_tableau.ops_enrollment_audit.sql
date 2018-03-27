@@ -5,13 +5,13 @@ CREATE OR ALTER VIEW tableau.ops_enrollment_audit AS
 
 WITH caredox_enrollment AS (
   SELECT student_id
-        ,status        
+        ,status_clean AS status
         ,ROW_NUMBER() OVER(
            PARTITION BY student_id
              ORDER BY CONVERT(DATETIME,last_updated_at) DESC) AS rn_last_updated
   FROM gabby.caredox.enrollment
   WHERE ISNUMERIC(student_id) = 1
-    AND status != 'new'
+    AND status_clean != 'new'
  )
 
 ,caredox_immunization AS (
@@ -26,13 +26,13 @@ WITH caredox_enrollment AS (
 
 ,caredox_screenings AS (
   SELECT student_id
-        ,status
+        ,status_clean AS status
         ,ROW_NUMBER() OVER(
            PARTITION BY student_id
              ORDER BY CONVERT(DATETIME,last_updated_at) DESC) AS rn_last_updated
   FROM gabby.caredox.screenings
   WHERE ISNUMERIC(student_id) = 1
-    AND status = 'compliant'
+    AND status_clean = 'compliant'
 )
 
 ,caredox_medications AS (
