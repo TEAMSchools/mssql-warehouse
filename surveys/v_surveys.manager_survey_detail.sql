@@ -90,32 +90,32 @@ FROM
            ,CONVERT(VARCHAR,mgr.question_code) AS question_code
            ,mgr.response
       
-           ,CONCAT(adp.preferred_first, ' ', adp.preferred_last) AS subject_name
-           ,CONVERT(VARCHAR,adp.location_custom) AS subject_location
-           ,adp.manager_custom_assoc_id AS subject_manager_id      
+           ,CONCAT(df.preferred_first_name, ' ', df.preferred_last_name) AS subject_name
+           ,CONVERT(VARCHAR,df.primary_site) AS subject_location
+           ,df.manager_adp_associate_id AS subject_manager_id      
            ,CASE
-             WHEN adp.location_custom = 'Rise Academy' THEN 73252
-             WHEN adp.location_custom = 'Newark Collegiate Academy' THEN 73253
-             WHEN adp.location_custom = 'SPARK Academy' THEN 73254
-             WHEN adp.location_custom = 'THRIVE Academy' THEN 73255
-             WHEN adp.location_custom = 'Seek Academy' THEN 73256
-             WHEN adp.location_custom = 'Life Academy' THEN 73257
-             WHEN adp.location_custom = 'Bold Academy' THEN 73258
-             WHEN adp.location_custom = 'Lanning Square Primary' THEN 179901
-             WHEN adp.location_custom = 'Lanning Square MS' THEN 179902
-             WHEN adp.location_custom = 'Whittier Middle' THEN 179903
-             WHEN adp.location_custom = 'TEAM Academy' THEN 133570965
-             WHEN adp.location_custom = 'Pathways' THEN 732574573
+             WHEN df.primary_site = 'Rise Academy' THEN 73252
+             WHEN df.primary_site = 'Newark Collegiate Academy' THEN 73253
+             WHEN df.primary_site = 'SPARK Academy' THEN 73254
+             WHEN df.primary_site = 'THRIVE Academy' THEN 73255
+             WHEN df.primary_site = 'Seek Academy' THEN 73256
+             WHEN df.primary_site = 'Life Academy' THEN 73257
+             WHEN df.primary_site = 'Bold Academy' THEN 73258
+             WHEN df.primary_site = 'Lanning Square Primary' THEN 179901
+             WHEN df.primary_site = 'Lanning Square MS' THEN 179902
+             WHEN df.primary_site = 'Whittier Middle' THEN 179903
+             WHEN df.primary_site = 'TEAM Academy' THEN 133570965
+             WHEN df.primary_site = 'Pathways' THEN 732574573
             END AS reporting_schoolid
            ,CASE
-             WHEN adp.location_custom IN ('SPARK Academy','THRIVE Academy','Seek Academy','Life Academy','Lanning Square Primary','Pathways') THEN 'ES'
-             WHEN adp.location_custom IN ('Rise Academy','Lanning Square MS','Whittier Middle','TEAM Academy','Bold Academy') THEN 'MS'
-             WHEN adp.location_custom IN ('Newark Collegiate Academy') THEN 'HS'
+             WHEN df.primary_site IN ('SPARK Academy','THRIVE Academy','Seek Academy','Life Academy','Lanning Square Primary','Pathways') THEN 'ES'
+             WHEN df.primary_site IN ('Rise Academy','Lanning Square MS','Whittier Middle','TEAM Academy','Bold Academy') THEN 'MS'
+             WHEN df.primary_site IN ('Newark Collegiate Academy') THEN 'HS'
             END AS school_level
            ,CASE
-             WHEN adp.location_custom IN ('SPARK Academy','THRIVE Academy','Seek Academy','Life Academy','Pathways'
+             WHEN df.primary_site IN ('SPARK Academy','THRIVE Academy','Seek Academy','Life Academy','Pathways'
                                          ,'Rise Academy','TEAM Academy','Bold Academy','Newark Collegiate Academy') THEN 'TEAM'
-             WHEN adp.location_custom IN ('Lanning Square Primary','Lanning Square MS','Whittier Middle') THEN 'KCNA'
+             WHEN df.primary_site IN ('Lanning Square Primary','Lanning Square MS','Whittier Middle') THEN 'KCNA'
             END AS region
 
            ,ad.samaccountname AS subject_username
@@ -128,17 +128,16 @@ FROM
 
            ,CONVERT(FLOAT,rs.response_value) AS response_value
      FROM manager_long mgr
-     JOIN gabby.adp.staff_roster adp
-       ON mgr.manager_associate_id = adp.associate_id
-      AND adp.rn_curr = 1
+     JOIN gabby.dayforce.staff_roster df
+       ON mgr.manager_associate_id = df.adp_associate_id
      JOIN gabby.adsi.user_attributes_static ad
-       ON adp.associate_id = ad.idautopersonalternateid
-     LEFT OUTER JOIN gabby.adsi.user_attributes_static admgr
-       ON adp.manager_custom_assoc_id = admgr.idautopersonalternateid
+       ON df.adp_associate_id = ad.idautopersonalternateid
+     LEFT JOIN gabby.adsi.user_attributes_static admgr
+       ON df.manager_adp_associate_id = admgr.idautopersonalternateid
      JOIN gabby.surveys.question_key qk
        ON mgr.question_code = qk.question_code
       AND qk.survey_type = 'MGR'
-     LEFT OUTER JOIN gabby.surveys.response_scales rs
+     LEFT JOIN gabby.surveys.response_scales rs
        ON mgr.response = rs.response_text
       AND rs.survey_type = 'MGR'
     ) sub

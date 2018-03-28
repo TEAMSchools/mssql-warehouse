@@ -11,7 +11,7 @@ SELECT sub.studentid
       ,sub.dateenrolled
       ,sub.dateleft
       
-      ,adp.personal_contact_personal_mobile AS advisor_phone
+      ,df.mobile_number AS advisor_phone
 
       ,dir.mail AS advisor_email
 
@@ -56,9 +56,8 @@ FROM
        AND enr.sectionid > 0
        AND enr.schoolid = 133570965
     ) sub
-LEFT OUTER JOIN gabby.adp.staff_roster adp
-  ON sub.associate_id = adp.associate_id
- AND adp.rn_curr = 1
-LEFT OUTER JOIN gabby.adsi.user_attributes_static dir
-  ON adp.position_id = dir.employeenumber
+LEFT JOIN gabby.dayforce.staff_roster df
+  ON sub.associate_id = df.adp_associate_id
+LEFT JOIN gabby.adsi.user_attributes_static dir
+  ON df.adp_associate_id = dir.idautopersonalternateid
  AND dir.is_active = 1

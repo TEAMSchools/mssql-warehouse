@@ -3,26 +3,27 @@ GO
 
 CREATE OR ALTER VIEW surveys.exit_survey_detail AS
 
-SELECT adp.associate_id
-      ,adp.termination_date
-      ,adp.termination_reason_description
-      ,adp.job_title_description
-      ,adp.birth_date
-      ,adp.eeo_ethnic_description
-      ,adp.subject_dept_custom
-      ,adp.benefits_eligibility_class_description
-      ,adp.is_management
-      ,adp.gender
-      ,adp.hire_date
-      ,adp.position_status      
-      ,adp.primary_address_city
-      ,adp.primary_address_state_territory_code
-      ,adp.primary_address_zip_postal_code
-      ,COALESCE(adp.location_custom, adp.location_description) AS location
-      ,COALESCE(adp.manager_name, adp.reports_to_name) AS manager
-      ,MONTH(adp.hire_date) AS hire_month
-      ,COALESCE(YEAR(adp.termination_date), YEAR(GETDATE())) - YEAR(adp.hire_date) + 1 AS years_at_kipp
-      ,gabby.utilities.DATE_TO_SY(adp.termination_date) AS termination_academic_year
+SELECT df.adp_associate_id AS associate_id
+      ,df.termination_date
+      ,df.status_reason AS termination_reason_description
+      ,df.primary_job AS job_title_description
+      ,df.birth_date
+      ,df.primary_ethnicity AS eeo_ethnic_description
+      ,df.primary_on_site_department AS subject_dept_custom
+      ,df.payclass + ' - ' + df.job_family AS benefits_eligibility_class_description
+      ,df.is_manager AS is_management
+      ,df.gender
+      ,df.original_hire_date AS hire_date
+      ,df.status AS position_status      
+      ,df.address
+      ,df.city AS primary_address_city
+      ,df.state AS primary_address_state_territory_code
+      ,df.postal_code AS primary_address_zip_postal_code
+      ,df.primary_site AS location
+      ,df.manager_name AS manager
+      ,MONTH(df.original_hire_date) AS hire_month
+      ,COALESCE(YEAR(df.termination_date), YEAR(GETDATE())) - YEAR(df.original_hire_date) + 1 AS years_at_kipp
+      ,gabby.utilities.DATE_TO_SY(df.termination_date) AS termination_academic_year
 	
       ,es.timestamp AS exit_survey_date
       ,es.q_1 AS exit_survey_title
@@ -50,7 +51,6 @@ SELECT adp.associate_id
       ,es.q_23 AS rating_freedom
       ,es.q_24 AS rating_fun
       ,es.q_25 AS rating_teamwork	     
-FROM gabby.adp.staff_roster adp 
+FROM gabby.dayforce.staff_roster df
 JOIN gabby.surveys.exit_survey es
-  ON adp.associate_id = es.associate_id
-WHERE adp.rn_curr = 1
+  ON df.adp_associate_id = es.associate_id

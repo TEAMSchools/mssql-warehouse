@@ -5,46 +5,55 @@ CREATE OR ALTER VIEW dayforce.staff_roster AS
 
 WITH clean_people AS (
   SELECT CONVERT(INT,e.df_employee_number) AS df_employee_number /* new */
-        ,CONVERT(VARCHAR(25),e.employee_property_xref_code_5) AS adp_associate_id /* new */
-        ,NULL AS salesforce_id /* no data in export */
+        ,CONVERT(VARCHAR(25),e.adp_associate_id) AS adp_associate_id /* new */
+        ,CONVERT(VARCHAR(25),e.salesforce_id) AS salesforce_id /* new */
         ,CONVERT(VARCHAR(25),e.first_name) AS first_name
-        ,CONVERT(VARCHAR(25),e.last_name) AS last_name                
-        ,CONVERT(VARCHAR(1),UPPER(gender)) AS gender
-        ,CONVERT(VARCHAR(125),e.ethinicity) AS ethinicity                          
-        ,e.mobile_number
+        ,CONVERT(VARCHAR(25),e.last_name) AS last_name        
         ,CONVERT(VARCHAR(125),e.address) AS address /* new */
         ,CONVERT(VARCHAR(125),e.city) AS city
         ,CONVERT(VARCHAR(5),e.state) AS state
-        ,CONVERT(VARCHAR(25),e.postal_code) AS postal_code            
-        ,e.birth_date
-        ,e.original_hire_date             
-        ,e.termination_date
-        ,e.rehire_date             
+        ,CONVERT(VARCHAR(25),e.postal_code) AS postal_code
         ,CONVERT(VARCHAR(25),e.status) AS status
-        ,CONVERT(VARCHAR(25),e.status_reason) AS status_reason                                        
-        ,CONVERT(VARCHAR(5),is_manager) AS is_manager
-        ,NULL AS leadership_role /* no data in export */          
-        ,COALESCE(CONVERT(VARCHAR(25),e.common_name), CONVERT(VARCHAR(25),e.first_name)) AS preferred_first_name
-        ,COALESCE(e.preferred_last_name , CONVERT(VARCHAR(25),e.last_name)) AS preferred_last_name
-             
-        ,CONVERT(VARCHAR(125),e.primary_job) AS primary_job             
-        ,CONVERT(VARCHAR(125),e.primary_on_site_department) AS primary_on_site_department             
-        ,CONVERT(VARCHAR(125),e.primary_site) AS primary_site             
-        ,CONVERT(VARCHAR(125),e.legal_entity_name) AS legal_entity_name /* different */                                       
-        ,CONVERT(VARCHAR(25),e.job_family) AS job_family /* different */                      
+        ,CONVERT(VARCHAR(25),e.status_reason) AS status_reason
+        ,CONVERT(VARCHAR(5),e.is_manager) AS is_manager        
+        ,CONVERT(VARCHAR(125),e.primary_job) AS primary_job
+        ,CONVERT(VARCHAR(125),e.primary_on_site_department) AS primary_on_site_department
+        ,CONVERT(VARCHAR(125),e.legal_entity_name) AS legal_entity_name /* different */
+        ,CONVERT(VARCHAR(25),e.job_family) AS job_family /* different */        
+        ,CONVERT(INT,e.employee_s_manager_s_df_emp_number_id) AS manager_df_employee_number
+        ,CONVERT(VARCHAR(5),e.payclass) AS payclass /* different */
+        ,CONVERT(VARCHAR(25),e.paytype) AS paytype /* new */
+        ,CONVERT(VARCHAR(25),e.jobs_and_positions_flsa_status) AS flsa_status /* new */                
+        ,e.birth_date
+        ,e.original_hire_date
+        ,e.termination_date
+        ,e.rehire_date
         ,e.position_effective_from_date
-        ,NULL AS position_effective_to_date /* no data in export */
-        ,CONVERT(INT,e.employee_s_manager_s_df_emp_number_id) AS manager_df_employee_number             
-        ,CONVERT(VARCHAR(5),e.payclass) AS payclass /* different */             
-        ,CONVERT(VARCHAR(25),paytype) AS paytype /* new */
-        ,NULL AS flsa_status /* no data in export */
-        ,e.annual_salary /* new */                                       
+        ,e.annual_salary /* new */
         ,e.grades_taught
-        ,e.subjects_taught
+        ,e.subjects_taught        
+        ,NULL AS leadership_role /* no data in export */
+        ,NULL AS position_effective_to_date /* no data in export */
 
-        --,CONVERT(VARCHAR(125),position_title) AS position_title /* new */
-        --,CONVERT(VARCHAR(125),primary_on_site_department_entity_) AS primary_on_site_department_entity /* new */
-        --,CONVERT(VARCHAR(125),primary_site_entity_) AS primary_site_entity /* new */             
+        ,CONVERT(VARCHAR(1),UPPER(e.gender)) AS gender
+        ,CONVERT(VARCHAR(25),COALESCE(e.common_name, e.first_name)) AS preferred_first_name
+        ,CONVERT(VARCHAR(25),COALESCE(e.preferred_last_name , e.last_name)) AS preferred_last_name
+        ,CONVERT(VARCHAR(125),REPLACE(e.primary_site, ' - Regional', '')) AS primary_site
+        ,CONVERT(VARCHAR(125),RTRIM(LEFT(e.ethinicity, CHARINDEX(' (', e.ethinicity)))) AS primary_ethnicity        
+        ,CASE WHEN e.ethinicity LIKE '%(Hispanic%' THEN 1 ELSE 0 END AS is_hispanic
+        ,CASE WHEN e.primary_site LIKE ' - Regional' THEN 1 ELSE 0 END AS is_regional_staff        
+        ,CASE
+          WHEN e.legal_entity_name = 'TEAM Academy Charter Schools' THEN 'YHD'
+          WHEN e.legal_entity_name = 'KIPP New Jersey' THEN 'D30'
+          WHEN e.legal_entity_name = 'KIPP Cooper Norcross Academy' THEN 'D3Z'          
+         END AS payroll_company_code
+        ,SUBSTRING(mobile_number, 1, 3) + '-' 
+           + SUBSTRING(mobile_number, 4, 3) + '-' 
+           + SUBSTRING(mobile_number, 7, 4) AS mobile_number        
+
+        --,CONVERT(VARCHAR(125),position_title) AS position_title /* new -- redundant combined field */
+        --,CONVERT(VARCHAR(125),primary_on_site_department_entity_) AS primary_on_site_department_entity /* new -- redundant combined field */
+        --,CONVERT(VARCHAR(125),primary_site_entity_) AS primary_site_entity /* new -- redundant combined field */
   FROM gabby.dayforce.employees e
  )
 
@@ -54,7 +63,8 @@ SELECT c.df_employee_number
       ,c.first_name
       ,c.last_name
       ,c.gender
-      ,c.ethinicity
+      ,c.primary_ethnicity
+      ,c.is_hispanic
       ,c.mobile_number
       ,c.address
       ,c.city
@@ -72,19 +82,43 @@ SELECT c.df_employee_number
       ,c.preferred_last_name
       ,c.primary_job
       ,c.primary_on_site_department
-      ,c.primary_site
+      ,c.primary_site      
+      ,c.is_regional_staff
       ,c.legal_entity_name
       ,c.job_family
       ,c.position_effective_from_date
       ,c.position_effective_to_date
       ,c.manager_df_employee_number
+      ,c.payroll_company_code
       ,c.payclass
       ,c.paytype
       ,c.flsa_status
       ,c.annual_salary
       ,c.grades_taught
       ,c.subjects_taught
+      ,c.preferred_last_name + ', ' + c.preferred_first_name AS preferred_name
+      ,CASE
+        WHEN c.primary_site = '18th Ave Campus' THEN 0
+        WHEN c.primary_site = 'BOLD Academy' THEN 73258
+        WHEN c.primary_site = 'Lanning Sq Campus' THEN 0
+        WHEN c.primary_site = 'Lanning Square Middle' THEN 179902
+        WHEN c.primary_site = 'Lanning Square Primary' THEN 179901
+        WHEN c.primary_site = 'Life Academy' THEN 73257
+        WHEN c.primary_site = 'Newark Collegiate Academy' THEN 73253
+        WHEN c.primary_site = 'Pathways at 18th Ave' THEN 73258
+        WHEN c.primary_site = 'Pathways at Bragaw' THEN 73257
+        WHEN c.primary_site = 'Rise Academy' THEN 73252
+        WHEN c.primary_site = 'Room 10 - 740 Chestnut St' THEN 0
+        WHEN c.primary_site = 'Room 11 - 6745 NW 23rd Ave' THEN 0
+        WHEN c.primary_site = 'Room 9 - 60 Park Pl' THEN 0
+        WHEN c.primary_site = 'Seek Academy' THEN 73256
+        WHEN c.primary_site = 'SPARK Academy' THEN 73254
+        WHEN c.primary_site = 'TEAM Academy' THEN 133570965
+        WHEN c.primary_site = 'THRIVE Academy' THEN 73255
+        WHEN c.primary_site = 'Whittier Middle' THEN 179903
+       END AS primary_site_schoolid
 
+      ,m.adp_associate_id AS manager_adp_associate_id
       ,m.preferred_first_name AS manager_preferred_first_name
       ,m.preferred_last_name AS manager_preferred_last_name
       ,m.preferred_last_name + ', ' + m.preferred_first_name AS manager_name

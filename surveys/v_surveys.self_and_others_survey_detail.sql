@@ -84,9 +84,9 @@ FROM
            ,CONVERT(VARCHAR,so.question_code) AS question_code
            ,so.response
       
-           ,CONCAT(adp.preferred_first, ' ', adp.preferred_last) AS subject_name
-           ,CONVERT(VARCHAR,adp.location_custom) AS subject_location
-           ,adp.manager_custom_assoc_id AS subject_manager_id      
+           ,CONCAT(df.preferred_first_name, ' ', df.preferred_last_name) AS subject_name
+           ,CONVERT(VARCHAR,df.primary_site) AS subject_location
+           ,df.manager_adp_associate_id AS subject_manager_id      
 
            ,ad.samaccountname AS subject_username
 
@@ -98,17 +98,16 @@ FROM
 
            ,CONVERT(FLOAT,rs.response_value) AS response_value
      FROM so_long so
-     JOIN gabby.adp.staff_roster adp
-       ON so.subject_associate_id = adp.associate_id
-      AND adp.rn_curr = 1
+     JOIN gabby.dayforce.staff_roster df
+       ON so.subject_associate_id = df.adp_associate_id
      JOIN gabby.adsi.user_attributes_static ad
-       ON adp.associate_id = ad.idautopersonalternateid
-     LEFT OUTER JOIN gabby.adsi.user_attributes_static mgr
-       ON adp.manager_custom_assoc_id = mgr.idautopersonalternateid
+       ON df.adp_associate_id = ad.idautopersonalternateid
+     LEFT JOIN gabby.adsi.user_attributes_static mgr
+       ON df.manager_adp_associate_id = mgr.idautopersonalternateid
      JOIN gabby.surveys.question_key qk
        ON so.question_code = qk.question_code
       AND qk.survey_type = 'SO'
-     LEFT OUTER JOIN gabby.surveys.response_scales rs
+     LEFT JOIN gabby.surveys.response_scales rs
        ON so.response = rs.response_text
       AND rs.survey_type = 'SO'
     ) sub

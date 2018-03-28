@@ -49,7 +49,7 @@ SELECT co.student_number
       
       ,nav.counselor_name AS ktc_counselor_name
       
-      ,adp.personal_contact_personal_mobile AS ktc_counselor_phone
+      ,df.mobile_number AS ktc_counselor_phone
       
       ,ad.mail AS ktc_counselor_email
       
@@ -60,22 +60,21 @@ SELECT co.student_number
 FROM gabby.powerschool.cohort_identifiers_static co
 JOIN ug_school ug
   ON co.student_number = ug.student_number
-LEFT OUTER JOIN enroll_dates ed
+LEFT JOIN enroll_dates ed
   ON co.student_number = ed.student_number
  AND CASE WHEN co.schoolid = 999999 THEN ug.schoolid ELSE co.schoolid END = ed.schoolid
-LEFT OUTER JOIN gabby.naviance.students nav 
+LEFT JOIN gabby.naviance.students nav 
   ON co.student_number = nav.hs_student_id
-LEFT OUTER JOIN gabby.adp.staff_roster adp 
-  ON nav.counselor_name = CONCAT(adp.preferred_first, ' ', adp.preferred_last)
- AND adp.rn_curr = 1
-LEFT OUTER JOIN gabby.adsi.user_attributes_static ad
-  ON adp.associate_id = ad.idautopersonalternateid
-LEFT OUTER JOIN gabby.powerschool.category_grades_wide cat
+LEFT JOIN gabby.dayforce.staff_roster df 
+  ON nav.counselor_name = CONCAT(df.preferred_first_name, ' ', df.preferred_last_name)
+LEFT JOIN gabby.adsi.user_attributes_static ad
+  ON df.adp_associate_id = ad.idautopersonalternateid
+LEFT JOIN gabby.powerschool.category_grades_wide cat
   ON co.student_number = cat.student_number
  AND co.academic_year = cat.academic_year
  AND cat.is_curterm = 1
  AND cat.course_number = 'ALL'
-LEFT OUTER JOIN gabby.powerschool.gpa_detail gpa
+LEFT JOIN gabby.powerschool.gpa_detail gpa
   ON co.student_number = gpa.student_number
  AND co.academic_year = gpa.academic_year
  AND gpa.is_curterm = 1

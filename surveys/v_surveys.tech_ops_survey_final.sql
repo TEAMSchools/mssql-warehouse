@@ -34,12 +34,12 @@ WITH to_survey AS (
        
         ,adsi.idautopersonalternateid AS associate_id
 
-        ,roster.location_custom AS location
+        ,roster.primary_site AS location
   FROM gabby.surveys.tech_ops_survey sur
   LEFT JOIN gabby.adsi.user_attributes_static adsi
     ON sur.please_confirm_your_email_address_please_use_your_kippnj_org_address_for_tracking_purposes_only_ = adsi.mail
-  LEFT JOIN gabby.adp.staff_roster roster
-    ON adsi.idautopersonalternateid = roster.associate_id
+  LEFT JOIN gabby.dayforce.staff_roster roster
+    ON adsi.idautopersonalternateid = roster.adp_associate_id
  )
 
 ,to_long AS (

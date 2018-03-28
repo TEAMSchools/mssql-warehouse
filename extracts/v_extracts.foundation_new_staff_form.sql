@@ -3,27 +3,24 @@ GO
 
 CREATE OR ALTER VIEW extracts.foundation_new_staff_form AS
 
-WITH adp AS (
-  SELECT e.location_description AS school_name
-	       ,e.first_name AS first_name
-	       ,e.last_name AS last_name
+WITH dayforce AS (
+  SELECT e.primary_site AS school_name
+	       ,e.preferred_first_name AS first_name
+	       ,e.preferred_last_name AS last_name
 	       ,e.birth_date AS date_of_birth
-	       ,e.gender AS gender
-	       ,e.eeo_ethnic_description AS ethnicity	       
-	       ,e.hire_date AS start_date_in_this_role
-	       ,e.job_title_description AS job_title
-	       ,e.grades_taught_custom AS grade_taught
-	       ,e.subject_dept_custom AS subject
-	       ,e.salesforce_job_position_name_custom
+	       ,e.gender
+	       ,e.primary_ethnicity AS ethnicity	       
+	       ,e.original_hire_date AS start_date_in_this_role
+	       ,e.primary_job AS job_title
+	       ,e.grades_taught AS grade_taught
+	       ,e.subjects_taught AS subject
+	       ,e.salesforce_id
 
         ,a.mail AS work_email_address
-
-	       ,NULL AS years_teaching	
-  FROM gabby.adp.staff_roster e 
-  LEFT OUTER JOIN gabby.adsi.user_attributes_static a
-    ON e.associate_id = a.idautopersonalternateid
-  WHERE e.hire_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
-    AND e.rn_curr = 1
+  FROM gabby.dayforce.staff_roster e 
+  LEFT JOIN gabby.adsi.user_attributes_static a
+    ON e.adp_associate_id = a.idautopersonalternateid
+  WHERE e.original_hire_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)    
  )
 
 ,salesforce AS (
@@ -61,9 +58,9 @@ SELECT 'KIPP New Jersey' AS region
 	      ,ISNULL(s.kipp_alumni, 'No') AS kipp_alumni
 	      ,COALESCE(c.grade_taught, s.grade_taught) AS grade_taught
 	      ,COALESCE(c.subject, s.subject) AS subject
-	      ,COALESCE(s.years_teaching, c.years_teaching) AS years_teaching
+	      ,s.years_teaching
 	      ,s.atp
 	      ,s.atp_city
-FROM adp c 
-LEFT OUTER JOIN salesforce s
-	 ON c.salesforce_job_position_name_custom = s.salesforce_position_id
+FROM dayforce c 
+LEFT JOIN salesforce s
+	 ON c.salesforce_id = s.salesforce_position_id
