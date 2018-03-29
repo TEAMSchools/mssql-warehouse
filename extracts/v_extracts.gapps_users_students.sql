@@ -15,10 +15,8 @@ SELECT co.student_number
                        ELSE co.school_name 
                       END AS org
 
-      ,acct.student_web_id + '@teamstudents.org' AS email
-      ,acct.student_web_password AS password
+      ,co.student_web_id + '@teamstudents.org' AS email
+      ,co.student_web_password AS password
 FROM gabby.powerschool.cohort_identifiers_static co
-JOIN gabby.powerschool.student_access_accounts acct 
-  ON co.student_number = acct.student_number
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.rn_year = 1

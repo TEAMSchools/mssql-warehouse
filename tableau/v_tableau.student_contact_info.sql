@@ -40,14 +40,11 @@ SELECT co.student_number
       ,co.zip
       ,co.first_name
       ,co.last_name
-
-      ,aa.student_web_id
-      ,aa.student_web_password
-      ,aa.web_id AS family_web_id
-      ,aa.web_password AS family_web_password      
+      ,co.student_web_id
+      ,co.student_web_password
+      ,co.student_web_id + '.fam' AS family_web_id
+      ,co.student_web_password AS family_web_password      
 FROM gabby.powerschool.cohort_identifiers_static co
-LEFT OUTER JOIN gabby.extracts.powerschool_autocomm_students_accessaccounts aa
-  ON co.student_number = aa.student_number
 WHERE co.enroll_status = 0
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.rn_year = 1

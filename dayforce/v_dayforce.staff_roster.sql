@@ -47,9 +47,9 @@ WITH clean_people AS (
           WHEN e.legal_entity_name = 'KIPP New Jersey' THEN 'D30'
           WHEN e.legal_entity_name = 'KIPP Cooper Norcross Academy' THEN 'D3Z'          
          END AS payroll_company_code
-        ,SUBSTRING(mobile_number, 1, 3) + '-' 
-           + SUBSTRING(mobile_number, 4, 3) + '-' 
-           + SUBSTRING(mobile_number, 7, 4) AS mobile_number        
+        ,CONVERT(VARCHAR(25),SUBSTRING(mobile_number, 1, 3) + '-' 
+                              + SUBSTRING(mobile_number, 4, 3) + '-' 
+                              + SUBSTRING(mobile_number, 7, 4)) AS mobile_number        
 
         --,CONVERT(VARCHAR(125),position_title) AS position_title /* new -- redundant combined field */
         --,CONVERT(VARCHAR(125),primary_on_site_department_entity_) AS primary_on_site_department_entity /* new -- redundant combined field */

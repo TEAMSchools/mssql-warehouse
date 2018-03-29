@@ -9,15 +9,11 @@ SELECT co.student_number
       ,co.team
       ,co.school_name
       ,CONVERT(VARCHAR,co.entrydate) AS entrydate
-
-      ,s.student_web_id
-      ,s.student_web_password
-      ,s.student_web_id + '@teamstudents.org' AS student_email      
-
+      ,co.student_web_id
+      ,co.student_web_password
+      ,co.student_web_id + '@teamstudents.org' AS student_email      
       ,co.region
 FROM gabby.powerschool.cohort_identifiers_static co
-JOIN gabby.powerschool.student_access_accounts s
-  ON co.student_number = s.student_number
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.rn_year = 1 
   AND co.enroll_status = 0

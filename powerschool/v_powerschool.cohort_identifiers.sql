@@ -135,16 +135,19 @@ SELECT co.studentid
         WHEN nj.lependdate < co.entrydate THEN NULL
         WHEN nj.lepbegindate <= co.exitdate THEN 1       
        END AS lep_status      
+
+      ,saa.student_web_id
+      ,saa.student_web_password
 FROM gabby.powerschool.cohort co
 JOIN gabby.powerschool.students s
   ON co.studentid = s.id
-LEFT OUTER JOIN gabby.powerschool.u_studentsuserfields suf
+LEFT JOIN gabby.powerschool.u_studentsuserfields suf
   ON s.dcid = suf.studentsdcid
-LEFT OUTER JOIN gabby.powerschool.studentcorefields scf
+LEFT JOIN gabby.powerschool.studentcorefields scf
   ON s.dcid = scf.studentsdcid
 JOIN gabby.powerschool.schools sch
   ON co.schoolid = sch.school_number
-LEFT OUTER JOIN gabby.powerschool.spenrollments_gen sp
+LEFT JOIN gabby.powerschool.spenrollments_gen sp
   ON co.studentid = sp.studentid
  AND co.entrydate BETWEEN sp.enter_date AND sp.exit_date
  AND sp.programid IN (4573, 5074, 5075, 5173) 
@@ -155,18 +158,20 @@ LEFT OUTER JOIN gabby.powerschool.spenrollments_gen sp
 --  * 5075 = Whittier (ES)
 --  * 5713 = Out-of-District
  */
-LEFT OUTER JOIN gabby.powerschool.team_roster t
+LEFT JOIN gabby.powerschool.team_roster_static t
   ON co.studentid = t.studentid
  AND co.academic_year = t.academic_year
  AND t.rn_year = 1
-LEFT OUTER JOIN gabby.powerschool.advisory adv
+LEFT JOIN gabby.powerschool.advisory_static adv
   ON co.studentid = adv.studentid
  AND co.academic_year = adv.academic_year
  AND adv.rn_year = 1
-LEFT OUTER JOIN gabby.mcs.lunch_info_static mcs
+LEFT JOIN gabby.mcs.lunch_info_static mcs
   ON s.student_number = mcs.studentnumber
-LEFT OUTER JOIN gabby.easyiep.njsmart_powerschool sped
+LEFT JOIN gabby.easyiep.njsmart_powerschool sped
   ON s.student_number = sped.student_number
  AND co.academic_year  = sped.academic_year
-LEFT OUTER JOIN gabby.powerschool.s_nj_stu_x nj
+LEFT JOIN gabby.powerschool.s_nj_stu_x nj
   ON s.dcid = nj.studentsdcid
+LEFT JOIN gabby.powerschool.student_access_accounts_static saa
+  ON s.student_number = saa.student_number

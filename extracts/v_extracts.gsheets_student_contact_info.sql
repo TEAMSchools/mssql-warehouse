@@ -36,16 +36,13 @@ SELECT co.student_number
       ,CONCAT(co.street, ', ', co.city, ', ', co.state, ' ', co.zip) AS address
       ,co.first_name
       ,co.last_name
-
-      ,aa.student_web_id
-      ,aa.student_web_password
-      ,aa.web_id AS family_web_id
-      ,aa.web_password AS family_web_password      
+      ,co.student_web_id
+      ,co.student_web_password
+      ,co.student_web_id + '.fam' AS family_web_id
+      ,co.student_web_password AS family_web_password      
 
       ,suf.media_release
 FROM gabby.powerschool.cohort_identifiers_static co
-LEFT JOIN gabby.extracts.powerschool_autocomm_students_accessaccounts aa
-  ON co.student_number = aa.student_number
 LEFT JOIN gabby.powerschool.u_studentsuserfields suf
   ON co.students_dcid = suf.studentsdcid
 WHERE co.enroll_status = 0

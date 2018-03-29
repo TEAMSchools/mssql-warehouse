@@ -15,9 +15,9 @@ SELECT sub.studentid
 
       ,dir.mail AS advisor_email
 
-      ,ROW_NUMBER() OVER(
-         PARTITION BY sub.student_number, sub.academic_year
-           ORDER BY sub.dateleft DESC, sub.dateenrolled DESC) AS rn_year
+      ,CONVERT(INT,ROW_NUMBER() OVER(
+                     PARTITION BY sub.student_number, sub.academic_year
+                       ORDER BY sub.dateleft DESC, sub.dateenrolled DESC)) AS rn_year
 FROM
     (
      SELECT enr.studentid

@@ -11,9 +11,9 @@ SELECT enr.studentid
         ELSE gabby.utilities.STRIP_CHARACTERS(enr.section_number,'0-9')
        END) AS team
 
-      ,ROW_NUMBER() OVER(
-         PARTITION BY enr.student_number, enr.academic_year
-           ORDER BY enr.dateleft DESC, enr.dateenrolled DESC) AS rn_year
+      ,CONVERT(INT,ROW_NUMBER() OVER(
+                     PARTITION BY enr.student_number, enr.academic_year
+                       ORDER BY enr.dateleft DESC, enr.dateenrolled DESC)) AS rn_year
 FROM gabby.powerschool.course_enrollments_static enr           
 WHERE enr.course_number = 'HR'
   AND enr.sectionid > 0
