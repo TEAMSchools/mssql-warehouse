@@ -30,7 +30,7 @@ WITH att_counts AS (
              ,CONVERT(VARCHAR,dates.alt_name) AS term_name
              ,dates.start_date
              ,dates.end_date
-       FROM gabby.powerschool.ps_attendance_daily_static att
+       FROM gabby.powerschool.ps_attendance_daily att
        JOIN gabby.reporting.reporting_terms dates
          ON att.schoolid = dates.schoolid
         AND att.att_date BETWEEN dates.start_date AND dates.end_date

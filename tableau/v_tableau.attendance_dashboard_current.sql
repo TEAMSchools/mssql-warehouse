@@ -127,7 +127,7 @@ FROM
       AND mem.calendardate <= CONVERT(DATE,GETDATE()) 
       AND mem.membershipvalue > 0
       AND mem.attendancevalue IS NOT NULL
-     LEFT JOIN gabby.powerschool.ps_attendance_daily_static att
+     LEFT JOIN gabby.powerschool.ps_attendance_daily att
        ON co.studentid = att.studentid
       AND mem.calendardate = att.att_date
      LEFT JOIN gabby.reporting.reporting_terms dt 

@@ -47,7 +47,7 @@ LEFT JOIN gabby.reporting.reporting_terms dt
  AND co.academic_year = dt.academic_year
  AND a.administered_at BETWEEN dt.start_date AND dt.end_date
  AND dt.identifier = 'RT' 
-LEFT JOIN gabby.powerschool.ps_attendance_daily_static att
+LEFT JOIN gabby.powerschool.ps_attendance_daily att
   ON co.studentid = att.studentid
  AND ovr.date_taken = att.att_date
  AND att.att_code LIKE 'A%'

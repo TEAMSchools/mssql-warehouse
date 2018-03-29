@@ -56,7 +56,7 @@ FROM
           JOIN valid_dates d
             ON co.schoolid = d.schoolid
            AND co.academic_year = d.academic_year
-          LEFT JOIN gabby.powerschool.ps_attendance_daily_static att 
+          LEFT JOIN gabby.powerschool.ps_attendance_daily att 
             ON co.studentid = att.studentid
            AND d.date_value = att.att_date     
           WHERE co.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)

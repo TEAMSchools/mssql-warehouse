@@ -3,36 +3,52 @@ GO
 
 CREATE OR ALTER VIEW powerschool.ps_attendance_daily AS 
 
-SELECT att.id
-      ,att.studentid
-      ,att.schoolid
-      ,att.att_date
-      ,att.attendance_codeid
-      ,att.att_mode_code
-      ,att.calendar_dayid
-      ,att.programid
-      ,att.total_minutes
+SELECT padcs.id
+      ,padcs.studentid
+      ,padcs.schoolid
+      ,padcs.att_date
+      ,padcs.attendance_codeid
+      ,padcs.att_mode_code
+      ,padcs.calendar_dayid
+      ,padcs.programid
+      ,padcs.total_minutes
+      ,padcs.att_code 
+      ,padcs.count_for_ada
+      ,padcs.presence_status_cd
+      ,padcs.count_for_adm
+      ,padcs.a
+      ,padcs.b
+      ,padcs.c
+      ,padcs.d
+      ,padcs.e
+      ,padcs.f
+      ,padcs.insession
+      ,padcs.cycle_day_id  
+      ,padcs.abbreviation
+FROM gabby.powerschool.ps_attendance_daily_current_static padcs
 
-      ,CASE WHEN ac.att_code = 'true' THEN 'T' ELSE CONVERT(VARCHAR(5),ac.att_code) END AS att_code 
-      ,CONVERT(INT,ac.calculate_ada_yn) AS count_for_ada
-      ,CONVERT(VARCHAR(25),ac.presence_status_cd) AS presence_status_cd
-      ,CONVERT(INT,ac.calculate_adm_yn) AS count_for_adm
+UNION ALL
 
-      ,CONVERT(INT,cd.a) AS a
-      ,CONVERT(INT,cd.b) AS b
-      ,CONVERT(INT,cd.c) AS c
-      ,CONVERT(INT,cd.d) AS d
-      ,CONVERT(INT,cd.e) AS e
-      ,CONVERT(INT,cd.f) AS f
-      ,CONVERT(INT,cd.insession) AS insession
-      ,CONVERT(INT,cd.cycle_day_id) AS cycle_day_id
-  
-      ,CONVERT(VARCHAR(25),cy.abbreviation) AS abbreviation
-FROM gabby.powerschool.attendance_clean att 
-JOIN gabby.powerschool.attendance_code ac 
-  ON att.attendance_codeid = ac.id
-JOIN gabby.powerschool.calendar_day cd
-  ON att.calendar_dayid = cd.id
-JOIN gabby.powerschool.cycle_day cy
-  ON cd.cycle_day_id = cy.id
-WHERE att.att_mode_code = 'ATT_ModeDaily'
+SELECT pada.id
+      ,pada.studentid
+      ,pada.schoolid
+      ,pada.att_date
+      ,pada.attendance_codeid
+      ,pada.att_mode_code
+      ,pada.calendar_dayid
+      ,pada.programid
+      ,pada.total_minutes
+      ,pada.att_code 
+      ,pada.count_for_ada
+      ,pada.presence_status_cd
+      ,pada.count_for_adm
+      ,pada.a
+      ,pada.b
+      ,pada.c
+      ,pada.d
+      ,pada.e
+      ,pada.f
+      ,pada.insession
+      ,pada.cycle_day_id  
+      ,pada.abbreviation
+FROM gabby.powerschool.ps_attendance_daily_archive pada
