@@ -197,7 +197,7 @@ SELECT sub.teachernumber
       ,CASE WHEN sub.status = 1 THEN 1 ELSE 0 END AS ptaccess            
 FROM
     (
-     SELECT COALESCE(CONVERT(VARCHAR,link.teachernumber), df.adp_associate_id) AS teachernumber
+     SELECT COALESCE(psid.ps_teachernumber, df.adp_associate_id) AS teachernumber
            ,df.preferred_first_name AS first_name
            ,df.preferred_last_name AS last_name
            ,df.primary_site_schoolid AS homeschoolid
@@ -207,7 +207,7 @@ FROM
            ,LOWER(dir.mail) AS email_addr
            
            ,CASE
-             WHEN link.is_master = 0 THEN 2
+             WHEN psid.is_master = 0 THEN 2
              WHEN df.termination_date < GETDATE() THEN 2
              WHEN df.primary_job = 'Intern' THEN 2
              WHEN df.status IN ('ACTIVE','INACTIVE') OR df.termination_date >= CONVERT(DATE,GETDATE()) THEN 1
@@ -217,8 +217,8 @@ FROM
      LEFT JOIN gabby.adsi.user_attributes_static dir
        ON df.adp_associate_id = dir.idautopersonalternateid
       AND dir.is_active = 1
-     LEFT JOIN gabby.people.adp_ps_id_link link
-       ON df.adp_associate_id = link.associate_id
+     LEFT JOIN gabby.people.id_crosswalk_powerschool psid
+       ON df.adp_associate_id = psid.adp_associate_id
      WHERE df.primary_on_site_department != 'Data'
     ) sub
 LEFT JOIN gabby.powerschool.teachers t

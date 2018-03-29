@@ -28,11 +28,11 @@ FROM
            ,enr.dateenrolled
            ,enr.dateleft           
 
-           ,COALESCE(link.associate_id, enr.teachernumber) AS associate_id
+           ,COALESCE(psid.adp_associate_id, enr.teachernumber) AS associate_id
      FROM gabby.powerschool.course_enrollments_static enr           
-     LEFT OUTER JOIN gabby.people.adp_ps_id_link link
-       ON enr.teachernumber = CONVERT(VARCHAR(125),link.teachernumber)
-      AND link.is_master = 1          
+     LEFT JOIN gabby.people.id_crosswalk_powerschool psid
+       ON enr.teachernumber = psid.ps_teachernumber
+      AND psid.is_master = 1          
      WHERE enr.course_number = 'HR'
        AND enr.sectionid > 0
        AND enr.schoolid != 133570965
@@ -47,11 +47,11 @@ FROM
            ,enr.dateenrolled
            ,enr.dateleft
            
-           ,COALESCE(link.associate_id, enr.teachernumber) AS associate_id
+           ,COALESCE(psid.adp_associate_id, enr.teachernumber) AS associate_id
      FROM gabby.powerschool.course_enrollments_static enr           
-     LEFT OUTER JOIN gabby.people.adp_ps_id_link link
-       ON enr.teachernumber = CONVERT(VARCHAR(125),link.teachernumber)
-      AND link.is_master = 1     
+     LEFT JOIN gabby.people.id_crosswalk_powerschool psid
+       ON enr.teachernumber = psid.ps_teachernumber
+      AND psid.is_master = 1     
      WHERE enr.course_number = 'ADV'
        AND enr.sectionid > 0
        AND enr.schoolid = 133570965
