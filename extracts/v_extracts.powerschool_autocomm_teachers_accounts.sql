@@ -34,7 +34,7 @@ SELECT sub.teachernumber
       --*/
 FROM
     (
-     SELECT COALESCE(LTRIM(RTRIM(STR(link.TEACHERNUMBER))), adp.[associate_id]) AS teachernumber           
+     SELECT COALESCE(link.ps_teachernumber, adp.[associate_id]) AS teachernumber           
            ,adp.preferred_first AS first_name
            ,adp.preferred_last AS last_name
            ,ISNULL(LOWER(dir.sAMAccountName),'') AS loginid
@@ -172,8 +172,8 @@ FROM
      JOIN gabby.adsi.user_attributes_static dir
        ON adp.position_id = dir.employeenumber
       AND dir.is_active = 1
-     LEFT OUTER JOIN gabby.people.adp_ps_id_link link
-       ON adp.associate_id = link.associate_id
+     LEFT JOIN gabby.people.id_crosswalk_powerschool link
+       ON adp.associate_id = link.adp_associate_id
      WHERE adp.rn_curr = 1     
        AND adp.associate_id NOT IN ('OJOCGAWIL','B8IZPXIOF','CLB53DM3M') /* data team */       
     ) sub
