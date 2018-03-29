@@ -117,6 +117,31 @@ SELECT c.df_employee_number
         WHEN c.primary_site = 'THRIVE Academy' THEN 73255
         WHEN c.primary_site = 'Whittier Middle' THEN 179903
        END AS primary_site_schoolid
+      ,CASE
+        WHEN c.primary_site = '18th Ave Campus' THEN 0
+        WHEN c.primary_site = 'BOLD Academy' THEN 73258
+        WHEN c.primary_site = 'Lanning Sq Campus' THEN 0
+        WHEN c.primary_site = 'Lanning Square Middle' THEN 179902
+        WHEN c.primary_site = 'Lanning Square Primary' THEN 179901
+        WHEN c.primary_site = 'Life Academy' THEN 73257
+        WHEN c.primary_site = 'Newark Collegiate Academy' THEN 73253
+        WHEN c.primary_site = 'Pathways at 18th Ave' THEN 732585074
+        WHEN c.primary_site = 'Pathways at Bragaw' THEN 732574573
+        WHEN c.primary_site = 'Rise Academy' THEN 73252
+        WHEN c.primary_site = 'Room 10 - 740 Chestnut St' THEN 0
+        WHEN c.primary_site = 'Room 11 - 6745 NW 23rd Ave' THEN 0
+        WHEN c.primary_site = 'Room 9 - 60 Park Pl' THEN 0
+        WHEN c.primary_site = 'Seek Academy' THEN 73256
+        WHEN c.primary_site = 'SPARK Academy' THEN 73254
+        WHEN c.primary_site = 'TEAM Academy' THEN 133570965
+        WHEN c.primary_site = 'THRIVE Academy' THEN 73255
+        WHEN c.primary_site = 'Whittier Middle' THEN 179903
+       END AS primary_site_reporting_schoolid
+      ,CASE        
+        WHEN c.primary_site IN ('Lanning Square Primary','Life Academy','Pathways at Bragaw','Seek Academy','SPARK Academy','THRIVE Academy') THEN 'ES'
+        WHEN c.primary_site IN ('BOLD Academy','Lanning Square Middle','Pathways at 18th Ave','Rise Academy','TEAM Academy') THEN 'MS'
+        WHEN c.primary_site = 'Newark Collegiate Academy' THEN 'HS'
+       END AS primary_site_school_level
 
       ,m.adp_associate_id AS manager_adp_associate_id
       ,m.preferred_first_name AS manager_preferred_first_name

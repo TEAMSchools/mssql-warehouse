@@ -19,51 +19,6 @@ WITH prof_calendar AS (
     AND (cal.insession = 1 OR cal.type = 'PD')  
  )
 
-,staff_roster AS (
-  SELECT associate_id        
-        ,location
-        ,job_title
-        ,manager
-        ,email_address
-        ,position_start_date
-        ,position_status
-        ,preferred_lastfirst
-        ,CASE          
-          WHEN reporting_location = 'TEAM Academy' THEN 133570965
-          WHEN reporting_location = 'Rise Academy' THEN 73252
-          WHEN reporting_location = 'Newark Collegiate Academy' THEN 73253
-          WHEN reporting_location = 'SPARK Academy' THEN 73254
-          WHEN reporting_location IN ('THRIVE Academy','18th Ave Campus','Pathways at 18th Ave') THEN 73255          
-          WHEN reporting_location = 'Seek Academy' THEN 73256
-          WHEN reporting_location IN ('Life Academy','Pathways at Bragaw') THEN 73257
-          WHEN reporting_location = 'Bold Academy' THEN 73258                    
-          WHEN reporting_location = 'Lanning Square Primary' THEN 179901
-          WHEN reporting_location = 'Lanning Square Middle' THEN 179902
-          WHEN reporting_location = 'Whittier Middle' THEN 179903
-          WHEN reporting_location = 'Whittier Elementary' THEN 1799015075          
-         END AS schoolid
-  FROM
-      (
-       SELECT df.adp_associate_id AS associate_id
-             ,df.preferred_first_name 
-             ,df.preferred_last_name     
-             ,df.preferred_name AS preferred_lastfirst  
-             ,df.primary_site AS location
-             ,df.primary_on_site_department AS department
-             ,df.primary_job AS job_title
-             ,df.manager_name AS manager
-             ,df.position_effective_from_date AS position_start_date
-             ,df.primary_site AS reporting_location             
-             ,df.status AS position_status
-             
-             ,dir.mail AS email_address             
-       FROM gabby.dayforce.staff_roster df
-       LEFT JOIN gabby.adsi.user_attributes_static dir
-         ON df.adp_associate_id = dir.idautopersonalternateid
-       WHERE df.status != 'TERMINATED'
-      ) sub
- )
-
 ,tracking_long AS (
   SELECT associate_id
         ,date
@@ -98,29 +53,33 @@ WITH prof_calendar AS (
   FROM tracking_long
  )
 
- SELECT r.associate_id
-       ,r.preferred_lastfirst             
-       ,r.email_address
-       ,r.schoolid
-       ,r.location AS school_name
-       ,r.job_title       
-       ,r.manager
-       ,r.position_status
+SELECT df.adp_associate_id AS associate_id
+      ,df.preferred_name AS preferred_lastfirst       
+      ,df.primary_site_schoolid AS schoolid
+      ,df.primary_site AS location
+      ,df.primary_job AS job_title
+      ,df.manager_name AS manager        
+      ,df.status AS position_status
 
-       ,cal.academic_year
-       ,cal.term
-       ,cal.date_value            
+      ,dir.mail AS email_address
+
+      ,cal.academic_year
+      ,cal.term
+      ,cal.date_value            
        
-       ,f.field
+      ,f.field
        
-       ,pt.notes      
-       ,pt.value
-FROM staff_roster r
+      ,pt.notes      
+      ,pt.value
+FROM gabby.dayforce.staff_roster df
+LEFT JOIN gabby.adsi.user_attributes_static dir
+  ON df.adp_associate_id = dir.idautopersonalternateid
 JOIN prof_calendar cal
-  ON r.schoolid = cal.schoolid
- AND r.position_start_date <= cal.date_value
+  ON df.primary_site_schoolid = cal.schoolid
+ AND df.position_effective_from_date <= cal.date_value
 CROSS JOIN tracker_fields f
 LEFT JOIN tracking_long pt
-  ON r.associate_id = pt.associate_id 
+  ON df.adp_associate_id = pt.associate_id 
  AND cal.date_value = pt.date
  AND f.field = pt.field
+WHERE df.status != 'TERMINATED'

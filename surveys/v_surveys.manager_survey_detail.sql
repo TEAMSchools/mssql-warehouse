@@ -93,30 +93,9 @@ FROM
            ,CONCAT(df.preferred_first_name, ' ', df.preferred_last_name) AS subject_name
            ,CONVERT(VARCHAR,df.primary_site) AS subject_location
            ,df.manager_adp_associate_id AS subject_manager_id      
-           ,CASE
-             WHEN df.primary_site = 'Rise Academy' THEN 73252
-             WHEN df.primary_site = 'Newark Collegiate Academy' THEN 73253
-             WHEN df.primary_site = 'SPARK Academy' THEN 73254
-             WHEN df.primary_site = 'THRIVE Academy' THEN 73255
-             WHEN df.primary_site = 'Seek Academy' THEN 73256
-             WHEN df.primary_site = 'Life Academy' THEN 73257
-             WHEN df.primary_site = 'Bold Academy' THEN 73258
-             WHEN df.primary_site = 'Lanning Square Primary' THEN 179901
-             WHEN df.primary_site = 'Lanning Square MS' THEN 179902
-             WHEN df.primary_site = 'Whittier Middle' THEN 179903
-             WHEN df.primary_site = 'TEAM Academy' THEN 133570965
-             WHEN df.primary_site = 'Pathways' THEN 732574573
-            END AS reporting_schoolid
-           ,CASE
-             WHEN df.primary_site IN ('SPARK Academy','THRIVE Academy','Seek Academy','Life Academy','Lanning Square Primary','Pathways') THEN 'ES'
-             WHEN df.primary_site IN ('Rise Academy','Lanning Square MS','Whittier Middle','TEAM Academy','Bold Academy') THEN 'MS'
-             WHEN df.primary_site IN ('Newark Collegiate Academy') THEN 'HS'
-            END AS school_level
-           ,CASE
-             WHEN df.primary_site IN ('SPARK Academy','THRIVE Academy','Seek Academy','Life Academy','Pathways'
-                                         ,'Rise Academy','TEAM Academy','Bold Academy','Newark Collegiate Academy') THEN 'TEAM'
-             WHEN df.primary_site IN ('Lanning Square Primary','Lanning Square MS','Whittier Middle') THEN 'KCNA'
-            END AS region
+           ,df.primary_site_reporting_schoolid AS reporting_schoolid
+           ,df.primary_site_school_level AS school_level
+           ,df.legal_entity_name AS region
 
            ,ad.samaccountname AS subject_username
 
