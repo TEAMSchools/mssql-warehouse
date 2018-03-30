@@ -3,18 +3,16 @@ GO
 
 CREATE OR ALTER VIEW tableau.gradebook_setup AS
 
-SELECT sec.id AS sectionid
-      ,(LEFT(sec.termid, 2) + 1990) AS academic_year            
-      ,sec.schoolid
-      ,sec.section_number
-      ,sec.expression AS period
-      
-      ,t.teachernumber
-      ,t.lastfirst AS teacher_name
-      
-      ,cou.credittype
-      ,cou.course_number
-      ,cou.course_name
+SELECT enr.sectionid
+      ,enr.academic_year            
+      ,enr.schoolid
+      ,enr.section_number
+      ,enr.expression AS period      
+      ,enr.teachernumber
+      ,enr.teacher_name      
+      ,enr.credittype
+      ,enr.course_number
+      ,enr.course_name
       
       ,gb.reportingterm_name AS finalgradename
       ,LEFT(gb.reportingterm_name, 1) AS finalgrade_category
@@ -35,16 +33,12 @@ SELECT sec.id AS sectionid
       ,a.isfinalscorecalculated
 
       ,NULL AS rn_category
-FROM gabby.powerschool.sections sec WITH(NOLOCK)
-JOIN gabby.powerschool.teachers t WITH(NOLOCK)
-  ON sec.teacher = t.id
-JOIN gabby.powerschool.courses cou WITH(NOLOCK)
-  ON sec.course_number_clean = cou.course_number_clean
-JOIN gabby.powerschool.gradebook_setup gb WITH(NOLOCK)
-  ON sec.dcid = gb.sectionsdcid  
+FROM gabby.powerschool.course_enrollments_static enr
+JOIN gabby.powerschool.gradebook_setup_static gb
+  ON enr.sections_dcid = gb.sectionsdcid  
  AND gb.startdate <= GETDATE()
 LEFT OUTER JOIN gabby.powerschool.gradebook_assignments a WITH(NOLOCK)
-  ON sec.dcid = a.sectionsdcid
+  ON enr.sections_dcid = a.sectionsdcid
  AND gb.assignmentcategoryid = a.categoryid
  AND a.assign_date between gb.startdate and gb.enddate
 

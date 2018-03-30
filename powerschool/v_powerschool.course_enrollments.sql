@@ -17,6 +17,7 @@ SELECT sub.studentid
       ,sub.yearid
       ,sub.academic_year
       ,sub.student_number
+      ,sub.students_dcid
       ,sub.credittype
       ,sub.course_name
       ,sub.credit_hours
@@ -58,6 +59,7 @@ FROM
            ,sub.yearid
            ,sub.academic_year
            ,sub.student_number
+           ,sub.students_dcid
            ,sub.credittype
            ,sub.course_name
            ,sub.credit_hours           
@@ -96,6 +98,7 @@ FROM
                 ,CASE WHEN cc.sectionid < 0 THEN 1 ELSE 0 END AS section_enroll_status
 
                 ,CONVERT(INT,s.student_number) AS student_number
+                ,CONVERT(INT,s.dcid) AS students_dcid
       
                 ,CONVERT(VARCHAR(25),cou.credittype) AS credittype
                 ,CONVERT(VARCHAR(125),cou.course_name) AS course_name
