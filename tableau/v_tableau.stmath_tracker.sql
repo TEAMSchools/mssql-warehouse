@@ -11,29 +11,13 @@ WITH enrollments AS (
         ,enr.teacher_name        
         ,enr.section_number
         ,ROW_NUMBER() OVER(
-           PARTITION BY enr.student_number, enr.academic_year, enr.credittype
-             ORDER BY enr.dateleft DESC) AS rn
+           PARTITION BY student_number, academic_year, credittype
+             ORDER BY dateleft DESC) AS rn
   FROM gabby.powerschool.course_enrollments_static enr
   WHERE enr.course_enroll_status = 0
     AND enr.section_enroll_status = 0    
-    AND enr.credittype = 'MATH'
-    AND enr.schoolid IN (133570965, 73252, 179902, 179903)
-    AND enr.academic_year >= 2015
-
-  UNION ALL
-
-  SELECT enr.student_number
-        ,enr.academic_year
-        ,enr.course_number
-        ,enr.course_name
-        ,enr.teacher_name        
-        ,enr.section_number
-        ,1 AS rn
-  FROM gabby.powerschool.course_enrollments_static enr
-  WHERE enr.course_enroll_status = 0
-    AND enr.section_enroll_status = 0    
-    AND enr.course_number = 'HR'
-    AND enr.schoolid NOT IN (133570965, 73252, 179902, 179903)
+    AND (enr.credittype = 'MATH' AND enr.schoolid IN (133570965, 73252, 179902, 179903) OR 
+         enr.course_number = 'HR' AND enr.schoolid NOT IN (133570965, 73252, 179902, 179903))
     AND enr.academic_year >= 2015
  )
 
