@@ -57,18 +57,8 @@ SELECT schoolid
 	     ,lastfirst
 	     ,grade_level
 	     ,'Phone - Mother Cell' AS element
-	     ,MOTHER_CELL AS detail
-	     ,CASE 
-        WHEN MOTHER_CELL LIKE '%;%' THEN 1
-	       WHEN MOTHER_CELL LIKE '%:%' THEN 1
-	       WHEN MOTHER_CELL LIKE '% %' THEN 1
-	       WHEN MOTHER_CELL LIKE '%  %' THEN 1
-	       WHEN MOTHER_CELL LIKE '%/%' THEN 1
-	       WHEN MOTHER_CELL LIKE '%\%' THEN 1
-	       WHEN MOTHER_CELL LIKE '%''%' THEN 1
-	       WHEN MOTHER_CELL LIKE '%@ %' THEN 1
-	       ELSE 0 
-       END AS flag
+	     ,mother_cell AS detail
+	     ,CASE WHEN mother_cell NOT LIKE '%-%-%' THEN 1 ELSE 0 END AS flag
 FROM gabby.powerschool.cohort_identifiers_static
 WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 	 AND schoolid != 999999
@@ -83,17 +73,7 @@ SELECT schoolid
 	     ,grade_level
 	     ,'Phone - Father Cell' AS element
 	     ,FATHER_CELL AS detail
-	     ,CASE 
-        WHEN FATHER_CELL LIKE '%;%' THEN 1
-	       WHEN FATHER_CELL LIKE '%:%' THEN 1
-	       WHEN FATHER_CELL LIKE '% %' THEN 1
-	       WHEN FATHER_CELL LIKE '%  %' THEN 1
-	       WHEN FATHER_CELL LIKE '%/%' THEN 1
-	       WHEN FATHER_CELL LIKE '%\%' THEN 1
-	       WHEN FATHER_CELL LIKE '%''%' THEN 1
-	       WHEN FATHER_CELL LIKE '%@ %' THEN 1
-	       ELSE 0 
-       END AS flag
+	     ,CASE WHEN father_cell NOT LIKE '%-%-%' THEN 1 ELSE 0 END AS flag
 FROM gabby.powerschool.cohort_identifiers_static
 WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 	 AND schoolid != 999999
@@ -108,18 +88,7 @@ SELECT schoolid
 	     ,grade_level
 	     ,'Phone - Home' AS element
 	     ,FATHER_CELL AS detail
-	     ,CASE
-        WHEN HOME_PHONE LIKE '%;%' THEN 1
-	       WHEN HOME_PHONE LIKE '%:%' THEN 1
-	       WHEN HOME_PHONE LIKE '% %' THEN 1
-	       WHEN HOME_PHONE LIKE '%  %' THEN 1
-	       WHEN HOME_PHONE LIKE '%/%' THEN 1
-	       WHEN HOME_PHONE LIKE '%\%' THEN 1
-	       WHEN HOME_PHONE LIKE '%''%' THEN 1
-	       WHEN HOME_PHONE LIKE '%@ %' THEN 1
-	       WHEN HOME_PHONE IS NULL THEN 1
-	       ELSE 0 
-       END AS flag
+	     ,CASE WHEN home_phone NOT LIKE '%-%-%' THEN 1 ELSE 0 END AS flag
 FROM gabby.powerschool.cohort_identifiers_static
 WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 	 AND schoolid != 999999
