@@ -36,4 +36,4 @@ SELECT 'D'
       ,ad.userprincipalname
 FROM gabby.dayforce.employees d
 JOIN gabby.adsi.user_attributes_static ad
-  ON COALESCE(d.adp_associate_id, CONVERT(VARCHAR,d.df_employee_number)) = ad.idautopersonalternateid
+  ON COALESCE(d.adp_associate_id, CONVERT(VARCHAR(25),d.df_employee_number)) = ad.idautopersonalternateid
