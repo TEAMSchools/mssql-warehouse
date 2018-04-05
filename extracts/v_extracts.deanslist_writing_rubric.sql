@@ -50,7 +50,6 @@ FROM
      JOIN gabby.illuminate_dna_assessments.agg_student_responses_standard asrs
        ON ast.assessment_id = asrs.assessment_id
       AND ast.standard_id = asrs.standard_id
-      AND asrs.student_assessment_id NOT IN (SELECT student_assessment_id FROM gabby.illuminate_dna_assessments.students_assessments_archive)
      JOIN gabby.illuminate_public.students s
        ON asrs.student_id = s.student_id
      WHERE (a.academic_year - 1) = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
