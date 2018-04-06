@@ -15,9 +15,9 @@ SELECT associate_id AS Example
        ,period_beginning_date AS PayPeriodStart
        ,period_end_date AS PayPeriodEnd
        ,total_hours AS GrossHours
-       ,SUM(total_hours) OVER (PARTITION BY associate_id,gabby.utilities.DATE_TO_SY(period_end_date) ORDER BY period_end_date) AS GrossHoursYTD
+       ,SUM(total_hours) OVER (PARTITION BY associate_id,YEAR(pay_date) ORDER BY pay_date,check_voucher_number) AS GrossHoursYTD
        ,gross_pay AS GrossPay
-       ,SUM(gross_pay) OVER (PARTITION BY associate_id,YEAR(period_end_date) ORDER BY period_end_date) AS GrossPayYTD
+       ,SUM(gross_pay) OVER (PARTITION BY associate_id,YEAR(pay_date) ORDER BY pay_date,check_voucher_number) AS GrossPayYTD
        ,'ASK ACCOUNTING' AS PreTaxDeduction
        ,NULL AS PreTaxDeductionYTD
        ,'ASK ACCOUNTING' AS PostTaxDeduction
@@ -25,7 +25,7 @@ SELECT associate_id AS Example
        ,'ASK ACCOUNTING' AS TotalStatutoryDeduction
        ,NULL AS TotalStatutoryDeductionYTD
        ,net_pay AS NetPay
-       ,SUM(net_pay) OVER (PARTITION BY associate_id,gabby.utilities.DATE_TO_SY(period_end_date) ORDER BY period_end_date) AS NetPayYTD
+       ,SUM(net_pay) OVER (PARTITION BY associate_id,YEAR(pay_date) ORDER BY pay_date,check_voucher_number) AS NetPayYTD
        ,NULL AS Address1
        ,NULL AS Address2
        ,NULL AS PostalCode

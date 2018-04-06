@@ -1,17 +1,5 @@
 --CREATE OR ALTER VIEW gabby.payroll.historical_earnings_03earnings AS
 
-WITH earnings_dates AS (
-     SELECT e.*
-           ,s.period_end_date
-     
-     FROM payroll.historical_earnings_earnings e
-              LEFT OUTER JOIN 
-                  (SELECT DISTINCT period_end_date
-                                  ,pay_date
-                  FROM gabby.payroll.historical_earnings_statements) s
-              ON e.pay_date = s.pay_date
-) 
-
 --1 - Regular Earnings
       SELECT associate_id AS Example
             ,payroll_company_code AS CompanyCode
@@ -25,11 +13,11 @@ WITH earnings_dates AS (
             ,regular_hours_detail AS Hours
             ,regular_rate_paid AS Rate
             ,regular_earnings_detail AS Amount
-            ,SUM(regular_hours_detail) OVER (PARTITION BY associate_id,gabby.utilities.DATE_TO_SY(period_end_date),void_check_indicator ORDER BY period_end_date) AS HoursYTD
-            ,SUM(regular_earnings_detail) OVER (PARTITION BY associate_id,YEAR(period_end_date),void_check_indicator ORDER BY period_end_date) AS AmountYTD
+            ,SUM(regular_hours_detail) OVER (PARTITION BY associate_id,YEAR(pay_date),void_check_indicator ORDER BY pay_date,check_voucher_number) AS HoursYTD
+            ,SUM(regular_earnings_detail) OVER (PARTITION BY associate_id,YEAR(pay_date),void_check_indicator ORDER BY pay_date,check_voucher_number) AS AmountYTD
             ,'ASK ACCOUNTING' AS EarningType
 
-      FROM earnings_dates
+      FROM payroll.historical_earnings_earnings
       WHERE regular_earnings_detail IS NOT NULL
 
 
@@ -48,11 +36,11 @@ UNION ALL
             ,overtime_hours_detail AS Hours
             ,overtime_rate_paid AS Rate
             ,overtime_earnings_detail AS Amount
-            ,SUM(overtime_hours_detail) OVER (PARTITION BY associate_id,gabby.utilities.DATE_TO_SY(period_end_date),void_check_indicator ORDER BY period_end_date) AS HoursYTD
-            ,SUM(overtime_earnings_detail) OVER (PARTITION BY associate_id,gabby.utilities.DATE_TO_SY(period_end_date),void_check_indicator  ORDER BY period_end_date) AS AmountYTD
+            ,SUM(overtime_hours_detail) OVER (PARTITION BY associate_id,YEAR(pay_date),void_check_indicator ORDER BY pay_date) AS HoursYTD
+            ,SUM(overtime_earnings_detail) OVER (PARTITION BY associate_id,YEAR(pay_date),void_check_indicator  ORDER BY pay_date) AS AmountYTD
             ,'ASK ACCOUNTING' AS EarningType
 
-      FROM earnings_dates
+      FROM payroll.historical_earnings_earnings
       WHERE overtime_earnings_detail IS NOT NULL
       
 UNION ALL
@@ -70,11 +58,11 @@ SELECT associate_id AS Example
       ,additional_hours AS Hours
       ,additional_earnings_rate_paid AS Rate
       ,additional_earnings AS Amount
-      ,SUM(additional_hours) OVER (PARTITION BY associate_id,gabby.utilities.DATE_TO_SY(period_end_date),additional_earnings_code_pay_statements, void_check_indicator  ORDER BY period_end_date) AS HoursYTD
-      ,SUM(additional_earnings) OVER (PARTITION BY associate_id,gabby.utilities.DATE_TO_SY(period_end_date),additional_earnings_code_pay_statements, void_check_indicator  ORDER BY period_end_date) AS AmountYTD
+      ,SUM(additional_hours) OVER (PARTITION BY associate_id,YEAR(pay_date),additional_earnings_code_pay_statements, void_check_indicator  ORDER BY pay_date) AS HoursYTD
+      ,SUM(additional_earnings) OVER (PARTITION BY associate_id,YEAR(pay_date),additional_earnings_code_pay_statements, void_check_indicator  ORDER BY pay_date) AS AmountYTD
       ,'ASK ACCOUNTING' AS EarningType
 
-      FROM earnings_dates
+      FROM payroll.historical_earnings_earnings
       WHERE additional_earnings IS NOT NULL
         AND additional_earnings != 0
         
@@ -95,9 +83,9 @@ UNION ALL
            ,NULL AS Rate
            ,memo_amount AS Amount
            ,NULL AS HoursYTD
-           ,SUM(memo_amount) OVER (PARTITION BY associate_id,gabby.utilities.DATE_TO_SY(period_end_date), memo_code_pay_statements, void_check_indicator  ORDER BY period_end_date) AS AmountYTD
+           ,SUM(memo_amount) OVER (PARTITION BY associate_id,YEAR(pay_date), memo_code_pay_statements, void_check_indicator  ORDER BY pay_date) AS AmountYTD
            ,'ASK ACCOUNTING' AS EarningType
 
-           FROM earnings_dates
+           FROM payroll.historical_earnings_earnings
            WHERE memo_amount IS NOT NULL
              AND memo_amount != 0
