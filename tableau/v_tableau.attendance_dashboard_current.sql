@@ -128,11 +128,11 @@ FROM
       AND mem.membershipvalue > 0
       AND mem.attendancevalue IS NOT NULL
      LEFT JOIN gabby.powerschool.ps_attendance_daily att
-       ON co.studentid = att.studentid
+       ON mem.studentid = att.studentid
       AND mem.calendardate = att.att_date
      LEFT JOIN gabby.reporting.reporting_terms dt 
-       ON co.schoolid = dt.schoolid
-      AND co.academic_year = dt.academic_year
+       ON mem.schoolid = dt.schoolid
+      AND mem.yearid = dt.yearid
       AND mem.calendardate BETWEEN dt.start_date AND dt.end_date
       AND dt.identifier = 'RT'
      WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()

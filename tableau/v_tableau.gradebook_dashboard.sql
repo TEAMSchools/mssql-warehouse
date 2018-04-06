@@ -16,7 +16,7 @@ WITH section_teacher AS (
         ,ROW_NUMBER() OVER(
            PARTITION BY scaff.studentid, scaff.yearid, scaff.course_number
              ORDER BY scaff.term_name DESC) AS rn
-  FROM gabby.powerschool.course_section_scaffold_static scaff 
+  FROM gabby.powerschool.course_section_scaffold scaff 
   JOIN gabby.powerschool.sections sec 
     ON scaff.sectionid = sec.id
   JOIN gabby.powerschool.teachers t 

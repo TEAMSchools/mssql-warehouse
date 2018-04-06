@@ -36,11 +36,11 @@ SELECT o.student_number
       ,cat.E_CUR AS HWQ_term      
 
       ,REPLACE(comm.comment_value,'"','''') AS comment_value
-FROM gabby.powerschool.course_section_scaffold_static o WITH(NOLOCK)
+FROM gabby.powerschool.course_section_scaffold o WITH(NOLOCK)
 JOIN gabby.powerschool.sections sec WITH(NOLOCK)
   ON o.sectionid = sec.id
 JOIN gabby.powerschool.courses cou WITH(NOLOCK)
-  ON o.course_number = cou.course_number
+  ON o.course_number = cou.course_number_clean
 JOIN gabby.powerschool.cc WITH(NOLOCK)
   ON o.studentid = cc.studentid
  AND o.sectionid = cc.sectionid
@@ -59,7 +59,7 @@ LEFT OUTER JOIN gabby.powerschool.pgfinalgrades comm WITH(NOLOCK)
   ON fg.studentid = comm.studentid
  AND fg.sectionid = comm.sectionid
  AND fg.term_name = comm.finalgradename
-WHERE (o.yearid + 1990) = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+WHERE o.yearid = (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990)
 
 UNION ALL
 

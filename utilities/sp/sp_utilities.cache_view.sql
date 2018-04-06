@@ -54,6 +54,8 @@ SET @destination_table_name = @source_view + '_static';
   ELSE 
     BEGIN TRY
       SET @sql = N'
+        DECLARE @nrows BIGINT;
+        
         IF OBJECT_ID(N''' + @temp_table_name + ''') IS NOT NULL
 		      BEGIN
 						    DROP TABLE ' + @temp_table_name + ';
@@ -63,18 +65,23 @@ SET @destination_table_name = @source_view + '_static';
 		      INTO ' + @temp_table_name + '
         FROM ' + @source_view + '; 
 
-        EXEC(''TRUNCATE TABLE ' + @destination_table_name + ''');
+        SELECT @nrows = COUNT(*) FROM ' + @temp_table_name + ';
 
-        INSERT INTO ' + @destination_table_name + '
-        SELECT *
-        FROM ' + @temp_table_name + ';
+        IF @nrows > 1
+        BEGIN
+          EXEC(''TRUNCATE TABLE ' + @destination_table_name + ''');
+
+          INSERT INTO ' + @destination_table_name + '
+          SELECT *
+          FROM ' + @temp_table_name + ';
         
-        INSERT INTO [utilities].[cache_view_log]
-         ([view_name]
-         ,[timestamp])
-        VALUES
-              (''' + @source_view + '''
-              ,GETUTCDATE());        
+          INSERT INTO [utilities].[cache_view_log]
+           ([view_name]
+           ,[timestamp])
+          VALUES
+                (''' + @source_view + '''
+                ,GETUTCDATE());        
+        END
       '
       PRINT(@sql);
       EXEC(@sql);

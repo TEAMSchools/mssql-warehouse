@@ -25,7 +25,7 @@ WITH roster AS (
 
         ,CASE WHEN sec.gradescaleid = 0 THEN CONVERT(INT,cou.gradescaleid) ELSE CONVERT(INT,sec.gradescaleid) END AS gradescaleid
   FROM gabby.powerschool.cohort_identifiers_static co  
-  JOIN gabby.powerschool.course_section_scaffold_static css
+  JOIN gabby.powerschool.course_section_scaffold css
     ON co.studentid = css.studentid
    AND co.yearid = css.yearid   
    AND css.course_number != 'ALL'
@@ -93,7 +93,7 @@ WITH roster AS (
          ON enr.studentid = pgf.studentid       
         AND enr.abs_sectionid = pgf.sectionid
         AND LEFT(pgf.finalgradename, 1) IN ('T','Q')
-       LEFT OUTER JOIN gabby.powerschool.storedgrades sg
+       LEFT OUTER JOIN gabby.powerschool.storedgrades sg 
          ON enr.studentid = sg.studentid 
         AND enr.abs_sectionid = sg.sectionid
         AND pgf.finalgradename = sg.storecode  
@@ -109,8 +109,8 @@ WITH roster AS (
        UNION ALL
 
        SELECT CONVERT(INT,sg.studentid) AS studentid
-             ,CONVERT(VARCHAR(125),sg.course_number) AS course_number
-             ,CONVERT(INT,LEFT(sg.termid,2) + 1990) AS academic_year      
+             ,sg.course_number_clean AS course_number
+             ,sg.academic_year      
              ,CONVERT(VARCHAR(5),sg.storecode) AS term_name
              ,CASE WHEN sg.grade = 'false' THEN 'F' ELSE CONVERT(VARCHAR(5),sg.grade) END AS stored_letter      
              ,sg.[percent] AS stored_pct
@@ -118,9 +118,9 @@ WITH roster AS (
              ,NULL AS pgf_pct      
              ,sg.gpa_points AS term_gpa_points      
              ,1 AS rn
-       FROM gabby.powerschool.storedgrades sg
-       WHERE sg.termid < ((gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990) * 100)
-         AND LEFT(sg.storecode, 1) IN ('T', 'Q')
+       FROM gabby.powerschool.storedgrades sg 
+       WHERE sg.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+         AND sg.storecode_type  IN ('T', 'Q')
       ) sub
   WHERE rn = 1
  )
@@ -136,13 +136,13 @@ WITH roster AS (
   FROM
       (
        SELECT CONVERT(INT,studentid) AS studentid
-             ,CONVERT(INT,LEFT(termid, 2) + 1990) AS academic_year      
-             ,CONVERT(VARCHAR(25),course_number) AS course_number
-             ,CONVERT(VARCHAR(5),storecode) AS storecode
+             ,academic_year      
+             ,course_number_clean AS course_number
+             ,storecode_clean AS storecode
              ,[percent]
        FROM gabby.powerschool.storedgrades
        WHERE schoolid = 73253
-         AND LEFT(storecode, 1) = 'E'
+         AND storecode_type = 'E'
       ) sub
   PIVOT(
     MAX([percent])
@@ -385,9 +385,9 @@ FROM
     ) sub
 LEFT OUTER JOIN gabby.powerschool.storedgrades y1
   ON sub.studentid = y1.studentid
- AND sub.academic_year = (LEFT(y1.termid, 2) + 1990)
- AND sub.course_number = y1.course_number
- AND y1.storecode = 'Y1'
+ AND sub.academic_year = y1.academic_year
+ AND sub.course_number = y1.course_number_clean
+ AND y1.storecode_clean = 'Y1'
 LEFT OUTER JOIN gabby.powerschool.gradescaleitem_lookup_static y1_scale WITH(NOLOCK)
   ON sub.gradescaleid = y1_scale.gradescaleid
  AND sub.y1_grade_percent_adjusted BETWEEN y1_scale.min_cutoffpercentage AND y1_scale.max_cutoffpercentage
