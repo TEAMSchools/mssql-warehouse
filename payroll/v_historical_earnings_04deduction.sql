@@ -13,7 +13,7 @@
           ,'ASK ACCOUNTING' AS IsStatutory
           ,'ASK ACCOUNTING' AS IsPreTax
           ,other_deduction_amount_pay_statements AS Amount
-          ,SUM(other_deduction_amount_pay_statements) OVER (PARTITION BY associate_id, YEAR(pay_date, check_voucher_number), void_check_indicator, other_deduction_code_pay_statements ORDER BY pay_date, check_voucher_number) AS YTD
+          ,SUM(other_deduction_amount_pay_statements) OVER (PARTITION BY associate_id, YEAR(pay_date), void_check_indicator, other_deduction_code_pay_statements ORDER BY pay_date, check_voucher_number) AS YTD
 
      FROM gabby.payroll.historical_earnings_deductions 
             WHERE other_deduction_code_pay_statements NOT LIKE 'CK%'
@@ -35,7 +35,7 @@ UNION ALL
            ,'ASK ACCOUNTING' AS IsStatutory
            ,'ASK ACCOUNTING' AS IsPreTax
            ,federal_tax_amount AS Amount
-           ,SUM(federal_tax_amount) OVER (PARTITION BY associate_id, YEAR(pay_date, check_voucher_number), void_check_indicator ORDER BY pay_date, check_voucher_number) AS YTD
+           ,SUM(federal_tax_amount) OVER (PARTITION BY associate_id, YEAR(pay_date), void_check_indicator ORDER BY pay_date, check_voucher_number) AS YTD
      FROM payroll.historical_earnings_taxes
 
 UNION ALL
@@ -53,7 +53,7 @@ UNION ALL
            ,'ASK ACCOUNTING' AS IsStatutory
            ,'ASK ACCOUNTING' AS IsPreTax
            ,lived_in_local_amount_pay_statements AS Amount
-           ,SUM(lived_in_local_amount_pay_statements) OVER (PARTITION BY associate_id, YEAR(pay_date, check_voucher_number), void_check_indicator,lived_in_local_code_pay_statements ORDER BY pay_date, check_voucher_number) AS YTD
+           ,SUM(lived_in_local_amount_pay_statements) OVER (PARTITION BY associate_id, YEAR(pay_date), void_check_indicator,lived_in_local_code_pay_statements ORDER BY pay_date, check_voucher_number) AS YTD
      FROM payroll.historical_earnings_taxes
      WHERE lived_in_local_amount_pay_statements != 0
      
@@ -71,7 +71,7 @@ UNION ALL
            ,'ASK ACCOUNTING' AS IsStatutory
            ,'ASK ACCOUNTING' AS IsPreTax
            ,lived_in_state_tax_amount_pay_statements AS Amount
-           ,SUM(lived_in_state_tax_amount_pay_statements) OVER (PARTITION BY associate_id, YEAR(pay_date, check_voucher_number), void_check_indicator,lived_in_state_tax_code_pay_statements ORDER BY pay_date, check_voucher_number) AS YTD
+           ,SUM(lived_in_state_tax_amount_pay_statements) OVER (PARTITION BY associate_id, YEAR(pay_date), void_check_indicator,lived_in_state_tax_code_pay_statements ORDER BY pay_date, check_voucher_number) AS YTD
      FROM payroll.historical_earnings_taxes
      WHERE lived_in_state_tax_amount_pay_statements != 0
      
@@ -89,7 +89,7 @@ UNION ALL
            ,'ASK ACCOUNTING' AS IsStatutory
            ,'ASK ACCOUNTING' AS IsPreTax
            ,medicare_surtax_amount AS Amount
-           ,SUM(medicare_surtax_amount) OVER (PARTITION BY associate_id, YEAR(pay_date, check_voucher_number), void_check_indicator ORDER BY pay_date, check_voucher_number) AS YTD
+           ,SUM(medicare_surtax_amount) OVER (PARTITION BY associate_id, YEAR(pay_date), void_check_indicator ORDER BY pay_date, check_voucher_number) AS YTD
      FROM payroll.historical_earnings_taxes
      WHERE medicare_surtax_amount != 0
 
@@ -107,7 +107,7 @@ UNION ALL
            ,'ASK ACCOUNTING' AS IsStatutory
            ,'ASK ACCOUNTING' AS IsPreTax
            ,medicare_tax_amount AS Amount
-           ,SUM(medicare_tax_amount) OVER (PARTITION BY associate_id, YEAR(pay_date, check_voucher_number), void_check_indicator ORDER BY pay_date, check_voucher_number) AS YTD
+           ,SUM(medicare_tax_amount) OVER (PARTITION BY associate_id, YEAR(pay_date), void_check_indicator ORDER BY pay_date, check_voucher_number) AS YTD
      FROM payroll.historical_earnings_taxes
      WHERE medicare_tax_amount != 0
      
@@ -125,7 +125,7 @@ UNION ALL
            ,'ASK ACCOUNTING' AS IsStatutory
            ,'ASK ACCOUNTING' AS IsPreTax
            ,school_district_tax_amount_pay_statements AS Amount
-           ,SUM(school_district_tax_amount_pay_statements) OVER (PARTITION BY associate_id, YEAR(pay_date, check_voucher_number), void_check_indicator,school_district_tax_code_pay_statements ORDER BY pay_date, check_voucher_number) AS YTD
+           ,SUM(school_district_tax_amount_pay_statements) OVER (PARTITION BY associate_id, YEAR(pay_date), void_check_indicator,school_district_tax_code_pay_statements ORDER BY pay_date, check_voucher_number) AS YTD
      FROM payroll.historical_earnings_taxes
      WHERE school_district_tax_amount_pay_statements != 0
      
@@ -143,7 +143,7 @@ UNION ALL
            ,'ASK ACCOUNTING' AS IsStatutory
            ,'ASK ACCOUNTING' AS IsPreTax
            ,social_security_tax_amount AS Amount
-           ,SUM(social_security_tax_amount) OVER (PARTITION BY associate_id, YEAR(pay_date, check_voucher_number), void_check_indicator ORDER BY pay_date, check_voucher_number) AS YTD
+           ,SUM(social_security_tax_amount) OVER (PARTITION BY associate_id, YEAR(pay_date), void_check_indicator ORDER BY pay_date, check_voucher_number) AS YTD
      FROM payroll.historical_earnings_taxes
      WHERE medicare_tax_amount != 0
      
@@ -161,7 +161,7 @@ UNION ALL
            ,'ASK ACCOUNTING' AS IsStatutory
            ,'ASK ACCOUNTING' AS IsPreTax
            ,sui_sdi_tax_amount_pay_statements AS Amount
-           ,SUM(sui_sdi_tax_amount_pay_statements) OVER (PARTITION BY associate_id, YEAR(pay_date, check_voucher_number), void_check_indicator,sui_sdi_tax_code_pay_statements ORDER BY pay_date, check_voucher_number) AS YTD
+           ,SUM(sui_sdi_tax_amount_pay_statements) OVER (PARTITION BY associate_id, YEAR(pay_date), void_check_indicator,sui_sdi_tax_code_pay_statements ORDER BY pay_date, check_voucher_number) AS YTD
      FROM payroll.historical_earnings_taxes
      WHERE sui_sdi_tax_amount_pay_statements != 0
    
@@ -179,6 +179,6 @@ UNION ALL
            ,'ASK ACCOUNTING' AS IsStatutory
            ,'ASK ACCOUNTING' AS IsPreTax
            ,worked_in_state_tax_amount_pay_statements AS Amount
-           ,SUM(worked_in_state_tax_amount_pay_statements) OVER (PARTITION BY associate_id, YEAR(pay_date, check_voucher_number), void_check_indicator,worked_in_state_tax_code_pay_statements ORDER BY pay_date, check_voucher_number) AS YTD
+           ,SUM(worked_in_state_tax_amount_pay_statements) OVER (PARTITION BY associate_id, YEAR(pay_date), void_check_indicator,worked_in_state_tax_code_pay_statements ORDER BY pay_date, check_voucher_number) AS YTD
      FROM payroll.historical_earnings_taxes
      WHERE worked_in_state_tax_amount_pay_statements != 0
