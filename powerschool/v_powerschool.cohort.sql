@@ -109,8 +109,7 @@ FROM
             ON s.schoolid = terms.schoolid
            AND s.entrydate <= terms.firstday
            AND terms.portion = 1
-          WHERE s.enroll_status = 3                
-            AND s.id NOT IN (171, 141, 45) /* 3 students back in the Dark Ages graduated 8th, didn't go to NCA in 9th, but came back and graduated from NCA with a different student record */
+          WHERE s.enroll_status = 3
 
           UNION ALL
 
