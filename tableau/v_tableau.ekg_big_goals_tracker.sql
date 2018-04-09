@@ -343,48 +343,12 @@ WITH act AS (
       (
        SELECT ISNULL(reporting_schoolid, 0) AS reporting_schoolid
              ,ISNULL(region, 'All') AS region
-             ,ISNULL(CONVERT(NVARCHAR(3),school_level), 'All') AS school_level
+             ,ISNULL(CONVERT(VARCHAR(5),school_level), 'All') AS school_level
              ,academic_year
              ,role      
-             ,SUM(school_responsed_positive) / SUM(school_responded) AS pct_responded_positive
-       FROM
-           (
-            SELECT CASE
-                    WHEN school IN ('KIPP Rise Academy','Rise Academy, a KIPP school') THEN 73252
-                    WHEN school IN ('KIPP Newark Collegiate Academy','Newark Collegiate Academy, a KIPP school') THEN 73253
-                    WHEN school IN ('KIPP SPARK Academy','SPARK Academy, a KIPP school') THEN 73254
-                    WHEN school IN ('KIPP THRIVE Academy','THRIVE Academy, a KIPP school') THEN 73255
-                    WHEN school IN ('KIPP Seek Academy','Seek Academy, a KIPP school') THEN 73256
-                    WHEN school IN ('KIPP Life Academy','Life Academy at Bragaw, a KIPP school') THEN 73257
-                    WHEN school IN ('KIPP BOLD Academy') THEN 73258
-                    WHEN school IN ('KIPP Lanning Square Primary','Revolution Primary, a KIPP school') THEN 179901
-                    WHEN school IN ('KIPP Lanning Square Middle School') THEN 179902
-                    WHEN school IN ('KIPP TEAM Academy','TEAM Academy, a KIPP school') THEN 133570965
-                   END AS reporting_schoolid
-                  ,CASE
-                    WHEN school IN ('KIPP Rise Academy','Rise Academy, a KIPP school','KIPP Newark Collegiate Academy','Newark Collegiate Academy, a KIPP school'
-                                   ,'KIPP SPARK Academy','SPARK Academy, a KIPP school','KIPP THRIVE Academy','THRIVE Academy, a KIPP school','KIPP Seek Academy'
-                                   ,'Seek Academy, a KIPP school','KIPP Life Academy','Life Academy at Bragaw, a KIPP school','KIPP BOLD Academy','KIPP TEAM Academy'
-                                   ,'TEAM Academy, a KIPP school') 
-                                  THEN 'TEAM'
-                    WHEN school IN ('KIPP Lanning Square Primary','Revolution Primary, a KIPP school','KIPP Lanning Square Middle School') THEN 'KCNA'                    
-                   END AS region
-                  ,CASE                    
-                    WHEN school IN ('KIPP Lanning Square Primary','Revolution Primary, a KIPP school','KIPP SPARK Academy','SPARK Academy, a KIPP school','KIPP THRIVE Academy'
-                                   ,'THRIVE Academy, a KIPP school','KIPP Seek Academy','Seek Academy, a KIPP school','KIPP Life Academy','Life Academy at Bragaw, a KIPP school') 
-                                  THEN 'ES'                    
-                    WHEN school IN ('KIPP Rise Academy','Rise Academy, a KIPP school','KIPP BOLD Academy','KIPP Lanning Square Middle School'
-                                   ,'KIPP TEAM Academy','TEAM Academy, a KIPP school') 
-                                  THEN 'MS'                    
-                    WHEN school IN ('KIPP Newark Collegiate Academy','Newark Collegiate Academy, a KIPP school') THEN 'HS'
-                   END AS school_level
-                  ,CONVERT(INT,LEFT(school_year, 4)) AS academic_year
-                  ,role                  
-                  ,school_responded
-                  ,ROUND((likert_4_ * school_responded) + (likert_5_ * school_responded), 0) AS school_responsed_positive      
-            FROM gabby.surveys.hsr_surveys
-            WHERE role IN ('Parent','Student')
-           ) sub
+             ,SUM(n_responses_positive) / SUM(n_responses) AS pct_responded_positive
+       FROM gabby.surveys.hsr_survey_detail       
+       WHERE role IN ('Parent','Student')
        GROUP BY academic_year
                ,role
                ,ROLLUP(school_level, region, reporting_schoolid)
