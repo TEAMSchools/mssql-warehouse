@@ -181,6 +181,6 @@ FROM
        ON a.code_subject_area_id = dsa.code_id    
      LEFT JOIN gabby.illuminate_dna_assessments.students_assessments sa
        ON a.assessment_id = sa.assessment_id
-     WHERE ns.scope IS NULL OR a.code_scope_id IS NULL
+     WHERE (ns.scope IS NULL OR a.code_scope_id IS NULL)
        AND a.deleted_at IS NULL
     ) sub
