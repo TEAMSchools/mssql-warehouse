@@ -33,14 +33,14 @@ SELECT enr.sectionid
       ,a.isfinalscorecalculated
 
       ,NULL AS rn_category
-FROM gabby.powerschool.course_enrollments_static enr
-JOIN gabby.powerschool.gradebook_setup_static gb
-  ON enr.sections_dcid = gb.sectionsdcid  
- AND gb.startdate <= GETDATE()
-LEFT OUTER JOIN gabby.powerschool.gradebook_assignments a WITH(NOLOCK)
-  ON enr.sections_dcid = a.sectionsdcid
+FROM gabby.powerschool.gradebook_setup_static gb
+JOIN gabby.powerschool.course_enrollments_static enr
+  ON gb.sectionsdcid = enr.sections_dcid 
+LEFT JOIN gabby.powerschool.gradebook_assignments a WITH(NOLOCK)
+  ON gb.sectionsdcid = a.sectionsdcid
  AND gb.assignmentcategoryid = a.categoryid
  AND a.assign_date between gb.startdate and gb.enddate
+WHERE gb.startdate >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7 , 1)
 
 UNION ALL
 

@@ -55,4 +55,5 @@ SELECT df.df_employee_number
       ,ad.mail
 FROM gabby.dayforce.staff_roster df
 LEFT JOIN gabby.adsi.user_attributes_static ad
-  ON COALESCE(df.adp_associate_id, CONVERT(VARCHAR(25),df.df_employee_number)) = ad.idautopersonalternateid
+  ON df.df_employee_number = ad.employeenumber
+ AND ISNUMERIC(ad.employeenumber) = 1

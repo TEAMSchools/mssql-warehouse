@@ -10,5 +10,6 @@ SELECT df.df_employee_number AS [Employee ID]
       ,df.legal_entity_name AS [Groups]
 FROM gabby.dayforce.staff_roster df
 JOIN gabby.adsi.user_attributes_static ad
-  ON COALESCE(df.adp_associate_id, CONVERT(VARCHAR,df.df_employee_number)) = ad.idautopersonalternateid
+  ON df.df_employee_number = ad.employeenumber
+ AND ISNUMERIC(ad.employeenumber) = 1
 WHERE df.status = 'ACTIVE'

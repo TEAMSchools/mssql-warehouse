@@ -36,7 +36,7 @@ FROM gabby.powerschool.course_enrollments_static enr
 JOIN gabby.powerschool.gradebook_setup_static gb
   ON enr.sections_dcid = gb.sectionsdcid
 LEFT JOIN gabby.powerschool.gradebook_assignments a WITH(NOLOCK)
-  ON enr.sections_dcid = a.sectionsdcid
+  ON gb.sectionsdcid = a.sectionsdcid
  AND a.assign_date BETWEEN gb.startdate and gb.enddate
  AND ((gb.finalgradesetuptype = 'Total_Points') OR
       (gb.finalgradesetuptype != 'Total_Points' AND gb.assignmentcategoryid = a.categoryid))

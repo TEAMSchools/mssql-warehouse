@@ -27,4 +27,5 @@ SELECT CONVERT(VARCHAR,df.adp_associate_id) AS associate_id
       ,df.legal_entity_name
 FROM gabby.dayforce.staff_roster df
 LEFT JOIN gabby.adsi.user_attributes_static dir
-  ON COALESCE(df.adp_associate_id, CONVERT(VARCHAR,df.df_employee_number)) = dir.idautopersonalternateid
+  ON df.df_employee_number = dir.employeenumber
+ AND ISNUMERIC(dir.employeenumber) = 1
