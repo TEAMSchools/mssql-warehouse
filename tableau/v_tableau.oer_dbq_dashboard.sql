@@ -107,7 +107,7 @@ WITH enrollments AS (
          ON ur.student_id = s.student_id
        JOIN gabby.illuminate_dna_repositories.repositories r
          ON ur.repository_id = r.repository_id
-       LEFT OUTER JOIN gabby.reporting.reporting_terms rt
+       LEFT JOIN gabby.reporting.reporting_terms rt
          ON r.date_administered BETWEEN rt.start_date AND rt.end_date
         AND rt.schoolid = 73253
         AND rt.identifier = 'RT'
@@ -166,7 +166,7 @@ JOIN gabby.powerschool.cohort_identifiers_static co
   ON w.student_number = co.student_number
  AND w.academic_year = co.academic_year
  AND co.rn_year = 1
-LEFT OUTER JOIN enrollments enr WITH(NOLOCK)
+LEFT JOIN enrollments enr WITH(NOLOCK)
   ON co.student_number = enr.student_number
  AND co.academic_year = enr.academic_year 
  AND w.course_number = enr.course_number 
@@ -206,10 +206,11 @@ FROM
            ,dts.alt_name AS term      
 
            ,a.title
-           ,LEFT(a.title, 6) AS course_number           
+           ,SUBSTRING(LTRIM(a.title), 1, CHARINDEX(' ', LTRIM(a.title))) AS course_number
            ,CASE
-             WHEN co.academic_year <= 2015 THEN SUBSTRING(a.title, PATINDEX('%QE_%', a.title), 3)
-             ELSE SUBSTRING(a.title, PATINDEX('%DBQ _%', a.title), 5) 
+             WHEN a.academic_year <= 2016 THEN SUBSTRING(a.title, PATINDEX('%QE_%', a.title), 3)
+             WHEN PATINDEX('%DBQ [0-9]%', a.title) > 0 THEN SUBSTRING(a.title, PATINDEX('%DBQ [0-9]%', a.title), 5)
+             WHEN PATINDEX('%DBQ[0-9]%', a.title) > 0 THEN SUBSTRING(a.title, PATINDEX('%DBQ[0-9]%', a.title), 4)
             END AS unit_number
            
            ,std.description AS strand
@@ -240,7 +241,7 @@ FROM
        ON r.standard_id = std.standard_id
      WHERE (a.academic_year - 1) >= 2016
     ) sub
-LEFT OUTER JOIN gabby.powerschool.course_enrollments_static enr
+LEFT JOIN gabby.powerschool.course_enrollments_static enr
   ON sub.student_number = enr.student_number
  AND sub.academic_year = enr.academic_year
  AND sub.course_number = enr.course_number
