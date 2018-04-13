@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW extracts.dayforce_earningstatementimport_03_earning AS
+--CREATE OR ALTER VIEW extracts.dayforce_earningstatementimport_03_earning AS
 
 /* 1 - Regular Earnings */
 SELECT associate_id AS Example
@@ -19,6 +19,7 @@ SELECT associate_id AS Example
       ,'ASK ACCOUNTING' AS EarningType
 FROM payroll.historical_earnings_earnings
 WHERE regular_earnings_detail IS NOT NULL
+  AND payroll_company_code != 'ZS1'
 
 UNION ALL
 
@@ -38,6 +39,7 @@ SELECT associate_id AS Example
       ,'ASK ACCOUNTING' AS EarningType
 FROM payroll.historical_earnings_earnings
 WHERE overtime_earnings_detail IS NOT NULL
+  AND payroll_company_code != 'ZS1'
       
 UNION ALL
 
@@ -57,6 +59,7 @@ SELECT associate_id AS Example
       ,'ASK ACCOUNTING' AS EarningType
 FROM payroll.historical_earnings_earnings
 WHERE additional_earnings != 0
+  AND payroll_company_code != 'ZS1'
 
 UNION ALL
 
@@ -68,11 +71,13 @@ SELECT associate_id AS Example
       ,pay_date AS CheckDate
       ,CASE WHEN void_check_indicator = 'N' THEN 0 ELSE 1 END AS IsVoid
       ,memo_description + ' (' + memo_code_pay_statements + ')' AS EarningCodeName
-      ,NULL AS Hours
-      ,NULL AS Rate
+      ,'' AS Hours
+      ,'' AS Rate
       ,memo_amount AS Amount
-      ,NULL AS HoursYTD
+      ,'' AS HoursYTD
       ,SUM(CASE WHEN void_check_indicator = 'Y' THEN NULL ELSE memo_amount END) OVER (PARTITION BY associate_id, YEAR(pay_date), memo_code_pay_statements ORDER BY pay_date) AS AmountYTD
       ,'ASK ACCOUNTING' AS EarningType
 FROM payroll.historical_earnings_earnings
 WHERE memo_amount != 0
+  AND payroll_company_code != 'ZS1'
+  AND memo_code_pay_statements NOT IN ('#','&','7','8') 

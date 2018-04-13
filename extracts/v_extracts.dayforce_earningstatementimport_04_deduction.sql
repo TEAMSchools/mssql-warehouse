@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW extracts.dayforce_earningstatementimport_04_deduction AS
+--CREATE OR ALTER VIEW extracts.dayforce_earningstatementimport_04_deduction AS
 
 /* 1 - regular deductions: */
 SELECT associate_id AS Example
@@ -18,6 +18,7 @@ SELECT associate_id AS Example
 FROM gabby.payroll.historical_earnings_deductions 
 WHERE LEFT(other_deduction_code_pay_statements, 2) NOT IN ('CK', 'SV')
   AND other_deduction_amount_pay_statements != 0
+  AND payroll_company_code != 'ZS1'
 
 /* 2 federal taxes */
 UNION ALL 
@@ -35,6 +36,7 @@ SELECT associate_id AS Example
       ,SUM(CASE WHEN void_check_indicator = 'Y' THEN NULL ELSE federal_tax_amount END) OVER (PARTITION BY associate_id, YEAR(pay_date) ORDER BY pay_date, check_voucher_number) AS YTD
 FROM gabby.payroll.historical_earnings_taxes
 WHERE federal_tax_amount != 0
+  AND payroll_company_code != 'ZS1'
 
 UNION ALL
 
@@ -52,6 +54,7 @@ SELECT associate_id AS Example
       ,SUM(CASE WHEN void_check_indicator = 'Y' THEN NULL ELSE lived_in_local_amount_pay_statements END) OVER (PARTITION BY associate_id, YEAR(pay_date), lived_in_local_code_pay_statements ORDER BY pay_date, check_voucher_number) AS YTD
 FROM gabby.payroll.historical_earnings_taxes
 WHERE lived_in_local_amount_pay_statements != 0
+  AND payroll_company_code != 'ZS1'
 
 UNION ALL
 
@@ -69,6 +72,7 @@ SELECT associate_id AS Example
       ,SUM(CASE WHEN void_check_indicator = 'Y' THEN NULL ELSE lived_in_state_tax_amount_pay_statements END) OVER (PARTITION BY associate_id, YEAR(pay_date), lived_in_state_tax_code_pay_statements ORDER BY pay_date, check_voucher_number) AS YTD
 FROM gabby.payroll.historical_earnings_taxes
 WHERE lived_in_state_tax_amount_pay_statements != 0
+  AND payroll_company_code != 'ZS1'
 
 UNION ALL
 
@@ -86,6 +90,7 @@ SELECT associate_id AS Example
       ,SUM(CASE WHEN void_check_indicator = 'Y' THEN NULL ELSE medicare_surtax_amount END) OVER(PARTITION BY associate_id, YEAR(pay_date) ORDER BY pay_date, check_voucher_number) AS YTD
 FROM gabby.payroll.historical_earnings_taxes
 WHERE medicare_surtax_amount != 0
+  AND payroll_company_code != 'ZS1'
 
 UNION ALL
 
@@ -103,6 +108,7 @@ SELECT associate_id AS Example
       ,SUM(CASE WHEN void_check_indicator = 'Y' THEN NULL ELSE medicare_tax_amount END) OVER(PARTITION BY associate_id, YEAR(pay_date) ORDER BY pay_date, check_voucher_number) AS YTD
 FROM gabby.payroll.historical_earnings_taxes
 WHERE medicare_tax_amount != 0
+  AND payroll_company_code != 'ZS1'
      
 UNION ALL
 
@@ -120,6 +126,7 @@ SELECT associate_id AS Example
       ,SUM(CASE WHEN void_check_indicator = 'Y' THEN NULL ELSE school_district_tax_amount_pay_statements END) OVER(PARTITION BY associate_id, YEAR(pay_date), school_district_tax_code_pay_statements ORDER BY pay_date, check_voucher_number) AS YTD
 FROM gabby.payroll.historical_earnings_taxes
 WHERE school_district_tax_amount_pay_statements != 0
+  AND payroll_company_code != 'ZS1'
      
 UNION ALL
 
@@ -137,6 +144,7 @@ SELECT associate_id AS Example
       ,SUM(CASE WHEN void_check_indicator = 'Y' THEN NULL ELSE social_security_tax_amount END) OVER (PARTITION BY associate_id, YEAR(pay_date) ORDER BY pay_date, check_voucher_number) AS YTD
 FROM gabby.payroll.historical_earnings_taxes
 WHERE social_security_tax_amount != 0
+  AND payroll_company_code != 'ZS1'
      
 
 UNION ALL
@@ -155,6 +163,7 @@ SELECT associate_id AS Example
       ,SUM(CASE WHEN void_check_indicator = 'Y' THEN NULL ELSE sui_sdi_tax_amount_pay_statements END) OVER(PARTITION BY associate_id, YEAR(pay_date), sui_sdi_tax_code_pay_statements ORDER BY pay_date, check_voucher_number) AS YTD
 FROM gabby.payroll.historical_earnings_taxes
 WHERE sui_sdi_tax_amount_pay_statements != 0
+  AND payroll_company_code != 'ZS1'
 
 UNION ALL
 
@@ -172,3 +181,4 @@ SELECT associate_id AS Example
       ,SUM(CASE WHEN void_check_indicator = 'Y' THEN NULL ELSE worked_in_state_tax_amount_pay_statements END) OVER(PARTITION BY associate_id, YEAR(pay_date), worked_in_state_tax_code_pay_statements ORDER BY pay_date, check_voucher_number) AS YTD
 FROM gabby.payroll.historical_earnings_taxes
 WHERE worked_in_state_tax_amount_pay_statements != 0
+  AND payroll_company_code != 'ZS1'
