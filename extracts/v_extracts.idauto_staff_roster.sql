@@ -19,3 +19,4 @@ SELECT QUOTENAME(ISNULL(NULL, ''), '"') AS ["Preferred Name"]
       ,QUOTENAME(ISNULL(CONVERT(VARCHAR,(CONVERT(DATE,df.birth_date)),101), ''), '"') AS ["Birth Date"]
       ,QUOTENAME(ISNULL(COALESCE(df.adp_associate_id, CONVERT(VARCHAR,df.df_employee_number)), ''), '"') AS ["Associate ID"] 
 FROM gabby.dayforce.staff_roster df
+WHERE df.original_hire_date <= DATEADD(DAY, 30, GETDATE())

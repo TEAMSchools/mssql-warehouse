@@ -23,8 +23,7 @@ WITH clean_people AS (
         ,CONVERT(INT,e.employee_s_manager_s_df_emp_number_id) AS manager_df_employee_number
         ,CONVERT(VARCHAR(5),e.payclass) AS payclass /* different */
         ,CONVERT(VARCHAR(25),e.paytype) AS paytype /* new */
-        ,CONVERT(VARCHAR(25),e.jobs_and_positions_flsa_status) AS flsa_status /* new */                
-        ,CONVERT(VARCHAR(25),e.mobile_number) AS mobile_number
+        ,CONVERT(VARCHAR(25),e.jobs_and_positions_flsa_status) AS flsa_status /* new */                        
         ,e.birth_date
         ,e.original_hire_date
         ,e.termination_date
@@ -41,6 +40,7 @@ WITH clean_people AS (
         ,CONVERT(VARCHAR(25),COALESCE(e.preferred_last_name , e.last_name)) AS preferred_last_name
         ,CONVERT(VARCHAR(125),REPLACE(e.primary_site, ' - Regional', '')) AS primary_site
         ,CONVERT(VARCHAR(125),RTRIM(LEFT(e.ethnicity, CHARINDEX(' (', e.ethnicity)))) AS primary_ethnicity        
+        ,CONVERT(VARCHAR(25),REPLACE(REPLACE(e.mobile_number, '-', ''), ' ', '')) AS mobile_number
         ,CASE WHEN e.ethnicity LIKE '%(Hispanic%' THEN 1 ELSE 0 END AS is_hispanic
         ,CASE WHEN e.primary_site LIKE ' - Regional' THEN 1 ELSE 0 END AS is_regional_staff        
         ,CASE
@@ -49,9 +49,9 @@ WITH clean_people AS (
           WHEN e.legal_entity_name = 'KIPP Cooper Norcross Academy' THEN 'D3Z'          
          END AS payroll_company_code        
 
-        --,CONVERT(VARCHAR(125),position_title) AS position_title /* new -- redundant combined field */
-        --,CONVERT(VARCHAR(125),primary_on_site_department_entity_) AS primary_on_site_department_entity /* new -- redundant combined field */
-        --,CONVERT(VARCHAR(125),primary_site_entity_) AS primary_site_entity /* new -- redundant combined field */
+        ,CONVERT(VARCHAR(125),position_title) AS position_title /* new -- redundant combined field */
+        ,CONVERT(VARCHAR(125),primary_on_site_department_entity_) AS primary_on_site_department_entity /* new -- redundant combined field */
+        ,CONVERT(VARCHAR(125),primary_site_entity_) AS primary_site_entity /* new -- redundant combined field */
   FROM gabby.dayforce.employees e
  )
 
@@ -93,6 +93,9 @@ SELECT c.df_employee_number
       ,c.annual_salary
       ,c.grades_taught
       ,c.subjects_taught
+      ,c.position_title
+      ,c.primary_on_site_department_entity
+      ,c.primary_site_entity
       ,c.preferred_last_name + ', ' + c.preferred_first_name AS preferred_name
       ,SUBSTRING(c.mobile_number, 1, 3) + '-' 
          + SUBSTRING(c.mobile_number, 4, 3) + '-' 
