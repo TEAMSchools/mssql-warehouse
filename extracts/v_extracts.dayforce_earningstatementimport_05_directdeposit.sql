@@ -1,7 +1,7 @@
 USE gabby
 GO
 
---CREATE OR ALTER VIEW extracts.dayforce_earningstatementimport_05_directdeposit AS
+CREATE OR ALTER VIEW extracts.dayforce_earningstatementimport_05_directdeposit AS
 
 SELECT associate_id AS Example
       ,payroll_company_code AS CompanyCode
@@ -9,7 +9,7 @@ SELECT associate_id AS Example
       ,check_voucher_number AS CheckNumber
       ,pay_date AS CheckDate
       ,CASE WHEN void_check_indicator = 'N' THEN 0 ELSE 1 END AS IsVoid
-      ,'deposit' AS Category
+      ,'Deposit' AS Category
       ,other_deduction_description AS AccountName
       ,'' AS BankNumber
       ,'' AS TransitNumber

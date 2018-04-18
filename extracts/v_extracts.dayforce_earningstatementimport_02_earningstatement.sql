@@ -1,25 +1,31 @@
 USE gabby
 GO
 
---CREATE OR ALTER VIEW extracts.dayforce_earningstatementimport_02_earningstatement AS
+CREATE OR ALTER VIEW extracts.dayforce_earningstatementimport_02_earningstatement AS
 
-SELECT TOP 1000
-       associate_id AS Example
+SELECT associate_id AS Example
       ,payroll_company_code AS CompanyCode
       ,tax_id_ssn_ AS SocialSecurityNumber
       ,check_voucher_number AS CheckNumber
       ,pay_date AS CheckDate
       ,CASE WHEN void_check_indicator = 'N' THEN 0 ELSE 1 END AS IsVoid
       ,payroll_name AS Name
-      ,CASE WHEN net_pay = 0 THEN 'Direct Deposit'
-            WHEN LEN(check_voucher_code) < 6 THEN 'Other' 
-            ELSE 'Check' END AS CheckType 
-      ,'semi-monthly' AS PayFrequency
-      ,CASE WHEN DATEPART(dd,period_end_date) > 15 THEN DATEPART(mm,period_end_date) * 2
-            ELSE (DATEPART(mm,period_end_date) * 2) -1 END AS PayPeriod 
-      ,CASE WHEN period_beginning_date != NULL THEN period_beginning_date
-            WHEN DATEPART(dd,period_end_date) > 15 THEN CONVERT(DATE,CONVERT(VARCHAR,DATEPART(yyyy,period_end_date)) + '-' + CONVERT(VARCHAR,DATEPART(mm,period_end_date)) + '-16')
-            ELSE CONVERT(DATE,CONVERT(VARCHAR,DATEPART(yyyy,period_end_date)) + '-' + CONVERT(VARCHAR,DATEPART(mm,period_end_date)) + '-1')  END AS PayPeriodStart
+      ,CASE 
+        WHEN net_pay = 0 THEN 'Direct Deposit'
+        WHEN LEN(check_voucher_code) < 6 THEN 'Other' 
+        ELSE 'Check' 
+       END AS CheckType 
+      ,'Semi-Monthly' AS PayFrequency
+      ,CASE 
+        WHEN DATEPART(DAY, period_end_date) >= 16 THEN DATEPART(MONTH, period_end_date) * 2
+        ELSE (DATEPART(MONTH, period_end_date) * 2) - 1
+       END AS PayPeriod
+      ,CASE
+        WHEN period_beginning_date IS NOT NULL THEN period_beginning_date
+        WHEN DATEPART(DAY, period_end_date) >= 16 THEN DATEFROMPARTS(DATEPART(YEAR, period_end_date), DATEPART(MONTH, period_end_date), 16)
+        ELSE DATEFROMPARTS(DATEPART(YEAR, period_end_date), DATEPART(MONTH, period_end_date), 1)
+       END AS PayPeriodStart
+      ,period_beginning_date
       ,period_end_date AS PayPeriodEnd
       ,total_hours AS GrossHours
       ,SUM(CASE WHEN void_check_indicator = 'Y' THEN NULL ELSE total_hours END) OVER(PARTITION BY associate_id, YEAR(pay_date) ORDER BY pay_date, check_voucher_number) AS GrossHoursYTD

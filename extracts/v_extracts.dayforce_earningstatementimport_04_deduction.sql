@@ -1,7 +1,7 @@
 USE gabby
 GO
 
---CREATE OR ALTER VIEW extracts.dayforce_earningstatementimport_04_deduction AS
+CREATE OR ALTER VIEW extracts.dayforce_earningstatementimport_04_deduction AS
 
 /* 1 - regular deductions: */
 SELECT associate_id AS Example
@@ -11,7 +11,7 @@ SELECT associate_id AS Example
       ,pay_date AS CheckDate
       ,CASE WHEN void_check_indicator = 'N' THEN 0 ELSE 1 END AS IsVoid
       ,other_deduction_description + ' (' + other_deduction_code_pay_statements + ')' AS DeductionName
-      ,'0' AS IsStatutory
+      ,0 AS IsStatutory
       ,CASE WHEN other_deduction_code_pay_statements IN ('L','D42','HCP','P','E','HSA','D31','Q','D40','D30','30') THEN 1 ELSE 0 END AS IsPreTax
       ,other_deduction_amount_pay_statements AS Amount
       ,SUM(CASE WHEN void_check_indicator = 'Y' THEN NULL ELSE other_deduction_amount_pay_statements END) OVER(PARTITION BY associate_id, YEAR(pay_date), other_deduction_code_pay_statements ORDER BY pay_date, check_voucher_number) AS YTD
@@ -30,8 +30,8 @@ SELECT associate_id AS Example
       ,pay_date AS CheckDate
       ,CASE WHEN void_check_indicator = 'N' THEN 0 ELSE 1 END AS IsVoid
       ,'Federal Tax' AS DeductionName
-      ,'1' AS IsStatutory
-      ,'0' AS IsPreTax
+      ,1 AS IsStatutory
+      ,0 AS IsPreTax
       ,federal_tax_amount AS Amount
       ,SUM(CASE WHEN void_check_indicator = 'Y' THEN NULL ELSE federal_tax_amount END) OVER (PARTITION BY associate_id, YEAR(pay_date) ORDER BY pay_date, check_voucher_number) AS YTD
 FROM gabby.payroll.historical_earnings_taxes
@@ -47,9 +47,9 @@ SELECT associate_id AS Example
       ,check_voucher_number AS CheckNumber
       ,pay_date AS CheckDate
       ,CASE WHEN void_check_indicator = 'N' THEN 0 ELSE 1 END AS IsVoid
-      ,'lived in local tax: ' + lived_in_local_code_pay_statements AS DeductionName
-      ,'1' AS IsStatutory
-      ,'0' AS IsPreTax
+      ,'Lived in Local Tax: ' + lived_in_local_code_pay_statements AS DeductionName
+      ,1 AS IsStatutory
+      ,0 AS IsPreTax
       ,lived_in_local_amount_pay_statements AS Amount
       ,SUM(CASE WHEN void_check_indicator = 'Y' THEN NULL ELSE lived_in_local_amount_pay_statements END) OVER (PARTITION BY associate_id, YEAR(pay_date), lived_in_local_code_pay_statements ORDER BY pay_date, check_voucher_number) AS YTD
 FROM gabby.payroll.historical_earnings_taxes
@@ -65,9 +65,9 @@ SELECT associate_id AS Example
       ,check_voucher_number AS CheckNumber
       ,pay_date AS CheckDate
       ,CASE WHEN void_check_indicator = 'N' THEN 0 ELSE 1 END AS IsVoid
-      ,'lived in state tax: ' + lived_in_state_tax_code_pay_statements AS DeductionName
-      ,'1' AS IsStatutory
-      ,'0' AS IsPreTax
+      ,'Lived in State Tax: ' + lived_in_state_tax_code_pay_statements AS DeductionName
+      ,1 AS IsStatutory
+      ,0 AS IsPreTax
       ,lived_in_state_tax_amount_pay_statements AS Amount
       ,SUM(CASE WHEN void_check_indicator = 'Y' THEN NULL ELSE lived_in_state_tax_amount_pay_statements END) OVER (PARTITION BY associate_id, YEAR(pay_date), lived_in_state_tax_code_pay_statements ORDER BY pay_date, check_voucher_number) AS YTD
 FROM gabby.payroll.historical_earnings_taxes
@@ -83,9 +83,9 @@ SELECT associate_id AS Example
       ,check_voucher_number AS CheckNumber
       ,pay_date AS CheckDate
       ,CASE WHEN void_check_indicator = 'N' THEN 0 ELSE 1 END AS IsVoid
-      ,'medicare surtax' AS DeductionName
-      ,'1' AS IsStatutory
-      ,'0' AS IsPreTax
+      ,'Medicare Surtax' AS DeductionName
+      ,1 AS IsStatutory
+      ,0 AS IsPreTax
       ,medicare_surtax_amount AS Amount
       ,SUM(CASE WHEN void_check_indicator = 'Y' THEN NULL ELSE medicare_surtax_amount END) OVER(PARTITION BY associate_id, YEAR(pay_date) ORDER BY pay_date, check_voucher_number) AS YTD
 FROM gabby.payroll.historical_earnings_taxes
@@ -101,9 +101,9 @@ SELECT associate_id AS Example
       ,check_voucher_number AS CheckNumber
       ,pay_date AS CheckDate
       ,CASE WHEN void_check_indicator = 'N' THEN 0 ELSE 1 END AS IsVoid
-      ,'medicare tax' AS DeductionName
-      ,'1' AS IsStatutory
-      ,'0' AS IsPreTax
+      ,'Medicare Tax' AS DeductionName
+      ,1 AS IsStatutory
+      ,0 AS IsPreTax
       ,medicare_tax_amount AS Amount
       ,SUM(CASE WHEN void_check_indicator = 'Y' THEN NULL ELSE medicare_tax_amount END) OVER(PARTITION BY associate_id, YEAR(pay_date) ORDER BY pay_date, check_voucher_number) AS YTD
 FROM gabby.payroll.historical_earnings_taxes
@@ -119,9 +119,9 @@ SELECT associate_id AS Example
       ,check_voucher_number AS CheckNumber
       ,pay_date AS CheckDate
       ,CASE WHEN void_check_indicator = 'N' THEN 0 ELSE 1 END AS IsVoid
-      ,'school district tax: ' + school_district_tax_code_pay_statements AS DeductionName
-      ,'1' AS IsStatutory
-      ,'0' AS IsPreTax
+      ,'School District Tax: ' + school_district_tax_code_pay_statements AS DeductionName
+      ,1 AS IsStatutory
+      ,0 AS IsPreTax
       ,school_district_tax_amount_pay_statements AS Amount
       ,SUM(CASE WHEN void_check_indicator = 'Y' THEN NULL ELSE school_district_tax_amount_pay_statements END) OVER(PARTITION BY associate_id, YEAR(pay_date), school_district_tax_code_pay_statements ORDER BY pay_date, check_voucher_number) AS YTD
 FROM gabby.payroll.historical_earnings_taxes
@@ -137,9 +137,9 @@ SELECT associate_id AS Example
       ,check_voucher_number AS CheckNumber
       ,pay_date AS CheckDate
       ,CASE WHEN void_check_indicator = 'N' THEN 0 ELSE 1 END AS IsVoid
-      ,'social security tax' AS DeductionName
-      ,'1' AS IsStatutory
-      ,'0' AS IsPreTax
+      ,'Social Security Tax' AS DeductionName
+      ,1 AS IsStatutory
+      ,0 AS IsPreTax
       ,social_security_tax_amount AS Amount
       ,SUM(CASE WHEN void_check_indicator = 'Y' THEN NULL ELSE social_security_tax_amount END) OVER (PARTITION BY associate_id, YEAR(pay_date) ORDER BY pay_date, check_voucher_number) AS YTD
 FROM gabby.payroll.historical_earnings_taxes
@@ -156,9 +156,9 @@ SELECT associate_id AS Example
       ,check_voucher_number AS CheckNumber
       ,pay_date AS CheckDate
       ,CASE WHEN void_check_indicator = 'N' THEN 0 ELSE 1 END AS IsVoid
-      ,'SUI/SDI tax: ' + sui_sdi_tax_code_pay_statements AS DeductionName
-      ,'1' AS IsStatutory
-      ,'0' AS IsPreTax
+      ,'SUI/SDI Tax: ' + sui_sdi_tax_code_pay_statements AS DeductionName
+      ,1 AS IsStatutory
+      ,0 AS IsPreTax
       ,sui_sdi_tax_amount_pay_statements AS Amount
       ,SUM(CASE WHEN void_check_indicator = 'Y' THEN NULL ELSE sui_sdi_tax_amount_pay_statements END) OVER(PARTITION BY associate_id, YEAR(pay_date), sui_sdi_tax_code_pay_statements ORDER BY pay_date, check_voucher_number) AS YTD
 FROM gabby.payroll.historical_earnings_taxes
@@ -174,9 +174,9 @@ SELECT associate_id AS Example
       ,check_voucher_number AS CheckNumber
       ,pay_date AS CheckDate
       ,CASE WHEN void_check_indicator = 'N' THEN 0 ELSE 1 END AS IsVoid
-      ,'worked in state tax: ' + worked_in_state_tax_code_pay_statements AS DeductionName
-      ,'1' AS IsStatutory
-      ,'0' AS IsPreTax
+      ,'Worked in State Tax: ' + worked_in_state_tax_code_pay_statements AS DeductionName
+      ,1 AS IsStatutory
+      ,0 AS IsPreTax
       ,worked_in_state_tax_amount_pay_statements AS Amount
       ,SUM(CASE WHEN void_check_indicator = 'Y' THEN NULL ELSE worked_in_state_tax_amount_pay_statements END) OVER(PARTITION BY associate_id, YEAR(pay_date), worked_in_state_tax_code_pay_statements ORDER BY pay_date, check_voucher_number) AS YTD
 FROM gabby.payroll.historical_earnings_taxes
