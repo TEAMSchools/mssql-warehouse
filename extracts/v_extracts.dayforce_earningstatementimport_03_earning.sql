@@ -1,5 +1,3 @@
-/* Still waiting on accounting to clarify some codes. */
-
 USE gabby
 GO
 
@@ -60,13 +58,13 @@ SELECT associate_id AS Example
       ,SUM(CASE WHEN void_check_indicator = 'Y' THEN NULL ELSE additional_earnings END) OVER(PARTITION BY associate_id, YEAR(pay_date), additional_earnings_code_pay_statements ORDER BY pay_date) AS AmountYTD
       ,CASE WHEN additional_earnings_code_pay_statements = 'N2G' THEN 'Memo'
             WHEN additional_earnings_code_pay_statements = 'GC' THEN 'TaxableBenefit'
-            WHEN additional_earnings_code_pay_statements IN ('4','F','PAV') THEN 'WAITING ON ACCOUNTING'
             ELSE 'Normal' 
             END AS EarningType
 FROM payroll.historical_earnings_earnings
 WHERE additional_earnings != 0
   AND payroll_company_code != 'ZS1'
-
+  AND additional_earnings_code_pay_statements NOT IN ('4','F','PAV')
+  
 UNION ALL
 
 /* 4 - Memo */
@@ -82,10 +80,8 @@ SELECT associate_id AS Example
       ,memo_amount AS Amount
       ,'' AS HoursYTD
       ,SUM(CASE WHEN void_check_indicator = 'Y' THEN NULL ELSE memo_amount END) OVER (PARTITION BY associate_id, YEAR(pay_date), memo_code_pay_statements ORDER BY pay_date) AS AmountYTD
-      ,CASE WHEN memo_code_pay_statements IN ('X','M','A') THEN 'WAITING ON ACCOUNTING' 
-            ELSE 'Memo'
-            END AS EarningType
+      ,'Memo' AS EarningType
 FROM payroll.historical_earnings_earnings
 WHERE memo_amount != 0
   AND payroll_company_code != 'ZS1'
-  AND memo_code_pay_statements NOT IN ('#','&','7','8') 
+  AND memo_code_pay_statements NOT IN ('#','&','7','8','X','M','A') 
