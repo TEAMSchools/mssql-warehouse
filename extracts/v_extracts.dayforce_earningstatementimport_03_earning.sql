@@ -1,3 +1,5 @@
+/* Still waiting on accounting to clarify some codes. */
+
 USE gabby
 GO
 
@@ -16,7 +18,7 @@ SELECT associate_id AS Example
       ,regular_earnings_detail AS Amount
       ,SUM(CASE WHEN void_check_indicator = 'Y' THEN NULL ELSE regular_hours_detail END) OVER(PARTITION BY associate_id, YEAR(pay_date) ORDER BY pay_date, check_voucher_number) AS HoursYTD
       ,SUM(CASE WHEN void_check_indicator = 'Y' THEN NULL ELSE regular_earnings_detail END) OVER(PARTITION BY associate_id, YEAR(pay_date) ORDER BY pay_date, check_voucher_number) AS AmountYTD
-      ,'ASK ACCOUNTING' AS EarningType
+      ,'Normal' AS EarningType
 FROM payroll.historical_earnings_earnings
 WHERE regular_earnings_detail IS NOT NULL
   AND payroll_company_code != 'ZS1'
@@ -36,7 +38,7 @@ SELECT associate_id AS Example
       ,overtime_earnings_detail AS Amount
       ,SUM(CASE WHEN void_check_indicator = 'Y' THEN NULL ELSE overtime_hours_detail END) OVER(PARTITION BY associate_id, YEAR(pay_date) ORDER BY pay_date) AS HoursYTD
       ,SUM(CASE WHEN void_check_indicator = 'Y' THEN NULL ELSE overtime_earnings_detail END) OVER(PARTITION BY associate_id, YEAR(pay_date) ORDER BY pay_date) AS AmountYTD
-      ,'ASK ACCOUNTING' AS EarningType
+      ,'Normal' AS EarningType
 FROM payroll.historical_earnings_earnings
 WHERE overtime_earnings_detail IS NOT NULL
   AND payroll_company_code != 'ZS1'
@@ -56,7 +58,11 @@ SELECT associate_id AS Example
       ,additional_earnings AS Amount
       ,SUM(CASE WHEN void_check_indicator = 'Y' THEN NULL ELSE additional_hours END) OVER(PARTITION BY associate_id, YEAR(pay_date), additional_earnings_code_pay_statements ORDER BY pay_date) AS HoursYTD
       ,SUM(CASE WHEN void_check_indicator = 'Y' THEN NULL ELSE additional_earnings END) OVER(PARTITION BY associate_id, YEAR(pay_date), additional_earnings_code_pay_statements ORDER BY pay_date) AS AmountYTD
-      ,'ASK ACCOUNTING' AS EarningType
+      ,CASE WHEN additional_earnings_code_pay_statements = 'N2G' THEN 'Memo'
+            WHEN additional_earnings_code_pay_statements = 'GC' THEN 'TaxableBenefit'
+            WHEN additional_earnings_code_pay_statements IN ('4','F','PAV') THEN 'WAITING ON ACCOUNTING'
+            ELSE 'Normal' 
+            END AS EarningType
 FROM payroll.historical_earnings_earnings
 WHERE additional_earnings != 0
   AND payroll_company_code != 'ZS1'
@@ -76,7 +82,9 @@ SELECT associate_id AS Example
       ,memo_amount AS Amount
       ,'' AS HoursYTD
       ,SUM(CASE WHEN void_check_indicator = 'Y' THEN NULL ELSE memo_amount END) OVER (PARTITION BY associate_id, YEAR(pay_date), memo_code_pay_statements ORDER BY pay_date) AS AmountYTD
-      ,'ASK ACCOUNTING' AS EarningType
+      ,CASE WHEN memo_code_pay_statements IN ('X','M','A') THEN 'WAITING ON ACCOUNTING' 
+            ELSE 'Memo'
+            END AS EarningType
 FROM payroll.historical_earnings_earnings
 WHERE memo_amount != 0
   AND payroll_company_code != 'ZS1'
