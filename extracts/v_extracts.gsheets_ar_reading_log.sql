@@ -132,31 +132,38 @@ SELECT co.student_number
       ,gr.y1_grade_percent_adjusted AS y1_rdg_gr
       
       ,ele.grade_category_pct AS cur_term_rdg_hw_avg            
+
+      ,bk.vch_content_title AS last_book_title
+      ,bk.dt_taken AS last_book_quiz_date
+      ,bk.d_percent_correct * 100 AS last_book_quiz_pct_correct
 FROM gabby.powerschool.cohort_identifiers_static co
-LEFT OUTER JOIN fp fp_base
+LEFT JOIN fp fp_base
   ON co.student_number = fp_base.student_number
  AND fp_base.rn_base = 1
-LEFT OUTER JOIN fp fp_curr
+LEFT JOIN fp fp_curr
   ON co.student_number = fp_curr.student_number
  AND fp_curr.rn_curr = 1
-LEFT OUTER JOIN gabby.powerschool.course_enrollments_static enr
+LEFT JOIN gabby.powerschool.course_enrollments_static enr
   ON co.studentid = enr.studentid 
  AND enr.credittype = 'ENG'
  AND CONVERT(DATE,GETDATE()) BETWEEN enr.dateenrolled AND enr.dateleft
  AND enr.rn_subject = 1
-LEFT OUTER JOIN gabby.powerschool.final_grades_static gr
+LEFT JOIN gabby.powerschool.final_grades_static gr
   ON co.student_number = gr.student_number
  AND co.academic_year = gr.academic_year
  AND enr.course_number = gr.course_number
  AND gr.is_curterm = 1
-LEFT OUTER JOIN gabby.powerschool.category_grades_static ele
+LEFT JOIN gabby.powerschool.category_grades_static ele
   ON co.student_number = ele.student_number
  AND co.academic_year = ele.academic_year 
  AND enr.course_number = ele.course_number   
  AND ele.grade_category = 'H'
  AND ele.is_curterm = 1
-LEFT OUTER JOIN ar_wide
+LEFT JOIN ar_wide
   ON co.student_number = ar_wide.student_number
+LEFT JOIN gabby.renaissance.ar_most_recent_quiz_static bk
+  ON co.student_number = bk.student_number
+ AND co.academic_year = bk.academic_year
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()  
   AND co.school_level = 'MS'
   AND co.enroll_status = 0    

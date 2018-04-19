@@ -21,24 +21,6 @@ WITH ar_long AS (
           ,dt_taken
  )
 
-,last_book AS (
-  SELECT student_number
-        ,academic_year
-        ,DATEDIFF(DAY, dt_taken, GETDATE()) AS n_days_ago
-        ,CASE 
-          WHEN rn_quiz > 1 THEN 'RETAKE - ' + vch_content_title
-          ELSE vch_content_title 
-         END AS book_title
-        ,i_lexile AS book_lexile
-        ,d_percent_correct AS book_pct_correct
-        ,i_word_count AS word_count
-        ,ROW_NUMBER() OVER(
-           PARTITION BY student_number, academic_year
-             ORDER BY dt_taken DESC) AS rn
-  FROM gabby.renaissance.ar_studentpractice_identifiers_static
-  WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
- )
-
 SELECT student_number
       ,lastfirst
       ,academic_year
@@ -180,49 +162,48 @@ FROM
                 ,ar.total_lexile
                 ,ar.total_pct_correct
            
-                ,bk.book_title AS last_book_title
-                ,bk.n_days_ago AS last_book_days_ago 
-                ,bk.book_lexile AS last_book_lexile
-                ,bk.book_pct_correct AS last_book_pct_correct
-                ,bk.word_count AS last_book_word_count
+                ,bk.n_days_ago AS last_book_days_ago                 
+                ,bk.i_lexile AS last_book_lexile
+                ,bk.d_percent_correct AS last_book_pct_correct
+                ,bk.i_word_count AS last_book_word_count
+                ,CASE WHEN bk.rn_quiz > 1 THEN 'RETAKE - ' + bk.vch_content_title ELSE bk.vch_content_title END AS last_book_title
           FROM gabby.powerschool.cohort_identifiers_scaffold co
-          LEFT OUTER JOIN gabby.reporting.reporting_terms dts
+          LEFT JOIN gabby.reporting.reporting_terms dts
             ON co.schoolid = dts.schoolid
            AND co.date BETWEEN dts.start_date AND dts.end_date
            AND dts.identifier = 'AR'
            AND dts.time_per_name != 'ARY'
-          LEFT OUTER JOIN gabby.reporting.reporting_terms y1dts
+          LEFT JOIN gabby.reporting.reporting_terms y1dts
             ON co.academic_year = y1dts.academic_year
            AND co.schoolid = y1dts.schoolid      
            AND y1dts.identifier = 'AR'
            AND y1dts.time_per_name = 'ARY'
-          LEFT OUTER JOIN gabby.powerschool.course_enrollments_static enr 
+          LEFT JOIN gabby.powerschool.course_enrollments_static enr 
             ON co.student_number = enr.student_number
            AND co.academic_year = enr.academic_year
            AND enr.credittype = 'ENG'
            AND enr.section_enroll_status = 0
            AND enr.rn_subject = 1
-          LEFT OUTER JOIN gabby.powerschool.course_enrollments_static hr
+          LEFT JOIN gabby.powerschool.course_enrollments_static hr
             ON co.student_number = hr.student_number
            AND co.academic_year = hr.academic_year
            AND hr.course_number = 'HR'
            AND hr.section_enroll_status = 0      
            AND hr.rn_subject = 1
-          LEFT OUTER JOIN gabby.renaissance.ar_goals y1_goal
+          LEFT JOIN gabby.renaissance.ar_goals y1_goal
             ON co.student_number = y1_goal.student_number
            AND co.academic_year = y1_goal.academic_year
            AND y1_goal.reporting_term = 'ARY'
-          LEFT OUTER JOIN gabby.renaissance.ar_goals term_goal
+          LEFT JOIN gabby.renaissance.ar_goals term_goal
             ON co.student_number = term_goal.student_number   
            AND co.academic_year = term_goal.academic_year
            AND dts.time_per_name = term_goal.reporting_term      
-          LEFT OUTER JOIN ar_long ar
-            ON co.student_number = ar.student_number
-           AND co.date = ar.date_taken
-          LEFT OUTER JOIN last_book bk
+          LEFT JOIN gabby.renaissance.ar_most_recent_quiz_static bk
             ON co.student_number = bk.student_number
            AND co.academic_year = bk.academic_year
-           AND bk.rn = 1
+          LEFT JOIN ar_long ar
+            ON co.student_number = ar.student_number
+           AND co.date = ar.date_taken          
           WHERE co.reporting_schoolid NOT IN (999999, 5173)
             AND co.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
             AND co.date <= CONVERT(DATE,GETDATE())
