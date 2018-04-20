@@ -5,7 +5,7 @@ CREATE OR ALTER VIEW tableau.zendesk_tickets_v2 AS
 
 WITH comments_count AS (
 	 SELECT c.ticket_id
-		      ,COUNT(c.ticket_id) -1 AS comments_count
+		      ,COUNT(c.ticket_id) - 1 AS comments_count
 	 FROM gabby.zendesk_v2.ticket_comment c  
 	 GROUP BY c.ticket_id
  )
