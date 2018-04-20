@@ -134,7 +134,7 @@ SELECT co.student_number
       ,ele.grade_category_pct AS cur_term_rdg_hw_avg            
 
       ,bk.vch_content_title AS last_book_title
-      ,bk.dt_taken AS last_book_quiz_date
+      ,CONVERT(VARCHAR,bk.dt_taken) AS last_book_quiz_date
       ,bk.d_percent_correct * 100 AS last_book_quiz_pct_correct
 FROM gabby.powerschool.cohort_identifiers_static co
 LEFT JOIN fp fp_base
