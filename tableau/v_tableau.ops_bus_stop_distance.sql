@@ -4,7 +4,8 @@ GO
 CREATE OR ALTER VIEW tableau.ops_bus_stop_distance AS
 
 SELECT student_number AS student_id
-      ,location_name AS bus_stop_name
+      ,location_type
+      ,location_name AS bus_stop_name      
       ,distance AS distance_to_bus_stop
       ,RANK() OVER(
         PARTITION BY student_number
