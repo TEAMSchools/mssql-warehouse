@@ -68,13 +68,13 @@ WITH archive_unpivot AS (
  )
 
 ,current_unpivot AS (
-  SELECT school
+  SELECT school COLLATE SQL_Latin1_General_CP1_CI_AS AS school
         ,academic_year
-        ,reporting_term
+        ,reporting_term COLLATE SQL_Latin1_General_CP1_CI_AS AS reporting_term
         ,am_pm      
         ,rubric_strand_field
         ,pct_of_classrooms_proficient
-  FROM gabby.ekg.walkthrough_scores
+  FROM gabby.ekg.walkthrough_scores 
   UNPIVOT(
     pct_of_classrooms_proficient
     FOR rubric_strand_field IN (overallaverage
@@ -215,8 +215,8 @@ FROM
            ,map.rubric_strand_label
            ,map.rubric_strand_description
      FROM scores_union su
-     LEFT OUTER JOIN gabby.ekg.walkthrough_domain_map map
-       ON su.rubric_strand_field = map.rubric_strand_field
+     LEFT JOIN gabby.ekg.walkthrough_domain_map map
+       ON su.rubric_strand_field = map.rubric_strand_field COLLATE SQL_Latin1_General_CP1_CI_AS
     ) sub
 GROUP BY school
         ,reporting_schoolid

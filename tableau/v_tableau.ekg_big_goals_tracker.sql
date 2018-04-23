@@ -191,7 +191,7 @@ WITH act AS (
        FROM gabby.powerschool.cohort_identifiers_static
        WHERE DATEFROMPARTS(academic_year, 10, 1) BETWEEN entrydate AND exitdate
       ) d
-  LEFT OUTER JOIN gabby.powerschool.cohort_identifiers_static n
+  LEFT JOIN gabby.powerschool.cohort_identifiers_static n
     ON d.student_number = n.student_number
    AND d.academic_year = (n.academic_year - 1)
    AND DATEFROMPARTS(n.academic_year, 10, 1) BETWEEN n.entrydate AND n.exitdate
@@ -484,31 +484,31 @@ WITH act AS (
              /* Attrition */
              ,sa.is_attrition AS is_student_attrition
        FROM gabby.powerschool.cohort_identifiers_static co
-       LEFT OUTER JOIN act
+       LEFT JOIN act
          ON co.student_number = act.student_number
         AND co.academic_year >= act.academic_year
         AND act.rn_highest = 1
-       LEFT OUTER JOIN parcc
+       LEFT JOIN parcc
          ON co.student_number = parcc.student_number
         AND co.academic_year = parcc.academic_year
-       LEFT OUTER JOIN modules
+       LEFT JOIN modules
          ON co.student_number = modules.student_number
         AND co.academic_year = modules.academic_year
         AND co.grade_level <= 2
-       LEFT OUTER JOIN lit_achievement la
+       LEFT JOIN lit_achievement la
          ON co.student_number = la.student_number
         AND co.academic_year = la.academic_year
         AND la.rn_most_recent = 1
-       LEFT OUTER JOIN lit_growth lg
+       LEFT JOIN lit_growth lg
          ON co.student_number = lg.student_number
         AND co.academic_year = lg.academic_year
-       LEFT OUTER JOIN ada
+       LEFT JOIN ada
          ON co.studentid = ada.studentid
         AND co.academic_year = ada.academic_year
-       LEFT OUTER JOIN suspensions sus
+       LEFT JOIN suspensions sus
          ON co.student_number = sus.student_number
         AND co.academic_year = sus.academic_year
-       LEFT OUTER JOIN student_attrition sa
+       LEFT JOIN student_attrition sa
          ON co.student_number = sa.denominator_student_number
         AND co.academic_year = sa.denominator_academic_year
        WHERE co.reporting_schoolid NOT IN (999999, 5173)
@@ -566,29 +566,29 @@ WITH act AS (
              ,CONVERT(FLOAT,tntp.ici_percentile) AS ici_percentile
              ,CONVERT(FLOAT,tntp.is_top_quartile_learning_environment_score) AS learning_environment_score_top_quartile             
        FROM student_level_rollup slr
-       LEFT OUTER JOIN teacher_attrition ta
+       LEFT JOIN teacher_attrition ta
          ON slr.reporting_schoolid = ta.reporting_schoolid
         AND slr.region = ta.region
         AND slr.school_level = ta.school_level
         AND slr.academic_year = ta.academic_year 
-       LEFT OUTER JOIN q12
+       LEFT JOIN q12
          ON slr.reporting_schoolid = q12.reporting_schoolid
         AND slr.region = q12.region
         AND slr.school_level = q12.school_level
         AND slr.academic_year = q12.academic_year
         AND q12.rn_most_recent = 1
-       LEFT OUTER JOIN hsr
+       LEFT JOIN hsr
          ON slr.reporting_schoolid = hsr.reporting_schoolid
         AND slr.region = hsr.region
         AND slr.school_level = hsr.school_level
         AND slr.academic_year = hsr.academic_year
-       LEFT OUTER JOIN tntp
+       LEFT JOIN tntp
          ON slr.reporting_schoolid = tntp.reporting_schoolid
         AND slr.region = tntp.region
         AND slr.school_level = tntp.school_level
         AND slr.academic_year = tntp.academic_year
         AND tntp.rn_most_recent = 1
-       LEFT OUTER JOIN ekg_walkthrough ekg
+       LEFT JOIN ekg_walkthrough ekg
          ON slr.reporting_schoolid = ekg.reporting_schoolid
         AND slr.region = ekg.region
         AND slr.school_level = ekg.school_level
@@ -638,7 +638,12 @@ SELECT ru.academic_year
       ,g.strand AS ekg_strand
       ,g.meeting
       ,g.unit
-      ,g.direction
+      ,g.direction     
+      ,CASE
+        WHEN ru.school_level = 'ES' THEN g.points_es
+        WHEN ru.school_level = 'MS' THEN g.points_ms
+        WHEN ru.school_level = 'HS' THEN g.points_hs
+       END AS points
 FROM rollup_unpivoted ru
-LEFT OUTER JOIN gabby.ekg.goals g
-  ON ru.field = g.field
+LEFT JOIN gabby.ekg.goals g
+  ON ru.field = g.field COLLATE SQL_Latin1_General_CP1_CI_AS

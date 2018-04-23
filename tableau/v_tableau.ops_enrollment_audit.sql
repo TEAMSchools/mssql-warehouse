@@ -106,7 +106,7 @@ WITH caredox_enrollment AS (
                               END) AS residency_proof_all
 
         ,ISNULL(CONVERT(VARCHAR(500),CASE WHEN rv.NEN IS NOT NULL THEN 'Y' END),'N') AS residency_verification_scanned
-        ,CONVERT(VARCHAR(500),CASE WHEN co.year_in_network > 1 THEN ISNULL(rv.verification_date,'1900-07-01') END) AS reverification_date
+        --,CONVERT(VARCHAR(500),CASE WHEN co.year_in_network > 1 THEN ISNULL(rv.verification_date,'1900-07-01') END) AS reverification_date
 
         ,ISNULL(CONVERT(VARCHAR(500),cde.status),'') AS caredox_enrollment_status
         
@@ -155,7 +155,7 @@ WITH caredox_enrollment AS (
                  ,residency_proof_1
                  ,residency_proof_2
                  ,residency_proof_3
-                 ,reverification_date
+                 --,reverification_date
                  ,birth_certificate_proof               
                  ,caredox_enrollment_status
                  ,caredox_immunization_status
@@ -179,7 +179,7 @@ SELECT a.student_number
       ,a.residency_proof_2
       ,a.residency_proof_3
       ,a.residency_proof_all
-      ,a.reverification_date      
+      ,NULL AS reverification_date      
       ,a.birth_certificate_proof
       ,a.residency_verification_scanned
       ,a.iep_registration_followup_required
@@ -225,8 +225,8 @@ SELECT a.student_number
         WHEN u.field = 'residency_proof_3' AND u.value IN ('','Missing') THEN -1
         WHEN u.field = 'residency_proof_all' AND u.value = 'Y' THEN 1
         WHEN u.field = 'residency_proof_all' AND u.value = 'N' THEN -1        
-        WHEN u.field = 'reverification_date' AND CONVERT(DATE,u.value) >= DATEFROMPARTS(2017, 5, 17) THEN 1 /* UPDATE ANNUALLY WITH VERIFICATION DATE CUTOFF */
-        WHEN u.field = 'reverification_date' AND CONVERT(DATE,u.value) < DATEFROMPARTS(2017, 5, 17) THEN -1 /* UPDATE ANNUALLY WITH VERIFICATION DATE CUTOFF */
+        --WHEN u.field = 'reverification_date' AND CONVERT(DATE,u.value) >= DATEFROMPARTS(2017, 5, 17) THEN 1 /* UPDATE ANNUALLY WITH VERIFICATION DATE CUTOFF */
+        --WHEN u.field = 'reverification_date' AND CONVERT(DATE,u.value) < DATEFROMPARTS(2017, 5, 17) THEN -1 /* UPDATE ANNUALLY WITH VERIFICATION DATE CUTOFF */
         WHEN u.field = 'residency_verification_scanned' AND u.value = 'Y' THEN 1
         WHEN u.field = 'residency_verification_scanned' AND u.value IN ('','N') THEN -1
        END AS audit_status
