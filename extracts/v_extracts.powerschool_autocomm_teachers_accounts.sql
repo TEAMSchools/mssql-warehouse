@@ -41,5 +41,5 @@ FROM
        ON df.adp_associate_id = psid.adp_associate_id
      WHERE df.primary_on_site_department != 'Data'
     ) sub
-LEFT JOIN gabby.powerschool.teachers t
+LEFT JOIN gabby.powerschool.teachers_static t
   ON sub.teachernumber = t.teachernumber

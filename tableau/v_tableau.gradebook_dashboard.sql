@@ -19,7 +19,7 @@ WITH section_teacher AS (
   FROM gabby.powerschool.course_section_scaffold scaff 
   JOIN gabby.powerschool.sections sec 
     ON scaff.sectionid = sec.id
-  JOIN gabby.powerschool.teachers t 
+  JOIN gabby.powerschool.teachers_static t 
     ON sec.teacher = t.id 
  )
 
@@ -118,7 +118,7 @@ JOIN gabby.powerschool.final_grades_static gr
   ON co.student_number = gr.student_number
  AND co.academic_year = gr.academic_year 
  AND gr.is_curterm = 1
-LEFT OUTER JOIN gabby.powerschool.storedgrades y1
+LEFT JOIN gabby.powerschool.storedgrades y1
   ON co.studentid = y1.studentid
  AND co.academic_year = (LEFT(y1.termid, 2) + 1990)
  AND gr.course_number = y1.course_number
@@ -170,12 +170,12 @@ SELECT COALESCE(co.student_number, e1.student_number) AS student_number
       ,NULL AS need_80
       ,NULL AS need_90
 FROM gabby.powerschool.storedgrades gr 
-LEFT OUTER JOIN gabby.powerschool.cohort_identifiers_static co 
+LEFT JOIN gabby.powerschool.cohort_identifiers_static co 
   ON gr.studentid = co.studentid
  AND gr.schoolid = co.schoolid
  AND (LEFT(gr.termid,2) + 1990) = co.academic_year
  AND co.rn_year = 1
-LEFT OUTER JOIN gabby.powerschool.cohort_identifiers_static e1 
+LEFT JOIN gabby.powerschool.cohort_identifiers_static e1 
   ON gr.studentid = e1.studentid
  AND gr.schoolid = e1.schoolid
  AND e1.year_in_school = 1
@@ -257,7 +257,7 @@ SELECT co.student_number
       
       ,gr.credittype
       ,gr.course_number
-      ,CONVERT(VARCHAR(125),cou.course_name) AS course_name
+      ,gr.course_name
       ,REPLACE(gr.reporting_term,'RT','Q') AS term_name
       ,CASE 
         WHEN co.schoolid != 73253 AND gr.grade_category = 'E' THEN 'HWQ'
@@ -294,8 +294,6 @@ JOIN section_teacher st
  AND co.academic_year = st.academic_year
  AND gr.course_number = st.course_number
  AND st.rn = 1
-JOIN gabby.powerschool.courses cou 
-  ON gr.course_number = cou.course_number_clean
 WHERE co.rn_year = 1
   AND co.school_level IN ('MS','HS')
   
@@ -315,7 +313,7 @@ SELECT co.student_number
       
       ,gr.credittype
       ,gr.course_number
-      ,CONVERT(VARCHAR(125),cou.course_name) AS course_name
+      ,gr.course_name
       ,'Y1' AS term_name
       ,CONCAT(CASE 
                WHEN co.schoolid != 73253 AND gr.grade_category = 'E' THEN 'HWQ'
@@ -353,7 +351,5 @@ JOIN section_teacher st
  AND co.academic_year = st.academic_year
  AND gr.course_number = st.course_number
  AND st.rn = 1
-JOIN gabby.powerschool.courses cou 
-  ON gr.course_number = cou.course_number_clean
 WHERE co.rn_year = 1
   AND co.school_level IN ('MS','HS')

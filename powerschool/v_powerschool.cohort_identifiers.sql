@@ -151,13 +151,12 @@ LEFT JOIN gabby.powerschool.spenrollments_gen sp
   ON co.studentid = sp.studentid
  AND co.entrydate BETWEEN sp.enter_date AND sp.exit_date
  AND sp.programid IN (4573, 5074, 5075, 5173) 
- /* 
--- ProgramIDs for schools within schools 
---  * 4573 = Pathways (ES)
---  * 5074 = Pathways (MS)
---  * 5075 = Whittier (ES)
---  * 5713 = Out-of-District
- */
+/* ProgramIDs for schools within schools 
+     * 4573 = Pathways (ES)
+     * 5074 = Pathways (MS)
+     * 5075 = Whittier (ES)
+     * 5713 = Out-of-District 
+*/
 LEFT JOIN gabby.powerschool.team_roster_static t
   ON co.studentid = t.studentid
  AND co.academic_year = t.academic_year
@@ -168,7 +167,7 @@ LEFT JOIN gabby.powerschool.advisory_static adv
  AND adv.rn_year = 1
 LEFT JOIN gabby.mcs.lunch_info_static mcs
   ON s.student_number = mcs.studentnumber
-LEFT JOIN gabby.easyiep.njsmart_powerschool sped
+LEFT JOIN gabby.easyiep.njsmart_powerschool_static sped
   ON s.student_number = sped.student_number
  AND co.academic_year  = sped.academic_year
 LEFT JOIN gabby.powerschool.s_nj_stu_x nj

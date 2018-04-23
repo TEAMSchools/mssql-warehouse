@@ -14,7 +14,7 @@ SELECT a.student_number
 FROM gabby.tableau.gradebook_assignment_detail a
 JOIN gabby.powerschool.sections sec 
   ON a.sectionid = sec.id
-JOIN gabby.powerschool.teachers t
+JOIN gabby.powerschool.teachers_static t
   ON sec.teacher = t.id
 JOIN gabby.powerschool.courses c
   ON sec.course_number_clean = c.course_number_clean

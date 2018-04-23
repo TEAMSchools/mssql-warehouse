@@ -131,12 +131,12 @@ FROM
                   WHEN cc.course_number_clean IN ('ENG30','ENG32','ENG35','NCCSE0030') THEN 'English 300'
                   WHEN cc.course_number_clean IN ('ENG40','ENG42','ENG45') THEN 'English 400'
                  END AS illuminate_subject
-          FROM gabby.powerschool.cc WITH(NOLOCK)
+          FROM gabby.powerschool.cc
           JOIN gabby.powerschool.students s 
             ON cc.studentid = s.id
           JOIN gabby.powerschool.courses cou
             ON cc.course_number_clean = cou.course_number_clean
-          JOIN gabby.powerschool.teachers t
+          JOIN gabby.powerschool.teachers_static t
             ON cc.teacherid = t.id          
          ) sub
      JOIN gabby.powerschool.sections sec

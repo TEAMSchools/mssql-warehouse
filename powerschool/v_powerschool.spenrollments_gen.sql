@@ -21,4 +21,4 @@ SELECT CONVERT(INT,sp.studentid) AS studentid
 FROM powerschool.spenrollments sp
 JOIN powerschool.gen
   ON sp.programid = gen.id
- AND gen.cat = 'specprog'
+ AND gen.cat_clean = 'specprog'

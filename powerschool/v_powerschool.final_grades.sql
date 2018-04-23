@@ -33,7 +33,7 @@ WITH roster AS (
     ON css.course_number = cou.course_number_clean
   JOIN gabby.powerschool.sections sec
     ON css.sectionid = sec.id
-  JOIN gabby.powerschool.teachers t
+  JOIN gabby.powerschool.teachers_static t
     ON sec.teacher = t.id
   WHERE co.rn_year = 1    
     AND co.school_level IN ('MS','HS')
@@ -93,14 +93,14 @@ WITH roster AS (
          ON enr.studentid = pgf.studentid       
         AND enr.abs_sectionid = pgf.sectionid
         AND LEFT(pgf.finalgradename, 1) IN ('T','Q')
-       LEFT OUTER JOIN gabby.powerschool.storedgrades sg 
+       LEFT JOIN gabby.powerschool.storedgrades sg 
          ON enr.studentid = sg.studentid 
         AND enr.abs_sectionid = sg.sectionid
         AND pgf.finalgradename = sg.storecode  
-       LEFT OUTER JOIN gabby.powerschool.gradescaleitem_lookup_static scale WITH(NOLOCK)
+       LEFT JOIN gabby.powerschool.gradescaleitem_lookup_static scale WITH(NOLOCK)
          ON enr.gradescaleid = scale.gradescaleid
         AND pgf.[percent] BETWEEN scale.min_cutoffpercentage AND scale.max_cutoffpercentage      
-       LEFT OUTER JOIN gabby.powerschool.gradescaleitem_lookup_static sg_scale WITH(NOLOCK)
+       LEFT JOIN gabby.powerschool.gradescaleitem_lookup_static sg_scale WITH(NOLOCK)
          ON enr.gradescaleid = sg_scale.gradescaleid
         AND sg.[percent] BETWEEN sg_scale.min_cutoffpercentage AND sg_scale.max_cutoffpercentage
        WHERE enr.course_enroll_status = 0       
@@ -195,12 +195,12 @@ WITH roster AS (
           WHEN r.academic_year >= 2016 AND r.grade_level >= 9 THEN .250
          END AS term_grade_weight_possible        
   FROM roster r
-  LEFT OUTER JOIN enr_grades gr
+  LEFT JOIN enr_grades gr
     ON r.studentid = gr.studentid
    AND r.academic_year = gr.academic_year
    AND r.term_name = gr.term_name
    AND r.course_number = gr.course_number
-  LEFT OUTER JOIN exams e
+  LEFT JOIN exams e
     ON r.studentid = e.studentid
    AND r.academic_year = e.academic_year
    AND r.course_number = e.course_number
@@ -383,15 +383,15 @@ FROM
           FROM grades_long               
          ) sub
     ) sub
-LEFT OUTER JOIN gabby.powerschool.storedgrades y1
+LEFT JOIN gabby.powerschool.storedgrades y1
   ON sub.studentid = y1.studentid
  AND sub.academic_year = y1.academic_year
  AND sub.course_number = y1.course_number_clean
  AND y1.storecode_clean = 'Y1'
-LEFT OUTER JOIN gabby.powerschool.gradescaleitem_lookup_static y1_scale WITH(NOLOCK)
+LEFT JOIN gabby.powerschool.gradescaleitem_lookup_static y1_scale WITH(NOLOCK)
   ON sub.gradescaleid = y1_scale.gradescaleid
  AND sub.y1_grade_percent_adjusted BETWEEN y1_scale.min_cutoffpercentage AND y1_scale.max_cutoffpercentage
-LEFT OUTER JOIN gabby.powerschool.gradescaleitem_lookup_static y1_scale_unweighted WITH(NOLOCK)
+LEFT JOIN gabby.powerschool.gradescaleitem_lookup_static y1_scale_unweighted WITH(NOLOCK)
   ON sub.y1_grade_percent_adjusted BETWEEN y1_scale_unweighted.min_cutoffpercentage AND y1_scale_unweighted.max_cutoffpercentage
  AND CASE
       WHEN sub.schoolid != 73253 THEN sub.gradescaleid
