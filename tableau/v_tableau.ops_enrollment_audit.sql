@@ -51,8 +51,8 @@ WITH caredox_enrollment AS (
         ,verification_date
   FROM
       (
-       SELECT subject_line AS nen
-             ,CONVERT(DATE,REPLACE(date, ' at ', ' ')) AS verification_date
+       SELECT CONVERT(VARCHAR(25),subject_line) AS nen
+             ,CONVERT(DATE,REPLACE(timestamp, ' at ', ' ')) AS verification_date
              ,ROW_NUMBER() OVER(
                 PARTITION BY subject_line
                   ORDER BY _row DESC) AS rn_recent
