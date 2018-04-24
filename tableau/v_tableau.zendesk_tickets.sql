@@ -5,31 +5,29 @@ CREATE OR ALTER VIEW tableau.zendesk_tickets AS
 
 WITH comments_count AS (
 	 SELECT c.ticket_id
-		      ,COUNT(c.ticket_id) as comments_count
-	 FROM gabby.zendesk.ticket_comments c
+		      ,COUNT(c.ticket_id) - 1 AS comments_count
+	 FROM gabby.zendesk_v2.ticket_comment c  
 	 GROUP BY c.ticket_id
  )
 
 ,solved AS (
   SELECT ticket_id
-        ,timestamp
-        ,ROW_NUMBER() OVER(
-          PARTITION BY ticket_id
-            ORDER BY timestamp DESC) AS rn
-  FROM gabby.zendesk.ticket_history
-  WHERE property = 'status'
-    AND new_value = 'solved'
+        ,MAX(updated) AS updated
+  FROM gabby.zendesk_v2.ticket_field_history
+  WHERE field_name = 'status'
+    AND value = 'solved'
+  GROUP BY ticket_id
  )
 
 SELECT t.id AS ticket_id
-	     ,CONVERT(NVARCHAR,t.subject) AS ticket_subject	     
+	     ,CONVERT(VARCHAR(500),t.subject) AS ticket_subject
 	     ,t.status AS ticket_status      
-  	   ,t.location	     
+  	   ,t.custom_location AS location	     
 	     ,t.created_at
 	     ,t.updated_at
 	     ,t.due_at      
-      ,t.category
-	     ,t.tech_tier
+      ,t.custom_category AS category
+	     ,t.custom_tech_tier AS tech_tier
       ,t.group_id
       ,t.submitter_id
       ,t.assignee_id            
@@ -37,22 +35,22 @@ SELECT t.id AS ticket_id
       ,s.name AS submitter_name
 
       ,a.name AS assignee_name
+      ,a.custom_user_group AS assignee_user_group      
 
       ,g.name AS group_name
 
 	     ,c.comments_count	       
       
-      ,slv.timestamp AS solved_timestamp            
-FROM gabby.zendesk.tickets t
-JOIN gabby.zendesk.users s
+      ,slv.updated AS solved_timestamp            
+FROM gabby.zendesk_v2.ticket t
+INNER JOIN gabby.zendesk_v2.[user] s
   ON t.submitter_id = s.id
-LEFT OUTER JOIN gabby.zendesk.users a
+LEFT JOIN gabby.zendesk_v2.[user] a
   ON t.assignee_id = a.id
-LEFT OUTER JOIN gabby.zendesk.groups g
+LEFT JOIN gabby.zendesk_v2.[group] g
   ON t.group_id = g.id
-JOIN comments_count c
+INNER JOIN comments_count c
   ON t.id = c.ticket_id
-LEFT OUTER JOIN solved slv
+LEFT JOIN solved slv
   ON t.id = slv.ticket_id
- AND slv.rn = 1
 WHERE t.status != 'deleted'
