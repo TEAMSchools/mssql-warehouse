@@ -74,7 +74,6 @@ FROM
      JOIN gabby.illuminate_public.student_session_aff_clean_static ssa
        ON a.academic_year = ssa.academic_year
       AND agl.grade_level_id = ssa.grade_level_id
-      AND ssa.rn = 1
      JOIN gabby.illuminate_dna_assessments.course_enrollment_scaffold_static ce
        ON ssa.student_id = ce.student_id  
       AND a.academic_year = ce.academic_year 
@@ -150,8 +149,7 @@ FROM
      JOIN gabby.illuminate_public.student_session_aff_clean_static ssa
        ON sa.student_id = ssa.student_id
       AND a.academic_year = ssa.academic_year
-      AND agl.grade_level_id != ssa.grade_level_id            
-      AND ssa.rn = 1
+      AND agl.grade_level_id != ssa.grade_level_id      
      WHERE a.deleted_at IS NULL       
 
      UNION ALL
