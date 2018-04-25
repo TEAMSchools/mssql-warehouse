@@ -6,7 +6,7 @@ CREATE OR ALTER VIEW zendesk.ticket_business_hours AS
 WITH solved AS (
   SELECT ticket_id
         ,MAX(updated) AS updated
-  FROM gabby.zendesk_v2.ticket_field_history
+  FROM gabby.zendesk.ticket_field_history
   WHERE field_name = 'status'
     AND value = 'solved'
   GROUP BY ticket_id
@@ -19,7 +19,7 @@ WITH solved AS (
         ,COALESCE(slv.updated
                  ,CASE WHEN t.status IN ('closed', 'solved') THEN t.updated_at END
                  ,GETDATE()) AS solved_timestamp            
-  FROM gabby.zendesk_v2.ticket t
+  FROM gabby.zendesk.ticket t
   LEFT JOIN solved slv
     ON t.id = slv.ticket_id
   WHERE t.status != 'deleted'
@@ -37,7 +37,7 @@ WITH solved AS (
              ,DATEADD(MINUTE
                      ,end_time
                      ,DATEADD(DAY, -(DATEPART(WEEKDAY, GETDATE()) - 1), CONVERT(DATETIME2,CONVERT(DATE,GETDATE())))) AS business_hours_end
-       FROM gabby.zendesk_v2.schedule
+       FROM gabby.zendesk.schedule
       ) sub
  )
 

@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW zendesk_v2.ticket_metrics AS
+CREATE OR ALTER VIEW zendesk.ticket_metrics AS
 
 WITH date_metrics AS (
   SELECT ticket_id
@@ -15,19 +15,19 @@ WITH date_metrics AS (
   FROM
       (
        SELECT ticket_id
-             ,field_name + '_' + metric_name AS pivot_field
+             ,field_name + '_' + metric_name COLLATE SQL_Latin1_General_CP1_CI_AS AS pivot_field
              ,field_value
        FROM
            (
             SELECT ticket_id
-                  ,field_name_clean AS field_name
+                  ,field_name AS field_name
                   ,MIN(updated) AS updated_min
                   ,MAX(updated) AS updated_max
                   ,NULL AS created_max      
-            FROM gabby.zendesk_v2.ticket_field_history
-            WHERE field_name_clean IN ('group_id', 'assignee_id', 'requester_id', 'status')
+            FROM gabby.zendesk.ticket_field_history
+            WHERE field_name IN ('group_id', 'assignee_id', 'requester_id', 'status')
             GROUP BY ticket_id
-                    ,field_name_clean
+                    ,field_name
 
             UNION ALL
 
@@ -36,7 +36,7 @@ WITH date_metrics AS (
                   ,MIN(updated) AS updated_min
                   ,MAX(updated) AS updated_max      
                   ,NULL AS created_max
-            FROM gabby.zendesk_v2.ticket_field_history
+            FROM gabby.zendesk.ticket_field_history
             WHERE value = 'solved'
             GROUP BY ticket_id
 
@@ -47,7 +47,7 @@ WITH date_metrics AS (
                   ,MIN(updated) AS updated_min
                   ,MAX(updated) AS updated_max      
                   ,NULL AS created_max
-            FROM gabby.zendesk_v2.ticket_field_history
+            FROM gabby.zendesk.ticket_field_history
             GROUP BY ticket_id
 
             UNION ALL
@@ -57,7 +57,7 @@ WITH date_metrics AS (
                   ,NULL AS updated_min
                   ,NULL AS updated_max
                   ,MAX(created) AS created_max
-            FROM gabby.zendesk_v2.ticket_comment
+            FROM gabby.zendesk.ticket_comment
             GROUP BY ticket_id
            ) sub
        UNPIVOT(
@@ -84,12 +84,12 @@ WITH date_metrics AS (
   FROM
       (
        SELECT ticket_id
-             ,field_name_clean + '_value_count_distinct' AS field_name
+             ,field_name + '_value_count_distinct' AS field_name
              ,COUNT(DISTINCT value) AS value_count
-       FROM gabby.zendesk_v2.ticket_field_history
-       WHERE field_name_clean IN ('group_id', 'assignee_id')
+       FROM gabby.zendesk.ticket_field_history
+       WHERE field_name IN ('group_id', 'assignee_id')
        GROUP BY ticket_id
-               ,field_name_clean
+               ,field_name
       ) sub
   PIVOT(
     MAX(value_count)
@@ -106,8 +106,8 @@ WITH date_metrics AS (
        SELECT ticket_id      
              ,value AS current_status
              ,LAG(value, 1, 'new') OVER(PARTITION BY ticket_id ORDER BY ticket_id, updated) AS prev_status        
-       FROM gabby.zendesk_v2.ticket_field_history
-       WHERE field_name_clean = 'status' 
+       FROM gabby.zendesk.ticket_field_history
+       WHERE field_name = 'status' 
       ) sub
   WHERE current_status = 'open'
     AND prev_status = 'solved' 
@@ -130,7 +130,7 @@ SELECT t.id AS ticket_id
       ,cm.group_stations
 
       ,r.reopens
-FROM gabby.zendesk_v2.ticket t
+FROM gabby.zendesk.ticket t
 LEFT JOIN date_metrics dm
   ON t.id = dm.ticket_id
 LEFT JOIN count_metrics cm
