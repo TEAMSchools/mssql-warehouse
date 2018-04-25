@@ -39,16 +39,15 @@ FROM
            ,enr.teacher_name            
            
            ,pgf.startdate
-           ,pgf.enddate
-      
-           ,CONVERT(VARCHAR(1),LEFT(pgf.finalgradename,1)) AS grade_category
-           ,CONVERT(VARCHAR(5),CONCAT('RT', RIGHT(pgf.finalgradename,1))) AS reporting_term            
+           ,pgf.enddate      
+           ,pgf.finalgrade_type AS grade_category
+           ,CONVERT(VARCHAR(5),CONCAT('RT', RIGHT(pgf.finalgradename_clean,1))) AS reporting_term            
            ,ROUND(CASE WHEN pgf.grade = '--' THEN NULL ELSE pgf.[percent] END, 0) AS grade_category_pct               
      FROM gabby.powerschool.course_enrollments_static enr
      JOIN gabby.powerschool.pgfinalgrades pgf
        ON enr.studentid = pgf.studentid
       AND enr.sectionid = pgf.sectionid
-      AND LEFT(pgf.finalgradename, 1) NOT IN ('Y','T','Q')
+      AND pgf.finalgrade_type NOT IN ('Y','T','Q')
      WHERE enr.course_enroll_status = 0
        AND enr.section_enroll_status = 0       
     ) sub
