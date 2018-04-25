@@ -37,13 +37,20 @@ WITH caredox_enrollment AS (
 
 ,caredox_medications AS (
   SELECT student_id
-        ,CONCAT(inventory_id_and_date_created, ' - ', medication_name) AS medication
-        ,ROW_NUMBER() OVER(
-           PARTITION BY student_id, medication_name
-             ORDER BY CONVERT(DATETIME,last_updated_at) DESC) AS rn_last_updated
-  FROM gabby.caredox.medication_inventory
-  WHERE ISNUMERIC(student_id) = 1
-    AND event = 'create'
+        ,gabby.dbo.GROUP_CONCAT_D(medication, ' | ') AS medication
+  FROM
+      (
+       SELECT student_id
+             ,CONCAT(inventory_id_and_date_created, ' - ', medication_name) AS medication
+             ,ROW_NUMBER() OVER(
+                PARTITION BY student_id, medication_name
+                  ORDER BY CONVERT(DATETIME,last_updated_at) DESC) AS rn_last_updated
+       FROM gabby.caredox.medication_inventory
+       WHERE ISNUMERIC(student_id) = 1
+         AND event = 'create'
+      ) sub
+  WHERE rn_last_updated = 1
+  GROUP BY student_id
  )
 
 ,residency_verification AS (
@@ -66,13 +73,15 @@ WITH caredox_enrollment AS (
   SELECT co.student_number
         ,co.lastfirst
         ,co.academic_year
+        ,co.region
         ,co.reporting_schoolid
-        ,co.grade_level
+        ,co.grade_level        
         ,CASE
           WHEN co.year_in_network = 1 THEN 'New to KIPP NJ'
           WHEN co.year_in_school = 1 THEN 'New to School'
           ELSE 'Returning Student'
          END AS entry_status           
+        ,CONVERT(VARCHAR(500),ISNULL(co.region + co.city, '')) AS region_city
         ,ISNULL(CONVERT(VARCHAR(500),co.lunch_app_status),'') AS lunch_app_status
         ,CONVERT(VARCHAR(500),CONVERT(MONEY,ISNULL(co.lunch_balance,0))) AS lunch_balance
       
@@ -82,16 +91,16 @@ WITH caredox_enrollment AS (
         ,ISNULL(CONVERT(VARCHAR(500),uxs.birth_certificate_proof),'N') AS birth_certificate_proof        
         ,ISNULL(CONVERT(VARCHAR(500),uxs.iep_registration_followup),'') AS iep_registration_followup_required
         ,CONVERT(VARCHAR(500),CASE 
-          WHEN uxs.iep_registration_followup IS NULL THEN ''
-          WHEN uxs.iep_registration_followup = 1 AND co.specialed_classification IS NOT NULL THEN 'Y'
-          ELSE 'N'
-         END) AS iep_registration_followup_complete
+                               WHEN uxs.iep_registration_followup IS NULL THEN ''
+                               WHEN uxs.iep_registration_followup = 1 AND co.specialed_classification IS NOT NULL THEN 'Y'
+                               ELSE 'N'
+                              END) AS iep_registration_followup_complete
         ,ISNULL(CONVERT(VARCHAR(500),uxs.lep_registration_followup),'') AS lep_registration_followup_required
         ,CONVERT(VARCHAR(500),CASE 
-          WHEN uxs.lep_registration_followup IS NULL THEN ''
-          WHEN uxs.lep_registration_followup = 1 AND co.lep_status IS NOT NULL THEN 'Y'
-          ELSE 'N'
-         END) AS lep_registration_followup_complete
+                               WHEN uxs.lep_registration_followup IS NULL THEN ''
+                               WHEN uxs.lep_registration_followup = 1 AND co.lep_status IS NOT NULL THEN 'Y'
+                               ELSE 'N'
+                              END) AS lep_registration_followup_complete
         ,CONVERT(VARCHAR(500),CASE
                                WHEN co.year_in_network = 1 
                                 AND CONCAT(ISNULL(uxs.residency_proof_1,'Missing')
@@ -131,7 +140,6 @@ WITH caredox_enrollment AS (
    AND cds.rn_last_updated = 1
   LEFT JOIN caredox_medications cdm
     ON co.student_number = cdm.student_id
-   AND cdm.rn_last_updated = 1  
   WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
     AND co.schoolid != 999999    
     AND co.rn_year = 1
@@ -146,7 +154,8 @@ WITH caredox_enrollment AS (
   FROM all_data
   UNPIVOT(
     value
-    FOR field IN (iep_registration_followup_required
+    FOR field IN (region_city
+                 ,iep_registration_followup_required
                  ,iep_registration_followup_complete
                  ,lep_registration_followup_required
                  ,lep_registration_followup_complete
@@ -170,6 +179,7 @@ WITH caredox_enrollment AS (
 SELECT a.student_number
       ,a.lastfirst
       ,a.academic_year
+      ,a.region
       ,a.reporting_schoolid
       ,a.grade_level
       ,a.entry_status
@@ -194,7 +204,9 @@ SELECT a.student_number
       ,u.field AS audit_field
       ,u.value AS audit_value
       ,CASE
-        /* 0 = ! / -1 = X / 1 = OK */        
+        /* 0 = FLAG || -1 = BAD || 1 = OK */        
+        WHEN u.field = 'region_city' AND u.value NOT IN ('TEAMNewark', 'KCNACamden', 'KMSMiami') THEN 0
+        WHEN u.field = 'region_city' AND u.value IN ('TEAMNewark', 'KCNACamden', 'KMSMiami') THEN 1
         WHEN u.field = 'caredox_enrollment_status' AND u.value = 'approved' THEN 1
         WHEN u.field = 'caredox_enrollment_status' AND u.value IN ('review_pending','started') THEN 0
         WHEN u.field = 'caredox_enrollment_status' AND u.value IN ('rejected','') THEN -1
@@ -204,9 +216,11 @@ SELECT a.student_number
         WHEN u.field = 'caredox_medication_status' AND u.value != '' THEN 0
         WHEN u.field = 'caredox_screenings_status' AND u.value = 'compliant' THEN 1
         WHEN u.field = 'caredox_screenings_status' AND u.value = '' THEN -1
+        WHEN u.field = 'iep_registration_followup_required' AND a.iep_registration_followup_complete = 'Y' THEN 1
         WHEN u.field = 'iep_registration_followup_required' AND u.value = '1' THEN 0
         WHEN u.field = 'iep_registration_followup_complete' AND u.value = 'Y' THEN 1
         WHEN u.field = 'iep_registration_followup_complete' AND u.value = 'N' THEN -1
+        WHEN u.field = 'lep_registration_followup_required' AND a.lep_registration_followup_complete = 'Y' THEN 1
         WHEN u.field = 'lep_registration_followup_required' AND u.value = '1' THEN 0
         WHEN u.field = 'lep_registration_followup_complete' AND u.value = 'Y' THEN 1
         WHEN u.field = 'lep_registration_followup_complete' AND u.value = 'N' THEN -1
