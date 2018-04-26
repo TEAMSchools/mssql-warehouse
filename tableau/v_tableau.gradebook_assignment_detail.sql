@@ -6,6 +6,7 @@ CREATE OR ALTER VIEW tableau.gradebook_assignment_detail AS
 SELECT enr.sectionid
       ,enr.academic_year
       ,enr.course_number
+      ,enr.course_name
       ,enr.section_number
       ,enr.teacher_name
       ,enr.student_number
