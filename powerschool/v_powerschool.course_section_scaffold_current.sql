@@ -9,6 +9,10 @@ WITH course_scaffold AS (
         ,yearid
         ,term_name
         ,course_number
+        ,course_name
+        ,credittype
+        ,credit_hours
+        ,gradescaleid
         ,excludefromgpa
         ,CASE 
           WHEN CONVERT(DATE,GETDATE()) BETWEEN term_start_date AND term_end_date THEN 1
@@ -22,6 +26,10 @@ WITH course_scaffold AS (
              ,enr.student_number
              ,enr.yearid           
              ,enr.course_number
+             ,enr.course_name
+             ,enr.credittype
+             ,enr.credit_hours
+             ,enr.gradescaleid
              ,enr.excludefromgpa
 
              ,CONVERT(VARCHAR(25),terms.alt_name) AS term_name
@@ -79,6 +87,10 @@ SELECT cs.studentid
       ,cs.term_name
       ,cs.is_curterm
       ,cs.course_number      
+      ,cs.course_name
+      ,cs.credittype
+      ,cs.credit_hours
+      ,cs.gradescaleid
       ,cs.excludefromgpa
 
       ,COALESCE(ss.abs_sectionid

@@ -15,22 +15,19 @@ WITH roster AS (
         ,css.course_number
         ,css.sectionid
         ,css.excludefromgpa
-        ,CONCAT('RT',RIGHT(css.term_name, 1)) AS reporting_term
-        
-        ,CONVERT(VARCHAR(125),cou.course_name) AS course_name
-        ,CONVERT(VARCHAR(25),cou.credittype) AS credittype
-        ,cou.credit_hours        
+        ,css.course_name
+        ,css.credittype
+        ,css.credit_hours
+        ,CONCAT('RT', RIGHT(css.term_name, 1)) AS reporting_term
         
         ,t.lastfirst AS teacher_name
 
-        ,CASE WHEN sec.gradescaleid = 0 THEN CONVERT(INT,cou.gradescaleid) ELSE CONVERT(INT,sec.gradescaleid) END AS gradescaleid
+        ,CASE WHEN sec.gradescaleid = 0 THEN css.gradescaleid ELSE CONVERT(INT,sec.gradescaleid) END AS gradescaleid
   FROM gabby.powerschool.cohort_identifiers_static co  
   JOIN gabby.powerschool.course_section_scaffold css
     ON co.studentid = css.studentid
    AND co.yearid = css.yearid   
-   AND css.course_number != 'ALL'
-  JOIN gabby.powerschool.courses cou
-    ON css.course_number = cou.course_number_clean
+   AND css.course_number != 'ALL'  
   JOIN gabby.powerschool.sections sec
     ON css.sectionid = sec.id
   JOIN gabby.powerschool.teachers_static t
@@ -317,10 +314,14 @@ FROM
            ,weighted_grade_total
            ,weighted_grade_total_adjusted
            ,weighted_points_total
-
            ,term_grade_weight_possible
            ,e1_grade_weight
            ,e2_grade_weight
+           ,CASE
+             WHEN schoolid != 73253 THEN gradescaleid
+             WHEN academic_year <= 2015 THEN 662 /* default pre-2016 */
+             WHEN academic_year >= 2016 THEN 874 /* default 2016+ */
+            END AS unweighted_gradescaleid
 
            /* Y1 calcs */
            ,ROUND((weighted_grade_total / weighted_points_total) * 100,0) AS y1_grade_percent
@@ -392,9 +393,5 @@ LEFT JOIN gabby.powerschool.gradescaleitem_lookup_static y1_scale WITH(NOLOCK)
   ON sub.gradescaleid = y1_scale.gradescaleid
  AND sub.y1_grade_percent_adjusted BETWEEN y1_scale.min_cutoffpercentage AND y1_scale.max_cutoffpercentage
 LEFT JOIN gabby.powerschool.gradescaleitem_lookup_static y1_scale_unweighted WITH(NOLOCK)
-  ON sub.y1_grade_percent_adjusted BETWEEN y1_scale_unweighted.min_cutoffpercentage AND y1_scale_unweighted.max_cutoffpercentage
- AND CASE
-      WHEN sub.schoolid != 73253 THEN sub.gradescaleid
-      WHEN sub.academic_year <= 2015 THEN 662 /* default pre-2016 */
-      WHEN sub.academic_year >= 2016 THEN 874 /* default 2016+ */
-     END = y1_scale_unweighted.gradescaleid
+  ON sub.unweighted_gradescaleid = y1_scale_unweighted.gradescaleid
+ AND sub.y1_grade_percent_adjusted BETWEEN y1_scale_unweighted.min_cutoffpercentage AND y1_scale_unweighted.max_cutoffpercentage
