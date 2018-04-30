@@ -1,7 +1,8 @@
---CREATE OR ALTER VIEW 'recruiting.hired_referrals' AS
-
 USE Gabby
 GO
+
+CREATE OR ALTER VIEW 'recruiting.hired_referrals' AS
+
 
 WITH all_hires AS (
      SELECT a.contact_id_c AS id
@@ -12,8 +13,8 @@ WITH all_hires AS (
            ,a.job_position_c AS job_position
            ,a.cultivation_owner_c AS recruiter
            ,pa.name AS profile_id
-     FROM recruiting.job_application_c a 
-     LEFT JOIN recruiting.profile_application_c pa
+     FROM gabby.recruiting.job_application_c a 
+     LEFT JOIN gabby.recruiting.profile_application_c pa
        ON a.profile_application_c = pa.id
      WHERE a.stage_c = 'Hired'
 )
@@ -23,15 +24,15 @@ WITH all_hires AS (
            ,status_c
            ,position_name_c AS position_name
            
-     FROM recruiting.job_position_c
+     FROM gabby.recruiting.job_position_c
 ) 
-,adp AS (
-     SELECT associate_id
-           ,salesforce_job_position_name_custom
-           ,COALESCE(rehire_date,hire_date) AS most_recent_hire_date
+,df AS (
+     SELECT df_employee_number
+           ,salesforce_id
+           ,COALESCE(rehire_date,original_hire_date) AS most_recent_hire_date
            ,termination_date 
-           ,position_status
-     FROM adp.staff_roster   
+           ,status
+     FROM gabby.dayforce.staff_roster   
 )
 
 SELECT c.created_date
@@ -51,18 +52,20 @@ SELECT c.created_date
       ,p.position_number
       ,p.status_c AS position_status
       ,p.position_name
-      ,adp.associate_id
-      ,adp.most_recent_hire_date
-      ,adp.termination_date 
-      ,adp.position_status
+      ,df.df_employee_number
+      ,df.most_recent_hire_date
+      ,df.termination_date 
+      ,df.status
+      ,DATEDIFF(dd,df.most_recent_hire_date,COALESCE(df.termination_date,GETDATE())) AS days_at_kipp
+      ,CASE WHEN df_employee_number IS NULL THEN 'Not matched in Dayforce - need to look up manually to verify' ELSE NULL END AS dayforce_notes
       
 FROM Recruiting.Cultivation_c c 
 LEFT OUTER JOIN all_hires h
  ON LEFT(c.CONTACT_c,LEN(c.contact_c)-3) = h.id
 LEFT OUTER JOIN job_positions p
  ON h.Job_Position = p.id
-LEFT OUTER JOIN adp
- ON p.position_number = adp.salesforce_job_position_name_custom
+LEFT OUTER JOIN df
+ ON p.position_number = df.salesforce_id
 
 WHERE (c.cultivation_stage_c = 'Hired'
        OR h.selection_stage = 'Hired')
