@@ -88,5 +88,3 @@ FROM(
                      )) p
          ) sub
          ) sub
-         
-ORDER by df_employee_number
