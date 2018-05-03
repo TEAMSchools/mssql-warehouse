@@ -3,28 +3,32 @@ GO
 
 CREATE OR ALTER VIEW extracts.cpn_demographic AS
 
-SELECT state_studentnumber AS [State IDNumber]
-      ,student_number AS [Student ID]
-      ,first_name AS [First Name]
-      ,middle_name AS [Middle Name]
-      ,last_name AS [Last Name]
-      ,dob AS [Date Of Birth]
-      ,schoolid AS [School Code]
-      ,school_name AS [Current School Name]
-      ,gender AS [Gender]
-      ,grade_level AS [Grade Level]
-      ,ethnicity AS [Ethnicity Primary]
-      ,NULL AS [Family Code]
-      ,street AS [Street Address]
-      ,city AS [City]
-      ,state AS [State]
-      ,zip AS [Zip]
-      ,NULL AS [Homeless]
-      ,CASE WHEN lep_status = 1 THEN 'Y' ELSE 'N' END AS [ESL Student]
-      ,CASE WHEN iep_status = 'No IEP' THEN 'N' ELSE 'Y' END AS [Has Active IEP]
-      ,CASE WHEN lunchstatus = 'P' THEN 'N' ELSE 'Y' END AS [Low Income]
-      ,team AS [Homeroom]
-FROM gabby.powerschool.cohort_identifiers_static
-WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-  AND rn_year = 1
-  AND region = 'KCNA'
+SELECT co.state_studentnumber AS [State IDNumber]
+      ,co.student_number AS [Student ID]
+      ,co.first_name AS [First Name]
+      ,co.middle_name AS [Middle Name]
+      ,co.last_name AS [Last Name]
+      ,co.dob AS [Date Of Birth]
+      ,co.schoolid AS [School Code]
+      ,co.school_name AS [Current School Name]
+      ,co.gender AS [Gender]
+      ,co.grade_level AS [Grade Level]
+      ,co.ethnicity AS [Ethnicity Primary]
+      ,s.family_ident AS [Family Code]
+      ,co.street AS [Street Address]
+      ,co.city AS [City]
+      ,co.state AS [State]
+      ,co.zip AS [Zip]
+      ,CASE WHEN scf.homeless_code = 1 THEN 'Y' ELSE 'N' END AS [Homeless]
+      ,CASE WHEN co.lep_status = 1 THEN 'Y' ELSE 'N' END AS [ESL Student]
+      ,CASE WHEN co.iep_status = 'No IEP' THEN 'N' ELSE 'Y' END AS [Has Active IEP]
+      ,CASE WHEN co.lunchstatus = 'P' THEN 'N' ELSE 'Y' END AS [Low Income]
+      ,co.team AS [Homeroom]
+FROM gabby.powerschool.cohort_identifiers_static co
+LEFT JOIN gabby.powerschool.studentcorefields scf
+  ON co.students_dcid = scf.studentsdcid
+LEFT JOIN gabby.powerschool.students s
+  ON co.studentid = s.id
+WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+  AND co.rn_year = 1
+  AND co.region = 'KCNA'
