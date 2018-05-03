@@ -17,7 +17,9 @@ SELECT sub.teachernumber
       ,CASE WHEN sub.status = 1 THEN 1 ELSE 0 END AS ptaccess            
 FROM
     (
-     SELECT COALESCE(psid.ps_teachernumber, df.adp_associate_id) AS teachernumber
+     SELECT COALESCE(psid.ps_teachernumber
+                    ,df.adp_associate_id
+                    ,CONVERT(VARCHAR(25),df.df_employee_number)) AS teachernumber
            ,df.preferred_first_name AS first_name
            ,df.preferred_last_name AS last_name
            ,df.primary_site_schoolid AS homeschoolid
@@ -35,8 +37,7 @@ FROM
             END AS status
      FROM gabby.dayforce.staff_roster df
      LEFT JOIN gabby.adsi.user_attributes_static dir
-       ON df.adp_associate_id = dir.idautopersonalternateid
-      AND dir.is_active = 1
+       ON CONVERT(VARCHAR(25),df.df_employee_number) = dir.employeenumber
      LEFT JOIN gabby.people.id_crosswalk_powerschool psid
        ON df.adp_associate_id = psid.adp_associate_id
      WHERE df.primary_on_site_department != 'Data'
