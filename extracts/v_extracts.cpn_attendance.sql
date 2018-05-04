@@ -7,7 +7,7 @@ SELECT ada.academic_year AS [School Year]
       ,ada.student_number AS [Student Id]
       ,ada.calendardate AS [Attendance Date]
       ,ada.att_code AS [Attendance Code]
-      ,NULL AS [Attendance Code Description]
+      --,NULL AS [Attendance Code Description]
       ,ada.grade_level AS [Grade Level]
       ,ada.schoolid AS [School Code]
       ,ada.membershipvalue
