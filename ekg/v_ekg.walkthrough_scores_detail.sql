@@ -6,7 +6,7 @@ CREATE OR ALTER VIEW ekg.walkthrough_scores_detail AS
 WITH archive_unpivot AS (
   SELECT academic_year
         ,term_name AS reporting_term        
-        ,rubric_strand_field
+        ,CONVERT(VARCHAR(256),rubric_strand_field) AS rubric_strand_field
         ,pct_of_classrooms_proficient
         ,LTRIM(RTRIM(school)) AS school
   FROM gabby.ekg.walkthrough_scores_archive
@@ -72,7 +72,7 @@ WITH archive_unpivot AS (
         ,academic_year
         ,reporting_term COLLATE SQL_Latin1_General_CP1_CI_AS AS reporting_term
         ,am_pm      
-        ,rubric_strand_field
+        ,CONVERT(VARCHAR(256),rubric_strand_field) AS rubric_strand_field
         ,pct_of_classrooms_proficient
   FROM gabby.ekg.walkthrough_scores 
   UNPIVOT(
@@ -179,37 +179,36 @@ FROM
            ,su.rubric_strand_field
            ,su.pct_of_classrooms_proficient
            ,CASE
-             WHEN school IN ('TEAM','TEAM Academy') THEN 133570965
-             WHEN school IN ('Rise','Rise Academy') THEN 73252
-             WHEN school IN ('NCA','Newark Collegiate Academy') THEN 73253
-             WHEN school IN ('SPARK','SPARK Academy') THEN 73254
-             WHEN school IN ('THRIVE','THRIVE Academy') THEN 73255
-             WHEN school IN ('Seek','Seek Academy') THEN 73256
-             WHEN school IN ('Life','Life Academy') THEN 73257
-             WHEN school IN ('BOLD','BOLD Academy') THEN 73258
-             WHEN school IN ('LSP','KSLP','Lanning Square Primary') THEN 179901
-             WHEN school IN ('LSM','KLSM','Lanning Square Middle') THEN 179902
-             WHEN school IN ('KWM','KIPP Whittier Middle') THEN 179903          
-             WHEN school IN ('WEK') THEN 1799015075
-             WHEN school = 'KIPP NJ' THEN 0
-             WHEN school = 'Pathways ES' THEN 732574573
-             WHEN school = 'Pathways MS' THEN 732585074
+             WHEN su.school IN ('TEAM','TEAM Academy') THEN 133570965
+             WHEN su.school IN ('Rise','Rise Academy') THEN 73252
+             WHEN su.school IN ('NCA','Newark Collegiate Academy') THEN 73253
+             WHEN su.school IN ('SPARK','SPARK Academy') THEN 73254
+             WHEN su.school IN ('THRIVE','THRIVE Academy') THEN 73255
+             WHEN su.school IN ('Seek','Seek Academy') THEN 73256
+             WHEN su.school IN ('Life','Life Academy') THEN 73257
+             WHEN su.school IN ('BOLD','BOLD Academy') THEN 73258
+             WHEN su.school IN ('LSP','KSLP','Lanning Square Primary') THEN 179901
+             WHEN su.school IN ('LSM','KLSM','Lanning Square Middle') THEN 179902
+             WHEN su.school IN ('KWM','KIPP Whittier Middle') THEN 179903          
+             WHEN su.school IN ('WEK') THEN 1799015075
+             WHEN su.school = 'KIPP NJ' THEN 0
+             WHEN su.school = 'Pathways ES' THEN 732574573
+             WHEN su.school = 'Pathways MS' THEN 732585074
             END AS reporting_schoolid
            ,CASE
-             WHEN school IN ('TEAM','TEAM Academy','Rise','Rise Academy','NCA','Newark Collegiate Academy','SPARK','SPARK Academy','THRIVE','THRIVE Academy','Seek','Seek Academy'
-                            ,'Life','Life Academy','BOLD','BOLD Academy','Pathways ES','Pathways MS')
-                           THEN 'TEAM'
-             WHEN school IN ('LSP','KSLP','Lanning Square Primary','LSM','KLSM','Lanning Square Middle','KWM','KIPP Whittier Middle','WEK') 
-                           THEN 'KCNA'
-             WHEN school = 'KIPP NJ' THEN 'All'        
+             WHEN su.school IN ('TEAM','TEAM Academy','Rise','Rise Academy','NCA','Newark Collegiate Academy','SPARK','SPARK Academy','THRIVE','THRIVE Academy','Seek','Seek Academy'
+                               ,'Life','Life Academy','BOLD','BOLD Academy','Pathways ES','Pathways MS')
+                    THEN 'TEAM'
+             WHEN su.school IN ('LSP','KSLP','Lanning Square Primary','LSM','KLSM','Lanning Square Middle','KWM','KIPP Whittier Middle','WEK') 
+                    THEN 'KCNA'
+             WHEN su.school = 'KIPP NJ' THEN 'All'        
             END AS region
            ,CASE
-             WHEN school IN ('SPARK','SPARK Academy','THRIVE','THRIVE Academy','Seek','Seek Academy','Life','Life Academy','LSP','KSLP','Lanning Square Primary','WEK','Pathways ES') THEN 'ES'
-             WHEN school IN ('TEAM','TEAM Academy','Rise','Rise Academy','Pathways MS','BOLD','BOLD Academy','LSM','KLSM','Lanning Square Middle','KWM','KIPP Whittier Middle') THEN 'MS'
-             WHEN school IN ('NCA','Newark Collegiate Academy') THEN 'HS'
-             WHEN school = 'KIPP NJ' THEN 'All'
-            END AS school_level
-      
+             WHEN su.school IN ('SPARK','SPARK Academy','THRIVE','THRIVE Academy','Seek','Seek Academy','Life','Life Academy','LSP','KSLP','Lanning Square Primary','WEK','Pathways ES') THEN 'ES'
+             WHEN su.school IN ('TEAM','TEAM Academy','Rise','Rise Academy','Pathways MS','BOLD','BOLD Academy','LSM','KLSM','Lanning Square Middle','KWM','KIPP Whittier Middle') THEN 'MS'
+             WHEN su.school IN ('NCA','Newark Collegiate Academy') THEN 'HS'
+             WHEN su.school = 'KIPP NJ' THEN 'All'
+            END AS school_level      
 
            ,map.rubric_domain
            ,map.rubric_strand_label
