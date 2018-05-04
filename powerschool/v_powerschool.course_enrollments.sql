@@ -72,12 +72,11 @@ FROM
            ,sub.illuminate_subject      
            ,sub.abs_sectionid
            ,sub.abs_termid           
+           ,sub.sections_dcid           
+           ,sub.gradescaleid
+           
            ,SUM(sub.section_enroll_status) OVER(PARTITION BY sub.studentid, sub.yearid, sub.course_number)
               / COUNT(sub.sectionid) OVER(PARTITION BY sub.studentid, sub.yearid, sub.course_number) AS course_enroll_status
-      
-           ,CONVERT(INT,sec.dcid) AS sections_dcid
-           
-           ,CASE WHEN sec.gradescaleid = 0 THEN sub.gradescaleid ELSE CONVERT(INT,sec.gradescaleid) END AS gradescaleid
      FROM
          (
           SELECT CONVERT(INT,cc.studentid) AS studentid
@@ -102,8 +101,7 @@ FROM
       
                 ,CONVERT(VARCHAR(25),cou.credittype) AS credittype
                 ,CONVERT(VARCHAR(125),cou.course_name) AS course_name
-                ,cou.credit_hours
-                ,CONVERT(INT,cou.gradescaleid) AS gradescaleid
+                ,cou.credit_hours                
                 ,CONVERT(INT,cou.excludefromgpa) AS excludefromgpa
                 ,CONVERT(INT,cou.excludefromstoredgrades) AS excludefromstoredgrades           
                 ,CASE
@@ -114,8 +112,11 @@ FROM
                  END AS map_measurementscale
 
                 ,CONVERT(VARCHAR(25),t.teachernumber) AS teachernumber
-                ,CONVERT(VARCHAR(125),t.lastfirst) AS teacher_name      
-           
+                ,CONVERT(VARCHAR(125),t.lastfirst) AS teacher_name
+
+                ,CONVERT(INT,sec.dcid) AS sections_dcid
+                
+                ,CASE WHEN sec.gradescaleid = 0 THEN CONVERT(INT,cou.gradescaleid) ELSE CONVERT(INT,sec.gradescaleid) END AS gradescaleid           
                 ,CASE
                   WHEN s.grade_level <= 8 AND cou.credittype = 'ENG' THEN 'Text Study'        
                   WHEN s.grade_level <= 8 AND cou.credittype = 'SCI' THEN 'Science'
@@ -138,7 +139,7 @@ FROM
             ON cc.course_number_clean = cou.course_number_clean
           JOIN gabby.powerschool.teachers_static t
             ON cc.teacherid = t.id          
+          JOIN gabby.powerschool.sections sec
+            ON cc.abs_sectionid = sec.id
          ) sub
-     JOIN gabby.powerschool.sections sec
-       ON sub.abs_sectionid = sec.id
     ) sub
