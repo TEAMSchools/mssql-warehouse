@@ -646,4 +646,4 @@ SELECT ru.academic_year
        END AS points
 FROM rollup_unpivoted ru
 LEFT JOIN gabby.ekg.goals g
-  ON ru.field = g.field COLLATE SQL_Latin1_General_CP1_CI_AS
+  ON ru.field = g.field
