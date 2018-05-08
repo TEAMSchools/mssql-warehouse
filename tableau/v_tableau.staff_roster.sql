@@ -53,6 +53,7 @@ SELECT df.df_employee_number
       ,CONVERT(DATE,df.termination_date) AS termination_date
 
       ,ad.mail
+      ,ad.userprincipalname
 FROM gabby.dayforce.staff_roster df
 LEFT JOIN gabby.adsi.user_attributes_static ad
   ON df.df_employee_number = ad.employeenumber
