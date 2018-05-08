@@ -81,11 +81,11 @@ WITH ms_grads AS (
                ,co.highest_achieved
                ,co.dob
       ) sub
-  LEFT OUTER JOIN gabby.powerschool.students s
+  LEFT JOIN gabby.powerschool.students s
     ON sub.student_number = s.student_number
-  LEFT OUTER JOIN gabby.powerschool.schools sch
+  LEFT JOIN gabby.powerschool.schools sch
     ON s.graduated_schoolid = sch.school_number
-  LEFT OUTER JOIN gabby.powerschool.schools sch2 
+  LEFT JOIN gabby.powerschool.schools sch2 
     ON s.schoolid = sch2.school_number
   WHERE sub.cohort >= 2018 
     AND ((years_enrolled = 1 AND final_exitdate >= DATEFROMPARTS(year_final_exitdate, 10, 1)) OR (years_enrolled > 1))
@@ -239,12 +239,12 @@ SELECT r.student_number
       ,CONVERT(VARCHAR(125),suf.release_5_phone) AS ps_release_5_phone
       ,CONVERT(VARCHAR(125),suf.release_5_relation) AS ps_release_5_relation
 FROM roster_union r
-LEFT OUTER JOIN enrollments enr
+LEFT JOIN enrollments enr
   ON r.student_number = enr.student_number
  AND enr.rn = 1
-LEFT OUTER JOIN gabby.powerschool.students s
+LEFT JOIN gabby.powerschool.students s
   ON r.student_number = s.student_number
-LEFT OUTER JOIN gabby.powerschool.u_studentsuserfields suf
+LEFT JOIN gabby.powerschool.u_studentsuserfields suf
   ON s.dcid = suf.studentsdcid
-LEFT OUTER JOIN gabby.powerschool.studentcorefields scf
+LEFT JOIN gabby.powerschool.studentcorefields scf
   ON s.dcid = scf.studentsdcid

@@ -52,16 +52,16 @@ FROM gabby.powerschool.cohort_identifiers_static co
 JOIN gabby.illuminate_dna_assessments.agg_student_responses_all asr
   ON co.student_number = asr.local_student_id
  AND co.academic_year = asr.academic_year
-LEFT OUTER JOIN gabby.powerschool.course_enrollments_static enr
-  ON co.studentid = enr.studentid
- AND co.yearid = enr.yearid
+LEFT JOIN gabby.powerschool.course_enrollments_static enr
+  ON co.student_number = enr.student_number
+ AND co.academic_year = enr.academic_year
  AND asr.subject_area = enr.illuminate_subject
  AND enr.course_enroll_status = 0 
  AND enr.section_enroll_status = 0 
  AND enr.rn_illuminate_subject = 1
-LEFT OUTER JOIN gabby.powerschool.course_enrollments_static hr
-  ON co.studentid = hr.studentid
- AND co.yearid = hr.yearid
+LEFT JOIN gabby.powerschool.course_enrollments_static hr
+  ON co.student_number = hr.student_number
+ AND co.academic_year = enr.academic_year
  AND hr.course_number = 'HR'    
  AND hr.course_enroll_status = 0 
  AND hr.section_enroll_status = 0 
