@@ -189,7 +189,6 @@ SELECT cd.unique_id
       ,cd.key_lever
       ,cd.fiction_nonfiction
       ,cd.test_administered_by AS test_administered_by
-      --,COALESCE(cd.test_administered_by, gr.gr_teacher) AS test_administered_by      
       ,CASE        
         WHEN cd.academic_year <= 2016 AND cd.test_round = 'BOY' THEN 1
         WHEN cd.academic_year <= 2016 AND cd.test_round = 'MOY' THEN 2
@@ -215,11 +214,7 @@ SELECT cd.unique_id
 
       ,CONVERT(INT,instr.fp_lvl_num) AS instr_lvl_num
 FROM clean_data cd
-LEFT OUTER JOIN gabby.lit.gleq achv
+LEFT JOIN gabby.lit.gleq achv
   ON cd.achieved_independent_level = achv.read_lvl
-LEFT OUTER JOIN gabby.lit.gleq instr
+LEFT JOIN gabby.lit.gleq instr
   ON cd.instructional_level_tested = instr.read_lvl
---LEFT OUTER JOIN gabby.lit.guided_reading_roster gr
---  ON cd.student_number = gr.student_number
--- AND cd.academic_year = gr.academic_year
--- AND cd.test_round = gr.test_round
