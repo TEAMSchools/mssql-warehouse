@@ -77,6 +77,7 @@ WITH caredox_enrollment AS (
         ,co.reporting_schoolid
         ,co.grade_level        
         ,CASE
+          WHEN co.enroll_status = -1 THEN 'Pre-Registered'
           WHEN co.year_in_network = 1 THEN 'New to KIPP NJ'
           WHEN co.year_in_school = 1 THEN 'New to School'
           ELSE 'Returning Student'
