@@ -5,8 +5,10 @@ CREATE OR ALTER VIEW extracts.idauto_staff_roster AS
 
 SELECT QUOTENAME(ISNULL(NULL, ''), '"') AS ["Preferred Name"]
       ,QUOTENAME(ISNULL(df.payroll_company_code, ''), '"') AS ["Company Code"]
+      --,QUOTENAME(ISNULL(df.legal_entity_name, ''), '"') AS ["Company Code"]      
       ,QUOTENAME(ISNULL(df.primary_on_site_department, ''), '"') AS ["Home Department Description"]
-      ,QUOTENAME(ISNULL(df.primary_site, ''), '"') AS ["Location Description"]
+      ,QUOTENAME(ISNULL(df.primary_site, ''), '"') AS ["Location Description"]      
+      --,QUOTENAME(ISNULL(df.primary_site_entity, ''), '"') AS ["Location Description"]
       ,QUOTENAME(ISNULL(NULL, ''), '"') AS ["Business Unit Code"]
       ,QUOTENAME(ISNULL(df.primary_on_site_department, ''), '"') AS ["Business Unit Description"]
       ,QUOTENAME(ISNULL(df.preferred_first_name, ''), '"') AS ["First Name"]
