@@ -13,3 +13,4 @@ SELECT ada.academic_year AS [School Year]
       ,ada.membershipvalue
       ,ada.is_present AS attendancevalue
 FROM gabby.tableau.attendance_dashboard_current_static ada
+WHERE ada.schoolid LIKE '1799%'
