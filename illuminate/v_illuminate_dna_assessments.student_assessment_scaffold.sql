@@ -50,7 +50,7 @@ FROM
            ,a.title
            ,a.administered_at        
            ,a.performance_band_set_id
-           ,(a.academic_year - 1) AS academic_year
+           ,a.academic_year_clean AS academic_year
            
            ,ds.code_translation AS scope           
            
@@ -88,7 +88,7 @@ FROM
            ,a.title
            ,a.administered_at        
            ,a.performance_band_set_id
-           ,(a.academic_year - 1) AS academic_year
+           ,a.academic_year_clean AS academic_year
            
            ,ds.code_translation AS scope           
 
@@ -123,7 +123,7 @@ FROM
            ,a.title
            ,a.administered_at        
            ,a.performance_band_set_id
-           ,(a.academic_year - 1) AS academic_year
+           ,a.academic_year_clean AS academic_year
            
            ,ds.code_translation AS scope           
            
@@ -159,7 +159,7 @@ FROM
            ,a.title
            ,a.administered_at        
            ,a.performance_band_set_id
-           ,(a.academic_year - 1) AS academic_year
+           ,a.academic_year_clean AS academic_year
 
            ,ds.code_translation AS scope           
 

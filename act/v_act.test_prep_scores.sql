@@ -16,9 +16,8 @@ WITH long_data AS (
         ,sub.number_of_questions
         ,sub.overall_number_correct        
         ,sub.overall_percent_correct
-        ,sub.overall_performance_band
-        
-        ,co.grade_level
+        ,sub.overall_performance_band        
+        ,sub.grade_level
         
         ,ROW_NUMBER() OVER(
            PARTITION BY sub.student_number, sub.academic_year, sub.subject_area, sub.time_per_name
@@ -27,7 +26,7 @@ WITH long_data AS (
       (    
        SELECT a.assessment_id
              ,CONVERT(VARCHAR(125),a.title) AS assessment_title        
-             ,(a.academic_year - 1) AS academic_year
+             ,a.academic_year_clean AS academic_year
              ,a.administered_at
 
              ,CONVERT(VARCHAR(125),dsu.code_translation) AS subject_area        
@@ -42,6 +41,8 @@ WITH long_data AS (
         
              ,CONVERT(VARCHAR,d.time_per_name) AS time_per_name
              ,CONVERT(VARCHAR,d.alt_name) AS administration_round
+
+             ,co.grade_level
        FROM gabby.illuminate_dna_assessments.assessments a
        JOIN gabby.illuminate_codes.dna_scopes dsc
          ON a.code_scope_id = dsc.code_id
@@ -55,11 +56,11 @@ WITH long_data AS (
        JOIN gabby.reporting.reporting_terms d
          ON a.administered_at BETWEEN d.start_date AND d.end_date
         AND d.identifier = 'ACT'
+       JOIN gabby.powerschool.cohort_identifiers_static co
+         ON s.local_student_id = co.student_number
+        AND a.academic_year_clean = co.academic_year
+        AND co.rn_year = 1
       ) sub
-  JOIN gabby.powerschool.cohort_identifiers_static co
-    ON sub.student_number = co.student_number
-   AND sub.academic_year = co.academic_year
-   AND co.rn_year = 1
  )
 
 ,overall_scores AS (
@@ -79,7 +80,7 @@ WITH long_data AS (
         
         ,CONVERT(INT,act.scale_score) AS scale_score
   FROM long_data d
-  LEFT OUTER JOIN gabby.act.scale_score_key act
+  LEFT JOIN gabby.act.scale_score_key act
     ON d.academic_year = act.academic_year
    AND d.grade_level = act.grade_level
    AND d.time_per_name = act.administration_round
@@ -119,7 +120,7 @@ WITH long_data AS (
              
              ,CONVERT(INT,act.scale_score) AS scale_score
        FROM long_data d
-       LEFT OUTER JOIN gabby.act.scale_score_key act
+       LEFT JOIN gabby.act.scale_score_key act
          ON d.academic_year = act.academic_year
         AND d.grade_level = act.grade_level
         AND d.time_per_name = act.administration_round
@@ -188,12 +189,12 @@ FROM
               - MAX(CASE WHEN administration_round = 'Pre-Test' THEN scale_score END) OVER(PARTITION BY student_number, academic_year, subject_area) AS growth_from_pretest
      FROM overall_scores
     ) sub
-LEFT OUTER JOIN gabby.illuminate_dna_assessments.agg_student_responses_standard std
+LEFT JOIN gabby.illuminate_dna_assessments.agg_student_responses_standard std
   ON sub.assessment_id = std.assessment_id
  AND sub.illuminate_student_id = std.student_id
-LEFT OUTER JOIN gabby.illuminate_standards.standards s
+LEFT JOIN gabby.illuminate_standards.standards s
   ON std.standard_id = s.standard_id
-LEFT OUTER JOIN gabby.illuminate_standards.standards ps
+LEFT JOIN gabby.illuminate_standards.standards ps
   ON s.parent_standard_id = ps.standard_id
-LEFT OUTER JOIN gabby.illuminate_standards.standards ps2
+LEFT JOIN gabby.illuminate_standards.standards ps2
   ON ps.parent_standard_id = ps2.standard_id

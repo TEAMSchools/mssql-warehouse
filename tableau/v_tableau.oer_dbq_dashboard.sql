@@ -208,7 +208,7 @@ FROM
            ,a.title
            ,SUBSTRING(LTRIM(a.title), 1, CHARINDEX(' ', LTRIM(a.title))) AS course_number
            ,CASE
-             WHEN a.academic_year <= 2016 THEN SUBSTRING(a.title, PATINDEX('%QE_%', a.title), 3)
+             WHEN a.academic_year_clean <= 2015 THEN SUBSTRING(a.title, PATINDEX('%QE_%', a.title), 3)
              WHEN PATINDEX('%DBQ [0-9]%', a.title) > 0 THEN SUBSTRING(a.title, PATINDEX('%DBQ [0-9]%', a.title), 5)
              WHEN PATINDEX('%DBQ[0-9]%', a.title) > 0 THEN SUBSTRING(a.title, PATINDEX('%DBQ[0-9]%', a.title), 4)
             END AS unit_number
@@ -235,11 +235,11 @@ FROM
        ON r.student_id = s.student_id     
      JOIN gabby.powerschool.cohort_identifiers_static co
        ON s.local_student_id = co.student_number
-      AND (a.academic_year - 1) = co.academic_year
+      AND a.academic_year_clean = co.academic_year
       AND co.rn_year = 1
      JOIN gabby.illuminate_standards.standards std
        ON r.standard_id = std.standard_id
-     WHERE (a.academic_year - 1) >= 2016
+     WHERE a.academic_year_clean >= 2016
     ) sub
 LEFT JOIN gabby.powerschool.course_enrollments_static enr
   ON sub.student_number = enr.student_number

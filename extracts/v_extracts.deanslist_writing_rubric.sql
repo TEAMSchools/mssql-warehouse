@@ -14,7 +14,7 @@ SELECT student_number
       ,[QA4]
 FROM
     (     
-     SELECT (a.academic_year - 1) AS academic_year
+     SELECT a.academic_year_clean AS academic_year
            ,CASE
              WHEN PATINDEX('%[MU][0-9]/[0-9]%', a.title) > 0 THEN SUBSTRING(a.title, PATINDEX('%[MU][0-9]/[0-9]%', a.title), 4)
              WHEN PATINDEX('%QA[0-9]%', a.title) > 0 THEN SUBSTRING(a.title, PATINDEX('%QA[0-9]%', a.title), 3)
@@ -52,7 +52,7 @@ FROM
       AND ast.standard_id = asrs.standard_id
      JOIN gabby.illuminate_public.students s
        ON asrs.student_id = s.student_id
-     WHERE (a.academic_year - 1) = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+     WHERE a.academic_year_clean = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
     ) sub
 PIVOT(
   AVG(rubric_score)

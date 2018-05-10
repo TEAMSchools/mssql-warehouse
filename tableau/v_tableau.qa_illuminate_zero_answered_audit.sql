@@ -37,7 +37,7 @@ JOIN gabby.illuminate_dna_assessments.agg_student_responses ovr
  AND ovr.answered = 0
 JOIN gabby.illuminate_dna_assessments.assessments a
   ON ovr.assessment_id = a.assessment_id
- AND a.academic_year = (co.academic_year + 1)
+ AND co.academic_year = a.academic_year_clean
 LEFT JOIN gabby.illuminate_codes.dna_scopes dsc
   ON a.code_scope_id = dsc.code_id
 LEFT JOIN gabby.illuminate_codes.dna_subject_areas dsu

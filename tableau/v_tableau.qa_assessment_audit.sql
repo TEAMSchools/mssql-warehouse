@@ -15,13 +15,13 @@ WITH standards_grouped AS (
 
 SELECT a.assessment_id
       ,a.title
-      ,a.academic_year - 1 AS academic_year
+      ,a.academic_year_clean AS academic_year
       ,a.administered_at            
       ,CASE
         WHEN dsc.code_translation = 'Process Piece' THEN 'PP'
         WHEN dsc.code_translation NOT IN (SELECT scope FROM gabby.illuminate_dna_assessments.normed_scopes) THEN NULL
-        WHEN dsc.code_translation = 'CMA - End-of-Module' AND a.academic_year <= 2016 THEN 'EOM'
-        WHEN dsc.code_translation = 'CMA - End-of-Module' AND a.academic_year > 2016 THEN 'QA'
+        WHEN dsc.code_translation = 'CMA - End-of-Module' AND a.academic_year_clean <= 2016 THEN 'EOM'
+        WHEN dsc.code_translation = 'CMA - End-of-Module' AND a.academic_year_clean >= 2017 THEN 'QA'
         WHEN dsc.code_translation IN ('Cold Read Quizzes', 'Cumulative Review Quizzes') THEN 'CRQ'
         WHEN dsc.code_translation = 'CGI Quiz' THEN 'CGI'
         WHEN dsc.code_translation = 'Math Facts and Counting Jar' THEN 'MFCJ'
