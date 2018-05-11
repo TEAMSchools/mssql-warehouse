@@ -239,9 +239,9 @@ FROM
            ,sub.term_numeric
            ,sub.measurement_scale
 
-           ,CONVERT(FLOAT,norms_2008.student_percentile) AS percentile_2008_norms
-           ,CONVERT(FLOAT,norms_2011.student_percentile) AS percentile_2011_norms
-           ,CONVERT(FLOAT,norms_2015.student_percentile) AS percentile_2015_norms
+           ,norms_2008.student_percentile AS percentile_2008_norms
+           ,norms_2011.student_percentile AS percentile_2011_norms
+           ,norms_2015.student_percentile AS percentile_2015_norms
 
            ,CONVERT(INT,ROW_NUMBER() OVER(
               PARTITION BY sub.student_id, sub.term_name, sub.measurement_scale
@@ -370,28 +370,28 @@ FROM
                   WHEN ritto_reading_score IN ('BR','<100') THEN 0
                   ELSE CONVERT(FLOAT,ritto_reading_score) 
                  END AS ritto_reading_score
-          FROM gabby.nwea.assessmentresult
+          FROM gabby.nwea.assessmentresult WITH(FORCESEEK)
          ) sub
      JOIN gabby.powerschool.cohort_identifiers_static co
        ON sub.student_id = co.student_number
       AND sub.academic_year = co.academic_year
       AND co.rn_year = 1
-     LEFT OUTER JOIN gabby.nwea.percentile_norms norms_2008
+     LEFT JOIN gabby.nwea.percentile_norms norms_2008
        ON co.grade_level = norms_2008.grade_level
-      AND sub.measurement_scale = norms_2008.measurementscale
+      AND sub.measurement_scale = norms_2008.measurementscale_clean COLLATE SQL_Latin1_General_CP1_CI_AS
       AND sub.test_ritscore = norms_2008.testritscore
-      AND sub.term = norms_2008.term
+      AND sub.term = norms_2008.term_clean COLLATE SQL_Latin1_General_CP1_CI_AS
       AND norms_2008.norms_year = 2008
-     LEFT OUTER JOIN gabby.nwea.percentile_norms norms_2011
+     LEFT JOIN gabby.nwea.percentile_norms norms_2011
        ON co.grade_level = norms_2011.grade_level
-      AND sub.measurement_scale = norms_2011.measurementscale
+      AND sub.measurement_scale = norms_2011.measurementscale_clean COLLATE SQL_Latin1_General_CP1_CI_AS
       AND sub.test_ritscore = norms_2011.testritscore
-      AND sub.term = norms_2011.term
+      AND sub.term = norms_2011.term_clean COLLATE SQL_Latin1_General_CP1_CI_AS
       AND norms_2011.norms_year = 2011
-     LEFT OUTER JOIN gabby.nwea.percentile_norms norms_2015
+     LEFT JOIN gabby.nwea.percentile_norms norms_2015
        ON co.grade_level = norms_2015.grade_level
-      AND sub.measurement_scale = norms_2015.measurementscale
+      AND sub.measurement_scale = norms_2015.measurementscale_clean COLLATE SQL_Latin1_General_CP1_CI_AS
       AND sub.test_ritscore = norms_2015.testritscore
-      AND sub.term = norms_2015.term
+      AND sub.term = norms_2015.term_clean COLLATE SQL_Latin1_General_CP1_CI_AS
       AND norms_2015.norms_year = 2015
      ) sub

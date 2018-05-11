@@ -3,52 +3,35 @@ GO
 
 CREATE OR ALTER VIEW tableau.map_untested_roster AS
 
-WITH roster AS (
-  SELECT co.student_number
-        ,co.lastfirst
-        ,co.reporting_schoolid AS schoolid
-        ,co.grade_level
-        ,co.team
-        ,co.academic_year
-  FROM gabby.powerschool.cohort_identifiers_static co
-  WHERE co.rn_year = 1
-    AND co.grade_level != 99    
-    AND co.enroll_status = 0
-    AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
- )
-
-,subjects AS (
+WITH subjects AS (
   SELECT 'Reading' AS measurement_scale UNION
   SELECT 'Mathematics' UNION
   SELECT 'Language Usage' UNION
   SELECT 'Science - General Science'
  )
 
-,terms AS (
-  SELECT academic_year        
-        ,alt_name AS term_name
-        ,start_date AS term_start_date
-  FROM gabby.reporting.reporting_terms
-  WHERE identifier = 'MAP'
-    AND start_date <= GETDATE()
- )
-
 ,scaffold AS (
-  SELECT co.student_number        
+  SELECT co.student_number
         ,co.lastfirst
-        ,co.academic_year
-        ,co.schoolid
+        ,co.reporting_schoolid AS schoolid
         ,co.grade_level
-        ,co.team                        
+        ,co.team
+        ,co.academic_year                 
         
-        ,terms.term_name
-        ,terms.term_start_date
+        ,terms.alt_name AS term_name
+        ,terms.start_date AS term_start_date        
         
         ,subjects.measurement_scale
-  FROM roster co
-  JOIN terms
+  FROM gabby.powerschool.cohort_identifiers_static co
+  JOIN gabby.reporting.reporting_terms terms
     ON co.academic_year = terms.academic_year
+   AND terms.identifier = 'MAP'
+   AND terms.start_date <= GETDATE()
   CROSS JOIN subjects
+  WHERE co.rn_year = 1
+    AND co.grade_level != 99    
+    AND co.enroll_status = 0
+    AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
  )
 
 SELECT student_number
@@ -58,7 +41,6 @@ SELECT student_number
       ,schoolid
       ,grade_level
       ,team      
-      
       ,measurement_scale      
       ,map_student_id
       ,test_date
@@ -106,12 +88,12 @@ FROM
            
            ,COUNT(map.student_id) OVER(PARTITION BY map.student_id, map.academic_year, map.term, map.measurement_scale) AS n_tests
      FROM scaffold r
-     LEFT OUTER JOIN gabby.nwea.assessment_result_identifiers map
+     LEFT JOIN gabby.nwea.assessment_result_identifiers map
        ON r.student_number = map.student_id
       AND r.academic_year = map.academic_year
       AND r.measurement_scale = map.measurement_scale
       AND r.term_name = map.term
-     LEFT OUTER JOIN gabby.nwea.best_baseline base 
+     LEFT JOIN gabby.nwea.best_baseline base
        ON r.student_number = base.student_number
       AND r.academic_year = base.academic_year
       AND r.measurement_scale = base.measurementscale
