@@ -24,6 +24,8 @@ SELECT co.state_studentnumber AS [State IDNumber]
       ,CASE WHEN co.iep_status = 'No IEP' THEN 'N' ELSE 'Y' END AS [Has Active IEP]
       ,CASE WHEN co.lunchstatus = 'P' THEN 'N' ELSE 'Y' END AS [Low Income]
       ,co.team AS [Homeroom]
+      ,co.entrydate AS [Most-Recent Entry Date]
+      ,co.exitdate AS [Most-Recent Exit Date]
 FROM gabby.powerschool.cohort_identifiers_static co
 LEFT JOIN gabby.powerschool.studentcorefields scf
   ON co.students_dcid = scf.studentsdcid
