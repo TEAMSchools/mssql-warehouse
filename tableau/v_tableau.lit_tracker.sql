@@ -111,7 +111,7 @@ LEFT JOIN gabby.lit.all_test_events_static dtid
   ON co.student_number = dtid.student_number
  AND achv.dna_unique_id = dtid.unique_id 
  AND dtid.status = 'Did Not Achieve'
-LEFT JOIN gabby.lit.component_proficiency_long_static long
+LEFT JOIN gabby.lit.component_proficiency_long_static long WITH(FORCESEEK)
   ON co.student_number = long.student_number
  AND achv.dna_unique_id = long.unique_id
  AND long.status != 'Achieved'
