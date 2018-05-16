@@ -15,13 +15,14 @@ WITH caredox_enrollment AS (
  )
 
 ,caredox_immunization AS (
-  SELECT student_id
-        ,status
+  SELECT student_id_clean AS student_id
+        ,status_clean AS status
         ,ROW_NUMBER() OVER(
-           PARTITION BY student_id
+           PARTITION BY student_id_clean
              ORDER BY CONVERT(DATETIME,last_updated_at) DESC) AS rn_last_updated  
-  FROM gabby.caredox.immunization       
-  WHERE ISNUMERIC(student_id) = 1
+  FROM gabby.caredox.immunization
+  WHERE ISNUMERIC(student_id_clean) = 1
+    AND status_clean IN ('Valid', 'N/A')
  )
 
 ,caredox_screenings AS (
@@ -55,16 +56,22 @@ WITH caredox_enrollment AS (
 
 ,residency_verification AS (
   SELECT nen
-        ,verification_date
+        ,verification_date        
   FROM
       (
-       SELECT CONVERT(VARCHAR(25),subject_line) AS nen
-             ,CONVERT(DATE,REPLACE(timestamp, ' at ', ' ')) AS verification_date
+       SELECT nen
+             ,verification_date
              ,ROW_NUMBER() OVER(
-                PARTITION BY subject_line
-                  ORDER BY _row DESC) AS rn_recent
-       FROM gabby.enrollment.residency_verification
-       WHERE ISNUMERIC(subject_line) = 1
+               PARTITION BY nen
+                 ORDER BY verification_date DESC) AS rn_recent
+       FROM
+           (
+            SELECT CONVERT(VARCHAR(25),subject_line) AS nen
+                  ,CONVERT(DATETIME,REPLACE(timestamp, ' at ', ' ')) AS verification_date
+            FROM gabby.enrollment.residency_verification
+            WHERE ISNUMERIC(subject_line) = 1
+              AND CONVERT(DATETIME,REPLACE(timestamp, ' at ', ' ')) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1, 5, 1)
+           ) sub
       ) sub
   WHERE rn_recent = 1
  )
@@ -141,9 +148,9 @@ WITH caredox_enrollment AS (
    AND cds.rn_last_updated = 1
   LEFT JOIN caredox_medications cdm
     ON co.student_number = cdm.student_id
-  WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-    AND co.schoolid != 999999    
+  WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()    
     AND co.rn_year = 1
+    AND co.schoolid != 999999    
     AND co.enroll_status IN (-1, 0)
  )
 
@@ -211,8 +218,7 @@ SELECT a.student_number
         WHEN u.field = 'caredox_enrollment_status' AND u.value = 'approved' THEN 1
         WHEN u.field = 'caredox_enrollment_status' AND u.value IN ('review_pending','started') THEN 0
         WHEN u.field = 'caredox_enrollment_status' AND u.value IN ('rejected','') THEN -1
-        WHEN u.field = 'caredox_immunization_status' AND u.value = 'Valid' THEN 1        
-        WHEN u.field = 'caredox_immunization_status' AND u.value = 'N/A' THEN 0
+        WHEN u.field = 'caredox_immunization_status' AND u.value IN ('Valid', 'N/A') THEN 1        
         WHEN u.field = 'caredox_immunization_status' AND (u.value LIKE 'Not Valid%' OR u.value = '') THEN -1        
         WHEN u.field = 'caredox_medication_status' AND u.value != '' THEN 0
         WHEN u.field = 'caredox_screenings_status' AND u.value = 'compliant' THEN 1
