@@ -31,6 +31,7 @@ WITH schooldays AS (
         ,CONVERT(INT,yearid) + 1990 AS academic_year
         ,CONVERT(INT,SUM(attendancevalue)) AS n_att
         ,CONVERT(INT,SUM(membershipvalue)) AS n_mem
+        ,CONVERT(INT,SUM(CASE WHEN calendardate <= GETDATE() THEN membershipvalue END)) AS n_mem_ytd
   FROM gabby.powerschool.ps_adaadm_daily_ctod
   WHERE membershipvalue = 1
   GROUP BY studentid
@@ -52,6 +53,7 @@ SELECT co.student_number
       ,co.iep_status
       ,co.specialed_classification
       ,co.lep_status
+      ,co.enroll_status
       ,COUNT(co.student_number) OVER(PARTITION BY co.schoolid, co.academic_year) AS n_students
       
       ,nj.programtypecode
@@ -61,7 +63,8 @@ SELECT co.student_number
       ,d.n_days_region_min
       
       ,sub.n_mem
-      ,sub.n_att            
+      ,sub.n_att          
+      ,sub.n_mem_ytd  
 FROM gabby.powerschool.cohort_identifiers_static co
 LEFT OUTER JOIN gabby.powerschool.s_nj_stu_x nj
   ON co.students_dcid = nj.studentsdcid
