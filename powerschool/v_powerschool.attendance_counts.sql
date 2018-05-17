@@ -21,7 +21,7 @@ WITH att_counts AS (
                WHEN att.att_code IN ('AE','E','EA') THEN 'AE'
                WHEN att.att_code IN ('ISS','Q','S') THEN 'ISS'
                WHEN att.att_code IN ('OS','OSS','OSSP') THEN 'OSS'
-               WHEN att.att_code IN ('TLE','true','T') THEN 'T'
+               WHEN att.att_code IN ('TLE','T') THEN 'T'
                WHEN att.att_code = 'T10' THEN 'T10'
               END AS att_code
                   
@@ -36,7 +36,7 @@ WITH att_counts AS (
         AND att.att_date BETWEEN dates.start_date AND dates.end_date
         AND dates.identifier = 'RT' 
        WHERE att.att_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1, 7, 1)
-         AND att.att_code IN ('A','AD','AE','A-E','D','E','EA','ISS','OS','OSS','OSSP','Q','S','T','T10','TLE','X','true')
+         AND att.att_code IN ('A','AD','AE','A-E','D','E','EA','ISS','OS','OSS','OSSP','Q','S','T','T10','TLE','X')
       ) sub  
   GROUP BY studentid
           ,academic_year            
