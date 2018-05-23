@@ -13,6 +13,7 @@ WITH roster AS (
         ,termination_date
         ,termination_reason_description        
         ,benefits_eligibility_class_description
+        ,job_title_custom AS job_title
         ,gabby.utilities.DATE_TO_SY(position_start_date) AS start_academic_year
         ,gabby.utilities.DATE_TO_SY(termination_date) AS end_academic_year
   FROM gabby.adp.staff_roster
@@ -29,6 +30,7 @@ WITH roster AS (
         ,preferred_first
         ,preferred_last
         ,entity
+        ,job_title
         ,location
         ,benefits_eligibility_class_description
         ,academic_year
@@ -42,6 +44,7 @@ WITH roster AS (
              ,r.entity
              ,r.preferred_first
              ,r.preferred_last                          
+             ,r.job_title
              ,r.location
              ,r.benefits_eligibility_class_description
              ,CASE WHEN r.end_academic_year =  y.academic_year THEN r.termination_date END AS termination_date
@@ -67,6 +70,7 @@ WITH roster AS (
 SELECT d.associate_id      
       ,d.preferred_first
       ,d.preferred_last
+      ,d.job_title
       ,d.location
       ,d.entity
       ,d.benefits_eligibility_class_description
