@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW surveys.exit_survey_detail AS
+--CREATE OR ALTER VIEW surveys.exit_survey_detail AS
 
 SELECT df.adp_associate_id AS associate_id
       ,df.termination_date
@@ -50,7 +50,11 @@ SELECT df.adp_associate_id AS associate_id
       ,es.q_22 AS rating_improvement
       ,es.q_23 AS rating_freedom
       ,es.q_24 AS rating_fun
-      ,es.q_25 AS rating_teamwork	     
+      ,es.q_25 AS rating_teamwork
+      ,es.df_id
+      
+      ,df.df_employee_number
+      	     
 FROM gabby.dayforce.staff_roster df
 JOIN gabby.surveys.exit_survey es
-  ON df.adp_associate_id = es.associate_id
+  ON df.df_employee_number = es.df_id
