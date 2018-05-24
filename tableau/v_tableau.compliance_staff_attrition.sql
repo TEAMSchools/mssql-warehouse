@@ -4,18 +4,56 @@ GO
 CREATE OR ALTER VIEW tableau.compliance_staff_attrition AS
 
 WITH roster AS (
-  SELECT df_employee_number        
-        ,preferred_first_name
-        ,preferred_last_name
-        ,legal_entity_name
-        ,primary_site AS location
-        ,COALESCE(rehire_date,original_hire_date) AS position_start_date
-        ,termination_date
-        ,status_reason
-        ,job_family
-        ,gabby.utilities.DATE_TO_SY(COALESCE(rehire_date,original_hire_date)) AS start_academic_year
-        ,gabby.utilities.DATE_TO_SY(termination_date) AS end_academic_year
-  FROM gabby.dayforce.staff_roster
+  SELECT associate_id
+        ,preferred_first
+        ,preferred_last
+        ,entity
+        ,location
+        ,department_name
+        ,MIN(effective_start_date) AS position_start_date
+        ,MAX(termination_date) AS termination_date
+        ,MAX(termination_reason_description) AS termination_reason_description
+        ,benefits_eligibility_class_description
+        ,job_title
+        ,gabby.utilities.DATE_TO_SY(MIN(effective_start_date)) AS start_academic_year
+        ,gabby.utilities.DATE_TO_SY(MAX(termination_date)) AS end_academic_year
+        --,_line
+        --,status     
+  FROM
+      (
+       SELECT es.number AS associate_id
+             ,es.status             
+             ,CONVERT(DATE,es.effective_start) AS effective_start_date
+             ,CONVERT(DATE,es.effective_end) AS effective_end
+             ,CASE WHEN es.status = 'Terminated' THEN es.status_reason_description END AS termination_reason_description             
+             ,CASE WHEN es.status = 'Terminated' THEN CONVERT(DATE,es.effective_start) END AS termination_date           
+
+             ,e.preferred_first_name AS preferred_first
+             ,e.preferred_last_name AS preferred_last
+
+             ,ewa._line
+             ,ewa.department_name      
+             ,ewa.job_family_name AS benefits_eligibility_class_description
+             ,ewa.job_name AS job_title
+             ,ewa.legal_entity_name AS entity
+             ,ewa.physical_location_name AS location
+       FROM gabby.dayforce.employee_status es
+       JOIN gabby.dayforce.staff_roster e
+         ON es.number = e.df_employee_number
+       LEFT JOIN gabby.dayforce.employee_work_assignment ewa
+         ON es.number = ewa.employee_reference_code
+        AND CONVERT(DATE,es.effective_start) BETWEEN CONVERT(DATE,ewa.work_assignment_effective_start) AND COALESCE(CONVERT(DATE,ewa.work_assignment_effective_end), GETDATE())
+        AND ewa.primary_work_assignment = 1
+      ) sub
+  GROUP BY _line
+          ,associate_id
+          ,preferred_first
+          ,preferred_last
+          ,entity
+          ,location
+          ,department_name              
+          ,benefits_eligibility_class_description
+          ,job_title
  )
 
 ,years AS (
