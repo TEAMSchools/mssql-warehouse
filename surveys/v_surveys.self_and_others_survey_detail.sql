@@ -99,7 +99,7 @@ FROM
            ,CONVERT(FLOAT,rs.response_value) AS response_value
      FROM so_long so
      JOIN gabby.dayforce.staff_roster df
-       ON so.subject_associate_id = df.adp_associate_id
+       ON (so.subject_associate_id = df.adp_associate_id OR so.subject_associate_id = df.df_employee_number)
      JOIN gabby.adsi.user_attributes_static ad
        ON df.adp_associate_id = ad.idautopersonalternateid
      LEFT JOIN gabby.adsi.user_attributes_static mgr
