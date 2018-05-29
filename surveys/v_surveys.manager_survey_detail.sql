@@ -108,7 +108,8 @@ FROM
            ,CONVERT(FLOAT,rs.response_value) AS response_value
      FROM manager_long mgr
      JOIN gabby.dayforce.staff_roster df
-       ON mgr.manager_associate_id = df.adp_associate_id
+       ON mgr.manager_associate_id = CONVERT(VARCHAR,df.df_employee_number)
+          OR mgr.manager_associate_id = CONVERT(VARCHAR,df.adp_associate_id)
      JOIN gabby.adsi.user_attributes_static ad
        ON df.adp_associate_id = ad.idautopersonalternateid
      LEFT JOIN gabby.adsi.user_attributes_static admgr
