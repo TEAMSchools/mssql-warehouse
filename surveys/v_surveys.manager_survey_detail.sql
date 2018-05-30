@@ -107,12 +107,12 @@ FROM
 
            ,CONVERT(FLOAT,rs.response_value) AS response_value
      FROM manager_long mgr
-     JOIN gabby.dayforce.staff_roster df
+     LEFT JOIN gabby.dayforce.staff_roster df
        ON (mgr.manager_associate_id = df.adp_associate_id OR mgr.manager_associate_id = CONVERT(VARCHAR,df.df_employee_number))
      JOIN gabby.adsi.user_attributes_static ad
-       ON df.adp_associate_id = ad.idautopersonalternateid
+       ON (df.adp_associate_id = ad.idautopersonalternateid OR CONVERT(VARCHAR,df.df_employee_number) = ad.employeeid)
      LEFT JOIN gabby.adsi.user_attributes_static admgr
-       ON df.manager_adp_associate_id = admgr.idautopersonalternateid
+       ON (df.manager_adp_associate_id = admgr.idautopersonalternateid OR CONVERT(VARCHAR,df.manager_df_employee_number) = admgr.employeeid)
      JOIN gabby.surveys.question_key qk
        ON mgr.question_code = qk.question_code
       AND qk.survey_type = 'MGR'
