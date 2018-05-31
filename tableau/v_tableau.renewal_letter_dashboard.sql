@@ -48,6 +48,21 @@ WITH wf AS (
       ) sub
  )
 
+,sta AS (
+   SELECT *
+         ,ROW_NUMBER() OVER(
+           PARTITION BY df_employee_number
+             ORDER BY future_status_effective_start DESC) AS rn_recent_status
+     FROM
+      (
+       SELECT sta.number AS df_employee_number
+             ,sta.status AS future_status
+             ,sta.base_salary AS future_salary
+             ,CONVERT(DATE,sta.effective_start) AS future_status_effective_start
+       FROM dayforce.employee_status sta
+      ) sub
+ )
+
 SELECT r.df_employee_number
       ,r.preferred_name
       ,r.manager_name AS current_manager_name
@@ -67,6 +82,10 @@ SELECT r.df_employee_number
       ,was.future_job_family
       ,was.future_role      
       ,was.future_work_assignment_effective_start
+      
+      ,sta.future_status
+      ,sta.future_salary
+      ,sta.future_status_effective_start
 FROM dayforce.staff_roster r 
 LEFT JOIN wf
   ON r.df_employee_number = wf.affected_employee_number
@@ -74,3 +93,6 @@ LEFT JOIN wf
 LEFT JOIN was
   ON r.df_employee_number = was.df_employee_number
  AND was.rn_recent_work_assignment = 1
+ LEFT JOIN sta
+  ON r.df_employee_number = sta.df_employee_number
+ AND sta.rn_recent_status = 1
