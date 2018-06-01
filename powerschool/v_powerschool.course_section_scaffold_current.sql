@@ -11,9 +11,9 @@ WITH course_scaffold AS (
         ,course_number
         ,course_name
         ,credittype
-        ,credit_hours
-        ,gradescaleid
+        ,credit_hours        
         ,excludefromgpa
+        ,gradescaleid
         ,CASE 
           WHEN CONVERT(DATE,GETDATE()) BETWEEN term_start_date AND term_end_date THEN 1
           WHEN term_end_date <= CONVERT(DATE,GETDATE()) AND term_start_date = MAX(term_start_date) OVER(PARTITION BY studentid, yearid, course_number) THEN 1
@@ -28,9 +28,9 @@ WITH course_scaffold AS (
              ,enr.course_number
              ,enr.course_name
              ,enr.credittype
-             ,enr.credit_hours
-             ,enr.gradescaleid
+             ,enr.credit_hours             
              ,enr.excludefromgpa
+             ,enr.gradescaleid
 
              ,CONVERT(VARCHAR(25),terms.alt_name) AS term_name
              ,terms.start_date AS term_start_date
@@ -54,7 +54,8 @@ WITH course_scaffold AS (
   SELECT studentid
         ,course_number
         ,yearid
-        ,ABS(sectionid) AS abs_sectionid
+        ,abs_sectionid
+        ,gradescaleid
         ,term_name
         ,ROW_NUMBER() OVER(
            PARTITION BY studentid, yearid, course_number, term_name
@@ -66,12 +67,17 @@ WITH course_scaffold AS (
              ,CONVERT(INT,cc.sectionid) AS sectionid
              ,cc.dateleft
              ,CONVERT(INT,LEFT(ABS(cc.termid), 2)) AS yearid                   
+             ,cc.abs_sectionid
       
+             ,CONVERT(INT,sec.gradescaleid) AS gradescaleid
+
              ,CASE 
                WHEN terms.alt_name = 'Summer School' THEN 'Q1' 
                ELSE CONVERT(VARCHAR,terms.alt_name) 
               END AS term_name        
        FROM gabby.powerschool.cc
+       JOIN gabby.powerschool.sections sec
+         ON cc.abs_sectionid = sec.id
        JOIN gabby.reporting.reporting_terms terms
          ON cc.schoolid = terms.schoolid         
         AND cc.dateenrolled BETWEEN terms.start_date AND terms.end_date
@@ -90,7 +96,10 @@ SELECT cs.studentid
       ,cs.course_name
       ,cs.credittype
       ,cs.credit_hours
-      ,cs.gradescaleid
+      ,COALESCE(CASE WHEN ss.gradescaleid = 0 THEN cs.gradescaleid ELSE ss.gradescaleid END
+               ,LAG(CASE WHEN ss.gradescaleid = 0 THEN cs.gradescaleid ELSE ss.gradescaleid END, 1) OVER(PARTITION BY cs.studentid, cs.yearid, cs.course_number ORDER BY cs.term_name)
+               ,LAG(CASE WHEN ss.gradescaleid = 0 THEN cs.gradescaleid ELSE ss.gradescaleid END, 2) OVER(PARTITION BY cs.studentid, cs.yearid, cs.course_number ORDER BY cs.term_name)
+               ,LAG(CASE WHEN ss.gradescaleid = 0 THEN cs.gradescaleid ELSE ss.gradescaleid END, 3) OVER(PARTITION BY cs.studentid, cs.yearid, cs.course_number ORDER BY cs.term_name)) AS gradescaleid
       ,cs.excludefromgpa
 
       ,COALESCE(ss.abs_sectionid

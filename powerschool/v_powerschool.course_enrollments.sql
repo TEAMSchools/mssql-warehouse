@@ -21,7 +21,7 @@ SELECT sub.studentid
       ,sub.credittype
       ,sub.course_name
       ,sub.credit_hours
-      ,sub.gradescaleid
+      ,sub.courses_gradescaleid AS gradescaleid
       ,sub.excludefromgpa
       ,sub.excludefromstoredgrades      
       ,sub.teachernumber
@@ -73,7 +73,7 @@ FROM
            ,sub.abs_sectionid
            ,sub.abs_termid           
            ,sub.sections_dcid           
-           ,sub.gradescaleid
+           ,sub.courses_gradescaleid
            
            ,SUM(sub.section_enroll_status) OVER(PARTITION BY sub.studentid, sub.yearid, sub.course_number)
               / COUNT(sub.sectionid) OVER(PARTITION BY sub.studentid, sub.yearid, sub.course_number) AS course_enroll_status
@@ -104,6 +104,7 @@ FROM
                 ,cou.credit_hours                
                 ,CONVERT(INT,cou.excludefromgpa) AS excludefromgpa
                 ,CONVERT(INT,cou.excludefromstoredgrades) AS excludefromstoredgrades           
+                ,CONVERT(INT,cou.gradescaleid) AS courses_gradescaleid
                 ,CASE
                   WHEN cou.credittype IN ('ENG','READ') THEN 'Reading'
                   WHEN cou.credittype = 'MATH' THEN 'Mathematics'
@@ -114,9 +115,8 @@ FROM
                 ,CONVERT(VARCHAR(25),t.teachernumber) AS teachernumber
                 ,CONVERT(VARCHAR(125),t.lastfirst) AS teacher_name
 
-                ,CONVERT(INT,sec.dcid) AS sections_dcid
+                ,CONVERT(INT,sec.dcid) AS sections_dcid               
                 
-                ,CASE WHEN sec.gradescaleid = 0 THEN CONVERT(INT,cou.gradescaleid) ELSE CONVERT(INT,sec.gradescaleid) END AS gradescaleid           
                 ,CASE
                   WHEN s.grade_level <= 8 AND cou.credittype = 'ENG' THEN 'Text Study'        
                   WHEN s.grade_level <= 8 AND cou.credittype = 'SCI' THEN 'Science'
