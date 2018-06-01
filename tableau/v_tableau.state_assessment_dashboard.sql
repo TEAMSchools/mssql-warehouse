@@ -24,7 +24,7 @@ WITH promo AS (
 ,external_prof AS (
   SELECT academic_year        
         ,test_code
-        ,grade_level
+        --,grade_level
         ,[NJ]
         ,[NPS]
         ,[CPS]
@@ -32,13 +32,49 @@ WITH promo AS (
   FROM
       (
        SELECT academic_year
-             ,test_code
-             ,grade_level
-             ,entity
-             ,pct_proficient
-       FROM gabby.parcc.external_proficiency_rates
-       WHERE (test_code IN ('ALG01','ALG02','GEO01') AND grade_level IS NULL)
-          OR (test_code NOT IN ('ALG01','ALG02','GEO01') AND grade_level IS NOT NULL)
+             ,test_code COLLATE SQL_Latin1_General_CP1_CI_AS AS test_code
+             --,grade_level
+             ,entity COLLATE SQL_Latin1_General_CP1_CI_AS AS entity                          
+             ,(SUM(proficient_count) / SUM(valid_scores)) * 100 AS pct_proficient
+       FROM
+           (
+            SELECT academic_year                                    
+                  ,test_code                                    
+                  --,CASE
+                  --  WHEN subgroup_type = 'GRADE - 06' THEN 6
+                  --  WHEN subgroup_type = 'GRADE - 07' THEN 7
+                  --  WHEN subgroup_type = 'GRADE - 08' THEN 8
+                  --  WHEN subgroup_type = 'GRADE - 09' THEN 9
+                  --  WHEN subgroup_type = 'GRADE - 10' THEN 10
+                  --  WHEN subgroup_type = 'GRADE - 11' THEN 11
+                  --  WHEN subgroup_type = 'GRADE - 12' THEN 12                    
+                  --  WHEN test_code IN ('ELA03', 'MAT03') THEN 3
+                  --  WHEN test_code IN ('ELA04', 'MAT04') THEN 4
+                  --  WHEN test_code IN ('ELA05', 'MAT05') THEN 5
+                  --  WHEN test_code IN ('ELA06', 'MAT06') THEN 6
+                  --  WHEN test_code IN ('ELA07', 'MAT07') THEN 7
+                  --  WHEN test_code IN ('ELA08', 'MAT08') THEN 8
+                  --  WHEN test_code IN ('ELA09', 'MAT09') THEN 9
+                  --  WHEN test_code IN ('ELA10', 'MAT10') THEN 10
+                  --  WHEN test_code IN ('ELA11', 'MAT11') THEN 11
+                  --  WHEN test_code IN ('ELA12', 'MAT12') THEN 12
+                  -- END AS grade_level
+                  ,CASE
+                    WHEN district_code IS NULL THEN 'NJ'
+                    WHEN district_code = 0680 THEN 'CPS'
+                    WHEN district_code = 3570 THEN 'NPS'
+                   END AS entity                  
+                  ,valid_scores
+                  ,((l_4_percent / 100) * valid_scores) + ((l_5_percent / 100) * valid_scores) AS proficient_count
+            FROM gabby.njdoe.parcc
+            WHERE school_code IS NULL
+              AND (district_code IN (3570, 0680) OR district_code IS NULL)
+              AND ((LEFT(test_code, 3) IN ('ELA', 'MAT') AND subgroup = 'TOTAL') OR ((LEFT(test_code, 3) IN ('ALG', 'GEO') AND subgroup = 'GRADE')))
+           ) sub       
+       GROUP BY academic_year
+               ,test_code
+               --,grade_level
+               ,entity
       ) sub
   PIVOT(
     MAX(pct_proficient)
