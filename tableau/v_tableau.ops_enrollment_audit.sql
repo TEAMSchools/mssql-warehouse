@@ -34,7 +34,7 @@ WITH caredox_enrollment AS (
   FROM gabby.caredox.screenings
   WHERE ISNUMERIC(student_id) = 1
     AND status_clean = 'compliant'
-)
+ )
 
 ,caredox_medications AS (
   SELECT student_id
