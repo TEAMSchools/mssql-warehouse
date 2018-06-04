@@ -11,10 +11,11 @@ SELECT co.school_name
       ,co.team
       ,co.advisor_name
       ,co.academic_year            
-      ,co.IEP_status      
-      ,co.LEP_status
+      ,co.iep_status      
+      ,co.lep_status
       ,co.enroll_status            
       ,co.cohort
+      ,co.region
       
       ,CASE WHEN sp.programid IS NOT NULL THEN 1 ELSE 0 END AS is_americorps
       
@@ -106,7 +107,7 @@ JOIN gabby.lit.achieved_by_round_static achv
 LEFT JOIN gabby.lit.all_test_events_static atid
   ON co.student_number = atid.student_number
  AND achv.achv_unique_id = atid.unique_id 
- AND atid.status = 'Achieved'
+ AND atid.status IN ('Achieved', 'Mixed')
 LEFT JOIN gabby.lit.all_test_events_static dtid
   ON co.student_number = dtid.student_number
  AND achv.dna_unique_id = dtid.unique_id 

@@ -51,6 +51,7 @@ SELECT r.academic_year
       ,r.team        
       ,r.iep_status
       ,r.enroll_status      
+      ,r.region
       
       ,map_long.test_id
       ,map_long.term      
