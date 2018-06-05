@@ -89,11 +89,11 @@ WITH attendance AS (
              
              ,COUNT(CASE WHEN lit.end_date <= CONVERT(DATE,GETDATE()) THEN lit.read_lvl END) OVER(PARTITION BY lit.student_number, lit.academic_year ORDER BY lit.end_date ASC) - 1 AS n_growth_rounds                                       
        FROM gabby.lit.achieved_by_round_static lit
-       LEFT OUTER JOIN gabby.lit.achieved_by_round_static lit_base
+       LEFT JOIN gabby.lit.achieved_by_round_static lit_base
          ON lit.student_number = lit_base.student_number
         AND lit.academic_year = lit_base.academic_year
         AND lit_base.rn_round_asc = 1
-       LEFT OUTER JOIN gabby.lit.achieved_by_round_static lit_prev
+       LEFT JOIN gabby.lit.achieved_by_round_static lit_prev
          ON lit.student_number = lit_prev.student_number
         AND lit.academic_year = lit_prev.academic_year
         AND (lit.rn_round_asc - 1) = lit_prev.rn_round_asc
@@ -145,7 +145,7 @@ WITH attendance AS (
                      ELSE fg.credit_hours 
                     END), 0) AS total_projected_credit_hours        
   FROM gabby.powerschool.final_grades_static fg  
-  LEFT OUTER JOIN gabby.powerschool.storedgrades sg
+  LEFT JOIN gabby.powerschool.storedgrades sg
     ON fg.studentid = sg.studentid
    AND fg.course_number = sg.course_number
    AND fg.academic_year = (LEFT(sg.termid, 2) + 1990)
@@ -157,11 +157,18 @@ WITH attendance AS (
 
 SELECT studentid
       ,student_number
+      ,lastfirst
       ,academic_year
-      ,schoolid
+      ,schoolid 
+      ,school_name     
       ,school_level
       ,iep_status
+      ,is_retained_year
+      ,is_retained_ever
       ,retention_flag
+      ,sched_nextyeargrade
+      ,next_school
+      ,summerschoolnote  
       ,term_name
       ,reporting_term
       ,is_curterm
@@ -208,11 +215,19 @@ FROM
     (
      SELECT co.studentid
            ,co.student_number
+           ,co.lastfirst
            ,co.academic_year
-           ,co.schoolid      
+           ,co.schoolid 
+           ,co.school_name     
            ,co.school_level
            ,co.iep_status
+           ,co.is_retained_year
+           ,co.is_retained_ever           
            ,co.is_retained_ever + co.is_retained_year AS retention_flag
+           
+           ,s.sched_nextyeargrade
+           ,s.next_school
+           ,s.summerschoolnote  
            
            ,dt.alt_name AS term_name
            ,dt.time_per_name AS reporting_term
@@ -309,37 +324,39 @@ FROM
              WHEN cum.cumulative_Y1_gpa >= 3.0  THEN 'Cum Laude'
             END AS GPA_cum_status          
      FROM gabby.powerschool.cohort_identifiers_static co
+     JOIN gabby.powerschool.students s
+       ON co.student_number = s.student_number
      JOIN gabby.reporting.reporting_terms dt
        ON co.schoolid = dt.schoolid
       AND co.academic_year = dt.academic_year
       AND dt.identifier = 'RT'
       AND dt.alt_name != 'Summer School'
-     LEFT OUTER JOIN attendance att
+     LEFT JOIN attendance att
        ON co.studentid = att.studentid
       AND co.academic_year = att.academic_year
       AND dt.alt_name = att.term_name
-     LEFT OUTER JOIN lit
+     LEFT JOIN lit
        ON co.student_number = lit.student_number
       AND co.academic_year = lit.academic_year
       AND dt.alt_name = lit.term_name
       AND co.school_level = 'ES'
-     LEFT OUTER JOIN final_grades fg
+     LEFT JOIN final_grades fg
        ON co.student_number = fg.student_number
       AND co.academic_year = fg.academic_year
       AND dt.alt_name = fg.term_name      
-     LEFT OUTER JOIN gabby.powerschool.category_grades_wide cat
+     LEFT JOIN gabby.powerschool.category_grades_wide cat
        ON co.student_number = cat.student_number
       AND co.academic_year = cat.academic_year 
       AND dt.time_per_name = cat.reporting_term
       AND cat.credittype = 'ALL'
-     LEFT OUTER JOIN gabby.powerschool.gpa_detail gpa 
+     LEFT JOIN gabby.powerschool.gpa_detail gpa 
        ON co.student_number = gpa.student_number
       AND co.academic_year = gpa.academic_year
       AND dt.alt_name = gpa.term_name
-     LEFT OUTER JOIN gabby.powerschool.gpa_cumulative cum
+     LEFT JOIN gabby.powerschool.gpa_cumulative cum
        ON co.studentid = cum.studentid
       AND co.schoolid = cum.schoolid
-     LEFT OUTER JOIN credits cr
+     LEFT JOIN credits cr
        ON co.student_number = cr.student_number
       AND co.academic_year = cr.academic_year
       AND dt.alt_name = cr.term_name
