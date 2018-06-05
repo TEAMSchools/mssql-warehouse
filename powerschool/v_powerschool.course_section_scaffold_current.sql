@@ -107,7 +107,7 @@ SELECT cs.studentid
                ,LAG(ss.abs_sectionid, 2) OVER(PARTITION BY cs.studentid, cs.yearid, cs.course_number ORDER BY cs.term_name)
                ,LAG(ss.abs_sectionid, 3) OVER(PARTITION BY cs.studentid, cs.yearid, cs.course_number ORDER BY cs.term_name)) AS sectionid
 FROM course_scaffold cs
-LEFT OUTER JOIN section_scaffold ss
+LEFT JOIN section_scaffold ss
   ON cs.studentid = ss.studentid
  AND cs.yearid = ss.yearid
  AND cs.term_name = ss.term_name

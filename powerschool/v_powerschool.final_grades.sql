@@ -22,7 +22,7 @@ WITH roster AS (
         
         ,t.lastfirst AS teacher_name
 
-        ,CASE WHEN sec.gradescaleid = 0 THEN css.gradescaleid ELSE CONVERT(INT,sec.gradescaleid) END AS gradescaleid
+        ,css.gradescaleid
   FROM gabby.powerschool.cohort_identifiers_static co  
   JOIN gabby.powerschool.course_section_scaffold css
     ON co.studentid = css.studentid
@@ -64,7 +64,7 @@ WITH roster AS (
              
              ,pgf.finalgradename_clean AS term_name
       
-             ,CONVERT(VARCHAR(5),sg.grade) AS stored_letter           
+             ,CASE WHEN sg.grade = 'false' THEN 'F' ELSE CONVERT(VARCHAR(5),sg.grade) END AS stored_letter
              ,ROUND(sg.[percent], 0) AS stored_pct             
              
              ,CASE
