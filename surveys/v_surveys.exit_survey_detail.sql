@@ -3,7 +3,8 @@ GO
 
 CREATE OR ALTER VIEW surveys.exit_survey_detail AS
 
-SELECT df.adp_associate_id AS associate_id
+SELECT df.df_employee_number
+      ,df.adp_associate_id AS associate_id
       ,df.termination_date
       ,df.status_reason AS termination_reason_description
       ,df.primary_job AS job_title_description
@@ -50,7 +51,7 @@ SELECT df.adp_associate_id AS associate_id
       ,es.q_22 AS rating_improvement
       ,es.q_23 AS rating_freedom
       ,es.q_24 AS rating_fun
-      ,es.q_25 AS rating_teamwork	     
-FROM gabby.dayforce.staff_roster df
-JOIN gabby.surveys.exit_survey es
-  ON df.adp_associate_id = es.associate_id
+      ,es.q_25 AS rating_teamwork        
+FROM gabby.surveys.exit_survey es
+LEFT JOIN gabby.dayforce.staff_roster df
+  ON es.df_id = df.df_employee_number
