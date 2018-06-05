@@ -44,22 +44,25 @@ WITH wf AS (
              ,was.department_name AS future_department
              ,was.job_name AS future_role
              ,CONVERT(DATE,was.work_assignment_effective_start) AS future_work_assignment_effective_start
-       FROM dayforce.employee_work_assignment was
+       FROM gabby.dayforce.employee_work_assignment was
       ) sub
  )
 
 ,sta AS (
-   SELECT *
-         ,ROW_NUMBER() OVER(
-           PARTITION BY df_employee_number
-             ORDER BY future_status_effective_start DESC) AS rn_recent_status
-     FROM
+  SELECT df_employee_number
+        ,future_status
+        ,future_salary
+        ,future_status_effective_start
+        ,ROW_NUMBER() OVER(
+          PARTITION BY df_employee_number
+            ORDER BY future_status_effective_start DESC) AS rn_recent_status
+  FROM
       (
        SELECT sta.number AS df_employee_number
              ,sta.status AS future_status
              ,sta.base_salary AS future_salary
              ,CONVERT(DATE,sta.effective_start) AS future_status_effective_start
-       FROM dayforce.employee_status sta
+       FROM gabby.dayforce.employee_status sta
       ) sub
  )
 
@@ -93,6 +96,6 @@ LEFT JOIN wf
 LEFT JOIN was
   ON r.df_employee_number = was.df_employee_number
  AND was.rn_recent_work_assignment = 1
- LEFT JOIN sta
+LEFT JOIN sta
   ON r.df_employee_number = sta.df_employee_number
  AND sta.rn_recent_status = 1
