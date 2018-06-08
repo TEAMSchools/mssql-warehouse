@@ -3,130 +3,113 @@ GO
 
 --CREATE OR ALTER VIEW tableau.compliance_staff_attrition AS
 
-WITH roster AS (
-  SELECT associate_id
-        ,preferred_first
-        ,preferred_last
-        ,entity
-        ,location
-        ,department_name
-        ,MIN(effective_start_date) AS position_start_date
-        ,MAX(termination_date) AS termination_date
-        ,MAX(termination_reason_description) AS termination_reason_description
-        ,benefits_eligibility_class_description
-        ,job_title
-        ,gabby.utilities.DATE_TO_SY(MIN(effective_start_date)) AS start_academic_year
-        ,gabby.utilities.DATE_TO_SY(MAX(termination_date)) AS end_academic_year
-        --,_line
-        --,status     
-  FROM
-      (
-       SELECT es.number AS associate_id
-             ,es.status             
-             ,CONVERT(DATE,es.effective_start) AS effective_start_date
-             ,CONVERT(DATE,es.effective_end) AS effective_end
-             ,CASE WHEN es.status = 'Terminated' THEN es.status_reason_description END AS termination_reason_description             
-             ,CASE WHEN es.status = 'Terminated' THEN CONVERT(DATE,es.effective_start) END AS termination_date           
-
-             ,e.preferred_first_name AS preferred_first
-             ,e.preferred_last_name AS preferred_last
-
-             ,ewa._line
-             ,ewa.department_name      
-             ,ewa.job_family_name AS benefits_eligibility_class_description
-             ,ewa.job_name AS job_title
-             ,ewa.legal_entity_name AS entity
-             ,ewa.physical_location_name AS location
-       FROM gabby.dayforce.employee_status es
-       JOIN gabby.dayforce.staff_roster e
-         ON es.number = e.df_employee_number
-       LEFT JOIN gabby.dayforce.employee_work_assignment ewa
-         ON es.number = ewa.employee_reference_code
-        AND CONVERT(DATE,es.effective_start) BETWEEN CONVERT(DATE,ewa.work_assignment_effective_start) AND COALESCE(CONVERT(DATE,ewa.work_assignment_effective_end), GETDATE())
-        AND ewa.primary_work_assignment = 1
-      ) sub
-  GROUP BY _line
-          ,associate_id
-          ,preferred_first
-          ,preferred_last
-          ,entity
-          ,location
-          ,department_name              
-          ,benefits_eligibility_class_description
-          ,job_title
- )
-
-,years AS (
-  SELECT n AS academic_year
-  FROM gabby.utilities.row_generator
-  WHERE n BETWEEN 2000 AND gabby.utilities.GLOBAL_ACADEMIC_YEAR()
- )
-
-,scaffold AS (
-  SELECT df_employee_number        
+WITH staff_scaffold AS (
+  SELECT df_employee_number
+        ,adp_associate_id
         ,preferred_first_name
         ,preferred_last_name
-        ,legal_entity_name
-        ,location
-        ,job_family
         ,academic_year
-        ,termination_date
-        ,status_reason  
-        ,academic_year_entrydate
-        ,academic_year_exitdate
+        ,status_effective_start_date
+        ,status_effective_end_date
+        ,status
+        ,status_reason_description
+        ,department_name
+        ,flsa_status_name
+        ,job_family_name
+        ,job_name
+        ,legal_entity_name
+        ,pay_class_name
+        ,pay_type_name
+        ,physical_location_name
+        ,work_assignment_effective_start_date
+        ,work_assignment_effective_end_date                
+        ,ROW_NUMBER() OVER(
+           PARTITION BY df_employee_number, academic_year
+             ORDER BY status_effective_start_date DESC, work_assignment_effective_start_date DESC) AS rn_recent_year
   FROM
       (
-       SELECT r.df_employee_number
-             ,r.legal_entity_name
-             ,r.preferred_first_name
-             ,r.preferred_last_name
-             ,r.location
-             ,r.job_family
-             ,CASE WHEN r.end_academic_year =  y.academic_year THEN r.termination_date END AS termination_date
-      
-             ,y.academic_year
+       SELECT DISTINCT
+              sr.df_employee_number
+             ,sr.adp_associate_id
+             ,sr.preferred_first_name
+             ,sr.preferred_last_name
 
-             ,CASE WHEN r.start_academic_year = y.academic_year THEN r.position_start_date ELSE DATEFROMPARTS(y.academic_year, 7, 1) END AS academic_year_entrydate
-             ,CASE                 
-               WHEN r.end_academic_year = y.academic_year THEN COALESCE(r.termination_date, DATEFROMPARTS((y.academic_year + 1), 6, 30))
-               ELSE DATEFROMPARTS((y.academic_year + 1), 6, 30)
-              END AS academic_year_exitdate
-             ,ROW_NUMBER() OVER(
-                PARTITION BY r.df_employee_number, y.academic_year
-                  ORDER BY r.position_start_date DESC, COALESCE(r.termination_date,CONVERT(DATE,GETDATE())) DESC) AS rn_dupe_academic_year
-              ,status_reason  
-       FROM roster r
-       JOIN years y
-         ON y.academic_year BETWEEN r.start_academic_year AND COALESCE(r.end_academic_year, gabby.utilities.GLOBAL_ACADEMIC_YEAR())
+             ,rd.academic_year             
+
+             ,CONVERT(DATE,es.effective_start) AS status_effective_start_date
+             ,COALESCE(CONVERT(DATE,es.effective_end)
+                      ,CONVERT(DATE,DATEFROMPARTS(gabby.utilities.DATE_TO_SY(GETDATE()) + 1, 9, 1))) AS status_effective_end_date
+             ,es.status
+             ,es.status_reason_description
+
+             ,ewa.department_name
+             ,ewa.flsa_status_name
+             ,ewa.job_family_name
+             ,ewa.job_name
+             ,ewa.legal_entity_name
+             ,ewa.pay_class_name
+             ,ewa.pay_type_name
+             ,ewa.physical_location_name
+             ,CONVERT(DATE,ewa.work_assignment_effective_start) AS work_assignment_effective_start_date
+             ,CONVERT(DATE,COALESCE(ewa.work_assignment_effective_end
+                                   ,DATEFROMPARTS(gabby.utilities.DATE_TO_SY(GETDATE()) + 1, 9, 1))) AS work_assignment_effective_end_date
+       FROM gabby.dayforce.staff_roster sr
+       JOIN gabby.utilities.reporting_days rd
+         ON rd.date BETWEEN sr.original_hire_date AND COALESCE(sr.termination_date
+                                                              ,DATEFROMPARTS(gabby.utilities.DATE_TO_SY(GETDATE()) + 1, 9, 1))
+        AND rd.date BETWEEN DATEFROMPARTS(rd.academic_year, 9, 1) AND DATEFROMPARTS(rd.academic_year + 1, 4, 30)
+       JOIN gabby.dayforce.employee_status es
+         ON sr.df_employee_number = es.number
+        AND rd.date BETWEEN CONVERT(DATE,es.effective_start) AND COALESCE(CONVERT(DATE,es.effective_end)
+                                                                         ,DATEFROMPARTS(gabby.utilities.DATE_TO_SY(GETDATE()) + 1, 9, 1))
+        AND es.status NOT IN ('Terminated', 'Pre-Start')
+       JOIN gabby.dayforce.employee_work_assignment ewa
+         ON sr.df_employee_number = ewa.employee_reference_code
+        AND rd.date BETWEEN CONVERT(DATE,ewa.work_assignment_effective_start) AND COALESCE(CONVERT(DATE,ewa.work_assignment_effective_end)
+                                                                                          ,DATEFROMPARTS(gabby.utilities.DATE_TO_SY(GETDATE()) + 1, 9, 1))
+        AND ewa.primary_work_assignment = 1       
       ) sub
-  WHERE rn_dupe_academic_year = 1
- )
+  )
 
-SELECT d.df_employee_number    
-      ,d.preferred_first_name
-      ,d.preferred_last_name
-      ,d.location
-      ,d.legal_entity_name
-      ,d.job_family
-      ,d.academic_year      
-      ,d.academic_year_entrydate      
-      ,d.academic_year_exitdate
-      ,d.status_reason
-      ,CASE 
-        WHEN d.academic_year_exitdate >= DATEFROMPARTS(d.academic_year, 9, 1) 
-         AND d.academic_year_entrydate <= DATEFROMPARTS((d.academic_year + 1), 4, 30) 
-               THEN 1         
-        ELSE 0 
-       END AS is_denominator      
+SELECT ss1.df_employee_number
+      ,ss1.adp_associate_id
+      ,ss1.preferred_first_name
+      ,ss1.preferred_last_name
+      ,ss1.academic_year
+      ,ss1.status_effective_start_date
+      ,ss1.status_effective_end_date
+      ,ss1.status
+      ,ss1.status_reason_description
+      ,ss1.department_name
+      ,ss1.flsa_status_name
+      ,ss1.job_family_name
+      ,ss1.job_name
+      ,ss1.legal_entity_name
+      ,ss1.pay_class_name
+      ,ss1.pay_type_name
+      ,ss1.physical_location_name
+      ,ss1.work_assignment_effective_start_date
+      ,ss1.work_assignment_effective_end_date
 
-      ,n.academic_year_exitdate AS next_academic_year_exitdate
-      ,d.termination_date     
-      ,COALESCE(n.academic_year_exitdate, d.termination_date, DATEFROMPARTS(d.academic_year + 2, 6, 30)) AS attrition_exitdate 
-      ,CASE
-        WHEN COALESCE(n.academic_year_exitdate, d.termination_date, DATEFROMPARTS(d.academic_year + 2, 6, 30)) < DATEFROMPARTS(d.academic_year + 1, 9, 1) THEN 1
-        ELSE 0
-       END AS is_attrition
-FROM scaffold d
-LEFT OUTER JOIN scaffold n
-  ON d.df_employee_number = n.df_employee_number
- AND d.academic_year = (n.academic_year - 1)
+      ,ss2.status_effective_start_date AS future_status_effective_start_date
+      ,ss2.status_effective_end_date AS future_status_effective_end_date
+      ,ss2.status AS future_status
+      ,ss2.status_reason_description AS future_status_reason_description
+      ,ss2.department_name AS future_department_name
+      ,ss2.flsa_status_name AS future_flsa_status_name
+      ,ss2.job_family_name AS future_job_family_name
+      ,ss2.job_name AS future_job_name
+      ,ss2.legal_entity_name AS future_legal_entity_name
+      ,ss2.pay_class_name AS future_pay_class_name
+      ,ss2.pay_type_name AS future_pay_type_name
+      ,ss2.physical_location_name AS future_physical_location_name
+      ,ss2.work_assignment_effective_start_date AS future_work_assignment_effective_start_date
+      ,ss2.work_assignment_effective_end_date AS future_work_assignment_effective_end_date      
+      ,CASE WHEN ss2.df_employee_number IS NULL THEN 1 ELSE 0 END AS is_attrition
+FROM staff_scaffold ss1
+LEFT JOIN staff_scaffold ss2
+  ON ss1.df_employee_number = ss2.df_employee_number
+ AND ss1.academic_year = ss2.academic_year - 1
+ AND ss2.rn_recent_year = 1
+WHERE ss1.academic_year <= gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+  AND ss1.rn_recent_year = 1
