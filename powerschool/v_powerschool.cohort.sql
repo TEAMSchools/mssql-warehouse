@@ -39,6 +39,7 @@ SELECT studentid
        END AS cohort      
       ,CASE 
         WHEN grade_level = 99 THEN 'Graduated'
+        WHEN MAX(year_in_network) OVER(PARTITION BY studentid, academic_year) = 1 THEN 'New'        
         WHEN prev_grade_level IS NULL THEN 'New'        
         WHEN prev_grade_level < grade_level THEN 'Promoted'
         WHEN prev_grade_level = grade_level THEN 'Retained'
@@ -86,6 +87,7 @@ FROM
             END AS year_in_network
            ,MIN(prev_grade_level) OVER(PARTITION BY studentid, yearid ORDER BY yearid ASC) AS prev_grade_level
            ,CASE
+             WHEN yearid = MIN(prev_yearid) OVER(PARTITION BY studentid, yearid ORDER BY yearid ASC) THEN 0
              WHEN grade_level != 99 
               AND sub.grade_level <= MIN(prev_grade_level) OVER(PARTITION BY studentid, yearid ORDER BY yearid ASC) 
                   THEN 1
@@ -107,6 +109,7 @@ FROM
                 ,sub.fteid      
                 ,sub.yearid
                 ,(sub.yearid + 1990) AS academic_year            
+                ,LAG(yearid, 1) OVER(PARTITION BY sub.studentid ORDER BY sub.yearid ASC) AS prev_yearid
                 ,LAG(grade_level, 1) OVER(PARTITION BY sub.studentid ORDER BY sub.yearid ASC) AS prev_grade_level
 
                 ,CONVERT(INT,ROW_NUMBER() OVER(
