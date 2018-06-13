@@ -31,6 +31,5 @@ LEFT JOIN gabby.powerschool.studentcorefields scf
   ON co.students_dcid = scf.studentsdcid
 LEFT JOIN gabby.powerschool.students s
   ON co.studentid = s.id
-WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-  AND co.rn_year = 1
+WHERE co.rn_year = 1
   AND co.region = 'KCNA'
