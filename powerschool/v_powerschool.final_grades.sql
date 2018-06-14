@@ -79,6 +79,7 @@ WITH roster AS (
               END AS pgf_pct        
              ,CASE 
                WHEN enr.sectionid < 0 AND sg.[percent] IS NULL THEN NULL                
+               WHEN pgf.grade = '--' THEN NULL
                ELSE COALESCE(sg_scale.grade_points, scale.grade_points) 
               END AS term_gpa_points
              
