@@ -1,6 +1,3 @@
-USE gabby
-GO
-
 CREATE OR ALTER VIEW powerschool.team_roster AS
 
 SELECT studentid
@@ -21,7 +18,7 @@ FROM
            ,CONVERT(INT,ROW_NUMBER() OVER(
                           PARTITION BY enr.student_number, enr.academic_year
                             ORDER BY enr.dateleft DESC, enr.dateenrolled DESC)) AS rn_year
-     FROM gabby.powerschool.course_enrollments_static enr           
+     FROM powerschool.course_enrollments_static enr           
      WHERE enr.course_number = 'HR'
        AND enr.sectionid > 0
     ) sub

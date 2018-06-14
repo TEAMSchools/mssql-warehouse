@@ -1,6 +1,3 @@
-USE gabby
-GO
-
 CREATE OR ALTER VIEW powerschool.final_grades AS
 
 WITH roster AS (
@@ -23,14 +20,14 @@ WITH roster AS (
         ,t.lastfirst AS teacher_name
 
         ,css.gradescaleid
-  FROM gabby.powerschool.cohort_identifiers_static co  
-  JOIN gabby.powerschool.course_section_scaffold css
+  FROM powerschool.cohort_identifiers_static co  
+  JOIN powerschool.course_section_scaffold css
     ON co.studentid = css.studentid
    AND co.yearid = css.yearid   
    AND css.course_number != 'ALL'  
-  JOIN gabby.powerschool.sections sec
+  JOIN powerschool.sections sec
     ON css.sectionid = sec.id
-  JOIN gabby.powerschool.teachers_static t
+  JOIN powerschool.teachers_static t
     ON sec.teacher = t.id
   WHERE co.rn_year = 1    
     AND co.school_level IN ('MS','HS')
@@ -86,19 +83,19 @@ WITH roster AS (
              ,ROW_NUMBER() OVER(
                 PARTITION BY enr.studentid, enr.yearid, enr.course_number, pgf.finalgradename_clean
                   ORDER BY sg.[percent] DESC, enr.section_enroll_status, enr.dateleft DESC) AS rn
-       FROM gabby.powerschool.course_enrollments_static enr
-       JOIN gabby.powerschool.pgfinalgrades pgf
+       FROM powerschool.course_enrollments_static enr
+       JOIN powerschool.pgfinalgrades pgf
          ON enr.studentid = pgf.studentid       
         AND enr.abs_sectionid = pgf.sectionid
         AND pgf.finalgrade_type IN ('T','Q')
-       LEFT JOIN gabby.powerschool.storedgrades sg 
+       LEFT JOIN powerschool.storedgrades sg 
          ON enr.studentid = sg.studentid 
         AND enr.abs_sectionid = sg.sectionid
         AND pgf.finalgradename_clean = sg.storecode  
-       LEFT JOIN gabby.powerschool.gradescaleitem_lookup_static scale WITH(NOLOCK)
+       LEFT JOIN powerschool.gradescaleitem_lookup_static scale WITH(NOLOCK)
          ON enr.gradescaleid = scale.gradescaleid
         AND pgf.[percent] BETWEEN scale.min_cutoffpercentage AND scale.max_cutoffpercentage      
-       LEFT JOIN gabby.powerschool.gradescaleitem_lookup_static sg_scale WITH(NOLOCK)
+       LEFT JOIN powerschool.gradescaleitem_lookup_static sg_scale WITH(NOLOCK)
          ON enr.gradescaleid = sg_scale.gradescaleid
         AND sg.[percent] BETWEEN sg_scale.min_cutoffpercentage AND sg_scale.max_cutoffpercentage
        WHERE enr.course_enroll_status = 0       
@@ -116,7 +113,7 @@ WITH roster AS (
              ,NULL AS pgf_pct      
              ,sg.gpa_points AS term_gpa_points      
              ,1 AS rn
-       FROM gabby.powerschool.storedgrades sg 
+       FROM powerschool.storedgrades sg 
        WHERE sg.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR()
          AND sg.storecode_type  IN ('T', 'Q')
       ) sub
@@ -138,7 +135,7 @@ WITH roster AS (
              ,course_number_clean AS course_number
              ,storecode_clean AS storecode
              ,[percent]
-       FROM gabby.powerschool.storedgrades
+       FROM powerschool.storedgrades
        WHERE schoolid = 73253
          AND storecode_type = 'E'
       ) sub
@@ -385,14 +382,14 @@ FROM
           FROM grades_long               
          ) sub
     ) sub
-LEFT JOIN gabby.powerschool.storedgrades y1
+LEFT JOIN powerschool.storedgrades y1
   ON sub.studentid = y1.studentid
  AND sub.academic_year = y1.academic_year
  AND sub.course_number = y1.course_number_clean
  AND y1.storecode_clean = 'Y1'
-LEFT JOIN gabby.powerschool.gradescaleitem_lookup_static y1_scale WITH(NOLOCK)
+LEFT JOIN powerschool.gradescaleitem_lookup_static y1_scale WITH(NOLOCK)
   ON sub.gradescaleid = y1_scale.gradescaleid
  AND sub.y1_grade_percent_adjusted BETWEEN y1_scale.min_cutoffpercentage AND y1_scale.max_cutoffpercentage
-LEFT JOIN gabby.powerschool.gradescaleitem_lookup_static y1_scale_unweighted WITH(NOLOCK)
+LEFT JOIN powerschool.gradescaleitem_lookup_static y1_scale_unweighted WITH(NOLOCK)
   ON sub.unweighted_gradescaleid = y1_scale_unweighted.gradescaleid
  AND sub.y1_grade_percent_adjusted BETWEEN y1_scale_unweighted.min_cutoffpercentage AND y1_scale_unweighted.max_cutoffpercentage

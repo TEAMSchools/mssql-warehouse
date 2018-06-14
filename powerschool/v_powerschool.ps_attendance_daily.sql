@@ -1,6 +1,3 @@
-USE gabby
-GO
-
 CREATE OR ALTER VIEW powerschool.ps_attendance_daily AS 
 
 SELECT padcs.id
@@ -25,7 +22,7 @@ SELECT padcs.id
       ,padcs.insession
       ,padcs.cycle_day_id  
       ,padcs.abbreviation
-FROM gabby.powerschool.ps_attendance_daily_current_static padcs
+FROM powerschool.ps_attendance_daily_current_static padcs
 
 UNION ALL
 
@@ -51,4 +48,4 @@ SELECT pada.id
       ,pada.insession
       ,pada.cycle_day_id  
       ,pada.abbreviation
-FROM gabby.powerschool.ps_attendance_daily_archive pada
+FROM powerschool.ps_attendance_daily_archive pada

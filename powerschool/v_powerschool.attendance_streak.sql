@@ -1,6 +1,3 @@
-USE gabby
-GO
-
 CREATE OR ALTER VIEW powerschool.attendance_streak AS
 
 WITH valid_dates AS (
@@ -15,7 +12,7 @@ WITH valid_dates AS (
        SELECT CONVERT(INT,schoolid) AS schoolid
              ,date_value
              ,gabby.utilities.DATE_TO_SY(date_value) AS academic_year        
-       FROM gabby.powerschool.calendar_day
+       FROM powerschool.calendar_day
        WHERE date_value >= DATEFROMPARTS((gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1), 7, 1)
          AND membershipvalue = 1
          AND insession = 1
@@ -52,11 +49,11 @@ FROM
                 ,CONVERT(INT,ROW_NUMBER() OVER(
                    PARTITION BY co.academic_year, co.student_number, att.att_code 
                      ORDER BY d.date_value)) AS streak_rn
-          FROM gabby.powerschool.cohort_identifiers_static co
+          FROM powerschool.cohort_identifiers_static co
           JOIN valid_dates d
             ON co.schoolid = d.schoolid
            AND co.academic_year = d.academic_year
-          LEFT JOIN gabby.powerschool.ps_attendance_daily att 
+          LEFT JOIN powerschool.ps_attendance_daily att 
             ON co.studentid = att.studentid
            AND d.date_value = att.att_date     
           WHERE co.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)

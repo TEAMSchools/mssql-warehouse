@@ -1,6 +1,3 @@
-USE gabby
-GO
-
 CREATE OR ALTER VIEW powerschool.gradebook_setup AS
 
 WITH default_gfs AS (
@@ -12,12 +9,12 @@ WITH default_gfs AS (
         ,gct.type
         
         ,sch.school_number
-  FROM gabby.powerschool.gradeformulaset gfs WITH(NOLOCK)
-  JOIN gabby.powerschool.gradecalculationtype gct WITH(NOLOCK)
+  FROM powerschool.gradeformulaset gfs WITH(NOLOCK)
+  JOIN powerschool.gradecalculationtype gct WITH(NOLOCK)
     ON gfs.gradeformulasetid = gct.gradeformulasetid
-  JOIN gabby.powerschool.gradecalcschoolassoc gcsa WITH(NOLOCK)
+  JOIN powerschool.gradecalcschoolassoc gcsa WITH(NOLOCK)
     ON gct.gradecalculationtypeid = gcsa.gradecalculationtypeid
-  JOIN gabby.powerschool.schools sch WITH(NOLOCK)
+  JOIN powerschool.schools sch WITH(NOLOCK)
     ON gcsa.schoolsdcid = sch.dcid
   WHERE gfs.sectionsdcid IS NULL
     AND gfs.name != 'DELETE'
@@ -65,11 +62,11 @@ FROM
            ,dtc.name AS dtc_name
            ,dtc.defaultscoretype AS dtc_defaultscoretype
            ,dtc.isinfinalgrades AS dtc_isinfinalgrades                
-     FROM gabby.powerschool.sections sec WITH(NOLOCK)
-     JOIN gabby.powerschool.termbins tb WITH(NOLOCK)
+     FROM powerschool.sections sec WITH(NOLOCK)
+     JOIN powerschool.termbins tb WITH(NOLOCK)
        ON sec.schoolid = tb.schoolid
       AND sec.termid = tb.termid   
-     JOIN gabby.powerschool.terms rt WITH(NOLOCK)
+     JOIN powerschool.terms rt WITH(NOLOCK)
        ON tb.termid = rt.id
       AND sec.schoolid = rt.schoolid
      JOIN default_gfs d
@@ -77,16 +74,16 @@ FROM
       AND sec.yearid = d.yearid
       AND tb.storecode = d.storecode
       AND rt.abbreviation = d.abbreviation
-     LEFT OUTER JOIN gabby.powerschool.gradeformulaset gfs WITH(NOLOCK)
+     LEFT OUTER JOIN powerschool.gradeformulaset gfs WITH(NOLOCK)
        ON sec.dcid = gfs.sectionsdcid         
-     LEFT OUTER JOIN gabby.powerschool.gradecalculationtype gct WITH(NOLOCK)
+     LEFT OUTER JOIN powerschool.gradecalculationtype gct WITH(NOLOCK)
        ON gfs.gradeformulasetid = gct.gradeformulasetid    
       AND tb.storecode = gct.storecode 
-     LEFT OUTER JOIN gabby.powerschool.gradecalcformulaweight gcfw WITH(NOLOCK)
+     LEFT OUTER JOIN powerschool.gradecalcformulaweight gcfw WITH(NOLOCK)
        ON COALESCE(gct.gradecalculationtypeid, d.gradecalculationtypeid) = gcfw.gradecalculationtypeid
-     LEFT OUTER JOIN gabby.powerschool.teachercategory tc WITH(NOLOCK)
+     LEFT OUTER JOIN powerschool.teachercategory tc WITH(NOLOCK)
        ON gcfw.teachercategoryid = tc.teachercategoryid 
-     LEFT OUTER JOIN gabby.powerschool.districtteachercategory dtc WITH(NOLOCK)
+     LEFT OUTER JOIN powerschool.districtteachercategory dtc WITH(NOLOCK)
        ON gcfw.districtteachercategoryid = dtc.districtteachercategoryid
      WHERE sec.termid >= 2500           
        AND sec.gradebooktype = 2    

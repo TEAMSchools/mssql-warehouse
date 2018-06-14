@@ -1,6 +1,3 @@
-USE gabby
-GO
-
 CREATE OR ALTER VIEW powerschool.student_access_accounts AS 
 
 WITH clean_names AS (
@@ -29,8 +26,8 @@ WITH clean_names AS (
             WHEN CHARINDEX('-',s.last_name) > 0 THEN LEFT(s.last_name,CHARINDEX('-',s.last_name) - 1)
             ELSE REPLACE(s.last_name, ' JR', '')
            END), '^A-Z') AS last_name_clean        
-  FROM gabby.powerschool.students s 
-  JOIN gabby.powerschool.schools sch
+  FROM powerschool.students s 
+  JOIN powerschool.schools sch
     ON s.schoolid = sch.school_number  
   WHERE s.enroll_status != -1
     AND s.dob IS NOT NULL

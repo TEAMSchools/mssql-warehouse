@@ -1,6 +1,3 @@
-USE gabby
-GO
-
 CREATE OR ALTER VIEW powerschool.course_section_scaffold_current AS 
 
 WITH course_scaffold AS (
@@ -35,8 +32,8 @@ WITH course_scaffold AS (
              ,CONVERT(VARCHAR(25),terms.alt_name) AS term_name
              ,terms.start_date AS term_start_date
              ,terms.end_date AS term_end_date
-       FROM gabby.powerschool.course_enrollments_static enr
-       JOIN gabby.powerschool.schools
+       FROM powerschool.course_enrollments_static enr
+       JOIN powerschool.schools
          ON enr.schoolid = schools.school_number
         AND schools.high_grade >= 8
        JOIN gabby.reporting.reporting_terms terms  
@@ -75,8 +72,8 @@ WITH course_scaffold AS (
                WHEN terms.alt_name = 'Summer School' THEN 'Q1' 
                ELSE CONVERT(VARCHAR,terms.alt_name) 
               END AS term_name        
-       FROM gabby.powerschool.cc
-       JOIN gabby.powerschool.sections sec
+       FROM powerschool.cc
+       JOIN powerschool.sections sec
          ON cc.abs_sectionid = sec.id
        JOIN gabby.reporting.reporting_terms terms
          ON cc.schoolid = terms.schoolid         

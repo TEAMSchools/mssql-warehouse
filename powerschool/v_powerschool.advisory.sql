@@ -1,6 +1,3 @@
-USE gabby
-GO
-
 CREATE OR ALTER VIEW powerschool.advisory AS
 
 SELECT studentid
@@ -41,7 +38,7 @@ FROM
                 ,enr.dateleft           
 
                 ,COALESCE(psid.adp_associate_id, enr.teachernumber) AS associate_id
-          FROM gabby.powerschool.course_enrollments_static enr           
+          FROM powerschool.course_enrollments_static enr           
           LEFT JOIN gabby.people.id_crosswalk_powerschool psid
             ON enr.teachernumber = psid.ps_teachernumber
            AND psid.is_master = 1          
@@ -60,7 +57,7 @@ FROM
                 ,enr.dateleft
            
                 ,COALESCE(psid.adp_associate_id, enr.teachernumber) AS associate_id
-          FROM gabby.powerschool.course_enrollments_static enr           
+          FROM powerschool.course_enrollments_static enr           
           LEFT JOIN gabby.people.id_crosswalk_powerschool psid
             ON enr.teachernumber = psid.ps_teachernumber
            AND psid.is_master = 1     

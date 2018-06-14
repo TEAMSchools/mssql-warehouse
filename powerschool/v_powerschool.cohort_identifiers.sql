@@ -1,6 +1,3 @@
-USE gabby
-GO
-
 CREATE OR ALTER VIEW powerschool.cohort_identifiers AS
 
 SELECT co.studentid
@@ -121,31 +118,31 @@ SELECT co.studentid
 
       ,saa.student_web_id
       ,saa.student_web_password
-FROM gabby.powerschool.cohort_static co
-JOIN gabby.powerschool.students s
+FROM powerschool.cohort_static co
+JOIN powerschool.students s
   ON co.studentid = s.id
-LEFT JOIN gabby.powerschool.u_studentsuserfields suf
+LEFT JOIN powerschool.u_studentsuserfields suf
   ON co.studentsdcid = suf.studentsdcid
-LEFT JOIN gabby.powerschool.studentcorefields scf
+LEFT JOIN powerschool.studentcorefields scf
   ON co.studentsdcid = scf.studentsdcid
 LEFT JOIN gabby.mcs.lunch_info_static mcs
   ON co.student_number = mcs.studentnumber
-LEFT JOIN gabby.powerschool.s_nj_stu_x nj
+LEFT JOIN powerschool.s_nj_stu_x nj
   ON co.studentsdcid = nj.studentsdcid
-LEFT JOIN gabby.powerschool.student_access_accounts_static saa
+LEFT JOIN powerschool.student_access_accounts_static saa
   ON co.student_number = saa.student_number
-JOIN gabby.powerschool.schools sch
+JOIN powerschool.schools sch
   ON co.schoolid = sch.school_number
-LEFT JOIN gabby.powerschool.team_roster_static t
+LEFT JOIN powerschool.team_roster_static t
   ON co.studentid = t.studentid
  AND co.academic_year = t.academic_year
-LEFT JOIN gabby.powerschool.advisory_static adv
+LEFT JOIN powerschool.advisory_static adv
   ON co.studentid = adv.studentid
  AND co.academic_year = adv.academic_year
 LEFT JOIN gabby.easyiep.njsmart_powerschool_static sped
   ON co.student_number = sped.student_number
  AND co.academic_year  = sped.academic_year
-LEFT JOIN gabby.powerschool.spenrollments_gen sp
+LEFT JOIN powerschool.spenrollments_gen sp
   ON co.studentid = sp.studentid
  AND co.entrydate BETWEEN sp.enter_date AND sp.exit_date
  AND sp.programid IN (4573, 5074, 5075, 5173) 

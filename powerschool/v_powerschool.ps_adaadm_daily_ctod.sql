@@ -1,6 +1,3 @@
-USE gabby
-GO
-
 CREATE OR ALTER VIEW powerschool.ps_adaadm_daily_ctod AS 
 
 SELECT padcc.studentid
@@ -16,7 +13,7 @@ SELECT padcc.studentid
       ,padcc.attendancevalue
       ,padcc.membershipvalue
       ,padcc.potential_attendancevalue      
-FROM gabby.powerschool.ps_adaadm_daily_ctod_current_static padcc
+FROM powerschool.ps_adaadm_daily_ctod_current_static padcc
 
 UNION ALL
 
@@ -33,4 +30,4 @@ SELECT padca.studentid
       ,padca.attendancevalue
       ,padca.membershipvalue
       ,padca.potential_attendancevalue      
-FROM gabby.powerschool.ps_adaadm_daily_ctod_archive padca
+FROM powerschool.ps_adaadm_daily_ctod_archive padca

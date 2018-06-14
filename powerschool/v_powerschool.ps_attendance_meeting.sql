@@ -1,6 +1,3 @@
-USE gabby
-GO
-
 CREATE OR ALTER VIEW powerschool.ps_attendance_meeting AS 
 
 SELECT att.id
@@ -40,19 +37,19 @@ SELECT att.id
 		    ,cd.cycle_day_id
 
 		    ,cy.abbreviation
-FROM gabby.powerschool.attendance att
-JOIN gabby.powerschool.cc 
+FROM powerschool.attendance att
+JOIN powerschool.cc 
   ON att.ccid = cc.id 
  AND att.studentid = cc.studentid
-JOIN gabby.powerschool.sections s 
+JOIN powerschool.sections s 
   ON ABS(cc.sectionid) = s.id
-JOIN gabby.powerschool.calendar_day cd 
+JOIN powerschool.calendar_day cd 
   ON att.calendar_dayid = cd.id
-JOIN gabby.powerschool.attendance_code ac 
+JOIN powerschool.attendance_code ac 
   ON att.attendance_codeid = ac.id
-JOIN gabby.powerschool.cycle_day cy 
+JOIN powerschool.cycle_day cy 
   ON cd.cycle_day_id = cy.id
-JOIN gabby.powerschool.period per 
+JOIN powerschool.period per 
   ON att.periodid = per.id
 WHERE att.att_date >= cc.dateenrolled 
 	 AND att.att_date < cc.dateleft
