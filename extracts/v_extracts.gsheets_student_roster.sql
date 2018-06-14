@@ -11,9 +11,6 @@ SELECT co.studentid
       ,co.grade_level 
       ,co.team 
       ,co.iep_status
-      ,co.state_studentnumber
-      ,co.region
-      ,co.reporting_schoolid
 FROM gabby.powerschool.cohort_identifiers_static co
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.rn_year = 1 
