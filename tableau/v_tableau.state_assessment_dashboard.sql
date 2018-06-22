@@ -28,7 +28,6 @@ WITH promo AS (
         ,[NJ]
         ,[NPS]
         ,[CPS]
-        ,[PARCC]        
   FROM
       (
        SELECT academic_year
@@ -68,7 +67,7 @@ WITH promo AS (
                   ,((l_4_percent / 100) * valid_scores) + ((l_5_percent / 100) * valid_scores) AS proficient_count
             FROM gabby.njdoe.parcc
             WHERE school_code IS NULL
-              AND (district_code IN (3570, 0680) OR district_code IS NULL)
+              AND (district_code IN (3570, 0680) OR (district_code IS NULL AND dfg = ''))
               AND ((LEFT(test_code, 3) IN ('ELA', 'MAT') AND subgroup = 'TOTAL') OR ((LEFT(test_code, 3) IN ('ALG', 'GEO') AND subgroup = 'GRADE')))
            ) sub       
        GROUP BY academic_year
@@ -130,7 +129,7 @@ SELECT co.student_number
       ,ext.nj AS pct_prof_nj
       ,ext.nps AS pct_prof_nps
       ,ext.cps AS pct_prof_cps
-      ,ext.parcc AS pct_prof_parcc       
+      ,NULL AS pct_prof_parcc       
 
       ,promo.attended_es
       ,promo.attended_ms
@@ -185,7 +184,7 @@ SELECT co.student_number
       ,ext.nj AS pct_prof_nj
       ,ext.nps AS pct_prof_nps
       ,ext.cps AS pct_prof_cps
-      ,ext.parcc AS pct_prof_parcc       
+      ,NULL AS pct_prof_parcc       
 
       ,promo.attended_es
       ,promo.attended_ms
