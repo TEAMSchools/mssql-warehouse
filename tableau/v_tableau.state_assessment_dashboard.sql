@@ -116,8 +116,8 @@ SELECT co.student_number
       ,co.lunchstatus      
       
       ,'PARCC' AS test_type
-      ,parcc.test_code
-      ,parcc.subject      
+      ,parcc.test_code COLLATE SQL_Latin1_General_CP1_CI_AS AS test_code
+      ,parcc.subject COLLATE SQL_Latin1_General_CP1_CI_AS AS subject
       ,parcc.test_scale_score
       ,parcc.test_performance_level
       ,parcc.test_reading_csem AS test_standard_error
@@ -136,7 +136,7 @@ SELECT co.student_number
 
       ,ms.ms_attended
 FROM gabby.powerschool.cohort_identifiers_static co
-JOIN gabby.parcc.summative_record_file_clean parcc
+JOIN gabby.parcc.summative_record_file parcc
   ON co.student_number = parcc.local_student_identifier
  AND co.academic_year = parcc.academic_year
 LEFT OUTER JOIN external_prof ext

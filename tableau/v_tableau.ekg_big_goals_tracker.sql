@@ -41,7 +41,7 @@ WITH act AS (
                ELSE 'math'
               END AS subject
              ,test_performance_level
-       FROM gabby.parcc.summative_record_file_clean
+       FROM gabby.parcc.summative_record_file
       ) sub
   PIVOT(
     MAX(test_performance_level)

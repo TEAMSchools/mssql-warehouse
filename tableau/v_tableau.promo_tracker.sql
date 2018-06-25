@@ -502,7 +502,7 @@ WITH roster AS (
         ,academic_year
         ,NULL AS test_date
         ,'PARCC' AS test_name
-        ,subject                 
+        ,subject COLLATE SQL_Latin1_General_CP1_CI_AS AS subject
         ,test_scale_score
         ,test_performance_level
         ,CASE
@@ -512,7 +512,7 @@ WITH roster AS (
           WHEN test_performance_level = 2 THEN 'Partially Met'
           WHEN test_performance_level = 1 THEN 'Did Not Meet'
          END AS performance_level_label       
-  FROM gabby.parcc.summative_record_file_clean
+  FROM gabby.parcc.summative_record_file
 
   UNION ALL
 

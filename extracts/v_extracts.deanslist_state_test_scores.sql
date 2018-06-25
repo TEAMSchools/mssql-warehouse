@@ -22,7 +22,7 @@ FROM
            ,'PARCC' AS test_type      
         
            ,CASE WHEN parcc.subject = 'English Language Arts/Literacy' THEN 'ELA' ELSE 'Math' END AS subject
-           ,parcc.subject AS test_name
+           ,parcc.subject COLLATE SQL_Latin1_General_CP1_CI_AS AS test_name
            ,parcc.test_scale_score AS scale_score
            ,CASE
              WHEN parcc.test_performance_level = 5 THEN 'Exceeded Expectations'
@@ -36,7 +36,7 @@ FROM
              WHEN parcc.test_performance_level < 4 THEN 0
             END AS is_proficient    
      FROM gabby.powerschool.cohort_identifiers_static co 
-     JOIN gabby.parcc.summative_record_file_clean parcc
+     JOIN gabby.parcc.summative_record_file parcc
        ON co.state_studentnumber = parcc.state_student_identifier
       AND co.academic_year = parcc.academic_year
      WHERE co.academic_year >= 2014  
