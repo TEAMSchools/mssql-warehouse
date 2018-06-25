@@ -1,3 +1,6 @@
+USE gabby
+GO
+
 CREATE OR ALTER VIEW powerschool.course_section_scaffold AS 
 
 SELECT studentid
@@ -12,7 +15,7 @@ SELECT studentid
       ,credittype
       ,credit_hours
       ,gradescaleid
-FROM powerschool.course_section_scaffold_current_static
+FROM gabby.powerschool.course_section_scaffold_current_static
 
 UNION ALL
 
@@ -28,4 +31,4 @@ SELECT studentid
       ,credittype
       ,credit_hours
       ,gradescaleid
-FROM powerschool.course_section_scaffold_archive
+FROM gabby.powerschool.course_section_scaffold_archive

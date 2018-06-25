@@ -1,3 +1,6 @@
+USE gabby
+GO
+
 CREATE OR ALTER VIEW powerschool.course_enrollments AS
 
 SELECT sub.studentid
@@ -129,14 +132,14 @@ FROM
                   WHEN cc.course_number_clean IN ('ENG30','ENG32','ENG35','NCCSE0030') THEN 'English 300'
                   WHEN cc.course_number_clean IN ('ENG40','ENG42','ENG45') THEN 'English 400'
                  END AS illuminate_subject
-          FROM powerschool.cc
-          JOIN powerschool.students s 
+          FROM gabby.powerschool.cc
+          JOIN gabby.powerschool.students s 
             ON cc.studentid = s.id
-          JOIN powerschool.courses cou
+          JOIN gabby.powerschool.courses cou
             ON cc.course_number_clean = cou.course_number_clean
-          JOIN powerschool.teachers_static t
+          JOIN gabby.powerschool.teachers_static t
             ON cc.teacherid = t.id          
-          JOIN powerschool.sections sec
+          JOIN gabby.powerschool.sections sec
             ON cc.abs_sectionid = sec.id
          ) sub
     ) sub

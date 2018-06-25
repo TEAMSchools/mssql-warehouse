@@ -1,3 +1,6 @@
+USE gabby
+GO
+
 CREATE OR ALTER VIEW powerschool.attendance_clean AS
 
 SELECT accs.id
@@ -13,7 +16,7 @@ SELECT accs.id
       ,accs.programid
       ,accs.total_minutes
       ,accs.att_comment
-FROM powerschool.attendance_clean_current_static accs
+FROM gabby.powerschool.attendance_clean_current_static accs
 
 UNION ALL
 
@@ -30,4 +33,4 @@ SELECT aca.id
       ,aca.programid
       ,aca.total_minutes
       ,aca.att_comment
-FROM powerschool.attendance_clean_archive aca
+FROM gabby.powerschool.attendance_clean_archive aca

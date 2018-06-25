@@ -1,3 +1,5 @@
+USE gabby
+GO
 
 CREATE OR ALTER VIEW powerschool.ps_adaadm_daily_ctod_current AS 
 
@@ -8,8 +10,8 @@ WITH terms_attendance_code AS (
         ,CONVERT(INT,t.yearid) AS yearid
       
         ,CONVERT(INT,ac.id) AS id
-  FROM powerschool.terms t  
-  LEFT JOIN powerschool.attendance_code ac
+  FROM gabby.powerschool.terms t  
+  LEFT JOIN gabby.powerschool.attendance_code ac
     ON t.schoolid = ac.schoolid
    AND t.yearid = ac.yearid
    AND ac.att_code IS NULL
@@ -22,7 +24,7 @@ WITH terms_attendance_code AS (
         ,CONVERT(INT,fteid) AS fteid
         ,CONVERT(INT,attendance_conversion_id) AS attendance_conversion_id
         ,CONVERT(INT,input_value) AS input_value
-  FROM powerschool.attendance_conversion_items 
+  FROM gabby.powerschool.attendance_conversion_items 
   WHERE conversion_mode_code = 'codeday'
  )
 
@@ -51,19 +53,19 @@ SELECT mv.studentid
          WHEN ada_1.id IS NOT NULL THEN 0
          ELSE CONVERT(INT,aci_potential.attendance_value)
 			     END) * mv.ontrack AS potential_attendancevalue
-FROM powerschool.ps_membership_reg mv
+FROM gabby.powerschool.ps_membership_reg mv
 LEFT JOIN terms_attendance_code tac
   ON mv.calendardate BETWEEN tac.firstday AND tac.lastday 
  AND mv.schoolid = tac.schoolid
-LEFT JOIN powerschool.ps_attendance_daily ada_0
+LEFT JOIN gabby.powerschool.ps_attendance_daily ada_0
   ON mv.studentid = ada_0.studentid
  AND mv.calendardate = ada_0.att_date
  AND ada_0.count_for_ada = 0
-LEFT JOIN powerschool.ps_attendance_daily ada_1
+LEFT JOIN gabby.powerschool.ps_attendance_daily ada_1
   ON mv.studentid = ada_1.studentid
  AND mv.calendardate = ada_1.att_date
  AND ada_1.count_for_ada = 1
-LEFT JOIN powerschool.ps_attendance_daily adm_0
+LEFT JOIN gabby.powerschool.ps_attendance_daily adm_0
   ON mv.studentid = adm_0.studentid
  AND mv.calendardate = adm_0.att_date
  AND adm_0.count_for_adm = 0

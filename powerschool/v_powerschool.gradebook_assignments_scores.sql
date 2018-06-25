@@ -1,3 +1,6 @@
+USE gabby
+GO
+
 CREATE OR ALTER VIEW powerschool.gradebook_assignments_scores AS
 
 SELECT gasc.studentsdcid

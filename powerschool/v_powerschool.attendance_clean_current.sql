@@ -1,3 +1,6 @@
+USE gabby
+GO
+
 CREATE OR ALTER VIEW powerschool.attendance_clean_current AS
 
 SELECT CONVERT(INT,att.id) AS id
@@ -13,5 +16,5 @@ SELECT CONVERT(INT,att.id) AS id
       ,CONVERT(INT,att.programid) AS programid
       ,CONVERT(INT,att.total_minutes) AS total_minutes            
       ,CONVERT(VARCHAR(1000),att.att_comment) AS att_comment
-FROM powerschool.attendance att
+FROM gabby.powerschool.attendance att
 WHERE att.att_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7 , 1)

@@ -1,3 +1,6 @@
+USE gabby
+GO
+
 CREATE OR ALTER VIEW powerschool.cohort_identifiers_scaffold AS
 
 SELECT co.academic_year

@@ -1,3 +1,6 @@
+USE gabby
+GO
+
 CREATE OR ALTER VIEW powerschool.ps_membership_reg AS 
 
 SELECT pmrc.studentid
@@ -24,7 +27,7 @@ SELECT pmrc.studentid
       ,pmrc.calendarmembership
 		    ,pmrc.ontrack
 		    ,pmrc.offtrack
-FROM powerschool.ps_membership_reg_current_static pmrc
+FROM gabby.powerschool.ps_membership_reg_current_static pmrc
 
 UNION ALL
 
@@ -52,4 +55,4 @@ SELECT pmra.studentid
       ,pmra.calendarmembership
 		    ,pmra.ontrack
 		    ,pmra.offtrack
-FROM powerschool.ps_membership_reg_archive pmra
+FROM gabby.powerschool.ps_membership_reg_archive pmra
