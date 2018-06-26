@@ -39,8 +39,8 @@ SELECT state_abbreviation
       ,state_field_9
       ,state_field_10
       ,class_name
-      ,test_administrator
-      ,staff_member_identifier
+      ,CONVERT(VARCHAR(25),test_administrator) AS test_administrator
+      ,CONVERT(VARCHAR(25),staff_member_identifier) AS staff_member_identifier
       ,test_code
       ,retest
       ,elaccommodation
