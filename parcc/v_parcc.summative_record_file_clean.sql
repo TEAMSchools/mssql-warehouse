@@ -3,8 +3,8 @@ CREATE OR ALTER VIEW parcc.summative_record_file_clean AS
 SELECT state_abbreviation
       ,COALESCE(CONVERT(VARCHAR(25),testing_district_code), eoy_testing_district_identifier) AS testing_district_code
       ,COALESCE(testing_school_code, eoy_testing_school_institution_identifier) AS testing_school_code
-      ,COALESCE(responsible_district_code, responsible_district_identifier) AS responsible_district_code
-      ,COALESCE(responsible_school_code, responsible_school_institution_identifier) AS responsible_school_code
+      ,COALESCE(responsible_accountable_district_code, responsible_district_code, responsible_district_identifier) AS responsible_district_code
+      ,COALESCE(responsible_accountable_school_code, responsible_school_code, responsible_school_institution_identifier) AS responsible_school_code
       ,state_student_identifier
       ,CONVERT(INT,local_student_identifier) AS local_student_identifier
       ,COALESCE(parccstudent_identifier, parcc_student_identifier) AS parccstudent_identifier
@@ -53,7 +53,7 @@ SELECT state_abbreviation
       ,answer_masking
       ,assistive_technology_screen_reader
       ,closed_captioning_for_elal
-      ,student_reads_assessment_aloud_to_themselves
+      ,COALESCE(student_reads_assessment_aloudto_self, student_reads_assessment_aloud_to_themselves) AS student_reads_assessment_aloud_to_self
       ,human_signer_for_test_directions
       ,calculation_device_and_mathematics_tools
       ,COALESCE(CONVERT(VARCHAR,elalconstructed_response), elal_constructed_response) AS elalconstructed_response

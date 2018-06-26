@@ -70,7 +70,7 @@ SELECT state_student_identifier
       ,answer_masking
       ,assistive_technology_screen_reader
       ,closed_captioning_for_elal
-      ,student_reads_assessment_aloud_to_themselves
+      ,student_reads_assessment_aloud_to_self
       ,human_signer_for_test_directions
       ,calculation_device_and_mathematics_tools
       ,elalconstructed_response
@@ -244,7 +244,7 @@ SELECT state_student_identifier
       ,answer_masking
       ,assistive_technology_screen_reader
       ,closed_captioning_for_elal
-      ,student_reads_assessment_aloud_to_themselves
+      ,student_reads_assessment_aloud_to_self
       ,human_signer_for_test_directions
       ,calculation_device_and_mathematics_tools
       ,elalconstructed_response
