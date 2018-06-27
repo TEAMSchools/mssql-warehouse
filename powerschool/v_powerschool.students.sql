@@ -1,7 +1,7 @@
 USE gabby
 GO
 
---CREATE OR ALTER VIEW powerschool.students AS 
+CREATE OR ALTER VIEW powerschool.students AS 
 
 SELECT _file
       ,_fivetran_synced

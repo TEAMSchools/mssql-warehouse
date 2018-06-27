@@ -1,6 +1,3 @@
-USE gabby
-GO
-
 CREATE OR ALTER VIEW powerschool.gpa_detail AS
 
 SELECT student_number

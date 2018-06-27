@@ -1,6 +1,3 @@
-USE gabby
-GO
-
 CREATE OR ALTER VIEW powerschool.gradescaleitem_lookup AS
 
 SELECT CONVERT(INT,parent.id) AS gradescaleid

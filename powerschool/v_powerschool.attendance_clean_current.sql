@@ -1,6 +1,3 @@
-USE gabby
-GO
-
 CREATE OR ALTER VIEW powerschool.attendance_clean_current AS
 
 SELECT CONVERT(INT,att.id) AS id

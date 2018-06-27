@@ -1,6 +1,3 @@
-USE gabby
-GO
-
 CREATE OR ALTER VIEW powerschool.spenrollments_gen AS
 
 SELECT CONVERT(INT,sp.studentid) AS studentid

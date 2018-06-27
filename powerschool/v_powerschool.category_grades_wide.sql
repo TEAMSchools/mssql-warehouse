@@ -1,6 +1,3 @@
-USE gabby
-GO
-
 CREATE OR ALTER VIEW powerschool.category_grades_wide AS
 
 WITH grades_long AS (

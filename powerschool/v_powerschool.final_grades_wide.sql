@@ -1,6 +1,3 @@
-USE gabby
-GO
-
 CREATE OR ALTER VIEW powerschool.final_grades_wide AS
 
 WITH grades_unpivot AS (

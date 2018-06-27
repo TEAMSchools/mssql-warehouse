@@ -1,6 +1,3 @@
-USE gabby
-GO
-
 CREATE OR ALTER VIEW powerschool.ps_enrollment_all AS 
 
 SELECT CONVERT(INT,s.id) AS studentid

@@ -1,6 +1,3 @@
-USE gabby
-GO
-
 CREATE OR ALTER VIEW powerschool.ps_membership_reg AS 
 
 SELECT pmrc.studentid

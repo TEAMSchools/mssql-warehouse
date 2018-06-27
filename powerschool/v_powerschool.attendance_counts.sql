@@ -1,6 +1,3 @@
-USE gabby
-GO
-
 CREATE OR ALTER VIEW powerschool.attendance_counts AS
 
 WITH att_counts AS (

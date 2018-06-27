@@ -1,6 +1,3 @@
-USE gabby
-GO
-
 CREATE OR ALTER VIEW powerschool.course_section_scaffold_current AS 
 
 WITH course_scaffold AS (

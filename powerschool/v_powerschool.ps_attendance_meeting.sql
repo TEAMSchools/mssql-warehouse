@@ -1,6 +1,3 @@
-USE gabby
-GO
-
 CREATE OR ALTER VIEW powerschool.ps_attendance_meeting AS 
 
 SELECT att.id

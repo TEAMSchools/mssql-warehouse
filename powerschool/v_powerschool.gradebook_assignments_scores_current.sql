@@ -1,6 +1,3 @@
-USE gabby
-GO
-
 CREATE OR ALTER VIEW powerschool.gradebook_assignments_scores_current AS
 
 SELECT CONVERT(INT,a.studentsdcid) AS studentsdcid

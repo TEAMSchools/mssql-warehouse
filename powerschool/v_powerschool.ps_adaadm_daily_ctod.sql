@@ -1,6 +1,3 @@
-USE gabby
-GO
-
 CREATE OR ALTER VIEW powerschool.ps_adaadm_daily_ctod AS 
 
 SELECT padcc.studentid

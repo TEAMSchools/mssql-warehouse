@@ -1,6 +1,3 @@
-USE gabby
-GO
-
 CREATE OR ALTER VIEW powerschool.attendance_streak AS
 
 WITH valid_dates AS (

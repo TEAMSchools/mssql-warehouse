@@ -1,6 +1,3 @@
-USE gabby
-GO
-
 CREATE OR ALTER VIEW powerschool.ps_attendance_daily AS 
 
 SELECT padcs.id

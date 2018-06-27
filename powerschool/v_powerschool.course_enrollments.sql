@@ -1,6 +1,3 @@
-USE gabby
-GO
-
 CREATE OR ALTER VIEW powerschool.course_enrollments AS
 
 SELECT sub.studentid

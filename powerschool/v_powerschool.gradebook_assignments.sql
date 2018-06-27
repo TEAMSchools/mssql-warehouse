@@ -1,6 +1,3 @@
-USE gabby
-GO
-
 CREATE OR ALTER VIEW powerschool.gradebook_assignments AS
 
 SELECT asec.assignmentsectionid

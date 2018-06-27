@@ -1,6 +1,3 @@
-USE gabby
-GO
-
 CREATE OR ALTER VIEW powerschool.gradebook_setup AS
 
 WITH default_gfs AS (
