@@ -29,7 +29,7 @@ FROM powerschool.cohort_identifiers_static co
 JOIN utilities.reporting_days rd
   ON co.academic_year = rd.academic_year
  AND co.exitdate >= rd.date
-LEFT OUTER JOIN gabby.reporting.reporting_terms dt
+LEFT JOIN gabby.reporting.reporting_terms dt
   ON co.schoolid = dt.schoolid
  AND dt.identifier = 'RT'
  AND rd.date BETWEEN dt.start_date AND dt.end_date

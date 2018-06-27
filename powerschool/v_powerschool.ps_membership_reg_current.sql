@@ -67,8 +67,8 @@ FROM gabby.powerschool.ps_enrollment_all_static ev
 JOIN gabby.powerschool.calendar_day cd 
   ON ev.schoolid = cd.schoolid
  AND cd.insession = 1
-	AND cd.date_value >= ev.entrydate
-	AND cd.date_value < ev.exitdate
+ AND cd.date_value >= ev.entrydate
+ AND cd.date_value < ev.exitdate
 JOIN gabby.powerschool.bell_schedule bs
   ON cd.bell_schedule_id = bs.id
 WHERE ev.yearid = (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990)

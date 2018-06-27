@@ -18,17 +18,17 @@ SELECT CONVERT(INT,s.id) AS studentid
       ,CASE WHEN p1.value LIKE 'P' then 'Present' ELSE 'Absent' END AS att_calccntpresentabsent
       ,CONVERT(VARCHAR(1),p2.value) AS att_intervalduration
 FROM gabby.powerschool.students s 
-LEFT OUTER JOIN gabby.powerschool.fte f 
+LEFT JOIN gabby.powerschool.fte f 
   ON s.fteid = f.id 
-LEFT OUTER JOIN gabby.powerschool.terms t 
+LEFT JOIN gabby.powerschool.terms t 
   ON s.schoolid = t.schoolid
  AND s.entrydate BETWEEN t.firstday AND t.lastday
  AND t.isyearrec = 1 
-LEFT OUTER JOIN gabby.powerschool.prefs p1
+LEFT JOIN gabby.powerschool.prefs p1
   ON p1.schoolid = s.schoolid 
  AND p1.name = 'ATT_CalcCntPresentsAbsences' 
  AND p1.yearid = t.yearid
-LEFT OUTER JOIN gabby.powerschool.prefs p2
+LEFT JOIN gabby.powerschool.prefs p2
   ON p2.schoolid = s.schoolid 
  AND p2.name = 'ATT_IntervalDuration' 
  AND p2.yearid = t.yearid
@@ -54,17 +54,17 @@ SELECT CONVERT(INT,r.studentid) AS studentid
       ,CASE WHEN p1.value LIKE 'P' then 'Present' ELSE 'Absent' END AS att_calccntpresentabsent
       ,CONVERT(VARCHAR(1),p2.value) AS att_intervalduration
 FROM gabby.powerschool.reenrollments r 
-LEFT OUTER JOIN gabby.powerschool.fte  f
+LEFT JOIN gabby.powerschool.fte  f
   ON r.fteid = f.id
-LEFT OUTER JOIN gabby.powerschool.terms t 
+LEFT JOIN gabby.powerschool.terms t 
   ON r.schoolid = t.schoolid
  AND r.entrydate BETWEEN t.firstday AND t.lastday
  AND t.isyearrec = 1 
-LEFT OUTER JOIN gabby.powerschool.prefs p1
+LEFT JOIN gabby.powerschool.prefs p1
   ON p1.schoolid = r.schoolid 
  AND p1.name = 'ATT_CalcCntPresentsAbsences' 
  AND p1.yearid = t.yearid
-LEFT OUTER JOIN gabby.powerschool.prefs p2
+LEFT JOIN gabby.powerschool.prefs p2
   ON p2.schoolid = r.schoolid 
  AND p2.name = 'ATT_IntervalDuration' 
  AND p2.yearid = t.yearid

@@ -74,16 +74,16 @@ FROM
       AND sec.yearid = d.yearid
       AND tb.storecode = d.storecode
       AND rt.abbreviation = d.abbreviation
-     LEFT OUTER JOIN gabby.powerschool.gradeformulaset gfs WITH(NOLOCK)
+     LEFT JOIN gabby.powerschool.gradeformulaset gfs WITH(NOLOCK)
        ON sec.dcid = gfs.sectionsdcid         
-     LEFT OUTER JOIN gabby.powerschool.gradecalculationtype gct WITH(NOLOCK)
+     LEFT JOIN gabby.powerschool.gradecalculationtype gct WITH(NOLOCK)
        ON gfs.gradeformulasetid = gct.gradeformulasetid    
       AND tb.storecode = gct.storecode 
-     LEFT OUTER JOIN gabby.powerschool.gradecalcformulaweight gcfw WITH(NOLOCK)
+     LEFT JOIN gabby.powerschool.gradecalcformulaweight gcfw WITH(NOLOCK)
        ON COALESCE(gct.gradecalculationtypeid, d.gradecalculationtypeid) = gcfw.gradecalculationtypeid
-     LEFT OUTER JOIN gabby.powerschool.teachercategory tc WITH(NOLOCK)
+     LEFT JOIN gabby.powerschool.teachercategory tc WITH(NOLOCK)
        ON gcfw.teachercategoryid = tc.teachercategoryid 
-     LEFT OUTER JOIN gabby.powerschool.districtteachercategory dtc WITH(NOLOCK)
+     LEFT JOIN gabby.powerschool.districtteachercategory dtc WITH(NOLOCK)
        ON gcfw.districtteachercategoryid = dtc.districtteachercategoryid
      WHERE sec.termid >= 2500           
        AND sec.gradebooktype = 2    
