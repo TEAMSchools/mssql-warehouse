@@ -75,7 +75,7 @@ FROM
            /* other */
            ,SUM(CASE WHEN y1_grade_percent_adjusted IS NULL THEN NULL ELSE credit_hours END) AS total_credit_hours
            ,SUM(CASE WHEN y1_grade_letter LIKE 'F%' THEN 1 ELSE 0 END) AS n_failing_y1
-     FROM gabby.powerschool.final_grades_static
+     FROM powerschool.final_grades_static
      WHERE excludefromgpa = 0
      GROUP BY student_number
              ,academic_year      

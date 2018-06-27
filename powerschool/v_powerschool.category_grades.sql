@@ -44,8 +44,8 @@ FROM
            ,ROW_NUMBER() OVER(
               PARTITION BY enr.student_number, enr.academic_year, enr.sectionid, pgf.finalgradename_clean
                 ORDER BY enr.dateleft DESC) AS rn_year
-     FROM gabby.powerschool.course_enrollments_static enr
-     JOIN gabby.powerschool.pgfinalgrades pgf
+     FROM powerschool.course_enrollments_static enr
+     JOIN powerschool.pgfinalgrades pgf
        ON enr.studentid = pgf.studentid
       AND enr.sectionid = pgf.sectionid
       AND pgf.finalgrade_type NOT IN ('Y','T','Q')

@@ -27,7 +27,7 @@ WITH att_counts AS (
              ,CONVERT(VARCHAR,dates.alt_name) AS term_name
              ,dates.start_date
              ,dates.end_date
-       FROM gabby.powerschool.ps_attendance_daily att
+       FROM powerschool.ps_attendance_daily att
        JOIN gabby.reporting.reporting_terms dates
          ON att.schoolid = dates.schoolid
         AND att.att_date BETWEEN dates.start_date AND dates.end_date
@@ -64,7 +64,7 @@ WITH att_counts AS (
              ,CONVERT(VARCHAR,d.alt_name) AS term_name
              ,d.start_date
              ,d.end_date             
-       FROM gabby.powerschool.ps_adaadm_daily_ctod mem
+       FROM powerschool.ps_adaadm_daily_ctod mem
        JOIN gabby.reporting.reporting_terms d
          ON mem.schoolid = d.schoolid 
         AND mem.calendardate BETWEEN d.start_date AND d.end_date

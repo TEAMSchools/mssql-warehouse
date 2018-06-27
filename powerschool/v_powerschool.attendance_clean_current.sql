@@ -13,5 +13,5 @@ SELECT CONVERT(INT,att.id) AS id
       ,CONVERT(INT,att.programid) AS programid
       ,CONVERT(INT,att.total_minutes) AS total_minutes            
       ,CONVERT(VARCHAR(1000),att.att_comment) AS att_comment
-FROM gabby.powerschool.attendance att
+FROM powerschool.attendance att
 WHERE att.att_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7 , 1)

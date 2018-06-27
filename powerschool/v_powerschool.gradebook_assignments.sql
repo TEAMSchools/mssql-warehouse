@@ -13,10 +13,10 @@ SELECT asec.assignmentsectionid
       ,COALESCE(tc.districtteachercategoryid, tc.teachercategoryid) AS categoryid
 
       ,COALESCE(dtc.name, tc.name) AS category_name
-FROM gabby.powerschool.assignmentsection asec
-LEFT JOIN gabby.powerschool.assignmentcategoryassoc aca
+FROM powerschool.assignmentsection asec
+LEFT JOIN powerschool.assignmentcategoryassoc aca
   ON asec.assignmentsectionid = aca.assignmentsectionid      
-LEFT JOIN gabby.powerschool.teachercategory tc
+LEFT JOIN powerschool.teachercategory tc
   ON aca.teachercategoryid = tc.teachercategoryid
-LEFT JOIN gabby.powerschool.districtteachercategory dtc
+LEFT JOIN powerschool.districtteachercategory dtc
   ON tc.districtteachercategoryid = dtc.districtteachercategoryid

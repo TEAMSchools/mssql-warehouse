@@ -38,7 +38,7 @@ FROM
                 ,enr.dateleft           
 
                 ,COALESCE(psid.adp_associate_id, enr.teachernumber) AS associate_id
-          FROM gabby.powerschool.course_enrollments_static enr           
+          FROM powerschool.course_enrollments_static enr           
           LEFT JOIN gabby.people.id_crosswalk_powerschool psid
             ON enr.teachernumber = psid.ps_teachernumber
            AND psid.is_master = 1          
@@ -57,7 +57,7 @@ FROM
                 ,enr.dateleft
            
                 ,COALESCE(psid.adp_associate_id, enr.teachernumber) AS associate_id
-          FROM gabby.powerschool.course_enrollments_static enr           
+          FROM powerschool.course_enrollments_static enr           
           LEFT JOIN gabby.people.id_crosswalk_powerschool psid
             ON enr.teachernumber = psid.ps_teachernumber
            AND psid.is_master = 1     
@@ -65,7 +65,7 @@ FROM
             AND enr.sectionid > 0
             AND enr.schoolid = 133570965
          ) sub
-     LEFT JOIN gabby.dayforce.staff_roster df
+     LEFT JOIN dayforce.staff_roster df
        ON sub.associate_id = df.adp_associate_id
      LEFT JOIN gabby.adsi.user_attributes_static dir
        ON df.adp_associate_id = dir.idautopersonalternateid

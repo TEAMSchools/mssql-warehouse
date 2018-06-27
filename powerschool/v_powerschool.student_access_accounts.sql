@@ -8,8 +8,8 @@ WITH clean_names AS (
         ,CONVERT(VARCHAR(125),s.last_name) AS last_name
         ,CONVERT(INT,s.enroll_status) AS enroll_status
         ,LEFT(LOWER(s.first_name),1) AS first_init           
-        ,CONVERT(VARCHAR,DATEPART(MONTH,s.dob)) AS dob_month
-        ,CONVERT(VARCHAR,RIGHT(DATEPART(DAY,s.dob),2)) AS dob_day
+        ,CONVERT(VARCHAR,DATEPART(MONTH,s.dob)) COLLATE Latin1_General_BIN AS dob_month
+        ,CONVERT(VARCHAR,RIGHT(DATEPART(DAY,s.dob),2)) COLLATE Latin1_General_BIN AS dob_day
         ,CONVERT(VARCHAR,RIGHT(DATEPART(YEAR,s.dob),2)) AS dob_year                
 
         ,CONVERT(VARCHAR(25),sch.abbreviation) AS school_name
@@ -26,8 +26,8 @@ WITH clean_names AS (
             WHEN CHARINDEX('-',s.last_name) > 0 THEN LEFT(s.last_name,CHARINDEX('-',s.last_name) - 1)
             ELSE REPLACE(s.last_name, ' JR', '')
            END), '^A-Z') AS last_name_clean        
-  FROM gabby.powerschool.students s 
-  JOIN gabby.powerschool.schools sch
+  FROM powerschool.students s 
+  JOIN powerschool.schools sch
     ON s.schoolid = sch.school_number  
   WHERE s.enroll_status != -1
     AND s.dob IS NOT NULL

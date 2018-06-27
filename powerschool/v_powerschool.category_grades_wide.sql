@@ -13,7 +13,7 @@ WITH grades_long AS (
         ,cat.is_curterm
         ,cat.grade_category
         ,cat.grade_category_pct        
-  FROM gabby.powerschool.category_grades_static cat
+  FROM powerschool.category_grades_static cat
   WHERE cat.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1
   UNION ALL
   SELECT cat.student_number
@@ -28,7 +28,7 @@ WITH grades_long AS (
         ,cat.is_curterm
         ,cat.grade_category
         ,ROUND(AVG(cat.grade_category_pct), 0) AS grade_category_pct   
-  FROM gabby.powerschool.category_grades_static cat
+  FROM powerschool.category_grades_static cat
   WHERE cat.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1
   GROUP BY cat.student_number
           ,cat.schoolid
@@ -51,7 +51,7 @@ WITH grades_long AS (
         ,cat.is_curterm
         ,cat.grade_category
         ,cat.grade_category_pct        
-  FROM gabby.powerschool.category_grades_static cat
+  FROM powerschool.category_grades_static cat
   WHERE cat.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1
   UNION ALL
   SELECT cat.student_number
@@ -66,7 +66,7 @@ WITH grades_long AS (
         ,cat.is_curterm
         ,cat.grade_category
         ,ROUND(AVG(cat.grade_category_pct), 0) AS grade_category_pct
-  FROM gabby.powerschool.category_grades_static cat
+  FROM powerschool.category_grades_static cat
   WHERE cat.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1
   GROUP BY cat.student_number
           ,cat.schoolid

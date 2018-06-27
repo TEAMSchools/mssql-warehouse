@@ -55,7 +55,7 @@ WITH grades_unpivot AS (
              ,fg.need_80
              ,fg.need_70
              ,fg.need_65
-       FROM gabby.powerschool.final_grades_static fg 
+       FROM powerschool.final_grades_static fg 
        WHERE fg.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1
 
        UNION ALL
@@ -89,7 +89,7 @@ WITH grades_unpivot AS (
              ,fg.need_80
              ,fg.need_70
              ,fg.need_65
-       FROM gabby.powerschool.final_grades_static fg 
+       FROM powerschool.final_grades_static fg 
        WHERE fg.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1
       ) sub
   UNPIVOT(
