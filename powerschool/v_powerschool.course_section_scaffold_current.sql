@@ -29,7 +29,7 @@ WITH course_scaffold AS (
              ,enr.excludefromgpa
              ,enr.gradescaleid
 
-             ,CONVERT(VARCHAR(25),terms.alt_name) AS term_name
+             ,CONVERT(VARCHAR(25),terms.alt_name) COLLATE Latin1_General_BIN AS term_name
              ,terms.start_date AS term_start_date
              ,terms.end_date AS term_end_date
        FROM powerschool.course_enrollments_static enr

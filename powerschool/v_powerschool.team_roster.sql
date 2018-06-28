@@ -11,7 +11,7 @@ FROM
            ,enr.student_number                      
            ,enr.academic_year                       
            ,CONVERT(VARCHAR(25),CASE
-             WHEN gabby.utilities.STRIP_CHARACTERS(enr.section_number,'0-9') = '' THEN enr.teacher_name
+             WHEN gabby.utilities.STRIP_CHARACTERS(enr.section_number,'0-9') = '' COLLATE Latin1_General_BIN THEN enr.teacher_name
              ELSE gabby.utilities.STRIP_CHARACTERS(enr.section_number,'0-9')
             END) AS team
 

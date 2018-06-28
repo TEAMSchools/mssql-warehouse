@@ -141,7 +141,7 @@ FROM
 
            ,CONCAT(gr.grade_category, '_', gr.rt) AS pivot_field           
            ,CASE 
-             WHEN gr.SCHOOLID = 73253 AND gr.grade_category = 'E' THEN NULL 
+             WHEN gr.schoolid = 73253 AND gr.grade_category = 'E' THEN NULL 
              ELSE gr.grade_category_pct 
             END AS grade_category_pct 
 

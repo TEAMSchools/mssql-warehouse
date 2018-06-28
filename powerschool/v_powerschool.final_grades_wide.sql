@@ -123,25 +123,25 @@ SELECT student_number
 
       ,MAX(e1_grade_percent) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS e1_grade_percent
       ,MAX(e2_grade_percent) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS e2_grade_percent
-      ,MAX(RT1_term_grade_letter) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS RT1_term_grade_letter
-      ,MAX(RT1_term_grade_letter_adjusted) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS RT1_term_grade_letter_adjusted
-      ,MAX(RT1_term_grade_percent) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS RT1_term_grade_percent
-      ,MAX(RT1_term_grade_percent_adjusted) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS RT1_term_grade_percent_adjusted      
+      ,MAX(rt1_term_grade_letter) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS rt1_term_grade_letter
+      ,MAX(rt1_term_grade_letter_adjusted) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS rt1_term_grade_letter_adjusted
+      ,MAX(rt1_term_grade_percent) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS rt1_term_grade_percent
+      ,MAX(rt1_term_grade_percent_adjusted) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS rt1_term_grade_percent_adjusted      
       
-      ,MAX(RT2_term_grade_letter) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS RT2_term_grade_letter
-      ,MAX(RT2_term_grade_letter_adjusted) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS RT2_term_grade_letter_adjusted
-      ,MAX(RT2_term_grade_percent) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS RT2_term_grade_percent
-      ,MAX(RT2_term_grade_percent_adjusted) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS RT2_term_grade_percent_adjusted      
+      ,MAX(rt2_term_grade_letter) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS rt2_term_grade_letter
+      ,MAX(rt2_term_grade_letter_adjusted) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS rt2_term_grade_letter_adjusted
+      ,MAX(rt2_term_grade_percent) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS rt2_term_grade_percent
+      ,MAX(rt2_term_grade_percent_adjusted) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS rt2_term_grade_percent_adjusted      
       
-      ,MAX(RT3_term_grade_letter) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS RT3_term_grade_letter
-      ,MAX(RT3_term_grade_letter_adjusted) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS RT3_term_grade_letter_adjusted
-      ,MAX(RT3_term_grade_percent) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS RT3_term_grade_percent
-      ,MAX(RT3_term_grade_percent_adjusted) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS RT3_term_grade_percent_adjusted      
+      ,MAX(rt3_term_grade_letter) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS rt3_term_grade_letter
+      ,MAX(rt3_term_grade_letter_adjusted) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS rt3_term_grade_letter_adjusted
+      ,MAX(rt3_term_grade_percent) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS rt3_term_grade_percent
+      ,MAX(rt3_term_grade_percent_adjusted) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS rt3_term_grade_percent_adjusted      
       
-      ,MAX(RT4_term_grade_letter) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS RT4_term_grade_letter
-      ,MAX(RT4_term_grade_letter_adjusted) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS RT4_term_grade_letter_adjusted
-      ,MAX(RT4_term_grade_percent) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS RT4_term_grade_percent
-      ,MAX(RT4_term_grade_percent_adjusted) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS RT4_term_grade_percent_adjusted
+      ,MAX(rt4_term_grade_letter) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS rt4_term_grade_letter
+      ,MAX(rt4_term_grade_letter_adjusted) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS rt4_term_grade_letter_adjusted
+      ,MAX(rt4_term_grade_percent) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS rt4_term_grade_percent
+      ,MAX(rt4_term_grade_percent_adjusted) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS rt4_term_grade_percent_adjusted
 
       ,[cur_term_grade_letter]
       ,[cur_term_grade_letter_adjusted]

@@ -82,30 +82,8 @@ SELECT co.studentid
       ,t.team
 
       ,adv.advisor_name
-      ,adv.advisor_phone
-      ,adv.advisor_email
-      
-      ,CONVERT(VARCHAR(5),CASE
-                           WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
-                            AND co.rn_year = 1 
-                                  THEN mcs.mealbenefitstatus 
-                           WHEN co.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
-                            AND co.entrydate = s.entrydate THEN REPLACE(s.lunchstatus,'false','F')
-                           ELSE co.lunchstatus
-                          END) AS lunchstatus      
-      ,CONVERT(VARCHAR(125),CASE 
-                             WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
-                              AND co.rn_year = 1 
-                              AND mcs.currentapplicationid IS NOT NULL 
-                                    THEN mcs.mealbenefitstatus
-                             WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
-                              AND co.rn_year = 1 
-                              AND mcs.currentapplicationid IS NULL 
-                                    THEN mcs.description
-                             WHEN co.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
-                              AND co.entrydate = s.entrydate THEN REPLACE(s.lunchstatus,'false','F')
-                             ELSE co.lunchstatus
-                            END) AS lunch_app_status                 
+      ,adv.advisor_phone COLLATE Latin1_General_BIN AS advisor_phone
+      ,adv.advisor_email COLLATE Latin1_General_BIN AS advisor_email
       
       ,ISNULL(sped.spedlep,'No IEP') AS iep_status
       ,sped.special_education_code AS specialed_classification
@@ -118,6 +96,28 @@ SELECT co.studentid
 
       ,saa.student_web_id
       ,saa.student_web_password
+
+      ,CONVERT(VARCHAR(5),CASE
+                           WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
+                            AND co.rn_year = 1 
+                                  THEN mcs.mealbenefitstatus COLLATE Latin1_General_BIN
+                           WHEN co.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
+                            AND co.entrydate = s.entrydate THEN REPLACE(s.lunchstatus,'false','F')
+                           ELSE co.lunchstatus
+                          END) AS lunchstatus      
+      ,CONVERT(VARCHAR(125),CASE 
+                             WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
+                              AND co.rn_year = 1 
+                              AND mcs.currentapplicationid IS NOT NULL 
+                                    THEN mcs.mealbenefitstatus COLLATE Latin1_General_BIN
+                             WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
+                              AND co.rn_year = 1 
+                              AND mcs.currentapplicationid IS NULL 
+                                    THEN mcs.description COLLATE Latin1_General_BIN
+                             WHEN co.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
+                              AND co.entrydate = s.entrydate THEN REPLACE(s.lunchstatus,'false','F')
+                             ELSE co.lunchstatus
+                            END) AS lunch_app_status 
 FROM powerschool.cohort_static co
 JOIN powerschool.students s
   ON co.studentid = s.id
@@ -125,8 +125,6 @@ LEFT JOIN powerschool.u_studentsuserfields suf
   ON co.studentsdcid = suf.studentsdcid
 LEFT JOIN powerschool.studentcorefields scf
   ON co.studentsdcid = scf.studentsdcid
-LEFT JOIN gabby.mcs.lunch_info_static mcs
-  ON co.student_number = mcs.studentnumber
 LEFT JOIN powerschool.s_nj_stu_x nj
   ON co.studentsdcid = nj.studentsdcid
 LEFT JOIN powerschool.student_access_accounts_static saa
@@ -139,13 +137,15 @@ LEFT JOIN powerschool.team_roster_static t
 LEFT JOIN powerschool.advisory_static adv
   ON co.studentid = adv.studentid
  AND co.academic_year = adv.academic_year
-LEFT JOIN easyiep.njsmart_powerschool_static sped
+LEFT JOIN easyiep.njsmart_powerschool_clean sped
   ON co.student_number = sped.student_number
  AND co.academic_year  = sped.academic_year
-LEFT JOIN powerschool.spenrollments_gen sp
+LEFT JOIN powerschool.spenrollments_gen_static sp
   ON co.studentid = sp.studentid
  AND co.entrydate BETWEEN sp.enter_date AND sp.exit_date
  AND sp.programid IN (4573, 5074, 5075, 5173) 
+LEFT JOIN gabby.mcs.lunch_info_static mcs
+  ON co.student_number = mcs.studentnumber
 /* 
 ProgramIDs for schools within schools 
 * 4573 = Pathways (ES)

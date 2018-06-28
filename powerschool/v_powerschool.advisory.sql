@@ -20,9 +20,9 @@ FROM
            ,sub.dateenrolled
            ,sub.dateleft
       
-           ,df.mobile_number AS advisor_phone
+           ,df.mobile_number COLLATE Latin1_General_BIN AS advisor_phone
 
-           ,dir.mail AS advisor_email
+           ,dir.mail COLLATE Latin1_General_BIN AS advisor_email
 
            ,CONVERT(INT,ROW_NUMBER() OVER(
                           PARTITION BY sub.student_number, sub.academic_year
@@ -37,10 +37,10 @@ FROM
                 ,enr.dateenrolled
                 ,enr.dateleft           
 
-                ,COALESCE(psid.adp_associate_id, enr.teachernumber) AS associate_id
+                ,COALESCE(psid.adp_associate_id COLLATE Latin1_General_BIN, enr.teachernumber) AS associate_id
           FROM powerschool.course_enrollments_static enr           
           LEFT JOIN gabby.people.id_crosswalk_powerschool psid
-            ON enr.teachernumber = psid.ps_teachernumber
+            ON enr.teachernumber = psid.ps_teachernumber COLLATE Latin1_General_BIN
            AND psid.is_master = 1          
           WHERE enr.course_number = 'HR'
             AND enr.sectionid > 0
@@ -56,16 +56,16 @@ FROM
                 ,enr.dateenrolled
                 ,enr.dateleft
            
-                ,COALESCE(psid.adp_associate_id, enr.teachernumber) AS associate_id
+                ,COALESCE(psid.adp_associate_id COLLATE Latin1_General_BIN, enr.teachernumber) AS associate_id
           FROM powerschool.course_enrollments_static enr           
           LEFT JOIN gabby.people.id_crosswalk_powerschool psid
-            ON enr.teachernumber = psid.ps_teachernumber
+            ON enr.teachernumber = psid.ps_teachernumber COLLATE Latin1_General_BIN
            AND psid.is_master = 1     
           WHERE enr.course_number = 'ADV'
             AND enr.sectionid > 0
             AND enr.schoolid = 133570965
          ) sub
-     LEFT JOIN dayforce.staff_roster df
+     LEFT JOIN gabby.dayforce.staff_roster df
        ON sub.associate_id = df.adp_associate_id
      LEFT JOIN gabby.adsi.user_attributes_static dir
        ON df.adp_associate_id = dir.idautopersonalternateid

@@ -84,7 +84,7 @@ FROM
                 ,CONVERT(VARCHAR(25),cc.section_number) AS section_number
                 ,cc.dateenrolled
                 ,cc.dateleft
-                ,cc.lastgradeupdate
+                ,NULL AS lastgradeupdate
                 ,CONVERT(INT,cc.sectionid) AS sectionid
                 ,CONVERT(VARCHAR(25),cc.expression) AS expression
                 ,ABS(CONVERT(INT,cc.termid)) AS abs_termid

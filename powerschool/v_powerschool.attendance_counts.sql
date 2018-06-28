@@ -23,8 +23,8 @@ WITH att_counts AS (
               END AS att_code
                   
              ,CONVERT(INT,dates.academic_year) AS academic_year
-             ,CONVERT(VARCHAR,dates.time_per_name) AS reporting_term     
-             ,CONVERT(VARCHAR,dates.alt_name) AS term_name
+             ,CONVERT(VARCHAR,dates.time_per_name) COLLATE Latin1_General_BIN AS reporting_term     
+             ,CONVERT(VARCHAR,dates.alt_name) COLLATE Latin1_General_BIN AS term_name
              ,dates.start_date
              ,dates.end_date
        FROM powerschool.ps_attendance_daily att
@@ -121,7 +121,7 @@ WITH att_counts AS (
        FROM mem_counts
       ) sub
   UNPIVOT(
-    N
+    n
     FOR field IN (count_term, count_y1)
    ) u
  )
@@ -158,7 +158,7 @@ SELECT studentid
       ,ISNULL(t_count_term, 0) + ISNULL(t10_count_term, 0) AS tdy_all_count_term     
 FROM counts_long
 PIVOT(
-  MAX(N)
+  MAX(n)
   FOR pivot_field IN ([a_count_term]
                      ,[a_count_y1]
                      ,[ad_count_term]
