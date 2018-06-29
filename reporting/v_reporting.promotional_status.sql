@@ -334,7 +334,7 @@ FROM
      LEFT JOIN attendance att
        ON co.studentid = att.studentid
       AND co.academic_year = att.academic_year
-      AND dt.alt_name = att.term_name
+      AND dt.alt_name COLLATE Latin1_General_BIN = att.term_name 
      LEFT JOIN lit
        ON co.student_number = lit.student_number
       AND co.academic_year = lit.academic_year
@@ -343,22 +343,22 @@ FROM
      LEFT JOIN final_grades fg
        ON co.student_number = fg.student_number
       AND co.academic_year = fg.academic_year
-      AND dt.alt_name = fg.term_name      
+      AND dt.alt_name COLLATE Latin1_General_BIN = fg.term_name      
      LEFT JOIN gabby.powerschool.category_grades_wide cat
        ON co.student_number = cat.student_number
       AND co.academic_year = cat.academic_year 
-      AND dt.time_per_name = cat.reporting_term
+      AND dt.time_per_name COLLATE Latin1_General_BIN = cat.reporting_term
       AND cat.credittype = 'ALL'
      LEFT JOIN gabby.powerschool.gpa_detail gpa 
        ON co.student_number = gpa.student_number
       AND co.academic_year = gpa.academic_year
-      AND dt.alt_name = gpa.term_name
+      AND dt.alt_name COLLATE Latin1_General_BIN = gpa.term_name
      LEFT JOIN gabby.powerschool.gpa_cumulative cum
        ON co.studentid = cum.studentid
       AND co.schoolid = cum.schoolid
      LEFT JOIN credits cr
        ON co.student_number = cr.student_number
       AND co.academic_year = cr.academic_year
-      AND dt.alt_name = cr.term_name
+      AND dt.alt_name COLLATE Latin1_General_BIN = cr.term_name
      WHERE co.rn_year = 1
     ) sub

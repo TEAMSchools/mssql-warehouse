@@ -43,4 +43,4 @@ FROM
      WHERE df.primary_on_site_department != 'Data'
     ) sub
 LEFT JOIN gabby.powerschool.teachers_static t
-  ON sub.teachernumber = t.teachernumber
+  ON sub.teachernumber COLLATE Latin1_General_BIN = t.teachernumber 

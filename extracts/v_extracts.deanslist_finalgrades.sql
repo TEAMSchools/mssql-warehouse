@@ -65,14 +65,14 @@ UNION ALL
 
 SELECT comm.student_number
       ,comm.academic_year
-      ,comm.term_name
-      ,comm.comment_subject AS course_number      
+      ,comm.term_name COLLATE Latin1_General_BIN AS term_name
+      ,comm.comment_subject COLLATE Latin1_General_BIN AS course_number      
       
       ,NULL AS sectionid      
       ,NULL AS sections_dcid
       ,NULL AS section_number
 
-      ,comm.comment_subject AS course_name
+      ,comm.comment_subject COLLATE Latin1_General_BIN AS course_name
       
       ,NULL AS credit_hours
       
@@ -93,6 +93,6 @@ SELECT comm.student_number
       ,NULL AS CP_term
       ,NULL AS HWQ_term      
 
-      ,REPLACE(comm.comment,'"','''') AS comment_value      
+      ,REPLACE(comm.comment,'"','''') COLLATE Latin1_General_BIN AS comment_value      
 FROM gabby.reporting.illuminate_report_card_comments comm WITH(NOLOCK)
 WHERE comm.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()

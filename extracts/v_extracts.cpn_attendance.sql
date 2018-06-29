@@ -12,5 +12,6 @@ SELECT ada.academic_year AS [School Year]
       ,ada.schoolid AS [School Code]
       ,ada.membershipvalue
       ,ada.is_present AS attendancevalue
-FROM gabby.tableau.attendance_dashboard_current_static ada
-WHERE ada.schoolid LIKE '1799%'
+FROM gabby.tableau.attendance_dashboard ada
+WHERE ada.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+  AND ada.schoolid LIKE '1799%'
