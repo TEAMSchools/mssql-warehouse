@@ -1,6 +1,3 @@
-USE gabby
-GO
-
 CREATE OR ALTER VIEW tableau.attendance_dashboard_current AS
 
 SELECT sub.academic_year
