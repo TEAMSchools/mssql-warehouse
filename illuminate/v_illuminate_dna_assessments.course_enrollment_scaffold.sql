@@ -36,7 +36,7 @@ FROM
           JOIN gabby.illuminate_public.students ils
             ON enr.student_number = ils.local_student_id
           JOIN gabby.illuminate_public.courses c
-            ON enr.course_number = c.school_course_id
+            ON enr.course_number = c.school_course_id COLLATE Latin1_General_BIN
           JOIN gabby.illuminate_matviews.ss_cube ssc
             ON ils.student_id = ssc.student_id
            AND c.course_id = ssc.course_id
@@ -61,7 +61,7 @@ FROM
           JOIN gabby.illuminate_public.students ils
             ON enr.student_number = ils.local_student_id
           JOIN gabby.illuminate_public.courses c
-            ON enr.course_number = c.school_course_id
+            ON enr.course_number = c.school_course_id COLLATE Latin1_General_BIN
           JOIN gabby.illuminate_matviews.ss_cube ssc
             ON ils.student_id = ssc.student_id
            AND c.course_id = ssc.course_id
@@ -88,7 +88,7 @@ FROM
           JOIN gabby.illuminate_public.students ils
             ON enr.student_number = ils.local_student_id
           JOIN gabby.illuminate_public.courses c
-            ON enr.course_number = c.school_course_id
+            ON enr.course_number = c.school_course_id COLLATE Latin1_General_BIN
           JOIN gabby.illuminate_matviews.ss_cube ssc
             ON ils.student_id = ssc.student_id
            AND c.course_id = ssc.course_id
