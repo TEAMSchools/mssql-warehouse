@@ -53,7 +53,7 @@ WITH prof_calendar AS (
   FROM tracking_long
  )
 
-SELECT df.adp_associate_id AS associate_id
+SELECT COALESCE(df.adp_associate_id, CONVERT(VARCHAR,df.df_employee_number)) AS associate_id
       ,df.preferred_name AS preferred_lastfirst       
       ,df.primary_site_schoolid AS schoolid
       ,df.primary_site AS location
