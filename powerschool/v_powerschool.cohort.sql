@@ -1,6 +1,3 @@
-USE gabby
-GO
-
 CREATE OR ALTER VIEW powerschool.cohort AS
 
 SELECT studentid
@@ -141,8 +138,8 @@ FROM
                      ,CONVERT(INT,s.fteid) AS fteid
                 
                      ,CONVERT(INT,terms.yearid) AS yearid
-               FROM gabby.powerschool.students s
-               JOIN gabby.powerschool.terms terms
+               FROM powerschool.students s
+               JOIN powerschool.terms terms
                  ON s.schoolid = terms.schoolid 
                 AND s.entrydate BETWEEN terms.firstday AND terms.lastday
                 AND terms.portion = 1
@@ -166,8 +163,8 @@ FROM
                      ,NULL AS fteid
                 
                      ,CONVERT(INT,terms.yearid) AS yearid
-               FROM gabby.powerschool.students s
-               JOIN gabby.powerschool.terms terms
+               FROM powerschool.students s
+               JOIN powerschool.terms terms
                  ON s.schoolid = terms.schoolid
                 AND s.entrydate <= terms.firstday
                 AND terms.portion = 1
@@ -190,10 +187,10 @@ FROM
                      ,CONVERT(INT,re.fteid) AS fteid
                 
                      ,CONVERT(INT,terms.yearid) AS yearid
-               FROM gabby.powerschool.reenrollments re       
-               JOIN gabby.powerschool.students s
+               FROM powerschool.reenrollments re       
+               JOIN powerschool.students s
                  ON re.studentid = s.id
-               JOIN gabby.powerschool.terms terms
+               JOIN powerschool.terms terms
                  ON re.schoolid = terms.schoolid       
                 AND re.entrydate BETWEEN terms.firstday AND terms.lastday
                 AND terms.portion = 1     

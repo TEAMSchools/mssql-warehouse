@@ -1,6 +1,3 @@
-USE gabby
-GO
-
 CREATE OR ALTER VIEW powerschool.final_grades AS
 
 WITH roster AS (
@@ -23,14 +20,14 @@ WITH roster AS (
         ,t.lastfirst AS teacher_name
 
         ,css.gradescaleid
-  FROM gabby.powerschool.cohort_identifiers_static co  
-  JOIN gabby.powerschool.course_section_scaffold css
+  FROM powerschool.cohort_identifiers_static co  
+  JOIN powerschool.course_section_scaffold css
     ON co.studentid = css.studentid
    AND co.yearid = css.yearid   
    AND css.course_number != 'ALL'  
-  JOIN gabby.powerschool.sections sec
+  JOIN powerschool.sections sec
     ON css.sectionid = sec.id
-  JOIN gabby.powerschool.teachers_static t
+  JOIN powerschool.teachers_static t
     ON sec.teacher = t.id
   WHERE co.rn_year = 1    
     AND co.school_level IN ('MS','HS')
@@ -86,19 +83,19 @@ WITH roster AS (
              ,ROW_NUMBER() OVER(
                 PARTITION BY enr.studentid, enr.yearid, enr.course_number, pgf.finalgradename_clean
                   ORDER BY sg.[percent] DESC, enr.section_enroll_status, enr.dateleft DESC) AS rn
-       FROM gabby.powerschool.course_enrollments_static enr
-       JOIN gabby.powerschool.pgfinalgrades pgf
+       FROM powerschool.course_enrollments_static enr
+       JOIN powerschool.pgfinalgrades pgf
          ON enr.studentid = pgf.studentid       
         AND enr.abs_sectionid = pgf.sectionid
         AND pgf.finalgrade_type IN ('T','Q')
-       LEFT JOIN gabby.powerschool.storedgrades sg 
+       LEFT JOIN powerschool.storedgrades sg 
          ON enr.studentid = sg.studentid 
         AND enr.abs_sectionid = sg.sectionid
         AND pgf.finalgradename_clean = sg.storecode  
-       LEFT JOIN gabby.powerschool.gradescaleitem_lookup_static scale WITH(NOLOCK)
+       LEFT JOIN powerschool.gradescaleitem_lookup_static scale WITH(NOLOCK)
          ON enr.gradescaleid = scale.gradescaleid
         AND pgf.[percent] BETWEEN scale.min_cutoffpercentage AND scale.max_cutoffpercentage      
-       LEFT JOIN gabby.powerschool.gradescaleitem_lookup_static sg_scale WITH(NOLOCK)
+       LEFT JOIN powerschool.gradescaleitem_lookup_static sg_scale WITH(NOLOCK)
          ON enr.gradescaleid = sg_scale.gradescaleid
         AND sg.[percent] BETWEEN sg_scale.min_cutoffpercentage AND sg_scale.max_cutoffpercentage
        WHERE enr.course_enroll_status = 0       
@@ -116,7 +113,7 @@ WITH roster AS (
              ,NULL AS pgf_pct      
              ,sg.gpa_points AS term_gpa_points      
              ,1 AS rn
-       FROM gabby.powerschool.storedgrades sg 
+       FROM powerschool.storedgrades sg 
        WHERE sg.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR()
          AND sg.storecode_type  IN ('T', 'Q')
       ) sub
@@ -127,10 +124,10 @@ WITH roster AS (
   SELECT studentid
         ,academic_year
         ,course_number     
-        ,E1
-        ,E2
-        ,CASE WHEN E1 < 50 THEN 50 ELSE E1 END AS E1_adjusted
-        ,CASE WHEN E2 < 50 THEN 50 ELSE E2 END AS E2_adjusted
+        ,e1
+        ,e2
+        ,CASE WHEN e1 < 50 THEN 50 ELSE e1 END AS e1_adjusted
+        ,CASE WHEN e2 < 50 THEN 50 ELSE e2 END AS e2_adjusted
   FROM
       (
        SELECT CONVERT(INT,studentid) AS studentid
@@ -138,13 +135,13 @@ WITH roster AS (
              ,course_number_clean AS course_number
              ,storecode_clean AS storecode
              ,[percent]
-       FROM gabby.powerschool.storedgrades
+       FROM powerschool.storedgrades
        WHERE schoolid = 73253
          AND storecode_type = 'E'
       ) sub
   PIVOT(
     MAX([percent])
-    FOR storecode IN ([E1],[E2])
+    FOR storecode IN ([e1],[e2])
    ) p
  )
 
@@ -173,10 +170,10 @@ WITH roster AS (
         ,gr.term_gpa_points
         
         /* exam grades for Y1 calc, only for applicable terms */
-        ,CASE WHEN r.term_name = 'Q2' THEN e.E1 ELSE NULL END AS E1           
-        ,CASE WHEN r.term_name = 'Q2' THEN e.E1_adjusted ELSE NULL END AS E1_adjusted           
-        ,CASE WHEN r.term_name = 'Q4' THEN e.E2 ELSE NULL END AS E2
-        ,CASE WHEN r.term_name = 'Q4' THEN e.E2_adjusted ELSE NULL END AS E2_adjusted
+        ,CASE WHEN r.term_name = 'Q2' THEN e.e1 ELSE NULL END AS e1           
+        ,CASE WHEN r.term_name = 'Q2' THEN e.e1_adjusted ELSE NULL END AS e1_adjusted           
+        ,CASE WHEN r.term_name = 'Q4' THEN e.e2 ELSE NULL END AS e2
+        ,CASE WHEN r.term_name = 'Q4' THEN e.e2_adjusted ELSE NULL END AS e2_adjusted
 
         /* prior to 2016-2017, NCA used exam terms as 10% of the final grade */
         ,CASE
@@ -185,8 +182,8 @@ WITH roster AS (
           WHEN r.academic_year <= 2015 AND r.grade_level >= 9 THEN .225
           WHEN r.academic_year >= 2016 AND r.grade_level >= 9 THEN .250
          END AS term_grade_weight                 
-        ,CASE WHEN r.academic_year <= 2015 AND r.grade_level >= 9 AND r.term_name = 'Q2' AND e.E1 IS NOT NULL THEN 0.05 END AS E1_grade_weight
-        ,CASE WHEN r.academic_year <= 2015 AND r.grade_level >= 9 AND r.term_name = 'Q4' AND e.E2 IS NOT NULL THEN 0.05 END AS E2_grade_weight
+        ,CASE WHEN r.academic_year <= 2015 AND r.grade_level >= 9 AND r.term_name = 'Q2' AND e.e1 IS NOT NULL THEN 0.05 END AS e1_grade_weight
+        ,CASE WHEN r.academic_year <= 2015 AND r.grade_level >= 9 AND r.term_name = 'Q4' AND e.e2 IS NOT NULL THEN 0.05 END AS e2_grade_weight
         ,CASE          
           WHEN r.grade_level <= 8 THEN 1.0 / CONVERT(FLOAT,COUNT(r.student_number) OVER(PARTITION BY r.student_number, r.academic_year, gr.course_number))
           WHEN r.academic_year <= 2015 AND r.grade_level >= 9 THEN .225
@@ -265,19 +262,19 @@ SELECT sub.student_number
       /* Need To Get calcs */
       ,ROUND((((weighted_points_possible_total * 0.9) /* 90% of total points possible */
                  - (ISNULL(weighted_grade_total_adjusted,0) - (ISNULL(term_grade_weighted,0) + ISNULL(e1_grade_weighted,0) + ISNULL(e2_grade_weighted,0)))) /* factor out points earned so far, including current */
-                 / (term_grade_weight_possible + ISNULL(E1_grade_weight,0) + ISNULL(E2_grade_weight,0))) /* divide by current term weights */
+                 / (term_grade_weight_possible + ISNULL(e1_grade_weight,0) + ISNULL(e2_grade_weight,0))) /* divide by current term weights */
              ,0) AS need_90      
       ,ROUND((((weighted_points_possible_total * 0.8) /* 80% of total points possible */
                  - (ISNULL(weighted_grade_total_adjusted,0) - (ISNULL(term_grade_weighted,0) + ISNULL(e1_grade_weighted,0) + ISNULL(e2_grade_weighted,0)))) /* factor out points earned so far, including current */
-                 / (term_grade_weight_possible + ISNULL(E1_grade_weight,0) + ISNULL(E2_grade_weight,0))) /* divide by current term weights */
+                 / (term_grade_weight_possible + ISNULL(e1_grade_weight,0) + ISNULL(e2_grade_weight,0))) /* divide by current term weights */
              ,0) AS need_80
       ,ROUND((((weighted_points_possible_total * 0.7) /* 70% of total points possible */
                  - (ISNULL(weighted_grade_total_adjusted,0) - (ISNULL(term_grade_weighted,0) + ISNULL(e1_grade_weighted,0) + ISNULL(e2_grade_weighted,0)))) /* factor out points earned so far, including current */
-                 / (term_grade_weight_possible + ISNULL(E1_grade_weight,0) + ISNULL(E2_grade_weight,0))) /* divide by current term weights */
+                 / (term_grade_weight_possible + ISNULL(e1_grade_weight,0) + ISNULL(e2_grade_weight,0))) /* divide by current term weights */
              ,0) AS need_70 
       ,ROUND((((weighted_points_possible_total * 0.65) /* 65% of total points possible */
                  - (ISNULL(weighted_grade_total_adjusted,0) - (ISNULL(term_grade_weighted,0) + ISNULL(e1_grade_weighted,0) + ISNULL(e2_grade_weighted,0)))) /* factor out points earned so far, including current */
-                 / (term_grade_weight_possible + ISNULL(E1_grade_weight,0) + ISNULL(E2_grade_weight,0))) /* divide by current term weights */
+                 / (term_grade_weight_possible + ISNULL(e1_grade_weight,0) + ISNULL(e2_grade_weight,0))) /* divide by current term weights */
              ,0) AS need_65
 
       /*
@@ -328,7 +325,7 @@ FROM
            ,ROUND((weighted_grade_total / weighted_points_total) * 100,0) AS y1_grade_percent
            ,ROUND((weighted_grade_total_adjusted / weighted_points_total) * 100,0) AS y1_grade_percent_adjusted
 
-           ,(CASE WHEN term_grade_percent_adjusted IS NULL THEN ISNULL(weighted_points_total,0) + (term_grade_weight_possible * 100) ELSE weighted_points_total END) + ISNULL(E1_grade_weight,0) + ISNULL(E2_grade_weight,0) AS weighted_points_possible_total
+           ,(CASE WHEN term_grade_percent_adjusted IS NULL THEN ISNULL(weighted_points_total,0) + (term_grade_weight_possible * 100) ELSE weighted_points_total END) + ISNULL(e1_grade_weight,0) + ISNULL(e2_grade_weight,0) AS weighted_points_possible_total
            ,(term_grade_percent_adjusted * term_grade_weight) AS term_grade_weighted
            ,ISNULL((e1 * e1_grade_weight),0) AS e1_grade_weighted
            ,ISNULL((e2 * e2_grade_weight),0) AS e2_grade_weighted                      
@@ -362,8 +359,8 @@ FROM
 
                 ,term_grade_weight
                 ,term_grade_weight_possible
-                ,E1_grade_weight
-                ,E2_grade_weight
+                ,e1_grade_weight
+                ,e2_grade_weight
       
                 /* Y1 calc -- weighted avg */                
                 /* (weighted term grade + weighted exam grades) / total weighted points possible */
@@ -379,20 +376,20 @@ FROM
                   ) OVER(PARTITION BY student_number, academic_year, course_number ORDER BY reporting_term ASC) AS weighted_grade_total_adjusted /* uses F* adjusted grade */
                 ,SUM(
                    (term_grade_weight * 100)
-                     + ISNULL((E1_grade_weight * 100),0)
-                     + ISNULL((E2_grade_weight * 100),0)
+                     + ISNULL((e1_grade_weight * 100),0)
+                     + ISNULL((e2_grade_weight * 100),0)
                   ) OVER(PARTITION BY student_number, academic_year, course_number ORDER BY reporting_term ASC) AS weighted_points_total                
           FROM grades_long               
          ) sub
     ) sub
-LEFT JOIN gabby.powerschool.storedgrades y1
+LEFT JOIN powerschool.storedgrades y1
   ON sub.studentid = y1.studentid
  AND sub.academic_year = y1.academic_year
  AND sub.course_number = y1.course_number_clean
  AND y1.storecode_clean = 'Y1'
-LEFT JOIN gabby.powerschool.gradescaleitem_lookup_static y1_scale WITH(NOLOCK)
+LEFT JOIN powerschool.gradescaleitem_lookup_static y1_scale WITH(NOLOCK)
   ON sub.gradescaleid = y1_scale.gradescaleid
  AND sub.y1_grade_percent_adjusted BETWEEN y1_scale.min_cutoffpercentage AND y1_scale.max_cutoffpercentage
-LEFT JOIN gabby.powerschool.gradescaleitem_lookup_static y1_scale_unweighted WITH(NOLOCK)
+LEFT JOIN powerschool.gradescaleitem_lookup_static y1_scale_unweighted WITH(NOLOCK)
   ON sub.unweighted_gradescaleid = y1_scale_unweighted.gradescaleid
  AND sub.y1_grade_percent_adjusted BETWEEN y1_scale_unweighted.min_cutoffpercentage AND y1_scale_unweighted.max_cutoffpercentage

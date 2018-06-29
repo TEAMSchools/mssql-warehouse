@@ -1,6 +1,3 @@
-USE gabby
-GO
-
 CREATE OR ALTER VIEW powerschool.course_enrollments AS
 
 SELECT sub.studentid
@@ -87,7 +84,7 @@ FROM
                 ,CONVERT(VARCHAR(25),cc.section_number) AS section_number
                 ,cc.dateenrolled
                 ,cc.dateleft
-                ,cc.lastgradeupdate
+                ,NULL AS lastgradeupdate
                 ,CONVERT(INT,cc.sectionid) AS sectionid
                 ,CONVERT(VARCHAR(25),cc.expression) AS expression
                 ,ABS(CONVERT(INT,cc.termid)) AS abs_termid
@@ -132,14 +129,14 @@ FROM
                   WHEN cc.course_number_clean IN ('ENG30','ENG32','ENG35','NCCSE0030') THEN 'English 300'
                   WHEN cc.course_number_clean IN ('ENG40','ENG42','ENG45') THEN 'English 400'
                  END AS illuminate_subject
-          FROM gabby.powerschool.cc
-          JOIN gabby.powerschool.students s 
+          FROM powerschool.cc
+          JOIN powerschool.students s 
             ON cc.studentid = s.id
-          JOIN gabby.powerschool.courses cou
+          JOIN powerschool.courses cou
             ON cc.course_number_clean = cou.course_number_clean
-          JOIN gabby.powerschool.teachers_static t
+          JOIN powerschool.teachers_static t
             ON cc.teacherid = t.id          
-          JOIN gabby.powerschool.sections sec
+          JOIN powerschool.sections sec
             ON cc.abs_sectionid = sec.id
          ) sub
     ) sub

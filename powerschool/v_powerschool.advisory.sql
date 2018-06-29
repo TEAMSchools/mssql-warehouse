@@ -1,6 +1,3 @@
-USE gabby
-GO
-
 CREATE OR ALTER VIEW powerschool.advisory AS
 
 SELECT studentid
@@ -23,9 +20,9 @@ FROM
            ,sub.dateenrolled
            ,sub.dateleft
       
-           ,df.mobile_number AS advisor_phone
+           ,df.mobile_number COLLATE Latin1_General_BIN AS advisor_phone
 
-           ,dir.mail AS advisor_email
+           ,dir.mail COLLATE Latin1_General_BIN AS advisor_email
 
            ,CONVERT(INT,ROW_NUMBER() OVER(
                           PARTITION BY sub.student_number, sub.academic_year
@@ -40,10 +37,10 @@ FROM
                 ,enr.dateenrolled
                 ,enr.dateleft           
 
-                ,COALESCE(psid.adp_associate_id, enr.teachernumber) AS associate_id
-          FROM gabby.powerschool.course_enrollments_static enr           
+                ,COALESCE(psid.adp_associate_id COLLATE Latin1_General_BIN, enr.teachernumber) AS associate_id
+          FROM powerschool.course_enrollments_static enr           
           LEFT JOIN gabby.people.id_crosswalk_powerschool psid
-            ON enr.teachernumber = psid.ps_teachernumber
+            ON enr.teachernumber = psid.ps_teachernumber COLLATE Latin1_General_BIN
            AND psid.is_master = 1          
           WHERE enr.course_number = 'HR'
             AND enr.sectionid > 0
@@ -59,10 +56,10 @@ FROM
                 ,enr.dateenrolled
                 ,enr.dateleft
            
-                ,COALESCE(psid.adp_associate_id, enr.teachernumber) AS associate_id
-          FROM gabby.powerschool.course_enrollments_static enr           
+                ,COALESCE(psid.adp_associate_id COLLATE Latin1_General_BIN, enr.teachernumber) AS associate_id
+          FROM powerschool.course_enrollments_static enr           
           LEFT JOIN gabby.people.id_crosswalk_powerschool psid
-            ON enr.teachernumber = psid.ps_teachernumber
+            ON enr.teachernumber = psid.ps_teachernumber COLLATE Latin1_General_BIN
            AND psid.is_master = 1     
           WHERE enr.course_number = 'ADV'
             AND enr.sectionid > 0

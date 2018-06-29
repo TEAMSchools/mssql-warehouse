@@ -1,6 +1,3 @@
-USE gabby
-GO
-
 CREATE OR ALTER VIEW powerschool.teachers AS
 
 SELECT CONVERT(VARCHAR(125),u.lastfirst) AS lastfirst

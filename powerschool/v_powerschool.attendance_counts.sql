@@ -1,6 +1,3 @@
-USE gabby
-GO
-
 CREATE OR ALTER VIEW powerschool.attendance_counts AS
 
 WITH att_counts AS (
@@ -26,11 +23,11 @@ WITH att_counts AS (
               END AS att_code
                   
              ,CONVERT(INT,dates.academic_year) AS academic_year
-             ,CONVERT(VARCHAR,dates.time_per_name) AS reporting_term     
-             ,CONVERT(VARCHAR,dates.alt_name) AS term_name
+             ,CONVERT(VARCHAR,dates.time_per_name) COLLATE Latin1_General_BIN AS reporting_term     
+             ,CONVERT(VARCHAR,dates.alt_name) COLLATE Latin1_General_BIN AS term_name
              ,dates.start_date
              ,dates.end_date
-       FROM gabby.powerschool.ps_attendance_daily att
+       FROM powerschool.ps_attendance_daily att
        JOIN gabby.reporting.reporting_terms dates
          ON att.schoolid = dates.schoolid
         AND att.att_date BETWEEN dates.start_date AND dates.end_date
@@ -67,7 +64,7 @@ WITH att_counts AS (
              ,CONVERT(VARCHAR,d.alt_name) AS term_name
              ,d.start_date
              ,d.end_date             
-       FROM gabby.powerschool.ps_adaadm_daily_ctod mem
+       FROM powerschool.ps_adaadm_daily_ctod mem
        JOIN gabby.reporting.reporting_terms d
          ON mem.schoolid = d.schoolid 
         AND mem.calendardate BETWEEN d.start_date AND d.end_date
@@ -124,7 +121,7 @@ WITH att_counts AS (
        FROM mem_counts
       ) sub
   UNPIVOT(
-    N
+    n
     FOR field IN (count_term, count_y1)
    ) u
  )
@@ -161,7 +158,7 @@ SELECT studentid
       ,ISNULL(t_count_term, 0) + ISNULL(t10_count_term, 0) AS tdy_all_count_term     
 FROM counts_long
 PIVOT(
-  MAX(N)
+  MAX(n)
   FOR pivot_field IN ([a_count_term]
                      ,[a_count_y1]
                      ,[ad_count_term]

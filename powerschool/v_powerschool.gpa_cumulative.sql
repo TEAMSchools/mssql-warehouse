@@ -1,6 +1,3 @@
-USE gabby
-GO
-
 CREATE OR ALTER VIEW powerschool.gpa_cumulative AS
 
 SELECT studentid
@@ -53,8 +50,8 @@ FROM
                 ,sg.potentialcrhrs AS potentialcrhrs_projected_s1
                 ,sg.earnedcrhrs AS earnedcrhrs_projected_s1
                 ,(sg.potentialcrhrs * sg.gpa_points) AS weighted_points_projected_s1
-          FROM gabby.powerschool.storedgrades sg
-          LEFT JOIN gabby.powerschool.gradescaleitem_lookup_static scale_unweighted 
+          FROM powerschool.storedgrades sg
+          LEFT JOIN powerschool.gradescaleitem_lookup_static scale_unweighted 
             ON sg.[percent] BETWEEN scale_unweighted.min_cutoffpercentage AND scale_unweighted.max_cutoffpercentage
            AND CASE
                 WHEN sg.schoolid != 73253 THEN sg.gradescale_name
@@ -82,8 +79,8 @@ FROM
                 ,NULL AS potentialcrhrs_projected_s1
                 ,NULL AS earnedcrhrs_projected_s1
                 ,NULL AS weighted_points_projected_s1
-          FROM gabby.powerschool.final_grades_static gr 
-          LEFT JOIN gabby.powerschool.storedgrades sg 
+          FROM powerschool.final_grades_static gr 
+          LEFT JOIN powerschool.storedgrades sg 
              ON gr.studentid = sg.studentid
             AND gr.course_number = sg.course_number
             AND gr.academic_year = (LEFT(sg.termid, 2) + 1990)
@@ -111,8 +108,8 @@ FROM
                 ,gr.credit_hours AS potentialcrhrs_projected_s1
                 ,CASE WHEN gr.y1_grade_letter NOT LIKE 'F%' THEN gr.credit_hours ELSE 0 END AS earnedcrhrs_projected_s1
                 ,(gr.credit_hours * gr.y1_gpa_points) AS weighted_points_projected_s1
-          FROM gabby.powerschool.final_grades_static gr 
-          LEFT JOIN gabby.powerschool.storedgrades sg 
+          FROM powerschool.final_grades_static gr 
+          LEFT JOIN powerschool.storedgrades sg 
             ON gr.studentid = sg.studentid
            AND gr.course_number = sg.course_number
            AND gr.academic_year = (LEFT(sg.termid, 2) + 1990)
