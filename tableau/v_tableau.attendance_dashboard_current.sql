@@ -111,20 +111,20 @@ FROM
            ,CASE WHEN att.att_code = 'X' THEN 1 ELSE 0 END AS n_X
 
            ,CONVERT(VARCHAR(25),dt.alt_name) AS term     
-     FROM gabby.powerschool.cohort_identifiers_static co
-     LEFT JOIN gabby.powerschool.course_enrollments_static enr
+     FROM powerschool.cohort_identifiers_static co
+     LEFT JOIN powerschool.course_enrollments_static enr
        ON co.studentid = enr.studentid
       AND co.academic_year = enr.academic_year 
       AND enr.course_number = 'HR' 
       AND enr.rn_course_yr = 1
-     JOIN gabby.powerschool.ps_adaadm_daily_ctod mem
+     JOIN powerschool.ps_adaadm_daily_ctod mem
        ON co.studentid = mem.studentid
       AND co.schoolid = mem.schoolid
       AND mem.calendardate BETWEEN co.entrydate AND co.exitdate
       AND mem.calendardate <= CONVERT(DATE,GETDATE()) 
       AND mem.membershipvalue > 0
       AND mem.attendancevalue IS NOT NULL
-     LEFT JOIN gabby.powerschool.ps_attendance_daily att
+     LEFT JOIN powerschool.ps_attendance_daily att
        ON mem.studentid = att.studentid
       AND mem.calendardate = att.att_date
      LEFT JOIN gabby.reporting.reporting_terms dt 
