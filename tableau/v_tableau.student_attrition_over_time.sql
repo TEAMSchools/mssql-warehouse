@@ -56,9 +56,9 @@ FROM enrolled_oct1 y1
 JOIN attrition_dates d
   ON y1.academic_year = d.attrition_year
  AND d.date <= GETDATE()
-LEFT OUTER JOIN gabby.powerschool.students s
+LEFT JOIN gabby.powerschool.students s
   ON y1.student_number = s.student_number
-LEFT OUTER JOIN gabby.powerschool.cohort_identifiers_static y2
+LEFT JOIN gabby.powerschool.cohort_identifiers_static y2
   ON y1.student_number = y2.student_number
  AND y1.academic_year = (y2.academic_year - 1)
  AND DATEFROMPARTS(y2.academic_year, 10, 01) BETWEEN y2.entrydate AND y2.exitdate

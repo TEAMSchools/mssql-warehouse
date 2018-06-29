@@ -1,7 +1,7 @@
 USE [gabby];
 GO
 
-CREATE OR ALTER VIEW tableau.attendance_dashboard_archive AS
+CREATE OR ALTER VIEW tableau.attendance_dashboard AS
 
 SELECT 'kippcamden' AS [db_name]
       ,[academic_year]
@@ -55,7 +55,7 @@ SELECT 'kippcamden' AS [db_name]
       ,[teacher_name]
       ,[team]
       ,[term]
-FROM kippcamden.tableau.attendance_dashboard_archive
+FROM kippcamden.tableau.attendance_dashboard
 UNION ALL
 SELECT 'kippmiami' AS [db_name]
       ,[academic_year]
@@ -109,7 +109,7 @@ SELECT 'kippmiami' AS [db_name]
       ,[teacher_name]
       ,[team]
       ,[term]
-FROM kippmiami.tableau.attendance_dashboard_archive
+FROM kippmiami.tableau.attendance_dashboard
 UNION ALL
 SELECT 'kippnewark' AS [db_name]
       ,[academic_year]
@@ -163,4 +163,4 @@ SELECT 'kippnewark' AS [db_name]
       ,[teacher_name]
       ,[team]
       ,[term]
-FROM kippnewark.tableau.attendance_dashboard_archive;
+FROM kippnewark.tableau.attendance_dashboard;

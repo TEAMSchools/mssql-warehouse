@@ -97,7 +97,7 @@ LEFT JOIN gabby.powerschool.spenrollments_gen sp
  AND co.academic_year = sp.academic_year
  AND sp.programid = 5224
 JOIN gabby.reporting.reporting_term_map term
-  ON co.school_level = term.school_level
+  ON co.school_level = term.school_level COLLATE Latin1_General_BIN
  AND co.academic_year BETWEEN term.min_year AND term.max_year 
 JOIN gabby.lit.achieved_by_round_static achv
   ON co.student_number = achv.student_number

@@ -78,7 +78,7 @@ WITH roster AS (
              ,CONVERT(VARCHAR(250),con.emerg_phone_1) AS emerg1_phone
              ,CONVERT(VARCHAR(250),con.emerg_contact_2) AS emerg2_name      
              ,CONVERT(VARCHAR(250),con.emerg_phone_2) AS emerg2_phone            
-             ,CONVERT(VARCHAR(250),'Home') AS home_name           
+             ,CONVERT(VARCHAR(250),'Home') COLLATE Latin1_General_BIN AS home_name           
 
              ,CONVERT(VARCHAR(250),scf.mother_home_phone) AS parent1_home      
              ,CONVERT(VARCHAR(250),scf.motherdayphone) AS parent1_day
@@ -114,9 +114,9 @@ WITH roster AS (
              ,CONVERT(VARCHAR(250),suf.release_5_relation) AS release5_relation
              ,CONVERT(VARCHAR(250),suf.release_5_phone) AS release5_phone                      
 
-             ,CASE WHEN CONCAT(scf.mother_home_phone, suf.mother_cell, scf.motherdayphone)!= '' THEN CONVERT(VARCHAR(250),'Mother') END AS parent1_relation
-             ,CASE WHEN CONCAT(scf.father_home_phone, suf.father_cell, scf.fatherdayphone) != '' THEN CONVERT(VARCHAR(250),'Father') END AS parent2_relation
-             ,CASE WHEN CONCAT(con.doctor_name, con.doctor_phone) != '' THEN CONVERT(VARCHAR(250),'Doctor') END AS doctor_relation
+             ,CASE WHEN CONCAT(scf.mother_home_phone, suf.mother_cell, scf.motherdayphone)!= '' THEN CONVERT(VARCHAR(250),'Mother') END COLLATE Latin1_General_BIN AS parent1_relation
+             ,CASE WHEN CONCAT(scf.father_home_phone, suf.father_cell, scf.fatherdayphone) != '' THEN CONVERT(VARCHAR(250),'Father') END COLLATE Latin1_General_BIN AS parent2_relation
+             ,CASE WHEN CONCAT(con.doctor_name, con.doctor_phone) != '' THEN CONVERT(VARCHAR(250),'Doctor') END COLLATE Latin1_General_BIN AS doctor_relation
        FROM gabby.powerschool.students con      
        JOIN gabby.powerschool.studentcorefields scf
          ON con.dcid = scf.studentsdcid
@@ -829,7 +829,7 @@ FROM roster r
 LEFT OUTER JOIN grades gr
   ON r.student_number = gr.student_number
  AND r.academic_year = gr.academic_year
- AND r.reporting_term = gr.reporting_term
+ AND r.reporting_term COLLATE Latin1_General_BIN = gr.reporting_term
 
 UNION ALL
 --*/
@@ -851,7 +851,7 @@ SELECT r.studentid
       ,att.subdomain      
       ,NULL AS subject
       ,NULL AS course_name
-      ,att.att_code AS measure_name
+      ,att.att_code COLLATE Latin1_General_BIN AS measure_name
       ,att.att_counts AS measure_value
       ,NULL AS measure_date
       ,NULL AS performance_level
@@ -860,7 +860,7 @@ FROM roster r
 LEFT OUTER JOIN attendance att
   ON r.studentid = att.studentid
  AND r.academic_year = att.academic_year
- AND r.reporting_term = att.reporting_term
+ AND r.reporting_term COLLATE Latin1_General_BIN = att.reporting_term
 
 UNION ALL
 --*/
@@ -880,9 +880,9 @@ SELECT r.studentid
       ,r.reporting_term      
       ,'MODULES' AS domain
       ,cma.subdomain      
-      ,cma.subject_area AS subject
-      ,cma.title AS course_name
-      ,cma.standards AS measure_name
+      ,cma.subject_area COLLATE Latin1_General_BIN AS subject
+      ,cma.title COLLATE Latin1_General_BIN AS course_name
+      ,cma.standards COLLATE Latin1_General_BIN AS measure_name
       ,cma.percent_correct AS measure_value
       ,cma.measure_date
       ,cma.assessment_id AS performance_level
@@ -923,7 +923,7 @@ JOIN gpa
   ON r.student_number = gpa.student_number 
  AND r.schoolid = gpa.schoolid
  AND r.academic_year >= gpa.academic_year
- AND r.reporting_term = gpa.reporting_term
+ AND r.reporting_term COLLATE Latin1_General_BIN = gpa.reporting_term
  AND r.term_start_date <= CONVERT(DATE,GETDATE())
 
 UNION ALL
@@ -1005,10 +1005,10 @@ SELECT r.studentid
       ,r.term_name
       ,r.reporting_term      
       ,'STANDARDIZED TESTS' AS domain
-      ,std.test_name AS subdomain
-      ,std.subject AS subject
+      ,std.test_name COLLATE Latin1_General_BIN AS subdomain
+      ,std.subject COLLATE Latin1_General_BIN AS subject
       ,NULL AS course_name
-      ,CONVERT(VARCHAR(250),NEWID()) AS measure_name
+      ,CONVERT(VARCHAR(250),NEWID()) COLLATE Latin1_General_BIN AS measure_name
       ,std.test_scale_score AS measure_value
       ,std.test_date AS measure_date
       ,std.test_performance_level AS performance_level

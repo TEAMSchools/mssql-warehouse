@@ -1,6 +1,3 @@
-USE gabby
-GO
-
 CREATE OR ALTER VIEW tableau.attendance_dashboard AS
 
 SELECT academic_year
@@ -54,7 +51,7 @@ SELECT academic_year
       ,is_oss_running
       ,is_iss_running
       ,is_suspended_running
-FROM gabby.tableau.attendance_dashboard_current_static
+FROM tableau.attendance_dashboard_current_static
 
 UNION ALL
 
@@ -109,4 +106,4 @@ SELECT academic_year
       ,is_oss_running
       ,is_iss_running
       ,is_suspended_running
-FROM gabby.tableau.attendance_dashboard_archive
+FROM tableau.attendance_dashboard_archive

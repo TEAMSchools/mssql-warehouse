@@ -58,12 +58,12 @@ SELECT co.student_number
       ,ext.cps AS pct_prof_cps
       ,ext.parcc AS pct_prof_parcc       
 FROM gabby.powerschool.cohort_identifiers_static co
-JOIN gabby.parcc.summative_record_file_clean parcc
+JOIN gabby.parcc.summative_record_file parcc
   ON co.student_number = parcc.local_student_identifier
  AND co.academic_year = LEFT(parcc.assessment_year, 4)
 LEFT OUTER JOIN external_prof ext
   ON co.academic_year = ext.academic_year
- AND parcc.test_code = ext.test_code
+ AND parcc.test_code = ext.test_code COLLATE Latin1_General_BIN
 WHERE co.rn_year = 1
 
 UNION ALL
@@ -80,9 +80,9 @@ SELECT co.student_number
       ,co.lep_status
       ,co.lunchstatus      
       
-      ,asa.test_type
-      ,CONCAT(LEFT(asa.subject, 3), RIGHT(CONCAT('0', co.grade_level), 2)) AS test_code
-      ,asa.subject      
+      ,asa.test_type COLLATE Latin1_General_BIN AS test_type
+      ,CONCAT(LEFT(asa.subject, 3), RIGHT(CONCAT('0', co.grade_level), 2)) COLLATE Latin1_General_BIN AS test_code
+      ,asa.subject COLLATE Latin1_General_BIN AS subject
       ,asa.scaled_score
       ,CASE
         WHEN asa.performance_level = 'Advanced Proficient' THEN 5

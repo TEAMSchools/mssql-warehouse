@@ -67,11 +67,11 @@ LEFT OUTER JOIN gabby.powerschool.course_enrollments_static enr
 LEFT OUTER JOIN gabby.lexia.student_goals g
   ON co.student_number = g.student_number 
 LEFT OUTER JOIN prev_week_time pw
-  ON s.student_web_id = pw.username
+  ON s.student_web_id = pw.username COLLATE Latin1_General_BIN
  AND co.academic_year = pw.academic_year
  AND pw.rn = 1
 LEFT OUTER JOIN gabby.lexia.student_progress lex 
-  ON s.student_web_id = lex.username 
+  ON s.student_web_id = lex.username COLLATE Latin1_General_BIN
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.grade_level <= 8
   AND co.enroll_status = 0

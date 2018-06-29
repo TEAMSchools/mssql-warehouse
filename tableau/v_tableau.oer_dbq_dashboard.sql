@@ -169,7 +169,7 @@ JOIN gabby.powerschool.cohort_identifiers_static co
 LEFT JOIN enrollments enr WITH(NOLOCK)
   ON co.student_number = enr.student_number
  AND co.academic_year = enr.academic_year 
- AND w.course_number = enr.course_number 
+ AND w.course_number = enr.course_number COLLATE SQL_Latin1_General_CP1_CI_AS
  AND enr.rn = 1
 
 UNION ALL
@@ -244,5 +244,5 @@ FROM
 LEFT JOIN gabby.powerschool.course_enrollments_static enr
   ON sub.student_number = enr.student_number
  AND sub.academic_year = enr.academic_year
- AND sub.course_number = enr.course_number
+ AND sub.course_number = enr.course_number COLLATE SQL_Latin1_General_CP1_CI_AS
  AND enr.section_enroll_status = 0

@@ -55,7 +55,7 @@ JOIN gabby.illuminate_dna_assessments.agg_student_responses_all asr
 LEFT JOIN gabby.powerschool.course_enrollments_static enr
   ON co.student_number = enr.student_number
  AND co.academic_year = enr.academic_year
- AND asr.subject_area = enr.illuminate_subject
+ AND asr.subject_area = enr.illuminate_subject COLLATE SQL_Latin1_General_CP1_CI_AS
  AND enr.course_enroll_status = 0 
  AND enr.section_enroll_status = 0 
  AND enr.rn_illuminate_subject = 1

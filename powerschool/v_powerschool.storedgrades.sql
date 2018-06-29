@@ -46,6 +46,7 @@ SELECT 'kippcamden' AS [db_name]
       ,[teacher_name]
       ,[termbinsname]
       ,[termid]
+      ,[_line]
 FROM kippcamden.powerschool.storedgrades
 UNION ALL
 SELECT 'kippmiami' AS [db_name]
@@ -91,6 +92,7 @@ SELECT 'kippmiami' AS [db_name]
       ,[teacher_name]
       ,[termbinsname]
       ,[termid]
+      ,[_line]
 FROM kippmiami.powerschool.storedgrades
 UNION ALL
 SELECT 'kippnewark' AS [db_name]
@@ -136,4 +138,5 @@ SELECT 'kippnewark' AS [db_name]
       ,[teacher_name]
       ,[termbinsname]
       ,[termid]
+      ,[_line]
 FROM kippnewark.powerschool.storedgrades;
