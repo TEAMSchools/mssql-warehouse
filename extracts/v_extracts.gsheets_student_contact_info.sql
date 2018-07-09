@@ -45,6 +45,6 @@ SELECT co.student_number
 FROM gabby.powerschool.cohort_identifiers_static co
 LEFT JOIN gabby.powerschool.u_studentsuserfields suf
   ON co.students_dcid = suf.studentsdcid
-WHERE co.enroll_status = 0
-  AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-  AND co.rn_year = 1 
+WHERE co.enroll_status IN (0, -1)
+  AND co.academic_year = 2018 --gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+  AND co.rn_year = 1
