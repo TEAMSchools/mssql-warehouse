@@ -97,3 +97,5 @@ FROM scaffold d
 LEFT OUTER JOIN scaffold n
   ON d.df_employee_number = n.df_employee_number
  AND d.academic_year = (n.academic_year - 1)
+ WHERE d.job_title NOT IN ('Intern'
+                          ,'Security')
