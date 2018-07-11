@@ -139,10 +139,10 @@ FROM gabby.powerschool.cohort_identifiers_static co
 JOIN gabby.parcc.summative_record_file parcc
   ON co.student_number = parcc.local_student_identifier
  AND co.academic_year = parcc.academic_year
-LEFT OUTER JOIN external_prof ext
+LEFT JOIN external_prof ext
   ON co.academic_year = ext.academic_year
  AND parcc.test_code = ext.test_code
-LEFT OUTER JOIN promo
+LEFT JOIN promo
   ON co.student_number = promo.student_number
 LEFT JOIN ms_grad ms
   ON co.student_number = ms.student_number

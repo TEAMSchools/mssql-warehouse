@@ -26,10 +26,9 @@ SELECT co.state_studentnumber AS [State IDNumber]
       ,co.team AS [Homeroom]
       ,co.entrydate AS [Most-Recent Entry Date]
       ,co.exitdate AS [Most-Recent Exit Date]
-FROM gabby.powerschool.cohort_identifiers_static co
-LEFT JOIN gabby.powerschool.studentcorefields scf
+FROM kippcamden.powerschool.cohort_identifiers_static co
+LEFT JOIN kippcamden.powerschool.studentcorefields scf
   ON co.students_dcid = scf.studentsdcid
-LEFT JOIN gabby.powerschool.students s
+LEFT JOIN kippcamden.powerschool.students s
   ON co.studentid = s.id
 WHERE co.rn_year = 1
-  AND co.region = 'KCNA'
