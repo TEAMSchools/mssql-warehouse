@@ -1,18 +1,21 @@
-USE gabby
+USE gabby;
 GO
 
-CREATE OR ALTER FUNCTION utilities.STRIP_CHARACTERS(
-    @string NVARCHAR(MAX)
+CREATE OR ALTER FUNCTION utilities.STRIP_CHARACTERS (
+    @string           NVARCHAR(MAX)
    ,@match_expression VARCHAR(255)
-  )
-    RETURNS NVARCHAR(MAX)
-  AS
+)
+  RETURNS NVARCHAR(MAX)
+  WITH SCHEMABINDING
+AS
 
 BEGIN
-  SET @match_expression =  '%['+ @match_expression +']%'
+
+  SET @match_expression = '%[' + @match_expression + ']%';
 
   WHILE PATINDEX(@match_expression, @string) > 0
-    SET @string = STUFF(@string, PATINDEX(@match_expression, @String), 1, '')
+  SET @string = STUFF(@string, PATINDEX(@match_expression, @String), 1, '');
 
-  RETURN @string
-END
+  RETURN @string;
+
+END;
