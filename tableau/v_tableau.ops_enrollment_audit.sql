@@ -78,6 +78,7 @@ WITH caredox_enrollment AS (
 
 ,all_data AS (
   SELECT co.student_number
+        ,co.newark_enrollment_number
         ,co.lastfirst
         ,co.academic_year
         ,co.region
@@ -185,6 +186,7 @@ WITH caredox_enrollment AS (
 
 
 SELECT a.student_number
+      ,a.newark_enrollment_number
       ,a.lastfirst
       ,a.academic_year
       ,a.region
