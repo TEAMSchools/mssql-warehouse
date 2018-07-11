@@ -72,7 +72,7 @@ WITH clean_data AS (
        FROM
            ( 
             SELECT 194 AS repository_id                  
-                  ,2017 AS academic_year
+                  ,gabby.utilities.GLOBAL_ACADEMIC_YEAR() AS academic_year
                   ,'Q1' AS test_round
                   ,repo.repository_row_id
                   ,repo.student_id
@@ -96,7 +96,7 @@ WITH clean_data AS (
             UNION ALL
 
             SELECT 195 AS repository_id                  
-                  ,2017 AS academic_year
+                  ,gabby.utilities.GLOBAL_ACADEMIC_YEAR() AS academic_year
                   ,'Q2' AS test_round
                   ,repo.repository_row_id
                   ,repo.student_id
@@ -120,7 +120,7 @@ WITH clean_data AS (
             UNION ALL
 
             SELECT 196 AS repository_id                  
-                  ,2017 AS academic_year
+                  ,gabby.utilities.GLOBAL_ACADEMIC_YEAR() AS academic_year
                   ,'Q3' AS test_round
                   ,repo.repository_row_id
                   ,repo.student_id
@@ -144,7 +144,7 @@ WITH clean_data AS (
             UNION ALL
 
             SELECT 193 AS repository_id                  
-                  ,2017 AS academic_year
+                  ,gabby.utilities.GLOBAL_ACADEMIC_YEAR() AS academic_year
                   ,'Q4' AS test_round                  
                   ,repo.repository_row_id
                   ,repo.student_id
