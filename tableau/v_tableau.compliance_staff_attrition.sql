@@ -7,13 +7,13 @@ WITH roster AS (
   SELECT adp_associate_id        
         ,preferred_first_name
         ,preferred_last_name
-        ,legal_entity_name AS entity
-        ,primary_site AS location
+        ,legal_entity_name
+        ,primary_site
         ,COALESCE(rehire_date,original_hire_date) AS position_start_date
         ,termination_date
         ,status_reason        
         ,job_family
-        ,primary_job AS job_title
+        ,primary_job
         ,gabby.utilities.DATE_TO_SY(COALESCE(rehire_date,original_hire_date)) AS start_academic_year
         ,gabby.utilities.DATE_TO_SY(termination_date) AS end_academic_year
         ,df_employee_number
@@ -30,9 +30,9 @@ WITH roster AS (
   SELECT df_employee_number       
         ,preferred_first_name
         ,preferred_last_name
-        ,entity
-        ,job_title
-        ,location
+        ,legal_entity_name
+        ,primary_job
+        ,primary_site
         ,job_family
         ,academic_year
         ,termination_date
@@ -42,11 +42,11 @@ WITH roster AS (
   FROM
       (
        SELECT r.df_employee_number
-             ,r.entity
+             ,r.legal_entity_name
              ,r.preferred_first_name
              ,r.preferred_last_name                    
-             ,r.job_title
-             ,r.location
+             ,r.primary_job
+             ,r.primary_site
              ,r.job_family
              ,CASE WHEN r.end_academic_year =  y.academic_year THEN r.termination_date END AS termination_date
       
@@ -71,9 +71,9 @@ WITH roster AS (
 SELECT d.df_employee_number    
       ,d.preferred_first_name
       ,d.preferred_last_name
-      ,d.job_title
-      ,d.location
-      ,d.entity
+      ,d.primary_job
+      ,d.primary_site
+      ,d.legal_entity_name
       ,d.job_family
       ,d.academic_year      
       ,d.academic_year_entrydate      
@@ -97,5 +97,5 @@ FROM scaffold d
 LEFT OUTER JOIN scaffold n
   ON d.df_employee_number = n.df_employee_number
  AND d.academic_year = (n.academic_year - 1)
- WHERE d.job_title NOT IN ('Intern'
+ WHERE d.primary_job NOT IN ('Intern'
                           ,'Security')
