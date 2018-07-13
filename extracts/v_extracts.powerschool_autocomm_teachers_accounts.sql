@@ -15,6 +15,7 @@ SELECT sub.teachernumber
       ,CASE WHEN sub.status = 1 THEN 1 ELSE 0 END AS teacherldapenabled
       ,CASE WHEN sub.status = 1 THEN 1 ELSE 0 END AS adminldapenabled      
       ,CASE WHEN sub.status = 1 THEN 1 ELSE 0 END AS ptaccess            
+      ,sub.legal_entity_name
 FROM
     (
      SELECT COALESCE(psid.ps_teachernumber
@@ -23,6 +24,7 @@ FROM
            ,df.preferred_first_name AS first_name
            ,df.preferred_last_name AS last_name
            ,df.primary_site_schoolid AS homeschoolid
+           ,df.legal_entity_name
            
            ,LOWER(dir.samaccountname) AS loginid
            ,LOWER(dir.samaccountname) AS teacherloginid

@@ -11,6 +11,7 @@ SELECT co.student_number
       ,co.student_web_password AS web_password
       ,CASE WHEN co.enroll_status = 0 THEN 1 ELSE 0 END AS allowwebaccess      
       ,co.team
+      ,co.db_name
 FROM gabby.powerschool.cohort_identifiers_static co
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.rn_year = 1
