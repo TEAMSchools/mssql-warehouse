@@ -4,6 +4,29 @@ GO
 CREATE OR ALTER VIEW lit.illuminate_test_events AS
 
 WITH clean_data AS (
+  SELECT local_student_id
+        ,date_administered
+        ,about_the_text
+        ,beyond_the_text
+        ,within_the_text
+        ,accuracy
+        ,fluency
+        ,reading_rate_wpm
+        ,instructional_level_tested
+        ,rate_proficiency
+        ,key_lever
+        ,fiction_nonfiction
+        ,NULL AS test_administered_by
+        ,academic_year        
+        ,unique_id
+        ,test_round
+        ,status
+        ,achieved_independent_level
+  FROM gabby.lit.illuminate_test_events_current
+  WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+
+  UNION ALL
+  
   SELECT CONVERT(INT,student_number) AS student_number
         ,date_administered
         ,CONVERT(INT,about_the_text) AS about_the_text
@@ -24,155 +47,10 @@ WITH clean_data AS (
         ,CASE WHEN status != '' THEN CONVERT(VARCHAR(25),status) END AS status
         ,CASE WHEN achieved_independent_level != '' THEN CONVERT(VARCHAR(1),achieved_independent_level) END AS achieved_independent_level
   FROM gabby.lit.illuminate_test_events_archive
-  
-  UNION ALL
-
-  SELECT CONVERT(INT,s.local_student_id) AS local_student_id
-        ,sub.date_administered
-        ,sub.about_the_text
-        ,sub.beyond_the_text
-        ,sub.within_the_text
-        ,sub.accuracy
-        ,sub.fluency
-        ,sub.reading_rate_wpm
-        ,sub.instructional_level_tested
-        ,sub.rate_proficiency
-        ,sub.key_lever
-        ,sub.fiction_nonfiction
-        ,NULL AS test_administered_by
-        ,sub.academic_year        
-        ,sub.unique_id
-        ,sub.test_round
-        ,sub.status
-        ,sub.achieved_independent_level
-  FROM
-      (
-       SELECT student_id 
-             ,academic_year        
-             ,test_round
-             ,CONVERT(DATE,date_administered) AS date_administered
-             ,CONVERT(FLOAT,about_the_text) AS about_the_text
-             ,CONVERT(FLOAT,beyond_the_text) AS beyond_the_text
-             ,CONVERT(FLOAT,within_the_text) AS within_the_text
-             ,CONVERT(FLOAT,accuracy) AS accuracy
-             ,CONVERT(FLOAT,fluency_score) AS fluency
-             ,CONVERT(FLOAT,reading_rate_wpm) AS reading_rate_wpm        
-             ,CONVERT(VARCHAR(1),reading_level) AS instructional_level_tested
-             ,CONVERT(VARCHAR(25),rate_proficiency) AS rate_proficiency
-             ,CONVERT(VARCHAR(25),key_lever) AS key_lever
-             ,CONVERT(VARCHAR(5),fiction_nonfiction) AS fiction_nonfiction
-             --,CONVERT(VARCHAR(125),test_administered_by) AS test_administered_by             
-             ,CONCAT('IL', repository_id, repository_row_id) AS unique_id                     
-             ,CASE
-               WHEN LTRIM(RTRIM([status])) LIKE '%Did Not Achieve%' THEN 'Did Not Achieve'
-               WHEN LTRIM(RTRIM([status])) LIKE '%Achieved%' THEN 'Achieved'
-               ELSE CONVERT(VARCHAR(25),LTRIM(RTRIM([status])))
-              END AS [status]
-             ,CASE WHEN [status] LIKE '%Achieved%' THEN CONVERT(VARCHAR(1),reading_level) END AS achieved_independent_level
-       FROM
-           ( 
-            SELECT 194 AS repository_id                  
-                  ,gabby.utilities.GLOBAL_ACADEMIC_YEAR() AS academic_year
-                  ,'Q1' AS test_round
-                  ,repo.repository_row_id
-                  ,repo.student_id
-                  ,repo.field_about_the_text AS about_the_text
-                  ,repo.field_accuracy AS accuracy
-                  ,repo.field_beyond_the_text AS beyond_the_text
-                  ,repo.field_comprehension_1 AS comprehension
-                  ,repo.field_date_administered AS date_administered
-                  ,repo.field_fictionnonfiction AS fiction_nonfiction
-                  ,repo.field_fluency_score AS fluency_score
-                  ,repo.field_key_lever AS key_lever
-                  ,repo.field_rate_proficiency AS rate_proficiency
-                  ,repo.field_reading_level AS reading_level
-                  ,repo.field_words_per_minute AS reading_rate_wpm
-                  ,repo.field_status AS status
-                  --,repo.field_test_administered_by AS test_administered_by
-                  ,repo.field_comprehension AS within_the_text
-                  ,repo.field_writing_optional AS writing
-            FROM [gabby].[illuminate_dna_repositories].[repository_194] repo       
-
-            UNION ALL
-
-            SELECT 195 AS repository_id                  
-                  ,gabby.utilities.GLOBAL_ACADEMIC_YEAR() AS academic_year
-                  ,'Q2' AS test_round
-                  ,repo.repository_row_id
-                  ,repo.student_id
-                  ,repo.field_about_the_text AS about_the_text
-                  ,repo.field_accuracy AS accuracy
-                  ,repo.field_beyond_the_text AS beyond_the_text
-                  ,repo.field_comprehension_1 AS comprehension
-                  ,repo.field_date_administered AS date_administered
-                  ,repo.field_fictionnonfiction AS fiction_nonfiction
-                  ,repo.field_fluency_score AS fluency_score
-                  ,repo.field_key_lever AS key_lever
-                  ,repo.field_rate_proficiency AS rate_proficiency
-                  ,repo.field_reading_level AS reading_level
-                  ,repo.field_words_per_minute AS reading_rate_wpm
-                  ,repo.field_status AS status
-                  --,repo.field_test_administered_by AS test_administered_by
-                  ,repo.field_within_the_text AS within_the_text
-                  ,repo.field_writing_optional AS writing
-            FROM [gabby].[illuminate_dna_repositories].[repository_195] repo       
-
-            UNION ALL
-
-            SELECT 196 AS repository_id                  
-                  ,gabby.utilities.GLOBAL_ACADEMIC_YEAR() AS academic_year
-                  ,'Q3' AS test_round
-                  ,repo.repository_row_id
-                  ,repo.student_id
-                  ,repo.field_about_the_text AS about_the_text
-                  ,repo.field_accuracy AS accuracy
-                  ,repo.field_beyond_the_text AS beyond_the_text
-                  ,repo.field_comprehension_2 AS comprehension
-                  ,repo.field_date_administered AS date_administered
-                  ,repo.field_fictionnonfiction AS fiction_nonfiction
-                  ,repo.field_fluency_score AS fluency_score
-                  ,repo.field_key_lever AS key_lever
-                  ,repo.field_rate_proficiency AS rate_proficiency
-                  ,repo.field_reading_level AS reading_level
-                  ,repo.field_words_per_minute AS reading_rate_wpm
-                  ,repo.field_status AS status
-                  --,repo.field_test_administered_by AS test_administered_by
-                  ,repo.field_within_the_text AS within_the_text
-                  ,repo.field_writing_optional AS writing
-            FROM [gabby].[illuminate_dna_repositories].[repository_196] repo       
-
-            UNION ALL
-
-            SELECT 193 AS repository_id                  
-                  ,gabby.utilities.GLOBAL_ACADEMIC_YEAR() AS academic_year
-                  ,'Q4' AS test_round                  
-                  ,repo.repository_row_id
-                  ,repo.student_id
-                  ,repo.field_about_the_text AS about_the_text
-                  ,repo.field_accuracy AS accuracy
-                  ,repo.field_beyond_the_text AS beyond_the_text
-                  ,repo.field_comprehension_1 AS comprehension
-                  ,repo.field_date_administered_1 AS date_administered
-                  ,repo.field_fictionnonfiction AS fiction_nonfiction
-                  ,repo.field_fluency_score AS fluency_score
-                  ,repo.field_key_lever AS key_lever
-                  ,repo.field_rate_proficiency AS rate_proficiency
-                  ,repo.field_reading_level AS reading_level
-                  ,repo.field_words_per_minute AS reading_rate_wpm
-                  ,repo.field_status AS status
-                  --,repo.field_test_administered_by AS test_administered_by
-                  ,repo.field_within_the_text AS within_the_text
-                  ,repo.field_writing_optional AS writing
-            FROM [gabby].[illuminate_dna_repositories].[repository_193] repo       
-           ) sub
-       WHERE CONCAT(repository_id, '_', repository_row_id) IN (SELECT CONCAT(repository_id, '_', repository_row_id) FROM gabby.illuminate_dna_repositories.repository_row_ids)
-      ) sub
-  JOIN gabby.illuminate_public.students s
-    ON sub.student_id = s.student_id
  )
 
 SELECT cd.unique_id
-      ,cd.student_number
+      ,cd.local_student_id AS student_number
       ,cd.academic_year
       ,cd.test_round
       ,cd.date_administered
