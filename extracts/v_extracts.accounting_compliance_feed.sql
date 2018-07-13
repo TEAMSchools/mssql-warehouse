@@ -5,28 +5,19 @@ GO
 
 WITH s AS
 (
+SELECT *
+FROM
+(
 SELECT number
-      ,last_status_or_salary_change
-      ,base_salary_curr
-      ,CASE WHEN number_prev != number THEN NULL ELSE base_salary_prev END AS base_salary_prev
-      ,status_curr
-      ,CASE WHEN number_prev != number THEN NULL ELSE status_prev END AS status_prev
-FROM
-
-(SELECT *
-      ,LEAD(base_salary_curr,1,0) OVER (ORDER BY number, rn_curr) AS base_salary_prev
-      ,LEAD(status_curr,1,0) OVER (ORDER BY number, rn_curr) AS status_prev
-      ,LEAD(number,1,0) OVER (ORDER BY number, rn_curr) AS number_prev
-FROM
-
-(SELECT number
        ,effective_start AS last_status_or_salary_change
        ,base_salary AS base_salary_curr
        ,status AS status_curr
-       ,ROW_NUMBER() OVER(
-            partition by number ORDER BY effective_start DESC) AS rn_curr
-FROM dayforce.employee_status) sub
+       ,LAG(base_salary,1,0) OVER(partition by number ORDER BY effective_start) AS base_salary_prev
+      ,LAG(status,1,0) OVER(partition by number ORDER BY effective_start) AS status_prev
+       ,ROW_NUMBER() OVER(partition by number ORDER BY effective_start DESC) AS rn_curr
+FROM dayforce.employee_status
 ) sub
+
 WHERE rn_curr = 1
 )
 
