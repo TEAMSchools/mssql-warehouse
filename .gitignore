@@ -7,4 +7,4 @@ njsmart/adhoc/backfill missing local_student_id.sql
 njsmart/adhoc/backfill missing state_student_id on name.sql
 njsmart/adhoc/backfill missing state_student_id.sql
 njsmart/adhoc/correct invalid local_student_id.sql
-powerschool/deploy
+utilities/deploy
