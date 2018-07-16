@@ -178,6 +178,7 @@ WITH act AS (
         ,d.academic_year AS denominator_academic_year
       
         ,CASE 
+          WHEN d.enroll_status = 3 THEN 0.0
           WHEN d.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() AND n.student_number IS NULL THEN 1.0 
           WHEN d.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() AND CONVERT(DATE,GETDATE()) >= d.exitdate THEN 1.0          
           ELSE 0.0 
@@ -188,6 +189,7 @@ WITH act AS (
              ,academic_year
              ,entrydate
              ,exitdate
+             ,enroll_status
        FROM gabby.powerschool.cohort_identifiers_static
        WHERE DATEFROMPARTS(academic_year, 10, 1) BETWEEN entrydate AND exitdate
       ) d
@@ -216,8 +218,9 @@ WITH act AS (
              ,is_attrition
        FROM gabby.tableau.compliance_staff_attrition
        WHERE is_denominator = 1
-      ) sub
-  WHERE reporting_schoolid IS NOT NULL
+         AND legal_entity_name IN ('TEAM Academy Charter Schools', 'KIPP Cooper Norcross Academy')
+         AND primary_site_reporting_schoolid != 0
+      ) sub  
   GROUP BY academic_year
           ,ROLLUP(school_level, region, reporting_schoolid)
  )
