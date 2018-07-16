@@ -205,31 +205,13 @@ WITH act AS (
         ,AVG(CONVERT(FLOAT,is_attrition)) AS pct_attrition
   FROM
       (
-       SELECT location
+       SELECT primary_site
+             ,primary_site_reporting_schoolid AS reporting_schoolid
              ,CASE
-               WHEN location = 'Rise Academy' THEN 73252
-               WHEN location = 'Newark Collegiate Academy' THEN 73253
-               WHEN location = 'SPARK Academy' THEN 73254
-               WHEN location = 'THRIVE Academy' THEN 73255
-               WHEN location = 'Seek Academy' THEN 73256
-               WHEN location = 'Life Academy' THEN 73257
-               WHEN location = 'Pathways' THEN 732574573
-               WHEN location = 'Bold Academy' THEN 73258
-               WHEN location = 'Lanning Square Primary' THEN 179901
-               WHEN location = 'Whittier Elementary' THEN 1799015075
-               WHEN location = 'Lanning Square MS' THEN 179902
-               WHEN location = 'Whittier Middle' THEN 179903
-               WHEN location = 'TEAM Academy' THEN 133570965
-              END AS reporting_schoolid
-             ,CASE
-               WHEN location IN ('Rise Academy','Newark Collegiate Academy','SPARK Academy','THRIVE Academy','Seek Academy','Life Academy','Pathways','Bold Academy','TEAM Academy') THEN 'TEAM'
-               WHEN location IN ('Lanning Square Primary','Whittier Elementary','Lanning Square MS','Whittier Middle') THEN 'KCNA'               
+               WHEN legal_entity_name = 'TEAM Academy Charter Schools' THEN 'TEAM'
+               WHEN legal_entity_name = 'KIPP Cooper Norcross Academy' THEN 'KCNA'
               END AS region
-             ,CASE
-               WHEN location IN ('SPARK Academy','THRIVE Academy','Seek Academy','Life Academy','Pathways','Lanning Square Primary','Whittier Elementary') THEN 'ES'
-               WHEN location IN ('TEAM Academy','Rise Academy','Bold Academy','Lanning Square MS','Whittier Middle') THEN 'MS'
-               WHEN location IN ('Newark Collegiate Academy') THEN 'HS'
-              END AS school_level
+             ,primary_site_school_level AS school_level
              ,academic_year
              ,is_attrition
        FROM gabby.tableau.compliance_staff_attrition
