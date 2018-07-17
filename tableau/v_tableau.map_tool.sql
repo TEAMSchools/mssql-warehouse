@@ -33,7 +33,7 @@ WITH map_long AS (
         ,map.ritto_reading_score AS lexile_score
         ,map.test_duration_minutes
   FROM gabby.nwea.best_baseline base
-  LEFT OUTER JOIN gabby.nwea.assessment_result_identifiers map
+  LEFT JOIN gabby.nwea.assessment_result_identifiers map
     ON base.student_number = map.student_id
    AND base.academic_year = map.academic_year
    AND base.measurementscale = map.measurement_scale
@@ -93,20 +93,20 @@ SELECT r.academic_year
                           ,map_long.term
                           ,map_long.measurementscale) AS median_pct
 FROM gabby.powerschool.cohort_identifiers_static r
-LEFT OUTER JOIN map_long
+LEFT JOIN map_long
   ON r.student_number = map_long.student_number
  AND r.academic_year = map_long.academic_year      
-LEFT OUTER JOIN gabby.nwea.percentile_norms_dense pct50
+LEFT JOIN gabby.nwea.percentile_norms_dense pct50
   ON r.grade_level = pct50.grade_level
  AND CASE WHEN map_long.term = 'Baseline' THEN 'Fall' ELSE map_long.term END = pct50.term
  AND map_long.measurementscale = pct50.measurementscale
  AND pct50.testpercentile = 50
-LEFT OUTER JOIN gabby.nwea.percentile_norms_dense pct75
+LEFT JOIN gabby.nwea.percentile_norms_dense pct75
   ON r.grade_level = pct75.grade_level
  AND CASE WHEN map_long.term = 'Baseline' THEN 'Fall' ELSE map_long.term END = pct75.term
  AND map_long.measurementscale = pct75.measurementscale
  AND pct75.testpercentile = 75
-LEFT OUTER JOIN gabby.nwea.learning_continuum_goals domain
+LEFT JOIN gabby.nwea.learning_continuum_goals domain
   ON r.student_number = domain.student_number
  AND map_long.test_id = domain.test_id
 WHERE r.academic_year >= 2008 /* first year of MAP data */
