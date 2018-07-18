@@ -9,7 +9,7 @@ SELECT co.state_studentnumber AS [State IDNumber]
       ,co.middle_name AS [Middle Name]
       ,co.last_name AS [Last Name]
       ,co.dob AS [Date Of Birth]
-      ,co.schoolid AS [School Code]
+      ,co.reporting_schoolid AS [School Code]
       ,co.school_name AS [Current School Name]
       ,co.gender AS [Gender]
       ,co.grade_level AS [Grade Level]
@@ -26,6 +26,7 @@ SELECT co.state_studentnumber AS [State IDNumber]
       ,co.team AS [Homeroom]
       ,co.entrydate AS [Most-Recent Entry Date]
       ,co.exitdate AS [Most-Recent Exit Date]
+      ,co.academic_year AS [School Year]
 FROM kippcamden.powerschool.cohort_identifiers_static co
 LEFT JOIN kippcamden.powerschool.studentcorefields scf
   ON co.students_dcid = scf.studentsdcid

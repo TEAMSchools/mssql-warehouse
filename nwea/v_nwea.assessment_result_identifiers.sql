@@ -370,7 +370,7 @@ FROM
                   WHEN ritto_reading_score IN ('BR','<100') THEN 0
                   ELSE CONVERT(FLOAT,ritto_reading_score) 
                  END AS ritto_reading_score
-          FROM gabby.nwea.assessmentresult WITH(FORCESEEK)
+          FROM gabby.nwea.assessmentresult
          ) sub
      JOIN gabby.powerschool.cohort_identifiers_static co
        ON sub.student_id = co.student_number
