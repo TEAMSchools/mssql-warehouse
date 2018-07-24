@@ -3,15 +3,16 @@ GO
 
 CREATE OR ALTER VIEW tableau.assessment_dashboard AS
 
-SELECT co.reporting_schoolid AS schoolid
+SELECT co.student_number
+      ,co.lastfirst
       ,co.academic_year
+      ,co.reporting_schoolid AS schoolid     
+      ,co.region
       ,co.grade_level
       ,co.team      
-      ,co.student_number
-      ,co.lastfirst
       ,co.iep_status
       ,co.lep_status
-      ,co.enroll_status                    
+      ,co.enroll_status
 
       ,asr.assessment_id
       ,asr.title
