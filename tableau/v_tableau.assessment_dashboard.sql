@@ -10,9 +10,12 @@ SELECT co.student_number
       ,co.region
       ,co.grade_level
       ,co.team      
+      ,co.enroll_status
+      ,co.cohort
       ,co.iep_status
       ,co.lep_status
-      ,co.enroll_status
+      ,co.c_504_status
+      ,CASE WHEN co.reporting_schoolid LIKE '%4573' OR co.reporting_schoolid LIKE '%5074' THEN 1 ELSE 0 END AS is_pathways
 
       ,asr.assessment_id
       ,asr.title

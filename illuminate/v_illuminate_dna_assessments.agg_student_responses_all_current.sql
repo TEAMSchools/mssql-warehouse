@@ -128,8 +128,8 @@ WITH responses_long AS (
         ,standard_code
         ,standard_description
         ,domain_description
-        ,CONCAT(subject_area, ' - ', module_number, ' - ', module_type, ' - ', academic_year, '-', (academic_year + 1)) AS title
-
+        
+        ,MIN(title) AS title
         ,MIN(assessment_id) AS assessment_id
         ,MIN(administered_at) AS administered_at
         ,MIN(performance_band_set_id) AS performance_band_set_id
@@ -165,8 +165,8 @@ WITH responses_long AS (
         ,standard_code
         ,standard_description
         ,domain_description
-        ,title
         
+        ,title        
         ,assessment_id  
         ,administered_at
         ,performance_band_set_id        
