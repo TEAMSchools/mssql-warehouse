@@ -70,7 +70,7 @@ WITH caredox_enrollment AS (
                   ,CONVERT(DATETIME,REPLACE(timestamp, ' at ', ' ')) AS verification_date
             FROM gabby.enrollment.residency_verification
             WHERE ISNUMERIC(subject_line) = 1
-              AND CONVERT(DATETIME,REPLACE(timestamp, ' at ', ' ')) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1, 5, 1)
+              AND CONVERT(DATETIME,REPLACE(timestamp, ' at ', ' ')) >= DATEFROMPARTS(CASE WHEN DATEPART(MONTH, GETDATE()) >= 5 THEN DATEPART(YEAR, GETDATE()) ELSE DATEPART(YEAR, GETDATE()) - 1 END, 5, 1)
            ) sub
       ) sub
   WHERE rn_recent = 1
