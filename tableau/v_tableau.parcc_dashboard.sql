@@ -41,7 +41,9 @@ SELECT co.student_number
       ,co.enroll_status
       ,co.iep_status
       ,co.lep_status
-      ,co.lunchstatus      
+      ,co.lunchstatus  
+      ,co.ethnicity
+      ,co.gender    
       
       ,'PARCC' AS test_type
       ,parcc.test_code
@@ -79,6 +81,8 @@ SELECT co.student_number
       ,co.iep_status
       ,co.lep_status
       ,co.lunchstatus      
+      ,co.ethnicity
+      ,co.gender
       
       ,asa.test_type COLLATE Latin1_General_BIN AS test_type
       ,CONCAT(LEFT(asa.subject, 3), RIGHT(CONCAT('0', co.grade_level), 2)) COLLATE Latin1_General_BIN AS test_code
