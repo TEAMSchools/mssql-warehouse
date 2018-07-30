@@ -52,7 +52,7 @@ SELECT co.student_number
 	     ,co.lunchstatus
       ,co.iep_status
       ,co.specialed_classification
-      ,co.lep_status
+      ,ISNULL(co.lep_status, 0) AS lep_status
       ,co.enroll_status
       ,COUNT(co.student_number) OVER(PARTITION BY co.schoolid, co.academic_year) AS n_students
       
@@ -66,8 +66,9 @@ SELECT co.student_number
       ,sub.n_att          
       ,sub.n_mem_ytd  
 FROM gabby.powerschool.cohort_identifiers_static co
-LEFT OUTER JOIN gabby.powerschool.s_nj_stu_x nj
+LEFT JOIN gabby.powerschool.s_nj_stu_x nj
   ON co.students_dcid = nj.studentsdcid
+ AND co.db_name = co.db_name
 JOIN schooldays d
   ON co.schoolid = d.schoolid
  AND co.academic_year = d.academic_year
