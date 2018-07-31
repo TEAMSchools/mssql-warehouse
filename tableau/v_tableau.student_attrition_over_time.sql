@@ -16,7 +16,7 @@ WITH enrolled_oct1 AS (
         ,enroll_status
   FROM gabby.powerschool.cohort_identifiers_static
   WHERE DATEFROMPARTS(academic_year, 10, 01) BETWEEN entrydate AND exitdate
-    AND academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
+    AND academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 2)
  )
 
 ,attrition_dates AS (
