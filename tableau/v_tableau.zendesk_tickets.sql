@@ -42,6 +42,8 @@ SELECT t.id AS ticket_id
 	     ,c.comments_count	       
       
       ,slv.updated AS solved_timestamp            
+
+      ,tbh.total_bh_minutes
 FROM gabby.zendesk.ticket t
 LEFT JOIN gabby.zendesk.[user] s
   ON t.submitter_id = s.id
@@ -53,4 +55,6 @@ LEFT JOIN comments_count c
   ON t.id = c.ticket_id
 LEFT JOIN solved slv
   ON t.id = slv.ticket_id
+LEFT JOIN gabby. zendesk.ticket_business_hours tbh
+  ON t.id = tbh.ticket_id
 WHERE t.status != 'deleted'

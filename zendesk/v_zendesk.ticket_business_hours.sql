@@ -43,26 +43,10 @@ WITH solved AS (
 
 SELECT ticket_id
       ,SUM(bh_day_minutes) AS total_bh_minutes
-
-      --,MAX(created_timestamp) AS created_timestamp
-      --,MAX(solved_timestamp) AS solved_timestamp
-      --,MAX(created_outside_bh) AS created_outside_bh
-      --,MAX(solved_outside_bh) AS solved_outside_bh
-      --,MIN(bh_day_start_timestamp) AS min_bh_day_start_timestamp
-      --,MAX(bh_day_end_timestamp) AS max_bh_day_end_timestamp            
-      --,SUM(bh_day_minutes) / 60 AS total_bh_hours
-      --,SUM(bh_day_minutes) % 60 AS total_bh_hours_remainder
 FROM
     (
      SELECT ticket_id      
-           ,DATEDIFF(MINUTE, bh_day_start_timestamp, bh_day_end_timestamp) AS bh_day_minutes
-           
-           --,created_timestamp
-           --,solved_timestamp           
-           --,bh_day_start_timestamp
-           --,bh_day_end_timestamp
-           --,created_outside_bh
-           --,solved_outside_bh           
+           ,DATEDIFF(MINUTE, bh_day_start_timestamp, bh_day_end_timestamp) AS bh_day_minutes          
      FROM
          (
           SELECT ticket_id
@@ -76,12 +60,6 @@ FROM
                   WHEN solved_timestamp BETWEEN bh_start_timestamp AND bh_end_timestamp THEN solved_timestamp                   
                   WHEN solved_timestamp > bh_end_timestamp THEN bh_end_timestamp                  
                  END AS bh_day_end_timestamp
-
-                --,dw_numeric
-                --,created_timestamp
-                --,solved_timestamp
-                --,created_outside_bh
-                --,solved_outside_bh                
           FROM
               (
                SELECT td.ticket_id
@@ -90,18 +68,6 @@ FROM
                      
                      ,DATETIME2FROMPARTS(rd.year_part, rd.month_part, rd.day_part, bh.start_hour, 0, 0, 0, 0) AS bh_start_timestamp
                      ,DATETIME2FROMPARTS(rd.year_part, rd.month_part, rd.day_part, bh.end_hour, 0, 0, 0, 0) AS bh_end_timestamp
-
-                     --,rd.dw_numeric
-                     --,CASE 
-                     --  WHEN bh.dw_numeric IS NULL THEN 1
-                     --  WHEN DATEPART(HOUR,td.created_timestamp) BETWEEN bh.start_hour AND (bh.end_hour - 1) THEN 0                       
-                     --  ELSE 1
-                     -- END AS created_outside_bh
-                     --,CASE 
-                     --  WHEN bh.dw_numeric IS NULL THEN 1
-                     --  WHEN DATEPART(HOUR,td.solved_timestamp) BETWEEN bh.start_hour AND (bh.end_hour - 1) THEN 0
-                     --  ELSE 1
-                     -- END AS solved_outside_bh                     
                FROM ticket_dates td
                INNER JOIN gabby.utilities.reporting_days rd
                   ON rd.date BETWEEN CONVERT(DATE,td.created_timestamp) AND CONVERT(DATE,td.solved_timestamp)
