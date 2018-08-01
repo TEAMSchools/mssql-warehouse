@@ -1,6 +1,6 @@
 USE gabby
 GO
- 
+
 CREATE OR ALTER VIEW dayforce.staff_roster AS
 
 WITH clean_people AS (
@@ -120,9 +120,9 @@ SELECT c.df_employee_number
         WHEN c.primary_site = 'KIPP THRIVE Academy' THEN 73255
         WHEN c.primary_site = 'KIPP Whittier Middle' THEN 179903
         WHEN c.primary_site = 'KIPP Whittier Elementary' THEN 179901
-        WHEN c.primary_site = 'KIPP Sunrise Academy' THEN 30132008        
+        WHEN c.primary_site = 'KIPP Sunrise Academy' THEN 30200801        
        END AS primary_site_schoolid
-      ,CASE        
+      ,CASE
         WHEN c.primary_site = 'Room 9 - 60 Park Pl' THEN 0
         WHEN c.primary_site = 'Room 10 - 740 Chestnut St' THEN 0
         WHEN c.primary_site = 'Room 11 - 6745 NW 23rd Ave' THEN 0        
@@ -142,9 +142,9 @@ SELECT c.df_employee_number
         WHEN c.primary_site = 'KIPP THRIVE Academy' THEN 73255
         WHEN c.primary_site = 'KIPP Whittier Middle' THEN 179903
         WHEN c.primary_site = 'KIPP Whittier Elementary' THEN 1799015075
-        WHEN c.primary_site = 'KIPP Sunrise Academy' THEN 30132008
+        WHEN c.primary_site = 'KIPP Sunrise Academy' THEN 30200801
        END AS primary_site_reporting_schoolid
-      ,CASE        
+      ,CASE
         WHEN c.primary_site IN ('KIPP Lanning Square Primary','KIPP Life Academy','KIPP Pathways at Bragaw','KIPP Seek Academy','KIPP SPARK Academy','KIPP THRIVE Academy','KIPP Whittier Elementary','KIPP Sunrise Academy') THEN 'ES'
         WHEN c.primary_site IN ('KIPP BOLD Academy','KIPP Lanning Square Middle','KIPP Pathways at 18th Ave','KIPP Rise Academy','KIPP TEAM Academy','KIPP Whittier Middle') THEN 'MS'
         WHEN c.primary_site = 'KIPP Newark Collegiate Academy' THEN 'HS'
