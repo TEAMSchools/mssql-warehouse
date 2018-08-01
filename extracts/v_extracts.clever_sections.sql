@@ -4,13 +4,12 @@ GO
 CREATE OR ALTER VIEW extracts.clever_sections AS
 
 SELECT sec.schoolid
-      ,CONCAT(
-         CASE 
-          WHEN sec.db_name = 'kippnewark' THEN 10
-          WHEN sec.db_name = 'kippcamden' THEN 20
-          WHEN sec.db_name = 'kippmiami' THEN 30
-         END
-        ,sec.id) AS [Section_id]
+      ,CONCAT(CASE 
+               WHEN sec.db_name = 'kippnewark' THEN 10
+               WHEN sec.db_name = 'kippcamden' THEN 20
+               WHEN sec.db_name = 'kippmiami' THEN 30
+              END
+             ,sec.id) AS [Section_id]
       ,t.teachernumber AS [Teacher_id]
       ,NULL AS [Teacher_2_id]
       ,NULL AS [Teacher_3_id]
@@ -58,4 +57,45 @@ JOIN gabby.powerschool.terms
   ON sec.termid = terms.id
  AND sec.schoolid = terms.schoolid
  AND sec.db_name = terms.db_name
-WHERE LEFT(sec.termid, 2) + 1990 = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+WHERE sec.yearid = (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990)
+
+UNION ALL
+
+SELECT DISTINCT 
+       co.schoolid
+      ,CONCAT(co.yearid, co.schoolid, RIGHT(CONCAT(0, co.grade_level),2)) AS [Section_id]
+      ,COALESCE(ps.ps_teachernumber, CONVERT(VARCHAR(25),df.df_employee_number)) COLLATE Latin1_General_BIN AS [Teacher_id]
+      ,NULL AS [Teacher_2_id]
+      ,NULL AS [Teacher_3_id]
+      ,NULL AS [Teacher_4_id]
+      ,NULL AS [Teacher_5_id]
+      ,NULL AS [Teacher_6_id]
+      ,NULL AS [Teacher_7_id]
+      ,NULL AS [Teacher_8_id]
+      ,NULL AS [Teacher_9_id]
+      ,NULL AS [Teacher_10_id]
+      ,NULL AS [Name]
+      ,CONCAT(co.academic_year, s.abbreviation, co.grade_level) AS [Section_number]
+      ,CASE WHEN co.grade_level = 0 THEN 'Kindergarten' ELSE CONVERT(VARCHAR(5),co.grade_level) END AS [Grade]      
+      ,'Enroll' AS [Course_name]
+      ,'ENR' AS [Course_number]
+      ,NULL AS [Course_description]
+      ,'1(A)' AS [Period]
+      ,'other' AS [Subject]
+      ,CONCAT(RIGHT(co.academic_year, 2), '-', RIGHT(co.academic_year + 1, 2))  [Term_name]
+      ,CONVERT(VARCHAR(25), DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1), 101) AS [Term_start]
+      ,CONVERT(VARCHAR(25), DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1, 6, 30), 101) AS [Term_end]
+FROM gabby.powerschool.cohort_identifiers_static co
+JOIN gabby.powerschool.schools s
+  ON co.schoolid = s.school_number
+JOIN gabby.dayforce.staff_roster df
+  ON co.schoolid = df.primary_site_schoolid
+ AND df.primary_job = 'School Leader'
+ AND df.status = 'ACTIVE'
+ AND df.legal_entity_name != 'KIPP New Jersey'
+LEFT JOIN gabby.people.id_crosswalk_powerschool ps
+  ON df.df_employee_number = ps.df_employee_number
+ AND ps.is_master = 1
+WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+  AND co.rn_year = 1
+  AND co.schoolid != 999999

@@ -17,3 +17,13 @@ JOIN gabby.powerschool.students s
   ON cc.studentid = s.id
  AND cc.db_name = s.db_name
 WHERE cc.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+
+UNION ALL
+
+SELECT schoolid AS [School_id]
+      ,CONCAT(yearid, schoolid, RIGHT(CONCAT(0, grade_level),2)) AS [Section_id]
+      ,student_number AS [Student_id]
+FROM gabby.powerschool.cohort_identifiers_static
+WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+  AND rn_year = 1
+  AND schoolid != 999999
