@@ -4,26 +4,31 @@ GO
 CREATE OR ALTER VIEW tableau.compliance_school_register_summary AS
 
 WITH schooldays AS (
-  SELECT academic_year
+  SELECT db_name
+        ,academic_year
         ,schoolid
         ,region
         ,n_days_school
         ,MIN(n_days_school) OVER(PARTITION BY academic_year, region) n_days_region_min
-  FROM
-      (
-       SELECT CONVERT(INT,schoolid) AS schoolid
-             ,CASE 
-               WHEN schoolid LIKE '1799%' THEN 'KCNA' 
-               WHEN schoolid LIKE '7325%' THEN 'TEAM' 
-               WHEN schoolid = 133570965 THEN 'TEAM' 
-              END AS region
-             ,gabby.utilities.DATE_TO_SY(date_value) AS academic_year
-             ,CONVERT(INT,SUM(membershipvalue)) AS n_days_school
-       FROM gabby.powerschool.calendar_day              
-       GROUP BY gabby.utilities.DATE_TO_SY(date_value)
-               ,schoolid
-      ) sub
-  GROUP BY academic_year, region, schoolid, n_days_school
+  FROM (
+        SELECT CONVERT(INT, schoolid) AS schoolid
+              ,db_name
+              ,CASE
+                WHEN db_name = 'kippcamden' THEN 'KCNA'
+                WHEN db_name LIKE 'kippnewark' THEN 'TEAM'
+               END AS region
+              ,gabby.utilities.DATE_TO_SY(date_value) AS academic_year
+              ,CONVERT(INT, SUM(membershipvalue)) AS n_days_school
+        FROM gabby.powerschool.calendar_day
+        GROUP BY gabby.utilities.DATE_TO_SY(date_value)
+                ,schoolid
+                ,db_name
+       ) sub
+  GROUP BY db_name
+          ,academic_year
+          ,region
+          ,schoolid
+          ,n_days_school
  )
 
 ,att_mem AS (
@@ -57,7 +62,8 @@ SELECT co.student_number
       ,COUNT(co.student_number) OVER(PARTITION BY co.schoolid, co.academic_year) AS n_students
       
       ,nj.programtypecode
-      ,nj.special_education_placement        
+      
+      ,iep.nj_se_placement AS special_education_placement 
       
       ,d.n_days_school
       ,d.n_days_region_min
@@ -69,9 +75,13 @@ FROM gabby.powerschool.cohort_identifiers_static co
 LEFT JOIN gabby.powerschool.s_nj_stu_x nj
   ON co.students_dcid = nj.studentsdcid
  AND co.db_name = co.db_name
+LEFT JOIN gabby.easyiep.njsmart_powerschool_clean iep
+  ON co.student_number = iep.student_number
+ AND co.academic_year = iep.academic_year
 JOIN schooldays d
   ON co.schoolid = d.schoolid
  AND co.academic_year = d.academic_year
+ AND co.db_name = d.db_name
 JOIN att_mem sub
   ON co.studentid = sub.studentid
  AND co.academic_year = sub.academic_year
