@@ -1,4 +1,7 @@
-CREATE OR ALTER VIEW powerschool.student_access_accounts AS 
+USE gabby
+GO
+
+CREATE OR ALTER VIEW powerschool.student_access_accounts_static AS 
 
 WITH clean_names AS (
   SELECT CONVERT(INT,s.student_number) AS student_number
@@ -26,9 +29,10 @@ WITH clean_names AS (
             WHEN CHARINDEX('-',s.last_name) > 0 THEN LEFT(s.last_name,CHARINDEX('-',s.last_name) - 1)
             ELSE REPLACE(s.last_name, ' JR', '')
            END), '^A-Z') AS last_name_clean        
-  FROM powerschool.students s 
-  JOIN powerschool.schools sch
+  FROM gabby.powerschool.students s 
+  JOIN gabby.powerschool.schools sch
     ON s.schoolid = sch.school_number  
+   AND s.db_name = sch.db_name
   WHERE s.enroll_status != -1
     AND s.dob IS NOT NULL
  ) 
@@ -42,16 +46,16 @@ SELECT student_number
       ,base_dupe_audit
       ,alt_dupe_audit      
       ,CONVERT(VARCHAR(125),CASE         
-        WHEN alt_dupe_audit > 1 THEN first_init + last_name_clean + dob_month + dob_day        
-        WHEN uses_alt = 1 THEN alt_username 
-        ELSE base_username 
-       END) AS student_web_id      
+                             WHEN alt_dupe_audit > 1 THEN first_init + last_name_clean + dob_month + dob_day        
+                             WHEN uses_alt = 1 THEN alt_username 
+                             ELSE base_username 
+                            END) AS student_web_id      
       ,CONVERT(VARCHAR(125),CASE
-        WHEN student_number IN (SELECT student_numbers_variation_1 FROM gabby.extracts.student_account_override) THEN first_name_clean + dob_month /* manual override of passwords */        
-        WHEN student_number IN (SELECT student_numbers_variation_2 FROM gabby.extracts.student_account_override) THEN CONCAT(first_name_clean, student_number) /* manual override of passwords */		      
-        WHEN grade_level >= 2 THEN last_name_clean + dob_year 
-        ELSE LOWER(school_name) + '1'
-       END) AS student_web_password
+                             WHEN student_number IN (SELECT student_numbers_variation_1 FROM gabby.extracts.student_account_override) THEN first_name_clean + dob_month /* manual override of passwords */        
+                             WHEN student_number IN (SELECT student_numbers_variation_2 FROM gabby.extracts.student_account_override) THEN CONCAT(first_name_clean, student_number) /* manual override of passwords */		      
+                             WHEN grade_level >= 2 THEN last_name_clean + dob_year 
+                             ELSE LOWER(school_name) + '1'
+                            END) AS student_web_password
 FROM
     (
      SELECT student_number

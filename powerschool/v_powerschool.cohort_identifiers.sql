@@ -127,7 +127,7 @@ LEFT JOIN powerschool.studentcorefields scf
   ON co.studentsdcid = scf.studentsdcid
 LEFT JOIN powerschool.s_nj_stu_x nj
   ON co.studentsdcid = nj.studentsdcid
-LEFT JOIN powerschool.student_access_accounts_static saa
+LEFT JOIN gabby.powerschool.student_access_accounts_static saa
   ON co.student_number = saa.student_number
 JOIN powerschool.schools sch
   ON co.schoolid = sch.school_number
