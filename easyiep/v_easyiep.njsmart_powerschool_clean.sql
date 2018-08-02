@@ -50,7 +50,7 @@ SELECT [state_studentnumber]
        END AS special_education_code
 FROM
     (
-     SELECT e.[student_number]
+     SELECT TRY_PARSE(CONVERT(VARCHAR(25),e.[student_number]) AS INT) AS [student_number]
            ,e.[state_studentnumber]           
            ,e.[nj_se_referraldate]
            ,e.[nj_se_parentalconsentdate]
