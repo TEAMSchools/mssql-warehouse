@@ -3,7 +3,7 @@ GO
 
 CREATE OR ALTER VIEW extracts.clever_sections AS
 
-SELECT sec.schoolid
+SELECT sec.schoolid AS [School_id]
       ,CONCAT(CASE 
                WHEN sec.db_name = 'kippnewark' THEN 10
                WHEN sec.db_name = 'kippcamden' THEN 20

@@ -4,7 +4,7 @@ GO
 CREATE OR ALTER VIEW extracts.clever_teachers AS
 
 SELECT CONVERT(VARCHAR(25),df.primary_site_schoolid) AS [School_id]
-      ,COALESCE(id.ps_teachernumber, CONVERT(VARCHAR(25),df.df_employee_number)) AS [Staff_id]
+      ,COALESCE(id.ps_teachernumber, CONVERT(VARCHAR(25),df.df_employee_number)) AS [Teacher_id]
       ,COALESCE(id.ps_teachernumber, CONVERT(VARCHAR(25),df.df_employee_number)) AS [Teacher_number]
       ,CONVERT(VARCHAR(25),df.df_employee_number) AS [State_teacher_id]
       ,ad.userprincipalname AS [Teacher_email]
