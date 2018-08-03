@@ -15,17 +15,17 @@ SELECT CONVERT(INT,c.studentnumber) AS studentnumber
 
       ,CONVERT(VARCHAR(125),e.description) AS description
 FROM [winsql06\han].[newton].[dbo].[customer] c
-LEFT OUTER JOIN [winsql06\han].[newton].[dbo].[student_guid_link] g
+LEFT JOIN [winsql06\han].[newton].[dbo].[student_guid_link] g
   ON c.[customer_recid] = g.[customerid]
-LEFT OUTER JOIN [winsql06\han].[newton].[dbo].[customer_category] cat
+LEFT JOIN [winsql06\han].[newton].[dbo].[customer_category] cat
   ON c.[customer_categoryid] = cat.[customer_category_recid]
-LEFT OUTER JOIN [winsql06\han].[franklin].[dbo].student s
+LEFT JOIN [winsql06\han].[franklin].[dbo].student s
   ON g.studentguid = s.globaluid
-LEFT OUTER JOIN [winsql06\han].[franklin].[dbo].[eligibility] e
+LEFT JOIN [winsql06\han].[franklin].[dbo].[eligibility] e
   ON s.[eligibilityid] = e.[eligibility_recid]
 WHERE cat.[isstudent] = 1 /* only students */
   AND ISNUMERIC(c.[studentnumber]) = 1
-  AND c.studentnumber IN (SELECT student_number FROM gabby.powerschool.students WHERE schoolid NOT LIKE '1799%')
+  AND c.studentnumber IN (SELECT student_number FROM kippnewark.powerschool.students)
   AND c.inactive = 0
   
 UNION ALL
@@ -42,15 +42,15 @@ SELECT CONVERT(INT,c.studentnumber) AS studentnumber
 
       ,CONVERT(VARCHAR(125),e.description) AS description
 FROM [winsql06\yoda].[newton].[dbo].[customer] c 
-LEFT OUTER JOIN [winsql06\yoda].[newton].[dbo].[student_guid_link] g 
+LEFT JOIN [winsql06\yoda].[newton].[dbo].[student_guid_link] g 
   ON c.[customer_recid] = g.[customerid]
-LEFT OUTER JOIN [winsql06\yoda].[newton].[dbo].[customer_category] cat 
+LEFT JOIN [winsql06\yoda].[newton].[dbo].[customer_category] cat 
   ON c.[customer_categoryid] = cat.[customer_category_recid]
-LEFT OUTER JOIN [winsql06\yoda].[franklin].[dbo].student s 
+LEFT JOIN [winsql06\yoda].[franklin].[dbo].student s 
   ON g.studentguid = s.globaluid
-LEFT OUTER JOIN [winsql06\yoda].[franklin].[dbo].[eligibility] e 
+LEFT JOIN [winsql06\yoda].[franklin].[dbo].[eligibility] e 
   ON s.[eligibilityid] = e.[eligibility_recid]
 WHERE cat.[isstudent] = 1 /* only students */
   AND ISNUMERIC(c.[studentnumber]) = 1
-  AND c.studentnumber IN (SELECT student_number FROM gabby.powerschool.students WHERE schoolid LIKE '1799%')
+  AND c.studentnumber IN (SELECT student_number FROM kippcamden.powerschool.students)
   AND c.inactive = 0
