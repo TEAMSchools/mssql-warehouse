@@ -73,7 +73,8 @@ WITH responses_long AS (
   LEFT JOIN gabby.illuminate_standards.standards std
     ON asrs.standard_id = std.standard_id   
   LEFT JOIN gabby.illuminate_standards.standards_domain_static dom
-    ON asrs.standard_id = dom.standard_id   
+    ON asrs.standard_id = dom.standard_id
+   AND dom.domain_level = 1
    AND dom.domain_label NOT IN ('', 'Standard')
   WHERE a.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   
