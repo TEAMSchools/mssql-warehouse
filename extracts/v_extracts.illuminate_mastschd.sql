@@ -4,9 +4,9 @@ GO
 CREATE OR ALTER VIEW extracts.illuminate_mastschd AS
 
 SELECT CONCAT(CASE
-               WHEN sec.db_name = 'kippnewark' THEN 10
-               WHEN sec.db_name = 'kippcamden' THEN 20
-               WHEN sec.db_name = 'kippmiami' THEN 30
+               WHEN sec.db_name = 'kippnewark' THEN 'NWK'
+               WHEN sec.db_name = 'kippcamden' THEN 'CMD'
+               WHEN sec.db_name = 'kippmiami' THEN 'MIA'
               END
              ,sec.id) AS [01 Section ID]
       ,sec.schoolid AS [02 Site ID]

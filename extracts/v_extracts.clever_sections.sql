@@ -5,9 +5,9 @@ CREATE OR ALTER VIEW extracts.clever_sections AS
 
 SELECT sec.schoolid AS [School_id]
       ,CONCAT(CASE 
-               WHEN sec.db_name = 'kippnewark' THEN 10
-               WHEN sec.db_name = 'kippcamden' THEN 20
-               WHEN sec.db_name = 'kippmiami' THEN 30
+               WHEN sec.db_name = 'kippnewark' THEN 'NWK'
+               WHEN sec.db_name = 'kippcamden' THEN 'CMD'
+               WHEN sec.db_name = 'kippmiami' THEN 'MIA'
               END
              ,sec.id) AS [Section_id]
       ,t.teachernumber AS [Teacher_id]

@@ -6,9 +6,9 @@ CREATE OR ALTER VIEW extracts.clever_enrollments AS
 SELECT cc.schoolid AS [School_id]
       ,CONCAT(
          CASE 
-          WHEN cc.db_name = 'kippnewark' THEN 10
-          WHEN cc.db_name = 'kippcamden' THEN 20
-          WHEN cc.db_name = 'kippmiami' THEN 30
+          WHEN cc.db_name = 'kippnewark' THEN 'NWK'
+          WHEN cc.db_name = 'kippcamden' THEN 'CMD'
+          WHEN cc.db_name = 'kippmiami' THEN 'MIA'
          END
         ,cc.sectionid) AS [Section_id]
       ,s.student_number AS [Student_id]

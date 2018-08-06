@@ -24,4 +24,5 @@ SELECT student_number AS [01 Student ID]
       ,NULL AS [15 Session Type ID]
       ,NULL AS [16 Enrollment Entry Code]
 FROM gabby.powerschool.cohort_identifiers_static
-WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR();
+WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+  AND grade_level != 99;
