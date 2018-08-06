@@ -26,9 +26,9 @@ SELECT studentid
       ,MIN(CASE WHEN year_in_network = 1 THEN schoolid END) OVER(PARTITION BY studentid) AS entry_schoolid
       ,MIN(CASE WHEN year_in_network = 1 THEN grade_level END) OVER(PARTITION BY studentid) AS entry_grade_level      
       ,CASE 
-        WHEN sub.schoolid = 999999 THEN NULL
-        WHEN schoolid LIKE '1799%' THEN 'KCNA' 
-        WHEN schoolid NOT LIKE '1799%' THEN 'TEAM' 
+        WHEN DB_NAME() = 'kippcamden' THEN 'KCNA' 
+        WHEN DB_NAME() = 'kippnewark' THEN 'TEAM' 
+        WHEN DB_NAME() = 'kippmiami' THEN 'KMS' 
        END AS region
       ,CASE        
         WHEN grade_level = 99 THEN MAX(CASE WHEN exitcode = 'G1' THEN yearid + 2003 + (-1 * grade_level) END) OVER(PARTITION BY studentid)
