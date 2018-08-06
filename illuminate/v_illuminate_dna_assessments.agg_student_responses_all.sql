@@ -26,6 +26,7 @@ SELECT assessment_id
       ,performance_band_number
       ,is_mastery
 FROM gabby.illuminate_dna_assessments.agg_student_responses_all_current
+WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 
 UNION ALL
 

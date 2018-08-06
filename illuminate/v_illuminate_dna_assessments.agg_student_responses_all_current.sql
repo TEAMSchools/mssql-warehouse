@@ -33,8 +33,7 @@ WITH responses_long AS (
    AND a.assessment_id = sa.assessment_id        
   LEFT JOIN gabby.illuminate_dna_assessments.agg_student_responses asr
     ON sa.student_assessment_id = asr.student_assessment_id
-   AND asr.points_possible > 0
-  WHERE a.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+   AND asr.points_possible > 0  
 
   UNION ALL
 
@@ -76,7 +75,6 @@ WITH responses_long AS (
     ON asrs.standard_id = dom.standard_id
    AND dom.domain_level = 1
    AND dom.domain_label NOT IN ('', 'Standard')
-  WHERE a.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   
   UNION ALL
 
@@ -113,7 +111,6 @@ WITH responses_long AS (
    AND asrg.points_possible > 0       
   JOIN gabby.illuminate_dna_assessments.reporting_groups rg
     ON asrg.reporting_group_id = rg.reporting_group_id
-  WHERE a.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
  )
 
 ,response_rollup AS (
