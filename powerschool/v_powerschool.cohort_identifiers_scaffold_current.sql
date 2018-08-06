@@ -25,6 +25,8 @@ SELECT co.academic_year
       ,CONVERT(VARCHAR(25),dt.alt_name) COLLATE Latin1_General_BIN AS term
       
       ,CASE WHEN CONVERT(DATE,rd.date) BETWEEN co.entrydate AND co.exitdate THEN 1 ELSE 0 END AS is_enrolled
+
+      ,co.region
 FROM powerschool.cohort_identifiers_static co
 JOIN gabby.utilities.reporting_days rd
   ON co.academic_year = rd.academic_year

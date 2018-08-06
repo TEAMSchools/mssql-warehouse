@@ -22,6 +22,7 @@ SELECT academic_year
       ,date      
       ,term      
       ,is_enrolled
+      ,region
 FROM powerschool.cohort_identifiers_scaffold_current_static
 
 UNION ALL
@@ -48,4 +49,5 @@ SELECT academic_year
       ,date      
       ,term      
       ,is_enrolled
+      ,region
 FROM powerschool.cohort_identifiers_scaffold_archive
