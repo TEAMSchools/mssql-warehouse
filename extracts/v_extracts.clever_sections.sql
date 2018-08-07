@@ -88,6 +88,7 @@ SELECT DISTINCT
 FROM gabby.powerschool.cohort_identifiers_static co
 JOIN gabby.powerschool.schools s
   ON co.schoolid = s.school_number
+  AND co.db_name = s.db_name
 JOIN gabby.dayforce.staff_roster df
   ON co.schoolid = df.primary_site_schoolid
  AND df.primary_job = 'School Leader'
