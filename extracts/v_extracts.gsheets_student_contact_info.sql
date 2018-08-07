@@ -18,7 +18,9 @@ SELECT co.student_number
       ,co.gender                        
       ,co.lunchstatus
       ,CASE
-        WHEN co.lunch_app_status IS NULL OR co.lunch_app_status = 'No Application' THEN 'N'
+        WHEN co.lunch_app_status IS NULL THEN 'N'
+        WHEN co.lunch_app_status = 'No Application' THEN 'N'
+        WHEN co.lunch_app_status LIKE 'Prior%' THEN 'N'
         ELSE 'Y'
        END AS lunch_app_status 
       ,CONVERT(MONEY,co.lunch_balance) AS lunch_balance
@@ -42,9 +44,12 @@ SELECT co.student_number
       ,co.student_web_password AS family_web_password      
 
       ,suf.media_release
+
+      ,co.region
 FROM gabby.powerschool.cohort_identifiers_static co
 LEFT JOIN gabby.powerschool.u_studentsuserfields suf
   ON co.students_dcid = suf.studentsdcid
+ AND co.db_name = suf.db_name
 WHERE co.enroll_status IN (0, -1)
-  AND co.academic_year = 2018 --gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+  AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.rn_year = 1
