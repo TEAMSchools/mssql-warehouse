@@ -38,7 +38,6 @@ FROM
            ,CASE
              WHEN psid.is_master = 0 THEN 2
              WHEN df.termination_date < GETDATE() THEN 2
-             WHEN df.primary_job = 'Intern' THEN 2
              WHEN df.status IN ('ACTIVE','INACTIVE','PRESTART') OR df.termination_date >= CONVERT(DATE,GETDATE()) THEN 1
              ELSE 2
             END AS status
