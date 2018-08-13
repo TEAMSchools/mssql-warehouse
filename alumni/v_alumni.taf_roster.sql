@@ -246,5 +246,7 @@ LEFT JOIN gabby.powerschool.students s
   ON r.student_number = s.student_number
 LEFT JOIN gabby.powerschool.u_studentsuserfields suf
   ON s.dcid = suf.studentsdcid
+ AND s.db_name = suf.db_name
 LEFT JOIN gabby.powerschool.studentcorefields scf
   ON s.dcid = scf.studentsdcid
+ AND s.db_name = scf.db_name
