@@ -102,6 +102,7 @@ FROM
      FROM gabby.powerschool.cohort_identifiers_static co
      LEFT JOIN gabby.powerschool.s_nj_stu_x nj
        ON co.students_dcid = nj.studentsdcid
+      AND co.db_name = nj.db_name
       AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
      LEFT JOIN gabby.finance.enrollment_targets t
        ON co.academic_year = t.academic_year

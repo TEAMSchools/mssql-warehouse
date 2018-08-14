@@ -202,6 +202,7 @@ FROM
            ,co.grade_level           
            ,co.team
            ,co.iep_status
+           ,co.db_name
 
            ,dts.alt_name AS term      
 
@@ -245,4 +246,5 @@ LEFT JOIN gabby.powerschool.course_enrollments_static enr
   ON sub.student_number = enr.student_number
  AND sub.academic_year = enr.academic_year
  AND sub.course_number = enr.course_number COLLATE SQL_Latin1_General_CP1_CI_AS
+ AND sub.db_name = enr.db_name
  AND enr.section_enroll_status = 0

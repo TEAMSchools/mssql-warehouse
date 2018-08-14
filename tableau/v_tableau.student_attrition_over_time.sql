@@ -14,6 +14,7 @@ WITH enrolled_oct1 AS (
         ,exitcode
         ,exitcomment
         ,enroll_status
+        ,db_name
   FROM gabby.powerschool.cohort_identifiers_static
   WHERE DATEFROMPARTS(academic_year, 10, 01) BETWEEN entrydate AND exitdate
     AND academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 2)
@@ -58,7 +59,9 @@ JOIN attrition_dates d
  AND d.date <= GETDATE()
 LEFT JOIN gabby.powerschool.students s
   ON y1.student_number = s.student_number
+ AND y1.db_name = s.db_name
 LEFT JOIN gabby.powerschool.cohort_identifiers_static y2
   ON y1.student_number = y2.student_number
+ AND y1.db_name = y2.db_name
  AND y1.academic_year = (y2.academic_year - 1)
  AND DATEFROMPARTS(y2.academic_year, 10, 01) BETWEEN y2.entrydate AND y2.exitdate

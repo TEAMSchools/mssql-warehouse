@@ -59,13 +59,16 @@ FROM
      FROM gabby.powerschool.attendance_clean att
      JOIN gabby.powerschool.attendance_code ac
        ON att.attendance_codeid = ac.id
+      AND att.db_name = ac.db_name
       AND ac.att_code IN ('A','AD')
      LEFT OUTER JOIN gabby.powerschool.cc
        ON att.studentid = cc.studentid
+      AND att.db_name = cc.db_name
       AND CONVERT(DATE,GETDATE()) BETWEEN cc.dateenrolled AND cc.dateleft
       AND cc.course_number = 'HR'
      JOIN gabby.powerschool.cohort_identifiers_static co
        ON att.studentid = co.studentid
+      AND att.db_name = co.db_name
       AND att.att_date BETWEEN co.entrydate AND co.exitdate
       AND co.enroll_status = 0
      WHERE att.att_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 07, 01)

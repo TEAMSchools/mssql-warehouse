@@ -8,6 +8,7 @@ WITH section_teacher AS (
         ,scaff.yearid + 1990 AS academic_year
         ,scaff.course_number        
         ,scaff.sectionid        
+        ,scaff.db_name
         
         ,CONVERT(VARCHAR(125),sec.section_number) AS section_number
         
@@ -19,8 +20,10 @@ WITH section_teacher AS (
   FROM gabby.powerschool.course_section_scaffold scaff 
   JOIN gabby.powerschool.sections sec 
     ON scaff.sectionid = sec.id
+   AND scaff.db_name = sec.db_name
   JOIN gabby.powerschool.teachers_static t 
     ON sec.teacher = t.id 
+   AND sec.db_name = t.db_name
  )
 
 /* final grades */
@@ -65,9 +68,11 @@ FROM gabby.powerschool.cohort_identifiers_static co
 JOIN gabby.powerschool.final_grades_static gr 
   ON co.student_number = gr.student_number
  AND co.academic_year = gr.academic_year 
+ AND co.db_name = gr.db_name
 JOIN section_teacher st 
   ON co.studentid = st.studentid
  AND co.academic_year = st.academic_year
+ AND co.db_name = st.db_name
  AND gr.course_number = st.course_number
  AND st.rn = 1
 WHERE co.rn_year = 1
@@ -117,15 +122,18 @@ FROM gabby.powerschool.cohort_identifiers_static co
 JOIN gabby.powerschool.final_grades_static gr 
   ON co.student_number = gr.student_number
  AND co.academic_year = gr.academic_year 
+ AND co.db_name = gr.db_name
  AND gr.is_curterm = 1
 LEFT JOIN gabby.powerschool.storedgrades y1
   ON co.studentid = y1.studentid
  AND co.academic_year = (LEFT(y1.termid, 2) + 1990)
- AND gr.course_number = y1.course_number
+ AND co.db_name = y1.db_name
+ AND gr.course_number = y1.course_number 
  AND y1.storecode = 'Y1'
 JOIN section_teacher st
   ON co.studentid = st.studentid
  AND co.academic_year = st.academic_year
+ AND co.db_name = st.db_name
  AND gr.course_number = st.course_number
  AND st.rn = 1
 WHERE co.rn_year = 1
@@ -173,11 +181,13 @@ FROM gabby.powerschool.storedgrades gr
 LEFT JOIN gabby.powerschool.cohort_identifiers_static co 
   ON gr.studentid = co.studentid
  AND gr.schoolid = co.schoolid
+ AND gr.db_name = co.db_name
  AND (LEFT(gr.termid,2) + 1990) = co.academic_year
  AND co.rn_year = 1
 LEFT JOIN gabby.powerschool.cohort_identifiers_static e1 
   ON gr.studentid = e1.studentid
  AND gr.schoolid = e1.schoolid
+ AND gr.db_name = e1.db_name
  AND e1.year_in_school = 1
 WHERE gr.storecode = 'Y1'
   AND gr.course_number IS NULL
@@ -232,10 +242,12 @@ FROM gabby.powerschool.cohort_identifiers_static co
 JOIN gabby.powerschool.final_grades_static gr 
   ON co.student_number = gr.student_number
  AND co.academic_year = gr.academic_year
+ AND co.db_name = gr.db_name
  AND (gr.e1 IS NOT NULL OR gr.e2 IS NOT NULL)
 JOIN section_teacher st
   ON co.studentid = st.studentid
  AND co.academic_year = st.academic_year
+ AND co.db_name = st.db_name
  AND gr.course_number = st.course_number
  AND st.rn = 1
 WHERE co.rn_year = 1
@@ -289,9 +301,11 @@ FROM gabby.powerschool.cohort_identifiers_static co
 JOIN gabby.powerschool.category_grades_static gr 
   ON co.student_number = gr.student_number
  AND co.academic_year = gr.academic_year 
+ AND co.db_name = gr.db_name
 JOIN section_teacher st
   ON co.studentid = st.studentid
  AND co.academic_year = st.academic_year
+ AND co.db_name = st.db_name
  AND gr.course_number = st.course_number
  AND st.rn = 1
 WHERE co.rn_year = 1
@@ -345,10 +359,12 @@ FROM gabby.powerschool.cohort_identifiers_static co
 JOIN gabby.powerschool.category_grades_static gr 
   ON co.student_number = gr.student_number
  AND co.academic_year = gr.academic_year 
+ AND co.db_name = gr.db_name
  AND gr.is_curterm = 1
 JOIN section_teacher st
   ON co.studentid = st.studentid
  AND co.academic_year = st.academic_year
+ AND co.db_name = st.db_name
  AND gr.course_number = st.course_number
  AND st.rn = 1
 WHERE co.rn_year = 1

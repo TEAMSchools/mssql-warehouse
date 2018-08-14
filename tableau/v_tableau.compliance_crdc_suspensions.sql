@@ -26,5 +26,6 @@ SELECT co.student_number
 FROM gabby.powerschool.cohort_identifiers_static co
 JOIN gabby.powerschool.attendance_streak att
   ON co.student_number = att.student_number
+ AND co.db_name = att.db_name
  AND att.streak_start BETWEEN co.entrydate AND co.exitdate
  AND att.att_code IN ('OSS','ISS')

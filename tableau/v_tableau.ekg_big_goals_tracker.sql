@@ -134,6 +134,7 @@ WITH act AS (
 
 ,ada AS (
   SELECT studentid
+        ,db_name
         ,(yearid + 1990) AS academic_year
         ,SUM(CONVERT(FLOAT,attendancevalue)) AS n_days_attendance
         ,SUM(CONVERT(FLOAT,membershipvalue)) AS n_days_membership
@@ -142,17 +143,20 @@ WITH act AS (
     AND calendardate <= CONVERT(DATE,GETDATE())
   GROUP BY studentid
           ,yearid
+          ,db_name
  )
 
 ,suspensions AS (
   SELECT student_number
         ,academic_year
+        ,db_name
         ,[OSS]
         ,[ISS]
   FROM
       (
        SELECT student_number
              ,academic_year
+             ,db_name
              ,CASE 
                WHEN att_code IN ('OS','OSS','OSSP') THEN 'OSS'
                WHEN att_code IN ('ISS','S') THEN 'ISS'
@@ -162,6 +166,7 @@ WITH act AS (
        WHERE att_code IN ('OS','OSS','OSSP','ISS','S')
        GROUP BY student_number
                ,academic_year
+               ,db_name
                ,CASE 
                  WHEN att_code IN ('OS','OSS','OSSP') THEN 'OSS'
                  WHEN att_code IN ('ISS','S') THEN 'ISS'
@@ -190,11 +195,13 @@ WITH act AS (
              ,entrydate
              ,exitdate
              ,enroll_status
+             ,db_name
        FROM gabby.powerschool.cohort_identifiers_static
        WHERE DATEFROMPARTS(academic_year, 10, 1) BETWEEN entrydate AND exitdate
       ) d
   LEFT JOIN gabby.powerschool.cohort_identifiers_static n
     ON d.student_number = n.student_number
+   AND d.db_name = n.db_name
    AND d.academic_year = (n.academic_year - 1)
    AND DATEFROMPARTS(n.academic_year, 10, 1) BETWEEN n.entrydate AND n.exitdate
  )
@@ -489,10 +496,12 @@ WITH act AS (
         AND co.academic_year = lg.academic_year
        LEFT JOIN ada
          ON co.studentid = ada.studentid
+        AND co.db_name = ada.db_name
         AND co.academic_year = ada.academic_year
        LEFT JOIN suspensions sus
          ON co.student_number = sus.student_number
         AND co.academic_year = sus.academic_year
+        AND co.db_name = sus.db_name
        LEFT JOIN student_attrition sa
          ON co.student_number = sa.denominator_student_number
         AND co.academic_year = sa.denominator_academic_year

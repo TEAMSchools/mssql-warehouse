@@ -33,6 +33,7 @@ WITH schooldays AS (
 
 ,att_mem AS (
   SELECT CONVERT(INT,studentid) AS studentid
+        ,db_name
         ,CONVERT(INT,yearid) + 1990 AS academic_year
         ,CONVERT(INT,SUM(attendancevalue)) AS n_att
         ,CONVERT(INT,SUM(membershipvalue)) AS n_mem
@@ -41,6 +42,7 @@ WITH schooldays AS (
   WHERE membershipvalue = 1
   GROUP BY studentid
           ,yearid
+          ,db_name
  )
 
 SELECT co.student_number
@@ -78,6 +80,7 @@ LEFT JOIN gabby.powerschool.s_nj_stu_x nj
 LEFT JOIN gabby.easyiep.njsmart_powerschool_clean iep
   ON co.student_number = iep.student_number
  AND co.academic_year = iep.academic_year
+ AND co.db_name = iep.db_name
 JOIN schooldays d
   ON co.schoolid = d.schoolid
  AND co.academic_year = d.academic_year
@@ -85,4 +88,5 @@ JOIN schooldays d
 JOIN att_mem sub
   ON co.studentid = sub.studentid
  AND co.academic_year = sub.academic_year
+ AND co.db_name = sub.db_name
 WHERE co.rn_year = 1

@@ -10,6 +10,7 @@ WITH contacts_repivot AS (
         ,contact_name AS name
         ,contact_relationship AS relation        
         ,registeredtovote
+        ,db_name
         ,[cell]
         ,[home]              
         ,[day]
@@ -26,6 +27,7 @@ WITH contacts_repivot AS (
   SELECT family_ident
         ,person
         ,name
+        ,db_name
         ,gabby.dbo.GROUP_CONCAT_D(DISTINCT cell, CHAR(10)) AS cell
         ,gabby.dbo.GROUP_CONCAT_D(DISTINCT home, CHAR(10)) AS home
         ,gabby.dbo.GROUP_CONCAT_D(DISTINCT day, CHAR(10)) AS day        
@@ -34,6 +36,7 @@ WITH contacts_repivot AS (
   GROUP BY family_ident
           ,person
           ,name
+          ,db_name
  )
 
 SELECT co.student_number
@@ -67,8 +70,10 @@ LEFT JOIN gabby.powerschool.u_studentsuserfields suf
  AND s.db_name = suf.db_name
 LEFT JOIN contacts_repivot c
   ON co.student_number = c.student_number
+ AND co.db_name = c.db_name
 LEFT JOIN contacts_grouped cg
   ON s.family_ident = cg.family_ident
+ AND s.db_name = cg.db_name
  AND c.person = cg.person
  AND c.name = cg.name
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()

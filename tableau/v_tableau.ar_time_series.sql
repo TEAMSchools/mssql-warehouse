@@ -181,12 +181,14 @@ FROM
           LEFT JOIN gabby.powerschool.course_enrollments_static enr 
             ON co.student_number = enr.student_number
            AND co.academic_year = enr.academic_year
+           AND co.db_name = enr.db_name
            AND enr.credittype = 'ENG'
            AND enr.section_enroll_status = 0
            AND enr.rn_subject = 1
           LEFT JOIN gabby.powerschool.course_enrollments_static hr
             ON co.student_number = hr.student_number
            AND co.academic_year = hr.academic_year
+           AND co.db_name = hr.db_name
            AND hr.course_number = 'HR'
            AND hr.section_enroll_status = 0      
            AND hr.rn_subject = 1

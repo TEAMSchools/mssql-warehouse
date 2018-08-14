@@ -19,6 +19,7 @@ WITH ms_grads AS (
         ,co.guardianemail
         ,co.iep_status
         ,co.specialed_classification
+        ,co.db_name
         ,(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - co.academic_year) + co.grade_level AS curr_grade_level
 
         ,ROW_NUMBER() OVER(
@@ -44,6 +45,7 @@ WITH ms_grads AS (
         ,sub.highest_achieved        
         ,sub.final_exitdate
         ,sub.guardianemail
+        ,sub.db_name
 
         ,CONVERT(INT,CASE 
                       WHEN s.graduated_schoolid = 0 THEN s.schoolid 
@@ -62,6 +64,7 @@ WITH ms_grads AS (
              ,co.lastfirst
              ,co.dob             
              ,co.highest_achieved             
+             ,co.db_name
              ,MAX(co.cohort) AS cohort
              ,MAX(co.guardianemail) AS guardianemail
              ,MIN(co.entrydate) AS orig_entrydate
@@ -80,13 +83,17 @@ WITH ms_grads AS (
                ,co.last_name
                ,co.highest_achieved
                ,co.dob
+               ,co.db_name
       ) sub
   LEFT JOIN gabby.powerschool.students s
     ON sub.student_number = s.student_number
+   AND sub.db_name = s.db_name
   LEFT JOIN gabby.powerschool.schools sch
     ON s.graduated_schoolid = sch.school_number
+   AND sub.db_name = sch.db_name
   LEFT JOIN gabby.powerschool.schools sch2 
     ON s.schoolid = sch2.school_number
+   AND sub.db_name = sch2.db_name
   WHERE sub.cohort >= 2018 
     AND ((years_enrolled = 1 AND final_exitdate >= DATEFROMPARTS(year_final_exitdate, 10, 1)) OR (years_enrolled > 1))
  )
@@ -151,6 +158,7 @@ WITH ms_grads AS (
         ,cohort
         ,highest_achieved        
         ,guardianemail
+        ,db_name
   FROM ms_grads  
 
   UNION  
@@ -168,6 +176,7 @@ WITH ms_grads AS (
         ,cohort
         ,highest_achieved        
         ,guardianemail
+        ,db_name
   FROM transfers    
  ) 
 
@@ -182,6 +191,7 @@ SELECT r.student_number
       ,r.dob
       ,r.exitdate      
       ,r.guardianemail AS ps_email
+      ,r.db_name
       ,CASE WHEN r.highest_achieved = 99 THEN 1 ELSE 0 END AS is_grad
 
       ,enr.kipp_hs_class_c AS cohort      

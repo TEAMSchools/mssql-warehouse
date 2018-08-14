@@ -36,9 +36,11 @@ SELECT enr.sectionid
 FROM gabby.powerschool.gradebook_setup_static gb
 JOIN gabby.powerschool.course_enrollments_static enr
   ON gb.sectionsdcid = enr.sections_dcid 
+ AND gb.db_name = enr.db_name
 LEFT JOIN gabby.powerschool.gradebook_assignments a WITH(NOLOCK)
   ON gb.sectionsdcid = a.sectionsdcid
  AND gb.assignmentcategoryid = a.categoryid
+ AND gb.db_name = a.db_name
  AND a.assign_date between gb.startdate and gb.enddate
 WHERE gb.startdate >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7 , 1)
 

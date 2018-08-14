@@ -6,6 +6,7 @@ CREATE OR ALTER VIEW tableau.attendance_comm_log AS
 WITH y1_ada AS (
   SELECT studentid
         ,schoolid
+        ,db_name
         ,(yearid + 1990) AS academic_year
         ,AVG(CONVERT(FLOAT,attendancevalue)) AS pct_attendance
         ,SUM(ABS(attendancevalue - 1)) AS n_absences
@@ -13,18 +14,21 @@ WITH y1_ada AS (
   WHERE membershipvalue = 1
   GROUP BY studentid
           ,schoolid
+          ,db_name
           ,(yearid + 1990)
  )
 
 ,weekly_ada AS (
   SELECT studentid
         ,schoolid
+        ,db_name
         ,DATEADD(DAY, (1 - DATEPART(WEEKDAY, calendardate)), calendardate) AS week_start_date
         ,SUM(ABS(attendancevalue - 1)) AS n_absences
   FROM gabby.powerschool.ps_adaadm_daily_ctod
   WHERE membershipvalue = 1
   GROUP BY studentid
           ,schoolid
+          ,db_name
           ,DATEADD(DAY, (1 - DATEPART(WEEKDAY, calendardate)), calendardate) 
  )
 
@@ -79,10 +83,12 @@ LEFT JOIN y1_ada y1
   ON co.studentid = y1.studentid
  AND co.schoolid = y1.schoolid
  AND co.academic_year = y1.academic_year
+ AND co.db_name = y1.db_name
 LEFT JOIN weekly_ada wk
   ON co.studentid = wk.studentid
  AND co.schoolid = wk.schoolid
  AND co.date = wk.week_start_date
+ AND co.db_name = wk.db_name
 LEFT JOIN commlog cl
   ON co.student_number = cl.student_school_id
  AND cl.commlog_date BETWEEN co.date AND DATEADD(DAY, 6, co.date)

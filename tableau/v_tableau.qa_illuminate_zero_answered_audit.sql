@@ -49,6 +49,7 @@ LEFT JOIN gabby.reporting.reporting_terms dt
  AND dt.identifier = 'RT' 
 LEFT JOIN gabby.powerschool.ps_attendance_daily att
   ON co.studentid = att.studentid
+ AND co.db_name = att.db_name
  AND ovr.date_taken = att.att_date
  AND att.att_code LIKE 'A%'
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()

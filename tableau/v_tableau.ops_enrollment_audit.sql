@@ -136,6 +136,7 @@ WITH caredox_enrollment AS (
   FROM gabby.powerschool.cohort_identifiers_static co  
   LEFT JOIN gabby.powerschool.u_def_ext_students uxs
     ON co.students_dcid = uxs.studentsdcid
+   AND co.db_name = uxs.db_name
   LEFT JOIN residency_verification rv
     ON co.newark_enrollment_number = rv.nen  
   LEFT JOIN caredox_enrollment cde

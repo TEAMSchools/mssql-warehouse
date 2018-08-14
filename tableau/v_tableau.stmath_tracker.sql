@@ -10,6 +10,7 @@ WITH enrollments AS (
         ,enr.course_name
         ,enr.teacher_name        
         ,enr.section_number
+        ,enr.db_name
         ,ROW_NUMBER() OVER(
            PARTITION BY student_number, academic_year, credittype
              ORDER BY dateleft DESC) AS rn
@@ -67,4 +68,5 @@ JOIN gabby.powerschool.cohort_identifiers_static co
 JOIN enrollments enr
   ON co.student_number = enr.student_number
  AND co.academic_Year = enr.academic_year
+ AND co.db_name = enr.db_name
  AND enr.rn = 1

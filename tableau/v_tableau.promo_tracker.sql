@@ -16,6 +16,7 @@ WITH roster AS (
         ,co.advisor_name   
         ,co.iep_status
         ,co.enroll_status
+        ,co.db_name
 
         ,CONVERT(VARCHAR,dt.alt_name) AS term_name
         ,CONVERT(VARCHAR,dt.time_per_name) AS reporting_term
@@ -45,6 +46,7 @@ WITH roster AS (
         ,co.advisor_name           
         ,co.iep_status
         ,co.enroll_status
+        ,co.db_name
 
         ,'Y1' AS term
         ,CONVERT(VARCHAR,dt.time_per_name) AS reporting_term
@@ -62,115 +64,10 @@ WITH roster AS (
 
 ,contact AS (
   SELECT student_number
-        ,CONVERT(VARCHAR(25),LEFT(field, CHARINDEX('_',field) - 1)) AS person
-        ,CONVERT(VARCHAR(25),RIGHT(field, LEN(field) - CHARINDEX('_',field))) AS type
-        ,value      
-  FROM
-      (
-       SELECT CONVERT(INT,con.student_number) AS student_number
-             ,CONVERT(VARCHAR(250),con.home_phone) AS home_phone
-             ,CONVERT(VARCHAR(250),con.guardianemail) AS home_email
-             ,CONVERT(VARCHAR(250),con.mother) AS parent1_name            
-             ,CONVERT(VARCHAR(250),con.father) AS parent2_name            
-             ,CONVERT(VARCHAR(250),con.doctor_name) AS doctor_name      
-             ,CONVERT(VARCHAR(250),con.doctor_phone) AS doctor_phone
-             ,CONVERT(VARCHAR(250),con.emerg_contact_1) AS emerg1_name      
-             ,CONVERT(VARCHAR(250),con.emerg_phone_1) AS emerg1_phone
-             ,CONVERT(VARCHAR(250),con.emerg_contact_2) AS emerg2_name      
-             ,CONVERT(VARCHAR(250),con.emerg_phone_2) AS emerg2_phone            
-             ,CONVERT(VARCHAR(250),'Home') COLLATE Latin1_General_BIN AS home_name           
-
-             ,CONVERT(VARCHAR(250),scf.mother_home_phone) AS parent1_home      
-             ,CONVERT(VARCHAR(250),scf.motherdayphone) AS parent1_day
-             ,CONVERT(VARCHAR(250),scf.father_home_phone) AS parent2_home      
-             ,CONVERT(VARCHAR(250),scf.fatherdayphone) AS parent2_day
-             ,CONVERT(VARCHAR(250),scf.emerg_1_rel) AS emerg1_relation
-             ,CONVERT(VARCHAR(250),scf.emerg_2_rel) AS emerg2_relation
-             ,CONVERT(VARCHAR(250),scf.emerg_contact_3) AS emerg3_name
-             ,CONVERT(VARCHAR(250),scf.emerg_3_rel) AS emerg3_relation
-             ,CONVERT(VARCHAR(250),scf.emerg_3_phone) AS emerg3_phone
-      
-             ,CONVERT(VARCHAR(250),suf.emerg_4_name) AS emerg4_name
-             ,CONVERT(VARCHAR(250),suf.emerg_4_rel) AS emerg4_relation
-             ,CONVERT(VARCHAR(250),suf.emerg_4_phone) AS emerg4_phone
-             ,CONVERT(VARCHAR(250),suf.emerg_5_name) AS emerg5_name
-             ,CONVERT(VARCHAR(250),suf.emerg_5_rel) AS emerg5_relation
-             ,CONVERT(VARCHAR(250),suf.emerg_5_phone) AS emerg5_phone
-             ,CONVERT(VARCHAR(250),suf.mother_cell) AS parent1_cell
-             ,CONVERT(VARCHAR(250),suf.father_cell) AS parent2_cell
-             ,CONVERT(VARCHAR(250),suf.release_1_name) AS release1_name
-             ,CONVERT(VARCHAR(250),suf.release_1_relation) AS release1_relation
-             ,CONVERT(VARCHAR(250),suf.release_1_phone) AS release1_phone           
-             ,CONVERT(VARCHAR(250),suf.release_2_name) AS release2_name
-             ,CONVERT(VARCHAR(250),suf.release_2_relation) AS release2_relation
-             ,CONVERT(VARCHAR(250),suf.release_2_phone) AS release2_phone           
-             ,CONVERT(VARCHAR(250),suf.release_3_name) AS release3_name
-             ,CONVERT(VARCHAR(250),suf.release_3_relation) AS release3_relation
-             ,CONVERT(VARCHAR(250),suf.release_3_phone) AS release3_phone           
-             ,CONVERT(VARCHAR(250),suf.release_4_name) AS release4_name
-             ,CONVERT(VARCHAR(250),suf.release_4_relation) AS release4_relation
-             ,CONVERT(VARCHAR(250),suf.release_4_phone) AS release4_phone           
-             ,CONVERT(VARCHAR(250),suf.release_5_name) AS release5_name
-             ,CONVERT(VARCHAR(250),suf.release_5_relation) AS release5_relation
-             ,CONVERT(VARCHAR(250),suf.release_5_phone) AS release5_phone                      
-
-             ,CASE WHEN CONCAT(scf.mother_home_phone, suf.mother_cell, scf.motherdayphone)!= '' THEN CONVERT(VARCHAR(250),'Mother') END COLLATE Latin1_General_BIN AS parent1_relation
-             ,CASE WHEN CONCAT(scf.father_home_phone, suf.father_cell, scf.fatherdayphone) != '' THEN CONVERT(VARCHAR(250),'Father') END COLLATE Latin1_General_BIN AS parent2_relation
-             ,CASE WHEN CONCAT(con.doctor_name, con.doctor_phone) != '' THEN CONVERT(VARCHAR(250),'Doctor') END COLLATE Latin1_General_BIN AS doctor_relation
-       FROM gabby.powerschool.students con      
-       JOIN gabby.powerschool.studentcorefields scf
-         ON con.dcid = scf.studentsdcid
-       JOIN gabby.powerschool.u_studentsuserfields suf
-         ON con.dcid = suf.studentsdcid    
-      ) sub
-  UNPIVOT(
-    value
-    FOR field IN (home_name
-                 ,home_phone
-                 ,home_email
-                 ,parent1_name
-                 ,parent1_relation
-                 ,parent1_home
-                 ,parent1_cell
-                 ,parent1_day
-                 ,parent2_name
-                 ,parent2_relation
-                 ,parent2_home
-                 ,parent2_cell
-                 ,parent2_day
-                 ,doctor_name
-                 ,doctor_phone
-                 ,emerg1_name
-                 ,emerg1_relation
-                 ,emerg1_phone
-                 ,emerg2_name
-                 ,emerg2_relation
-                 ,emerg2_phone
-                 ,emerg3_name
-                 ,emerg3_relation
-                 ,emerg3_phone
-                 ,emerg4_name
-                 ,emerg4_relation
-                 ,emerg4_phone
-                 ,emerg5_name
-                 ,emerg5_relation
-                 ,emerg5_phone
-                 ,release1_name
-                 ,release1_relation
-                 ,release1_phone
-                 ,release2_name
-                 ,release2_relation
-                 ,release2_phone
-                 ,release3_name
-                 ,release3_relation
-                 ,release3_phone
-                 ,release4_name
-                 ,release4_relation
-                 ,release4_phone
-                 ,release5_name
-                 ,release5_relation
-                 ,release5_phone)
-   ) u
+        ,contact_type AS person
+        ,phone_type AS type
+        ,phone AS value      
+  FROM gabby.powerschool.student_contacts_static  
  )
 
 ,grades AS (
@@ -224,6 +121,7 @@ WITH roster AS (
 
 ,attendance AS (
   SELECT studentid
+        ,db_name
         ,academic_year
         ,reporting_term
         ,UPPER(LEFT(field, CHARINDEX('_', field) - 1)) AS att_code
@@ -239,6 +137,7 @@ WITH roster AS (
   FROM 
       (
        SELECT att.studentid
+             ,att.db_name
              ,att.academic_year
              ,att.reporting_term           
              ,att.a_count_term
@@ -271,6 +170,7 @@ WITH roster AS (
        UNION ALL
 
        SELECT att.studentid
+             ,att.db_name
              ,att.academic_year
              ,'SY1' AS reporting_term
              ,att.a_count_y1
@@ -388,6 +288,7 @@ WITH roster AS (
   FROM gabby.powerschool.gpa_cumulative gpa
   JOIN gabby.powerschool.students s
     ON gpa.studentid = s.id
+   AND gpa.db_name = s.db_name
 
   UNION ALL
 
@@ -400,6 +301,7 @@ WITH roster AS (
   FROM gabby.powerschool.gpa_cumulative gpa
   JOIN gabby.powerschool.students s
     ON gpa.studentid = s.id
+   AND gpa.db_name = s.db_name
   WHERE gpa.schoolid = 73253
  )
 
@@ -859,6 +761,7 @@ SELECT r.studentid
 FROM roster r
 LEFT OUTER JOIN attendance att
   ON r.studentid = att.studentid
+ AND r.db_name = att.db_name
  AND r.academic_year = att.academic_year
  AND r.reporting_term COLLATE Latin1_General_BIN = att.reporting_term
 

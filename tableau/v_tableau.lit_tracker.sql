@@ -95,6 +95,7 @@ FROM gabby.powerschool.cohort_identifiers_static co
 LEFT JOIN gabby.powerschool.spenrollments_gen sp
   ON co.studentid = sp.studentid
  AND co.academic_year = sp.academic_year
+ AND co.db_name = sp.db_name
  AND sp.programid = 5224
 JOIN gabby.reporting.reporting_term_map term
   ON co.school_level = term.school_level COLLATE Latin1_General_BIN

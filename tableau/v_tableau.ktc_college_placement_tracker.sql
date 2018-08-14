@@ -12,6 +12,7 @@ WITH roster AS (
         ,co.reporting_schoolid
         ,co.grade_level        
         ,co.enroll_status
+        ,co.db_name
         
         ,c.id AS contact_id
         ,c.latest_fafsa_date_c
@@ -50,6 +51,7 @@ WITH roster AS (
           WHEN c.kipp_hs_class_c > gabby.utilities.GLOBAL_ACADEMIC_YEAR() THEN 2
           WHEN c.post_hs_simple_admin_c IS NOT NULL THEN 23
          END AS enroll_status
+        ,taf.db_name
         
         ,c.id AS contact_id
         ,c.latest_fafsa_date_c
@@ -359,6 +361,7 @@ FROM roster co
 LEFT OUTER JOIN gabby.powerschool.gpa_cumulative gpa
   ON co.studentid = gpa.studentid
  AND co.schoolid = gpa.schoolid
+ AND co.db_name = gpa.db_name
 LEFT OUTER JOIN gabby.naviance.current_task_completion_status ctcs
   ON co.student_number = ctcs.student_id
 LEFT OUTER JOIN nav_applications na

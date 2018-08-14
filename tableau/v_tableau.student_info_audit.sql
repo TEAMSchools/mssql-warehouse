@@ -158,6 +158,7 @@ FROM gabby.powerschool.cohort_identifiers_static co
 JOIN gabby.powerschool.fte
   ON co.schoolid = fte.schoolid
  AND co.yearid = fte.yearid
+ AND co.db_name = fte.db_name
  AND fte.name = 'Full Time Students'
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 	 AND co.schoolid != 999999  
