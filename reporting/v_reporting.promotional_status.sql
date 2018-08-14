@@ -12,6 +12,7 @@ WITH attendance AS (
         ,tdy_all_count_y1
         ,att_pts
         ,att_pts_pct
+        ,db_name
         ,ROUND((((sub.mem_count_y1 * 0.105) - att_pts) / -0.105) + 0.5,0) AS days_to_90_pts
         ,ROUND((((sub.mem_count_y1 * 0.105) - abs_unexcused_count_y1) / -0.105) + 0.5,0) AS days_to_90_abs_only
         ,CASE
@@ -26,7 +27,8 @@ WITH attendance AS (
              ,att.term_name
              ,att.mem_count_y1
              ,att.abs_unexcused_count_y1
-             ,att.tdy_all_count_y1        
+             ,att.tdy_all_count_y1       
+             ,att.db_name 
              ,ROUND(att.abs_unexcused_count_y1 + (att.tdy_all_count_y1 / 3), 1, 1) AS att_pts
              ,ROUND(((att.mem_count_y1 - (att.abs_unexcused_count_y1 + FLOOR(att.tdy_all_count_y1 / 3))) / att.mem_count_y1) * 100, 0) AS att_pts_pct
        FROM gabby.powerschool.attendance_counts_static att
@@ -106,6 +108,7 @@ WITH attendance AS (
         ,term_name
         ,N_below_60
         ,N_below_70
+        ,db_name
         ,CASE
           WHEN N_below_60 > 0 THEN 'Off Track'
           WHEN N_below_70 > 0 THEN 'Warning'
@@ -116,6 +119,7 @@ WITH attendance AS (
        SELECT gr.student_number
              ,gr.academic_year
              ,gr.term_name
+             ,gr.db_name
              ,SUM(CASE WHEN gr.y1_grade_percent_adjusted < 70 THEN 1 ELSE 0 END) AS N_below_70
              ,SUM(CASE WHEN gr.y1_grade_percent_adjusted < 60 THEN 1 ELSE 0 END) AS N_below_60
        FROM gabby.powerschool.final_grades_static gr
@@ -124,6 +128,7 @@ WITH attendance AS (
        GROUP BY gr.student_number
                ,gr.term_name
                ,gr.academic_year
+               ,gr.db_name
       ) sub
  )
 
@@ -131,6 +136,7 @@ WITH attendance AS (
   SELECT fg.student_number
         ,fg.academic_year
         ,fg.term_name
+        ,fg.db_name
   
         ,ISNULL(SUM(fg.credit_hours), 0) AS total_credit_hours_enrolled_y1
         ,ISNULL(SUM(CASE                      
@@ -148,11 +154,13 @@ WITH attendance AS (
   LEFT JOIN gabby.powerschool.storedgrades sg
     ON fg.studentid = sg.studentid
    AND fg.course_number = sg.course_number
+   AND fg.db_name = sg.db_name
    AND fg.academic_year = (LEFT(sg.termid, 2) + 1990)
    AND sg.storecode = 'Y1'
   GROUP BY fg.student_number
           ,fg.academic_year
           ,fg.term_name
+          ,fg.db_name
  )
 
 SELECT studentid
@@ -326,6 +334,7 @@ FROM
      FROM gabby.powerschool.cohort_identifiers_static co
      JOIN gabby.powerschool.students s
        ON co.student_number = s.student_number
+      AND co.db_name = s.db_name
      JOIN gabby.reporting.reporting_terms dt
        ON co.schoolid = dt.schoolid
       AND co.academic_year = dt.academic_year
@@ -334,6 +343,7 @@ FROM
      LEFT JOIN attendance att
        ON co.studentid = att.studentid
       AND co.academic_year = att.academic_year
+      AND co.db_name = att.db_name
       AND dt.alt_name COLLATE Latin1_General_BIN = att.term_name 
      LEFT JOIN lit
        ON co.student_number = lit.student_number
@@ -343,22 +353,27 @@ FROM
      LEFT JOIN final_grades fg
        ON co.student_number = fg.student_number
       AND co.academic_year = fg.academic_year
+      AND co.db_name = fg.db_name
       AND dt.alt_name COLLATE Latin1_General_BIN = fg.term_name      
      LEFT JOIN gabby.powerschool.category_grades_wide cat
        ON co.student_number = cat.student_number
       AND co.academic_year = cat.academic_year 
+      AND co.db_name = cat.db_name
       AND dt.time_per_name COLLATE Latin1_General_BIN = cat.reporting_term
       AND cat.credittype = 'ALL'
      LEFT JOIN gabby.powerschool.gpa_detail gpa 
        ON co.student_number = gpa.student_number
       AND co.academic_year = gpa.academic_year
+      AND co.db_name = gpa.db_name
       AND dt.alt_name COLLATE Latin1_General_BIN = gpa.term_name
      LEFT JOIN gabby.powerschool.gpa_cumulative cum
        ON co.studentid = cum.studentid
       AND co.schoolid = cum.schoolid
+      AND co.db_name = cum.db_name
      LEFT JOIN credits cr
        ON co.student_number = cr.student_number
       AND co.academic_year = cr.academic_year
+      AND co.db_name = cr.db_name
       AND dt.alt_name COLLATE Latin1_General_BIN = cr.term_name
      WHERE co.rn_year = 1
     ) sub
