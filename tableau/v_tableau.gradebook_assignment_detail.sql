@@ -36,12 +36,15 @@ SELECT enr.sectionid
 FROM gabby.powerschool.course_enrollments_static enr
 JOIN gabby.powerschool.gradebook_setup_static gb
   ON enr.sections_dcid = gb.sectionsdcid
+ AND enr.db_name = gb.db_name
 LEFT JOIN gabby.powerschool.gradebook_assignments a WITH(NOLOCK)
   ON gb.sectionsdcid = a.sectionsdcid
- AND a.assign_date BETWEEN gb.startdate and gb.enddate
+ AND gb.db_name = a.db_name
+ AND a.assign_date BETWEEN gb.startdate and gb.enddate 
  AND ((gb.finalgradesetuptype = 'Total_Points') OR
       (gb.finalgradesetuptype != 'Total_Points' AND gb.assignmentcategoryid = a.categoryid))
 LEFT JOIN gabby.powerschool.gradebook_assignments_scores scores WITH(NOLOCK)
   ON a.assignmentsectionid = scores.assignmentsectionid
- AND enr.students_dcid = scores.studentsdcid
+ AND a.db_name = scores.db_name
+ AND enr.students_dcid = scores.studentsdcid 
 WHERE enr.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()

@@ -26,8 +26,10 @@ FROM
           FROM gabby.powerschool.storedgrades sg
           JOIN gabby.powerschool.students s
             ON sg.studentid = s.id
+           AND sg.db_name = s.db_name
           LEFT OUTER JOIN gabby.powerschool.gradescaleitem_lookup_static scale_unweighted
-            ON sg.[percent] BETWEEN scale_unweighted.min_cutoffpercentage AND scale_unweighted.max_cutoffpercentage
+            ON sg.db_name = scale_unweighted.db_name
+           AND sg.[percent] BETWEEN scale_unweighted.min_cutoffpercentage AND scale_unweighted.max_cutoffpercentage
            AND CASE
                 WHEN sg.schoolid != 73253 THEN sg.gradescale_name
                 WHEN sg.termid < 2600 THEN 'NCA 2011' /* default pre-2016 */
@@ -51,5 +53,6 @@ FROM gabby.powerschool.cohort_identifiers_static co
 JOIN gabby.powerschool.gpa_cumulative sg
   ON co.studentid = sg.studentid
  AND co.schoolid = sg.schoolid
+ AND co.db_name = sg.db_name
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.rn_year = 1

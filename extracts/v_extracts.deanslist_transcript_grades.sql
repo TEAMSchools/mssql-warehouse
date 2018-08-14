@@ -43,6 +43,7 @@ WITH all_grades AS (
   FROM gabby.powerschool.storedgrades sg
   JOIN gabby.powerschool.students s
     ON sg.studentid = s.id
+   AND sg.db_name = s.db_name
   WHERE ISNULL(sg.excludefromgpa, 0) = 0
     AND ISNULL(sg.excludefromtranscripts, 0) = 0
     AND sg.storecode = 'Y1'

@@ -137,28 +137,31 @@ SELECT co.student_number
       ,CONVERT(VARCHAR,bk.dt_taken) AS last_book_quiz_date
       ,bk.d_percent_correct * 100 AS last_book_quiz_pct_correct
 FROM gabby.powerschool.cohort_identifiers_static co
-LEFT JOIN fp fp_base
-  ON co.student_number = fp_base.student_number
- AND fp_base.rn_base = 1
-LEFT JOIN fp fp_curr
-  ON co.student_number = fp_curr.student_number
- AND fp_curr.rn_curr = 1
 LEFT JOIN gabby.powerschool.course_enrollments_static enr
   ON co.studentid = enr.studentid 
+ AND co.db_name = enr.db_name
  AND enr.credittype = 'ENG'
  AND CONVERT(DATE,GETDATE()) BETWEEN enr.dateenrolled AND enr.dateleft
  AND enr.rn_subject = 1
 LEFT JOIN gabby.powerschool.final_grades_static gr
   ON co.student_number = gr.student_number
  AND co.academic_year = gr.academic_year
+ AND co.db_name = gr.db_name
  AND enr.course_number = gr.course_number
  AND gr.is_curterm = 1
 LEFT JOIN gabby.powerschool.category_grades_static ele
   ON co.student_number = ele.student_number
  AND co.academic_year = ele.academic_year 
+ AND co.db_name = ele.db_name
  AND enr.course_number = ele.course_number   
  AND ele.grade_category = 'H'
  AND ele.is_curterm = 1
+LEFT JOIN fp fp_base
+  ON co.student_number = fp_base.student_number
+ AND fp_base.rn_base = 1
+LEFT JOIN fp fp_curr
+  ON co.student_number = fp_curr.student_number
+ AND fp_curr.rn_curr = 1
 LEFT JOIN ar_wide
   ON co.student_number = ar_wide.student_number
 LEFT JOIN gabby.renaissance.ar_most_recent_quiz_static bk

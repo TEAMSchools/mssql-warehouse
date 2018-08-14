@@ -15,4 +15,5 @@ SELECT t.schoolid AS [01 Site ID]
 FROM gabby.powerschool.terms t
 JOIN gabby.powerschool.schools s
   ON t.schoolid = s.school_number
+ AND t.db_name = s.db_name
  AND s.state_excludefromreporting = 0

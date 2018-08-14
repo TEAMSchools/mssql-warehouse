@@ -39,26 +39,32 @@ SELECT o.student_number
 FROM gabby.powerschool.course_section_scaffold o WITH(NOLOCK)
 JOIN gabby.powerschool.sections sec WITH(NOLOCK)
   ON o.sectionid = sec.id
+ AND o.db_name = sec.db_name
 JOIN gabby.powerschool.courses cou WITH(NOLOCK)
   ON o.course_number = cou.course_number_clean
+ AND o.db_name = cou.db_name
 JOIN gabby.powerschool.cc WITH(NOLOCK)
   ON o.studentid = cc.studentid
  AND o.sectionid = cc.sectionid
+ AND o.db_name = cc.db_name
 LEFT JOIN gabby.powerschool.final_grades_wide fg WITH(NOLOCK)
   ON o.student_number = fg.student_number
  AND (o.yearid + 1990) = fg.academic_year
  AND o.course_number = fg.course_number
  AND o.term_name = fg.term_name
+ AND o.db_name = fg.db_name
  AND fg.reporting_term != 'CUR'
 LEFT JOIN gabby.powerschool.category_grades_wide cat WITH(NOLOCK)
   ON o.student_number = cat.student_number
  AND (o.yearid + 1990) = cat.academic_year
+ AND o.db_name = cat.db_name
  AND fg.course_number = cat.course_number
  AND fg.reporting_term = cat.reporting_term 
 LEFT JOIN gabby.powerschool.pgfinalgrades comm WITH(NOLOCK)
   ON fg.studentid = comm.studentid
  AND fg.sectionid = comm.sectionid
  AND fg.term_name = comm.finalgradename_clean
+ AND fg.db_name = comm.db_name
 WHERE o.yearid = (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990)
 
 UNION ALL
