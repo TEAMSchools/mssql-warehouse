@@ -414,7 +414,7 @@ WITH roster AS (
           WHEN test_performance_level = 2 THEN 'Partially Met'
           WHEN test_performance_level = 1 THEN 'Did Not Meet'
          END AS performance_level_label       
-  FROM gabby.parcc.summative_record_file
+  FROM gabby.parcc.summative_record_file_clean
 
   UNION ALL
 

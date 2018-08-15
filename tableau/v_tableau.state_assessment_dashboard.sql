@@ -138,7 +138,7 @@ SELECT co.student_number
 
       ,ms.ms_attended
 FROM gabby.powerschool.cohort_identifiers_static co
-JOIN gabby.parcc.summative_record_file parcc
+JOIN gabby.parcc.summative_record_file_clean parcc
   ON co.student_number = parcc.local_student_identifier
  AND co.academic_year = parcc.academic_year
 LEFT JOIN external_prof ext
