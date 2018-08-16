@@ -26,11 +26,12 @@ WITH commlog AS (
 
 SELECT co.student_number
       ,co.lastfirst
-      ,co.grade_level
-      ,co.team
+      ,co.academic_year
       ,co.region
       ,co.reporting_schoolid
-      
+      ,co.grade_level
+      ,co.team
+
       ,att.att_date
       ,att.att_comment
       ,CASE WHEN ac.att_code = 'true' THEN 'T' ELSE ac.att_code END AS att_code 

@@ -19,17 +19,17 @@ FROM
            ,schoolid AS schoolid
            
            ,SUM(CASE WHEN academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() THEN earnedcrhrs ELSE potentialcrhrs END) AS potential_credits_cum                       
-           ,ROUND(SUM(CONVERT(FLOAT,unweighted_points)),3) AS unweighted_points
+           ,SUM(CONVERT(FLOAT,unweighted_points)) AS unweighted_points
 
-           ,ROUND(SUM(CONVERT(FLOAT,weighted_points)),3) AS weighted_points           
+           ,SUM(CONVERT(FLOAT,weighted_points)) AS weighted_points           
            ,CASE WHEN SUM(CONVERT(FLOAT,potentialcrhrs)) = 0 THEN NULL ELSE SUM(CONVERT(FLOAT,potentialcrhrs)) END AS potentialcrhrs
            ,SUM(earnedcrhrs) AS earned_credits_cum           
 
-           ,ROUND(SUM(CONVERT(FLOAT,weighted_points_projected)),3) AS weighted_points_projected
+           ,SUM(CONVERT(FLOAT,weighted_points_projected)) AS weighted_points_projected
            ,CASE WHEN SUM(CONVERT(FLOAT,potentialcrhrs_projected)) = 0 THEN NULL ELSE SUM(CONVERT(FLOAT,potentialcrhrs_projected)) END AS credit_hours_projected
            ,SUM(earnedcrhrs_projected) AS earned_credits_cum_projected
 
-           ,ROUND(SUM(CONVERT(FLOAT,weighted_points_projected_s1)),3) AS weighted_points_projected_s1
+           ,SUM(CONVERT(FLOAT,weighted_points_projected_s1)) AS weighted_points_projected_s1
            ,CASE WHEN SUM(CONVERT(FLOAT,potentialcrhrs_projected_s1)) = 0 THEN NULL ELSE SUM(CONVERT(FLOAT,potentialcrhrs_projected_s1)) END AS credit_hours_projected_s1
            ,SUM(earnedcrhrs_projected_s1) AS earned_credits_cum_projected_s1
      FROM 
