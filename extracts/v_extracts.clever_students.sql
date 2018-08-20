@@ -37,7 +37,7 @@ SELECT CONVERT(VARCHAR(25), co.schoolid) AS [School_id]
       ,sc.contact_relationship AS [Contact_relationship]
       ,sc.contact_type AS [Contact_type]
       ,sc.contact_name AS [Contact_name]
-      ,CONVERT(BIGINT,LEFT(gabby.utilities.STRIP_CHARACTERS(sc.phone, '^0-9'), 10)) AS [Contact_phone]
+      ,CONVERT(VARCHAR(25),LEFT(gabby.utilities.STRIP_CHARACTERS(sc.phone, '^0-9'), 10)) AS [Contact_phone]
       ,CASE
         WHEN sc.phone_type = 'home' THEN 'Home'
         WHEN sc.phone_type = 'cell' THEN 'Cell'
