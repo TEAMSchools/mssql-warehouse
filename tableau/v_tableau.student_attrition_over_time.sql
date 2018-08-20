@@ -39,6 +39,7 @@ SELECT y1.student_number
       ,y1.exitcode
       ,y1.exitcomment
       ,y1.enroll_status
+      ,y1.db_name
 
       ,d.date
       

@@ -26,6 +26,8 @@ SELECT 54 AS repository_id
       ,co.grade_level
       ,co.iep_status  
       ,co.team
+      ,co.c_504_status
+      ,co.region
 FROM gabby.illuminate_dna_repositories.repository_54 r
 JOIN gabby.illuminate_public.students s
   ON r.student_id = s.student_id
