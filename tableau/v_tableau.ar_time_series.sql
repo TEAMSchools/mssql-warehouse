@@ -24,6 +24,7 @@ WITH ar_long AS (
 SELECT student_number
       ,lastfirst
       ,academic_year
+      ,region
       ,schoolid
       ,grade_level
       ,team
@@ -73,6 +74,7 @@ FROM
      SELECT student_number
            ,lastfirst
            ,academic_year
+           ,region
            ,schoolid
            ,grade_level
            ,team
@@ -131,7 +133,8 @@ FROM
                 ,co.team
                 ,co.advisor_name
                 ,co.iep_status           
-                ,co.date                      
+                ,co.date          
+                ,co.region            
 
                 ,CONVERT(VARCHAR(25),dts.alt_name) AS term
                 ,CONVERT(VARCHAR(25),dts.time_per_name) AS goal_term

@@ -10,6 +10,7 @@ SELECT co.student_number
       ,co.grade_level
       ,co.team
       ,co.advisor_name
+      ,co.region
 
       ,ar.i_quiz_number      
       ,ar.vch_content_title
