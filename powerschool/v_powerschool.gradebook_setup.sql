@@ -1,5 +1,29 @@
 CREATE OR ALTER VIEW powerschool.gradebook_setup AS
 
+WITH default_gfs AS (
+  SELECT gfs.gradeformulasetid	        
+        ,gfs.yearid  
+        ,gfs.name
+
+        ,gct.abbreviation
+        ,gct.storecode
+        ,gct.gradecalculationtypeid
+        ,gct.type
+        
+        ,sch.school_number
+  FROM powerschool.gradeformulaset gfs 
+  JOIN powerschool.gradecalculationtype gct 
+    ON gfs.gradeformulasetid = gct.gradeformulasetid
+  JOIN powerschool.gradecalcschoolassoc gcsa 
+    ON gct.gradecalculationtypeid = gcsa.gradecalculationtypeid
+  JOIN powerschool.schools sch 
+    ON gcsa.schoolsdcid = sch.dcid
+  WHERE gfs.sectionsdcid IS NULL
+    AND ((gfs.name IN ('KNJ Middle Schools', 'Middle school') AND sch.high_grade = 8)
+         OR (gfs.name IN ('KNJ High Schools') AND sch.high_grade = 12))
+    AND sch.school_number = 73253
+ )
+    
 SELECT sectionsdcid
       ,sectionsdcid AS psm_sectionid                
       ,ISNULL(gradeformulasetid, 0) AS finalgradesetupid
@@ -8,7 +32,7 @@ SELECT sectionsdcid
       ,storecode AS reportingterm_name
       ,date_1 AS startdate
       ,date_2 AS enddate
-      ,ISNULL(gradecalcformulaweightid, gradecalculationtypeid) AS gradingformulaid
+      ,ISNULL(gradecalcformulaweightid, gradecalculationtypeid)AS gradingformulaid
       ,ISNULL(gcfw_type, gct_type) AS gradingformulaweightingtype
       ,weight AS weighting
                 
@@ -20,15 +44,15 @@ SELECT sectionsdcid
 FROM
     (
      SELECT sec.dcid AS sectionsdcid        
-           
+           ,sec.schoolid
+
            ,tb.storecode
            ,tb.date_1
            ,tb.date_2
 
-           ,gfs.gradeformulasetid
-           
-           ,gct.gradecalculationtypeid
-           ,gct.type AS gct_type
+           ,COALESCE(gfs.gradeformulasetid, d.gradeformulasetid) AS gradeformulasetid
+           ,COALESCE(gct.gradecalculationtypeid, d.gradecalculationtypeid) AS gradecalculationtypeid
+           ,COALESCE(gct.type, d.type) AS gct_type       
 
            ,gcfw.gradecalcformulaweightid
            ,gcfw.teachercategoryid
@@ -45,23 +69,27 @@ FROM
            ,dtc.defaultscoretype AS dtc_defaultscoretype
            ,dtc.isinfinalgrades AS dtc_isinfinalgrades                
      FROM powerschool.sections sec 
-     JOIN powerschool.termbins tb 
-       ON sec.schoolid = tb.schoolid
-      AND sec.termid = tb.termid   
      JOIN powerschool.terms rt 
-       ON tb.termid = rt.id
+       ON sec.termid = rt.id
       AND sec.schoolid = rt.schoolid
+     JOIN powerschool.termbins tb 
+       ON rt.schoolid = tb.schoolid
+      AND rt.id = tb.termid
+     JOIN default_gfs d
+       ON sec.schoolid = d.school_number
+      AND sec.yearid = d.yearid
+      AND rt.abbreviation = d.abbreviation
+      AND tb.storecode = d.storecode      
      LEFT JOIN powerschool.gradeformulaset gfs 
        ON sec.dcid = gfs.sectionsdcid         
      LEFT JOIN powerschool.gradecalculationtype gct 
        ON gfs.gradeformulasetid = gct.gradeformulasetid    
       AND tb.storecode = gct.storecode 
      LEFT JOIN powerschool.gradecalcformulaweight gcfw 
-       ON gct.gradecalculationtypeid = gcfw.gradecalculationtypeid
+       ON COALESCE(gct.gradecalculationtypeid, d.gradecalculationtypeid) = gcfw.gradecalculationtypeid
      LEFT JOIN powerschool.teachercategory tc 
        ON gcfw.teachercategoryid = tc.teachercategoryid 
      LEFT JOIN powerschool.districtteachercategory dtc 
        ON gcfw.districtteachercategoryid = dtc.districtteachercategoryid
-     WHERE sec.gradebooktype = 2    
+     WHERE sec.gradebooktype = 2
     ) sub
-WHERE ISNULL(gradecalcformulaweightid, gradecalculationtypeid) IS NOT NULL
