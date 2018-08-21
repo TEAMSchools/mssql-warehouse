@@ -3,7 +3,8 @@ GO
 
 CREATE OR ALTER VIEW deanslist.incidents_penalties AS
 
-SELECT CONVERT(INT,dli.incident_id) AS incident_id
+SELECT DISTINCT
+       CONVERT(INT,dli.incident_id) AS incident_id
       ,CONVERT(VARCHAR(2000),dli.penalties) AS penalties_json
 
       ,dlip.incidentpenaltyid
