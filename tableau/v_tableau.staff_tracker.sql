@@ -66,4 +66,3 @@ LEFT JOIN tracking_long pt
   ON df.df_employee_number = pt.employee_number
  AND cal.date_value = pt.date
  AND f.pay_code = pt.pay_code
-WHERE df.status != 'TERMINATED'
