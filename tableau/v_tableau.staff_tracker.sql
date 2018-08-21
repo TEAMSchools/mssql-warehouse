@@ -25,13 +25,26 @@ WITH prof_calendar AS (
         ,pay_code
         ,pay_category
   FROM dayforce.employee_attendance
+  WHERE pay_code NOT IN ('Assessment Coordinator'
+                         ,'Department Chair'
+                         ,'Discretionary Stipend'
+                         ,'Discretionary Stipend'
+                         ,'Extracurricular Coach/Leader'
+                         ,'Extracurricular Program Coordinator - Elementary'
+                         ,'Extracurricular Program Coordinator - Middle and High'
+                         ,'Grade Level Chair'
+                         ,'Instructional Coach'
+                         ,'MEAL'
+                         )
   )
 
-,tracker_fields AS (
-  SELECT DISTINCT
-         pay_code
-  FROM tracking_long
- )
+--@cbini, This was in the original feed as a CROSS JOIN, but I don't think we need it. Thoughts?
+--,tracker_fields AS (
+--  SELECT DISTINCT
+--         pay_code
+--        ,pay_category
+--  FROM tracking_long
+-- ) 
 
 ,directory AS (
   SELECT CASE WHEN LEN(employeenumber) > 6 THEN RIGHT(employeenumber,LEN(employeenumber)-3) ELSE employeenumber END AS employeenumber
@@ -39,7 +52,8 @@ WITH prof_calendar AS (
   FROM gabby.adsi.user_attributes_static
  )
  
-SELECT df.df_employee_number
+SELECT DISTINCT 
+       df.df_employee_number
       ,df.preferred_name AS preferred_lastfirst       
       ,df.primary_site_schoolid AS schoolid
       ,df.primary_site AS location
@@ -53,7 +67,8 @@ SELECT df.df_employee_number
       ,cal.term
       ,cal.date_value            
        
-      ,f.pay_code
+      ,pt.pay_code
+      ,pt.pay_category
 
 FROM gabby.dayforce.staff_roster df
 LEFT JOIN directory dir
@@ -61,8 +76,11 @@ LEFT JOIN directory dir
 JOIN prof_calendar cal
   ON df.primary_site_schoolid = cal.schoolid
  AND df.position_effective_from_date <= cal.date_value
-CROSS JOIN tracker_fields f
+--CROSS JOIN tracker_fields f
 LEFT JOIN tracking_long pt
   ON df.df_employee_number = pt.employee_number
  AND cal.date_value = pt.date
- AND f.pay_code = pt.pay_code
+ --AND f.pay_code = pt.pay_code
+
+WHERE df.termination_date BETWEEN DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1) AND GETDATE()
+      OR df.termination_date IS NULL
