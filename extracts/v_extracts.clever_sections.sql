@@ -95,7 +95,7 @@ SELECT DISTINCT
         WHEN co.grade_level = 11 THEN '11(A)'
         WHEN co.grade_level = 12 THEN '12(A)'
        END AS [Period]
-      ,'other' AS [Subject]
+      ,'Homeroom/advisory' AS [Subject]
       ,CONCAT(RIGHT(co.academic_year, 2), '-', RIGHT(co.academic_year + 1, 2))  [Term_name]
       ,CONVERT(VARCHAR(25), DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1), 101) AS [Term_start]
       ,CONVERT(VARCHAR(25), DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1, 6, 30), 101) AS [Term_end]
