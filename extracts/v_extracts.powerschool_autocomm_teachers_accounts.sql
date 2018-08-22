@@ -10,7 +10,7 @@ SELECT sub.teachernumber
       ,CASE WHEN sub.status = 1 THEN sub.teacherloginid END AS teacherloginid
       ,sub.email_addr
       ,CONVERT(INT,COALESCE(t.schoolid, sub.homeschoolid, 0)) AS schoolid
-      ,CONVERT(INT,COALESCE(t.homeschoolid, sub.homeschoolid, 0)) AS homeschoolid
+      ,CONVERT(INT,COALESCE(sub.homeschoolid, 0)) AS homeschoolid
       ,sub.status      
       ,CASE WHEN sub.status = 1 THEN 1 ELSE 0 END AS teacherldapenabled
       ,CASE WHEN sub.status = 1 THEN 1 ELSE 0 END AS adminldapenabled      
