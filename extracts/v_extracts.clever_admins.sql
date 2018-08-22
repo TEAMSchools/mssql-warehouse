@@ -15,7 +15,7 @@ SELECT CONVERT(VARCHAR(25),COALESCE(sch.school_number, df.primary_site_schoolid)
 FROM gabby.dayforce.staff_roster df
 JOIN gabby.adsi.user_attributes_static ad
   ON CONVERT(VARCHAR(25),df.df_employee_number) = ad.employeenumber
-JOIN gabby.people.id_crosswalk_powerschool id
+LEFT JOIN gabby.people.id_crosswalk_powerschool id
   ON df.df_employee_number = id.df_employee_number
  AND id.is_master = 1
 LEFT JOIN gabby.powerschool.schools sch
