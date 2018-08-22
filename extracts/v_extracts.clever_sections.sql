@@ -80,7 +80,21 @@ SELECT DISTINCT
       ,'Enroll' AS [Course_name]
       ,'ENR' AS [Course_number]
       ,NULL AS [Course_description]
-      ,'1(A)' AS [Period]
+      ,CASE
+        WHEN co.grade_level = 0 THEN '0(A)'
+        WHEN co.grade_level = 1 THEN '1(A)'
+        WHEN co.grade_level = 2 THEN '2(A)'
+        WHEN co.grade_level = 3 THEN '3(A)'
+        WHEN co.grade_level = 4 THEN '4(A)'
+        WHEN co.grade_level = 5 THEN '5(A)'
+        WHEN co.grade_level = 6 THEN '6(A)'
+        WHEN co.grade_level = 7 THEN '7(A)'
+        WHEN co.grade_level = 8 THEN '8(A)'
+        WHEN co.grade_level = 9 THEN '9(A)'
+        WHEN co.grade_level = 10 THEN '10(A)'
+        WHEN co.grade_level = 11 THEN '11(A)'
+        WHEN co.grade_level = 12 THEN '12(A)'
+       END AS [Period]
       ,'other' AS [Subject]
       ,CONCAT(RIGHT(co.academic_year, 2), '-', RIGHT(co.academic_year + 1, 2))  [Term_name]
       ,CONVERT(VARCHAR(25), DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1), 101) AS [Term_start]
