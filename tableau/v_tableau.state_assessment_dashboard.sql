@@ -100,6 +100,17 @@ WITH promo AS (
   WHERE rn = 1
  )
 
+,ps_users AS (
+  SELECT DISTINCT 
+         u.sif_stateprid      
+        ,u.lastfirst
+  FROM gabby.powerschool.users u
+  JOIN gabby.powerschool.schools sch
+    ON u.homeschoolid = sch.school_number
+   AND u.db_name = sch.db_name
+  WHERE u.sif_stateprid IS NOT NULL
+ )
+
 SELECT co.student_number
       ,co.lastfirst
       ,co.academic_year
@@ -123,6 +134,7 @@ SELECT co.student_number
       ,parcc.test_scale_score
       ,parcc.test_performance_level
       ,parcc.test_reading_csem AS test_standard_error
+      ,parcc.staff_member_identifier
       ,CASE
         WHEN parcc.test_performance_level >= 4 THEN 1
         WHEN parcc.test_performance_level < 4 THEN 0
@@ -137,6 +149,8 @@ SELECT co.student_number
       ,promo.attended_ms
 
       ,ms.ms_attended
+
+      ,pu.lastfirst AS teacher_lastfirst
 FROM gabby.powerschool.cohort_identifiers_static co
 JOIN gabby.parcc.summative_record_file_clean parcc
   ON co.student_number = parcc.local_student_identifier
@@ -148,6 +162,8 @@ LEFT JOIN promo
   ON co.student_number = promo.student_number
 LEFT JOIN ms_grad ms
   ON co.student_number = ms.student_number
+LEFT JOIN ps_users pu
+  ON parcc.staff_member_identifier = pu.sif_stateprid
 WHERE co.rn_year = 1
 
 UNION ALL
@@ -179,6 +195,7 @@ SELECT co.student_number
         WHEN asa.performance_level = 'Partially Proficient' THEN 1
        END AS performance_level
       ,NULL AS test_standard_error
+      ,NULL staff_member_identifier
       ,CASE
         WHEN asa.scaled_score = 0 THEN NULL
         WHEN asa.scaled_score >= 200 THEN 1
@@ -194,6 +211,8 @@ SELECT co.student_number
       ,promo.attended_ms
 
       ,ms.ms_attended
+
+      ,NULL AS teacher_lastfirst
 FROM gabby.powerschool.cohort_identifiers_static co
 JOIN gabby.njsmart.all_state_assessments asa
   ON co.student_number = asa.local_student_id
