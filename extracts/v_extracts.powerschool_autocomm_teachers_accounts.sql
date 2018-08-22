@@ -38,7 +38,8 @@ FROM
            ,CASE
              WHEN psid.is_master = 0 THEN 2
              WHEN df.termination_date < GETDATE() THEN 2
-             WHEN df.status IN ('ACTIVE','INACTIVE','PRESTART') OR df.termination_date >= CONVERT(DATE,GETDATE()) THEN 1
+             WHEN df.status IN ('ACTIVE','INACTIVE','PRESTART') THEN 1
+             WHEN df.termination_date >= CONVERT(DATE,GETDATE()) THEN 1
              ELSE 2
             END AS status
      FROM gabby.dayforce.staff_roster df
@@ -47,7 +48,8 @@ FROM
      LEFT JOIN gabby.people.id_crosswalk_powerschool psid
        ON df.adp_associate_id = psid.adp_associate_id
       AND psid.is_master = 1
-     WHERE df.primary_on_site_department != 'Data'
+     WHERE DATEDIFF(DAY, ISNULL(df.termination_date, CONVERT(DATE,GETDATE())), GETDATE()) <= 7 /* import terminated staff up to a week after termination date */
+       AND df.primary_on_site_department != 'Data'
        AND df.legal_entity_name != 'KIPP New Jersey'
     ) sub
 LEFT JOIN gabby.powerschool.teachers_static t
@@ -85,8 +87,8 @@ FROM
            ,CASE
              WHEN psid.is_master = 0 THEN 2
              WHEN df.termination_date < GETDATE() THEN 2
-             WHEN df.primary_job = 'Intern' THEN 2
-             WHEN df.status IN ('ACTIVE','INACTIVE','PRESTART') OR df.termination_date >= CONVERT(DATE,GETDATE()) THEN 1
+             WHEN df.status IN ('ACTIVE','INACTIVE','PRESTART') THEN 1
+             WHEN df.termination_date >= CONVERT(DATE,GETDATE()) THEN 1
              ELSE 2
             END AS status
      FROM gabby.dayforce.staff_roster df
