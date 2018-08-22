@@ -23,7 +23,11 @@ FROM
                     ,CONVERT(VARCHAR(25),df.df_employee_number)) AS teachernumber
            ,df.preferred_first_name AS first_name
            ,df.preferred_last_name AS last_name
-           ,df.primary_site_schoolid AS homeschoolid
+           ,CASE
+             WHEN df.primary_site = '18th Ave Campus' THEN 73255
+             WHEN df.primary_site = 'KIPP Lanning Sq Campus' THEN 179901
+             ELSE df.primary_site_schoolid 
+            END AS homeschoolid
            ,df.legal_entity_name
            ,CASE
              WHEN df.legal_entity_name = 'TEAM Academy Charter Schools' THEN 'kippnewark'
