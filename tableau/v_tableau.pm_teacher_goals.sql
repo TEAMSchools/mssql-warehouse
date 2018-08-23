@@ -22,6 +22,10 @@ WITH teacher_crosswalk AS (
          END AS db_name
       
         ,COALESCE(idps.ps_teachernumber, idadp.adp_associate_id, CONVERT(VARCHAR(25),sr.df_employee_number)) AS ps_teachernumber
+
+        ,ads.samaccountname AS staff_username
+
+        ,adm.samaccountname AS manager_username
   FROM gabby.dayforce.staff_roster sr
   LEFT JOIN gabby.people.id_crosswalk_powerschool idps
     ON sr.df_employee_number = idps.df_employee_number
@@ -29,6 +33,10 @@ WITH teacher_crosswalk AS (
   LEFT JOIN gabby.people.id_crosswalk_adp idadp
     ON sr.df_employee_number = idadp.df_employee_number
    AND idadp.rn_curr = 1
+  LEFT JOIN gabby.adsi.user_attributes_static ads
+    ON CONVERT(VARCHAR(25),sr.df_employee_number) = ads.employeenumber
+  LEFT JOIN gabby.adsi.user_attributes_static adm
+    ON CONVERT(VARCHAR(25),sr.manager_df_employee_number) = adm.employeenumber
   WHERE sr.primary_job IN ('Teacher', 'Teacher Fellow', 'Teacher in Residence', 'Co-Teacher', 'Learning Specialist')
     AND ISNULL(sr.termination_date, GETDATE()) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
  )
@@ -47,6 +55,8 @@ WITH teacher_crosswalk AS (
         ,sr.primary_site_schoolid      
         ,sr.manager_df_employee_number
         ,sr.manager_name
+        ,sr.staff_username
+        ,sr.manager_username
         ,sr.db_name
 
         ,tg.academic_year      
@@ -83,6 +93,8 @@ WITH teacher_crosswalk AS (
         ,sr.primary_site_schoolid      
         ,sr.manager_df_employee_number
         ,sr.manager_name
+        ,sr.staff_username
+        ,sr.manager_username
         ,sr.db_name
 
         ,tg.academic_year      
@@ -120,6 +132,8 @@ WITH teacher_crosswalk AS (
         ,sr.primary_site_schoolid      
         ,sr.manager_df_employee_number
         ,sr.manager_name
+        ,sr.staff_username
+        ,sr.manager_username
         ,sr.db_name
 
         ,tg.academic_year      
@@ -167,6 +181,8 @@ SELECT tgs.df_employee_number
       ,tgs.primary_site_schoolid
       ,tgs.manager_df_employee_number
       ,tgs.manager_name
+      ,tgs.staff_username
+      ,tgs.manager_username
       ,tgs.academic_year
       ,tgs.goal_type
       ,tgs.grade
@@ -203,6 +219,8 @@ SELECT tgs.df_employee_number
       ,tgs.primary_site_schoolid
       ,tgs.manager_df_employee_number
       ,tgs.manager_name
+      ,tgs.staff_username
+      ,tgs.manager_username
       ,tgs.academic_year
       ,tgs.goal_type
       ,tgs.grade
@@ -235,6 +253,8 @@ SELECT tgs.df_employee_number
       ,tgs.primary_site_schoolid
       ,tgs.manager_df_employee_number
       ,tgs.manager_name
+      ,tgs.staff_username
+      ,tgs.manager_username
       ,tgs.academic_year
       ,tgs.goal_type
       ,tgs.grade
