@@ -1,7 +1,25 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW tableau.staff_tracker AS
+--CREATE OR ALTER VIEW tableau.staff_tracker AS
+
+WITH pt AS
+
+    (SELECT employee_number
+           ,pay_date
+           ,pay_category
+           ,pay_code
+           ,excused_status
+           ,absent
+           ,late
+           ,early_out
+    FROM dayforce.employee_attendance
+    PIVOT(
+    MAX(absence_type) for absence_type IN ([absent]
+                                          ,[late]
+                                          ,[early_out])) p
+                                          
+    )
 
 SELECT df.df_employee_number
       ,df.preferred_name AS preferred_lastfirst       
@@ -20,6 +38,11 @@ SELECT df.df_employee_number
              
       ,pt.pay_code
       ,pt.pay_category
+      ,pt.excused_status
+      ,pt.absent
+      ,pt.late
+      ,pt.early_out
+      
 FROM gabby.dayforce.staff_roster df
 LEFT JOIN gabby.adsi.user_attributes_static dir
   ON CONVERT(VARCHAR(25),df.df_employee_number) = dir.employeenumber
@@ -29,12 +52,14 @@ JOIN gabby.powerschool.calendar_day cal
  AND cal.date_value BETWEEN DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1) AND GETDATE()
  AND (cal.insession = 1 OR cal.type = 'PD')  
  AND cal.schoolid != 0
+ AND COALESCE(df.rehire_date,df.original_hire_date) <= cal.date_value
+ AND (termination_date IS NULL OR termination_date >= cal.date_value)
 JOIN gabby.reporting.reporting_terms dt
   ON cal.schoolid = dt.schoolid
  AND cal.date_value BETWEEN dt.start_date AND dt.end_date
  AND dt.identifier = 'RT' 
-LEFT JOIN gabby.dayforce.employee_attendance pt
+LEFT JOIN pt
   ON df.df_employee_number = pt.employee_number
  AND cal.date_value = pt.pay_date
- AND pt.pay_code IN ('L-In') /* @KV we need to update this list to only include the absent/tardy codes */
+ AND pt.pay_code IS NOT NULL 
 WHERE COALESCE(df.termination_date, GETDATE()) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
