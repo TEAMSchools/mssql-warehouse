@@ -1,7 +1,7 @@
 CREATE OR ALTER VIEW easyiep.njsmart_powerschool_clean AS
 
 SELECT [state_studentnumber]
-      ,CONVERT(INT,[student_number]) AS student_number            
+      ,[student_number]
       ,special_education
       ,CONVERT(VARCHAR(2),[nj_se_delayreason]) AS nj_se_delayreason
       ,CONVERT(VARCHAR(2),[nj_se_placement]) AS nj_se_placement      
@@ -50,7 +50,7 @@ SELECT [state_studentnumber]
        END AS special_education_code
 FROM
     (
-     SELECT TRY_PARSE(CONVERT(VARCHAR(25),e.[student_number]) AS INT) AS [student_number]
+     SELECT CONVERT(INT,TRY_PARSE(CONVERT(VARCHAR(25),e.[student_number]) AS INT)) AS [student_number]
            ,e.[state_studentnumber]           
            ,e.[nj_se_referraldate]
            ,e.[nj_se_parentalconsentdate]

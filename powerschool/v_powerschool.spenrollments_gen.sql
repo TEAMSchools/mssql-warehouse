@@ -14,7 +14,7 @@ SELECT CONVERT(INT,sp.studentid) AS studentid
         ELSE DATEPART(YEAR,sp.enter_date) 
        END AS academic_year
 
-      ,CONVERT(VARCHAR(125),gen.name) AS specprog_name
+      ,gen.name_clean AS specprog_name
 FROM powerschool.spenrollments sp
 JOIN powerschool.gen
   ON sp.programid = gen.id

@@ -140,16 +140,9 @@ LEFT JOIN powerschool.advisory_static adv
 LEFT JOIN easyiep.njsmart_powerschool_clean sped
   ON co.student_number = sped.student_number
  AND co.academic_year  = sped.academic_year
-LEFT JOIN powerschool.spenrollments_gen_static sp
+LEFT JOIN powerschool.spenrollments_gen sp
   ON co.studentid = sp.studentid
  AND co.entrydate BETWEEN sp.enter_date AND sp.exit_date
- AND sp.programid IN (4573, 5074, 5075, 5173) 
+ AND sp.specprog_name IN ('Out of District','Pathways ES','Pathways MS','Whittier ES')
 LEFT JOIN gabby.mcs.lunch_info_static mcs
   ON co.student_number = mcs.studentnumber
-/* 
-ProgramIDs for schools within schools 
-* 4573 = Pathways (ES)
-* 5074 = Pathways (MS)
-* 5075 = Whittier (ES)
-* 5713 = Out-of-District 
-*/
