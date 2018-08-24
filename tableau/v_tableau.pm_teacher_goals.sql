@@ -21,7 +21,7 @@ WITH teacher_crosswalk AS (
           WHEN sr.legal_entity_name = 'KIPP Miami' THEN 'kippmiami'
          END AS db_name
       
-        ,COALESCE(idps.ps_teachernumber, idadp.adp_associate_id, CONVERT(VARCHAR(25),sr.df_employee_number)) AS ps_teachernumber
+        ,COALESCE(idps.ps_teachernumber, sr.adp_associate_id, CONVERT(VARCHAR(25),sr.df_employee_number)) AS ps_teachernumber
 
         ,ads.samaccountname AS staff_username
 
@@ -30,9 +30,6 @@ WITH teacher_crosswalk AS (
   LEFT JOIN gabby.people.id_crosswalk_powerschool idps
     ON sr.df_employee_number = idps.df_employee_number
    AND idps.is_master = 1
-  LEFT JOIN gabby.people.id_crosswalk_adp idadp
-    ON sr.df_employee_number = idadp.df_employee_number
-   AND idadp.rn_curr = 1
   LEFT JOIN gabby.adsi.user_attributes_static ads
     ON CONVERT(VARCHAR(25),sr.df_employee_number) = ads.employeenumber
   LEFT JOIN gabby.adsi.user_attributes_static adm
@@ -61,6 +58,7 @@ WITH teacher_crosswalk AS (
 
         ,tg.academic_year      
         ,tg.goal_type
+        ,tg.df_primary_on_site_department AS goal_department
         ,tg.grade
         ,tg.is_sped_goal
         ,tg.ps_course_number
@@ -99,6 +97,7 @@ WITH teacher_crosswalk AS (
 
         ,tg.academic_year      
         ,tg.goal_type
+        ,tg.df_primary_on_site_department AS goal_department
         ,tg.grade
         ,tg.is_sped_goal
         ,tg.ps_course_number
@@ -112,7 +111,6 @@ WITH teacher_crosswalk AS (
   FROM teacher_crosswalk sr
   JOIN gabby.pm.teacher_goals tg
     ON sr.primary_site = tg.df_primary_site
-   AND sr.primary_on_site_department = tg.df_primary_on_site_department
    AND tg.goal_type = 'Class'
    AND tg.is_sped_goal = 0
   WHERE sr.primary_job IN ('Teacher', 'Teacher Fellow', 'Teacher in Residence', 'Co-Teacher')
@@ -138,6 +136,7 @@ WITH teacher_crosswalk AS (
 
         ,tg.academic_year      
         ,tg.goal_type
+        ,tg.df_primary_on_site_department AS goal_department
         ,tg.grade
         ,tg.is_sped_goal
         ,tg.ps_course_number
@@ -151,7 +150,6 @@ WITH teacher_crosswalk AS (
   FROM teacher_crosswalk sr
   JOIN gabby.pm.teacher_goals tg
     ON sr.primary_site = tg.df_primary_site
-   AND sr.primary_on_site_department = tg.df_primary_on_site_department
    AND tg.goal_type = 'Class'
    AND tg.is_sped_goal = 1
   WHERE sr.primary_job IN ('Learning Specialist')
@@ -185,6 +183,7 @@ SELECT tgs.df_employee_number
       ,tgs.manager_username
       ,tgs.academic_year
       ,tgs.goal_type
+      ,tgs.goal_department
       ,tgs.grade
       ,tgs.is_sped_goal
       ,tgs.ps_course_number
@@ -223,6 +222,7 @@ SELECT tgs.df_employee_number
       ,tgs.manager_username
       ,tgs.academic_year
       ,tgs.goal_type
+      ,tgs.goal_department
       ,tgs.grade
       ,tgs.is_sped_goal
       ,tgs.ps_course_number
@@ -257,6 +257,7 @@ SELECT tgs.df_employee_number
       ,tgs.manager_username
       ,tgs.academic_year
       ,tgs.goal_type
+      ,tgs.goal_department
       ,tgs.grade
       ,tgs.is_sped_goal
       ,tgs.ps_course_number
