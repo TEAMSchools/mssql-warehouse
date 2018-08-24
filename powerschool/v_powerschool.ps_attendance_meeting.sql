@@ -37,7 +37,7 @@ SELECT att.id
 		    ,cd.cycle_day_id
 
 		    ,cy.abbreviation
-FROM powerschool.attendance att
+FROM powerschool.attendance_clean att
 JOIN powerschool.cc 
   ON att.ccid = cc.id 
  AND att.studentid = cc.studentid
@@ -51,6 +51,6 @@ JOIN powerschool.cycle_day cy
   ON cd.cycle_day_id = cy.id
 JOIN powerschool.period per 
   ON att.periodid = per.id
-WHERE att.att_date >= cc.dateenrolled 
+WHERE att.att_mode_code = 'ATT_ModeMeeting'
+  AND att.att_date >= cc.dateenrolled 
 	 AND att.att_date < cc.dateleft
-	 AND att.att_mode_code = 'ATT_ModeMeeting'
