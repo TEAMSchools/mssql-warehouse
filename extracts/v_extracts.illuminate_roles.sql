@@ -9,7 +9,7 @@ SELECT COALESCE(id.ps_teachernumber, CONVERT(VARCHAR(25),df.df_employee_number))
       ,CONCAT(gabby.utilities.GLOBAL_ACADEMIC_YEAR() , '-', (gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1))  AS [04 Academic Year]
       ,1 AS [05 Session Type ID]
 FROM gabby.dayforce.staff_roster df
-JOIN gabby.people.id_crosswalk_powerschool id
+LEFT JOIN gabby.people.id_crosswalk_powerschool id
   ON df.df_employee_number = id.df_employee_number
  AND id.is_master = 1
 JOIN gabby.powerschool.schools sch
