@@ -1,3 +1,8 @@
+USE gabby
+GO
+
+CREATE OR ALTER VIEW extracts.deanslist_designations AS
+
 WITH ada AS (
   SELECT psa.studentid
         ,psa.db_name
@@ -47,12 +52,10 @@ WITH ada AS (
 ,designation AS (
   SELECT co.student_number
         ,co.academic_year
-        ,co.enroll_status
-        ,co.db_name
 
         ,CASE WHEN co.iep_status <> 'No IEP' THEN 'IEP' ELSE NULL END AS is_iep 
         ,CASE WHEN co.c_504_status = 1 THEN '504' ELSE NULL END AS is_504
-		,CASE WHEN co.lep_status = 1 THEN 'LEP' ELSE NULL END AS is_lep 
+		      ,CASE WHEN co.lep_status = 1 THEN 'LEP' ELSE NULL END AS is_lep 
         
         ,CASE WHEN gpa.gpa_term >= 3 THEN 'Quarter GPA 3.0+' ELSE NULL END AS is_quarter_gpa_3plus
         
@@ -80,19 +83,15 @@ WITH ada AS (
  )
 
 SELECT student_number
-      ,academic_year
-      ,enroll_status
-      ,db_name      
+      ,academic_year            
       ,value AS designation_name
 FROM (
       SELECT student_number          
             ,academic_year
-            ,enroll_status
-            ,db_name
 
             ,CAST(is_iep AS VARCHAR(250)) AS is_iep
             ,CAST(is_504 AS VARCHAR(250)) AS is_504
-			,CAST(is_lep AS VARCHAR(250)) AS is_lep
+            ,CAST(is_lep AS VARCHAR(250)) AS is_lep
             ,CAST(is_quarter_gpa_3plus AS VARCHAR(250)) AS is_quarter_gpa_3plus
             ,CAST(is_ood AS VARCHAR(250)) AS is_ood
             ,CAST(is_nccs AS VARCHAR(250)) AS is_nccs
