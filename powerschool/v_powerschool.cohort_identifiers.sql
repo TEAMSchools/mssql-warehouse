@@ -70,9 +70,14 @@ SELECT co.studentid
       ,co.region
       ,CASE
         WHEN sp.specprog_name = 'Out of District' THEN sp.programid
-        ELSE CONCAT(co.schoolid, sp.programid)
+        WHEN co.academic_year <= 2017 THEN CONCAT(co.schoolid, sp.programid) /* Pathways as a separate school era */
+        ELSE co.schoolid
        END AS reporting_schoolid
-      ,CONVERT(VARCHAR(25),COALESCE(sp.specprog_name, sch.abbreviation)) AS school_name
+      ,CASE
+        WHEN sp.specprog_name = 'Out of District' THEN sp.specprog_name
+        WHEN co.academic_year <= 2017 THEN CONVERT(VARCHAR(25),COALESCE(sp.specprog_name, sch.abbreviation)) /* Pathways as a separate school era */
+        ELSE CONVERT(VARCHAR(25),sch.abbreviation)
+       END AS school_name
       ,CASE
         WHEN sch.high_grade = 12 THEN 'HS'
         WHEN sch.high_grade = 8 THEN 'MS'
