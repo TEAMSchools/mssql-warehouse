@@ -71,11 +71,12 @@ WITH roster AS (
   SELECT CONVERT(INT,student_number) AS student_number
         ,REPLACE(reporting_term, 'q_', 'AR') AS reporting_term
         ,CONVERT(INT,adjusted_goal) AS adjusted_goal
-  FROM gabby.renaissance.ar_individualized_goals WITH(NOLOCK)
+  FROM gabby.renaissance.ar_individualized_goals  
   UNPIVOT(
     adjusted_goal
     FOR reporting_term IN (q_1, q_2, q_3, q_4)
    ) u
+  WHERE _fivetran_deleted = 0
  )
 
 ,term_goals AS (
