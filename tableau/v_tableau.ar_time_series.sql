@@ -209,12 +209,9 @@ FROM
           LEFT JOIN ar_long ar
             ON co.student_number = ar.student_number
            AND co.date = ar.date_taken          
-          WHERE co.reporting_schoolid NOT IN (999999, 5173)
+          WHERE co.enroll_status = 0
+            AND co.reporting_schoolid NOT IN (999999, 5173)
             AND co.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
             AND co.date <= CONVERT(DATE,GETDATE())
-            AND co.enroll_status = 0       
-            AND ((co.grade_level BETWEEN 5 AND 8)
-                   OR (co.schoolid IN (179901) AND co.grade_level >= 3)
-                   OR (co.schoolid IN (73255) AND co.grade_level >= 2))       
          ) sub
     ) sub
