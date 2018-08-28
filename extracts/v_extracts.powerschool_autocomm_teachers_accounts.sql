@@ -97,4 +97,5 @@ JOIN gabby.powerschool.teachers_static t
   ON df.teachernumber = t.teachernumber COLLATE Latin1_General_BIN
  AND df.db_name = t.db_name 
  AND df.homeschoolid != t.schoolid
+ AND t.schoolid != 0
 WHERE df.legal_entity_name != 'KIPP New Jersey'
