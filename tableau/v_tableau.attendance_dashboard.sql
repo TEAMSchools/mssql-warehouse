@@ -6,10 +6,14 @@ SELECT academic_year
       ,student_number
       ,lastfirst
       ,grade_level
+      ,region
       ,school_level
       ,team
       ,enroll_status
       ,iep_status
+      ,lep_status
+      ,c_504_status
+      ,is_pathways
       ,gender
       ,ethnicity
       ,section_number
@@ -19,34 +23,6 @@ SELECT academic_year
       ,is_present
       ,is_absent
       ,att_code
-      ,is_tardy
-      ,suspension_all
-      ,n_A
-      ,n_AD
-      ,n_AE
-      ,n_A_E
-      ,n_CR
-      ,n_CS
-      ,n_D
-      ,n_E
-      ,n_EA
-      ,n_ET
-      ,n_EV
-      ,n_ISS
-      ,n_NM
-      ,n_OS
-      ,n_OSS
-      ,n_OSSP
-      ,n_PLE
-      ,n_Q
-      ,n_S
-      ,n_SE
-      ,n_T
-      ,n_T10
-      ,n_TE
-      ,n_TLE
-      ,n_U
-      ,n_X
       ,term
       ,is_oss_running
       ,is_iss_running
@@ -61,10 +37,18 @@ SELECT academic_year
       ,student_number
       ,lastfirst
       ,grade_level
+      ,CASE
+        WHEN DB_NAME() = 'kippnewark' THEN 'TEAM'
+        WHEN DB_NAME() = 'kippcamden' THEN 'KCNA'
+        WHEN DB_NAME() = 'kippmiami' THEN 'KMS'
+       END AS region
       ,school_level
       ,team
       ,enroll_status
       ,iep_status
+      ,NULL AS lep_status
+      ,NULL AS c_504_status
+      ,NULL AS is_pathways
       ,gender
       ,ethnicity
       ,section_number
@@ -74,34 +58,6 @@ SELECT academic_year
       ,is_present
       ,is_absent
       ,att_code
-      ,is_tardy
-      ,suspension_all
-      ,n_A
-      ,n_AD
-      ,n_AE
-      ,n_A_E
-      ,n_CR
-      ,n_CS
-      ,n_D
-      ,n_E
-      ,n_EA
-      ,n_ET
-      ,n_EV
-      ,n_ISS
-      ,n_NM
-      ,n_OS
-      ,n_OSS
-      ,n_OSSP
-      ,n_PLE
-      ,n_Q
-      ,n_S
-      ,n_SE
-      ,n_T
-      ,n_T10
-      ,n_TE
-      ,n_TLE
-      ,n_U
-      ,n_X
       ,term
       ,is_oss_running
       ,is_iss_running
