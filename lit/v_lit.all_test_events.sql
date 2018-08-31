@@ -111,7 +111,7 @@ FROM (
               WHEN status IN ('Mixed','Achieved') THEN indep_lvl_num
               WHEN status = 'Did Not Achieve' THEN instr_lvl_num
              END AS lvl_num
-            ,GLEQ
+            ,gleq
             ,NULL AS color
             ,fiction_nonfiction AS genre        
         
@@ -128,4 +128,33 @@ FROM (
             ,NULL AS coaching_code
             ,NULL AS test_administered_by
       FROM gabby.lit.illuminate_test_events ill
+
+      UNION ALL
+
+      SELECT unique_id
+            ,student_identifier AS student_number        
+            ,academic_year
+            ,test_round
+            ,round_num
+            ,assessment_date AS test_date
+            ,testid
+            ,is_fp                
+            ,status
+            ,text_level AS read_lvl
+            ,lvl_num
+            ,gleq
+            ,NULL AS color
+            ,genre        
+            ,dna_lvl
+            ,dna_lvl_num
+            ,instruct_lvl
+            ,instruct_lvl_num
+            ,indep_lvl
+            ,indep_lvl_num 
+            ,gleq_lvl_num        
+            ,wpm_rate AS fp_wpmrate
+            ,NULL AS fp_keylever
+            ,NULL AS coaching_code
+            ,test_administered_by
+      FROM gabby.lit.fpodms_test_events fpodms
      ) rs

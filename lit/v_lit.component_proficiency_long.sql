@@ -34,6 +34,23 @@ WITH illuminate_fp AS (
               END AS read_lvl
              ,3273 AS testid
        FROM gabby.lit.illuminate_test_events rs       
+
+       UNION ALL
+
+       SELECT rs.unique_id
+             ,rs.student_identifier AS student_number             
+             ,rs.status      
+             ,rs.comprehension_about AS fp_comp_about   
+             ,rs.comprehension_beyond AS fp_comp_beyond
+             ,rs.comprehension_within AS fp_comp_within
+             ,rs.accuracy_percent AS fp_accuracy
+             ,rs.fluency AS fp_fluency
+             ,rs.wpm_rate AS fp_wpmrate    
+             ,rs.comprehension_total AS fp_comp_prof                          
+             ,rs.lvl_num             
+             ,rs.text_level AS read_lvl
+             ,rs.testid
+       FROM gabby.lit.fpodms_test_events rs       
       ) sub
   UNPIVOT(
     score
