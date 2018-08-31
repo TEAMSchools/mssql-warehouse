@@ -159,12 +159,22 @@ WITH teacher_crosswalk AS (
   SELECT sec.id AS sectionid
         ,sec.course_number
         ,sec.db_name
+        
+        ,MIN(st.start_date) AS start_date_min
+        ,MAX(st.end_date) AS end_date_max
 
         ,t.teachernumber
   FROM gabby.powerschool.sections sec
+  JOIN gabby.powerschool.sectionteacher st
+    ON sec.id = st.sectionid
+   AND sec.db_name = st.db_name
   JOIN gabby.powerschool.teachers_static t
-    ON sec.teacher = t.id
-   AND sec.db_name = t.db_name
+    ON st.teacherid = t.id
+   AND st.db_name = t.db_name
+  GROUP BY sec.id
+          ,sec.course_number
+          ,sec.db_name
+          ,t.teachernumber
  )
 
 /* Classroom goals -- JOIN to student data by sections */
@@ -197,6 +207,8 @@ SELECT tgs.df_employee_number
       ,tgs.ps_teachernumber
       
       ,st.sectionid      
+      ,st.start_date_min
+      ,st.end_date_max
 FROM teacher_goal_scaffold tgs
 JOIN ps_section_teacher st
   ON tgs.ps_teachernumber = st.teachernumber COLLATE Latin1_General_BIN
@@ -236,6 +248,8 @@ SELECT tgs.df_employee_number
       ,tgs.ps_teachernumber
       
       ,NULL AS sectionid
+      ,NULL AS start_date_min
+      ,NULL AS end_date_max
 FROM teacher_goal_scaffold tgs
 WHERE tgs.goal_type = 'Team'
 
@@ -271,5 +285,7 @@ SELECT tgs.df_employee_number
       ,tgs.ps_teachernumber
       
       ,NULL AS sectionid
+      ,NULL AS start_date_min
+      ,NULL AS end_date_max
 FROM teacher_goal_scaffold tgs
 WHERE tgs.goal_type = 'Individual'
