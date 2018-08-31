@@ -48,7 +48,7 @@ WITH clean_people AS (
           WHEN e.legal_entity_name_clean = 'KIPP New Jersey' THEN 'D30'
           WHEN e.legal_entity_name_clean = 'KIPP Cooper Norcross Academy' THEN 'D3Z'          
          END AS payroll_company_code
-        ,CASE WHEN e.status NOT IN ('TERMINATED', 'PRESTART') THEN 0 ELSE 1 END AS is_active
+        ,CASE WHEN e.status NOT IN ('TERMINATED', 'PRESTART') THEN 1 ELSE 0 END AS is_active
 
         /* redundant combined fields */
         ,CONVERT(VARCHAR(125),position_title) AS position_title 
