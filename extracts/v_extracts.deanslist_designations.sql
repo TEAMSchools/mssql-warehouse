@@ -99,6 +99,7 @@ FROM (
             ,CAST(is_home_instruction AS VARCHAR(250)) AS is_home_instruction
             ,CAST(is_chronic_absentee AS VARCHAR(250)) AS is_chronic_absentee
       FROM designation
+      WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
      ) sub
 UNPIVOT (
   value
