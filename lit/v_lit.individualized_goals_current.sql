@@ -18,7 +18,7 @@ WITH gdoc_long AS (
              ,SUBSTRING([q_3_goal], CHARINDEX(' ',[q_3_goal]) + 1, LEN([q_3_goal])) AS q3_goal
              ,SUBSTRING([q_4_goal], CHARINDEX(' ',[q_4_goal]) + 1, LEN([q_4_goal])) AS q4_goal
        FROM gabby.lit.individualized_goal_entry       
-       WHERE _fivetran_deleted IS NULL
+       WHERE _fivetran_deleted = 0
       ) sub
   UNPIVOT (
     goal
