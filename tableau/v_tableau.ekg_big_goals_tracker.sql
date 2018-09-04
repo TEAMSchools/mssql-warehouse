@@ -208,7 +208,7 @@ WITH act AS (
 
 ,teacher_attrition AS (
   SELECT ISNULL(region, 'All') AS region
-        ,ISNULL(CONVERT(NVARCHAR(3),school_level), 'All') AS school_level
+        ,ISNULL(CONVERT(VARCHAR(5),school_level), 'All') AS school_level
         ,ISNULL(reporting_schoolid, 0) AS reporting_schoolid
         ,academic_year
         ,AVG(CONVERT(FLOAT,is_attrition)) AS pct_attrition
@@ -277,7 +277,7 @@ WITH act AS (
       (
        SELECT ISNULL(reporting_schoolid, 0) AS reporting_schoolid
              ,ISNULL(region, 'All') AS region
-             ,ISNULL(CONVERT(NVARCHAR(3),school_level), 'All') AS school_level
+             ,ISNULL(CONVERT(VARCHAR(5),school_level), 'All') AS school_level
              ,academic_year
              ,survey_round      
              ,field
@@ -298,7 +298,7 @@ WITH act AS (
 ,manager_survey AS (
   SELECT ISNULL(reporting_schoolid, 0) AS reporting_schoolid
         ,ISNULL(region, 'All') AS region
-        ,ISNULL(CONVERT(NVARCHAR(3),school_level), 'All') AS school_level
+        ,ISNULL(CONVERT(VARCHAR(5),school_level), 'All') AS school_level
         ,academic_year      
         ,reporting_term
         ,AVG(is_agree) AS pct_agree
@@ -381,8 +381,9 @@ WITH act AS (
 ,student_level_rollup AS (  
   SELECT sub.academic_year
         ,ISNULL(sub.region,'All') AS region
-        ,ISNULL(CONVERT(NVARCHAR(3),sub.school_level),'All') AS school_level
+        ,ISNULL(CONVERT(VARCHAR(5),sub.school_level),'All') AS school_level
         ,ISNULL(sub.reporting_schoolid, 0) AS reporting_schoolid
+        ,ISNULL(CONVERT(VARCHAR(5),sub.grade_level), 'All') AS grade_level
 
         /* student-level percentages */
         ,CONVERT(FLOAT,AVG(sub.is_free_or_reduced)) AS free_or_reduced_pct
@@ -509,7 +510,7 @@ WITH act AS (
          AND co.rn_year = 1
       ) sub
   GROUP BY sub.academic_year                              
-          ,ROLLUP(sub.school_level, sub.region, sub.reporting_schoolid)
+          ,ROLLUP(sub.school_level, sub.region, sub.reporting_schoolid, sub.grade_level)
  )
 
 ,rollup_unpivoted AS (
