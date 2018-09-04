@@ -3,7 +3,14 @@ GO
 
 CREATE OR ALTER VIEW alumni.taf_roster AS 
 
-WITH ms_grads AS (
+WITH hs_grads AS (
+  SELECT student_number 
+  FROM gabby.powerschool.cohort_identifiers_static 
+  WHERE exitcode = 'G1' 
+    AND school_level = 'HS'
+)
+
+,ms_grads AS (
   SELECT co.studentid
         ,co.student_number
         ,co.first_name
@@ -21,16 +28,12 @@ WITH ms_grads AS (
         ,co.specialed_classification
         ,co.db_name
         ,(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - co.academic_year) + co.grade_level AS curr_grade_level
-
-        ,ROW_NUMBER() OVER(
-           PARTITION BY co.student_number
-             ORDER BY co.exitdate DESC) AS rn
   FROM gabby.powerschool.cohort_identifiers_static co
   WHERE co.grade_level = 8
-    AND co.exitcode IN ('G1','T2')        
     AND co.rn_year = 1
-    AND co.enroll_status != 0
-    AND co.student_number NOT IN (SELECT student_number FROM gabby.powerschool.cohort_identifiers_static WHERE grade_level >= 9 AND exitcode = 'G1') /* exclude hs grads */
+    AND co.exitcode IN ('G1','T2') /* sucessfully completed 8th */
+    AND co.enroll_status IN (2, 3) /* transfers/grads only */
+    AND co.student_number NOT IN (SELECT student_number FROM hs_grads) /* exclude hs grads */
  )
 
 ,transfers AS (
@@ -47,14 +50,8 @@ WITH ms_grads AS (
         ,sub.guardianemail
         ,sub.db_name
 
-        ,CONVERT(INT,CASE 
-                      WHEN s.graduated_schoolid = 0 THEN s.schoolid 
-                      ELSE s.graduated_schoolid 
-                     END) AS schoolid       
-        ,CONVERT(VARCHAR(25),CASE 
-                              WHEN s.graduated_schoolid = 0 THEN sch2.abbreviation 
-                              ELSE sch.abbreviation 
-                             END) AS school_name                         
+        ,CONVERT(INT,CASE WHEN s.graduated_schoolid = 0 THEN s.schoolid ELSE s.graduated_schoolid END) AS schoolid       
+        ,CONVERT(VARCHAR(25),CASE WHEN s.graduated_schoolid = 0 THEN sch2.abbreviation ELSE sch.abbreviation END) AS school_name                         
   FROM
       (
        SELECT co.studentid             
@@ -73,9 +70,9 @@ WITH ms_grads AS (
              ,DATEPART(YEAR,MAX(co.exitdate)) AS year_final_exitdate             
              ,(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - MAX(co.academic_year)) + MAX(co.grade_level) AS curr_grade_level
        FROM gabby.powerschool.cohort_identifiers_static co
-       WHERE co.grade_level >= 9
-         AND co.enroll_status = 2
-         AND co.studentid NOT IN (SELECT studentid FROM ms_grads) 
+       WHERE co.enroll_status = 2
+         AND co.school_level = 'HS'
+         AND co.student_number NOT IN (SELECT student_number FROM ms_grads) 
        GROUP BY co.studentid
                ,co.student_number
                ,co.lastfirst
@@ -254,6 +251,7 @@ LEFT JOIN enrollments enr
  AND enr.rn = 1
 LEFT JOIN gabby.powerschool.students s
   ON r.student_number = s.student_number
+ AND r.db_name = s.db_name
 LEFT JOIN gabby.powerschool.u_studentsuserfields suf
   ON s.dcid = suf.studentsdcid
  AND s.db_name = suf.db_name
