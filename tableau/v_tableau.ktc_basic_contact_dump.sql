@@ -13,6 +13,8 @@ WITH attending_enrollment AS (
         ,e.major_c              
         ,e.pursuing_degree_type_c        
         ,e.date_last_verified_c
+        ,e.anticipated_graduation_c
+        ,e.college_major_declared_c
 
         ,a.ncesid_c
         ,a.name AS account_name
@@ -25,8 +27,7 @@ WITH attending_enrollment AS (
   FROM gabby.alumni.enrollment_c e
   LEFT OUTER JOIN gabby.alumni.account a
     ON e.school_c = a.id   
-  WHERE e.status_c IN ('Attending','Matriculated')
-    AND e.start_date_c < DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1, 7, 1)
+  WHERE e.start_date_c < DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1, 7, 1)
     AND e.is_deleted = 0
  )
 
@@ -43,30 +44,40 @@ WITH attending_enrollment AS (
 
 ,checkins AS (
   SELECT contact_id        
-        ,AAS1F
-        ,AAS2F
-        ,AAS1S
-        ,AAS2S
-        ,PSC1
-        ,PSC2
-        ,REM        
+        ,[AAS1F]
+        ,[AAS2F]
+        ,[AAS1S]
+        ,[AAS2S]
+        ,[PSCF]
+        ,[PSCS]
+        ,[BBBF]
+        ,[BBBS]
+        ,[BMF]
+        ,[BMS]
+        ,[GPF]
+        ,[GPS]
   FROM
       (
        SELECT c.contact_c AS contact_id
              ,CASE 
-               WHEN c.category_c = 'Benchmark' AND MONTH(c.date_c) >= 7 THEN 'AAS1F'
-               WHEN c.category_c = 'Benchmark' AND MONTH(c.date_c) < 7 THEN 'AAS1S'
-               WHEN c.category_c = 'Benchmark Follow-Up' AND MONTH(c.date_c) >= 7 THEN 'AAS2F'
-               WHEN c.category_c = 'Benchmark Follow-Up' AND MONTH(c.date_c) < 7 THEN 'AAS2S'               
-               WHEN c.subject_c LIKE 'PSC%' AND MONTH(c.date_c) >= 7 THEN 'PSC1'
-               WHEN c.subject_c LIKE 'PSC 2.25%' AND MONTH(c.date_c) < 7 THEN 'PSC2'
-               ELSE c.subject_c
+               WHEN c.category_c = 'Benchmark' AND MONTH(c.date_c) >= 7 THEN 'BMF'
+               WHEN c.category_c = 'Benchmark' AND MONTH(c.date_c) < 7 THEN 'BMS'
+               WHEN c.subject_c = 'PSC' AND MONTH(c.date_c) >= 7 THEN 'PSCF'
+               WHEN c.subject_c = 'PSC' AND MONTH(c.date_c) < 7 THEN 'PSCS'
+               WHEN c.subject_c = 'BBB' AND MONTH(c.date_c) >= 7 THEN 'BBBF'
+               WHEN c.subject_c = 'BBB' AND MONTH(c.date_c) < 7 THEN 'BBBS'
+               WHEN c.subject_c = 'Grad Plan FA18' THEN 'GPF'
+               WHEN c.subject_c = 'Grad Plan SP19' THEN 'GPS'
+               WHEN c.subject_c = 'AAS1' AND MONTH(c.date_c) >= 7 THEN 'AAS1F'
+               WHEN c.subject_c = 'AAS1' AND MONTH(c.date_c) < 7 THEN 'AAS1S'
+               WHEN c.subject_c = 'AAS2' AND MONTH(c.date_c) >= 7 THEN 'AAS2F'
+               WHEN c.subject_c = 'AAS2' AND MONTH(c.date_c) < 7 THEN 'AAS2S'
               END AS contact_subject
-             ,c.Date_c AS contact_date             
+             ,c.Date_c AS contact_date
        FROM gabby.alumni.contact_note_c c
-       WHERE ((c.Subject_c LIKE 'PSC%' OR c.Subject_c = 'REM') OR (c.category_c IN ('Benchmark','Benchmark Follow-Up')))
-         AND gabby.utilities.DATE_TO_SY(c.Date_c) = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+       WHERE gabby.utilities.DATE_TO_SY(c.Date_c) = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
          AND c.is_deleted = 0
+         AND (c.category_c = 'Benchmark' OR c.subject_c IN ('BBB', 'Grad Plan FA18', 'Grad Plan SP19', 'PSC', 'AAS1', 'AAS2'))
       ) sub
   PIVOT(
     COUNT(contact_date)
@@ -74,9 +85,14 @@ WITH attending_enrollment AS (
                            ,[AAS2F]
                            ,[AAS1S]
                            ,[AAS2S]
-                           ,[PSC1]
-                           ,[PSC2]
-                           ,[REM])
+                           ,[PSCF]
+                           ,[PSCS]
+                           ,[BBBF]
+                           ,[BBBS]
+                           ,[BMF]
+                           ,[BMS]
+                           ,[GPF]
+                           ,[GPS])
    ) p
  )
 
@@ -86,6 +102,8 @@ WITH attending_enrollment AS (
         ,[fall_academic_status]
         ,[spring_semester_gpa]
         ,[spring_academic_status]
+        ,[prev_spring_semester_gpa]
+        ,[prev_spring_academic_status]
   FROM
       (
        SELECT student_c             
@@ -94,14 +112,16 @@ WITH attending_enrollment AS (
        FROM
            (
             SELECT student_c                  
+                  ,transcript_date_c
                   ,CASE
-                    WHEN MONTH(transcript_date_c) = 8 AND DAY(transcript_date_c) = 31 THEN 'spring'
-                    WHEN MONTH(transcript_date_c) = 12 AND DAY(transcript_date_c) = 31 THEN 'fall'
+                    WHEN transcript_date_c = '2018-05-31' THEN 'prev_spring'
+                    WHEN transcript_date_c = '2018-12-31' THEN 'fall'
+                    WHEN transcript_date_c = '2019-05-31' THEN 'spring'
                    END AS semester
                   ,CONVERT(VARCHAR,semester_gpa_c) AS semester_gpa
                   ,CONVERT(VARCHAR,academic_status_c) AS academic_status
             FROM gabby.alumni.gpa_c
-            WHERE transcript_date_c >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
+            WHERE transcript_date_c >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1, 7, 1)
            ) sub
        UNPIVOT(
          value
@@ -113,7 +133,9 @@ WITH attending_enrollment AS (
     FOR pivot_field IN ([fall_semester_gpa]
                        ,[fall_academic_status]
                        ,[spring_semester_gpa]
-                       ,[spring_academic_status])
+                       ,[spring_academic_status]
+                       ,[prev_spring_semester_gpa]
+                       ,[prev_spring_academic_status])
    ) p
  )
 
@@ -282,9 +304,11 @@ SELECT c.id AS contact_id
         ELSE 0 
        END AS is_found_this_term
 
+      ,e.college_major_declared_c
       ,e.major_c
       ,e.pursuing_degree_type_c
       ,e.start_date_c
+      ,e.anticipated_graduation_c
       ,e.status_c AS enrollment_status
       ,e.account_name
       ,e.account_type  
@@ -292,19 +316,30 @@ SELECT c.id AS contact_id
       ,e.ncesid_c
       ,e.date_last_verified_c
 
-      ,cn.AAS1F
-      ,cn.AAS2F
-      ,cn.AAS1S
-      ,cn.AAS2S
-      ,cn.PSC1
-      ,cn.PSC2
-      ,cn.REM                 
+      ,cn.[AAS1F]
+      ,cn.[AAS2F]
+      ,cn.[AAS1S]
+      ,cn.[AAS2S]
+      ,cn.[PSCF]
+      ,cn.[PSCS]
+      ,cn.[BBBF]
+      ,cn.[BBBS]
+      ,cn.[BMF]
+      ,cn.[BMS]
+      ,cn.[GPF]
+      ,cn.[GPS]              
       
       ,gpa.fall_academic_status 
       ,gpa.spring_academic_status
+      ,gpa.prev_spring_academic_status
       ,gpa.fall_semester_gpa AS gpa_mp1
       ,gpa.spring_semester_gpa AS gpa_mp2      
-      ,COALESCE(gpa.fall_academic_status, gpa.spring_academic_status) AS gpa_recent
+      ,gpa.prev_spring_semester_gpa AS gpa_prev_mp2 
+      ,COALESCE(gpa.spring_semester_gpa, gpa.fall_semester_gpa, gpa.prev_spring_semester_gpa) AS gpa_recent
+      ,CASE
+        WHEN gpa.prev_spring_semester_gpa IS NOT NULL THEN 1        
+        ELSE 0
+       END AS transcript_collected_prev_mp2
       ,CASE
         WHEN gpa.fall_semester_gpa IS NOT NULL THEN 1        
         ELSE 0
