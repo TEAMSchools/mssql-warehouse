@@ -332,10 +332,10 @@ SELECT c.id AS contact_id
       ,gpa.fall_academic_status 
       ,gpa.spring_academic_status
       ,gpa.prev_spring_academic_status
-      ,gpa.fall_semester_gpa AS gpa_mp1
-      ,gpa.spring_semester_gpa AS gpa_mp2      
-      ,gpa.prev_spring_semester_gpa AS gpa_prev_mp2 
-      ,COALESCE(gpa.spring_semester_gpa, gpa.fall_semester_gpa, gpa.prev_spring_semester_gpa) AS gpa_recent
+      ,CONVERT(FLOAT,gpa.fall_semester_gpa) AS gpa_mp1
+      ,CONVERT(FLOAT,gpa.spring_semester_gpa) AS gpa_mp2      
+      ,CONVERT(FLOAT,gpa.prev_spring_semester_gpa) AS gpa_prev_mp2 
+      ,CONVERT(FLOAT,COALESCE(gpa.spring_semester_gpa, gpa.fall_semester_gpa, gpa.prev_spring_semester_gpa)) AS gpa_recent
       ,CASE
         WHEN gpa.prev_spring_semester_gpa IS NOT NULL THEN 1        
         ELSE 0
