@@ -52,45 +52,60 @@ WITH act AS (
 ,modules AS (
   SELECT student_number
         ,academic_year
+        ,module_type
+        ,module_number
+
         ,ela_percent_correct
         ,ela_is_mastery
+        ,ela_performance_band_number
+        ,ela_rn_most_recent_subject
         ,math_percent_correct
         ,math_is_mastery
+        ,math_performance_band_number
+        ,math_rn_most_recent_subject
   FROM
       (
-       SELECT local_student_id AS student_number
+       SELECT local_student_id AS student_number             
              ,academic_year
+             ,module_type
+             ,module_number
              ,CONCAT(subject_area, '_', field) AS pivot_field
              ,value
        FROM
            (
             SELECT local_student_id
                   ,academic_year
-                  ,CASE
-                    WHEN subject_area = 'Text Study' THEN 'ela'
-                    ELSE 'math'
-                   END AS subject_area
-                  ,CONVERT(FLOAT,percent_correct) AS percent_correct
+                  ,module_type
+                  ,module_number
+                  ,CASE WHEN subject_area = 'Text Study' THEN 'ela' ELSE 'math' END AS subject_area
+                  ,CONVERT(FLOAT,performance_band_number) AS performance_band_number
+                  ,CONVERT(FLOAT,percent_correct) AS percent_correct                  
                   ,CONVERT(FLOAT,is_mastery) AS is_mastery
       
-                  ,ROW_NUMBER() OVER(
+                  ,CONVERT(FLOAT,ROW_NUMBER() OVER(
                      PARTITION BY local_student_id, academic_year, CASE WHEN subject_area = 'Text Study' THEN 'ela' ELSE 'math' END
-                       ORDER BY administered_at DESC) AS rn_subject_most_recent
+                       ORDER BY administered_at DESC)) AS rn_most_recent_subject
             FROM gabby.illuminate_dna_assessments.agg_student_responses_all
             WHERE response_type = 'O'
-              AND scope = 'CMA - End-of-Module'
+              AND module_type IN ('QA', 'CRQ')
               AND subject_area IN ('Text Study', 'Mathematics', 'Algebra I', 'Geometry', 'Algebra IIA', 'Algebra IIB')
               AND percent_correct IS NOT NULL
            ) sub
        UNPIVOT(
          value
-         FOR field IN (percent_correct, is_mastery)
+         FOR field IN (percent_correct, is_mastery, performance_band_number, rn_most_recent_subject)
         ) u
-       WHERE rn_subject_most_recent = 1
-      ) sub
+     ) sub
   PIVOT(
     MAX(value)
-    FOR pivot_field IN (ela_percent_correct, ela_is_mastery, math_percent_correct, math_is_mastery)
+    FOR pivot_field IN (ela_percent_correct
+                       ,ela_is_mastery
+                       ,ela_performance_band_number
+                       ,ela_rn_most_recent_subject
+                       ,math_percent_correct
+                       ,math_is_mastery
+                       ,math_performance_band_number
+                       ,math_rn_most_recent_subject)
    ) p
  )
 
@@ -138,6 +153,8 @@ WITH act AS (
         ,(yearid + 1990) AS academic_year
         ,SUM(CONVERT(FLOAT,attendancevalue)) AS n_days_attendance
         ,SUM(CONVERT(FLOAT,membershipvalue)) AS n_days_membership
+		,ROUND(AVG(CONVERT(FLOAT,attendancevalue)), 2) AS ada
+
   FROM gabby.powerschool.ps_adaadm_daily_ctod
   WHERE membershipvalue > 0
     AND calendardate <= CONVERT(DATE,GETDATE())
@@ -150,32 +167,39 @@ WITH act AS (
   SELECT student_number
         ,academic_year
         ,db_name
-        ,[OSS]
-        ,[ISS]
+        ,MAX(CASE WHEN sub.att_code_group = 'OSS' THEN sub.n_streaks END) AS [OSS]
+        ,MAX(CASE WHEN sub.att_code_group = 'ISS' THEN sub.n_streaks END) AS [ISS]
+        ,MAX(CASE WHEN sub.att_code_group = 'T' THEN sub.n_days END) AS n_days_tardy
   FROM
       (
-       SELECT student_number
-             ,academic_year
-             ,db_name
-             ,CASE 
-               WHEN att_code IN ('OS','OSS','OSSP') THEN 'OSS'
-               WHEN att_code IN ('ISS','S') THEN 'ISS'
-              END AS att_code
-             ,COUNT(student_number) AS N
-       FROM gabby.powerschool.attendance_streak
-       WHERE att_code IN ('OS','OSS','OSSP','ISS','S')
+       SELECT sub.student_number
+             ,sub.academic_year
+             ,sub.att_code_group
+             ,sub.db_name      
+             ,COUNT(student_number) AS n_streaks
+             ,SUM(sub.streak_length_membership) AS n_days
+       FROM
+           (
+            SELECT student_number
+                  ,academic_year             
+                  ,streak_length_membership
+                  ,db_name             
+                  ,CASE 
+                    WHEN att_code IN ('OS','OSS','OSSP') THEN 'OSS'
+                    WHEN att_code IN ('ISS','S') THEN 'ISS'
+                    WHEN att_code IN ('T', 'T10') THEN 'T'
+                   END AS att_code_group
+            FROM gabby.powerschool.attendance_streak
+            WHERE att_code IN ('OS','OSS','OSSP','ISS','S', 'T', 'T10')
+           ) sub
        GROUP BY student_number
                ,academic_year
+               ,sub.att_code_group
                ,db_name
-               ,CASE 
-                 WHEN att_code IN ('OS','OSS','OSSP') THEN 'OSS'
-                 WHEN att_code IN ('ISS','S') THEN 'ISS'
-                END
-      ) sub
-  PIVOT(
-    MAX(N)
-    FOR att_code IN ([OSS],[ISS])
-   ) p
+             ) sub
+  GROUP BY student_number
+          ,academic_year
+          ,db_name
  )
 
 ,student_attrition AS (
@@ -212,6 +236,9 @@ WITH act AS (
         ,ISNULL(reporting_schoolid, 0) AS reporting_schoolid
         ,academic_year
         ,AVG(CONVERT(FLOAT,is_attrition)) AS pct_attrition
+        ,AVG(CONVERT(FLOAT,is_attrition_termination)) AS pct_attrition_termination
+        ,AVG(CONVERT(FLOAT,is_attrition_resignation)) AS pct_attrition_resignation
+        ,AVG(CONVERT(FLOAT,is_attrition_other)) AS pct_attrition_other
   FROM
       (
        SELECT primary_site
@@ -219,13 +246,17 @@ WITH act AS (
              ,CASE
                WHEN legal_entity_name = 'TEAM Academy Charter Schools' THEN 'TEAM'
                WHEN legal_entity_name = 'KIPP Cooper Norcross Academy' THEN 'KCNA'
+               WHEN legal_entity_name = 'KIPP Miami' THEN 'KMS'               
               END AS region
              ,primary_site_school_level AS school_level
              ,academic_year
              ,is_attrition
+             ,CASE WHEN status_reason = 'Termination' THEN is_attrition ELSE 0 END AS is_attrition_termination
+             ,CASE WHEN status_reason = 'Resignation' THEN is_attrition ELSE 0 END AS is_attrition_resignation
+             ,CASE WHEN status_reason NOT IN ('Termination', 'Resignation') THEN is_attrition ELSE 0 END AS is_attrition_other
        FROM gabby.tableau.compliance_staff_attrition
-       WHERE is_denominator = 1
-         AND legal_entity_name IN ('TEAM Academy Charter Schools', 'KIPP Cooper Norcross Academy')
+       WHERE is_denominator = 1         
+         AND legal_entity_name != 'KIPP New Jersey'
          AND primary_site_reporting_schoolid != 0
       ) sub  
   GROUP BY academic_year
@@ -378,7 +409,7 @@ WITH act AS (
     ) p
  )
 
-,student_level_rollup AS (  
+,student_level_rollup_y1 AS (
   SELECT sub.academic_year
         ,ISNULL(sub.region,'All') AS region
         ,ISNULL(CONVERT(VARCHAR(5),sub.school_level),'All') AS school_level
@@ -402,11 +433,17 @@ WITH act AS (
         ,CONVERT(FLOAT,AVG(sub.lit_meeting_goal)) AS lit_meeting_goal_pct
         ,CONVERT(FLOAT,AVG(sub.lit_making_1yr_growth)) AS lit_making_1yr_growth_pct
         ,CONVERT(FLOAT,AVG(sub.is_student_attrition)) AS student_attrition_pct
-
-        /* student-level totals */
-        ,CONVERT(FLOAT,SUM(sub.n_days_attendance) / SUM(sub.n_days_membership)) AS ada
+		      ,CONVERT(FLOAT,SUM(sub.n_days_attendance) / SUM(sub.n_days_membership)) AS ada
+        ,CONVERT(FLOAT,AVG(sub.is_chronically_absent)) AS chronically_absent_pct
+        ,CONVERT(FLOAT,SUM(sub.n_days_tardy) / SUM(sub.n_days_membership)) AS tardy_pct
+      		,CONVERT(FLOAT,AVG(sub.is_OSS)) AS oss_pct
+        ,CONVERT(FLOAT,AVG(sub.is_ISS)) AS iss_pct
+		      ,CONVERT(FLOAT,AVG(sub.is_OSS_iep)) AS oss_iep_pct
+        ,CONVERT(FLOAT,AVG(sub.is_ISS_iep)) AS iss_iep_pct
+		
+       	/* student-level totals */
         ,CONVERT(FLOAT,SUM(sub.n_OSS)) AS n_oss
-        ,CONVERT(FLOAT,SUM(sub.n_ISS)) AS n_iss
+        ,CONVERT(FLOAT,SUM(sub.n_ISS)) AS n_iss		
   FROM
       (
        SELECT co.student_number      
@@ -432,6 +469,22 @@ WITH act AS (
                WHEN parcc.math_performance_level < 4 THEN 0.0 
               END AS parcc_math_proficient
              ,CASE 
+               WHEN parcc.ela_performance_level = 3 THEN 1.0 
+               WHEN parcc.ela_performance_level <> 3 THEN 0.0 
+              END AS parcc_ela_approaching
+             ,CASE 
+               WHEN parcc.math_performance_level = 3 THEN 1.0 
+               WHEN parcc.math_performance_level <> 3 THEN 0.0 
+              END AS parcc_math_approaching
+			          ,CASE 
+               WHEN parcc.ela_performance_level <= 2 THEN 1.0 
+               WHEN parcc.ela_performance_level > 2 THEN 0.0 
+              END AS parcc_ela_below
+             ,CASE 
+               WHEN parcc.math_performance_level <= 2 THEN 1.0 
+               WHEN parcc.math_performance_level > 2 THEN 0.0 
+              END AS parcc_math_below
+			          ,CASE 
                WHEN co.iep_status = 'SPED' AND parcc.ela_performance_level >= 4 THEN 1.0
                WHEN co.iep_status = 'SPED' AND parcc.ela_performance_level < 4 THEN 0.0 
               END AS parcc_ela_proficient_iep
@@ -449,17 +502,18 @@ WITH act AS (
               END AS parcc_math_approaching_iep      
 
              /* T&L assessments */
-             ,CASE WHEN co.grade_level <= 2 THEN modules.ela_is_mastery END AS module_ela_is_mastery 
-             ,CASE WHEN co.grade_level <= 2 THEN modules.math_is_mastery END AS module_math_is_mastery 
+             ,CASE WHEN co.grade_level <= 2 THEN modela.ela_is_mastery END AS module_ela_is_mastery 
              ,CASE 
                WHEN co.grade_level > 2 THEN NULL
-               WHEN modules.ela_percent_correct >= 65 THEN 1.0 
-               WHEN modules.ela_percent_correct < 65 THEN 0.0 
+               WHEN modela.ela_percent_correct >= 65 THEN 1.0 
+               WHEN modela.ela_percent_correct < 65 THEN 0.0 
               END AS module_ela_is_parcc_predictive
+
+             ,CASE WHEN co.grade_level <= 2 THEN modmath.math_is_mastery END AS module_math_is_mastery              
              ,CASE 
                WHEN co.grade_level > 2 THEN NULL
-               WHEN modules.math_percent_correct >= 65 THEN 1.0 
-               WHEN modules.math_percent_correct < 65 THEN 0.0 
+               WHEN modmath.math_percent_correct >= 65 THEN 1.0 
+               WHEN modmath.math_percent_correct < 65 THEN 0.0 
               END AS module_math_is_parcc_predictive
 
              /*Literacy */
@@ -467,12 +521,19 @@ WITH act AS (
 
              ,lg.is_making_1yr_growth AS lit_making_1yr_growth
 
-             /* Attendance */
+             /* ADA */
              ,ada.n_days_attendance
              ,ada.n_days_membership
+			          ,CASE WHEN ada.ada < 0.9 THEN 1.0 ELSE 0.0 END AS is_chronically_absent
 
-             ,sus.OSS AS n_OSS
-             ,sus.ISS AS n_ISS
+             /* Attendance Codes */
+			          ,sus.n_days_tardy
+             ,sus.OSS AS n_oss
+             ,sus.ISS AS n_iss
+			          ,CASE WHEN sus.OSS > 0 THEN 1.0 ELSE 0.0 END AS is_oss
+             ,CASE WHEN sus.ISS > 0 THEN 1.0 ELSE 0.0 END AS is_iss
+			          ,CASE WHEN co.iep_status = 'SPED' AND sus.OSS > 0 THEN 1.0 ELSE 0.0 END AS is_oss_iep
+             ,CASE WHEN co.iep_status = 'SPED' AND sus.ISS > 0 THEN 1.0 ELSE 0.0 END AS is_iss_iep
 
              /* Attrition */
              ,sa.is_attrition AS is_student_attrition
@@ -484,9 +545,15 @@ WITH act AS (
        LEFT JOIN parcc
          ON co.student_number = parcc.student_number
         AND co.academic_year = parcc.academic_year
-       LEFT JOIN modules
-         ON co.student_number = modules.student_number
-        AND co.academic_year = modules.academic_year
+       LEFT JOIN modules modela
+         ON co.student_number = modela.student_number
+        AND co.academic_year = modela.academic_year
+        AND modela.ela_rn_most_recent_subject = 1
+        AND co.grade_level <= 2
+       LEFT JOIN modules modmath
+         ON co.student_number = modmath.student_number
+        AND co.academic_year = modmath.academic_year
+        AND modmath.math_rn_most_recent_subject = 1
         AND co.grade_level <= 2
        LEFT JOIN lit_achievement la
          ON co.student_number = la.student_number
@@ -513,82 +580,86 @@ WITH act AS (
           ,ROLLUP(sub.school_level, sub.region, sub.reporting_schoolid, sub.grade_level)
  )
 
-,rollup_unpivoted AS (
+,school_level_rollup_y1 AS (
+  SELECT slr.academic_year
+        ,slr.region
+        ,slr.school_level
+        ,slr.reporting_schoolid
+        ,slr.free_or_reduced_pct
+        ,slr.act_composite_seniors_avg
+        ,slr.act_composite_juniors_avg
+        ,slr.parcc_ela_proficient_pct
+        ,slr.parcc_math_proficient_pct
+        ,slr.parcc_ela_proficient_iep_pct
+        ,slr.parcc_math_proficient_iep_pct
+        ,slr.parcc_ela_approaching_iep_pct
+        ,slr.parcc_math_approaching_iep_pct
+        ,slr.module_ela_mastery_pct
+        ,slr.module_math_mastery_pct
+        ,slr.module_ela_parcc_predictive_pct
+        ,slr.module_math_parcc_predictive_pct
+        ,slr.lit_meeting_goal_pct
+        ,slr.lit_making_1yr_growth_pct
+        ,slr.student_attrition_pct
+        ,slr.ada
+        ,slr.n_oss
+        ,slr.n_iss      
+
+        /* school-level metrics */
+        ,CONVERT(FLOAT,ta.pct_attrition) AS teacher_attrition_pct
+        ,CONVERT(FLOAT,ta.pct_attrition_termination) AS teacher_attrition_termination_pct
+        ,CONVERT(FLOAT,ta.pct_attrition_resignation) AS teacher_attrition_resignation_pct
+        ,CONVERT(FLOAT,ta.pct_attrition_other) AS teacher_attrition_other_pct
+             
+        ,CONVERT(FLOAT,ekg.overallaverage) AS ekg_walkthough_overall_avg
+        ,CONVERT(FLOAT,ekg.threecsaverage) AS ekg_walkthough_three_cs_avg
+
+        /* Surveys */
+        ,CONVERT(FLOAT,q12.avg_response_value) AS q12_response_avg      
+     
+        ,CONVERT(FLOAT,hsr.parent_pct_responded_positive) AS hsr_parent_positive_pct
+        ,CONVERT(FLOAT,hsr.student_pct_responded_positive) AS hsr_student_positive_pct
+     
+        ,CONVERT(FLOAT,tntp.ici_percentile) AS ici_percentile
+        ,CONVERT(FLOAT,tntp.is_top_quartile_learning_environment_score) AS learning_environment_score_top_quartile             
+  FROM student_level_rollup_y1 slr
+  LEFT JOIN teacher_attrition ta
+    ON slr.reporting_schoolid = ta.reporting_schoolid
+   AND slr.region = ta.region
+   AND slr.school_level = ta.school_level
+   AND slr.academic_year = ta.academic_year 
+  LEFT JOIN q12
+    ON slr.reporting_schoolid = q12.reporting_schoolid
+   AND slr.region = q12.region
+   AND slr.school_level = q12.school_level
+   AND slr.academic_year = q12.academic_year
+   AND q12.rn_most_recent = 1
+  LEFT JOIN hsr
+    ON slr.reporting_schoolid = hsr.reporting_schoolid
+   AND slr.region = hsr.region
+   AND slr.school_level = hsr.school_level
+   AND slr.academic_year = hsr.academic_year
+  LEFT JOIN tntp
+    ON slr.reporting_schoolid = tntp.reporting_schoolid
+   AND slr.region = tntp.region
+   AND slr.school_level = tntp.school_level
+   AND slr.academic_year = tntp.academic_year
+   AND tntp.rn_most_recent = 1
+  LEFT JOIN ekg_walkthrough ekg
+    ON slr.reporting_schoolid = ekg.reporting_schoolid
+   AND slr.region = ekg.region
+   AND slr.school_level = ekg.school_level
+   AND slr.academic_year = ekg.academic_year
+)
+
+,rollup_unpivoted_y1 AS (
   SELECT academic_year
         ,region
         ,school_level
         ,reporting_schoolid
         ,field
         ,value
-  FROM
-      (
-       SELECT slr.academic_year
-             ,slr.region
-             ,slr.school_level
-             ,slr.reporting_schoolid
-             ,slr.free_or_reduced_pct
-             ,slr.act_composite_seniors_avg
-             ,slr.act_composite_juniors_avg
-             ,slr.parcc_ela_proficient_pct
-             ,slr.parcc_math_proficient_pct
-             ,slr.parcc_ela_proficient_iep_pct
-             ,slr.parcc_math_proficient_iep_pct
-             ,slr.parcc_ela_approaching_iep_pct
-             ,slr.parcc_math_approaching_iep_pct
-             ,slr.module_ela_mastery_pct
-             ,slr.module_math_mastery_pct
-             ,slr.module_ela_parcc_predictive_pct
-             ,slr.module_math_parcc_predictive_pct
-             ,slr.lit_meeting_goal_pct
-             ,slr.lit_making_1yr_growth_pct
-             ,slr.student_attrition_pct
-             ,slr.ada
-             ,slr.n_oss
-             ,slr.n_iss      
-
-             /* school-level metrics */
-             ,CONVERT(FLOAT,ta.pct_attrition) AS teacher_attrition_pct
-             
-             ,CONVERT(FLOAT,ekg.overallaverage) AS ekg_walkthough_overall_avg
-             ,CONVERT(FLOAT,ekg.threecsaverage) AS ekg_walkthough_three_cs_avg
-
-             /* Surveys */
-             ,CONVERT(FLOAT,q12.avg_response_value) AS q12_response_avg      
-     
-             ,CONVERT(FLOAT,hsr.parent_pct_responded_positive) AS hsr_parent_positive_pct
-             ,CONVERT(FLOAT,hsr.student_pct_responded_positive) AS hsr_student_positive_pct
-     
-             ,CONVERT(FLOAT,tntp.ici_percentile) AS ici_percentile
-             ,CONVERT(FLOAT,tntp.is_top_quartile_learning_environment_score) AS learning_environment_score_top_quartile             
-       FROM student_level_rollup slr
-       LEFT JOIN teacher_attrition ta
-         ON slr.reporting_schoolid = ta.reporting_schoolid
-        AND slr.region = ta.region
-        AND slr.school_level = ta.school_level
-        AND slr.academic_year = ta.academic_year 
-       LEFT JOIN q12
-         ON slr.reporting_schoolid = q12.reporting_schoolid
-        AND slr.region = q12.region
-        AND slr.school_level = q12.school_level
-        AND slr.academic_year = q12.academic_year
-        AND q12.rn_most_recent = 1
-       LEFT JOIN hsr
-         ON slr.reporting_schoolid = hsr.reporting_schoolid
-        AND slr.region = hsr.region
-        AND slr.school_level = hsr.school_level
-        AND slr.academic_year = hsr.academic_year
-       LEFT JOIN tntp
-         ON slr.reporting_schoolid = tntp.reporting_schoolid
-        AND slr.region = tntp.region
-        AND slr.school_level = tntp.school_level
-        AND slr.academic_year = tntp.academic_year
-        AND tntp.rn_most_recent = 1
-       LEFT JOIN ekg_walkthrough ekg
-         ON slr.reporting_schoolid = ekg.reporting_schoolid
-        AND slr.region = ekg.region
-        AND slr.school_level = ekg.school_level
-        AND slr.academic_year = ekg.academic_year
-      ) sub
+  FROM school_level_rollup_y1
   UNPIVOT(
     value
     FOR field IN (free_or_reduced_pct
@@ -622,11 +693,13 @@ WITH act AS (
  )
 
 SELECT ru.academic_year
-      ,ru.region
+	     ,ru.region
       ,ru.school_level
       ,ru.reporting_schoolid
       ,ru.field AS ekg_metric_field
       ,ru.value AS ekg_metric_value
+	     ,'Y1' AS term_name
+      ,CAST(SYSDATETIME() AS DATE) AS week_of_date
       
       ,g.metric AS ekg_metric_label
       ,g.domain AS ekg_domain
@@ -639,6 +712,6 @@ SELECT ru.academic_year
         WHEN ru.school_level = 'MS' THEN g.points_ms
         WHEN ru.school_level = 'HS' THEN g.points_hs
        END AS points
-FROM rollup_unpivoted ru
+FROM rollup_unpivoted_y1 ru
 LEFT JOIN gabby.ekg.goals g
   ON ru.field = g.field
