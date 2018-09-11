@@ -19,6 +19,8 @@ WITH emp_att AS (
 
 SELECT df.df_employee_number
       ,df.preferred_name AS preferred_lastfirst
+      ,df.legal_entity_name
+      ,df.primary_site_school_level
       ,df.primary_site_schoolid AS schoolid
       ,df.primary_site AS location
       ,df.primary_job AS job_title
@@ -29,7 +31,7 @@ SELECT df.df_employee_number
       
       ,dir.userprincipalname AS email_address
       
-      ,cal.date_value
+      ,cal.date_value      
       ,gabby.utilities.DATE_TO_SY(cal.date_value) AS academic_year
       
       ,CONVERT(VARCHAR(5), dt.alt_name) AS term

@@ -452,7 +452,6 @@ WITH act AS (
              ,co.school_level COLLATE SQL_Latin1_General_CP1_CI_AS AS school_level
              ,co.reporting_schoolid
              ,co.grade_level
-             ,co.iep_status COLLATE SQL_Latin1_General_CP1_CI_AS AS iep_status
              ,CASE WHEN co.lunchstatus IN ('F', 'R') THEN 1.0 ELSE 0.0 END AS is_free_or_reduced
       
              /* ACT */

@@ -6,7 +6,7 @@ CREATE OR ALTER VIEW ekg.walkthrough_scores_detail AS
 WITH archive_unpivot AS (
   SELECT academic_year
         ,term_name AS reporting_term        
-        ,CONVERT(VARCHAR(256),rubric_strand_field) AS rubric_strand_field
+        ,CONVERT(VARCHAR(250),rubric_strand_field) AS rubric_strand_field
         ,pct_of_classrooms_proficient
         ,LTRIM(RTRIM(school)) AS school
   FROM gabby.ekg.walkthrough_scores_archive
@@ -68,11 +68,11 @@ WITH archive_unpivot AS (
  )
 
 ,current_unpivot AS (
-  SELECT school COLLATE SQL_Latin1_General_CP1_CI_AS AS school
+  SELECT school COLLATE Latin1_General_BIN AS school
         ,academic_year
-        ,reporting_term COLLATE SQL_Latin1_General_CP1_CI_AS AS reporting_term
+        ,reporting_term COLLATE Latin1_General_BIN AS reporting_term
         ,am_pm      
-        ,CONVERT(VARCHAR(256),rubric_strand_field) AS rubric_strand_field
+        ,CONVERT(VARCHAR(250),rubric_strand_field) AS rubric_strand_field
         ,pct_of_classrooms_proficient
   FROM gabby.ekg.walkthrough_scores 
   UNPIVOT(
@@ -192,7 +192,7 @@ FROM
              WHEN su.school IN ('KWM','KIPP Whittier Middle') THEN 179903          
              WHEN su.school IN ('WEK') THEN 1799015075
              WHEN su.school = 'KIPP NJ' THEN 0
-             WHEN su.school = 'Pathways ES' THEN 732574573
+             WHEN su.school IN ('Pathways','Pathways ES') THEN 732574573
              WHEN su.school = 'Pathways MS' THEN 732585074
             END AS reporting_schoolid
            ,CASE
@@ -215,7 +215,7 @@ FROM
            ,map.rubric_strand_description
      FROM scores_union su
      LEFT JOIN gabby.ekg.walkthrough_domain_map map
-       ON su.rubric_strand_field = map.rubric_strand_field COLLATE SQL_Latin1_General_CP1_CI_AS
+       ON su.rubric_strand_field = map.rubric_strand_field COLLATE Latin1_General_BIN
     ) sub
 GROUP BY school
         ,reporting_schoolid
