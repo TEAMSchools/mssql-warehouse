@@ -154,7 +154,7 @@ SELECT COALESCE(co.student_number, e1.student_number) AS student_number
       ,COALESCE(co.cohort, e1.cohort) AS cohort
       
       ,'TRANSFER' AS credittype
-      ,CONVERT(VARCHAR(125),CONCAT('TRANSFER', gr.termid, gr._line)) AS course_number
+      ,CONVERT(VARCHAR(125),CONCAT('TRANSFER', gr.termid, gr.db_name, gr.dcid)) COLLATE Latin1_General_BIN AS course_number
       ,CONVERT(VARCHAR(125),gr.course_name) AS course_name
       ,'Y1' AS reporting_term
       ,'Y1' AS finalgradename            
