@@ -12,63 +12,31 @@ SELECT studentid
       ,1 AS rn_year
 FROM
     (
-     SELECT sub.studentid
-           ,sub.student_number                      
-           ,sub.academic_year           
-           ,sub.teachernumber
-           ,sub.advisor_name
-           ,sub.dateenrolled
-           ,sub.dateleft
-      
+     SELECT enr.studentid
+           ,enr.student_number                      
+           ,enr.academic_year           
+           ,enr.teachernumber
+           ,enr.teacher_name AS advisor_name
+           ,enr.dateenrolled
+           ,enr.dateleft           
+
            ,df.mobile_number COLLATE Latin1_General_BIN AS advisor_phone
 
            ,dir.mail COLLATE Latin1_General_BIN AS advisor_email
 
            ,CONVERT(INT,ROW_NUMBER() OVER(
-                          PARTITION BY sub.student_number, sub.academic_year
-                            ORDER BY sub.dateleft DESC, sub.dateenrolled DESC)) AS rn_year
-     FROM
-         (
-          SELECT enr.studentid
-                ,enr.student_number                      
-                ,enr.academic_year           
-                ,enr.teachernumber
-                ,enr.teacher_name AS advisor_name
-                ,enr.dateenrolled
-                ,enr.dateleft           
-
-                ,COALESCE(psid.adp_associate_id COLLATE Latin1_General_BIN, enr.teachernumber) AS associate_id
-          FROM powerschool.course_enrollments_static enr           
-          LEFT JOIN gabby.people.id_crosswalk_powerschool psid
-            ON enr.teachernumber = psid.ps_teachernumber COLLATE Latin1_General_BIN
-           AND psid.is_master = 1          
-          WHERE enr.course_number = 'HR'
-            AND enr.sectionid > 0
-            AND enr.schoolid != 133570965
-
-          UNION ALL
-
-          SELECT enr.studentid
-                ,enr.student_number                      
-                ,enr.academic_year           
-                ,enr.teachernumber
-                ,enr.teacher_name AS advisor_name        
-                ,enr.dateenrolled
-                ,enr.dateleft
-           
-                ,COALESCE(psid.adp_associate_id COLLATE Latin1_General_BIN, enr.teachernumber) AS associate_id
-          FROM powerschool.course_enrollments_static enr           
-          LEFT JOIN gabby.people.id_crosswalk_powerschool psid
-            ON enr.teachernumber = psid.ps_teachernumber COLLATE Latin1_General_BIN
-           AND psid.is_master = 1     
-          WHERE enr.course_number = 'ADV'
-            AND enr.sectionid > 0
-            AND enr.schoolid = 133570965
-         ) sub
+                          PARTITION BY enr.student_number, enr.academic_year
+                            ORDER BY enr.dateleft DESC, enr.dateenrolled DESC)) AS rn_year
+     FROM powerschool.course_enrollments_static enr           
+     LEFT JOIN gabby.people.id_crosswalk_powerschool psid
+       ON enr.teachernumber = psid.ps_teachernumber COLLATE Latin1_General_BIN
      LEFT JOIN gabby.dayforce.staff_roster df
-       ON sub.associate_id = df.adp_associate_id
+       ON COALESCE(psid.df_employee_number, enr.teachernumber) = df.df_employee_number
      LEFT JOIN gabby.adsi.user_attributes_static dir
-       ON df.adp_associate_id = dir.idautopersonalternateid
+       ON df.df_employee_number = dir.employeenumber
       AND dir.is_active = 1
+      AND ISNUMERIC(dir.employeenumber) = 1
+     WHERE enr.course_number = 'HR'
+       AND enr.sectionid > 0
     ) sub
 WHERE rn_year = 1
