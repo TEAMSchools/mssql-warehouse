@@ -107,11 +107,11 @@ WITH roster AS (
             JOIN gabby.illuminate_dna_assessments.agg_student_responses_all a
               ON r.student_number = a.local_student_id
              AND r.academic_year = a.academic_year
-             AND a.is_replacement = 0
              AND a.response_type = 'O'      
-             AND a.module_type IN ('QA', 'CRQ')
+             AND a.is_replacement = 0
              AND a.subject_area IN ('Text Study', 'Mathematics', 'Algebra I', 'Geometry', 'Algebra IIA', 'Algebra IIB')
-             AND a.module_number IS NOT NULL
+             AND a.module_type IN ('QA', 'CRQ')
+             AND a.module_number IS NOT NULL                          
            ) sub
        GROUP BY sub.academic_year
                ,sub.subject_area
@@ -208,7 +208,7 @@ WITH roster AS (
    ) u
  )
 
-,attendance AS (
+,student_attendance AS (
   SELECT u.academic_year
         ,u.region
         ,u.school_level
@@ -268,7 +268,6 @@ WITH roster AS (
               ON r.studentid = att.studentid
              AND r.db_name = att.db_name
              AND ada.calendardate = att.att_date 
-            WHERE r.academic_year = 2017
             GROUP BY r.student_number
                     ,r.academic_year
                     ,r.region
@@ -615,11 +614,14 @@ SELECT a.academic_year
       ,NULL AS subject_area
       ,'Y1' AS term_name
       
-      ,'Attendance' AS domain
+      ,CASE 
+        WHEN a.field IN ('pct_iss', 'pct_oss', 'pct_iss_iep', 'pct_oss_iep') THEN 'Student Culture'
+        ELSE 'Student Attendance'
+       END AS domain
       ,NULL AS subdomain
       ,a.field
       ,a.value      
-FROM attendance a
+FROM student_attendance a
 
 UNION ALL
 
@@ -700,4 +702,3 @@ SELECT lit.academic_year
       ,lit.field
       ,lit.value
 FROM lit
---,DATEADD(DAY, 1 - (DATEPART(WEEKDAY, SYSDATETIME())), CAST(SYSDATETIME() AS DATE)) AS week_of_date
