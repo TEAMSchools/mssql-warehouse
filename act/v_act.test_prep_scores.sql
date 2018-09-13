@@ -29,7 +29,7 @@ WITH long_data AS (
              ,a.academic_year_clean AS academic_year
              ,a.administered_at
 
-             ,CONVERT(VARCHAR(125),dsu.code_translation) AS subject_area        
+             ,CONVERT(VARCHAR(125),a.subject_area) AS subject_area        
         
              ,ovr.student_id AS illuminate_student_id
              ,ovr.performance_band_level AS overall_performance_band                      
@@ -43,12 +43,7 @@ WITH long_data AS (
              ,CONVERT(VARCHAR,d.alt_name) AS administration_round
 
              ,co.grade_level
-       FROM gabby.illuminate_dna_assessments.assessments a
-       JOIN gabby.illuminate_codes.dna_scopes dsc
-         ON a.code_scope_id = dsc.code_id
-        AND dsc.code_translation = 'ACT Prep'
-       JOIN gabby.illuminate_codes.dna_subject_areas dsu
-         ON a.code_subject_area_id = dsu.code_id
+       FROM gabby.illuminate_dna_assessments.assessments_identifiers a              
        JOIN gabby.illuminate_dna_assessments.agg_student_responses ovr
          ON a.assessment_id = ovr.assessment_id
        JOIN gabby.illuminate_public.students s
@@ -60,6 +55,7 @@ WITH long_data AS (
          ON s.local_student_id = co.student_number
         AND a.academic_year_clean = co.academic_year
         AND co.rn_year = 1
+       WHERE a.scope = 'ACT Prep'       
       ) sub
  )
 

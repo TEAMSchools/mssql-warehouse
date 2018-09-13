@@ -50,25 +50,19 @@ FROM
            ,a.title
            ,a.administered_at        
            ,a.performance_band_set_id
-           ,a.academic_year_clean AS academic_year
-           
-           ,ds.code_translation AS scope           
+           ,a.academic_year_clean AS academic_year           
+           ,a.scope           
            
            ,ns.scope AS normed_scope
 
-           ,dsa.code_translation AS subject_area
+           ,a.subject_area
 
            ,ssa.student_id           
       
            ,0 AS is_replacement
-     FROM gabby.illuminate_dna_assessments.assessments a  
-     JOIN gabby.illuminate_codes.dna_scopes ds
-       ON a.code_scope_id = ds.code_id      
+     FROM gabby.illuminate_dna_assessments.assessments_identifiers a       
      JOIN gabby.illuminate_dna_assessments.normed_scopes ns
-       ON ds.code_translation = ns.scope
-     JOIN gabby.illuminate_codes.dna_subject_areas dsa
-       ON a.code_subject_area_id = dsa.code_id    
-      AND dsa.code_translation IN ('Text Study','Mathematics','Social Studies','Science')
+       ON a.scope = ns.scope           
      JOIN gabby.illuminate_dna_assessments.assessment_grade_levels agl
        ON a.assessment_id = agl.assessment_id       
      JOIN gabby.illuminate_public.student_session_aff_clean_static ssa
@@ -77,9 +71,10 @@ FROM
      JOIN gabby.illuminate_dna_assessments.course_enrollment_scaffold_static ce
        ON ssa.student_id = ce.student_id  
       AND a.academic_year = ce.academic_year 
-      AND dsa.code_translation = ce.subject_area
+      AND a.subject_area = ce.subject_area
       AND ce.is_advanced_math_student = 0      
-     WHERE a.deleted_at IS NULL       
+     WHERE a.deleted_at IS NULL  
+       AND a.subject_area IN ('Text Study','Mathematics','Social Studies','Science')     
 
      UNION ALL
 
@@ -88,32 +83,27 @@ FROM
            ,a.title
            ,a.administered_at        
            ,a.performance_band_set_id
-           ,a.academic_year_clean AS academic_year
-           
-           ,ds.code_translation AS scope           
+           ,a.academic_year_clean AS academic_year           
+           ,a.scope           
 
            ,ns.scope AS normed_scope
       
-           ,dsa.code_translation AS subject_area
+           ,a.subject_area
 
            ,ce.student_id
       
            ,0 AS is_replacement
-     FROM gabby.illuminate_dna_assessments.assessments a  
-     JOIN gabby.illuminate_codes.dna_scopes ds
-       ON a.code_scope_id = ds.code_id
+     FROM gabby.illuminate_dna_assessments.assessments_identifiers a       
      JOIN gabby.illuminate_dna_assessments.normed_scopes ns
-       ON ds.code_translation = ns.scope
-     JOIN gabby.illuminate_codes.dna_subject_areas dsa
-       ON a.code_subject_area_id = dsa.code_id    
-      AND dsa.code_translation IN ('Algebra I','Geometry','Algebra IIA','Algebra IIB','English 100','English 200','English 300','English 400')
+       ON a.scope = ns.scope
      JOIN gabby.illuminate_dna_assessments.assessment_grade_levels agl
        ON a.assessment_id = agl.assessment_id      
      JOIN gabby.illuminate_dna_assessments.course_enrollment_scaffold_static ce
        ON a.academic_year = ce.academic_year 
       AND agl.grade_level_id = ce.grade_level_id
-      AND dsa.code_translation = ce.subject_area       
+      AND a.subject_area = ce.subject_area       
      WHERE a.deleted_at IS NULL
+       AND a.subject_area IN ('Algebra I','Geometry','Algebra IIA','Algebra IIB','English 100','English 200','English 300','English 400')
 
      UNION ALL
 
@@ -123,25 +113,19 @@ FROM
            ,a.title
            ,a.administered_at        
            ,a.performance_band_set_id
-           ,a.academic_year_clean AS academic_year
-           
-           ,ds.code_translation AS scope           
+           ,a.academic_year_clean AS academic_year           
+           ,a.scope           
            
            ,ns.scope AS normed_scope
 
-           ,dsa.code_translation AS subject_area
+           ,a.subject_area
 
            ,sa.student_id
 
            ,1 AS is_replacement
-     FROM gabby.illuminate_dna_assessments.assessments a  
-     JOIN gabby.illuminate_codes.dna_scopes ds
-       ON a.code_scope_id = ds.code_id
+     FROM gabby.illuminate_dna_assessments.assessments_identifiers a       
      JOIN gabby.illuminate_dna_assessments.normed_scopes ns
-       ON ds.code_translation = ns.scope
-     JOIN gabby.illuminate_codes.dna_subject_areas dsa
-       ON a.code_subject_area_id = dsa.code_id    
-      AND dsa.code_translation NOT IN ('Algebra I','Geometry','Algebra IIA','Algebra IIB','English 100','English 200','English 300','English 400')
+       ON a.scope = ns.scope           
      JOIN gabby.illuminate_dna_assessments.assessment_grade_levels agl
        ON a.assessment_id = agl.assessment_id      
      JOIN gabby.illuminate_dna_assessments.students_assessments sa
@@ -151,6 +135,7 @@ FROM
       AND a.academic_year = ssa.academic_year
       AND agl.grade_level_id != ssa.grade_level_id      
      WHERE a.deleted_at IS NULL       
+       AND a.subject_area NOT IN ('Algebra I','Geometry','Algebra IIA','Algebra IIB','English 100','English 200','English 300','English 400')
 
      UNION ALL
 

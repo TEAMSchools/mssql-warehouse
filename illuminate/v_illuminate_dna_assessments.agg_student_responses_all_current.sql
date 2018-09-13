@@ -46,7 +46,7 @@ WITH responses_long AS (
         ,a.subject_area
         ,a.module_type
         ,a.module_number
-        ,a.performance_band_set_id
+        ,astd.performance_band_set_id
         ,a.is_replacement
         
         ,'S' AS response_type             
@@ -69,6 +69,9 @@ WITH responses_long AS (
   JOIN gabby.illuminate_dna_assessments.agg_student_responses_standard asrs
     ON sa.student_assessment_id = asrs.student_assessment_id
    AND asrs.points_possible > 0  
+  JOIN gabby.illuminate_dna_assessments.assessment_standards astd
+    ON asrs.assessment_id = astd.assessment_id
+   AND asrs.standard_id = astd.standard_id
   LEFT JOIN gabby.illuminate_standards.standards std
     ON asrs.standard_id = std.standard_id   
   LEFT JOIN gabby.illuminate_standards.standards_domain_static dom
@@ -87,7 +90,7 @@ WITH responses_long AS (
         ,a.subject_area
         ,a.module_type
         ,a.module_number
-        ,a.performance_band_set_id
+        ,arg.performance_band_set_id
         ,a.is_replacement
         
         ,'G' AS response_type
@@ -109,6 +112,9 @@ WITH responses_long AS (
   JOIN gabby.illuminate_dna_assessments.agg_student_responses_group asrg
     ON sa.student_assessment_id = asrg.student_assessment_id      
    AND asrg.points_possible > 0       
+  JOIN gabby.illuminate_dna_assessments.assessments_reporting_groups arg
+    ON asrg.assessment_id = arg.assessment_id
+   AND asrg.reporting_group_id = arg.reporting_group_id
   JOIN gabby.illuminate_dna_assessments.reporting_groups rg
     ON asrg.reporting_group_id = rg.reporting_group_id
  )
