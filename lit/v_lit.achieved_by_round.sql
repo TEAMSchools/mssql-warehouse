@@ -315,9 +315,12 @@ SELECT academic_year
        END AS met_default_goal
       ,NULL AS met_natl_goal
       ,CASE
-        WHEN lvl_num >= 26 THEN 'On Track'
-        WHEN lvl_num >= goal_num THEN 'On Track'
-        WHEN lvl_num < goal_num THEN 'Off Track'        
+        WHEN lvl_num >= 26 THEN 'Target'
+        WHEN lvl_num - goal_num > 0 THEN 'Above Target'
+        WHEN lvl_num - goal_num = 0 THEN 'Target'
+        WHEN lvl_num - goal_num = -1 THEN 'Approaching'
+        WHEN lvl_num - goal_num = -2 THEN 'Below'
+        WHEN lvl_num - goal_num < -2 THEN 'Far Below'
        END AS goal_status
       ,CASE 
         WHEN gleq = prev_gleq THEN 0
@@ -363,6 +366,7 @@ FROM
            ,sub.is_new_test
 
            ,CASE
+             WHEN sub.academic_year >= 2018 THEN sub.fp_read_lvl
              WHEN (sub.fp_read_lvl IS NOT NULL AND sub.step_read_lvl IS NOT NULL)
               AND sub.is_fp = 1 
                     THEN sub.fp_read_lvl
@@ -372,6 +376,7 @@ FROM
              ELSE COALESCE(sub.fp_read_lvl, sub.step_read_lvl)
             END AS default_goal_lvl
            ,CASE
+             WHEN sub.academic_year >= 2018 THEN sub.fp_lvl_num
              WHEN (sub.fp_lvl_num IS NOT NULL AND sub.step_lvl_num IS NOT NULL)
               AND sub.is_fp = 1 
                     THEN sub.fp_lvl_num
@@ -390,6 +395,7 @@ FROM
            ,LAG(sub.gleq_lvl_num, 1) OVER(PARTITION BY sub.student_number ORDER BY sub.start_date ASC) AS prev_gleq_lvl_num           
            ,COALESCE(sub.indiv_goal_lvl
                     ,CASE
+                      WHEN sub.academic_year >= 2018 THEN sub.fp_read_lvl
                       WHEN (sub.fp_read_lvl IS NOT NULL AND sub.step_read_lvl IS NOT NULL)
                        AND sub.is_fp = 1 
                              THEN sub.fp_read_lvl
@@ -400,6 +406,7 @@ FROM
                      END) AS goal_lvl
            ,COALESCE(sub.indiv_lvl_num
                     ,CASE
+                      WHEN sub.academic_year >= 2018 THEN sub.fp_lvl_num
                       WHEN (sub.fp_lvl_num IS NOT NULL AND sub.step_lvl_num IS NOT NULL)
                        AND sub.is_fp = 1 
                              THEN sub.fp_lvl_num
@@ -410,6 +417,7 @@ FROM
                      END) AS goal_num                                                 
            ,sub.lvl_num - COALESCE(sub.lvl_num
                                   ,CASE
+                                    WHEN sub.academic_year >= 2018 THEN sub.fp_lvl_num
                                     WHEN (sub.fp_lvl_num IS NOT NULL AND sub.step_lvl_num IS NOT NULL)
                                      AND sub.is_fp = 1 
                                            THEN sub.fp_lvl_num
@@ -472,7 +480,7 @@ FROM
           LEFT JOIN gabby.lit.network_goals goals 
             ON achieved.grade_level = goals.grade_level
            AND achieved.round_num = goals.round_num
-           AND achieved.academic_year = goals.norms_year
+           AND goals.norms_year = 2018
           LEFT JOIN gabby.lit.individualized_goals indiv 
             ON achieved.student_number = indiv.student_number
            AND achieved.test_round = indiv.test_round

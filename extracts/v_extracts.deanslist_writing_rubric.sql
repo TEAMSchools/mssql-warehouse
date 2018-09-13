@@ -35,13 +35,7 @@ FROM
             END AS rubric_score                      
 
           ,s.local_student_id AS student_number
-     FROM gabby.illuminate_dna_assessments.assessments a
-     JOIN gabby.illuminate_codes.dna_scopes dsc
-       ON a.code_scope_id = dsc.code_id
-      AND dsc.code_translation = 'Process Piece'
-     JOIN gabby.illuminate_codes.dna_subject_areas dsu
-       ON a.code_subject_area_id = dsu.code_id
-      AND dsu.code_translation = 'Writing'
+     FROM gabby.illuminate_dna_assessments.assessments_identifiers a     
      JOIN gabby.illuminate_dna_assessments.assessment_standards ast
        ON a.assessment_id = ast.assessment_id      
      JOIN gabby.illuminate_standards.standards std
@@ -53,6 +47,8 @@ FROM
      JOIN gabby.illuminate_public.students s
        ON asrs.student_id = s.student_id
      WHERE a.academic_year_clean = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+       AND a.scope = 'Process Piece'     
+       AND a.subject_area = 'Writing' 
     ) sub
 PIVOT(
   AVG(rubric_score)
