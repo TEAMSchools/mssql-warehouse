@@ -110,7 +110,7 @@ SELECT co.studentid
                             AND co.entrydate = s.entrydate THEN REPLACE(s.lunchstatus,'false','F')
                            ELSE co.lunchstatus
                           END) AS lunchstatus      
-      ,CONVERT(VARCHAR(125),CASE 
+      ,CONVERT(VARCHAR(125),CASE
                              WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
                               AND co.rn_year = 1 
                               AND mcs.currentapplicationid IS NOT NULL 
@@ -120,7 +120,8 @@ SELECT co.studentid
                               AND mcs.currentapplicationid IS NULL 
                                     THEN mcs.description COLLATE Latin1_General_BIN
                              WHEN co.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
-                              AND co.entrydate = s.entrydate THEN REPLACE(s.lunchstatus,'false','F')
+                              AND co.entrydate = s.entrydate 
+                                    THEN REPLACE(s.lunchstatus,'false','F')
                              ELSE co.lunchstatus
                             END) AS lunch_app_status 
 FROM powerschool.cohort_static co
@@ -137,10 +138,10 @@ LEFT JOIN gabby.powerschool.student_access_accounts_static saa
 JOIN powerschool.schools sch
   ON co.schoolid = sch.school_number
 LEFT JOIN powerschool.team_roster_static t
-  ON co.studentid = t.studentid
+  ON co.student_number = t.student_number
  AND co.academic_year = t.academic_year
 LEFT JOIN powerschool.advisory_static adv
-  ON co.studentid = adv.studentid
+  ON co.student_number = adv.student_number
  AND co.academic_year = adv.academic_year
 LEFT JOIN easyiep.njsmart_powerschool_clean sped
   ON co.student_number = sped.student_number

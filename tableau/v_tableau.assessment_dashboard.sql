@@ -60,7 +60,7 @@ LEFT JOIN gabby.powerschool.course_enrollments_static enr
   ON co.student_number = enr.student_number
  AND co.academic_year = enr.academic_year
  AND co.db_name = enr.db_name
- AND asr.subject_area = enr.illuminate_subject COLLATE SQL_Latin1_General_CP1_CI_AS
+ AND asr.subject_area = enr.illuminate_subject COLLATE Latin1_General_BIN
  AND enr.course_enroll_status = 0 
  AND enr.section_enroll_status = 0 
  AND enr.rn_illuminate_subject = 1
