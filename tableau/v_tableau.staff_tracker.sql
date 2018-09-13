@@ -9,11 +9,11 @@ WITH emp_att AS (
 
         ,[absent]
         ,[late]
-        ,[early_out]
+        ,[early out] AS early_out
   FROM gabby.dayforce.employee_attendance
   PIVOT (
     MAX(excused_status)
-    FOR absence_type IN ([absent], [late], [early_out])
+    FOR absence_type IN ([absent], [late], [early out])
    ) p
  )
 
