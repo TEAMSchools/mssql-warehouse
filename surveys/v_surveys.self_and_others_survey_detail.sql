@@ -86,7 +86,7 @@ FROM
       
            ,CONCAT(df.preferred_first_name, ' ', df.preferred_last_name) AS subject_name
            ,CONVERT(VARCHAR,df.primary_site) AS subject_location
-           ,df.manager_adp_associate_id AS subject_manager_id      
+           ,df.manager_df_employee_number AS subject_manager_id
 
            ,ad.samaccountname AS subject_username
 
