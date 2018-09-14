@@ -36,7 +36,7 @@ WITH map_long AS (
   LEFT JOIN gabby.nwea.assessment_result_identifiers map
     ON base.student_number = map.student_id
    AND base.academic_year = map.academic_year
-   AND base.measurementscale = map.measurement_scale
+   AND base.measurementscale = map.measurement_scale COLLATE Latin1_General_BIN
    AND map.rn_term_subj = 1
  )
 
@@ -98,13 +98,13 @@ LEFT JOIN map_long
  AND r.academic_year = map_long.academic_year      
 LEFT JOIN gabby.nwea.percentile_norms_dense pct50
   ON r.grade_level = pct50.grade_level
- AND CASE WHEN map_long.term = 'Baseline' THEN 'Fall' ELSE map_long.term END = pct50.term
- AND map_long.measurementscale = pct50.measurementscale
+ AND CASE WHEN map_long.term = 'Baseline' THEN 'Fall' ELSE map_long.term END = pct50.term COLLATE Latin1_General_BIN
+ AND map_long.measurementscale = pct50.measurementscale COLLATE Latin1_General_BIN
  AND pct50.testpercentile = 50
 LEFT JOIN gabby.nwea.percentile_norms_dense pct75
   ON r.grade_level = pct75.grade_level
- AND CASE WHEN map_long.term = 'Baseline' THEN 'Fall' ELSE map_long.term END = pct75.term
- AND map_long.measurementscale = pct75.measurementscale
+ AND CASE WHEN map_long.term = 'Baseline' THEN 'Fall' ELSE map_long.term END = pct75.term COLLATE Latin1_General_BIN
+ AND map_long.measurementscale = pct75.measurementscale COLLATE Latin1_General_BIN
  AND pct75.testpercentile = 75
 LEFT JOIN gabby.nwea.learning_continuum_goals domain
   ON r.student_number = domain.student_number
