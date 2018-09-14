@@ -307,7 +307,7 @@ WITH roster AS (
              ,ISNULL(sub.region, 'All') AS region        
              ,ISNULL(sub.school_level, 'All') AS school_level
              ,ISNULL(sub.reporting_schoolid, 'All') AS reporting_schoolid
-             ,ISNULL(sub.grade_level, 'All') AS grade_level
+             ,'All' AS grade_level
 
              ,AVG(sub.is_attrition) AS pct_attrition
              ,AVG(sub.is_attrition_resignation) AS pct_attrition_resignation
@@ -331,11 +331,11 @@ WITH roster AS (
             WHERE a.is_denominator = 1
               AND a.primary_site_reporting_schoolid != 0
               AND a.legal_entity_name != 'KIPP New Jersey'
+              AND a.academic_year = 2002
            ) sub
        GROUP BY sub.academic_year
                ,sub.school_level
                ,ROLLUP(sub.region, sub.reporting_schoolid)
-               ,CUBE(sub.grade_level)
       ) sub
   UNPIVOT(
     value
@@ -455,7 +455,7 @@ WITH roster AS (
              ,ISNULL(sub.region, 'All') AS region        
              ,ISNULL(sub.primary_site_school_level, 'All') AS school_level
              ,ISNULL(sub.reporting_schoolid, 'All') AS reporting_schoolid
-             ,ISNULL(sub.grade_level, 'All') AS grade_level
+             ,'All' AS grade_level
       
              ,AVG(sub.present_lt_90) AS pct_present_lt_90
              ,AVG(sub.present_ge_90_lt_95) AS pct_present_ge_90_lt_95
@@ -469,6 +469,7 @@ WITH roster AS (
                     WHEN legal_entity_name = 'TEAM Academy Charter Schools' THEN 'TEAM'
                     WHEN legal_entity_name = 'KIPP Cooper Norcross Academy' THEN 'TEAM'
                     WHEN legal_entity_name = 'KIPP Miami' THEN 'KMS'
+                    ELSE ''
                    END AS region
                   ,primary_site_school_level
                   ,CAST(schoolid AS VARCHAR(25)) AS reporting_schoolid
@@ -494,7 +495,6 @@ WITH roster AS (
        GROUP BY sub.academic_year
                ,sub.primary_site_school_level
                ,ROLLUP(sub.region, sub.reporting_schoolid)
-               ,CUBE(sub.grade_level)
       ) sub
   UNPIVOT(
     value
@@ -536,8 +536,8 @@ WITH roster AS (
       
                   ,achv.reporting_term                        
       
-                  ,achv.met_goal AS is_on_gradelevel
-                  ,CASE WHEN achv.reporting_term = 'LIT1' THEN NULL ELSE achv.moved_levels END AS moved_reading_level
+                  ,CONVERT(FLOAT,achv.met_goal) AS is_on_gradelevel
+                  ,CASE WHEN achv.reporting_term = 'LIT1' THEN NULL ELSE CONVERT(FLOAT,achv.moved_levels) END AS moved_reading_level
             FROM roster r
             JOIN gabby.lit.achieved_by_round_static achv
               ON r.student_number = achv.student_number
