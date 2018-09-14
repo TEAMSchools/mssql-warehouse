@@ -142,13 +142,13 @@ WITH attending_enrollment AS (
 ,stipends AS (
   SELECT student_c
         ,CASE 
-          WHEN [F] IS NOT NULL THEN 'Approved'
+          WHEN [F] IS NOT NULL THEN 'Picked Up'
           WHEN [F] IS NULL THEN 'Not Picked Up'
-        END AS stipend_status_fall
+         END AS stipend_status_fall
         ,CASE 
-          WHEN [S] IS NOT NULL THEN 'Approved'
+          WHEN [S] IS NOT NULL THEN 'Picked Up'
           WHEN [S] IS NULL THEN 'Not Picked Up'
-        END AS stipend_status_spr
+         END AS stipend_status_spr
   FROM
       (
        SELECT a.student_c        
