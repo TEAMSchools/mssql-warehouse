@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW surveys.self_and_others_survey_detail AS
+--CREATE OR ALTER VIEW surveys.self_and_others_survey_detail AS
 
 WITH so_long AS (
   SELECT response_id
@@ -13,7 +13,8 @@ WITH so_long AS (
         ,your_name_ AS respondent_name
         ,your_kipp_nj_email_account AS respondent_email_address
         ,subject_name
-        ,subject_associate_id    
+        ,subject_associate_id
+        ,is_manager
         ,question_code
         ,response
   FROM gabby.surveys.self_and_others_survey_final
@@ -69,7 +70,12 @@ SELECT sub.survey_type
       ,sub.open_ended
       ,sub.response_value      
 
-      ,ROUND(AVG(sub.response_value) OVER(PARTITION BY academic_year, reporting_term, question_code), 1) AS avg_response_value_location
+      ,ROUND(AVG(sub.response_value) OVER(PARTITION BY academic_year, reporting_term, subject_location, question_code), 1) AS avg_response_value_location
+      
+      ,sub.weighted_value
+      ,sub.weighted_value
+      ,ROUND(AVG(sub.weighted_value) OVER(PARTITION BY academic_year, reporting_term, subject_location, question_code), 1) AS avg_weighted_response_value_location
+      ,ROUND(AVG(sub.weighted_possible) OVER(PARTITION BY academic_year, reporting_term, subject_location, question_code), 1) AS avg_weighted_response_possible_location
 FROM
     (
      SELECT 'SO' AS survey_type
@@ -86,7 +92,7 @@ FROM
       
            ,CONCAT(df.preferred_first_name, ' ', df.preferred_last_name) AS subject_name
            ,CONVERT(VARCHAR,df.primary_site) AS subject_location
-           ,df.manager_adp_associate_id AS subject_manager_id      
+           ,df.manager_df_employee_number AS subject_manager_id      
 
            ,ad.samaccountname AS subject_username
 
@@ -97,6 +103,10 @@ FROM
            ,qk.open_ended
 
            ,CONVERT(FLOAT,rs.response_value) AS response_value
+           ,CASE WHEN so.is_manager = 0 AND qk.open_ended = 'N' AND so.academic_year >= 2018 THEN CONVERT(FLOAT,rs.response_value) / (COUNT(so.subject_associate_id) OVER(PARTITION BY so.subject_associate_id, so.academic_year, so.reporting_term, so.question_code) - 1) ELSE CONVERT(FLOAT,rs.response_value) END AS weighted_value
+           ,CASE WHEN so.is_manager = 0 AND qk.open_ended = 'N' AND so.academic_year >= 2018 THEN 4 / (COUNT(so.subject_associate_id) OVER(PARTITION BY so.subject_associate_id, so.academic_year, so.reporting_term, so.question_code) - 1) ELSE 5 END AS weighted_possible
+           
+           ,so.is_manager
      FROM so_long so
      LEFT JOIN gabby.dayforce.staff_roster df
        ON (so.subject_associate_id = df.adp_associate_id OR so.subject_associate_id = CONVERT(VARCHAR,df.df_employee_number))
@@ -109,5 +119,5 @@ FROM
       AND qk.survey_type = 'SO'
      LEFT JOIN gabby.surveys.response_scales rs
        ON so.response = rs.response_text
-      AND rs.survey_type = 'SO'
+      AND CASE WHEN so.academic_year <= 2017 THEN 'SO' ELSE 'SO2018' END = rs.survey_type 
     ) sub
