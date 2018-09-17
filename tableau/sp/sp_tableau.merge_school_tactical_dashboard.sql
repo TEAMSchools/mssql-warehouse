@@ -35,6 +35,7 @@ USING MySource
   AND MySource.domain = MyTarget.domain
   AND ISNULL(MySource.subdomain, '') = ISNULL(MyTarget.subdomain, '')
   AND MySource.field = MyTarget.field
+  AND MySource.week_of_date = MyTarget.week_of_date
 WHEN MATCHED THEN
     UPDATE SET value = MySource.value
 WHEN NOT MATCHED THEN
@@ -50,8 +51,9 @@ WHEN NOT MATCHED THEN
      ,subdomain
      ,field
      ,value
+     ,week_of_date
     )
     VALUES (
       MySource.academic_year, MySource.region, MySource.school_level, MySource.reporting_schoolid, MySource.grade_level
-     ,MySource.subject_area, MySource.term_name, MySource.domain, MySource.subdomain, MySource.field, MySource.value
+     ,MySource.subject_area, MySource.term_name, MySource.domain, MySource.subdomain, MySource.field, MySource.value, MySource.week_of_date    
     );
