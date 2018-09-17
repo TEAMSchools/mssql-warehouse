@@ -157,14 +157,20 @@ WITH teacher_crosswalk AS (
 
 ,ps_section_teacher AS (
   SELECT sec.id AS sectionid
-        ,sec.course_number
+        ,sec.section_number
+        ,sec.section_type
+        ,sec.course_number        
         ,sec.db_name
         
+        ,c.course_name
+
         ,MIN(st.start_date) AS start_date_min
         ,MAX(st.end_date) AS end_date_max
 
         ,t.teachernumber
   FROM gabby.powerschool.sections sec
+  JOIN gabby.powerschool.courses c
+    ON sec.course_number_clean = c.course_number_clean
   JOIN gabby.powerschool.sectionteacher st
     ON sec.id = st.sectionid
    AND sec.db_name = st.db_name
@@ -173,7 +179,10 @@ WITH teacher_crosswalk AS (
    AND st.db_name = t.db_name
   GROUP BY sec.id
           ,sec.course_number
+          ,sec.section_number
+          ,sec.section_type
           ,sec.db_name
+          ,c.course_name
           ,t.teachernumber
  )
 
@@ -207,6 +216,8 @@ SELECT tgs.df_employee_number
       ,tgs.ps_teachernumber
       
       ,st.sectionid      
+      ,st.section_number
+      ,st.course_name
       ,st.start_date_min
       ,st.end_date_max
 FROM teacher_goal_scaffold tgs
@@ -248,6 +259,8 @@ SELECT tgs.df_employee_number
       ,tgs.ps_teachernumber
       
       ,NULL AS sectionid
+      ,NULL AS section_number
+      ,NULL AS course_name
       ,NULL AS start_date_min
       ,NULL AS end_date_max
 FROM teacher_goal_scaffold tgs
@@ -285,6 +298,8 @@ SELECT tgs.df_employee_number
       ,tgs.ps_teachernumber
       
       ,NULL AS sectionid
+      ,NULL AS section_number
+      ,NULL AS course_name
       ,NULL AS start_date_min
       ,NULL AS end_date_max
 FROM teacher_goal_scaffold tgs
