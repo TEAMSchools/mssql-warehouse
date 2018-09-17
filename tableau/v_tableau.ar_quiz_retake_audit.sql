@@ -22,11 +22,7 @@ SELECT co.student_number
       ,CONVERT(INT,ar.rn_quiz) AS rn_quiz
       
       ,CONVERT(VARCHAR(25),dts.alt_name) AS term
-      ,CASE 
-        WHEN CONVERT(DATE,GETDATE()) BETWEEN dts.start_date AND dts.end_date THEN 1 
-        WHEN MAX(dts.start_date) OVER(PARTITION BY co.schoolid, co.academic_year, co.student_number) BETWEEN dts.start_date AND dts.end_date THEN 1 
-        ELSE 0 
-       END AS is_curterm    
+      ,dts.is_curterm    
            
       ,enr.teacher_name           
            

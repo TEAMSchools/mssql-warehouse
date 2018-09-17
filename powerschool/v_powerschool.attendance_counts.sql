@@ -7,7 +7,8 @@ WITH att_counts AS (
         ,term_name
         ,start_date
         ,end_date
-        ,att_code             
+        ,att_code           
+        ,is_curterm  
         ,COUNT(studentid) AS count_term
   FROM
       (
@@ -27,6 +28,7 @@ WITH att_counts AS (
              ,CONVERT(VARCHAR,dates.alt_name) COLLATE Latin1_General_BIN AS term_name
              ,dates.start_date
              ,dates.end_date
+             ,dates.is_curterm
        FROM powerschool.ps_attendance_daily att
        JOIN gabby.reporting.reporting_terms dates
          ON att.schoolid = dates.schoolid
@@ -42,6 +44,7 @@ WITH att_counts AS (
           ,term_name
           ,start_date
           ,end_date
+          ,is_curterm
  )
 
 ,mem_counts AS (
@@ -51,6 +54,7 @@ WITH att_counts AS (
         ,sub.term_name
         ,sub.start_date
         ,sub.end_date
+        ,sub.is_curterm
         ,SUM(sub.membershipvalue) AS count_term
 
         ,'MEM' AS att_code
@@ -63,7 +67,8 @@ WITH att_counts AS (
              ,CONVERT(VARCHAR,d.time_per_name) AS reporting_term
              ,CONVERT(VARCHAR,d.alt_name) AS term_name
              ,d.start_date
-             ,d.end_date             
+             ,d.end_date     
+             ,d.is_curterm        
        FROM powerschool.ps_adaadm_daily_ctod mem
        JOIN gabby.reporting.reporting_terms d
          ON mem.schoolid = d.schoolid 
@@ -78,6 +83,7 @@ WITH att_counts AS (
           ,sub.term_name
           ,sub.start_date
           ,sub.end_date
+          ,sub.is_curterm
  )
 
 ,counts_long AS (
@@ -87,13 +93,9 @@ WITH att_counts AS (
         ,term_name
         ,start_date
         ,end_date                
+        ,is_curterm
         ,CONVERT(FLOAT,n) AS n
-        ,CONCAT(att_code,'_',field) AS pivot_field        
-        ,CASE 
-          WHEN CONVERT(DATE,GETDATE()) BETWEEN start_date AND end_date THEN 1 
-          WHEN academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() AND start_date = MAX(start_date) OVER(PARTITION BY studentid, academic_year) THEN 1 
-          ELSE 0 
-         END AS is_curterm
+        ,CONCAT(LOWER(att_code),'_',field) AS pivot_field                
   FROM
       (
        SELECT studentid
@@ -104,6 +106,7 @@ WITH att_counts AS (
              ,end_date
              ,att_code             
              ,count_term
+             ,is_curterm
              ,SUM(count_term) OVER(PARTITION BY studentid, academic_year, att_code ORDER BY start_date) AS count_y1
        FROM att_counts
        
@@ -117,6 +120,7 @@ WITH att_counts AS (
              ,end_date
              ,att_code
              ,count_term 
+             ,is_curterm
              ,SUM(count_term) OVER(PARTITION BY studentid, academic_year ORDER BY start_date) AS count_y1
        FROM mem_counts
       ) sub

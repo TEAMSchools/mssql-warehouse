@@ -11,11 +11,7 @@ WITH course_scaffold AS (
         ,credit_hours        
         ,excludefromgpa
         ,gradescaleid
-        ,CASE 
-          WHEN CONVERT(DATE,GETDATE()) BETWEEN term_start_date AND term_end_date THEN 1
-          WHEN term_end_date <= CONVERT(DATE,GETDATE()) AND term_start_date = MAX(term_start_date) OVER(PARTITION BY studentid, yearid, course_number) THEN 1
-          ELSE 0
-         END AS is_curterm
+        ,is_curterm
   FROM
       (
        SELECT DISTINCT 
@@ -32,6 +28,7 @@ WITH course_scaffold AS (
              ,CONVERT(VARCHAR(25),terms.alt_name) COLLATE Latin1_General_BIN AS term_name
              ,terms.start_date AS term_start_date
              ,terms.end_date AS term_end_date
+             ,terms.is_curterm
        FROM powerschool.course_enrollments_static enr
        JOIN powerschool.schools
          ON enr.schoolid = schools.school_number

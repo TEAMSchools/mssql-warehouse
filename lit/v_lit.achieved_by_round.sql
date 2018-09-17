@@ -15,13 +15,7 @@ WITH roster_scaffold AS (
         ,terms.end_date
         ,CONVERT(INT,RIGHT(terms.time_per_name, 1)) AS round_num        
         
-        ,CASE 
-          WHEN CONVERT(DATE,GETDATE()) BETWEEN terms.start_date AND terms.end_date THEN 1 
-          WHEN MAX(CASE WHEN terms.start_date <= CONVERT(DATE,GETDATE()) THEN terms.start_date END) 
-                 OVER(PARTITION BY r.schoolid, r.academic_year) = terms.start_date 
-                   THEN 1
-          ELSE 0 
-         END AS is_curterm        
+        ,terms.is_curterm        
   FROM gabby.powerschool.cohort_identifiers_static r
   JOIN gabby.reporting.reporting_terms terms
     ON r.academic_year = terms.academic_year 

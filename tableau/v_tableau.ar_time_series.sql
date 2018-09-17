@@ -91,6 +91,7 @@ FROM
            ,words_goal_yr
            ,points_goal_yr
            ,goal_term
+           ,is_curterm           
            ,words_goal_term
            ,points_goal_term
            ,n_words_read
@@ -111,12 +112,7 @@ FROM
              WHEN DATEPART(WEEK,date) = DATEPART(WEEK,CONVERT(DATE,GETDATE())) THEN 1 
              WHEN DATEPART(WEEK,date) = DATEPART(WEEK,MAX(date) OVER(PARTITION BY schoolid, academic_year, student_number)) THEN 1 
              ELSE 0 
-            END AS is_current_week
-           ,CASE 
-             WHEN CONVERT(DATE,GETDATE()) BETWEEN term_start_date AND term_end_date THEN 1 
-             WHEN MAX(date) OVER(PARTITION BY schoolid, academic_year, student_number) BETWEEN term_start_date AND term_end_date THEN 1 
-             ELSE 0 
-            END AS is_curterm           
+            END AS is_current_week           
            ,SUM(n_words_read) OVER(
               PARTITION BY student_number, academic_year, term
                 ORDER BY date) AS n_words_read_running_term
@@ -140,6 +136,7 @@ FROM
                 ,CONVERT(VARCHAR(25),dts.time_per_name) AS goal_term
                 ,dts.start_date AS term_start_date
                 ,dts.end_date AS term_end_date
+                ,dts.is_curterm
 
                 ,y1dts.start_date AS y1_start_date
                 ,y1dts.end_date AS y1_end_date
