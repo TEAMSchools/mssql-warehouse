@@ -90,6 +90,7 @@ SELECT d.df_employee_number
       ,d.status_reason
       ,d.termination_date
       ,CASE
+        WHEN DATEDIFF(DAY, d.academic_year_entrydate, d.academic_year_exitdate) <= 0 THEN 0
         WHEN d.academic_year_exitdate >= DATEFROMPARTS(d.academic_year, 9, 1)
          AND d.academic_year_entrydate <= DATEFROMPARTS((d.academic_year + 1), 4, 30) THEN 1
         ELSE 0
