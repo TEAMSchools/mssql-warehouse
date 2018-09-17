@@ -16,6 +16,7 @@ WITH so_long AS (
         ,subject_associate_id    
         ,question_code
         ,response
+        ,CASE WHEN u.academic_year <= 2017 THEN 'SO' ELSE 'SO2018' END AS survey_type
   FROM gabby.surveys.self_and_others_survey_final
   UNPIVOT(
     response
@@ -109,5 +110,5 @@ FROM
       AND qk.survey_type = 'SO'
      LEFT JOIN gabby.surveys.response_scales rs
        ON so.response = rs.response_text
-      AND rs.survey_type = 'SO'
+      AND so.survey_type = rs.survey_type
     ) sub
