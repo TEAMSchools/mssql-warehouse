@@ -108,8 +108,7 @@ WITH roster AS (
               ON r.student_number = a.local_student_id
              AND r.academic_year = a.academic_year
              AND a.response_type = 'O'      
-             AND a.is_replacement = 0
-             AND a.subject_area IN ('Text Study', 'Mathematics', 'Algebra I', 'Geometry', 'Algebra IIA', 'Algebra IIB')
+             AND a.is_replacement = 0             
              AND a.module_type IN ('QA', 'CRQ')
              AND a.module_number IS NOT NULL                          
            ) sub
@@ -209,6 +208,51 @@ WITH roster AS (
  )
 
 ,student_attendance AS (
+  SELECT r.student_number
+        ,r.academic_year
+        ,r.region
+        ,r.school_level
+        ,r.reporting_schoolid
+        ,r.grade_level
+        ,r.iep_status
+      
+        ,SUM(CAST(ada.membershipvalue AS FLOAT)) AS n_membership
+        ,SUM(CAST(ada.attendancevalue AS FLOAT)) AS n_present
+
+        ,CAST(SUM(CASE WHEN att.att_code IN ('T', 'T10') THEN 1 ELSE 0 END) AS FLOAT) AS n_tardy
+        ,CAST(CASE WHEN SUM(CASE WHEN att.att_code = 'ISS' THEN 1 END) > 0 THEN 1 ELSE 0 END AS FLOAT) AS is_iss
+        ,CAST(CASE WHEN SUM(CASE WHEN att.att_code = 'OSS' THEN 1 END) > 0 THEN 1 ELSE 0 END AS FLOAT) AS is_oss
+        ,CAST(CASE 
+          WHEN r.iep_status = 'No IEP' THEN NULL 
+          WHEN SUM(CASE WHEN att.att_code = 'ISS' THEN 1 END) > 0 THEN 1 
+          ELSE 0 
+         END AS FLOAT) AS is_iss_iep
+        ,CAST(CASE 
+          WHEN r.iep_status = 'No IEP' THEN NULL 
+          WHEN SUM(CASE WHEN att.att_code = 'OSS' THEN 1 END) > 0 THEN 1 
+          ELSE 0 
+         END AS FLOAT) AS is_oss_iep
+  FROM roster r
+  JOIN gabby.powerschool.ps_adaadm_daily_ctod ada
+    ON r.studentid = ada.studentid
+   AND r.yearid = ada.yearid
+   AND r.db_name = ada.db_name
+   AND ada.membershipvalue > 0
+   AND ada.calendardate < CAST(SYSDATETIME() AS DATE)
+  LEFT JOIN gabby.powerschool.ps_attendance_daily att
+    ON r.studentid = att.studentid
+   AND r.db_name = att.db_name
+   AND ada.calendardate = att.att_date 
+  GROUP BY r.student_number
+          ,r.academic_year
+          ,r.region
+          ,r.school_level
+          ,r.reporting_schoolid
+          ,r.grade_level
+          ,r.iep_status
+ )
+
+,student_attendance_rollup AS (
   SELECT u.academic_year
         ,u.region
         ,u.school_level
@@ -231,51 +275,7 @@ WITH roster AS (
              ,AVG(sub.is_oss) AS pct_oss
              ,AVG(sub.is_iss_iep) AS pct_iss_iep
              ,AVG(sub.is_oss_iep) AS pct_oss_iep
-       FROM
-           (
-            SELECT r.student_number
-                  ,r.academic_year
-                  ,r.region
-                  ,r.school_level
-                  ,r.reporting_schoolid
-                  ,r.grade_level
-                  ,r.iep_status
-      
-                  ,SUM(CAST(ada.membershipvalue AS FLOAT)) AS n_membership
-                  ,SUM(CAST(ada.attendancevalue AS FLOAT)) AS n_present
-
-                  ,CAST(SUM(CASE WHEN att.att_code IN ('T', 'T10') THEN 1 ELSE 0 END) AS FLOAT) AS n_tardy
-                  ,CAST(CASE WHEN SUM(CASE WHEN att.att_code = 'ISS' THEN 1 END) > 0 THEN 1 ELSE 0 END AS FLOAT) AS is_iss
-                  ,CAST(CASE WHEN SUM(CASE WHEN att.att_code = 'OSS' THEN 1 END) > 0 THEN 1 ELSE 0 END AS FLOAT) AS is_oss
-                  ,CAST(CASE 
-                    WHEN r.iep_status = 'No IEP' THEN NULL 
-                    WHEN SUM(CASE WHEN att.att_code = 'ISS' THEN 1 END) > 0 THEN 1 
-                    ELSE 0 
-                   END AS FLOAT) AS is_iss_iep
-                  ,CAST(CASE 
-                    WHEN r.iep_status = 'No IEP' THEN NULL 
-                    WHEN SUM(CASE WHEN att.att_code = 'OSS' THEN 1 END) > 0 THEN 1 
-                    ELSE 0 
-                   END AS FLOAT) AS is_oss_iep
-            FROM roster r
-            JOIN gabby.powerschool.ps_adaadm_daily_ctod ada
-              ON r.studentid = ada.studentid
-             AND r.yearid = ada.yearid
-             AND r.db_name = ada.db_name
-             AND ada.membershipvalue > 0
-             AND ada.calendardate < CAST(SYSDATETIME() AS DATE)
-            LEFT JOIN gabby.powerschool.ps_attendance_daily att
-              ON r.studentid = att.studentid
-             AND r.db_name = att.db_name
-             AND ada.calendardate = att.att_date 
-            GROUP BY r.student_number
-                    ,r.academic_year
-                    ,r.region
-                    ,r.school_level
-                    ,r.reporting_schoolid
-                    ,r.grade_level
-                    ,r.iep_status
-           ) sub
+       FROM student_attendance sub
        GROUP BY sub.academic_year
                ,sub.school_level
                ,ROLLUP(sub.region, sub.reporting_schoolid)
@@ -290,6 +290,33 @@ WITH roster AS (
                  ,sub.pct_iss_iep
                  ,sub.pct_oss_iep)
    ) u
+)
+
+,chronic_absentee AS (
+  SELECT sub.academic_year
+        ,ISNULL(sub.region, 'All') AS region        
+        ,ISNULL(sub.school_level, 'All') AS school_level
+        ,ISNULL(sub.reporting_schoolid, 'All') AS reporting_schoolid
+        ,ISNULL(sub.grade_level, 'All') AS grade_level
+
+        ,'pct_chronic_absentee' AS field
+        ,AVG(sub.is_chronic_absentee) AS value
+  FROM
+      (
+       SELECT sa.student_number
+             ,sa.academic_year
+             ,sa.region
+             ,sa.school_level
+             ,sa.reporting_schoolid
+             ,sa.grade_level
+      
+             ,CAST(CASE WHEN (sa.n_present / sa.n_membership) < 0.895 THEN 1 ELSE 0 END AS FLOAT) AS is_chronic_absentee
+       FROM student_attendance sa
+      ) sub
+  GROUP BY sub.academic_year
+          ,sub.school_level
+          ,ROLLUP(sub.region, sub.reporting_schoolid)
+          ,CUBE(sub.grade_level)
  )
 
 ,staff_attrition AS (
@@ -621,7 +648,23 @@ SELECT a.academic_year
       ,NULL AS subdomain
       ,a.field
       ,a.value      
-FROM student_attendance a
+FROM student_attendance_rollup a
+
+UNION ALL
+
+SELECT a.academic_year
+      ,a.region
+      ,a.school_level
+      ,a.reporting_schoolid
+      ,a.grade_level
+      ,NULL AS subject_area
+      ,'Y1' AS term_name
+      
+      ,'Student Attendance' AS domain
+      ,NULL AS subdomain
+      ,a.field
+      ,a.value      
+FROM chronic_absentee a
 
 UNION ALL
 
