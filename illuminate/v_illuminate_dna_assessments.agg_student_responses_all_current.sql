@@ -23,7 +23,7 @@ WITH responses_long AS (
         ,asr.points_possible                     
         ,asr.percent_correct             
         
-        ,NULL AS standard_id
+        ,-1 AS standard_id
         ,'Overall' AS standard_code
         ,'Overall' AS standard_description
         ,NULL AS domain_description
