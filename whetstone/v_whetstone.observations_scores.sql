@@ -16,8 +16,8 @@ CROSS APPLY OPENJSON(wo.scores, '$')
   WITH (
     _id VARCHAR(25),
     measurement VARCHAR(125),
-    percentage FLOAT,
-    value FLOAT,
+    [percentage] FLOAT,
+    [value] FLOAT,
     textBoxes NVARCHAR(MAX) AS JSON
    ) AS ws
 WHERE wo.scores != '[]'
