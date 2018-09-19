@@ -34,7 +34,7 @@ WITH teacher_crosswalk AS (
     ON CONVERT(VARCHAR(25),sr.df_employee_number) = ads.employeenumber
   LEFT JOIN gabby.adsi.user_attributes_static adm
     ON CONVERT(VARCHAR(25),sr.manager_df_employee_number) = adm.employeenumber
-  WHERE sr.primary_job IN ('Teacher', 'Teacher Fellow', 'Teacher in Residence', 'Co-Teacher', 'Learning Specialist')
+  WHERE sr.primary_job IN ('Teacher', 'Teacher Fellow', 'Teacher in Residence', 'Co-Teacher', 'Learning Specialist', 'Learning Specialist Coordinator')
     AND ISNULL(sr.termination_date, GETDATE()) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
  )
 
@@ -74,7 +74,7 @@ WITH teacher_crosswalk AS (
     ON sr.primary_site = tg.df_primary_site
    AND sr.grades_taught = tg.grade
    AND tg.goal_type IN ('Team', 'Individual')
-  WHERE sr.primary_job IN ('Teacher', 'Teacher Fellow', 'Teacher in Residence', 'Co-Teacher', 'Learning Specialist')
+  WHERE sr.primary_job IN ('Teacher', 'Teacher Fellow', 'Teacher in Residence', 'Co-Teacher', 'Learning Specialist', 'learning specialist Coordinator')
 
   UNION ALL
 
@@ -152,7 +152,7 @@ WITH teacher_crosswalk AS (
     ON sr.primary_site = tg.df_primary_site
    AND tg.goal_type = 'Class'
    AND tg.is_sped_goal = 1
-  WHERE sr.primary_job IN ('Learning Specialist')
+  WHERE sr.primary_job IN ('Learning Specialist', 'learning specialist Coordinator')
  )
 
 ,ps_section_teacher AS (
