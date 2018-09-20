@@ -74,7 +74,7 @@ WITH teacher_crosswalk AS (
     ON sr.primary_site = tg.df_primary_site
    AND sr.grades_taught = tg.grade
    AND tg.goal_type IN ('Team', 'Individual')
-  WHERE sr.primary_job IN ('Teacher', 'Teacher Fellow', 'Teacher in Residence', 'Co-Teacher', 'Learning Specialist', 'learning specialist Coordinator')
+  WHERE sr.primary_job IN ('Teacher', 'Teacher Fellow', 'Teacher in Residence', 'Co-Teacher', 'Learning Specialist', 'Learning Specialist Coordinator')
 
   UNION ALL
 
@@ -152,7 +152,7 @@ WITH teacher_crosswalk AS (
     ON sr.primary_site = tg.df_primary_site
    AND tg.goal_type = 'Class'
    AND tg.is_sped_goal = 1
-  WHERE sr.primary_job IN ('Learning Specialist', 'learning specialist Coordinator')
+  WHERE sr.primary_job IN ('Learning Specialist', 'Learning Specialist Coordinator')
  )
 
 ,ps_section_teacher AS (
