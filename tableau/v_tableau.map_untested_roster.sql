@@ -92,7 +92,7 @@ FROM
        ON r.student_number = map.student_id
       AND r.academic_year = map.academic_year
       AND r.measurement_scale = map.measurement_scale
-      AND r.term_name = map.term
+      AND r.term_name = map.term COLLATE Latin1_General_BIN
      LEFT JOIN gabby.nwea.best_baseline base
        ON r.student_number = base.student_number
       AND r.academic_year = base.academic_year
