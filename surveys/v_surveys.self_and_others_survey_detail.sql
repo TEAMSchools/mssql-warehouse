@@ -3,16 +3,7 @@ GO
 
 CREATE OR ALTER VIEW surveys.self_and_others_survey_detail AS
 
-WITH response_values AS (
-  SELECT rs.survey_type
-        ,rs.response_text
-        ,rs.response_value
-        ,MAX(rs.response_value) OVER(PARTITION BY rs.survey_type) AS max_response_value
-  FROM gabby.surveys.response_scales rs
-  WHERE rs._fivetran_deleted = 0
- )
-
-,so_long AS (
+WITH so_long AS (
   SELECT u.response_id
         ,u.academic_year
         ,u.term_name
@@ -160,8 +151,7 @@ FROM
            ,qk.question_text
            ,qk.open_ended           
 
-           ,CONVERT(FLOAT,rs.response_value) AS response_value
-           ,CONVERT(FLOAT,rs.max_response_value) AS max_response_value
+           ,CONVERT(FLOAT,rs.response_value) AS response_value           
 
            ,CONCAT(df.preferred_first_name, ' ', df.preferred_last_name) AS subject_name
            ,CONVERT(VARCHAR,df.primary_site) AS subject_location
@@ -180,7 +170,7 @@ FROM
      JOIN gabby.surveys.question_key qk
        ON so.question_code = qk.question_code
       AND qk.survey_type = 'SO'
-     JOIN response_values rs
+     JOIN gabby.surveys.response_scales rs
        ON so.response = rs.response_text
       AND so.survey_type = rs.survey_type 
      LEFT JOIN gabby.dayforce.staff_roster df
