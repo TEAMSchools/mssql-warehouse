@@ -27,6 +27,7 @@ SELECT s.student_number
       ,suf.release_4_phone
       ,suf.release_5_name
       ,suf.release_5_phone  
+      ,suf._modified
       ,CASE 
         WHEN suf.bus_info_am NOT LIKE '%-%-%' THEN suf.bus_info_am
         ELSE SUBSTRING(suf.bus_info_am
