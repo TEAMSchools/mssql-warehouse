@@ -99,6 +99,7 @@ WITH attendance AS (
          ON lit.student_number = lit_prev.student_number
         AND lit.academic_year = lit_prev.academic_year
         AND (lit.rn_round_asc - 1) = lit_prev.rn_round_asc
+       WHERE lit.achv_unique_id LIKE 'FPBAS%'
       ) sub
  )
 
@@ -240,12 +241,7 @@ FROM
            ,dt.alt_name AS term_name
            ,dt.time_per_name AS reporting_term
            
-           ,CASE 
-             WHEN CONVERT(DATE,GETDATE()) BETWEEN dt.start_date AND dt.end_date THEN 1 
-             WHEN co.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
-              AND dt.start_date = MAX(dt.start_date) OVER(PARTITION BY co.studentid, co.academic_year) THEN 1
-             ELSE 0
-            END AS is_curterm
+           ,dt.is_curterm
 
            /* attendance */
            ,att.promo_status_attendance
@@ -265,13 +261,14 @@ FROM
            ,lit.goal_status AS lit_goal_status
            ,lit.lvls_grown_yr
            ,lit.lvls_grown_term
-           ,CASE                     
-             WHEN NOT (co.schoolid = 73257 AND (co.grade_level - (co.academic_year - 2014)) > 0) THEN lit.goal_status
-             /* Life Upper students have different promo criteria */
-             WHEN lit.goal_status = 'On Track' THEN 'On Track' /* if On Track, then On Track*/
-             WHEN lit.lvls_grown_yr >= lit.n_growth_rounds THEN 'On Track' /* if grew 1 lvl per round overall, then On Track */        
-             WHEN lit.lvls_grown_yr < lit.n_growth_rounds THEN 'Off Track'             
-            END AS promo_status_lit
+           ,NULL AS promo_status_lit
+           --,CASE                     
+           --  WHEN NOT (co.schoolid = 73257 AND (co.grade_level - (co.academic_year - 2014)) > 0) THEN lit.goal_status
+           --  /* Life Upper students have different promo criteria */
+           --  WHEN lit.goal_status = 'On Track' THEN 'On Track' /* if On Track, then On Track*/
+           --  WHEN lit.lvls_grown_yr >= lit.n_growth_rounds THEN 'On Track' /* if grew 1 lvl per round overall, then On Track */        
+           --  WHEN lit.lvls_grown_yr < lit.n_growth_rounds THEN 'Off Track'             
+           -- END AS promo_status_lit
 
            /* final grades */
            ,fg.promo_status_grades
@@ -344,7 +341,7 @@ FROM
        ON co.studentid = att.studentid
       AND co.academic_year = att.academic_year
       AND co.db_name = att.db_name
-      AND dt.alt_name COLLATE Latin1_General_BIN = att.term_name 
+      AND dt.alt_name = att.term_name COLLATE Latin1_General_BIN
      LEFT JOIN lit
        ON co.student_number = lit.student_number
       AND co.academic_year = lit.academic_year
@@ -354,18 +351,18 @@ FROM
        ON co.student_number = fg.student_number
       AND co.academic_year = fg.academic_year
       AND co.db_name = fg.db_name
-      AND dt.alt_name COLLATE Latin1_General_BIN = fg.term_name      
+      AND dt.alt_name = fg.term_name COLLATE Latin1_General_BIN
      LEFT JOIN gabby.powerschool.category_grades_wide cat
        ON co.student_number = cat.student_number
       AND co.academic_year = cat.academic_year 
       AND co.db_name = cat.db_name
-      AND dt.time_per_name COLLATE Latin1_General_BIN = cat.reporting_term
+      AND dt.time_per_name = cat.reporting_term COLLATE Latin1_General_BIN
       AND cat.credittype = 'ALL'
      LEFT JOIN gabby.powerschool.gpa_detail gpa 
        ON co.student_number = gpa.student_number
       AND co.academic_year = gpa.academic_year
       AND co.db_name = gpa.db_name
-      AND dt.alt_name COLLATE Latin1_General_BIN = gpa.term_name
+      AND dt.alt_name = gpa.term_name COLLATE Latin1_General_BIN
      LEFT JOIN gabby.powerschool.gpa_cumulative cum
        ON co.studentid = cum.studentid
       AND co.schoolid = cum.schoolid
@@ -374,6 +371,6 @@ FROM
        ON co.student_number = cr.student_number
       AND co.academic_year = cr.academic_year
       AND co.db_name = cr.db_name
-      AND dt.alt_name COLLATE Latin1_General_BIN = cr.term_name
+      AND dt.alt_name = cr.term_name COLLATE Latin1_General_BIN
      WHERE co.rn_year = 1
     ) sub

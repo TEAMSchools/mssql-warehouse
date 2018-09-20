@@ -21,7 +21,6 @@ WITH default_gfs AS (
   WHERE gfs.sectionsdcid IS NULL
     AND ((gfs.name IN ('KNJ Middle Schools', 'Middle school') AND sch.high_grade = 8)
          OR (gfs.name IN ('KNJ High Schools') AND sch.high_grade = 12))
-    AND sch.school_number = 73253
  )
     
 SELECT sectionsdcid

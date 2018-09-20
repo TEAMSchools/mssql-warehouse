@@ -22,7 +22,7 @@ WITH grades_unpivot AS (
         ,need_80
         ,need_70
         ,need_65
-        ,CONCAT(reporting_term,'_',field) AS pivot_field
+        ,CONCAT(LOWER(reporting_term),'_',field) AS pivot_field
         ,CASE WHEN value = '' THEN NULL ELSE value END AS value
   FROM
       (
@@ -56,7 +56,7 @@ WITH grades_unpivot AS (
              ,fg.need_70
              ,fg.need_65
        FROM powerschool.final_grades_static fg 
-       WHERE fg.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1
+       WHERE fg.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
 
        UNION ALL
 
@@ -90,7 +90,7 @@ WITH grades_unpivot AS (
              ,fg.need_70
              ,fg.need_65
        FROM powerschool.final_grades_static fg 
-       WHERE fg.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1
+       WHERE fg.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
       ) sub
   UNPIVOT(
     value

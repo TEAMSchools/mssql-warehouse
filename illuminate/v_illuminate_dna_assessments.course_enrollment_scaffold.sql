@@ -22,7 +22,7 @@ FROM
                 ORDER BY entry_date DESC, leave_date DESC)) AS rn
      FROM
          (
-          /* K-4 enrollments */
+          /* K-4 ELA */
           SELECT ssc.student_id
                 ,ssc.academic_year      
                 ,ssc.grade_level_id
@@ -48,6 +48,7 @@ FROM
        
           UNION ALL       
        
+          /* K-4 Math */
           SELECT ssc.student_id
                 ,ssc.academic_year      
                 ,ssc.grade_level_id

@@ -14,7 +14,7 @@ WITH clean_people AS (
         ,CONVERT(VARCHAR(5),e.state) AS state
         ,CONVERT(VARCHAR(25),e.postal_code) AS postal_code
         ,CONVERT(VARCHAR(25),e.status) AS status
-        ,CONVERT(VARCHAR(25),e.status_reason) AS status_reason
+        ,CONVERT(VARCHAR(125),e.status_reason) AS status_reason
         ,CONVERT(VARCHAR(5),e.is_manager) AS is_manager        
         ,CONVERT(VARCHAR(125),e.primary_job) AS primary_job
         ,CONVERT(VARCHAR(125),e.primary_on_site_department_clean) AS primary_on_site_department

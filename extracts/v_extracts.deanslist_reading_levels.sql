@@ -13,3 +13,4 @@ SELECT student_number
       ,goal_status AS met_goal
 FROM gabby.lit.achieved_by_round_static
 WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()  
+  AND achv_unique_id LIKE 'FPBAS%'

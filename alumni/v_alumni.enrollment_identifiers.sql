@@ -50,12 +50,14 @@ SELECT e.student_c
       ,ug.status_c AS ugrad_status
       ,ug.start_date_c AS ugrad_start_date
       ,ug.actual_end_date_c AS ugrad_actual_end_date      
+      ,ug.anticipated_graduation_c AS ugrad_anticipated_graduation
 
       ,ecc.name AS ecc_school_name      
       ,ecc.pursuing_degree_type_c AS ecc_pursuing_degree_type
       ,ecc.status_c AS ecc_status
       ,ecc.start_date_c AS ecc_start_date
       ,ecc.actual_end_date_c AS ecc_actual_end_date      
+      ,ecc.anticipated_graduation_c AS ecc_anticipated_graduation
 
       ,ISNULL(ecca.adjusted_6_year_minority_graduation_rate_c, 0) AS ecc_adjusted_6_year_minority_graduation_rate
 
@@ -64,6 +66,7 @@ SELECT e.student_c
       ,hs.status_c AS hs_status
       ,hs.start_date_c AS hs_start_date
       ,hs.actual_end_date_c AS hs_actual_end_date
+      ,hs.anticipated_graduation_c AS hs_anticipated_graduation
 FROM enrollments e
 LEFT JOIN gabby.alumni.enrollment_c ug
   ON e.recent_ugrad_enrollment_c = ug.id
