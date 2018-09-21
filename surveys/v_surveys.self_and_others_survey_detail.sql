@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW surveys.self_and_others_survey_detail AS
+--CREATE OR ALTER VIEW surveys.self_and_others_survey_detail AS
 
 WITH so_long AS (
   SELECT u.response_id
@@ -125,10 +125,15 @@ SELECT sub.survey_type
       ,sub.response_weight      
       ,sub.response_value * sub.response_weight AS response_value_weighted
 
-      ,ROUND(
+      ,COALESCE(
+       ROUND(
          SUM(sub.response_value * sub.response_weight) OVER(PARTITION BY academic_year, reporting_term, subject_location, question_code)
            / SUM(sub.response_weight) OVER(PARTITION BY academic_year, reporting_term, subject_location, question_code)
-        ,1) AS avg_response_value_location
+        ,1)
+        ,ROUND(
+          AVG(response_value) OVER(PARTITION BY academic_year, reporting_term, subject_location, question_code)
+          ,1) 
+        ) AS avg_response_value_location
 FROM
     (
      SELECT so.survey_type
@@ -170,7 +175,7 @@ FROM
      JOIN gabby.surveys.question_key qk
        ON so.question_code = qk.question_code
       AND qk.survey_type = 'SO'
-     JOIN gabby.surveys.response_scales rs
+     LEFT JOIN gabby.surveys.response_scales rs
        ON so.response = rs.response_text
       AND so.survey_type = rs.survey_type 
      LEFT JOIN gabby.dayforce.staff_roster df
