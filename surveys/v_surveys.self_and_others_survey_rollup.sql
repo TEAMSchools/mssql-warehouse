@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW surveys.self_and_others_survey_rollup AS
+--CREATE OR ALTER VIEW surveys.self_and_others_survey_rollup AS
 
 SELECT survey_type
       ,academic_year
@@ -22,7 +22,7 @@ SELECT survey_type
       ,ROUND(SUM(response_value_weighted) / SUM(response_weight), 1) AS avg_weighted_response_value
       ,MAX(avg_response_value_location) AS avg_response_value_location
 FROM gabby.surveys.self_and_others_survey_detail
-WHERE open_ended = 'N'
+
 GROUP BY survey_type
         ,academic_year
         ,reporting_term
