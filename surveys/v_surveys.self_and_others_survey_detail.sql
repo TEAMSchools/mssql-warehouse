@@ -10,61 +10,19 @@ WITH so_long AS (
         ,u.reporting_term
         ,u.time_started
         ,u.date_submitted
-        ,u.respondent_name
-        ,u.respondent_email_address
+        ,u.your_name_ AS respondent_name
+        ,u.your_kipp_nj_email_account AS respondent_email_address
         ,u.subject_name
         ,u.subject_associate_id
         ,u.is_manager
-        ,u.survey_type
-        ,SUM(u.is_manager) OVER(PARTITION BY u.subject_associate_id, u.question_code) AS n_managers
-        ,COUNT(CASE WHEN u.is_manager = 0 THEN u.respondent_email_address END) OVER(PARTITION BY subject_associate_id, u.question_code) AS n_peers
-        ,COUNT(u.respondent_email_address) OVER(PARTITION BY u.subject_associate_id, u.question_code) AS n_total
-
         ,u.question_code
         ,u.response
-  FROM
-      (
-       SELECT response_id
-             ,academic_year
-             ,term_name
-             ,reporting_term
-             ,time_started
-             ,date_submitted
-             ,your_name_ AS respondent_name
-             ,your_kipp_nj_email_account AS respondent_email_address
-             ,subject_name
-             ,subject_associate_id
-             ,is_manager
-             ,q_1_1_b
-             ,q_1_1_c
-             ,q_1_1_d
-             ,q_1_1_oe
-             ,q_1_2_a
-             ,q_1_2_b
-             ,q_1_2_oe
-             ,q_1_3_a
-             ,q_1_3_c
-             ,q_1_3_d
-             ,q_1_3_e
-             ,q_1_3_oe
-             ,q_1_4_a
-             ,q_1_4_b
-             ,q_1_4_oe
-             ,q_1_5_a
-             ,q_1_5_b
-             ,q_1_5_c
-             ,q_1_5_d
-             ,q_1_5_f
-             ,q_1_5_oe
-             ,q_1_6_a
-             ,q_1_6_b
-             ,q_1_6_c
-             ,q_1_6_d
-             ,q_1_6_oe
-      
-             ,CASE WHEN academic_year <= 2017 THEN 'SO' ELSE 'SO2018' END AS survey_type
-       FROM gabby.surveys.self_and_others_survey_final
-      ) sub
+
+        ,CASE WHEN u.academic_year <= 2017 THEN 'SO' ELSE 'SO2018' END AS survey_type
+        ,SUM(u.is_manager) OVER(PARTITION BY u.subject_associate_id, u.question_code) AS n_managers
+        ,COUNT(CASE WHEN u.is_manager = 0 THEN u.your_kipp_nj_email_account END) OVER(PARTITION BY subject_associate_id, u.question_code) AS n_peers
+        ,COUNT(u.your_kipp_nj_email_account) OVER(PARTITION BY u.subject_associate_id, u.question_code) AS n_total        
+  FROM gabby.surveys.self_and_others_survey_final
   UNPIVOT(
     response
     FOR question_code IN (q_1_1_b
@@ -118,17 +76,15 @@ SELECT sub.survey_type
       ,sub.subject_manager_id
       ,sub.subject_username
       ,sub.subject_manager_name
-      ,sub.subject_manager_username
-      
+      ,sub.subject_manager_username      
       ,sub.response
       ,sub.response_value
       ,sub.response_weight      
       ,sub.response_value * sub.response_weight AS response_value_weighted
 
-      ,ROUND(
-         SUM(sub.response_value * sub.response_weight) OVER(PARTITION BY academic_year, reporting_term, subject_location, question_code)
-           / SUM(sub.response_weight) OVER(PARTITION BY academic_year, reporting_term, subject_location, question_code)
-        ,1) AS avg_response_value_location
+      ,ROUND(SUM(sub.response_value * sub.response_weight) OVER(PARTITION BY academic_year, reporting_term, subject_location, question_code)
+               / SUM(sub.response_weight) OVER(PARTITION BY academic_year, reporting_term, subject_location, question_code)
+            ,1) AS avg_response_value_location
 FROM
     (
      SELECT so.survey_type
@@ -163,6 +119,7 @@ FROM
            ,mgr.samaccountname AS subject_manager_username           
            
            ,CASE 
+             WHEN so.academic_year <= 2017 THEN 1.0
              WHEN so.is_manager = 1 THEN CONVERT(FLOAT,so.n_total) / 2.0 /* manager response weight */
              WHEN so.is_manager = 0 THEN (CONVERT(FLOAT,so.n_total) / 2.0) / CONVERT(FLOAT,so.n_peers) /* peer response weight */
             END AS response_weight
@@ -170,7 +127,7 @@ FROM
      JOIN gabby.surveys.question_key qk
        ON so.question_code = qk.question_code
       AND qk.survey_type = 'SO'
-     JOIN gabby.surveys.response_scales rs
+     LEFT JOIN gabby.surveys.response_scales rs
        ON so.response = rs.response_text
       AND so.survey_type = rs.survey_type 
      LEFT JOIN gabby.dayforce.staff_roster df
