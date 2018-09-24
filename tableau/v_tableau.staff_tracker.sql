@@ -1,7 +1,7 @@
 USE gabby;
 GO
 
---CREATE OR ALTER VIEW tableau.staff_tracker AS
+CREATE OR ALTER VIEW tableau.staff_tracker AS
 
 WITH emp_att AS (
   SELECT employee_number
