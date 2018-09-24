@@ -10,10 +10,11 @@ WITH emp_att AS (
         ,[absent]
         ,[late]
         ,[early out] AS early_out
+        ,[partial day] AS partial_day
   FROM gabby.dayforce.employee_attendance
   PIVOT (
     MAX(excused_status)
-    FOR absence_type IN ([absent], [late], [early out])
+    FOR absence_type IN ([absent], [late], [early out], [partial day])
    ) p
  )
 
@@ -39,6 +40,7 @@ SELECT df.df_employee_number
       ,pt.absent
       ,pt.late
       ,pt.early_out
+      ,pt.partial_day
 FROM gabby.dayforce.staff_roster df
 LEFT JOIN gabby.adsi.user_attributes_static dir
   ON CONVERT(VARCHAR(25),df.df_employee_number) = dir.employeenumber
