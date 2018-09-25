@@ -51,6 +51,8 @@ SELECT tc.db_name
       ,wo.observation_id
       ,wo.is_published
       ,wo.observed_at
+      ,gabby.utilities.DATE_TO_SY(wo.observed_at) AS academic_year
+      ,ROW_NUMBER() OVER( PARTITION BY wo.teacher_accountingId, observer_accountingId, gabby.utilities.DATE_TO_SY(wo.observed_at), wos.score_measurement_id, wo.rubric_name ORDER BY wo.observed_at) AS observation_round
       ,wo.observer_accountingId
       ,wo.observer_name
       ,wo.observer_email
