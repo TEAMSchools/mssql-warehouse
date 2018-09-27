@@ -25,6 +25,8 @@ SELECT CONVERT(VARCHAR,df.adp_associate_id) AS associate_id
       ,df.df_employee_number
       ,df.manager_df_employee_number
       ,df.legal_entity_name
+
+      ,dir.userprincipalname
 FROM gabby.dayforce.staff_roster df
 LEFT JOIN gabby.adsi.user_attributes_static dir
   ON df.df_employee_number = dir.employeenumber
