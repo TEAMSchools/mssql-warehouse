@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW tableau.graduation_requirements AS
+CREATE OR ALTER VIEW tableau.hs_graduation_requirement_audit AS
 
 WITH parcc AS ( 
   SELECT parcc.local_student_identifier         
@@ -31,23 +31,23 @@ WITH parcc AS (
                  ,reading_test
                  ,math_test)
    ) u
- )
+  )
 
 ,act AS (
-  SELECT u.hs_student_id
-        ,CONCAT('act_', u.field) COLLATE Latin1_General_BIN AS test_type
-        ,u.value AS test_score
-  FROM
-      (
-       SELECT act.hs_student_id
-             ,CONVERT(FLOAT,act.reading) AS reading
-             ,CONVERT(FLOAT,act.math) AS math
-       FROM gabby.naviance.act_scores act
-      ) sub
-  UNPIVOT(
-    value
-    FOR field IN (reading, math)
-   ) u
+ SELECT u.hs_student_id
+       ,CONCAT('act_', u.field) COLLATE Latin1_General_BIN AS test_type
+       ,u.value AS test_score
+ FROM
+     (
+      SELECT act.hs_student_id
+            ,CONVERT(FLOAT,act.reading) AS reading
+            ,CONVERT(FLOAT,act.math) AS math
+      FROM gabby.naviance.act_scores act
+     ) sub
+ UNPIVOT(
+   value
+   FOR field IN (reading, math)
+  ) u
  )
 
 ,all_tests AS (
@@ -55,15 +55,19 @@ WITH parcc AS (
         ,parcc.test_type
         ,parcc.test_score
   FROM parcc
+
   UNION ALL
+
   SELECT sat.hs_student_id
-       ,sat.test_type
-       ,sat.test_score
+        ,sat.test_type
+        ,sat.test_score
   FROM sat
+
   UNION ALL
+
   SELECT act.hs_student_id
-       ,act.test_type
-       ,act.test_score
+        ,act.test_type
+        ,act.test_score
   FROM act
  )
 
@@ -71,7 +75,7 @@ SELECT co.student_number
       ,co.lastfirst
       ,co.grade_level
       ,co.cohort
-      ,co.enroll_status
+	  ,co.enroll_status
             
       ,a.test_type
       ,a.test_score
