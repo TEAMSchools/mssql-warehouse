@@ -4,8 +4,7 @@ GO
 CREATE OR ALTER VIEW whetstone.observations_clean AS
 
 SELECT wo._id AS observation_id
-      ,wo.signed
-      ,wo.archived_at
+      ,wo.signed      
       ,wo.is_published
       ,wo.observee_role
       ,wo.viewed_by_teacher

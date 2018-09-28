@@ -43,15 +43,17 @@ SELECT sr.df_employee_number
       ,MAX(wo.created) OVER(PARTITION BY gabby.utilities.DATE_TO_SY(wo.observed_at), wo.observer_accountingId, wo.teacher_accountingId) AS last_submitted_form
 FROM gabby.dayforce.staff_roster sr
 LEFT JOIN gabby.adsi.user_attributes_static ads
-  ON CONVERT(VARCHAR(25),sr.df_employee_number) = ads.employeenumber
+  ON sr.df_employee_number = ads.employeenumber
+ AND ISNUMERIC(ads.employeenumber) = 1
 LEFT JOIN gabby.adsi.user_attributes_static adm
-  ON CONVERT(VARCHAR(25),sr.manager_df_employee_number) = adm.employeenumber
+  ON sr.manager_df_employee_number = adm.employeenumber
+ AND ISNUMERIC(adm.employeenumber) = 1
 JOIN gabby.whetstone.observations_clean wo
   ON sr.df_employee_number = wo.teacher_accountingId
  AND wo.rubric_name IN ('Coaching Tool: Coach ETR and Reflection') 
-JOIN gabby.whetstone.observations_scores wos
+LEFT JOIN gabby.whetstone.observations_scores wos
   ON wo.observation_id = wos.observation_id
-JOIN gabby.whetstone.measurements wm
+LEFT JOIN gabby.whetstone.measurements wm
   ON wos.score_measurement_id = wm._id
 LEFT JOIN gabby.whetstone.observations_scores_text_boxes tb
   ON wos.score_id = tb.score_id
