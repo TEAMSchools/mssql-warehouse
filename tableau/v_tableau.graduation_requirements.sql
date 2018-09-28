@@ -72,6 +72,10 @@ SELECT co.student_number
       ,co.grade_level
       ,co.cohort
       ,co.enroll_status
+	  ,co.iep_status
+	  ,co.c_504_status
+	  ,co.is_retained_year
+	  ,co.is_retained_ever
             
       ,a.test_type
       ,a.test_score
