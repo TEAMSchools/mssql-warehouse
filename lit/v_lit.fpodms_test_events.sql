@@ -95,6 +95,78 @@ WITH clean_data AS (
       ) sub
  )
 
+,predna AS (
+  SELECT clean_data.unique_id
+        ,clean_data.student_identifier
+        ,clean_data.year_of_assessment
+        ,clean_data.academic_year
+        ,clean_data.assessment_date
+        ,clean_data.genre
+        ,clean_data.data_type
+        ,clean_data.class_name
+        ,clean_data.benchmark_level
+        ,clean_data.title
+        ,clean_data.accuracy_percent
+        ,clean_data.comprehension_within
+        ,clean_data.comprehension_beyond
+        ,clean_data.comprehension_about
+        ,clean_data.comprehension_additional
+        ,clean_data.comprehension_total
+        ,clean_data.comprehension_maximum
+        ,clean_data.comprehension_label
+        ,clean_data.fluency
+        ,clean_data.wpm_rate
+        ,clean_data.writing
+        ,clean_data.self_corrections
+        ,clean_data.text_level
+        ,clean_data.status
+        ,clean_data.schoolid
+        ,clean_data.test_administered_by
+        ,clean_data.testid
+        ,clean_data.is_fp
+        ,clean_data.dna_lvl
+        ,clean_data.instruct_lvl
+        ,clean_data.indep_lvl
+  FROM clean_data
+
+  UNION ALL
+
+  SELECT clean_data.unique_id
+        ,clean_data.student_identifier
+        ,clean_data.year_of_assessment
+        ,clean_data.academic_year
+        ,clean_data.assessment_date
+        ,clean_data.genre
+        ,clean_data.data_type
+        ,clean_data.class_name
+        ,'Independent' AS benchmark_level
+        ,clean_data.title
+        ,clean_data.accuracy_percent
+        ,clean_data.comprehension_within
+        ,clean_data.comprehension_beyond
+        ,clean_data.comprehension_about
+        ,clean_data.comprehension_additional
+        ,clean_data.comprehension_total
+        ,clean_data.comprehension_maximum
+        ,clean_data.comprehension_label
+        ,clean_data.fluency
+        ,clean_data.wpm_rate
+        ,clean_data.writing
+        ,clean_data.self_corrections
+        ,'Pre-A' AS text_level
+        ,'Achieved' AS status
+        ,clean_data.schoolid
+        ,clean_data.test_administered_by
+        ,clean_data.testid
+        ,clean_data.is_fp
+        ,clean_data.dna_lvl
+        ,clean_data.instruct_lvl
+        ,'Pre-A' AS indep_lvl
+  FROM clean_data
+  WHERE clean_data.text_level = 'A'
+    AND clean_data.status = 'Did Not Achieve'
+ )
+
 SELECT cd.unique_id
       ,cd.student_identifier
       ,cd.year_of_assessment
@@ -136,9 +208,7 @@ SELECT cd.unique_id
       ,CASE WHEN cd.benchmark_level IN ('Instructional', 'Hard') THEN gleq.fp_lvl_num END AS dna_lvl_num
       ,CASE WHEN cd.benchmark_level IN ('Instructional', 'Hard') THEN gleq.fp_lvl_num END AS instruct_lvl_num      
       ,CASE WHEN cd.benchmark_level = 'Independent' THEN gleq.fp_lvl_num END AS indep_lvl_num      
-
-      --,NULL AS fp_keylever /* comprehension label? */
-FROM clean_data cd
+FROM predna cd
 LEFT JOIN gabby.reporting.reporting_terms rt
   ON cd.schoolid = rt.schoolid
  AND cd.assessment_date BETWEEN rt.start_date AND rt.end_date
