@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW surveys.self_and_others_survey_detail AS
+--CREATE OR ALTER VIEW surveys.self_and_others_survey_detail AS
 
 WITH so_long AS (
   SELECT u.response_id
@@ -19,9 +19,9 @@ WITH so_long AS (
         ,u.response
 
         ,CASE WHEN u.academic_year <= 2017 THEN 'SO' ELSE 'SO2018' END AS survey_type
-        ,SUM(u.is_manager) OVER(PARTITION BY u.subject_associate_id, u.question_code) AS n_managers
-        ,COUNT(CASE WHEN u.is_manager = 0 THEN u.your_kipp_nj_email_account END) OVER(PARTITION BY subject_associate_id, u.question_code) AS n_peers
-        ,COUNT(u.your_kipp_nj_email_account) OVER(PARTITION BY u.subject_associate_id, u.question_code) AS n_total        
+        ,SUM(u.is_manager) OVER(PARTITION BY u.academic_year, u.reporting_term, u.subject_associate_id, u.question_code) AS n_managers
+        ,COUNT(CASE WHEN u.is_manager = 0 THEN u.your_kipp_nj_email_account END) OVER(PARTITION BY u.academic_year, u.reporting_term, subject_associate_id, u.question_code) AS n_peers
+        ,COUNT(u.your_kipp_nj_email_account) OVER(PARTITION BY u.academic_year, u.reporting_term, u.subject_associate_id, u.question_code) AS n_total        
   FROM gabby.surveys.self_and_others_survey_final
   UNPIVOT(
     response
@@ -120,8 +120,12 @@ FROM
            
            ,CASE 
              WHEN so.academic_year <= 2017 THEN 1.0
-             WHEN so.is_manager = 1 THEN CONVERT(FLOAT,so.n_total) / 2.0 /* manager response weight */
-             WHEN so.is_manager = 0 THEN (CONVERT(FLOAT,so.n_total) / 2.0) / CONVERT(FLOAT,so.n_peers) /* peer response weight */
+             WHEN so.is_manager = 1 THEN 
+                  CASE WHEN so.n_managers = so.n_total THEN 1
+                       ELSE CONVERT(FLOAT,so.n_total) / 2.0 END /* manager response weight */
+             WHEN so.is_manager = 0 THEN 
+                  CASE WHEN so.n_peers = so.n_total THEN 1 
+                       ELSE (CONVERT(FLOAT,so.n_total) / 2.0) / CONVERT(FLOAT,so.n_peers) END /* peer response weight */
             END AS response_weight
      FROM so_long so
      JOIN gabby.surveys.question_key qk
