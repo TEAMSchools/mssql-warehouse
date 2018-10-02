@@ -109,6 +109,6 @@ LEFT JOIN gabby.nwea.percentile_norms_dense pct75
 LEFT JOIN gabby.nwea.learning_continuum_goals domain
   ON r.student_number = domain.student_number
  AND map_long.test_id = domain.test_id
-WHERE r.academic_year >= 2008 /* first year of MAP data */
+WHERE r.rn_year = 1
   AND r.schoolid != 999999
-  AND r.rn_year = 1
+  AND r.academic_year >= 2008 /* first year of MAP data */

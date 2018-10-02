@@ -584,6 +584,7 @@ WITH act AS (
         ,slr.region
         ,slr.school_level
         ,slr.reporting_schoolid
+        ,slr.grade_level
         ,slr.free_or_reduced_pct
         ,slr.act_composite_seniors_avg
         ,slr.act_composite_juniors_avg
@@ -656,6 +657,7 @@ WITH act AS (
         ,region
         ,school_level
         ,reporting_schoolid
+        ,grade_level
         ,field
         ,value
   FROM school_level_rollup_y1
@@ -695,6 +697,7 @@ SELECT ru.academic_year
 	     ,ru.region
       ,ru.school_level
       ,ru.reporting_schoolid
+      ,ru.grade_level
       ,ru.field AS ekg_metric_field
       ,ru.value AS ekg_metric_value
 	     ,'Y1' AS term_name
