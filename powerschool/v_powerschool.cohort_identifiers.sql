@@ -83,6 +83,7 @@ SELECT co.studentid
         WHEN sch.high_grade = 8 THEN 'MS'
         WHEN sch.high_grade = 4 THEN 'ES'
        END AS school_level
+      ,CASE WHEN sp.specprog_name IN ('Pathways ES','Pathways MS') THEN 1 ELSE 0 END AS is_pathways
 
       ,t.team
 

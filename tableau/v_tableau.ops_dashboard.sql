@@ -20,6 +20,7 @@ SELECT student_number
       ,iep_status
       ,sped_code
       ,lep_status
+      ,is_pathways
       ,lunchstatus
       ,lunch_app_status
       ,ethnicity
@@ -70,6 +71,7 @@ FROM
            ,co.iep_status
            ,co.specialed_classification AS sped_code
            ,co.lep_status
+           ,co.is_pathways
            ,co.lunchstatus
            ,co.lunch_app_status
            ,co.ethnicity
