@@ -12,6 +12,7 @@ WITH date_metrics AS (
         ,solved_updated_max AS solved_at        
         ,all_updated_max AS updated_at        
         ,comment_created_max AS latest_comment_added_at        
+        ,comment_created_min AS initial_comment_added_at
   FROM
       (
        SELECT ticket_id
@@ -24,6 +25,7 @@ WITH date_metrics AS (
                   ,MIN(updated) AS updated_min
                   ,MAX(updated) AS updated_max
                   ,NULL AS created_max      
+                  ,NULL AS created_min
             FROM gabby.zendesk.ticket_field_history
             WHERE field_name IN ('group_id', 'assignee_id', 'requester_id', 'status')
             GROUP BY ticket_id
@@ -36,6 +38,7 @@ WITH date_metrics AS (
                   ,MIN(updated) AS updated_min
                   ,MAX(updated) AS updated_max      
                   ,NULL AS created_max
+                  ,NULL AS created_min
             FROM gabby.zendesk.ticket_field_history
             WHERE value = 'solved'
             GROUP BY ticket_id
@@ -47,6 +50,7 @@ WITH date_metrics AS (
                   ,MIN(updated) AS updated_min
                   ,MAX(updated) AS updated_max      
                   ,NULL AS created_max
+                  ,NULL AS created_min
             FROM gabby.zendesk.ticket_field_history
             GROUP BY ticket_id
 
@@ -57,12 +61,13 @@ WITH date_metrics AS (
                   ,NULL AS updated_min
                   ,NULL AS updated_max
                   ,MAX(created) AS created_max
+                  ,MIN(CASE WHEN [public] = 1 THEN created END) AS created_min
             FROM gabby.zendesk.ticket_comment
             GROUP BY ticket_id
            ) sub
        UNPIVOT(
          field_value
-         FOR metric_name IN (updated_min, updated_max, created_max)
+         FOR metric_name IN (updated_min, updated_max, created_max, created_min)
         ) u
       ) sub
   PIVOT(
@@ -73,7 +78,8 @@ WITH date_metrics AS (
                        ,status_updated_max
                        ,solved_updated_max
                        ,all_updated_max
-                       ,comment_created_max)
+                       ,comment_created_max
+                       ,comment_created_min)
    ) p
  )
 
@@ -125,6 +131,7 @@ SELECT t.id AS ticket_id
       ,dm.solved_at	
       ,dm.updated_at	
       ,dm.latest_comment_added_at
+      ,dm.initial_comment_added_at
 
       ,cm.assignee_stations
       ,cm.group_stations

@@ -3,25 +3,15 @@ GO
 
 CREATE OR ALTER VIEW zendesk.ticket_business_hours AS
 
-WITH solved AS (
-  SELECT ticket_id
-        ,MAX(updated) AS updated
-  FROM gabby.zendesk.ticket_field_history
-  WHERE field_name = 'status'
-    AND value = 'solved'
-  GROUP BY ticket_id
- )
-
-,ticket_dates AS (
+WITH ticket_dates AS (
   SELECT t.id AS ticket_id	     	     
 	       ,t.created_at AS created_timestamp
 
-        ,COALESCE(slv.updated
-                 ,CASE WHEN t.status IN ('closed', 'solved') THEN t.updated_at END
-                 ,GETDATE()) AS solved_timestamp            
+        ,COALESCE(m.solved_at, SYSDATETIME()) AS solved_at
+        ,COALESCE(m.initial_comment_added_at, SYSDATETIME()) AS initial_comment_added_at
   FROM gabby.zendesk.ticket t
-  LEFT JOIN solved slv
-    ON t.id = slv.ticket_id
+  LEFT JOIN gabby.zendesk.ticket_metrics m
+    ON t.id = m.ticket_id
   WHERE t.status != 'deleted'
  )
 
@@ -51,26 +41,26 @@ FROM
          (
           SELECT ticket_id
                 ,CASE 
-                  WHEN solved_timestamp < bh_start_timestamp THEN NULL
+                  WHEN solved_at < bh_start_timestamp THEN NULL
                   WHEN created_timestamp BETWEEN bh_start_timestamp AND bh_end_timestamp THEN created_timestamp 
                   WHEN created_timestamp < bh_start_timestamp THEN bh_start_timestamp
                  END AS bh_day_start_timestamp
                 ,CASE                   
                   WHEN created_timestamp > bh_end_timestamp THEN NULL
-                  WHEN solved_timestamp BETWEEN bh_start_timestamp AND bh_end_timestamp THEN solved_timestamp                   
-                  WHEN solved_timestamp > bh_end_timestamp THEN bh_end_timestamp                  
+                  WHEN solved_at BETWEEN bh_start_timestamp AND bh_end_timestamp THEN sub.solved_at                   
+                  WHEN solved_at > bh_end_timestamp THEN bh_end_timestamp                  
                  END AS bh_day_end_timestamp
           FROM
               (
                SELECT td.ticket_id
                      ,td.created_timestamp
-                     ,td.solved_timestamp
+                     ,td.solved_at
                      
                      ,DATETIME2FROMPARTS(rd.year_part, rd.month_part, rd.day_part, bh.start_hour, 0, 0, 0, 0) AS bh_start_timestamp
                      ,DATETIME2FROMPARTS(rd.year_part, rd.month_part, rd.day_part, bh.end_hour, 0, 0, 0, 0) AS bh_end_timestamp
                FROM ticket_dates td
                INNER JOIN gabby.utilities.reporting_days rd
-                  ON rd.date BETWEEN CONVERT(DATE,td.created_timestamp) AND CONVERT(DATE,td.solved_timestamp)
+                  ON rd.date BETWEEN CONVERT(DATE,td.created_timestamp) AND CONVERT(DATE,td.solved_at)
                LEFT JOIN business_hours bh
                   ON rd.dw_numeric = bh.dw_numeric                              
               ) sub
