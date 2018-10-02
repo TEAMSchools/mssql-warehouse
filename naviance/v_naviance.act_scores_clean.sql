@@ -55,7 +55,7 @@ FROM
          (
           SELECT CONVERT(INT,studentid) AS naviance_studentid
                 ,CONVERT(INT,hs_student_id) AS student_number                
-                ,CONVERT(VARCHAR(5),REPLACE(test_type,' (Legacy)','')) AS test_type
+                ,'ACT' AS test_type
                 
                 ,CASE
                   WHEN test_date = '0000-00-00' THEN NULL
@@ -74,6 +74,6 @@ FROM
                 ,CONVERT(INT,CASE WHEN comb_eng_write = 0 THEN NULL ELSE comb_eng_write END) AS comb_eng_write                
                 ,CONVERT(INT,CASE WHEN stem = 0 THEN NULL ELSE stem END) AS stem
           FROM gabby.naviance.act_scores act           
-          WHERE act.test_type LIKE 'ACT%'          
+          WHERE act.test_type IN ('ACT (Legacy)', 'ACT')
          ) sub1    
    ) sub2
