@@ -115,19 +115,19 @@ FROM
                 ,CONVERT(INT,sec.dcid) AS sections_dcid               
                 
                 ,CASE
-                  WHEN sec.grade_level <= 8 AND cou.credittype = 'ENG' THEN 'Text Study'        
-                  WHEN sec.grade_level <= 8 AND cou.credittype = 'SCI' THEN 'Science'
-                  WHEN sec.grade_level <= 8 AND cou.credittype = 'SOC' THEN 'Social Studies'        
                   WHEN cc.course_number_clean IN ('MATH10','MATH15','MATH71','MATH10ICS','MATH12','MATH12ICS','MATH14','MATH16','M415') THEN 'Algebra I'        
                   WHEN cc.course_number_clean IN ('MATH20','MATH25','MATH31','MATH73','MATH20ICS') THEN 'Geometry'
                   WHEN cc.course_number_clean IN ('MATH32','MATH35','MATH32A','MATH32HA') THEN 'Algebra IIA'
                   WHEN cc.course_number_clean IN ('MATH32B') THEN 'Algebra IIB'
-                  WHEN cc.course_number_clean = 'M315' THEN NULL
-                  WHEN sec.grade_level <= 8 AND cou.credittype = 'MATH' THEN 'Mathematics'             
+                  WHEN cc.course_number_clean = 'M315' THEN NULL                  
                   WHEN cc.course_number_clean IN ('ENG10','ENG12','ENG15','NCCSE0010') THEN 'English 100'             
                   WHEN cc.course_number_clean IN ('ENG20','ENG22','ENG25','NCCSE0020') THEN 'English 200'
                   WHEN cc.course_number_clean IN ('ENG30','ENG32','ENG35','NCCSE0030') THEN 'English 300'
                   WHEN cc.course_number_clean IN ('ENG40','ENG42','ENG45') THEN 'English 400'
+                  WHEN sec.grade_level <= 8 AND cou.credittype = 'ENG' THEN 'Text Study'        
+                  WHEN sec.grade_level <= 8 AND cou.credittype = 'SCI' THEN 'Science'
+                  WHEN sec.grade_level <= 8 AND cou.credittype = 'SOC' THEN 'Social Studies'        
+                  WHEN sec.grade_level <= 8 AND cou.credittype = 'MATH' THEN 'Mathematics'             
                  END AS illuminate_subject
           FROM powerschool.cc
           JOIN powerschool.students s 
