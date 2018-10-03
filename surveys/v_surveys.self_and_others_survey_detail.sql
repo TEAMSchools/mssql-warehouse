@@ -4,54 +4,70 @@ GO
 CREATE OR ALTER VIEW surveys.self_and_others_survey_detail AS
 
 WITH so_long AS (
-  SELECT u.response_id
-        ,u.academic_year
-        ,u.term_name
-        ,u.reporting_term
-        ,u.time_started
-        ,u.date_submitted
-        ,u.your_name_ AS respondent_name
-        ,u.your_kipp_nj_email_account AS respondent_email_address
-        ,u.subject_name
-        ,u.subject_associate_id
-        ,u.is_manager
-        ,u.question_code
-        ,u.response
-
-        ,CASE WHEN u.academic_year <= 2017 THEN 'SO' ELSE 'SO2018' END AS survey_type
-        ,SUM(u.is_manager) OVER(PARTITION BY u.academic_year, u.reporting_term, u.subject_associate_id, u.question_code) AS n_managers
-        ,COUNT(CASE WHEN u.is_manager = 0 THEN u.your_kipp_nj_email_account END) OVER(PARTITION BY u.academic_year, u.reporting_term, subject_associate_id, u.question_code) AS n_peers
-        ,COUNT(u.your_kipp_nj_email_account) OVER(PARTITION BY u.academic_year, u.reporting_term, u.subject_associate_id, u.question_code) AS n_total        
-  FROM gabby.surveys.self_and_others_survey_final
-  UNPIVOT(
-    response
-    FOR question_code IN (q_1_1_b
-                         ,q_1_1_c
-                         ,q_1_1_d
-                         ,q_1_1_oe
-                         ,q_1_2_a
-                         ,q_1_2_b
-                         ,q_1_2_oe
-                         ,q_1_3_a
-                         ,q_1_3_c
-                         ,q_1_3_d
-                         ,q_1_3_e
-                         ,q_1_3_oe
-                         ,q_1_4_a
-                         ,q_1_4_b
-                         ,q_1_4_oe
-                         ,q_1_5_a
-                         ,q_1_5_b
-                         ,q_1_5_c
-                         ,q_1_5_d
-                         ,q_1_5_f
-                         ,q_1_5_oe
-                         ,q_1_6_a
-                         ,q_1_6_b
-                         ,q_1_6_c
-                         ,q_1_6_d
-                         ,q_1_6_oe)
-   ) u
+  SELECT sub.response_id
+        ,sub.academic_year
+        ,sub.term_name
+        ,sub.reporting_term
+        ,sub.time_started
+        ,sub.date_submitted
+        ,sub.respondent_name
+        ,sub.respondent_email_address
+        ,sub.subject_name
+        ,sub.subject_associate_id
+        ,sub.is_manager
+        ,sub.question_code
+        ,sub.response
+        ,sub.survey_type
+        ,SUM(sub.is_manager) OVER(PARTITION BY sub.academic_year, sub.reporting_term, sub.subject_associate_id, sub.question_code) AS n_managers
+        ,COUNT(CASE WHEN sub.is_manager = 0 THEN sub.respondent_email_address END) OVER(PARTITION BY sub.academic_year, sub.reporting_term, subject_associate_id, sub.question_code) AS n_peers
+        ,COUNT(sub.respondent_email_address) OVER(PARTITION BY sub.academic_year, sub.reporting_term, sub.subject_associate_id, sub.question_code) AS n_total        
+  FROM
+      (
+       SELECT u.response_id
+             ,CONVERT(INT,u.academic_year) AS academic_year
+             ,u.term_name
+             ,CONVERT(VARCHAR(5),u.reporting_term) AS reporting_term
+             ,u.time_started
+             ,u.date_submitted
+             ,u.your_name_ AS respondent_name
+             ,u.your_kipp_nj_email_account AS respondent_email_address
+             ,u.subject_name
+             ,CONVERT(VARCHAR(25),u.subject_associate_id) AS subject_associate_id
+             ,u.is_manager
+             ,CONVERT(VARCHAR(25),u.question_code) AS question_code
+             ,u.response
+             ,CASE WHEN u.academic_year <= 2017 THEN 'SO' ELSE 'SO2018' END AS survey_type
+       FROM gabby.surveys.self_and_others_survey_final
+       UNPIVOT(
+         response
+         FOR question_code IN (q_1_1_b
+                              ,q_1_1_c
+                              ,q_1_1_d
+                              ,q_1_1_oe
+                              ,q_1_2_a
+                              ,q_1_2_b
+                              ,q_1_2_oe
+                              ,q_1_3_a
+                              ,q_1_3_c
+                              ,q_1_3_d
+                              ,q_1_3_e
+                              ,q_1_3_oe
+                              ,q_1_4_a
+                              ,q_1_4_b
+                              ,q_1_4_oe
+                              ,q_1_5_a
+                              ,q_1_5_b
+                              ,q_1_5_c
+                              ,q_1_5_d
+                              ,q_1_5_f
+                              ,q_1_5_oe
+                              ,q_1_6_a
+                              ,q_1_6_b
+                              ,q_1_6_c
+                              ,q_1_6_d
+                              ,q_1_6_oe)
+        ) u
+   ) sub
  ) 
 
 SELECT sub.survey_type
