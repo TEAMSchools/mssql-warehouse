@@ -31,7 +31,7 @@ WITH roster AS (
     ON co.student_number = c.school_specific_id_c 
    AND c.is_deleted = 0
   LEFT OUTER JOIN gabby.naviance.students n
-    ON co.student_number = n.hs_student_id
+    ON co.student_number = CONVERT(INT,gabby.utilities.STRIP_CHARACTERS(n.hs_student_id, '^0-9'))
   LEFT OUTER JOIN gabby.alumni.[user] u
     ON c.owner_id = u.id
   WHERE co.rn_undergrad = 1

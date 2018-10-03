@@ -68,7 +68,7 @@ LEFT JOIN enroll_dates ed
  AND co.db_name = ed.db_name
  AND CASE WHEN co.schoolid = 999999 THEN ug.schoolid ELSE co.schoolid END = ed.schoolid
 LEFT JOIN gabby.naviance.students nav 
-  ON co.student_number = nav.hs_student_id
+  ON co.student_number = CONVERT(INT,gabby.utilities.STRIP_CHARACTERS(hs_student_id, '^0-9'))
 LEFT JOIN gabby.dayforce.staff_roster df 
   ON nav.counselor_name = CONCAT(df.preferred_first_name, ' ', df.preferred_last_name)
 LEFT JOIN gabby.adsi.user_attributes_static ad
