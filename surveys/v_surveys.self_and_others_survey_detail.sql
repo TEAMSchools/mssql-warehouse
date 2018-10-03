@@ -96,7 +96,7 @@ SELECT sub.survey_type
       ,sub.response
       ,sub.response_value
       ,sub.response_weight      
-      ,(sub.response_value * sub.response_weight) / sub.response_weight AS response_value_weighted
+      ,(sub.response_value * sub.response_weight) AS response_value_weighted
 
       ,ROUND(SUM(sub.response_value * sub.response_weight) OVER(PARTITION BY academic_year, reporting_term, subject_location, question_code)
                / SUM(sub.response_weight) OVER(PARTITION BY academic_year, reporting_term, subject_location, question_code)
