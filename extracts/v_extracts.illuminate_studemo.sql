@@ -18,7 +18,18 @@ SELECT student_number AS [01 Import Student ID]
       ,NULL AS [13 Correspondence Language]
       ,NULL AS [14 English Proficiency]
       ,NULL AS [15 Redesignation Date]
-      ,NULL AS [16 Primary Disability]
+      ,CASE
+		 WHEN specialed_classification IN ('PSD','CMO','CMI') THEN 210
+	     WHEN specialed_classification IN ('CI','ESLS') THEN 240
+		 WHEN specialed_classification = 'VI' THEN 250
+		 WHEN specialed_classification = 'ED' THEN 260
+		 WHEN specialed_classification = 'OI' THEN 270
+		 WHEN specialed_classification = 'OHI' THEN 280
+		 WHEN specialed_classification = 'SLD' THEN 290
+		 WHEN specialed_classification = 'MD' THEN 310
+		 WHEN specialed_classification IN ('AI','AUT') THEN 320
+		 WHEN specialed_classification = 'TBI' THEN 330
+		 ELSE NULL END AS [16 Primary Disability]
       ,NULL AS [17 Migrant Ed Student ID]
       ,NULL AS [18 Lep Date]
       ,NULL AS [19 Us Entry Date]
