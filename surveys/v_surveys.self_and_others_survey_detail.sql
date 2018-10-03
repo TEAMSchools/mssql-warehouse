@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW surveys.self_and_others_survey_detail AS
+--CREATE OR ALTER VIEW surveys.self_and_others_survey_detail AS
 
 WITH so_long AS (
   SELECT sub.response_id
@@ -96,7 +96,8 @@ SELECT sub.survey_type
       ,sub.response
       ,sub.response_value
       ,sub.response_weight      
-      ,sub.response_value * sub.response_weight AS response_value_weighted
+      ,(sub.response_value * sub.response_weight) 
+               / sub.response_weight AS response_value_weighted
 
       ,ROUND(SUM(sub.response_value * sub.response_weight) OVER(PARTITION BY academic_year, reporting_term, subject_location, question_code)
                / SUM(sub.response_weight) OVER(PARTITION BY academic_year, reporting_term, subject_location, question_code)
@@ -137,7 +138,7 @@ FROM
            ,CASE 
              WHEN so.academic_year <= 2017 THEN 1.0
              WHEN so.is_manager = 1 THEN CONVERT(FLOAT,so.n_total) / 2.0 /* manager response weight */
-             WHEN so.is_manager = 0 THEN (CONVERT(FLOAT,so.n_total) / 2.0) / CONVERT(FLOAT,so.n_peers) /* peer response weight */	
+             WHEN so.is_manager = 0 THEN (CONVERT(FLOAT,so.n_total) / 2.0) / CONVERT(FLOAT,so.n_peers) /* peer response weight */
             END AS response_weight
      FROM so_long so
      JOIN gabby.surveys.question_key qk
