@@ -131,7 +131,7 @@ WITH clean_data AS (
 
   UNION ALL
 
-  SELECT clean_data.unique_id
+  SELECT clean_data.unique_id + 'DNA' AS unique_id
         ,clean_data.student_identifier
         ,clean_data.year_of_assessment
         ,clean_data.academic_year
