@@ -16,6 +16,8 @@ SELECT co.school_name
       ,co.enroll_status            
       ,co.cohort
       ,co.region
+      ,co.is_pathways
+      ,co.c_504_status
       
       ,CASE WHEN sp.programid IS NOT NULL THEN 1 ELSE 0 END AS is_americorps
       
