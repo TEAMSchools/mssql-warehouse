@@ -92,7 +92,8 @@ WHERE a.subject_area NOT IN ('Algebra I','Geometry','Algebra IIA','Algebra IIB',
 UNION ALL
 
 /* all other assessments */
-SELECT a.assessment_id
+SELECT DISTINCT 
+       a.assessment_id
       ,a.title
       ,a.administered_at        
       ,a.performance_band_set_id
