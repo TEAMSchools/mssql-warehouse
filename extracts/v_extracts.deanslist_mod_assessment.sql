@@ -152,7 +152,7 @@ SELECT asr.local_student_id
        END AS proficiency_label
 FROM gabby.illuminate_dna_assessments.agg_student_responses_all asr
 WHERE asr.scope = 'Sight Words Quiz'
-  AND asr.subject_area IN ('Word Work')
+  AND asr.subject_area = 'Word Work'
   AND asr.response_type = 'O'
   AND asr.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND asr.percent_correct IS NOT NULL
