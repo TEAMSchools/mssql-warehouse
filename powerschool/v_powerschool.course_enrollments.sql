@@ -115,15 +115,17 @@ FROM
                 ,CONVERT(INT,sec.dcid) AS sections_dcid               
                 
                 ,CASE
-                  WHEN cc.course_number_clean IN ('MATH10','MATH15','MATH71','MATH10ICS','MATH12','MATH12ICS','MATH14','MATH16','M415') THEN 'Algebra I'        
-                  WHEN cc.course_number_clean IN ('MATH20','MATH25','MATH31','MATH73','MATH20ICS') THEN 'Geometry'
+                  WHEN cc.course_number_clean IN ('MATH10','MATH15','MATH71','MATH10ICS','MATH12','MATH12ICS','MATH14','MATH16','M415'
+                                                 ,'MAT02052F1','MAT02052G1','MAT02052P1','MAT02052H4') THEN 'Algebra I'
+                  WHEN cc.course_number_clean IN ('MATH20','MATH25','MATH31','MATH73','MATH20ICS','MAT02072F2','MAT02072G2') THEN 'Geometry'
+                  WHEN cc.course_number_clean IN ('MAT02056F3','MAT02056G3') THEN 'Algebra II'
                   WHEN cc.course_number_clean IN ('MATH32','MATH35','MATH32A','MATH32HA') THEN 'Algebra IIA'
                   WHEN cc.course_number_clean IN ('MATH32B') THEN 'Algebra IIB'
                   WHEN cc.course_number_clean = 'M315' THEN NULL                  
-                  WHEN cc.course_number_clean IN ('ENG10','ENG12','ENG15','NCCSE0010') THEN 'English 100'             
-                  WHEN cc.course_number_clean IN ('ENG20','ENG22','ENG25','NCCSE0020') THEN 'English 200'
-                  WHEN cc.course_number_clean IN ('ENG30','ENG32','ENG35','NCCSE0030') THEN 'English 300'
-                  WHEN cc.course_number_clean IN ('ENG40','ENG42','ENG45') THEN 'English 400'
+                  WHEN cc.course_number_clean IN ('ENG10','ENG12','ENG15','NCCSE0010','ENG01051A1','ENG01051F1','ENG01051G1','ENG01051P1') THEN 'English 100'             
+                  WHEN cc.course_number_clean IN ('ENG20','ENG22','ENG25','NCCSE0020','ENG01051A2','ENG01051F2','ENG01051G2') THEN 'English 200'
+                  WHEN cc.course_number_clean IN ('ENG30','ENG32','ENG35','NCCSE0030','ENG01005C3','ENG01052F3','ENG01052G3') THEN 'English 300'
+                  WHEN cc.course_number_clean IN ('ENG40','ENG42','ENG45','ENG01006C4','ENG01052F4','ENG01052G4') THEN 'English 400'
                   WHEN sec.grade_level <= 8 AND cou.credittype = 'ENG' THEN 'Text Study'        
                   WHEN sec.grade_level <= 8 AND cou.credittype = 'SCI' THEN 'Science'
                   WHEN sec.grade_level <= 8 AND cou.credittype = 'SOC' THEN 'Social Studies'        

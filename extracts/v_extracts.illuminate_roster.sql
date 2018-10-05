@@ -33,4 +33,6 @@ JOIN gabby.powerschool.cohort_identifiers_static co
  AND enr.academic_year = co.academic_year
  AND enr.db_name = co.db_name
  AND co.rn_year = 1
-WHERE enr.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR();
+WHERE enr.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+  AND enr.course_enroll_status = 0
+  AND enr.section_enroll_status = 0;
