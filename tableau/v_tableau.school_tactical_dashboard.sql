@@ -84,9 +84,21 @@ WITH roster AS (
 
                   ,a.subject_area
                   ,a.module_number           
-                  ,CASE WHEN a.performance_band_number >= 4 THEN 1.0 ELSE 0.0 END AS is_target
-                  ,CASE WHEN a.performance_band_number = 3 THEN 1.0 ELSE 0.0 END AS is_approaching
-                  ,CASE WHEN a.performance_band_number <= 2 THEN 1.0 ELSE 0.0 END AS is_below
+                  ,CASE 
+                    WHEN a.performance_band_number IS NULL THEN NULL
+                    WHEN a.performance_band_number >= 4 THEN 1.0 
+                    ELSE 0.0 
+                   END AS is_target
+                  ,CASE 
+                    WHEN a.performance_band_number IS NULL THEN NULL
+                    WHEN a.performance_band_number = 3 THEN 1.0 
+                    ELSE 0.0 
+                   END AS is_approaching
+                  ,CASE 
+                    WHEN a.performance_band_number IS NULL THEN NULL
+                    WHEN a.performance_band_number <= 2 THEN 1.0 
+                    ELSE 0.0 
+                   END AS is_below
            
                   ,CASE 
                     WHEN r.iep_status = 'No IEP' THEN NULL

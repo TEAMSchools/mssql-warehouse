@@ -35,6 +35,8 @@ SELECT a.assessment_id
       ,u.local_user_id AS creator_local_user_id
       ,u.username AS creator_username
       ,u.email1 AS creator_email1      
+      ,u.first_name AS creator_first_name
+      ,u.last_name AS creator_last_name
 
       ,ds.code_translation AS scope
       
