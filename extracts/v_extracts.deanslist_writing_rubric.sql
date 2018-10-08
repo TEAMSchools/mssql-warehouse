@@ -8,18 +8,22 @@ SELECT student_number
       ,NULL AS composition_type
       ,NULL AS rubric_type
       ,rubric_strand
-      ,[QA1]
-      ,[QA2]
-      ,[QA3]
-      ,[QA4]
+      ,[July]
+      ,[August]
+      ,[September]
+      ,[October]
+      ,[November]
+      ,[December]
+      ,[January]
+      ,[February]
+      ,[March]
+      ,[April]
+      ,[May]
+      ,[June]
 FROM
     (     
      SELECT a.academic_year_clean AS academic_year
-           ,CASE
-             WHEN PATINDEX('%[MU][0-9]/[0-9]%', a.title) > 0 THEN SUBSTRING(a.title, PATINDEX('%[MU][0-9]/[0-9]%', a.title), 4)
-             WHEN PATINDEX('%QA[0-9]%', a.title) > 0 THEN SUBSTRING(a.title, PATINDEX('%QA[0-9]%', a.title), 3)
-             WHEN PATINDEX('%[MU][0-9]%', a.title) > 0 THEN SUBSTRING(a.title, PATINDEX('%[MU][0-9]%', a.title), 2)
-            END AS module_num  
+           ,DATENAME(MONTH,a.administered_at) AS module_num
            
            ,CASE
              WHEN std.custom_code IN ('TES.W.KIPP.C.TP','TES.W.KIPP.C','TES.W.KIPP.C.I','TES.W.KIPP.N.FTT','TES.W.KIPP.C.F') THEN 'Focus on Task and Text'
@@ -29,12 +33,9 @@ FROM
              WHEN std.custom_code IN ('TES.W.KIPP.C.C','TES.W.KIPP.N.C','TES.W.KIPP.C.G','TES.W.KIPP.C.S_1') THEN 'Conventions'             
             END AS rubric_strand
                                   
-           ,CASE
-             WHEN asrs.answered = 0 THEN NULL 
-             ELSE asrs.points 
-            END AS rubric_score                      
+           ,CASE WHEN asrs.answered = 0 THEN NULL ELSE asrs.points END AS rubric_score          
 
-          ,s.local_student_id AS student_number
+           ,s.local_student_id AS student_number
      FROM gabby.illuminate_dna_assessments.assessments_identifiers a     
      JOIN gabby.illuminate_dna_assessments.assessment_standards ast
        ON a.assessment_id = ast.assessment_id      
@@ -52,8 +53,16 @@ FROM
     ) sub
 PIVOT(
   AVG(rubric_score)
-  FOR module_num IN ([QA1]
-                    ,[QA2]
-                    ,[QA3]
-                    ,[QA4])
+  FOR module_num IN ([July]
+                    ,[August]
+                    ,[September]
+                    ,[October]
+                    ,[November]
+                    ,[December]
+                    ,[January]
+                    ,[February]
+                    ,[March]
+                    ,[April]
+                    ,[May]
+                    ,[June])
  ) p
