@@ -46,10 +46,18 @@ SELECT co.student_number
       ,suf.media_release
 
       ,co.region
+      ,co.iep_status
+      ,co.lep_status
+      ,co.c_504_status
+
+      ,CASE WHEN scf.homeless_code IN ('Y1', 'Y2') THEN 1 END AS is_homeless
 FROM gabby.powerschool.cohort_identifiers_static co
 LEFT JOIN gabby.powerschool.u_studentsuserfields suf
   ON co.students_dcid = suf.studentsdcid
  AND co.db_name = suf.db_name
+LEFT JOIN gabby.powerschool.studentcorefields scf
+  ON co.students_dcid = scf.studentsdcid
+ AND co.db_name = scf.db_name
 WHERE co.enroll_status IN (0, -1)
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.rn_year = 1
