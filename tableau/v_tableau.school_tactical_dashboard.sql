@@ -597,6 +597,76 @@ WITH roster AS (
    ) u
  )
 
+,so_survey AS (
+  SELECT academic_year
+        ,reporting_term
+        ,ISNULL(subject_legal_entity_name, 'All') AS region        
+        ,ISNULL(subject_primary_site_school_level, 'All') AS school_level
+        ,ISNULL(subject_primary_site_schoolid, 'All') AS reporting_schoolid
+        ,'All' AS grade_level      
+      
+        ,'avg_survey_weighted_response_value' AS field
+        ,AVG(avg_survey_weighted_response_value) AS value
+  FROM
+      (
+       SELECT academic_year
+             ,reporting_term
+             ,subject_legal_entity_name COLLATE Latin1_General_BIN AS subject_legal_entity_name
+             ,subject_primary_site_school_level
+             ,CONVERT(VARCHAR,subject_primary_site_schoolid) AS subject_primary_site_schoolid            
+             ,subject_username
+
+             ,SUM(total_weighted_response_value) / SUM(total_response_weight) AS avg_survey_weighted_response_value
+       FROM gabby.surveys.self_and_others_survey_rollup
+       WHERE subject_primary_site_school_level IS NOT NULL
+       GROUP BY academic_year
+               ,reporting_term
+               ,subject_legal_entity_name
+               ,subject_primary_site_school_level
+               ,subject_primary_site_schoolid
+               ,subject_username
+      ) sub
+  GROUP BY academic_year
+          ,reporting_term
+          ,subject_primary_site_school_level
+          ,ROLLUP(subject_legal_entity_name, subject_primary_site_schoolid)
+ )
+
+,manager_survey AS (
+  SELECT academic_year
+        ,reporting_term
+        ,ISNULL(subject_legal_entity_name, 'All') AS region        
+        ,ISNULL(subject_primary_site_school_level, 'All') AS school_level
+        ,ISNULL(subject_primary_site_schoolid, 'All') AS reporting_schoolid
+        ,'All' AS grade_level      
+      
+        ,'avg_survey_response_value' AS field
+        ,AVG(sub.avg_survey_response_value) AS value
+  FROM
+      (
+       SELECT academic_year
+             ,reporting_term
+             ,subject_legal_entity_name COLLATE Latin1_General_BIN AS subject_legal_entity_name
+             ,subject_primary_site_school_level
+             ,CONVERT(VARCHAR,subject_primary_site_schoolid) AS subject_primary_site_schoolid            
+             ,subject_username
+
+             ,AVG(avg_response_value) AS avg_survey_response_value
+       FROM gabby.surveys.manager_survey_rollup
+       WHERE subject_primary_site_school_level IS NOT NULL
+       GROUP BY academic_year
+               ,reporting_term
+               ,subject_legal_entity_name
+               ,subject_primary_site_school_level
+               ,subject_primary_site_schoolid
+               ,subject_username
+      ) sub
+  GROUP BY academic_year
+          ,reporting_term
+          ,subject_primary_site_school_level
+          ,ROLLUP(subject_legal_entity_name, subject_primary_site_schoolid)
+ )
+
 SELECT d.academic_year
       ,d.region
       ,d.school_level
@@ -757,3 +827,35 @@ SELECT lit.academic_year
       ,lit.field
       ,lit.value
 FROM lit
+
+UNION ALL
+
+SELECT sos.academic_year      
+      ,sos.region
+      ,sos.school_level
+      ,sos.reporting_schoolid
+      ,sos.grade_level
+      ,NULL AS subject_area
+      ,sos.reporting_term AS term_name
+
+      ,'Surveys' AS domain
+      ,'Self & Others' AS subdomain
+      ,sos.field
+      ,sos.value
+FROM so_survey sos
+
+UNION ALL
+
+SELECT mgr.academic_year      
+      ,mgr.region
+      ,mgr.school_level
+      ,mgr.reporting_schoolid
+      ,mgr.grade_level
+      ,NULL AS subject_area
+      ,mgr.reporting_term AS term_name
+
+      ,'Surveys' AS domain
+      ,'Manager' AS subdomain
+      ,mgr.field
+      ,mgr.value
+FROM manager_survey mgr

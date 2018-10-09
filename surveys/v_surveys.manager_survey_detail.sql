@@ -3,46 +3,6 @@ GO
 
 CREATE OR ALTER VIEW surveys.manager_survey_detail AS
 
-WITH manager_long AS (
-  SELECT response_id
-        ,academic_year
-        ,reporting_term
-        ,term_name      
-        ,time_started
-        ,date_submitted
-        ,status
-        ,associate_id
-        ,salesforce_id
-        ,email_address
-        ,your_name_ AS respondent_name
-        ,manager_name
-        ,manager_associate_id      
-        ,question_code
-        ,response
-  FROM gabby.surveys.manager_survey_final
-  UNPIVOT(
-    response
-    FOR question_code IN (q_1
-                         ,q_2
-                         ,q_3
-                         ,q_4
-                         ,q_5
-                         ,q_6
-                         ,q_7
-                         ,q_8
-                         ,q_9
-                         ,q_10
-                         ,q_11
-                         ,q_12
-                         ,q_13
-                         ,q_14
-                         ,q_15
-                         ,q_16
-                         ,q_17
-                         ,q_18)
-   ) u
- )
-
 SELECT sub.survey_type
       ,sub.response_id
       ,sub.academic_year
@@ -74,49 +34,48 @@ SELECT sub.survey_type
       ,ROUND(AVG(response_value) OVER(PARTITION BY academic_year, reporting_term, question_code, subject_location), 1) AS avg_response_value_location
 FROM
     (
-     SELECT 'MGR' AS survey_type
+     SELECT mgr.survey_type
            ,mgr.response_id
-           ,CONVERT(INT,mgr.academic_year) AS academic_year
-           ,CONVERT(VARCHAR,mgr.reporting_term) AS reporting_term
+           ,mgr.academic_year
+           ,mgr.reporting_term
            ,mgr.term_name
            ,mgr.time_started
            ,mgr.date_submitted
            ,mgr.status
-           ,mgr.associate_id  AS respondent_associate_id
-           ,mgr.salesforce_id AS respondent_salesforce_id
-           ,mgr.email_address AS respondent_email_address
+           ,mgr.respondent_associate_id
+           ,mgr.respondent_salesforce_id
+           ,mgr.respondent_email_address
            ,mgr.respondent_name      
-           ,mgr.manager_associate_id AS subject_associate_id
-           ,CONVERT(VARCHAR,mgr.question_code) AS question_code
+           ,mgr.subject_associate_id
+           ,mgr.question_code
            ,mgr.response
+           ,mgr.question_text
+           ,mgr.open_ended
+           ,mgr.response_value
       
-           ,CONCAT(df.preferred_first_name, ' ', df.preferred_last_name) AS subject_name
-           ,CONVERT(VARCHAR,df.primary_site) AS subject_location
-           ,df.manager_adp_associate_id AS subject_manager_id      
-           ,df.primary_site_reporting_schoolid AS reporting_schoolid
-           ,df.primary_site_school_level AS school_level
-           ,df.legal_entity_name AS region
+           ,COALESCE(CONCAT(dfdf.preferred_first_name, ' ', dfdf.preferred_last_name)
+                    ,CONCAT(dfadp.preferred_first_name, ' ', dfadp.preferred_last_name)) AS subject_name
+           ,COALESCE(dfdf.primary_site, dfadp.primary_site) AS subject_location
+           ,COALESCE(dfdf.primary_site_reporting_schoolid, dfadp.primary_site_reporting_schoolid) AS reporting_schoolid
+           ,COALESCE(dfdf.primary_site_school_level, dfadp.primary_site_school_level) AS school_level
+           ,COALESCE(dfdf.legal_entity_name, dfadp.legal_entity_name) AS region
+           ,COALESCE(dfdf.manager_adp_associate_id, dfadp.manager_adp_associate_id) AS subject_manager_id
 
-           ,ad.samaccountname AS subject_username
+           ,COALESCE(addf.samaccountname, adadp.samaccountname) AS subject_username
 
-           ,admgr.displayname AS subject_manager_name
-           ,admgr.samaccountname AS subject_manager_username
-      
-           ,qk.question_text
-           ,qk.open_ended
-
-           ,CONVERT(FLOAT,rs.response_value) AS response_value
-     FROM manager_long mgr
-     LEFT JOIN gabby.dayforce.staff_roster df
-       ON (mgr.manager_associate_id = df.adp_associate_id OR mgr.manager_associate_id = CONVERT(VARCHAR,df.df_employee_number))
-     JOIN gabby.adsi.user_attributes_static ad
-       ON (df.adp_associate_id = ad.idautopersonalternateid OR CONVERT(VARCHAR,df.df_employee_number) = ad.employeeid)
-     LEFT JOIN gabby.adsi.user_attributes_static admgr
-       ON (df.manager_adp_associate_id = admgr.idautopersonalternateid OR CONVERT(VARCHAR,df.manager_df_employee_number) = admgr.employeeid)
-     JOIN gabby.surveys.question_key qk
-       ON mgr.question_code = qk.question_code
-      AND qk.survey_type = 'MGR'
-     LEFT JOIN gabby.surveys.response_scales rs
-       ON mgr.response = rs.response_text
-      AND rs.survey_type = 'MGR'
+           ,COALESCE(admgrdf.displayname, admgradp.displayname) AS subject_manager_name
+           ,COALESCE(admgrdf.samaccountname, admgradp.samaccountname) AS subject_manager_username
+     FROM gabby.surveys.manager_survey_long_static mgr     
+     LEFT JOIN gabby.dayforce.staff_roster dfadp
+       ON mgr.subject_associate_id = dfadp.adp_associate_id
+     LEFT JOIN gabby.adsi.user_attributes_static adadp
+       ON dfadp.adp_associate_id = adadp.idautopersonalternateid
+     LEFT JOIN gabby.adsi.user_attributes_static admgradp
+       ON dfadp.manager_adp_associate_id = admgradp.idautopersonalternateid
+     LEFT JOIN gabby.dayforce.staff_roster dfdf
+       ON mgr.subject_associate_id = CONVERT(VARCHAR,dfdf.df_employee_number)
+     LEFT JOIN gabby.adsi.user_attributes_static addf
+       ON CONVERT(VARCHAR,dfdf.df_employee_number) = addf.employeenumber     
+     LEFT JOIN gabby.adsi.user_attributes_static admgrdf
+       ON CONVERT(VARCHAR,dfdf.manager_df_employee_number) = admgrdf.employeenumber
     ) sub
