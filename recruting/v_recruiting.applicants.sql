@@ -1,12 +1,10 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW recruiting.applicants AS
+--CREATE OR ALTER VIEW recruiting.applicants AS
 
 SELECT pa.id
       ,pa.name AS profile_id
-      ,pa.race_ethnicity_c AS race_ethnicity
-      ,pa.gender_c AS gender
       ,pa.years_full_time_experience_c AS years_full_time_experience
       ,pa.years_of_full_time_teaching_c AS years_of_full_time_teaching
       ,pa.undergraduate_degree_school_name_c AS undergrad_school_name
@@ -23,7 +21,14 @@ SELECT pa.id
       ,pa.certificate_subject_s_c AS certificate_subject
       ,pa.certificate_state_c AS certificate_state
       ,pa.certificate_expiration_c AS certificate_expiration
-    
+      
+      ,c.name
+      ,c.email
+      ,c.ethnicity_c AS race_ethnicity
+      ,c.gender_c AS gender
+      ,c.title AS previous_role
+      ,c.current_employer_c AS previous_employer
+
       ,a.name AS jobapp_id      
       ,a.hired_status_date_c AS hired_status_date
       ,a.total_days_in_process_c AS total_days_in_process
@@ -34,8 +39,6 @@ SELECT pa.id
       ,a.applicant_source_c AS applicant_score
       ,a.cultivation_regional_source_c AS regional_source
       ,a.cultivation_regional_source_detail_c AS regional_source_detail
-      ,a.applicant_name_c AS applicant_name
-      ,a.contact_email_c AS applicant_email
       ,LEFT(RIGHT(a.resume_url_c,LEN(a.resume_url_c)-9),LEN(RIGHT(a.resume_url_c,LEN(a.resume_url_c)-9))-39) AS resume_url
         
       ,j.name AS job_position_id
@@ -51,6 +54,8 @@ SELECT pa.id
         
       ,p.name AS job_posting
 FROM gabby.recruiting.profile_application_c pa 
+LEFT JOIN gabby.recruiting.contact c
+  ON pa.contact_id_c = LEFT(c.id,15)
 LEFT JOIN gabby.recruiting.job_application_c a
   ON pa.id = a.profile_application_c
 LEFT JOIN gabby.recruiting.job_position_c  j
