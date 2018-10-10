@@ -13,6 +13,7 @@ WITH subjects AS (
 ,scaffold AS (
   SELECT co.student_number
         ,co.lastfirst
+        ,co.region
         ,co.reporting_schoolid AS schoolid
         ,co.grade_level
         ,co.team
@@ -38,6 +39,7 @@ SELECT student_number
       ,lastfirst
       ,academic_year
       ,term_name
+      ,region
       ,schoolid
       ,grade_level
       ,team      
@@ -67,6 +69,7 @@ FROM
     (
      SELECT r.student_number
            ,r.lastfirst      
+           ,r.region
            ,r.schoolid
            ,r.grade_level
            ,r.team

@@ -4,8 +4,8 @@ GO
 CREATE OR ALTER VIEW tableau.qa_illuminate_zero_answered_audit AS
 
 SELECT co.student_number
-      ,co.studentid
       ,co.lastfirst
+      ,co.region
       ,co.schoolid
       ,co.grade_level
       ,co.team
@@ -19,32 +19,26 @@ SELECT co.student_number
       ,a.assessment_id
       ,a.title
       ,a.administered_at
-
-      ,dsc.code_translation AS scope
-      
-      ,dsu.code_translation AS subject_area
+      ,a.scope      
+      ,a.subject_area
 
       ,dt.alt_name AS term_name
       ,dt.start_date
       ,dt.end_date
 
       ,att.att_code
-FROM gabby.powerschool.cohort_identifiers_static co
+FROM gabby.illuminate_dna_assessments.agg_student_responses ovr
 JOIN gabby.illuminate_public.students s
-  ON co.student_number = s.local_student_id
-JOIN gabby.illuminate_dna_assessments.agg_student_responses ovr
-  ON s.student_id = ovr.student_id
- AND ovr.answered = 0
-JOIN gabby.illuminate_dna_assessments.assessments a
+  ON ovr.student_id = s.student_id
+JOIN gabby.illuminate_dna_assessments.assessments_identifiers a
   ON ovr.assessment_id = a.assessment_id
- AND co.academic_year = a.academic_year_clean
-LEFT JOIN gabby.illuminate_codes.dna_scopes dsc
-  ON a.code_scope_id = dsc.code_id
-LEFT JOIN gabby.illuminate_codes.dna_subject_areas dsu
-  ON a.code_subject_area_id = dsu.code_id
+JOIN gabby.powerschool.cohort_identifiers_static co
+  ON s.local_student_id = co.student_number
+ AND a.academic_year_clean = co.academic_year
+ AND co.rn_year = 1
+ AND co.enroll_status = 0
 LEFT JOIN gabby.reporting.reporting_terms dt
-  ON co.schoolid = dt.schoolid
- AND co.academic_year = dt.academic_year
+  ON co.schoolid = dt.schoolid 
  AND a.administered_at BETWEEN dt.start_date AND dt.end_date
  AND dt.identifier = 'RT' 
 LEFT JOIN gabby.powerschool.ps_attendance_daily att
@@ -52,6 +46,5 @@ LEFT JOIN gabby.powerschool.ps_attendance_daily att
  AND co.db_name = att.db_name
  AND ovr.date_taken = att.att_date
  AND att.att_code LIKE 'A%'
-WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-  AND co.rn_year = 1
-  AND co.enroll_status = 0
+WHERE ovr.answered = 0
+  AND ovr.date_taken >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)

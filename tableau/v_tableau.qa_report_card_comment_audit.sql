@@ -25,6 +25,7 @@ WITH repo_fields AS (
 
 SELECT co.student_number
       ,co.lastfirst
+      ,co.region
       ,co.reporting_schoolid AS schoolid
       ,co.grade_level
       ,co.team

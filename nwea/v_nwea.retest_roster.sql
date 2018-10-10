@@ -14,6 +14,7 @@ WITH map_long AS (
         ,sub.test_duration_minutes
         ,sub.lastfirst
         ,sub.reporting_schoolid
+        ,sub.region
         ,sub.grade_level
         ,sub.student_testdurationminutes
         ,sub.prev_academic_year
@@ -45,6 +46,7 @@ WITH map_long AS (
              ,m.test_duration_minutes
 
              ,co.lastfirst
+             ,co.region
              ,co.reporting_schoolid
              ,co.grade_level
 
@@ -75,6 +77,7 @@ WITH map_long AS (
 
 SELECT sub.student_number
       ,sub.lastfirst
+      ,sub.region
       ,sub.schoolid
       ,sub.grade_level
       ,sub.academic_year
@@ -119,6 +122,7 @@ FROM
     (
      SELECT sub.student_id AS student_number
            ,sub.lastfirst
+           ,sub.region
            ,sub.schoolid           
            ,sub.grade_level
            ,sub.academic_year
@@ -162,6 +166,7 @@ FROM
          (
           SELECT sub.student_id
                 ,sub.lastfirst
+                ,sub.region
                 ,sub.schoolid                
                 ,sub.grade_level
                 ,sub.academic_year
@@ -197,6 +202,7 @@ FROM
               (
                SELECT map_long.student_id
                      ,map_long.lastfirst
+                     ,map_long.region
                      ,map_long.reporting_schoolid AS schoolid                     
                      ,map_long.grade_level
                      ,map_long.academic_year

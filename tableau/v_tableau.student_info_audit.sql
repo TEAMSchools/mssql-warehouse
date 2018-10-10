@@ -6,7 +6,8 @@ CREATE OR ALTER VIEW tableau.student_info_audit AS
 SELECT schoolid
       ,school_name
       ,student_number
-	     ,lastfirst
+	     ,region
+      ,lastfirst
 	     ,grade_level
 	     ,'Name Spelling' AS element
 	     ,lastfirst AS detail
@@ -28,6 +29,7 @@ UNION ALL
 SELECT schoolid
       ,school_name
       ,student_number
+      ,region
 	     ,lastfirst
 	     ,grade_level
 	     ,'Email' AS element
@@ -54,6 +56,7 @@ UNION ALL
 SELECT schoolid
       ,school_name
       ,student_number
+      ,region
 	     ,lastfirst
 	     ,grade_level
 	     ,'Phone - Mother Cell' AS element
@@ -69,6 +72,7 @@ UNION ALL
 SELECT schoolid
       ,school_name
       ,student_number
+      ,region
 	     ,lastfirst
 	     ,grade_level
 	     ,'Phone - Father Cell' AS element
@@ -84,6 +88,7 @@ UNION ALL
 SELECT schoolid
       ,school_name
       ,student_number
+      ,region
 	     ,lastfirst
 	     ,grade_level
 	     ,'Phone - Home' AS element
@@ -99,6 +104,7 @@ UNION ALL
 SELECT schoolid
       ,school_name
       ,student_number
+      ,region
 	     ,lastfirst
 	     ,grade_level
 	     ,'Missing Ethnicity' AS element
@@ -114,6 +120,7 @@ UNION ALL
 SELECT schoolid
 	     ,school_name
 	     ,student_number
+      ,region
 	     ,lastfirst
 	     ,grade_level
 	     ,'Missing Gender' AS element
@@ -129,6 +136,7 @@ UNION ALL
 SELECT co.schoolid
 	     ,co.school_name
 	     ,co.student_number
+      ,co.region
 	     ,co.lastfirst
 	     ,co.grade_level
 	     ,'Missing SID' AS element
@@ -144,6 +152,7 @@ UNION ALL
 SELECT co.schoolid
 	     ,co.school_name
 	     ,co.student_number
+      ,co.region
 	     ,co.lastfirst
 	     ,co.grade_level
 	     ,'Missing or Incorrect FTEID' AS element

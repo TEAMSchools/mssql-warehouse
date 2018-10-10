@@ -46,9 +46,10 @@ SELECT a.assessment_id
 
       ,ns.scope AS normed_scope
 
-      ,CASE
-        WHEN ns.scope IS NULL THEN NULL
+      ,CASE        
+        WHEN ds.code_translation = 'Sight Words Quiz' THEN 'SWQ'
         WHEN ds.code_translation = 'Process Piece' THEN 'PP'
+        WHEN ns.scope IS NULL THEN NULL        
         WHEN ds.code_translation = 'CMA - End-of-Module' AND a.academic_year <= 2016 THEN 'EOM'
         WHEN ds.code_translation = 'CMA - End-of-Module' AND a.academic_year > 2016 THEN 'QA'
         WHEN ds.code_translation IN ('Cold Read Quizzes', 'Cumulative Review Quizzes') THEN 'CRQ'
@@ -59,9 +60,15 @@ SELECT a.assessment_id
         WHEN ds.code_translation = 'CMA - Mid-Module' AND PATINDEX('%Checkpoint [0-9]%', a.title) > 0 THEN 'CP' + SUBSTRING(a.title, PATINDEX('%Checkpoint [0-9]%', a.title) + 11, 1)
        END AS module_type
       ,CASE
-        WHEN ns.scope IS NULL THEN NULL
+        WHEN PATINDEX('%SWQ[0-9]%', a.title) > 0 THEN SUBSTRING(a.title, PATINDEX('%SWQ[0-9]%', a.title), 4)        
+        WHEN ds.code_translation = 'Process Piece' AND CHARINDEX(DATENAME(MONTH, a.administered_at), a.title) > 0 
+             THEN CONCAT('PP', CASE 
+                                WHEN DATEPART(MONTH, a.administered_at) >= 9 THEN (DATEPART(MONTH, a.administered_at) - 9) + 1
+                                WHEN DATEPART(MONTH, a.administered_at) < 9 THEN ((12 - 9) + DATEPART(MONTH, a.administered_at)) + 1
+                               END)
         WHEN ds.code_translation = 'Process Piece' AND PATINDEX('%QA[0-9]%', a.title) > 0 THEN SUBSTRING(a.title, PATINDEX('%QA[0-9]%', a.title), 3)
         WHEN ds.code_translation = 'Process Piece' AND PATINDEX('%[MU][0-9]%', a.title) > 0 THEN SUBSTRING(a.title, PATINDEX('%[MU][0-9]%', a.title), 2)        
+        WHEN ns.scope IS NULL THEN NULL
         WHEN PATINDEX('%[MU][0-9]/[0-9]%', a.title) > 0 THEN SUBSTRING(a.title, PATINDEX('%[MU][0-9]/[0-9]%', a.title), 4)
         WHEN PATINDEX('%[MU][0-9]%', a.title) > 0 THEN SUBSTRING(a.title, PATINDEX('%[MU][0-9]%', a.title), 2)
         WHEN PATINDEX('%QA[0-9]%', a.title) > 0 THEN SUBSTRING(a.title, PATINDEX('%QA[0-9]%', a.title), 3)
@@ -74,7 +81,7 @@ SELECT a.assessment_id
         WHEN PATINDEX('%MF[0-9][0-9]%', a.title) > 0 THEN LTRIM(RTRIM(SUBSTRING(a.title, PATINDEX('%MF[0-9]%', a.title), 4)))
         WHEN PATINDEX('%MF[0-9]%', a.title) > 0 THEN LTRIM(RTRIM(SUBSTRING(a.title, PATINDEX('%MF[0-9]%', a.title), 3)))
         WHEN PATINDEX('%CJ[0-9][0-9]%', a.title) > 0 THEN LTRIM(RTRIM(SUBSTRING(a.title, PATINDEX('%CJ[0-9]%', a.title), 4)))
-        WHEN PATINDEX('%CJ[0-9]%', a.title) > 0 THEN LTRIM(RTRIM(SUBSTRING(a.title, PATINDEX('%CJ[0-9]%', a.title), 3)))
+        WHEN PATINDEX('%CJ[0-9]%', a.title) > 0 THEN LTRIM(RTRIM(SUBSTRING(a.title, PATINDEX('%CJ[0-9]%', a.title), 3)))        
        END AS module_number
 FROM gabby.illuminate_dna_assessments.assessments a
 LEFT JOIN gabby.illuminate_public.users u

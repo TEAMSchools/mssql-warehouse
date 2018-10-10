@@ -16,6 +16,7 @@ SELECT asr.local_student_id AS student_number
       ,asr.is_replacement      
 
       ,co.lastfirst
+      ,co.region
       ,co.reporting_schoolid
       ,co.grade_level
       ,co.team
