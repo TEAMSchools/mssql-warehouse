@@ -74,6 +74,7 @@ FROM
            ,REPLACE(asr.term_administered, 'Q', 'QA') AS module_num      
            ,'MATH' AS subject_area
            ,ROUND(AVG(asr.percent_correct),0) AS avg_pct_correct                     
+           ,MIN(performance_band_set_id) AS performance_band_set_id
      FROM gabby.illuminate_dna_assessments.agg_student_responses_all asr
      WHERE asr.module_type = 'CGI'
        AND asr.subject_area = 'Mathematics'
@@ -87,8 +88,8 @@ FROM
              ,asr.module_type
     ) sub
 JOIN gabby.illuminate_dna_assessments.performance_band_lookup_static pbl
-  ON sub.avg_pct_correct BETWEEN pbl.minimum_value AND pbl.maximum_value
- AND pbl.description = 'KIPP NJ Proficiency Band - 1718'
+  ON sub.performance_band_set_id = pbl.performance_band_set_id
+ AND sub.avg_pct_correct BETWEEN pbl.minimum_value AND pbl.maximum_value
 
 UNION ALL
 
@@ -117,6 +118,7 @@ FROM
            ,'UA' AS scope
            ,REPLACE(asr.term_administered, 'Q', 'QA') AS module_num      
            ,ROUND(AVG(asr.percent_correct),0) AS avg_pct_correct                       
+           ,MIN(performance_band_set_id) AS performance_band_set_id
      FROM gabby.illuminate_dna_assessments.agg_student_responses_all asr
      WHERE asr.scope = 'Unit Assessment'
        AND asr.subject_area NOT IN ('Text Study','Mathematics')
@@ -129,8 +131,8 @@ FROM
              ,asr.term_administered
     ) sub
 JOIN gabby.illuminate_dna_assessments.performance_band_lookup_static pbl
-  ON sub.avg_pct_correct BETWEEN pbl.minimum_value AND pbl.maximum_value
- AND pbl.description = 'KIPP NJ Proficiency Band - 1718'
+  ON sub.performance_band_set_id = pbl.performance_band_set_id
+ AND sub.avg_pct_correct BETWEEN pbl.minimum_value AND pbl.maximum_value
 
 UNION ALL
 

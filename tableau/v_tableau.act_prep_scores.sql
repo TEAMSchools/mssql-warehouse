@@ -79,6 +79,7 @@ SELECT co.academic_year
       ,co.iep_status
       ,co.enroll_status
 	     ,co.advisor_name
+      ,co.region
 
       ,'PREP' AS ACT_type
       ,act.assessment_id
@@ -128,6 +129,7 @@ SELECT co.academic_year
       ,co.iep_status
       ,co.enroll_status
 	     ,co.advisor_name
+      ,co.region
       ,'REAL' AS ACT_type
       ,NULL AS assessment_id
       ,NULL AS assessment_title

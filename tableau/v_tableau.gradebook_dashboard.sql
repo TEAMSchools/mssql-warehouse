@@ -37,6 +37,7 @@ SELECT co.student_number
       ,co.academic_year
       ,co.iep_status
       ,co.cohort
+      ,co.region
             
       ,gr.credittype
       ,gr.course_number
@@ -91,6 +92,7 @@ SELECT co.student_number
       ,co.academic_year
       ,co.iep_status
       ,co.cohort
+      ,co.region
 
       ,gr.credittype
       ,gr.course_number
@@ -152,6 +154,7 @@ SELECT COALESCE(co.student_number, e1.student_number) AS student_number
       ,CONVERT(INT,LEFT(gr.termid,2) + 1990) AS academic_year
       ,COALESCE(co.iep_status, e1.iep_status) AS iep_status
       ,COALESCE(co.cohort, e1.cohort) AS cohort
+      ,COALESCE(co.region, e1.region) AS region
       
       ,'TRANSFER' AS credittype
       ,CONVERT(VARCHAR(125),CONCAT('TRANSFER', gr.termid, gr.db_name, gr.dcid)) COLLATE Latin1_General_BIN AS course_number
@@ -205,6 +208,7 @@ SELECT co.student_number
       ,co.academic_year
       ,co.iep_status      
       ,co.cohort
+      ,co.region
       
       ,gr.credittype
       ,gr.course_number
@@ -266,6 +270,7 @@ SELECT co.student_number
       ,co.academic_year
       ,co.iep_status      
       ,co.cohort
+      ,co.region
       
       ,gr.credittype
       ,gr.course_number
@@ -324,6 +329,7 @@ SELECT co.student_number
       ,co.academic_year
       ,co.iep_status      
       ,co.cohort
+      ,co.region
       
       ,gr.credittype
       ,gr.course_number

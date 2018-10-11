@@ -198,6 +198,7 @@ SELECT rr.assessment_id
       ,rr.standard_code
       ,rr.standard_description      
       ,rr.domain_description
+      ,rr.performance_band_set_id
 
       ,CONVERT(INT,s.local_student_id) AS local_student_id
 

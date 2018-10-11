@@ -8,6 +8,8 @@ WITH roster AS (
         ,co.student_number
         ,co.lastfirst      
         ,co.academic_year
+        ,co.region
+        ,co.school_level
         ,co.schoolid
         ,co.reporting_schoolid
         ,co.grade_level
@@ -38,6 +40,8 @@ WITH roster AS (
         ,co.student_number
         ,co.lastfirst      
         ,co.academic_year
+        ,co.region
+        ,co.school_level
         ,co.schoolid
         ,co.reporting_schoolid
         ,co.grade_level
@@ -64,7 +68,7 @@ WITH roster AS (
 
 ,contact AS (
   SELECT student_number
-        ,contact_type AS person
+        ,contact_name AS person
         ,phone_type AS type
         ,phone AS value      
   FROM gabby.powerschool.student_contacts_static  
@@ -221,16 +225,16 @@ WITH roster AS (
 
 ,modules AS (
   SELECT a.subject_area
-        ,a.title
+        ,a.module_number
         ,a.academic_year
         ,a.local_student_id AS student_number
         ,a.assessment_id
-        ,a.scope        
+        ,a.module_type        
         ,a.date_taken AS measure_date
         ,CONVERT(VARCHAR(250),CASE 
-          WHEN a.subject_area = 'Writing' THEN a.standard_description
-          ELSE a.standard_code 
-         END) AS standards
+                               WHEN a.subject_area = 'Writing' THEN a.standard_description
+                               ELSE a.standard_code 
+                              END) AS standards
         ,CASE
           WHEN a.subject_area = 'Writing' THEN a.points
           ELSE a.percent_correct        
@@ -248,11 +252,9 @@ WITH roster AS (
           WHEN a.response_type = 'S' THEN 'STANDARDS' 
          END AS subdomain        
   FROM gabby.illuminate_dna_assessments.agg_student_responses_all a  
-  WHERE a.subject_area IN ('Text Study','Mathematics','Writing')
-    AND a.scope IN (SELECT scope FROM gabby.illuminate_dna_assessments.normed_scopes)
-    AND a.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
+  WHERE a.module_type IS NOT NULL
     AND a.response_type IN ('O','S')
-    AND a.is_replacement = 0
+    AND a.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)    
  )
 
 ,gpa AS (
@@ -709,6 +711,8 @@ SELECT r.studentid
       ,r.student_number
       ,r.lastfirst
       ,r.academic_year
+      ,r.region
+      ,r.school_level
       ,r.reporting_schoolid AS schoolid
       ,r.grade_level
       ,r.cohort
@@ -740,6 +744,8 @@ SELECT r.studentid
       ,r.student_number
       ,r.lastfirst
       ,r.academic_year
+      ,r.region
+      ,r.school_level
       ,r.reporting_schoolid AS schoolid
       ,r.grade_level
       ,r.cohort
@@ -772,6 +778,8 @@ SELECT r.studentid
       ,r.student_number
       ,r.lastfirst
       ,r.academic_year
+      ,r.region
+      ,r.school_level
       ,r.reporting_schoolid AS schoolid
       ,r.grade_level
       ,r.cohort
@@ -779,12 +787,12 @@ SELECT r.studentid
       ,r.advisor_name
       ,r.iep_status
       ,r.enroll_status
-      ,cma.scope AS term
+      ,cma.module_number AS term
       ,r.reporting_term      
       ,'MODULES' AS domain
       ,cma.subdomain      
       ,cma.subject_area COLLATE Latin1_General_BIN AS subject
-      ,cma.title COLLATE Latin1_General_BIN AS course_name
+      ,cma.module_type COLLATE Latin1_General_BIN AS course_name
       ,cma.standards COLLATE Latin1_General_BIN AS measure_name
       ,cma.percent_correct AS measure_value
       ,cma.measure_date
@@ -803,6 +811,8 @@ SELECT r.studentid
       ,r.student_number
       ,r.lastfirst
       ,gpa.academic_year AS year
+      ,r.region
+      ,r.school_level
       ,r.reporting_schoolid AS schoolid
       ,r.grade_level
       ,r.cohort
@@ -836,6 +846,8 @@ SELECT r.studentid
       ,r.student_number
       ,r.lastfirst
       ,lit.academic_year AS year
+      ,r.region
+      ,r.school_level
       ,r.reporting_schoolid AS schoolid
       ,r.grade_level
       ,r.cohort
@@ -867,6 +879,8 @@ SELECT r.studentid
       ,r.student_number
       ,r.lastfirst
       ,map.test_year AS year
+      ,r.region
+      ,r.school_level
       ,r.reporting_schoolid AS schoolid
       ,r.grade_level
       ,r.cohort
@@ -898,6 +912,8 @@ SELECT r.studentid
       ,r.student_number
       ,r.lastfirst
       ,std.academic_year AS year
+      ,r.region
+      ,r.school_level
       ,r.reporting_schoolid AS schoolid
       ,r.grade_level
       ,r.cohort
@@ -928,6 +944,8 @@ SELECT r.studentid
       ,r.student_number
       ,r.lastfirst
       ,r.academic_year
+      ,r.region
+      ,r.school_level
       ,r.reporting_schoolid AS schoolid
       ,r.grade_level
       ,r.cohort
@@ -958,6 +976,8 @@ SELECT r.studentid
       ,r.student_number
       ,r.lastfirst
       ,r.academic_year
+      ,r.region
+      ,r.school_level
       ,r.reporting_schoolid AS schoolid
       ,r.grade_level
       ,r.cohort
@@ -989,6 +1009,8 @@ SELECT r.studentid
       ,r.student_number
       ,r.lastfirst
       ,r.academic_year
+      ,r.region
+      ,r.school_level
       ,r.reporting_schoolid AS schoolid
       ,r.grade_level
       ,r.cohort
@@ -1019,6 +1041,8 @@ SELECT r.studentid
       ,r.student_number
       ,r.lastfirst
       ,r.academic_year
+      ,r.region
+      ,r.school_level
       ,r.reporting_schoolid AS schoolid
       ,r.grade_level
       ,r.cohort
@@ -1052,6 +1076,8 @@ SELECT DISTINCT
       ,NULL AS student_number
       ,' Choose a student...' AS lastfirst
       ,academic_year
+      ,region
+      ,school_level
       ,reporting_schoolid AS schoolid
       ,grade_level
       ,NULL AS cohort
@@ -1070,7 +1096,6 @@ SELECT DISTINCT
       ,NULL AS measure_date
       ,NULL AS performance_level
       ,NULL AS performance_level_label
-FROM gabby.powerschool.cohort_identifiers_static 
-WHERE academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
-  AND reporting_schoolid NOT IN (999999, 5173)
+FROM roster
+WHERE term_name = 'Y1'
 --*/

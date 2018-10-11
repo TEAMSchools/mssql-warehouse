@@ -23,6 +23,7 @@ SELECT assessment_id
       ,domain_description
       ,term_administered
       ,term_taken
+      ,performance_band_set_id
       ,performance_band_number
       ,is_mastery
 FROM gabby.illuminate_dna_assessments.agg_student_responses_all_current
@@ -50,6 +51,7 @@ SELECT assessment_id
       ,domain_description
       ,term_administered
       ,term_taken
+      ,performance_band_set_id
       ,performance_band_number
       ,is_mastery
 FROM gabby.illuminate_dna_assessments.agg_student_responses_all_archive
