@@ -11,6 +11,7 @@ SELECT enr.sectionid
       ,enr.teacher_name
       ,enr.student_number
       ,enr.schoolid
+      ,enr.db_name
       
       ,gb.reportingterm_name AS finalgradename
       ,LEFT(gb.reportingterm_name,1) AS finalgrade_category
