@@ -28,6 +28,7 @@ SELECT [state_studentnumber]
         ELSE 'SPED'
        END AS spedlep
       ,CASE 
+        WHEN nj_se_parental_consentobtained = 'R' THEN NULL
         WHEN special_education = '01' THEN 'AI'
         WHEN special_education = '02' THEN 'AUT'
         WHEN special_education = '03' THEN 'CMI'
@@ -69,6 +70,6 @@ FROM
            ,e.[ti_serv_speech]
            ,e.[ti_serv_other]
            ,e.academic_year
-           ,RIGHT('0' + CONVERT(VARCHAR,e.[special_education]), 2) AS [special_education]
+           ,RIGHT('0' + CONVERT(VARCHAR,e.[special_education]), 2) AS [special_education]                      
      FROM easyiep.njsmart_powerschool e
     ) sub
