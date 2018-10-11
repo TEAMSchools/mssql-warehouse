@@ -61,9 +61,9 @@ WITH survey_feed AS
     SELECT df_employee_number
           ,userprincipalname
           ,mail
-          ,preferred_first
-          ,preferred_last
-          ,preferred_name
+          ,preferred_first AS survey_taker_last
+          ,preferred_last AS survey_taker_first
+          ,preferred_name AS survey_taker_name
           ,location_custom
     FROM tableau.staff_roster
     )
@@ -76,9 +76,9 @@ SELECT f.start_date
       ,f.reporting_term
       ,f.survey
 
-      ,u.preferred_first
-      ,u.preferred_last
-      ,u.preferred_name
+      ,u.survey_taker_first
+      ,u.survey_taker_last
+      ,u.survey_taker_name
       ,u.location_custom
       ,u.df_employee_number
 
