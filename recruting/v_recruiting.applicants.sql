@@ -1,7 +1,7 @@
 USE gabby
 GO
 
---CREATE OR ALTER VIEW recruiting.applicants AS
+CREATE OR ALTER VIEW recruiting.applicants AS
 
 SELECT pa.id
       ,pa.name AS profile_id
@@ -55,7 +55,7 @@ SELECT pa.id
       ,p.name AS job_posting
 FROM gabby.recruiting.profile_application_c pa 
 LEFT JOIN gabby.recruiting.contact c
-  ON pa.contact_id_c = LEFT(c.id,15)
+  ON pa.contact_id_c = LEFT(c.id, 15)
 LEFT JOIN gabby.recruiting.job_application_c a
   ON pa.id = a.profile_application_c
 LEFT JOIN gabby.recruiting.job_position_c  j
