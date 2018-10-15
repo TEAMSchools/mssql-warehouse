@@ -4,39 +4,39 @@ GO
 CREATE OR ALTER VIEW extracts.deanslist_writing_rubric AS
 
 SELECT student_number
-      ,academic_year
-      ,NULL AS composition_type
-      ,NULL AS rubric_type
+      ,academic_year      
       ,rubric_strand
-      ,[July]
-      ,[August]
-      ,[September]
-      ,[October]
-      ,[November]
-      ,[December]
-      ,[January]
-      ,[February]
-      ,[March]
-      ,[April]
-      ,[May]
-      ,[June]
+      ,[Q1]
+      ,[Q2]
+      ,[Q3]
+      ,[Q4]
+      ,[PP1]
+      ,[PP2]
+      ,[PP3]
+      ,[PP4]
+      ,[PP5]
+      ,[PP6]
+      ,[PP7]
+      ,[PP8]
+      ,[PP9]
+      ,[PP10]
+      ,[PP11]
+      ,[PP12]
 FROM
-    (     
+    (
      SELECT a.academic_year_clean AS academic_year
-           ,DATENAME(MONTH,a.administered_at) AS module_num
+           ,a.module_number AS module_num
            
-           ,CASE
-             WHEN std.custom_code IN ('TES.W.KIPP.C.TP','TES.W.KIPP.C','TES.W.KIPP.C.I','TES.W.KIPP.N.FTT','TES.W.KIPP.C.F') THEN 'Focus on Task and Text'
-             WHEN std.custom_code IN ('TES.W.KIPP.C.O','TES.W.KIPP.N.O','TES.W.KIPP.C.O_1') THEN 'Organization'
-             WHEN std.custom_code IN ('TES.W.KIPP.C.AJ','TES.W.KIPP.C.S','TES.W.KIPP.N.DS','TES.W.KIPP.C.D') THEN 'Development and Support'
-             WHEN std.custom_code IN ('TES.W.KIPP.C.L','TES.W.KIPP.N.L','TES.W.KIPP.L.SF') THEN 'Language'
-             WHEN std.custom_code IN ('TES.W.KIPP.C.C','TES.W.KIPP.N.C','TES.W.KIPP.C.G','TES.W.KIPP.C.S_1') THEN 'Conventions'             
-            END AS rubric_strand
-                                  
-           ,CASE WHEN asrs.answered = 0 THEN NULL ELSE asrs.points END AS rubric_score          
+           ,std.description AS rubric_strand           
+           
+           ,pbl.label AS performance_band_label
 
            ,s.local_student_id AS student_number
      FROM gabby.illuminate_dna_assessments.assessments_identifiers a     
+     JOIN gabby.reporting.reporting_terms rt
+       ON a.administered_at BETWEEN rt.start_date AND rt.end_date
+      AND rt.identifier = 'RT'
+      AND rt.schoolid = 0
      JOIN gabby.illuminate_dna_assessments.assessment_standards ast
        ON a.assessment_id = ast.assessment_id      
      JOIN gabby.illuminate_standards.standards std
@@ -45,24 +45,79 @@ FROM
      JOIN gabby.illuminate_dna_assessments.agg_student_responses_standard asrs
        ON ast.assessment_id = asrs.assessment_id
       AND ast.standard_id = asrs.standard_id
+     JOIN gabby.illuminate_dna_assessments.performance_band_lookup_static pbl
+       ON a.performance_band_set_id = pbl.performance_band_set_id
+      AND asrs.percent_correct BETWEEN pbl.minimum_value AND pbl.maximum_value
      JOIN gabby.illuminate_public.students s
        ON asrs.student_id = s.student_id
      WHERE a.academic_year_clean = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
        AND a.scope = 'Process Piece'     
        AND a.subject_area = 'Writing' 
+
+     UNION ALL
+
+     SELECT sub.academic_year
+           ,sub.module_num
+           ,sub.rubric_strand
+      
+           ,pbl.label AS performance_band_label
+      
+           ,sub.student_number
+     FROM
+         (
+          SELECT a.academic_year_clean AS academic_year          
+                ,MIN(a.performance_band_set_id) AS min_performance_band_set_id
+
+                ,rt.alt_name AS module_num
+           
+                ,std.description AS rubric_strand
+
+                ,ROUND(AVG(asrs.percent_correct), 0) AS avg_percent_correct                
+
+                ,s.local_student_id AS student_number
+          FROM gabby.illuminate_dna_assessments.assessments_identifiers a     
+          JOIN gabby.reporting.reporting_terms rt
+            ON a.administered_at BETWEEN rt.start_date AND rt.end_date
+           AND rt.identifier = 'RT'
+           AND rt.schoolid = 0
+          JOIN gabby.illuminate_dna_assessments.assessment_standards ast
+            ON a.assessment_id = ast.assessment_id      
+          JOIN gabby.illuminate_standards.standards std
+            ON ast.standard_id = std.standard_id
+           AND std.subject_id IN (273, 269, 334)
+          JOIN gabby.illuminate_dna_assessments.agg_student_responses_standard asrs
+            ON ast.assessment_id = asrs.assessment_id
+           AND ast.standard_id = asrs.standard_id
+          JOIN gabby.illuminate_public.students s
+            ON asrs.student_id = s.student_id
+          WHERE a.academic_year_clean = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+            AND a.scope = 'Process Piece'     
+            AND a.subject_area = 'Writing' 
+          GROUP BY a.academic_year_clean           
+                  ,rt.alt_name           
+                  ,std.description
+                  ,s.local_student_id
+         ) sub
+     JOIN gabby.illuminate_dna_assessments.performance_band_lookup_static pbl
+       ON sub.min_performance_band_set_id = pbl.performance_band_set_id
+      AND sub.avg_percent_correct BETWEEN pbl.minimum_value AND pbl.maximum_value
     ) sub
 PIVOT(
-  AVG(rubric_score)
-  FOR module_num IN ([July]
-                    ,[August]
-                    ,[September]
-                    ,[October]
-                    ,[November]
-                    ,[December]
-                    ,[January]
-                    ,[February]
-                    ,[March]
-                    ,[April]
-                    ,[May]
-                    ,[June])
+  MAX(performance_band_label)
+  FOR module_num IN ([Q1]
+                    ,[Q2]
+                    ,[Q3]
+                    ,[Q4]
+                    ,[PP1]
+                    ,[PP2]
+                    ,[PP3]
+                    ,[PP4]
+                    ,[PP5]
+                    ,[PP6]
+                    ,[PP7]
+                    ,[PP8]
+                    ,[PP9]
+                    ,[PP10]
+                    ,[PP11]
+                    ,[PP12])
  ) p

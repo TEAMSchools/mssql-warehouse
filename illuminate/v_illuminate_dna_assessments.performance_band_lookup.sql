@@ -7,6 +7,7 @@ SELECT performance_band_set_id
       ,description
       ,minimum_value
       ,LEAD(minimum_value, 1, 1001) OVER(PARTITION BY performance_band_set_id ORDER BY label_number) - .1 AS maximum_value
+      ,label
       ,label_number
       ,is_mastery
 FROM
@@ -15,6 +16,7 @@ FROM
            ,CONVERT(VARCHAR(125),pbs.description) AS description
       
            ,CONVERT(FLOAT,pb.minimum_value) AS minimum_value
+           ,pb.label
            ,pb.label_number
            ,pb.is_mastery           
 
