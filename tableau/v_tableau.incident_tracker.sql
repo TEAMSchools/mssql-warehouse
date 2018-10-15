@@ -20,6 +20,7 @@ SELECT co.student_number
       ,co.iep_status
       ,co.gender
       ,co.ethnicity
+      ,co.region
       
       ,r.roster_name AS dl_rostername
       
@@ -29,6 +30,7 @@ SELECT co.student_number
       ,dli.create_first + ' ' + dli.create_last AS referring_teacher_name
       ,dli.update_first + ' ' + dli.update_last AS reviewed_by            
       ,dli.create_ts AS dl_timestamp      
+      ,dli.infraction
       ,ISNULL(dli.category, 'Referral') AS dl_behavior
       ,'Referral' AS dl_category
       
@@ -44,8 +46,8 @@ JOIN gabby.reporting.reporting_terms d
  AND CONVERT(DATE,dli.create_ts) BETWEEN d.start_date AND d.end_date
  AND d.identifier = 'RT'
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-  AND co.schoolid != 999999
   AND co.rn_year = 1
+  AND co.grade_level != 99  
 
 UNION ALL
 
@@ -59,6 +61,7 @@ SELECT co.student_number
       ,co.iep_status
       ,co.gender
       ,co.ethnicity
+      ,co.region
 
       ,r.roster_name AS dl_rostername
 
@@ -68,6 +71,7 @@ SELECT co.student_number
       ,dli.create_first + ' ' + dli.create_last AS referring_teacher_name
       ,dli.update_first + ' ' + dli.update_last AS reviewed_by
       ,ISNULL(dlip.startdate, dli.create_ts) AS dl_timestamp
+      ,dli.infraction
       ,dlip.penaltyname AS dl_behavior
       ,'Consequence' AS dl_category
 
@@ -85,8 +89,8 @@ JOIN gabby.reporting.reporting_terms d
  AND ISNULL(dlip.startdate, CONVERT(DATE,dli.create_ts)) BETWEEN d.start_date AND d.end_date 
  AND d.identifier = 'RT'
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-  AND co.schoolid != 999999
   AND co.rn_year = 1
+  AND co.grade_level != 99  
 
 UNION ALL
 
@@ -100,6 +104,7 @@ SELECT co.student_number
       ,co.iep_status
       ,co.gender
       ,co.ethnicity
+      ,co.region
 
       ,r.roster_name AS dl_rostername
            
@@ -109,6 +114,7 @@ SELECT co.student_number
       ,CONVERT(VARCHAR(125),dlb.staff_first_name + ' ' + dlb.staff_last_name) AS referring_teacher_name
       ,NULL AS reviewed_by
       ,dlb.behavior_date AS dl_timestamp
+      ,NULL AS infraction
       ,CONVERT(VARCHAR(250),dlb.behavior) AS dl_behavior
       ,CONVERT(VARCHAR(125),dlb.behavior_category) AS dl_category
       
