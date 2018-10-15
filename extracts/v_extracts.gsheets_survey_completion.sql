@@ -3,8 +3,9 @@ GO
 
 CREATE OR ALTER VIEW extracts.gsheets_survey_completion AS
 
-SELECT survey
-      ,feedback_recipient
-      ,responder
-      ,CONVERT(NVARCHAR,date_completed) AS date_completed
-FROM gabby.surveys.survey_completion
+SELECT sc.survey_type
+      ,sc.subject_name
+      ,sc.responder_email
+      ,CONVERT(NVARCHAR,sc.date_created) AS date_completed
+FROM gabby.surveys.survey_completion sc
+WHERE sc.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
