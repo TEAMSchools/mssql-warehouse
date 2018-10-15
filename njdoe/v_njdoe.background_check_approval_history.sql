@@ -12,7 +12,7 @@ SELECT bg.df_employee_number
       ,ah.schoolcode
       ,CASE WHEN ah.contractorcode = '' THEN NULL ELSE ah.contractorcode END AS contractorcode
       ,ah.jobposition
-      ,ah.pcn
+      ,CONVERT(BIGINT,CONVERT(FLOAT,CASE WHEN ah.pcn != '' THEN ah.pcn END)) AS pcn
       ,CASE WHEN ah.transferind = '' THEN NULL ELSE ah.transferind END AS transferind
 FROM gabby.njdoe.background_check_clean bg
 CROSS APPLY OPENJSON(bg.approval_history, '$')
