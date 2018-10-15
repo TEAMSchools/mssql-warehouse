@@ -42,7 +42,7 @@ WITH clean_people AS (
         ,CONVERT(VARCHAR(125),RTRIM(LEFT(e.ethnicity, CHARINDEX(' (', e.ethnicity)))) AS primary_ethnicity        
         ,CONVERT(VARCHAR(25),gabby.utilities.STRIP_CHARACTERS(mobile_number, '^0-9')) AS mobile_number
         ,CASE WHEN e.ethnicity LIKE '%(Hispanic%' THEN 1 ELSE 0 END AS is_hispanic
-        ,CASE WHEN e.primary_site_clean LIKE ' - Regional' THEN 1 ELSE 0 END AS is_regional_staff        
+        ,CASE WHEN e.primary_site_clean LIKE '% - Regional%' THEN 1 ELSE 0 END AS is_regional_staff        
         ,CASE
           WHEN e.legal_entity_name_clean = 'TEAM Academy Charter Schools' THEN 'YHD'
           WHEN e.legal_entity_name_clean = 'KIPP New Jersey' THEN 'D30'
