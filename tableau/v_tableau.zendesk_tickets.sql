@@ -39,11 +39,10 @@ SELECT t.id AS ticket_id
 
       ,g.name AS group_name
 
-	     ,c.comments_count	       
-      
-      ,slv.updated AS solved_timestamp            
-
-      ,tbh.total_bh_minutes
+	     ,tm.replies AS comments_count	             
+      ,tm.solved_at AS solved_timestamp
+      ,tm.full_resolution_time_in_minutes_business AS total_bh_minutes
+      ,tm.reply_time_in_minutes_business
 FROM gabby.zendesk.ticket t
 LEFT JOIN gabby.zendesk.[user] s
   ON t.submitter_id = s.id
@@ -51,10 +50,6 @@ LEFT JOIN gabby.zendesk.[user] a
   ON t.assignee_id = a.id
 LEFT JOIN gabby.zendesk.[group] g
   ON t.group_id = g.id
-LEFT JOIN comments_count c
-  ON t.id = c.ticket_id
-LEFT JOIN solved slv
-  ON t.id = slv.ticket_id
-LEFT JOIN gabby. zendesk.ticket_business_hours tbh
-  ON t.id = tbh.ticket_id
+LEFT JOIN gabby.zendesk.ticket_metrics_clean tm
+  ON t.id = tm.ticket_id
 WHERE t.status != 'deleted'
