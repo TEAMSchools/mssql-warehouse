@@ -24,5 +24,4 @@ CROSS APPLY OPENJSON(cc.application_history, '$')
     status VARCHAR(125),
     checklist NVARCHAR(MAX) AS JSON
    ) AS ah
-WHERE cc.rn_employee_current = 1
-  AND cc.application_history != '[]'
+WHERE cc.application_history != '[]'

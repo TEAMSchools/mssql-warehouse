@@ -31,5 +31,4 @@ CROSS APPLY OPENJSON(cc.certificate_history, '$')
     month_year_expiration VARCHAR(25),
     certificate_id VARCHAR(25)
    ) AS ch
-WHERE cc.rn_employee_current = 1
-  AND cc.certificate_history != '[]'
+WHERE cc.certificate_history != '[]'

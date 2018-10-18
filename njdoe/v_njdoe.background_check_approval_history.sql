@@ -4,7 +4,7 @@ GO
 CREATE OR ALTER VIEW njdoe.background_check_approval_history AS
 
 SELECT bg.df_employee_number
-      ,bg.approval_history
+      ,bg.approval_history AS approval_history_json
       
       ,ah.approvaldate
       ,ah.countycode
@@ -26,5 +26,4 @@ CROSS APPLY OPENJSON(bg.approval_history, '$')
     pcn VARCHAR(25),
     transferind DATETIME2
    ) AS ah
-WHERE bg.rn_employee_current = 1
-  AND bg.approval_history != '[]'
+WHERE bg.approval_history != '[]'
