@@ -31,6 +31,7 @@ JOIN gabby.reporting.reporting_terms term
 LEFT JOIN gabby.lit.all_test_events_static testid
   ON co.student_number = testid.student_number
  AND co.academic_year = testid.academic_year
+ AND testid.test_date BETWEEN term.start_date AND term.end_date
 LEFT JOIN gabby.lit.guided_reading_roster gr
   ON co.student_number = gr.student_number
  AND co.academic_year = gr.academic_year

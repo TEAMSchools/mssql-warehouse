@@ -3,7 +3,19 @@ GO
 
 CREATE OR ALTER VIEW lit.fpodms_test_events AS 
 
-WITH clean_data AS (
+WITH classes_dedupe AS (
+  SELECT c.school_name
+        ,c.school_year
+        ,c.name
+        ,c.teacher_first_name
+        ,c.teacher_last_name
+        ,ROW_NUMBER() OVER(
+           PARTITION BY c.school_name, c.school_year, c.name
+             ORDER BY c.student_count DESC) AS rn
+  FROM gabby.fpodms.bas_classes c
+ )
+
+,clean_data AS (
   SELECT sub.unique_id
         ,sub.student_identifier
         ,sub.year_of_assessment
@@ -87,11 +99,11 @@ WITH clean_data AS (
              ,3273 AS testid
              ,1 AS is_fp
        FROM gabby.fpodms.bas_assessments fp
-       JOIN gabby.fpodms.bas_classes c
+       JOIN classes_dedupe c
          ON fp.school_name = c.school_name
         AND fp.year_of_assessment = c.school_year
         AND fp.class_name = c.name
-        AND c.student_count > 0
+        AND c.rn = 1
       ) sub
  )
 
