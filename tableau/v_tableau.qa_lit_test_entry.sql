@@ -9,6 +9,7 @@ SELECT co.student_number
       ,co.region
       ,co.school_name
       ,co.grade_level
+      ,co.school_level
 
       ,CONVERT(VARCHAR(5),term.alt_name) AS lit_term      
 
