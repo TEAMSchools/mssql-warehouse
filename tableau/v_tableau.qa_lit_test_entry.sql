@@ -28,6 +28,7 @@ JOIN gabby.reporting.reporting_terms term
  AND co.academic_year = term.academic_year
  AND term.identifier = 'LIT'
  AND term.start_date <= CONVERT(DATE,GETDATE())
+ AND term._fivetran_deleted = 0
 LEFT JOIN gabby.lit.all_test_events_static testid
   ON co.student_number = testid.student_number
  AND co.academic_year = testid.academic_year

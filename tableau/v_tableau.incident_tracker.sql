@@ -45,6 +45,7 @@ JOIN gabby.reporting.reporting_terms d
   ON co.schoolid = d.schoolid
  AND CONVERT(DATE,dli.create_ts) BETWEEN d.start_date AND d.end_date
  AND d.identifier = 'RT'
+ AND d._fivetran_deleted = 0
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.rn_year = 1
   AND co.grade_level != 99  
@@ -88,6 +89,7 @@ JOIN gabby.reporting.reporting_terms d
   ON co.schoolid = d.schoolid
  AND ISNULL(dlip.startdate, CONVERT(DATE,dli.create_ts)) BETWEEN d.start_date AND d.end_date 
  AND d.identifier = 'RT'
+ AND d._fivetran_deleted = 0
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.rn_year = 1
   AND co.grade_level != 99  
@@ -130,6 +132,7 @@ JOIN gabby.reporting.reporting_terms d
   ON co.schoolid = d.schoolid
  AND dlb.behavior_date BETWEEN d.start_date AND d.end_date 
  AND d.identifier = 'RT'
+ AND d._fivetran_deleted = 0
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.rn_year = 1
   AND co.schoolid = 73253

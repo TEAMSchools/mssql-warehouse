@@ -37,6 +37,7 @@ FROM
        ON a.administered_at BETWEEN rt.start_date AND rt.end_date
       AND rt.identifier = 'RT'
       AND rt.schoolid = 0
+      AND rt._fivetran_deleted = 0
      JOIN gabby.illuminate_dna_assessments.assessment_standards ast
        ON a.assessment_id = ast.assessment_id      
      JOIN gabby.illuminate_standards.standards std
@@ -80,6 +81,7 @@ FROM
             ON a.administered_at BETWEEN rt.start_date AND rt.end_date
            AND rt.identifier = 'RT'
            AND rt.schoolid = 0
+           AND rt._fivetran_deleted = 0
           JOIN gabby.illuminate_dna_assessments.assessment_standards ast
             ON a.assessment_id = ast.assessment_id      
           JOIN gabby.illuminate_standards.standards std

@@ -173,11 +173,13 @@ FROM
            AND co.date BETWEEN dts.start_date AND dts.end_date
            AND dts.identifier = 'AR'
            AND dts.time_per_name != 'ARY'
+           AND dts._fivetran_deleted = 0
           LEFT JOIN gabby.reporting.reporting_terms y1dts
             ON co.academic_year = y1dts.academic_year
            AND co.schoolid = y1dts.schoolid      
            AND y1dts.identifier = 'AR'
            AND y1dts.time_per_name = 'ARY'
+           AND y1dts._fivetran_deleted = 0
           LEFT JOIN gabby.powerschool.course_enrollments_static enr 
             ON co.student_number = enr.student_number
            AND co.academic_year = enr.academic_year

@@ -29,6 +29,7 @@ WITH roster AS (
         AND co.academic_year = dts.academic_year
         AND dts.identifier = 'AR'          
         AND dts.time_per_name != 'ARY'  
+        AND dts._fivetran_deleted = 0
        WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
        ) sub
   GROUP BY student_number

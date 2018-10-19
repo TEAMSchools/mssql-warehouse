@@ -28,6 +28,7 @@ WITH subjects AS (
     ON co.academic_year = terms.academic_year
    AND terms.identifier = 'MAP'
    AND terms.start_date <= GETDATE()
+   AND terms._fivetran_deleted = 0
   CROSS JOIN subjects
   WHERE co.rn_year = 1
     AND co.grade_level != 99    

@@ -51,6 +51,7 @@ WITH long_data AS (
        JOIN gabby.reporting.reporting_terms d
          ON a.administered_at BETWEEN d.start_date AND d.end_date
         AND d.identifier = 'ACT'
+        AND d._fivetran_deleted = 0
        JOIN gabby.powerschool.cohort_identifiers_static co
          ON s.local_student_id = co.student_number
         AND a.academic_year_clean = co.academic_year

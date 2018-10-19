@@ -53,6 +53,7 @@ JOIN gabby.reporting.reporting_terms dt
   ON cal.schoolid = dt.schoolid
  AND cal.date_value BETWEEN dt.start_date AND dt.end_date
  AND dt.identifier = 'RT'
+ AND dt._fivetran_deleted = 0
 LEFT JOIN emp_att pt
   ON df.df_employee_number = pt.employee_number
  AND cal.date_value = pt.pay_date

@@ -21,7 +21,8 @@ WITH roster_scaffold AS (
     ON r.academic_year = terms.academic_year 
    AND r.schoolid = terms.schoolid
    AND r.exitdate > terms.start_date
-   AND terms.identifier = 'LIT'          
+   AND terms.identifier = 'LIT'
+   AND terms._fivetran_deleted = 0          
   WHERE r.rn_year = 1
  )
 

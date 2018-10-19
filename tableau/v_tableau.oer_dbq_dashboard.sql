@@ -111,6 +111,7 @@ WITH enrollments AS (
          ON r.date_administered BETWEEN rt.start_date AND rt.end_date
         AND rt.schoolid = 73253
         AND rt.identifier = 'RT'
+        AND rt._fivetran_deleted = 0
       ) sub
   UNPIVOT(
     field_value
@@ -230,6 +231,7 @@ FROM
        ON a.administered_at BETWEEN dts.start_date AND dts.end_date
       AND dts.schoolid = 73253
       AND dts.identifier = 'RT'     
+      AND dts._fivetran_deleted = 0
      JOIN gabby.illuminate_dna_assessments.agg_student_responses_standard r
        ON a.assessment_id = r.assessment_id      
      JOIN gabby.illuminate_public.students s

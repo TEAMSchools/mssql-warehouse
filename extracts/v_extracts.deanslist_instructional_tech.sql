@@ -75,6 +75,7 @@ FROM
      JOIN gabby.reporting.reporting_terms dt 
        ON lex.academic_year = dt.academic_year
       AND dt.identifier = 'SY'
+      AND dt._fivetran_deleted = 0
      WHERE lex.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
        AND lex.rn_curr = 1
     ) sub

@@ -58,6 +58,7 @@ WITH progress_rollup AS (
          ON co.academic_year = rt.academic_year       
         AND co.schoolid = rt.schoolid
         AND rt.identifier = 'AR'     
+        AND rt._fivetran_deleted = 0
        LEFT OUTER JOIN gabby.renaissance.ar_studentpractice_identifiers_static arsp
          ON co.student_number = arsp.student_number
         AND arsp.dt_taken BETWEEN rt.start_date AND rt.end_date

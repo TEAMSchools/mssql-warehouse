@@ -30,6 +30,7 @@ WITH roster AS (
    AND co.schoolid = dt.schoolid
    AND dt.identifier = 'RT'
    AND dt.alt_name != 'Summer School'
+   AND dt._fivetran_deleted = 0
   WHERE co.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
     AND co.reporting_schoolid NOT IN (999999, 5173)
     AND co.rn_year = 1    
@@ -61,6 +62,7 @@ WITH roster AS (
     ON co.academic_year = dt.academic_year   
    AND dt.schoolid = 0
    AND dt.identifier = 'SY'   
+   AND dt._fivetran_deleted = 0
   WHERE co.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
     AND co.reporting_schoolid NOT IN (999999, 5173)
     AND co.rn_year = 1

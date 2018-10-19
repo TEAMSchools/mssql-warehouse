@@ -90,3 +90,4 @@ JOIN gabby.reporting.reporting_terms dt
   ON co.schoolid = dt.schoolid
  AND sub.test_date BETWEEN dt.start_date AND dt.end_date
  AND dt.identifier = 'LIT'
+ AND dt._fivetran_deleted = 0

@@ -337,6 +337,7 @@ FROM
       AND co.academic_year = dt.academic_year
       AND dt.identifier = 'RT'
       AND dt.alt_name != 'Summer School'
+      AND dt._fivetran_deleted = 0
      LEFT JOIN attendance att
        ON co.studentid = att.studentid
       AND co.academic_year = att.academic_year
