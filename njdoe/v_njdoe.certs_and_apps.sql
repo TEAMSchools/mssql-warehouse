@@ -14,7 +14,8 @@ SELECT df_employee_number
       ,null as expiration_date
       ,null as county_code
       ,null as district_code
-      ,'application' AS app_or_cert 
+      ,'application' AS app_or_cert
+      ,ROW_NUMBER() OVER( PARTITION BY df_employee_number, endorsement ORDER BY date_received DESC) AS rn 
 FROM njdoe.certification_application_history
 
 UNION ALL
@@ -31,4 +32,5 @@ SELECT df_employee_number
       ,county_code
       ,district_code
       ,'certification' AS app_or_cert 
+      ,ROW_NUMBER() OVER( PARTITION BY df_employee_number, endorsement ORDER BY issued_date DESC) AS rn
 FROM njdoe.certification_certificate_history
