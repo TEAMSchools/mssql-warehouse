@@ -20,6 +20,7 @@ SELECT sub.survey_type
       ,sub.n_total
       ,sub.question_text
       ,sub.open_ended      
+      ,sub.subject_employee_number
       ,sub.subject_name
       ,sub.subject_location      
       ,sub.subject_legal_entity_name
@@ -61,6 +62,7 @@ FROM
            ,so.response_weight
            ,(so.response_value * so.response_weight) AS response_value_weighted
 
+           ,COALESCE(dfdf.df_employee_number, dfadp.df_employee_number) AS subject_employee_number
            ,COALESCE(CONCAT(dfdf.preferred_first_name, ' ', dfdf.preferred_last_name) 
                     ,CONCAT(dfadp.preferred_first_name, ' ', dfadp.preferred_last_name)) AS subject_name
            ,COALESCE(dfdf.legal_entity_name, dfadp.legal_entity_name) AS subject_legal_entity_name

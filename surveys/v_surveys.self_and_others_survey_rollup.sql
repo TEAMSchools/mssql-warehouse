@@ -7,6 +7,7 @@ SELECT survey_type
       ,academic_year
       ,reporting_term
       ,term_name            
+      ,subject_employee_number
       ,subject_name
       ,subject_location
       ,subject_legal_entity_name
@@ -29,7 +30,8 @@ WHERE open_ended = 'N'
 GROUP BY survey_type
         ,academic_year
         ,reporting_term
-        ,term_name            
+        ,term_name   
+        ,subject_employee_number         
         ,subject_name
         ,subject_location
         ,subject_legal_entity_name

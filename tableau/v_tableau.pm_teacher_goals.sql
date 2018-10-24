@@ -186,7 +186,7 @@ WITH teacher_crosswalk AS (
           ,t.teachernumber
  )
 
-/* Classroom goals -- JOIN to student data by sections */
+/* Classroom goals -- JOIN to student data by sectionid */
 SELECT tgs.df_employee_number
       ,tgs.preferred_name
       ,tgs.primary_site
@@ -229,7 +229,7 @@ WHERE tgs.goal_type = 'Class'
 
 UNION ALL
 
-/* GLT goals -- JOIN to student data by grade-level */
+/* GLT goals -- JOIN to student data by academic year, schoolid, grade-level */
 SELECT tgs.df_employee_number
       ,tgs.preferred_name
       ,tgs.primary_site
