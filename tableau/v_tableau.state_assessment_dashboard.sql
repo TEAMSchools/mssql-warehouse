@@ -24,55 +24,33 @@ WITH promo AS (
 ,external_prof AS (
   SELECT academic_year        
         ,test_code
-        --,grade_level
         ,[NJ]
         ,[NPS]
         ,[CPS]
   FROM
       (
        SELECT academic_year
-             ,test_code COLLATE SQL_Latin1_General_CP1_CI_AS AS test_code
-             --,grade_level
-             ,entity COLLATE SQL_Latin1_General_CP1_CI_AS AS entity                          
+             ,test_code             
+             ,entity
              ,(SUM(proficient_count) / SUM(valid_scores)) * 100 AS pct_proficient
        FROM
            (
             SELECT academic_year                                    
-                  ,test_code                                    
-                  --,CASE
-                  --  WHEN subgroup_type = 'GRADE - 06' THEN 6
-                  --  WHEN subgroup_type = 'GRADE - 07' THEN 7
-                  --  WHEN subgroup_type = 'GRADE - 08' THEN 8
-                  --  WHEN subgroup_type = 'GRADE - 09' THEN 9
-                  --  WHEN subgroup_type = 'GRADE - 10' THEN 10
-                  --  WHEN subgroup_type = 'GRADE - 11' THEN 11
-                  --  WHEN subgroup_type = 'GRADE - 12' THEN 12                    
-                  --  WHEN test_code IN ('ELA03', 'MAT03') THEN 3
-                  --  WHEN test_code IN ('ELA04', 'MAT04') THEN 4
-                  --  WHEN test_code IN ('ELA05', 'MAT05') THEN 5
-                  --  WHEN test_code IN ('ELA06', 'MAT06') THEN 6
-                  --  WHEN test_code IN ('ELA07', 'MAT07') THEN 7
-                  --  WHEN test_code IN ('ELA08', 'MAT08') THEN 8
-                  --  WHEN test_code IN ('ELA09', 'MAT09') THEN 9
-                  --  WHEN test_code IN ('ELA10', 'MAT10') THEN 10
-                  --  WHEN test_code IN ('ELA11', 'MAT11') THEN 11
-                  --  WHEN test_code IN ('ELA12', 'MAT12') THEN 12
-                  -- END AS grade_level
+                  ,test_code    
                   ,CASE
-                    WHEN district_code IS NULL THEN 'NJ'
-                    WHEN district_code = 0680 THEN 'CPS'
-                    WHEN district_code = 3570 THEN 'NPS'
-                   END AS entity                  
+                    WHEN district_name IS NULL THEN 'NJ'
+                    WHEN UPPER(district_name) = 'CAMDEN CITY' THEN 'CPS'
+                    WHEN UPPER(district_name) = 'NEWARK CITY' THEN 'NPS'
+                   END AS entity                
                   ,valid_scores
-                  ,((l_4_percent / 100) * valid_scores) + ((l_5_percent / 100) * valid_scores) AS proficient_count
+                  ,((l_4_percent / 100) * valid_scores) + ((l_5_percent / 100) * valid_scores) AS proficient_count                                
             FROM gabby.njdoe.parcc
             WHERE school_code IS NULL
-              AND (district_code IN (3570, 0680) OR (district_code IS NULL AND dfg = ''))
-              AND ((LEFT(test_code, 3) IN ('ELA', 'MAT') AND subgroup = 'TOTAL') OR ((LEFT(test_code, 3) IN ('ALG', 'GEO') AND subgroup = 'GRADE')))
+              AND (UPPER(district_name) IN ('NEWARK CITY', 'CAMDEN CITY') OR (district_name IS NULL AND dfg IS NULL))
+              AND subgroup = 'TOTAL'
            ) sub       
        GROUP BY academic_year
-               ,test_code
-               --,grade_level
+               ,test_code               
                ,entity
       ) sub
   PIVOT(
@@ -157,7 +135,7 @@ JOIN gabby.parcc.summative_record_file_clean parcc
  AND co.academic_year = parcc.academic_year
 LEFT JOIN external_prof ext
   ON co.academic_year = ext.academic_year
- AND parcc.test_code = ext.test_code
+ AND parcc.test_code = ext.test_code COLLATE Latin1_General_BIN
 LEFT JOIN promo
   ON co.student_number = promo.student_number
 LEFT JOIN ms_grad ms
@@ -202,9 +180,9 @@ SELECT co.student_number
         WHEN asa.scaled_score < 200 THEN 0
        END AS is_proficient
 
-      ,ext.nj AS pct_prof_nj
-      ,ext.nps AS pct_prof_nps
-      ,ext.cps AS pct_prof_cps
+      ,NULL AS pct_prof_nj
+      ,NULL AS pct_prof_nps
+      ,NULL AS pct_prof_cps
       ,NULL AS pct_prof_parcc       
 
       ,promo.attended_es
@@ -217,9 +195,6 @@ FROM gabby.powerschool.cohort_identifiers_static co
 JOIN gabby.njsmart.all_state_assessments asa
   ON co.student_number = asa.local_student_id
  AND co.academic_year = asa.academic_year
-LEFT JOIN external_prof ext
-  ON co.academic_year = ext.academic_year
- AND CONCAT(LEFT(asa.subject, 3), RIGHT(CONCAT('0', co.grade_level), 2)) = ext.test_code
 LEFT JOIN promo
   ON co.student_number = promo.student_number
 LEFT JOIN ms_grad ms
