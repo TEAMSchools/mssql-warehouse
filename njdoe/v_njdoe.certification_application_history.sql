@@ -9,9 +9,9 @@ SELECT cc.df_employee_number
       ,ah.application_number
       ,ah.date_received
       ,ah.endorsement
-      ,ah.certificate_type
-      ,ah.request_type
-      ,ah.status
+      ,CASE WHEN ah.certificate_type != '' THEN ah.certificate_type END AS certificate_type
+      ,CASE WHEN ah.request_type != '' THEN ah.request_type END AS request_type
+      ,CASE WHEN ah.status != '' THEN ah.status END AS status
       ,ah.checklist
 FROM gabby.njdoe.certification_check_clean cc
 CROSS APPLY OPENJSON(cc.application_history, '$')
