@@ -84,7 +84,7 @@ FROM
              
                 ,enr.illuminate_subject AS subject_area
                 ,enr.credittype             
-                ,CASE WHEN enr.illuminate_subject IN ('Algebra I', 'Geometry', 'Algebra IIA', 'Algebra IIB') THEN 1 ELSE 0 END AS is_advanced_math
+                ,CASE WHEN enr.illuminate_subject IN ('Algebra I', 'Geometry', 'Algebra II', 'Algebra IIA', 'Algebra IIB') THEN 1 ELSE 0 END AS is_advanced_math
           FROM gabby.powerschool.course_enrollments_static enr
           JOIN gabby.illuminate_public.students ils
             ON enr.student_number = ils.local_student_id
@@ -96,7 +96,7 @@ FROM
            AND (enr.academic_year + 1) = ssc.academic_year        
           WHERE enr.course_enroll_status = 0
             AND enr.section_enroll_status = 0
-            AND enr.illuminate_subject IN ('Mathematics','Algebra I','Geometry','Algebra IIA','Algebra IIB'
+            AND enr.illuminate_subject IN ('Mathematics','Algebra I','Geometry','Algebra II','Algebra IIA','Algebra IIB'
                                           ,'Text Study','English 100','English 200','English 300','English 400'
                                           ,'Science','Social Studies') 
          ) sub
