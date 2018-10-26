@@ -77,6 +77,7 @@ FROM
            ,SUM(CASE WHEN y1_grade_letter LIKE 'F%' THEN 1 ELSE 0 END) AS n_failing_y1
      FROM powerschool.final_grades_static
      WHERE excludefromgpa = 0
+       AND credit_hours > 0
      GROUP BY student_number
              ,academic_year      
              ,term_name
@@ -84,5 +85,4 @@ FROM
              ,is_curterm
              ,schoolid
              ,grade_level
-     HAVING SUM(credit_hours) > 0
     ) sub
