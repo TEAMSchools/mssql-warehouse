@@ -74,7 +74,7 @@ WITH combined_unpivot AS (
 
        UNION ALL
 
-       SELECT CONVERT(INT,local_student_id) AS local_student_id
+       SELECT CONVERT(BIGINT,CONVERT(FLOAT,REPLACE(local_student_id, ' ', ''))) AS local_student_id
              ,CONVERT(INT, SUBSTRING(_file, PATINDEX('%- [0-9][0-9][0-9][0-9]%', _file) + 2, 4)) AS academic_year
              ,'HSPA' AS test_type
       
