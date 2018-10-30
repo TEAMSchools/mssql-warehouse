@@ -55,7 +55,8 @@ JOIN gabby.illuminate_dna_assessments.course_enrollment_scaffold_static ce
   ON a.academic_year = ce.academic_year 
  AND agl.grade_level_id = ce.grade_level_id
  AND a.subject_area = ce.subject_area       
-WHERE a.subject_area IN ('Algebra I','Geometry','Algebra II','Algebra IIA','Algebra IIB','English 100','English 200','English 300','English 400')  
+WHERE a.subject_area IN ('Algebra I','Geometry','Algebra II','Algebra IIA','Algebra IIB','Pre-Calculus'
+                        ,'English 100','English 200','English 300','English 400')  
   AND a.deleted_at IS NULL
   AND a.normed_scope IS NOT NULL
 
@@ -85,7 +86,8 @@ JOIN gabby.illuminate_public.student_session_aff_clean_static ssa
   ON sa.student_id = ssa.student_id
  AND a.academic_year = ssa.academic_year
  AND agl.grade_level_id != ssa.grade_level_id      
-WHERE a.subject_area NOT IN ('Algebra I','Geometry','Algebra II','Algebra IIA','Algebra IIB','English 100','English 200','English 300','English 400')
+WHERE a.subject_area NOT IN ('Algebra I','Geometry','Algebra II','Algebra IIA','Algebra IIB','Pre-Calculus'
+                            ,'English 100','English 200','English 300','English 400')
   AND a.deleted_at IS NULL
   AND a.normed_scope IS NOT NULL
 
