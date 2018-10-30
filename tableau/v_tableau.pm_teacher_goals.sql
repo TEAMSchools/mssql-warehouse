@@ -1,7 +1,7 @@
 USE gabby
 GO
 
---CREATE OR ALTER VIEW tableau.pm_teacher_goals AS
+CREATE OR ALTER VIEW tableau.pm_teacher_goals AS
 
 WITH teacher_crosswalk AS (
   SELECT sr.df_employee_number
@@ -315,7 +315,7 @@ WITH teacher_crosswalk AS (
         ,rt.time_per_name
         ,'etr_overall_score' AS metric_name
         
-        ,ROUND(wo.score, 2) AS metric_value
+        ,wo.score AS metric_value
         
         ,ROW_NUMBER() OVER(
            PARTITION BY sr.df_employee_number, rt.academic_year, rt.time_per_name
@@ -337,7 +337,7 @@ WITH teacher_crosswalk AS (
         ,academic_year
         ,reporting_term      
         ,'so_survey_overall_score' AS metric_name
-        ,ROUND(SUM(total_weighted_response_value) / SUM(total_response_weight), 2) AS metric_value
+        ,SUM(total_weighted_response_value) / SUM(total_response_weight) AS metric_value
   FROM gabby.surveys.self_and_others_survey_rollup_static
   GROUP BY subject_employee_number
           ,academic_year
@@ -413,7 +413,7 @@ SELECT tgs.df_employee_number
       ,NULL AS grade_level
       ,CASE
         WHEN tgs.data_type = '#' THEN CONVERT(VARCHAR,ROUND(tgs.tier_3, 2))
-        WHEN tgs.data_type = '%' THEN CONVERT(VARCHAR,ROUND(CONVERT(FLOAT,tgs.tier_3) * 100, 1)) + '%'
+        WHEN tgs.data_type = '%' THEN CONVERT(VARCHAR,ROUND(CONVERT(FLOAT,tgs.tier_3) * 100, 2)) + '%'
        END AS goal_display
       
       ,ig.reporting_term      
@@ -421,7 +421,7 @@ SELECT tgs.df_employee_number
       ,NULL AS n_students
       ,CASE
         WHEN tgs.data_type = '#' THEN CONVERT(VARCHAR,ROUND(ig.metric_value, 2))
-        WHEN tgs.data_type = '%' THEN CONVERT(VARCHAR,ROUND(ig.metric_value * 100, 1)) + '%'
+        WHEN tgs.data_type = '%' THEN CONVERT(VARCHAR,ROUND(ig.metric_value * 100, 2)) + '%'
        END AS metric_value_display
 FROM teacher_goal_scaffold tgs
 LEFT JOIN individual_goal_data ig
@@ -463,7 +463,7 @@ SELECT tgs.df_employee_number
       ,tgs.grade_level
       ,CASE
         WHEN tgs.data_type = '#' THEN CONVERT(VARCHAR,ROUND(tgs.tier_3, 2))
-        WHEN tgs.data_type = '%' THEN CONVERT(VARCHAR,ROUND(CONVERT(FLOAT,tgs.tier_3) * 100, 1)) + '%'
+        WHEN tgs.data_type = '%' THEN CONVERT(VARCHAR,ROUND(CONVERT(FLOAT,tgs.tier_3) * 100, 2)) + '%'
        END AS goal_display
       
       ,glt.reporting_term      
@@ -471,7 +471,7 @@ SELECT tgs.df_employee_number
       ,NULL AS n_students
       ,CASE
         WHEN tgs.data_type = '#' THEN CONVERT(VARCHAR,ROUND(glt.metric_value, 2))
-        WHEN tgs.data_type = '%' THEN CONVERT(VARCHAR,ROUND(glt.metric_value * 100, 1)) + '%'
+        WHEN tgs.data_type = '%' THEN CONVERT(VARCHAR,ROUND(glt.metric_value * 100, 2)) + '%'
        END AS metric_value_display
 FROM teacher_goal_scaffold tgs
 LEFT JOIN glt_goal_data glt
@@ -514,7 +514,7 @@ SELECT sub.df_employee_number
       ,sub.grade_level
       ,CASE
         WHEN sub.data_type = '#' THEN CONVERT(VARCHAR,ROUND(sub.tier_3, 2))
-        WHEN sub.data_type = '%' THEN CONVERT(VARCHAR,ROUND(CONVERT(FLOAT,sub.tier_3) * 100, 1)) + '%'
+        WHEN sub.data_type = '%' THEN CONVERT(VARCHAR,ROUND(CONVERT(FLOAT,sub.tier_3) * 100, 2)) + '%'
        END AS goal_display
 
       ,sub.metric_term AS reporting_term
@@ -524,9 +524,9 @@ SELECT sub.df_employee_number
        END AS metric_value      
       ,COUNT(sub.student_number) AS n_students
       ,CASE
-        WHEN sub.metric_label IN ('Lit Cohort Growth from Last Year', 'Math Cohort Growth from Last Year') THEN CONVERT(VARCHAR,ROUND((AVG(sub.is_mastery) - sub.prior_year_outcome) * 100, 1)) + '%'
+        WHEN sub.metric_label IN ('Lit Cohort Growth from Last Year', 'Math Cohort Growth from Last Year') THEN CONVERT(VARCHAR,ROUND((AVG(sub.is_mastery) - sub.prior_year_outcome) * 100, 2)) + '%'
         WHEN sub.data_type = '#' THEN CONVERT(VARCHAR,ROUND(AVG(sub.is_mastery), 2))
-        WHEN sub.data_type = '%' THEN CONVERT(VARCHAR,ROUND((AVG(sub.is_mastery) - sub.prior_year_outcome) * 100, 1)) + '%'
+        WHEN sub.data_type = '%' THEN CONVERT(VARCHAR,ROUND((AVG(sub.is_mastery) - sub.prior_year_outcome) * 100, 2)) + '%'
        END AS metric_value_display
 FROM
     (
