@@ -58,7 +58,9 @@ WITH ada AS (
 		      ,CASE WHEN co.lep_status = 1 THEN 'LEP' ELSE NULL END AS is_lep 
         
         ,CASE WHEN gpa.gpa_term >= 3 THEN 'Quarter GPA 3.0+' ELSE NULL END AS is_quarter_gpa_3plus
-        
+        ,CASE WHEN gpa.gpa_term >= 3.5 THEN 'Quarter GPA 3.5+' ELSE NULL END AS is_quarter_gpa_35plus
+
+
         ,CASE WHEN sp.[Out of District] IS NOT NULL THEN 'Out-of-District Placement' ELSE NULL END AS is_ood
         ,CASE WHEN sp.[NCCS] IS NOT NULL THEN 'NCCS' ELSE NULL END AS is_nccs
         ,CASE WHEN sp.[Pathways MS] IS NOT NULL OR sp.[Pathways ES] IS NOT NULL THEN 'Pathways' ELSE NULL END AS is_pathways
@@ -93,6 +95,7 @@ FROM (
             ,CAST(is_504 AS VARCHAR(250)) AS is_504
             ,CAST(is_lep AS VARCHAR(250)) AS is_lep
             ,CAST(is_quarter_gpa_3plus AS VARCHAR(250)) AS is_quarter_gpa_3plus
+			,CAST(is_quarter_gpa_35plus AS VARCHAR(250)) AS is_quarter_gpa_35plus
             ,CAST(is_ood AS VARCHAR(250)) AS is_ood
             ,CAST(is_nccs AS VARCHAR(250)) AS is_nccs
             ,CAST(is_pathways AS VARCHAR(250)) AS is_pathways
@@ -103,5 +106,5 @@ FROM (
      ) sub
 UNPIVOT (
   value
-  FOR field IN (is_iep, is_504, is_lep, is_quarter_gpa_3plus, is_ood, is_nccs, is_pathways, is_home_instruction, is_chronic_absentee)
+  FOR field IN (is_iep, is_504, is_lep, is_quarter_gpa_3plus, is_quarter_gpa_35plus, is_ood, is_nccs, is_pathways, is_home_instruction, is_chronic_absentee)
  ) u
