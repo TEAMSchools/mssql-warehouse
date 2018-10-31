@@ -576,7 +576,7 @@ FROM
       AND enr.academic_year = co.academic_year
       AND enr.db_name = co.db_name
       AND co.rn_year = 1
-     LEFT JOIN assessment_metrics am
+     JOIN assessment_metrics am
        ON tgs.academic_year = am.academic_year
       AND tgs.metric_name = am.metric_name
       AND tgs.metric_term = am.module_number
