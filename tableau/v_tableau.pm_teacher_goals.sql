@@ -522,7 +522,7 @@ SELECT sub.df_employee_number
         WHEN sub.metric_label IN ('Lit Cohort Growth from Last Year', 'Math Cohort Growth from Last Year') THEN AVG(sub.is_mastery) - sub.prior_year_outcome
         ELSE AVG(sub.is_mastery) 
        END AS metric_value      
-      ,COUNT(sub.student_number) AS n_students
+      ,COUNT(DISTINCT sub.student_number) AS n_students
       ,CASE
         WHEN sub.metric_label IN ('Lit Cohort Growth from Last Year', 'Math Cohort Growth from Last Year') THEN CONVERT(VARCHAR,ROUND((AVG(sub.is_mastery) - sub.prior_year_outcome) * 100, 2)) + '%'
         WHEN sub.data_type = '#' THEN CONVERT(VARCHAR,ROUND(AVG(sub.is_mastery), 2))
