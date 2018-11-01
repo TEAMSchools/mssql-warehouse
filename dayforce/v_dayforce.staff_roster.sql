@@ -30,7 +30,7 @@ WITH clean_people AS (
         ,e.rehire_date
         ,e.position_effective_from_date
         ,e.annual_salary
-        ,e.grades_taught
+        ,CONVERT(VARCHAR(125),e.grades_taught) AS grades_taught
         ,e.subjects_taught
         ,e.position_effective_to_date
         ,NULL AS leadership_role /* no data in export */

@@ -3,198 +3,7 @@ GO
 
 CREATE OR ALTER VIEW tableau.pm_teacher_goals AS
 
-WITH teacher_crosswalk AS (
-  SELECT sr.df_employee_number
-        ,sr.preferred_name        
-        ,sr.primary_site
-        ,sr.primary_on_site_department
-        ,sr.grades_taught
-        ,sr.primary_job
-        ,sr.legal_entity_name        
-        ,sr.is_active
-        ,sr.primary_site_schoolid
-        ,sr.manager_df_employee_number
-        ,sr.manager_name
-        ,CASE
-          WHEN sr.legal_entity_name = 'TEAM Academy Charter Schools' THEN 'kippnewark'
-          WHEN sr.legal_entity_name = 'KIPP Cooper Norcross Academy' THEN 'kippcamden'
-          WHEN sr.legal_entity_name = 'KIPP Miami' THEN 'kippmiami'
-         END AS db_name
-      
-        ,COALESCE(idps.ps_teachernumber, sr.adp_associate_id, CONVERT(VARCHAR(25),sr.df_employee_number)) AS ps_teachernumber
-
-        ,ads.samaccountname AS staff_username
-
-        ,adm.samaccountname AS manager_username
-  FROM gabby.dayforce.staff_roster sr
-  LEFT JOIN gabby.people.id_crosswalk_powerschool idps
-    ON sr.df_employee_number = idps.df_employee_number
-   AND idps.is_master = 1
-  LEFT JOIN gabby.adsi.user_attributes_static ads
-    ON CONVERT(VARCHAR(25),sr.df_employee_number) = ads.employeenumber
-  LEFT JOIN gabby.adsi.user_attributes_static adm
-    ON CONVERT(VARCHAR(25),sr.manager_df_employee_number) = adm.employeenumber
-  WHERE sr.primary_job IN ('Teacher', 'Teacher Fellow', 'Teacher in Residence', 'Co-Teacher', 'Learning Specialist', 'Learning Specialist Coordinator')
-    AND ISNULL(sr.termination_date, GETDATE()) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
- )
-
-,teacher_goal_scaffold AS (
-  /* Team/Individual Goals */
-  SELECT sr.df_employee_number
-        ,sr.ps_teachernumber
-        ,sr.preferred_name      
-        ,sr.primary_site
-        ,sr.primary_on_site_department
-        ,sr.grades_taught
-        ,sr.primary_job
-        ,sr.legal_entity_name
-        ,sr.is_active
-        ,sr.primary_site_schoolid      
-        ,sr.manager_df_employee_number
-        ,sr.manager_name
-        ,sr.staff_username
-        ,sr.manager_username
-        ,sr.db_name
-
-        ,tg.academic_year      
-        ,tg.goal_type
-        ,tg.df_primary_on_site_department AS goal_department
-        ,tg.grade_level
-        ,tg.is_sped_goal
-        ,tg.ps_course_number
-        ,tg.metric_label
-        ,tg.metric_name      
-        ,tg.tier_1
-        ,tg.tier_2
-        ,tg.tier_3
-        ,tg.tier_4
-        ,tg.prior_year_outcome
-        ,tg.data_type
-
-        ,tm.metric_term
-        ,tm.pm_term
-  FROM teacher_crosswalk sr
-  JOIN gabby.pm.teacher_goals tg
-    ON sr.primary_site = tg.df_primary_site
-   AND sr.grades_taught = tg.grade
-   AND tg.goal_type IN ('Team', 'Individual')
-  JOIN gabby.pm.teacher_goals_term_map tm
-    ON tg.academic_year = tm.academic_year
-   AND tg.metric_name = tm.metric_name
-  WHERE sr.primary_job IN ('Teacher', 'Teacher Fellow', 'Teacher in Residence', 'Co-Teacher', 'Learning Specialist', 'Learning Specialist Coordinator')
-
-  UNION ALL
-
-  /* Class Goals - Non-SpEd */
-  SELECT sr.df_employee_number
-        ,sr.ps_teachernumber
-        ,sr.preferred_name
-        ,sr.primary_site
-        ,sr.primary_on_site_department
-        ,sr.grades_taught
-        ,sr.primary_job
-        ,sr.legal_entity_name
-        ,sr.is_active
-        ,sr.primary_site_schoolid      
-        ,sr.manager_df_employee_number
-        ,sr.manager_name
-        ,sr.staff_username
-        ,sr.manager_username
-        ,sr.db_name
-
-        ,tg.academic_year      
-        ,tg.goal_type
-        ,tg.df_primary_on_site_department AS goal_department
-        ,tg.grade_level
-        ,tg.is_sped_goal
-        ,tg.ps_course_number
-        ,tg.metric_label
-        ,tg.metric_name      
-        ,tg.tier_1
-        ,tg.tier_2
-        ,tg.tier_3
-        ,tg.tier_4
-        ,tg.prior_year_outcome
-        ,tg.data_type
-
-        ,tm.metric_term
-        ,tm.pm_term
-  FROM teacher_crosswalk sr
-  JOIN gabby.pm.teacher_goals tg
-    ON sr.primary_site = tg.df_primary_site
-   AND tg.goal_type = 'Class'
-   AND tg.is_sped_goal = 0
-  JOIN gabby.pm.teacher_goals_term_map tm
-    ON tg.academic_year = tm.academic_year
-   AND tg.metric_name = tm.metric_name
-  WHERE sr.primary_job IN ('Teacher', 'Teacher Fellow', 'Teacher in Residence', 'Co-Teacher')
-
-  UNION ALL
-
-  /* Class Goals - SpEd */
-  SELECT sr.df_employee_number
-        ,sr.ps_teachernumber
-        ,sr.preferred_name      
-        ,sr.primary_site
-        ,sr.primary_on_site_department
-        ,sr.grades_taught
-        ,sr.primary_job
-        ,sr.legal_entity_name
-        ,sr.is_active
-        ,sr.primary_site_schoolid      
-        ,sr.manager_df_employee_number
-        ,sr.manager_name
-        ,sr.staff_username
-        ,sr.manager_username
-        ,sr.db_name
-
-        ,tg.academic_year      
-        ,tg.goal_type
-        ,tg.df_primary_on_site_department AS goal_department
-        ,tg.grade_level
-        ,tg.is_sped_goal
-        ,tg.ps_course_number
-        ,tg.metric_label
-        ,tg.metric_name      
-        ,tg.tier_1
-        ,tg.tier_2
-        ,tg.tier_3
-        ,tg.tier_4
-        ,tg.prior_year_outcome
-        ,tg.data_type
-
-        ,tm.metric_term
-        ,tm.pm_term
-  FROM teacher_crosswalk sr
-  JOIN gabby.pm.teacher_goals tg
-    ON sr.primary_site = tg.df_primary_site
-   AND tg.goal_type = 'Class'
-   AND tg.is_sped_goal = 1
-  JOIN gabby.pm.teacher_goals_term_map tm
-    ON tg.academic_year = tm.academic_year
-   AND tg.metric_name = tm.metric_name
-  WHERE sr.primary_job IN ('Learning Specialist', 'Learning Specialist Coordinator')
- )
-
-,ps_section_teacher AS (
-  SELECT sec.id AS sectionid
-        ,sec.section_number
-        ,sec.section_type
-        ,sec.course_number_clean AS course_number        
-        ,sec.db_name
-                
-        ,t.teachernumber
-  FROM gabby.powerschool.sections sec  
-  JOIN gabby.powerschool.sectionteacher st
-    ON sec.id = st.sectionid
-   AND sec.db_name = st.db_name
-  JOIN gabby.powerschool.teachers_static t
-    ON st.teacherid = t.id
-   AND st.db_name = t.db_name
-  WHERE (sec.section_type != 'SC' OR sec.section_type IS NULL)
- )
-
-,reading_level AS (
+WITH reading_level AS (
   SELECT sub.academic_year
         ,sub.schoolid
         ,sub.grade_level
@@ -411,19 +220,11 @@ SELECT tgs.df_employee_number
       ,tgs.pm_term
       ,tgs.data_type
       ,NULL AS grade_level
-      ,CASE
-        WHEN tgs.data_type = '#' THEN CONVERT(VARCHAR,ROUND(tgs.tier_3, 2))
-        WHEN tgs.data_type = '%' THEN CONVERT(VARCHAR,ROUND(CONVERT(FLOAT,tgs.tier_3) * 100, 2)) + '%'
-       END AS goal_display
       
       ,ig.reporting_term      
       ,ig.metric_value            
       ,NULL AS n_students
-      ,CASE
-        WHEN tgs.data_type = '#' THEN CONVERT(VARCHAR,ROUND(ig.metric_value, 2))
-        WHEN tgs.data_type = '%' THEN CONVERT(VARCHAR,ROUND(ig.metric_value * 100, 2)) + '%'
-       END AS metric_value_display
-FROM teacher_goal_scaffold tgs
+FROM gabby.pm.teacher_goal_scaffold_static tgs
 LEFT JOIN individual_goal_data ig
   ON tgs.academic_year = ig.academic_year 
  AND tgs.metric_name = ig.metric_name
@@ -461,19 +262,11 @@ SELECT tgs.df_employee_number
       ,tgs.pm_term
       ,tgs.data_type
       ,tgs.grade_level
-      ,CASE
-        WHEN tgs.data_type = '#' THEN CONVERT(VARCHAR,ROUND(tgs.tier_3, 2))
-        WHEN tgs.data_type = '%' THEN CONVERT(VARCHAR,ROUND(CONVERT(FLOAT,tgs.tier_3) * 100, 2)) + '%'
-       END AS goal_display
       
       ,glt.reporting_term      
       ,glt.metric_value
       ,NULL AS n_students
-      ,CASE
-        WHEN tgs.data_type = '#' THEN CONVERT(VARCHAR,ROUND(glt.metric_value, 2))
-        WHEN tgs.data_type = '%' THEN CONVERT(VARCHAR,ROUND(glt.metric_value * 100, 2)) + '%'
-       END AS metric_value_display
-FROM teacher_goal_scaffold tgs
+FROM gabby.pm.teacher_goal_scaffold_static tgs
 LEFT JOIN glt_goal_data glt
   ON tgs.academic_year = glt.academic_year 
  AND tgs.metric_name = glt.metric_name
@@ -512,10 +305,6 @@ SELECT sub.df_employee_number
       ,sub.pm_term
       ,sub.data_type
       ,sub.grade_level
-      ,CASE
-        WHEN sub.data_type = '#' THEN CONVERT(VARCHAR,ROUND(sub.tier_3, 2))
-        WHEN sub.data_type = '%' THEN CONVERT(VARCHAR,ROUND(CONVERT(FLOAT,sub.tier_3) * 100, 2)) + '%'
-       END AS goal_display
 
       ,sub.metric_term AS reporting_term
       ,CASE
@@ -523,11 +312,6 @@ SELECT sub.df_employee_number
         ELSE AVG(sub.is_mastery) 
        END AS metric_value      
       ,COUNT(DISTINCT sub.student_number) AS n_students
-      ,CASE
-        WHEN sub.metric_label IN ('Lit Cohort Growth from Last Year', 'Math Cohort Growth from Last Year') THEN CONVERT(VARCHAR,ROUND((AVG(sub.is_mastery) - sub.prior_year_outcome) * 100, 2)) + '%'
-        WHEN sub.data_type = '#' THEN CONVERT(VARCHAR,ROUND(AVG(sub.is_mastery), 2))
-        WHEN sub.data_type = '%' THEN CONVERT(VARCHAR,ROUND((AVG(sub.is_mastery) - sub.prior_year_outcome) * 100, 2)) + '%'
-       END AS metric_value_display
 FROM
     (
      SELECT tgs.df_employee_number
@@ -557,31 +341,17 @@ FROM
            ,tgs.pm_term
            ,tgs.data_type
            ,tgs.metric_term
-
-           ,enr.student_number
-
-           ,co.grade_level
+           ,tgs.student_number
+           ,tgs.student_grade_level AS grade_level
            
            ,am.is_mastery
-     FROM teacher_goal_scaffold tgs
-     JOIN ps_section_teacher st
-       ON tgs.ps_teachernumber = st.teachernumber COLLATE Latin1_General_BIN
-      AND tgs.ps_course_number = st.course_number COLLATE Latin1_General_BIN
-      AND tgs.db_name = st.db_name
-     JOIN gabby.powerschool.course_enrollments_static enr
-       ON st.sectionid = enr.abs_sectionid
-      AND st.db_name = enr.db_name
-     JOIN gabby.powerschool.cohort_identifiers_static co
-       ON enr.student_number = co.student_number
-      AND enr.academic_year = co.academic_year
-      AND enr.db_name = co.db_name
-      AND co.rn_year = 1
+     FROM gabby.pm.teacher_goal_scaffold_static tgs          
      JOIN assessment_metrics am
        ON tgs.academic_year = am.academic_year
       AND tgs.metric_name = am.metric_name
       AND tgs.metric_term = am.module_number
-      AND enr.student_number = am.local_student_id
-      AND am.date_taken BETWEEN enr.dateenrolled AND enr.dateleft
+      AND tgs.student_number = am.local_student_id
+      AND am.date_taken BETWEEN tgs.dateenrolled AND tgs.dateleft
      WHERE tgs.goal_type = 'Class'
     ) sub
 GROUP BY sub.df_employee_number
