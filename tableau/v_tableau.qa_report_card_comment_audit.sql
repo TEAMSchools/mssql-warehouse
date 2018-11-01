@@ -7,7 +7,7 @@ WITH repo_fields AS (
   SELECT r.repository_id
         ,r.title
         ,CASE
-          WHEN r.repository_id = 46 THEN 'Q1'
+          WHEN r.repository_id = 216 THEN 'Q1'
           WHEN r.repository_id = 207 THEN 'Q2'
           WHEN r.repository_id = 208 THEN 'Q3'
           WHEN r.repository_id = 209 THEN 'Q4'
@@ -20,7 +20,7 @@ WITH repo_fields AS (
     ON r.repository_id = f.repository_id
    AND f.deleted_at IS NULL
    AND f.name != 'field_term'
-  WHERE r.repository_id IN (46, 207, 208, 209)
+  WHERE r.repository_id IN (216, 207, 208, 209)
  )
 
 SELECT co.student_number
