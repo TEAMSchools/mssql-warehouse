@@ -10,6 +10,32 @@ WITH dlrosters AS (
   WHERE roster_name = 'Comeback Scholars (1)'
  )
 
+,custom_fields AS (
+  SELECT p.incident_id
+        ,p.[Restraint Used]
+        ,p.[Perceived Motivation]
+        ,p.[Parent Contacted?]
+        ,p.[Others Involved]
+        ,p.[NJ State Reporting]
+        ,p.[Behavior Category]
+  FROM
+      (
+       SELECT incident_id
+             ,field_name
+             ,value
+       FROM deanslist.incidents_custom_fields
+      ) sub
+  PIVOT(
+    MAX(value)
+    FOR field_name IN ([Behavior Category]
+                      ,[NJ State Reporting]
+                      ,[Others Involved]
+                      ,[Parent Contacted?]
+                      ,[Perceived Motivation]
+                      ,[Restraint Used])
+   ) p
+ )
+
 SELECT co.student_number
       ,co.lastfirst
       ,co.academic_year
@@ -35,6 +61,13 @@ SELECT co.student_number
       ,'Referral' AS dl_category
       
       ,CONVERT(VARCHAR(5),d.alt_name) AS term
+
+      ,cf.[Restraint Used]
+      ,cf.[Perceived Motivation]
+      ,cf.[Parent Contacted?]
+      ,cf.[Others Involved]
+      ,cf.[NJ State Reporting]
+      ,cf.[Behavior Category]
 FROM gabby.powerschool.cohort_identifiers_static co
 LEFT OUTER JOIN dlrosters r
   ON co.student_number = r.student_school_id
@@ -46,6 +79,8 @@ JOIN gabby.reporting.reporting_terms d
  AND CONVERT(DATE,dli.create_ts) BETWEEN d.start_date AND d.end_date
  AND d.identifier = 'RT'
  AND d._fivetran_deleted = 0
+LEFT JOIN custom_fields cf
+  ON dli.incident_id = cf.incident_id
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.rn_year = 1
   AND co.grade_level != 99  
@@ -77,6 +112,13 @@ SELECT co.student_number
       ,'Consequence' AS dl_category
 
       ,CONVERT(VARCHAR(5),d.alt_name) AS term
+
+      ,NULL AS [Restraint Used]
+      ,NULL AS [Perceived Motivation]
+      ,NULL AS [Parent Contacted?]
+      ,NULL AS [Others Involved]
+      ,NULL AS [NJ State Reporting]
+      ,NULL AS [Behavior Category]
 FROM gabby.powerschool.cohort_identifiers_static co
 LEFT OUTER JOIN dlrosters r
   ON co.student_number = r.student_school_id
@@ -121,6 +163,13 @@ SELECT co.student_number
       ,CONVERT(VARCHAR(125),dlb.behavior_category) AS dl_category
       
       ,CONVERT(VARCHAR(5),d.alt_name) AS term
+
+      ,NULL AS [Restraint Used]
+      ,NULL AS [Perceived Motivation]
+      ,NULL AS [Parent Contacted?]
+      ,NULL AS [Others Involved]
+      ,NULL AS [NJ State Reporting]
+      ,NULL AS [Behavior Category]
 FROM gabby.powerschool.cohort_identifiers_static co
 LEFT OUTER JOIN dlrosters r
   ON co.student_number = r.student_school_id
