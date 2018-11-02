@@ -109,7 +109,7 @@ SELECT DISTINCT
 
       ,0 AS is_replacement
 FROM gabby.illuminate_dna_assessments.assessments_identifiers a       
-LEFT JOIN gabby.illuminate_dna_assessments.students_assessments sa
+JOIN gabby.illuminate_dna_assessments.students_assessments sa
   ON a.assessment_id = sa.assessment_id
 WHERE a.deleted_at IS NULL
   AND a.normed_scope IS NULL

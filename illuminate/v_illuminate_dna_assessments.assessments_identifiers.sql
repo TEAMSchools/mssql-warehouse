@@ -86,11 +86,11 @@ SELECT a.assessment_id
 FROM gabby.illuminate_dna_assessments.assessments a
 LEFT JOIN gabby.illuminate_public.users u
   ON a.user_id = u.user_id
-LEFT JOIN gabby.illuminate_codes.dna_scopes ds
+LEFT JOIN gabby.illuminate_codes.dna_scopes ds WITH(FORCESEEK)
   ON a.code_scope_id = ds.code_id
-LEFT JOIN gabby.illuminate_codes.dna_subject_areas dsa
+LEFT JOIN gabby.illuminate_codes.dna_subject_areas dsa WITH(FORCESEEK)
   ON a.code_subject_area_id = dsa.code_id
 LEFT JOIN gabby.illuminate_dna_assessments.performance_band_sets pbs
   ON a.performance_band_set_id = pbs.performance_band_set_id
-LEFT JOIN gabby.illuminate_dna_assessments.normed_scopes ns
+LEFT JOIN gabby.illuminate_dna_assessments.normed_scopes ns WITH(FORCESEEK)
   ON ds.code_translation = ns.scope
