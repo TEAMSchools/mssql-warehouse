@@ -1,7 +1,8 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW pm.teacher_goal_scaffold AS
+--CREATE OR ALTER VIEW pm.teacher_goal_scaffold AS
+
 
 WITH teacher_crosswalk AS (
   SELECT sr.df_employee_number
@@ -36,6 +37,7 @@ WITH teacher_crosswalk AS (
     ON CONVERT(VARCHAR(25),sr.manager_df_employee_number) = adm.employeenumber
   WHERE sr.primary_job IN ('Teacher', 'Teacher Fellow', 'Teacher in Residence', 'Co-Teacher', 'Learning Specialist', 'Learning Specialist Coordinator')
     AND ISNULL(sr.termination_date, GETDATE()) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
+
  )
 
 ,ps_section_teacher AS (
@@ -99,7 +101,7 @@ SELECT sr.df_employee_number
 FROM teacher_crosswalk sr
 JOIN gabby.pm.teacher_goals tg
   ON sr.primary_site = tg.df_primary_site
- AND sr.grades_taught = tg.grade
+ AND COALESCE(sr.grades_taught,'None Assigned') = COALESCE(tg.grade,'None Assigned')
  AND tg.goal_type IN ('Team', 'Individual')
 JOIN gabby.pm.teacher_goals_term_map tm
   ON tg.academic_year = tm.academic_year
