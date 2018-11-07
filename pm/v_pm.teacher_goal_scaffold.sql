@@ -56,7 +56,58 @@ WITH teacher_crosswalk AS (
   WHERE (sec.section_type != 'SC' OR sec.section_type IS NULL)
  )
 
-/* Team/Individual Goals */
+/* Individual Goals */
+SELECT sr.df_employee_number
+      ,sr.ps_teachernumber
+      ,sr.preferred_name      
+      ,sr.primary_site
+      ,sr.primary_on_site_department
+      ,sr.grades_taught
+      ,sr.primary_job
+      ,sr.legal_entity_name
+      ,sr.is_active
+      ,sr.primary_site_schoolid      
+      ,sr.manager_df_employee_number
+      ,sr.manager_name
+      ,sr.staff_username
+      ,sr.manager_username
+      ,sr.db_name
+
+      ,tg.academic_year      
+      ,tg.goal_type
+      ,tg.df_primary_on_site_department AS goal_department
+      ,tg.grade_level
+      ,tg.is_sped_goal
+      ,tg.ps_course_number
+      ,tg.metric_label
+      ,CONVERT(VARCHAR(125),tg.metric_name) AS metric_name
+      ,CONVERT(FLOAT,tg.tier_1) AS tier_1
+      ,CONVERT(FLOAT,tg.tier_2) AS tier_2
+      ,CONVERT(FLOAT,tg.tier_3) AS tier_3
+      ,CONVERT(FLOAT,tg.tier_4) AS tier_4
+      ,CONVERT(FLOAT,tg.prior_year_outcome) AS prior_year_outcome
+      ,tg.data_type
+
+      ,NULL AS sectionid
+      ,NULL AS student_number
+      ,NULL AS dateenrolled
+      ,NULL AS dateleft
+      ,NULL AS student_grade_level
+
+      ,tm.metric_term
+      ,tm.pm_term
+FROM teacher_crosswalk sr
+JOIN gabby.pm.teacher_goals tg
+  ON sr.primary_site = tg.df_primary_site 
+ AND tg.goal_type = 'Individual'
+JOIN gabby.pm.teacher_goals_term_map tm
+  ON tg.academic_year = tm.academic_year
+ AND tg.metric_name = tm.metric_name
+WHERE sr.primary_job IN ('Teacher', 'Teacher Fellow', 'Teacher in Residence', 'Co-Teacher', 'Learning Specialist', 'Learning Specialist Coordinator')
+
+UNION ALL
+
+/* Team Goals */
 SELECT sr.df_employee_number
       ,sr.ps_teachernumber
       ,sr.preferred_name      
@@ -100,7 +151,7 @@ FROM teacher_crosswalk sr
 JOIN gabby.pm.teacher_goals tg
   ON sr.primary_site = tg.df_primary_site
  AND sr.grades_taught = tg.grade
- AND tg.goal_type IN ('Team', 'Individual')
+ AND tg.goal_type = 'Team'
 JOIN gabby.pm.teacher_goals_term_map tm
   ON tg.academic_year = tm.academic_year
  AND tg.metric_name = tm.metric_name
