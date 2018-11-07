@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW surveys.survey_completion AS
+--CREATE OR ALTER VIEW surveys.survey_completion AS
 
 WITH survey_feed AS (
   SELECT _created AS date_created
@@ -64,6 +64,9 @@ SELECT f.date_created
       ,COALESCE(uupn.preferred_last, um.preferred_last) AS survey_taker_last
       ,COALESCE(uupn.preferred_name, um.preferred_name) AS survey_taker_name
       ,COALESCE(uupn.location_custom, um.location_custom) AS location_custom
+
+      ,ROW_NUMBER() OVER( PARTITION BY COALESCE(uupn.df_employee_number, um.df_employee_number), f.academic_year, f.reporting_term, f.survey_type ORDER BY f.date_submitted) AS rn
+
 FROM survey_feed f
 LEFT JOIN gabby.tableau.staff_roster uupn
   ON f.responder_email = uupn.userprincipalname
