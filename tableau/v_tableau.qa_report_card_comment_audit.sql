@@ -14,7 +14,11 @@ WITH repo_fields AS (
          END AS term_name        
 
         ,CONVERT(VARCHAR(250),f.label) AS field_label
-        ,f.name AS field_name
+        ,CASE
+          WHEN f.name = 'field_character_comment_1_1' THEN 'field_character_comment_1'
+          WHEN f.name = 'field_character_comment_2_1' THEN 'field_character_comment_2'
+          ELSE f.name
+         END AS field_name
   FROM gabby.illuminate_dna_repositories.repositories r
   JOIN gabby.illuminate_dna_repositories.fields f
     ON r.repository_id = f.repository_id
