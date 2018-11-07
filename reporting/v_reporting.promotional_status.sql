@@ -261,14 +261,13 @@ FROM
            ,lit.goal_status AS lit_goal_status
            ,lit.lvls_grown_yr
            ,lit.lvls_grown_term
-           ,NULL AS promo_status_lit
-           --,CASE                     
-           --  WHEN NOT (co.schoolid = 73257 AND (co.grade_level - (co.academic_year - 2014)) > 0) THEN lit.goal_status
-           --  /* Life Upper students have different promo criteria */
-           --  WHEN lit.goal_status = 'On Track' THEN 'On Track' /* if On Track, then On Track*/
-           --  WHEN lit.lvls_grown_yr >= lit.n_growth_rounds THEN 'On Track' /* if grew 1 lvl per round overall, then On Track */        
-           --  WHEN lit.lvls_grown_yr < lit.n_growth_rounds THEN 'Off Track'             
-           -- END AS promo_status_lit
+           ,CASE
+             WHEN NOT (co.schoolid = 73257 AND (co.grade_level - (co.academic_year - 2014)) > 0) THEN lit.goal_status
+             /* Life Upper students have different promo criteria */
+             WHEN lit.goal_status = 'On Track' THEN 'On Track' /* if On Track, then On Track*/
+             WHEN lit.lvls_grown_yr >= lit.n_growth_rounds THEN 'On Track' /* if grew 1 lvl per round overall, then On Track */
+             WHEN lit.lvls_grown_yr < lit.n_growth_rounds THEN 'Off Track'
+            END AS promo_status_lit
 
            /* final grades */
            ,fg.promo_status_grades
