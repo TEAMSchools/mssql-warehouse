@@ -100,6 +100,7 @@ FROM teacher_crosswalk sr
 JOIN gabby.pm.teacher_goals tg
   ON sr.primary_site = tg.df_primary_site 
  AND tg.goal_type = 'Individual'
+ AND tg._fivetran_deleted = 0
 JOIN gabby.pm.teacher_goals_term_map tm
   ON tg.academic_year = tm.academic_year
  AND tg.metric_name = tm.metric_name
@@ -152,6 +153,7 @@ JOIN gabby.pm.teacher_goals tg
   ON sr.primary_site = tg.df_primary_site
  AND sr.grades_taught = tg.grade
  AND tg.goal_type = 'Team'
+ AND tg._fivetran_deleted = 0
 JOIN gabby.pm.teacher_goals_term_map tm
   ON tg.academic_year = tm.academic_year
  AND tg.metric_name = tm.metric_name
@@ -206,6 +208,7 @@ JOIN gabby.pm.teacher_goals tg
   ON sr.primary_site = tg.df_primary_site
  AND tg.goal_type = 'Class'
  AND tg.is_sped_goal = 0
+ AND tg._fivetran_deleted = 0
 JOIN ps_section_teacher st
   ON sr.ps_teachernumber = st.teachernumber COLLATE Latin1_General_BIN
  AND sr.db_name = st.db_name
@@ -272,6 +275,7 @@ JOIN gabby.pm.teacher_goals tg
   ON sr.primary_site = tg.df_primary_site
  AND tg.goal_type = 'Class'
  AND tg.is_sped_goal = 1
+ AND tg._fivetran_deleted = 0
 JOIN ps_section_teacher st
   ON sr.ps_teachernumber = st.teachernumber COLLATE Latin1_General_BIN
  AND sr.db_name = st.db_name
