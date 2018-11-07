@@ -134,7 +134,7 @@ WITH reading_level AS (
     ON wo.teacher_accountingid = sr.df_employee_number
   JOIN gabby.reporting.reporting_terms rt
     ON wo.observed_at BETWEEN rt.start_date AND rt.end_date 
-   AND rt.identifier = 'RT'
+   AND rt.identifier = 'ETR'
    AND rt.schoolid = 0
    AND rt._fivetran_deleted = 0
   WHERE wo.rubric_name IN ('Coaching Tool: Coach ETR and Reflection')
