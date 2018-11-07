@@ -83,6 +83,7 @@ WITH long_data AS (
    AND d.time_per_name = act.administration_round
    AND d.subject_area = act.subject
    AND d.overall_number_correct = act.raw_score
+   AND act._fivetran_deleted = 0
   WHERE d.rn_highscore = 1
 
   UNION ALL
@@ -123,6 +124,7 @@ WITH long_data AS (
         AND d.time_per_name = act.administration_round
         AND d.subject_area = act.subject
         AND d.overall_number_correct = act.raw_score     
+        AND act._fivetran_deleted = 0
        WHERE d.rn_highscore = 1
       ) sub
   GROUP BY student_number
