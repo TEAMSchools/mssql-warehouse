@@ -12,4 +12,4 @@ FROM gabby.dayforce.staff_roster df
 JOIN gabby.adsi.user_attributes_static ad
   ON df.df_employee_number = ad.employeenumber
  AND ISNUMERIC(ad.employeenumber) = 1
-WHERE df.status IN ('ACTIVE', 'PRESTART')
+WHERE df.status IN ('ACTIVE', 'PRESTART', 'INACTIVE')
