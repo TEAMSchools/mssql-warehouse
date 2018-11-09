@@ -57,16 +57,6 @@ SELECT sub.student_id
       ,sub.goal_4_range
       ,sub.goal_4_rit_score
       ,sub.goal_4_std_err
-      ,sub.goal_5_adjective
-      ,sub.goal_5_name
-      ,sub.goal_5_range
-      ,sub.goal_5_rit_score
-      ,sub.goal_5_std_err
-      ,sub.goal_6_adjective
-      ,sub.goal_6_name
-      ,sub.goal_6_range
-      ,sub.goal_6_rit_score
-      ,sub.goal_6_std_err
       ,sub.projected_proficiency_level_1
       ,sub.projected_proficiency_level_2
       ,sub.projected_proficiency_level_3
@@ -184,16 +174,6 @@ FROM
            ,sub.goal_4_range
            ,sub.goal_4_rit_score
            ,sub.goal_4_std_err
-           ,sub.goal_5_adjective
-           ,sub.goal_5_name
-           ,sub.goal_5_range
-           ,sub.goal_5_rit_score
-           ,sub.goal_5_std_err
-           ,sub.goal_6_adjective
-           ,sub.goal_6_name
-           ,sub.goal_6_range
-           ,sub.goal_6_rit_score
-           ,sub.goal_6_std_err
            ,sub.projected_proficiency_level_1
            ,sub.projected_proficiency_level_2
            ,sub.projected_proficiency_level_3
@@ -304,16 +284,6 @@ FROM
                 ,CONVERT(VARCHAR(25),goal_4_range) AS goal_4_range
                 ,goal_4_rit_score
                 ,goal_4_std_err
-                ,CONVERT(VARCHAR(25),goal_5_adjective) AS goal_5_adjective
-                ,CONVERT(VARCHAR(50),goal_5_name) AS goal_5_name
-                ,CONVERT(VARCHAR(25),goal_5_range) AS goal_5_range
-                ,goal_5_rit_score
-                ,goal_5_std_err
-                ,CONVERT(VARCHAR(25),goal_6_adjective) AS goal_6_adjective
-                ,CONVERT(VARCHAR(50),goal_6_name) AS goal_6_name
-                ,CONVERT(VARCHAR(25),goal_6_range) AS goal_6_range
-                ,goal_6_rit_score
-                ,goal_6_std_err
                 ,CONVERT(VARCHAR(25),projected_proficiency_level_1) AS projected_proficiency_level_1
                 ,CONVERT(VARCHAR(25),projected_proficiency_level_2) AS projected_proficiency_level_2
                 ,CONVERT(VARCHAR(25),projected_proficiency_level_3) AS projected_proficiency_level_3

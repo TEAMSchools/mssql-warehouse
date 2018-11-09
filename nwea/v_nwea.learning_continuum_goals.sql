@@ -37,14 +37,6 @@ WITH long_data AS (
              ,CONVERT(VARCHAR(125), goal_4_name) AS goal_4_name
              ,CONVERT(VARCHAR(125), goal_4_range) AS goal_4_range
              ,CONVERT(VARCHAR(125), goal_4_rit_score) COLLATE Latin1_General_BIN AS goal_4_rit_score
-             ,CONVERT(VARCHAR(125), goal_5_adjective) AS goal_5_adjective
-             ,CONVERT(VARCHAR(125), goal_5_name) AS goal_5_name
-             ,CONVERT(VARCHAR(125), goal_5_range) AS goal_5_range
-             ,CONVERT(VARCHAR(125), goal_5_rit_score) COLLATE Latin1_General_BIN AS goal_5_rit_score
-             ,CONVERT(VARCHAR(125), goal_6_adjective) AS goal_6_adjective
-             ,CONVERT(VARCHAR(125), goal_6_name) AS goal_6_name
-             ,CONVERT(VARCHAR(125), goal_6_range) AS goal_6_range
-             ,CONVERT(VARCHAR(125), goal_6_rit_score) COLLATE Latin1_General_BIN AS goal_6_rit_score             
        FROM gabby.nwea.assessment_result_identifiers
       ) sub
   UNPIVOT(
@@ -64,15 +56,7 @@ WITH long_data AS (
                  ,goal_4_adjective
                  ,goal_4_name
                  ,goal_4_range
-                 ,goal_4_rit_score
-                 ,goal_5_adjective
-                 ,goal_5_name
-                 ,goal_5_range
-                 ,goal_5_rit_score
-                 ,goal_6_adjective
-                 ,goal_6_name
-                 ,goal_6_range
-                 ,goal_6_rit_score)
+                 ,goal_4_rit_score)                 
    ) u
  )
 
