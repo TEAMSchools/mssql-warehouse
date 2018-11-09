@@ -52,10 +52,10 @@ JOIN gabby.illuminate_dna_assessments.fields f
  AND f.deleted_at IS NULL
 LEFT JOIN gabby.illuminate_dna_assessments.fields_reporting_groups frg
   ON f.field_id = frg.field_id 
+ AND (frg.reporting_group_id IN (SELECT reporting_group_id 
+                                 FROM gabby.illuminate_dna_assessments.reporting_groups 
+                                 WHERE label IN ('Multiple Choice','Open Ended Response','Open-Ended Response'))
+      OR frg.reporting_group_id IS NULL)
 LEFT JOIN standards_grouped sg
   ON f.field_id = sg.field_id
 WHERE a.deleted_at IS NULL
-  AND (frg.reporting_group_id IN (SELECT reporting_group_id 
-                                  FROM gabby.illuminate_dna_assessments.reporting_groups 
-                                  WHERE label IN ('Multiple Choice','Open Ended Response','Open-Ended Response'))
-       OR frg.reporting_group_id IS NULL)
