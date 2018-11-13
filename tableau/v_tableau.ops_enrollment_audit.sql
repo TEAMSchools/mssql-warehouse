@@ -113,13 +113,13 @@ WITH caredox_enrollment AS (
         ,CONVERT(VARCHAR(500),CASE
                                WHEN co.year_in_network = 1 
                                 AND CONCAT(ISNULL(uxs.residency_proof_1,'Missing')
-									                                 ,ISNULL(uxs.residency_proof_2,'Missing')
-									                                 ,ISNULL(uxs.residency_proof_3,'Missing')) NOT LIKE '%Missing%' 
-		                                    THEN 'Y'
+                                          ,ISNULL(uxs.residency_proof_2,'Missing')
+                                          ,ISNULL(uxs.residency_proof_3,'Missing')) NOT LIKE '%Missing%' 
+                                      THEN 'Y'
                                WHEN co.year_in_network > 1 
                                 AND ISNULL(uxs.residency_proof_1,'Missing') != 'N' 
                                 AND rv.verification_date IS NOT NULL
-		                                    THEN 'Y'
+                                      THEN 'Y'
                                ELSE 'N'
                               END) COLLATE Latin1_General_BIN AS residency_proof_all
 
