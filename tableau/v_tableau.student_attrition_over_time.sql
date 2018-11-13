@@ -35,11 +35,12 @@ SELECT y1.student_number
       ,y1.reporting_schoolid
       ,y1.grade_level
       ,y1.entrydate
-      ,y1.exitdate
-      ,y1.exitcode
-      ,y1.exitcomment
-      ,y1.enroll_status
       ,y1.db_name
+
+      ,s.exitdate
+      ,s.exitcode
+      ,s.exitcomment
+      ,s.enroll_status      
 
       ,d.date
       
