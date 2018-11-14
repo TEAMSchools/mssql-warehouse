@@ -4,9 +4,9 @@ GO
 CREATE OR ALTER VIEW alumni.taf_roster AS 
 
 WITH hs_grads AS (
-  SELECT student_number 
-  FROM gabby.powerschool.cohort_identifiers_static 
-  WHERE exitcode = 'G1' 
+  SELECT student_number
+  FROM gabby.powerschool.cohort_identifiers_static
+  WHERE exitcode = 'G1'
     AND school_level = 'HS'
 )
 
@@ -15,14 +15,14 @@ WITH hs_grads AS (
         ,co.student_number
         ,co.first_name
         ,co.last_name
-        ,co.lastfirst        
+        ,co.lastfirst
         ,co.dob
-        ,co.schoolid        
+        ,co.schoolid
         ,co.school_name
-        ,co.grade_level                                
+        ,co.grade_level
         ,co.exitdate
         ,co.cohort
-        ,co.highest_achieved        
+        ,co.highest_achieved
         ,co.guardianemail
         ,co.iep_status
         ,co.specialed_classification
@@ -41,11 +41,11 @@ WITH hs_grads AS (
         ,sub.student_number
         ,sub.first_name
         ,sub.last_name
-        ,sub.lastfirst                
+        ,sub.lastfirst
         ,sub.dob
         ,sub.curr_grade_level
         ,sub.cohort
-        ,sub.highest_achieved        
+        ,sub.highest_achieved
         ,sub.final_exitdate
         ,sub.guardianemail
         ,sub.db_name
@@ -54,25 +54,25 @@ WITH hs_grads AS (
         ,CONVERT(VARCHAR(25),CASE WHEN s.graduated_schoolid = 0 THEN sch2.abbreviation ELSE sch.abbreviation END) AS school_name                         
   FROM
       (
-       SELECT co.studentid             
+       SELECT co.studentid
              ,co.student_number
              ,co.first_name
              ,co.last_name
              ,co.lastfirst
-             ,co.dob             
-             ,co.highest_achieved             
+             ,co.dob
+             ,co.highest_achieved
              ,co.db_name
              ,MAX(co.cohort) AS cohort
              ,MAX(co.guardianemail) AS guardianemail
              ,MIN(co.entrydate) AS orig_entrydate
              ,MAX(co.exitdate) AS final_exitdate
-             ,DATEDIFF(YEAR, MIN(co.entrydate), MAX(co.exitdate)) AS years_enrolled             
-             ,DATEPART(YEAR,MAX(co.exitdate)) AS year_final_exitdate             
+             ,DATEDIFF(YEAR, MIN(co.entrydate), MAX(co.exitdate)) AS years_enrolled
+             ,DATEPART(YEAR,MAX(co.exitdate)) AS year_final_exitdate
              ,(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - MAX(co.academic_year)) + MAX(co.grade_level) AS curr_grade_level
        FROM gabby.powerschool.cohort_identifiers_static co
        WHERE co.enroll_status = 2
          AND co.school_level = 'HS'
-         AND co.student_number NOT IN (SELECT student_number FROM ms_grads) 
+         AND co.student_number NOT IN (SELECT student_number FROM ms_grads)
        GROUP BY co.studentid
                ,co.student_number
                ,co.lastfirst
@@ -116,21 +116,21 @@ WITH hs_grads AS (
   FROM
       (
        SELECT CONVERT(VARCHAR(25),s.id) AS salesforce_contact_id
-             ,CONVERT(INT,s.school_specific_id_c) AS student_number        
+             ,CONVERT(INT,s.school_specific_id_c) AS student_number
              ,CONVERT(VARCHAR(125),s.mobile_phone) AS sf_mobile_phone
              ,CONVERT(VARCHAR(125),s.home_phone) AS sf_home_phone
              ,CONVERT(VARCHAR(125),s.other_phone) AS sf_other_phone
              ,CONVERT(VARCHAR(125),s.email) AS sf_email
              ,CONVERT(INT,s.kipp_hs_class_c) AS kipp_hs_class_c
              ,s.expected_hs_graduation_c
-        
+
              ,CONVERT(VARCHAR(25),u.id) AS contact_owner_id
              ,CONVERT(VARCHAR(125),u.name) AS ktc_counselor
-        
+
              ,CONVERT(VARCHAR(25),enr.type_c) AS enrollment_type
              ,CONVERT(VARCHAR(25),enr.status_c) AS enrollment_status
              ,CONVERT(VARCHAR(125),enr.name) AS enrollment_name    
-             ,enr.start_date_c    
+             ,enr.start_date_c
        FROM gabby.alumni.contact s
        JOIN gabby.alumni.[user] u
          ON s.owner_id = u.id
@@ -153,17 +153,17 @@ WITH hs_grads AS (
         ,school_name
         ,curr_grade_level
         ,cohort
-        ,highest_achieved        
+        ,highest_achieved
         ,guardianemail
         ,db_name
-  FROM ms_grads  
+  FROM ms_grads
 
-  UNION  
+  UNION
 
   SELECT studentid
         ,student_number
         ,first_name
-        ,last_name           
+        ,last_name
         ,lastfirst
         ,dob
         ,final_exitdate
@@ -171,10 +171,10 @@ WITH hs_grads AS (
         ,school_name
         ,curr_grade_level
         ,cohort
-        ,highest_achieved        
+        ,highest_achieved
         ,guardianemail
         ,db_name
-  FROM transfers    
+  FROM transfers
  ) 
 
 SELECT r.student_number
@@ -186,12 +186,12 @@ SELECT r.student_number
       ,r.first_name
       ,r.last_name
       ,r.dob
-      ,r.exitdate      
+      ,r.exitdate
       ,r.guardianemail AS ps_email
       ,r.db_name
       ,CASE WHEN r.highest_achieved = 99 THEN 1 ELSE 0 END AS is_grad
 
-      ,enr.kipp_hs_class_c AS cohort      
+      ,enr.kipp_hs_class_c AS cohort
       ,enr.expected_hs_graduation_c AS expected_hs_graduation_date
       ,enr.ktc_counselor
       ,enr.enrollment_type
@@ -223,7 +223,7 @@ SELECT r.student_number
       ,CONVERT(VARCHAR(125),suf.mother_cell) AS ps_mother_cell
       ,CONVERT(VARCHAR(125),suf.parent_motherdayphone) AS ps_mother_day
       ,CONVERT(VARCHAR(125),suf.father_cell) AS ps_father_cell
-      ,CONVERT(VARCHAR(125),suf.parent_fatherdayphone) AS ps_father_day      
+      ,CONVERT(VARCHAR(125),suf.parent_fatherdayphone) AS ps_father_day
       ,CONVERT(VARCHAR(125),suf.emerg_4_name) AS ps_emerg_4_name
       ,CONVERT(VARCHAR(125),suf.emerg_4_rel) AS ps_emerg_4_rel
       ,CONVERT(VARCHAR(125),suf.emerg_4_phone) AS ps_emerg_4_phone
