@@ -4,7 +4,7 @@ GO
 CREATE OR ALTER VIEW tableau.school_tactical_dashboard AS
 
 WITH roster AS (
-  SELECT co.student_number      
+  SELECT co.student_number
         ,co.studentid
         ,co.academic_year
         ,co.yearid
@@ -14,6 +14,7 @@ WITH roster AS (
         ,CONVERT(VARCHAR(5),co.grade_level) AS grade_level
         ,co.iep_status
         ,co.lunchstatus
+        ,co.exitdate
         ,co.db_name
   FROM gabby.powerschool.cohort_identifiers_static co
   WHERE co.reporting_schoolid NOT IN (999999, 5173)
@@ -21,28 +22,46 @@ WITH roster AS (
  )
 
 ,demographics AS (
-  SELECT sub.academic_year
-        ,ISNULL(sub.region, 'All') AS region        
-        ,ISNULL(sub.school_level, 'All') AS school_level
-        ,ISNULL(sub.reporting_schoolid, 'All') AS reporting_schoolid
-        ,ISNULL(sub.grade_level, 'All') AS grade_level
+  SELECT u.academic_year
+        ,u.region
+        ,u.school_level
+        ,u.reporting_schoolid
+        ,u.grade_level
         
-        ,'pct_fr_lunch' AS field
-        ,AVG(sub.is_fr_lunch) AS value
+        ,u.field
+        ,u.value
   FROM
       (
-       SELECT r.academic_year
-             ,r.region
-             ,r.school_level
-             ,r.reporting_schoolid
-             ,r.grade_level
-             ,CASE WHEN r.lunchstatus IN ('F', 'R') THEN 1.0 ELSE 0.0 END AS is_fr_lunch
-       FROM roster r
+       SELECT sub.academic_year
+             ,ISNULL(sub.region, 'All') AS region
+             ,ISNULL(sub.school_level, 'All') AS school_level
+             ,ISNULL(sub.reporting_schoolid, 'All') AS reporting_schoolid
+             ,ISNULL(sub.grade_level, 'All') AS grade_level
+
+             ,AVG(CAST(sub.is_fr_lunch AS FLOAT)) AS pct_fr_lunch
+             ,SUM(CAST(sub.is_attrition_week AS FLOAT)) AS n_attrition_week
+       FROM
+           (
+            SELECT r.academic_year
+                  ,r.region
+                  ,r.school_level
+                  ,r.reporting_schoolid
+                  ,r.grade_level
+                  ,CASE WHEN r.lunchstatus IN ('F', 'R') THEN 1.0 ELSE 0.0 END AS is_fr_lunch
+                  ,CASE WHEN r.exitdate BETWEEN DATEADD(DAY, 1 - (DATEPART(WEEKDAY, SYSDATETIME())), CAST(SYSDATETIME() AS DATE)) /* week start date */
+                                            AND DATEADD(DAY, 7 - (DATEPART(WEEKDAY, SYSDATETIME())), CAST(SYSDATETIME() AS DATE)) /* week end date */
+                                                  THEN 1.0 ELSE 0.0 END AS is_attrition_week
+            FROM roster r
+           ) sub
+       GROUP BY sub.academic_year
+               ,sub.school_level
+               ,ROLLUP(sub.region, sub.reporting_schoolid)
+               ,CUBE(sub.grade_level)
       ) sub
-  GROUP BY sub.academic_year          
-          ,sub.school_level
-          ,ROLLUP(sub.region, sub.reporting_schoolid)
-          ,CUBE(sub.grade_level)
+  UNPIVOT(
+    value
+    FOR field IN (pct_fr_lunch, n_attrition_week)
+   ) u
  )
 
 ,modules AS (  
@@ -60,9 +79,9 @@ WITH roster AS (
       (
        SELECT sub.academic_year
              ,sub.subject_area
-             ,sub.module_number        
+             ,sub.module_number
 
-             ,ISNULL(sub.region, 'All') AS region        
+             ,ISNULL(sub.region, 'All') AS region
              ,ISNULL(sub.school_level, 'All') AS school_level
              ,ISNULL(sub.reporting_schoolid, 'All') AS reporting_schoolid
              ,ISNULL(sub.grade_level, 'All') AS grade_level
@@ -83,7 +102,7 @@ WITH roster AS (
                   ,r.grade_level
 
                   ,a.subject_area
-                  ,a.module_number           
+                  ,a.module_number
                   ,CASE 
                     WHEN a.performance_band_number IS NULL THEN NULL
                     WHEN a.performance_band_number >= 4 THEN 1.0 
@@ -119,10 +138,10 @@ WITH roster AS (
             JOIN gabby.illuminate_dna_assessments.agg_student_responses_all a
               ON r.student_number = a.local_student_id
              AND r.academic_year = a.academic_year
-             AND a.response_type = 'O'      
-             AND a.is_replacement = 0             
+             AND a.response_type = 'O'
+             AND a.is_replacement = 0
              AND a.module_type IN ('QA', 'CRQ')
-             AND a.module_number IS NOT NULL                          
+             AND a.module_number IS NOT NULL
            ) sub
        GROUP BY sub.academic_year
                ,sub.subject_area
@@ -157,7 +176,7 @@ WITH roster AS (
        SELECT sub.academic_year
              ,sub.subject
 
-             ,ISNULL(sub.region, 'All') AS region        
+             ,ISNULL(sub.region, 'All') AS region
              ,ISNULL(sub.school_level, 'All') AS school_level
              ,ISNULL(sub.reporting_schoolid, 'All') AS reporting_schoolid
              ,ISNULL(sub.grade_level, 'All') AS grade_level
@@ -170,7 +189,7 @@ WITH roster AS (
              ,AVG(sub.is_below_iep) AS pct_below_iep
        FROM
            (
-            SELECT r.student_number       
+            SELECT r.student_number
                   ,r.academic_year
                   ,r.region
                   ,r.school_level
@@ -181,7 +200,7 @@ WITH roster AS (
                   ,CASE WHEN p.test_performance_level >= 4 THEN 1.0 ELSE 0.0 END AS is_target
                   ,CASE WHEN p.test_performance_level = 3 THEN 1.0 ELSE 0.0 END AS is_approaching
                   ,CASE WHEN p.test_performance_level <= 2 THEN 1.0 ELSE 0.0 END AS is_below
-           
+
                   ,CASE 
                     WHEN r.iep_status = 'No IEP' THEN NULL
                     WHEN p.test_performance_level >= 4 THEN 1.0 
@@ -230,20 +249,47 @@ WITH roster AS (
       
         ,SUM(CAST(ada.membershipvalue AS FLOAT)) AS n_membership
         ,SUM(CAST(ada.attendancevalue AS FLOAT)) AS n_present
+        ,SUM(CASE 
+              WHEN ada.calendardate BETWEEN DATEADD(DAY, 1 - (DATEPART(WEEKDAY, SYSDATETIME())), CAST(SYSDATETIME() AS DATE)) /* week start date */
+                                        AND DATEADD(DAY, 7 - (DATEPART(WEEKDAY, SYSDATETIME())), CAST(SYSDATETIME() AS DATE)) /* week end date */
+                                              THEN CAST(ada.membershipvalue AS FLOAT)
+             END) AS n_membership_week
+        ,SUM(CASE 
+              WHEN ada.calendardate BETWEEN DATEADD(DAY, 1 - (DATEPART(WEEKDAY, SYSDATETIME())), CAST(SYSDATETIME() AS DATE)) /* week start date */
+                                        AND DATEADD(DAY, 7 - (DATEPART(WEEKDAY, SYSDATETIME())), CAST(SYSDATETIME() AS DATE)) /* week end date */
+                                              THEN CAST(ada.attendancevalue AS FLOAT)
+             END) AS n_present_week
 
-        ,CAST(SUM(CASE WHEN att.att_code IN ('T', 'T10') THEN 1 ELSE 0 END) AS FLOAT) AS n_tardy
+
+        ,SUM(CAST(CASE WHEN att.att_code IN ('T', 'T10') THEN 1 ELSE 0 END AS FLOAT)) AS n_tardy
         ,CAST(CASE WHEN SUM(CASE WHEN att.att_code = 'ISS' THEN 1 END) > 0 THEN 1 ELSE 0 END AS FLOAT) AS is_iss
         ,CAST(CASE WHEN SUM(CASE WHEN att.att_code = 'OSS' THEN 1 END) > 0 THEN 1 ELSE 0 END AS FLOAT) AS is_oss
+        ,SUM(CASE 
+              WHEN ada.calendardate BETWEEN DATEADD(DAY, 1 - (DATEPART(WEEKDAY, SYSDATETIME())), CAST(SYSDATETIME() AS DATE)) /* week start date */
+                                        AND DATEADD(DAY, 7 - (DATEPART(WEEKDAY, SYSDATETIME())), CAST(SYSDATETIME() AS DATE)) /* week end date */
+                                              THEN CAST(CASE WHEN att.att_code IN ('T', 'T10') THEN 1 ELSE 0 END AS FLOAT)
+             END) AS n_tardy_week
+        ,SUM(CASE 
+              WHEN ada.calendardate BETWEEN DATEADD(DAY, 1 - (DATEPART(WEEKDAY, SYSDATETIME())), CAST(SYSDATETIME() AS DATE)) /* week start date */
+                                        AND DATEADD(DAY, 7 - (DATEPART(WEEKDAY, SYSDATETIME())), CAST(SYSDATETIME() AS DATE)) /* week end date */
+                                              THEN CAST(CASE WHEN att.att_code = 'ISS' THEN 1 ELSE 0 END AS FLOAT)
+             END) AS is_iss_week
+        ,SUM(CASE 
+              WHEN ada.calendardate BETWEEN DATEADD(DAY, 1 - (DATEPART(WEEKDAY, SYSDATETIME())), CAST(SYSDATETIME() AS DATE)) /* week start date */
+                                        AND DATEADD(DAY, 7 - (DATEPART(WEEKDAY, SYSDATETIME())), CAST(SYSDATETIME() AS DATE)) /* week end date */
+                                              THEN CAST(CASE WHEN att.att_code = 'OSS' THEN 1 ELSE 0 END AS FLOAT)
+             END) AS is_oss_week
+        
         ,CAST(CASE 
-          WHEN r.iep_status = 'No IEP' THEN NULL 
-          WHEN SUM(CASE WHEN att.att_code = 'ISS' THEN 1 END) > 0 THEN 1 
-          ELSE 0 
-         END AS FLOAT) AS is_iss_iep
+               WHEN r.iep_status = 'No IEP' THEN NULL 
+               WHEN SUM(CASE WHEN att.att_code = 'ISS' THEN 1 END) > 0 THEN 1 
+               ELSE 0 
+              END AS FLOAT) AS is_iss_iep
         ,CAST(CASE 
-          WHEN r.iep_status = 'No IEP' THEN NULL 
-          WHEN SUM(CASE WHEN att.att_code = 'OSS' THEN 1 END) > 0 THEN 1 
-          ELSE 0 
-         END AS FLOAT) AS is_oss_iep
+               WHEN r.iep_status = 'No IEP' THEN NULL 
+               WHEN SUM(CASE WHEN att.att_code = 'OSS' THEN 1 END) > 0 THEN 1 
+               ELSE 0 
+              END AS FLOAT) AS is_oss_iep
   FROM roster r
   JOIN gabby.powerschool.ps_adaadm_daily_ctod ada
     ON r.studentid = ada.studentid
@@ -270,7 +316,7 @@ WITH roster AS (
         ,u.school_level
         ,u.reporting_schoolid
         ,u.grade_level
-      
+
         ,u.field
         ,u.value
   FROM
@@ -281,12 +327,17 @@ WITH roster AS (
              ,ISNULL(sub.reporting_schoolid, 'All') AS reporting_schoolid
              ,ISNULL(sub.grade_level, 'All') AS grade_level
             
-             ,SUM(sub.n_present) / SUM(sub.n_membership) AS pct_ada
-             ,(SUM(sub.n_present) - SUM(sub.n_tardy)) / SUM(sub.n_membership) AS pct_ontime
+             ,SUM(sub.n_present) / SUM(sub.n_membership) AS pct_ada             
+             ,(SUM(sub.n_present) - SUM(sub.n_tardy)) / SUM(sub.n_membership) AS pct_ontime             
              ,AVG(sub.is_iss) AS pct_iss
              ,AVG(sub.is_oss) AS pct_oss
              ,AVG(sub.is_iss_iep) AS pct_iss_iep
              ,AVG(sub.is_oss_iep) AS pct_oss_iep
+
+             ,SUM(sub.n_present_week) / SUM(sub.n_membership_week) AS pct_ada_week
+             ,(SUM(sub.n_present_week) - SUM(sub.n_tardy_week)) / SUM(sub.n_membership_week) AS pct_ontime_week
+             ,CAST(COUNT(DISTINCT CASE WHEN sub.is_iss_week >= 1 THEN sub.student_number END) AS FLOAT) AS n_iss_week
+             ,CAST(COUNT(DISTINCT CASE WHEN sub.is_oss_week >= 1 THEN sub.student_number END) AS FLOAT) AS n_oss_week
        FROM student_attendance sub
        GROUP BY sub.academic_year
                ,sub.school_level
@@ -300,7 +351,11 @@ WITH roster AS (
                  ,sub.pct_iss
                  ,sub.pct_oss
                  ,sub.pct_iss_iep
-                 ,sub.pct_oss_iep)
+                 ,sub.pct_oss_iep                 
+                 ,sub.pct_ada_week
+                 ,sub.pct_ontime_week
+                 ,sub.n_iss_week
+                 ,sub.n_oss_week)
    ) u
 )
 
