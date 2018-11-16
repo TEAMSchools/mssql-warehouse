@@ -345,8 +345,8 @@ FROM
            ,tgs.student_grade_level AS grade_level
            
            ,am.is_mastery
-     FROM gabby.pm.teacher_goal_scaffold_static tgs          
-     JOIN assessment_metrics am
+     FROM gabby.pm.teacher_goal_scaffold_static tgs
+     LEFT JOIN assessment_metrics am
        ON tgs.academic_year = am.academic_year
       AND tgs.metric_name = am.metric_name
       AND tgs.metric_term = am.module_number
