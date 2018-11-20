@@ -60,8 +60,6 @@ WITH attending_enrollment AS (
       (
        SELECT c.contact_c AS contact_id
              ,CASE 
-               WHEN c.category_c = 'Benchmark' AND MONTH(c.date_c) >= 7 THEN 'BMF'
-               WHEN c.category_c = 'Benchmark' AND MONTH(c.date_c) < 7 THEN 'BMS'
                WHEN c.subject_c = 'PSC' AND MONTH(c.date_c) >= 7 THEN 'PSCF'
                WHEN c.subject_c = 'PSC' AND MONTH(c.date_c) < 7 THEN 'PSCS'
                WHEN c.subject_c = 'BBB' AND MONTH(c.date_c) >= 7 THEN 'BBBF'
@@ -75,9 +73,22 @@ WITH attending_enrollment AS (
               END AS contact_subject
              ,c.Date_c AS contact_date
        FROM gabby.alumni.contact_note_c c
-       WHERE gabby.utilities.DATE_TO_SY(c.Date_c) = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+       WHERE gabby.utilities.DATE_TO_SY(c.Date_c) = gabby.utilities.GLOBAL_ACADEMIC_YEAR()         
+         AND c.subject_c IN ('BBB', 'Grad Plan FA18', 'Grad Plan SP19', 'PSC', 'AAS1', 'AAS2')
          AND c.is_deleted = 0
-         AND (c.category_c = 'Benchmark' OR c.subject_c IN ('BBB', 'Grad Plan FA18', 'Grad Plan SP19', 'PSC', 'AAS1', 'AAS2'))
+
+       UNION ALL
+
+       SELECT contact_c
+             ,CASE
+               WHEN MONTH(benchmark_date_c) >= 7 THEN 'BMF'
+               WHEN MONTH(benchmark_date_c) < 7 THEN 'BMS'
+              END AS contact_subject
+             ,benchmark_date_c AS contact_date
+       FROM gabby.alumni.college_persistence_c
+       WHERE benchmark_status_c = 'Complete'
+         AND gabby.utilities.DATE_TO_SY(benchmark_date_c) = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+         AND is_deleted = 0
       ) sub
   PIVOT(
     COUNT(contact_date)
