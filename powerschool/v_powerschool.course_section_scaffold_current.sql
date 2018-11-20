@@ -8,20 +8,20 @@ WITH course_scaffold AS (
         ,course_number
         ,course_name
         ,credittype
-        ,credit_hours        
+        ,credit_hours
         ,excludefromgpa
         ,gradescaleid
         ,is_curterm
   FROM
       (
-       SELECT DISTINCT 
+       SELECT DISTINCT
               enr.studentid
              ,enr.student_number
-             ,enr.yearid           
+             ,enr.yearid
              ,enr.course_number
              ,enr.course_name
              ,enr.credittype
-             ,enr.credit_hours             
+             ,enr.credit_hours
              ,enr.excludefromgpa
              ,enr.gradescaleid
 
@@ -33,18 +33,18 @@ WITH course_scaffold AS (
        JOIN powerschool.schools
          ON enr.schoolid = schools.school_number
         AND schools.high_grade >= 8
-       JOIN gabby.reporting.reporting_terms terms  
+       JOIN gabby.reporting.reporting_terms terms
          ON enr.yearid = terms.yearid
         AND enr.schoolid = terms.schoolid
         AND terms.identifier = 'RT'
         AND terms.alt_name NOT IN ('Summer School','Capstone','EOY')
-       WHERE enr.dateenrolled BETWEEN DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1) AND CONVERT(DATE,GETDATE())
+       WHERE enr.section_enroll_status = 0
          AND enr.course_enroll_status = 0
-         AND enr.section_enroll_status = 0
+         AND enr.dateenrolled BETWEEN DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1) AND CONVERT(DATE,GETDATE())
       ) sub
  )
 
-,section_scaffold AS (  
+,section_scaffold AS (
   SELECT studentid
         ,course_number
         ,yearid
@@ -60,22 +60,22 @@ WITH course_scaffold AS (
              ,CONVERT(VARCHAR(25),cc.course_number) AS course_number
              ,CONVERT(INT,cc.sectionid) AS sectionid
              ,cc.dateleft
-             ,CONVERT(INT,LEFT(ABS(cc.termid), 2)) AS yearid                   
+             ,CONVERT(INT,LEFT(ABS(cc.termid), 2)) AS yearid
              ,cc.abs_sectionid
       
              ,CONVERT(INT,sec.gradescaleid) AS gradescaleid
 
-             ,CASE 
-               WHEN terms.alt_name = 'Summer School' THEN 'Q1' 
-               ELSE CONVERT(VARCHAR,terms.alt_name) 
-              END AS term_name        
+             ,CASE
+               WHEN terms.alt_name = 'Summer School' THEN 'Q1'
+               ELSE CONVERT(VARCHAR,terms.alt_name)
+              END AS term_name
        FROM powerschool.cc
        JOIN powerschool.sections sec
          ON cc.abs_sectionid = sec.id
        JOIN gabby.reporting.reporting_terms terms
-         ON cc.schoolid = terms.schoolid         
+         ON cc.schoolid = terms.schoolid
         AND cc.dateenrolled BETWEEN terms.start_date AND terms.end_date
-        AND terms.identifier = 'RT'   
+        AND terms.identifier = 'RT'
         AND terms.school_level IN ('MS','HS')
        WHERE cc.dateenrolled BETWEEN DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1) AND CONVERT(DATE,GETDATE())
       ) sub
@@ -86,7 +86,7 @@ SELECT cs.studentid
       ,cs.yearid
       ,cs.term_name
       ,cs.is_curterm
-      ,cs.course_number      
+      ,cs.course_number
       ,cs.course_name
       ,cs.credittype
       ,cs.credit_hours

@@ -17,18 +17,18 @@ FROM
            ,CONVERT(VARCHAR(125),credittype) AS credittype
            ,CONVERT(VARCHAR(125),subject_area) AS subject_area
            ,MAX(is_advanced_math) OVER(PARTITION BY student_id, academic_year, credittype) AS is_advanced_math_student
-           ,CONVERT(INT,ROW_NUMBER() OVER(        
+           ,CONVERT(INT,ROW_NUMBER() OVER(
               PARTITION BY student_id, academic_year, credittype, subject_area
                 ORDER BY entry_date DESC, leave_date DESC)) AS rn
      FROM
          (
           /* K-4 ELA */
           SELECT ssc.student_id
-                ,ssc.academic_year      
+                ,ssc.academic_year
                 ,ssc.grade_level_id
                 ,ssc.entry_date
                 ,ssc.leave_date
-             
+
                 ,'Text Study' AS subject_area
                 ,'ENG' AS credittype
                 ,0 AS is_advanced_math
@@ -40,17 +40,17 @@ FROM
           JOIN gabby.illuminate_matviews.ss_cube ssc
             ON ils.student_id = ssc.student_id
            AND c.course_id = ssc.course_id
-           AND (enr.academic_year + 1) = ssc.academic_year                
+           AND (enr.academic_year + 1) = ssc.academic_year
           WHERE enr.course_enroll_status = 0
             AND enr.section_enroll_status = 0
-            AND enr.course_number = 'HR'       
+            AND enr.course_number = 'HR'
             AND (ssc.grade_level_id <= 5 OR (enr.schoolid = 73258 AND enr.section_number LIKE 'W%')) /* Pathways MS students only enrolled in HR */
-       
-          UNION ALL       
-       
+
+          UNION ALL
+
           /* K-4 Math */
           SELECT ssc.student_id
-                ,ssc.academic_year      
+                ,ssc.academic_year
                 ,ssc.grade_level_id
                 ,ssc.entry_date
                 ,ssc.leave_date
@@ -67,23 +67,23 @@ FROM
             ON ils.student_id = ssc.student_id
            AND c.course_id = ssc.course_id
            AND (enr.academic_year + 1) = ssc.academic_year
-           AND ssc.grade_level_id <= 5        
+           AND ssc.grade_level_id <= 5
           WHERE enr.course_enroll_status = 0
             AND enr.section_enroll_status = 0
             AND enr.course_number = 'HR'
             AND (ssc.grade_level_id <= 5 OR (enr.schoolid = 73258 AND enr.section_number LIKE 'W%')) /* Pathways MS students only enrolled in HR */
-       
+
           UNION ALL
 
           /* 5-12 enrollments */
           SELECT ssc.student_id
-                ,ssc.academic_year      
+                ,ssc.academic_year
                 ,ssc.grade_level_id
                 ,ssc.entry_date
                 ,ssc.leave_date
-             
+
                 ,enr.illuminate_subject AS subject_area
-                ,enr.credittype             
+                ,enr.credittype
                 ,CASE WHEN enr.illuminate_subject IN ('Algebra I', 'Geometry', 'Algebra II', 'Algebra IIA', 'Algebra IIB', 'Pre-Calculus') THEN 1 ELSE 0 END AS is_advanced_math
           FROM gabby.powerschool.course_enrollments_static enr
           JOIN gabby.illuminate_public.students ils
@@ -93,12 +93,12 @@ FROM
           JOIN gabby.illuminate_matviews.ss_cube ssc
             ON ils.student_id = ssc.student_id
            AND c.course_id = ssc.course_id
-           AND (enr.academic_year + 1) = ssc.academic_year        
+           AND (enr.academic_year + 1) = ssc.academic_year
           WHERE enr.course_enroll_status = 0
             AND enr.section_enroll_status = 0
             AND enr.illuminate_subject IN ('Mathematics','Algebra I','Geometry','Algebra II','Algebra IIA','Algebra IIB','Pre-Calculus'
                                           ,'Text Study','English 100','English 200','English 300','English 400'
-                                          ,'Science','Social Studies') 
+                                          ,'Science','Social Studies')
          ) sub
     ) sub
 WHERE rn = 1
