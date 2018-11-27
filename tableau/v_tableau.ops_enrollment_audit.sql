@@ -123,7 +123,7 @@ WITH caredox_enrollment AS (
                                ELSE 'N'
                               END) COLLATE Latin1_General_BIN AS residency_proof_all
 
-        ,CONVERT(VARCHAR(500),ISNULL(CASE WHEN rv.NEN IS NOT NULL THEN 'Y' END,'N')) COLLATE Latin1_General_BIN AS residency_verification_scanned
+        ,CONVERT(VARCHAR(500),ISNULL(CASE WHEN rv.nen IS NOT NULL THEN 'Y' END,'N')) COLLATE Latin1_General_BIN AS residency_verification_scanned
         --,CONVERT(VARCHAR(500),CASE WHEN co.year_in_network > 1 THEN ISNULL(rv.verification_date,'1900-07-01') END) AS reverification_date
 
         ,CONVERT(VARCHAR(500),ISNULL(cde.status,'')) COLLATE Latin1_General_BIN AS caredox_enrollment_status
@@ -152,8 +152,8 @@ WITH caredox_enrollment AS (
     ON co.student_number = cdm.student_id
   WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()    
     AND co.rn_year = 1
-    AND co.schoolid != 999999    
     AND co.enroll_status IN (-1, 0)
+    AND co.schoolid != 999999    
  )
 
 ,unpivoted AS (
