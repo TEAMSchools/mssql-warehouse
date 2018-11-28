@@ -24,9 +24,11 @@ SELECT academic_year
       ,is_absent
       ,att_code
       ,term
+      ,ada_running
+      ,pct_ontime_running
       ,is_oss_running
       ,is_iss_running
-      ,is_suspended_running
+      ,is_suspended_running      
 FROM tableau.attendance_dashboard_current_static
 
 UNION ALL
@@ -59,6 +61,8 @@ SELECT academic_year
       ,is_absent
       ,att_code
       ,term
+      ,NULL AS ada_running
+      ,NULL AS pct_ontime_running
       ,is_oss_running
       ,is_iss_running
       ,is_suspended_running

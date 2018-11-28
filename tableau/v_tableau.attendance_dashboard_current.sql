@@ -1,7 +1,7 @@
 CREATE OR ALTER VIEW tableau.attendance_dashboard_current AS
 
 SELECT sub.student_number
-      ,sub.studentid      
+      ,sub.studentid
       ,sub.lastfirst
       ,sub.academic_year
       ,sub.schoolid
@@ -24,15 +24,11 @@ SELECT sub.student_number
       ,sub.is_absent
       ,sub.att_code
       ,sub.term
-      ,MAX(CASE WHEN sub.att_code IN ('OS', 'OSS', 'OSSP') THEN 1 ELSE 0 END)
-         OVER(PARTITION BY sub.student_number, sub.academic_year
-              ORDER BY sub.calendardate) AS is_oss_running
-      ,MAX(CASE WHEN sub.att_code IN ('S', 'ISS') THEN 1 ELSE 0 END) 
-         OVER(PARTITION BY sub.student_number, sub.academic_year
-              ORDER BY sub.calendardate) AS is_iss_running
-      ,MAX(CASE WHEN sub.att_code IN ('OS', 'OSS', 'OSSP', 'S', 'ISS') THEN 1 ELSE 0 END) 
-         OVER(PARTITION BY sub.student_number, sub.academic_year
-              ORDER BY sub.calendardate) AS is_suspended_running
+      ,AVG(sub.is_present) OVER(PARTITION BY sub.studentid, sub.academic_year ORDER BY sub.calendardate) AS ada_running
+      ,AVG(sub.is_ontime) OVER(PARTITION BY sub.student_number, sub.academic_year ORDER BY sub.calendardate) AS pct_ontime_running
+      ,MAX(sub.is_oss) OVER(PARTITION BY sub.student_number, sub.academic_year ORDER BY sub.calendardate) AS is_oss_running
+      ,MAX(sub.is_iss) OVER(PARTITION BY sub.student_number, sub.academic_year ORDER BY sub.calendardate) AS is_iss_running
+      ,MAX(sub.is_suspended) OVER(PARTITION BY sub.student_number, sub.academic_year ORDER BY sub.calendardate) AS is_suspended_running
 FROM
     (
      SELECT co.academic_year
@@ -57,12 +53,16 @@ FROM
 
            ,mem.calendardate
            ,mem.membershipvalue
-           ,mem.attendancevalue AS is_present
+           ,CONVERT(FLOAT,mem.attendancevalue) AS is_present
            ,ABS(mem.attendancevalue - 1) AS is_absent
 
            ,att.att_code
+           ,CASE WHEN att.att_code IN ('T', 'T10') THEN 0.0 ELSE 1.0 END AS is_ontime
+           ,CASE WHEN att.att_code IN ('OS', 'OSS', 'OSSP') THEN 1.0 ELSE 0.0 END AS is_oss
+           ,CASE WHEN att.att_code IN ('S', 'ISS') THEN 1.0 ELSE 0.0 END AS is_iss
+           ,CASE WHEN att.att_code IN ('OS', 'OSS', 'OSSP', 'S', 'ISS') THEN 1.0 ELSE 0.0 END AS is_suspended
 
-           ,CONVERT(VARCHAR(25),dt.alt_name) AS term     
+           ,CONVERT(VARCHAR(25),dt.alt_name) AS term
      FROM powerschool.cohort_identifiers_static co
      LEFT JOIN powerschool.course_enrollments_static enr
        ON co.studentid = enr.studentid
