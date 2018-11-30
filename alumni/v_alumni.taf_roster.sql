@@ -116,7 +116,7 @@ WITH hs_grads AS (
   FROM
       (
        SELECT CONVERT(VARCHAR(25),s.id) AS salesforce_contact_id
-             ,CONVERT(INT,s.school_specific_id_c) AS student_number
+             ,CONVERT(BIGINT,s.school_specific_id_c) AS student_number
              ,CONVERT(VARCHAR(125),s.mobile_phone) AS sf_mobile_phone
              ,CONVERT(VARCHAR(125),s.home_phone) AS sf_home_phone
              ,CONVERT(VARCHAR(125),s.other_phone) AS sf_other_phone
