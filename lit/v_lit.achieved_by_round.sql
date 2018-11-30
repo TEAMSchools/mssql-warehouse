@@ -321,14 +321,12 @@ SELECT academic_year
         WHEN gleq = prev_gleq THEN 0
         WHEN gleq_lvl_num > prev_gleq_lvl_num THEN 1 
         WHEN gleq_lvl_num <= prev_gleq_lvl_num THEN 0        
-       END AS moved_levels
-      ,SUM(CASE             
-            WHEN round_num = 1 THEN 0 
-            WHEN gleq = prev_gleq THEN 0
-            ELSE gleq_lvl_num - prev_gleq_lvl_num
-            --WHEN lvl_num > prev_lvl_num THEN 1 
-            --WHEN lvl_num <= prev_lvl_num THEN 0        
-           END) OVER(PARTITION BY student_number, academic_year ORDER BY start_date ASC) AS n_levels_moved_y1
+       END AS moved_levels      
+      ,CASE             
+        WHEN round_num <= 1 THEN NULL
+        ELSE MAX(CASE WHEN sub.reporting_term = sub.max_reporting_term_ytd THEN sub.gleq_lvl_num END) OVER(PARTITION BY sub.student_number, sub.academic_year)
+             - MAX(CASE WHEN sub.reporting_term = sub.min_reporting_term_ytd THEN sub.gleq_lvl_num END) OVER(PARTITION BY sub.student_number, sub.academic_year)
+       END AS n_levels_moved_y1
       ,ROW_NUMBER() OVER(
          PARTITION BY student_number, academic_year
            ORDER BY start_date ASC) AS rn_round_asc
@@ -359,6 +357,8 @@ FROM
            ,sub.achv_unique_id      
            ,sub.dna_unique_id      
            ,sub.is_new_test
+           ,MIN(sub.reporting_term) OVER(PARTITION BY sub.student_number, sub.academic_year) AS min_reporting_term_ytd
+           ,MAX(CASE WHEN GETDATE() >= sub.start_date THEN sub.reporting_term END) OVER(PARTITION BY sub.student_number, sub.academic_year) AS max_reporting_term_ytd
 
            ,CASE
              WHEN sub.academic_year >= 2018 THEN sub.fp_read_lvl
@@ -466,7 +466,7 @@ FROM
           FROM achieved
           LEFT JOIN gabby.lit.all_test_events_static atid 
             ON achieved.achv_unique_id = atid.unique_id
-           AND atid.status != 'Did Not Achieve'     
+           AND atid.status != 'Did Not Achieve'
           LEFT JOIN dna
             ON achieved.student_number = dna.student_number
            AND achieved.academic_year = dna.academic_year
