@@ -44,8 +44,8 @@ WITH classes_dedupe AS (
         ,sub.test_administered_by
         ,sub.testid
         ,sub.is_fp
-        ,CASE WHEN sub.benchmark_level IN ('Instructional', 'Hard') THEN sub.text_level END AS dna_lvl
-        ,CASE WHEN sub.benchmark_level IN ('Instructional', 'Hard') THEN sub.text_level END AS instruct_lvl
+        ,CASE WHEN sub.benchmark_level = 'Instructional' THEN sub.text_level END AS dna_lvl
+        ,CASE WHEN sub.benchmark_level = 'Instructional' THEN sub.text_level END AS instruct_lvl
         ,CASE WHEN sub.benchmark_level = 'Independent' THEN sub.text_level END AS indep_lvl
   FROM
       (
@@ -78,7 +78,8 @@ WITH classes_dedupe AS (
               END AS text_level
              ,CASE
                WHEN fp.benchmark_level = 'Independent' THEN 'Achieved'
-               WHEN fp.benchmark_level IN ('Instructional', 'Hard') THEN 'Did Not Achieve'
+               WHEN fp.benchmark_level = 'Instructional' THEN 'Did Not Achieve'
+               WHEN fp.benchmark_level = 'Hard' THEN 'DNA - Hard'
               END AS status           
              ,CASE
                WHEN fp.school_name = 'BOLD Academy' THEN 73258
@@ -217,8 +218,8 @@ SELECT cd.unique_id
       ,gleq.fp_lvl_num AS lvl_num
       ,gleq.gleq AS gleq      
       ,gleq.lvl_num AS gleq_lvl_num
-      ,CASE WHEN cd.benchmark_level IN ('Instructional', 'Hard') THEN gleq.fp_lvl_num END AS dna_lvl_num
-      ,CASE WHEN cd.benchmark_level IN ('Instructional', 'Hard') THEN gleq.fp_lvl_num END AS instruct_lvl_num      
+      ,CASE WHEN cd.benchmark_level = 'Instructional' THEN gleq.fp_lvl_num END AS dna_lvl_num
+      ,CASE WHEN cd.benchmark_level = 'Instructional' THEN gleq.fp_lvl_num END AS instruct_lvl_num      
       ,CASE WHEN cd.benchmark_level = 'Independent' THEN gleq.fp_lvl_num END AS indep_lvl_num      
 FROM predna cd
 LEFT JOIN gabby.reporting.reporting_terms rt

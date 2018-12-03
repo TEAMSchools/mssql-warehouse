@@ -322,11 +322,9 @@ SELECT academic_year
         WHEN gleq_lvl_num > prev_gleq_lvl_num THEN 1 
         WHEN gleq_lvl_num <= prev_gleq_lvl_num THEN 0        
        END AS moved_levels      
-      ,CASE             
-        WHEN round_num <= 1 THEN NULL
-        ELSE MAX(CASE WHEN sub.reporting_term = sub.max_reporting_term_ytd THEN sub.gleq_lvl_num END) OVER(PARTITION BY sub.student_number, sub.academic_year)
-             - MAX(CASE WHEN sub.reporting_term = sub.min_reporting_term_ytd THEN sub.gleq_lvl_num END) OVER(PARTITION BY sub.student_number, sub.academic_year)
-       END AS n_levels_moved_y1
+      ,MAX(CASE WHEN sub.reporting_term = sub.max_reporting_term_ytd THEN sub.lvl_num END) OVER(PARTITION BY sub.student_number, sub.academic_year)
+         - MAX(CASE WHEN sub.reporting_term = sub.min_reporting_term_ytd THEN sub.lvl_num END) OVER(PARTITION BY sub.student_number, sub.academic_year)
+         AS n_levels_moved_y1
       ,ROW_NUMBER() OVER(
          PARTITION BY student_number, academic_year
            ORDER BY start_date ASC) AS rn_round_asc
