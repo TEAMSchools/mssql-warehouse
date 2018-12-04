@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW surveys.r9engagement_survey_detail AS
+--CREATE OR ALTER VIEW surveys.r9engagement_survey_detail AS
 
 WITH survey_unpivoted AS (
   SELECT academic_year
@@ -260,6 +260,37 @@ WITH survey_unpivoted AS (
              ,CONVERT(FLOAT,technologyschoolleadersonly_2) AS technologyschoolleadersonly_2
              ,CONVERT(FLOAT,technologyschoolleadersonly_3) AS technologyschoolleadersonly_3
              ,CONVERT(FLOAT,technologysl) AS technologysl
+            
+             ,CONVERT(FLOAT,NULL) AS data_1
+             ,CONVERT(FLOAT,NULL) AS data_2
+             ,CONVERT(FLOAT,NULL) AS ER_1
+             ,CONVERT(FLOAT,NULL) AS ER_2
+             ,CONVERT(FLOAT,NULL) AS facilities_7
+             ,CONVERT(FLOAT,NULL) AS facilities_8
+             ,CONVERT(FLOAT,NULL) AS humanresources_1
+             ,CONVERT(FLOAT,NULL) AS humanresources_2
+             ,CONVERT(FLOAT,NULL) AS humanresource_3
+             ,CONVERT(FLOAT,NULL) AS marketing_3
+             ,CONVERT(FLOAT,NULL) AS purchasing_9
+             ,CONVERT(FLOAT,NULL) AS purchasing_10
+             ,CONVERT(FLOAT,NULL) AS specialeducation_7
+             ,CONVERT(FLOAT,NULL) AS specialeducation_6
+             ,CONVERT(FLOAT,NULL) AS region_1
+             ,CONVERT(FLOAT,NULL) AS region_2
+             ,CONVERT(FLOAT,NULL) AS schooloperations_11
+             ,CONVERT(FLOAT,NULL) AS region_3
+             ,CONVERT(FLOAT,NULL) AS region_4
+             ,CONVERT(FLOAT,NULL) AS region_5
+             ,CONVERT(FLOAT,NULL) AS teachinglearning_11
+             ,CONVERT(FLOAT,NULL) AS teachinglearning_12
+             ,CONVERT(FLOAT,NULL) AS teachinglearning_13
+             ,CONVERT(FLOAT,NULL) AS technology_14
+             ,CONVERT(FLOAT,NULL) AS technology_16
+             ,CONVERT(FLOAT,NULL) AS technology_15
+             ,CONVERT(FLOAT,NULL) AS region_8
+             --,CONVERT(varchar,NULL) AS region_6 --open-ended, do we need to treat these differently?
+             --,CONVERT(varchar,NULL) AS region_7 --open-ended, do we need to treat these differently?
+
        FROM gabby.surveys.r9engagement_survey_archive
 
        UNION ALL
@@ -580,6 +611,224 @@ WITH survey_unpivoted AS (
              ,NULL AS technologyschoolleadersonly_2
              ,NULL AS technologyschoolleadersonly_3
              ,NULL AS technologysl
+
+             ,CASE
+               WHEN data_1 = 'Strongly agree' THEN 5.0	
+               WHEN data_1 = 'Agree' THEN 4.0	
+               WHEN data_1 = 'Neutral' THEN 3.0	
+               WHEN data_1 = 'Disagree' THEN 2.0	
+               WHEN data_1 = 'Strongly disagree' THEN 1.0
+               WHEN data_1 = 'Not Applicable' THEN NULL
+              END AS  data_1
+             ,CASE
+               WHEN data_2 = 'Strongly agree' THEN 5.0	
+               WHEN data_2 = 'Agree' THEN 4.0	
+               WHEN data_2 = 'Neutral' THEN 3.0	
+               WHEN data_2 = 'Disagree' THEN 2.0	
+               WHEN data_2 = 'Strongly disagree' THEN 1.0
+               WHEN data_2 = 'Not Applicable' THEN NULL
+              END AS data_2
+             ,CASE
+               WHEN ER_1 = 'Strongly agree' THEN 5.0	
+               WHEN ER_1 = 'Agree' THEN 4.0	
+               WHEN ER_1 = 'Neutral' THEN 3.0	
+               WHEN ER_1 = 'Disagree' THEN 2.0	
+               WHEN ER_1 = 'Strongly disagree' THEN 1.0
+               WHEN ER_1 = 'Not Applicable' THEN NULL
+              END AS ER_1
+             ,CASE
+               WHEN ER_2 = 'Strongly agree' THEN 5.0	
+               WHEN ER_2 = 'Agree' THEN 4.0	
+               WHEN ER_2 = 'Neutral' THEN 3.0	
+               WHEN ER_2 = 'Disagree' THEN 2.0	
+               WHEN ER_2 = 'Strongly disagree' THEN 1.0
+               WHEN ER_2 = 'Not Applicable' THEN NULL
+              END AS ER_2
+             ,CASE
+               WHEN facilities_7 = 'Strongly agree' THEN 5.0	
+               WHEN facilities_7 = 'Agree' THEN 4.0	
+               WHEN facilities_7 = 'Neutral' THEN 3.0	
+               WHEN facilities_7 = 'Disagree' THEN 2.0	
+               WHEN facilities_7 = 'Strongly disagree' THEN 1.0
+               WHEN facilities_7 = 'Not Applicable' THEN NULL
+              END AS facilities_7
+             ,CASE
+               WHEN facilities_8 = 'Strongly agree' THEN 5.0	
+               WHEN facilities_8 = 'Agree' THEN 4.0	
+               WHEN facilities_8 = 'Neutral' THEN 3.0	
+               WHEN facilities_8 = 'Disagree' THEN 2.0	
+               WHEN facilities_8 = 'Strongly disagree' THEN 1.0
+               WHEN facilities_8 = 'Not Applicable' THEN NULL
+              END AS facilities_8
+             ,CASE
+               WHEN humanresources_1 = 'Strongly agree' THEN 5.0	
+               WHEN humanresources_1 = 'Agree' THEN 4.0	
+               WHEN humanresources_1 = 'Neutral' THEN 3.0	
+               WHEN humanresources_1 = 'Disagree' THEN 2.0	
+               WHEN humanresources_1 = 'Strongly disagree' THEN 1.0
+               WHEN humanresources_1 = 'Not Applicable' THEN NULL
+              END AS humanresourcess_1
+             ,CASE
+               WHEN humanresources_2 = 'Strongly agree' THEN 5.0	
+               WHEN humanresources_2 = 'Agree' THEN 4.0	
+               WHEN humanresources_2 = 'Neutral' THEN 3.0	
+               WHEN humanresources_2 = 'Disagree' THEN 2.0	
+               WHEN humanresources_2 = 'Strongly disagree' THEN 1.0
+               WHEN humanresources_2 = 'Not Applicable' THEN NULL
+              END AS humanresources_2
+             ,CASE
+               WHEN humanresource_3 = 'Strongly agree' THEN 5.0	
+               WHEN humanresource_3 = 'Agree' THEN 4.0	
+               WHEN humanresource_3 = 'Neutral' THEN 3.0	
+               WHEN humanresource_3 = 'Disagree' THEN 2.0	
+               WHEN humanresource_3 = 'Strongly disagree' THEN 1.0
+               WHEN humanresource_3 = 'Not Applicable' THEN NULL
+              END AS humanresource_3
+             ,CASE
+               WHEN marketing_3 = 'Strongly agree' THEN 5.0	
+               WHEN marketing_3 = 'Agree' THEN 4.0	
+               WHEN marketing_3 = 'Neutral' THEN 3.0	
+               WHEN marketing_3 = 'Disagree' THEN 2.0	
+               WHEN marketing_3 = 'Strongly disagree' THEN 1.0
+               WHEN marketing_3 = 'Not Applicable' THEN NULL
+              END AS marketing_3
+             ,CASE
+               WHEN purchasing_9 = 'Strongly agree' THEN 5.0	
+               WHEN purchasing_9 = 'Agree' THEN 4.0	
+               WHEN purchasing_9 = 'Neutral' THEN 3.0	
+               WHEN purchasing_9 = 'Disagree' THEN 2.0	
+               WHEN purchasing_9 = 'Strongly disagree' THEN 1.0
+               WHEN purchasing_9 = 'Not Applicable' THEN NULL
+              END AS purchasing_9
+             ,CASE
+               WHEN purchasing_10 = 'Strongly agree' THEN 5.0	
+               WHEN purchasing_10 = 'Agree' THEN 4.0	
+               WHEN purchasing_10 = 'Neutral' THEN 3.0	
+               WHEN purchasing_10 = 'Disagree' THEN 2.0	
+               WHEN purchasing_10 = 'Strongly disagree' THEN 1.0
+               WHEN purchasing_10 = 'Not Applicable' THEN NULL
+              END AS purchasing_10
+             ,CASE
+               WHEN specialeducation_7 = 'Strongly agree' THEN 5.0	
+               WHEN specialeducation_7 = 'Agree' THEN 4.0	
+               WHEN specialeducation_7 = 'Neutral' THEN 3.0	
+               WHEN specialeducation_7 = 'Disagree' THEN 2.0	
+               WHEN specialeducation_7 = 'Strongly disagree' THEN 1.0
+               WHEN specialeducation_7 = 'Not Applicable' THEN NULL
+              END AS specialeducation_7
+             ,CASE
+               WHEN specialeducation_6 = 'Strongly agree' THEN 5.0	
+               WHEN specialeducation_6 = 'Agree' THEN 4.0	
+               WHEN specialeducation_6 = 'Neutral' THEN 3.0	
+               WHEN specialeducation_6 = 'Disagree' THEN 2.0	
+               WHEN specialeducation_6 = 'Strongly disagree' THEN 1.0
+               WHEN specialeducation_6 = 'Not Applicable' THEN NULL
+              END AS specialeducation_6
+             ,CASE
+               WHEN specialeducation_6 = 'Yes' THEN 1.0	
+               WHEN specialeducation_6 = 'No' THEN 0.0	
+               WHEN specialeducation_6 = 'Not Applicable' THEN NULL
+              END AS region_1 --yes/no
+             ,CASE
+               WHEN region_2 = 'Strongly agree' THEN 5.0	
+               WHEN region_2 = 'Agree' THEN 4.0	
+               WHEN region_2 = 'Neutral' THEN 3.0	
+               WHEN region_2 = 'Disagree' THEN 2.0	
+               WHEN region_2 = 'Strongly disagree' THEN 1.0
+               WHEN region_2 = 'Not Applicable' THEN NULL
+              END AS region_2
+             ,CASE
+               WHEN schooloperations_11 = 'Strongly agree' THEN 5.0	
+               WHEN schooloperations_11 = 'Agree' THEN 4.0	
+               WHEN schooloperations_11 = 'Neutral' THEN 3.0	
+               WHEN schooloperations_11 = 'Disagree' THEN 2.0	
+               WHEN schooloperations_11 = 'Strongly disagree' THEN 1.0
+               WHEN schooloperations_11 = 'Not Applicable' THEN NULL
+              END AS schooloperations_11
+             ,CASE
+               WHEN region_3 = 'Strongly agree' THEN 5.0	
+               WHEN region_3 = 'Agree' THEN 4.0	
+               WHEN region_3 = 'Neutral' THEN 3.0	
+               WHEN region_3 = 'Disagree' THEN 2.0	
+               WHEN region_3 = 'Strongly disagree' THEN 1.0
+               WHEN region_3 = 'Not Applicable' THEN NULL
+              END AS region_3
+             ,CASE
+               WHEN region_4 = 'Strongly agree' THEN 5.0	
+               WHEN region_4 = 'Agree' THEN 4.0	
+               WHEN region_4 = 'Neutral' THEN 3.0	
+               WHEN region_4 = 'Disagree' THEN 2.0	
+               WHEN region_4 = 'Strongly disagree' THEN 1.0
+               WHEN region_4 = 'Not Applicable' THEN NULL
+              END AS region_4
+             ,CASE
+               WHEN region_5 = 'Strongly agree' THEN 5.0	
+               WHEN region_5 = 'Agree' THEN 4.0	
+               WHEN region_5 = 'Neutral' THEN 3.0	
+               WHEN region_5 = 'Disagree' THEN 2.0	
+               WHEN region_5 = 'Strongly disagree' THEN 1.0
+               WHEN region_5 = 'Not Applicable' THEN NULL
+              END AS region_5
+             ,CASE
+               WHEN teachinglearning_11 = 'Strongly agree' THEN 5.0	
+               WHEN teachinglearning_11 = 'Agree' THEN 4.0	
+               WHEN teachinglearning_11 = 'Neutral' THEN 3.0	
+               WHEN teachinglearning_11 = 'Disagree' THEN 2.0	
+               WHEN teachinglearning_11 = 'Strongly disagree' THEN 1.0
+               WHEN teachinglearning_11 = 'Not Applicable' THEN NULL
+              END AS teachinglearning_11
+             ,CASE
+               WHEN teachinglearning_12 = 'Strongly agree' THEN 5.0	
+               WHEN teachinglearning_12 = 'Agree' THEN 4.0	
+               WHEN teachinglearning_12 = 'Neutral' THEN 3.0	
+               WHEN teachinglearning_12 = 'Disagree' THEN 2.0	
+               WHEN teachinglearning_12 = 'Strongly disagree' THEN 1.0
+               WHEN teachinglearning_12 = 'Not Applicable' THEN NULL
+              END AS teachinglearning_12
+             ,CASE
+               WHEN teachinglearning_13 = 'Strongly agree' THEN 5.0	
+               WHEN teachinglearning_13 = 'Agree' THEN 4.0	
+               WHEN teachinglearning_13 = 'Neutral' THEN 3.0	
+               WHEN teachinglearning_13 = 'Disagree' THEN 2.0	
+               WHEN teachinglearning_13 = 'Strongly disagree' THEN 1.0
+               WHEN teachinglearning_13 = 'Not Applicable' THEN NULL
+              END AS teachinglearning_13
+             ,CASE
+               WHEN technology_14 = 'Strongly agree' THEN 5.0	
+               WHEN technology_14 = 'Agree' THEN 4.0	
+               WHEN technology_14 = 'Neutral' THEN 3.0	
+               WHEN technology_14 = 'Disagree' THEN 2.0	
+               WHEN technology_14 = 'Strongly disagree' THEN 1.0
+               WHEN technology_14 = 'Not Applicable' THEN NULL
+              END AS technology_14
+             ,CASE
+               WHEN technology_16 = 'Strongly agree' THEN 5.0	
+               WHEN technology_16 = 'Agree' THEN 4.0	
+               WHEN technology_16 = 'Neutral' THEN 3.0	
+               WHEN technology_16 = 'Disagree' THEN 2.0	
+               WHEN technology_16 = 'Strongly disagree' THEN 1.0
+               WHEN technology_16 = 'Not Applicable' THEN NULL
+              END AS technology_16
+             ,CASE
+               WHEN technology_15 = 'Strongly agree' THEN 5.0	
+               WHEN technology_15 = 'Agree' THEN 4.0	
+               WHEN technology_15 = 'Neutral' THEN 3.0	
+               WHEN technology_15 = 'Disagree' THEN 2.0	
+               WHEN technology_15 = 'Strongly disagree' THEN 1.0
+               WHEN technology_15 = 'Not Applicable' THEN NULL
+              END AS technology_15
+             ,CASE
+               WHEN region_8 = 'Strongly agree' THEN 5.0	
+               WHEN region_8 = 'Agree' THEN 4.0	
+               WHEN region_8 = 'Neutral' THEN 3.0	
+               WHEN region_8 = 'Disagree' THEN 2.0	
+               WHEN region_8 = 'Strongly disagree' THEN 1.0
+               WHEN region_8 = 'Not Applicable' THEN NULL
+              END AS region_8
+             --,region_6 --open ended, do we need to treat these differently?
+             --,region_7 --open ended, do we need to treat these differently?
+
+
        FROM gabby.surveys.r9engagement_survey_final
       ) sub
   UNPIVOT(
@@ -819,7 +1068,38 @@ WITH survey_unpivoted AS (
                          ,technologyschoolleadersonly_1
                          ,technologyschoolleadersonly_2
                          ,technologyschoolleadersonly_3
-                         ,technologysl)
+                         ,technologysl
+                         
+                         ,data_1
+                         ,data_2
+                         ,ER_1
+                         ,ER_2
+                         ,facilities_7
+                         ,facilities_8
+                         ,humanresources_1
+                         ,humanresources_2
+                         ,humanresource_3
+                         ,marketing_3
+                         ,purchasing_9
+                         ,purchasing_10
+                         ,specialeducation_7
+                         ,specialeducation_6
+                         ,region_1
+                         ,region_2
+                         ,schooloperations_11
+                         ,region_3
+                         ,region_4
+                         ,region_5
+                         ,teachinglearning_11
+                         ,teachinglearning_12
+                         ,teachinglearning_13
+                         ,technology_14
+                         ,technology_16
+                         ,technology_15
+                         ,region_8
+                         --,region_6 -- open ended, do we need to treat these differently?
+                         --,region_7 -- open ended, do we need to treat these differently?
+                         )
    ) u
  )
 
@@ -836,31 +1116,46 @@ SELECT su.academic_year
       ,CASE 
         WHEN su.location = 'Rise' THEN 73252
         WHEN su.location = 'Rise Academy' THEN 73252
+        WHEN su.location = 'KIPP Rise Academy' THEN 73252
         WHEN su.location = 'NCA' THEN 73253
         WHEN su.location = 'Newark Collegiate Academy' THEN 73253
+        WHEN su.location = 'KIPP Newark Collegiate Academy' THEN 73253
         WHEN su.location = 'SPARK' THEN 73254
         WHEN su.location = 'SPARK Academy' THEN 73254
+        WHEN su.location = 'KIPP SPARK Academy' THEN 73254
         WHEN su.location = 'THRIVE' THEN 73255
         WHEN su.location = 'THRIVE Academy' THEN 73255
+        WHEN su.location = 'KIPP THRIVE Academy' THEN 73255
         WHEN su.location = 'Seek' THEN 73256
         WHEN su.location = 'Seek Academy' THEN 73256
+        WHEN su.location = 'KIPP Seek Academy'  THEN 73256
         WHEN su.location = 'Life Upper' THEN 73257
         WHEN su.location = 'Life Lower' THEN 73257
         WHEN su.location = 'Life' THEN 73257
         WHEN su.location = 'Life Academy' THEN 73257
+        WHEN su.location = 'KIPP Life Academy'  THEN 73257
         WHEN su.location = 'Bold' THEN 73258
         WHEN su.location = 'Bold Academy' THEN 73258
+        WHEN su.location = 'KIPP BOLD Academy' THEN 73258
         WHEN su.location = 'Revolution' THEN 179901
         WHEN su.location = 'LSP' THEN 179901
         WHEN su.location = 'Lanning Square Primary' THEN 179901
+        WHEN su.location = 'KIPP Lanning Square Primary' THEN 179901
         WHEN su.location = 'Lanning Square MS' THEN 179902
         WHEN su.location = 'LSMS' THEN 179902
+        WHEN su.location = 'KIPP Lanning Square Middle' THEN 179902
         WHEN su.location = 'Whittier Elementary' THEN 179903
+        WHEN su.location = 'KIPP Whittier Elementary' THEN 179903
         WHEN su.location = 'Whittier Middle' THEN 179903
         WHEN su.location = 'Whitter MS' THEN 179903
+        WHEN su.location = 'KIPP Whittier Middle' THEN 179903
         WHEN su.location = 'TEAM' THEN 133570965
         WHEN su.location = 'TEAM Academy' THEN 133570965
+        WHEN su.location = 'KIPP TEAM Academy' THEN 133570965
         WHEN su.location = 'Pathways' THEN 732574573
+        WHEN su.location = 'KIPP Pathways at Bragaw' THEN '' --not sure what to put here
+        WHEN su.location = 'KIPP Pathways at 18th Ave' THEN '' --not sure what to put here
+        WHEN su.location = 'KIPP Sunrise Academy' THEN '' --not sure what to put here
         WHEN su.location = 'Whitter ES' THEN 1799015075
        END AS reporting_schoolid
       ,CASE 
@@ -901,6 +1196,27 @@ SELECT su.academic_year
         WHEN su.location = 'Pathways' THEN 'TEAM'
         WHEN su.location = 'TEAM Schools' THEN 'TEAM'
         WHEN su.location = '18th Avenue Campus' THEN 'TEAM'
+        WHEN su.location = 'KIPP SPARK Academy' THEN 'TEAM'
+        WHEN su.location = 'Room 10 - 740 Chestnut St' THEN 'KCNA'
+        WHEN su.location = 'KIPP Whittier Middle' THEN 'KCNA'
+        WHEN su.location = 'Room 11 - 6745 NW 23rd Ave' THEN 'KNJ'
+        WHEN su.location = 'KIPP Newark Collegiate Academy' THEN 'TEAM'
+        WHEN su.location = 'KIPP BOLD Academy' THEN 'TEAM'
+        WHEN su.location = 'KIPP Lanning Sq Campus' THEN 'KCNA'
+        WHEN su.location = 'KIPP Pathways at 18th Ave' THEN 'TEAM'
+        WHEN su.location = 'KIPP Seek Academy' THEN 'TEAM'
+        WHEN su.location = 'Room 9 - 60 Park Pl' THEN 'KNJ'
+        WHEN su.location = 'KIPP TEAM Academy' THEN 'TEAM'
+        WHEN su.location = '18th Ave Campus' THEN 'TEAM'
+        WHEN su.location = 'KIPP Pathways at Bragaw' THEN 'TEAM'
+        WHEN su.location = 'KIPP Life Academy' THEN 'TEAM'
+        WHEN su.location = 'KIPP Lanning Square Middle' THEN 'KCNA'
+        WHEN su.location = 'KIPP Lanning Square Primary' THEN 'KCNA'
+        WHEN su.location = 'KIPP Sunrise Academy' THEN 'Miami'
+        WHEN su.location = 'KIPP THRIVE Academy' THEN 'TEAM'
+        WHEN su.location = 'KIPP Rise Academy' THEN 'TEAM'
+        WHEN su.location = 'KIPP Whittier Elementary' THEN 'KCNA'
+
        END AS region
       ,CASE 
         WHEN su.location = 'Revolution' THEN 'ES'
@@ -931,6 +1247,23 @@ SELECT su.academic_year
         WHEN su.location = 'Bold Academy' THEN 'MS'
         WHEN su.location = 'TEAM' THEN 'MS'
         WHEN su.location = 'TEAM Academy' THEN 'MS'
+
+        WHEN su.location = 'KIPP SPARK Academy' THEN 'ES'
+        WHEN su.location = 'KIPP Whittier Middle' THEN 'MS'
+        WHEN su.location = 'KIPP Newark Collegiate Academy' THEN 'HS'
+        WHEN su.location = 'KIPP BOLD Academy' THEN 'HS'
+        WHEN su.location = 'KIPP Pathways at 18th Ave' THEN 'MS'
+        WHEN su.location = 'KIPP Seek Academy' THEN 'ES'
+        WHEN su.location = 'KIPP TEAM Academy' THEN 'MS'
+        WHEN su.location = 'KIPP Pathways at Bragaw' THEN 'ES'
+        WHEN su.location = 'KIPP Life Academy' THEN 'ES'
+        WHEN su.location = 'KIPP Lanning Square Middle' THEN 'MS'
+        WHEN su.location = 'KIPP Lanning Square Primary' THEN 'ES'
+        WHEN su.location = 'KIPP Sunrise Academy' THEN 'ES'
+        WHEN su.location = 'KIPP THRIVE Academy' THEN 'ES'
+        WHEN su.location = 'KIPP Rise Academy' THEN 'MS'
+        WHEN su.location = 'KIPP Whittier Elementary' THEN 'ES'
+
        END AS school_level
 
       ,qk.survey_type
