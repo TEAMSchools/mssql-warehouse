@@ -58,6 +58,7 @@ SELECT co.student_number
       ,dli.create_ts AS dl_timestamp      
       ,dli.infraction
       ,ISNULL(dli.category, 'Referral') AS dl_behavior
+      ,NULL AS dl_numdays
       ,'Referral' AS dl_category
       
       ,CONVERT(VARCHAR(5),d.alt_name) AS term
@@ -109,6 +110,7 @@ SELECT co.student_number
       ,ISNULL(dlip.startdate, dli.create_ts) AS dl_timestamp
       ,dli.infraction
       ,dlip.penaltyname AS dl_behavior
+      ,dlip.numdays AS dl_numdays
       ,'Consequence' AS dl_category
 
       ,CONVERT(VARCHAR(5),d.alt_name) AS term
@@ -160,6 +162,7 @@ SELECT co.student_number
       ,dlb.behavior_date AS dl_timestamp
       ,NULL AS infraction
       ,CONVERT(VARCHAR(250),dlb.behavior) AS dl_behavior
+      ,NULL AS dl_numdays
       ,CONVERT(VARCHAR(125),dlb.behavior_category) AS dl_category
       
       ,CONVERT(VARCHAR(5),d.alt_name) AS term
