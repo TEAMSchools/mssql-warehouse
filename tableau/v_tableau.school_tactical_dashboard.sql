@@ -121,16 +121,19 @@ WITH roster AS (
            
                   ,CASE 
                     WHEN r.iep_status = 'No IEP' THEN NULL
+                    WHEN a.performance_band_number IS NULL THEN NULL
                     WHEN a.performance_band_number >= 4 THEN 1.0 
                     ELSE 0.0 
                    END AS is_target_iep
                   ,CASE 
                     WHEN r.iep_status = 'No IEP' THEN NULL
+                    WHEN a.performance_band_number IS NULL THEN NULL
                     WHEN a.performance_band_number = 3 THEN 1.0 
                     ELSE 0.0 
                    END AS is_approaching_iep
                   ,CASE 
                     WHEN r.iep_status = 'No IEP' THEN NULL
+                    WHEN a.performance_band_number IS NULL THEN NULL
                     WHEN a.performance_band_number <= 2 THEN 1.0 
                     ELSE 0.0 
                    END AS is_below_iep
