@@ -15,6 +15,7 @@ WITH roster AS (
         ,co.iep_status
         ,co.lunchstatus
         ,co.exitdate
+        ,co.enroll_status
         ,co.db_name
   FROM gabby.powerschool.cohort_identifiers_static co
   WHERE co.reporting_schoolid NOT IN (999999, 5173)
@@ -249,6 +250,7 @@ WITH roster AS (
         ,r.reporting_schoolid
         ,r.grade_level
         ,r.iep_status
+        ,r.enroll_status
       
         ,SUM(CAST(ada.membershipvalue AS FLOAT)) AS n_membership
         ,SUM(CAST(ada.attendancevalue AS FLOAT)) AS n_present
@@ -311,6 +313,7 @@ WITH roster AS (
           ,r.reporting_schoolid
           ,r.grade_level
           ,r.iep_status
+          ,r.enroll_status
  )
 
 ,student_attendance_rollup AS (
@@ -382,6 +385,7 @@ WITH roster AS (
       
              ,CAST(CASE WHEN (sa.n_present / sa.n_membership) < 0.895 THEN 1 ELSE 0 END AS FLOAT) AS is_chronic_absentee
        FROM student_attendance sa
+       WHERE sa.enroll_status = 0
       ) sub
   GROUP BY sub.academic_year
           ,sub.school_level
