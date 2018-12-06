@@ -91,22 +91,32 @@ SELECT co.studentid
       ,adv.advisor_phone COLLATE Latin1_General_BIN AS advisor_phone
       ,adv.advisor_email COLLATE Latin1_General_BIN AS advisor_email
       
-      ,ISNULL(sped.spedlep,'No IEP') AS iep_status
-      ,sped.special_education_code AS specialed_classification
+      ,ISNULL(CASE
+               WHEN DB_NAME() = 'kippmiami' THEN scf.spedlep
+               WHEN DB_NAME() IN ('kippnewark', 'kippcamden') THEN sped.spedlep
+              END,'No IEP') AS iep_status
+      ,CASE
+        WHEN DB_NAME() = 'kippmiami' THEN scf.spedlep
+        WHEN DB_NAME() IN ('kippnewark', 'kippcamden') THEN sped.special_education_code
+       END AS specialed_classification
       
-      ,CASE 
+      ,CASE
+        WHEN DB_NAME() = 'kippmiami' AND scf.lep_status = 'Y' THEN 1
         WHEN nj.lepbegindate IS NULL THEN NULL
         WHEN nj.lependdate < co.entrydate THEN NULL
-        WHEN nj.lepbegindate <= co.exitdate THEN 1       
-       END AS lep_status      
+        WHEN nj.lepbegindate <= co.exitdate THEN 1
+       END AS lep_status
 
       ,saa.student_web_id
       ,saa.student_web_password
 
       ,CONVERT(VARCHAR(5),CASE
                            WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
-                            AND co.rn_year = 1 
-                                  THEN mcs.mealbenefitstatus COLLATE Latin1_General_BIN
+                            AND co.rn_year = 1                             
+                                THEN CASE
+                                      WHEN DB_NAME() = 'kippmiami' THEN REPLACE(s.lunchstatus,'false','F')
+                                      WHEN DB_NAME() IN ('kippnewark', 'kippcamden') THEN mcs.mealbenefitstatus COLLATE Latin1_General_BIN
+                                     END                           
                            WHEN co.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
                             AND co.entrydate = s.entrydate THEN REPLACE(s.lunchstatus,'false','F')
                            ELSE co.lunchstatus
@@ -115,14 +125,20 @@ SELECT co.studentid
                              WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
                               AND co.rn_year = 1 
                               AND mcs.currentapplicationid IS NOT NULL 
-                                    THEN mcs.mealbenefitstatus COLLATE Latin1_General_BIN
+                                  THEN CASE
+                                        WHEN DB_NAME() = 'kippmiami' THEN REPLACE(s.lunchstatus,'false','F')
+                                        WHEN DB_NAME() IN ('kippnewark', 'kippcamden') THEN mcs.mealbenefitstatus COLLATE Latin1_General_BIN
+                                       END
                              WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
                               AND co.rn_year = 1 
                               AND mcs.currentapplicationid IS NULL 
-                                    THEN mcs.description COLLATE Latin1_General_BIN
+                                  THEN CASE
+                                        WHEN DB_NAME() = 'kippmiami' THEN REPLACE(s.lunchstatus,'false','F')
+                                        WHEN DB_NAME() IN ('kippnewark', 'kippcamden') THEN mcs.description COLLATE Latin1_General_BIN
+                                       END
                              WHEN co.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
                               AND co.entrydate = s.entrydate 
-                                    THEN REPLACE(s.lunchstatus,'false','F')
+                                  THEN REPLACE(s.lunchstatus,'false','F')
                              ELSE co.lunchstatus
                             END) AS lunch_app_status 
 FROM powerschool.cohort_static co
