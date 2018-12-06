@@ -1,7 +1,7 @@
 USE gabby
 GO
 
---CREATE OR ALTER VIEW surveys.r9engagement_survey_detail AS
+CREATE OR ALTER VIEW surveys.r9engagement_survey_oe AS
 
 WITH survey_unpivoted AS (
   SELECT academic_year
@@ -23,33 +23,15 @@ WITH survey_unpivoted AS (
              ,associate_id
              ,email
              ,location
-             ,n
-             ,CONVERT(varchar,NULL) AS region_6 --open-ended, do we need to treat these differently?
-             ,CONVERT(varchar,NULL) AS region_7 --open-ended, do we need to treat these differently?
-
-       FROM gabby.surveys.r9engagement_survey_archive
-
-       UNION ALL
-
-       SELECT academic_year
-             ,reporting_term
-             ,term_name
-             ,participant_id
-             ,associate_id
-             ,email
-             ,location
-             ,null AS n
-             ,CONVERT(VARCHAR,region_6) --open ended, do we need to treat these differently?
-             ,CONVERT(VARCHAR,region_7) --open ended, do we need to treat these differently?
-
-
+             ,NULL AS n
+             ,CONVERT(VARCHAR,region_6) AS region_6
+             ,CONVERT(VARCHAR,region_7) AS region_7
        FROM gabby.surveys.r9engagement_survey_final
       ) sub
   UNPIVOT(
     response_value
-    FOR question_code IN (region_6 -- open ended, do we need to treat these differently?
-                         ,region_7 -- open ended, do we need to treat these differently?
-                         )
+    FOR question_code IN (region_6
+                         ,region_7)
    ) u
  )
 
@@ -103,9 +85,9 @@ SELECT su.academic_year
         WHEN su.location = 'TEAM Academy' THEN 133570965
         WHEN su.location = 'KIPP TEAM Academy' THEN 133570965
         WHEN su.location = 'Pathways' THEN 732574573
-        WHEN su.location = 'KIPP Pathways at Bragaw' THEN '' --not sure what to put here
-        WHEN su.location = 'KIPP Pathways at 18th Ave' THEN '' --not sure what to put here
-        WHEN su.location = 'KIPP Sunrise Academy' THEN '' --not sure what to put here
+        WHEN su.location = 'KIPP Pathways at Bragaw' THEN 732574573
+        WHEN su.location = 'KIPP Pathways at 18th Ave' THEN 732585074
+        WHEN su.location = 'KIPP Sunrise Academy' THEN 30200801
         WHEN su.location = 'Whitter ES' THEN 1799015075
        END AS reporting_schoolid
       ,CASE 
@@ -162,11 +144,10 @@ SELECT su.academic_year
         WHEN su.location = 'KIPP Life Academy' THEN 'TEAM'
         WHEN su.location = 'KIPP Lanning Square Middle' THEN 'KCNA'
         WHEN su.location = 'KIPP Lanning Square Primary' THEN 'KCNA'
-        WHEN su.location = 'KIPP Sunrise Academy' THEN 'Miami'
+        WHEN su.location = 'KIPP Sunrise Academy' THEN 'KMS'
         WHEN su.location = 'KIPP THRIVE Academy' THEN 'TEAM'
         WHEN su.location = 'KIPP Rise Academy' THEN 'TEAM'
         WHEN su.location = 'KIPP Whittier Elementary' THEN 'KCNA'
-
        END AS region
       ,CASE 
         WHEN su.location = 'Revolution' THEN 'ES'
@@ -197,7 +178,6 @@ SELECT su.academic_year
         WHEN su.location = 'Bold Academy' THEN 'MS'
         WHEN su.location = 'TEAM' THEN 'MS'
         WHEN su.location = 'TEAM Academy' THEN 'MS'
-
         WHEN su.location = 'KIPP SPARK Academy' THEN 'ES'
         WHEN su.location = 'KIPP Whittier Middle' THEN 'MS'
         WHEN su.location = 'KIPP Newark Collegiate Academy' THEN 'HS'
@@ -213,14 +193,13 @@ SELECT su.academic_year
         WHEN su.location = 'KIPP THRIVE Academy' THEN 'ES'
         WHEN su.location = 'KIPP Rise Academy' THEN 'MS'
         WHEN su.location = 'KIPP Whittier Elementary' THEN 'ES'
-
        END AS school_level
 
       ,qk.survey_type
       ,qk.competency
       ,qk.question_text
 FROM survey_unpivoted su
-LEFT OUTER JOIN gabby.surveys.question_key qk
+LEFT JOIN gabby.surveys.question_key qk
   ON su.question_code = qk.question_code
- AND su.academic_year = ISNULL(qk.academic_year, su.academic_year)
+ AND su.academic_year = qk.academic_year
  AND qk.survey_type = 'R9'

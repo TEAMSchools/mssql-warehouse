@@ -1,7 +1,7 @@
 USE gabby
 GO
 
---CREATE OR ALTER VIEW surveys.r9engagement_survey_detail AS
+CREATE OR ALTER VIEW surveys.r9engagement_survey_detail AS
 
 WITH survey_unpivoted AS (
   SELECT academic_year
@@ -260,7 +260,6 @@ WITH survey_unpivoted AS (
              ,CONVERT(FLOAT,technologyschoolleadersonly_2) AS technologyschoolleadersonly_2
              ,CONVERT(FLOAT,technologyschoolleadersonly_3) AS technologyschoolleadersonly_3
              ,CONVERT(FLOAT,technologysl) AS technologysl
-            
              ,CONVERT(FLOAT,NULL) AS data_1
              ,CONVERT(FLOAT,NULL) AS data_2
              ,CONVERT(FLOAT,NULL) AS ER_1
@@ -288,9 +287,6 @@ WITH survey_unpivoted AS (
              ,CONVERT(FLOAT,NULL) AS technology_16
              ,CONVERT(FLOAT,NULL) AS technology_15
              ,CONVERT(FLOAT,NULL) AS region_8
-             --,CONVERT(varchar,NULL) AS region_6 --open-ended, do we need to treat these differently?
-             --,CONVERT(varchar,NULL) AS region_7 --open-ended, do we need to treat these differently?
-
        FROM gabby.surveys.r9engagement_survey_archive
 
        UNION ALL
@@ -611,7 +607,6 @@ WITH survey_unpivoted AS (
              ,NULL AS technologyschoolleadersonly_2
              ,NULL AS technologyschoolleadersonly_3
              ,NULL AS technologysl
-
              ,CASE
                WHEN data_1 = 'Strongly agree' THEN 5.0	
                WHEN data_1 = 'Agree' THEN 4.0	
@@ -725,8 +720,8 @@ WITH survey_unpivoted AS (
                WHEN specialeducation_6 = 'Not Applicable' THEN NULL
               END AS specialeducation_6
              ,CASE
-               WHEN specialeducation_6 = 'Yes' THEN 1.0	
-               WHEN specialeducation_6 = 'No' THEN 0.0	
+               WHEN specialeducation_6 = 'Yes' THEN 5.0	
+               WHEN specialeducation_6 = 'No' THEN 1.0	
                WHEN specialeducation_6 = 'Not Applicable' THEN NULL
               END AS region_1 --yes/no
              ,CASE
@@ -825,10 +820,6 @@ WITH survey_unpivoted AS (
                WHEN region_8 = 'Strongly disagree' THEN 1.0
                WHEN region_8 = 'Not Applicable' THEN NULL
               END AS region_8
-             --,region_6 --open ended, do we need to treat these differently?
-             --,region_7 --open ended, do we need to treat these differently?
-
-
        FROM gabby.surveys.r9engagement_survey_final
       ) sub
   UNPIVOT(
@@ -1068,8 +1059,7 @@ WITH survey_unpivoted AS (
                          ,technologyschoolleadersonly_1
                          ,technologyschoolleadersonly_2
                          ,technologyschoolleadersonly_3
-                         ,technologysl
-                         
+                         ,technologysl                         
                          ,data_1
                          ,data_2
                          ,ER_1
@@ -1096,10 +1086,7 @@ WITH survey_unpivoted AS (
                          ,technology_14
                          ,technology_16
                          ,technology_15
-                         ,region_8
-                         --,region_6 -- open ended, do we need to treat these differently?
-                         --,region_7 -- open ended, do we need to treat these differently?
-                         )
+                         ,region_8)
    ) u
  )
 
@@ -1153,9 +1140,9 @@ SELECT su.academic_year
         WHEN su.location = 'TEAM Academy' THEN 133570965
         WHEN su.location = 'KIPP TEAM Academy' THEN 133570965
         WHEN su.location = 'Pathways' THEN 732574573
-        WHEN su.location = 'KIPP Pathways at Bragaw' THEN '' --not sure what to put here
-        WHEN su.location = 'KIPP Pathways at 18th Ave' THEN '' --not sure what to put here
-        WHEN su.location = 'KIPP Sunrise Academy' THEN '' --not sure what to put here
+        WHEN su.location = 'KIPP Pathways at Bragaw' THEN 732574573
+        WHEN su.location = 'KIPP Pathways at 18th Ave' THEN 732585074
+        WHEN su.location = 'KIPP Sunrise Academy' THEN 30200801
         WHEN su.location = 'Whitter ES' THEN 1799015075
        END AS reporting_schoolid
       ,CASE 
@@ -1212,11 +1199,10 @@ SELECT su.academic_year
         WHEN su.location = 'KIPP Life Academy' THEN 'TEAM'
         WHEN su.location = 'KIPP Lanning Square Middle' THEN 'KCNA'
         WHEN su.location = 'KIPP Lanning Square Primary' THEN 'KCNA'
-        WHEN su.location = 'KIPP Sunrise Academy' THEN 'Miami'
+        WHEN su.location = 'KIPP Sunrise Academy' THEN 'KMS'
         WHEN su.location = 'KIPP THRIVE Academy' THEN 'TEAM'
         WHEN su.location = 'KIPP Rise Academy' THEN 'TEAM'
         WHEN su.location = 'KIPP Whittier Elementary' THEN 'KCNA'
-
        END AS region
       ,CASE 
         WHEN su.location = 'Revolution' THEN 'ES'
@@ -1247,7 +1233,6 @@ SELECT su.academic_year
         WHEN su.location = 'Bold Academy' THEN 'MS'
         WHEN su.location = 'TEAM' THEN 'MS'
         WHEN su.location = 'TEAM Academy' THEN 'MS'
-
         WHEN su.location = 'KIPP SPARK Academy' THEN 'ES'
         WHEN su.location = 'KIPP Whittier Middle' THEN 'MS'
         WHEN su.location = 'KIPP Newark Collegiate Academy' THEN 'HS'
@@ -1263,7 +1248,6 @@ SELECT su.academic_year
         WHEN su.location = 'KIPP THRIVE Academy' THEN 'ES'
         WHEN su.location = 'KIPP Rise Academy' THEN 'MS'
         WHEN su.location = 'KIPP Whittier Elementary' THEN 'ES'
-
        END AS school_level
 
       ,qk.survey_type
