@@ -16,6 +16,7 @@ WITH roster AS (
         ,status_reason
         ,job_family
         ,primary_job
+        ,primary_on_site_department
         ,gabby.utilities.DATE_TO_SY(COALESCE(rehire_date, original_hire_date)) AS start_academic_year
         ,gabby.utilities.DATE_TO_SY(termination_date) AS end_academic_year
         ,df_employee_number
@@ -38,6 +39,7 @@ WITH roster AS (
         ,primary_site_reporting_schoolid
         ,primary_site_school_level
         ,job_family
+        ,primary_on_site_department
         ,academic_year
         ,termination_date
         ,status_reason
@@ -50,6 +52,7 @@ WITH roster AS (
              ,r.preferred_first_name
              ,r.preferred_last_name
              ,r.primary_job
+             ,r.primary_on_site_department
              ,r.primary_site
              ,r.primary_site_reporting_schoolid
              ,r.primary_site_school_level
@@ -79,6 +82,7 @@ SELECT d.df_employee_number
       ,d.preferred_first_name
       ,d.preferred_last_name
       ,d.primary_job
+      ,d.primary_on_site_department
       ,d.primary_site
       ,d.primary_site_reporting_schoolid
       ,d.primary_site_school_level
