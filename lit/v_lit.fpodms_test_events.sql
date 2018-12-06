@@ -177,7 +177,7 @@ WITH classes_dedupe AS (
         ,'Pre-A' AS indep_lvl
   FROM clean_data
   WHERE clean_data.text_level = 'A'
-    AND clean_data.status = 'Did Not Achieve'
+    AND clean_data.status IN ('Did Not Achieve', 'DNA - Hard')
  )
 
 SELECT cd.unique_id
