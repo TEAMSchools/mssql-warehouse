@@ -23,7 +23,7 @@ WITH dlrosters AS (
        SELECT incident_id
              ,field_name
              ,value
-       FROM deanslist.incidents_custom_fields
+       FROM gabby.deanslist.incidents_custom_fields
       ) sub
   PIVOT(
     MAX(value)
@@ -50,6 +50,7 @@ SELECT co.student_number
       
       ,r.roster_name AS dl_rostername
       
+      ,dli.student_id AS dl_student_id
       ,dli.incident_id AS dl_id            
       ,dli.status
       ,dli.reported_details AS notes
@@ -102,6 +103,8 @@ SELECT co.student_number
 
       ,r.roster_name AS dl_rostername
 
+      ,dli.student_id AS dl_student_id
+
       ,dlip.incidentpenaltyid AS dl_id
       ,dli.status
       ,dli.admin_summary AS notes
@@ -153,7 +156,8 @@ SELECT co.student_number
       ,co.region
 
       ,r.roster_name AS dl_rostername
-           
+
+      ,dlb.dlstudent_id AS dl_student_id
       ,CONVERT(INT,dlb.dlsaid) AS dl_id
       ,NULL AS status
       ,NULL AS notes
