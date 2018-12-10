@@ -288,6 +288,7 @@ JOIN gabby.powerschool.cohort_identifiers_static co
  AND enr.academic_year = co.academic_year
  AND enr.db_name = co.db_name
  AND co.rn_year = 1
+ AND co.iep_status = 'SPED'
 JOIN gabby.pm.teacher_goals_term_map tm
   ON tg.academic_year = tm.academic_year
  AND tg.metric_name = tm.metric_name

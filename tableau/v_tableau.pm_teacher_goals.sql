@@ -81,40 +81,15 @@ WITH reading_level AS (
   SELECT asr.local_student_id
         ,asr.academic_year
         ,asr.subject_area
-        ,asr.module_number        
+        ,asr.module_number
         ,asr.date_taken
-        ,CONVERT(FLOAT,asr.is_mastery) AS is_mastery        
-
-        ,co.iep_status
-  FROM gabby.illuminate_dna_assessments.agg_student_responses_all asr    
-  JOIN gabby.powerschool.cohort_identifiers_static co
-    ON asr.local_student_id = co.student_number
-   AND asr.academic_year = co.academic_year
-   AND co.rn_year = 1
+        ,asr.performance_band_number
+        ,asr.is_mastery
+        ,'pct_qa_mastery_' + REPLACE(LOWER(asr.subject_area), ' ', '_') AS metric_name
+  FROM gabby.illuminate_dna_assessments.agg_student_responses_all asr      
   WHERE asr.response_type = 'O'
     AND asr.subject_area IN ('Algebra I','Algebra II','English 100','English 200','English 300','Geometry','Mathematics','Text Study')
     AND asr.module_number IN ('QA1','QA2','QA3','QA4')  
- )
-
-,assessment_metrics AS (
-  SELECT local_student_id
-        ,academic_year
-        ,module_number 
-        ,date_taken
-        ,is_mastery        
-        ,'pct_qa_mastery_' + REPLACE(LOWER(subject_area), ' ', '_') AS metric_name
-  FROM assessment_detail
-
-  UNION ALL
-
-  SELECT local_student_id
-        ,academic_year
-        ,module_number 
-        ,date_taken
-        ,is_mastery        
-        ,'pct_qa_mastery_' + REPLACE(LOWER(subject_area), ' ', '_') + '_iep' AS metric_name
-  FROM assessment_detail
-  WHERE iep_status = 'SPED'
  )
 
 ,etr AS (
@@ -344,9 +319,15 @@ FROM
            ,tgs.student_number
            ,tgs.student_grade_level AS grade_level
            
-           ,am.is_mastery
+           ,CASE
+             WHEN tgs.is_sped_goal = 0 THEN am.is_mastery
+             WHEN tgs.is_sped_goal = 1
+              AND am.performance_band_number >= 3 THEN 1.0
+             WHEN tgs.is_sped_goal = 1
+              AND am.performance_band_number < 3 THEN 0.0
+            END AS is_mastery
      FROM gabby.pm.teacher_goal_scaffold_static tgs
-     LEFT JOIN assessment_metrics am
+     LEFT JOIN assessment_detail am
        ON tgs.academic_year = am.academic_year
       AND tgs.metric_name = am.metric_name
       AND tgs.metric_term = am.module_number
