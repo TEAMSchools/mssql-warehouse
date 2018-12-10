@@ -53,6 +53,7 @@ SELECT co.student_number
       ,dli.student_id AS dl_student_id
       ,dli.incident_id AS dl_id            
       ,dli.status
+      ,dli.location
       ,dli.reported_details AS notes
       ,dli.create_first + ' ' + dli.create_last AS referring_teacher_name
       ,dli.update_first + ' ' + dli.update_last AS reviewed_by            
@@ -104,9 +105,9 @@ SELECT co.student_number
       ,r.roster_name AS dl_rostername
 
       ,dli.student_id AS dl_student_id
-
       ,dlip.incidentpenaltyid AS dl_id
       ,dli.status
+      ,dli.location
       ,dli.admin_summary AS notes
       ,dli.create_first + ' ' + dli.create_last AS referring_teacher_name
       ,dli.update_first + ' ' + dli.update_last AS reviewed_by
@@ -160,6 +161,7 @@ SELECT co.student_number
       ,dlb.dlstudent_id AS dl_student_id
       ,CONVERT(INT,dlb.dlsaid) AS dl_id
       ,NULL AS status
+      ,NULL location
       ,NULL AS notes
       ,CONVERT(VARCHAR(125),dlb.staff_first_name + ' ' + dlb.staff_last_name) AS referring_teacher_name
       ,NULL AS reviewed_by
