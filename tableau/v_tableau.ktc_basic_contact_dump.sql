@@ -73,7 +73,7 @@ WITH attending_enrollment AS (
               END AS contact_subject
              ,c.Date_c AS contact_date
        FROM gabby.alumni.contact_note_c c
-       WHERE gabby.utilities.DATE_TO_SY(c.Date_c) = gabby.utilities.GLOBAL_ACADEMIC_YEAR()         
+       WHERE gabby.utilities.DATE_TO_SY(c.Date_c) = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
          AND c.subject_c IN ('BBB', 'Grad Plan FA18', 'Grad Plan SP19', 'PSC', 'AAS1', 'AAS2')
          AND c.is_deleted = 0
 
