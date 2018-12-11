@@ -87,6 +87,7 @@ WITH attending_enrollment AS (
              ,benchmark_date_c AS contact_date
        FROM gabby.alumni.college_persistence_c
        WHERE benchmark_status_c = 'Complete'
+         AND benchmark_period_c != 'Pre-College'
          AND gabby.utilities.DATE_TO_SY(benchmark_date_c) = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
          AND is_deleted = 0
       ) sub
