@@ -92,17 +92,17 @@ SELECT mip.Fund
       ,mip.DeptGroup
       ,mip.Subject
       ,mip.[Budget Period]
-      ,mip.[Revised Budget]
-      ,mip.[Available Budget]
-      ,mip.[Remaining Budget]
+      ,mip.[Revised Budget] AS revised_budget_mip
+      ,mip.[Available Budget] AS available_budget_mip
+      ,mip.[Remaining Budget] AS remaining_budget_mip
       ,mip.[AcctCode From Valid Segments]
       ,mip.[AcctCode Valid]
       ,mip.entity
 
       ,coupa.budget_owner
-      ,coupa.amount
-      ,coupa.remaining
-      ,coupa.budget_period
+      ,coupa.amount AS revised_budget_coupa
+      ,coupa.remaining AS available_budget_coupa
+      ,coupa.amount - coupa.remaining AS remaining_budget_coupa
 FROM mip
 LEFT JOIN coupa
   ON mip.[AcctCode From Valid Segments] = coupa.code
