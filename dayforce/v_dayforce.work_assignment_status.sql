@@ -25,10 +25,9 @@ with validdates AS (
   SELECT employee_reference_code AS df_employee_id
         ,CONVERT(DATETIME,work_assignment_effective_end) AS date
   FROM gabby.dayforce.employee_work_assignment
-
   )
 
-, validranges AS (
+,validranges AS (
   SELECT d.df_employee_id
        ,d.date AS effective_start
        ,lead(d.date,1) over (partition by d.df_employee_id order by d.date) AS effective_end
@@ -57,3 +56,4 @@ FROM validranges r JOIN gabby.dayforce.employee_status s
   ON r.df_employee_id = w.employee_reference_code
  AND COALESCE(r.effective_end,CONVERT(DATETIME,GETDATE())) > w.work_assignment_effective_start
  AND r.effective_start < COALESCE(w.work_assignment_effective_end,CONVERT(DATETIME,GETDATE()))
+ AND w.primary_work_assignment = 1
