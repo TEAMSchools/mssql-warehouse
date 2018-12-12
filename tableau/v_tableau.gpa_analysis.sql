@@ -1,4 +1,5 @@
-SELECT co.db_name
+SELECT co.academic_year
+      ,co.db_name
 	  ,co.lastfirst
 	  ,co.team
 	  ,co.gender
@@ -6,7 +7,7 @@ SELECT co.db_name
 	  ,co.lunchstatus
 	  ,co.cohort
 	  ,co.year_in_network
-
+	  ,co.enroll_status
 
 	  ,co.iep_status
 	  ,co.lep_status
@@ -35,7 +36,7 @@ LEFT JOIN powerschool.gpa_detail gpad
 
 LEFT JOIN powerschool.gpa_cumulative gpac
   ON gpac.studentid = co.studentid
- AND gpac.studentid = co.studentid
+ AND gpac.schoolid = co.schoolid
  AND gpac.db_name = co.db_name
 
 WHERE co.grade_level >= 5
