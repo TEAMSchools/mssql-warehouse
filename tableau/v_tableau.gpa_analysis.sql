@@ -1,43 +1,71 @@
-SELECT co.academic_year
-      ,co.db_name
-	  ,co.lastfirst
-	  ,co.team
-	  ,co.gender
-	  ,co.ethnicity
-	  ,co.lunchstatus
-	  ,co.cohort
-	  ,co.year_in_network
-	  ,co.enroll_status
+USE gabby
+GO
 
-	  ,co.iep_status
-	  ,co.lep_status
-	  ,co.c_504_status
-	  ,co.is_pathways
+CREATE OR ALTER VIEW tableau.gpa_analysis AS
 
-	  ,co.region
-	  ,co.school_level
-	  ,co.school_name
+SELECT co.student_number
+      ,co.lastfirst
+      ,co.gender
+      ,co.ethnicity
+      ,co.enroll_status
+      ,co.cohort
+      ,co.academic_year
+      ,co.region
+      ,co.school_level
+      ,co.school_name
+      ,co.grade_level
+      ,co.team
+      ,co.iep_status
+      ,co.lep_status
+      ,co.c_504_status
+      ,co.is_pathways
+      ,co.lunchstatus
+      ,co.year_in_network
+      ,co.boy_status
+      ,co.is_retained_year
+      ,co.is_retained_ever
 
-	  ,co.boy_status
-	  ,co.is_retained_year
-	  ,co.is_retained_ever
+      ,gpad.reporting_term
+      ,gpad.term_name
+      ,gpad.semester
+      ,gpad.is_curterm
 
-	  ,gpad.*
+      ,gpad.gpa_term
+      ,gpad.gpa_points_total_term
+      ,gpad.weighted_gpa_points_term
+      ,gpad.grade_avg_term
 
-	  ,gpac.*
+      ,gpad.gpa_semester
+      ,gpad.gpa_points_total_semester
+      ,gpad.weighted_gpa_points_semester
+      ,gpad.total_credit_hours_semester
+      ,gpad.grade_avg_semester
 
-FROM powerschool.cohort_identifiers_static co
-LEFT JOIN powerschool.gpa_detail gpad
+      ,gpad.gpa_y1
+      ,gpad.gpa_y1_unweighted
+      ,gpad.gpa_points_total_y1
+      ,gpad.weighted_gpa_points_y1
+      ,gpad.total_credit_hours
+      ,gpad.grade_avg_y1
+      ,gpad.n_failing_y1
+
+      ,gpac.cumulative_Y1_gpa
+      ,gpac.cumulative_Y1_gpa_projected
+      ,gpac.cumulative_Y1_gpa_projected_s1
+      ,gpac.cumulative_Y1_gpa_unweighted
+      ,gpac.earned_credits_cum
+      ,gpac.earned_credits_cum_projected
+      ,gpac.earned_credits_cum_projected_s1
+      ,gpac.potential_credits_cum
+FROM gabby.powerschool.cohort_identifiers_static co
+LEFT JOIN gabby.powerschool.gpa_detail gpad
   ON co.student_number = gpad.student_number
  AND co.academic_year = gpad.academic_year
  AND co.schoolid = gpad.schoolid
- AND gpad.grade_level = co.grade_level
  AND co.db_name = gpad.db_name
-
-LEFT JOIN powerschool.gpa_cumulative gpac
-  ON gpac.studentid = co.studentid
- AND gpac.schoolid = co.schoolid
- AND gpac.db_name = co.db_name
-
-WHERE co.grade_level >= 5
+LEFT JOIN gabby.powerschool.gpa_cumulative gpac
+  ON co.studentid = gpac.studentid 
+ AND co.schoolid = gpac.schoolid
+ AND co.db_name = gpac.db_name
+WHERE co.school_level IN ('MS', 'HS')
   AND co.rn_year = 1
