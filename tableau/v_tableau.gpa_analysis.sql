@@ -24,7 +24,7 @@ SELECT co.student_number
       ,co.boy_status
       ,co.is_retained_year
       ,co.is_retained_ever
-      ,co.rn_all
+      ,co.rn_undergrad
 
       ,gpad.reporting_term
       ,gpad.term_name
