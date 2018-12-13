@@ -20,6 +20,7 @@ SELECT ird.administration_year
 
       ,vals.label AS value_label
 
+      ,ivm.domain
       ,ivm.is_ici
 
       ,CASE
@@ -28,10 +29,11 @@ SELECT ird.administration_year
         WHEN vals.label NOT IN ('Agree','Strongly Agree') THEN 0.0
        END AS is_agree
 FROM gabby.tntp.insight_raw_data ird
-JOIN gabby.tntp.insight_variables vars
+LEFT JOIN gabby.tntp.insight_variables vars
   ON ird.variable = vars.variable
-JOIN gabby.tntp.insight_values vals
+LEFT JOIN gabby.tntp.insight_values vals
   ON ird.variable = vals.variable
  AND CONVERT(FLOAT,ird.value) = vals.value
 LEFT JOIN gabby.tntp.insight_variables_metadata ivm
   ON ird.variable = ivm.variable
+ AND ivm._fivetran_deleted = 0
