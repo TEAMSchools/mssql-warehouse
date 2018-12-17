@@ -13,6 +13,11 @@ SELECT studentid
 
       ,CONVERT(FLOAT,ROUND(CONVERT(DECIMAL(4,3),(weighted_points_projected_s1 / credit_hours_projected_s1)), 2)) AS cumulative_Y1_gpa_projected_s1
       ,earned_credits_cum_projected_s1
+
+	  ,CONVERT(FLOAT,ROUND(CONVERT(DECIMAL(4,3),(core_weighted_points / core_potentialcrhrs)), 2)) AS core_cumulative_Y1_gpa
+
+
+
 FROM
     (
      SELECT studentid AS studentid
@@ -32,6 +37,12 @@ FROM
            ,SUM(CONVERT(FLOAT,weighted_points_projected_s1)) AS weighted_points_projected_s1
            ,CASE WHEN SUM(CONVERT(FLOAT,potentialcrhrs_projected_s1)) = 0 THEN NULL ELSE SUM(CONVERT(FLOAT,potentialcrhrs_projected_s1)) END AS credit_hours_projected_s1
            ,SUM(earnedcrhrs_projected_s1) AS earned_credits_cum_projected_s1
+		   
+		   ,CASE WHEN SUM(CONVERT(FLOAT,core_potentialcrhrs)) = 0 THEN NULL ELSE SUM(CONVERT(FLOAT,core_potentialcrhrs)) END AS core_potentialcrhrs
+		   ,SUM(CONVERT(FLOAT,core_gpa_points)) AS core_gpa_points
+		   ,SUM(CONVERT(FLOAT,core_weighted_points)) AS core_weighted_points
+
+
      FROM 
          (
           SELECT CONVERT(INT,sg.studentid) AS studentid
@@ -50,6 +61,11 @@ FROM
                 ,sg.potentialcrhrs AS potentialcrhrs_projected_s1
                 ,sg.earnedcrhrs AS earnedcrhrs_projected_s1
                 ,(sg.potentialcrhrs * sg.gpa_points) AS weighted_points_projected_s1
+
+				,CASE WHEN sg.credit_type IN ('MATH','SCI','ENG','SOC') THEN sg.potentialcrhrs ELSE NULL END AS core_potentialcrhrs
+				,CASE WHEN sg.credit_type IN ('MATH','SCI','ENG','SOC') THEN sg.gpa_points ELSE NULL END AS core_gpa_points
+				,CASE WHEN sg.credit_type IN ('MATH','SCI','ENG','SOC') THEN sg.potentialcrhrs ELSE NULL END * CASE WHEN sg.credit_type IN ('MATH','SCI','ENG','SOC') THEN sg.gpa_points ELSE NULL END AS core_weighted_points
+
           FROM powerschool.storedgrades sg
           LEFT JOIN powerschool.gradescaleitem_lookup_static scale_unweighted 
             ON sg.[percent] BETWEEN scale_unweighted.min_cutoffpercentage AND scale_unweighted.max_cutoffpercentage
@@ -79,6 +95,11 @@ FROM
                 ,NULL AS potentialcrhrs_projected_s1
                 ,NULL AS earnedcrhrs_projected_s1
                 ,NULL AS weighted_points_projected_s1
+
+				,NULL AS core_potentialcrhrs
+				,NULL AS core_gpa_points
+				,NULL AS core_weighted_points
+
           FROM powerschool.final_grades_static gr 
           LEFT JOIN powerschool.storedgrades sg 
              ON gr.studentid = sg.studentid
@@ -108,6 +129,11 @@ FROM
                 ,gr.credit_hours AS potentialcrhrs_projected_s1
                 ,CASE WHEN gr.y1_grade_letter NOT LIKE 'F%' THEN gr.credit_hours ELSE 0 END AS earnedcrhrs_projected_s1
                 ,(gr.credit_hours * gr.y1_gpa_points) AS weighted_points_projected_s1
+
+				,NULL AS core_potentialcrhrs
+				,NULL AS core_gpa_points
+				,NULL AS core_weighted_points
+
           FROM powerschool.final_grades_static gr 
           LEFT JOIN powerschool.storedgrades sg 
             ON gr.studentid = sg.studentid
