@@ -14,10 +14,7 @@ SELECT studentid
       ,CONVERT(FLOAT,ROUND(CONVERT(DECIMAL(4,3),(weighted_points_projected_s1 / credit_hours_projected_s1)), 2)) AS cumulative_Y1_gpa_projected_s1
       ,earned_credits_cum_projected_s1
 
-	  ,CONVERT(FLOAT,ROUND(CONVERT(DECIMAL(4,3),(core_weighted_points / core_potentialcrhrs)), 2)) AS core_cumulative_Y1_gpa
-
-
-
+      ,CONVERT(FLOAT,ROUND(CONVERT(DECIMAL(4,3),(core_weighted_points / core_potentialcrhrs)), 2)) AS core_cumulative_Y1_gpa
 FROM
     (
      SELECT studentid AS studentid
@@ -37,20 +34,18 @@ FROM
            ,SUM(CONVERT(FLOAT,weighted_points_projected_s1)) AS weighted_points_projected_s1
            ,CASE WHEN SUM(CONVERT(FLOAT,potentialcrhrs_projected_s1)) = 0 THEN NULL ELSE SUM(CONVERT(FLOAT,potentialcrhrs_projected_s1)) END AS credit_hours_projected_s1
            ,SUM(earnedcrhrs_projected_s1) AS earned_credits_cum_projected_s1
-		   
-		   ,CASE WHEN SUM(CONVERT(FLOAT,core_potentialcrhrs)) = 0 THEN NULL ELSE SUM(CONVERT(FLOAT,core_potentialcrhrs)) END AS core_potentialcrhrs
-		   ,SUM(CONVERT(FLOAT,core_gpa_points)) AS core_gpa_points
-		   ,SUM(CONVERT(FLOAT,core_weighted_points)) AS core_weighted_points
 
-
+           ,CASE WHEN SUM(CONVERT(FLOAT,core_potentialcrhrs)) = 0 THEN NULL ELSE SUM(CONVERT(FLOAT,core_potentialcrhrs)) END AS core_potentialcrhrs
+           ,SUM(CONVERT(FLOAT,core_gpa_points)) AS core_gpa_points
+           ,SUM(CONVERT(FLOAT,core_weighted_points)) AS core_weighted_points
      FROM 
          (
           SELECT CONVERT(INT,sg.studentid) AS studentid
-                ,(LEFT(sg.termid, 2) + 1990) AS academic_year
+                ,sg.academic_year
                 ,CONVERT(INT,sg.schoolid) AS schoolid
-                ,sg.course_number
-                ,sg.potentialcrhrs                   
-                ,sg.earnedcrhrs                   
+                ,sg.course_number_clean AS course_number
+                ,sg.potentialcrhrs
+                ,sg.earnedcrhrs
                 ,(sg.potentialcrhrs * sg.gpa_points) AS weighted_points
                 ,(sg.potentialcrhrs * scale_unweighted.grade_points) AS unweighted_points
                 
@@ -62,19 +57,19 @@ FROM
                 ,sg.earnedcrhrs AS earnedcrhrs_projected_s1
                 ,(sg.potentialcrhrs * sg.gpa_points) AS weighted_points_projected_s1
 
-				,CASE WHEN sg.credit_type IN ('MATH','SCI','ENG','SOC') THEN sg.potentialcrhrs ELSE NULL END AS core_potentialcrhrs
-				,CASE WHEN sg.credit_type IN ('MATH','SCI','ENG','SOC') THEN sg.gpa_points ELSE NULL END AS core_gpa_points
-				,CASE WHEN sg.credit_type IN ('MATH','SCI','ENG','SOC') THEN sg.potentialcrhrs ELSE NULL END * CASE WHEN sg.credit_type IN ('MATH','SCI','ENG','SOC') THEN sg.gpa_points ELSE NULL END AS core_weighted_points
-
+                ,CASE WHEN sg.credit_type IN ('MATH','SCI','ENG','SOC') THEN sg.potentialcrhrs END AS core_potentialcrhrs
+                ,CASE WHEN sg.credit_type IN ('MATH','SCI','ENG','SOC') THEN sg.gpa_points END AS core_gpa_points
+                ,CASE WHEN sg.credit_type IN ('MATH','SCI','ENG','SOC') THEN sg.potentialcrhrs END 
+                   * CASE WHEN sg.credit_type IN ('MATH','SCI','ENG','SOC') THEN sg.gpa_points END AS core_weighted_points
           FROM powerschool.storedgrades sg
           LEFT JOIN powerschool.gradescaleitem_lookup_static scale_unweighted 
             ON sg.[percent] BETWEEN scale_unweighted.min_cutoffpercentage AND scale_unweighted.max_cutoffpercentage
            AND CASE
                 WHEN sg.schoolid != 73253 THEN sg.gradescale_name
-                WHEN sg.termid < 2600 THEN 'NCA 2011' /* default pre-2016 */
-                WHEN sg.termid >= 2600 THEN 'KIPP NJ 2016 (5-12)' /* default 2016+ */
+                WHEN sg.academic_year < 2016 THEN 'NCA 2011' /* default pre-2016 */
+                WHEN sg.academic_year >= 2016 THEN 'KIPP NJ 2016 (5-12)' /* default 2016+ */
                END = scale_unweighted.gradescale_name
-          WHERE sg.storecode = 'Y1'
+          WHERE sg.storecode_clean = 'Y1'
             AND sg.excludefromgpa = 0
           
           UNION ALL
@@ -96,16 +91,15 @@ FROM
                 ,NULL AS earnedcrhrs_projected_s1
                 ,NULL AS weighted_points_projected_s1
 
-				,NULL AS core_potentialcrhrs
-				,NULL AS core_gpa_points
-				,NULL AS core_weighted_points
-
+                ,NULL AS core_potentialcrhrs
+                ,NULL AS core_gpa_points
+                ,NULL AS core_weighted_points
           FROM powerschool.final_grades_static gr 
           LEFT JOIN powerschool.storedgrades sg 
              ON gr.studentid = sg.studentid
-            AND gr.course_number = sg.course_number
-            AND gr.academic_year = (LEFT(sg.termid, 2) + 1990)
-            AND sg.storecode = 'Y1'           
+            AND gr.course_number = sg.course_number_clean
+            AND gr.academic_year = sg.academic_year
+            AND sg.storecode_clean = 'Y1'           
           WHERE gr.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
             AND gr.is_curterm = 1
             AND gr.excludefromgpa = 0
@@ -130,16 +124,16 @@ FROM
                 ,CASE WHEN gr.y1_grade_letter NOT LIKE 'F%' THEN gr.credit_hours ELSE 0 END AS earnedcrhrs_projected_s1
                 ,(gr.credit_hours * gr.y1_gpa_points) AS weighted_points_projected_s1
 
-				,NULL AS core_potentialcrhrs
-				,NULL AS core_gpa_points
-				,NULL AS core_weighted_points
+                ,NULL AS core_potentialcrhrs
+                ,NULL AS core_gpa_points
+                ,NULL AS core_weighted_points
 
           FROM powerschool.final_grades_static gr 
           LEFT JOIN powerschool.storedgrades sg 
             ON gr.studentid = sg.studentid
-           AND gr.course_number = sg.course_number
-           AND gr.academic_year = (LEFT(sg.termid, 2) + 1990)
-           AND sg.storecode = 'Y1'           
+           AND gr.course_number = sg.course_number_clean
+           AND gr.academic_year = sg.academic_year
+           AND sg.storecode_clean = 'Y1'           
           WHERE gr.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
             AND gr.term_name = 'Q2' /* Y1 as of Q2 (aka Semester 1) */
             AND gr.excludefromgpa = 0
