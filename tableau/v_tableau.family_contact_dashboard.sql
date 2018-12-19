@@ -46,6 +46,7 @@ SELECT co.student_number
       ,co.grade_level
       ,co.team
       ,co.enroll_status
+      ,co.db_name
       ,CONCAT(co.STREET, ' - ', co.city, ', ', co.state, ' ', co.zip) AS street_address
       
       ,s.family_ident
