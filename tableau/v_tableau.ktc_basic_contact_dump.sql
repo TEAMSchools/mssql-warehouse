@@ -290,6 +290,7 @@ SELECT c.id AS contact_id
       ,c.last_successful_contact_c
       ,c.actual_hs_graduation_date_c
       ,c.actual_college_graduation_date_c      
+      ,c.kipp_region_name_c
 
       ,rt.name AS record_type
 

@@ -273,6 +273,7 @@ SELECT co.student_number
       ,co.latest_fafsa_date_c
       ,co.latest_state_financial_aid_app_date_c                    
       ,co.latest_transcript_c      
+      ,co.db_name
       
       ,CASE 
         WHEN co.is_taf = 0 AND co.grade_level = 12 THEN gpa.cumulative_Y1_gpa
