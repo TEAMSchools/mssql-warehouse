@@ -59,6 +59,8 @@ SELECT co.student_number
       ,gpac.earned_credits_cum_projected
       ,gpac.earned_credits_cum_projected_s1
       ,gpac.potential_credits_cum
+
+      ,gpac.core_cumulative_Y1_gpa
 FROM gabby.powerschool.cohort_identifiers_static co
 LEFT JOIN gabby.powerschool.gpa_detail gpad
   ON co.student_number = gpad.student_number
