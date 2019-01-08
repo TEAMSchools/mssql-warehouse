@@ -9,6 +9,7 @@ WITH schooldays AS (
         ,schoolid
         ,region
         ,n_days_school
+        ,n_days_remaining
         ,MIN(n_days_school) OVER(PARTITION BY academic_year, region) n_days_region_min
   FROM (
         SELECT CONVERT(INT, schoolid) AS schoolid
@@ -18,17 +19,13 @@ WITH schooldays AS (
                 WHEN db_name LIKE 'kippnewark' THEN 'TEAM'
                END AS region
               ,gabby.utilities.DATE_TO_SY(date_value) AS academic_year
-              ,CONVERT(INT, SUM(membershipvalue)) AS n_days_school
+              ,CONVERT(INT,SUM(membershipvalue)) AS n_days_school
+              ,CONVERT(INT,SUM(CASE WHEN date_value > GETDATE() THEN membershipvalue END)) AS n_days_remaining
         FROM gabby.powerschool.calendar_day
         GROUP BY gabby.utilities.DATE_TO_SY(date_value)
                 ,schoolid
                 ,db_name
        ) sub
-  GROUP BY db_name
-          ,academic_year
-          ,region
-          ,schoolid
-          ,n_days_school
  )
 
 ,att_mem AS (
@@ -56,11 +53,12 @@ SELECT co.student_number
       ,co.entrydate
       ,co.exitdate      
       ,co.ethnicity      
-	     ,co.lunchstatus
+      ,co.lunchstatus
       ,co.iep_status
-      ,co.specialed_classification
-      ,ISNULL(co.lep_status, 0) AS lep_status
+      ,co.specialed_classification      
       ,co.enroll_status
+      ,co.is_pathways
+      ,ISNULL(co.lep_status, 0) AS lep_status
       ,COUNT(co.student_number) OVER(PARTITION BY co.schoolid, co.academic_year) AS n_students
       
       ,nj.programtypecode
@@ -69,14 +67,15 @@ SELECT co.student_number
       
       ,d.n_days_school
       ,d.n_days_region_min
+      ,d.n_days_remaining
       
       ,sub.n_mem
       ,sub.n_att          
-      ,sub.n_mem_ytd  
+      ,sub.n_mem_ytd
 FROM gabby.powerschool.cohort_identifiers_static co
 LEFT JOIN gabby.powerschool.s_nj_stu_x nj
   ON co.students_dcid = nj.studentsdcid
- AND co.db_name = co.db_name
+ AND co.db_name = nj.db_name
 LEFT JOIN gabby.easyiep.njsmart_powerschool_clean iep
   ON co.student_number = iep.student_number
  AND co.academic_year = iep.academic_year
