@@ -1,7 +1,7 @@
 USE gabby
 GO
 
---CREATE OR ALTER VIEW tableau.pm_etr_dashboard AS
+CREATE OR ALTER VIEW tableau.pm_etr_dashboard AS
 
 SELECT sr.df_employee_number
       ,sr.preferred_name        
@@ -28,7 +28,6 @@ SELECT sr.df_employee_number
       ,wo.score
       ,wo.score_averaged_by_strand
       ,wo.percentage AS percentage_averaged_by_strand
-      ,gabby.utilities.DATE_TO_SY(wo.observed_at) AS academic_year
         
       ,wos.score_percentage
       ,wos.score_value
@@ -39,12 +38,9 @@ SELECT sr.df_employee_number
 
       ,tb.text_box_label
       ,tb.text_box_text
-        
-      ,MAX(wo.created) OVER(PARTITION BY gabby.utilities.DATE_TO_SY(wo.observed_at), wo.observer_accountingId, wo.teacher_accountingId) AS last_submitted_form
 
       ,rt.academic_year
       ,rt.time_per_name AS reporting_term
-
 FROM gabby.dayforce.staff_roster sr
 LEFT JOIN gabby.adsi.user_attributes_static ads
   ON sr.df_employee_number = ads.employeenumber
@@ -55,15 +51,15 @@ LEFT JOIN gabby.adsi.user_attributes_static adm
 JOIN gabby.whetstone.observations_clean wo
   ON sr.df_employee_number = wo.teacher_accountingId
  AND wo.rubric_name IN ('Coaching Tool: Coach ETR and Reflection') 
-JOIN gabby.reporting.reporting_terms rt
-  ON wo.observed_at BETWEEN rt.start_date AND rt.end_date 
- AND rt.identifier = 'ETR'
- AND rt.schoolid = 0
- AND rt._fivetran_deleted = 0
 LEFT JOIN gabby.whetstone.observations_scores wos
   ON wo.observation_id = wos.observation_id
 LEFT JOIN gabby.whetstone.measurements wm
   ON wos.score_measurement_id = wm._id
 LEFT JOIN gabby.whetstone.observations_scores_text_boxes tb
   ON wos.score_id = tb.score_id
+JOIN gabby.reporting.reporting_terms rt
+  ON wo.observed_at BETWEEN rt.start_date AND rt.end_date 
+ AND rt.identifier = 'ETR'
+ AND rt.schoolid = 0
+ AND rt._fivetran_deleted = 0
 WHERE ISNULL(sr.termination_date, GETDATE()) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
