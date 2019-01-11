@@ -35,21 +35,21 @@ WITH repos_union AS (
              ,r.field_character_comment_2_1 AS field_character_comment_2
        FROM gabby.illuminate_dna_repositories.repository_216 r
 
-       --UNION ALL
+       UNION ALL
 
-       --SELECT 207 AS repository_id
-       --      ,'Q2' AS field_term
-       --      ,r.repository_row_id           
-       --      ,r.student_id
-       --      ,r.field_math_comment_1
-       --      ,r.field_math_comment_2
-       --      ,r.field_writing_comment_1
-       --      ,r.field_writing_comment_2
-       --      ,r.field_reading_comment_1
-       --      ,r.field_reading_comment_2
-       --      ,r.field_character_comment_1
-       --      ,r.field_character_comment_2
-       --FROM gabby.illuminate_dna_repositories.repository_207 r       
+       SELECT 207 AS repository_id
+             ,'Q2' AS field_term
+             ,r.repository_row_id           
+             ,r.student_id
+             ,r.field_math_comment_1
+             ,r.field_math_comment_2
+             ,r.field_writing_comment_1
+             ,r.field_writing_comment_2
+             ,r.field_reading_comment_1
+             ,r.field_reading_comment_2
+             ,r.field_character_comment_1
+             ,r.field_character_comment_2
+       FROM gabby.illuminate_dna_repositories.repository_207 r       
 
        --UNION ALL
 
