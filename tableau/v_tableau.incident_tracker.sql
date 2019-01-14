@@ -37,6 +37,7 @@ WITH dlrosters AS (
  )
 
 SELECT co.student_number
+      ,co.state_studentnumber
       ,co.lastfirst
       ,co.academic_year
       ,co.reporting_schoolid
@@ -91,6 +92,7 @@ WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 UNION ALL
 
 SELECT co.student_number
+      ,co.state_studentnumber
       ,co.lastfirst
       ,co.academic_year
       ,co.reporting_schoolid
@@ -145,6 +147,7 @@ WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 UNION ALL
 
 SELECT co.student_number
+      ,co.state_studentnumber
       ,co.lastfirst
       ,co.academic_year
       ,co.reporting_schoolid
