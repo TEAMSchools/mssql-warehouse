@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW surveys.survey_completion AS
+--CREATE OR ALTER VIEW surveys.survey_completion AS
 
 WITH survey_feed AS (
   SELECT _created AS date_created
@@ -17,7 +17,8 @@ WITH survey_feed AS (
         ,'Self & Others' AS survey_type
   FROM gabby.surveys.self_and_others_survey
   WHERE subject_name IS NOT NULL
-    AND survey_timestamp IS NOT NULL
+    AND  _created IS NOT NULL
+    AND q_1_3 IS NOT NULL
 
   UNION ALL
 
@@ -34,7 +35,8 @@ WITH survey_feed AS (
         ,'Manager' AS survey_type
   FROM gabby.surveys.manager_survey
   WHERE subject_name IS NOT NULL
-    AND survey_timestamp IS NOT NULL
+    AND _created IS NOT NULL
+    AND q_1 IS NOT NULL
 
   UNION ALL
 
@@ -49,6 +51,7 @@ WITH survey_feed AS (
          END AS reporting_term
         ,'R9/Engagement' AS survey
   FROM gabby.surveys.r_9_engagement_survey
+  WHERE email IS NOT NULL
  )
 
 ,teacher_scaffold AS (
