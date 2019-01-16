@@ -55,7 +55,9 @@ SELECT co.student_number
       ,dli.incident_id AS dl_id            
       ,dli.status
       ,dli.location
-      ,dli.reported_details AS notes
+      ,dli.reported_details
+      ,dli.admin_summary
+      ,dli.context
       ,dli.create_first + ' ' + dli.create_last AS referring_teacher_name
       ,dli.update_first + ' ' + dli.update_last AS reviewed_by            
       ,dli.create_ts AS dl_timestamp      
@@ -110,7 +112,9 @@ SELECT co.student_number
       ,dlip.incidentpenaltyid AS dl_id
       ,dli.status
       ,dli.location
-      ,dli.admin_summary AS notes
+      ,dli.reported_details
+      ,dli.admin_summary
+      ,dli.context
       ,dli.create_first + ' ' + dli.create_last AS referring_teacher_name
       ,dli.update_first + ' ' + dli.update_last AS reviewed_by
       ,ISNULL(dlip.startdate, dli.create_ts) AS dl_timestamp
@@ -165,7 +169,9 @@ SELECT co.student_number
       ,CONVERT(INT,dlb.dlsaid) AS dl_id
       ,NULL AS status
       ,NULL location
-      ,NULL AS notes
+      ,NULL AS reported_details
+      ,NULL AS admin_summary
+      ,NULL AS context
       ,CONVERT(VARCHAR(125),dlb.staff_first_name + ' ' + dlb.staff_last_name) AS referring_teacher_name
       ,NULL AS reviewed_by
       ,dlb.behavior_date AS dl_timestamp
