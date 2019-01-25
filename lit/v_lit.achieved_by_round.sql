@@ -355,7 +355,7 @@ FROM
            ,sub.achv_unique_id      
            ,sub.dna_unique_id      
            ,sub.is_new_test
-           ,MIN(sub.reporting_term) OVER(PARTITION BY sub.student_number, sub.academic_year) AS min_reporting_term_ytd
+           ,MIN(CASE WHEN sub.lvl_num IS NOT NULL THEN sub.reporting_term END) OVER(PARTITION BY sub.student_number, sub.academic_year) AS min_reporting_term_ytd
            ,MAX(CASE WHEN GETDATE() >= sub.start_date THEN sub.reporting_term END) OVER(PARTITION BY sub.student_number, sub.academic_year) AS max_reporting_term_ytd
 
            ,CASE
