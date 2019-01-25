@@ -63,3 +63,4 @@ JOIN gabby.reporting.reporting_terms rt
  AND rt.schoolid = 0
  AND rt._fivetran_deleted = 0
 WHERE ISNULL(sr.termination_date, GETDATE()) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
+  AND ads.samaccountname != LEFT(wo.observer_email,CHARINDEX('@',wo.observer_email)-1)

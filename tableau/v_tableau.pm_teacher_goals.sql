@@ -114,6 +114,7 @@ WITH reading_level AS (
    AND rt._fivetran_deleted = 0
   WHERE wo.rubric_name IN ('Coaching Tool: Coach ETR and Reflection')
     AND wo.score IS NOT NULL
+    AND wo.observer_email != wo.teacher_email
  )
 
 ,so_survey AS (
