@@ -50,7 +50,8 @@ LEFT JOIN gabby.adsi.user_attributes_static adm
  AND ISNUMERIC(adm.employeenumber) = 1
 JOIN gabby.whetstone.observations_clean wo
   ON sr.df_employee_number = wo.teacher_accountingId
- AND wo.rubric_name IN ('Coaching Tool: Coach ETR and Reflection') 
+ AND ads.samaccountname != LEFT(wo.observer_email, CHARINDEX('@', wo.observer_email) - 1)
+ AND wo.rubric_name = 'Coaching Tool: Coach ETR and Reflection'
 LEFT JOIN gabby.whetstone.observations_scores wos
   ON wo.observation_id = wos.observation_id
 LEFT JOIN gabby.whetstone.measurements wm
@@ -63,4 +64,3 @@ JOIN gabby.reporting.reporting_terms rt
  AND rt.schoolid = 0
  AND rt._fivetran_deleted = 0
 WHERE ISNULL(sr.termination_date, GETDATE()) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
-  AND ads.samaccountname != LEFT(wo.observer_email,CHARINDEX('@',wo.observer_email)-1)
