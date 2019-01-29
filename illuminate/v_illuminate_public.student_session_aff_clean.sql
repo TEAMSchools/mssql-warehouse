@@ -7,7 +7,9 @@ SELECT student_id
       ,grade_level_id
       ,academic_year
       ,entry_date
-      ,1 AS rn
+      ,ROW_NUMBER() OVER(
+         PARTITION BY sub.student_id, sub.academic_year
+           ORDER BY sub.entry_date DESC) AS rn
 FROM
     (
      SELECT student_id

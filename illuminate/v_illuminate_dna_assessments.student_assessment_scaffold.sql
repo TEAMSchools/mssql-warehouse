@@ -13,6 +13,8 @@ SELECT a.assessment_id
       ,a.module_number
       ,a.scope           
       ,a.subject_area
+      
+      ,agl.grade_level_id
 
       ,ssa.student_id           
       
@@ -23,6 +25,7 @@ JOIN gabby.illuminate_dna_assessments.assessment_grade_levels agl
 JOIN gabby.illuminate_public.student_session_aff_clean_static ssa
   ON a.academic_year = ssa.academic_year
  AND agl.grade_level_id = ssa.grade_level_id
+ AND ssa.rn = 1
 JOIN gabby.illuminate_dna_assessments.course_enrollment_scaffold_static ce
   ON ssa.student_id = ce.student_id  
  AND a.academic_year = ce.academic_year 
@@ -44,6 +47,8 @@ SELECT a.assessment_id
       ,a.module_number
       ,a.scope           
       ,a.subject_area
+
+      ,agl.grade_level_id
 
       ,ce.student_id
       
@@ -74,6 +79,8 @@ SELECT DISTINCT
       ,a.scope           
       ,a.subject_area
 
+      ,NULL AS grade_level_id
+
       ,sa.student_id
 
       ,1 AS is_replacement
@@ -86,6 +93,7 @@ JOIN gabby.illuminate_public.student_session_aff_clean_static ssa
   ON sa.student_id = ssa.student_id
  AND a.academic_year = ssa.academic_year
  AND agl.grade_level_id != ssa.grade_level_id      
+ AND ssa.rn = 1
 WHERE a.subject_area NOT IN ('Algebra I','Geometry','Algebra II','Algebra IIA','Algebra IIB','Pre-Calculus'
                             ,'English 100','English 200','English 300','English 400')
   AND a.deleted_at IS NULL
@@ -104,6 +112,8 @@ SELECT DISTINCT
       ,a.module_number     
       ,a.scope      
       ,a.subject_area
+
+      ,NULL AS grade_level_id
 
       ,sa.student_id
 
