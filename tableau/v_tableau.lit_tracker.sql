@@ -56,6 +56,8 @@ SELECT co.school_name
       ,achv.met_goal
       ,achv.met_natl_goal
       ,achv.met_default_goal      
+      ,achv.hard_lvl
+      ,achv.hard_lvl_num
       ,achv.lvl_num - achv.goal_num AS distance_from_goal
       
       ,atid.is_fp

@@ -65,7 +65,7 @@ FROM
      UNION ALL
 
      /* ACHIEVED PRE DNA */
-     SELECT CONVERT(VARCHAR(25),CONCAT('UC', gabby.utilities.DATE_TO_SY(step.date), step.[_line])) AS unique_id
+     SELECT CONVERT(VARCHAR(25),CONCAT('UCDNA', gabby.utilities.DATE_TO_SY(step.date), step.[_line])) AS unique_id
            ,CONVERT(INT,CONVERT(FLOAT,step.student_id)) AS student_number      
            ,gabby.utilities.DATE_TO_SY(CONVERT(DATE,step.date)) AS academic_year
            ,CONVERT(DATE,step.date) AS test_date      
