@@ -1,7 +1,7 @@
 USE gabby
 GO
 
---CREATE OR ALTER VIEW surveys.survey_completion AS
+CREATE OR ALTER VIEW surveys.survey_completion AS
 
 WITH survey_feed AS (
   SELECT _created AS date_created
@@ -84,7 +84,7 @@ WITH survey_feed AS (
   CROSS JOIN STRING_SPLIT('SO1,SO2,SO3', ',') ss
   WHERE sr.status NOT IN ('TERMINATED', 'PRESTART')
 
-UNION ALL
+  UNION ALL
 
   SELECT sr.df_employee_number
         ,sr.preferred_first_name AS preferred_first
@@ -114,7 +114,7 @@ UNION ALL
   CROSS JOIN STRING_SPLIT('R9S1,R9S2,R9S3,R9S4', ',') ss
   WHERE sr.status NOT IN ('TERMINATED', 'PRESTART')
 
-UNION ALL
+  UNION ALL
 
   SELECT sr.df_employee_number
         ,sr.preferred_first_name AS preferred_first
