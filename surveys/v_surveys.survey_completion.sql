@@ -155,6 +155,8 @@ SELECT DISTINCT
       ,s.job_title_description
       ,s.position_status
 
+      ,COALESCE(f1.date_created, f2.date_created, f3.date_created) AS date_created
+      ,COALESCE(f1.date_submitted, f2.date_submitted, f3.date_submitted) AS date_submitted
       ,COALESCE(f1.responder_email, f2.responder_email, f3.responder_email, email1) AS responder_email   
       ,COALESCE(f1.subject_name, f2.subject_name, f3.subject_name) AS subject_name
       ,COALESCE(s.academic_year,f1.academic_year, f2.academic_year, f3.academic_year) AS academic_year
