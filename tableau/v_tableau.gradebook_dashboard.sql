@@ -343,7 +343,7 @@ SELECT co.student_number
       ,gr.is_curterm         
       ,NULL AS excludefromgpa
       ,NULL AS credit_hours      
-      ,gr.grade_category_pct AS term_grade_percent_adjusted
+      ,gr.grade_category_pct_y1 AS term_grade_percent_adjusted
       ,NULL AS term_grade_letter_adjusted
       ,NULL AS term_gpa_points      
       ,gr.grade_category_pct_y1 AS y1_grade_percent_adjusted
