@@ -14,6 +14,7 @@ SELECT co.student_number
       ,CONVERT(VARCHAR(5),term.alt_name) AS lit_term      
 
       ,testid.read_lvl
+      ,testid.lvl_num
       ,testid.test_date
       ,testid.status      
       ,testid.is_fp
