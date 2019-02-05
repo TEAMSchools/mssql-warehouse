@@ -8,7 +8,7 @@ SELECT studentid
       ,term_name
       ,ROW_NUMBER() OVER(
          PARTITION BY studentid, yearid, course_number, term_name
-           ORDER BY dateleft DESC, sectionid DESC) AS rn_term
+           ORDER BY is_dropped, dateleft DESC, sectionid DESC) AS rn_term
 FROM
     (
      SELECT CONVERT(INT,cc.studentid) AS studentid
@@ -17,6 +17,7 @@ FROM
            ,cc.dateleft
            ,CONVERT(INT,LEFT(ABS(cc.termid), 2)) AS yearid
            ,cc.abs_sectionid
+           ,CASE WHEN cc.sectionid < 0 THEN 1 ELSE 0 END AS is_dropped
       
            ,CONVERT(INT,sec.gradescaleid) AS gradescaleid
 
