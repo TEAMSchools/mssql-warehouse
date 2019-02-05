@@ -12,7 +12,7 @@ WITH terms_attendance_code AS (
     ON t.schoolid = ac.schoolid
    AND t.yearid = ac.yearid
    AND ac.att_code IS NULL
-	  AND ac.presence_status_cd = 'Present'
+   AND ac.presence_status_cd = 'Present'
   WHERE t.isyearrec = 1
  )
 
@@ -49,7 +49,7 @@ SELECT mv.studentid
       ,(CASE 
          WHEN ada_1.id IS NOT NULL THEN 0
          ELSE CONVERT(INT,aci_potential.attendance_value)
-			     END) * mv.ontrack AS potential_attendancevalue
+        END) * mv.ontrack AS potential_attendancevalue
 FROM powerschool.ps_membership_reg mv
 LEFT JOIN terms_attendance_code tac
   ON mv.calendardate BETWEEN tac.firstday AND tac.lastday 
