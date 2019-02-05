@@ -83,6 +83,7 @@ FROM
      WHERE a.module_type = 'CGI'
        AND a.subject_area = 'Mathematics'
        AND a.academic_year_clean = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+       AND a.deleted_at IS NULL
      GROUP BY s.local_student_id
              ,a.academic_year_clean
              ,a.subject_area
@@ -129,6 +130,7 @@ FROM
      WHERE a.scope = 'Unit Assessment'
        AND a.subject_area NOT IN ('Text Study','Mathematics')  
        AND a.academic_year_clean = gabby.utilities.GLOBAL_ACADEMIC_YEAR()  
+       AND a.deleted_at IS NULL
      GROUP BY s.local_student_id
              ,a.academic_year_clean              
              ,a.subject_area        
@@ -168,8 +170,8 @@ FROM
      FROM gabby.illuminate_dna_assessments.assessments_identifiers a
      WHERE a.scope = 'Sight Words Quiz'
        AND a.subject_area = 'Word Work'  
-       AND a. module_number IS NULL
        AND a.academic_year_clean = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+       AND a.deleted_at IS NULL
     ) sub
 JOIN gabby.illuminate_dna_assessments.agg_student_responses asr
   ON sub.assessment_id = asr.assessment_id
