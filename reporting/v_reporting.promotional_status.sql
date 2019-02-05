@@ -154,9 +154,9 @@ WITH attendance AS (
   FROM gabby.powerschool.final_grades_static fg  
   LEFT JOIN gabby.powerschool.storedgrades sg
     ON fg.studentid = sg.studentid
-   AND fg.course_number = sg.course_number
+   AND fg.course_number = sg.course_number_clean   
+   AND fg.academic_year = sg.academic_year
    AND fg.db_name = sg.db_name
-   AND fg.academic_year = (LEFT(sg.termid, 2) + 1990)
    AND sg.storecode = 'Y1'
   GROUP BY fg.student_number
           ,fg.academic_year
