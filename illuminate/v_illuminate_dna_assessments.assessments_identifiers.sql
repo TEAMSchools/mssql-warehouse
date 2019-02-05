@@ -46,7 +46,7 @@ SELECT a.assessment_id
 
       ,ns.scope AS normed_scope
 
-      ,CASE        
+      ,CASE
         WHEN ds.code_translation = 'Sight Words Quiz' THEN 'SWQ'
         WHEN ds.code_translation = 'Process Piece' THEN 'PP'
         WHEN ns.scope IS NULL THEN NULL        
@@ -83,6 +83,8 @@ SELECT a.assessment_id
         WHEN PATINDEX('%CJ[0-9][0-9]%', a.title) > 0 THEN LTRIM(RTRIM(SUBSTRING(a.title, PATINDEX('%CJ[0-9]%', a.title), 4)))
         WHEN PATINDEX('%CJ[0-9]%', a.title) > 0 THEN LTRIM(RTRIM(SUBSTRING(a.title, PATINDEX('%CJ[0-9]%', a.title), 3)))        
        END AS module_number
+
+      ,CONVERT(VARCHAR(5),rt.alt_name) AS term_administered
 FROM gabby.illuminate_dna_assessments.assessments a
 LEFT JOIN gabby.illuminate_public.users u
   ON a.user_id = u.user_id
@@ -94,3 +96,8 @@ LEFT JOIN gabby.illuminate_dna_assessments.performance_band_sets pbs
   ON a.performance_band_set_id = pbs.performance_band_set_id
 LEFT JOIN gabby.illuminate_dna_assessments.normed_scopes ns WITH(FORCESEEK)
   ON ds.code_translation = ns.scope
+LEFT JOIN gabby.reporting.reporting_terms rt
+  ON a.administered_at BETWEEN rt.start_date AND rt.end_date
+ AND rt.identifier = 'RT'
+ AND rt.schoolid = 0
+ AND rt._fivetran_deleted = 0
