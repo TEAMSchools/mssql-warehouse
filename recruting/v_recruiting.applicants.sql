@@ -71,6 +71,9 @@ SELECT pa.id
       ,a.phone_interview_status_date_c AS phone_screen_date
       ,a.in_person_interview_status_date_c AS interview_date
       ,a.offer_extended_date_c AS offer_date
+      ,a.stage_c AS selection_stage
+      ,a.status_c AS selection_status
+      ,a.selection_notes_c AS selection_notes
         
       ,j.position_number
       ,j.position_name
