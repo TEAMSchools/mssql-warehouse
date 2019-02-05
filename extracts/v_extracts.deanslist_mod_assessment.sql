@@ -67,25 +67,27 @@ SELECT sub.local_student_id AS student_number
        END AS proficiency_label      
 FROM
     (
-     SELECT asr.local_student_id
-           ,asr.academic_year                 
-           ,asr.module_type
-           ,asr.subject_area AS subject_area_label
-           ,REPLACE(asr.term_administered, 'Q', 'QA') AS module_num      
+     SELECT s.local_student_id
+           ,a.academic_year_clean AS academic_year
+           ,a.module_type
+           ,a.subject_area AS subject_area_label
+           ,REPLACE(a.term_administered, 'Q', 'QA') AS module_num
            ,'MATH' AS subject_area
-           ,ROUND(AVG(asr.percent_correct),0) AS avg_pct_correct                     
-           ,MIN(performance_band_set_id) AS performance_band_set_id
-     FROM gabby.illuminate_dna_assessments.agg_student_responses_all asr
-     WHERE asr.module_type = 'CGI'
-       AND asr.subject_area = 'Mathematics'
-       AND asr.response_type = 'O'
-       AND asr.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-       AND asr.percent_correct IS NOT NULL
-     GROUP BY asr.local_student_id
-             ,asr.academic_year              
-             ,asr.subject_area        
-             ,asr.term_administered
-             ,asr.module_type
+           ,ROUND(AVG(asr.percent_correct),0) AS avg_pct_correct
+           ,MIN(a.performance_band_set_id) AS performance_band_set_id
+     FROM gabby.illuminate_dna_assessments.assessments_identifiers a
+     JOIN gabby.illuminate_dna_assessments.agg_student_responses asr
+       ON a.assessment_id = asr.assessment_id
+     JOIN gabby.illuminate_public.students s
+       ON asr.student_id = s.student_id
+     WHERE a.module_type = 'CGI'
+       AND a.subject_area = 'Mathematics'
+       AND a.academic_year_clean = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+     GROUP BY s.local_student_id
+             ,a.academic_year_clean
+             ,a.subject_area
+             ,a.term_administered
+             ,a.module_type
     ) sub
 JOIN gabby.illuminate_dna_assessments.performance_band_lookup_static pbl
   ON sub.performance_band_set_id = pbl.performance_band_set_id
@@ -111,24 +113,26 @@ SELECT sub.student_number
        END AS proficiency_label      
 FROM
     (
-     SELECT asr.local_student_id AS student_number
-           ,asr.academic_year      
-           ,asr.subject_area AS subject_area_label
+     SELECT s.local_student_id AS student_number
+           ,a.academic_year_clean AS academic_year      
+           ,a.subject_area AS subject_area_label
            ,'ENRICHMENT' AS subject_area           
            ,'UA' AS scope
-           ,REPLACE(asr.term_administered, 'Q', 'QA') AS module_num      
+           ,REPLACE(a.term_administered, 'Q', 'QA') AS module_num      
            ,ROUND(AVG(asr.percent_correct),0) AS avg_pct_correct                       
-           ,MIN(performance_band_set_id) AS performance_band_set_id
-     FROM gabby.illuminate_dna_assessments.agg_student_responses_all asr
-     WHERE asr.scope = 'Unit Assessment'
-       AND asr.subject_area NOT IN ('Text Study','Mathematics')
-       AND asr.response_type = 'O'
-       AND asr.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-       AND asr.percent_correct IS NOT NULL
-     GROUP BY asr.local_student_id
-             ,asr.academic_year              
-             ,asr.subject_area        
-             ,asr.term_administered
+           ,MIN(a.performance_band_set_id) AS performance_band_set_id
+     FROM gabby.illuminate_dna_assessments.assessments_identifiers a
+     JOIN gabby.illuminate_dna_assessments.agg_student_responses asr
+       ON a.assessment_id = asr.assessment_id
+     JOIN gabby.illuminate_public.students s
+       ON asr.student_id = s.student_id
+     WHERE a.scope = 'Unit Assessment'
+       AND a.subject_area NOT IN ('Text Study','Mathematics')  
+       AND a.academic_year_clean = gabby.utilities.GLOBAL_ACADEMIC_YEAR()  
+     GROUP BY s.local_student_id
+             ,a.academic_year_clean              
+             ,a.subject_area        
+             ,a.term_administered
     ) sub
 JOIN gabby.illuminate_dna_assessments.performance_band_lookup_static pbl
   ON sub.performance_band_set_id = pbl.performance_band_set_id
@@ -137,24 +141,38 @@ JOIN gabby.illuminate_dna_assessments.performance_band_lookup_static pbl
 UNION ALL
 
 /* Sight Words */
-SELECT asr.local_student_id
-      ,asr.academic_year     
+SELECT s.local_student_id
+      ,sub.academic_year
       ,'Sight Words' AS subject_area
       ,'Sight Words' AS subject_area_label
-      ,'SW' AS scope       
-      ,asr.module_number
-      ,NULL AS rn_unit
+      ,'SW' AS scope
+      ,sub.module_number
+      ,NULL AS rn_unit    
       ,asr.percent_correct
       ,CASE
-        WHEN asr.performance_band_number = 5 THEN 'Above Target'
-        WHEN asr.performance_band_number = 4 THEN 'Target'
-        WHEN asr.performance_band_number = 3 THEN 'Near Target'
-        WHEN asr.performance_band_number = 2 THEN 'Below Target'
-        WHEN asr.performance_band_number = 1 THEN 'Far Below Target'
+        WHEN asr.performance_band_level = 5 THEN 'Above Target'
+        WHEN asr.performance_band_level = 4 THEN 'Target'
+        WHEN asr.performance_band_level = 3 THEN 'Near Target'
+        WHEN asr.performance_band_level = 2 THEN 'Below Target'
+        WHEN asr.performance_band_level = 1 THEN 'Far Below Target'
        END AS proficiency_label
-FROM gabby.illuminate_dna_assessments.agg_student_responses_all asr
-WHERE asr.scope = 'Sight Words Quiz'
-  AND asr.subject_area = 'Word Work'
-  AND asr.response_type = 'O'
-  AND asr.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-  AND asr.percent_correct IS NOT NULL
+FROM
+    (
+     SELECT a.assessment_id
+           ,a.academic_year_clean AS academic_year
+           ,CONCAT('SW', RIGHT(a.title, 1)) AS module_number
+           
+           ,ROW_NUMBER() OVER(
+             PARTITION BY a.academic_year, a.term_administered, a.tags
+               ORDER BY a.administered_at DESC) AS rn
+     FROM gabby.illuminate_dna_assessments.assessments_identifiers a
+     WHERE a.scope = 'Sight Words Quiz'
+       AND a.subject_area = 'Word Work'  
+       AND a. module_number IS NULL
+       AND a.academic_year_clean = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+    ) sub
+JOIN gabby.illuminate_dna_assessments.agg_student_responses asr
+  ON sub.assessment_id = asr.assessment_id
+JOIN gabby.illuminate_public.students s
+  ON asr.student_id = s.student_id
+WHERE sub.rn = 1
