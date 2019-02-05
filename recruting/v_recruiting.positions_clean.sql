@@ -7,6 +7,7 @@ WITH position_parse AS (
   SELECT pn.name AS position_number
         ,REPLACE(LEFT(pn.position_name_c,LEN(pn.position_name_c) - CHARINDEX('_',REVERSE(pn.position_name_c))),'_','.') AS position_name_splitter
         ,pn.position_name_c AS position_name
+        ,CASE WHEN CHARINDEX('_',pn.position_name_c) = 0 
              THEN NULL
              WHEN LEN(RIGHT(pn.position_name_c,CHARINDEX('_',REVERSE(pn.position_name_c))-1)) > 3
              THEN NULL
