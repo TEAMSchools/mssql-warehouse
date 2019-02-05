@@ -1,5 +1,45 @@
 CREATE OR ALTER VIEW powerschool.cohort_identifiers AS
 
+WITH cal AS (
+  SELECT schoolid
+        ,grade_level
+        ,yearid
+        ,MIN(calendardate) AS min_calendardate
+        ,MAX(calendardate) AS max_calendardate
+  FROM powerschool.ps_adaadm_daily_ctod
+  WHERE membershipvalue = 1
+  GROUP BY schoolid
+          ,grade_level
+          ,yearid
+ )
+
+,enr AS (
+  SELECT sub.student_number
+        ,sub.yearid
+        ,MAX(sub.is_enrolled_y1) AS is_enrolled_y1
+        ,MAX(sub.is_enrolled_oct01) AS is_enrolled_oct01
+        ,MAX(sub.is_enrolled_oct15) AS is_enrolled_oct15
+        ,MAX(sub.is_enrolled_recent) AS is_enrolled_recent
+  FROM
+      (
+       SELECT co.student_number
+             ,co.yearid
+
+             ,CASE WHEN co.exitdate >= c.min_calendardate THEN 1 END AS is_enrolled_y1
+             ,CASE WHEN DATEFROMPARTS(co.academic_year, 10, 1) BETWEEN co.entrydate AND co.exitdate THEN 1 END AS is_enrolled_oct01
+             ,CASE WHEN DATEFROMPARTS(co.academic_year, 10, 15) BETWEEN co.entrydate AND co.exitdate THEN 1 END AS is_enrolled_oct15
+             ,CASE WHEN co.exitdate >= c.max_calendardate THEN 1 END AS is_enrolled_recent
+       FROM powerschool.cohort_static co
+       LEFT JOIN cal c
+         ON co.yearid = c.yearid
+        AND co.schoolid = c.schoolid
+        AND co.grade_level = c.grade_level
+       WHERE co.grade_level != 99
+      ) sub
+  GROUP BY sub.student_number
+          ,sub.yearid
+ )
+
 SELECT co.studentid
       ,co.academic_year
       ,co.yearid
@@ -24,6 +64,11 @@ SELECT co.studentid
       ,co.is_retained_ever
       ,co.boy_status
       ,co.eoy_status
+
+      ,ISNULL(enr.is_enrolled_y1, 0) AS is_enrolled_y1
+      ,ISNULL(enr.is_enrolled_oct01, 0) AS is_enrolled_oct01
+      ,ISNULL(enr.is_enrolled_oct15, 0) AS is_enrolled_oct15
+      ,ISNULL(enr.is_enrolled_recent, 0) AS is_enrolled_recent
 
       ,CONVERT(INT,s.student_number) AS student_number
       ,co.studentsdcid AS students_dcid
@@ -105,6 +150,7 @@ SELECT co.studentid
         WHEN nj.lepbegindate IS NULL THEN NULL
         WHEN nj.lependdate < co.entrydate THEN NULL
         WHEN nj.lepbegindate <= co.exitdate THEN 1
+        ELSE 0
        END AS lep_status
 
       ,saa.student_web_id
@@ -142,6 +188,9 @@ SELECT co.studentid
                              ELSE co.lunchstatus
                             END) AS lunch_app_status 
 FROM powerschool.cohort_static co
+LEFT JOIN enr
+  ON co.student_number = enr.student_number
+ AND co.yearid = enr.yearid
 JOIN powerschool.students s
   ON co.studentid = s.id
 LEFT JOIN powerschool.u_studentsuserfields suf
