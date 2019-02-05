@@ -3,6 +3,34 @@ GO
 
 CREATE OR ALTER VIEW recruiting.applicants AS
 
+WITH position_parse AS (
+  SELECT pn.name AS position_number
+        ,REPLACE(LEFT(pn.position_name_c,LEN(pn.position_name_c) - CHARINDEX('_',REVERSE(pn.position_name_c))),'_','.') AS position_name_splitter
+        ,pn.position_name_c AS position_name
+        ,CASE WHEN CHARINDEX('_',pn.position_name_c) = 0 
+             THEN NULL
+             WHEN LEN(RIGHT(pn.position_name_c,CHARINDEX('_',REVERSE(pn.position_name_c))-1)) > 3
+             THEN NULL
+             ELSE LEN(RIGHT(pn.position_name_c,CHARINDEX('_',REVERSE(pn.position_name_c))-1))
+          END AS position_count
+        ,pn.city_c AS city
+        ,pn.desired_start_date_c AS desired_start_date
+        ,pn.created_date
+        ,pn.job_type_c AS job_type
+        ,pn.job_sub_type_c AS sub_type
+        ,pn.status_c AS status
+        ,pn.date_position_filled_c AS date_filled
+        ,pn.replacement_or_new_position_c AS new_or_replacement
+        ,pn.region_c AS region
+
+        ,LEN(pn.position_name_c)-LEN(REPLACE(pn.position_name_c,'_','')) AS n
+        ,pn.id
+        ,pn.job_posting_c AS job_posting
+
+  FROM gabby.recruiting.job_position_c pn
+  WHERE pn.city_c IN ('Newark', 'Camden', 'Newark & Camden', 'Miami')
+  )
+
 SELECT pa.id
       ,pa.name AS profile_id
       ,pa.years_full_time_experience_c AS years_full_time_experience
@@ -40,17 +68,26 @@ SELECT pa.id
       ,a.cultivation_regional_source_c AS regional_source
       ,a.cultivation_regional_source_detail_c AS regional_source_detail
       ,LEFT(RIGHT(a.resume_url_c,LEN(a.resume_url_c)-9),LEN(RIGHT(a.resume_url_c,LEN(a.resume_url_c)-9))-39) AS resume_url
+      ,a.phone_interview_status_date_c AS phone_screen_date
+      ,a.in_person_interview_status_date_c AS interview_date
+      ,a.offer_extended_date_c AS offer_date
         
-      ,j.name AS job_position_id
-      ,j.position_name_c AS job_position_name
-      ,j.created_date AS postion_created_date
-      ,j.desired_start_date_c AS desired_start_date
-      ,j.date_position_filled_c AS date_position_filled
-      ,j.subject_area_c AS subject_area
-      ,j.grade_level_c AS grade_level
-      ,j.grade_c AS grade
-      ,j.job_sub_type_c AS job_sub_type
-      ,j.status_c AS position_status
+      ,j.position_number
+      ,j.position_name
+      ,j.city
+      ,j.job_type
+      ,j.sub_type
+      ,j.status
+      ,j.new_or_replacement
+      ,j.region
+      ,j.desired_start_date
+      ,j.created_date
+      ,j.date_filled
+      ,CASE WHEN position_name_splitter IS NULL THEN NULL WHEN j.n = 4 THEN PARSENAME(j.position_name_splitter,4) ELSE 'Invalid position_name Format' END AS recruiter
+      ,CASE WHEN position_name_splitter IS NULL THEN NULL WHEN j.n = 4 THEN PARSENAME(j.position_name_splitter,3) ELSE 'Invalid position_name Format' END AS location
+      ,CASE WHEN position_name_splitter IS NULL THEN NULL WHEN j.n = 4 THEN PARSENAME(j.position_name_splitter,2) ELSE 'Invalid position_name Format' END AS role_short
+      ,CASE WHEN position_name_splitter IS NULL THEN NULL WHEN j.n = 4 THEN PARSENAME(j.position_name_splitter,1) ELSE 'Invalid position_name Format' END AS recruiing_year
+      ,j.position_count
         
       ,p.name AS job_posting
 FROM gabby.recruiting.profile_application_c pa 
@@ -58,7 +95,7 @@ LEFT JOIN gabby.recruiting.contact c
   ON pa.contact_id_c = LEFT(c.id, 15)
 LEFT JOIN gabby.recruiting.job_application_c a
   ON pa.id = a.profile_application_c
-LEFT JOIN gabby.recruiting.job_position_c  j
-  ON a.job_position_c = j.id     
+LEFT JOIN position_parse  j
+  ON a.job_position_c = j.id
 LEFT JOIN gabby.recruiting.job_posting_c p
-  ON j.job_posting_c = p.id
+  ON j.job_posting = p.id
