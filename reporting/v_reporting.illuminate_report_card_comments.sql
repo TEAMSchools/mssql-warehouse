@@ -126,3 +126,4 @@ SELECT cu.repository_id
 FROM comm_unpivot cu
 JOIN gabby.reporting.report_card_comment_bank cb
   ON cu.comment_code = cb.code
+ AND cb._fivetran_deleted = 0
