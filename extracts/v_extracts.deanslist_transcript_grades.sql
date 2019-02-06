@@ -74,7 +74,7 @@ FROM
            ,schoolname
            ,is_stored
            ,ROW_NUMBER() OVER(
-              PARTITION BY student_number, course_name, academic_year
+              PARTITION BY student_number, course_number, course_name, academic_year, schoolname
                 ORDER BY is_stored DESC) AS rn
      FROM all_grades
     ) sub
