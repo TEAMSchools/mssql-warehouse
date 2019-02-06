@@ -66,10 +66,7 @@ SELECT co.school_name
       ,atid.genre
       
       ,COALESCE(achv.fp_keylever, dtid.fp_keylever) AS fp_keylever      
-      ,CASE 
-        WHEN atid.test_date >= dtid.test_date THEN atid.test_date 
-        ELSE COALESCE(dtid.test_date, atid.test_date)
-       END AS test_date      
+      ,(SELECT MAX(v) FROM (VALUES (atid.test_date), (dtid.test_date), (htid.test_date)) AS val(v)) AS test_date
       ,COALESCE(atid.test_administered_by, gr.gr_teacher) AS test_administered_by
       
       /* component data */      
@@ -117,6 +114,10 @@ LEFT JOIN gabby.lit.all_test_events_static dtid
   ON co.student_number = dtid.student_number
  AND achv.dna_unique_id = dtid.unique_id 
  AND dtid.status = 'Did Not Achieve'
+LEFT JOIN gabby.lit.all_test_events_static htid
+  ON co.student_number = htid.student_number
+ AND achv.hard_unique_id = htid.unique_id 
+ AND htid.status = 'DNA - Hard'
 LEFT JOIN gabby.lit.component_proficiency_long_static long WITH(FORCESEEK)
   ON co.student_number = long.student_number
  AND achv.dna_unique_id = long.unique_id
