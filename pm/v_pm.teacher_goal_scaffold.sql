@@ -50,6 +50,7 @@ WITH teacher_crosswalk AS (
   JOIN gabby.powerschool.sectionteacher st
     ON sec.id = st.sectionid
    AND sec.db_name = st.db_name
+   AND st.roleid IN (25, 26, 41, 42)
   JOIN gabby.powerschool.teachers_static t
     ON st.teacherid = t.id
    AND st.db_name = t.db_name
