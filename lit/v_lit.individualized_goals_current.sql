@@ -40,4 +40,4 @@ SELECT g.student_number
        END) AS lvl_num
 FROM gdoc_long g
 LEFT OUTER JOIN gabby.lit.gleq
-  ON g.goal = gleq.read_lvl
+  ON g.goal = gleq.read_lvl_clean

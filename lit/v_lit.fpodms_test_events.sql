@@ -228,4 +228,4 @@ LEFT JOIN gabby.reporting.reporting_terms rt
  AND rt.identifier = 'LIT'
  AND rt._fivetran_deleted = 0
 LEFT JOIN gabby.lit.gleq
-  ON cd.text_level = gleq.read_lvl
+  ON cd.text_level = gleq.read_lvl_clean
