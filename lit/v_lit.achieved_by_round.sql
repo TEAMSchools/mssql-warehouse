@@ -204,8 +204,8 @@ WITH roster_scaffold AS (
              ,fp.unique_id AS dna_unique_id
              ,CONVERT(VARCHAR(1),CASE
                WHEN fp.status = 'Did Not Achieve' AND fp.instruct_lvl = fp.indep_lvl THEN fp.read_lvl
-               WHEN fp.status = 'Achieved' AND fp.instruct_lvl = fp.indep_lvl THEN gleq.instruct_lvl
-               ELSE COALESCE(fp.instruct_lvl, gleq.instruct_lvl)
+               WHEN fp.status = 'Achieved' AND fp.instruct_lvl = fp.indep_lvl THEN NULL
+               ELSE fp.instruct_lvl
               END) AS instruct_lvl
              ,CONVERT(INT,CASE
                WHEN fp.status = 'Did Not Achieve' AND fp.instruct_lvl = fp.indep_lvl THEN fp.lvl_num
@@ -214,8 +214,8 @@ WITH roster_scaffold AS (
               END) AS instruct_lvl_num             
              ,CONVERT(VARCHAR(1),CASE
                WHEN fp.status = 'Did Not Achieve' AND fp.instruct_lvl = fp.indep_lvl THEN fp.read_lvl
-               WHEN fp.status = 'Achieved' AND fp.instruct_lvl = fp.indep_lvl THEN gleq.instruct_lvl
-               ELSE COALESCE(fp.instruct_lvl, gleq.instruct_lvl)
+               WHEN fp.status = 'Achieved' AND fp.instruct_lvl = fp.indep_lvl THEN NULL
+               ELSE fp.instruct_lvl
               END) AS dna_lvl
              ,CONVERT(INT,CASE
                WHEN fp.status = 'Did Not Achieve' AND fp.instruct_lvl = fp.indep_lvl THEN fp.lvl_num
