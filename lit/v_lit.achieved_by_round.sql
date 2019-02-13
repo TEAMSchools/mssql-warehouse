@@ -382,6 +382,9 @@ SELECT academic_year
       ,MAX(CASE WHEN sub.reporting_term = sub.max_reporting_term_ytd THEN sub.lvl_num END) OVER(PARTITION BY sub.student_number, sub.academic_year)
          - MAX(CASE WHEN sub.reporting_term = sub.min_reporting_term_ytd THEN sub.lvl_num END) OVER(PARTITION BY sub.student_number, sub.academic_year)
          AS n_levels_moved_y1
+      ,MAX(CASE WHEN sub.reporting_term = sub.max_reporting_term_ytd THEN sub.gleq END) OVER(PARTITION BY sub.student_number, sub.academic_year)
+         - MAX(CASE WHEN sub.reporting_term = sub.min_reporting_term_ytd THEN sub.gleq END) OVER(PARTITION BY sub.student_number, sub.academic_year)
+         AS gleq_growth_y1
       
       ,ROW_NUMBER() OVER(
          PARTITION BY student_number, academic_year

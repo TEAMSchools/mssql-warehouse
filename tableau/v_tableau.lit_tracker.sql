@@ -47,6 +47,7 @@ SELECT co.school_name
       ,achv.achv_unique_id AS unique_id
       ,achv.dna_unique_id        
       ,achv.n_levels_moved_y1
+      ,achv.gleq_growth_y1
       ,achv.goal_lvl
       ,achv.goal_num
       ,achv.natl_goal_lvl
