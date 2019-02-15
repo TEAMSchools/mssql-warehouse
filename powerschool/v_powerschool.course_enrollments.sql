@@ -91,7 +91,11 @@ FROM
                 ,cc.abs_sectionid
                 ,cc.yearid
                 ,cc.academic_year
-                ,CASE WHEN cc.sectionid < 0 THEN 1 ELSE 0 END AS section_enroll_status
+                ,CASE 
+                  WHEN cc.sectionid < 0 AND s.enroll_status = 2 AND s.exitdate = cc.dateleft THEN 0
+                  WHEN cc.sectionid < 0 THEN 1
+                  ELSE 0
+                 END AS section_enroll_status
 
                 ,CONVERT(INT,s.student_number) AS student_number
                 ,CONVERT(INT,s.dcid) AS students_dcid
