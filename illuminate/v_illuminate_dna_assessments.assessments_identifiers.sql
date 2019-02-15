@@ -3,6 +3,20 @@ GO
 
 CREATE OR ALTER VIEW illuminate_dna_assessments.assessments_identifiers AS
 
+WITH tnl_uids AS (
+  SELECT DISTINCT u.user_id
+  FROM gabby.dayforce.employee_work_assignment sr
+  JOIN gabby.illuminate_public.users u
+    ON CONVERT(VARCHAR(25),sr.employee_reference_code) = u.state_id
+  WHERE sr.department_name = 'Teaching and Learning'
+
+  UNION
+
+  SELECT u.user_id
+  FROM gabby.illuminate_public.users u
+  WHERE u.username IN ('login', 'kippfoundation', 'JEsteban')
+ )
+
 SELECT a.assessment_id
       ,a.title
       ,a.description
@@ -38,15 +52,16 @@ SELECT a.assessment_id
       ,u.first_name AS creator_first_name
       ,u.last_name AS creator_last_name
 
-      ,ds.code_translation AS scope
-      
-      ,dsa.code_translation AS subject_area
-      
       ,pbs.description AS performance_band_set_description
+
+      ,ds.code_translation AS scope
+
+      ,dsa.code_translation AS subject_area
 
       ,ns.scope AS normed_scope
 
       ,CASE
+        WHEN a.user_id NOT IN (SELECT user_id FROM tnl_uids) THEN NULL
         WHEN ds.code_translation = 'Sight Words Quiz' THEN 'SWQ'
         WHEN ds.code_translation = 'Process Piece' THEN 'PP'
         WHEN ns.scope IS NULL THEN NULL        
@@ -60,6 +75,7 @@ SELECT a.assessment_id
         WHEN ds.code_translation = 'CMA - Mid-Module' AND PATINDEX('%Checkpoint [0-9]%', a.title) > 0 THEN 'CP' + SUBSTRING(a.title, PATINDEX('%Checkpoint [0-9]%', a.title) + 11, 1)
        END AS module_type
       ,CASE
+        WHEN a.user_id NOT IN (SELECT user_id FROM tnl_uids) THEN NULL
         WHEN PATINDEX('%SWQ[0-9]%', a.title) > 0 THEN SUBSTRING(a.title, PATINDEX('%SWQ[0-9]%', a.title), 4)        
         WHEN ds.code_translation = 'Process Piece' AND CHARINDEX(DATENAME(MONTH, a.administered_at), a.title) > 0 
              THEN CONCAT('PP', CASE 
@@ -86,17 +102,17 @@ SELECT a.assessment_id
 
       ,CONVERT(VARCHAR(5),rt.alt_name) AS term_administered
 FROM gabby.illuminate_dna_assessments.assessments a
-LEFT JOIN gabby.illuminate_public.users u
+JOIN gabby.illuminate_public.users u WITH(FORCESEEK)
   ON a.user_id = u.user_id
+JOIN gabby.illuminate_dna_assessments.performance_band_sets pbs WITH(FORCESEEK)
+  ON a.performance_band_set_id = pbs.performance_band_set_id
 LEFT JOIN gabby.illuminate_codes.dna_scopes ds WITH(FORCESEEK)
   ON a.code_scope_id = ds.code_id
 LEFT JOIN gabby.illuminate_codes.dna_subject_areas dsa WITH(FORCESEEK)
   ON a.code_subject_area_id = dsa.code_id
-LEFT JOIN gabby.illuminate_dna_assessments.performance_band_sets pbs
-  ON a.performance_band_set_id = pbs.performance_band_set_id
 LEFT JOIN gabby.illuminate_dna_assessments.normed_scopes ns WITH(FORCESEEK)
   ON ds.code_translation = ns.scope
-LEFT JOIN gabby.reporting.reporting_terms rt
+LEFT JOIN gabby.reporting.reporting_terms rt WITH(FORCESEEK)
   ON a.administered_at BETWEEN rt.start_date AND rt.end_date
  AND rt.identifier = 'RT'
  AND rt.schoolid = 0
