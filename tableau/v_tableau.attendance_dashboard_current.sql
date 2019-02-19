@@ -69,14 +69,14 @@ FROM
       AND co.academic_year = enr.academic_year 
       AND enr.course_number = 'HR' 
       AND enr.rn_course_yr = 1
-     JOIN powerschool.ps_adaadm_daily_ctod mem
+     JOIN powerschool.ps_adaadm_daily_ctod_current_static mem
        ON co.studentid = mem.studentid
       AND co.schoolid = mem.schoolid
       AND mem.calendardate BETWEEN co.entrydate AND co.exitdate
       AND mem.calendardate <= CONVERT(DATE,GETDATE()) 
       AND mem.membershipvalue > 0
       AND mem.attendancevalue IS NOT NULL
-     LEFT JOIN powerschool.ps_attendance_daily att
+     LEFT JOIN powerschool.ps_attendance_daily_current_static att
        ON mem.studentid = att.studentid
       AND mem.calendardate = att.att_date
      LEFT JOIN gabby.reporting.reporting_terms dt 
@@ -84,5 +84,6 @@ FROM
       AND mem.yearid = dt.yearid
       AND mem.calendardate BETWEEN dt.start_date AND dt.end_date
       AND dt.identifier = 'RT'
+      AND dt._fivetran_deleted = 0
      WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
     ) sub
