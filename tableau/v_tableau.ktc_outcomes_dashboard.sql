@@ -3,6 +3,23 @@ GO
 
 CREATE OR ALTER VIEW tableau.ktc_outcomes_dashboard AS
 
+WITH matric_app AS (
+  SELECT app.applicant_c
+
+        ,acc.type AS matriculation_account_type
+
+        ,ROW_NUMBER() OVER(
+           PARTITION BY app.applicant_c
+             ORDER BY app.created_date) AS rn
+  FROM gabby.alumni.application_c app
+  JOIN gabby.alumni.account acc
+    ON app.school_c = acc.id
+   AND acc.is_deleted = 0
+  WHERE app.is_deleted = 0
+    AND app.transfer_application_c = 0
+    AND app.matriculation_decision_c = 'Matriculated (Intent to Enroll)'
+ )
+
 SELECT c.id AS contact_id
       ,c.name
       ,c.kipp_hs_class_c
@@ -32,12 +49,15 @@ SELECT c.id AS contact_id
       ,ei.ecc_actual_end_date
       ,ei.ecc_anticipated_graduation
       ,ei.ecc_adjusted_6_year_minority_graduation_rate
+      ,ei.ecc_account_type
       ,ei.hs_school_name
       ,ei.hs_pursuing_degree_type
       ,ei.hs_status
       ,ei.hs_start_date
       ,ei.hs_actual_end_date
       ,ei.hs_anticipated_graduation
+
+      ,a.matriculation_account_type
 FROM gabby.alumni.contact c
 JOIN gabby.alumni.record_type rt
   ON c.record_type_id = rt.id
@@ -45,4 +65,7 @@ JOIN gabby.alumni.[user] u
   ON c.owner_id = u.id
 LEFT JOIN gabby.alumni.enrollment_identifiers ei
   ON c.id = ei.student_c
+LEFT JOIN matric_app a
+  ON c.id = a.applicant_c
+ AND a.rn = 1
 WHERE c.is_deleted = 0
