@@ -102,7 +102,7 @@ SELECT a.assessment_id
 
       ,CONVERT(VARCHAR(5),rt.alt_name) AS term_administered
 FROM gabby.illuminate_dna_assessments.assessments a
-JOIN gabby.illuminate_public.users u WITH(FORCESEEK)
+JOIN gabby.illuminate_public.users u
   ON a.user_id = u.user_id
 JOIN gabby.illuminate_dna_assessments.performance_band_sets pbs WITH(FORCESEEK)
   ON a.performance_band_set_id = pbs.performance_band_set_id
