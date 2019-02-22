@@ -1,19 +1,6 @@
 CREATE OR ALTER VIEW powerschool.cohort_identifiers AS
 
-WITH cal AS (
-  SELECT schoolid
-        ,grade_level
-        ,yearid
-        ,MIN(calendardate) AS min_calendardate
-        ,MAX(calendardate) AS max_calendardate
-  FROM powerschool.ps_adaadm_daily_ctod
-  WHERE membershipvalue = 1
-  GROUP BY schoolid
-          ,grade_level
-          ,yearid
- )
-
-,enr AS (
+WITH enr AS (
   SELECT sub.student_number
         ,sub.yearid
         ,MAX(sub.is_enrolled_y1) AS is_enrolled_y1
@@ -30,10 +17,10 @@ WITH cal AS (
              ,CASE WHEN DATEFROMPARTS(co.academic_year, 10, 15) BETWEEN co.entrydate AND co.exitdate THEN 1 END AS is_enrolled_oct15
              ,CASE WHEN co.exitdate >= c.max_calendardate THEN 1 END AS is_enrolled_recent
        FROM powerschool.cohort_static co
-       LEFT JOIN cal c
-         ON co.yearid = c.yearid
-        AND co.schoolid = c.schoolid
-        AND co.grade_level = c.grade_level
+       LEFT JOIN powerschool.calendar_rollup_static c
+         ON co.schoolid = c.schoolid
+        AND co.yearid = c.yearid
+        AND co.track = c.track
        WHERE co.grade_level != 99
       ) sub
   GROUP BY sub.student_number

@@ -12,6 +12,7 @@ SELECT studentid
       ,exitcomment
       ,lunchstatus
       ,fteid
+      ,track
       ,yearid
       ,academic_year      
       ,rn_year
@@ -65,8 +66,9 @@ FROM
            ,exitcomment
            ,lunchstatus
            ,fteid
+           ,ISNULL(track, 'A') AS track
            ,yearid
-           ,academic_year      
+           ,academic_year
            ,rn_year
            ,rn_school
            ,rn_undergrad
@@ -104,9 +106,10 @@ FROM
                 ,sub.exitcode      
                 ,sub.exitcomment
                 ,sub.lunchstatus
-                ,sub.fteid      
+                ,sub.fteid
+                ,sub.track
                 ,sub.yearid
-                ,(sub.yearid + 1990) AS academic_year            
+                ,(sub.yearid + 1990) AS academic_year
                 ,LAG(yearid, 1) OVER(PARTITION BY sub.studentid ORDER BY sub.yearid ASC) AS prev_yearid
                 ,LAG(grade_level, 1) OVER(PARTITION BY sub.studentid ORDER BY sub.yearid ASC) AS prev_grade_level
 
@@ -137,6 +140,7 @@ FROM
                      ,CONVERT(VARCHAR(250),s.exitcomment) AS exitcomment
                      ,CONVERT(VARCHAR,CASE WHEN s.lunchstatus = 'false' THEN 'F' ELSE s.lunchstatus END) AS lunchstatus
                      ,CONVERT(INT,s.fteid) AS fteid
+                     ,CONVERT(VARCHAR(1),s.track) AS track
                 
                      ,CONVERT(INT,terms.yearid) AS yearid
                FROM powerschool.students s
@@ -162,6 +166,7 @@ FROM
                      ,NULL AS exitcomment
                      ,NULL AS lunchstatus
                      ,NULL AS fteid
+                     ,NULL AS track
                 
                      ,CONVERT(INT,terms.yearid) AS yearid
                FROM powerschool.students s
@@ -186,6 +191,7 @@ FROM
                      ,CONVERT(VARCHAR(250),re.exitcomment) AS exitcomment
                      ,CONVERT(VARCHAR,CASE WHEN re.lunchstatus = 'false' THEN 'F' ELSE re.lunchstatus END) AS lunchstatus
                      ,CONVERT(INT,re.fteid) AS fteid
+                     ,CONVERT(VARCHAR(1),re.track) AS track
                 
                      ,CONVERT(INT,terms.yearid) AS yearid
                FROM powerschool.reenrollments re       
