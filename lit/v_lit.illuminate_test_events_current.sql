@@ -33,7 +33,7 @@ FROM
            ,CONVERT(FLOAT,accuracy) AS accuracy
            ,CONVERT(FLOAT,fluency_score) AS fluency
            ,CONVERT(FLOAT,reading_rate_wpm) AS reading_rate_wpm        
-           ,CONVERT(VARCHAR(1),reading_level) AS instructional_level_tested
+           ,CONVERT(VARCHAR(5),reading_level) AS instructional_level_tested
            ,CONVERT(VARCHAR(25),rate_proficiency) AS rate_proficiency
            ,CONVERT(VARCHAR(25),key_lever) AS key_lever
            ,CONVERT(VARCHAR(5),fiction_nonfiction) AS fiction_nonfiction
@@ -44,7 +44,7 @@ FROM
              WHEN LTRIM(RTRIM([status])) LIKE '%Achieved%' THEN 'Achieved'
              ELSE CONVERT(VARCHAR(25),LTRIM(RTRIM([status])))
             END AS [status]
-           ,CASE WHEN [status] LIKE '%Achieved%' THEN CONVERT(VARCHAR(1),reading_level) END AS achieved_independent_level
+           ,CASE WHEN [status] LIKE '%Achieved%' THEN CONVERT(VARCHAR(5),reading_level) END AS achieved_independent_level
      FROM
          ( 
           SELECT 194 AS repository_id                  

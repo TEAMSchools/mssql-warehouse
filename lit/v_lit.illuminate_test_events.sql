@@ -35,7 +35,7 @@ WITH clean_data AS (
         ,CONVERT(INT,accuracy) AS accuracy
         ,CONVERT(INT,fluency) AS fluency
         ,reading_rate_wpm
-        ,CASE WHEN instructional_level_tested != '' THEN CONVERT(VARCHAR(1),instructional_level_tested) END AS instructional_level_tested
+        ,CASE WHEN instructional_level_tested != '' THEN CONVERT(VARCHAR(5),instructional_level_tested) END AS instructional_level_tested
         ,CASE WHEN rate_proficiency != '' THEN CONVERT(VARCHAR(25),rate_proficiency) END AS rate_proficiency
         ,CASE WHEN key_lever != '' THEN CONVERT(VARCHAR(25),key_lever) END AS key_lever
         ,CASE WHEN fiction_nonfiction != '' THEN CONVERT(VARCHAR(5),fiction_nonfiction) END AS fiction_nonfiction
@@ -45,7 +45,7 @@ WITH clean_data AS (
         ,CONVERT(VARCHAR(125),unique_id) AS unique_id
         ,CASE WHEN test_round != '' THEN CONVERT(VARCHAR(25),test_round) END AS test_round
         ,CASE WHEN status != '' THEN CONVERT(VARCHAR(25),status) END AS status
-        ,CASE WHEN achieved_independent_level != '' THEN CONVERT(VARCHAR(1),achieved_independent_level) END AS achieved_independent_level
+        ,CASE WHEN achieved_independent_level != '' THEN CONVERT(VARCHAR(5),achieved_independent_level) END AS achieved_independent_level
   FROM gabby.lit.illuminate_test_events_archive
  )
 
