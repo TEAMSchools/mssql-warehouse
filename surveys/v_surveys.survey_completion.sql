@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW surveys.survey_completion AS
+--CREATE OR ALTER VIEW surveys.survey_completion AS
 
 WITH survey_feed AS (
   SELECT _created AS date_created
@@ -29,8 +29,9 @@ WITH survey_feed AS (
         ,gabby.utilities.DATE_TO_SY(_created) AS academic_year
         ,CASE
           WHEN MONTH(_created) IN (8, 9, 10) THEN 'MGR1'
-          WHEN MONTH(_created) IN (11, 12, 1, 2) THEN 'MGR2'
-          WHEN MONTH(_created) IN (3, 4, 5, 6, 7) THEN 'MGR3'
+          WHEN MONTH(_created) IN (11, 12, 1) THEN 'MGR2'
+          WHEN MONTH(_created) IN (2, 3, 4) THEN 'MGR3'
+          WHEN MONTH(_created) IN (5, 6, 7) THEN 'MGR4'
          END AS reporting_term
         ,'Manager' AS survey_type
   FROM gabby.surveys.manager_survey
