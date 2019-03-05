@@ -88,8 +88,9 @@ SELECT r.df_employee_id
       ,r.effective_start_date
       ,r.effective_end_date
 
-      ,s.first_name
-      ,s.last_name
+      ,sr.preferred_first_name AS first_name
+      ,sr.preferred_last_name AS last_name
+      
       ,s.status
       ,s.base_salary
 
@@ -100,9 +101,11 @@ SELECT r.df_employee_id
       ,w.job_name
       ,w.flsa_status_name
 FROM validranges r
+JOIN gabby.dayforce.staff_roster sr
+  ON r.df_employee_id = sr.df_employee_number
 LEFT JOIN status_clean s
   ON r.df_employee_id = s.df_employee_id
  AND r.effective_start_date BETWEEN s.effective_start AND s.effective_end
 LEFT JOIN work_assignment_clean w
   ON r.df_employee_id = w.df_employee_id
- AND r.effective_end_date BETWEEN w.work_assignment_effective_start AND w.work_assignment_effective_end
+ AND r.effective_start_date BETWEEN w.work_assignment_effective_start AND w.work_assignment_effective_end
