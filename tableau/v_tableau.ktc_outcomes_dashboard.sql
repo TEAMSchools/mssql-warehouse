@@ -48,7 +48,7 @@ SELECT c.id AS contact_id
       ,ei.ecc_start_date
       ,ei.ecc_actual_end_date
       ,ei.ecc_anticipated_graduation
-      ,ei.ecc_adjusted_6_year_minority_graduation_rate
+      ,ISNULL(ei.ecc_adjusted_6_year_minority_graduation_rate, 0) AS ecc_adjusted_6_year_minority_graduation_rate
       ,ei.ecc_account_type
       ,ei.hs_school_name
       ,ei.hs_pursuing_degree_type
