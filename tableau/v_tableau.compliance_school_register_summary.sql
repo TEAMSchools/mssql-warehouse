@@ -4,28 +4,30 @@ GO
 CREATE OR ALTER VIEW tableau.compliance_school_register_summary AS
 
 WITH schooldays AS (
-  SELECT db_name
-        ,academic_year
-        ,schoolid
-        ,region
-        ,n_days_school
-        ,n_days_remaining
+  SELECT sub.db_name
+        ,sub.academic_year
+        ,sub.schoolid
+        ,sub.region
+        ,sub.n_days_school
+        ,sub.n_days_remaining
         ,MIN(n_days_school) OVER(PARTITION BY academic_year, region) n_days_region_min
-  FROM (
-        SELECT CONVERT(INT, schoolid) AS schoolid
-              ,db_name
-              ,CASE
-                WHEN db_name = 'kippcamden' THEN 'KCNA'
-                WHEN db_name LIKE 'kippnewark' THEN 'TEAM'
-               END AS region
-              ,gabby.utilities.DATE_TO_SY(date_value) AS academic_year
-              ,CONVERT(INT,SUM(membershipvalue)) AS n_days_school
-              ,CONVERT(INT,SUM(CASE WHEN date_value > GETDATE() THEN membershipvalue END)) AS n_days_remaining
-        FROM gabby.powerschool.calendar_day
-        GROUP BY gabby.utilities.DATE_TO_SY(date_value)
-                ,schoolid
-                ,db_name
-       ) sub
+  FROM
+      (
+       SELECT db_name
+             ,yearid + 1990 AS academic_year
+             ,schoolid
+             ,CASE
+               WHEN db_name = 'kippcamden' THEN 'KCNA'
+               WHEN db_name LIKE 'kippnewark' THEN 'TEAM'
+               WHEN db_name LIKE 'kippmiami' THEN 'KMS'
+              END AS region
+             ,MAX(days_total) AS n_days_school
+             ,MAX(days_remaining) AS n_days_remaining           
+       FROM gabby.powerschool.calendar_rollup_static
+       GROUP BY yearid + 1990        
+               ,db_name
+               ,schoolid
+      ) sub
  )
 
 ,att_mem AS (
