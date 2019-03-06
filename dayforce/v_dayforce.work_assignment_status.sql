@@ -82,8 +82,10 @@ WITH status_clean AS (
         ,d.effective_date AS effective_start_date
         ,COALESCE(DATEADD(DAY, -1, LEAD(d.effective_date, 1) OVER(PARTITION BY d.df_employee_id ORDER BY d.effective_date))
                  ,DATEFROMPARTS(CASE 
-                                 WHEN DATEPART(MONTH,d.effective_date) >= 7 THEN DATEPART(YEAR,d.effective_date) + 1
-                                 ELSE DATEPART(YEAR,d.effective_date)
+                                 WHEN DATEPART(YEAR,d.effective_date) > gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+                                  AND DATEPART(MONTH,d.effective_date) >= 7 
+                                      THEN DATEPART(YEAR,d.effective_date) + 1
+                                 ELSE gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1
                                 END, 6, 30)) AS effective_end_date
   FROM validdates d
  )
