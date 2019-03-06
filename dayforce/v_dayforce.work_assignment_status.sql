@@ -12,8 +12,10 @@ WITH status_clean AS (
         ,sub.effective_start
         ,COALESCE(sub.effective_end
                  ,DATEFROMPARTS(CASE 
-                                 WHEN DATEPART(MONTH,sub.effective_start) >= 7 THEN DATEPART(YEAR,sub.effective_start) + 1
-                                 ELSE DATEPART(YEAR,sub.effective_start)
+                                 WHEN DATEPART(YEAR,sub.effective_start) > gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+                                  AND DATEPART(MONTH,sub.effective_start) >= 7 
+                                      THEN DATEPART(YEAR,sub.effective_start) + 1
+                                 ELSE gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1
                                 END, 6, 30)) AS effective_end
   FROM
       (
@@ -42,8 +44,10 @@ WITH status_clean AS (
         ,sub.work_assignment_effective_start
         ,COALESCE(sub.work_assignment_effective_end
                  ,DATEFROMPARTS(CASE 
-                                 WHEN DATEPART(MONTH,sub.work_assignment_effective_start) >= 7 THEN DATEPART(YEAR,sub.work_assignment_effective_start) + 1
-                                 ELSE DATEPART(YEAR,sub.work_assignment_effective_start)
+                                 WHEN DATEPART(YEAR,sub.work_assignment_effective_start) > gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+                                  AND DATEPART(MONTH,sub.work_assignment_effective_start) >= 7 
+                                      THEN DATEPART(YEAR,sub.work_assignment_effective_start) + 1
+                                 ELSE gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1
                                 END, 6, 30)) AS work_assignment_effective_end
   FROM
       (
