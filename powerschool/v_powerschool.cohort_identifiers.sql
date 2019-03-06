@@ -51,6 +51,7 @@ SELECT co.studentid
       ,co.is_retained_ever
       ,co.boy_status
       ,co.eoy_status
+      ,co.track
 
       ,ISNULL(enr.is_enrolled_y1, 0) AS is_enrolled_y1
       ,ISNULL(enr.is_enrolled_oct01, 0) AS is_enrolled_oct01
