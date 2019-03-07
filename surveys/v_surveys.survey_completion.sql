@@ -147,8 +147,7 @@ WITH survey_feed AS (
 
  )
 
-SELECT DISTINCT
-       s.df_employee_number AS df_employee_number
+SELECT s.df_employee_number AS df_employee_number
       ,s.preferred_first AS survey_taker_first
       ,s.preferred_last AS survey_taker_last
       ,s.preferred_name AS survey_taker_name
