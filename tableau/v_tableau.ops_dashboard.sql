@@ -3,7 +3,7 @@ GO
 
 CREATE OR ALTER VIEW tableau.ops_dashboard AS
 
-WITH enr AS (
+WITH att_mem AS (
   SELECT studentid
         ,db_name
         ,yearid      
@@ -16,6 +16,40 @@ WITH enr AS (
           ,db_name
  )
 
+,targets AS (
+  SELECT sub.academic_year
+        ,sub.schoolid
+        ,sub.grade_level
+        ,sub.is_pathways
+        ,SUM(sub.target_enrollment) AS target_enrollment
+  FROM
+      (
+       SELECT academic_year
+             ,schoolid
+             ,grade_level
+             ,0 AS is_pathways
+             ,target_enrollment
+       FROM gabby.finance.enrollment_targets
+       WHERE _fivetran_deleted = 0
+         AND grade_level IS NOT NULL
+
+       UNION ALL
+
+       SELECT academic_year
+             ,reporting_schoolid
+             ,grade_level
+             ,is_pathways
+             ,1 AS target_enrollment
+       FROM gabby.powerschool.cohort_identifiers_static
+       WHERE (is_pathways = 1 OR reporting_schoolid = 5173)
+         AND is_enrolled_recent = 1
+      ) sub
+  GROUP BY sub.academic_year
+          ,sub.schoolid
+          ,sub.grade_level
+          ,sub.is_pathways
+ )
+
 SELECT co.student_number
       ,co.lastfirst
       ,co.academic_year
@@ -24,6 +58,7 @@ SELECT co.student_number
       ,co.exitcode
       ,co.region
       ,co.school_level
+      ,co.schoolid
       ,co.reporting_schoolid
       ,co.school_name
       ,co.grade_level
@@ -50,8 +85,8 @@ SELECT co.student_number
       ,cal.days_remaining
       ,cal.days_total
 
-      ,ISNULL(enr.n_attendance, 0) AS n_attendance
-      ,ISNULL(enr.n_membership, 0) AS n_membership
+      ,ISNULL(att_mem.n_attendance, 0) AS n_attendance
+      ,ISNULL(att_mem.n_membership, 0) AS n_membership
 
       ,nj.districtcoderesident
       ,nj.referral_date
@@ -74,24 +109,23 @@ SELECT co.student_number
       ,CONVERT(VARCHAR(1),nj.other_related_services_yn) AS other_related_services_yn
 
       ,t.target_enrollment
-      ,t.sped_enrollment AS target_enrollment_sped
-      ,t.f_r_enrollment AS target_enrollment_fr
 FROM gabby.powerschool.cohort_identifiers_static co
 LEFT JOIN gabby.powerschool.calendar_rollup_static cal
   ON co.schoolid = cal.schoolid
  AND co.yearid = cal.yearid
  AND co.track = cal.track
  AND co.db_name = cal.db_name
-LEFT JOIN enr
-  ON co.studentid = enr.studentid
- AND co.yearid = enr.yearid
- AND co.db_name = enr.db_name
+LEFT JOIN att_mem
+  ON co.studentid = att_mem.studentid
+ AND co.yearid = att_mem.yearid
+ AND co.db_name = att_mem.db_name
 LEFT JOIN gabby.powerschool.s_nj_stu_x nj
   ON co.students_dcid = nj.studentsdcid
  AND co.db_name = nj.db_name
  AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-LEFT JOIN gabby.finance.enrollment_targets t
+LEFT JOIN targets t
   ON co.academic_year = t.academic_year
  AND co.reporting_schoolid = t.schoolid
  AND co.grade_level = t.grade_level
+ AND co.is_pathways = t.is_pathways
 WHERE co.rn_year = 1
