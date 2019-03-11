@@ -32,6 +32,7 @@ WITH att_mem AS (
        FROM gabby.finance.enrollment_targets
        WHERE _fivetran_deleted = 0
          AND grade_level IS NOT NULL
+         AND schoolid NOT IN (732585074, 1799015075)
 
        UNION ALL
 
