@@ -112,6 +112,7 @@ SELECT co.studentid
         ELSE CONVERT(VARCHAR(25),sch.abbreviation)
        END AS school_name
       ,CASE
+        WHEN sp.specprog_name = 'Out of District' THEN 'OD'
         WHEN sch.high_grade = 12 THEN 'HS'
         WHEN sch.high_grade = 8 THEN 'MS'
         WHEN sch.high_grade = 4 THEN 'ES'
@@ -135,8 +136,8 @@ SELECT co.studentid
       
       ,CASE
         WHEN DB_NAME() = 'kippmiami' AND scf.lep_status = 'Y' THEN 1
-        WHEN nj.lepbegindate IS NULL THEN NULL
-        WHEN nj.lependdate < co.entrydate THEN NULL
+        WHEN nj.lepbegindate IS NULL THEN 0
+        WHEN nj.lependdate < co.entrydate THEN 0
         WHEN nj.lepbegindate <= co.exitdate THEN 1
         ELSE 0
        END AS lep_status
