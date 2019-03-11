@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW recruiting.applicants AS
+--CREATE OR ALTER VIEW recruiting.applicants AS
 
 WITH position_parse AS (
   SELECT pn.id
@@ -63,7 +63,7 @@ SELECT pa.id
       ,a.applicant_source_c AS applicant_score
       ,a.cultivation_regional_source_c AS regional_source
       ,a.cultivation_regional_source_detail_c AS regional_source_detail      
-      ,a.phone_interview_status_date_c AS phone_screen_date
+      ,a.phone_interview_status_date_c AS phone_screen_or_contact_date
       ,a.in_person_interview_status_date_c AS interview_date
       ,a.offer_extended_date_c AS offer_date
       ,a.stage_c AS selection_stage
@@ -106,6 +106,11 @@ SELECT pa.id
        END AS recruiing_year
         
       ,p.name AS job_posting
+
+      ,'application' as candidate_type
+
+      ,null AS cult_grade_level_interest
+      ,null AS cult_subject_interest
 FROM gabby.recruiting.profile_application_c pa 
 LEFT JOIN gabby.recruiting.contact c
   ON pa.contact_id_c = LEFT(c.id, 15)
@@ -115,3 +120,78 @@ LEFT JOIN position_parse  j
   ON a.job_position_c = j.id
 LEFT JOIN gabby.recruiting.job_posting_c p
   ON j.job_posting = p.id
+
+  UNION ALL
+
+SELECT c.id AS id
+      ,p.name AS profile_id
+      ,null AS years_full_time_experience
+      ,null AS years_of_full_time_teaching
+      ,null AS undergrad_school_name
+      ,null AS undergrad_major_area_of_study
+      ,null AS undergrad_gpa
+      ,null AS degree_1_school_name
+      ,null AS degree_1_major_area_of_study
+      ,null AS degree_1_gpa
+      ,null AS degree_2_school_name
+      ,null AS degree_2_major_area_of_study
+      ,null AS degree_2_gpa
+      ,null AS is_certified
+      ,null AS certificate_type
+      ,null AS certificate_subject
+      ,null AS certificate_state
+      ,null AS certificate_expiration
+      ,co.name AS name
+      ,co.email
+      ,co.ethnicity_c AS race_ethnicity
+      ,co.gender_c AS gender
+      ,co.title AS previous_role
+      ,co.current_employer_c AS previous_employer
+      ,c.name AS jobapp_id
+      ,null AS hired_status_date
+      ,null AS total_days_in_process
+      ,null AS application_review_score
+      ,null AS average_teacher_phone_score
+      ,null AS average_teacher_in_person_score
+      ,c.prospect_rating_c AS applicant_score
+      ,regional_source_c AS regional_source
+      ,COALESCE(regional_source_detail_c, referred_by_c, identified_by_c) AS regional_source_detail
+      ,first_contact_date_c AS phone_screen_or_contact_date
+      ,null AS interview_date
+      ,null AS offer_date
+      ,c.cultivation_stage_c AS selection_stage
+      ,c.current_status_c  AS selection_status
+      ,c.cultivation_notes_c 
+          + CASE WHEN c.regions_applied_to_this_year_c = null THEN null
+                 ELSE ' regions aapplied to this year: ' + c.regions_applied_to_this_year_c
+            END AS selection_notes
+      ,null AS submitted_date
+      ,null AS resume_url
+      ,null AS position_number
+      ,job_position_name_c AS position_name
+      ,null AS city
+      ,c.experience_type_c AS job_type
+      ,null AS sub_type
+      ,null AS status
+      ,null AS new_or_replacement
+      ,null AS region
+      ,null AS desired_start_date
+      ,c.created_date AS created_date
+      ,null AS date_filled
+      ,null AS position_count
+      ,null AS recruiter
+      ,null AS location
+      ,null AS role_short
+      ,COALESCE(future_prospect_year_c, (CONVERT(varchar,gabby.utilities.DATE_TO_SY(c.created_date)) + '-' + CONVERT(varchar,gabby.utilities.DATE_TO_SY(c.created_date)+1))) AS recruiing_year
+      ,c.instructional_experience_level_c AS job_posting
+      ,'culitvation' AS candidate_type
+      ,c.primary_interest_general_grade_level_c AS cult_grade_level_interest
+      ,c.primary_interest_general_subject_c AS cult_subject_interest
+FROM gabby.recruiting.cultivation_c c 
+LEFT JOIN gabby.recruiting.profile_application_c p
+  ON c.contact_c = p.applicant_c
+LEFT JOIN gabby.recruiting.contact co
+  ON c.contact_c = LEFT(co.id, 15)
+
+WHERE p.name NOT IN (SELECT name FROM gabby.recruiting.profile_application_c)
+   OR p.name IS NULL
