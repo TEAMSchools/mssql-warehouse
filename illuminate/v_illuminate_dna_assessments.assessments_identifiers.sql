@@ -59,6 +59,7 @@ SELECT a.assessment_id
       ,dsa.code_translation AS subject_area
 
       ,ns.scope AS normed_scope
+      ,CASE WHEN ns.scope IS NOT NULL THEN 1 ELSE 0 END AS is_normed_scope
 
       ,CASE
         WHEN a.user_id NOT IN (SELECT user_id FROM tnl_uids) THEN NULL

@@ -13,6 +13,7 @@ SELECT a.assessment_id
       ,a.module_number
       ,a.scope           
       ,a.subject_area
+      ,a.is_normed_scope
       
       ,agl.grade_level_id
 
@@ -47,6 +48,7 @@ SELECT a.assessment_id
       ,a.module_number
       ,a.scope           
       ,a.subject_area
+      ,a.is_normed_scope
 
       ,agl.grade_level_id
 
@@ -78,6 +80,7 @@ SELECT DISTINCT
       ,a.module_number
       ,a.scope           
       ,a.subject_area
+      ,a.is_normed_scope
 
       ,NULL AS grade_level_id
 
@@ -112,6 +115,7 @@ SELECT DISTINCT
       ,a.module_number     
       ,a.scope      
       ,a.subject_area
+      ,a.is_normed_scope
 
       ,NULL AS grade_level_id
 
