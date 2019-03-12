@@ -19,30 +19,31 @@ WITH att_mem AS (
 ,targets AS (
   SELECT sub.academic_year
         ,sub.schoolid
-        ,sub.grade_level
         ,sub.is_pathways
+        ,sub.grade_level        
         ,SUM(sub.target_enrollment) AS target_enrollment
+        ,SUM(sub.target_enrollment_ade) AS target_enrollment_ade
   FROM
       (
        SELECT academic_year
              ,schoolid
-             ,grade_level
              ,0 AS is_pathways
+             ,grade_level             
              ,target_enrollment
+             ,target_enrollment AS target_enrollment_ade
        FROM gabby.finance.enrollment_targets
        WHERE _fivetran_deleted = 0
-         AND grade_level IS NOT NULL
-         AND schoolid NOT IN (732585074, 1799015075)
 
        UNION ALL
 
        SELECT academic_year
              ,reporting_schoolid
-             ,grade_level
              ,is_pathways
-             ,1 AS target_enrollment
+             ,grade_level             
+             ,NULL AS target_enrollment
+             ,1 AS target_enrollment_ade
        FROM gabby.powerschool.cohort_identifiers_static
-       WHERE (is_pathways = 1 OR reporting_schoolid = 5173)
+       WHERE (is_pathways = 1 OR school_name = 'Out of District')
          AND is_enrolled_recent = 1
       ) sub
   GROUP BY sub.academic_year
@@ -77,8 +78,8 @@ SELECT co.student_number
       ,co.is_enrolled_oct01
       ,co.is_enrolled_oct15
       ,co.is_enrolled_recent
+      ,co.track
 
-      /* DELETE THESE */
       ,LEAD(co.schoolid, 1) OVER(PARTITION BY co.student_number ORDER BY co.academic_year  ASC) AS next_schoolid
       ,LEAD(co.exitdate, 1) OVER(PARTITION BY co.student_number ORDER BY co.academic_year  ASC) AS next_exitdate
       ,LEAD(co.is_enrolled_oct01, 1, 0) OVER(PARTITION BY co.student_number ORDER BY co.academic_year) AS is_enrolled_oct01_next
@@ -110,6 +111,7 @@ SELECT co.student_number
       ,CONVERT(VARCHAR(1),nj.other_related_services_yn) AS other_related_services_yn
 
       ,t.target_enrollment
+      ,t.target_enrollment_ade
 FROM gabby.powerschool.cohort_identifiers_static co
 LEFT JOIN gabby.powerschool.calendar_rollup_static cal
   ON co.schoolid = cal.schoolid
