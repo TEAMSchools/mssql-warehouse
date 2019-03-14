@@ -63,7 +63,7 @@ SELECT pa.id
       ,a.applicant_source_c AS applicant_score
       ,a.cultivation_regional_source_c AS regional_source
       ,a.cultivation_regional_source_detail_c AS regional_source_detail      
-      ,a.phone_interview_status_date_c AS phone_screen_date
+      ,a.phone_interview_status_date_c AS phone_screen_or_contact_date
       ,a.in_person_interview_status_date_c AS interview_date
       ,a.offer_extended_date_c AS offer_date
       ,a.stage_c AS selection_stage
@@ -103,9 +103,14 @@ SELECT pa.id
         WHEN j.position_name_splitter IS NULL THEN NULL 
         WHEN j.n = 4 THEN PARSENAME(j.position_name_splitter, 1) 
         ELSE 'Invalid position_name Format' 
-       END AS recruiing_year
+       END AS recruiring_year
         
       ,p.name AS job_posting
+
+      ,'application' as candidate_type
+
+      ,NULL AS cult_grade_level_interest
+      ,NULL AS cult_subject_interest
 FROM gabby.recruiting.profile_application_c pa 
 LEFT JOIN gabby.recruiting.contact c
   ON pa.contact_id_c = LEFT(c.id, 15)
@@ -115,3 +120,73 @@ LEFT JOIN position_parse  j
   ON a.job_position_c = j.id
 LEFT JOIN gabby.recruiting.job_posting_c p
   ON j.job_posting = p.id
+
+UNION ALL
+
+SELECT c.id AS id
+      ,p.name AS profile_id
+      ,NULL AS years_full_time_experience
+      ,NULL AS years_of_full_time_teaching
+      ,NULL AS undergrad_school_name
+      ,NULL AS undergrad_major_area_of_study
+      ,NULL AS undergrad_gpa
+      ,NULL AS degree_1_school_name
+      ,NULL AS degree_1_major_area_of_study
+      ,NULL AS degree_1_gpa
+      ,NULL AS degree_2_school_name
+      ,NULL AS degree_2_major_area_of_study
+      ,NULL AS degree_2_gpa
+      ,NULL AS is_certified
+      ,NULL AS certificate_type
+      ,NULL AS certificate_subject
+      ,NULL AS certificate_state
+      ,NULL AS certificate_expiration
+      ,co.name AS name
+      ,co.email
+      ,co.ethnicity_c AS race_ethnicity
+      ,co.gender_c AS gender
+      ,co.title AS previous_role
+      ,co.current_employer_c AS previous_employer
+      ,c.name AS jobapp_id
+      ,NULL AS hired_status_date
+      ,NULL AS total_days_in_process
+      ,NULL AS application_review_score
+      ,NULL AS average_teacher_phone_score
+      ,NULL AS average_teacher_in_person_score
+      ,c.prospect_rating_c AS applicant_score
+      ,c.regional_source_c AS regional_source
+      ,COALESCE(c.regional_source_detail_c, c.referred_by_c, c.identified_by_c) AS regional_source_detail
+      ,c.first_contact_date_c AS phone_screen_or_contact_date
+      ,NULL AS interview_date
+      ,NULL AS offer_date
+      ,c.cultivation_stage_c AS selection_stage
+      ,c.current_status_c  AS selection_status
+      ,CONCAT(c.cultivation_notes_c, 'regions applied to this year: ' + c.regions_applied_to_this_year_c) AS selection_notes
+      ,NULL AS submitted_date
+      ,NULL AS resume_url
+      ,NULL AS position_number
+      ,c.job_position_name_c AS position_name
+      ,NULL AS city
+      ,c.experience_type_c AS job_type
+      ,NULL AS sub_type
+      ,NULL AS status
+      ,NULL AS new_or_replacement
+      ,NULL AS region
+      ,NULL AS desired_start_date
+      ,c.created_date AS created_date
+      ,NULL AS date_filled
+      ,NULL AS position_count
+      ,NULL AS recruiter
+      ,NULL AS location
+      ,NULL AS role_short
+      ,COALESCE(c.future_prospect_year_c, (CONVERT(VARCHAR(25),gabby.utilities.DATE_TO_SY(c.created_date)) + '-' + CONVERT(VARCHAR(25),gabby.utilities.DATE_TO_SY(c.created_date) + 1))) AS recruiting_year
+      ,c.instructional_experience_level_c AS job_posting
+      ,'culitvation' AS candidate_type
+      ,c.primary_interest_general_grade_level_c AS cult_grade_level_interest
+      ,c.primary_interest_general_subject_c AS cult_subject_interest
+FROM gabby.recruiting.cultivation_c c 
+LEFT JOIN gabby.recruiting.profile_application_c p
+  ON c.contact_c = p.applicant_c
+LEFT JOIN gabby.recruiting.contact co
+  ON c.contact_c = LEFT(co.id, 15)
+WHERE p.name IS NULL
