@@ -22,7 +22,7 @@ WITH att_mem AS (
         ,sub.is_pathways
         ,sub.grade_level        
         ,SUM(sub.target_enrollment) AS target_enrollment
-        ,SUM(sub.target_enrollment_ade) AS target_enrollment_ade
+        ,SUM(sub.target_enrollment_finance) AS target_enrollment_finance
   FROM
       (
        SELECT academic_year
@@ -30,7 +30,7 @@ WITH att_mem AS (
              ,0 AS is_pathways
              ,grade_level             
              ,target_enrollment
-             ,target_enrollment AS target_enrollment_ade
+             ,financial_model_enrollment AS target_enrollment_finance
        FROM gabby.finance.enrollment_targets
        WHERE _fivetran_deleted = 0
 
@@ -41,7 +41,7 @@ WITH att_mem AS (
              ,is_pathways
              ,grade_level             
              ,NULL AS target_enrollment
-             ,1 AS target_enrollment_ade
+             ,1 AS target_enrollment_finance
        FROM gabby.powerschool.cohort_identifiers_static
        WHERE (is_pathways = 1 OR school_name = 'Out of District')
          AND is_enrolled_recent = 1
@@ -111,7 +111,7 @@ SELECT co.student_number
       ,CONVERT(VARCHAR(1),nj.other_related_services_yn) AS other_related_services_yn
 
       ,t.target_enrollment
-      ,t.target_enrollment_ade
+      ,t.target_enrollment_finance
 FROM gabby.powerschool.cohort_identifiers_static co
 LEFT JOIN gabby.powerschool.calendar_rollup_static cal
   ON co.schoolid = cal.schoolid
