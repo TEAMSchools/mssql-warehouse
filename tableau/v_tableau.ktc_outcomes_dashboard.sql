@@ -4,20 +4,28 @@ GO
 CREATE OR ALTER VIEW tableau.ktc_outcomes_dashboard AS
 
 WITH matric_app AS (
-  SELECT app.applicant_c
+  SELECT c.id AS contact_id
 
         ,acc.type AS matriculation_account_type
 
         ,ROW_NUMBER() OVER(
-           PARTITION BY app.applicant_c
-             ORDER BY app.created_date) AS rn
-  FROM gabby.alumni.application_c app
+           PARTITION BY c.id
+             ORDER BY enr.start_date_c) AS rn
+  FROM gabby.alumni.contact c
+  JOIN gabby.alumni.application_c app
+    ON c.id = app.applicant_c
+   AND app.is_deleted = 0
+   AND app.transfer_application_c = 0
+   AND app.matriculation_decision_c = 'Matriculated (Intent to Enroll)'
   JOIN gabby.alumni.account acc
     ON app.school_c = acc.id
    AND acc.is_deleted = 0
-  WHERE app.is_deleted = 0
-    AND app.transfer_application_c = 0
-    AND app.matriculation_decision_c = 'Matriculated (Intent to Enroll)'
+  JOIN gabby.alumni.enrollment_c enr
+    ON app.applicant_c = enr.student_c
+   AND app.school_c = enr.school_c
+   AND c.kipp_hs_class_c = YEAR(enr.start_date_c)
+   AND enr.is_deleted = 0
+  WHERE c.is_deleted = 0
  )
 
 SELECT c.id AS contact_id
@@ -66,6 +74,6 @@ JOIN gabby.alumni.[user] u
 LEFT JOIN gabby.alumni.enrollment_identifiers ei
   ON c.id = ei.student_c
 LEFT JOIN matric_app a
-  ON c.id = a.applicant_c
+  ON c.id = a.contact_id
  AND a.rn = 1
 WHERE c.is_deleted = 0
