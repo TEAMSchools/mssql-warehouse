@@ -8,7 +8,7 @@ WITH position_parse AS (
         ,pn.name AS position_number
         ,pn.position_name_c AS position_name        
         ,pn.region_c AS region        
-        ,pn.city_c AS city
+        ,pn.city_c AS position_city
         ,pn.created_date
         ,pn.desired_start_date_c AS desired_start_date
         ,pn.date_position_filled_c AS date_filled        
@@ -74,7 +74,7 @@ SELECT pa.id
         
       ,j.position_number
       ,j.position_name
-      ,j.city
+      ,j.position_city
       ,j.job_type
       ,j.sub_type
       ,j.status
@@ -103,14 +103,15 @@ SELECT pa.id
         WHEN j.position_name_splitter IS NULL THEN NULL 
         WHEN j.n = 4 THEN PARSENAME(j.position_name_splitter, 1) 
         ELSE 'Invalid position_name Format' 
-       END AS recruiing_year
+       END AS recruiring_year
         
       ,p.name AS job_posting
+      ,p.city_c AS posting_city
 
       ,'application' as candidate_type
 
-      ,null AS cult_grade_level_interest
-      ,null AS cult_subject_interest
+      ,NULL AS cult_grade_level_interest
+      ,NULL AS cult_subject_interest
 FROM gabby.recruiting.profile_application_c pa 
 LEFT JOIN gabby.recruiting.contact c
   ON pa.contact_id_c = LEFT(c.id, 15)
@@ -121,26 +122,26 @@ LEFT JOIN position_parse  j
 LEFT JOIN gabby.recruiting.job_posting_c p
   ON j.job_posting = p.id
 
-  UNION ALL
+UNION ALL
 
 SELECT c.id AS id
       ,p.name AS profile_id
-      ,null AS years_full_time_experience
-      ,null AS years_of_full_time_teaching
-      ,null AS undergrad_school_name
-      ,null AS undergrad_major_area_of_study
-      ,null AS undergrad_gpa
-      ,null AS degree_1_school_name
-      ,null AS degree_1_major_area_of_study
-      ,null AS degree_1_gpa
-      ,null AS degree_2_school_name
-      ,null AS degree_2_major_area_of_study
-      ,null AS degree_2_gpa
-      ,null AS is_certified
-      ,null AS certificate_type
-      ,null AS certificate_subject
-      ,null AS certificate_state
-      ,null AS certificate_expiration
+      ,NULL AS years_full_time_experience
+      ,NULL AS years_of_full_time_teaching
+      ,NULL AS undergrad_school_name
+      ,NULL AS undergrad_major_area_of_study
+      ,NULL AS undergrad_gpa
+      ,NULL AS degree_1_school_name
+      ,NULL AS degree_1_major_area_of_study
+      ,NULL AS degree_1_gpa
+      ,NULL AS degree_2_school_name
+      ,NULL AS degree_2_major_area_of_study
+      ,NULL AS degree_2_gpa
+      ,NULL AS is_certified
+      ,NULL AS certificate_type
+      ,NULL AS certificate_subject
+      ,NULL AS certificate_state
+      ,NULL AS certificate_expiration
       ,co.name AS name
       ,co.email
       ,co.ethnicity_c AS race_ethnicity
@@ -148,42 +149,40 @@ SELECT c.id AS id
       ,co.title AS previous_role
       ,co.current_employer_c AS previous_employer
       ,c.name AS jobapp_id
-      ,null AS hired_status_date
-      ,null AS total_days_in_process
-      ,null AS application_review_score
-      ,null AS average_teacher_phone_score
-      ,null AS average_teacher_in_person_score
+      ,NULL AS hired_status_date
+      ,NULL AS total_days_in_process
+      ,NULL AS application_review_score
+      ,NULL AS average_teacher_phone_score
+      ,NULL AS average_teacher_in_person_score
       ,c.prospect_rating_c AS applicant_score
-      ,regional_source_c AS regional_source
-      ,COALESCE(regional_source_detail_c, referred_by_c, identified_by_c) AS regional_source_detail
-      ,first_contact_date_c AS phone_screen_or_contact_date
-      ,null AS interview_date
-      ,null AS offer_date
+      ,c.regional_source_c AS regional_source
+      ,COALESCE(c.regional_source_detail_c, c.referred_by_c, c.identified_by_c) AS regional_source_detail
+      ,c.first_contact_date_c AS phone_screen_or_contact_date
+      ,NULL AS interview_date
+      ,NULL AS offer_date
       ,c.cultivation_stage_c AS selection_stage
       ,c.current_status_c  AS selection_status
-      ,c.cultivation_notes_c 
-          + CASE WHEN c.regions_applied_to_this_year_c = null THEN null
-                 ELSE ' regions aapplied to this year: ' + c.regions_applied_to_this_year_c
-            END AS selection_notes
-      ,null AS submitted_date
-      ,null AS resume_url
-      ,null AS position_number
-      ,job_position_name_c AS position_name
-      ,null AS city
+      ,CONCAT(c.cultivation_notes_c, 'regions applied to this year: ' + c.regions_applied_to_this_year_c) AS selection_notes
+      ,NULL AS submitted_date
+      ,NULL AS resume_url
+      ,NULL AS position_number
+      ,c.job_position_name_c AS position_name
+      ,NULL AS position_city
       ,c.experience_type_c AS job_type
-      ,null AS sub_type
-      ,null AS status
-      ,null AS new_or_replacement
-      ,null AS region
-      ,null AS desired_start_date
+      ,NULL AS sub_type
+      ,NULL AS status
+      ,NULL AS new_or_replacement
+      ,NULL AS region
+      ,NULL AS desired_start_date
       ,c.created_date AS created_date
-      ,null AS date_filled
-      ,null AS position_count
-      ,null AS recruiter
-      ,null AS location
-      ,null AS role_short
-      ,COALESCE(future_prospect_year_c, (CONVERT(varchar,gabby.utilities.DATE_TO_SY(c.created_date)) + '-' + CONVERT(varchar,gabby.utilities.DATE_TO_SY(c.created_date)+1))) AS recruiing_year
+      ,NULL AS date_filled
+      ,NULL AS position_count
+      ,NULL AS recruiter
+      ,NULL AS location
+      ,NULL AS role_short
+      ,COALESCE(c.future_prospect_year_c, (CONVERT(VARCHAR(25),gabby.utilities.DATE_TO_SY(c.created_date)) + '-' + CONVERT(VARCHAR(25),gabby.utilities.DATE_TO_SY(c.created_date) + 1))) AS recruiting_year
       ,c.instructional_experience_level_c AS job_posting
+      ,null AS posting_city
       ,'culitvation' AS candidate_type
       ,c.primary_interest_general_grade_level_c AS cult_grade_level_interest
       ,c.primary_interest_general_subject_c AS cult_subject_interest
@@ -192,6 +191,4 @@ LEFT JOIN gabby.recruiting.profile_application_c p
   ON c.contact_c = p.applicant_c
 LEFT JOIN gabby.recruiting.contact co
   ON c.contact_c = LEFT(co.id, 15)
-
-WHERE p.name NOT IN (SELECT name FROM gabby.recruiting.profile_application_c)
-   OR p.name IS NULL
+WHERE p.name IS NULL
