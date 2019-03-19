@@ -16,10 +16,10 @@ FROM
       
            ,CONVERT(INT,COALESCE(onc.new_sat_total_score, sat.all_tests_total)) AS total_score
      FROM gabby.naviance.sat_scores_clean sat
-     LEFT JOIN gabby.collegeboard.sat_old_new_concordance onc
+     LEFT OUTER JOIN gabby.collegeboard.sat_old_new_concordance onc
        ON sat.sat_scale = onc.old_sat_scale
       AND sat.all_tests_total = onc.old_sat_total_score
       AND sat.is_old_sat = 1     
     ) sub
-LEFT JOIN gabby.collegeboard.sat_act_concordance sac
+LEFT OUTER JOIN gabby.collegeboard.sat_act_concordance sac
   ON sub.total_score = sac.sat_total_score

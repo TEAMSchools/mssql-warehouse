@@ -625,7 +625,7 @@ WITH roster AS (
                WHEN a.competitiveness_ranking_c = 'Less Competitive' THEN 2
               END competitiveness_ranking_int
        FROM gabby.naviance.college_applications app
-       LEFT JOIN gabby.alumni.account a
+       LEFT OUTER JOIN gabby.alumni.account a
          ON app.ceeb_code = CONVERT(VARCHAR,a.ceeb_code_c)
         AND a.record_type_id = '01280000000BQEkAAO'
         AND a.competitiveness_ranking_c IS NOT NULL
@@ -734,7 +734,7 @@ SELECT r.studentid
       ,NULL AS performance_level
       ,NULL AS performance_level_label
 FROM roster r
-LEFT JOIN grades gr
+LEFT OUTER JOIN grades gr
   ON r.student_number = gr.student_number
  AND r.academic_year = gr.academic_year
  AND r.reporting_term COLLATE Latin1_General_BIN = gr.reporting_term
@@ -767,7 +767,7 @@ SELECT r.studentid
       ,NULL AS performance_level
       ,NULL AS performance_level_label
 FROM roster r
-LEFT JOIN attendance att
+LEFT OUTER JOIN attendance att
   ON r.studentid = att.studentid
  AND r.db_name = att.db_name
  AND r.academic_year = att.academic_year
@@ -801,7 +801,7 @@ SELECT r.studentid
       ,cma.assessment_id AS performance_level
       ,cma.proficiency_label AS performance_level_label
 FROM roster r
-LEFT JOIN modules cma
+LEFT OUTER JOIN modules cma
   ON r.student_number = cma.student_number
  AND r.academic_year = cma.academic_year
 WHERE r.term_name = 'Y1' 
@@ -869,7 +869,7 @@ SELECT r.studentid
       ,NULL AS performance_level
       ,NULL AS performance_level_label
 FROM roster r
-LEFT JOIN lit
+LEFT OUTER JOIN lit
   ON r.student_number = lit.student_number
  AND r.academic_year >= lit.academic_year
 WHERE r.term_name = 'Y1'
@@ -902,7 +902,7 @@ SELECT r.studentid
       ,NULL AS performance_level
       ,NULL AS performance_level_label
 FROM roster r
-LEFT JOIN map
+LEFT OUTER JOIN map
   ON r.student_number = map.student_number
  AND r.academic_year >= map.academic_year
 WHERE r.term_name = 'Y1' 
@@ -935,7 +935,7 @@ SELECT r.studentid
       ,std.test_performance_level AS performance_level
       ,std.performance_level_label
 FROM roster r
-LEFT JOIN standardized_tests std
+LEFT OUTER JOIN standardized_tests std
   ON r.student_number = std.student_number
 WHERE r.term_name = 'Y1'
 
@@ -967,7 +967,7 @@ SELECT r.studentid
       ,apps.competitiveness_ranking AS performance_level
       ,apps.value AS performance_level_label
 FROM roster r
-LEFT JOIN collegeapps apps
+LEFT OUTER JOIN collegeapps apps
   ON r.student_number = apps.student_number
 WHERE r.term_name = 'Y1'
 
@@ -999,7 +999,7 @@ SELECT r.studentid
       ,promo.numeric_value AS performance_level
       ,promo.text_value AS performance_level_label
 FROM roster r
-LEFT JOIN promo_status promo
+LEFT OUTER JOIN promo_status promo
   ON r.student_number = promo.student_number 
  AND r.academic_year = promo.academic_year
 WHERE r.term_name = 'Y1'
@@ -1032,7 +1032,7 @@ SELECT r.studentid
       ,NULL AS performance_level
       ,NULL AS performance_level_label
 FROM roster r
-LEFT JOIN contact c
+LEFT OUTER JOIN contact c
   ON r.student_number = c.student_number  
 WHERE r.term_name = 'Y1'
 

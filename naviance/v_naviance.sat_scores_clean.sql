@@ -77,11 +77,11 @@ FROM
                  ,CONVERT(FLOAT,[math])
                  ,CONVERT(FLOAT,[total])
                  ,NULL AS [reading_test]
-                 ,[writing] AS writing_test
+                 ,CONVERT(FLOAT,[essay_subscore]) AS writing_test
                  ,NULL AS [math_test]
-                 ,CONVERT(FLOAT,[writing]) AS writing
-                 ,NULL AS essay_subscore
-                 ,NULL AS mc_subscore
+                 ,CONVERT(FLOAT,[writing])
+                 ,CONVERT(FLOAT,[essay_subscore])
+                 ,CONVERT(FLOAT,[mc_subscore])
                  ,CASE
                    WHEN test_date = '0000-00-00' THEN NULL
                    WHEN RIGHT(test_date,2) = '00' THEN DATEFROMPARTS(LEFT(test_date,4), SUBSTRING(test_date, 6, 2), 01)
