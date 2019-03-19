@@ -22,17 +22,17 @@ WITH roster AS (
         ,c.informed_consent_c
         ,c.latest_transcript_c
 
-        ,COALESCE(n.counselor_name, u.name) AS counselor_name
+        ,u.name AS counselor_name
         ,COALESCE(n.class_year, co.cohort) AS cohort
 
         ,0 AS is_taf
   FROM gabby.powerschool.cohort_identifiers_static co
-  LEFT OUTER JOIN gabby.alumni.contact c
+  LEFT JOIN gabby.alumni.contact c
     ON co.student_number = c.school_specific_id_c 
    AND c.is_deleted = 0
-  LEFT OUTER JOIN gabby.naviance.students n
-    ON co.student_number = CONVERT(INT,gabby.utilities.STRIP_CHARACTERS(n.hs_student_id, '^0-9'))
-  LEFT OUTER JOIN gabby.alumni.[user] u
+  LEFT JOIN gabby.naviance.students n
+    ON co.student_number = n.hs_student_id
+  LEFT JOIN gabby.alumni.[user] u
     ON c.owner_id = u.id
   WHERE co.rn_undergrad = 1
     AND co.grade_level BETWEEN 9 AND 12
@@ -66,17 +66,19 @@ WITH roster AS (
         
         ,1 AS is_taf
   FROM gabby.alumni.taf_roster taf
-  LEFT OUTER JOIN gabby.alumni.contact c
+  LEFT JOIN gabby.alumni.contact c
     ON taf.student_number = c.school_specific_id_c 
    AND c.is_deleted = 0
-  LEFT OUTER JOIN gabby.alumni.[user] u
+  LEFT JOIN gabby.alumni.[user] u
     ON c.owner_id = u.id
 )
 
 ,nav_applications AS (
   SELECT hs_student_id
-        ,SUM(CASE WHEN result_code = 'accepted' THEN award ELSE 0 END) AS n_award_letters_collected
-        ,MAX(CASE WHEN result_code = 'accepted' THEN decis ELSE 0 END) AS is_acceptance_letter_collected
+        ,NULL AS n_award_letters_collected
+        ,NULL AS is_acceptance_letter_collected
+        --,SUM(CASE WHEN result_code = 'accepted' THEN award ELSE 0 END) AS n_award_letters_collected
+        --,MAX(CASE WHEN result_code = 'accepted' THEN decis ELSE 0 END) AS is_acceptance_letter_collected
   FROM gabby.naviance.college_applications
   WHERE stage != 'cancelled'
   GROUP BY hs_student_id
@@ -359,25 +361,25 @@ SELECT co.student_number
         ELSE 0.0
        END AS is_attending_4yr
 FROM roster co
-LEFT OUTER JOIN gabby.powerschool.gpa_cumulative gpa
+LEFT JOIN gabby.powerschool.gpa_cumulative gpa
   ON co.studentid = gpa.studentid
  AND co.schoolid = gpa.schoolid
  AND co.db_name = gpa.db_name
-LEFT OUTER JOIN gabby.naviance.current_task_completion_status ctcs
+LEFT JOIN gabby.naviance.current_task_completion_status ctcs
   ON co.student_number = ctcs.student_id
-LEFT OUTER JOIN nav_applications na
+LEFT JOIN nav_applications na
   ON co.student_number = na.hs_student_id
-LEFT OUTER JOIN gabby.naviance.act_scores_clean act
+LEFT JOIN gabby.naviance.act_scores_clean act
   ON co.student_number = act.student_number
  AND act.rn_highest = 1
-LEFT OUTER JOIN act_presenior ap
+LEFT JOIN act_presenior ap
   ON co.student_number = ap.student_number
  AND ap.rn_highest_presenior = 1
-LEFT OUTER JOIN act_month am
+LEFT JOIN act_month am
   ON co.student_number = am.student_number
  AND co.academic_year = am.academic_year
-LEFT OUTER JOIN college_apps ca
+LEFT JOIN college_apps ca
   ON co.contact_id = ca.applicant_c
  AND ca.application_submission_status_c = 'Submitted'
-LEFT OUTER JOIN gabby.alumni.enrollment_identifiers ei
+LEFT JOIN gabby.alumni.enrollment_identifiers ei
   ON co.contact_id = ei.student_c

@@ -3,20 +3,20 @@ GO
 
 CREATE OR ALTER VIEW naviance.act_scores_clean AS
 
-SELECT naviance_studentid	
-      ,student_number	
-      ,test_type	
+SELECT naviance_studentid 
+      ,student_number 
+      ,test_type 
       ,academic_year
-      ,test_date	
-      ,composite	
-      ,english	
-      ,math	
-      ,reading	
-      ,science	
-      ,writing	
-      ,ela	
-      ,writing_sub	
-      ,comb_eng_write	
+      ,test_date 
+      ,composite 
+      ,english 
+      ,math 
+      ,reading 
+      ,science 
+      ,writing 
+      ,ela 
+      ,writing_sub 
+      ,comb_eng_write 
       ,stem
       
       ,ROW_NUMBER() OVER(

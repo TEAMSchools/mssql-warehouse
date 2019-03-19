@@ -49,11 +49,14 @@ SELECT co.student_number
       ,ed.school_entrydate
       ,ed.school_exitdate
       
-      ,nav.counselor_name AS ktc_counselor_name
+      ,NULL AS ktc_counselor_name
+      --,nav.counselor_name AS ktc_counselor_name
       
-      ,df.mobile_number AS ktc_counselor_phone
+      ,NULL AS ktc_counselor_phone
+      --,df.mobile_number AS ktc_counselor_phone
       
-      ,ad.mail AS ktc_counselor_email
+      ,NULL AS ktc_counselor_email
+      --,ad.mail AS ktc_counselor_email
       
       ,cat.H_Y1 AS HWQ_Y1
       
@@ -69,10 +72,10 @@ LEFT JOIN enroll_dates ed
  AND CASE WHEN co.schoolid = 999999 THEN ug.schoolid ELSE co.schoolid END = ed.schoolid
 LEFT JOIN gabby.naviance.students nav 
   ON co.student_number = CONVERT(INT,gabby.utilities.STRIP_CHARACTERS(hs_student_id, '^0-9'))
-LEFT JOIN gabby.dayforce.staff_roster df 
-  ON nav.counselor_name = CONCAT(df.preferred_first_name, ' ', df.preferred_last_name)
-LEFT JOIN gabby.adsi.user_attributes_static ad
-  ON df.adp_associate_id = ad.idautopersonalternateid
+--LEFT JOIN gabby.dayforce.staff_roster df 
+--  ON nav.counselor_name = CONCAT(df.preferred_first_name, ' ', df.preferred_last_name)
+--LEFT JOIN gabby.adsi.user_attributes_static ad
+--  ON df.adp_associate_id = ad.idautopersonalternateid
 LEFT JOIN gabby.powerschool.category_grades_wide cat
   ON co.student_number = cat.student_number
  AND co.academic_year = cat.academic_year
