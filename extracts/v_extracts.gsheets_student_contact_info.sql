@@ -59,5 +59,4 @@ LEFT JOIN gabby.powerschool.studentcorefields scf
   ON co.students_dcid = scf.studentsdcid
  AND co.db_name = scf.db_name
 WHERE co.enroll_status IN (0, -1)
-  AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-  AND co.rn_year = 1
+  AND co.rn_all = 1
