@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW tableau.staff_roster AS
+--CREATE OR ALTER VIEW tableau.staff_roster AS
 
 SELECT df.df_employee_number
       ,df.adp_associate_id AS associate_id      
@@ -52,14 +52,14 @@ SELECT df.df_employee_number
       ,CONVERT(DATE,df.position_effective_from_date) AS position_start_date      
       ,CONVERT(DATE,df.termination_date) AS termination_date
 
-      ,ad.mail
-      ,ad.userprincipalname
+      ,LOWER(ad.mail) AS mail
+      ,LOWER(ad.userprincipalname) AS userprincipalname
 
-      ,adm.mail AS manager_mail
+      ,LOWER(adm.userprincipalname) AS manager_mail
 FROM gabby.dayforce.staff_roster df
 LEFT JOIN gabby.adsi.user_attributes_static ad
   ON df.df_employee_number = ad.employeenumber
  AND ISNUMERIC(ad.employeenumber) = 1
 LEFT JOIN gabby.adsi.user_attributes_static adm
-  ON df.df_employee_number = adm.employeenumber
+  ON df.manager_df_employee_number = adm.employeenumber
  AND ISNUMERIC(adm.employeenumber) = 1
