@@ -8,7 +8,7 @@ WITH position_parse AS (
         ,pn.name AS position_number
         ,pn.position_name_c AS position_name        
         ,pn.region_c AS region        
-        ,pn.city_c AS city
+        ,pn.city_c AS position_city
         ,pn.created_date
         ,pn.desired_start_date_c AS desired_start_date
         ,pn.date_position_filled_c AS date_filled        
@@ -74,7 +74,7 @@ SELECT pa.id
         
       ,j.position_number
       ,j.position_name
-      ,j.city
+      ,j.position_city
       ,j.job_type
       ,j.sub_type
       ,j.status
@@ -106,6 +106,7 @@ SELECT pa.id
        END AS recruiring_year
         
       ,p.name AS job_posting
+      ,p.city_c AS posting_city
 
       ,'application' as candidate_type
 
@@ -166,7 +167,7 @@ SELECT c.id AS id
       ,NULL AS resume_url
       ,NULL AS position_number
       ,c.job_position_name_c AS position_name
-      ,NULL AS city
+      ,NULL AS position_city
       ,c.experience_type_c AS job_type
       ,NULL AS sub_type
       ,NULL AS status
@@ -181,6 +182,7 @@ SELECT c.id AS id
       ,NULL AS role_short
       ,COALESCE(c.future_prospect_year_c, (CONVERT(VARCHAR(25),gabby.utilities.DATE_TO_SY(c.created_date)) + '-' + CONVERT(VARCHAR(25),gabby.utilities.DATE_TO_SY(c.created_date) + 1))) AS recruiting_year
       ,c.instructional_experience_level_c AS job_posting
+      ,NULL AS posting_city
       ,'culitvation' AS candidate_type
       ,c.primary_interest_general_grade_level_c AS cult_grade_level_interest
       ,c.primary_interest_general_subject_c AS cult_subject_interest
