@@ -242,18 +242,17 @@ SELECT co.student_number
       ,NULL AS need_70
       ,NULL AS need_80
       ,NULL AS need_90
-FROM gabby.powerschool.cohort_identifiers_static co 
-JOIN gabby.powerschool.final_grades_static gr 
+FROM kippnewark.powerschool.cohort_identifiers_static co 
+JOIN kippnewark.powerschool.final_grades_static gr 
   ON co.student_number = gr.student_number
  AND co.academic_year = gr.academic_year
- AND co.db_name = gr.db_name
  AND (gr.e1 IS NOT NULL OR gr.e2 IS NOT NULL)
 JOIN section_teacher st
   ON co.studentid = st.studentid
- AND co.academic_year = st.academic_year
- AND co.db_name = st.db_name
+ AND co.academic_year = st.academic_year 
  AND gr.course_number = st.course_number
  AND st.rn = 1
+ AND st.db_name = 'kippnewark'
 WHERE co.rn_year = 1
   AND co.schoolid = 73253
 
