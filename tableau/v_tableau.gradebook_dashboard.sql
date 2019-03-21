@@ -128,10 +128,10 @@ JOIN gabby.powerschool.final_grades_static gr
  AND gr.is_curterm = 1
 LEFT JOIN gabby.powerschool.storedgrades y1
   ON co.studentid = y1.studentid
- AND co.academic_year = (LEFT(y1.termid, 2) + 1990)
+ AND co.academic_year = y1.academic_year
  AND co.db_name = y1.db_name
- AND gr.course_number = y1.course_number 
- AND y1.storecode = 'Y1'
+ AND gr.course_number = y1.course_number_clean
+ AND y1.storecode_clean = 'Y1'
 JOIN section_teacher st
   ON co.studentid = st.studentid
  AND co.academic_year = st.academic_year
@@ -151,7 +151,7 @@ SELECT COALESCE(co.student_number, e1.student_number) AS student_number
       ,COALESCE(co.team, e1.team) AS team
       ,NULL AS advisor_name
       ,COALESCE(co.enroll_status, e1.enroll_status) AS enroll_status
-      ,CONVERT(INT,LEFT(gr.termid,2) + 1990) AS academic_year
+      ,gr.academic_year
       ,COALESCE(co.iep_status, e1.iep_status) AS iep_status
       ,COALESCE(co.cohort, e1.cohort) AS cohort
       ,COALESCE(co.region, e1.region) AS region
@@ -185,15 +185,15 @@ LEFT JOIN gabby.powerschool.cohort_identifiers_static co
   ON gr.studentid = co.studentid
  AND gr.schoolid = co.schoolid
  AND gr.db_name = co.db_name
- AND (LEFT(gr.termid,2) + 1990) = co.academic_year
+ AND gr.academic_year = co.academic_year
  AND co.rn_year = 1
 LEFT JOIN gabby.powerschool.cohort_identifiers_static e1 
   ON gr.studentid = e1.studentid
  AND gr.schoolid = e1.schoolid
  AND gr.db_name = e1.db_name
  AND e1.year_in_school = 1
-WHERE gr.storecode = 'Y1'
-  AND gr.course_number IS NULL
+WHERE gr.storecode_clean = 'Y1'
+  AND gr.course_number_clean IS NULL
 
 UNION ALL
 
