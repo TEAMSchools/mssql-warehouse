@@ -182,7 +182,7 @@ SELECT c.id AS id
       ,NULL AS role_short
       ,COALESCE(c.future_prospect_year_c, (CONVERT(VARCHAR(25),gabby.utilities.DATE_TO_SY(c.created_date)) + '-' + CONVERT(VARCHAR(25),gabby.utilities.DATE_TO_SY(c.created_date) + 1))) AS recruiting_year
       ,c.instructional_experience_level_c AS job_posting
-      ,null AS posting_city
+      ,NULL AS posting_city
       ,'culitvation' AS candidate_type
       ,c.primary_interest_general_grade_level_c AS cult_grade_level_interest
       ,c.primary_interest_general_subject_c AS cult_subject_interest
