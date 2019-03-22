@@ -8,7 +8,7 @@ WITH position_parse AS (
         ,pn.name AS position_number
         ,pn.position_name_c AS position_name        
         ,pn.region_c AS region        
-        ,pn.city_c AS position_city
+        ,pn.city_c AS city
         ,pn.created_date
         ,pn.desired_start_date_c AS desired_start_date
         ,pn.date_position_filled_c AS date_filled        
@@ -60,21 +60,20 @@ SELECT pa.id
       ,a.application_review_score_c AS application_review_score
       ,a.average_teacher_phone_score_c AS average_teacher_phone_score
       ,a.average_teacher_in_person_score_c AS average_teacher_in_person_score      
-      ,a.applicant_source_c AS applicant_score
-      ,a.cultivation_regional_source_c AS regional_source
+      ,a.applicant_source_c AS applicant_source
       ,a.cultivation_regional_source_detail_c AS regional_source_detail      
       ,a.phone_interview_status_date_c AS phone_screen_or_contact_date
       ,a.in_person_interview_status_date_c AS interview_date
       ,a.offer_extended_date_c AS offer_date
       ,a.stage_c AS selection_stage
-      ,a.status_c AS selection_status
+      ,a.selection_status_c AS selection_status
       ,a.selection_notes_c AS selection_notes
       ,COALESCE(a.submitted_status_date_c, a.in_progress_status_date_c) AS submitted_date
       ,LEFT(RIGHT(a.resume_url_c,LEN(a.resume_url_c)-9),LEN(RIGHT(a.resume_url_c,LEN(a.resume_url_c)-9))-39) AS resume_url
         
       ,j.position_number
       ,j.position_name
-      ,j.position_city
+      ,j.city
       ,j.job_type
       ,j.sub_type
       ,j.status
@@ -106,7 +105,6 @@ SELECT pa.id
        END AS recruiring_year
         
       ,p.name AS job_posting
-      ,p.city_c AS posting_city
 
       ,'application' as candidate_type
 
@@ -117,10 +115,11 @@ LEFT JOIN gabby.recruiting.contact c
   ON pa.contact_id_c = LEFT(c.id, 15)
 LEFT JOIN gabby.recruiting.job_application_c a
   ON pa.id = a.profile_application_c
+LEFT JOIN gabby.recruiting.job_posting_c p
+  ON p.id= a.job_posting_c
 LEFT JOIN position_parse  j
   ON a.job_position_c = j.id
-LEFT JOIN gabby.recruiting.job_posting_c p
-  ON j.job_posting = p.id
+
 
 UNION ALL
 
@@ -154,8 +153,7 @@ SELECT c.id AS id
       ,NULL AS application_review_score
       ,NULL AS average_teacher_phone_score
       ,NULL AS average_teacher_in_person_score
-      ,c.prospect_rating_c AS applicant_score
-      ,c.regional_source_c AS regional_source
+      ,c.regional_source_c AS applicant_source
       ,COALESCE(c.regional_source_detail_c, c.referred_by_c, c.identified_by_c) AS regional_source_detail
       ,c.first_contact_date_c AS phone_screen_or_contact_date
       ,NULL AS interview_date
@@ -167,7 +165,7 @@ SELECT c.id AS id
       ,NULL AS resume_url
       ,NULL AS position_number
       ,c.job_position_name_c AS position_name
-      ,NULL AS position_city
+      ,NULL AS city
       ,c.experience_type_c AS job_type
       ,NULL AS sub_type
       ,NULL AS status
@@ -182,7 +180,6 @@ SELECT c.id AS id
       ,NULL AS role_short
       ,COALESCE(c.future_prospect_year_c, (CONVERT(VARCHAR(25),gabby.utilities.DATE_TO_SY(c.created_date)) + '-' + CONVERT(VARCHAR(25),gabby.utilities.DATE_TO_SY(c.created_date) + 1))) AS recruiting_year
       ,c.instructional_experience_level_c AS job_posting
-      ,NULL AS posting_city
       ,'culitvation' AS candidate_type
       ,c.primary_interest_general_grade_level_c AS cult_grade_level_interest
       ,c.primary_interest_general_subject_c AS cult_subject_interest
@@ -191,4 +188,4 @@ LEFT JOIN gabby.recruiting.profile_application_c p
   ON c.contact_c = p.applicant_c
 LEFT JOIN gabby.recruiting.contact co
   ON c.contact_c = LEFT(co.id, 15)
-WHERE p.name IS NULL
+WHERE p.name IS NULL 
