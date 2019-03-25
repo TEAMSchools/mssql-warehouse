@@ -221,6 +221,7 @@ JOIN gabby.powerschool.cohort_identifiers_static co
   ON enr.student_number = co.student_number
  AND enr.academic_year = co.academic_year
  AND enr.db_name = co.db_name
+ AND tg.grade_level = co.grade_level
  AND co.rn_year = 1
 JOIN gabby.pm.teacher_goals_term_map tm
   ON tg.academic_year = tm.academic_year
