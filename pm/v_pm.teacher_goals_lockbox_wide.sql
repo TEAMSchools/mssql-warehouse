@@ -10,12 +10,12 @@ SELECT p.academic_year
       ,p.metric_name
       ,p.pm_term
       
-      ,p.[Metric Value]
-      ,p.Goal
-      ,p.Score      
-      ,p.[Grade-Level Weight]
-      ,p.[Bucket Weight]
-      ,p.[Bucket Score]
+      ,p.[Metric Value] AS metric_value
+      ,p.Goal AS goal
+      ,p.Score AS score
+      ,p.[Grade-Level Weight] AS grade_level_weight
+      ,p.[Bucket Weight] AS bucket_weight
+      ,p.[Bucket Score] AS bucket_score
 FROM
     (
      SELECT academic_year
