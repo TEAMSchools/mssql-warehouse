@@ -9,6 +9,8 @@ SELECT p.academic_year
       ,p.metric_label
       ,p.metric_name
       ,p.pm_term
+      ,p.grade_level
+      ,p.is_sped_goal
       
       ,p.[Metric Value] AS metric_value
       ,p.Goal AS goal
@@ -24,6 +26,8 @@ FROM
            ,metric_label
            ,metric_name
            ,pm_term
+           ,grade_level
+           ,is_sped_goal
            ,measure_names
            ,measure_values
      FROM pm.teacher_goals_lockbox
