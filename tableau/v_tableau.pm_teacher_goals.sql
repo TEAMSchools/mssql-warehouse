@@ -168,175 +168,94 @@ WITH reading_level AS (
   FROM so_survey so
  )
 
-/* individual goals */
-SELECT tgs.df_employee_number
-      ,tgs.preferred_name
-      ,tgs.primary_site
-      ,tgs.primary_on_site_department
-      ,tgs.grades_taught
-      ,tgs.primary_job
-      ,tgs.legal_entity_name
-      ,tgs.is_active
-      ,tgs.primary_site_schoolid
-      ,tgs.manager_df_employee_number
-      ,tgs.manager_name
-      ,tgs.staff_username
-      ,tgs.manager_username
-      ,tgs.academic_year
-      ,tgs.goal_type
-      ,tgs.goal_department
-      ,tgs.is_sped_goal
-      ,tgs.metric_label
-      ,tgs.metric_name
-      ,tgs.tier_1
-      ,tgs.tier_2
-      ,tgs.tier_3
-      ,tgs.tier_4
-      ,tgs.prior_year_outcome
-      ,tgs.pm_term
-      ,tgs.data_type
-      ,NULL AS grade_level
+,all_data AS (
+  /* individual goals */
+  SELECT tgs.df_employee_number
+        ,tgs.preferred_name
+        ,tgs.primary_site
+        ,tgs.primary_on_site_department
+        ,tgs.grades_taught
+        ,tgs.primary_job
+        ,tgs.legal_entity_name
+        ,tgs.is_active
+        ,tgs.primary_site_schoolid
+        ,tgs.manager_df_employee_number
+        ,tgs.manager_name
+        ,tgs.staff_username
+        ,tgs.manager_username
+        ,tgs.academic_year
+        ,tgs.goal_type
+        ,tgs.goal_department
+        ,tgs.is_sped_goal
+        ,tgs.metric_label
+        ,tgs.metric_name
+        ,tgs.tier_1
+        ,tgs.tier_2
+        ,tgs.tier_3
+        ,tgs.tier_4
+        ,tgs.prior_year_outcome
+        ,tgs.pm_term
+        ,tgs.data_type
+        ,NULL AS grade_level
       
-      ,ig.reporting_term      
-      ,ig.metric_value            
-      ,NULL AS n_students
-FROM gabby.pm.teacher_goal_scaffold_static tgs
-LEFT JOIN individual_goal_data ig
-  ON tgs.academic_year = ig.academic_year 
- AND tgs.metric_name = ig.metric_name
- AND tgs.metric_term = ig.reporting_term
- AND tgs.df_employee_number = ig.df_employee_number
-WHERE tgs.goal_type = 'Individual'
+        ,ig.reporting_term      
+        ,ig.metric_value            
+        ,NULL AS n_students
+  FROM gabby.pm.teacher_goal_scaffold_static tgs
+  LEFT JOIN individual_goal_data ig
+    ON tgs.academic_year = ig.academic_year 
+   AND tgs.metric_name = ig.metric_name
+   AND tgs.metric_term = ig.reporting_term
+   AND tgs.df_employee_number = ig.df_employee_number
+  WHERE tgs.goal_type = 'Individual'
 
-UNION ALL
+  UNION ALL
 
-/* GLT goals */
-SELECT tgs.df_employee_number
-      ,tgs.preferred_name
-      ,tgs.primary_site
-      ,tgs.primary_on_site_department
-      ,tgs.grades_taught
-      ,tgs.primary_job
-      ,tgs.legal_entity_name
-      ,tgs.is_active
-      ,tgs.primary_site_schoolid
-      ,tgs.manager_df_employee_number
-      ,tgs.manager_name
-      ,tgs.staff_username
-      ,tgs.manager_username
-      ,tgs.academic_year
-      ,tgs.goal_type
-      ,tgs.goal_department
-      ,tgs.is_sped_goal
-      ,tgs.metric_label
-      ,tgs.metric_name
-      ,tgs.tier_1
-      ,tgs.tier_2
-      ,tgs.tier_3
-      ,tgs.tier_4
-      ,tgs.prior_year_outcome
-      ,tgs.pm_term
-      ,tgs.data_type
-      ,tgs.grade_level
+  /* GLT goals */
+  SELECT tgs.df_employee_number
+        ,tgs.preferred_name
+        ,tgs.primary_site
+        ,tgs.primary_on_site_department
+        ,tgs.grades_taught
+        ,tgs.primary_job
+        ,tgs.legal_entity_name
+        ,tgs.is_active
+        ,tgs.primary_site_schoolid
+        ,tgs.manager_df_employee_number
+        ,tgs.manager_name
+        ,tgs.staff_username
+        ,tgs.manager_username
+        ,tgs.academic_year
+        ,tgs.goal_type
+        ,tgs.goal_department
+        ,tgs.is_sped_goal
+        ,tgs.metric_label
+        ,tgs.metric_name
+        ,tgs.tier_1
+        ,tgs.tier_2
+        ,tgs.tier_3
+        ,tgs.tier_4
+        ,tgs.prior_year_outcome
+        ,tgs.pm_term
+        ,tgs.data_type
+        ,tgs.grade_level
       
-      ,glt.reporting_term      
-      ,glt.metric_value
-      ,NULL AS n_students
-FROM gabby.pm.teacher_goal_scaffold_static tgs
-LEFT JOIN glt_goal_data glt
-  ON tgs.academic_year = glt.academic_year 
- AND tgs.metric_name = glt.metric_name
- AND tgs.metric_term = glt.reporting_term
- AND tgs.primary_site_schoolid = glt.schoolid
- AND tgs.grade_level = glt.grade_level
-WHERE tgs.goal_type = 'Team'
+        ,glt.reporting_term      
+        ,glt.metric_value
+        ,NULL AS n_students
+  FROM gabby.pm.teacher_goal_scaffold_static tgs
+  LEFT JOIN glt_goal_data glt
+    ON tgs.academic_year = glt.academic_year 
+   AND tgs.metric_name = glt.metric_name
+   AND tgs.metric_term = glt.reporting_term
+   AND tgs.primary_site_schoolid = glt.schoolid
+   AND tgs.grade_level = glt.grade_level
+  WHERE tgs.goal_type = 'Team'
 
-UNION ALL
+  UNION ALL
 
-/* classroom goals */
-SELECT sub.df_employee_number
-      ,sub.preferred_name
-      ,sub.primary_site
-      ,sub.primary_on_site_department
-      ,sub.grades_taught
-      ,sub.primary_job
-      ,sub.legal_entity_name
-      ,sub.is_active
-      ,sub.primary_site_schoolid
-      ,sub.manager_df_employee_number
-      ,sub.manager_name
-      ,sub.staff_username
-      ,sub.manager_username
-      ,sub.academic_year
-      ,sub.goal_type
-      ,sub.goal_department
-      ,sub.is_sped_goal
-      ,sub.metric_label
-      ,sub.metric_name
-      ,sub.tier_1
-      ,sub.tier_2
-      ,sub.tier_3
-      ,sub.tier_4
-      ,sub.prior_year_outcome
-      ,sub.pm_term
-      ,sub.data_type
-      ,sub.grade_level
-
-      ,sub.metric_term AS reporting_term
-      ,CASE
-        WHEN sub.metric_label IN ('Lit Cohort Growth from Last Year', 'Math Cohort Growth from Last Year') THEN AVG(sub.is_mastery) - sub.prior_year_outcome
-        ELSE AVG(sub.is_mastery) 
-       END AS metric_value      
-      ,COUNT(DISTINCT sub.student_number) AS n_students
-FROM
-    (
-     SELECT tgs.df_employee_number
-           ,tgs.preferred_name
-           ,tgs.primary_site
-           ,tgs.primary_on_site_department
-           ,tgs.grades_taught
-           ,tgs.primary_job
-           ,tgs.legal_entity_name
-           ,tgs.is_active
-           ,tgs.primary_site_schoolid
-           ,tgs.manager_df_employee_number
-           ,tgs.manager_name
-           ,tgs.staff_username
-           ,tgs.manager_username
-           ,tgs.academic_year
-           ,tgs.goal_type
-           ,tgs.goal_department
-           ,tgs.is_sped_goal
-           ,tgs.metric_label
-           ,tgs.metric_name
-           ,tgs.tier_1
-           ,tgs.tier_2
-           ,tgs.tier_3
-           ,tgs.tier_4
-           ,tgs.prior_year_outcome
-           ,tgs.pm_term
-           ,tgs.data_type
-           ,tgs.metric_term
-           ,tgs.student_number
-           ,tgs.student_grade_level AS grade_level
-           
-           ,CASE
-             WHEN tgs.is_sped_goal = 0 THEN am.is_mastery
-             WHEN tgs.is_sped_goal = 1
-              AND am.performance_band_number >= 3 THEN 1.0
-             WHEN tgs.is_sped_goal = 1
-              AND am.performance_band_number < 3 THEN 0.0
-            END AS is_mastery
-     FROM gabby.pm.teacher_goal_scaffold_static tgs
-     LEFT JOIN assessment_detail am
-       ON tgs.academic_year = am.academic_year
-      AND tgs.metric_name = am.metric_name
-      AND tgs.metric_term = am.module_number
-      AND tgs.student_number = am.local_student_id
-      AND am.date_taken BETWEEN tgs.dateenrolled AND tgs.dateleft
-     WHERE tgs.goal_type = 'Class'
-    ) sub
-GROUP BY sub.df_employee_number
+  /* classroom goals */
+  SELECT sub.df_employee_number
         ,sub.preferred_name
         ,sub.primary_site
         ,sub.primary_on_site_department
@@ -360,7 +279,136 @@ GROUP BY sub.df_employee_number
         ,sub.tier_3
         ,sub.tier_4
         ,sub.prior_year_outcome
-        ,sub.metric_term
-        ,sub.grade_level
         ,sub.pm_term
         ,sub.data_type
+        ,sub.grade_level
+
+        ,sub.metric_term AS reporting_term
+        ,CASE
+          WHEN sub.metric_label IN ('Lit Cohort Growth from Last Year', 'Math Cohort Growth from Last Year') THEN AVG(sub.is_mastery) - sub.prior_year_outcome
+          ELSE AVG(sub.is_mastery) 
+         END AS metric_value      
+        ,COUNT(DISTINCT sub.student_number) AS n_students
+  FROM
+      (
+       SELECT tgs.df_employee_number
+             ,tgs.preferred_name
+             ,tgs.primary_site
+             ,tgs.primary_on_site_department
+             ,tgs.grades_taught
+             ,tgs.primary_job
+             ,tgs.legal_entity_name
+             ,tgs.is_active
+             ,tgs.primary_site_schoolid
+             ,tgs.manager_df_employee_number
+             ,tgs.manager_name
+             ,tgs.staff_username
+             ,tgs.manager_username
+             ,tgs.academic_year
+             ,tgs.goal_type
+             ,tgs.goal_department
+             ,tgs.is_sped_goal
+             ,tgs.metric_label
+             ,tgs.metric_name
+             ,tgs.tier_1
+             ,tgs.tier_2
+             ,tgs.tier_3
+             ,tgs.tier_4
+             ,tgs.prior_year_outcome
+             ,tgs.pm_term
+             ,tgs.data_type
+             ,tgs.metric_term
+             ,tgs.student_number
+             ,tgs.student_grade_level AS grade_level
+           
+             ,CASE
+               WHEN tgs.is_sped_goal = 0 THEN am.is_mastery
+               WHEN tgs.is_sped_goal = 1
+                AND am.performance_band_number >= 3 THEN 1.0
+               WHEN tgs.is_sped_goal = 1
+                AND am.performance_band_number < 3 THEN 0.0
+              END AS is_mastery
+       FROM gabby.pm.teacher_goal_scaffold_static tgs
+       LEFT JOIN assessment_detail am
+         ON tgs.academic_year = am.academic_year
+        AND tgs.metric_name = am.metric_name
+        AND tgs.metric_term = am.module_number
+        AND tgs.student_number = am.local_student_id
+        AND am.date_taken BETWEEN tgs.dateenrolled AND tgs.dateleft
+       WHERE tgs.goal_type = 'Class'
+      ) sub
+  GROUP BY sub.df_employee_number
+          ,sub.preferred_name
+          ,sub.primary_site
+          ,sub.primary_on_site_department
+          ,sub.grades_taught
+          ,sub.primary_job
+          ,sub.legal_entity_name
+          ,sub.is_active
+          ,sub.primary_site_schoolid
+          ,sub.manager_df_employee_number
+          ,sub.manager_name
+          ,sub.staff_username
+          ,sub.manager_username
+          ,sub.academic_year
+          ,sub.goal_type
+          ,sub.goal_department
+          ,sub.is_sped_goal
+          ,sub.metric_label
+          ,sub.metric_name
+          ,sub.tier_1
+          ,sub.tier_2
+          ,sub.tier_3
+          ,sub.tier_4
+          ,sub.prior_year_outcome
+          ,sub.metric_term
+          ,sub.grade_level
+          ,sub.pm_term
+          ,sub.data_type
+ )
+
+SELECT d.df_employee_number
+      ,d.academic_year
+      ,d.pm_term
+      ,d.grade_level
+      ,d.is_sped_goal
+      ,d.metric_name
+      ,d.metric_label
+      ,d.preferred_name
+      ,d.primary_site
+      ,d.primary_on_site_department
+      ,d.grades_taught
+      ,d.primary_job
+      ,d.legal_entity_name
+      ,d.is_active
+      ,d.primary_site_schoolid
+      ,d.manager_df_employee_number
+      ,d.manager_name
+      ,d.staff_username
+      ,d.manager_username
+      ,d.goal_type
+      ,d.goal_department
+      ,d.tier_1
+      ,d.tier_2
+      ,d.tier_3
+      ,d.tier_4
+      ,d.prior_year_outcome
+      ,d.data_type
+      ,d.reporting_term
+      ,d.metric_value
+      ,d.n_students
+
+      ,lb.metric_value AS metric_value_stored
+      ,lb.score AS score_stored
+      ,lb.grade_level_weight AS grade_level_weight_stored
+      ,lb.bucket_weight AS bucket_weight_stored
+      ,lb.bucket_score AS bucket_score_stored
+FROM all_data d
+LEFT JOIN gabby.pm.teacher_goals_lockbox_wide lb
+  ON d.df_employee_number = lb.df_employee_number
+ AND d.academic_year = lb.academic_year
+ AND d.pm_term = lb.pm_term
+ AND ISNULL(d.grade_level, -1) = lb.grade_level
+ AND d.is_sped_goal = lb.is_sped_goal
+ AND d.metric_name = lb.metric_name
+ AND d.metric_label = lb.metric_label
