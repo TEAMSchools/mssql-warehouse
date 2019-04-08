@@ -51,37 +51,37 @@ WITH repos_union AS (
              ,r.field_character_comment_2
        FROM gabby.illuminate_dna_repositories.repository_207 r       
 
-       --UNION ALL
+       UNION ALL
 
-       --SELECT 208 AS repository_id
-       --      ,'Q3' AS field_term
-       --      ,r.repository_row_id           
-       --      ,r.student_id
-       --      ,r.field_math_comment_1
-       --      ,r.field_math_comment_2
-       --      ,r.field_writing_comment_1
-       --      ,r.field_writing_comment_2
-       --      ,r.field_reading_comment_1
-       --      ,r.field_reading_comment_2
-       --      ,r.field_character_comment_1
-       --      ,r.field_character_comment_2
-       --FROM gabby.illuminate_dna_repositories.repository_208 r       
+       SELECT 208 AS repository_id
+             ,'Q3' AS field_term
+             ,r.repository_row_id           
+             ,r.student_id
+             ,r.field_math_comment_1
+             ,r.field_math_comment_2
+             ,r.field_writing_comment_1
+             ,r.field_writing_comment_2
+             ,r.field_reading_comment_1
+             ,r.field_reading_comment_2
+             ,r.field_character_comment_1
+             ,r.field_character_comment_2
+       FROM gabby.illuminate_dna_repositories.repository_208 r       
 
-       --UNION ALL
+       UNION ALL
 
-       --SELECT 209 AS repository_id     
-       --      ,'Q4' AS field_term
-       --      ,r.repository_row_id
-       --      ,r.student_id
-       --      ,r.field_math_comment_1
-       --      ,r.field_math_comment_2
-       --      ,r.field_writing_comment_1
-       --      ,r.field_writing_comment_2
-       --      ,r.field_reading_comment_1
-       --      ,r.field_reading_comment_2
-       --      ,r.field_character_comment_1
-       --      ,r.field_character_comment_2
-       --FROM gabby.illuminate_dna_repositories.repository_209 r       
+       SELECT 209 AS repository_id     
+             ,'Q4' AS field_term
+             ,r.repository_row_id
+             ,r.student_id
+             ,r.field_math_comment_1
+             ,r.field_math_comment_2
+             ,r.field_writing_comment_1
+             ,r.field_writing_comment_2
+             ,r.field_reading_comment_1
+             ,r.field_reading_comment_2
+             ,r.field_character_comment_1
+             ,r.field_character_comment_2
+       FROM gabby.illuminate_dna_repositories.repository_209 r       
       ) sub
   JOIN gabby.illuminate_public.students s
     ON sub.student_id = s.student_id
