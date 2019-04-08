@@ -4,7 +4,7 @@ GO
 CREATE OR ALTER VIEW illuminate_dna_assessments.assessments_identifiers AS
 
 WITH tnl_uids AS (
-  SELECT DISTINCT u.user_id
+  SELECT u.user_id
   FROM gabby.dayforce.employee_work_assignment sr
   JOIN gabby.illuminate_public.users u
     ON CONVERT(VARCHAR(25),sr.employee_reference_code) = u.state_id
