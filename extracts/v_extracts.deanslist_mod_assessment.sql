@@ -165,7 +165,7 @@ FROM
            ,CONCAT('SW', RIGHT(a.title, 1)) AS module_number
            
            ,ROW_NUMBER() OVER(
-             PARTITION BY a.academic_year, a.term_administered, a.tags
+             PARTITION BY a.academic_year_clean, a.term_administered, a.tags
                ORDER BY a.administered_at DESC) AS rn
      FROM gabby.illuminate_dna_assessments.assessments_identifiers a
      WHERE a.scope = 'Sight Words Quiz'
