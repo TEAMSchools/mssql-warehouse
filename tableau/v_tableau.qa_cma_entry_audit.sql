@@ -23,7 +23,7 @@ SELECT s.local_student_id AS student_number
       ,co.grade_level
       ,co.team
       ,co.enroll_status      
-FROM gabby.illuminate_dna_assessments.student_assessment_scaffold_static asr
+FROM gabby.illuminate_dna_assessments.student_assessment_scaffold asr
 JOIN gabby.illuminate_public.students s
   ON asr.student_id = s.student_id
 LEFT JOIN gabby.illuminate_dna_assessments.agg_student_responses o
