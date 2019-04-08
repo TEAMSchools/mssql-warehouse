@@ -81,7 +81,6 @@ FROM
       AND mem.calendardate = att.att_date
      LEFT JOIN gabby.reporting.reporting_terms dt 
        ON mem.schoolid = dt.schoolid
-      AND mem.yearid = dt.yearid
       AND mem.calendardate BETWEEN dt.start_date AND dt.end_date
       AND dt.identifier = 'RT'
       AND dt._fivetran_deleted = 0
