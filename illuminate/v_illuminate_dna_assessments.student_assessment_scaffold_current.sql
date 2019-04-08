@@ -8,7 +8,8 @@ WITH asmts AS (
         ,a.title
         ,a.administered_at
         ,a.performance_band_set_id
-        ,a.academic_year_clean AS academic_year
+        ,a.academic_year
+        ,a.academic_year_clean
         ,a.module_type
         ,a.module_number
         ,a.scope
@@ -24,7 +25,7 @@ SELECT a.assessment_id
       ,a.title
       ,a.administered_at        
       ,a.performance_band_set_id
-      ,a.academic_year
+      ,a.academic_year_clean AS academic_year
       ,a.module_type
       ,a.module_number
       ,a.scope           
@@ -58,7 +59,7 @@ SELECT a.assessment_id
       ,a.title
       ,a.administered_at        
       ,a.performance_band_set_id
-      ,a.academic_year                      
+      ,a.academic_year_clean AS academic_year
       ,a.module_type
       ,a.module_number
       ,a.scope           
@@ -88,7 +89,7 @@ SELECT DISTINCT
       ,a.title
       ,a.administered_at        
       ,a.performance_band_set_id
-      ,a.academic_year                      
+      ,a.academic_year_clean AS academic_year
       ,a.module_type
       ,a.module_number
       ,a.scope           
@@ -121,7 +122,7 @@ SELECT DISTINCT
       ,a.title
       ,a.administered_at        
       ,a.performance_band_set_id
-      ,a.academic_year
+      ,a.academic_year_clean AS academic_year
       ,a.module_type
       ,a.module_number     
       ,a.scope      
