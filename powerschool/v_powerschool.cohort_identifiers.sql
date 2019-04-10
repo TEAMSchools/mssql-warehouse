@@ -125,14 +125,16 @@ SELECT co.studentid
       ,adv.advisor_phone COLLATE Latin1_General_BIN AS advisor_phone
       ,adv.advisor_email COLLATE Latin1_General_BIN AS advisor_email
       
-      ,ISNULL(CASE
-               WHEN DB_NAME() = 'kippmiami' THEN scf.spedlep
-               WHEN DB_NAME() IN ('kippnewark', 'kippcamden') THEN sped.spedlep
-              END,'No IEP') AS iep_status
-      ,CASE
-        WHEN DB_NAME() = 'kippmiami' THEN scf.spedlep
-        WHEN DB_NAME() IN ('kippnewark', 'kippcamden') THEN sped.special_education_code
-       END AS specialed_classification
+      ,CONVERT(VARCHAR(25),
+         ISNULL(CASE
+                 WHEN DB_NAME() = 'kippmiami' THEN scf.spedlep
+                 WHEN DB_NAME() IN ('kippnewark', 'kippcamden') THEN sped.spedlep
+                END,'No IEP')) AS iep_status
+      ,CONVERT(VARCHAR(25),
+         CASE
+          WHEN DB_NAME() = 'kippmiami' THEN scf.spedlep
+          WHEN DB_NAME() IN ('kippnewark', 'kippcamden') THEN sped.special_education_code
+         END) AS specialed_classification
       
       ,CASE
         WHEN DB_NAME() = 'kippmiami' AND scf.lep_status = 'Y' THEN 1
