@@ -20,7 +20,9 @@ WITH ada AS (
   SELECT p.db_name
         ,p.academic_year
         ,p.studentid
-      
+		,p.enter_date
+		,p.exit_date
+
         ,p.[NCCS]
         ,p.[Americorps]
         ,p.[Out of District]
@@ -34,6 +36,8 @@ WITH ada AS (
              ,sp.academic_year      
              ,sp.studentid
              ,sp.specprog_name
+			 ,sp.enter_date
+			 ,sp.exit_date
              ,1 AS n
        FROM gabby.powerschool.spenrollments_gen sp
       ) sub
@@ -63,7 +67,7 @@ WITH ada AS (
         ,CASE WHEN sp.[Out of District] IS NOT NULL THEN 'Out-of-District Placement' ELSE NULL END AS is_ood
         ,CASE WHEN sp.[NCCS] IS NOT NULL THEN 'NCCS' ELSE NULL END AS is_nccs
         ,CASE WHEN sp.[Pathways MS] IS NOT NULL OR sp.[Pathways ES] IS NOT NULL THEN 'Pathways' ELSE NULL END AS is_pathways
-        ,CASE WHEN sp.[Home Instruction] IS NOT NULL THEN 'Home Instruction' ELSE NULL END AS is_home_instruction
+        ,CASE WHEN sp.[Home Instruction] IS NOT NULL AND sp.exit_date > GETDATE() THEN 'Home Instruction' ELSE NULL END AS is_home_instruction
         
         ,CASE WHEN ada.ada < 0.9 THEN 'Chronic Absence' ELSE NULL END AS is_chronic_absentee
   FROM gabby.powerschool.cohort_identifiers_static co
