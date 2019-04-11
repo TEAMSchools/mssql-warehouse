@@ -8,7 +8,7 @@ WITH ada AS (
         ,psa.db_name
         ,psa.yearid + 1990 AS academic_year
         ,ROUND(AVG(CAST(psa.attendancevalue AS FLOAT)), 2) AS ada
-  FROM gabby.powerschool.ps_adaadm_daily_ctod psa   
+  FROM gabby.powerschool.ps_adaadm_daily_ctod_current_static psa
   WHERE psa.membershipvalue = 1
     AND psa.calendardate <= CAST(SYSDATETIME() AS DATE)
   GROUP BY psa.studentid
@@ -20,7 +20,9 @@ WITH ada AS (
   SELECT p.db_name
         ,p.academic_year
         ,p.studentid
-      
+        ,p.enter_date
+        ,p.exit_date
+
         ,p.[NCCS]
         ,p.[Americorps]
         ,p.[Out of District]
@@ -34,8 +36,11 @@ WITH ada AS (
              ,sp.academic_year      
              ,sp.studentid
              ,sp.specprog_name
+             ,sp.enter_date
+             ,sp.exit_date
              ,1 AS n
        FROM gabby.powerschool.spenrollments_gen sp
+       WHERE sp.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
       ) sub
   PIVOT(
     MAX(n)
@@ -63,7 +68,7 @@ WITH ada AS (
         ,CASE WHEN sp.[Out of District] IS NOT NULL THEN 'Out-of-District Placement' ELSE NULL END AS is_ood
         ,CASE WHEN sp.[NCCS] IS NOT NULL THEN 'NCCS' ELSE NULL END AS is_nccs
         ,CASE WHEN sp.[Pathways MS] IS NOT NULL OR sp.[Pathways ES] IS NOT NULL THEN 'Pathways' ELSE NULL END AS is_pathways
-        ,CASE WHEN sp.[Home Instruction] IS NOT NULL THEN 'Home Instruction' ELSE NULL END AS is_home_instruction
+        ,CASE WHEN sp.[Home Instruction] IS NOT NULL AND sp.exit_date > CONVERT(DATE,GETDATE()) THEN 'Home Instruction' ELSE NULL END AS is_home_instruction
         
         ,CASE WHEN ada.ada < 0.9 THEN 'Chronic Absence' ELSE NULL END AS is_chronic_absentee
   FROM gabby.powerschool.cohort_identifiers_static co
@@ -81,6 +86,7 @@ WITH ada AS (
    AND co.academic_year = ada.academic_year
    AND co.db_name = ada.db_name
   WHERE co.rn_year = 1
+    AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
  )
 
 SELECT student_number
@@ -101,7 +107,6 @@ FROM (
             ,CAST(is_home_instruction AS VARCHAR(250)) AS is_home_instruction
             ,CAST(is_chronic_absentee AS VARCHAR(250)) AS is_chronic_absentee
       FROM designation
-      WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
      ) sub
 UNPIVOT (
   value
