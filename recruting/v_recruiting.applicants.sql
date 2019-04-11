@@ -178,14 +178,14 @@ SELECT c.id AS id
       ,j.new_or_replacement
       ,j.region
       ,j.desired_start_date
-      ,COALESCE(j.created_date,c.created_date) as created_date
+      ,COALESCE(j.created_date, c.created_date) as created_date
       ,j.date_filled
       ,j.position_count
       ,COALESCE(CASE 
         WHEN j.position_name_splitter IS NULL THEN NULL 
         WHEN j.n = 4 THEN PARSENAME(j.position_name_splitter, 4) 
         ELSE 'Invalid position_name Format' 
-       END,c.cultivation_owner_c) AS recruiter
+       END, c.cultivation_owner_c) AS recruiter
       ,CASE 
         WHEN j.position_name_splitter IS NULL THEN NULL 
         WHEN j.n = 4 THEN PARSENAME(j.position_name_splitter, 3) 
@@ -203,7 +203,7 @@ SELECT c.id AS id
        END AS recruiring_year
         
       ,p.name AS job_posting
-      ,COALESCE(p.city_c,c.cultivation_owner_c) AS city
+      ,COALESCE(p.city_c, c.cultivation_owner_c) AS city
 
       ,'culitvation' AS candidate_type
 
