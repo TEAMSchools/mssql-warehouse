@@ -25,7 +25,6 @@ WITH position_parse AS (
           ELSE LEN(RIGHT(pn.position_name_c, CHARINDEX('_', REVERSE(pn.position_name_c)) - 1))
          END AS position_count
   FROM gabby.recruiting.job_position_c pn
-  --WHERE pn.city_c IN ('Newark', 'Camden', 'Newark & Camden', 'Miami')
  )
 
 SELECT pa.id
