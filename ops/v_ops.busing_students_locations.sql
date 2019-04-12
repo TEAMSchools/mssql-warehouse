@@ -3,7 +3,7 @@ GO
 
 CREATE OR ALTER VIEW ops.busing_students_locations AS
 
-SELECT	s.nen AS student_number
+SELECT s.nen AS student_number
       ,NULL AS schoolid
       ,s.grade_level
       ,s.first AS first_name
@@ -15,6 +15,7 @@ SELECT	s.nen AS student_number
       ,CASE
         WHEN s.grade_level <= 4 THEN 'ES'
         WHEN s.grade_level <= 8 THEN 'MS'
+        WHEN s.grade_level <= 12 THEN 'HS'
        END AS school_level
       ,s.geocode
 
@@ -26,4 +27,5 @@ JOIN gabby.ops.busing_students_new s
   ON l.school_level = CASE
                        WHEN s.grade_level <= 4 THEN 'ES'
                        WHEN s.grade_level <= 8 THEN 'MS'
+                       WHEN s.grade_level <= 12 THEN 'HS'
                       END
