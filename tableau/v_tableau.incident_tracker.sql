@@ -65,6 +65,7 @@ SELECT co.student_number
       ,ISNULL(dli.category, 'Referral') AS dl_behavior
       ,NULL AS dl_numdays
       ,'Referral' AS dl_category
+      ,NULL AS dl_point_value
       
       ,CONVERT(VARCHAR(5),d.alt_name) AS term
 
@@ -122,6 +123,7 @@ SELECT co.student_number
       ,dlip.penaltyname AS dl_behavior
       ,dlip.numdays AS dl_numdays
       ,'Consequence' AS dl_category
+      ,NULL AS dl_point_value
 
       ,CONVERT(VARCHAR(5),d.alt_name) AS term
 
@@ -179,6 +181,7 @@ SELECT co.student_number
       ,CONVERT(VARCHAR(250),dlb.behavior) AS dl_behavior
       ,NULL AS dl_numdays
       ,CONVERT(VARCHAR(125),dlb.behavior_category) AS dl_category
+      ,dlb.point_value AS dl_point_value
       
       ,CONVERT(VARCHAR(5),d.alt_name) AS term
 
