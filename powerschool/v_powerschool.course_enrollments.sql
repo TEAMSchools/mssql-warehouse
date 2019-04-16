@@ -32,11 +32,11 @@ SELECT sub.studentid
       ,sub.sections_dcid
 
       ,ROW_NUMBER() OVER(
-         PARTITION BY sub.credittype, sub.studentid, sub.abs_termid, sub.section_enroll_status
-           ORDER BY sub.termid DESC, sub.course_number DESC, sub.dateenrolled DESC, sub.dateleft DESC) AS rn_subject    
+         PARTITION BY sub.studentid, sub.credittype, sub.section_enroll_status
+           ORDER BY sub.termid DESC, sub.course_number DESC, sub.dateenrolled DESC, sub.dateleft DESC) AS rn_subject
       ,ROW_NUMBER() OVER(
          PARTITION BY sub.studentid, sub.course_number, sub.academic_year
-           ORDER BY sub.termid DESC, sub.dateenrolled DESC, sub.dateleft DESC) AS rn_course_yr      
+           ORDER BY sub.termid DESC, sub.dateenrolled DESC, sub.dateleft DESC) AS rn_course_yr
       ,ROW_NUMBER() OVER(
          PARTITION BY sub.student_number, sub.academic_year, sub.illuminate_subject, sub.course_enroll_status, sub.section_enroll_status
            ORDER BY sub.termid DESC, sub.dateenrolled DESC, sub.dateleft DESC) AS rn_illuminate_subject
