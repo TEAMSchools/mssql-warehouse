@@ -71,7 +71,7 @@ LEFT JOIN gabby.powerschool.course_enrollments_static hr
  AND hr.course_number = 'HR'    
  AND hr.course_enroll_status = 0 
  AND hr.section_enroll_status = 0 
- AND hr.rn_subject = 1
+ AND hr.rn_course_yr = 1
 WHERE co.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
   AND co.reporting_schoolid NOT IN (5173, 999999) /* exclude OoD Placements */
   AND co.rn_year = 1

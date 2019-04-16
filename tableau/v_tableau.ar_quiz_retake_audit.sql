@@ -52,7 +52,7 @@ LEFT JOIN gabby.powerschool.course_enrollments_static hr
  AND co.db_name = hr.db_name
  AND hr.course_number = 'HR'
  AND hr.section_enroll_status = 0      
- AND hr.rn_subject = 1
+ AND hr.rn_course_yr = 1
 WHERE co.reporting_schoolid NOT IN (999999, 5173)
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.enroll_status = 0
