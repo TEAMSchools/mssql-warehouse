@@ -48,7 +48,7 @@ FROM
 
            ,SUM(points) AS points
            ,ROUND((SUM(points) / SUM(points_possible)) * 100, 1) AS percent_correct
-     FROM illuminate_dna_assessments.assessment_responses_long
+     FROM gabby.illuminate_dna_assessments.assessment_responses_long
      WHERE is_normed_scope = 1
        AND academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
      GROUP BY student_id
