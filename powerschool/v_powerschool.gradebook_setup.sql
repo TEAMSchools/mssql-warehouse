@@ -23,23 +23,23 @@ WITH default_gfs AS (
          OR (gfs.name IN ('KNJ High Schools') AND sch.high_grade = 12))
  )
     
-SELECT sectionsdcid
-      ,sectionsdcid AS psm_sectionid                
-      ,ISNULL(gradeformulasetid, 0) AS finalgradesetupid
-      ,gct_type AS finalgradesetuptype        
-      ,gradecalculationtypeid AS fg_reportingtermid
-      ,storecode AS reportingterm_name
+SELECT CONVERT(INT,sectionsdcid) AS sectionsdcid
+      ,CONVERT(INT,sectionsdcid) AS psm_sectionid                
+      ,CONVERT(INT,ISNULL(gradeformulasetid, 0)) AS finalgradesetupid
+      ,CONVERT(VARCHAR(25),gct_type) AS finalgradesetuptype        
+      ,CONVERT(INT,gradecalculationtypeid) AS fg_reportingtermid
+      ,CONVERT(VARCHAR(5),storecode) AS reportingterm_name
       ,date_1 AS startdate
       ,date_2 AS enddate
-      ,ISNULL(gradecalcformulaweightid, gradecalculationtypeid)AS gradingformulaid
-      ,ISNULL(gcfw_type, gct_type) AS gradingformulaweightingtype
+      ,CONVERT(INT,ISNULL(gradecalcformulaweightid, gradecalculationtypeid)) AS gradingformulaid
+      ,CONVERT(VARCHAR(25),ISNULL(gcfw_type, gct_type)) AS gradingformulaweightingtype
       ,weight AS weighting
                 
-      ,COALESCE(districtteachercategoryid, teachercategoryid, gradecalculationtypeid) AS assignmentcategoryid
-      ,COALESCE(dtc_name, tc_name, gct_type) AS category_name
-      ,COALESCE(dtc_name, tc_name, gct_type) AS category_abbreviation
-      ,COALESCE(dtc_defaultscoretype, tc_defaultscoretype) AS defaultscoretype
-      ,COALESCE(dtc_isinfinalgrades, tc_isinfinalgrades, 1) AS includeinfinalgrades
+      ,CONVERT(INT,COALESCE(districtteachercategoryid, teachercategoryid, gradecalculationtypeid)) AS assignmentcategoryid
+      ,CONVERT(VARCHAR(125),COALESCE(dtc_name, tc_name, gct_type)) AS category_name
+      ,CONVERT(VARCHAR(125),COALESCE(dtc_name, tc_name, gct_type)) AS category_abbreviation
+      ,CONVERT(INT,COALESCE(dtc_defaultscoretype, tc_defaultscoretype)) AS defaultscoretype
+      ,CONVERT(INT,COALESCE(dtc_isinfinalgrades, tc_isinfinalgrades, 1)) AS includeinfinalgrades
 FROM
     (
      SELECT sec.dcid AS sectionsdcid        
