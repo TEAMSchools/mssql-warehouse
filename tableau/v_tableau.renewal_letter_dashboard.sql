@@ -7,9 +7,13 @@ WITH wf AS (
   SELECT affected_employee_number
         ,renewal_status_updated
         ,renewal_status
-        ,ROW_NUMBER() OVER(
-           PARTITION BY affected_employee_number
-             ORDER BY renewal_status_updated DESC) AS rn_recent_workflow
+        ,CASE WHEN YEAR(renewal_status_updated) < YEAR(GETDATE()) 
+            THEN 0
+            ELSE ROW_NUMBER() OVER(
+                 PARTITION BY affected_employee_number
+                   ORDER BY renewal_status_updated DESC) 
+            END AS rn_recent_workflow
+        ,YEAR(renewal_status_updated) AS renewal_year
   FROM
       (
        SELECT RIGHT(rs.affected_employee, 6) AS affected_employee_number             
@@ -78,6 +82,8 @@ SELECT r.df_employee_number
       
       ,wf.renewal_status
       ,wf.renewal_status_updated
+      ,wf.renewal_year
+      ,wf.rn_recent_workflow
       
       ,was.future_legal_entity
       ,was.future_location
@@ -92,7 +98,6 @@ SELECT r.df_employee_number
 FROM dayforce.staff_roster r 
 LEFT JOIN wf
   ON r.df_employee_number = wf.affected_employee_number
- AND wf.rn_recent_workflow = 1
 LEFT JOIN was
   ON r.df_employee_number = was.df_employee_number
  AND was.rn_recent_work_assignment = 1
