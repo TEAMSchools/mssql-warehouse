@@ -14,7 +14,7 @@ SELECT enr.sectionid
       ,enr.db_name
       
       ,gb.reportingterm_name AS finalgradename
-      ,LEFT(gb.reportingterm_name,1) AS finalgrade_category
+      ,LEFT(gb.reportingterm_name, 1) AS finalgrade_category
       ,gb.finalgradesetuptype
       ,gb.gradingformulaweightingtype
       ,gb.category_name AS grade_category
@@ -62,7 +62,7 @@ SELECT enr.sectionid
       ,enr.db_name
       
       ,gb.reportingterm_name AS finalgradename
-      ,LEFT(gb.reportingterm_name,1) AS finalgrade_category
+      ,LEFT(gb.reportingterm_name, 1) AS finalgrade_category
       ,gb.finalgradesetuptype
       ,gb.gradingformulaweightingtype
       ,gb.category_name AS grade_category
