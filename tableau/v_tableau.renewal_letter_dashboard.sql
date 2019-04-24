@@ -7,24 +7,21 @@ WITH wf AS (
   SELECT affected_employee_number
         ,renewal_status_updated
         ,renewal_status
-        ,CASE WHEN YEAR(renewal_status_updated) < YEAR(GETDATE()) 
-            THEN 0
-            ELSE ROW_NUMBER() OVER(
-                 PARTITION BY affected_employee_number
-                   ORDER BY renewal_status_updated DESC) 
-            END AS rn_recent_workflow
         ,YEAR(renewal_status_updated) AS renewal_year
+        ,ROW_NUMBER() OVER(
+           PARTITION BY affected_employee_number, YEAR(renewal_status_updated)
+             ORDER BY renewal_status_updated DESC) AS rn_recent_workflow
   FROM
       (
-       SELECT RIGHT(rs.affected_employee, 6) AS affected_employee_number             
+       SELECT RIGHT(rs.affected_employee, 6) AS affected_employee_number
              ,CONVERT(DATETIME2,rs.workflow_data_last_modified_timestamp) AS renewal_status_updated
              ,CASE 
                WHEN rs.workflow_status = 'completed' AND rs.workflow_data_saved = 'true' THEN 'Offer Accepted'
                WHEN rs.workflow_status = 'completed' AND rs.workflow_data_saved = 'false' THEN 'SL, HR, or Employee Rejected'
                WHEN rs.workflow_status = 'open' AND rs.workflow_data_saved = 'false' THEN 'Pending Acceptance'
                WHEN rs.workflow_status = 'withdrawn' AND rs.workflow_data_saved = 'false' THEN 'DSO Withdrew Letter'
-              END AS renewal_status               
-       FROM gabby.dayforce.renewal_status rs  
+              END AS renewal_status
+       FROM gabby.dayforce.renewal_status rs
       ) sub
  )
 
