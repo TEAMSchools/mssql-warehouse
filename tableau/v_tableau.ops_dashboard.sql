@@ -20,9 +20,13 @@ WITH att_mem AS (
   SELECT sub.academic_year
         ,sub.schoolid
         ,sub.is_pathways
-        ,sub.grade_level        
+        ,sub.grade_level
         ,SUM(sub.target_enrollment) AS target_enrollment
         ,SUM(sub.target_enrollment_finance) AS target_enrollment_finance
+        ,MAX(at_risk_and_lep_ratio) AS at_risk_and_lep_ratio
+        ,MAX(at_risk_only_ratio) AS at_risk_only_ratio
+        ,MAX(lep_only_ratio) AS lep_only_ratio
+        ,MAX(sped_ratio) AS sped_ratio
   FROM
       (
        SELECT academic_year
@@ -31,6 +35,10 @@ WITH att_mem AS (
              ,grade_level             
              ,target_enrollment
              ,financial_model_enrollment AS target_enrollment_finance
+             ,at_risk_and_lep_ratio
+             ,at_risk_only_ratio
+             ,lep_only_ratio
+             ,sped_ratio
        FROM gabby.finance.enrollment_targets
        WHERE _fivetran_deleted = 0
 
@@ -39,9 +47,13 @@ WITH att_mem AS (
        SELECT academic_year
              ,reporting_schoolid
              ,is_pathways
-             ,grade_level             
+             ,grade_level
              ,NULL AS target_enrollment
              ,1 AS target_enrollment_finance
+             ,NULL AS at_risk_and_lep_ratio
+             ,NULL AS at_risk_only_ratio
+             ,NULL AS lep_only_ratio
+             ,NULL AS sped_ratio
        FROM gabby.powerschool.cohort_identifiers_static
        WHERE (is_pathways = 1 OR school_name = 'Out of District')
          AND is_enrolled_recent = 1
@@ -112,6 +124,10 @@ SELECT co.student_number
 
       ,t.target_enrollment
       ,t.target_enrollment_finance
+      ,t.at_risk_and_lep_ratio
+      ,t.at_risk_only_ratio
+      ,t.lep_only_ratio
+      ,t.sped_ratio
 FROM gabby.powerschool.cohort_identifiers_static co
 LEFT JOIN gabby.powerschool.calendar_rollup_static cal
   ON co.schoolid = cal.schoolid
