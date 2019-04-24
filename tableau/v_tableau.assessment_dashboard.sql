@@ -65,16 +65,16 @@ LEFT JOIN gabby.powerschool.course_enrollments_static enr
  AND co.academic_year = enr.academic_year
  AND co.db_name = enr.db_name
  AND asr.subject_area = enr.illuminate_subject COLLATE Latin1_General_BIN
- AND enr.course_enroll_status = 0 
- AND enr.section_enroll_status = 0 
+ AND enr.course_enroll_status = 0
+ AND enr.section_enroll_status = 0
  AND enr.rn_illuminate_subject = 1
 LEFT JOIN gabby.powerschool.course_enrollments_static hr
   ON co.student_number = hr.student_number
  AND co.academic_year = hr.academic_year
  AND co.db_name = hr.db_name
- AND hr.course_number = 'HR'    
- AND hr.course_enroll_status = 0 
- AND hr.section_enroll_status = 0 
+ AND hr.course_number = 'HR'
+ AND hr.course_enroll_status = 0
+ AND hr.section_enroll_status = 0
  AND hr.rn_course_yr = 1
 WHERE co.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
   AND co.reporting_schoolid NOT IN (5173, 999999) /* exclude OoD Placements */
