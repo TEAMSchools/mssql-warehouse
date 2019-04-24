@@ -31,11 +31,11 @@ WITH all_grades AS (
 
   SELECT s.student_number
         ,sg.schoolid
-        ,(LEFT(sg.termid, 2) + 1990) AS academic_year
-        ,'Y1' AS term      
-        ,sg.course_number
-        ,sg.course_name      
-        ,sg.earnedcrhrs AS credit_hours      
+        ,sg.academic_year
+        ,'Y1' AS term
+        ,sg.course_number_clean AS course_number
+        ,sg.course_name
+        ,sg.earnedcrhrs AS credit_hours
         ,sg.[percent] AS y1_grade_percent
         ,CASE WHEN sg.grade = 'false' THEN 'F' ELSE sg.grade END AS y1_grade_letter
         ,sg.schoolname
@@ -46,7 +46,7 @@ WITH all_grades AS (
    AND sg.db_name = s.db_name
   WHERE ISNULL(sg.excludefromgpa, 0) = 0
     AND ISNULL(sg.excludefromtranscripts, 0) = 0
-    AND sg.storecode = 'Y1'
+    AND sg.storecode_clean = 'Y1'
  )
 
 SELECT student_number
