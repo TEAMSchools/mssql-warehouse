@@ -23,6 +23,7 @@ WITH att_mem AS (
         ,sub.grade_level
         ,SUM(sub.target_enrollment) AS target_enrollment
         ,SUM(sub.target_enrollment_finance) AS target_enrollment_finance
+        ,MAX(grade_band_ratio) AS grade_band_ratio
         ,MAX(at_risk_and_lep_ratio) AS at_risk_and_lep_ratio
         ,MAX(at_risk_only_ratio) AS at_risk_only_ratio
         ,MAX(lep_only_ratio) AS lep_only_ratio
@@ -35,6 +36,7 @@ WITH att_mem AS (
              ,grade_level             
              ,target_enrollment
              ,financial_model_enrollment AS target_enrollment_finance
+             ,grade_band_ratio
              ,at_risk_and_lep_ratio
              ,at_risk_only_ratio
              ,lep_only_ratio
@@ -48,8 +50,9 @@ WITH att_mem AS (
              ,reporting_schoolid
              ,is_pathways
              ,grade_level
-             ,NULL AS target_enrollment
+             ,0 AS target_enrollment
              ,1 AS target_enrollment_finance
+             ,NULL AS grade_band_ratio
              ,NULL AS at_risk_and_lep_ratio
              ,NULL AS at_risk_only_ratio
              ,NULL AS lep_only_ratio
@@ -124,6 +127,7 @@ SELECT co.student_number
 
       ,t.target_enrollment
       ,t.target_enrollment_finance
+      ,t.grade_band_ratio
       ,t.at_risk_and_lep_ratio
       ,t.at_risk_only_ratio
       ,t.lep_only_ratio
