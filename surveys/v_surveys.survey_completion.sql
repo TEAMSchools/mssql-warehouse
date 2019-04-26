@@ -11,8 +11,8 @@ WITH survey_feed AS (
         ,gabby.utilities.DATE_TO_SY(_created) AS academic_year
         ,CASE
           WHEN MONTH(_created) IN (8, 9, 10) THEN 'SO1'
-          WHEN MONTH(_created) IN (11, 12, 1, 2) THEN 'SO2'
-          WHEN MONTH(_created) IN (3, 4, 5, 6, 7) THEN 'SO3'
+          WHEN MONTH(_created) IN (11, 12, 1, 2, 3) THEN 'SO2'
+          WHEN MONTH(_created) IN (4, 5, 6, 7) THEN 'SO3'
          END AS reporting_term
         ,'Self & Others' AS survey_type
   FROM gabby.surveys.self_and_others_survey
