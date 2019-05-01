@@ -72,8 +72,8 @@ SELECT pa.id
         
       ,j.position_number
       ,j.position_name
-      ,j.job_type
-      ,j.sub_type
+      ,COALESCE(j.job_type,p.job_type_c) AS job_type
+      ,COALESCE(j.sub_type,p.job_sub_type_c) AS sub_type
       ,j.status
       ,j.new_or_replacement
       ,j.region
