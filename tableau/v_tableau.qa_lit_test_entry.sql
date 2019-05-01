@@ -40,5 +40,5 @@ LEFT JOIN gabby.lit.guided_reading_roster gr
  AND term.alt_name = gr.test_round
 WHERE co.rn_year = 1
   AND co.enroll_status = 0
-  AND co.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1
+  AND co.academic_year IN (gabby.utilities.GLOBAL_ACADEMIC_YEAR(), (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1))
   AND co.grade_level != 99  

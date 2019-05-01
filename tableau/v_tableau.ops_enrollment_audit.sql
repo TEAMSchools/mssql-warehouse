@@ -4,14 +4,13 @@ GO
 CREATE OR ALTER VIEW tableau.ops_enrollment_audit AS
 
 WITH caredox_enrollment AS (
-  SELECT student_id
+  SELECT student_id_clean AS student_id
         ,status_clean AS status
         ,ROW_NUMBER() OVER(
-           PARTITION BY student_id
-             ORDER BY CONVERT(DATETIME,last_updated_at) DESC) AS rn_last_updated
+           PARTITION BY student_id_clean
+             ORDER BY CONVERT(DATETIME2,last_updated_at) DESC) AS rn_last_updated
   FROM gabby.caredox.enrollment
-  WHERE ISNUMERIC(student_id) = 1
-    AND status_clean != 'new'
+  WHERE status_clean != 'new'
  )
 
 ,caredox_immunization AS (
@@ -19,21 +18,19 @@ WITH caredox_enrollment AS (
         ,status_clean AS status
         ,ROW_NUMBER() OVER(
            PARTITION BY student_id_clean
-             ORDER BY CONVERT(DATETIME,last_updated_at) DESC) AS rn_last_updated  
+             ORDER BY CONVERT(DATETIME2,last_updated_at) DESC) AS rn_last_updated  
   FROM gabby.caredox.immunization
-  WHERE ISNUMERIC(student_id_clean) = 1
-    AND status_clean IN ('Valid', 'N/A')
+  WHERE status_clean IN ('Valid', 'N/A')
  )
 
 ,caredox_screenings AS (
-  SELECT student_id
+  SELECT student_id_clean AS student_id
         ,status_clean AS status
         ,ROW_NUMBER() OVER(
-           PARTITION BY student_id
-             ORDER BY CONVERT(DATETIME,last_updated_at) DESC) AS rn_last_updated
+           PARTITION BY student_id_clean
+             ORDER BY CONVERT(DATETIME2,last_updated_at) DESC) AS rn_last_updated
   FROM gabby.caredox.screenings
-  WHERE ISNUMERIC(student_id) = 1
-    AND status_clean = 'compliant'
+  WHERE status_clean = 'compliant'
  )
 
 ,caredox_medications AS (
@@ -41,14 +38,13 @@ WITH caredox_enrollment AS (
         ,gabby.dbo.GROUP_CONCAT_D(medication, ' | ') AS medication
   FROM
       (
-       SELECT student_id
+       SELECT student_id_clean AS student_id
              ,CONCAT(inventory_id_and_date_created, ' - ', medication_name) AS medication
              ,ROW_NUMBER() OVER(
-                PARTITION BY student_id, medication_name
-                  ORDER BY CONVERT(DATETIME,last_updated_at) DESC) AS rn_last_updated
+                PARTITION BY student_id_clean, medication_name
+                  ORDER BY CONVERT(DATETIME2,last_updated_at) DESC) AS rn_last_updated
        FROM gabby.caredox.medication_inventory
-       WHERE ISNUMERIC(student_id) = 1
-         AND event = 'create'
+       WHERE event = 'create'
       ) sub
   WHERE rn_last_updated = 1
   GROUP BY student_id

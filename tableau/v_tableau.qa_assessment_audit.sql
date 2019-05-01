@@ -40,7 +40,7 @@ SELECT a.assessment_id
        END AS question_reporting_group
 
       ,sg.standard_codes AS question_standard_codes
-FROM gabby.illuminate_dna_assessments.assessments_identifiers a
+FROM gabby.illuminate_dna_assessments.assessments_identifiers_static a
 LEFT JOIN gabby.illuminate_dna_assessments.performance_band_sets pbs
   ON a.performance_band_set_id = pbs.performance_band_set_id
 LEFT JOIN gabby.illuminate_dna_assessments.assessment_grade_levels agl
