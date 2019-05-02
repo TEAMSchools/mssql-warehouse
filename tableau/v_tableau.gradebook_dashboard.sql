@@ -78,6 +78,7 @@ JOIN section_teacher st
  AND st.rn = 1
 WHERE co.rn_year = 1
   AND co.school_level IN ('MS','HS')
+  AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 
 UNION ALL
 
@@ -255,6 +256,7 @@ JOIN section_teacher st
  AND st.db_name = 'kippnewark'
 WHERE co.rn_year = 1
   AND co.schoolid = 73253
+  AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 
 UNION ALL
 
@@ -314,6 +316,7 @@ JOIN section_teacher st
  AND st.rn = 1
 WHERE co.rn_year = 1
   AND co.school_level IN ('MS','HS')
+  AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   
 UNION ALL
 
@@ -374,3 +377,4 @@ JOIN section_teacher st
  AND st.rn = 1
 WHERE co.rn_year = 1
   AND co.school_level IN ('MS','HS')
+  AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()

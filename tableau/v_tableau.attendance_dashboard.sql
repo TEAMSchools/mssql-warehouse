@@ -63,3 +63,4 @@ SELECT academic_year
       ,is_iss_running
       ,is_suspended_running
 FROM tableau.attendance_dashboard_archive
+WHERE academic_year = (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
