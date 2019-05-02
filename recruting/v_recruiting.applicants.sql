@@ -72,8 +72,8 @@ SELECT pa.id
         
       ,j.position_number
       ,j.position_name
-      ,COALESCE(j.job_type,p.job_type_c) AS job_type
-      ,COALESCE(j.sub_type,p.job_sub_type_c) AS sub_type
+      ,COALESCE(j.job_type, p.job_type_c) AS job_type
+      ,COALESCE(j.sub_type, p.job_sub_type_c) AS sub_type
       ,j.status
       ,j.new_or_replacement
       ,j.region
@@ -182,10 +182,11 @@ SELECT c.id AS id
       ,j.date_filled
       ,j.position_count
       ,COALESCE(CASE 
-        WHEN j.position_name_splitter IS NULL THEN NULL 
-        WHEN j.n = 4 THEN PARSENAME(j.position_name_splitter, 4) 
-        ELSE 'Invalid position_name Format' 
-       END, c.cultivation_owner_c) AS recruiter
+                 WHEN j.position_name_splitter IS NULL THEN NULL 
+                 WHEN j.n = 4 THEN PARSENAME(j.position_name_splitter, 4) 
+                 ELSE 'Invalid position_name Format' 
+                END
+               ,c.cultivation_owner_c) AS recruiter
       ,CASE 
         WHEN j.position_name_splitter IS NULL THEN NULL 
         WHEN j.n = 4 THEN PARSENAME(j.position_name_splitter, 3) 
