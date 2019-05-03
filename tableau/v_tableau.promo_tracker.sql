@@ -31,7 +31,7 @@ WITH roster AS (
    AND dt.identifier = 'RT'
    AND dt.alt_name != 'Summer School'
    AND dt._fivetran_deleted = 0
-  WHERE co.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
+  WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
     AND co.reporting_schoolid NOT IN (999999, 5173)
     AND co.rn_year = 1    
   
@@ -63,7 +63,7 @@ WITH roster AS (
    AND dt.schoolid = 0
    AND dt.identifier = 'SY'   
    AND dt._fivetran_deleted = 0
-  WHERE co.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
+  WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
     AND co.reporting_schoolid NOT IN (999999, 5173)
     AND co.rn_year = 1
  )
@@ -87,7 +87,7 @@ WITH roster AS (
         ,'TERM' AS subdomain
         ,'Term' AS finalgradename
   FROM gabby.powerschool.final_grades_static gr
-  WHERE gr.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
+  WHERE gr.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
     AND gr.excludefromgpa = 0
 
   UNION ALL
@@ -101,7 +101,7 @@ WITH roster AS (
         ,'TERM' AS subdomain
         ,'Y1' AS finalgradename
   FROM gabby.powerschool.final_grades_static gr
-  WHERE gr.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
+  WHERE gr.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
     AND gr.is_curterm = 1
     AND gr.excludefromgpa = 0
 
@@ -117,7 +117,7 @@ WITH roster AS (
         ,'CATEGORY' AS subdomain
         ,gr.grade_category AS finalgradename
   FROM gabby.powerschool.category_grades_static gr
-  WHERE gr.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)    
+  WHERE gr.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   GROUP BY gr.student_number
           ,gr.academic_year
           ,gr.grade_category
@@ -169,7 +169,7 @@ WITH roster AS (
                  / CASE WHEN att.mem_count_term = 0 THEN NULL ELSE att.mem_count_term END) 
                  * 100, 0) AS attptspct_term
        FROM gabby.powerschool.attendance_counts_static att
-       WHERE att.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
+       WHERE att.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
          AND att.mem_count_term > 0
          AND att.mem_count_term != att.abs_unexcused_count_term
 
@@ -202,7 +202,7 @@ WITH roster AS (
                  / CASE WHEN (att.MEM_count_y1 - att.abs_unexcused_count_y1) = 0 THEN NULL ELSE (att.mem_count_y1 - att.abs_unexcused_count_y1) END) 
                  * 100, 0) AS ontimepct_y1             
        FROM gabby.powerschool.attendance_counts_static att 
-       WHERE att.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
+       WHERE att.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
          AND att.mem_count_y1 > 0
          AND att.mem_count_y1 != att.abs_unexcused_count_y1
          AND att.is_curterm = 1
@@ -256,7 +256,7 @@ WITH roster AS (
   FROM gabby.illuminate_dna_assessments.agg_student_responses_all a  
   WHERE a.module_type IS NOT NULL
     AND a.response_type IN ('O','S')
-    AND a.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)    
+    AND a.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
  )
 
 ,gpa AS (
@@ -267,7 +267,7 @@ WITH roster AS (
         ,gpa_y1 AS gpa
         ,'GPA Y1 - TERM' AS subdomain
   FROM gabby.powerschool.gpa_detail
-  WHERE academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
+  WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 
   UNION ALL
 
@@ -278,7 +278,7 @@ WITH roster AS (
         ,gpa_y1 AS GPA
         ,'GPA Y1' AS subdomain
   FROM gabby.powerschool.gpa_detail
-  WHERE academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
+  WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
     AND is_curterm = 1
 
   UNION ALL
@@ -671,7 +671,7 @@ WITH roster AS (
              ,CONVERT(VARCHAR,earned_credits_cum) AS earned_credits_cum
              ,CONVERT(VARCHAR,credits_needed) AS credits_needed
        FROM gabby.reporting.promotional_status
-       WHERE academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
+       WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
          AND is_curterm = 1       
       ) sub
   UNPIVOT(
@@ -705,7 +705,7 @@ WITH roster AS (
         ,CASE WHEN reporting_term = 'ARY' THEN 'Y1' ELSE REPLACE(reporting_term, 'AR', 'Q') END AS term_name
         ,'AR' AS subdomain      
   FROM gabby.renaissance.ar_progress_to_goals
-  WHERE academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
+  WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
  )
 
 --/*
