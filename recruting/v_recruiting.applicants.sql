@@ -81,11 +81,11 @@ SELECT pa.id
       ,j.created_date
       ,j.date_filled
       ,j.position_count
-      ,CASE 
+      ,COALESCE(CASE 
         WHEN j.position_name_splitter IS NULL THEN NULL 
         WHEN j.n = 4 THEN PARSENAME(j.position_name_splitter, 4) 
         ELSE 'Invalid position_name Format' 
-       END AS recruiter
+       END,cr.name) AS recruiter
       ,CASE 
         WHEN j.position_name_splitter IS NULL THEN NULL 
         WHEN j.n = 4 THEN PARSENAME(j.position_name_splitter, 3) 
@@ -116,6 +116,8 @@ LEFT JOIN gabby.recruiting.job_application_c a
   ON pa.id = a.profile_application_c
 LEFT JOIN gabby.recruiting.job_posting_c p
   ON p.id= a.job_posting_c
+LEFT JOIN gabby.recruiting.contact cr
+  ON cr.id = p.primary_contact_c
 LEFT JOIN position_parse  j
   ON a.job_position_c = j.id
 
