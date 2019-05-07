@@ -91,11 +91,11 @@ WITH roster AS (
        LEFT JOIN powerschool.storedgrades sg 
          ON enr.studentid = sg.studentid 
         AND enr.abs_sectionid = sg.sectionid
-        AND pgf.finalgradename_clean = sg.storecode  
-       LEFT JOIN powerschool.gradescaleitem_lookup_static scale WITH(NOLOCK)
+        AND pgf.finalgradename_clean = sg.storecode_clean
+       LEFT JOIN powerschool.gradescaleitem_lookup_static scale
          ON enr.gradescaleid = scale.gradescaleid
         AND pgf.[percent] BETWEEN scale.min_cutoffpercentage AND scale.max_cutoffpercentage      
-       LEFT JOIN powerschool.gradescaleitem_lookup_static sg_scale WITH(NOLOCK)
+       LEFT JOIN powerschool.gradescaleitem_lookup_static sg_scale
          ON enr.gradescaleid = sg_scale.gradescaleid
         AND sg.[percent] BETWEEN sg_scale.min_cutoffpercentage AND sg_scale.max_cutoffpercentage
        WHERE enr.course_enroll_status = 0       
@@ -106,7 +106,7 @@ WITH roster AS (
        SELECT CONVERT(INT,sg.studentid) AS studentid
              ,sg.course_number_clean AS course_number
              ,sg.academic_year      
-             ,CONVERT(VARCHAR(5),sg.storecode) AS term_name
+             ,CONVERT(VARCHAR(5),sg.storecode_clean) AS term_name
              ,CASE WHEN sg.grade = 'false' THEN 'F' ELSE CONVERT(VARCHAR(5),sg.grade) END AS stored_letter      
              ,sg.[percent] AS stored_pct
              ,NULL AS pgf_letter
@@ -387,9 +387,9 @@ LEFT JOIN powerschool.storedgrades y1
  AND sub.academic_year = y1.academic_year
  AND sub.course_number = y1.course_number_clean
  AND y1.storecode_clean = 'Y1'
-LEFT JOIN powerschool.gradescaleitem_lookup_static y1_scale WITH(NOLOCK)
+LEFT JOIN powerschool.gradescaleitem_lookup_static y1_scale
   ON sub.gradescaleid = y1_scale.gradescaleid
  AND sub.y1_grade_percent_adjusted BETWEEN y1_scale.min_cutoffpercentage AND y1_scale.max_cutoffpercentage
-LEFT JOIN powerschool.gradescaleitem_lookup_static y1_scale_unweighted WITH(NOLOCK)
+LEFT JOIN powerschool.gradescaleitem_lookup_static y1_scale_unweighted
   ON sub.unweighted_gradescaleid = y1_scale_unweighted.gradescaleid
  AND sub.y1_grade_percent_adjusted BETWEEN y1_scale_unweighted.min_cutoffpercentage AND y1_scale_unweighted.max_cutoffpercentage
