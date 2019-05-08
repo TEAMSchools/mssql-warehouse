@@ -17,5 +17,5 @@ SELECT student_number
       ,enroll_status
       ,next_school
       ,sched_nextyeargrade
-      ,promo_status
+      ,NULL AS promo_status
 FROM gabby.tableau.next_year_status
