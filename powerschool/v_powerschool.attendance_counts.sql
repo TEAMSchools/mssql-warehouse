@@ -74,8 +74,7 @@ WITH att_counts AS (
          ON mem.schoolid = d.schoolid 
         AND mem.calendardate BETWEEN d.start_date AND d.end_date
         AND d.identifier = 'RT'
-       WHERE mem.yearid >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990 - 1)
-         AND mem.calendardate <= GETDATE()
+       WHERE mem.calendardate BETWEEN DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1, 7, 1) AND GETDATE()
       ) sub
   GROUP BY sub.studentid
           ,sub.academic_year
