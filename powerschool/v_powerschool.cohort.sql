@@ -9,6 +9,8 @@ SELECT studentid
       ,exitdate
       ,entrycode
       ,exitcode
+      ,exit_code_kf
+      ,exit_code_ts
       ,exitcomment
       ,lunchstatus
       ,fteid
@@ -63,6 +65,8 @@ FROM
            ,exitdate
            ,entrycode
            ,exitcode
+           ,exit_code_kf
+           ,exit_code_ts
            ,exitcomment
            ,lunchstatus
            ,fteid
@@ -72,7 +76,7 @@ FROM
            ,rn_year
            ,rn_school
            ,rn_undergrad
-           ,rn_all
+           ,rn_all           
            ,CASE
              WHEN rn_year > 1 THEN NULL
              ELSE CONVERT(INT,ROW_NUMBER() OVER(
@@ -104,11 +108,13 @@ FROM
                 ,sub.exitdate
                 ,sub.entrycode
                 ,sub.exitcode      
+                ,sub.exit_code_kf
+                ,sub.exit_code_ts
                 ,sub.exitcomment
                 ,sub.lunchstatus
                 ,sub.fteid
                 ,sub.track
-                ,sub.yearid
+                ,sub.yearid                
                 ,(sub.yearid + 1990) AS academic_year
                 ,LAG(yearid, 1) OVER(PARTITION BY sub.studentid ORDER BY sub.yearid ASC) AS prev_yearid
                 ,LAG(grade_level, 1) OVER(PARTITION BY sub.studentid ORDER BY sub.yearid ASC) AS prev_grade_level
@@ -141,16 +147,26 @@ FROM
                      ,CONVERT(VARCHAR,CASE WHEN s.lunchstatus = 'false' THEN 'F' ELSE s.lunchstatus END) AS lunchstatus
                      ,CONVERT(INT,s.fteid) AS fteid
                      ,CONVERT(VARCHAR(1),s.track) AS track
-                
+
                      ,CONVERT(INT,terms.yearid) AS yearid
+
+                     ,CONVERT(VARCHAR(5),x1.exit_code) AS exit_code_kf
+
+                     ,CONVERT(VARCHAR(5),x2.exit_code) AS exit_code_ts
                FROM powerschool.students s
                JOIN powerschool.terms terms
-                 ON s.schoolid = terms.schoolid 
+                 ON s.schoolid = terms.schoolid
                 AND s.entrydate BETWEEN terms.firstday AND terms.lastday
-                AND terms.portion = 1
-               WHERE s.enroll_status IN (0, 2)            
+                AND terms.isyearrec = 1
+               LEFT JOIN powerschool.u_clg_et_stu x1
+                 ON s.dcid = x1.studentsdcid
+                AND s.exitdate = x1.exit_date
+               LEFT JOIN powerschool.u_clg_et_stu_alt x2
+                 ON s.dcid = x2.studentsdcid
+                AND s.exitdate = x2.exit_date
+               WHERE s.enroll_status IN (0, 2)
                  AND s.exitdate > s.entrydate
-     
+
                UNION ALL
 
                /* terminal (grads) */
@@ -158,22 +174,25 @@ FROM
                      ,CONVERT(INT,s.dcid) AS studentsdcid
                      ,CONVERT(INT,s.student_number) AS student_number
                      ,CONVERT(INT,s.grade_level) AS grade_level
-                     ,CONVERT(INT,s.schoolid) AS schoolid        
+                     ,CONVERT(INT,s.schoolid) AS schoolid
                      ,NULL AS entrydate
-                     ,NULL AS exitdate        
+                     ,NULL AS exitdate
                      ,NULL AS entrycode
                      ,NULL AS exitcode
                      ,NULL AS exitcomment
                      ,NULL AS lunchstatus
                      ,NULL AS fteid
                      ,NULL AS track
-                
+
                      ,CONVERT(INT,terms.yearid) AS yearid
+
+                     ,NULL AS exit_code_kf
+                     ,NULL AS exit_code_ts
                FROM powerschool.students s
                JOIN powerschool.terms terms
                  ON s.schoolid = terms.schoolid
                 AND s.entrydate <= terms.firstday
-                AND terms.portion = 1
+                AND terms.isyearrec = 1
                WHERE s.enroll_status = 3
 
                UNION ALL
@@ -194,15 +213,25 @@ FROM
                      ,CONVERT(VARCHAR(1),re.track) AS track
                 
                      ,CONVERT(INT,terms.yearid) AS yearid
-               FROM powerschool.reenrollments re       
+
+                     ,CONVERT(VARCHAR(5),x1.exit_code) AS exit_code_kf
+
+                     ,CONVERT(VARCHAR(5),x2.exit_code) AS exit_code_ts
+               FROM powerschool.reenrollments re
                JOIN powerschool.students s
                  ON re.studentid = s.id
                JOIN powerschool.terms terms
-                 ON re.schoolid = terms.schoolid       
+                 ON re.schoolid = terms.schoolid
                 AND re.entrydate BETWEEN terms.firstday AND terms.lastday
-                AND terms.portion = 1     
+                AND terms.isyearrec = 1
+               LEFT JOIN powerschool.u_clg_et_stu x1
+                 ON s.dcid = x1.studentsdcid
+                AND re.exitdate = x1.exit_date
+               LEFT JOIN powerschool.u_clg_et_stu_alt x2
+                 ON s.dcid = x2.studentsdcid
+                AND re.exitdate = x2.exit_date
                WHERE re.schoolid != 12345 /* filter out summer school */
-                 AND re.exitdate > re.entrydate            
+                 AND re.exitdate > re.entrydate
               ) sub
          ) sub
     ) sub

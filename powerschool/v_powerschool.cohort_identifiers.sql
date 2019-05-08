@@ -36,6 +36,8 @@ SELECT co.studentid
       ,co.exitdate                
       ,co.entrycode
       ,co.exitcode
+      ,co.exit_code_kf
+      ,co.exit_code_ts
       ,co.exitcomment      
       ,co.fteid
       ,co.cohort
