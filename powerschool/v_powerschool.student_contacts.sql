@@ -21,7 +21,7 @@ WITH contacts_unpivot AS (
              ,CONVERT(VARCHAR(250),s.emerg_contact_2) AS emerg2_name
              ,CONVERT(VARCHAR(250),s.emerg_phone_2) AS emerg2_cell
              ,CONVERT(VARCHAR(250),CONCAT(LTRIM(RTRIM(s.street)), ', ', LTRIM(RTRIM(s.city)), ' ', LTRIM(RTRIM(s.zip)))) AS home_name
-             ,CONVERT(VARCHAR(250),CASE WHEN CONCAT(s.doctor_name, s.doctor_phone) != '' THEN 'Doctor' END) COLLATE Latin1_General_BIN AS doctor_relation      
+             ,CONVERT(VARCHAR(250),CASE WHEN CONCAT(s.doctor_name, s.doctor_phone) != '' THEN 'Doctor' END) AS doctor_relation      
       
              ,CONVERT(VARCHAR(250),scf.mother_home_phone) AS parent1_home      
              ,CONVERT(VARCHAR(250),scf.father_home_phone) AS parent2_home      
@@ -59,8 +59,8 @@ WITH contacts_unpivot AS (
              ,CONVERT(VARCHAR(250),suf.release_5_relation) AS release5_relation
              ,CONVERT(VARCHAR(250),suf.release_5_phone) AS release5_cell
 
-             ,CONVERT(VARCHAR(250),CASE WHEN CONCAT(scf.mother_home_phone, suf.mother_cell, suf.parent_motherdayphone) != '' THEN 'Mother' END) COLLATE Latin1_General_BIN AS parent1_relation
-             ,CONVERT(VARCHAR(250),CASE WHEN CONCAT(scf.father_home_phone, suf.father_cell, suf.parent_fatherdayphone) != '' THEN 'Father' END) COLLATE Latin1_General_BIN AS parent2_relation
+             ,CONVERT(VARCHAR(250),CASE WHEN CONCAT(scf.mother_home_phone, suf.mother_cell, suf.parent_motherdayphone) != '' THEN 'Mother' END) AS parent1_relation
+             ,CONVERT(VARCHAR(250),CASE WHEN CONCAT(scf.father_home_phone, suf.father_cell, suf.parent_fatherdayphone) != '' THEN 'Father' END) AS parent2_relation
        FROM powerschool.students s
        LEFT JOIN powerschool.studentcorefields scf
          ON s.dcid = scf.studentsdcid        
