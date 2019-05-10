@@ -52,22 +52,16 @@ WITH caredox_enrollment AS (
 
 ,residency_verification AS (
   SELECT nen
-        ,verification_date        
+        ,verification_date
   FROM
       (
-       SELECT nen
-             ,verification_date
+       SELECT CONVERT(VARCHAR(25),subject_line) AS nen
+             ,[timestamp] AS verification_date
              ,ROW_NUMBER() OVER(
-               PARTITION BY nen
-                 ORDER BY verification_date DESC) AS rn_recent
-       FROM
-           (
-            SELECT CONVERT(VARCHAR(25),subject_line) AS nen
-                  ,CONVERT(DATETIME,REPLACE(timestamp, ' at ', ' ')) AS verification_date
-            FROM gabby.enrollment.residency_verification
-            WHERE ISNUMERIC(subject_line) = 1
-              AND CONVERT(DATETIME,REPLACE(timestamp, ' at ', ' ')) >= DATEFROMPARTS(CASE WHEN DATEPART(MONTH, GETDATE()) >= 5 THEN DATEPART(YEAR, GETDATE()) ELSE DATEPART(YEAR, GETDATE()) - 1 END, 5, 1)
-           ) sub
+               PARTITION BY subject_line
+                 ORDER BY [timestamp] DESC) AS rn_recent
+       FROM gabby.enrollment.residency_verification
+       WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
       ) sub
   WHERE rn_recent = 1
  )
