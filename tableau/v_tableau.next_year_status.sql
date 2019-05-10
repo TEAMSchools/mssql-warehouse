@@ -8,6 +8,8 @@ SELECT s.student_number
       ,s.lastfirst
       ,s.schoolid
       ,s.grade_level
+      ,s.entrydate
+      ,s.exitdate
       ,s.enroll_status
       ,s.gender
       ,s.dob
@@ -36,6 +38,5 @@ FROM gabby.powerschool.students s
 LEFT JOIN gabby.powerschool.cohort_identifiers_static co
   ON s.student_number = co.student_number
  AND s.db_name = co.db_name 
- AND co.rn_all = 1
+ AND co.rn_undergrad = 1
 WHERE s.enroll_status IN (0, -1)
-  AND s.grade_level <> 99;
