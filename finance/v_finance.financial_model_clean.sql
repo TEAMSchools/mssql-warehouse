@@ -98,7 +98,7 @@ SELECT p.region
       ,p.fiscal_year
       ,p.snapshot_month
       ,p.snapshot_date
-	  ,'Hi Charlie!' AS github_example2
+      ,'Hi Charlie!' AS github_example2
       ,'Hi Kevin!' AS github_example
 
       ,p.[Unfinanced Capital Outlays Per Pupil]
