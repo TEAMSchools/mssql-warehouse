@@ -11,6 +11,7 @@ WITH academic_years AS (
 
 SELECT employee_reference_code
       ,academic_year      
+      ,[salesforce_id]
       ,[grade_taught_kindergarten]
       ,[grade_taught_grade_1]
       ,[grade_taught_grade_2]
@@ -27,8 +28,8 @@ SELECT employee_reference_code
 FROM
     (
      SELECT sub.employee_reference_code
+           ,sub.property_name
            ,sub.property_value
-           ,1 AS n      
 
            ,sy.academic_year
      FROM
@@ -36,28 +37,37 @@ FROM
           SELECT CONVERT(VARCHAR(25),employee_reference_code) AS employee_reference_code
                 ,CONVERT(DATE,employee_property_value_effective_start) AS effective_start_date
                 ,CONVERT(DATE,COALESCE(employee_property_value_effective_end, GETDATE())) AS effective_end_date
-                ,CONVERT(VARCHAR(25),LOWER(CONCAT(REPLACE(employee_property_value_name, ' ', '_') 
-                                                 ,'_'
-                                                 ,REPLACE(property_value, ' ', '_')))) AS property_value
+                ,CONVERT(VARCHAR(25),LOWER(CASE
+                                            WHEN employee_property_value_name IN ('Grade Taught', 'Subject')
+                                                   THEN CONCAT(REPLACE(employee_property_value_name, ' ', '_') 
+                                                              ,'_'
+                                                              ,REPLACE(property_value, ' ', '_'))
+                                            ELSE REPLACE(employee_property_value_name, ' ', '_')
+                                           END)) AS property_name
+                ,CONVERT(VARCHAR(25),CASE
+                                      WHEN employee_property_value_name IN ('Grade Taught', 'Subject') THEN '1'
+                                      ELSE property_value
+                                     END) AS property_value
           FROM gabby.dayforce.employee_properties
-          WHERE employee_property_value_name IN ('Grade Taught', 'Subject')
+          WHERE employee_property_value_name IN ('Grade Taught', 'Subject', 'Salesforce ID')
          ) sub
      JOIN academic_years sy
        ON sy.academic_year BETWEEN gabby.utilities.DATE_TO_SY(sub.effective_start_date) AND gabby.utilities.DATE_TO_SY(sub.effective_end_date)
     ) sub
 PIVOT(
-  MAX(n)
-  FOR property_value IN ([grade_taught_kindergarten]
-                        ,[grade_taught_grade_1]
-                        ,[grade_taught_grade_2]
-                        ,[grade_taught_grade_3]
-                        ,[grade_taught_grade_4]
-                        ,[grade_taught_grade_5]
-                        ,[grade_taught_grade_6]
-                        ,[grade_taught_grade_7]
-                        ,[grade_taught_grade_8]
-                        ,[grade_taught_grade_9]
-                        ,[grade_taught_grade_10]
-                        ,[grade_taught_grade_11]
-                        ,[grade_taught_grade_12])
+  MAX(property_value)
+  FOR property_name IN ([salesforce_id]
+                       ,[grade_taught_kindergarten]
+                       ,[grade_taught_grade_1]
+                       ,[grade_taught_grade_2]
+                       ,[grade_taught_grade_3]
+                       ,[grade_taught_grade_4]
+                       ,[grade_taught_grade_5]
+                       ,[grade_taught_grade_6]
+                       ,[grade_taught_grade_7]
+                       ,[grade_taught_grade_8]
+                       ,[grade_taught_grade_9]
+                       ,[grade_taught_grade_10]
+                       ,[grade_taught_grade_11]
+                       ,[grade_taught_grade_12])
  ) p

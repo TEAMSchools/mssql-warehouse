@@ -3,42 +3,7 @@ GO
 
 CREATE OR ALTER VIEW pm.teacher_goal_scaffold AS
 
-WITH teacher_crosswalk AS (
-  SELECT sr.df_employee_number
-        ,sr.preferred_name        
-        ,sr.primary_site
-        ,sr.primary_on_site_department
-        ,sr.grades_taught
-        ,sr.primary_job
-        ,sr.legal_entity_name        
-        ,sr.is_active
-        ,sr.primary_site_schoolid
-        ,sr.manager_df_employee_number
-        ,sr.manager_name
-        ,CASE
-          WHEN sr.legal_entity_name = 'TEAM Academy Charter Schools' THEN 'kippnewark'
-          WHEN sr.legal_entity_name = 'KIPP Cooper Norcross Academy' THEN 'kippcamden'
-          WHEN sr.legal_entity_name = 'KIPP Miami' THEN 'kippmiami'
-         END AS db_name
-      
-        ,COALESCE(idps.ps_teachernumber, sr.adp_associate_id, CONVERT(VARCHAR(25),sr.df_employee_number)) AS ps_teachernumber
-
-        ,ads.samaccountname AS staff_username
-
-        ,adm.samaccountname AS manager_username
-  FROM gabby.dayforce.staff_roster sr
-  LEFT JOIN gabby.people.id_crosswalk_powerschool idps
-    ON sr.df_employee_number = idps.df_employee_number
-   AND idps.is_master = 1
-  LEFT JOIN gabby.adsi.user_attributes_static ads
-    ON CONVERT(VARCHAR(25),sr.df_employee_number) = ads.employeenumber
-  LEFT JOIN gabby.adsi.user_attributes_static adm
-    ON CONVERT(VARCHAR(25),sr.manager_df_employee_number) = adm.employeenumber
-  WHERE sr.primary_job IN ('Teacher', 'Teacher Fellow', 'Teacher in Residence', 'Co-Teacher', 'Learning Specialist', 'Learning Specialist Coordinator')
-    AND ISNULL(sr.termination_date, GETDATE()) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
- )
-
-,ps_section_teacher AS (
+WITH ps_section_teacher AS (
   SELECT sec.id AS sectionid
         ,sec.section_number
         ,sec.section_type
@@ -70,8 +35,8 @@ SELECT sr.df_employee_number
       ,sr.primary_site_schoolid      
       ,sr.manager_df_employee_number
       ,sr.manager_name
-      ,sr.staff_username
-      ,sr.manager_username
+      ,sr.userprincipalname AS staff_username
+      ,sr.manager_userprincipalname AS manager_username
       ,sr.db_name
 
       ,tg.academic_year      
@@ -97,7 +62,7 @@ SELECT sr.df_employee_number
 
       ,tm.metric_term
       ,tm.pm_term
-FROM teacher_crosswalk sr
+FROM gabby.people.staff_crosswalk sr
 JOIN gabby.pm.teacher_goals tg
   ON sr.primary_site = tg.df_primary_site 
  AND tg.goal_type = 'Individual'
@@ -105,7 +70,8 @@ JOIN gabby.pm.teacher_goals tg
 JOIN gabby.pm.teacher_goals_term_map tm
   ON tg.academic_year = tm.academic_year
  AND tg.metric_name = tm.metric_name
-WHERE sr.primary_job IN ('Teacher', 'Teacher Fellow', 'Teacher in Residence', 'Co-Teacher', 'Learning Specialist', 'Learning Specialist Coordinator')
+WHERE sr.primary_job IN ('Teacher', 'Teacher Fellow', 'Teacher in Residence', 'Co-Teacher', 'Learning Specialist', 'Learning Specialist Coordinator')  
+  AND ISNULL(sr.termination_date, GETDATE()) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
 
 UNION ALL
 
@@ -122,8 +88,8 @@ SELECT sr.df_employee_number
       ,sr.primary_site_schoolid      
       ,sr.manager_df_employee_number
       ,sr.manager_name
-      ,sr.staff_username
-      ,sr.manager_username
+      ,sr.userprincipalname AS staff_username
+      ,sr.manager_userprincipalname AS manager_username
       ,sr.db_name
 
       ,tg.academic_year      
@@ -149,7 +115,7 @@ SELECT sr.df_employee_number
 
       ,tm.metric_term
       ,tm.pm_term
-FROM teacher_crosswalk sr
+FROM gabby.people.staff_crosswalk sr
 JOIN gabby.pm.teacher_goals tg
   ON sr.primary_site = tg.df_primary_site
  AND sr.grades_taught = tg.grade
@@ -159,6 +125,7 @@ JOIN gabby.pm.teacher_goals_term_map tm
   ON tg.academic_year = tm.academic_year
  AND tg.metric_name = tm.metric_name
 WHERE sr.primary_job IN ('Teacher', 'Teacher Fellow', 'Teacher in Residence', 'Co-Teacher', 'Learning Specialist', 'Learning Specialist Coordinator')
+  AND ISNULL(sr.termination_date, GETDATE()) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
 
 UNION ALL
 
@@ -175,8 +142,8 @@ SELECT sr.df_employee_number
       ,sr.primary_site_schoolid      
       ,sr.manager_df_employee_number
       ,sr.manager_name
-      ,sr.staff_username
-      ,sr.manager_username
+      ,sr.userprincipalname AS staff_username
+      ,sr.manager_userprincipalname AS manager_username
       ,sr.db_name
 
       ,tg.academic_year      
@@ -204,7 +171,7 @@ SELECT sr.df_employee_number
 
       ,tm.metric_term
       ,tm.pm_term
-FROM teacher_crosswalk sr
+FROM gabby.people.staff_crosswalk sr
 JOIN gabby.pm.teacher_goals tg
   ON sr.primary_site = tg.df_primary_site
  AND tg.goal_type = 'Class'
@@ -227,6 +194,7 @@ JOIN gabby.pm.teacher_goals_term_map tm
   ON tg.academic_year = tm.academic_year
  AND tg.metric_name = tm.metric_name
 WHERE sr.primary_job IN ('Teacher', 'Teacher Fellow', 'Teacher in Residence', 'Co-Teacher')
+  AND ISNULL(sr.termination_date, GETDATE()) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
 
 UNION ALL
 
@@ -243,8 +211,8 @@ SELECT sr.df_employee_number
       ,sr.primary_site_schoolid      
       ,sr.manager_df_employee_number
       ,sr.manager_name
-      ,sr.staff_username
-      ,sr.manager_username
+      ,sr.userprincipalname AS staff_username
+      ,sr.manager_userprincipalname AS manager_username
       ,sr.db_name
 
       ,tg.academic_year      
@@ -272,7 +240,7 @@ SELECT sr.df_employee_number
 
       ,tm.metric_term
       ,tm.pm_term
-FROM teacher_crosswalk sr
+FROM gabby.people.staff_crosswalk sr
 JOIN gabby.pm.teacher_goals tg
   ON sr.primary_site = tg.df_primary_site
  AND tg.goal_type = 'Class'
@@ -296,3 +264,4 @@ JOIN gabby.pm.teacher_goals_term_map tm
   ON tg.academic_year = tm.academic_year
  AND tg.metric_name = tm.metric_name
 WHERE sr.primary_job IN ('Learning Specialist', 'Learning Specialist Coordinator')
+  AND ISNULL(sr.termination_date, GETDATE()) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)

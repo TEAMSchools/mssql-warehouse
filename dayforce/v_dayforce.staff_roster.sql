@@ -9,21 +9,21 @@ WITH clean_people AS (
         ,CONVERT(VARCHAR(25),e.salesforce_id) AS salesforce_id 
         ,CONVERT(VARCHAR(25),e.first_name) AS first_name
         ,CONVERT(VARCHAR(25),e.last_name) AS last_name        
-        ,CONVERT(VARCHAR(125),e.address) AS address 
+        ,CONVERT(VARCHAR(125),e.[address]) AS [address]
         ,CONVERT(VARCHAR(125),e.city) AS city
-        ,CONVERT(VARCHAR(5),e.state) AS state
+        ,CONVERT(VARCHAR(5),e.[state]) AS [state]
         ,CONVERT(VARCHAR(25),e.postal_code) AS postal_code
-        ,CONVERT(VARCHAR(25),e.status) AS status
+        ,CONVERT(VARCHAR(25),e.[status]) AS [status]
         ,CONVERT(VARCHAR(125),e.status_reason) AS status_reason
-        ,CONVERT(VARCHAR(5),e.is_manager) AS is_manager        
+        ,CONVERT(VARCHAR(5),e.is_manager) AS is_manager
         ,CONVERT(VARCHAR(125),e.primary_job) AS primary_job
         ,CONVERT(VARCHAR(125),e.primary_on_site_department_clean) AS primary_on_site_department
-        ,CONVERT(VARCHAR(125),e.legal_entity_name_clean) AS legal_entity_name 
-        ,CONVERT(VARCHAR(25),e.job_family) AS job_family         
+        ,CONVERT(VARCHAR(125),e.legal_entity_name_clean) AS legal_entity_name
+        ,CONVERT(VARCHAR(25),e.job_family) AS job_family
         ,CONVERT(INT,e.employee_s_manager_s_df_emp_number_id) AS manager_df_employee_number
-        ,CONVERT(VARCHAR(5),e.payclass) AS payclass 
-        ,CONVERT(VARCHAR(25),e.paytype) AS paytype 
-        ,CONVERT(VARCHAR(25),e.jobs_and_positions_flsa_status) AS flsa_status                         
+        ,CONVERT(VARCHAR(5),e.payclass) AS payclass
+        ,CONVERT(VARCHAR(25),e.paytype) AS paytype
+        ,CONVERT(VARCHAR(25),e.jobs_and_positions_flsa_status) AS flsa_status
         ,e.birth_date
         ,e.original_hire_date
         ,e.termination_date
@@ -39,16 +39,10 @@ WITH clean_people AS (
         ,CONVERT(VARCHAR(25),COALESCE(e.common_name, e.first_name)) AS preferred_first_name
         ,CONVERT(VARCHAR(25),COALESCE(e.preferred_last_name , e.last_name)) AS preferred_last_name
         ,CONVERT(VARCHAR(125),REPLACE(e.primary_site_clean, ' - Regional', '')) AS primary_site
-        ,CONVERT(VARCHAR(125),RTRIM(LEFT(e.ethnicity, CHARINDEX(' (', e.ethnicity)))) AS primary_ethnicity        
+        ,CONVERT(VARCHAR(125),RTRIM(LEFT(e.ethnicity, CHARINDEX(' (', e.ethnicity)))) AS primary_ethnicity
         ,CONVERT(VARCHAR(25),gabby.utilities.STRIP_CHARACTERS(mobile_number, '^0-9')) AS mobile_number
         ,CASE WHEN e.ethnicity LIKE '%(Hispanic%' THEN 1 ELSE 0 END AS is_hispanic
-        ,CASE WHEN e.primary_site_clean LIKE '% - Regional%' THEN 1 ELSE 0 END AS is_regional_staff        
-        ,CASE
-          WHEN e.legal_entity_name_clean = 'TEAM Academy Charter Schools' THEN 'YHD'
-          WHEN e.legal_entity_name_clean = 'KIPP New Jersey' THEN 'D30'
-          WHEN e.legal_entity_name_clean = 'KIPP Cooper Norcross Academy' THEN 'D3Z'          
-         END AS payroll_company_code
-        ,CASE WHEN e.status NOT IN ('TERMINATED', 'PRESTART') THEN 1 ELSE 0 END AS is_active
+        ,CASE WHEN e.primary_site_clean LIKE '% - Regional%' THEN 1 ELSE 0 END AS is_regional_staff
 
         /* redundant combined fields */
         ,CONVERT(VARCHAR(125),position_title) AS position_title 
@@ -65,15 +59,15 @@ SELECT c.df_employee_number
       ,c.gender
       ,c.primary_ethnicity
       ,c.is_hispanic      
-      ,c.address
+      ,c.[address]
       ,c.city
-      ,c.state
+      ,c.[state]
       ,c.postal_code
       ,c.birth_date
       ,c.original_hire_date
       ,c.termination_date
       ,c.rehire_date
-      ,c.status
+      ,c.[status]
       ,c.status_reason
       ,c.is_manager
       ,c.leadership_role
@@ -88,7 +82,6 @@ SELECT c.df_employee_number
       ,c.position_effective_from_date
       ,c.position_effective_to_date
       ,c.manager_df_employee_number
-      ,c.payroll_company_code
       ,c.payclass
       ,c.paytype
       ,c.flsa_status
@@ -98,11 +91,16 @@ SELECT c.df_employee_number
       ,c.position_title
       ,c.primary_on_site_department_entity
       ,c.primary_site_entity
-      ,c.is_active
       ,c.preferred_last_name + ', ' + c.preferred_first_name AS preferred_name
       ,SUBSTRING(c.mobile_number, 1, 3) + '-' 
          + SUBSTRING(c.mobile_number, 4, 3) + '-' 
-         + SUBSTRING(c.mobile_number, 7, 4) AS mobile_number
+         + SUBSTRING(c.mobile_number, 7, 4) AS mobile_number            
+      ,CASE
+        WHEN c.legal_entity_name = 'TEAM Academy Charter Schools' THEN 'YHD'
+        WHEN c.legal_entity_name = 'KIPP New Jersey' THEN 'D30'
+        WHEN c.legal_entity_name = 'KIPP Cooper Norcross Academy' THEN 'D3Z'          
+       END AS payroll_company_code
+      ,CASE WHEN c.[status] NOT IN ('TERMINATED', 'PRESTART') THEN 1 ELSE 0 END AS is_active
       ,CASE
         WHEN c.primary_site = '18th Ave Campus' THEN 0
         WHEN c.primary_site = 'Room 9 - 60 Park Pl' THEN 0
@@ -152,6 +150,11 @@ SELECT c.df_employee_number
         WHEN c.primary_site IN ('KIPP BOLD Academy','KIPP Lanning Square Middle','KIPP Pathways at 18th Ave','KIPP Rise Academy','KIPP TEAM Academy','KIPP Whittier Middle') THEN 'MS'
         WHEN c.primary_site = 'KIPP Newark Collegiate Academy' THEN 'HS'
        END AS primary_site_school_level
+      ,CASE
+        WHEN c.legal_entity_name = 'TEAM Academy Charter Schools' THEN 'kippnewark'
+        WHEN c.legal_entity_name = 'KIPP Cooper Norcross Academy' THEN 'kippcamden'
+        WHEN c.legal_entity_name = 'KIPP Miami' THEN 'kippmiami'
+       END AS [db_name]
 
       ,m.adp_associate_id AS manager_adp_associate_id
       ,m.preferred_first_name AS manager_preferred_first_name
