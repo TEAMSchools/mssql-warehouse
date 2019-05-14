@@ -62,7 +62,7 @@ SELECT sr.df_employee_number
 
       ,tm.metric_term
       ,tm.pm_term
-FROM gabby.people.staff_crosswalk sr
+FROM gabby.people.staff_crosswalk_static sr
 JOIN gabby.pm.teacher_goals tg
   ON sr.primary_site = tg.df_primary_site 
  AND tg.goal_type = 'Individual'
@@ -70,8 +70,13 @@ JOIN gabby.pm.teacher_goals tg
 JOIN gabby.pm.teacher_goals_term_map tm
   ON tg.academic_year = tm.academic_year
  AND tg.metric_name = tm.metric_name
+LEFT JOIN gabby.pm.teacher_goals_exemption_clean_static ex
+  ON sr.df_employee_number = ex.df_employee_number
+ AND tg.academic_year = ex.academic_year
+ AND tm.pm_term = ex.pm_term
 WHERE sr.primary_job IN ('Teacher', 'Teacher Fellow', 'Teacher in Residence', 'Co-Teacher', 'Learning Specialist', 'Learning Specialist Coordinator')  
   AND ISNULL(sr.termination_date, GETDATE()) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
+  AND ex.exemption IS NULL
 
 UNION ALL
 
@@ -115,7 +120,7 @@ SELECT sr.df_employee_number
 
       ,tm.metric_term
       ,tm.pm_term
-FROM gabby.people.staff_crosswalk sr
+FROM gabby.people.staff_crosswalk_static sr
 JOIN gabby.pm.teacher_goals tg
   ON sr.primary_site = tg.df_primary_site
  AND sr.grades_taught = tg.grade
@@ -124,8 +129,13 @@ JOIN gabby.pm.teacher_goals tg
 JOIN gabby.pm.teacher_goals_term_map tm
   ON tg.academic_year = tm.academic_year
  AND tg.metric_name = tm.metric_name
+LEFT JOIN gabby.pm.teacher_goals_exemption_clean_static ex
+  ON sr.df_employee_number = ex.df_employee_number
+ AND tg.academic_year = ex.academic_year
+ AND tm.pm_term = ex.pm_term
 WHERE sr.primary_job IN ('Teacher', 'Teacher Fellow', 'Teacher in Residence', 'Co-Teacher', 'Learning Specialist', 'Learning Specialist Coordinator')
   AND ISNULL(sr.termination_date, GETDATE()) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
+  AND ex.exemption IS NULL
 
 UNION ALL
 
@@ -171,7 +181,7 @@ SELECT sr.df_employee_number
 
       ,tm.metric_term
       ,tm.pm_term
-FROM gabby.people.staff_crosswalk sr
+FROM gabby.people.staff_crosswalk_static sr
 JOIN gabby.pm.teacher_goals tg
   ON sr.primary_site = tg.df_primary_site
  AND tg.goal_type = 'Class'
@@ -193,8 +203,13 @@ JOIN gabby.powerschool.cohort_identifiers_static co
 JOIN gabby.pm.teacher_goals_term_map tm
   ON tg.academic_year = tm.academic_year
  AND tg.metric_name = tm.metric_name
+LEFT JOIN gabby.pm.teacher_goals_exemption_clean_static ex
+  ON sr.df_employee_number = ex.df_employee_number
+ AND tg.academic_year = ex.academic_year
+ AND tm.pm_term = ex.pm_term
 WHERE sr.primary_job IN ('Teacher', 'Teacher Fellow', 'Teacher in Residence', 'Co-Teacher')
   AND ISNULL(sr.termination_date, GETDATE()) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
+  AND ex.exemption IS NULL
 
 UNION ALL
 
@@ -240,7 +255,7 @@ SELECT sr.df_employee_number
 
       ,tm.metric_term
       ,tm.pm_term
-FROM gabby.people.staff_crosswalk sr
+FROM gabby.people.staff_crosswalk_static sr
 JOIN gabby.pm.teacher_goals tg
   ON sr.primary_site = tg.df_primary_site
  AND tg.goal_type = 'Class'
@@ -263,5 +278,10 @@ JOIN gabby.powerschool.cohort_identifiers_static co
 JOIN gabby.pm.teacher_goals_term_map tm
   ON tg.academic_year = tm.academic_year
  AND tg.metric_name = tm.metric_name
+LEFT JOIN gabby.pm.teacher_goals_exemption_clean_static ex
+  ON sr.df_employee_number = ex.df_employee_number
+ AND tg.academic_year = ex.academic_year
+ AND tm.pm_term = ex.pm_term
 WHERE sr.primary_job IN ('Learning Specialist', 'Learning Specialist Coordinator')
   AND ISNULL(sr.termination_date, GETDATE()) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
+  AND ex.exemption IS NULL
