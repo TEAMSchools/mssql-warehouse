@@ -63,19 +63,16 @@ FROM
            ,CASE WHEN att.att_code IN ('OS', 'OSS', 'OSSP', 'S', 'ISS') THEN 1.0 ELSE 0.0 END AS is_suspended
 
            ,CONVERT(VARCHAR(25),dt.alt_name) AS term
-     FROM powerschool.cohort_identifiers_static co
+     FROM powerschool.ps_adaadm_daily_ctod_current_static mem
+     JOIN powerschool.cohort_identifiers_static co
+       ON mem.studentid = co.studentid
+      AND mem.schoolid = co.schoolid
+      AND mem.calendardate BETWEEN co.entrydate AND co.exitdate
      LEFT JOIN powerschool.course_enrollments_static enr
        ON co.studentid = enr.studentid
       AND co.academic_year = enr.academic_year 
       AND enr.course_number = 'HR' 
       AND enr.rn_course_yr = 1
-     JOIN powerschool.ps_adaadm_daily_ctod_current_static mem
-       ON co.studentid = mem.studentid
-      AND co.schoolid = mem.schoolid
-      AND mem.calendardate BETWEEN co.entrydate AND co.exitdate
-      AND mem.calendardate <= CONVERT(DATE,GETDATE()) 
-      AND mem.membershipvalue > 0
-      AND mem.attendancevalue IS NOT NULL
      LEFT JOIN powerschool.ps_attendance_daily_current_static att
        ON mem.studentid = att.studentid
       AND mem.calendardate = att.att_date
@@ -84,5 +81,7 @@ FROM
       AND mem.calendardate BETWEEN dt.start_date AND dt.end_date
       AND dt.identifier = 'RT'
       AND dt._fivetran_deleted = 0
-     WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+     WHERE mem.attendancevalue IS NOT NULL
+       AND mem.calendardate <= GETDATE()
+       AND mem.membershipvalue > 0
     ) sub
