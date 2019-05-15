@@ -70,9 +70,6 @@ WITH att_mem AS (
 SELECT co.student_number
       ,co.lastfirst
       ,co.academic_year
-      ,co.entrydate
-      ,co.exitdate
-      ,co.exitcode
       ,co.region
       ,co.school_level
       ,co.schoolid
@@ -80,6 +77,10 @@ SELECT co.student_number
       ,co.school_name
       ,co.grade_level
       ,co.enroll_status
+      ,co.entrydate
+      ,co.exitdate
+      ,co.exitcode
+      ,co.exitcomment
       ,co.iep_status
       ,co.specialed_classification
       ,co.lep_status
