@@ -16,7 +16,7 @@ SELECT s.student_number
       ,s.home_phone
       ,s.guardianemail
       ,s.next_school
-      ,s.sched_nextyeargrade
+      ,CASE WHEN s.sched_nextyeargrade IS NULL THEN 0 ELSE s.sched_nextyeargrade END AS sched_nextyeargrade
       ,CONCAT(s.street, ', ', s.city, ', ', s.state, ' ', s.zip) AS student_address
       ,REPLACE(CONCAT(s.street, '+', s.city, '+', s.state, '+', s.zip), ' ', '+') AS gmaps_address
       ,CASE WHEN s.home_phone IS NOT NULL THEN REPLACE(CONCAT('+1', s.home_phone), '-', '') END AS tel_home_phone
