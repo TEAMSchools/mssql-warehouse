@@ -43,7 +43,7 @@ WITH long_data AS (
              ,CONVERT(VARCHAR,d.alt_name) AS administration_round
 
              ,co.grade_level
-       FROM gabby.illuminate_dna_assessments.assessments_identifiers a              
+       FROM gabby.illuminate_dna_assessments.assessments_identifiers_static a              
        JOIN gabby.illuminate_dna_assessments.agg_student_responses ovr
          ON a.assessment_id = ovr.assessment_id
        JOIN gabby.illuminate_public.students s

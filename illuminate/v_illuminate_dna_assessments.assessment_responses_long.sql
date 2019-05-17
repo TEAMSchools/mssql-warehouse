@@ -92,7 +92,7 @@ JOIN gabby.illuminate_dna_assessments.agg_student_responses_standard asrs
 JOIN gabby.illuminate_dna_assessments.assessment_standards astd
   ON asrs.assessment_id = astd.assessment_id
  AND asrs.standard_id = astd.standard_id
-LEFT JOIN gabby.illuminate_standards.standards std
+JOIN gabby.illuminate_standards.standards std
   ON asrs.standard_id = std.standard_id   
 LEFT JOIN gabby.illuminate_standards.standards_domain_static dom
   ON asrs.standard_id = dom.standard_id
