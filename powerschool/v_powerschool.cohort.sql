@@ -9,8 +9,10 @@ SELECT studentid
       ,exitdate
       ,entrycode
       ,exitcode
-      ,exit_code_kf
-      ,exit_code_ts
+      ,NULL AS exit_code_kf
+      ,NULL AS exit_code_ts
+      --,exit_code_kf
+      --,exit_code_ts
       ,exitcomment
       ,lunchstatus
       ,fteid
@@ -65,8 +67,8 @@ FROM
            ,exitdate
            ,entrycode
            ,exitcode
-           ,exit_code_kf
-           ,exit_code_ts
+           --,exit_code_kf
+           --,exit_code_ts
            ,exitcomment
            ,lunchstatus
            ,fteid
@@ -108,8 +110,8 @@ FROM
                 ,sub.exitdate
                 ,sub.entrycode
                 ,sub.exitcode      
-                ,sub.exit_code_kf
-                ,sub.exit_code_ts
+                --,sub.exit_code_kf
+                --,sub.exit_code_ts
                 ,sub.exitcomment
                 ,sub.lunchstatus
                 ,sub.fteid
@@ -150,20 +152,20 @@ FROM
 
                      ,CONVERT(INT,terms.yearid) AS yearid
 
-                     ,CONVERT(VARCHAR(5),x1.exit_code) AS exit_code_kf
+                     --,CONVERT(VARCHAR(5),x1.exit_code) AS exit_code_kf
 
-                     ,CONVERT(VARCHAR(5),x2.exit_code) AS exit_code_ts
+                     --,CONVERT(VARCHAR(5),x2.exit_code) AS exit_code_ts
                FROM powerschool.students s
                JOIN powerschool.terms terms
                  ON s.schoolid = terms.schoolid
                 AND s.entrydate BETWEEN terms.firstday AND terms.lastday
                 AND terms.isyearrec = 1
-               LEFT JOIN powerschool.u_clg_et_stu x1
-                 ON s.dcid = x1.studentsdcid
-                AND s.exitdate = x1.exit_date
-               LEFT JOIN powerschool.u_clg_et_stu_alt x2
-                 ON s.dcid = x2.studentsdcid
-                AND s.exitdate = x2.exit_date
+               --LEFT JOIN powerschool.u_clg_et_stu x1
+               --  ON s.dcid = x1.studentsdcid
+               -- AND s.exitdate = x1.exit_date
+               --LEFT JOIN powerschool.u_clg_et_stu_alt x2
+               --  ON s.dcid = x2.studentsdcid
+               -- AND s.exitdate = x2.exit_date
                WHERE s.enroll_status IN (0, 2)
                  AND s.exitdate > s.entrydate
 
@@ -186,8 +188,8 @@ FROM
 
                      ,CONVERT(INT,terms.yearid) AS yearid
 
-                     ,NULL AS exit_code_kf
-                     ,NULL AS exit_code_ts
+                     --,NULL AS exit_code_kf
+                     --,NULL AS exit_code_ts
                FROM powerschool.students s
                JOIN powerschool.terms terms
                  ON s.schoolid = terms.schoolid
@@ -214,9 +216,9 @@ FROM
                 
                      ,CONVERT(INT,terms.yearid) AS yearid
 
-                     ,CONVERT(VARCHAR(5),x1.exit_code) AS exit_code_kf
+                     --,CONVERT(VARCHAR(5),x1.exit_code) AS exit_code_kf
 
-                     ,CONVERT(VARCHAR(5),x2.exit_code) AS exit_code_ts
+                     --,CONVERT(VARCHAR(5),x2.exit_code) AS exit_code_ts
                FROM powerschool.reenrollments re
                JOIN powerschool.students s
                  ON re.studentid = s.id
@@ -224,12 +226,12 @@ FROM
                  ON re.schoolid = terms.schoolid
                 AND re.entrydate BETWEEN terms.firstday AND terms.lastday
                 AND terms.isyearrec = 1
-               LEFT JOIN powerschool.u_clg_et_stu x1
-                 ON s.dcid = x1.studentsdcid
-                AND re.exitdate = x1.exit_date
-               LEFT JOIN powerschool.u_clg_et_stu_alt x2
-                 ON s.dcid = x2.studentsdcid
-                AND re.exitdate = x2.exit_date
+               --LEFT JOIN powerschool.u_clg_et_stu x1
+               --  ON s.dcid = x1.studentsdcid
+               -- AND re.exitdate = x1.exit_date
+               --LEFT JOIN powerschool.u_clg_et_stu_alt x2
+               --  ON s.dcid = x2.studentsdcid
+               -- AND re.exitdate = x2.exit_date
                WHERE re.schoolid != 12345 /* filter out summer school */
                  AND re.exitdate > re.entrydate
               ) sub
