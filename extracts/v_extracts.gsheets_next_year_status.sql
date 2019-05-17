@@ -18,4 +18,5 @@ SELECT student_number
       ,next_school
       ,sched_nextyeargrade
       ,NULL AS promo_status
+      ,gmaps_address
 FROM gabby.tableau.next_year_status
