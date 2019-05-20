@@ -14,10 +14,8 @@ SELECT sr.df_employee_number
       ,sr.primary_site_schoolid
       ,sr.manager_name
       ,sr.original_hire_date
-
-      ,ads.samaccountname AS staff_username
-
-      ,adm.samaccountname AS manager_username
+      ,sr.samaccountname AS staff_username
+      ,sr.manager_samaccountname AS manager_username
 
       ,wo.observation_id
       ,wo.observed_at
@@ -41,16 +39,12 @@ SELECT sr.df_employee_number
 
       ,rt.academic_year
       ,rt.time_per_name AS reporting_term
-FROM gabby.dayforce.staff_roster sr
-LEFT JOIN gabby.adsi.user_attributes_static ads
-  ON sr.df_employee_number = ads.employeenumber
- AND ISNUMERIC(ads.employeenumber) = 1
-LEFT JOIN gabby.adsi.user_attributes_static adm
-  ON sr.manager_df_employee_number = adm.employeenumber
- AND ISNUMERIC(adm.employeenumber) = 1
+
+      ,ex.exemption
+FROM gabby.people.staff_crosswalk_static sr
 JOIN gabby.whetstone.observations_clean wo
   ON sr.df_employee_number = wo.teacher_accountingId
- AND ads.samaccountname != LEFT(wo.observer_email, CHARINDEX('@', wo.observer_email) - 1)
+ AND sr.samaccountname != LEFT(wo.observer_email, CHARINDEX('@', wo.observer_email) - 1)
  AND wo.rubric_name = 'Coaching Tool: Coach ETR and Reflection'
 LEFT JOIN gabby.whetstone.observations_scores wos
   ON wo.observation_id = wos.observation_id
@@ -63,4 +57,8 @@ JOIN gabby.reporting.reporting_terms rt
  AND rt.identifier = 'ETR'
  AND rt.schoolid = 0
  AND rt._fivetran_deleted = 0
+LEFT JOIN gabby.pm.teacher_goals_exemption_clean_static ex
+  ON sr.df_employee_number = ex.df_employee_number
+ AND rt.academic_year = ex.academic_year
+ AND rt.time_per_name = REPLACE(ex.pm_term, 'PM', 'ETR')
 WHERE ISNULL(sr.termination_date, GETDATE()) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)

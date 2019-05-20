@@ -12,6 +12,7 @@ SELECT sr.df_employee_number
       ,sr.primary_site_schoolid
       ,sr.primary_site_reporting_schoolid
       ,sr.primary_site_school_level
+      ,sr.[status]
       ,sr.is_active
       ,sr.original_hire_date
       ,sr.termination_date
