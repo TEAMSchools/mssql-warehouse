@@ -218,7 +218,8 @@ WITH caredox_enrollment AS (
                  ,caredox_screenings_status
                  ,caredox_medication_status
                  ,residency_proof_all
-                 ,residency_verification_scanned)
+                 ,residency_verification_scanned
+                 ,residency_verification_approved)
    ) u
  )
 
@@ -239,6 +240,7 @@ SELECT a.student_number
       ,NULL AS reverification_date
       ,a.birth_certificate_proof
       ,a.residency_verification_scanned
+      ,a.residency_verification_approved
       ,a.iep_registration_followup_required
       ,a.iep_registration_followup_complete
       ,a.lep_registration_followup_required
