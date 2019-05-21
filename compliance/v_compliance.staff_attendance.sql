@@ -1,7 +1,7 @@
 USE gabby
 GO
 
---CREATE OR ALTER VIEW compliance.staff_attendance AS
+CREATE OR ALTER VIEW compliance.staff_attendance AS
 
 WITH calendars AS (
   SELECT c.db_name
@@ -88,7 +88,6 @@ SELECT e.df_employee_number
 
       ,COALESCE(o.status,e.day_status) COLLATE Latin1_General_BIN AS day_status
 
-      ,gabby.utilities.DATE_TO_SY(e.date_value) AS academic_year
       ,CASE WHEN e.day_status IN ('HOL','VAC') THEN 0
             WHEN o.status IS NOT NULL THEN 0
             ELSE COALESCE(9.5-t.hours,9.5) 
