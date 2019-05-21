@@ -54,11 +54,13 @@ WITH caredox_enrollment AS (
   SELECT nen
         ,academic_year
         ,verification_date
+        ,approved
   FROM
       (
        SELECT CONVERT(VARCHAR(25),subject_line) AS nen
              ,academic_year
              ,[timestamp] AS verification_date
+             ,approved
              ,ROW_NUMBER() OVER(
                PARTITION BY subject_line, academic_year
                  ORDER BY [timestamp] DESC) AS rn_recent
@@ -79,17 +81,18 @@ WITH caredox_enrollment AS (
         
         ,CONVERT(VARCHAR(500),sub.lunch_app_status) COLLATE Latin1_General_BIN AS lunch_app_status
         ,CONVERT(VARCHAR(500),sub.lunch_balance) COLLATE Latin1_General_BIN AS lunch_balance
-        ,CONVERT(VARCHAR(500),sub.residency_proof_1) COLLATE Latin1_General_BIN AS residency_proof_1
-        ,CONVERT(VARCHAR(500),sub.residency_proof_2) COLLATE Latin1_General_BIN AS residency_proof_2
-        ,CONVERT(VARCHAR(500),sub.residency_proof_3) COLLATE Latin1_General_BIN AS residency_proof_3
-        ,CONVERT(VARCHAR(500),sub.birth_certificate_proof) COLLATE Latin1_General_BIN AS birth_certificate_proof
         ,CONVERT(VARCHAR(500),sub.iep_registration_followup) COLLATE Latin1_General_BIN AS iep_registration_followup_required
         ,CONVERT(VARCHAR(500),sub.lep_registration_followup) COLLATE Latin1_General_BIN AS lep_registration_followup_required
         ,CONVERT(VARCHAR(500),sub.caredox_enrollment_status) COLLATE Latin1_General_BIN AS caredox_enrollment_status
         ,CONVERT(VARCHAR(500),sub.caredox_immunization_status) COLLATE Latin1_General_BIN AS caredox_immunization_status
         ,CONVERT(VARCHAR(500),sub.caredox_screenings_status) COLLATE Latin1_General_BIN AS caredox_screenings_status
         ,CONVERT(VARCHAR(500),sub.caredox_medication_status) COLLATE Latin1_General_BIN AS caredox_medication_status
+        ,CONVERT(VARCHAR(500),sub.birth_certificate_proof) COLLATE Latin1_General_BIN AS birth_certificate_proof
+        ,CONVERT(VARCHAR(500),sub.residency_proof_1) COLLATE Latin1_General_BIN AS residency_proof_1
+        ,CONVERT(VARCHAR(500),sub.residency_proof_2) COLLATE Latin1_General_BIN AS residency_proof_2
+        ,CONVERT(VARCHAR(500),sub.residency_proof_3) COLLATE Latin1_General_BIN AS residency_proof_3
         ,CONVERT(VARCHAR(500),sub.residency_verification_scanned) COLLATE Latin1_General_BIN AS residency_verification_scanned
+        ,CONVERT(VARCHAR(500),sub.residency_verification_approved) COLLATE Latin1_General_BIN AS residency_verification_approved
         
         ,CONVERT(VARCHAR(500),sub.region + sub.city) COLLATE Latin1_General_BIN AS region_city
         
@@ -143,13 +146,18 @@ WITH caredox_enrollment AS (
              ,suf.newark_enrollment_number
 
              ,ISNULL(uxs.residency_proof_1, 'Missing') AS residency_proof_1
-             ,ISNULL(uxs.residency_proof_2, 'Missing') AS residency_proof_2
-             ,ISNULL(uxs.residency_proof_3, 'Missing') AS residency_proof_3
+             ,CASE
+               WHEN (s.enroll_status = -1 OR COALESCE(co.year_in_network, 1) = 1) THEN ISNULL(uxs.residency_proof_2, 'Missing') 
+              END AS residency_proof_2
+             ,CASE
+               WHEN (s.enroll_status = -1 OR COALESCE(co.year_in_network, 1) = 1) THEN ISNULL(uxs.residency_proof_3, 'Missing') 
+              END AS residency_proof_3
              ,ISNULL(uxs.birth_certificate_proof, 'N') AS birth_certificate_proof
              ,ISNULL(uxs.iep_registration_followup, '') AS iep_registration_followup
              ,ISNULL(uxs.lep_registration_followup, '') AS lep_registration_followup
 
              ,CASE WHEN rv.nen IS NOT NULL THEN 'Y' ELSE 'N' END AS residency_verification_scanned
+             ,ISNULL(rv.approved, '') AS residency_verification_approved
 
              ,ISNULL(cde.status, '') AS caredox_enrollment_status
              ,ISNULL(cdi.status, '') AS caredox_immunization_status
@@ -170,7 +178,7 @@ WITH caredox_enrollment AS (
         AND s.db_name = uxs.db_name
        LEFT JOIN residency_verification rv
          ON suf.newark_enrollment_number = rv.nen
-        AND rv.academic_year = COALESCE(co.academic_year, gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1)
+        AND rv.academic_year = 2019 /* update manually */
        LEFT JOIN caredox_enrollment cde
          ON s.student_number = cde.student_id
         AND cde.rn_last_updated = 1
@@ -279,6 +287,9 @@ SELECT a.student_number
         WHEN u.field = 'residency_proof_all' AND u.value = 'N' THEN -1
         WHEN u.field = 'residency_verification_scanned' AND u.value = 'Y' THEN 1
         WHEN u.field = 'residency_verification_scanned' AND u.value IN ('','N') THEN -1
+        WHEN u.field = 'residency_verification_approved' AND u.value = 'Yes' THEN 1
+        WHEN u.field = 'residency_verification_approved' AND u.value = 'No' THEN -1
+        WHEN u.field = 'residency_verification_approved' AND u.value = '' THEN 0
        END AS audit_status
 FROM all_data a
 JOIN unpivoted u
