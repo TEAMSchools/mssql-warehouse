@@ -147,6 +147,7 @@ SELECT r.contact_id
       ,r.ktc_counselor_name
 
       ,'Attachment Audit' AS audit_type
+      ,r.contact_id AS record_id
       ,NULL AS status_change_date
       ,NULL AS updated_by
       ,s.semester + ' ' + s.[year] + ' ' + d.document_type AS audit_name
@@ -170,6 +171,7 @@ SELECT r.contact_id
       ,r.ktc_counselor_name
 
       ,'Enrollment Audit' AS audit_type
+      ,eh.enrollment_id AS record_id
       ,eh.status_change_date
       ,eh.updated_by
       
@@ -200,6 +202,7 @@ SELECT r.contact_id
       ,r.ktc_counselor_name
 
       ,'Graduation Audit' AS audit_type
+      ,eh.enrollment_id AS record_id
       ,eh.status_change_date
       ,eh.updated_by
       
