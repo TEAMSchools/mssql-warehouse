@@ -249,6 +249,7 @@ SELECT a.student_number
       ,a.caredox_immunization_status
       ,a.caredox_screenings_status
       ,a.caredox_medication_status
+      ,CASE WHEN a.region_city IN ('TEAMNewark', 'KCNACamden', 'KMSMiami') THEN 'Resident' ELSE 'Non-Resident' END AS residency_status
 
       ,u.field AS audit_field
       ,u.value AS audit_value
