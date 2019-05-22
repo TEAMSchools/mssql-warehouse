@@ -31,7 +31,7 @@ WITH roster AS (
 
 ,valid_documents AS (
   SELECT [value] AS document_type
-  FROM STRING_SPLIT('Degree Audit,Bill,Financial Aid Award Letter,Schedule,Transcript', ',')
+  FROM STRING_SPLIT('DA,Bill,Financial Aid Award Letter,Schedule,Transcript', ',')
  )
 
 ,attachments_clean AS (
@@ -70,7 +70,7 @@ WITH roster AS (
 
 ,enr_hist AS (
   SELECT eh.parent_id AS enrollment_id
-        ,eh.created_date AS status_change_date
+        ,CONVERT(DATE,eh.created_date) AS status_change_date
         ,ROW_NUMBER() OVER(PARTITION BY eh.parent_id ORDER BY eh.created_date DESC) AS rn
 
         ,u.name AS updated_by
@@ -86,6 +86,7 @@ WITH roster AS (
 
 ,enrollment_audits AS (
   SELECT u.contact_id
+        ,u.enrollment_name
         ,u.status_change_date
         ,u.updated_by      
         ,u.field AS audit_name
@@ -95,7 +96,7 @@ WITH roster AS (
            AND u.value != ''
                  THEN 1
           WHEN u.field = 'date_last_verified_c'
-           AND  CONVERT(DATE,u.value) BETWEEN u.status_change_date AND DATEADD(DAY, 30, u.status_change_date)
+           AND  CONVERT(DATE,u.value) >= u.status_change_date --AND DATEADD(DAY, 30, u.status_change_date)
                  THEN 1
           ELSE 0
          END AS audit_result
@@ -106,6 +107,7 @@ WITH roster AS (
              ,eh.updated_by
 
              ,e.student_c AS contact_id
+             ,e.name AS enrollment_name
              ,e.status_c
              ,ISNULL(CONVERT(NVARCHAR(MAX),e.actual_end_date_c), '') AS actual_end_date_c
              ,ISNULL(CONVERT(NVARCHAR(MAX),e.date_last_verified_c), '') AS date_last_verified_c
@@ -154,7 +156,7 @@ WHERE r.post_hs_simple_admin_c IN ('College Persisting', 'College Grad - AA')
 UNION ALL
 
 SELECT r.contact_id
-      ,r.contact_name
+      ,ea.enrollment_name
       ,r.cohort      
       ,r.ktc_counselor_name
 
