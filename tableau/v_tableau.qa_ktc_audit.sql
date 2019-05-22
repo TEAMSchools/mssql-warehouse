@@ -127,6 +127,7 @@ WITH roster AS (
        FROM gabby.alumni.enrollment_c e
        JOIN gabby.alumni.contact c
          ON e.student_c = c.id
+       WHERE e.type_c = 'College'
       ) sub
   UNPIVOT(
     value
