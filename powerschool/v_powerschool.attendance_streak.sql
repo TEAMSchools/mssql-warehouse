@@ -11,11 +11,11 @@ WITH valid_dates AS (
       (
        SELECT CONVERT(INT,schoolid) AS schoolid
              ,date_value
-             ,gabby.utilities.DATE_TO_SY(date_value) AS academic_year        
+             ,gabby.utilities.DATE_TO_SY(date_value) AS academic_year
        FROM powerschool.calendar_day
-       WHERE date_value >= DATEFROMPARTS((gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1), 7, 1)
+       WHERE insession = 1
          AND membershipvalue = 1
-         AND insession = 1
+         AND date_value >= DATEFROMPARTS((gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1), 7, 1)
       ) sub
  )
 
@@ -38,12 +38,12 @@ FROM
            ,CONCAT(student_number, '_', academic_year, '_', att_code, (day_number - streak_rn)) AS streak_id
      FROM
          (
-          SELECT co.student_number           
+          SELECT co.student_number
                 ,co.academic_year
-           
+
                 ,d.date_value
                 ,d.day_number
-           
+
                 ,ISNULL(att.att_code, 'P') AS att_code
 
                 ,CONVERT(INT,ROW_NUMBER() OVER(
@@ -56,8 +56,8 @@ FROM
           LEFT JOIN powerschool.ps_attendance_daily att 
             ON co.studentid = att.studentid
            AND d.date_value = att.att_date     
-          WHERE co.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
-            AND co.rn_year = 1
+          WHERE co.rn_year = 1
+            AND co.academic_year IN (gabby.utilities.GLOBAL_ACADEMIC_YEAR(), (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1))
          ) sub
     ) sub
 GROUP BY academic_year

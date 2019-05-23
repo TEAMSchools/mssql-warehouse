@@ -63,12 +63,12 @@ SELECT ev.studentid
          WHEN (ev.track IS NULL) THEN 0
          ELSE 1         
         END) AS offtrack
-FROM powerschool.ps_enrollment_all_static ev 
+FROM powerschool.bell_schedule bs
 JOIN powerschool.calendar_day cd 
-  ON ev.schoolid = cd.schoolid
+  ON bs.id = cd.bell_schedule_id
  AND cd.insession = 1
+JOIN powerschool.ps_enrollment_all_static ev 
+  ON cd.schoolid = ev.schoolid
  AND cd.date_value >= ev.entrydate
  AND cd.date_value < ev.exitdate
-JOIN powerschool.bell_schedule bs
-  ON cd.bell_schedule_id = bs.id
-WHERE ev.yearid = (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990)
+WHERE bs.year_id = (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990)
