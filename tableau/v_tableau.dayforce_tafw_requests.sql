@@ -18,6 +18,6 @@ SELECT t.reference_code AS df_employee_number
       ,r.manager_df_employee_number
       ,r.manager_name
       ,r.manager_mail
-FROM dayforce.tafw_requests t 
+FROM gabby.dayforce.tafw_requests t
 JOIN gabby.tableau.staff_roster r
   ON t.reference_code = r.df_employee_number 
