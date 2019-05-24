@@ -112,9 +112,14 @@ WITH reading_level AS (
    AND rt.identifier = 'ETR'
    AND rt.schoolid = 0
    AND rt._fivetran_deleted = 0
+  LEFT JOIN gabby.pm.teacher_goals_exemption_clean_static ex
+    ON sr.df_employee_number = ex.df_employee_number
+   AND rt.academic_year = ex.academic_year
+   AND rt.time_per_name = REPLACE(ex.pm_term, 'PM', 'ETR')
   WHERE wo.rubric_name = 'Coaching Tool: Coach ETR and Reflection'
     AND wo.score IS NOT NULL
     AND wo.observer_email != wo.teacher_email
+    AND ex.exemption IS NULL
  )
 
 ,etr AS (
@@ -142,15 +147,20 @@ WITH reading_level AS (
  )
 
 ,so_survey_long AS (
-  SELECT subject_employee_number
-        ,academic_year
-        ,reporting_term      
+  SELECT so.subject_employee_number
+        ,so.academic_year
+        ,so.reporting_term
         ,'so_survey_overall_score' AS metric_name
-        ,SUM(total_weighted_response_value) / SUM(total_response_weight) AS metric_value
-  FROM gabby.surveys.self_and_others_survey_rollup_static
-  GROUP BY subject_employee_number
-          ,academic_year
-          ,reporting_term
+        ,SUM(so.total_weighted_response_value) / SUM(so.total_response_weight) AS metric_value
+  FROM gabby.surveys.self_and_others_survey_rollup_static so
+  LEFT JOIN gabby.pm.teacher_goals_exemption_clean_static ex
+    ON so.subject_employee_number = ex.df_employee_number
+   AND so.academic_year = ex.academic_year
+   AND so.reporting_term = REPLACE(ex.pm_term, 'PM', 'SO')
+  WHERE ex.exemption IS NULL
+  GROUP BY so.subject_employee_number
+          ,so.academic_year
+          ,so.reporting_term
  )
 
 ,so_survey AS (
@@ -456,4 +466,4 @@ LEFT JOIN gabby.pm.teacher_goals_lockbox_wide lb
  AND ISNULL(d.grade_level, -1) = lb.grade_level
  AND d.is_sped_goal = lb.is_sped_goal
  AND d.metric_name = lb.metric_name
- AND d.metric_label = lb.metric_label
+ AND d.metric_label = lb.metric_label;
