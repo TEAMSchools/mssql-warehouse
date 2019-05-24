@@ -92,7 +92,7 @@ WITH reading_level AS (
     AND asr.module_number IN ('QA1','QA2','QA3','QA4')  
  )
 
-,etr AS (
+,etr_long AS (  
   SELECT sr.df_employee_number
         
         ,rt.academic_year
@@ -117,7 +117,31 @@ WITH reading_level AS (
     AND wo.observer_email != wo.teacher_email
  )
 
-,so_survey AS (
+,etr AS (
+  SELECT etr_long.df_employee_number
+        ,etr_long.academic_year
+        ,etr_long.time_per_name
+        ,etr_long.metric_name
+        ,etr_long.metric_value
+  FROM etr_long
+  WHERE rn = 1
+
+  UNION ALL
+
+  SELECT etr_long.df_employee_number
+        ,etr_long.academic_year
+        ,'ETRY1' AS time_per_name
+        ,etr_long.metric_name
+        ,AVG(etr_long.metric_value) AS metric_value
+  FROM etr_long
+  WHERE rn = 1
+    AND etr_long.time_per_name IN ('ETR2', 'ETR3')
+  GROUP BY etr_long.df_employee_number
+          ,etr_long.academic_year
+          ,etr_long.metric_name
+ )
+
+,so_survey_long AS (
   SELECT subject_employee_number
         ,academic_year
         ,reporting_term      
@@ -127,6 +151,28 @@ WITH reading_level AS (
   GROUP BY subject_employee_number
           ,academic_year
           ,reporting_term
+ )
+
+,so_survey AS (
+  SELECT so_survey_long.subject_employee_number
+        ,so_survey_long.academic_year
+        ,so_survey_long.reporting_term
+        ,so_survey_long.metric_name
+        ,so_survey_long.metric_value
+  FROM so_survey_long
+
+  UNION ALL
+
+  SELECT so_survey_long.subject_employee_number
+        ,so_survey_long.academic_year
+        ,'SOY1' AS reporting_term
+        ,so_survey_long.metric_name
+        ,AVG(so_survey_long.metric_value) AS metric_value
+  FROM so_survey_long
+  WHERE so_survey_long.reporting_term IN ('SO2', 'SO3')
+  GROUP BY so_survey_long.subject_employee_number
+          ,so_survey_long.academic_year
+          ,so_survey_long.metric_name
  )
 
 ,glt_goal_data AS (
@@ -156,7 +202,6 @@ WITH reading_level AS (
         ,etr.metric_name
         ,etr.metric_value
   FROM etr
-  WHERE rn = 1 
 
   UNION ALL
 
