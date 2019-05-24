@@ -70,6 +70,7 @@ JOIN gabby.pm.teacher_goals tg
 JOIN gabby.pm.teacher_goals_term_map tm
   ON tg.academic_year = tm.academic_year
  AND tg.metric_name = tm.metric_name
+ AND tm._fivetran_deleted = 0
 LEFT JOIN gabby.pm.teacher_goals_exemption_clean_static ex
   ON sr.df_employee_number = ex.df_employee_number
  AND tg.academic_year = ex.academic_year
@@ -129,6 +130,7 @@ JOIN gabby.pm.teacher_goals tg
 JOIN gabby.pm.teacher_goals_term_map tm
   ON tg.academic_year = tm.academic_year
  AND tg.metric_name = tm.metric_name
+ AND tm._fivetran_deleted = 0
 LEFT JOIN gabby.pm.teacher_goals_exemption_clean_static ex
   ON sr.df_employee_number = ex.df_employee_number
  AND tg.academic_year = ex.academic_year
@@ -203,6 +205,7 @@ JOIN gabby.powerschool.cohort_identifiers_static co
 JOIN gabby.pm.teacher_goals_term_map tm
   ON tg.academic_year = tm.academic_year
  AND tg.metric_name = tm.metric_name
+ AND tm._fivetran_deleted = 0
 LEFT JOIN gabby.pm.teacher_goals_exemption_clean_static ex
   ON sr.df_employee_number = ex.df_employee_number
  AND tg.academic_year = ex.academic_year
@@ -278,6 +281,7 @@ JOIN gabby.powerschool.cohort_identifiers_static co
 JOIN gabby.pm.teacher_goals_term_map tm
   ON tg.academic_year = tm.academic_year
  AND tg.metric_name = tm.metric_name
+ AND tm._fivetran_deleted = 0
 LEFT JOIN gabby.pm.teacher_goals_exemption_clean_static ex
   ON sr.df_employee_number = ex.df_employee_number
  AND tg.academic_year = ex.academic_year
