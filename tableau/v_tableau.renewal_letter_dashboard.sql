@@ -46,6 +46,7 @@ WITH wf AS (
              ,was.job_name AS future_role
              ,CONVERT(DATE,was.work_assignment_effective_start) AS future_work_assignment_effective_start
        FROM gabby.dayforce.employee_work_assignment was
+       WHERE was.primary_work_assignment = 1
       ) sub
  )
 
