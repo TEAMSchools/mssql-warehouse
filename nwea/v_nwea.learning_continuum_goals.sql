@@ -1,6 +1,3 @@
-USE gabby
-GO
-
 CREATE OR ALTER VIEW nwea.learning_continuum_goals AS
 
 WITH long_data AS (
@@ -37,7 +34,7 @@ WITH long_data AS (
              ,CONVERT(VARCHAR(125), goal_4_name) AS goal_4_name
              ,CONVERT(VARCHAR(125), goal_4_range) AS goal_4_range
              ,CONVERT(VARCHAR(125), goal_4_rit_score) COLLATE Latin1_General_BIN AS goal_4_rit_score
-       FROM gabby.nwea.assessment_result_identifiers
+       FROM nwea.assessment_result_identifiers
       ) sub
   UNPIVOT(
     value

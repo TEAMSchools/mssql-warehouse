@@ -1,6 +1,3 @@
-USE gabby
-GO
-
 CREATE OR ALTER VIEW nwea.assessment_result_identifiers AS
 
 SELECT sub.student_id
@@ -341,9 +338,9 @@ FROM
                   WHEN ISNUMERIC(ritto_reading_score) = 0 THEN CONVERT(FLOAT,REPLACE(REPLACE(ritto_reading_score, 'L', ''), 'BR', ''))
                   ELSE CONVERT(FLOAT,ritto_reading_score) 
                  END AS ritto_reading_score
-          FROM gabby.nwea.assessment_results
+          FROM nwea.assessment_results
          ) sub
-     JOIN gabby.powerschool.cohort_identifiers_static co
+     JOIN powerschool.cohort_identifiers_static co
        ON sub.student_id = co.student_number
       AND sub.academic_year = co.academic_year
       AND co.rn_year = 1
