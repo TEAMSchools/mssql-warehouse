@@ -3,22 +3,6 @@ GO
 
 CREATE OR ALTER VIEW tableau.zendesk_tickets AS
 
-WITH comments_count AS (
-  SELECT c.ticket_id
-        ,COUNT(c.ticket_id) - 1 AS comments_count
-  FROM gabby.zendesk.ticket_comment c  
-  GROUP BY c.ticket_id
- )
-
-,solved AS (
-  SELECT ticket_id
-        ,MAX(updated) AS updated
-  FROM gabby.zendesk.ticket_field_history
-  WHERE field_name = 'status'
-    AND value = 'solved'
-  GROUP BY ticket_id
- )
-
 SELECT t.id AS ticket_id
       ,CONVERT(VARCHAR(500),t.subject) AS ticket_subject
       ,t.status AS ticket_status      
