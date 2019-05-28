@@ -29,14 +29,20 @@ SELECT s.student_number
       ,co.is_retained_ever
       ,co.is_retained_year
       ,co.year_in_school
-      ,co.mother_cell
-      ,co.father_cell
+      
       ,co.boy_status
       ,CASE WHEN co.mother_cell IS NOT NULL THEN REPLACE(CONCAT('+1', co.mother_cell), '-', '') END AS tel_mother_cell
       ,CASE WHEN co.father_cell IS NOT NULL THEN REPLACE(CONCAT('+1', co.father_cell), '-', '') END AS tel_father_cell
+
+	  ,CONVERT(VARCHAR(125),suf.mother_cell) AS mother_cell
+      ,CONVERT(VARCHAR(125),suf.father_cell) AS father_cell
+
 FROM gabby.powerschool.students s
 LEFT JOIN gabby.powerschool.cohort_identifiers_static co
   ON s.student_number = co.student_number
  AND s.db_name = co.db_name 
  AND co.rn_undergrad = 1
+LEFT JOIN powerschool.u_studentsuserfields suf
+  ON s.dcid = suf.studentsdcid
+ AND s.db_name = suf.db_name
 WHERE s.enroll_status IN (0, -1)
