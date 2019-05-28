@@ -131,7 +131,7 @@ WITH caredox_enrollment AS (
                WHEN s.db_name = 'kippmiami' THEN 'KMS' 
               END AS region
 
-             ,COALESCE(co.reporting_schoolid, s.schoolid) AS reporting_schoolid
+             ,s.next_school AS reporting_schoolid
              ,ISNULL(co.specialed_classification, '') AS specialed_classification
              ,ISNULL(co.lep_status, '') AS lep_status
              ,ISNULL(co.lunch_app_status, '') AS lunch_app_status
