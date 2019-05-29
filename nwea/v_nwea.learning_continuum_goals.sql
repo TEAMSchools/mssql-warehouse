@@ -15,25 +15,25 @@ WITH long_data AS (
        SELECT student_id
              ,academic_year
              ,term
-             ,measurement_scale                          
+             ,measurement_scale
              ,test_id
              ,test_name
              ,CONVERT(VARCHAR(125), goal_1_adjective) AS goal_1_adjective
              ,CONVERT(VARCHAR(125), goal_1_name) AS goal_1_name
              ,CONVERT(VARCHAR(125), goal_1_range) AS goal_1_range
-             ,CONVERT(VARCHAR(125), goal_1_rit_score) COLLATE Latin1_General_BIN AS goal_1_rit_score
+             ,CONVERT(VARCHAR(125), goal_1_rit_score) AS goal_1_rit_score
              ,CONVERT(VARCHAR(125), goal_2_adjective) AS goal_2_adjective
              ,CONVERT(VARCHAR(125), goal_2_name) AS goal_2_name
              ,CONVERT(VARCHAR(125), goal_2_range) AS goal_2_range
-             ,CONVERT(VARCHAR(125), goal_2_rit_score) COLLATE Latin1_General_BIN AS goal_2_rit_score
+             ,CONVERT(VARCHAR(125), goal_2_rit_score) AS goal_2_rit_score
              ,CONVERT(VARCHAR(125), goal_3_adjective) AS goal_3_adjective
              ,CONVERT(VARCHAR(125), goal_3_name) AS goal_3_name
              ,CONVERT(VARCHAR(125), goal_3_range) AS goal_3_range
-             ,CONVERT(VARCHAR(125), goal_3_rit_score) COLLATE Latin1_General_BIN AS goal_3_rit_score
+             ,CONVERT(VARCHAR(125), goal_3_rit_score) AS goal_3_rit_score
              ,CONVERT(VARCHAR(125), goal_4_adjective) AS goal_4_adjective
              ,CONVERT(VARCHAR(125), goal_4_name) AS goal_4_name
              ,CONVERT(VARCHAR(125), goal_4_range) AS goal_4_range
-             ,CONVERT(VARCHAR(125), goal_4_rit_score) COLLATE Latin1_General_BIN AS goal_4_rit_score
+             ,CONVERT(VARCHAR(125), goal_4_rit_score) AS goal_4_rit_score
        FROM nwea.assessment_result_identifiers
       ) sub
   UNPIVOT(

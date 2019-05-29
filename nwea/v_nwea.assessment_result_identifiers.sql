@@ -221,10 +221,12 @@ FROM
            ,norms_2015.student_percentile AS percentile_2015_norms
 
            ,CONVERT(INT,ROW_NUMBER() OVER(
-              PARTITION BY sub.student_id, sub.term_name, sub.measurement_scale
+              PARTITION BY sub.student_id
+                          ,sub.term_name
+                          ,sub.measurement_scale
                 ORDER BY sub.growth_measure_yn DESC
-                        ,test_start_date DESC
-                        ,test_standard_error)) AS rn_term_subj
+                        ,sub.test_start_date DESC
+                        ,sub.test_standard_error)) AS rn_term_subj
      FROM
          (
           SELECT CONVERT(INT,student_id) AS student_id
@@ -320,27 +322,15 @@ FROM
                 ,CONVERT(FLOAT,wiselected_ayspring) AS wiselected_ayspring
                 ,wiselected_aywinter
 
-                ,CONVERT(INT,SUBSTRING(term_name, CHARINDEX('-', term_name) - 4, 4)) AS academic_year
-                ,CASE
-                  WHEN term_name LIKE 'Fall%' THEN CONVERT(INT,SUBSTRING(term_name, (CHARINDEX('-', term_name) - 4), 4))
-                  ELSE CONVERT(INT,SUBSTRING(term_name, (CHARINDEX('-', term_name) + 1), 4))
-                 END AS test_year                      
-                ,CONVERT(VARCHAR(25),LEFT(term_name, (CHARINDEX(' ', term_name) - 1))) AS term
-                ,CASE
-                  WHEN LEFT(term_name, CHARINDEX(' ', term_name) - 1) = 'Fall'   THEN 1 
-                  WHEN LEFT(term_name, CHARINDEX(' ', term_name) - 1) = 'Winter' THEN 2
-                  WHEN LEFT(term_name, CHARINDEX(' ', term_name) - 1) = 'Spring' THEN 3
-                  ELSE NULL
-                 END term_numeric      
-                ,CASE WHEN measurement_scale LIKE 'Language%' THEN 'Language Usage' ELSE CONVERT(VARCHAR(125),measurement_scale) END AS measurement_scale            
-                ,CASE
-                  WHEN ritto_reading_score IN ('BR','<100') THEN 0
-                  WHEN ISNUMERIC(ritto_reading_score) = 0 THEN CONVERT(FLOAT,REPLACE(REPLACE(ritto_reading_score, 'L', ''), 'BR', ''))
-                  ELSE CONVERT(FLOAT,ritto_reading_score) 
-                 END AS ritto_reading_score
+                ,academic_year
+                ,test_year
+                ,term
+                ,term_numeric
+                ,measurement_scale_clean AS measurement_scale
+                ,rit_to_readingscore_clean AS ritto_reading_score
           FROM nwea.assessment_results
          ) sub
-     JOIN powerschool.cohort_identifiers_static co
+     JOIN powerschool.cohort_static co
        ON sub.student_id = co.student_number
       AND sub.academic_year = co.academic_year
       AND co.rn_year = 1

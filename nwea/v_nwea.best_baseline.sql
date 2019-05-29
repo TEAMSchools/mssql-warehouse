@@ -39,15 +39,15 @@ FROM powerschool.cohort_identifiers_static r
 CROSS JOIN STRING_SPLIT('Mathematics,Reading,Language Usage,Science - General Science', ',') subj
 LEFT JOIN nwea.assessment_result_identifiers map_fall /* CURRENT YEAR FALL */
   ON r.student_number = map_fall.student_id
- AND r.academic_year = map_fall.academic_year 
  AND subj.[value] = map_fall.measurement_scale
- AND map_fall.rn_term_subj = 1 
+ AND r.academic_year = map_fall.academic_year
  AND map_fall.term = 'Fall'
+ AND map_fall.rn_term_subj = 1
 LEFT JOIN nwea.assessment_result_identifiers map_spr /* PREVIOUS YEAR SPRING */
   ON r.student_number = map_spr.student_id
- AND r.academic_year = map_spr.test_year 
  AND subj.[value] = map_spr.measurement_scale
- AND map_spr.rn_term_subj = 1
+ AND r.academic_year = map_spr.test_year
  AND map_spr.term = 'Spring'
+ AND map_spr.rn_term_subj = 1
 WHERE r.rn_year = 1
   AND r.grade_level != 99

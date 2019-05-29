@@ -10,7 +10,6 @@ SELECT student_number
       ,grade_level
       ,team
       ,advisor_name
-
       ,mathematics_pctl_baseline
       ,mathematics_rit_50pctl
       ,mathematics_rit_75pctl
@@ -35,7 +34,7 @@ FROM
      FROM
          (
           SELECT bb.student_number                
-                ,bb.measurementscale
+                ,bb.measurementscale COLLATE Latin1_General_BIN AS measurementscale
                 ,CONVERT(FLOAT,bb.test_ritscore) AS rit_baseline
                 ,CONVERT(FLOAT,bb.testpercentile) AS pctl_baseline
       
@@ -59,19 +58,19 @@ FROM
            AND co.school_level IN ('ES', 'MS')
           LEFT JOIN gabby.nwea.percentile_norms_dense ku
             ON co.grade_level = ku.grade_level
-           AND bb.measurementscale = ku.measurementscale
+           AND bb.measurementscale = ku.measurementscale COLLATE Latin1_General_BIN
            AND bb.testpercentile = ku.testpercentile
            AND ku.term = 'Spring'
           LEFT JOIN gabby.nwea.percentile_norms_dense gl
             ON co.grade_level = gl.grade_level
-           AND bb.measurementscale = gl.measurementscale
-           AND gl.testpercentile = 50
+           AND bb.measurementscale = gl.measurementscale COLLATE Latin1_General_BIN
            AND gl.term = 'Spring'
+           AND gl.testpercentile = 50
           LEFT JOIN gabby.nwea.percentile_norms_dense tq
             ON co.grade_level = tq.grade_level
-           AND bb.measurementscale = tq.measurementscale
-           AND tq.testpercentile = 75
+           AND bb.measurementscale = tq.measurementscale COLLATE Latin1_General_BIN
            AND tq.term = 'Spring'
+           AND tq.testpercentile = 75
           WHERE bb.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
             AND bb.measurementscale IN ('Mathematics', 'Reading')
          ) sub
