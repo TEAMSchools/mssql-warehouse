@@ -366,7 +366,7 @@ SELECT academic_year
        END AS met_default_goal
       ,NULL AS met_natl_goal
       ,CASE
-        WHEN lvl_num >= 26 THEN 'Target'
+        WHEN lvl_num >= 26 THEN 'Achieved Z'
         WHEN lvl_num - goal_num > 0 THEN 'Above Target'
         WHEN lvl_num - goal_num = 0 THEN 'Target'
         WHEN lvl_num - goal_num = -1 THEN 'Approaching'
