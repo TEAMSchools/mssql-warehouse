@@ -26,7 +26,7 @@ WITH users_clean AS (
         ,CASE
           WHEN psid.is_master = 0 THEN 2
           WHEN df.termination_date < GETDATE() THEN 2
-          WHEN df.status IN ('ACTIVE','INACTIVE','PRESTART') THEN 1
+          WHEN df.status IN ('ACTIVE','INACTIVE','PRESTART', 'PLOA', 'ADMIN_LEAVE') THEN 1
           WHEN df.termination_date >= CONVERT(DATE,GETDATE()) THEN 1
           ELSE 2
          END AS status
