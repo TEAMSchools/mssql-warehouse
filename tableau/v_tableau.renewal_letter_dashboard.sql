@@ -13,7 +13,7 @@ WITH wf AS (
              ORDER BY renewal_status_updated DESC) AS rn_recent_workflow
   FROM
       (
-       SELECT RIGHT(rs.affected_employee, 6) AS affected_employee_number
+       SELECT rs.employee_reference_code AS affected_employee_number
              ,CONVERT(DATETIME2,rs.workflow_data_last_modified_timestamp) AS renewal_status_updated
              ,CASE 
                WHEN rs.workflow_status = 'completed' AND rs.workflow_data_saved = 'true' THEN 'Offer Accepted'
@@ -56,8 +56,8 @@ WITH wf AS (
         ,future_salary
         ,future_status_effective_start
         ,ROW_NUMBER() OVER(
-          PARTITION BY df_employee_number
-            ORDER BY future_status_effective_start DESC) AS rn_recent_status
+           PARTITION BY df_employee_number
+             ORDER BY future_status_effective_start DESC) AS rn_recent_status
   FROM
       (
        SELECT sta.number AS df_employee_number
