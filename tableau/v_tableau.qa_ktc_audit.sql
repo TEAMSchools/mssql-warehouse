@@ -31,7 +31,7 @@ WITH roster AS (
 
 ,valid_documents AS (
   SELECT [value] AS document_type
-  FROM STRING_SPLIT('DA,Bill,Financial Aid Award Letter,Schedule,Transcript', ',')
+  FROM STRING_SPLIT('DA,Bill,FAAL,Schedule,Transcript', ',')
  )
 
 ,attachments_clean AS (
