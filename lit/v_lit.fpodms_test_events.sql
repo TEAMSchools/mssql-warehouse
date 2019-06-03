@@ -213,6 +213,7 @@ SELECT cd.unique_id
       ,cd.indep_lvl
 
       ,rt.alt_name AS test_round
+      ,rt.time_per_name AS reporting_term
       ,CONVERT(INT,RIGHT(rt.time_per_name, 1)) AS round_num
 
       ,gleq.fp_lvl_num AS lvl_num
