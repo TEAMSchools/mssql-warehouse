@@ -14,7 +14,7 @@ WITH fp_recent AS (
         ,fp.text_level
         ,fp.lvl_num
   FROM gabby.lit.fpodms_test_events fp
-  WHERE fp.benchmark_level = 'Independent'
+  WHERE fp.benchmark_level = 'Instructional'
  )
 
 ,scaffold AS (
@@ -104,7 +104,7 @@ SELECT s.student_number
        END AS audit_status
       ,CASE
         WHEN s.year_in_network = 1 THEN 'New to KIPP NJ'
-        WHEN s.assessment_date IS NULL THEN 'No Assessment Data'
+        WHEN s.assessment_date IS NULL THEN 'No Instructional Level'
         WHEN s.goal_status = 'Far Below' THEN 'Far Below'
         WHEN s.academic_year - s.asssessment_academic_year > 1 THEN 'More Than 2 Rounds Since Last Test'
         WHEN s.asssessment_test_round NOT IN ('Q3', 'Q4', 'DR') THEN 'More Than 2 Rounds Since Last Test'
@@ -145,7 +145,7 @@ SELECT s.student_number
        END AS audit_status
       ,CASE
         WHEN s.entrydate >= s.test_round_start_date THEN 'New to KIPP NJ'
-        WHEN s.assessment_date IS NULL THEN  'No Assessment Data'
+        WHEN s.assessment_date IS NULL THEN  'No Instructional Level'
         WHEN s.goal_status IN ('Below', 'Approaching') THEN 'Below/Approaching'
        END AS audit_reason
 FROM scaffold s
@@ -184,7 +184,7 @@ SELECT s.student_number
        END AS audit_status
       ,CASE
         WHEN s.entrydate >= s.test_round_start_date THEN 'New to KIPP NJ'
-        WHEN s.assessment_date IS NULL THEN  'No Assessment Data'
+        WHEN s.assessment_date IS NULL THEN  'No Instructional Level'
         WHEN s.goal_status IN ('Far Below', 'Below') THEN 'Far Below/Below'
        END AS audit_reason
 FROM scaffold s
@@ -223,7 +223,7 @@ SELECT s.student_number
        END AS audit_status
       ,CASE
         WHEN s.entrydate >= s.test_round_start_date THEN 'New to KIPP NJ'
-        WHEN s.assessment_date IS NULL THEN  'No Assessment Data'
+        WHEN s.assessment_date IS NULL THEN  'No Instructional Level'
         WHEN s.academic_year != s.asssessment_academic_year THEN 'Not Tested in Q3'
         WHEN s.asssessment_test_round != 'Q3' THEN 'Not Tested in Q3'
        END AS audit_reason
