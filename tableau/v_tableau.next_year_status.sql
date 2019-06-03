@@ -34,9 +34,8 @@ SELECT s.student_number
       ,CASE WHEN co.mother_cell IS NOT NULL THEN REPLACE(CONCAT('+1', co.mother_cell), '-', '') END AS tel_mother_cell
       ,CASE WHEN co.father_cell IS NOT NULL THEN REPLACE(CONCAT('+1', co.father_cell), '-', '') END AS tel_father_cell
 
-	  ,CONVERT(VARCHAR(125),suf.mother_cell) AS mother_cell
-      ,CONVERT(VARCHAR(125),suf.father_cell) AS father_cell
-
+      ,suf.mother_cell
+      ,suf.father_cell
 FROM gabby.powerschool.students s
 LEFT JOIN gabby.powerschool.cohort_identifiers_static co
   ON s.student_number = co.student_number
