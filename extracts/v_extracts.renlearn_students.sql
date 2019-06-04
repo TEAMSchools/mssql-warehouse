@@ -16,6 +16,7 @@ SELECT student_number AS id
       ,exitcode
       ,exitdate
       ,state_studentnumber
+      ,student_web_id + '@apps.teamschools.org' AS student_email
 FROM gabby.powerschool.students
 WHERE enroll_status = 0
   AND db_name != 'kippmiami';

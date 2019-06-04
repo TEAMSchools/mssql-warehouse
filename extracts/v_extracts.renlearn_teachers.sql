@@ -10,6 +10,7 @@ SELECT COALESCE(psid.ps_teachernumber, CONVERT(VARCHAR(25),df.df_employee_number
       ,df.preferred_first_name AS first_name
       ,NULL AS middle_name
       ,ad.samaccountname AS teacherloginid
+      ,ad.userprincipalname AS staff_email
 FROM gabby.dayforce.staff_roster df
 LEFT JOIN gabby.people.id_crosswalk_powerschool psid
   ON df.df_employee_number = psid.df_employee_number
