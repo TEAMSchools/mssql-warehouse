@@ -131,11 +131,11 @@ FROM
                 ,hr.section_number AS homeroom_section
                 ,hr.teacher_name AS homeroom_teacher
 
-                ,y1_goal.words_goal AS words_goal_yr
-                ,y1_goal.points_goal AS points_goal_yr
+                ,CASE WHEN y1_goal.words_goal > 0 THEN y1_goal.words_goal END AS words_goal_yr
+                ,CASE WHEN y1_goal.points_goal > 0 THEN y1_goal.points_goal END AS points_goal_yr
            
-                ,term_goal.words_goal AS words_goal_term
-                ,term_goal.points_goal AS points_goal_term           
+                ,CASE WHEN term_goal.words_goal > 0 THEN term_goal.words_goal END AS words_goal_term
+                ,CASE WHEN term_goal.points_goal > 0 THEN term_goal.points_goal END AS points_goal_term
       
                 ,ar.n_words_read
                 ,ar.n_points_earned
