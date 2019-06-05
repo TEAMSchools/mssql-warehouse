@@ -22,5 +22,5 @@ SELECT student_number
       ,credits_enrolled_cum AS credits_enrolled
       ,HWQ_Y1
       ,lvls_grown_yr AS reading_lvl_growth_y1
-FROM gabby.reporting.promotional_status WITH(NOLOCK)
+FROM gabby.reporting.promotional_status
 WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
