@@ -21,6 +21,7 @@ LEFT JOIN gabby.people.id_crosswalk_powerschool id
 LEFT JOIN gabby.powerschool.schools sch
   ON CASE WHEN df.primary_on_site_department = 'Teaching and Learning' THEN sch.db_name END = sch.db_name
  AND sch.state_excludefromreporting = 0
-WHERE df.primary_on_site_department != 'Data'
+WHERE df.status != 'TERMINATED'
+  AND df.primary_on_site_department != 'Data'
   AND df.primary_site_schoolid != 0
-  AND df.status != 'TERMINATED'
+  --AND (df.primary_site_schoolid != 0 OR df.is_campus_staff = 1) /* off until we figure out what school to put these bozos in*/
