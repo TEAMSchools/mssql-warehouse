@@ -43,6 +43,10 @@ WITH clean_people AS (
         ,CONVERT(VARCHAR(25),gabby.utilities.STRIP_CHARACTERS(mobile_number, '^0-9')) AS mobile_number
         ,CASE WHEN e.ethnicity LIKE '%(Hispanic%' THEN 1 ELSE 0 END AS is_hispanic
         ,CASE WHEN e.primary_site_clean LIKE '% - Regional%' THEN 1 ELSE 0 END AS is_regional_staff
+        ,CASE
+          WHEN REPLACE(e.primary_site_clean, ' - Regional', '') IN ('18th Ave Campus', 'Room 10 - 740 Chestnut St', 'Room 11 - 6745 NW 23rd Ave', 'KIPP Lanning Sq Campus') THEN 1
+          ELSE 0
+         END AS is_campus_staff
 
         /* redundant combined fields */
         ,CONVERT(VARCHAR(125),position_title) AS position_title 
@@ -77,6 +81,7 @@ SELECT c.df_employee_number
       ,c.primary_on_site_department
       ,c.primary_site      
       ,c.is_regional_staff
+      ,c.is_campus_staff
       ,c.legal_entity_name
       ,c.job_family
       ,c.position_effective_from_date
