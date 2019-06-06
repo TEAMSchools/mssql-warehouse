@@ -28,6 +28,7 @@ SELECT rs.unique_id AS unique_id
       ,rs.fp_keylever
       ,rs.coaching_code
       ,rs.test_administered_by
+      ,rs.schoolid
 
       ,ROW_NUMBER() OVER(
          PARTITION BY rs.student_number, rs.status, rs.academic_year, rs.test_round
@@ -61,6 +62,7 @@ FROM (
             ,CONVERT(VARCHAR(25),ps.fp_keylever) AS fp_keylever
             ,CONVERT(VARCHAR(5),ps.coaching_code) AS coaching_code
             ,NULL AS test_administered_by        
+            ,NULL AS schoolid
       FROM gabby.lit.powerschool_test_events_archive ps  
 
       UNION ALL
@@ -90,6 +92,7 @@ FROM (
             ,NULL AS fp_keylever
             ,NULL AS coaching_code
             ,recorder AS test_administered_by
+            ,uc.schoolid
       FROM gabby.lit.steptool_test_events uc
 
       UNION ALL
@@ -127,6 +130,7 @@ FROM (
             ,key_lever AS fp_keylever
             ,NULL AS coaching_code
             ,NULL AS test_administered_by
+            ,NULL AS schoolid
       FROM gabby.lit.illuminate_test_events ill
 
       UNION ALL
@@ -156,5 +160,6 @@ FROM (
             ,NULL AS fp_keylever
             ,NULL AS coaching_code
             ,test_administered_by
+            ,schoolid
       FROM gabby.lit.fpodms_test_events fpodms
      ) rs

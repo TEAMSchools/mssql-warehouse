@@ -6,11 +6,11 @@ CREATE OR ALTER VIEW lit.fpodms_test_events AS
 WITH classes_dedupe AS (
   SELECT c.school_name
         ,c.school_year
-        ,c.name
+        ,c.[name]
         ,c.teacher_first_name
         ,c.teacher_last_name
         ,ROW_NUMBER() OVER(
-           PARTITION BY c.school_name, c.school_year, c.name
+           PARTITION BY c.school_name, c.school_year, c.[name]
              ORDER BY c.student_count DESC) AS rn
   FROM gabby.fpodms.bas_classes c
  )
@@ -39,7 +39,8 @@ WITH classes_dedupe AS (
         ,sub.writing
         ,sub.self_corrections
         ,sub.text_level
-        ,sub.status        
+        ,sub.[status]
+        ,sub.is_achieved
         ,sub.schoolid
         ,sub.test_administered_by
         ,sub.testid
@@ -80,7 +81,11 @@ WITH classes_dedupe AS (
                WHEN fp.benchmark_level = 'Independent' THEN 'Achieved'
                WHEN fp.benchmark_level = 'Instructional' THEN 'Did Not Achieve'
                WHEN fp.benchmark_level = 'Hard' THEN 'DNA - Hard'
-              END AS status           
+              END AS [status]
+             ,CASE
+               WHEN fp.benchmark_level = 'Independent' THEN 1
+               ELSE 0
+              END AS is_achieved
              ,CASE
                WHEN fp.school_name = 'BOLD Academy' THEN 73258
                WHEN fp.school_name = 'KIPP Sunrise Academy' THEN 30200801
@@ -103,7 +108,7 @@ WITH classes_dedupe AS (
        JOIN classes_dedupe c
          ON fp.school_name = c.school_name
         AND fp.year_of_assessment = c.school_year
-        AND fp.class_name = c.name
+        AND fp.class_name = c.[name]
         AND c.rn = 1
       ) sub
  )
@@ -132,7 +137,8 @@ WITH classes_dedupe AS (
         ,clean_data.writing
         ,clean_data.self_corrections
         ,clean_data.text_level
-        ,clean_data.status
+        ,clean_data.[status]
+        ,clean_data.is_achieved
         ,clean_data.schoolid
         ,clean_data.test_administered_by
         ,clean_data.testid
@@ -167,7 +173,8 @@ WITH classes_dedupe AS (
         ,clean_data.writing
         ,clean_data.self_corrections
         ,'Pre-A' AS text_level
-        ,'Achieved' AS status
+        ,'Achieved' AS [status]
+        ,clean_data.is_achieved
         ,clean_data.schoolid
         ,clean_data.test_administered_by
         ,clean_data.testid
@@ -177,7 +184,7 @@ WITH classes_dedupe AS (
         ,'Pre-A' AS indep_lvl
   FROM clean_data
   WHERE clean_data.text_level = 'A'
-    AND clean_data.status IN ('Did Not Achieve', 'DNA - Hard')
+    AND clean_data.[status] IN ('Did Not Achieve', 'DNA - Hard')
  )
 
 SELECT cd.unique_id
@@ -203,7 +210,8 @@ SELECT cd.unique_id
       ,cd.writing
       ,cd.self_corrections
       ,cd.text_level
-      ,cd.status
+      ,cd.[status]
+      ,cd.is_achieved
       ,cd.schoolid
       ,cd.test_administered_by
       ,cd.testid
@@ -225,7 +233,7 @@ SELECT cd.unique_id
 FROM predna cd
 LEFT JOIN gabby.reporting.reporting_terms rt
   ON cd.schoolid = rt.schoolid
- AND cd.assessment_date BETWEEN rt.start_date AND rt.end_date
+ AND cd.assessment_date BETWEEN rt.[start_date] AND rt.end_date
  AND rt.identifier = 'LIT'
  AND rt._fivetran_deleted = 0
 LEFT JOIN gabby.lit.gleq
