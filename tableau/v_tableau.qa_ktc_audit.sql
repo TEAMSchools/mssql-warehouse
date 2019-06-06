@@ -118,6 +118,7 @@ WITH roster AS (
              ,e.status_c
              ,ISNULL(CONVERT(NVARCHAR(MAX),e.actual_end_date_c), '') AS actual_end_date_c
              ,ISNULL(CONVERT(NVARCHAR(MAX),e.date_last_verified_c), '') AS date_last_verified_c
+             ,ISNULL(CONVERT(NVARCHAR(MAX),e.date_last_verified_c), '') AS date_last_verified_ontime
              ,ISNULL(CONVERT(NVARCHAR(MAX),e.notes_c), '') AS notes_c
              ,ISNULL(CONVERT(NVARCHAR(MAX),e.transfer_reason_c), '') AS transfer_reason_c
              ,ISNULL(CONVERT(NVARCHAR(MAX),COALESCE(e.major_c, e.major_area_c)), '') AS major_or_area
@@ -133,6 +134,7 @@ WITH roster AS (
     value
     FOR field IN (actual_end_date_c
                  ,date_last_verified_c
+                 ,date_last_verified_ontime
                  ,notes_c
                  ,transfer_reason_c
                  ,description
@@ -184,6 +186,9 @@ SELECT r.contact_id
         WHEN ea.audit_name = 'date_last_verified_c'
          AND CONVERT(DATE, ea.audit_value) >= eh.status_change_date 
                THEN 1
+        WHEN ea.audit_name = 'date_last_verified_ontime'
+         AND CONVERT(DATE, ea.audit_value) >= DATEADD(DAY, 30, eh.status_change_date)
+               THEN 1
         ELSE 0
        END AS audit_result
 FROM roster r
@@ -217,6 +222,9 @@ SELECT r.contact_id
                THEN 1
         WHEN ea.audit_name = 'date_last_verified_c'
          AND CONVERT(DATE, ea.audit_value) >= eh.status_change_date 
+               THEN 1
+        WHEN ea.audit_name = 'date_last_verified_ontime'
+         AND CONVERT(DATE, ea.audit_value) >= DATEADD(DAY, 30, eh.status_change_date)
                THEN 1
         ELSE 0
        END AS audit_result
