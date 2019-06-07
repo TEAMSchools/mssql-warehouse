@@ -73,8 +73,8 @@ WITH fp_long AS (
           WHEN ind.lvl_num - g.fp_lvl_num < -2 THEN 'Far Below'
          END AS goal_status
 
-        ,COALESCE(ins.academic_year, hard.academic_year) AS instructional_academic_year
-        ,COALESCE(ins.test_round, hard.test_round) AS instructional_test_round
+        ,COALESCE(ins.assessment_academic_year, hard.assessment_academic_year) AS instructional_academic_year
+        ,COALESCE(ins.assessment_test_round, hard.assessment_test_round) AS instructional_test_round
         ,COALESCE(ins.assessment_date, hard.assessment_date) AS instructional_assessment_date
         ,COALESCE(ins.text_level, hard.text_level) AS instructional_level
         ,COALESCE(ins.genre, hard.genre) AS instructional_genre
@@ -248,8 +248,8 @@ WITH fp_long AS (
           WHEN s.independent_level = 'Z' THEN 0 /* Achieved Z */
           WHEN s.entrydate >= s.test_round_start_date THEN 1 /* new to KNJ */
           WHEN s.instructional_assessment_date IS NULL THEN 1 /* missing all data */
-          WHEN s.academic_year != s.instructional_academic_year THEN 'Not Tested in Q3'
-          WHEN s.instructional_test_round != 'Q3' THEN 1
+          WHEN s.academic_year != s.instructional_academic_year THEN 1 /* not tested in Q3 */
+          WHEN s.instructional_test_round != 'Q3' THEN 1 /* not tested in Q3 */
           ELSE 0
          END AS audit_status
         ,CASE
