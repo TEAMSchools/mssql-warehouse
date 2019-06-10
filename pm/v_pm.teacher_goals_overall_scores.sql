@@ -15,22 +15,22 @@ SELECT sub.df_employee_number
       ,sub.so_score
       ,sub.overall_score
       ,CASE
-        WHEN sub.etr_score >= 3.5 THEN 4
-        WHEN sub.etr_score >= 2.75 THEN 3
-        WHEN sub.etr_score >= 1.75 THEN 2
-        WHEN sub.etr_score < 1.75 THEN 1
+        WHEN sub.etr_score >= 3.495 THEN 4
+        WHEN sub.etr_score >= 2.745 THEN 3
+        WHEN sub.etr_score >= 1.745 THEN 2
+        WHEN sub.etr_score < 1.745 THEN 1
        END AS etr_tier
       ,CASE
-        WHEN sub.so_score >= 3.5 THEN 4
-        WHEN sub.so_score >= 3.0 THEN 3
-        WHEN sub.so_score >= 2.0 THEN 2
-        WHEN sub.so_score < 2.0 THEN 1
+        WHEN sub.so_score >= 3.495 THEN 4
+        WHEN sub.so_score >= 2.995 THEN 3
+        WHEN sub.so_score >= 1.995 THEN 2
+        WHEN sub.so_score < 1.995 THEN 1
        END AS so_tier
       ,CASE
-        WHEN sub.overall_score >= 3.5 THEN 4
-        WHEN sub.overall_score >= 2.75 THEN 3
-        WHEN sub.overall_score >= 1.75 THEN 2
-        WHEN sub.overall_score < 1.75 THEN 1
+        WHEN sub.overall_score >= 3.495 THEN 4
+        WHEN sub.overall_score >= 2.745 THEN 3
+        WHEN sub.overall_score >= 1.745 THEN 2
+        WHEN sub.overall_score < 1.745 THEN 1
        END AS overall_tier
 FROM
     (
