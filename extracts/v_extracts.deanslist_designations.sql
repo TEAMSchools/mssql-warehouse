@@ -6,7 +6,7 @@ CREATE OR ALTER VIEW extracts.deanslist_designations AS
 WITH ada AS (
   SELECT psa.studentid
         ,psa.db_name
-        ,psa.yearid + 1990 AS academic_year
+        ,psa.yearid
         ,ROUND(AVG(CAST(psa.attendancevalue AS FLOAT)), 2) AS ada
   FROM gabby.powerschool.ps_adaadm_daily_ctod_current_static psa
   WHERE psa.membershipvalue = 1
@@ -83,7 +83,7 @@ WITH ada AS (
    AND co.db_name = sp.db_name
   LEFT JOIN ada
     ON co.studentid = ada.studentid
-   AND co.academic_year = ada.academic_year
+   AND co.yearid = ada.yearid
    AND co.db_name = ada.db_name
   WHERE co.rn_year = 1
     AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()

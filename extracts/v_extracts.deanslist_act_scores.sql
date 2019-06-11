@@ -3,7 +3,7 @@ GO
 
 CREATE OR ALTER VIEW extracts.deanslist_act_scores AS
 
-SELECT student_number	
+SELECT student_number
       ,academic_year
       ,[scale_score_act1]
       ,[scale_score_act2]

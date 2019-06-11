@@ -8,8 +8,8 @@ WITH ug_school AS (
         ,schoolid        
         ,db_name
   FROM gabby.powerschool.cohort_identifiers_static
-  WHERE schoolid != 999999
-    AND rn_undergrad = 1
+  WHERE rn_undergrad = 1
+    AND grade_level != 99
  )
 
 ,enroll_dates AS (

@@ -15,5 +15,5 @@ SELECT co.student_number
 FROM gabby.powerschool.cohort_identifiers_static co
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.rn_year = 1
-  AND co.schoolid != 999999  
   AND co.enroll_status = 0
+  AND co.grade_level != 99
