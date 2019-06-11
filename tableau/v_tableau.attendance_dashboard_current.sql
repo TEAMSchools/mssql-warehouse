@@ -24,11 +24,11 @@ SELECT sub.student_number
       ,sub.is_absent
       ,sub.att_code
       ,sub.term
-      ,AVG(sub.is_present) OVER(PARTITION BY sub.studentid, sub.academic_year ORDER BY sub.calendardate) AS ada_running
-      ,AVG(sub.is_ontime) OVER(PARTITION BY sub.student_number, sub.academic_year ORDER BY sub.calendardate) AS pct_ontime_running
-      ,MAX(sub.is_oss) OVER(PARTITION BY sub.student_number, sub.academic_year ORDER BY sub.calendardate) AS is_oss_running
-      ,MAX(sub.is_iss) OVER(PARTITION BY sub.student_number, sub.academic_year ORDER BY sub.calendardate) AS is_iss_running
-      ,MAX(sub.is_suspended) OVER(PARTITION BY sub.student_number, sub.academic_year ORDER BY sub.calendardate) AS is_suspended_running
+      ,NULL AS ada_running
+      ,sub.is_ontime AS pct_ontime_running
+      ,sub.is_oss AS is_oss_running
+      ,sub.is_iss AS is_iss_running
+      ,sub.is_suspended AS is_suspended_running
 FROM
     (
      SELECT co.academic_year

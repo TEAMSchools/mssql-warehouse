@@ -24,11 +24,11 @@ SELECT academic_year
       ,is_absent
       ,att_code
       ,term
-      ,ada_running
-      ,pct_ontime_running
-      ,is_oss_running
-      ,is_iss_running
-      ,is_suspended_running      
+      ,AVG(is_present) OVER(PARTITION BY studentid, academic_year ORDER BY calendardate) AS ada_running
+      ,AVG(pct_ontime_running) OVER(PARTITION BY student_number, academic_year ORDER BY calendardate) AS pct_ontime_running
+      ,MAX(is_oss_running) OVER(PARTITION BY student_number, academic_year ORDER BY calendardate) AS is_oss_running
+      ,MAX(is_iss_running) OVER(PARTITION BY student_number, academic_year ORDER BY calendardate) AS is_iss_running
+      ,MAX(is_suspended_running) OVER(PARTITION BY student_number, academic_year ORDER BY calendardate) AS is_suspended_running
 FROM tableau.attendance_dashboard_current_static
 
 UNION ALL
@@ -57,10 +57,10 @@ SELECT academic_year
       ,is_absent
       ,att_code
       ,term
-      ,ada_running
-      ,pct_ontime_running
-      ,is_oss_running
-      ,is_iss_running
-      ,is_suspended_running
+      ,AVG(is_present) OVER(PARTITION BY studentid, academic_year ORDER BY calendardate) AS ada_running
+      ,AVG(pct_ontime_running) OVER(PARTITION BY student_number, academic_year ORDER BY calendardate) AS pct_ontime_running
+      ,MAX(is_oss_running) OVER(PARTITION BY student_number, academic_year ORDER BY calendardate) AS is_oss_running
+      ,MAX(is_iss_running) OVER(PARTITION BY student_number, academic_year ORDER BY calendardate) AS is_iss_running
+      ,MAX(is_suspended_running) OVER(PARTITION BY student_number, academic_year ORDER BY calendardate) AS is_suspended_running
 FROM tableau.attendance_dashboard_archive
 WHERE academic_year = (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
