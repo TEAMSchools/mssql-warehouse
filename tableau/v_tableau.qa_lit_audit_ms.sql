@@ -5,7 +5,6 @@ CREATE OR ALTER VIEW tableau.qa_lit_audit_ms AS
 
 WITH fp_long AS (
   SELECT fp.student_number student_identifier
-        ,fp.schoolid
         ,fp.unique_id
         ,fp.academic_year AS assessment_academic_year
         ,fp.test_round AS assessment_test_round
@@ -14,10 +13,17 @@ WITH fp_long AS (
         ,fp.read_lvl AS text_level
         ,fp.lvl_num
         ,fp.genre
+
+        ,co.schoolid
+
         ,ROW_NUMBER() OVER(
            PARTITION BY fp.student_number, fp.[status], fp.academic_year, fp.test_round
              ORDER BY fp.test_date DESC, fp.lvl_num DESC) AS rn
   FROM gabby.lit.all_test_events_static fp
+  JOIN gabby.powerschool.cohort_identifiers_static co
+    ON fp.student_number = co.student_number
+   AND fp.academic_year = co.academic_year
+   AND co.rn_year = 1
  )
 
 ,fp_recent AS (
@@ -43,8 +49,7 @@ WITH fp_long AS (
   JOIN fp_long fp
     ON rt.schoolid = fp.schoolid
    AND rt.[start_date] > fp.assessment_date
-  WHERE rt.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-    AND rt.identifier = 'LIT'
+  WHERE rt.identifier = 'LIT'
     AND rt._fivetran_deleted = 0
  )
 
