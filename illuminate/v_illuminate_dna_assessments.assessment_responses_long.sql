@@ -21,8 +21,7 @@ WITH asmts AS (
         ,sa.student_assessment_id
         ,sa.date_taken
   FROM gabby.illuminate_dna_assessments.student_assessment_scaffold a
-  --LEFT JOIN gabby.illuminate_dna_assessments.students_assessments sa
-  LEFT JOIN illuminate_dna_assessments.students_assessments_workaround sa
+  LEFT JOIN gabby.illuminate_dna_assessments.students_assessments sa  
     ON a.student_id = sa.student_id
    AND a.assessment_id = sa.assessment_id
  )

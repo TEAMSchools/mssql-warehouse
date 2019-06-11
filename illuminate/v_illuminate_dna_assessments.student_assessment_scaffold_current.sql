@@ -104,8 +104,7 @@ SELECT DISTINCT
 FROM asmts a
 JOIN gabby.illuminate_dna_assessments.assessment_grade_levels agl
   ON a.assessment_id = agl.assessment_id      
-JOIN gabby.illuminate_dna_assessments.students_assessments_workaround sa
---JOIN gabby.illuminate_dna_assessments.students_assessments sa
+JOIN gabby.illuminate_dna_assessments.students_assessments sa
   ON a.assessment_id = sa.assessment_id     
 JOIN gabby.illuminate_public.student_session_aff_clean_static ssa
   ON sa.student_id = ssa.student_id
@@ -136,7 +135,6 @@ SELECT DISTINCT
 
       ,0 AS is_replacement
 FROM asmts a
-JOIN gabby.illuminate_dna_assessments.students_assessments_workaround sa
---JOIN gabby.illuminate_dna_assessments.students_assessments sa
+JOIN gabby.illuminate_dna_assessments.students_assessments sa
   ON a.assessment_id = sa.assessment_id
 WHERE a.is_normed_scope = 0
