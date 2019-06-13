@@ -54,15 +54,15 @@ SELECT jp.name AS job_position_name
         ELSE 'N' 
        END AS in_activedirectory
 FROM gabby.recruiting.job_position_c jp 
-LEFT OUTER JOIN gabby.recruiting.job_application_c ja
+LEFT JOIN gabby.recruiting.job_application_c ja
   ON jp.id = ja.job_position_c
  AND ja.selection_status_c IN ('Complete','Withdrew')
  AND ja.stage_c = 'Hired'              
  AND ja.is_deleted = 0
-LEFT OUTER JOIN gabby.adp.staff_roster adp
+LEFT JOIN gabby.adp.staff_roster adp
   ON jp.name = adp.salesforce_job_position_name_custom  
  AND adp.rn_curr = 1
-LEFT OUTER JOIN gabby.adsi.user_attributes_static ad
+LEFT JOIN gabby.adsi.user_attributes_static ad
   ON adp.associate_id = ad.idautopersonalternateid
 WHERE jp.region_c = 'New Jersey'
   AND jp.is_deleted = 0

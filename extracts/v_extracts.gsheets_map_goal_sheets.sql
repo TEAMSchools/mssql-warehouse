@@ -64,8 +64,8 @@ FROM
           LEFT JOIN gabby.nwea.percentile_norms_dense gl
             ON co.grade_level = gl.grade_level
            AND bb.measurementscale = gl.measurementscale COLLATE Latin1_General_BIN
-           AND gl.term = 'Spring'
            AND gl.testpercentile = 50
+           AND gl.term = 'Spring'
           LEFT JOIN gabby.nwea.percentile_norms_dense tq
             ON co.grade_level = tq.grade_level
            AND bb.measurementscale = tq.measurementscale COLLATE Latin1_General_BIN

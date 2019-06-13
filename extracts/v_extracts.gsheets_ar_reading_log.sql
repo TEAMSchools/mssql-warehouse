@@ -138,7 +138,7 @@ SELECT co.student_number
       ,bk.d_percent_correct * 100 AS last_book_quiz_pct_correct
 FROM gabby.powerschool.cohort_identifiers_static co
 LEFT JOIN gabby.powerschool.course_enrollments_static enr
-  ON co.studentid = enr.studentid 
+  ON co.student_number = enr.student_number
  AND co.db_name = enr.db_name
  AND enr.credittype = 'ENG'
  AND CONVERT(DATE,GETDATE()) BETWEEN enr.dateenrolled AND enr.dateleft

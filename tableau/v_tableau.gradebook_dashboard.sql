@@ -5,7 +5,7 @@ CREATE OR ALTER VIEW tableau.gradebook_dashboard AS
 
 WITH section_teacher AS (
   SELECT scaff.studentid
-        ,scaff.yearid + 1990 AS academic_year
+        ,scaff.yearid
         ,scaff.course_number        
         ,scaff.sectionid        
         ,scaff.db_name
@@ -72,13 +72,13 @@ JOIN gabby.powerschool.final_grades_static gr
  AND co.db_name = gr.db_name
 JOIN section_teacher st 
   ON co.studentid = st.studentid
- AND co.academic_year = st.academic_year
+ AND co.yearid = st.yearid
  AND co.db_name = st.db_name
  AND gr.course_number = st.course_number
  AND st.rn = 1
 WHERE co.rn_year = 1
-  AND co.school_level IN ('MS','HS')
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+  AND co.school_level IN ('MS','HS')
 
 UNION ALL
 
@@ -135,12 +135,12 @@ LEFT JOIN gabby.powerschool.storedgrades y1
  AND y1.storecode_clean = 'Y1'
 JOIN section_teacher st
   ON co.studentid = st.studentid
- AND co.academic_year = st.academic_year
+ AND co.yearid = st.yearid
  AND co.db_name = st.db_name
  AND gr.course_number = st.course_number
  AND st.rn = 1
 WHERE co.rn_year = 1
-  AND co.school_level IN ('MS','HS')  
+  AND co.school_level IN ('MS','HS')
 
 UNION ALL
 
@@ -250,7 +250,7 @@ JOIN kippnewark.powerschool.final_grades_static gr
  AND (gr.e1 IS NOT NULL OR gr.e2 IS NOT NULL)
 JOIN section_teacher st
   ON co.studentid = st.studentid
- AND co.academic_year = st.academic_year 
+ AND co.yearid = st.yearid
  AND gr.course_number = st.course_number
  AND st.rn = 1
  AND st.db_name = 'kippnewark'
@@ -310,13 +310,13 @@ JOIN gabby.powerschool.category_grades_static gr
  AND co.db_name = gr.db_name
 JOIN section_teacher st
   ON co.studentid = st.studentid
- AND co.academic_year = st.academic_year
+ AND co.yearid = st.yearid
  AND co.db_name = st.db_name
  AND gr.course_number = st.course_number
  AND st.rn = 1
 WHERE co.rn_year = 1
-  AND co.school_level IN ('MS','HS')
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+  AND co.school_level IN ('MS','HS')
   
 UNION ALL
 
@@ -371,10 +371,10 @@ JOIN gabby.powerschool.category_grades_static gr
  AND gr.is_curterm = 1
 JOIN section_teacher st
   ON co.studentid = st.studentid
- AND co.academic_year = st.academic_year
+ AND co.yearid = st.yearid
  AND co.db_name = st.db_name
  AND gr.course_number = st.course_number
  AND st.rn = 1
 WHERE co.rn_year = 1
-  AND co.school_level IN ('MS','HS')
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+  AND co.school_level IN ('MS','HS')
