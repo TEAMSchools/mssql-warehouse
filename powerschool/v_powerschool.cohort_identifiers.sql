@@ -81,6 +81,8 @@ SELECT co.studentid
       ,ISNULL(enr.is_enrolled_oct01, 0) AS is_enrolled_oct01
       ,ISNULL(enr.is_enrolled_oct15, 0) AS is_enrolled_oct15
       ,ISNULL(enr.is_enrolled_recent, 0) AS is_enrolled_recent
+      ,ISNULL(enr.is_enrolled_oct15_week, 0) AS is_enrolled_oct15_week
+      ,ISNULL(enr.is_enrolled_jan15_week, 0) AS is_enrolled_jan15_week
 
       ,CONVERT(INT,s.student_number) AS student_number
       ,co.studentsdcid AS students_dcid

@@ -94,6 +94,8 @@ SELECT co.student_number
       ,co.is_enrolled_oct01
       ,co.is_enrolled_oct15
       ,co.is_enrolled_recent
+      ,co.is_enrolled_oct15_week
+      ,co.is_enrolled_jan15_week
       ,co.track
 
       ,LEAD(co.schoolid, 1) OVER(PARTITION BY co.student_number ORDER BY co.academic_year  ASC) AS next_schoolid
