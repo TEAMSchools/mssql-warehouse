@@ -5,6 +5,8 @@ CREATE OR ALTER VIEW people.staff_crosswalk AS
 
 SELECT sr.df_employee_number
       ,sr.preferred_name
+      ,sr.preferred_first_name
+      ,sr.preferred_last_name
       ,sr.primary_job
       ,sr.legal_entity_name
       ,sr.primary_site
@@ -30,6 +32,8 @@ SELECT sr.df_employee_number
 
       ,adm.samaccountname AS manager_samaccountname
       ,adm.userprincipalname AS manager_userprincipalname
+
+      ,c.personal_email
 FROM gabby.dayforce.staff_roster sr
 LEFT JOIN gabby.people.id_crosswalk_powerschool idps
   ON sr.df_employee_number = idps.df_employee_number
@@ -38,3 +42,5 @@ LEFT JOIN gabby.adsi.user_attributes_static ads
   ON CONVERT(VARCHAR(25),sr.df_employee_number) = ads.employeenumber
 LEFT JOIN gabby.adsi.user_attributes_static adm
   ON CONVERT(VARCHAR(25),sr.manager_df_employee_number) = adm.employeenumber
+LEFT JOIN gabby.dayforce.personal_contact_info c
+  ON sr.df_employee_number = c.employee_number
