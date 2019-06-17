@@ -524,9 +524,12 @@ FROM
                 ,hard.hard_lvl_num
                 ,hard.hard_unique_id
 
-                ,CONVERT(VARCHAR(5),goals.fp_read_lvl) AS fp_read_lvl
+                ,CONVERT(VARCHAR(5),CASE 
+                                     WHEN goals.fp_read_lvl IN ('true', 'false') THEN UPPER(LEFT(goals.fp_read_lvl, 1))
+                                     ELSE goals.fp_read_lvl
+                                    END) AS fp_read_lvl
                 ,CONVERT(VARCHAR(5),goals.step_read_lvl) AS step_read_lvl
-                ,CONVERT(INT,goals.fp_lvl_num) AS fp_lvl_num                
+                ,CONVERT(INT,goals.fp_lvl_num) AS fp_lvl_num
                 ,CONVERT(INT,goals.step_lvl_num) AS step_lvl_num
 
                 ,CONVERT(VARCHAR(5),indiv.goal) AS indiv_goal_lvl
