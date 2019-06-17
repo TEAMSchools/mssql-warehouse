@@ -11,7 +11,7 @@ SELECT co.student_number
       ,co.grade_level
       ,co.school_level
 
-      ,CONVERT(VARCHAR(5),term.alt_name) AS lit_term      
+      ,CONVERT(VARCHAR(5),term.alt_name) AS lit_term
 
       ,testid.read_lvl
       ,testid.lvl_num
@@ -39,6 +39,6 @@ LEFT JOIN gabby.lit.guided_reading_roster gr
  AND co.academic_year = gr.academic_year
  AND term.alt_name = gr.test_round
 WHERE co.rn_year = 1
-  AND co.enroll_status = 0
   AND co.academic_year IN (gabby.utilities.GLOBAL_ACADEMIC_YEAR(), (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1))
-  AND co.grade_level != 99  
+  AND co.enroll_status = 0
+  AND co.grade_level != 99
