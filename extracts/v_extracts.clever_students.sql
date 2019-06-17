@@ -56,4 +56,4 @@ LEFT JOIN gabby.powerschool.student_contacts_static sc
  AND sc.contact_type IN ('emerg1', 'emerg2', 'emerg3', 'emerg4', 'emerg5', 'parent1', 'parent2', 'release1', 'release2','release3', 'release4', 'release5')
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.rn_year = 1
-  AND co.schoolid != 999999;
+  AND co.grade_level != 99

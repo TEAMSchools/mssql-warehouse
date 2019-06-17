@@ -21,13 +21,13 @@ SELECT CASE WHEN sr.primary_site_schoolid = 0 THEN NULL ELSE CONVERT(VARCHAR(25)
         WHEN sr.primary_site = 'KIPP THRIVE Academy' THEN 'THRIVE Academy'
         WHEN sr.primary_site = 'KIPP Whittier Middle' THEN 'Whittier Middle'
        END AS [School Name]
-      ,COALESCE(idps.ps_teachernumber, CONVERT(VARCHAR(25), sr.df_employee_number)) AS [Instructor ID]
+      ,sr.ps_teachernumber AS [Instructor ID]
       ,sr.df_employee_number AS [Instructor State ID]
       ,sr.preferred_last_name AS [Last Name]
       ,sr.preferred_first_name AS [First Name]
       ,NULL AS [Middle Name]
-      ,ad.userprincipalname AS [User Name]
-      ,ad.userprincipalname AS [Email Address]
+      ,sr.userprincipalname AS [User Name]
+      ,sr.userprincipalname AS [Email Address]
 
       ,'Y' AS [Role = School Proctor?]
       ,NULL AS [Role = School Assessment Coordinator?]
@@ -43,12 +43,7 @@ SELECT CASE WHEN sr.primary_site_schoolid = 0 THEN NULL ELSE CONVERT(VARCHAR(25)
       ,NULL AS [Role = District Assessment Coordinator?]
       ,NULL AS [Role = Interventionist?]
       ,NULL AS [Role = SN Administrator?]
-FROM gabby.dayforce.staff_roster sr
-JOIN gabby.adsi.user_attributes_static ad
-  ON CONVERT(VARCHAR(25), sr.df_employee_number) = ad.employeenumber
-LEFT JOIN gabby.people.id_crosswalk_powerschool idps
-  ON sr.df_employee_number = idps.df_employee_number
- AND idps.is_master = 1
+FROM gabby.people.staff_crosswalk_static sr
 WHERE sr.is_active = 1
   AND sr.legal_entity_name != 'KIPP New Jersey'
   AND (sr.primary_site_schoolid != 0

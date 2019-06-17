@@ -8,6 +8,7 @@ SELECT sr.df_employee_number
       ,sr.preferred_first_name
       ,sr.preferred_last_name
       ,sr.primary_job
+      ,sr.position_title
       ,sr.legal_entity_name
       ,sr.primary_site
       ,sr.primary_on_site_department

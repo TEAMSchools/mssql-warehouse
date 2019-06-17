@@ -64,7 +64,7 @@ UNION ALL
 SELECT DISTINCT 
        co.schoolid
       ,CONCAT(co.yearid, co.schoolid, RIGHT(CONCAT(0, co.grade_level),2)) AS [Section_id]
-      ,COALESCE(ps.ps_teachernumber, CONVERT(VARCHAR(25),df.df_employee_number)) COLLATE Latin1_General_BIN AS [Teacher_id]
+      ,df.ps_teachernumber COLLATE Latin1_General_BIN AS [Teacher_id]
       ,NULL AS [Teacher_2_id]
       ,NULL AS [Teacher_3_id]
       ,NULL AS [Teacher_4_id]
@@ -103,14 +103,11 @@ FROM gabby.powerschool.cohort_identifiers_static co
 JOIN gabby.powerschool.schools s
   ON co.schoolid = s.school_number
   AND co.db_name = s.db_name
-JOIN gabby.dayforce.staff_roster df
+JOIN gabby.people.staff_crosswalk_static df
   ON co.schoolid = df.primary_site_schoolid
  AND df.primary_job = 'School Leader'
  AND df.status = 'ACTIVE'
  AND df.legal_entity_name != 'KIPP New Jersey'
-LEFT JOIN gabby.people.id_crosswalk_powerschool ps
-  ON df.df_employee_number = ps.df_employee_number
- AND ps.is_master = 1
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.rn_year = 1
-  AND co.schoolid != 999999
+  AND co.grade_level != 99
