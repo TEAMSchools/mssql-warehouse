@@ -43,10 +43,6 @@ WITH clean_people AS (
         ,CONVERT(VARCHAR(25),gabby.utilities.STRIP_CHARACTERS(mobile_number, '^0-9')) AS mobile_number
         ,CASE WHEN e.ethnicity LIKE '%(Hispanic%' THEN 1 ELSE 0 END AS is_hispanic
         ,CASE WHEN e.primary_site_clean LIKE '% - Regional%' THEN 1 ELSE 0 END AS is_regional_staff
-        ,CASE
-          WHEN REPLACE(e.primary_site_clean, ' - Regional', '') IN ('18th Ave Campus', 'Room 10 - 740 Chestnut St', 'Room 11 - 6745 NW 23rd Ave', 'KIPP Lanning Sq Campus') THEN 1
-          ELSE 0
-         END AS is_campus_staff
 
         /* redundant combined fields */
         ,CONVERT(VARCHAR(125),position_title) AS position_title 
@@ -81,7 +77,6 @@ SELECT c.df_employee_number
       ,c.primary_on_site_department
       ,c.primary_site      
       ,c.is_regional_staff
-      ,c.is_campus_staff
       ,c.legal_entity_name
       ,c.job_family
       ,c.position_effective_from_date
@@ -97,74 +92,33 @@ SELECT c.df_employee_number
       ,c.primary_on_site_department_entity
       ,c.primary_site_entity
       ,c.preferred_last_name + ', ' + c.preferred_first_name AS preferred_name
-      ,SUBSTRING(c.mobile_number, 1, 3) + '-' 
-         + SUBSTRING(c.mobile_number, 4, 3) + '-' 
-         + SUBSTRING(c.mobile_number, 7, 4) AS mobile_number            
+      ,SUBSTRING(c.mobile_number, 1, 3) + '-'
+         + SUBSTRING(c.mobile_number, 4, 3) + '-'
+         + SUBSTRING(c.mobile_number, 7, 4) AS mobile_number
       ,CASE
         WHEN c.legal_entity_name = 'TEAM Academy Charter Schools' THEN 'YHD'
         WHEN c.legal_entity_name = 'KIPP New Jersey' THEN 'D30'
-        WHEN c.legal_entity_name = 'KIPP Cooper Norcross Academy' THEN 'D3Z'          
+        WHEN c.legal_entity_name = 'KIPP Cooper Norcross Academy' THEN 'D3Z'
        END AS payroll_company_code
-      ,CASE WHEN c.[status] NOT IN ('TERMINATED', 'PRESTART') THEN 1 ELSE 0 END AS is_active
-      ,CASE
-        WHEN c.primary_site = '18th Ave Campus' THEN 0
-        WHEN c.primary_site = 'Room 9 - 60 Park Pl' THEN 0
-        WHEN c.primary_site = 'Room 10 - 740 Chestnut St' THEN 0
-        WHEN c.primary_site = 'Room 11 - 6745 NW 23rd Ave' THEN 0
-        WHEN c.primary_site = 'KIPP BOLD Academy' THEN 73258
-        WHEN c.primary_site = 'KIPP Lanning Sq Campus' THEN 0
-        WHEN c.primary_site = 'KIPP Lanning Square Middle' THEN 179902
-        WHEN c.primary_site = 'KIPP Lanning Square Primary' THEN 179901
-        WHEN c.primary_site = 'KIPP Life Academy' THEN 73257
-        WHEN c.primary_site = 'KIPP Newark Collegiate Academy' THEN 73253
-        WHEN c.primary_site = 'KIPP Pathways at 18th Ave' THEN 73258
-        WHEN c.primary_site = 'KIPP Pathways at Bragaw' THEN 73257
-        WHEN c.primary_site = 'KIPP Rise Academy' THEN 73252        
-        WHEN c.primary_site = 'KIPP Seek Academy' THEN 73256
-        WHEN c.primary_site = 'KIPP SPARK Academy' THEN 73254
-        WHEN c.primary_site = 'KIPP TEAM Academy' THEN 133570965
-        WHEN c.primary_site = 'KIPP THRIVE Academy' THEN 73255
-        WHEN c.primary_site = 'KIPP Whittier Middle' THEN 179903
-        WHEN c.primary_site = 'KIPP Whittier Elementary' THEN 179901
-        WHEN c.primary_site = 'KIPP Sunrise Academy' THEN 30200801        
-       END AS primary_site_schoolid
-      ,CASE
-        WHEN c.primary_site = 'Room 9 - 60 Park Pl' THEN 0
-        WHEN c.primary_site = 'Room 10 - 740 Chestnut St' THEN 0
-        WHEN c.primary_site = 'Room 11 - 6745 NW 23rd Ave' THEN 0        
-        WHEN c.primary_site = 'KIPP Lanning Sq Campus' THEN 0
-        WHEN c.primary_site = '18th Ave Campus' THEN 0
-        WHEN c.primary_site = 'KIPP BOLD Academy' THEN 73258        
-        WHEN c.primary_site = 'KIPP Lanning Square Middle' THEN 179902
-        WHEN c.primary_site = 'KIPP Lanning Square Primary' THEN 179901
-        WHEN c.primary_site = 'KIPP Life Academy' THEN 73257
-        WHEN c.primary_site = 'KIPP Newark Collegiate Academy' THEN 73253
-        WHEN c.primary_site = 'KIPP Pathways at 18th Ave' THEN 732585074
-        WHEN c.primary_site = 'KIPP Pathways at Bragaw' THEN 732574573
-        WHEN c.primary_site = 'KIPP Rise Academy' THEN 73252                
-        WHEN c.primary_site = 'KIPP Seek Academy' THEN 73256
-        WHEN c.primary_site = 'KIPP SPARK Academy' THEN 73254
-        WHEN c.primary_site = 'KIPP TEAM Academy' THEN 133570965
-        WHEN c.primary_site = 'KIPP THRIVE Academy' THEN 73255
-        WHEN c.primary_site = 'KIPP Whittier Middle' THEN 179903
-        WHEN c.primary_site = 'KIPP Whittier Elementary' THEN 1799015075
-        WHEN c.primary_site = 'KIPP Sunrise Academy' THEN 30200801
-       END AS primary_site_reporting_schoolid
-      ,CASE
-        WHEN c.primary_site IN ('KIPP Lanning Square Primary','KIPP Life Academy','KIPP Pathways at Bragaw','KIPP Seek Academy','KIPP SPARK Academy','KIPP THRIVE Academy','KIPP Whittier Elementary','KIPP Sunrise Academy') THEN 'ES'
-        WHEN c.primary_site IN ('KIPP BOLD Academy','KIPP Lanning Square Middle','KIPP Pathways at 18th Ave','KIPP Rise Academy','KIPP TEAM Academy','KIPP Whittier Middle') THEN 'MS'
-        WHEN c.primary_site = 'KIPP Newark Collegiate Academy' THEN 'HS'
-       END AS primary_site_school_level
       ,CASE
         WHEN c.legal_entity_name = 'TEAM Academy Charter Schools' THEN 'kippnewark'
         WHEN c.legal_entity_name = 'KIPP Cooper Norcross Academy' THEN 'kippcamden'
         WHEN c.legal_entity_name = 'KIPP Miami' THEN 'kippmiami'
        END AS [db_name]
+      ,CASE WHEN c.[status] NOT IN ('TERMINATED', 'PRESTART') THEN 1 ELSE 0 END AS is_active
+      
+      ,s.ps_school_id AS primary_site_schoolid
+      ,s.reporting_school_id AS primary_site_reporting_schoolid
+      ,s.school_level AS primary_site_school_level
+      ,s.is_campus AS is_campus_staff
 
       ,m.adp_associate_id AS manager_adp_associate_id
       ,m.preferred_first_name AS manager_preferred_first_name
       ,m.preferred_last_name AS manager_preferred_last_name
       ,m.preferred_last_name + ', ' + m.preferred_first_name AS manager_name
 FROM clean_people c
+LEFT JOIN gabby.people.school_crosswalk s
+  ON c.primary_site = s.site_name
+ AND s._fivetran_deleted = 0
 LEFT JOIN clean_people m
   ON c.manager_df_employee_number = m.df_employee_number
