@@ -1,7 +1,7 @@
 USE gabby;
 GO
 
-CREATE OR ALTER VIEW tableau.compliance_staff_attrition AS
+--CREATE OR ALTER VIEW tableau.compliance_staff_attrition AS
 
 WITH roster AS (
   SELECT r.adp_associate_id
@@ -75,7 +75,7 @@ WITH roster AS (
              
              ,y.academic_year
              ,CASE
-               WHEN r.start_academic_year = y.academic_year THEN r.position_start_date
+               WHEN r.start_academic_year = y.academic_year THEN COALESCE(r.rehire_date,r.original_hire_date)
                ELSE DATEFROMPARTS(y.academic_year, 7, 1)
               END AS academic_year_entrydate
              ,CASE
@@ -126,6 +126,8 @@ SELECT d.df_employee_number
         WHEN COALESCE(n.academic_year_exitdate, d.termination_date, DATEFROMPARTS(d.academic_year + 2, 6, 30)) < DATEFROMPARTS(d.academic_year + 1, 9, 1) THEN 1
         ELSE 0
        END AS is_attrition
+      ,d.original_hire_date
+      ,d.rehire_date
 FROM scaffold d
 LEFT JOIN scaffold n
   ON d.df_employee_number = n.df_employee_number
