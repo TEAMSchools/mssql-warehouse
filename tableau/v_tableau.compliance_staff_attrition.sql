@@ -1,7 +1,7 @@
 USE gabby;
 GO
 
---CREATE OR ALTER VIEW tableau.compliance_staff_attrition AS
+CREATE OR ALTER VIEW tableau.compliance_staff_attrition AS
 
 WITH roster AS (
   SELECT r.adp_associate_id
@@ -82,8 +82,9 @@ WITH roster AS (
                WHEN r.end_academic_year = y.academic_year THEN COALESCE(r.termination_date, DATEFROMPARTS((y.academic_year + 1), 6, 30))
                ELSE DATEFROMPARTS((y.academic_year + 1), 6, 30)
               END AS academic_year_exitdate
-             ,ROW_NUMBER() OVER(PARTITION BY r.df_employee_number, y.academic_year
-                                  ORDER BY r.position_start_date DESC, COALESCE(r.termination_date, CONVERT(DATE, GETDATE())) DESC) AS rn_dupe_academic_year             
+             ,ROW_NUMBER() OVER(
+                PARTITION BY r.df_employee_number, y.academic_year
+                  ORDER BY r.position_start_date DESC, COALESCE(r.termination_date, CONVERT(DATE, GETDATE())) DESC) AS rn_dupe_academic_year
        FROM roster r
        JOIN years y
          ON y.academic_year BETWEEN r.start_academic_year AND COALESCE(r.end_academic_year, gabby.utilities.GLOBAL_ACADEMIC_YEAR())
@@ -97,9 +98,9 @@ SELECT d.df_employee_number
       ,d.primary_ethnicity
       ,CASE 
         WHEN COALESCE(d.rehire_date, d.original_hire_date) > COALESCE(n.academic_year_exitdate, d.termination_date, DATEFROMPARTS(d.academic_year + 2, 6, 30))
-         THEN ROUND(DATEDIFF(DAY,d.original_hire_date,COALESCE(n.academic_year_exitdate, d.termination_date, DATEFROMPARTS(d.academic_year + 2, 6, 30)))/365,0)
+               THEN ROUND(DATEDIFF(DAY,d.original_hire_date,COALESCE(n.academic_year_exitdate, d.termination_date, DATEFROMPARTS(d.academic_year + 2, 6, 30)))/365,0)
         ELSE ROUND(DATEDIFF(DAY,COALESCE(d.rehire_date, d.original_hire_date),COALESCE(n.academic_year_exitdate, d.termination_date, DATEFROMPARTS(d.academic_year + 2, 6, 30)))/365,0)
-        END AS years_at_kipp
+       END AS years_at_kipp
       ,d.primary_job
       ,d.primary_on_site_department
       ,d.primary_site
