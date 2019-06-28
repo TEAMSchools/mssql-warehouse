@@ -23,7 +23,8 @@ LEFT JOIN [winsql06\han].[newton].[dbo].[student_guid_link] g
   ON s.globaluid = g.studentguid
 LEFT JOIN [winsql06\han].[newton].[dbo].[customer] c 
   ON g.[customerid] = c.[customer_recid]
-WHERE s.inactivedate IS NULL
+JOIN kippnewark.powerschool.students ps
+  ON s.StudentNumber = ps.student_number
 
 UNION ALL
 
@@ -56,4 +57,5 @@ LEFT JOIN [WINSQL06\YODA].[newton].[dbo].[student_guid_link] g
   ON s.StudentGuid = g.studentguid
 LEFT JOIN [WINSQL06\YODA].[newton].[dbo].[customer] c 
   ON g.[customerid] = c.[customer_recid]
-WHERE s.Inactive = 0
+JOIN kippcamden.powerschool.students ps
+  ON s.StudentNumber = ps.student_number
