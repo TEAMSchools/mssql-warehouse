@@ -3,13 +3,14 @@ GO
 
 CREATE OR ALTER VIEW mcs.lunch_info AS
 
+/* Newark */
 SELECT CONVERT(INT,s.studentnumber) AS studentnumber
       ,s.currentapplicationid
 
-      ,CONVERT(VARCHAR(125),e.description) AS description
+      ,CONVERT(VARCHAR(125),e.[description]) AS [description]
 
-      ,LEFT(mbs.description, 1) AS mealbenefitstatus /* returns F/R/P */
-      ,CONVERT(VARCHAR(125),mbs.description) AS shortdesc
+      ,LEFT(mbs.[description], 1) AS mealbenefitstatus
+      ,CONVERT(VARCHAR(125),mbs.[description]) AS shortdesc
 
       ,c.reimbursableonlybalance
       ,c.unallocatedbalance
@@ -24,38 +25,43 @@ LEFT JOIN [winsql06\han].[newton].[dbo].[student_guid_link] g
 LEFT JOIN [winsql06\han].[newton].[dbo].[customer] c 
   ON g.[customerid] = c.[customer_recid]
 JOIN kippnewark.powerschool.students ps
-  ON s.StudentNumber = ps.student_number
+  ON s.studentnumber = ps.student_number
 
 UNION ALL
 
-SELECT CONVERT(INT,s.StudentNumber) AS studentnumber
-      ,s.ApplicationID AS currentapplicationid      
-      ,CASE
-        WHEN s.IsDC = 1 THEN 'Direct Certification'
-        ELSE COALESCE(s.Application_Approval_Result_Description, 'No Application')
-       END AS description      
-      ,LEFT(CASE
-             WHEN s.IsDC = 1 THEN 'Free'
-             WHEN s.Application_Approval_Result_Description = 'Zero Income' THEN 'Free'
-             WHEN s.Application_Approval_Result_Description LIKE 'Free%' THEN 'Free'
-             WHEN s.Application_Approval_Result_Description LIKE 'Denied%' THEN 'Paying'
-             ELSE COALESCE(s.Application_Approval_Result_Description, 'Paying')
-            END, 1) AS mealbenefitstatus
-      ,CASE        
-        WHEN s.IsDC = 1 THEN 'Free'
-        WHEN s.Application_Approval_Result_Description = 'Zero Income' THEN 'Free'
-        WHEN s.Application_Approval_Result_Description LIKE 'Free%' THEN 'Free'
-        WHEN s.Application_Approval_Result_Description LIKE 'Denied%' THEN 'Paying'
-        ELSE COALESCE(s.Application_Approval_Result_Description, 'Paying')
-       END AS shortdesc      
+/* Camden */
+SELECT sub.studentnumber
+      ,sub.currentapplicationid
+      ,sub.[description]
+      ,LEFT(sub.shortdesc, 1) AS mealbenefitstatus
+      ,sub.shortdesc
+      ,sub.reimbursableonlybalance
+      ,sub.unallocatedbalance
+      ,sub.balance
+FROM
+    (
+     SELECT CONVERT(INT,s.studentnumber) AS studentnumber
+           ,s.applicationid AS currentapplicationid
+           ,CASE
+             WHEN s.isdc = 1 THEN 'Direct Certification'
+             ELSE COALESCE(s.application_approval_result_description, 'No Application')
+            END AS [description]
+           ,CASE
+             WHEN s.isdc = 1 THEN 'Free'
+             WHEN s.application_approval_result_description = 'Zero Income' THEN 'Free'
+             WHEN s.application_approval_result_description LIKE 'Free%' THEN 'Free'
+             WHEN s.application_approval_result_description LIKE 'Denied%' THEN 'Paying'
+             ELSE COALESCE(s.application_approval_result_description, 'Paying')
+            END AS shortdesc
 
-      ,c.reimbursableonlybalance
-      ,c.unallocatedbalance
-      ,c.reimbursableonlybalance + c.unallocatedbalance AS balance
-FROM [WINSQL06\YODA].[Franklin].[dbo].[VIEW_STUDENT_DATA] s
-LEFT JOIN [WINSQL06\YODA].[newton].[dbo].[student_guid_link] g
-  ON s.StudentGuid = g.studentguid
-LEFT JOIN [WINSQL06\YODA].[newton].[dbo].[customer] c 
-  ON g.[customerid] = c.[customer_recid]
-JOIN kippcamden.powerschool.students ps
-  ON s.StudentNumber = ps.student_number
+           ,c.reimbursableonlybalance
+           ,c.unallocatedbalance
+           ,c.reimbursableonlybalance + c.unallocatedbalance AS balance
+     FROM [winsql06\yoda].[franklin].[dbo].[view_student_data] s
+     LEFT JOIN [winsql06\yoda].[newton].[dbo].[student_guid_link] g
+       ON s.studentguid = g.studentguid
+     LEFT JOIN [winsql06\yoda].[newton].[dbo].[customer] c 
+       ON g.[customerid] = c.[customer_recid]
+     JOIN kippcamden.powerschool.students ps
+       ON s.studentnumber = ps.student_number
+    ) sub
