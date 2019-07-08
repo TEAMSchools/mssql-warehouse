@@ -50,19 +50,19 @@ SELECT mv.studentid
          WHEN ada_1.id IS NOT NULL THEN 0
          ELSE CONVERT(INT,aci_potential.attendance_value)
         END) * mv.ontrack AS potential_attendancevalue
-FROM powerschool.ps_membership_reg mv
+FROM powerschool.ps_membership_reg_current mv
 LEFT JOIN terms_attendance_code tac
   ON mv.calendardate BETWEEN tac.firstday AND tac.lastday 
  AND mv.schoolid = tac.schoolid
-LEFT JOIN powerschool.ps_attendance_daily ada_0
+LEFT JOIN powerschool.ps_attendance_daily_current ada_0
   ON mv.studentid = ada_0.studentid
  AND mv.calendardate = ada_0.att_date
  AND ada_0.count_for_ada = 0
-LEFT JOIN powerschool.ps_attendance_daily ada_1
+LEFT JOIN powerschool.ps_attendance_daily_current ada_1
   ON mv.studentid = ada_1.studentid
  AND mv.calendardate = ada_1.att_date
  AND ada_1.count_for_ada = 1
-LEFT JOIN powerschool.ps_attendance_daily adm_0
+LEFT JOIN powerschool.ps_attendance_daily_current adm_0
   ON mv.studentid = adm_0.studentid
  AND mv.calendardate = adm_0.att_date
  AND adm_0.count_for_adm = 0
@@ -74,4 +74,3 @@ LEFT JOIN aci aci_potential
   ON mv.fteid = aci_potential.fteid
  AND mv.attendance_conversion_id = aci_potential.attendance_conversion_id
  AND tac.id = aci_potential.input_value 
-WHERE mv.yearid = (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990)

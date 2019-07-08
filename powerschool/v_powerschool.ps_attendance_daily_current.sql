@@ -29,7 +29,7 @@ SELECT att.id
         WHEN cy.abbreviation = 'true' THEN 'T' 
         ELSE CONVERT(VARCHAR(25),cy.abbreviation) 
        END AS abbreviation
-FROM powerschool.attendance_clean att 
+FROM powerschool.attendance_clean_current att 
 JOIN powerschool.attendance_code ac
   ON att.attendance_codeid = ac.id
 JOIN powerschool.calendar_day cd
@@ -37,4 +37,3 @@ JOIN powerschool.calendar_day cd
 JOIN powerschool.cycle_day cy
   ON cd.cycle_day_id = cy.id
 WHERE att.att_mode_code = 'ATT_ModeDaily'
-  AND att.att_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
