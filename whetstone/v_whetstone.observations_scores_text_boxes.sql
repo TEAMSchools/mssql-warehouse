@@ -13,6 +13,6 @@ CROSS APPLY OPENJSON(wos.score_textBoxes_json, '$')
   WITH (
     _id VARCHAR(25),
     label VARCHAR(125),
-    text VARCHAR(500)
+    text VARCHAR(MAX)
    ) AS tb
 WHERE wos.score_textBoxes_json != '[]'
