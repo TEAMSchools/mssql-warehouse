@@ -50,7 +50,7 @@ WITH att_mem AS (
              ,reporting_schoolid
              ,is_pathways
              ,grade_level
-             ,0 AS target_enrollment
+             ,1 AS target_enrollment
              ,1 AS target_enrollment_finance
              ,NULL AS grade_band_ratio
              ,NULL AS at_risk_and_lep_ratio
