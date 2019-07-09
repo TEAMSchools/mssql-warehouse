@@ -88,7 +88,7 @@ JOIN gabby.reporting.reporting_terms d
  AND d._fivetran_deleted = 0
 LEFT JOIN custom_fields cf
   ON dli.incident_id = cf.incident_id
-WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+WHERE co.academic_year IN (gabby.utilities.GLOBAL_ACADEMIC_YEAR(), gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
   AND co.rn_year = 1
   AND co.grade_level != 99  
 
@@ -146,7 +146,7 @@ JOIN gabby.reporting.reporting_terms d
  AND ISNULL(dlip.startdate, CONVERT(DATE,dli.create_ts)) BETWEEN d.start_date AND d.end_date 
  AND d.identifier = 'RT'
  AND d._fivetran_deleted = 0
-WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+WHERE co.academic_year IN (gabby.utilities.GLOBAL_ACADEMIC_YEAR(), gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
   AND co.rn_year = 1
   AND co.grade_level != 99  
 
@@ -203,6 +203,6 @@ JOIN gabby.reporting.reporting_terms d
  AND dlb.behavior_date BETWEEN d.start_date AND d.end_date 
  AND d.identifier = 'RT'
  AND d._fivetran_deleted = 0
-WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+WHERE co.academic_year IN (gabby.utilities.GLOBAL_ACADEMIC_YEAR(), gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
   AND co.rn_year = 1
   AND co.schoolid = 73253
