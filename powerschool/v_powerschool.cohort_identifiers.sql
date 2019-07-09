@@ -14,7 +14,7 @@ WITH enr AS (
        SELECT co.student_number
              ,co.yearid
 
-             ,CASE WHEN co.exitdate >= c.min_calendardate THEN 1 END AS is_enrolled_y1
+             ,CASE WHEN co.exitdate IS NOT NULL THEN 1 END AS is_enrolled_y1
              ,CASE WHEN DATEFROMPARTS(co.academic_year, 10, 1) BETWEEN co.entrydate AND co.exitdate THEN 1 END AS is_enrolled_oct01
              ,CASE WHEN DATEFROMPARTS(co.academic_year, 10, 15) BETWEEN co.entrydate AND co.exitdate THEN 1 END AS is_enrolled_oct15
              ,CASE WHEN co.exitdate >= c.max_calendardate THEN 1 END AS is_enrolled_recent
