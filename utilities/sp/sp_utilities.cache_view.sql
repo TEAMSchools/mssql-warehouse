@@ -75,13 +75,6 @@ BEGIN
           SELECT *
           FROM ' + @temp_table_name
                    + N';
-        
-          INSERT INTO [utilities].[cache_view_log]
-           ([view_name]
-           ,[timestamp])
-          VALUES
-                (''' + @source_view + N'''
-                ,GETUTCDATE());        
         END
       ' ;
         PRINT (@sql);
