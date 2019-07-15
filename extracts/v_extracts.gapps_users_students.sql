@@ -18,11 +18,17 @@ SELECT co.student_number
                   WHEN co.region = 'KCNA' THEN 'KCNA'
                   WHEN co.region = 'TEAM' THEN 'TEAM'
                   WHEN co.region = 'KMS' THEN 'Miami'
-                 END + '/' + CASE 
-                              WHEN co.school_name = 'TEAM' THEN 'TEAM Academy'
-                              WHEN co.school_name = 'KSA' THEN 'Sunrise Academy'
-                              ELSE co.school_name
-                             END
+                 END
+               + '/' 
+               + CASE 
+                  WHEN co.school_name = 'TEAM' THEN 'TEAM Academy'
+                  WHEN co.school_name = 'KSA' THEN 'Sunrise Academy'
+                  WHEN co.school_name = 'NLH' THEN 'Newark Lab'
+                  WHEN co.school_name = 'URA' THEN 'Upper Roseville'
+                  WHEN co.school_name = 'NCP' THEN 'Newark Community'
+                  WHEN co.school_name = 'LIB' THEN 'Liberty Academy'
+                  ELSE co.school_name
+                 END
            END AS org
       ,co.student_web_id + '@teamstudents.org' AS email
       ,co.student_web_password AS password
