@@ -59,7 +59,7 @@ WITH att_mem AS (
              ,NULL AS sped_ratio
        FROM gabby.powerschool.cohort_identifiers_static
        WHERE (is_pathways = 1 OR school_name = 'Out of District')
-         AND is_enrolled_recent = 1
+         AND is_enrolled_y1 = 1
       ) sub
   GROUP BY sub.academic_year
           ,sub.schoolid
