@@ -8,6 +8,9 @@ SELECT 'gabby' AS db_name
       ,t.name COLLATE Latin1_General_BIN AS table_name
       ,c.name COLLATE Latin1_General_BIN AS column_name
       ,y.name COLLATE Latin1_General_BIN AS column_type
+      ,ROW_NUMBER() OVER(
+         PARTITION BY s.name, t.name
+           ORDER BY c.object_id) AS rn
 FROM gabby.sys.schemas AS s
 INNER JOIN gabby.sys.objects AS t
    ON s.[schema_id] = t.[schema_id]
@@ -25,6 +28,9 @@ SELECT 'kippnewark' AS db_name
       ,t.name AS table_name
       ,c.name AS column_name
       ,y.name AS column_type
+      ,ROW_NUMBER() OVER(
+         PARTITION BY s.name, t.name
+           ORDER BY c.object_id) AS rn
 FROM [kippnewark].sys.schemas AS s
 INNER JOIN [kippnewark].sys.objects AS t
    ON s.[schema_id] = t.[schema_id]
@@ -42,6 +48,9 @@ SELECT 'kippcamden' AS db_name
       ,t.name AS table_name
       ,c.name AS column_name
       ,y.name AS column_type
+      ,ROW_NUMBER() OVER(
+         PARTITION BY s.name, t.name
+           ORDER BY c.object_id) AS rn
 FROM kippcamden.sys.schemas AS s
 INNER JOIN kippcamden.sys.objects AS t
    ON s.[schema_id] = t.[schema_id]
@@ -59,6 +68,9 @@ SELECT 'kippmiami' AS db_name
       ,t.name AS table_name
       ,c.name AS column_name
       ,y.name AS column_type
+      ,ROW_NUMBER() OVER(
+         PARTITION BY s.name, t.name
+           ORDER BY c.object_id) AS rn
 FROM kippmiami.sys.schemas AS s
 INNER JOIN kippmiami.sys.objects AS t
    ON s.[schema_id] = t.[schema_id]
