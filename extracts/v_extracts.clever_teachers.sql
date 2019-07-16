@@ -15,4 +15,18 @@ SELECT CONVERT(VARCHAR(25),df.primary_site_schoolid) AS [School_id]
       ,df.samaccountname AS [Username]
       ,NULL AS [Password]
 FROM gabby.people.staff_crosswalk_static df
-WHERE df.primary_site_schoolid != 0;
+WHERE df.primary_site_schoolid != 0
+
+UNION ALL
+
+SELECT '73253' AS [School_id]
+      ,'data_test' AS [Teacher_id]
+      ,'data_test' AS [Teacher_number]
+      ,'data_test' AS [State_teacher_id]
+      ,'data_test@kippnj.org' AS [Teacher_email]
+      ,'Demo_Test' AS [First_name]
+      ,NULL AS [Middle_name]
+      ,'Data_Test' AS [Last_name]
+      ,'Teacher' AS [Title]
+      ,'data_test' AS [Username]
+      ,NULL AS [Password]
