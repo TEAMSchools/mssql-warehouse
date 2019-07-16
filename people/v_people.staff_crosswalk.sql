@@ -17,6 +17,7 @@ SELECT sr.df_employee_number
       ,sr.primary_site_school_level
       ,sr.[status]
       ,sr.is_active
+      ,sr.is_campus_staff
       ,sr.original_hire_date
       ,sr.termination_date
       ,sr.grades_taught
@@ -30,9 +31,11 @@ SELECT sr.df_employee_number
 
       ,ads.samaccountname
       ,ads.userprincipalname
+      ,ads.mail
 
       ,adm.samaccountname AS manager_samaccountname
       ,adm.userprincipalname AS manager_userprincipalname
+      ,adm.mail AS manager_mail
 
       ,c.personal_email
 FROM gabby.dayforce.staff_roster sr
