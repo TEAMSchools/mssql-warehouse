@@ -21,6 +21,7 @@ WITH users_clean AS (
   FROM gabby.people.staff_crosswalk_static df
   JOIN gabby.people.school_crosswalk sc
     ON df.primary_site = sc.site_name
+   AND sc._fivetran_deleted = 0
   JOIN gabby.powerschool.users u
     ON df.ps_teachernumber = u.teachernumber COLLATE Latin1_General_BIN
    AND df.primary_site_schoolid = u.homeschoolid
