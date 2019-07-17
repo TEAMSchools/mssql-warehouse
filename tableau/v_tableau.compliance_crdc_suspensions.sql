@@ -19,13 +19,12 @@ SELECT co.student_number
       ,co.year_in_network
       
       ,att.streak_id
-      ,att.att_code      
+      ,att.att_code
       ,att.streak_start
       ,att.streak_end
       ,att.streak_length_membership
 FROM gabby.powerschool.cohort_identifiers_static co
 JOIN gabby.powerschool.attendance_streak att
-  ON co.student_number = att.student_number
+  ON co.studentid = att.studentid
  AND co.db_name = att.db_name
- AND att.streak_start BETWEEN co.entrydate AND co.exitdate
  AND att.att_code IN ('OSS','ISS')

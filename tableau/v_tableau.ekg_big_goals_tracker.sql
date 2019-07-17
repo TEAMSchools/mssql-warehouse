@@ -153,7 +153,7 @@ WITH act AS (
         ,(yearid + 1990) AS academic_year
         ,SUM(CONVERT(FLOAT,attendancevalue)) AS n_days_attendance
         ,SUM(CONVERT(FLOAT,membershipvalue)) AS n_days_membership
-		,ROUND(AVG(CONVERT(FLOAT,attendancevalue)), 2) AS ada
+  ,ROUND(AVG(CONVERT(FLOAT,attendancevalue)), 2) AS ada
 
   FROM gabby.powerschool.ps_adaadm_daily_ctod
   WHERE membershipvalue > 0
@@ -164,24 +164,24 @@ WITH act AS (
  )
 
 ,suspensions AS (
-  SELECT student_number
-        ,academic_year
+  SELECT studentid
+        ,yearid
         ,db_name
         ,MAX(CASE WHEN sub.att_code_group = 'OSS' THEN sub.n_streaks END) AS [OSS]
         ,MAX(CASE WHEN sub.att_code_group = 'ISS' THEN sub.n_streaks END) AS [ISS]
         ,MAX(CASE WHEN sub.att_code_group = 'T' THEN sub.n_days END) AS n_days_tardy
   FROM
       (
-       SELECT sub.student_number
-             ,sub.academic_year
+       SELECT sub.studentid
+             ,sub.yearid
              ,sub.att_code_group
              ,sub.db_name      
-             ,COUNT(student_number) AS n_streaks
+             ,COUNT(studentid) AS n_streaks
              ,SUM(sub.streak_length_membership) AS n_days
        FROM
            (
-            SELECT student_number
-                  ,academic_year             
+            SELECT studentid
+                  ,yearid
                   ,streak_length_membership
                   ,db_name             
                   ,CASE 
@@ -192,13 +192,13 @@ WITH act AS (
             FROM gabby.powerschool.attendance_streak
             WHERE att_code IN ('OS','OSS','OSSP','ISS','S', 'T', 'T10')
            ) sub
-       GROUP BY student_number
-               ,academic_year
+       GROUP BY studentid
+               ,yearid
                ,sub.att_code_group
                ,db_name
              ) sub
-  GROUP BY student_number
-          ,academic_year
+  GROUP BY studentid
+          ,yearid
           ,db_name
  )
 
@@ -433,17 +433,17 @@ WITH act AS (
         ,CONVERT(FLOAT,AVG(sub.lit_meeting_goal)) AS lit_meeting_goal_pct
         ,CONVERT(FLOAT,AVG(sub.lit_making_1yr_growth)) AS lit_making_1yr_growth_pct
         ,CONVERT(FLOAT,AVG(sub.is_student_attrition)) AS student_attrition_pct
-		      ,CONVERT(FLOAT,SUM(sub.n_days_attendance) / SUM(sub.n_days_membership)) AS ada
+        ,CONVERT(FLOAT,SUM(sub.n_days_attendance) / SUM(sub.n_days_membership)) AS ada
         ,CONVERT(FLOAT,AVG(sub.is_chronically_absent)) AS chronically_absent_pct
         ,CONVERT(FLOAT,SUM(sub.n_days_tardy) / SUM(sub.n_days_membership)) AS tardy_pct
-      		,CONVERT(FLOAT,AVG(sub.is_OSS)) AS oss_pct
+        ,CONVERT(FLOAT,AVG(sub.is_OSS)) AS oss_pct
         ,CONVERT(FLOAT,AVG(sub.is_ISS)) AS iss_pct
-		      ,CONVERT(FLOAT,AVG(sub.is_OSS_iep)) AS oss_iep_pct
+        ,CONVERT(FLOAT,AVG(sub.is_OSS_iep)) AS oss_iep_pct
         ,CONVERT(FLOAT,AVG(sub.is_ISS_iep)) AS iss_iep_pct
-		
-       	/* student-level totals */
+
+        /* student-level totals */
         ,CONVERT(FLOAT,SUM(sub.n_OSS)) AS n_oss
-        ,CONVERT(FLOAT,SUM(sub.n_ISS)) AS n_iss		
+        ,CONVERT(FLOAT,SUM(sub.n_ISS)) AS n_iss  
   FROM
       (
        SELECT co.student_number      
@@ -475,7 +475,7 @@ WITH act AS (
                WHEN parcc.math_performance_level = 3 THEN 1.0 
                WHEN parcc.math_performance_level <> 3 THEN 0.0 
               END AS parcc_math_approaching
-			          ,CASE 
+             ,CASE 
                WHEN parcc.ela_performance_level <= 2 THEN 1.0 
                WHEN parcc.ela_performance_level > 2 THEN 0.0 
               END AS parcc_ela_below
@@ -483,7 +483,7 @@ WITH act AS (
                WHEN parcc.math_performance_level <= 2 THEN 1.0 
                WHEN parcc.math_performance_level > 2 THEN 0.0 
               END AS parcc_math_below
-			          ,CASE 
+             ,CASE 
                WHEN co.iep_status = 'SPED' AND parcc.ela_performance_level >= 4 THEN 1.0
                WHEN co.iep_status = 'SPED' AND parcc.ela_performance_level < 4 THEN 0.0 
               END AS parcc_ela_proficient_iep
@@ -523,15 +523,15 @@ WITH act AS (
              /* ADA */
              ,ada.n_days_attendance
              ,ada.n_days_membership
-			          ,CASE WHEN ada.ada < 0.9 THEN 1.0 ELSE 0.0 END AS is_chronically_absent
+             ,CASE WHEN ada.ada < 0.9 THEN 1.0 ELSE 0.0 END AS is_chronically_absent
 
              /* Attendance Codes */
-			          ,sus.n_days_tardy
+             ,sus.n_days_tardy
              ,sus.OSS AS n_oss
              ,sus.ISS AS n_iss
-			          ,CASE WHEN sus.OSS > 0 THEN 1.0 ELSE 0.0 END AS is_oss
+             ,CASE WHEN sus.OSS > 0 THEN 1.0 ELSE 0.0 END AS is_oss
              ,CASE WHEN sus.ISS > 0 THEN 1.0 ELSE 0.0 END AS is_iss
-			          ,CASE WHEN co.iep_status = 'SPED' AND sus.OSS > 0 THEN 1.0 ELSE 0.0 END AS is_oss_iep
+             ,CASE WHEN co.iep_status = 'SPED' AND sus.OSS > 0 THEN 1.0 ELSE 0.0 END AS is_oss_iep
              ,CASE WHEN co.iep_status = 'SPED' AND sus.ISS > 0 THEN 1.0 ELSE 0.0 END AS is_iss_iep
 
              /* Attrition */
@@ -566,8 +566,8 @@ WITH act AS (
         AND co.db_name = ada.db_name
         AND co.academic_year = ada.academic_year
        LEFT JOIN suspensions sus
-         ON co.student_number = sus.student_number
-        AND co.academic_year = sus.academic_year
+         ON co.studentid = sus.studentid
+        AND co.yearid = sus.yearid
         AND co.db_name = sus.db_name
        LEFT JOIN student_attrition sa
          ON co.student_number = sa.denominator_student_number
@@ -694,13 +694,13 @@ WITH act AS (
  )
 
 SELECT ru.academic_year
-	     ,ru.region
+      ,ru.region
       ,ru.school_level
       ,ru.reporting_schoolid
       ,ru.grade_level
       ,ru.field AS ekg_metric_field
       ,ru.value AS ekg_metric_value
-	     ,'Y1' AS term_name
+      ,'Y1' AS term_name
       ,CAST(SYSDATETIME() AS DATE) AS week_of_date
       
       ,g.metric AS ekg_metric_label
