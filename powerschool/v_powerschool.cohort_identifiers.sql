@@ -175,35 +175,25 @@ SELECT co.studentid
 
       ,CONVERT(VARCHAR(5),CASE
                            WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
-                            AND co.rn_year = 1                             
-                                THEN CASE
-                                      WHEN DB_NAME() = 'kippmiami' THEN REPLACE(s.lunchstatus,'false','F')
-                                      WHEN DB_NAME() IN ('kippnewark', 'kippcamden') THEN mcs.mealbenefitstatus COLLATE Latin1_General_BIN
-                                     END                           
+                            AND co.rn_year = 1 THEN CASE
+                                                     WHEN DB_NAME() = 'kippmiami' THEN REPLACE(s.lunchstatus, 'false', 'F')
+                                                     WHEN DB_NAME() IN ('kippnewark', 'kippcamden') THEN mcs.lunch_status COLLATE Latin1_General_BIN
+                                                    END
                            WHEN co.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
-                            AND co.entrydate = s.entrydate THEN REPLACE(s.lunchstatus,'false','F')
+                            AND co.entrydate = s.entrydate THEN REPLACE(s.lunchstatus, 'false', 'F')
                            ELSE co.lunchstatus
-                          END) AS lunchstatus      
+                          END) AS lunchstatus
       ,CONVERT(VARCHAR(125),CASE
                              WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
-                              AND co.rn_year = 1 
-                              AND mcs.currentapplicationid IS NOT NULL 
-                                  THEN CASE
-                                        WHEN DB_NAME() = 'kippmiami' THEN REPLACE(s.lunchstatus,'false','F')
-                                        WHEN DB_NAME() IN ('kippnewark', 'kippcamden') THEN mcs.mealbenefitstatus COLLATE Latin1_General_BIN
-                                       END
-                             WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
-                              AND co.rn_year = 1 
-                              AND mcs.currentapplicationid IS NULL 
-                                  THEN CASE
-                                        WHEN DB_NAME() = 'kippmiami' THEN REPLACE(s.lunchstatus,'false','F')
-                                        WHEN DB_NAME() IN ('kippnewark', 'kippcamden') THEN mcs.description COLLATE Latin1_General_BIN
-                                       END
+                              AND co.rn_year = 1 THEN CASE
+                                                       WHEN DB_NAME() = 'kippmiami' THEN REPLACE(s.lunchstatus,'false','F')
+                                                       WHEN DB_NAME() IN ('kippnewark', 'kippcamden') THEN mcs.lunch_app_status COLLATE Latin1_General_BIN
+                                                      END
                              WHEN co.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
                               AND co.entrydate = s.entrydate 
-                                  THEN REPLACE(s.lunchstatus,'false','F')
+                                  THEN REPLACE(s.lunchstatus, 'false', 'F')
                              ELSE co.lunchstatus
-                            END) AS lunch_app_status 
+                            END) AS lunch_app_status
 FROM powerschool.cohort_static co
 LEFT JOIN enr
   ON co.student_number = enr.student_number
@@ -233,5 +223,5 @@ LEFT JOIN powerschool.spenrollments_gen sp
   ON co.studentid = sp.studentid
  AND co.entrydate BETWEEN sp.enter_date AND sp.exit_date
  AND sp.specprog_name IN ('Out of District','Pathways ES','Pathways MS','Whittier ES')
-LEFT JOIN gabby.mcs.lunch_info_static mcs
-  ON co.student_number = mcs.studentnumber
+LEFT JOIN mcs.view_student_data_static mcs
+  ON co.student_number = mcs.student_number
