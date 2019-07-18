@@ -557,7 +557,7 @@ FROM
           LEFT JOIN gabby.lit.network_goals goals 
             ON achieved.grade_level = goals.grade_level
            AND achieved.round_num = goals.round_num
-           AND goals.norms_year = 2018
+           AND goals.norms_year = 2019
           LEFT JOIN gabby.lit.individualized_goals indiv 
             ON achieved.student_number = indiv.student_number
            AND achieved.test_round = indiv.test_round
