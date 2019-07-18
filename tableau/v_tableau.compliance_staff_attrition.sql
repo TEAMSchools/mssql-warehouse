@@ -32,9 +32,23 @@ WITH roster AS (
 
 ,years AS (
   SELECT n AS academic_year
+        ,CONVERT(DATE,CONVERT(VARCHAR,n+1) + CONVERT(VARCHAR,'-04-01')) AS job_date
   FROM gabby.utilities.row_generator
   WHERE n BETWEEN 2000 AND gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 )
+
+,work_assignments AS (
+      SELECT df_employee_id
+             ,legal_entity_name
+             ,job_name AS primary_job
+             ,physical_location_name AS primary_site
+             ,department_name AS primary_on_site_department
+             ,job_family_name AS job_family
+             ,MIN(effective_start_date) AS work_assignment_effective_start
+             ,MAX(effective_end_date) AS work_assignment_effective_end
+       FROM dayforce.work_assignment_status w
+       GROUP BY df_employee_id, legal_entity_name, job_name, physical_location_name, department_name, job_family_name
+  )
 
 ,scaffold AS (
   SELECT df_employee_number
@@ -58,16 +72,16 @@ WITH roster AS (
   FROM 
       (
        SELECT r.df_employee_number
-             ,r.legal_entity_name
+             ,w.legal_entity_name
              ,r.preferred_first_name
              ,r.preferred_last_name
              ,r.primary_ethnicity
-             ,r.primary_job
-             ,r.primary_on_site_department
-             ,r.primary_site
+             ,w.primary_job
+             ,w.primary_on_site_department
+             ,w.primary_site
              ,r.primary_site_reporting_schoolid
              ,r.primary_site_school_level
-             ,r.job_family
+             ,w.job_family
              ,r.status_reason
              ,r.original_hire_date
              ,r.rehire_date
@@ -88,6 +102,9 @@ WITH roster AS (
        FROM roster r
        JOIN years y
          ON y.academic_year BETWEEN r.start_academic_year AND COALESCE(r.end_academic_year, gabby.utilities.GLOBAL_ACADEMIC_YEAR())
+       JOIN work_assignments w 
+         ON y.job_date BETWEEN w.work_assignment_effective_start AND w.work_assignment_effective_end
+        AND w.df_employee_id = r.df_employee_number
       ) sub
   WHERE rn_dupe_academic_year = 1
  )
