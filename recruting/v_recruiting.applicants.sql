@@ -217,7 +217,7 @@ FROM gabby.recruiting.cultivation_c c
 LEFT JOIN gabby.recruiting.profile_application_c pa
   ON c.contact_c = pa.applicant_c
 LEFT JOIN gabby.recruiting.contact co
-  ON c.contact_c = LEFT(co.id, 15)
+  ON c.contact_c = co.id
 LEFT JOIN position_parse j
   ON c.job_position_name_c = j.position_name
 LEFT JOIN gabby.recruiting.job_posting_c p
