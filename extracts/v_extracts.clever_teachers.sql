@@ -3,7 +3,7 @@ GO
 
 CREATE OR ALTER VIEW extracts.clever_teachers AS
 
-SELECT CONVERT(VARCHAR(25),df.primary_site_schoolid) AS [School_id]
+SELECT CONVERT(VARCHAR(25), df.primary_site_schoolid) AS [School_id]
       ,COALESCE(df.ps_teachernumber, CONVERT(VARCHAR(25),df.df_employee_number)) AS [Teacher_id]
       ,COALESCE(df.ps_teachernumber, CONVERT(VARCHAR(25),df.df_employee_number)) AS [Teacher_number]
       ,CONVERT(VARCHAR(25),df.df_employee_number) AS [State_teacher_id]
@@ -15,10 +15,11 @@ SELECT CONVERT(VARCHAR(25),df.primary_site_schoolid) AS [School_id]
       ,df.samaccountname AS [Username]
       ,NULL AS [Password]
 FROM gabby.people.staff_crosswalk_static df
-WHERE df.primary_site_schoolid != 0
+WHERE df.is_active = 1
 
 UNION ALL
 
+/* testing account */
 SELECT '73253' AS [School_id]
       ,'data_test' AS [Teacher_id]
       ,'data_test' AS [Teacher_number]
