@@ -117,6 +117,44 @@ WITH fp_long AS (
  )
 
 ,audits_long AS (
+  /* DR */
+  SELECT s.student_number
+        ,s.lastfirst
+        ,s.academic_year
+        ,s.reporting_schoolid
+        ,s.grade_level
+        ,s.region
+        ,s.entrydate
+        ,s.year_in_network
+        ,s.test_round
+        ,s.test_round_start_date
+        ,s.goal_lvl_num
+        ,s.independent_level
+        ,s.goal_status
+        ,s.instructional_academic_year
+        ,s.instructional_test_round
+        ,s.instructional_assessment_date
+        ,s.instructional_level
+        ,s.instructional_genre
+        ,CASE
+          WHEN s.independent_level = 'Z' THEN 0 /* Achieved Z */
+          WHEN s.year_in_network = 1 THEN 1 /* new to KNJ */
+          WHEN s.instructional_assessment_date IS NULL THEN 1 /* missing all data */
+          WHEN s.academic_year - s.instructional_academic_year > 1 THEN 1 /* more than 2 rounds ago */
+          WHEN s.instructional_test_round NOT IN ('Q3', 'Q4') THEN 1 /* more than 2 rounds ago */
+          ELSE 0
+         END AS audit_status
+        ,CASE
+          WHEN s.year_in_network = 1 THEN 'New to KIPP NJ'
+          WHEN s.instructional_assessment_date IS NULL THEN 'No Instructional Level'
+          WHEN s.academic_year - s.instructional_academic_year > 1 THEN 'More Than 2 Rounds Since Last Test'
+          WHEN s.instructional_test_round NOT IN ('Q3', 'Q4') THEN 'More Than 2 Rounds Since Last Test'
+         END AS audit_reason
+  FROM scaffold s
+  WHERE s.test_round = 'DR'
+
+  UNION ALL
+
   /* Q1 */
   SELECT s.student_number
         ,s.lastfirst
@@ -149,8 +187,8 @@ WITH fp_long AS (
           WHEN s.year_in_network = 1 THEN 'New to KIPP NJ'
           WHEN s.instructional_assessment_date IS NULL THEN 'No Instructional Level'
           WHEN s.goal_status = 'Far Below' THEN 'Far Below'
-          WHEN s.academic_year - s.instructional_academic_year > 1 THEN 'More Than 2 Rounds Since Last Test'
-          WHEN s.instructional_test_round NOT IN ('Q3', 'Q4', 'DR') THEN 'More Than 2 Rounds Since Last Test'
+          WHEN s.academic_year - s.instructional_academic_year > 1 THEN 'More Than 3 Rounds Since Last Test'
+          WHEN s.instructional_test_round NOT IN ('Q3', 'Q4', 'DR') THEN 'More Than 3 Rounds Since Last Test'
          END AS audit_reason
   FROM scaffold s
   WHERE s.test_round = 'Q1'
