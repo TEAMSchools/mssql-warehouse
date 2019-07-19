@@ -3,6 +3,18 @@ GO
 
 CREATE OR ALTER VIEW extracts.renlearn_student_schedules AS
 
+WITH dsos AS (
+  SELECT df.ps_teachernumber COLLATE Latin1_General_BIN AS teacher
+        ,COALESCE(ccw.ps_school_id, df.primary_site_schoolid) AS schoolid
+  FROM gabby.people.staff_crosswalk_static df
+  LEFT JOIN gabby.people.campus_crosswalk ccw
+    ON df.primary_site = ccw.campus_name
+   AND ccw._fivetran_deleted = 0
+   AND ccw.is_pathways = 0
+  WHERE df.is_active = 1
+    AND df.primary_job IN ('Director of Campus Operations', 'Director Campus Operations', 'Director School Operations')
+ )
+
 SELECT cc.id
       ,cc.termid
       ,s.student_number AS studentid
@@ -27,23 +39,21 @@ WHERE cc.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 
 UNION ALL
 
-SELECT CONCAT(co.yearid, co.schoolid, RIGHT(CONCAT(0, co.grade_level),2)) AS id
+SELECT CONCAT(co.yearid, co.schoolid, RIGHT(CONCAT(0, co.grade_level), 2)) AS id
       ,CONVERT(INT,CONCAT(co.yearid, '00')) AS termid
       ,co.student_number AS studentid
       ,CONCAT(co.academic_year, s.abbreviation, co.grade_level) AS section_number
       ,co.schoolid
       ,'ENR' AS course_number
       ,'Enroll' AS course_name
-      ,df.ps_teachernumber COLLATE Latin1_General_BIN AS teacher
+      ,dsos.teacher
       ,'1(A)' expression
 FROM gabby.powerschool.cohort_identifiers_static co
 JOIN gabby.powerschool.schools s
   ON co.schoolid = s.school_number
  AND co.db_name = s.db_name
-JOIN gabby.people.staff_crosswalk_static df
-  ON co.schoolid = df.primary_site_schoolid
- AND df.primary_job = 'School Leader'
- AND df.status = 'ACTIVE'
+LEFT JOIN dsos
+  ON s.school_number = dsos.schoolid
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.rn_year = 1
   AND co.grade_level BETWEEN 2 AND 12

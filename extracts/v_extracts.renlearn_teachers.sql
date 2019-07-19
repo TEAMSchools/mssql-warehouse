@@ -1,16 +1,20 @@
-USE gabby
+USE gabby;
 GO
 
 CREATE OR ALTER VIEW extracts.renlearn_teachers AS
 
-SELECT ps_teachernumber AS id
-      ,ps_teachernumber AS teachernumber
-      ,primary_site_schoolid AS schoolid
-      ,preferred_last_name AS last_name
-      ,preferred_first_name AS first_name
+SELECT scw.ps_teachernumber AS id
+      ,scw.ps_teachernumber AS teachernumber
+      ,COALESCE(ccw.ps_school_id, scw.primary_site_schoolid) AS schoolid
+      ,scw.preferred_last_name AS last_name
+      ,scw.preferred_first_name AS first_name
       ,NULL AS middle_name
-      ,samaccountname AS teacherloginid
-      ,userprincipalname AS staff_email
-FROM gabby.people.staff_crosswalk_static
-WHERE status != 'TERMINATED'
-  AND primary_site_schoolid != 0
+      ,scw.samaccountname AS teacherloginid
+      ,scw.userprincipalname AS staff_email
+FROM gabby.people.staff_crosswalk_static scw
+LEFT JOIN gabby.people.campus_crosswalk ccw
+  ON scw.primary_site = ccw.campus_name
+ AND ccw.is_pathways = 0
+ AND ccw._fivetran_deleted = 0
+WHERE scw.is_active = 1
+  AND COALESCE(ccw.ps_school_id, scw.primary_site_schoolid) != 0
