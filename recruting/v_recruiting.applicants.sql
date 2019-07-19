@@ -112,7 +112,7 @@ SELECT pa.id
       ,NULL AS cult_subject_interest
 FROM gabby.recruiting.profile_application_c pa 
 LEFT JOIN gabby.recruiting.contact c
-  ON pa.contact_id_c = LEFT(c.id, 15)
+  ON pa.applicant_c = c.id
 LEFT JOIN gabby.recruiting.job_application_c a
   ON pa.id = a.profile_application_c
 LEFT JOIN gabby.recruiting.job_posting_c p
