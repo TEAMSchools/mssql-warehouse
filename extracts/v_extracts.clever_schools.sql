@@ -20,4 +20,20 @@ SELECT CONVERT(VARCHAR(25), school_number) AS [School_id]
       ,schoolzip AS [School_zip]
       ,NULL AS [School_phone]
 FROM gabby.powerschool.schools
-WHERE state_excludefromreporting = 0; /* filter out summer school and graduated students */
+WHERE state_excludefromreporting = 0 /* filter out summer school and graduated students */
+
+UNION ALL
+
+SELECT CONVERT(VARCHAR(25), 0) AS [School_id]
+      ,'District Office' AS [School_name]
+      ,CONVERT(VARCHAR(25), 0) AS [School_number]
+      ,NULL AS [State_id]
+      ,'Kindergarten' AS [Low_grade]
+      ,'12' AS [High_grade]
+      ,'Ryan Hill' AS [Principal]
+      ,'rhill@kippnj.org' AS [Principal_email]
+      ,'60 Park Place, Suite 802' AS [School_address]
+      ,'Newark' AS [School_city]
+      ,'NJ' AS [School_state]
+      ,'07102' AS [School_zip]
+      ,NULL AS [School_phone]
