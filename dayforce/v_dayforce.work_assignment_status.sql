@@ -5,8 +5,6 @@ CREATE OR ALTER VIEW dayforce.work_assignment_status AS
 
 WITH status_clean AS (
   SELECT sub.df_employee_id
-        ,sub.first_name
-        ,sub.last_name
         ,sub.status
         ,sub.base_salary
         ,sub.effective_start
@@ -20,8 +18,6 @@ WITH status_clean AS (
   FROM
       (
        SELECT number AS df_employee_id
-             ,first_name
-             ,last_name
              ,status
              ,base_salary
              ,CASE
