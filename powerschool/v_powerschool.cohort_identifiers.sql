@@ -143,7 +143,7 @@ SELECT co.studentid
         WHEN sch.high_grade = 8 THEN 'MS'
         WHEN sch.high_grade = 4 THEN 'ES'
        END AS school_level
-      ,CASE WHEN sp.specprog_name IN ('Pathways ES','Pathways MS') THEN 1 ELSE 0 END AS is_pathways
+      ,CASE WHEN sp.specprog_name IN ('Self-Contained Special Education', 'Pathways ES', 'Pathways MS') THEN 1 ELSE 0 END AS is_pathways
 
       ,t.team
 
@@ -222,6 +222,6 @@ LEFT JOIN easyiep.njsmart_powerschool_clean sped
 LEFT JOIN powerschool.spenrollments_gen sp
   ON co.studentid = sp.studentid
  AND co.entrydate BETWEEN sp.enter_date AND sp.exit_date
- AND sp.specprog_name IN ('Out of District','Pathways ES','Pathways MS','Whittier ES')
+ AND sp.specprog_name IN ('Out of District', 'Self-Contained Special Education', 'Pathways ES', 'Pathways MS', 'Whittier ES')
 LEFT JOIN mcs.view_student_data_static mcs
   ON co.student_number = mcs.student_number
