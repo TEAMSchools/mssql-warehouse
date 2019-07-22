@@ -3,14 +3,14 @@ GO
 
 CREATE OR ALTER VIEW extracts.illuminate_users AS
 
-SELECT COALESCE(ps.ps_teachernumber, CONVERT(VARCHAR(25), df.df_employee_number)) AS [01 User ID]
+SELECT df.ps_teachernumber AS [01 User ID]
       ,df.preferred_last_name AS [02 User Last Name]
       ,df.preferred_first_name AS [03 User First Name]
       ,NULL AS [04 User Middle Name]
       ,NULL AS [05 Birth Date]
       ,NULL AS [06 Gender]
-      ,ad.userprincipalname AS [07 Email Address]
-      ,ad.samaccountname AS [08 Username]
+      ,df.userprincipalname AS [07 Email Address]
+      ,df.samaccountname AS [08 Username]
       ,NULL AS [09 Password]
       ,df.df_employee_number AS [10 State User or Employee ID]
       ,NULL AS [11 Name suffix]
@@ -34,9 +34,4 @@ SELECT COALESCE(ps.ps_teachernumber, CONVERT(VARCHAR(25), df.df_employee_number)
       ,NULL AS [29 Email2]
       ,NULL AS [30 Phone1]
       ,NULL AS [31 Phone2]
-FROM gabby.dayforce.staff_roster df
-LEFT JOIN gabby.people.id_crosswalk_powerschool ps
-  ON df.df_employee_number = ps.df_employee_number
- AND ps.is_master = 1
-LEFT JOIN gabby.adsi.user_attributes_static ad
-  ON CONVERT(VARCHAR,df.df_employee_number) = ad.employeenumber
+FROM gabby.people.staff_crosswalk_static df

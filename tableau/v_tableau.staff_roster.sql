@@ -47,15 +47,7 @@ SELECT df.df_employee_number
       ,df.manager_name AS manager_name
       ,df.position_effective_from_date AS position_start_date
       ,df.termination_date
-
-      ,LOWER(ad.mail) AS mail
-      ,LOWER(ad.userprincipalname) AS userprincipalname
-
-      ,LOWER(adm.userprincipalname) AS manager_mail
-FROM gabby.dayforce.staff_roster df
-LEFT JOIN gabby.adsi.user_attributes_static ad
-  ON df.df_employee_number = ad.employeenumber
- AND ISNUMERIC(ad.employeenumber) = 1
-LEFT JOIN gabby.adsi.user_attributes_static adm
-  ON df.manager_df_employee_number = adm.employeenumber
- AND ISNUMERIC(adm.employeenumber) = 1
+      ,LOWER(df.mail) AS mail
+      ,LOWER(df.userprincipalname) AS userprincipalname
+      ,LOWER(df.manager_mail) AS manager_mail
+FROM gabby.people.staff_crosswalk_static df

@@ -27,8 +27,8 @@ WITH status_curr AS (
  )
 
 SELECT r.df_employee_number
-      ,r.first_name
-      ,r.last_name
+      ,r.preferred_first_name AS first_name
+      ,r.preferred_last_name AS last_name
       ,r.original_hire_date
       ,r.rehire_date
       ,r.status
@@ -61,7 +61,7 @@ SELECT r.df_employee_number
       ,b.medical
       ,b.fsa_hc
       ,b.vol_hos
-FROM gabby.dayforce.staff_roster r
+FROM gabby.people.staff_crosswalk_static r
 LEFT JOIN status_curr s
   ON r.df_employee_number = s.number
  AND s.rn_curr = 1

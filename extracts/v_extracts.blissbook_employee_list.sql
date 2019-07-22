@@ -4,12 +4,9 @@ GO
 CREATE OR ALTER VIEW extracts.blissbook_employee_list AS
 
 SELECT df.df_employee_number AS [Employee ID]
-      ,ad.mail AS [Email Address]
+      ,df.mail AS [Email Address]
       ,CONCAT(df.preferred_first_name, ' ', df.preferred_last_name) AS [Name]
       ,COALESCE(df.rehire_date, df.original_hire_date) AS [Latest Hire Date]
       ,df.legal_entity_name AS [Groups]
-FROM gabby.dayforce.staff_roster df
-JOIN gabby.adsi.user_attributes_static ad
-  ON df.df_employee_number = ad.employeenumber
- AND ISNUMERIC(ad.employeenumber) = 1
-WHERE df.status IN ('ACTIVE', 'PRESTART', 'INACTIVE')
+FROM gabby.people.staff_crosswalk_static df
+WHERE df.is_active = 1

@@ -61,21 +61,13 @@ FROM
            ,COALESCE(dfdf.legal_entity_name, dfadp.legal_entity_name) AS region
            ,COALESCE(dfdf.manager_adp_associate_id, dfadp.manager_adp_associate_id) AS subject_manager_id
 
-           ,COALESCE(addf.samaccountname, adadp.samaccountname) AS subject_username
+           ,COALESCE(dfdf.samaccountname, dfadp.samaccountname) AS subject_username
 
-           ,COALESCE(admgrdf.displayname, admgradp.displayname) AS subject_manager_name
-           ,COALESCE(admgrdf.samaccountname, admgradp.samaccountname) AS subject_manager_username
+           ,COALESCE(dfdf.manager_name, dfadp.manager_name) AS subject_manager_name
+           ,COALESCE(dfdf.manager_samaccountname, dfadp.manager_samaccountname) AS subject_manager_username
      FROM gabby.surveys.manager_survey_long_static mgr     
-     LEFT JOIN gabby.dayforce.staff_roster dfadp
-       ON mgr.subject_associate_id = dfadp.adp_associate_id
-     LEFT JOIN gabby.adsi.user_attributes_static adadp
-       ON dfadp.adp_associate_id = adadp.idautopersonalternateid
-     LEFT JOIN gabby.adsi.user_attributes_static admgradp
-       ON dfadp.manager_adp_associate_id = admgradp.idautopersonalternateid
-     LEFT JOIN gabby.dayforce.staff_roster dfdf
+     LEFT JOIN gabby.people.staff_crosswalk_static dfdf
        ON mgr.subject_associate_id = CONVERT(VARCHAR,dfdf.df_employee_number)
-     LEFT JOIN gabby.adsi.user_attributes_static addf
-       ON CONVERT(VARCHAR,dfdf.df_employee_number) = addf.employeenumber     
-     LEFT JOIN gabby.adsi.user_attributes_static admgrdf
-       ON CONVERT(VARCHAR,dfdf.manager_df_employee_number) = admgrdf.employeenumber
+     LEFT JOIN gabby.people.staff_crosswalk_static dfadp
+       ON mgr.subject_associate_id = dfadp.adp_associate_id
     ) sub

@@ -4,24 +4,56 @@ GO
 CREATE OR ALTER VIEW people.staff_crosswalk AS
 
 SELECT sr.df_employee_number
-      ,sr.preferred_name
+      ,sr.adp_associate_id
+      ,sr.salesforce_id
+      ,sr.first_name
+      ,sr.last_name
+      ,sr.gender
+      ,sr.primary_ethnicity
+      ,sr.is_hispanic
+      ,sr.address
+      ,sr.city
+      ,sr.state
+      ,sr.postal_code
+      ,sr.birth_date
+      ,sr.original_hire_date
+      ,sr.termination_date
+      ,sr.rehire_date
+      ,sr.status
+      ,sr.status_reason
+      ,sr.is_manager
+      ,sr.leadership_role
       ,sr.preferred_first_name
       ,sr.preferred_last_name
       ,sr.primary_job
-      ,sr.position_title
-      ,sr.legal_entity_name
-      ,sr.primary_site
       ,sr.primary_on_site_department
+      ,sr.primary_site
+      ,sr.is_regional_staff
+      ,sr.legal_entity_name
+      ,sr.job_family
+      ,sr.position_effective_from_date
+      ,sr.position_effective_to_date
+      ,sr.manager_df_employee_number
+      ,sr.payclass
+      ,sr.paytype
+      ,sr.flsa_status
+      ,sr.annual_salary
+      ,sr.grades_taught
+      ,sr.subjects_taught
+      ,sr.position_title
+      ,sr.primary_on_site_department_entity
+      ,sr.primary_site_entity
+      ,sr.preferred_name
+      ,sr.mobile_number
+      ,sr.payroll_company_code
+      ,sr.is_active
+      ,sr.is_campus_staff
       ,sr.primary_site_schoolid
       ,sr.primary_site_reporting_schoolid
       ,sr.primary_site_school_level
-      ,sr.[status]
-      ,sr.is_active
-      ,sr.is_campus_staff
-      ,sr.original_hire_date
-      ,sr.termination_date
-      ,sr.grades_taught
-      ,sr.manager_df_employee_number
+      ,sr.manager_adp_associate_id
+      ,sr.manager_preferred_first_name
+      ,sr.manager_preferred_last_name
       ,sr.manager_name
       ,sr.[db_name]
 

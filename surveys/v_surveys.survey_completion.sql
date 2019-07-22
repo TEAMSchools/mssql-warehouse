@@ -62,26 +62,22 @@ WITH survey_feed AS (
         ,sr.preferred_last_name AS preferred_last
         ,sr.preferred_name
         ,sr.primary_site AS location_custom
-        ,sr.primary_job AS job_title_description                  
-        ,CASE WHEN sr.status IN ('INACTIVE', 'ADMIN_LEAVE') THEN 'LEAVE' ELSE sr.status END AS position_status        
-        
-        ,LOWER(ad.userprincipalname) as email1
+        ,sr.primary_job AS job_title_description
+        ,CASE WHEN sr.status IN ('INACTIVE', 'ADMIN_LEAVE') THEN 'LEAVE' ELSE sr.status END AS position_status
+        ,LOWER(sr.userprincipalname) as email1
         ,CASE 
-          WHEN LOWER(REPLACE(ad.userprincipalname, '-', '')) = LOWER(ad.userprincipalname) THEN NULL
-          ELSE LOWER(REPLACE(ad.userprincipalname, '-', ''))
+          WHEN LOWER(REPLACE(sr.userprincipalname, '-', '')) = LOWER(sr.userprincipalname) THEN NULL
+          ELSE LOWER(REPLACE(sr.userprincipalname, '-', ''))
          END AS email2
         ,CASE
-          WHEN LOWER(ad.mail) = LOWER(ad.userprincipalname) THEN NULL
-          ELSE LOWER(ad.mail)
+          WHEN LOWER(sr.mail) = LOWER(sr.userprincipalname) THEN NULL
+          ELSE LOWER(sr.mail)
          END AS email3
 
         ,'Self & Others' AS survey_type
         ,ss.value AS reporting_term
         ,gabby.utilities.GLOBAL_ACADEMIC_YEAR() AS academic_year
-  FROM gabby.dayforce.staff_roster sr
-  LEFT JOIN gabby.adsi.user_attributes_static ad
-    ON sr.df_employee_number = ad.employeenumber
-   AND ISNUMERIC(ad.employeenumber) = 1
+  FROM gabby.people.staff_crosswalk_static sr
   CROSS JOIN STRING_SPLIT('SO1,SO2,SO3', ',') ss
   WHERE sr.status NOT IN ('TERMINATED', 'PRESTART')
 
@@ -93,25 +89,21 @@ WITH survey_feed AS (
         ,sr.preferred_name
         ,sr.primary_site AS location_custom
         ,sr.primary_job AS job_title_description                  
-        ,CASE WHEN sr.status IN ('INACTIVE', 'ADMIN_LEAVE') THEN 'LEAVE' ELSE sr.status END AS position_status        
-        
-        ,LOWER(ad.userprincipalname) as email1
+        ,CASE WHEN sr.status IN ('INACTIVE', 'ADMIN_LEAVE') THEN 'LEAVE' ELSE sr.status END AS position_status
+        ,LOWER(sr.userprincipalname) as email1
         ,CASE 
-          WHEN LOWER(REPLACE(ad.userprincipalname, '-', '')) = LOWER(ad.userprincipalname) THEN NULL
-          ELSE LOWER(REPLACE(ad.userprincipalname, '-', ''))
+          WHEN LOWER(REPLACE(sr.userprincipalname, '-', '')) = LOWER(sr.userprincipalname) THEN NULL
+          ELSE LOWER(REPLACE(sr.userprincipalname, '-', ''))
          END AS email2
         ,CASE
-          WHEN LOWER(ad.mail) = LOWER(ad.userprincipalname) THEN NULL
-          ELSE LOWER(ad.mail)
+          WHEN LOWER(sr.mail) = LOWER(sr.userprincipalname) THEN NULL
+          ELSE LOWER(sr.mail)
          END AS email3
 
         ,'R9/Engagement' AS survey_type
         ,ss.value AS reporting_term
         ,gabby.utilities.GLOBAL_ACADEMIC_YEAR() AS academic_year
-  FROM gabby.dayforce.staff_roster sr
-  LEFT JOIN gabby.adsi.user_attributes_static ad
-    ON sr.df_employee_number = ad.employeenumber
-   AND ISNUMERIC(ad.employeenumber) = 1
+  FROM gabby.people.staff_crosswalk_static sr
   CROSS JOIN STRING_SPLIT('R9S1,R9S2,R9S3,R9S4', ',') ss
   WHERE sr.status NOT IN ('TERMINATED', 'PRESTART')
 
@@ -125,26 +117,22 @@ WITH survey_feed AS (
         ,sr.primary_job AS job_title_description                  
         ,CASE WHEN sr.status IN ('INACTIVE', 'ADMIN_LEAVE') THEN 'LEAVE' ELSE sr.status END AS position_status        
         
-        ,LOWER(ad.userprincipalname) as email1
+        ,LOWER(sr.userprincipalname) as email1
         ,CASE 
-          WHEN LOWER(REPLACE(ad.userprincipalname, '-', '')) = LOWER(ad.userprincipalname) THEN NULL
-          ELSE LOWER(REPLACE(ad.userprincipalname, '-', ''))
+          WHEN LOWER(REPLACE(sr.userprincipalname, '-', '')) = LOWER(sr.userprincipalname) THEN NULL
+          ELSE LOWER(REPLACE(sr.userprincipalname, '-', ''))
          END AS email2
         ,CASE
-          WHEN LOWER(ad.mail) = LOWER(ad.userprincipalname) THEN NULL
-          ELSE LOWER(ad.mail)
+          WHEN LOWER(sr.mail) = LOWER(sr.userprincipalname) THEN NULL
+          ELSE LOWER(sr.mail)
          END AS email3
 
         ,'Manager' AS survey_type
         ,ss.value AS reporting_term
         ,gabby.utilities.GLOBAL_ACADEMIC_YEAR() AS academic_year
-  FROM gabby.dayforce.staff_roster sr
-  LEFT JOIN gabby.adsi.user_attributes_static ad
-    ON sr.df_employee_number = ad.employeenumber
-   AND ISNUMERIC(ad.employeenumber) = 1
+  FROM gabby.people.staff_crosswalk_static sr
   CROSS JOIN STRING_SPLIT('MGR1,MGR2,MGR3,MGR4', ',') ss
   WHERE sr.status NOT IN ('TERMINATED', 'PRESTART')
-
  )
 
 SELECT s.df_employee_number AS df_employee_number

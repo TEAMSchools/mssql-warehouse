@@ -62,8 +62,7 @@ SELECT df.df_employee_number
       ,df.[status] AS position_status
       ,df.position_effective_from_date AS academic_year_start_date
       ,COALESCE(df.termination_date, CONVERT(DATE,GETDATE())) AS academic_year_end_date
-      
-      ,dir.userprincipalname AS email_address
+      ,df.userprincipalname AS email_address
       
       ,cal.date_value
       ,cal.insession
@@ -82,9 +81,7 @@ SELECT df.df_employee_number
         WHEN l.[status] IS NOT NULL THEN 0
         ELSE 9.5 - ISNULL(t.tafw_hours, 0)
        END AS hours_worked
-FROM gabby.dayforce.staff_roster df
-LEFT JOIN gabby.adsi.user_attributes_static dir
-  ON CONVERT(VARCHAR(25),df.df_employee_number) = dir.employeenumber
+FROM gabby.people.staff_crosswalk_static df
 JOIN gabby.powerschool.calendar_day cal
   ON df.primary_site_schoolid = cal.schoolid 
  AND cal.date_value BETWEEN df.position_effective_from_date AND COALESCE(df.termination_date, GETDATE()) 
