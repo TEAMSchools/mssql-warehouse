@@ -25,6 +25,7 @@ WITH position_parse AS (
           ELSE LEN(RIGHT(pn.position_name_c, CHARINDEX('_', REVERSE(pn.position_name_c)) - 1))
          END AS position_count
   FROM gabby.recruiting.job_position_c pn
+  WHERE pn.is_deleted = 0
  )
 
 SELECT pa.id
@@ -113,14 +114,19 @@ SELECT pa.id
 FROM gabby.recruiting.profile_application_c pa 
 LEFT JOIN gabby.recruiting.contact c
   ON pa.applicant_c = c.id
+ AND c.is_deleted = 0
 LEFT JOIN gabby.recruiting.job_application_c a
   ON pa.id = a.profile_application_c
+ AND a.is_deleted = 0
 LEFT JOIN gabby.recruiting.job_posting_c p
-  ON p.id= a.job_posting_c
+  ON a.job_posting_c = p.id
+ AND p.is_deleted = 0
 LEFT JOIN gabby.recruiting.contact cr
-  ON cr.id = p.primary_contact_c
+  ON p.primary_contact_c = cr.id
+ AND cr.is_deleted = 0
 LEFT JOIN position_parse  j
   ON a.job_position_c = j.id
+WHERE pa.is_deleted = 0
 
 UNION ALL
 
@@ -216,10 +222,14 @@ SELECT c.id AS id
 FROM gabby.recruiting.cultivation_c c 
 LEFT JOIN gabby.recruiting.profile_application_c pa
   ON c.contact_c = pa.applicant_c
+ AND pa.is_deleted = 0
 LEFT JOIN gabby.recruiting.contact co
   ON c.contact_c = co.id
+ AND co.is_deleted = 0
 LEFT JOIN position_parse j
   ON c.job_position_name_c = j.position_name
 LEFT JOIN gabby.recruiting.job_posting_c p
   ON j.job_posting = p.id
-WHERE p.name IS NULL
+ AND p.is_deleted = 0
+WHERE c.is_deleted = 0
+  AND p.name IS NULL
