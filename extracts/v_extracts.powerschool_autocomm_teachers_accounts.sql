@@ -9,6 +9,7 @@ WITH users_clean AS (
         ,sc.region AS legal_entity_name
         ,df.ps_teachernumber AS teachernumber
         ,df.primary_site_schoolid AS homeschoolid
+        ,df.birth_date
         ,LOWER(df.samaccountname) AS loginid
         ,LOWER(df.samaccountname) AS teacherloginid
         ,LOWER(df.mail) AS email_addr
@@ -46,5 +47,6 @@ SELECT df.teachernumber
       ,CASE WHEN df.[status] = 1 THEN 1 ELSE 0 END AS teacherldapenabled
       ,CASE WHEN df.[status] = 1 THEN 1 ELSE 0 END AS adminldapenabled
       ,CASE WHEN df.[status] = 1 THEN 1 ELSE 0 END AS ptaccess
+      ,df.birth_date
       ,df.legal_entity_name
 FROM users_clean df
