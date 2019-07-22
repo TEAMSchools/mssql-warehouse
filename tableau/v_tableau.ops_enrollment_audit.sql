@@ -77,6 +77,7 @@ WITH caredox_enrollment AS (
         ,sub.reporting_schoolid
         ,sub.grade_level
         ,sub.academic_year
+        ,sub.is_pathways
         ,sub.entry_status
         
         ,CONVERT(VARCHAR(500),sub.lunch_app_status) COLLATE Latin1_General_BIN AS lunch_app_status
@@ -133,6 +134,7 @@ WITH caredox_enrollment AS (
 
              ,COALESCE(co.reporting_schoolid, s.next_school) AS reporting_schoolid
              --,s.next_school AS reporting_schoolid
+             ,COALESCE(co.is_pathways, 0) AS is_pathways
              ,ISNULL(co.specialed_classification, '') AS specialed_classification
              ,ISNULL(co.lep_status, '') AS lep_status
              ,ISNULL(co.lunch_app_status, '') AS lunch_app_status
@@ -231,6 +233,7 @@ SELECT a.student_number
       ,a.region
       ,a.reporting_schoolid
       ,a.grade_level
+      ,a.is_pathways
       ,a.entry_status
       ,a.lunch_app_status
       ,a.lunch_balance
