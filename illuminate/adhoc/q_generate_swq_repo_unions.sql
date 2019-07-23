@@ -6,6 +6,6 @@ JOIN gabby.illuminate_codes.dna_scopes s
 JOIN gabby.utilities.all_tables_columns atc
   ON CONCAT('repository_', r.repository_id) = atc.table_name
  AND atc.schema_name = 'illuminate_dna_repositories'
- AND atc.rn = 1
+ AND atc.column_id = -1
 WHERE r.deleted_at IS NULL
 ORDER BY r.repository_id;
