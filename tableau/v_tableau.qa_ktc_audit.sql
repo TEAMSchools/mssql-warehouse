@@ -37,15 +37,15 @@ WITH roster AS (
 ,attachments_clean AS (
   SELECT sub.contact_id
         ,sub.[name]
-        ,SUBSTRING(sub.[name]
+        ,LTRIM(RTRIM(SUBSTRING(sub.[name]
                  ,(sub.underscore_1 + 1)
-                 ,(sub.underscore_2 - sub.underscore_1 - 1)) AS semester
-        ,SUBSTRING(sub.[name]
+                 ,(sub.underscore_2 - sub.underscore_1 - 1)))) AS semester
+        ,LTRIM(RTRIM(SUBSTRING(sub.[name]
                  ,(sub.underscore_2 + 1)
-                 ,(sub.underscore_3 - sub.underscore_2 - 1)) AS [year]
-        ,SUBSTRING(sub.[name]
+                 ,(sub.underscore_3 - sub.underscore_2 - 1)))) AS [year]
+        ,LTRIM(RTRIM(SUBSTRING(sub.[name]
                  ,(sub.underscore_3 + 1)
-                 ,(sub.file_ext_dot - sub.underscore_3)) AS document_type
+                 ,(sub.file_ext_dot - sub.underscore_3)))) AS document_type
   FROM
       (
        SELECT a.parent_id AS contact_id
