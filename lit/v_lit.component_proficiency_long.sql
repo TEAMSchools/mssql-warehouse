@@ -126,37 +126,52 @@ SELECT sub.unique_id
       ,sub.score
       ,sub.benchmark
       ,sub.is_prof
-      ,sub.is_dna
-      ,CASE
-        WHEN sub.label LIKE '%errors%' THEN sub.benchmark - sub.score
-        ELSE sub.score - sub.benchmark 
-       END AS margin      
+      ,ABS(sub.is_prof - 1) AS is_dna
+      ,sub.score - sub.benchmark AS margin
       ,CASE 
-        WHEN sub.testid != 3273 AND sub.is_prof = 0 THEN 1
-        WHEN sub.testid = 3273 AND sub.domain != 'Comprehension' AND sub.is_prof = 0 THEN 1
-        WHEN sub.testid = 3273 AND sub.domain = 'Comprehension' AND MIN(sub.is_prof) OVER(PARTITION BY sub.unique_id, sub.domain) = 0 AND sub.score_order = 1 THEN 1
-        ELSE 0        
+        WHEN sub.testid != 3273 
+         AND sub.is_prof = 0 
+             THEN 1
+        WHEN sub.testid = 3273 
+         AND sub.domain != 'Comprehension' 
+         AND sub.is_prof = 0
+             THEN 1
+        WHEN sub.testid = 3273 
+         AND sub.domain = 'Comprehension' 
+         AND MIN(sub.is_prof) OVER(PARTITION BY sub.unique_id, sub.domain) = 0 
+         AND sub.score_order = 1 
+             THEN 1
+        ELSE 0
        END AS dna_filter
-      ,CASE 
-        WHEN sub.testid != 3273 AND sub.is_prof = 0 THEN sub.domain 
-        WHEN sub.testid = 3273 AND sub.domain != 'Comprehension' AND sub.is_prof = 0 THEN sub.domain
-        WHEN sub.testid = 3273 AND sub.domain = 'Comprehension' AND MIN(sub.is_prof) OVER(PARTITION BY sub.unique_id, sub.domain) = 0 AND sub.score_order = 1 THEN sub.strand
-        ELSE NULL 
+      ,CASE
+        WHEN sub.testid != 3273 
+         AND sub.is_prof = 0 
+             THEN sub.domain 
+        WHEN sub.testid = 3273 
+         AND sub.domain != 'Comprehension' 
+         AND sub.is_prof = 0 
+             THEN sub.domain
+        WHEN sub.testid = 3273 
+         AND sub.domain = 'Comprehension' 
+         AND MIN(sub.is_prof) OVER(PARTITION BY sub.unique_id, sub.domain) = 0 
+         AND sub.score_order = 1 
+             THEN sub.strand
+        ELSE NULL
        END AS dna_reason
-FROM 
+FROM
     (
-     SELECT rs.unique_id           
+     SELECT rs.unique_id
            ,rs.testid
            ,rs.student_number
            ,rs.read_lvl
            ,rs.lvl_num
-           ,rs.status                                 
+           ,rs.status
            ,rs.field
            ,rs.score
            
            ,prof.domain
            ,prof.subdomain
-           ,prof.strand           
+           ,prof.strand
            ,prof.score AS benchmark
            ,CASE
              WHEN prof.strand LIKE '%overall%' THEN ISNULL(prof.domain + ': ', '') + prof.strand
@@ -164,31 +179,16 @@ FROM
             END AS label
            ,CASE
              WHEN prof.strand LIKE '%overall%' AND ISNULL(prof.subdomain,'') != '' 
-                    THEN ISNULL(prof.domain + ' (', '') + ISNULL(prof.subdomain + '): ', '') + prof.strand
+                  THEN ISNULL(prof.domain + ' (', '') + ISNULL(prof.subdomain + '): ', '') + prof.strand
              WHEN prof.strand LIKE '%overall%' AND ISNULL(prof.subdomain,'') = ''
-                    THEN ISNULL(prof.domain + ': ', '') + prof.strand
+                  THEN ISNULL(prof.domain + ': ', '') + prof.strand
              ELSE ISNULL(prof.subdomain + ': ', '') + prof.strand 
             END AS specific_label
            ,CASE 
              WHEN prof.score IS NULL THEN NULL
-             WHEN prof.field_name NOT IN ('ra_errors','accuracy_1a','accuracy_2b','reading_accuracy_2_','reading_accuracy_2_2_') 
-              AND rs.score >= prof.score
-                    THEN 1
-             WHEN prof.field_name IN ('ra_errors','accuracy_1a','accuracy_2b','reading_accuracy_2_','reading_accuracy_2_2_') 
-               AND rs.score <= prof.score
-                    THEN 1
+             WHEN rs.score >= prof.score THEN 1
              ELSE 0
             END AS is_prof
-           ,CASE 
-             WHEN prof.score IS NULL THEN NULL
-             WHEN prof.field_name NOT IN ('ra_errors','accuracy_1a','accuracy_2b','reading_accuracy_2_','reading_accuracy_2_2_') 
-              AND rs.score < prof.score
-                    THEN 1
-             WHEN prof.field_name IN ('ra_errors','accuracy_1a','accuracy_2b','reading_accuracy_2_','reading_accuracy_2_2_') 
-              AND rs.score > prof.score
-                    THEN 1
-             ELSE 0
-            END AS is_dna
 
            ,ROW_NUMBER() OVER(
               PARTITION BY rs.unique_id, prof.domain
