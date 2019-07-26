@@ -295,8 +295,8 @@ SELECT a.student_number
         WHEN u.field = 'residency_verification_scanned' AND u.value = 'Y' THEN 1
         WHEN u.field = 'residency_verification_scanned' AND u.value IN ('','N') THEN -1
         WHEN u.field = 'residency_verification_approved' AND u.value = 'Yes' THEN 1
-        WHEN u.field = 'residency_verification_approved' AND u.value = 'No' THEN -1
-        WHEN u.field = 'residency_verification_approved' AND u.value = '' THEN 0
+        WHEN u.field = 'residency_verification_approved' AND u.value = 'No' THEN 0
+        WHEN u.field = 'residency_verification_approved' AND u.value = '' THEN -1
        END AS audit_status
 FROM all_data a
 JOIN unpivoted u
