@@ -9,4 +9,5 @@ SELECT df.df_employee_number AS [Employee ID]
       ,COALESCE(df.rehire_date, df.original_hire_date) AS [Latest Hire Date]
       ,df.legal_entity_name AS [Groups]
 FROM gabby.people.staff_crosswalk_static df
-WHERE df.is_active = 1
+WHERE df.[status] != 'TERMINATED'
+  AND df.mail IS NOT NULL
