@@ -14,5 +14,5 @@ LEFT JOIN gabby.people.campus_crosswalk ccw
   ON scw.primary_site = ccw.campus_name
  AND ccw._fivetran_deleted = 0
  AND ccw.is_pathways = 0
-WHERE scw.is_active = 1
+WHERE scw.[status] != 'TERMINATED'
   AND COALESCE(ccw.ps_school_id, scw.primary_site_schoolid) != 0

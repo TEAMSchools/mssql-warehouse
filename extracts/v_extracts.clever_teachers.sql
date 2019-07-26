@@ -15,7 +15,7 @@ SELECT CONVERT(VARCHAR(25), df.primary_site_schoolid) AS [School_id]
       ,df.samaccountname AS [Username]
       ,NULL AS [Password]
 FROM gabby.people.staff_crosswalk_static df
-WHERE df.is_active = 1
+WHERE df.[status] != 'TERMINATED'
 
 UNION ALL
 
