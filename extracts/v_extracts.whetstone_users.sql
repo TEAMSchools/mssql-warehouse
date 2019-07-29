@@ -15,7 +15,7 @@ SELECT scw.df_employee_number AS accounting_id
       ,scw.primary_on_site_department AS course_name
       ,scw.manager_df_employee_number AS coach_accounting_id
       ,scw.preferred_first_name + ' ' + scw.preferred_last_name AS name
-      ,LOWER(LEFT(scw.mail, CHARINDEX('@', scw.mail))) + 'apps.teamschools.org' AS email
+      ,LOWER(LEFT(scw.userprincipalname, CHARINDEX('@', scw.userprincipalname))) + 'apps.teamschools.org' AS email
       ,CASE
         WHEN scw.grades_taught = 'Grade 10' THEN '10th grade'
         WHEN scw.grades_taught = 'Grade 11' THEN '11th grade'
