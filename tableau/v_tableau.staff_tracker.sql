@@ -86,7 +86,7 @@ JOIN gabby.powerschool.calendar_day cal
   ON df.primary_site_schoolid = cal.schoolid 
  AND cal.date_value BETWEEN df.position_effective_from_date AND COALESCE(df.termination_date, GETDATE()) 
  AND (cal.insession = 1 OR cal.[type] = 'PD') 
- AND cal.date_value BETWEEN DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1) AND GETDATE()
+ AND cal.date_value BETWEEN DATEFROMPARTS((gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1), 7, 1) AND GETDATE()
 JOIN gabby.reporting.reporting_terms dt
   ON cal.schoolid = dt.schoolid
  AND cal.date_value BETWEEN dt.[start_date] AND dt.end_date
@@ -101,5 +101,5 @@ LEFT JOIN tafw t
 LEFT JOIN leave l
   ON df.df_employee_number = l.df_employee_number
  AND cal.date_value BETWEEN l.effective_start AND l.effective_end
-WHERE COALESCE(df.termination_date, GETDATE()) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
+WHERE COALESCE(df.termination_date, GETDATE()) >= DATEFROMPARTS((gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1), 7, 1)
   AND df.primary_site_schoolid != 0
