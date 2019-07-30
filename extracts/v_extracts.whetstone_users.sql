@@ -15,7 +15,10 @@ SELECT scw.df_employee_number AS accounting_id
       ,scw.primary_on_site_department AS course_name
       ,scw.manager_df_employee_number AS coach_accounting_id
       ,scw.preferred_first_name + ' ' + scw.preferred_last_name AS name
-      ,LOWER(LEFT(scw.userprincipalname, CHARINDEX('@', scw.userprincipalname))) + 'apps.teamschools.org' AS email
+      ,CASE
+        WHEN scw.legal_entity_name = 'KIPP Miami' THEN LOWER(LEFT(scw.userprincipalname, CHARINDEX('@', scw.userprincipalname))) + 'kippmiami.org' 
+        ELSE LOWER(LEFT(scw.userprincipalname, CHARINDEX('@', scw.userprincipalname))) + 'apps.teamschools.org' 
+       END AS email
       ,CASE
         WHEN scw.grades_taught = 'Grade 10' THEN '10th grade'
         WHEN scw.grades_taught = 'Grade 11' THEN '11th grade'
@@ -40,5 +43,6 @@ FROM gabby.people.staff_crosswalk_static scw
 LEFT JOIN managers m
   ON scw.df_employee_number = m.manager_df_employee_number
 WHERE scw.[status] != 'TERMINATED'
+  AND scw.userprincipalname IS NOT NULL
   AND (scw.primary_on_site_department = 'School Leadership'
        OR scw.primary_job IN ('Teacher', 'Co-Teacher', 'Learning Specialist', 'Learning Specialist Coordinator','Teacher in Residence', 'Teaching Fellow'))
