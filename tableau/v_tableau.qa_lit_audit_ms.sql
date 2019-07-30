@@ -8,7 +8,10 @@ WITH fp_long AS (
         ,fp.unique_id
         ,fp.academic_year AS assessment_academic_year
         ,fp.test_round AS assessment_test_round
-        ,fp.status AS benchmark_level
+        ,CASE 
+          WHEN fp.status IN ('Did Not Achieve', 'DNA - Hard') THEN 'Did Not Achieve'
+          ELSE fp.status
+         END AS benchmark_level
         ,fp.test_date AS assessment_date
         ,fp.read_lvl AS text_level
         ,fp.lvl_num
