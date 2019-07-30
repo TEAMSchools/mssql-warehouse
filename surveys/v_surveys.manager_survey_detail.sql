@@ -61,10 +61,10 @@ FROM
            ,COALESCE(dfdf.legal_entity_name, dfadp.legal_entity_name) AS region
            ,COALESCE(dfdf.manager_adp_associate_id, dfadp.manager_adp_associate_id) AS subject_manager_id
 
-           ,COALESCE(dfdf.samaccountname, dfadp.samaccountname) AS subject_username
+           ,LOWER(COALESCE(LEFT(dfdf.userprincipalname,CHARINDEX('@',dfdf.userprincipalname)-1), dfadp.samaccountname)) AS subject_username
 
            ,COALESCE(dfdf.manager_name, dfadp.manager_name) AS subject_manager_name
-           ,COALESCE(dfdf.manager_samaccountname, dfadp.manager_samaccountname) AS subject_manager_username
+           ,LOWER(COALESCE(LEFT(dfdf.manager_userprincipalname,CHARINDEX('@',dfdf.manager_userprincipalname)-1), dfadp.manager_samaccountname)) AS subject_manager_username
      FROM gabby.surveys.manager_survey_long_static mgr     
      LEFT JOIN gabby.people.staff_crosswalk_static dfdf
        ON mgr.subject_associate_id = CONVERT(VARCHAR,dfdf.df_employee_number)
