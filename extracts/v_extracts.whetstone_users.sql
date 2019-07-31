@@ -7,7 +7,6 @@ WITH managers AS (
   SELECT DISTINCT
          manager_df_employee_number
   FROM gabby.people.staff_crosswalk_static
-  WHERE [status] != 'TERMINATED'
  )
 
 SELECT scw.df_employee_number AS accounting_id
@@ -15,6 +14,7 @@ SELECT scw.df_employee_number AS accounting_id
       ,scw.primary_on_site_department AS course_name
       ,scw.manager_df_employee_number AS coach_accounting_id
       ,scw.preferred_first_name + ' ' + scw.preferred_last_name AS name
+      ,CASE WHEN scw.[status] = 'TERMINATED' THEN 1 ELSE 0 END AS inactive
       ,CASE
         WHEN scw.legal_entity_name = 'KIPP Miami' THEN LOWER(LEFT(scw.userprincipalname, CHARINDEX('@', scw.userprincipalname))) + 'kippmiami.org' 
         ELSE LOWER(LEFT(scw.userprincipalname, CHARINDEX('@', scw.userprincipalname))) + 'apps.teamschools.org' 
@@ -42,7 +42,6 @@ SELECT scw.df_employee_number AS accounting_id
 FROM gabby.people.staff_crosswalk_static scw
 LEFT JOIN managers m
   ON scw.df_employee_number = m.manager_df_employee_number
-WHERE scw.[status] != 'TERMINATED'
-  AND scw.userprincipalname IS NOT NULL
+WHERE scw.userprincipalname IS NOT NULL
   AND (scw.primary_on_site_department = 'School Leadership'
        OR scw.primary_job IN ('Teacher', 'Co-Teacher', 'Learning Specialist', 'Learning Specialist Coordinator','Teacher in Residence', 'Teaching Fellow'))
