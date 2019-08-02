@@ -81,6 +81,6 @@ SELECT df.teachernumber
       ,CASE WHEN df.[status] = 1 THEN 1 ELSE 0 END AS teacherldapenabled
       ,CASE WHEN df.[status] = 1 THEN 1 ELSE 0 END AS adminldapenabled
       ,CASE WHEN df.[status] = 1 THEN 1 ELSE 0 END AS ptaccess
-      ,df.birth_date
+      ,CONVERT(VARCHAR, df.birth_date, 101) AS dob
       ,df.legal_entity_name
 FROM users_clean df
