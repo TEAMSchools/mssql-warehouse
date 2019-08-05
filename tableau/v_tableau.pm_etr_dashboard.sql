@@ -14,8 +14,8 @@ SELECT sr.df_employee_number
       ,sr.primary_site_schoolid
       ,sr.manager_name
       ,sr.original_hire_date
-      ,LEFT(sr.userprincipalname,CHARINDEX('@',sr.userprincipalname)-1) AS staff_username
-      ,LEFT(sr.manager_userprincipalname,CHARINDEX('@',sr.manager_userprincipalname)-1) AS manager_username
+      ,LEFT(sr.userprincipalname, CHARINDEX('@', sr.userprincipalname) - 1) AS staff_username
+      ,LEFT(sr.manager_userprincipalname, CHARINDEX('@', sr.manager_userprincipalname) - 1) AS manager_username
 
       ,wo.observation_id
       ,wo.observed_at
