@@ -30,13 +30,9 @@ FROM
           LEFT OUTER JOIN gabby.powerschool.gradescaleitem_lookup_static scale_unweighted
             ON sg.db_name = scale_unweighted.db_name
            AND sg.[percent] BETWEEN scale_unweighted.min_cutoffpercentage AND scale_unweighted.max_cutoffpercentage
-           AND CASE
-                WHEN sg.schoolid != 73253 THEN sg.gradescale_name
-                WHEN sg.termid < 2600 THEN 'NCA 2011' /* default pre-2016 */
-                WHEN sg.termid >= 2600 THEN 'KIPP NJ 2016 (5-12)' /* default 2016+ */
-               END = scale_unweighted.gradescale_name
-          WHERE (LEFT(sg.termid, 2) + 1990) < gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-            AND sg.storecode = 'Y1'
+           AND gabby.utilities.PS_UNWEIGHTED_GRADESCALE_NAME(sg.academic_year, sg.gradescale_name) = scale_unweighted.gradescale_name
+          WHERE sg.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+            AND sg.storecode_clean = 'Y1'
             AND sg.excludefromgpa = 0
          ) sub
      GROUP BY student_number     
@@ -46,7 +42,7 @@ FROM
 UNION ALL
 
 SELECT co.student_number
-      ,co.academic_year AS academic_year
+      ,NULL AS academic_year
       ,sg.cumulative_y1_gpa AS GPA_Y1_weighted
       ,sg.cumulative_y1_gpa_unweighted AS GPA_Y1_unweighted
 FROM gabby.powerschool.cohort_identifiers_static co
@@ -54,5 +50,4 @@ JOIN gabby.powerschool.gpa_cumulative sg
   ON co.studentid = sg.studentid
  AND co.schoolid = sg.schoolid
  AND co.db_name = sg.db_name
-WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-  AND co.rn_year = 1
+WHERE co.rn_undergrad = 1

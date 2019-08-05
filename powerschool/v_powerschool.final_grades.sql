@@ -315,11 +315,7 @@ FROM
            ,term_grade_weight_possible
            ,e1_grade_weight
            ,e2_grade_weight
-           ,CASE
-             WHEN schoolid != 73253 THEN gradescaleid
-             WHEN academic_year <= 2015 THEN 662 /* default pre-2016 */
-             WHEN academic_year >= 2016 THEN 874 /* default 2016+ */
-            END AS unweighted_gradescaleid
+           ,NULL AS unweighted_gradescaleid
 
            /* Y1 calcs */
            ,ROUND((weighted_grade_total / weighted_points_total) * 100,0) AS y1_grade_percent

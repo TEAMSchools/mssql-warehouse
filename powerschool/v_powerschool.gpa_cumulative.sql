@@ -64,11 +64,7 @@ FROM
           FROM powerschool.storedgrades sg
           LEFT JOIN powerschool.gradescaleitem_lookup_static scale_unweighted 
             ON sg.[percent] BETWEEN scale_unweighted.min_cutoffpercentage AND scale_unweighted.max_cutoffpercentage
-           AND CASE
-                WHEN sg.schoolid != 73253 THEN sg.gradescale_name
-                WHEN sg.academic_year < 2016 THEN 'NCA 2011' /* default pre-2016 */
-                WHEN sg.academic_year >= 2016 THEN 'KIPP NJ 2016 (5-12)' /* default 2016+ */
-               END = scale_unweighted.gradescale_name
+           AND gabby.utilities.PS_UNWEIGHTED_GRADESCALE_NAME(sg.academic_year, sg.gradescale_name) = scale_unweighted.gradescale_name
           WHERE sg.storecode_clean = 'Y1'
             AND sg.excludefromgpa = 0
           
