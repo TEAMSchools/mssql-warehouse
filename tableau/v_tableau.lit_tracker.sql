@@ -96,6 +96,9 @@ LEFT JOIN gabby.lit.guided_reading_roster gr
  AND co.academic_year = gr.academic_year
  AND term.lit = gr.test_round
 WHERE co.rn_year = 1
-  AND co.academic_year IN (gabby.utilities.GLOBAL_ACADEMIC_YEAR(), (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1))
+  AND co.academic_year IN (gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+                          ,(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
+                          ,(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 2)
+                          ,(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 3))
   AND co.grade_level != 99
   AND co.reporting_schoolid != 5173
