@@ -34,10 +34,16 @@ SELECT so.survey_type
       ,COALESCE(dfid.primary_site_school_level, adpid.primary_site_school_level) AS subject_primary_site_school_level
       ,COALESCE(dfid.manager_df_employee_number, adpid.manager_df_employee_number) AS subject_manager_id      
 
-      ,COALESCE(dfid.samaccountname, adpid.samaccountname) AS subject_username
+      ,COALESCE(
+          LEFT(dfid.userprincipalname, CHARINDEX('@', dfid.userprincipalname) - 1)
+         ,adpid.samaccountname
+        ) AS subject_username
 
       ,COALESCE(dfid.preferred_name, adpid.preferred_name) AS subject_manager_name
-      ,COALESCE(dfid.manager_samaccountname, adpid.manager_samaccountname) AS subject_manager_username
+      ,COALESCE(
+          LEFT(dfid.manager_userprincipalname, CHARINDEX('@', dfid.manager_userprincipalname) - 1)
+         ,adpid.manager_samaccountname
+        ) AS subject_manager_username
 
       ,NULL AS avg_response_value_location
 FROM gabby.surveys.self_and_others_survey_long_static so
