@@ -66,7 +66,7 @@ SELECT 'PD3' AS ColA
       ,NULL AS ColAA -- program code
       ,'ED' AS ColAB
 FROM gabby.powerschool.cohort_identifiers_static co
-WHERE co.grade_level = 12
+WHERE co.school_level = 'HS'
   AND co.exitcode = 'G1'
 
 UNION ALL
@@ -100,5 +100,5 @@ SELECT 'PT3' AS ColA
       ,NULL AS ColAA
       ,NULL AS ColAB
 FROM gabby.powerschool.cohort_identifiers_static co
-WHERE co.grade_level = 12
+WHERE co.school_level = 'HS'
   AND co.exitcode = 'G1'
