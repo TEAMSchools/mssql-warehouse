@@ -44,6 +44,7 @@ WITH fp_long AS (
         ,fp.text_level
         ,fp.lvl_num
         ,fp.genre
+        ,MAX(fp.lvl_num) OVER(PARTITION BY fp.student_identifier) AS max_lvl_num
 
         ,ROW_NUMBER() OVER(
            PARTITION BY rt.academic_year, rt.alt_name, fp.student_identifier, fp.benchmark_level
@@ -72,6 +73,7 @@ WITH fp_long AS (
         ,g.fp_lvl_num AS goal_lvl_num
 
         ,ind.text_level AS independent_level
+        ,ind.max_lvl_num
         ,CASE
           WHEN ind.lvl_num >= 26 THEN 'Achieved Z'
           WHEN ind.lvl_num - g.fp_lvl_num > 0 THEN 'Above Target'
@@ -140,6 +142,7 @@ WITH fp_long AS (
         ,s.instructional_level
         ,s.instructional_genre
         ,CASE
+          WHEN s.max_lvl_num = 26 THEN 0 /* Achieved Z */
           WHEN s.independent_level = 'Z' THEN 0 /* Achieved Z */
           WHEN s.year_in_network = 1 THEN 1 /* new to KNJ */
           WHEN s.instructional_assessment_date IS NULL THEN 1 /* missing all data */
@@ -178,6 +181,7 @@ WITH fp_long AS (
         ,s.instructional_level
         ,s.instructional_genre
         ,CASE
+          WHEN s.max_lvl_num = 26 THEN 0 /* Achieved Z */
           WHEN s.independent_level = 'Z' THEN 0 /* Achieved Z */
           WHEN s.year_in_network = 1 THEN 1 /* new to KNJ */
           WHEN s.instructional_assessment_date IS NULL THEN 1 /* missing all data */
@@ -218,6 +222,7 @@ WITH fp_long AS (
         ,s.instructional_level
         ,s.instructional_genre
         ,CASE
+          WHEN s.max_lvl_num = 26 THEN 0 /* Achieved Z */
           WHEN s.independent_level = 'Z' THEN 0 /* Achieved Z */
           WHEN s.entrydate >= s.test_round_start_date THEN 1 /* new to KNJ */
           WHEN s.instructional_assessment_date IS NULL THEN 1 /* missing all data */
@@ -254,6 +259,7 @@ WITH fp_long AS (
         ,s.instructional_level
         ,s.instructional_genre
         ,CASE
+          WHEN s.max_lvl_num = 26 THEN 0 /* Achieved Z */
           WHEN s.independent_level = 'Z' THEN 0 /* Achieved Z */
           WHEN s.entrydate >= s.test_round_start_date THEN 1 /* new to KNJ */
           WHEN s.instructional_assessment_date IS NULL THEN 1 /* missing all data */
@@ -290,6 +296,7 @@ WITH fp_long AS (
         ,s.instructional_level
         ,s.instructional_genre
         ,CASE
+          WHEN s.max_lvl_num = 26 THEN 0 /* Achieved Z */
           WHEN s.independent_level = 'Z' THEN 0 /* Achieved Z */
           WHEN s.entrydate >= s.test_round_start_date THEN 1 /* new to KNJ */
           WHEN s.instructional_assessment_date IS NULL THEN 1 /* missing all data */
