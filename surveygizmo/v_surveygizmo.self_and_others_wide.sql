@@ -3,6 +3,7 @@ GO
 
 CREATE OR ALTER VIEW surveygizmo.self_and_others_wide AS: 
 
+--KILL This after surveygizmo.survey_question_clean is created
 WITH questions AS (
   SELECT sq.survey_id
       ,sq.id AS question_id
@@ -17,6 +18,7 @@ CROSS APPLY OPENJSON(title, '$')
    ) AS nested
    )
 
+--Kill this after surveygizmo.survey_response_clean is created
 ,responses AS (
   SELECT sr.survey_id
         ,sr.id
@@ -41,7 +43,7 @@ CROSS APPLY OPENJSON(title, '$')
       answer VARCHAR(MAX)
      ) AS nested
   WHERE sr.status = 'Complete'
-    --AND sr.is_test_data = 0
+    AND sr.is_test_data = 0
   )
 
 ,so_repsonses AS (
