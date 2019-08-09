@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW surveygizmo.self_and_others_wide AS: 
+--CREATE OR ALTER VIEW surveygizmo.self_and_others_wide AS: 
 
 --KILL This after surveygizmo.survey_question_clean is created
 WITH questions AS (
@@ -82,7 +82,7 @@ CROSS APPLY OPENJSON(title, '$')
         ,response_time
         ,status
         ,contact_id
-        ,gabby.utilities.DATE_TO_SY(date_submitted) AS academic_year
+        ,gabby.utilities.DATE_TO_SY(CONVERT(DATE,LEFT(date_submitted,10))) AS academic_year
         ,survey_name
         ,campaign_name
         ,[reporting_term]
@@ -104,8 +104,8 @@ CROSS APPLY OPENJSON(title, '$')
         ,SO_m3
   FROM   (SELECT r.submission_id
                 ,r.survey_id 
-                ,r.date_started
-                ,r.date_submitted
+                ,CONVERT(VARCHAR,r.date_started,103) AS date_started
+                ,CONVERT(VARCHAR,r.date_submitted,103) AS date_submitted
                 ,r.response_time
                 ,r.status
                 ,r.contact_id
@@ -116,11 +116,11 @@ CROSS APPLY OPENJSON(title, '$')
           FROM so_repsonses r) sub
   PIVOT (
            MAX(answer)
-           FOR question_shortname in ([reporting_term]
-                                     ,[respondent_name]
-                                     ,[respondent_email_address]
-                                     ,[subject_name]
-                                     ,[is_manager]
+           FOR question_shortname in (reporting_term
+                                     ,respondent_name
+                                     ,respondent_email_address
+                                     ,subject_name
+                                     ,is_manager
                                      ,SO_1
                                      ,SO_2
                                      ,SO_3
@@ -138,5 +138,6 @@ CROSS APPLY OPENJSON(title, '$')
   )
 
 SELECT *
-      ,ROW_NUMBER() OVER( PARTITION BY academic_year, reporting_term, respondant_email_address, subject_name ORDER BY submitted_date DESC) AS rn_submission
+      ,RIGHT(LEFT(subject_name,LEN(subject_name)-1),6) AS subject_associate_id
+      ,ROW_NUMBER() OVER( PARTITION BY academic_year, campaign_name, respondent_email_address, subject_name ORDER BY date_submitted DESC) AS rn_submission
 FROM so_wide

@@ -36,7 +36,7 @@ WITH so_long AS (
              ,CONVERT(VARCHAR(125),u.respondent_name) AS respondent_name
              ,CONVERT(VARCHAR(125),u.respondent_email_addresst) AS respondent_email_address
              ,CONVERT(VARCHAR(125),u.subject_name) AS subject_name
-             ,CONVERT(VARCHAR(25),MID(u.subject_name,CHARINDEX(u.subject_name,'[')+1,6)) AS subject_associate_id
+             ,CONVERT(VARCHAR(25),u.subject_associate_id) AS subject_associate_id
              ,CONVERT(INT,u.is_manager) AS is_manager
              ,CONVERT(VARCHAR(25),u.question_code) AS question_code
              ,u.answer AS response
