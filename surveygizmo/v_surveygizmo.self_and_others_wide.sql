@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER TABLE surveygizmo.self_and_others_wide AS: 
+CREATE OR ALTER VIEW surveygizmo.self_and_others_wide AS: 
 
 WITH questions AS (
   SELECT sq.survey_id
@@ -41,7 +41,7 @@ CROSS APPLY OPENJSON(title, '$')
       answer VARCHAR(MAX)
      ) AS nested
   WHERE sr.status = 'Complete'
-    AND sr.is_test_data = 0
+    --AND sr.is_test_data = 0
   )
 
 ,so_repsonses AS (
@@ -79,24 +79,26 @@ CROSS APPLY OPENJSON(title, '$')
         ,response_time
         ,status
         ,contact_id
+        ,gabby.utilities.DATE_TO_SY(date_submitted) AS academic_year
         ,survey_name
         ,campaign_name
         ,[reporting_term]
-        ,[respondant_name]
-        ,[respondant_email_address]
+        ,[respondent_name]
+        ,[respondent_email_address]
         ,[subject_name]
-        ,[I can depend on this teammate to fulfill team obligations and follow through on commitments.]
-        ,[I am confident that this teammate does whatever it takes to support every child we serve.]
-        ,[This teammate makes me feel included amongst a team with various cultural differences.]
-        ,[This teammate works to make me feel known, loved, and valued.]
-        ,[This teammate seeks my feedback and takes it seriously. ]
-        ,[I trust this teammate to address challenges directly and productively.]
-        ,[I would choose to work with this teammate as much as I possibly can.]
-        ,[This teammate meets professional expectations for punctuality. (MGR)]
-        ,[This teammate meets professional expectations for presence. (MGR)]
-        ,[This teammate meets professional expectations for team responsibilities. (MGR)]
-        ,[Name two things this teammate does well based on the statements above.]
-        ,[Name two things this teammate needs to improve upon based on the statements above.]
+        ,is_manager
+        ,SO_1
+        ,SO_2
+        ,SO_3
+        ,SO_4
+        ,SO_5
+        ,SO_6
+        ,SO_7
+        ,SO_oe1
+        ,SO_oe2
+        ,SO_m1
+        ,SO_m2
+        ,SO_m3
   FROM   (SELECT r.submission_id
                 ,r.survey_id 
                 ,r.date_started
@@ -112,20 +114,21 @@ CROSS APPLY OPENJSON(title, '$')
   PIVOT (
            MAX(answer)
            FOR question_shortname in ([reporting_term]
-                                     ,[respondant_name]
-                                     ,[respondant_email_address]
+                                     ,[respondent_name]
+                                     ,[respondent_email_address]
                                      ,[subject_name]
-                                     ,[I can depend on this teammate to fulfill team obligations and follow through on commitments.]
-                                     ,[I am confident that this teammate does whatever it takes to support every child we serve.]
-                                     ,[This teammate makes me feel included amongst a team with various cultural differences.]
-                                     ,[This teammate works to make me feel known, loved, and valued.]
-                                     ,[This teammate seeks my feedback and takes it seriously. ]
-                                     ,[I trust this teammate to address challenges directly and productively.]
-                                     ,[I would choose to work with this teammate as much as I possibly can.]
-                                     ,[This teammate meets professional expectations for punctuality. (MGR)]
-                                     ,[This teammate meets professional expectations for presence. (MGR)]
-                                     ,[This teammate meets professional expectations for team responsibilities. (MGR)]
-                                     ,[Name two things this teammate does well based on the statements above.]
-                                     ,[Name two things this teammate needs to improve upon based on the statements above.]
+                                     ,[is_manager]
+                                     ,SO_1
+                                     ,SO_2
+                                     ,SO_3
+                                     ,SO_4
+                                     ,SO_5
+                                     ,SO_6
+                                     ,SO_7
+                                     ,SO_oe1
+                                     ,SO_oe2
+                                     ,SO_m1
+                                     ,SO_m2
+                                     ,SO_m3
                                      ) 
           ) p
