@@ -42,6 +42,7 @@ WITH so_long AS (
              ,u.answer AS response
              ,CASE WHEN u.academic_year <= 2017 THEN 'SO' ELSE 'SO2018' END AS survey_type
        FROM gabby.surveygizmo.self_and_others_wide
+       WHERE rn_submission = 1
        UNPIVOT(
          answer
          FOR question_code IN (SO_1

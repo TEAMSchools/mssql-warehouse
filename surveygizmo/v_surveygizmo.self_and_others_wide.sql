@@ -74,6 +74,7 @@ CROSS APPLY OPENJSON(title, '$')
   WHERE s.title = 'Self and Others'
   )
 
+,so_wide AS (
   SELECT submission_id
         ,survey_id 
         ,date_started
@@ -134,3 +135,8 @@ CROSS APPLY OPENJSON(title, '$')
                                      ,SO_m3
                                      ) 
           ) p
+  )
+
+SELECT *
+      ,ROW_NUMBER() OVER( PARTITION BY academic_year, reporting_term, respondant_email_address, subject_name ORDER BY submitted_date DESC) AS rn_submission
+FROM so_wide
