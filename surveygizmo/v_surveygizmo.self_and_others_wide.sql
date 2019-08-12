@@ -1,7 +1,7 @@
 USE gabby
 GO
 
---CREATE OR ALTER VIEW surveygizmo.self_and_others_wide AS: 
+CREATE OR ALTER VIEW surveygizmo.self_and_others_wide AS: 
 
 --KILL This after surveygizmo.survey_question_clean is created
 WITH questions AS (
