@@ -315,7 +315,14 @@ FROM
            ,term_grade_weight_possible
            ,e1_grade_weight
            ,e2_grade_weight
-           ,NULL AS unweighted_gradescaleid
+           ,CASE
+             WHEN sub.academic_year < 2016 AND sub.gradescaleid = 712 THEN 662 /* unweighted pre-2016 */
+             WHEN sub.academic_year >= 2016 AND sub.gradescaleid = 712 THEN 874 /* unweighted 2016-2018 */
+             WHEN sub.academic_year >= 0 AND sub.gradescaleid = 991 THEN 976 /* unweighted 2019+ */
+             WHEN sub.academic_year < 2016 AND sub.gradescaleid IS NULL THEN 662 /* MISSING GRADESCALE - default pre-2016 */
+             WHEN sub.academic_year >= 2016 AND sub.gradescaleid IS NULL THEN 874 /* MISSING GRADESCALE - default 2016+ */
+             ELSE sub.gradescaleid
+            END AS unweighted_gradescaleid
 
            /* Y1 calcs */
            ,ROUND((weighted_grade_total / weighted_points_total) * 100,0) AS y1_grade_percent
