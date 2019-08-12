@@ -46,6 +46,7 @@ SELECT CASE WHEN sr.primary_site_schoolid = 0 THEN NULL ELSE CONVERT(VARCHAR(25)
       ,NULL AS [Role = SN Administrator?]
 FROM gabby.people.staff_crosswalk_static sr
 WHERE sr.[status] != 'TERMINATED'
+  AND sr.userprincipalname IS NOT NULL
   AND sr.legal_entity_name != 'KIPP New Jersey'
   AND (sr.primary_site_schoolid != 0
          OR sr.primary_job IN ('Academic Operations Manager', 'Associate Director of School Operations', 'Director Campus Operations'
