@@ -99,25 +99,25 @@ SELECT co.student_number
            ORDER BY cl.student_school_id DESC) AS rn_date
 FROM gabby.powerschool.attendance_clean att
 JOIN gabby.powerschool.cohort_identifiers_static co
-  ON att.studentid = co.studentid
- AND att.db_name = co.db_name
+  ON att.studentid = co.studentid 
  AND att.att_date BETWEEN co.entrydate AND co.exitdate
+ AND att.db_name = co.db_name
 JOIN gabby.powerschool.attendance_code ac
   ON att.attendance_codeid = ac.id
  AND att.db_name = ac.db_name
  AND ac.att_code LIKE 'A%'
 LEFT JOIN gabby.powerschool.cc
-  ON att.studentid = cc.studentid
- AND att.db_name = cc.db_name
+  ON att.studentid = cc.studentid 
  AND att.att_date BETWEEN cc.dateenrolled AND cc.dateleft
+ AND att.db_name = cc.db_name
  AND cc.course_number = 'HR'
 LEFT JOIN commlog cl
   ON co.student_number = cl.student_school_id
  AND att.att_date = cl.commlog_date
 LEFT JOIN ada
-  ON ada.studentid = co.studentid
- AND ada.db_name = co.db_name
+  ON ada.studentid = co.studentid 
  AND ada.academic_year = co.academic_year
+ AND ada.db_name = co.db_name
 LEFT JOIN gpa_y1 gpa
   ON gpa.academic_year = co.academic_year
  AND gpa.student_number = co.student_number
