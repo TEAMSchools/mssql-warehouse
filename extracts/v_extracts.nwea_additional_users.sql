@@ -20,6 +20,7 @@ SELECT CASE WHEN sr.primary_site_schoolid = 0 THEN NULL ELSE CONVERT(VARCHAR(25)
         WHEN sr.primary_site = 'KIPP TEAM Academy' THEN 'TEAM Academy'
         WHEN sr.primary_site = 'KIPP THRIVE Academy' THEN 'THRIVE Academy'
         WHEN sr.primary_site = 'KIPP Whittier Middle' THEN 'Whittier Middle'
+        ELSE sr.primary_site
        END AS [School Name]
       ,sr.ps_teachernumber AS [Instructor ID]
       ,sr.df_employee_number AS [Instructor State ID]
