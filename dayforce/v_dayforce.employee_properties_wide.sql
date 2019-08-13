@@ -24,7 +24,9 @@ SELECT employee_reference_code
       ,[grade_taught_grade_9]
       ,[grade_taught_grade_10]
       ,[grade_taught_grade_11]
-      ,[grade_taught_grade_12]    
+      ,[grade_taught_grade_12]
+      ,[TFA_CM_or_Alum]
+      ,[Is_Alum?]   
 FROM
     (
      SELECT sub.employee_reference_code
@@ -36,12 +38,14 @@ FROM
          (
           SELECT CONVERT(VARCHAR(25),employee_reference_code) AS employee_reference_code
                 ,CONVERT(DATE,employee_property_value_effective_start) AS effective_start_date
-                ,CONVERT(DATE,COALESCE(employee_property_value_effective_end, GETDATE())) AS effective_end_date
+                ,CONVERT(DATE,COALESCE(CASE WHEN employee_property_value_effective_end = '' THEN GETDATE() ELSE employee_property_value_effective_end END, GETDATE())) AS effective_end_date
                 ,CONVERT(VARCHAR(25),LOWER(CASE
                                             WHEN employee_property_value_name IN ('Grade Taught', 'Subject')
                                                    THEN CONCAT(REPLACE(employee_property_value_name, ' ', '_') 
                                                               ,'_'
                                                               ,REPLACE(property_value, ' ', '_'))
+                                            WHEN employee_property_value_name = 'Are you a TFA Corps Member or Alumni?'
+                                                   THEN 'TFA_CM_or_Alum'
                                             ELSE REPLACE(employee_property_value_name, ' ', '_')
                                            END)) AS property_name
                 ,CONVERT(VARCHAR(25),CASE
@@ -49,7 +53,7 @@ FROM
                                       ELSE property_value
                                      END) AS property_value
           FROM gabby.dayforce.employee_properties
-          WHERE employee_property_value_name IN ('Grade Taught', 'Subject', 'Salesforce ID')
+          WHERE employee_property_value_name IN ('Grade Taught', 'Subject', 'Salesforce ID', 'Are you a TFA Corps Member or Alumni?', 'Is Alum?')
          ) sub
      JOIN academic_years sy
        ON sy.academic_year BETWEEN gabby.utilities.DATE_TO_SY(sub.effective_start_date) AND gabby.utilities.DATE_TO_SY(sub.effective_end_date)
@@ -69,5 +73,7 @@ PIVOT(
                        ,[grade_taught_grade_9]
                        ,[grade_taught_grade_10]
                        ,[grade_taught_grade_11]
-                       ,[grade_taught_grade_12])
+                       ,[grade_taught_grade_12]
+                       ,[TFA_CM_or_Alum]
+                       ,[is_alum?])
  ) p
