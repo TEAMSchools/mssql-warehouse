@@ -112,10 +112,12 @@ WITH roster AS (
              ,NULL AS pgf_letter
              ,NULL AS pgf_pct      
              ,sg.gpa_points AS term_gpa_points      
-             ,1 AS rn
+             ,ROW_NUMBER() OVER(
+                PARTITION BY sg.studentid, sg.academic_year, sg.course_number_clean, sg.storecode_clean
+                  ORDER BY sg.datestored DESC) AS rn
        FROM powerschool.storedgrades sg 
-       WHERE sg.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-         AND sg.storecode_type  IN ('T', 'Q')
+       WHERE sg.storecode_type  IN ('T', 'Q')
+         AND sg.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR()
       ) sub
   WHERE rn = 1
  )
