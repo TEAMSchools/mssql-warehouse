@@ -37,6 +37,7 @@ FROM
       AND enr.schoolid = terms.schoolid
       AND terms.identifier = 'RT'
       AND terms.alt_name NOT IN ('Summer School','Capstone','EOY')
+      AND terms._fivetran_deleted = 0
      WHERE enr.section_enroll_status = 0
        AND enr.course_enroll_status = 0
        AND enr.dateenrolled BETWEEN DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1) AND CONVERT(DATE,GETDATE())
