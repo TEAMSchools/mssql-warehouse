@@ -6,21 +6,10 @@ CREATE OR ALTER VIEW extracts.nwea_additional_users AS
 SELECT CASE WHEN sr.primary_site_schoolid = 0 THEN NULL ELSE CONVERT(VARCHAR(25),sr.primary_site_schoolid) END AS [School State Code]
       ,CASE 
         WHEN sr.primary_site_schoolid = 0 THEN NULL 
-        WHEN sr.primary_site = 'KIPP BOLD Academy' THEN 'BOLD Academy'
-        WHEN sr.primary_site = 'KIPP Lanning Square Middle' THEN 'Lanning Sq Middle'
-        WHEN sr.primary_site = 'KIPP Lanning Square Primary' THEN 'Lanning Sq Primary'
-        WHEN sr.primary_site = 'KIPP Life Academy' THEN 'Life Academy'
-        WHEN sr.primary_site = 'KIPP Newark Collegiate Academy' THEN 'Newark Collegiate Academy'
-        WHEN sr.primary_site = 'KIPP Pathways at 18th Ave' THEN 'BOLD Academy'
         WHEN sr.primary_site = 'KIPP Pathways at Bragaw' THEN 'Life Academy'
-        WHEN sr.primary_site = 'KIPP Rise Academy' THEN 'Rise Academy'
-        WHEN sr.primary_site = 'KIPP Seek Academy' THEN 'Seek Academy'
-        WHEN sr.primary_site = 'KIPP SPARK Academy' THEN 'SPARK Academy'
-        WHEN sr.primary_site = 'KIPP Sunrise Academy' THEN 'KIPP Sunrise Academy'
-        WHEN sr.primary_site = 'KIPP TEAM Academy' THEN 'TEAM Academy'
-        WHEN sr.primary_site = 'KIPP THRIVE Academy' THEN 'THRIVE Academy'
-        WHEN sr.primary_site = 'KIPP Whittier Middle' THEN 'Whittier Middle'
-        ELSE sr.primary_site
+        WHEN sr.primary_site = 'KIPP Pathways at 18th Ave' THEN 'BOLD Academy'
+        WHEN sr.primary_site IN ('KIPP Liberty Academy', 'KIPP Sunrise Academy') THEN sr.primary_site
+        ELSE REPLACE(REPLACE(sr.primary_site, 'KIPP ', ''), 'Square', 'Sq')
        END AS [School Name]
       ,sr.ps_teachernumber AS [Instructor ID]
       ,sr.df_employee_number AS [Instructor State ID]
