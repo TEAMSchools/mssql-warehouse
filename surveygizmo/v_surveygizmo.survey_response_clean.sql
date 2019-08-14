@@ -3,27 +3,28 @@ GO
 
 CREATE OR ALTER VIEW surveygizmo.survey_response_clean AS
 
-SELECT sr.survey_id
-      ,sr.id
-      ,sr.date_started
-      ,sr.date_submitted
-      ,sr.response_time
-      ,sr.status
-      ,sr.contact_id
-      
-      ,nested.id AS response_id
-      ,nested.type
-      ,nested.question
-      ,nested.shown
-      ,nested.answer
-FROM gabby.surveygizmo.survey_response sr
-CROSS APPLY OPENJSON(survey_data, '$')
-  WITH (
-    id BIGINT,
-    type VARCHAR(125),    
-    question VARCHAR(MAX),
-    shown BIT,
-    answer VARCHAR(MAX)
-   ) AS nested
-WHERE sr.status = 'Complete'
-  AND sr.is_test_data = 0
+SELECT id
+      ,survey_id
+      ,contact_id
+      ,[status]
+      ,is_test_data
+      ,CONVERT(DATETIME2, LEFT(date_started, 19)) AS date_started
+      ,CONVERT(DATETIME2, LEFT(date_submitted, 19)) AS date_submitted
+      ,response_time
+      ,city
+      ,postal
+      ,region
+      ,country
+      ,latitude
+      ,longitude
+      ,dma
+      ,[language]
+      ,ip_address
+      ,link_id
+      ,referer
+      ,session_id
+      ,user_agent
+      ,survey_data AS survey_data_json
+      ,url_variables AS url_variables_json
+      ,data_quality AS data_quality_json
+FROM gabby.surveygizmo.survey_response
