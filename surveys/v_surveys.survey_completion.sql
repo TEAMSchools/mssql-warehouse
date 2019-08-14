@@ -15,10 +15,10 @@ WITH survey_feed AS (
           WHEN MONTH(_created) IN (4, 5, 6, 7) THEN 'SO3'
          END AS reporting_term
         ,'Self & Others' AS survey_type
+        ,is_manager
   FROM gabby.surveys.self_and_others_survey
   WHERE subject_name IS NOT NULL
     AND _created IS NOT NULL
-    AND q_1_3 IS NOT NULL
 
   UNION ALL
 
@@ -34,6 +34,7 @@ WITH survey_feed AS (
           WHEN MONTH(_created) IN (5, 6, 7) THEN 'MGR4'
          END AS reporting_term
         ,'Manager' AS survey_type
+        ,NULL AS is_manager
   FROM gabby.surveys.manager_survey
   WHERE subject_name IS NOT NULL
     AND _created IS NOT NULL
@@ -52,6 +53,7 @@ WITH survey_feed AS (
           WHEN MONTH(_created) < 7 THEN 'R9S2'
          END AS reporting_term
         ,'R9/Engagement' AS survey
+        ,NULL AS is_manager
   FROM gabby.surveys.r_9_engagement_survey
   WHERE email IS NOT NULL
  )
@@ -150,6 +152,7 @@ SELECT s.df_employee_number AS df_employee_number
       ,COALESCE(s.academic_year,f1.academic_year, f2.academic_year, f3.academic_year) AS academic_year
       ,COALESCE(s.reporting_term,f1.reporting_term, f2.reporting_term, f3.reporting_term) AS reporting_term
       ,COALESCE(s.survey_type, f1.survey_type, f2.survey_type, f3.survey_type) AS survey_type
+      ,COALESCE(f1.is_manager,f2.is_manager,f3.is_manager) AS is_manager
 FROM teacher_scaffold s
 LEFT JOIN survey_feed f1
   ON s.email1 = f1.responder_email
