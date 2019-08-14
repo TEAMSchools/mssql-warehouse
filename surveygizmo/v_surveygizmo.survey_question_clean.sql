@@ -23,9 +23,6 @@ SELECT id
 
       ,JSON_QUERY(properties, '$.messages') AS messages_json
       ,JSON_QUERY(properties, '$.show_rules') AS show_rules_json
-
       ,varname AS varname_json
       ,[description] AS description_json
-      ,options AS options_json
-      ,sub_questions AS sub_questions_json
 FROM gabby.surveygizmo.survey_question

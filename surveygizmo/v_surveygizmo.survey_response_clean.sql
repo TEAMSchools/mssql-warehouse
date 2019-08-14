@@ -24,7 +24,11 @@ SELECT id
       ,referer
       ,session_id
       ,user_agent
-      ,survey_data AS survey_data_json
-      ,url_variables AS url_variables_json
+      ,JSON_VALUE(url_variables, '$._privatedomain') AS url_privatedomain
+      ,JSON_VALUE(url_variables, '$.__contact') AS url_contact
+      ,JSON_VALUE(url_variables, '$.__messageid') AS url_messageid
+      ,JSON_VALUE(url_variables, '$.sguid') AS url_sguid
+      ,JSON_VALUE(url_variables, '$.__pathdata') AS url_pathdata
+
       ,data_quality AS data_quality_json
 FROM gabby.surveygizmo.survey_response
