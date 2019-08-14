@@ -5,7 +5,6 @@ CREATE OR ALTER VIEW surveygizmo.survey_response_data AS
 
 SELECT sr.id AS survey_response_id
       ,sr.survey_id
-      ,sr.survey_data AS survey_data_json
 
       ,sd.id AS question_id
       ,sd.section_id
