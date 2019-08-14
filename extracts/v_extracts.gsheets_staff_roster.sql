@@ -3,7 +3,7 @@ GO
 
 CREATE OR ALTER VIEW extracts.gsheets_staff_roster AS
 
-SELECT CONVERT(VARCHAR,df.adp_associate_id) AS associate_id
+SELECT df.adp_associate_id AS associate_id
       ,df.preferred_first_name
       ,df.preferred_last_name
       ,df.preferred_name AS preferred_lastfirst
