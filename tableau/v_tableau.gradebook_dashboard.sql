@@ -26,7 +26,7 @@ WITH section_teacher AS (
    AND sec.db_name = t.db_name
  )
 
-/* final grades */
+/* current year - term grades */
 SELECT co.student_number
       ,co.lastfirst
       ,co.reporting_schoolid AS schoolid
@@ -82,7 +82,7 @@ WHERE co.rn_year = 1
 
 UNION ALL
 
-/* Y1 grades as additional term */
+/* current year - Y1 grades */
 SELECT co.student_number
       ,co.lastfirst
       ,co.reporting_schoolid AS schoolid
@@ -141,64 +141,11 @@ JOIN section_teacher st
  AND st.rn = 1
 WHERE co.rn_year = 1
   AND co.school_level IN ('MS','HS')
+  AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 
 UNION ALL
 
-/* transfer grades */
-SELECT COALESCE(co.student_number, e1.student_number) AS student_number
-      ,COALESCE(co.lastfirst, e1.lastfirst) AS lastfirst
-      ,COALESCE(co.schoolid, e1.schoolid) AS schoolid
-      ,COALESCE(co.grade_level, e1.grade_level) AS grade_level
-      ,COALESCE(co.team, e1.team) AS team
-      ,NULL AS advisor_name
-      ,COALESCE(co.enroll_status, e1.enroll_status) AS enroll_status
-      ,gr.academic_year
-      ,COALESCE(co.iep_status, e1.iep_status) AS iep_status
-      ,COALESCE(co.cohort, e1.cohort) AS cohort
-      ,COALESCE(co.region, e1.region) AS region
-      
-      ,'TRANSFER' AS credittype
-      ,CONVERT(VARCHAR(125),CONCAT('TRANSFER', gr.termid, gr.db_name, gr.dcid)) COLLATE Latin1_General_BIN AS course_number
-      ,CONVERT(VARCHAR(125),gr.course_name) AS course_name
-      ,'Y1' AS reporting_term
-      ,'Y1' AS finalgradename            
-      ,1 AS is_curterm
-      ,CONVERT(INT,gr.excludefromgpa) AS excludefromgpa
-      ,gr.potentialcrhrs AS credit_hours      
-      ,gr.[percent] AS term_grade_percent_adjusted
-      ,CONVERT(VARCHAR(5),gr.grade) AS term_grade_letter_adjusted
-      ,gr.gpa_points AS term_gpa_points
-      ,gr.[percent] AS y1_grade_percent_adjusted
-      ,CONVERT(VARCHAR(5),gr.grade) AS y1_grade_letter           
-      ,gr.gpa_points AS y1_gpa_points                  
-      ,gr.earnedcrhrs
-
-      ,CONVERT(INT,gr.sectionid) AS sectionid
-      ,'TRANSFER' AS teacher_name    
-      ,'TRANSFER' AS section_number       
-      ,NULL AS period
-      ,NULL AS need_65
-      ,NULL AS need_70
-      ,NULL AS need_80
-      ,NULL AS need_90
-FROM gabby.powerschool.storedgrades gr 
-LEFT JOIN gabby.powerschool.cohort_identifiers_static co 
-  ON gr.studentid = co.studentid
- AND gr.schoolid = co.schoolid
- AND gr.db_name = co.db_name
- AND gr.academic_year = co.academic_year
- AND co.rn_year = 1
-LEFT JOIN gabby.powerschool.cohort_identifiers_static e1 
-  ON gr.studentid = e1.studentid
- AND gr.schoolid = e1.schoolid
- AND gr.db_name = e1.db_name
- AND e1.year_in_school = 1
-WHERE gr.storecode_clean = 'Y1'
-  AND gr.course_number_clean IS NULL
-
-UNION ALL
-
-/* NCA exam grades */
+/* current year - NCA exam grades */
 SELECT co.student_number
       ,co.lastfirst
       ,co.reporting_schoolid AS schoolid
@@ -211,21 +158,21 @@ SELECT co.student_number
       ,co.cohort
       ,co.region
       
-      ,gr.credittype
-      ,gr.course_number
-      ,gr.course_name        
+      ,ex.credittype
+      ,ex.course_number
+      ,ex.course_name        
       ,CASE 
-        WHEN gr.e1 IS NOT NULL THEN 'Q2' 
-        WHEN gr.e2 IS NOT NULL THEN 'Q4'
+        WHEN ex.e1 IS NOT NULL THEN 'Q2' 
+        WHEN ex.e2 IS NOT NULL THEN 'Q4'
        END AS term_name
       ,CASE
-        WHEN gr.e1 IS NOT NULL THEN 'E1'
-        WHEN gr.e2 IS NOT NULL THEN 'E2'
+        WHEN ex.e1 IS NOT NULL THEN 'E1'
+        WHEN ex.e2 IS NOT NULL THEN 'E2'
        END AS finalgradename
-      ,gr.is_curterm                
-      ,gr.excludefromgpa
-      ,gr.credit_hours      
-      ,COALESCE(gr.e1, gr.e2) AS term_grade_percent_adjusted
+      ,ex.is_curterm                
+      ,ex.excludefromgpa
+      ,ex.credit_hours      
+      ,COALESCE(ex.e1, ex.e2) AS term_grade_percent_adjusted
       ,NULL AS term_grade_letter_adjusted
       ,NULL AS term_gpa_points
       ,NULL AS y1_grade_percent_adjusted
@@ -244,19 +191,131 @@ SELECT co.student_number
       ,NULL AS need_80
       ,NULL AS need_90
 FROM kippnewark.powerschool.cohort_identifiers_static co 
-JOIN kippnewark.powerschool.final_grades_static gr 
-  ON co.student_number = gr.student_number
- AND co.academic_year = gr.academic_year
- AND (gr.e1 IS NOT NULL OR gr.e2 IS NOT NULL)
+JOIN kippnewark.powerschool.final_grades_static ex
+  ON co.student_number = ex.student_number
+ AND co.academic_year = ex.academic_year
+ AND (ex.e1 IS NOT NULL OR ex.e2 IS NOT NULL)
 JOIN section_teacher st
   ON co.studentid = st.studentid
  AND co.yearid = st.yearid
- AND gr.course_number = st.course_number
+ AND ex.course_number = st.course_number
  AND st.rn = 1
  AND st.db_name = 'kippnewark'
 WHERE co.rn_year = 1
   AND co.schoolid = 73253
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+
+UNION ALL
+
+/* historical grades */
+SELECT co.student_number
+      ,co.lastfirst
+      ,co.reporting_schoolid AS schoolid
+      ,co.grade_level
+      ,co.team
+      ,co.advisor_name
+      ,co.enroll_status
+      ,co.academic_year
+      ,co.iep_status
+      ,co.cohort
+      ,co.region
+
+      ,sg.credit_type AS credittype
+      ,sg.course_number
+      ,sg.course_name            
+      ,'Y1' AS reporting_term   
+      ,'Y1' AS finalgradename      
+      ,1 AS is_curterm            
+      ,sg.excludefromgpa
+      ,sg.potentialcrhrs AS credit_hours
+      ,sg.[percent] AS term_grade_percent_adjusted
+      ,CASE WHEN sg.grade = 'false' THEN 'F' ELSE CONVERT(VARCHAR(5), sg.grade) END AS term_grade_letter_adjusted
+      ,sg.gpa_points AS term_gpa_points
+      ,sg.[percent] AS y1_grade_percent_adjusted
+      ,CASE WHEN sg.grade = 'false' THEN 'F' ELSE CONVERT(VARCHAR(5), sg.grade) END AS y1_grade_letter           
+      ,sg.gpa_points AS y1_gpa_points
+      
+      ,sg.earnedcrhrs
+      
+      ,st.sectionid
+      ,st.teacher_name
+      ,st.section_number       
+      ,st.section_number AS period
+
+      ,NULL AS need_65
+      ,NULL AS need_70
+      ,NULL AS need_80
+      ,NULL AS need_90
+FROM gabby.powerschool.cohort_identifiers_static co 
+LEFT JOIN gabby.powerschool.storedgrades sg
+  ON co.studentid = sg.studentid
+ AND co.academic_year = sg.academic_year
+ AND co.db_name = sg.db_name
+ AND sg.storecode_clean = 'Y1'
+ AND sg.course_number_clean IS NOT NULL
+LEFT JOIN section_teacher st
+  ON co.studentid = st.studentid
+ AND co.yearid = st.yearid
+ AND co.db_name = st.db_name
+ AND sg.course_number = st.course_number
+ AND st.rn = 1
+WHERE co.rn_year = 1
+  AND co.school_level IN ('MS','HS')
+  AND co.academic_year != gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+
+UNION ALL
+
+/* transfer grades */
+SELECT COALESCE(co.student_number, e1.student_number) AS student_number
+      ,COALESCE(co.lastfirst, e1.lastfirst) AS lastfirst
+      ,COALESCE(co.schoolid, e1.schoolid) AS schoolid
+      ,COALESCE(co.grade_level, e1.grade_level) AS grade_level
+      ,COALESCE(co.team, e1.team) AS team
+      ,NULL AS advisor_name
+      ,COALESCE(co.enroll_status, e1.enroll_status) AS enroll_status
+      ,tr.academic_year
+      ,COALESCE(co.iep_status, e1.iep_status) AS iep_status
+      ,COALESCE(co.cohort, e1.cohort) AS cohort
+      ,COALESCE(co.region, e1.region) AS region
+      
+      ,'TRANSFER' AS credittype
+      ,CONVERT(VARCHAR(125),CONCAT('TRANSFER', tr.termid, tr.db_name, tr.dcid)) COLLATE Latin1_General_BIN AS course_number
+      ,CONVERT(VARCHAR(125),tr.course_name) AS course_name
+      ,'Y1' AS reporting_term
+      ,'Y1' AS finalgradename            
+      ,1 AS is_curterm
+      ,CONVERT(INT,tr.excludefromgpa) AS excludefromgpa
+      ,tr.potentialcrhrs AS credit_hours      
+      ,tr.[percent] AS term_grade_percent_adjusted
+      ,CASE WHEN tr.grade = 'false' THEN 'F' ELSE CONVERT(VARCHAR(5), tr.grade) END AS term_grade_letter_adjusted
+      ,tr.gpa_points AS term_gpa_points
+      ,tr.[percent] AS y1_grade_percent_adjusted
+      ,CASE WHEN tr.grade = 'false' THEN 'F' ELSE CONVERT(VARCHAR(5), tr.grade) END AS y1_grade_letter
+      ,tr.gpa_points AS y1_gpa_points                  
+      ,tr.earnedcrhrs
+
+      ,CONVERT(INT,tr.sectionid) AS sectionid
+      ,'TRANSFER' AS teacher_name    
+      ,'TRANSFER' AS section_number       
+      ,NULL AS period
+      ,NULL AS need_65
+      ,NULL AS need_70
+      ,NULL AS need_80
+      ,NULL AS need_90
+FROM gabby.powerschool.storedgrades tr
+LEFT JOIN gabby.powerschool.cohort_identifiers_static co 
+  ON tr.studentid = co.studentid
+ AND tr.schoolid = co.schoolid
+ AND tr.db_name = co.db_name
+ AND tr.academic_year = co.academic_year
+ AND co.rn_year = 1
+LEFT JOIN gabby.powerschool.cohort_identifiers_static e1 
+  ON tr.studentid = e1.studentid
+ AND tr.schoolid = e1.schoolid
+ AND tr.db_name = e1.db_name
+ AND e1.year_in_school = 1
+WHERE tr.storecode_clean = 'Y1'
+  AND tr.course_number_clean IS NULL
 
 UNION ALL
 
@@ -273,22 +332,22 @@ SELECT co.student_number
       ,co.cohort
       ,co.region
       
-      ,gr.credittype
-      ,gr.course_number
-      ,gr.course_name
-      ,REPLACE(gr.reporting_term,'RT','Q') AS term_name
+      ,cg.credittype
+      ,cg.course_number
+      ,cg.course_name
+      ,REPLACE(cg.reporting_term,'RT','Q') AS term_name
       ,CASE 
-        WHEN co.schoolid != 73253 AND gr.grade_category = 'E' THEN 'HWQ'
-        WHEN co.schoolid != 73253 AND co.academic_year <= 2014 AND gr.grade_category = 'Q' THEN 'HWQ'
-        ELSE gr.grade_category
+        WHEN co.schoolid != 73253 AND cg.grade_category = 'E' THEN 'HWQ'
+        WHEN co.schoolid != 73253 AND co.academic_year <= 2014 AND cg.grade_category = 'Q' THEN 'HWQ'
+        ELSE cg.grade_category
        END AS finalgradename
-      ,gr.is_curterm         
+      ,cg.is_curterm         
       ,NULL AS excludefromgpa
       ,NULL AS credit_hours      
-      ,gr.grade_category_pct AS term_grade_percent_adjusted
+      ,cg.grade_category_pct AS term_grade_percent_adjusted
       ,NULL AS term_grade_letter_adjusted
       ,NULL AS term_gpa_points      
-      ,gr.grade_category_pct_y1 AS y1_grade_percent_adjusted
+      ,cg.grade_category_pct_y1 AS y1_grade_percent_adjusted
       ,NULL AS y1_grade_letter            
       ,NULL AS y1_gpa_points      
 
@@ -304,15 +363,15 @@ SELECT co.student_number
       ,NULL AS need_80
       ,NULL AS need_90
 FROM gabby.powerschool.cohort_identifiers_static co 
-JOIN gabby.powerschool.category_grades_static gr 
-  ON co.student_number = gr.student_number
- AND co.academic_year = gr.academic_year 
- AND co.db_name = gr.db_name
+JOIN gabby.powerschool.category_grades_static cg
+  ON co.student_number = cg.student_number
+ AND co.academic_year = cg.academic_year 
+ AND co.db_name = cg.db_name
 JOIN section_teacher st
   ON co.studentid = st.studentid
  AND co.yearid = st.yearid
  AND co.db_name = st.db_name
- AND gr.course_number = st.course_number
+ AND cg.course_number = st.course_number
  AND st.rn = 1
 WHERE co.rn_year = 1
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
@@ -333,22 +392,22 @@ SELECT co.student_number
       ,co.cohort
       ,co.region
       
-      ,gr.credittype
-      ,gr.course_number
-      ,gr.course_name
+      ,cy.credittype
+      ,cy.course_number
+      ,cy.course_name
       ,'Y1' AS term_name
       ,CONCAT(CASE 
-               WHEN co.schoolid != 73253 AND gr.grade_category = 'E' THEN 'HWQ'
-               WHEN co.schoolid != 73253 AND co.academic_year <= 2014 AND gr.grade_category = 'Q' THEN 'HWQ'
-               ELSE gr.grade_category
+               WHEN co.schoolid != 73253 AND cy.grade_category = 'E' THEN 'HWQ'
+               WHEN co.schoolid != 73253 AND co.academic_year <= 2014 AND cy.grade_category = 'Q' THEN 'HWQ'
+               ELSE cy.grade_category
               END, 'Y1') AS finalgradename
-      ,gr.is_curterm         
+      ,cy.is_curterm         
       ,NULL AS excludefromgpa
       ,NULL AS credit_hours      
-      ,gr.grade_category_pct_y1 AS term_grade_percent_adjusted
+      ,cy.grade_category_pct_y1 AS term_grade_percent_adjusted
       ,NULL AS term_grade_letter_adjusted
       ,NULL AS term_gpa_points      
-      ,gr.grade_category_pct_y1 AS y1_grade_percent_adjusted
+      ,cy.grade_category_pct_y1 AS y1_grade_percent_adjusted
       ,NULL AS y1_grade_letter            
       ,NULL AS y1_gpa_points      
 
@@ -364,16 +423,16 @@ SELECT co.student_number
       ,NULL AS need_80
       ,NULL AS need_90
 FROM gabby.powerschool.cohort_identifiers_static co 
-JOIN gabby.powerschool.category_grades_static gr 
-  ON co.student_number = gr.student_number
- AND co.academic_year = gr.academic_year 
- AND co.db_name = gr.db_name
- AND gr.is_curterm = 1
+JOIN gabby.powerschool.category_grades_static cy
+  ON co.student_number = cy.student_number
+ AND co.academic_year = cy.academic_year 
+ AND co.db_name = cy.db_name
+ AND cy.is_curterm = 1
 JOIN section_teacher st
   ON co.studentid = st.studentid
  AND co.yearid = st.yearid
  AND co.db_name = st.db_name
- AND gr.course_number = st.course_number
+ AND cy.course_number = st.course_number
  AND st.rn = 1
 WHERE co.rn_year = 1
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
