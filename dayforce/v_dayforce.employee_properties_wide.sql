@@ -25,8 +25,8 @@ SELECT employee_reference_code
       ,[grade_taught_grade_10]
       ,[grade_taught_grade_11]
       ,[grade_taught_grade_12]
-      ,[TFA_CM_or_Alum]
-      ,[Is_Alum?]   
+      ,[tfa_cm_or_alum]
+      ,[is_alum]   
 FROM
     (
      SELECT sub.employee_reference_code
@@ -38,14 +38,19 @@ FROM
          (
           SELECT CONVERT(VARCHAR(25),employee_reference_code) AS employee_reference_code
                 ,CONVERT(DATE,employee_property_value_effective_start) AS effective_start_date
-                ,CONVERT(DATE,COALESCE(CASE WHEN employee_property_value_effective_end = '' THEN GETDATE() ELSE employee_property_value_effective_end END, GETDATE())) AS effective_end_date
+                ,CONVERT(DATE,COALESCE(CASE 
+                                        WHEN employee_property_value_effective_end = '' THEN GETDATE() 
+                                        ELSE employee_property_value_effective_end 
+                                       END
+                                      ,GETDATE())) AS effective_end_date
                 ,CONVERT(VARCHAR(25),LOWER(CASE
                                             WHEN employee_property_value_name IN ('Grade Taught', 'Subject')
                                                    THEN CONCAT(REPLACE(employee_property_value_name, ' ', '_') 
                                                               ,'_'
                                                               ,REPLACE(property_value, ' ', '_'))
                                             WHEN employee_property_value_name = 'Are you a TFA Corps Member or Alumni?'
-                                                   THEN 'TFA_CM_or_Alum'
+                                                   THEN 'tfa_cm_or_alum'
+                                            WHEN employee_property_value_name = 'Is Alum?' THEN 'is_alum'
                                             ELSE REPLACE(employee_property_value_name, ' ', '_')
                                            END)) AS property_name
                 ,CONVERT(VARCHAR(25),CASE
@@ -74,6 +79,6 @@ PIVOT(
                        ,[grade_taught_grade_10]
                        ,[grade_taught_grade_11]
                        ,[grade_taught_grade_12]
-                       ,[TFA_CM_or_Alum]
-                       ,[is_alum?])
+                       ,[tfa_cm_or_alum]
+                       ,[is_alum])
  ) p
