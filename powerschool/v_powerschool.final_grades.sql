@@ -31,6 +31,7 @@ WITH roster AS (
     ON sec.teacher = t.id
   WHERE co.rn_year = 1    
     AND co.school_level IN ('MS','HS')
+    AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
  )     
 
 ,enr_grades AS (
@@ -100,24 +101,6 @@ WITH roster AS (
         AND sg.[percent] BETWEEN sg_scale.min_cutoffpercentage AND sg_scale.max_cutoffpercentage
        WHERE enr.course_enroll_status = 0       
          AND enr.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-
-       UNION ALL
-
-       SELECT CONVERT(INT,sg.studentid) AS studentid
-             ,sg.course_number_clean AS course_number
-             ,sg.academic_year      
-             ,CONVERT(VARCHAR(5),sg.storecode_clean) AS term_name
-             ,CASE WHEN sg.grade = 'false' THEN 'F' ELSE CONVERT(VARCHAR(5),sg.grade) END AS stored_letter      
-             ,sg.[percent] AS stored_pct
-             ,NULL AS pgf_letter
-             ,NULL AS pgf_pct      
-             ,sg.gpa_points AS term_gpa_points      
-             ,ROW_NUMBER() OVER(
-                PARTITION BY sg.studentid, sg.academic_year, sg.course_number_clean, sg.storecode_clean
-                  ORDER BY sg.datestored DESC) AS rn
-       FROM powerschool.storedgrades sg 
-       WHERE sg.storecode_type  IN ('T', 'Q')
-         AND sg.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR()
       ) sub
   WHERE rn = 1
  )
@@ -278,12 +261,6 @@ SELECT sub.student_number
                  - (ISNULL(weighted_grade_total_adjusted,0) - (ISNULL(term_grade_weighted,0) + ISNULL(e1_grade_weighted,0) + ISNULL(e2_grade_weighted,0)))) /* factor out points earned so far, including current */
                  / (term_grade_weight_possible + ISNULL(e1_grade_weight,0) + ISNULL(e2_grade_weight,0))) /* divide by current term weights */
              ,0) AS need_65
-
-      /*
-      ,ROW_NUMBER() OVER(
-         PARTITION BY sub.student_number, sub.academic_year, sub.course_number
-           ORDER BY sub.term_name DESC) AS rn_curterm
-      */
 FROM
     (
      SELECT student_number
