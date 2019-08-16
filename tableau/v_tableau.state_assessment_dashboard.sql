@@ -48,6 +48,24 @@ WITH promo AS (
             WHERE school_code IS NULL
               AND (UPPER(district_name) IN ('NEWARK CITY', 'CAMDEN CITY') OR (district_name IS NULL AND dfg IS NULL))
               AND subgroup = 'TOTAL'
+
+            UNION ALL
+
+            /* 18-19 spoofed unti real results available*/
+            SELECT 2018 AS academic_year
+                  ,test_code    
+                  ,CASE
+                    WHEN district_name IS NULL THEN 'NJ'
+                    WHEN UPPER(district_name) = 'CAMDEN CITY' THEN 'CPS'
+                    WHEN UPPER(district_name) = 'NEWARK CITY' THEN 'NPS'
+                   END AS entity                
+                  ,valid_scores
+                  ,((l_4_percent / 100) * valid_scores) + ((l_5_percent / 100) * valid_scores) AS proficient_count                                
+            FROM gabby.njdoe.parcc
+            WHERE school_code IS NULL
+              AND (UPPER(district_name) IN ('NEWARK CITY', 'CAMDEN CITY') OR (district_name IS NULL AND dfg IS NULL))
+              AND subgroup = 'TOTAL'
+              AND academic_year = 2016
            ) sub       
        GROUP BY academic_year
                ,test_code               
