@@ -3,7 +3,7 @@ GO
 
 CREATE OR ALTER VIEW surveygizmo.survey_response_clean AS
 
-SELECT id
+SELECT id AS survey_response_id
       ,survey_id
       ,contact_id
       ,[status]

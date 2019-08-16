@@ -3,10 +3,10 @@ GO
 
 CREATE OR ALTER VIEW surveygizmo.survey_clean AS
 
-SELECT id
+SELECT id AS survey_id
       ,title
-      ,type
-      ,status
+      ,[type]
+      ,[status]
       ,team
       ,CONVERT(DATETIME2, created_on) AS created_on
       ,CONVERT(DATETIME2, modified_on) AS modified_on

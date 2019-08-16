@@ -21,4 +21,6 @@ SELECT id
       ,[ssl]
       ,limit_responses
       ,token_variables
+
+      ,gabby.utilities.DATE_TO_SY(CONVERT(DATETIME2,CASE WHEN link_open_date = '0000-00-00 00:00:00' THEN NULL ELSE link_open_date END)) AS academic_year
 FROM gabby.surveygizmo.survey_campaign
