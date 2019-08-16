@@ -15,7 +15,7 @@ SELECT q.id AS question_id
 FROM gabby.surveygizmo.survey_question q
 CROSS APPLY OPENJSON(q.options, '$')
   WITH (
-    id INT,
+    id VARCHAR(25),
     value NVARCHAR(MAX),
     title NVARCHAR(MAX) AS JSON,
     properties NVARCHAR(MAX) AS JSON
