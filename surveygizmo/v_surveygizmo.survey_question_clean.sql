@@ -3,7 +3,7 @@ GO
 
 CREATE OR ALTER VIEW surveygizmo.survey_question_clean AS
 
-SELECT id
+SELECT id AS survey_question_id
       ,survey_id
       ,base_type
       ,[type]
