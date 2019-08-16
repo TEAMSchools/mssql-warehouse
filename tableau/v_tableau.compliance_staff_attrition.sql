@@ -13,8 +13,15 @@ WITH roster AS (
         ,sub.position_start_date
         ,sub.termination_date
         ,sub.status_reason
-        ,gabby.utilities.DATE_TO_SY(sub.position_start_date) AS start_academic_year
-        ,COALESCE(gabby.utilities.DATE_TO_SY(sub.termination_date), gabby.utilities.GLOBAL_ACADEMIC_YEAR()) AS end_academic_year
+        ,CASE 
+          WHEN MONTH(sub.position_start_date) >= 9 THEN YEAR(sub.position_start_date)
+          WHEN MONTH(sub.position_start_date) < 9 THEN YEAR(sub.position_start_date) - 1
+         END AS start_academic_year
+        ,COALESCE(CASE 
+                   WHEN MONTH(sub.termination_date) >= 9 THEN YEAR(sub.termination_date)
+                   WHEN MONTH(sub.termination_date) < 9 THEN YEAR(sub.termination_date) - 1
+                  END
+                 ,gabby.utilities.GLOBAL_ACADEMIC_YEAR()) AS end_academic_year
   FROM (
         SELECT r.df_employee_number
               ,r.preferred_first_name

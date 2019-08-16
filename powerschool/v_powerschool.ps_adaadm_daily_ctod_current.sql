@@ -11,8 +11,7 @@ WITH terms_attendance_code AS (
   LEFT JOIN powerschool.attendance_code ac
     ON t.schoolid = ac.schoolid
    AND t.yearid = ac.yearid
-   AND ac.att_code IS NULL
-   AND ac.presence_status_cd = 'Present'
+   AND ac.[description] = 'Present'
   WHERE t.isyearrec = 1
  )
 

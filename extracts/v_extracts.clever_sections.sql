@@ -121,7 +121,7 @@ WITH dsos AS (
        FROM gabby.powerschool.cohort_identifiers_static co
        JOIN gabby.powerschool.schools s
          ON co.schoolid = s.school_number
-         AND co.db_name = s.db_name
+        AND co.db_name = s.db_name
        JOIN dsos
          ON s.school_number = dsos.School_id
        WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
