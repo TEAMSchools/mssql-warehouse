@@ -43,13 +43,13 @@ WITH ps_section_teacher AS (
 
 ,percentages AS (
 
-  SELECT g.df_employee_number
-        ,g.academic_year
-        ,g.student_grade_level
-        ,g.n_gl_students
-        ,SUM(g.n_gl_students) OVER( PARTITION BY g.df_employee_number, g.academic_year) AS n_total_students
-        ,CONVERT(FLOAT,n_gl_students)/CONVERT(FLOAT,SUM(g.n_gl_students) OVER( PARTITION BY g.df_employee_number, g.academic_year)) AS percent_gl
-  FROM gl_students g
+  SELECT df_employee_number
+        ,academic_year
+        ,student_grade_level
+        ,n_gl_students
+        ,SUM(n_gl_students) OVER( PARTITION BY df_employee_number, academic_year) AS n_total_students
+        ,CONVERT(FLOAT,n_gl_students)/CONVERT(FLOAT,SUM(n_gl_students) OVER( PARTITION BY df_employee_number, academic_year)) AS percent_gl
+  FROM gl_students
 
 )
 
