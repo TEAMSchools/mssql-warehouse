@@ -8,6 +8,9 @@ WITH matric_app AS (
 
         ,acc.type AS matriculation_account_type
 
+        ,enr.status_c AS matriculation_enrollment_status
+        ,enr.pursuing_degree_type_c AS matriculation_pursuing_degree_type
+
         ,ROW_NUMBER() OVER(
            PARTITION BY c.id
              ORDER BY enr.start_date_c) AS rn
@@ -66,6 +69,8 @@ SELECT c.id AS contact_id
       ,ei.hs_anticipated_graduation
 
       ,a.matriculation_account_type
+      ,a.matriculation_enrollment_status
+      ,a.matriculation_pursuing_degree_type
 FROM gabby.alumni.contact c
 JOIN gabby.alumni.record_type rt
   ON c.record_type_id = rt.id
