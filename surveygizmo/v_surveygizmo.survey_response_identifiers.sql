@@ -63,3 +63,4 @@ LEFT JOIN gabby.people.staff_crosswalk_static mail
 LEFT JOIN gabby.surveys.surveygizmo_abnormal_respondents ab
   ON rp.survey_id = ab.survey_id
  AND rp.survey_response_id = ab.survey_response_id
+ AND ab._fivetran_deleted = 0
