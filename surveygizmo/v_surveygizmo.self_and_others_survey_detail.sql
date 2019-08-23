@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW surveygizmo.self_and_others_detail AS
+--CREATE OR ALTER VIEW surveygizmo.self_and_others_detail AS
 
 SELECT d.survey_title AS survey_type
       ,d.survey_response_id AS response_id
@@ -14,7 +14,7 @@ SELECT d.survey_title AS survey_type
       ,d.respondant_email_address
       ,d.question_shortname AS question_code
       ,d.answer AS response
-      ,d.subject_df_id AS subject_associate_id
+      ,d.subject_df_employee_number AS subject_associate_id
       ,d.is_manager
       ,d.n_managers
       ,d.n_peers
@@ -44,6 +44,7 @@ LEFT JOIN gabby.people.staff_crosswalk_static dfid
 LEFT JOIN gabby.people.staff_crosswalk_static adpid
   ON d.subject_df_idd = adpid.adp_associate_id
 WHERE d.survey_title = 'Self & Others'
+  AND CONVERT(DATE,d.date_submitted) > CONVERT(DATE,'2019-07-01')
 
 UNION ALL 
 

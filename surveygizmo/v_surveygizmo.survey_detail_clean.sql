@@ -5,7 +5,9 @@ CREATE OR ALTER VIEW surveygizmo.survey_detail_clean AS
 
 WITH scaffold AS (
 
-SELECT survey_id
+SELECT df_employee_number
+      ,subject_df_employee_number
+      ,survey_id
       ,survey_response_id
       ,reporting_term
       ,respondent_name
@@ -15,11 +17,16 @@ SELECT survey_id
             WHEN is_manager LIKE 'No%' THEN 0
             ELSE is_manager
             END AS is_manager
-FROM (SELECT survey_id
-            ,survey_response_id
-            ,shortname
-            ,answer
-      FROM surveygizmo.survey_detail
+FROM (SELECT i.df_employee_number
+            ,i.subject_df_employee_number
+            ,d.survey_id
+            ,d.survey_response_id
+            ,d.shortname
+            ,d.answer
+      FROM surveygizmo.survey_detail d
+      JOIN gabby.surveygizmo.survey_response_identifiers i
+        ON d.survey_id = i.survey_id
+       AND d.survey_response_id = i.survey_response_id
       WHERE shortname IN ('reporting_term'
                          ,'respondent_name'
                          ,'respondent_email_address'
@@ -39,17 +46,15 @@ PIVOT (
 
 ,all_responses_long AS (
 
-SELECT s.survey_id
+SELECT s.df_employee_number
+      ,s.subject_df_employee_number
+      ,s.survey_id
       ,s.survey_response_id
       ,s.reporting_term
       ,s.respondent_name
       ,s.respondent_email_address
       ,s.subject_name
       ,s.is_manager
-      ,CASE WHEN s.subject_name LIKE '%]' THEN
-                 SUBSTRING(s.subject_name,CHARINDEX('[', s.subject_name) + 1,(CHARINDEX(']', s.subject_name) - CHARINDEX('[', s.subject_name) - 1)) 
-            ELSE null
-       END AS subject_df_id
       ,d.survey_title
       ,d.contact_id
       ,d.date_started
@@ -115,10 +120,10 @@ FROM (SELECT *
       FROM all_responses_long a 
       WHERE a.rn_submission = 1) a
 LEFT JOIN dayforce.employee_work_assignment w
-  ON a.subject_df_id = w.employee_reference_code
+  ON a.subject_df_employee_number = w.employee_reference_code
  AND a.date_submitted BETWEEN w.work_assignment_effective_start AND (CASE WHEN w.work_assignment_effective_end = '' OR ISNULL(w.work_assignment_effective_end,'') = '' THEN GETDATE() ELSE w.work_assignment_effective_end END)
 LEFT JOIN tableau.staff_roster r
-  ON a.subject_df_id = r.df_employee_number 
+  ON a.subject_df_employee_number = r.df_employee_number 
 LEFT JOIN tableau.staff_roster m
   ON r.manager_df_employee_number = m.df_employee_number
 WHERE rn_submission = 1
