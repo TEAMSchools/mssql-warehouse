@@ -1,4 +1,4 @@
-USE gabby
+USE gabby;
 GO
 
 CREATE OR ALTER VIEW illuminate_dna_repositories.sight_words_data AS
@@ -365,7 +365,7 @@ FROM (
       FROM illuminate_dna_repositories.repository_234
        UNPIVOT (
                 value
-                FOR field IN (field_five, field_their, field_going, field_three, field_our, field_name, field_school)
+                FOR field IN (field_five, field_their, field_going, field_three, field_name, field_school)
                ) u
       WHERE u.repository_row_id IN (
                                     SELECT repository_row_id
@@ -1032,7 +1032,7 @@ FROM (
       FROM illuminate_dna_repositories.repository_257
        UNPIVOT (
                 value
-                FOR field IN (field_walk, field_every, field_these, field_going, field_before, field_able)
+                FOR field IN (field_walk, field_every, field_these, field_before, field_able)
                ) u
       WHERE u.repository_row_id IN (
                                     SELECT repository_row_id
