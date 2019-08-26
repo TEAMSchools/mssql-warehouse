@@ -3,50 +3,84 @@ GO
 
 --CREATE OR ALTER VIEW surveygizmo.self_and_others_detail AS
 
-SELECT d.survey_title AS survey_type
-      ,d.survey_response_id AS response_id
+SELECT d.survey_id
+      ,d.survey_title
+      ,d.survey_response_id
       ,d.academic_year
-      ,d.reporting_term
-      ,d.campaign_name AS term_name
-      ,d.date_started AS time_started
-      ,d.date_submitted AS date_submitted
-      ,d.respondant_name
-      ,d.respondant_email_address
+      ,d.date_started
+      ,d.date_submitted
+      ,d.campaign_name AS reporting_term_code
+      ,d.campaign_name AS reporting_term_name
+      ,d.respondent_df_employee_number
+      ,resp.preferred_name AS respondent_name
+      ,resp.mail AS respondent_email_address
+      ,resp.is_manager
+      ,d.question_type
       ,d.question_shortname AS question_code
+      ,d.is_open_ended
+      ,d.question_title AS question_text
       ,d.answer AS response
-      ,d.subject_df_employee_number AS subject_associate_id
-      ,d.is_manager
-      ,d.n_managers
-      ,d.n_peers
-      ,d.n_total
-      ,d.question_text
-      ,CASE WHEN question_shortname LIKE '%oe%' THEN 'Y' ELSE 'N' END as open_ended
       ,d.answer_value AS response_value
+      ,d.subject_df_employee_number
+      ,NULL AS subject_adp_associate_id
+      ,subj.preferred_name AS subject_name
+      ,subj.legal_entity_name AS subject_legal_entity_name
+      ,subj.primary_site AS subject_location
+      ,subj.primary_site_schoolid AS subject_primary_site_schoolid
+      ,subj.primary_site_school_level AS subject_primary_site_school_level
+      ,subj.manager_df_employee_number AS subject_manager_df_employee_number
+      ,subj.samaccountname AS subject_username
+      ,subj.manager_name AS subject_manager_name
+      ,subj.manager_samaccountname AS subject_manager_username
 
-      ,CASE WHEN d.n_peers = 0 OR d.n_manager = 0 THEN d.answer_value * d.response_weight * 2
-            ELSE d.answer_value * d.response_weight
-       END AS response_value_weighted
-      ,d.subject_df_id AS subject_employee_number
-      ,d.preferred_name AS subject_name
-      ,d.legal_entity_during_survey AS subject_legal_entity_name
-      ,d.location_during_survey AS subject_location
-      ,COALESCE(dfid.primary_site_schoolid, adpid.primary_site_schoolid) AS subject_primary_site_schoolid
-      ,COALESCE(dfid.primary_site_school_level, adpid.primary_site_school_level) AS subject_primary_site_school_level
-      ,d.manager_df_employee_number
-      ,LEFT(d.subject_email,CHARINDEX('@',d.subject_email)-1) AS subject_username
-      ,d.manager_current AS subject_manager_name
-      ,LEFT(d.manager_email, CHARINDEX('@',d.manager_email)-1) AS subject_manager_username
-      ,NULL AS avg_response_value_location
+      --,d.n_managers
+      --,d.n_peers
+      --,d.n_total
+      --,CASE 
+      --  WHEN d.n_peers = 0 OR d.n_manager = 0 THEN d.answer_value * d.response_weight * 2
+      --  ELSE d.answer_value * d.response_weight
+      -- END AS response_value_weighted
+      --,NULL AS avg_response_value_location
+FROM gabby.surveygizmo.survey_detail d
+LEFT JOIN gabby.people.staff_crosswalk_static resp
+  ON d.respondent_df_employee_number = resp.df_employee_number
+LEFT JOIN gabby.people.staff_crosswalk_static subj
+  ON d.subject_df_employee_number = subj.df_employee_number
+WHERE d.survey_title = 'Self and Others'
+  AND d.academic_year >= 2019
 
-FROM gabbysurveygizmo.survey_detail_clean d
-LEFT JOIN gabby.people.staff_crosswalk_static dfid
-  ON d.subject_df_id = CONVERT(VARCHAR,dfid.df_employee_number)
-LEFT JOIN gabby.people.staff_crosswalk_static adpid
-  ON d.subject_df_idd = adpid.adp_associate_id
-WHERE d.survey_title = 'Self & Others'
-  AND CONVERT(DATE,d.date_submitted) > CONVERT(DATE,'2019-07-01')
+--UNION ALL 
 
-UNION ALL 
-
-SELECT *
-FROM surveys.self_and_others_survey_detail
+--SELECT survey_type
+--      ,response_id
+--      ,academic_year
+--      ,reporting_term
+--      ,term_name
+--      ,time_started
+--      ,date_submitted
+--      ,respondent_name
+--      ,respondent_email_address
+--      ,question_code
+--      ,response
+--      ,subject_associate_id
+--      ,is_manager
+--      ,n_managers
+--      ,n_peers
+--      ,n_total
+--      ,question_text
+--      ,open_ended
+--      ,response_value
+--      ,response_weight
+--      ,response_value_weighted
+--      ,subject_employee_number
+--      ,subject_name
+--      ,subject_legal_entity_name
+--      ,subject_location
+--      ,subject_primary_site_schoolid
+--      ,subject_primary_site_school_level
+--      ,subject_manager_id
+--      ,subject_username
+--      ,subject_manager_name
+--      ,subject_manager_username
+--      ,avg_response_value_location
+--FROM surveys.self_and_others_survey_detail
