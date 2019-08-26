@@ -13,6 +13,7 @@ SELECT rs.mentor_school_leader
       ,rs.date_completed_or_observed
       ,rs.rated_by_or_level_of_ownership
       ,rs.notes
+      ,rs.year
 
       ,r.preferred_name
       ,r.primary_on_site_department
