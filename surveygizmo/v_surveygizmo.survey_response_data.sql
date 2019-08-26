@@ -5,6 +5,7 @@ CREATE OR ALTER VIEW surveygizmo.survey_response_data AS
 
 SELECT sr.id AS survey_response_id
       ,sr.survey_id
+      ,CONVERT(DATE, LEFT(date_started, 19)) AS date_started
 
       ,sd.id AS question_id
       ,sd.section_id
