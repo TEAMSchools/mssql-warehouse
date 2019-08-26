@@ -12,19 +12,26 @@ SELECT s.survey_id
       ,sr.date_submitted
       ,sr.response_time
 
+      ,sri.df_employee_number AS respondent_df_employee_number
+      ,sri.subject_df_employee_number
+
       ,sc.[name] AS campaign_name
       ,sc.academic_year
 
-      ,sq.shortname
-      ,sq.title_english
+      ,sq.shortname AS question_shortname
+      ,sq.title_english AS question_title
+      ,sq.[type] AS question_type
+      ,CASE WHEN sq.type = 'ESSAY' THEN 'Y' ELSE 'N' END as is_open_ended
 
-      ,srd.answer
-
+      ,COALESCE(qo.title_english, srd.answer) AS answer
       ,qo.value AS answer_value
 FROM gabby.surveygizmo.survey_clean s
 JOIN gabby.surveygizmo.survey_response_clean sr
   ON s.survey_id = sr.survey_id
  AND sr.[status] = 'Complete'
+LEFT JOIN gabby.surveygizmo.survey_response_identifiers_static sri
+  ON sr.survey_id = sri.survey_id
+ AND sr.survey_response_id = sri.survey_response_id
 JOIN gabby.surveygizmo.survey_question_clean sq
   ON s.survey_id = sq.survey_id
  AND sq.base_type = 'Question'
