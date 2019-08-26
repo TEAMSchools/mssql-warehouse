@@ -119,6 +119,7 @@ WITH fp_long AS (
   WHERE co.rn_year = 1
     AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
     AND co.school_level = 'MS'
+    AND co.enroll_status = 0
  )
 
 ,audits_long AS (
