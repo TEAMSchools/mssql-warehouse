@@ -21,6 +21,7 @@ SELECT [state_studentnumber]
       ,CONVERT(DATE,[nj_se_reevaluationdate]) AS nj_se_reevaluationdate            
       ,COALESCE(academic_year, gabby.utilities.GLOBAL_ACADEMIC_YEAR()) AS academic_year
       ,CASE
+        WHEN special_education = '' THEN NULL
         WHEN special_education IS NULL THEN NULL
         WHEN nj_se_parental_consentobtained = 'R' THEN NULL
         WHEN special_education IN ('00','99') THEN NULL

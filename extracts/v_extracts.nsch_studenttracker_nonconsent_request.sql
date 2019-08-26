@@ -30,8 +30,11 @@ SELECT 'D1' AS ColA
       ,NULL AS ColJ /* leave blank */
       ,'00' AS ColK
       ,CONVERT(VARCHAR,student_number) AS ColL /* requestor return field */
-FROM gabby.alumni.taf_roster
-WHERE cohort <= gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+FROM gabby.powerschool.cohort_identifiers_static
+WHERE rn_undergrad = 1
+  AND exitcode = 'G1'
+  AND grade_level != 99
+  AND cohort <= gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 
 UNION ALL
 
@@ -47,5 +50,8 @@ SELECT 'T1'
       ,NULL
       ,NULL
       ,NULL
-FROM gabby.alumni.taf_roster
-WHERE cohort <= gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+FROM gabby.powerschool.cohort_identifiers_static
+WHERE rn_undergrad = 1
+  AND exitcode = 'G1'
+  AND grade_level != 99
+  AND cohort <= gabby.utilities.GLOBAL_ACADEMIC_YEAR()

@@ -3,7 +3,7 @@ GO
 
 CREATE OR ALTER VIEW surveygizmo.survey_campaign_clean AS
 
-SELECT id
+SELECT id AS survey_campaign_id
       ,survey_id
       ,[name]
       ,[type]

@@ -50,3 +50,4 @@ JOIN gabby.extracts.clever_sections csc
   ON cer.Section_id = csc.Section_id
 JOIN gabby.extracts.clever_teachers ct
   ON csc.Teacher_id = ct.Teacher_id COLLATE Latin1_General_BIN
+WHERE ct.Teacher_email IS NOT NULL

@@ -45,6 +45,7 @@ SELECT co.student_number
         WHEN co.enroll_status = 3 THEN 'Graduated'
        END AS enroll_status
       ,CONCAT(co.street, ', ', co.city, ', ', co.state, ' ', co.zip) AS home_address
+      ,co.student_web_id + '@teamstudents.org' AS student_email
       
       ,ed.school_entrydate
       ,ed.school_exitdate

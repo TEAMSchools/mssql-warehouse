@@ -118,7 +118,6 @@ SELECT co.student_number
       ,co.entry_schoolid
       ,co.entry_grade_level
       ,co.enroll_status
-      ,co.iep_status
       ,co.lep_status
       ,co.lunchstatus      
       ,co.ethnicity
@@ -135,6 +134,10 @@ SELECT co.student_number
         WHEN parcc.test_performance_level >= 4 THEN 1
         WHEN parcc.test_performance_level < 4 THEN 0
        END AS is_proficient
+      ,CASE
+        WHEN parcc.student_with_disabilities IN ('IEP', 'Y', 'B') THEN 'SPED'
+        ELSE 'No IEP'
+       END AS iep_status
 
       ,ext.nj AS pct_prof_nj
       ,ext.nps AS pct_prof_nps
@@ -175,7 +178,6 @@ SELECT co.student_number
       ,co.entry_schoolid
       ,co.entry_grade_level
       ,co.enroll_status
-      ,co.iep_status
       ,co.lep_status
       ,co.lunchstatus      
       ,co.ethnicity
@@ -197,6 +199,8 @@ SELECT co.student_number
         WHEN asa.scaled_score >= 200 THEN 1
         WHEN asa.scaled_score < 200 THEN 0
        END AS is_proficient
+
+      ,co.iep_status
 
       ,NULL AS pct_prof_nj
       ,NULL AS pct_prof_nps

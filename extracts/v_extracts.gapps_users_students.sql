@@ -32,6 +32,11 @@ SELECT co.student_number
            END AS org
       ,co.student_web_id + '@teamstudents.org' AS email
       ,co.student_web_password AS password
+      ,CASE
+        WHEN co.region = 'TEAM' THEN 'group-students-newark@teamstudents.org'
+        WHEN co.region = 'KCNA' THEN 'group-students-camden@teamstudents.org'
+        WHEN co.region = 'KMS' THEN 'group-students-miami@teamstudents.org'
+       END AS group_email
 FROM gabby.powerschool.cohort_identifiers_static co
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.rn_year = 1

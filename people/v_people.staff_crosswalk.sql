@@ -69,7 +69,7 @@ SELECT sr.df_employee_number
       ,adm.userprincipalname AS manager_userprincipalname
       ,adm.mail AS manager_mail
 
-      ,c.personal_email
+      ,CASE WHEN c.personal_email != '' THEN c.personal_email END AS personal_email
 FROM gabby.dayforce.staff_roster sr
 LEFT JOIN gabby.people.id_crosswalk_powerschool idps
   ON sr.df_employee_number = idps.df_employee_number
