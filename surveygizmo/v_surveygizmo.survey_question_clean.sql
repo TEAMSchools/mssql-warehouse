@@ -9,7 +9,7 @@ SELECT id AS survey_question_id
       ,[type]
       ,comment
       ,has_showhide_deps
-      ,shortname
+      ,CASE WHEN shortname != '' THEN shortname END AS shortname
       
       ,JSON_VALUE(title, '$.English') AS title_english
       ,JSON_VALUE(properties, '$.url') AS [url]
