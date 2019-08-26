@@ -12,14 +12,14 @@ SELECT s.survey_id
       ,sr.date_submitted
       ,sr.response_time
 
-      ,sri.df_employee_number AS respondent_df_employee_number
+      ,sri.respondent_df_employee_number
       ,sri.subject_df_employee_number
 
       ,sc.[name] AS campaign_name
       ,sc.academic_year
 
       ,sq.shortname AS question_shortname
-      ,sq.title_english AS question_title
+      ,sq.title_clean AS question_title
       ,sq.[type] AS question_type
       ,CASE WHEN sq.type = 'ESSAY' THEN 'Y' ELSE 'N' END as is_open_ended
 
