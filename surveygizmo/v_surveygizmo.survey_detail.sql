@@ -46,7 +46,9 @@ SELECT s.survey_id
       ,sri.subject_manager_mail
       ,sri.subject_manager_userprincipalname
       ,sri.subject_manager_samaccountname
-      ,CASE WHEN sri.respondent_df_employee_number = sri.subject_manager_df_employee_number THEN 1 ELSE 0 END AS is_manager
+      ,COALESCE(sri.is_manager
+               ,CASE WHEN sri.respondent_df_employee_number = sri.subject_manager_df_employee_number THEN 1 ELSE 0 END
+         ) AS is_manager
 
       ,sc.[name] AS campaign_name
       ,sc.academic_year
