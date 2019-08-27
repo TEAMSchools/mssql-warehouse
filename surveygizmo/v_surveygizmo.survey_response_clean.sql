@@ -8,8 +8,10 @@ SELECT id AS survey_response_id
       ,contact_id
       ,[status]
       ,is_test_data
-      ,CONVERT(DATETIME2, LEFT(date_started, 19)) AS date_started
-      ,CONVERT(DATETIME2, LEFT(date_submitted, 19)) AS date_submitted
+      ,CONVERT(DATETIME2, LEFT(date_started, 19)) AS datetime_started
+      ,CONVERT(DATETIME2, LEFT(date_submitted, 19)) AS datetime_submitted
+      ,CONVERT(DATE, CONVERT(DATETIME2, LEFT(date_started, 19))) AS date_started
+      ,CONVERT(DATE, CONVERT(DATETIME2, LEFT(date_submitted, 19))) AS date_submitted
       ,response_time
       ,city
       ,postal

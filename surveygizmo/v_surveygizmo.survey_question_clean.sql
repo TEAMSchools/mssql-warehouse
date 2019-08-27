@@ -9,7 +9,13 @@ SELECT id AS survey_question_id
       ,[type]
       ,comment
       ,has_showhide_deps
-      ,shortname
+      ,CASE WHEN shortname != '' THEN shortname END AS shortname
+      ,CASE WHEN [type] = 'ESSAY' THEN 'Y' ELSE 'N' END AS is_open_ended
+      ,CASE 
+        WHEN [shortname] IN ('respondent_df_employee_number', 'respondent_userprincipalname', 'respondent_adp_associate_id'
+                            ,'subject_df_employee_number', 'is_manager') THEN 1
+        ELSE 0
+       END AS is_identifier_question
       
       ,JSON_VALUE(title, '$.English') AS title_english
       ,JSON_VALUE(properties, '$.url') AS [url]
@@ -20,6 +26,7 @@ SELECT id AS survey_question_id
       ,CONVERT(BIT, JSON_VALUE(properties, '$.disabled')) AS [disabled]
       ,CONVERT(BIT, JSON_VALUE(properties, '$.hide_after_response')) AS hide_after_response
       ,CONVERT(BIT, JSON_VALUE(properties, '$.break_after')) AS break_after
+      ,gabby.utilities.STRIP_HTML(JSON_VALUE(title, '$.English')) AS title_clean
 
       ,JSON_QUERY(properties, '$.messages') AS messages_json
       ,JSON_QUERY(properties, '$.show_rules') AS show_rules_json

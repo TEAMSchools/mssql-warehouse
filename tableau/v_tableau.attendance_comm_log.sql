@@ -8,6 +8,7 @@ WITH commlog AS (
         ,c.reason AS commlog_reason
         ,c.response AS commlog_notes        
         ,c.call_topic AS commlog_topic
+        ,c.call_date_time AS commlog_datetime
         ,CONVERT(DATE,c.call_date_time) AS commlog_date
         
         ,CONCAT(u.first_name, ' ', u.last_name) AS commlog_staff_name
@@ -96,7 +97,7 @@ SELECT co.student_number
 
       ,ROW_NUMBER() OVER(
          PARTITION BY att.studentid, att.att_date
-           ORDER BY cl.student_school_id DESC) AS rn_date
+           ORDER BY cl.commlog_datetime DESC) AS rn_date
 FROM gabby.powerschool.attendance_clean att
 JOIN gabby.powerschool.cohort_identifiers_static co
   ON att.studentid = co.studentid 
