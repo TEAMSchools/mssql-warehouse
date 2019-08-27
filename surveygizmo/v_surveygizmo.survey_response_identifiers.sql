@@ -23,52 +23,77 @@ WITH response_pivot AS (
                                      ,CHARINDEX(']', p.subject_df_employee_number) - CHARINDEX('[', p.subject_df_employee_number) - 1)
                       END) AS subject_df_employee_number
         ,CASE WHEN CHARINDEX('[', p.subject_df_employee_number) = 0 THEN p.subject_df_employee_number END AS subject_preferred_name
+        ,CASE
+          WHEN p.is_manager = 'Yes - I am their manager.' THEN 1
+          WHEN p.is_manager = 'No - I am their peer.' THEN 0
+         END AS is_manager
   FROM
       (
-       SELECT srd.survey_response_id
-             ,srd.survey_id
+       SELECT sq.survey_id
+             ,sq.shortname
+
+             ,srd.survey_response_id
              ,srd.date_started
              ,srd.answer
-             ,cw.field_mapping
-       FROM gabby.surveygizmo.survey_response_data_static srd
-       JOIN gabby.people.surveygizmo_crosswalk cw
-         ON srd.survey_id = cw.survey_id
-        AND srd.question_id = cw.question_id
-        AND cw._fivetran_deleted = 0
-       WHERE srd.answer IS NOT NULL
+       FROM gabby.surveygizmo.survey_question_clean sq
+       JOIN gabby.surveygizmo.survey_response_data_static srd
+         ON sq.survey_id = srd.survey_id
+        AND sq.survey_question_id = srd.question_id
+        AND srd.answer IS NOT NULL
+       WHERE sq.shortname IN ('respondent_df_employee_number'
+                             ,'respondent_userprincipalname'
+                             ,'respondent_adp_associate_id'
+                             ,'subject_df_employee_number'
+                             ,'is_manager')
       ) sub
   PIVOT(
     MAX(answer)
-    FOR field_mapping IN (respondent_df_employee_number
-                         ,respondent_userprincipalname
-                         ,respondent_adp_associate_id
-                         ,subject_df_employee_number)
+    FOR shortname IN (respondent_df_employee_number
+                     ,respondent_userprincipalname
+                     ,respondent_adp_associate_id
+                     ,subject_df_employee_number
+                     ,is_manager)
    ) p
  )
 
 ,response_clean AS (
-  SELECT rp.survey_response_id
-        ,rp.survey_id
-        ,rp.date_started
-        ,COALESCE(rp.subject_df_employee_number, subj.df_employee_number) AS subject_df_employee_number
-        ,COALESCE(rp.respondent_df_employee_number
-                 ,upn.df_employee_number
-                 ,adp.df_employee_number
-                 ,mail.df_employee_number
-                 ,ab.df_employee_number) AS respondent_df_employee_number
-  FROM response_pivot rp
-  LEFT JOIN gabby.people.staff_crosswalk_static upn
-    ON rp.respondent_userprincipalname = upn.userprincipalname
-  LEFT JOIN gabby.people.staff_crosswalk_static adp
-    ON rp.respondent_adp_associate_id = adp.adp_associate_id
-  LEFT JOIN gabby.people.staff_crosswalk_static mail
-    ON rp.respondent_userprincipalname = mail.mail
-  LEFT JOIN gabby.surveys.surveygizmo_abnormal_respondents ab
-    ON rp.survey_id = ab.survey_id
-   AND rp.survey_response_id = ab.survey_response_id
-   AND ab._fivetran_deleted = 0
+  SELECT sub.survey_response_id
+        ,sub.survey_id
+        ,sub.date_started
+        ,COALESCE(sub.subject_df_employee_number, subj.df_employee_number) AS subject_df_employee_number
+        ,sub.respondent_df_employee_number
+        ,sub.is_manager
+  FROM
+      (
+       SELECT rp.survey_response_id
+             ,rp.survey_id
+             ,rp.date_started
+             ,rp.subject_df_employee_number
+             ,rp.subject_preferred_name
+             ,rp.is_manager
+
+             ,ab.subject_preferred_name_duplicate
+
+             ,COALESCE(rp.respondent_df_employee_number
+                      ,upn.df_employee_number
+                      ,adp.df_employee_number
+                      ,mail.df_employee_number
+                      ,ab.df_employee_number) AS respondent_df_employee_number
+       FROM response_pivot rp
+       LEFT JOIN gabby.people.staff_crosswalk_static upn
+         ON rp.respondent_userprincipalname = upn.userprincipalname
+       LEFT JOIN gabby.people.staff_crosswalk_static adp
+         ON rp.respondent_adp_associate_id = adp.adp_associate_id
+       LEFT JOIN gabby.people.staff_crosswalk_static mail
+         ON rp.respondent_userprincipalname = mail.mail
+       LEFT JOIN gabby.surveys.surveygizmo_abnormal_respondents ab
+         ON rp.survey_id = ab.survey_id
+        AND rp.survey_response_id = ab.survey_response_id
+        AND ab._fivetran_deleted = 0
+      ) sub
   LEFT JOIN gabby.people.staff_crosswalk_static subj
-    ON rp.subject_preferred_name = subj.preferred_name
+    ON sub.subject_preferred_name = subj.preferred_name
+   AND sub.subject_preferred_name_duplicate IS NULL
  )
 
 ,work_assignment AS (
@@ -94,21 +119,58 @@ WITH response_pivot AS (
 )
 
 ,manager AS (
-  SELECT em.employee_reference_code
-        ,em.manager_employee_number
-        ,CONVERT(DATE, em.manager_effective_start) AS manager_effective_start
-        ,CONVERT(DATE, COALESCE(CASE WHEN em.manager_effective_end != '' THEN em.manager_effective_end END
-                               ,GETDATE())) AS manager_effective_end
+  SELECT sub.employee_reference_code
+        ,sub.manager_df_employee_number
+        ,sub.manager_name
+        ,sub.manager_mail
+        ,sub.manager_userprincipalname
+        ,sub.manager_samaccountname
+        ,sub.manager_effective_start
+        ,sub.manager_effective_end
+  FROM
+      (
+       SELECT sub.employee_reference_code
+             ,sub.manager_df_employee_number
+             ,sub.manager_name
+             ,sub.manager_mail
+             ,sub.manager_userprincipalname
+             ,sub.manager_samaccountname
+             ,sub.effective_date AS manager_effective_start
+             ,COALESCE(DATEADD(DAY, -1, LEAD(sub.effective_date) OVER(PARTITION BY sub.employee_reference_code ORDER BY sub.effective_date))
+                      ,CONVERT(DATE, GETDATE())) AS manager_effective_end
+       FROM
+           (
+            SELECT em.employee_reference_code
+                  ,em.manager_employee_number AS manager_df_employee_number
+                  ,CONVERT(DATE, em.manager_effective_start) AS effective_date
 
-        ,mgr.manager_df_employee_number
-        ,mgr.manager_name
-        ,mgr.manager_mail
-        ,mgr.manager_userprincipalname
-        ,mgr.manager_samaccountname
-  FROM gabby.dayforce.employee_manager em
-  JOIN gabby.people.staff_crosswalk_static mgr
-    ON em.employee_reference_code = mgr.df_employee_number
-  WHERE em.manager_derived_method = 'Direct Report'
+                  ,mgr.preferred_name AS manager_name
+                  ,mgr.mail AS manager_mail
+                  ,mgr.userprincipalname AS manager_userprincipalname
+                  ,mgr.samaccountname AS manager_samaccountname
+            FROM gabby.dayforce.employee_manager em
+            JOIN gabby.people.staff_crosswalk_static mgr
+              ON em.manager_employee_number = mgr.df_employee_number
+            WHERE em.manager_derived_method = 'Direct Report'
+
+            UNION ALL
+
+            SELECT em.employee_reference_code
+                  ,em.manager_employee_number AS manager_df_employee_number
+                  ,CONVERT(DATE, COALESCE(CASE WHEN em.manager_effective_end != '' THEN em.manager_effective_end END
+                                         ,GETDATE())) AS effective_date
+
+                  ,mgr.preferred_name AS manager_name
+                  ,mgr.mail AS manager_mail
+                  ,mgr.userprincipalname AS manager_userprincipalname
+                  ,mgr.samaccountname AS manager_samaccountname
+            FROM gabby.dayforce.employee_manager em
+            JOIN gabby.people.staff_crosswalk_static mgr
+              ON em.manager_employee_number = mgr.df_employee_number
+            WHERE em.manager_derived_method = 'Direct Report'
+           ) sub
+      ) sub
+  WHERE sub.manager_effective_start <= sub.manager_effective_end
  )
 
 SELECT rc.survey_response_id
@@ -116,6 +178,7 @@ SELECT rc.survey_response_id
       ,rc.date_started
       ,rc.subject_df_employee_number
       ,rc.respondent_df_employee_number
+      ,rc.is_manager
       
       ,resp.preferred_name AS respondent_preferred_name
       ,resp.adp_associate_id AS respondent_adp_associate_id
