@@ -13,7 +13,40 @@ SELECT s.survey_id
       ,sr.response_time
 
       ,sri.respondent_df_employee_number
+      ,sri.respondent_preferred_name
+      ,sri.respondent_adp_associate_id
+      ,sri.respondent_userprincipalname
+      ,sri.respondent_mail
+      ,sri.respondent_samaccountname
+      ,sri.respondent_legal_entity_name
+      ,sri.respondent_primary_site
+      ,sri.respondent_department_name
+      ,sri.respondent_primary_job
+      ,sri.respondent_primary_site_schoolid
+      ,sri.respondent_primary_site_school_level
+      ,sri.respondent_manager_df_employee_number
+      ,sri.respondent_manager_name
+      ,sri.respondent_manager_mail
+      ,sri.respondent_manager_userprincipalname
+      ,sri.respondent_manager_samaccountname
       ,sri.subject_df_employee_number
+      ,sri.subject_preferred_name
+      ,sri.subject_adp_associate_id
+      ,sri.subject_userprincipalname
+      ,sri.subject_mail
+      ,sri.subject_samaccountname
+      ,sri.subject_legal_entity_name
+      ,sri.subject_primary_site
+      ,sri.subject_department_name
+      ,sri.subject_primary_job
+      ,sri.subject_primary_site_schoolid
+      ,sri.subject_primary_site_school_level
+      ,sri.subject_manager_df_employee_number
+      ,sri.subject_manager_name
+      ,sri.subject_manager_mail
+      ,sri.subject_manager_userprincipalname
+      ,sri.subject_manager_samaccountname
+      ,CASE WHEN sri.respondent_df_employee_number = sri.subject_manager_df_employee_number THEN 1 ELSE 0 END AS is_manager
 
       ,sc.[name] AS campaign_name
       ,sc.academic_year
