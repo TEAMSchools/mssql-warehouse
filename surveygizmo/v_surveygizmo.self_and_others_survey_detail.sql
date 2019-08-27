@@ -12,42 +12,40 @@ SELECT d.survey_id
       ,d.campaign_name AS reporting_term_code
       ,d.campaign_name AS reporting_term_name
       ,d.respondent_df_employee_number
-      ,resp.preferred_name AS respondent_name
-      ,resp.mail AS respondent_email_address
-      ,resp.is_manager
+      ,d.respondent_preferred_name
+      ,d.respondent_mail
+      ,d.is_manager
       ,d.question_type
-      ,d.question_shortname AS question_code
+      ,d.question_shortname
       ,d.is_open_ended
-      ,d.question_title AS question_text
-      ,d.answer AS response
-      ,d.answer_value AS response_value
+      ,d.question_title
+      ,d.answer
+      ,d.answer_value
       ,d.subject_df_employee_number
-      ,NULL AS subject_adp_associate_id
-      ,subj.preferred_name AS subject_name
-      ,subj.legal_entity_name AS subject_legal_entity_name
-      ,subj.primary_site AS subject_location
-      ,subj.primary_site_schoolid AS subject_primary_site_schoolid
-      ,subj.primary_site_school_level AS subject_primary_site_school_level
-      ,subj.manager_df_employee_number AS subject_manager_df_employee_number
-      ,subj.samaccountname AS subject_username
-      ,subj.manager_name AS subject_manager_name
-      ,subj.manager_samaccountname AS subject_manager_username
-
-      --,d.n_managers
-      --,d.n_peers
-      --,d.n_total
-      --,CASE 
-      --  WHEN d.n_peers = 0 OR d.n_manager = 0 THEN d.answer_value * d.response_weight * 2
-      --  ELSE d.answer_value * d.response_weight
-      -- END AS response_value_weighted
-      --,NULL AS avg_response_value_location
+      ,d.subject_adp_associate_id
+      ,d.subject_preferred_name
+      ,d.subject_legal_entity_name
+      ,d.subject_primary_site
+      ,d.subject_primary_site_schoolid
+      ,d.subject_primary_site_school_level
+      ,d.subject_manager_df_employee_number
+      ,d.subject_samaccountname
+      ,d.subject_manager_name
+      ,d.subject_manager_samaccountname
+      ,CASE 
+        WHEN ISNUMERIC(d.answer_value) = 0 THEN NULL
+        WHEN d.is_manager = 1 THEN 2.0 
+        ELSE 1.0
+       END AS response_weight
+      ,CASE 
+        WHEN ISNUMERIC(d.answer_value) = 0 THEN NULL
+        WHEN d.is_manager = 1 THEN d.answer_value * 2.0 
+        ELSE d.answer_value 
+       END AS response_value
+      ,NULL AS avg_response_value_location
 FROM gabby.surveygizmo.survey_detail d
-LEFT JOIN gabby.people.staff_crosswalk_static resp
-  ON d.respondent_df_employee_number = resp.df_employee_number
-LEFT JOIN gabby.people.staff_crosswalk_static subj
-  ON d.subject_df_employee_number = subj.df_employee_number
 WHERE d.survey_title = 'Self and Others'
-  AND d.academic_year >= 2019
+  AND d.academic_year = 2018
 
 --UNION ALL 
 
