@@ -97,6 +97,8 @@ SELECT co.student_number
       ,co.is_enrolled_oct15_week
       ,co.is_enrolled_jan15_week
       ,co.track
+      ,co.exit_code_kf
+      ,co.exit_code_ts
 
       ,LEAD(co.schoolid, 1) OVER(PARTITION BY co.student_number ORDER BY co.academic_year  ASC) AS next_schoolid
       ,LEAD(co.exitdate, 1) OVER(PARTITION BY co.student_number ORDER BY co.academic_year  ASC) AS next_exitdate
