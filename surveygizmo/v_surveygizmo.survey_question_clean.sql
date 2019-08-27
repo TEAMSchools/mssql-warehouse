@@ -10,6 +10,7 @@ SELECT id AS survey_question_id
       ,comment
       ,has_showhide_deps
       ,CASE WHEN shortname != '' THEN shortname END AS shortname
+      ,CASE WHEN [type] = 'ESSAY' THEN 'Y' ELSE 'N' END AS is_open_ended
       
       ,JSON_VALUE(title, '$.English') AS title_english
       ,JSON_VALUE(properties, '$.url') AS [url]

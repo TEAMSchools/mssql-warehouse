@@ -116,12 +116,12 @@ SELECT srs.survey_id
       ,sq.shortname AS question_shortname
       ,sq.title_clean AS question_title
       ,sq.[type] AS question_type
-      ,CASE WHEN sq.type = 'ESSAY' THEN 'Y' ELSE 'N' END as is_open_ended
+      ,sq.is_open_ended
 
       ,COALESCE(qo.title_english, srd.answer) AS answer
       ,qo.value AS answer_value
 FROM survey_response_scaffold srs
-JOIN gabby.surveygizmo.survey_question_clean sq
+JOIN gabby.surveygizmo.survey_question_clean_static sq
   ON srs.survey_id = sq.survey_id
  AND sq.base_type = 'Question'
 LEFT JOIN gabby.surveygizmo.survey_response_data_static srd
