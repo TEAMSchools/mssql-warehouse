@@ -124,6 +124,8 @@ FROM survey_response_scaffold srs
 JOIN gabby.surveygizmo.survey_question_clean_static sq
   ON srs.survey_id = sq.survey_id
  AND sq.base_type = 'Question'
+ AND sq.is_identifier_question = 0
+ AND sq.[type] IN ('RADIO', 'ESSAY')
 LEFT JOIN gabby.surveygizmo.survey_response_data_static srd
   ON srs.survey_id = srd.survey_id
  AND srs.survey_response_id = srd.survey_response_id

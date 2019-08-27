@@ -35,16 +35,12 @@ WITH response_pivot AS (
              ,srd.survey_response_id
              ,srd.date_started
              ,srd.answer
-       FROM gabby.surveygizmo.survey_question_clean sq
+       FROM gabby.surveygizmo.survey_question_clean_static sq
        JOIN gabby.surveygizmo.survey_response_data_static srd
          ON sq.survey_id = srd.survey_id
         AND sq.survey_question_id = srd.question_id
         AND srd.answer IS NOT NULL
-       WHERE sq.shortname IN ('respondent_df_employee_number'
-                             ,'respondent_userprincipalname'
-                             ,'respondent_adp_associate_id'
-                             ,'subject_df_employee_number'
-                             ,'is_manager')
+       WHERE sq.is_identifier_question = 1
       ) sub
   PIVOT(
     MAX(answer)

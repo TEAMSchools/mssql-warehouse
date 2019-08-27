@@ -11,6 +11,11 @@ SELECT id AS survey_question_id
       ,has_showhide_deps
       ,CASE WHEN shortname != '' THEN shortname END AS shortname
       ,CASE WHEN [type] = 'ESSAY' THEN 'Y' ELSE 'N' END AS is_open_ended
+      ,CASE 
+        WHEN [shortname] IN ('respondent_df_employee_number', 'respondent_userprincipalname', 'respondent_adp_associate_id'
+                            ,'subject_df_employee_number', 'is_manager') THEN 1
+        ELSE 0
+       END AS is_identifier_question
       
       ,JSON_VALUE(title, '$.English') AS title_english
       ,JSON_VALUE(properties, '$.url') AS [url]
