@@ -15,6 +15,7 @@ WITH survey_response_scaffold AS (
 
         ,sc.academic_year
         ,sc.[name] AS campaign_name
+        ,sc.reporting_term_code
 
         ,sri.respondent_df_employee_number
         ,sri.respondent_preferred_name
@@ -54,17 +55,17 @@ WITH survey_response_scaffold AS (
         
         ,ROW_NUMBER() OVER(
            PARTITION BY s.survey_id, sc.academic_year, sc.[name], sri.respondent_df_employee_number, sri.subject_df_employee_number
-             ORDER BY sr.date_submitted DESC) AS rn_respondent_survey
+             ORDER BY sr.date_submitted DESC) AS rn_respondent_subject
   FROM gabby.surveygizmo.survey_clean s
-  JOIN gabby.surveygizmo.survey_response_clean sr
+  JOIN gabby.surveygizmo.survey_response_clean_static sr
     ON s.survey_id = sr.survey_id
    AND sr.[status] = 'Complete'
-  LEFT JOIN gabby.surveygizmo.survey_campaign_clean sc
+  LEFT JOIN gabby.surveygizmo.survey_campaign_clean_static sc
     ON sr.survey_id = sc.survey_id
    AND sr.date_started BETWEEN sc.link_open_date AND sc.link_close_date
   LEFT JOIN gabby.surveygizmo.survey_response_identifiers_static sri
-    ON sr.survey_id = sri.survey_id
-   AND sr.survey_response_id = sri.survey_response_id
+    ON sr.survey_response_id = sri.survey_response_id
+   AND sr.survey_id = sri.survey_id
  )
 
 SELECT srs.survey_id
@@ -76,6 +77,7 @@ SELECT srs.survey_id
       ,srs.response_time
       ,srs.academic_year
       ,srs.campaign_name
+      ,srs.reporting_term_code
       ,srs.respondent_df_employee_number
       ,srs.respondent_preferred_name
       ,srs.respondent_adp_associate_id
@@ -111,7 +113,7 @@ SELECT srs.survey_id
       ,srs.subject_manager_userprincipalname
       ,srs.subject_manager_samaccountname
       ,srs.is_manager
-      ,srs.rn_respondent_survey
+      ,srs.rn_respondent_subject
 
       ,sq.shortname AS question_shortname
       ,sq.title_clean AS question_title
