@@ -178,7 +178,11 @@ SELECT rc.survey_response_id
       ,rc.date_started
       ,rc.subject_df_employee_number
       ,rc.respondent_df_employee_number
-      ,rc.is_manager
+      ,COALESCE(rc.is_manager
+               ,CASE 
+                 WHEN rc.respondent_df_employee_number = smgr.manager_df_employee_number THEN 1 
+                 ELSE 0 
+                END) AS is_manager
       
       ,resp.preferred_name AS respondent_preferred_name
       ,resp.adp_associate_id AS respondent_adp_associate_id
