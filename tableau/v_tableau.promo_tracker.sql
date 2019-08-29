@@ -114,7 +114,7 @@ WITH roster AS (
         ,gr.academic_year
         ,CASE
           WHEN gr.storecode_clean = 'Y1' THEN 'SY1'
-          ELSE gr.storecode_clean
+          ELSE REPLACE(gr.storecode_clean, 'Q', 'RT')
          END AS reporting_term
         ,gr.credit_type AS credittype
         ,gr.course_name
