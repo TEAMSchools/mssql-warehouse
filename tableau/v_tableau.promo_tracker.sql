@@ -108,6 +108,30 @@ WITH roster AS (
     AND gr.excludefromgpa = 0
 
   UNION ALL
+
+  /* previous year grades */
+  SELECT s.student_number
+        ,gr.academic_year
+        ,CASE
+          WHEN gr.storecode_clean = 'Y1' THEN 'SY1'
+          ELSE gr.storecode_clean
+         END AS reporting_term
+        ,gr.credit_type AS credittype
+        ,gr.course_name
+        ,gr.[percent] AS term_grade_percent_adjusted
+        ,'TERM' AS subdomain
+        ,CASE
+          WHEN gr.storecode_clean = 'Y1' THEN 'Y1'
+          ELSE 'Term' 
+         END AS finalgradename
+  FROM gabby.powerschool.storedgrades gr
+  JOIN gabby.powerschool.students s
+    ON gr.studentid = gr.studentid
+   AND gr.[db_name] = gr.[db_name]
+  WHERE gr.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1
+    AND gr.excludefromgpa = 0
+  
+  UNION ALL
   
   /* category grades */
   SELECT gr.student_number        
