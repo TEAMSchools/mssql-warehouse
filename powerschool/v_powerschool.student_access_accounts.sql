@@ -37,6 +37,91 @@ WITH clean_names AS (
     AND s.dob IS NOT NULL
  )
 
+,base_username AS (
+  SELECT sub.student_number
+        ,sub.schoolid
+        ,sub.school_name
+        ,sub.grade_level
+        ,sub.enroll_status
+        ,sub.first_name_clean
+        ,sub.first_init
+        ,sub.last_name_clean
+        ,sub.dob_month
+        ,sub.dob_day
+        ,sub.dob_year
+        ,sub.base_username
+        ,sub.alt_username
+        ,CASE WHEN sa.student_web_id IS NOT NULL THEN 1 ELSE 0 END AS base_dupe_audit
+  FROM
+      (
+       SELECT student_number
+             ,schoolid
+             ,school_name
+             ,grade_level
+             ,enroll_status
+             ,first_name_clean
+             ,first_init
+             ,last_name_clean
+             ,dob_month
+             ,dob_day
+             ,dob_year
+             ,last_name_clean + dob_month + dob_day AS base_username
+             ,first_name_clean + dob_month + dob_day AS alt_username
+       FROM clean_names
+      ) sub
+  LEFT JOIN gabby.powerschool.student_access_accounts_static sa
+    ON sub.base_username = sa.student_web_id
+   AND sub.student_number != sa.student_number
+ )
+
+,alt_username AS (
+  SELECT sub.student_number
+        ,sub.schoolid
+        ,sub.school_name
+        ,sub.grade_level
+        ,sub.enroll_status
+        ,sub.first_name_clean
+        ,sub.first_init
+        ,sub.last_name_clean
+        ,sub.dob_month
+        ,sub.dob_day
+        ,sub.dob_year
+        ,sub.base_username
+        ,sub.alt_username
+        ,sub.base_dupe_audit
+        ,sub.uses_alt
+        ,CASE
+          WHEN sub.uses_alt = 1 AND sa.student_web_id IS NOT NULL THEN 1
+          ELSE 0
+         END AS alt_dupe_audit
+  FROM
+      (
+       SELECT bu.student_number
+             ,bu.schoolid
+             ,bu.school_name
+             ,bu.grade_level
+             ,bu.enroll_status
+             ,bu.first_name_clean
+             ,bu.first_init
+             ,bu.last_name_clean
+             ,bu.dob_month
+             ,bu.dob_day
+             ,bu.dob_year
+             ,bu.base_username
+             ,bu.alt_username
+             ,bu.base_dupe_audit
+             ,CASE
+               WHEN bu.base_dupe_audit = 1 THEN 1
+               WHEN LEN(bu.base_username) > 16 THEN 1
+               ELSE 0
+              END AS uses_alt
+       FROM base_username bu
+       ) sub
+  LEFT JOIN gabby.powerschool.student_access_accounts_static sa
+    ON sub.alt_username = sa.student_web_id
+   AND sub.student_number != sa.student_number
+ )
+
 SELECT student_number
       ,schoolid
       ,enroll_status
@@ -46,7 +131,7 @@ SELECT student_number
       ,base_dupe_audit
       ,alt_dupe_audit
       ,CONVERT(VARCHAR(125),CASE
-                             WHEN alt_dupe_audit > 1 THEN first_init + last_name_clean + dob_month + dob_day
+                             WHEN alt_dupe_audit = 1 THEN first_init + last_name_clean + dob_month + dob_day
                              WHEN uses_alt = 1 THEN alt_username
                              ELSE base_username
                             END) AS student_web_id
@@ -56,50 +141,4 @@ SELECT student_number
                              WHEN grade_level >= 2 THEN last_name_clean + dob_year
                              ELSE LOWER(school_name) + '1'
                             END) AS student_web_password
-FROM
-    (
-     SELECT student_number
-           ,schoolid
-           ,school_name
-           ,grade_level
-           ,enroll_status
-           ,first_name_clean
-           ,first_init
-           ,last_name_clean
-           ,dob_month
-           ,dob_day
-           ,dob_year
-           ,base_username
-           ,alt_username
-           ,base_dupe_audit
-           ,CASE
-             WHEN base_dupe_audit > 1 THEN 1
-             WHEN LEN(base_username) > 16 THEN 1
-             ELSE 0
-            END AS uses_alt
-           
-           ,ROW_NUMBER() OVER(
-             PARTITION BY CASE WHEN base_dupe_audit > 1 THEN alt_username ELSE base_username END
-               ORDER BY student_number) AS alt_dupe_audit
-     FROM
-         (
-          SELECT student_number
-                ,schoolid
-                ,school_name
-                ,grade_level
-                ,enroll_status
-                ,first_name_clean
-                ,first_init
-                ,last_name_clean
-                ,dob_month
-                ,dob_day
-                ,dob_year
-                ,last_name_clean + dob_month + dob_day AS base_username
-                ,first_name_clean + dob_month + dob_day AS alt_username
-                
-                ,ROW_NUMBER() OVER(
-                   PARTITION BY last_name_clean + dob_month + dob_day
-                     ORDER BY student_number) AS base_dupe_audit
-          FROM clean_names
-         ) sub
-    ) sub
+FROM alt_username
