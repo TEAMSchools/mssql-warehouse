@@ -126,8 +126,8 @@ WITH roster AS (
          END AS finalgradename
   FROM gabby.powerschool.storedgrades gr
   JOIN gabby.powerschool.students s
-    ON gr.studentid = gr.studentid
-   AND gr.[db_name] = gr.[db_name]
+    ON gr.studentid = s.id
+   AND gr.[db_name] = s.[db_name]
   WHERE gr.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1
     AND gr.excludefromgpa = 0
   
