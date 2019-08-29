@@ -155,6 +155,7 @@ FROM
           LEFT JOIN gabby.powerschool.attendance_counts_static att
             ON co.studentid = att.studentid
            AND co.[db_name] = att.[db_name]
+           AND co.academic_year = att.academic_year
            AND rt.time_per_name = att.reporting_term COLLATE Latin1_General_BIN
            AND att.mem_count_y1 > 0
           LEFT JOIN gabby.lit.achieved_by_round_static lit
