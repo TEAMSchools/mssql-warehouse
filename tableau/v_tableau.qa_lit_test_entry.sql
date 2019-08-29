@@ -13,6 +13,7 @@ SELECT co.student_number
       ,co.boy_status
 
       ,CONVERT(VARCHAR(5),term.alt_name) AS lit_term
+      ,term.is_curterm
 
       ,testid.read_lvl
       ,testid.lvl_num
