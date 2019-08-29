@@ -180,6 +180,15 @@ SELECT rc.survey_response_id
                  ELSE 0 
                 END) AS is_manager
       
+      ,sr.[status]
+      ,sr.contact_id
+      ,sr.date_submitted
+      ,sr.response_time
+
+      ,sc.academic_year AS campaign_academic_year
+      ,sc.[name] AS campaign_name
+      ,sc.reporting_term_code AS campaign_reporting_term
+      
       ,resp.preferred_name AS respondent_preferred_name
       ,resp.adp_associate_id AS respondent_adp_associate_id
       ,resp.userprincipalname AS respondent_userprincipalname
@@ -217,7 +226,17 @@ SELECT rc.survey_response_id
       ,smgr.manager_mail AS subject_manager_mail
       ,smgr.manager_userprincipalname AS subject_manager_userprincipalname
       ,smgr.manager_samaccountname AS subject_manager_samaccountname
+
+      ,ROW_NUMBER() OVER(
+         PARTITION BY rc.survey_id, sc.academic_year, sc.[name], rc.respondent_df_employee_number, rc.subject_df_employee_number
+           ORDER BY sr.date_submitted DESC) AS rn_respondent_subject
 FROM response_clean rc
+JOIN gabby.surveygizmo.survey_response_clean_static sr
+  ON rc.survey_id = sr.survey_id
+ AND rc.survey_response_id = sr.survey_response_id
+LEFT JOIN gabby.surveygizmo.survey_campaign_clean_static sc
+  ON rc.survey_id = sc.survey_id
+ AND rc.date_started BETWEEN sc.link_open_date AND sc.link_close_date
 LEFT JOIN gabby.people.staff_crosswalk_static resp
   ON rc.respondent_df_employee_number = resp.df_employee_number
 LEFT JOIN work_assignment rwa
