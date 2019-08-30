@@ -1,7 +1,7 @@
 USE gabby
 GO
 
---CREATE OR ALTER VIEW surveys.self_and_others_detail AS
+CREATE OR ALTER VIEW surveys.self_and_others_detail AS
 
 SELECT d.survey_id
       ,d.survey_title
@@ -41,7 +41,7 @@ SELECT d.survey_id
         /* peer weight = half of total possible */
         ELSE (COUNT(d.survey_response_id) OVER(PARTITION BY d.survey_id, d.campaign_academic_year, d.campaign_name, d.question_shortname, d.subject_df_employee_number) * 0.5)
                / SUM(ABS(d.is_manager - 1)) OVER(PARTITION BY d.survey_id, d.campaign_academic_year, d.campaign_name, d.question_shortname, d.subject_df_employee_number)
-       END AS response_weight
+       END AS answer_weight
       ,CASE 
         WHEN d.is_open_ended = 'Y' THEN NULL
         WHEN ISNUMERIC(d.answer_value) = 0 THEN NULL
@@ -72,38 +72,36 @@ WHERE d.survey_title = 'Self and Others'
   AND d.rn_respondent_subject = 1
   AND d.campaign_academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 
---UNION ALL 
+UNION ALL 
 
---SELECT survey_type
---      ,response_id
---      ,campaign_academic_year
---      ,reporting_term
---      ,term_name
---      ,time_started
---      ,date_submitted
---      ,respondent_name
---      ,respondent_email_address
---      ,question_code
---      ,response
---      ,subject_associate_id
---      ,is_manager
---      ,n_managers
---      ,n_peers
---      ,n_total
---      ,question_text
---      ,open_ended
---      ,response_value
---      ,response_weight
---      ,response_value_weighted
---      ,subject_employee_number
---      ,subject_name
---      ,subject_legal_entity_name
---      ,subject_location
---      ,subject_primary_site_schoolid
---      ,subject_primary_site_school_level
---      ,subject_manager_id
---      ,subject_username
---      ,subject_manager_name
---      ,subject_manager_username
---      ,avg_response_value_location
---FROM surveys.self_and_others_survey_detail_archive
+SELECT NULL AS survey_id
+      ,survey_type AS survey_title
+      ,response_id AS survey_response_id
+      ,academic_year AS campaign_academic_year
+      ,NULL AS date_started
+      ,date_submitted
+      ,reporting_term AS campaign_name
+      ,reporting_term AS campaign_reporting_term
+      ,open_ended AS is_open_ended
+      ,question_code AS question_shortname
+      ,question_text AS question_title
+      ,response AS answer
+      ,response_value AS answer_value
+      ,NULL AS respondent_df_employee_number
+      ,respondent_name AS respondent_preferred_name
+      ,respondent_email_address AS respondent_mail
+      ,is_manager
+      ,subject_employee_number AS subject_df_employee_number
+      ,subject_associate_id AS subject_adp_associate_id
+      ,subject_name AS subject_preferred_name
+      ,subject_legal_entity_name
+      ,subject_location AS subject_primary_site
+      ,subject_primary_site_schoolid
+      ,subject_primary_site_school_level
+      ,subject_manager_id AS subject_manager_df_employee_number
+      ,subject_username AS subject_samaccountname
+      ,subject_manager_name
+      ,subject_manager_username AS subject_manager_samaccountname
+      ,response_weight
+      ,response_value_weighted AS answer_value_weighted
+FROM surveys.self_and_others_survey_detail_archive
