@@ -5,7 +5,7 @@ CREATE OR ALTER VIEW extracts.deanslist_promo_status AS
 
 SELECT student_number
       ,academic_year
-      ,reporting_term_name AS term
+      ,alt_name AS term
       ,promo_status_overall
       ,promo_status_attendance
       ,promo_status_lit
