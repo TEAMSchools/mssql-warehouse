@@ -3,204 +3,44 @@ GO
 
 CREATE OR ALTER VIEW alumni.taf_roster AS 
 
-WITH hs_grads AS (
-  SELECT student_number
-  FROM gabby.powerschool.cohort_identifiers_static
-  WHERE exitcode = 'G1'
-    AND school_level = 'HS'
-)
-
-,ms_grads AS (
-  SELECT co.studentid
-        ,co.student_number
-        ,co.first_name
-        ,co.last_name
-        ,co.lastfirst
-        ,co.dob
-        ,co.schoolid
-        ,co.school_name
-        ,co.grade_level
-        ,co.exitdate
-        ,co.cohort
-        ,co.highest_achieved
-        ,co.guardianemail
-        ,co.iep_status
-        ,co.specialed_classification
-        ,co.db_name
-        ,(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - co.academic_year) + co.grade_level AS curr_grade_level
-  FROM gabby.powerschool.cohort_identifiers_static co
-  WHERE co.grade_level = 8
-    AND co.rn_year = 1
-    AND co.exitcode IN ('G1','T2') /* sucessfully completed 8th */
-    AND co.enroll_status IN (2, 3) /* transfers/grads only */
-    AND co.student_number NOT IN (SELECT student_number FROM hs_grads) /* exclude hs grads */
- )
-
-,transfers AS (
-  SELECT sub.studentid
-        ,sub.student_number
-        ,sub.first_name
-        ,sub.last_name
-        ,sub.lastfirst
-        ,sub.dob
-        ,sub.curr_grade_level
-        ,sub.cohort
-        ,sub.highest_achieved
-        ,sub.final_exitdate
-        ,sub.guardianemail
-        ,sub.db_name
-
-        ,CONVERT(INT,CASE WHEN s.graduated_schoolid = 0 THEN s.schoolid ELSE s.graduated_schoolid END) AS schoolid       
-        ,CONVERT(VARCHAR(25),CASE WHEN s.graduated_schoolid = 0 THEN sch2.abbreviation ELSE sch.abbreviation END) AS school_name                         
-  FROM
-      (
-       SELECT co.studentid
-             ,co.student_number
-             ,co.first_name
-             ,co.last_name
-             ,co.lastfirst
-             ,co.dob
-             ,co.highest_achieved
-             ,co.db_name
-             ,MAX(co.cohort) AS cohort
-             ,MAX(co.guardianemail) AS guardianemail
-             ,MIN(co.entrydate) AS orig_entrydate
-             ,MAX(co.exitdate) AS final_exitdate
-             ,DATEDIFF(YEAR, MIN(co.entrydate), MAX(co.exitdate)) AS years_enrolled
-             ,DATEPART(YEAR,MAX(co.exitdate)) AS year_final_exitdate
-             ,(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - MAX(co.academic_year)) + MAX(co.grade_level) AS curr_grade_level
-       FROM gabby.powerschool.cohort_identifiers_static co
-       WHERE co.enroll_status = 2
-         AND co.school_level = 'HS'
-         AND co.student_number NOT IN (SELECT student_number FROM ms_grads)
-       GROUP BY co.studentid
-               ,co.student_number
-               ,co.lastfirst
-               ,co.first_name
-               ,co.last_name
-               ,co.highest_achieved
-               ,co.dob
-               ,co.db_name
-      ) sub
-  LEFT JOIN gabby.powerschool.students s
-    ON sub.student_number = s.student_number
-   AND sub.db_name = s.db_name
-  LEFT JOIN gabby.powerschool.schools sch
-    ON s.graduated_schoolid = sch.school_number
-   AND sub.db_name = sch.db_name
-  LEFT JOIN gabby.powerschool.schools sch2 
-    ON s.schoolid = sch2.school_number
-   AND sub.db_name = sch2.db_name
-  WHERE sub.cohort >= 2018 
-    AND ((years_enrolled = 1 AND final_exitdate >= DATEFROMPARTS(year_final_exitdate, 10, 1)) OR (years_enrolled > 1))
- )
-
-,enrollments AS (
-  SELECT salesforce_contact_id
-        ,student_number
-        ,sf_mobile_phone
-        ,sf_home_phone
-        ,sf_other_phone
-        ,sf_email
-        ,kipp_hs_class_c
-        ,expected_hs_graduation_c
-        ,contact_owner_id
-        ,ktc_counselor
-        ,enrollment_type
-        ,enrollment_status
-        ,enrollment_name
-        ,start_date_c
+WITH enrollments AS (
+  SELECT CONVERT(VARCHAR(25),enr.student_c) AS salesforce_contact_id
+        ,CONVERT(VARCHAR(25),enr.type_c) AS enrollment_type
+        ,CONVERT(VARCHAR(25),enr.status_c) AS enrollment_status
+        ,CONVERT(VARCHAR(125),enr.name) AS enrollment_name
+        ,enr.start_date_c
         ,ROW_NUMBER() OVER(
-          PARTITION BY student_number
-            ORDER BY start_date_c DESC) AS rn
-  FROM
-      (
-       SELECT CONVERT(VARCHAR(25),s.id) AS salesforce_contact_id
-             ,CONVERT(BIGINT,s.school_specific_id_c) AS student_number
-             ,CONVERT(VARCHAR(125),s.mobile_phone) AS sf_mobile_phone
-             ,CONVERT(VARCHAR(125),s.home_phone) AS sf_home_phone
-             ,CONVERT(VARCHAR(125),s.other_phone) AS sf_other_phone
-             ,CONVERT(VARCHAR(125),s.email) AS sf_email
-             ,CONVERT(INT,s.kipp_hs_class_c) AS kipp_hs_class_c
-             ,s.expected_hs_graduation_c
-
-             ,CONVERT(VARCHAR(25),u.id) AS contact_owner_id
-             ,CONVERT(VARCHAR(125),u.name) AS ktc_counselor
-
-             ,CONVERT(VARCHAR(25),enr.type_c) AS enrollment_type
-             ,CONVERT(VARCHAR(25),enr.status_c) AS enrollment_status
-             ,CONVERT(VARCHAR(125),enr.name) AS enrollment_name    
-             ,enr.start_date_c
-       FROM gabby.alumni.contact s
-       JOIN gabby.alumni.[user] u
-         ON s.owner_id = u.id
-       JOIN gabby.alumni.enrollment_c enr
-         ON s.id = enr.student_c
-       WHERE s.is_deleted = 0
-         AND s.school_specific_id_c IS NOT NULL
-      ) sub
+           PARTITION BY enr.student_c
+             ORDER BY start_date_c DESC) AS rn
+  FROM gabby.alumni.enrollment_c enr
+  WHERE enr.is_deleted = 0
  )
-
-,roster_union AS (
-  SELECT studentid
-        ,student_number
-        ,first_name
-        ,last_name
-        ,lastfirst
-        ,dob
-        ,exitdate
-        ,schoolid
-        ,school_name
-        ,curr_grade_level
-        ,cohort
-        ,highest_achieved
-        ,guardianemail
-        ,db_name
-  FROM ms_grads
-
-  UNION
-
-  SELECT studentid
-        ,student_number
-        ,first_name
-        ,last_name
-        ,lastfirst
-        ,dob
-        ,final_exitdate
-        ,schoolid
-        ,school_name
-        ,curr_grade_level
-        ,cohort
-        ,highest_achieved
-        ,guardianemail
-        ,db_name
-  FROM transfers
- ) 
 
 SELECT r.student_number
       ,r.studentid
       ,r.lastfirst
-      ,r.schoolid
-      ,r.school_name
-      ,r.curr_grade_level AS approx_grade_level
-      ,r.first_name
-      ,r.last_name
-      ,r.dob
-      ,r.exitdate
-      ,r.guardianemail AS ps_email
-      ,r.db_name
-      ,CASE WHEN r.highest_achieved = 99 THEN 1 ELSE 0 END AS is_grad
+      ,r.exit_schoolid AS schoolid
+      ,r.exit_school_name AS school_name
+      ,r.exit_date AS exitdate
+      ,r.exit_db_name AS db_name
+      ,r.current_grade_level_projection AS approx_grade_level
+      ,r.ktc_cohort AS cohort
+      ,r.expected_hs_graduation_date
+      ,r.counselor_name AS ktc_counselor
+      ,r.sf_home_phone
+      ,r.sf_mobile_phone
+      ,r.sf_other_phone
+      ,r.sf_email
+      
+      ,s.first_name
+      ,s.last_name
+      ,s.dob
+      ,s.guardianemail AS ps_email
+      ,1 AS is_grad
 
-      ,enr.kipp_hs_class_c AS cohort
-      ,enr.expected_hs_graduation_c AS expected_hs_graduation_date
-      ,enr.ktc_counselor
       ,enr.enrollment_type
       ,enr.enrollment_name
       ,enr.enrollment_status
-      ,enr.sf_home_phone
-      ,enr.sf_mobile_phone
-      ,enr.sf_other_phone
-      ,enr.sf_email
       
       ,CONVERT(VARCHAR(125),s.home_phone) AS ps_home_phone
       ,CONVERT(VARCHAR(125),s.mother) AS ps_mother
@@ -245,16 +85,17 @@ SELECT r.student_number
       ,CONVERT(VARCHAR(125),suf.release_5_name) AS ps_release_5_name
       ,CONVERT(VARCHAR(125),suf.release_5_phone) AS ps_release_5_phone
       ,CONVERT(VARCHAR(125),suf.release_5_relation) AS ps_release_5_relation
-FROM roster_union r
+FROM gabby.alumni.ktc_roster r
 LEFT JOIN enrollments enr
-  ON r.student_number = enr.student_number
+  ON r.sf_contact_id = enr.salesforce_contact_id
  AND enr.rn = 1
 LEFT JOIN gabby.powerschool.students s
   ON r.student_number = s.student_number
- AND r.db_name = s.db_name
+ AND r.exit_db_name= s.db_name
 LEFT JOIN gabby.powerschool.u_studentsuserfields suf
   ON s.dcid = suf.studentsdcid
  AND s.db_name = suf.db_name
 LEFT JOIN gabby.powerschool.studentcorefields scf
   ON s.dcid = scf.studentsdcid
  AND s.db_name = scf.db_name
+WHERE r.ktc_status = 'TAF'
