@@ -48,7 +48,10 @@ WITH failing AS (
 )
 
 SELECT sub.student_number
+      ,sub.studentid
+      ,sub.[db_name]
       ,sub.academic_year
+      ,sub.schoolid
       ,sub.iep_status
       ,sub.is_retained_flag
       ,sub.reporting_term_name
@@ -74,7 +77,10 @@ SELECT sub.student_number
 FROM
     (
      SELECT sub.student_number
+           ,sub.studentid
+           ,sub.[db_name]
            ,sub.academic_year
+           ,sub.schoolid
            ,sub.iep_status
            ,sub.is_retained_flag
            ,sub.reporting_term_name
@@ -118,8 +124,11 @@ FROM
      FROM
          (
           SELECT co.student_number
+                ,co.studentid
+                ,co.[db_name]
                 ,co.academic_year
                 ,co.school_level
+                ,co.schoolid
                 ,co.grade_level
                 ,co.iep_status
                 ,CASE WHEN co.is_retained_year + co.is_retained_ever >= 1 THEN 1 ELSE 0 END AS is_retained_flag

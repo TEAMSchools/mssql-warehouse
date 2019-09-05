@@ -1,26 +1,27 @@
-USE gabby
+USE gabby;
 GO
 
 CREATE OR ALTER VIEW extracts.deanslist_promo_status AS 
 
-SELECT student_number
-      ,academic_year
-      ,alt_name AS term
-      ,promo_status_overall
-      ,promo_status_attendance
-      ,promo_status_lit
-      ,promo_status_grades
-      --,promo_status_credits     
-      --,att_pts_pct
-      --,GPA_term
-      --,GPA_Y1
-      --,GPA_cum
-      --,GPA_term_status
-      --,GPA_Y1_status
-      --,GPA_cum_status
-      --,grades_y1_credits_projected AS projected_credits_earned
-      --,credits_enrolled_cum AS credits_enrolled
-      --,HWQ_Y1
-      --,lvls_grown_yr AS reading_lvl_growth_y1
-FROM gabby.reporting.promotional_status
-WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+SELECT ps.student_number
+      ,ps.academic_year
+      ,ps.alt_name AS term
+      ,ps.promo_status_overall
+      ,ps.promo_status_attendance
+      ,ps.promo_status_lit
+      ,ps.promo_status_grades
+
+      ,gpa.gpa_term AS gpa_term
+      ,gpa.gpa_y1 AS gpa_y1
+
+      ,cum.cumulative_Y1_gpa AS gpa_cum
+FROM gabby.reporting.promotional_status ps
+LEFT JOIN gabby.powerschool.gpa_detail gpa
+  ON ps.student_number = gpa.student_number
+ AND ps.academic_year = gpa.academic_year
+ AND ps.alt_name = gpa.term_name COLLATE Latin1_General_BIN
+LEFT JOIN gabby.powerschool.gpa_cumulative cum
+  ON ps.studentid = cum.studentid
+ AND ps.schoolid = cum.schoolid
+ AND ps.[db_name] = cum.[db_name]
+WHERE ps.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR();
