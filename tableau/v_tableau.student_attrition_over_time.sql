@@ -17,6 +17,7 @@ WITH enrolled_oct1 AS (
         ,db_name
   FROM gabby.powerschool.cohort_identifiers_static
   WHERE is_enrolled_oct01 = 1
+    AND rn_year = 1
     AND academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 2)
  )
 
@@ -56,9 +57,7 @@ JOIN attrition_dates d
  AND d.date <= GETDATE()
 LEFT JOIN gabby.powerschool.students s
   ON y1.student_number = s.student_number
- AND y1.db_name = s.db_name
 LEFT JOIN gabby.powerschool.cohort_identifiers_static y2
   ON y1.student_number = y2.student_number
- AND y1.db_name = y2.db_name
  AND y1.academic_year = (y2.academic_year - 1)
  AND y2.is_enrolled_oct01 = 1
