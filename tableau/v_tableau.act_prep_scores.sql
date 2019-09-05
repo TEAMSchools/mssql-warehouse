@@ -114,8 +114,7 @@ LEFT JOIN gabby.act.test_prep_scores act
 LEFT JOIN ms_grad ms
   ON co.student_number = ms.student_number
 WHERE co.rn_year = 1
-  AND co.schoolid = 73253
-  AND co.grade_level != 99
+  AND co.school_level = 'HS'
   AND co.academic_year >= 2015 /* 1st year with ACT prep */  
 
 UNION ALL
@@ -161,5 +160,5 @@ JOIN real_tests r
  AND r.rn_highest = 1
 LEFT JOIN ms_grad ms
   ON co.student_number = ms.student_number
-WHERE co.schoolid = 73253
+WHERE co.school_level = 'HS'
   AND co.rn_school = 1
