@@ -15,6 +15,7 @@ SELECT r.repository_id
       ,co.lastfirst
       ,co.region
       ,co.reporting_schoolid
+      ,co.is_pathways
       ,co.grade_level
       ,co.team
 
