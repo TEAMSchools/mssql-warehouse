@@ -8,6 +8,7 @@ SELECT sub.repository_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 222 AS repository_id
             ,repository_row_id
@@ -31,12 +32,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 223 AS repository_id
             ,repository_row_id
@@ -60,12 +64,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 224 AS repository_id
             ,repository_row_id
@@ -89,12 +96,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 225 AS repository_id
             ,repository_row_id
@@ -118,12 +128,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 226 AS repository_id
             ,repository_row_id
@@ -147,12 +160,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 227 AS repository_id
             ,repository_row_id
@@ -176,12 +192,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 228 AS repository_id
             ,repository_row_id
@@ -205,12 +224,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 229 AS repository_id
             ,repository_row_id
@@ -234,12 +256,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 230 AS repository_id
             ,repository_row_id
@@ -263,12 +288,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 231 AS repository_id
             ,repository_row_id
@@ -292,12 +320,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 232 AS repository_id
             ,repository_row_id
@@ -321,12 +352,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 233 AS repository_id
             ,repository_row_id
@@ -350,12 +384,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 234 AS repository_id
             ,repository_row_id
@@ -379,12 +416,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 235 AS repository_id
             ,repository_row_id
@@ -408,12 +448,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 236 AS repository_id
             ,repository_row_id
@@ -437,12 +480,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 237 AS repository_id
             ,repository_row_id
@@ -466,12 +512,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 238 AS repository_id
             ,repository_row_id
@@ -495,12 +544,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 239 AS repository_id
             ,repository_row_id
@@ -524,12 +576,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 240 AS repository_id
             ,repository_row_id
@@ -553,12 +608,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 241 AS repository_id
             ,repository_row_id
@@ -582,12 +640,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 242 AS repository_id
             ,repository_row_id
@@ -611,12 +672,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 243 AS repository_id
             ,repository_row_id
@@ -640,12 +704,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 244 AS repository_id
             ,repository_row_id
@@ -669,12 +736,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 245 AS repository_id
             ,repository_row_id
@@ -698,12 +768,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 246 AS repository_id
             ,repository_row_id
@@ -727,12 +800,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 247 AS repository_id
             ,repository_row_id
@@ -756,12 +832,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 248 AS repository_id
             ,repository_row_id
@@ -785,12 +864,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 249 AS repository_id
             ,repository_row_id
@@ -814,12 +896,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 250 AS repository_id
             ,repository_row_id
@@ -843,12 +928,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 251 AS repository_id
             ,repository_row_id
@@ -872,12 +960,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 252 AS repository_id
             ,repository_row_id
@@ -901,12 +992,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 253 AS repository_id
             ,repository_row_id
@@ -930,12 +1024,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 254 AS repository_id
             ,repository_row_id
@@ -959,12 +1056,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 255 AS repository_id
             ,repository_row_id
@@ -988,12 +1088,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 256 AS repository_id
             ,repository_row_id
@@ -1017,12 +1120,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 257 AS repository_id
             ,repository_row_id
@@ -1046,12 +1152,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 258 AS repository_id
             ,repository_row_id
@@ -1075,12 +1184,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 259 AS repository_id
             ,repository_row_id
@@ -1104,12 +1216,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 260 AS repository_id
             ,repository_row_id
@@ -1133,12 +1248,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 261 AS repository_id
             ,repository_row_id
@@ -1162,12 +1280,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 262 AS repository_id
             ,repository_row_id
@@ -1191,12 +1312,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 263 AS repository_id
             ,repository_row_id
@@ -1220,12 +1344,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 264 AS repository_id
             ,repository_row_id
@@ -1249,12 +1376,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 265 AS repository_id
             ,repository_row_id
@@ -1278,12 +1408,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 266 AS repository_id
             ,repository_row_id
@@ -1307,12 +1440,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 267 AS repository_id
             ,repository_row_id
@@ -1336,12 +1472,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 268 AS repository_id
             ,repository_row_id
@@ -1365,12 +1504,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 269 AS repository_id
             ,repository_row_id
@@ -1394,12 +1536,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 270 AS repository_id
             ,repository_row_id
@@ -1423,12 +1568,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 271 AS repository_id
             ,repository_row_id
@@ -1452,12 +1600,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 272 AS repository_id
             ,repository_row_id
@@ -1481,12 +1632,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 273 AS repository_id
             ,repository_row_id
@@ -1510,12 +1664,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 274 AS repository_id
             ,repository_row_id
@@ -1539,12 +1696,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 275 AS repository_id
             ,repository_row_id
@@ -1568,12 +1728,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 276 AS repository_id
             ,repository_row_id
@@ -1597,12 +1760,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 277 AS repository_id
             ,repository_row_id
@@ -1626,12 +1792,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 278 AS repository_id
             ,repository_row_id
@@ -1655,12 +1824,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 279 AS repository_id
             ,repository_row_id
@@ -1684,12 +1856,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 280 AS repository_id
             ,repository_row_id
@@ -1713,12 +1888,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 281 AS repository_id
             ,repository_row_id
@@ -1742,12 +1920,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 282 AS repository_id
             ,repository_row_id
@@ -1771,12 +1952,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 283 AS repository_id
             ,repository_row_id
@@ -1800,12 +1984,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 284 AS repository_id
             ,repository_row_id
@@ -1829,12 +2016,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 285 AS repository_id
             ,repository_row_id
@@ -1858,12 +2048,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 286 AS repository_id
             ,repository_row_id
@@ -1887,12 +2080,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 287 AS repository_id
             ,repository_row_id
@@ -1916,12 +2112,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 288 AS repository_id
             ,repository_row_id
@@ -1945,12 +2144,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 289 AS repository_id
             ,repository_row_id
@@ -1974,12 +2176,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 290 AS repository_id
             ,repository_row_id
@@ -2003,12 +2208,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 291 AS repository_id
             ,repository_row_id
@@ -2032,12 +2240,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 292 AS repository_id
             ,repository_row_id
@@ -2061,12 +2272,15 @@ JOIN illuminate_dna_repositories.fields f
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
   ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id
 UNION ALL
 SELECT sub.repository_id
       ,sub.repository_row_id
       ,sub.value
       ,f.label
       ,s.local_student_id
+      ,CONVERT(DATE, r.date_administered) AS date_administered
 FROM (
       SELECT 293 AS repository_id
             ,repository_row_id
@@ -2089,4 +2303,6 @@ JOIN illuminate_dna_repositories.fields f
  AND sub.field = f.name
  AND f.deleted_at IS NULL
 JOIN illuminate_public.students s
-  ON sub.student_id = s.student_id;
+  ON sub.student_id = s.student_id
+JOIN illuminate_dna_repositories.repositories r
+  ON sub.repository_id = r.repository_id;
