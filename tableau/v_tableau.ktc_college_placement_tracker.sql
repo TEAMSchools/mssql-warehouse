@@ -3,77 +3,7 @@ GO
 
 CREATE OR ALTER VIEW tableau.ktc_college_placement_tracker AS
 
-WITH roster AS (
-  SELECT co.student_number
-        ,co.studentid
-        ,co.academic_year
-        ,co.schoolid
-        ,co.lastfirst      
-        ,co.reporting_schoolid
-        ,co.grade_level        
-        ,co.enroll_status
-        ,co.db_name
-        
-        ,c.id AS contact_id
-        ,c.latest_fafsa_date_c
-        ,c.latest_state_financial_aid_app_date_c              
-        ,c.college_match_display_gpa_c
-        ,c.highest_act_score_c
-        ,c.informed_consent_c
-        ,c.latest_transcript_c
-
-        ,COALESCE(n.counselor_name, u.name) AS counselor_name
-        ,COALESCE(n.class_year, co.cohort) AS cohort
-
-        ,0 AS is_taf
-  FROM gabby.powerschool.cohort_identifiers_static co
-  LEFT JOIN gabby.alumni.contact c
-    ON co.student_number = c.school_specific_id_c 
-   AND c.is_deleted = 0
-  LEFT JOIN gabby.naviance.students n
-    ON co.student_number = n.hs_student_id
-  LEFT JOIN gabby.alumni.[user] u
-    ON c.owner_id = u.id
-  WHERE co.rn_undergrad = 1
-    AND co.grade_level BETWEEN 9 AND 12
-    AND co.enroll_status IN (0, 3)
-
-  UNION ALL
-
-  SELECT taf.student_number
-        ,taf.studentid
-        ,gabby.utilities.GLOBAL_ACADEMIC_YEAR() AS academic_year
-        ,taf.schoolid
-        ,taf.lastfirst      
-        ,999999 AS reporting_schoolid
-        ,taf.approx_grade_level        
-        ,CASE           
-          WHEN c.kipp_hs_class_c > gabby.utilities.GLOBAL_ACADEMIC_YEAR() THEN 2
-          WHEN c.post_hs_simple_admin_c IS NOT NULL THEN 23
-         END AS enroll_status
-        ,taf.db_name
-        
-        ,c.id AS contact_id
-        ,c.latest_fafsa_date_c
-        ,c.latest_state_financial_aid_app_date_c              
-        ,c.college_match_display_gpa_c
-        ,c.highest_act_score_c
-        ,c.informed_consent_c
-        ,c.latest_transcript_c
-        
-        ,u.name
-        ,c.kipp_hs_class_c AS cohort
-        
-        ,1 AS is_taf
-  FROM gabby.alumni.taf_roster taf
-  LEFT JOIN gabby.alumni.contact c
-    ON taf.student_number = c.school_specific_id_c 
-   AND c.is_deleted = 0
-  LEFT JOIN gabby.alumni.[user] u
-    ON c.owner_id = u.id
-)
-
-,nav_applications AS (
+WITH nav_applications AS (
   SELECT hs_student_id
         ,SUM(CASE WHEN result_code = 'accepted' THEN award ELSE 0 END) AS n_award_letters_collected
         ,MAX(CASE WHEN result_code = 'accepted' THEN decis ELSE 0 END) AS is_acceptance_letter_collected
@@ -263,22 +193,22 @@ WITH roster AS (
 
 SELECT co.student_number
       ,co.lastfirst      
-      ,co.reporting_schoolid
-      ,co.grade_level      
-      ,co.enroll_status
+      ,co.exit_schoolid AS reporting_schoolid
+      ,co.exit_grade_level AS grade_level
+      ,NULL AS enroll_status
       ,co.counselor_name
-      ,co.is_taf      
-      ,co.cohort
-      ,co.informed_consent_c
-      ,co.latest_fafsa_date_c
-      ,co.latest_state_financial_aid_app_date_c                    
-      ,co.latest_transcript_c      
-      ,co.db_name
+      ,CASE WHEN co.ktc_status = 'TAF' THEN 1 ELSE 0 END AS is_taf
+      ,co.ktc_cohort AS cohort
+      ,co.is_informed_consent AS informed_consent_c
+      ,co.latest_fafsa_date AS latest_fafsa_date_c
+      ,co.latest_state_financial_aid_app_date AS latest_state_financial_aid_app_date_c
+      ,co.latest_transcript_date AS latest_transcript_c
+      ,co.exit_db_name AS [db_name]
       
       ,CASE 
-        WHEN co.is_taf = 0 AND co.grade_level = 12 THEN gpa.cumulative_Y1_gpa
-        WHEN co.is_taf = 0 AND co.grade_level = 11 THEN gpa.cumulative_Y1_gpa_projected
-        WHEN co.is_taf = 1 THEN co.college_match_display_gpa_c
+        WHEN co.ktc_status = 'TAF' AND co.exit_grade_level = 12 THEN gpa.cumulative_Y1_gpa
+        WHEN co.ktc_status = 'TAF' AND co.exit_grade_level = 11 THEN gpa.cumulative_Y1_gpa_projected
+        WHEN co.ktc_status = 'TAF' THEN co.college_match_display_gpa
        END cumulative_Y1_gpa      
 
       ,ctcs.attended_2018_junior_kickoff            
@@ -325,7 +255,7 @@ SELECT co.student_number
       ,na.n_award_letters_collected
       ,na.is_acceptance_letter_collected
 
-      ,COALESCE(act.composite, co.highest_act_score_c) AS act_composite_highest
+      ,COALESCE(act.composite, co.highest_act_score) AS act_composite_highest
       
       ,ap.composite AS act_composite_highest_presenior_year
       
@@ -358,11 +288,11 @@ SELECT co.student_number
         WHEN SUBSTRING(ei.ugrad_pursuing_degree_type, PATINDEX('%[24]%year%', ei.ugrad_pursuing_degree_type), 1) = '4' THEN 1.0         
         ELSE 0.0
        END AS is_attending_4yr
-FROM roster co
+FROM gabby.alumni.ktc_roster co
 LEFT JOIN gabby.powerschool.gpa_cumulative gpa
   ON co.studentid = gpa.studentid
- AND co.schoolid = gpa.schoolid
- AND co.db_name = gpa.db_name
+ AND co.exit_schoolid = gpa.schoolid
+ AND co.exit_db_name = gpa.[db_name]
 LEFT JOIN gabby.naviance.current_task_completion_status ctcs
   ON co.student_number = ctcs.student_id
 LEFT JOIN nav_applications na
@@ -375,9 +305,10 @@ LEFT JOIN act_presenior ap
  AND ap.rn_highest_presenior = 1
 LEFT JOIN act_month am
   ON co.student_number = am.student_number
- AND co.academic_year = am.academic_year
+ AND co.exit_academic_year = am.academic_year
 LEFT JOIN college_apps ca
-  ON co.contact_id = ca.applicant_c
+  ON co.sf_contact_id = ca.applicant_c
  AND ca.application_submission_status_c = 'Submitted'
 LEFT JOIN gabby.alumni.enrollment_identifiers ei
-  ON co.contact_id = ei.student_c
+  ON co.sf_contact_id = ei.student_c
+WHERE co.ktc_status IN ('HS11', 'HS12')

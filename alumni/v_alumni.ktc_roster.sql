@@ -6,6 +6,8 @@ CREATE OR ALTER VIEW alumni.ktc_roster AS
 SELECT sub.student_number
       ,sub.studentid
       ,sub.lastfirst
+      ,sub.first_name
+      ,sub.last_name
       ,sub.exit_academic_year
       ,sub.exit_schoolid
       ,sub.exit_school_name
@@ -16,6 +18,7 @@ SELECT sub.student_number
       ,sub.current_grade_level_projection
       ,sub.sf_contact_id
       ,sub.ktc_cohort
+      ,sub.kipp_region_name
       ,sub.is_kipp_ms_graduate
       ,sub.is_kipp_hs_graduate
       ,sub.is_informed_consent
@@ -28,6 +31,7 @@ SELECT sub.student_number
       ,sub.latest_fafsa_date
       ,sub.latest_state_financial_aid_app_date
       ,sub.cumulative_gpa
+      ,sub.current_college_semester_gpa
       ,sub.college_match_display_gpa
       ,sub.highest_act_score
       ,sub.college_credits_attempted
@@ -36,7 +40,9 @@ SELECT sub.student_number
       ,sub.sf_home_phone
       ,sub.sf_other_phone
       ,sub.sf_email
+      ,sub.current_kipp_student
       ,sub.post_hs_simple_admin
+      ,sub.college_status
       ,sub.currently_enrolled_school
       ,sub.middle_school_attended
       ,sub.high_school_graduated_from
@@ -57,6 +63,8 @@ FROM
      SELECT co.student_number
            ,co.studentid
            ,co.lastfirst
+           ,co.first_name
+           ,co.last_name
            ,co.academic_year AS exit_academic_year
            ,co.schoolid AS exit_schoolid
            ,co.school_name AS exit_school_name
@@ -68,6 +76,7 @@ FROM
 
            ,c.id AS sf_contact_id
            ,c.kipp_hs_class_c AS ktc_cohort
+           ,c.kipp_region_name_c AS kipp_region_name
            ,c.kipp_ms_graduate_c AS is_kipp_ms_graduate
            ,c.kipp_hs_graduate_c AS is_kipp_hs_graduate
            ,c.informed_consent_c AS is_informed_consent
@@ -80,6 +89,7 @@ FROM
            ,c.latest_fafsa_date_c AS latest_fafsa_date
            ,c.latest_state_financial_aid_app_date_c AS latest_state_financial_aid_app_date
            ,c.cumulative_gpa_c AS cumulative_gpa
+           ,c.current_college_semester_gpa_c AS current_college_semester_gpa
            ,c.college_match_display_gpa_c AS college_match_display_gpa
            ,c.highest_act_score_c AS highest_act_score
            ,c.college_credits_attempted_c AS college_credits_attempted
@@ -88,7 +98,9 @@ FROM
            ,c.home_phone AS sf_home_phone
            ,c.other_phone AS sf_other_phone
            ,c.email AS sf_email
+           ,c.current_kipp_student_c AS current_kipp_student
            ,c.post_hs_simple_admin_c AS post_hs_simple_admin
+           ,c.college_status_c AS college_status
            ,c.currently_enrolled_school_c AS currently_enrolled_school
            ,c.middle_school_attended_c AS middle_school_attended
            ,c.high_school_graduated_from_c AS high_school_graduated_from

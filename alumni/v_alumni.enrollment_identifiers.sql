@@ -15,9 +15,6 @@ WITH enrollments AS (
        SELECT sub.student_c
              ,sub.enrollment_id
              ,sub.pursuing_degree_level
-             ,sub.start_date_c
-             ,sub.actual_end_date_c
-             ,sub.ecc_date
              ,CASE WHEN sub.ecc_date BETWEEN sub.start_date_c AND sub.actual_end_date_c THEN 1 ELSE 0 END AS is_ecc_dated
              ,ROW_NUMBER() OVER(
                 PARTITION BY sub.student_c, sub.pursuing_degree_level
@@ -67,8 +64,16 @@ SELECT e.student_c
       ,ug.actual_end_date_c AS ugrad_actual_end_date      
       ,ug.anticipated_graduation_c AS ugrad_anticipated_graduation
       ,ug.account_type_c AS ugrad_account_type
+      ,ug.major_c AS ugrad_major
+      ,ug.major_area_c AS ugrad_major_area
+      ,ug.college_major_declared_c AS ugrad_college_major_declared
+      ,ug.date_last_verified_c AS ugrad_date_last_verified
 
-      ,ecc.name AS ecc_school_name      
+      ,uga.[name] AS ugrad_account_name
+      ,uga.billing_state AS ugrad_billing_state
+      ,uga.ncesid_c AS ugrad_ncesid
+
+      ,ecc.[name] AS ecc_school_name      
       ,ecc.pursuing_degree_type_c AS ecc_pursuing_degree_type
       ,ecc.status_c AS ecc_status
       ,ecc.start_date_c AS ecc_start_date
@@ -96,6 +101,8 @@ SELECT e.student_c
 FROM enrollments e
 LEFT JOIN gabby.alumni.enrollment_c ug
   ON e.college_enrollment_id = ug.id
+LEFT JOIN gabby.alumni.account uga
+  ON ug.school_c = uga.id
 LEFT JOIN gabby.alumni.enrollment_c ecc
   ON e.ecc_enrollment_id = ecc.id
 LEFT JOIN gabby.alumni.account ecca

@@ -31,21 +31,19 @@ WITH matric_app AS (
   WHERE c.is_deleted = 0
  )
 
-SELECT c.id AS contact_id
-      ,c.name
-      ,c.kipp_hs_class_c
-      ,c.kipp_ms_graduate_c
-      ,c.kipp_hs_graduate_c
-      ,c.expected_hs_graduation_c
-      ,c.actual_hs_graduation_date_c
-      ,c.expected_college_graduation_c
-      ,c.actual_college_graduation_date_c
-      ,c.current_kipp_student_c
-      ,c.highest_act_score_c
-
-      ,rt.name AS record_type_name
-
-      ,u.name AS user_name
+SELECT c.sf_contact_id AS contact_id
+      ,c.lastfirst AS [name]
+      ,c.ktc_cohort AS kipp_hs_class_c
+      ,c.is_kipp_ms_graduate AS kipp_ms_graduate_c
+      ,c.is_kipp_hs_graduate AS kipp_hs_graduate_c
+      ,c.expected_hs_graduation_date AS expected_hs_graduation_c
+      ,c.actual_hs_graduation_date AS actual_hs_graduation_date_c
+      ,c.expected_college_graduation_date AS expected_college_graduation_c
+      ,c.actual_college_graduation_date AS actual_college_graduation_date_c
+      ,c.current_kipp_student AS current_kipp_student_c
+      ,c.highest_act_score AS highest_act_score_c
+      ,c.record_type_name AS record_type_name
+      ,c.counselor_name AS [user_name]
 
       ,ei.ugrad_school_name
       ,ei.ugrad_pursuing_degree_type
@@ -71,14 +69,11 @@ SELECT c.id AS contact_id
       ,a.matriculation_account_type
       ,a.matriculation_enrollment_status
       ,a.matriculation_pursuing_degree_type
-FROM gabby.alumni.contact c
-JOIN gabby.alumni.record_type rt
-  ON c.record_type_id = rt.id
-JOIN gabby.alumni.[user] u
-  ON c.owner_id = u.id
+FROM gabby.alumni.ktc_roster c
 LEFT JOIN gabby.alumni.enrollment_identifiers ei
-  ON c.id = ei.student_c
+  ON c.sf_contact_id = ei.student_c
 LEFT JOIN matric_app a
-  ON c.id = a.contact_id
+  ON c.sf_contact_id = a.contact_id
  AND a.rn = 1
-WHERE c.is_deleted = 0
+WHERE c.ktc_status IN ('HSG', 'TAF')
+  AND c.sf_contact_id IS NOT NULL

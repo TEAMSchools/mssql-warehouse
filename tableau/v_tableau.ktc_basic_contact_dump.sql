@@ -3,35 +3,7 @@ GO
 
 CREATE OR ALTER VIEW tableau.ktc_basic_contact_dump AS
 
-WITH attending_enrollment AS (
-  SELECT e.id AS enrollment_id
-        ,e.student_c
-        ,e.school_c
-        ,e.status_c
-        ,e.start_date_c
-        ,e.actual_end_date_c
-        ,e.major_c              
-        ,e.pursuing_degree_type_c        
-        ,e.date_last_verified_c
-        ,e.anticipated_graduation_c
-        ,e.college_major_declared_c
-
-        ,a.ncesid_c
-        ,a.name AS account_name
-        ,a.type AS account_type    
-        ,a.billing_state
-
-        ,ROW_NUMBER() OVER(
-           PARTITION BY e.student_c
-             ORDER BY e.start_date_c DESC) AS rn  
-  FROM gabby.alumni.enrollment_c e
-  LEFT OUTER JOIN gabby.alumni.account a
-    ON e.school_c = a.id   
-  WHERE e.start_date_c < DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1, 7, 1)
-    AND e.is_deleted = 0
- )
-
-,next_yr_enrollment AS (
+WITH next_yr_enrollment AS (
   SELECT student_c
         ,pursuing_degree_type_c
   FROM gabby.alumni.enrollment_c
@@ -40,72 +12,6 @@ WITH attending_enrollment AS (
     AND start_date_c >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1, 1, 1)
     AND status_c IN ('Attending','Matriculated')
     AND is_deleted = 0
- )
-
-,checkins AS (
-  SELECT contact_id        
-        ,[AAS1F]
-        ,[AAS2F]
-        ,[AAS1S]
-        ,[AAS2S]
-        ,[PSCF]
-        ,[PSCS]
-        ,[BBBF]
-        ,[BBBS]
-        ,[BMF]
-        ,[BMS]
-        ,[GPF]
-        ,[GPS]
-  FROM
-      (
-       SELECT c.contact_c AS contact_id
-             ,CASE 
-               WHEN c.subject_c = 'PSC' AND MONTH(c.date_c) >= 7 THEN 'PSCF'
-               WHEN c.subject_c = 'PSC' AND MONTH(c.date_c) < 7 THEN 'PSCS'
-               WHEN c.subject_c = 'BBB' AND MONTH(c.date_c) >= 7 THEN 'BBBF'
-               WHEN c.subject_c = 'BBB' AND MONTH(c.date_c) < 7 THEN 'BBBS'
-               WHEN c.subject_c = 'Grad Plan FA18' THEN 'GPF'
-               WHEN c.subject_c = 'Grad Plan SP19' THEN 'GPS'
-               WHEN c.subject_c = 'AAS1' AND MONTH(c.date_c) >= 7 THEN 'AAS1F'
-               WHEN c.subject_c = 'AAS1' AND MONTH(c.date_c) < 7 THEN 'AAS1S'
-               WHEN c.subject_c = 'AAS2' AND MONTH(c.date_c) >= 7 THEN 'AAS2F'
-               WHEN c.subject_c = 'AAS2' AND MONTH(c.date_c) < 7 THEN 'AAS2S'
-              END AS contact_subject
-             ,c.Date_c AS contact_date
-       FROM gabby.alumni.contact_note_c c
-       WHERE gabby.utilities.DATE_TO_SY(c.Date_c) = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-         AND c.subject_c IN ('BBB', 'Grad Plan FA18', 'Grad Plan SP19', 'PSC', 'AAS1', 'AAS2')
-         AND c.is_deleted = 0
-
-       UNION ALL
-
-       SELECT contact_c
-             ,CASE
-               WHEN MONTH(benchmark_date_c) >= 7 THEN 'BMF'
-               WHEN MONTH(benchmark_date_c) < 7 THEN 'BMS'
-              END AS contact_subject
-             ,benchmark_date_c AS contact_date
-       FROM gabby.alumni.college_persistence_c
-       WHERE benchmark_status_c = 'Complete'
-         AND benchmark_period_c != 'Pre-College'
-         AND gabby.utilities.DATE_TO_SY(benchmark_date_c) = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-         AND is_deleted = 0
-      ) sub
-  PIVOT(
-    COUNT(contact_date)
-    FOR contact_subject IN ([AAS1F]
-                           ,[AAS2F]
-                           ,[AAS1S]
-                           ,[AAS2S]
-                           ,[PSCF]
-                           ,[PSCS]
-                           ,[BBBF]
-                           ,[BBBS]
-                           ,[BMF]
-                           ,[BMS]
-                           ,[GPF]
-                           ,[GPS])
-   ) p
  )
 
 ,gpa AS (
@@ -259,42 +165,41 @@ WITH attending_enrollment AS (
    ) p
 )
 
-SELECT c.id AS contact_id
-      ,c.school_specific_id_c AS student_number
+SELECT c.sf_contact_id AS contact_id
+      ,c.student_number
       ,CONCAT(c.first_name, ' ', c.last_name) AS Full_Name_c
       ,c.first_name AS FirstName
       ,c.last_name AS LastName
-      ,c.kipp_hs_class_c
-      ,(gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1) - DATEPART(YEAR, c.actual_hs_graduation_date_c) AS years_out_of_HS
-      ,c.college_status_c
-      ,c.currently_enrolled_school_c
-      ,c.kipp_ms_graduate_c
-      ,c.middle_school_attended_c
-      ,c.kipp_hs_graduate_c
-      ,c.high_school_graduated_from_c
-      ,c.college_graduated_from_c      
-      ,c.gender_c
-      ,c.ethnicity_c      
-      ,c.cumulative_gpa_c
-      ,c.college_credits_attempted_c
-      ,c.accumulated_credits_college_c            
-      ,c.transcript_release_c
-      ,c.latest_fafsa_date_c
-      ,c.latest_state_financial_aid_app_date_c
-      ,c.latest_resume_c     
-      ,c.informed_consent_c 
-      ,c.expected_college_graduation_c
-      ,c.expected_hs_graduation_c
-      ,c.post_hs_simple_admin_c
-      ,c.last_outreach_c
-      ,c.last_successful_contact_c
-      ,c.actual_hs_graduation_date_c
-      ,c.actual_college_graduation_date_c      
-      ,c.kipp_region_name_c
-
-      ,rt.name AS record_type
-
-      ,u.name AS ktc_manager
+      ,c.ktc_cohort AS kipp_hs_class_c
+      ,c.years_out_of_hs
+      ,c.college_status AS college_status_c
+      ,c.currently_enrolled_school AS currently_enrolled_school_c
+      ,c.is_kipp_ms_graduate AS kipp_ms_graduate_c
+      ,c.middle_school_attended AS middle_school_attended_c
+      ,c.is_kipp_hs_graduate AS kipp_hs_graduate_c
+      ,c.high_school_graduated_from AS high_school_graduated_from_c
+      ,c.college_graduated_from AS college_graduated_from_c
+      ,c.gender AS gender_c
+      ,c.ethnicity AS ethnicity_c
+      ,c.cumulative_gpa AS cumulative_gpa_c
+      ,c.current_college_semester_gpa
+      ,c.college_credits_attempted AS college_credits_attempted_c
+      ,c.accumulated_credits_college AS accumulated_credits_college_c
+      ,c.is_transcript_release AS transcript_release_c
+      ,c.latest_fafsa_date AS latest_fafsa_date_c
+      ,c.latest_state_financial_aid_app_date AS latest_state_financial_aid_app_date_c
+      ,c.latest_resume_date AS latest_resume_c
+      ,c.is_informed_consent AS informed_consent_c 
+      ,c.expected_college_graduation_date AS expected_college_graduation_c
+      ,c.expected_hs_graduation_date AS expected_hs_graduation_c
+      ,c.post_hs_simple_admin AS post_hs_simple_admin_c
+      ,c.last_outreach_date AS last_outreach_c
+      ,c.last_successful_contact_date AS last_successful_contact_c
+      ,c.actual_hs_graduation_date AS actual_hs_graduation_date_c
+      ,c.actual_college_graduation_date AS actual_college_graduation_date_c      
+      ,c.kipp_region_name AS kipp_region_name_c
+      ,c.record_type_name AS record_type
+      ,c.counselor_name AS ktc_manager
 
       ,oot.n_months_elapsed
       ,CASE         
@@ -308,7 +213,7 @@ SELECT c.id AS contact_id
        END AS is_out_of_touch            
       ,CASE         
         WHEN (oot.n_months_elapsed >= 12 OR oot.contact_id IS NULL)
-         AND u.name = cc.new_value 
+         AND c.counselor_name = cc.new_value 
              THEN 1 
         ELSE 0 
        END AS is_oot_assigned
@@ -317,17 +222,17 @@ SELECT c.id AS contact_id
         ELSE 0 
        END AS is_found_this_term
 
-      ,e.college_major_declared_c
-      ,e.major_c
-      ,e.pursuing_degree_type_c
-      ,e.start_date_c
-      ,e.anticipated_graduation_c
-      ,e.status_c AS enrollment_status
-      ,e.account_name
-      ,e.account_type  
-      ,e.billing_state
-      ,e.ncesid_c
-      ,e.date_last_verified_c
+      ,e.ugrad_college_major_declared AS college_major_declared_c
+      ,e.ugrad_major AS major_c
+      ,e.ugrad_pursuing_degree_type AS pursuing_degree_type_c
+      ,e.ugrad_start_date AS start_date_c
+      ,e.ugrad_anticipated_graduation AS anticipated_graduation_c
+      ,e.ugrad_status AS enrollment_status
+      ,e.ugrad_account_name AS account_name
+      ,e.ugrad_account_type AS account_type  
+      ,e.ugrad_billing_state AS billing_state
+      ,e.ugrad_ncesid AS ncesid_c
+      ,e.ugrad_date_last_verified AS date_last_verified_c
 
       ,cn.[AAS1F]
       ,cn.[AAS2F]
@@ -372,28 +277,25 @@ SELECT c.id AS contact_id
       ,app.[ALL] AS N_apps_all
 
       ,nye.pursuing_degree_type_c AS next_year_pursuing_degree_type
-FROM gabby.alumni.contact c 
-JOIN gabby.alumni.record_type rt
-  ON c.record_type_id = rt.id
-JOIN gabby.alumni.[user] u 
-  ON c.owner_id = u.Id
-LEFT OUTER JOIN attending_enrollment e
-  ON c.id = e.student_c 
- AND e.rn = 1 
-LEFT OUTER JOIN checkins cn
-  ON c.id = cn.contact_id
-LEFT OUTER JOIN gpa
-  ON c.id = gpa.student_c
-LEFT OUTER JOIN stipends s
-  ON c.id = s.student_c
-LEFT OUTER JOIN oot_roster oot
-  ON c.id = oot.contact_id
+FROM gabby.alumni.ktc_roster c 
+LEFT JOIN gabby.alumni.enrollment_identifiers e
+  ON c.sf_contact_id = e.student_c
+LEFT JOIN gabby.alumni.contact_note_rollup cn
+  ON c.sf_contact_id = cn.contact_id
+ AND cn.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+LEFT JOIN gpa
+  ON c.sf_contact_id = gpa.student_c
+LEFT JOIN stipends s
+  ON c.sf_contact_id = s.student_c
+LEFT JOIN oot_roster oot
+  ON c.sf_contact_id = oot.contact_id
  AND gabby.utilities.GLOBAL_ACADEMIC_YEAR() BETWEEN oot.missing_academic_year AND oot.found_academic_year
  AND oot.rn = 1
-LEFT OUTER JOIN counselor_changes cc
-  ON c.id = cc.contact_id
+LEFT JOIN counselor_changes cc
+  ON c.sf_contact_id = cc.contact_id
  AND cc.rn = 1
-LEFT OUTER JOIN transfer_apps app
-  ON c.id = app.applicant_c
-LEFT OUTER JOIN next_yr_enrollment nye
-  ON c.id = nye.student_c
+LEFT JOIN transfer_apps app
+  ON c.sf_contact_id = app.applicant_c
+LEFT JOIN next_yr_enrollment nye
+  ON c.sf_contact_id = nye.student_c
+WHERE c.ktc_status IN ('HSG', 'TAF')
