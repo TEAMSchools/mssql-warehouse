@@ -86,25 +86,16 @@ WITH classes_dedupe AS (
                WHEN fp.benchmark_level = 'Independent' THEN 1
                ELSE 0
               END AS is_achieved
-             ,CASE
-               WHEN fp.school_name = 'BOLD Academy' THEN 73258
-               WHEN fp.school_name = 'KIPP Sunrise Academy' THEN 30200801
-               WHEN fp.school_name = 'Lanning Sq Middle' THEN 179902
-               WHEN fp.school_name = 'Lanning Sq Primary' THEN 179901
-               WHEN fp.school_name = 'Life Academy' THEN 73257
-               WHEN fp.school_name = 'Rise Academy' THEN 73252
-               WHEN fp.school_name = 'Seek Academy' THEN 73256
-               WHEN fp.school_name = 'SPARK Academy' THEN 73254
-               WHEN fp.school_name = 'TEAM Academy' THEN 133570965
-               WHEN fp.school_name = 'THRIVE Academy' THEN 73255
-               WHEN fp.school_name = 'Whittier Middle' THEN 179903
-              END AS schoolid
+             
+             ,sch.school_number AS schoolid
 
              ,c.teacher_first_name + ', ' + c.teacher_last_name AS test_administered_by
-      
+
              ,3273 AS testid
              ,1 AS is_fp
        FROM gabby.fpodms.bas_assessments fp
+       LEFT JOIN gabby.powerschool.schools sch
+         ON fp.school_name = sch.[name] COLLATE Latin1_General_BIN
        JOIN classes_dedupe c
          ON fp.school_name = c.school_name
         AND fp.year_of_assessment = c.school_year
