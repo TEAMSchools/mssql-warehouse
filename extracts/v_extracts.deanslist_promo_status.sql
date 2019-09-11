@@ -10,6 +10,7 @@ SELECT ps.student_number
       ,ps.promo_status_attendance
       ,ps.promo_status_lit
       ,ps.promo_status_grades
+      ,ps.promo_status_qa_math
 
       ,gpa.gpa_term AS gpa_term
       ,gpa.gpa_y1 AS gpa_y1
