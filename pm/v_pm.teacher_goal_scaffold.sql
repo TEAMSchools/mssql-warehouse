@@ -75,7 +75,7 @@ LEFT JOIN gabby.pm.teacher_goals_exemption_clean_static ex
   ON sr.df_employee_number = ex.df_employee_number
  AND tg.academic_year = ex.academic_year
  AND tm.pm_term = ex.pm_term
-WHERE sr.primary_job IN ('Teacher', 'Teacher Fellow', 'Teacher in Residence', 'Co-Teacher', 'Learning Specialist', 'Learning Specialist Coordinator')  
+WHERE sr.primary_job IN ('Teacher', 'Teacher Fellow', 'Teacher in Residence', 'Co-Teacher', 'Learning Specialist', 'Learning Specialist Coordinator', 'Teacher, ESL')
   AND ISNULL(sr.termination_date, GETDATE()) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
   AND ex.exemption IS NULL
 
@@ -135,7 +135,7 @@ LEFT JOIN gabby.pm.teacher_goals_exemption_clean_static ex
   ON sr.df_employee_number = ex.df_employee_number
  AND tg.academic_year = ex.academic_year
  AND tm.pm_term = ex.pm_term
-WHERE sr.primary_job IN ('Teacher', 'Teacher Fellow', 'Teacher in Residence', 'Co-Teacher', 'Learning Specialist', 'Learning Specialist Coordinator')
+WHERE sr.primary_job IN ('Teacher', 'Teacher Fellow', 'Teacher in Residence', 'Co-Teacher', 'Learning Specialist', 'Learning Specialist Coordinator', 'Teacher, ESL')
   AND ISNULL(sr.termination_date, GETDATE()) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
   AND ex.exemption IS NULL
 
@@ -210,7 +210,7 @@ LEFT JOIN gabby.pm.teacher_goals_exemption_clean_static ex
   ON sr.df_employee_number = ex.df_employee_number
  AND tg.academic_year = ex.academic_year
  AND tm.pm_term = ex.pm_term
-WHERE sr.primary_job IN ('Teacher', 'Teacher Fellow', 'Teacher in Residence', 'Co-Teacher')
+WHERE sr.primary_job IN ('Teacher', 'Teacher Fellow', 'Teacher in Residence', 'Co-Teacher', 'Teacher, ESL')
   AND ISNULL(sr.termination_date, GETDATE()) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
   AND ex.exemption IS NULL
 
