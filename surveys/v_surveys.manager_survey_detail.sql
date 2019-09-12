@@ -28,6 +28,7 @@ SELECT d.survey_id
       ,d.subject_primary_site_schoolid
       ,d.subject_primary_site_school_level
       ,d.subject_manager_df_employee_number
+      ,NULL AS subject_manager_adp_associate_id
       ,d.subject_samaccountname
       ,d.subject_manager_name
       ,d.subject_manager_samaccountname
@@ -54,16 +55,17 @@ SELECT NULL AS survey_id
       ,NULL AS respondent_df_employee_number
       ,respondent_name AS respondent_preferred_name
       ,respondent_email_address AS respondent_mail
-      ,Null AS is_manager
-      ,subject_manager_id AS subject_df_employee_number
+      ,NULL AS is_manager
+      ,NULL AS subject_df_employee_number
       ,subject_associate_id AS subject_adp_associate_id
       ,subject_name AS subject_preferred_name
       ,region AS subject_legal_entity_name
       ,subject_location AS subject_primary_site
       ,reporting_schoolid AS subject_primary_site_schoolid
       ,school_level AS subject_primary_site_school_level
-      ,subject_manager_id AS subject_manager_df_employee_number
+      ,NULL AS subject_manager_df_employee_number
+      ,subject_manager_id AS subject_manager_adp_associate_id
       ,subject_username AS subject_samaccountname
       ,subject_manager_name
       ,subject_manager_username AS subject_manager_samaccountname
-FROM surveys.manager_survey_detail_archive --@cbini, can you archive surveys.manager_survey_detail_archive?
+FROM surveys.manager_survey_detail_archive
