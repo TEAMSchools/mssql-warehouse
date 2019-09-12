@@ -30,7 +30,11 @@ SELECT sub.assessment_id
         WHEN sub.scope = 'Cold Read Quizzes' AND sub.grade_level_id IN (1, 2) THEN 'CP'
         ELSE sub.module_type
        END AS module_type
-      ,sub.module_number
+      ,CASE 
+        WHEN sub.scope = 'Cumulative Review Quizzes' AND sub.grade_level_id IN (1, 2, 3) THEN REPLACE(sub.module_number, 'CRQ', 'CP')
+        WHEN sub.scope = 'Cold Read Quizzes' AND sub.grade_level_id IN (1, 2) THEN REPLACE(sub.module_number, 'CRQ', 'CP')
+        ELSE sub.module_number
+       END AS module_number
       ,CASE 
         WHEN sub.scope = 'Cumulative Review Quizzes' AND sub.grade_level_id IN (1, 2, 3) THEN 'Checkpoint'
         WHEN sub.scope = 'Cold Read Quizzes' AND sub.grade_level_id IN (1, 2) THEN 'Checkpoint'
