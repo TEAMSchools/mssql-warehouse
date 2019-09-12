@@ -44,7 +44,7 @@ WITH roster AS (
   SELECT n AS academic_year
         ,DATEFROMPARTS((n + 1), 4, 30) AS effective_date
   FROM gabby.utilities.row_generator
-  WHERE n BETWEEN 2010 AND (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
+  WHERE n BETWEEN 2010 AND (gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1)
  )
 
 ,scaffold AS (
