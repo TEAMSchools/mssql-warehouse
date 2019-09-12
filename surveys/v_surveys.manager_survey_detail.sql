@@ -3,77 +3,69 @@ GO
 
 CREATE OR ALTER VIEW surveys.manager_survey_detail AS
 
-SELECT sub.survey_type
-      ,sub.response_id
-      ,sub.academic_year
-      ,sub.reporting_term
-      ,sub.term_name
-      ,sub.time_started
-      ,sub.date_submitted
-      ,sub.status
-      ,sub.respondent_associate_id
-      ,sub.respondent_salesforce_id
-      ,sub.respondent_email_address
-      ,sub.respondent_name
-      ,sub.subject_associate_id
-      ,sub.question_code
-      ,sub.response
-      ,sub.subject_name
-      ,sub.subject_location
-      ,sub.subject_manager_id
-      ,sub.reporting_schoolid
-      ,sub.school_level
-      ,sub.region
-      ,sub.subject_username
-      ,sub.subject_manager_name
-      ,sub.subject_manager_username
-      ,sub.question_text
-      ,sub.open_ended
-      ,sub.response_value
+SELECT d.survey_id
+      ,d.survey_title
+      ,d.survey_response_id
+      ,d.campaign_academic_year
+      ,d.date_started
+      ,d.date_submitted
+      ,d.campaign_name
+      ,d.campaign_reporting_term
+      ,d.is_open_ended
+      ,d.question_shortname
+      ,d.question_title
+      ,d.answer
+      ,d.answer_value
+      ,d.respondent_df_employee_number
+      ,d.respondent_preferred_name
+      ,d.respondent_mail
+      ,d.is_manager
+      ,d.subject_df_employee_number
+      ,d.subject_adp_associate_id
+      ,d.subject_preferred_name
+      ,d.subject_legal_entity_name
+      ,d.subject_primary_site
+      ,d.subject_primary_site_schoolid
+      ,d.subject_primary_site_school_level
+      ,d.subject_manager_df_employee_number
+      ,NULL AS subject_manager_adp_associate_id
+      ,d.subject_samaccountname
+      ,d.subject_manager_name
+      ,d.subject_manager_samaccountname
+FROM gabby.surveygizmo.survey_detail d
+WHERE d.survey_title = 'Manager Survey'
+  AND d.rn_respondent_subject = 1
+  AND d.campaign_academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 
-      ,ROUND(AVG(response_value) OVER(PARTITION BY academic_year, reporting_term, question_code, subject_location), 1) AS avg_response_value_location
-FROM
-    (
-     SELECT mgr.survey_type
-           ,mgr.response_id
-           ,mgr.academic_year
-           ,mgr.reporting_term
-           ,mgr.term_name
-           ,mgr.time_started
-           ,mgr.date_submitted
-           ,mgr.status
-           ,mgr.respondent_associate_id
-           ,mgr.respondent_salesforce_id
-           ,mgr.respondent_email_address
-           ,mgr.respondent_name      
-           ,mgr.subject_associate_id
-           ,mgr.question_code
-           ,mgr.response
-           ,mgr.question_text
-           ,mgr.open_ended
-           ,mgr.response_value
-      
-           ,COALESCE(CONCAT(dfdf.preferred_first_name, ' ', dfdf.preferred_last_name)
-                    ,CONCAT(dfadp.preferred_first_name, ' ', dfadp.preferred_last_name)) AS subject_name
-           ,COALESCE(dfdf.primary_site, dfadp.primary_site) AS subject_location
-           ,COALESCE(dfdf.primary_site_reporting_schoolid, dfadp.primary_site_reporting_schoolid) AS reporting_schoolid
-           ,COALESCE(dfdf.primary_site_school_level, dfadp.primary_site_school_level) AS school_level
-           ,COALESCE(dfdf.legal_entity_name, dfadp.legal_entity_name) AS region
-           ,COALESCE(dfdf.manager_adp_associate_id, dfadp.manager_adp_associate_id) AS subject_manager_id
+UNION ALL
 
-           ,LOWER(COALESCE(
-               LEFT(dfdf.userprincipalname, CHARINDEX('@', dfdf.userprincipalname) - 1)
-              ,dfadp.samaccountname
-             )) AS subject_username
-
-           ,COALESCE(dfdf.manager_name, dfadp.manager_name) AS subject_manager_name
-           ,LOWER(COALESCE(
-               LEFT(dfdf.manager_userprincipalname, CHARINDEX('@', dfdf.manager_userprincipalname) - 1)
-              ,dfadp.manager_samaccountname
-             )) AS subject_manager_username
-     FROM gabby.surveys.manager_survey_long_static mgr     
-     LEFT JOIN gabby.people.staff_crosswalk_static dfdf
-       ON mgr.subject_associate_id = CONVERT(VARCHAR,dfdf.df_employee_number)
-     LEFT JOIN gabby.people.staff_crosswalk_static dfadp
-       ON mgr.subject_associate_id = dfadp.adp_associate_id
-    ) sub
+SELECT NULL AS survey_id
+      ,survey_type AS survey_title
+      ,response_id AS survey_response_id
+      ,academic_year AS campaign_academic_year
+      ,NULL AS date_started
+      ,date_submitted
+      ,reporting_term AS campaign_name
+      ,reporting_term AS campaign_reporting_term
+      ,open_ended AS is_open_ended
+      ,question_code AS question_shortname
+      ,question_text AS question_title
+      ,response AS answer
+      ,response_value AS answer_value
+      ,NULL AS respondent_df_employee_number
+      ,respondent_name AS respondent_preferred_name
+      ,respondent_email_address AS respondent_mail
+      ,NULL AS is_manager
+      ,NULL AS subject_df_employee_number
+      ,subject_associate_id AS subject_adp_associate_id
+      ,subject_name AS subject_preferred_name
+      ,region AS subject_legal_entity_name
+      ,subject_location AS subject_primary_site
+      ,reporting_schoolid AS subject_primary_site_schoolid
+      ,school_level AS subject_primary_site_school_level
+      ,NULL AS subject_manager_df_employee_number
+      ,subject_manager_id AS subject_manager_adp_associate_id
+      ,subject_username AS subject_samaccountname
+      ,subject_manager_name
+      ,subject_manager_username AS subject_manager_samaccountname
+FROM surveys.manager_survey_detail_archive
