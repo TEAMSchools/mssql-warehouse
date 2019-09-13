@@ -21,7 +21,11 @@ SELECT DISTINCT
       ,cst.Last_name AS [Student Last Name]
       ,cst.First_name AS [Student First Name]
       ,UPPER(LEFT(cst.Middle_name, 1)) AS [Student Middle Initial]
-      ,CASE WHEN cst.DOB >= GETDATE() THEN CONVERT(DATE,GETDATE()) ELSE cst.DOB END AS [Student Date Of Birth]
+      ,CASE 
+        WHEN cst.DOB >= GETDATE() THEN CONVERT(DATE,GETDATE()) 
+        WHEN cst.DOB IS NULL THEN CONVERT(DATE,GETDATE())
+        ELSE cst.DOB 
+       END AS [Student Date Of Birth]
       ,CASE
         WHEN cst.Gender IS NOT NULL THEN cst.Gender
         WHEN RAND() >= 0.5 THEN 'M'
@@ -50,4 +54,3 @@ JOIN gabby.extracts.clever_sections csc
   ON cer.Section_id = csc.Section_id
 JOIN gabby.extracts.clever_teachers ct
   ON csc.Teacher_id = ct.Teacher_id COLLATE Latin1_General_BIN
-WHERE ct.Teacher_email IS NOT NULL
