@@ -51,7 +51,11 @@ WITH clean_names AS (
         ,sub.dob_year
         ,sub.base_username
         ,sub.alt_username
-        ,CASE WHEN sa.student_web_id IS NOT NULL THEN 1 ELSE 0 END AS base_dupe_audit
+        ,CASE 
+          WHEN sa.student_web_id IS NOT NULL THEN 1 
+          WHEN ROW_NUMBER() OVER(PARTITION BY sub.base_username ORDER BY sub.student_number) > 1 THEN 1
+          ELSE 0
+         END AS base_dupe_audit
   FROM
       (
        SELECT student_number
@@ -91,7 +95,9 @@ WITH clean_names AS (
         ,sub.base_dupe_audit
         ,sub.uses_alt
         ,CASE
-          WHEN sub.uses_alt = 1 AND sa.student_web_id IS NOT NULL THEN 1
+          WHEN sub.uses_alt = 0 THEN 0
+          WHEN sa.student_web_id IS NOT NULL THEN 1
+          WHEN ROW_NUMBER() OVER(PARTITION BY sub.alt_username ORDER BY sub.student_number) > 1 THEN 1
           ELSE 0
          END AS alt_dupe_audit
   FROM
