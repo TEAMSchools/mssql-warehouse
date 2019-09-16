@@ -10,6 +10,7 @@ WITH enrollments AS (
         ,MAX(CASE WHEN sub.pursuing_degree_level = 'Secondary' AND sub.rn_degree_desc = 1 THEN sub.enrollment_id END) AS secondary_enrollment_id
         ,MAX(CASE WHEN sub.pursuing_degree_level = 'Graduate' AND sub.rn_degree_desc = 1 THEN sub.enrollment_id END) AS graduate_enrollment_id
         ,MAX(CASE WHEN sub.pursuing_degree_level = 'College' AND sub.rn_degree_asc = 1 AND sub.is_ecc_dated = 1 THEN sub.enrollment_id END) AS ecc_enrollment_id
+        ,MAX(CASE WHEN sub.rn_current = 1 THEN sub.enrollment_id END) AS curr_enrollment_id
   FROM
       (
        SELECT sub.student_c
@@ -22,6 +23,9 @@ WITH enrollments AS (
              ,ROW_NUMBER() OVER(
                 PARTITION BY sub.student_c, sub.pursuing_degree_level
                   ORDER BY sub.start_date_c DESC, sub.actual_end_date_c DESC) AS rn_degree_desc
+             ,ROW_NUMBER() OVER(
+                PARTITION BY sub.student_c
+                  ORDER BY sub.start_date_c DESC, sub.actual_end_date_c DESC) AS rn_current
        FROM
            (
             SELECT e.student_c
@@ -51,10 +55,10 @@ WITH enrollments AS (
  )
 
 SELECT e.student_c
-      ,e.college_enrollment_id AS recent_ugrad_enrollment_c
-      ,e.ecc_enrollment_id AS ecc_enrollment_c
-      ,e.secondary_enrollment_id AS hs_enrollment_c
-      ,e.vocational_enrollment_id
+      ,e.college_enrollment_id AS ugrad_enrollment_id
+      ,e.ecc_enrollment_id
+      ,e.secondary_enrollment_id AS hs_enrollment_id
+      ,e.vocational_enrollment_id AS cte_enrollment_id
       ,e.graduate_enrollment_id
 
       ,ug.name AS ugrad_school_name      
@@ -91,13 +95,27 @@ SELECT e.student_c
       ,hs.anticipated_graduation_c AS hs_anticipated_graduation
       ,hs.account_type_c AS hs_account_type
 
-      ,cte.name AS cte_school_name      
       ,cte.pursuing_degree_type_c AS cte_pursuing_degree_type
       ,cte.status_c AS cte_status
       ,cte.start_date_c AS cte_start_date
       ,cte.actual_end_date_c AS cte_actual_end_date      
       ,cte.anticipated_graduation_c AS cte_anticipated_graduation
       ,cte.account_type_c AS cte_account_type
+
+      ,ctea.[name] AS cte_school_name
+      ,ctea.billing_state AS cte_billing_state
+      ,ctea.ncesid_c AS cte_ncesid
+
+      ,cur.pursuing_degree_type_c AS cur_pursuing_degree_type
+      ,cur.status_c AS cur_status
+      ,cur.start_date_c AS cur_start_date
+      ,cur.actual_end_date_c AS cur_actual_end_date      
+      ,cur.anticipated_graduation_c AS cur_anticipated_graduation
+      ,cur.account_type_c AS cur_account_type
+
+      ,cura.[name] AS cur_school_name
+      ,cura.billing_state AS cur_billing_state
+      ,cura.ncesid_c AS cur_ncesid
 FROM enrollments e
 LEFT JOIN gabby.alumni.enrollment_c ug
   ON e.college_enrollment_id = ug.id
@@ -111,3 +129,9 @@ LEFT JOIN gabby.alumni.enrollment_c hs
   ON e.secondary_enrollment_id = hs.id
 LEFT JOIN gabby.alumni.enrollment_c cte
   ON e.vocational_enrollment_id = cte.id
+LEFT JOIN gabby.alumni.account ctea
+  ON cte.school_c = ctea.id
+LEFT JOIN gabby.alumni.enrollment_c cur
+  ON e.curr_enrollment_id = cur.id
+LEFT JOIN gabby.alumni.account cura
+  ON cur.school_c = cura.id
