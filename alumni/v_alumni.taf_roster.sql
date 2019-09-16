@@ -98,4 +98,4 @@ LEFT JOIN gabby.powerschool.u_studentsuserfields suf
 LEFT JOIN gabby.powerschool.studentcorefields scf
   ON s.dcid = scf.studentsdcid
  AND s.db_name = scf.db_name
-WHERE r.ktc_status = 'TAF'
+WHERE r.ktc_status IN ('TAF', 'TAFHS')

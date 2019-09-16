@@ -119,11 +119,11 @@ FROM
            ,u.[name] AS counselor_name
 
            ,CASE
-             WHEN co.grade_level = 8 AND co.exitcode IN ('G1', 'T2') THEN 'TAF'
-             WHEN co.school_level = 'HS' AND co.exitcode = 'G1' THEN 'HSG'
+             WHEN (co.school_level = 'HS' AND co.exitcode = 'G1') OR c.kipp_hs_graduate_c = 1 THEN 'HSG'
              WHEN co.grade_level IN (11, 12) AND co.enroll_status = 0 THEN CONCAT('HS', co.grade_level)
-             WHEN c.kipp_ms_graduate_c = 1 AND c.kipp_hs_graduate_c = 0 THEN 'TAF'
-             WHEN c.kipp_hs_graduate_c = 1 THEN 'HSG'
+             WHEN ((co.grade_level = 8 AND co.exitcode IN ('G1', 'T2')) OR (c.kipp_ms_graduate_c = 1 AND c.kipp_hs_graduate_c = 0))
+              AND rt.[name] = 'HS Student' THEN 'TAFHS'
+             WHEN (co.grade_level = 8 AND co.exitcode IN ('G1', 'T2')) OR (c.kipp_ms_graduate_c = 1 AND c.kipp_hs_graduate_c = 0) THEN 'TAF'
             END AS ktc_status
      FROM gabby.powerschool.cohort_identifiers_static co
      LEFT JOIN gabby.alumni.contact c
