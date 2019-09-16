@@ -47,9 +47,7 @@ WITH clean_people AS (
         ,CASE
           WHEN sub.ethnicity = 'Hispanic or Latino' THEN 'Hispanic or Latino'
           WHEN sub.ethnicity = 'Decline to Answer' THEN NULL
-          ELSE CONVERT(VARCHAR(125),
-                 RTRIM(LEFT(sub.ethnicity, CHARINDEX(' (', sub.ethnicity)))
-                ) 
+          ELSE CONVERT(VARCHAR(125), RTRIM(LEFT(sub.ethnicity, CHARINDEX(' (', sub.ethnicity))))
          END AS primary_ethnicity
         ,CONVERT(VARCHAR(25),gabby.utilities.STRIP_CHARACTERS(sub.mobile_number, '^0-9')) AS mobile_number
         ,CASE WHEN sub.primary_site_clean LIKE '% - Regional%' THEN 1 ELSE 0 END AS is_regional_staff
@@ -140,7 +138,7 @@ SELECT c.df_employee_number
       ,c.position_title
       ,c.primary_on_site_department_entity
       ,c.primary_site_entity
-      ,c.preferred_last_name + ', ' + c.preferred_first_name AS preferred_name
+      ,CONVERT(VARCHAR(125), c.preferred_last_name + ', ' + c.preferred_first_name) AS preferred_name
       ,SUBSTRING(c.mobile_number, 1, 3) + '-'
          + SUBSTRING(c.mobile_number, 4, 3) + '-'
          + SUBSTRING(c.mobile_number, 7, 4) AS mobile_number
@@ -164,7 +162,7 @@ SELECT c.df_employee_number
       ,m.adp_associate_id AS manager_adp_associate_id
       ,m.preferred_first_name AS manager_preferred_first_name
       ,m.preferred_last_name AS manager_preferred_last_name
-      ,m.preferred_last_name + ', ' + m.preferred_first_name AS manager_name
+      ,CONVERT(VARCHAR(125), m.preferred_last_name + ', ' + m.preferred_first_name) AS manager_name
 FROM clean_people c
 LEFT JOIN gabby.people.school_crosswalk s
   ON c.primary_site = s.site_name

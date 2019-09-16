@@ -10,9 +10,9 @@ SELECT d.survey_id
       ,d.date_started
       ,d.date_submitted
       ,d.campaign_name
-      ,d.campaign_reporting_term
+      ,CONVERT(VARCHAR(25), d.campaign_reporting_term) AS campaign_reporting_term
       ,d.is_open_ended
-      ,d.question_shortname
+      ,CONVERT(VARCHAR(250), d.question_shortname) AS question_shortname
       ,d.question_title
       ,d.answer
       ,d.answer_value
@@ -79,12 +79,12 @@ SELECT NULL AS survey_id
       ,response_id AS survey_response_id
       ,academic_year AS campaign_academic_year
       ,NULL AS date_started
-      ,date_submitted
+      ,CONVERT(DATE, date_submitted)
       ,reporting_term AS campaign_name
       ,reporting_term AS campaign_reporting_term
       ,open_ended AS is_open_ended
       ,question_code AS question_shortname
-      ,question_text AS question_title
+      ,CONVERT(VARCHAR(500), question_text) AS question_title
       ,response AS answer
       ,response_value AS answer_value
       ,NULL AS respondent_df_employee_number

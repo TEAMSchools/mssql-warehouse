@@ -56,9 +56,9 @@ SELECT s.survey_id
       ,sri.is_manager
       ,sri.rn_respondent_subject
 
-      ,COALESCE(qo.title_english, srd.answer) AS answer
+      ,COALESCE(qo.option_title_english, srd.answer) AS answer
 
-      ,qo.value AS answer_value
+      ,qo.option_value AS answer_value
 FROM gabby.surveygizmo.survey_clean s
 JOIN gabby.surveygizmo.survey_question_clean_static sq
   ON s.survey_id = sq.survey_id

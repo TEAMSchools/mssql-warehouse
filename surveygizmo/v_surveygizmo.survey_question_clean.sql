@@ -26,7 +26,7 @@ SELECT id AS survey_question_id
       ,CONVERT(BIT, JSON_VALUE(properties, '$.disabled')) AS [disabled]
       ,CONVERT(BIT, JSON_VALUE(properties, '$.hide_after_response')) AS hide_after_response
       ,CONVERT(BIT, JSON_VALUE(properties, '$.break_after')) AS break_after
-      ,gabby.utilities.STRIP_HTML(JSON_VALUE(title, '$.English')) AS title_clean
+      ,CONVERT(VARCHAR(500), gabby.utilities.STRIP_HTML(JSON_VALUE(title, '$.English'))) AS title_clean
 
       ,JSON_QUERY(properties, '$.messages') AS messages_json
       ,JSON_QUERY(properties, '$.show_rules') AS show_rules_json

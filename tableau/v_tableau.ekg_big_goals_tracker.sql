@@ -338,14 +338,14 @@ WITH act AS (
              ORDER BY reporting_term DESC) AS rn_most_recent
   FROM
       (
-       SELECT reporting_schoolid
-             ,region
-             ,school_level
-             ,academic_year
-             ,reporting_term
+       SELECT subject_primary_site_schoolid AS reporting_schoolid
+             ,subject_legal_entity_name AS region
+             ,subject_primary_site_school_level AS school_level
+             ,campaign_academic_year AS academic_year
+             ,campaign_reporting_term AS reporting_term
              ,CASE 
-               WHEN response_value >= 4 THEN 1.0
-               WHEN response_value < 4 THEN 0.0
+               WHEN answer_value >= 4 THEN 1.0
+               WHEN answer_value < 4 THEN 0.0
               END AS is_agree
        FROM gabby.surveys.manager_survey_detail
       ) sub
