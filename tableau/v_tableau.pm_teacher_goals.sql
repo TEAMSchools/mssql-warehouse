@@ -85,11 +85,11 @@ WITH reading_level AS (
         ,asr.date_taken
         ,asr.performance_band_number
         ,asr.is_mastery
-        ,'pct_qa_mastery_' + REPLACE(LOWER(asr.subject_area), ' ', '_') AS metric_name
+        ,'pct_' + LOWER(asr.module_type) + '_mastery_' + REPLACE(LOWER(asr.subject_area), ' ', '_') AS metric_name
   FROM gabby.illuminate_dna_assessments.agg_student_responses_all asr      
   WHERE asr.response_type = 'O'
-    AND asr.subject_area IN ('Algebra I','Algebra II','English 100','English 200','English 300','Geometry','Mathematics','Text Study')
-    AND asr.module_number IN ('QA1','QA2','QA3','QA4')  
+    AND asr.subject_area IN ('Algebra I','Algebra II','English 100','English 200','English 300','Geometry','Mathematics','Text Study', 'Science')
+    AND asr.module_type IN ('QA','CP')
  )
 
 ,etr_long AS (  
