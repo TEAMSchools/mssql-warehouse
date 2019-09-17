@@ -13,7 +13,7 @@ WITH academic_years AS (
   SELECT sub.df_employee_number
         ,sub.job_name
         ,sub.is_sped_teacher
-        ,sub.physical_location_name
+        ,sub.site_name_clean
         ,sub.ps_school_id
         ,sub.department_name
         ,sub.legal_entity_name
@@ -24,7 +24,6 @@ WITH academic_years AS (
       (
        SELECT wa.employee_reference_code AS df_employee_number
              ,wa.job_name
-             ,wa.physical_location_name
              ,wa.department_name
              ,wa.legal_entity_name
              ,CASE WHEN wa.job_name IN ('Learning Specialist', 'Learning Specialist Coordinator') THEN 1 ELSE 0 END AS is_sped_teacher
@@ -33,6 +32,7 @@ WITH academic_years AS (
                                     ,DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1, 6, 30))) AS work_assignment_effective_end
 
              ,sc.ps_school_id
+             ,sc.site_name_clean
        FROM gabby.dayforce.employee_work_assignment wa
        LEFT JOIN gabby.people.school_crosswalk sc
          ON wa.physical_location_name = sc.site_name
@@ -45,7 +45,7 @@ WITH academic_years AS (
 ,current_work_assignment AS (
   SELECT wa.df_employee_number
         ,wa.job_name
-        ,wa.physical_location_name
+        ,wa.site_name_clean
         ,wa.department_name
         ,wa.legal_entity_name
         ,wa.ps_school_id
@@ -64,7 +64,7 @@ WITH academic_years AS (
 SELECT cwa.df_employee_number
       ,cwa.academic_year
       ,cwa.job_name AS primary_job
-      ,cwa.physical_location_name AS primary_site
+      ,cwa.site_name_clean AS primary_site
       ,cwa.department_name AS primary_on_site_department
       ,cwa.legal_entity_name
       ,cwa.ps_school_id AS primary_site_schoolid
