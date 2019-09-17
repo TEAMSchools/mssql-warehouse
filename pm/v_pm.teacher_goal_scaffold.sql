@@ -62,7 +62,7 @@ SELECT sr.df_employee_number
 
       ,tm.metric_term
       ,tm.pm_term
-FROM gabby.pm.teacher_goals_roster sr
+FROM gabby.pm.teacher_goals_roster_static sr
 JOIN gabby.pm.teacher_goals tg
   ON sr.primary_site = tg.df_primary_site 
  AND sr.academic_year = tg.academic_year
@@ -120,7 +120,7 @@ SELECT sr.df_employee_number
 
       ,tm.metric_term
       ,tm.pm_term
-FROM gabby.pm.teacher_goals_roster sr
+FROM gabby.pm.teacher_goals_roster_static sr
 JOIN gabby.pm.teacher_goals tg
   ON sr.primary_site = tg.df_primary_site
  AND sr.grades_taught = tg.grade_level
@@ -181,7 +181,7 @@ SELECT sr.df_employee_number
 
       ,tm.metric_term
       ,tm.pm_term
-FROM gabby.pm.teacher_goals_roster sr
+FROM gabby.pm.teacher_goals_roster_static sr
 JOIN gabby.pm.teacher_goals tg
   ON sr.primary_site = tg.df_primary_site
  AND sr.academic_year = tg.academic_year
@@ -256,7 +256,7 @@ SELECT sr.df_employee_number
 
       ,tm.metric_term
       ,tm.pm_term
-FROM gabby.pm.teacher_goals_roster sr
+FROM gabby.pm.teacher_goals_roster_static sr
 JOIN gabby.pm.teacher_goals tg
   ON sr.primary_site = tg.df_primary_site
  AND sr.academic_year = tg.academic_year
