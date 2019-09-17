@@ -153,8 +153,7 @@ WITH act AS (
         ,(yearid + 1990) AS academic_year
         ,SUM(CONVERT(FLOAT,attendancevalue)) AS n_days_attendance
         ,SUM(CONVERT(FLOAT,membershipvalue)) AS n_days_membership
-  ,ROUND(AVG(CONVERT(FLOAT,attendancevalue)), 2) AS ada
-
+        ,ROUND(AVG(CONVERT(FLOAT,attendancevalue)), 2) AS ada
   FROM gabby.powerschool.ps_adaadm_daily_ctod
   WHERE membershipvalue > 0
     AND calendardate <= CONVERT(DATE,GETDATE())
