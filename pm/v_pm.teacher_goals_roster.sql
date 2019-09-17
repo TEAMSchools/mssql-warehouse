@@ -37,7 +37,7 @@ WITH academic_years AS (
        LEFT JOIN gabby.people.school_crosswalk sc
          ON wa.physical_location_name = sc.site_name
         AND sc._fivetran_deleted = 0
-       WHERE primary_work_assignment = 1
+       WHERE wa.primary_work_assignment = 1
          AND wa.job_name IN ('Teacher', 'Teacher Fellow', 'Teacher in Residence', 'Co-Teacher', 'Learning Specialist', 'Learning Specialist Coordinator', 'Teacher, ESL')
       ) sub
  )
