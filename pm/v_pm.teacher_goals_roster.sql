@@ -6,7 +6,7 @@ CREATE OR ALTER VIEW pm.teacher_goals_roster AS
 WITH academic_years AS (
   SELECT n AS academic_year
   FROM gabby.utilities.row_generator rg
-  WHERE rg.n BETWEEN 2002 AND gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+  WHERE rg.n BETWEEN 2018 AND gabby.utilities.GLOBAL_ACADEMIC_YEAR() /* 2018 = first year of Teacher Goals */
  )
 
 ,work_assignment AS (
