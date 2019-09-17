@@ -68,10 +68,9 @@ SELECT p.teachernumber
       ,p.n_students_gl
       ,p.n_students_total
       ,p.pct_students_gl
-      ,CASE
-        WHEN MAX(p.pct_students_gl) OVER(PARTITION BY p.teachernumber, p.academic_year) = p.pct_students_gl THEN 1 
-        ELSE 0 
-       END AS is_primary_gl
+      ,ROW_NUMBER() OVER(
+         PARTITION BY p.teachernumber, p.academic_year
+           ORDER BY p.pct_students_gl DESC) AS is_primary_gl
 
       ,cw.df_employee_number
 FROM percentages p
