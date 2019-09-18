@@ -97,7 +97,7 @@ FROM
           WHERE enr.course_enroll_status = 0
             AND enr.section_enroll_status = 0
             AND enr.illuminate_subject IN ('Mathematics','Algebra I','Geometry','Algebra II','Algebra IIA','Algebra IIB','Pre-Calculus'
-                                          ,'Text Study','English 100','English 200','English 300','English 400'
+                                          ,'Text Study','English 100','English 200','English 300','English 400','Composition 100','Composition 200','Composition 300','AP Language','AP Literature'
                                           ,'Science','Social Studies')
          ) sub
     ) sub
