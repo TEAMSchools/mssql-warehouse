@@ -26,11 +26,11 @@ BEGIN
     SET @destination_table_name = @source_view + N'_static';
 
     /* if source view does not exist, exit */
-    --IF OBJECTPROPERTYEX(OBJECT_ID(@source_view), 'IsTable') != 0
-    --BEGIN
-    --    PRINT ('View does not exist');
-    --    RETURN;
-    --END;
+    IF OBJECT_ID(@source_view, 'V') IS NULL
+    BEGIN
+        PRINT ('View does not exist');
+        RETURN;
+    END;
 
     /* if destination table does not exist, create and exit */
     IF OBJECT_ID(@destination_table_name) IS NULL
