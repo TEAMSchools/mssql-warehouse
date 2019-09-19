@@ -8,6 +8,7 @@ WITH ps_section_teacher AS (
         ,sec.section_number
         ,sec.section_type
         ,sec.course_number_clean AS course_number        
+        ,sec.yearid + 1990 AS academic_year
         ,sec.db_name
                 
         ,t.teachernumber
@@ -190,6 +191,7 @@ JOIN gabby.pm.teacher_goals tg
  AND tg._fivetran_deleted = 0
 JOIN ps_section_teacher st
   ON sr.ps_teachernumber = st.teachernumber COLLATE Latin1_General_BIN
+ AND sr.academic_year = st.academic_year
  AND sr.db_name = st.db_name
  AND tg.ps_course_number = st.course_number COLLATE Latin1_General_BIN 
 JOIN gabby.powerschool.course_enrollments_static enr
@@ -265,6 +267,7 @@ JOIN gabby.pm.teacher_goals tg
  AND tg._fivetran_deleted = 0
 JOIN ps_section_teacher st
   ON sr.ps_teachernumber = st.teachernumber COLLATE Latin1_General_BIN
+ AND sr.academic_year = st.academic_year
  AND sr.db_name = st.db_name
  AND tg.ps_course_number = st.course_number COLLATE Latin1_General_BIN 
 JOIN gabby.powerschool.course_enrollments_static enr
