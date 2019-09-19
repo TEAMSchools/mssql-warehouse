@@ -378,10 +378,12 @@ WITH reading_level AS (
            
              ,CASE
                WHEN tgs.is_sped_goal = 0 THEN am.is_mastery
-               WHEN tgs.is_sped_goal = 1
-                AND am.performance_band_number >= 3 THEN 1.0
-               WHEN tgs.is_sped_goal = 1
-                AND am.performance_band_number < 3 THEN 0.0
+               WHEN tgs.is_sped_goal = 1 AND tgs.metric_name LIKE '%iep345' AND am.performance_band_number >= 3 THEN 1.0
+               WHEN tgs.is_sped_goal = 1 AND tgs.metric_name LIKE '%iep345' AND am.performance_band_number < 3 THEN 0.0
+               WHEN tgs.is_sped_goal = 1 AND tgs.metric_name LIKE '%iep45' AND am.performance_band_number >= 4 THEN 1.0
+               WHEN tgs.is_sped_goal = 1 AND tgs.metric_name LIKE '%iep45' AND am.performance_band_number < 4 THEN 0.0
+               WHEN tgs.is_sped_goal = 1 AND am.performance_band_number >= 3 THEN 1.0
+               WHEN tgs.is_sped_goal = 1 AND am.performance_band_number < 3 THEN 0.0
               END AS is_mastery
        FROM gabby.pm.teacher_goal_scaffold_static tgs
        LEFT JOIN assessment_detail am
