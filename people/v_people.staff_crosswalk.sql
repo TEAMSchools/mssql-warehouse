@@ -38,7 +38,11 @@ SELECT sr.df_employee_number
       ,sr.paytype
       ,sr.flsa_status
       ,sr.annual_salary
-      ,COALESCE(sr.grades_taught,'Grade ' + CASE WHEN gl.student_grade_level = 0 THEN 'K' ELSE CONVERT(varchar, gl.student_grade_level) END) AS grades_taught
+      ,COALESCE(sr.grades_taught
+               ,'Grade ' + CASE 
+                            WHEN gl.student_grade_level = 0 THEN 'K' 
+                            ELSE CONVERT(VARCHAR(5), gl.student_grade_level) 
+                           END) AS grades_taught
       ,sr.subjects_taught
       ,sr.position_title
       ,sr.primary_on_site_department_entity
