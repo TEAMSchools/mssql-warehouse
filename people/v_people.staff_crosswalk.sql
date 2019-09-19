@@ -38,7 +38,11 @@ SELECT sr.df_employee_number
       ,sr.paytype
       ,sr.flsa_status
       ,sr.annual_salary
-      ,sr.grades_taught
+      ,COALESCE(sr.grades_taught
+               ,'Grade ' + CASE 
+                            WHEN gl.student_grade_level = 0 THEN 'K' 
+                            ELSE CONVERT(VARCHAR(5), gl.student_grade_level) 
+                           END) AS grades_taught
       ,sr.subjects_taught
       ,sr.position_title
       ,sr.primary_on_site_department_entity
@@ -70,6 +74,7 @@ SELECT sr.df_employee_number
       ,adm.mail AS manager_mail
 
       ,CASE WHEN c.personal_email != '' THEN c.personal_email END AS personal_email
+
 FROM gabby.dayforce.staff_roster sr
 LEFT JOIN gabby.people.id_crosswalk_powerschool idps
   ON sr.df_employee_number = idps.df_employee_number
@@ -80,3 +85,7 @@ LEFT JOIN gabby.adsi.user_attributes_static adm
   ON CONVERT(VARCHAR(25),sr.manager_df_employee_number) = adm.employeenumber
 LEFT JOIN gabby.dayforce.personal_contact_info c
   ON sr.df_employee_number = c.employee_number
+LEFT JOIN gabby.pm.teacher_grade_levels gl
+  ON sr.df_employee_number = gl.df_employee_number
+ AND gl.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+ AND gl.is_primary_gl = 1
