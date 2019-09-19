@@ -22,22 +22,21 @@ WITH academic_years AS (
         ,gabby.utilities.DATE_TO_SY(sub.work_assignment_effective_end) AS end_academic_year
   FROM
       (
-       SELECT wa.employee_reference_code AS df_employee_number
+       SELECT wa.df_employee_id AS df_employee_number
              ,wa.job_name
              ,wa.department_name
              ,wa.legal_entity_name
              ,CASE WHEN wa.job_name IN ('Learning Specialist', 'Learning Specialist Coordinator') THEN 1 ELSE 0 END AS is_sped_teacher
-             ,CONVERT(DATE, wa.work_assignment_effective_start) AS work_assignment_effective_start
-             ,CONVERT(DATE, COALESCE(wa.work_assignment_effective_end
-                                    ,DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1, 6, 30))) AS work_assignment_effective_end
+             ,CONVERT(DATE, wa.effective_start_date) AS work_assignment_effective_start
+             ,CONVERT(DATE, COALESCE(wa.effective_end_date, DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1, 6, 30))) AS work_assignment_effective_end
 
              ,sc.ps_school_id
              ,sc.site_name_clean
-       FROM gabby.dayforce.employee_work_assignment wa
+       FROM gabby.dayforce.work_assignment_status wa
        LEFT JOIN gabby.people.school_crosswalk sc
          ON wa.physical_location_name = sc.site_name
         AND sc._fivetran_deleted = 0
-       WHERE wa.primary_work_assignment = 1
+       WHERE wa.[status] NOT IN ('Terminated', 'Pre-Start')
          AND wa.job_name IN ('Teacher', 'Teacher Fellow', 'Teacher in Residence', 'Co-Teacher', 'Learning Specialist', 'Learning Specialist Coordinator', 'Teacher, ESL')
       ) sub
  )
