@@ -79,6 +79,7 @@ FROM gabby.dayforce.staff_roster sr
 LEFT JOIN gabby.people.id_crosswalk_powerschool idps
   ON sr.df_employee_number = idps.df_employee_number
  AND idps.is_master = 1
+ AND idps._fivetran_deleted = 0
 LEFT JOIN gabby.adsi.user_attributes_static ads
   ON CONVERT(VARCHAR(25),sr.df_employee_number) = ads.employeenumber
 LEFT JOIN gabby.adsi.user_attributes_static adm
