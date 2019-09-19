@@ -11,15 +11,15 @@ SELECT sr.df_employee_number
       ,sr.gender
       ,sr.primary_ethnicity
       ,sr.is_hispanic
-      ,sr.address
+      ,sr.[address]
       ,sr.city
-      ,sr.state
+      ,sr.[state]
       ,sr.postal_code
       ,sr.birth_date
       ,sr.original_hire_date
       ,sr.termination_date
       ,sr.rehire_date
-      ,sr.status
+      ,sr.[status]
       ,sr.status_reason
       ,sr.is_manager
       ,sr.leadership_role
@@ -38,7 +38,7 @@ SELECT sr.df_employee_number
       ,sr.paytype
       ,sr.flsa_status
       ,sr.annual_salary
-      ,COALESCE(sr.grades_taught
+      ,COALESCE(CASE WHEN sr.grades_taught = 'Kindergarten' THEN 'Grade K' ELSE sr.grades_taught END
                ,'Grade ' + CASE 
                             WHEN gl.student_grade_level = 0 THEN 'K' 
                             ELSE CONVERT(VARCHAR(5), gl.student_grade_level) 
