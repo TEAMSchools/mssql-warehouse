@@ -18,12 +18,32 @@ WITH dlrosters AS (
         ,p.[Others Involved]
         ,p.[NJ State Reporting]
         ,p.[Behavior Category]
+        ,p.[Final approval]
+        ,p.[Approver name]
+        ,p.[Instructor Source]
+        ,p.[Instructor Name]
+        ,p.[Hours per week]
+        ,p.[Hourly rate]
+        ,p.[Board Approval Date]
   FROM
       (
        SELECT incident_id
              ,field_name
              ,value
        FROM gabby.deanslist.incidents_custom_fields
+       WHERE field_name IN ('Behavior Category'
+                           ,'NJ State Reporting'
+                           ,'Others Involved'
+                           ,'Parent Contacted?'
+                           ,'Perceived Motivation'
+                           ,'Restraint Used'
+                           ,'Final approval'
+                           ,'Approver name'
+                           ,'Instructor Source'
+                           ,'Instructor Name'
+                           ,'Hours per week'
+                           ,'Hourly rate'
+                           ,'Board Approval Date')
       ) sub
   PIVOT(
     MAX(value)
@@ -32,7 +52,14 @@ WITH dlrosters AS (
                       ,[Others Involved]
                       ,[Parent Contacted?]
                       ,[Perceived Motivation]
-                      ,[Restraint Used])
+                      ,[Restraint Used]
+                      ,[Final approval]
+                      ,[Approver name]
+                      ,[Instructor Source]
+                      ,[Instructor Name]
+                      ,[Hours per week]
+                      ,[Hourly rate]
+                      ,[Board Approval Date])
    ) p
  )
 
@@ -69,12 +96,19 @@ SELECT co.student_number
       
       ,CONVERT(VARCHAR(5),d.alt_name) AS term
 
-      ,cf.[Restraint Used]
-      ,cf.[Perceived Motivation]
-      ,cf.[Parent Contacted?]
-      ,cf.[Others Involved]
-      ,cf.[NJ State Reporting]
       ,cf.[Behavior Category]
+      ,cf.[NJ State Reporting]
+      ,cf.[Others Involved]
+      ,cf.[Parent Contacted?]
+      ,cf.[Perceived Motivation]
+      ,cf.[Restraint Used]
+      ,cf.[Final approval]
+      ,cf.[Approver name]
+      ,cf.[Instructor Source]
+      ,cf.[Instructor Name]
+      ,cf.[Hours per week]
+      ,cf.[Hourly rate]
+      ,cf.[Board Approval Date]
 FROM gabby.powerschool.cohort_identifiers_static co
 LEFT OUTER JOIN dlrosters r
   ON co.student_number = r.student_school_id
@@ -127,12 +161,19 @@ SELECT co.student_number
 
       ,CONVERT(VARCHAR(5),d.alt_name) AS term
 
-      ,NULL AS [Restraint Used]
-      ,NULL AS [Perceived Motivation]
-      ,NULL AS [Parent Contacted?]
-      ,NULL AS [Others Involved]
-      ,NULL AS [NJ State Reporting]
       ,NULL AS [Behavior Category]
+      ,NULL AS [NJ State Reporting]
+      ,NULL AS [Others Involved]
+      ,NULL AS [Parent Contacted?]
+      ,NULL AS [Perceived Motivation]
+      ,NULL AS [Restraint Used]
+      ,NULL AS [Final approval]
+      ,NULL AS [Approver name]
+      ,NULL AS [Instructor Source]
+      ,NULL AS [Instructor Name]
+      ,NULL AS [Hours per week]
+      ,NULL AS [Hourly rate]
+      ,NULL AS [Board Approval Date]
 FROM gabby.powerschool.cohort_identifiers_static co
 LEFT OUTER JOIN dlrosters r
   ON co.student_number = r.student_school_id
@@ -185,12 +226,19 @@ SELECT co.student_number
       
       ,CONVERT(VARCHAR(5),d.alt_name) AS term
 
-      ,NULL AS [Restraint Used]
-      ,NULL AS [Perceived Motivation]
-      ,NULL AS [Parent Contacted?]
-      ,NULL AS [Others Involved]
-      ,NULL AS [NJ State Reporting]
       ,NULL AS [Behavior Category]
+      ,NULL AS [NJ State Reporting]
+      ,NULL AS [Others Involved]
+      ,NULL AS [Parent Contacted?]
+      ,NULL AS [Perceived Motivation]
+      ,NULL AS [Restraint Used]
+      ,NULL AS [Final approval]
+      ,NULL AS [Approver name]
+      ,NULL AS [Instructor Source]
+      ,NULL AS [Instructor Name]
+      ,NULL AS [Hours per week]
+      ,NULL AS [Hourly rate]
+      ,NULL AS [Board Approval Date]
 FROM gabby.powerschool.cohort_identifiers_static co
 LEFT OUTER JOIN dlrosters r
   ON co.student_number = r.student_school_id
