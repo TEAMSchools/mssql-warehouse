@@ -55,9 +55,8 @@ WITH roster AS (
             FROM roster r
            ) sub
        GROUP BY sub.academic_year
-               ,sub.school_level
                ,ROLLUP(sub.region, sub.reporting_schoolid)
-               ,CUBE(sub.grade_level)
+               ,CUBE(sub.school_level, sub.grade_level)
       ) sub
   UNPIVOT(
     value
@@ -150,9 +149,8 @@ WITH roster AS (
        GROUP BY sub.academic_year
                ,sub.subject_area
                ,sub.module_number
-               ,sub.school_level
                ,ROLLUP(sub.region, sub.reporting_schoolid)
-               ,CUBE(sub.grade_level)
+               ,CUBE(sub.school_level, sub.grade_level)
       ) sub
   UNPIVOT (
     value
@@ -227,9 +225,8 @@ WITH roster AS (
            ) sub
        GROUP BY sub.academic_year
                ,sub.subject
-               ,sub.school_level
                ,ROLLUP(sub.region, sub.reporting_schoolid)
-               ,CUBE(sub.grade_level)
+               ,CUBE(sub.school_level, sub.grade_level)
       ) sub
   UNPIVOT (
     value
@@ -346,9 +343,8 @@ WITH roster AS (
              ,CAST(COUNT(DISTINCT CASE WHEN sub.is_oss_week >= 1 THEN sub.student_number END) AS FLOAT) AS n_oss_week
        FROM student_attendance sub
        GROUP BY sub.academic_year
-               ,sub.school_level
                ,ROLLUP(sub.region, sub.reporting_schoolid)
-               ,CUBE(sub.grade_level)
+               ,CUBE(sub.school_level, sub.grade_level)
       ) sub
   UNPIVOT(
     value 
@@ -388,9 +384,8 @@ WITH roster AS (
        WHERE sa.enroll_status = 0
       ) sub
   GROUP BY sub.academic_year
-          ,sub.school_level
           ,ROLLUP(sub.region, sub.reporting_schoolid)
-          ,CUBE(sub.grade_level)
+          ,CUBE(sub.school_level, sub.grade_level)
  )
 
 ,staff_attrition AS (
@@ -435,8 +430,8 @@ WITH roster AS (
               AND a.academic_year = 2002
            ) sub
        GROUP BY sub.academic_year
-               ,sub.school_level
                ,ROLLUP(sub.region, sub.reporting_schoolid)
+               ,CUBE(sub.school_level)
       ) sub
   UNPIVOT(
     value
@@ -487,9 +482,8 @@ WITH roster AS (
        WHERE DATEFROMPARTS(y1.academic_year, 10, 01) BETWEEN y1.entrydate AND y1.exitdate
       ) sub
   GROUP BY sub.academic_year
-          ,sub.school_level
           ,ROLLUP(sub.region, sub.reporting_schoolid)
-          ,CUBE(sub.grade_level)
+          ,CUBE(sub.school_level, sub.grade_level)
  )
 
 ,gpa AS (
@@ -530,9 +524,8 @@ WITH roster AS (
              AND gpa.is_curterm = 1
            ) sub
        GROUP BY sub.academic_year
-               ,sub.school_level
                ,ROLLUP(sub.region, sub.reporting_schoolid)
-               ,CUBE(sub.grade_level)
+               ,CUBE(sub.school_level, sub.grade_level)
       ) sub
   UNPIVOT(
     value
@@ -594,8 +587,8 @@ WITH roster AS (
                     ,schoolid
            ) sub
        GROUP BY sub.academic_year
-               ,sub.primary_site_school_level
                ,ROLLUP(sub.region, sub.reporting_schoolid)
+               ,CUBE(sub.primary_site_school_level)
       ) sub
   UNPIVOT(
     value
@@ -648,9 +641,8 @@ WITH roster AS (
            ) sub
        GROUP BY sub.academic_year
                ,sub.reporting_term
-               ,sub.school_level
                ,ROLLUP(sub.region, sub.reporting_schoolid)
-               ,CUBE(sub.grade_level)
+               ,CUBE(sub.school_level, sub.grade_level)
       ) sub
   UNPIVOT(
     value
@@ -690,8 +682,8 @@ WITH roster AS (
       ) sub
   GROUP BY academic_year
           ,reporting_term
-          ,subject_primary_site_school_level
           ,ROLLUP(subject_legal_entity_name, subject_primary_site_schoolid)
+          ,CUBE(subject_primary_site_school_level)
  )
 
 ,manager_survey AS (
@@ -725,8 +717,8 @@ WITH roster AS (
       ) sub
   GROUP BY academic_year
           ,reporting_term
-          ,subject_primary_site_school_level
           ,ROLLUP(subject_legal_entity_name, subject_primary_site_schoolid)
+          ,CUBE(subject_primary_site_school_level)
  )
 
 SELECT d.academic_year
