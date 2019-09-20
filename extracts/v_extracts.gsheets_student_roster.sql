@@ -15,6 +15,7 @@ SELECT co.studentid
       ,co.region
       ,co.reporting_schoolid
       ,co.boy_status
+      ,co.enroll_status
 FROM gabby.powerschool.cohort_identifiers_static co
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.rn_year = 1 
