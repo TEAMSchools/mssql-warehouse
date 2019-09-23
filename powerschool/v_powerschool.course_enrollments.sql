@@ -133,6 +133,7 @@ FROM
                   WHEN cc.course_number_clean = 'COM01101G1' THEN 'Composition 100'
                   WHEN cc.course_number_clean = 'COM01101G2' THEN 'Composition 200'
                   WHEN cc.course_number_clean = 'COM01102G3' THEN 'Composition 300'
+                  WHEN cc.course_number_clean = 'COM22110C3' THEN 'AP Seminar'
                   WHEN cc.course_number_clean = 'ENG01005C3' THEN 'AP Language'
                   WHEN cc.course_number_clean = 'ENG01006C4' THEN 'AP Literature'
                   WHEN cc.course_number_clean = 'M315' THEN NULL /* ignore MS Pre-Algebra */
