@@ -16,7 +16,7 @@ SELECT CONVERT(INT, s.StudentNumber) AS student_number
                              END) COLLATE Latin1_General_BIN AS lunch_app_status
       ,CASE
         WHEN s.IsDC = 1 THEN 'F'
-        WHEN s.Application_Approval_Result_Description IN ('Denied, High Income') THEN 'P'
+        WHEN s.Application_Approval_Result_Description LIKE ('Denied%') THEN 'P'
         WHEN s.Application_Approval_Result_Description IN ('Zero Income') THEN 'F'
         WHEN s.Application_Approval_Result_Description IS NULL AND s.EligibilityDescription LIKE 'Prior%' THEN 'P'
         ELSE LEFT(COALESCE(s.Application_Approval_Result_Description, s.MealBenefitsStatusDescription), 1)
@@ -51,7 +51,7 @@ SELECT CONVERT(INT, s.StudentNumber) AS student_number
                              END) COLLATE Latin1_General_BIN AS lunch_app_status
       ,CASE
         WHEN s.IsDC = 1 THEN 'F'
-        WHEN s.Application_Approval_Result_Description IN ('Denied, High Income') THEN 'P'
+        WHEN s.Application_Approval_Result_Description LIKE ('Denied%') THEN 'P'
         WHEN s.Application_Approval_Result_Description IN ('Zero Income') THEN 'F'
         WHEN s.Application_Approval_Result_Description IS NULL AND s.EligibilityDescription LIKE 'Prior%' THEN 'P'
         ELSE LEFT(COALESCE(s.Application_Approval_Result_Description, s.MealBenefitsStatusDescription), 1)

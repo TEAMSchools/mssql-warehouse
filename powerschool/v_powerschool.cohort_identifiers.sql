@@ -173,16 +173,20 @@ SELECT co.studentid
       ,saa.student_web_id
       ,saa.student_web_password
 
-      ,CONVERT(VARCHAR(5),CASE
-                           WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
-                            AND co.rn_year = 1 THEN CASE
-                                                     WHEN DB_NAME() = 'kippmiami' THEN REPLACE(s.lunchstatus, 'false', 'F')
-                                                     WHEN DB_NAME() IN ('kippnewark', 'kippcamden') THEN mcs.lunch_status COLLATE Latin1_General_BIN
-                                                    END
-                           WHEN co.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
-                            AND co.entrydate = s.entrydate THEN REPLACE(s.lunchstatus, 'false', 'F')
-                           ELSE co.lunchstatus
-                          END) AS lunchstatus
+      ,CONVERT(VARCHAR(5),UPPER(CASE
+                                 WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
+                                  AND co.rn_year = 1 THEN CASE
+                                                           WHEN s.lunchstatus = 'NoD' THEN NULL
+                                                           WHEN DB_NAME() = 'kippmiami' THEN REPLACE(s.lunchstatus, 'false', 'F')
+                                                           WHEN DB_NAME() IN ('kippnewark', 'kippcamden') THEN mcs.lunch_status COLLATE Latin1_General_BIN
+                                                          END
+                                 WHEN co.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
+                                  AND co.entrydate = s.entrydate THEN CASE
+                                                                       WHEN s.lunchstatus = 'NoD' THEN NULL
+                                                                       ELSE REPLACE(s.lunchstatus, 'false', 'F')
+                                                                      END
+                                 ELSE co.lunchstatus
+                                END)) AS lunchstatus
       ,CONVERT(VARCHAR(125),CASE
                              WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
                               AND co.rn_year = 1 THEN CASE

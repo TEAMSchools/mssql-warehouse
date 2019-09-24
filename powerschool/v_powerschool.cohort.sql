@@ -68,7 +68,6 @@ FROM
            ,exit_code_kf
            ,exit_code_ts
            ,exitcomment
-           ,lunchstatus
            ,fteid
            ,ISNULL(track, 'A') AS track
            ,yearid
@@ -76,7 +75,12 @@ FROM
            ,rn_year
            ,rn_school
            ,rn_undergrad
-           ,rn_all           
+           ,rn_all
+           ,CASE 
+             WHEN sub.lunchstatus = 'false' THEN 'F'
+             WHEN sub.lunchstatus IN ('', 'NoD', '1', '2') THEN NULL
+             ELSE sub.lunchstatus
+            END AS lunchstatus
            ,CASE
              WHEN rn_year > 1 THEN NULL
              ELSE CONVERT(INT,ROW_NUMBER() OVER(
@@ -144,7 +148,7 @@ FROM
                      ,CONVERT(VARCHAR,s.entrycode) AS entrycode
                      ,CONVERT(VARCHAR,s.exitcode) AS exitcode
                      ,CONVERT(VARCHAR(250),s.exitcomment) AS exitcomment
-                     ,CONVERT(VARCHAR,CASE WHEN s.lunchstatus = 'false' THEN 'F' ELSE s.lunchstatus END) AS lunchstatus
+                     ,CONVERT(VARCHAR,s.lunchstatus) AS lunchstatus
                      ,CONVERT(INT,s.fteid) AS fteid
                      ,CONVERT(VARCHAR(1),s.track) AS track
 
@@ -208,7 +212,7 @@ FROM
                      ,CONVERT(VARCHAR,re.entrycode) AS entrycode
                      ,CONVERT(VARCHAR,re.exitcode) AS exitcode
                      ,CONVERT(VARCHAR(250),re.exitcomment) AS exitcomment
-                     ,CONVERT(VARCHAR,CASE WHEN re.lunchstatus = 'false' THEN 'F' ELSE re.lunchstatus END) AS lunchstatus
+                     ,CONVERT(VARCHAR,s.lunchstatus) AS lunchstatus
                      ,CONVERT(INT,re.fteid) AS fteid
                      ,CONVERT(VARCHAR(1),re.track) AS track
                 
