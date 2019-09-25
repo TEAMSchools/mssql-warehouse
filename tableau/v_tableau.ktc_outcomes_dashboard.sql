@@ -75,5 +75,4 @@ LEFT JOIN gabby.alumni.enrollment_identifiers ei
 LEFT JOIN matric_app a
   ON c.sf_contact_id = a.contact_id
  AND a.rn = 1
-WHERE c.ktc_status IN ('HSG', 'TAF')
-  AND c.sf_contact_id IS NOT NULL
+WHERE c.sf_contact_id IS NOT NULL
