@@ -212,7 +212,7 @@ FROM
                      ,CONVERT(VARCHAR,re.entrycode) AS entrycode
                      ,CONVERT(VARCHAR,re.exitcode) AS exitcode
                      ,CONVERT(VARCHAR(250),re.exitcomment) AS exitcomment
-                     ,CONVERT(VARCHAR,s.lunchstatus) AS lunchstatus
+                     ,CONVERT(VARCHAR,re.lunchstatus) AS lunchstatus
                      ,CONVERT(INT,re.fteid) AS fteid
                      ,CONVERT(VARCHAR(1),re.track) AS track
                 
