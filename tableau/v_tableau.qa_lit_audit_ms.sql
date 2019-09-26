@@ -336,7 +336,7 @@ SELECT al.student_number
       ,al.audit_status
       ,al.audit_reason
 
-      ,COALESCE(ins.unique_id, hard.unique_id) AS verify_unique_id
+      ,COALESCE(ins.unique_id, hard.unique_id, z.unique_id) AS verify_unique_id
 FROM audits_long al
 LEFT JOIN fp_long ins
   ON al.student_number = ins.student_identifier
@@ -350,3 +350,10 @@ LEFT JOIN fp_long hard
  AND al.test_round = hard.assessment_test_round
  AND hard.benchmark_level = 'DNA - Hard'
  AND hard.rn = 1
+LEFT JOIN fp_long z
+  ON al.student_number = z.student_identifier
+ AND al.academic_year = z.assessment_academic_year
+ AND al.test_round = z.assessment_test_round
+ AND z.benchmark_level = 'Achieved'
+ AND z.text_level = 'Z'
+ AND z.rn = 1
