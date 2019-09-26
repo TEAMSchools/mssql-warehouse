@@ -184,7 +184,7 @@ WITH fp_long AS (
         ,CASE
           WHEN s.max_lvl_num = 26 THEN 0 /* Achieved Z */
           WHEN s.independent_level = 'Z' THEN 0 /* Achieved Z */
-          WHEN s.year_in_network = 1 THEN 1 /* new to KNJ */
+          WHEN s.entrydate >= s.test_round_start_date THEN 1 /* new to KNJ */
           WHEN s.instructional_assessment_date IS NULL THEN 1 /* missing all data */
           WHEN s.goal_status = 'Far Below' THEN 1 /* status */
           WHEN s.academic_year - s.instructional_academic_year > 1 THEN 1 /* more than 2 rounds ago */
@@ -192,7 +192,7 @@ WITH fp_long AS (
           ELSE 0
          END AS audit_status
         ,CASE
-          WHEN s.year_in_network = 1 THEN 'New to KIPP NJ'
+          WHEN s.entrydate >= s.test_round_start_date THEN 'New to KIPP NJ'
           WHEN s.instructional_assessment_date IS NULL THEN 'No Instructional Level'
           WHEN s.goal_status = 'Far Below' THEN 'Far Below'
           WHEN s.academic_year - s.instructional_academic_year > 1 THEN 'More Than 3 Rounds Since Last Test'
