@@ -3,9 +3,18 @@ GO
 
 CREATE OR ALTER VIEW surveygizmo.survey_response_data AS
 
-SELECT sr.id AS survey_response_id
+WITH responses AS (
+  SELECT sr.id AS survey_response_id
+        ,sr.survey_id
+        ,sr.survey_data
+        ,CONVERT(DATE, LEFT(date_started, 19)) AS date_started
+        ,ROW_NUMBER() OVER(PARTITION BY sr.survey_id, sr.id ORDER BY sr._modified DESC) AS rn
+  FROM gabby.surveygizmo.survey_response sr
+ )
+
+SELECT sr.survey_response_id
       ,sr.survey_id
-      ,CONVERT(DATE, LEFT(date_started, 19)) AS date_started
+      ,sr.date_started
 
       ,sd.id AS question_id
       ,sd.section_id
@@ -14,7 +23,7 @@ SELECT sr.id AS survey_response_id
       ,sd.answer_id
       ,sd.answer
       ,sd.shown
-FROM gabby.surveygizmo.survey_response sr
+FROM responses sr
 CROSS APPLY OPENJSON(sr.survey_data, '$')
   WITH (
     id INT,
@@ -25,3 +34,4 @@ CROSS APPLY OPENJSON(sr.survey_data, '$')
     answer VARCHAR(MAX),
     shown BIT
    ) AS sd
+WHERE sr.rn = 1
