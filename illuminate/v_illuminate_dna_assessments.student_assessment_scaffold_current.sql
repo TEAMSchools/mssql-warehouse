@@ -26,18 +26,15 @@ SELECT sub.assessment_id
       ,sub.performance_band_set_id
       ,sub.academic_year
       ,CASE 
-        WHEN sub.scope = 'Cumulative Review Quizzes' AND sub.grade_level_id IN (1, 2, 3) THEN 'CP'
-        WHEN sub.scope = 'Cold Read Quizzes' AND sub.grade_level_id IN (1, 2) THEN 'CP'
+        WHEN sub.scope IN ('Cumulative Review Quizzes', 'Cold Read Quizzes') AND sub.grade_level_id IN (1, 2) THEN 'CP'
         ELSE sub.module_type
        END AS module_type
       ,CASE 
-        WHEN sub.scope = 'Cumulative Review Quizzes' AND sub.grade_level_id IN (1, 2, 3) THEN REPLACE(sub.module_number, 'CRQ', 'CP')
-        WHEN sub.scope = 'Cold Read Quizzes' AND sub.grade_level_id IN (1, 2) THEN REPLACE(sub.module_number, 'CRQ', 'CP')
+        WHEN sub.scope IN ('Cumulative Review Quizzes', 'Cold Read Quizzes') AND sub.grade_level_id IN (1, 2) THEN REPLACE(sub.module_number, 'CRQ', 'CP')
         ELSE sub.module_number
        END AS module_number
       ,CASE 
-        WHEN sub.scope = 'Cumulative Review Quizzes' AND sub.grade_level_id IN (1, 2, 3) THEN 'Checkpoint'
-        WHEN sub.scope = 'Cold Read Quizzes' AND sub.grade_level_id IN (1, 2) THEN 'Checkpoint'
+        WHEN sub.scope IN ('Cumulative Review Quizzes', 'Cold Read Quizzes') AND sub.grade_level_id IN (1, 2) THEN 'Checkpoint'
         ELSE sub.scope
        END AS scope
       ,sub.subject_area
