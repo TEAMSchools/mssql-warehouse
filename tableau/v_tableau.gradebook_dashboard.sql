@@ -8,9 +8,10 @@ WITH section_teacher AS (
         ,scaff.yearid
         ,scaff.course_number        
         ,scaff.sectionid        
-        ,scaff.db_name
+        ,scaff.[db_name]
         
         ,CONVERT(VARCHAR(125),sec.section_number) AS section_number
+        ,sec.external_expression
         
         ,t.lastfirst AS teacher_name               
         
@@ -20,10 +21,10 @@ WITH section_teacher AS (
   FROM gabby.powerschool.course_section_scaffold scaff 
   JOIN gabby.powerschool.sections sec 
     ON scaff.sectionid = sec.id
-   AND scaff.db_name = sec.db_name
+   AND scaff.[db_name] = sec.[db_name]
   JOIN gabby.powerschool.teachers_static t 
     ON sec.teacher = t.id 
-   AND sec.db_name = t.db_name
+   AND sec.[db_name] = t.[db_name]
  )
 
 /* current year - term grades */
@@ -38,6 +39,7 @@ SELECT co.student_number
       ,co.iep_status
       ,co.cohort
       ,co.region
+      ,co.gender
             
       ,gr.credittype
       ,gr.course_number
@@ -59,7 +61,8 @@ SELECT co.student_number
       ,st.sectionid
       ,st.teacher_name
       ,st.section_number       
-      ,st.section_number AS period
+      ,st.section_number AS [period]
+      ,st.external_expression
 
       ,MAX(CASE WHEN gr.is_curterm = 1 THEN gr.need_65 ELSE NULL END) OVER(PARTITION BY co.student_number, co.academic_year, gr.course_number) AS need_65
       ,MAX(CASE WHEN gr.is_curterm = 1 THEN gr.need_70 ELSE NULL END) OVER(PARTITION BY co.student_number, co.academic_year, gr.course_number) AS need_70
@@ -69,11 +72,11 @@ FROM gabby.powerschool.cohort_identifiers_static co
 JOIN gabby.powerschool.final_grades_static gr 
   ON co.student_number = gr.student_number
  AND co.academic_year = gr.academic_year 
- AND co.db_name = gr.db_name
+ AND co.[db_name] = gr.[db_name]
 JOIN section_teacher st 
   ON co.studentid = st.studentid
  AND co.yearid = st.yearid
- AND co.db_name = st.db_name
+ AND co.[db_name] = st.[db_name]
  AND gr.course_number = st.course_number
  AND st.rn = 1
 WHERE co.rn_year = 1
@@ -94,6 +97,7 @@ SELECT co.student_number
       ,co.iep_status
       ,co.cohort
       ,co.region
+      ,co.gender
 
       ,gr.credittype
       ,gr.course_number
@@ -115,7 +119,8 @@ SELECT co.student_number
       ,st.sectionid
       ,st.teacher_name
       ,st.section_number       
-      ,st.section_number AS period
+      ,st.section_number AS [period]
+      ,st.external_expression
 
       ,MAX(CASE WHEN gr.is_curterm = 1 THEN gr.need_65 ELSE NULL END) OVER(PARTITION BY co.student_number, co.academic_year, gr.course_number) AS need_65
       ,MAX(CASE WHEN gr.is_curterm = 1 THEN gr.need_70 ELSE NULL END) OVER(PARTITION BY co.student_number, co.academic_year, gr.course_number) AS need_70
@@ -125,18 +130,18 @@ FROM gabby.powerschool.cohort_identifiers_static co
 JOIN gabby.powerschool.final_grades_static gr 
   ON co.student_number = gr.student_number
  AND co.academic_year = gr.academic_year 
- AND co.db_name = gr.db_name
+ AND co.[db_name] = gr.[db_name]
  AND gr.is_curterm = 1
 LEFT JOIN gabby.powerschool.storedgrades y1
   ON co.studentid = y1.studentid
  AND co.academic_year = y1.academic_year
- AND co.db_name = y1.db_name
+ AND co.[db_name] = y1.[db_name]
  AND gr.course_number = y1.course_number_clean
  AND y1.storecode_clean = 'Y1'
 JOIN section_teacher st
   ON co.studentid = st.studentid
  AND co.yearid = st.yearid
- AND co.db_name = st.db_name
+ AND co.[db_name] = st.[db_name]
  AND gr.course_number = st.course_number
  AND st.rn = 1
 WHERE co.rn_year = 1
@@ -157,6 +162,7 @@ SELECT co.student_number
       ,co.iep_status      
       ,co.cohort
       ,co.region
+      ,co.gender
       
       ,ex.credittype
       ,ex.course_number
@@ -184,7 +190,8 @@ SELECT co.student_number
       ,st.sectionid
       ,st.teacher_name
       ,st.section_number       
-      ,st.section_number AS period
+      ,st.section_number AS [period]
+      ,st.external_expression
 
       ,NULL AS need_65
       ,NULL AS need_70
@@ -200,7 +207,7 @@ JOIN section_teacher st
  AND co.yearid = st.yearid
  AND ex.course_number = st.course_number
  AND st.rn = 1
- AND st.db_name = 'kippnewark'
+ AND st.[db_name] = 'kippnewark'
 WHERE co.rn_year = 1
   AND co.schoolid = 73253
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
@@ -219,6 +226,7 @@ SELECT co.student_number
       ,co.iep_status
       ,co.cohort
       ,co.region
+      ,co.gender
 
       ,sg.credit_type AS credittype
       ,sg.course_number
@@ -240,7 +248,8 @@ SELECT co.student_number
       ,st.sectionid
       ,st.teacher_name
       ,st.section_number       
-      ,st.section_number AS period
+      ,st.section_number AS [period]
+      ,st.external_expression
 
       ,NULL AS need_65
       ,NULL AS need_70
@@ -250,13 +259,13 @@ FROM gabby.powerschool.cohort_identifiers_static co
 LEFT JOIN gabby.powerschool.storedgrades sg
   ON co.studentid = sg.studentid
  AND co.academic_year = sg.academic_year
- AND co.db_name = sg.db_name
+ AND co.[db_name] = sg.[db_name]
  AND sg.storecode_clean = 'Y1'
  AND sg.course_number_clean IS NOT NULL
 LEFT JOIN section_teacher st
   ON co.studentid = st.studentid
  AND co.yearid = st.yearid
- AND co.db_name = st.db_name
+ AND co.[db_name] = st.[db_name]
  AND sg.course_number = st.course_number
  AND st.rn = 1
 WHERE co.rn_year = 1
@@ -277,9 +286,10 @@ SELECT COALESCE(co.student_number, e1.student_number) AS student_number
       ,COALESCE(co.iep_status, e1.iep_status) AS iep_status
       ,COALESCE(co.cohort, e1.cohort) AS cohort
       ,COALESCE(co.region, e1.region) AS region
+      ,COALESCE(co.gender, e1.gender) AS gender
       
       ,'TRANSFER' AS credittype
-      ,CONVERT(VARCHAR(125),CONCAT('TRANSFER', tr.termid, tr.db_name, tr.dcid)) COLLATE Latin1_General_BIN AS course_number
+      ,CONVERT(VARCHAR(125),CONCAT('TRANSFER', tr.termid, tr.[db_name], tr.dcid)) COLLATE Latin1_General_BIN AS course_number
       ,CONVERT(VARCHAR(125),tr.course_name) AS course_name
       ,'Y1' AS reporting_term
       ,'Y1' AS finalgradename            
@@ -297,7 +307,8 @@ SELECT COALESCE(co.student_number, e1.student_number) AS student_number
       ,CONVERT(INT,tr.sectionid) AS sectionid
       ,'TRANSFER' AS teacher_name    
       ,'TRANSFER' AS section_number       
-      ,NULL AS period
+      ,NULL AS [period]
+      ,NULL AS external_expression
       ,NULL AS need_65
       ,NULL AS need_70
       ,NULL AS need_80
@@ -306,13 +317,13 @@ FROM gabby.powerschool.storedgrades tr
 LEFT JOIN gabby.powerschool.cohort_identifiers_static co 
   ON tr.studentid = co.studentid
  AND tr.schoolid = co.schoolid
- AND tr.db_name = co.db_name
+ AND tr.[db_name] = co.[db_name]
  AND tr.academic_year = co.academic_year
  AND co.rn_year = 1
 LEFT JOIN gabby.powerschool.cohort_identifiers_static e1 
   ON tr.studentid = e1.studentid
  AND tr.schoolid = e1.schoolid
- AND tr.db_name = e1.db_name
+ AND tr.[db_name] = e1.[db_name]
  AND e1.year_in_school = 1
 WHERE tr.storecode_clean = 'Y1'
   AND tr.course_number_clean IS NULL
@@ -331,6 +342,7 @@ SELECT co.student_number
       ,co.iep_status      
       ,co.cohort
       ,co.region
+      ,co.gender
       
       ,cg.credittype
       ,cg.course_number
@@ -356,7 +368,8 @@ SELECT co.student_number
       ,st.sectionid
       ,st.teacher_name
       ,st.section_number       
-      ,st.section_number AS period
+      ,st.section_number AS [period]
+      ,st.external_expression
 
       ,NULL AS need_65
       ,NULL AS need_70
@@ -366,11 +379,11 @@ FROM gabby.powerschool.cohort_identifiers_static co
 JOIN gabby.powerschool.category_grades_static cg
   ON co.student_number = cg.student_number
  AND co.academic_year = cg.academic_year 
- AND co.db_name = cg.db_name
+ AND co.[db_name] = cg.[db_name]
 JOIN section_teacher st
   ON co.studentid = st.studentid
  AND co.yearid = st.yearid
- AND co.db_name = st.db_name
+ AND co.[db_name] = st.[db_name]
  AND cg.course_number = st.course_number
  AND st.rn = 1
 WHERE co.rn_year = 1
@@ -391,6 +404,7 @@ SELECT co.student_number
       ,co.iep_status      
       ,co.cohort
       ,co.region
+      ,co.gender
       
       ,cy.credittype
       ,cy.course_number
@@ -416,7 +430,8 @@ SELECT co.student_number
       ,st.sectionid
       ,st.teacher_name
       ,st.section_number       
-      ,st.section_number AS period
+      ,st.section_number AS [period]
+      ,st.external_expression
 
       ,NULL AS need_65
       ,NULL AS need_70
@@ -426,12 +441,12 @@ FROM gabby.powerschool.cohort_identifiers_static co
 JOIN gabby.powerschool.category_grades_static cy
   ON co.student_number = cy.student_number
  AND co.academic_year = cy.academic_year 
- AND co.db_name = cy.db_name
+ AND co.[db_name] = cy.[db_name]
  AND cy.is_curterm = 1
 JOIN section_teacher st
   ON co.studentid = st.studentid
  AND co.yearid = st.yearid
- AND co.db_name = st.db_name
+ AND co.[db_name] = st.[db_name]
  AND cy.course_number = st.course_number
  AND st.rn = 1
 WHERE co.rn_year = 1
