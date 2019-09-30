@@ -105,6 +105,7 @@ SELECT co.student_number
       ,LEAD(co.exitcode, 1) OVER(PARTITION BY co.student_number ORDER BY co.academic_year  ASC) AS next_exitcode
       ,LEAD(co.exit_code_kf, 1) OVER(PARTITION BY co.student_number ORDER BY co.academic_year  ASC) AS next_exit_code_kf
       ,LEAD(co.exit_code_ts, 1) OVER(PARTITION BY co.student_number ORDER BY co.academic_year  ASC) AS next_exit_code_ts
+      ,LEAD(co.exitcomment, 1) OVER(PARTITION BY co.student_number ORDER BY co.academic_year  ASC) AS next_exitcomment
       ,LEAD(co.is_enrolled_oct01, 1, 0) OVER(PARTITION BY co.student_number ORDER BY co.academic_year) AS is_enrolled_oct01_next
 
       ,cal.days_remaining
