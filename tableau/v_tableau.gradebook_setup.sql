@@ -14,13 +14,14 @@ SELECT enr.sectionid
       ,enr.course_number
       ,enr.course_name
       
-      ,gb.reportingterm_name AS finalgradename
-      ,LEFT(gb.reportingterm_name, 1) AS finalgrade_category
+      ,gb.term_abbreviation
+      ,gb.storecode AS finalgradename
+      ,LEFT(gb.storecode, 1) AS finalgrade_category
       ,gb.finalgradesetuptype
       ,gb.gradingformulaweightingtype
       ,gb.category_name AS grade_category
       ,gb.category_abbreviation AS grade_category_abbreviation
-      ,CASE WHEN gb.finalgradesetuptype LIKE 'Total%Points' THEN 100 ELSE gb.weighting END AS weighting
+      ,CASE WHEN gb.finalgradesetuptype LIKE 'Total%Points' THEN 100 ELSE gb.weight END AS weighting
       ,CASE WHEN gb.finalgradesetuptype LIKE 'Total%Points' THEN 1 ELSE gb.includeinfinalgrades END AS includeinfinalgrades
       ,gb.defaultscoretype            
       
@@ -37,28 +38,26 @@ FROM gabby.powerschool.gradebook_setup_static gb
 JOIN gabby.powerschool.course_enrollments_static enr
   ON gb.sectionsdcid = enr.sections_dcid 
  AND gb.db_name = enr.db_name
-LEFT JOIN gabby.powerschool.gradebook_assignments a WITH(NOLOCK)
+LEFT JOIN gabby.powerschool.gradebook_assignments a
   ON gb.sectionsdcid = a.sectionsdcid
  AND gb.assignmentcategoryid = a.categoryid
  AND gb.db_name = a.db_name
- AND a.assign_date between gb.startdate and gb.enddate
-WHERE gb.startdate >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7 , 1)
+ AND a.assign_date between gb.term_start_date AND gb.term_end_date
+WHERE gb.term_start_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7 , 1)
 
 UNION ALL
 
 SELECT NULL AS sectionid
-      ,gabby.utilities.GLOBAL_ACADEMIC_YEAR() AS academic_year            
+      ,gabby.utilities.GLOBAL_ACADEMIC_YEAR() AS academic_year
       ,NULL AS schoolid
       ,NULL AS section_number
       ,NULL AS period
-      
       ,NULL AS teachernumber
       ,NULL AS teacher_name
-      
       ,NULL AS credittype
       ,NULL AS course_number
       ,NULL AS course_name
-
+      ,NULL AS term_abbreviation
       ,NULL AS finalgradename
       ,NULL AS finalgrade_category
       ,NULL AS finalgradesetuptype
@@ -66,9 +65,8 @@ SELECT NULL AS sectionid
       ,NULL AS grade_category
       ,NULL AS grade_category_abbreviation
       ,NULL AS weighting
-      ,NULL AS includeinfinalgrades                   
-      ,NULL AS defaultscoretype            
-      
+      ,NULL AS includeinfinalgrades
+      ,NULL AS defaultscoretype
       ,NULL AS assignmentid
       ,NULL AS assign_date
       ,NULL AS assign_name
@@ -76,5 +74,4 @@ SELECT NULL AS sectionid
       ,NULL AS weight
       ,NULL AS extracreditpoints
       ,NULL AS isfinalscorecalculated
-
       ,NULL AS rn_category

@@ -13,13 +13,14 @@ SELECT enr.sectionid
       ,enr.schoolid
       ,enr.db_name
       
-      ,gb.reportingterm_name AS finalgradename
-      ,LEFT(gb.reportingterm_name, 1) AS finalgrade_category
+      ,gb.term_abbreviation
+      ,gb.storecode AS finalgradename
+      ,LEFT(gb.storecode, 1) AS finalgrade_category
       ,gb.finalgradesetuptype
       ,gb.gradingformulaweightingtype
       ,gb.category_name AS grade_category
       ,gb.category_abbreviation AS grade_category_abbreviation
-      ,gb.weighting
+      ,gb.weight AS weighting
       ,gb.includeinfinalgrades  
       
       ,a1.assignmentid
@@ -41,7 +42,7 @@ JOIN gabby.powerschool.gradebook_setup_static gb
  AND gb.finalgradesetuptype = 'Total_Points'
 LEFT JOIN gabby.powerschool.gradebook_assignments_current_static a1 WITH(NOLOCK)
   ON gb.sectionsdcid = a1.sectionsdcid 
- AND a1.assign_date BETWEEN gb.startdate and gb.enddate 
+ AND a1.assign_date BETWEEN gb.term_start_date and gb.term_end_date 
  AND gb.db_name = a1.db_name 
 LEFT JOIN gabby.powerschool.gradebook_assignments_scores_current_static s1 WITH(NOLOCK)
   ON a1.assignmentsectionid = s1.assignmentsectionid
@@ -61,13 +62,14 @@ SELECT enr.sectionid
       ,enr.schoolid
       ,enr.db_name
       
-      ,gb.reportingterm_name AS finalgradename
-      ,LEFT(gb.reportingterm_name, 1) AS finalgrade_category
+      ,gb.term_abbreviation
+      ,gb.storecode AS finalgradename
+      ,LEFT(gb.storecode, 1) AS finalgrade_category
       ,gb.finalgradesetuptype
       ,gb.gradingformulaweightingtype
       ,gb.category_name AS grade_category
       ,gb.category_abbreviation AS grade_category_abbreviation
-      ,gb.weighting
+      ,gb.weight AS weighting
       ,gb.includeinfinalgrades  
       
       ,a2.assignmentid
@@ -90,7 +92,7 @@ JOIN gabby.powerschool.gradebook_setup_static gb
 LEFT JOIN gabby.powerschool.gradebook_assignments_current_static a2 WITH(NOLOCK)
   ON gb.sectionsdcid = a2.sectionsdcid 
  AND gb.assignmentcategoryid = a2.categoryid
- AND a2.assign_date BETWEEN gb.startdate and gb.enddate 
+ AND a2.assign_date BETWEEN gb.term_start_date and gb.term_end_date 
  AND gb.db_name = a2.db_name 
 LEFT JOIN gabby.powerschool.gradebook_assignments_scores_current_static s2 WITH(NOLOCK)
   ON a2.assignmentsectionid = s2.assignmentsectionid
