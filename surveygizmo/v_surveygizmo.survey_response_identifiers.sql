@@ -179,7 +179,7 @@ SELECT rc.survey_response_id
                  WHEN rc.respondent_df_employee_number = smgr.manager_df_employee_number THEN 1 
                  ELSE 0 
                 END) AS is_manager
-      
+
       ,sr.[status]
       ,sr.contact_id
       ,sr.date_submitted
@@ -254,4 +254,4 @@ LEFT JOIN work_assignment swa
  AND swa.rn = 1
 LEFT JOIN manager smgr
   ON rc.subject_df_employee_number = smgr.employee_reference_code
- AND rc.date_started BETWEEN smgr.manager_effective_start AND smgr.manager_effective_end
+ AND sc.link_close_date BETWEEN smgr.manager_effective_start AND smgr.manager_effective_end
