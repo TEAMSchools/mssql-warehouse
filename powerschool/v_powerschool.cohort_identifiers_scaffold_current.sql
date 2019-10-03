@@ -35,6 +35,6 @@ LEFT JOIN gabby.reporting.reporting_terms dt
   ON co.schoolid = dt.schoolid
  AND dt.identifier = 'RT'
  AND rd.date BETWEEN dt.start_date AND dt.end_date
-WHERE co.schoolid != 999999
-  AND co.rn_year = 1
+WHERE co.rn_year = 1
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+  AND co.schoolid != 999999
