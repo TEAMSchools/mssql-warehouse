@@ -58,7 +58,7 @@ SELECT s.survey_id
 
       ,COALESCE(qo.option_title_english, srd.answer) AS answer
 
-      ,qo.option_value AS answer_value
+      ,CASE WHEN ISNUMERIC(qo.option_value) = 0 THEN NULL ELSE qo.option_value END AS answer_value
 FROM gabby.surveygizmo.survey_clean s
 JOIN gabby.surveygizmo.survey_question_clean_static sq
   ON s.survey_id = sq.survey_id
