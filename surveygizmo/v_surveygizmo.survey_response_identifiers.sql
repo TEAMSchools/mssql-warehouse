@@ -26,7 +26,7 @@ WITH response_pivot AS (
         ,CASE
           WHEN p.is_manager = 'Yes - I am their manager.' THEN 1
           WHEN p.is_manager = 'No - I am their peer.' THEN 0
-          ELSE p.is_manager
+          ELSE CONVERT(INT, p.is_manager)
          END AS is_manager
   FROM
       (
