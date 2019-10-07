@@ -35,7 +35,7 @@ FROM
            ,co.studentid
            ,co.student_number
            ,co.lastfirst
-           ,co.reporting_schoolid AS schoolid           
+           ,co.reporting_schoolid AS schoolid
            ,co.grade_level
            ,co.region
            ,co.school_level
@@ -53,7 +53,7 @@ FROM
 
            ,mem.calendardate
            ,mem.membershipvalue
-           ,CONVERT(FLOAT,mem.attendancevalue) AS is_present
+           ,CONVERT(FLOAT, mem.attendancevalue) AS is_present
            ,ABS(mem.attendancevalue - 1) AS is_absent
 
            ,att.att_code
@@ -62,8 +62,8 @@ FROM
            ,CASE WHEN att.att_code IN ('S', 'ISS') THEN 1.0 ELSE 0.0 END AS is_iss
            ,CASE WHEN att.att_code IN ('OS', 'OSS', 'OSSP', 'S', 'ISS') THEN 1.0 ELSE 0.0 END AS is_suspended
 
-           ,CONVERT(VARCHAR(25),dt.alt_name) AS term
-     FROM powerschool.ps_adaadm_daily_ctod_current mem
+           ,CONVERT(VARCHAR(25), dt.alt_name) AS term
+     FROM powerschool.ps_adaadm_daily_ctod_current_static mem
      JOIN powerschool.cohort_identifiers_static co
        ON mem.studentid = co.studentid
       AND mem.schoolid = co.schoolid
@@ -73,12 +73,12 @@ FROM
       AND co.academic_year = enr.academic_year 
       AND enr.course_number = 'HR' 
       AND enr.rn_course_yr = 1
-     LEFT JOIN powerschool.ps_attendance_daily_current att
+     LEFT JOIN powerschool.ps_attendance_daily_current_static att
        ON mem.studentid = att.studentid
       AND mem.calendardate = att.att_date
      LEFT JOIN gabby.reporting.reporting_terms dt 
        ON mem.schoolid = dt.schoolid
-      AND mem.calendardate BETWEEN dt.start_date AND dt.end_date
+      AND mem.calendardate BETWEEN dt.[start_date] AND dt.end_date
       AND dt.identifier = 'RT'
       AND dt._fivetran_deleted = 0
      WHERE mem.attendancevalue IS NOT NULL
