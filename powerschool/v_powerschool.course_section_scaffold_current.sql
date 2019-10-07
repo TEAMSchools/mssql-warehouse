@@ -1,28 +1,44 @@
 CREATE OR ALTER VIEW powerschool.course_section_scaffold_current AS 
 
-SELECT cs.studentid
-      ,cs.student_number
-      ,cs.yearid
-      ,cs.term_name
-      ,cs.is_curterm
-      ,cs.course_number
-      ,cs.course_name
-      ,cs.credittype
-      ,cs.credit_hours
-      ,COALESCE(CASE WHEN ss.gradescaleid = 0 THEN cs.gradescaleid ELSE ss.gradescaleid END
-               ,LAG(CASE WHEN ss.gradescaleid = 0 THEN cs.gradescaleid ELSE ss.gradescaleid END, 1) OVER(PARTITION BY cs.studentid, cs.yearid, cs.course_number ORDER BY cs.term_name)
-               ,LAG(CASE WHEN ss.gradescaleid = 0 THEN cs.gradescaleid ELSE ss.gradescaleid END, 2) OVER(PARTITION BY cs.studentid, cs.yearid, cs.course_number ORDER BY cs.term_name)
-               ,LAG(CASE WHEN ss.gradescaleid = 0 THEN cs.gradescaleid ELSE ss.gradescaleid END, 3) OVER(PARTITION BY cs.studentid, cs.yearid, cs.course_number ORDER BY cs.term_name)) AS gradescaleid
-      ,cs.excludefromgpa
+SELECT sub.studentid
+      ,sub.student_number
+      ,sub.yearid
+      ,sub.term_name
+      ,sub.is_curterm
+      ,sub.course_number
+      ,sub.course_name
+      ,sub.credittype
+      ,sub.credit_hours
+      ,COALESCE(CASE WHEN sub.gradescaleid = 0 THEN sub.gradescaleid ELSE sub.gradescaleid END
+               ,LAG(CASE WHEN sub.gradescaleid = 0 THEN sub.gradescaleid ELSE sub.gradescaleid END, 1) OVER(PARTITION BY sub.studentid, sub.yearid, sub.course_number ORDER BY sub.term_name)
+               ,LAG(CASE WHEN sub.gradescaleid = 0 THEN sub.gradescaleid ELSE sub.gradescaleid END, 2) OVER(PARTITION BY sub.studentid, sub.yearid, sub.course_number ORDER BY sub.term_name)
+               ,LAG(CASE WHEN sub.gradescaleid = 0 THEN sub.gradescaleid ELSE sub.gradescaleid END, 3) OVER(PARTITION BY sub.studentid, sub.yearid, sub.course_number ORDER BY sub.term_name)) AS gradescaleid
+      ,sub.excludefromgpa
 
-      ,COALESCE(ss.abs_sectionid
-               ,LAG(ss.abs_sectionid, 1) OVER(PARTITION BY cs.studentid, cs.yearid, cs.course_number ORDER BY cs.term_name)
-               ,LAG(ss.abs_sectionid, 2) OVER(PARTITION BY cs.studentid, cs.yearid, cs.course_number ORDER BY cs.term_name)
-               ,LAG(ss.abs_sectionid, 3) OVER(PARTITION BY cs.studentid, cs.yearid, cs.course_number ORDER BY cs.term_name)) AS sectionid
-FROM powerschool.course_scaffold_current_static cs
-LEFT JOIN powerschool.section_scaffold_current_static ss
-  ON cs.studentid = ss.studentid
- AND cs.yearid = ss.yearid
- AND cs.term_name = ss.term_name
- AND cs.course_number = ss.course_number
- AND ss.rn_term = 1
+      ,COALESCE(sub.abs_sectionid
+               ,LAG(sub.abs_sectionid, 1) OVER(PARTITION BY sub.studentid, sub.yearid, sub.course_number ORDER BY sub.term_name)
+               ,LAG(sub.abs_sectionid, 2) OVER(PARTITION BY sub.studentid, sub.yearid, sub.course_number ORDER BY sub.term_name)
+               ,LAG(sub.abs_sectionid, 3) OVER(PARTITION BY sub.studentid, sub.yearid, sub.course_number ORDER BY sub.term_name)) AS sectionid
+FROM
+    (
+     SELECT cs.studentid
+           ,cs.student_number
+           ,cs.yearid
+           ,cs.term_name
+           ,cs.course_number
+           ,cs.course_name
+           ,cs.credittype
+           ,cs.credit_hours
+           ,cs.excludefromgpa
+           ,cs.gradescaleid
+           ,cs.is_curterm
+
+           ,ss.abs_sectionid
+     FROM powerschool.course_scaffold_current_static cs
+     LEFT JOIN powerschool.section_scaffold_current_static ss
+       ON cs.studentid = ss.studentid
+      AND cs.yearid = ss.yearid
+      AND cs.term_name = ss.term_name
+      AND cs.course_number = ss.course_number
+      AND ss.rn_term = 1
+    ) sub
