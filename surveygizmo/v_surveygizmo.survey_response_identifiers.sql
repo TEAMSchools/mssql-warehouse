@@ -183,7 +183,7 @@ SELECT rc.survey_response_id
 
       ,sr.[status]
       ,sr.contact_id
-      ,sr.datetime_submitted AS date_submitted
+      ,sr.date_submitted
       ,sr.response_time
 
       ,sc.academic_year AS campaign_academic_year
