@@ -230,11 +230,12 @@ SELECT rc.survey_response_id
 
       ,ROW_NUMBER() OVER(
          PARTITION BY rc.survey_id, sc.academic_year, sc.[name], rc.respondent_df_employee_number, rc.subject_df_employee_number
-           ORDER BY sr.date_submitted DESC) AS rn_respondent_subject
+           ORDER BY sr.datetime_submitted DESC) AS rn_respondent_subject
 FROM response_clean rc
 JOIN gabby.surveygizmo.survey_response_clean_static sr
   ON rc.survey_id = sr.survey_id
  AND rc.survey_response_id = sr.survey_response_id
+ AND sr.[status] = 'Complete'
 LEFT JOIN gabby.surveygizmo.survey_campaign_clean_static sc
   ON rc.survey_id = sc.survey_id
  AND rc.date_started BETWEEN sc.link_open_date AND sc.link_close_date
