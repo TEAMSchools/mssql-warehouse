@@ -71,7 +71,6 @@ FROM gabby.surveygizmo.survey_detail d
 WHERE d.survey_title = 'Self and Others'
   AND d.rn_respondent_subject = 1
   AND d.campaign_academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-
 UNION ALL 
 
 SELECT NULL AS survey_id
