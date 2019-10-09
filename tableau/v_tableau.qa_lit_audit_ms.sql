@@ -143,15 +143,8 @@ WITH fp_long AS (
         ,s.instructional_level
         ,s.instructional_genre
         ,CASE
-          WHEN s.max_lvl_num = 26 THEN 0 /* Achieved Z */
-          WHEN s.independent_level = 'Z' THEN 0 /* Achieved Z */
-          WHEN s.year_in_network = 1 THEN 1 /* new to KNJ */
-          WHEN s.instructional_assessment_date IS NULL THEN 1 /* missing all data */
-          WHEN s.academic_year - s.instructional_academic_year > 1 THEN 1 /* more than 2 rounds ago */
-          WHEN s.instructional_test_round NOT IN ('Q3', 'Q4') THEN 1 /* more than 2 rounds ago */
-          ELSE 0
-         END AS audit_status
-        ,CASE
+          WHEN s.max_lvl_num = 26 THEN NULL /* Achieved Z */
+          WHEN s.independent_level = 'Z' THEN NULL /* Achieved Z */
           WHEN s.year_in_network = 1 THEN 'New to KIPP NJ'
           WHEN s.instructional_assessment_date IS NULL THEN 'No Instructional Level'
           WHEN s.academic_year - s.instructional_academic_year > 1 THEN 'More Than 2 Rounds Since Last Test'
@@ -182,19 +175,11 @@ WITH fp_long AS (
         ,s.instructional_level
         ,s.instructional_genre
         ,CASE
-          WHEN s.max_lvl_num = 26 THEN 0 /* Achieved Z */
-          WHEN s.independent_level = 'Z' THEN 0 /* Achieved Z */
-          WHEN s.entrydate >= s.test_round_start_date THEN 1 /* new to KNJ */
-          WHEN s.instructional_assessment_date IS NULL THEN 1 /* missing all data */
-          WHEN s.goal_status = 'Far Below' THEN 1 /* status */
-          WHEN s.academic_year - s.instructional_academic_year > 1 THEN 1 /* more than 2 rounds ago */
-          WHEN s.instructional_test_round NOT IN ('Q3', 'Q4', 'DR') THEN 1 /* more than 2 rounds ago */
-          ELSE 0
-         END AS audit_status
-        ,CASE
+          WHEN s.max_lvl_num = 26 THEN NULL /* Achieved Z */
+          WHEN s.independent_level = 'Z' THEN NULL /* Achieved Z */
           WHEN s.entrydate >= s.test_round_start_date THEN 'New to KIPP NJ'
           WHEN s.instructional_assessment_date IS NULL THEN 'No Instructional Level'
-          WHEN s.goal_status = 'Far Below' THEN 'Far Below'
+          WHEN s.goal_status = 'Far Below' THEN s.goal_status
           WHEN s.academic_year - s.instructional_academic_year > 1 THEN 'More Than 3 Rounds Since Last Test'
           WHEN s.instructional_test_round NOT IN ('Q3', 'Q4', 'DR') THEN 'More Than 3 Rounds Since Last Test'
          END AS audit_reason
@@ -223,17 +208,11 @@ WITH fp_long AS (
         ,s.instructional_level
         ,s.instructional_genre
         ,CASE
-          WHEN s.max_lvl_num = 26 THEN 0 /* Achieved Z */
-          WHEN s.independent_level = 'Z' THEN 0 /* Achieved Z */
-          WHEN s.entrydate >= s.test_round_start_date THEN 1 /* new to KNJ */
-          WHEN s.instructional_assessment_date IS NULL THEN 1 /* missing all data */
-          WHEN s.goal_status IN ('Below', 'Approaching') THEN 1 /* status */
-          ELSE 0
-         END AS audit_status
-        ,CASE
+          WHEN s.max_lvl_num = 26 THEN NULL /* Achieved Z */
+          WHEN s.independent_level = 'Z' THEN NULL /* Achieved Z */
           WHEN s.entrydate >= s.test_round_start_date THEN 'New to KIPP NJ'
           WHEN s.instructional_assessment_date IS NULL THEN  'No Instructional Level'
-          WHEN s.goal_status IN ('Below', 'Approaching') THEN 'Below/Approaching'
+          WHEN s.goal_status IN ('Far Below', 'Below', 'Approaching') THEN s.goal_status 
          END AS audit_reason
   FROM scaffold s
   WHERE s.test_round = 'Q2'
@@ -260,17 +239,11 @@ WITH fp_long AS (
         ,s.instructional_level
         ,s.instructional_genre
         ,CASE
-          WHEN s.max_lvl_num = 26 THEN 0 /* Achieved Z */
-          WHEN s.independent_level = 'Z' THEN 0 /* Achieved Z */
-          WHEN s.entrydate >= s.test_round_start_date THEN 1 /* new to KNJ */
-          WHEN s.instructional_assessment_date IS NULL THEN 1 /* missing all data */
-          WHEN s.goal_status IN ('Far Below', 'Below') THEN 1 /* status */
-          ELSE 0
-         END AS audit_status
-        ,CASE
+          WHEN s.max_lvl_num = 26 THEN NULL /* Achieved Z */
+          WHEN s.independent_level = 'Z' THEN NULL /* Achieved Z */
           WHEN s.entrydate >= s.test_round_start_date THEN 'New to KIPP NJ'
           WHEN s.instructional_assessment_date IS NULL THEN  'No Instructional Level'
-          WHEN s.goal_status IN ('Far Below', 'Below') THEN 'Far Below/Below'
+          WHEN s.goal_status IN ('Far Below', 'Below') THEN s.goal_status 
          END AS audit_reason
   FROM scaffold s
   WHERE s.test_round = 'Q3'
@@ -297,15 +270,8 @@ WITH fp_long AS (
         ,s.instructional_level
         ,s.instructional_genre
         ,CASE
-          WHEN s.max_lvl_num = 26 THEN 0 /* Achieved Z */
-          WHEN s.independent_level = 'Z' THEN 0 /* Achieved Z */
-          WHEN s.entrydate >= s.test_round_start_date THEN 1 /* new to KNJ */
-          WHEN s.instructional_assessment_date IS NULL THEN 1 /* missing all data */
-          WHEN s.academic_year != s.instructional_academic_year THEN 1 /* not tested in Q3 */
-          WHEN s.instructional_test_round != 'Q3' THEN 1 /* not tested in Q3 */
-          ELSE 0
-         END AS audit_status
-        ,CASE
+          WHEN s.max_lvl_num = 26 THEN NULL /* Achieved Z */
+          WHEN s.independent_level = 'Z' THEN NULL /* Achieved Z */
           WHEN s.entrydate >= s.test_round_start_date THEN 'New to KIPP NJ'
           WHEN s.instructional_assessment_date IS NULL THEN  'No Instructional Level'
           WHEN s.academic_year != s.instructional_academic_year THEN 'Not Tested in Q3'
@@ -333,8 +299,11 @@ SELECT al.student_number
       ,al.instructional_assessment_date
       ,al.instructional_level
       ,al.instructional_genre
-      ,al.audit_status
       ,al.audit_reason
+      ,CASE 
+        WHEN al.audit_reason IS NOT NULL THEN 1
+        ELSE 0
+       END AS audit_status
 
       ,COALESCE(ins.unique_id, hard.unique_id, z.unique_id) AS verify_unique_id
 FROM audits_long al
