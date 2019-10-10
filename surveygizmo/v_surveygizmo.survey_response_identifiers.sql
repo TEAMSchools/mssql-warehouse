@@ -149,22 +149,6 @@ WITH response_pivot AS (
             JOIN gabby.people.staff_crosswalk_static mgr
               ON em.manager_employee_number = mgr.df_employee_number
             WHERE em.manager_derived_method = 'Direct Report'
-
-            UNION ALL
-
-            SELECT em.employee_reference_code
-                  ,em.manager_employee_number AS manager_df_employee_number
-                  ,CONVERT(DATE, COALESCE(CASE WHEN em.manager_effective_end != '' THEN em.manager_effective_end END
-                                         ,GETDATE())) AS effective_date
-
-                  ,mgr.preferred_name AS manager_name
-                  ,mgr.mail AS manager_mail
-                  ,mgr.userprincipalname AS manager_userprincipalname
-                  ,mgr.samaccountname AS manager_samaccountname
-            FROM gabby.dayforce.employee_manager em
-            JOIN gabby.people.staff_crosswalk_static mgr
-              ON em.manager_employee_number = mgr.df_employee_number
-            WHERE em.manager_derived_method = 'Direct Report'
            ) sub
       ) sub
   WHERE sub.manager_effective_start <= sub.manager_effective_end
