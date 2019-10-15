@@ -50,6 +50,7 @@ SELECT employee_reference_code
       ,[nj_sped_course_credits]
       ,[undergrad_gpa]
       ,[praxis_passed]
+      ,[highest_education_level]
 FROM
     (
      SELECT sub.employee_reference_code
@@ -97,6 +98,7 @@ FROM
                                             WHEN employee_property_value_name = 'NJ Only - Do you have 20-27 course credits in special education?' THEN 'nj_sped_course_credits'
                                             WHEN employee_property_value_name = 'Undergraduate GPA (type number or N/A)' THEN 'undergrad_gpa'
                                             WHEN employee_property_value_name = 'Which Praxis exam(s) have you passed?' THEN 'praxis_passed'
+                                            WHEN employee_property_value_name = 'Highest Grade Completed' THEN 'highest_education_level'
                                             ELSE REPLACE(employee_property_value_name, ' ', '_')
                                            END)) AS property_name
                 ,CONVERT(VARCHAR(25),CASE
@@ -148,5 +150,6 @@ PIVOT(
                        ,[miami_cert_leadership_exams]
                        ,[nj_sped_course_credits]
                        ,[undergrad_gpa]
-                       ,[praxis_passed])
+                       ,[praxis_passed]
+                       ,[highest_education_level])
  ) p
