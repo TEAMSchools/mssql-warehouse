@@ -106,11 +106,13 @@ SELECT pa.id
         
       ,p.name AS job_posting
       ,p.city_c AS city
+      ,p.subject_area_c AS posting_subject_area
 
       ,'application' as candidate_type
 
       ,NULL AS cult_grade_level_interest
       ,NULL AS cult_subject_interest
+      ,NULL AS next_contact_date
 FROM gabby.recruiting.profile_application_c pa 
 LEFT JOIN gabby.recruiting.contact c
   ON pa.applicant_c = c.id
@@ -214,11 +216,14 @@ SELECT c.id AS id
         
       ,p.name AS job_posting
       ,COALESCE(p.city_c, c.cultivation_owner_c) AS city
+      ,p.subject_area_c AS posting_subject_area
 
       ,'culitvation' AS candidate_type
 
       ,c.primary_interest_general_grade_level_c AS cult_grade_level_interest
       ,c.primary_interest_general_subject_c AS cult_subject_interest
+      ,c.next_contact_date_c AS next_contact_date
+
 FROM gabby.recruiting.cultivation_c c 
 LEFT JOIN gabby.recruiting.profile_application_c pa
   ON c.contact_c = pa.applicant_c
