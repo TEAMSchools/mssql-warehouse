@@ -104,22 +104,8 @@ FROM
            ,dsa.code_translation AS subject_area
 
            ,n.scope AS normed_scope
+           ,n.module_type
            ,CASE WHEN n.scope IS NOT NULL THEN 1 ELSE 0 END AS is_normed_scope
-
-           ,CASE
-             WHEN a.[user_id] NOT IN (SELECT [user_id] FROM tnl_uids) THEN NULL
-             WHEN n.scope IS NULL THEN NULL
-             WHEN ds.code_translation = 'Sight Words Quiz' THEN 'SWQ'
-             WHEN ds.code_translation = 'Process Piece' THEN 'PP'
-             WHEN ds.code_translation = 'CMA - End-of-Module' AND a.academic_year <= 2016 THEN 'EOM'
-             WHEN ds.code_translation = 'CMA - End-of-Module' AND a.academic_year > 2016 THEN 'QA'
-             WHEN ds.code_translation IN ('Cold Read Quizzes', 'Cumulative Review Quizzes') THEN 'CRQ'
-             WHEN ds.code_translation = 'CGI Quiz' THEN 'CGI'
-             WHEN ds.code_translation = 'Math Facts and Counting Jar' THEN 'MFCJ'
-             WHEN ds.code_translation = 'Checkpoint' THEN 'CP'
-             WHEN ds.code_translation = 'CMA - Mid-Module' AND PATINDEX('%Checkpoint [0-9]%', a.title) = 0 THEN 'MM'
-             WHEN ds.code_translation = 'CMA - Mid-Module' AND PATINDEX('%Checkpoint [0-9]%', a.title) > 0 THEN 'CP' + SUBSTRING(a.title, PATINDEX('%Checkpoint [0-9]%', a.title) + 11, 1)
-            END AS module_type
            ,CASE
              WHEN PATINDEX('%' + n.module_number_pattern_1 + '[0-9][0-9]/[0-9][0-9]%', a.title) > 0 
                   THEN '%' + n.module_number_pattern_1 + '[0-9][0-9]/[0-9][0-9]%'
