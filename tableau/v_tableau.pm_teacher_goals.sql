@@ -185,6 +185,52 @@ WITH reading_level AS (
           ,so_survey_long.metric_name
  )
 
+,act AS (
+  SELECT u.academic_year
+        ,u.schoolid
+        ,u.grade_level
+        ,u.reporting_term
+        ,u.metric_name
+        ,u.metric_value
+  FROM
+      (
+       SELECT sub.academic_year
+             ,sub.schoolid
+             ,sub.grade_level
+             ,sub.reporting_term
+             ,AVG(sub.is_act_17plus) AS pct_act_17plus
+             ,AVG(sub.is_act_19plus) AS pct_act_19plus
+             ,AVG(sub.is_act_21plus) AS pct_act_21plus
+       FROM
+           (
+            SELECT act.student_number
+                  ,act.composite
+                  ,'ACTY1' AS reporting_term
+                  ,CASE WHEN act.composite >= 17 THEN 1.0 ELSE 0.0 END AS is_act_17plus
+                  ,CASE WHEN act.composite >= 19 THEN 1.0 ELSE 0.0 END AS is_act_19plus
+                  ,CASE WHEN act.composite >= 21 THEN 1.0 ELSE 0.0 END AS is_act_21plus
+
+                  ,co.academic_year
+                  ,co.grade_level
+                  ,co.schoolid
+            FROM gabby.naviance.act_scores_clean act
+            JOIN gabby.powerschool.cohort_identifiers_static co
+              ON act.student_number = co.student_number
+             AND co.rn_undergrad = 1
+             AND co.grade_level != 99
+            WHERE act.rn_highest = 1
+           ) sub
+       GROUP BY sub.academic_year
+               ,sub.schoolid
+               ,sub.grade_level
+               ,sub.reporting_term
+      ) sub
+  UNPIVOT (
+    metric_value
+    FOR metric_name IN (pct_act_17plus, pct_act_19plus, pct_act_21plus)
+   ) u
+ )
+
 ,glt_goal_data AS (
   SELECT rl.academic_year
         ,rl.schoolid
@@ -203,6 +249,16 @@ WITH reading_level AS (
         ,gpa.metric_name
         ,gpa.metric_value        
   FROM gpa
+
+  UNION ALL
+
+  SELECT act.academic_year
+        ,act.schoolid
+        ,act.grade_level
+        ,act.reporting_term
+        ,act.metric_name
+        ,act.metric_value
+  FROM act
  )
 
 ,individual_goal_data AS (
