@@ -70,7 +70,7 @@ SELECT co.student_number
 
       ,att.att_date
       ,att.att_comment
-      ,CASE WHEN ac.att_code = 'true' THEN 'T' ELSE ac.att_code END AS att_code 
+      ,ac.att_code
       
       ,CASE
         WHEN att.schoolid = 73253 THEN co.advisor_name
