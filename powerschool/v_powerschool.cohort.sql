@@ -77,7 +77,6 @@ FROM
            ,rn_undergrad
            ,rn_all
            ,CASE 
-             WHEN sub.lunchstatus = 'false' THEN 'F'
              WHEN sub.lunchstatus IN ('', 'NoD', '1', '2') THEN NULL
              ELSE sub.lunchstatus
             END AS lunchstatus

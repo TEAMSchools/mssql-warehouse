@@ -237,10 +237,10 @@ SELECT co.student_number
       ,sg.excludefromgpa
       ,sg.potentialcrhrs AS credit_hours
       ,sg.[percent] AS term_grade_percent_adjusted
-      ,CASE WHEN sg.grade = 'false' THEN 'F' ELSE CONVERT(VARCHAR(5), sg.grade) END AS term_grade_letter_adjusted
+      ,CONVERT(VARCHAR(5), sg.grade) AS term_grade_letter_adjusted
       ,sg.gpa_points AS term_gpa_points
       ,sg.[percent] AS y1_grade_percent_adjusted
-      ,CASE WHEN sg.grade = 'false' THEN 'F' ELSE CONVERT(VARCHAR(5), sg.grade) END AS y1_grade_letter           
+      ,CONVERT(VARCHAR(5), sg.grade) AS y1_grade_letter           
       ,sg.gpa_points AS y1_gpa_points
       
       ,sg.earnedcrhrs
@@ -297,10 +297,10 @@ SELECT COALESCE(co.student_number, e1.student_number) AS student_number
       ,CONVERT(INT,tr.excludefromgpa) AS excludefromgpa
       ,tr.potentialcrhrs AS credit_hours      
       ,tr.[percent] AS term_grade_percent_adjusted
-      ,CASE WHEN tr.grade = 'false' THEN 'F' ELSE CONVERT(VARCHAR(5), tr.grade) END AS term_grade_letter_adjusted
+      ,CONVERT(VARCHAR(5), tr.grade) AS term_grade_letter_adjusted
       ,tr.gpa_points AS term_gpa_points
       ,tr.[percent] AS y1_grade_percent_adjusted
-      ,CASE WHEN tr.grade = 'false' THEN 'F' ELSE CONVERT(VARCHAR(5), tr.grade) END AS y1_grade_letter
+      ,CONVERT(VARCHAR(5), tr.grade) AS y1_grade_letter
       ,tr.gpa_points AS y1_gpa_points                  
       ,tr.earnedcrhrs
 

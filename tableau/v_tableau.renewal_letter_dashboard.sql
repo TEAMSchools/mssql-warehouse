@@ -16,10 +16,10 @@ WITH wf AS (
        SELECT rs.employee_reference_code AS affected_employee_number
              ,CONVERT(DATETIME2,rs.workflow_data_last_modified_timestamp) AS renewal_status_updated
              ,CASE 
-               WHEN rs.workflow_status = 'completed' AND rs.workflow_data_saved = 'true' THEN 'Offer Accepted'
-               WHEN rs.workflow_status = 'completed' AND rs.workflow_data_saved = 'false' THEN 'SL, HR, or Employee Rejected'
-               WHEN rs.workflow_status = 'open' AND rs.workflow_data_saved = 'false' THEN 'Pending Acceptance'
-               WHEN rs.workflow_status = 'withdrawn' AND rs.workflow_data_saved = 'false' THEN 'DSO Withdrew Letter'
+               WHEN rs.workflow_status = 'completed' AND rs.workflow_data_saved = 1 THEN 'Offer Accepted'
+               WHEN rs.workflow_status = 'completed' AND rs.workflow_data_saved = 0 THEN 'SL, HR, or Employee Rejected'
+               WHEN rs.workflow_status = 'open' AND rs.workflow_data_saved = 0 THEN 'Pending Acceptance'
+               WHEN rs.workflow_status = 'withdrawn' AND rs.workflow_data_saved = 0 THEN 'DSO Withdrew Letter'
               END AS renewal_status
        FROM gabby.dayforce.renewal_status rs
       ) sub

@@ -62,12 +62,11 @@ WITH roster AS (
              
              ,pgf.finalgradename_clean AS term_name
       
-             ,CASE WHEN sg.grade = 'false' THEN 'F' ELSE CONVERT(VARCHAR(5),sg.grade) END AS stored_letter
+             ,CONVERT(VARCHAR(5),sg.grade) AS stored_letter
              ,ROUND(sg.[percent], 0) AS stored_pct             
              
              ,CASE
                WHEN enr.sectionid < 0 AND sg.[percent] IS NULL THEN NULL                
-               WHEN pgf.grade = 'false' THEN 'F'
                ELSE CONVERT(VARCHAR(5),pgf.grade)
               END AS pgf_letter      
              ,CASE 
@@ -231,12 +230,13 @@ SELECT sub.student_number
         WHEN sub.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() THEN NULL
         ELSE sub.y1_grade_percent_adjusted
        END AS y1_grade_percent_adjusted      
-      ,CONVERT(VARCHAR(5),REPLACE(CASE
-                WHEN y1.grade IS NOT NULL THEN y1.grade
-                WHEN sub.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() THEN NULL
-                WHEN sub.y1_grade_percent_adjusted = 50 AND sub.y1_grade_percent < 50 THEN 'F*'
-                ELSE y1_scale.letter_grade
-               END, 'false', 'F')) AS y1_grade_letter
+      ,CONVERT(VARCHAR(5), 
+         CASE
+          WHEN y1.grade IS NOT NULL THEN y1.grade
+          WHEN sub.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() THEN NULL
+          WHEN sub.y1_grade_percent_adjusted = 50 AND sub.y1_grade_percent < 50 THEN 'F*'
+          ELSE y1_scale.letter_grade
+         END) AS y1_grade_letter
       ,CASE
         WHEN y1.gpa_points IS NOT NULL THEN y1.gpa_points
         WHEN sub.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() THEN NULL

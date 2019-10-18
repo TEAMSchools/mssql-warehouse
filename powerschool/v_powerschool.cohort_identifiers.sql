@@ -181,24 +181,24 @@ SELECT co.studentid
                                   AND co.rn_year = 1 THEN CASE
                                                            WHEN DB_NAME() IN ('kippnewark', 'kippcamden') THEN mcs.lunch_status COLLATE Latin1_General_BIN
                                                            WHEN DB_NAME() = 'kippmiami' AND s.lunchstatus = 'NoD' THEN NULL
-                                                           WHEN DB_NAME() = 'kippmiami' THEN REPLACE(s.lunchstatus, 'false', 'F')
+                                                           WHEN DB_NAME() = 'kippmiami' THEN s.lunchstatus
                                                           END
                                  WHEN co.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
                                   AND co.entrydate = s.entrydate THEN CASE
                                                                        WHEN s.lunchstatus = 'NoD' THEN NULL
-                                                                       ELSE REPLACE(s.lunchstatus, 'false', 'F')
+                                                                       ELSE s.lunchstatus
                                                                       END
                                  ELSE co.lunchstatus
                                 END)) AS lunchstatus
       ,CONVERT(VARCHAR(125),CASE
                              WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
                               AND co.rn_year = 1 THEN CASE
-                                                       WHEN DB_NAME() = 'kippmiami' THEN REPLACE(s.lunchstatus,'false','F')
+                                                       WHEN DB_NAME() = 'kippmiami' THEN s.lunchstatus
                                                        WHEN DB_NAME() IN ('kippnewark', 'kippcamden') THEN mcs.lunch_app_status COLLATE Latin1_General_BIN
                                                       END
                              WHEN co.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
                               AND co.entrydate = s.entrydate 
-                                  THEN REPLACE(s.lunchstatus, 'false', 'F')
+                                  THEN s.lunchstatus
                              ELSE co.lunchstatus
                             END) AS lunch_app_status
 FROM powerschool.cohort_static co

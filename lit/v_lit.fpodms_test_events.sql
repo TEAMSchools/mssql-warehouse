@@ -72,11 +72,7 @@ WITH classes_dedupe AS (
              ,fp.wpm_rate
              ,fp.writing
              ,fp.self_corrections /* how should this be parsed? */
-             ,CASE 
-               WHEN fp.text_level = 'false' THEN 'F'
-               WHEN fp.text_level = 'true' THEN 'T'
-               ELSE CONVERT(VARCHAR(5),fp.text_level)
-              END AS text_level
+             ,CONVERT(VARCHAR(5),fp.text_level) AS text_level
              ,CASE
                WHEN fp.benchmark_level = 'Independent' THEN 'Achieved'
                WHEN fp.benchmark_level = 'Instructional' THEN 'Did Not Achieve'

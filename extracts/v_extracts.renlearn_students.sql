@@ -8,9 +8,9 @@ SELECT student_number AS id
       ,first_name
       ,last_name
       ,middle_name
-      ,CASE WHEN gender = 'false' THEN 'F' ELSE gender END AS gender
+      ,gender
       ,grade_level
-      ,CASE WHEN ethnicity = 'true' THEN 'T' ELSE ethnicity END AS ethnicity
+      ,ethnicity
       ,dob
       ,enroll_status
       ,exitcode

@@ -10,7 +10,7 @@ SELECT att.id
       ,att.programid
       ,att.total_minutes
 
-      ,CASE WHEN ac.att_code = 'true' THEN 'T' ELSE CONVERT(VARCHAR(5),ac.att_code) END AS att_code 
+      ,CONVERT(VARCHAR(5),ac.att_code) AS att_code 
       ,CONVERT(INT,ac.calculate_ada_yn) AS count_for_ada
       ,CONVERT(VARCHAR(25),ac.presence_status_cd) AS presence_status_cd
       ,CONVERT(INT,ac.calculate_adm_yn) AS count_for_adm
@@ -24,11 +24,7 @@ SELECT att.id
       ,CONVERT(INT,cd.insession) AS insession
       ,CONVERT(INT,cd.cycle_day_id) AS cycle_day_id
   
-      ,CASE 
-        WHEN cy.abbreviation = 'false' THEN 'F' 
-        WHEN cy.abbreviation = 'true' THEN 'T' 
-        ELSE CONVERT(VARCHAR(25),cy.abbreviation) 
-       END AS abbreviation
+      ,CONVERT(VARCHAR(25),cy.abbreviation) AS abbreviation
 FROM powerschool.attendance_clean_current att 
 JOIN powerschool.attendance_code ac
   ON att.attendance_codeid = ac.id
