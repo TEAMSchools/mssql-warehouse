@@ -18,6 +18,7 @@ WITH long_data AS (
         ,sub.overall_percent_correct
         ,sub.overall_performance_band        
         ,sub.grade_level
+        ,sub.schoolid
         
         ,ROW_NUMBER() OVER(
            PARTITION BY sub.student_number, sub.academic_year, sub.subject_area, sub.time_per_name
@@ -43,6 +44,7 @@ WITH long_data AS (
              ,CONVERT(VARCHAR,d.alt_name) AS administration_round
 
              ,co.grade_level
+             ,co.schoolid
        FROM gabby.illuminate_dna_assessments.assessments_identifiers_static a              
        JOIN gabby.illuminate_dna_assessments.agg_student_responses ovr
          ON a.assessment_id = ovr.assessment_id
@@ -64,6 +66,8 @@ WITH long_data AS (
   SELECT d.student_number        
         ,d.illuminate_student_id
         ,d.academic_year                
+        ,d.schoolid
+        ,d.grade_level
         ,d.time_per_name
         ,d.subject_area        
         ,d.assessment_id        
@@ -91,6 +95,8 @@ WITH long_data AS (
   SELECT student_number
         ,illuminate_student_id
         ,academic_year
+        ,schoolid
+        ,grade_level
         ,time_per_name
         ,'Composite' AS subject_area        
         ,NULL AS assessment_id
@@ -108,6 +114,8 @@ WITH long_data AS (
        SELECT d.student_number           
              ,d.illuminate_student_id
              ,d.academic_year
+             ,d.schoolid
+             ,d.grade_level
              ,d.assessment_id
              ,d.time_per_name
              ,d.administration_round                   
@@ -130,12 +138,16 @@ WITH long_data AS (
   GROUP BY student_number
           ,illuminate_student_id
           ,academic_year
+          ,schoolid
+          ,grade_level
           ,administration_round       
           ,time_per_name 
  )
 
 SELECT sub.student_number
       ,sub.academic_year
+      ,sub.schoolid
+      ,sub.grade_level
       ,sub.assessment_id
       ,sub.assessment_title
       ,sub.time_per_name
@@ -170,6 +182,8 @@ FROM
      SELECT student_number
            ,illuminate_student_id
            ,academic_year
+           ,schoolid
+           ,grade_level
            ,assessment_id
            ,assessment_title
            ,time_per_name

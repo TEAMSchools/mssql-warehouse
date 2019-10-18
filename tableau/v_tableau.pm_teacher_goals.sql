@@ -203,6 +203,21 @@ WITH reading_level AS (
              ,AVG(sub.is_act_21plus) AS pct_act_21plus
        FROM
            (
+            SELECT student_number
+                  ,scale_score AS composite
+                  ,time_per_name AS reporting_term
+                  ,CASE WHEN scale_score >= 17 THEN 1.0 ELSE 0.0 END AS is_act_17plus
+                  ,CASE WHEN scale_score >= 19 THEN 1.0 ELSE 0.0 END AS is_act_19plus
+                  ,CASE WHEN scale_score >= 21 THEN 1.0 ELSE 0.0 END AS is_act_21plus
+                  ,academic_year
+                  ,grade_level
+                  ,schoolid
+            FROM gabby.act.test_prep_scores
+            WHERE subject_area = 'Composite'
+              AND scale_score IS NOT NULL
+
+            UNION ALL
+
             SELECT act.student_number
                   ,act.composite
                   ,'ACTY1' AS reporting_term
