@@ -29,7 +29,8 @@ FROM [WINSQL06\HAN].Franklin.dbo.VIEW_STUDENT_DATA s
 LEFT JOIN [WINSQL06\HAN].Newton.dbo.STUDENT_GUID_LINK g
   ON s.StudentGuid = g.StudentGUID
 LEFT JOIN [WINSQL06\HAN].Newton.dbo.CUSTOMER c
-  ON g.CustomerID = c.CUSTOMER_RECID;
+  ON g.CustomerID = c.CUSTOMER_RECID
+WHERE ISNUMERIC(s.StudentNumber) = 1;
 
 GO
 
@@ -64,4 +65,5 @@ FROM [WINSQL06\YODA].Franklin.dbo.VIEW_STUDENT_DATA s
 LEFT JOIN [WINSQL06\YODA].Newton.dbo.STUDENT_GUID_LINK g
   ON s.StudentGuid = g.StudentGUID
 LEFT JOIN [WINSQL06\YODA].Newton.dbo.CUSTOMER c
-  ON g.CustomerID = c.CUSTOMER_RECID;
+  ON g.CustomerID = c.CUSTOMER_RECID
+WHERE ISNUMERIC(s.StudentNumber) = 1;
