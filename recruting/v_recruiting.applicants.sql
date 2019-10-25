@@ -65,6 +65,7 @@ SELECT pa.id
       ,a.phone_interview_status_date_c AS phone_screen_or_contact_date
       ,a.in_person_interview_status_date_c AS interview_date
       ,a.offer_extended_date_c AS offer_date
+      ,a.rejected_status_date_c AS rejected_date
       ,a.stage_c AS selection_stage
       ,a.selection_status_c AS selection_status
       ,a.selection_notes_c AS selection_notes
@@ -173,6 +174,7 @@ SELECT c.id AS id
 
       ,NULL AS interview_date
       ,NULL AS offer_date
+      ,NULL AS rejected_date
 
       ,c.cultivation_stage_c AS selection_stage
       ,c.current_status_c  AS selection_status
