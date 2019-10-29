@@ -3,13 +3,13 @@ GO
 
 CREATE OR ALTER VIEW extracts.deanslist_state_test_scores AS
 
-SELECT student_number      
+SELECT student_number
       ,test_type
       ,subject
       ,test_name
       ,scale_score
       ,proficiency_level
-      ,is_proficient      
+      ,is_proficient
       ,CONCAT(academic_year, '-', (academic_year + 1)) AS academic_year
 
       ,ROW_NUMBER() OVER(
@@ -19,8 +19,8 @@ FROM
     (
      SELECT co.student_number
            ,co.academic_year
-           ,'PARCC' AS test_type      
-        
+           ,CASE WHEN co.academic_year >= 2018 THEN 'NJSLA' ELSE 'PARCC' END AS test_type
+
            ,CASE WHEN parcc.subject = 'English Language Arts/Literacy' THEN 'ELA' ELSE 'Math' END AS subject
            ,parcc.subject COLLATE SQL_Latin1_General_CP1_CI_AS AS test_name
            ,parcc.test_scale_score AS scale_score
@@ -44,9 +44,9 @@ FROM
 
      UNION ALL
 
-     SELECT co.student_number      
+     SELECT co.student_number
            ,co.academic_year
-        
+
            ,nj.test_type
            ,nj.subject
            ,nj.subject AS test_name
