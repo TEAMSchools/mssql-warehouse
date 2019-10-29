@@ -71,6 +71,7 @@ SELECT pa.id
       ,a.selection_notes_c AS selection_notes
       ,COALESCE(a.submitted_status_date_c, a.in_progress_status_date_c) AS submitted_date
       ,LEFT(RIGHT(a.resume_url_c,LEN(a.resume_url_c)-9),LEN(RIGHT(a.resume_url_c,LEN(a.resume_url_c)-9))-39) AS resume_url
+      ,a.last_modified_date
         
       ,j.position_number
       ,j.position_name
@@ -182,6 +183,7 @@ SELECT c.id AS id
 
       ,NULL AS submitted_date
       ,NULL AS resume_url
+      ,c.last_modified_date 
 
       ,j.position_number
       ,j.position_name
