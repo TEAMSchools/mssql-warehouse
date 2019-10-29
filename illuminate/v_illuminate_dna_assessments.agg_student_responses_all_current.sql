@@ -23,6 +23,7 @@ WITH response_rollup AS (
         ,date_taken
         ,points
         ,percent_correct
+        ,1 AS is_normed_scope
   FROM gabby.illuminate_dna_assessments.assessment_responses_rollup_current_static
   
   UNION ALL
@@ -46,6 +47,7 @@ WITH response_rollup AS (
         ,date_taken
         ,points
         ,percent_correct
+        ,0 AS is_normed_scope
   FROM gabby.illuminate_dna_assessments.assessment_responses_long
   WHERE is_normed_scope = 0
  )
@@ -68,6 +70,7 @@ SELECT rr.assessment_id
       ,rr.standard_description      
       ,rr.domain_description
       ,rr.performance_band_set_id
+      ,rr.is_normed_scope
 
       ,CONVERT(INT,s.local_student_id) AS local_student_id
 

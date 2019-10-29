@@ -35,6 +35,7 @@ SELECT co.student_number
       ,asr.is_mastery
       ,asr.performance_band_number
       ,asr.is_replacement
+      ,asr.is_normed_scope
 
       ,hr.teachernumber AS hr_teachernumber
       
