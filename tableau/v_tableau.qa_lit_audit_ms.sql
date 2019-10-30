@@ -142,6 +142,7 @@ WITH fp_long AS (
         ,s.instructional_assessment_date
         ,s.instructional_level
         ,s.instructional_genre
+        ,CASE WHEN s.instructional_test_round = 'Q4' THEN 1 ELSE 0 END AS is_tested_previous_round
         ,CASE
           WHEN s.max_lvl_num = 26 THEN NULL /* Achieved Z */
           WHEN s.independent_level = 'Z' THEN NULL /* Achieved Z */
@@ -174,6 +175,7 @@ WITH fp_long AS (
         ,s.instructional_assessment_date
         ,s.instructional_level
         ,s.instructional_genre
+        ,CASE WHEN s.instructional_test_round = 'DR' THEN 1 ELSE 0 END AS is_tested_previous_round
         ,CASE
           WHEN s.max_lvl_num = 26 THEN NULL /* Achieved Z */
           WHEN s.independent_level = 'Z' THEN NULL /* Achieved Z */
@@ -207,6 +209,7 @@ WITH fp_long AS (
         ,s.instructional_assessment_date
         ,s.instructional_level
         ,s.instructional_genre
+        ,CASE WHEN s.instructional_test_round = 'Q1' THEN 1 ELSE 0 END AS is_tested_previous_round
         ,CASE
           WHEN s.max_lvl_num = 26 THEN NULL /* Achieved Z */
           WHEN s.independent_level = 'Z' THEN NULL /* Achieved Z */
@@ -238,6 +241,7 @@ WITH fp_long AS (
         ,s.instructional_assessment_date
         ,s.instructional_level
         ,s.instructional_genre
+        ,CASE WHEN s.instructional_test_round = 'Q2' THEN 1 ELSE 0 END AS is_tested_previous_round
         ,CASE
           WHEN s.max_lvl_num = 26 THEN NULL /* Achieved Z */
           WHEN s.independent_level = 'Z' THEN NULL /* Achieved Z */
@@ -269,6 +273,7 @@ WITH fp_long AS (
         ,s.instructional_assessment_date
         ,s.instructional_level
         ,s.instructional_genre
+        ,CASE WHEN s.instructional_test_round = 'Q3' THEN 1 ELSE 0 END AS is_tested_previous_round
         ,CASE
           WHEN s.max_lvl_num = 26 THEN NULL /* Achieved Z */
           WHEN s.independent_level = 'Z' THEN NULL /* Achieved Z */
@@ -300,6 +305,7 @@ SELECT al.student_number
       ,al.instructional_level
       ,al.instructional_genre
       ,al.audit_reason
+      ,al.is_tested_previous_round
       ,CASE 
         WHEN al.audit_reason IS NOT NULL THEN 1
         ELSE 0
