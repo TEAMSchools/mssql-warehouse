@@ -73,7 +73,7 @@ FROM
       AND a.academic_year = ce.academic_year 
       AND a.subject_area = ce.subject_area
       AND ce.is_advanced_math_student = 0      
-     WHERE a.subject_area IN ('Text Study','Mathematics','Social Studies','Science')     
+     WHERE a.subject_area IN ('Text Study','Mathematics','Social Studies','Science')
        AND a.is_normed_scope = 1
 
      UNION ALL
@@ -103,8 +103,7 @@ FROM
       AND agl.grade_level_id = ce.grade_level_id
       AND a.subject_area = ce.subject_area       
      WHERE a.is_normed_scope = 1
-       AND a.subject_area IN ('Algebra I','Geometry','Algebra II','Algebra IIA','Algebra IIB','Pre-Calculus'
-                             ,'English 100','English 200','English 300','English 400')
+       AND a.subject_area NOT IN ('Text Study','Mathematics','Social Studies','Science')
 
      UNION ALL
 
@@ -137,8 +136,7 @@ FROM
       AND agl.grade_level_id != ssa.grade_level_id      
       AND ssa.rn = 1
      WHERE a.is_normed_scope = 1
-       AND a.subject_area NOT IN ('Algebra I','Geometry','Algebra II','Algebra IIA','Algebra IIB','Pre-Calculus'
-                                 ,'English 100','English 200','English 300','English 400')
+       AND a.subject_area IN ('Text Study','Mathematics','Social Studies','Science')
 
      UNION ALL
 

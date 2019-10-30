@@ -94,11 +94,10 @@ FROM
             ON ils.student_id = ssc.student_id
            AND c.course_id = ssc.course_id
            AND (enr.academic_year + 1) = ssc.academic_year
+           AND ssc.grade_level_id >= 6
           WHERE enr.course_enroll_status = 0
             AND enr.section_enroll_status = 0
-            AND enr.illuminate_subject IN ('Mathematics','Algebra I','Geometry','Algebra II','Algebra IIA','Algebra IIB','Pre-Calculus'
-                                          ,'Text Study','English 100','English 200','English 300','English 400','Composition 100','Composition 200','Composition 300','AP Language','AP Literature', 'AP Seminar'
-                                          ,'Science','Social Studies')
+            AND enr.illuminate_subject IS NOT NULL
          ) sub
     ) sub
 WHERE rn = 1
