@@ -47,6 +47,19 @@ WITH failing AS (
       ) sub
 )
 
+,ada AS (
+  SELECT mem.studentid
+        ,mem.[db_name]
+        ,mem.yearid
+        ,ROUND(AVG(CONVERT(FLOAT, mem.attendancevalue)) * 100, 0) AS ada_y1_running
+  FROM gabby.powerschool.ps_adaadm_daily_ctod mem
+  WHERE mem.membershipvalue > 0
+    AND mem.calendardate <= CONVERT(DATE, GETDATE())
+  GROUP BY mem.studentid
+          ,mem.[db_name]
+          ,mem.yearid
+ )
+
 SELECT sub.student_number
       ,sub.studentid
       ,sub.[db_name]
@@ -92,6 +105,8 @@ FROM
            ,sub.grades_y1_credits_projected
            ,sub.qa_avg_performance_band_running
            ,CASE
+             WHEN sub.school_level = 'HS' AND sub.ada_y1_running >= 85 THEN 'On Track'
+             WHEN sub.school_level = 'HS' AND sub.ada_y1_running < 85 THEN 'Off Track'
              WHEN sub.ada_y1_running >= 90 THEN 'On Track'
              WHEN sub.ada_y1_running < 90 THEN 'Off Track'
              ELSE 'No Data'
@@ -137,7 +152,7 @@ FROM
                 ,rt.alt_name
                 ,rt.is_curterm
 
-                ,ROUND(((att.mem_count_y1 - att.abs_unexcused_count_y1) / att.mem_count_y1) * 100, 0) AS ada_y1_running
+                ,ada.ada_y1_running
 
                 ,lit.read_lvl AS fp_independent_level
                 ,lit.goal_status AS fp_goal_status
@@ -161,12 +176,10 @@ FROM
            AND co.academic_year = rt.academic_year
            AND rt.identifier = 'RT'
            AND rt._fivetran_deleted = 0
-          LEFT JOIN gabby.powerschool.attendance_counts_static att
-            ON co.studentid = att.studentid
-           AND co.[db_name] = att.[db_name]
-           AND co.academic_year = att.academic_year
-           AND rt.time_per_name = att.reporting_term COLLATE Latin1_General_BIN
-           AND att.mem_count_y1 > 0
+          LEFT JOIN ada
+            ON co.studentid = ada.studentid
+           AND co.[db_name] = ada.[db_name]
+           AND co.yearid = ada.yearid
           LEFT JOIN gabby.lit.achieved_by_round_static lit
             ON co.student_number = lit.student_number
            AND co.academic_year = lit.academic_year
