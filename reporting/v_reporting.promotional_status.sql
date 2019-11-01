@@ -164,9 +164,10 @@ FROM
 
                 ,cr.earned_credits_cum_projected AS grades_y1_credits_projected
                 ,CASE
-                  WHEN co.grade_level = 9 THEN 30
-                  WHEN co.grade_level = 10 THEN 60
-                  WHEN co.grade_level = 11 THEN 90
+                  WHEN co.grade_level = 9 THEN 25
+                  WHEN co.grade_level = 10 THEN 50
+                  WHEN co.grade_level = 11 THEN 85
+                  WHEN co.grade_level = 12 THEN 120
                  END AS grades_y1_credits_goal
 
                 ,qas.avg_performance_band_running AS qa_avg_performance_band_running
