@@ -22,11 +22,10 @@ WITH roster AS (
 
 ,valid_semesters AS (
   SELECT [value] AS semester
-        ,CASE 
-          WHEN [value] = 'FA' THEN '19'
-          WHEN [value] = 'SP' THEN '19'
-         END AS [year]
-  FROM STRING_SPLIT('FA,SP', ',')
+        ,CONVERT(VARCHAR(5), RIGHT(rg.n + 1, 2)) AS [year]
+  FROM STRING_SPLIT('FA,SP', ',') ss
+  JOIN gabby.utilities.row_generator rg
+    ON rg.n BETWEEN 2018 AND gabby.utilities.GLOBAL_ACADEMIC_YEAR()
  )
 
 ,valid_documents AS (
