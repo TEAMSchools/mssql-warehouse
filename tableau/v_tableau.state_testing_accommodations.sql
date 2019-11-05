@@ -9,6 +9,8 @@ WITH accom AS (
         ,parcc_test_format
         ,state_assessment_name
         ,math_state_assessment_name
+        ,asmt_exclude_ela
+        ,asmt_exclude_math
         ,accommodation
         ,accom_value
 
@@ -20,6 +22,8 @@ WITH accom AS (
              ,CAST(alternate_access AS varchar(255)) AS alternate_access
              ,state_assessment_name
              ,math_state_assessment_name
+             ,asmt_exclude_ela
+             ,asmt_exclude_math
              ,CAST(parcc_test_format AS varchar(255)) AS parcc_test_format
              ,CAST(access_test_format_override AS varchar(255)) AS access_test_format_override
              ,CAST(asmt_frequent_breaks AS varchar(255)) AS asmt_frequent_breaks
@@ -116,6 +120,8 @@ SELECT co.db_name
       ,parcc_test_format
       ,state_assessment_name
       ,math_state_assessment_name
+      ,asmt_exclude_ela
+      ,asmt_exclude_math
       ,accommodation
       ,accom_value
 
