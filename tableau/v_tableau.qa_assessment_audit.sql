@@ -22,6 +22,7 @@ SELECT a.assessment_id
       ,a.scope
       ,a.subject_area
       ,a.tags
+      ,a.is_normed_scope
       ,a.creator_first_name + ' ' + a.creator_last_name AS created_by
 
       ,pbs.description AS performance_band_set_description
