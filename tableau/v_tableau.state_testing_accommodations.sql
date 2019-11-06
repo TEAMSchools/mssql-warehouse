@@ -6,18 +6,12 @@ CREATE OR ALTER VIEW tableau.state_testing_accommodations AS
 WITH accom AS (
   SELECT [db_name]
         ,studentsdcid
-        ,parcc_test_format
-        ,state_assessment_name
-        ,math_state_assessment_name
         ,accommodation
         ,accommodation_value
   FROM 
       (
        SELECT [db_name]
              ,studentsdcid
-             ,parcc_test_format
-             ,state_assessment_name
-             ,math_state_assessment_name
              ,CAST(parcc_ell_paper_accom AS VARCHAR(25)) AS parcc_ell_paper_accom
              ,CAST(alternate_access AS VARCHAR(25)) AS alternate_access
              ,CAST(access_test_format_override AS VARCHAR(25)) AS access_test_format_override
@@ -112,12 +106,16 @@ SELECT co.student_number
       ,co.lep_status
       ,co.c_504_status
 
-      ,ac.parcc_test_format
-      ,ac.state_assessment_name
-      ,ac.math_state_assessment_name
+      ,nj.parcc_test_format
+      ,nj.state_assessment_name
+      ,nj.math_state_assessment_name
+
       ,ac.accommodation
       ,ac.accommodation_value
 FROM gabby.powerschool.cohort_identifiers_static co
+LEFT JOIN gabby.powerschool.s_nj_stu_x nj
+  ON co.students_dcid = nj.studentsdcid
+ AND co.[db_name] = nj.[db_name]
 LEFT JOIN accom ac
   ON co.students_dcid = ac.studentsdcid
  AND co.[db_name] = ac.[db_name]
