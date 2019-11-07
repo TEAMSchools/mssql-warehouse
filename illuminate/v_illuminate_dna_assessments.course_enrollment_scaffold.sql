@@ -22,60 +22,7 @@ FROM
                 ORDER BY entry_date DESC, leave_date DESC)) AS rn
      FROM
          (
-          /* K-4 ELA */
-          SELECT ssc.student_id
-                ,ssc.academic_year
-                ,ssc.grade_level_id
-                ,ssc.entry_date
-                ,ssc.leave_date
-
-                ,'Text Study' AS subject_area
-                ,'ENG' AS credittype
-                ,0 AS is_advanced_math
-          FROM gabby.powerschool.course_enrollments_static enr
-          JOIN gabby.illuminate_public.students ils
-            ON enr.student_number = ils.local_student_id
-          JOIN gabby.illuminate_public.courses c
-            ON enr.course_number = c.school_course_id COLLATE Latin1_General_BIN
-          JOIN gabby.illuminate_matviews.ss_cube ssc
-            ON ils.student_id = ssc.student_id
-           AND c.course_id = ssc.course_id
-           AND (enr.academic_year + 1) = ssc.academic_year
-          WHERE enr.course_enroll_status = 0
-            AND enr.section_enroll_status = 0
-            AND enr.course_number = 'HR'
-            AND (ssc.grade_level_id <= 5 OR (enr.schoolid = 73258 AND enr.section_number LIKE 'W%')) /* Pathways MS students only enrolled in HR */
-
-          UNION ALL
-
-          /* K-4 Math */
-          SELECT ssc.student_id
-                ,ssc.academic_year
-                ,ssc.grade_level_id
-                ,ssc.entry_date
-                ,ssc.leave_date
-             
-                ,'Mathematics' AS subject_area
-                ,'MATH' AS credittype
-                ,0 AS is_advanced_math
-          FROM gabby.powerschool.course_enrollments_static enr
-          JOIN gabby.illuminate_public.students ils
-            ON enr.student_number = ils.local_student_id
-          JOIN gabby.illuminate_public.courses c
-            ON enr.course_number = c.school_course_id COLLATE Latin1_General_BIN
-          JOIN gabby.illuminate_matviews.ss_cube ssc
-            ON ils.student_id = ssc.student_id
-           AND c.course_id = ssc.course_id
-           AND (enr.academic_year + 1) = ssc.academic_year
-           AND ssc.grade_level_id <= 5
-          WHERE enr.course_enroll_status = 0
-            AND enr.section_enroll_status = 0
-            AND enr.course_number = 'HR'
-            AND (ssc.grade_level_id <= 5 OR (enr.schoolid = 73258 AND enr.section_number LIKE 'W%')) /* Pathways MS students only enrolled in HR */
-
-          UNION ALL
-
-          /* 5-12 enrollments */
+          /* K-12 enrollments */
           SELECT ssc.student_id
                 ,ssc.academic_year
                 ,ssc.grade_level_id
@@ -94,10 +41,35 @@ FROM
             ON ils.student_id = ssc.student_id
            AND c.course_id = ssc.course_id
            AND (enr.academic_year + 1) = ssc.academic_year
-           AND ssc.grade_level_id >= 6
           WHERE enr.course_enroll_status = 0
             AND enr.section_enroll_status = 0
             AND enr.illuminate_subject IS NOT NULL
+
+          UNION ALL
+
+          /* ES Writing */
+          SELECT ssc.student_id
+                ,ssc.academic_year
+                ,ssc.grade_level_id
+                ,ssc.entry_date
+                ,ssc.leave_date
+
+                ,'Writing' AS subject_area
+                ,'RHET' AS credittype
+                ,0 AS is_advanced_math
+          FROM gabby.powerschool.course_enrollments_static enr
+          JOIN gabby.illuminate_public.students ils
+            ON enr.student_number = ils.local_student_id
+          JOIN gabby.illuminate_public.courses c
+            ON enr.course_number = c.school_course_id COLLATE Latin1_General_BIN
+          JOIN gabby.illuminate_matviews.ss_cube ssc
+            ON ils.student_id = ssc.student_id
+           AND c.course_id = ssc.course_id
+           AND (enr.academic_year + 1) = ssc.academic_year
+           AND ssc.grade_level_id <= 5
+          WHERE enr.course_enroll_status = 0
+            AND enr.section_enroll_status = 0
+            AND enr.course_number = 'HR'
          ) sub
     ) sub
 WHERE rn = 1
