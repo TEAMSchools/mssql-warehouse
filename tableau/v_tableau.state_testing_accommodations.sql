@@ -106,6 +106,8 @@ SELECT co.student_number
       ,co.lep_status
       ,co.c_504_status
 
+      ,nj.asmt_exclude_ela
+      ,nj.asmt_exclude_math
       ,nj.parcc_test_format
       ,nj.state_assessment_name
       ,nj.math_state_assessment_name
