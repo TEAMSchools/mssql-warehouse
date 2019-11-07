@@ -6,6 +6,7 @@ CREATE OR ALTER VIEW utilities.all_tables_columns AS
 SELECT 'gabby' AS db_name
       ,s.name COLLATE Latin1_General_BIN AS schema_name
       ,t.name COLLATE Latin1_General_BIN AS table_name
+      ,t.type
       ,-1 AS column_id
       ,NULL AS column_name
       ,NULL AS column_type
@@ -18,6 +19,7 @@ UNION ALL
 SELECT 'gabby' AS db_name
       ,s.name COLLATE Latin1_General_BIN AS schema_name
       ,t.name COLLATE Latin1_General_BIN AS table_name
+      ,t.type
       ,c.column_id
       ,c.name COLLATE Latin1_General_BIN AS column_name
       ,y.name COLLATE Latin1_General_BIN AS column_type
@@ -36,6 +38,7 @@ UNION ALL
 SELECT 'kippnewark' AS db_name
       ,s.name AS schema_name
       ,t.name AS table_name
+      ,t.type
       ,-1 AS column_id
       ,NULL AS column_name
       ,NULL AS column_type
@@ -48,6 +51,7 @@ UNION ALL
 SELECT 'kippnewark' AS db_name
       ,s.name AS schema_name
       ,t.name AS table_name
+      ,t.type
       ,c.column_id
       ,c.name AS column_name
       ,y.name AS column_type
@@ -66,6 +70,7 @@ UNION ALL
 SELECT 'kippcamden' AS db_name
       ,s.name AS schema_name
       ,t.name AS table_name
+      ,t.type
       ,-1 AS column_id
       ,NULL AS column_name
       ,NULL AS column_type
@@ -78,6 +83,7 @@ UNION ALL
 SELECT 'kippcamden' AS db_name
       ,s.name AS schema_name
       ,t.name AS table_name
+      ,t.type
       ,c.column_id
       ,c.name AS column_name
       ,y.name AS column_type
@@ -96,6 +102,7 @@ UNION ALL
 SELECT 'kippmiami' AS db_name
       ,s.name AS schema_name
       ,t.name AS table_name
+      ,t.type
       ,-1 AS column_id
       ,NULL AS column_name
       ,NULL AS column_type
@@ -108,6 +115,7 @@ UNION ALL
 SELECT 'kippmiami' AS db_name
       ,s.name AS schema_name
       ,t.name AS table_name
+      ,t.type
       ,c.column_id
       ,c.name AS column_name
       ,y.name AS column_type
