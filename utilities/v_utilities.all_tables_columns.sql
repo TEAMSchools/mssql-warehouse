@@ -13,7 +13,7 @@ SELECT 'gabby' AS db_name
 FROM gabby.sys.schemas AS s
 INNER JOIN gabby.sys.objects AS t
    ON s.[schema_id] = t.[schema_id]
-  AND t.type = 'U'
+  AND t.type IN ('U', 'V')
 WHERE s.schema_id BETWEEN 5 AND 16383
 UNION ALL
 SELECT 'gabby' AS db_name
@@ -26,7 +26,7 @@ SELECT 'gabby' AS db_name
 FROM gabby.sys.schemas AS s
 INNER JOIN gabby.sys.objects AS t
    ON s.[schema_id] = t.[schema_id]
-  AND t.type = 'U'
+  AND t.type IN ('U', 'V')
 INNER JOIN gabby.sys.columns c
    ON t.object_id = c.object_id
 INNER JOIN gabby.sys.types y
