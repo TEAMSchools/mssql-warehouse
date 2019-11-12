@@ -6,13 +6,12 @@ WITH grades_long AS (
         ,cat.academic_year
         ,cat.credittype
         ,cat.course_number
-        ,cat.sectionid
         ,cat.teacher_name
         ,cat.reporting_term
         ,cat.reporting_term AS rt
         ,cat.is_curterm
         ,cat.grade_category
-        ,cat.grade_category_pct        
+        ,cat.grade_category_pct
   FROM powerschool.category_grades_static cat
   WHERE cat.academic_year IN (gabby.utilities.GLOBAL_ACADEMIC_YEAR(), (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1))
   UNION ALL
@@ -21,19 +20,18 @@ WITH grades_long AS (
         ,cat.academic_year
         ,'ALL' AS credittype
         ,'ALL' AS course_number
-        ,NULL AS sectionid
         ,NULL AS teacher_name
-        ,cat.reporting_term      
+        ,cat.reporting_term
         ,cat.reporting_term AS rt
         ,cat.is_curterm
         ,cat.grade_category
-        ,ROUND(AVG(cat.grade_category_pct), 0) AS grade_category_pct   
+        ,ROUND(AVG(cat.grade_category_pct), 0) AS grade_category_pct
   FROM powerschool.category_grades_static cat
   WHERE cat.academic_year IN (gabby.utilities.GLOBAL_ACADEMIC_YEAR(), (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1))
   GROUP BY cat.student_number
           ,cat.schoolid
           ,cat.academic_year
-          ,cat.reporting_term      
+          ,cat.reporting_term
           ,cat.grade_category
           ,cat.is_curterm
 
@@ -44,13 +42,12 @@ WITH grades_long AS (
         ,cat.academic_year
         ,cat.credittype
         ,cat.course_number
-        ,cat.sectionid
         ,cat.teacher_name
         ,cat.reporting_term
         ,'CUR' AS rt
         ,cat.is_curterm
         ,cat.grade_category
-        ,cat.grade_category_pct        
+        ,cat.grade_category_pct
   FROM powerschool.category_grades_static cat
   WHERE cat.academic_year IN (gabby.utilities.GLOBAL_ACADEMIC_YEAR(), (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1))
   UNION ALL
@@ -59,7 +56,6 @@ WITH grades_long AS (
         ,cat.academic_year
         ,'ALL' AS credittype
         ,'ALL' AS course_number
-        ,NULL AS sectionid
         ,NULL AS teacher_name
         ,cat.reporting_term
         ,'CUR' AS rt
@@ -71,7 +67,7 @@ WITH grades_long AS (
   GROUP BY cat.student_number
           ,cat.schoolid
           ,cat.academic_year
-          ,cat.reporting_term      
+          ,cat.reporting_term
           ,cat.grade_category
           ,cat.is_curterm
  )
@@ -81,21 +77,20 @@ SELECT student_number
       ,academic_year
       ,credittype
       ,course_number
-      ,sectionid
       ,teacher_name
-      ,reporting_term      
+      ,reporting_term
       ,is_curterm
-    
+
       ,[A_CUR] /* assessments */
-      ,[C_CUR] /* classwork */      
+      ,[C_CUR] /* classwork */
       ,[H_CUR] /* homework */
       ,[P_CUR] /* class performance */
       ,[S_CUR] /* summative assessments */
-      ,[E_CUR] /* homework quality for MS, exams for HS */      
-      
-      ,ROUND(AVG([A_CUR]) OVER(PARTITION BY student_number, academic_year, course_number ORDER BY reporting_term ASC),0) AS A_Y1 
-      ,ROUND(AVG([C_CUR]) OVER(PARTITION BY student_number, academic_year, course_number ORDER BY reporting_term ASC),0) AS C_Y1      
-      ,ROUND(AVG([H_CUR]) OVER(PARTITION BY student_number, academic_year, course_number ORDER BY reporting_term ASC),0) AS H_Y1      
+      ,[E_CUR] /* homework quality for MS, exams for HS */
+
+      ,ROUND(AVG([A_CUR]) OVER(PARTITION BY student_number, academic_year, course_number ORDER BY reporting_term ASC),0) AS A_Y1
+      ,ROUND(AVG([C_CUR]) OVER(PARTITION BY student_number, academic_year, course_number ORDER BY reporting_term ASC),0) AS C_Y1
+      ,ROUND(AVG([H_CUR]) OVER(PARTITION BY student_number, academic_year, course_number ORDER BY reporting_term ASC),0) AS H_Y1
       ,ROUND(AVG([P_CUR]) OVER(PARTITION BY student_number, academic_year, course_number ORDER BY reporting_term ASC),0) AS P_Y1
       ,ROUND(AVG([S_CUR]) OVER(PARTITION BY student_number, academic_year, course_number ORDER BY reporting_term ASC),0) AS S_Y1
       ,ROUND(AVG([E_CUR]) OVER(PARTITION BY student_number, academic_year, course_number ORDER BY reporting_term ASC),0) AS E_Y1
@@ -136,17 +131,18 @@ FROM
            ,gr.course_number
            ,CONVERT(VARCHAR,gr.reporting_term) AS reporting_term
            ,gr.is_curterm
-           ,gr.sectionid
-           ,gr.teacher_name                      
+           ,gr.teacher_name
 
-           ,CONCAT(gr.grade_category, '_', gr.rt) AS pivot_field           
+           ,CONCAT(gr.grade_category, '_', gr.rt) AS pivot_field
            ,CASE 
              WHEN gr.schoolid = 73253 AND gr.grade_category = 'E' THEN NULL 
              ELSE gr.grade_category_pct 
             END AS grade_category_pct 
 
-           ,MAX(gr.schoolid) OVER(PARTITION BY gr.student_number, gr.academic_year, gr.course_number, gr.reporting_term ORDER BY CONVERT(VARCHAR,gr.reporting_term) ASC) AS schoolid                      
-     FROM grades_long gr       
+           ,MAX(gr.schoolid) OVER(
+              PARTITION BY gr.student_number, gr.academic_year, gr.course_number, gr.reporting_term 
+                ORDER BY gr.reporting_term ASC) AS schoolid
+     FROM grades_long gr
     ) sub
 PIVOT(
   MAX(grade_category_pct)
