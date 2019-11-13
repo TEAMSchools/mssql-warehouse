@@ -3,6 +3,21 @@ GO
 
 CREATE OR ALTER VIEW tableau.ktc_goals_dashboard AS
 
+WITH app_rollup AS (
+  SELECT sf_contact_id
+        ,SUM(CASE WHEN is_ltr = 1 AND is_submitted = 1 THEN 1 ELSE 0 END) AS n_submitted_ltr
+        ,SUM(CASE WHEN is_ltr = 1 AND is_wishlist = 1 THEN 1 ELSE 0 END) AS n_wishlist_ltr
+        ,MAX(is_eof_applied) AS is_eof_applied
+        ,MAX(is_eof_accepted) AS is_eof_accepted
+        ,MAX(CASE WHEN is_accepted = 1 AND is_4yr_college = 1 THEN 1 ELSE 0 END) AS is_accepted_4yr
+        ,MAX(CASE WHEN is_accepted = 1 AND is_2yr_college = 1 THEN 1 ELSE 0 END) AS is_accepted_2yr
+        ,MAX(CASE WHEN is_accepted = 1 AND is_cte = 1 THEN 1 ELSE 0 END) AS is_accepted_cte
+        ,MAX(CASE WHEN is_early_actiondecision = 1 AND is_submitted = 1 AND is_4yr_college = 1 THEN 1 ELSE 0 END) AS is_submitted_eaed_4yr
+        ,MAX(CASE WHEN is_early_actiondecision = 1 AND is_accepted = 1 AND is_4yr_college = 1 THEN 1 ELSE 0 END) AS is_accepted_eaed_4yr
+  FROM gabby.alumni.application_identifiers
+  GROUP BY sf_contact_id
+ )
+
 SELECT c.student_number
       ,c.sf_contact_id
       ,c.lastfirst
@@ -52,7 +67,7 @@ SELECT c.student_number
       ,c.last_successful_advisor_contact_date
       ,c.years_out_of_hs
 
-      , e.student_c
+      ,e.student_c
       ,e.ugrad_enrollment_id
       ,e.ecc_enrollment_id
       ,e.hs_enrollment_id
@@ -106,33 +121,43 @@ SELECT c.student_number
       ,e.cur_billing_state
       ,e.cur_ncesid
 
-      ,cn.SM1Q1
-      ,cn.SM2Q1
-      ,cn.SM1Q2
-      ,cn.SM2Q2
-      ,cn.SM1Q3
-      ,cn.SM2Q3
-      ,cn.SM1Q4
-      ,cn.SM2Q4
-      ,cn.MC1
-      ,cn.MC2
-      ,cn.GPF
-      ,cn.GPS
-      ,cn.BMF
-      ,cn.BMS
-      ,cn.BBBF
-      ,cn.BBBS
-      ,cn.PSCF
-      ,cn.PSCS
-      ,cn.AASS
-      ,cn.AAS1F
-      ,cn.AAS2F
-      ,cn.AAS3F
-      ,cn.AAS4F
-      ,cn.AAS1S
-      ,cn.AAS2S
-      ,cn.AAS3S
-      ,cn.AAS4S
+      ,ISNULL(cn.SM1Q1, 0) AS SM1Q1
+      ,ISNULL(cn.SM2Q1, 0) AS SM2Q1
+      ,ISNULL(cn.SM1Q2, 0) AS SM1Q2
+      ,ISNULL(cn.SM2Q2, 0) AS SM2Q2
+      ,ISNULL(cn.SM1Q3, 0) AS SM1Q3
+      ,ISNULL(cn.SM2Q3, 0) AS SM2Q3
+      ,ISNULL(cn.SM1Q4, 0) AS SM1Q4
+      ,ISNULL(cn.SM2Q4, 0) AS SM2Q4
+      ,ISNULL(cn.MC1, 0) AS MC1
+      ,ISNULL(cn.MC2, 0) AS MC2
+      ,ISNULL(cn.GPF, 0) AS GPF
+      ,ISNULL(cn.GPS, 0) AS GPS
+      ,ISNULL(cn.BMF, 0) AS BMF
+      ,ISNULL(cn.BMS, 0) AS BMS
+      ,ISNULL(cn.BBBF, 0) AS BBBF
+      ,ISNULL(cn.BBBS, 0) AS BBBS
+      ,ISNULL(cn.PSCF, 0) AS PSCF
+      ,ISNULL(cn.PSCS, 0) AS PSCS
+      ,ISNULL(cn.AASS, 0) AS AASS
+      ,ISNULL(cn.AAS1F, 0) AS AAS1F
+      ,ISNULL(cn.AAS2F, 0) AS AAS2F
+      ,ISNULL(cn.AAS3F, 0) AS AAS3F
+      ,ISNULL(cn.AAS4F, 0) AS AAS4F
+      ,ISNULL(cn.AAS1S, 0) AS AAS1S
+      ,ISNULL(cn.AAS2S, 0) AS AAS2S
+      ,ISNULL(cn.AAS3S, 0) AS AAS3S
+      ,ISNULL(cn.AAS4S, 0) AS AAS4S
+
+      ,ISNULL(ap.n_submitted_ltr, 0) AS n_submitted_ltr
+      ,ISNULL(ap.n_wishlist_ltr, 0) AS n_wishlist_ltr
+      ,ISNULL(ap.is_eof_applied, 0) AS is_eof_applied
+      ,ISNULL(ap.is_eof_accepted, 0) AS is_eof_accepted
+      ,ISNULL(ap.is_submitted_eaed_4yr, 0) AS is_submitted_eaed_4yr
+      ,ISNULL(ap.is_accepted_eaed_4yr, 0) AS is_accepted_eaed_4yr
+      ,ISNULL(ap.is_accepted_4yr, 0) AS is_accepted_4yr
+      ,ISNULL(ap.is_accepted_2yr, 0) AS is_accepted_2yr
+      ,ISNULL(ap.is_accepted_cte, 0) AS is_accepted_cte
 
       ,gabby.utilities.GLOBAL_ACADEMIC_YEAR() AS current_academic_year
 FROM gabby.alumni.ktc_roster c 
@@ -141,3 +166,5 @@ LEFT JOIN gabby.alumni.enrollment_identifiers e
 LEFT JOIN gabby.alumni.contact_note_rollup cn
   ON c.sf_contact_id = cn.contact_id
  AND cn.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+LEFT JOIN app_rollup ap
+  ON c.sf_contact_id = ap.sf_contact_id
