@@ -78,6 +78,7 @@ SELECT rr.assessment_id
       ,CONVERT(VARCHAR(5),rtt.alt_name) AS term_taken
       
       ,pbl.label_number AS performance_band_number
+      ,pbl.[label] AS performance_band_label
       ,pbl.is_mastery
 FROM response_rollup rr
 JOIN gabby.illuminate_public.students s

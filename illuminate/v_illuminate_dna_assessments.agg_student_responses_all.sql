@@ -25,6 +25,7 @@ SELECT assessment_id
       ,term_taken
       ,performance_band_set_id
       ,performance_band_number
+      ,performance_band_label
       ,is_mastery
       ,is_normed_scope
 FROM gabby.illuminate_dna_assessments.agg_student_responses_all_current
@@ -54,6 +55,7 @@ SELECT assessment_id
       ,term_taken
       ,performance_band_set_id
       ,performance_band_number
+      ,CONVERT(VARCHAR(5), performance_band_number) AS performance_band_label
       ,is_mastery
       ,is_normed_scope
 FROM gabby.illuminate_dna_assessments.agg_student_responses_all_archive

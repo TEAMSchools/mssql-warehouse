@@ -34,6 +34,7 @@ SELECT co.student_number
       ,asr.percent_correct
       ,asr.is_mastery
       ,asr.performance_band_number
+      ,asr.performance_band_label
       ,asr.is_replacement
       ,asr.is_normed_scope
 
