@@ -43,19 +43,17 @@ WITH survey_feed AS (
 
   UNION ALL
 
-  SELECT _created AS date_created
-        ,CONVERT(DATETIME2,survey_timestamp) AS date_submitted
+  SELECT date_started AS date_created
+        ,CONVERT(DATETIME2,date_submitted) AS date_submitted
         ,'R9/Engagement' AS subject_name
-        ,LOWER(email) AS responder_email
-        ,gabby.utilities.DATE_TO_SY(_created) AS academic_year
-        ,CASE
-          WHEN MONTH(_created) >= 7 THEN 'R9S1'
-          WHEN MONTH(_created) < 7 THEN 'R9S2'
-         END AS reporting_term
+        ,LOWER(respondent_mail) AS responder_email
+        ,gabby.utilities.DATE_TO_SY(date_submitted) AS academic_year
+        ,campaign_reporting_term AS reporting_term
         ,'R9/Engagement' AS survey
         ,NULL AS is_manager
-  FROM gabby.surveys.r_9_engagement_survey
-  WHERE email IS NOT NULL
+  FROM gabby.surveygizmo.survey_response_identifiers_static
+  WHERE survey_id = 5300913
+    AND status = 'Complete'
  )
 
 ,teacher_scaffold AS (
