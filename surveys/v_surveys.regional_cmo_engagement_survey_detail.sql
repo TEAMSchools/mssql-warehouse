@@ -26,7 +26,7 @@ SELECT d.survey_id
       ,d.respondent_primary_job
       ,d.respondent_primary_site
 FROM gabby.surveygizmo.survey_detail d
-WHERE d.survey_title = 'Engagement, Regional, and CMO Survey'
+WHERE d.survey_id = 5300913
   AND d.rn_respondent_subject = 1
   AND d.campaign_academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 
