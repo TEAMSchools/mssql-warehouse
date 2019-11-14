@@ -86,7 +86,7 @@ SELECT df.df_employee_number
 
       ,CASE 
         WHEN was.[status] IN ('Terminated', 'Pre-Start') THEN was.[status]
-        ELSE COALESCE(CASE WHEN l.[status] = '' THEN NULL ELSE l.[status] END, CASE WHEN cal.[type] = '' THEN NULL ELSE cal.[type] END, 'IN') COLLATE Latin1_General_BIN 
+        ELSE COALESCE(pt.[absent], CASE WHEN l.[status] = '' THEN NULL ELSE l.[status] END, CASE WHEN cal.[type] = '' THEN NULL ELSE cal.[type] END, 'IN') COLLATE Latin1_General_BIN 
        END AS day_status
       ,CASE 
         WHEN cal.[type] IN ('HOL','VAC') THEN 0
