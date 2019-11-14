@@ -63,9 +63,18 @@ SELECT df.df_employee_number
       ,df.position_effective_from_date AS academic_year_start_date
       ,COALESCE(df.termination_date, CONVERT(DATE,GETDATE())) AS academic_year_end_date
       ,df.userprincipalname AS email_address
-      
+
+      ,was.[status] AS cal_position_status
+      ,was.legal_entity_name AS cal_legal_entity
+      ,was.physical_location_name AS cal_location
+      ,was.department_name AS cal_department_name
+      ,was.job_name AS cal_job_title
+            
       ,cal.date_value
-      ,cal.insession
+      ,CASE 
+        WHEN was.[status] IN ('Terminated', 'Pre-Start', 'Administrative Leave', 'Medical Leave of Absence', 'Personal Leave of Absence') THEN 0
+        ELSE cal.insession
+       END AS insession
       ,gabby.utilities.DATE_TO_SY(cal.date_value) AS academic_year
       
       ,CONVERT(VARCHAR(5), dt.alt_name) AS term
@@ -75,16 +84,22 @@ SELECT df.df_employee_number
       ,pt.early_out
       ,pt.partial_day
 
-      ,COALESCE(l.[status], cal.[type]) COLLATE Latin1_General_BIN AS day_status
+      ,CASE 
+        WHEN was.[status] IN ('Terminated', 'Pre-Start') THEN was.[status]
+        ELSE COALESCE(CASE WHEN l.[status] = '' THEN NULL ELSE l.[status] END, CASE WHEN cal.[type] = '' THEN NULL ELSE cal.[type] END, 'IN') COLLATE Latin1_General_BIN 
+       END AS day_status
       ,CASE 
         WHEN cal.[type] IN ('HOL','VAC') THEN 0
         WHEN l.[status] IS NOT NULL THEN 0
+        WHEN was.[status] IN ('Terminated', 'Pre-Start') THEN 0
         ELSE 9.5 - ISNULL(t.tafw_hours, 0)
        END AS hours_worked
 FROM gabby.people.staff_crosswalk_static df
+JOIN gabby.dayforce.work_assignment_status was
+  ON df.df_employee_number = was.df_employee_id
 JOIN gabby.powerschool.calendar_day cal
   ON df.primary_site_schoolid = cal.schoolid 
- AND cal.date_value BETWEEN df.position_effective_from_date AND COALESCE(df.termination_date, GETDATE()) 
+ AND cal.date_value BETWEEN was.effective_start_date AND COALESCE(was.effective_end_date, GETDATE()) 
  AND (cal.insession = 1 OR cal.[type] = 'PD') 
  AND cal.date_value BETWEEN DATEFROMPARTS((gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1), 7, 1) AND GETDATE()
 JOIN gabby.reporting.reporting_terms dt
