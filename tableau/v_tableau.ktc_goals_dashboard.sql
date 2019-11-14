@@ -9,6 +9,9 @@ WITH app_rollup AS (
         ,SUM(CASE WHEN is_ltr = 1 AND is_wishlist = 1 THEN 1 ELSE 0 END) AS n_wishlist_ltr
         ,MAX(is_eof_applied) AS is_eof_applied
         ,MAX(is_eof_accepted) AS is_eof_accepted
+        ,MAX(CASE WHEN is_submitted = 1 AND is_4yr_college = 1 THEN 1 ELSE 0 END) AS is_submitted_4yr
+        ,MAX(CASE WHEN is_submitted= 1 AND is_2yr_college = 1 THEN 1 ELSE 0 END) AS is_submitted_2yr
+        ,MAX(CASE WHEN is_submitted = 1 AND is_cte = 1 THEN 1 ELSE 0 END) AS is_submitted_cte
         ,MAX(CASE WHEN is_accepted = 1 AND is_4yr_college = 1 THEN 1 ELSE 0 END) AS is_accepted_4yr
         ,MAX(CASE WHEN is_accepted = 1 AND is_2yr_college = 1 THEN 1 ELSE 0 END) AS is_accepted_2yr
         ,MAX(CASE WHEN is_accepted = 1 AND is_cte = 1 THEN 1 ELSE 0 END) AS is_accepted_cte
@@ -120,6 +123,7 @@ SELECT c.student_number
       ,e.cur_school_name
       ,e.cur_billing_state
       ,e.cur_ncesid
+      ,e.cur_adjusted_6_year_minority_graduation_rate
 
       ,ISNULL(cn.SM1Q1, 0) AS SM1Q1
       ,ISNULL(cn.SM2Q1, 0) AS SM2Q1
@@ -158,6 +162,9 @@ SELECT c.student_number
       ,ISNULL(ap.is_accepted_4yr, 0) AS is_accepted_4yr
       ,ISNULL(ap.is_accepted_2yr, 0) AS is_accepted_2yr
       ,ISNULL(ap.is_accepted_cte, 0) AS is_accepted_cte
+      ,ISNULL(ap.is_submitted_4yr, 0) AS is_submitted_4yr
+      ,ISNULL(ap.is_submitted_2yr, 0) AS is_submitted_2yr
+      ,ISNULL(ap.is_submitted_cte, 0) AS is_submitted_cte
 
       ,gabby.utilities.GLOBAL_ACADEMIC_YEAR() AS current_academic_year
 FROM gabby.alumni.ktc_roster c 

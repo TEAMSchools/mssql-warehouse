@@ -116,6 +116,7 @@ SELECT e.student_c
       ,cura.[name] AS cur_school_name
       ,cura.billing_state AS cur_billing_state
       ,cura.ncesid_c AS cur_ncesid
+      ,cura.adjusted_6_year_minority_graduation_rate_c AS cur_adjusted_6_year_minority_graduation_rate
 FROM enrollments e
 LEFT JOIN gabby.alumni.enrollment_c ug
   ON e.college_enrollment_id = ug.id
