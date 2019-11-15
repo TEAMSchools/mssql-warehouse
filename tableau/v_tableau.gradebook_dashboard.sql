@@ -19,10 +19,10 @@ WITH section_teacher AS (
            PARTITION BY scaff.studentid, scaff.yearid, scaff.course_number
              ORDER BY scaff.term_name DESC) AS rn
   FROM gabby.powerschool.course_section_scaffold scaff 
-  JOIN gabby.powerschool.sections sec 
+  LEFT JOIN gabby.powerschool.sections sec 
     ON scaff.sectionid = sec.id
    AND scaff.[db_name] = sec.[db_name]
-  JOIN gabby.powerschool.teachers_static t 
+  LEFT JOIN gabby.powerschool.teachers_static t 
     ON sec.teacher = t.id 
    AND sec.[db_name] = t.[db_name]
  )
@@ -69,11 +69,11 @@ SELECT co.student_number
       ,MAX(CASE WHEN gr.is_curterm = 1 THEN gr.need_80 ELSE NULL END) OVER(PARTITION BY co.student_number, co.academic_year, gr.course_number) AS need_80
       ,MAX(CASE WHEN gr.is_curterm = 1 THEN gr.need_90 ELSE NULL END) OVER(PARTITION BY co.student_number, co.academic_year, gr.course_number) AS need_90
 FROM gabby.powerschool.cohort_identifiers_static co 
-JOIN gabby.powerschool.final_grades_static gr 
+LEFT JOIN gabby.powerschool.final_grades_static gr 
   ON co.student_number = gr.student_number
  AND co.academic_year = gr.academic_year 
  AND co.[db_name] = gr.[db_name]
-JOIN section_teacher st 
+LEFT JOIN section_teacher st 
   ON co.studentid = st.studentid
  AND co.yearid = st.yearid
  AND co.[db_name] = st.[db_name]
@@ -127,7 +127,7 @@ SELECT co.student_number
       ,MAX(CASE WHEN gr.is_curterm = 1 THEN gr.need_80 ELSE NULL END) OVER(PARTITION BY co.student_number, co.academic_year, gr.course_number) AS need_80
       ,MAX(CASE WHEN gr.is_curterm = 1 THEN gr.need_90 ELSE NULL END) OVER(PARTITION BY co.student_number, co.academic_year, gr.course_number) AS need_90
 FROM gabby.powerschool.cohort_identifiers_static co 
-JOIN gabby.powerschool.final_grades_static gr 
+LEFT JOIN gabby.powerschool.final_grades_static gr 
   ON co.student_number = gr.student_number
  AND co.academic_year = gr.academic_year 
  AND co.[db_name] = gr.[db_name]
@@ -138,7 +138,7 @@ LEFT JOIN gabby.powerschool.storedgrades y1
  AND co.[db_name] = y1.[db_name]
  AND gr.course_number = y1.course_number_clean
  AND y1.storecode_clean = 'Y1'
-JOIN section_teacher st
+LEFT JOIN section_teacher st
   ON co.studentid = st.studentid
  AND co.yearid = st.yearid
  AND co.[db_name] = st.[db_name]
@@ -198,11 +198,11 @@ SELECT co.student_number
       ,NULL AS need_80
       ,NULL AS need_90
 FROM kippnewark.powerschool.cohort_identifiers_static co 
-JOIN kippnewark.powerschool.final_grades_static ex
+LEFT JOIN kippnewark.powerschool.final_grades_static ex
   ON co.student_number = ex.student_number
  AND co.academic_year = ex.academic_year
  AND (ex.e1 IS NOT NULL OR ex.e2 IS NOT NULL)
-JOIN section_teacher st
+LEFT JOIN section_teacher st
   ON co.studentid = st.studentid
  AND co.yearid = st.yearid
  AND ex.course_number = st.course_number
@@ -376,11 +376,11 @@ SELECT co.student_number
       ,NULL AS need_80
       ,NULL AS need_90
 FROM gabby.powerschool.cohort_identifiers_static co 
-JOIN gabby.powerschool.category_grades_static cg
+LEFT JOIN gabby.powerschool.category_grades_static cg
   ON co.student_number = cg.student_number
  AND co.academic_year = cg.academic_year 
  AND co.[db_name] = cg.[db_name]
-JOIN section_teacher st
+LEFT JOIN section_teacher st
   ON co.studentid = st.studentid
  AND co.yearid = st.yearid
  AND co.[db_name] = st.[db_name]
@@ -438,12 +438,12 @@ SELECT co.student_number
       ,NULL AS need_80
       ,NULL AS need_90
 FROM gabby.powerschool.cohort_identifiers_static co 
-JOIN gabby.powerschool.category_grades_static cy
+LEFT JOIN gabby.powerschool.category_grades_static cy
   ON co.student_number = cy.student_number
  AND co.academic_year = cy.academic_year 
  AND co.[db_name] = cy.[db_name]
  AND cy.is_curterm = 1
-JOIN section_teacher st
+LEFT JOIN section_teacher st
   ON co.studentid = st.studentid
  AND co.yearid = st.yearid
  AND co.[db_name] = st.[db_name]
