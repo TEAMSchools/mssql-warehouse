@@ -18,13 +18,7 @@ WITH dlrosters AS (
         ,p.[Others Involved]
         ,p.[NJ State Reporting]
         ,p.[Behavior Category]
-        ,p.[Final approval]
-        ,p.[Approver name]
-        ,p.[Instructor Source]
-        ,p.[Instructor Name]
-        ,p.[Hours per week]
-        ,p.[Hourly rate]
-        ,p.[Board Approval Date]
+        ,p.[SSDS Incident ID]
   FROM
       (
        SELECT incident_id
@@ -37,13 +31,7 @@ WITH dlrosters AS (
                            ,'Parent Contacted?'
                            ,'Perceived Motivation'
                            ,'Restraint Used'
-                           ,'Final approval'
-                           ,'Approver name'
-                           ,'Instructor Source'
-                           ,'Instructor Name'
-                           ,'Hours per week'
-                           ,'Hourly rate'
-                           ,'Board Approval Date')
+                           ,'SSDS Incident ID')
       ) sub
   PIVOT(
     MAX(value)
@@ -53,13 +41,7 @@ WITH dlrosters AS (
                       ,[Parent Contacted?]
                       ,[Perceived Motivation]
                       ,[Restraint Used]
-                      ,[Final approval]
-                      ,[Approver name]
-                      ,[Instructor Source]
-                      ,[Instructor Name]
-                      ,[Hours per week]
-                      ,[Hourly rate]
-                      ,[Board Approval Date])
+                      ,[SSDS Incident ID])
    ) p
  )
 
@@ -102,13 +84,8 @@ SELECT co.student_number
       ,cf.[Parent Contacted?]
       ,cf.[Perceived Motivation]
       ,cf.[Restraint Used]
-      ,cf.[Final approval]
-      ,cf.[Approver name]
-      ,cf.[Instructor Source]
-      ,cf.[Instructor Name]
-      ,cf.[Hours per week]
-      ,cf.[Hourly rate]
-      ,cf.[Board Approval Date]
+      ,cf.[SSDS Incident ID]
+
 FROM gabby.powerschool.cohort_identifiers_static co
 LEFT OUTER JOIN dlrosters r
   ON co.student_number = r.student_school_id
@@ -124,7 +101,7 @@ LEFT JOIN custom_fields cf
   ON dli.incident_id = cf.incident_id
 WHERE co.academic_year IN (gabby.utilities.GLOBAL_ACADEMIC_YEAR(), gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
   AND co.rn_year = 1
-  AND co.grade_level != 99  
+  AND co.grade_level != 99 
 
 UNION ALL
 
@@ -167,13 +144,8 @@ SELECT co.student_number
       ,NULL AS [Parent Contacted?]
       ,NULL AS [Perceived Motivation]
       ,NULL AS [Restraint Used]
-      ,NULL AS [Final approval]
-      ,NULL AS [Approver name]
-      ,NULL AS [Instructor Source]
-      ,NULL AS [Instructor Name]
-      ,NULL AS [Hours per week]
-      ,NULL AS [Hourly rate]
-      ,NULL AS [Board Approval Date]
+      ,NULL AS [SSDS Incident ID]
+
 FROM gabby.powerschool.cohort_identifiers_static co
 LEFT OUTER JOIN dlrosters r
   ON co.student_number = r.student_school_id
@@ -232,13 +204,8 @@ SELECT co.student_number
       ,NULL AS [Parent Contacted?]
       ,NULL AS [Perceived Motivation]
       ,NULL AS [Restraint Used]
-      ,NULL AS [Final approval]
-      ,NULL AS [Approver name]
-      ,NULL AS [Instructor Source]
-      ,NULL AS [Instructor Name]
-      ,NULL AS [Hours per week]
-      ,NULL AS [Hourly rate]
-      ,NULL AS [Board Approval Date]
+      ,NULL AS [SSDS Incident ID]
+
 FROM gabby.powerschool.cohort_identifiers_static co
 LEFT OUTER JOIN dlrosters r
   ON co.student_number = r.student_school_id
