@@ -45,13 +45,13 @@ SELECT c.sf_contact_id AS contact_id
       ,c.record_type_name AS record_type_name
       ,c.counselor_name AS [user_name]
 
-      ,ei.ugrad_school_name
+      ,ei.ugrad_account_name AS ugrad_school_name
       ,ei.ugrad_pursuing_degree_type
       ,ei.ugrad_status
       ,ei.ugrad_start_date
       ,ei.ugrad_actual_end_date
       ,ei.ugrad_anticipated_graduation
-      ,ei.ecc_school_name
+      ,ei.ecc_account_name AS ecc_school_name
       ,ei.ecc_pursuing_degree_type
       ,ei.ecc_status
       ,ei.ecc_start_date
@@ -59,7 +59,7 @@ SELECT c.sf_contact_id AS contact_id
       ,ei.ecc_anticipated_graduation
       ,ei.ecc_adjusted_6_year_minority_graduation_rate
       ,ei.ecc_account_type
-      ,ei.hs_school_name
+      ,ei.hs_account_name AS hs_school_name
       ,ei.hs_pursuing_degree_type
       ,ei.hs_status
       ,ei.hs_start_date

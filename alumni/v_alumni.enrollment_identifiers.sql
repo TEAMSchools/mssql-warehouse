@@ -85,6 +85,7 @@ SELECT e.student_c
       ,ecc.anticipated_graduation_c AS ecc_anticipated_graduation
       ,ecc.account_type_c AS ecc_account_type
 
+      ,ecca.[name] AS ecc_account_name
       ,ecca.adjusted_6_year_minority_graduation_rate_c AS ecc_adjusted_6_year_minority_graduation_rate
 
       ,hs.name AS hs_school_name      
@@ -94,6 +95,8 @@ SELECT e.student_c
       ,hs.actual_end_date_c AS hs_actual_end_date
       ,hs.anticipated_graduation_c AS hs_anticipated_graduation
       ,hs.account_type_c AS hs_account_type
+
+      ,hsa.[name] AS hs_account_name
 
       ,cte.pursuing_degree_type_c AS cte_pursuing_degree_type
       ,cte.status_c AS cte_status
@@ -128,6 +131,8 @@ LEFT JOIN gabby.alumni.account ecca
   ON ecc.school_c = ecca.id
 LEFT JOIN gabby.alumni.enrollment_c hs
   ON e.secondary_enrollment_id = hs.id
+LEFT JOIN gabby.alumni.account hsa
+  ON hs.school_c = hsa.id
 LEFT JOIN gabby.alumni.enrollment_c cte
   ON e.vocational_enrollment_id = cte.id
 LEFT JOIN gabby.alumni.account ctea
