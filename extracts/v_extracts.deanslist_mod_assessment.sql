@@ -13,6 +13,7 @@ WITH assessments_long AS (
         ,percent_correct
         ,performance_band_number
         ,performance_band_set_id
+        ,performance_band_label
          /* if a student takes a replacement assessment, it will be preferred */
         ,ROW_NUMBER() OVER(
            PARTITION BY local_student_id, subject_area, module_number
@@ -30,20 +31,14 @@ SELECT sub.local_student_id AS student_number
       ,sub.term_administered
       ,CASE
         WHEN sub.subject_area = 'Text Study' THEN 'ELA'
-        WHEN sub.subject_area = 'Mathematics' THEN 'MATH'               
+        WHEN sub.subject_area = 'Mathematics' THEN 'MATH'
        END AS subject_area
       ,sub.subject_area AS subject_area_label
       ,sub.module_type AS scope
       ,sub.module_number AS module_num
       ,RIGHT(sub.module_number, 1) AS rn_unit
       ,sub.percent_correct
-      ,CASE
-        WHEN sub.performance_band_number = 5 THEN 'Above Target'
-        WHEN sub.performance_band_number = 4 THEN 'Target'
-        WHEN sub.performance_band_number = 3 THEN 'Near Target'
-        WHEN sub.performance_band_number = 2 THEN 'Below Target'
-        WHEN sub.performance_band_number = 1 THEN 'Far Below Target'
-       END AS proficiency_label
+      ,sub.performance_band_label AS proficiency_label
 FROM
     (
      SELECT al.local_student_id
@@ -53,7 +48,7 @@ FROM
            ,al.module_type
            ,al.module_number
            ,al.percent_correct
-           ,al.performance_band_number
+           ,al.performance_band_label
      FROM assessments_long al
      WHERE al.rn_subj_modnum = 1
 
@@ -66,7 +61,7 @@ FROM
            ,sub.module_type
            ,sub.module_type + 'A' AS module_number
            ,sub.avg_percent_correct
-           ,pbl.label_number
+           ,pbl.[label] AS performance_band_label
      FROM
          (
           SELECT al.local_student_id
@@ -100,24 +95,19 @@ SELECT sub.student_number
       ,sub.scope
       ,sub.module_num
       ,NULL AS rn_unit
-      ,sub.avg_pct_correct 
-      ,CASE
-        WHEN pbl.label_number = 5 THEN 'Above Target'
-        WHEN pbl.label_number = 4 THEN 'Target'
-        WHEN pbl.label_number = 3 THEN 'Near Target'
-        WHEN pbl.label_number = 2 THEN 'Below Target'
-        WHEN pbl.label_number = 1 THEN 'Far Below Target'       
-       END AS proficiency_label      
+      ,sub.avg_pct_correct
+      
+      ,pbl.[label] AS proficiency_label
 FROM
     (
      SELECT s.local_student_id AS student_number
-           ,a.academic_year_clean AS academic_year      
+           ,a.academic_year_clean AS academic_year
            ,a.term_administered
            ,a.subject_area AS subject_area_label
-           ,'ENRICHMENT' AS subject_area           
+           ,'ENRICHMENT' AS subject_area
            ,'UA' AS scope
-           ,REPLACE(a.term_administered, 'Q', 'QA') AS module_num      
-           ,ROUND(AVG(asr.percent_correct),0) AS avg_pct_correct                       
+           ,REPLACE(a.term_administered, 'Q', 'QA') AS module_num
+           ,ROUND(AVG(asr.percent_correct),0) AS avg_pct_correct
            ,MIN(a.performance_band_set_id) AS performance_band_set_id
      FROM gabby.illuminate_dna_assessments.assessments_identifiers a
      JOIN gabby.illuminate_dna_assessments.agg_student_responses asr
@@ -125,12 +115,12 @@ FROM
      JOIN gabby.illuminate_public.students s
        ON asr.student_id = s.student_id
      WHERE a.scope = 'Unit Assessment'
-       AND a.subject_area NOT IN ('Text Study','Mathematics')  
-       AND a.academic_year_clean = gabby.utilities.GLOBAL_ACADEMIC_YEAR()  
+       AND a.subject_area NOT IN ('Text Study','Mathematics')
+       AND a.academic_year_clean = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
        AND a.deleted_at IS NULL
      GROUP BY s.local_student_id
-             ,a.academic_year_clean              
-             ,a.subject_area        
+             ,a.academic_year_clean
+             ,a.subject_area
              ,a.term_administered
     ) sub
 JOIN gabby.illuminate_dna_assessments.performance_band_lookup_static pbl
