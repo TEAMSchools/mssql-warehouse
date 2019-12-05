@@ -31,6 +31,7 @@ SELECT d.survey_id
       ,d.subject_samaccountname
       ,d.subject_manager_name
       ,d.subject_manager_samaccountname
+      ,d.subject_primary_job AS subject_dayforce_role
       ,CASE 
         WHEN d.is_open_ended = 'Y' THEN NULL
         WHEN ISNUMERIC(d.answer_value) = 0 THEN NULL
@@ -75,33 +76,37 @@ WHERE d.survey_title = 'Self and Others'
 UNION ALL 
 
 SELECT NULL AS survey_id
-      ,survey_type AS survey_title
-      ,response_id AS survey_response_id
-      ,academic_year AS campaign_academic_year
+      ,a.survey_type AS survey_title
+      ,a.response_id AS survey_response_id
+      ,a.academic_year AS campaign_academic_year
       ,NULL AS date_started
       ,CONVERT(DATE, date_submitted)
-      ,reporting_term AS campaign_name
-      ,reporting_term AS campaign_reporting_term
-      ,open_ended AS is_open_ended
-      ,question_code AS question_shortname
-      ,CONVERT(VARCHAR(500), question_text) AS question_title
-      ,response AS answer
-      ,response_value AS answer_value
+      ,a.reporting_term AS campaign_name
+      ,a.reporting_term AS campaign_reporting_term
+      ,a.open_ended AS is_open_ended
+      ,a.question_code AS question_shortname
+      ,CONVERT(VARCHAR(500), a.question_text) AS question_title
+      ,a.response AS answer
+      ,a.response_value AS answer_value
       ,NULL AS respondent_df_employee_number
-      ,respondent_name AS respondent_preferred_name
-      ,respondent_email_address AS respondent_mail
-      ,is_manager
-      ,subject_employee_number AS subject_df_employee_number
-      ,subject_associate_id AS subject_adp_associate_id
-      ,subject_name AS subject_preferred_name
-      ,subject_legal_entity_name
-      ,subject_location AS subject_primary_site
-      ,subject_primary_site_schoolid
-      ,subject_primary_site_school_level
-      ,subject_manager_id AS subject_manager_df_employee_number
-      ,subject_username AS subject_samaccountname
-      ,subject_manager_name
-      ,subject_manager_username AS subject_manager_samaccountname
-      ,response_weight
-      ,response_value_weighted AS answer_value_weighted
-FROM surveys.self_and_others_survey_detail_archive
+      ,a.respondent_name AS respondent_preferred_name
+      ,a.respondent_email_address AS respondent_mail
+      ,a.is_manager
+      ,a.subject_employee_number AS subject_df_employee_number
+      ,a.subject_associate_id AS subject_adp_associate_id
+      ,a.subject_name AS subject_preferred_name
+      ,a.subject_legal_entity_name
+      ,a.subject_location AS subject_primary_site
+      ,a.subject_primary_site_schoolid
+      ,a.subject_primary_site_school_level
+      ,a.subject_manager_id AS subject_manager_df_employee_number
+      ,a.subject_username AS subject_samaccountname
+      ,a.subject_manager_name
+      ,a.subject_manager_username AS subject_manager_samaccountname
+      ,w.job_name AS subject_dayforce_role
+      ,a.response_weight
+      ,a.response_value_weighted AS answer_value_weighted
+FROM surveys.self_and_others_survey_detail_archive a 
+LEFT JOIN dayforce.work_assignment_status w
+  ON a.subject_employee_number = w.df_employee_id
+ AND a.date_submitted BETWEEN w.effective_start_date AND w.effective_end_date
