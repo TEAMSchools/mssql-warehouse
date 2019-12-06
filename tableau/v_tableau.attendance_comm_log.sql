@@ -28,9 +28,9 @@ WITH commlog AS (
 ,ada AS (
   SELECT psa.studentid
         ,psa.db_name
-        ,psa.yearid + 1990 AS academic_year
+        ,psa.yearid
         ,ROUND(AVG(CAST(psa.attendancevalue AS FLOAT)), 2) AS ada
-  FROM gabby.powerschool.ps_adaadm_daily_ctod psa
+  FROM gabby.powerschool.ps_adaadm_daily_ctod_current_static psa
   WHERE psa.membershipvalue = 1
     AND psa.calendardate <= CAST(SYSDATETIME() AS DATE)
   GROUP BY psa.studentid
@@ -38,24 +38,6 @@ WITH commlog AS (
           ,psa.db_name
  )
  
-,gpa_y1 AS (
-  SELECT student_number
-        ,academic_year
-        ,gpa_y1
-        ,n_failing_y1
-  FROM powerschool.gpa_detail
-  WHERE is_curterm = 1
- )
-
-,reading AS (
-  SELECT student_number
-        ,academic_year
-        ,read_lvl
-        ,goal_status
-  FROM lit.achieved_by_round_static
-  WHERE is_curterm = 1
- )
-
 SELECT co.student_number
       ,co.lastfirst
       ,co.academic_year
@@ -70,8 +52,11 @@ SELECT co.student_number
 
       ,att.att_date
       ,att.att_comment
+
       ,ac.att_code
       
+      ,rt.alt_name AS term
+
       ,CASE
         WHEN att.schoolid = 73253 THEN co.advisor_name
         ELSE cc.section_number
@@ -85,8 +70,6 @@ SELECT co.student_number
       ,cl.followup_init_notes
       ,cl.followup_close_notes
 
-      ,rt.alt_name AS term
-
       ,ada.ada
 
       ,r.read_lvl
@@ -98,7 +81,7 @@ SELECT co.student_number
       ,ROW_NUMBER() OVER(
          PARTITION BY att.studentid, att.att_date
            ORDER BY cl.commlog_datetime DESC) AS rn_date
-FROM gabby.powerschool.attendance_clean att
+FROM gabby.powerschool.attendance_clean_current_static att
 JOIN gabby.powerschool.cohort_identifiers_static co
   ON att.studentid = co.studentid 
  AND att.att_date BETWEEN co.entrydate AND co.exitdate
@@ -107,27 +90,28 @@ JOIN gabby.powerschool.attendance_code ac
   ON att.attendance_codeid = ac.id
  AND att.db_name = ac.db_name
  AND ac.att_code LIKE 'A%'
-LEFT JOIN gabby.powerschool.cc
-  ON att.studentid = cc.studentid 
- AND att.att_date BETWEEN cc.dateenrolled AND cc.dateleft
- AND att.db_name = cc.db_name
- AND cc.course_number = 'HR'
-LEFT JOIN commlog cl
-  ON co.student_number = cl.student_school_id
- AND att.att_date = cl.commlog_date
-LEFT JOIN ada
-  ON ada.studentid = co.studentid 
- AND ada.academic_year = co.academic_year
- AND ada.db_name = co.db_name
-LEFT JOIN gpa_y1 gpa
-  ON gpa.academic_year = co.academic_year
- AND gpa.student_number = co.student_number
-LEFT JOIN reading r
-  ON r.student_number = co.student_number
- AND r.academic_year = co.academic_year
 LEFT JOIN gabby.reporting.reporting_terms rt 
   ON co.schoolid = rt.schoolid
  AND att.att_date BETWEEN rt.[start_date] AND rt.end_date
  AND rt.identifier = 'RT'
-WHERE att.att_date >= DATEFROMPARTS((gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1), 07, 01)
-  AND att.att_mode_code = 'ATT_ModeDaily'
+LEFT JOIN gabby.powerschool.cc
+  ON att.studentid = cc.studentid 
+ AND att.att_date BETWEEN cc.dateenrolled AND cc.dateleft
+ AND att.db_name = cc.db_name
+ AND cc.course_number_clean = 'HR'
+LEFT JOIN commlog cl
+  ON co.student_number = cl.student_school_id
+ AND att.att_date = cl.commlog_date
+LEFT JOIN ada
+  ON co.studentid = ada.studentid
+ AND co.yearid = ada.yearid
+ AND co.db_name = ada.db_name
+LEFT JOIN gabby.powerschool.gpa_detail gpa
+  ON co.student_number = gpa.student_number
+ AND co.academic_year = gpa.academic_year
+ AND gpa.is_curterm = 1
+LEFT JOIN gabby.lit.achieved_by_round_static r
+  ON co.student_number = r.student_number
+ AND co.academic_year = r.academic_year
+ AND r.is_curterm = 1
+WHERE att.att_mode_code = 'ATT_ModeDaily'
