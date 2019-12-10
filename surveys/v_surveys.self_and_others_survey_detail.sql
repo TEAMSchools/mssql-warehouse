@@ -80,7 +80,7 @@ SELECT NULL AS survey_id
       ,a.response_id AS survey_response_id
       ,a.academic_year AS campaign_academic_year
       ,NULL AS date_started
-      ,CONVERT(DATE, date_submitted)
+      ,CONVERT(DATE, a.date_submitted)
       ,a.reporting_term AS campaign_name
       ,a.reporting_term AS campaign_reporting_term
       ,a.open_ended AS is_open_ended
@@ -106,7 +106,7 @@ SELECT NULL AS survey_id
       ,w.job_name AS subject_dayforce_role
       ,a.response_weight
       ,a.response_value_weighted AS answer_value_weighted
-FROM surveys.self_and_others_survey_detail_archive a 
-LEFT JOIN dayforce.work_assignment_status w
+FROM gabby.surveys.self_and_others_survey_detail_archive a 
+LEFT JOIN gabby.dayforce.work_assignment_status w
   ON a.subject_employee_number = w.df_employee_id
  AND a.date_submitted BETWEEN w.effective_start_date AND w.effective_end_date
