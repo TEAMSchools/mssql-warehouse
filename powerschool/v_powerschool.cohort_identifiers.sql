@@ -224,6 +224,7 @@ LEFT JOIN powerschool.team_roster_static t
 LEFT JOIN powerschool.advisory_static adv
   ON co.student_number = adv.student_number
  AND co.academic_year = adv.academic_year
+ AND co.schoolid = adv.schoolid
 LEFT JOIN easyiep.njsmart_powerschool_clean sped
   ON co.student_number = sped.student_number
  AND co.academic_year  = sped.academic_year
