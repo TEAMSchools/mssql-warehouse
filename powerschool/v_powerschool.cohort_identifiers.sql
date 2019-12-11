@@ -220,6 +220,7 @@ JOIN powerschool.schools sch
 LEFT JOIN powerschool.team_roster_static t
   ON co.student_number = t.student_number
  AND co.academic_year = t.academic_year
+ AND co.schoolid = t.schoolid
 LEFT JOIN powerschool.advisory_static adv
   ON co.student_number = adv.student_number
  AND co.academic_year = adv.academic_year
