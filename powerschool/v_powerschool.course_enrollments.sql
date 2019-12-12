@@ -35,7 +35,7 @@ SELECT sub.studentid
          PARTITION BY sub.studentid, sub.credittype, sub.section_enroll_status
            ORDER BY sub.termid DESC, sub.course_number DESC, sub.dateenrolled DESC, sub.dateleft DESC)) AS rn_subject
       ,CONVERT(INT, ROW_NUMBER() OVER(
-         PARTITION BY sub.studentid, sub.course_number, sub.academic_year
+         PARTITION BY sub.studentid, sub.course_number, sub.academic_year, sub.schoolid
            ORDER BY sub.termid DESC, sub.dateenrolled DESC, sub.dateleft DESC)) AS rn_course_yr
       ,CONVERT(INT, ROW_NUMBER() OVER(
          PARTITION BY sub.student_number, sub.academic_year, sub.illuminate_subject, sub.course_enroll_status, sub.section_enroll_status

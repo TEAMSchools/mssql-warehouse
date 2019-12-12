@@ -71,6 +71,7 @@ FROM
      LEFT JOIN powerschool.course_enrollments_static enr
        ON co.studentid = enr.studentid
       AND co.academic_year = enr.academic_year 
+      AND co.schoolid = enr.schoolid
       AND enr.course_number = 'HR' 
       AND enr.rn_course_yr = 1
      LEFT JOIN powerschool.ps_attendance_daily_current_static att
