@@ -5,15 +5,15 @@ CREATE OR ALTER VIEW tableau.ops_dashboard AS
 
 WITH att_mem AS (
   SELECT studentid
-        ,db_name
-        ,yearid      
+        ,[db_name]
+        ,yearid
         ,SUM(attendancevalue) AS n_attendance
         ,SUM(membershipvalue) AS n_membership
   FROM gabby.powerschool.ps_adaadm_daily_ctod
   WHERE membershipvalue = 1
   GROUP BY studentid
           ,yearid
-          ,db_name
+          ,[db_name]
  )
 
 ,targets AS (
@@ -46,6 +46,7 @@ WITH att_mem AS (
 
        UNION ALL
 
+       /* Newark/Miami SC & OOD students */
        SELECT academic_year
              ,reporting_schoolid
              ,is_pathways
@@ -59,7 +60,8 @@ WITH att_mem AS (
              ,NULL AS sped_ratio
        FROM gabby.powerschool.cohort_identifiers_static
        WHERE (is_pathways = 1 OR school_name = 'Out of District')
-         AND is_enrolled_y1 = 1
+         AND rn_year = 1
+         AND [db_name] IN ('kippnewark', 'kippmiami')
       ) sub
   GROUP BY sub.academic_year
           ,sub.schoolid
@@ -146,14 +148,14 @@ LEFT JOIN gabby.powerschool.calendar_rollup_static cal
   ON co.schoolid = cal.schoolid
  AND co.yearid = cal.yearid
  AND co.track = cal.track
- AND co.db_name = cal.db_name
+ AND co.[db_name] = cal.[db_name]
 LEFT JOIN att_mem
   ON co.studentid = att_mem.studentid
  AND co.yearid = att_mem.yearid
- AND co.db_name = att_mem.db_name
+ AND co.[db_name] = att_mem.[db_name]
 LEFT JOIN gabby.powerschool.s_nj_stu_x nj
   ON co.students_dcid = nj.studentsdcid
- AND co.db_name = nj.db_name
+ AND co.[db_name] = nj.[db_name]
  AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 LEFT JOIN targets t
   ON co.academic_year = t.academic_year
