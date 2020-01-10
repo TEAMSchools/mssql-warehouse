@@ -70,15 +70,15 @@ SELECT NULL AS survey_id
       ,sda.school_level AS subject_primary_site_school_level
       ,NULL AS subject_manager_df_employee_number
       ,sda.subject_manager_id AS subject_manager_adp_associate_id
-      ,COALESCE(sbjt.samaccountname,sda.subject_username) AS subject_samaccountname
+      ,COALESCE(sbjt.samaccountname, sda.subject_username) AS subject_samaccountname
       ,sda.subject_manager_name
       ,COALESCE(mgr.samaccountname, sda.subject_manager_username) AS subject_manager_samaccountname
       ,w.job_name AS subject_dayforce_role
 FROM surveys.manager_survey_detail_archive  sda
 LEFT JOIN gabby.people.staff_crosswalk_static sbjt
-  ON sda.subject_associate_id = CONVERT(nvarchar,sbjt.df_employee_number)
+  ON sda.subject_df_employee_number = sbjt.df_employee_number
 LEFT JOIN gabby.people.staff_crosswalk_static mgr
-  ON sda.subject_manager_id = CONVERT(nvarchar,mgr.df_employee_number)
+  ON sda.subject_manager_df_employee_number = mgr.df_employee_number
 LEFT JOIN gabby.dayforce.employee_work_assignment w
   ON sda.subject_associate_id = CONVERT(nvarchar,w.employee_reference_code)
  AND sda.date_submitted BETWEEN w.work_assignment_effective_start AND w.work_assignment_effective_end
