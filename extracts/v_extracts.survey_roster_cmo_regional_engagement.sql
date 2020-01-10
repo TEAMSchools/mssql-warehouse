@@ -15,6 +15,7 @@ SELECT df_employee_number
       ,CASE WHEN primary_site IN ('Room 9 - 60 Park Pl', 'Room 10 - 740 Chestnut St', 'Room 11 - 6745 NW 23rd Ave') THEN 'Not School Based'
             ELSE 'school-based'
        END AS 'school_based'
+      ,CASE WHEN primary_job IN ('Teacher', 'Teacher in Residence', 'Learning Specialist', 'Learning Specialist Coordinator', 'Teacher, ESL') THEN 'Teacher'
             WHEN primary_job = 'Executive Director' THEN 'Executive Director'
             WHEN primary_job IN ('Associate Director of School Operations') THEN 'ADSO'
             WHEN primary_job IN ('Director Campus Operations', 'Director School Operations', 'Director of Campus Operations') THEN 'DSO'
