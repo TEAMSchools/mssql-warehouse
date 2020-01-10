@@ -32,7 +32,12 @@ SELECT d.survey_id
       ,d.subject_samaccountname
       ,d.subject_manager_name
       ,d.subject_manager_samaccountname
+      ,w.job_name AS subject_dayforce_role
 FROM gabby.surveygizmo.survey_detail d
+LEFT JOIN gabby.dayforce.employee_work_assignment w
+  ON d.subject_adp_associate_id = w.employee_reference_code
+ AND d.date_submitted BETWEEN w.work_assignment_effective_start AND w.work_assignment_effective_end
+ AND w.primary_work_assignment = 1
 WHERE d.survey_title = 'Manager Survey'
   AND d.rn_respondent_subject = 1
   AND d.campaign_academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
@@ -68,8 +73,13 @@ SELECT NULL AS survey_id
       ,COALESCE(sbjt.samaccountname,sda.subject_username) AS subject_samaccountname
       ,sda.subject_manager_name
       ,COALESCE(mgr.samaccountname, sda.subject_manager_username) AS subject_manager_samaccountname
+      ,w.job_name AS subject_dayforce_role
 FROM surveys.manager_survey_detail_archive  sda
 LEFT JOIN gabby.people.staff_crosswalk_static sbjt
   ON sda.subject_associate_id = CONVERT(nvarchar,sbjt.df_employee_number)
 LEFT JOIN gabby.people.staff_crosswalk_static mgr
   ON sda.subject_manager_id = CONVERT(nvarchar,mgr.df_employee_number)
+LEFT JOIN gabby.dayforce.employee_work_assignment w
+  ON sda.subject_associate_id = CONVERT(nvarchar,w.employee_reference_code)
+ AND sda.date_submitted BETWEEN w.work_assignment_effective_start AND w.work_assignment_effective_end
+ AND w.primary_work_assignment = 1
