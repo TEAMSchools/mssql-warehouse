@@ -32,7 +32,12 @@ SELECT d.survey_id
       ,d.subject_samaccountname
       ,d.subject_manager_name
       ,d.subject_manager_samaccountname
+      ,w.job_name AS subject_dayforce_role
 FROM gabby.surveygizmo.survey_detail d
+LEFT JOIN gabby.dayforce.employee_work_assignment w
+  ON d.subject_adp_associate_id = w.employee_reference_code
+ AND d.date_submitted BETWEEN w.work_assignment_effective_start AND w.work_assignment_effective_end
+ AND w.primary_work_assignment = 1
 WHERE d.survey_title = 'Manager Survey'
   AND d.rn_respondent_subject = 1
   AND d.campaign_academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
@@ -40,32 +45,41 @@ WHERE d.survey_title = 'Manager Survey'
 UNION ALL
 
 SELECT NULL AS survey_id
-      ,survey_type AS survey_title
-      ,response_id AS survey_response_id
-      ,academic_year AS campaign_academic_year
+      ,sda.survey_type AS survey_title
+      ,sda.response_id AS survey_response_id
+      ,sda.academic_year AS campaign_academic_year
       ,NULL AS date_started
-      ,date_submitted
-      ,reporting_term AS campaign_name
-      ,reporting_term AS campaign_reporting_term
-      ,open_ended AS is_open_ended
-      ,question_code AS question_shortname
-      ,question_text AS question_title
-      ,response AS answer
-      ,response_value AS answer_value
+      ,sda.date_submitted
+      ,sda.reporting_term AS campaign_name
+      ,sda.reporting_term AS campaign_reporting_term
+      ,sda.open_ended AS is_open_ended
+      ,sda.question_code AS question_shortname
+      ,sda.question_text AS question_title
+      ,sda.response AS answer
+      ,sda.response_value AS answer_value
       ,NULL AS respondent_df_employee_number
-      ,respondent_name AS respondent_preferred_name
-      ,respondent_email_address AS respondent_mail
+      ,sda.respondent_name AS respondent_preferred_name
+      ,sda.respondent_email_address AS respondent_mail
       ,NULL AS is_manager
       ,NULL AS subject_df_employee_number
-      ,subject_associate_id AS subject_adp_associate_id
-      ,subject_name AS subject_preferred_name
-      ,region AS subject_legal_entity_name
-      ,subject_location AS subject_primary_site
-      ,reporting_schoolid AS subject_primary_site_schoolid
-      ,school_level AS subject_primary_site_school_level
+      ,sda.subject_associate_id AS subject_adp_associate_id
+      ,sda.subject_name AS subject_preferred_name
+      ,sda.region AS subject_legal_entity_name
+      ,sda.subject_location AS subject_primary_site
+      ,sda.reporting_schoolid AS subject_primary_site_schoolid
+      ,sda.school_level AS subject_primary_site_school_level
       ,NULL AS subject_manager_df_employee_number
-      ,subject_manager_id AS subject_manager_adp_associate_id
-      ,subject_username AS subject_samaccountname
-      ,subject_manager_name
-      ,subject_manager_username AS subject_manager_samaccountname
-FROM surveys.manager_survey_detail_archive
+      ,sda.subject_manager_id AS subject_manager_adp_associate_id
+      ,COALESCE(sbjt.samaccountname, sda.subject_username) AS subject_samaccountname
+      ,sda.subject_manager_name
+      ,COALESCE(mgr.samaccountname, sda.subject_manager_username) AS subject_manager_samaccountname
+      ,w.job_name AS subject_dayforce_role
+FROM surveys.manager_survey_detail_archive  sda
+LEFT JOIN gabby.people.staff_crosswalk_static sbjt
+  ON sda.subject_df_employee_number = sbjt.df_employee_number
+LEFT JOIN gabby.people.staff_crosswalk_static mgr
+  ON sda.subject_manager_df_employee_number = mgr.df_employee_number
+LEFT JOIN gabby.dayforce.employee_work_assignment w
+  ON sda.subject_associate_id = CONVERT(nvarchar,w.employee_reference_code)
+ AND sda.date_submitted BETWEEN w.work_assignment_effective_start AND w.work_assignment_effective_end
+ AND w.primary_work_assignment = 1
