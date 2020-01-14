@@ -78,7 +78,7 @@ SELECT co.academic_year
       ,co.cohort
       ,co.iep_status
       ,co.enroll_status
-	     ,co.advisor_name
+      ,co.advisor_name
       ,co.region
 
       ,'PREP' AS ACT_type
@@ -107,6 +107,7 @@ SELECT co.academic_year
       ,ROW_NUMBER() OVER(
          PARTITION BY co.student_number, co.academic_year, act.administration_round, act.subject_area, act.standard_code
            ORDER BY act.student_number) AS rn_assessment_standard /* 1 row per student, per test (by standard) */      
+      ,NULL AS rn_highest
 FROM gabby.powerschool.cohort_identifiers_static co 
 LEFT JOIN gabby.act.test_prep_scores act 
   ON co.student_number = act.student_number
@@ -127,7 +128,7 @@ SELECT co.academic_year
       ,co.cohort
       ,co.iep_status
       ,co.enroll_status
-	     ,co.advisor_name
+      ,co.advisor_name
       ,co.region
       ,'REAL' AS ACT_type
       ,NULL AS assessment_id
@@ -154,11 +155,11 @@ SELECT co.academic_year
       ,ms.ms_attended
 
       ,1 AS rn_assessment_standard
+      ,r.rn_highest
 FROM gabby.powerschool.cohort_identifiers_static co
 JOIN real_tests r
   ON co.student_number = r.student_number
- AND r.rn_highest = 1
+ AND r.test_date BETWEEN co.entrydate AND co.exitdate
 LEFT JOIN ms_grad ms
   ON co.student_number = ms.student_number
-WHERE co.school_level = 'HS'
-  AND co.rn_school = 1
+WHERE co.rn_year = 1
