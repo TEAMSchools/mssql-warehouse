@@ -35,7 +35,7 @@ SELECT d.survey_id
       ,w.job_name AS subject_dayforce_role
 FROM gabby.surveygizmo.survey_detail d
 LEFT JOIN gabby.dayforce.employee_work_assignment w
-  ON d.subject_adp_associate_id = w.employee_reference_code
+  ON d.subject_df_employee_number = w.employee_reference_code
  AND d.date_submitted BETWEEN w.work_assignment_effective_start AND w.work_assignment_effective_end
  AND w.primary_work_assignment = 1
 WHERE d.survey_title = 'Manager Survey'
@@ -61,14 +61,14 @@ SELECT NULL AS survey_id
       ,sda.respondent_name AS respondent_preferred_name
       ,sda.respondent_email_address AS respondent_mail
       ,NULL AS is_manager
-      ,NULL AS subject_df_employee_number
+      ,sda.subject_df_employee_number
       ,sda.subject_associate_id AS subject_adp_associate_id
       ,sda.subject_name AS subject_preferred_name
       ,sda.region AS subject_legal_entity_name
       ,sda.subject_location AS subject_primary_site
       ,sda.reporting_schoolid AS subject_primary_site_schoolid
       ,sda.school_level AS subject_primary_site_school_level
-      ,NULL AS subject_manager_df_employee_number
+      ,sda.subject_manager_df_employee_number
       ,sda.subject_manager_id AS subject_manager_adp_associate_id
       ,COALESCE(sbjt.samaccountname, sda.subject_username) AS subject_samaccountname
       ,sda.subject_manager_name
@@ -80,6 +80,6 @@ LEFT JOIN gabby.people.staff_crosswalk_static sbjt
 LEFT JOIN gabby.people.staff_crosswalk_static mgr
   ON sda.subject_manager_df_employee_number = mgr.df_employee_number
 LEFT JOIN gabby.dayforce.employee_work_assignment w
-  ON sda.subject_associate_id = CONVERT(nvarchar,w.employee_reference_code)
+  ON sda.subject_df_employee_number = w.employee_reference_code
  AND sda.date_submitted BETWEEN w.work_assignment_effective_start AND w.work_assignment_effective_end
  AND w.primary_work_assignment = 1
