@@ -120,8 +120,8 @@ WITH roster AS (
              ,storecode_clean AS storecode
              ,[percent]
        FROM powerschool.storedgrades
-       WHERE schoolid = 73253
-         AND storecode_type = 'E'
+       WHERE storecode_type = 'E'
+         AND academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
       ) sub
   PIVOT(
     MAX([percent])
@@ -162,17 +162,27 @@ WITH roster AS (
         /* prior to 2016-2017, NCA used exam terms as 10% of the final grade */
         ,CASE
           WHEN gr.term_grade_percent IS NULL THEN NULL
-          WHEN r.grade_level <= 8 THEN 1.0 / CONVERT(FLOAT,COUNT(r.student_number) OVER(PARTITION BY r.student_number, r.academic_year, gr.course_number))
-          WHEN r.academic_year <= 2015 AND r.grade_level >= 9 THEN .225
-          WHEN r.academic_year >= 2016 AND r.grade_level >= 9 THEN .250
-         END AS term_grade_weight                 
-        ,CASE WHEN r.academic_year <= 2015 AND r.grade_level >= 9 AND r.term_name = 'Q2' AND e.e1 IS NOT NULL THEN 0.05 END AS e1_grade_weight
-        ,CASE WHEN r.academic_year <= 2015 AND r.grade_level >= 9 AND r.term_name = 'Q4' AND e.e2 IS NOT NULL THEN 0.05 END AS e2_grade_weight
-        ,CASE          
-          WHEN r.grade_level <= 8 THEN 1.0 / CONVERT(FLOAT,COUNT(r.student_number) OVER(PARTITION BY r.student_number, r.academic_year, gr.course_number))
-          WHEN r.academic_year <= 2015 AND r.grade_level >= 9 THEN .225
-          WHEN r.academic_year >= 2016 AND r.grade_level >= 9 THEN .250
-         END AS term_grade_weight_possible        
+          WHEN r.grade_level >= 9 THEN 0.225
+          WHEN r.grade_level <= 8 
+               THEN 1.0 / CONVERT(FLOAT,COUNT(r.student_number) OVER(PARTITION BY r.student_number, r.academic_year, gr.course_number))
+         END AS term_grade_weight
+        ,CASE
+          WHEN r.grade_level >= 9 THEN 0.225
+          WHEN r.grade_level <= 8 
+               THEN 1.0 / CONVERT(FLOAT,COUNT(r.student_number) OVER(PARTITION BY r.student_number, r.academic_year, gr.course_number))
+         END AS term_grade_weight_possible
+        ,CASE
+          WHEN r.grade_level >= 9 
+           AND r.term_name = 'Q2' 
+           AND e.e1 IS NOT NULL 
+               THEN 0.05
+         END AS e1_grade_weight
+        ,CASE 
+          WHEN r.grade_level >= 9
+           AND r.term_name = 'Q4'
+           AND e.e2 IS NOT NULL
+               THEN 0.05
+         END AS e2_grade_weight
   FROM roster r
   LEFT JOIN enr_grades gr
     ON r.studentid = gr.studentid
@@ -198,14 +208,10 @@ SELECT sub.student_number
       ,sub.course_name
       ,sub.sectionid
       ,sub.teacher_name
-      ,CASE
-        WHEN sub.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() THEN CONVERT(INT,y1.excludefromgpa)
-        ELSE sub.excludefromgpa
-       END AS excludefromgpa
+      ,sub.excludefromgpa
       ,sub.gradescaleid
       ,CASE
         WHEN y1.potentialcrhrs IS NOT NULL THEN y1.potentialcrhrs
-        WHEN sub.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() THEN NULL
         ELSE sub.credit_hours
        END AS credit_hours
       
@@ -227,19 +233,16 @@ SELECT sub.student_number
       /* these use the adjusted Y1 */
       ,CASE
         WHEN y1.[percent] IS NOT NULL THEN y1.[percent]
-        WHEN sub.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() THEN NULL
         ELSE sub.y1_grade_percent_adjusted
        END AS y1_grade_percent_adjusted      
       ,CONVERT(VARCHAR(5), 
          CASE
           WHEN y1.grade IS NOT NULL THEN y1.grade
-          WHEN sub.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() THEN NULL
           WHEN sub.y1_grade_percent_adjusted = 50 AND sub.y1_grade_percent < 50 THEN 'F*'
           ELSE y1_scale.letter_grade
          END) AS y1_grade_letter
       ,CASE
         WHEN y1.gpa_points IS NOT NULL THEN y1.gpa_points
-        WHEN sub.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() THEN NULL
         ELSE y1_scale.grade_points
        END AS y1_gpa_points
       ,y1_scale_unweighted.grade_points AS y1_gpa_points_unweighted
@@ -295,11 +298,9 @@ FROM
            ,e1_grade_weight
            ,e2_grade_weight
            ,CASE
-             WHEN sub.academic_year < 2016 AND sub.gradescaleid = 712 THEN 662 /* unweighted pre-2016 */
-             WHEN sub.academic_year >= 2016 AND sub.gradescaleid = 712 THEN 874 /* unweighted 2016-2018 */
-             WHEN sub.academic_year >= 0 AND sub.gradescaleid = 991 THEN 976 /* unweighted 2019+ */
-             WHEN sub.academic_year < 2016 AND sub.gradescaleid IS NULL THEN 662 /* MISSING GRADESCALE - default pre-2016 */
-             WHEN sub.academic_year >= 2016 AND sub.gradescaleid IS NULL THEN 874 /* MISSING GRADESCALE - default 2016+ */
+             WHEN sub.gradescaleid = 712 THEN 874 /* unweighted 2016-2018 */
+             WHEN sub.gradescaleid = 991 THEN 976 /* unweighted 2019+ */
+             WHEN sub.gradescaleid IS NULL THEN 874 /* MISSING GRADESCALE - default 2016+ */
              ELSE sub.gradescaleid
             END AS unweighted_gradescaleid
 
