@@ -7,17 +7,17 @@ SELECT student_number
       ,term_name
       ,semester
       ,reporting_term
-      ,is_curterm      
-      ,total_credit_hours      
+      ,is_curterm
+      ,total_credit_hours
       ,grade_avg_term
       ,gpa_points_total_term
       ,weighted_gpa_points_term
-      ,gpa_term      
+      ,gpa_term
       ,grade_avg_y1
       ,gpa_points_total_y1
       ,weighted_gpa_points_y1
       ,gpa_y1
-      ,gpa_y1_unweighted      
+      ,gpa_y1_unweighted
       ,n_failing_y1
 
       /* gpa semester */
@@ -29,12 +29,13 @@ SELECT student_number
          / SUM(credit_hours_term) OVER(PARTITION BY student_number, academic_year, semester)),2)) AS gpa_semester
 FROM
     (
+     /* current year */
      SELECT student_number
            ,schoolid
-           ,grade_level      
-           ,academic_year      
-           ,term_name                       
-           ,reporting_term 
+           ,grade_level
+           ,academic_year
+           ,term_name
+           ,reporting_term
            ,is_curterm
            ,CASE 
              WHEN term_name IN ('Q1','Q2') THEN 'S1'
@@ -85,4 +86,67 @@ FROM
              ,is_curterm
              ,schoolid
              ,grade_level
+     
+     UNION ALL
+
+     /* previous years */
+     SELECT s.student_number
+           ,sg.schoolid
+           ,sg.grade_level
+           ,sg.academic_year
+           ,sg.storecode_clean AS term_name
+           ,NULL AS reporting_term
+           ,CASE WHEN sg.storecode_clean = 'Q4' THEN 1 ELSE 0 END AS is_curterm
+           ,CASE
+             WHEN sg.storecode_clean IN ('Q1', 'Q2') THEN 'S1'
+             WHEN sg.storecode_clean IN ('Q3', 'Q4') THEN 'S2'
+            END AS semester
+
+           /* gpa term */
+           ,ROUND(AVG(sg.[percent]),0) AS grade_avg_term
+           ,SUM(sg.gpa_points) AS gpa_points_total_term
+           ,SUM((c.credit_hours * sg.gpa_points)) AS weighted_gpa_points_term
+           ,SUM(CASE WHEN sg.[percent] IS NULL THEN NULL ELSE c.credit_hours END) AS credit_hours_term
+           /* when no term_name pct, then exclude credit hours */
+           ,CONVERT(FLOAT,ROUND(CONVERT(DECIMAL(4,3),
+              SUM(c.credit_hours * sg.gpa_points)
+                / CASE 
+                   WHEN SUM(CASE WHEN sg.[percent] IS NULL THEN NULL ELSE c.credit_hours END) = 0 THEN NULL
+                   ELSE SUM(CASE WHEN sg.[percent] IS NULL THEN NULL ELSE c.credit_hours END)
+                  END), 2)) AS gpa_term
+           
+           /* gpa Y1 */
+           ,ROUND(AVG(y1.[percent]), 0) AS grade_avg_y1
+           ,SUM(y1.gpa_points) AS gpa_points_total_y1
+           ,SUM((c.credit_hours * y1.gpa_points)) AS weighted_gpa_points_y1
+           /* when no y1 pct, then exclude credit hours */
+           ,CONVERT(FLOAT,ROUND(CONVERT(DECIMAL(4,3),
+              SUM((c.credit_hours * y1.gpa_points)) 
+                / CASE
+                   WHEN SUM(CASE WHEN y1.[percent] IS NULL THEN NULL ELSE c.credit_hours END) = 0 THEN NULL
+                   ELSE SUM(CASE WHEN y1.[percent] IS NULL THEN NULL ELSE c.credit_hours END)
+                  END), 2)) AS gpa_y1
+           ,NULL AS gpa_y1_unweighted
+           
+           /* other */
+           ,SUM(CASE WHEN y1.[percent] IS NULL THEN NULL ELSE c.credit_hours END) AS total_credit_hours
+           ,SUM(CASE WHEN y1.grade LIKE 'F%' THEN 1 ELSE 0 END) AS n_failing_y1
+     FROM powerschool.storedgrades sg
+     JOIN powerschool.students s
+       ON sg.studentid = s.id
+     JOIN powerschool.courses c
+       ON sg.course_number = c.course_number
+     LEFT JOIN powerschool.storedgrades y1
+       ON sg.studentid = y1.studentid
+      AND sg.academic_year = y1.academic_year
+      AND sg.course_number_clean = y1.course_number_clean
+      AND y1.storecode_clean = 'Y1'
+     WHERE sg.excludefromgpa = 0
+       AND sg.storecode_type = 'Q'
+       AND sg.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+     GROUP BY s.student_number
+             ,sg.schoolid
+             ,sg.grade_level
+             ,sg.academic_year
+             ,sg.storecode_clean
     ) sub
