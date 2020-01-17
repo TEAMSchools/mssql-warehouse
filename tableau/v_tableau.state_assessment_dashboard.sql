@@ -22,7 +22,7 @@ WITH promo AS (
  )
 
 ,external_prof AS (
-  SELECT academic_year        
+  SELECT academic_year
         ,test_code
         ,[NJ]
         ,[NPS]
@@ -30,49 +30,29 @@ WITH promo AS (
   FROM
       (
        SELECT academic_year
-             ,test_code             
+             ,test_code
              ,entity
              ,(SUM(proficient_count) / SUM(valid_scores)) * 100 AS pct_proficient
        FROM
            (
-            SELECT academic_year - 1 AS academic_year
-                  ,test_code    
+            SELECT academic_year
+                  ,test_code
                   ,CASE
-                    WHEN CASE WHEN district_name != ''THEN district_name END IS NULL THEN 'NJ'
+                    WHEN CASE WHEN district_name != '' THEN district_name END IS NULL THEN 'NJ'
                     WHEN UPPER(district_name) = 'CAMDEN CITY' THEN 'CPS'
                     WHEN UPPER(district_name) = 'NEWARK CITY' THEN 'NPS'
-                   END AS entity                
+                   END AS entity
                   ,valid_scores
-                  ,((l_4_percent / 100) * valid_scores) + ((l_5_percent / 100) * valid_scores) AS proficient_count                                
+                  ,((l_4_percent / 100) * valid_scores) + ((l_5_percent / 100) * valid_scores) AS proficient_count
             FROM gabby.njdoe.parcc
-            WHERE CASE WHEN school_code != ''THEN school_code END IS NULL
+            WHERE subgroup = 'TOTAL'
+              AND CASE WHEN school_code != '' THEN school_code END IS NULL
               AND (UPPER(district_name) IN ('NEWARK CITY', 'CAMDEN CITY') 
-                OR (CASE WHEN district_name != ''THEN district_name END IS NULL 
-                      AND CASE WHEN dfg != ''THEN dfg END IS NULL))
-              AND subgroup = 'TOTAL'
-
-            UNION ALL
-
-            /* temporary until results come out */
-            SELECT 2018 AS academic_year
-                  ,test_code    
-                  ,CASE
-                    WHEN CASE WHEN district_name != ''THEN district_name END IS NULL THEN 'NJ'
-                    WHEN UPPER(district_name) = 'CAMDEN CITY' THEN 'CPS'
-                    WHEN UPPER(district_name) = 'NEWARK CITY' THEN 'NPS'
-                   END AS entity                
-                  ,valid_scores
-                  ,((l_4_percent / 100) * valid_scores) + ((l_5_percent / 100) * valid_scores) AS proficient_count                                
-            FROM gabby.njdoe.parcc
-            WHERE CASE WHEN school_code != ''THEN school_code END IS NULL
-              AND (UPPER(district_name) IN ('NEWARK CITY', 'CAMDEN CITY') 
-                OR (CASE WHEN district_name != ''THEN district_name END IS NULL 
-                      AND CASE WHEN dfg != ''THEN dfg END IS NULL))
-              AND subgroup = 'TOTAL'
-              AND academic_year = 2018
+                     OR (CASE WHEN district_name != '' THEN district_name END IS NULL 
+                           AND CASE WHEN dfg != '' THEN dfg END IS NULL))
            ) sub       
        GROUP BY academic_year
-               ,test_code               
+               ,test_code
                ,entity
       ) sub
   PIVOT(
