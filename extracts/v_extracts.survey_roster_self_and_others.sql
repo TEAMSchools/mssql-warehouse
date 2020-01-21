@@ -22,4 +22,4 @@ WHERE [status] != 'Terminated'
                        ,'Director Campus Operations', 'Director School Operations', 'Director of Campus Operations'
                        ,'Associate Director of School Operations', 'Fellow School Operations Director'
                        ,'Academic Operations Manager', 'School Operations Manager', 'Receptionist', 'Custodian'
-                       ,'Senior Custodian', 'Nurse', 'Student Support Advocate')))
+                       ,'Senior Custodian', 'Nurse', 'Student Support Advocate','Associate')))
