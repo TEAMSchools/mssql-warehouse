@@ -113,7 +113,7 @@ SELECT co.studentid
       
       ,CONVERT(VARCHAR(25),suf.newark_enrollment_number) AS newark_enrollment_number
       ,CONVERT(INT,suf.c_504_status) AS c_504_status
-      ,suf.lunch_balance            
+      ,mcs.total_balance AS lunch_balance
       ,CONVERT(VARCHAR(125),suf.mother_cell) AS mother_cell
       ,CONVERT(VARCHAR(125),suf.parent_motherdayphone) AS parent_motherdayphone
       ,CONVERT(VARCHAR(125),suf.father_cell) AS father_cell
