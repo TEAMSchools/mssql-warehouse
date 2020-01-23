@@ -62,7 +62,7 @@ SELECT '73253' AS [School_id]
 UNION ALL
 
 SELECT s.school_number AS School_id
-      ,100107 AS Staff_id
+      ,'100107' AS Staff_id
       ,'lcooke@kippnj.org' AS Staff_email
       ,'Lauren' AS First_name
       ,'Cooke' AS Last_name
