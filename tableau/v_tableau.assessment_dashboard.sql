@@ -9,7 +9,7 @@ SELECT co.student_number
       ,co.reporting_schoolid AS schoolid
       ,co.region
       ,co.grade_level
-      ,co.team      
+      ,co.team
       ,co.enroll_status
       ,co.cohort
       ,co.iep_status
@@ -39,25 +39,12 @@ SELECT co.student_number
       ,asr.is_normed_scope
 
       ,hr.teachernumber AS hr_teachernumber
-      
-      ,enr.teachernumber AS enr_teachernumber
 
-      ,CASE
-        WHEN (co.grade_level <= 4 OR co.reporting_schoolid = 732585074) THEN hr.teacher_name
-        ELSE enr.teacher_name
-       END AS teacher_name      
-      ,CASE
-        WHEN (co.grade_level <= 4 OR co.reporting_schoolid = 732585074) THEN hr.course_name
-        ELSE enr.course_name
-       END AS course_name
-      ,CASE
-        WHEN (co.grade_level <= 4 OR co.reporting_schoolid = 732585074) THEN hr.expression
-        ELSE enr.expression
-       END AS expression
-      ,CASE
-        WHEN (co.grade_level <= 4 OR co.reporting_schoolid = 732585074) THEN hr.section_number
-        ELSE enr.section_number
-       END AS section_number
+      ,enr.teachernumber AS enr_teachernumber
+      ,enr.teacher_name
+      ,enr.course_name
+      ,enr.expression
+      ,enr.section_number
 FROM gabby.powerschool.cohort_identifiers_static co 
 JOIN gabby.illuminate_dna_assessments.agg_student_responses_all asr
   ON co.student_number = asr.local_student_id
@@ -65,7 +52,7 @@ JOIN gabby.illuminate_dna_assessments.agg_student_responses_all asr
 LEFT JOIN gabby.powerschool.course_enrollments_static enr
   ON co.student_number = enr.student_number
  AND co.academic_year = enr.academic_year
- AND co.db_name = enr.db_name
+ AND co.[db_name] = enr.[db_name]
  AND asr.subject_area = enr.illuminate_subject COLLATE Latin1_General_BIN
  AND enr.course_enroll_status = 0
  AND enr.section_enroll_status = 0
@@ -73,7 +60,7 @@ LEFT JOIN gabby.powerschool.course_enrollments_static enr
 LEFT JOIN gabby.powerschool.course_enrollments_static hr
   ON co.student_number = hr.student_number
  AND co.academic_year = hr.academic_year
- AND co.db_name = hr.db_name
+ AND co.[db_name] = hr.[db_name]
  AND co.schoolid = hr.schoolid
  AND hr.course_number = 'HR'
  AND hr.course_enroll_status = 0
