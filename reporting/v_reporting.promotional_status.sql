@@ -19,17 +19,28 @@ WITH failing AS (
   SELECT studentid
         ,[db_name]
         ,schoolid
+        ,earned_credits_cum
         ,earned_credits_cum_projected
   FROM gabby.powerschool.gpa_cumulative
+ )
+
+,enrolled_credits AS (
+  SELECT student_number
+        ,academic_year
+        ,SUM(credit_hours) AS credit_hours_enrolled
+  FROM gabby.powerschool.course_enrollments_static
+  WHERE course_enroll_status = 0
+    AND section_enroll_status = 0
+    AND rn_course_yr = 1
+  GROUP BY student_number
+          ,academic_year
  )
 
 ,qas AS (
   SELECT sub.local_student_id
         ,sub.academic_year
         ,sub.term_administered
-        ,ROUND(AVG(sub.avg_performance_band_number) OVER(
-           PARTITION BY local_student_id, academic_year 
-             ORDER BY term_administered), 0) AS avg_performance_band_running
+        ,sub.avg_performance_band_number
   FROM
       (
        SELECT local_student_id
@@ -38,20 +49,19 @@ WITH failing AS (
              ,AVG(performance_band_number) AS avg_performance_band_number
        FROM gabby.illuminate_dna_assessments.agg_student_responses_all
        WHERE module_type = 'QA'
-         AND subject_area = 'Mathematics'
+         AND subject_area IN ('Mathematics', 'Algebra I')
          AND response_type = 'O'
-         AND is_replacement = 0
        GROUP BY local_student_id
                ,academic_year
                ,term_administered
       ) sub
-)
+ )
 
 ,ada AS (
   SELECT mem.studentid
         ,mem.[db_name]
         ,mem.yearid
-        ,ROUND(AVG(CONVERT(FLOAT, mem.attendancevalue)) * 100, 0) AS ada_y1_running
+        ,ROUND(AVG(CONVERT(FLOAT, mem.attendancevalue)) * 100, 1) AS ada_y1_running
   FROM gabby.powerschool.ps_adaadm_daily_ctod mem
   WHERE mem.membershipvalue > 0
     AND mem.calendardate <= CONVERT(DATE, GETDATE())
@@ -74,13 +84,25 @@ SELECT sub.student_number
       ,sub.fp_independent_level
       ,sub.grades_y1_failing_projected
       ,sub.grades_y1_credits_projected
+      ,sub.grades_y1_credits_enrolled
+      ,sub.grades_y1_credits_goal
       ,sub.qa_avg_performance_band_running
       ,sub.promo_status_attendance
       ,sub.promo_status_lit
       ,sub.promo_status_grades
       ,sub.promo_status_qa_math
       ,CASE
-        WHEN sub.iep_status = 'SPED' OR sub.is_retained_flag = 1 THEN 'See Teacher'
+        WHEN sub.alt_name = 'Q4' 
+             THEN CASE 
+                   WHEN sub.sched_nextyeargrade = 99 AND sub.school_level = 'HS' THEN 'Graduated'
+                   WHEN sub.sched_nextyeargrade > sub.grade_level THEN 'Promoted'
+                   WHEN sub.sched_nextyeargrade <= sub.grade_level THEN 'Retained'
+                  END
+        WHEN sub.school_level != 'HS' AND (sub.iep_status = 'SPED' OR sub.is_retained_flag = 1) THEN 'See Teacher'
+        WHEN CONCAT(sub.promo_status_attendance
+                   ,sub.promo_status_lit
+                   ,sub.promo_status_grades
+                   ,sub.promo_status_qa_math) LIKE '%At Risk%' THEN 'At Risk'
         WHEN CONCAT(sub.promo_status_attendance
                    ,sub.promo_status_lit
                    ,sub.promo_status_grades
@@ -93,9 +115,12 @@ FROM
            ,sub.studentid
            ,sub.[db_name]
            ,sub.academic_year
+           ,sub.school_level
            ,sub.schoolid
+           ,sub.grade_level
            ,sub.iep_status
            ,sub.is_retained_flag
+           ,sub.sched_nextyeargrade
            ,sub.reporting_term_name
            ,sub.alt_name
            ,sub.is_curterm
@@ -103,39 +128,45 @@ FROM
            ,sub.fp_independent_level
            ,sub.grades_y1_failing_projected
            ,sub.grades_y1_credits_projected
+           ,sub.grades_y1_credits_enrolled
+           ,sub.grades_y1_credits_goal
            ,sub.qa_avg_performance_band_running
            ,CASE
-             WHEN sub.school_level = 'HS' AND sub.ada_y1_running >= 85 THEN 'On Track'
-             WHEN sub.school_level = 'HS' AND sub.ada_y1_running < 85 THEN 'Off Track'
-             WHEN sub.ada_y1_running >= 90 THEN 'On Track'
-             WHEN sub.ada_y1_running < 90 THEN 'Off Track'
+             WHEN sub.ada_y1_running >= 90.1 THEN 'On Track'
+             WHEN sub.ada_y1_running >= 80.0 THEN 'Off Track'
+             WHEN sub.ada_y1_running < 80.0 THEN 'At Risk'
              ELSE 'No Data'
             END AS promo_status_attendance
            ,CASE
              WHEN sub.school_level = 'HS' THEN 'N/A'
-             WHEN sub.fp_goal_status IN ('Approaching', 'Target', 'Above Target', 'Achieved Z') THEN 'On Track'
-             WHEN sub.fp_goal_status IN ('Far Below', 'Below') THEN 'Off Track'
+             WHEN sub.fp_goal_status IN ('Target', 'Above Target', 'Achieved Z') THEN 'On Track'
+             WHEN sub.fp_goal_status IN ('Below', 'Approaching') THEN 'Off Track'
+             WHEN sub.fp_goal_status = 'Far Below' THEN 'At Risk'
              ELSE 'No Data'
             END AS promo_status_lit
-           ,CASE
-             WHEN sub.grade_level = 12 THEN 'N/A'
-             WHEN sub.school_level = 'ES' THEN 'N/A'
-             WHEN sub.school_level = 'MS' AND sub.grades_y1_failing_projected >= 2 THEN 'Off Track'
-             WHEN sub.school_level = 'MS' AND sub.grades_y1_failing_projected < 2 THEN 'On Track'
-             WHEN sub.school_level = 'HS' 
-              AND (sub.grades_y1_failing_projected >= 3 OR sub.grades_y1_credits_projected < sub.grades_y1_credits_goal)
-                  THEN 'Off Track'
-             WHEN sub.school_level = 'HS' 
-              AND (sub.grades_y1_failing_projected < 3 AND sub.grades_y1_credits_projected >= sub.grades_y1_credits_goal)
-                  THEN 'On Track' 
-             ELSE 'No Data'
-            END AS promo_status_grades
            ,CASE 
              WHEN sub.school_level = 'HS' THEN 'N/A'
-             WHEN sub.qa_avg_performance_band_running >= 3 THEN 'On Track' 
-             WHEN sub.qa_avg_performance_band_running < 3 THEN 'Off Track' 
+             WHEN sub.qa_avg_performance_band_running >= 4 THEN 'On Track'
+             WHEN sub.qa_avg_performance_band_running IN (2, 3) THEN 'Off Track' 
+             WHEN sub.qa_avg_performance_band_running = 1 THEN 'At Risk' 
              ELSE 'No Data'
             END AS promo_status_qa_math
+           ,CASE
+             WHEN sub.school_level = 'ES' THEN 'N/A'
+             WHEN sub.school_level = 'MS'
+                  THEN CASE
+                        WHEN sub.grades_y1_failing_projected = 0 THEN 'On Track'
+                        WHEN sub.grades_y1_failing_projected = 1 THEN 'Off Track'
+                        WHEN sub.grades_y1_failing_projected >= 2 THEN 'At Risk'
+                        ELSE 'No Data'
+                       END
+             WHEN sub.school_level = 'HS'
+                  THEN CASE
+                        WHEN sub.grades_y1_credits_projected >= sub.grades_y1_credits_goal THEN 'On Track'
+                        WHEN sub.grades_y1_credits_projected < sub.grades_y1_credits_goal THEN 'Off Track'
+                        ELSE 'No Data'
+                       END
+            END AS promo_status_grades
      FROM
          (
           SELECT co.student_number
@@ -147,6 +178,8 @@ FROM
                 ,co.grade_level
                 ,co.iep_status
                 ,CASE WHEN co.is_retained_year + co.is_retained_ever >= 1 THEN 1 ELSE 0 END AS is_retained_flag
+
+                ,s.sched_nextyeargrade
       
                 ,rt.time_per_name AS reporting_term_name
                 ,rt.alt_name
@@ -163,6 +196,7 @@ FROM
                  END AS grades_y1_failing_projected
 
                 ,cr.earned_credits_cum_projected AS grades_y1_credits_projected
+                ,ISNULL(cr.earned_credits_cum, 0) + ISNULL(enr.credit_hours_enrolled, 0) AS grades_y1_credits_enrolled
                 ,CASE
                   WHEN co.grade_level = 9 THEN 25
                   WHEN co.grade_level = 10 THEN 50
@@ -170,8 +204,12 @@ FROM
                   WHEN co.grade_level = 12 THEN 120
                  END AS grades_y1_credits_goal
 
-                ,qas.avg_performance_band_running AS qa_avg_performance_band_running
+                ,ROUND(AVG(qas.avg_performance_band_number) OVER(
+                   PARTITION BY co.student_number, co.academic_year
+                     ORDER BY rt.time_per_name), 0) AS qa_avg_performance_band_running
           FROM gabby.powerschool.cohort_identifiers_static co
+          LEFT JOIN gabby.powerschool.students s
+            ON co.student_number = s.student_number
           JOIN gabby.reporting.reporting_terms rt
             ON co.schoolid = rt.schoolid
            AND co.academic_year = rt.academic_year
@@ -193,6 +231,9 @@ FROM
             ON co.studentid = cr.studentid
            AND co.schoolid = cr.schoolid
            AND co.[db_name] = cr.[db_name]
+          LEFT JOIN  enrolled_credits enr
+            ON co.student_number = enr.student_number
+           AND co.academic_year = enr.academic_year
           LEFT JOIN qas
             ON co.student_number = qas.local_student_id
            AND co.academic_year = qas.academic_year
