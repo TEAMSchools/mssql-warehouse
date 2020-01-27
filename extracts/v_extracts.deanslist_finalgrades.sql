@@ -25,6 +25,8 @@ SELECT o.student_number
       ,fg.RT2_term_grade_percent_adjusted AS Q2_pct
       ,fg.RT3_term_grade_percent_adjusted AS Q3_pct
       ,fg.RT4_term_grade_percent_adjusted AS Q4_pct
+      ,fg.e1_grade_percent AS e1_pct
+      ,fg.e2_grade_percent AS e2_pct
       ,fg.y1_grade_percent AS y1_pct
       ,fg.y1_grade_letter AS y1_letter
 
@@ -90,6 +92,8 @@ SELECT comm.student_number
       ,NULL AS Q2_pct
       ,NULL AS Q3_pct
       ,NULL AS Q4_pct
+      ,NULL AS E1_pct
+      ,NULL AS E2_pct
       ,NULL AS Y1_pct
       ,NULL AS Y1_letter
       ,NULL AS A_term
