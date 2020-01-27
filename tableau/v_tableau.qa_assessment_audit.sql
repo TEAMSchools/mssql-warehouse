@@ -60,4 +60,4 @@ LEFT JOIN gabby.illuminate_dna_assessments.fields_reporting_groups frg
 LEFT JOIN standards_grouped sg
   ON f.field_id = sg.field_id
 WHERE a.deleted_at IS NULL
-  AND a.academic_year_clean = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+  AND a.academic_year_clean IN (gabby.utilities.GLOBAL_ACADEMIC_YEAR(), gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
