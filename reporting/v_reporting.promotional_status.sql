@@ -86,7 +86,7 @@ SELECT sub.student_number
       ,sub.grades_y1_credits_projected
       ,sub.grades_y1_credits_enrolled
       ,sub.grades_y1_credits_goal
-      ,sub.qa_avg_performance_band_running
+      ,sub.qa_avg_performance_band_number
       ,sub.promo_status_attendance
       ,sub.promo_status_lit
       ,sub.promo_status_grades
@@ -130,7 +130,7 @@ FROM
            ,sub.grades_y1_credits_projected
            ,sub.grades_y1_credits_enrolled
            ,sub.grades_y1_credits_goal
-           ,sub.qa_avg_performance_band_running
+           ,sub.qa_avg_performance_band_number
            ,CASE
              WHEN sub.ada_y1_running >= 90.1 THEN 'On Track'
              WHEN sub.ada_y1_running >= 80.0 THEN 'Off Track'
@@ -145,10 +145,10 @@ FROM
              ELSE 'No Data'
             END AS promo_status_lit
            ,CASE 
-             WHEN sub.school_level = 'HS' THEN 'N/A'
-             WHEN sub.qa_avg_performance_band_running >= 4 THEN 'On Track'
-             WHEN sub.qa_avg_performance_band_running IN (2, 3) THEN 'Off Track' 
-             WHEN sub.qa_avg_performance_band_running = 1 THEN 'At Risk' 
+             WHEN sub.school_level IN ('HS', 'MS') THEN 'N/A'
+             WHEN sub.qa_avg_performance_band_number >= 4 THEN 'On Track'
+             WHEN sub.qa_avg_performance_band_number IN (2, 3) THEN 'Off Track'
+             WHEN sub.qa_avg_performance_band_number = 1 THEN 'At Risk'
              ELSE 'No Data'
             END AS promo_status_qa_math
            ,CASE
@@ -204,9 +204,7 @@ FROM
                   WHEN co.grade_level = 12 THEN 120
                  END AS grades_y1_credits_goal
 
-                ,ROUND(AVG(qas.avg_performance_band_number) OVER(
-                   PARTITION BY co.student_number, co.academic_year
-                     ORDER BY rt.time_per_name), 0) AS qa_avg_performance_band_running
+                ,qas.avg_performance_band_number AS qa_avg_performance_band_number
           FROM gabby.powerschool.cohort_identifiers_static co
           LEFT JOIN gabby.powerschool.students s
             ON co.student_number = s.student_number
