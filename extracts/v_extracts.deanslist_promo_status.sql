@@ -11,6 +11,8 @@ SELECT ps.student_number
       ,ps.promo_status_lit
       ,ps.promo_status_grades
       ,ps.promo_status_qa_math
+      ,ps.grades_y1_credits_projected
+      ,ps.grades_y1_credits_enrolled
 
       ,gpa.gpa_term AS gpa_term
       ,gpa.gpa_y1 AS gpa_y1
