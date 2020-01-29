@@ -97,7 +97,7 @@ WITH fp_long AS (
   JOIN gabby.lit.network_goals g
     ON co.grade_level = g.grade_level
    AND rt.alt_name = g.test_round
-   AND g.norms_year = 2018
+   AND g.norms_year = 2019
   LEFT JOIN fp_recent ind
     ON co.student_number = ind.student_identifier
    AND rt.academic_year = ind.academic_year
@@ -247,7 +247,7 @@ WITH fp_long AS (
           WHEN s.independent_level = 'Z' THEN NULL /* Achieved Z */
           WHEN s.entrydate >= s.test_round_start_date THEN 'New to KIPP NJ'
           WHEN s.instructional_assessment_date IS NULL THEN  'No Instructional Level'
-          WHEN s.goal_status IN ('Far Below', 'Below') THEN s.goal_status 
+          WHEN s.goal_status IN ('Far Below', 'Below', 'Approaching') THEN s.goal_status 
          END AS audit_reason
   FROM scaffold s
   WHERE s.test_round = 'Q3'
