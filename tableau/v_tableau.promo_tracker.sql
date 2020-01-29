@@ -661,6 +661,7 @@ WITH roster AS (
 ,promo_status AS (
   SELECT student_number
         ,academic_year
+        ,reporting_term_name
         ,CONVERT(VARCHAR,field) AS subdomain
         ,CASE WHEN field LIKE '%status%' THEN value ELSE NULL END AS text_value
         ,CASE WHEN field LIKE '%status%' THEN NULL ELSE CONVERT(FLOAT,value) END AS numeric_value
@@ -668,29 +669,12 @@ WITH roster AS (
       (
        SELECT student_number
              ,academic_year
+             ,reporting_term_name
              ,CONVERT(VARCHAR,promo_status_overall) AS promo_status_overall
              ,CONVERT(VARCHAR,promo_status_attendance) AS promo_status_att
              ,CONVERT(VARCHAR,promo_status_lit) AS promo_status_lit
              ,CONVERT(VARCHAR,promo_status_grades) AS promo_status_grades
              ,CONVERT(VARCHAR,promo_status_qa_math) AS promo_status_qa_math
-
-             /* attendance */
-             --,CONVERT(VARCHAR,att_pts) AS att_pts
-             --,CONVERT(VARCHAR,att_pts_pct) AS att_pts_pct
-             --,CONVERT(VARCHAR,days_to_90_pts) AS days_to_90
-             --,CONVERT(VARCHAR,days_to_90_abs_only) AS days_to_90_abs_only             
-             /* lit */
-             --,CONVERT(VARCHAR,cur_read_lvl) AS read_lvl_status
-             --,CONVERT(VARCHAR,goal_lvl) AS goal_lvl_status      
-             
-             /* grades */
-             --,CONVERT(VARCHAR,N_below_60) AS n_failing
-             --,CONVERT(VARCHAR,gpa_y1) AS gpa_y1_promo
-             --,CONVERT(VARCHAR,promo_status_credits) AS promo_status_credits
-             --,CONVERT(VARCHAR,credits_enrolled_y1) AS credits_enrolled
-             --,CONVERT(VARCHAR,projected_credits_earned_cum) AS projected_credits_earned
-             --,CONVERT(VARCHAR,earned_credits_cum) AS earned_credits_cum
-             --,CONVERT(VARCHAR,credits_needed) AS credits_needed
        FROM gabby.reporting.promotional_status
        WHERE academic_year IN (gabby.utilities.GLOBAL_ACADEMIC_YEAR(), gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
          AND is_curterm = 1
@@ -997,7 +981,7 @@ SELECT r.studentid
       ,r.iep_status
       ,r.enroll_status
       ,r.term_name
-      ,r.reporting_term      
+      ,'Q' + RIGHT(promo.reporting_term_name, 1) AS reporting_term
       ,'PROMO STATUS' AS domain
       ,promo.subdomain
       ,NULL AS subject
