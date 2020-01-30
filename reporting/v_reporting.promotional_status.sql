@@ -138,7 +138,7 @@ FROM
              ELSE 'No Data'
             END AS promo_status_attendance
            ,CASE
-             WHEN sub.school_level = 'HS' THEN 'N/A'
+             WHEN sub.school_level IN ('HS', 'MS') THEN 'N/A'
              WHEN sub.fp_goal_status IN ('Target', 'Above Target', 'Achieved Z') THEN 'On Track'
              WHEN sub.fp_goal_status IN ('Below', 'Approaching') THEN 'Off Track'
              WHEN sub.fp_goal_status = 'Far Below' THEN 'At Risk'
