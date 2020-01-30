@@ -108,10 +108,10 @@ WITH roster AS (
   SELECT studentid
         ,academic_year
         ,course_number     
-        ,e1
-        ,e2
-        ,CASE WHEN e1 < 50 THEN 50 ELSE e1 END AS e1_adjusted
-        ,CASE WHEN e2 < 50 THEN 50 ELSE e2 END AS e2_adjusted
+        ,E1 AS e1
+        ,E2 AS e2
+        ,CASE WHEN E1 < 50 THEN 50 ELSE E1 END AS e1_adjusted
+        ,CASE WHEN E2 < 50 THEN 50 ELSE E2 END AS e2_adjusted
   FROM
       (
        SELECT CONVERT(INT,studentid) AS studentid
@@ -125,7 +125,7 @@ WITH roster AS (
       ) sub
   PIVOT(
     MAX([percent])
-    FOR storecode IN ([e1],[e2])
+    FOR storecode IN ([E1],[E2])
    ) p
  )
 
