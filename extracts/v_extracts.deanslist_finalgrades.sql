@@ -35,7 +35,10 @@ SELECT o.student_number
       ,cat.C_CUR AS CW_term
       ,cat.H_CUR AS HWC_term
       ,cat.P_CUR AS CP_term
-      ,cat.E_CUR AS HWQ_term      
+      ,cat.E_CUR AS HWQ_term
+      
+      /* need_60 (aliased need_65) */
+      ,fg.need_65 AS need_60     
 
       ,REPLACE(comm.comment_value,'"','''') AS comment_value
 FROM gabby.powerschool.course_section_scaffold_current_static o
@@ -100,7 +103,9 @@ SELECT comm.student_number
       ,NULL AS CW_term
       ,NULL AS HWC_term
       ,NULL AS CP_term
-      ,NULL AS HWQ_term      
+      ,NULL AS HWQ_term
+      
+      ,NULL AS need_60      
 
       ,REPLACE(comm.comment,'"','''') COLLATE Latin1_General_BIN AS comment_value      
 FROM gabby.reporting.illuminate_report_card_comments comm

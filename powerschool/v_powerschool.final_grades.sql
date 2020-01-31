@@ -260,7 +260,7 @@ SELECT sub.student_number
                  - (ISNULL(weighted_grade_total_adjusted,0) - (ISNULL(term_grade_weighted,0) + ISNULL(e1_grade_weighted,0) + ISNULL(e2_grade_weighted,0)))) /* factor out points earned so far, including current */
                  / (term_grade_weight_possible + ISNULL(e1_grade_weight,0) + ISNULL(e2_grade_weight,0))) /* divide by current term weights */
              ,0) AS need_70 
-      ,ROUND((((weighted_points_possible_total * 0.65) /* 65% of total points possible */
+      ,ROUND((((weighted_points_possible_total * 0.6) /* 60% of total points possible - the field is still called need_65 but it is aliased as need_60 in extracts.deanslist_finalgrades */
                  - (ISNULL(weighted_grade_total_adjusted,0) - (ISNULL(term_grade_weighted,0) + ISNULL(e1_grade_weighted,0) + ISNULL(e2_grade_weighted,0)))) /* factor out points earned so far, including current */
                  / (term_grade_weight_possible + ISNULL(e1_grade_weight,0) + ISNULL(e2_grade_weight,0))) /* divide by current term weights */
              ,0) AS need_65
