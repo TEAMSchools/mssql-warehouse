@@ -29,7 +29,7 @@ WITH grade_detail AS (
         ,sg.academic_year
         ,sg.storecode_clean AS term_name
         ,NULL AS reporting_term
-        ,CASE WHEN sg.storecode_clean = 'Q4' THEN 1 ELSE 0 END AS is_curterm
+        ,CASE WHEN sg.storecode_clean IN ('Q4', 'T3') THEN 1 ELSE 0 END AS is_curterm
         ,c.credit_hours
         ,sg.[percent] AS term_grade_percent
         ,sg.gpa_points AS term_gpa_points
@@ -48,7 +48,7 @@ WITH grade_detail AS (
    AND sg.academic_year = y1.academic_year
    AND sg.course_number_clean = y1.course_number_clean
    AND y1.storecode_clean = 'Y1'
-  WHERE sg.storecode_type = 'Q'
+  WHERE sg.storecode_type IN ('Q', 'T')
     AND sg.excludefromgpa = 0
     AND sg.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR()
  )
