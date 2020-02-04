@@ -4,35 +4,40 @@ GO
 CREATE OR ALTER VIEW tableau.pm_etr_dashboard AS
 
 SELECT sr.df_employee_number
-      ,sr.preferred_name        
+      ,sr.preferred_name
       ,sr.primary_site
       ,sr.primary_on_site_department AS dayforce_department
       ,sr.grades_taught AS dayforce_grade_team
       ,sr.primary_job AS dayforce_role
-      ,sr.legal_entity_name        
+      ,sr.legal_entity_name
       ,sr.is_active
       ,sr.primary_site_schoolid
       ,sr.manager_name
       ,sr.original_hire_date
+      ,sr.primary_ethnicity AS observee_ethnicity
+      ,sr.gender AS observee_gender
       ,LEFT(sr.userprincipalname, CHARINDEX('@', sr.userprincipalname) - 1) AS staff_username
       ,LEFT(sr.manager_userprincipalname, CHARINDEX('@', sr.manager_userprincipalname) - 1) AS manager_username
 
       ,wo.observation_id
       ,wo.observed_at
-      ,wo.created      
+      ,wo.created
       ,wo.observer_name
       ,wo.observer_email
       ,wo.rubric_name
       ,wo.score
       ,wo.score_averaged_by_strand
-      ,wo.percentage AS percentage_averaged_by_strand
-        
+      ,wo.[percentage] AS percentage_averaged_by_strand
+
+      ,osr.primary_ethnicity AS observer_ethnicity
+      ,osr.gender AS observer_gender
+
       ,wos.score_percentage
       ,wos.score_value
               
       ,wm.name AS measurement_name
       ,wm.scale_min AS measurement_scale_min
-      ,wm.scale_max AS measurement_scale_max      
+      ,wm.scale_max AS measurement_scale_max
 
       ,tb.text_box_label
       ,tb.text_box_text
@@ -46,6 +51,8 @@ JOIN gabby.whetstone.observations_clean wo
   ON sr.df_employee_number = wo.teacher_accountingId
  AND sr.samaccountname != LEFT(wo.observer_email, CHARINDEX('@', wo.observer_email) - 1)
  AND wo.rubric_name = 'Coaching Tool: Coach ETR and Reflection'
+LEFT JOIN gabby.people.staff_crosswalk_static osr
+  ON wo.observer_accountingId = osr.df_employee_number
 LEFT JOIN gabby.whetstone.observations_scores wos
   ON wo.observation_id = wos.observation_id
 LEFT JOIN gabby.whetstone.measurements wm
