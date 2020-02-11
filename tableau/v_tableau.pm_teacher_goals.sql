@@ -110,18 +110,38 @@ WITH reading_level AS (
  )
 
 ,assessment_detail AS (
-  SELECT asr.local_student_id
-        ,asr.academic_year
-        ,asr.subject_area
-        ,asr.module_number
-        ,asr.date_taken
-        ,asr.performance_band_number
-        ,asr.is_mastery
-        ,'pct_' + LOWER(asr.module_type) + '_mastery_' + REPLACE(LOWER(asr.subject_area), ' ', '_') AS metric_name
-  FROM gabby.illuminate_dna_assessments.agg_student_responses_all asr      
-  WHERE asr.response_type = 'O'
-    AND asr.subject_area IN ('Algebra I','Algebra II','English 100','English 200','English 300','Geometry','Mathematics','Text Study', 'Science')
-    AND asr.module_type IN ('QA','CP')
+  SELECT u.local_student_id
+        ,u.academic_year
+        ,u.subject_area
+        ,u.module_number
+        ,u.date_taken
+        ,u.performance_band_number
+        ,u.[value] AS is_mastery
+        ,'pct_' + u.module_type + '_mastery_' + u.subject_area_clean + REPLACE(u.field, 'is_mastery', '') AS metric_name
+  FROM
+      (
+       SELECT asr.local_student_id
+             ,asr.academic_year
+             ,asr.subject_area
+             ,REPLACE(LOWER(asr.subject_area), ' ', '_') AS subject_area_clean
+             ,LOWER(asr.module_type) AS module_type
+             ,asr.module_number
+             ,asr.date_taken
+             ,asr.performance_band_number
+             ,asr.is_mastery
+             ,asr.is_mastery AS is_mastery_iep45
+             ,CONVERT(BIT, CASE 
+               WHEN asr.performance_band_number >= 3 THEN 1
+               WHEN asr.performance_band_number < 3 THEN 0
+              END) AS is_mastery_iep345
+       FROM gabby.illuminate_dna_assessments.agg_student_responses_all asr      
+       WHERE asr.response_type = 'O'
+         AND asr.subject_area IN ('Algebra I','Algebra II','English 100','English 200','English 300','Geometry','Mathematics','Text Study', 'Science')
+         AND asr.module_type IN ('QA','CP')
+      ) sub
+  UNPIVOT(
+    [value] FOR field IN (is_mastery, is_mastery_iep45, is_mastery_iep345)
+   ) u
 
   UNION ALL
 
@@ -141,6 +161,7 @@ WITH reading_level AS (
         
         ,rt.academic_year
         ,rt.time_per_name
+        ,REPLACE(rt.time_per_name, 'ETR', 'PM') AS pm_term
         ,'etr_overall_score' AS metric_name
         
         ,wo.score AS metric_value
@@ -177,23 +198,30 @@ WITH reading_level AS (
 
   UNION ALL
 
-  SELECT etr_long.df_employee_number
-        ,etr_long.academic_year
+  SELECT e.df_employee_number
+        ,e.academic_year
         ,'ETRY1' AS time_per_name
-        ,etr_long.metric_name
-        ,AVG(etr_long.metric_value) AS metric_value
-  FROM etr_long
-  WHERE rn = 1
-    AND etr_long.time_per_name IN ('ETR2', 'ETR3')
-  GROUP BY etr_long.df_employee_number
-          ,etr_long.academic_year
-          ,etr_long.metric_name
+        ,e.metric_name
+        ,AVG(COALESCE(lb.measure_values,e.metric_value)) AS metric_value
+  FROM etr_long e
+  LEFT JOIN gabby.pm.teacher_goals_lockbox lb
+    ON e.df_employee_number = lb.df_employee_number
+   AND e.metric_name = lb.metric_name
+   AND e.academic_year = lb.academic_year
+   AND e.pm_term = lb.pm_term
+   AND lb.measure_names = 'Metric Value'
+ WHERE e.rn = 1
+   AND e.time_per_name IN ('ETR2', 'ETR3')
+  GROUP BY e.df_employee_number
+          ,e.academic_year
+          ,e.metric_name
  )
 
 ,so_survey_long AS (
   SELECT so.subject_employee_number
         ,so.academic_year
         ,so.reporting_term
+        ,REPLACE(so.reporting_term, 'SO', 'PM') AS pm_term
         ,'so_survey_overall_score' AS metric_name
         ,SUM(so.total_weighted_response_value) / SUM(so.total_response_weight) AS metric_value
   FROM gabby.surveys.self_and_others_survey_rollup_static so
@@ -217,16 +245,22 @@ WITH reading_level AS (
 
   UNION ALL
 
-  SELECT so_survey_long.subject_employee_number
-        ,so_survey_long.academic_year
+  SELECT s.subject_employee_number
+        ,s.academic_year
         ,'SOY1' AS reporting_term
-        ,so_survey_long.metric_name
-        ,AVG(so_survey_long.metric_value) AS metric_value
-  FROM so_survey_long
-  WHERE so_survey_long.reporting_term IN ('SO2', 'SO3')
-  GROUP BY so_survey_long.subject_employee_number
-          ,so_survey_long.academic_year
-          ,so_survey_long.metric_name
+        ,s.metric_name
+        ,AVG(COALESCE(lb.measure_values,s.metric_value)) AS metric_value
+  FROM so_survey_long s
+  LEFT JOIN gabby.pm.teacher_goals_lockbox lb
+    ON s.subject_employee_number = lb.df_employee_number
+   AND s.metric_name = lb.metric_name
+   AND s.academic_year = lb.academic_year
+   AND s.pm_term = lb.pm_term
+   AND lb.measure_names = 'Metric Value'
+  WHERE s.reporting_term IN ('SO2', 'SO3')
+  GROUP BY s.subject_employee_number
+          ,s.academic_year
+          ,s.metric_name
  )
 
 ,act AS (
@@ -572,6 +606,7 @@ SELECT d.df_employee_number
       ,d.n_students
 
       ,lb.metric_value AS metric_value_stored
+
       ,lb.score AS score_stored
       ,lb.grade_level_weight AS grade_level_weight_stored
       ,lb.bucket_weight AS bucket_weight_stored
