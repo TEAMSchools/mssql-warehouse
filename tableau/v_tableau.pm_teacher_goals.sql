@@ -177,17 +177,23 @@ WITH reading_level AS (
 
   UNION ALL
 
-  SELECT etr_long.df_employee_number
-        ,etr_long.academic_year
+  SELECT e.df_employee_number
+        ,e.academic_year
         ,'ETRY1' AS time_per_name
-        ,etr_long.metric_name
-        ,AVG(etr_long.metric_value) AS metric_value
-  FROM etr_long
-  WHERE rn = 1
-    AND etr_long.time_per_name IN ('ETR2', 'ETR3')
-  GROUP BY etr_long.df_employee_number
-          ,etr_long.academic_year
-          ,etr_long.metric_name
+        ,e.metric_name
+        ,AVG(COALESCE(lb.measure_values,e.metric_value)) AS metric_value
+  FROM etr_long e
+  LEFT JOIN gabby.pm.teacher_goals_lockbox lb
+    ON e.df_employee_number = lb.df_employee_number
+   AND e.metric_name = lb.metric_name
+   AND e.academic_year = lb.academic_year
+   AND e.time_per_name = REPLACE(lb.pm_term, 'PM', 'ETR')
+ WHERE e.rn = 1
+   AND e.time_per_name IN ('ETR2', 'ETR3')
+   AND lb.measure_names = 'Metric Value'
+  GROUP BY e.df_employee_number
+          ,e.academic_year
+          ,e.metric_name
  )
 
 ,so_survey_long AS (
@@ -217,16 +223,22 @@ WITH reading_level AS (
 
   UNION ALL
 
-  SELECT so_survey_long.subject_employee_number
-        ,so_survey_long.academic_year
+  SELECT s.subject_employee_number
+        ,s.academic_year
         ,'SOY1' AS reporting_term
-        ,so_survey_long.metric_name
-        ,AVG(so_survey_long.metric_value) AS metric_value
-  FROM so_survey_long
-  WHERE so_survey_long.reporting_term IN ('SO2', 'SO3')
-  GROUP BY so_survey_long.subject_employee_number
-          ,so_survey_long.academic_year
-          ,so_survey_long.metric_name
+        ,s.metric_name
+        ,AVG(COALESCE(lb.measure_values,s.metric_value)) AS metric_value
+  FROM so_survey_long s
+  LEFT JOIN gabby.pm.teacher_goals_lockbox lb
+    ON s.subject_employee_number = lb.df_employee_number
+   AND s.metric_name = lb.metric_name
+   AND s.academic_year = lb.academic_year
+   AND s.reporting_term = REPLACE(lb.pm_term, 'PM', 'SO')
+  WHERE s.reporting_term IN ('SO2', 'SO3')
+    AND lb.measure_names = 'Metric Value'
+  GROUP BY s.subject_employee_number
+          ,s.academic_year
+          ,s.metric_name
  )
 
 ,act AS (
@@ -572,6 +584,7 @@ SELECT d.df_employee_number
       ,d.n_students
 
       ,lb.metric_value AS metric_value_stored
+
       ,lb.score AS score_stored
       ,lb.grade_level_weight AS grade_level_weight_stored
       ,lb.bucket_weight AS bucket_weight_stored
