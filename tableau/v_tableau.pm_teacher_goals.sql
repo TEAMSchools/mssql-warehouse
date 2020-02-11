@@ -516,7 +516,7 @@ WITH reading_level AS (
        FROM gabby.pm.teacher_goal_scaffold_static tgs
        LEFT JOIN assessment_detail am
          ON tgs.academic_year = am.academic_year
-        AND tgs.metric_name = am.metric_name
+        AND CASE WHEN tgs.primary_job = 'Learning Specialist' THEN REPLACE(tgs.metric_name,'_iep345','') ELSE tgs.metric_name END = am.metric_name
         AND tgs.metric_term = am.module_number
         AND tgs.student_number = am.local_student_id
         AND am.date_taken BETWEEN tgs.dateenrolled AND tgs.dateleft
