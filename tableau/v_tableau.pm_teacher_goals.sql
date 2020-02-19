@@ -77,37 +77,37 @@ WITH reading_level AS (
           ,sub.reporting_term
  )
 
-,map AS (
-  SELECT p.student_number
-        ,p.academic_year
-        ,p.measurement_scale
-        ,p.Spring - p.Fall AS rit_growth_f2s
-  FROM
-      (
-       SELECT sp.academic_year
+--,map AS (
+--  SELECT p.student_number
+--        ,p.academic_year
+--        ,p.measurement_scale
+--        ,p.Spring - p.Fall AS rit_growth_f2s
+--  FROM
+--      (
+--       SELECT sp.academic_year
 
-             ,s.student_number
+--             ,s.student_number
 
-             ,LOWER(map.measurement_scale) AS measurement_scale
-             ,map.test_ritscore
-             ,map.term
-       FROM gabby.powerschool.spenrollments_gen sp
-       JOIN gabby.powerschool.students s
-         ON sp.studentid = s.id
-        AND sp.[db_name] = s.[db_name]
-       JOIN gabby.nwea.assessment_result_identifiers map
-         ON s.student_number = map.student_id
-        AND sp.academic_year = map.academic_year
-        AND map.rn_term_subj = 1
-        AND map.term IN ('Fall', 'Spring')
-        AND map.measurement_scale IN ('Mathematics', 'Reading')
-       WHERE sp.specprog_name IN ('Cognitive-Mild','Cognitive-Moderate','Cognitive-Severe','Cognitive')
-      ) sub
-  PIVOT (
-    MAX(test_ritscore)
-    FOR term IN (Fall, Spring)
-   ) p
- )
+--             ,LOWER(map.measurement_scale) AS measurement_scale
+--             ,map.test_ritscore
+--             ,map.term
+--       FROM gabby.powerschool.spenrollments_gen sp
+--       JOIN gabby.powerschool.students s
+--         ON sp.studentid = s.id
+--        AND sp.[db_name] = s.[db_name]
+--       JOIN gabby.nwea.assessment_result_identifiers map
+--         ON s.student_number = map.student_id
+--        AND sp.academic_year = map.academic_year
+--        AND map.rn_term_subj = 1
+--        AND map.term IN ('Fall', 'Spring')
+--        AND map.measurement_scale IN ('Mathematics', 'Reading')
+--       WHERE sp.specprog_name IN ('Cognitive-Mild','Cognitive-Moderate','Cognitive-Severe','Cognitive')
+--      ) sub
+--  PIVOT (
+--    MAX(test_ritscore)
+--    FOR term IN (Fall, Spring)
+--   ) p
+-- )
 
 ,assessment_detail AS (
   SELECT u.local_student_id
@@ -143,17 +143,17 @@ WITH reading_level AS (
     [value] FOR field IN (is_mastery, is_mastery_iep45, is_mastery_iep345)
    ) u
 
-  UNION ALL
+  --UNION ALL
 
-  SELECT map.student_number
-        ,map.academic_year
-        ,map.measurement_scale COLLATE Latin1_General_BIN AS subject_area
-        ,'MAPY1' AS module_number
-        ,CONVERT(DATE, GETDATE()) AS date_taken
-        ,NULL AS performance_band_number
-        ,map.rit_growth_f2s
-        ,map.measurement_scale + '_rit_growth_f2s' COLLATE Latin1_General_BIN AS metric_name
-  FROM map
+  --SELECT map.student_number
+  --      ,map.academic_year
+  --      ,map.measurement_scale COLLATE Latin1_General_BIN AS subject_area
+  --      ,'MAPY1' AS module_number
+  --      ,CONVERT(DATE, GETDATE()) AS date_taken
+  --      ,NULL AS performance_band_number
+  --      ,map.rit_growth_f2s
+  --      ,map.measurement_scale + '_rit_growth_f2s' COLLATE Latin1_General_BIN AS metric_name
+  --FROM map
  )
 
 ,etr_long AS (  
