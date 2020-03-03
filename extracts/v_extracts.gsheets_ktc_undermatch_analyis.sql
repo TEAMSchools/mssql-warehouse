@@ -18,6 +18,7 @@ WITH apps AS (
   FROM gabby.alumni.application_c a
   LEFT JOIN gabby.alumni.account ac
     ON a.school_c = ac.id
+   AND ac.is_deleted = 0
   LEFT JOIN gabby.alumni.record_type rt
     ON ac.record_type_id = rt.id
   WHERE a.is_deleted = 0
