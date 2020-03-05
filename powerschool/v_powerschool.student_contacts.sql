@@ -1,11 +1,11 @@
 CREATE OR ALTER VIEW powerschool.student_contacts AS
 
 WITH contacts_unpivot AS (
-  SELECT student_number        
+  SELECT student_number
         ,family_ident
         ,LEFT(field, CHARINDEX('_', field) - 1) AS person
-        ,RIGHT(field, LEN(field) - CHARINDEX('_', field)) AS type
-        ,value      
+        ,RIGHT(field, LEN(field) - CHARINDEX('_', field)) AS [type]
+        ,[value]
   FROM
       (
        SELECT CONVERT(INT,s.student_number) AS student_number
@@ -14,15 +14,15 @@ WITH contacts_unpivot AS (
              ,CONVERT(VARCHAR(250),s.home_phone) AS home_home
              ,CONVERT(VARCHAR(250),s.mother) AS parent1_name
              ,CONVERT(VARCHAR(250),s.father) AS parent2_name
-             ,CONVERT(VARCHAR(250),s.doctor_name) AS doctor_name      
+             ,CONVERT(VARCHAR(250),s.doctor_name) AS doctor_name
              ,CONVERT(VARCHAR(250),s.doctor_phone) AS doctor_cell
              ,CONVERT(VARCHAR(250),s.emerg_contact_1) AS emerg1_name
              ,CONVERT(VARCHAR(250),s.emerg_phone_1) AS emerg1_cell
              ,CONVERT(VARCHAR(250),s.emerg_contact_2) AS emerg2_name
              ,CONVERT(VARCHAR(250),s.emerg_phone_2) AS emerg2_cell
              ,CONVERT(VARCHAR(250),CONCAT(LTRIM(RTRIM(s.street)), ', ', LTRIM(RTRIM(s.city)), ' ', LTRIM(RTRIM(s.zip)))) AS home_name
-             ,CONVERT(VARCHAR(250),CASE WHEN CONCAT(s.doctor_name, s.doctor_phone) != '' THEN 'Doctor' END) AS doctor_relation      
-      
+             ,CONVERT(VARCHAR(250),CASE WHEN CONCAT(s.doctor_name, s.doctor_phone) != '' THEN 'Doctor' END) AS doctor_relation
+
              ,CONVERT(VARCHAR(250),scf.mother_home_phone) AS parent1_home      
              ,CONVERT(VARCHAR(250),scf.father_home_phone) AS parent2_home      
              ,CONVERT(VARCHAR(250),scf.emerg_1_rel) AS emerg1_relation      
@@ -123,21 +123,21 @@ WITH contacts_unpivot AS (
   SELECT student_number
         ,family_ident
         ,person
-        ,name
+        ,[name]
         ,relation
         ,registeredtovote
         ,cell
         ,home
-        ,day      
+        ,[day]
   FROM contacts_unpivot
   PIVOT(
-    MAX(value)
-    FOR type IN ([name]
-                ,[relation]
-                ,[cell]
-                ,[home]              
-                ,[day]
-                ,[registeredtovote])
+    MAX([value])
+    FOR [type] IN ([name]
+                  ,[relation]
+                  ,[cell]
+                  ,[home]
+                  ,[day]
+                  ,[registeredtovote])
    ) p
  )
 
@@ -145,12 +145,12 @@ SELECT u.student_number
       ,u.family_ident
       ,CONVERT(VARCHAR(250),u.person) AS contact_type
       ,u.relation AS contact_relationship
-      ,u.name AS contact_name
+      ,u.[name] AS contact_name
       ,u.registeredtovote
       ,CONVERT(VARCHAR(250),u.phone_type) AS phone_type
       ,u.phone
 FROM contacts_repivot
 UNPIVOT(
   phone
-  FOR phone_type IN (cell, home, day)
+  FOR phone_type IN (cell, home, [day])
  ) u
