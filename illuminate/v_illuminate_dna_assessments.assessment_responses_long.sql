@@ -21,7 +21,7 @@ WITH asmts AS (
         ,sa.student_assessment_id
         ,sa.date_taken
   FROM gabby.illuminate_dna_assessments.student_assessment_scaffold a
-  LEFT JOIN gabby.illuminate_dna_assessments.students_assessments sa  
+  LEFT JOIN gabby.illuminate_dna_assessments.students_assessments sa WITH(FORCESEEK)
     ON a.student_id = sa.student_id
    AND a.assessment_id = sa.assessment_id
  )
@@ -52,7 +52,7 @@ SELECT a.student_id
       ,'Overall' AS standard_description
       ,NULL AS domain_description
 FROM asmts a  
-LEFT JOIN gabby.illuminate_dna_assessments.agg_student_responses asr
+LEFT JOIN gabby.illuminate_dna_assessments.agg_student_responses asr WITH(FORCESEEK)
   ON a.student_assessment_id = asr.student_assessment_id
  AND asr.points_possible > 0  
 
@@ -85,10 +85,10 @@ SELECT a.student_id
 
       ,dom.domain_description
 FROM asmts a  
-JOIN gabby.illuminate_dna_assessments.agg_student_responses_standard asrs
+JOIN gabby.illuminate_dna_assessments.agg_student_responses_standard asrs WITH(FORCESEEK)
   ON a.student_assessment_id = asrs.student_assessment_id
  AND asrs.points_possible > 0  
-JOIN gabby.illuminate_dna_assessments.assessment_standards astd
+JOIN gabby.illuminate_dna_assessments.assessment_standards astd WITH(FORCESEEK)
   ON asrs.assessment_id = astd.assessment_id
  AND asrs.standard_id = astd.standard_id
 JOIN gabby.illuminate_standards.standards std
@@ -126,7 +126,7 @@ SELECT a.student_id
       ,rg.label AS standard_description
       ,NULL AS domain_description
 FROM asmts a  
-JOIN gabby.illuminate_dna_assessments.agg_student_responses_group asrg
+JOIN gabby.illuminate_dna_assessments.agg_student_responses_group asrg WITH(FORCESEEK)
   ON a.student_assessment_id = asrg.student_assessment_id      
  AND asrg.points_possible > 0       
 JOIN gabby.illuminate_dna_assessments.assessments_reporting_groups arg

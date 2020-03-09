@@ -38,7 +38,7 @@ FROM
            ,standard_code
            ,standard_description
            ,domain_description
-        
+
            ,MIN(title) AS title
            ,MIN(assessment_id) AS assessment_id
            ,MIN(administered_at) AS administered_at
