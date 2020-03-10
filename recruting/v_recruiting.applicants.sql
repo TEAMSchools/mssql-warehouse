@@ -60,7 +60,7 @@ SELECT pa.id
       ,a.application_review_score_c AS application_review_score
       ,a.average_teacher_phone_score_c AS average_teacher_phone_score
       ,a.average_teacher_in_person_score_c AS average_teacher_in_person_score      
-      ,a.applicant_source_c AS applicant_source
+      ,COALESCE(a.cultivation_regional_source_c, a.applicant_source_c) AS applicant_source
       ,a.cultivation_regional_source_detail_c AS regional_source_detail      
       ,a.phone_interview_status_date_c AS phone_screen_or_contact_date
       ,a.in_person_interview_status_date_c AS interview_date
