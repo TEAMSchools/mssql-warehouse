@@ -5,17 +5,17 @@ CREATE OR ALTER VIEW recruiting.applicants AS
 
 WITH position_parse AS (
   SELECT pn.id
-        ,pn.name AS position_number
-        ,pn.position_name_c AS position_name        
-        ,pn.region_c AS region        
+        ,pn.[name] AS position_number
+        ,pn.position_name_c AS position_name
+        ,pn.region_c AS region
         ,pn.city_c AS city
         ,pn.created_date
         ,pn.desired_start_date_c AS desired_start_date
-        ,pn.date_position_filled_c AS date_filled        
+        ,pn.date_position_filled_c AS date_filled
         ,pn.job_type_c AS job_type
         ,pn.job_sub_type_c AS sub_type
-        ,pn.status_c AS status        
-        ,pn.replacement_or_new_position_c AS new_or_replacement        
+        ,pn.status_c AS [status]
+        ,pn.replacement_or_new_position_c AS new_or_replacement
         ,pn.job_posting_c AS job_posting
         ,LEN(pn.position_name_c) - LEN(REPLACE(pn.position_name_c, '_', '')) AS n
         ,REPLACE(LEFT(pn.position_name_c, LEN(pn.position_name_c) - CHARINDEX('_', REVERSE(pn.position_name_c))), '_', '.') AS position_name_splitter
@@ -29,7 +29,7 @@ WITH position_parse AS (
  )
 
 SELECT pa.id
-      ,pa.name AS profile_id
+      ,pa.[name] AS profile_id
       ,pa.years_full_time_experience_c AS years_full_time_experience
       ,pa.years_of_full_time_teaching_c AS years_of_full_time_teaching
       ,pa.undergraduate_degree_school_name_c AS undergrad_school_name
@@ -47,14 +47,14 @@ SELECT pa.id
       ,pa.certificate_state_c AS certificate_state
       ,pa.certificate_expiration_c AS certificate_expiration
       
-      ,c.name
+      ,c.[name]
       ,c.email
       ,c.ethnicity_c AS race_ethnicity
       ,c.gender_c AS gender
       ,c.title AS previous_role
       ,c.current_employer_c AS previous_employer
 
-      ,a.name AS jobapp_id      
+      ,a.[name] AS jobapp_id      
       ,a.hired_status_date_c AS hired_status_date
       ,a.total_days_in_process_c AS total_days_in_process
       ,a.application_review_score_c AS application_review_score
@@ -77,7 +77,7 @@ SELECT pa.id
       ,j.position_name
       ,COALESCE(j.job_type, p.job_type_c) AS job_type
       ,COALESCE(j.sub_type, p.job_sub_type_c) AS sub_type
-      ,j.status
+      ,j.[status]
       ,j.new_or_replacement
       ,j.region
       ,j.desired_start_date
@@ -89,12 +89,12 @@ SELECT pa.id
                  WHEN j.n = 4 THEN PARSENAME(j.position_name_splitter, 4) 
                  ELSE 'Invalid position_name Format' 
                 END
-               ,cr.name) AS recruiter
+               ,cr.[name]) AS recruiter
       ,CASE 
         WHEN j.position_name_splitter IS NULL THEN NULL 
         WHEN j.n = 4 THEN PARSENAME(j.position_name_splitter, 3) 
         ELSE 'Invalid position_name Format' 
-       END AS location
+       END AS [location]
       ,CASE 
         WHEN j.position_name_splitter IS NULL THEN NULL 
         WHEN j.n = 4 THEN PARSENAME(j.position_name_splitter, 2) 
@@ -106,7 +106,7 @@ SELECT pa.id
         ELSE 'Invalid position_name Format' 
        END AS recruiring_year
         
-      ,p.name AS job_posting
+      ,p.[name] AS job_posting
       ,p.city_c AS city
       ,p.subject_area_c AS posting_subject_area
 
@@ -136,7 +136,7 @@ UNION ALL
 
 SELECT c.id AS id
 
-      ,pa.name AS profile_id
+      ,pa.[name] AS profile_id
       ,pa.years_full_time_experience_c AS years_full_time_experience
       ,pa.years_of_full_time_teaching_c AS years_of_full_time_teaching
       ,pa.undergraduate_degree_school_name_c AS undergrad_school_name
@@ -154,14 +154,14 @@ SELECT c.id AS id
       ,pa.certificate_state_c AS certificate_state
       ,pa.certificate_expiration_c AS certificate_expiration
 
-      ,co.name AS name
+      ,co.[name] AS [name]
       ,co.email
       ,co.ethnicity_c AS race_ethnicity
       ,co.gender_c AS gender
       ,co.title AS previous_role
       ,co.current_employer_c AS previous_employer
 
-      ,c.name AS jobapp_id
+      ,c.[name] AS jobapp_id
 
       ,NULL AS hired_status_date
       ,NULL AS total_days_in_process
@@ -189,7 +189,7 @@ SELECT c.id AS id
       ,j.position_name
       ,j.job_type
       ,j.sub_type
-      ,j.status
+      ,j.[status]
       ,j.new_or_replacement
       ,j.region
       ,j.desired_start_date
@@ -218,7 +218,7 @@ SELECT c.id AS id
         ELSE 'Invalid position_name Format' 
        END AS recruiring_year
         
-      ,p.name AS job_posting
+      ,p.[name] AS job_posting
       ,COALESCE(p.city_c, c.cultivation_owner_c) AS city
       ,p.subject_area_c AS posting_subject_area
 
@@ -241,4 +241,4 @@ LEFT JOIN gabby.recruiting.job_posting_c p
   ON j.job_posting = p.id
  AND p.is_deleted = 0
 WHERE c.is_deleted = 0
-  AND p.name IS NULL
+  AND p.[name] IS NULL
