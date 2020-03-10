@@ -196,18 +196,18 @@ SELECT co.region AS helper_region
       ,NULL AS WorldLanguageAssessment5
       ,NULL AS WorldLanguagesAssessed5
 FROM gabby.powerschool.cohort_identifiers_static co
+JOIN gabby.powerschool.students s
+  ON co.student_number = s.student_number
 LEFT JOIN gabby.powerschool.s_nj_stu_x nj
   ON co.students_dcid = nj.studentsdcid
  AND co.[db_name] = nj.[db_name]
-LEFT JOIN gabby.powerschool.students s
-  ON s.student_number = co.student_number
 LEFT JOIN att a
-  ON a.studentid = co.studentid
- AND a.[db_name] = co.[db_name]
+  ON co.studentid = a.studentid
+ AND co.[db_name] = a.[db_name]
 LEFT JOIN race r
   ON co.studentid = r.studentid
  AND co.[db_name] = r.[db_name]
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.rn_year = 1
-  AND co.region IN ('TEAM', 'KCNA')
   AND co.grade_level != 99
+  AND co.[db_name] IN ('kippnewark', 'kippcamden')
