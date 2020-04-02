@@ -43,7 +43,8 @@ FROM gabby.people.staff_crosswalk_static df
 JOIN gabby.powerschool.schools sch
   ON sch.state_excludefromreporting = 0
 WHERE df.[status] != 'TERMINATED'
-  AND df.primary_on_site_department IN ('Data', 'Teaching and Learning')
+  AND (df.primary_on_site_department IN ('Data', 'Teaching and Learning') 
+        OR df.ps_teachernumber IN ('CMMCYBMTL', '91TKT1L73')) /* special exception for FW/SA */
 
 UNION ALL
 
@@ -61,6 +62,7 @@ SELECT '73253' AS [School_id]
 
 UNION ALL
 
+/* all Newark MS */
 SELECT s.school_number AS School_id
       ,'100107' AS Staff_id
       ,'lcooke@kippnj.org' AS Staff_email
@@ -74,3 +76,22 @@ SELECT s.school_number AS School_id
 FROM kippnewark.powerschool.schools s
 WHERE s.high_grade = 8
   AND s.school_number != 732510 /* already assigned by default */
+
+UNION ALL
+
+/* All Newark */
+SELECT CONVERT(VARCHAR(25), sch.school_number) AS [School_id]
+      ,df.ps_teachernumber AS [Staff_id]
+      ,df.userprincipalname AS [Staff_email]
+      ,df.preferred_first_name AS [First_name]
+      ,df.preferred_last_name AS [Last_name]
+      ,df.primary_on_site_department AS [Department]
+      ,'School Admin' AS [Title]
+      ,df.samaccountname AS [Username]
+      ,NULL AS [Password]
+      ,CASE WHEN df.primary_on_site_department = 'Operations' THEN 'School Tech Lead' END AS [Role]
+FROM gabby.people.staff_crosswalk_static df
+JOIN kippnewark.powerschool.schools sch
+  ON sch.state_excludefromreporting = 0
+WHERE df.[status] != 'TERMINATED'
+  AND df.ps_teachernumber IN ('50001', 'DMCYRU7B2', '445')
