@@ -30,4 +30,4 @@ FROM
      WHERE cc.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
        AND cc.sectionid > 0
     ) sub
-WHERE sub.alias IN ('nwk10516SOC04435G1', 'nwk11271SOC04435G1')
+WHERE sub.alias IN ('nwk11280HR', 'mia620HR')
