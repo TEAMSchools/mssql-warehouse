@@ -17,12 +17,12 @@ WITH roster AS (
              ,co.grade_level             
              ,co.enroll_status
              ,CASE 
-               WHEN co.exitdate <= dts.start_date THEN 0
+               WHEN co.exitdate <= dts.[start_date] THEN 0
                WHEN co.entrydate <= dts.end_date THEN 1 
                ELSE 0 
               END AS is_enrolled
              
-             ,CONVERT(VARCHAR(5),dts.time_per_name) AS reporting_term                          
+             ,CONVERT(VARCHAR(5), dts.time_per_name) AS reporting_term                          
        FROM gabby.powerschool.cohort_identifiers_static co
        JOIN gabby.reporting.reporting_terms dts
          ON co.schoolid = dts.schoolid
@@ -41,14 +41,14 @@ WITH roster AS (
 
 ,ms_goals AS (
   SELECT sub.student_number
-        ,sub.term      
-        ,CONVERT(INT,tiers.words_goal) AS words_goal
+        ,sub.term
+        ,CONVERT(INT, tiers.words_goal) AS words_goal
   FROM
       (
        SELECT achv.student_number           
-             ,COALESCE(s1.value, s2.value) AS term
+             ,COALESCE(s1.[value], s2.[value]) AS term
              ,COALESCE(COALESCE(achv.indep_lvl_num, achv.lvl_num)
-                      ,LAG(COALESCE(achv.indep_lvl_num, achv.lvl_num), 2) OVER(PARTITION BY achv.student_number, achv.academic_year ORDER BY achv.start_date)
+                      ,LAG(COALESCE(achv.indep_lvl_num, achv.lvl_num), 2) OVER(PARTITION BY achv.student_number, achv.academic_year ORDER BY achv.[start_date])
                 ) AS indep_lvl_num /* Q1 & Q2 are set by BOY, carry them forward for setting goals at beginning of year */
        FROM gabby.lit.achieved_by_round_static achv
        LEFT JOIN STRING_SPLIT('AR1,AR2', ',') s1
@@ -59,16 +59,16 @@ WITH roster AS (
          AND achv.reporting_term IN ('LIT0','LIT2')
       ) sub
   LEFT JOIN gabby.renaissance.ar_goal_criteria goal
-    ON sub.indep_lvl_num BETWEEN goal.min AND goal.max
+    ON sub.indep_lvl_num BETWEEN goal.[min] AND goal.[max]
    AND goal.criteria_clean = 'lvl_num'
   LEFT JOIN gabby.renaissance.ar_tier_goals tiers
     ON goal.tier = tiers.tier
  )
 
 ,indiv_goals AS (
-  SELECT CONVERT(INT,student_number) AS student_number
+  SELECT CONVERT(INT, student_number) AS student_number
         ,REPLACE(reporting_term, 'q_', 'AR') AS reporting_term
-        ,CONVERT(INT,adjusted_goal) AS adjusted_goal
+        ,CONVERT(INT, adjusted_goal) AS adjusted_goal
   FROM gabby.renaissance.ar_individualized_goals  
   UNPIVOT(
     adjusted_goal
@@ -95,13 +95,13 @@ WITH roster AS (
                WHEN r.is_enrolled = 0 THEN NULL
                WHEN r.grade_level >= 9 THEN NULL
                WHEN r.enroll_status != 0 THEN -1
-               ELSE COALESCE(g.adjusted_goal, ms.words_goal, CONVERT(INT,df.words_goal))
+               ELSE COALESCE(g.adjusted_goal, ms.words_goal, CONVERT(INT, df.words_goal))
               END AS words_goal
              ,CASE
                WHEN r.is_enrolled = 0 THEN NULL
                WHEN r.grade_level <= 8 THEN NULL
                WHEN r.enroll_status != 0 THEN -1
-               ELSE COALESCE(g.adjusted_goal, CONVERT(INT,df.points_goal))
+               ELSE COALESCE(g.adjusted_goal, CONVERT(INT, df.points_goal))
               END AS points_goal             
        FROM roster r
        LEFT JOIN ms_goals ms
@@ -121,7 +121,6 @@ SELECT student_number
       ,reporting_term
       ,CASE WHEN words_goal < 0 THEN -1 ELSE words_goal END AS words_goal
       ,CASE WHEN points_goal < 0 THEN -1 ELSE points_goal END AS points_goal
-
 FROM
     (
      SELECT student_number           
