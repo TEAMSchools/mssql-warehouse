@@ -25,10 +25,12 @@ WITH sections AS (
    AND c.credittype != 'LOG'
   JOIN gabby.powerschool.teachers_static t
     ON s.teacher = t.id
+   AND s.schoolid = t.schoolid
    AND s.[db_name] = t.[db_name]
   LEFT JOIN gabby.people.staff_crosswalk_static scw
     ON t.teachernumber = scw.ps_teachernumber COLLATE Latin1_General_BIN
   WHERE s.yearid = (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990)
+    AND s.no_of_students > 0
  )
 
 /* HR by teacher */
