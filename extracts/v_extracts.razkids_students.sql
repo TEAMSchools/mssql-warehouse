@@ -1,3 +1,8 @@
+USE gabby
+GO
+
+CREATE OR ALTER VIEW extracts.razkids_students AS
+
 SELECT saa.student_web_id + '@teamstudents.org' AS student_id
       ,CASE
         WHEN scw.legal_entity_name = 'KIPP Miami' THEN LOWER(LEFT(scw.userprincipalname, CHARINDEX('@', scw.userprincipalname))) + 'kippmiami.org'
@@ -18,14 +23,11 @@ JOIN gabby.powerschool.students s
   ON enr.student_number = s.student_number
  AND enr.[db_name] = s.[db_name]
  AND s.enroll_status = 0
-JOIN gabby.powerschool.schools sch
-  ON s.schoolid = sch.school_number
- AND s.[db_name] = sch.[db_name]
- AND sch.low_grade = 0
+ AND s.grade_level <= 4
 JOIN gabby.people.staff_crosswalk_static scw
   ON enr.teachernumber = scw.ps_teachernumber COLLATE Latin1_General_BIN
 WHERE enr.course_number = 'HR'
-  AND enr.academic_year = 2019
+  AND enr.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND enr.course_enroll_status = 0
   AND enr.section_enroll_status = 0
   AND enr.rn_course_yr = 1
