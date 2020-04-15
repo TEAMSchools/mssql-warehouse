@@ -179,7 +179,10 @@ WITH dsos AS (
          ON sec.id = st.sectionid
         AND sec.[db_name] = st.[db_name]
         AND CONVERT(DATE, GETDATE()) BETWEEN st.[start_date] AND st.end_date
-        AND st.roleid IN (25, 26, 41, 42)
+       JOIN gabby.powerschool.roledef rd
+         ON st.roleid = rd.id
+        AND st.[db_name] = rd.[db_name]
+        AND rd.[name] IN ('Lead Teacher', 'Co-teacher')
        JOIN gabby.powerschool.teachers_static t
          ON st.teacherid = t.id
         AND sec.schoolid = t.schoolid

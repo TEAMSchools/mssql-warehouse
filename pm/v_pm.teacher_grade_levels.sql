@@ -8,17 +8,20 @@ WITH ps_section_teacher AS (
         ,sec.section_number
         ,sec.section_type
         ,sec.course_number_clean AS course_number
-        ,sec.db_name
-                
+        ,sec.[db_name]
+
         ,t.teachernumber
   FROM gabby.powerschool.sections sec  
   JOIN gabby.powerschool.sectionteacher st
     ON sec.id = st.sectionid
-   AND sec.db_name = st.db_name
-   AND st.roleid IN (25, 26, 41, 42)
+   AND sec.[db_name] = st.[db_name]
+  JOIN gabby.powerschool.roledef rd
+    ON st.roleid = rd.id
+   AND st.[db_name] = rd.[db_name]
+   AND rd.[name] IN ('Lead Teacher', 'Co-teacher')
   JOIN gabby.powerschool.teachers_static t
     ON st.teacherid = t.id
-   AND st.db_name = t.db_name
+   AND st.[db_name] = t.[db_name]
   WHERE (sec.section_type != 'SC' OR sec.section_type IS NULL)
  )
 
@@ -34,7 +37,7 @@ WITH ps_section_teacher AS (
   FROM ps_section_teacher st
   JOIN gabby.powerschool.course_enrollments_static enr
     ON st.sectionid = enr.abs_sectionid
-   AND st.db_name = enr.db_name
+   AND st.[db_name] = enr.[db_name]
   JOIN gabby.powerschool.cohort_identifiers_static co
     ON enr.student_number = co.student_number
    AND enr.dateenrolled BETWEEN co.entrydate AND co.exitdate

@@ -7,19 +7,22 @@ WITH ps_section_teacher AS (
   SELECT sec.id AS sectionid
         ,sec.section_number
         ,sec.section_type
-        ,sec.course_number_clean AS course_number        
+        ,sec.course_number_clean AS course_number
         ,sec.yearid + 1990 AS academic_year
-        ,sec.db_name
+        ,sec.[db_name]
                 
         ,t.teachernumber
   FROM gabby.powerschool.sections sec  
   JOIN gabby.powerschool.sectionteacher st
     ON sec.id = st.sectionid
-   AND sec.db_name = st.db_name
-   AND st.roleid IN (25, 26, 41, 42)
+   AND sec.[db_name] = st.[db_name]
+  JOIN gabby.powerschool.roledef rd
+    ON st.roleid = rd.id
+   AND st.[db_name] = rd.[db_name]
+   AND rd.[name] IN ('Lead Teacher', 'Co-teacher')
   JOIN gabby.powerschool.teachers_static t
     ON st.teacherid = t.id
-   AND st.db_name = t.db_name
+   AND st.[db_name] = t.[db_name]
   WHERE (sec.section_type != 'SC' OR sec.section_type IS NULL)
  )
 
@@ -38,7 +41,7 @@ SELECT sr.df_employee_number
       ,sr.manager_name
       ,sr.staff_username
       ,sr.manager_username
-      ,sr.db_name
+      ,sr.[db_name]
 
       ,tg.academic_year      
       ,tg.goal_type
@@ -47,12 +50,12 @@ SELECT sr.df_employee_number
       ,tg.is_sped_goal
       ,tg.ps_course_number
       ,tg.metric_label
-      ,CONVERT(VARCHAR(125),tg.metric_name) AS metric_name
-      ,CONVERT(FLOAT,tg.tier_1) AS tier_1
-      ,CONVERT(FLOAT,tg.tier_2) AS tier_2
-      ,CONVERT(FLOAT,tg.tier_3) AS tier_3
-      ,CONVERT(FLOAT,tg.tier_4) AS tier_4
-      ,CONVERT(FLOAT,tg.prior_year_outcome) AS prior_year_outcome
+      ,CONVERT(VARCHAR(125), tg.metric_name) AS metric_name
+      ,CONVERT(FLOAT, tg.tier_1) AS tier_1
+      ,CONVERT(FLOAT, tg.tier_2) AS tier_2
+      ,CONVERT(FLOAT, tg.tier_3) AS tier_3
+      ,CONVERT(FLOAT, tg.tier_4) AS tier_4
+      ,CONVERT(FLOAT, tg.prior_year_outcome) AS prior_year_outcome
       ,tg.data_type
 
       ,NULL AS sectionid
@@ -96,7 +99,7 @@ SELECT sr.df_employee_number
       ,sr.manager_name
       ,sr.staff_username
       ,sr.manager_username
-      ,sr.db_name
+      ,sr.[db_name]
 
       ,tg.academic_year      
       ,tg.goal_type
@@ -105,12 +108,12 @@ SELECT sr.df_employee_number
       ,tg.is_sped_goal
       ,tg.ps_course_number
       ,tg.metric_label
-      ,CONVERT(VARCHAR(125),tg.metric_name) AS metric_name
-      ,CONVERT(FLOAT,tg.tier_1) AS tier_1
-      ,CONVERT(FLOAT,tg.tier_2) AS tier_2
-      ,CONVERT(FLOAT,tg.tier_3) AS tier_3
-      ,CONVERT(FLOAT,tg.tier_4) AS tier_4
-      ,CONVERT(FLOAT,tg.prior_year_outcome) AS prior_year_outcome
+      ,CONVERT(VARCHAR(125), tg.metric_name) AS metric_name
+      ,CONVERT(FLOAT, tg.tier_1) AS tier_1
+      ,CONVERT(FLOAT, tg.tier_2) AS tier_2
+      ,CONVERT(FLOAT, tg.tier_3) AS tier_3
+      ,CONVERT(FLOAT, tg.tier_4) AS tier_4
+      ,CONVERT(FLOAT, tg.prior_year_outcome) AS prior_year_outcome
       ,tg.data_type
 
       ,NULL AS sectionid
@@ -155,7 +158,7 @@ SELECT sr.df_employee_number
       ,sr.manager_name
       ,sr.staff_username
       ,sr.manager_username
-      ,sr.db_name
+      ,sr.[db_name]
 
       ,tg.academic_year      
       ,tg.goal_type
@@ -164,12 +167,12 @@ SELECT sr.df_employee_number
       ,tg.is_sped_goal
       ,tg.ps_course_number
       ,tg.metric_label
-      ,CONVERT(VARCHAR(125),tg.metric_name) AS metric_name
-      ,CONVERT(FLOAT,tg.tier_1) AS tier_1
-      ,CONVERT(FLOAT,tg.tier_2) AS tier_2
-      ,CONVERT(FLOAT,tg.tier_3) AS tier_3
-      ,CONVERT(FLOAT,tg.tier_4) AS tier_4
-      ,CONVERT(FLOAT,tg.prior_year_outcome) AS prior_year_outcome
+      ,CONVERT(VARCHAR(125), tg.metric_name) AS metric_name
+      ,CONVERT(FLOAT, tg.tier_1) AS tier_1
+      ,CONVERT(FLOAT, tg.tier_2) AS tier_2
+      ,CONVERT(FLOAT, tg.tier_3) AS tier_3
+      ,CONVERT(FLOAT, tg.tier_4) AS tier_4
+      ,CONVERT(FLOAT, tg.prior_year_outcome) AS prior_year_outcome
       ,tg.data_type
 
       ,st.sectionid
@@ -192,15 +195,15 @@ JOIN gabby.pm.teacher_goals tg
 JOIN ps_section_teacher st
   ON sr.ps_teachernumber = st.teachernumber COLLATE Latin1_General_BIN
  AND sr.academic_year = st.academic_year
- AND sr.db_name = st.db_name
+ AND sr.[db_name] = st.[db_name]
  AND tg.ps_course_number = st.course_number COLLATE Latin1_General_BIN 
 JOIN gabby.powerschool.course_enrollments_static enr
   ON st.sectionid = enr.abs_sectionid
- AND st.db_name = enr.db_name
+ AND st.[db_name] = enr.[db_name]
 JOIN gabby.powerschool.cohort_identifiers_static co
   ON enr.student_number = co.student_number
  AND enr.academic_year = co.academic_year
- AND enr.db_name = co.db_name
+ AND enr.[db_name] = co.[db_name]
  AND tg.grade_level = co.grade_level
  AND co.rn_year = 1
 JOIN gabby.pm.teacher_goals_term_map tm
@@ -231,7 +234,7 @@ SELECT sr.df_employee_number
       ,sr.manager_name
       ,sr.staff_username
       ,sr.manager_username
-      ,sr.db_name
+      ,sr.[db_name]
 
       ,tg.academic_year      
       ,tg.goal_type
@@ -240,12 +243,12 @@ SELECT sr.df_employee_number
       ,tg.is_sped_goal
       ,tg.ps_course_number
       ,tg.metric_label
-      ,CONVERT(VARCHAR(125),tg.metric_name) AS metric_name
-      ,CONVERT(FLOAT,tg.tier_1) AS tier_1
-      ,CONVERT(FLOAT,tg.tier_2) AS tier_2
-      ,CONVERT(FLOAT,tg.tier_3) AS tier_3
-      ,CONVERT(FLOAT,tg.tier_4) AS tier_4
-      ,CONVERT(FLOAT,tg.prior_year_outcome) AS prior_year_outcome
+      ,CONVERT(VARCHAR(125), tg.metric_name) AS metric_name
+      ,CONVERT(FLOAT, tg.tier_1) AS tier_1
+      ,CONVERT(FLOAT, tg.tier_2) AS tier_2
+      ,CONVERT(FLOAT, tg.tier_3) AS tier_3
+      ,CONVERT(FLOAT, tg.tier_4) AS tier_4
+      ,CONVERT(FLOAT, tg.prior_year_outcome) AS prior_year_outcome
       ,tg.data_type
 
       ,st.sectionid
@@ -268,15 +271,15 @@ JOIN gabby.pm.teacher_goals tg
 JOIN ps_section_teacher st
   ON sr.ps_teachernumber = st.teachernumber COLLATE Latin1_General_BIN
  AND sr.academic_year = st.academic_year
- AND sr.db_name = st.db_name
+ AND sr.[db_name] = st.[db_name]
  AND tg.ps_course_number = st.course_number COLLATE Latin1_General_BIN 
 JOIN gabby.powerschool.course_enrollments_static enr
   ON st.sectionid = enr.abs_sectionid
- AND st.db_name = enr.db_name
+ AND st.[db_name] = enr.[db_name]
 JOIN gabby.powerschool.cohort_identifiers_static co
   ON enr.student_number = co.student_number
  AND enr.academic_year = co.academic_year
- AND enr.db_name = co.db_name
+ AND enr.[db_name] = co.[db_name]
  AND tg.grade_level = co.grade_level
  AND co.rn_year = 1
  AND co.iep_status = 'SPED'
