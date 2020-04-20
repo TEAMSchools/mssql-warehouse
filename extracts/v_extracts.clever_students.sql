@@ -35,7 +35,7 @@ SELECT CONVERT(VARCHAR(25), co.schoolid) AS [School_id]
       ,NULL AS [Student_zip]
       ,co.student_web_id + '@teamstudents.org' AS [Student_email]
       ,sc.contact_relationship AS [Contact_relationship]
-      ,sc.contact_type AS [Contact_type]
+      ,CASE WHEN sc.contact_type IN ('parent1', 'parent2') THEN 'primary' ELSE sc.contact_type END AS [Contact_type]
       ,sc.contact_name AS [Contact_name]
       ,CONVERT(VARCHAR(25),LEFT(gabby.utilities.STRIP_CHARACTERS(sc.phone, '^0-9'), 10)) AS [Contact_phone]
       ,CASE
