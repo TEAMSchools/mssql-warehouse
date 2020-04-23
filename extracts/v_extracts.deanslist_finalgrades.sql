@@ -22,9 +22,13 @@ SELECT o.student_number
       /* final grades */
       ,fg.teacher_name
       ,fg.RT1_term_grade_percent_adjusted AS Q1_pct
+      ,fg.RT1_term_grade_letter_adjusted AS Q1_letter
       ,fg.RT2_term_grade_percent_adjusted AS Q2_pct
+      ,fg.RT2_term_grade_letter_adjusted AS Q2_letter
       ,fg.RT3_term_grade_percent_adjusted AS Q3_pct
+      ,fg.RT3_term_grade_letter_adjusted AS Q3_letter
       ,fg.RT4_term_grade_percent_adjusted AS Q4_pct
+      ,fg.RT4_term_grade_letter_adjusted AS Q4_letter
       ,fg.e1_grade_percent AS e1_pct
       ,fg.e2_grade_percent AS e2_pct
       ,fg.y1_grade_percent AS y1_pct
@@ -85,9 +89,13 @@ SELECT comm.student_number
       ,NULL AS currenttardies
       ,NULL AS teacher_name
       ,NULL AS Q1_pct
+      ,NULL AS Q1_letter
       ,NULL AS Q2_pct
+      ,NULL AS Q2_letter
       ,NULL AS Q3_pct
+      ,NULL AS Q3_letter
       ,NULL AS Q4_pct
+      ,NULL AS Q4_letter
       ,NULL AS E1_pct
       ,NULL AS E2_pct
       ,NULL AS Y1_pct
