@@ -30,7 +30,7 @@ WITH roster AS (
   JOIN powerschool.teachers_static t
     ON sec.teacher = t.id
   WHERE co.rn_year = 1    
-    AND co.school_level IN ('MS','HS')
+    AND co.school_level IN ('MS', 'HS', 'OD')
     AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
  )     
 
