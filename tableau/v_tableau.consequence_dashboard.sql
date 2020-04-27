@@ -3,41 +3,6 @@ GO
 
 CREATE OR ALTER VIEW tableau.consequence_dashboard AS
 
-WITH custom_fields AS (
-  SELECT p.incident_id
-        ,p.[Restraint Used]
-        ,p.[Perceived Motivation]
-        ,p.[Parent Contacted?]
-        ,p.[Others Involved]
-        ,p.[NJ State Reporting]
-        ,p.[Behavior Category]
-        ,p.[SSDS Incident ID]
-  FROM
-      (
-       SELECT incident_id
-             ,field_name
-             ,[value]
-       FROM gabby.deanslist.incidents_custom_fields
-       WHERE field_name IN ('Behavior Category'
-                           ,'NJ State Reporting'
-                           ,'Others Involved'
-                           ,'Parent Contacted?'
-                           ,'Perceived Motivation'
-                           ,'Restraint Used'
-                           ,'SSDS Incident ID')
-      ) sub
-  PIVOT(
-    MAX([value])
-    FOR field_name IN ([Behavior Category]
-                      ,[NJ State Reporting]
-                      ,[Others Involved]
-                      ,[Parent Contacted?]
-                      ,[Perceived Motivation]
-                      ,[Restraint Used]
-                      ,[SSDS Incident ID])
-   ) p
- )
-
 SELECT co.student_number
       ,co.state_studentnumber
       ,co.lastfirst
@@ -74,6 +39,7 @@ SELECT co.student_number
       ,dli.infraction AS incident_type
       ,dli.is_referral
       ,dli.category AS referral_category
+      ,'Referral' AS dl_category
 
       ,CONVERT(VARCHAR(5), d.alt_name) AS term
 
@@ -103,7 +69,7 @@ LEFT JOIN gabby.reporting.reporting_terms d
  AND d._fivetran_deleted = 0
 LEFT JOIN deanslist.incidents_penalties_static dlp
   ON dli.incident_id = dlp.incident_id
-LEFT JOIN custom_fields cf
+LEFT JOIN gabby.deanslist.incidents_custom_fields_wide cf
   ON dli.incident_id = cf.incident_id
 WHERE co.academic_year IN (gabby.utilities.GLOBAL_ACADEMIC_YEAR(), gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
   AND co.rn_year = 1
