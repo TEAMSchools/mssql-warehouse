@@ -33,6 +33,10 @@ SELECT co.student_number
       ,NULL AS dl_numdays
       ,'Referral' AS dl_category
       ,NULL AS dl_point_value
+      ,NULL AS roster
+      ,NULL AS assignment
+      ,NULL AS notes
+      ,NULL AS roster_subject_name
       
       ,CONVERT(VARCHAR(5), d.alt_name) AS term
 
@@ -90,6 +94,10 @@ SELECT co.student_number
       ,dlip.numdays AS dl_numdays
       ,'Consequence' AS dl_category
       ,NULL AS dl_point_value
+      ,NULL AS roster
+      ,NULL AS assignment
+      ,NULL AS notes
+      ,NULL AS roster_subject_name
 
       ,CONVERT(VARCHAR(5), d.alt_name) AS term
 
@@ -147,7 +155,12 @@ SELECT co.student_number
       ,NULL AS dl_numdays
       ,CONVERT(VARCHAR(125), dlb.behavior_category) AS dl_category
       ,dlb.point_value AS dl_point_value
-      
+      ,dlb.roster
+      ,dlb.assignment
+      ,dlb.notes
+
+      ,r.subject_name AS roster_subject_name
+
       ,CONVERT(VARCHAR(5), d.alt_name) AS term
 
       ,NULL AS [Behavior Category]
@@ -157,16 +170,18 @@ SELECT co.student_number
       ,NULL AS [Perceived Motivation]
       ,NULL AS [Restraint Used]
       ,NULL AS [SSDS Incident ID]
-FROM gabby.powerschool.cohort_identifiers_static co
-JOIN gabby.deanslist.behavior dlb 
+FROM gabby.deanslist.behavior dlb 
+JOIN gabby.powerschool.cohort_identifiers_static co
   ON co.student_number = dlb.student_school_id
  AND dlb.behavior_date BETWEEN co.entrydate AND co.exitdate
- AND dlb.is_deleted = 0
+ AND co.rn_year = 1
+LEFT JOIN deanslist.rosters_all r
+  ON dlb.roster_id = r.roster_id
 JOIN gabby.reporting.reporting_terms d
   ON co.schoolid = d.schoolid
  AND dlb.behavior_date BETWEEN d.[start_date] AND d.end_date 
  AND d.identifier = 'RT'
  AND d._fivetran_deleted = 0
-WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-  AND co.rn_year = 1
-  AND co.grade_level != 99
+WHERE dlb.behavior_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
+  AND dlb.is_deleted = 0
+  AND (dlb.school_name IN ('KIPP NCA', 'KIPP Newark Lab High School') OR dlb.behavior_category = 'Remote Learning')
