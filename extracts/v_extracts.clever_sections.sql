@@ -47,7 +47,7 @@ WITH dsos AS (
                     ,sec.id) AS [Section_id]
              ,NULL AS [Name]
              ,sec.section_number AS [Section_number]
-             ,CASE WHEN sec.grade_level = 0 THEN 'Kindergarten' ELSE CONVERT(VARCHAR(5), sec.grade_level) END AS [Grade]
+             ,NULL AS [Grade]
              ,c.course_name AS [Course_name]
              ,sec.course_number_clean AS [Course_number]
              ,NULL AS [Course_description]
@@ -147,7 +147,7 @@ WITH dsos AS (
                     ,sec.id) AS [Section_id]
              ,NULL AS [Name]
              ,sec.section_number AS [Section_number]
-             ,CASE WHEN sec.grade_level = 0 THEN 'Kindergarten' ELSE CONVERT(VARCHAR(5), sec.grade_level) END AS [Grade]
+             ,NULL AS [Grade]
              ,c.course_name AS [Course_name]
              ,sec.course_number_clean AS [Course_number]
              ,NULL AS [Course_description]
@@ -175,18 +175,11 @@ WITH dsos AS (
              ,CONCAT('ADMIN', t.teachernumber) AS [Teacher_id]
              ,0 AS is_lead_teacher
        FROM gabby.powerschool.sections sec
-       JOIN gabby.powerschool.sectionteacher st
-         ON sec.id = st.sectionid
-        AND sec.[db_name] = st.[db_name]
-        AND CONVERT(DATE, GETDATE()) BETWEEN st.[start_date] AND st.end_date
-       JOIN gabby.powerschool.roledef rd
-         ON st.roleid = rd.id
-        AND st.[db_name] = rd.[db_name]
-        AND rd.[name] IN ('Lead Teacher', 'Co-teacher')
        JOIN gabby.powerschool.teachers_static t
-         ON st.teacherid = t.id
+         ON sec.teacher = t.id
         AND sec.schoolid = t.schoolid
         AND sec.[db_name] = t.[db_name]
+        AND t.teachernumber IN ('JX5DVZDW1', '50013')
        JOIN gabby.powerschool.courses c
          ON sec.course_number_clean = c.course_number_clean
         AND sec.[db_name] = c.[db_name]
@@ -195,7 +188,6 @@ WITH dsos AS (
         AND sec.schoolid = terms.schoolid
         AND sec.[db_name] = terms.[db_name]
        WHERE sec.yearid = (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990)
-         AND t.teachernumber IN ('JX5DVZDW1', '50013')
       ) sub
  )
 
