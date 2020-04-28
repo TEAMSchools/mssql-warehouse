@@ -91,6 +91,7 @@ WITH dsos AS (
         AND sec.schoolid = terms.schoolid
         AND sec.[db_name] = terms.[db_name]
        WHERE sec.yearid = (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990)
+         AND sec.no_of_students > 0
 
        UNION ALL
 

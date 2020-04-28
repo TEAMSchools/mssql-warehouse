@@ -5,7 +5,7 @@ WITH contacts_unpivot AS (
         ,family_ident
         ,LEFT(field, CHARINDEX('_', field) - 1) AS person
         ,RIGHT(field, LEN(field) - CHARINDEX('_', field)) AS [type]
-        ,[value]
+        ,CASE WHEN [value] = '' THEN NULL ELSE [value] END AS [value]
   FROM
       (
        SELECT CONVERT(INT,s.student_number) AS student_number

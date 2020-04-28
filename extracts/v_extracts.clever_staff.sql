@@ -22,7 +22,7 @@ LEFT JOIN gabby.people.campus_crosswalk ccw
   ON df.primary_site = ccw.campus_name
  AND ccw._fivetran_deleted = 0
  AND ccw.is_pathways = 0
-WHERE df.[status] != 'TERMINATED'
+WHERE df.[status] NOT IN ('TERMINATED', 'PRESTART')
   AND df.primary_on_site_department NOT IN ('Data', 'Teaching and Learning')
   AND COALESCE(ccw.ps_school_id, df.primary_site_schoolid) != 0
 
@@ -42,7 +42,7 @@ SELECT CONVERT(VARCHAR(25), sch.school_number) AS [School_id]
 FROM gabby.people.staff_crosswalk_static df
 JOIN gabby.powerschool.schools sch
   ON sch.state_excludefromreporting = 0
-WHERE df.[status] != 'TERMINATED'
+WHERE df.[status] NOT IN ('TERMINATED', 'PRESTART')
   AND (df.primary_on_site_department IN ('Data', 'Teaching and Learning') 
         OR df.ps_teachernumber IN ('CMMCYBMTL', '91TKT1L73')) /* special exception for FW/SA */
 
@@ -93,5 +93,5 @@ SELECT CONVERT(VARCHAR(25), sch.school_number) AS [School_id]
 FROM gabby.people.staff_crosswalk_static df
 JOIN kippnewark.powerschool.schools sch
   ON sch.state_excludefromreporting = 0
-WHERE df.[status] != 'TERMINATED'
+WHERE df.[status] NOT IN ('TERMINATED', 'PRESTART')
   AND df.ps_teachernumber IN ('50001', 'DMCYRU7B2', '445')
