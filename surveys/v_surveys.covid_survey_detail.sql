@@ -20,23 +20,21 @@ SELECT d.survey_id
       ,d.respondent_preferred_name
       ,d.respondent_mail
       ,d.is_manager
-      ,d.respondent_df_employee_number
       ,d.respondent_adp_associate_id
-      ,d.respondent_preferred_name
       ,d.respondent_legal_entity_name
       ,d.respondent_primary_site
       ,d.respondent_primary_site_schoolid
       ,d.respondent_primary_site_school_level
       ,d.respondent_manager_df_employee_number
-      ,NULL AS respondent_manager_adp_associate_id
       ,d.respondent_samaccountname
       ,d.respondent_manager_name
       ,d.respondent_manager_samaccountname
+
       ,w.job_name
 FROM gabby.surveygizmo.survey_detail d
 LEFT JOIN gabby.dayforce.employee_work_assignment w
   ON d.respondent_df_employee_number = w.employee_reference_code
- AND d.date_submitted BETWEEN w.work_assignment_effective_start AND COALESCE(w.work_assignment_effective_end,GETDATE()+1)
+ AND d.date_submitted BETWEEN w.work_assignment_effective_start AND COALESCE(w.work_assignment_effective_end, GETDATE()+1)
  AND w.primary_work_assignment = 1
 WHERE d.survey_title = 'COVID-19 Survey'
   AND d.rn_respondent_subject = 1
