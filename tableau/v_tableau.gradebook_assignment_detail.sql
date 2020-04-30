@@ -11,8 +11,12 @@ SELECT enr.sectionid
       ,enr.teacher_name
       ,enr.student_number
       ,enr.schoolid
-      ,enr.db_name
-      
+      ,enr.[db_name]
+
+      ,co.lastfirst
+      ,co.grade_level
+      ,co.iep_status
+
       ,gb.term_abbreviation
       ,gb.storecode AS finalgradename
       ,LEFT(gb.storecode, 1) AS finalgrade_category
@@ -20,14 +24,14 @@ SELECT enr.sectionid
       ,gb.gradingformulaweightingtype
       ,gb.category_name AS grade_category
       ,gb.category_abbreviation AS grade_category_abbreviation
-      ,gb.weight AS weighting
+      ,gb.[weight] AS weighting
       ,gb.includeinfinalgrades  
       
       ,a1.assignmentid
       ,a1.assign_date
       ,a1.assign_name
       ,a1.pointspossible
-      ,a1.weight
+      ,a1.[weight]
       ,a1.extracreditpoints
       ,a1.isfinalscorecalculated
       
@@ -36,17 +40,21 @@ SELECT enr.sectionid
       ,s1.isexempt
       ,s1.ismissing
 FROM gabby.powerschool.course_enrollments_static enr
+JOIN gabby.powerschool.cohort_identifiers_static co
+  ON enr.student_number = co.student_number
+ AND enr.academic_year = co.academic_year
+ AND co.rn_year = 1
 JOIN gabby.powerschool.gradebook_setup_static gb
   ON enr.sections_dcid = gb.sectionsdcid
- AND enr.db_name = gb.db_name
+ AND enr.[db_name] = gb.[db_name]
  AND gb.finalgradesetuptype = 'Total_Points'
-LEFT JOIN gabby.powerschool.gradebook_assignments_current_static a1 WITH(NOLOCK)
+LEFT JOIN gabby.powerschool.gradebook_assignments_current_static a1
   ON gb.sectionsdcid = a1.sectionsdcid 
  AND a1.assign_date BETWEEN gb.term_start_date and gb.term_end_date 
- AND gb.db_name = a1.db_name 
-LEFT JOIN gabby.powerschool.gradebook_assignments_scores_current_static s1 WITH(NOLOCK)
+ AND gb.[db_name] = a1.[db_name]
+LEFT JOIN gabby.powerschool.gradebook_assignments_scores_current_static s1
   ON a1.assignmentsectionid = s1.assignmentsectionid
- AND a1.db_name = s1.db_name
+ AND a1.[db_name] = s1.[db_name]
  AND enr.students_dcid = s1.studentsdcid
 WHERE enr.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 
@@ -60,8 +68,12 @@ SELECT enr.sectionid
       ,enr.teacher_name
       ,enr.student_number
       ,enr.schoolid
-      ,enr.db_name
-      
+      ,enr.[db_name]
+
+      ,co.lastfirst
+      ,co.grade_level
+      ,co.iep_status
+
       ,gb.term_abbreviation
       ,gb.storecode AS finalgradename
       ,LEFT(gb.storecode, 1) AS finalgrade_category
@@ -69,33 +81,37 @@ SELECT enr.sectionid
       ,gb.gradingformulaweightingtype
       ,gb.category_name AS grade_category
       ,gb.category_abbreviation AS grade_category_abbreviation
-      ,gb.weight AS weighting
+      ,gb.[weight] AS weighting
       ,gb.includeinfinalgrades  
       
       ,a2.assignmentid
       ,a2.assign_date
       ,a2.assign_name
       ,a2.pointspossible
-      ,a2.weight
+      ,a2.[weight]
       ,a2.extracreditpoints
       ,a2.isfinalscorecalculated
-      
+
       ,s2.scorepoints
       ,s2.islate
       ,s2.isexempt
       ,s2.ismissing
 FROM gabby.powerschool.course_enrollments_static enr
+JOIN gabby.powerschool.cohort_identifiers_static co
+  ON enr.student_number = co.student_number
+ AND enr.academic_year = co.academic_year
+ AND co.rn_year = 1
 JOIN gabby.powerschool.gradebook_setup_static gb
   ON enr.sections_dcid = gb.sectionsdcid
- AND enr.db_name = gb.db_name
+ AND enr.[db_name] = gb.[db_name]
  AND gb.finalgradesetuptype != 'Total_Points'
-LEFT JOIN gabby.powerschool.gradebook_assignments_current_static a2 WITH(NOLOCK)
+LEFT JOIN gabby.powerschool.gradebook_assignments_current_static a2
   ON gb.sectionsdcid = a2.sectionsdcid 
  AND gb.assignmentcategoryid = a2.categoryid
  AND a2.assign_date BETWEEN gb.term_start_date and gb.term_end_date 
- AND gb.db_name = a2.db_name 
-LEFT JOIN gabby.powerschool.gradebook_assignments_scores_current_static s2 WITH(NOLOCK)
+ AND gb.[db_name] = a2.[db_name]
+LEFT JOIN gabby.powerschool.gradebook_assignments_scores_current_static s2
   ON a2.assignmentsectionid = s2.assignmentsectionid
- AND a2.db_name = s2.db_name
+ AND a2.[db_name] = s2.[db_name]
  AND enr.students_dcid = s2.studentsdcid 
 WHERE enr.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
