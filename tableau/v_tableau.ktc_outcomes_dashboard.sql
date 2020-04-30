@@ -6,7 +6,8 @@ CREATE OR ALTER VIEW tableau.ktc_outcomes_dashboard AS
 WITH matric_app AS (
   SELECT c.id AS contact_id
 
-        ,acc.type AS matriculation_account_type
+        ,acc.[name] AS matriculation_school_name
+        ,acc.[type] AS matriculation_account_type
 
         ,enr.status_c AS matriculation_enrollment_status
         ,enr.pursuing_degree_type_c AS matriculation_pursuing_degree_type
@@ -66,6 +67,7 @@ SELECT c.sf_contact_id AS contact_id
       ,ei.hs_actual_end_date
       ,ei.hs_anticipated_graduation
 
+      ,a.matriculation_school_name
       ,a.matriculation_account_type
       ,a.matriculation_enrollment_status
       ,a.matriculation_pursuing_degree_type
