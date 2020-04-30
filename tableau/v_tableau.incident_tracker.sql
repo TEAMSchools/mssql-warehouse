@@ -184,4 +184,4 @@ JOIN gabby.reporting.reporting_terms d
  AND d._fivetran_deleted = 0
 WHERE dlb.behavior_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
   AND dlb.is_deleted = 0
-  AND (dlb.school_name IN ('KIPP NCA', 'KIPP Newark Lab High School') OR dlb.behavior_category = 'Remote Learning')
+  AND (dlb.school_name IN ('KIPP NCA', 'KIPP Newark Lab High School'))
