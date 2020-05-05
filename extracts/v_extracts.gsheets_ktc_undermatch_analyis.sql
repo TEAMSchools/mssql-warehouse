@@ -22,19 +22,19 @@ WITH apps AS (
   LEFT JOIN gabby.alumni.record_type rt
     ON ac.record_type_id = rt.id
   WHERE a.is_deleted = 0
-    AND a.application_status_c IN ('Conditionally Accepted','Accepted')
+    AND a.application_status_c = 'Accepted'
     AND rt.[name] != 'High School'
  )
 
-SELECT c.id AS salesforce_contact_id
-      ,c.[name] AS student_name
-      ,c.kipp_hs_class_c AS kipp_hs_class
-      ,c.kipp_region_name_c AS kipp_region_name
-      ,c.currently_enrolled_school_c AS currently_enrolled_school
-      ,c.current_kipp_student_c AS current_kipp_student
-      ,c.expected_hs_graduation_c AS expected_hs_graduation
-      ,c.college_match_display_gpa_c AS college_match_display_gpa
-      ,c.highest_act_score_c AS highest_act_score
+SELECT c.sf_contact_id AS salesforce_contact_id
+      ,CONCAT(c.first_name, ' ', c.last_name) AS student_name
+      ,c.ktc_cohort AS kipp_hs_class
+      ,c.kipp_region_name
+      ,c.currently_enrolled_school
+      ,c.current_kipp_student
+      ,c.expected_hs_graduation_date AS expected_hs_graduation
+      ,c.college_match_display_gpa
+      ,c.highest_act_score
 
       ,a.school_name
       ,a.school_type
@@ -42,8 +42,7 @@ SELECT c.id AS salesforce_contact_id
       ,a.adjusted_6_year_minority_graduation_rate
       ,a.school_description
       ,a.record_type_name
-FROM gabby.alumni.contact c
+FROM gabby.alumni.ktc_roster c
 LEFT JOIN apps a
-  ON c.id = a.contact_id
+  ON c.sf_contact_id = a.contact_id
  AND a.rn_grad_rate = 1
-WHERE c.is_deleted = 0

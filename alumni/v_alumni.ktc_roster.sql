@@ -75,7 +75,6 @@ FROM
            ,(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - co.academic_year) + co.grade_level AS current_grade_level_projection
 
            ,c.id AS sf_contact_id
-           ,c.kipp_hs_class_c AS ktc_cohort
            ,c.kipp_region_name_c AS kipp_region_name
            ,c.kipp_ms_graduate_c AS is_kipp_ms_graduate
            ,c.kipp_hs_graduate_c AS is_kipp_hs_graduate
@@ -98,7 +97,6 @@ FROM
            ,c.home_phone AS sf_home_phone
            ,c.other_phone AS sf_other_phone
            ,c.email AS sf_email
-           ,c.current_kipp_student_c AS current_kipp_student
            ,c.post_hs_simple_admin_c AS post_hs_simple_admin
            ,c.college_status_c AS college_status
            ,c.currently_enrolled_school_c AS currently_enrolled_school
@@ -111,6 +109,8 @@ FROM
            ,c.last_outreach_c AS last_outreach_date
            ,c.last_successful_contact_c AS last_successful_contact_date
            ,c.last_successful_advisor_contact_c AS last_successful_advisor_contact_date
+           ,COALESCE(c.current_kipp_student_c, 'Missing from Salesforce') AS current_kipp_student
+           ,COALESCE(c.kipp_hs_class_c, co.cohort) AS ktc_cohort
            ,(gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1) - DATEPART(YEAR, c.actual_hs_graduation_date_c) AS years_out_of_hs
 
            ,rt.[name] AS record_type_name
