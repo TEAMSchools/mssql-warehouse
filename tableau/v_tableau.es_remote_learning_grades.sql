@@ -18,7 +18,8 @@ SELECT r.roster_id
 FROM gabby.deanslist.rosters_all r
 JOIN gabby.deanslist.roster_assignments ra
   ON r.roster_id = ra.dlroster_id
-LEFT JOIN gabby.deanslist.behavior b
+ AND ra.grade_level IN ('K', '1st', '2nd', '3rd', '4th')
+LEFT JOIN gabby.deanslist.homework b
   ON ra.student_school_id = b.student_school_id
  AND ra.dlroster_id = b.roster_id
  AND b.behavior_category = 'Remote Learning'
