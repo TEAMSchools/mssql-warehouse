@@ -31,7 +31,7 @@ SELECT co.student_number
                  END
            END AS org
       ,co.student_web_id + '@teamstudents.org' AS email
-      ,co.student_web_password AS password
+      ,co.student_web_password AS [password]
       ,CASE
         WHEN co.region = 'TEAM' THEN 'group-students-newark@teamstudents.org'
         WHEN co.region = 'KCNA' THEN 'group-students-camden@teamstudents.org'
