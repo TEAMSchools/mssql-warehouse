@@ -29,6 +29,7 @@ SELECT d.survey_id
       ,d.respondent_samaccountname
       ,d.respondent_manager_name
       ,d.respondent_manager_samaccountname
+      ,d.respondent_department_name
 
       ,w.job_name
 FROM gabby.surveygizmo.survey_detail d
@@ -36,6 +37,6 @@ LEFT JOIN gabby.dayforce.employee_work_assignment w
   ON d.respondent_df_employee_number = w.employee_reference_code
  AND d.date_submitted BETWEEN w.work_assignment_effective_start AND COALESCE(w.work_assignment_effective_end, GETDATE()+1)
  AND w.primary_work_assignment = 1
-WHERE d.survey_title = 'COVID-19 Survey'
+WHERE d.survey_id = 5560557
   AND d.rn_respondent_subject = 1
   AND d.campaign_academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
