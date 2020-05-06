@@ -101,7 +101,7 @@ WITH response_pivot AS (
         ,ewa.job_name AS primary_job
         ,CONVERT(DATE, ewa.work_assignment_effective_start) AS work_assignment_effective_start
         ,CONVERT(DATE, COALESCE(CASE WHEN ewa.work_assignment_effective_end != '' THEN ewa.work_assignment_effective_end END
-                               ,GETDATE()
+                               ,CONVERT(DATE,CONVERT(varchar,gabby.utilities.global_academic_year()+1)+'-06-30')
            )) AS work_assignment_effective_end
         ,ROW_NUMBER() OVER (PARTITION BY ewa.employee_reference_code, ewa.work_assignment_effective_start
            ORDER BY ewa.work_assignment_effective_end DESC) AS rn
@@ -134,7 +134,7 @@ WITH response_pivot AS (
              ,sub.manager_samaccountname
              ,sub.effective_date AS manager_effective_start
              ,COALESCE(DATEADD(DAY, -1, LEAD(sub.effective_date) OVER(PARTITION BY sub.employee_reference_code ORDER BY sub.effective_date))
-                      ,CONVERT(DATE, GETDATE())) AS manager_effective_end
+                      ,CONVERT(DATE,CONVERT(varchar,gabby.utilities.global_academic_year()+1)+'-06-30')) AS manager_effective_end
        FROM
            (
             SELECT em.employee_reference_code
