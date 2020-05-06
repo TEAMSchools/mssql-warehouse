@@ -10,7 +10,10 @@ SELECT id AS survey_question_id
       ,comment
       ,has_showhide_deps
       ,CASE WHEN shortname != '' THEN shortname END AS shortname
-      ,CASE WHEN [type] = 'ESSAY' THEN 'Y' ELSE 'N' END AS is_open_ended
+      ,CASE WHEN [type] = 'ESSAY' THEN 'Y' 
+            WHEN [type] = 'TEXTBOX' THEN 'Y'
+            ELSE 'N' 
+       END AS is_open_ended
       ,CASE 
         WHEN [shortname] IN ('respondent_df_employee_number', 'respondent_userprincipalname', 'respondent_adp_associate_id'
                             ,'subject_df_employee_number', 'is_manager') THEN 1
