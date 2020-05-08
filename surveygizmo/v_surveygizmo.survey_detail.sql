@@ -65,7 +65,6 @@ JOIN gabby.surveygizmo.survey_question_clean_static sq
  AND sq.base_type = 'Question'
  AND sq.is_identifier_question = 0
  AND sq.[type] IN ('RADIO', 'ESSAY', 'TEXTBOX')
- AND sq.shortname IS NOT NULL
 JOIN gabby.surveygizmo.survey_response_identifiers_static sri
   ON s.survey_id = sri.survey_id
  AND sri.[status] = 'Complete'
