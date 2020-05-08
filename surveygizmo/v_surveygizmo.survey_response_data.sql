@@ -22,6 +22,7 @@ SELECT sr.survey_response_id
       ,sd.question
       ,sd.answer_id
       ,sd.answer
+      ,sd.options
       ,sd.shown
 FROM responses sr
 CROSS APPLY OPENJSON(sr.survey_data, '$')
@@ -32,6 +33,7 @@ CROSS APPLY OPENJSON(sr.survey_data, '$')
     [type] VARCHAR(125),
     question VARCHAR(MAX),
     answer VARCHAR(MAX),
+    options NVARCHAR(MAX) AS JSON,
     shown BIT
    ) AS sd
 WHERE sr.rn = 1
