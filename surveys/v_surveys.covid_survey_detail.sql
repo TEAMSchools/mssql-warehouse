@@ -88,7 +88,7 @@ LEFT JOIN gabby.dayforce.employee_work_assignment w
   ON d.respondent_df_employee_number = w.employee_reference_code
  AND d.date_submitted BETWEEN w.work_assignment_effective_start 
                           AND COALESCE(w.work_assignment_effective_end
-                                      ,DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 6, 30))
+                                      ,DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR()+1, 6, 30))
  AND w.primary_work_assignment = 1
 LEFT JOIN identifiers i
   ON d.survey_response_id = i.survey_response_id
