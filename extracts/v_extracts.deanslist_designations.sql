@@ -5,7 +5,7 @@ CREATE OR ALTER VIEW extracts.deanslist_designations AS
 
 WITH ada AS (
   SELECT psa.studentid
-        ,psa.db_name
+        ,psa.[db_name]
         ,psa.yearid
         ,ROUND(AVG(CAST(psa.attendancevalue AS FLOAT)), 2) AS ada
   FROM gabby.powerschool.ps_adaadm_daily_ctod_current_static psa
@@ -13,11 +13,11 @@ WITH ada AS (
     AND psa.calendardate <= CAST(SYSDATETIME() AS DATE)
   GROUP BY psa.studentid
           ,psa.yearid
-          ,psa.db_name
+          ,psa.[db_name]
  )
 
 ,sp AS (
-  SELECT p.db_name
+  SELECT p.[db_name]
         ,p.academic_year
         ,p.studentid
         ,p.enter_date
@@ -32,8 +32,8 @@ WITH ada AS (
         ,p.[Home Instruction]
   FROM
       (
-       SELECT sp.db_name
-             ,sp.academic_year      
+       SELECT sp.[db_name]
+             ,sp.academic_year
              ,sp.studentid
              ,sp.specprog_name
              ,sp.enter_date
@@ -75,40 +75,41 @@ WITH ada AS (
   LEFT JOIN gabby.powerschool.gpa_detail gpa
     ON co.student_number = gpa.student_number
    AND co.academic_year = gpa.academic_year
-   AND co.db_name = gpa.db_name
+   AND co.[db_name] = gpa.[db_name]
    AND gpa.is_curterm = 1
   LEFT JOIN sp
     ON co.studentid = sp.studentid
    AND co.academic_year = sp.academic_year
-   AND co.db_name = sp.db_name
+   AND co.[db_name] = sp.[db_name]
   LEFT JOIN ada
     ON co.studentid = ada.studentid
    AND co.yearid = ada.yearid
-   AND co.db_name = ada.db_name
+   AND co.[db_name] = ada.[db_name]
   WHERE co.rn_year = 1
     AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
  )
 
 SELECT student_number
-      ,academic_year            
-      ,value AS designation_name
-FROM (
-      SELECT student_number          
-            ,academic_year
+      ,academic_year
+      ,[value] AS designation_name
+FROM
+    (
+     SELECT student_number
+           ,academic_year
 
-            ,CAST(is_iep AS VARCHAR(250)) AS is_iep
-            ,CAST(is_504 AS VARCHAR(250)) AS is_504
-            ,CAST(is_lep AS VARCHAR(250)) AS is_lep
-            ,CAST(is_quarter_gpa_3plus AS VARCHAR(250)) AS is_quarter_gpa_3plus
-            ,CAST(is_quarter_gpa_35plus AS VARCHAR(250)) AS is_quarter_gpa_35plus
-            ,CAST(is_ood AS VARCHAR(250)) AS is_ood
-            ,CAST(is_nccs AS VARCHAR(250)) AS is_nccs
-            ,CAST(is_pathways AS VARCHAR(250)) AS is_pathways
-            ,CAST(is_home_instruction AS VARCHAR(250)) AS is_home_instruction
-            ,CAST(is_chronic_absentee AS VARCHAR(250)) AS is_chronic_absentee
-      FROM designation
-     ) sub
+           ,CAST(is_iep AS VARCHAR(250)) AS is_iep
+           ,CAST(is_504 AS VARCHAR(250)) AS is_504
+           ,CAST(is_lep AS VARCHAR(250)) AS is_lep
+           ,CAST(is_quarter_gpa_3plus AS VARCHAR(250)) AS is_quarter_gpa_3plus
+           ,CAST(is_quarter_gpa_35plus AS VARCHAR(250)) AS is_quarter_gpa_35plus
+           ,CAST(is_ood AS VARCHAR(250)) AS is_ood
+           ,CAST(is_nccs AS VARCHAR(250)) AS is_nccs
+           ,CAST(is_pathways AS VARCHAR(250)) AS is_pathways
+           ,CAST(is_home_instruction AS VARCHAR(250)) AS is_home_instruction
+           ,CAST(is_chronic_absentee AS VARCHAR(250)) AS is_chronic_absentee
+     FROM designation
+    ) sub
 UNPIVOT (
-  value
+  [value]
   FOR field IN (is_iep, is_504, is_lep, is_quarter_gpa_3plus, is_quarter_gpa_35plus, is_ood, is_nccs, is_pathways, is_home_instruction, is_chronic_absentee)
  ) u
