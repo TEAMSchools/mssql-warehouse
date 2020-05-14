@@ -13,17 +13,17 @@ WITH repo_fields AS (
           WHEN r.repository_id = 209 THEN 'Q4'
          END AS term_name        
 
-        ,CONVERT(VARCHAR(250),f.label) AS field_label
+        ,CONVERT(VARCHAR(250), f.[label]) AS field_label
         ,CASE
-          WHEN f.name = 'field_character_comment_1_1' THEN 'field_character_comment_1'
-          WHEN f.name = 'field_character_comment_2_1' THEN 'field_character_comment_2'
-          ELSE f.name
+          WHEN f.[name] = 'field_character_comment_1_1' THEN 'field_character_comment_1'
+          WHEN f.[name] = 'field_character_comment_2_1' THEN 'field_character_comment_2'
+          ELSE f.[name]
          END AS field_name
   FROM gabby.illuminate_dna_repositories.repositories r
   JOIN gabby.illuminate_dna_repositories.fields f
     ON r.repository_id = f.repository_id
    AND f.deleted_at IS NULL
-   AND f.name != 'field_term'
+   AND f.[name] <> 'field_term'
   WHERE r.repository_id IN (216, 207, 208, 209)
  )
 
@@ -42,7 +42,7 @@ SELECT co.student_number
       ,rf.field_label      
 
       ,rdu.comment_code
-      ,rdu.comment_subject AS subject      
+      ,rdu.comment_subject AS [subject]
       ,rdu.subcategory      
       ,rdu.comment
 FROM gabby.powerschool.cohort_identifiers_static co
