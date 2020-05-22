@@ -9,8 +9,8 @@ GO
 CREATE OR ALTER PROCEDURE illuminate_dna_repositories.repository_row_ids_merge AS 
 
 BEGIN
-	 /* SET NOCOUNT ON added to prevent extra result sets from interfering with SELECT statements */
-	 SET NOCOUNT ON;
+  /* SET NOCOUNT ON added to prevent extra result sets from interfering with SELECT statements */
+  SET NOCOUNT ON;
 
   /* 1.) Drop and recreate the temp table */
   IF OBJECT_ID(N'tempdb..#repository_row_ids') IS NOT NULL
@@ -42,7 +42,7 @@ BEGIN
                             WHERE schema_id = SCHEMA_ID(N'illuminate_dna_repositories')
                               AND ISNUMERIC(RIGHT(name, 1)) = 1)
     ORDER BY repository_id DESC;
-  		    
+       
   /* 4.) Do work son */  
   OPEN repository_cursor
   WHILE 1 = 1
