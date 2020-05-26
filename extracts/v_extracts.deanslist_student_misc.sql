@@ -47,6 +47,8 @@ SELECT co.student_number
       ,CONCAT(co.street, ', ', co.city, ', ', co.state, ' ', co.zip) AS home_address
       ,co.student_web_id + '@teamstudents.org' AS student_email
       
+      ,s.sched_nextyeargrade
+      
       ,ed.school_entrydate
       ,ed.school_exitdate
       
@@ -60,6 +62,9 @@ SELECT co.student_number
       ,gpa.GPA_Y1
       ,gpa.gpa_term
 FROM gabby.powerschool.cohort_identifiers_static co
+JOIN gabby.powerschool.students s
+  ON co.student_number = s.student_number
+ AND co.[db_name] = s.[db_name]
 JOIN ug_school ug
   ON co.student_number = ug.student_number
  AND co.[db_name] = ug.[db_name]
