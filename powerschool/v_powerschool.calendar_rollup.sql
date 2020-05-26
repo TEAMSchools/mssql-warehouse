@@ -4,11 +4,11 @@ WITH cal_long AS (
   SELECT u.schoolid
         ,u.date_value
         ,u.yearid
-        ,CONVERT(VARCHAR(1),UPPER(u.field)) AS track
-        ,u.value
+        ,CONVERT(VARCHAR(1), UPPER(u.field)) AS track
+        ,u.[value]
   FROM
       (
-       SELECT CONVERT(INT,cd.schoolid) AS schoolid
+       SELECT CONVERT(INT, cd.schoolid) AS schoolid
              ,cd.date_value
              ,cd.a
              ,cd.b
@@ -17,7 +17,7 @@ WITH cal_long AS (
              ,cd.e
              ,cd.f
 
-             ,CONVERT(INT,t.yearid) AS yearid
+             ,CONVERT(INT, t.yearid) AS yearid
        FROM powerschool.calendar_day cd
        JOIN powerschool.schools s
          ON cd.schoolid = s.school_number
@@ -33,7 +33,7 @@ WITH cal_long AS (
          AND cd.membershipvalue > 0
       ) sub
   UNPIVOT(
-    value
+    [value]
     FOR field IN (sub.a, sub.b, sub.c, sub.d, sub.e, sub.f)
    ) u
  )
@@ -46,7 +46,7 @@ SELECT cl.schoolid
       ,COUNT(cl.date_value) AS days_total
       ,SUM(CASE WHEN cl.date_value > GETDATE() THEN 1 ELSE 0 END) AS days_remaining
 FROM cal_long cl
-WHERE cl.value = 1
+WHERE cl.[value] = 1
 GROUP BY cl.schoolid
         ,cl.yearid
         ,cl.track
