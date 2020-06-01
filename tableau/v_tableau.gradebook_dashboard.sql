@@ -12,6 +12,7 @@ WITH section_teacher AS (
         
         ,CONVERT(VARCHAR(125),sec.section_number) AS section_number
         ,sec.external_expression
+        ,sec.termid
         
         ,t.lastfirst AS teacher_name               
         
@@ -59,6 +60,7 @@ SELECT co.student_number
       ,NULL AS earnedcrhrs
 
       ,st.sectionid
+      ,st.termid
       ,st.teacher_name
       ,st.section_number       
       ,st.section_number AS [period]
@@ -117,6 +119,7 @@ SELECT co.student_number
       ,y1.earnedcrhrs
       
       ,st.sectionid
+      ,st.termid
       ,st.teacher_name
       ,st.section_number       
       ,st.section_number AS [period]
@@ -188,6 +191,7 @@ SELECT co.student_number
       ,NULL AS earnedcrhrs
 
       ,st.sectionid
+      ,st.termid
       ,st.teacher_name
       ,st.section_number       
       ,st.section_number AS [period]
@@ -246,6 +250,7 @@ SELECT co.student_number
       ,sg.earnedcrhrs
       
       ,st.sectionid
+      ,st.termid
       ,st.teacher_name
       ,st.section_number       
       ,st.section_number AS [period]
@@ -305,6 +310,7 @@ SELECT COALESCE(co.student_number, e1.student_number) AS student_number
       ,tr.earnedcrhrs
 
       ,CONVERT(INT,tr.sectionid) AS sectionid
+      ,tr.termid
       ,'TRANSFER' AS teacher_name    
       ,'TRANSFER' AS section_number       
       ,NULL AS [period]
@@ -366,6 +372,7 @@ SELECT co.student_number
       ,NULL AS earnedcrhrs
 
       ,st.sectionid
+      ,st.termid
       ,st.teacher_name
       ,st.section_number       
       ,st.section_number AS [period]
@@ -428,6 +435,7 @@ SELECT co.student_number
       ,NULL AS earnedcrhrs
 
       ,st.sectionid
+      ,st.termid
       ,st.teacher_name
       ,st.section_number       
       ,st.section_number AS [period]
