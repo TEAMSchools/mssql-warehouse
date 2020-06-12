@@ -136,6 +136,8 @@ SELECT student_number
       ,uses_alt
       ,base_dupe_audit
       ,alt_dupe_audit
+      ,first_init
+      ,last_name_clean
       ,CONVERT(VARCHAR(125),CASE
                              WHEN alt_dupe_audit = 1 THEN first_init + last_name_clean + dob_month + dob_day
                              WHEN uses_alt = 1 THEN alt_username
