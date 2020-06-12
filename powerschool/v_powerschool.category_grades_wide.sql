@@ -6,7 +6,6 @@ WITH grades_long AS (
         ,cat.academic_year
         ,cat.credittype
         ,cat.course_number
-        ,cat.teacher_name
         ,cat.reporting_term
         ,cat.reporting_term AS rt
         ,cat.is_curterm
@@ -20,7 +19,6 @@ WITH grades_long AS (
         ,cat.academic_year
         ,'ALL' AS credittype
         ,'ALL' AS course_number
-        ,NULL AS teacher_name
         ,cat.reporting_term
         ,cat.reporting_term AS rt
         ,cat.is_curterm
@@ -42,7 +40,6 @@ WITH grades_long AS (
         ,cat.academic_year
         ,cat.credittype
         ,cat.course_number
-        ,cat.teacher_name
         ,cat.reporting_term
         ,'CUR' AS rt
         ,cat.is_curterm
@@ -56,7 +53,6 @@ WITH grades_long AS (
         ,cat.academic_year
         ,'ALL' AS credittype
         ,'ALL' AS course_number
-        ,NULL AS teacher_name
         ,cat.reporting_term
         ,'CUR' AS rt
         ,cat.is_curterm
@@ -77,7 +73,6 @@ SELECT student_number
       ,academic_year
       ,credittype
       ,course_number
-      ,teacher_name
       ,reporting_term
       ,is_curterm
 
@@ -131,7 +126,6 @@ FROM
            ,gr.course_number
            ,CONVERT(VARCHAR,gr.reporting_term) AS reporting_term
            ,gr.is_curterm
-           ,gr.teacher_name
 
            ,CONCAT(gr.grade_category, '_', gr.rt) AS pivot_field
            ,CASE 

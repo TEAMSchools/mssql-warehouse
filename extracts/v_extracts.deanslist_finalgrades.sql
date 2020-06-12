@@ -65,7 +65,7 @@ LEFT JOIN gabby.powerschool.category_grades_wide cat
   ON o.student_number = cat.student_number
  AND (o.yearid + 1990) = cat.academic_year
  AND o.[db_name] = cat.[db_name]
- AND fg.course_number = cat.course_number
+ AND o.course_number = cat.course_number
  AND fg.reporting_term = cat.reporting_term 
 LEFT JOIN gabby.powerschool.pgfinalgrades comm
   ON fg.studentid = comm.studentid
