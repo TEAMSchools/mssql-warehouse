@@ -4,38 +4,37 @@ GO
 CREATE OR ALTER VIEW extracts.deanslist_transcript_gpas AS
 
 SELECT student_number
-      ,academic_year            
-      ,CONVERT(FLOAT,ROUND(CONVERT(DECIMAL(4,3),(weighted_points / credit_hours)), 2)) AS GPA_Y1_weighted
-      ,CONVERT(FLOAT,ROUND(CONVERT(DECIMAL(4,3),(unweighted_points / credit_hours)), 2)) AS GPA_Y1_unweighted
+      ,academic_year
+      ,CONVERT(FLOAT, ROUND(CONVERT(DECIMAL(4,3), (weighted_points / credit_hours)), 2)) AS GPA_Y1_weighted
+      ,CONVERT(FLOAT, ROUND(CONVERT(DECIMAL(4,3), (unweighted_points / credit_hours)), 2)) AS GPA_Y1_unweighted
 FROM
     (
      SELECT student_number
            ,academic_year
-           ,ROUND(SUM(CONVERT(FLOAT,weighted_points)),3) AS weighted_points
-           ,ROUND(SUM(CONVERT(FLOAT,unweighted_points)),3) AS unweighted_points
-           ,CASE WHEN SUM(CONVERT(FLOAT,potentialcrhrs)) = 0 THEN NULL ELSE SUM(CONVERT(FLOAT,potentialcrhrs)) END AS credit_hours
+           ,ROUND(SUM(CONVERT(FLOAT, weighted_points)),3) AS weighted_points
+           ,ROUND(SUM(CONVERT(FLOAT, unweighted_points)),3) AS unweighted_points
+           ,CASE WHEN SUM(CONVERT(FLOAT, potentialcrhrs)) = 0 THEN NULL ELSE SUM(CONVERT(FLOAT, potentialcrhrs)) END AS credit_hours
      FROM
          (
-          SELECT sg.potentialcrhrs           
-                ,(LEFT(sg.termid, 2) + 1990) AS academic_year
-                ,(sg.potentialcrhrs * sg.gpa_points) AS weighted_points      
-                
+          SELECT sg.potentialcrhrs
+                ,sg.academic_year
+                ,(sg.potentialcrhrs * sg.gpa_points) AS weighted_points
+
                 ,s.student_number
-                
-                ,(sg.potentialcrhrs * scale_unweighted.grade_points) AS unweighted_points                
+
+                ,(sg.potentialcrhrs * scale_unweighted.grade_points) AS unweighted_points
           FROM gabby.powerschool.storedgrades sg
           JOIN gabby.powerschool.students s
             ON sg.studentid = s.id
-           AND sg.db_name = s.db_name
+           AND sg.[db_name] = s.[db_name]
           LEFT OUTER JOIN gabby.powerschool.gradescaleitem_lookup_static scale_unweighted
-            ON sg.db_name = scale_unweighted.db_name
+            ON sg.[db_name] = scale_unweighted.[db_name]
            AND sg.[percent] BETWEEN scale_unweighted.min_cutoffpercentage AND scale_unweighted.max_cutoffpercentage
            AND gabby.utilities.PS_UNWEIGHTED_GRADESCALE_NAME(sg.academic_year, sg.gradescale_name) = scale_unweighted.gradescale_name
-          WHERE sg.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-            AND sg.storecode_clean = 'Y1'
+          WHERE sg.storecode_clean = 'Y1'
             AND sg.excludefromgpa = 0
          ) sub
-     GROUP BY student_number     
+     GROUP BY student_number
              ,academic_year
     ) sub
 
@@ -49,5 +48,5 @@ FROM gabby.powerschool.cohort_identifiers_static co
 JOIN gabby.powerschool.gpa_cumulative sg
   ON co.studentid = sg.studentid
  AND co.schoolid = sg.schoolid
- AND co.db_name = sg.db_name
+ AND co.[db_name] = sg.[db_name]
 WHERE co.rn_undergrad = 1
