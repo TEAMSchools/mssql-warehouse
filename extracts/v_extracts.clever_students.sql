@@ -34,14 +34,14 @@ SELECT CONVERT(VARCHAR(25), co.schoolid) AS [School_id]
       ,NULL AS [Student_state]
       ,NULL AS [Student_zip]
       ,co.student_web_id + '@teamstudents.org' AS [Student_email]
-      ,sc.contact_relationship AS [Contact_relationship]
-      ,CASE WHEN sc.contact_type IN ('parent1', 'parent2') THEN 'primary' ELSE sc.contact_type END AS [Contact_type]
-      ,COALESCE(sc.contact_name, sc.contact_type) AS [Contact_name]
-      ,CONVERT(VARCHAR(25),LEFT(gabby.utilities.STRIP_CHARACTERS(sc.phone, '^0-9'), 10)) AS [Contact_phone]
+      ,sc.person_relationship AS [Contact_relationship]
+      ,CASE WHEN sc.person_type IN ('mother', 'father', 'contact1', 'contact2') THEN 'primary' ELSE sc.person_type END AS [Contact_type]
+      ,COALESCE(sc.person_name, sc.person_type) AS [Contact_name]
+      ,CONVERT(VARCHAR(25), LEFT(gabby.utilities.STRIP_CHARACTERS(sc.contact, '^0-9'), 10)) AS [Contact_phone]
       ,CASE
-        WHEN sc.phone_type = 'home' THEN 'Home'
-        WHEN sc.phone_type = 'cell' THEN 'Cell'
-        WHEN sc.phone_type = 'day' THEN 'Work'
+        WHEN sc.contact_type = 'home' THEN 'Home'
+        WHEN sc.contact_type = 'mobile' THEN 'Cell'
+        WHEN sc.contact_type = 'daytime' THEN 'Work'
        END AS [Contact_phone_type]
       ,NULL AS [Contact_email]
       ,NULL AS [Contact_sis_id]
@@ -53,8 +53,8 @@ FROM gabby.powerschool.cohort_identifiers_static co
 LEFT JOIN gabby.powerschool.student_contacts_static sc
   ON co.student_number = sc.student_number
  AND co.[db_name] = sc.[db_name]
- AND sc.contact_type IN ('emerg1', 'emerg2', 'emerg3', 'emerg4', 'emerg5', 'parent1'
-                        ,'parent2', 'release1', 'release2','release3', 'release4', 'release5')
+ AND sc.contact_category = 'Phone'
+ AND sc.person_type <> 'self'
 LEFT JOIN gabby.powerschool.gpa_cumulative gpa
   ON co.studentid = gpa.studentid
  AND co.schoolid = gpa.schoolid

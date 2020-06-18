@@ -72,9 +72,9 @@ WITH roster AS (
 
 ,contact AS (
   SELECT student_number
-        ,contact_name AS person
-        ,phone_type AS type
-        ,phone AS value      
+        ,person_name AS person
+        ,contact_type AS [type]
+        ,contact AS [value]
   FROM gabby.powerschool.student_contacts_static  
  )
 

@@ -14,6 +14,7 @@ SELECT s.student_number
       ,scd.isemergency
       ,scd.iscustodial
       ,scd.liveswithflg
+      ,scd.schoolpickupflg
 
       ,sccs.code AS relationship_type
 FROM powerschool.students s
@@ -46,6 +47,7 @@ SELECT s.student_number
       ,0 AS isemergency
       ,0 AS iscustodial
       ,0 AS liveswithflg
+      ,0 AS schoolpickupflg
 
       ,'Self' AS relationship_type
 FROM powerschool.students s
