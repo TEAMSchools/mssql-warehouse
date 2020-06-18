@@ -47,14 +47,18 @@ SELECT CONVERT(VARCHAR(25), co.schoolid) AS [School_id]
       ,NULL AS [Contact_sis_id]
       ,co.student_web_id AS [Username]
       ,NULL AS [Password]
-      ,NULL AS [Unweighted_gpa]
-      ,NULL AS [Weighted_gpa]
+      ,gpa.cumulative_Y1_gpa AS [Unweighted_gpa]
+      ,gpa.cumulative_Y1_gpa_unweighted AS [Weighted_gpa]
 FROM gabby.powerschool.cohort_identifiers_static co
 LEFT JOIN gabby.powerschool.student_contacts_static sc
   ON co.student_number = sc.student_number
  AND co.[db_name] = sc.[db_name]
  AND sc.contact_type IN ('emerg1', 'emerg2', 'emerg3', 'emerg4', 'emerg5', 'parent1'
                         ,'parent2', 'release1', 'release2','release3', 'release4', 'release5')
+LEFT JOIN gabby.powerschool.gpa_cumulative gpa
+  ON co.studentid = gpa.studentid
+ AND co.schoolid = gpa.schoolid
+ AND co.[db_name] = gpa.[db_name]
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.rn_year = 1
   AND co.grade_level != 99
