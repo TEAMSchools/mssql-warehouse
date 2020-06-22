@@ -6,7 +6,7 @@ CREATE OR ALTER VIEW tableau.compliance_school_register_summary AS
 WITH att_mem AS (
   SELECT studentid        
         ,yearid
-        ,db_name
+        ,[db_name]
         ,SUM(attendancevalue) AS n_att
         ,SUM(membershipvalue) AS n_mem
         ,SUM(CASE WHEN calendardate <= GETDATE() THEN membershipvalue END) AS n_mem_ytd
@@ -14,7 +14,7 @@ WITH att_mem AS (
   WHERE membershipvalue = 1
   GROUP BY studentid
           ,yearid
-          ,db_name
+          ,[db_name]
  )
 
 SELECT co.student_number
@@ -44,18 +44,18 @@ SELECT co.student_number
 FROM gabby.powerschool.cohort_identifiers_static co
 LEFT JOIN gabby.powerschool.s_nj_stu_x nj
   ON co.students_dcid = nj.studentsdcid
- AND co.db_name = nj.db_name
+ AND co.[db_name] = nj.[db_name]
 LEFT JOIN gabby.easyiep.njsmart_powerschool_clean iep
   ON co.student_number = iep.student_number
  AND co.academic_year = iep.academic_year
- AND co.db_name = iep.db_name
+ AND co.[db_name] = iep.[db_name]
 JOIN gabby.powerschool.calendar_rollup_static d
   ON co.schoolid = d.schoolid
  AND co.yearid = d.yearid
  AND co.track = d.track
- AND co.db_name = d.db_name
+ AND co.[db_name] = d.[db_name]
 JOIN att_mem sub
   ON co.studentid = sub.studentid
  AND co.yearid = sub.yearid
- AND co.db_name = sub.db_name
+ AND co.[db_name] = sub.[db_name]
 WHERE co.rn_year = 1
