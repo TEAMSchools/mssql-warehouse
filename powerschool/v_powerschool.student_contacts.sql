@@ -14,6 +14,7 @@ SELECT c.student_number
         ELSE LOWER(pc.contact_type)
        END AS contact_type
       ,pc.contact
+      ,pc.priority_order AS contact_priority_order
 FROM powerschool.contacts c
 JOIN powerschool.person_contacts pc
   ON c.personid = pc.personid
