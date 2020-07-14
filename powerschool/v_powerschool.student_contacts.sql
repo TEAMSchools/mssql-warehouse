@@ -11,7 +11,6 @@ SELECT c.student_number
       ,pc.contact_category
       ,CASE
         WHEN pc.contact_category IN ('Email', 'Address') THEN LOWER(pc.contact_category)
-        WHEN pc.contact_type = 'Not Set' THEN 'home'
         ELSE LOWER(pc.contact_type)
        END AS contact_type
       ,pc.contact
