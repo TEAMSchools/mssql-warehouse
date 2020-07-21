@@ -30,7 +30,7 @@ WITH people AS (
 ,contacts AS (
   SELECT sub.student_number
         ,sub.person_type + '_' + sub.contact_category_type AS pivot_field
-        ,sub.contact AS pivot_value
+        ,CONVERT(VARCHAR(250), sub.contact) AS pivot_value
   FROM
       (
        SELECT c.student_number

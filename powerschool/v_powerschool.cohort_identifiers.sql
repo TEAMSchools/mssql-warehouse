@@ -1,4 +1,4 @@
---CREATE OR ALTER VIEW powerschool.cohort_identifiers AS
+CREATE OR ALTER VIEW powerschool.cohort_identifiers AS
 
 WITH enr AS (
   SELECT sub.student_number
@@ -103,22 +103,22 @@ SELECT co.studentid
       ,CONVERT(VARCHAR, s.[state]) AS [state]
       ,CONVERT(VARCHAR, s.zip) AS zip
       
-      ,COALESCE(scw.contact_1_email_current, scw.contact_2_email_current) AS guardianemail
+      ,CONVERT(VARCHAR(250), COALESCE(scw.contact_1_email_current, scw.contact_2_email_current)) AS guardianemail
       ,CONVERT(VARCHAR,s.home_phone) AS home_phone
-      ,scw.contact_1_name AS mother
-      ,scw.contact_2_name AS father
+      ,CONVERT(VARCHAR(250), scw.contact_1_name) AS mother
+      ,CONVERT(VARCHAR(250), scw.contact_2_name) AS father
       ,CONVERT(INT,s.grade_level) AS highest_achieved
 
-      ,scw.contact_1_phone_home AS mother_home_phone
-      ,scw.contact_2_phone_home AS father_home_phone
+      ,CONVERT(VARCHAR(250), scw.contact_1_phone_home) AS mother_home_phone
+      ,CONVERT(VARCHAR(250), scw.contact_2_phone_home) AS father_home_phone
       
       ,CONVERT(VARCHAR(25),suf.newark_enrollment_number) AS newark_enrollment_number
       ,CONVERT(INT,suf.c_504_status) AS c_504_status
       ,mcs.total_balance AS lunch_balance
-      ,scw.contact_1_phone_mobile AS mother_cell
-      ,scw.contact_1_phone_daytime AS parent_motherdayphone
-      ,scw.contact_2_phone_mobile AS father_cell
-      ,scw.contact_2_phone_daytime AS parent_fatherdayphone
+      ,CONVERT(VARCHAR(250), scw.contact_1_phone_mobile) AS mother_cell
+      ,CONVERT(VARCHAR(250), scw.contact_1_phone_daytime) AS parent_motherdayphone
+      ,CONVERT(VARCHAR(250), scw.contact_2_phone_mobile) AS father_cell
+      ,CONVERT(VARCHAR(250), scw.contact_2_phone_daytime) AS parent_fatherdayphone
       ,NULL AS release_1_name
       ,NULL AS release_2_name
       ,NULL AS release_3_name
