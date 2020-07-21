@@ -50,6 +50,7 @@ WITH response_rollup AS (
         ,0 AS is_normed_scope
   FROM gabby.illuminate_dna_assessments.assessment_responses_long
   WHERE is_normed_scope = 0
+    AND academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
  )
 
 SELECT rr.assessment_id

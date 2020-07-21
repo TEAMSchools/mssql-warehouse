@@ -20,6 +20,9 @@ WITH asmts AS (
 
         ,sa.student_assessment_id
         ,sa.date_taken
+        ,ROW_NUMBER() OVER(
+           PARTITION BY a.student_id, a.assessment_id 
+             ORDER BY sa.student_assessment_id DESC) AS rn
   FROM gabby.illuminate_dna_assessments.student_assessment_scaffold a
   LEFT JOIN gabby.illuminate_dna_assessments.students_assessments sa
     ON a.student_id = sa.student_id
@@ -55,6 +58,7 @@ FROM asmts a
 LEFT JOIN gabby.illuminate_dna_assessments.agg_student_responses asr
   ON a.student_assessment_id = asr.student_assessment_id
  AND asr.points_possible > 0  
+WHERE a.rn = 1
 
 UNION ALL
 
@@ -97,7 +101,8 @@ LEFT JOIN gabby.illuminate_standards.standards_domain_static dom
   ON asrs.standard_id = dom.standard_id
  AND dom.domain_level = 1
  AND dom.domain_label NOT IN ('', 'Standard')
-  
+WHERE a.rn = 1
+
 UNION ALL
 
 SELECT a.student_id
@@ -134,3 +139,4 @@ JOIN gabby.illuminate_dna_assessments.assessments_reporting_groups arg
  AND asrg.reporting_group_id = arg.reporting_group_id
 JOIN gabby.illuminate_dna_assessments.reporting_groups rg
   ON asrg.reporting_group_id = rg.reporting_group_id
+WHERE a.rn = 1
