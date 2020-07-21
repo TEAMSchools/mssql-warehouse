@@ -1,4 +1,4 @@
-CREATE OR ALTER VIEW powerschool.cohort_identifiers AS
+--CREATE OR ALTER VIEW powerschool.cohort_identifiers AS
 
 WITH enr AS (
   SELECT sub.student_number
@@ -46,7 +46,7 @@ WITH enr AS (
          ON co.schoolid = c.schoolid
         AND co.yearid = c.yearid
         AND co.track = c.track
-       WHERE co.grade_level != 99
+       WHERE co.grade_level <> 99
       ) sub
   GROUP BY sub.student_number
           ,sub.yearid
@@ -58,15 +58,15 @@ SELECT co.studentid
       ,co.schoolid
       ,co.grade_level
       ,co.entrydate
-      ,co.exitdate                
+      ,co.exitdate
       ,co.entrycode
       ,co.exitcode
       ,co.exit_code_kf
       ,co.exit_code_ts
-      ,co.exitcomment      
+      ,co.exitcomment
       ,co.fteid
       ,co.cohort
-      ,co.is_retained_year      
+      ,co.is_retained_year
       ,co.year_in_network
       ,co.year_in_school
       ,co.rn_year
@@ -87,47 +87,48 @@ SELECT co.studentid
       ,ISNULL(enr.is_enrolled_oct15_week, 0) AS is_enrolled_oct15_week
       ,ISNULL(enr.is_enrolled_jan15_week, 0) AS is_enrolled_jan15_week
 
-      ,CONVERT(INT,s.student_number) AS student_number
+      ,CONVERT(INT, s.student_number) AS student_number
       ,co.studentsdcid AS students_dcid
-      ,CONVERT(VARCHAR,s.lastfirst) AS lastfirst
-      ,CONVERT(VARCHAR,s.first_name) AS first_name
-      ,CONVERT(VARCHAR,s.middle_name) AS middle_name
-      ,CONVERT(VARCHAR,s.last_name) AS last_name
+      ,CONVERT(VARCHAR, s.lastfirst) AS lastfirst
+      ,CONVERT(VARCHAR, s.first_name) AS first_name
+      ,CONVERT(VARCHAR, s.middle_name) AS middle_name
+      ,CONVERT(VARCHAR, s.last_name) AS last_name
       ,s.state_studentnumber
-      ,CONVERT(INT,s.enroll_status) AS enroll_status
-      ,CONVERT(VARCHAR,UPPER(LEFT(s.gender, 1))) AS gender
-      ,CONVERT(VARCHAR,UPPER(LEFT(s.ethnicity, 1))) AS ethnicity
-      ,s.dob      
-      ,CONVERT(VARCHAR,s.street) AS street
-      ,CONVERT(VARCHAR,s.city) AS city
-      ,CONVERT(VARCHAR,s.state) AS state
-      ,CONVERT(VARCHAR,s.zip) AS zip
-      ,CONVERT(VARCHAR(125),s.guardianemail) AS guardianemail
+      ,CONVERT(INT, s.enroll_status) AS enroll_status
+      ,CONVERT(VARCHAR(1), UPPER(s.gender)) AS gender
+      ,CONVERT(VARCHAR(1), UPPER(s.ethnicity)) AS ethnicity
+      ,s.dob
+      ,CONVERT(VARCHAR, s.street) AS street
+      ,CONVERT(VARCHAR, s.city) AS city
+      ,CONVERT(VARCHAR, s.[state]) AS [state]
+      ,CONVERT(VARCHAR, s.zip) AS zip
+      
+      ,COALESCE(scw.contact_1_email_current, scw.contact_2_email_current) AS guardianemail
       ,CONVERT(VARCHAR,s.home_phone) AS home_phone
-      ,CONVERT(VARCHAR,s.mother) AS mother
-      ,CONVERT(VARCHAR,s.father) AS father
+      ,scw.contact_1_name AS mother
+      ,scw.contact_2_name AS father
       ,CONVERT(INT,s.grade_level) AS highest_achieved
 
-      ,CONVERT(VARCHAR(125),scf.mother_home_phone) AS mother_home_phone
-      ,CONVERT(VARCHAR(125),scf.father_home_phone) AS father_home_phone
+      ,scw.contact_1_phone_home AS mother_home_phone
+      ,scw.contact_2_phone_home AS father_home_phone
       
       ,CONVERT(VARCHAR(25),suf.newark_enrollment_number) AS newark_enrollment_number
       ,CONVERT(INT,suf.c_504_status) AS c_504_status
       ,mcs.total_balance AS lunch_balance
-      ,CONVERT(VARCHAR(125),suf.mother_cell) AS mother_cell
-      ,CONVERT(VARCHAR(125),suf.parent_motherdayphone) AS parent_motherdayphone
-      ,CONVERT(VARCHAR(125),suf.father_cell) AS father_cell
-      ,CONVERT(VARCHAR(125),suf.parent_fatherdayphone) AS parent_fatherdayphone
-      ,CONVERT(VARCHAR(125),suf.release_1_name) AS release_1_name
-      ,CONVERT(VARCHAR(125),suf.release_2_name) AS release_2_name
-      ,CONVERT(VARCHAR(125),suf.release_3_name) AS release_3_name
-      ,CONVERT(VARCHAR(125),suf.release_4_name) AS release_4_name
-      ,CONVERT(VARCHAR(125),suf.release_5_name) AS release_5_name
-      ,CONVERT(VARCHAR(125),suf.release_1_phone) AS release_1_phone
-      ,CONVERT(VARCHAR(125),suf.release_2_phone) AS release_2_phone
-      ,CONVERT(VARCHAR(125),suf.release_3_phone) AS release_3_phone
-      ,CONVERT(VARCHAR(125),suf.release_4_phone) AS release_4_phone
-      ,CONVERT(VARCHAR(125),suf.release_5_phone) AS release_5_phone  
+      ,scw.contact_1_phone_mobile AS mother_cell
+      ,scw.contact_1_phone_daytime AS parent_motherdayphone
+      ,scw.contact_2_phone_mobile AS father_cell
+      ,scw.contact_2_phone_daytime AS parent_fatherdayphone
+      ,NULL AS release_1_name
+      ,NULL AS release_2_name
+      ,NULL AS release_3_name
+      ,NULL AS release_4_name
+      ,NULL AS release_5_name
+      ,NULL AS release_1_phone
+      ,NULL AS release_2_phone
+      ,NULL AS release_3_phone
+      ,NULL AS release_4_phone
+      ,NULL AS release_5_phone
 
       ,co.region
       ,CASE
@@ -234,3 +235,5 @@ LEFT JOIN powerschool.spenrollments_gen sp
  AND sp.specprog_name IN ('Out of District', 'Self-Contained Special Education', 'Pathways ES', 'Pathways MS', 'Whittier ES')
 LEFT JOIN mcs.view_student_data_static mcs
   ON co.student_number = mcs.student_number
+LEFT JOIN powerschool.student_contacts_wide_static scw
+  ON co.student_number = scw.student_number
