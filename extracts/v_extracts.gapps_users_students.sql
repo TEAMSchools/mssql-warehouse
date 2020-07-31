@@ -27,6 +27,7 @@ SELECT co.student_number
                   WHEN co.school_name = 'URA' THEN 'Upper Roseville'
                   WHEN co.school_name = 'NCP' THEN 'Newark Community'
                   WHEN co.school_name = 'LIB' THEN 'Liberty Academy'
+                  WHEN co.school_name = 'COU' THEN 'Courage'
                   ELSE co.school_name
                  END
            END AS org
