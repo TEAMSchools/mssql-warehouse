@@ -17,6 +17,8 @@ SELECT student_number AS id
       ,exitdate
       ,state_studentnumber
       ,student_web_id + '@teamstudents.org' AS student_email
-FROM gabby.powerschool.students
-WHERE enroll_status = 0
-  AND grade_level >= 2
+FROM gabby.powerschool.cohort_identifiers_static co
+WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+  AND co.rn_year = 1
+  AND co.enroll_status = 0
+  AND co.school_level IN ('MS', 'HS')
