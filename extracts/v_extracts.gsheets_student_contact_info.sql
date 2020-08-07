@@ -25,16 +25,16 @@ SELECT co.student_number
        END AS lunch_app_status 
       ,CONVERT(MONEY, co.lunch_balance) AS lunch_balance
       ,co.home_phone
-      ,co.mother_cell
-      ,co.father_cell
-      ,co.mother
-      ,co.father
-      ,CONCAT(co.release_1_name, ' | ', co.release_1_phone) AS release_1
-      ,CONCAT(co.release_2_name, ' | ', co.release_2_phone) AS release_2
-      ,CONCAT(co.release_3_name, ' | ', co.release_3_phone) AS release_3
-      ,CONCAT(co.release_4_name, ' | ', co.release_4_phone) AS release_4
-      ,CONCAT(co.release_5_name, ' | ', co.release_5_phone) AS release_5
-      ,co.guardianemail
+      ,COALESCE(scw.contact_1_phone_mobile, scw.contact_1_phone_daytime, scw.contact_1_phone_home) AS mother_cell
+      ,COALESCE(scw.contact_2_phone_mobile, scw.contact_2_phone_daytime, scw.contact_2_phone_home) AS father_cell
+      ,scw.contact_1_name AS mother
+      ,scw.contact_2_name AS father
+      ,CONCAT(scw.pickup_1_name, ' | ', scw.pickup_1_phone_mobile) AS release_1
+      ,CONCAT(scw.pickup_2_name, ' | ', scw.pickup_2_phone_mobile) AS release_2
+      ,CONCAT(scw.pickup_3_name, ' | ', scw.pickup_3_phone_mobile) AS release_3
+      ,NULL AS release_4
+      ,NULL AS release_5
+      ,COALESCE(scw.contact_1_email_current, scw.contact_2_email_current) AS guardianemail
       ,CONCAT(co.street, ', ', co.city, ', ', co.[state], ' ', co.zip) AS [address]
       ,co.first_name
       ,co.last_name
@@ -58,5 +58,8 @@ LEFT JOIN gabby.powerschool.u_studentsuserfields suf
 LEFT JOIN gabby.powerschool.studentcorefields scf
   ON co.students_dcid = scf.studentsdcid
  AND co.[db_name] = scf.[db_name]
+LEFT JOIN gabby.powerschool.student_contacts_wide_static scw
+  ON co.student_number = scw.student_number
+ AND co.[db_name] = scw.[db_name]
 WHERE co.enroll_status IN (0, -1)
   AND co.rn_all = 1
