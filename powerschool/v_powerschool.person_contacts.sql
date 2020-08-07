@@ -3,6 +3,7 @@ CREATE OR ALTER VIEW powerschool.person_contacts AS
 /* address */
 SELECT paa.personid
       ,paa.addresspriorityorder AS priority_order
+      ,CASE WHEN paa.addresspriorityorder = 1 THEN 1 ELSE 0 END AS is_primary 
       ,'Address' AS contact_category
       ,acs.code AS contact_type
       ,pa.street
@@ -23,6 +24,7 @@ UNION ALL
 /* phone number */
 SELECT ppna.personid
       ,ppna.phonenumberpriorityorder AS priority_order
+      ,CASE WHEN ppna.phonenumberpriorityorder = 1 THEN 1 ELSE 0 END AS is_primary 
       ,'Phone' AS contact_category
       ,pncs.code AS contact_type
       ,'(' + LEFT(pn.phonenumber, 3) + ') '
@@ -40,8 +42,9 @@ UNION ALL
 /* email */
 SELECT peaa.personid
       ,peaa.emailaddresspriorityorder AS priority_order
+      ,peaa.isprimaryemailaddress AS is_primary
       ,'Email' AS contact_category
-      ,eacs.code AS contact_type
+      ,CASE WHEN eacs.code = 'Not Set' THEN 'Current' ELSE eacs.code END AS contact_type
       ,ea.emailaddress AS contact
 FROM powerschool.personemailaddressassoc peaa
 LEFT JOIN powerschool.codeset eacs
