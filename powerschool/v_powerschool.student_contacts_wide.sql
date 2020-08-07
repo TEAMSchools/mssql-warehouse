@@ -25,6 +25,22 @@ WITH people AS (
   WHERE c.person_type <> 'self'
     AND c.contactpriorityorder > 2
     AND c.isemergency = 1
+
+  UNION ALL
+
+  SELECT c.student_number
+        ,c.personid
+        ,'pickup' AS person_type
+        ,c.relationship_type
+        ,CONCAT(LTRIM(RTRIM(c.firstname)), ' ', LTRIM(RTRIM(c.lastname))) AS contact_name
+        ,ROW_NUMBER() OVER(
+           PARTITION BY c.student_number
+             ORDER BY c.contactpriorityorder) AS contactpriorityorder
+  FROM powerschool.contacts c
+  WHERE c.person_type <> 'self'
+    AND c.contactpriorityorder > 2
+    AND c.schoolpickupflg = 1
+    AND c.isemergency = 0
  )
 
 ,contacts AS (
@@ -107,6 +123,30 @@ SELECT student_number
       ,emerg_3_phone_work
       ,emerg_3_address_home
       ,emerg_3_email_current
+      ,pickup_1_name
+      ,pickup_1_relationship
+      ,pickup_1_phone_home
+      ,pickup_1_phone_mobile
+      ,pickup_1_phone_daytime
+      ,pickup_1_phone_work
+      ,pickup_1_address_home
+      ,pickup_1_email_current
+      ,pickup_2_name
+      ,pickup_2_relationship
+      ,pickup_2_phone_home
+      ,pickup_2_phone_mobile
+      ,pickup_2_phone_daytime
+      ,pickup_2_phone_work
+      ,pickup_2_address_home
+      ,pickup_2_email_current
+      ,pickup_3_name
+      ,pickup_3_relationship
+      ,pickup_3_phone_home
+      ,pickup_3_phone_mobile
+      ,pickup_3_phone_daytime
+      ,pickup_3_phone_work
+      ,pickup_3_address_home
+      ,pickup_3_email_current
 FROM contacts c
 PIVOT(
   MAX(pivot_value)
@@ -119,5 +159,15 @@ PIVOT(
                      ,emerg_2_address_home,emerg_2_email_current,emerg_2_name,emerg_2_phone_daytime
                      ,emerg_2_phone_home,emerg_2_phone_mobile,emerg_2_phone_work,emerg_2_relationship
                      ,emerg_3_address_home,emerg_3_email_current,emerg_3_name,emerg_3_phone_daytime
-                     ,emerg_3_phone_home,emerg_3_phone_mobile,emerg_3_phone_work,emerg_3_relationship)
+                     ,emerg_3_phone_home,emerg_3_phone_mobile,emerg_3_phone_work,emerg_3_relationship
+                     ,pickup_1_address_home,pickup_1_email_current,pickup_1_name,pickup_1_phone_daytime
+                     ,pickup_1_phone_home,pickup_1_phone_mobile,pickup_1_phone_work,pickup_1_relationship
+                     ,pickup_2_address_home,pickup_2_email_current,pickup_2_name,pickup_2_phone_daytime
+                     ,pickup_2_phone_home,pickup_2_phone_mobile,pickup_2_phone_work,pickup_2_relationship
+                     ,pickup_3_address_home,pickup_3_email_current,pickup_3_name,pickup_3_phone_daytime
+                     ,pickup_3_phone_home,pickup_3_phone_mobile,pickup_3_phone_work,pickup_3_relationship
+                     ,pickup_4_address_home,pickup_4_email_current,pickup_4_name,pickup_4_phone_daytime
+                     ,pickup_4_phone_home,pickup_4_phone_mobile,pickup_4_phone_work,pickup_4_relationship
+                     ,pickup_5_address_home,pickup_5_email_current,pickup_5_name,pickup_5_phone_daytime
+                     ,pickup_5_phone_home,pickup_5_phone_mobile,pickup_5_phone_work,pickup_5_relationship)
  ) p
