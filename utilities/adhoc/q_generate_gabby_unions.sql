@@ -43,9 +43,9 @@ WITH all_tables_columns_pivot AS (
              ,p.kippnewark AS kippnewark_column_type
              ,CONCAT(p.kippnewark, p.kippcamden, p.kippmiami) AS column_type_concat
              ,CASE
-               WHEN (CONCAT(p.kippcamden,p.kippnewark) != '' AND CHARINDEX(p.kippmiami, CONCAT(p.kippcamden,p.kippnewark)) = 0)
-                 OR (CONCAT(p.kippmiami,p.kippnewark) != '' AND CHARINDEX(p.kippcamden, CONCAT(p.kippmiami,p.kippnewark)) = 0)
-                 OR (CONCAT(p.kippmiami,p.kippcamden) != '' AND CHARINDEX(p.kippnewark, CONCAT(p.kippmiami,p.kippcamden)) = 0)
+               WHEN (CONCAT(p.kippcamden,p.kippnewark) <> '' AND CHARINDEX(p.kippmiami, CONCAT(p.kippcamden,p.kippnewark)) = 0)
+                 OR (CONCAT(p.kippmiami,p.kippnewark) <> '' AND CHARINDEX(p.kippcamden, CONCAT(p.kippmiami,p.kippnewark)) = 0)
+                 OR (CONCAT(p.kippmiami,p.kippcamden) <> '' AND CHARINDEX(p.kippnewark, CONCAT(p.kippmiami,p.kippcamden)) = 0)
                     THEN 1
                ELSE 0
               END AS column_type_mismatch
@@ -58,7 +58,7 @@ WITH all_tables_columns_pivot AS (
                   ,column_type
             FROM gabby.utilities.all_tables_columns
             WHERE column_id > -1
-              AND [db_name] != 'gabby'
+              AND [db_name] <> 'gabby'
            ) sub
        PIVOT(
          MAX(column_type)
@@ -94,6 +94,7 @@ FROM
            ,COUNT(CASE WHEN atc.kippmiami NOT LIKE '%NULL%' THEN atc.kippmiami END) AS kippmiami_count
      FROM all_tables_columns_pivot atc
      WHERE atc.table_name NOT LIKE 'fivetran%'
+       AND atc.[schema_name] <> 'fivetran_log'
      GROUP BY atc.table_name
              ,atc.[schema_name]
     ) sub
