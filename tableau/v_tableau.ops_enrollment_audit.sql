@@ -3,54 +3,54 @@ GO
 
 CREATE OR ALTER VIEW tableau.ops_enrollment_audit AS
 
-WITH caredox_enrollment AS (
-  SELECT student_id_clean AS student_id
-        ,status_clean AS status
-        ,ROW_NUMBER() OVER(
-           PARTITION BY student_id_clean
-             ORDER BY CONVERT(DATETIME2,last_updated_at) DESC) AS rn_last_updated
-  FROM gabby.caredox.enrollment
-  WHERE status_clean != 'new'
- )
+--WITH caredox_enrollment AS (
+--  SELECT student_id_clean AS student_id
+--        ,status_clean AS status
+--        ,ROW_NUMBER() OVER(
+--           PARTITION BY student_id_clean
+--             ORDER BY CONVERT(DATETIME2,last_updated_at) DESC) AS rn_last_updated
+--  FROM gabby.caredox.enrollment
+--  WHERE status_clean != 'new'
+-- )
 
-,caredox_immunization AS (
-  SELECT student_id_clean AS student_id
-        ,status_clean AS status
-        ,ROW_NUMBER() OVER(
-           PARTITION BY student_id_clean
-             ORDER BY CONVERT(DATETIME2,last_updated_at) DESC) AS rn_last_updated  
-  FROM gabby.caredox.immunization
-  WHERE status_clean IN ('Valid', 'N/A')
- )
+--,caredox_immunization AS (
+--  SELECT student_id_clean AS student_id
+--        ,status_clean AS status
+--        ,ROW_NUMBER() OVER(
+--           PARTITION BY student_id_clean
+--             ORDER BY CONVERT(DATETIME2,last_updated_at) DESC) AS rn_last_updated  
+--  FROM gabby.caredox.immunization
+--  WHERE status_clean IN ('Valid', 'N/A')
+-- )
 
-,caredox_screenings AS (
-  SELECT student_id_clean AS student_id
-        ,status_clean AS status
-        ,ROW_NUMBER() OVER(
-           PARTITION BY student_id_clean
-             ORDER BY CONVERT(DATETIME2,last_updated_at) DESC) AS rn_last_updated
-  FROM gabby.caredox.screenings
-  WHERE status_clean = 'compliant'
- )
+--,caredox_screenings AS (
+--  SELECT student_id_clean AS student_id
+--        ,status_clean AS status
+--        ,ROW_NUMBER() OVER(
+--           PARTITION BY student_id_clean
+--             ORDER BY CONVERT(DATETIME2,last_updated_at) DESC) AS rn_last_updated
+--  FROM gabby.caredox.screenings
+--  WHERE status_clean = 'compliant'
+-- )
 
-,caredox_medications AS (
-  SELECT student_id
-        ,gabby.dbo.GROUP_CONCAT_D(medication, ' | ') AS medication
-  FROM
-      (
-       SELECT student_id_clean AS student_id
-             ,CONCAT(inventory_id_and_date_created, ' - ', medication_name) AS medication
-             ,ROW_NUMBER() OVER(
-                PARTITION BY student_id_clean, medication_name
-                  ORDER BY CONVERT(DATETIME2,last_updated_at) DESC) AS rn_last_updated
-       FROM gabby.caredox.medication_inventory
-       WHERE event = 'create'
-      ) sub
-  WHERE rn_last_updated = 1
-  GROUP BY student_id
- )
+--,caredox_medications AS (
+--  SELECT student_id
+--        ,gabby.dbo.GROUP_CONCAT_D(medication, ' | ') AS medication
+--  FROM
+--      (
+--       SELECT student_id_clean AS student_id
+--             ,CONCAT(inventory_id_and_date_created, ' - ', medication_name) AS medication
+--             ,ROW_NUMBER() OVER(
+--                PARTITION BY student_id_clean, medication_name
+--                  ORDER BY CONVERT(DATETIME2,last_updated_at) DESC) AS rn_last_updated
+--       FROM gabby.caredox.medication_inventory
+--       WHERE event = 'create'
+--      ) sub
+--  WHERE rn_last_updated = 1
+--  GROUP BY student_id
+-- )
 
-,residency_verification AS (
+WITH residency_verification AS (
   SELECT nen
         ,academic_year
         ,verification_date
@@ -84,10 +84,10 @@ WITH caredox_enrollment AS (
         ,CONVERT(VARCHAR(500),sub.lunch_balance) COLLATE Latin1_General_BIN AS lunch_balance
         ,CONVERT(VARCHAR(500),sub.iep_registration_followup) COLLATE Latin1_General_BIN AS iep_registration_followup_required
         ,CONVERT(VARCHAR(500),sub.lep_registration_followup) COLLATE Latin1_General_BIN AS lep_registration_followup_required
-        ,CONVERT(VARCHAR(500),sub.caredox_enrollment_status) COLLATE Latin1_General_BIN AS caredox_enrollment_status
-        ,CONVERT(VARCHAR(500),sub.caredox_immunization_status) COLLATE Latin1_General_BIN AS caredox_immunization_status
-        ,CONVERT(VARCHAR(500),sub.caredox_screenings_status) COLLATE Latin1_General_BIN AS caredox_screenings_status
-        ,CONVERT(VARCHAR(500),sub.caredox_medication_status) COLLATE Latin1_General_BIN AS caredox_medication_status
+        --,CONVERT(VARCHAR(500),sub.caredox_enrollment_status) COLLATE Latin1_General_BIN AS caredox_enrollment_status
+        --,CONVERT(VARCHAR(500),sub.caredox_immunization_status) COLLATE Latin1_General_BIN AS caredox_immunization_status
+        --,CONVERT(VARCHAR(500),sub.caredox_screenings_status) COLLATE Latin1_General_BIN AS caredox_screenings_status
+        --,CONVERT(VARCHAR(500),sub.caredox_medication_status) COLLATE Latin1_General_BIN AS caredox_medication_status
         ,CONVERT(VARCHAR(500),sub.birth_certificate_proof) COLLATE Latin1_General_BIN AS birth_certificate_proof
         ,CONVERT(VARCHAR(500),sub.residency_proof_1) COLLATE Latin1_General_BIN AS residency_proof_1
         ,CONVERT(VARCHAR(500),sub.residency_proof_2) COLLATE Latin1_General_BIN AS residency_proof_2
@@ -162,10 +162,10 @@ WITH caredox_enrollment AS (
              ,CASE WHEN rv.nen IS NOT NULL THEN 'Y' ELSE 'N' END AS residency_verification_scanned
              ,ISNULL(rv.approved, '') AS residency_verification_approved
 
-             ,ISNULL(cde.status, '') AS caredox_enrollment_status
-             ,ISNULL(cdi.status, '') AS caredox_immunization_status
-             ,ISNULL(cds.status, '') AS caredox_screenings_status
-             ,ISNULL(cdm.medication, '') AS caredox_medication_status
+             --,ISNULL(cde.status, '') AS caredox_enrollment_status
+             --,ISNULL(cdi.status, '') AS caredox_immunization_status
+             --,ISNULL(cds.status, '') AS caredox_screenings_status
+             --,ISNULL(cdm.medication, '') AS caredox_medication_status
 
              ,gabby.utilities.GLOBAL_ACADEMIC_YEAR() AS academic_year
        FROM gabby.powerschool.students s
@@ -182,17 +182,17 @@ WITH caredox_enrollment AS (
        LEFT JOIN residency_verification rv
          ON suf.newark_enrollment_number = rv.nen
         AND rv.academic_year = 2019 /* update manually */
-       LEFT JOIN caredox_enrollment cde
-         ON s.student_number = cde.student_id
-        AND cde.rn_last_updated = 1
-       LEFT JOIN caredox_immunization cdi
-         ON s.student_number = cdi.student_id
-        AND cdi.rn_last_updated = 1
-       LEFT JOIN caredox_screenings cds
-         ON s.student_number = cds.student_id
-        AND cds.rn_last_updated = 1
-       LEFT JOIN caredox_medications cdm
-         ON s.student_number = cdm.student_id
+       --LEFT JOIN caredox_enrollment cde
+       --  ON s.student_number = cde.student_id
+       -- AND cde.rn_last_updated = 1
+       --LEFT JOIN caredox_immunization cdi
+       --  ON s.student_number = cdi.student_id
+       -- AND cdi.rn_last_updated = 1
+       --LEFT JOIN caredox_screenings cds
+       --  ON s.student_number = cds.student_id
+       -- AND cds.rn_last_updated = 1
+       --LEFT JOIN caredox_medications cdm
+       --  ON s.student_number = cdm.student_id
        WHERE s.enroll_status IN (-1, 0)
       ) sub
  )
@@ -216,10 +216,10 @@ WITH caredox_enrollment AS (
                  ,residency_proof_2
                  ,residency_proof_3
                  ,birth_certificate_proof
-                 ,caredox_enrollment_status
-                 ,caredox_immunization_status
-                 ,caredox_screenings_status
-                 ,caredox_medication_status
+                 --,caredox_enrollment_status
+                 --,caredox_immunization_status
+                 --,caredox_screenings_status
+                 --,caredox_medication_status
                  ,residency_proof_all
                  ,residency_verification_scanned
                  ,residency_verification_approved)
@@ -249,10 +249,10 @@ SELECT a.student_number
       ,a.iep_registration_followup_complete
       ,a.lep_registration_followup_required
       ,a.lep_registration_followup_complete
-      ,a.caredox_enrollment_status
-      ,a.caredox_immunization_status
-      ,a.caredox_screenings_status
-      ,a.caredox_medication_status
+      --,a.caredox_enrollment_status
+      --,a.caredox_immunization_status
+      --,a.caredox_screenings_status
+      --,a.caredox_medication_status
       ,CASE WHEN a.region_city IN ('TEAMNewark', 'KCNACamden', 'KMSMiami') THEN 'Resident' ELSE 'Non-Resident' END AS residency_status
 
       ,u.field AS audit_field
@@ -261,14 +261,14 @@ SELECT a.student_number
         /* 0 = FLAG || -1 = BAD || 1 = OK */        
         WHEN u.field = 'region_city' AND u.value NOT IN ('TEAMNewark', 'KCNACamden', 'KMSMiami') THEN 0
         WHEN u.field = 'region_city' AND u.value IN ('TEAMNewark', 'KCNACamden', 'KMSMiami') THEN 1
-        WHEN u.field = 'caredox_enrollment_status' AND u.value = 'approved' THEN 1
-        WHEN u.field = 'caredox_enrollment_status' AND u.value IN ('review_pending','started') THEN 0
-        WHEN u.field = 'caredox_enrollment_status' AND u.value IN ('rejected','') THEN -1
-        WHEN u.field = 'caredox_immunization_status' AND u.value IN ('Valid', 'N/A') THEN 1        
-        WHEN u.field = 'caredox_immunization_status' AND (u.value LIKE 'Not Valid%' OR u.value = '') THEN -1        
-        WHEN u.field = 'caredox_medication_status' AND u.value != '' THEN 0
-        WHEN u.field = 'caredox_screenings_status' AND u.value = 'compliant' THEN 1
-        WHEN u.field = 'caredox_screenings_status' AND u.value = '' THEN -1
+        --WHEN u.field = 'caredox_enrollment_status' AND u.value = 'approved' THEN 1
+        --WHEN u.field = 'caredox_enrollment_status' AND u.value IN ('review_pending','started') THEN 0
+        --WHEN u.field = 'caredox_enrollment_status' AND u.value IN ('rejected','') THEN -1
+        --WHEN u.field = 'caredox_immunization_status' AND u.value IN ('Valid', 'N/A') THEN 1        
+        --WHEN u.field = 'caredox_immunization_status' AND (u.value LIKE 'Not Valid%' OR u.value = '') THEN -1        
+        --WHEN u.field = 'caredox_medication_status' AND u.value != '' THEN 0
+        --WHEN u.field = 'caredox_screenings_status' AND u.value = 'compliant' THEN 1
+        --WHEN u.field = 'caredox_screenings_status' AND u.value = '' THEN -1
         WHEN u.field = 'iep_registration_followup_required' AND a.iep_registration_followup_complete = 'Y' THEN 1
         WHEN u.field = 'iep_registration_followup_required' AND u.value = '1' THEN 0
         WHEN u.field = 'iep_registration_followup_complete' AND u.value = 'Y' THEN 1
