@@ -114,7 +114,7 @@ SELECT co.studentid
       
       ,CONVERT(VARCHAR(25),suf.newark_enrollment_number) AS newark_enrollment_number
       ,CONVERT(INT,suf.c_504_status) AS c_504_status
-      ,mcs.total_balance AS lunch_balance
+      ,tp.total_balance AS lunch_balance
       ,CONVERT(VARCHAR(250), scw.contact_1_phone_mobile) AS mother_cell
       ,CONVERT(VARCHAR(250), scw.contact_1_phone_daytime) AS parent_motherdayphone
       ,CONVERT(VARCHAR(250), scw.contact_2_phone_mobile) AS father_cell
@@ -177,31 +177,31 @@ SELECT co.studentid
       ,saa.student_web_id
       ,saa.student_web_password
 
-      ,CONVERT(VARCHAR(5),UPPER(CASE
-                                 WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
-                                  AND co.rn_year = 1 THEN CASE
-                                                           WHEN DB_NAME() IN ('kippnewark', 'kippcamden') THEN mcs.lunch_status COLLATE Latin1_General_BIN
-                                                           WHEN DB_NAME() = 'kippmiami' AND s.lunchstatus = 'NoD' THEN NULL
-                                                           WHEN DB_NAME() = 'kippmiami' THEN s.lunchstatus
-                                                          END
-                                 WHEN co.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
-                                  AND co.entrydate = s.entrydate THEN CASE
-                                                                       WHEN s.lunchstatus = 'NoD' THEN NULL
-                                                                       ELSE s.lunchstatus
-                                                                      END
-                                 ELSE co.lunchstatus
-                                END)) AS lunchstatus
-      ,CONVERT(VARCHAR(125),CASE
-                             WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
-                              AND co.rn_year = 1 THEN CASE
-                                                       WHEN DB_NAME() = 'kippmiami' THEN s.lunchstatus
-                                                       WHEN DB_NAME() IN ('kippnewark', 'kippcamden') THEN mcs.lunch_app_status COLLATE Latin1_General_BIN
-                                                      END
-                             WHEN co.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
-                              AND co.entrydate = s.entrydate 
-                                  THEN s.lunchstatus
-                             ELSE co.lunchstatus
-                            END) AS lunch_app_status
+      ,CONVERT(VARCHAR(5),UPPER(
+         CASE
+          WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
+           AND co.rn_year = 1 THEN CASE
+                                    WHEN DB_NAME() = 'kippmiami' THEN (CASE WHEN s.lunchstatus = 'NoD' THEN NULL ELSE s.lunchstatus END)
+                                    ELSE tp.eligibility_name
+                                   END
+          WHEN co.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
+           AND co.entrydate = s.entrydate THEN (CASE WHEN s.lunchstatus = 'NoD' THEN NULL ELSE s.lunchstatus END)
+          ELSE co.lunchstatus
+         END)) AS lunchstatus
+      ,CONVERT(VARCHAR(125),
+         CASE
+          WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
+           AND co.rn_year = 1 THEN CASE
+                                    WHEN DB_NAME() = 'kippmiami' THEN s.lunchstatus
+                                    WHEN tp.is_directly_certified = 1 THEN 'Direct Certification'
+                                    WHEN COALESCE(tp.application_approved_benefit_type, tp.eligibility_name + ' - ' + tp.eligibility_determination_reason) IS NULL THEN 'No Application'
+                                    ELSE COALESCE(tp.application_approved_benefit_type, tp.eligibility_name + ' - ' + tp.eligibility_determination_reason)
+                                   END
+          WHEN co.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
+           AND co.entrydate = s.entrydate 
+               THEN s.lunchstatus
+          ELSE co.lunchstatus
+         END) AS lunch_app_status
 FROM powerschool.cohort_static co
 LEFT JOIN enr
   ON co.student_number = enr.student_number
@@ -233,7 +233,7 @@ LEFT JOIN powerschool.spenrollments_gen sp
   ON co.studentid = sp.studentid
  AND co.entrydate BETWEEN sp.enter_date AND sp.exit_date
  AND sp.specprog_name IN ('Out of District', 'Self-Contained Special Education', 'Pathways ES', 'Pathways MS', 'Whittier ES')
-LEFT JOIN mcs.view_student_data_static mcs
-  ON co.student_number = mcs.student_number
+LEFT JOIN titan.person_data_clean tp
+  ON co.student_number = tp.person_identifier
 LEFT JOIN powerschool.student_contacts_wide_static scw
   ON co.student_number = scw.student_number
