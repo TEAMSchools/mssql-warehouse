@@ -24,7 +24,7 @@ UNION ALL
 /* phone number */
 SELECT ppna.personid
       ,ppna.phonenumberpriorityorder AS priority_order
-      ,CASE WHEN ppna.phonenumberpriorityorder = 1 THEN 1 ELSE 0 END AS is_primary 
+      ,ppna.ispreferred AS is_primary
       ,'Phone' AS contact_category
       ,pncs.code AS contact_type
       ,'(' + LEFT(pn.phonenumber, 3) + ') '

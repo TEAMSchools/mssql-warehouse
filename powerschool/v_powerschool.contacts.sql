@@ -24,7 +24,6 @@ LEFT JOIN powerschool.originalcontactmap ocm
   ON sca.studentcontactassocid = ocm.studentcontactassocid
 JOIN powerschool.person p
   ON sca.personid = p.id
- AND p.isactive = 1
 JOIN powerschool.studentcontactdetail scd
   ON sca.studentcontactassocid = scd.studentcontactassocid
  AND scd.isactive = 1

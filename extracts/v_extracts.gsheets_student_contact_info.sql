@@ -25,8 +25,8 @@ SELECT co.student_number
        END AS lunch_app_status 
       ,CONVERT(MONEY, co.lunch_balance) AS lunch_balance
       ,co.home_phone
-      ,COALESCE(scw.contact_1_phone_mobile, scw.contact_1_phone_daytime, scw.contact_1_phone_home) AS mother_cell
-      ,COALESCE(scw.contact_2_phone_mobile, scw.contact_2_phone_daytime, scw.contact_2_phone_home) AS father_cell
+      ,scw.contact_1_phone_primary  AS mother_cell
+      ,scw.contact_2_phone_primary AS father_cell
       ,scw.contact_1_name AS mother
       ,scw.contact_2_name AS father
       ,CONCAT(scw.pickup_1_name, ' | ', scw.pickup_1_phone_mobile) AS release_1
