@@ -79,14 +79,48 @@ SELECT df.df_employee_number
       
       ,CONVERT(VARCHAR(5), dt.alt_name) AS term
       
-      ,pt.[absent]
-      ,pt.late
-      ,pt.early_out
-      ,pt.partial_day
+      ,COALESCE(CASE 
+                 WHEN t.tafw_hours = 9.5 THEN 'PTO'
+                 WHEN a.sick_day = 1 THEN 'SICK'
+                 WHEN a.personal_day = 1 THEN 'PERSONAL'
+                 WHEN a.absent_other = 1 THEN 'OTHER'
+                 ELSE NULL 
+                END
+                ,pt.[absent]) AS [absent]
+      ,COALESCE(CASE 
+                 WHEN a.late_tardy = 1 AND a.approved = 1 THEN 'L-In OK'
+                 WHEN a.late_tardy = 1 AND a.approved = 0 THEN 'L-In'
+                 ELSE NULL 
+                END
+                
+                ,pt.late) AS late
+      ,COALESCE(CASE 
+                 WHEN a.left_early = 1 AND a.approved = 1 THEN 'E-Out OK'
+                 WHEN a.left_early = 1 AND a.approved = 0 THEN 'E-Out'
+                 ELSE NULL 
+                END
+                ,pt.early_out) AS early_out
+      ,COALESCE(CASE WHEN t.tafw_hours < 9.5 THEN 'PTO' ELSE NULL END
+                ,pt.partial_day) AS partial_day
+
+      ,a.attendance_status AS gsheet_status
+      ,a.submitted_by AS gsheets_submitted_by
+      ,a.additional_notes AS gsheets_additional_notes
+      ,CASE WHEN a.attendance_status = 'Sick Day - COVID Related' THEN 1 ELSE 0 END AS covid_related
+      ,CASE WHEN (a.approved = 1 OR t.tafw_hours > 0) THEN 1 ELSE NULL END AS approved
 
       ,CASE 
         WHEN was.[status] IN ('Terminated', 'Pre-Start') THEN was.[status]
-        ELSE COALESCE(pt.[absent], CASE WHEN l.[status] = '' THEN NULL ELSE l.[status] END, CASE WHEN cal.[type] = '' THEN NULL ELSE cal.[type] END, 'IN') COLLATE Latin1_General_BIN 
+        ELSE COALESCE(CASE 
+                       WHEN t.tafw_hours = 9.5 THEN 'PTO'
+                       WHEN t.tafw_hours < 9.5 THEN 'PARTIAL'
+                       ELSE NULL 
+                      END
+                     ,a.attendance_status
+                     ,pt.[absent]
+                     ,CASE WHEN l.[status] = '' THEN NULL ELSE l.[status] END
+                     ,CASE WHEN cal.[type] = '' THEN NULL ELSE cal.[type] END
+                     ,'IN') COLLATE Latin1_General_BIN 
        END AS day_status
       ,CASE 
         WHEN cal.[type] IN ('HOL','VAC') THEN 0
@@ -116,5 +150,9 @@ LEFT JOIN tafw t
 LEFT JOIN leave l
   ON df.df_employee_number = l.df_employee_number
  AND cal.date_value BETWEEN l.effective_start AND l.effective_end
+ LEFT JOIN people.staff_attendance_clean a
+  ON df.df_employee_number = a.df_number
+ AND cal.date_value = a.attendance_date
+ AND a.rn_curr = 1
 WHERE COALESCE(df.termination_date, GETDATE()) >= DATEFROMPARTS((gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1), 7, 1)
   AND df.primary_site_schoolid != 0
