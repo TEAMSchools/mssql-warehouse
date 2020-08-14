@@ -12,6 +12,8 @@ WITH all_tables_columns_pivot AS (
                THEN 'CONVERT(NVARCHAR, [' + sub.column_name + ']) AS [' + sub.column_name + ']' 
           WHEN sub.column_type_mismatch = 1 AND sub.column_type_concat LIKE '%float%' 
                THEN 'CONVERT(FLOAT, [' + sub.column_name + ']) AS [' + sub.column_name + ']' 
+          WHEN sub.column_type_mismatch = 1 AND sub.column_type_concat LIKE '%datetimeoffset%' 
+               THEN 'CONVERT(DATETIMEOFFSET, [' + sub.column_name + ']) AS [' + sub.column_name + ']' 
           WHEN sub.column_type_mismatch = 1 THEN 'CONVERT(INT, [' + sub.column_name + ']) AS [' + sub.column_name + ']' 
           ELSE '[' + sub.column_name + ']' 
          END AS kippnewark
@@ -21,6 +23,8 @@ WITH all_tables_columns_pivot AS (
                THEN 'CONVERT(NVARCHAR, [' + sub.column_name + ']) AS [' + sub.column_name + ']' 
           WHEN sub.column_type_mismatch = 1 AND sub.column_type_concat LIKE '%float%' 
                THEN 'CONVERT(FLOAT, [' + sub.column_name + ']) AS [' + sub.column_name + ']' 
+          WHEN sub.column_type_mismatch = 1 AND sub.column_type_concat LIKE '%datetimeoffset%' 
+               THEN 'CONVERT(DATETIMEOFFSET, [' + sub.column_name + ']) AS [' + sub.column_name + ']' 
           WHEN sub.column_type_mismatch = 1 THEN 'CONVERT(INT, [' + sub.column_name + ']) AS [' + sub.column_name + ']' 
           ELSE '[' + sub.column_name + ']' 
          END AS kippmiami        
@@ -30,6 +34,8 @@ WITH all_tables_columns_pivot AS (
                THEN 'CONVERT(NVARCHAR, [' + sub.column_name + ']) AS [' + sub.column_name + ']' 
           WHEN sub.column_type_mismatch = 1 AND sub.column_type_concat LIKE '%float%' 
                THEN 'CONVERT(FLOAT, [' + sub.column_name + ']) AS [' + sub.column_name + ']' 
+          WHEN sub.column_type_mismatch = 1 AND sub.column_type_concat LIKE '%datetimeoffset%' 
+               THEN 'CONVERT(DATETIMEOFFSET, [' + sub.column_name + ']) AS [' + sub.column_name + ']' 
           WHEN sub.column_type_mismatch = 1 THEN 'CONVERT(INT, [' + sub.column_name + ']) AS [' + sub.column_name + ']' 
           ELSE '[' + sub.column_name + ']'
          END AS kippcamden
