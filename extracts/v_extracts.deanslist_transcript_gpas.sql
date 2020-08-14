@@ -31,7 +31,7 @@ FROM
             ON sg.[db_name] = scale_unweighted.[db_name]
            AND sg.[percent] BETWEEN scale_unweighted.min_cutoffpercentage AND scale_unweighted.max_cutoffpercentage
            AND gabby.utilities.PS_UNWEIGHTED_GRADESCALE_NAME(sg.academic_year, sg.gradescale_name) = scale_unweighted.gradescale_name
-          WHERE sg.storecode_clean = 'Y1'
+          WHERE sg.storecode = 'Y1'
             AND sg.excludefromgpa = 0
          ) sub
      GROUP BY student_number

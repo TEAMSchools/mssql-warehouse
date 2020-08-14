@@ -139,8 +139,8 @@ LEFT JOIN gabby.powerschool.storedgrades y1
   ON co.studentid = y1.studentid
  AND co.academic_year = y1.academic_year
  AND co.[db_name] = y1.[db_name]
- AND gr.course_number = y1.course_number_clean
- AND y1.storecode_clean = 'Y1'
+ AND gr.course_number = y1.course_number
+ AND y1.storecode = 'Y1'
 LEFT JOIN section_teacher st
   ON co.studentid = st.studentid
  AND co.yearid = st.yearid
@@ -265,8 +265,8 @@ LEFT JOIN gabby.powerschool.storedgrades sg
   ON co.studentid = sg.studentid
  AND co.academic_year = sg.academic_year
  AND co.[db_name] = sg.[db_name]
- AND sg.storecode_clean = 'Y1'
- AND sg.course_number_clean IS NOT NULL
+ AND sg.storecode = 'Y1'
+ AND sg.course_number IS NOT NULL
 LEFT JOIN section_teacher st
   ON co.studentid = st.studentid
  AND co.yearid = st.yearid
@@ -331,8 +331,8 @@ LEFT JOIN gabby.powerschool.cohort_identifiers_static e1
  AND tr.schoolid = e1.schoolid
  AND tr.[db_name] = e1.[db_name]
  AND e1.year_in_school = 1
-WHERE tr.storecode_clean = 'Y1'
-  AND tr.course_number_clean IS NULL
+WHERE tr.storecode = 'Y1'
+  AND tr.course_number IS NULL
 
 UNION ALL
 

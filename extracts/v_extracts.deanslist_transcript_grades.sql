@@ -33,7 +33,7 @@ WITH all_grades AS (
         ,sg.schoolid
         ,sg.academic_year
         ,'Y1' AS term
-        ,sg.course_number_clean AS course_number
+        ,sg.course_number
         ,sg.course_name
         ,sg.earnedcrhrs AS credit_hours
         ,sg.[percent] AS y1_grade_percent
@@ -46,7 +46,7 @@ WITH all_grades AS (
    AND sg.db_name = s.db_name
   WHERE ISNULL(sg.excludefromgpa, 0) = 0
     AND ISNULL(sg.excludefromtranscripts, 0) = 0
-    AND sg.storecode_clean = 'Y1'
+    AND sg.storecode = 'Y1'
  )
 
 SELECT student_number

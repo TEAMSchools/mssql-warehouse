@@ -113,15 +113,15 @@ WITH roster AS (
   SELECT s.student_number
         ,gr.academic_year
         ,CASE
-          WHEN gr.storecode_clean = 'Y1' THEN 'SY1'
-          ELSE REPLACE(gr.storecode_clean, 'Q', 'RT')
+          WHEN gr.storecode = 'Y1' THEN 'SY1'
+          ELSE REPLACE(gr.storecode, 'Q', 'RT')
          END AS reporting_term
         ,gr.credit_type AS credittype
         ,gr.course_name
         ,gr.[percent] AS term_grade_percent_adjusted
         ,'TERM' AS subdomain
         ,CASE
-          WHEN gr.storecode_clean = 'Y1' THEN 'Y1'
+          WHEN gr.storecode = 'Y1' THEN 'Y1'
           ELSE 'Term' 
          END AS finalgradename
   FROM gabby.powerschool.storedgrades gr
