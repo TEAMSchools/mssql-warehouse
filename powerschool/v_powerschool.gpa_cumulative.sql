@@ -43,7 +43,7 @@ FROM
           SELECT CONVERT(INT,sg.studentid) AS studentid
                 ,sg.academic_year
                 ,CONVERT(INT,sg.schoolid) AS schoolid
-                ,sg.course_number_clean AS course_number
+                ,sg.course_number
                 ,sg.potentialcrhrs
                 ,sg.earnedcrhrs
                 ,(sg.potentialcrhrs * sg.gpa_points) AS weighted_points
@@ -65,7 +65,7 @@ FROM
           LEFT JOIN powerschool.gradescaleitem_lookup_static scale_unweighted 
             ON sg.[percent] BETWEEN scale_unweighted.min_cutoffpercentage AND scale_unweighted.max_cutoffpercentage
            AND gabby.utilities.PS_UNWEIGHTED_GRADESCALE_NAME(sg.academic_year, sg.gradescale_name) = scale_unweighted.gradescale_name
-          WHERE sg.storecode_clean = 'Y1'
+          WHERE sg.storecode = 'Y1'
             AND sg.excludefromgpa = 0
           
           UNION ALL
@@ -93,9 +93,9 @@ FROM
           FROM powerschool.final_grades_static gr 
           LEFT JOIN powerschool.storedgrades sg 
              ON gr.studentid = sg.studentid
-            AND gr.course_number = sg.course_number_clean
+            AND gr.course_number = sg.course_number
             AND gr.academic_year = sg.academic_year
-            AND sg.storecode_clean = 'Y1'           
+            AND sg.storecode = 'Y1'
           WHERE gr.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
             AND gr.is_curterm = 1
             AND gr.excludefromgpa = 0
@@ -127,9 +127,9 @@ FROM
           FROM powerschool.final_grades_static gr 
           LEFT JOIN powerschool.storedgrades sg 
             ON gr.studentid = sg.studentid
-           AND gr.course_number = sg.course_number_clean
+           AND gr.course_number = sg.course_number
            AND gr.academic_year = sg.academic_year
-           AND sg.storecode_clean = 'Y1'           
+           AND sg.storecode = 'Y1'
           WHERE gr.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
             AND gr.term_name = 'Q2' /* Y1 as of Q2 (aka Semester 1) */
             AND gr.excludefromgpa = 0

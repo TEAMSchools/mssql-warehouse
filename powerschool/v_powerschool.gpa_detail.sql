@@ -27,9 +27,9 @@ WITH grade_detail AS (
         ,sg.schoolid
         ,sg.grade_level
         ,sg.academic_year
-        ,sg.storecode_clean AS term_name
+        ,sg.storecode AS term_name
         ,NULL AS reporting_term
-        ,CASE WHEN sg.storecode_clean IN ('Q4', 'T3') THEN 1 ELSE 0 END AS is_curterm
+        ,CASE WHEN sg.storecode IN ('Q4', 'T3') THEN 1 ELSE 0 END AS is_curterm
         ,c.credit_hours
         ,sg.[percent] AS term_grade_percent
         ,sg.gpa_points AS term_gpa_points
@@ -41,13 +41,13 @@ WITH grade_detail AS (
   JOIN powerschool.students s
     ON sg.studentid = s.id
   JOIN powerschool.courses c
-    ON sg.course_number_clean = c.course_number_clean
+    ON sg.course_number = c.course_number_clean
    AND c.credit_hours > 0
   LEFT JOIN powerschool.storedgrades y1
     ON sg.studentid = y1.studentid
    AND sg.academic_year = y1.academic_year
-   AND sg.course_number_clean = y1.course_number_clean
-   AND y1.storecode_clean = 'Y1'
+   AND sg.course_number = y1.course_number
+   AND y1.storecode = 'Y1'
   WHERE sg.storecode_type IN ('Q', 'T')
     AND sg.excludefromgpa = 0
     AND sg.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR()

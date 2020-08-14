@@ -91,7 +91,7 @@ WITH roster AS (
        LEFT JOIN powerschool.storedgrades sg 
          ON enr.studentid = sg.studentid 
         AND enr.abs_sectionid = sg.sectionid
-        AND pgf.finalgradename_clean = sg.storecode_clean
+        AND pgf.finalgradename_clean = sg.storecode
        LEFT JOIN powerschool.gradescaleitem_lookup_static scale
          ON enr.gradescaleid = scale.gradescaleid
         AND pgf.[percent] BETWEEN scale.min_cutoffpercentage AND scale.max_cutoffpercentage      
@@ -116,8 +116,8 @@ WITH roster AS (
       (
        SELECT CONVERT(INT,studentid) AS studentid
              ,academic_year      
-             ,course_number_clean AS course_number
-             ,storecode_clean AS storecode
+             ,course_number
+             ,storecode
              ,[percent]
        FROM powerschool.storedgrades
        WHERE storecode_type = 'E'
@@ -368,8 +368,8 @@ FROM
 LEFT JOIN powerschool.storedgrades y1
   ON sub.studentid = y1.studentid
  AND sub.academic_year = y1.academic_year
- AND sub.course_number = y1.course_number_clean
- AND y1.storecode_clean = 'Y1'
+ AND sub.course_number = y1.course_number
+ AND y1.storecode = 'Y1'
 LEFT JOIN powerschool.gradescaleitem_lookup_static y1_scale
   ON sub.gradescaleid = y1_scale.gradescaleid
  AND sub.y1_grade_percent_adjusted BETWEEN y1_scale.min_cutoffpercentage AND y1_scale.max_cutoffpercentage
