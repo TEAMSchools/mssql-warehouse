@@ -95,7 +95,7 @@ FROM
            ,MIN(prev_grade_level) OVER(PARTITION BY studentid, yearid ORDER BY yearid ASC) AS prev_grade_level
            ,CASE
              WHEN yearid = MIN(prev_yearid) OVER(PARTITION BY studentid, yearid ORDER BY yearid ASC) THEN 0
-             WHEN grade_level != 99 
+             WHEN grade_level <> 99 
               AND sub.grade_level <= MIN(prev_grade_level) OVER(PARTITION BY studentid, yearid ORDER BY yearid ASC) 
                   THEN 1
              ELSE 0
@@ -167,7 +167,7 @@ FROM
                LEFT JOIN powerschool.u_clg_et_stu_alt_clean_static x2
                  ON s.dcid = x2.studentsdcid
                 AND s.exitdate = x2.exit_date
-               WHERE s.enroll_status IN (0, 2)
+               WHERE s.enroll_status IN (-1, 0, 2)
                  AND s.exitdate > s.entrydate
 
                UNION ALL
@@ -233,7 +233,7 @@ FROM
                LEFT JOIN powerschool.u_clg_et_stu_alt_clean_static x2
                  ON s.dcid = x2.studentsdcid
                 AND re.exitdate = x2.exit_date
-               WHERE re.schoolid != 12345 /* filter out summer school */
+               WHERE re.schoolid <> 12345 /* filter out summer school */
                  AND re.exitdate > re.entrydate
               ) sub
          ) sub
