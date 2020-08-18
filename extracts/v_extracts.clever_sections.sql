@@ -12,7 +12,7 @@ WITH dsos AS (
    AND ccw._fivetran_deleted = 0
    AND ccw.is_pathways = 0
   WHERE df.[status] != 'TERMINATED'
-    AND df.primary_job IN ('Director of Campus Operations', 'Director Campus Operations', 'Director School Operations')
+    AND df.primary_job IN ('Director of Campus Operations', 'Director Campus Operations', 'Director School Operations', 'School Leader')
  )
 
 ,teachers_long AS (
@@ -78,7 +78,7 @@ WITH dsos AS (
        JOIN gabby.powerschool.sectionteacher st
          ON sec.id = st.sectionid
         AND sec.[db_name] = st.[db_name]
-        AND CONVERT(DATE, GETDATE()) BETWEEN st.[start_date] AND st.end_date
+        --AND CONVERT(DATE, GETDATE()) BETWEEN st.[start_date] AND st.end_date
        JOIN gabby.powerschool.teachers_static t
          ON st.teacherid = t.id
         AND sec.schoolid = t.schoolid
