@@ -19,6 +19,7 @@ SELECT sub.student_number
       ,sub.sf_contact_id
       ,sub.ktc_cohort
       ,sub.kipp_region_name
+      ,sub.kipp_region_school
       ,sub.is_kipp_ms_graduate
       ,sub.is_kipp_hs_graduate
       ,sub.is_informed_consent
@@ -76,6 +77,7 @@ FROM
 
            ,c.id AS sf_contact_id
            ,c.kipp_region_name_c AS kipp_region_name
+           ,c.kipp_region_school_c AS kipp_region_school
            ,c.kipp_ms_graduate_c AS is_kipp_ms_graduate
            ,c.kipp_hs_graduate_c AS is_kipp_hs_graduate
            ,c.informed_consent_c AS is_informed_consent

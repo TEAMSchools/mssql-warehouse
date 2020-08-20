@@ -45,6 +45,8 @@ SELECT c.sf_contact_id AS contact_id
       ,c.highest_act_score AS highest_act_score_c
       ,c.record_type_name AS record_type_name
       ,c.counselor_name AS [user_name]
+      ,c.college_match_display_gpa
+      ,c.kipp_region_school
 
       ,ei.ugrad_account_name AS ugrad_school_name
       ,ei.ugrad_pursuing_degree_type
@@ -52,6 +54,7 @@ SELECT c.sf_contact_id AS contact_id
       ,ei.ugrad_start_date
       ,ei.ugrad_actual_end_date
       ,ei.ugrad_anticipated_graduation
+      ,ei.ugrad_credits_required_for_graduation
       ,ei.ecc_account_name AS ecc_school_name
       ,ei.ecc_pursuing_degree_type
       ,ei.ecc_status
@@ -60,12 +63,14 @@ SELECT c.sf_contact_id AS contact_id
       ,ei.ecc_anticipated_graduation
       ,ei.ecc_adjusted_6_year_minority_graduation_rate
       ,ei.ecc_account_type
+      ,ei.ecc_credits_required_for_graduation
       ,ei.hs_account_name AS hs_school_name
       ,ei.hs_pursuing_degree_type
       ,ei.hs_status
       ,ei.hs_start_date
       ,ei.hs_actual_end_date
       ,ei.hs_anticipated_graduation
+      ,ei.hs_credits_required_for_graduation
 
       ,a.matriculation_school_name
       ,a.matriculation_account_type

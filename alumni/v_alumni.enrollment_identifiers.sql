@@ -61,7 +61,7 @@ SELECT e.student_c
       ,e.vocational_enrollment_id AS cte_enrollment_id
       ,e.graduate_enrollment_id
 
-      ,ug.name AS ugrad_school_name      
+      ,ug.[name] AS ugrad_school_name
       ,ug.pursuing_degree_type_c AS ugrad_pursuing_degree_type
       ,ug.status_c AS ugrad_status
       ,ug.start_date_c AS ugrad_start_date
@@ -72,7 +72,7 @@ SELECT e.student_c
       ,ug.major_area_c AS ugrad_major_area
       ,ug.college_major_declared_c AS ugrad_college_major_declared
       ,ug.date_last_verified_c AS ugrad_date_last_verified
-
+      ,ug.of_credits_required_for_graduation_c AS ugrad_credits_required_for_graduation
       ,uga.[name] AS ugrad_account_name
       ,uga.billing_state AS ugrad_billing_state
       ,uga.ncesid_c AS ugrad_ncesid
@@ -84,7 +84,7 @@ SELECT e.student_c
       ,ecc.actual_end_date_c AS ecc_actual_end_date      
       ,ecc.anticipated_graduation_c AS ecc_anticipated_graduation
       ,ecc.account_type_c AS ecc_account_type
-
+      ,ecc.of_credits_required_for_graduation_c AS ecc_credits_required_for_graduation
       ,ecca.[name] AS ecc_account_name
       ,ecca.adjusted_6_year_minority_graduation_rate_c AS ecc_adjusted_6_year_minority_graduation_rate
 
@@ -95,7 +95,7 @@ SELECT e.student_c
       ,hs.actual_end_date_c AS hs_actual_end_date
       ,hs.anticipated_graduation_c AS hs_anticipated_graduation
       ,hs.account_type_c AS hs_account_type
-
+      ,hs.of_credits_required_for_graduation_c AS hs_credits_required_for_graduation
       ,hsa.[name] AS hs_account_name
 
       ,cte.pursuing_degree_type_c AS cte_pursuing_degree_type
@@ -104,7 +104,7 @@ SELECT e.student_c
       ,cte.actual_end_date_c AS cte_actual_end_date      
       ,cte.anticipated_graduation_c AS cte_anticipated_graduation
       ,cte.account_type_c AS cte_account_type
-
+      ,cte.of_credits_required_for_graduation_c AS cte_credits_required_for_graduation
       ,ctea.[name] AS cte_school_name
       ,ctea.billing_state AS cte_billing_state
       ,ctea.ncesid_c AS cte_ncesid
@@ -115,7 +115,7 @@ SELECT e.student_c
       ,cur.actual_end_date_c AS cur_actual_end_date      
       ,cur.anticipated_graduation_c AS cur_anticipated_graduation
       ,cur.account_type_c AS cur_account_type
-
+      ,cur.of_credits_required_for_graduation_c AS cur_credits_required_for_graduation
       ,cura.[name] AS cur_school_name
       ,cura.billing_state AS cur_billing_state
       ,cura.ncesid_c AS cur_ncesid
