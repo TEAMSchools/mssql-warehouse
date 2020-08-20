@@ -6,7 +6,9 @@ CREATE OR ALTER VIEW extracts.gclassroom_teachers AS
 SELECT s.class_alias
       ,s.schoolid
       ,s.termid
-
+      
+      ,scw.df_employee_number
+      ,scw.preferred_name
       ,CASE
         WHEN scw.legal_entity_name = 'KIPP Miami' THEN LOWER(LEFT(scw.userprincipalname, CHARINDEX('@', scw.userprincipalname))) + 'kippmiami.org'
         ELSE LOWER(LEFT(scw.userprincipalname, CHARINDEX('@', scw.userprincipalname))) + 'apps.teamschools.org' 
