@@ -36,8 +36,8 @@ SELECT scw.df_employee_number AS accounting_id
        END AS grade_name
 
       ,CASE
-        WHEN m.manager_df_employee_number IS NOT NULL THEN 'observer'
-        ELSE 'observee'
+        WHEN m.manager_df_employee_number IS NOT NULL THEN 'observers'
+        ELSE 'observees'
        END AS user_level
 FROM gabby.people.staff_crosswalk_static scw
 LEFT JOIN managers m
