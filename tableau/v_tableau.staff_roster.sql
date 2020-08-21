@@ -22,7 +22,7 @@ SELECT df.df_employee_number
       ,df.postal_code AS primary_address_zip_postal_code
       ,df.mobile_number AS personal_contact_personal_mobile
       ,df.primary_on_site_department AS subject_dept_custom
-      ,df.grades_taught AS grades_taught_custom
+      ,gl.student_grade_level AS grades_taught_custom
       ,df.original_hire_date
       ,df.rehire_date
       ,df.primary_job AS job_title_description
@@ -51,3 +51,7 @@ SELECT df.df_employee_number
       ,LOWER(df.userprincipalname) AS userprincipalname
       ,LOWER(df.manager_mail) AS manager_mail
 FROM gabby.people.staff_crosswalk_static df
+LEFT JOIN gabby.pm.teacher_grade_levels gl
+  ON df.df_employee_number = gl.df_employee_number
+ AND gl.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+ AND gl.is_primary_gl = 1
