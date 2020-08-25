@@ -46,7 +46,9 @@ SELECT c.sf_contact_id AS contact_id
       ,c.record_type_name AS record_type_name
       ,c.counselor_name AS [user_name]
       ,c.college_match_display_gpa
+      ,c.kipp_region_name
       ,c.kipp_region_school
+      ,c.post_hs_simple_admin
 
       ,ei.ugrad_account_name AS ugrad_school_name
       ,ei.ugrad_pursuing_degree_type
