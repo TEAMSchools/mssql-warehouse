@@ -4,37 +4,45 @@ GO
 CREATE OR ALTER VIEW powerschool.student_access_accounts AS 
 
 WITH clean_names AS (
-  SELECT CONVERT(INT,s.student_number) AS student_number
-        ,CONVERT(INT,s.schoolid) AS schoolid
-        ,CONVERT(INT,s.grade_level) AS grade_level
-        ,CONVERT(VARCHAR(125),s.first_name) AS first_name
-        ,CONVERT(VARCHAR(125),s.last_name) AS last_name
-        ,CONVERT(INT,s.enroll_status) AS enroll_status
-        ,LEFT(LOWER(s.first_name),1) AS first_init
-        ,CONVERT(VARCHAR,DATEPART(MONTH,s.dob)) COLLATE Latin1_General_BIN AS dob_month
-        ,CONVERT(VARCHAR,RIGHT(DATEPART(DAY,s.dob),2)) COLLATE Latin1_General_BIN AS dob_day
-        ,CONVERT(VARCHAR,RIGHT(DATEPART(YEAR,s.dob),2)) AS dob_year
-
-        ,CONVERT(VARCHAR(25),sch.abbreviation) AS school_name
-
-        ,gabby.utilities.STRIP_CHARACTERS(LOWER(s.first_name), '^A-Z') AS first_name_clean
+  SELECT sub.student_number
+        ,sub.schoolid
+        ,sub.school_name
+        ,sub.grade_level
+        ,sub.enroll_status
+        ,LEFT(LOWER(sub.first_name), 1) AS first_init
+        ,CONVERT(VARCHAR, DATEPART(MONTH, sub.dob)) AS dob_month
+        ,RIGHT(DATEPART(DAY, sub.dob), 2) AS dob_day
+        ,RIGHT(DATEPART(YEAR, sub.dob), 2) AS dob_year
+        ,gabby.utilities.STRIP_CHARACTERS(LOWER(sub.first_name), '^A-Z') AS first_name_clean
         ,gabby.utilities.STRIP_CHARACTERS(LOWER(
            CASE
-            WHEN s.last_name LIKE 'St %' OR s.last_name LIKE 'St. %' THEN s.last_name
-            WHEN s.last_name LIKE '% II%' THEN LEFT(s.last_name,CHARINDEX(' I',s.last_name) - 1)
-            WHEN CHARINDEX('-',s.last_name) + CHARINDEX(' ',s.last_name) = 0 THEN REPLACE(s.last_name, ' JR', '')
-            WHEN CHARINDEX(' ',s.last_name) > 0 AND CHARINDEX('-',s.last_name) > 0 AND CHARINDEX(' ',s.last_name) < CHARINDEX('-',s.last_name) THEN LEFT(s.last_name,CHARINDEX(' ',s.last_name) - 1)
-            WHEN CHARINDEX('-',s.last_name) > 0 AND CHARINDEX(' ',s.last_name) > 0 AND CHARINDEX('-',s.last_name) < CHARINDEX(' ',s.last_name) THEN LEFT(s.last_name,CHARINDEX('-',s.last_name) - 1)
-            WHEN s.last_name NOT LIKE 'De %' AND CHARINDEX(' ',s.last_name) > 0 THEN LEFT(s.last_name,CHARINDEX(' ',s.last_name) - 1)
-            WHEN CHARINDEX('-',s.last_name) > 0 THEN LEFT(s.last_name,CHARINDEX('-',s.last_name) - 1)
-            ELSE REPLACE(s.last_name, ' JR', '')
+            WHEN sub.last_name LIKE 'St %' OR sub.last_name LIKE 'St. %' THEN sub.last_name
+            WHEN sub.last_name LIKE '% II%' THEN LEFT(sub.last_name,CHARINDEX(' I',sub.last_name) - 1)
+            WHEN CHARINDEX('-',sub.last_name) + CHARINDEX(' ',sub.last_name) = 0 THEN REPLACE(sub.last_name, ' JR', '')
+            WHEN CHARINDEX(' ',sub.last_name) > 0 AND CHARINDEX('-',sub.last_name) > 0 AND CHARINDEX(' ',sub.last_name) < CHARINDEX('-',sub.last_name) THEN LEFT(sub.last_name,CHARINDEX(' ',sub.last_name) - 1)
+            WHEN CHARINDEX('-',sub.last_name) > 0 AND CHARINDEX(' ',sub.last_name) > 0 AND CHARINDEX('-',sub.last_name) < CHARINDEX(' ',sub.last_name) THEN LEFT(sub.last_name,CHARINDEX('-',sub.last_name) - 1)
+            WHEN sub.last_name NOT LIKE 'De %' AND CHARINDEX(' ',sub.last_name) > 0 THEN LEFT(sub.last_name,CHARINDEX(' ',sub.last_name) - 1)
+            WHEN CHARINDEX('-',sub.last_name) > 0 THEN LEFT(sub.last_name,CHARINDEX('-',sub.last_name) - 1)
+            ELSE REPLACE(sub.last_name, ' JR', '')
            END), '^A-Z') AS last_name_clean
-  FROM gabby.powerschool.students s
-  JOIN gabby.powerschool.schools sch
-    ON s.schoolid = sch.school_number
-   AND s.db_name = sch.db_name
-  WHERE s.enroll_status != -1
-    AND s.dob IS NOT NULL
+  FROM
+      (
+       SELECT CONVERT(INT, s.student_number) AS student_number
+             ,CONVERT(INT, s.schoolid) AS schoolid
+             ,CONVERT(INT, s.grade_level) AS grade_level
+             ,CONVERT(INT, s.enroll_status) AS enroll_status
+             ,CONVERT(VARCHAR(125), s.first_name) COLLATE SQL_Latin1_General_CP1253_CI_AI AS first_name
+             ,CONVERT(VARCHAR(125), s.last_name) COLLATE SQL_Latin1_General_CP1253_CI_AI AS last_name
+             ,CONVERT(VARCHAR, s.dob) COLLATE SQL_Latin1_General_CP1253_CI_AI AS dob
+
+             ,CONVERT(VARCHAR(25), sch.abbreviation) AS school_name
+       FROM gabby.powerschool.students s
+       JOIN gabby.powerschool.schools sch
+         ON s.schoolid = sch.school_number
+        AND s.[db_name] = sch.[db_name]
+       WHERE s.enroll_status <> -1
+         AND s.dob IS NOT NULL
+      ) sub
  )
 
 ,base_username AS (
@@ -75,7 +83,7 @@ WITH clean_names AS (
       ) sub
   LEFT JOIN gabby.powerschool.student_access_accounts_static sa
     ON sub.base_username = sa.student_web_id
-   AND sub.student_number != sa.student_number
+   AND sub.student_number <> sa.student_number
  )
 
 ,alt_username AS (
