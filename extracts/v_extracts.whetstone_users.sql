@@ -9,10 +9,10 @@ WITH managers AS (
   FROM gabby.people.staff_crosswalk_static
  )
 
-SELECT scw.df_employee_number AS accounting_id
+SELECT CONVERT(VARCHAR(25), scw.df_employee_number) AS accounting_id
       ,scw.primary_site AS school_name
       ,scw.primary_on_site_department AS course_name
-      ,scw.manager_df_employee_number AS coach_accounting_id
+      ,CONVERT(VARCHAR(25), scw.manager_df_employee_number) AS coach_accounting_id
       ,scw.preferred_first_name + ' ' + scw.preferred_last_name AS name
       ,CASE WHEN scw.[status] = 'TERMINATED' THEN 1 ELSE 0 END AS inactive
       ,CASE
@@ -42,6 +42,7 @@ SELECT scw.df_employee_number AS accounting_id
 FROM gabby.people.staff_crosswalk_static scw
 LEFT JOIN managers m
   ON scw.df_employee_number = m.manager_df_employee_number
-WHERE scw.userprincipalname IS NOT NULL
+WHERE COALESCE(scw.termination_date, CURRENT_TIMESTAMP) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1, 7, 1)
+  AND scw.userprincipalname IS NOT NULL
   AND (scw.primary_on_site_department = 'School Leadership'
        OR scw.primary_job IN ('Teacher', 'Co-Teacher', 'Learning Specialist', 'Learning Specialist Coordinator','Teacher in Residence', 'Teaching Fellow'))
