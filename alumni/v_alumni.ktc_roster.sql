@@ -122,7 +122,7 @@ FROM
 
            ,CASE
              WHEN (co.school_level = 'HS' AND co.exitcode = 'G1') OR c.kipp_hs_graduate_c = 1 THEN 'HSG'
-             WHEN co.grade_level IN (11, 12) AND co.enroll_status = 0 THEN CONCAT('HS', co.grade_level)
+             WHEN co.enroll_status = 0 THEN CONCAT('HS', co.grade_level)
              WHEN ((co.grade_level = 8 AND co.exitcode IN ('G1', 'T2')) OR (c.kipp_ms_graduate_c = 1 AND c.kipp_hs_graduate_c = 0))
               AND rt.[name] = 'HS Student' THEN 'TAFHS'
              WHEN (co.grade_level = 8 AND co.exitcode IN ('G1', 'T2')) OR (c.kipp_ms_graduate_c = 1 AND c.kipp_hs_graduate_c = 0) THEN 'TAF'
@@ -135,6 +135,6 @@ FROM
      LEFT JOIN gabby.alumni.[user] u
        ON c.owner_id = u.id
      WHERE co.rn_undergrad = 1
-       AND co.grade_level != 99
+       AND co.grade_level <> 99
     ) sub
 WHERE sub.ktc_status IS NOT NULL
