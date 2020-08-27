@@ -133,28 +133,31 @@ WITH clean_names AS (
        ) sub
   LEFT JOIN gabby.powerschool.student_access_accounts_static sa
     ON sub.alt_username = sa.student_web_id
-   AND sub.student_number != sa.student_number
+   AND sub.student_number <> sa.student_number
  )
 
-SELECT student_number
-      ,schoolid
-      ,enroll_status
-      ,base_username
-      ,alt_username
-      ,uses_alt
-      ,base_dupe_audit
-      ,alt_dupe_audit
-      ,first_init
-      ,last_name_clean
-      ,CONVERT(VARCHAR(125),CASE
-                             WHEN alt_dupe_audit = 1 THEN first_init + last_name_clean + dob_month + dob_day
-                             WHEN uses_alt = 1 THEN alt_username
-                             ELSE base_username
-                            END) AS student_web_id
-      ,CONVERT(VARCHAR(125),CASE
-                             WHEN student_number IN (SELECT student_numbers_variation_1 FROM gabby.extracts.student_account_override) THEN first_name_clean + dob_month /* manual override of passwords */
-                             WHEN student_number IN (SELECT student_numbers_variation_2 FROM gabby.extracts.student_account_override) THEN CONCAT(first_name_clean, student_number) /* manual override of passwords */
-                             WHEN grade_level >= 2 THEN last_name_clean + dob_year
-                             ELSE LOWER(school_name) + '1'
-                            END) AS student_web_password
-FROM alt_username
+SELECT au.student_number
+      ,au.schoolid
+      ,au.enroll_status
+      ,au.base_username
+      ,au.alt_username
+      ,au.uses_alt
+      ,au.base_dupe_audit
+      ,au.alt_dupe_audit
+      ,au.first_init
+      ,au.last_name_clean
+      ,CONVERT(VARCHAR(125),
+         CASE
+          WHEN au.alt_dupe_audit = 1 THEN au.first_init + au.last_name_clean + au.dob_month + au.dob_day
+          WHEN au.uses_alt = 1 THEN au.alt_username
+          ELSE au.base_username
+         END) AS student_web_id
+      ,CONVERT(VARCHAR(125),
+         CASE
+          WHEN spo.student_number IS NOT NULL THEN spo.default_password COLLATE Latin1_General_BIN
+          WHEN au.grade_level >= 2 THEN last_name_clean + dob_year
+          ELSE LOWER(au.school_name) + '1'
+         END) AS student_web_password
+FROM alt_username au
+LEFT JOIN gabby.people.student_password_override spo
+  ON au.student_number = spo.student_number
