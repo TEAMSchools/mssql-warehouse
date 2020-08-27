@@ -155,4 +155,3 @@ LEFT JOIN leave l
  AND cal.date_value = a.attendance_date
  AND a.rn_curr = 1
 WHERE COALESCE(df.termination_date, GETDATE()) >= DATEFROMPARTS((gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1), 7, 1)
-  AND df.primary_site_schoolid != 0
