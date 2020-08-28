@@ -171,9 +171,9 @@ WITH reading_level AS (
              ORDER BY wo.observed_at DESC) AS rn
   FROM gabby.whetstone.observations_clean wo
   JOIN gabby.dayforce.staff_roster sr
-    ON wo.teacher_accountingid = sr.df_employee_number
+    ON wo.teacher_internal_id = sr.df_employee_number
   JOIN gabby.reporting.reporting_terms rt
-    ON wo.observed_at BETWEEN rt.start_date AND rt.end_date 
+    ON wo.observed_at BETWEEN rt.[start_date] AND rt.end_date 
    AND rt.identifier = 'ETR'
    AND rt.schoolid = 0
    AND rt._fivetran_deleted = 0
@@ -183,7 +183,7 @@ WITH reading_level AS (
    AND rt.time_per_name = REPLACE(ex.pm_term, 'PM', 'ETR')
   WHERE wo.rubric_name = 'Coaching Tool: Coach ETR and Reflection'
     AND wo.score IS NOT NULL
-    AND wo.observer_email != wo.teacher_email
+    AND wo.observer_email <> wo.teacher_email
     AND ex.exemption IS NULL
  )
 

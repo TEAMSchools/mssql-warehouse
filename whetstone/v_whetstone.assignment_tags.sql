@@ -4,15 +4,16 @@ GO
 CREATE OR ALTER VIEW whetstone.assignment_tags AS
 
 SELECT wa._id AS assignment_id
-      ,wa.type
-      ,wa.tags AS assignment_tags_json
-      
-      ,wt.tag_id
-      ,wt.tag_name
+      ,wa.[type] AS assignment_type
+
+      ,wt._id AS tag_id
+      ,wt.[name] AS tag_name
+      ,wt.[url] AS tag_url
 FROM [gabby].[whetstone].[assignments] wa
 CROSS APPLY OPENJSON(wa.[tags], '$')
   WITH (
-    tag_id VARCHAR(25) '$._id',
-    tag_name VARCHAR(125) '$.name'
+    _id VARCHAR(25),
+    [name] VARCHAR(125),
+    [url] VARCHAR(125)
    ) AS wt
 WHERE wa.[tags] != '[]'

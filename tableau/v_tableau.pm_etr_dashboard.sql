@@ -26,8 +26,8 @@ SELECT sr.df_employee_number
       ,wo.observer_email
       ,wo.rubric_name
       ,wo.score
-      ,wo.score_averaged_by_strand
-      ,wo.[percentage] AS percentage_averaged_by_strand
+      ,NULL AS score_averaged_by_strand
+      ,NULL AS percentage_averaged_by_strand
 
       ,osr.primary_ethnicity AS observer_ethnicity
       ,osr.gender AS observer_gender
@@ -35,7 +35,7 @@ SELECT sr.df_employee_number
       ,wos.score_percentage
       ,wos.score_value
               
-      ,wm.name AS measurement_name
+      ,wm.[name] AS measurement_name
       ,wm.scale_min AS measurement_scale_min
       ,wm.scale_max AS measurement_scale_max
 
@@ -48,19 +48,19 @@ SELECT sr.df_employee_number
       ,ex.exemption
 FROM gabby.people.staff_crosswalk_static sr
 JOIN gabby.whetstone.observations_clean wo
-  ON sr.df_employee_number = wo.teacher_accountingId
+  ON sr.df_employee_number = wo.teacher_internal_id
  AND sr.samaccountname != LEFT(wo.observer_email, CHARINDEX('@', wo.observer_email) - 1)
  AND wo.rubric_name = 'Coaching Tool: Coach ETR and Reflection'
 LEFT JOIN gabby.people.staff_crosswalk_static osr
-  ON wo.observer_accountingId = osr.df_employee_number
+  ON wo.observer_internal_id = osr.df_employee_number
 LEFT JOIN gabby.whetstone.observations_scores wos
   ON wo.observation_id = wos.observation_id
 LEFT JOIN gabby.whetstone.measurements wm
   ON wos.score_measurement_id = wm._id
 LEFT JOIN gabby.whetstone.observations_scores_text_boxes tb
-  ON wos.score_id = tb.score_id
+  ON wos.score_measurement_id = tb.score_measurement_id
 JOIN gabby.reporting.reporting_terms rt
-  ON wo.observed_at BETWEEN rt.start_date AND rt.end_date 
+  ON wo.observed_at BETWEEN rt.[start_date] AND rt.end_date 
  AND rt.identifier = 'ETR'
  AND rt.schoolid = 0
  AND rt._fivetran_deleted = 0
