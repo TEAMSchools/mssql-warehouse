@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW tableau.pm_etr_dashboard AS
+CREATE OR ALTER VIEW tableau.extraordinary_prep_ratings AS
 
 SELECT sr.df_employee_number
       ,sr.preferred_name
@@ -33,26 +33,27 @@ SELECT sr.df_employee_number
       ,osr.gender AS observer_gender
 
       ,wos.score_percentage
-      ,wos.score_value
+      ,CASE WHEN wos.score_value_text = 'Yes' THEN 3
+            WHEN wos.score_value_text = 'Almost' THEN 2
+            WHEN wos.score_value_text = 'No' THEN 1
+            ELSE NULL
+       END AS score_value
+      ,COALESCE(wos.score_value_text, tb.text_box_text) AS response_value
               
       ,wm.[name] AS measurement_name
       ,wm.scale_min AS measurement_scale_min
       ,wm.scale_max AS measurement_scale_max
 
-      ,tb.text_box_label
-      ,tb.text_box_text
-
       ,rt.academic_year
       ,rt.time_per_name AS reporting_term
 
-      ,ex.exemption
 FROM gabby.people.staff_crosswalk_static sr
-JOIN gabby.whetstone.observations_clean wo
+LEFT JOIN gabby.whetstone.observations_clean wo
   ON CONVERT(varchar,sr.df_employee_number) = CONVERT(varchar,wo.teacher_internal_id)
  AND sr.samaccountname != LEFT(wo.observer_email, CHARINDEX('@', wo.observer_email) - 1)
- AND wo.rubric_name IN ('Coaching Tool: Coach ETR and Reflection', 'Coaching Tool: Coach ETR and Reflection 19-20')
+ AND wo.rubric_name = 'Extraordinary Focus Areas Ratings'
 LEFT JOIN gabby.people.staff_crosswalk_static osr
-  ON CONVERT(varchar,wo.observer_internal_id) = CONVERT(varchar,osr.df_employee_number)
+  ON wo.observer_internal_id = osr.df_employee_number
 LEFT JOIN gabby.whetstone.observations_scores wos
   ON wo.observation_id = wos.observation_id
 LEFT JOIN gabby.whetstone.measurements wm
@@ -65,8 +66,5 @@ JOIN gabby.reporting.reporting_terms rt
  AND rt.identifier = 'ETR'
  AND rt.schoolid = 0
  AND rt._fivetran_deleted = 0
-LEFT JOIN gabby.pm.teacher_goals_exemption_clean_static ex
-  ON sr.df_employee_number = ex.df_employee_number
- AND rt.academic_year = ex.academic_year
- AND rt.time_per_name = REPLACE(ex.pm_term, 'PM', 'ETR')
 WHERE ISNULL(sr.termination_date, GETDATE()) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
+  AND COALESCE(text_box_text, score_value_text) IS NOT NULL
