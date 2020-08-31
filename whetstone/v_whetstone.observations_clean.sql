@@ -12,6 +12,7 @@ SELECT sub.observation_id
       ,sub.last_modified
       ,sub.first_published
       ,sub.last_published
+      ,sub.archived_at
       ,sub.signed_at
       ,sub.is_private
       ,sub.is_published
@@ -51,6 +52,7 @@ FROM
           ,wo.[last_modified]
           ,wo.[first_published]
           ,wo.[last_published]
+          ,wo.[archived_at]
           ,wo.[signed_at]
           ,wo.[is_private]
           ,wo.[is_published]
