@@ -3,7 +3,8 @@ GO
 
 CREATE OR ALTER VIEW whetstone.observations_scores_text_boxes AS
 
-SELECT wos.score_measurement_id
+SELECT wos.observation_id
+      ,wos.score_measurement_id
 
       ,tb._id AS text_box_id
       ,tb.[key] AS text_box_label
