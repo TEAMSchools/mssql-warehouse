@@ -79,4 +79,4 @@ FROM
 LEFT JOIN gabby.whetstone.users_clean t
   ON sub.teacher_id = t.[user_id]
 LEFT JOIN gabby.whetstone.users_clean o
-  ON sub.teacher_id = o.[user_id]
+  ON sub.observer_id = o.[user_id]
