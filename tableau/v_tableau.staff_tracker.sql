@@ -63,6 +63,8 @@ SELECT df.df_employee_number
       ,df.position_effective_from_date AS academic_year_start_date
       ,COALESCE(df.termination_date, CONVERT(DATE,GETDATE())) AS academic_year_end_date
       ,df.userprincipalname AS email_address
+      ,LOWER(df.samaccountname) AS staff_username_short
+      ,LOWER(df.manager_samaccountname) AS mgr_username_short
 
       ,was.[status] AS cal_position_status
       ,was.legal_entity_name AS cal_legal_entity
