@@ -30,8 +30,8 @@ LEFT JOIN gabby.pm.teacher_goals_exemption_clean_static ex
  AND rt.academic_year = ex.academic_year
  AND rt.time_per_name = REPLACE(ex.pm_term, 'PM', 'ETR')
 LEFT JOIN gabby.whetstone.observations_clean wo
-  ON r.df_employee_number = wo.teacher_internal_id
+  ON CONVERT(varchar,r.df_employee_number) = CONVERT(varchar,wo.teacher_internal_id)
  AND wo.observed_at BETWEEN rt.start_date AND rt.end_date
- AND wo.rubric_name = 'Coaching Tool: Coach ETR and Reflection'
+ AND wo.rubric_name IN ('Coaching Tool: Coach ETR and Reflection','Coaching Tool: Teacher Reflection 19-20') 
  AND r.samaccountname != LEFT(wo.observer_email, CHARINDEX('@', wo.observer_email) - 1)
 WHERE r.is_active = 1
