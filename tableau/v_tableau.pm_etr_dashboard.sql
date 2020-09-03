@@ -48,17 +48,18 @@ SELECT sr.df_employee_number
       ,ex.exemption
 FROM gabby.people.staff_crosswalk_static sr
 JOIN gabby.whetstone.observations_clean wo
-  ON sr.df_employee_number = wo.teacher_internal_id
+  ON CONVERT(varchar,sr.df_employee_number) = CONVERT(varchar,wo.teacher_internal_id)
  AND sr.samaccountname != LEFT(wo.observer_email, CHARINDEX('@', wo.observer_email) - 1)
- AND wo.rubric_name = 'Coaching Tool: Coach ETR and Reflection'
+ AND wo.rubric_name IN ('Coaching Tool: Coach ETR and Reflection', 'Coaching Tool: Coach ETR and Reflection 19-20')
 LEFT JOIN gabby.people.staff_crosswalk_static osr
-  ON wo.observer_internal_id = osr.df_employee_number
+  ON CONVERT(varchar,wo.observer_internal_id) = CONVERT(varchar,osr.df_employee_number)
 LEFT JOIN gabby.whetstone.observations_scores wos
   ON wo.observation_id = wos.observation_id
 LEFT JOIN gabby.whetstone.measurements wm
   ON wos.score_measurement_id = wm._id
 LEFT JOIN gabby.whetstone.observations_scores_text_boxes tb
   ON wos.score_measurement_id = tb.score_measurement_id
+ AND wo.observation_id = tb.observation_id
 JOIN gabby.reporting.reporting_terms rt
   ON wo.observed_at BETWEEN rt.[start_date] AND rt.end_date 
  AND rt.identifier = 'ETR'
