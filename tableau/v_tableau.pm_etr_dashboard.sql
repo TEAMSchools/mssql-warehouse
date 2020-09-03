@@ -48,11 +48,11 @@ SELECT sr.df_employee_number
       ,ex.exemption
 FROM gabby.people.staff_crosswalk_static sr
 JOIN gabby.whetstone.observations_clean wo
-  ON CONVERT(varchar,sr.df_employee_number) = CONVERT(varchar,wo.teacher_internal_id)
- AND sr.samaccountname != LEFT(wo.observer_email, CHARINDEX('@', wo.observer_email) - 1)
+  ON CONVERT(VARCHAR(25), sr.df_employee_number) = wo.teacher_internal_id
+ AND sr.samaccountname <> LEFT(wo.observer_email, CHARINDEX('@', wo.observer_email) - 1)
  AND wo.rubric_name IN ('Coaching Tool: Coach ETR and Reflection', 'Coaching Tool: Coach ETR and Reflection 19-20')
 LEFT JOIN gabby.people.staff_crosswalk_static osr
-  ON CONVERT(varchar,wo.observer_internal_id) = CONVERT(varchar,osr.df_employee_number)
+  ON wo.observer_internal_id = CONVERT(VARCHAR(25), osr.df_employee_number)
 LEFT JOIN gabby.whetstone.observations_scores wos
   ON wo.observation_id = wos.observation_id
 LEFT JOIN gabby.whetstone.measurements wm

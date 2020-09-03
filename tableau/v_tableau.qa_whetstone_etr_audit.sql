@@ -10,7 +10,7 @@ SELECT r.df_employee_number
       ,r.legal_entity_name
       ,r.manager_df_employee_number
       ,r.manager_name
-      ,r.status AS position_status
+      ,r.[status] AS position_status
 
       ,rt.time_per_name AS reporting_term
       ,rt.academic_year
@@ -30,8 +30,8 @@ LEFT JOIN gabby.pm.teacher_goals_exemption_clean_static ex
  AND rt.academic_year = ex.academic_year
  AND rt.time_per_name = REPLACE(ex.pm_term, 'PM', 'ETR')
 LEFT JOIN gabby.whetstone.observations_clean wo
-  ON CONVERT(varchar,r.df_employee_number) = CONVERT(varchar,wo.teacher_internal_id)
- AND wo.observed_at BETWEEN rt.start_date AND rt.end_date
+  ON CONVERT(VARCHAR(25), r.df_employee_number) = wo.teacher_internal_id
+ AND wo.observed_at BETWEEN rt.[start_date] AND rt.end_date
  AND wo.rubric_name IN ('Coaching Tool: Coach ETR and Reflection','Coaching Tool: Teacher Reflection 19-20') 
- AND r.samaccountname != LEFT(wo.observer_email, CHARINDEX('@', wo.observer_email) - 1)
+ AND r.samaccountname <> LEFT(wo.observer_email, CHARINDEX('@', wo.observer_email) - 1)
 WHERE r.is_active = 1

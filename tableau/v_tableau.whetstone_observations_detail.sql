@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW tableau.pir_ap_whetstone_form_responses AS
+CREATE OR ALTER VIEW tableau.whetstone_observations_detail AS
 
 SELECT sr.df_employee_number
       ,sr.preferred_name
@@ -33,7 +33,15 @@ SELECT sr.df_employee_number
       ,osr.gender AS observer_gender
 
       ,wos.score_percentage
-      ,wos.score_value
+      ,CASE
+        WHEN wo.rubric_name IN ('Development Roadmap','Shadow Session','Assistant Principal PM Rubric','School Leader Moments',
+                                'Readiness Reflection','Monthly Triad Meeting Form','New Leader Talent Review')
+             THEN wos.score_value
+        WHEN wos.score_value_text = 'Yes' THEN 3
+        WHEN wos.score_value_text = 'Almost' THEN 2
+        WHEN wos.score_value_text = 'No' THEN 1
+        ELSE NULL
+       END AS score_value
       ,COALESCE(wos.score_value_text, tb.text_box_text) AS response_value
 
       ,wm.[name] AS measurement_name
@@ -42,18 +50,12 @@ SELECT sr.df_employee_number
 
       ,rt.academic_year
       ,rt.time_per_name AS reporting_term
-
 FROM gabby.people.staff_crosswalk_static sr
 LEFT JOIN gabby.whetstone.observations_clean wo
-  ON CONVERT(varchar,sr.df_employee_number) = CONVERT(varchar,wo.teacher_internal_id)
- AND sr.samaccountname != LEFT(wo.observer_email, CHARINDEX('@', wo.observer_email) - 1)
- AND wo.rubric_name IN ('Development Roadmap'
-                       ,'Shadow Session'
-                       ,'Assistant Principal PM Rubric'
-                       ,'School Leader Moments'
-                       ,'Readiness Reflection'
-                       ,'Monthly Triad Meeting Form'
-                       ,'New Leader Talent Review')
+  ON CONVERT(VARCHAR(25), sr.df_employee_number) = wo.teacher_internal_id
+ AND sr.samaccountname <> LEFT(wo.observer_email, CHARINDEX('@', wo.observer_email) - 1)
+ AND wo.rubric_name IN ('Development Roadmap','Shadow Session','Assistant Principal PM Rubric','School Leader Moments','Readiness Reflection'
+                       ,'Monthly Triad Meeting Form','New Leader Talent Review','Extraordinary Focus Areas Ratings','O3 Form')
 LEFT JOIN gabby.people.staff_crosswalk_static osr
   ON wo.observer_internal_id = osr.df_employee_number
 LEFT JOIN gabby.whetstone.observations_scores wos
@@ -69,4 +71,4 @@ JOIN gabby.reporting.reporting_terms rt
  AND rt.schoolid = 0
  AND rt._fivetran_deleted = 0
 WHERE ISNULL(sr.termination_date, GETDATE()) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
-  AND COALESCE(text_box_text, score_value_text) IS NOT NULL 
+  AND COALESCE(tb.text_box_text, wos.score_value_text) IS NOT NULL 
