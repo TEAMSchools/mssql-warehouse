@@ -12,3 +12,4 @@ SELECT ada.academic_year AS [School Year]
       ,ada.membershipvalue
       ,ada.is_present AS attendancevalue
 FROM kippcamden.tableau.attendance_dashboard ada
+WHERE ada.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()

@@ -17,7 +17,7 @@ SELECT co.state_studentnumber AS [State IDNumber]
       ,s.family_ident AS [Family Code]
       ,co.street AS [Street Address]
       ,co.city AS [City]
-      ,co.state AS [State]
+      ,co.[state] AS [State]
       ,co.zip AS [Zip]
       ,CASE WHEN scf.homeless_code IS NOT NULL THEN 'Y' ELSE 'N' END AS [Homeless]
       ,CASE WHEN co.lep_status = 1 THEN 'Y' ELSE 'N' END AS [ESL Student]
@@ -33,3 +33,4 @@ LEFT JOIN kippcamden.powerschool.studentcorefields scf
 LEFT JOIN kippcamden.powerschool.students s
   ON co.studentid = s.id
 WHERE co.rn_year = 1
+  AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
