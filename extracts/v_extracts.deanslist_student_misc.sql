@@ -56,9 +56,7 @@ SELECT co.student_number
       
       ,df.mobile_number AS ktc_counselor_phone
       ,df.mail AS ktc_counselor_email
-      
-      ,cat.h_y1 AS HWQ_Y1
-      
+
       ,gpa.GPA_Y1
       ,gpa.gpa_term
 FROM gabby.powerschool.cohort_identifiers_static co
@@ -76,12 +74,6 @@ LEFT JOIN gabby.naviance.students nav
   ON co.student_number = nav.hs_student_id
 LEFT JOIN gabby.people.staff_crosswalk_static df
   ON nav.counselor_name = CONCAT(df.preferred_first_name, ' ', df.preferred_last_name)
-LEFT JOIN gabby.powerschool.category_grades_wide cat
-  ON co.student_number = cat.student_number
- AND co.academic_year = cat.academic_year
- AND co.[db_name] = cat.[db_name]
- AND cat.is_curterm = 1
- AND cat.course_number = 'ALL'
 LEFT JOIN gabby.powerschool.gpa_detail gpa
   ON co.student_number = gpa.student_number
  AND co.academic_year = gpa.academic_year
