@@ -8,6 +8,7 @@ WITH residency_verification AS (
         ,COALESCE(rv.doc_1, x.residency_proof_1) COLLATE Latin1_General_BIN AS residency_proof_1
         ,COALESCE(rv.doc_2, x.residency_proof_2) COLLATE Latin1_General_BIN AS residency_proof_2
         ,COALESCE(rv.doc_3, x.residency_proof_3) COLLATE Latin1_General_BIN AS residency_proof_3
+        ,COALESCE(rv.age, x.birth_certificate_proof) COLLATE Latin1_General_BIN AS birth_certificate_proof
         ,ROW_NUMBER() OVER(
            PARTITION BY s.student_number
              ORDER BY rv.[timestamp] DESC) AS rn
@@ -99,7 +100,6 @@ WITH residency_verification AS (
              ,suf.newark_enrollment_number
              ,suf.registration_status
 
-             ,ISNULL(uxs.birth_certificate_proof, 'N') AS birth_certificate_proof
              ,ISNULL(uxs.iep_registration_followup, '') AS iep_registration_followup
              ,ISNULL(uxs.lep_registration_followup, '') AS lep_registration_followup
 
@@ -110,6 +110,7 @@ WITH residency_verification AS (
              ,CASE
                WHEN (s.enroll_status = -1 OR COALESCE(co.year_in_network, 1) = 1) THEN ISNULL(rv.residency_proof_3, 'Missing') 
               END AS residency_proof_3
+             ,ISNULL(rv.birth_certificate_proof, 'N') AS birth_certificate_proof
 
              ,gabby.utilities.GLOBAL_ACADEMIC_YEAR() AS academic_year
        FROM gabby.powerschool.students s
