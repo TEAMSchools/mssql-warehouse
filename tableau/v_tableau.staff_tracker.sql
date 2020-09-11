@@ -71,16 +71,16 @@ SELECT df.df_employee_number
       ,was.physical_location_name AS cal_location
       ,was.department_name AS cal_department_name
       ,was.job_name AS cal_job_title
-            
+
       ,cal.date_value
       ,CASE 
         WHEN was.[status] IN ('Terminated', 'Pre-Start', 'Administrative Leave', 'Medical Leave of Absence', 'Personal Leave of Absence') THEN 0
         ELSE cal.insession
        END AS insession
       ,gabby.utilities.DATE_TO_SY(cal.date_value) AS academic_year
-      
+
       ,CONVERT(VARCHAR(5), dt.alt_name) AS term
-      
+
       ,COALESCE(CASE 
                  WHEN t.tafw_hours = 9.5 THEN 'PTO'
                  WHEN a.sick_day = 1 THEN 'SICK'
@@ -88,22 +88,21 @@ SELECT df.df_employee_number
                  WHEN a.absent_other = 1 THEN 'OTHER'
                  ELSE NULL 
                 END
-                ,pt.[absent]) AS [absent]
+               ,pt.[absent]) AS [absent]
       ,COALESCE(CASE 
                  WHEN a.late_tardy = 1 AND a.approved = 1 THEN 'L-In OK'
                  WHEN a.late_tardy = 1 AND a.approved = 0 THEN 'L-In'
                  ELSE NULL 
                 END
-                
-                ,pt.late) AS late
+               ,pt.late) AS late
       ,COALESCE(CASE 
                  WHEN a.left_early = 1 AND a.approved = 1 THEN 'E-Out OK'
                  WHEN a.left_early = 1 AND a.approved = 0 THEN 'E-Out'
                  ELSE NULL 
                 END
-                ,pt.early_out) AS early_out
+               ,pt.early_out) AS early_out
       ,COALESCE(CASE WHEN t.tafw_hours < 9.5 THEN 'PTO' ELSE NULL END
-                ,pt.partial_day) AS partial_day
+               ,pt.partial_day) AS partial_day
 
       ,a.attendance_status AS gsheet_status
       ,a.submitted_by AS gsheets_submitted_by
@@ -133,11 +132,13 @@ SELECT df.df_employee_number
 FROM gabby.people.staff_crosswalk_static df
 JOIN gabby.dayforce.work_assignment_status was
   ON df.df_employee_number = was.df_employee_id
+ AND was.effective_end_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
 JOIN gabby.powerschool.calendar_day cal
   ON df.primary_site_schoolid = cal.schoolid 
+ AND df.[db_name]= cal.[db_name]
  AND cal.date_value BETWEEN was.effective_start_date AND COALESCE(was.effective_end_date, GETDATE()) 
  AND (cal.insession = 1 OR cal.[type] = 'PD') 
- AND cal.date_value BETWEEN DATEFROMPARTS((gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1), 7, 1) AND GETDATE()
+ AND cal.date_value BETWEEN DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1) AND GETDATE()
 JOIN gabby.reporting.reporting_terms dt
   ON cal.schoolid = dt.schoolid
  AND cal.date_value BETWEEN dt.[start_date] AND dt.end_date
@@ -149,11 +150,11 @@ LEFT JOIN emp_att pt
 LEFT JOIN tafw t
   ON df.df_employee_number = t.df_employee_number
  AND cal.date_value BETWEEN t.tafw_start_date AND t.tafw_end_date
-LEFT JOIN leave l
-  ON df.df_employee_number = l.df_employee_number
- AND cal.date_value BETWEEN l.effective_start AND l.effective_end
- LEFT JOIN people.staff_attendance_clean a
+LEFT JOIN people.staff_attendance_clean a
   ON df.df_employee_number = a.df_number
  AND cal.date_value = a.attendance_date
  AND a.rn_curr = 1
-WHERE COALESCE(df.termination_date, GETDATE()) >= DATEFROMPARTS((gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1), 7, 1)
+LEFT JOIN leave l
+  ON df.df_employee_number = l.df_employee_number
+ AND cal.date_value BETWEEN l.effective_start AND l.effective_end
+WHERE COALESCE(df.termination_date, GETDATE()) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
