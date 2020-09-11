@@ -48,5 +48,6 @@ LEFT JOIN managers m
   ON scw.df_employee_number = m.manager_df_employee_number
 WHERE scw.userprincipalname IS NOT NULL
   AND COALESCE(scw.termination_date, CURRENT_TIMESTAMP) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1, 7, 1)
-  AND (scw.primary_on_site_department = 'School Leadership'
-         OR scw.primary_job IN ('Teacher', 'Co-Teacher', 'Learning Specialist', 'Learning Specialist Coordinator','Teacher in Residence', 'Teaching Fellow'))
+  AND ((scw.primary_on_site_department = 'School Leadership')
+         OR (scw.primary_job IN ('Teacher', 'Co-Teacher', 'Learning Specialist', 'Learning Specialist Coordinator','Teacher in Residence', 'Teaching Fellow'))
+         OR (primary_on_site_department = 'Special Education' AND primary_job = 'Director'))
