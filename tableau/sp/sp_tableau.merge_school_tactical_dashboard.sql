@@ -14,7 +14,7 @@ WITH MySource AS (
         ,domain
         ,subdomain
         ,field
-        ,value
+        ,[value]
         ,CASE
           WHEN academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() THEN DATEFROMPARTS(academic_year, 6, 30)
           ELSE DATEADD(DAY, 1 - (DATEPART(WEEKDAY, SYSDATETIME())), CAST(SYSDATETIME() AS DATE))
@@ -37,7 +37,7 @@ USING MySource
   AND MySource.field = MyTarget.field
   AND MySource.week_of_date = MyTarget.week_of_date
 WHEN MATCHED THEN
-    UPDATE SET value = MySource.value
+    UPDATE SET [value] = MySource.[value]
 WHEN NOT MATCHED THEN
     INSERT (
       academic_year
@@ -50,10 +50,11 @@ WHEN NOT MATCHED THEN
      ,domain
      ,subdomain
      ,field
-     ,value
+     ,[value]
      ,week_of_date
     )
     VALUES (
-      MySource.academic_year, MySource.region, MySource.school_level, MySource.reporting_schoolid, MySource.grade_level
-     ,MySource.subject_area, MySource.term_name, MySource.domain, MySource.subdomain, MySource.field, MySource.value, MySource.week_of_date    
+      MySource.academic_year, MySource.region, MySource.school_level, MySource.reporting_schoolid,
+      MySource.grade_level, MySource.subject_area, MySource.term_name, MySource.domain,
+      MySource.subdomain, MySource.field, MySource.[value], MySource.week_of_date
     );
