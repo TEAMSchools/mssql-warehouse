@@ -5,7 +5,7 @@ CREATE OR ALTER VIEW dayforce.work_assignment_status AS
 
 WITH status_clean AS (
   SELECT sub.df_employee_id
-        ,sub.status
+        ,sub.[status]
         ,sub.base_salary
         ,sub.effective_start
         ,COALESCE(sub.effective_end
@@ -18,13 +18,13 @@ WITH status_clean AS (
   FROM
       (
        SELECT number AS df_employee_id
-             ,status
+             ,[status]
              ,base_salary
              ,CASE
-               WHEN status = 'Terminated' THEN DATEADD(DAY, 1, CONVERT(DATE,effective_start))
+               WHEN status = 'Terminated' THEN DATEADD(DAY, 1, CONVERT(DATE, effective_start))
                ELSE CONVERT(DATE,effective_start)
               END AS effective_start
-             ,CONVERT(DATE,effective_end) AS effective_end
+             ,CONVERT(DATE, effective_end) AS effective_end
        FROM gabby.dayforce.employee_status
       ) sub
  )
@@ -54,8 +54,8 @@ WITH status_clean AS (
              ,department_name
              ,job_name
              ,flsa_status_name
-             ,CONVERT(DATE,CASE WHEN work_assignment_effective_start != '' THEN work_assignment_effective_start END) AS work_assignment_effective_start
-             ,CONVERT(DATE,CASE WHEN work_assignment_effective_end != '' THEN work_assignment_effective_end END) AS work_assignment_effective_end
+             ,CONVERT(DATE, CASE WHEN work_assignment_effective_start <> '' THEN work_assignment_effective_start END) AS work_assignment_effective_start
+             ,CONVERT(DATE, CASE WHEN work_assignment_effective_end <> '' THEN work_assignment_effective_end END) AS work_assignment_effective_end
        FROM gabby.dayforce.employee_work_assignment
        WHERE primary_work_assignment = 1
       ) sub
@@ -93,7 +93,7 @@ SELECT r.df_employee_id
       ,sr.preferred_first_name AS first_name
       ,sr.preferred_last_name AS last_name
       
-      ,s.status
+      ,s.[status]
       ,s.base_salary
 
       ,w.job_family_name
@@ -102,6 +102,10 @@ SELECT r.df_employee_id
       ,w.department_name
       ,w.job_name
       ,w.flsa_status_name
+
+      ,ROW_NUMBER() OVER(
+         PARTITION BY r.df_employee_id
+           ORDER BY r.effective_end_date DESC) AS rn_cur
 FROM validranges r
 JOIN gabby.dayforce.staff_roster sr
   ON r.df_employee_id = sr.df_employee_number
