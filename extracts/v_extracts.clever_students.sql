@@ -61,7 +61,7 @@ LEFT JOIN gabby.powerschool.gpa_cumulative gpa
  AND co.[db_name] = gpa.[db_name]
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.rn_year = 1
-  AND co.grade_level != 99
+  AND co.grade_level <> 99
 
   UNION ALL
 

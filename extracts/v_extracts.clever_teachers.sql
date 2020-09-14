@@ -49,5 +49,5 @@ SELECT CONVERT(VARCHAR(25), df.primary_site_schoolid) AS [School_id]
       ,'awesometeacher' + CASE WHEN df.ps_teachernumber = '50013' THEN 'ms' ELSE 'es' END AS [Username]
       ,NULL AS [Password]
 FROM gabby.people.staff_crosswalk_static df
-WHERE df.[status] != 'TERMINATED'
+WHERE df.[status] <> 'TERMINATED'
   AND df.ps_teachernumber IN ('JX5DVZDW1', '50013')
