@@ -9,7 +9,7 @@ SELECT r.repository_id
 
       ,rt.alt_name AS term_name
 
-      ,f.label AS sight_word
+      ,f.[label] AS sight_word
 
       ,co.student_number
       ,co.lastfirst
@@ -18,6 +18,7 @@ SELECT r.repository_id
       ,co.is_pathways
       ,co.grade_level
       ,co.team
+      ,co.academic_year
 
       ,sw.[value]
 FROM gabby.illuminate_codes.dna_scopes ds
@@ -42,5 +43,5 @@ JOIN gabby.powerschool.cohort_identifiers_static co
 LEFT JOIN gabby.illuminate_dna_repositories.sight_words_data sw
   ON co.student_number = sw.local_student_id
  AND r.repository_id = sw.repository_id
- AND f.label = sw.label
+ AND f.[label] = sw.[label]
 WHERE ds.code_translation = 'Sight Words Quiz'
