@@ -34,24 +34,26 @@ WITH dsos AS (
         ,CONCAT('Teacher_'
                ,ROW_NUMBER() OVER(
                   PARTITION BY sub.Section_id
-                    ORDER BY sub.is_lead_teacher DESC, sub.Teacher_id)
+                    ORDER BY sub.sortorder ASC)
                ,'_id') AS pivot_field
   FROM
       (
        SELECT sec.schoolid AS [School_id]
+             ,sec.section_number AS [Section_number]
+             ,sec.course_number_clean AS [Course_number]
+             ,sec.expression AS [Period]
              ,CONCAT(CASE 
                       WHEN sec.[db_name] = 'kippnewark' THEN 'NWK'
                       WHEN sec.[db_name] = 'kippcamden' THEN 'CMD'
                       WHEN sec.[db_name] = 'kippmiami' THEN 'MIA'
                      END
                     ,sec.id) AS [Section_id]
-             ,NULL AS [Name]
-             ,sec.section_number AS [Section_number]
-             ,NULL AS [Grade]
+
+             ,r.sortorder
+
+             ,t.teachernumber AS [Teacher_id]
+
              ,c.course_name AS [Course_name]
-             ,sec.course_number_clean AS [Course_number]
-             ,NULL AS [Course_description]
-             ,sec.expression AS [Period]
              ,CASE
                WHEN c.credittype = 'ART' THEN 'Arts and music'
                WHEN c.credittype = 'CAREER' THEN 'other'
@@ -68,17 +70,21 @@ WITH dsos AS (
                WHEN c.credittype = 'STUDY' THEN 'other'
                WHEN c.credittype = 'WLANG' THEN 'Language'
               END AS [Subject]
+
              ,terms.abbreviation [Term_name]
              ,CONVERT(VARCHAR(25), terms.firstday, 101) AS [Term_start]
              ,CONVERT(VARCHAR(25), terms.lastday, 101) AS [Term_end]
 
-             ,t.teachernumber AS [Teacher_id]
-             ,CASE WHEN sec.teacher = st.teacherid THEN 1 END  AS is_lead_teacher
+             ,NULL AS [Name]
+             ,NULL AS [Grade]
+             ,NULL AS [Course_description]
        FROM gabby.powerschool.sections sec
        JOIN gabby.powerschool.sectionteacher st
          ON sec.id = st.sectionid
         AND sec.[db_name] = st.[db_name]
-        --AND CONVERT(DATE, GETDATE()) BETWEEN st.[start_date] AND st.end_date
+       JOIN gabby.powerschool.roledef r
+         ON st.roleid = r.id
+        AND st.[db_name] = r.[db_name]
        JOIN gabby.powerschool.teachers_static t
          ON st.teacherid = t.id
         AND sec.schoolid = t.schoolid
@@ -97,13 +103,8 @@ WITH dsos AS (
 
        SELECT DISTINCT 
               co.schoolid AS [School_id]
-             ,CONCAT(co.yearid, co.schoolid, RIGHT(CONCAT(0, co.grade_level),2)) AS [Section_id]
-             ,NULL AS [Name]
              ,CONCAT(co.academic_year, s.abbreviation, co.grade_level) AS [Section_number]
-             ,CASE WHEN co.grade_level = 0 THEN 'Kindergarten' ELSE CONVERT(VARCHAR(5), co.grade_level) END AS [Grade]
-             ,'Enroll' AS [Course_name]
              ,'ENR' AS [Course_number]
-             ,NULL AS [Course_description]
              ,CASE
                WHEN co.grade_level = 0 THEN '0(A)'
                WHEN co.grade_level = 1 THEN '1(A)'
@@ -119,13 +120,22 @@ WITH dsos AS (
                WHEN co.grade_level = 11 THEN '11(A)'
                WHEN co.grade_level = 12 THEN '12(A)'
               END AS [Period]
+             ,CONCAT(co.yearid, co.schoolid, RIGHT(CONCAT(0, co.grade_level),2)) AS [Section_id]
+
+             ,1 AS sortorder
+
+             ,dsos.[Teacher_id]
+
+             ,'Enroll' AS [Course_name]
              ,'Homeroom/advisory' AS [Subject]
+
              ,CONCAT(RIGHT(co.academic_year, 2), '-', RIGHT(co.academic_year + 1, 2))  [Term_name]
              ,CONVERT(VARCHAR(25), DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1), 101) AS [Term_start]
              ,CONVERT(VARCHAR(25), DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1, 6, 30), 101) AS [Term_end]
 
-             ,dsos.[Teacher_id]
-             ,1 AS is_lead_teacher
+             ,NULL AS [Name]
+             ,CASE WHEN co.grade_level = 0 THEN 'Kindergarten' ELSE CONVERT(VARCHAR(5), co.grade_level) END AS [Grade]
+             ,NULL AS [Course_description]
        FROM gabby.powerschool.cohort_identifiers_static co
        JOIN gabby.powerschool.schools s
          ON co.schoolid = s.school_number
@@ -140,19 +150,18 @@ WITH dsos AS (
 
        /* demo sections */
        SELECT sec.schoolid AS [School_id]
+             ,sec.section_number AS [Section_number]
+             ,sec.course_number_clean AS [Course_number]
+             ,sec.expression AS [Period]
              ,CONCAT(CASE 
                       WHEN sec.[db_name] = 'kippnewark' THEN 'NWK'
                       WHEN sec.[db_name] = 'kippcamden' THEN 'CMD'
                       WHEN sec.[db_name] = 'kippmiami' THEN 'MIA'
                      END
                     ,sec.id) AS [Section_id]
-             ,NULL AS [Name]
-             ,sec.section_number AS [Section_number]
-             ,NULL AS [Grade]
+             ,1 AS sortorder
+             ,CONCAT('ADMIN', t.teachernumber) AS [Teacher_id]
              ,c.course_name AS [Course_name]
-             ,sec.course_number_clean AS [Course_number]
-             ,NULL AS [Course_description]
-             ,sec.expression AS [Period]
              ,CASE
                WHEN c.credittype = 'ART' THEN 'Arts and music'
                WHEN c.credittype = 'CAREER' THEN 'other'
@@ -169,12 +178,14 @@ WITH dsos AS (
                WHEN c.credittype = 'STUDY' THEN 'other'
                WHEN c.credittype = 'WLANG' THEN 'Language'
               END AS [Subject]
+
              ,terms.abbreviation [Term_name]
              ,CONVERT(VARCHAR(25), terms.firstday, 101) AS [Term_start]
              ,CONVERT(VARCHAR(25), terms.lastday, 101) AS [Term_end]
 
-             ,CONCAT('ADMIN', t.teachernumber) AS [Teacher_id]
-             ,0 AS is_lead_teacher
+             ,NULL AS [Name]
+             ,NULL AS [Grade]
+             ,NULL AS [Course_description]
        FROM gabby.powerschool.sections sec
        JOIN gabby.powerschool.teachers_static t
          ON sec.teacher = t.id
