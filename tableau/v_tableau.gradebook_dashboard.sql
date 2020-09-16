@@ -41,6 +41,7 @@ SELECT co.student_number
       ,co.cohort
       ,co.region
       ,co.gender
+      ,co.school_level
             
       ,gr.credittype
       ,gr.course_number
@@ -83,7 +84,6 @@ LEFT JOIN section_teacher st
  AND st.rn = 1
 WHERE co.rn_year = 1
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-  AND co.school_level IN ('MS','HS')
 
 UNION ALL
 
@@ -100,6 +100,7 @@ SELECT co.student_number
       ,co.cohort
       ,co.region
       ,co.gender
+      ,co.school_level
 
       ,gr.credittype
       ,gr.course_number
@@ -148,12 +149,11 @@ LEFT JOIN section_teacher st
  AND gr.course_number = st.course_number
  AND st.rn = 1
 WHERE co.rn_year = 1
-  AND co.school_level IN ('MS','HS')
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 
 UNION ALL
 
-/* current year - NCA exam grades */
+/* current year - HS exam grades */
 SELECT co.student_number
       ,co.lastfirst
       ,co.reporting_schoolid AS schoolid
@@ -166,6 +166,7 @@ SELECT co.student_number
       ,co.cohort
       ,co.region
       ,co.gender
+      ,co.school_level
       
       ,ex.credittype
       ,ex.course_number
@@ -211,9 +212,8 @@ LEFT JOIN section_teacher st
  AND co.yearid = st.yearid
  AND ex.course_number = st.course_number
  AND st.rn = 1
- AND st.[db_name] = 'kippnewark'
 WHERE co.rn_year = 1
-  AND co.schoolid = 73253
+  AND co.schoolid IN (73253, 732511, 179904)
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 
 UNION ALL
@@ -231,6 +231,7 @@ SELECT co.student_number
       ,co.cohort
       ,co.region
       ,co.gender
+      ,co.school_level
 
       ,sg.credit_type AS credittype
       ,sg.course_number
@@ -274,7 +275,6 @@ LEFT JOIN section_teacher st
  AND sg.course_number = st.course_number
  AND st.rn = 1
 WHERE co.rn_year = 1
-  AND co.school_level IN ('MS','HS')
   AND co.academic_year != gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 
 UNION ALL
@@ -292,6 +292,7 @@ SELECT COALESCE(co.student_number, e1.student_number) AS student_number
       ,COALESCE(co.cohort, e1.cohort) AS cohort
       ,COALESCE(co.region, e1.region) AS region
       ,COALESCE(co.gender, e1.gender) AS gender
+      ,COALESCE(co.school_level, e1.school_level) AS school_level
       
       ,'TRANSFER' AS credittype
       ,CONVERT(VARCHAR(125),CONCAT('TRANSFER', tr.termid, tr.[db_name], tr.dcid)) COLLATE Latin1_General_BIN AS course_number
@@ -349,6 +350,7 @@ SELECT co.student_number
       ,co.cohort
       ,co.region
       ,co.gender
+      ,co.school_level
       
       ,cg.credittype
       ,cg.course_number
@@ -395,7 +397,6 @@ LEFT JOIN section_teacher st
  AND st.rn = 1
 WHERE co.rn_year = 1
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-  AND co.school_level IN ('MS','HS')
   
 UNION ALL
 
@@ -412,6 +413,7 @@ SELECT co.student_number
       ,co.cohort
       ,co.region
       ,co.gender
+      ,co.school_level
       
       ,cy.credittype
       ,cy.course_number
@@ -459,4 +461,3 @@ LEFT JOIN section_teacher st
  AND st.rn = 1
 WHERE co.rn_year = 1
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-  AND co.school_level IN ('MS','HS')
