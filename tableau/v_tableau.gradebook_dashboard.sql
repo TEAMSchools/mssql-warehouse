@@ -82,6 +82,7 @@ LEFT JOIN section_teacher st
  AND gr.course_number = st.course_number
  AND st.rn = 1
 WHERE co.rn_year = 1
+  AND co.grade_level <> 99
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 
 UNION ALL
@@ -148,6 +149,7 @@ LEFT JOIN section_teacher st
  AND gr.course_number = st.course_number
  AND st.rn = 1
 WHERE co.rn_year = 1
+  AND co.grade_level <> 99
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 
 UNION ALL
@@ -391,6 +393,7 @@ LEFT JOIN section_teacher st
  AND cg.course_number = st.course_number
  AND st.rn = 1
 WHERE co.rn_year = 1
+  AND co.grade_level <> 99
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 
 UNION ALL
@@ -450,4 +453,5 @@ LEFT JOIN section_teacher st
  AND cy.course_number = st.course_number
  AND st.rn = 1
 WHERE co.rn_year = 1
+  AND co.grade_level <> 99
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
