@@ -25,13 +25,12 @@ FROM
            ,enr.gradescaleid
 
            ,CONVERT(VARCHAR(25),terms.alt_name) COLLATE Latin1_General_BIN AS term_name
-           ,terms.start_date AS term_start_date
+           ,terms.[start_date] AS term_start_date
            ,terms.end_date AS term_end_date
            ,terms.is_curterm
      FROM powerschool.course_enrollments_static enr
      JOIN powerschool.schools
        ON enr.schoolid = schools.school_number
-      AND schools.high_grade >= 8
      JOIN gabby.reporting.reporting_terms terms
        ON enr.yearid = terms.yearid
       AND enr.schoolid = terms.schoolid

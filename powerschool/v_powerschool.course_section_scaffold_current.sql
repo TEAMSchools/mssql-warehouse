@@ -9,10 +9,10 @@ SELECT sub.studentid
       ,sub.course_name
       ,sub.credittype
       ,sub.credit_hours
-      ,COALESCE(CASE WHEN sub.gradescaleid = 0 THEN sub.gradescaleid ELSE sub.gradescaleid END
-               ,LAG(CASE WHEN sub.gradescaleid = 0 THEN sub.gradescaleid ELSE sub.gradescaleid END, 1) OVER(PARTITION BY sub.studentid, sub.yearid, sub.course_number ORDER BY sub.term_name)
-               ,LAG(CASE WHEN sub.gradescaleid = 0 THEN sub.gradescaleid ELSE sub.gradescaleid END, 2) OVER(PARTITION BY sub.studentid, sub.yearid, sub.course_number ORDER BY sub.term_name)
-               ,LAG(CASE WHEN sub.gradescaleid = 0 THEN sub.gradescaleid ELSE sub.gradescaleid END, 3) OVER(PARTITION BY sub.studentid, sub.yearid, sub.course_number ORDER BY sub.term_name)) AS gradescaleid
+      ,COALESCE(sub.gradescaleid
+               ,LAG(sub.gradescaleid, 1) OVER(PARTITION BY sub.studentid, sub.yearid, sub.course_number ORDER BY sub.term_name)
+               ,LAG(sub.gradescaleid, 2) OVER(PARTITION BY sub.studentid, sub.yearid, sub.course_number ORDER BY sub.term_name)
+               ,LAG(sub.gradescaleid, 3) OVER(PARTITION BY sub.studentid, sub.yearid, sub.course_number ORDER BY sub.term_name)) AS gradescaleid
       ,sub.excludefromgpa
 
       ,COALESCE(sub.abs_sectionid

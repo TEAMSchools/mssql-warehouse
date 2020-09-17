@@ -31,7 +31,6 @@ FROM
      JOIN gabby.reporting.reporting_terms terms
        ON cc.schoolid = terms.schoolid        
       AND terms.identifier = 'RT'
-      AND terms.school_level IN ('MS','HS')
-      AND cc.dateenrolled BETWEEN terms.start_date AND terms.end_date
+      AND cc.dateenrolled BETWEEN terms.[start_date] AND terms.end_date
      WHERE cc.dateenrolled BETWEEN DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1) AND CONVERT(DATE,GETDATE())
     ) sub
