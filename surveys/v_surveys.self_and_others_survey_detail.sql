@@ -23,8 +23,8 @@ SELECT d.survey_id
       ,d.subject_df_employee_number
       ,d.subject_adp_associate_id
       ,d.subject_preferred_name
-      ,d.subject_legal_entity_name
-      ,d.subject_primary_site
+      ,s.legal_entity_name AS subject_legal_entity_name
+      ,s.primary_site AS subject_primary_site
       ,d.subject_primary_site_schoolid
       ,d.subject_primary_site_school_level
       ,d.subject_manager_df_employee_number
@@ -69,9 +69,11 @@ SELECT d.survey_id
          / SUM(ABS(d.is_manager - 1)) OVER(PARTITION BY d.survey_id, d.campaign_academic_year, d.campaign_name, d.question_shortname) AS peer_weight
       --*/
 FROM gabby.surveygizmo.survey_detail d
+LEFT JOIN gabby.people.staff_crosswalk_static s
+  ON d.subject_df_employee_number = s.df_employee_number
 WHERE d.survey_title = 'Self and Others'
   AND d.rn_respondent_subject = 1
-  AND d.campaign_academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+  AND d.campaign_academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
 
 UNION ALL 
 
