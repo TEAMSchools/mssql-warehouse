@@ -29,7 +29,7 @@ WITH response_rollup AS (
   UNION ALL
 
   SELECT student_id
-        ,academic_year            
+        ,academic_year
         ,scope
         ,subject_area
         ,module_type
@@ -39,9 +39,9 @@ WITH response_rollup AS (
         ,standard_id
         ,standard_code
         ,standard_description
-        ,domain_description        
-        ,title        
-        ,assessment_id  
+        ,domain_description
+        ,title
+        ,assessment_id
         ,administered_at
         ,performance_band_set_id
         ,date_taken
@@ -54,29 +54,29 @@ WITH response_rollup AS (
  )
 
 SELECT rr.assessment_id
-      ,rr.academic_year    
+      ,rr.academic_year
       ,rr.administered_at
       ,rr.date_taken
-      ,CONVERT(VARCHAR(250),rr.title) AS title
-      ,CONVERT(VARCHAR(125),rr.scope) AS scope
-      ,CONVERT(VARCHAR(125),rr.subject_area) AS subject_area
-      ,CONVERT(VARCHAR(25),rr.module_type) AS module_type
-      ,CONVERT(VARCHAR(5),rr.module_number) AS module_number    
+      ,CONVERT(VARCHAR(250), rr.title) AS title
+      ,CONVERT(VARCHAR(125), rr.scope) AS scope
+      ,CONVERT(VARCHAR(125), rr.subject_area) AS subject_area
+      ,CONVERT(VARCHAR(25), rr.module_type) AS module_type
+      ,CONVERT(VARCHAR(5), rr.module_number) AS module_number
       ,rr.response_type
-      ,rr.standard_id      
+      ,rr.standard_id
       ,rr.points
       ,rr.percent_correct
       ,rr.is_replacement
       ,rr.standard_code
-      ,rr.standard_description      
+      ,rr.standard_description
       ,rr.domain_description
       ,rr.performance_band_set_id
       ,rr.is_normed_scope
 
-      ,CONVERT(INT,s.local_student_id) AS local_student_id
+      ,CONVERT(INT, s.local_student_id) AS local_student_id
 
-      ,CONVERT(VARCHAR(5),rta.alt_name) AS term_administered
-      ,CONVERT(VARCHAR(5),rtt.alt_name) AS term_taken
+      ,CONVERT(VARCHAR(5), rta.alt_name) AS term_administered
+      ,CONVERT(VARCHAR(5), rtt.alt_name) AS term_taken
       
       ,pbl.label_number AS performance_band_number
       ,pbl.[label] AS performance_band_label
@@ -92,12 +92,12 @@ JOIN gabby.powerschool.cohort_identifiers_static co
  AND rr.academic_year = co.academic_year
  AND co.rn_year = 1
 LEFT JOIN gabby.reporting.reporting_terms rta
-  ON rr.administered_at BETWEEN rta.start_date AND rta.end_date
+  ON rr.administered_at BETWEEN rta.[start_date] AND rta.end_date
  AND co.schoolid = rta.schoolid
  AND rta.identifier = 'RT' 
  AND rta._fivetran_deleted = 0
 LEFT JOIN gabby.reporting.reporting_terms rtt
-  ON rr.date_taken BETWEEN rtt.start_date AND rtt.end_date
+  ON rr.date_taken BETWEEN rtt.[start_date] AND rtt.end_date
  AND co.schoolid = rtt.schoolid
  AND rtt.identifier = 'RT'
  AND rtt._fivetran_deleted = 0
