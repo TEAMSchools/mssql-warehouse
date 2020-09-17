@@ -42,7 +42,7 @@ LEFT JOIN gabby.people.staff_crosswalk_static s
   ON d.subject_df_employee_number = s.df_employee_number
 WHERE d.survey_title = 'Manager Survey'
   AND d.rn_respondent_subject = 1
-  AND d.campaign_academic_year >= 2019
+  AND d.campaign_academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
 
 UNION ALL
 

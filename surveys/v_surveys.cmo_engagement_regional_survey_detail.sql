@@ -28,10 +28,11 @@ SELECT d.survey_id
 FROM gabby.surveygizmo.survey_detail d
 LEFT JOIN gabby.dayforce.work_assignment_status w
   ON d.respondent_df_employee_number = w.df_employee_id
- AND d.date_submitted BETWEEN w.effective_start_date AND COALESCE(w.effective_end_date,datefromparts(gabby.utilities.GLOBAL_ACADEMIC_YEAR()+1,07,01))
+ AND d.date_submitted BETWEEN w.effective_start_date 
+                          AND COALESCE(w.effective_end_date, DATEFROMPARTS((d.campaign_academic_year + 1), 7, 1))
 WHERE d.survey_id = 5300913
   AND d.rn_respondent_subject = 1
-  AND d.campaign_academic_year >= 2019
+  AND d.campaign_academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
 
 UNION ALL
 
