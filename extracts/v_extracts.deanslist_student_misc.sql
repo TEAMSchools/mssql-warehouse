@@ -30,13 +30,13 @@ SELECT co.student_number
       ,co.mother AS parent1_name
       ,co.father AS parent2_name
       ,co.guardianemail
-      ,co.academic_year      
-      ,co.mother_cell AS parent1_cell      
+      ,co.academic_year
+      ,co.mother_cell AS parent1_cell
       ,co.father_cell AS parent2_cell
       ,co.advisor_name
       ,co.advisor_phone AS advisor_cell
       ,co.advisor_email
-      ,co.lunch_balance            
+      ,co.lunch_balance
       ,CASE
         WHEN co.enroll_status = -1 THEN 'Pre-Registered'
         WHEN co.enroll_status = 0 THEN 'Enrolled'
@@ -44,14 +44,15 @@ SELECT co.student_number
         WHEN co.enroll_status = 2 THEN 'Transferred Out'
         WHEN co.enroll_status = 3 THEN 'Graduated'
        END AS enroll_status
-      ,CONCAT(co.street, ', ', co.city, ', ', co.state, ' ', co.zip) AS home_address
+      ,CONCAT(co.street, ', ', co.city, ', ', co.[state], ' ', co.zip) AS home_address
       ,co.student_web_id + '@teamstudents.org' AS student_email
-      
+      ,co.student_web_password
+
       ,s.sched_nextyeargrade
-      
+
       ,ed.school_entrydate
       ,ed.school_exitdate
-      
+
       ,nav.counselor_name AS ktc_counselor_name
       
       ,df.mobile_number AS ktc_counselor_phone
