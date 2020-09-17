@@ -96,4 +96,4 @@ LEFT JOIN ethnicity e
   ON d.survey_response_id = e.survey_response_id
 WHERE d.survey_id = 5560557
   AND d.rn_respondent_subject = 1
-  AND d.campaign_academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+  AND d.campaign_academic_year >= 2019
