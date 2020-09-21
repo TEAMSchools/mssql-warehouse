@@ -15,10 +15,6 @@ WITH section_teacher AS (
         ,sec.termid
 
         ,t.lastfirst AS teacher_name
-
-        ,ROW_NUMBER() OVER(
-           PARTITION BY scaff.studentid, scaff.yearid, scaff.course_number
-             ORDER BY scaff.term_name DESC) AS rn
   FROM gabby.powerschool.course_section_scaffold scaff 
   LEFT JOIN gabby.powerschool.sections sec 
     ON scaff.sectionid = sec.id
@@ -26,6 +22,7 @@ WITH section_teacher AS (
   LEFT JOIN gabby.powerschool.teachers_static t 
     ON sec.teacher = t.id 
    AND sec.[db_name] = t.[db_name]
+  WHERE scaff.is_curterm = 1
  )
 
 /* current year - term grades */
@@ -80,7 +77,6 @@ LEFT JOIN section_teacher st
  AND co.yearid = st.yearid
  AND co.[db_name] = st.[db_name]
  AND gr.course_number = st.course_number
- AND st.rn = 1
 WHERE co.rn_year = 1
   AND co.grade_level <> 99
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
@@ -147,7 +143,6 @@ LEFT JOIN section_teacher st
  AND co.yearid = st.yearid
  AND co.[db_name] = st.[db_name]
  AND gr.course_number = st.course_number
- AND st.rn = 1
 WHERE co.rn_year = 1
   AND co.grade_level <> 99
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
@@ -213,7 +208,6 @@ LEFT JOIN section_teacher st
  AND co.yearid = st.yearid
  AND co.[db_name] = st.[db_name]
  AND ex.course_number = st.course_number
- AND st.rn = 1
 WHERE co.rn_year = 1
   AND co.school_level = 'HS'
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
@@ -275,7 +269,6 @@ LEFT JOIN section_teacher st
  AND co.yearid = st.yearid
  AND co.[db_name] = st.[db_name]
  AND sg.course_number = st.course_number
- AND st.rn = 1
 WHERE co.rn_year = 1
   AND co.academic_year <> gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 
@@ -391,7 +384,6 @@ LEFT JOIN section_teacher st
  AND co.yearid = st.yearid
  AND co.[db_name] = st.[db_name]
  AND cg.course_number = st.course_number
- AND st.rn = 1
 WHERE co.rn_year = 1
   AND co.grade_level <> 99
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
@@ -451,7 +443,6 @@ LEFT JOIN section_teacher st
  AND co.yearid = st.yearid
  AND co.[db_name] = st.[db_name]
  AND cy.course_number = st.course_number
- AND st.rn = 1
 WHERE co.rn_year = 1
   AND co.grade_level <> 99
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
