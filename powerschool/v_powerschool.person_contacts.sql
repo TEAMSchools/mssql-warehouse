@@ -1,23 +1,17 @@
 CREATE OR ALTER VIEW powerschool.person_contacts AS
 
 /* address */
-SELECT paa.personid
-      ,paa.addresspriorityorder AS priority_order
-      ,CASE WHEN paa.addresspriorityorder = 1 THEN 1 ELSE 0 END AS is_primary 
+SELECT ca.personid
+      ,ca.priority_order
+      ,CASE WHEN ca.priority_order = 1 THEN 1 ELSE 0 END AS is_primary 
       ,'Address' AS contact_category
-      ,acs.code AS contact_type
-      ,pa.street
-        + CASE WHEN pa.unit <> '' THEN ' ' + pa.unit ELSE '' END + ', ' 
-        + pa.city + ', ' 
-        + scs.code + ' ' 
-        + pa.postalcode AS contact
-FROM powerschool.personaddressassoc paa
-LEFT JOIN powerschool.codeset acs
-  ON paa.addresstypecodesetid = acs.codesetid
-LEFT JOIN powerschool.personaddress pa
-  ON paa.personaddressid = pa.personaddressid
-LEFT JOIN powerschool.codeset scs
-  ON pa.statescodesetid = scs.codesetid
+      ,ca.address_type AS contact_type
+      ,ca.street
+        + CASE WHEN ca.unit <> '' THEN ' ' + ca.unit ELSE '' END + ', ' 
+        + ca.city + ', ' 
+        + ca.state_code + ' ' 
+        + ca.postalcode AS contact
+FROM powerschool.contact_address ca
 
 UNION ALL
 
