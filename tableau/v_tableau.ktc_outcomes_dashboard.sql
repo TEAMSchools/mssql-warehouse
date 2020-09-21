@@ -73,6 +73,13 @@ SELECT c.sf_contact_id AS contact_id
       ,ei.hs_actual_end_date
       ,ei.hs_anticipated_graduation
       ,ei.hs_credits_required_for_graduation
+      ,ei.aa_account_name AS aa_school_name
+      ,ei.aa_pursuing_degree_type
+      ,ei.aa_status
+      ,ei.aa_start_date
+      ,ei.aa_actual_end_date
+      ,ei.aa_anticipated_graduation
+      ,ei.aa_credits_required_for_graduation
 
       ,a.matriculation_school_name
       ,a.matriculation_account_type
