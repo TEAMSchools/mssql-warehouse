@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW tableau.whetstone_observations_detail AS
+--CREATE OR ALTER VIEW tableau.whetstone_observations_detail AS
 
 SELECT sr.df_employee_number
       ,sr.preferred_name
@@ -25,24 +25,31 @@ SELECT sr.df_employee_number
       ,wo.observer_name
       ,wo.observer_email
       ,wo.rubric_name
+      ,wo.list_two_column_a AS glows
+      ,wo.list_two_column_b AS grows
       ,wo.score
-      ,NULL AS score_averaged_by_strand
-      ,NULL AS percentage_averaged_by_strand
+      ,wos.score_value
+      ,CASE 
+        WHEN (wo.rubric_name = 'School Leader Moments' AND wm.[name] LIKE '%- type' AND wos.score_value = 1) THEN 'Observed'
+        WHEN (wo.rubric_name = 'School Leader Moments' AND wm.[name] LIKE '%- type' AND wos.score_value = 2) THEN 'Co-Led/Planned'
+        WHEN (wo.rubric_name = 'School Leader Moments' AND wm.[name] LIKE '%- type' AND wos.score_value = 3) THEN 'Led'
+        ELSE wos.score_value_text
+       END as score_value_text
+      ,wos.score_percentage
+      ,tb.text_box_text
 
-      ,osr.primary_ethnicity AS observer_ethnicity
+      ,osr.primary_ethnicity AS bserver_ethnicity
       ,osr.gender AS observer_gender
 
-      ,wos.score_percentage
       ,CASE
-        WHEN wo.rubric_name IN ('Development Roadmap','Shadow Session','Assistant Principal PM Rubric','School Leader Moments',
-                                'Readiness Reflection','Monthly Triad Meeting Form','New Leader Talent Review')
-             THEN wos.score_value
         WHEN wos.score_value_text = 'Yes' THEN 3
         WHEN wos.score_value_text = 'Almost' THEN 2
         WHEN wos.score_value_text = 'No' THEN 1
-        ELSE NULL
-       END AS score_value
-      ,COALESCE(wos.score_value_text, tb.text_box_text) AS response_value
+        WHEN wos.score_value_text = 'On Track' THEN 3
+        WHEN wos.score_value_text = 'Off Track' THEN 1
+        ELSE wos.score_value
+
+       END AS measure_value
 
       ,wm.[name] AS measurement_name
       ,wm.scale_min AS measurement_scale_min
@@ -51,7 +58,7 @@ SELECT sr.df_employee_number
       ,rt.academic_year
       ,rt.time_per_name AS reporting_term
 FROM gabby.people.staff_crosswalk_static sr
-LEFT JOIN gabby.whetstone.observations_clean wo
+JOIN gabby.whetstone.observations_clean wo
   ON CONVERT(VARCHAR(25), sr.df_employee_number) = wo.teacher_internal_id
  AND sr.samaccountname <> LEFT(wo.observer_email, CHARINDEX('@', wo.observer_email) - 1)
  AND wo.rubric_name IN ('Development Roadmap','Shadow Session','Assistant Principal PM Rubric','School Leader Moments','Readiness Reflection'
@@ -71,3 +78,8 @@ JOIN gabby.reporting.reporting_terms rt
  AND rt.schoolid = 0
  AND rt._fivetran_deleted = 0
 WHERE ISNULL(sr.termination_date, GETDATE()) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
+  AND (    
+          wos.score_value IS NOT NULL 
+       OR wos.score_value_text IS NOT NULL
+       OR tb.text_box_text IS NOT NULL
+       )
