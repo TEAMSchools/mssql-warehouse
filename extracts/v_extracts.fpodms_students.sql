@@ -18,3 +18,4 @@ JOIN gabby.powerschool.schools sch
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.school_level IN ('ES', 'MS')
   AND co.is_enrolled_recent = 1
+  AND co.rn_year = 1
