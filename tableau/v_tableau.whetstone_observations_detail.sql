@@ -1,7 +1,7 @@
 USE gabby
 GO
 
---CREATE OR ALTER VIEW tableau.whetstone_observations_detail AS
+CREATE OR ALTER VIEW tableau.whetstone_observations_detail AS
 
 SELECT sr.df_employee_number
       ,sr.preferred_name
@@ -28,19 +28,9 @@ SELECT sr.df_employee_number
       ,wo.list_two_column_a AS glows
       ,wo.list_two_column_b AS grows
       ,wo.score
+
       ,wos.score_value
-      ,CASE 
-        WHEN (wo.rubric_name = 'School Leader Moments' AND wm.[name] LIKE '%- type' AND wos.score_value = 1) THEN 'Observed'
-        WHEN (wo.rubric_name = 'School Leader Moments' AND wm.[name] LIKE '%- type' AND wos.score_value = 2) THEN 'Co-Led/Planned'
-        WHEN (wo.rubric_name = 'School Leader Moments' AND wm.[name] LIKE '%- type' AND wos.score_value = 3) THEN 'Led'
-        ELSE wos.score_value_text
-       END as score_value_text
       ,wos.score_percentage
-      ,tb.text_box_text
-
-      ,osr.primary_ethnicity AS bserver_ethnicity
-      ,osr.gender AS observer_gender
-
       ,CASE
         WHEN wos.score_value_text = 'Yes' THEN 3
         WHEN wos.score_value_text = 'Almost' THEN 2
@@ -48,12 +38,22 @@ SELECT sr.df_employee_number
         WHEN wos.score_value_text = 'On Track' THEN 3
         WHEN wos.score_value_text = 'Off Track' THEN 1
         ELSE wos.score_value
-
        END AS measure_value
+      ,CASE
+        WHEN (wo.rubric_name = 'School Leader Moments' AND wm.[name] LIKE '%- type' AND wos.score_value = 1) THEN 'Observed'
+        WHEN (wo.rubric_name = 'School Leader Moments' AND wm.[name] LIKE '%- type' AND wos.score_value = 2) THEN 'Co-Led/Planned'
+        WHEN (wo.rubric_name = 'School Leader Moments' AND wm.[name] LIKE '%- type' AND wos.score_value = 3) THEN 'Led'
+        ELSE wos.score_value_text
+       END AS score_value_text
+
+      ,osr.primary_ethnicity AS observer_ethnicity
+      ,osr.gender AS observer_gender
 
       ,wm.[name] AS measurement_name
       ,wm.scale_min AS measurement_scale_min
       ,wm.scale_max AS measurement_scale_max
+
+      ,tb.text_box_text
 
       ,rt.academic_year
       ,rt.time_per_name AS reporting_term
@@ -78,8 +78,6 @@ JOIN gabby.reporting.reporting_terms rt
  AND rt.schoolid = 0
  AND rt._fivetran_deleted = 0
 WHERE ISNULL(sr.termination_date, GETDATE()) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
-  AND (    
-          wos.score_value IS NOT NULL 
-       OR wos.score_value_text IS NOT NULL
-       OR tb.text_box_text IS NOT NULL
-       )
+  AND (wos.score_value IS NOT NULL
+        OR wos.score_value_text IS NOT NULL
+        OR tb.text_box_text IS NOT NULL)
