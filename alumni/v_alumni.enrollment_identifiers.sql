@@ -10,17 +10,21 @@ WITH enrollments AS (
         ,MAX(CASE WHEN sub.pursuing_degree_level = 'Vocational' AND sub.rn_degree_desc = 1 THEN sub.enrollment_id END) AS vocational_enrollment_id
         ,MAX(CASE WHEN sub.pursuing_degree_level = 'Secondary' AND sub.rn_degree_desc = 1 THEN sub.enrollment_id END) AS secondary_enrollment_id
         ,MAX(CASE WHEN sub.pursuing_degree_level = 'Graduate' AND sub.rn_degree_desc = 1 THEN sub.enrollment_id END) AS graduate_enrollment_id
-        ,MAX(CASE WHEN sub.pursuing_degree_level = 'College' AND sub.rn_degree_asc = 1 AND sub.is_ecc_dated = 1 THEN sub.enrollment_id END) AS ecc_enrollment_id
+        ,MAX(CASE WHEN sub.is_ecc_degree_type = 1 AND sub.is_ecc_dated = 1 AND sub.rn_ecc_asc = 1 THEN sub.enrollment_id END) AS ecc_enrollment_id
         ,MAX(CASE WHEN sub.rn_current = 1 THEN sub.enrollment_id END) AS curr_enrollment_id
   FROM
       (
        SELECT sub.student_c
              ,sub.enrollment_id
              ,sub.pursuing_degree_level
-             ,CASE WHEN sub.ecc_date BETWEEN sub.start_date_c AND sub.actual_end_date_c THEN 1 ELSE 0 END AS is_ecc_dated
+             ,sub.is_ecc_degree_type
+             ,sub.is_ecc_dated
              ,ROW_NUMBER() OVER(
                 PARTITION BY sub.student_c, sub.pursuing_degree_level
                   ORDER BY sub.start_date_c ASC, sub.actual_end_date_c ASC) AS rn_degree_asc
+             ,ROW_NUMBER() OVER(
+                PARTITION BY sub.student_c, sub.is_ecc_degree_type, sub.is_ecc_dated
+                  ORDER BY sub.start_date_c ASC, sub.actual_end_date_c ASC) AS rn_ecc_asc
              ,ROW_NUMBER() OVER(
                 PARTITION BY sub.student_c, sub.pursuing_degree_level
                   ORDER BY sub.start_date_c DESC, sub.actual_end_date_c DESC) AS rn_degree_desc
@@ -43,14 +47,18 @@ WITH enrollments AS (
                      AND e.account_type_c NOT IN ('Traditional Public School', 'Alternative High School', 'KIPP School')
                          THEN 'Vocational'
                    END AS pursuing_degree_level
-                  
-                  ,DATEFROMPARTS(DATEPART(YEAR,c.actual_hs_graduation_date_c), 10, 31) AS ecc_date
+                  ,CASE WHEN e.pursuing_degree_type_c IN ('Bachelor''s (4-year)', 'Associate''s (2 year)') THEN 1 END AS is_ecc_degree_type
+                  ,CASE 
+                    WHEN DATEFROMPARTS(DATEPART(YEAR, c.actual_hs_graduation_date_c), 10, 31) 
+                           BETWEEN e.start_date_c AND e.actual_end_date_c THEN 1 
+                    ELSE 0 
+                   END AS is_ecc_dated
             FROM gabby.alumni.enrollment_c e
             JOIN gabby.alumni.contact c
               ON e.student_c = c.id
              AND c.is_deleted = 0
             WHERE e.is_deleted = 0
-              AND e.status_c != 'Did Not Enroll'
+              AND e.status_c <> 'Did Not Enroll'
            ) sub
       ) sub
   GROUP BY sub.student_c
@@ -135,21 +143,21 @@ SELECT sub.student_c
       ,sub.cur_ncesid
       ,sub.cur_adjusted_6_year_minority_graduation_rate
 
-     ,ug.[name] AS ugrad_school_name
-     ,ug.pursuing_degree_type_c AS ugrad_pursuing_degree_type
-     ,ug.status_c AS ugrad_status
-     ,ug.start_date_c AS ugrad_start_date
-     ,ug.actual_end_date_c AS ugrad_actual_end_date      
-     ,ug.anticipated_graduation_c AS ugrad_anticipated_graduation
-     ,ug.account_type_c AS ugrad_account_type
-     ,ug.major_c AS ugrad_major
-     ,ug.major_area_c AS ugrad_major_area
-     ,ug.college_major_declared_c AS ugrad_college_major_declared
-     ,ug.date_last_verified_c AS ugrad_date_last_verified
-     ,ug.of_credits_required_for_graduation_c AS ugrad_credits_required_for_graduation
-     ,uga.[name] AS ugrad_account_name
-     ,uga.billing_state AS ugrad_billing_state
-     ,uga.ncesid_c AS ugrad_ncesid
+      ,ug.[name] AS ugrad_school_name
+      ,ug.pursuing_degree_type_c AS ugrad_pursuing_degree_type
+      ,ug.status_c AS ugrad_status
+      ,ug.start_date_c AS ugrad_start_date
+      ,ug.actual_end_date_c AS ugrad_actual_end_date      
+      ,ug.anticipated_graduation_c AS ugrad_anticipated_graduation
+      ,ug.account_type_c AS ugrad_account_type
+      ,ug.major_c AS ugrad_major
+      ,ug.major_area_c AS ugrad_major_area
+      ,ug.college_major_declared_c AS ugrad_college_major_declared
+      ,ug.date_last_verified_c AS ugrad_date_last_verified
+      ,ug.of_credits_required_for_graduation_c AS ugrad_credits_required_for_graduation
+      ,uga.[name] AS ugrad_account_name
+      ,uga.billing_state AS ugrad_billing_state
+      ,uga.ncesid_c AS ugrad_ncesid
 FROM
     (
      SELECT e.student_c
@@ -161,6 +169,7 @@ FROM
            ,e.graduate_enrollment_id
            ,CASE 
              WHEN ba.start_date_c > aa.start_date_c THEN e.ba_enrollment_id
+             WHEN aa.start_date_c IS NULL THEN e.ba_enrollment_id
              ELSE e.aa_enrollment_id
             END AS ugrad_enrollment_id
 
