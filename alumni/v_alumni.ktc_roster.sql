@@ -32,6 +32,7 @@ SELECT sub.student_number
       ,sub.latest_fafsa_date
       ,sub.latest_state_financial_aid_app_date
       ,sub.cumulative_gpa
+      ,sub.current_college_cumulative_gpa
       ,sub.current_college_semester_gpa
       ,sub.college_match_display_gpa
       ,sub.highest_act_score
@@ -90,6 +91,7 @@ FROM
            ,c.latest_fafsa_date_c AS latest_fafsa_date
            ,c.latest_state_financial_aid_app_date_c AS latest_state_financial_aid_app_date
            ,c.cumulative_gpa_c AS cumulative_gpa
+           ,c.current_college_cumulative_gpa_c AS current_college_cumulative_gpa
            ,c.current_college_semester_gpa_c AS current_college_semester_gpa
            ,c.college_match_display_gpa_c AS college_match_display_gpa
            ,c.highest_act_score_c AS highest_act_score
@@ -130,6 +132,7 @@ FROM
      FROM gabby.powerschool.cohort_identifiers_static co
      LEFT JOIN gabby.alumni.contact c
        ON co.student_number = c.school_specific_id_c
+      AND c.is_deleted = 0
      LEFT JOIN gabby.alumni.record_type rt
        ON c.record_type_id = rt.id
      LEFT JOIN gabby.alumni.[user] u
