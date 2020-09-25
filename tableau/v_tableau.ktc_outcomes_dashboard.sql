@@ -49,6 +49,7 @@ SELECT c.sf_contact_id AS contact_id
       ,c.kipp_region_name
       ,c.kipp_region_school
       ,c.post_hs_simple_admin
+      ,c.ktc_status
 
       ,ei.ugrad_account_name AS ugrad_school_name
       ,ei.ugrad_pursuing_degree_type
