@@ -92,7 +92,7 @@ WITH classes_dedupe AS (
        FROM gabby.fpodms.bas_assessments fp
        LEFT JOIN gabby.powerschool.schools sch
          ON fp.school_name = sch.[name] COLLATE Latin1_General_BIN
-       JOIN classes_dedupe c
+       LEFT JOIN classes_dedupe c
          ON fp.school_name = c.school_name
         AND fp.year_of_assessment = c.school_year
         AND fp.class_name = c.[name]
