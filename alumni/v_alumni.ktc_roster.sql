@@ -132,7 +132,6 @@ FROM
      FROM gabby.powerschool.cohort_identifiers_static co
      LEFT JOIN gabby.alumni.contact c
        ON co.student_number = c.school_specific_id_c
-      AND c.is_deleted = 0
      LEFT JOIN gabby.alumni.record_type rt
        ON c.record_type_id = rt.id
      LEFT JOIN gabby.alumni.[user] u
