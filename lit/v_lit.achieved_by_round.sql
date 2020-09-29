@@ -7,21 +7,21 @@ WITH roster_scaffold AS (
   SELECT r.student_number
         ,r.schoolid
         ,r.grade_level
-        ,r.academic_year        
-        
-        ,CONVERT(VARCHAR(25),terms.time_per_name) AS reporting_term
-        ,CONVERT(VARCHAR(25),terms.alt_name) AS test_round
-        ,terms.start_date
+        ,r.academic_year
+
+        ,CONVERT(VARCHAR(25), terms.time_per_name) AS reporting_term
+        ,CONVERT(VARCHAR(25), terms.alt_name) AS test_round
+        ,terms.[start_date]
         ,terms.end_date
-        ,CONVERT(INT,RIGHT(terms.time_per_name, 1)) AS round_num        
-        
-        ,terms.is_curterm        
+        ,CONVERT(INT, RIGHT(terms.time_per_name, 1)) AS round_num
+
+        ,terms.is_curterm
   FROM gabby.powerschool.cohort_identifiers_static r
   JOIN gabby.reporting.reporting_terms terms
-    ON r.academic_year = terms.academic_year 
+    ON r.academic_year = terms.academic_year
    AND r.schoolid = terms.schoolid
    AND terms.identifier = 'LIT'
-   AND terms._fivetran_deleted = 0          
+   AND terms._fivetran_deleted = 0
   WHERE r.rn_year = 1
  )
 
@@ -33,12 +33,10 @@ WITH roster_scaffold AS (
         ,reporting_term
         ,test_round
         ,round_num
-        ,start_date
+        ,[start_date]
         ,end_date
         ,is_curterm
-        
         ,is_fp
-        
         ,achv_unique_id
         ,read_lvl
         ,lvl_num
@@ -48,17 +46,14 @@ WITH roster_scaffold AS (
         ,gleq_lvl_num
         ,fp_wpmrate
         ,fp_keylever
-
         ,dna_unique_id
         ,instruct_lvl
         ,instruct_lvl_num
         ,dna_lvl
         ,dna_lvl_num
-
         ,hard_unique_id
         ,hard_read_lvl
         ,hard_lvl_num
-
         ,ROW_NUMBER() OVER(
            PARTITION BY sub.student_number
              ORDER BY sub.academic_year DESC, sub.round_num DESC) AS meta_achv_round
@@ -72,10 +67,10 @@ WITH roster_scaffold AS (
              ,r.reporting_term
              ,r.test_round
              ,r.round_num
-             ,r.start_date
+             ,r.[start_date]
              ,r.end_date
              ,r.is_curterm
-        
+
              ,COALESCE(achv.is_fp, ps.is_fp) AS is_fp
 
              ,COALESCE(achv.unique_id, ps.unique_id) AS achv_unique_id
@@ -99,28 +94,28 @@ WITH roster_scaffold AS (
              ,hard.lvl_num AS hard_lvl_num
        FROM roster_scaffold r
        LEFT JOIN gabby.lit.all_test_events_static ps
-         ON r.student_number = ps.student_number      
+         ON r.student_number = ps.student_number
         AND r.academic_year = ps.academic_year
         AND r.test_round = ps.test_round
-        AND ps.status = 'Mixed'
+        AND ps.[status] = 'Mixed'
         AND ps.curr_round = 1
-       LEFT JOIN gabby.lit.all_test_events_static achv 
-         ON r.student_number = achv.student_number      
+       LEFT JOIN gabby.lit.all_test_events_static achv
+         ON r.student_number = achv.student_number
         AND r.academic_year = achv.academic_year
         AND r.test_round = achv.test_round
-        AND achv.status = 'Achieved'
+        AND achv.[status] = 'Achieved'
         AND achv.curr_round = 1
-       LEFT JOIN gabby.lit.all_test_events_static dna 
-         ON r.student_number = dna.student_number      
+       LEFT JOIN gabby.lit.all_test_events_static dna
+         ON r.student_number = dna.student_number
         AND r.academic_year = dna.academic_year
         AND r.test_round = dna.test_round
-        AND dna.status = 'Did Not Achieve'
+        AND dna.[status] = 'Did Not Achieve'
         AND dna.curr_round = 1
-       LEFT JOIN gabby.lit.all_test_events_static hard 
-         ON r.student_number = hard.student_number      
+       LEFT JOIN gabby.lit.all_test_events_static hard
+         ON r.student_number = hard.student_number
         AND r.academic_year = hard.academic_year
         AND r.test_round = hard.test_round
-        AND hard.status = 'DNA - Hard'
+        AND hard.[status] = 'DNA - Hard'
         AND hard.curr_round = 1
        WHERE r.academic_year >= 2015
 
@@ -134,12 +129,11 @@ WITH roster_scaffold AS (
              ,r.reporting_term
              ,r.test_round
              ,r.round_num
-             ,r.start_date
+             ,r.[start_date]
              ,r.end_date
              ,r.is_curterm
 
              ,achv.is_fp
-
              ,achv.unique_id AS achv_unique_id
              ,achv.read_lvl
              ,achv.lvl_num
@@ -164,14 +158,14 @@ WITH roster_scaffold AS (
          ON r.student_number = achv.student_number
         AND r.academic_year = achv.academic_year
         AND r.test_round = achv.test_round
-        AND achv.status = 'Achieved'
+        AND achv.[status] = 'Achieved'
         AND achv.curr_round = 1
        LEFT JOIN gabby.lit.all_test_events_static dna
-         ON r.student_number = dna.student_number      
+         ON r.student_number = dna.student_number
         AND r.academic_year = dna.academic_year
         AND r.test_round = dna.test_round
-        AND dna.status = 'Did Not Achieve'
-        AND dna.curr_round = 1    
+        AND dna.[status] = 'Did Not Achieve'
+        AND dna.curr_round = 1
        WHERE r.academic_year <= 2014
          AND NOT (r.academic_year = 2014 AND r.schoolid = 133570965 AND r.test_round = 'T3')
 
@@ -184,54 +178,55 @@ WITH roster_scaffold AS (
              ,r.reporting_term
              ,r.test_round
              ,r.round_num
-             ,r.start_date
+             ,r.[start_date]
              ,r.end_date
              ,r.is_curterm
 
              ,fp.is_fp
-
              ,fp.unique_id AS achv_unique_id
-             ,CASE WHEN fp.status = 'Achieved' THEN COALESCE(fp.read_lvl, fp.indep_lvl) ELSE fp.indep_lvl END AS read_lvl
-             ,CASE WHEN fp.status = 'Achieved' THEN COALESCE(fp.lvl_num, fp.indep_lvl_num) ELSE fp.indep_lvl_num END AS lvl_num
-             ,CASE WHEN fp.status = 'Achieved' THEN COALESCE(fp.read_lvl, fp.indep_lvl) ELSE fp.indep_lvl END AS indep_lvl
-             ,CASE WHEN fp.status = 'Achieved' THEN COALESCE(fp.lvl_num, fp.indep_lvl_num) ELSE fp.indep_lvl_num END AS indep_lvl_num
+             ,CASE WHEN fp.[status] = 'Achieved' THEN COALESCE(fp.read_lvl, fp.indep_lvl) ELSE fp.indep_lvl END AS read_lvl
+             ,CASE WHEN fp.[status] = 'Achieved' THEN COALESCE(fp.lvl_num, fp.indep_lvl_num) ELSE fp.indep_lvl_num END AS lvl_num
+             ,CASE WHEN fp.[status] = 'Achieved' THEN COALESCE(fp.read_lvl, fp.indep_lvl) ELSE fp.indep_lvl END AS indep_lvl
+             ,CASE WHEN fp.[status] = 'Achieved' THEN COALESCE(fp.lvl_num, fp.indep_lvl_num) ELSE fp.indep_lvl_num END AS indep_lvl_num
              ,gleq.gleq
              ,gleq.lvl_num AS gleq_lvl_num
              ,fp.fp_wpmrate
              ,fp.fp_keylever
-             
              ,fp.unique_id AS dna_unique_id
-             ,CONVERT(VARCHAR(1),CASE
-               WHEN fp.status = 'Did Not Achieve' AND fp.instruct_lvl = fp.indep_lvl THEN fp.read_lvl
-               WHEN fp.status = 'Achieved' AND fp.instruct_lvl = fp.indep_lvl THEN NULL
-               ELSE fp.instruct_lvl
-              END) AS instruct_lvl
-             ,CONVERT(INT,CASE
-               WHEN fp.status = 'Did Not Achieve' AND fp.instruct_lvl = fp.indep_lvl THEN fp.lvl_num
-               WHEN fp.status = 'Achieved' AND fp.instruct_lvl = fp.indep_lvl THEN (gleq.fp_lvl_num + 1)
-               ELSE COALESCE(fp.instruct_lvl_num, (gleq.fp_lvl_num + 1))
-              END) AS instruct_lvl_num             
-             ,CONVERT(VARCHAR(1),CASE
-               WHEN fp.status = 'Did Not Achieve' AND fp.instruct_lvl = fp.indep_lvl THEN fp.read_lvl
-               WHEN fp.status = 'Achieved' AND fp.instruct_lvl = fp.indep_lvl THEN NULL
-               ELSE fp.instruct_lvl
-              END) AS dna_lvl
-             ,CONVERT(INT,CASE
-               WHEN fp.status = 'Did Not Achieve' AND fp.instruct_lvl = fp.indep_lvl THEN fp.lvl_num
-               WHEN fp.status = 'Achieved' AND fp.instruct_lvl = fp.indep_lvl THEN (gleq.fp_lvl_num + 1)
-               ELSE COALESCE(fp.instruct_lvl_num, (gleq.fp_lvl_num + 1))
-              END) AS dna_lvl_num
-
+             ,CONVERT(VARCHAR(1),
+                CASE
+                 WHEN fp.[status] = 'Did Not Achieve' AND fp.instruct_lvl = fp.indep_lvl THEN fp.read_lvl
+                 WHEN fp.[status] = 'Achieved' AND fp.instruct_lvl = fp.indep_lvl THEN NULL
+                 ELSE fp.instruct_lvl
+                END) AS instruct_lvl
+             ,CONVERT(INT,
+                CASE
+                 WHEN fp.[status] = 'Did Not Achieve' AND fp.instruct_lvl = fp.indep_lvl THEN fp.lvl_num
+                 WHEN fp.[status] = 'Achieved' AND fp.instruct_lvl = fp.indep_lvl THEN (gleq.fp_lvl_num + 1)
+                 ELSE COALESCE(fp.instruct_lvl_num, (gleq.fp_lvl_num + 1))
+                END) AS instruct_lvl_num
+             ,CONVERT(VARCHAR(1),
+                CASE
+                 WHEN fp.[status] = 'Did Not Achieve' AND fp.instruct_lvl = fp.indep_lvl THEN fp.read_lvl
+                 WHEN fp.[status] = 'Achieved' AND fp.instruct_lvl = fp.indep_lvl THEN NULL
+                 ELSE fp.instruct_lvl
+                END) AS dna_lvl
+             ,CONVERT(INT,
+                CASE
+                 WHEN fp.[status] = 'Did Not Achieve' AND fp.instruct_lvl = fp.indep_lvl THEN fp.lvl_num
+                 WHEN fp.[status] = 'Achieved' AND fp.instruct_lvl = fp.indep_lvl THEN (gleq.fp_lvl_num + 1)
+                 ELSE COALESCE(fp.instruct_lvl_num, (gleq.fp_lvl_num + 1))
+                END) AS dna_lvl_num
              ,NULL AS hard_unique_id
              ,NULL AS hard_read_lvl
              ,NULL AS hard_lvl_num
-       FROM roster_scaffold r  
+       FROM roster_scaffold r
        JOIN gabby.lit.all_test_events_static fp
          ON r.student_number = fp.student_number
         AND r.academic_year = fp.academic_year
         AND fp.recent_yr = 1
        LEFT JOIN gabby.lit.gleq
-         ON CASE WHEN fp.status = 'Achieved' AND fp.indep_lvl IS NULL THEN fp.read_lvl ELSE fp.indep_lvl END = gleq.read_lvl
+         ON CASE WHEN fp.[status] = 'Achieved' AND fp.indep_lvl IS NULL THEN fp.read_lvl ELSE fp.indep_lvl END = gleq.read_lvl
         AND gleq.testid = 3273
        WHERE r.academic_year = 2014
          AND r.schoolid = 133570965
@@ -243,14 +238,14 @@ WITH roster_scaffold AS (
   SELECT tests.student_number
         ,tests.academic_year
         ,tests.schoolid
-        ,tests.grade_level                
+        ,tests.grade_level
         ,tests.reporting_term
-        ,tests.test_round 
-        ,tests.round_num     
-        ,tests.start_date
+        ,tests.test_round
+        ,tests.round_num
+        ,tests.[start_date]
         ,tests.end_date
-        ,tests.is_curterm        
-                
+        ,tests.is_curterm
+
         ,COALESCE(tests.is_fp,achv_prev.is_fp) AS is_fp
         ,COALESCE(tests.read_lvl,achv_prev.read_lvl) AS read_lvl
         ,COALESCE(tests.lvl_num,achv_prev.lvl_num) AS lvl_num
@@ -261,29 +256,29 @@ WITH roster_scaffold AS (
         ,COALESCE(tests.gleq,achv_prev.gleq) AS gleq
         ,COALESCE(tests.gleq_lvl_num,achv_prev.gleq_lvl_num) AS gleq_lvl_num
         ,COALESCE(tests.fp_wpmrate,achv_prev.fp_wpmrate) AS fp_wpmrate
-        ,COALESCE(tests.fp_keylever,achv_prev.fp_keylever) AS fp_keylever                
-        ,COALESCE(tests.achv_unique_id, achv_prev.achv_unique_id) AS achv_unique_id                
-        
+        ,COALESCE(tests.fp_keylever,achv_prev.fp_keylever) AS fp_keylever
+        ,COALESCE(tests.achv_unique_id, achv_prev.achv_unique_id) AS achv_unique_id
+
         ,ROW_NUMBER() OVER(
           PARTITION BY tests.student_number, tests.meta_achv_round
             ORDER BY achv_prev.meta_achv_round) AS rn
-  FROM tests 
-  LEFT JOIN tests achv_prev 
+  FROM tests
+  LEFT JOIN tests achv_prev
     ON tests.student_number = achv_prev.student_number
    AND tests.meta_achv_round < achv_prev.meta_achv_round
-   AND achv_prev.read_lvl IS NOT NULL                       
+   AND achv_prev.read_lvl IS NOT NULL
  )
 
 ,dna AS (
-  SELECT tests.academic_year        
-        ,tests.student_number        
+  SELECT tests.academic_year
+        ,tests.student_number
         ,tests.test_round
-        ,tests.round_num                             
-        
+        ,tests.round_num
+
         ,COALESCE(tests.dna_lvl, dna_prev.dna_lvl) AS dna_lvl
         ,COALESCE(tests.dna_lvl_num, dna_prev.dna_lvl_num) AS dna_lvl_num
         ,COALESCE(tests.dna_unique_id, dna_prev.dna_unique_id) AS dna_unique_id
-                
+
         ,ROW_NUMBER() OVER(
           PARTITION BY tests.student_number, tests.meta_achv_round
             ORDER BY dna_prev.meta_achv_round) AS rn
@@ -292,28 +287,28 @@ WITH roster_scaffold AS (
     ON tests.student_number = dna_prev.student_number           
    AND tests.meta_achv_round < dna_prev.meta_achv_round
    AND dna_prev.dna_lvl IS NOT NULL                    
-   AND tests.start_date <= CONVERT(DATE,GETDATE()) /* preserves the scaffold but will not carry scores to a future term */
+   AND tests.[start_date] <= CONVERT(DATE, GETDATE()) /* preserves the scaffold but will not carry scores to a future term */
  )
 
 ,hard AS (
-  SELECT tests.academic_year        
-        ,tests.student_number        
+  SELECT tests.academic_year
+        ,tests.student_number
         ,tests.test_round
-        ,tests.round_num                             
-        
+        ,tests.round_num
+
         ,COALESCE(tests.hard_read_lvl, hard_prev.hard_read_lvl) AS hard_lvl
         ,COALESCE(tests.hard_lvl_num, hard_prev.hard_lvl_num) AS hard_lvl_num
         ,COALESCE(tests.hard_unique_id, hard_prev.hard_unique_id) AS hard_unique_id
-                
+
         ,ROW_NUMBER() OVER(
           PARTITION BY tests.student_number, tests.meta_achv_round
             ORDER BY hard_prev.meta_achv_round) AS rn
-  FROM tests 
-  LEFT JOIN tests hard_prev 
-    ON tests.student_number = hard_prev.student_number           
+  FROM tests
+  LEFT JOIN tests hard_prev
+    ON tests.student_number = hard_prev.student_number
    AND tests.meta_achv_round < hard_prev.meta_achv_round
-   AND hard_prev.hard_lvl_num IS NOT NULL                    
-   AND tests.start_date <= CONVERT(DATE,GETDATE()) /* preserves the scaffold but will not carry scores to a future term */
+   AND hard_prev.hard_lvl_num IS NOT NULL
+   AND tests.[start_date] <= CONVERT(DATE, GETDATE()) /* preserves the scaffold but will not carry scores to a future term */
  )
 
 /* falls back to most recently achieved reading level for each round, if NULL */
@@ -323,7 +318,7 @@ SELECT academic_year
       ,student_number      
       ,reporting_term
       ,test_round
-      ,start_date
+      ,[start_date]
       ,end_date
       ,is_curterm
       ,read_lvl
@@ -387,7 +382,7 @@ SELECT academic_year
       
       ,ROW_NUMBER() OVER(
          PARTITION BY student_number, academic_year
-           ORDER BY start_date ASC) AS rn_round_asc
+           ORDER BY [start_date] ASC) AS rn_round_asc
 FROM
     (
      SELECT sub.academic_year
@@ -397,10 +392,9 @@ FROM
            ,sub.reporting_term
            ,sub.test_round
            ,sub.round_num
-           ,sub.start_date
+           ,sub.[start_date]
            ,sub.end_date
            ,sub.is_curterm
-
            ,sub.achv_unique_id      
            ,sub.read_lvl           
            ,sub.lvl_num            
@@ -410,20 +404,17 @@ FROM
            ,sub.gleq_lvl_num        
            ,sub.fp_wpmrate
            ,sub.fp_keylever
-
            ,sub.dna_unique_id      
            ,sub.instruct_lvl
            ,sub.instruct_lvl_num                
            ,sub.dna_lvl
            ,sub.dna_lvl_num                     
-
            ,sub.hard_unique_id
            ,sub.hard_lvl
-           ,sub.hard_lvl_num
-           
+           ,sub.hard_lvl_num           
            ,sub.is_new_test
            ,MIN(CASE WHEN sub.lvl_num IS NOT NULL THEN sub.reporting_term END) OVER(PARTITION BY sub.student_number, sub.academic_year) AS min_reporting_term_ytd
-           ,MAX(CASE WHEN GETDATE() >= sub.start_date THEN sub.reporting_term END) OVER(PARTITION BY sub.student_number, sub.academic_year) AS max_reporting_term_ytd
+           ,MAX(CASE WHEN GETDATE() >= sub.[start_date] THEN sub.reporting_term END) OVER(PARTITION BY sub.student_number, sub.academic_year) AS max_reporting_term_ytd
 
            ,CASE
              WHEN sub.academic_year >= 2018 THEN sub.fp_read_lvl
@@ -450,10 +441,10 @@ FROM
            ,sub.indiv_goal_lvl
            ,sub.indiv_lvl_num
 
-           ,LAG(sub.read_lvl, 1) OVER(PARTITION BY sub.student_number ORDER BY sub.start_date ASC) AS prev_read_lvl
-           ,LAG(sub.lvl_num, 1) OVER(PARTITION BY sub.student_number ORDER BY sub.start_date ASC) AS prev_lvl_num           
-           ,LAG(sub.gleq, 1) OVER(PARTITION BY sub.student_number ORDER BY sub.start_date ASC) AS prev_gleq
-           ,LAG(sub.gleq_lvl_num, 1) OVER(PARTITION BY sub.student_number ORDER BY sub.start_date ASC) AS prev_gleq_lvl_num           
+           ,LAG(sub.read_lvl, 1) OVER(PARTITION BY sub.student_number ORDER BY sub.[start_date] ASC) AS prev_read_lvl
+           ,LAG(sub.lvl_num, 1) OVER(PARTITION BY sub.student_number ORDER BY sub.[start_date] ASC) AS prev_lvl_num           
+           ,LAG(sub.gleq, 1) OVER(PARTITION BY sub.student_number ORDER BY sub.[start_date] ASC) AS prev_gleq
+           ,LAG(sub.gleq_lvl_num, 1) OVER(PARTITION BY sub.student_number ORDER BY sub.[start_date] ASC) AS prev_gleq_lvl_num           
            
            ,COALESCE(sub.indiv_goal_lvl
                     ,CASE
@@ -499,7 +490,7 @@ FROM
                 ,achieved.reporting_term
                 ,achieved.test_round 
                 ,achieved.round_num     
-                ,achieved.start_date
+                ,achieved.[start_date]
                 ,achieved.end_date
                 ,achieved.is_curterm
                 ,achieved.is_fp                
@@ -523,13 +514,13 @@ FROM
                 ,hard.hard_lvl_num
                 ,hard.hard_unique_id
 
-                ,CONVERT(VARCHAR(5),goals.fp_read_lvl) AS fp_read_lvl
-                ,CONVERT(VARCHAR(5),goals.step_read_lvl) AS step_read_lvl
-                ,CONVERT(INT,goals.fp_lvl_num) AS fp_lvl_num
-                ,CONVERT(INT,goals.step_lvl_num) AS step_lvl_num
+                ,CONVERT(VARCHAR(5), goals.fp_read_lvl) AS fp_read_lvl
+                ,CONVERT(VARCHAR(5), goals.step_read_lvl) AS step_read_lvl
+                ,CONVERT(INT, goals.fp_lvl_num) AS fp_lvl_num
+                ,CONVERT(INT, goals.step_lvl_num) AS step_lvl_num
 
-                ,CONVERT(VARCHAR(5),indiv.goal) AS indiv_goal_lvl
-                ,CONVERT(INT,indiv.lvl_num) AS indiv_lvl_num
+                ,CONVERT(VARCHAR(5), indiv.goal) AS indiv_goal_lvl
+                ,CONVERT(INT, indiv.lvl_num) AS indiv_lvl_num
 
                 ,CASE 
                   WHEN achieved.academic_year = atid.academic_year AND achieved.round_num = atid.round_num THEN 1 
@@ -539,7 +530,7 @@ FROM
           FROM achieved
           LEFT JOIN gabby.lit.all_test_events_static atid 
             ON achieved.achv_unique_id = atid.unique_id
-           AND atid.status = 'Achieved'
+           AND atid.[status] = 'Achieved'
           LEFT JOIN dna
             ON achieved.student_number = dna.student_number
            AND achieved.academic_year = dna.academic_year
