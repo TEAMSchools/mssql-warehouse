@@ -3,24 +3,6 @@ GO
 
 CREATE OR ALTER VIEW tableau.whetstone_observations_detail AS
 
-WITH sl_moments_type AS(
-  SELECT wo.observation_id
-        ,LEFT(wm.[name],LEN(wm.[name])-LEN(' -type')) AS measurement_name
-        ,CASE
-          WHEN wos.score_value = 1 THEN 'Observed'
-          WHEN wos.score_value = 2 THEN 'Co-Led/Planned'
-          WHEN wos.score_value = 3 THEN 'Led'
-         ELSE NULL
-         END AS score_type
-  FROM gabby.whetstone.observations_clean wo
-  LEFT JOIN gabby.whetstone.observations_scores wos
-    ON wo.observation_id = wos.observation_id
-  LEFT JOIN gabby.whetstone.measurements wm
-    ON wos.score_measurement_id = wm._id
-  WHERE wo.rubric_name = 'School Leader Moments' 
-    AND wm.[name] LIKE '%- type'
-  )
-
 SELECT sr.df_employee_number
       ,sr.preferred_name
       ,sr.primary_site
@@ -64,7 +46,14 @@ SELECT sr.df_employee_number
         ELSE wos.score_value_text
        END AS score_value_text
 
-      ,sl.score_type
+      ,MAX(CASE
+            WHEN wo.rubric_name <> 'School Leader Moments' THEN NULL
+            WHEN wm.[name] NOT LIKE '%- type' THEN NULL
+            WHEN wos.score_value = 1 THEN 'Observed' 
+            WHEN wos.score_value = 2 THEN 'Co-Led/Planned'
+            WHEN wos.score_value = 3 THEN 'Led'
+            ELSE NULL
+           END) OVER(PARTITION BY wo.observation_id, LTRIM(RTRIM(REPLACE(wm.[name], '- type', '')))) AS score_type_new
 
       ,osr.primary_ethnicity AS observer_ethnicity
       ,osr.gender AS observer_gender
@@ -93,9 +82,6 @@ LEFT JOIN gabby.whetstone.measurements wm
 LEFT JOIN gabby.whetstone.observations_scores_text_boxes tb
   ON wos.score_measurement_id = tb.score_measurement_id
  AND wo.observation_id = tb.observation_id
-LEFT JOIN sl_moments_type sl
-  ON wo.observation_id = sl.observation_id
- AND wm.[name] = sl.measurement_name
 JOIN gabby.reporting.reporting_terms rt
   ON wo.observed_at BETWEEN rt.[start_date] AND rt.end_date 
  AND rt.identifier = 'ETR'
