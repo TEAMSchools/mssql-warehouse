@@ -46,6 +46,15 @@ SELECT sr.df_employee_number
         ELSE wos.score_value_text
        END AS score_value_text
 
+      ,MAX(CASE
+            WHEN wo.rubric_name <> 'School Leader Moments' THEN NULL
+            WHEN wm.[name] NOT LIKE '%- type' THEN NULL
+            WHEN wos.score_value = 1 THEN 'Observed' 
+            WHEN wos.score_value = 2 THEN 'Co-Led/Planned'
+            WHEN wos.score_value = 3 THEN 'Led'
+            ELSE NULL
+           END) OVER(PARTITION BY wo.observation_id, LTRIM(RTRIM(REPLACE(wm.[name], '- type', '')))) AS score_type_new
+
       ,osr.primary_ethnicity AS observer_ethnicity
       ,osr.gender AS observer_gender
 
