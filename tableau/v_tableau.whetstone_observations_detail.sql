@@ -53,7 +53,7 @@ SELECT sr.df_employee_number
             WHEN wos.score_value = 2 THEN 'Co-Led/Planned'
             WHEN wos.score_value = 3 THEN 'Led'
             ELSE NULL
-           END) OVER(PARTITION BY wo.observation_id, LTRIM(RTRIM(REPLACE(wm.[name], '- type', '')))) AS score_type_new
+           END) OVER(PARTITION BY wo.observation_id, LTRIM(RTRIM(REPLACE(wm.[name], '- type', '')))) AS score_type
 
       ,osr.primary_ethnicity AS observer_ethnicity
       ,osr.gender AS observer_gender
