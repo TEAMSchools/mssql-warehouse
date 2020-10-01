@@ -18,23 +18,23 @@ WITH roster AS (
         ,co.advisor_name   
         ,co.iep_status
         ,co.enroll_status
-        ,co.db_name
+        ,co.[db_name]
 
-        ,CONVERT(VARCHAR,dt.alt_name) AS term_name
-        ,CONVERT(VARCHAR,dt.time_per_name) AS reporting_term
-        ,dt.start_date AS term_start_date
+        ,CONVERT(VARCHAR, dt.alt_name) AS term_name
+        ,CONVERT(VARCHAR, dt.time_per_name) AS reporting_term
+        ,dt.[start_date] AS term_start_date
         ,dt.end_date AS term_end_date
   FROM gabby.powerschool.cohort_identifiers_static co
   JOIN gabby.reporting.reporting_terms dt
     ON co.academic_year = dt.academic_year
    AND co.schoolid = dt.schoolid
    AND dt.identifier = 'RT'
-   AND dt.alt_name != 'Summer School'
    AND dt._fivetran_deleted = 0
+   AND dt.alt_name <> 'Summer School'
   WHERE co.academic_year IN (gabby.utilities.GLOBAL_ACADEMIC_YEAR(), gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
     AND co.rn_year = 1
     AND co.is_enrolled_recent = 1
-    AND co.reporting_schoolid != 5173
+    AND co.reporting_schoolid <> 5173
   
   UNION ALL
 
@@ -52,11 +52,11 @@ WITH roster AS (
         ,co.advisor_name           
         ,co.iep_status
         ,co.enroll_status
-        ,co.db_name
+        ,co.[db_name]
 
         ,'Y1' AS term
         ,CONVERT(VARCHAR,dt.time_per_name) AS reporting_term
-        ,dt.start_date AS term_start_date
+        ,dt.[start_date] AS term_start_date
         ,dt.end_date AS term_end_date
   FROM gabby.powerschool.cohort_identifiers_static co
   JOIN gabby.reporting.reporting_terms dt
@@ -67,7 +67,7 @@ WITH roster AS (
   WHERE co.academic_year IN (gabby.utilities.GLOBAL_ACADEMIC_YEAR(), gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
     AND co.rn_year = 1
     AND co.is_enrolled_recent = 1
-    AND co.reporting_schoolid != 5173
+    AND co.reporting_schoolid <> 5173
  )
 
 ,contact AS (
@@ -153,11 +153,11 @@ WITH roster AS (
 
 ,attendance AS (
   SELECT studentid
-        ,db_name
+        ,[db_name]
         ,academic_year
         ,reporting_term
         ,UPPER(LEFT(field, CHARINDEX('_', field) - 1)) AS att_code
-        ,value AS att_counts        
+        ,[value] AS att_counts        
         ,CASE
           WHEN field = 'presentpct_term' THEN 'ABSENT'
           WHEN field = 'ontimepct_term' THEN 'TARDY'
@@ -169,7 +169,7 @@ WITH roster AS (
   FROM 
       (
        SELECT att.studentid
-             ,att.db_name
+             ,att.[db_name]
              ,att.academic_year
              ,att.reporting_term           
              ,att.a_count_term
@@ -197,12 +197,12 @@ WITH roster AS (
        FROM gabby.powerschool.attendance_counts_static att
        WHERE att.academic_year IN (gabby.utilities.GLOBAL_ACADEMIC_YEAR(), gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
          AND att.mem_count_term > 0
-         AND att.mem_count_term != att.abs_unexcused_count_term
+         AND att.mem_count_term <> att.abs_unexcused_count_term
 
        UNION ALL
 
        SELECT att.studentid
-             ,att.db_name
+             ,att.[db_name]
              ,att.academic_year
              ,'SY1' AS reporting_term
              ,att.a_count_y1
@@ -230,11 +230,11 @@ WITH roster AS (
        FROM gabby.powerschool.attendance_counts_static att 
        WHERE att.academic_year IN (gabby.utilities.GLOBAL_ACADEMIC_YEAR(), gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
          AND att.mem_count_y1 > 0
-         AND att.mem_count_y1 != att.abs_unexcused_count_y1
+         AND att.mem_count_y1 <> att.abs_unexcused_count_y1
          AND att.is_curterm = 1
       ) sub
   UNPIVOT(
-    value
+    [value]
     FOR field IN (a_count_term       
                  ,ad_count_term
                  ,ae_count_term
@@ -318,7 +318,7 @@ WITH roster AS (
   FROM gabby.powerschool.gpa_cumulative gpa
   JOIN gabby.powerschool.students s
     ON gpa.studentid = s.id
-   AND gpa.db_name = s.db_name
+   AND gpa.[db_name] = s.[db_name]
 
   UNION ALL
 
@@ -331,8 +331,7 @@ WITH roster AS (
   FROM gabby.powerschool.gpa_cumulative gpa
   JOIN gabby.powerschool.students s
     ON gpa.studentid = s.id
-   AND gpa.db_name = s.db_name
-  WHERE gpa.schoolid = 73253
+   AND gpa.[db_name] = s.[db_name]
  )
 
 ,lit AS (
@@ -345,7 +344,7 @@ WITH roster AS (
         ,'ACHIEVED' AS subdomain 
   FROM gabby.lit.achieved_by_round_static
   WHERE read_lvl IS NOT NULL
-    AND start_date <= CONVERT(DATE,GETDATE())
+    AND [start_date] <= CONVERT(DATE,GETDATE())
 
   UNION ALL
 
@@ -357,7 +356,7 @@ WITH roster AS (
         ,'GOAL' AS subdomain
   FROM gabby.lit.achieved_by_round_static
   WHERE goal_lvl IS NOT NULL
-    AND start_date <= CONVERT(DATE,GETDATE())
+    AND [start_date] <= CONVERT(DATE,GETDATE())
   
   UNION ALL
 
@@ -409,7 +408,6 @@ WITH roster AS (
   FROM gabby.nwea.assessment_result_identifiers map
   JOIN gabby.powerschool.students s
     ON map.student_id = s.student_number
-   AND s.schoolid = 73253
   WHERE map.measurement_scale = 'Reading'    
     AND map.school_name = 'Newark Collegiate Academy'
     AND map.rn_term_subj = 1
@@ -434,7 +432,7 @@ WITH roster AS (
         ,academic_year
         ,NULL AS test_date
         ,'PARCC' AS test_name
-        ,subject COLLATE Latin1_General_BIN AS subject
+        ,[subject] COLLATE Latin1_General_BIN AS [subject]
         ,test_scale_score
         ,test_performance_level
         ,CASE
@@ -453,7 +451,7 @@ WITH roster AS (
         ,academic_year
         ,NULL AS test_date
         ,test_type
-        ,subject      
+        ,[subject]      
         ,scaled_score      
         ,CASE
           WHEN performance_level = 'Advanced Proficient' THEN 5
@@ -470,7 +468,7 @@ WITH roster AS (
         ,academic_year
         ,test_date
         ,test_name
-        ,CONVERT(VARCHAR(25),subject) AS subject
+        ,CONVERT(VARCHAR(25),[subject]) AS [subject]
         ,scale_score
         ,NULL AS performance_level
         ,NULL AS performance_level_label
@@ -489,7 +487,7 @@ WITH roster AS (
       ) sub
   UNPIVOT(
     scale_score
-    FOR subject IN (composite
+    FOR [subject] IN (composite
                    ,english
                    ,math
                    ,reading
@@ -503,7 +501,7 @@ WITH roster AS (
         ,academic_year
         ,administered_at AS test_date
         ,'ACT Prep' AS test_name
-        ,CASE WHEN subject_area = 'Mathematics' THEN 'Math' ELSE subject_area END AS subject
+        ,CASE WHEN subject_area = 'Mathematics' THEN 'Math' ELSE subject_area END AS [subject]
         ,scale_score
         ,overall_performance_band AS performance_level
         ,NULL AS performance_level_label
@@ -518,14 +516,14 @@ WITH roster AS (
         ,academic_year
         ,test_date      
         ,'SAT' AS test_name
-        ,CONVERT(VARCHAR(25),subject) AS subject
+        ,CONVERT(VARCHAR(25),[subject]) AS [subject]
         ,scale_score
         ,NULL AS performance_level
         ,NULL AS performance_level_label
   FROM gabby.naviance.sat_scores_clean
   UNPIVOT(
     scale_score
-    FOR subject IN (all_tests_total
+    FOR [subject] IN (all_tests_total
                    ,math
                    ,verbal
                    ,writing)
@@ -538,7 +536,7 @@ WITH roster AS (
         ,academic_year
         ,test_date
         ,'SAT II' test_name      
-        ,test_name AS subject
+        ,test_name AS [subject]
         ,score AS scale_score
         ,NULL AS performance_level
         ,NULL AS performance_level_label
@@ -557,7 +555,7 @@ WITH roster AS (
                        ELSE REPLACE(test_date,'-00','-01') 
                       END) AS test_date     
         ,'AP' AS test_name      
-        ,CONVERT(VARCHAR(125),test_name) AS subject
+        ,CONVERT(VARCHAR(125),test_name) AS [subject]
         ,CONVERT(INT,score) AS scale_score
         ,NULL AS performance_level
         ,NULL AS performance_level_label
@@ -576,14 +574,14 @@ WITH roster AS (
                        ELSE REPLACE(test_date,'-00','-01') 
                       END) AS test_date     
         ,'EXPLORE' AS test_name
-        ,CONVERT(VARCHAR(25),subject) AS subject
+        ,CONVERT(VARCHAR(25),[subject]) AS [subject]
         ,CONVERT(INT,scale_score) AS scale_score
         ,NULL AS performance_level
         ,NULL AS performance_level_label
   FROM gabby.naviance.explore_scores
   UNPIVOT(
     scale_score
-    FOR subject IN (english	
+    FOR [subject] IN (english	
                    ,math
                    ,reading
                    ,science
@@ -602,14 +600,14 @@ WITH roster AS (
                        ELSE REPLACE(test_date,'-00','-01') 
                       END) AS test_date 
         ,'PSAT' AS test_name
-        ,CONVERT(VARCHAR(25),subject) AS subject
+        ,CONVERT(VARCHAR(25),[subject]) AS [subject]
         ,CONVERT(INT,scale_score) AS scale_score
         ,NULL AS performance_level
         ,NULL AS performance_level_label
   FROM gabby.naviance.psat_scores
   UNPIVOT(
     scale_score
-    FOR subject IN (critical_reading
+    FOR [subject] IN (critical_reading
                    ,math
                    ,writing
                    ,total)
@@ -619,9 +617,9 @@ WITH roster AS (
 ,collegeapps AS (
   SELECT sub.student_number
         ,sub.collegename
-        ,sub.level
+        ,sub.[level]
         ,sub.result_code
-        ,sub.value        
+        ,sub.[value]        
         ,ROW_NUMBER() OVER(                                
            PARTITION BY sub.student_number
              ORDER BY sub.competitiveness_ranking_int DESC) AS competitiveness_ranking 
@@ -629,7 +627,7 @@ WITH roster AS (
       ( 
        SELECT CONVERT(INT,app.hs_student_id) AS student_number
              ,CONVERT(VARCHAR(125),app.collegename) AS collegename
-             ,CONVERT(VARCHAR(25),app.level) AS level
+             ,CONVERT(VARCHAR(25),app.[level]) AS [level]
              ,CONVERT(VARCHAR(125),CASE 
                WHEN app.result_code IN ('unknown') 
                  OR app.result_code IS NULL 
@@ -639,7 +637,7 @@ WITH roster AS (
              ,CONVERT(VARCHAR(250),
                 CONCAT('Type:', CHAR(9), REPLACE(app.inst_control,'p','P'), CHAR(10)
                       ,'Attending:', CHAR(9), app.attending, CHAR(10)               
-                      ,app.comments)) AS value
+                      ,app.comments)) AS [value]
         
              ,CASE
                WHEN a.competitiveness_ranking_c = 'Most Competitive+' THEN 7
@@ -663,8 +661,8 @@ WITH roster AS (
         ,academic_year
         ,reporting_term_name
         ,CONVERT(VARCHAR,field) AS subdomain
-        ,CASE WHEN field LIKE '%status%' THEN value ELSE NULL END AS text_value
-        ,CASE WHEN field LIKE '%status%' THEN NULL ELSE CONVERT(FLOAT,value) END AS numeric_value
+        ,CASE WHEN field LIKE '%status%' THEN [value] ELSE NULL END AS text_value
+        ,CASE WHEN field LIKE '%status%' THEN NULL ELSE CONVERT(FLOAT,[value]) END AS numeric_value
   FROM
       (
        SELECT student_number
@@ -680,7 +678,7 @@ WITH roster AS (
          AND is_curterm = 1
       ) sub
   UNPIVOT(
-    value
+    [value]
     FOR field IN (promo_status_overall
                  ,promo_status_att
                  ,promo_status_lit
@@ -719,7 +717,7 @@ SELECT r.studentid
       ,r.reporting_term      
       ,'GRADES' AS domain
       ,gr.subdomain      
-      ,gr.credittype AS subject
+      ,gr.credittype AS [subject]
       ,gr.course_name
       ,gr.finalgradename AS measure_name
       ,gr.term_grade_percent_adjusted AS measure_value
@@ -752,7 +750,7 @@ SELECT r.studentid
       ,r.reporting_term      
       ,'ATTENDANCE' AS domain
       ,att.subdomain      
-      ,NULL AS subject
+      ,NULL AS [subject]
       ,NULL AS course_name
       ,att.att_code COLLATE Latin1_General_BIN AS measure_name
       ,att.att_counts AS measure_value
@@ -762,7 +760,7 @@ SELECT r.studentid
 FROM roster r
 LEFT JOIN attendance att
   ON r.studentid = att.studentid
- AND r.db_name = att.db_name
+ AND r.[db_name] = att.[db_name]
  AND r.academic_year = att.academic_year
  AND r.reporting_term COLLATE Latin1_General_BIN = att.reporting_term
 
@@ -786,7 +784,7 @@ SELECT r.studentid
       ,r.reporting_term      
       ,'MODULES' AS domain
       ,cma.subdomain      
-      ,cma.subject_area COLLATE Latin1_General_BIN AS subject
+      ,cma.subject_area COLLATE Latin1_General_BIN AS [subject]
       ,cma.module_type COLLATE Latin1_General_BIN AS course_name
       ,cma.standards COLLATE Latin1_General_BIN AS measure_name
       ,cma.percent_correct AS measure_value
@@ -819,7 +817,7 @@ SELECT r.studentid
       ,r.reporting_term      
       ,'GPA'
       ,gpa.subdomain      
-      ,NULL AS subject
+      ,NULL AS [subject]
       ,NULL AS course_name
       ,NULL AS measure_name
       ,gpa.GPA AS measure_value
@@ -854,7 +852,7 @@ SELECT r.studentid
       ,r.reporting_term      
       ,'LIT'
       ,lit.subdomain      
-      ,NULL AS subject
+      ,NULL AS [subject]
       ,NULL AS course_name
       ,lit.read_lvl AS measure_name
       ,lit.lvl_num AS measure_value
@@ -887,7 +885,7 @@ SELECT r.studentid
       ,r.reporting_term      
       ,'MAP' AS domain
       ,map.subdomain      
-      ,map.measurement_scale AS subject
+      ,map.measurement_scale AS [subject]
       ,NULL AS course_name
       ,CONVERT(VARCHAR,map.test_ritscore) AS measure_name
       ,map.testpercentile AS measure_value
@@ -920,7 +918,7 @@ SELECT r.studentid
       ,r.reporting_term      
       ,'STANDARDIZED TESTS' AS domain
       ,std.test_name COLLATE Latin1_General_BIN AS subdomain
-      ,std.subject COLLATE Latin1_General_BIN AS subject
+      ,std.[subject] COLLATE Latin1_General_BIN AS [subject]
       ,NULL AS course_name
       ,CONVERT(VARCHAR(250),NEWID()) COLLATE Latin1_General_BIN AS measure_name
       ,std.test_scale_score AS measure_value
@@ -951,14 +949,14 @@ SELECT r.studentid
       ,r.term_name
       ,r.reporting_term      
       ,'COLLEGE APPS' AS domain
-      ,apps.level AS subdomain
-      ,apps.result_code AS subject
+      ,apps.[level] AS subdomain
+      ,apps.result_code AS [subject]
       ,apps.collegename AS course_name
       ,NULL AS measure_name
       ,NULL AS measure_value
       ,NULL AS measure_date
       ,apps.competitiveness_ranking AS performance_level
-      ,apps.value AS performance_level_label
+      ,apps.[value] AS performance_level_label
 FROM roster r
 LEFT JOIN collegeapps apps
   ON r.student_number = apps.student_number
@@ -984,7 +982,7 @@ SELECT r.studentid
       ,'Q' + RIGHT(promo.reporting_term_name, 1) AS reporting_term
       ,'PROMO STATUS' AS domain
       ,promo.subdomain
-      ,NULL AS subject
+      ,NULL AS [subject]
       ,NULL AS course_name
       ,NULL AS measure_name
       ,NULL AS measure_value
@@ -1016,10 +1014,10 @@ SELECT r.studentid
       ,r.term_name
       ,r.reporting_term      
       ,'CONTACT' AS domain
-      ,c.type AS subdomain
-      ,c.person AS subject
+      ,c.[type] AS subdomain
+      ,c.person AS [subject]
       ,NULL AS course_name
-      ,c.value AS measure_name
+      ,c.[value] AS measure_name
       ,NULL AS measure_value
       ,NULL AS measure_date
       ,NULL AS performance_level
@@ -1049,7 +1047,7 @@ SELECT r.studentid
       ,r.reporting_term      
       ,'BLENDED LEARNING' AS domain
       ,b.subdomain
-      ,NULL AS subject
+      ,NULL AS [subject]
       ,NULL AS course_name
       ,NULL AS measure_name
       ,b.progress AS measure_value
@@ -1084,7 +1082,7 @@ SELECT DISTINCT
       ,NULL AS reporting_term      
       ,'CONTACT' AS domain
       ,NULL AS subdomain
-      ,NULL AS subject
+      ,NULL AS [subject]
       ,NULL AS course_name
       ,NULL AS measure_name
       ,NULL AS measure_value
