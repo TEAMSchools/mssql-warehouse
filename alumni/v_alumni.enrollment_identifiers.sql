@@ -27,7 +27,7 @@ WITH enrollments AS (
                   ORDER BY sub.start_date_c ASC, sub.actual_end_date_c ASC) AS rn_ecc_asc
              ,ROW_NUMBER() OVER(
                 PARTITION BY sub.student_c, sub.pursuing_degree_level
-                  ORDER BY sub.start_date_c DESC, sub.actual_end_date_c DESC) AS rn_degree_desc
+                  ORDER BY sub.is_graduated DESC, sub.start_date_c DESC, sub.actual_end_date_c DESC) AS rn_degree_desc
              ,ROW_NUMBER() OVER(
                 PARTITION BY sub.student_c
                   ORDER BY sub.start_date_c DESC, sub.actual_end_date_c DESC) AS rn_current
@@ -47,6 +47,7 @@ WITH enrollments AS (
                      AND e.account_type_c NOT IN ('Traditional Public School', 'Alternative High School', 'KIPP School')
                          THEN 'Vocational'
                    END AS pursuing_degree_level
+                  ,CASE WHEN e.status_c = 'Graduated' THEN 1 ELSE 0 END AS is_graduated
                   ,CASE WHEN e.pursuing_degree_type_c IN ('Bachelor''s (4-year)', 'Associate''s (2 year)') THEN 1 END AS is_ecc_degree_type
                   ,CASE 
                     WHEN DATEFROMPARTS(DATEPART(YEAR, c.actual_hs_graduation_date_c), 10, 31) 
