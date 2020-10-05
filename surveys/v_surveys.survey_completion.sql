@@ -4,57 +4,85 @@ GO
 CREATE OR ALTER VIEW surveys.survey_completion AS
 
 WITH survey_feed AS (
-  SELECT _created AS date_created
-        ,CONVERT(DATETIME2,survey_timestamp) AS date_submitted
-        ,subject_name
-        ,LOWER(email) AS responder_email
-        ,gabby.utilities.DATE_TO_SY(_created) AS academic_year
-        ,CASE
-          WHEN MONTH(_created) IN (8, 9, 10) THEN 'SO1'
-          WHEN MONTH(_created) IN (11, 12, 1, 2, 3) THEN 'SO2'
-          WHEN MONTH(_created) IN (4, 5, 6, 7) THEN 'SO3'
-         END AS reporting_term
-        ,'Self & Others' AS survey_type
-        ,is_manager
-  FROM gabby.surveys.self_and_others_survey
-  WHERE subject_name IS NOT NULL
-    AND _created IS NOT NULL
-
-  UNION ALL
-
-  SELECT _created AS date_created
-        ,CONVERT(DATETIME2,survey_timestamp) AS date_submitted
-        ,subject_name
-        ,LOWER(responder_name) AS responder_email
-        ,gabby.utilities.DATE_TO_SY(_created) AS academic_year
-        ,CASE
-          WHEN MONTH(_created) IN (8, 9, 10) THEN 'MGR1'
-          WHEN MONTH(_created) IN (11, 12, 1) THEN 'MGR2'
-          WHEN MONTH(_created) IN (2, 3, 4) THEN 'MGR3'
-          WHEN MONTH(_created) IN (5, 6, 7) THEN 'MGR4'
-         END AS reporting_term
-        ,'Manager' AS survey_type
-        ,NULL AS is_manager
-  FROM gabby.surveys.manager_survey
-  WHERE subject_name IS NOT NULL
-    AND _created IS NOT NULL
-    AND subject_name IS NOT NULL
-    AND q_1 IS NOT NULL
-
-  UNION ALL
-
-  SELECT date_started AS date_created
+  SELECT date_submitted AS date_created
         ,CONVERT(DATETIME2,date_submitted) AS date_submitted
-        ,'R9/Engagement' AS subject_name
-        ,LOWER(respondent_mail) AS responder_email
-        ,gabby.utilities.DATE_TO_SY(date_submitted) AS academic_year
+        ,CASE WHEN survey_title = 'Engagement, Regional, and CMO Surveys' AND subject_preferred_name IS NULL THEN 'R9/Engagement'
+              ELSE subject_preferred_name 
+         END AS subject_name
+        ,respondent_mail AS responder_email
+        ,campaign_academic_year AS academic_year
         ,campaign_reporting_term AS reporting_term
-        ,'R9/Engagement' AS survey
-        ,NULL AS is_manager
-  FROM gabby.surveygizmo.survey_response_identifiers_static
-  WHERE survey_id = 5300913
-    AND status = 'Complete'
- )
+        ,CASE WHEN survey_title = 'Manager Survey' THEN 'Manager'
+              WHEN survey_title = 'Self and Others' THEN 'Self & Others'
+              WHEN survey_title = 'Engagement, Regional, and CMO Surveys' THEN 'R9/Engagement'
+              ELSE NULL
+         END AS survey_type
+        ,is_manager
+  FROM gabby.surveygizmo.survey_detail
+  WHERE survey_id IN (5300913, 4561288, 4561325)
+    AND rn_respondent_subject = 1
+  GROUP BY date_submitted
+          ,survey_title
+          ,subject_preferred_name
+          ,respondent_mail
+          ,campaign_academic_year
+          ,campaign_reporting_term
+          ,is_manager
+  )
+
+--kill the webhooks
+--WITH survey_feed AS (
+--  SELECT _created AS date_created
+--        ,CONVERT(DATETIME2,survey_timestamp) AS date_submitted
+--        ,subject_name
+--        ,LOWER(email) AS responder_email
+--        ,gabby.utilities.DATE_TO_SY(_created) AS academic_year
+--        ,CASE
+--          WHEN MONTH(_created) IN (8, 9, 10) THEN 'SO1'
+--          WHEN MONTH(_created) IN (11, 12, 1, 2, 3) THEN 'SO2'
+--          WHEN MONTH(_created) IN (4, 5, 6, 7) THEN 'SO3'
+--         END AS reporting_term
+--        ,'Self & Others' AS survey_type
+--        ,is_manager
+--  FROM gabby.surveys.self_and_others_survey
+--  WHERE subject_name IS NOT NULL
+--    AND _created IS NOT NULL
+
+--  UNION ALL
+
+--  SELECT _created AS date_created
+--        ,CONVERT(DATETIME2,survey_timestamp) AS date_submitted
+--        ,subject_name
+--        ,LOWER(responder_name) AS responder_email
+--        ,gabby.utilities.DATE_TO_SY(_created) AS academic_year
+--        ,CASE
+--          WHEN MONTH(_created) IN (8, 9, 10) THEN 'MGR1'
+--          WHEN MONTH(_created) IN (11, 12, 1) THEN 'MGR2'
+--          WHEN MONTH(_created) IN (2, 3, 4) THEN 'MGR3'
+--          WHEN MONTH(_created) IN (5, 6, 7) THEN 'MGR4'
+--         END AS reporting_term
+--        ,'Manager' AS survey_type
+--        ,NULL AS is_manager
+--  FROM gabby.surveys.manager_survey
+--  WHERE subject_name IS NOT NULL
+--    AND _created IS NOT NULL
+--    AND subject_name IS NOT NULL
+--    AND q_1 IS NOT NULL
+
+--  UNION ALL
+
+--  SELECT date_started AS date_created
+--        ,CONVERT(DATETIME2,date_submitted) AS date_submitted
+--        ,'R9/Engagement' AS subject_name
+--        ,LOWER(respondent_mail) AS responder_email
+--        ,gabby.utilities.DATE_TO_SY(date_submitted) AS academic_year
+--        ,campaign_reporting_term AS reporting_term
+--        ,'R9/Engagement' AS survey
+--        ,NULL AS is_manager
+--  FROM gabby.surveygizmo.survey_response_identifiers_static
+--  WHERE survey_id = 5300913
+--    AND status = 'Complete'
+-- )
 
 ,teacher_scaffold AS (
   SELECT sr.df_employee_number
