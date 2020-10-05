@@ -32,7 +32,7 @@ LEFT JOIN gabby.dayforce.work_assignment_status w
                           AND COALESCE(w.effective_end_date, DATEFROMPARTS((d.campaign_academic_year + 1), 7, 1))
 WHERE d.survey_id = 5300913
   AND d.rn_respondent_subject = 1
-  AND d.campaign_academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
+  AND d.campaign_academic_year >= 2018
 
 UNION ALL
 
