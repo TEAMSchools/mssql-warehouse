@@ -7,6 +7,7 @@ SELECT sub.student_number
       ,sub.sf_contact_id
       ,sub.lastfirst
       ,sub.ktc_cohort
+      ,sub.ktc_status
       ,sub.kipp_region_name
       ,sub.current_kipp_student
       ,sub.post_hs_simple_admin
@@ -15,6 +16,7 @@ SELECT sub.student_number
       ,sub.current_college_semester_gpa
       ,sub.highest_act_score
       ,sub.academic_year
+      ,sub.middle_school_attended
 
       ,e.id AS enrollment_id
       ,e.pursuing_degree_type_c AS pursuing_degree_type
@@ -45,12 +47,13 @@ FROM
            ,r.current_college_cumulative_gpa
            ,r.current_college_semester_gpa
            ,r.highest_act_score
+           ,r.ktc_status
+           ,r.middle_school_attended
 
            ,r.ktc_cohort + n.n AS academic_year
      FROM gabby.alumni.ktc_roster r
      JOIN gabby.utilities.row_generator n
        ON n.n <= 5
-     WHERE r.ktc_status IN ('HSG', 'TAF')
     ) sub
 LEFT JOIN gabby.alumni.enrollment_c e
    ON sub.sf_contact_id = e.student_c
