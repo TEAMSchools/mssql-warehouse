@@ -6,6 +6,7 @@ CREATE OR ALTER VIEW extracts.gclassroom_teachers AS
 SELECT s.class_alias
       ,s.schoolid
       ,s.termid
+      ,s.[db_name]
       
       ,scw.df_employee_number
       ,scw.preferred_name
