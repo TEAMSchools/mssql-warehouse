@@ -252,30 +252,44 @@ FROM
      FROM enrollments e
      LEFT JOIN gabby.alumni.enrollment_c ba
        ON e.ba_enrollment_id = ba.id
+      AND ba.is_deleted = 0
      LEFT JOIN gabby.alumni.account baa
        ON ba.school_c = baa.id
+      AND baa.is_deleted = 0
      LEFT JOIN gabby.alumni.enrollment_c aa
        ON e.aa_enrollment_id = aa.id
+      AND aa.is_deleted = 0
      LEFT JOIN gabby.alumni.account aaa
        ON aa.school_c = aaa.id
+      AND aaa.is_deleted = 0
      LEFT JOIN gabby.alumni.enrollment_c ecc
        ON e.ecc_enrollment_id = ecc.id
+      AND ecc.is_deleted = 0
      LEFT JOIN gabby.alumni.account ecca
        ON ecc.school_c = ecca.id
+      AND ecca.is_deleted = 0
      LEFT JOIN gabby.alumni.enrollment_c hs
        ON e.secondary_enrollment_id = hs.id
+      AND hs.is_deleted = 0
      LEFT JOIN gabby.alumni.account hsa
        ON hs.school_c = hsa.id
+      AND hsa.is_deleted = 0
      LEFT JOIN gabby.alumni.enrollment_c cte
        ON e.vocational_enrollment_id = cte.id
+      AND cte.is_deleted = 0
      LEFT JOIN gabby.alumni.account ctea
        ON cte.school_c = ctea.id
+      AND ctea.is_deleted = 0
      LEFT JOIN gabby.alumni.enrollment_c cur
        ON e.curr_enrollment_id = cur.id
+      AND cur.is_deleted = 0
      LEFT JOIN gabby.alumni.account cura
        ON cur.school_c = cura.id
+      AND cura.is_deleted = 0
     ) sub
 LEFT JOIN gabby.alumni.enrollment_c ug
   ON sub.ugrad_enrollment_id = ug.id
+ AND ug.is_deleted = 0
 LEFT JOIN gabby.alumni.account uga
   ON ug.school_c = uga.id
+ AND uga.is_deleted = 0
