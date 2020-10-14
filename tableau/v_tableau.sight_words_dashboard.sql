@@ -8,6 +8,7 @@ SELECT r.repository_id
       ,r.date_administered
 
       ,rt.alt_name AS term_name
+      ,rt.academic_year
 
       ,f.[label] AS sight_word
 
@@ -18,7 +19,6 @@ SELECT r.repository_id
       ,co.is_pathways
       ,co.grade_level
       ,co.team
-      ,co.academic_year
 
       ,sw.[value]
 FROM gabby.illuminate_codes.dna_scopes ds
@@ -37,7 +37,7 @@ JOIN gabby.illuminate_dna_repositories.repository_grade_levels g
   ON r.repository_id = g.repository_id
 JOIN gabby.powerschool.cohort_identifiers_static co
   ON g.grade_level_id = (co.grade_level + 1)
- AND gabby.utilities.DATE_TO_SY(r.date_administered) = co.academic_year
+ AND rt.academic_year = co.academic_year
  AND co.is_enrolled_recent = 1
  AND co.rn_year = 1
 LEFT JOIN gabby.illuminate_dna_repositories.sight_words_data sw

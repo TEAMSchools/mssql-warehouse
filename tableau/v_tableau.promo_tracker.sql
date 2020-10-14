@@ -55,7 +55,7 @@ WITH roster AS (
         ,co.[db_name]
 
         ,'Y1' AS term
-        ,CONVERT(VARCHAR,dt.time_per_name) AS reporting_term
+        ,CONVERT(VARCHAR, dt.time_per_name) AS reporting_term
         ,dt.[start_date] AS term_start_date
         ,dt.end_date AS term_end_date
   FROM gabby.powerschool.cohort_identifiers_static co
@@ -871,7 +871,7 @@ UNION ALL
 SELECT r.studentid
       ,r.student_number
       ,r.lastfirst
-      ,map.test_year AS year
+      ,map.academic_year AS [year]
       ,r.region
       ,r.school_level
       ,r.reporting_schoolid AS schoolid
@@ -887,7 +887,7 @@ SELECT r.studentid
       ,map.subdomain      
       ,map.measurement_scale AS [subject]
       ,NULL AS course_name
-      ,CONVERT(VARCHAR,map.test_ritscore) AS measure_name
+      ,CONVERT(VARCHAR, map.test_ritscore) AS measure_name
       ,map.testpercentile AS measure_value
       ,NULL AS measure_date
       ,NULL AS performance_level
@@ -895,8 +895,8 @@ SELECT r.studentid
 FROM roster r
 LEFT JOIN map
   ON r.student_number = map.student_number
- AND r.academic_year >= map.academic_year
 WHERE r.term_name = 'Y1' 
+  AND r.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 
 UNION ALL
 --*/

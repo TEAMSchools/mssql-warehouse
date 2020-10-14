@@ -49,7 +49,7 @@ SELECT co.school_name
       
       /* component data */
       ,long.domain AS component_domain
-      ,long.label AS component_strand
+      ,long.[label] AS component_strand
       ,long.specific_label AS component_strand_specific
       ,long.score AS component_score
       ,long.benchmark AS component_benchmark
@@ -76,7 +76,7 @@ JOIN gabby.lit.achieved_by_round_static achv
   ON co.student_number = achv.student_number
  AND co.academic_year = achv.academic_year
  AND term.lit = achv.test_round
- AND achv.start_date <= GETDATE()
+ AND achv.[start_date] <= GETDATE()
 LEFT JOIN gabby.lit.all_test_events_static atid
   ON achv.achv_unique_id = atid.unique_id
 LEFT JOIN gabby.lit.all_test_events_static dtid
@@ -89,16 +89,13 @@ LEFT JOIN gabby.renaissance.ar_progress_to_goals ar
   ON co.student_number = ar.student_number
  AND co.academic_year = ar.academic_year
  AND term.ar = ar.reporting_term 
- AND ar.start_date <= GETDATE()
+ AND ar.[start_date] <= GETDATE()
  AND ar.n_total > 0
 LEFT JOIN gabby.lit.guided_reading_roster gr
   ON co.student_number = gr.student_number
  AND co.academic_year = gr.academic_year
  AND term.lit = gr.test_round
 WHERE co.rn_year = 1
-  AND co.academic_year IN (gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-                          ,(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
-                          ,(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 2)
-                          ,(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 3))
-  AND co.grade_level != 99
-  AND co.reporting_schoolid != 5173
+  AND co.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 3)
+  AND co.grade_level <> 99
+  AND co.school_level <> 'OD'
