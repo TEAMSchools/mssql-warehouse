@@ -51,7 +51,7 @@ WITH enrollments AS (
                   ,CASE WHEN e.pursuing_degree_type_c IN ('Bachelor''s (4-year)', 'Associate''s (2 year)') THEN 1 END AS is_ecc_degree_type
                   ,CASE 
                     WHEN DATEFROMPARTS(DATEPART(YEAR, c.actual_hs_graduation_date_c), 10, 31) 
-                           BETWEEN e.start_date_c AND e.actual_end_date_c THEN 1 
+                           BETWEEN e.start_date_c AND COALESCE(e.actual_end_date_c, CONVERT(DATE, GETDATE())) THEN 1 
                     ELSE 0 
                    END AS is_ecc_dated
             FROM gabby.alumni.enrollment_c e
