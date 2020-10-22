@@ -43,13 +43,13 @@ FROM gabby.people.staff_crosswalk_static df
 JOIN gabby.powerschool.schools sch
   ON sch.state_excludefromreporting = 0
 WHERE df.[status] NOT IN ('TERMINATED', 'PRESTART')
+  AND df.legal_entity_name = 'KIPP New Jersey'
   AND (df.primary_on_site_department IN ('Data', 'Teaching and Learning') 
-        OR df.primary_job = 'Executive Director'
-        OR df.ps_teachernumber = 'CMMCYBMTL') /* special exception for FW */
+        OR df.primary_job IN ('Executive Director', 'Managing Director'))
 
 UNION ALL
 
-/* All Newark */
+/* All region */
 SELECT CONVERT(VARCHAR(25), sch.school_number) AS [School_id]
       ,df.ps_teachernumber AS [Staff_id]
       ,df.userprincipalname AS [Staff_email]
@@ -66,7 +66,7 @@ JOIN gabby.powerschool.schools sch
  AND sch.state_excludefromreporting = 0
 WHERE df.[status] NOT IN ('TERMINATED', 'PRESTART')
   AND (df.primary_job IN ('Assistant Superintendent', 'Head of Schools')
-         OR df.ps_teachernumber = '445') /* exception for AR */
+         OR (df.primary_on_site_department = 'Special Education' AND df.primary_job LIKE '%Director%'))
 
 UNION ALL
 
