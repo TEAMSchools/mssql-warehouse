@@ -63,7 +63,7 @@ WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.rn_year = 1
   AND co.grade_level <> 99
 
-  UNION ALL
+UNION ALL
 
 /* demo students */
 SELECT CONVERT(VARCHAR(25), co.schoolid) AS [School_id]
