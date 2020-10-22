@@ -16,7 +16,9 @@ SELECT co.studentid
       ,co.reporting_schoolid
       ,co.boy_status
       ,co.enroll_status
+      ,co.advisor_name
+      ,co.student_web_id + '@teamstudents.org' AS student_email
 FROM gabby.powerschool.cohort_identifiers_static co
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.rn_year = 1 
-  AND co.grade_level != 99
+  AND co.grade_level <> 99

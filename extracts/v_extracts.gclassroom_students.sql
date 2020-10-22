@@ -9,6 +9,8 @@ SELECT sec.class_alias
       ,sec.[db_name]
       ,sec.section_number
 
+      ,s.student_number
+
       ,sas.student_web_id + '@teamstudents.org' AS student_gsuite_email
 FROM gabby.extracts.gclassroom_sections sec
 JOIN gabby.powerschool.cc

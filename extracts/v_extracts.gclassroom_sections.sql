@@ -20,12 +20,18 @@ SELECT CONCAT(s.schoolid, '-'
       ,s.external_expression AS [period]
       ,s.schoolid
       ,s.termid
+      ,s.course_number
+      ,s.room
+
+      ,sch.[name] AS school_name
 
       ,CASE
         WHEN scw.legal_entity_name = 'KIPP Miami' THEN LOWER(LEFT(scw.userprincipalname, CHARINDEX('@', scw.userprincipalname))) + 'kippmiami.org'
         ELSE LOWER(LEFT(scw.userprincipalname, CHARINDEX('@', scw.userprincipalname))) + 'apps.teamschools.org' 
        END AS teacher_gsuite_email
 FROM gabby.powerschool.sections s
+JOIN gabby.powerschool.schools sch
+  ON s.schoolid = sch.school_number
 JOIN gabby.powerschool.courses c
   ON s.course_number_clean = c.course_number_clean
  AND s.[db_name] = c.[db_name] 
