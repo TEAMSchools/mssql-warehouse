@@ -23,9 +23,7 @@ SELECT asr.local_student_id AS student_number
         WHEN asr.performance_band_number = 2 THEN 'Below Target'
         WHEN asr.performance_band_number = 1 THEN 'Far Below Target'
        END AS standard_proficiency
-FROM gabby.illuminate_dna_assessments.agg_student_responses_all asr
-WHERE asr.response_type = 'S'
-  AND asr.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-  AND asr.scope IN ('CMA - End-of-Module', 'Unit Assessment')  
-  AND asr.subject_area != 'Writing'       
-  AND asr.standard_code NOT LIKE 'TES.W.%'
+      ,asr.response_type
+FROM gabby.illuminate_dna_assessments.agg_student_responses_all_current asr
+WHERE asr.response_type IN ('S', 'G')
+  AND asr.module_type IN ('QA', 'CRQ')
