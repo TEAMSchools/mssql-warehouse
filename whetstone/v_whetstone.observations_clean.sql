@@ -77,6 +77,7 @@ FROM
           ,JSON_VALUE(wo.teaching_assignment, '$.course') AS teaching_assignment_course_id
           ,JSON_VALUE(wo.teaching_assignment, '$.period') AS teaching_assignment_period_id
     FROM gabby.whetstone.observations wo
+    WHERE wo.[archived_at] IS NULL
    ) sub
 LEFT JOIN gabby.whetstone.users_clean t
   ON sub.teacher_id = t.[user_id]
