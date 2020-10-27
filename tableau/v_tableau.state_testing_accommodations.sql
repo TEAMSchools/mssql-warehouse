@@ -41,7 +41,7 @@ WITH accom AS (
              ,CAST(asmt_directions_aloud AS VARCHAR(25)) AS asmt_directions_aloud
              ,CAST(asmt_math_response_el AS VARCHAR(25)) AS asmt_math_response_el
              ,CAST(parcc_translation_math_paper AS VARCHAR(25)) AS parcc_translation_math_paper
-             ,CAST(asmt_dictionary AS VARCHAR(25)) AS asmt_dictionary
+             --,CAST(asmt_dictionary AS VARCHAR(25)) AS asmt_dictionary
              ,CAST(parcc_text_to_speech AS VARCHAR(25)) AS parcc_text_to_speech
              ,CAST(parcc_text_to_speech_math AS VARCHAR(25)) AS parcc_text_to_speech_math
              ,CAST(asmt_humanreader_signer AS VARCHAR(25)) AS asmt_humanreader_signer
@@ -81,7 +81,7 @@ WITH accom AS (
                          ,asmt_directions_aloud
                          ,asmt_math_response_el
                          ,parcc_translation_math_paper
-                         ,asmt_dictionary
+                         --,asmt_dictionary
                          ,parcc_text_to_speech
                          ,parcc_text_to_speech_math
                          ,asmt_humanreader_signer

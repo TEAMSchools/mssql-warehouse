@@ -66,8 +66,8 @@ SELECT state_abbreviation
       ,word_prediction
       ,COALESCE(administration_directions_clarifiedin_students_native_language, administration_directions_clarified_in_students_native_language) AS administration_directions_clarifiedin_students_native_language
       ,administration_directions_read_aloudin_students_native_language
-      ,NULL AS mathematics_response_el
-      ,NULL AS wordto_word_dictionary_english_native_language
+      --,NULL AS mathematics_response_el
+      --,NULL AS wordto_word_dictionary_english_native_language
       ,emergency_accommodation
       ,extended_time
       ,COALESCE(student_test_uuid, summative_score_record_uuid) AS student_test_uuid
@@ -144,7 +144,7 @@ SELECT state_abbreviation
       ,subclaim_4_category
       ,subclaim_5_category
       ,test_score_complete
-      ,NULL AS word_prediction_for_elal
+      --,NULL AS word_prediction_for_elal
       ,record_type
       ,assessment_accommodation_english_learner
       ,assessment_accommodation_504
@@ -246,8 +246,8 @@ SELECT state_abbreviation
       ,word_prediction
       ,administration_directions_clarifiedin_students_native_language
       ,administration_directions_read_aloudin_students_native_language
-      ,mathematics_response_el
-      ,wordto_word_dictionary_english_native_language
+      --,mathematics_response_el
+      --,wordto_word_dictionary_english_native_language
       ,emergency_accommodation
       ,extended_time
       ,student_test_uuid
@@ -324,7 +324,7 @@ SELECT state_abbreviation
       ,subclaim_4_category
       ,subclaim_5_category
       ,test_score_complete
-      ,word_prediction_for_elal
+      --,word_prediction_for_elal
       ,NULL AS record_type
       ,NULL AS assessment_accommodation_english_learner
       ,NULL AS assessment_accommodation_504
@@ -353,6 +353,7 @@ SELECT state_abbreviation
       ,NULL AS pba_unit_3_total_number_of_items
       ,CONVERT(INT, LEFT(assessment_year, 4)) AS academic_year
 FROM parcc.summative_record_file
-WHERE test_status = 'Attempt' AND summative_flag = 'Y';
+WHERE test_status = 'Attempt' 
+  AND summative_flag = 'Y';
 
 GO

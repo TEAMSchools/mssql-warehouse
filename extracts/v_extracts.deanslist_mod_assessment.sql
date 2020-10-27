@@ -18,11 +18,10 @@ WITH assessments_long AS (
         ,ROW_NUMBER() OVER(
            PARTITION BY local_student_id, subject_area, module_number
              ORDER BY is_replacement DESC, percent_correct DESC) AS rn_subj_modnum
-  FROM gabby.illuminate_dna_assessments.agg_student_responses_all
+  FROM gabby.illuminate_dna_assessments.agg_student_responses_all_current
   WHERE response_type = 'O'
     AND subject_area IN ('Text Study','Mathematics')
     AND module_type IN ('QA', 'CRQ', 'CGI', 'CP')
-    AND academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
     AND percent_correct IS NOT NULL
  )
 
@@ -107,9 +106,9 @@ FROM
            ,'ENRICHMENT' AS subject_area
            ,'UA' AS scope
            ,REPLACE(a.term_administered, 'Q', 'QA') AS module_num
-           ,ROUND(AVG(asr.percent_correct),0) AS avg_pct_correct
+           ,ROUND(AVG(asr.percent_correct), 0) AS avg_pct_correct
            ,MIN(a.performance_band_set_id) AS performance_band_set_id
-     FROM gabby.illuminate_dna_assessments.assessments_identifiers a
+     FROM gabby.illuminate_dna_assessments.assessments_identifiers_static a
      JOIN gabby.illuminate_dna_assessments.agg_student_responses asr
        ON a.assessment_id = asr.assessment_id
      JOIN gabby.illuminate_public.students s

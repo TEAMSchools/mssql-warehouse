@@ -5,7 +5,7 @@ CREATE OR ALTER VIEW extracts.deanslist_state_test_scores AS
 
 SELECT student_number
       ,test_type
-      ,subject
+      ,[subject]
       ,test_name
       ,scale_score
       ,proficiency_level
@@ -13,7 +13,7 @@ SELECT student_number
       ,CONCAT(academic_year, '-', (academic_year + 1)) AS academic_year
 
       ,ROW_NUMBER() OVER(
-         PARTITION BY student_number, subject
+         PARTITION BY student_number, [subject]
            ORDER BY academic_year) AS test_index
 FROM
     (
@@ -21,8 +21,8 @@ FROM
            ,co.academic_year
            ,CASE WHEN co.academic_year >= 2018 THEN 'NJSLA' ELSE 'PARCC' END AS test_type
 
-           ,CASE WHEN parcc.subject = 'English Language Arts/Literacy' THEN 'ELA' ELSE 'Math' END AS subject
-           ,parcc.subject COLLATE SQL_Latin1_General_CP1_CI_AS AS test_name
+           ,CASE WHEN parcc.[subject] = 'English Language Arts/Literacy' THEN 'ELA' ELSE 'Math' END AS [subject]
+           ,parcc.[subject] COLLATE SQL_Latin1_General_CP1_CI_AS AS test_name
            ,parcc.test_scale_score AS scale_score
            ,CASE
              WHEN parcc.test_performance_level = 5 THEN 'Exceeded Expectations'
@@ -48,8 +48,8 @@ FROM
            ,co.academic_year
 
            ,nj.test_type
-           ,nj.subject
-           ,nj.subject AS test_name
+           ,nj.[subject]
+           ,nj.[subject] AS test_name
            ,nj.scaled_score AS scale_score
            ,nj.performance_level AS proficiency_level
            ,CASE

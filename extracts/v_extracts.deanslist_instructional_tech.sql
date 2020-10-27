@@ -17,27 +17,27 @@ SELECT student_number
 FROM gabby.renaissance.ar_progress_to_goals
 WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 
-UNION ALL
+--UNION ALL
 
-/* ST Math */
-SELECT school_student_id AS student_number
-      ,start_year AS academic_year
-      ,reporting_term AS term      
-      ,'ST Math' AS it_program
-      ,ROUND(SUM(k_5_progress), 0) AS progress
-      ,ROUND((MAX(days_elapsed) / MAX(total_days)) * 100, 0) AS goal
-      ,CASE
-        WHEN CONVERT(DATE,GETDATE()) >= MAX(term_end_date) AND ROUND(SUM(k_5_progress), 0) >= ROUND((MAX(days_elapsed) / MAX(total_days)) * 100, 0) THEN 'Met Goal'
-        WHEN CONVERT(DATE,GETDATE()) >= MAX(term_end_date) AND ROUND(SUM(k_5_progress), 0) < ROUND((MAX(days_elapsed) / MAX(total_days)) * 100, 0) THEN 'Missed Goal'
-        WHEN ROUND(SUM(k_5_progress), 0) >= ROUND((MAX(days_elapsed) / MAX(total_days)) * 100, 0) THEN 'On Track'        
-        WHEN ROUND(SUM(k_5_progress), 0) < ROUND((MAX(days_elapsed) / MAX(total_days)) * 100, 0) THEN 'Off Track'
-       END AS goal_status
-FROM gabby.stmath.progress_completion_report_clean
-WHERE start_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-  AND rn_gcd = 1
-GROUP BY school_student_id
-        ,start_year
-        ,reporting_term 
+--/* ST Math */
+--SELECT school_student_id AS student_number
+--      ,start_year AS academic_year
+--      ,reporting_term AS term      
+--      ,'ST Math' AS it_program
+--      ,ROUND(SUM(k_5_progress), 0) AS progress
+--      ,ROUND((MAX(days_elapsed) / MAX(total_days)) * 100, 0) AS goal
+--      ,CASE
+--        WHEN CONVERT(DATE,GETDATE()) >= MAX(term_end_date) AND ROUND(SUM(k_5_progress), 0) >= ROUND((MAX(days_elapsed) / MAX(total_days)) * 100, 0) THEN 'Met Goal'
+--        WHEN CONVERT(DATE,GETDATE()) >= MAX(term_end_date) AND ROUND(SUM(k_5_progress), 0) < ROUND((MAX(days_elapsed) / MAX(total_days)) * 100, 0) THEN 'Missed Goal'
+--        WHEN ROUND(SUM(k_5_progress), 0) >= ROUND((MAX(days_elapsed) / MAX(total_days)) * 100, 0) THEN 'On Track'        
+--        WHEN ROUND(SUM(k_5_progress), 0) < ROUND((MAX(days_elapsed) / MAX(total_days)) * 100, 0) THEN 'Off Track'
+--       END AS goal_status
+--FROM gabby.stmath.progress_completion_report_clean
+--WHERE start_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+--  AND rn_gcd = 1
+--GROUP BY school_student_id
+--        ,start_year
+--        ,reporting_term 
 
 --UNION ALL
 
