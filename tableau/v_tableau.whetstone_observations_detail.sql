@@ -69,7 +69,6 @@ SELECT sr.df_employee_number
 FROM gabby.people.staff_crosswalk_static sr
 JOIN gabby.whetstone.observations_clean wo
   ON CONVERT(VARCHAR(25), sr.df_employee_number) = wo.teacher_internal_id
- AND sr.samaccountname <> LEFT(wo.observer_email, CHARINDEX('@', wo.observer_email) - 1)
  AND wo.rubric_name IN ('Development Roadmap','Shadow Session','Assistant Principal PM Rubric','School Leader Moments','Readiness Reflection'
                        ,'Monthly Triad Meeting Form','New Leader Talent Review','Extraordinary Focus Areas Ratings','O3 Form'
                        ,'O3 Form v.1', 'Extraordinary Focus Areas Ratings v.1')
