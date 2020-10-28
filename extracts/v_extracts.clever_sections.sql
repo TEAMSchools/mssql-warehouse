@@ -11,7 +11,7 @@ WITH dsos AS (
     ON df.primary_site = ccw.campus_name
    AND ccw._fivetran_deleted = 0
    AND ccw.is_pathways = 0
-  WHERE df.[status] != 'TERMINATED'
+  WHERE df.[status] <> 'TERMINATED'
     AND df.primary_job IN ('Director of Campus Operations', 'Director Campus Operations', 'Director School Operations', 'School Leader')
  )
 
@@ -144,7 +144,7 @@ WITH dsos AS (
          ON s.school_number = dsos.School_id
        WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
          AND co.rn_year = 1
-         AND co.grade_level != 99
+         AND co.grade_level <> 99
 
        UNION ALL
 

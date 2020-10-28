@@ -4,7 +4,7 @@ GO
 CREATE OR ALTER VIEW extracts.clever_schools AS
 
 SELECT CONVERT(VARCHAR(25), school_number) AS [School_id]
-      ,name AS [School_name]
+      ,[name] AS [School_name]
       ,CONVERT(VARCHAR(25), school_number) AS [School_number]
       ,NULL AS [State_id]
       ,CASE

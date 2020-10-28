@@ -9,12 +9,13 @@ SELECT enr.student_number AS [01 Student ID]
       ,NULL AS [04 First Name]
       ,NULL AS [05 Middle Name]
       ,NULL AS [06 Birth Date]
-      ,CONCAT(CASE
-               WHEN enr.db_name = 'kippnewark' THEN 'NWK'
-               WHEN enr.db_name = 'kippcamden' THEN 'CMD'
-               WHEN enr.db_name = 'kippmiami' THEN 'MIA'
-              END
-             ,enr.sectionid) AS [07 Section ID]
+      ,CONCAT(
+         CASE
+          WHEN enr.[db_name] = 'kippnewark' THEN 'NWK'
+          WHEN enr.[db_name] = 'kippcamden' THEN 'CMD'
+          WHEN enr.[db_name] = 'kippmiami' THEN 'MIA'
+         END
+        ,enr.sectionid) AS [07 Section ID]
       ,enr.schoolid AS [08 Site ID]
       ,enr.course_number AS [09 Course ID]
       ,enr.teachernumber AS [10 User ID]
@@ -31,7 +32,7 @@ FROM gabby.powerschool.course_enrollments_static enr
 JOIN gabby.powerschool.cohort_identifiers_static co
   ON enr.student_number = co.student_number
  AND enr.academic_year = co.academic_year
- AND enr.db_name = co.db_name
+ AND enr.[db_name] = co.[db_name]
  AND co.rn_year = 1
 WHERE enr.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND enr.course_enroll_status = 0

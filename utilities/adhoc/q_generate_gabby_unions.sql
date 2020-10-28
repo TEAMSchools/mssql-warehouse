@@ -1,5 +1,5 @@
 WITH all_tables_columns_pivot AS (
-  SELECT sub.schema_name
+  SELECT sub.[schema_name]
         ,sub.table_name
         ,sub.column_name
         ,sub.kippmiami_column_type
