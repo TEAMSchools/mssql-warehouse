@@ -30,7 +30,7 @@ JOIN gabby.powerschool.students s
  AND cc.db_name = s.db_name
  AND s.grade_level >= 2
 JOIN gabby.powerschool.courses c
-  ON cc.course_number = c.course_number_clean
+  ON cc.course_number = c.course_number
  AND cc.db_name = c.db_name
 JOIN gabby.powerschool.teachers_static t
   ON cc.teacherid = t.id

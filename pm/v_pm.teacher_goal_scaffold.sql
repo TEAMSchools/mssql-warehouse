@@ -7,7 +7,7 @@ WITH ps_section_teacher AS (
   SELECT sec.id AS sectionid
         ,sec.section_number
         ,sec.section_type
-        ,sec.course_number_clean AS course_number
+        ,sec.course_number
         ,sec.yearid + 1990 AS academic_year
         ,sec.[db_name]
                 

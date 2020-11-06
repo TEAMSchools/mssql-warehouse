@@ -41,7 +41,7 @@ WITH grade_detail AS (
   JOIN powerschool.students s
     ON sg.studentid = s.id
   JOIN powerschool.courses c
-    ON sg.course_number = c.course_number_clean
+    ON sg.course_number = c.course_number
    AND c.credit_hours > 0
   LEFT JOIN powerschool.storedgrades y1
     ON sg.studentid = y1.studentid

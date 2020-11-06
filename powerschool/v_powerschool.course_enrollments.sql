@@ -80,7 +80,7 @@ FROM
                 ,CONVERT(INT,cc.schoolid) AS schoolid
                 ,CONVERT(INT,cc.termid) AS termid           
                 ,CONVERT(INT,cc.id) AS cc_id
-                ,cc.course_number_clean AS course_number
+                ,cc.course_number
                 ,CONVERT(VARCHAR(25),cc.section_number) AS section_number
                 ,cc.dateenrolled
                 ,cc.dateleft
@@ -123,13 +123,13 @@ FROM
           JOIN powerschool.students s 
             ON cc.studentid = s.id
           JOIN powerschool.courses cou
-            ON cc.course_number_clean = cou.course_number_clean
+            ON cc.course_number = cou.course_number
           JOIN powerschool.teachers_static t
             ON cc.teacherid = t.id          
           JOIN powerschool.sections sec
             ON cc.abs_sectionid = sec.id
           LEFT JOIN gabby.assessments.normed_subjects sj
-            ON cc.course_number_clean = sj.course_number COLLATE Latin1_General_BIN
+            ON cc.course_number = sj.course_number COLLATE Latin1_General_BIN
            AND sj._fivetran_deleted = 0
          ) sub
     ) sub

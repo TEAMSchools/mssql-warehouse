@@ -46,7 +46,7 @@ JOIN gabby.powerschool.sections sec
   ON o.sectionid = sec.id
  AND o.[db_name] = sec.[db_name]
 JOIN gabby.powerschool.courses cou
-  ON o.course_number = cou.course_number_clean
+  ON o.course_number = cou.course_number
  AND o.[db_name] = cou.[db_name]
 JOIN gabby.powerschool.cc
   ON o.studentid = cc.studentid
@@ -58,12 +58,12 @@ LEFT JOIN gabby.powerschool.final_grades_wide fg
  AND o.course_number = fg.course_number
  AND o.term_name = fg.term_name
  AND o.[db_name] = fg.[db_name]
- AND fg.reporting_term != 'CUR'
+ AND fg.reporting_term <> 'CUR'
 LEFT JOIN gabby.powerschool.category_grades_wide cat
   ON o.student_number = cat.student_number
  AND (o.yearid + 1990) = cat.academic_year
- AND o.[db_name] = cat.[db_name]
  AND o.course_number = cat.course_number
+ AND o.[db_name] = cat.[db_name]
  AND fg.reporting_term = cat.reporting_term 
 LEFT JOIN gabby.powerschool.pgfinalgrades comm
   ON fg.studentid = comm.studentid

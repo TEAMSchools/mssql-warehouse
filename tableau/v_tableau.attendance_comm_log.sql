@@ -98,7 +98,7 @@ LEFT JOIN gabby.powerschool.cc
   ON att.studentid = cc.studentid 
  AND att.att_date BETWEEN cc.dateenrolled AND cc.dateleft
  AND att.db_name = cc.db_name
- AND cc.course_number_clean = 'HR'
+ AND cc.course_number = 'HR'
 LEFT JOIN commlog cl
   ON co.student_number = cl.student_school_id
  AND att.att_date = cl.commlog_date

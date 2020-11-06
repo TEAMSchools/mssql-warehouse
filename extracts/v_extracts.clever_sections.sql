@@ -40,7 +40,7 @@ WITH dsos AS (
       (
        SELECT sec.schoolid AS [School_id]
              ,sec.section_number AS [Section_number]
-             ,sec.course_number_clean AS [Course_number]
+             ,sec.course_number AS [Course_number]
              ,sec.expression AS [Period]
              ,CONCAT(CASE 
                       WHEN sec.[db_name] = 'kippnewark' THEN 'NWK'
@@ -90,7 +90,7 @@ WITH dsos AS (
         AND sec.schoolid = t.schoolid
         AND sec.[db_name] = t.[db_name]
        JOIN gabby.powerschool.courses c
-         ON sec.course_number_clean = c.course_number_clean
+         ON sec.course_number = c.course_number
         AND sec.[db_name] = c.[db_name]
        JOIN gabby.powerschool.terms
          ON sec.termid = terms.id
@@ -151,7 +151,7 @@ WITH dsos AS (
        /* demo sections */
        SELECT sec.schoolid AS [School_id]
              ,sec.section_number AS [Section_number]
-             ,sec.course_number_clean AS [Course_number]
+             ,sec.course_number AS [Course_number]
              ,sec.expression AS [Period]
              ,CONCAT(CASE 
                       WHEN sec.[db_name] = 'kippnewark' THEN 'NWK'
@@ -193,7 +193,7 @@ WITH dsos AS (
         AND sec.[db_name] = t.[db_name]
         AND t.teachernumber IN ('JX5DVZDW1', '50013')
        JOIN gabby.powerschool.courses c
-         ON sec.course_number_clean = c.course_number_clean
+         ON sec.course_number = c.course_number
         AND sec.[db_name] = c.[db_name]
        JOIN gabby.powerschool.terms
          ON sec.termid = terms.id
