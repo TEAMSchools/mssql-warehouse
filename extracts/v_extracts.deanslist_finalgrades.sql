@@ -33,7 +33,11 @@ SELECT o.student_number
       ,fg.e2_grade_percent AS e2_pct
       ,fg.y1_grade_percent AS y1_pct
       ,fg.y1_grade_letter AS y1_letter
-      ,fg.need_65 AS need_60
+      ,COALESCE(
+         LEAD(fg.need_65, 1) OVER(
+          PARTITION BY o.student_number, o.course_number 
+            ORDER BY o.term_name)
+        ,fg.need_65) AS need_60
 
       /* category grades */
       ,cat.M_CUR AS A_term
