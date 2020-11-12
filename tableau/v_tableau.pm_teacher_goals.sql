@@ -9,7 +9,7 @@ WITH reading_level AS (
         ,sub.grade_level
         ,sub.reporting_term
         ,'pct_met_reading_goal' AS metric_name
-        ,AVG(CONVERT(FLOAT,sub.met_goal)) AS metric_value
+        ,AVG(CONVERT(FLOAT, sub.met_goal)) AS metric_value
   FROM
       (
        SELECT student_number
@@ -19,7 +19,7 @@ WITH reading_level AS (
              ,reporting_term
              ,met_goal
        FROM gabby.lit.achieved_by_round_static
-       WHERE start_date <= CONVERT(DATE,GETDATE())
+       WHERE [start_date] <= CONVERT(DATE, GETDATE())
       ) sub
   GROUP BY sub.academic_year
           ,sub.schoolid
@@ -46,7 +46,7 @@ WITH reading_level AS (
     ON gpa.academic_year = rt.academic_year
    AND gpa.reporting_term = rt.time_per_name COLLATE Latin1_General_BIN
    AND gpa.schoolid = rt.schoolid
-   AND rt.start_date <= CONVERT(DATE,SYSDATETIME())
+   AND rt.[start_date] <= CONVERT(DATE, SYSDATETIME())
  )
 
 ,gpa AS (
@@ -77,38 +77,6 @@ WITH reading_level AS (
           ,sub.reporting_term
  )
 
---,map AS (
---  SELECT p.student_number
---        ,p.academic_year
---        ,p.measurement_scale
---        ,p.Spring - p.Fall AS rit_growth_f2s
---  FROM
---      (
---       SELECT sp.academic_year
-
---             ,s.student_number
-
---             ,LOWER(map.measurement_scale) AS measurement_scale
---             ,map.test_ritscore
---             ,map.term
---       FROM gabby.powerschool.spenrollments_gen sp
---       JOIN gabby.powerschool.students s
---         ON sp.studentid = s.id
---        AND sp.[db_name] = s.[db_name]
---       JOIN gabby.nwea.assessment_result_identifiers map
---         ON s.student_number = map.student_id
---        AND sp.academic_year = map.academic_year
---        AND map.rn_term_subj = 1
---        AND map.term IN ('Fall', 'Spring')
---        AND map.measurement_scale IN ('Mathematics', 'Reading')
---       WHERE sp.specprog_name IN ('Cognitive-Mild','Cognitive-Moderate','Cognitive-Severe','Cognitive')
---      ) sub
---  PIVOT (
---    MAX(test_ritscore)
---    FOR term IN (Fall, Spring)
---   ) p
--- )
-
 ,assessment_detail AS (
   SELECT u.local_student_id
         ,u.academic_year
@@ -130,11 +98,12 @@ WITH reading_level AS (
              ,asr.performance_band_number
              ,asr.is_mastery
              ,asr.is_mastery AS is_mastery_iep45
-             ,CONVERT(BIT, CASE 
-               WHEN asr.performance_band_number >= 3 THEN 1
-               WHEN asr.performance_band_number < 3 THEN 0
-              END) AS is_mastery_iep345
-       FROM gabby.illuminate_dna_assessments.agg_student_responses_all asr      
+             ,CONVERT(BIT, 
+               CASE 
+                WHEN asr.performance_band_number >= 3 THEN 1
+                WHEN asr.performance_band_number < 3 THEN 0
+               END) AS is_mastery_iep345
+       FROM gabby.illuminate_dna_assessments.agg_student_responses_all asr
        WHERE asr.response_type = 'O'
          AND asr.subject_area IN ('Algebra I','Algebra II','English 100','English 200','English 300','Geometry','Mathematics','Text Study', 'Science')
          AND asr.module_type IN ('QA','CP')
@@ -142,18 +111,6 @@ WITH reading_level AS (
   UNPIVOT(
     [value] FOR field IN (is_mastery, is_mastery_iep45, is_mastery_iep345)
    ) u
-
-  --UNION ALL
-
-  --SELECT map.student_number
-  --      ,map.academic_year
-  --      ,map.measurement_scale COLLATE Latin1_General_BIN AS subject_area
-  --      ,'MAPY1' AS module_number
-  --      ,CONVERT(DATE, GETDATE()) AS date_taken
-  --      ,NULL AS performance_band_number
-  --      ,map.rit_growth_f2s
-  --      ,map.measurement_scale + '_rit_growth_f2s' COLLATE Latin1_General_BIN AS metric_name
-  --FROM map
  )
 
 ,etr_long AS (  
@@ -310,7 +267,7 @@ WITH reading_level AS (
             JOIN gabby.powerschool.cohort_identifiers_static co
               ON act.student_number = co.student_number
              AND co.rn_undergrad = 1
-             AND co.grade_level != 99
+             AND co.grade_level <> 99
             WHERE act.rn_highest = 1
            ) sub
        GROUP BY sub.academic_year
@@ -327,10 +284,10 @@ WITH reading_level AS (
 ,glt_goal_data AS (
   SELECT rl.academic_year
         ,rl.schoolid
-        ,rl.grade_level        
+        ,rl.grade_level
         ,rl.reporting_term
         ,rl.metric_name
-        ,rl.metric_value        
+        ,rl.metric_value
   FROM reading_level rl
 
   UNION ALL
@@ -340,7 +297,7 @@ WITH reading_level AS (
         ,gpa.grade_level
         ,gpa.reporting_term COLLATE Latin1_General_BIN AS reporting_term
         ,gpa.metric_name
-        ,gpa.metric_value        
+        ,gpa.metric_value
   FROM gpa
 
   UNION ALL
@@ -364,11 +321,11 @@ WITH reading_level AS (
 
   UNION ALL
 
-  SELECT so.academic_year        
+  SELECT so.academic_year
         ,so.subject_employee_number AS df_employee_number
         ,so.reporting_term
         ,so.metric_name
-        ,so.metric_value        
+        ,so.metric_value
   FROM so_survey so
  )
 
@@ -401,9 +358,9 @@ WITH reading_level AS (
         ,tgs.pm_term
         ,tgs.data_type
         ,NULL AS grade_level
-      
-        ,ig.reporting_term      
-        ,ig.metric_value            
+
+        ,ig.reporting_term
+        ,ig.metric_value
         ,NULL AS n_students
   FROM gabby.pm.teacher_goal_scaffold_static tgs
   LEFT JOIN individual_goal_data ig
@@ -443,8 +400,8 @@ WITH reading_level AS (
         ,tgs.pm_term
         ,tgs.data_type
         ,tgs.grade_level
-      
-        ,glt.reporting_term      
+
+        ,glt.reporting_term
         ,glt.metric_value
         ,NULL AS n_students
   FROM gabby.pm.teacher_goal_scaffold_static tgs
@@ -492,7 +449,7 @@ WITH reading_level AS (
           WHEN sub.metric_label IN ('Lit Cohort Growth from Last Year', 'Math Cohort Growth from Last Year') 
                THEN AVG(sub.is_mastery) - sub.prior_year_outcome
           ELSE AVG(sub.is_mastery) 
-         END AS metric_value      
+         END AS metric_value
         ,COUNT(DISTINCT sub.student_number) AS n_students
   FROM
       (
@@ -606,7 +563,6 @@ SELECT d.df_employee_number
       ,d.n_students
 
       ,lb.metric_value AS metric_value_stored
-
       ,lb.score AS score_stored
       ,lb.grade_level_weight AS grade_level_weight_stored
       ,lb.bucket_weight AS bucket_weight_stored
