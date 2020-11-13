@@ -13,4 +13,3 @@ FROM gabby.tableau.gradebook_assignment_detail a
 WHERE a.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND a.ismissing = 1
   AND a.finalgrade_category = 'Q'
-  AND (a.scorepoints = 0 OR a.scorepoints IS NULL)
