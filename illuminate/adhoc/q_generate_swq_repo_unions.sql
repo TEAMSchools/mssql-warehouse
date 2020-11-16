@@ -8,7 +8,8 @@ JOIN gabby.illuminate_codes.dna_scopes s
  AND s.code_translation = 'Sight Words Quiz'
 LEFT JOIN gabby.utilities.all_tables_columns atc
   ON CONCAT('repository_', r.repository_id) = atc.table_name
- AND atc.schema_name = 'illuminate_dna_repositories'
+ AND atc.[schema_name] = 'illuminate_dna_repositories'
  AND atc.column_id = -1
 WHERE r.deleted_at IS NULL
+  AND r.date_administered >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
 ORDER BY r.repository_id;
