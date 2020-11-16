@@ -235,5 +235,6 @@ LEFT JOIN powerschool.spenrollments_gen sp
  AND sp.specprog_name IN ('Out of District', 'Self-Contained Special Education', 'Pathways ES', 'Pathways MS', 'Whittier ES')
 LEFT JOIN titan.person_data_clean tp
   ON co.student_number = tp.person_identifier
+ AND co.academic_year = tp.application_academic_school_year_clean
 LEFT JOIN powerschool.student_contacts_wide_static scw
   ON co.student_number = scw.student_number
