@@ -42,7 +42,7 @@ JOIN gabby.powerschool.cohort_identifiers_static co
  AND rt.academic_year = co.academic_year
  AND co.is_enrolled_recent = 1
  AND co.rn_year = 1
-LEFT JOIN gabby.illuminate_dna_repositories.sight_words_data_static sw
+LEFT JOIN gabby.illuminate_dna_repositories.sight_words_data sw
   ON co.student_number = sw.local_student_id
  AND r.repository_id = sw.repository_id
  AND f.[label] = sw.[label]
@@ -89,7 +89,7 @@ JOIN gabby.powerschool.cohort_identifiers_static co
  AND rt.academic_year = co.academic_year
  AND co.is_enrolled_recent = 1
  AND co.rn_year = 1
-JOIN gabby.illuminate_dna_repositories.sight_words_data_static sw
+JOIN gabby.illuminate_dna_repositories.sight_words_data sw
   ON co.student_number = sw.local_student_id
  AND r.repository_id = sw.repository_id
  AND f.[label] = sw.[label]
