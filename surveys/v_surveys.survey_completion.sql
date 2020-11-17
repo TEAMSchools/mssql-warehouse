@@ -5,37 +5,42 @@ CREATE OR ALTER VIEW surveys.survey_completion AS
 
 WITH survey_feed AS (
   SELECT _created AS date_created
-        ,CONVERT(DATETIME2,survey_timestamp) AS date_submitted
-        ,subject_name
-        ,LOWER(email) AS responder_email
-        ,gabby.utilities.DATE_TO_SY(_created) AS academic_year
-        ,CASE
-          WHEN MONTH(_created) IN (8, 9, 10) THEN 'SO1'
-          WHEN MONTH(_created) IN (11, 12, 1, 2, 3) THEN 'SO2'
-          WHEN MONTH(_created) IN (4, 5, 6, 7) THEN 'SO3'
-         END AS reporting_term
+        ,CONVERT(DATETIME2,s.survey_timestamp) AS date_submitted
+        ,s.subject_name
+        ,LOWER(s.email) AS responder_email
+        ,gabby.utilities.DATE_TO_SY(s._created) AS academic_year
+        ,CASE WHEN c.name LIKE '%SO1%' THEN 'SO1'
+								      WHEN c.name LIKE '%SO2%' THEN 'SO2'
+														WHEN c.name LIKE '%SO3%' THEN 'SO3'
+														WHEN c.name LIKE '%SO4%' THEN 'SO4'
+									END AS reporting_term
         ,'Self & Others' AS survey_type
-        ,is_manager
-  FROM gabby.surveys.self_and_others_survey
-  WHERE subject_name IS NOT NULL
-    AND _created IS NOT NULL
+        ,s.is_manager
+  FROM gabby.surveys.self_and_others_survey s
+		LEFT JOIN gabby.surveygizmo.survey_campaign_clean_static c
+		  ON c.survey_id = 4561325
+			AND CONVERT(DATETIME2,s.survey_timestamp) BETWEEN c.link_open_date AND c.link_close_date
+  WHERE s.subject_name IS NOT NULL
+    AND s._created IS NOT NULL
 
   UNION ALL
 
-  SELECT _created AS date_created
-        ,CONVERT(DATETIME2,survey_timestamp) AS date_submitted
-        ,subject_name
-        ,LOWER(responder_name) AS responder_email
-        ,gabby.utilities.DATE_TO_SY(_created) AS academic_year
-        ,CASE
-          WHEN MONTH(_created) IN (8, 9, 10) THEN 'MGR1'
-          WHEN MONTH(_created) IN (11, 12, 1) THEN 'MGR2'
-          WHEN MONTH(_created) IN (2, 3, 4) THEN 'MGR3'
-          WHEN MONTH(_created) IN (5, 6, 7) THEN 'MGR4'
-         END AS reporting_term
+  SELECT m._created AS date_created
+        ,CONVERT(DATETIME2,m.survey_timestamp) AS date_submitted
+        ,m.subject_name
+        ,LOWER(m.responder_name) AS responder_email
+        ,gabby.utilities.DATE_TO_SY(m._created) AS academic_year
+        ,CASE WHEN c.name LIKE '%MGR1%' THEN 'MGR1'
+								      WHEN c.name LIKE '%MGR2%' THEN 'MGR2'
+														WHEN c.name LIKE '%MGR3%' THEN 'MGR3'
+														WHEN c.name LIKE '%MGR4%' THEN 'MGR4'
+									END AS reporting_term
         ,'Manager' AS survey_type
         ,NULL AS is_manager
-  FROM gabby.surveys.manager_survey
+  FROM gabby.surveys.manager_survey m
+		LEFT JOIN gabby.surveygizmo.survey_campaign_clean_static c
+		  ON c.survey_id = 4561288
+			AND CONVERT(DATETIME2,m.survey_timestamp) BETWEEN c.link_open_date AND c.link_close_date
   WHERE subject_name IS NOT NULL
     AND _created IS NOT NULL
     AND subject_name IS NOT NULL
