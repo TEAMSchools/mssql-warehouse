@@ -9,11 +9,11 @@ SELECT student_number
       ,approx_grade_level
       ,first_name
       ,last_name
-      ,CONVERT(VARCHAR,dob) AS dob
-      ,CONVERT(VARCHAR,exitdate) AS exitdate
+      ,CONVERT(VARCHAR, dob) AS dob
+      ,CONVERT(VARCHAR, exitdate) AS exitdate
       ,is_grad
       ,cohort
-      ,CONVERT(VARCHAR,expected_hs_graduation_date) AS expected_hs_graduation_date
+      ,CONVERT(VARCHAR, expected_hs_graduation_date) AS expected_hs_graduation_date
       ,ktc_counselor
       ,enrollment_type
       ,enrollment_name

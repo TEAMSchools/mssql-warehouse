@@ -8,10 +8,10 @@ SELECT co.student_number
       ,co.grade_level
       ,co.team
       ,co.school_name
-      ,CONVERT(VARCHAR,co.entrydate) AS entrydate
+      ,CONVERT(VARCHAR, co.entrydate) AS entrydate
       ,co.student_web_id
       ,co.student_web_password
-      ,co.student_web_id + '@teamstudents.org' AS student_email      
+      ,co.student_web_id + '@teamstudents.org' AS student_email
       ,co.region
 FROM gabby.powerschool.cohort_identifiers_static co
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()

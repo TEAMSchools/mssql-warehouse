@@ -10,10 +10,11 @@ WITH att AS (
         ,SUM(psa.attendancevalue) AS CumulativeDaysPresent
         ,SUM(psa.membershipvalue) AS CumulativeDaysInMembership
   FROM gabby.powerschool.ps_adaadm_daily_ctod_current_static psa
-  WHERE psa.calendardate <= CAST(GETDATE() AS DATE)
+  WHERE psa.membershipvalue = 1
+    AND psa.calendardate <= CAST(GETDATE() AS DATE)
   GROUP BY psa.studentid
-          ,psa.[db_name]
           ,psa.yearid
+          ,psa.[db_name]
  )
 
 ,race AS (
@@ -209,5 +210,5 @@ LEFT JOIN race r
  AND co.[db_name] = r.[db_name]
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.rn_year = 1
-  AND co.grade_level != 99
+  AND co.grade_level <> 99
   AND co.[db_name] IN ('kippnewark', 'kippcamden')
