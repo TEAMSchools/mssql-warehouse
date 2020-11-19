@@ -40,9 +40,13 @@ FROM
            ,CONVERT(VARCHAR(25), COALESCE(dq.[status], sr.[status])) AS [status]
            ,sr.is_test_data
            ,CONVERT(DATETIME2, LEFT(sr.date_started, 19)) AS datetime_started
-           ,CONVERT(DATETIME2, LEFT(sr.date_submitted, 19)) AS datetime_submitted
            ,CONVERT(DATE, CONVERT(DATETIME2, LEFT(sr.date_started, 19))) AS date_started
-           ,CONVERT(DATE, CONVERT(DATETIME2, LEFT(sr.date_submitted, 19))) AS date_submitted
+           ,CONVERT(DATETIME2,
+              CASE WHEN ISDATE(LEFT(sr.date_submitted, 19)) = 1 THEN LEFT(sr.date_submitted, 19) END
+             ) AS datetime_submitted
+           ,CONVERT(DATE, CONVERT(DATETIME2, 
+              CASE WHEN ISDATE(LEFT(sr.date_submitted, 19)) = 1 THEN LEFT(sr.date_submitted, 19) END
+             )) AS date_submitted
            ,sr.response_time
            ,CONVERT(VARCHAR(25), sr.city) AS city
            ,CONVERT(VARCHAR(25), sr.postal) AS postal
