@@ -3,49 +3,13 @@ GO
 
 CREATE OR ALTER VIEW utilities.row_generator AS
 
-WITH nbrs_4(n) AS (
-  SELECT 1 
-  UNION 
-  SELECT 0
- )
+WITH
+  t0(i) AS (SELECT 0 UNION ALL SELECT 0),
+  t1(i) AS (SELECT 0 FROM t0 a, t0 b),
+  t2(i) AS (SELECT 0 FROM t1 a, t1 b),
+  t3(i) AS (SELECT 0 FROM t2 a, t2 b),
+  t4(i) AS (SELECT 0 FROM t3 a, t3 b),
+  t5(i) AS (SELECT 0 FROM t4 a, t4 b)
 
-,nbrs_3(n) AS (
-  SELECT 1 
-  FROM nbrs_4 n1 
-  CROSS JOIN nbrs_4 n2
- )
-
-,nbrs_2(n) AS (
-  SELECT 1 
-  FROM nbrs_3 n1 
-  CROSS JOIN nbrs_3 n2
- )
-
-,nbrs_1(n) AS (
-  SELECT 1 
-  FROM nbrs_2 n1 
-  CROSS JOIN nbrs_2 n2
- )
-
-,nbrs_0(n) AS (
-  SELECT 1 
-  FROM nbrs_1 n1 
-  CROSS JOIN nbrs_1 n2
- )
-
-,nbrs(n) AS (
-  SELECT 1 
-  FROM nbrs_0 n1 
-  CROSS JOIN nbrs_0 n2
- )
-    
-SELECT 0 AS n
-
-UNION
-
-SELECT n
-FROM
-    (
-     SELECT ROW_NUMBER() OVER(ORDER BY n) AS n
-     FROM nbrs
-    ) d
+SELECT ROW_NUMBER() OVER(ORDER BY (SELECT 0)) AS n
+FROM t5
