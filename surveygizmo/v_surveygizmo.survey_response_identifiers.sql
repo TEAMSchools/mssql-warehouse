@@ -65,12 +65,12 @@ WITH response_pivot AS (
        SELECT rp.survey_response_id
              ,rp.survey_id
              ,rp.date_started
-             ,rp.subject_df_employee_number
              ,rp.subject_preferred_name
              ,rp.is_manager
 
              ,ab.subject_preferred_name_duplicate
 
+             ,COALESCE(rp.subject_df_employee_number, ab.subject_df_employee_number) AS subject_df_employee_number
              ,COALESCE(rp.respondent_df_employee_number
                       ,upn.df_employee_number
                       ,adp.df_employee_number
