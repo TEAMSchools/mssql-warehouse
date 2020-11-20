@@ -1,3 +1,8 @@
+USE gabby
+GO
+
+CREATE OR ALTER VIEW utilities.generate_gabby_unions AS 
+
 WITH all_tables_columns_pivot AS (
   SELECT sub.[schema_name]
         ,sub.table_name
@@ -73,18 +78,19 @@ WITH all_tables_columns_pivot AS (
     ) sub
  )
 
-SELECT sub.[schema_name]
+SELECT TOP 100000
+       sub.[schema_name]
       ,sub.table_name
       ,sub.column_type_mismatch
       ,CASE 
-        WHEN t.n = 0 THEN 'USE gabby'
-        WHEN t.n = 1 THEN 'GO'
-        WHEN t.n = 2 THEN 'CREATE OR ALTER VIEW ' + sub.[schema_name] + '.' + sub.table_name + ' AS ' 
+        WHEN t.n = 1 THEN 'USE gabby'
+        WHEN t.n = 2 THEN 'GO'
+        WHEN t.n = 3 THEN 'CREATE OR ALTER VIEW ' + sub.[schema_name] + '.' + sub.table_name + ' AS ' 
                             + CASE WHEN sub.kippnewark_count > 0 THEN sub.kippnewark ELSE '' END
                             + CASE WHEN sub.kippcamden_count > 0 THEN ' UNION ALL ' + sub.kippcamden ELSE '' END
                             + CASE WHEN sub.kippmiami_count > 0 THEN ' UNION ALL ' + sub.kippmiami ELSE '' END
                             + ';' 
-        WHEN t.n = 3 THEN 'GO'
+        WHEN t.n = 4 THEN 'GO'
        END AS query
 FROM
     (
@@ -104,5 +110,5 @@ FROM
      GROUP BY atc.table_name
              ,atc.[schema_name]
     ) sub
-CROSS JOIN (SELECT n FROM gabby.utilities.row_generator WHERE n <= 3) t
+CROSS JOIN (SELECT n FROM gabby.utilities.row_generator WHERE n <= 4) t
 ORDER BY sub.[schema_name], sub.table_name, t.n
