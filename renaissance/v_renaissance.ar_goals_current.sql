@@ -12,26 +12,26 @@ WITH roster AS (
         ,MAX(is_enrolled) AS is_enrolled
   FROM
       (
-       SELECT co.student_number        
-             ,co.academic_year             
-             ,co.grade_level             
+       SELECT co.student_number
+             ,co.academic_year
+             ,co.grade_level
              ,co.enroll_status
-             ,CASE 
+             ,CASE
                WHEN co.exitdate <= dts.[start_date] THEN 0
-               WHEN co.entrydate <= dts.end_date THEN 1 
-               ELSE 0 
+               WHEN co.entrydate <= dts.end_date THEN 1
+               ELSE 0
               END AS is_enrolled
              
-             ,CONVERT(VARCHAR(5), dts.time_per_name) AS reporting_term                          
+             ,CONVERT(VARCHAR(5), dts.time_per_name) AS reporting_term
        FROM gabby.powerschool.cohort_identifiers_static co
        JOIN gabby.reporting.reporting_terms dts
          ON co.schoolid = dts.schoolid
         AND co.academic_year = dts.academic_year
-        AND dts.identifier = 'AR'          
-        AND dts.time_per_name != 'ARY'  
+        AND dts.identifier = 'AR'
+        AND dts.time_per_name <> 'ARY'
         AND dts._fivetran_deleted = 0
        WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-       ) sub
+      ) sub
   GROUP BY student_number
           ,academic_year
           ,grade_level
@@ -42,13 +42,16 @@ WITH roster AS (
 ,ms_goals AS (
   SELECT sub.student_number
         ,sub.term
+
         ,CONVERT(INT, tiers.words_goal) AS words_goal
   FROM
       (
-       SELECT achv.student_number           
+       SELECT achv.student_number
              ,COALESCE(s1.[value], s2.[value]) AS term
              ,COALESCE(COALESCE(achv.indep_lvl_num, achv.lvl_num)
-                      ,LAG(COALESCE(achv.indep_lvl_num, achv.lvl_num), 2) OVER(PARTITION BY achv.student_number, achv.academic_year ORDER BY achv.[start_date])
+                      ,LAG(COALESCE(achv.indep_lvl_num, achv.lvl_num), 2) OVER(
+                         PARTITION BY achv.student_number, achv.academic_year 
+                           ORDER BY achv.[start_date])
                 ) AS indep_lvl_num /* Q1 & Q2 are set by BOY, carry them forward for setting goals at beginning of year */
        FROM gabby.lit.achieved_by_round_static achv
        LEFT JOIN STRING_SPLIT('AR1,AR2', ',') s1
@@ -94,13 +97,13 @@ WITH roster AS (
              ,CASE
                WHEN r.is_enrolled = 0 THEN NULL
                WHEN r.grade_level >= 9 THEN NULL
-               WHEN r.enroll_status != 0 THEN -1
+               WHEN r.enroll_status <> 0 THEN -1
                ELSE COALESCE(g.adjusted_goal, ms.words_goal, CONVERT(INT, df.words_goal))
               END AS words_goal
              ,CASE
                WHEN r.is_enrolled = 0 THEN NULL
                WHEN r.grade_level <= 8 THEN NULL
-               WHEN r.enroll_status != 0 THEN -1
+               WHEN r.enroll_status <> 0 THEN -1
                ELSE COALESCE(g.adjusted_goal, CONVERT(INT, df.points_goal))
               END AS points_goal             
        FROM roster r
@@ -123,7 +126,7 @@ SELECT student_number
       ,CASE WHEN points_goal < 0 THEN -1 ELSE points_goal END AS points_goal
 FROM
     (
-     SELECT student_number           
+     SELECT student_number
            ,academic_year
            ,reporting_term
            ,words_goal
@@ -133,7 +136,7 @@ FROM
 
      UNION ALL
 
-     SELECT student_number           
+     SELECT student_number
            ,academic_year
            ,'ARY' AS reporting_term
            ,SUM(words_goal) AS words_goal
