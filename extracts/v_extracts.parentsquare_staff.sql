@@ -20,5 +20,4 @@ SELECT df.ps_teachernumber AS [staff_id]
        END AS [school_id]
 FROM gabby.people.staff_crosswalk_static df
 WHERE df.[status] NOT IN ('TERMINATED', 'PRESTART')
-  AND df.legal_entity_name <> 'KIPP Miami'
-  AND df.primary_site <> 'Room 11 - 1951 NW 7th Ave'
+  AND df.mail NOT LIKE '%kippmiami.org'
