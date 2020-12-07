@@ -9,7 +9,7 @@ SELECT CONCAT(s.schoolid, '-'
              ,s.termid) AS class_alias
 
       ,CONCAT(c.course_name
-             ,' (' + c.course_number_clean + ') - '
+             ,' (' + c.course_number + ') - '
              ,s.section_number + ' - '
              ,gabby.utilities.GLOBAL_ACADEMIC_YEAR(), '-'
              ,RIGHT(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 2) + 1) AS class_name
@@ -33,7 +33,7 @@ FROM gabby.powerschool.sections s
 JOIN gabby.powerschool.schools sch
   ON s.schoolid = sch.school_number
 JOIN gabby.powerschool.courses c
-  ON s.course_number_clean = c.course_number_clean
+  ON s.course_number = c.course_number
  AND s.[db_name] = c.[db_name] 
  AND c.credittype <> 'LOG'
 JOIN gabby.powerschool.teachers_static t
