@@ -39,7 +39,7 @@ WITH ada AS (
              ,sp.enter_date
              ,sp.exit_date
              ,1 AS n
-       FROM gabby.powerschool.spenrollments_gen sp
+       FROM gabby.powerschool.spenrollments_gen_static sp
        WHERE sp.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
       ) sub
   PIVOT(
