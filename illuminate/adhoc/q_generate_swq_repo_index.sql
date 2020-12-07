@@ -14,6 +14,7 @@ LEFT JOIN gabby.utilities.all_tables_columns atc
  AND atc.schema_name = 'illuminate_dna_repositories'
  AND atc.column_id > 0
 WHERE r.deleted_at IS NULL
+  AND r.repository_id IN (SELECT DISTINCT repository_id FROM gabby.illuminate_dna_repositories.repository_row_ids)
   AND atc.column_name NOT IN ('repository_row_id', 'student_id')
   AND atc.column_name NOT LIKE '_fivetran%'
 GROUP BY atc.table_name
