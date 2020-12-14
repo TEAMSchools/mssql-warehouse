@@ -66,12 +66,17 @@ BEGIN
               SELECT @nrows = COUNT(*) FROM ' + @temp_table_name + N';
 
             IF @nrows > 1
-              BEGIN
-                EXEC(''TRUNCATE TABLE ' + @destination_table_name + N''');
-                INSERT INTO ' + @destination_table_name + N'
-                SELECT *
+              BEGIN TRY
+               BEGIN TRANSACTION t_Transaction
+                TRUNCATE TABLE ' + @destination_table_name + N';
+                INSERT INTO ' + @destination_table_name + N' WITH(TABLOCKX)
+                SELECT * 
                 FROM ' + @temp_table_name + N';
-              END
+               COMMIT TRANSACTION t_Transaction
+              END TRY 
+              BEGIN CATCH
+                ROLLBACK TRANSACTION t_Transaction
+              END CATCH
           ' ;
           PRINT (@sql);
           EXEC (@sql);
@@ -80,7 +85,7 @@ BEGIN
           PRINT (ERROR_MESSAGE());
 
           SET @email_subject = @db_name + N'.' + @schema_name + N'.' + @view_name + N' static refresh failed';
-          SET @email_body = N'The refresh procedure for ' + @db_name + N'.' + @schema_name + N'.' + @view_name + N'failed.' + CHAR(10) + ERROR_MESSAGE();
+          SET @email_body = N'The refresh procedure for ' + @db_name + N'.' + @schema_name + N'.' + @view_name + N' failed.' + CHAR(10) + ERROR_MESSAGE();
 
           EXEC msdb.dbo.sp_send_dbmail @profile_name = 'datarobot'
                                       ,@recipients = 'u7c1r1b1c5n4p0q0@kippnj.slack.com'
