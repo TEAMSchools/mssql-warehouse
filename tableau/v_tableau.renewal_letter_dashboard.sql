@@ -14,7 +14,7 @@ WITH wf AS (
   FROM
       (
        SELECT rs.employee_reference_code AS affected_employee_number
-             ,CONVERT(DATETIME2,rs.workflow_data_last_modified_timestamp) AS renewal_status_updated
+             ,CONVERT(DATETIME2, rs.workflow_data_last_modified_timestamp) AS renewal_status_updated
              ,CASE 
                WHEN rs.workflow_status = 'completed' AND rs.workflow_data_saved = 1 THEN 'Offer Accepted'
                WHEN rs.workflow_status = 'completed' AND rs.workflow_data_saved = 0 THEN 'SL, HR, or Employee Rejected'
@@ -44,7 +44,7 @@ WITH wf AS (
              ,was.physical_location_name AS future_location
              ,was.department_name AS future_department
              ,was.job_name AS future_role
-             ,CONVERT(DATE,CASE WHEN work_assignment_effective_start != '' THEN work_assignment_effective_start END) AS future_work_assignment_effective_start
+             ,CONVERT(DATE, CASE WHEN work_assignment_effective_start <> '' THEN work_assignment_effective_start END) AS future_work_assignment_effective_start
        FROM gabby.dayforce.employee_work_assignment was
        WHERE was.primary_work_assignment = 1
       ) sub
@@ -61,9 +61,9 @@ WITH wf AS (
   FROM
       (
        SELECT sta.number AS df_employee_number
-             ,sta.status AS future_status
+             ,sta.[status] AS future_status
              ,sta.base_salary AS future_salary
-             ,CONVERT(DATE,sta.effective_start) AS future_status_effective_start
+             ,CONVERT(DATE, sta.effective_start) AS future_status_effective_start
        FROM gabby.dayforce.employee_status sta
       ) sub
  )
@@ -71,25 +71,25 @@ WITH wf AS (
 SELECT r.df_employee_number
       ,r.preferred_name
       ,r.manager_name AS current_manager_name
-      ,r.status AS current_status
+      ,r.[status] AS current_status
       ,r.legal_entity_name AS current_legal_entity
       ,r.primary_site AS current_site
       ,r.primary_on_site_department AS current_department
       ,r.primary_job AS current_role
       ,r.is_regional_staff AS is_regional_staff_current
-      
+
       ,wf.renewal_status
       ,wf.renewal_status_updated
       ,wf.renewal_year
       ,wf.rn_recent_workflow
-      
+
       ,was.future_legal_entity
       ,was.future_location
       ,was.future_department
       ,was.future_job_family
       ,was.future_role      
       ,was.future_work_assignment_effective_start
-      
+
       ,sta.future_status
       ,sta.future_salary
       ,sta.future_status_effective_start

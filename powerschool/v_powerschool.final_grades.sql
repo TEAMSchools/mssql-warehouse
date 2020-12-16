@@ -24,7 +24,7 @@ WITH roster AS (
   JOIN powerschool.course_section_scaffold css
     ON co.studentid = css.studentid
    AND co.yearid = css.yearid   
-   AND css.course_number != 'ALL'  
+   AND css.course_number <> 'ALL'  
   JOIN powerschool.sections sec
     ON css.sectionid = sec.id
   JOIN powerschool.teachers_static t

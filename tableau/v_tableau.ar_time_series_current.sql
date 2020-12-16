@@ -154,7 +154,7 @@ FROM
             ON co.schoolid = dts.schoolid
            AND co.[date] BETWEEN dts.[start_date] AND dts.end_date
            AND dts.identifier = 'AR'
-           AND dts.time_per_name != 'ARY'
+           AND dts.time_per_name <> 'ARY'
            AND dts._fivetran_deleted = 0
           LEFT JOIN gabby.reporting.reporting_terms y1dts
             ON co.academic_year = y1dts.academic_year
@@ -192,7 +192,7 @@ FROM
             ON co.student_number = ar.student_number
            AND co.[date] = ar.date_taken
           WHERE co.enroll_status = 0
-            AND co.grade_level != 99
+            AND co.grade_level <> 99
             AND co.[date] <= CONVERT(DATE, GETDATE())
          ) sub
     ) sub

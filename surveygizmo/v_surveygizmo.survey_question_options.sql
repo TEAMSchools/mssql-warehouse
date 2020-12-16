@@ -20,4 +20,4 @@ CROSS APPLY OPENJSON(q.options, '$')
     title NVARCHAR(MAX) AS JSON,
     properties NVARCHAR(MAX) AS JSON
    ) AS o
-WHERE q.options != '[]'
+WHERE q.options <> '[]'

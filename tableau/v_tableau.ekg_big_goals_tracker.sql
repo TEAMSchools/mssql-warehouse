@@ -255,8 +255,8 @@ WITH act AS (
              ,CASE WHEN status_reason NOT IN ('Termination', 'Resignation') THEN is_attrition ELSE 0 END AS is_attrition_other
        FROM gabby.tableau.compliance_staff_attrition
        WHERE is_denominator = 1         
-         AND legal_entity_name != 'KIPP New Jersey'
-         AND primary_site_reporting_schoolid != 0
+         AND legal_entity_name <> 'KIPP New Jersey'
+         AND primary_site_reporting_schoolid <> 0
       ) sub  
   GROUP BY academic_year
           ,ROLLUP(school_level, region, reporting_schoolid)

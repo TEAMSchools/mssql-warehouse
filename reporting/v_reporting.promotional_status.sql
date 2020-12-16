@@ -98,7 +98,7 @@ SELECT sub.student_number
                    WHEN sub.sched_nextyeargrade > sub.grade_level THEN 'Promoted'
                    WHEN sub.sched_nextyeargrade <= sub.grade_level THEN 'Retained'
                   END
-        WHEN sub.school_level != 'HS' AND (sub.iep_status = 'SPED' OR sub.is_retained_flag = 1) THEN 'See Teacher'
+        WHEN sub.school_level <> 'HS' AND (sub.iep_status = 'SPED' OR sub.is_retained_flag = 1) THEN 'See Teacher'
         WHEN CONCAT(sub.promo_status_attendance
                    ,sub.promo_status_lit
                    ,sub.promo_status_grades

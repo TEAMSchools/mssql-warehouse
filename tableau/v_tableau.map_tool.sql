@@ -111,4 +111,4 @@ LEFT JOIN gabby.nwea.learning_continuum_goals domain
  AND map_long.test_id = domain.test_id
 WHERE r.rn_year = 1
   AND r.academic_year >= 2008 /* first year of MAP data */
-  AND r.grade_level != 99
+  AND r.grade_level <> 99

@@ -106,7 +106,7 @@ JOIN gabby.powerschool.cohort_identifiers_static co
 JOIN gabby.powerschool.gradebook_setup_static gb
   ON enr.sections_dcid = gb.sectionsdcid
  AND enr.[db_name] = gb.[db_name]
- AND gb.finalgradesetuptype != 'Total_Points'
+ AND gb.finalgradesetuptype <> 'Total_Points'
 LEFT JOIN gabby.powerschool.gradebook_assignments_current_static a2
   ON gb.sectionsdcid = a2.sectionsdcid 
  AND gb.assignmentcategoryid = a2.categoryid

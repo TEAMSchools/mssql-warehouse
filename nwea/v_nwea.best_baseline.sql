@@ -50,4 +50,4 @@ LEFT JOIN nwea.assessment_result_identifiers map_spr /* PREVIOUS YEAR SPRING */
  AND map_spr.term = 'Spring'
  AND map_spr.rn_term_subj = 1
 WHERE r.rn_year = 1
-  AND r.grade_level != 99
+  AND r.grade_level <> 99

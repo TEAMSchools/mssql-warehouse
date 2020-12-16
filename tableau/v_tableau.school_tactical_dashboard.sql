@@ -428,7 +428,7 @@ WITH roster AS (
 --                  ,CAST(CASE WHEN a.status_reason = 'Termination' THEN 1.0 ELSE 0.0 END AS FLOAT) AS is_attrition_termination
 --            FROM gabby.tableau.compliance_staff_attrition a
 --            WHERE a.is_denominator = 1
---              AND a.primary_site_reporting_schoolid != 0
+--              AND a.primary_site_reporting_schoolid <> 0
 --              AND a.legal_entity_name <> 'KIPP New Jersey'
 --              AND a.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 --           ) sub
@@ -463,7 +463,7 @@ WITH roster AS (
              ,CONVERT(VARCHAR(5), y1.grade_level) AS grade_level
 
              ,CASE
-               /* graduates != attrition */
+               /* graduates <> attrition */
                WHEN y1.exitcode = 'G1' THEN 0.0
                /* handles re-enrollments during the year */
                WHEN s.exitdate >= y1.exitdate AND s.exitdate >= CONVERT(DATE,SYSDATETIME()) THEN 0.0

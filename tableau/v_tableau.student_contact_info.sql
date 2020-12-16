@@ -36,7 +36,7 @@ SELECT co.student_number
       ,co.guardianemail      
       ,co.street
       ,co.city
-      ,co.state 
+      ,co.[state]
       ,co.zip
       ,co.first_name
       ,co.last_name

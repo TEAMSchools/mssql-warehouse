@@ -16,4 +16,4 @@ CROSS APPLY OPENJSON(wa.[tags], '$')
     [name] VARCHAR(125),
     [url] VARCHAR(125)
    ) AS wt
-WHERE wa.[tags] != '[]'
+WHERE wa.[tags] <> '[]'

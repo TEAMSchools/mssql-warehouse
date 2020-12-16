@@ -49,7 +49,7 @@ WITH residency_verification AS (
         ,CONVERT(VARCHAR(500), 
            CASE
             WHEN sub.iep_registration_followup = '1'
-             AND sub.specialed_classification != ''
+             AND sub.specialed_classification <> ''
                   THEN 'Y'
             WHEN sub.iep_registration_followup = '1'
              AND sub.specialed_classification = ''
@@ -59,7 +59,7 @@ WITH residency_verification AS (
         ,CONVERT(VARCHAR(500), 
            CASE
             WHEN sub.lep_registration_followup = '1'
-             AND sub.lep_status != ''
+             AND sub.lep_status <> ''
                   THEN 'Y'
             WHEN sub.lep_registration_followup = '1'
              AND sub.lep_status = ''

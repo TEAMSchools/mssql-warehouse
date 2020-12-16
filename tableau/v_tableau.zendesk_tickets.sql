@@ -4,9 +4,9 @@ GO
 CREATE OR ALTER VIEW tableau.zendesk_tickets AS
 
 SELECT t.id AS ticket_id
-      ,CONVERT(VARCHAR(500),t.subject) AS ticket_subject
-      ,t.status AS ticket_status      
-      ,t.custom_location AS location      
+      ,CONVERT(VARCHAR(500), t.[subject]) AS ticket_subject
+      ,t.[status] AS ticket_status      
+      ,t.custom_location AS [location]
       ,t.created_at
       ,t.updated_at
       ,t.due_at      
@@ -16,12 +16,12 @@ SELECT t.id AS ticket_id
       ,t.submitter_id
       ,t.assignee_id            
 
-      ,s.name AS submitter_name
+      ,s.[name] AS submitter_name
 
-      ,a.name AS assignee_name
+      ,a.[name] AS assignee_name
       ,a.custom_user_group AS assignee_user_group      
 
-      ,g.name AS group_name
+      ,g.[name] AS group_name
 
       ,tm.replies AS comments_count              
       ,tm.solved_at AS solved_timestamp
@@ -36,4 +36,4 @@ LEFT JOIN gabby.zendesk.[group] g
   ON t.group_id = g.id
 LEFT JOIN gabby.zendesk.ticket_metrics_clean tm
   ON t.id = tm.ticket_id
-WHERE t.status != 'deleted'
+WHERE t.[status] <> 'deleted'

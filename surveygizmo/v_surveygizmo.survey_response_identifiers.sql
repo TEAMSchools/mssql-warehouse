@@ -8,7 +8,7 @@ WITH response_pivot AS (
         ,p.survey_id
         ,p.date_started
         ,CONVERT(VARCHAR(25), p.respondent_adp_associate_id) AS respondent_adp_associate_id
-        ,CONVERT(VARCHAR(125),LOWER(p.respondent_userprincipalname)) AS respondent_userprincipalname
+        ,CONVERT(VARCHAR(125), LOWER(p.respondent_userprincipalname)) AS respondent_userprincipalname
         ,CONVERT(INT, CASE
                        WHEN ISNUMERIC(p.respondent_df_employee_number) = 1 THEN p.respondent_df_employee_number
                        WHEN CHARINDEX('[', p.respondent_df_employee_number) = 0 THEN NULL
@@ -100,7 +100,7 @@ WITH response_pivot AS (
         ,ewa.department_name
         ,ewa.job_name AS primary_job
         ,CONVERT(DATE, ewa.work_assignment_effective_start) AS work_assignment_effective_start
-        ,CONVERT(DATE, COALESCE(CASE WHEN ewa.work_assignment_effective_end != '' THEN ewa.work_assignment_effective_end END
+        ,CONVERT(DATE, COALESCE(CASE WHEN ewa.work_assignment_effective_end <> '' THEN ewa.work_assignment_effective_end END
                                ,DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1, 6, 30))) AS work_assignment_effective_end
         ,ROW_NUMBER() OVER (PARTITION BY ewa.employee_reference_code, ewa.work_assignment_effective_start
            ORDER BY ewa.work_assignment_effective_end DESC) AS rn

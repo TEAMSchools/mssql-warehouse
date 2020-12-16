@@ -70,4 +70,4 @@ LEFT JOIN salary s
  AND CONVERT(INT,SUBSTRING(cr._file, PATINDEX('%-[0-9][0-9]-%', cr._file) + 1, 2)) = s.month
  AND CONVERT(INT,SUBSTRING(cr._file, PATINDEX('%PP[0-9]%', cr._file) + 2, 1)) = s.pay_period
  AND s.rn_salary_desc = 1
-WHERE cr.employee_code != '0'
+WHERE cr.employee_code <> '0'

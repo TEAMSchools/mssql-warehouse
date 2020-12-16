@@ -60,7 +60,7 @@ LEFT JOIN gabby.deanslist.incidents_custom_fields_wide cf
   ON dli.incident_id = cf.incident_id
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.rn_year = 1
-  AND co.grade_level != 99 
+  AND co.grade_level <> 99 
 
 UNION ALL
 
@@ -121,7 +121,7 @@ JOIN gabby.reporting.reporting_terms d
  AND d._fivetran_deleted = 0
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.rn_year = 1
-  AND co.grade_level != 99  
+  AND co.grade_level <> 99  
 
 UNION ALL
 

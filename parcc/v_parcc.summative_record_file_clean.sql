@@ -174,7 +174,7 @@ SELECT state_abbreviation
       ,CONVERT(INT, LEFT(assessment_year, 4)) AS academic_year
 FROM parcc.summative_record_file
 WHERE (assessment_year = '2014-2015' AND record_type = 1 AND reported_summative_score_flag = 'Y')
-   OR (assessment_year != '2014-2015' AND test_status = 'Attempt' AND summative_flag = 'Y');
+   OR (assessment_year <> '2014-2015' AND test_status = 'Attempt' AND summative_flag = 'Y');
 
 GO
 

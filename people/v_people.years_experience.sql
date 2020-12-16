@@ -17,7 +17,7 @@ WITH months AS (
             ,DATEDIFF(MONTH, effective_start_date, effective_end_date) AS months
       FROM gabby.dayforce.work_assignment_status
       WHERE [status] NOT IN ('Terminated', 'Pre-Start')
-        AND job_name != 'Intern'
+        AND job_name <> 'Intern'
      ) sub
  PIVOT (
    SUM(months)
@@ -30,12 +30,7 @@ WITH months AS (
         ,SUM(DATEDIFF(MONTH, was.effective_start_date, was.effective_end_date)) AS months_as_teacher
   FROM gabby.dayforce.work_assignment_status was
   WHERE was.[status] NOT IN ('Terminated', 'Pre-Start')
-    AND was.job_name IN ('Teacher'
-                        ,'Learning Specialist'
-                        ,'Learning Specialist Coordinator'
-                        ,'Teacher in Residence'
-                        ,'Teacher, ESL'
-                        ,'Co-Teacher')
+    AND was.job_name IN ('Teacher', 'Learning Specialist', 'Learning Specialist Coordinator', 'Teacher in Residence', 'Teacher, ESL', 'Co-Teacher')
   GROUP BY was.df_employee_id
  )
 

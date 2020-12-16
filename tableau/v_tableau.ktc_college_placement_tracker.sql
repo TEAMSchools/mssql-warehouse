@@ -8,7 +8,7 @@ WITH nav_applications AS (
         ,SUM(CASE WHEN result_code = 'accepted' THEN award ELSE 0 END) AS n_award_letters_collected
         ,MAX(CASE WHEN result_code = 'accepted' THEN decis ELSE 0 END) AS is_acceptance_letter_collected
   FROM gabby.naviance.college_applications
-  WHERE stage != 'cancelled'
+  WHERE stage <> 'cancelled'
   GROUP BY hs_student_id
  )
 
@@ -152,7 +152,7 @@ WITH nav_applications AS (
                WHEN a.match_type_c NOT IN ('Likely Plus','Target','Reach') THEN 0.0
               END AS is_ltr_match
              ,CASE WHEN a.application_admission_type_c IN ('Early Action', 'Early Decision') THEN 1.0 ELSE 0.0 END AS is_eaed_application
-             ,CASE WHEN a.application_status_c != 'Unknown' THEN 1.0 ELSE 0.0 END AS is_closed_application
+             ,CASE WHEN a.application_status_c <> 'Unknown' THEN 1.0 ELSE 0.0 END AS is_closed_application
              ,CASE WHEN a.efc_from_fafsa_c IS NOT NULL THEN 1.0 ELSE 0.0 END AS is_efc_entered
              ,CASE
                WHEN a.matriculation_decision_c = 'Matriculated (Intent to Enroll)'
@@ -166,16 +166,16 @@ WITH nav_applications AS (
                ELSE 0.0 
               END AS is_accepted_4yr
              ,CASE
-               WHEN a.application_status_c != 'Accepted' THEN NULL
+               WHEN a.application_status_c <> 'Accepted' THEN NULL
                WHEN a.application_status_c = 'Accepted' 
                 AND a.matriculation_decision_c = 'Matriculated (Intent to Enroll)'                
                       THEN 1
                WHEN a.application_status_c = 'Accepted' 
-                AND a.matriculation_decision_c != 'Matriculated (Intent to Enroll)'
+                AND a.matriculation_decision_c <> 'Matriculated (Intent to Enroll)'
                 AND a.primary_reason_for_not_attending_c IS NOT NULL
                       THEN 1
                WHEN a.application_status_c = 'Accepted' 
-                AND a.matriculation_decision_c != 'Matriculated (Intent to Enroll)'
+                AND a.matriculation_decision_c <> 'Matriculated (Intent to Enroll)'
                 AND a.primary_reason_for_not_attending_c IS NULL
                       THEN 0
               END AS accepted_app_closed_with_reason_not_attending
@@ -262,7 +262,7 @@ SELECT co.student_number
       ,am.act_dec
       ,am.act_oct
       ,am.act_apr
-      ,CASE WHEN CONCAT(am.sat2_ch, am.sat2_fl, am.sat2_lr, am.sat2_m1, am.sat2_m2, am.sat2_sp) != '' THEN 1.0 ELSE 0.0 END AS took_sat2      
+      ,CASE WHEN CONCAT(am.sat2_ch, am.sat2_fl, am.sat2_lr, am.sat2_m1, am.sat2_m2, am.sat2_sp) <> '' THEN 1.0 ELSE 0.0 END AS took_sat2      
 
       ,ca.n_applications_submitted
       ,ca.n_ltr_applications      

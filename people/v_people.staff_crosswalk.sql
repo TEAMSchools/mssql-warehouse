@@ -63,7 +63,7 @@ SELECT sr.df_employee_number
 
       ,COALESCE(idps.ps_teachernumber
                ,sr.adp_associate_id
-               ,CONVERT(VARCHAR(25),sr.df_employee_number)) AS ps_teachernumber
+               ,CONVERT(VARCHAR(25), sr.df_employee_number)) AS ps_teachernumber
 
       ,ads.samaccountname
       ,ads.userprincipalname
@@ -73,17 +73,16 @@ SELECT sr.df_employee_number
       ,adm.userprincipalname AS manager_userprincipalname
       ,adm.mail AS manager_mail
 
-      ,CASE WHEN c.personal_email != '' THEN c.personal_email END AS personal_email
-
+      ,CASE WHEN c.personal_email <> '' THEN c.personal_email END AS personal_email
 FROM gabby.dayforce.staff_roster sr
 LEFT JOIN gabby.people.id_crosswalk_powerschool idps
   ON sr.df_employee_number = idps.df_employee_number
  AND idps.is_master = 1
  AND idps._fivetran_deleted = 0
 LEFT JOIN gabby.adsi.user_attributes_static ads
-  ON CONVERT(VARCHAR(25),sr.df_employee_number) = ads.employeenumber
+  ON CONVERT(VARCHAR(25), sr.df_employee_number) = ads.employeenumber
 LEFT JOIN gabby.adsi.user_attributes_static adm
-  ON CONVERT(VARCHAR(25),sr.manager_df_employee_number) = adm.employeenumber
+  ON CONVERT(VARCHAR(25), sr.manager_df_employee_number) = adm.employeenumber
 LEFT JOIN gabby.dayforce.personal_contact_info c
   ON sr.df_employee_number = c.employee_number
 LEFT JOIN gabby.pm.teacher_grade_levels gl

@@ -6,12 +6,12 @@ CREATE OR ALTER VIEW njdoe.parcc_clean AS
 SELECT academic_year
       ,COALESCE(test_session, test_season) AS test_session
       ,UPPER(county_code) AS county_code
-      ,CASE WHEN county_name != '' THEN UPPER(county_name) END AS county_name
-      ,CASE WHEN district_code != '' THEN district_code END AS district_code
-      ,CASE WHEN district_name != '' THEN UPPER(district_name) END AS district_name 
-      ,CASE WHEN school_code != '' THEN school_code END AS school_code
-      ,CASE WHEN school_name != '' THEN school_name END AS school_name
-      ,CASE WHEN dfg != '' THEN dfg END AS dfg
+      ,CASE WHEN county_name <> '' THEN UPPER(county_name) END AS county_name
+      ,CASE WHEN district_code <> '' THEN district_code END AS district_code
+      ,CASE WHEN district_name <> '' THEN UPPER(district_name) END AS district_name 
+      ,CASE WHEN school_code <> '' THEN school_code END AS school_code
+      ,CASE WHEN school_name <> '' THEN school_name END AS school_name
+      ,CASE WHEN dfg <> '' THEN dfg END AS dfg
       ,UPPER(subgroup) AS subgroup
       ,UPPER(subgroup_type) AS subgroup_type
       ,CASE 
@@ -19,8 +19,8 @@ SELECT academic_year
         WHEN test_code LIKE 'ELA00%' THEN REPLACE(test_code, '00', '0')
         ELSE test_code
        END AS test_code
-      ,CONVERT(INT, CASE WHEN reg_to_test != '' THEN reg_to_test END) AS reg_to_test
-      ,CONVERT(INT, CASE WHEN not_tested != '' THEN not_tested END) AS not_tested
+      ,CONVERT(INT, CASE WHEN reg_to_test <> '' THEN reg_to_test END) AS reg_to_test
+      ,CONVERT(INT, CASE WHEN not_tested <> '' THEN not_tested END) AS not_tested
       ,valid_scores
       ,mean_score
       ,l_1_percent

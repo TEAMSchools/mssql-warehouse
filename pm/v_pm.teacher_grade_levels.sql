@@ -22,7 +22,7 @@ WITH ps_section_teacher AS (
   JOIN gabby.powerschool.teachers_static t
     ON st.teacherid = t.id
    AND st.[db_name] = t.[db_name]
-  WHERE (sec.section_type != 'SC' OR sec.section_type IS NULL)
+  WHERE (sec.section_type <> 'SC' OR sec.section_type IS NULL)
  )
 
 ,gl_students AS (

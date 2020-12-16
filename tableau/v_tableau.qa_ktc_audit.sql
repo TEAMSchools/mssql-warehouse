@@ -36,15 +36,9 @@ WITH roster AS (
 ,attachments_clean AS (
   SELECT sub.contact_id
         ,sub.[name]
-        ,LTRIM(RTRIM(SUBSTRING(sub.[name]
-                 ,(sub.underscore_1 + 1)
-                 ,(sub.underscore_2 - sub.underscore_1 - 1)))) AS semester
-        ,LTRIM(RTRIM(SUBSTRING(sub.[name]
-                 ,(sub.underscore_2 + 1)
-                 ,(sub.underscore_3 - sub.underscore_2 - 1)))) AS [year]
-        ,LTRIM(RTRIM(SUBSTRING(sub.[name]
-                 ,(sub.underscore_3 + 1)
-                 ,(sub.file_ext_dot - sub.underscore_3)))) AS document_type
+        ,LTRIM(RTRIM(SUBSTRING(sub.[name], (sub.underscore_1 + 1), (sub.underscore_2 - sub.underscore_1 - 1)))) AS semester
+        ,LTRIM(RTRIM(SUBSTRING(sub.[name], (sub.underscore_2 + 1), (sub.underscore_3 - sub.underscore_2 - 1)))) AS [year]
+        ,LTRIM(RTRIM(SUBSTRING(sub.[name], (sub.underscore_3 + 1), (sub.file_ext_dot - sub.underscore_3)))) AS document_type
   FROM
       (
        SELECT a.parent_id AS contact_id
@@ -74,7 +68,7 @@ WITH roster AS (
 
         ,e.student_c AS contact_id
 
-        ,u.name AS updated_by
+        ,u.[name] AS updated_by
   FROM gabby.alumni.enrollment_history eh
   JOIN gabby.alumni.enrollment_c e
     ON eh.parent_id = e.id
@@ -89,12 +83,12 @@ WITH roster AS (
 
 ,enr_hist_grad AS (
   SELECT eh.parent_id AS enrollment_id
-        ,CONVERT(DATE,eh.created_date) AS status_change_date
+        ,CONVERT(DATE, eh.created_date) AS status_change_date
         ,ROW_NUMBER() OVER(PARTITION BY eh.parent_id ORDER BY eh.created_date DESC) AS rn
 
         ,e.student_c AS contact_id
 
-        ,u.name AS updated_by
+        ,u.[name] AS updated_by
   FROM gabby.alumni.enrollment_history eh
   JOIN gabby.alumni.enrollment_c e
     ON eh.parent_id = e.id
@@ -109,11 +103,11 @@ WITH roster AS (
   SELECT u.enrollment_id
         ,u.enrollment_name
         ,u.field AS audit_name
-        ,u.value AS audit_value
+        ,u.[value] AS audit_value
   FROM
       (
        SELECT e.id AS enrollment_id
-             ,e.name AS enrollment_name
+             ,e.[name] AS enrollment_name
              ,e.status_c
              ,ISNULL(CONVERT(NVARCHAR(MAX),e.actual_end_date_c), '') AS actual_end_date_c
              ,ISNULL(CONVERT(NVARCHAR(MAX),e.date_last_verified_c), '') AS date_last_verified_c
@@ -123,20 +117,20 @@ WITH roster AS (
              ,ISNULL(CONVERT(NVARCHAR(MAX),COALESCE(e.major_c, e.major_area_c)), '') AS major_or_area
              ,ISNULL(CONVERT(NVARCHAR(MAX),e.college_major_declared_c), '') AS college_major_declared_c
 
-             ,ISNULL(CONVERT(NVARCHAR(MAX),c.description), '') AS description
+             ,ISNULL(CONVERT(NVARCHAR(MAX),c.[description]), '') AS [description]
        FROM gabby.alumni.enrollment_c e
        JOIN gabby.alumni.contact c
          ON e.student_c = c.id
        WHERE e.type_c = 'College'
       ) sub
   UNPIVOT(
-    value
+    [value]
     FOR field IN (actual_end_date_c
                  ,date_last_verified_c
                  ,date_last_verified_ontime
                  ,notes_c
                  ,transfer_reason_c
-                 ,description
+                 ,[description]
                  ,major_or_area
                  ,college_major_declared_c)
    ) u
@@ -152,8 +146,8 @@ SELECT r.contact_id
       ,NULL AS status_change_date
       ,NULL AS updated_by
       ,s.semester + ' ' + s.[year] + ' ' + d.document_type AS audit_name
-      ,a.name AS audit_value
-      ,CASE WHEN a.name IS NOT NULL THEN 1 ELSE 0 END AS audit_result
+      ,a.[name] AS audit_value
+      ,CASE WHEN a.[name] IS NOT NULL THEN 1 ELSE 0 END AS audit_result
 FROM roster r
 CROSS JOIN valid_semesters s
 CROSS JOIN valid_documents d
@@ -180,7 +174,7 @@ SELECT r.contact_id
       ,ea.audit_value
       ,CASE
         WHEN ea.audit_name IN ('actual_end_date_c', 'description', 'notes_c', 'transfer_reason_c')
-         AND ea.audit_value != ''
+         AND ea.audit_value <> ''
                THEN 1
         WHEN ea.audit_name = 'date_last_verified_c'
          AND CONVERT(DATE, ea.audit_value) >= eh.status_change_date 
@@ -217,7 +211,7 @@ SELECT r.contact_id
          AND ea.audit_value = '1'
                THEN 1
         WHEN ea.audit_name IN ('actual_end_date_c', 'major_or_area')
-         AND ea.audit_value != ''
+         AND ea.audit_value <> ''
                THEN 1
         WHEN ea.audit_name = 'date_last_verified_c'
          AND CONVERT(DATE, ea.audit_value) >= eh.status_change_date 

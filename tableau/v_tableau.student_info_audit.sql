@@ -21,7 +21,7 @@ SELECT schoolid
        END AS flag
 FROM gabby.powerschool.cohort_identifiers_static
 WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-  AND schoolid != 999999
+  AND schoolid <> 999999
   AND rn_year = 1
 
 UNION ALL
@@ -48,7 +48,7 @@ SELECT schoolid
        END AS flag
 FROM gabby.powerschool.cohort_identifiers_static
 WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-  AND schoolid != 999999
+  AND schoolid <> 999999
   AND rn_year = 1
 
 UNION ALL
@@ -64,7 +64,7 @@ SELECT schoolid
       ,CASE WHEN mother_cell NOT LIKE '%-%-%' THEN 1 ELSE 0 END AS flag
 FROM gabby.powerschool.cohort_identifiers_static
 WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-  AND schoolid != 999999
+  AND schoolid <> 999999
   AND rn_year = 1
       
 UNION ALL
@@ -80,7 +80,7 @@ SELECT schoolid
       ,CASE WHEN father_cell NOT LIKE '%-%-%' THEN 1 ELSE 0 END AS flag
 FROM gabby.powerschool.cohort_identifiers_static
 WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-  AND schoolid != 999999
+  AND schoolid <> 999999
   AND rn_year = 1
 
 UNION ALL
@@ -96,7 +96,7 @@ SELECT schoolid
       ,CASE WHEN home_phone NOT LIKE '%-%-%' THEN 1 ELSE 0 END AS flag
 FROM gabby.powerschool.cohort_identifiers_static
 WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-  AND schoolid != 999999
+  AND schoolid <> 999999
   AND rn_year = 1
 
 UNION ALL
@@ -112,7 +112,7 @@ SELECT schoolid
       ,CASE WHEN ethnicity IS NULL THEN 1 ELSE 0 END AS flag
 FROM gabby.powerschool.cohort_identifiers_static
 WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-  AND schoolid != 999999
+  AND schoolid <> 999999
   AND rn_year = 1
 
 UNION ALL
@@ -128,7 +128,7 @@ SELECT schoolid
       ,CASE WHEN gender IS NULL THEN 1 ELSE 0 END AS flag
 FROM gabby.powerschool.cohort_identifiers_static
 WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-  AND schoolid != 999999
+  AND schoolid <> 999999
   AND rn_year = 1
 
 UNION ALL
@@ -144,7 +144,7 @@ SELECT co.schoolid
       ,CASE WHEN co.state_studentnumber IS NULL THEN 1 ELSE 0 END AS flag
 FROM gabby.powerschool.cohort_identifiers_static co
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-  AND co.schoolid != 999999
+  AND co.schoolid <> 999999
   AND rn_year = 1
 
 UNION ALL
@@ -158,7 +158,7 @@ SELECT co.schoolid
       ,'Missing or Incorrect FTEID' AS element
       ,CONVERT(VARCHAR,co.fteid) AS detail
       ,CASE 
-        WHEN co.fteid != fte.id THEN 1
+        WHEN co.fteid <> fte.id THEN 1
         WHEN co.fteid IS NULL THEN 1
         WHEN co.fteid = 0 THEN 1
         ELSE 0
@@ -170,4 +170,4 @@ JOIN gabby.powerschool.fte
  AND co.db_name = fte.db_name
  AND fte.name = 'Full Time Students'
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-  AND co.schoolid != 999999  
+  AND co.schoolid <> 999999  

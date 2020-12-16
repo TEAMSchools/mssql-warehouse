@@ -31,7 +31,7 @@ WITH subjects AS (
    AND terms._fivetran_deleted = 0
   CROSS JOIN subjects
   WHERE co.rn_year = 1
-    AND co.grade_level != 99    
+    AND co.grade_level <> 99    
     AND co.enroll_status = 0
     AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
  )

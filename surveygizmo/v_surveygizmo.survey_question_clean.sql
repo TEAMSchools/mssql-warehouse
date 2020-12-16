@@ -9,7 +9,7 @@ SELECT id AS survey_question_id
       ,[type]
       ,comment
       ,has_showhide_deps
-      ,CASE WHEN shortname != '' THEN shortname END AS shortname
+      ,CASE WHEN shortname <> '' THEN shortname END AS shortname
       ,CASE 
         WHEN [type] = 'ESSAY' THEN 'Y' 
         WHEN [type] = 'TEXTBOX' THEN 'Y'
@@ -20,7 +20,7 @@ SELECT id AS survey_question_id
                             ,'subject_df_employee_number', 'is_manager') THEN 1
         ELSE 0
        END AS is_identifier_question
-      
+
       ,JSON_VALUE(title, '$.English') AS title_english
       ,JSON_VALUE(properties, '$.url') AS [url]
       ,JSON_VALUE(properties, '$.orientation') AS orientation
