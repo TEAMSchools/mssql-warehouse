@@ -1,198 +1,186 @@
 USE gabby
 GO
- 
+
 CREATE OR ALTER VIEW adp.staff_roster AS
 
 WITH clean_people AS (
-  SELECT sub.associate_id
+  SELECT sub.df_employee_number
+        ,sub.adp_associate_id
         ,sub.first_name
         ,sub.last_name
-        ,sub.preferred_name
-        ,sub.maiden_name
-        ,sub.eeo_ethnic_code
-        ,sub.eeo_ethnic_description
-        ,sub.gender
-        ,sub.primary_address_city
-        ,sub.primary_address_state_territory_code
-        ,sub.primary_address_zip_postal_code
-        ,sub.personal_contact_personal_mobile
-        ,sub.subject_dept_custom
-        ,sub.manager_secondary_custom
-        ,sub.grades_taught_custom
+        ,sub.[address]
+        ,sub.city
+        ,sub.[state]
+        ,sub.postal_code
+        ,sub.[status]
+        ,sub.status_reason
+        ,sub.primary_job
+        ,sub.primary_on_site_department
+        ,sub.legal_entity_name
+        ,sub.job_family
+        ,sub.payclass
+        ,sub.paytype
+        ,sub.flsa_status
+        ,sub.ethnicity
         ,sub.birth_date
-        ,sub.hire_date
-        ,sub.rehire_date
-        ,sub.position_id
-        ,sub.salesforce_job_position_name_custom
-        ,sub.job_title_description
-        ,sub.job_title_custom
-        ,sub.position_status
-        ,sub.location_code
-        ,sub.location_description
-        ,sub.location_custom
-        ,sub.home_department_code
-        ,sub.home_department_description
-        ,sub.reports_to_position_id
-        ,sub.reports_to_name
-        ,sub.years_of_service
-        ,sub.termination_reason_code
-        ,sub.termination_reason_description
-        ,sub.spun_off_merged_employee
-        ,sub.worker_category_code
-        ,sub.worker_category_description
-        ,sub.benefits_eligibility_class_description
-        ,sub.payroll_company_code
-        ,sub.flsa_code
-        ,sub.flsa_description
-        ,sub.this_is_a_management_position
-        ,sub.manager_custom_assoc_id
-        ,sub.position_start_date
+        ,sub.original_hire_date
         ,sub.termination_date
-        ,sub.spin_off_merge_date
-        ,sub.is_management
-        ,sub.is_merged
-        ,COALESCE(
-           LTRIM(RTRIM(CASE
-                        WHEN CHARINDEX(',',sub.preferred_name) = 0 AND CHARINDEX(' ',sub.preferred_name) = 0 THEN SUBSTRING(sub.preferred_name, 1, LEN(sub.preferred_name))
-                        WHEN CHARINDEX(',',sub.preferred_name) = 0 AND CHARINDEX(' ',sub.preferred_name) > 0 THEN SUBSTRING(sub.preferred_name, 1, CHARINDEX(' ',sub.preferred_name))
-                        WHEN CHARINDEX(',',sub.preferred_name) > 0 THEN SUBSTRING(sub.preferred_name, CHARINDEX(',',sub.preferred_name) + 1, LEN(sub.preferred_name))
-                       END)) 
-          ,sub.first_name) AS preferred_first
-        ,COALESCE(
-           LTRIM(RTRIM(CASE
-                        WHEN CHARINDEX(',',sub.preferred_name) = 0 AND CHARINDEX(' ',sub.preferred_name) = 0 THEN NULL
-                        WHEN CHARINDEX(',',sub.preferred_name) = 0 AND CHARINDEX(' ',sub.preferred_name) > 0 THEN SUBSTRING(sub.preferred_name, CHARINDEX(' ',sub.preferred_name) + 1, LEN(sub.preferred_name))
-                        WHEN CHARINDEX(',',sub.preferred_name) > 0 THEN SUBSTRING(sub.preferred_name, 1, CHARINDEX(',',sub.preferred_name) - 1)
-                       END))
-          ,sub.last_name) AS preferred_last
+        ,sub.rehire_date
+        ,sub.position_effective_from_date
+        ,sub.position_effective_to_date
+        ,sub.annual_salary
+        ,sub.gender
+        ,sub.is_hispanic
+        ,sub.is_manager
+        ,sub.reports_to_associate_id
+        ,REPLACE(sub.primary_site_clean, ' - Regional', '') AS primary_site
+        ,COALESCE(sub.common_name, sub.first_name) AS preferred_first_name
+        ,COALESCE(sub.preferred_last_name , sub.last_name) AS preferred_last_name
+        ,gabby.utilities.STRIP_CHARACTERS(sub.mobile_number, '^0-9') AS mobile_number
+        ,CASE WHEN sub.primary_site_clean LIKE '% - Regional%' THEN 1 ELSE 0 END AS is_regional_staff
+        ,CASE
+          WHEN sub.ethnicity = 'Hispanic or Latino' THEN 'Hispanic or Latino'
+          WHEN sub.ethnicity = 'Decline to Answer' THEN NULL
+          ELSE CONVERT(VARCHAR(125), RTRIM(LEFT(sub.ethnicity, CHARINDEX(' (', sub.ethnicity))))
+         END AS primary_ethnicity
+        /* redundant combined fields */
+        ,CONCAT(sub.primary_on_site_department, ' - ', sub.primary_job) AS position_title
+        ,sub.primary_site_clean + ' (' + sub.legal_entity_abbreviation + ') ' + '- ' + sub.primary_on_site_department AS primary_on_site_department_entity
+        ,sub.primary_site_clean + ' (' + sub.legal_entity_abbreviation + ') ' AS primary_site_entity
 
-        ,ROW_NUMBER() OVER(
-           PARTITION BY sub.associate_id
-             ORDER BY sub.position_status ASC
-                     ,sub.position_start_date DESC
-                     ,sub.termination_date DESC) AS rn_curr
-        ,ROW_NUMBER() OVER(
-           PARTITION BY sub.associate_id
-             ORDER BY sub.position_status DESC
-                     ,sub.position_start_date ASC
-                     ,sub.termination_date ASC) AS rn_base     
+        ,adp2.file_number AS manager_df_employee_number
   FROM
       (
-       SELECT CONVERT(VARCHAR(125),associate_id) AS associate_id
-             ,CONVERT(VARCHAR(125),first_name) AS first_name
-             ,CONVERT(VARCHAR(125),last_name) AS last_name
-             ,CONVERT(VARCHAR(125),preferred_name) AS preferred_name
-             ,CONVERT(VARCHAR(125),maiden_name) AS maiden_name
-             ,CONVERT(INT,eeo_ethnic_code) AS eeo_ethnic_code
-             ,CONVERT(VARCHAR(125),eeo_ethnic_description) AS eeo_ethnic_description
-             ,CONVERT(VARCHAR(125),gender) AS gender
-             ,CONVERT(VARCHAR(125),primary_address_city) AS primary_address_city
-             ,CONVERT(VARCHAR(125),primary_address_state_territory_code) AS primary_address_state_territory_code
-             ,CONVERT(VARCHAR(125),primary_address_zip_postal_code) AS primary_address_zip_postal_code
-             ,CONVERT(VARCHAR(125),personal_contact_personal_mobile) AS personal_contact_personal_mobile
-             ,CONVERT(VARCHAR(125),subject_dept_custom) AS subject_dept_custom
-             ,CONVERT(VARCHAR(125),manager_secondary_custom) AS manager_secondary_custom
-             ,CONVERT(VARCHAR(125),grades_taught_custom) AS grades_taught_custom
-             ,CONVERT(VARCHAR(125),position_id) AS position_id
-             ,CONVERT(VARCHAR(125),salesforce_job_position_name_custom) AS salesforce_job_position_name_custom
-             ,CONVERT(VARCHAR(125),job_title_description) AS job_title_description
-             ,CONVERT(VARCHAR(125),job_title_custom) AS job_title_custom
-             ,CONVERT(VARCHAR(125),position_status) AS position_status
-             ,CONVERT(VARCHAR(125),location_code) AS location_code
-             ,CONVERT(VARCHAR(125),location_description) AS location_description
-             ,CONVERT(VARCHAR(125),location_custom) AS location_custom
-             ,CONVERT(VARCHAR(125),home_department_code) AS home_department_code
-             ,CONVERT(VARCHAR(125),home_department_description) AS home_department_description
-             ,CONVERT(VARCHAR(125),reports_to_position_id) AS reports_to_position_id
-             ,CONVERT(VARCHAR(125),reports_to_name) AS reports_to_name
-             ,CONVERT(VARCHAR(125),years_of_service) AS years_of_service
-             ,CONVERT(VARCHAR(125),termination_reason_code) AS termination_reason_code
-             ,CONVERT(VARCHAR(125),termination_reason_description) AS termination_reason_description
-             ,CONVERT(VARCHAR(125),spun_off_merged_employee) AS spun_off_merged_employee
-             ,CONVERT(VARCHAR(125),worker_category_code) AS worker_category_code
-             ,CONVERT(VARCHAR(125),worker_category_description) AS worker_category_description
-             ,CONVERT(VARCHAR(125),benefits_eligibility_class_description) AS benefits_eligibility_class_description
-             ,CONVERT(VARCHAR(125),payroll_company_code) AS payroll_company_code
-             ,CONVERT(VARCHAR(125),flsa_code) AS flsa_code
-             ,CONVERT(VARCHAR(125),flsa_description) AS flsa_description
-             ,CONVERT(VARCHAR(125),this_is_a_management_position) AS this_is_a_management_position
-             ,CONVERT(VARCHAR(125),manager_custom_assoc_id) AS manager_custom_assoc_id    
-             ,CONVERT(DATE,adp.birth_date) AS birth_date
-             ,CONVERT(DATE,adp.hire_date) AS hire_date
-             ,CONVERT(DATE,adp.rehire_date) AS rehire_date
-             ,CONVERT(DATE,adp.position_start_date) AS position_start_date      
-             ,CONVERT(DATE,adp.termination_date) AS termination_date                  
-             ,CONVERT(DATE,adp.spin_off_merge_date) AS spin_off_merge_date
-             --,education_level_code
-             --,education_level_description        
-             ,CASE 
-               WHEN adp.this_is_a_management_position = 'Yes' THEN 1
-               WHEN adp.this_is_a_management_position = 'No' THEN 0
-              END AS is_management
-             ,CASE 
-               WHEN adp.spun_off_merged_employee = 'Yes' THEN 1 
-               WHEN adp.spun_off_merged_employee = 'No' THEN 0
-              END AS is_merged                   
-       FROM gabby.adp.export_people_details adp WITH(NOLOCK)
+       SELECT adp.file_number AS df_employee_number
+             ,adp.associate_id AS adp_associate_id
+             ,adp.first_name
+             ,adp.last_name
+             ,adp.primary_address_city AS city
+             ,adp.primary_address_state_territory_code AS [state]
+             ,adp.primary_address_zip_postal_code AS postal_code
+             ,adp.position_status AS [status]
+             ,adp.termination_reason_description AS status_reason
+             ,adp.job_title_description AS primary_job
+             ,adp.home_department_description AS primary_on_site_department
+             ,adp.flsa_description AS flsa_status
+             ,adp.location_description AS primary_site_clean
+             ,adp.personal_contact_personal_mobile AS mobile_number
+             ,adp.race_description AS ethnicity
+             ,adp.reports_to_associate_id
+             ,NULL AS job_family -- on the way
+             ,NULL AS payclass -- on the way
+             ,NULL AS paytype -- on the way
+             /* transformations */
+             ,CONVERT(DATE, adp.birth_date) AS birth_date
+             ,CONVERT(DATE, adp.hire_date) AS original_hire_date
+             ,CONVERT(DATE, adp.termination_date) AS termination_date
+             ,CONVERT(DATE, adp.rehire_date) AS rehire_date
+             ,CONVERT(DATE, adp.position_start_date) AS position_effective_from_date
+             ,CONVERT(DATE, adp.position_effective_end_date) AS position_effective_to_date
+             ,CONVERT(MONEY, adp.annual_salary) AS annual_salary
+             ,CONCAT(adp.primary_address_address_line_1, ' ', adp.primary_address_address_line_2) AS [address]
+             ,LEFT(UPPER(adp.gender), 1) AS gender
+             ,CASE
+               WHEN adp.business_unit_description = 'TEAM Academy Charter' THEN 'TEAM Academy Charter Schools'
+               WHEN adp.business_unit_description = 'KIPP TEAM and Family Schools Inc.' THEN 'KIPP New Jersey'
+               WHEN adp.business_unit_description = 'KIPP Cooper Norcross' THEN 'KIPP Cooper Norcross Academy'
+               ELSE adp.business_unit_description
+              END AS legal_entity_name
+             ,CASE
+               WHEN adp.business_unit_description = 'TEAM Academy Charter' THEN 'TEAM'
+               WHEN adp.business_unit_description = 'KIPP TEAM and Family Schools Inc.' THEN 'KNJ'
+               WHEN adp.business_unit_description = 'KIPP Cooper Norcross' THEN 'KCNA'
+               WHEN adp.business_unit_description = 'KIPP Miami' THEN 'MIA'
+              END AS legal_entity_abbreviation
+             ,CASE
+               WHEN adp.race_description LIKE '%Hispanic%' THEN 1
+               WHEN adp.race_description NOT LIKE '%Hispanic%' THEN 1
+              END AS is_hispanic
+             ,CASE WHEN adp.associate_id IN (SELECT reports_to_associate_id FROM gabby.adp.employees WHERE position_status <> 'TERMINATED') THEN 1 ELSE 0 END AS is_manager
+             ,ROW_NUMBER() OVER(
+                PARTITION BY adp.associate_id 
+                  ORDER BY CONVERT(DATE, adp.position_start_date) DESC) AS rn
+
+             ,df.common_name -- use DF until fixed
+             ,df.preferred_last_name -- use DF until fixed
+       FROM gabby.adp.employees adp
+       LEFT JOIN gabby.dayforce.employees df
+         ON adp.file_number = df.df_employee_number
       ) sub
+  LEFT JOIN gabby.adp.employees adp2
+    ON sub.reports_to_associate_id = adp2.associate_id
+  WHERE sub.rn = 1
  )
 
-SELECT sub.associate_id
-      ,sub.first_name
-      ,sub.last_name
-      ,sub.preferred_name
-      ,sub.maiden_name
-      ,sub.eeo_ethnic_code
-      ,sub.eeo_ethnic_description
-      ,sub.gender
-      ,sub.primary_address_city
-      ,sub.primary_address_state_territory_code
-      ,sub.primary_address_zip_postal_code
-      ,sub.personal_contact_personal_mobile
-      ,sub.subject_dept_custom
-      ,sub.manager_secondary_custom
-      ,sub.grades_taught_custom
-      ,sub.birth_date
-      ,sub.hire_date
-      ,sub.rehire_date
-      ,sub.position_id
-      ,sub.salesforce_job_position_name_custom
-      ,sub.job_title_description
-      ,sub.job_title_custom
-      ,sub.position_status
-      ,sub.location_code
-      ,sub.location_description
-      ,sub.location_custom
-      ,sub.home_department_code
-      ,sub.home_department_description
-      ,sub.reports_to_position_id
-      ,sub.reports_to_name
-      ,sub.years_of_service
-      ,sub.termination_reason_code
-      ,sub.termination_reason_description
-      ,sub.spun_off_merged_employee
-      ,sub.worker_category_code
-      ,sub.worker_category_description
-      ,sub.benefits_eligibility_class_description
-      ,sub.payroll_company_code
-      ,sub.flsa_code
-      ,sub.flsa_description
-      ,sub.this_is_a_management_position
-      ,sub.manager_custom_assoc_id
-      ,sub.position_start_date
-      ,sub.termination_date
-      ,sub.spin_off_merge_date
-      ,sub.is_management
-      ,sub.is_merged
-      ,sub.preferred_first
-      ,sub.preferred_last
-      ,sub.rn_curr
-      ,sub.rn_base
+SELECT c.df_employee_number
+      ,c.adp_associate_id
+      ,c.first_name
+      ,c.last_name
+      ,c.gender
+      ,c.primary_ethnicity
+      ,c.is_hispanic
+      ,c.[address]
+      ,c.city
+      ,c.[state]
+      ,c.postal_code
+      ,c.birth_date
+      ,c.original_hire_date
+      ,c.termination_date
+      ,c.rehire_date
+      ,c.[status]
+      ,c.status_reason
+      ,c.is_manager
+      ,c.reports_to_associate_id
+      ,c.preferred_first_name
+      ,c.preferred_last_name
+      ,c.primary_job
+      ,c.primary_on_site_department
+      ,c.primary_site
+      ,c.is_regional_staff
+      ,c.legal_entity_name
+      ,c.job_family
+      ,c.position_effective_from_date
+      ,c.position_effective_to_date
+      ,c.manager_df_employee_number
+      ,c.payclass
+      ,c.paytype
+      ,c.flsa_status
+      ,c.annual_salary
+      ,c.position_title
+      ,c.primary_on_site_department_entity
+      ,c.primary_site_entity
+      ,NULL AS salesforce_id
+      ,NULL AS grades_taught
+      ,NULL AS subjects_taught
+      ,NULL AS leadership_role
+      ,c.preferred_last_name + ', ' + c.preferred_first_name AS preferred_name
+      ,SUBSTRING(c.mobile_number, 1, 3) + '-'
+         + SUBSTRING(c.mobile_number, 4, 3) + '-'
+         + SUBSTRING(c.mobile_number, 7, 4) AS mobile_number
+      ,CASE
+        WHEN c.legal_entity_name = 'TEAM Academy Charter Schools' THEN 'YHD'
+        WHEN c.legal_entity_name = 'KIPP New Jersey' THEN 'D30'
+        WHEN c.legal_entity_name = 'KIPP Cooper Norcross Academy' THEN 'D3Z'
+       END AS payroll_company_code
+      ,CASE
+        WHEN c.legal_entity_name = 'TEAM Academy Charter Schools' THEN 'kippnewark'
+        WHEN c.legal_entity_name = 'KIPP Cooper Norcross Academy' THEN 'kippcamden'
+        WHEN c.legal_entity_name = 'KIPP Miami' THEN 'kippmiami'
+       END AS [db_name]
+      ,CASE WHEN c.[status] NOT IN ('TERMINATED', 'PRESTART') THEN 1 ELSE 0 END AS is_active
 
-      ,m.preferred_first AS manager_preferred_first
-      ,m.preferred_last AS manager_preferred_last
-      ,m.preferred_last + ', ' + m.preferred_first AS manager_name
-FROM clean_people sub
-LEFT OUTER JOIN clean_people m
-  ON sub.manager_custom_assoc_id = m.associate_id
- AND m.rn_curr = 1
+      ,s.ps_school_id AS primary_site_schoolid
+      ,s.reporting_school_id AS primary_site_reporting_schoolid
+      ,s.school_level AS primary_site_school_level
+      ,s.is_campus AS is_campus_staff
+
+      ,m.adp_associate_id AS manager_adp_associate_id
+      ,m.preferred_first_name AS manager_preferred_first_name
+      ,m.preferred_last_name AS manager_preferred_last_name
+      ,m.preferred_last_name + ', ' + m.preferred_first_name AS manager_name
+FROM clean_people c
+LEFT JOIN gabby.people.school_crosswalk s
+  ON c.primary_site = s.site_name
+ AND s._fivetran_deleted = 0
+LEFT JOIN clean_people m
+  ON c.manager_df_employee_number = m.df_employee_number
