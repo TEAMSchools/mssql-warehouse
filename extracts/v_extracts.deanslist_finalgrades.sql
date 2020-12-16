@@ -49,6 +49,7 @@ FROM gabby.powerschool.course_section_scaffold_current_static o
 JOIN gabby.powerschool.sections sec
   ON o.sectionid = sec.id
  AND o.[db_name] = sec.[db_name]
+ AND sec.termid <> 3002 -- ad hoc nonsense bc walters cant do his job right
 JOIN gabby.powerschool.courses cou
   ON o.course_number = cou.course_number
  AND o.[db_name] = cou.[db_name]
