@@ -55,11 +55,11 @@ WITH roster AS (
                 ) AS indep_lvl_num /* Q1 & Q2 are set by BOY, carry them forward for setting goals at beginning of year */
        FROM gabby.lit.achieved_by_round_static achv
        LEFT JOIN STRING_SPLIT('AR1,AR2', ',') s1
-         ON achv.reporting_term = 'LIT0'
+         ON achv.reporting_term = 'LIT1'
        LEFT JOIN STRING_SPLIT('AR3,AR4', ',') s2
          ON achv.reporting_term = 'LIT2'
        WHERE achv.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-         AND achv.reporting_term IN ('LIT0','LIT2')
+         AND achv.reporting_term IN ('LIT1','LIT2')
       ) sub
   LEFT JOIN gabby.renaissance.ar_goal_criteria goal
     ON sub.indep_lvl_num BETWEEN goal.[min] AND goal.[max]
