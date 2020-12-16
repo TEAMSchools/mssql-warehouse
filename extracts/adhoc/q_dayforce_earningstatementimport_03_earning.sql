@@ -19,7 +19,7 @@ SELECT associate_id AS Example
       ,'Normal' AS EarningType
 FROM payroll.historical_earnings_earnings
 WHERE regular_earnings_detail IS NOT NULL
-  AND payroll_company_code != 'ZS1'
+  AND payroll_company_code <> 'ZS1'
 
 UNION ALL
 
@@ -39,7 +39,7 @@ SELECT associate_id AS Example
       ,'Normal' AS EarningType
 FROM payroll.historical_earnings_earnings
 WHERE overtime_earnings_detail IS NOT NULL
-  AND payroll_company_code != 'ZS1'
+  AND payroll_company_code <> 'ZS1'
       
 UNION ALL
 
@@ -62,8 +62,8 @@ SELECT associate_id AS Example
         ELSE 'Normal' 
        END AS EarningType
 FROM payroll.historical_earnings_earnings
-WHERE additional_earnings != 0
-  AND payroll_company_code != 'ZS1'
+WHERE additional_earnings <> 0
+  AND payroll_company_code <> 'ZS1'
   AND additional_earnings_code_pay_statements NOT IN ('4','F','PAV')
   
 UNION ALL
@@ -83,6 +83,6 @@ SELECT associate_id AS Example
       ,SUM(CASE WHEN void_check_indicator = 'Y' THEN NULL ELSE memo_amount END) OVER (PARTITION BY associate_id, YEAR(pay_date), memo_code_pay_statements ORDER BY pay_date) AS AmountYTD
       ,'Memo' AS EarningType
 FROM payroll.historical_earnings_earnings
-WHERE memo_amount != 0
-  AND payroll_company_code != 'ZS1'
+WHERE memo_amount <> 0
+  AND payroll_company_code <> 'ZS1'
   AND memo_code_pay_statements NOT IN ('#','&','7','8','X','M','A')

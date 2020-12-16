@@ -7,4 +7,4 @@ SELECT REPLACE(mail,'kippnj','teamschools') AS email_addr
 FROM gabby.adsi.user_attributes
 WHERE createtimestamp >= CONVERT(DATE,DATEADD(HOUR,-144,SYSDATETIME()))
   AND mail IS NOT NULL
-  AND company != 'KIPP Miami'
+  AND company <> 'KIPP Miami'

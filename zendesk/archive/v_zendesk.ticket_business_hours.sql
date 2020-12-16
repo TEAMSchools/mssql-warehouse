@@ -9,7 +9,7 @@ WITH ticket_dates AS (
   FROM gabby.zendesk.ticket t
   JOIN gabby.zendesk.ticket_comment tc
     ON t.id = tc.ticket_id
-   AND t.submitter_id != tc.user_id
+   AND t.submitter_id <> tc.user_id
   GROUP BY t.id, t.created_at
  )
 

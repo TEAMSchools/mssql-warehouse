@@ -5,14 +5,14 @@ CREATE OR ALTER VIEW extracts.gapps_users_students AS
 
 SELECT co.student_number
       ,co.school_level
-      ,co.schoolid      
+      ,co.schoolid
       ,co.first_name AS firstname
-      ,co.last_name AS lastname      
+      ,co.last_name AS lastname
       ,CASE WHEN co.school_level IN ('MS','HS') THEN 'on' ELSE 'off' END AS changepassword
       ,CASE WHEN co.enroll_status = 0 THEN 'off' ELSE 'on' END AS suspended
       ,'/Students/' 
          + CASE 
-            WHEN co.enroll_status != 0 THEN 'Disabled'
+            WHEN co.enroll_status <> 0 THEN 'Disabled'
             WHEN co.school_name = 'Out of District' THEN 'Disabled'
             ELSE CASE
                   WHEN co.region = 'KCNA' THEN 'KCNA'

@@ -1,8 +1,3 @@
-USE gabby
-GO
-
-CREATE OR ALTER VIEW extracts.foundation_new_staff_form AS
-
 WITH dayforce AS (
   SELECT e.primary_site AS school_name
         ,e.preferred_first_name AS first_name

@@ -1,8 +1,3 @@
-USE gabby
-GO
-
-CREATE OR ALTER VIEW extracts.nsch_studenttracker_graduate_file AS
-
 SELECT 'PH3' AS ColA
       ,'10046698' AS ColB -- account code
       ,'KIPP NEWARK COLLEGIATE ACADEMY' AS ColC -- account name

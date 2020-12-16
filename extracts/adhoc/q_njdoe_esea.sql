@@ -1,8 +1,3 @@
-USE gabby
-GO
-
-CREATE OR ALTER VIEW extracts.njdoe_esea AS
-
 WITH scaffold AS (
   SELECT t.df_employee_number
         ,t.preferred_lastfirst

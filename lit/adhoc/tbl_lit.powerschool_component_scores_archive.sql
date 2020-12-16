@@ -148,7 +148,7 @@ SELECT rs.unique_id
       ,gleq.read_lvl
       ,CASE
           WHEN rs.testid = 3273 THEN gleq.fp_lvl_num 
-          WHEN rs.testid != 3273 THEN gleq.lvl_num
+          WHEN rs.testid <> 3273 THEN gleq.lvl_num
          END AS lvl_num           
 FROM ps_scores_long rs
 LEFT OUTER JOIN gabby.lit.gleq

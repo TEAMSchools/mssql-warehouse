@@ -77,7 +77,7 @@ FROM
                 ,benchmark_date_c AS contact_date
           FROM gabby.alumni.college_persistence_c
           WHERE benchmark_status_c = 'Complete'
-            AND benchmark_period_c != 'Pre-College'
+            AND benchmark_period_c <> 'Pre-College'
             AND is_deleted = 0
          ) sub
     ) sub

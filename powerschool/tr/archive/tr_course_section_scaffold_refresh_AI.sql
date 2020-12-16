@@ -35,7 +35,7 @@ BEGIN
     FROM utilities.dependent_objects
     WHERE usedbyschemaname = @schema_name
       AND usedbyobjectname = @view_name
-      AND table_name != 'reporting_terms'; /* manual exclude */
+      AND table_name <> 'reporting_terms'; /* manual exclude */
 
     /* get list of tables updated during current hour */  
     SET @stage = 'updated tables'

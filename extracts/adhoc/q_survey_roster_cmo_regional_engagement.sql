@@ -1,8 +1,3 @@
-USE gabby
-GO
-
-CREATE OR ALTER VIEW extracts.survey_roster_cmo_regional_engagement AS
-
 SELECT df_employee_number
       ,userprincipalname
       ,preferred_first_name

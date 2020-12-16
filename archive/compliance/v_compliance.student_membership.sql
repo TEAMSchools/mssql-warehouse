@@ -20,7 +20,7 @@ FROM gabby.powerschool.cohort_identifiers_static co
 JOIN gabby.powerschool.ps_adaadm_daily_ctod_static mem
   ON co.studentid = mem.studentid
  AND co.yearid = mem.yearid
-WHERE co.schoolid != 999999
+WHERE co.schoolid <> 999999
   AND co.rn_year = 1
 GROUP BY co.student_number      
         ,co.state_studentnumber

@@ -1,8 +1,3 @@
-USE gabby;
-GO
-
-CREATE OR ALTER VIEW extracts.ktc_salesforce_student_import AS
-
 SELECT CASE
         WHEN co.schoolid = 133570965 THEN 'TEAM Academy, a KIPP school'
         WHEN co.schoolid = 73252 THEN 'Rise Academy, a KIPP school'
@@ -80,4 +75,4 @@ LEFT JOIN gabby.alumni.[user] u
   ON s.owner_id = u.id
 WHERE co.schoolid IN (73252, 73253, 133570965, 179902)
   AND co.rn_undergrad = 1
-  AND co.grade_level != 99
+  AND co.grade_level <> 99

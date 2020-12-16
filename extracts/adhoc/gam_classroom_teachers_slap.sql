@@ -23,7 +23,7 @@ FROM gabby.powerschool.sections s
 JOIN gabby.powerschool.courses c
   ON s.course_number_clean = c.course_number_clean
  AND s.[db_name] = c.[db_name] 
- AND c.credittype != 'LOG'
+ AND c.credittype <> 'LOG'
 JOIN slap sl
   ON s.schoolid = sl.primary_site_schoolid
 WHERE s.yearid = (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990)

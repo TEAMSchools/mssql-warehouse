@@ -18,13 +18,13 @@ FROM
            ,df.first_name AS FirstName
            ,df.last_name AS LastName
            ,CONCAT('<ContactInformationTypeXrefCode>', 'BusinessEmail', '</ContactInformationTypeXrefCode>') AS ContactInformationTypeXrefCode
-           ,CONCAT('<EffectiveStart>', df.original_hire_date, '</EffectiveStart>') AS EffectiveStart           
+           ,CONCAT('<EffectiveStart>', df.original_hire_date, '</EffectiveStart>') AS EffectiveStart
            ,CONCAT('<IsForSystemCommunication>', 1, '</IsForSystemCommunication>') AS IsForSystemCommunication
-      
+
            ,CONCAT('<ElectronicAddress>', ad.mail, '</ElectronicAddress>') AS ElectronicAddress
      FROM gabby.dayforce.employees df
      JOIN gabby.adsi.user_attributes_static ad
-       ON df.df_employee_number = CONVERT(VARCHAR,ad.employeenumber)
-      AND ISNUMERIC(ad.employeenumber) = 1     
-     WHERE df.status != 'TERMINATED'
+       ON df.df_employee_number = CONVERT(VARCHAR, ad.employeenumber)
+      AND ISNUMERIC(ad.employeenumber) = 1
+     WHERE df.[status] <> 'TERMINATED'
     ) sub

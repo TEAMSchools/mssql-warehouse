@@ -9,7 +9,7 @@ WITH ug_school AS (
         ,[db_name]
   FROM gabby.powerschool.cohort_identifiers_static
   WHERE rn_undergrad = 1
-    AND grade_level != 99
+    AND grade_level <> 99
  )
 
 ,enroll_dates AS (

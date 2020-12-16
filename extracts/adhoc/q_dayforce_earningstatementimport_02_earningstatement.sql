@@ -1,8 +1,3 @@
-USE gabby
-GO
-
-CREATE OR ALTER VIEW extracts.dayforce_earningstatementimport_02_earningstatement AS
-
 SELECT associate_id AS Example
       ,payroll_company_code AS CompanyCode
       ,tax_id_ssn_ AS SocialSecurityNumber
@@ -58,4 +53,4 @@ SELECT associate_id AS Example
       ,'' AS LocalExemptions
       ,'' AS Message
 FROM gabby.payroll.historical_earnings_statements
-WHERE payroll_company_code != 'ZS1'
+WHERE payroll_company_code <> 'ZS1'

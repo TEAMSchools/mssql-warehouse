@@ -21,7 +21,7 @@ SELECT dli.incident_id
       ,cf.SourceID
       ,cf.SourceType
       ,cf.StringValue
-      ,CASE WHEN cf.value != '' THEN cf.Value END AS value
+      ,CASE WHEN cf.[value] <> '' THEN cf.[Value] END AS [value]
 FROM gabby.deanslist.incidents dli
 CROSS APPLY OPENJSON(dli.custom_fields, '$')
   WITH (
@@ -40,6 +40,6 @@ CROSS APPLY OPENJSON(dli.custom_fields, '$')
    ,SourceID BIGINT
    ,SourceType VARCHAR(MAX)
    ,StringValue VARCHAR(MAX)
-   ,Value VARCHAR(MAX)
+   ,[Value] VARCHAR(MAX)
    ) AS cf
-WHERE dli.custom_fields != '[]'
+WHERE dli.custom_fields <> '[]'

@@ -1,5 +1,5 @@
 /*
---Demographics: all grades for 2014/15 – 2016/17 school years
+--Demographics: all grades for 2014/15 ï¿½ 2016/17 school years
 ---- Student identifier (can be scrambled if scrambled same way each year)
 ---- Gender
 ---- Race/ethnicity
@@ -19,11 +19,11 @@ SELECT student_number
 FROM gabby.powerschool.cohort_identifiers_static
 WHERE academic_year BETWEEN 2014 AND 2016
   AND rn_year = 1
-  AND schoolid != 999999
+  AND schoolid <> 999999
 --*/
 
 /*
---Assessment Data: all applicable grades for 2014/15  – 2016/17 school years
+--Assessment Data: all applicable grades for 2014/15  ï¿½ 2016/17 school years
 ----Student identifier (can be scrambled if scrambled same way each year)
 ----State summative test data (ELA, Math, Science, Social Studies)
 ----Test name

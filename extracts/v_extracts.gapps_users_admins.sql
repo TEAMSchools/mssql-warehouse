@@ -20,15 +20,18 @@ SELECT CASE
         WHEN df.primary_site_schoolid = 179901 THEN '/Students/KCNA/LSP'
         WHEN df.primary_site_schoolid = 179902 THEN '/Students/KCNA/LSM'
         WHEN df.primary_site_schoolid = 179903 THEN '/Students/KCNA/WMS'
+        WHEN df.primary_site_schoolid = 179904 THEN '/Students/KCNA/KCNHS'
         /* KMS */
         WHEN df.primary_site_schoolid = 30200801 THEN '/Students/Miami/Sunrise Academy'
         WHEN df.primary_site_schoolid = 30200802 THEN '/Students/Miami/Liberty Academy'
+        WHEN df.primary_site_schoolid = 30200803 THEN '/Students/Miami/Courage'
        END AS OU
+      ,primary_site_schoolid
       ,CASE
         WHEN df.legal_entity_name = 'KIPP Miami' THEN LOWER(LEFT(df.userprincipalname, CHARINDEX('@', df.userprincipalname))) + 'kippmiami.org'
         ELSE LOWER(LEFT(df.userprincipalname, CHARINDEX('@', df.userprincipalname))) + 'apps.teamschools.org' 
        END AS [user]
 FROM gabby.people.staff_crosswalk_static df
-WHERE df.[status] != 'TERMINATED'
-  AND df.primary_site_schoolid != 0
-  AND df.userprincipalname IS NOT NULL
+WHERE df.userprincipalname IS NOT NULL
+  AND df.[status] <> 'TERMINATED'
+  AND df.primary_site_schoolid <> 0

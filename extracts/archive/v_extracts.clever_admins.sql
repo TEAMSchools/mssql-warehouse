@@ -14,7 +14,7 @@ SELECT CONVERT(VARCHAR(25), df.primary_site_schoolid) AS [School_id]
       ,NULL AS [Password]
       ,CASE WHEN df.primary_on_site_department = 'Operations' THEN 'School Tech Lead' END AS [Role]
 FROM gabby.people.staff_crosswalk_static df
-WHERE df.status != 'TERMINATED'
+WHERE df.status <> 'TERMINATED'
   AND df.primary_on_site_department NOT IN ('Data', 'Teaching and Learning')
   AND df.is_campus_staff = 0
 
@@ -35,7 +35,7 @@ JOIN gabby.people.campus_crosswalk cc
   ON df.primary_site = cc.campus_name
  AND cc._fivetran_deleted = 0
  AND cc.is_pathways = 0
-WHERE df.status != 'TERMINATED'
+WHERE df.status <> 'TERMINATED'
   AND df.primary_on_site_department NOT IN ('Data', 'Teaching and Learning')
   AND df.is_campus_staff = 1
 
@@ -54,7 +54,7 @@ SELECT CONVERT(VARCHAR(25), sch.school_number) AS [School_id]
 FROM gabby.people.staff_crosswalk_static df
 JOIN gabby.powerschool.schools sch
   ON sch.state_excludefromreporting = 0
-WHERE df.status != 'TERMINATED'
+WHERE df.status <> 'TERMINATED'
   AND df.primary_on_site_department = 'Teaching and Learning'
 
 UNION ALL

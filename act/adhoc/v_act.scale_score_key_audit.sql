@@ -14,4 +14,4 @@ FROM
              ,administration_round
              ,subject
     ) sub
-WHERE (max_score_adjusted != N_records) OR (RIGHT(max_scale_score, 1) NOT IN (1,6))
+WHERE (max_score_adjusted <> N_records) OR (RIGHT(max_scale_score, 1) NOT IN (1,6))

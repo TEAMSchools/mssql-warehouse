@@ -3,21 +3,20 @@ GO
 
 CREATE OR ALTER VIEW deanslist.incidents_penalties AS
 
-SELECT DISTINCT
-       CONVERT(INT,dli.incident_id) AS incident_id
-      ,CONVERT(VARCHAR(2000),dli.penalties) AS penalties_json
+SELECT CONVERT(INT, dli.incident_id) AS incident_id
+      ,CONVERT(VARCHAR(2000), dli.penalties) AS penalties_json
 
       ,dlip.incidentpenaltyid
       ,dlip.studentid
-      ,dlip.schoolid      
+      ,dlip.schoolid
       ,dlip.penaltyid
       ,dlip.penaltyname
       ,dlip.said
       ,dlip.startdate
-      ,dlip.enddate      
+      ,dlip.enddate
       ,dlip.numdays
-      ,dlip.numperiods      
-      ,dlip.issuspension      
+      ,dlip.numperiods
+      ,dlip.issuspension
       ,dlip.[print]
 FROM gabby.[deanslist].[incidents] dli
 CROSS APPLY OPENJSON(dli.penalties, N'$')
@@ -36,4 +35,4 @@ CROSS APPLY OPENJSON(dli.penalties, N'$')
     incidentid INT N'$.IncidentID',
     numdays FLOAT N'$.NumDays'
    ) AS dlip
-WHERE dli.penalties != '[]'
+WHERE dli.penalties <> '[]'
