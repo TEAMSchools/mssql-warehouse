@@ -12,7 +12,6 @@ WITH clean_people AS (
         ,sub.city
         ,sub.[state]
         ,sub.postal_code
-        ,sub.[status]
         ,sub.status_reason
         ,sub.primary_job
         ,sub.primary_on_site_department
@@ -33,6 +32,7 @@ WITH clean_people AS (
         ,sub.is_hispanic
         ,sub.is_manager
         ,sub.reports_to_associate_id
+        ,sub.adp_associate_id_legacy
         ,REPLACE(sub.primary_site_clean, ' - Regional', '') AS primary_site
         ,COALESCE(sub.common_name, sub.first_name) AS preferred_first_name
         ,COALESCE(sub.preferred_last_name , sub.last_name) AS preferred_last_name
@@ -43,32 +43,33 @@ WITH clean_people AS (
           WHEN sub.ethnicity = 'Decline to Answer' THEN NULL
           ELSE CONVERT(VARCHAR(125), RTRIM(LEFT(sub.ethnicity, CHARINDEX(' (', sub.ethnicity))))
          END AS primary_ethnicity
+        ,CASE
+          WHEN COALESCE(sub.rehire_date, sub.original_hire_date) > GETDATE() OR sub.[status] IS NULL THEN 'PRESTART'
+          WHEN sub.[status] = 'Leave' THEN 'INACTIVE'
+          ELSE UPPER(sub.[status])
+         END AS [status]
         /* redundant combined fields */
         ,CONCAT(sub.primary_on_site_department, ' - ', sub.primary_job) AS position_title
         ,sub.primary_site_clean + ' (' + sub.legal_entity_abbreviation + ') ' + '- ' + sub.primary_on_site_department AS primary_on_site_department_entity
         ,sub.primary_site_clean + ' (' + sub.legal_entity_abbreviation + ') ' AS primary_site_entity
-
-        ,adp2.file_number AS manager_df_employee_number
   FROM
       (
        SELECT adp.file_number AS df_employee_number
              ,adp.associate_id AS adp_associate_id
              ,adp.first_name
              ,adp.last_name
+             ,adp.preferred_name AS common_name
              ,adp.primary_address_city AS city
              ,adp.primary_address_state_territory_code AS [state]
              ,adp.primary_address_zip_postal_code AS postal_code
-             ,adp.position_status AS [status]
              ,adp.termination_reason_description AS status_reason
              ,adp.job_title_description AS primary_job
              ,adp.home_department_description AS primary_on_site_department
-             ,adp.flsa_description AS flsa_status
-             ,adp.location_description AS primary_site_clean
              ,adp.personal_contact_personal_mobile AS mobile_number
              ,adp.race_description AS ethnicity
              ,adp.reports_to_associate_id
+             ,adp.position_status AS [status]
              ,NULL AS job_family -- on the way
-             ,NULL AS payclass -- on the way
              ,NULL AS paytype -- on the way
              /* transformations */
              ,CONVERT(DATE, adp.birth_date) AS birth_date
@@ -76,9 +77,10 @@ WITH clean_people AS (
              ,CONVERT(DATE, adp.termination_date) AS termination_date
              ,CONVERT(DATE, adp.rehire_date) AS rehire_date
              ,CONVERT(DATE, adp.position_start_date) AS position_effective_from_date
-             ,CONVERT(DATE, adp.position_effective_end_date) AS position_effective_to_date
+             ,CONVERT(DATE, adp.termination_date) AS position_effective_to_date -- missing position_effective_end_date?
              ,CONVERT(MONEY, adp.annual_salary) AS annual_salary
-             ,CONCAT(adp.primary_address_address_line_1, ' ', adp.primary_address_address_line_2) AS [address]
+             ,CONCAT(adp.primary_address_address_line_1, ', ' + adp.primary_address_address_line_2) AS [address]
+             ,UPPER(adp.flsa_description) AS flsa_status
              ,LEFT(UPPER(adp.gender), 1) AS gender
              ,CASE
                WHEN adp.business_unit_description = 'TEAM Academy Charter' THEN 'TEAM Academy Charter Schools'
@@ -92,23 +94,36 @@ WITH clean_people AS (
                WHEN adp.business_unit_description = 'KIPP Cooper Norcross' THEN 'KCNA'
                WHEN adp.business_unit_description = 'KIPP Miami' THEN 'MIA'
               END AS legal_entity_abbreviation
+             ,CASE 
+               WHEN adp.location_description = 'Norfolk St. Campus' THEN 'Norfolk St Campus'
+               WHEN adp.location_description = 'KIPP Lanning Square Campus' THEN 'KIPP Lanning Sq Campus'
+               ELSE adp.location_description
+              END AS primary_site_clean -- temporary fix for changed names
              ,CASE
                WHEN adp.race_description LIKE '%Hispanic%' THEN 1
                WHEN adp.race_description NOT LIKE '%Hispanic%' THEN 1
               END AS is_hispanic
-             ,CASE WHEN adp.associate_id IN (SELECT reports_to_associate_id FROM gabby.adp.employees WHERE position_status <> 'TERMINATED') THEN 1 ELSE 0 END AS is_manager
+             ,CASE 
+               WHEN adp.worker_category_description = 'Full Time' THEN 'FT'
+               WHEN adp.worker_category_description = 'Part Time' THEN 'FT'
+               ELSE adp.worker_category_description
+              END AS payclass
+             ,CASE 
+               WHEN adp.associate_id IN (SELECT reports_to_associate_id 
+                                         FROM gabby.adp.employees 
+                                         WHERE position_status <> 'TERMINATED') THEN 'Yes'
+               ELSE 'No'
+              END AS is_manager
              ,ROW_NUMBER() OVER(
                 PARTITION BY adp.associate_id 
                   ORDER BY CONVERT(DATE, adp.position_start_date) DESC) AS rn
 
-             ,df.common_name -- use DF until fixed
              ,df.preferred_last_name -- use DF until fixed
+             ,df.adp_associate_id AS adp_associate_id_legacy -- replace with new crosswalk
        FROM gabby.adp.employees adp
        LEFT JOIN gabby.dayforce.employees df
          ON adp.file_number = df.df_employee_number
       ) sub
-  LEFT JOIN gabby.adp.employees adp2
-    ON sub.reports_to_associate_id = adp2.associate_id
   WHERE sub.rn = 1
  )
 
@@ -141,7 +156,6 @@ SELECT c.df_employee_number
       ,c.job_family
       ,c.position_effective_from_date
       ,c.position_effective_to_date
-      ,c.manager_df_employee_number
       ,c.payclass
       ,c.paytype
       ,c.flsa_status
@@ -149,6 +163,7 @@ SELECT c.df_employee_number
       ,c.position_title
       ,c.primary_on_site_department_entity
       ,c.primary_site_entity
+      ,c.adp_associate_id_legacy
       ,NULL AS salesforce_id
       ,NULL AS grades_taught
       ,NULL AS subjects_taught
@@ -174,6 +189,7 @@ SELECT c.df_employee_number
       ,s.school_level AS primary_site_school_level
       ,s.is_campus AS is_campus_staff
 
+      ,m.df_employee_number AS manager_df_employee_number
       ,m.adp_associate_id AS manager_adp_associate_id
       ,m.preferred_first_name AS manager_preferred_first_name
       ,m.preferred_last_name AS manager_preferred_last_name
@@ -183,4 +199,4 @@ LEFT JOIN gabby.people.school_crosswalk s
   ON c.primary_site = s.site_name
  AND s._fivetran_deleted = 0
 LEFT JOIN clean_people m
-  ON c.manager_df_employee_number = m.df_employee_number
+  ON c.reports_to_associate_id = m.adp_associate_id
