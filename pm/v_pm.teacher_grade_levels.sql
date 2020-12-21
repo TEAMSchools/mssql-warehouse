@@ -77,5 +77,5 @@ SELECT p.teachernumber
 
       ,cw.df_employee_number
 FROM percentages p
-JOIN gabby.people.staff_crosswalk_static cw
+JOIN gabby.people.id_crosswalk_powerschool cw
   ON p.teachernumber = cw.ps_teachernumber COLLATE Latin1_General_BIN
