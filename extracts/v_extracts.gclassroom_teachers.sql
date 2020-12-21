@@ -10,10 +10,7 @@ SELECT s.class_alias
       
       ,scw.df_employee_number
       ,scw.preferred_name
-      ,CASE
-        WHEN scw.legal_entity_name = 'KIPP Miami' THEN LOWER(LEFT(scw.userprincipalname, CHARINDEX('@', scw.userprincipalname))) + 'kippmiami.org'
-        ELSE LOWER(LEFT(scw.userprincipalname, CHARINDEX('@', scw.userprincipalname))) + 'apps.teamschools.org' 
-       END AS teacher_gsuite_email
+      ,scw.google_email AS teacher_gsuite_email
 FROM gabby.extracts.gclassroom_sections s
 JOIN gabby.powerschool.sectionteacher st
   ON s.sectionid = st.sectionid

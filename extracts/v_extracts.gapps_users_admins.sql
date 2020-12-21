@@ -27,10 +27,7 @@ SELECT CASE
         WHEN df.primary_site_schoolid = 30200803 THEN '/Students/Miami/Courage'
        END AS OU
       ,primary_site_schoolid
-      ,CASE
-        WHEN df.legal_entity_name = 'KIPP Miami' THEN LOWER(LEFT(df.userprincipalname, CHARINDEX('@', df.userprincipalname))) + 'kippmiami.org'
-        ELSE LOWER(LEFT(df.userprincipalname, CHARINDEX('@', df.userprincipalname))) + 'apps.teamschools.org' 
-       END AS [user]
+      ,df.google_email AS [user]
 FROM gabby.people.staff_crosswalk_static df
 WHERE df.userprincipalname IS NOT NULL
   AND df.[status] <> 'TERMINATED'

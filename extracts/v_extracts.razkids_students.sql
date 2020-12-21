@@ -4,10 +4,7 @@ GO
 CREATE OR ALTER VIEW extracts.razkids_students AS
 
 SELECT saa.student_web_id + '@teamstudents.org' AS student_id
-      ,CASE
-        WHEN scw.legal_entity_name = 'KIPP Miami' THEN LOWER(LEFT(scw.userprincipalname, CHARINDEX('@', scw.userprincipalname))) + 'kippmiami.org'
-        ELSE LOWER(LEFT(scw.userprincipalname, CHARINDEX('@', scw.userprincipalname))) + 'apps.teamschools.org' 
-       END AS teacher_id
+      ,scw.google_email AS teacher_id
       ,s.first_name
       ,s.last_name
       ,NULL AS reading_level

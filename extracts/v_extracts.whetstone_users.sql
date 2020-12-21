@@ -15,10 +15,7 @@ SELECT CONVERT(VARCHAR(25), scw.df_employee_number) AS user_internal_id
       ,CONVERT(VARCHAR(25), scw.manager_df_employee_number) AS coach_internal_id
       ,scw.preferred_first_name + ' ' + scw.preferred_last_name AS [user_name]
       ,CASE WHEN scw.[status] = 'TERMINATED' THEN 1 ELSE 0 END AS inactive
-      ,CASE
-        WHEN scw.legal_entity_name = 'KIPP Miami' THEN LOWER(LEFT(scw.userprincipalname, CHARINDEX('@', scw.userprincipalname))) + 'kippmiami.org' 
-        ELSE LOWER(LEFT(scw.userprincipalname, CHARINDEX('@', scw.userprincipalname))) + 'apps.teamschools.org' 
-       END AS user_email
+      ,scw.google_email AS user_email
       ,CASE
         WHEN scw.grades_taught = 'Grade 10' THEN '10th grade'
         WHEN scw.grades_taught = 'Grade 11' THEN '11th grade'

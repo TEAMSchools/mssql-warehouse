@@ -68,6 +68,10 @@ SELECT sr.df_employee_number
       ,ads.samaccountname
       ,ads.userprincipalname
       ,ads.mail
+      ,CASE
+        WHEN sr.legal_entity_name = 'KIPP Miami' THEN LOWER(LEFT(ads.userprincipalname, CHARINDEX('@', ads.userprincipalname))) + 'kippmiami.org'
+        ELSE LOWER(LEFT(ads.userprincipalname, CHARINDEX('@', ads.userprincipalname))) + 'apps.teamschools.org' 
+       END AS google_email
 
       ,adm.samaccountname AS manager_samaccountname
       ,adm.userprincipalname AS manager_userprincipalname

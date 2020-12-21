@@ -13,7 +13,7 @@ SELECT CONCAT(s.schoolid, '-'
              ,s.section_number + ' - '
              ,gabby.utilities.GLOBAL_ACADEMIC_YEAR(), '-'
              ,RIGHT(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 2) + 1) AS class_name
-      
+
       ,s.id AS sectionid
       ,s.[db_name]
       ,s.section_number
@@ -25,10 +25,7 @@ SELECT CONCAT(s.schoolid, '-'
 
       ,sch.[name] AS school_name
 
-      ,CASE
-        WHEN scw.legal_entity_name = 'KIPP Miami' THEN LOWER(LEFT(scw.userprincipalname, CHARINDEX('@', scw.userprincipalname))) + 'kippmiami.org'
-        ELSE LOWER(LEFT(scw.userprincipalname, CHARINDEX('@', scw.userprincipalname))) + 'apps.teamschools.org' 
-       END AS teacher_gsuite_email
+      ,scw.google_email AS teacher_gsuite_email
 FROM gabby.powerschool.sections s
 JOIN gabby.powerschool.schools sch
   ON s.schoolid = sch.school_number
