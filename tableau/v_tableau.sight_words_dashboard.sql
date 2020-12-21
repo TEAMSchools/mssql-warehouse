@@ -19,6 +19,10 @@ SELECT r.repository_id
       ,co.is_pathways
       ,co.grade_level
       ,co.team
+      ,co.iep_status
+      ,co.lep_status
+      ,co.gender
+      ,co.ethnicity
 
       ,sw.[value]
 
