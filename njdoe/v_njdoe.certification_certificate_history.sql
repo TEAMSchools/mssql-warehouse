@@ -4,7 +4,7 @@ GO
 CREATE OR ALTER VIEW njdoe.certification_certificate_history AS
 
 SELECT cc.df_employee_number
-      ,cc.certificate_history AS certificate_history_json
+      ,NULL AS certificate_history_json
 
       ,ch.seq_number
       ,CASE WHEN ch.certificate_id <> '' THEN ch.certificate_id END AS certificate_id
@@ -18,7 +18,17 @@ SELECT cc.df_employee_number
       ,CASE WHEN ch.month_year_issued <> '' THEN DATEFROMPARTS(CONVERT(INT, RIGHT(ch.month_year_issued, 4)), CONVERT(INT, LEFT(ch.month_year_issued, 2)), 1) END AS issued_date
       ,CASE WHEN ch.month_year_expiration <> '' THEN ch.month_year_expiration END AS month_year_expiration
       ,CASE WHEN ch.month_year_expiration <> '' THEN DATEFROMPARTS(CONVERT(INT, RIGHT(ch.month_year_expiration, 4)), CONVERT(INT, LEFT(ch.month_year_expiration, 2)), 1) END AS expiration_date
+
+      ,s.preferred_name
+      ,s.original_hire_date
+      ,s.primary_job
+      ,s.legal_entity_name
+      ,s.[status]
+      ,s.primary_site
+      ,s.userprincipalname
 FROM gabby.njdoe.certification_check_clean cc
+LEFT JOIN gabby.people.staff_crosswalk_static s
+  ON cc.df_employee_number = s.df_employee_number
 CROSS APPLY OPENJSON(cc.certificate_history, '$')
   WITH (
     seq_number INT,

@@ -4,7 +4,7 @@ GO
 CREATE OR ALTER VIEW njdoe.certification_application_history AS
 
 SELECT cc.df_employee_number
-      ,cc.application_history AS application_history_json
+      ,NULL AS application_history_json
 
       ,ah.application_number
       ,ah.date_received
