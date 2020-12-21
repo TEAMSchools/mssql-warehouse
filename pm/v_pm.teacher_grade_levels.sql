@@ -64,6 +64,18 @@ WITH ps_section_teacher AS (
       ) sub
  )
 
+,teachernumber AS (
+  SELECT sr.df_employee_number
+        ,COALESCE(idps.ps_teachernumber
+                 ,sr.adp_associate_id
+                 ,CONVERT(VARCHAR(25), sr.df_employee_number)) COLLATE Latin1_General_BIN AS ps_teachernumber
+  FROM gabby.dayforce.staff_roster sr
+  LEFT JOIN gabby.people.id_crosswalk_powerschool idps
+    ON sr.df_employee_number = idps.df_employee_number
+   AND idps.is_master = 1
+   AND idps._fivetran_deleted = 0
+ )
+
 SELECT p.teachernumber
       ,p.academic_year
       ,p.student_grade_level
@@ -77,5 +89,5 @@ SELECT p.teachernumber
 
       ,cw.df_employee_number
 FROM percentages p
-JOIN gabby.people.id_crosswalk_powerschool cw
-  ON p.teachernumber = cw.ps_teachernumber COLLATE Latin1_General_BIN
+JOIN teachernumber cw
+  ON p.teachernumber = cw.ps_teachernumber
