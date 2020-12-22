@@ -5,6 +5,8 @@ CREATE OR ALTER VIEW illuminate_dna_assessments.course_enrollment_scaffold AS
 
 SELECT student_id
       ,academic_year
+      ,entry_date
+      ,leave_date
       ,grade_level_id
       ,credittype
       ,subject_area
@@ -14,10 +16,12 @@ FROM
      SELECT student_id
            ,academic_year
            ,grade_level_id
-           ,CONVERT(VARCHAR(125),credittype) AS credittype
-           ,CONVERT(VARCHAR(125),subject_area) AS subject_area
+           ,entry_date
+           ,leave_date
+           ,CONVERT(VARCHAR(125), credittype) AS credittype
+           ,CONVERT(VARCHAR(125), subject_area) COLLATE Latin1_General_BIN AS subject_area
            ,MAX(is_advanced_math) OVER(PARTITION BY student_id, academic_year, credittype) AS is_advanced_math_student
-           ,CONVERT(INT,ROW_NUMBER() OVER(
+           ,CONVERT(INT, ROW_NUMBER() OVER(
               PARTITION BY student_id, academic_year, credittype, subject_area
                 ORDER BY entry_date DESC, leave_date DESC)) AS rn
      FROM
@@ -31,7 +35,10 @@ FROM
 
                 ,enr.illuminate_subject AS subject_area
                 ,enr.credittype
-                ,CASE WHEN enr.illuminate_subject IN ('Algebra I', 'Geometry', 'Algebra II', 'Algebra IIA', 'Algebra IIB', 'Pre-Calculus') THEN 1 ELSE 0 END AS is_advanced_math
+                ,CASE 
+                  WHEN enr.illuminate_subject IN ('Algebra I', 'Geometry', 'Algebra II', 'Algebra IIA', 'Algebra IIB', 'Pre-Calculus') THEN 1 
+                  ELSE 0 
+                 END AS is_advanced_math
           FROM gabby.powerschool.course_enrollments_static enr
           JOIN gabby.illuminate_public.students ils
             ON enr.student_number = ils.local_student_id
