@@ -77,14 +77,8 @@ SELECT cwa.df_employee_number
       ,sr.manager_df_employee_number
       ,sr.manager_name
       ,sr.manager_userprincipalname AS manager_username
-
-      ,gl.student_grade_level AS grades_taught
-
+      ,sr.grades_taught
 FROM current_work_assignment cwa
 JOIN gabby.people.staff_crosswalk_static sr
   ON cwa.df_employee_number = sr.df_employee_number
-JOIN gabby.pm.teacher_grade_levels gl
-  ON cwa.df_employee_number = gl.df_employee_number
- AND cwa.academic_year = gl.academic_year
- AND gl.is_primary_gl = 1
 WHERE cwa.rn_emp_yr = 1

@@ -16,9 +16,9 @@ SELECT df.df_employee_number
       ,df.is_hispanic
       ,df.gender
       ,df.birth_date
-      ,df.address
+      ,df.[address]
       ,df.city AS primary_address_city
-      ,df.state AS primary_address_state_territory_code
+      ,df.[state] AS primary_address_state_territory_code
       ,df.postal_code AS primary_address_zip_postal_code
       ,df.mobile_number AS personal_contact_personal_mobile
       ,df.primary_on_site_department AS subject_dept_custom
@@ -30,7 +30,7 @@ SELECT df.df_employee_number
       ,df.payroll_company_code
       ,df.legal_entity_name
       ,df.is_regional_staff
-      ,df.status AS position_status
+      ,df.[status] AS position_status
       ,df.primary_site AS location_description
       ,df.primary_site AS location_custom      
       ,df.primary_on_site_department AS home_department_description
@@ -51,7 +51,7 @@ SELECT df.df_employee_number
       ,LOWER(df.userprincipalname) AS userprincipalname
       ,LOWER(df.manager_mail) AS manager_mail
 FROM gabby.people.staff_crosswalk_static df
-LEFT JOIN gabby.pm.teacher_grade_levels gl
+LEFT JOIN gabby.pm.teacher_grade_levels_static gl
   ON df.df_employee_number = gl.df_employee_number
  AND gl.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
  AND gl.is_primary_gl = 1
