@@ -101,26 +101,15 @@ WITH dsos AS (
 
        UNION ALL
 
-       SELECT DISTINCT 
-              co.schoolid AS [School_id]
-             ,CONCAT(co.academic_year, s.abbreviation, co.grade_level) AS [Section_number]
+       SELECT dsos.School_id
+             ,CONCAT(gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+                    ,s.abbreviation
+                    ,r.n) AS [Section_number]
              ,'ENR' AS [Course_number]
-             ,CASE
-               WHEN co.grade_level = 0 THEN '0(A)'
-               WHEN co.grade_level = 1 THEN '1(A)'
-               WHEN co.grade_level = 2 THEN '2(A)'
-               WHEN co.grade_level = 3 THEN '3(A)'
-               WHEN co.grade_level = 4 THEN '4(A)'
-               WHEN co.grade_level = 5 THEN '5(A)'
-               WHEN co.grade_level = 6 THEN '6(A)'
-               WHEN co.grade_level = 7 THEN '7(A)'
-               WHEN co.grade_level = 8 THEN '8(A)'
-               WHEN co.grade_level = 9 THEN '9(A)'
-               WHEN co.grade_level = 10 THEN '10(A)'
-               WHEN co.grade_level = 11 THEN '11(A)'
-               WHEN co.grade_level = 12 THEN '12(A)'
-              END AS [Period]
-             ,CONCAT(co.yearid, co.schoolid, RIGHT(CONCAT(0, co.grade_level),2)) AS [Section_id]
+             ,CONCAT(r.n, '(A)') AS [Period]
+             ,CONCAT(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990
+                    ,dsos.School_id
+                    ,RIGHT(CONCAT(0, r.n), 2)) AS [Section_id]
 
              ,1 AS sortorder
 
@@ -129,22 +118,19 @@ WITH dsos AS (
              ,'Enroll' AS [Course_name]
              ,'Homeroom/advisory' AS [Subject]
 
-             ,CONCAT(RIGHT(co.academic_year, 2), '-', RIGHT(co.academic_year + 1, 2))  [Term_name]
+             ,CONCAT(RIGHT(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 2), '-'
+                    ,RIGHT(gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1, 2))  [Term_name]
              ,CONVERT(VARCHAR(25), DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1), 101) AS [Term_start]
              ,CONVERT(VARCHAR(25), DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1, 6, 30), 101) AS [Term_end]
 
              ,NULL AS [Name]
-             ,CASE WHEN co.grade_level = 0 THEN 'Kindergarten' ELSE CONVERT(VARCHAR(5), co.grade_level) END AS [Grade]
+             ,CASE WHEN r.n = 0 THEN 'Kindergarten' ELSE CONVERT(VARCHAR(5), r.n) END AS [Grade]
              ,NULL AS [Course_description]
-       FROM gabby.powerschool.cohort_identifiers_static co
+       FROM dsos
        JOIN gabby.powerschool.schools s
-         ON co.schoolid = s.school_number
-        AND co.[db_name] = s.[db_name]
-       JOIN dsos
-         ON s.school_number = dsos.School_id
-       WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-         AND co.rn_year = 1
-         AND co.grade_level <> 99
+         ON dsos.School_id = s.school_number
+       JOIN gabby.utilities.row_generator_smallint r
+         ON r.n BETWEEN s.low_grade AND s.high_grade
 
        UNION ALL
 
