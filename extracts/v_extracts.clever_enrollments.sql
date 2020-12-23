@@ -22,12 +22,12 @@ UNION ALL
 
 /* ENR sections */
 SELECT schoolid AS [School_id]
-      ,CONCAT(yearid, schoolid, RIGHT(CONCAT(0, grade_level), 2)) AS [Section_id]
+      ,CONCAT(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990
+             ,schoolid
+             ,RIGHT(CONCAT(0, grade_level), 2)) AS [Section_id]
       ,student_number AS [Student_id]
-FROM gabby.powerschool.cohort_identifiers_static
-WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-  AND rn_year = 1
-  AND grade_level <> 99
+FROM gabby.powerschool.students
+WHERE enroll_status IN (0, -1)
 
 UNION ALL
 
