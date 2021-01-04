@@ -69,15 +69,25 @@ WITH roster AS (
  )
 
 ,indiv_goals AS (
-  SELECT CONVERT(INT, student_number) AS student_number
+  SELECT student_number
         ,REPLACE(reporting_term, 'q_', 'AR') AS reporting_term
         ,CONVERT(INT, adjusted_goal) AS adjusted_goal
-  FROM gabby.renaissance.ar_individualized_goals  
+  FROM
+      (
+       SELECT CONVERT(INT, student_number) AS student_number
+             ,q_1
+             ,q_2
+             ,q_3
+             ,q_4
+             ,ROW_NUMBER() OVER(PARTITION BY student_number ORDER BY _row DESC) AS rn
+       FROM gabby.renaissance.ar_individualized_goals
+       WHERE _fivetran_deleted = 0
+      ) sub
   UNPIVOT(
     adjusted_goal
     FOR reporting_term IN (q_1, q_2, q_3, q_4)
    ) u
-  WHERE _fivetran_deleted = 0
+  WHERE rn = 1
  )
 
 ,term_goals AS (
