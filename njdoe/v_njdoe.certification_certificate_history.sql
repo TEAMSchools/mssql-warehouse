@@ -3,7 +3,7 @@ GO
 
 CREATE OR ALTER VIEW njdoe.certification_certificate_history AS
 
-SELECT cc.df_employee_number
+SELECT s.df_employee_number
       ,NULL AS certificate_history_json
 
       ,ch.seq_number
@@ -26,10 +26,10 @@ SELECT cc.df_employee_number
       ,s.[status]
       ,s.primary_site
       ,s.userprincipalname
-FROM gabby.njdoe.certification_check_clean cc
-LEFT JOIN gabby.people.staff_crosswalk_static s
-  ON cc.df_employee_number = s.df_employee_number
-CROSS APPLY OPENJSON(cc.certificate_history, '$')
+FROM gabby.people.staff_crosswalk_static s
+LEFT JOIN gabby.njdoe.certification_check_clean cc
+  ON s.df_employee_number = cc.df_employee_number
+OUTER APPLY OPENJSON(cc.certificate_history, '$')
   WITH (
     seq_number INT,
     certificate_type VARCHAR(250),
@@ -41,4 +41,3 @@ CROSS APPLY OPENJSON(cc.certificate_history, '$')
     month_year_expiration VARCHAR(25),
     certificate_id VARCHAR(25)
    ) AS ch
-WHERE cc.certificate_history <> '[]'
