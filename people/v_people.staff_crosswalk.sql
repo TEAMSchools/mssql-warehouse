@@ -62,7 +62,7 @@ SELECT sr.df_employee_number
       ,sr.[db_name]
 
       ,COALESCE(idps.ps_teachernumber
-               ,sr.adp_associate_id
+               ,sr.adp_associate_id -- update to legacy for ADP go-live
                ,CONVERT(VARCHAR(25), sr.df_employee_number)) AS ps_teachernumber
 
       ,ads.samaccountname

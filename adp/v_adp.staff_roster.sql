@@ -69,8 +69,9 @@ WITH clean_people AS (
              ,adp.race_description AS ethnicity
              ,adp.reports_to_associate_id
              ,adp.position_status AS [status]
+             ,adp.worker_category_description AS payclass
+             ,adp.wfmgr_pay_rule AS paytype
              ,NULL AS job_family -- on the way
-             ,NULL AS paytype -- on the way
              /* transformations */
              ,CONVERT(DATE, adp.birth_date) AS birth_date
              ,CONVERT(DATE, adp.hire_date) AS original_hire_date
@@ -104,11 +105,6 @@ WITH clean_people AS (
                WHEN adp.race_description NOT LIKE '%Hispanic%' THEN 1
               END AS is_hispanic
              ,CASE 
-               WHEN adp.worker_category_description = 'Full Time' THEN 'FT'
-               WHEN adp.worker_category_description = 'Part Time' THEN 'FT'
-               ELSE adp.worker_category_description
-              END AS payclass
-             ,CASE 
                WHEN adp.associate_id IN (SELECT reports_to_associate_id 
                                          FROM gabby.adp.employees 
                                          WHERE position_status <> 'TERMINATED') THEN 'Yes'
@@ -119,10 +115,14 @@ WITH clean_people AS (
                   ORDER BY CONVERT(DATE, adp.position_start_date) DESC) AS rn
 
              ,df.preferred_last_name -- use DF until fixed
-             ,df.adp_associate_id AS adp_associate_id_legacy -- replace with new crosswalk
+
+             ,cw.adp_associate_id AS adp_associate_id_legacy -- replace with new crosswalk
        FROM gabby.adp.employees adp
        LEFT JOIN gabby.dayforce.employees df
          ON adp.file_number = df.df_employee_number
+       LEFT JOIN gabby.people.id_crosswalk_adp cw
+         ON adp.file_number = cw.df_employee_number
+        AND cw.rn_curr = 1
       ) sub
   WHERE sub.rn = 1
  )
