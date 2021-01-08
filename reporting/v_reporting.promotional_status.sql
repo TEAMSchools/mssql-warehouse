@@ -133,8 +133,8 @@ FROM
            ,sub.qa_avg_performance_band_number
            ,CASE
              WHEN sub.ada_y1_running >= 90.1 THEN 'On Track'
-             WHEN sub.ada_y1_running >= 80.0 THEN 'Off Track'
-             WHEN sub.ada_y1_running < 80.0 THEN 'At Risk'
+             WHEN sub.ada_y1_running < 90.1 THEN 'Off Track'
+             --WHEN sub.ada_y1_running < 80.0 THEN 'At Risk'
              ELSE 'No Data'
             END AS promo_status_attendance
            ,CASE
@@ -156,8 +156,8 @@ FROM
              WHEN sub.school_level = 'MS'
                   THEN CASE
                         WHEN sub.grades_y1_failing_projected = 0 THEN 'On Track'
-                        WHEN sub.grades_y1_failing_projected = 1 THEN 'Off Track'
-                        WHEN sub.grades_y1_failing_projected >= 2 THEN 'At Risk'
+                        WHEN sub.grades_y1_failing_projected >= 1 THEN 'Off Track'
+                        --WHEN sub.grades_y1_failing_projected >= 2 THEN 'At Risk'
                         ELSE 'No Data'
                        END
              WHEN sub.school_level = 'HS'
