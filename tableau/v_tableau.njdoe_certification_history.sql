@@ -5,7 +5,7 @@ CREATE OR ALTER VIEW tableau.njdoe_certification_history AS
 
 SELECT s.df_employee_number
 
-      ,c.certificate_history_json
+      ,NULL AS certificate_history_json
       ,c.seq_number
       ,c.certificate_id
       ,c.certificate_type
@@ -23,9 +23,9 @@ SELECT s.df_employee_number
       ,s.original_hire_date
       ,s.primary_job
       ,s.legal_entity_name
-      ,s.status
+      ,s.[status]
       ,s.primary_site
       ,s.userprincipalname
 FROM people.staff_crosswalk_static s
 LEFT JOIN njdoe.certification_certificate_history c
-ON s.df_employee_number = c.df_employee_number
+  ON s.df_employee_number = c.df_employee_number
