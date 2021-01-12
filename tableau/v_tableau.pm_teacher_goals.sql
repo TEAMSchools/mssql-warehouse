@@ -114,28 +114,25 @@ WITH reading_level AS (
  )
 
 ,etr_long AS (  
-  SELECT sr.df_employee_number
-        
+  SELECT wo.teacher_internal_id AS df_employee_number
+        ,wo.score AS metric_value
+
         ,rt.academic_year
         ,rt.time_per_name
         ,REPLACE(rt.time_per_name, 'ETR', 'PM') AS pm_term
         ,'etr_overall_score' AS metric_name
         
-        ,wo.score AS metric_value
-        
         ,ROW_NUMBER() OVER(
-           PARTITION BY sr.df_employee_number, rt.academic_year, rt.time_per_name
+           PARTITION BY wo.teacher_internal_id, rt.academic_year, rt.time_per_name
              ORDER BY wo.observed_at DESC) AS rn
   FROM gabby.whetstone.observations_clean wo
-  JOIN gabby.dayforce.staff_roster sr
-    ON wo.teacher_internal_id = sr.df_employee_number
   JOIN gabby.reporting.reporting_terms rt
     ON wo.observed_at BETWEEN rt.[start_date] AND rt.end_date 
    AND rt.identifier = 'ETR'
    AND rt.schoolid = 0
    AND rt._fivetran_deleted = 0
   LEFT JOIN gabby.pm.teacher_goals_exemption_clean_static ex
-    ON sr.df_employee_number = ex.df_employee_number
+    ON wo.teacher_internal_id = ex.df_employee_number
    AND rt.academic_year = ex.academic_year
    AND rt.time_per_name = REPLACE(ex.pm_term, 'PM', 'ETR')
   WHERE wo.rubric_name IN ('Coaching Tool: Coach ETR and Reflection', 'Coaching Tool: Coach ETR and Reflection 19-20')
