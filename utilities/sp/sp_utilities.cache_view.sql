@@ -18,8 +18,6 @@ BEGIN
            ,@source_view            NVARCHAR(MAX)
            ,@temp_table_name        NVARCHAR(MAX)
            ,@destination_table_name NVARCHAR(MAX)
-           ,@email_subject          NVARCHAR(MAX)
-           ,@email_body             NVARCHAR(MAX);
 
     SET @source_view = @db_name + N'.' + @schema_name + N'.' + @view_name;
     SET @temp_table_name = N'#' + @db_name + @schema_name + @view_name + N'_temp';
@@ -50,46 +48,40 @@ BEGIN
     /* truncate destination table... */
     /* insert into destination table */
     ELSE
-      BEGIN TRY
-          SET @sql = N'
-            DECLARE @nrows BIGINT;
+      SET @sql = N'
+        DECLARE @nrows BIGINT
+               ,@email_body NVARCHAR(MAX);
 
-            IF OBJECT_ID(N''' + @temp_table_name + N''') IS NOT NULL
-              BEGIN
-                DROP TABLE ' + @temp_table_name + N';
-              END
+        IF OBJECT_ID(N''' + @temp_table_name + N''') IS NOT NULL
+          BEGIN
+            DROP TABLE ' + @temp_table_name + N';
+          END
 
-              SELECT *
-              INTO ' + @temp_table_name + N'
-              FROM ' + @source_view + N'; 
+          SELECT *
+          INTO ' + @temp_table_name + N'
+          FROM ' + @source_view + N'; 
 
-              SELECT @nrows = COUNT(*) FROM ' + @temp_table_name + N';
+          SELECT @nrows = COUNT(*) FROM ' + @temp_table_name + N';
 
-            IF @nrows > 1
-              BEGIN TRY
-               BEGIN TRANSACTION t_Transaction
-                TRUNCATE TABLE ' + @destination_table_name + N';
-                INSERT INTO ' + @destination_table_name + N' WITH(TABLOCKX)
-                SELECT * 
-                FROM ' + @temp_table_name + N';
-               COMMIT TRANSACTION t_Transaction
-              END TRY 
-              BEGIN CATCH
-                ROLLBACK TRANSACTION t_Transaction
-              END CATCH
-          ' ;
-          PRINT (@sql);
-          EXEC (@sql);
-      END TRY
-      BEGIN CATCH
-          PRINT (ERROR_MESSAGE());
-
-          SET @email_subject = @db_name + N'.' + @schema_name + N'.' + @view_name + N' static refresh failed';
-          SET @email_body = N'The refresh procedure for ' + @db_name + N'.' + @schema_name + N'.' + @view_name + N' failed.' + CHAR(10) + ERROR_MESSAGE();
-
-          EXEC msdb.dbo.sp_send_dbmail @profile_name = 'datarobot'
-                                      ,@recipients = 'u7c1r1b1c5n4p0q0@kippnj.slack.com'
-                                      ,@subject = @email_subject
-                                      ,@body = @email_body;
-      END CATCH;
+        IF @nrows > 1
+          BEGIN TRY
+           BEGIN TRANSACTION t_Transaction
+            TRUNCATE TABLE ' + @destination_table_name + N';
+            INSERT INTO ' + @destination_table_name + N' WITH(TABLOCKX)
+            SELECT * 
+            FROM ' + @temp_table_name + N';
+           COMMIT TRANSACTION t_Transaction
+          END TRY 
+          BEGIN CATCH
+            ROLLBACK TRANSACTION t_Transaction
+            PRINT (ERROR_MESSAGE())
+            SET @email_body = ERROR_MESSAGE()
+            EXEC msdb.dbo.sp_send_dbmail @profile_name = ''datarobot''
+                                        ,@recipients = ''u7c1r1b1c5n4p0q0@kippnj.slack.com''
+                                        ,@subject = N''' + @db_name + N'.' + @schema_name + N'.' + @view_name + N' static refresh failed''
+                                        ,@body = @email_body;
+          END CATCH
+      ' ;
+      PRINT (@sql);
+      EXEC (@sql);
 END;
