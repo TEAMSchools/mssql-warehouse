@@ -33,10 +33,10 @@ WITH clean_people AS (
         ,sub.is_manager
         ,sub.reports_to_associate_id
         ,sub.adp_associate_id_legacy
+        ,sub.mobile_number
         ,REPLACE(sub.primary_site_clean, ' - Regional', '') AS primary_site
         ,COALESCE(sub.common_name, sub.first_name) AS preferred_first_name
         ,COALESCE(sub.preferred_last_name , sub.last_name) AS preferred_last_name
-        ,gabby.utilities.STRIP_CHARACTERS(sub.mobile_number, '^0-9') AS mobile_number
         ,CASE WHEN sub.primary_site_clean LIKE '% - Regional%' THEN 1 ELSE 0 END AS is_regional_staff
         ,CASE
           WHEN sub.ethnicity = 'Hispanic or Latino' THEN 'Hispanic or Latino'
@@ -50,8 +50,8 @@ WITH clean_people AS (
          END AS [status]
         /* redundant combined fields */
         ,CONCAT(sub.primary_on_site_department, ' - ', sub.primary_job) AS position_title
-        ,sub.primary_site_clean + ' (' + sub.legal_entity_abbreviation + ') ' + '- ' + sub.primary_on_site_department AS primary_on_site_department_entity
-        ,sub.primary_site_clean + ' (' + sub.legal_entity_abbreviation + ') ' AS primary_site_entity
+        ,sub.primary_site_clean + ' (' + sub.legal_entity_abbreviation + ') - ' + sub.primary_on_site_department AS primary_on_site_department_entity
+        ,sub.primary_site_clean + ' (' + sub.legal_entity_abbreviation + ')' AS primary_site_entity
   FROM
       (
        SELECT adp.file_number AS df_employee_number
@@ -65,13 +65,12 @@ WITH clean_people AS (
              ,adp.termination_reason_description AS status_reason
              ,adp.job_title_description AS primary_job
              ,adp.home_department_description AS primary_on_site_department
-             ,adp.personal_contact_personal_mobile AS mobile_number
              ,adp.race_description AS ethnicity
              ,adp.reports_to_associate_id
              ,adp.position_status AS [status]
              ,adp.worker_category_description AS payclass
              ,adp.wfmgr_pay_rule AS paytype
-             ,NULL AS job_family -- on the way
+             ,CONVERT(NVARCHAR(256), NULL) AS job_family -- on the way
              /* transformations */
              ,CONVERT(DATE, adp.birth_date) AS birth_date
              ,CONVERT(DATE, adp.hire_date) AS original_hire_date
@@ -83,16 +82,16 @@ WITH clean_people AS (
              ,CONCAT(adp.primary_address_address_line_1, ', ' + adp.primary_address_address_line_2) AS [address]
              ,UPPER(adp.flsa_description) AS flsa_status
              ,LEFT(UPPER(adp.gender), 1) AS gender
+             ,CONVERT(NVARCHAR(256), gabby.utilities.STRIP_CHARACTERS(adp.personal_contact_personal_mobile, '^0-9')) AS mobile_number
              ,CASE
                WHEN adp.business_unit_description = 'TEAM Academy Charter' THEN 'TEAM Academy Charter Schools'
                WHEN adp.business_unit_description = 'KIPP TEAM and Family Schools Inc.' THEN 'KIPP New Jersey'
-               WHEN adp.business_unit_description = 'KIPP Cooper Norcross' THEN 'KIPP Cooper Norcross Academy'
                ELSE adp.business_unit_description
               END AS legal_entity_name
              ,CASE
                WHEN adp.business_unit_description = 'TEAM Academy Charter' THEN 'TEAM'
                WHEN adp.business_unit_description = 'KIPP TEAM and Family Schools Inc.' THEN 'KNJ'
-               WHEN adp.business_unit_description = 'KIPP Cooper Norcross' THEN 'KCNA'
+               WHEN adp.business_unit_description = 'KIPP Cooper Norcross Academy' THEN 'KCNA'
                WHEN adp.business_unit_description = 'KIPP Miami' THEN 'MIA'
               END AS legal_entity_abbreviation
              ,CASE 
@@ -116,7 +115,7 @@ WITH clean_people AS (
 
              ,df.preferred_last_name -- use DF until fixed
 
-             ,cw.adp_associate_id AS adp_associate_id_legacy -- replace with new crosswalk
+             ,cw.adp_associate_id AS adp_associate_id_legacy
        FROM gabby.adp.employees adp
        LEFT JOIN gabby.dayforce.employees df
          ON adp.file_number = df.df_employee_number
@@ -164,10 +163,6 @@ SELECT c.df_employee_number
       ,c.primary_on_site_department_entity
       ,c.primary_site_entity
       ,c.adp_associate_id_legacy
-      ,NULL AS salesforce_id
-      ,NULL AS grades_taught
-      ,NULL AS subjects_taught
-      ,NULL AS leadership_role
       ,c.preferred_last_name + ', ' + c.preferred_first_name AS preferred_name
       ,SUBSTRING(c.mobile_number, 1, 3) + '-'
          + SUBSTRING(c.mobile_number, 4, 3) + '-'
