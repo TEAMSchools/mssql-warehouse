@@ -69,7 +69,7 @@ WITH ps_section_teacher AS (
         ,COALESCE(idps.ps_teachernumber
                  ,sr.adp_associate_id
                  ,CONVERT(VARCHAR(25), sr.df_employee_number)) COLLATE Latin1_General_BIN AS ps_teachernumber
-  FROM gabby.dayforce.staff_roster sr
+  FROM gabby.adp.staff_roster sr
   LEFT JOIN gabby.people.id_crosswalk_powerschool idps
     ON sr.df_employee_number = idps.df_employee_number
    AND idps.is_master = 1

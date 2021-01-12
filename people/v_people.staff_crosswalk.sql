@@ -5,7 +5,7 @@ CREATE OR ALTER VIEW people.staff_crosswalk AS
 
 SELECT sr.df_employee_number
       ,sr.adp_associate_id
-      ,sr.salesforce_id
+      ,NULL AS salesforce_id
       ,sr.first_name
       ,sr.last_name
       ,sr.gender
@@ -22,7 +22,7 @@ SELECT sr.df_employee_number
       ,sr.[status]
       ,sr.status_reason
       ,sr.is_manager
-      ,sr.leadership_role
+      ,NULL AS leadership_role
       ,sr.preferred_first_name
       ,sr.preferred_last_name
       ,sr.primary_job
@@ -38,12 +38,11 @@ SELECT sr.df_employee_number
       ,sr.paytype
       ,sr.flsa_status
       ,sr.annual_salary
-      ,COALESCE(CASE WHEN sr.grades_taught = 'Kindergarten' THEN 'Grade K' ELSE sr.grades_taught END
-               ,'Grade ' + CASE 
-                            WHEN gl.student_grade_level = 0 THEN 'K' 
-                            ELSE CONVERT(VARCHAR(5), gl.student_grade_level) 
-                           END) AS grades_taught
-      ,sr.subjects_taught
+      ,'Grade ' + CASE 
+                   WHEN gl.student_grade_level = 0 THEN 'K' 
+                   ELSE CONVERT(VARCHAR(5), gl.student_grade_level) 
+                  END AS grades_taught
+      ,NULL AS subjects_taught
       ,sr.position_title
       ,sr.primary_on_site_department_entity
       ,sr.primary_site_entity
@@ -62,7 +61,7 @@ SELECT sr.df_employee_number
       ,sr.[db_name]
 
       ,COALESCE(idps.ps_teachernumber
-               ,sr.adp_associate_id -- update to legacy for ADP go-live
+               ,sr.adp_associate_id_legacy
                ,CONVERT(VARCHAR(25), sr.df_employee_number)) AS ps_teachernumber
 
       ,ads.samaccountname
@@ -77,8 +76,8 @@ SELECT sr.df_employee_number
       ,adm.userprincipalname AS manager_userprincipalname
       ,adm.mail AS manager_mail
 
-      ,CASE WHEN c.personal_email <> '' THEN c.personal_email END AS personal_email
-FROM gabby.dayforce.staff_roster sr
+      ,NULL AS personal_email
+FROM gabby.adp.staff_roster sr
 LEFT JOIN gabby.people.id_crosswalk_powerschool idps
   ON sr.df_employee_number = idps.df_employee_number
  AND idps.is_master = 1
@@ -87,8 +86,6 @@ LEFT JOIN gabby.adsi.user_attributes_static ads
   ON CONVERT(VARCHAR(25), sr.df_employee_number) = ads.employeenumber
 LEFT JOIN gabby.adsi.user_attributes_static adm
   ON CONVERT(VARCHAR(25), sr.manager_df_employee_number) = adm.employeenumber
-LEFT JOIN gabby.dayforce.personal_contact_info c
-  ON sr.df_employee_number = c.employee_number
 LEFT JOIN gabby.pm.teacher_grade_levels gl
   ON sr.df_employee_number = gl.df_employee_number
  AND gl.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
