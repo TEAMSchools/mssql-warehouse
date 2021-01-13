@@ -59,6 +59,7 @@ SELECT sr.df_employee_number
       ,sr.manager_preferred_last_name
       ,sr.manager_name
       ,sr.[db_name]
+      ,sr.adp_associate_id_legacy
 
       ,COALESCE(idps.ps_teachernumber
                ,sr.adp_associate_id_legacy
