@@ -37,7 +37,7 @@ WITH academic_years AS (
          ON wa.physical_location_name = sc.site_name
         AND sc._fivetran_deleted = 0
        WHERE wa.[status] NOT IN ('Terminated', 'Pre-Start')
-         AND wa.job_name IN ('Teacher', 'Teacher Fellow', 'Teacher in Residence', 'Co-Teacher', 'Learning Specialist', 'Learning Specialist Coordinator', 'Teacher, ESL')
+         AND wa.job_name IN ('Teacher', 'Teacher Fellow', 'Teacher in Residence', 'Co-Teacher', 'Learning Specialist', 'Learning Specialist Coordinator', 'Teacher, ESL', 'Teacher ESL')
       ) sub
  )
 
