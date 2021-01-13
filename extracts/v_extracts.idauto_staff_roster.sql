@@ -17,7 +17,7 @@ SELECT QUOTENAME(ISNULL(NULL, ''), '"') AS ["Preferred Name"]
       ,QUOTENAME(ISNULL(CONVERT(VARCHAR, (CONVERT(DATE, df.rehire_date)),101), ''), '"') AS ["Rehire Date"]
       ,QUOTENAME(ISNULL(CONVERT(VARCHAR, (CONVERT(DATE, df.termination_date)),101), ''), '"') AS ["Termination Date"]
       ,QUOTENAME(ISNULL(CONVERT(VARCHAR, (CONVERT(DATE, df.birth_date)),101), ''), '"') AS ["Birth Date"]
-      ,QUOTENAME(ISNULL(COALESCE(df.adp_associate_id_legacy, CONVERT(VARCHAR, df.df_employee_number)), ''), '"') AS ["Associate ID"] 
+      ,QUOTENAME(ISNULL(df.adp_associate_id, ''), '"') AS ["Associate ID"] 
 FROM gabby.people.staff_crosswalk_static df
 WHERE df.original_hire_date <= DATEADD(DAY, 30, GETDATE())
   AND df.df_employee_number IS NOT NULL
