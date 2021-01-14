@@ -77,7 +77,7 @@ SELECT sr.df_employee_number
       ,adm.userprincipalname AS manager_userprincipalname
       ,adm.mail AS manager_mail
 
-      ,NULL AS personal_email
+      ,sr.personal_email
 FROM gabby.adp.staff_roster sr
 LEFT JOIN gabby.people.id_crosswalk_powerschool idps
   ON sr.df_employee_number = idps.df_employee_number
