@@ -39,5 +39,4 @@ JOIN gabby.powerschool.teachers_static t
  AND s.[db_name] = t.[db_name]
 JOIN gabby.people.staff_crosswalk_static scw
   ON t.teachernumber = scw.ps_teachernumber COLLATE Latin1_General_BIN
-WHERE s.no_of_students > 0
-  AND s.yearid = (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990)
+WHERE s.yearid = (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990)

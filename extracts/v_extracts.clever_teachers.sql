@@ -17,6 +17,7 @@ SELECT df.primary_site_schoolid AS [School_id]
 FROM gabby.people.staff_crosswalk_static df
 WHERE df.[status] NOT IN ('TERMINATED', 'PRESTART')
   AND df.primary_site_schoolid IS NOT NULL
+  AND df.df_employee_number IS NOT NULL
 
 UNION ALL
 

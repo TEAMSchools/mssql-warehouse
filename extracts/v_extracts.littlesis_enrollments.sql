@@ -17,5 +17,5 @@ SELECT sec.schoolid AS school_id
       ,stu.student_number AS student_id
       ,stu.student_gsuite_email
 FROM gabby.extracts.gclassroom_sections sec
-JOIN gabby.extracts.gclassroom_students stu
+LEFT JOIN gabby.extracts.gclassroom_students stu
   ON sec.class_alias = stu.class_alias
