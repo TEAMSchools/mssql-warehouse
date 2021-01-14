@@ -34,6 +34,7 @@ WITH clean_people AS (
         ,sub.reports_to_associate_id
         ,sub.adp_associate_id_legacy
         ,sub.mobile_number
+        ,sub.personal_email
         ,REPLACE(sub.primary_site_clean, ' - Regional', '') AS primary_site
         ,COALESCE(sub.common_name, sub.first_name) AS preferred_first_name
         ,COALESCE(sub.preferred_last_name , sub.last_name) AS preferred_last_name
@@ -46,6 +47,7 @@ WITH clean_people AS (
         ,CASE
           WHEN COALESCE(sub.rehire_date, sub.original_hire_date) > GETDATE() OR sub.[status] IS NULL THEN 'PRESTART'
           WHEN sub.[status] = 'Leave' THEN 'INACTIVE'
+          WHEN sub.termination_date > GETDATE() THEN 'ACTIVE'
           ELSE UPPER(sub.[status])
          END AS [status]
         /* redundant combined fields */
@@ -70,6 +72,7 @@ WITH clean_people AS (
              ,adp.position_status AS [status]
              ,adp.worker_category_description AS payclass
              ,adp.wfmgr_pay_rule AS paytype
+             ,adp.personal_contact_personal_email AS personal_email
              ,CONVERT(NVARCHAR(256), NULL) AS job_family -- on the way
              /* transformations */
              ,CONVERT(DATE, adp.birth_date) AS birth_date
@@ -163,6 +166,7 @@ SELECT c.df_employee_number
       ,c.primary_on_site_department_entity
       ,c.primary_site_entity
       ,c.adp_associate_id_legacy
+      ,c.personal_email
       ,c.preferred_last_name + ', ' + c.preferred_first_name AS preferred_name
       ,SUBSTRING(c.mobile_number, 1, 3) + '-'
          + SUBSTRING(c.mobile_number, 4, 3) + '-'
