@@ -125,6 +125,7 @@ WITH clean_people AS (
        LEFT JOIN gabby.people.id_crosswalk_adp cw
          ON adp.file_number = cw.df_employee_number
         AND cw.rn_curr = 1
+       WHERE adp.file_number IS NOT NULL
       ) sub
   WHERE sub.rn = 1
  )
