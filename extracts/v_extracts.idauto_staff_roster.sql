@@ -20,4 +20,3 @@ SELECT QUOTENAME(ISNULL(NULL, ''), '"') AS ["Preferred Name"]
       ,QUOTENAME(ISNULL(df.adp_associate_id, ''), '"') AS ["Associate ID"] 
 FROM gabby.people.staff_crosswalk_static df
 WHERE df.original_hire_date <= DATEADD(DAY, 30, GETDATE())
-  AND df.df_employee_number IS NOT NULL
