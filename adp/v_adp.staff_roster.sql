@@ -80,7 +80,7 @@ WITH clean_people AS (
              ,CONVERT(DATE, adp.termination_date) AS termination_date
              ,CONVERT(DATE, adp.rehire_date) AS rehire_date
              ,CONVERT(DATE, adp.position_start_date) AS position_effective_from_date
-             ,CONVERT(DATE, adp.termination_date) AS position_effective_to_date -- missing position_effective_end_date?
+             ,CONVERT(DATE, adp.position_effective_end_date) AS position_effective_to_date
              ,CONVERT(MONEY, adp.annual_salary) AS annual_salary
              ,CONCAT(adp.primary_address_address_line_1, ', ' + adp.primary_address_address_line_2) AS [address]
              ,UPPER(adp.flsa_description) AS flsa_status
