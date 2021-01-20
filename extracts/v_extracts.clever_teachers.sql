@@ -33,22 +33,3 @@ SELECT 73253 AS [School_id]
       ,'Teacher' AS [Title]
       ,'data_test' AS [Username]
       ,NULL AS [Password]
-
-UNION ALL
-
-/* demo accounts */
-SELECT df.primary_site_schoolid AS [School_id]
-      ,CONCAT('ADMIN', df.ps_teachernumber) AS [Teacher_id]
-      ,CONCAT('ADMIN', df.ps_teachernumber) AS [Teacher_number]
-      ,CONVERT(VARCHAR(25), CONCAT('ADMIN', df.df_employee_number)) AS [State_teacher_id]
-      ,'awesometeacher' 
-         + CASE WHEN df.ps_teachernumber = '50013' THEN 'ms' ELSE 'es' END
-         + '@kippnj.org' AS [Teacher_email]
-      ,'Awesome' AS [First_name]
-      ,NULL AS [Middle_name]
-      ,'Teacher ' + CASE WHEN df.ps_teachernumber = '50013' THEN 'MS' ELSE 'ES' END AS [Last_name]
-      ,df.position_title AS [Title]
-      ,'awesometeacher' + CASE WHEN df.ps_teachernumber = '50013' THEN 'ms' ELSE 'es' END AS [Username]
-      ,NULL AS [Password]
-FROM gabby.people.staff_crosswalk_static df
-WHERE df.ps_teachernumber IN ('JX5DVZDW1', '50013')

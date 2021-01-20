@@ -11,12 +11,13 @@ SELECT cc.schoolid AS [School_id]
           WHEN cc.[db_name] = 'kippmiami' THEN 'MIA'
          END
         ,cc.sectionid) AS [Section_id]
+
       ,s.student_number AS [Student_id]
 FROM gabby.powerschool.cc
 JOIN gabby.powerschool.students s
   ON cc.studentid = s.id
  AND cc.[db_name] = s.[db_name]
-WHERE cc.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+WHERE CONVERT(DATE, GETDATE()) BETWEEN cc.dateenrolled AND cc.dateleft
 
 UNION ALL
 
@@ -28,22 +29,3 @@ SELECT schoolid AS [School_id]
       ,student_number AS [Student_id]
 FROM gabby.powerschool.students
 WHERE enroll_status IN (0, -1)
-
-UNION ALL
-
-/* demo students */
-SELECT cc.schoolid AS [School_id]
-      ,CONCAT(
-         CASE 
-          WHEN cc.[db_name] = 'kippnewark' THEN 'NWK'
-          WHEN cc.[db_name] = 'kippcamden' THEN 'CMD'
-          WHEN cc.[db_name] = 'kippmiami' THEN 'MIA'
-         END
-        ,cc.sectionid) AS [Section_id]
-      ,CONCAT(999, s.student_number) AS [Student_id]
-FROM gabby.powerschool.cc
-JOIN gabby.powerschool.students s
-  ON cc.studentid = s.id
- AND cc.[db_name] = s.[db_name]
- AND s.student_number IN (17453, 11900)
-WHERE cc.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()

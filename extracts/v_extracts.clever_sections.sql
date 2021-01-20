@@ -96,8 +96,8 @@ WITH dsos AS (
          ON sec.termid = terms.id
         AND sec.schoolid = terms.schoolid
         AND sec.[db_name] = terms.[db_name]
-       WHERE sec.yearid = (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990)
-         AND sec.no_of_students > 0
+        AND CONVERT(DATE, GETDATE()) BETWEEN terms.firstday AND terms.lastday
+       WHERE sec.no_of_students > 0
 
        UNION ALL
 
@@ -131,61 +131,6 @@ WITH dsos AS (
          ON dsos.School_id = s.school_number
        JOIN gabby.utilities.row_generator_smallint r
          ON r.n BETWEEN s.low_grade AND s.high_grade
-
-       UNION ALL
-
-       /* demo sections */
-       SELECT sec.schoolid AS [School_id]
-             ,sec.section_number AS [Section_number]
-             ,sec.course_number AS [Course_number]
-             ,sec.expression AS [Period]
-             ,CONCAT(CASE 
-                      WHEN sec.[db_name] = 'kippnewark' THEN 'NWK'
-                      WHEN sec.[db_name] = 'kippcamden' THEN 'CMD'
-                      WHEN sec.[db_name] = 'kippmiami' THEN 'MIA'
-                     END
-                    ,sec.id) AS [Section_id]
-             ,1 AS sortorder
-             ,CONCAT('ADMIN', t.teachernumber) AS [Teacher_id]
-             ,c.course_name AS [Course_name]
-             ,CASE
-               WHEN c.credittype = 'ART' THEN 'Arts and music'
-               WHEN c.credittype = 'CAREER' THEN 'other'
-               WHEN c.credittype = 'COCUR' THEN 'other'
-               WHEN c.credittype = 'ELEC' THEN 'other'
-               WHEN c.credittype = 'ENG' THEN 'English/language arts'
-               WHEN c.credittype = 'LOG' THEN 'other'
-               WHEN c.credittype = 'MATH' THEN 'Math'
-               WHEN c.credittype = 'NULL' THEN 'Homeroom/advisory'
-               WHEN c.credittype = 'PHYSED' THEN 'PE and health'
-               WHEN c.credittype = 'RHET' THEN 'English/language arts'
-               WHEN c.credittype = 'SCI' THEN 'Science'
-               WHEN c.credittype = 'SOC' THEN 'Social studies'
-               WHEN c.credittype = 'STUDY' THEN 'other'
-               WHEN c.credittype = 'WLANG' THEN 'Language'
-              END AS [Subject]
-
-             ,terms.abbreviation [Term_name]
-             ,CONVERT(VARCHAR(25), terms.firstday, 101) AS [Term_start]
-             ,CONVERT(VARCHAR(25), terms.lastday, 101) AS [Term_end]
-
-             ,NULL AS [Name]
-             ,NULL AS [Grade]
-             ,NULL AS [Course_description]
-       FROM gabby.powerschool.sections sec
-       JOIN gabby.powerschool.teachers_static t
-         ON sec.teacher = t.id
-        AND sec.schoolid = t.schoolid
-        AND sec.[db_name] = t.[db_name]
-        AND t.teachernumber IN ('JX5DVZDW1', '50013')
-       JOIN gabby.powerschool.courses c
-         ON sec.course_number = c.course_number
-        AND sec.[db_name] = c.[db_name]
-       JOIN gabby.powerschool.terms
-         ON sec.termid = terms.id
-        AND sec.schoolid = terms.schoolid
-        AND sec.[db_name] = terms.[db_name]
-       WHERE sec.yearid = (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990)
       ) sub
  )
 
