@@ -226,17 +226,17 @@ LEFT JOIN gabby.people.staff_crosswalk_static resp
   ON rc.respondent_df_employee_number = resp.df_employee_number
 LEFT JOIN work_assignment rwa
   ON rc.respondent_df_employee_number = rwa.employee_reference_code
- AND sc.link_close_date BETWEEN rwa.work_assignment_effective_start AND rwa.work_assignment_effective_end
+ AND CONVERT(DATE, sc.link_close_date) BETWEEN rwa.work_assignment_effective_start AND rwa.work_assignment_effective_end
  AND rwa.rn = 1
 LEFT JOIN manager rmgr
   ON rc.respondent_df_employee_number = rmgr.employee_reference_code
- AND sc.link_close_date BETWEEN rmgr.manager_effective_start AND rmgr.manager_effective_end
+ AND CONVERT(DATE, sc.link_close_date) BETWEEN rmgr.manager_effective_start AND rmgr.manager_effective_end
 LEFT JOIN gabby.people.staff_crosswalk_static subj
   ON rc.subject_df_employee_number = subj.df_employee_number
 LEFT JOIN work_assignment swa
   ON rc.subject_df_employee_number = swa.employee_reference_code
- AND sc.link_close_date BETWEEN swa.work_assignment_effective_start AND swa.work_assignment_effective_end
+ AND CONVERT(DATE, sc.link_close_date) BETWEEN swa.work_assignment_effective_start AND swa.work_assignment_effective_end
  AND swa.rn = 1
 LEFT JOIN manager smgr
   ON rc.subject_df_employee_number = smgr.employee_reference_code
- AND sc.link_close_date BETWEEN smgr.manager_effective_start AND smgr.manager_effective_end
+ AND CONVERT(DATE, sc.link_close_date) BETWEEN smgr.manager_effective_start AND smgr.manager_effective_end
