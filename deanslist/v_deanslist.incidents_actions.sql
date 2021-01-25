@@ -3,9 +3,8 @@ GO
 
 CREATE OR ALTER VIEW deanslist.incidents_actions AS
 
-SELECT DISTINCT 
-       CONVERT(INT, dli.incident_id) AS incident_id
-      ,CONVERT(VARCHAR(1000), dli.actions) AS actions_json
+SELECT CONVERT(INT, dli.incident_id) AS incident_id
+      ,NULL AS actions_json
 
       ,dlia.said
       ,dlia.actionid
