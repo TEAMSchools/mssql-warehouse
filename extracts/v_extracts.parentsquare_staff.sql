@@ -35,8 +35,8 @@ FROM
      UNION
 
      SELECT ad.employeeid AS [staff_id]
-           ,ad.cn AS [first_name]
-           ,ad.givenname AS [last_name]
+           ,ad.givenname AS [first_name]
+           ,ad.sn AS [last_name]
            ,ad.userprincipalname AS [login]
            ,ad.mail AS [email]
            ,ad.mobile AS [mobile]
