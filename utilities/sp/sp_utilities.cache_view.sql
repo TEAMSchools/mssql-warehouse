@@ -17,6 +17,10 @@ BEGIN
   SET XACT_ABORT ON;
 
   DECLARE @sql                    NVARCHAR(MAX)
+         ,@sql_drop               NVARCHAR(MAX)
+         ,@sql_selectinto         NVARCHAR(MAX)
+         ,@sql_truncateinsert     NVARCHAR(MAX)
+         ,@rowcount               INT
          ,@source_view            NVARCHAR(MAX)
          ,@temp_table_name        NVARCHAR(MAX)
          ,@destination_table_name NVARCHAR(MAX)
@@ -24,7 +28,7 @@ BEGIN
          ,@email_body             NVARCHAR(MAX)
 
   SET @source_view = @db_name + N'.' + @schema_name + N'.' + @view_name;
-  SET @temp_table_name = N'#' + @db_name + @schema_name + @view_name + N'_temp';
+  SET @temp_table_name = N'tempdb..##' + @db_name + @schema_name + @view_name;
   SET @destination_table_name = @source_view + N'_static';
 
   /* if source view does not exist, exit */
@@ -45,50 +49,63 @@ BEGIN
       PRINT (@sql);
       EXEC (@sql);
     END;
-
-  /* otherwise, drop temp table, if exists... */
-  /* load data from view into temp table... */
-  /* truncate destination table... */
-  /* insert into destination table */
   ELSE
     BEGIN
-      SET @sql = N'
+      /* drop temp table, if exists... */
+      SET @sql_drop = N'
         IF OBJECT_ID(N''' + @temp_table_name + N''') IS NOT NULL
           BEGIN
             DROP TABLE ' + @temp_table_name + N';
           END
+      '
+      PRINT(@sql_drop);
+      EXEC (@sql_drop);
 
+      /* load data from view into temp table... */
+      SET @sql_selectinto = N'
+        SELECT *
+        INTO ' + @temp_table_name + N'
+        FROM ' + @source_view + N';
+      '
+      PRINT(@sql_selectinto);
+      EXEC (@sql_selectinto);
+
+      /* truncate destination table... */
+      /* insert into destination table */
+      SET @sql_truncateinsert = N'
+        TRUNCATE TABLE ' + @destination_table_name + N';
+        INSERT INTO ' + @destination_table_name + N' WITH(TABLOCKX)
+        SELECT * 
+        FROM ' + @temp_table_name + N';
+      ';
+      IF @@ROWCOUNT > 0
         BEGIN
-          SELECT *
-          INTO ' + @temp_table_name + N'
-          FROM ' + @source_view + N';
+          BEGIN TRY
+            BEGIN TRANSACTION
+              PRINT(@sql_truncateinsert);
+              EXEC (@sql_truncateinsert);
+            COMMIT
+          END TRY
+          BEGIN CATCH
+            ROLLBACK;
+            SET @email_body = ERROR_MESSAGE();
+            SET @email_subject = @destination_table_name + N' refresh failed';
+            EXEC msdb.dbo.sp_send_dbmail @profile_name = 'datarobot'
+                                        ,@recipients = 'u7c1r1b1c5n4p0q0@kippnj.slack.com'
+                                        ,@subject = @email_subject
+                                        ,@body = @email_body;
+            THROW;
+          END CATCH;
         END
 
-        IF @@ROWCOUNT > 0
+      /* drop temp table, if exists... */
+      SET @sql_drop = N'
+        IF OBJECT_ID(N''' + @temp_table_name + N''') IS NOT NULL
           BEGIN
-            TRUNCATE TABLE ' + @destination_table_name + N';
-            INSERT INTO ' + @destination_table_name + N' WITH(TABLOCKX)
-            SELECT * 
-            FROM ' + @temp_table_name + N';
+            DROP TABLE ' + @temp_table_name + N';
           END
-      ';
-      PRINT (@sql);
-      BEGIN TRY
-        EXEC (@sql);
-      END TRY
-      BEGIN CATCH
-        IF @@TRANCOUNT > 0
-          BEGIN
-            ROLLBACK;
-            THROW;
-          END
-
-        SET @email_body = ERROR_MESSAGE();
-        SET @email_subject = @destination_table_name + N' refresh failed';
-        EXEC msdb.dbo.sp_send_dbmail @profile_name = 'datarobot'
-                                    ,@recipients = 'u7c1r1b1c5n4p0q0@kippnj.slack.com'
-                                    ,@subject = @email_subject
-                                    ,@body = @email_body;
-      END CATCH;
+      '
+      PRINT(@sql_drop);
+      EXEC (@sql_drop);
     END
 END;
