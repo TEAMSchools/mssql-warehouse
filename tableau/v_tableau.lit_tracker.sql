@@ -16,7 +16,7 @@ SELECT co.school_name
       ,co.region
       ,co.is_pathways
       ,co.c_504_status
-      
+
       ,term.lit AS lit_term
       ,CASE
         WHEN co.academic_year >= 2015 THEN REPLACE(term.ar,'AR','Q')
@@ -40,13 +40,13 @@ SELECT co.school_name
       ,achv.hard_lvl
       ,achv.goal_status
       ,achv.lvl_num - achv.goal_num AS distance_from_goal
-      
+
       ,atid.is_fp
       ,atid.genre
-      
+
       ,(SELECT MAX(v) FROM (VALUES (atid.test_date), (dtid.test_date), (htid.test_date)) AS val(v)) AS test_date
-      ,COALESCE(atid.test_administered_by, gr.gr_teacher) AS test_administered_by
-      
+      ,atid.test_administered_by
+
       /* component data */
       ,long.domain AS component_domain
       ,long.[label] AS component_strand
@@ -64,7 +64,7 @@ SELECT co.school_name
       ,ar.n_passed
       ,ar.n_total
       ,CASE WHEN ar.words_goal < 0 THEN NULL ELSE ar.words_goal END AS words_goal
-      
+
       ,ROW_NUMBER() OVER(
          PARTITION BY co.student_number, co.academic_year, term.lit, term.ar, achv.achv_unique_id
            ORDER BY achv.achv_unique_id) AS rn_test
@@ -91,10 +91,6 @@ LEFT JOIN gabby.renaissance.ar_progress_to_goals ar
  AND term.ar = ar.reporting_term 
  AND ar.[start_date] <= GETDATE()
  AND ar.n_total > 0
-LEFT JOIN gabby.lit.guided_reading_roster gr
-  ON co.student_number = gr.student_number
- AND co.academic_year = gr.academic_year
- AND term.lit = gr.test_round
 WHERE co.rn_year = 1
   AND co.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 3)
   AND co.grade_level <> 99
