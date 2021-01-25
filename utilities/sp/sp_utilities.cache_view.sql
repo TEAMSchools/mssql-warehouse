@@ -42,6 +42,7 @@ BEGIN
         INTO ' + @destination_table_name + N'
         FROM ' + @source_view + N';
       ';
+      PRINT (@sql);
       EXEC (@sql);
     END;
 
@@ -50,38 +51,44 @@ BEGIN
   /* truncate destination table... */
   /* insert into destination table */
   ELSE
-    SET @sql = N'
-      IF OBJECT_ID(N''' + @temp_table_name + N''') IS NOT NULL
+    BEGIN
+      SET @sql = N'
+        IF OBJECT_ID(N''' + @temp_table_name + N''') IS NOT NULL
+          BEGIN
+            DROP TABLE ' + @temp_table_name + N';
+          END
+
         BEGIN
-          DROP TABLE ' + @temp_table_name + N';
+          SELECT *
+          INTO ' + @temp_table_name + N'
+          FROM ' + @source_view + N';
         END
 
-        SELECT *
-        INTO ' + @temp_table_name + N'
-        FROM ' + @source_view + N';
-
-      IF @@ROWCOUNT > 0
-        TRUNCATE TABLE ' + @destination_table_name + N';
-        INSERT INTO ' + @destination_table_name + N' WITH(TABLOCKX)
-        SELECT * 
-        FROM ' + @temp_table_name + N';
-    ';
-    PRINT (@sql);
-    BEGIN TRY
-      BEGIN TRANSACTION
+        IF @@ROWCOUNT > 0
+          BEGIN
+            TRUNCATE TABLE ' + @destination_table_name + N';
+            INSERT INTO ' + @destination_table_name + N' WITH(TABLOCKX)
+            SELECT * 
+            FROM ' + @temp_table_name + N';
+          END
+      ';
+      PRINT (@sql);
+      BEGIN TRY
         EXEC (@sql);
-      COMMIT TRANSACTION
-    END TRY
-    BEGIN CATCH
-      ROLLBACK;
+      END TRY
+      BEGIN CATCH
+        IF @@TRANCOUNT > 0
+          BEGIN
+            ROLLBACK;
+            THROW;
+          END
 
-      SET @email_body = ERROR_MESSAGE();
-      SET @email_subject = @destination_table_name + N' refresh failed';
-      EXEC msdb.dbo.sp_send_dbmail @profile_name = 'datarobot'
-                                  ,@recipients = 'u7c1r1b1c5n4p0q0@kippnj.slack.com'
-                                  ,@subject = @email_subject
-                                  ,@body = @email_body;
-
-      THROW;
-    END CATCH;
+        SET @email_body = ERROR_MESSAGE();
+        SET @email_subject = @destination_table_name + N' refresh failed';
+        EXEC msdb.dbo.sp_send_dbmail @profile_name = 'datarobot'
+                                    ,@recipients = 'u7c1r1b1c5n4p0q0@kippnj.slack.com'
+                                    ,@subject = @email_subject
+                                    ,@body = @email_body;
+      END CATCH;
+    END
 END;
