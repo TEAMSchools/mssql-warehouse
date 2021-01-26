@@ -7,7 +7,7 @@ WITH responses AS (
   SELECT sr.id AS survey_response_id
         ,sr.survey_id
         ,sr.survey_data
-        ,CONVERT(DATE, LEFT(date_started, 19)) AS date_started
+        ,CONVERT(DATETIME2, LEFT(date_started, 19)) AS date_started
         ,ROW_NUMBER() OVER(PARTITION BY sr.survey_id, sr.id ORDER BY sr._modified DESC) AS rn
   FROM gabby.surveygizmo.survey_response sr
  )
@@ -31,8 +31,8 @@ CROSS APPLY OPENJSON(sr.survey_data, '$')
     section_id INT,
     answer_id VARCHAR(125),
     [type] VARCHAR(125),
-    question VARCHAR(MAX),
-    answer VARCHAR(MAX),
+    question NVARCHAR(512),
+    answer NVARCHAR(MAX),
     options NVARCHAR(MAX) AS JSON,
     shown BIT
    ) AS sd

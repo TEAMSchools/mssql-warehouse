@@ -155,7 +155,7 @@ WITH response_pivot AS (
 
 SELECT rc.survey_response_id
       ,rc.survey_id
-      ,rc.date_started
+      ,CONVERT(DATE, rc.date_started) AS date_started
       ,rc.subject_df_employee_number
       ,rc.respondent_df_employee_number
       ,COALESCE(rc.is_manager
