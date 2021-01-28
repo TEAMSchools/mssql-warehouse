@@ -56,6 +56,9 @@ SELECT co.student_number
       ,gr.y1_gpa_points
       ,NULL AS earnedcrhrs
 
+      ,CASE WHEN pgf.citizenship <> '' THEN pgf.citizenship END AS citizenship
+      ,CASE WHEN pgf.comment_value <> '' THEN pgf.comment_value END AS comment_value
+
       ,st.sectionid
       ,st.termid
       ,st.teacher_name
@@ -72,6 +75,11 @@ LEFT JOIN gabby.powerschool.final_grades_static gr
   ON co.student_number = gr.student_number
  AND co.academic_year = gr.academic_year 
  AND co.[db_name] = gr.[db_name]
+LEFT JOIN gabby.powerschool.pgfinalgrades pgf
+  ON gr.studentid = pgf.studentid
+ AND gr.sectionid = pgf.sectionid
+ AND gr.term_name = pgf.finalgradename_clean
+ AND gr.[db_name] = pgf.[db_name]
 LEFT JOIN section_teacher st 
   ON co.studentid = st.studentid
  AND co.yearid = st.yearid
@@ -114,6 +122,8 @@ SELECT co.student_number
       ,gr.y1_gpa_points
 
       ,y1.earnedcrhrs
+      ,NULL AS citizenship
+      ,NULL AS comment_value
 
       ,st.sectionid
       ,st.termid
@@ -185,6 +195,8 @@ SELECT co.student_number
       ,NULL AS y1_grade_letter
       ,NULL AS y1_gpa_points
       ,NULL AS earnedcrhrs
+      ,NULL AS citizenship
+      ,NULL AS comment_value
 
       ,st.sectionid
       ,st.termid
@@ -245,6 +257,8 @@ SELECT co.student_number
       ,sg.gpa_points AS y1_gpa_points
 
       ,sg.earnedcrhrs
+      ,NULL AS citizenship
+      ,NULL AS comment_value
 
       ,st.sectionid
       ,st.termid
@@ -304,6 +318,8 @@ SELECT COALESCE(co.student_number, e1.student_number) AS student_number
       ,CONVERT(VARCHAR(5), tr.grade) AS y1_grade_letter
       ,tr.gpa_points AS y1_gpa_points
       ,tr.earnedcrhrs
+      ,NULL AS citizenship
+      ,NULL AS comment_value
 
       ,CONVERT(INT, tr.sectionid) AS sectionid
       ,tr.termid
@@ -362,6 +378,8 @@ SELECT co.student_number
       ,NULL AS y1_grade_letter
       ,NULL AS y1_gpa_points
       ,NULL AS earnedcrhrs
+      ,NULL AS citizenship
+      ,NULL AS comment_value
 
       ,st.sectionid
       ,st.termid
@@ -420,6 +438,8 @@ SELECT co.student_number
       ,NULL AS y1_grade_letter
       ,NULL AS y1_gpa_points
       ,NULL AS earnedcrhrs
+      ,NULL AS citizenship
+      ,NULL AS comment_value
 
       ,st.sectionid
       ,st.termid
