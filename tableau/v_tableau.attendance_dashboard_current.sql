@@ -29,6 +29,7 @@ SELECT sub.student_number
       ,sub.is_oss AS is_oss_running
       ,sub.is_iss AS is_iss_running
       ,sub.is_suspended AS is_suspended_running
+      ,sub.is_counselingservices
 FROM
     (
      SELECT co.academic_year
