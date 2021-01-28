@@ -63,6 +63,8 @@ FROM
            ,CASE WHEN att.att_code IN ('OS', 'OSS', 'OSSP', 'S', 'ISS') THEN 1.0 ELSE 0.0 END AS is_suspended
 
            ,CONVERT(VARCHAR(25), dt.alt_name) AS term
+
+           ,CASE WHEN sp.studentid IS NOT NULL THEN 1 END AS is_counselingservices
      FROM powerschool.ps_adaadm_daily_ctod_current_static mem
      JOIN powerschool.cohort_identifiers_static co
        ON mem.studentid = co.studentid
@@ -82,6 +84,10 @@ FROM
       AND mem.calendardate BETWEEN dt.[start_date] AND dt.end_date
       AND dt.identifier = 'RT'
       AND dt._fivetran_deleted = 0
+     LEFT JOIN powerschool.spenrollments_gen sp
+       ON mem.studentid = sp.studentid
+      AND mem.calendardate BETWEEN sp.enter_date AND sp.exit_date
+      AND sp.specprog_name = 'Counseling Services'
      WHERE mem.attendancevalue IS NOT NULL
        AND mem.calendardate <= GETDATE()
        AND mem.membershipvalue > 0
