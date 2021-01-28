@@ -17,17 +17,15 @@ FROM
            ,academic_year
            ,grade_level_id
            ,entry_date
-           ,leave_date
+           ,DATEADD(DAY, -1, leave_date) AS leave_date
            ,CONVERT(VARCHAR(125), credittype) AS credittype
            ,CONVERT(VARCHAR(125), subject_area) COLLATE Latin1_General_BIN AS subject_area
            ,MAX(is_advanced_math) OVER(PARTITION BY student_id, academic_year, credittype) AS is_advanced_math_student
-           ,CONVERT(INT, ROW_NUMBER() OVER(
-              PARTITION BY student_id, academic_year, credittype, subject_area
-                ORDER BY entry_date DESC, leave_date DESC)) AS rn
      FROM
          (
           /* K-12 enrollments */
-          SELECT ssc.student_id
+          SELECT DISTINCT
+                 ssc.student_id
                 ,ssc.academic_year
                 ,ssc.grade_level_id
                 ,ssc.entry_date
@@ -48,14 +46,17 @@ FROM
             ON ils.student_id = ssc.student_id
            AND c.course_id = ssc.course_id
            AND (enr.academic_year + 1) = ssc.academic_year
+           AND ssc.entry_date <> ssc.leave_date
           WHERE enr.course_enroll_status = 0
             AND enr.section_enroll_status = 0
             AND enr.illuminate_subject IS NOT NULL
+            AND enr.rn_illuminate_subject = 1
 
           UNION ALL
 
           /* ES Writing */
-          SELECT ssc.student_id
+          SELECT DISTINCT
+                 ssc.student_id
                 ,ssc.academic_year
                 ,ssc.grade_level_id
                 ,ssc.entry_date
@@ -73,10 +74,11 @@ FROM
             ON ils.student_id = ssc.student_id
            AND c.course_id = ssc.course_id
            AND (enr.academic_year + 1) = ssc.academic_year
+           AND ssc.entry_date <> ssc.leave_date
            AND ssc.grade_level_id <= 5
           WHERE enr.course_enroll_status = 0
             AND enr.section_enroll_status = 0
             AND enr.course_number = 'HR'
+            AND enr.rn_course_yr = 1
          ) sub
     ) sub
-WHERE rn = 1
