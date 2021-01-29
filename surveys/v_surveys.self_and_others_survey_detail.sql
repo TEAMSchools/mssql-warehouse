@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW surveys.self_and_others_survey_detail AS
+--CREATE OR ALTER VIEW surveys.self_and_others_survey_detail AS
 
 SELECT d.survey_id
       ,d.survey_title
@@ -27,10 +27,10 @@ SELECT d.survey_id
       ,s.primary_site AS subject_primary_site
       ,d.subject_primary_site_schoolid
       ,d.subject_primary_site_school_level
-      ,d.subject_manager_df_employee_number
+      ,m.df_employee_number AS subject_manager_df_employee_number
       ,d.subject_samaccountname
-      ,d.subject_manager_name
-      ,d.subject_manager_samaccountname
+      ,m.preferred_name AS subject_manager_name
+      ,m.samaccountname AS subject_manager_samaccountname
       ,d.subject_primary_job AS subject_dayforce_role
       ,CASE 
         WHEN d.is_open_ended = 'Y' THEN NULL
@@ -71,6 +71,8 @@ SELECT d.survey_id
 FROM gabby.surveygizmo.survey_detail d
 LEFT JOIN gabby.people.staff_crosswalk_static s
   ON d.subject_df_employee_number = s.df_employee_number
+LEFT JOIN gabby.people.staff_crosswalk_static m
+  ON s.manager_df_employee_number = m.df_employee_number
 WHERE d.survey_title = 'Self and Others'
   AND d.rn_respondent_subject = 1
   AND d.campaign_academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)

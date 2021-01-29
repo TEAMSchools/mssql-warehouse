@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW surveygizmo.survey_response_identifiers AS
+--CREATE OR ALTER VIEW surveygizmo.survey_response_identifiers AS
 
 WITH response_pivot AS (
   SELECT p.survey_response_id
@@ -136,18 +136,19 @@ WITH response_pivot AS (
                       ,DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1, 6, 30)) AS manager_effective_end
        FROM
            (
-            SELECT em.employee_reference_code
-                  ,em.manager_employee_number AS manager_df_employee_number
-                  ,CONVERT(DATE, em.manager_effective_start) AS effective_date
+            SELECT subj.df_employee_number AS employee_reference_code
+                  ,mgr.df_employee_number AS manager_df_employee_number
+                  ,CONVERT(DATE, em.reports_to_effective_date) AS effective_date
 
                   ,mgr.preferred_name AS manager_name
                   ,mgr.mail AS manager_mail
                   ,mgr.userprincipalname AS manager_userprincipalname
                   ,mgr.samaccountname AS manager_samaccountname
-            FROM gabby.dayforce.employee_manager em
+            FROM gabby.adp.manager_history em
             JOIN gabby.people.staff_crosswalk_static mgr
-              ON em.manager_employee_number = mgr.df_employee_number
-            WHERE em.manager_derived_method = 'Direct Report'
+              ON em.reports_to_associate_id = mgr.adp_associate_id
+            JOIN gabby.people.staff_crosswalk_static subj
+              ON subj.adp_associate_id =  em.associate_id
            ) sub
       ) sub
   WHERE sub.manager_effective_start <= sub.manager_effective_end
