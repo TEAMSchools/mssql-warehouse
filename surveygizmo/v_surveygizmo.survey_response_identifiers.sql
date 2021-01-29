@@ -125,30 +125,18 @@ WITH response_pivot AS (
         ,sub.manager_effective_end
   FROM
       (
-       SELECT sub.employee_reference_code
-             ,sub.manager_df_employee_number
-             ,sub.manager_name
-             ,sub.manager_mail
-             ,sub.manager_userprincipalname
-             ,sub.manager_samaccountname
-             ,sub.effective_date AS manager_effective_start
-             ,COALESCE(DATEADD(DAY, -1, LEAD(sub.effective_date) OVER(PARTITION BY sub.employee_reference_code ORDER BY sub.effective_date))
-                      ,DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1, 6, 30)) AS manager_effective_end
-       FROM
-           (
-            SELECT em.employee_reference_code
-                  ,em.manager_employee_number AS manager_df_employee_number
-                  ,CONVERT(DATE, em.manager_effective_start) AS effective_date
-
-                  ,mgr.preferred_name AS manager_name
-                  ,mgr.mail AS manager_mail
-                  ,mgr.userprincipalname AS manager_userprincipalname
-                  ,mgr.samaccountname AS manager_samaccountname
-            FROM gabby.dayforce.employee_manager em
-            JOIN gabby.people.staff_crosswalk_static mgr
-              ON em.manager_employee_number = mgr.df_employee_number
-            WHERE em.manager_derived_method = 'Direct Report'
-           ) sub
+       SELECT em.employee_number AS employee_reference_code
+             ,em.reports_to_effective_date AS manager_effective_start
+             ,em.reports_to_effective_end_date AS manager_effective_end
+                  
+             ,subj.manager_df_employee_number
+             ,subj.manager_name
+             ,subj.manager_mail
+             ,subj.manager_userprincipalname
+             ,subj.manager_samaccountname
+       FROM gabby.adp.manager_history_clean em
+       JOIN gabby.people.staff_crosswalk_static subj
+         ON em.employee_number = subj.df_employee_number
       ) sub
   WHERE sub.manager_effective_start <= sub.manager_effective_end
  )

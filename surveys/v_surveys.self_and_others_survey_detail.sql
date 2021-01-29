@@ -27,10 +27,10 @@ SELECT d.survey_id
       ,s.primary_site AS subject_primary_site
       ,d.subject_primary_site_schoolid
       ,d.subject_primary_site_school_level
-      ,d.subject_manager_df_employee_number
+      ,s.manager_df_employee_number AS subject_manager_df_employee_number
       ,d.subject_samaccountname
-      ,d.subject_manager_name
-      ,d.subject_manager_samaccountname
+      ,s.manager_preferred_last_name + ', ' + s.manager_preferred_first_name AS subject_manager_name
+      ,s.manager_samaccountname AS subject_manager_samaccountname
       ,d.subject_primary_job AS subject_dayforce_role
       ,CASE 
         WHEN d.is_open_ended = 'Y' THEN NULL
