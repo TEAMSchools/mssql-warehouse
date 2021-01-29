@@ -77,7 +77,7 @@ LEFT JOIN gabby.adp.status_history_clean s
  AND r.effective_start_date BETWEEN s.status_effective_date AND s.status_effective_end_date
 LEFT JOIN gabby.adp.work_assignment_history_clean w
   ON r.employee_number = w.employee_number
- AND r.effective_start_date BETWEEN w.position_effective_date AND w.position_effective_date
+ AND r.effective_start_date BETWEEN w.position_effective_date AND w.position_effective_end_date
 LEFT JOIN gabby.adp.salary_history_clean sal
   ON r.employee_number = sal.employee_number
  AND r.effective_start_date BETWEEN sal.regular_pay_effective_date AND sal.regular_pay_effective_end_date
