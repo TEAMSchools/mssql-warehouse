@@ -1,7 +1,7 @@
 USE gabby
 GO
 
---CREATE OR ALTER VIEW surveygizmo.survey_response_identifiers AS
+CREATE OR ALTER VIEW surveygizmo.survey_response_identifiers AS
 
 WITH response_pivot AS (
   SELECT p.survey_response_id
