@@ -50,19 +50,19 @@ SELECT r.employee_number
       ,r.effective_start_date
       ,r.effective_end_date
 
-      ,sr.preferred_first_name AS first_name
-      ,sr.preferred_last_name AS last_name
+      ,sr.preferred_first_name
+      ,sr.preferred_last_name
 
       ,s.position_status
 
-      ,w.business_unit_description AS business_unit
-      ,w.location_description AS [location]
+      ,w.business_unit_description
+      ,w.location_description
       ,w.home_department_description home_department
-      ,w.job_title_description AS job_title
+      ,w.job_title_description
       --,w.job_family_name
       --,w.flsa_status_name
 
-      ,sal.annual_salary AS base_salary
+      ,sal.annual_salary
 
       ,mh.reports_to_associate_id
 
