@@ -9,7 +9,7 @@ WHERE [status] <> 'Terminated'
   AND ((primary_job IN ('Dean', 'Dean of Students', 'Dean of Students and Families') AND is_manager = 'No')
          OR (primary_on_site_department = 'KTC' AND primary_site = 'KIPP Newark Collegiate Academy')
          OR (primary_job IN ('Learning Specialist', 'Learning Specialist Coordinator', 'Teacher', 'Teacher in Residence'
-                       ,'Teacher, ESL', 'Social Worker', 'Paraprofessional', 'Behavior Analyst', 'Behavior Specialist'
+                       ,'Teacher, ESL','Teacher ESL', 'Social Worker', 'Paraprofessional', 'Behavior Analyst', 'Behavior Specialist'
                        ,'Speech Therapist', 'Speech Language Pathologist', 'Occupational Therapist'
                        ,'School Psychologist', 'Learning Disabilities Teacher Consultant', 'Assistant Dean'
                        ,'Aide (instructional)', 'School Leader', 'Assistant School Leader'

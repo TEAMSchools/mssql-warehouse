@@ -15,7 +15,7 @@ SELECT df_employee_number
       ,CASE 
         WHEN primary_job = 'Head of Schools' THEN 'Head of Schools'
         WHEN primary_job = 'Assistant Superintendent' THEN 'Head of Schools'
-        WHEN primary_job IN ('Teacher', 'Teacher in Residence', 'Learning Specialist', 'Learning Specialist Coordinator', 'Teacher, ESL') THEN 'Teacher'
+        WHEN primary_job IN ('Teacher', 'Teacher in Residence', 'Learning Specialist', 'Learning Specialist Coordinator', 'Teacher, ESL', 'Teacher ESL') THEN 'Teacher'
         WHEN primary_job = 'Executive Director' THEN 'Executive Director'
         WHEN primary_job IN ('Associate Director of School Operations') THEN 'ADSO'
         WHEN primary_job IN ('Director Campus Operations', 'Director School Operations', 'Director of Campus Operations', 'Fellow School Operations Director') THEN 'DSO'
