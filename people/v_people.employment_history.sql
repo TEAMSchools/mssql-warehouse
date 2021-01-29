@@ -54,15 +54,23 @@ SELECT r.employee_number
       ,sr.preferred_last_name
 
       ,s.position_status
+      ,s.termination_reason_description
+      ,s.leave_reason_description
+      ,s.paid_leave_of_absence
 
       ,w.business_unit_description
       ,w.location_description
-      ,w.home_department_description home_department
+      ,w.home_department_description
+      ,w.job_title_code
       ,w.job_title_description
+      ,w.job_change_reason_code
+      ,w.job_change_reason_description
       --,w.job_family_name
       --,w.flsa_status_name
 
       ,sal.annual_salary
+      ,sal.regular_pay_rate_amount
+      ,sal.compensation_change_reason_description
 
       ,mh.reports_to_associate_id
 
