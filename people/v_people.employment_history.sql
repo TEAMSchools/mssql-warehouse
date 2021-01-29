@@ -73,10 +73,6 @@ SELECT r.employee_number
       ,sal.compensation_change_reason_description
 
       ,mh.reports_to_associate_id
-
-      ,ROW_NUMBER() OVER(
-         PARTITION BY r.employee_number
-           ORDER BY r.effective_end_date DESC) AS rn_cur
 FROM validranges r
 JOIN gabby.adp.staff_roster sr
   ON r.employee_number = sr.df_employee_number
