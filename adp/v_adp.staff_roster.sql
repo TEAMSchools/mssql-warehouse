@@ -6,6 +6,7 @@ CREATE OR ALTER VIEW adp.staff_roster AS
 WITH clean_people AS (
   SELECT sub.df_employee_number
         ,sub.adp_associate_id
+        ,sub.position_id
         ,sub.first_name
         ,sub.last_name
         ,sub.[address]
@@ -58,6 +59,7 @@ WITH clean_people AS (
       (
        SELECT adp.file_number AS df_employee_number
              ,adp.associate_id AS adp_associate_id
+             ,adp.position_id
              ,adp.first_name
              ,adp.last_name
              ,adp.preferred_name AS common_name
@@ -132,6 +134,7 @@ WITH clean_people AS (
 
 SELECT c.df_employee_number
       ,c.adp_associate_id
+      ,c.position_id
       ,c.first_name
       ,c.last_name
       ,c.gender

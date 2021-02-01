@@ -5,6 +5,7 @@ CREATE OR ALTER VIEW adp.manager_history_clean AS
 
 SELECT sub.employee_number
       ,sub.associate_id
+      ,sub.position_id
       ,sub.reports_to_associate_id
       ,sub.reports_to_effective_date
       ,COALESCE(sub.reports_to_effective_end_date
@@ -18,13 +19,14 @@ SELECT sub.employee_number
 FROM
     (
      SELECT mh.associate_id
+           ,mh.position_id
            ,mh.reports_to_associate_id
            ,CONVERT(DATE, mh.reports_to_effective_date) AS reports_to_effective_date
            ,CONVERT(DATE, mh.reports_to_effective_end_date) AS reports_to_effective_end_date
 
-           ,sr.df_employee_number AS employee_number
+           ,sr.file_number AS employee_number
      FROM gabby.adp.manager_history mh
-     JOIN gabby.adp.staff_roster sr
-       ON mh.associate_id = sr.adp_associate_id
+     JOIN gabby.adp.employees_all sr
+       ON mh.associate_id = sr.associate_id
      WHERE mh.reports_to_associate_id IS NOT NULL
     ) sub
