@@ -8,6 +8,10 @@ SELECT sub.employee_number
       ,sub.position_id
       ,sub.reports_to_associate_id
       ,sub.reports_to_effective_date
+      ,COALESCE(
+           sub.reports_to_effective_end_date
+          ,DATEADD(DAY, -1, LEAD(sub.reports_to_effective_date, 1) OVER(PARTITION BY sub.associate_id ORDER BY sub.reports_to_effective_date))
+         ) AS reports_to_effective_end_date
       ,COALESCE(sub.reports_to_effective_end_date
                ,DATEADD(DAY, -1, LEAD(sub.reports_to_effective_date, 1) OVER(PARTITION BY sub.associate_id ORDER BY sub.reports_to_effective_date))
                ,DATEFROMPARTS(CASE
@@ -15,7 +19,7 @@ SELECT sub.employee_number
                                 AND DATEPART(MONTH, sub.reports_to_effective_date) >= 7
                                     THEN DATEPART(YEAR, sub.reports_to_effective_date) + 1
                                ELSE gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1
-                              END, 6, 30)) AS reports_to_effective_end_date
+                              END, 6, 30)) AS reports_to_effective_end_date_eoy
 FROM
     (
      SELECT mh.associate_id

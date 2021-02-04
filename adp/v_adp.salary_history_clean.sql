@@ -10,6 +10,10 @@ SELECT sub.employee_number
       ,sub.regular_pay_rate_amount
       ,sub.compensation_change_reason_description
       ,sub.regular_pay_effective_date
+      ,COALESCE(
+           sub.regular_pay_effective_end_date
+          ,DATEADD(DAY, -1, LEAD(sub.regular_pay_effective_date, 1) OVER(PARTITION BY sub.position_id ORDER BY sub.regular_pay_effective_date))
+         ) AS regular_pay_effective_end_date
       ,COALESCE(sub.regular_pay_effective_end_date
                ,DATEADD(DAY, -1, LEAD(sub.regular_pay_effective_date, 1) OVER(PARTITION BY sub.position_id ORDER BY sub.regular_pay_effective_date))
                ,DATEFROMPARTS(CASE
@@ -17,7 +21,7 @@ SELECT sub.employee_number
                                 AND DATEPART(MONTH, sub.regular_pay_effective_date) >= 7
                                     THEN DATEPART(YEAR, sub.regular_pay_effective_date) + 1
                                ELSE gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1
-                              END, 6, 30)) AS regular_pay_effective_end_date
+                              END, 6, 30)) AS regular_pay_effective_end_date_eoy
 FROM
     (
      SELECT sh.associate_id

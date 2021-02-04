@@ -11,6 +11,10 @@ SELECT sub.employee_number
       ,sub.leave_reason_description
       ,sub.paid_leave_of_absence
       ,sub.status_effective_date
+      ,COALESCE(
+           sub.status_effective_end_date
+          ,DATEADD(DAY, -1, LEAD(sub.status_effective_date, 1) OVER(PARTITION BY sub.position_id ORDER BY sub.status_effective_date))
+         ) AS status_effective_end_date
       ,COALESCE(sub.status_effective_end_date
                ,DATEADD(DAY, -1, LEAD(sub.status_effective_date, 1) OVER(PARTITION BY sub.position_id ORDER BY sub.status_effective_date))
                ,DATEFROMPARTS(CASE
@@ -18,7 +22,7 @@ SELECT sub.employee_number
                                 AND DATEPART(MONTH, sub.status_effective_date) >= 7
                                     THEN DATEPART(YEAR, sub.status_effective_date) + 1
                                ELSE gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1
-                              END, 6, 30)) AS status_effective_end_date
+                              END, 6, 30)) AS status_effective_end_date_eoy
 FROM
     (
      SELECT sh.associate_id

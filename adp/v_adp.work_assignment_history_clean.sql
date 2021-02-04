@@ -14,6 +14,10 @@ SELECT sub.employee_number
       ,sub.job_change_reason_code
       ,sub.job_change_reason_description
       ,sub.position_effective_date
+      ,COALESCE(
+           sub.position_effective_end_date
+          ,DATEADD(DAY, -1, LEAD(sub.position_effective_date, 1) OVER(PARTITION BY sub.position_id ORDER BY sub.position_effective_date))
+         ) AS position_effective_end_date
       ,COALESCE(sub.position_effective_end_date
                ,DATEADD(DAY, -1, LEAD(sub.position_effective_date, 1) OVER(PARTITION BY sub.position_id ORDER BY sub.position_effective_date))
                ,DATEFROMPARTS(CASE 
@@ -21,7 +25,7 @@ SELECT sub.employee_number
                                 AND DATEPART(MONTH,sub.position_effective_date) >= 7
                                     THEN DATEPART(YEAR,sub.position_effective_date) + 1
                                ELSE gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1
-                              END, 6, 30)) AS position_effective_end_date
+                              END, 6, 30)) AS position_effective_end_date_eoy
 FROM
     (
      SELECT wah.associate_id
