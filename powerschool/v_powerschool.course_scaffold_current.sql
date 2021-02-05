@@ -24,7 +24,7 @@ FROM
            ,enr.excludefromgpa
            ,enr.gradescaleid
 
-           ,CONVERT(VARCHAR(25),terms.alt_name) COLLATE Latin1_General_BIN AS term_name
+           ,CONVERT(VARCHAR(25), terms.alt_name) COLLATE Latin1_General_BIN AS term_name
            ,terms.[start_date] AS term_start_date
            ,terms.end_date AS term_end_date
            ,terms.is_curterm
@@ -39,5 +39,5 @@ FROM
       AND terms._fivetran_deleted = 0
      WHERE enr.section_enroll_status = 0
        AND enr.course_enroll_status = 0
-       AND enr.dateenrolled BETWEEN DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1) AND CONVERT(DATE,GETDATE())
+       AND enr.dateenrolled BETWEEN DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1) AND CONVERT(DATE, GETDATE())
     ) sub

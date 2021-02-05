@@ -110,5 +110,5 @@ FROM
      GROUP BY atc.table_name
              ,atc.[schema_name]
     ) sub
-CROSS JOIN (SELECT n FROM gabby.utilities.row_generator WHERE n <= 4) t
+CROSS JOIN (SELECT n FROM gabby.utilities.row_generator WHERE n BETWEEN 1 AND 4) t
 ORDER BY sub.[schema_name], sub.table_name, t.n
