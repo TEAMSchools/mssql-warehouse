@@ -55,3 +55,4 @@ LEFT JOIN dsos
   ON s.school_number = dsos.schoolid
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.rn_year = 1
+  AND co.grade_level <> 99
