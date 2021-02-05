@@ -105,8 +105,8 @@ WITH clean_people AS (
                ELSE adp.location_description
               END AS primary_site_clean -- temporary fix for changed names
              ,CASE
-               WHEN adp.race_description LIKE '%Hispanic%' THEN 1
-               WHEN adp.race_description NOT LIKE '%Hispanic%' THEN 0
+               WHEN adp.ethnicity = 'Hispanic or Latino' THEN 1
+               WHEN adp.ethnicity = 'Not Hispanic or Latino' THEN 0
               END AS is_hispanic
              ,CASE 
                WHEN adp.associate_id IN (SELECT reports_to_associate_id 
