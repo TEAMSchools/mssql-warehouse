@@ -26,7 +26,7 @@ FROM
            ,mh.position_id
            ,mh.reports_to_associate_id
            ,CASE 
-             WHEN mh.reports_to_effective_date > '2021-01-01' THEN CONVERT(DATE, mh.reports_to_effective_date)
+             WHEN CONVERT(DATE, mh.reports_to_effective_date) > '2021-01-01' THEN CONVERT(DATE, mh.reports_to_effective_date)
              ELSE '2021-01-01'
             END AS reports_to_effective_date
            ,CONVERT(DATE, mh.reports_to_effective_end_date) AS reports_to_effective_end_date
@@ -47,19 +47,23 @@ FROM
            ,sub.employee_number
      FROM
          (
-          SELECT sre.associate_id AS associate_id
-                ,srm.associate_id AS reports_to_associate_id
+          SELECT dm.employee_reference_code AS employee_number
                 ,CONVERT(DATE, dm.manager_effective_start) AS reports_to_effective_date
                 ,CASE 
                   WHEN CONVERT(DATE,dm.manager_effective_end) > '2020-12-31' THEN '2020-12-31'
                   ELSE COALESCE(CONVERT(DATE,dm.manager_effective_end), '2020-12-31')
                  END AS reports_to_effective_end_date
-                ,dm.employee_reference_code AS employee_number
-                ,ROW_NUMBER() OVER(PARTITION BY dm.employee_reference_code, dm.manager_effective_start ORDER BY COALESCE(CONVERT(DATE,dm.manager_effective_end), '2020-12-31') DESC) AS rn
+                ,ROW_NUMBER() OVER(
+                   PARTITION BY dm.employee_reference_code, dm.manager_effective_start 
+                     ORDER BY COALESCE(CONVERT(DATE,dm.manager_effective_end), '2020-12-31') DESC) AS rn
+
+                ,sre.associate_id AS associate_id
+
+                ,srm.associate_id AS reports_to_associate_id
           FROM gabby.dayforce.employee_manager dm
           JOIN gabby.adp.employees_all sre
             ON dm.employee_reference_code = sre.file_number
-          LEFT JOIN gabby.adp.employees_all srm
+          JOIN gabby.adp.employees_all srm
             ON dm.manager_employee_number = srm.file_number
           WHERE dm.manager_derived_method = 'Direct Report'
             AND CONVERT(DATE, dm.manager_effective_start) <= '2020-12-31'
