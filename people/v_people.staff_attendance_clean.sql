@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW people.staff_attendance_clean AS
+--CREATE OR ALTER VIEW people.staff_attendance_clean AS
 
 WITH attendance_clean AS (
   SELECT SUBSTRING(a.staff_member, CHARINDEX('(', a.staff_member) + 1, 6) AS df_number
@@ -12,7 +12,7 @@ WITH attendance_clean AS (
         ,a.attendance_status
         ,a.additional_notes
         ,CONVERT(DATE, a.attendance_date) AS attendance_date
-        ,CONVERT(DATE, a.[timestamp]) AS submitted_on
+        ,CONVERT(DATETIME, a.[timestamp]) AS submitted_on
         ,CASE WHEN attendance_status LIKE '%Sick Day%' THEN 1 ELSE 0 END AS sick_day
         ,CASE WHEN attendance_status LIKE '%Personal Day%' THEN 1 ELSE 0 END AS personal_day
         ,CASE WHEN attendance_status LIKE '%Late/Tardy%' THEN 1 ELSE 0 END AS late_tardy
@@ -48,7 +48,7 @@ SELECT a.df_number
 
       ,ROW_NUMBER() OVER(
          PARTITION BY a.df_number, a.attendance_date
-           ORDER BY a.submitted_on DESC) AS rn_curr
+           ORDER BY CONVERT(DATETIME,a.submitted_on) DESC) AS rn_curr
 FROM attendance_clean a
 JOIN gabby.people.staff_crosswalk_static c
   ON a.df_number = c.df_employee_number
