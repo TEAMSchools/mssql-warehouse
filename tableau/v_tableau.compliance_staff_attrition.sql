@@ -1,7 +1,7 @@
 USE gabby;
 GO
 
-CREATE OR ALTER VIEW tableau.compliance_staff_attrition AS
+--CREATE OR ALTER VIEW tableau.compliance_staff_attrition AS
 
 WITH roster AS (
   SELECT sub.df_employee_number
@@ -32,7 +32,7 @@ WITH roster AS (
               ,COALESCE(r.rehire_date, r.original_hire_date) AS position_start_date
               ,CONVERT(DATE, COALESCE(CONVERT(DATETIME2, t.effective_start), r.termination_date)) AS termination_date
               ,COALESCE(t.status_reason_description, r.status_reason) AS status_reason
-        FROM gabby.dayforce.staff_roster r
+        FROM gabby.people.staff_crosswalk_static r
         LEFT JOIN gabby.dayforce.employee_status t /* final termination record */
           ON r.df_employee_number = t.number
          AND t.status = 'Terminated'
@@ -93,7 +93,7 @@ WITH roster AS (
         JOIN years y
           ON y.academic_year BETWEEN r.start_academic_year AND r.end_academic_year
        ) sub
-  LEFT JOIN gabby.dayforce.work_assignment_status w 
+  LEFT JOIN gabby.dayforce.work_assignment_status w --Swap this out for the feed Charlie is working on
     ON sub.df_employee_number= w.df_employee_id
    AND sub.effective_date BETWEEN w.effective_start_date AND w.effective_end_date
   LEFT JOIN gabby.people.school_crosswalk scw
