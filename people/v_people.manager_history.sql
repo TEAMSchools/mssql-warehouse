@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW people.manager_history_clean AS
+CREATE OR ALTER VIEW people.manager_history AS
 
 SELECT sub.employee_number
       ,sub.associate_id
@@ -40,7 +40,7 @@ FROM
      UNION ALL
 
      SELECT sub.associate_id
-           ,NULL AS position_id
+           ,CONVERT(NVARCHAR(256), sub.employee_number) AS position_id
            ,sub.reports_to_associate_id
            ,sub.reports_to_effective_date
            ,sub.reports_to_effective_end_date
@@ -50,12 +50,15 @@ FROM
           SELECT dm.employee_reference_code AS employee_number
                 ,CONVERT(DATE, dm.manager_effective_start) AS reports_to_effective_date
                 ,CASE 
-                  WHEN CONVERT(DATE,dm.manager_effective_end) > '2020-12-31' THEN '2020-12-31'
-                  ELSE COALESCE(CONVERT(DATE,dm.manager_effective_end), '2020-12-31')
+                  WHEN CONVERT(DATE, dm.manager_effective_end) > '2020-12-31' THEN '2020-12-31'
+                  ELSE COALESCE(CONVERT(DATE, dm.manager_effective_end), '2020-12-31')
                  END AS reports_to_effective_end_date
                 ,ROW_NUMBER() OVER(
                    PARTITION BY dm.employee_reference_code, dm.manager_effective_start 
-                     ORDER BY COALESCE(CONVERT(DATE,dm.manager_effective_end), '2020-12-31') DESC) AS rn
+                     ORDER BY COALESCE(CONVERT(DATE, dm.manager_effective_end), '2020-12-31') DESC) AS rn_start
+                ,ROW_NUMBER() OVER(
+                   PARTITION BY dm.employee_reference_code, dm.manager_effective_end 
+                     ORDER BY COALESCE(CONVERT(DATE, dm.manager_effective_start), '2020-12-31') DESC) AS rn_end
 
                 ,sre.associate_id AS associate_id
 
@@ -68,5 +71,6 @@ FROM
           WHERE dm.manager_derived_method = 'Direct Report'
             AND CONVERT(DATE, dm.manager_effective_start) <= '2020-12-31'
          ) sub
-     WHERE sub.rn = 1
+     WHERE sub.rn_start = 1
+       AND sub.rn_end = 1
     ) sub

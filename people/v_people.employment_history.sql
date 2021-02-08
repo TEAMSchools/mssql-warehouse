@@ -8,7 +8,7 @@ WITH validdates AS (
         ,associate_id
         ,position_id
         ,status_effective_date AS effective_date
-  FROM gabby.adp.status_history_clean
+  FROM gabby.people.status_history_static
 
   UNION
 
@@ -16,7 +16,7 @@ WITH validdates AS (
         ,associate_id
         ,position_id
         ,position_effective_date AS effective_date
-  FROM gabby.adp.work_assignment_history_clean
+  FROM gabby.people.work_assignment_history_static
 
   UNION
 
@@ -24,7 +24,7 @@ WITH validdates AS (
         ,associate_id
         ,position_id
         ,regular_pay_effective_date AS effective_date
-  FROM gabby.adp.salary_history_clean
+  FROM gabby.people.salary_history_static
 
   UNION
 
@@ -32,7 +32,7 @@ WITH validdates AS (
         ,associate_id
         ,position_id
         ,reports_to_effective_date AS effective_date
-  FROM gabby.adp.manager_history_clean
+  FROM gabby.people.manager_history_static
  )
 
 ,validranges AS (
@@ -81,15 +81,15 @@ SELECT r.employee_number
 
       ,mh.reports_to_associate_id
 FROM validranges r
-LEFT JOIN gabby.adp.status_history_clean s
+LEFT JOIN gabby.people.status_history_static s
   ON r.position_id = s.position_id
  AND r.effective_start_date BETWEEN s.status_effective_date AND s.status_effective_end_date_eoy
-LEFT JOIN gabby.adp.work_assignment_history_clean w
+LEFT JOIN gabby.people.work_assignment_history_static w
   ON r.position_id = w.position_id
  AND r.effective_start_date BETWEEN w.position_effective_date AND w.position_effective_end_date_eoy
-LEFT JOIN gabby.adp.salary_history_clean sal
+LEFT JOIN gabby.people.salary_history_static sal
   ON r.position_id = sal.position_id
  AND r.effective_start_date BETWEEN sal.regular_pay_effective_date AND sal.regular_pay_effective_end_date_eoy
-LEFT JOIN gabby.adp.manager_history_clean mh
+LEFT JOIN gabby.people.manager_history_static mh
   ON r.position_id = mh.position_id
  AND r.effective_start_date BETWEEN mh.reports_to_effective_date AND mh.reports_to_effective_end_date_eoy

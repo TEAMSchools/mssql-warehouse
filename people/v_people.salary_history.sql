@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW people.salary_history_clean AS
+CREATE OR ALTER VIEW people.salary_history AS
 
 SELECT sub.employee_number
       ,sub.associate_id
@@ -12,10 +12,10 @@ SELECT sub.employee_number
       ,sub.regular_pay_effective_date
       ,COALESCE(
            sub.regular_pay_effective_end_date
-          ,DATEADD(DAY, -1, LEAD(sub.regular_pay_effective_date, 1) OVER(PARTITION BY sub.associate_id, sub.position_id ORDER BY sub.regular_pay_effective_date))
+          ,DATEADD(DAY, -1, LEAD(sub.regular_pay_effective_date, 1) OVER(PARTITION BY sub.position_id ORDER BY sub.regular_pay_effective_date))
          ) AS regular_pay_effective_end_date
       ,COALESCE(sub.regular_pay_effective_end_date
-               ,DATEADD(DAY, -1, LEAD(sub.regular_pay_effective_date, 1) OVER(PARTITION BY sub.associate_id, sub.position_id ORDER BY sub.regular_pay_effective_date))
+               ,DATEADD(DAY, -1, LEAD(sub.regular_pay_effective_date, 1) OVER(PARTITION BY sub.position_id ORDER BY sub.regular_pay_effective_date))
                ,DATEFROMPARTS(CASE
                                WHEN DATEPART(YEAR, sub.regular_pay_effective_date) > gabby.utilities.GLOBAL_ACADEMIC_YEAR()
                                 AND DATEPART(MONTH, sub.regular_pay_effective_date) >= 7
@@ -44,7 +44,7 @@ FROM
      UNION ALL
 
      SELECT sr.associate_id
-           ,NULL AS position_id
+           ,CONVERT(NVARCHAR(256), ds.number) AS position_id
            ,CONVERT(DATE, ds.effective_start) AS regular_pay_effective_date
            ,COALESCE(CASE 
                       WHEN CONVERT(DATE, ds.effective_end) > '2020-12-31' THEN '2020-12-31'

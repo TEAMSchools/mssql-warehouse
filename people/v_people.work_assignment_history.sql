@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW people.work_assignment_history_clean AS
+CREATE OR ALTER VIEW people.work_assignment_history AS
 
 SELECT sub.employee_number
       ,sub.associate_id
@@ -16,10 +16,10 @@ SELECT sub.employee_number
       ,sub.position_effective_date
       ,COALESCE(
            sub.position_effective_end_date
-          ,DATEADD(DAY, -1, LEAD(sub.position_effective_date, 1) OVER(PARTITION BY sub.associate_id, sub.position_id ORDER BY sub.position_effective_date))
+          ,DATEADD(DAY, -1, LEAD(sub.position_effective_date, 1) OVER(PARTITION BY sub.position_id ORDER BY sub.position_effective_date))
          ) AS position_effective_end_date
       ,COALESCE(sub.position_effective_end_date
-               ,DATEADD(DAY, -1, LEAD(sub.position_effective_date, 1) OVER(PARTITION BY sub.associate_id, sub.position_id ORDER BY sub.position_effective_date))
+               ,DATEADD(DAY, -1, LEAD(sub.position_effective_date, 1) OVER(PARTITION BY sub.position_id ORDER BY sub.position_effective_date))
                ,DATEFROMPARTS(CASE 
                                WHEN DATEPART(YEAR,sub.position_effective_date) > gabby.utilities.GLOBAL_ACADEMIC_YEAR()
                                 AND DATEPART(MONTH,sub.position_effective_date) >= 7
@@ -52,7 +52,7 @@ FROM
      UNION ALL
 
      SELECT sr.associate_id
-           ,NULL AS position_id
+           ,CONVERT(NVARCHAR(256), dwa.employee_reference_code) AS position_id
            ,dwa.legal_entity_name AS business_unit_description
            ,dwa.department_name AS home_department_description
            ,dwa.physical_location_name AS location_description

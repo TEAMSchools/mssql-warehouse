@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW people.status_history_clean AS
+CREATE OR ALTER VIEW people.status_history AS
 
 SELECT sub.employee_number
       ,sub.associate_id
@@ -13,10 +13,10 @@ SELECT sub.employee_number
       ,CONVERT(DATE,sub.status_effective_date) AS status_effective_date
       ,COALESCE(
            sub.status_effective_end_date
-          ,DATEADD(DAY, -1, LEAD(sub.status_effective_date, 1) OVER(PARTITION BY sub.associate_id, sub.position_id ORDER BY sub.status_effective_date))
+          ,DATEADD(DAY, -1, LEAD(sub.status_effective_date, 1) OVER(PARTITION BY sub.position_id ORDER BY sub.status_effective_date))
          ) AS status_effective_end_date
       ,COALESCE(CONVERT(DATE,sub.status_effective_end_date)
-               ,DATEADD(DAY, -1, LEAD(sub.status_effective_date, 1) OVER(PARTITION BY sub.associate_id, sub.position_id ORDER BY sub.status_effective_date))
+               ,DATEADD(DAY, -1, LEAD(sub.status_effective_date, 1) OVER(PARTITION BY sub.position_id ORDER BY sub.status_effective_date))
                ,DATEFROMPARTS(CASE
                                WHEN DATEPART(YEAR, sub.status_effective_date) > gabby.utilities.GLOBAL_ACADEMIC_YEAR()
                                 AND DATEPART(MONTH, sub.status_effective_date) >= 7
@@ -46,7 +46,7 @@ FROM
      UNION ALL
 
      SELECT sr.associate_id
-           ,NULL AS position_id
+           ,CONVERT(NVARCHAR(256), ds.number) AS position_id
            ,ds.[status] AS position_status
            ,CONVERT(DATE, ds.effective_start) AS status_effective_date
            ,CASE 
