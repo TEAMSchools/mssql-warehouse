@@ -14,6 +14,7 @@ SELECT sub.employee_number
       ,sub.job_change_reason_code
       ,sub.job_change_reason_description
       ,sub.position_effective_date
+      ,sub.source_system
       ,COALESCE(
            sub.position_effective_end_date
           ,DATEADD(DAY, -1, LEAD(sub.position_effective_date, 1) OVER(PARTITION BY sub.position_id ORDER BY sub.position_effective_date))
@@ -44,31 +45,53 @@ FROM
            ,CONVERT(DATE, wah.position_effective_end_date) AS position_effective_end_date
 
            ,sr.file_number AS employee_number
+
+           ,'ADP' AS source_system
      FROM gabby.adp.work_assignment_history wah
      JOIN gabby.adp.employees_all sr
        ON wah.associate_id = sr.associate_id
      WHERE '2021-01-01' BETWEEN CONVERT(DATE, wah.position_effective_date) AND COALESCE(CONVERT(DATE, wah.position_effective_end_date), GETDATE())
+        OR CONVERT(DATE, wah.position_effective_date) > '2021-01-01'
 
      UNION ALL
 
-     SELECT sr.associate_id
-           ,CONVERT(NVARCHAR(256), dwa.employee_reference_code) AS position_id
-           ,dwa.legal_entity_name AS business_unit_description
-           ,dwa.department_name AS home_department_description
-           ,dwa.physical_location_name AS location_description
-           ,NULL AS job_title_code
-           ,dwa.job_name AS job_title_description
-           ,NULL AS job_change_reason_code
-           ,NULL AS job_change_reason_description
-           ,CONVERT(DATE, dwa.work_assignment_effective_start) AS position_effective_date
-           ,CASE 
-             WHEN CONVERT(DATE, dwa.work_assignment_effective_end) > '2020-12-31' THEN '2020-12-31'
-             ELSE COALESCE(CONVERT(DATE, dwa.work_assignment_effective_end), '2020-12-31')
-            END AS position_effective_end_date
-           ,sr.file_number AS employee_number
-     FROM gabby.dayforce.employee_work_assignment dwa
-     JOIN gabby.adp.employees_all sr
-       ON dwa.employee_reference_code = sr.file_number
-     WHERE dwa.primary_work_assignment = 1
-       AND CONVERT(DATE, dwa.work_assignment_effective_start) <= '2020-12-31'
+     SELECT associate_id
+           ,position_id
+           ,business_unit_description
+           ,home_department_description
+           ,location_description
+           ,job_title_code
+           ,job_title_description
+           ,job_change_reason_code
+           ,job_change_reason_description
+           ,position_effective_date
+           ,COALESCE(DATEADD(DAY, -1, sub.effective_start_next), '2020-12-31') AS position_effective_end_date
+           ,employee_number
+           ,source_system
+     FROM
+         (
+          SELECT sr.associate_id
+                ,CONVERT(NVARCHAR(256), dwa.employee_reference_code) AS position_id
+                ,dwa.legal_entity_name AS business_unit_description
+                ,dwa.department_name AS home_department_description
+                ,dwa.physical_location_name AS location_description
+                ,NULL AS job_title_code
+                ,dwa.job_name AS job_title_description
+                ,NULL AS job_change_reason_code
+                ,NULL AS job_change_reason_description
+                ,CONVERT(DATE, dwa.work_assignment_effective_start) AS position_effective_date
+                ,LEAD(CONVERT(DATE, dwa.work_assignment_effective_start), 1) OVER(PARTITION BY dwa.employee_reference_code ORDER BY CONVERT(DATETIME2, dwa.work_assignment_effective_start)) AS effective_start_next
+                ,CASE 
+                  WHEN CONVERT(DATE, dwa.work_assignment_effective_end) > '2020-12-31' THEN '2020-12-31'
+                  ELSE COALESCE(CONVERT(DATE, dwa.work_assignment_effective_end), '2020-12-31')
+                 END AS position_effective_end_date
+                ,sr.file_number AS employee_number
+
+                ,'DF' AS source_system
+          FROM gabby.dayforce.employee_work_assignment dwa
+          JOIN gabby.adp.employees_all sr
+            ON dwa.employee_reference_code = sr.file_number
+          WHERE dwa.primary_work_assignment = 1
+            AND CONVERT(DATE, dwa.work_assignment_effective_start) <= '2020-12-31'
+         ) sub
     ) sub

@@ -84,27 +84,26 @@ WITH all_staff AS (
         ,sub.worker_category
         ,sub.flsa
         ,sub.associate_id_legacy
-        ,sub.legal_entity_name
-        ,sub.legal_entity_abbreviation
-        ,sub.primary_site_clean
-
-        ,REPLACE(sub.primary_site_clean, ' - Regional', '') AS primary_site
+        --,sub.legal_entity_name
+        --,sub.legal_entity_abbreviation
+        --,sub.primary_site_clean
+        --,REPLACE(sub.primary_site_clean, ' - Regional', '') AS primary_site
         ,COALESCE(sub.preferred_first_name, sub.first_name) AS preferred_first_name
         ,COALESCE(sub.preferred_last_name , sub.last_name) AS preferred_last_name
-        ,CASE WHEN sub.primary_site_clean LIKE '% - Regional%' THEN 1 ELSE 0 END AS is_regional_staff
-        ,CASE
-          WHEN sub.race = 'Hispanic or Latino' THEN 'Hispanic or Latino'
-          WHEN sub.race = 'Decline to Answer' THEN NULL
-          ELSE CONVERT(VARCHAR(125), RTRIM(LEFT(sub.race, CHARINDEX(' (', sub.race))))
-         END AS primary_ethnicity
-        ,CASE
-          WHEN sub.position_status = 'Leave' THEN 'INACTIVE'
-          ELSE UPPER(sub.position_status)
-         END AS [status]
-        /* redundant combined fields */
-        ,CONCAT(sub.home_department, ' - ', sub.job_title) AS position_title
-        ,sub.primary_site_clean + ' (' + sub.legal_entity_abbreviation + ') - ' + sub.home_department AS primary_on_site_department_entity
-        ,sub.primary_site_clean + ' (' + sub.legal_entity_abbreviation + ')' AS primary_site_entity
+        --,CASE WHEN sub.primary_site_clean LIKE '% - Regional%' THEN 1 ELSE 0 END AS is_regional_staff
+        --,CASE
+        --  WHEN sub.race = 'Hispanic or Latino' THEN 'Hispanic or Latino'
+        --  WHEN sub.race = 'Decline to Answer' THEN NULL
+        --  ELSE CONVERT(VARCHAR(125), RTRIM(LEFT(sub.race, CHARINDEX(' (', sub.race))))
+        -- END AS primary_ethnicity
+        --,CASE
+        --  WHEN sub.position_status = 'Leave' THEN 'INACTIVE'
+        --  ELSE UPPER(sub.position_status)
+        -- END AS [status]
+        --/* redundant combined fields */
+        --,CONCAT(sub.home_department, ' - ', sub.job_title) AS position_title
+        --,sub.primary_site_clean + ' (' + sub.legal_entity_abbreviation + ') - ' + sub.home_department AS primary_on_site_department_entity
+        --,sub.primary_site_clean + ' (' + sub.legal_entity_abbreviation + ')' AS primary_site_entity
   FROM
       (
        SELECT eh.employee_number
@@ -122,34 +121,35 @@ WITH all_staff AS (
              ,eh.annual_salary
              ,eh.original_hire_date
              ,CONVERT(NVARCHAR(256), NULL) AS job_family -- on the way
-             /* transformations to match DF conventions */
-             ,CASE
-               WHEN eh.business_unit = 'TEAM Academy Charter' THEN 'TEAM Academy Charter Schools'
-               WHEN eh.business_unit = 'KIPP TEAM and Family Schools Inc.' THEN 'KIPP New Jersey'
-               ELSE eh.business_unit
-              END AS legal_entity_name
-             ,CASE
-               WHEN eh.business_unit = 'TEAM Academy Charter' THEN 'TEAM'
-               WHEN eh.business_unit = 'KIPP TEAM and Family Schools Inc.' THEN 'KNJ'
-               WHEN eh.business_unit = 'KIPP Cooper Norcross Academy' THEN 'KCNA'
-               WHEN eh.business_unit = 'KIPP Miami' THEN 'MIA'
-              END AS legal_entity_abbreviation
-             ,CASE 
-               WHEN eh.[location] = 'Norfolk St. Campus' THEN 'Norfolk St Campus'
-               WHEN eh.[location] = 'KIPP Lanning Square Campus' THEN 'KIPP Lanning Sq Campus'
-               ELSE eh.[location]
-              END AS primary_site_clean
              ,CASE 
                WHEN eh.associate_id IN (SELECT reports_to_associate_id
-                                        FROM gabby.adp.manager_history_clean
+                                        FROM gabby.people.manager_history
                                         WHERE CONVERT(DATE, GETDATE()) BETWEEN reports_to_effective_date 
-                                                AND reports_to_effective_end_date_eoy) THEN 1
+                                                                           AND reports_to_effective_end_date_eoy) THEN 1
                ELSE 0
               END AS is_manager
              /* dedupe positions */
              ,ROW_NUMBER() OVER(
                 PARTITION BY eh.associate_id
                   ORDER BY CONVERT(DATE, eh.effective_start_date) DESC) AS rn
+
+             --/* transformations to match DF conventions */
+             --,CASE
+             --  WHEN eh.business_unit = 'TEAM Academy Charter' THEN 'TEAM Academy Charter Schools'
+             --  WHEN eh.business_unit = 'KIPP TEAM and Family Schools Inc.' THEN 'KIPP New Jersey'
+             --  ELSE eh.business_unit
+             -- END AS legal_entity_name
+             --,CASE
+             --  WHEN eh.business_unit = 'TEAM Academy Charter' THEN 'TEAM'
+             --  WHEN eh.business_unit = 'KIPP TEAM and Family Schools Inc.' THEN 'KNJ'
+             --  WHEN eh.business_unit = 'KIPP Cooper Norcross Academy' THEN 'KCNA'
+             --  WHEN eh.business_unit = 'KIPP Miami' THEN 'MIA'
+             -- END AS legal_entity_abbreviation
+             --,CASE 
+             --  WHEN eh.[location] = 'Norfolk St. Campus' THEN 'Norfolk St Campus'
+             --  WHEN eh.[location] = 'KIPP Lanning Square Campus' THEN 'KIPP Lanning Sq Campus'
+             --  ELSE eh.[location]
+             -- END AS primary_site_clean
 
              ,ea.first_name
              ,ea.last_name
@@ -232,33 +232,33 @@ SELECT c.employee_number
       ,c.worker_category
       ,c.flsa
       ,c.associate_id_legacy
-      ,c.legal_entity_name
-      ,c.legal_entity_abbreviation
-      ,c.primary_site_clean
-      ,c.primary_site
       ,c.preferred_first_name
       ,c.preferred_last_name
-      ,c.is_regional_staff
-      ,c.primary_ethnicity
-      ,c.[status]
-      ,c.position_title
-      ,c.primary_on_site_department_entity
-      ,c.primary_site_entity
+      --,c.legal_entity_name
+      --,c.legal_entity_abbreviation
+      --,c.primary_site_clean
+      --,c.primary_site
+      --,c.is_regional_staff
+      --,c.primary_ethnicity
+      --,c.[status]
+      --,c.position_title
+      --,c.primary_on_site_department_entity
+      --,c.primary_site_entity
       ,c.preferred_last_name + ', ' + c.preferred_first_name AS preferred_name
       ,SUBSTRING(c.personal_mobile, 1, 3) + '-'
          + SUBSTRING(c.personal_mobile, 4, 3) + '-'
          + SUBSTRING(c.personal_mobile, 7, 4) AS personal_mobile
       ,CASE
-        WHEN c.legal_entity_name = 'TEAM Academy Charter Schools' THEN 'YHD'
-        WHEN c.legal_entity_name = 'KIPP New Jersey' THEN 'D30'
-        WHEN c.legal_entity_name = 'KIPP Cooper Norcross Academy' THEN 'D3Z'
+        WHEN c.business_unit = 'TEAM Academy Charter Schools' THEN 'YHD'
+        WHEN c.business_unit = 'KIPP New Jersey' THEN 'D30'
+        WHEN c.business_unit = 'KIPP Cooper Norcross Academy' THEN 'D3Z'
        END AS payroll_company_code
       ,CASE
-        WHEN c.legal_entity_name = 'TEAM Academy Charter Schools' THEN 'kippnewark'
-        WHEN c.legal_entity_name = 'KIPP Cooper Norcross Academy' THEN 'kippcamden'
-        WHEN c.legal_entity_name = 'KIPP Miami' THEN 'kippmiami'
+        WHEN c.business_unit = 'TEAM Academy Charter Schools' THEN 'kippnewark'
+        WHEN c.business_unit = 'KIPP Cooper Norcross Academy' THEN 'kippcamden'
+        WHEN c.business_unit = 'KIPP Miami' THEN 'kippmiami'
        END AS [db_name]
-      ,CASE WHEN c.[status] NOT IN ('TERMINATED', 'PRESTART') THEN 1 ELSE 0 END AS is_active
+      ,CASE WHEN c.position_status NOT IN ('Terminated', 'Prestart') THEN 1 ELSE 0 END AS is_active
 
       ,s.ps_school_id AS primary_site_schoolid
       ,s.reporting_school_id AS primary_site_reporting_schoolid
@@ -272,7 +272,7 @@ SELECT c.employee_number
       ,m.preferred_last_name + ', ' + m.preferred_first_name AS manager_name
 FROM clean_staff c
 LEFT JOIN gabby.people.school_crosswalk s
-  ON c.primary_site = s.site_name
+  ON c.[location] = s.site_name
  AND s._fivetran_deleted = 0
 LEFT JOIN clean_staff m
   ON c.reports_to_associate_id = m.associate_id
