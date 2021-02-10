@@ -1,7 +1,7 @@
 USE gabby;
 GO
 
---CREATE OR ALTER VIEW tableau.compliance_staff_attrition AS
+CREATE OR ALTER VIEW tableau.compliance_staff_attrition AS
 
 WITH roster AS (
   SELECT sub.df_employee_number
@@ -47,6 +47,17 @@ WITH roster AS (
   WHERE n BETWEEN 2010 AND (gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1)
  )
 
+,work_assignment_status AS (
+  SELECT employee_number
+        ,business_unit AS legal_entity_name
+        ,job_title AS job_name
+        ,[location] AS physical_location_name
+        ,home_department AS department_name
+        ,effective_start_date
+        ,effective_end_date
+  FROM people.employment_history
+  )
+
 ,scaffold AS (
   SELECT sub.df_employee_number
         ,sub.preferred_first_name
@@ -63,7 +74,6 @@ WITH roster AS (
         ,w.legal_entity_name
         ,w.job_name
         ,w.physical_location_name
-        ,w.job_family_name
         ,w.department_name
 
         ,scw.school_level
@@ -93,8 +103,8 @@ WITH roster AS (
         JOIN years y
           ON y.academic_year BETWEEN r.start_academic_year AND r.end_academic_year
        ) sub
-  LEFT JOIN gabby.dayforce.work_assignment_status w --Swap this out for the feed Charlie is working on
-    ON sub.df_employee_number= w.df_employee_id
+  LEFT JOIN work_assignment_status w --Swap this out for the feed Charlie is working on
+    ON sub.df_employee_number= w.employee_number
    AND sub.effective_date BETWEEN w.effective_start_date AND w.effective_end_date
   LEFT JOIN gabby.people.school_crosswalk scw
     ON w.physical_location_name = scw.site_name
@@ -116,7 +126,6 @@ SELECT d.df_employee_number
       ,d.department_name AS primary_on_site_department
       ,d.physical_location_name AS primary_site
       ,d.legal_entity_name
-      ,d.job_family_name AS job_family
       ,d.reporting_school_id AS primary_site_reporting_schoolid
       ,d.school_level AS primary_site_school_level
       ,CASE
