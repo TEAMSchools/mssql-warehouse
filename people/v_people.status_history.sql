@@ -44,8 +44,8 @@ FROM
      FROM gabby.adp.status_history sh
      JOIN gabby.adp.employees_all sr
        ON sh.associate_id = sr.associate_id
-     WHERE '2021-01-01' BETWEEN CONVERT(DATE, sh.status_effective_date) AND COALESCE(CONVERT(DATE, sh.status_effective_end_date), GETDATE())
-        OR CONVERT(DATE, sh.status_effective_date) > '2021-01-01'
+     WHERE CONVERT(DATE, sh.status_effective_date) > '2021-01-01'
+             OR COALESCE(CONVERT(DATE, sh.status_effective_end_date), GETDATE()) > '2021-01-01'
 
      UNION ALL
 
