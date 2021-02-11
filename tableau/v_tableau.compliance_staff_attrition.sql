@@ -29,34 +29,24 @@ WITH roster AS (
               ,r.primary_ethnicity
               ,r.original_hire_date
               ,r.rehire_date
+
               ,COALESCE(r.rehire_date, r.original_hire_date) AS position_start_date
-              ,CONVERT(DATE, COALESCE(CONVERT(DATETIME2, t.effective_start), r.termination_date)) AS termination_date
-              ,COALESCE(t.status_reason_description, r.status_reason) AS status_reason
+              ,COALESCE(t.status_effective_date, r.termination_date) AS termination_date
+              ,COALESCE(t.termination_reason_description, r.status_reason) AS status_reason
         FROM gabby.people.staff_crosswalk_static r
-        LEFT JOIN gabby.dayforce.employee_status t /* final termination record */
-          ON r.df_employee_number = t.number
-         AND t.status = 'Terminated'
-         AND t.effective_end IS NULL
+        LEFT JOIN gabby.people.status_history t /* final termination record */
+          ON r.df_employee_number = t.employee_number
+         AND t.position_status = 'Terminated'
+         AND t.status_effective_end_date IS NULL
        ) sub
  )
 
 ,years AS (
   SELECT n AS academic_year
         ,DATEFROMPARTS((n + 1), 4, 30) AS effective_date
-  FROM gabby.utilities.row_generator
+  FROM gabby.utilities.row_generator_smallint
   WHERE n BETWEEN 2010 AND (gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1)
  )
-
-,work_assignment_status AS (
-  SELECT employee_number
-        ,business_unit AS legal_entity_name
-        ,job_title AS job_name
-        ,[location] AS physical_location_name
-        ,home_department AS department_name
-        ,effective_start_date
-        ,effective_end_date
-  FROM people.employment_history
-  )
 
 ,scaffold AS (
   SELECT sub.df_employee_number
@@ -71,10 +61,10 @@ WITH roster AS (
         ,sub.academic_year_entrydate
         ,sub.academic_year_exitdate
       
-        ,w.legal_entity_name
-        ,w.job_name
-        ,w.physical_location_name
-        ,w.department_name
+        ,w.business_unit
+        ,w.job_title
+        ,w.[location]
+        ,w.home_department
 
         ,scw.school_level
         ,scw.reporting_school_id
@@ -103,11 +93,11 @@ WITH roster AS (
         JOIN years y
           ON y.academic_year BETWEEN r.start_academic_year AND r.end_academic_year
        ) sub
-  LEFT JOIN work_assignment_status w --Swap this out for the feed Charlie is working on
+  LEFT JOIN gabby.people.employment_history w
     ON sub.df_employee_number= w.employee_number
    AND sub.effective_date BETWEEN w.effective_start_date AND w.effective_end_date
   LEFT JOIN gabby.people.school_crosswalk scw
-    ON w.physical_location_name = scw.site_name
+    ON w.[location] = scw.site_name
    AND scw._fivetran_deleted = 0
  )
 
@@ -122,10 +112,10 @@ SELECT d.df_employee_number
       ,d.rehire_date
       ,d.termination_date
       ,d.status_reason
-      ,d.job_name AS primary_job
-      ,d.department_name AS primary_on_site_department
-      ,d.physical_location_name AS primary_site
-      ,d.legal_entity_name
+      ,d.job_title AS primary_job
+      ,d.home_department AS primary_on_site_department
+      ,d.[location] AS primary_site
+      ,d.business_unit AS legal_entity_name
       ,d.reporting_school_id AS primary_site_reporting_schoolid
       ,d.school_level AS primary_site_school_level
       ,CASE
@@ -135,9 +125,17 @@ SELECT d.df_employee_number
         ELSE 0
        END AS is_denominator
       ,CASE
-        WHEN COALESCE(d.rehire_date, d.original_hire_date) > COALESCE(n.academic_year_exitdate, d.termination_date, DATEFROMPARTS(d.academic_year + 2, 6, 30))
-               THEN ROUND(DATEDIFF(DAY,d.original_hire_date,COALESCE(n.academic_year_exitdate, d.termination_date, DATEFROMPARTS(d.academic_year + 2, 6, 30)))/365,0)
-        ELSE ROUND(DATEDIFF(DAY,COALESCE(d.rehire_date, d.original_hire_date),COALESCE(n.academic_year_exitdate, d.termination_date, DATEFROMPARTS(d.academic_year + 2, 6, 30)))/365,0)
+        WHEN COALESCE(d.rehire_date, d.original_hire_date) > COALESCE(n.academic_year_exitdate
+                                                                     ,d.termination_date
+                                                                     ,DATEFROMPARTS(d.academic_year + 2, 6, 30))
+             THEN ROUND(DATEDIFF(DAY, d.original_hire_date, COALESCE(n.academic_year_exitdate
+                                                                    ,d.termination_date
+                                                                    ,DATEFROMPARTS(d.academic_year + 2, 6, 30)))
+                          /365, 0)
+        ELSE ROUND(DATEDIFF(DAY
+                           ,COALESCE(d.rehire_date, d.original_hire_date)
+                           ,COALESCE(n.academic_year_exitdate, d.termination_date, DATEFROMPARTS(d.academic_year + 2, 6, 30)))
+                     / 365, 0)
        END AS years_at_kipp
 
       ,n.academic_year_exitdate AS next_academic_year_exitdate
