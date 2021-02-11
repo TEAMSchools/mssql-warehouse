@@ -42,7 +42,7 @@ WITH all_staff AS (
         ,ps.original_hire_date
         ,ps.effective_start_date
   FROM gabby.people.employment_history ps
-  WHERE ps.status_effective_start_date > GETDATE()
+  WHERE ps.status_effective_start_date > CONVERT(DATE, GETDATE())
     AND ps.position_status = 'Active'
     AND (ps.position_status_prev IS NULL OR ps.position_status_prev = 'Terminated')
  )
@@ -84,26 +84,26 @@ WITH all_staff AS (
         ,sub.worker_category
         ,sub.flsa
         ,sub.associate_id_legacy
-        --,sub.legal_entity_name
-        --,sub.legal_entity_abbreviation
-        --,sub.primary_site_clean
-        --,REPLACE(sub.primary_site_clean, ' - Regional', '') AS primary_site
+        ,sub.legal_entity_name
+        ,sub.legal_entity_abbreviation
+        ,sub.primary_site_clean
+        ,REPLACE(sub.primary_site_clean, ' - Regional', '') AS primary_site
         ,COALESCE(sub.preferred_first_name, sub.first_name) AS preferred_first_name
         ,COALESCE(sub.preferred_last_name , sub.last_name) AS preferred_last_name
-        --,CASE WHEN sub.primary_site_clean LIKE '% - Regional%' THEN 1 ELSE 0 END AS is_regional_staff
-        --,CASE
-        --  WHEN sub.race = 'Hispanic or Latino' THEN 'Hispanic or Latino'
-        --  WHEN sub.race = 'Decline to Answer' THEN NULL
-        --  ELSE CONVERT(VARCHAR(125), RTRIM(LEFT(sub.race, CHARINDEX(' (', sub.race))))
-        -- END AS primary_ethnicity
-        --,CASE
-        --  WHEN sub.position_status = 'Leave' THEN 'INACTIVE'
-        --  ELSE UPPER(sub.position_status)
-        -- END AS [status]
-        --/* redundant combined fields */
-        --,CONCAT(sub.home_department, ' - ', sub.job_title) AS position_title
-        --,sub.primary_site_clean + ' (' + sub.legal_entity_abbreviation + ') - ' + sub.home_department AS primary_on_site_department_entity
-        --,sub.primary_site_clean + ' (' + sub.legal_entity_abbreviation + ')' AS primary_site_entity
+        ,CASE WHEN sub.primary_site_clean LIKE '% - Regional%' THEN 1 ELSE 0 END AS is_regional_staff
+        ,CASE
+          WHEN sub.race = 'Hispanic or Latino' THEN 'Hispanic or Latino'
+          WHEN sub.race = 'Decline to Answer' THEN NULL
+          ELSE CONVERT(VARCHAR(125), RTRIM(LEFT(sub.race, CHARINDEX(' (', sub.race))))
+         END AS primary_ethnicity
+        ,CASE
+          WHEN sub.position_status = 'Leave' THEN 'INACTIVE'
+          ELSE UPPER(sub.position_status)
+         END AS [status]
+        /* redundant combined fields */
+        ,CONCAT(sub.home_department, ' - ', sub.job_title) AS position_title
+        ,sub.primary_site_clean + ' (' + sub.legal_entity_abbreviation + ') - ' + sub.home_department AS primary_on_site_department_entity
+        ,sub.primary_site_clean + ' (' + sub.legal_entity_abbreviation + ')' AS primary_site_entity
   FROM
       (
        SELECT eh.employee_number
@@ -133,23 +133,23 @@ WITH all_staff AS (
                 PARTITION BY eh.associate_id
                   ORDER BY CONVERT(DATE, eh.effective_start_date) DESC) AS rn
 
-             --/* transformations to match DF conventions */
-             --,CASE
-             --  WHEN eh.business_unit = 'TEAM Academy Charter' THEN 'TEAM Academy Charter Schools'
-             --  WHEN eh.business_unit = 'KIPP TEAM and Family Schools Inc.' THEN 'KIPP New Jersey'
-             --  ELSE eh.business_unit
-             -- END AS legal_entity_name
-             --,CASE
-             --  WHEN eh.business_unit = 'TEAM Academy Charter' THEN 'TEAM'
-             --  WHEN eh.business_unit = 'KIPP TEAM and Family Schools Inc.' THEN 'KNJ'
-             --  WHEN eh.business_unit = 'KIPP Cooper Norcross Academy' THEN 'KCNA'
-             --  WHEN eh.business_unit = 'KIPP Miami' THEN 'MIA'
-             -- END AS legal_entity_abbreviation
-             --,CASE 
-             --  WHEN eh.[location] = 'Norfolk St. Campus' THEN 'Norfolk St Campus'
-             --  WHEN eh.[location] = 'KIPP Lanning Square Campus' THEN 'KIPP Lanning Sq Campus'
-             --  ELSE eh.[location]
-             -- END AS primary_site_clean
+             /* transformations to match DF conventions */
+             ,CASE
+               WHEN eh.business_unit = 'TEAM Academy Charter' THEN 'TEAM Academy Charter Schools'
+               WHEN eh.business_unit = 'KIPP TEAM and Family Schools Inc.' THEN 'KIPP New Jersey'
+               ELSE eh.business_unit
+              END AS legal_entity_name
+             ,CASE
+               WHEN eh.business_unit = 'TEAM Academy Charter' THEN 'TEAM'
+               WHEN eh.business_unit = 'KIPP TEAM and Family Schools Inc.' THEN 'KNJ'
+               WHEN eh.business_unit = 'KIPP Cooper Norcross Academy' THEN 'KCNA'
+               WHEN eh.business_unit = 'KIPP Miami' THEN 'MIA'
+              END AS legal_entity_abbreviation
+             ,CASE 
+               WHEN eh.[location] = 'Norfolk St. Campus' THEN 'Norfolk St Campus'
+               WHEN eh.[location] = 'KIPP Lanning Square Campus' THEN 'KIPP Lanning Sq Campus'
+               ELSE eh.[location]
+              END AS primary_site_clean
 
              ,ea.first_name
              ,ea.last_name
@@ -193,6 +193,7 @@ WITH all_staff AS (
        LEFT JOIN gabby.people.id_crosswalk_adp cw
          ON eh.employee_number = cw.df_employee_number
         AND cw.rn_curr = 1
+       WHERE eh.employee_number IS NOT NULL
       ) sub
   WHERE rn = 1
  )
@@ -234,16 +235,16 @@ SELECT c.employee_number
       ,c.associate_id_legacy
       ,c.preferred_first_name
       ,c.preferred_last_name
-      --,c.legal_entity_name
-      --,c.legal_entity_abbreviation
-      --,c.primary_site_clean
-      --,c.primary_site
-      --,c.is_regional_staff
-      --,c.primary_ethnicity
-      --,c.[status]
-      --,c.position_title
-      --,c.primary_on_site_department_entity
-      --,c.primary_site_entity
+      ,c.legal_entity_name
+      ,c.legal_entity_abbreviation
+      ,c.primary_site_clean
+      ,c.primary_site
+      ,c.is_regional_staff
+      ,c.primary_ethnicity
+      ,c.[status]
+      ,c.position_title
+      ,c.primary_on_site_department_entity
+      ,c.primary_site_entity
       ,c.preferred_last_name + ', ' + c.preferred_first_name AS preferred_name
       ,SUBSTRING(c.personal_mobile, 1, 3) + '-'
          + SUBSTRING(c.personal_mobile, 4, 3) + '-'
