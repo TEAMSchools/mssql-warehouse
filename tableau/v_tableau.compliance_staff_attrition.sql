@@ -4,14 +4,21 @@ GO
 CREATE OR ALTER VIEW tableau.compliance_staff_attrition AS
 
 WITH term AS (
-  SELECT t.employee_number
-        ,t.status_effective_date
-        ,t.termination_reason_description
-        ,t.source_system
-        ,ROW_NUMBER() OVER(PARTITION BY t.employee_number ORDER BY t.status_effective_date DESC) AS rn
-  FROM gabby.people.status_history t
-  WHERE t.position_status = 'Terminated'
-    AND t.termination_reason_description <> 'Import Created Action'
+  SELECT sub.employee_number
+        ,sub.status_effective_date
+        ,sub.termination_reason_description
+        ,ROW_NUMBER() OVER(PARTITION BY sub.employee_number ORDER BY sub.status_effective_date DESC) AS rn
+  FROM
+      (
+       SELECT t.employee_number
+             ,t.status_effective_date
+             ,t.status_effective_end_date
+             ,t.termination_reason_description
+             ,LAG(t.status_effective_end_date) OVER(PARTITION BY t.employee_number ORDER BY t.status_effective_date) AS prev_end_date
+       FROM gabby.people.status_history t
+       WHERE t.position_status = 'Terminated'
+      ) sub
+  WHERE ISNULL(DATEDIFF(DAY, sub.prev_end_date, sub.status_effective_date), 2) > 1
  )
 
 ,roster AS (
