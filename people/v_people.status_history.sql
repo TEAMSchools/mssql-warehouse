@@ -14,10 +14,10 @@ SELECT sub.employee_number
       ,CONVERT(DATE,sub.status_effective_date) AS status_effective_date
       ,COALESCE(
            sub.status_effective_end_date
-          ,DATEADD(DAY, -1, LEAD(sub.status_effective_date, 1) OVER(PARTITION BY sub.position_id ORDER BY sub.status_effective_date))
+          ,DATEADD(DAY, -1, LEAD(sub.status_effective_date, 1) OVER(PARTITION BY sub.employee_number ORDER BY sub.status_effective_date))
          ) AS status_effective_end_date
       ,COALESCE(CONVERT(DATE,sub.status_effective_end_date)
-               ,DATEADD(DAY, -1, LEAD(sub.status_effective_date, 1) OVER(PARTITION BY sub.position_id ORDER BY sub.status_effective_date))
+               ,DATEADD(DAY, -1, LEAD(sub.status_effective_date, 1) OVER(PARTITION BY sub.employee_number ORDER BY sub.status_effective_date))
                ,DATEFROMPARTS(CASE
                                WHEN DATEPART(YEAR, sub.status_effective_date) > gabby.utilities.GLOBAL_ACADEMIC_YEAR()
                                 AND DATEPART(MONTH, sub.status_effective_date) >= 7
@@ -44,8 +44,9 @@ FROM
      FROM gabby.adp.status_history sh
      JOIN gabby.adp.employees_all sr
        ON sh.associate_id = sr.associate_id
-     WHERE CONVERT(DATE, sh.status_effective_date) > '2021-01-01'
-             OR COALESCE(CONVERT(DATE, sh.status_effective_end_date), GETDATE()) > '2021-01-01'
+     WHERE (CONVERT(DATE, sh.status_effective_date) > '2021-01-01'
+             OR COALESCE(CONVERT(DATE, sh.status_effective_end_date), GETDATE()) > '2021-01-01')
+       AND (CASE WHEN termination_reason_description = 'Import Created Action' AND position_status = 'Terminated' THEN 1 ELSE 0 END = 0)
 
      UNION ALL
 
@@ -53,7 +54,7 @@ FROM
            ,sub.position_id
            ,sub.position_status
            ,sub.status_effective_date
-           ,COALESCE(DATEADD(DAY, -1, sub.effective_start_next), '2020-12-31') AS status_effective_end_date
+           ,DATEADD(DAY, -1, sub.effective_start_next) AS status_effective_end_date
            ,sub.termination_reason_description
            ,sub.leave_reason_description
            ,sub.paid_leave_of_absence
