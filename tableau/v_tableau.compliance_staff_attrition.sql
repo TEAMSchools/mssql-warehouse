@@ -3,7 +3,18 @@ GO
 
 CREATE OR ALTER VIEW tableau.compliance_staff_attrition AS
 
-WITH roster AS (
+WITH term AS (
+  SELECT t.employee_number
+        ,t.status_effective_date
+        ,t.termination_reason_description
+        ,t.source_system
+        ,ROW_NUMBER() OVER(PARTITION BY t.employee_number ORDER BY t.status_effective_date DESC) AS rn
+  FROM gabby.people.status_history t
+  WHERE t.position_status = 'Terminated'
+    AND t.termination_reason_description <> 'Import Created Action'
+ )
+
+,roster AS (
   SELECT sub.df_employee_number
         ,sub.preferred_first_name
         ,sub.preferred_last_name
@@ -34,10 +45,9 @@ WITH roster AS (
               ,COALESCE(t.status_effective_date, r.termination_date) AS termination_date
               ,COALESCE(t.termination_reason_description, r.status_reason) AS status_reason
         FROM gabby.people.staff_crosswalk_static r
-        LEFT JOIN gabby.people.status_history t /* final termination record */
+        LEFT JOIN term t /* final termination record */
           ON r.df_employee_number = t.employee_number
-         AND t.position_status = 'Terminated'
-         AND t.status_effective_end_date IS NULL
+         AND t.rn = 1
        ) sub
  )
 

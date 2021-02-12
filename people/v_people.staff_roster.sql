@@ -188,7 +188,7 @@ WITH all_staff AS (
          ON eh.associate_id = ea.associate_id
        LEFT JOIN gabby.adp.employees p
          ON eh.position_id = p.position_id
-       LEFT JOIN gabby.dayforce.employees df
+       LEFT JOIN gabby.dayforce.employees df /* temporary for preferred last name */
          ON eh.employee_number= df.df_employee_number
        LEFT JOIN gabby.people.id_crosswalk_adp cw
          ON eh.employee_number = cw.df_employee_number
