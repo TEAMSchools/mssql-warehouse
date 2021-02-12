@@ -62,7 +62,6 @@ FROM
      FROM
          (
           SELECT sr.associate_id
-                ,CONVERT(NVARCHAR(256), ds.number) AS position_id
                 ,ds.[status] AS position_status
                 ,CONVERT(DATE, ds.effective_start) AS status_effective_date
                 ,CASE WHEN ds.[status] = 'Terminated' THEN ds.status_reason_description END AS termination_reason_description
@@ -70,10 +69,20 @@ FROM
                 ,NULL AS paid_leave_of_absence
                 ,LEAD(CONVERT(DATE, ds.effective_start), 1) OVER(PARTITION BY ds.number ORDER BY CONVERT(DATETIME2, ds.effective_start)) AS effective_start_next
 
+                ,CONCAT(CASE
+                         WHEN e.legal_entity_name = 'KIPP New Jersey' THEN '9AM'
+                         WHEN e.legal_entity_name = 'TEAM Academy Charter Schools' THEN '2Z3'
+                         WHEN e.legal_entity_name = 'KIPP Cooper Norcross Academy' THEN '3LE'
+                         WHEN e.legal_entity_name = 'KIPP Miami' THEN '47S'
+                        END
+                       ,ds.number) AS position_id
+
                 ,sr.file_number AS employee_number
 
                 ,'DF' AS source_system
           FROM gabby.dayforce.employee_status ds
+          JOIN gabby.dayforce.employees e
+            ON ds.number = e.df_employee_number
           JOIN gabby.adp.employees_all sr
             ON ds.number = sr.file_number
           WHERE CONVERT(DATE, ds.effective_start) <= '2020-12-31'
