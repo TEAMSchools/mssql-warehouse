@@ -116,6 +116,8 @@ WITH term AS (
   LEFT JOIN gabby.people.school_crosswalk scw
     ON w.[location] = scw.site_name
    AND scw._fivetran_deleted = 0
+   WHERE w.business_unit IS NOT NULL
+     AND CONVERT(DATE,sub.academic_year_exitdate) > CONVERT(DATE,sub.academic_year_entrydate)
  )
 
 SELECT d.df_employee_number
