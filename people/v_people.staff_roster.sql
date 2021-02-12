@@ -250,12 +250,13 @@ SELECT c.employee_number
          + SUBSTRING(c.personal_mobile, 4, 3) + '-'
          + SUBSTRING(c.personal_mobile, 7, 4) AS personal_mobile
       ,CASE
-        WHEN c.business_unit = 'TEAM Academy Charter Schools' THEN 'YHD'
-        WHEN c.business_unit = 'KIPP New Jersey' THEN 'D30'
-        WHEN c.business_unit = 'KIPP Cooper Norcross Academy' THEN 'D3Z'
+        WHEN c.business_unit = 'KIPP TEAM and Family Schools Inc.' THEN '9AM'
+        WHEN c.business_unit = 'TEAM Academy Charter' THEN '2Z3'
+        WHEN c.business_unit = 'KIPP Cooper Norcross Academy' THEN '3LE'
+        WHEN c.business_unit = 'KIPP Miami' THEN '47S'
        END AS payroll_company_code
       ,CASE
-        WHEN c.business_unit = 'TEAM Academy Charter Schools' THEN 'kippnewark'
+        WHEN c.business_unit = 'TEAM Academy Charter' THEN 'kippnewark'
         WHEN c.business_unit = 'KIPP Cooper Norcross Academy' THEN 'kippcamden'
         WHEN c.business_unit = 'KIPP Miami' THEN 'kippmiami'
        END AS [db_name]
