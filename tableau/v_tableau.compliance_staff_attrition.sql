@@ -50,7 +50,7 @@ WITH term AS (
 
               ,COALESCE(r.rehire_date, r.original_hire_date) AS position_start_date
               ,CASE
-                WHEN r.status <> 'Terminated' THEN NULL
+                WHEN r.[status] <> 'Terminated' THEN NULL
                 ELSE COALESCE(t.status_effective_date, r.termination_date)
                END AS termination_date
               ,COALESCE(t.termination_reason_description, r.status_reason) AS status_reason
