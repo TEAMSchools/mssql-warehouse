@@ -23,7 +23,7 @@ WITH certs AS (
           ELSE 0
          END AS valid_cert
         ,'NJ' AS cert_state
-  FROM njdoe.certification_certificate_history c
+  FROM gabby.njdoe.certification_certificate_history c
   )
 
 SELECT s.df_employee_number
@@ -60,9 +60,9 @@ SELECT s.df_employee_number
         ELSE NULL
        END AS is_certified
 
-FROM people.staff_crosswalk_static s
+FROM gabby.people.staff_crosswalk_static s
 
-LEFT JOIN powerschool.schools pss
+LEFT JOIN gabby.powerschool.schools pss
   ON pss.school_number = s.primary_site_schoolid
 LEFT JOIN certs c
   ON s.df_employee_number = c.employee_number
