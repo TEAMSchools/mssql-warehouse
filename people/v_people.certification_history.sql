@@ -3,15 +3,7 @@ GO
 
 CREATE OR ALTER VIEW people.certification_history AS
 
-SELECT sub.df_employee_number
-      ,sub.adp_associate_id
-      ,sub.preferred_name
-      ,sub.original_hire_date
-      ,sub.primary_job
-      ,sub.legal_entity_name
-      ,sub.[status]
-      ,sub.primary_site
-      ,sub.userprincipalname
+SELECT sub.employee_number
       ,sub.seq_number
       ,sub.certificate_id
       ,sub.certificate_type
@@ -28,18 +20,10 @@ SELECT sub.df_employee_number
       ,sub.valid_cert
       ,sub.cert_state
       ,sub.schoolstate
-      ,CASE WHEN sub.schoolstate = sub.cert_state THEN MAX(sub.valid_cert) OVER(PARTITION BY sub.df_employee_number) END AS is_certified
+      ,CASE WHEN sub.schoolstate = sub.cert_state THEN MAX(sub.valid_cert) OVER(PARTITION BY sub.employee_number) END AS is_certified
 FROM
     (
-     SELECT s.df_employee_number
-           ,s.adp_associate_id
-           ,s.preferred_name
-           ,s.original_hire_date
-           ,s.primary_job
-           ,s.legal_entity_name
-           ,s.[status]
-           ,s.primary_site
-           ,s.userprincipalname
+     SELECT s.df_employee_number AS employee_number
 
            ,pss.schoolstate
 
