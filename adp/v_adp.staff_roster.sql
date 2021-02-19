@@ -176,9 +176,10 @@ SELECT c.df_employee_number
          + SUBSTRING(c.mobile_number, 4, 3) + '-'
          + SUBSTRING(c.mobile_number, 7, 4) AS mobile_number
       ,CASE
-        WHEN c.legal_entity_name = 'TEAM Academy Charter Schools' THEN 'YHD'
-        WHEN c.legal_entity_name = 'KIPP New Jersey' THEN 'D30'
-        WHEN c.legal_entity_name = 'KIPP Cooper Norcross Academy' THEN 'D3Z'
+        WHEN c.legal_entity_name = 'KIPP New Jersey' THEN '9AM'
+        WHEN c.legal_entity_name = 'TEAM Academy Charter Schools' THEN '2Z3'
+        WHEN c.legal_entity_name = 'KIPP Cooper Norcross Academy' THEN '3LE'
+        WHEN c.legal_entity_name = 'KIPP Miami' THEN '47S'
        END AS payroll_company_code
       ,CASE
         WHEN c.legal_entity_name = 'TEAM Academy Charter Schools' THEN 'kippnewark'
