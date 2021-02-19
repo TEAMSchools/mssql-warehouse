@@ -26,6 +26,6 @@ SELECT LOWER(scw.samaccountname) AS [Login]
 FROM gabby.people.staff_crosswalk_static scw
 LEFT JOIN gabby.coupa.users cu
   ON scw.userprincipalname = cu.sso_identifier
-WHERE scw.[status] NOT IN ('Terminated', 'Prestart')
+WHERE scw.[status] NOT IN ('Terminated', 'Prestart') -- include prestart?
   AND scw.primary_on_site_department NOT IN ('Interns')
   AND scw.legal_entity_name IN ('KIPP New Jersey', 'KIPP Cooper Norcross Academy')
