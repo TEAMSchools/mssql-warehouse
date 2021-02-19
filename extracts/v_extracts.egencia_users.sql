@@ -26,7 +26,6 @@ FROM
              WHEN scw.df_employee_number IN (100219, 100412, 100566, 102298) THEN 'Travel Manager'
              ELSE 'Traveler'
             END AS [Role]
-           --,NULL AS [Traveler Group]
 
            ,scw.primary_site AS match_site
            ,CASE 
