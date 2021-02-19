@@ -29,4 +29,3 @@ FROM gabby.people.employment_history h
 JOIN gabby.people.staff_crosswalk_static r
   ON h.associate_id = r.adp_associate_id
 WHERE (h.job_title IS NOT NULL OR h.annual_salary IS NOT NULL)
-ORDER BY effective_start_date DESC
