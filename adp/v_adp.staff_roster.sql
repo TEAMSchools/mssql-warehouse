@@ -69,7 +69,7 @@ WITH clean_people AS (
              ,adp.termination_reason_description AS status_reason
              ,adp.job_title_description AS primary_job
              ,adp.home_department_description AS primary_on_site_department
-             ,adp.race_description AS ethnicity
+             ,COALESCE(adp.race_description,df.ethnicity) AS ethnicity
              ,adp.reports_to_associate_id
              ,adp.position_status AS [status]
              ,adp.worker_category_description AS payclass
