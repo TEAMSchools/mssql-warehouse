@@ -9,7 +9,7 @@ SELECT sr.df_employee_number
       ,sr.first_name
       ,sr.last_name
       ,sr.gender
-      ,sr.primary_ethnicity
+      ,COALESCE(sr.primary_ethnicity, df.primary_ethnicity) AS primary_ethnicity
       ,sr.is_hispanic
       ,sr.[address]
       ,sr.city
@@ -76,6 +76,8 @@ SELECT sr.df_employee_number
 
       ,sr.personal_email
 FROM gabby.adp.staff_roster sr
+LEFT JOIN gabby.dayforce.staff_roster df
+  ON sr.df_employee_number = df.df_employee_number
 LEFT JOIN gabby.people.id_crosswalk_powerschool idps
   ON sr.df_employee_number = idps.df_employee_number
  AND idps.is_master = 1
