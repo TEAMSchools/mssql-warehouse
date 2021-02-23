@@ -10,13 +10,24 @@ WITH years AS (
   WHERE n BETWEEN 2010 AND (gabby.utilities.GLOBAL_ACADEMIC_YEAR())
  )
 
+,cert_history AS (
+  SELECT y.academic_year
+        ,c.employee_number
+        ,CASE WHEN COUNT(certificate_type) > 0 THEN 1 ELSE 0 END AS is_certified
+  FROM years y
+  JOIN gabby.people.certification_history c
+    ON y.effective_date BETWEEN c.issued_date AND COALESCE(c.expiration_date,DATEADD(day,1,y.effective_date))
+  GROUP BY y.academic_year
+          ,c.employee_number
+ )
+
 SELECT y.academic_year
 
       ,s.df_employee_number
       ,s.adp_associate_id
       ,s.preferred_first_name
       ,s.preferred_last_name
-      ,s.[status]
+      ,s.[status] AS cur
       ,COALESCE(s.rehire_date, s.original_hire_date) AS hire_date
       ,s.termination_date
       ,s.legal_entity_name AS current_legal_entity
@@ -30,11 +41,7 @@ SELECT y.academic_year
       ,LOWER(s.samaccountname) AS samaccountname
       ,LOWER(s.manager_samaccountname) AS manager_samaccountname
 
-      --,CASE
-      --  WHEN COUNT(c.endorsement_or_rank) OVER(PARTITION BY s.df_employee_number) > 0
-      --  THEN 1
-      --  ELSE NULL
-      -- END AS is_certified
+      ,c.is_certified
 
       ,e.business_unit AS historic_legal_entity
       ,e.location AS historic_location
@@ -61,9 +68,9 @@ FROM gabby.people.staff_crosswalk s
 LEFT JOIN years y
   ON y.effective_date BETWEEN s.original_hire_date AND COALESCE(s.termination_date,DATEADD(day,1,y.effective_date))
 
---LEFT JOIN people.certification_history c
---  ON s.df_employee_number = c.employee_number
--- AND y.effective_date BETWEEN c.issue_date AND COALESCE(c.expiration_date,DATEADD(day,1,y.effective_date))
+LEFT JOIN cert_history c
+  ON s.df_employee_number = c.employee_number
+ AND y.academic_year = c.academic_year
 
 LEFT JOIN gabby.people.employment_history e
   ON s.df_employee_number = e.employee_number
@@ -77,3 +84,5 @@ LEFT JOIN gabby.pm.teacher_goals_overall_scores pm
 LEFT JOIN gabby.people.staff_attendance_rollup a
   ON s.df_employee_number = a.df_employee_number
  AND y.academic_year = a.academic_year
+
+ ORDER BY s.df_employee_number, y.academic_year
