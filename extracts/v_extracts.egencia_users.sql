@@ -11,22 +11,21 @@ SELECT sub.[Username]
       ,sub.[First name]
       ,sub.[Last name]
       ,sub.[Role]
+      ,sub.match_department
+      ,sub.match_site
+      ,sub.match_title
 
-      ,tg.egencia_traveler_group AS [Traveler Group]
+      ,tg.egencia_traveler_group AS [Traveler Group] -- cascading match on location/dept/job
 FROM
     (
      SELECT CONCAT(scw.df_employee_number, '@kippnj.org') AS [Username]
            ,scw.mail AS [Email]
            ,scw.userprincipalname AS [Single Sign On ID]
            ,scw.df_employee_number AS [Employee ID]
-           ,CASE WHEN scw.[status] = 'Terminated' THEN 'Inactive' ELSE 'Active' END AS [Status]
-           ,scw.preferred_first_name AS [First name]
-           ,scw.preferred_last_name AS [Last name]
-           ,CASE 
-             WHEN scw.df_employee_number IN (100219, 100412, 100566, 102298) THEN 'Travel Manager'
-             ELSE 'Traveler'
-            END AS [Role]
-
+           ,CASE WHEN scw.[status] = 'Terminated' THEN 'Disabled' ELSE 'Active' END AS [Status]
+           ,scw.first_name AS [First name] -- legal name
+           ,scw.last_name AS [Last name] -- legal name
+           ,'Traveler' AS [Role]
            ,scw.primary_site AS match_site
            ,CASE 
              WHEN scw.primary_on_site_department IN ('School Leadership', 'Teaching and Learning', 'Operations', 'KTC', 'New Teacher Development', 'Executive', 'School Support'
@@ -43,7 +42,7 @@ FROM
             END AS match_title
      FROM gabby.people.staff_crosswalk_static scw
      WHERE scw.primary_on_site_department NOT IN ('Interns')
-       AND scw.legal_entity_name IN ('KIPP New Jersey', 'KIPP Cooper Norcross Academy')
+       AND COALESCE(scw.termination_date, GETDATE()) >= '2020-11-01'
     ) sub
 LEFT JOIN gabby.egencia.traveler_groups tg
   ON sub.match_site = tg.physicaldeliveryofficename
