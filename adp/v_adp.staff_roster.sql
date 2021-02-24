@@ -69,7 +69,6 @@ WITH clean_people AS (
              ,adp.termination_reason_description AS status_reason
              ,adp.job_title_description AS primary_job
              ,adp.home_department_description AS primary_on_site_department
-             ,COALESCE(adp.race_description,df.ethnicity) AS ethnicity
              ,adp.reports_to_associate_id
              ,adp.position_status AS [status]
              ,adp.worker_category_description AS payclass
@@ -109,16 +108,19 @@ WITH clean_people AS (
                WHEN adp.ethnicity = 'Not Hispanic or Latino' THEN 0
               END AS is_hispanic
              ,CASE 
-               WHEN adp.associate_id IN (SELECT reports_to_associate_id 
-                                         FROM gabby.adp.employees 
-                                         WHERE position_status <> 'TERMINATED') THEN 'Yes'
+               WHEN adp.associate_id IN (SELECT reports_to_associate_id
+                                         FROM gabby.adp.employees
+                                         WHERE position_status <> 'TERMINATED')
+                    THEN 'Yes'
                ELSE 'No'
               END AS is_manager
              ,ROW_NUMBER() OVER(
                 PARTITION BY adp.associate_id 
                   ORDER BY CONVERT(DATE, adp.position_start_date) DESC) AS rn
 
-             ,df.preferred_last_name -- use DF until fixed
+              /* use DF until fixed */
+             ,df.preferred_last_name
+             ,COALESCE(adp.race_description, df.ethnicity) AS ethnicity
 
              ,cw.adp_associate_id AS adp_associate_id_legacy
        FROM gabby.adp.employees adp
