@@ -49,42 +49,21 @@ FROM
 
      UNION ALL
 
-     SELECT sub.associate_id
-           ,sub.position_id
-           ,sub.position_status
-           ,sub.status_effective_date
-           ,COALESCE(DATEADD(DAY, -1, sub.effective_start_next), '2020-12-31') AS status_effective_end_date
-           ,sub.termination_reason_description
-           ,sub.leave_reason_description
-           ,sub.paid_leave_of_absence
-           ,sub.employee_number
-           ,sub.source_system
-     FROM
-         (
-          SELECT sr.associate_id
-                ,ds.[status] AS position_status
-                ,CONVERT(DATE, ds.effective_start) AS status_effective_date
-                ,CASE WHEN ds.[status] = 'Terminated' THEN ds.status_reason_description END AS termination_reason_description
-                ,CASE WHEN ds.[status] IN ('Administrative Leave', 'Medical Leave of Absence', 'Personal Leave of Absence') THEN ds.status_reason_description END AS leave_reason_description
-                ,NULL AS paid_leave_of_absence
-                ,LEAD(CONVERT(DATE, ds.effective_start), 1) OVER(PARTITION BY ds.number ORDER BY CONVERT(DATETIME2, ds.effective_start)) AS effective_start_next
+     SELECT sr.associate_id
 
-                ,CONCAT(CASE
-                         WHEN e.legal_entity_name = 'KIPP New Jersey' THEN '9AM'
-                         WHEN e.legal_entity_name = 'TEAM Academy Charter Schools' THEN '2Z3'
-                         WHEN e.legal_entity_name = 'KIPP Cooper Norcross Academy' THEN '3LE'
-                         WHEN e.legal_entity_name = 'KIPP Miami' THEN '47S'
-                        END
-                       ,ds.number) AS position_id
+           ,ds.position_id
+           ,ds.[status] AS position_status
+           ,ds.effective_start AS status_effective_date
+           ,COALESCE(ds.effective_end, '2020-12-31') AS status_effective_end_date
+           ,CASE WHEN ds.[status] = 'Terminated' THEN ds.status_reason_description END AS termination_reason_description
+           ,CASE WHEN ds.[status] IN ('Administrative Leave', 'Medical Leave of Absence', 'Personal Leave of Absence') THEN ds.status_reason_description END AS leave_reason_description
+           ,NULL AS paid_leave_of_absence
 
-                ,sr.file_number AS employee_number
+           ,sr.file_number AS employee_number
 
-                ,'DF' AS source_system
-          FROM gabby.dayforce.employee_status ds
-          JOIN gabby.dayforce.employees e
-            ON ds.number = e.df_employee_number
-          JOIN gabby.adp.employees_all sr
-            ON ds.number = sr.file_number
-          WHERE CONVERT(DATE, ds.effective_start) <= '2020-12-31'
-         ) sub
+           ,'DF' AS source_system
+     FROM gabby.dayforce.employee_status_clean ds
+     JOIN gabby.adp.employees_all sr
+       ON ds.number = sr.file_number
+     WHERE ds.effective_start <= '2020-12-31'
     ) sub
