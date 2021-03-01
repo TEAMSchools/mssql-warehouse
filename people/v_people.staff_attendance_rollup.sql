@@ -16,7 +16,7 @@ WITH attendance_pivot AS (
         ,SUM(CASE WHEN approved = 0 THEN late_tardy ELSE 0 END) AS late_tardy_unapproved
         ,SUM(CASE WHEN approved = 1 THEN left_early ELSE 0 END) AS left_early_approved
         ,SUM(CASE WHEN approved = 0 THEN left_early ELSE 0 END) AS left_early_unapproved
-  FROM gabby.people.staff_attendance_clean
+  FROM gabby.people.staff_attendance_clean_static
   WHERE rn_curr = 1
   GROUP BY df_number, academic_year
  )
