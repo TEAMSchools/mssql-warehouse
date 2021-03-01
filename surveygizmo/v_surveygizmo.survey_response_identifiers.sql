@@ -80,7 +80,7 @@ WITH response_pivot AS (
        LEFT JOIN gabby.people.staff_crosswalk_static upn
          ON rp.respondent_userprincipalname = upn.userprincipalname
        LEFT JOIN gabby.people.staff_crosswalk_static adp
-         ON rp.respondent_adp_associate_id = adp.adp_associate_id
+         ON rp.respondent_adp_associate_id = adp.adp_associate_id_legacy
        LEFT JOIN gabby.people.staff_crosswalk_static mail
          ON rp.respondent_userprincipalname = mail.mail
        LEFT JOIN gabby.surveys.surveygizmo_abnormal_respondents ab

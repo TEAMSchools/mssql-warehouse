@@ -61,8 +61,8 @@ FROM
                 ,r.original_hire_date AS hire_date
                 ,r.legal_entity_name
           FROM gabby.tableau.pm_teacher_goals tg
-          LEFT JOIN gabby.adp.staff_roster r
-            ON tg.df_employee_number = r.df_employee_number
+          LEFT JOIN gabby.people.staff_roster r
+            ON tg.df_employee_number = r.employee_number
           WHERE tg.metric_label IN ('Excellent Teaching Rubric', 'Self & Others')
             AND tg.metric_value_stored IS NOT NULL
          ) sub
