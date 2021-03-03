@@ -34,7 +34,6 @@ SELECT co.student_number
       ,co.mother_cell AS parent1_cell
       ,co.father_cell AS parent2_cell
       ,co.advisor_name
-      ,co.advisor_phone AS advisor_cell
       ,co.advisor_email
       ,co.lunch_balance
       ,CASE
