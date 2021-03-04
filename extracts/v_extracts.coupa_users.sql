@@ -20,23 +20,20 @@ SELECT LOWER(sub.samaccountname) AS [Login]
       ,CONCAT('Expense User, ', sub.roles) AS [User Role Names]
       ,COALESCE(sub.content_groups
                ,CASE
-                 WHEN sub.legal_entity_abbreviation = 'KIPP New Jersey' THEN 'KIPP NJ'
-                 WHEN sub.legal_entity_abbreviation = 'TEAM Academy Charter Schools' THEN 'TEAM'
-                 WHEN sub.legal_entity_abbreviation = 'KIPP Cooper Norcross Academy' THEN 'KCNA'
-                 WHEN sub.legal_entity_abbreviation = 'KIPP Miami' THEN 'MIA'
+                 WHEN sub.legal_entity_abbreviation = 'KNJ' THEN 'KIPP NJ'
+                 ELSE sub.legal_entity_abbreviation 
                 END) AS [Content Groups] -- preserve Coupa, otherwise use HRIS
       ,COALESCE(sub.mention_name, CONCAT(sub.preferred_first_name, sub.preferred_last_name )) AS [Mention Name] -- preserve Coupa, otherwise use HRIS
       ,COALESCE(x.coupa_school_name
                ,CASE
-                 WHEN sn.coupa_school_name = '<Use PhysicalDeliveryOfficeName>' 
-                  AND sub.physicaldeliveryofficename IN ('KIPP Cooper Norcross High (KCNA)', 'KIPP Cooper Norcross High School') 
-                      THEN 'KCNHS'
+                 WHEN sn.coupa_school_name = '<Use PhysicalDeliveryOfficeName>' AND sub.physicaldeliveryofficename IN ('KIPP Cooper Norcross High (KCNA)', 'KIPP Cooper Norcross High School') THEN 'KCNHS'
                  WHEN sn.coupa_school_name = '<Use PhysicalDeliveryOfficeName>' AND sub.physicaldeliveryofficename = 'KIPP Lanning Square Middle' THEN 'Lanning Square Middle'
                  WHEN sn.coupa_school_name = '<Use PhysicalDeliveryOfficeName>' AND sub.physicaldeliveryofficename = 'KIPP Lanning Square Primary' THEN 'Lanning Square Primary'
                  WHEN sn.coupa_school_name = '<Use PhysicalDeliveryOfficeName>' AND sub.physicaldeliveryofficename = 'KIPP Whittier Middle' THEN 'Whittier Middle'
                  WHEN sn.coupa_school_name = '<Use PhysicalDeliveryOfficeName>' THEN sub.physicaldeliveryofficename
                  ELSE sn.coupa_school_name
-                END) AS [School Name] -- preserve Coupa, otherwise use match on lookup table (content group/department)
+                END
+               ,sub.school_name) AS [School Name] -- override > lookup table (content group/department) > coupa
 FROM
     (
      /* existing users */
