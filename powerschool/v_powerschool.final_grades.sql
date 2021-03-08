@@ -248,16 +248,16 @@ SELECT sub.student_number
                 / (term_grade_weight_possible + ISNULL(e1_grade_weight, 0) + ISNULL(e2_grade_weight, 0)) /* divide by current term weights */
          , 0) AS need_90
       ,ROUND(((weighted_points_possible_total * 0.8) /* 80% of total points possible */
-                - (ISNULL(weighted_grade_total_adjusted,0) - (ISNULL(term_grade_weighted,0) + ISNULL(e1_grade_weighted,0) + ISNULL(e2_grade_weighted,0)))) /* factor out points earned so far, including current */
-                / (term_grade_weight_possible + ISNULL(e1_grade_weight,0) + ISNULL(e2_grade_weight,0)) /* divide by current term weights */
+                - (ISNULL(weighted_grade_total_adjusted, 0) - (ISNULL(term_grade_weighted, 0) + ISNULL(e1_grade_weighted, 0) + ISNULL(e2_grade_weighted, 0)))) /* factor out points earned so far, including current */
+                / (term_grade_weight_possible + ISNULL(e1_grade_weight, 0) + ISNULL(e2_grade_weight, 0)) /* divide by current term weights */
          , 0) AS need_80
       ,ROUND(((weighted_points_possible_total * 0.7) /* 70% of total points possible */
-                - (ISNULL(weighted_grade_total_adjusted,0) - (ISNULL(term_grade_weighted,0) + ISNULL(e1_grade_weighted,0) + ISNULL(e2_grade_weighted,0)))) /* factor out points earned so far, including current */
-                / (term_grade_weight_possible + ISNULL(e1_grade_weight,0) + ISNULL(e2_grade_weight,0)) /* divide by current term weights */
+                - (ISNULL(weighted_grade_total_adjusted, 0) - (ISNULL(term_grade_weighted, 0) + ISNULL(e1_grade_weighted, 0) + ISNULL(e2_grade_weighted, 0)))) /* factor out points earned so far, including current */
+                / (term_grade_weight_possible + ISNULL(e1_grade_weight, 0) + ISNULL(e2_grade_weight, 0)) /* divide by current term weights */
          , 0) AS need_70 
       ,ROUND(((weighted_points_possible_total * 0.6) /* 60% of total points possible - the field is still called need_65 but it is aliased as need_60 because walters is a liar */
-                - (ISNULL(weighted_grade_total_adjusted,0) - (ISNULL(term_grade_weighted,0) + ISNULL(e1_grade_weighted,0) + ISNULL(e2_grade_weighted,0)))) /* factor out points earned so far, including current */
-                / (term_grade_weight_possible + ISNULL(e1_grade_weight,0) + ISNULL(e2_grade_weight,0)) /* divide by current term weights */
+                - (ISNULL(weighted_grade_total_adjusted, 0) - (ISNULL(term_grade_weighted, 0) + ISNULL(e1_grade_weighted, 0) + ISNULL(e2_grade_weighted, 0)))) /* factor out points earned so far, including current */
+                / (term_grade_weight_possible + ISNULL(e1_grade_weight, 0) + ISNULL(e2_grade_weight, 0)) /* divide by current term weights */
          , 0) AS need_65
 FROM
     (
