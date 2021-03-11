@@ -29,6 +29,6 @@ SELECT QUOTENAME(ISNULL(NULL, ''), '"') AS ["Preferred Name"]
       --,QUOTENAME(ISNULL(df.job_title, ''), '"') AS ["Job Title Description"]
       --,QUOTENAME(ISNULL(df.position_status, ''), '"') AS ["Position Status"]
       --,QUOTENAME(ISNULL(df.associate_id, ''), '"') AS ["Associate ID"]
-FROM gabby.people.staff_crosswalk_static df
+FROM gabby.adp.staff_roster df
 --FROM gabby.people.staff_roster df
 WHERE df.original_hire_date <= DATEADD(DAY, 30, GETDATE())
