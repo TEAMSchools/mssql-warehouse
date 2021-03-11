@@ -15,6 +15,7 @@ WITH years AS (
         ,c.academic_year
         ,COUNT(c.certificate_type) AS n_certs
   FROM gabby.people.certification_history c
+  WHERE c.valid_cert = 1
   GROUP BY c.employee_number
           ,c.academic_year
  )
