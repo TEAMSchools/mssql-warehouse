@@ -3,29 +3,30 @@ GO
 
 CREATE OR ALTER VIEW extracts.egencia_users AS
 
-SELECT sub.[Username]
+SELECT CONCAT(sub.df_employee_number, '@kippnj.org') AS [Username]
       ,sub.[Email]
       ,sub.[Single Sign On ID]
       ,sub.[Employee ID]
-      ,sub.[Status]
+      ,CASE WHEN sub.[status] = 'Terminated' THEN 'Disabled' ELSE 'Active' END AS [Status]
       ,sub.[First name]
       ,sub.[Last name]
-      ,sub.[Role]
+      ,sub.hire_date
       ,sub.match_department
       ,sub.match_site
       ,sub.match_title
+      ,'Traveler' AS [Role]
 
       ,tg.egencia_traveler_group AS [Traveler Group] -- cascading match on location/dept/job
 FROM
     (
-     SELECT CONCAT(scw.df_employee_number, '@kippnj.org') AS [Username]
+     SELECT scw.df_employee_number
            ,scw.mail AS [Email]
            ,scw.userprincipalname AS [Single Sign On ID]
            ,scw.df_employee_number AS [Employee ID]
-           ,CASE WHEN scw.[status] = 'Terminated' THEN 'Disabled' ELSE 'Active' END AS [Status]
            ,scw.first_name AS [First name] -- legal name
            ,scw.last_name AS [Last name] -- legal name
-           ,'Traveler' AS [Role]
+           ,scw.[status]
+           ,COALESCE(scw.rehire_date, scw.original_hire_date) AS hire_date
            ,scw.primary_site AS match_site
            ,CASE 
              WHEN scw.primary_on_site_department IN ('School Leadership', 'Teaching and Learning', 'Operations', 'KTC', 'New Teacher Development', 'Executive', 'School Support'
