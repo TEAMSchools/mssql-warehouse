@@ -17,17 +17,17 @@ SELECT cc.df_employee_number
       ,CASE WHEN ch.month_year_issued <> '' THEN DATEFROMPARTS(CONVERT(INT, RIGHT(ch.month_year_issued, 4)), CONVERT(INT, LEFT(ch.month_year_issued, 2)), 1) END AS issued_date
       ,CASE WHEN ch.month_year_expiration <> '' THEN ch.month_year_expiration END AS month_year_expiration
       ,CASE WHEN ch.month_year_expiration <> '' THEN DATEFROMPARTS(CONVERT(INT, RIGHT(ch.month_year_expiration, 4)), CONVERT(INT, LEFT(ch.month_year_expiration, 2)), 1) END AS expiration_date
-FROM gabby.njdoe.certification_check_clean cc
+FROM gabby.njdoe.certification_check cc
 CROSS APPLY OPENJSON(cc.certificate_history, '$')
   WITH (
     seq_number INT,
-    certificate_type VARCHAR(250),
-    endorsement VARCHAR(125),
-    county_code VARCHAR(125),
-    district_code VARCHAR(125),
-    basis_code VARCHAR(125),
-    month_year_issued VARCHAR(25),
-    month_year_expiration VARCHAR(25),
-    certificate_id VARCHAR(25)
+    certificate_type NVARCHAR(256),
+    endorsement NVARCHAR(256),
+    county_code NVARCHAR(256),
+    district_code NVARCHAR(256),
+    basis_code NVARCHAR(256),
+    month_year_issued NVARCHAR(256),
+    month_year_expiration NVARCHAR(256),
+    certificate_id NVARCHAR(256)
    ) AS ch
 WHERE cc.certificate_history <> '[]'

@@ -3,24 +3,10 @@ GO
 
 CREATE OR ALTER VIEW njdoe.certification_check_clean AS
 
-SELECT sub.df_employee_number
-      ,sub.applicant_tracking_number
-      ,sub.applicant_email
-      ,sub.applicant_phone_number
-      ,sub.application_history
-      ,sub.certificate_history
-      ,sub.rn_employee_current
-FROM
-    (
-     SELECT df_employee_number
-           ,JSON_VALUE(applicant, '$.tracking_number') AS applicant_tracking_number
-           ,JSON_VALUE(applicant, '$.email') AS applicant_email
-           ,JSON_VALUE(applicant, '$.phone_number') AS applicant_phone_number      
-           ,application_history
-           ,certificate_history
-           ,ROW_NUMBER() OVER(
-              PARTITION BY df_employee_number
-                ORDER BY _modified DESC) AS rn_employee_current
-     FROM gabby.njdoe.certification_check
-    ) sub
-WHERE sub.rn_employee_current = 1
+SELECT df_employee_number
+      ,JSON_VALUE(applicant, '$.tracking_number') AS applicant_tracking_number
+      ,JSON_VALUE(applicant, '$.email') AS applicant_email
+      ,JSON_VALUE(applicant, '$.phone_number') AS applicant_phone_number
+      ,application_history
+      ,certificate_history
+FROM gabby.njdoe.certification_check

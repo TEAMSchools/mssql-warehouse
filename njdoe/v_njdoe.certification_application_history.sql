@@ -13,15 +13,15 @@ SELECT cc.df_employee_number
       ,CASE WHEN ah.request_type <> '' THEN ah.request_type END AS request_type
       ,CASE WHEN ah.[status] <> '' THEN ah.[status] END AS [status]
       ,ah.checklist
-FROM gabby.njdoe.certification_check_clean cc
+FROM gabby.njdoe.certification_check cc
 CROSS APPLY OPENJSON(cc.application_history, '$')
   WITH (
     application_number INT,
-    date_received DATETIME2,
-    endorsement VARCHAR(125),
-    certificate_type VARCHAR(125),
-    request_type VARCHAR(25),
-    [status] VARCHAR(125),
+    date_received DATE,
+    endorsement NVARCHAR(256),
+    certificate_type NVARCHAR(256),
+    request_type NVARCHAR(256),
+    [status] NVARCHAR(256),
     checklist NVARCHAR(MAX) AS JSON
    ) AS ah
 WHERE cc.application_history <> '[]'
