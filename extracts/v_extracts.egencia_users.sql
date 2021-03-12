@@ -6,7 +6,7 @@ CREATE OR ALTER VIEW extracts.egencia_users AS
 SELECT CONCAT(sub.df_employee_number, '@kippnj.org') AS [Username]
       ,sub.[Email]
       ,sub.[Single Sign On ID]
-      ,sub.[Employee ID]
+      ,sub.df_employee_number AS [Employee ID]
       ,CASE WHEN sub.[status] = 'Terminated' THEN 'Disabled' ELSE 'Active' END AS [Status]
       ,sub.[First name]
       ,sub.[Last name]
@@ -22,7 +22,6 @@ FROM
      SELECT scw.df_employee_number
            ,scw.mail AS [Email]
            ,scw.userprincipalname AS [Single Sign On ID]
-           ,scw.df_employee_number AS [Employee ID]
            ,scw.first_name AS [First name] -- legal name
            ,scw.last_name AS [Last name] -- legal name
            ,scw.[status]
