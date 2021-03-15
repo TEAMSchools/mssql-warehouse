@@ -16,7 +16,12 @@ SELECT cc.df_employee_number
       ,CASE WHEN ch.month_year_issued <> '' THEN ch.month_year_issued END AS month_year_issued
       ,CASE WHEN ch.month_year_issued <> '' THEN DATEFROMPARTS(CONVERT(INT, RIGHT(ch.month_year_issued, 4)), CONVERT(INT, LEFT(ch.month_year_issued, 2)), 1) END AS issued_date
       ,CASE WHEN ch.month_year_expiration <> '' THEN ch.month_year_expiration END AS month_year_expiration
-      ,CASE WHEN ch.month_year_expiration <> '' THEN DATEFROMPARTS(CONVERT(INT, RIGHT(ch.month_year_expiration, 4)), CONVERT(INT, LEFT(ch.month_year_expiration, 2)), 1) END AS expiration_date
+      ,CASE 
+        WHEN ch.month_year_expiration = '' THEN NULL
+        ELSE DATEADD(DAY, -1,
+                     DATEADD(MONTH, 1,
+                             DATEFROMPARTS(CONVERT(INT, RIGHT(ch.month_year_expiration, 4)), CONVERT(INT, LEFT(ch.month_year_expiration, 2)), 1)))
+       END AS expiration_date
 FROM gabby.njdoe.certification_check cc
 CROSS APPLY OPENJSON(cc.certificate_history, '$')
   WITH (
