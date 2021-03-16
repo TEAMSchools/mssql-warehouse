@@ -91,8 +91,8 @@ FROM
        ON sr.employee_number = cu.employee_number
      WHERE sr.[status] NOT IN ('Prestart', 'Terminated')
        AND sr.home_department NOT IN ('Interns')
+       AND sr.business_unit IN ('KIPP TEAM and Family Schools Inc.', 'KIPP Cooper Norcross Academy', 'KIPP Miami') -- only CMO/KCNA/MIA
        AND cu.employee_number IS NULL
-       AND sr.legal_entity_name IN ('KIPP New Jersey', 'KIPP Cooper Norcross Academy') -- only TEAM/KCNA temporarily
     ) sub
 LEFT JOIN gabby.coupa.school_name_lookup sn
   ON sub.legal_entity_abbreviation = sn.entity_abbv
