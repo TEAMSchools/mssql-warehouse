@@ -55,43 +55,25 @@ FROM
 
      UNION ALL
 
-     SELECT associate_id
-           ,position_id
-           ,business_unit_description
-           ,home_department_description
-           ,location_description
-           ,job_title_code
-           ,job_title_description
-           ,job_change_reason_code
-           ,job_change_reason_description
-           ,position_effective_date
-           ,COALESCE(DATEADD(DAY, -1, sub.effective_start_next), '2020-12-31') AS position_effective_end_date
-           ,employee_number
-           ,source_system
-     FROM
-         (
-          SELECT sr.associate_id
-                ,CONVERT(NVARCHAR(256), dwa.employee_reference_code) AS position_id
-                ,dwa.legal_entity_name AS business_unit_description
-                ,dwa.department_name AS home_department_description
-                ,dwa.physical_location_name AS location_description
-                ,NULL AS job_title_code
-                ,dwa.job_name AS job_title_description
-                ,NULL AS job_change_reason_code
-                ,NULL AS job_change_reason_description
-                ,CONVERT(DATE, dwa.work_assignment_effective_start) AS position_effective_date
-                ,LEAD(CONVERT(DATE, dwa.work_assignment_effective_start), 1) OVER(PARTITION BY dwa.employee_reference_code ORDER BY CONVERT(DATETIME2, dwa.work_assignment_effective_start)) AS effective_start_next
-                ,CASE 
-                  WHEN CONVERT(DATE, dwa.work_assignment_effective_end) > '2020-12-31' THEN '2020-12-31'
-                  ELSE COALESCE(CONVERT(DATE, dwa.work_assignment_effective_end), '2020-12-31')
-                 END AS position_effective_end_date
-                ,sr.file_number AS employee_number
-
-                ,'DF' AS source_system
-          FROM gabby.dayforce.employee_work_assignment dwa
-          JOIN gabby.adp.employees_all sr
-            ON dwa.employee_reference_code = sr.file_number
-          WHERE dwa.primary_work_assignment = 1
-            AND CONVERT(DATE, dwa.work_assignment_effective_start) <= '2020-12-31'
-         ) sub
+     SELECT sr.associate_id
+           
+           ,dwa.position_id
+           ,dwa.legal_entity_name AS business_unit_description
+           ,dwa.department_name AS home_department_description
+           ,dwa.physical_location_name AS location_description
+           ,NULL AS job_title_code
+           ,dwa.job_name AS job_title_description
+           ,NULL job_change_reason_code
+           ,NULL job_change_reason_description
+           ,dwa.work_assignment_effective_start AS position_effective_date
+           ,CASE
+             WHEN dwa.work_assignment_effective_end < '2020-12-31' THEN dwa.work_assignment_effective_end
+             ELSE '2020-12-31' 
+            END AS position_effective_end_date
+           ,dwa.employee_reference_code AS employee_number
+           ,'DF' AS source_system
+     FROM gabby.dayforce.employee_work_assignment_clean dwa
+     JOIN gabby.adp.employees_all sr
+       ON dwa.employee_reference_code = sr.file_number
+     WHERE dwa.work_assignment_effective_start <= '2020-12-31'
     ) sub

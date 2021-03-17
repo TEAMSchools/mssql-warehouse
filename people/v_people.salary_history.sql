@@ -48,32 +48,24 @@ FROM
 
      UNION ALL
 
-     SELECT sub.associate_id
-           ,sub.position_id
-           ,sub.regular_pay_effective_date
-           ,COALESCE(DATEADD(DAY, -1, sub.effective_start_next), '2020-12-31') AS regular_pay_effective_end_date
-           ,sub.annual_salary
-           ,sub.regular_pay_rate_amount
-           ,sub.compensation_change_reason_description
-           ,sub.employee_number
-           ,sub.source_system
-     FROM
-         (
-          SELECT sr.associate_id
-                ,CONVERT(NVARCHAR(256), ds.number) AS position_id
-                ,CONVERT(DATE, ds.effective_start) AS regular_pay_effective_date
-                ,CONVERT(MONEY, ds.base_salary) AS annual_salary
-                ,NULL AS regular_pay_rate_amount
-                ,ds.status_reason_description AS compensation_change_reason_description
-                ,LEAD(CONVERT(DATE, ds.effective_start), 1) OVER(PARTITION BY ds.number ORDER BY CONVERT(DATETIME2, ds.effective_start)) AS effective_start_next
+     SELECT sr.associate_id
 
-                ,sr.file_number AS employee_number
+           ,ds.position_id
+           ,ds.effective_start AS regular_pay_effective_date
+           ,CASE 
+             WHEN ds.effective_end < '2020-12-31' THEN ds.effective_end
+             ELSE '2020-12-31'
+            END AS regular_pay_effective_end_date
+           ,ds.base_salary AS annual_salary
+           ,NULL AS regular_pay_rate_amount
+           ,ds.status_reason_description AS compensation_change_reason_description
 
-                ,'DF' AS source_system
-          FROM gabby.dayforce.employee_status ds
-          JOIN gabby.adp.employees_all sr
-            ON ds.number = sr.file_number
-          WHERE CONVERT(DATE, ds.effective_start) <= '2020-12-31'
-         ) sub
+           ,sr.file_number AS employee_number
+
+           ,'DF' AS source_system
+     FROM gabby.dayforce.employee_status_clean ds
+     JOIN gabby.adp.employees_all sr
+       ON ds.number = sr.file_number
+     WHERE CONVERT(DATE, ds.effective_start) <= '2020-12-31'
     ) sub
 WHERE sub.annual_salary > 0

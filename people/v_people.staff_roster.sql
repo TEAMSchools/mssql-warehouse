@@ -12,6 +12,7 @@ WITH all_staff AS (
         ,eh.job_title
         ,eh.home_department
         ,eh.reports_to_associate_id
+        ,eh.reports_to_employee_number
         ,eh.position_status
         ,eh.business_unit
         ,eh.[location]
@@ -33,6 +34,7 @@ WITH all_staff AS (
         ,ps.job_title
         ,ps.home_department
         ,ps.reports_to_associate_id
+        ,ps.reports_to_employee_number
         ,'Prestart' AS position_status
         ,ps.business_unit
         ,ps.[location]

@@ -32,3 +32,4 @@ FROM
      JOIN gabby.dayforce.employees e
        ON ds.number = e.df_employee_number
     ) sub
+WHERE sub.effective_start <= DATEADD(DAY, -1, sub.effective_start_next)
