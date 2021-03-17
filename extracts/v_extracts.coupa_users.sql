@@ -23,7 +23,10 @@ SELECT LOWER(sub.samaccountname) AS [Login]
                  WHEN sub.legal_entity_abbreviation = 'KNJ' THEN 'KIPP NJ'
                  ELSE sub.legal_entity_abbreviation 
                 END) AS [Content Groups] -- preserve Coupa, otherwise use HRIS
-      ,COALESCE(sub.mention_name, CONCAT(sub.preferred_first_name, sub.preferred_last_name )) AS [Mention Name] -- preserve Coupa, otherwise use HRIS
+      ,COALESCE(
+          sub.mention_name
+         ,gabby.utilities.STRIP_CHARACTERS(CONCAT(sub.preferred_first_name, sub.preferred_last_name ), '^A-Z-') -- first + last, keep only letters & dashes
+        ) AS [Mention Name] -- preserve Coupa, otherwise use HRIS
       ,COALESCE(x.coupa_school_name
                ,CASE
                  WHEN sn.coupa_school_name = '<Use PhysicalDeliveryOfficeName>' AND sub.physicaldeliveryofficename IN ('KIPP Cooper Norcross High (KCNA)', 'KIPP Cooper Norcross High School') THEN 'KCNHS'
