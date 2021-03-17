@@ -13,7 +13,7 @@ SELECT LOWER(sub.samaccountname) AS [Login]
       ,'SAML' AS [Authentication Method]
       ,LOWER(sub.userprincipalname) AS [Sso Identifier]
       ,'No' AS [Generate Password And Notify User]
-      ,LOWER(sub.mail) AS [Email]
+      ,COALESCE(LOWER(sub.mail), LOWER(sub.userprincipalname)) AS [Email] -- some are missing the AD mail attribute `\(8|)/`
       ,sub.preferred_first_name AS [First Name]
       ,sub.preferred_last_name AS [Last Name]
       ,sub.employee_number AS [Employee Number]
