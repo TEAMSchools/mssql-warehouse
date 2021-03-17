@@ -35,7 +35,7 @@ FROM
           JOIN gabby.dayforce.employees e
             ON em.employee_reference_code = e.df_employee_number
           WHERE em.manager_derived_method = 'Direct Report'
-            AND (em.manager_effective_start <> em.manager_effective_end OR em.manager_effective_end IS NULL)
+            AND (em.manager_effective_start < em.manager_effective_end OR em.manager_effective_end IS NULL)
          ) sub
      WHERE sub.rn_start = 1
     ) sub
