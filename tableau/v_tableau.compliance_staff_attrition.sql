@@ -15,7 +15,7 @@ WITH term AS (
              ,t.status_effective_end_date
              ,t.termination_reason_description
              ,LAG(t.status_effective_end_date) OVER(PARTITION BY t.employee_number ORDER BY t.status_effective_date) AS prev_end_date
-       FROM gabby.people.status_history t
+       FROM gabby.people.status_history_static t
        WHERE t.position_status = 'Terminated'
       ) sub
   WHERE ISNULL(DATEDIFF(DAY, sub.prev_end_date, sub.status_effective_date), 2) > 1
@@ -40,25 +40,26 @@ WITH term AS (
                    WHEN MONTH(sub.termination_date) < 9 THEN YEAR(sub.termination_date) - 1
                   END
                  ,gabby.utilities.GLOBAL_ACADEMIC_YEAR()) AS end_academic_year
-  FROM (
-        SELECT r.df_employee_number
-              ,r.preferred_first_name
-              ,r.preferred_last_name
-              ,r.primary_ethnicity
-              ,r.original_hire_date
-              ,r.rehire_date
+  FROM 
+      (
+       SELECT r.df_employee_number
+             ,r.preferred_first_name
+             ,r.preferred_last_name
+             ,r.primary_ethnicity
+             ,r.original_hire_date
+             ,r.rehire_date
 
-              ,COALESCE(r.rehire_date, r.original_hire_date) AS position_start_date
-              ,CASE
-                WHEN r.[status] <> 'Terminated' THEN NULL
-                ELSE COALESCE(t.status_effective_date, r.termination_date)
-               END AS termination_date
-              ,COALESCE(t.termination_reason_description, r.status_reason) AS status_reason
-        FROM gabby.people.staff_crosswalk_static r
-        LEFT JOIN term t /* final termination record */
-          ON r.df_employee_number = t.employee_number
-         AND t.rn = 1
-       ) sub
+             ,COALESCE(r.rehire_date, r.original_hire_date) AS position_start_date
+             ,CASE
+               WHEN r.[status] <> 'Terminated' THEN NULL
+               ELSE COALESCE(t.status_effective_date, r.termination_date)
+              END AS termination_date
+             ,COALESCE(t.termination_reason_description, r.status_reason) AS status_reason
+       FROM gabby.people.staff_crosswalk_static r
+       LEFT JOIN term t /* final termination record */
+         ON r.df_employee_number = t.employee_number
+        AND t.rn = 1
+      ) sub
  )
 
 ,years AS (
@@ -80,7 +81,8 @@ WITH term AS (
         ,sub.status_reason
         ,sub.academic_year_entrydate
         ,sub.academic_year_exitdate
-      
+        ,LEAD(sub.academic_year_exitdate, 1, DATEFROMPARTS(sub.academic_year + 2, 6, 30)) OVER(PARTITION BY sub.df_employee_number ORDER BY sub.academic_year) AS academic_year_exitdate_next
+
         ,w.business_unit
         ,w.job_title
         ,w.[location]
@@ -99,7 +101,7 @@ WITH term AS (
               ,CASE
                 WHEN r.end_academic_year = y.academic_year THEN r.termination_date
                END AS termination_date
-            
+
               ,y.academic_year
               ,y.effective_date
 
@@ -140,6 +142,8 @@ SELECT d.df_employee_number
       ,d.business_unit AS legal_entity_name
       ,d.reporting_school_id AS primary_site_reporting_schoolid
       ,d.school_level AS primary_site_school_level
+      ,d.academic_year_exitdate_next AS next_academic_year_exitdate
+      ,COALESCE(d.academic_year_exitdate_next, d.termination_date) AS attrition_exitdate
       ,CASE
         WHEN DATEDIFF(DAY, d.academic_year_entrydate, d.academic_year_exitdate) <= 0 THEN 0
         WHEN d.academic_year_exitdate >= DATEFROMPARTS(d.academic_year, 9, 1)
@@ -147,27 +151,12 @@ SELECT d.df_employee_number
         ELSE 0
        END AS is_denominator
       ,CASE
-        WHEN COALESCE(d.rehire_date, d.original_hire_date) > COALESCE(n.academic_year_exitdate
-                                                                     ,d.termination_date
-                                                                     ,DATEFROMPARTS(d.academic_year + 2, 6, 30))
-             THEN ROUND(DATEDIFF(DAY, d.original_hire_date, COALESCE(n.academic_year_exitdate
-                                                                    ,d.termination_date
-                                                                    ,DATEFROMPARTS(d.academic_year + 2, 6, 30)))
-                          /365, 0)
-        ELSE ROUND(DATEDIFF(DAY
-                           ,COALESCE(d.rehire_date, d.original_hire_date)
-                           ,COALESCE(n.academic_year_exitdate, d.termination_date, DATEFROMPARTS(d.academic_year + 2, 6, 30)))
-                     / 365, 0)
-       END AS years_at_kipp
-
-      ,n.academic_year_exitdate AS next_academic_year_exitdate
-
-      ,COALESCE(n.academic_year_exitdate, d.termination_date, DATEFROMPARTS((d.academic_year + 2), 6, 30)) AS attrition_exitdate
-      ,CASE
-        WHEN COALESCE(n.academic_year_exitdate, d.termination_date, DATEFROMPARTS((d.academic_year + 2), 6, 30)) < DATEFROMPARTS((d.academic_year + 1), 9, 1) THEN 1
+        WHEN COALESCE(d.academic_year_exitdate_next, d.termination_date) < DATEFROMPARTS((d.academic_year + 1), 9, 1) THEN 1
         ELSE 0
        END AS is_attrition
+      ,CASE
+        WHEN COALESCE(d.rehire_date, d.original_hire_date) > COALESCE(d.academic_year_exitdate_next, d.termination_date)
+          THEN ROUND(DATEDIFF(DAY, d.original_hire_date, COALESCE(d.academic_year_exitdate_next, d.termination_date)) / 365, 0)
+        ELSE ROUND(DATEDIFF(DAY, COALESCE(d.rehire_date, d.original_hire_date), COALESCE(d.academic_year_exitdate_next, d.termination_date)) / 365, 0)
+       END AS years_at_kipp
 FROM scaffold d
-LEFT JOIN scaffold n
-  ON d.df_employee_number = n.df_employee_number
- AND d.academic_year = (n.academic_year - 1)
