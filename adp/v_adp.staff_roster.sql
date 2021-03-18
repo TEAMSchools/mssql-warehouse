@@ -30,21 +30,42 @@ WITH clean_people AS (
         ,sub.position_effective_to_date
         ,sub.annual_salary
         ,sub.gender
-        ,sub.is_hispanic
+        ,sub.gender_reporting
         ,sub.is_manager
         ,sub.reports_to_associate_id
         ,sub.adp_associate_id_legacy
         ,sub.mobile_number
         ,sub.personal_email
+        ,sub.ethnicity AS primary_ethnicity
+        ,sub.race_reporting
+        ,sub.is_race_asian
+        ,sub.is_race_black
+        ,sub.is_race_decline
+        ,sub.is_race_mideast
+        ,sub.is_race_multi
+        ,sub.is_race_nhpi
+        ,sub.is_race_other
+        ,sub.is_race_white
         ,REPLACE(sub.primary_site_clean, ' - Regional', '') AS primary_site
         ,COALESCE(sub.common_name, sub.first_name) AS preferred_first_name
         ,COALESCE(sub.preferred_last_name , sub.last_name) AS preferred_last_name
         ,CASE WHEN sub.primary_site_clean LIKE '% - Regional%' THEN 1 ELSE 0 END AS is_regional_staff
         ,CASE
-          WHEN sub.ethnicity = 'Hispanic or Latino' THEN 'Hispanic or Latino'
-          WHEN sub.ethnicity = 'Decline to Answer' THEN NULL
-          ELSE CONVERT(VARCHAR(125), RTRIM(LEFT(sub.ethnicity, CHARINDEX(' (', sub.ethnicity))))
-         END AS primary_ethnicity
+          WHEN sub.ethnicity = 'Hispanic or Latino' THEN 1
+          WHEN sub.ethnicity = 'Not Hispanic or Latino' THEN 0
+         END AS is_hispanic
+        ,CASE
+          WHEN sub.race_reporting IS NULL AND sub.ethnicity = 'Hispanic or Latino' THEN 'Hispanic or Latino'
+          WHEN sub.race_reporting = 'I decline to state my preferred racial/ethnic identity' THEN 'Decline to state'
+          WHEN sub.race_reporting = 'My racial/ethnic identity is not listed' THEN 'Not Listed'
+          WHEN sub.race_reporting = 'Latinx/Hispanic/Chicana(o)' THEN 'Hispanic or Latino'
+          WHEN sub.race_reporting = 'Black or African American' THEN 'Black/African American'
+          WHEN sub.race_reporting = 'Two or more races (Not Hispanic or Latino)' THEN 'Bi/Multiracial'
+          ELSE sub.race_reporting + (CASE 
+                                      WHEN sub.ethnicity = 'Hispanic or Latino' THEN ' - ' + sub.ethnicity
+                                      ELSE '' 
+                                     END)
+         END AS race_ethnicity_reporting
         ,CASE
           WHEN COALESCE(sub.rehire_date, sub.original_hire_date) > GETDATE() OR sub.[status] IS NULL THEN 'PRESTART'
           WHEN sub.[status] = 'Leave' THEN 'INACTIVE'
@@ -57,79 +78,132 @@ WITH clean_people AS (
         ,sub.primary_site_clean + ' (' + sub.legal_entity_abbreviation + ')' AS primary_site_entity
   FROM
       (
-       SELECT adp.file_number AS df_employee_number
-             ,adp.associate_id AS adp_associate_id
-             ,adp.position_id
-             ,adp.first_name
-             ,adp.last_name
-             ,adp.preferred_name AS common_name
-             ,adp.primary_address_city AS city
-             ,adp.primary_address_state_territory_code AS [state]
-             ,adp.primary_address_zip_postal_code AS postal_code
-             ,adp.termination_reason_description AS status_reason
-             ,adp.job_title_description AS primary_job
-             ,adp.home_department_description AS primary_on_site_department
-             ,adp.reports_to_associate_id
-             ,adp.position_status AS [status]
-             ,adp.worker_category_description AS payclass
-             ,adp.wfmgr_pay_rule AS paytype
-             ,adp.personal_contact_personal_email AS personal_email
+       SELECT ea.file_number AS df_employee_number
+             ,ea.associate_id AS adp_associate_id
+             ,ea.first_name
+             ,ea.last_name
+             ,ea.preferred_name AS common_name
+             ,ea.primary_address_city AS city
+             ,ea.primary_address_state_territory_code AS [state]
+             ,ea.primary_address_zip_postal_code AS postal_code
+             ,ea.personal_contact_personal_email AS personal_email
              ,CONVERT(NVARCHAR(256), NULL) AS job_family -- on the way
              /* transformations */
-             ,CONVERT(DATE, adp.birth_date) AS birth_date
-             ,CONVERT(DATE, adp.hire_date) AS original_hire_date
-             ,CONVERT(DATE, adp.termination_date) AS termination_date
-             ,CONVERT(DATE, adp.rehire_date) AS rehire_date
-             ,CONVERT(DATE, adp.position_start_date) AS position_effective_from_date
-             ,CONVERT(DATE, adp.position_effective_end_date) AS position_effective_to_date
-             ,CONVERT(MONEY, adp.annual_salary) AS annual_salary
-             ,CONCAT(adp.primary_address_address_line_1, ', ' + adp.primary_address_address_line_2) AS [address]
-             ,UPPER(adp.flsa_description) AS flsa_status
-             ,LEFT(UPPER(adp.gender), 1) AS gender
-             ,CONVERT(NVARCHAR(256), gabby.utilities.STRIP_CHARACTERS(adp.personal_contact_personal_mobile, '^0-9')) AS mobile_number
+             ,CONVERT(DATE, ea.birth_date) AS birth_date
+             ,CONCAT(ea.primary_address_address_line_1, ', ' + ea.primary_address_address_line_2) AS [address]
+             ,CONVERT(NVARCHAR(256), gabby.utilities.STRIP_CHARACTERS(ea.personal_contact_personal_mobile, '^0-9')) AS mobile_number
+             ,LEFT(UPPER(ea.gender), 1) AS gender
+             ,COALESCE(ea.preferred_gender
+                      ,CASE
+                        WHEN ea.gender = 'Male' THEN 'Man'
+                        WHEN ea.gender = 'Female' THEN 'Woman'
+                       END) AS gender_reporting
              ,CASE
-               WHEN adp.business_unit_description = 'TEAM Academy Charter' THEN 'TEAM Academy Charter Schools'
-               WHEN adp.business_unit_description = 'KIPP TEAM and Family Schools Inc.' THEN 'KIPP New Jersey'
-               ELSE adp.business_unit_description
-              END AS legal_entity_name
-             ,CASE
-               WHEN adp.business_unit_description = 'TEAM Academy Charter' THEN 'TEAM'
-               WHEN adp.business_unit_description = 'KIPP TEAM and Family Schools Inc.' THEN 'KNJ'
-               WHEN adp.business_unit_description = 'KIPP Cooper Norcross Academy' THEN 'KCNA'
-               WHEN adp.business_unit_description = 'KIPP Miami' THEN 'MIA'
-              END AS legal_entity_abbreviation
+               WHEN ea.ethnicity IS NULL AND ea.preferred_race_ethnicity IS NULL THEN NULL
+               WHEN CHARINDEX('Decline to state', ea.preferred_race_ethnicity) > 0 THEN NULL
+               WHEN CHARINDEX('Latinx/Hispanic/Chicana(o)', ea.preferred_race_ethnicity) > 0 THEN 'Hispanic or Latino'
+               WHEN ea.ethnicity = 'Hispanic or Latino' THEN 'Hispanic or Latino'
+               ELSE 'Not Hispanic or Latino'
+              END AS ethnicity
              ,CASE 
-               WHEN adp.location_description = 'Norfolk St. Campus' THEN 'Norfolk St Campus'
-               WHEN adp.location_description = 'KIPP Lanning Square Campus' THEN 'KIPP Lanning Sq Campus'
-               ELSE adp.location_description
-              END AS primary_site_clean -- temporary fix for changed names
-             ,CASE
-               WHEN adp.ethnicity = 'Hispanic or Latino' THEN 1
-               WHEN adp.ethnicity = 'Not Hispanic or Latino' THEN 0
-              END AS is_hispanic
+               WHEN ea.race_description = 'Black or African American' THEN 1
+               WHEN CHARINDEX('Black/African American', ea.preferred_race_ethnicity) > 0 THEN 1
+               ELSE 0
+              END AS is_race_black
              ,CASE 
-               WHEN adp.associate_id IN (SELECT reports_to_associate_id
-                                         FROM gabby.adp.employees
+               WHEN ea.race_description = 'Asian' THEN 1
+               WHEN CHARINDEX('Asian', ea.preferred_race_ethnicity) > 0 THEN 1
+               ELSE 0
+              END AS is_race_asian
+             ,CASE 
+               WHEN ea.race_description = 'Native Hawaiian or Other Pacific Islander' THEN 1
+               WHEN CHARINDEX('Pacific Islander', ea.preferred_race_ethnicity) > 0 THEN 1
+               ELSE 0
+              END AS is_race_nhpi
+             ,CASE 
+               WHEN CHARINDEX('Middle Eastern', ea.preferred_race_ethnicity) > 0 THEN 1
+               ELSE 0
+              END AS is_race_mideast
+             ,CASE 
+               WHEN ea.race_description = 'White' THEN 1
+               WHEN CHARINDEX('White', ea.preferred_race_ethnicity) > 0 THEN 1
+               ELSE 0
+              END AS is_race_white
+             ,CASE
+               WHEN ea.race_description = 'Two or more races (Not Hispanic or Latino)' THEN 1
+               WHEN CHARINDEX('Bi/Multiracial', ea.preferred_race_ethnicity) > 0 THEN 1
+               WHEN CHARINDEX(';', ea.preferred_race_ethnicity) > 0 THEN 1
+               ELSE 0
+              END AS is_race_multi
+             ,CASE
+               WHEN CHARINDEX('My racial/ethnic identity is not listed', ea.preferred_race_ethnicity) > 0 THEN 1
+               ELSE 0
+              END AS is_race_other
+             ,CASE
+               WHEN CHARINDEX('Decline to state', ea.preferred_race_ethnicity) > 0 THEN 1
+               ELSE 0
+              END AS is_race_decline
+             ,CASE
+               WHEN CHARINDEX(';', ea.preferred_race_ethnicity) > 0 THEN 'Bi/Multiracial'
+               ELSE COALESCE(ea.preferred_race_ethnicity, ea.race_description)
+              END AS race_reporting
+             ,CASE
+               WHEN ea.associate_id IN (SELECT reports_to_associate_id
+                                         FROM gabby.adp.employees_all
                                          WHERE position_status <> 'TERMINATED')
                     THEN 'Yes'
                ELSE 'No'
               END AS is_manager
+
+             ,e.position_id
+             ,e.termination_reason_description AS status_reason
+             ,e.job_title_description AS primary_job
+             ,e.home_department_description AS primary_on_site_department
+             ,e.reports_to_associate_id
+             ,e.position_status AS [status]
+             ,e.worker_category_description AS payclass
+             ,e.wfmgr_pay_rule AS paytype
+             ,CONVERT(DATE, e.hire_date) AS original_hire_date
+             ,CONVERT(DATE, e.termination_date) AS termination_date
+             ,CONVERT(DATE, e.rehire_date) AS rehire_date
+             ,CONVERT(DATE, e.position_start_date) AS position_effective_from_date
+             ,CONVERT(DATE, e.position_effective_end_date) AS position_effective_to_date
+             ,CONVERT(MONEY, e.annual_salary) AS annual_salary
+             ,UPPER(e.flsa_description) AS flsa_status
+             ,CASE
+               WHEN e.business_unit_description = 'TEAM Academy Charter' THEN 'TEAM Academy Charter Schools'
+               WHEN e.business_unit_description = 'KIPP TEAM and Family Schools Inc.' THEN 'KIPP New Jersey'
+               ELSE e.business_unit_description
+              END AS legal_entity_name
+             ,CASE
+               WHEN e.business_unit_description = 'TEAM Academy Charter' THEN 'TEAM'
+               WHEN e.business_unit_description = 'KIPP TEAM and Family Schools Inc.' THEN 'KNJ'
+               WHEN e.business_unit_description = 'KIPP Cooper Norcross Academy' THEN 'KCNA'
+               WHEN e.business_unit_description = 'KIPP Miami' THEN 'MIA'
+              END AS legal_entity_abbreviation
+             ,CASE 
+               WHEN e.location_description = 'Norfolk St. Campus' THEN 'Norfolk St Campus'
+               WHEN e.location_description = 'KIPP Lanning Square Campus' THEN 'KIPP Lanning Sq Campus'
+               ELSE e.location_description
+              END AS primary_site_clean -- temporary fix for changed names
+
              ,ROW_NUMBER() OVER(
-                PARTITION BY adp.associate_id 
-                  ORDER BY CONVERT(DATE, adp.position_start_date) DESC) AS rn
+                PARTITION BY ea.associate_id 
+                  ORDER BY CONVERT(DATE, e.position_start_date) DESC) AS rn
 
               /* use DF until fixed */
              ,df.preferred_last_name
-             ,COALESCE(adp.race_description, df.ethnicity) AS ethnicity
 
              ,cw.adp_associate_id AS adp_associate_id_legacy
-       FROM gabby.adp.employees adp
+       FROM gabby.adp.employees_all ea
+       JOIN gabby.adp.employees e
+         ON ea.file_number = e.file_number
        LEFT JOIN gabby.dayforce.employees df
-         ON adp.file_number = df.df_employee_number
+         ON ea.file_number = df.df_employee_number
        LEFT JOIN gabby.people.id_crosswalk_adp cw
-         ON adp.file_number = cw.df_employee_number
+         ON ea.file_number = cw.df_employee_number
         AND cw.rn_curr = 1
-       WHERE adp.file_number IS NOT NULL
+       WHERE ea.file_number IS NOT NULL
       ) sub
   WHERE sub.rn = 1
  )
@@ -173,6 +247,18 @@ SELECT c.df_employee_number
       ,c.primary_site_entity
       ,c.adp_associate_id_legacy
       ,c.personal_email
+      ,c.gender_reporting
+      ,c.race_reporting
+      ,c.race_ethnicity_reporting
+      ,c.is_race_asian
+      ,c.is_race_black
+      ,c.is_race_decline
+      ,c.is_race_mideast
+      ,c.is_race_multi
+      ,c.is_race_nhpi
+      ,c.is_race_other
+      ,c.is_race_white
+
       ,c.preferred_last_name + ', ' + c.preferred_first_name AS preferred_name
       ,SUBSTRING(c.mobile_number, 1, 3) + '-'
          + SUBSTRING(c.mobile_number, 4, 3) + '-'
