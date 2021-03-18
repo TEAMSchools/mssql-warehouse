@@ -54,7 +54,10 @@ FROM
            ,ds.position_id
            ,ds.[status] AS position_status
            ,ds.effective_start AS status_effective_date
-           ,COALESCE(ds.effective_end, '2020-12-31') AS status_effective_end_date
+           ,CASE
+             WHEN ds.effective_end < '2020-12-31' THEN ds.effective_end
+             ELSE '2020-12-31'
+            END AS status_effective_end_date
            ,CASE WHEN ds.[status] = 'Terminated' THEN ds.status_reason_description END AS termination_reason_description
            ,CASE WHEN ds.[status] IN ('Administrative Leave', 'Medical Leave of Absence', 'Personal Leave of Absence') THEN ds.status_reason_description END AS leave_reason_description
            ,NULL AS paid_leave_of_absence

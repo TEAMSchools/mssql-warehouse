@@ -8,12 +8,14 @@ SELECT LOWER(sub.samaccountname) AS [Login]
         WHEN sub.[status] = 'Terminated' THEN 'inactive'
         ELSE 'active'
        END AS [Status]
-      ,COALESCE(sub.purchasing_license, 'No') AS [Purchasing User] -- preserve Coupa, otherwise No
-      ,'Yes' AS [Expense User]
+      ,COALESCE(CASE WHEN sub.[status] = 'Terminated' THEN 'No' END
+               ,sub.purchasing_license
+               ,'No') AS [Purchasing User] -- preserve Coupa, otherwise No
+      ,CASE WHEN sub.[status] = 'Terminated' THEN 'No' ELSE 'Yes' END AS [Expense User]
       ,'SAML' AS [Authentication Method]
       ,LOWER(sub.userprincipalname) AS [Sso Identifier]
       ,'No' AS [Generate Password And Notify User]
-      ,LOWER(sub.mail) AS [Email]
+      ,COALESCE(LOWER(sub.mail), LOWER(sub.userprincipalname)) AS [Email] -- some are missing the AD mail attribute `\(8|)/`
       ,sub.preferred_first_name AS [First Name]
       ,sub.preferred_last_name AS [Last Name]
       ,sub.employee_number AS [Employee Number]
@@ -23,7 +25,10 @@ SELECT LOWER(sub.samaccountname) AS [Login]
                  WHEN sub.legal_entity_abbreviation = 'KNJ' THEN 'KIPP NJ'
                  ELSE sub.legal_entity_abbreviation 
                 END) AS [Content Groups] -- preserve Coupa, otherwise use HRIS
-      ,COALESCE(sub.mention_name, CONCAT(sub.preferred_first_name, sub.preferred_last_name )) AS [Mention Name] -- preserve Coupa, otherwise use HRIS
+      ,COALESCE(
+          sub.mention_name
+         ,gabby.utilities.STRIP_CHARACTERS(CONCAT(sub.preferred_first_name, sub.preferred_last_name ), '^A-Z-') -- first + last, keep only letters & dashes
+        ) AS [Mention Name] -- preserve Coupa, otherwise use HRIS
       ,COALESCE(x.coupa_school_name
                ,CASE
                  WHEN sn.coupa_school_name = '<Use PhysicalDeliveryOfficeName>' AND sub.physicaldeliveryofficename IN ('KIPP Cooper Norcross High (KCNA)', 'KIPP Cooper Norcross High School') THEN 'KCNHS'
@@ -91,8 +96,8 @@ FROM
        ON sr.employee_number = cu.employee_number
      WHERE sr.[status] NOT IN ('Prestart', 'Terminated')
        AND sr.home_department NOT IN ('Interns')
+       AND sr.business_unit IN ('KIPP TEAM and Family Schools Inc.', 'KIPP Cooper Norcross Academy', 'KIPP Miami') -- only CMO/KCNA/MIA
        AND cu.employee_number IS NULL
-       AND sr.legal_entity_name IN ('KIPP New Jersey', 'KIPP Cooper Norcross Academy') -- only TEAM/KCNA temporarily
     ) sub
 LEFT JOIN gabby.coupa.school_name_lookup sn
   ON sub.legal_entity_abbreviation = sn.entity_abbv

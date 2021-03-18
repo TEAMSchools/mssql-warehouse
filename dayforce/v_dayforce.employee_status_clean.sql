@@ -19,7 +19,7 @@ FROM
            ,CONVERT(MONEY, ds.base_salary) AS base_salary
            ,LEAD(CONVERT(DATE, ds.effective_start), 1) OVER(
               PARTITION BY ds.number 
-                ORDER BY CONVERT(DATETIME2, ds.effective_start)) AS effective_start_next
+                ORDER BY CONVERT(DATE, ds.effective_start)) AS effective_start_next
 
            ,CONCAT(CASE
                     WHEN e.legal_entity_name = 'KIPP New Jersey' THEN '9AM'
@@ -32,3 +32,5 @@ FROM
      JOIN gabby.dayforce.employees e
        ON ds.number = e.df_employee_number
     ) sub
+WHERE sub.effective_start <= DATEADD(DAY, -1, sub.effective_start_next)
+        OR sub.effective_start_next IS NULL
