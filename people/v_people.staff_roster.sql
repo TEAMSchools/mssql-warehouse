@@ -125,7 +125,7 @@ WITH all_staff AS (
              ,CONVERT(NVARCHAR(256), NULL) AS job_family -- on the way
              ,CASE 
                WHEN eh.associate_id IN (SELECT reports_to_associate_id
-                                        FROM gabby.people.manager_history
+                                        FROM gabby.people.manager_history_static
                                         WHERE CONVERT(DATE, GETDATE()) BETWEEN reports_to_effective_date 
                                                                            AND reports_to_effective_end_date_eoy) THEN 1
                ELSE 0
