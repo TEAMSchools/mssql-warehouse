@@ -94,24 +94,22 @@ WITH response_pivot AS (
  )
 
 ,work_assignment AS (
-  SELECT ewa.employee_reference_code
-        ,ewa.legal_entity_name
-        ,ewa.physical_location_name AS primary_site
-        ,ewa.department_name
-        ,ewa.job_name AS primary_job
-        ,CONVERT(DATE, ewa.work_assignment_effective_start) AS work_assignment_effective_start
-        ,CONVERT(DATE, COALESCE(CASE WHEN ewa.work_assignment_effective_end <> '' THEN ewa.work_assignment_effective_end END
-                               ,DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1, 6, 30))) AS work_assignment_effective_end
-        ,ROW_NUMBER() OVER (PARTITION BY ewa.employee_reference_code, ewa.work_assignment_effective_start
-           ORDER BY ewa.work_assignment_effective_end DESC) AS rn
+  SELECT ewa.employee_number
+        ,ewa.business_unit_description
+        ,ewa.location_description
+        ,ewa.home_department_description
+        ,ewa.job_title_description
+        ,ewa.position_effective_date
+        ,ewa.position_effective_end_date_eoy
+        ,ROW_NUMBER() OVER (PARTITION BY ewa.employee_number, ewa.position_effective_date
+           ORDER BY ewa.position_effective_end_date_eoy DESC) AS rn
 
         ,scw.ps_school_id AS primary_site_schoolid
         ,scw.school_level AS primary_site_school_level
-  FROM gabby.dayforce.employee_work_assignment ewa
+  FROM gabby.people.work_assignment_history_static ewa
   LEFT JOIN gabby.people.school_crosswalk scw
-    ON ewa.physical_location_name = scw.site_name
+    ON ewa.location_description = scw.site_name
    AND scw._fivetran_deleted = 0
-  WHERE ewa.primary_work_assignment = 1
 )
 
 ,manager AS (
@@ -134,7 +132,7 @@ WITH response_pivot AS (
              ,subj.manager_mail
              ,subj.manager_userprincipalname
              ,subj.manager_samaccountname
-       FROM gabby.adp.manager_history_clean em
+       FROM gabby.people.manager_history_static em
        JOIN gabby.people.staff_crosswalk_static subj
          ON em.employee_number = subj.df_employee_number
       ) sub
@@ -167,10 +165,10 @@ SELECT rc.survey_response_id
       ,resp.mail AS respondent_mail
       ,resp.samaccountname AS respondent_samaccountname
 
-      ,rwa.legal_entity_name AS respondent_legal_entity_name
-      ,rwa.primary_site AS respondent_primary_site
-      ,rwa.department_name AS respondent_department_name
-      ,rwa.primary_job AS respondent_primary_job
+      ,rwa.business_unit_description AS respondent_legal_entity_name
+      ,rwa.location_description AS respondent_primary_site
+      ,rwa.home_department_description AS respondent_department_name
+      ,rwa.job_title_description AS respondent_primary_job
       ,rwa.primary_site_schoolid AS respondent_primary_site_schoolid
       ,rwa.primary_site_school_level AS respondent_primary_site_school_level
 
@@ -186,10 +184,10 @@ SELECT rc.survey_response_id
       ,subj.mail AS subject_mail
       ,subj.samaccountname AS subject_samaccountname
 
-      ,swa.legal_entity_name AS subject_legal_entity_name
-      ,swa.primary_site AS subject_primary_site
-      ,swa.department_name AS subject_department_name
-      ,swa.primary_job AS subject_primary_job
+      ,swa.business_unit_description AS subject_legal_entity_name
+      ,swa.location_description AS subject_primary_site
+      ,swa.home_department_description AS subject_department_name
+      ,swa.job_title_description AS subject_primary_job
       ,swa.primary_site_schoolid AS subject_primary_site_schoolid
       ,swa.primary_site_school_level AS subject_primary_site_school_level
 
@@ -213,8 +211,8 @@ LEFT JOIN gabby.surveygizmo.survey_campaign_clean_static sc
 LEFT JOIN gabby.people.staff_crosswalk_static resp
   ON rc.respondent_df_employee_number = resp.df_employee_number
 LEFT JOIN work_assignment rwa
-  ON rc.respondent_df_employee_number = rwa.employee_reference_code
- AND CONVERT(DATE, sc.link_close_date) BETWEEN rwa.work_assignment_effective_start AND rwa.work_assignment_effective_end
+  ON rc.respondent_df_employee_number = rwa.employee_number
+ AND CONVERT(DATE, sc.link_close_date) BETWEEN rwa.position_effective_date AND rwa.position_effective_end_date_eoy
  AND rwa.rn = 1
 LEFT JOIN manager rmgr
   ON rc.respondent_df_employee_number = rmgr.employee_reference_code
@@ -222,8 +220,8 @@ LEFT JOIN manager rmgr
 LEFT JOIN gabby.people.staff_crosswalk_static subj
   ON rc.subject_df_employee_number = subj.df_employee_number
 LEFT JOIN work_assignment swa
-  ON rc.subject_df_employee_number = swa.employee_reference_code
- AND CONVERT(DATE, sc.link_close_date) BETWEEN swa.work_assignment_effective_start AND swa.work_assignment_effective_end
+  ON rc.subject_df_employee_number = swa.employee_number
+ AND CONVERT(DATE, sc.link_close_date) BETWEEN swa.position_effective_date AND swa.position_effective_end_date_eoy
  AND swa.rn = 1
 LEFT JOIN manager smgr
   ON rc.subject_df_employee_number = smgr.employee_reference_code
