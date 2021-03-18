@@ -8,8 +8,10 @@ SELECT LOWER(sub.samaccountname) AS [Login]
         WHEN sub.[status] = 'Terminated' THEN 'inactive'
         ELSE 'active'
        END AS [Status]
-      ,COALESCE(sub.purchasing_license, 'No') AS [Purchasing User] -- preserve Coupa, otherwise No
-      ,'Yes' AS [Expense User]
+      ,COALESCE(CASE WHEN sub.[status] = 'Terminated' THEN 'No' END
+               ,sub.purchasing_license
+               ,'No') AS [Purchasing User] -- preserve Coupa, otherwise No
+      ,CASE WHEN sub.[status] = 'Terminated' THEN 'No' ELSE 'Yes' END AS [Expense User]
       ,'SAML' AS [Authentication Method]
       ,LOWER(sub.userprincipalname) AS [Sso Identifier]
       ,'No' AS [Generate Password And Notify User]
