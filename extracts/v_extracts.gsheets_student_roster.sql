@@ -19,6 +19,8 @@ SELECT co.studentid
       ,co.advisor_name
       ,co.student_web_id + '@teamstudents.org' AS student_email
       ,co.is_pathways AS is_self_contained
+      ,co.ethnicity
+      ,co.lep_status
 FROM gabby.powerschool.cohort_identifiers_static co
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.rn_year = 1 
