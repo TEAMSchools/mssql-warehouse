@@ -4,7 +4,7 @@ GO
 CREATE OR ALTER VIEW extracts.gapps_users_students AS
 
 SELECT co.student_number
-      ,co.school_level
+      ,COALESCE(co.school_level, 'OD') AS school_level
       ,co.schoolid
       ,co.first_name AS firstname
       ,co.last_name AS lastname
@@ -39,6 +39,5 @@ SELECT co.student_number
         WHEN co.region = 'KMS' THEN 'group-students-miami@teamstudents.org'
        END AS group_email
 FROM gabby.powerschool.cohort_identifiers_static co
-WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-  AND co.rn_year = 1
+WHERE co.rn_all = 1
   AND co.student_web_id IS NOT NULL
