@@ -24,6 +24,7 @@ SELECT sub.employee_number
                               END, 6, 30)) AS reports_to_effective_end_date_eoy
 FROM
     (
+     /* ADP */
      SELECT mh.associate_id
            ,mh.position_id
            ,mh.reports_to_associate_id
@@ -33,21 +34,24 @@ FROM
             END AS reports_to_effective_date
            ,CONVERT(DATE, mh.reports_to_effective_end_date) AS reports_to_effective_end_date
 
-           ,sr.file_number AS employee_number
+           ,sre.file_number AS employee_number
 
            ,srm.file_number AS reports_to_employee_number
 
            ,'ADP' AS source_system
      FROM gabby.adp.manager_history mh
-     JOIN gabby.adp.employees_all sr
-       ON mh.associate_id = sr.associate_id
+     JOIN gabby.adp.employees_all sre
+       ON mh.associate_id = sre.associate_id
+      AND sre.file_number NOT IN (100814, 102496) /*  HR incapable of fixing these multiple employee numbers */
      JOIN gabby.adp.employees_all srm
        ON mh.reports_to_associate_id = srm.associate_id
+      AND srm.file_number NOT IN (100814, 102496) /*  HR incapable of fixing these multiple employee numbers */
      WHERE '2021-01-01' BETWEEN CONVERT(DATE, mh.reports_to_effective_date) AND COALESCE(CONVERT(DATE, mh.reports_to_effective_end_date), GETDATE())
         OR CONVERT(DATE, mh.reports_to_effective_date) > '2021-01-01'
 
      UNION ALL
 
+     /* DF */
      SELECT sre.associate_id AS associate_id
 
            ,dm.position_id
@@ -65,7 +69,9 @@ FROM
      FROM gabby.dayforce.employee_manager_clean dm
      JOIN gabby.adp.employees_all sre
        ON dm.employee_reference_code = sre.file_number
+      AND sre.file_number NOT IN (101640, 102602) /*  HR incapable of fixing these multiple employee numbers */
      JOIN gabby.adp.employees_all srm
        ON dm.manager_employee_number = srm.file_number
+      AND srm.file_number NOT IN (101640, 102602) /*  HR incapable of fixing these multiple employee numbers */
      WHERE CONVERT(DATE, dm.manager_effective_start) <= '2020-12-31'
     ) sub

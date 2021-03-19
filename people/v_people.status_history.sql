@@ -26,6 +26,7 @@ SELECT sub.employee_number
                               END, 6, 30)) AS status_effective_end_date_eoy
 FROM
     (
+     /* ADP */
      SELECT sh.associate_id
            ,sh.position_id
            ,sh.position_status
@@ -44,11 +45,13 @@ FROM
      FROM gabby.adp.status_history sh
      JOIN gabby.adp.employees_all sr
        ON sh.associate_id = sr.associate_id
+      AND sr.file_number NOT IN (100814, 102496) /*  HR incapable of fixing these multiple employee numbers */
      WHERE CONVERT(DATE, sh.status_effective_date) > '2021-01-01'
              OR COALESCE(CONVERT(DATE, sh.status_effective_end_date), GETDATE()) > '2021-01-01'
 
      UNION ALL
 
+     /* DF */
      SELECT sr.associate_id
 
            ,ds.position_id
@@ -68,5 +71,6 @@ FROM
      FROM gabby.dayforce.employee_status_clean ds
      JOIN gabby.adp.employees_all sr
        ON ds.number = sr.file_number
+      AND sr.file_number NOT IN (101640, 102602) /*  HR incapable of fixing these multiple employee numbers */
      WHERE ds.effective_start <= '2020-12-31'
     ) sub

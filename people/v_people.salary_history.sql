@@ -25,6 +25,7 @@ SELECT sub.employee_number
                               END, 6, 30)) AS regular_pay_effective_end_date_eoy
 FROM
     (
+     /* ADP */
      SELECT sh.associate_id
            ,sh.position_id
            ,CASE 
@@ -42,12 +43,14 @@ FROM
      FROM gabby.adp.salary_history sh
      JOIN gabby.adp.employees_all sr
        ON sh.associate_id = sr.associate_id
+      AND sr.file_number NOT IN (100814, 102496) /*  HR incapable of fixing these multiple employee numbers */
      WHERE CONVERT(DATE, sh.regular_pay_effective_date) < COALESCE(CONVERT(DATE, sh.regular_pay_effective_end_date), GETDATE())
        AND ('2021-01-01' BETWEEN CONVERT(DATE, sh.regular_pay_effective_date) AND COALESCE(CONVERT(DATE, sh.regular_pay_effective_end_date), GETDATE())
               OR CONVERT(DATE, sh.regular_pay_effective_date) > '2021-01-01')
 
      UNION ALL
 
+     /* DF */
      SELECT sr.associate_id
 
            ,ds.position_id
@@ -66,6 +69,7 @@ FROM
      FROM gabby.dayforce.employee_status_clean ds
      JOIN gabby.adp.employees_all sr
        ON ds.number = sr.file_number
+      AND sr.file_number NOT IN (101640, 102602) /*  HR incapable of fixing these multiple employee numbers */
      WHERE CONVERT(DATE, ds.effective_start) <= '2020-12-31'
     ) sub
 WHERE sub.annual_salary > 0
