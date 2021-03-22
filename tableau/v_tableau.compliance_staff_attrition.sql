@@ -81,7 +81,7 @@ WITH term AS (
         ,sub.status_reason
         ,sub.academic_year_entrydate
         ,sub.academic_year_exitdate
-        ,LEAD(sub.academic_year_exitdate, 1, DATEFROMPARTS(sub.academic_year + 2, 6, 30)) OVER(PARTITION BY sub.df_employee_number ORDER BY sub.academic_year) AS academic_year_exitdate_next
+        ,LEAD(sub.academic_year_exitdate, 1) OVER(PARTITION BY sub.df_employee_number ORDER BY sub.academic_year) AS academic_year_exitdate_next
 
         ,w.business_unit
         ,w.job_title
@@ -90,31 +90,30 @@ WITH term AS (
 
         ,scw.school_level
         ,scw.reporting_school_id
-  FROM (
-        SELECT r.df_employee_number
-              ,r.preferred_first_name
-              ,r.preferred_last_name
-              ,r.primary_ethnicity
-              ,r.original_hire_date
-              ,r.rehire_date
-              ,r.status_reason
-              ,CASE
-                WHEN r.end_academic_year = y.academic_year THEN r.termination_date
-               END AS termination_date
+  FROM 
+      (
+       SELECT r.df_employee_number
+             ,r.preferred_first_name
+             ,r.preferred_last_name
+             ,r.primary_ethnicity
+             ,r.original_hire_date
+             ,r.rehire_date
+             ,r.status_reason
 
-              ,y.academic_year
-              ,y.effective_date
+             ,y.academic_year
+             ,y.effective_date
 
-              ,CASE
-                WHEN r.start_academic_year = y.academic_year THEN r.position_start_date
-                ELSE DATEFROMPARTS(y.academic_year, 7, 1)
-               END AS academic_year_entrydate
-              ,COALESCE(CASE WHEN r.end_academic_year = y.academic_year THEN r.termination_date END
-                       ,DATEFROMPARTS((y.academic_year + 1), 6, 30)) AS academic_year_exitdate
-        FROM roster r
-        JOIN years y
-          ON y.academic_year BETWEEN r.start_academic_year AND r.end_academic_year
-       ) sub
+             ,CASE WHEN r.end_academic_year = y.academic_year THEN r.termination_date END AS termination_date
+             ,CASE
+               WHEN r.start_academic_year = y.academic_year THEN r.position_start_date
+               ELSE DATEFROMPARTS(y.academic_year, 7, 1)
+              END AS academic_year_entrydate
+             ,COALESCE(CASE WHEN r.end_academic_year = y.academic_year THEN r.termination_date END
+                      ,DATEFROMPARTS((y.academic_year + 1), 6, 30)) AS academic_year_exitdate
+       FROM roster r
+       JOIN years y
+         ON y.academic_year BETWEEN r.start_academic_year AND r.end_academic_year
+      ) sub
   LEFT JOIN gabby.people.employment_history w
     ON sub.df_employee_number= w.employee_number
    AND sub.effective_date BETWEEN w.effective_start_date AND w.effective_end_date
