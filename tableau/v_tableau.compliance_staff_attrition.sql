@@ -5,16 +5,18 @@ CREATE OR ALTER VIEW tableau.compliance_staff_attrition AS
 
 WITH term AS (
   SELECT sub.employee_number
+        ,sub.position_id
         ,sub.status_effective_date
         ,sub.termination_reason_description
-        ,ROW_NUMBER() OVER(PARTITION BY sub.employee_number ORDER BY sub.status_effective_date DESC) AS rn
+        ,ROW_NUMBER() OVER(PARTITION BY sub.position_id ORDER BY sub.status_effective_date DESC) AS rn
   FROM
       (
        SELECT t.employee_number
+             ,t.position_id
              ,t.status_effective_date
              ,t.status_effective_end_date
              ,t.termination_reason_description
-             ,LAG(t.status_effective_end_date) OVER(PARTITION BY t.employee_number ORDER BY t.status_effective_date) AS prev_end_date
+             ,LAG(t.status_effective_end_date) OVER(PARTITION BY t.position_id ORDER BY t.status_effective_date) AS prev_end_date
        FROM gabby.people.status_history_static t
        WHERE t.position_status = 'Terminated'
       ) sub
@@ -22,10 +24,11 @@ WITH term AS (
  )
 
 ,roster AS (
-  SELECT sub.df_employee_number
+  SELECT sub.employee_number
+        ,sub.position_id
         ,sub.preferred_first_name
         ,sub.preferred_last_name
-        ,sub.primary_ethnicity
+        ,sub.race_ethnicity_reporting
         ,sub.original_hire_date
         ,sub.rehire_date
         ,sub.position_start_date
@@ -42,10 +45,11 @@ WITH term AS (
                  ,gabby.utilities.GLOBAL_ACADEMIC_YEAR()) AS end_academic_year
   FROM 
       (
-       SELECT r.df_employee_number
+       SELECT r.employee_number
+             ,r.position_id
              ,r.preferred_first_name
              ,r.preferred_last_name
-             ,r.primary_ethnicity
+             ,r.race_ethnicity_reporting
              ,r.original_hire_date
              ,r.rehire_date
 
@@ -54,10 +58,10 @@ WITH term AS (
                WHEN r.[status] <> 'Terminated' THEN NULL
                ELSE COALESCE(t.status_effective_date, r.termination_date)
               END AS termination_date
-             ,COALESCE(t.termination_reason_description, r.status_reason) AS status_reason
-       FROM gabby.people.staff_crosswalk_static r
+             ,COALESCE(t.termination_reason_description, r.termination_reason) AS status_reason
+       FROM gabby.people.staff_roster r
        LEFT JOIN term t /* final termination record */
-         ON r.df_employee_number = t.employee_number
+         ON r.position_id = t.position_id
         AND t.rn = 1
       ) sub
  )
@@ -70,10 +74,11 @@ WITH term AS (
  )
 
 ,scaffold AS (
-  SELECT sub.df_employee_number
+  SELECT sub.employee_number
+        ,sub.position_id
         ,sub.preferred_first_name
         ,sub.preferred_last_name
-        ,sub.primary_ethnicity
+        ,sub.race_ethnicity_reporting
         ,sub.original_hire_date
         ,sub.rehire_date
         ,sub.academic_year
@@ -81,7 +86,7 @@ WITH term AS (
         ,sub.status_reason
         ,sub.academic_year_entrydate
         ,sub.academic_year_exitdate
-        ,LEAD(sub.academic_year_exitdate, 1) OVER(PARTITION BY sub.df_employee_number ORDER BY sub.academic_year) AS academic_year_exitdate_next
+        ,LEAD(sub.academic_year_exitdate, 1) OVER(PARTITION BY sub.position_id ORDER BY sub.academic_year) AS academic_year_exitdate_next
 
         ,w.business_unit
         ,w.job_title
@@ -92,10 +97,11 @@ WITH term AS (
         ,scw.reporting_school_id
   FROM 
       (
-       SELECT r.df_employee_number
+       SELECT r.employee_number
+             ,r.position_id
              ,r.preferred_first_name
              ,r.preferred_last_name
-             ,r.primary_ethnicity
+             ,r.race_ethnicity_reporting
              ,r.original_hire_date
              ,r.rehire_date
              ,r.status_reason
@@ -115,7 +121,7 @@ WITH term AS (
          ON y.academic_year BETWEEN r.start_academic_year AND r.end_academic_year
       ) sub
   LEFT JOIN gabby.people.employment_history w
-    ON sub.df_employee_number= w.employee_number
+    ON sub.position_id = w.position_id
    AND sub.effective_date BETWEEN w.effective_start_date AND w.effective_end_date
   LEFT JOIN gabby.people.school_crosswalk scw
     ON w.[location] = scw.site_name
@@ -124,10 +130,10 @@ WITH term AS (
     AND sub.academic_year_exitdate > sub.academic_year_entrydate
  )
 
-SELECT d.df_employee_number
+SELECT d.employee_number AS df_employee_number
       ,d.preferred_first_name
       ,d.preferred_last_name
-      ,d.primary_ethnicity
+      ,d.race_ethnicity_reporting AS primary_ethnicity
       ,d.academic_year
       ,d.academic_year_entrydate
       ,d.academic_year_exitdate
