@@ -277,7 +277,10 @@ SELECT c.employee_number
       ,c.first_name
       ,c.last_name
       ,c.position_status
-      ,c.business_unit
+      ,CASE 
+        WHEN c.business_unit = 'Team Academy Charter' THEN 'Team Academy Charter School' /* temp fix until ADP updated */
+        ELSE c.business_unit
+       END AS business_unit
       ,c.[location]
       ,c.home_department
       ,c.job_title
