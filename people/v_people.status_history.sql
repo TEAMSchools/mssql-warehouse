@@ -7,11 +7,17 @@ SELECT sub.employee_number
       ,sub.associate_id
       ,sub.position_id
       ,sub.position_status
-      ,sub.termination_reason_description
       ,sub.leave_reason_description
       ,sub.paid_leave_of_absence
       ,sub.source_system
       ,CONVERT(DATE,sub.status_effective_date) AS status_effective_date
+      ,CASE
+        WHEN sub.termination_reason_description = 'Import Created Action'
+             THEN LAG(termination_reason_description, 1) OVER(
+                    PARTITION BY associate_id
+                      ORDER BY status_effective_date)
+        ELSE sub.termination_reason_description
+       END AS termination_reason_description -- cover ADP Import status with terminal DF reason
       ,COALESCE(
            sub.status_effective_end_date
           ,DATEADD(DAY, -1, LEAD(sub.status_effective_date, 1) OVER(PARTITION BY sub.position_id ORDER BY sub.status_effective_date))
