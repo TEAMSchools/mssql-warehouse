@@ -12,12 +12,14 @@ WITH years AS (
 
 ,cert_history AS (
   SELECT c.employee_number
-        ,c.academic_year
+        ,y.academic_year
         ,COUNT(c.certificate_type) AS n_certs
   FROM gabby.people.certification_history c
+  JOIN years y
+    ON y.effective_date > c.issued_date
   WHERE c.valid_cert = 1
   GROUP BY c.employee_number
-          ,c.academic_year
+          ,y.academic_year
  )
 
 SELECT s.df_employee_number
@@ -64,7 +66,7 @@ SELECT s.df_employee_number
 FROM gabby.people.staff_crosswalk_static s
 LEFT JOIN years y
   ON y.effective_date BETWEEN s.original_hire_date 
-                          AND COALESCE(s.termination_date, DATEFROMPARTS(y.academic_year + 1, 6, 30))
+ AND COALESCE(s.termination_date, DATEFROMPARTS(y.academic_year + 1, 6, 30))
 LEFT JOIN cert_history c
   ON s.df_employee_number = c.employee_number
  AND y.academic_year = c.academic_year
