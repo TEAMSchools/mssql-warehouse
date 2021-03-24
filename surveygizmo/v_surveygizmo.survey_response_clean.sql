@@ -32,6 +32,7 @@ SELECT sub.survey_response_id
       ,sub.url_sguid
       ,sub.url_pathdata
       ,sub.data_quality_json
+      ,sub.survey_data_json
 FROM
     (
      SELECT sr.id AS survey_response_id
@@ -67,6 +68,7 @@ FROM
            ,CONVERT(VARCHAR(25), JSON_VALUE(sr.url_variables, '$.sguid')) AS url_sguid
            ,CONVERT(VARCHAR(250), JSON_VALUE(sr.url_variables, '$.__pathdata')) AS url_pathdata
            ,CONVERT(NVARCHAR(MAX), sr.data_quality) AS data_quality_json
+           ,CONVERT(NVARCHAR(MAX), sr.survey_data) AS survey_data_json
 
            ,ROW_NUMBER() OVER(PARTITION BY sr.id, sr.survey_id ORDER BY sr._modified DESC) AS rn
      FROM gabby.surveygizmo.survey_response sr
