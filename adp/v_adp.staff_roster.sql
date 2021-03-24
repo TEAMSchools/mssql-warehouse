@@ -171,12 +171,12 @@ WITH clean_people AS (
              ,CONVERT(MONEY, e.annual_salary) AS annual_salary
              ,UPPER(e.flsa_description) AS flsa_status
              ,CASE
-               WHEN e.business_unit_description = 'TEAM Academy Charter' THEN 'TEAM Academy Charter Schools'
+               WHEN e.business_unit_description = 'TEAM Academy Charter School' THEN 'TEAM Academy Charter Schools'
                WHEN e.business_unit_description = 'KIPP TEAM and Family Schools Inc.' THEN 'KIPP New Jersey'
                ELSE e.business_unit_description
               END AS legal_entity_name
              ,CASE
-               WHEN e.business_unit_description = 'TEAM Academy Charter' THEN 'TEAM'
+               WHEN e.business_unit_description = 'TEAM Academy Charter School' THEN 'TEAM'
                WHEN e.business_unit_description = 'KIPP TEAM and Family Schools Inc.' THEN 'KNJ'
                WHEN e.business_unit_description = 'KIPP Cooper Norcross Academy' THEN 'KCNA'
                WHEN e.business_unit_description = 'KIPP Miami' THEN 'MIA'

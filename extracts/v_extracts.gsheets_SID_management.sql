@@ -205,7 +205,7 @@ LEFT JOIN gabby.powerschool.s_nj_stu_x nj
 LEFT JOIN att a
   ON co.studentid = a.studentid
  AND co.[db_name] = a.[db_name]
-LEFT JOIN race r
+LEFT JOIN race r WITH(FORCESEEK)
   ON co.studentid = r.studentid
  AND co.[db_name] = r.[db_name]
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
