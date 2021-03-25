@@ -7,7 +7,7 @@ WITH years AS (
   SELECT n AS academic_year
         ,DATEFROMPARTS((n + 1), 4, 30) AS effective_date
   FROM gabby.utilities.row_generator_smallint
-  WHERE n BETWEEN 2010 AND (gabby.utilities.GLOBAL_ACADEMIC_YEAR())
+  WHERE n BETWEEN 2002 AND (gabby.utilities.GLOBAL_ACADEMIC_YEAR())
  )
 
 ,cert_history AS (
@@ -64,7 +64,7 @@ SELECT s.df_employee_number
       ,a.left_early_approved AS ay_approved_left_early
       ,a.left_early_unapproved AS ay_unapproved_left_early
 FROM gabby.people.staff_crosswalk_static s
-LEFT JOIN years y
+JOIN years y
   ON y.effective_date BETWEEN s.original_hire_date 
                           AND COALESCE(s.termination_date, DATEFROMPARTS(y.academic_year + 1, 6, 30))
 LEFT JOIN cert_history c
