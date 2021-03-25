@@ -41,6 +41,7 @@ FROM
            ,c.month_year_expiration
            ,c.expiration_date
            ,CASE 
+             WHEN certificate_type IS NULL THEN 0
              WHEN certificate_type IN ('CE - Charter School - Temp' ,'CE - Temp' ,'Provisional - Temp') THEN 0 
              ELSE 1 
             END AS valid_cert
