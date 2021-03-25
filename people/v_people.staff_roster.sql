@@ -158,12 +158,12 @@ WITH all_staff AS (
 
              /* transformations to match DF conventions */
              ,CASE
-               WHEN eh.business_unit = 'TEAM Academy Charter' THEN 'TEAM Academy Charter Schools'
+               WHEN eh.business_unit = 'TEAM Academy Charter School' THEN 'TEAM Academy Charter Schools'
                WHEN eh.business_unit = 'KIPP TEAM and Family Schools Inc.' THEN 'KIPP New Jersey'
                ELSE eh.business_unit
               END AS legal_entity_name
              ,CASE
-               WHEN eh.business_unit = 'TEAM Academy Charter' THEN 'TEAM'
+               WHEN eh.business_unit = 'TEAM Academy Charter School' THEN 'TEAM'
                WHEN eh.business_unit = 'KIPP TEAM and Family Schools Inc.' THEN 'KNJ'
                WHEN eh.business_unit = 'KIPP Cooper Norcross Academy' THEN 'KCNA'
                WHEN eh.business_unit = 'KIPP Miami' THEN 'MIA'
@@ -277,10 +277,7 @@ SELECT c.employee_number
       ,c.first_name
       ,c.last_name
       ,c.position_status
-      ,CASE 
-        WHEN c.business_unit = 'Team Academy Charter' THEN 'Team Academy Charter School' /* temp fix until ADP updated */
-        ELSE c.business_unit
-       END AS business_unit
+      ,c.business_unit
       ,c.[location]
       ,c.home_department
       ,c.job_title
@@ -338,12 +335,12 @@ SELECT c.employee_number
          + SUBSTRING(c.personal_mobile, 7, 4) AS personal_mobile
       ,CASE
         WHEN c.business_unit = 'KIPP TEAM and Family Schools Inc.' THEN '9AM'
-        WHEN c.business_unit = 'TEAM Academy Charter' THEN '2Z3'
+        WHEN c.business_unit = 'TEAM Academy Charter School' THEN '2Z3'
         WHEN c.business_unit = 'KIPP Cooper Norcross Academy' THEN '3LE'
         WHEN c.business_unit = 'KIPP Miami' THEN '47S'
        END AS payroll_company_code
       ,CASE
-        WHEN c.business_unit = 'TEAM Academy Charter' THEN 'kippnewark'
+        WHEN c.business_unit = 'TEAM Academy Charter School' THEN 'kippnewark'
         WHEN c.business_unit = 'KIPP Cooper Norcross Academy' THEN 'kippcamden'
         WHEN c.business_unit = 'KIPP Miami' THEN 'kippmiami'
        END AS [db_name]
