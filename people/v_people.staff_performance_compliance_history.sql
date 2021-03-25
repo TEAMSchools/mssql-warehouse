@@ -66,7 +66,7 @@ SELECT s.df_employee_number
 FROM gabby.people.staff_crosswalk_static s
 LEFT JOIN years y
   ON y.effective_date BETWEEN s.original_hire_date 
- AND COALESCE(s.termination_date, DATEFROMPARTS(y.academic_year + 1, 6, 30))
+                          AND COALESCE(s.termination_date, DATEFROMPARTS(y.academic_year + 1, 6, 30))
 LEFT JOIN cert_history c
   ON s.df_employee_number = c.employee_number
  AND y.academic_year = c.academic_year
