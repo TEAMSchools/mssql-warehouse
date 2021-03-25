@@ -12,12 +12,14 @@ WITH years AS (
 
 ,cert_history AS (
   SELECT c.employee_number
-        ,c.academic_year
+        ,y.academic_year
         ,COUNT(c.certificate_type) AS n_certs
   FROM gabby.people.certification_history c
+  JOIN years y
+    ON y.effective_date > c.issued_date
   WHERE c.valid_cert = 1
   GROUP BY c.employee_number
-          ,c.academic_year
+          ,y.academic_year
  )
 
 SELECT s.df_employee_number

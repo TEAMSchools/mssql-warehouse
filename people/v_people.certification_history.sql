@@ -40,7 +40,11 @@ FROM
            ,c.issued_date
            ,c.month_year_expiration
            ,c.expiration_date
-           ,CASE WHEN CONVERT(DATE, GETDATE()) BETWEEN c.issued_date AND COALESCE(c.expiration_date, DATEADD(DAY, 1, GETDATE())) THEN 1 ELSE 0 END AS valid_cert
+           ,CASE 
+             WHEN certificate_type IS NULL THEN 0
+             WHEN certificate_type IN ('CE - Charter School - Temp' ,'CE - Temp' ,'Provisional - Temp') THEN 0 
+             ELSE 1 
+            END AS valid_cert
            ,gabby.utilities.DATE_TO_SY(c.issued_date) AS academic_year
 
            ,NULL AS cert_status
