@@ -21,8 +21,6 @@ WITH cal_long AS (
        FROM powerschool.calendar_day cd
        JOIN powerschool.schools s
          ON cd.schoolid = s.school_number
-       JOIN powerschool.bell_schedule bs
-         ON cd.bell_schedule_id = bs.id
        JOIN powerschool.cycle_day cy
          ON cd.cycle_day_id = cy.id
        JOIN powerschool.terms t
@@ -31,6 +29,7 @@ WITH cal_long AS (
         AND t.isyearrec = 1
        WHERE cd.insession = 1
          AND cd.membershipvalue > 0
+         AND cd.bell_schedule_id IN (SELECT bs.id FROM powerschool.bell_schedule bs)
       ) sub
   UNPIVOT(
     [value]

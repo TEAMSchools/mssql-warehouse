@@ -27,7 +27,7 @@ WITH commlog AS (
 
 ,ada AS (
   SELECT psa.studentid
-        ,psa.db_name
+        ,psa.[db_name]
         ,psa.yearid
         ,ROUND(AVG(CAST(psa.attendancevalue AS FLOAT)), 2) AS ada
   FROM gabby.powerschool.ps_adaadm_daily_ctod_current_static psa
@@ -35,7 +35,7 @@ WITH commlog AS (
     AND psa.calendardate <= CAST(SYSDATETIME() AS DATE)
   GROUP BY psa.studentid
           ,psa.yearid
-          ,psa.db_name
+          ,psa.[db_name]
  )
  
 SELECT co.student_number
@@ -85,10 +85,10 @@ FROM gabby.powerschool.attendance_clean_current_static att
 JOIN gabby.powerschool.cohort_identifiers_static co
   ON att.studentid = co.studentid 
  AND att.att_date BETWEEN co.entrydate AND co.exitdate
- AND att.db_name = co.db_name
+ AND att.[db_name] = co.[db_name]
 JOIN gabby.powerschool.attendance_code ac
   ON att.attendance_codeid = ac.id
- AND att.db_name = ac.db_name
+ AND att.[db_name] = ac.[db_name]
  AND ac.att_code LIKE 'A%'
 LEFT JOIN gabby.reporting.reporting_terms rt 
   ON co.schoolid = rt.schoolid
@@ -97,7 +97,7 @@ LEFT JOIN gabby.reporting.reporting_terms rt
 LEFT JOIN gabby.powerschool.cc
   ON att.studentid = cc.studentid 
  AND att.att_date BETWEEN cc.dateenrolled AND cc.dateleft
- AND att.db_name = cc.db_name
+ AND att.[db_name] = cc.[db_name]
  AND cc.course_number = 'HR'
 LEFT JOIN commlog cl
   ON co.student_number = cl.student_school_id
@@ -105,7 +105,7 @@ LEFT JOIN commlog cl
 LEFT JOIN ada
   ON co.studentid = ada.studentid
  AND co.yearid = ada.yearid
- AND co.db_name = ada.db_name
+ AND co.[db_name] = ada.[db_name]
 LEFT JOIN gabby.powerschool.gpa_detail gpa
   ON co.student_number = gpa.student_number
  AND co.academic_year = gpa.academic_year

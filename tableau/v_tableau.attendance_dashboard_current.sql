@@ -85,7 +85,7 @@ FROM
       AND mem.calendardate BETWEEN dt.[start_date] AND dt.end_date
       AND dt.identifier = 'RT'
       AND dt._fivetran_deleted = 0
-     LEFT JOIN powerschool.spenrollments_gen sp
+     LEFT JOIN powerschool.spenrollments_gen_static sp
        ON mem.studentid = sp.studentid
       AND mem.calendardate BETWEEN sp.enter_date AND sp.exit_date
       AND sp.specprog_name = 'Counseling Services'

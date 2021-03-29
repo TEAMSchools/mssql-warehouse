@@ -13,7 +13,7 @@ SELECT CONVERT(INT, s.id) AS studentid
       ,CONVERT(VARCHAR(1), s.track) AS track
       ,CONVERT(VARCHAR(25), ISNULL(f.dflt_att_mode_code, '-1')) AS dflt_att_mode_code
       ,CONVERT(VARCHAR(25), ISNULL(f.dflt_conversion_mode_code, '-1')) AS dflt_conversion_mode_code
-        
+
       ,CONVERT(INT, t.yearid) AS yearid
       ,CASE WHEN p1.[value] LIKE 'P' THEN 'Present' ELSE 'Absent' END AS att_calccntpresentabsent
       ,CONVERT(VARCHAR(1), p2.[value]) AS att_intervalduration
@@ -25,13 +25,13 @@ LEFT JOIN powerschool.terms t
  AND s.entrydate BETWEEN t.firstday AND t.lastday
  AND t.isyearrec = 1 
 LEFT JOIN powerschool.prefs p1
-  ON p1.schoolid = s.schoolid 
- AND p1.[name] = 'ATT_CalcCntPresentsAbsences' 
+  ON p1.schoolid = s.schoolid
  AND p1.yearid = t.yearid
+ AND p1.[name] = 'ATT_CalcCntPresentsAbsences'
 LEFT JOIN powerschool.prefs p2
-  ON p2.schoolid = s.schoolid 
- AND p2.[name] = 'ATT_IntervalDuration' 
+  ON p2.schoolid = s.schoolid
  AND p2.yearid = t.yearid
+ AND p2.[name] = 'ATT_IntervalDuration'
 WHERE s.entrydate IS NOT NULL
 
 UNION 
@@ -61,11 +61,11 @@ LEFT JOIN powerschool.terms t
  AND r.entrydate BETWEEN t.firstday AND t.lastday
  AND t.isyearrec = 1 
 LEFT JOIN powerschool.prefs p1
-  ON p1.schoolid = r.schoolid 
- AND p1.[name] = 'ATT_CalcCntPresentsAbsences' 
+  ON p1.schoolid = r.schoolid
  AND p1.yearid = t.yearid
+ AND p1.[name] = 'ATT_CalcCntPresentsAbsences'
 LEFT JOIN powerschool.prefs p2
-  ON p2.schoolid = r.schoolid 
- AND p2.[name] = 'ATT_IntervalDuration' 
+  ON p2.schoolid = r.schoolid
  AND p2.yearid = t.yearid
+ AND p2.[name] = 'ATT_IntervalDuration'
 WHERE r.entrydate IS NOT NULL

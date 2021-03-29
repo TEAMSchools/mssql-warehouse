@@ -1,30 +1,30 @@
 CREATE OR ALTER VIEW powerschool.teachers AS
 
-SELECT CONVERT(VARCHAR(125),u.lastfirst) AS lastfirst
+SELECT CONVERT(VARCHAR(125), u.lastfirst) AS lastfirst
       ,u.first_name
       ,u.middle_name
       ,u.last_name
-      ,u.photo      
+      ,u.photo
       ,u.title
       ,u.homeroom
       ,u.email_addr
-      ,u.password
-      ,u.numlogins      
+      ,u.[password]
+      ,u.numlogins
       ,u.allowloginstart
       ,u.allowloginend
-      ,u.psaccess      
+      ,u.psaccess
       ,u.homepage
       ,u.loginid
-      ,u.defaultstudscrn      
+      ,u.defaultstudscrn
       ,u.groupvalue
-      ,CONVERT(VARCHAR(25),u.teachernumber) AS teachernumber
-      ,u.lunch_id      
+      ,CONVERT(VARCHAR(25), u.teachernumber) AS teachernumber
+      ,u.lunch_id
       ,u.ssn
       ,u.home_phone
       ,u.school_phone
       ,u.street
       ,u.city
-      ,u.state
+      ,u.[state]
       ,u.zip
       ,u.periodsavail
       ,u.powergradepw
@@ -35,10 +35,10 @@ SELECT CONVERT(VARCHAR(125),u.lastfirst) AS lastfirst
       ,u.teacherloginip
       ,u.supportcontact
       ,u.wm_tier
-      ,u.wm_createtime      
-      ,u.wm_exclude      
+      ,u.wm_createtime
+      ,u.wm_exclude
       ,u.ethnicity
-      ,u.preferredname      
+      ,u.preferredname
       ,u.staffpers_guid
       ,u.adminldapenabled
       ,u.teacherldapenabled
@@ -47,35 +47,35 @@ SELECT CONVERT(VARCHAR(125),u.lastfirst) AS lastfirst
       ,u.gradebooktype
       ,u.fedethnicity
       ,u.fedracedecline
-      ,CONVERT(INT,u.homeschoolid) AS homeschoolid
+      ,CONVERT(INT, u.homeschoolid) AS homeschoolid
       ,u.ptaccess
 
       ,s.dcid
-      ,CONVERT(INT,s.id) AS id
-      ,CONVERT(INT,s.schoolid) AS schoolid
-      ,s.status
-      ,s.noofcurclasses      
-      ,s.log      
-      ,s.staffstatus      
-      ,s.sched_classroom      
+      ,CONVERT(INT, s.id) AS id
+      ,CONVERT(INT, s.schoolid) AS schoolid
+      ,s.[status]
+      ,s.noofcurclasses
+      ,s.[log]
+      ,s.staffstatus
+      ,s.sched_classroom
       ,s.sched_department
       ,s.sched_maximumcourses
       ,s.sched_maximumduty
       ,s.sched_maximumfree
       ,s.sched_totalcourses
       ,s.sched_maximumconsecutive
-      ,s.sched_isteacherfree      
+      ,s.sched_isteacherfree
       ,s.sched_teachermoreoneschool
       ,s.sched_substitute
-      ,s.sched_scheduled      
+      ,s.sched_scheduled
       ,s.sched_usebuilding
-      ,s.sched_usehouse      
+      ,s.sched_usehouse
       ,s.sched_lunch
       ,s.sched_maxpers
-      ,s.sched_maxpreps      
+      ,s.sched_maxpreps
       ,s.sched_housecode
-      ,s.users_dcid      
-      
+      ,s.users_dcid
+
       --,s.classpua
       --,s.custom
       --,s.balance1      

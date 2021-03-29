@@ -16,44 +16,44 @@ SELECT studentid
       ,fteid
       ,track
       ,yearid
-      ,academic_year      
+      ,academic_year
       ,rn_year
       ,rn_school
       ,rn_undergrad
-      ,rn_all      
+      ,rn_all
       ,prev_grade_level
-      ,is_retained_year      
+      ,is_retained_year
       ,MAX(is_retained_year) OVER(PARTITION BY studentid) AS is_retained_ever
       ,MAX(year_in_network) OVER(PARTITION BY studentid, academic_year) AS year_in_network
       ,MAX(year_in_school) OVER(PARTITION BY studentid, academic_year) AS year_in_school
       ,MIN(CASE WHEN year_in_network = 1 THEN schoolid END) OVER(PARTITION BY studentid) AS entry_schoolid
-      ,MIN(CASE WHEN year_in_network = 1 THEN grade_level END) OVER(PARTITION BY studentid) AS entry_grade_level      
-      ,CASE 
-        WHEN DB_NAME() = 'kippcamden' THEN 'KCNA' 
-        WHEN DB_NAME() = 'kippnewark' THEN 'TEAM' 
-        WHEN DB_NAME() = 'kippmiami' THEN 'KMS' 
+      ,MIN(CASE WHEN year_in_network = 1 THEN grade_level END) OVER(PARTITION BY studentid) AS entry_grade_level
+      ,CASE
+        WHEN DB_NAME() = 'kippcamden' THEN 'KCNA'
+        WHEN DB_NAME() = 'kippnewark' THEN 'TEAM'
+        WHEN DB_NAME() = 'kippmiami' THEN 'KMS'
        END AS region
-      ,CASE        
+      ,CASE
         WHEN grade_level = 99 THEN MAX(CASE WHEN exitcode = 'G1' THEN yearid + 2003 + (-1 * grade_level) END) OVER(PARTITION BY studentid)
         WHEN grade_level >= 9 THEN MAX(CASE WHEN year_in_school = 1 THEN yearid + 2003 + (-1 * grade_level) END) OVER(PARTITION BY studentid, schoolid)
         ELSE yearid + 2003 + (-1 * grade_level)
-       END AS cohort      
+       END AS cohort
       ,CASE 
         WHEN grade_level = 99 THEN 'Graduated'
-        WHEN MAX(year_in_network) OVER(PARTITION BY studentid, academic_year) = 1 THEN 'New'        
-        WHEN prev_grade_level IS NULL THEN 'New'        
+        WHEN MAX(year_in_network) OVER(PARTITION BY studentid, academic_year) = 1 THEN 'New'
+        WHEN prev_grade_level IS NULL THEN 'New'
         WHEN prev_grade_level < grade_level THEN 'Promoted'
         WHEN prev_grade_level = grade_level THEN 'Retained'
-        WHEN prev_grade_level > grade_level THEN 'Demoted'                
+        WHEN prev_grade_level > grade_level THEN 'Demoted'
        END AS boy_status
       ,CASE 
         WHEN academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() THEN NULL
         WHEN exitcode = 'G1' THEN 'Graduated'
-        WHEN exitcode LIKE 'T%' THEN 'Transferred'        
+        WHEN exitcode LIKE 'T%' THEN 'Transferred'
         WHEN prev_grade_level < grade_level THEN 'Promoted'
         WHEN prev_grade_level = grade_level THEN 'Retained'
         WHEN prev_grade_level > grade_level THEN 'Demoted'
-       END AS eoy_status      
+       END AS eoy_status
 FROM
     (
      SELECT studentid
@@ -102,22 +102,22 @@ FROM
             END AS is_retained_year
      FROM
          (
-          SELECT sub.studentid      
+          SELECT sub.studentid
                 ,sub.studentsdcid
                 ,sub.student_number
-                ,sub.schoolid      
-                ,sub.grade_level      
+                ,sub.schoolid
+                ,sub.grade_level
                 ,sub.entrydate
                 ,sub.exitdate
                 ,sub.entrycode
-                ,sub.exitcode      
+                ,sub.exitcode
                 ,sub.exit_code_kf
                 ,sub.exit_code_ts
                 ,sub.exitcomment
                 ,sub.lunchstatus
                 ,sub.fteid
                 ,sub.track
-                ,sub.yearid                
+                ,sub.yearid
                 ,(sub.yearid + 1990) AS academic_year
                 ,LAG(yearid, 1) OVER(PARTITION BY sub.studentid ORDER BY sub.yearid ASC) AS prev_yearid
                 ,LAG(grade_level, 1) OVER(PARTITION BY sub.studentid ORDER BY sub.yearid ASC) AS prev_grade_level
@@ -137,21 +137,21 @@ FROM
           FROM
               (
                /* terminal (current & transfers) */
-               SELECT CONVERT(INT,s.id) AS studentid
-                     ,CONVERT(INT,s.dcid) AS studentsdcid
-                     ,CONVERT(INT,s.student_number) AS student_number
-                     ,CONVERT(INT,s.grade_level) AS grade_level
-                     ,CONVERT(INT,s.schoolid) AS schoolid
+               SELECT CONVERT(INT, s.id) AS studentid
+                     ,CONVERT(INT, s.dcid) AS studentsdcid
+                     ,CONVERT(INT, s.student_number) AS student_number
+                     ,CONVERT(INT, s.grade_level) AS grade_level
+                     ,CONVERT(INT, s.schoolid) AS schoolid
                      ,s.entrydate
                      ,s.exitdate
-                     ,CONVERT(VARCHAR,s.entrycode) AS entrycode
-                     ,CONVERT(VARCHAR,s.exitcode) AS exitcode
-                     ,CONVERT(VARCHAR(250),s.exitcomment) AS exitcomment
-                     ,CONVERT(VARCHAR,s.lunchstatus) AS lunchstatus
-                     ,CONVERT(INT,s.fteid) AS fteid
-                     ,CONVERT(VARCHAR(1),s.track) AS track
+                     ,CONVERT(VARCHAR, s.entrycode) AS entrycode
+                     ,CONVERT(VARCHAR, s.exitcode) AS exitcode
+                     ,CONVERT(VARCHAR(250), s.exitcomment) AS exitcomment
+                     ,CONVERT(VARCHAR, s.lunchstatus) AS lunchstatus
+                     ,CONVERT(INT, s.fteid) AS fteid
+                     ,CONVERT(VARCHAR(1), s.track) AS track
 
-                     ,CONVERT(INT,terms.yearid) AS yearid
+                     ,CONVERT(INT, terms.yearid) AS yearid
 
                      ,x1.exit_code AS exit_code_kf
 
@@ -173,11 +173,11 @@ FROM
                UNION ALL
 
                /* terminal (grads) */
-               SELECT CONVERT(INT,s.id) AS studentid
-                     ,CONVERT(INT,s.dcid) AS studentsdcid
-                     ,CONVERT(INT,s.student_number) AS student_number
-                     ,CONVERT(INT,s.grade_level) AS grade_level
-                     ,CONVERT(INT,s.schoolid) AS schoolid
+               SELECT CONVERT(INT, s.id) AS studentid
+                     ,CONVERT(INT, s.dcid) AS studentsdcid
+                     ,CONVERT(INT, s.student_number) AS student_number
+                     ,CONVERT(INT, s.grade_level) AS grade_level
+                     ,CONVERT(INT, s.schoolid) AS schoolid
                      ,NULL AS entrydate
                      ,NULL AS exitdate
                      ,NULL AS entrycode
@@ -187,7 +187,7 @@ FROM
                      ,NULL AS fteid
                      ,NULL AS track
 
-                     ,CONVERT(INT,terms.yearid) AS yearid
+                     ,CONVERT(INT, terms.yearid) AS yearid
 
                      ,NULL AS exit_code_kf
                      ,NULL AS exit_code_ts
@@ -201,21 +201,21 @@ FROM
                UNION ALL
 
                /* re-enrollments */
-               SELECT CONVERT(INT,re.studentid) AS studentid
-                     ,CONVERT(INT,s.dcid) AS studentsdcid
-                     ,CONVERT(INT,s.student_number) AS student_number
-                     ,CONVERT(INT,re.grade_level) AS grade_level
-                     ,CONVERT(INT,re.schoolid) AS schoolid
+               SELECT CONVERT(INT, re.studentid) AS studentid
+                     ,CONVERT(INT, s.dcid) AS studentsdcid
+                     ,CONVERT(INT, s.student_number) AS student_number
+                     ,CONVERT(INT, re.grade_level) AS grade_level
+                     ,CONVERT(INT, re.schoolid) AS schoolid
                      ,re.entrydate
                      ,re.exitdate
-                     ,CONVERT(VARCHAR,re.entrycode) AS entrycode
-                     ,CONVERT(VARCHAR,re.exitcode) AS exitcode
-                     ,CONVERT(VARCHAR(250),re.exitcomment) AS exitcomment
-                     ,CONVERT(VARCHAR,re.lunchstatus) AS lunchstatus
-                     ,CONVERT(INT,re.fteid) AS fteid
-                     ,CONVERT(VARCHAR(1),re.track) AS track
-                
-                     ,CONVERT(INT,terms.yearid) AS yearid
+                     ,CONVERT(VARCHAR, re.entrycode) AS entrycode
+                     ,CONVERT(VARCHAR, re.exitcode) AS exitcode
+                     ,CONVERT(VARCHAR(250), re.exitcomment) AS exitcomment
+                     ,CONVERT(VARCHAR, re.lunchstatus) AS lunchstatus
+                     ,CONVERT(INT, re.fteid) AS fteid
+                     ,CONVERT(VARCHAR(1), re.track) AS track
+
+                     ,CONVERT(INT, terms.yearid) AS yearid
 
                      ,x1.exit_code AS exit_code_kf
 
