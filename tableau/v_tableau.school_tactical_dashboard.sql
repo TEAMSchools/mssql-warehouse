@@ -18,9 +18,9 @@ WITH roster AS (
         ,co.enroll_status
         ,co.[db_name]
   FROM gabby.powerschool.cohort_identifiers_static co
-  WHERE co.reporting_schoolid NOT IN (999999, 5173)
+  WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
     AND co.rn_year = 1
-    AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+    AND co.grade_level <> 99
  )
 
 ,demographics AS (
@@ -29,7 +29,6 @@ WITH roster AS (
         ,u.school_level
         ,u.reporting_schoolid
         ,u.grade_level
-        
         ,u.field
         ,u.[value]
   FROM
@@ -39,7 +38,6 @@ WITH roster AS (
              ,ISNULL(sub.school_level, 'All') AS school_level
              ,ISNULL(sub.reporting_schoolid, 'All') AS reporting_schoolid
              ,ISNULL(sub.grade_level, 'All') AS grade_level
-
              ,AVG(CAST(sub.is_fr_lunch AS FLOAT)) AS pct_fr_lunch
              ,SUM(CAST(sub.is_attrition_week AS FLOAT)) AS n_attrition_week
        FROM
@@ -76,7 +74,6 @@ WITH roster AS (
         ,u.grade_level
         ,u.subject_area
         ,u.module_number
-      
         ,u.field
         ,u.[value]
   FROM
@@ -84,12 +81,10 @@ WITH roster AS (
        SELECT sub.academic_year
              ,sub.subject_area
              ,sub.module_number
-
              ,ISNULL(sub.region, 'All') AS region
              ,ISNULL(sub.school_level, 'All') AS school_level
              ,ISNULL(sub.reporting_schoolid, 'All') AS reporting_schoolid
              ,ISNULL(sub.grade_level, 'All') AS grade_level
-      
              ,AVG(sub.is_target) AS pct_target
              ,AVG(sub.is_approaching) AS pct_approaching
              ,AVG(sub.is_below) AS pct_below
@@ -122,7 +117,7 @@ WITH roster AS (
                     WHEN a.performance_band_number <= 2 THEN 1.0 
                     ELSE 0.0 
                    END AS is_below
-           
+
                   ,CASE 
                     WHEN r.iep_status = 'No IEP' THEN NULL
                     WHEN a.performance_band_number IS NULL THEN NULL
@@ -296,13 +291,13 @@ WITH roster AS (
                ELSE 0 
               END AS FLOAT) AS is_oss_iep
   FROM roster r
-  JOIN gabby.powerschool.ps_adaadm_daily_ctod ada
+  JOIN gabby.powerschool.ps_adaadm_daily_ctod_current_static ada
     ON r.studentid = ada.studentid
    AND r.yearid = ada.yearid
    AND r.[db_name] = ada.[db_name]
    AND ada.membershipvalue > 0
    AND ada.calendardate < CAST(SYSDATETIME() AS DATE)
-  LEFT JOIN gabby.powerschool.ps_attendance_daily att
+  LEFT JOIN gabby.powerschool.ps_attendance_daily_current_static att
     ON r.studentid = att.studentid
    AND r.[db_name] = att.[db_name]
    AND ada.calendardate = att.att_date 
@@ -322,7 +317,6 @@ WITH roster AS (
         ,u.school_level
         ,u.reporting_schoolid
         ,u.grade_level
-
         ,u.field
         ,u.[value]
   FROM
@@ -332,14 +326,12 @@ WITH roster AS (
              ,ISNULL(sub.school_level, 'All') AS school_level
              ,ISNULL(sub.reporting_schoolid, 'All') AS reporting_schoolid
              ,ISNULL(sub.grade_level, 'All') AS grade_level
-            
              ,SUM(sub.n_present) / SUM(sub.n_membership) AS pct_ada             
              ,(SUM(sub.n_present) - SUM(sub.n_tardy)) / SUM(sub.n_membership) AS pct_ontime             
              ,AVG(sub.is_iss) AS pct_iss
              ,AVG(sub.is_oss) AS pct_oss
              ,AVG(sub.is_iss_iep) AS pct_iss_iep
              ,AVG(sub.is_oss_iep) AS pct_oss_iep
-
              ,SUM(sub.n_present_week) / SUM(sub.n_membership_week) AS pct_ada_week
              ,(SUM(sub.n_present_week) - SUM(sub.n_tardy_week)) / SUM(sub.n_membership_week) AS pct_ontime_week
              ,CAST(COUNT(DISTINCT CASE WHEN sub.is_iss_week >= 1 THEN sub.student_number END) AS FLOAT) AS n_iss_week
@@ -370,7 +362,6 @@ WITH roster AS (
         ,ISNULL(sub.school_level, 'All') AS school_level
         ,ISNULL(sub.reporting_schoolid, 'All') AS reporting_schoolid
         ,ISNULL(sub.grade_level, 'All') AS grade_level
-
         ,'pct_chronic_absentee' AS field
         ,AVG(sub.is_chronic_absentee) AS [value]
   FROM
@@ -381,7 +372,6 @@ WITH roster AS (
              ,sa.school_level
              ,sa.reporting_schoolid
              ,sa.grade_level
-      
              ,CAST(CASE WHEN (sa.n_present / sa.n_membership) < 0.895 THEN 1 ELSE 0 END AS FLOAT) AS is_chronic_absentee
        FROM student_attendance sa
        WHERE sa.enroll_status = 0
@@ -450,7 +440,6 @@ WITH roster AS (
         ,ISNULL(sub.school_level, 'All') AS school_level
         ,ISNULL(sub.reporting_schoolid, 'All') AS reporting_schoolid
         ,ISNULL(sub.grade_level, 'All') AS grade_level
-      
         ,'pct_attrition' AS field
         ,AVG(sub.is_attrition) AS [value]
   FROM
@@ -495,7 +484,6 @@ WITH roster AS (
         ,u.school_level
         ,u.reporting_schoolid
         ,u.grade_level
-      
         ,u.field
         ,u.[value]
   FROM
@@ -505,7 +493,6 @@ WITH roster AS (
              ,ISNULL(sub.school_level, 'All') AS school_level
              ,ISNULL(sub.reporting_schoolid, 'All') AS reporting_schoolid
              ,ISNULL(sub.grade_level, 'All') AS grade_level
-
              ,AVG(sub.gpa_ge_3) AS pct_gpa_ge_3
              ,AVG(sub.gpa_ge_2) AS pct_gpa_ge_2
        FROM
@@ -516,7 +503,7 @@ WITH roster AS (
                   ,r.school_level
                   ,r.reporting_schoolid
                   ,r.grade_level
-      
+
                   ,CASE WHEN gpa.gpa_y1 >= 3.0 THEN 1.0 ELSE 0.0 END AS gpa_ge_3
                   ,CASE WHEN gpa.gpa_y1 >= 2.0 THEN 1.0 ELSE 0.0 END AS gpa_ge_2
             FROM roster r
@@ -524,6 +511,7 @@ WITH roster AS (
               ON r.student_number = gpa.student_number
              AND r.academic_year = gpa.academic_year
              AND r.reporting_schoolid = gpa.schoolid
+             AND r.[db_name] = gpa.[db_name]
              AND gpa.is_curterm = 1
            ) sub
        GROUP BY sub.academic_year
@@ -620,7 +608,6 @@ WITH roster AS (
              ,ISNULL(sub.school_level, 'All') AS school_level
              ,ISNULL(sub.reporting_schoolid, 'All') AS reporting_schoolid
              ,ISNULL(sub.grade_level, 'All') AS grade_level
-      
              ,AVG(sub.is_on_gradelevel) AS pct_on_gradelevel
              ,AVG(sub.moved_reading_level) AS pct_moved_reading_level
        FROM
@@ -631,9 +618,9 @@ WITH roster AS (
                   ,r.school_level
                   ,r.reporting_schoolid
                   ,r.grade_level      
-      
+
                   ,achv.reporting_term                        
-      
+
                   ,CONVERT(FLOAT, achv.met_goal) AS is_on_gradelevel
                   ,CASE WHEN achv.reporting_term = 'LIT1' THEN NULL ELSE CONVERT(FLOAT, achv.moved_levels) END AS moved_reading_level
             FROM roster r
@@ -661,8 +648,7 @@ WITH roster AS (
         ,ISNULL(subject_legal_entity_name, 'All') AS region        
         ,ISNULL(subject_primary_site_school_level, 'All') AS school_level
         ,ISNULL(subject_primary_site_schoolid, 'All') AS reporting_schoolid
-        ,'All' AS grade_level      
-      
+        ,'All' AS grade_level
         ,'avg_survey_weighted_response_value' AS field
         ,AVG(avg_survey_weighted_response_value) AS [value]
   FROM
@@ -673,7 +659,6 @@ WITH roster AS (
              ,subject_primary_site_school_level
              ,CONVERT(VARCHAR, subject_primary_site_schoolid) AS subject_primary_site_schoolid            
              ,subject_username
-
              ,SUM(total_weighted_response_value) / SUM(total_response_weight) AS avg_survey_weighted_response_value
        FROM gabby.surveys.self_and_others_survey_rollup
        WHERE subject_primary_site_school_level IS NOT NULL
@@ -696,8 +681,7 @@ WITH roster AS (
         ,ISNULL(subject_legal_entity_name, 'All') AS region        
         ,ISNULL(subject_primary_site_school_level, 'All') AS school_level
         ,ISNULL(subject_primary_site_schoolid, 'All') AS reporting_schoolid
-        ,'All' AS grade_level      
-      
+        ,'All' AS grade_level            
         ,'avg_survey_response_value' AS field
         ,AVG(sub.avg_survey_response_value) AS [value]
   FROM
@@ -708,7 +692,6 @@ WITH roster AS (
              ,subject_primary_site_school_level
              ,CONVERT(VARCHAR, subject_primary_site_schoolid) AS subject_primary_site_schoolid            
              ,subject_username
-
              ,AVG(avg_response_value) AS avg_survey_response_value
        FROM gabby.surveys.manager_survey_rollup
        WHERE subject_primary_site_school_level IS NOT NULL
