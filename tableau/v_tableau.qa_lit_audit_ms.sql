@@ -116,10 +116,10 @@ WITH fp_long AS (
    AND rt.alt_name = hard.test_round
    AND hard.rn = 1
    AND hard.benchmark_level = 'DNA - Hard'
-  WHERE co.rn_year = 1
-    AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-    AND co.school_level = 'MS'
+  WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+    AND co.rn_year = 1
     AND co.enroll_status = 0
+    AND co.school_level = 'MS'
  )
 
 ,audits_long AS (

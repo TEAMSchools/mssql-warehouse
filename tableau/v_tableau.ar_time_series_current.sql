@@ -165,6 +165,7 @@ FROM
           LEFT JOIN gabby.powerschool.course_enrollments_static enr 
             ON co.student_number = enr.student_number
            AND co.academic_year = enr.academic_year
+           AND co.[db_name] = enr.[db_name]
            AND enr.credittype = 'ENG'
            AND enr.course_enroll_status = 0
            AND enr.section_enroll_status = 0
@@ -173,6 +174,7 @@ FROM
             ON co.student_number = hr.student_number
            AND co.academic_year = hr.academic_year
            AND co.schoolid = hr.schoolid
+           AND co.[db_name] = hr.[db_name]
            AND hr.course_number = 'HR'
            AND hr.course_enroll_status = 0
            AND hr.section_enroll_status = 0
