@@ -30,7 +30,7 @@ USING MySource
   AND MySource.school_level = MyTarget.school_level
   AND MySource.reporting_schoolid = MyTarget.reporting_schoolid
   AND MySource.grade_level = MyTarget.grade_level
-  AND ISNULL(MySource.subject_area, '') = ISNULL(MyTarget.subject_area, '')
+  AND ISNULL(MySource.subject_area, '') = ISNULL(MyTarget.subject_area, '') COLLATE Latin1_General_BIN
   AND MySource.term_name = MyTarget.term_name
   AND MySource.domain = MyTarget.domain
   AND ISNULL(MySource.subdomain, '') = ISNULL(MyTarget.subdomain, '')

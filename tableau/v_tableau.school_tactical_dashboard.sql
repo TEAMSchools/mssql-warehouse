@@ -9,7 +9,7 @@ WITH roster AS (
         ,co.academic_year
         ,co.yearid
         ,co.region
-        ,CONVERT(VARCHAR(5), co.school_level) AS school_level
+        ,co.school_level
         ,CONVERT(VARCHAR(25), co.reporting_schoolid) AS reporting_schoolid
         ,CONVERT(VARCHAR(5), co.grade_level) AS grade_level
         ,co.iep_status
@@ -162,81 +162,81 @@ WITH roster AS (
    ) u
  )
 
-,parcc AS (
-  SELECT u.academic_year
-        ,u.region
-        ,u.school_level
-        ,u.reporting_schoolid
-        ,u.grade_level
-        ,u.[subject]
+--,parcc AS (
+--  SELECT u.academic_year
+--        ,u.region
+--        ,u.school_level
+--        ,u.reporting_schoolid
+--        ,u.grade_level
+--        ,u.[subject]
       
-        ,u.field
-        ,u.[value]
-  FROM
-      (
-       SELECT sub.academic_year
-             ,sub.[subject]
+--        ,u.field
+--        ,u.[value]
+--  FROM
+--      (
+--       SELECT sub.academic_year
+--             ,sub.[subject]
 
-             ,ISNULL(sub.region, 'All') AS region
-             ,ISNULL(sub.school_level, 'All') AS school_level
-             ,ISNULL(sub.reporting_schoolid, 'All') AS reporting_schoolid
-             ,ISNULL(sub.grade_level, 'All') AS grade_level
+--             ,ISNULL(sub.region, 'All') AS region
+--             ,ISNULL(sub.school_level, 'All') AS school_level
+--             ,ISNULL(sub.reporting_schoolid, 'All') AS reporting_schoolid
+--             ,ISNULL(sub.grade_level, 'All') AS grade_level
       
-             ,AVG(sub.is_target) AS pct_target
-             ,AVG(sub.is_approaching) AS pct_approaching
-             ,AVG(sub.is_below) AS pct_below
-             ,AVG(sub.is_target_iep) AS pct_target_iep
-             ,AVG(sub.is_approaching_iep) AS pct_approaching_iep
-             ,AVG(sub.is_below_iep) AS pct_below_iep
-       FROM
-           (
-            SELECT r.student_number
-                  ,r.academic_year
-                  ,r.region
-                  ,r.school_level
-                  ,r.reporting_schoolid
-                  ,r.grade_level
+--             ,AVG(sub.is_target) AS pct_target
+--             ,AVG(sub.is_approaching) AS pct_approaching
+--             ,AVG(sub.is_below) AS pct_below
+--             ,AVG(sub.is_target_iep) AS pct_target_iep
+--             ,AVG(sub.is_approaching_iep) AS pct_approaching_iep
+--             ,AVG(sub.is_below_iep) AS pct_below_iep
+--       FROM
+--           (
+--            SELECT r.student_number
+--                  ,r.academic_year
+--                  ,r.region
+--                  ,r.school_level
+--                  ,r.reporting_schoolid
+--                  ,r.grade_level
 
-                  ,p.[subject]
-                  ,CASE WHEN p.test_performance_level >= 4 THEN 1.0 ELSE 0.0 END AS is_target
-                  ,CASE WHEN p.test_performance_level = 3 THEN 1.0 ELSE 0.0 END AS is_approaching
-                  ,CASE WHEN p.test_performance_level <= 2 THEN 1.0 ELSE 0.0 END AS is_below
+--                  ,p.[subject]
+--                  ,CASE WHEN p.test_performance_level >= 4 THEN 1.0 ELSE 0.0 END AS is_target
+--                  ,CASE WHEN p.test_performance_level = 3 THEN 1.0 ELSE 0.0 END AS is_approaching
+--                  ,CASE WHEN p.test_performance_level <= 2 THEN 1.0 ELSE 0.0 END AS is_below
 
-                  ,CASE 
-                    WHEN r.iep_status = 'No IEP' THEN NULL
-                    WHEN p.test_performance_level >= 4 THEN 1.0 
-                    ELSE 0.0 
-                   END AS is_target_iep
-                  ,CASE 
-                    WHEN r.iep_status = 'No IEP' THEN NULL
-                    WHEN p.test_performance_level = 3 THEN 1.0 
-                    ELSE 0.0 
-                   END AS is_approaching_iep
-                  ,CASE 
-                    WHEN r.iep_status = 'No IEP' THEN NULL
-                    WHEN p.test_performance_level <= 2 THEN 1.0 
-                    ELSE 0.0 
-                   END AS is_below_iep
-            FROM roster r
-            JOIN gabby.parcc.summative_record_file_clean p
-              ON r.student_number = p.local_student_identifier
-             AND r.academic_year = p.academic_year
-           ) sub
-       GROUP BY sub.academic_year
-               ,sub.[subject]
-               ,ROLLUP(sub.region, sub.reporting_schoolid)
-               ,CUBE(sub.school_level, sub.grade_level)
-      ) sub
-  UNPIVOT (
-    [value]
-    FOR field IN (sub.pct_target
-                 ,sub.pct_approaching
-                 ,sub.pct_below
-                 ,sub.pct_target_iep
-                 ,sub.pct_approaching_iep
-                 ,sub.pct_below_iep) 
-   ) u
- )
+--                  ,CASE 
+--                    WHEN r.iep_status = 'No IEP' THEN NULL
+--                    WHEN p.test_performance_level >= 4 THEN 1.0 
+--                    ELSE 0.0 
+--                   END AS is_target_iep
+--                  ,CASE 
+--                    WHEN r.iep_status = 'No IEP' THEN NULL
+--                    WHEN p.test_performance_level = 3 THEN 1.0 
+--                    ELSE 0.0 
+--                   END AS is_approaching_iep
+--                  ,CASE 
+--                    WHEN r.iep_status = 'No IEP' THEN NULL
+--                    WHEN p.test_performance_level <= 2 THEN 1.0 
+--                    ELSE 0.0 
+--                   END AS is_below_iep
+--            FROM roster r
+--            JOIN gabby.parcc.summative_record_file_clean p
+--              ON r.student_number = p.local_student_identifier
+--             AND r.academic_year = p.academic_year
+--           ) sub
+--       GROUP BY sub.academic_year
+--               ,sub.[subject]
+--               ,ROLLUP(sub.region, sub.reporting_schoolid)
+--               ,CUBE(sub.school_level, sub.grade_level)
+--      ) sub
+--  UNPIVOT (
+--    [value]
+--    FOR field IN (sub.pct_target
+--                 ,sub.pct_approaching
+--                 ,sub.pct_below
+--                 ,sub.pct_target_iep
+--                 ,sub.pct_approaching_iep
+--                 ,sub.pct_below_iep) 
+--   ) u
+-- )
 
 ,student_attendance AS (
   SELECT r.student_number
@@ -295,7 +295,7 @@ WITH roster AS (
     ON r.studentid = ada.studentid
    AND r.yearid = ada.yearid
    AND r.[db_name] = ada.[db_name]
-   AND ada.membershipvalue > 0
+   AND ada.membershipvalue = 1
    AND ada.calendardate < CAST(SYSDATETIME() AS DATE)
   LEFT JOIN gabby.powerschool.ps_attendance_daily_current_static att
     ON r.studentid = att.studentid
@@ -660,7 +660,7 @@ WITH roster AS (
              ,CONVERT(VARCHAR, subject_primary_site_schoolid) AS subject_primary_site_schoolid            
              ,subject_username
              ,SUM(total_weighted_response_value) / SUM(total_response_weight) AS avg_survey_weighted_response_value
-       FROM gabby.surveys.self_and_others_survey_rollup
+       FROM gabby.surveys.self_and_others_survey_rollup_static
        WHERE subject_primary_site_school_level IS NOT NULL
        GROUP BY academic_year
                ,reporting_term
@@ -740,21 +740,21 @@ FROM modules m
 
 UNION ALL
 
-SELECT p.academic_year
-      ,p.region
-      ,p.school_level
-      ,p.reporting_schoolid
-      ,p.grade_level
-      ,p.subject COLLATE Latin1_General_BIN AS subject_area
-      ,'Y1' AS term_name
+--SELECT p.academic_year
+--      ,p.region
+--      ,p.school_level
+--      ,p.reporting_schoolid
+--      ,p.grade_level
+--      ,p.subject COLLATE Latin1_General_BIN AS subject_area
+--      ,'Y1' AS term_name
       
-      ,'Assessments' AS domain
-      ,'PARCC' AS subdomain
-      ,p.field
-      ,p.[value]
-FROM parcc p
+--      ,'Assessments' AS domain
+--      ,'PARCC' AS subdomain
+--      ,p.field
+--      ,p.[value]
+--FROM parcc p
 
-UNION ALL
+--UNION ALL
 
 SELECT a.academic_year
       ,a.region
@@ -789,7 +789,7 @@ SELECT a.academic_year
       ,a.[value]      
 FROM chronic_absentee a
 
---UNION ALL
+UNION ALL
 
 --SELECT sa.academic_year
 --      ,sa.region
@@ -805,7 +805,7 @@ FROM chronic_absentee a
 --      ,sa.[value]      
 --FROM staff_attrition sa
 
-UNION ALL
+--UNION ALL
 
 SELECT sta.academic_year
       ,sta.region
@@ -837,7 +837,7 @@ SELECT gpa.academic_year
       ,gpa.[value]      
 FROM gpa
 
---UNION ALL
+UNION ALL
 
 --SELECT sta.academic_year
 --      ,sta.region
@@ -853,7 +853,7 @@ FROM gpa
 --      ,sta.[value]
 --FROM staff_attendance sta
 
-UNION ALL
+--UNION ALL
 
 SELECT lit.academic_year      
       ,lit.region
