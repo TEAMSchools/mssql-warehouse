@@ -32,10 +32,7 @@ SELECT LOWER(sub.samaccountname) AS [Login]
       ,COALESCE(x.coupa_school_name
                ,CASE
                  WHEN sn.coupa_school_name = '<Use PhysicalDeliveryOfficeName>' AND sub.physicaldeliveryofficename IN ('KIPP Cooper Norcross High (KCNA)', 'KIPP Cooper Norcross High School') THEN 'KCNHS'
-                 WHEN sn.coupa_school_name = '<Use PhysicalDeliveryOfficeName>' AND sub.physicaldeliveryofficename = 'KIPP Lanning Square Middle' THEN 'Lanning Square Middle'
-                 WHEN sn.coupa_school_name = '<Use PhysicalDeliveryOfficeName>' AND sub.physicaldeliveryofficename = 'KIPP Lanning Square Primary' THEN 'Lanning Square Primary'
-                 WHEN sn.coupa_school_name = '<Use PhysicalDeliveryOfficeName>' AND sub.physicaldeliveryofficename = 'KIPP Whittier Middle' THEN 'Whittier Middle'
-                 WHEN sn.coupa_school_name = '<Use PhysicalDeliveryOfficeName>' THEN sub.physicaldeliveryofficename
+                 WHEN sn.coupa_school_name = '<Use PhysicalDeliveryOfficeName>' THEN REPLACE(sub.physicaldeliveryofficename, 'KIPP ', '')
                  ELSE sn.coupa_school_name
                 END
                ,sub.school_name) AS [School Name] -- override > lookup table (content group/department) > coupa
