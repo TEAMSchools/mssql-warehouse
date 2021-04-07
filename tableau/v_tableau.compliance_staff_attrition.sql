@@ -160,8 +160,8 @@ SELECT d.employee_number AS df_employee_number
         ELSE 0
        END AS is_attrition
       ,CASE
-        WHEN COALESCE(d.rehire_date, d.original_hire_date) > COALESCE(d.academic_year_exitdate_next, d.termination_date)
-          THEN ROUND(DATEDIFF(DAY, d.original_hire_date, COALESCE(d.academic_year_exitdate_next, d.termination_date)) / 365, 0)
-        ELSE ROUND(DATEDIFF(DAY, COALESCE(d.rehire_date, d.original_hire_date), COALESCE(d.academic_year_exitdate_next, d.termination_date)) / 365, 0)
+        WHEN COALESCE(d.rehire_date, d.original_hire_date) > COALESCE(d.academic_year_exitdate_next, d.termination_date,GETDATE())
+          THEN ROUND(DATEDIFF(DAY, d.original_hire_date, COALESCE(d.academic_year_exitdate_next, d.termination_date,GETDATE())) / 365, 0)
+        ELSE ROUND(DATEDIFF(DAY, COALESCE(d.rehire_date, d.original_hire_date), COALESCE(d.academic_year_exitdate_next, d.termination_date,GETDATE())) / 365, 0)
        END AS years_at_kipp
 FROM scaffold d
