@@ -109,6 +109,6 @@ LEFT JOIN gabby.coupa.school_name_lookup sn
 LEFT JOIN gabby.coupa.school_name_lookup sn2
   ON sub.legal_entity_abbreviation = sn2.entity_abbv
  AND sub.home_department = sn2.home_department
- AND sn2.job_title = 'All'
+ AND sn2.job_title = 'Default'
 LEFT JOIN gabby.coupa.user_exceptions x
   ON sub.employee_number = x.employee_number
