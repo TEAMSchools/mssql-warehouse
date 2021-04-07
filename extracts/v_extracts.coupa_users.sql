@@ -35,7 +35,11 @@ SELECT LOWER(sub.samaccountname) AS [Login]
                  WHEN sn.coupa_school_name = '<Use PhysicalDeliveryOfficeName>' THEN REPLACE(sub.physicaldeliveryofficename, 'KIPP ', '')
                  ELSE sn.coupa_school_name
                 END
-               ,sub.school_name) AS [School Name] -- override > lookup table (content group/department) > coupa
+               ,CASE
+                 WHEN sn2.coupa_school_name = '<Use PhysicalDeliveryOfficeName>' AND sub.physicaldeliveryofficename IN ('KIPP Cooper Norcross High (KCNA)', 'KIPP Cooper Norcross High School') THEN 'KCNHS'
+                 WHEN sn2.coupa_school_name = '<Use PhysicalDeliveryOfficeName>' THEN REPLACE(sub.physicaldeliveryofficename, 'KIPP ', '')
+                 ELSE sn2.coupa_school_name
+                END) AS [School Name] -- override > lookup table (content group/department/job) > lookup table (content group/department)
 FROM
     (
      /* existing users */
@@ -45,6 +49,7 @@ FROM
            ,sr.legal_entity_abbreviation
            ,sr.home_department
            ,sr.[status]
+           ,sr.job_title
 
            ,ad.samaccountname
            ,ad.userprincipalname
@@ -74,6 +79,7 @@ FROM
            ,sr.legal_entity_abbreviation
            ,sr.home_department
            ,sr.[status]
+           ,sr.job_title
 
            ,ad.samaccountname
            ,ad.userprincipalname
@@ -99,5 +105,10 @@ FROM
 LEFT JOIN gabby.coupa.school_name_lookup sn
   ON sub.legal_entity_abbreviation = sn.entity_abbv
  AND sub.home_department = sn.home_department
+ AND sub.job_title = sn.job_title
+LEFT JOIN gabby.coupa.school_name_lookup sn2
+  ON sub.legal_entity_abbreviation = sn2.entity_abbv
+ AND sub.home_department = sn2.home_department
+ AND sn2.job_title = 'All'
 LEFT JOIN gabby.coupa.user_exceptions x
   ON sub.employee_number = x.employee_number
