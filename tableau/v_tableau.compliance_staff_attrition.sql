@@ -42,7 +42,7 @@ WITH term AS (
                    WHEN MONTH(sub.termination_date) >= 9 THEN YEAR(sub.termination_date)
                    WHEN MONTH(sub.termination_date) < 9 THEN YEAR(sub.termination_date) - 1
                   END
-                 ,gabby.utilities.GLOBAL_ACADEMIC_YEAR()) AS end_academic_year
+                 ,gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1) AS end_academic_year
   FROM 
       (
        SELECT r.employee_number
@@ -70,7 +70,7 @@ WITH term AS (
   SELECT n AS academic_year
         ,DATEFROMPARTS((n + 1), 4, 30) AS effective_date
   FROM gabby.utilities.row_generator_smallint
-  WHERE n BETWEEN 2010 AND (gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1)
+  WHERE n BETWEEN 2002 AND (gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1)
  )
 
 ,scaffold AS (
@@ -126,8 +126,7 @@ WITH term AS (
   LEFT JOIN gabby.people.school_crosswalk scw
     ON w.[location] = scw.site_name
    AND scw._fivetran_deleted = 0
-  WHERE w.business_unit IS NOT NULL
-    AND sub.academic_year_exitdate > sub.academic_year_entrydate
+  WHERE sub.academic_year_exitdate > sub.academic_year_entrydate
  )
 
 SELECT d.employee_number AS df_employee_number
@@ -160,8 +159,8 @@ SELECT d.employee_number AS df_employee_number
         ELSE 0
        END AS is_attrition
       ,CASE
-        WHEN COALESCE(d.rehire_date, d.original_hire_date) > COALESCE(d.academic_year_exitdate_next, d.termination_date,GETDATE())
-          THEN ROUND(DATEDIFF(DAY, d.original_hire_date, COALESCE(d.academic_year_exitdate_next, d.termination_date,GETDATE())) / 365, 0)
-        ELSE ROUND(DATEDIFF(DAY, COALESCE(d.rehire_date, d.original_hire_date), COALESCE(d.academic_year_exitdate_next, d.termination_date,GETDATE())) / 365, 0)
+        WHEN COALESCE(d.rehire_date, d.original_hire_date) > COALESCE(d.academic_year_exitdate_next, d.termination_date)
+          THEN ROUND(DATEDIFF(DAY, d.original_hire_date, COALESCE(d.academic_year_exitdate_next, d.termination_date)) / 365, 0)
+        ELSE ROUND(DATEDIFF(DAY, COALESCE(d.rehire_date, d.original_hire_date), COALESCE(d.academic_year_exitdate_next, d.termination_date)) / 365, 0)
        END AS years_at_kipp
 FROM scaffold d
