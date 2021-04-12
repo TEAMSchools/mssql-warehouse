@@ -82,7 +82,7 @@ WITH all_staff AS (
         ,sub.flsa
         ,sub.associate_id_legacy
         ,sub.legal_entity_name
-        ,sub.legal_entity_abbreviation
+        ,sub.business_unit_code
         ,sub.primary_site_clean
         ,sub.sex
         ,sub.preferred_gender
@@ -125,8 +125,8 @@ WITH all_staff AS (
          END AS [status]
         /* redundant combined fields */
         ,CONCAT(sub.home_department, ' - ', sub.job_title) AS position_title
-        ,sub.primary_site_clean + ' (' + sub.legal_entity_abbreviation + ') - ' + sub.home_department AS primary_on_site_department_entity
-        ,sub.primary_site_clean + ' (' + sub.legal_entity_abbreviation + ')' AS primary_site_entity
+        ,sub.primary_site_clean + ' (' + sub.business_unit_code + ') - ' + sub.home_department AS primary_on_site_department_entity
+        ,sub.primary_site_clean + ' (' + sub.business_unit_code + ')' AS primary_site_entity
   FROM
       (
        SELECT eh.employee_number
@@ -164,10 +164,10 @@ WITH all_staff AS (
               END AS legal_entity_name
              ,CASE
                WHEN eh.business_unit = 'TEAM Academy Charter School' THEN 'TEAM'
-               WHEN eh.business_unit = 'KIPP TEAM and Family Schools Inc.' THEN 'KNJ'
+               WHEN eh.business_unit = 'KIPP TEAM and Family Schools Inc.' THEN 'KIPP_TAF'
                WHEN eh.business_unit = 'KIPP Cooper Norcross Academy' THEN 'KCNA'
                WHEN eh.business_unit = 'KIPP Miami' THEN 'MIA'
-              END AS legal_entity_abbreviation
+              END AS business_unit_code
              ,CASE 
                WHEN eh.[location] = 'Norfolk St. Campus' THEN 'Norfolk St Campus'
                WHEN eh.[location] = 'KIPP Lanning Square Campus' THEN 'KIPP Lanning Sq Campus'
@@ -304,7 +304,7 @@ SELECT c.employee_number
       ,c.preferred_first_name
       ,c.preferred_last_name
       ,c.legal_entity_name
-      ,c.legal_entity_abbreviation
+      ,c.business_unit_code
       ,c.primary_site_clean
       ,c.primary_site
       ,c.is_regional_staff

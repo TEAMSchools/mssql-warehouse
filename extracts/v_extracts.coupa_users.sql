@@ -6,6 +6,8 @@ CREATE OR ALTER VIEW extracts.coupa_users AS
 SELECT LOWER(sub.samaccountname) AS [Login]
       ,CASE
         WHEN sub.[status] = 'Terminated' THEN 'inactive'
+        WHEN sub.active IS NOT NULL THEN sub.active
+        WHEN sub.business_unit_code IN ('TEAM', 'MIA') THEN 'inactive' -- TEAM/Miami phasing in
         ELSE 'active'
        END AS [Status]
       ,COALESCE(CASE WHEN sub.[status] = 'Terminated' THEN 'No' END
@@ -22,13 +24,10 @@ SELECT LOWER(sub.samaccountname) AS [Login]
       ,CONCAT('Expense User, ', sub.roles) AS [User Role Names]
       ,COALESCE(sub.content_groups
                ,CASE
-                 WHEN sub.legal_entity_abbreviation = 'KNJ' THEN 'KIPP NJ'
-                 ELSE sub.legal_entity_abbreviation 
+                 WHEN sub.business_unit_code = 'KIPP_TAF' THEN 'KIPP NJ'
+                 ELSE sub.business_unit_code 
                 END) AS [Content Groups] -- preserve Coupa, otherwise use HRIS
-      ,COALESCE(
-          sub.mention_name
-         ,gabby.utilities.STRIP_CHARACTERS(CONCAT(sub.preferred_first_name, sub.preferred_last_name ), '^A-Z-') -- first + last, keep only letters & dashes
-        ) AS [Mention Name] -- preserve Coupa, otherwise use HRIS
+      ,gabby.utilities.STRIP_CHARACTERS(CONCAT(sub.preferred_first_name, sub.preferred_last_name ), '^A-Z') AS [Mention Name]
       ,COALESCE(x.coupa_school_name
                ,CASE
                  WHEN sn.coupa_school_name = '<Use PhysicalDeliveryOfficeName>' AND sub.physicaldeliveryofficename IN ('KIPP Cooper Norcross High (KCNA)', 'KIPP Cooper Norcross High School') THEN 'KCNHS'
@@ -46,7 +45,7 @@ FROM
      SELECT sr.employee_number
            ,sr.preferred_first_name
            ,sr.preferred_last_name
-           ,sr.legal_entity_abbreviation
+           ,sr.business_unit_code
            ,sr.home_department
            ,sr.[status]
            ,sr.job_title
@@ -58,9 +57,9 @@ FROM
 
            ,cu.content_groups
            ,cu.school_name
-           ,cu.mention_name
            ,cu.purchasing_license
            ,cu.roles
+           ,cu.active
      FROM gabby.people.staff_roster sr
      INNER JOIN gabby.adsi.user_attributes_static ad
        ON sr.employee_number = ad.employeenumber
@@ -76,7 +75,7 @@ FROM
      SELECT sr.employee_number
            ,sr.preferred_first_name
            ,sr.preferred_last_name
-           ,sr.legal_entity_abbreviation
+           ,sr.business_unit_code
            ,sr.home_department
            ,sr.[status]
            ,sr.job_title
@@ -88,9 +87,9 @@ FROM
 
            ,NULL AS content_groups
            ,NULL AS school_name
-           ,NULL AS mention_name
            ,'No' AS purchasing_license
            ,'Expense User' AS roles
+           ,NULL AS active
      FROM gabby.people.staff_roster sr
      INNER JOIN gabby.adsi.user_attributes_static ad
        ON sr.employee_number = ad.employeenumber
@@ -99,15 +98,14 @@ FROM
        ON sr.employee_number = cu.employee_number
      WHERE sr.[status] NOT IN ('Prestart', 'Terminated')
        AND sr.home_department NOT IN ('Interns')
-       AND sr.business_unit IN ('KIPP TEAM and Family Schools Inc.', 'KIPP Cooper Norcross Academy', 'KIPP Miami') -- only CMO/KCNA/MIA
        AND cu.employee_number IS NULL
     ) sub
 LEFT JOIN gabby.coupa.school_name_lookup sn
-  ON sub.legal_entity_abbreviation = sn.entity_abbv
+  ON sub.business_unit_code = sn.business_unit_code
  AND sub.home_department = sn.home_department
  AND sub.job_title = sn.job_title
 LEFT JOIN gabby.coupa.school_name_lookup sn2
-  ON sub.legal_entity_abbreviation = sn2.entity_abbv
+  ON sub.business_unit_code = sn2.business_unit_code
  AND sub.home_department = sn2.home_department
  AND sn2.job_title = 'Default'
 LEFT JOIN gabby.coupa.user_exceptions x

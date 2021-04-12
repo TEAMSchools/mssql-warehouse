@@ -74,8 +74,8 @@ WITH clean_people AS (
          END AS [status]
         /* redundant combined fields */
         ,CONCAT(sub.primary_on_site_department, ' - ', sub.primary_job) AS position_title
-        ,sub.primary_site_clean + ' (' + sub.legal_entity_abbreviation + ') - ' + sub.primary_on_site_department AS primary_on_site_department_entity
-        ,sub.primary_site_clean + ' (' + sub.legal_entity_abbreviation + ')' AS primary_site_entity
+        ,sub.primary_site_clean + ' (' + sub.business_unit_code + ') - ' + sub.primary_on_site_department AS primary_on_site_department_entity
+        ,sub.primary_site_clean + ' (' + sub.business_unit_code + ')' AS primary_site_entity
   FROM
       (
        SELECT ea.file_number AS df_employee_number
@@ -180,7 +180,7 @@ WITH clean_people AS (
                WHEN e.business_unit_description = 'KIPP TEAM and Family Schools Inc.' THEN 'KNJ'
                WHEN e.business_unit_description = 'KIPP Cooper Norcross Academy' THEN 'KCNA'
                WHEN e.business_unit_description = 'KIPP Miami' THEN 'MIA'
-              END AS legal_entity_abbreviation
+              END AS business_unit_code
              ,CASE 
                WHEN e.location_description = 'Norfolk St. Campus' THEN 'Norfolk St Campus'
                WHEN e.location_description = 'KIPP Lanning Square Campus' THEN 'KIPP Lanning Sq Campus'
