@@ -72,6 +72,7 @@ SELECT r.employee_number
       ,MIN(s.status_effective_date) OVER(PARTITION BY r.associate_id) AS original_hire_date
       ,LAG(s.position_status, 1) OVER(PARTITION BY r.position_id ORDER BY r.effective_start_date) AS position_status_prev
 
+      ,w.business_unit_code
       ,w.business_unit_description AS business_unit
       ,w.location_description AS [location]
       ,w.home_department_description AS home_department

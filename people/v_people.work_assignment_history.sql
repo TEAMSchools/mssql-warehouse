@@ -6,6 +6,7 @@ CREATE OR ALTER VIEW people.work_assignment_history AS
 SELECT sub.employee_number
       ,sub.associate_id
       ,sub.position_id
+      ,sub.business_unit_code
       ,sub.business_unit_description
       ,sub.location_description
       ,sub.home_department_description
@@ -32,6 +33,7 @@ FROM
      /* ADP */
      SELECT wah.associate_id
            ,wah.position_id
+           ,wah.business_unit_code
            ,wah.business_unit_description
            ,wah.home_department_description
            ,wah.location_description
@@ -59,8 +61,9 @@ FROM
 
      /* DF */
      SELECT sr.associate_id
-           
+
            ,dwa.position_id
+           ,dwa.legal_entity_code AS business_unit_code
            ,dwa.legal_entity_name AS business_unit_description
            ,dwa.department_name AS home_department_description
            ,dwa.physical_location_name AS location_description

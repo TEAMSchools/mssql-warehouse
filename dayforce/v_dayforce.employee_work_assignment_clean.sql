@@ -5,6 +5,7 @@ CREATE OR ALTER VIEW dayforce.employee_work_assignment_clean AS
 
 SELECT sub.employee_reference_code
       ,sub.job_name
+      ,sub.legal_entity_code
       ,sub.legal_entity_name
       ,sub.physical_location_name
       ,sub.department_name
@@ -19,7 +20,8 @@ FROM
     (
      SELECT ewa.employee_reference_code
            ,ewa.job_name
-           ,ewa.legal_entity_name
+           ,ewa.legal_entity_name AS legal_entity_code
+           ,e.legal_entity_name
            ,ewa.physical_location_name
            ,ewa.department_name
            ,ewa.flsa_status_name
