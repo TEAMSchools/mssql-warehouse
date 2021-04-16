@@ -30,6 +30,7 @@ SELECT sub.student_number
       ,sub.is_iss AS is_iss_running
       ,sub.is_suspended AS is_suspended_running
       ,sub.is_counselingservices
+      ,sub.is_remote
 FROM
     (
      SELECT co.academic_year
@@ -66,7 +67,19 @@ FROM
            ,CONVERT(VARCHAR(25), dt.alt_name) AS term
 
            ,CASE WHEN sp.studentid IS NOT NULL THEN 1 END AS is_counselingservices
+
+           ,CASE
+             WHEN hb.specprog_name IN ('Hybrid (SC) - Cohort D', 'Learning Centers - Cohort D') AND cal.[type] = 'AR' THEN 0
+             WHEN hb.specprog_name = 'Remote - Cohort C' OR cal.[type] = 'AR' THEN 1
+             WHEN hb.specprog_name = 'Hybrid - Cohort A' AND cal.[type] = 'ACR' THEN 1
+             WHEN hb.specprog_name = 'Hybrid - Cohort B' AND cal.[type] = 'BCR' THEN 1
+             WHEN hb.specprog_name IS NOT NULL AND cal.[type] NOT IN ('AR', 'ACR', 'BCR') THEN 1
+             ELSE 0
+            END AS is_remote
      FROM powerschool.ps_adaadm_daily_ctod_current_static mem
+     JOIN powerschool.calendar_day cal
+       ON mem.schoolid = cal.schoolid
+      AND mem.calendardate = cal.date_value
      JOIN powerschool.cohort_identifiers_static co
        ON mem.studentid = co.studentid
       AND mem.schoolid = co.schoolid
@@ -89,6 +102,10 @@ FROM
        ON mem.studentid = sp.studentid
       AND mem.calendardate BETWEEN sp.enter_date AND sp.exit_date
       AND sp.specprog_name = 'Counseling Services'
+     LEFT JOIN powerschool.spenrollments_gen_static hb
+       ON mem.studentid = hb.studentid
+      AND mem.calendardate BETWEEN hb.enter_date AND hb.exit_date
+      AND hb.specprog_name IN ('Hybrid - Cohort A', 'Hybrid - Cohort B', 'Remote - Cohort C', 'Hybrid (SC) - Cohort D', 'Learning Centers - Cohort D')
      WHERE mem.attendancevalue IS NOT NULL
        AND mem.calendardate <= GETDATE()
        AND mem.membershipvalue > 0
