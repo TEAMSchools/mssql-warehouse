@@ -30,6 +30,11 @@ WITH ada AS (
         ,p.[Pathways MS]
         ,p.[Pathways ES]
         ,p.[Home Instruction]
+        ,p.[Hybrid - Cohort A]
+        ,p.[Hybrid - Cohort B]
+        ,p.[Remote - Cohort C]
+        ,p.[Hybrid (SC) - Cohort D]
+        ,p.[Counseling Services]
   FROM
       (
        SELECT sp.[db_name]
@@ -50,7 +55,12 @@ WITH ada AS (
                          ,[Out of District]
                          ,[Americorps]
                          ,[NCCS]
-                         ,[Home Instruction])
+                         ,[Home Instruction]
+                         ,[Hybrid - Cohort A]
+                         ,[Hybrid - Cohort B]
+                         ,[Remote - Cohort C]
+                         ,[Hybrid (SC) - Cohort D]
+                         ,[Counseling Services])
    ) p
  )
 
@@ -69,6 +79,11 @@ WITH ada AS (
         ,CASE WHEN sp.[NCCS] IS NOT NULL THEN 'NCCS' ELSE NULL END AS is_nccs
         ,CASE WHEN sp.[Pathways MS] IS NOT NULL OR sp.[Pathways ES] IS NOT NULL THEN 'Pathways' ELSE NULL END AS is_pathways
         ,CASE WHEN sp.[Home Instruction] IS NOT NULL AND sp.exit_date > CONVERT(DATE,GETDATE()) THEN 'Home Instruction' ELSE NULL END AS is_home_instruction
+        ,CASE WHEN sp.[Hybrid - Cohort A] IS NOT NULL AND sp.exit_date > CONVERT(DATE,GETDATE()) THEN 'Hybrid - Cohort A' ELSE NULL END AS is_hybrid_a
+        ,CASE WHEN sp.[Hybrid - Cohort B] IS NOT NULL AND sp.exit_date > CONVERT(DATE,GETDATE()) THEN 'Hybrid - Cohort B' ELSE NULL END AS is_hybrid_b
+        ,CASE WHEN sp.[Remote - Cohort C] IS NOT NULL AND sp.exit_date > CONVERT(DATE,GETDATE()) THEN 'Remote - Cohort C' ELSE NULL END AS is_remote_c
+        ,CASE WHEN sp.[Hybrid (SC) - Cohort D] IS NOT NULL AND sp.exit_date > CONVERT(DATE,GETDATE()) THEN 'Hybrid (SC) - Cohort D' ELSE NULL END AS is_hybrid_d
+        ,CASE WHEN sp.[Counseling Services] IS NOT NULL AND sp.exit_date > CONVERT(DATE,GETDATE()) THEN 'Counseling Services' ELSE NULL END AS is_counseling
         
         ,CASE WHEN ada.ada < 0.9 THEN 'Chronic Absence' ELSE NULL END AS is_chronic_absentee
   FROM gabby.powerschool.cohort_identifiers_static co
@@ -107,9 +122,15 @@ FROM
            ,CAST(is_pathways AS VARCHAR(250)) AS is_pathways
            ,CAST(is_home_instruction AS VARCHAR(250)) AS is_home_instruction
            ,CAST(is_chronic_absentee AS VARCHAR(250)) AS is_chronic_absentee
+           ,CAST(is_hybrid_a AS VARCHAR(250)) AS is_hybrid_a
+           ,CAST(is_hybrid_b AS VARCHAR(250)) AS is_hybrid_b
+           ,CAST(is_remote_c AS VARCHAR(250)) AS is_remote_c
+           ,CAST(is_hybrid_d AS VARCHAR(250)) AS is_hybrid_d
+           ,CAST(is_counseling AS VARCHAR(250)) AS is_counseling
+
      FROM designation
     ) sub
 UNPIVOT (
   [value]
-  FOR field IN (is_iep, is_504, is_lep, is_quarter_gpa_3plus, is_quarter_gpa_35plus, is_ood, is_nccs, is_pathways, is_home_instruction, is_chronic_absentee)
+  FOR field IN (is_iep, is_504, is_lep, is_quarter_gpa_3plus, is_quarter_gpa_35plus, is_ood, is_nccs, is_pathways, is_home_instruction, is_chronic_absentee, is_hybrid_a, is_hybrid_b, is_remote_c, is_hybrid_d, is_counseling)
  ) u
