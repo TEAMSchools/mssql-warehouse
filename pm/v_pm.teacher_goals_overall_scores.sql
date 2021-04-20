@@ -5,7 +5,7 @@ CREATE OR ALTER VIEW pm.teacher_goals_overall_scores AS
 
 SELECT sub.df_employee_number
       ,sub.preferred_name
-      ,sub.legal_entity_name
+      ,sub.business_unit AS legal_entity_name
       ,sub.hire_date
       ,sub.primary_job
       ,sub.primary_site
@@ -36,7 +36,7 @@ FROM
     (
      SELECT p.df_employee_number
            ,p.preferred_name
-           ,p.legal_entity_name
+           ,p.business_unit
            ,p.hire_date
            ,p.primary_job
            ,p.primary_site
@@ -59,7 +59,7 @@ FROM
                 ,tg.metric_value_stored
 
                 ,r.original_hire_date AS hire_date
-                ,r.legal_entity_name
+                ,r.business_unit
           FROM gabby.tableau.pm_teacher_goals tg
           LEFT JOIN gabby.people.staff_roster r
             ON tg.df_employee_number = r.employee_number
