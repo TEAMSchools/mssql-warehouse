@@ -14,12 +14,12 @@ WITH all_staff AS (
         ,eh.reports_to_associate_id
         ,eh.reports_to_employee_number
         ,eh.position_status
+        ,eh.business_unit_code
         ,eh.business_unit
         ,eh.[location]
         ,eh.position_effective_start_date
         ,eh.position_effective_end_date
         ,eh.annual_salary
-        ,eh.original_hire_date
         ,eh.effective_start_date
   FROM gabby.people.employment_history eh
   WHERE CONVERT(DATE, GETDATE()) BETWEEN eh.effective_start_date AND eh.effective_end_date
@@ -36,12 +36,12 @@ WITH all_staff AS (
         ,ps.reports_to_associate_id
         ,ps.reports_to_employee_number
         ,'Prestart' AS position_status
+        ,ps.business_unit_code
         ,ps.business_unit
         ,ps.[location]
         ,ps.position_effective_start_date
         ,ps.position_effective_end_date
         ,ps.annual_salary
-        ,ps.original_hire_date
         ,ps.effective_start_date
   FROM gabby.people.employment_history ps
   WHERE ps.status_effective_start_date > CONVERT(DATE, GETDATE())
@@ -56,6 +56,7 @@ WITH all_staff AS (
         ,sub.first_name
         ,sub.last_name
         ,sub.position_status
+        ,sub.business_unit_code
         ,sub.business_unit
         ,sub.[location]
         ,sub.home_department
@@ -65,7 +66,7 @@ WITH all_staff AS (
         ,sub.annual_salary
         ,sub.position_effective_start_date
         ,sub.position_effective_end_date
-        ,sub.original_hire_date
+        ,sub.hire_date
         ,sub.rehire_date
         ,sub.termination_date
         ,sub.termination_reason
@@ -81,9 +82,6 @@ WITH all_staff AS (
         ,sub.worker_category
         ,sub.flsa
         ,sub.associate_id_legacy
-        ,sub.legal_entity_name
-        ,sub.business_unit_code
-        ,sub.primary_site_clean
         ,sub.sex
         ,sub.preferred_gender
         ,sub.gender_reporting
@@ -99,10 +97,8 @@ WITH all_staff AS (
         ,sub.is_race_nhpi
         ,sub.is_race_other
         ,sub.is_race_white
-        ,REPLACE(sub.primary_site_clean, ' - Regional', '') AS primary_site
         ,COALESCE(sub.preferred_first_name, sub.first_name) AS preferred_first_name
         ,COALESCE(sub.preferred_last_name , sub.last_name) AS preferred_last_name
-        ,CASE WHEN sub.primary_site_clean LIKE '% - Regional%' THEN 1 ELSE 0 END AS is_regional_staff
         ,CASE
           WHEN sub.ethnicity = 'Hispanic or Latino' THEN 1
           WHEN sub.ethnicity = 'Not Hispanic or Latino' THEN 0
@@ -123,10 +119,6 @@ WITH all_staff AS (
           WHEN sub.position_status = 'Leave' THEN 'INACTIVE'
           ELSE UPPER(sub.position_status)
          END AS [status]
-        /* redundant combined fields */
-        ,CONCAT(sub.home_department, ' - ', sub.job_title) AS position_title
-        ,sub.primary_site_clean + ' (' + sub.business_unit_code + ') - ' + sub.home_department AS primary_on_site_department_entity
-        ,sub.primary_site_clean + ' (' + sub.business_unit_code + ')' AS primary_site_entity
   FROM
       (
        SELECT eh.employee_number
@@ -137,12 +129,12 @@ WITH all_staff AS (
              ,eh.home_department
              ,eh.reports_to_associate_id
              ,eh.position_status
+             ,eh.business_unit_code
              ,eh.business_unit
              ,eh.[location]
              ,eh.position_effective_start_date
              ,eh.position_effective_end_date
              ,eh.annual_salary
-             ,eh.original_hire_date
              ,CONVERT(NVARCHAR(256), NULL) AS job_family -- on the way
              ,CASE 
                WHEN eh.associate_id IN (SELECT reports_to_associate_id
@@ -155,24 +147,6 @@ WITH all_staff AS (
              ,ROW_NUMBER() OVER(
                 PARTITION BY eh.associate_id
                   ORDER BY CONVERT(DATE, eh.effective_start_date) DESC) AS rn
-
-             /* transformations to match DF conventions */
-             ,CASE
-               WHEN eh.business_unit = 'TEAM Academy Charter School' THEN 'TEAM Academy Charter Schools'
-               WHEN eh.business_unit = 'KIPP TEAM and Family Schools Inc.' THEN 'KIPP New Jersey'
-               ELSE eh.business_unit
-              END AS legal_entity_name
-             ,CASE
-               WHEN eh.business_unit = 'TEAM Academy Charter School' THEN 'TEAM'
-               WHEN eh.business_unit = 'KIPP TEAM and Family Schools Inc.' THEN 'KIPP_TAF'
-               WHEN eh.business_unit = 'KIPP Cooper Norcross Academy' THEN 'KCNA'
-               WHEN eh.business_unit = 'KIPP Miami' THEN 'MIA'
-              END AS business_unit_code
-             ,CASE 
-               WHEN eh.[location] = 'Norfolk St. Campus' THEN 'Norfolk St Campus'
-               WHEN eh.[location] = 'KIPP Lanning Square Campus' THEN 'KIPP Lanning Sq Campus'
-               ELSE eh.[location]
-              END AS primary_site_clean
 
              ,ea.first_name
              ,ea.last_name
@@ -252,6 +226,7 @@ WITH all_staff AS (
              ,p.flsa_description AS flsa
              ,CONVERT(DATE, p.rehire_date) AS rehire_date
              ,CONVERT(DATE, p.termination_date) AS termination_date
+             ,CONVERT(DATE, p.hire_date) AS hire_date
 
              ,df.preferred_last_name -- use DF until ADP available
 
@@ -286,7 +261,7 @@ SELECT c.employee_number
       ,c.annual_salary
       ,c.position_effective_start_date
       ,c.position_effective_end_date
-      ,c.original_hire_date
+      ,c.hire_date AS original_hire_date
       ,c.rehire_date
       ,c.termination_date
       ,c.termination_reason
@@ -303,15 +278,8 @@ SELECT c.employee_number
       ,c.associate_id_legacy
       ,c.preferred_first_name
       ,c.preferred_last_name
-      ,c.legal_entity_name
       ,c.business_unit_code
-      ,c.primary_site_clean
-      ,c.primary_site
-      ,c.is_regional_staff
       ,c.[status]
-      ,c.position_title
-      ,c.primary_on_site_department_entity
-      ,c.primary_site_entity
       ,c.sex
       ,c.preferred_gender
       ,c.gender_reporting
