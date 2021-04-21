@@ -43,7 +43,7 @@ FROM gabby.people.staff_crosswalk_static df
 JOIN gabby.powerschool.schools sch
   ON sch.state_excludefromreporting = 0
 WHERE df.[status] NOT IN ('TERMINATED', 'PRESTART')
-  AND df.legal_entity_name = 'KIPP New Jersey'
+  AND df.legal_entity_name = 'KIPP TEAM and Family Schools Inc.'
   AND (df.primary_on_site_department IN ('Data', 'Teaching and Learning') 
         OR df.primary_job IN ('Executive Director', 'Managing Director'))
 

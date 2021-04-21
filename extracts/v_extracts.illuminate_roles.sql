@@ -14,7 +14,7 @@ JOIN gabby.powerschool.schools sch
   ON sch.state_excludefromreporting = 0
 WHERE df.[status] <> 'TERMINATED'
   AND df.primary_on_site_department IN ('Teaching and Learning', 'Data', 'Executive')
-  AND df.legal_entity_name = 'KIPP New Jersey'
+  AND df.legal_entity_name = 'KIPP TEAM and Family Schools Inc.'
 
 UNION ALL
 

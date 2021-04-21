@@ -11,7 +11,7 @@ SELECT df.primary_site_schoolid AS [School_id]
       ,df.preferred_first_name AS [First_name]
       ,NULL AS [Middle_name]
       ,df.preferred_last_name AS [Last_name]
-      ,df.position_title AS [Title]
+      ,df.primary_job AS [Title]
       ,df.samaccountname AS [Username]
       ,NULL AS [Password]
 FROM gabby.people.staff_crosswalk_static df

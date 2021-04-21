@@ -28,7 +28,7 @@ WITH users_clean AS (
     ON df.ps_teachernumber = u.teachernumber COLLATE Latin1_General_BIN
    AND df.primary_site_schoolid = u.homeschoolid
    AND CASE 
-        WHEN sc.region = 'TEAM Academy Charter Schools' THEN 'kippnewark'
+        WHEN sc.region = 'TEAM Academy Charter School' THEN 'kippnewark'
         WHEN sc.region = 'KIPP Cooper Norcross Academy' THEN 'kippcamden'
         WHEN sc.region = 'KIPP Miami' THEN 'kippmiami'
        END = u.[db_name]
@@ -60,7 +60,7 @@ WITH users_clean AS (
   LEFT JOIN gabby.powerschool.users u
     ON df.ps_teachernumber = u.teachernumber COLLATE Latin1_General_BIN
    AND CASE 
-        WHEN sc.region = 'TEAM Academy Charter Schools' THEN 'kippnewark'
+        WHEN sc.region = 'TEAM Academy Charter School' THEN 'kippnewark'
         WHEN sc.region = 'KIPP Cooper Norcross Academy' THEN 'kippcamden'
         WHEN sc.region = 'KIPP Miami' THEN 'kippmiami'
        END = u.[db_name]
