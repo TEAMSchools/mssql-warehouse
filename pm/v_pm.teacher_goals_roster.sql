@@ -5,7 +5,7 @@ CREATE OR ALTER VIEW pm.teacher_goals_roster AS
 
 WITH academic_years AS (
   SELECT n AS academic_year
-  FROM gabby.utilities.row_generator rg
+  FROM gabby.utilities.row_generator_smallint rg
   WHERE rg.n BETWEEN 2018 AND gabby.utilities.GLOBAL_ACADEMIC_YEAR() /* 2018 = first year of Teacher Goals */
  )
 
@@ -34,7 +34,7 @@ WITH academic_years AS (
              ,sc.site_name_clean
        FROM gabby.people.employment_history wa
        LEFT JOIN gabby.people.school_crosswalk sc
-         ON wa.location = sc.site_name
+         ON wa.[location] = sc.site_name
         AND sc._fivetran_deleted = 0
        WHERE wa.position_status NOT IN ('Terminated', 'Pre-Start')
          AND wa.job_title IN ('Teacher', 'Teacher Fellow', 'Teacher in Residence', 'Co-Teacher', 'Learning Specialist', 'Learning Specialist Coordinator', 'Teacher, ESL', 'Teacher ESL')
