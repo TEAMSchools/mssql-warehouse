@@ -32,7 +32,7 @@ WITH academic_years AS (
 
              ,sc.ps_school_id
              ,sc.site_name_clean
-       FROM people.employment_history wa
+       FROM gabby.people.employment_history wa
        LEFT JOIN gabby.people.school_crosswalk sc
          ON wa.location = sc.site_name
         AND sc._fivetran_deleted = 0
