@@ -27,3 +27,4 @@ SELECT LOWER(mail) AS [Email]
       ,df_employee_number AS [DF Employee Number]
       ,[status]
 FROM gabby.people.staff_crosswalk_static
+WHERE [status] != 'PRESTART'
