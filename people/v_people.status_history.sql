@@ -51,7 +51,7 @@ FROM
      FROM gabby.adp.status_history sh
      JOIN gabby.adp.employees_all sr
        ON sh.associate_id = sr.associate_id
-      AND sr.file_number NOT IN (100814, 102496, 101652) /*  HR incapable of fixing these multiple employee numbers */
+      AND sr.file_number NOT IN (100814, 102496, 101652, 102634) /*  HR incapable of fixing these multiple employee numbers */
      WHERE CONVERT(DATE, sh.status_effective_date) > '2021-01-01'
              OR COALESCE(CONVERT(DATE, sh.status_effective_end_date), GETDATE()) > '2021-01-01'
 

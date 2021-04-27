@@ -42,7 +42,7 @@ FROM
      FROM gabby.adp.manager_history mh
      JOIN gabby.adp.employees_all sre
        ON mh.associate_id = sre.associate_id
-      AND sre.file_number NOT IN (100814, 102496, 101652) /*  HR incapable of fixing these multiple employee numbers */
+      AND sre.file_number NOT IN (100814, 102496, 101652, 102634) /*  HR incapable of fixing these multiple employee numbers */
      JOIN gabby.adp.employees_all srm
        ON mh.reports_to_associate_id = srm.associate_id
       AND srm.file_number NOT IN (100814, 102496) /*  HR incapable of fixing these multiple employee numbers */
