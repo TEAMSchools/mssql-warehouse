@@ -10,15 +10,15 @@ WITH roles AS (
       (
        SELECT urm.[user_id]
              ,r.[name] AS role_name
-       FROM gabby.coupa_test.user_role_mapping urm
-       JOIN gabby.coupa_test.[role] r
+       FROM gabby.coupa.user_role_mapping urm
+       JOIN gabby.coupa.[role] r
          ON urm.role_id = r.id
 
        UNION
 
        SELECT u.id AS [user_id]
              ,'Expense User' AS role_name
-       FROM gabby.coupa_test.[user] u
+       FROM gabby.coupa.[user] u
       ) sub
   GROUP BY [user_id]
  )
@@ -26,8 +26,8 @@ WITH roles AS (
 ,business_groups AS (
   SELECT ubgm.[user_id]
         ,gabby.dbo.GROUP_CONCAT_D(bg.[name], ', ') AS business_group_names
-  FROM gabby.coupa_test.user_business_group_mapping ubgm
-  JOIN gabby.coupa_test.business_group bg
+  FROM gabby.coupa.user_business_group_mapping ubgm
+  JOIN gabby.coupa.business_group bg
     ON ubgm.business_group_id = bg.id
   GROUP BY ubgm.[user_id]
  )
@@ -102,7 +102,7 @@ FROM
      INNER JOIN gabby.adsi.user_attributes_static ad
        ON sr.employee_number = ad.employeenumber
       AND ISNUMERIC(ad.employeenumber) = 1
-     INNER JOIN gabby.coupa_test.[user] cu
+     INNER JOIN gabby.coupa.[user] cu
        ON sr.employee_number = cu.employee_number
      INNER JOIN roles r
        ON cu.id = r.[user_id]
@@ -135,7 +135,7 @@ FROM
      INNER JOIN gabby.adsi.user_attributes_static ad
        ON sr.employee_number = ad.employeenumber
       AND ISNUMERIC(ad.employeenumber) = 1
-     LEFT JOIN gabby.coupa_test.[user] cu
+     LEFT JOIN gabby.coupa.[user] cu
        ON sr.employee_number = cu.employee_number
      WHERE sr.[status] NOT IN ('Prestart', 'Terminated')
        AND sr.home_department NOT IN ('Interns')
