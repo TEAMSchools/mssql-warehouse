@@ -7,10 +7,10 @@ WITH mip AS (
   SELECT fund
         ,program
         ,[function]
-        ,object
+        ,[object]
         ,school
         ,deptgroup
-        ,subject
+        ,[subject]
         ,[budget period]
         ,[revised budget]
         ,[available budget]
@@ -25,10 +25,10 @@ WITH mip AS (
   SELECT fund
         ,program
         ,[function]
-        ,object
+        ,[object]
         ,school
         ,deptgroup
-        ,subject
+        ,[subject]
         ,[budget period]
         ,[revised budget]
         ,[available budget]
@@ -43,10 +43,10 @@ WITH mip AS (
   SELECT fund
         ,program
         ,[function]
-        ,object
+        ,[object]
         ,school
         ,deptgroup
-        ,subject
+        ,[subject]
         ,[budget period]
         ,[revised budget]
         ,[available budget]
@@ -61,10 +61,10 @@ WITH mip AS (
   SELECT fund
         ,program
         ,[function]
-        ,object
+        ,[object]
         ,school
         ,deptgroup
-        ,subject
+        ,[subject]
         ,[budget period]
         ,[revised budget]
         ,[available budget]
@@ -78,19 +78,19 @@ WITH mip AS (
 ,coupa AS (
   SELECT code
         ,budget_owner
-        ,CONVERT(FLOAT,REPLACE(amount,',', '')) AS amount
-        ,CONVERT(FLOAT,REPLACE(remaining, ',', '')) AS remaining
-        ,LEFT(period, 4) AS budget_period
+        ,CONVERT(FLOAT, REPLACE(amount,',', '')) AS amount
+        ,CONVERT(FLOAT, REPLACE(remaining, ',', '')) AS remaining
+        ,LEFT([period], 4) AS budget_period
   FROM gabby.coupa.budget_line_list
  )
 
 SELECT mip.Fund
       ,mip.Program
       ,mip.[Function]
-      ,mip.Object
+      ,mip.[Object]
       ,mip.School
       ,mip.DeptGroup
-      ,mip.Subject
+      ,mip.[Subject]
       ,mip.[Budget Period]
       ,mip.[Revised Budget] AS revised_budget_mip
       ,mip.[Available Budget] AS available_budget_mip
