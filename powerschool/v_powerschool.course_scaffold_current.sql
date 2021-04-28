@@ -28,7 +28,7 @@ FROM
            ,terms.[start_date] AS term_start_date
            ,terms.end_date AS term_end_date
            ,terms.is_curterm
-     FROM powerschool.course_enrollments_static enr
+     FROM powerschool.course_enrollments_current_static enr
      JOIN powerschool.schools
        ON enr.schoolid = schools.school_number
      JOIN gabby.reporting.reporting_terms terms
@@ -39,5 +39,5 @@ FROM
       AND terms._fivetran_deleted = 0
      WHERE enr.section_enroll_status = 0
        AND enr.course_enroll_status = 0
-       AND enr.dateenrolled BETWEEN DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1) AND CONVERT(DATE, GETDATE())
+       AND enr.dateenrolled <= CONVERT(DATE, GETDATE())
     ) sub

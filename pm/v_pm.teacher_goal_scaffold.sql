@@ -197,7 +197,7 @@ JOIN ps_section_teacher st
  AND sr.academic_year = st.academic_year
  AND sr.[db_name] = st.[db_name]
  AND tg.ps_course_number = st.course_number COLLATE Latin1_General_BIN 
-JOIN gabby.powerschool.course_enrollments_static enr
+JOIN gabby.powerschool.course_enrollments enr
   ON st.sectionid = enr.abs_sectionid
  AND st.[db_name] = enr.[db_name]
 JOIN gabby.powerschool.cohort_identifiers_static co
@@ -273,7 +273,7 @@ JOIN ps_section_teacher st
  AND sr.academic_year = st.academic_year
  AND sr.[db_name] = st.[db_name]
  AND tg.ps_course_number = st.course_number COLLATE Latin1_General_BIN 
-JOIN gabby.powerschool.course_enrollments_static enr
+JOIN gabby.powerschool.course_enrollments enr
   ON st.sectionid = enr.abs_sectionid
  AND st.[db_name] = enr.[db_name]
 JOIN gabby.powerschool.cohort_identifiers_static co

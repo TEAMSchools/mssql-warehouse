@@ -37,7 +37,7 @@ FROM
                   WHEN enr.illuminate_subject IN ('Algebra I', 'Geometry', 'Algebra II', 'Algebra IIA', 'Algebra IIB', 'Pre-Calculus') THEN 1 
                   ELSE 0 
                  END AS is_advanced_math
-          FROM gabby.powerschool.course_enrollments_static enr
+          FROM gabby.powerschool.course_enrollments enr
           JOIN gabby.illuminate_public.students ils
             ON enr.student_number = ils.local_student_id
           JOIN gabby.illuminate_public.courses c
@@ -65,7 +65,7 @@ FROM
                 ,'Writing' AS subject_area
                 ,'RHET' AS credittype
                 ,0 AS is_advanced_math
-          FROM gabby.powerschool.course_enrollments_static enr
+          FROM gabby.powerschool.course_enrollments enr
           JOIN gabby.illuminate_public.students ils
             ON enr.student_number = ils.local_student_id
           JOIN gabby.illuminate_public.courses c

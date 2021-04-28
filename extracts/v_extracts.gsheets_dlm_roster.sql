@@ -44,7 +44,7 @@ SELECT r.region
       ,LEFT(ce.teacher_name, CHARINDEX(',', ce.teacher_name) - 1) AS [Educator Last Name]
       ,NULL AS [Remove from Roster]
 FROM roster r
-JOIN gabby.powerschool.course_enrollments_static ce
+JOIN gabby.powerschool.course_enrollments_current_static ce
   ON r.student_number = ce.student_number
  AND r.academic_year = ce.academic_year
  AND ce.course_enroll_status = 0
@@ -72,7 +72,7 @@ SELECT r.region
       ,LEFT(ce.teacher_name,CHARINDEX(',',ce.teacher_name)-1) AS [Educator Last Name]
       ,NULL AS [Remove from Roster]
 FROM roster r
-JOIN powerschool.course_enrollments_static ce
+JOIN powerschool.course_enrollments_current_static ce
   ON r.student_number = ce.student_number
  AND r.academic_year = ce.academic_year
  AND ce.course_enroll_status = 0

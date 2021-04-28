@@ -35,7 +35,7 @@ WITH ps_section_teacher AS (
         ,COUNT(DISTINCT enr.sectionid) AS n_sections_gl
         ,COUNT(enr.student_number) AS n_students_gl
   FROM ps_section_teacher st
-  JOIN gabby.powerschool.course_enrollments_static enr
+  JOIN gabby.powerschool.course_enrollments enr
     ON st.sectionid = enr.abs_sectionid
    AND st.[db_name] = enr.[db_name]
   JOIN gabby.powerschool.cohort_identifiers_static co

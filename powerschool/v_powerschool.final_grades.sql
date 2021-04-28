@@ -82,7 +82,7 @@ WITH roster AS (
              ,ROW_NUMBER() OVER(
                 PARTITION BY enr.studentid, enr.yearid, enr.course_number, pgf.finalgradename_clean
                   ORDER BY sg.[percent] DESC, enr.section_enroll_status, enr.dateleft DESC) AS rn
-       FROM powerschool.course_enrollments_static enr
+       FROM powerschool.course_enrollments_current_static enr
        JOIN powerschool.pgfinalgrades pgf
          ON enr.studentid = pgf.studentid
         AND enr.abs_sectionid = pgf.sectionid
@@ -98,7 +98,6 @@ WITH roster AS (
          ON enr.gradescaleid = sg_scale.gradescaleid
         AND sg.[percent] BETWEEN sg_scale.min_cutoffpercentage AND sg_scale.max_cutoffpercentage
        WHERE enr.course_enroll_status = 0
-         AND enr.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
       ) sub
   WHERE rn = 1
  )

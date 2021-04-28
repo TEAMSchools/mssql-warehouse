@@ -17,7 +17,7 @@ SELECT sub.student_number
            ORDER BY sub.startdate), 0) AS grade_category_pct_y1
 
       ,CASE
-        WHEN CONVERT(DATE,GETDATE()) BETWEEN sub.startdate AND sub.enddate THEN 1 
+        WHEN CONVERT(DATE, GETDATE()) BETWEEN sub.startdate AND sub.enddate THEN 1 
         WHEN sub.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
          AND sub.startdate = MAX(sub.startdate) OVER(PARTITION BY student_number, sub.academic_year)
                THEN 1
@@ -45,7 +45,7 @@ FROM
            ,ROW_NUMBER() OVER(
               PARTITION BY enr.student_number, enr.academic_year, enr.course_number, tb.storecode
                 ORDER BY pgf.[percent] DESC, enr.sectionid DESC) AS rn_year
-     FROM powerschool.course_enrollments_static enr
+     FROM powerschool.course_enrollments_current_static enr
      JOIN powerschool.terms t
        ON enr.schoolid = t.schoolid
       AND t.yearid = (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990)
@@ -60,7 +60,6 @@ FROM
       AND enr.sectionid = pgf.sectionid
       AND tb.storecode = pgf.finalgradename_clean
      WHERE enr.course_enroll_status = 0
-       AND enr.section_enroll_status = 0       
-       AND enr.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+       AND enr.section_enroll_status = 0
     ) sub
 WHERE rn_year = 1

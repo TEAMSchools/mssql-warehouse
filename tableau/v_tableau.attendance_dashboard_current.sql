@@ -84,7 +84,7 @@ FROM
        ON mem.studentid = co.studentid
       AND mem.schoolid = co.schoolid
       AND mem.calendardate BETWEEN co.entrydate AND co.exitdate
-     LEFT JOIN powerschool.course_enrollments_static enr
+     LEFT JOIN powerschool.course_enrollments_current_static enr
        ON co.studentid = enr.studentid
       AND co.academic_year = enr.academic_year 
       AND co.schoolid = enr.schoolid

@@ -138,7 +138,7 @@ SELECT co.student_number
       ,CONVERT(VARCHAR, bk.dt_taken) AS last_book_quiz_date
       ,bk.d_percent_correct * 100 AS last_book_quiz_pct_correct
 FROM gabby.powerschool.cohort_identifiers_static co
-LEFT JOIN gabby.powerschool.course_enrollments_static enr
+LEFT JOIN gabby.powerschool.course_enrollments_current_static enr
   ON co.student_number = enr.student_number
  AND co.[db_name] = enr.[db_name]
  AND enr.credittype = 'ENG'

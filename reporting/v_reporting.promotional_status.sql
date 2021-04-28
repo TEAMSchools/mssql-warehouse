@@ -28,7 +28,7 @@ WITH failing AS (
   SELECT student_number
         ,academic_year
         ,SUM(credit_hours) AS credit_hours_enrolled
-  FROM gabby.powerschool.course_enrollments_static
+  FROM gabby.powerschool.course_enrollments
   WHERE course_enroll_status = 0
     AND section_enroll_status = 0
     AND rn_course_yr = 1

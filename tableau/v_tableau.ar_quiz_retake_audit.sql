@@ -39,14 +39,14 @@ LEFT JOIN gabby.reporting.reporting_terms dts
  AND dts.identifier = 'AR'
  AND dts.time_per_name <> 'ARY'
  AND dts._fivetran_deleted = 0
-LEFT JOIN gabby.powerschool.course_enrollments_static enr 
+LEFT JOIN gabby.powerschool.course_enrollments_current_static enr 
   ON co.student_number = enr.student_number
  AND co.academic_year = enr.academic_year
  AND co.[db_name] = enr.[db_name]
  AND enr.credittype = 'ENG'
  AND enr.section_enroll_status = 0
  AND enr.rn_subject = 1
-LEFT JOIN gabby.powerschool.course_enrollments_static hr
+LEFT JOIN gabby.powerschool.course_enrollments_current_static hr
   ON co.student_number = hr.student_number
  AND co.academic_year = hr.academic_year
  AND co.schoolid = hr.schoolid

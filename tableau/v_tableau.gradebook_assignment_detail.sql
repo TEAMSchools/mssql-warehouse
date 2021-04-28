@@ -40,10 +40,11 @@ SELECT enr.sectionid
       ,s1.islate
       ,s1.isexempt
       ,s1.ismissing
-FROM gabby.powerschool.course_enrollments_static enr
+FROM gabby.powerschool.course_enrollments_current_static enr
 JOIN gabby.powerschool.cohort_identifiers_static co
   ON enr.student_number = co.student_number
  AND enr.academic_year = co.academic_year
+ AND enr.[db_name] = co.[db_name]
  AND co.rn_year = 1
 JOIN gabby.powerschool.gradebook_setup_static gb
   ON enr.sections_dcid = gb.sectionsdcid
@@ -57,7 +58,6 @@ LEFT JOIN gabby.powerschool.gradebook_assignments_scores_current_static s1
   ON a1.assignmentsectionid = s1.assignmentsectionid
  AND a1.[db_name] = s1.[db_name]
  AND enr.students_dcid = s1.studentsdcid
-WHERE enr.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 
 UNION ALL
 
@@ -98,10 +98,11 @@ SELECT enr.sectionid
       ,s2.islate
       ,s2.isexempt
       ,s2.ismissing
-FROM gabby.powerschool.course_enrollments_static enr
+FROM gabby.powerschool.course_enrollments_current_static enr
 JOIN gabby.powerschool.cohort_identifiers_static co
   ON enr.student_number = co.student_number
  AND enr.academic_year = co.academic_year
+ AND enr.[db_name] = co.[db_name]
  AND co.rn_year = 1
 JOIN gabby.powerschool.gradebook_setup_static gb
   ON enr.sections_dcid = gb.sectionsdcid
@@ -116,4 +117,3 @@ LEFT JOIN gabby.powerschool.gradebook_assignments_scores_current_static s2
   ON a2.assignmentsectionid = s2.assignmentsectionid
  AND a2.[db_name] = s2.[db_name]
  AND enr.students_dcid = s2.studentsdcid 
-WHERE enr.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
