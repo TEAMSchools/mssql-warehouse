@@ -146,7 +146,8 @@ WITH all_staff AS (
              /* dedupe positions */
              ,ROW_NUMBER() OVER(
                 PARTITION BY eh.associate_id
-                  ORDER BY CONVERT(DATE, eh.effective_start_date) DESC) AS rn
+                  ORDER BY CONVERT(DATE, eh.effective_start_date) DESC
+                          ,CASE WHEN eh.position_status = 'Terminated' THEN 0 ELSE 1 END DESC) AS rn
 
              ,ea.first_name
              ,ea.last_name
