@@ -9,6 +9,7 @@ WITH webhook_feed AS (
         ,s.subject_name
        ,CONVERT(INT, CASE
                        WHEN CHARINDEX('[', s.subject_name) = 0 THEN NULL
+                       ELSE SUBSTRING(s.subject_name
                                      ,CHARINDEX('[', s.subject_name) + 1
                                      ,CHARINDEX(']', s.subject_name) - CHARINDEX('[', s.subject_name) - 1)
                       END) AS subject_df_employee_number
