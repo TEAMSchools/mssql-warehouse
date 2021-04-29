@@ -3,65 +3,131 @@ GO
 
 CREATE OR ALTER VIEW surveys.survey_completion AS
 
-WITH survey_feed AS (
+WITH webhook_feed AS (
   SELECT s._created AS date_created
-        ,CONVERT(DATETIME2, s.survey_timestamp) AS date_submitted
+        ,s.survey_timestamp
         ,s.subject_name
-        ,LOWER(s.email) AS responder_email
+       ,CONVERT(INT, CASE
+                       WHEN CHARINDEX('[', s.subject_name) = 0 THEN NULL
+                       ELSE SUBSTRING(s.subject_name
+                                     ,CHARINDEX('[', s.subject_name) + 1
+                                     ,CHARINDEX(']', s.subject_name) - CHARINDEX('[', s.subject_name) - 1)
+                      END) AS subject_df_employee_number
+        ,LOWER(s.email) AS email
         ,gabby.utilities.DATE_TO_SY(s._created) AS academic_year
-        ,CASE 
+        ,CASE
           WHEN c.[name] LIKE '%SO1%' THEN 'SO1'
           WHEN c.[name] LIKE '%SO2%' THEN 'SO2'
           WHEN c.[name] LIKE '%SO3%' THEN 'SO3'
           WHEN c.[name] LIKE '%SO4%' THEN 'SO4'
          END AS reporting_term
-        ,'Self & Others' AS survey_type
         ,s.is_manager
+        ,'Self & Others' AS survey_type
+        ,c.survey_id AS survey_id
   FROM gabby.surveys.self_and_others_survey s
-  LEFT JOIN gabby.surveygizmo.survey_campaign_clean_static c
+  JOIN gabby.surveygizmo.survey_campaign_clean_static c
     ON c.survey_id = 4561325
-   AND CONVERT(DATETIME2, s.survey_timestamp) BETWEEN c.link_open_date AND c.link_close_date
-  WHERE s.subject_name IS NOT NULL
-    AND s._created IS NOT NULL
+   AND CONVERT(DATETIME2, s._created) BETWEEN c.link_open_date AND c.link_close_date
+  WHERE gabby.utilities.DATE_TO_SY(s._created) = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+    AND s.subject_name IS NOT NULL
 
   UNION ALL
 
   SELECT m._created AS date_created
-        ,CONVERT(DATETIME2, m.survey_timestamp) AS date_submitted
+        ,m.survey_timestamp
         ,m.subject_name
-        ,LOWER(m.responder_name) AS responder_email
+        ,CONVERT(INT, CASE
+                       WHEN CHARINDEX('[', m.subject_name) = 0 THEN NULL
+                       ELSE SUBSTRING(m.subject_name
+                                     ,CHARINDEX('[', m.subject_name) + 1
+                                     ,CHARINDEX(']', m.subject_name) - CHARINDEX('[', m.subject_name) - 1)
+                      END) AS subject_df_employee_number
+        ,LOWER(m.responder_name) AS email
         ,gabby.utilities.DATE_TO_SY(m._created) AS academic_year
-        ,CASE 
+        ,CASE
           WHEN c.[name] LIKE '%MGR1%' THEN 'MGR1'
           WHEN c.[name] LIKE '%MGR2%' THEN 'MGR2'
           WHEN c.[name] LIKE '%MGR3%' THEN 'MGR3'
           WHEN c.[name] LIKE '%MGR4%' THEN 'MGR4'
          END AS reporting_term
-        ,'Manager' AS survey_type
         ,NULL AS is_manager
+        ,'Manager' AS survey_type
+        ,c.survey_id AS survey_id
   FROM gabby.surveys.manager_survey m
-  LEFT JOIN gabby.surveygizmo.survey_campaign_clean_static c
+  JOIN gabby.surveygizmo.survey_campaign_clean_static c
     ON c.survey_id = 4561288
-   AND CONVERT(DATETIME2, m.survey_timestamp) BETWEEN c.link_open_date AND c.link_close_date
-  WHERE m.subject_name IS NOT NULL
-    AND m._created IS NOT NULL
+   AND CONVERT(DATETIME2, m._created) BETWEEN c.link_open_date AND c.link_close_date
+  WHERE gabby.utilities.DATE_TO_SY(m._created) = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
     AND m.subject_name IS NOT NULL
     AND m.q_1 IS NOT NULL
 
   UNION ALL
-
-  SELECT r.date_started AS date_created
-        ,CONVERT(DATETIME2, r.date_submitted) AS date_submitted
+   
+  SELECT e._created AS date_created
+        ,e._created survey_timestamp
         ,'R9/Engagement' AS subject_name
-        ,LOWER(r.respondent_mail) AS responder_email
-        ,gabby.utilities.DATE_TO_SY(r.date_submitted) AS academic_year
-        ,r.campaign_reporting_term AS reporting_term
-        ,'R9/Engagement' AS survey
+        ,999999 AS subject_df_employee_number
+        ,LOWER(e.email) AS email
+        ,gabby.utilities.DATE_TO_SY(e._created) AS academic_year
+        ,CASE
+          WHEN c.[name] LIKE '%R9S1%' THEN 'R9S1'
+          WHEN c.[name] LIKE '%R9S2%' THEN 'R9S2'
+          WHEN c.[name] LIKE '%R9S3%' THEN 'R9S3'
+          WHEN c.[name] LIKE '%R9S4%' THEN 'R9S4'
+         END AS reporting_term
         ,NULL AS is_manager
+        ,'R9/Engagement' AS survey_type
+        ,c.survey_id AS survey_id
+  FROM gabby.surveys.r_9_engagement_survey e
+  JOIN gabby.surveygizmo.survey_campaign_clean_static c
+    ON c.survey_id = 5300913
+   AND CONVERT(DATETIME2, e._created) BETWEEN c.link_open_date AND c.link_close_date
+  WHERE gabby.utilities.DATE_TO_SY(e._created) = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+  )
+
+,response_identifiers AS (
+  SELECT r.date_submitted AS date_created
+        ,r.date_submitted AS survey_timestamp
+        ,CASE 
+          WHEN r.survey_id = 5300913 THEN 'R9/Engagement' 
+          ELSE r.subject_preferred_name + ' - ' + r.subject_primary_site + ' [' + CONVERT(varchar,r.subject_df_employee_number) + ']'
+         END AS subject_name
+        ,CASE 
+          WHEN r.survey_id = 5300913 THEN 999999 
+          ELSE r.subject_df_employee_number
+         END AS subject_df_employee_number
+        ,LOWER(r.respondent_mail) AS email
+        ,r.campaign_academic_year AS academic_year
+        ,r.campaign_reporting_term AS reporting_term
+        ,r.is_manager AS is_manager
+        ,CASE  
+          WHEN r.survey_id = 4561325 THEN 'Self & Others'
+          WHEN r.survey_id = 4561288 THEN 'Manager'
+          WHEN r.survey_id = 5300913 THEN 'R9/Engagement' 
+         END AS survey_type
+        ,r.survey_id AS survey_id
   FROM gabby.surveygizmo.survey_response_identifiers_static r
-  WHERE r.survey_id = 5300913
-    AND r.[status] = 'Complete'
- )
+  WHERE r.campaign_academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+  )
+
+,survey_feed AS (
+  SELECT COALESCE(r.date_created, w.date_created) AS date_created
+        ,COALESCE(r.survey_timestamp, w.survey_timestamp) AS date_submitted
+        ,COALESCE(r.subject_name, w.subject_name) AS subject_name
+        ,COALESCE(r.subject_df_employee_number, w.subject_df_employee_number) AS subject_df_employee_number
+        ,COALESCE(r.email, w.email) AS responder_email
+        ,COALESCE(r.academic_year, w.academic_year) AS academic_year
+        ,COALESCE(r.reporting_term, w.reporting_term) AS reporting_term
+        ,COALESCE(r.is_manager, w.is_manager) AS is_manager
+        ,COALESCE(r.survey_type, w.survey_type) AS survey_type
+        ,COALESCE(r.survey_id, w.survey_id) AS survey_id
+  FROM response_identifiers r
+  FULL JOIN webhook_feed w
+    ON r.survey_id = w.survey_id
+   AND r.email = w.email
+   AND r.subject_df_employee_number = w.subject_df_employee_number
+   AND r.reporting_term = w.reporting_term
+   )
 
 ,teacher_scaffold AS (
   SELECT sr.df_employee_number
