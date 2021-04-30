@@ -52,8 +52,8 @@ SELECT co.student_number
 
       ,CASE WHEN scf.homeless_code IN ('Y1', 'Y2') THEN 1 END AS is_homeless
       ,suf.infosnap_opt_in
-      ,co.city
 
+      ,co.city
 FROM gabby.powerschool.cohort_identifiers_static co
 LEFT JOIN gabby.powerschool.u_studentsuserfields suf
   ON co.students_dcid = suf.studentsdcid
