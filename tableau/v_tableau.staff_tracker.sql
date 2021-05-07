@@ -66,15 +66,15 @@ SELECT df.df_employee_number
       ,LOWER(df.samaccountname) AS staff_username_short
       ,LOWER(df.manager_samaccountname) AS mgr_username_short
 
-      ,was.[status] AS cal_position_status
-      ,was.legal_entity_name AS cal_legal_entity
-      ,was.physical_location_name AS cal_location
-      ,was.department_name AS cal_department_name
-      ,was.job_name AS cal_job_title
+      ,was.position_status AS cal_position_status
+      ,was.business_unit AS cal_legal_entity
+      ,was.location AS cal_location
+      ,was.home_department AS cal_department_name
+      ,was.job_title AS cal_job_title
 
       ,cal.date_value
       ,CASE 
-        WHEN was.[status] IN ('Terminated', 'Pre-Start', 'Administrative Leave', 'Medical Leave of Absence', 'Personal Leave of Absence') THEN 0
+        WHEN was.position_status IN ('Terminated', 'Pre-Start', 'Administrative Leave', 'Medical Leave of Absence', 'Personal Leave of Absence') THEN 0
         ELSE cal.insession
        END AS insession
       ,gabby.utilities.DATE_TO_SY(cal.date_value) AS academic_year
@@ -111,7 +111,7 @@ SELECT df.df_employee_number
       ,CASE WHEN (a.approved = 1 OR t.tafw_hours > 0) THEN 1 ELSE NULL END AS approved
 
       ,CASE 
-        WHEN was.[status] IN ('Terminated', 'Pre-Start') THEN was.[status]
+        WHEN was.position_status IN ('Terminated', 'Pre-Start') THEN was.position_status
         ELSE COALESCE(CASE 
                        WHEN t.tafw_hours = 9.5 THEN 'PTO'
                        WHEN t.tafw_hours < 9.5 THEN 'PARTIAL'
@@ -126,12 +126,12 @@ SELECT df.df_employee_number
       ,CASE 
         WHEN cal.[type] IN ('HOL','VAC') THEN 0
         WHEN l.[status] IS NOT NULL THEN 0
-        WHEN was.[status] IN ('Terminated', 'Pre-Start') THEN 0
+        WHEN was.position_status IN ('Terminated', 'Pre-Start') THEN 0
         ELSE 9.5 - ISNULL(t.tafw_hours, 0)
        END AS hours_worked
 FROM gabby.people.staff_crosswalk_static df
-JOIN gabby.dayforce.work_assignment_status was
-  ON df.df_employee_number = was.df_employee_id
+JOIN gabby.people.employment_history was
+  ON df.df_employee_number = was.employee_number
  AND was.effective_end_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
 JOIN gabby.powerschool.calendar_day cal
   ON df.primary_site_schoolid = cal.schoolid 
