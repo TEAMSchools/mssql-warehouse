@@ -130,13 +130,9 @@ SELECT df.df_employee_number
         ELSE 9.5 - ISNULL(t.tafw_hours, 0)
        END AS hours_worked
 FROM gabby.people.staff_crosswalk_static df
-JOIN gabby.people.employment_history was
-  ON df.df_employee_number = was.employee_number
- AND was.effective_end_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
 JOIN gabby.powerschool.calendar_day cal
   ON df.primary_site_schoolid = cal.schoolid 
  AND df.[db_name]= cal.[db_name]
- AND cal.date_value BETWEEN was.effective_start_date AND COALESCE(was.effective_end_date, GETDATE()) 
  AND (cal.insession = 1 OR cal.[type] = 'PD') 
  AND cal.date_value BETWEEN DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1) AND GETDATE()
 JOIN gabby.reporting.reporting_terms dt
@@ -144,6 +140,9 @@ JOIN gabby.reporting.reporting_terms dt
  AND cal.date_value BETWEEN dt.[start_date] AND dt.end_date
  AND dt.identifier = 'RT'
  AND dt._fivetran_deleted = 0
+JOIN gabby.people.employment_history was
+  ON df.df_employee_number = was.employee_number
+ AND cal.date_value BETWEEN was.effective_start_date AND was.effective_end_date
 LEFT JOIN emp_att pt
   ON df.df_employee_number = pt.employee_number
  AND cal.date_value = pt.pay_date
