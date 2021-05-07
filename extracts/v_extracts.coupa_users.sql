@@ -32,7 +32,7 @@ WITH roles AS (
   GROUP BY ubgm.[user_id]
  )
 
-SELECT LOWER(sub.samaccountname) AS [Login]
+SELECT LOWER(ad.samaccountname) AS [Login]
       ,CASE
         WHEN sub.[status] = 'Terminated' THEN 'inactive'
         WHEN sub.active IS NOT NULL THEN sub.active
@@ -44,9 +44,9 @@ SELECT LOWER(sub.samaccountname) AS [Login]
                ,'No') AS [Purchasing User] /* preserve Coupa, otherwise No */
       ,CASE WHEN sub.[status] = 'Terminated' THEN 'No' ELSE 'Yes' END AS [Expense User]
       ,'SAML' AS [Authentication Method]
-      ,LOWER(sub.userprincipalname) AS [Sso Identifier]
+      ,LOWER(ad.userprincipalname) AS [Sso Identifier]
       ,'No' AS [Generate Password And Notify User]
-      ,COALESCE(LOWER(sub.mail), LOWER(sub.userprincipalname)) AS [Email] /* some are missing the AD mail attribute `\(o_O)/` */
+      ,COALESCE(LOWER(ad.mail), LOWER(ad.userprincipalname)) AS [Email] /* some are missing the AD mail attribute `\(o_O)/` */
       ,sub.preferred_first_name AS [First Name]
       ,sub.preferred_last_name AS [Last Name]
       ,sub.employee_number AS [Employee Number]
@@ -60,13 +60,13 @@ SELECT LOWER(sub.samaccountname) AS [Login]
       ,gabby.utilities.STRIP_CHARACTERS(CONCAT(sub.preferred_first_name, sub.preferred_last_name ), '^A-Z') AS [Mention Name]
       ,COALESCE(x.coupa_school_name
                ,CASE
-                 WHEN sn.coupa_school_name = '<Use PhysicalDeliveryOfficeName>' AND sub.physicaldeliveryofficename IN ('KIPP Cooper Norcross High (KCNA)', 'KIPP Cooper Norcross High School') THEN 'KCNHS'
-                 WHEN sn.coupa_school_name = '<Use PhysicalDeliveryOfficeName>' THEN REPLACE(sub.physicaldeliveryofficename, 'KIPP ', '')
+                 WHEN sn.coupa_school_name = '<Use PhysicalDeliveryOfficeName>' AND ad.physicaldeliveryofficename IN ('KIPP Cooper Norcross High (KCNA)', 'KIPP Cooper Norcross High School') THEN 'KCNHS'
+                 WHEN sn.coupa_school_name = '<Use PhysicalDeliveryOfficeName>' THEN REPLACE(ad.physicaldeliveryofficename, 'KIPP ', '')
                  ELSE sn.coupa_school_name
                 END
                ,CASE
-                 WHEN sn2.coupa_school_name = '<Use PhysicalDeliveryOfficeName>' AND sub.physicaldeliveryofficename IN ('KIPP Cooper Norcross High (KCNA)', 'KIPP Cooper Norcross High School') THEN 'KCNHS'
-                 WHEN sn2.coupa_school_name = '<Use PhysicalDeliveryOfficeName>' THEN REPLACE(sub.physicaldeliveryofficename, 'KIPP ', '')
+                 WHEN sn2.coupa_school_name = '<Use PhysicalDeliveryOfficeName>' AND ad.physicaldeliveryofficename IN ('KIPP Cooper Norcross High (KCNA)', 'KIPP Cooper Norcross High School') THEN 'KCNHS'
+                 WHEN sn2.coupa_school_name = '<Use PhysicalDeliveryOfficeName>' THEN REPLACE(ad.physicaldeliveryofficename, 'KIPP ', '')
                  ELSE sn2.coupa_school_name
                 END) AS [School Name] /* override > lookup table (content group/department/job) > lookup table (content group/department) */
 FROM
@@ -80,12 +80,7 @@ FROM
            ,sr.[status]
            ,sr.job_title
 
-           ,ad.samaccountname
-           ,ad.userprincipalname
-           ,ad.mail
-           ,ad.physicaldeliveryofficename
-
-           ,CASE 
+           ,CASE
              WHEN cu.active = 1 THEN 'active'
              WHEN cu.active = 0 THEN 'inactive'
             END AS active
@@ -99,9 +94,6 @@ FROM
 
            ,bg.business_group_names AS content_groups
      FROM gabby.people.staff_roster sr
-     INNER JOIN gabby.adsi.user_attributes_static ad
-       ON sr.employee_number = ad.employeenumber
-      AND ISNUMERIC(ad.employeenumber) = 1
      INNER JOIN gabby.coupa.[user] cu
        ON sr.employee_number = cu.employee_number
      INNER JOIN roles r
@@ -109,7 +101,7 @@ FROM
      LEFT JOIN business_groups bg
        ON cu.id = bg.[user_id]
      WHERE sr.[status] <> 'Prestart'
-       AND sr.home_department NOT IN ('Interns')
+       AND sr.job_title NOT IN ('Intern')
 
      UNION ALL
 
@@ -122,25 +114,21 @@ FROM
            ,sr.[status]
            ,sr.job_title
 
-           ,ad.samaccountname
-           ,ad.userprincipalname
-           ,ad.mail
-           ,ad.physicaldeliveryofficename
            ,NULL AS active
            ,'No' AS purchasing_user
            ,NULL AS school_name
            ,'Expense User' AS roles
            ,NULL AS content_groups
      FROM gabby.people.staff_roster sr
-     INNER JOIN gabby.adsi.user_attributes_static ad
-       ON sr.employee_number = ad.employeenumber
-      AND ISNUMERIC(ad.employeenumber) = 1
      LEFT JOIN gabby.coupa.[user] cu
        ON sr.employee_number = cu.employee_number
      WHERE sr.[status] NOT IN ('Prestart', 'Terminated')
-       AND sr.home_department NOT IN ('Interns')
+       AND sr.job_title NOT IN ('Intern')
        AND cu.employee_number IS NULL
     ) sub
+INNER JOIN gabby.adsi.user_attributes_static ad
+  ON sub.employee_number = ad.employeenumber
+ AND ISNUMERIC(ad.employeenumber) = 1
 LEFT JOIN gabby.coupa.school_name_lookup sn
   ON sub.business_unit_code = sn.business_unit_code
  AND sub.home_department = sn.home_department
