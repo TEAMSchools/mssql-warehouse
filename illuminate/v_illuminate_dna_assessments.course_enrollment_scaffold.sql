@@ -24,12 +24,11 @@ FROM
      FROM
          (
           /* K-12 enrollments */
-          SELECT DISTINCT
-                 ssc.student_id
-                ,ssc.academic_year
-                ,ssc.grade_level_id
-                ,ssc.entry_date
-                ,ssc.leave_date
+          SELECT ils.student_id
+                ,enr.academic_year + 1 AS academic_year
+                ,co.grade_level + 1 AS grade_level_id
+                ,enr.dateenrolled AS entry_date
+                ,enr.dateleft AS leave_date
 
                 ,enr.illuminate_subject AS subject_area
                 ,enr.credittype
@@ -38,15 +37,13 @@ FROM
                   ELSE 0 
                  END AS is_advanced_math
           FROM gabby.powerschool.course_enrollments enr
+          JOIN gabby.powerschool.cohort_identifiers_static co
+            ON enr.student_number = co.student_number
+           AND enr.academic_year = co.academic_year
+           AND enr.[db_name] = co.[db_name]
+           AND co.rn_year = 1
           JOIN gabby.illuminate_public.students ils
             ON enr.student_number = ils.local_student_id
-          JOIN gabby.illuminate_public.courses c
-            ON enr.course_number = c.school_course_id COLLATE Latin1_General_BIN
-          JOIN gabby.illuminate_matviews.ss_cube ssc
-            ON ils.student_id = ssc.student_id
-           AND c.course_id = ssc.course_id
-           AND (enr.academic_year + 1) = ssc.academic_year
-           AND ssc.entry_date <> ssc.leave_date
           WHERE enr.course_enroll_status = 0
             AND enr.section_enroll_status = 0
             AND enr.illuminate_subject IS NOT NULL
@@ -55,27 +52,24 @@ FROM
           UNION ALL
 
           /* ES Writing */
-          SELECT DISTINCT
-                 ssc.student_id
-                ,ssc.academic_year
-                ,ssc.grade_level_id
-                ,ssc.entry_date
-                ,ssc.leave_date
+          SELECT ils.student_id
+                ,enr.academic_year + 1 AS academic_year
+                ,co.grade_level + 1 AS grade_level_id
+                ,enr.dateenrolled AS entry_date
+                ,enr.dateleft AS leave_date
 
                 ,'Writing' AS subject_area
                 ,'RHET' AS credittype
                 ,0 AS is_advanced_math
           FROM gabby.powerschool.course_enrollments enr
+          JOIN gabby.powerschool.cohort_identifiers_static co
+            ON enr.student_number = co.student_number
+           AND enr.academic_year = co.academic_year
+           AND enr.[db_name] = co.[db_name]
+           AND co.rn_year = 1
+           AND co.grade_level <= 4
           JOIN gabby.illuminate_public.students ils
             ON enr.student_number = ils.local_student_id
-          JOIN gabby.illuminate_public.courses c
-            ON enr.course_number = c.school_course_id COLLATE Latin1_General_BIN
-          JOIN gabby.illuminate_matviews.ss_cube ssc
-            ON ils.student_id = ssc.student_id
-           AND c.course_id = ssc.course_id
-           AND (enr.academic_year + 1) = ssc.academic_year
-           AND ssc.entry_date <> ssc.leave_date
-           AND ssc.grade_level_id <= 5
           WHERE enr.course_enroll_status = 0
             AND enr.section_enroll_status = 0
             AND enr.course_number = 'HR'
