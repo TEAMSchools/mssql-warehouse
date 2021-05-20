@@ -24,7 +24,8 @@ FROM
      FROM
          (
           /* K-12 enrollments */
-          SELECT ils.student_id
+          SELECT DISTINCT 
+                 ils.student_id
                 ,enr.academic_year + 1 AS academic_year
                 ,co.grade_level + 1 AS grade_level_id
                 ,enr.dateenrolled AS entry_date
@@ -45,7 +46,6 @@ FROM
           JOIN gabby.illuminate_public.students ils
             ON enr.student_number = ils.local_student_id
           WHERE enr.course_enroll_status = 0
-            AND enr.section_enroll_status = 0
             AND enr.illuminate_subject IS NOT NULL
             AND enr.rn_illuminate_subject = 1
 
@@ -53,26 +53,17 @@ FROM
 
           /* ES Writing */
           SELECT ils.student_id
-                ,enr.academic_year + 1 AS academic_year
+                ,co.academic_year + 1 AS academic_year
                 ,co.grade_level + 1 AS grade_level_id
-                ,enr.dateenrolled AS entry_date
-                ,enr.dateleft AS leave_date
+                ,co.entrydate AS entry_date
+                ,co.exitdate AS leave_date
 
                 ,'Writing' AS subject_area
                 ,'RHET' AS credittype
                 ,0 AS is_advanced_math
-          FROM gabby.powerschool.course_enrollments enr
-          JOIN gabby.powerschool.cohort_identifiers_static co
-            ON enr.student_number = co.student_number
-           AND enr.academic_year = co.academic_year
-           AND enr.[db_name] = co.[db_name]
-           AND co.rn_year = 1
-           AND co.grade_level <= 4
+          FROM gabby.powerschool.cohort_identifiers_static co
           JOIN gabby.illuminate_public.students ils
-            ON enr.student_number = ils.local_student_id
-          WHERE enr.course_enroll_status = 0
-            AND enr.section_enroll_status = 0
-            AND enr.course_number = 'HR'
-            AND enr.rn_course_yr = 1
+            ON co.student_number = ils.local_student_id
+          WHERE co.grade_level <= 4
          ) sub
     ) sub
