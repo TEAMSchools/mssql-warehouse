@@ -136,7 +136,7 @@ WITH response_pivot AS (
        JOIN gabby.people.staff_crosswalk_static subj
          ON em.employee_number = subj.df_employee_number
       ) sub
-  WHERE sub.manager_effective_start <= COALESCE(sub.manager_effective_end,GETDATE()+1)
+  WHERE sub.manager_effective_start <= COALESCE(sub.manager_effective_end, GETDATE() + 1)
  )
 
 SELECT rc.survey_response_id
@@ -216,7 +216,7 @@ LEFT JOIN work_assignment rwa
  AND rwa.rn = 1
 LEFT JOIN manager rmgr
   ON rc.respondent_df_employee_number = rmgr.employee_reference_code
- AND CONVERT(DATE, sc.link_close_date) BETWEEN rmgr.manager_effective_start AND COALESCE(rmgr.manager_effective_end,GETDATE()+1)
+ AND CONVERT(DATE, sc.link_close_date) BETWEEN rmgr.manager_effective_start AND COALESCE(rmgr.manager_effective_end, GETDATE() + 1)
 LEFT JOIN gabby.people.staff_crosswalk_static subj
   ON rc.subject_df_employee_number = subj.df_employee_number
 LEFT JOIN work_assignment swa
@@ -225,4 +225,4 @@ LEFT JOIN work_assignment swa
  AND swa.rn = 1
 LEFT JOIN manager smgr
   ON rc.subject_df_employee_number = smgr.employee_reference_code
- AND CONVERT(DATE, sc.link_close_date) BETWEEN smgr.manager_effective_start AND COALESCE(smgr.manager_effective_end,GETDATE()+1)
+ AND CONVERT(DATE, sc.link_close_date) BETWEEN smgr.manager_effective_start AND COALESCE(smgr.manager_effective_end, GETDATE() + 1)
