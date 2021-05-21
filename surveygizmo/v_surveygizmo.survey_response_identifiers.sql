@@ -54,43 +54,31 @@ WITH response_pivot AS (
  )
 
 ,response_clean AS (
-  SELECT sub.survey_response_id
-        ,sub.survey_id
-        ,sub.date_started
-        ,COALESCE(sub.subject_df_employee_number, subj.df_employee_number) AS subject_df_employee_number
-        ,sub.respondent_df_employee_number
-        ,sub.is_manager
-  FROM
-      (
-       SELECT rp.survey_response_id
-             ,rp.survey_id
-             ,rp.date_started
-             ,rp.subject_preferred_name
-             ,rp.is_manager
+  SELECT rp.survey_response_id
+        ,rp.survey_id
+        ,rp.date_started
+        ,rp.subject_preferred_name
+        ,rp.is_manager
 
-             ,ab.subject_preferred_name_duplicate
+        ,ab.subject_preferred_name_duplicate
 
-             ,COALESCE(rp.subject_df_employee_number, ab.subject_df_employee_number) AS subject_df_employee_number
-             ,COALESCE(rp.respondent_df_employee_number
-                      ,upn.df_employee_number
-                      ,adp.df_employee_number
-                      ,mail.df_employee_number
-                      ,ab.df_employee_number) AS respondent_df_employee_number
-       FROM response_pivot rp
-       LEFT JOIN gabby.people.staff_crosswalk_static upn
-         ON rp.respondent_userprincipalname = upn.userprincipalname
-       LEFT JOIN gabby.people.staff_crosswalk_static adp
-         ON rp.respondent_adp_associate_id = adp.adp_associate_id_legacy
-       LEFT JOIN gabby.people.staff_crosswalk_static mail
-         ON rp.respondent_userprincipalname = mail.mail
-       LEFT JOIN gabby.surveys.surveygizmo_abnormal_respondents ab
-         ON rp.survey_id = ab.survey_id
-        AND rp.survey_response_id = ab.survey_response_id
-        AND ab._fivetran_deleted = 0
-      ) sub
-  LEFT JOIN gabby.people.staff_crosswalk_static subj
-    ON sub.subject_preferred_name = subj.preferred_name
-   AND sub.subject_preferred_name_duplicate IS NULL
+        ,COALESCE(rp.subject_df_employee_number, ab.subject_df_employee_number) AS subject_df_employee_number
+        ,COALESCE(rp.respondent_df_employee_number
+                 ,upn.df_employee_number
+                 ,adp.df_employee_number
+                 ,mail.df_employee_number
+                 ,ab.df_employee_number) AS respondent_df_employee_number
+  FROM response_pivot rp
+  LEFT JOIN gabby.people.staff_crosswalk_static upn
+    ON rp.respondent_userprincipalname = upn.userprincipalname
+  LEFT JOIN gabby.people.staff_crosswalk_static adp
+    ON rp.respondent_adp_associate_id = adp.adp_associate_id_legacy
+  LEFT JOIN gabby.people.staff_crosswalk_static mail
+    ON rp.respondent_userprincipalname = mail.mail
+  LEFT JOIN gabby.surveys.surveygizmo_abnormal_respondents ab
+    ON rp.survey_id = ab.survey_id
+   AND rp.survey_response_id = ab.survey_response_id
+   AND ab._fivetran_deleted = 0
  )
 
 ,work_assignment AS (
@@ -125,8 +113,8 @@ WITH response_pivot AS (
       (
        SELECT em.employee_number AS employee_reference_code
              ,em.reports_to_effective_date AS manager_effective_start
-             ,em.reports_to_effective_end_date AS manager_effective_end
-                  
+             ,em.reports_to_effective_end_date_eoy AS manager_effective_end
+
              ,subj.manager_df_employee_number
              ,subj.manager_name
              ,subj.manager_mail
@@ -136,7 +124,7 @@ WITH response_pivot AS (
        JOIN gabby.people.staff_crosswalk_static subj
          ON em.employee_number = subj.df_employee_number
       ) sub
-  WHERE sub.manager_effective_start <= COALESCE(sub.manager_effective_end, GETDATE() + 1)
+  WHERE sub.manager_effective_start <= sub.manager_effective_end
  )
 
 SELECT rc.survey_response_id
@@ -216,7 +204,7 @@ LEFT JOIN work_assignment rwa
  AND rwa.rn = 1
 LEFT JOIN manager rmgr
   ON rc.respondent_df_employee_number = rmgr.employee_reference_code
- AND CONVERT(DATE, sc.link_close_date) BETWEEN rmgr.manager_effective_start AND COALESCE(rmgr.manager_effective_end, GETDATE() + 1)
+ AND CONVERT(DATE, sc.link_close_date) BETWEEN rmgr.manager_effective_start AND rmgr.manager_effective_end
 LEFT JOIN gabby.people.staff_crosswalk_static subj
   ON rc.subject_df_employee_number = subj.df_employee_number
 LEFT JOIN work_assignment swa
@@ -225,4 +213,4 @@ LEFT JOIN work_assignment swa
  AND swa.rn = 1
 LEFT JOIN manager smgr
   ON rc.subject_df_employee_number = smgr.employee_reference_code
- AND CONVERT(DATE, sc.link_close_date) BETWEEN smgr.manager_effective_start AND COALESCE(smgr.manager_effective_end, GETDATE() + 1)
+ AND CONVERT(DATE, sc.link_close_date) BETWEEN smgr.manager_effective_start AND smgr.manager_effective_end
