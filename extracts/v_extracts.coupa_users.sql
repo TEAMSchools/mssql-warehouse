@@ -64,6 +64,8 @@ WITH roles AS (
     ON cu.id = bg.[user_id]
   WHERE sr.[status] <> 'Prestart'
     AND sr.job_title NOT IN ('Intern')
+    AND (sr.termination_date IS NULL 
+           OR sr.termination_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1))
 
   UNION ALL
 
