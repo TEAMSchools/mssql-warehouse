@@ -16,6 +16,7 @@ SELECT co.school_name
       ,co.region
       ,co.is_pathways
       ,co.c_504_status
+      ,co.is_pathways AS is_self_contained
 
       ,term.lit AS lit_term
       ,CASE
