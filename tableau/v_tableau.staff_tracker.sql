@@ -149,7 +149,7 @@ LEFT JOIN emp_att pt
 LEFT JOIN tafw t
   ON df.df_employee_number = t.df_employee_number
  AND cal.date_value BETWEEN t.tafw_start_date AND t.tafw_end_date
-LEFT JOIN people.staff_attendance_clean_static a
+LEFT JOIN gabby.people.staff_attendance_clean_static a
   ON df.df_employee_number = a.df_number
  AND cal.date_value = a.attendance_date
  AND a.rn_curr = 1
