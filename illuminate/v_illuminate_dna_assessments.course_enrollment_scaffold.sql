@@ -47,7 +47,6 @@ FROM
             ON enr.student_number = ils.local_student_id
           WHERE enr.course_enroll_status = 0
             AND enr.illuminate_subject IS NOT NULL
-            AND enr.rn_illuminate_subject = 1
 
           UNION ALL
 
