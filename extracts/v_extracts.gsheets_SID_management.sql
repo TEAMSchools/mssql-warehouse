@@ -1,20 +1,43 @@
 USE gabby
 GO
 
---CREATE OR ALTER VIEW extracts.gsheets_sid_management AS
+CREATE OR ALTER VIEW extracts.gsheets_sid_management AS
 
 WITH att AS (
-  SELECT psa.studentid
-        ,psa.[db_name]
-        ,psa.yearid
-        ,SUM(psa.attendancevalue) AS CumulativeDaysPresent
-        ,SUM(psa.membershipvalue) AS CumulativeDaysInMembership
-  FROM gabby.powerschool.ps_adaadm_daily_ctod_current_static psa
-  WHERE psa.membershipvalue = 1
-    AND psa.calendardate <= CAST(GETDATE() AS DATE)
-  GROUP BY psa.studentid
-          ,psa.yearid
-          ,psa.[db_name]
+  SELECT sub.studentid
+        ,sub.[db_name]
+        ,SUM(sub.attendancevalue) AS CumulativeDaysPresent
+        ,SUM(sub.membershipvalue) AS CumulativeDaysInMembership
+        ,SUM(CASE WHEN sub.membershipvalue = 1 AND sub.is_inperson = 1 THEN 1 ELSE 0 END) AS membership_in_person
+        ,SUM(CASE WHEN sub.attendancevalue = 1 AND sub.is_inperson = 1 THEN 1 ELSE 0 END) AS present_in_person
+  FROM
+      (
+       SELECT mem.studentid
+             ,mem.[db_name]
+             ,mem.membershipvalue
+             ,CONVERT(FLOAT, mem.attendancevalue) AS attendancevalue
+
+             ,CASE
+               WHEN hb.specprog_name = 'Hybrid (SC) - Cohort D' AND cal.[type] <> 'AR' THEN 1
+               WHEN hb.specprog_name = 'Hybrid - Cohort A' AND cal.[type] = 'BCR' THEN 1
+               WHEN hb.specprog_name = 'Hybrid - Cohort B' AND cal.[type] = 'ACR' THEN 1
+               ELSE 0
+              END AS is_inperson
+       FROM gabby.powerschool.ps_adaadm_daily_ctod_current_static mem
+       JOIN gabby.powerschool.calendar_day cal
+         ON mem.schoolid = cal.schoolid
+        AND mem.calendardate = cal.date_value
+        AND mem.[db_name] = cal.[db_name]
+       LEFT JOIN gabby.powerschool.spenrollments_gen_static hb
+         ON mem.studentid = hb.studentid
+        AND mem.calendardate BETWEEN hb.enter_date AND hb.exit_date
+        AND mem.[db_name] = hb.[db_name]
+        AND hb.specprog_name IN ('Hybrid - Cohort A', 'Hybrid - Cohort B', 'Remote - Cohort C', 'Hybrid (SC) - Cohort D')
+       WHERE mem.calendardate <= GETDATE()
+         AND mem.membershipvalue > 0
+      ) sub
+  GROUP BY sub.studentid
+          ,sub.[db_name]
  )
 
 ,race AS (
@@ -37,59 +60,6 @@ WITH att AS (
     MAX(yn)
     FOR racecd IN ([I],[A],[B],[P],[W])
    ) p
- )
-
-,KCNA_remote AS (
-  SELECT sub2.student_number
-      ,SUM(sub2.remote_days_membership) AS membership_in_person
-      ,SUM(sub2.remote_days_present) AS present_in_person
-
-  FROM (
-    SELECT sub.student_number
-          ,CASE WHEN sub.membershipvalue = 1 AND sub.is_inperson = 1 THEN 1
-            ELSE 0
-           END AS remote_days_membership
-          ,CASE WHEN sub.is_present = 1 AND sub.is_inperson = 1 THEN 1
-            ELSE 0
-           END AS remote_days_present
-          ,sub.membershipvalue
-          ,sub.is_present
-    FROM
-        (
-         SELECT co.student_number
-               ,mem.membershipvalue
-               ,CONVERT(FLOAT, mem.attendancevalue) AS is_present
-               ,CASE
-                 WHEN hb.specprog_name = 'Hybrid (SC) - Cohort D' AND cal.[type] <> 'AR' THEN 1
-                 WHEN hb.specprog_name = 'Hybrid - Cohort A' AND cal.[type] = 'BCR' THEN 1
-                 WHEN hb.specprog_name = 'Hybrid - Cohort B' AND cal.[type] = 'ACR' THEN 1
-                 ELSE 0
-                END AS is_inperson
-         FROM powerschool.ps_adaadm_daily_ctod_current_static mem
-         JOIN powerschool.calendar_day cal
-           ON mem.schoolid = cal.schoolid
-          AND mem.calendardate = cal.date_value
-         JOIN powerschool.cohort_identifiers_static co
-           ON mem.studentid = co.studentid
-          AND mem.schoolid = co.schoolid
-          AND mem.calendardate BETWEEN co.entrydate AND co.exitdate
-         LEFT JOIN powerschool.ps_attendance_daily_current_static att
-           ON mem.studentid = att.studentid
-          AND mem.calendardate = att.att_date
-         LEFT JOIN powerschool.spenrollments_gen_static hb
-           ON mem.studentid = hb.studentid
-          AND mem.calendardate BETWEEN hb.enter_date AND hb.exit_date
-          AND hb.specprog_name IN ('Hybrid - Cohort A', 'Hybrid - Cohort B', 'Remote - Cohort C', 'Hybrid (SC) - Cohort D')
-         WHERE mem.attendancevalue IS NOT NULL
-           AND mem.calendardate <= GETDATE()
-           AND mem.membershipvalue > 0
-           AND co.region <> 'KMS'
-
-        ) sub
-
-    )sub2
-
-    GROUP BY sub2.student_number
  )
 
 SELECT co.region AS helper_region
@@ -130,7 +100,7 @@ SELECT co.region AS helper_region
         WHEN co.enroll_status IN (2, 3) THEN 'I'
         ELSE NULL 
        END AS [Status]
-      ,'F' AS EnrollmentType --needs to be updated to live PS field
+      ,'F' AS EnrollmentType -- needs to be updated to live PS field
 
       ,nj.countycoderesident AS CountyCodeResident
       ,nj.districtcoderesident AS DistrictCodeResident
@@ -175,8 +145,7 @@ SELECT co.region AS helper_region
         WHEN co.enroll_status IN (2,3) THEN CONVERT(VARCHAR, co.exitdate, 112)
         ELSE NULL
        END AS SchoolExitDate
-      ,CASE WHEN co.exitcode = 'G1' THEN 'L'
-         ELSE co.exitcode END AS SchoolExitWithdrawalCode
+      ,CASE WHEN co.exitcode = 'G1' THEN 'L' ELSE co.exitcode END AS SchoolExitWithdrawalCode
 
       ,a.CumulativeDaysInMembership
       ,a.CumulativeDaysPresent
@@ -215,11 +184,10 @@ SELECT co.region AS helper_region
         WHEN co.specialed_classification = 'PSD' THEN '12'
         WHEN co.specialed_classification = 'SLD' THEN '14'
         WHEN co.specialed_classification = 'TBI' THEN '15'
-        WHEN co.specialed_classification = 'VI' THEN '16'        
+        WHEN co.specialed_classification = 'VI' THEN '16'
         WHEN co.specialed_classification = 'ESLS' THEN '17'
         WHEN co.specialed_classification = '99' THEN '99'
         WHEN nj.determined_ineligible_yn = 1 THEN '00'
-        ELSE NULL 
        END AS SpecialEducationClassification
       ,CONVERT(VARCHAR, nj.lepbegindate, 112) AS ELLIdentificationDate
       ,CASE 
@@ -238,9 +206,7 @@ SELECT co.region AS helper_region
       ,nj.graduation_pathway_ela AS ELAGraduationPathwayIndicator
       ,nj.graduation_pathway_math AS MathGraduationPathwayIndicator
       ,nj.indistrictplacement AS InDistrictPlacement
-      ,CASE WHEN nj.lepbegindate IS NOT NULL AND nj.lependdate IS NOT NULL THEN '3'
-        ELSE NULL 
-       END AS LanguageInstructionEducationalProgram
+      ,CASE WHEN nj.lepbegindate IS NOT NULL AND nj.lependdate IS NOT NULL THEN '3' END AS LanguageInstructionEducationalProgram
       ,NULL AS Biliterate
       ,NULL AS WorldLanguageAssessment1
       ,NULL AS WorldLanguagesAssessed1
@@ -255,21 +221,17 @@ SELECT co.region AS helper_region
 
       ,nj.gifted_and_talented AS GiftedAndTalentedStudent
       ,nj.learningenvironment AS StudentLearningEnvironment
-      ,a.CumulativeDaysInMembership - kr.membership_in_person AS RemoteDaysInMembership
-      ,a.CumulativeDaysPresent - kr.present_in_person AS RemoteDaysPresent
       ,nj.internetconnectivity AS StudentInternetConnectivity
-      ,NULL AS StudentDeviceOwner
-      ,NULL AS StudentDeviceType
-      ,CASE WHEN co.grade_level = 12 THEN nj.bridge_year
-        ELSE NULL
-       END AS BridgeYear
       ,nj.federalhsmathtestingreq AS FederalHSMathTestingReq
       ,nj.iepgradcourserequirement AS IEPGraduationCourseRequirement
       ,nj.iepgraduationattendance AS IEPGraduationAttendance
-      ,CASE WHEN nj.lepbegindate IS NOT NULL AND nj.lependdate IS NOT NULL THEN 'OTH'
-        ELSE NULL 
-       END AS LIEPLanguageOfInstruction
+      ,CASE WHEN co.grade_level = 12 THEN nj.bridge_year END AS BridgeYear
+      ,CASE WHEN nj.lepbegindate IS NOT NULL AND nj.lependdate IS NOT NULL THEN 'OTH' END AS LIEPLanguageOfInstruction
+      ,NULL AS StudentDeviceOwner
+      ,NULL AS StudentDeviceType
 
+      ,a.CumulativeDaysInMembership - a.membership_in_person AS RemoteDaysInMembership
+      ,a.CumulativeDaysPresent - a.present_in_person AS RemoteDaysPresent
 FROM gabby.powerschool.cohort_identifiers_static co
 JOIN gabby.powerschool.students s
   ON co.student_number = s.student_number
@@ -279,8 +241,6 @@ LEFT JOIN gabby.powerschool.s_nj_stu_x nj
 LEFT JOIN att a
   ON co.studentid = a.studentid
  AND co.[db_name] = a.[db_name]
-LEFT JOIN KCNA_remote kr
-  ON co.student_number = kr.student_number
 LEFT JOIN race r WITH(FORCESEEK)
   ON co.studentid = r.studentid
  AND co.[db_name] = r.[db_name]
