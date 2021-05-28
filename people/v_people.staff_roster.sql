@@ -49,6 +49,45 @@ WITH all_staff AS (
     AND (ps.position_status_prev IS NULL OR ps.position_status_prev = 'Terminated')
  )
 
+,employees_clean (
+  SELECT COALESCE(ef.first_name,ep.first_name) AS first_name
+        ,COALESCE(ef.last_name,ep.last_name) AS last_name
+        ,COALESCE(ef.preferred_name,ep.preferred_name) AS preferred_name
+        ,COALESCE(ef.reports_to_associate_id,ep.reports_to_associate_id) AS reports_to_associate_id
+        ,COALESCE(ef.personal_contact_personal_mobile,ep.personal_contact_personal_mobile) AS personal_contact_personal_mobile
+        ,COALESCE(ef.birth_date,ep.birth_date) AS birth_date
+        ,COALESCE(ef.race_description,ep.race_description) AS race_description
+        ,COALESCE(ef.gender,ep.gender) AS gender
+        ,COALESCE(ef.rehire_date,ep.rehire_date) AS rehire_date
+        ,COALESCE(ef.termination_date,ep.termination_date) AS termination_date
+        ,COALESCE(ef.job_title_description,ep.job_title_description) AS job_title_description
+        ,COALESCE(ef.worker_category_description,ep.worker_category_description) AS worker_category_description
+        ,COALESCE(ef.position_start_date,ep.position_start_date) AS position_start_date
+        ,COALESCE(ef.primary_address_address_line_1,ep.primary_address_address_line_1) AS primary_address_address_line_1
+        ,COALESCE(ef.primary_address_address_line_2,ep.primary_address_address_line_2) AS primary_address_address_line_2
+        ,COALESCE(ef.primary_address_city,ep.primary_address_city) AS primary_address_city
+        ,COALESCE(ef.primary_address_state_territory_code,ep.primary_address_state_territory_code) AS primary_address_state_territory_code
+        ,COALESCE(ef.primary_address_zip_postal_code,ep.primary_address_zip_postal_code) AS primary_address_zip_postal_code
+        ,COALESCE(ef.flsa_description,ep.flsa_description) AS flsa_description
+        ,COALESCE(ef.home_department_description,ep.home_department_description) AS home_department_description
+        ,COALESCE(ef.location_description,ep.location_description) AS location_description
+        ,COALESCE(ef.business_unit_description,ep.business_unit_description) AS business_unit_description
+        ,COALESCE(ef.preferred_race_ethnicity,ep.preferred_race_ethnicity) AS preferred_race_ethnicity
+        ,COALESCE(ef.file_number,ep.file_number) AS file_number
+        ,COALESCE(ef.associate_id,ep.associate_id) AS associate_id
+        ,COALESCE(ef.wfmgr_pay_rule,ep.wfmgr_pay_rule) AS wfmgr_pay_rule
+        ,COALESCE(ef.personal_contact_personal_email,ep.personal_contact_personal_email) AS personal_contact_personal_email
+        ,COALESCE(ef.position_effective_end_date,ep.position_effective_end_date) AS position_effective_end_date
+        ,COALESCE(ef.position_id,ep.position_id) AS position_id
+        ,COALESCE(ef.ethnicity,ep.ethnicity) AS ethnicity
+
+  FROM gabby.adp.employees ep
+  FULL JOIN gabby.adp.employees_future ef
+    ON ep.associate_id = ef.associate_id
+    /* Not sure if this is the best approach, but what I'm trying to do here is pull in the employees_future data if it exists 
+       Employees future is pulling the data for people 30 days from now if their hire/rehire date is in the future.*/
+  )
+
 ,clean_staff AS (
   SELECT sub.employee_number
         ,sub.associate_id
@@ -121,19 +160,19 @@ WITH all_staff AS (
          END AS [status]
   FROM
       (
-       SELECT eh.employee_number
+       SELECT COALESCE(eh.employee_number,ea.file_number) AS employee_number
              ,eh.associate_id
              ,eh.position_id
              ,eh.termination_reason
-             ,eh.job_title
-             ,eh.home_department
-             ,eh.reports_to_associate_id
+             ,COALESCE(eh.job_title, ea.job_title_description) AS job_title
+             ,COALESCE(eh.home_department, ea.home_department_description) AS home_department
+             ,COALESCE(eh.reports_to_associate_id,ea.reports_to_associate_id) AS reports_to_associate_id
              ,eh.position_status
              ,eh.business_unit_code
-             ,eh.business_unit
-             ,eh.[location]
-             ,eh.position_effective_start_date
-             ,eh.position_effective_end_date
+             ,COALESCE(eh.business_unit, ea.business_unit_description) AS business_unit
+             ,COALESCE(eh.[location],ea.location_description) AS [location]
+             ,COALESCE(eh.position_effective_start_date,ea.position_start_date) AS position_effective_start_date
+             ,COALESCE(eh.position_effective_end_date,ea.position_effective_end_date) AS position_effective_end_date
              ,eh.annual_salary
              ,CONVERT(NVARCHAR(256), NULL) AS job_family -- on the way
              ,CASE 
@@ -233,9 +272,9 @@ WITH all_staff AS (
 
              ,cw.adp_associate_id AS associate_id_legacy
        FROM all_staff eh
-       JOIN gabby.adp.employees_all ea
+       JOIN employees_clean ea
          ON eh.associate_id = ea.associate_id
-       LEFT JOIN gabby.adp.employees p
+       LEFT JOIN gabby.employees_clean p
          ON eh.position_id = p.position_id
        LEFT JOIN gabby.dayforce.employees df /* temporary for preferred last name */
          ON eh.employee_number= df.df_employee_number
