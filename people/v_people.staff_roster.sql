@@ -227,7 +227,10 @@ WITH all_staff AS (
              ,p.flsa_description AS flsa
              ,CONVERT(DATE, p.rehire_date) AS rehire_date
              ,CONVERT(DATE, p.termination_date) AS termination_date
-             ,CONVERT(DATE, p.hire_date) AS hire_date
+             ,CASE
+               WHEN eh.position_status = 'Prestart' THEN eh.position_effective_start_date
+               ELSE CONVERT(DATE, p.hire_date)
+              END AS hire_date
 
              ,df.preferred_last_name -- use DF until ADP available
 
