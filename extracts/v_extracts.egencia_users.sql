@@ -3,48 +3,63 @@ GO
 
 CREATE OR ALTER VIEW extracts.egencia_users AS
 
-SELECT CONCAT(sub.df_employee_number, '@kippnj.org') AS [Username]
+SELECT CONCAT(sub.employee_number, '@kippnj.org') AS [Username]
       ,sub.[Email]
       ,sub.[Single Sign On ID]
-      ,sub.df_employee_number AS [Employee ID]
+      ,sub.employee_number AS [Employee ID]
       ,CASE WHEN sub.[status] = 'Terminated' THEN 'Disabled' ELSE 'Active' END AS [Status]
       ,sub.[First name]
       ,sub.[Last name]
-      ,sub.hire_date
-      ,sub.match_department
-      ,sub.match_site
-      ,sub.match_title
       ,'Traveler' AS [Role]
 
-      ,tg.egencia_traveler_group AS [Traveler Group] -- cascading match on location/dept/job
+      ,COALESCE(tg.egencia_traveler_group
+               ,tg2.egencia_traveler_group
+               ,tg3.egencia_traveler_group) AS [Traveler Group] -- cascading match on location/dept/job
+
+      ,sub.home_department
+      ,sub.[location]
+      ,sub.job_title
+      ,sub.hire_date
 FROM
     (
-     SELECT scw.df_employee_number
-           ,scw.mail AS [Email]
-           ,scw.userprincipalname AS [Single Sign On ID]
+     SELECT scw.employee_number
            ,scw.first_name AS [First name] -- legal name
            ,scw.last_name AS [Last name] -- legal name
            ,scw.[status]
            ,COALESCE(scw.rehire_date, scw.original_hire_date) AS hire_date
-           ,scw.primary_site AS match_site
+           ,scw.[location]
            ,CASE 
-             WHEN scw.primary_on_site_department IN ('School Leadership', 'Teaching and Learning', 'Operations', 'KTC', 'New Teacher Development', 'Executive', 'School Support'
+             WHEN scw.home_department IN ('School Leadership', 'Teaching and Learning', 'Operations', 'KTC', 'New Teacher Development', 'Executive', 'School Support'
                                                     ,'Human Resources', 'Special Projects', 'Special Education', 'Enrollment', 'Recruitment', 'Technology', 'Community Engagement'
                                                     ,'Development', 'Finance and Purchasing', 'Data', 'Accounting and Compliance', 'Real Estate', 'Marketing', 'Facilities', 'Student Support')
-                  THEN scw.primary_on_site_department
-             ELSE 'All others'
-            END AS match_department
+                  THEN scw.home_department
+             ELSE 'Default'
+            END AS home_department
            ,CASE 
-             WHEN scw.primary_job IN ('School Leader', 'School Leader in Residence', 'Director School Operations', 'Managing Director of Operations', 'Managing Director', 'Assistant Superintendent'
+             WHEN scw.job_title IN ('School Leader', 'School Leader in Residence', 'Director School Operations', 'Managing Director of Operations', 'Managing Director', 'Assistant Superintendent'
                                      ,'Chief Equity Strategist', 'Executive Director', 'Managing Director of School Operations', 'Manager', 'Fellow School Operations Director', 'Specialist')
-                  THEN scw.primary_job
-             ELSE 'All'
-            END AS match_title
-     FROM gabby.people.staff_crosswalk_static scw
-     WHERE scw.primary_on_site_department NOT IN ('Interns')
+                  THEN scw.job_title
+             ELSE 'Default'
+            END AS job_title
+
+           ,ad.mail AS [Email]
+           ,ad.userprincipalname AS [Single Sign On ID]
+     FROM gabby.people.staff_roster scw
+     JOIN gabby.adsi.user_attributes_static ad
+       ON scw.employee_number = ad.employeenumber
+      AND ISNUMERIC(ad.employeenumber) = 1
+     WHERE scw.home_department NOT IN ('Interns')
        AND COALESCE(scw.termination_date, GETDATE()) >= '2020-11-01'
     ) sub
 LEFT JOIN gabby.egencia.traveler_groups tg
-  ON sub.match_site = tg.physicaldeliveryofficename
- AND sub.match_department = tg.department
- AND sub.match_title = tg.title
+  ON sub.[location] = tg.[location]
+ AND sub.home_department = tg.home_department
+ AND sub.job_title = tg.job_title
+LEFT JOIN gabby.egencia.traveler_groups tg2
+  ON sub.[location] = tg2.[location]
+ AND sub.home_department = tg2.home_department
+ AND tg2.job_title = 'Default'
+LEFT JOIN gabby.egencia.traveler_groups tg3
+  ON sub.[location] = tg3.[location]
+ AND tg3.home_department = 'Default'
+ AND tg3.job_title = 'Default'
