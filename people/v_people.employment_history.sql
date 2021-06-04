@@ -70,6 +70,10 @@ SELECT r.employee_number
       ,s.status_effective_date AS status_effective_start_date
       ,s.status_effective_end_date
       ,LAG(s.position_status, 1) OVER(PARTITION BY r.position_id ORDER BY r.effective_start_date) AS position_status_prev
+      ,MAX(CASE 
+            WHEN CONVERT(DATE, GETDATE()) BETWEEN s.status_effective_date AND s.status_effective_end_date
+                   THEN s.position_status
+           END) OVER(PARTITION BY r.associate_id) AS position_status_cur
 
       ,w.business_unit_code
       ,w.business_unit_description AS business_unit

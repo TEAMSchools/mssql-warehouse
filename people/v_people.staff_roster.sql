@@ -46,7 +46,7 @@ WITH all_staff AS (
   FROM gabby.people.employment_history ps
   WHERE ps.status_effective_start_date > CONVERT(DATE, GETDATE())
     AND ps.position_status = 'Active'
-    AND (ps.position_status_prev IS NULL OR ps.position_status_prev = 'Terminated')
+    AND (ps.position_status_cur IS NULL OR ps.position_status_cur = 'Terminated')
  )
 
 ,clean_staff AS (
