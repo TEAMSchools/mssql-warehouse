@@ -118,7 +118,11 @@ FROM
            ,COALESCE(CASE WHEN au.[status] = 'Terminated' THEN 'No' END
                     ,au.purchasing_user
                     ,'No') AS [Purchasing User] /* preserve Coupa, otherwise No */
-           ,CASE WHEN au.[status] = 'Terminated' THEN 'No' ELSE 'Yes' END AS [Expense User]
+           ,CASE 
+             WHEN au.[status] = 'Terminated' THEN 'No' 
+             WHEN au.business_unit_code IN ('TEAM', 'KIPP_MIAMI') THEN 'No' /* TEAM/Miami phasing in */
+             ELSE 'Yes' 
+            END AS [Expense User]
            ,'SAML' AS [Authentication Method]
            ,LOWER(ad.userprincipalname) AS [Sso Identifier]
            ,'No' AS [Generate Password And Notify User]
