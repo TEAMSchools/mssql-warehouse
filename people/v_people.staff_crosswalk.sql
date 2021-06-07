@@ -10,6 +10,7 @@ SELECT sub.employee_number AS df_employee_number
       ,sub.last_name
       ,sub.sex AS gender
       ,sub.ethnicity AS primary_ethnicity
+      ,sub.race_ethnicity_reporting AS primary_race_ethnicity_reporting
       ,sub.is_hispanic
       ,sub.address_street AS [address]
       ,sub.address_city AS city
@@ -74,6 +75,7 @@ FROM
            ,sr.last_name
            ,sr.sex
            ,sr.ethnicity
+           ,sr.race_ethnicity_reporting
            ,sr.is_hispanic
            ,sr.address_street
            ,sr.address_city
