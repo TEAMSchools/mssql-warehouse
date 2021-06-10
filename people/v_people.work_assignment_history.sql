@@ -53,7 +53,7 @@ FROM
      FROM gabby.adp.work_assignment_history wah
      JOIN gabby.adp.employees_all sr
        ON wah.associate_id = sr.associate_id
-      AND sr.file_number NOT IN (100814, 102496, 101652, 102634) /*  HR incapable of fixing these multiple employee numbers */
+      AND sr.file_number NOT IN (100814, 102496, 101652, 102634, 102641) /*  HR incapable of fixing these multiple employee numbers */
      WHERE '2021-01-01' BETWEEN CONVERT(DATE, wah.position_effective_date) AND COALESCE(CONVERT(DATE, wah.position_effective_end_date), GETDATE())
         OR CONVERT(DATE, wah.position_effective_date) > '2021-01-01'
 
@@ -81,6 +81,6 @@ FROM
      FROM gabby.dayforce.employee_work_assignment_clean dwa
      JOIN gabby.adp.employees_all sr
        ON dwa.employee_reference_code = sr.file_number
-      AND sr.file_number NOT IN (101640, 102602, 400011) /*  HR incapable of fixing these multiple employee numbers */
+      AND sr.file_number NOT IN (101640, 102602, 400011, 102641) /*  HR incapable of fixing these multiple employee numbers */
      WHERE dwa.work_assignment_effective_start <= '2020-12-31'
     ) sub

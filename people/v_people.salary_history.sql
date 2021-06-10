@@ -43,7 +43,7 @@ FROM
      FROM gabby.adp.salary_history sh
      JOIN gabby.adp.employees_all sr
        ON sh.associate_id = sr.associate_id
-      AND sr.file_number NOT IN (100814, 102496, 101652, 102634) /*  HR incapable of fixing these multiple employee numbers */
+      AND sr.file_number NOT IN (100814, 102496, 101652, 102634, 102641) /*  HR incapable of fixing these multiple employee numbers */
      WHERE CONVERT(DATE, sh.regular_pay_effective_date) < COALESCE(CONVERT(DATE, sh.regular_pay_effective_end_date), GETDATE())
        AND ('2021-01-01' BETWEEN CONVERT(DATE, sh.regular_pay_effective_date) AND COALESCE(CONVERT(DATE, sh.regular_pay_effective_end_date), GETDATE())
               OR CONVERT(DATE, sh.regular_pay_effective_date) > '2021-01-01')
@@ -69,7 +69,7 @@ FROM
      FROM gabby.dayforce.employee_status_clean ds
      JOIN gabby.adp.employees_all sr
        ON ds.number = sr.file_number
-      AND sr.file_number NOT IN (101640, 102602, 400011) /*  HR incapable of fixing these multiple employee numbers */
+      AND sr.file_number NOT IN (101640, 102602, 400011, 102641) /*  HR incapable of fixing these multiple employee numbers */
      WHERE CONVERT(DATE, ds.effective_start) <= '2020-12-31'
     ) sub
 WHERE sub.annual_salary > 0
