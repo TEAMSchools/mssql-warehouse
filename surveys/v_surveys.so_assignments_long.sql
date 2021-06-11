@@ -33,7 +33,7 @@ SELECT u.survey_taker_id
       ,COALESCE(r.preferred_name,assignment) AS assignment_preferred_name
       ,r.location AS assignment_location
       ,r.position_status AS assignment_adp_status
-      ,'Assigned to you' AS assignment_type
+      ,'Self & Others - Peer Feedback' AS assignment_type
 FROM surveys_unpivoted u
 LEFT JOIN gabby.people.staff_roster r
   ON u.assingment_employee_id = r.employee_number
@@ -47,7 +47,7 @@ SELECT manager_employee_number  AS survey_taker_id
       ,preferred_name AS assignment_preferred_name
       ,location AS assignment_location
       ,position_status AS assignment_adp_status
-      ,'ADP Manager' AS assignment_type
+      ,'Self & Others - Manager Feedback' AS assignment_type
 FROM gabby.people.staff_roster
 WHERE position_status != 'Terminated'
   AND COALESCE(rehire_date,original_hire_date) < DATEADD(DAY,-30,GETDATE())
