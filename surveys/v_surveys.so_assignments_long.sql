@@ -50,3 +50,4 @@ SELECT manager_employee_number  AS survey_taker_id
       ,'ADP Manager' AS assignment_type
 FROM gabby.people.staff_roster
 WHERE position_status != 'Terminated'
+  AND COALESCE(rehire_date,original_hire_date) < DATEADD(DAY,-30,GETDATE())
