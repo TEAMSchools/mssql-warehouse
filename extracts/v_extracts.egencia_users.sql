@@ -10,11 +10,15 @@ SELECT CONCAT(sub.employee_number, '@kippnj.org') AS [Username]
       ,CASE WHEN sub.[status] = 'Terminated' THEN 'Disabled' ELSE 'Active' END AS [Status]
       ,sub.[First name]
       ,sub.[Last name]
-      ,'Traveler' AS [Role]
+      ,CASE 
+        WHEN sub.employee_number IN (100219, 100412, 100566, 102298) THEN 'Travel Manager'
+        ELSE 'Traveler'
+       END AS [Role]
 
       ,COALESCE(tg.egencia_traveler_group
                ,tg2.egencia_traveler_group
-               ,tg3.egencia_traveler_group) AS [Traveler Group] -- cascading match on location/dept/job
+               ,tg3.egencia_traveler_group
+               ,'General Traveler Group') AS [Traveler Group] -- cascading match on location/dept/job
 
       ,sub.home_department
       ,sub.[location]
@@ -30,14 +34,14 @@ FROM
            ,scw.[location]
            ,CASE 
              WHEN scw.home_department IN ('School Leadership', 'Teaching and Learning', 'Operations', 'KTC', 'New Teacher Development', 'Executive', 'School Support'
-                                                    ,'Human Resources', 'Special Projects', 'Special Education', 'Enrollment', 'Recruitment', 'Technology', 'Community Engagement'
-                                                    ,'Development', 'Finance and Purchasing', 'Data', 'Accounting and Compliance', 'Real Estate', 'Marketing', 'Facilities', 'Student Support')
+                                         ,'Human Resources', 'Special Projects', 'Special Education', 'Enrollment', 'Recruitment', 'Technology', 'Community Engagement'
+                                         ,'Development', 'Finance and Purchasing', 'Data', 'Accounting and Compliance', 'Real Estate', 'Marketing', 'Facilities', 'Student Support')
                   THEN scw.home_department
              ELSE 'Default'
             END AS home_department
            ,CASE 
              WHEN scw.job_title IN ('School Leader', 'School Leader in Residence', 'Director School Operations', 'Managing Director of Operations', 'Managing Director', 'Assistant Superintendent'
-                                     ,'Chief Equity Strategist', 'Executive Director', 'Managing Director of School Operations', 'Manager', 'Fellow School Operations Director', 'Specialist')
+                                   ,'Chief Equity Strategist', 'Executive Director', 'Managing Director of School Operations', 'Manager', 'Fellow School Operations Director', 'Specialist')
                   THEN scw.job_title
              ELSE 'Default'
             END AS job_title
@@ -49,7 +53,7 @@ FROM
        ON scw.employee_number = ad.employeenumber
       AND ISNUMERIC(ad.employeenumber) = 1
      WHERE scw.home_department NOT IN ('Interns')
-       AND COALESCE(scw.termination_date, GETDATE()) >= '2020-11-01'
+       AND COALESCE(scw.termination_date, GETDATE()) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
     ) sub
 LEFT JOIN gabby.egencia.traveler_groups tg
   ON sub.[location] = tg.[location]
