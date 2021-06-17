@@ -7,8 +7,9 @@ WITH surveys_unpivoted AS (
   SELECT u.employee_number AS survey_taker_id
         ,u.survey_taker AS survey_round_status
         ,u.assignment
-        ,CASE WHEN CHARINDEX('[',u.assignment) = 0 THEN NULL
-              ELSE SUBSTRING(u.assignment,CHARINDEX('[',u.assignment) + 1,6)
+        ,CASE 
+          WHEN CHARINDEX('[', u.assignment) = 0 THEN NULL
+          ELSE SUBSTRING(u.assignment, CHARINDEX('[', u.assignment) + 1, 6)
          END AS assingment_employee_id
   FROM gabby.surveys.so_assignments
   UNPIVOT(
@@ -30,8 +31,9 @@ SELECT u.survey_taker_id
       ,u.survey_round_status
       ,u.assignment
       ,u.assingment_employee_id
-      ,COALESCE(r.preferred_name,assignment) AS assignment_preferred_name
-      ,r.location AS assignment_location
+
+      ,COALESCE(r.preferred_name, u.assignment) AS assignment_preferred_name
+      ,r.[location] AS assignment_location
       ,r.position_status AS assignment_adp_status
       ,'Self & Others - Peer Feedback' AS assignment_type
 FROM surveys_unpivoted u
@@ -42,12 +44,12 @@ UNION ALL
 
 SELECT manager_employee_number  AS survey_taker_id
       ,'Yes' AS survey_round_status
-      ,preferred_name + '[' + CONVERT(varchar(6),employee_number) + ']' AS assignment
+      ,CONCAT(preferred_name, ' [', employee_number, '] ') AS assignment
       ,employee_number AS assignment_employee_id
       ,preferred_name AS assignment_preferred_name
-      ,location AS assignment_location
+      ,[location] AS assignment_location
       ,position_status AS assignment_adp_status
       ,'Self & Others - Manager Feedback' AS assignment_type
 FROM gabby.people.staff_roster
-WHERE position_status != 'Terminated'
-  AND COALESCE(rehire_date,original_hire_date) < DATEADD(DAY,-30,GETDATE())
+WHERE position_status <> 'Terminated'
+  AND COALESCE(rehire_date, original_hire_date) < DATEADD(DAY, -30, GETDATE())
