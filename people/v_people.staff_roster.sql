@@ -21,6 +21,7 @@ WITH all_staff AS (
         ,eh.position_effective_end_date
         ,eh.annual_salary
         ,eh.effective_start_date
+        ,eh.status_effective_start_date
   FROM gabby.people.employment_history eh
   WHERE CONVERT(DATE, GETDATE()) BETWEEN eh.effective_start_date AND eh.effective_end_date
 
@@ -43,6 +44,7 @@ WITH all_staff AS (
         ,ps.position_effective_end_date
         ,ps.annual_salary
         ,ps.effective_start_date
+        ,ps.status_effective_start_date
   FROM gabby.people.employment_history ps
   WHERE ps.status_effective_start_date > CONVERT(DATE, GETDATE())
     AND ps.position_status = 'Active'
@@ -146,8 +148,9 @@ WITH all_staff AS (
              /* dedupe positions */
              ,ROW_NUMBER() OVER(
                 PARTITION BY eh.associate_id
-                  ORDER BY CONVERT(DATE, eh.effective_start_date) DESC
-                          ,CASE WHEN eh.position_status = 'Terminated' THEN 0 ELSE 1 END DESC) AS rn
+                  ORDER BY eh.status_effective_start_date DESC
+                          ,CASE WHEN eh.position_status = 'Terminated' THEN 0 ELSE 1 END DESC
+                          ,eh.effective_start_date DESC) AS rn
 
              ,ea.first_name
              ,ea.last_name
