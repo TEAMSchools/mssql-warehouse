@@ -44,7 +44,8 @@ FROM
      JOIN gabby.adp.employees_all sr
        ON sh.associate_id = sr.associate_id
       AND sr.file_number NOT IN (100814, 102496, 101652, 102634, 102641, 300082) /*  HR incapable of fixing these multiple employee numbers */
-     WHERE CONVERT(DATE, sh.regular_pay_effective_date) < COALESCE(CONVERT(DATE, sh.regular_pay_effective_end_date), GETDATE())
+     WHERE (CONVERT(DATE, sh.regular_pay_effective_date) < CONVERT(DATE, sh.regular_pay_effective_end_date)
+              OR sh.regular_pay_effective_end_date IS NULL)
        AND ('2021-01-01' BETWEEN CONVERT(DATE, sh.regular_pay_effective_date) AND COALESCE(CONVERT(DATE, sh.regular_pay_effective_end_date), GETDATE())
               OR CONVERT(DATE, sh.regular_pay_effective_date) > '2021-01-01')
 
