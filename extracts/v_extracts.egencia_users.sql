@@ -24,6 +24,7 @@ SELECT CONCAT(sub.employee_number, '@kippnj.org') AS [Username]
       ,sub.[location]
       ,sub.job_title
       ,sub.hire_date
+      ,sub.termination_date
 FROM
     (
      SELECT scw.employee_number
@@ -31,20 +32,10 @@ FROM
            ,scw.last_name AS [Last name] -- legal name
            ,scw.[status]
            ,COALESCE(scw.rehire_date, scw.original_hire_date) AS hire_date
+           ,scw.termination_date
            ,scw.[location]
-           ,CASE 
-             WHEN scw.home_department IN ('School Leadership', 'Teaching and Learning', 'Operations', 'KTC', 'New Teacher Development', 'Executive', 'School Support'
-                                         ,'Human Resources', 'Special Projects', 'Special Education', 'Enrollment', 'Recruitment', 'Technology', 'Community Engagement'
-                                         ,'Development', 'Finance and Purchasing', 'Data', 'Accounting and Compliance', 'Real Estate', 'Marketing', 'Facilities', 'Student Support')
-                  THEN scw.home_department
-             ELSE 'Default'
-            END AS home_department
-           ,CASE 
-             WHEN scw.job_title IN ('School Leader', 'School Leader in Residence', 'Director School Operations', 'Managing Director of Operations', 'Managing Director', 'Assistant Superintendent'
-                                   ,'Chief Equity Strategist', 'Executive Director', 'Managing Director of School Operations', 'Manager', 'Fellow School Operations Director', 'Specialist')
-                  THEN scw.job_title
-             ELSE 'Default'
-            END AS job_title
+           ,scw.home_department
+           ,scw.job_title
 
            ,ad.mail AS [Email]
            ,ad.userprincipalname AS [Single Sign On ID]
