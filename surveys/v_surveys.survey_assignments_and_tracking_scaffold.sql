@@ -139,7 +139,7 @@ LEFT JOIN gabby.surveys.survey_completion c
  AND st.academic_year = c.academic_year
  AND st.reporting_term_code = c.reporting_term
  AND survey_type = 'R9/Engagement'
-WHERE r.position_status != 'Terminated'
+WHERE r.position_status NOT IN ('Terminated','Prestart')
 
 UNION ALL
 
@@ -176,7 +176,7 @@ LEFT JOIN gabby.surveys.survey_completion c
  AND st.academic_year = c.academic_year
  AND st.reporting_term_code = c.reporting_term
  AND survey_type = 'Staff Update'
-WHERE r.position_status != 'Terminated'
+WHERE r.position_status NOT IN ('Terminated','Prestart')
 
 UNION ALL
 
@@ -213,4 +213,4 @@ LEFT JOIN gabby.surveys.survey_completion c
  AND st.academic_year = c.academic_year
  AND st.reporting_term_code = c.reporting_term
  AND survey_type = 'Staff Update'
-WHERE r.position_status != 'Terminated'
+WHERE r.position_status NOT IN ('Terminated','Prestart')
