@@ -1,7 +1,7 @@
 USE gabby
 GO
 
---CREATE OR ALTER VIEW surveys.survey_assignments_and_tracking_scaffold AS
+CREATE OR ALTER VIEW surveys.survey_assignments_and_tracking_scaffold AS
 
 WITH survey_terms AS (
   SELECT c.survey_id
@@ -28,9 +28,14 @@ SELECT COALESCE(r.employee_number,c.df_employee_number) AS survey_taker_id
       ,COALESCE(r.position_status,c.position_status) AS survey_taker_adp_status
 
       ,s.survey_round_status
-      ,s.assignment
-      ,s.assingment_employee_id
-      ,s.assignment_preferred_name
+      ,COALESCE(s.assignment,c.subject_name) AS assignment
+      ,COALESCE(s.assingment_employee_id, 
+                CASE 
+                 WHEN CHARINDEX('[', c.subject_name) = 0 THEN NULL
+                 ELSE SUBSTRING(c.subject_name, CHARINDEX('[', c.subject_name) + 1, 6)
+                END
+                ) AS assingment_employee_id
+      ,COALESCE(s.assignment_preferred_name,c.subject_name) AS assignment_preferred_name
       ,s.assignment_location
       ,s.assignment_adp_status
       ,s.assignment_type
@@ -52,7 +57,7 @@ JOIN gabby.people.staff_roster r
 JOIN survey_terms st
   ON st.current_survey_term = 1
  AND st.survey_id = 4561325 --S&O Survey Code
-FULL JOIN gabby.surveys.survey_completion c
+FULL JOIN gabby.surveys.survey_completion c  -- full join to pull in completed surveys that had no assignment
   ON CONVERT(nvarchar,assingment_employee_id) = SUBSTRING(c.subject_name,CHARINDEX('[',c.subject_name) + 1,6)
  AND s.survey_taker_id = c.df_employee_number
  AND st.academic_year = c.academic_year
@@ -90,7 +95,7 @@ FROM gabby.people.staff_roster r
 JOIN survey_terms st
   ON st.current_survey_term = 1
  AND st.survey_id = 4561288 --MGR Survey Code
-FULL JOIN gabby.surveys.survey_completion c
+FULL JOIN gabby.surveys.survey_completion c -- full join to pull in completed surveys that had no assignment
   ON r.employee_number = c.df_employee_number
  AND st.academic_year = c.academic_year
  AND st.reporting_term_code = c.reporting_term
