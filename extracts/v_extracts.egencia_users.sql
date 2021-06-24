@@ -19,12 +19,6 @@ SELECT CONCAT(sub.employee_number, '@kippnj.org') AS [Username]
                ,tg2.egencia_traveler_group
                ,tg3.egencia_traveler_group
                ,'General Traveler Group') AS [Traveler Group] -- cascading match on location/dept/job
-
-      ,sub.home_department
-      ,sub.[location]
-      ,sub.job_title
-      ,sub.hire_date
-      ,sub.termination_date
 FROM
     (
      SELECT scw.employee_number
