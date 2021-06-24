@@ -1,31 +1,51 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW surveys.survey_assignments_and_tracking_scaffold AS
+--CREATE OR ALTER VIEW surveys.survey_assignments_and_tracking_scaffold AS
 
-WITH survey_terms AS (
-  SELECT c.survey_id
-        ,c.[name] AS survey_round_code
-        ,c.academic_year
-        ,c.reporting_term_code
-        ,c.link_open_date AS survey_round_open
-        ,c.link_close_date AS survey_round_close
-        ,DATEADD(DAY,-15, c.link_open_date) AS survey_round_open_minus_fifteen
-        ,JSON_VALUE(links, '$.default') AS survey_default_link
-        ,CASE 
-          WHEN MAX(c.link_open_date) OVER( PARTITION BY c.survey_id) = c.link_open_date THEN 1
-          ELSE NULL
-         END AS current_survey_term
-  FROM gabby.surveygizmo.survey_campaign_clean_static c
-  JOIN gabby.surveygizmo.survey s
-    ON c.survey_id = s.id
-  WHERE c.link_type = 'email'
-  )
+WITH survey_term_staff_scaffold AS (
+  SELECT sub.survey_id
+        ,sub.survey_round_code
+        ,sub.academic_year
+        ,sub.reporting_term_code
+        ,sub.survey_round_open
+        ,sub.survey_round_close
+        ,sub.survey_round_open_minus_fifteen
+        ,sub.survey_default_link
+        ,sub.title
 
-SELECT COALESCE(r.employee_number,c.df_employee_number) AS survey_taker_id
-      ,COALESCE(r.preferred_name,c.survey_taker_name) AS survey_taker_name
-      ,COALESCE(r.[location],c.location_custom) AS survey_taker_location
-      ,COALESCE(r.position_status,c.position_status) AS survey_taker_adp_status
+        ,r.df_employee_number AS employee_number
+        ,r.preferred_name
+        ,r.primary_site AS [location]
+        ,r.[status] AS position_status
+  FROM
+      (
+       SELECT c.survey_id
+             ,c.[name] AS survey_round_code
+             ,c.academic_year
+             ,c.reporting_term_code
+             ,c.link_open_date AS survey_round_open
+             ,c.link_close_date AS survey_round_close
+             ,DATEADD(DAY, -15, c.link_open_date) AS survey_round_open_minus_fifteen
+             ,ROW_NUMBER() OVER(PARTITION BY c.survey_id ORDER BY c.link_open_date DESC) AS rn
+
+             ,s.default_link AS survey_default_link
+             ,s.[title]
+       FROM gabby.surveygizmo.survey_campaign_clean_static c
+       JOIN gabby.surveygizmo.survey_clean s
+         ON c.survey_id = s.survey_id
+       WHERE c.link_type = 'email'
+         AND c.survey_id IN (4561325, 4561288, 5300913, 6330385)
+      ) sub
+  JOIN gabby.people.staff_crosswalk_static r
+    ON r.[status] NOT IN ('Terminated', 'Prestart')
+  WHERE rn = 1
+ )
+
+SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
+      ,COALESCE(st.preferred_name, c.survey_taker_name) AS survey_taker_name
+      ,COALESCE(st.[location], c.location_custom) AS survey_taker_location
+      ,COALESCE(st.position_status, c.position_status) AS survey_taker_adp_status
 
       ,s.survey_round_status
       ,COALESCE(s.assignment,c.subject_name) AS assignment
@@ -52,11 +72,8 @@ SELECT COALESCE(r.employee_number,c.df_employee_number) AS survey_taker_id
       ,c.is_manager
 
 FROM gabby.surveys.so_assignments_long s
-JOIN gabby.people.staff_roster r
-  ON s.survey_taker_id = r.employee_number
-JOIN survey_terms st
-  ON st.current_survey_term = 1
- AND st.survey_id = 4561325 --S&O Survey Code
+JOIN survey_term_staff_scaffold st
+  ON st.survey_id = 4561325 --S&O Survey Code
 FULL JOIN gabby.surveys.survey_completion c  -- full join to pull in completed surveys that had no assignment
   ON CONVERT(nvarchar,assingment_employee_id) = SUBSTRING(c.subject_name,CHARINDEX('[',c.subject_name) + 1,6)
  AND s.survey_taker_id = c.df_employee_number
@@ -67,10 +84,10 @@ WHERE c.survey_type = 'Self & Others'
 
 UNION ALL
 
-SELECT COALESCE(r.employee_number,c.df_employee_number) AS survey_taker_id
-      ,COALESCE(r.preferred_name,c.survey_taker_name) AS survey_taker_name
-      ,COALESCE(r.[location],c.location_custom) AS survey_taker_location
-      ,COALESCE(r.position_status,c.position_status) AS survey_taker_adp_status
+SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
+      ,COALESCE(st.preferred_name, c.survey_taker_name) AS survey_taker_name
+      ,COALESCE(st.[location], c.location_custom) AS survey_taker_location
+      ,COALESCE(st.position_status, c.position_status) AS survey_taker_adp_status
 
       ,'Yes' AS survey_round_status
       ,'Your Manager' AS assignment
@@ -90,26 +107,20 @@ SELECT COALESCE(r.employee_number,c.df_employee_number) AS survey_taker_id
       ,c.subject_name AS completed_survey_subject_name
       ,c.date_submitted AS survey_completion_date
       ,c.is_manager
-
-FROM gabby.people.staff_roster r
-JOIN survey_terms st
-  ON st.current_survey_term = 1
- AND st.survey_id = 4561288 --MGR Survey Code
+FROM survey_term_staff_scaffold st
 FULL JOIN gabby.surveys.survey_completion c -- full join to pull in completed surveys that had no assignment
-  ON r.employee_number = c.df_employee_number
+  ON st.employee_number = c.df_employee_number
  AND st.academic_year = c.academic_year
  AND st.reporting_term_code = c.reporting_term
- AND survey_type = 'Manager'
-WHERE r.position_status != 'Terminated'
-  AND c.survey_type = 'Manager'
-  AND c.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+ AND c.survey_type = 'Manager'
+WHERE st.survey_id = 4561288 --MGR Survey Code
 
 UNION ALL
 
-SELECT r.employee_number AS survey_taker_id
-      ,r.preferred_name AS survey_taker_name
-      ,r.location AS survey_taker_location
-      ,r.position_status AS survey_taker_adp_status
+SELECT st.employee_number AS survey_taker_id
+      ,st.preferred_name AS survey_taker_name
+      ,st.[location] AS survey_taker_location
+      ,st.position_status AS survey_taker_adp_status
 
       ,'Yes' AS survey_round_status
       ,'Regional & Staff Engagement Survey' AS assignment
@@ -129,24 +140,20 @@ SELECT r.employee_number AS survey_taker_id
       ,c.subject_name AS completed_survey_subject_name
       ,c.date_submitted AS survey_completion_date
       ,c.is_manager
-
-FROM gabby.people.staff_roster r
-JOIN survey_terms st
-  ON st.current_survey_term = 1
- AND st.survey_id = 5300913 --R9S Survey Code
+FROM survey_term_staff_scaffold st
 LEFT JOIN gabby.surveys.survey_completion c
-  ON r.employee_number = c.df_employee_number
+  ON st.employee_number = c.df_employee_number
  AND st.academic_year = c.academic_year
  AND st.reporting_term_code = c.reporting_term
- AND survey_type = 'R9/Engagement'
-WHERE r.position_status NOT IN ('Terminated','Prestart')
+ AND c.survey_type = 'R9/Engagement'
+WHERE st.survey_id = 5300913 --R9S Survey Code
 
 UNION ALL
 
-SELECT r.employee_number AS survey_taker_id
-      ,r.preferred_name AS survey_taker_name
-      ,r.location AS survey_taker_location
-      ,r.position_status AS survey_taker_adp_status
+SELECT st.employee_number AS survey_taker_id
+      ,st.preferred_name AS survey_taker_name
+      ,st.[location] AS survey_taker_location
+      ,st.position_status AS survey_taker_adp_status
 
       ,'Yes' AS survey_round_status
       ,'Update Your Staff Info' AS assignment
@@ -166,24 +173,20 @@ SELECT r.employee_number AS survey_taker_id
       ,c.subject_name AS completed_survey_subject_name
       ,c.date_submitted AS survey_completion_date
       ,c.is_manager
-
-FROM gabby.people.staff_roster r
-JOIN survey_terms st
-  ON st.current_survey_term = 1
- AND st.survey_id = 6330385 --UP Survey Code
+FROM survey_term_staff_scaffold st
 LEFT JOIN gabby.surveys.survey_completion c
-  ON r.employee_number = c.df_employee_number
+  ON st.employee_number = c.df_employee_number
  AND st.academic_year = c.academic_year
  AND st.reporting_term_code = c.reporting_term
- AND survey_type = 'Staff Update'
-WHERE r.position_status NOT IN ('Terminated','Prestart')
+ AND c.survey_type = 'Staff Update'
+WHERE st.survey_id = 6330385 --UP Survey Code
 
 UNION ALL
 
-SELECT r.employee_number AS survey_taker_id
-      ,r.preferred_name AS survey_taker_name
-      ,r.location AS survey_taker_location
-      ,r.position_status AS survey_taker_adp_status
+SELECT st.employee_number AS survey_taker_id
+      ,st.preferred_name AS survey_taker_name
+      ,st.[location] AS survey_taker_location
+      ,st.[position_status] AS survey_taker_adp_status
 
       ,'Yes' AS survey_round_status
       ,'One Off Staff Survey' AS assignment
@@ -203,14 +206,10 @@ SELECT r.employee_number AS survey_taker_id
       ,'Cannot be tracked' AS completed_survey_subject_name
       ,NULL AS survey_completion_date
       ,0 AS is_manager
-
-FROM gabby.people.staff_roster r
-JOIN survey_terms st
-  ON st.current_survey_term = 1
- AND st.survey_id = 6330385 --UP Survey Code
+FROM survey_term_staff_scaffold st  
 LEFT JOIN gabby.surveys.survey_completion c
-  ON r.employee_number = c.df_employee_number
+  ON st.employee_number = c.df_employee_number
  AND st.academic_year = c.academic_year
  AND st.reporting_term_code = c.reporting_term
- AND survey_type = 'Staff Update'
-WHERE r.position_status NOT IN ('Terminated','Prestart')
+ AND c.survey_type = 'Staff Update'
+WHERE st.survey_id = 6330385 --UP Survey Code
