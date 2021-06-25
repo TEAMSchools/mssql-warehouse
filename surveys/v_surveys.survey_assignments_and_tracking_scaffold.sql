@@ -1,7 +1,7 @@
 USE gabby
 GO
 
---CREATE OR ALTER VIEW surveys.survey_assignments_and_tracking_scaffold AS
+CREATE OR ALTER VIEW surveys.survey_assignments_and_tracking_scaffold AS
 
 WITH survey_term_staff_scaffold AS (
   SELECT sub.survey_id
@@ -76,7 +76,7 @@ WITH survey_term_staff_scaffold AS (
                                  ORDER BY c.date_submitted DESC) AS rn
         FROM gabby.surveys.survey_completion c
         WHERE c.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-          AND subject_name IS NOT NULL
+          AND c.subject_name IS NOT NULL
         ) sub
    WHERE rn = 1
   )
@@ -113,14 +113,57 @@ SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
 FROM gabby.surveys.so_assignments_long s
 JOIN survey_term_staff_scaffold st
   ON st.survey_id = 4561325 --S&O Survey Code
- AND s.survey_taker_id = st.employee_number --this was missing, and it was joining everyone to every record on the term_staff_scaffold
-FULL JOIN clean_responses c  -- full join to pull in completed surveys that had no assignment
-  ON assingment_employee_id = c.subject_employee_id
+ AND s.survey_taker_id = st.employee_number
+LEFT JOIN clean_responses c
+  ON s.assingment_employee_id = c.subject_employee_id
  AND s.survey_taker_id = c.df_employee_number
  AND st.academic_year = c.academic_year
  AND st.reporting_term_code = c.reporting_term
  AND c.survey_type = 'Self & Others'
-WHERE assignment_type IS NOT NULL
+
+ UNION ALL
+
+ SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
+      ,COALESCE(st.preferred_name, c.survey_taker_name) AS survey_taker_name
+      ,COALESCE(st.[location], c.location_custom) AS survey_taker_location
+      ,COALESCE(st.position_status, c.position_status) AS survey_taker_adp_status
+
+      ,'Yes' AS survey_round_status
+      ,c.subject_name AS assignment
+      ,CASE 
+        WHEN CHARINDEX('[', c.subject_name) = 0 THEN NULL
+        ELSE SUBSTRING(c.subject_name, CHARINDEX('[', c.subject_name) + 1, 6)
+       END AS assingment_employee_id
+      ,c.subject_name AS assignment_preferred_name
+      ,c.location_custom AS assignment_location
+      ,NULL AS assignment_adp_status
+      ,CASE 
+        WHEN c.is_manager = 1 THEN 'Self & Others - Manager Feedback' 
+        ELSE 'Self & Others - Peer Feedback' 
+       END AS assignment_type
+
+      ,COALESCE(st.academic_year,c.academic_year) AS academic_year
+      ,COALESCE(st.reporting_term_code,c.reporting_term) AS reporting_term
+      ,st.survey_round_open_minus_fifteen
+      ,st.survey_round_open
+      ,st.survey_round_close
+      ,st.survey_default_link
+
+      ,c.subject_name AS completed_survey_subject_name
+      ,c.date_submitted AS survey_completion_date
+      ,c.is_manager
+
+FROM clean_responses c
+JOIN survey_term_staff_scaffold st
+  ON st.survey_id = 4561325 --S&O Survey Code
+ AND st.employee_number = c.df_employee_number
+ AND st.academic_year = c.academic_year
+ AND st.reporting_term_code = c.reporting_term
+LEFT JOIN gabby.surveys.so_assignments_long s
+  ON s.assingment_employee_id = c.subject_employee_id
+ AND s.survey_taker_id = c.df_employee_number
+WHERE c.survey_type = 'Self & Others'
+  AND s.assignment IS NULL
 
 UNION ALL
 
@@ -148,7 +191,40 @@ SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
       ,c.date_submitted AS survey_completion_date
       ,c.is_manager
 FROM survey_term_staff_scaffold st
-FULL JOIN clean_responses c -- full join to pull in completed surveys that had no assignment
+LEFT JOIN clean_responses c -- full join to pull in completed surveys that had no assignment
+  ON st.employee_number = c.df_employee_number
+ AND st.academic_year = c.academic_year
+ AND st.reporting_term_code = c.reporting_term
+ AND c.survey_type = 'Manager'
+WHERE st.survey_id = 4561288 --MGR Survey Code
+
+UNION
+
+SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
+      ,COALESCE(st.preferred_name, c.survey_taker_name) AS survey_taker_name
+      ,COALESCE(st.[location], c.location_custom) AS survey_taker_location
+      ,COALESCE(st.position_status, c.position_status) AS survey_taker_adp_status
+
+      ,'Yes' AS survey_round_status
+      ,'Your Manager' AS assignment
+      ,NULL AS assingment_employee_id
+      ,NULL AS assignment_preferred_name
+      ,NULL AS assignment_location
+      ,NULL AS assignment_adp_status
+      ,'Manager Survey' AS assignment_type
+
+      ,COALESCE(st.academic_year,c.academic_year) AS academic_year
+      ,COALESCE(st.reporting_term_code,c.reporting_term) AS reporting_term
+      ,st.survey_round_open_minus_fifteen
+      ,st.survey_round_open
+      ,st.survey_round_close
+      ,st.survey_default_link
+
+      ,c.subject_name AS completed_survey_subject_name
+      ,c.date_submitted AS survey_completion_date
+      ,c.is_manager
+FROM clean_responses c
+LEFT JOIN survey_term_staff_scaffold st
   ON st.employee_number = c.df_employee_number
  AND st.academic_year = c.academic_year
  AND st.reporting_term_code = c.reporting_term
