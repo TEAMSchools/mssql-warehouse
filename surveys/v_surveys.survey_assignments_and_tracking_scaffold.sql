@@ -42,6 +42,45 @@ WITH survey_term_staff_scaffold AS (
   WHERE rn = 1
  )
 
+,clean_responses AS ( --clean up responses to include only most recent
+  SELECT sub.academic_year
+        ,sub.reporting_term
+        ,sub.survey_type
+        ,sub.df_employee_number
+        ,sub.survey_taker_name
+        ,sub.location_custom
+        ,sub.position_status
+        ,sub.subject_name
+        ,sub.subject_employee_id
+        ,sub.is_manager
+        ,sub.date_submitted
+  FROM (
+        SELECT c.academic_year
+              ,c.reporting_term
+              ,c.survey_type
+              ,c.df_employee_number
+              ,c.survey_taker_name
+              ,c.location_custom
+              ,c.position_status
+              ,c.subject_name
+              ,CASE 
+                WHEN CHARINDEX('[', c.subject_name) = 0 THEN NULL
+                ELSE CONVERT(int,SUBSTRING(c.subject_name, CHARINDEX('[', c.subject_name) + 1, 6))
+               END AS subject_employee_id
+              ,c.is_manager
+              ,c.date_submitted
+              ,ROW_NUMBER() OVER(PARTITION BY  c.survey_type, c.df_employee_number, CASE 
+                                                                                     WHEN CHARINDEX('[', c.subject_name) = 0 THEN c.subject_name
+                                                                                     ELSE SUBSTRING(c.subject_name, CHARINDEX('[', c.subject_name) + 1, 6)
+                                                                                    END 
+                                 ORDER BY c.date_submitted DESC) AS rn
+        FROM gabby.surveys.survey_completion c
+        WHERE c.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+          AND subject_name IS NOT NULL
+        ) sub
+   WHERE rn = 1
+  )
+
 SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
       ,COALESCE(st.preferred_name, c.survey_taker_name) AS survey_taker_name
       ,COALESCE(st.[location], c.location_custom) AS survey_taker_location
@@ -74,13 +113,14 @@ SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
 FROM gabby.surveys.so_assignments_long s
 JOIN survey_term_staff_scaffold st
   ON st.survey_id = 4561325 --S&O Survey Code
-FULL JOIN gabby.surveys.survey_completion c  -- full join to pull in completed surveys that had no assignment
-  ON CONVERT(nvarchar,assingment_employee_id) = SUBSTRING(c.subject_name,CHARINDEX('[',c.subject_name) + 1,6)
+ AND s.survey_taker_id = st.employee_number --this was missing, and it was joining everyone to every record on the term_staff_scaffold
+FULL JOIN clean_responses c  -- full join to pull in completed surveys that had no assignment
+  ON assingment_employee_id = c.subject_employee_id
  AND s.survey_taker_id = c.df_employee_number
  AND st.academic_year = c.academic_year
  AND st.reporting_term_code = c.reporting_term
-WHERE c.survey_type = 'Self & Others'
-  AND c.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+ AND c.survey_type = 'Self & Others'
+WHERE assignment_type IS NOT NULL
 
 UNION ALL
 
@@ -108,7 +148,7 @@ SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
       ,c.date_submitted AS survey_completion_date
       ,c.is_manager
 FROM survey_term_staff_scaffold st
-FULL JOIN gabby.surveys.survey_completion c -- full join to pull in completed surveys that had no assignment
+FULL JOIN clean_responses c -- full join to pull in completed surveys that had no assignment
   ON st.employee_number = c.df_employee_number
  AND st.academic_year = c.academic_year
  AND st.reporting_term_code = c.reporting_term
@@ -141,7 +181,7 @@ SELECT st.employee_number AS survey_taker_id
       ,c.date_submitted AS survey_completion_date
       ,c.is_manager
 FROM survey_term_staff_scaffold st
-LEFT JOIN gabby.surveys.survey_completion c
+LEFT JOIN clean_responses c
   ON st.employee_number = c.df_employee_number
  AND st.academic_year = c.academic_year
  AND st.reporting_term_code = c.reporting_term
@@ -174,7 +214,7 @@ SELECT st.employee_number AS survey_taker_id
       ,c.date_submitted AS survey_completion_date
       ,c.is_manager
 FROM survey_term_staff_scaffold st
-LEFT JOIN gabby.surveys.survey_completion c
+LEFT JOIN clean_responses c
   ON st.employee_number = c.df_employee_number
  AND st.academic_year = c.academic_year
  AND st.reporting_term_code = c.reporting_term
@@ -207,7 +247,7 @@ SELECT st.employee_number AS survey_taker_id
       ,NULL AS survey_completion_date
       ,0 AS is_manager
 FROM survey_term_staff_scaffold st  
-LEFT JOIN gabby.surveys.survey_completion c
+LEFT JOIN clean_responses c
   ON st.employee_number = c.df_employee_number
  AND st.academic_year = c.academic_year
  AND st.reporting_term_code = c.reporting_term
