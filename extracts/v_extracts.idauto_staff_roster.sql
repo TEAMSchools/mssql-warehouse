@@ -19,4 +19,4 @@ SELECT QUOTENAME(ISNULL(NULL, ''), '"') AS ["Preferred Name"]
       ,QUOTENAME(ISNULL(CASE WHEN df.position_status = 'Prestart' THEN 'Active' ELSE df.position_status END, ''), '"') AS ["Position Status"]
       ,QUOTENAME(ISNULL(df.associate_id, ''), '"') AS ["Associate ID"]
 FROM gabby.people.staff_roster df
-WHERE df.original_hire_date <= DATEADD(DAY, 15, GETDATE())
+WHERE df.original_hire_date <= DATEADD(DAY, 10, GETDATE())
