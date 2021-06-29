@@ -7,7 +7,7 @@ WITH webhook_feed AS (
   SELECT s._created AS date_created
         ,s.survey_timestamp
         ,s.subject_name
-       ,CONVERT(INT, CASE
+       , CONVERT(INT, CASE
                        WHEN CHARINDEX('[', s.subject_name) = 0 THEN NULL
                        ELSE SUBSTRING(s.subject_name
                                      ,CHARINDEX('[', s.subject_name) + 1
@@ -62,7 +62,7 @@ WITH webhook_feed AS (
     AND m.q_1 IS NOT NULL
 
   UNION ALL
-   
+
   SELECT e._created AS date_created
         ,e._created survey_timestamp
         ,'R9/Engagement' AS subject_name
@@ -90,7 +90,7 @@ WITH webhook_feed AS (
         ,r.date_submitted AS survey_timestamp
         ,CASE 
           WHEN r.survey_id = 5300913 THEN 'R9/Engagement' 
-          ELSE r.subject_preferred_name + ' - ' + r.subject_primary_site + ' [' + CONVERT(varchar,r.subject_df_employee_number) + ']'
+          ELSE CONCAT(r.subject_preferred_name, ' - ', r.subject_primary_site, ' [', r.subject_df_employee_number, ']')
          END AS subject_name
         ,CASE 
           WHEN r.survey_id = 5300913 THEN 999999 
@@ -108,7 +108,7 @@ WITH webhook_feed AS (
         ,r.survey_id AS survey_id
   FROM gabby.surveygizmo.survey_response_identifiers_static r
   WHERE r.campaign_academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-  )
+ )
 
 ,survey_feed AS (
   SELECT COALESCE(r.date_created, w.date_created) AS date_created
