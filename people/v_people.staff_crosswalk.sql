@@ -5,7 +5,7 @@ CREATE OR ALTER VIEW people.staff_crosswalk AS
 
 SELECT sub.employee_number AS df_employee_number
       ,sub.associate_id AS adp_associate_id
-      ,NULL AS salesforce_id
+      ,CONVERT(NVARCHAR(32), NULL) AS salesforce_id
       ,sub.first_name
       ,sub.last_name
       ,sub.sex AS gender

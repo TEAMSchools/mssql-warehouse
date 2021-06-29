@@ -4,34 +4,34 @@ GO
 CREATE OR ALTER VIEW people.years_experience AS
 
 WITH months AS (
- SELECT df_employee_id
-       ,ISNULL(active, 0) AS months_active
-       ,ISNULL(inactive, 0) AS months_inactive
- FROM 
-     (
-      SELECT df_employee_id
-            ,CASE
-              WHEN [status] = 'Active' THEN 'active'
-              ELSE 'inactive'
-             END AS status_clean
-            ,DATEDIFF(MONTH, effective_start_date, effective_end_date) AS months
-      FROM gabby.dayforce.work_assignment_status
-      WHERE [status] NOT IN ('Terminated', 'Pre-Start')
-        AND job_name <> 'Intern'
-     ) sub
- PIVOT (
-   SUM(months)
-   FOR status_clean IN (active, inactive)
-  ) p
+  SELECT employee_number AS df_employee_id
+        ,ISNULL(active, 0) AS months_active
+        ,ISNULL(inactive, 0) AS months_inactive
+  FROM 
+      (
+       SELECT employee_number
+             ,CASE
+               WHEN position_status = 'Active' THEN 'active'
+               ELSE 'inactive'
+              END AS status_clean
+             ,DATEDIFF(MONTH, effective_start_date, effective_end_date) AS months
+       FROM gabby.people.employment_history
+       WHERE position_status NOT IN ('Terminated', 'Pre-Start')
+         AND job_title <> 'Intern'
+      ) sub
+  PIVOT (
+    SUM(months)
+    FOR status_clean IN (active, inactive)
+   ) p
  )
 
 ,years_teaching_at_kipp AS (
-  SELECT was.df_employee_id
+  SELECT was.employee_number AS df_employee_id
         ,SUM(DATEDIFF(MONTH, was.effective_start_date, was.effective_end_date)) AS months_as_teacher
-  FROM gabby.dayforce.work_assignment_status was
-  WHERE was.[status] NOT IN ('Terminated', 'Pre-Start')
-    AND was.job_name IN ('Teacher', 'Learning Specialist', 'Learning Specialist Coordinator', 'Teacher in Residence', 'Teacher, ESL', 'Teacher ESL', 'Co-Teacher')
-  GROUP BY was.df_employee_id
+  FROM gabby.people.employment_history was
+  WHERE was.position_status NOT IN ('Terminated', 'Pre-Start')
+    AND was.job_title IN ('Teacher', 'Learning Specialist', 'Learning Specialist Coordinator', 'Teacher in Residence', 'Teacher, ESL', 'Teacher ESL', 'Co-Teacher')
+  GROUP BY was.employee_number
  )
 
 SELECT r.df_employee_number

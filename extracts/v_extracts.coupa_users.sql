@@ -115,9 +115,11 @@ FROM
              WHEN au.business_unit_code IN ('TEAM', 'KIPP_MIAMI') THEN 'inactive' /* TEAM/Miami phasing in */
              ELSE 'active'
             END AS [Status]
-           ,COALESCE(CASE WHEN au.[status] = 'Terminated' THEN 'No' END
-                    ,au.purchasing_user
-                    ,'No') AS [Purchasing User] /* preserve Coupa, otherwise No */
+           ,COALESCE(
+               CASE WHEN au.[status] = 'Terminated' THEN 'No' END
+              ,au.purchasing_user
+              ,'No'
+             ) AS [Purchasing User] /* preserve Coupa, otherwise No */
            ,CASE 
              WHEN au.[status] = 'Terminated' THEN 'No' 
              WHEN au.business_unit_code IN ('TEAM', 'KIPP_MIAMI') THEN 'No' /* TEAM/Miami phasing in */
@@ -126,27 +128,31 @@ FROM
            ,'SAML' AS [Authentication Method]
            ,LOWER(ad.userprincipalname) AS [Sso Identifier]
            ,'No' AS [Generate Password And Notify User]
-           ,COALESCE(LOWER(ad.mail), LOWER(ad.userprincipalname)) AS [Email] /* some are missing the AD mail attribute `\(o_O)/` */
+           ,LOWER(ad.mail) AS [Email] /* some are missing the AD mail attribute `\(o_O)/` */
            ,au.preferred_first_name AS [First Name]
            ,au.preferred_last_name AS [Last Name]
            ,au.employee_number AS [Employee Number]
            ,au.roles AS [User Role Names]
-           ,COALESCE(au.content_groups
-                    ,CASE
-                      WHEN au.business_unit_code = 'KIPP_TAF' THEN 'KIPP NJ'
-                      WHEN au.business_unit_code = 'KIPP_MIAMI' THEN 'MIA'
-                      ELSE au.business_unit_code
-                     END) AS [Content Groups] /* preserve Coupa, otherwise use HRIS */
+           ,COALESCE(
+               au.content_groups
+              ,CASE
+                WHEN au.business_unit_code = 'KIPP_TAF' THEN 'KIPP NJ'
+                WHEN au.business_unit_code = 'KIPP_MIAMI' THEN 'MIA'
+                ELSE au.business_unit_code
+               END
+             ) AS [Content Groups] /* preserve Coupa, otherwise use HRIS */
            ,gabby.utilities.STRIP_CHARACTERS(CONCAT(au.preferred_first_name, au.preferred_last_name ), '^A-Z') AS [Mention Name]
-           ,COALESCE(x.coupa_school_name
-                    ,CASE 
-                      WHEN sn.coupa_school_name = '<Use PhysicalDeliveryOfficeName>' THEN ad.physicaldeliveryofficename
-                      ELSE sn.coupa_school_name
-                     END
-                    ,CASE 
-                      WHEN sn2.coupa_school_name = '<Use PhysicalDeliveryOfficeName>' THEN ad.physicaldeliveryofficename
-                      ELSE sn2.coupa_school_name
-                     END) AS coupa_school_name /* override > lookup table (content group/department/job) > lookup table (content group/department) */
+           ,COALESCE(
+               x.coupa_school_name
+              ,CASE 
+                WHEN sn.coupa_school_name = '<Use PhysicalDeliveryOfficeName>' THEN ad.physicaldeliveryofficename
+                ELSE sn.coupa_school_name
+               END
+              ,CASE 
+                WHEN sn2.coupa_school_name = '<Use PhysicalDeliveryOfficeName>' THEN ad.physicaldeliveryofficename
+                ELSE sn2.coupa_school_name
+               END
+             ) AS coupa_school_name /* override > lookup table (content group/department/job) > lookup table (content group/department) */
      FROM all_users au
      INNER JOIN gabby.adsi.user_attributes_static ad
        ON au.employee_number = ad.employeenumber

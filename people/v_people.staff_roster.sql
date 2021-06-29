@@ -21,6 +21,7 @@ WITH all_staff AS (
         ,eh.position_effective_end_date
         ,eh.annual_salary
         ,eh.effective_start_date
+        ,eh.status_effective_start_date
   FROM gabby.people.employment_history eh
   WHERE CONVERT(DATE, GETDATE()) BETWEEN eh.effective_start_date AND eh.effective_end_date
 
@@ -43,6 +44,7 @@ WITH all_staff AS (
         ,ps.position_effective_end_date
         ,ps.annual_salary
         ,ps.effective_start_date
+        ,ps.status_effective_start_date
   FROM gabby.people.employment_history ps
   WHERE ps.status_effective_start_date > CONVERT(DATE, GETDATE())
     AND ps.position_status = 'Active'
@@ -52,6 +54,7 @@ WITH all_staff AS (
 ,clean_staff AS (
   SELECT sub.employee_number
         ,sub.associate_id
+        ,sub.associate_oid
         ,sub.position_id
         ,sub.first_name
         ,sub.last_name
@@ -146,12 +149,12 @@ WITH all_staff AS (
              /* dedupe positions */
              ,ROW_NUMBER() OVER(
                 PARTITION BY eh.associate_id
-                  ORDER BY CONVERT(DATE, eh.effective_start_date) DESC
-                          ,CASE WHEN eh.position_status = 'Terminated' THEN 0 ELSE 1 END DESC) AS rn
+                  ORDER BY eh.status_effective_start_date DESC
+                          ,CASE WHEN eh.position_status = 'Terminated' THEN 0 ELSE 1 END DESC
+                          ,eh.effective_start_date DESC) AS rn
 
              ,ea.first_name
              ,ea.last_name
-             ,ea.preferred_name AS preferred_first_name
              ,ea.primary_address_city AS address_city
              ,ea.primary_address_state_territory_code AS address_state
              ,ea.primary_address_zip_postal_code AS address_zip
@@ -222,6 +225,10 @@ WITH all_staff AS (
                ELSE COALESCE(ea.preferred_race_ethnicity, ea.race_description)
               END AS race_reporting
 
+             ,w.preferred_name_given AS preferred_first_name
+             ,w.preferred_name_family AS preferred_last_name
+             ,w.associate_oid
+
              ,p.wfmgr_pay_rule
              ,p.worker_category_description AS worker_category
              ,p.flsa_description AS flsa
@@ -232,16 +239,14 @@ WITH all_staff AS (
                ELSE CONVERT(DATE, p.hire_date)
               END AS hire_date
 
-             ,df.preferred_last_name -- use DF until ADP available
-
              ,cw.adp_associate_id AS associate_id_legacy
        FROM all_staff eh
        JOIN gabby.adp.employees_all ea
          ON eh.associate_id = ea.associate_id
+       LEFT JOIN gabby.adp.workers_clean_static w
+         ON eh.associate_id = w.worker_id
        LEFT JOIN gabby.adp.employees p
          ON eh.position_id = p.position_id
-       LEFT JOIN gabby.dayforce.employees df /* temporary for preferred last name */
-         ON eh.employee_number= df.df_employee_number
        LEFT JOIN gabby.people.id_crosswalk_adp cw
          ON eh.employee_number = cw.df_employee_number
         AND cw.rn_curr = 1
@@ -252,6 +257,7 @@ WITH all_staff AS (
 
 SELECT c.employee_number
       ,c.associate_id
+      ,c.associate_oid
       ,c.position_id
       ,c.first_name
       ,c.last_name
