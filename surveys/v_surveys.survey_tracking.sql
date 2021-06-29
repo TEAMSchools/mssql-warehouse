@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW surveys.survey_assignments_and_tracking_scaffold AS
+CREATE OR ALTER VIEW surveys.survey_tracking AS
 
 WITH survey_term_staff_scaffold AS (
   SELECT sub.survey_id
@@ -39,47 +39,38 @@ WITH survey_term_staff_scaffold AS (
       ) sub
   JOIN gabby.people.staff_crosswalk_static r
     ON r.[status] NOT IN ('Terminated', 'Prestart')
-  WHERE rn = 1
+  WHERE sub.rn = 1
  )
 
-,clean_responses AS ( --clean up responses to include only most recent
-  SELECT sub.academic_year
-        ,sub.reporting_term
-        ,sub.survey_type
-        ,sub.df_employee_number
-        ,sub.survey_taker_name
-        ,sub.location_custom
-        ,sub.position_status
-        ,sub.subject_name
-        ,sub.subject_employee_id
-        ,sub.is_manager
-        ,sub.date_submitted
-  FROM (
-        SELECT c.academic_year
-              ,c.reporting_term
-              ,c.survey_type
-              ,c.df_employee_number
-              ,c.survey_taker_name
-              ,c.location_custom
-              ,c.position_status
-              ,c.subject_name
-              ,CASE 
-                WHEN CHARINDEX('[', c.subject_name) = 0 THEN NULL
-                ELSE CONVERT(int,SUBSTRING(c.subject_name, CHARINDEX('[', c.subject_name) + 1, 6))
-               END AS subject_employee_id
-              ,c.is_manager
-              ,c.date_submitted
-              ,ROW_NUMBER() OVER(PARTITION BY  c.survey_type, c.df_employee_number, CASE 
-                                                                                     WHEN CHARINDEX('[', c.subject_name) = 0 THEN c.subject_name
-                                                                                     ELSE SUBSTRING(c.subject_name, CHARINDEX('[', c.subject_name) + 1, 6)
-                                                                                    END 
-                                 ORDER BY c.date_submitted DESC) AS rn
-        FROM gabby.surveys.survey_completion c
-        WHERE c.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-          AND c.subject_name IS NOT NULL
-        ) sub
-   WHERE rn = 1
-  )
+,clean_responses AS (
+  SELECT c.survey_id
+        ,c.academic_year
+        ,CASE
+          WHEN c.survey_id = 4561325 THEN 'Self & Others'
+          WHEN c.survey_id = 4561288 THEN 'Manager'
+          WHEN c.survey_id = 5300913 THEN 'R9/Engagement' 
+         END AS survey_type
+        ,SUBSTRING(c.[name], CHARINDEX(' ', c.[name]), LEN(c.[name])) AS reporting_term
+
+        ,i.date_submitted
+        ,i.respondent_df_employee_number AS df_employee_number
+        ,i.respondent_preferred_name AS survey_taker_name
+        ,i.respondent_primary_site AS location_custom
+        ,i.is_manager
+        ,i.subject_preferred_name AS subject_name
+        ,i.subject_df_employee_number AS subject_employee_id
+
+        ,sc.[status] AS position_status
+  FROM gabby.surveygizmo.survey_campaign_clean_static c
+  JOIN gabby.surveygizmo.survey_response_identifiers_static i
+    ON c.survey_id = i.survey_id
+   AND i.date_started BETWEEN c.link_open_date AND c.link_close_date
+   AND i.rn_respondent_subject = 1
+  JOIN gabby.people.staff_crosswalk_static sc
+    ON i.respondent_df_employee_number = sc.df_employee_number
+  WHERE c.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+    AND c.survey_id IN (4561325, 4561288, 5300913, 6330385)
+ )
 
 SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
       ,COALESCE(st.preferred_name, c.survey_taker_name) AS survey_taker_name
@@ -88,12 +79,13 @@ SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
 
       ,s.survey_round_status
       ,COALESCE(s.assignment,c.subject_name) AS assignment
-      ,COALESCE(s.assingment_employee_id, 
-                CASE 
-                 WHEN CHARINDEX('[', c.subject_name) = 0 THEN NULL
-                 ELSE SUBSTRING(c.subject_name, CHARINDEX('[', c.subject_name) + 1, 6)
-                END
-                ) AS assingment_employee_id
+      ,COALESCE(
+          s.assignment_employee_id
+         ,CASE 
+           WHEN CHARINDEX('[', c.subject_name) = 0 THEN NULL
+           ELSE SUBSTRING(c.subject_name, CHARINDEX('[', c.subject_name) + 1, 6)
+          END
+        ) AS assignment_employee_id
       ,COALESCE(s.assignment_preferred_name,c.subject_name) AS assignment_preferred_name
       ,s.assignment_location
       ,s.assignment_adp_status
@@ -110,20 +102,20 @@ SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
       ,c.date_submitted AS survey_completion_date
       ,c.is_manager
 
-FROM gabby.surveys.so_assignments_long s
-JOIN survey_term_staff_scaffold st
-  ON st.survey_id = 4561325 --S&O Survey Code
- AND s.survey_taker_id = st.employee_number
+FROM survey_term_staff_scaffold st
+JOIN gabby.surveys.so_assignments_long s
+  ON st.employee_number = s.survey_taker_id
 LEFT JOIN clean_responses c
-  ON s.assingment_employee_id = c.subject_employee_id
+  ON s.assignment_employee_id = c.subject_employee_id
  AND s.survey_taker_id = c.df_employee_number
  AND st.academic_year = c.academic_year
  AND st.reporting_term_code = c.reporting_term
- AND c.survey_type = 'Self & Others'
+ AND st.survey_id = c.survey_id
+WHERE st.survey_id = 4561325 /* S&O Survey Code */
 
- UNION ALL
+UNION ALL
 
- SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
+SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
       ,COALESCE(st.preferred_name, c.survey_taker_name) AS survey_taker_name
       ,COALESCE(st.[location], c.location_custom) AS survey_taker_location
       ,COALESCE(st.position_status, c.position_status) AS survey_taker_adp_status
@@ -155,14 +147,14 @@ LEFT JOIN clean_responses c
 
 FROM clean_responses c
 JOIN survey_term_staff_scaffold st
-  ON st.survey_id = 4561325 --S&O Survey Code
- AND st.employee_number = c.df_employee_number
+  ON st.employee_number = c.df_employee_number
  AND st.academic_year = c.academic_year
  AND st.reporting_term_code = c.reporting_term
+ AND st.survey_id = c.survey_id
 LEFT JOIN gabby.surveys.so_assignments_long s
-  ON s.assingment_employee_id = c.subject_employee_id
- AND s.survey_taker_id = c.df_employee_number
-WHERE c.survey_type = 'Self & Others'
+  ON c.subject_employee_id = s.assignment_employee_id
+ AND c.df_employee_number = s.survey_taker_id
+WHERE c.survey_id = 4561325 /* S&O Survey Code */
   AND s.assignment IS NULL
 
 UNION ALL
@@ -191,12 +183,12 @@ SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
       ,c.date_submitted AS survey_completion_date
       ,c.is_manager
 FROM survey_term_staff_scaffold st
-LEFT JOIN clean_responses c -- full join to pull in completed surveys that had no assignment
+LEFT JOIN clean_responses c
   ON st.employee_number = c.df_employee_number
  AND st.academic_year = c.academic_year
  AND st.reporting_term_code = c.reporting_term
- AND c.survey_type = 'Manager'
-WHERE st.survey_id = 4561288 --MGR Survey Code
+ AND st.survey_id = c.survey_id
+WHERE st.survey_id = 4561288 /* MGR Survey Code */
 
 UNION
 
@@ -225,11 +217,11 @@ SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
       ,c.is_manager
 FROM clean_responses c
 LEFT JOIN survey_term_staff_scaffold st
-  ON st.employee_number = c.df_employee_number
- AND st.academic_year = c.academic_year
- AND st.reporting_term_code = c.reporting_term
- AND c.survey_type = 'Manager'
-WHERE st.survey_id = 4561288 --MGR Survey Code
+  ON c.df_employee_number = st.employee_number
+ AND c.academic_year = st.academic_year
+ AND c.reporting_term = st.reporting_term_code
+ AND c.survey_id = st.survey_id
+WHERE st.survey_id = 4561288 /* MGR Survey Code */
 
 UNION ALL
 
@@ -261,8 +253,8 @@ LEFT JOIN clean_responses c
   ON st.employee_number = c.df_employee_number
  AND st.academic_year = c.academic_year
  AND st.reporting_term_code = c.reporting_term
- AND c.survey_type = 'R9/Engagement'
-WHERE st.survey_id = 5300913 --R9S Survey Code
+ AND st.survey_id = c.survey_id
+WHERE st.survey_id = 5300913 /* R9S Survey Code */
 
 UNION ALL
 
@@ -294,8 +286,8 @@ LEFT JOIN clean_responses c
   ON st.employee_number = c.df_employee_number
  AND st.academic_year = c.academic_year
  AND st.reporting_term_code = c.reporting_term
- AND c.survey_type = 'Staff Update'
-WHERE st.survey_id = 6330385 --UP Survey Code
+ AND st.survey_id = c.survey_id
+WHERE st.survey_id = 6330385 /* UP Survey Code */
 
 UNION ALL
 
@@ -327,5 +319,5 @@ LEFT JOIN clean_responses c
   ON st.employee_number = c.df_employee_number
  AND st.academic_year = c.academic_year
  AND st.reporting_term_code = c.reporting_term
- AND c.survey_type = 'Staff Update'
-WHERE st.survey_id = 6330385 --UP Survey Code
+ AND st.survey_id = c.survey_id
+WHERE st.survey_id = 6330385 /* UP Survey Code */
