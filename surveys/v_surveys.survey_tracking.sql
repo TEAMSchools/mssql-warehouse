@@ -50,7 +50,7 @@ WITH survey_term_staff_scaffold AS (
           WHEN c.survey_id = 4561288 THEN 'Manager'
           WHEN c.survey_id = 5300913 THEN 'R9/Engagement' 
          END AS survey_type
-        ,SUBSTRING(c.[name], CHARINDEX(' ', c.[name]), LEN(c.[name])) AS reporting_term
+        ,SUBSTRING(c.[name], CHARINDEX(' ', c.[name])+1, LEN(c.[name])) AS reporting_term
 
         ,i.date_submitted
         ,i.respondent_df_employee_number AS df_employee_number
