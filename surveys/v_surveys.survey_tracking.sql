@@ -18,6 +18,7 @@ WITH survey_term_staff_scaffold AS (
         ,r.preferred_name
         ,r.primary_site AS [location]
         ,r.[status] AS position_status
+        ,LOWER(r.samaccountname) AS survey_taker_samaccount
   FROM
       (
        SELECT c.survey_id
@@ -61,6 +62,7 @@ WITH survey_term_staff_scaffold AS (
         ,i.subject_df_employee_number AS subject_employee_id
 
         ,sc.[status] AS position_status
+        ,LOWER(sc.samaccountname) AS survey_taker_samaccount
   FROM gabby.surveygizmo.survey_campaign_clean_static c
   JOIN gabby.surveygizmo.survey_response_identifiers_static i
     ON c.survey_id = i.survey_id
@@ -76,6 +78,7 @@ SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
       ,COALESCE(st.preferred_name, c.survey_taker_name) AS survey_taker_name
       ,COALESCE(st.[location], c.location_custom) AS survey_taker_location
       ,COALESCE(st.position_status, c.position_status) AS survey_taker_adp_status
+      ,COALESCE(st.survey_taker_samaccount,c.survey_taker_samaccount) AS survey_taker_samaccount
 
       ,s.survey_round_status
       ,COALESCE(s.assignment,c.subject_name) AS assignment
@@ -119,6 +122,7 @@ SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
       ,COALESCE(st.preferred_name, c.survey_taker_name) AS survey_taker_name
       ,COALESCE(st.[location], c.location_custom) AS survey_taker_location
       ,COALESCE(st.position_status, c.position_status) AS survey_taker_adp_status
+      ,COALESCE(st.survey_taker_samaccount,c.survey_taker_samaccount) AS survey_taker_samaccount
 
       ,'Yes' AS survey_round_status
       ,c.subject_name AS assignment
@@ -163,6 +167,7 @@ SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
       ,COALESCE(st.preferred_name, c.survey_taker_name) AS survey_taker_name
       ,COALESCE(st.[location], c.location_custom) AS survey_taker_location
       ,COALESCE(st.position_status, c.position_status) AS survey_taker_adp_status
+      ,COALESCE(st.survey_taker_samaccount,c.survey_taker_samaccount) AS survey_taker_samaccount
 
       ,'Yes' AS survey_round_status
       ,'Your Manager' AS assignment
@@ -196,6 +201,7 @@ SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
       ,COALESCE(st.preferred_name, c.survey_taker_name) AS survey_taker_name
       ,COALESCE(st.[location], c.location_custom) AS survey_taker_location
       ,COALESCE(st.position_status, c.position_status) AS survey_taker_adp_status
+      ,COALESCE(st.survey_taker_samaccount,c.survey_taker_samaccount) AS survey_taker_samaccount
 
       ,'Yes' AS survey_round_status
       ,'Your Manager' AS assignment
@@ -229,6 +235,7 @@ SELECT st.employee_number AS survey_taker_id
       ,st.preferred_name AS survey_taker_name
       ,st.[location] AS survey_taker_location
       ,st.position_status AS survey_taker_adp_status
+      ,st.survey_taker_samaccount AS survey_taker_samaccount
 
       ,'Yes' AS survey_round_status
       ,'Regional & Staff Engagement Survey' AS assignment
@@ -262,6 +269,7 @@ SELECT st.employee_number AS survey_taker_id
       ,st.preferred_name AS survey_taker_name
       ,st.[location] AS survey_taker_location
       ,st.position_status AS survey_taker_adp_status
+      ,st.survey_taker_samaccount AS survey_taker_samaccount
 
       ,'Yes' AS survey_round_status
       ,'Update Your Staff Info' AS assignment
@@ -295,6 +303,7 @@ SELECT st.employee_number AS survey_taker_id
       ,st.preferred_name AS survey_taker_name
       ,st.[location] AS survey_taker_location
       ,st.[position_status] AS survey_taker_adp_status
+      ,st.survey_taker_samaccount AS survey_taker_samaccount
 
       ,'Yes' AS survey_round_status
       ,'One Off Staff Survey' AS assignment
