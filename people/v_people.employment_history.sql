@@ -51,6 +51,9 @@ WITH validdates AS (
                                  WHEN DATEPART(YEAR,d.effective_start_date) > gabby.utilities.GLOBAL_ACADEMIC_YEAR()
                                   AND DATEPART(MONTH,d.effective_start_date) >= 7
                                       THEN DATEPART(YEAR,d.effective_start_date) + 1
+                                 WHEN DATEPART(YEAR, GETDATE()) = gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1
+                                  AND DATEPART(MONTH, GETDATE()) >= 7
+                                      THEN gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 2
                                  ELSE gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1
                                 END, 6, 30)) AS effective_end_date
   FROM validdates d

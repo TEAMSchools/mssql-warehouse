@@ -22,10 +22,13 @@ SELECT sub.employee_number
          ) AS position_effective_end_date
       ,COALESCE(sub.position_effective_end_date
                ,DATEADD(DAY, -1, LEAD(sub.position_effective_date, 1) OVER(PARTITION BY sub.position_id ORDER BY sub.position_effective_date))
-               ,DATEFROMPARTS(CASE 
-                               WHEN DATEPART(YEAR,sub.position_effective_date) > gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-                                AND DATEPART(MONTH,sub.position_effective_date) >= 7
-                                    THEN DATEPART(YEAR,sub.position_effective_date) + 1
+               ,DATEFROMPARTS(CASE
+                               WHEN DATEPART(YEAR, sub.position_effective_date) > gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+                                AND DATEPART(MONTH, sub.position_effective_date) >= 7
+                                    THEN DATEPART(YEAR, sub.position_effective_date) + 1
+                               WHEN DATEPART(YEAR, GETDATE()) = gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1
+                                AND DATEPART(MONTH, GETDATE()) >= 7
+                                    THEN gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 2
                                ELSE gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1
                               END, 6, 30)) AS position_effective_end_date_eoy
 FROM
