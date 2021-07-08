@@ -46,7 +46,7 @@ FROM
            ,co.iep_status
            ,co.lep_status
            ,co.c_504_status
-           ,NULL AS is_pathways
+           ,0 AS is_pathways
            ,co.gender
            ,co.ethnicity
 
