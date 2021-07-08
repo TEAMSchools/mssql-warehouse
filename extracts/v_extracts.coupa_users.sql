@@ -64,8 +64,7 @@ WITH roles AS (
     ON cu.id = bg.[user_id]
   WHERE sr.[status] <> 'Prestart'
     AND sr.job_title NOT IN ('Intern')
-    AND (sr.termination_date IS NULL 
-           OR sr.termination_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1, 7, 1))
+    AND COALESCE(sr.termination_date, CONVERT(DATE, GETDATE())) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1, 7, 1)
 
   UNION ALL
 
@@ -111,8 +110,6 @@ FROM
      SELECT LOWER(ad.samaccountname) AS [Login]
            ,CASE
              WHEN au.[status] = 'Terminated' THEN 'inactive'
-             WHEN au.active IS NOT NULL THEN au.active
-             WHEN au.business_unit_code IN ('TEAM', 'KIPP_MIAMI') THEN 'inactive' /* TEAM/Miami phasing in */
              ELSE 'active'
             END AS [Status]
            ,COALESCE(
@@ -122,7 +119,6 @@ FROM
              ) AS [Purchasing User] /* preserve Coupa, otherwise No */
            ,CASE 
              WHEN au.[status] = 'Terminated' THEN 'No' 
-             WHEN au.business_unit_code IN ('TEAM', 'KIPP_MIAMI') THEN 'No' /* TEAM/Miami phasing in */
              ELSE 'Yes' 
             END AS [Expense User]
            ,'SAML' AS [Authentication Method]
@@ -141,7 +137,10 @@ FROM
                 ELSE au.business_unit_code
                END
              ) AS [Content Groups] /* preserve Coupa, otherwise use HRIS */
-           ,gabby.utilities.STRIP_CHARACTERS(CONCAT(au.preferred_first_name, au.preferred_last_name ), '^A-Z') AS [Mention Name]
+           ,CASE
+             WHEN au.[status] = 'Terminated' THEN 'X' + gabby.utilities.STRIP_CHARACTERS(CONCAT(au.preferred_first_name, au.preferred_last_name ), '^A-Z')
+             ELSE gabby.utilities.STRIP_CHARACTERS(CONCAT(au.preferred_first_name, au.preferred_last_name ), '^A-Z')
+            END AS [Mention Name]
            ,COALESCE(
                x.coupa_school_name
               ,CASE 
