@@ -112,6 +112,7 @@ FROM
            ,CASE
              WHEN au.[status] = 'Terminated' THEN 'inactive'
              WHEN au.active IS NOT NULL THEN au.active
+             WHEN au.business_unit_code IN ('TEAM', 'KIPP_MIAMI') THEN 'inactive' /* TEAM/Miami phasing in */
              ELSE 'active'
             END AS [Status]
            ,COALESCE(
@@ -121,6 +122,7 @@ FROM
              ) AS [Purchasing User] /* preserve Coupa, otherwise No */
            ,CASE 
              WHEN au.[status] = 'Terminated' THEN 'No' 
+             WHEN au.business_unit_code IN ('TEAM', 'KIPP_MIAMI') THEN 'No' /* TEAM/Miami phasing in */
              ELSE 'Yes' 
             END AS [Expense User]
            ,'SAML' AS [Authentication Method]
