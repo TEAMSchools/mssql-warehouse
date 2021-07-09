@@ -37,20 +37,16 @@ WITH roles AS (
   SELECT sr.employee_number
         ,sr.preferred_first_name
         ,sr.preferred_last_name
+        ,sr.[status]
         ,sr.business_unit_code
         ,sr.home_department
-        ,sr.[status]
         ,sr.job_title
 
-        ,CASE
-          WHEN cu.active = 1 THEN 'active'
-          WHEN cu.active = 0 THEN 'inactive'
-         END AS active
+        ,cu.active
         ,CASE
           WHEN cu.purchasing_user = 1 THEN 'Yes'
           WHEN cu.purchasing_user = 0 THEN 'No'
          END AS purchasing_user
-        ,JSON_VALUE(cu.custom_fields, '$."school-name".name') AS school_name
 
         ,r.roles
 
@@ -72,14 +68,13 @@ WITH roles AS (
   SELECT sr.employee_number
         ,sr.preferred_first_name
         ,sr.preferred_last_name
+        ,sr.[status]
         ,sr.business_unit_code
         ,sr.home_department
-        ,sr.[status]
         ,sr.job_title
 
-        ,NULL AS active
+        ,1 AS active
         ,'No' AS purchasing_user
-        ,NULL AS school_name
         ,'Expense User' AS roles
         ,NULL AS content_groups
   FROM gabby.people.staff_roster sr
@@ -113,7 +108,10 @@ FROM
              ELSE 'active'
             END AS [Status]
            ,COALESCE(
-               CASE WHEN au.[status] = 'Terminated' THEN 'No' END
+               CASE 
+                WHEN au.[status] = 'Terminated' THEN 'No' 
+                WHEN au.active = 0 THEN 'No'
+               END
               ,au.purchasing_user
               ,'No'
              ) AS [Purchasing User] /* preserve Coupa, otherwise No */
