@@ -77,11 +77,11 @@ WITH mip AS (
 
 ,coupa AS (
   SELECT code
-        ,budget_owner
+        ,owner_name
         ,CONVERT(FLOAT, REPLACE(amount,',', '')) AS amount
         ,CONVERT(FLOAT, REPLACE(remaining, ',', '')) AS remaining
-        ,LEFT([period], 4) AS budget_period
-  FROM gabby.coupa.budget_line_list
+        ,LEFT(period_name, 4) AS budget_period
+  FROM gabby.coupa.budget_line_clean
  )
 
 SELECT mip.Fund
@@ -99,11 +99,11 @@ SELECT mip.Fund
       ,mip.[AcctCode Valid]
       ,mip.entity
 
-      ,coupa.budget_owner
-      ,coupa.amount AS revised_budget_coupa
-      ,coupa.remaining AS available_budget_coupa
-      ,coupa.amount - coupa.remaining AS remaining_budget_coupa
+      ,c.owner_name AS budget_owner
+      ,c.amount AS revised_budget_coupa
+      ,c.remaining AS available_budget_coupa
+      ,c.amount - c.remaining AS remaining_budget_coupa
 FROM mip
-LEFT JOIN coupa
-  ON mip.[AcctCode From Valid Segments] = coupa.code
- AND mip.[Budget Period] = coupa.budget_period
+LEFT JOIN coupa c
+  ON mip.[AcctCode From Valid Segments] = c.code
+ AND mip.[Budget Period] = c.budget_period
