@@ -238,7 +238,7 @@ SELECT st.employee_number AS survey_taker_id
       ,st.survey_taker_samaccount AS survey_taker_samaccount
 
       ,'Yes' AS survey_round_status
-      ,'Regional & Staff Engagement Survey' AS assignment
+      ,sa.engagement_survey_assignment AS assignment
       ,NULL AS assingment_employee_id
       ,NULL AS assignment_preferred_name
       ,NULL AS assignment_location
@@ -261,6 +261,8 @@ LEFT JOIN clean_responses c
  AND st.academic_year = c.academic_year
  AND st.reporting_term_code = c.reporting_term
  AND st.survey_id = c.survey_id
+LEFT JOIN gabby.surveys.so_assignments sa
+  ON st.employee_number = sa.employee_number
 WHERE st.survey_id = 5300913 /* R9S Survey Code */
 
 UNION ALL
