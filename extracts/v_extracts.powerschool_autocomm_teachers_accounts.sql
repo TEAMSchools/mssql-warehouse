@@ -33,7 +33,7 @@ WITH users_clean AS (
         WHEN sc.region = 'KIPP Miami' THEN 'kippmiami'
        END = u.[db_name]
   WHERE DATEDIFF(DAY, ISNULL(df.termination_date, CONVERT(DATE, GETDATE())), GETDATE()) <= 14 /* import terminated staff up to a week after termination date */
-    AND df.primary_on_site_department <> 'Data'
+    AND (df.primary_on_site_department <> 'Data' OR df.primary_on_site_department IS NULL)
 
   UNION ALL
 
@@ -65,7 +65,7 @@ WITH users_clean AS (
         WHEN sc.region = 'KIPP Miami' THEN 'kippmiami'
        END = u.[db_name]
   WHERE DATEDIFF(DAY, ISNULL(df.termination_date, CONVERT(DATE, GETDATE())), GETDATE()) <= 14 /* import terminated staff up to a week after termination date */
-    AND df.primary_on_site_department <> 'Data'
+    AND (df.primary_on_site_department <> 'Data' OR df.primary_on_site_department IS NULL)
     AND u.dcid IS NULL
  )
 
