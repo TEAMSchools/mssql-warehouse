@@ -35,8 +35,8 @@ WITH roles AS (
 ,all_users AS (
   /* existing users */
   SELECT sr.employee_number
-        ,sr.preferred_first_name
-        ,sr.preferred_last_name
+        ,sr.first_name
+        ,sr.last_name
         ,sr.[status]
         ,sr.business_unit_code
         ,sr.home_department
@@ -66,8 +66,8 @@ WITH roles AS (
 
   /* new users */
   SELECT sr.employee_number
-        ,sr.preferred_first_name
-        ,sr.preferred_last_name
+        ,sr.first_name
+        ,sr.last_name
         ,sr.[status]
         ,sr.business_unit_code
         ,sr.home_department
@@ -123,8 +123,8 @@ FROM
            ,LOWER(ad.userprincipalname) AS [Sso Identifier]
            ,'No' AS [Generate Password And Notify User]
            ,LOWER(ad.mail) AS [Email] /* some are missing the AD mail attribute `\(o_O)/` */
-           ,au.preferred_first_name AS [First Name]
-           ,au.preferred_last_name AS [Last Name]
+           ,au.first_name AS [First Name]
+           ,au.last_name AS [Last Name]
            ,au.employee_number AS [Employee Number]
            ,au.roles AS [User Role Names]
            ,COALESCE(
@@ -136,8 +136,8 @@ FROM
                END
              ) AS [Content Groups] /* preserve Coupa, otherwise use HRIS */
            ,CASE
-             WHEN au.[status] = 'Terminated' THEN 'X' + gabby.utilities.STRIP_CHARACTERS(CONCAT(au.preferred_first_name, au.preferred_last_name ), '^A-Z')
-             ELSE gabby.utilities.STRIP_CHARACTERS(CONCAT(au.preferred_first_name, au.preferred_last_name ), '^A-Z')
+             WHEN au.[status] = 'Terminated' THEN 'X' + gabby.utilities.STRIP_CHARACTERS(CONCAT(au.first_name, au.last_name ), '^A-Z')
+             ELSE gabby.utilities.STRIP_CHARACTERS(CONCAT(au.first_name, au.last_name ), '^A-Z')
             END AS [Mention Name]
            ,COALESCE(
                x.coupa_school_name
