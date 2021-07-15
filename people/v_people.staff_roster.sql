@@ -233,7 +233,10 @@ WITH all_staff AS (
              ,p.worker_category_description AS worker_category
              ,p.flsa_description AS flsa
              ,CONVERT(DATE, p.rehire_date) AS rehire_date
-             ,CONVERT(DATE, p.termination_date) AS termination_date
+             ,CASE 
+               WHEN eh.position_status = 'Prestart' THEN NULL
+               ELSE CONVERT(DATE, p.termination_date) 
+              END AS termination_date
              ,CASE
                WHEN eh.position_status = 'Prestart' THEN eh.position_effective_start_date
                ELSE CONVERT(DATE, p.hire_date)
