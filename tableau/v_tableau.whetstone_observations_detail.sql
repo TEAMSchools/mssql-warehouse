@@ -71,8 +71,8 @@ FROM gabby.people.staff_crosswalk_static sr
 JOIN gabby.whetstone.observations_clean wo
   ON CONVERT(VARCHAR(25), sr.df_employee_number) = wo.teacher_internal_id
  AND wo.rubric_name IN ('Development Roadmap','Shadow Session','Assistant Principal PM Rubric','School Leader Moments','Readiness Reflection'
-                       ,'Monthly Triad Meeting Form','New Leader Talent Review','Extraordinary Focus Areas Ratings','O3 Form'
-                       ,'O3 Form v.1', 'Extraordinary Focus Areas Ratings v.1')
+                       ,'Monthly Triad Meeting Form','New Leader Talent Review','Extraordinary Focus Areas Ratings','O3 Form', 'O3 Form v2'
+                       ,'O3 Form v3', 'Extraordinary Focus Areas Ratings v.1')
 LEFT JOIN gabby.people.staff_crosswalk_static osr
   ON wo.observer_internal_id = osr.df_employee_number
 LEFT JOIN gabby.whetstone.observations_scores wos
