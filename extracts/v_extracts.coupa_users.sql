@@ -135,10 +135,11 @@ FROM
                 ELSE au.business_unit_code
                END
              ) AS [Content Groups] /* preserve Coupa, otherwise use HRIS */
-           ,CASE
-             WHEN au.[status] = 'Terminated' THEN 'X' + gabby.utilities.STRIP_CHARACTERS(CONCAT(au.first_name, au.last_name ), '^A-Z')
-             ELSE gabby.utilities.STRIP_CHARACTERS(CONCAT(au.first_name, au.last_name ), '^A-Z')
-            END AS [Mention Name]
+           ,CONCAT(
+               CASE WHEN au.[status] = 'Terminated' THEN 'X' END
+              ,gabby.utilities.STRIP_CHARACTERS(CONCAT(au.first_name, au.last_name ), '^A-Z')
+              ,CASE WHEN ISNUMERIC(RIGHT(ad.samaccountname, 1)) = 1 THEN RIGHT(ad.samaccountname, 1) END
+             ) AS [Mention Name]
            ,COALESCE(
                x.coupa_school_name
               ,CASE 
