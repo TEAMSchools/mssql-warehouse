@@ -12,17 +12,17 @@ SELECT wo._id AS observation_id
       ,ws.[percentage] AS score_percentage
       ,ws.lastModified AS score_last_modified
       ,ws.checkboxes AS score_checkboxes_json
-      ,ws.textBoxes AS score_textBoxes_json
+      ,ws.textBoxes AS score_text_boxes_json
 FROM [gabby].[whetstone].observations wo
 CROSS APPLY OPENJSON(wo.observation_scores, '$')
   WITH (
-    measurement VARCHAR(125),
-    measurementGroup VARCHAR(125),
-    valueScore FLOAT,
-    valueText VARCHAR(125),
-    [percentage] FLOAT,
-    lastModified DATETIME2,
-    checkboxes  NVARCHAR(MAX) AS JSON,
-    textBoxes NVARCHAR(MAX) AS JSON
+     measurement VARCHAR(125)
+    ,measurementGroup VARCHAR(125)
+    ,valueScore FLOAT
+    ,valueText VARCHAR(125)
+    ,[percentage] FLOAT
+    ,lastModified DATETIME2
+    ,checkboxes  NVARCHAR(MAX) AS JSON
+    ,textBoxes NVARCHAR(MAX) AS JSON
    ) AS ws
 WHERE wo.observation_scores <> '[]'
