@@ -11,7 +11,7 @@ SELECT os.observation_id
 FROM gabby.whetstone.observations_scores os
 CROSS APPLY OPENJSON(os.score_checkboxes_json, '$')
   WITH (
-     [label] VARCHAR(125)
-    ,[value] VARCHAR(125)
+     [label] NVARCHAR(256)
+    ,[value] BIT
    ) AS sc
 WHERE os.score_checkboxes_json <> '[]'
