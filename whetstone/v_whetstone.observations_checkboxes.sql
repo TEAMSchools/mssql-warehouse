@@ -11,8 +11,8 @@ SELECT os.observation_id
       ,os.score_percentage
       ,os.score_last_modified
       ,os.score_checkboxes_json
-      ,sc.[label]
-      ,sc.[value]
+      ,sc.[label] AS checkbox_label
+      ,sc.[value] AS checkbox_value
 FROM gabby.whetstone.observations_scores os
 CROSS APPLY OPENJSON(os.score_checkboxes_json, '$')
   WITH (
