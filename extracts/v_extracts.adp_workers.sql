@@ -4,6 +4,8 @@ GO
 CREATE OR ALTER VIEW extracts.adp_workers AS
 
 SELECT w.associate_oid
+
+      ,scw.df_employee_number AS employee_number
       ,LOWER(scw.mail) AS mail
 FROM gabby.people.staff_crosswalk_static scw
 JOIN gabby.adp.workers_clean_static w
