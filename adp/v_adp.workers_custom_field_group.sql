@@ -4,6 +4,7 @@ GO
 CREATE OR ALTER VIEW adp.workers_custom_field_group AS
 
 SELECT w.associate_oid
+      ,JSON_VALUE(w.worker_id, '$.idValue') AS worker_id
       ,'stringFields' AS custom_field_group
 
       ,cfg.itemID AS item_id
@@ -26,6 +27,7 @@ WHERE JSON_QUERY(w.custom_field_group, '$.stringFields') <> '{}'
 UNION ALL
 
 SELECT w.associate_oid
+      ,JSON_VALUE(w.worker_id, '$.idValue') AS worker_id
       ,'codeFields' AS custom_field_group
 
       ,cfg.itemID AS item_id
@@ -48,6 +50,7 @@ WHERE JSON_QUERY(w.custom_field_group, '$.codeFields') <> '{}'
 UNION ALL
 
 SELECT w.associate_oid
+      ,JSON_VALUE(w.worker_id, '$.idValue') AS worker_id
       ,'dateFields' AS custom_field_group
 
       ,cfg.itemID AS item_id
@@ -70,6 +73,7 @@ WHERE JSON_QUERY(w.custom_field_group, '$.dateFields') <> '{}'
 UNION ALL
 
 SELECT w.associate_oid
+      ,JSON_VALUE(w.worker_id, '$.idValue') AS worker_id
       ,'indicatorFields' AS custom_field_group
 
       ,cfg.itemID AS item_id

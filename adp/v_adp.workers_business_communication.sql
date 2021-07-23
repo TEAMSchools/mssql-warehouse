@@ -4,6 +4,7 @@ GO
 CREATE OR ALTER VIEW adp.workers_business_communication AS
 
 SELECT w.associate_oid
+      ,JSON_VALUE(w.worker_id, '$.idValue') AS worker_id
 
       ,bc.itemID AS item_id
       ,bc.emailUri AS email_uri
