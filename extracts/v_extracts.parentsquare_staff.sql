@@ -16,8 +16,6 @@ FROM
      SELECT df.ps_teachernumber AS [staff_id]
            ,df.preferred_first_name AS [first_name]
            ,df.preferred_last_name AS [last_name]
-           ,df.userprincipalname AS [login]
-           ,df.mail AS [email]
            ,df.mobile_number AS [mobile]
            ,df.primary_job AS [title]
            ,CASE 
@@ -28,7 +26,13 @@ FROM
              WHEN df.primary_site = 'Norfolk St Campus' THEN 1004
              ELSE df.primary_site_schoolid
             END AS [school_id]
+
+           ,ad.userprincipalname AS [login]
+           ,ad.mail AS [email]
      FROM gabby.people.staff_crosswalk_static df
+     JOIN gabby.adsi.user_attributes ad
+       ON df.df_employee_number = ad.employeenumber
+      AND ISNUMERIC(ad.employeenumber) = 1
      WHERE df.[status] NOT IN ('TERMINATED', 'PRESTART')
        AND df.mail NOT LIKE '%kippmiami.org'
 
@@ -37,8 +41,6 @@ FROM
      SELECT ad.employeeid AS [staff_id]
            ,ad.givenname AS [first_name]
            ,ad.sn AS [last_name]
-           ,ad.userprincipalname AS [login]
-           ,ad.mail AS [email]
            ,ad.mobile AS [mobile]
            ,ad.title AS [title]
            ,CASE 
@@ -49,7 +51,10 @@ FROM
              WHEN ad.physicaldeliveryofficename = 'Norfolk St Campus' THEN 1004
              ELSE scw.ps_school_id
             END AS [school_id]
-     FROM gabby.adsi.user_attributes_static ad
+
+           ,ad.userprincipalname AS [login]
+           ,ad.mail AS [email]
+     FROM gabby.adsi.user_attributes ad
      JOIN gabby.people.school_crosswalk scw
        ON ad.physicaldeliveryofficename = scw.site_name
      WHERE ad.is_active = 1
