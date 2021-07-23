@@ -134,7 +134,7 @@ JOIN gabby.powerschool.calendar_day cal
   ON df.primary_site_schoolid = cal.schoolid 
  AND df.[db_name]= cal.[db_name]
  AND (cal.insession = 1 OR cal.[type] = 'PD') 
- AND cal.date_value BETWEEN DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR()-1, 7, 1) AND GETDATE()
+ AND cal.date_value BETWEEN DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1, 7, 1) AND GETDATE()
 JOIN gabby.reporting.reporting_terms dt
   ON cal.schoolid = dt.schoolid
  AND cal.date_value BETWEEN dt.[start_date] AND dt.end_date
