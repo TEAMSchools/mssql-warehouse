@@ -8,15 +8,11 @@ WITH managers AS (
          manager_df_employee_number
   FROM gabby.people.staff_crosswalk_static
 
-  UNION ALL
+  UNION
 
   SELECT s.df_employee_number
   FROM gabby.people.staff_crosswalk_static s
-  LEFT JOIN gabby.people.staff_crosswalk_static m
-    ON s.df_employee_number = m.manager_df_employee_number
   WHERE s.primary_job IN ('School Leader', 'Assistant School Leader', 'Assistant School Leader, SPED')
-   AND m.manager_df_employee_number IS NULL
-
  )
 
 SELECT CONVERT(VARCHAR(25), scw.df_employee_number) AS user_internal_id
