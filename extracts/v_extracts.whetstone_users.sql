@@ -7,6 +7,12 @@ WITH managers AS (
   SELECT DISTINCT
          manager_df_employee_number
   FROM gabby.people.staff_crosswalk_static
+
+  UNION
+
+  SELECT s.df_employee_number
+  FROM gabby.people.staff_crosswalk_static s
+  WHERE s.primary_job IN ('School Leader', 'Assistant School Leader', 'Assistant School Leader, SPED')
  )
 
 SELECT CONVERT(VARCHAR(25), scw.df_employee_number) AS user_internal_id
