@@ -152,8 +152,7 @@ FROM
                END
              ) AS coupa_school_name /* override > lookup table (content group/department/job) > lookup table (content group/department) */
      FROM all_users au
-     --INNER JOIN gabby.adsi.user_attributes_static ad
-     INNER JOIN gabby.adsi.user_attributes ad
+     INNER JOIN gabby.adsi.user_attributes_static ad
        ON au.employee_number = ad.employeenumber
       AND ISNUMERIC(ad.employeenumber) = 1
      LEFT JOIN gabby.coupa.school_name_lookup sn

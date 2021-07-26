@@ -34,8 +34,7 @@ FROM
            ,ad.mail AS [Email]
            ,ad.userprincipalname AS [Single Sign On ID]
      FROM gabby.people.staff_roster scw
-     --JOIN gabby.adsi.user_attributes_static ad
-     JOIN gabby.adsi.user_attributes ad
+     JOIN gabby.adsi.user_attributes_static ad
        ON scw.employee_number = ad.employeenumber
       AND ISNUMERIC(ad.employeenumber) = 1
      WHERE scw.home_department NOT IN ('Interns')
