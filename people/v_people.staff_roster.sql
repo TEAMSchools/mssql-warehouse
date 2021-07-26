@@ -164,7 +164,7 @@ WITH all_staff AS (
              ,ea.preferred_race_ethnicity
              /* transformations */
              ,CONVERT(DATE, ea.birth_date) AS birth_date
-             ,LEFT(UPPER(ea.gender), 1) AS sex
+             ,LEFT(UPPER(ea.gender_for_insurance_coverage), 1) AS sex
              ,CASE 
                WHEN ea.primary_address_address_line_1 IS NOT NULL 
                     THEN CONCAT(ea.primary_address_address_line_1, ', ' + ea.primary_address_address_line_2)
@@ -172,8 +172,8 @@ WITH all_staff AS (
              ,CONVERT(NVARCHAR(256), gabby.utilities.STRIP_CHARACTERS(ea.personal_contact_personal_mobile, '^0-9')) AS personal_mobile
              ,COALESCE(ea.preferred_gender
                       ,CASE
-                        WHEN ea.gender = 'Male' THEN 'Man'
-                        WHEN ea.gender = 'Female' THEN 'Woman'
+                        WHEN ea.gender_for_insurance_coverage = 'Male' THEN 'Man'
+                        WHEN ea.gender_for_insurance_coverage = 'Female' THEN 'Woman'
                        END) AS gender_reporting
              ,CASE
                WHEN ea.ethnicity IS NULL AND ea.preferred_race_ethnicity IS NULL THEN NULL
