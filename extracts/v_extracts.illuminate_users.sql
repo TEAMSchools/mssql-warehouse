@@ -9,8 +9,8 @@ SELECT df.ps_teachernumber AS [01 User ID]
       ,NULL AS [04 User Middle Name]
       ,NULL AS [05 Birth Date]
       ,NULL AS [06 Gender]
-      ,ad.userprincipalname AS [07 Email Address]
-      ,ad.samaccountname AS [08 Username]
+      ,df.userprincipalname AS [07 Email Address]
+      ,df.samaccountname AS [08 Username]
       ,NULL AS [09 Password]
       ,df.df_employee_number AS [10 State User or Employee ID]
       ,NULL AS [11 Name suffix]
@@ -35,6 +35,3 @@ SELECT df.ps_teachernumber AS [01 User ID]
       ,NULL AS [30 Phone1]
       ,NULL AS [31 Phone2]
 FROM gabby.people.staff_crosswalk_static df
-JOIN gabby.adsi.user_attributes ad
-  ON df.df_employee_number = ad.employeenumber
- AND ISNUMERIC(ad.employeenumber) = 1
