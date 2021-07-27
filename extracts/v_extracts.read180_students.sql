@@ -11,7 +11,7 @@ SELECT co.student_web_id AS [USER_NAME]
       ,co.last_name AS LAST_NAME
       ,CASE WHEN co.grade_level = 0 THEN 'K' ELSE CONVERT(VARCHAR(2), co.grade_level) END AS GRADE /* PK, K, 1-12 */
       ,s.[name] AS SCHOOL_NAME /* "SCHOOL_NAME must match an existing school name */
-      ,enr.course_name AS CLASS_NAME
+      ,CONCAT(enr.course_number, '.', UPPER(enr.section_number)) AS CLASS_NAME
       --,NULL AS LEXILE_SCORE
       --,NULL AS LEXILE_MOD_DATE
       --,NULL AS ETHNIC_CAUCASIAN

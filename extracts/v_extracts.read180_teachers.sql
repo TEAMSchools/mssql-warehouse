@@ -14,7 +14,7 @@ SELECT scw.df_employee_number AS DISTRICT_USER_ID
       ,scw.samaccountname AS [USER_NAME]
       ,NULL AS [PASSWORD]
       ,sch.[name] AS SCHOOL_NAME
-      ,cou.course_name AS CLASS_NAME
+      ,CONCAT(sec.course_number, '.', UPPER(sec.section_number)) AS CLASS_NAME
       ,scw.google_email AS EXTERNAL_ID
 FROM gabby.powerschool.sections sec
 JOIN gabby.powerschool.sectionteacher st
@@ -25,9 +25,6 @@ JOIN gabby.powerschool.teachers_static t
  AND st.[db_name] = t.[db_name]
 JOIN gabby.people.staff_crosswalk_static scw
   ON t.teachernumber = scw.ps_teachernumber COLLATE Latin1_General_BIN
-JOIN gabby.powerschool.courses cou
-  ON sec.course_number = cou.course_number
- AND sec.[db_name] = cou.[db_name]
 JOIN gabby.powerschool.schools sch
   ON sec.schoolid = sch.school_number
  AND sec.[db_name] = sch.[db_name]
