@@ -16,10 +16,10 @@ SELECT wo._id AS observation_id
 FROM [gabby].[whetstone].observations wo
 CROSS APPLY OPENJSON(wo.observation_scores, '$')
   WITH (
-     measurement VARCHAR(125)
-    ,measurementGroup VARCHAR(125)
+     measurement NVARCHAR(128)
+    ,measurementGroup NVARCHAR(128)
     ,valueScore FLOAT
-    ,valueText VARCHAR(125)
+    ,valueText NVARCHAR(128)
     ,[percentage] FLOAT
     ,lastModified DATETIME2
     ,checkboxes  NVARCHAR(MAX) AS JSON
