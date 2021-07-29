@@ -7,27 +7,27 @@ SELECT co.student_web_id AS [USER_NAME]
       ,NULL AS [PASSWORD]
       ,co.student_number AS SIS_ID
       ,co.first_name AS FIRST_NAME
-      --,NULL AS MIDDLE_NAME
+      ,NULL AS MIDDLE_NAME
       ,co.last_name AS LAST_NAME
       ,CASE WHEN co.grade_level = 0 THEN 'K' ELSE CONVERT(VARCHAR(2), co.grade_level) END AS GRADE /* PK, K, 1-12 */
-      ,s.[name] AS SCHOOL_NAME /* "SCHOOL_NAME must match an existing school name */
+      ,s.[name] AS SCHOOL_NAME
       ,CONCAT(enr.course_number, '.', UPPER(enr.section_number)) AS CLASS_NAME
-      --,NULL AS LEXILE_SCORE
-      --,NULL AS LEXILE_MOD_DATE
-      --,NULL AS ETHNIC_CAUCASIAN
-      --,NULL AS ETHNIC_AFRICAN_AM
-      --,NULL AS ETHNIC_HISPANIC
-      --,NULL AS ETHNIC_PACIFIC_ISL
-      --,NULL AS ETHNIC_AM_IND_AK_NATIVE
-      --,NULL AS ETHNIC_ASIAN
-      --,NULL AS ETHNIC_TWO_OR_MORE_RACES
-      --,NULL AS GENDER_MALE
-      --,NULL AS GENDER_FEMALE
-      --,NULL AS AYP_ECON_DISADVANTAGED
-      --,NULL AS AYP_LTD_ENGLISH_PROFICIENCY
-      --,NULL AS AYP_GIFTED_TALENTED
-      --,NULL AS AYP_MIGRANT
-      --,NULL AS AYP_WITH_DISABILITIES
+      ,NULL AS LEXILE_SCORE
+      ,NULL AS LEXILE_MOD_DATE
+      ,NULL AS ETHNIC_CAUCASIAN
+      ,NULL AS ETHNIC_AFRICAN_AM
+      ,NULL AS ETHNIC_HISPANIC
+      ,NULL AS ETHNIC_PACIFIC_ISL
+      ,NULL AS ETHNIC_AM_IND_AK_NATIVE
+      ,NULL AS ETHNIC_ASIAN
+      ,NULL AS ETHNIC_TWO_OR_MORE_RACES
+      ,NULL AS GENDER_MALE
+      ,NULL AS GENDER_FEMALE
+      ,NULL AS AYP_ECON_DISADVANTAGED
+      ,NULL AS AYP_LTD_ENGLISH_PROFICIENCY
+      ,NULL AS AYP_GIFTED_TALENTED
+      ,NULL AS AYP_MIGRANT
+      ,NULL AS AYP_WITH_DISABILITIES
       ,co.student_web_id + '@teamstudents.org' AS EXTERNAL_ID
 FROM gabby.powerschool.cohort_identifiers_static co
 JOIN gabby.powerschool.course_enrollments_current_static enr
@@ -43,4 +43,3 @@ JOIN gabby.powerschool.schools s
 WHERE co.rn_year = 1
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.school_level = 'HS'
-  AND co.[db_name] IN ('kippnewark', 'kippcamden')

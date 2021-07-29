@@ -4,12 +4,12 @@ GO
 CREATE OR ALTER VIEW extracts.read180_teachers AS
 
 SELECT scw.df_employee_number AS DISTRICT_USER_ID
-      --,NULL AS SPS_ID
-      --,NULL AS PREFIX
+      ,NULL AS SPS_ID
+      ,NULL AS PREFIX
       ,scw.preferred_first_name AS FIRST_NAME
       ,scw.preferred_last_name AS LAST_NAME
-      --,NULL AS TITLE
-      --,NULL AS SUFFIX
+      ,NULL AS TITLE
+      ,NULL AS SUFFIX
       ,scw.mail AS EMAIL
       ,scw.samaccountname AS [USER_NAME]
       ,NULL AS [PASSWORD]
@@ -30,4 +30,3 @@ JOIN gabby.powerschool.schools sch
  AND sec.[db_name] = sch.[db_name]
 WHERE sec.yearid = (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990)
   AND sec.course_number IN ('MAT02999G1', 'ELA01068G1')
-  AND sec.[db_name] IN ('kippnewark', 'kippcamden')
