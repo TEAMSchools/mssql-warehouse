@@ -9,7 +9,7 @@ SELECT wos.observation_id
       ,tb._id AS text_box_id
       ,tb.[key] AS text_box_label
       ,tb.[value] AS text_box_text
-FROM gabby.whetstone.observations_scores wos
+FROM gabby.whetstone.observations_scores_static wos
 CROSS APPLY OPENJSON(wos.score_text_boxes_json, '$')
   WITH (
      _id VARCHAR(25)
