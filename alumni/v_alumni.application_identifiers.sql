@@ -5,6 +5,7 @@ CREATE OR ALTER VIEW alumni.application_identifiers AS
 
 SELECT sub.sf_contact_id
       ,sub.application_id
+      ,sub.school_id
       ,sub.match_type
       ,sub.application_admission_type
       ,sub.application_submission_status
@@ -24,6 +25,7 @@ SELECT sub.sf_contact_id
       ,sub.application_account_type
       ,sub.application_enrollment_status
       ,sub.application_pursuing_degree_type
+      ,sub.enrollment_start_date
       ,CASE WHEN sub.type_for_roll_ups = 'College' AND sub.application_account_type LIKE '%4 yr' THEN 1 ELSE 0 END AS is_4yr_college
       ,CASE WHEN sub.type_for_roll_ups = 'College' AND sub.application_account_type LIKE '%2 yr' THEN 1 ELSE 0 END AS is_2yr_college
       ,CASE WHEN sub.type_for_roll_ups = 'Alternative Program' THEN 1 ELSE 0 END AS is_cte
@@ -40,10 +42,10 @@ FROM
     (
      SELECT app.applicant_c AS sf_contact_id
            ,app.id AS application_id
+           ,app.school_c AS school_id
            ,app.match_type_c AS match_type
            ,app.application_admission_type_c AS application_admission_type
            ,app.application_submission_status_c AS application_submission_status
-           ,COALESCE(app.starting_application_status_c, app.application_status_c) AS starting_application_status
            ,app.application_status_c AS application_status
            ,app.honors_special_program_name_c AS honors_special_program_name
            ,app.honors_special_program_status_c AS honors_special_program_status
@@ -55,16 +57,14 @@ FROM
            ,app.transfer_application_c AS transfer_application
            ,app.created_date
            ,app.type_for_roll_ups_c AS type_for_roll_ups
+           ,COALESCE(app.starting_application_status_c, app.application_status_c) AS starting_application_status
 
            ,acc.[name] AS application_name
            ,acc.[type] AS application_account_type
 
            ,enr.status_c AS application_enrollment_status
            ,enr.pursuing_degree_type_c AS application_pursuing_degree_type
-
-           --,ROW_NUMBER() OVER(
-           --   PARTITION BY app.applicant_c, app.matriculation_decision_c, app.transfer_application_c
-           --     ORDER BY enr.start_date_c) AS rn
+           ,enr.start_date_c AS enrollment_start_date
      FROM gabby.alumni.application_c app
      JOIN gabby.alumni.account acc
        ON app.school_c = acc.id

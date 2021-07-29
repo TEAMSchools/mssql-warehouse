@@ -113,6 +113,7 @@ SELECT sub.student_c
       ,sub.ecc_credits_required_for_graduation
       ,sub.ecc_account_name
       ,sub.ecc_adjusted_6_year_minority_graduation_rate
+      ,sub.ecc_date_last_verified
       ,sub.hs_school_name
       ,sub.hs_pursuing_degree_type
       ,sub.hs_status
@@ -132,6 +133,7 @@ SELECT sub.student_c
       ,sub.cte_school_name
       ,sub.cte_billing_state
       ,sub.cte_ncesid
+      ,sub.cte_date_last_verified
       ,sub.cur_pursuing_degree_type
       ,sub.cur_status
       ,sub.cur_start_date
@@ -143,6 +145,7 @@ SELECT sub.student_c
       ,sub.cur_billing_state
       ,sub.cur_ncesid
       ,sub.cur_adjusted_6_year_minority_graduation_rate
+      ,sub.cur_date_last_verified
 
       ,ug.[name] AS ugrad_school_name
       ,ug.pursuing_degree_type_c AS ugrad_pursuing_degree_type
@@ -214,6 +217,7 @@ FROM
            ,ecc.anticipated_graduation_c AS ecc_anticipated_graduation
            ,ecc.account_type_c AS ecc_account_type
            ,ecc.of_credits_required_for_graduation_c AS ecc_credits_required_for_graduation
+           ,ecc.date_last_verified_c AS ecc_date_last_verified
            ,ecca.[name] AS ecc_account_name
            ,ecca.adjusted_6_year_minority_graduation_rate_c AS ecc_adjusted_6_year_minority_graduation_rate
 
@@ -234,6 +238,7 @@ FROM
            ,cte.anticipated_graduation_c AS cte_anticipated_graduation
            ,cte.account_type_c AS cte_account_type
            ,cte.of_credits_required_for_graduation_c AS cte_credits_required_for_graduation
+           ,cte.date_last_verified_c AS cte_date_last_verified
            ,ctea.[name] AS cte_school_name
            ,ctea.billing_state AS cte_billing_state
            ,ctea.ncesid_c AS cte_ncesid
@@ -245,6 +250,7 @@ FROM
            ,cur.anticipated_graduation_c AS cur_anticipated_graduation
            ,cur.account_type_c AS cur_account_type
            ,cur.of_credits_required_for_graduation_c AS cur_credits_required_for_graduation
+           ,cur.date_last_verified_c AS cur_date_last_verified
            ,cura.[name] AS cur_school_name
            ,cura.billing_state AS cur_billing_state
            ,cura.ncesid_c AS cur_ncesid

@@ -31,6 +31,7 @@ SELECT sub.student_number
       ,sub.latest_transcript_date
       ,sub.latest_fafsa_date
       ,sub.latest_state_financial_aid_app_date
+      ,sub.efc_from_fafsa
       ,sub.cumulative_gpa
       ,sub.current_college_cumulative_gpa
       ,sub.current_college_semester_gpa
@@ -113,6 +114,7 @@ FROM
            ,c.last_outreach_c AS last_outreach_date
            ,c.last_successful_contact_c AS last_successful_contact_date
            ,c.last_successful_advisor_contact_c AS last_successful_advisor_contact_date
+           ,c.efc_from_fafsa_c AS efc_from_fafsa
            ,COALESCE(c.current_kipp_student_c, 'Missing from Salesforce') AS current_kipp_student
            ,COALESCE(c.kipp_hs_class_c, co.cohort) AS ktc_cohort
            ,(gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1) - DATEPART(YEAR, c.actual_hs_graduation_date_c) AS years_out_of_hs
