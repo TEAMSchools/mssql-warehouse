@@ -20,18 +20,22 @@ WITH apps AS (
         ,CASE 
           WHEN app.application_submission_status = 'Submitted' 
            AND app.application_status = 'Accepted'
-           AND app.application_pursuing_degree_type = 'Associate''s (2 year)' 
+           AND app.type_for_roll_ups = 'College' 
+           AND app.application_account_type IN ('Public 2 yr', 'Private 2 yr')
                THEN 1
          END AS is_accepted_aa
         ,CASE 
           WHEN app.application_submission_status = 'Submitted' 
            AND app.application_status = 'Accepted'
-           AND app.application_pursuing_degree_type = 'Bachelor''s (4-year)' THEN 1 
+           AND app.type_for_roll_ups = 'College' 
+           AND app.application_account_type IN ('Private 4 yr', 'Public 4 yr')
+               THEN 1
          END AS is_accepted_ba
         ,CASE 
           WHEN app.application_submission_status = 'Submitted' 
            AND app.application_status = 'Accepted'
-           AND app.application_pursuing_degree_type = 'Certificate' THEN 1 
+           AND app.type_for_roll_ups IN ('Alternative Program', 'Organization', 'Other')
+               THEN 1
          END AS is_accepted_cert
         ,CASE
           WHEN app.matriculation_decision = 'Matriculated (Intent to Enroll)' 
@@ -157,6 +161,7 @@ SELECT c.sf_contact_id
       ,c.record_type_name
       ,c.counselor_name
       ,c.college_match_display_gpa
+      ,c.current_college_cumulative_gpa
       ,c.kipp_region_name
       ,c.kipp_region_school
       ,c.post_hs_simple_admin
@@ -198,13 +203,11 @@ SELECT c.sf_contact_id
       ,cnr.PSCS
       ,cnr.SC
 
-      ,gpa.fall_credits_required_for_graduation
       ,gpa.fall_cumulative_credits_earned
       ,gpa.fall_cumulative_gpa
       ,gpa.fall_semester_credits_earned
       ,gpa.fall_semester_gpa
       ,gpa.fall_transcript_date
-      ,gpa.spr_credits_required_for_graduation
       ,gpa.spr_cumulative_credits_earned
       ,gpa.spr_cumulative_gpa
       ,gpa.spr_semester_credits_earned
@@ -215,7 +218,7 @@ LEFT JOIN gabby.alumni.enrollment_identifiers ei
   ON c.sf_contact_id = ei.student_c
 LEFT JOIN apps_rollup ar
   ON c.sf_contact_id = ar.sf_contact_id
-LEFT JOIN alumni.contact_note_rollup cnr
+LEFT JOIN gabby.alumni.contact_note_rollup cnr
   ON c.sf_contact_id = cnr.contact_id
  AND cnr.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 LEFT JOIN semester_gpa_pivot gpa
