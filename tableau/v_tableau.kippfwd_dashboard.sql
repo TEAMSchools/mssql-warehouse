@@ -3,7 +3,12 @@ GO
 
 CREATE OR ALTER VIEW tableau.kippfwd_dashboard AS
 
-WITH apps AS (
+WITH academic_years AS (
+  SELECT gabby.utilities.GLOBAL_ACADEMIC_YEAR() AS academic_year UNION
+  SELECT gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1
+ )
+
+,apps AS (
   SELECT app.sf_contact_id
         ,app.application_id
         ,app.application_name
@@ -172,6 +177,8 @@ SELECT c.sf_contact_id
       ,c.latest_resume_date
       ,c.efc_from_fafsa
 
+      ,ay.academic_year
+
       ,ei.cur_school_name
       ,ei.cur_pursuing_degree_type
       ,ei.cur_status
@@ -214,14 +221,15 @@ SELECT c.sf_contact_id
       ,gpa.spr_semester_gpa
       ,gpa.spr_transcript_date
 FROM gabby.alumni.ktc_roster c
+CROSS JOIN academic_years ay
 LEFT JOIN gabby.alumni.enrollment_identifiers ei
   ON c.sf_contact_id = ei.student_c
 LEFT JOIN apps_rollup ar
   ON c.sf_contact_id = ar.sf_contact_id
 LEFT JOIN gabby.alumni.contact_note_rollup cnr
   ON c.sf_contact_id = cnr.contact_id
- AND cnr.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+ AND ay.academic_year = cnr.academic_year
 LEFT JOIN semester_gpa_pivot gpa
   ON c.sf_contact_id = gpa.sf_contact_id
- AND gpa.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
+ AND ay.academic_year = gpa.academic_year
 WHERE c.sf_contact_id IS NOT NULL
