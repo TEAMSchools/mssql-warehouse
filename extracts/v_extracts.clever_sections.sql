@@ -41,7 +41,7 @@ WITH dsos AS (
        SELECT sec.schoolid AS [School_id]
              ,sec.section_number AS [Section_number]
              ,sec.course_number AS [Course_number]
-             ,sec.expression AS [Period]
+             ,sec.section_number AS [Period]
              ,CONCAT(CASE 
                       WHEN sec.[db_name] = 'kippnewark' THEN 'NWK'
                       WHEN sec.[db_name] = 'kippcamden' THEN 'CMD'
@@ -106,7 +106,9 @@ WITH dsos AS (
                     ,s.abbreviation
                     ,r.n) AS [Section_number]
              ,'ENR' AS [Course_number]
-             ,CONCAT(r.n, '(A)') AS [Period]
+             ,CONCAT(gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+                    ,s.abbreviation
+                    ,r.n) AS [Period]
              ,CONCAT(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990
                     ,dsos.School_id
                     ,RIGHT(CONCAT(0, r.n), 2)) AS [Section_id]
