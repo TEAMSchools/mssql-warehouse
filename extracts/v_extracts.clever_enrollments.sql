@@ -17,7 +17,7 @@ FROM gabby.powerschool.cc
 JOIN gabby.powerschool.students s
   ON cc.studentid = s.id
  AND cc.[db_name] = s.[db_name]
-WHERE CONVERT(DATE, GETDATE()) BETWEEN cc.dateenrolled AND cc.dateleft
+WHERE cc.dateleft >= CONVERT(DATE, GETDATE())
 
 UNION ALL
 
