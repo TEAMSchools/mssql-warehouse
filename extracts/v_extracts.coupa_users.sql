@@ -37,7 +37,7 @@ WITH roles AS (
   SELECT sr.employee_number
         ,sr.first_name
         ,sr.last_name
-        ,sr.[status]
+        ,sr.position_status
         ,sr.business_unit_code
         ,sr.home_department
         ,sr.job_title
@@ -58,8 +58,8 @@ WITH roles AS (
     ON cu.id = r.[user_id]
   LEFT JOIN business_groups bg
     ON cu.id = bg.[user_id]
-  WHERE sr.[status] <> 'Prestart'
-    AND sr.job_title NOT IN ('Intern')
+  WHERE sr.position_status <> 'Prestart'
+    AND sr.worker_category NOT IN ('Intern', 'Part Time')
     AND COALESCE(sr.termination_date, CONVERT(DATE, GETDATE())) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1, 7, 1)
 
   UNION ALL
@@ -68,7 +68,7 @@ WITH roles AS (
   SELECT sr.employee_number
         ,sr.first_name
         ,sr.last_name
-        ,sr.[status]
+        ,sr.position_status
         ,sr.business_unit_code
         ,sr.home_department
         ,sr.job_title
@@ -80,8 +80,8 @@ WITH roles AS (
   FROM gabby.people.staff_roster sr
   LEFT JOIN gabby.coupa.[user] cu
     ON sr.employee_number = cu.employee_number
-  WHERE sr.[status] NOT IN ('Prestart', 'Terminated')
-    AND sr.job_title NOT IN ('Intern')
+  WHERE sr.position_status NOT IN ('Prestart', 'Terminated')
+    AND sr.worker_category NOT IN ('Intern', 'Part Time')
     AND cu.employee_number IS NULL
  )
 
@@ -104,19 +104,19 @@ FROM
     (
      SELECT LOWER(ad.samaccountname) AS [Login]
            ,CASE
-             WHEN au.[status] = 'Terminated' THEN 'inactive'
+             WHEN au.position_status <> 'Active' THEN 'inactive'
              ELSE 'active'
             END AS [Status]
            ,COALESCE(
                CASE 
-                WHEN au.[status] = 'Terminated' THEN 'No' 
+                WHEN au.position_status <> 'Active' THEN 'No' 
                 WHEN au.active = 0 THEN 'No'
                END
               ,au.purchasing_user
               ,'No'
              ) AS [Purchasing User] /* preserve Coupa, otherwise No */
            ,CASE 
-             WHEN au.[status] = 'Terminated' THEN 'No' 
+             WHEN au.position_status <> 'Active' THEN 'No' 
              ELSE 'Yes' 
             END AS [Expense User]
            ,'SAML' AS [Authentication Method]
@@ -136,7 +136,7 @@ FROM
                END
              ) AS [Content Groups] /* preserve Coupa, otherwise use HRIS */
            ,CONCAT(
-               CASE WHEN au.[status] = 'Terminated' THEN 'X' END
+               CASE WHEN au.position_status = 'Terminated' THEN 'X' END
               ,gabby.utilities.STRIP_CHARACTERS(CONCAT(au.first_name, au.last_name ), '^A-Z')
               ,CASE WHEN ISNUMERIC(RIGHT(ad.samaccountname, 1)) = 1 THEN RIGHT(ad.samaccountname, 1) END
              ) AS [Mention Name]
