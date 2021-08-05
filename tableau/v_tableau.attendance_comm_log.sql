@@ -9,6 +9,7 @@ WITH commlog AS (
         ,c.response AS commlog_notes        
         ,c.call_topic AS commlog_topic
         ,c.call_date_time AS commlog_datetime
+        ,c.[db_name]
         ,CONVERT(DATE,c.call_date_time) AS commlog_date
         
         ,CONCAT(u.first_name, ' ', u.last_name) AS commlog_staff_name
@@ -20,8 +21,10 @@ WITH commlog AS (
   FROM gabby.deanslist.communication c
   JOIN gabby.deanslist.users u
     ON c.dluser_id = u.dluser_id
+   AND c.[db_name] = u.[db_name]
   LEFT JOIN gabby.deanslist.followups f
     ON c.followup_id = f.followup_id
+   AND c.[db_name] = f.[db_name]
   WHERE (c.reason LIKE 'att:%' OR c.reason LIKE 'chronic%')
  )
 
@@ -102,6 +105,7 @@ LEFT JOIN gabby.powerschool.cc
 LEFT JOIN commlog cl
   ON co.student_number = cl.student_school_id
  AND att.att_date = cl.commlog_date
+ AND co.[db_name] = cl.[db_name]
 LEFT JOIN ada
   ON co.studentid = ada.studentid
  AND co.yearid = ada.yearid
