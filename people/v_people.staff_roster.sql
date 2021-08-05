@@ -22,6 +22,8 @@ WITH all_staff AS (
         ,eh.annual_salary
         ,eh.effective_start_date
         ,eh.status_effective_start_date
+        ,active_file_number AS file_number --need to add
+        ,active_position_id as position_id --need to add
   FROM gabby.people.employment_history eh
   WHERE CONVERT(DATE, GETDATE()) BETWEEN eh.effective_start_date AND eh.effective_end_date
 
@@ -45,6 +47,8 @@ WITH all_staff AS (
         ,ps.annual_salary
         ,ps.effective_start_date
         ,ps.status_effective_start_date
+        ,NULL as file_number
+        ,NULL AS position_id
   FROM gabby.people.employment_history ps
   WHERE ps.status_effective_start_date > CONVERT(DATE, GETDATE())
     AND ps.position_status = 'Active'
