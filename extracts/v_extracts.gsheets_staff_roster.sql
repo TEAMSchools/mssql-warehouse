@@ -27,4 +27,5 @@ SELECT df.adp_associate_id AS associate_id
       ,df.file_number
       ,df.position_id
       ,df.last_name +', ' + df.first_name AS legal_name
+      ,df.mobile_number
 FROM gabby.people.staff_crosswalk_static df
