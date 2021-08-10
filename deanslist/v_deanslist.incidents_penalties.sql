@@ -1,6 +1,3 @@
-USE gabby
-GO
-
 CREATE OR ALTER VIEW deanslist.incidents_penalties AS
 
 SELECT CONVERT(INT, dli.incident_id) AS incident_id
@@ -18,7 +15,7 @@ SELECT CONVERT(INT, dli.incident_id) AS incident_id
       ,dlip.numperiods
       ,dlip.issuspension
       ,dlip.[print]
-FROM gabby.[deanslist].[incidents] dli
+FROM [deanslist].[incidents] dli
 CROSS APPLY OPENJSON(dli.penalties, N'$')
   WITH (
     startdate DATE N'$.StartDate',

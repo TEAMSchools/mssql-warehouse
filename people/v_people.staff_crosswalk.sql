@@ -85,7 +85,6 @@ FROM
            ,sr.original_hire_date
            ,sr.termination_date
            ,sr.rehire_date
-           ,sr.[status]
            ,sr.termination_reason
            ,sr.is_manager
            ,sr.preferred_first_name
@@ -117,6 +116,10 @@ FROM
            ,sr.[db_name]
            ,sr.associate_id_legacy
            ,sr.personal_email
+           ,CASE
+             WHEN sr.position_status = 'Leave' THEN 'INACTIVE'
+             ELSE UPPER(sr.position_status)
+            END AS [status]
 
            ,COALESCE(idps.ps_teachernumber
                     ,sr.associate_id_legacy

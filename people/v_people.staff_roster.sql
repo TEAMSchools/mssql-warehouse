@@ -118,10 +118,6 @@ WITH all_staff AS (
                                       ELSE '' 
                                      END)
          END AS race_ethnicity_reporting
-        ,CASE
-          WHEN sub.position_status = 'Leave' THEN 'INACTIVE'
-          ELSE UPPER(sub.position_status)
-         END AS [status]
   FROM
       (
        SELECT eh.employee_number
@@ -292,7 +288,6 @@ SELECT c.employee_number
       ,c.preferred_first_name
       ,c.preferred_last_name
       ,c.business_unit_code
-      ,c.[status]
       ,c.sex
       ,c.preferred_gender
       ,c.gender_reporting

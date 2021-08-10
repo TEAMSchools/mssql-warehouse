@@ -13,11 +13,13 @@ SELECT ps.student_number
       ,ps.promo_status_qa_math
       ,ps.grades_y1_credits_projected
       ,ps.grades_y1_credits_enrolled
+      ,ps.grades_y1_failing_projected
 
       ,gpa.gpa_term AS gpa_term
       ,gpa.gpa_y1 AS gpa_y1
 
-      ,cum.cumulative_Y1_gpa AS gpa_cum
+      ,cum.cumulative_y1_gpa AS gpa_cum
+      ,cum.cumulative_y1_gpa_projected AS gpa_cum_projected
 FROM gabby.reporting.promotional_status ps
 LEFT JOIN gabby.powerschool.gpa_detail gpa
   ON ps.student_number = gpa.student_number
