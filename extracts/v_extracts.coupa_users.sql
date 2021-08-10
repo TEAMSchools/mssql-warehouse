@@ -60,7 +60,7 @@ WITH roles AS (
   LEFT JOIN business_groups bg
     ON cu.id = bg.[user_id]
   WHERE sr.position_status <> 'Prestart'
-    AND sr.worker_category NOT IN ('Intern', 'Part Time')
+    AND (sr.worker_category NOT IN ('Intern', 'Part Time') OR sr.worker_category IS NULL)
     AND COALESCE(sr.termination_date, CONVERT(DATE, GETDATE())) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1, 7, 1)
 
   UNION ALL
