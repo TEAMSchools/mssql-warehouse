@@ -46,6 +46,7 @@ SELECT co.student_number
       ,CONCAT(co.street, ', ', co.city, ', ', co.[state], ' ', co.zip) AS home_address
       ,co.student_web_id + '@teamstudents.org' AS student_email
       ,co.student_web_password
+      ,co.student_web_id + '.fam' AS family_access_id
 
       ,s.sched_nextyeargrade
 
