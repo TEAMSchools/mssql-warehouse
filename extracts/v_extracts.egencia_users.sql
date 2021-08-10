@@ -7,7 +7,7 @@ SELECT CONCAT(sub.employee_number, '@kippnj.org') AS [Username]
       ,sub.[Email]
       ,sub.[Single Sign On ID]
       ,sub.employee_number AS [Employee ID]
-      ,CASE WHEN sub.[status] = 'Terminated' THEN 'Disabled' ELSE 'Active' END AS [Status]
+      ,CASE WHEN sub.position_status = 'Terminated' THEN 'Disabled' ELSE 'Active' END AS [Status]
       ,sub.[First name]
       ,sub.[Last name]
       ,CASE 
@@ -24,7 +24,7 @@ FROM
      SELECT scw.employee_number
            ,scw.first_name AS [First name] -- legal name
            ,scw.last_name AS [Last name] -- legal name
-           ,scw.[status]
+           ,scw.position_status
            ,COALESCE(scw.rehire_date, scw.original_hire_date) AS hire_date
            ,scw.termination_date
            ,scw.[location]
