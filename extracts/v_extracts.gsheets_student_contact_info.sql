@@ -54,6 +54,7 @@ SELECT co.student_number
       ,suf.infosnap_opt_in
 
       ,co.city
+      ,co.is_pathways AS is_selfcontained
 FROM gabby.powerschool.cohort_identifiers_static co
 LEFT JOIN gabby.powerschool.u_studentsuserfields suf
   ON co.students_dcid = suf.studentsdcid
