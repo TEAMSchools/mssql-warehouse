@@ -133,7 +133,10 @@ SELECT sub.samaccountname AS [Login]
          ,CASE WHEN ISNUMERIC(RIGHT(sub.samaccountname, 1)) = 1 THEN RIGHT(sub.samaccountname, 1) END
         ) AS [Mention Name]
 
-      ,COALESCE(sna.coupa_school_name, sub.[coupa_school_name]) AS [School Name]
+      ,CASE 
+        WHEN sna.coupa_school_name = '<BLANK>' THEN NULL
+        ELSE COALESCE(sna.coupa_school_name, sub.[coupa_school_name]) 
+       END AS [School Name]
 
       ,'SAML' AS [Authentication Method]
       ,'No' AS [Generate Password And Notify User]
