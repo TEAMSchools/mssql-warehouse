@@ -37,7 +37,7 @@ FROM
      JOIN gabby.adsi.user_attributes_static ad
        ON scw.employee_number = ad.employeenumber
       AND ISNUMERIC(ad.employeenumber) = 1
-     WHERE scw.home_department NOT IN ('Interns')
+     WHERE (scw.worker_category NOT IN ('Intern', 'Part Time') OR scw.worker_category IS NULL)
        AND COALESCE(scw.termination_date, GETDATE()) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
     ) sub
 LEFT JOIN gabby.egencia.traveler_groups tg
