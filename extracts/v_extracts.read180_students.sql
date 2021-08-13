@@ -37,6 +37,7 @@ JOIN gabby.powerschool.course_enrollments_current_static enr
  AND enr.course_number IN ('MAT02999G1', 'ELA01068G1', 'ENG01051S1', 'ENG01051S2')
  AND enr.course_enroll_status = 0
  AND enr.section_enroll_status = 0
+ AND enr.sectionid NOT IN (21493)
 JOIN gabby.powerschool.schools s
   ON co.schoolid = s.school_number
  AND co.[db_name] = s.[db_name]

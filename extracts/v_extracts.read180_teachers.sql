@@ -30,3 +30,4 @@ JOIN gabby.powerschool.schools sch
  AND sec.[db_name] = sch.[db_name]
 WHERE sec.yearid = (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990)
   AND sec.course_number IN ('MAT02999G1', 'ELA01068G1', 'ENG01051S1', 'ENG01051S2')
+  AND sec.id NOT IN (21493)
