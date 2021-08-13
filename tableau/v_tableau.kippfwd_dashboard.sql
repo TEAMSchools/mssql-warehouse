@@ -176,6 +176,8 @@ SELECT c.sf_contact_id
       ,c.latest_state_financial_aid_app_date
       ,c.latest_resume_date
       ,c.efc_from_fafsa
+      ,c.ethnicity
+      ,c.gender
 
       ,ay.academic_year
 
