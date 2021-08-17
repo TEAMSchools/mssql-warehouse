@@ -3,47 +3,6 @@ GO
 
 CREATE OR ALTER VIEW tableau.hi_approval_queue AS
 
-WITH custom_fields AS (
-  SELECT p.incident_id
-        ,p.[Final approval]
-        ,p.[Approver name]
-        ,p.[Instructor Source]
-        ,p.[Instructor Name]
-        ,p.[Hours per week]
-        ,p.[Hourly rate]
-        ,p.[Board Approval Date]
-        ,p.[HI start date]
-        ,p.[HI end date]
-  FROM
-      (
-       SELECT incident_id
-             ,field_name
-             ,[value]
-       FROM gabby.deanslist.incidents_custom_fields
-       WHERE field_name IN ('Final approval'
-                           ,'Approver name'
-                           ,'Instructor Source'
-                           ,'Instructor Name'
-                           ,'Hours per week'
-                           ,'Hourly rate'
-                           ,'Board Approval Date'
-                           ,'HI start date'
-                           ,'HI end date')
-      ) sub
-  PIVOT(
-    MAX([value])
-    FOR field_name IN ([Final approval]
-                      ,[Approver name]
-                      ,[Instructor Source]
-                      ,[Instructor Name]
-                      ,[Hours per week]
-                      ,[Hourly rate]
-                      ,[Board Approval Date]
-                      ,[HI start date]
-                      ,[HI end date])
-   ) p
- )
-
 SELECT co.student_number
       ,co.state_studentnumber
       ,co.lastfirst
@@ -85,13 +44,15 @@ SELECT co.student_number
       ,cf.[HI start date]
       ,cf.[HI end date]
 FROM gabby.deanslist.incidents_clean_static dli
-LEFT JOIN custom_fields cf
+LEFT JOIN gabby.deanslist.incidents_custom_fields_wide cf
   ON dli.incident_id = cf.incident_id
 LEFT JOIN gabby.deanslist.users u
   ON u.dluser_id = cf.[Approver name]
+ AND u.[db_name] = cf.[db_name]
 JOIN gabby.powerschool.cohort_identifiers_static co
   ON dli.student_school_id= co.student_number
  AND dli.create_academic_year = co.academic_year
+ AND dli.[db_name] = co.[db_name]
  AND co.rn_year = 1
 JOIN gabby.reporting.reporting_terms d
   ON co.schoolid = d.schoolid

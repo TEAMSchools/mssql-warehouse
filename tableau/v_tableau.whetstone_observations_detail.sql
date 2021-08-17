@@ -87,6 +87,7 @@ FROM
            ,sr.[status]
            ,LEFT(sr.userprincipalname, CHARINDEX('@', sr.userprincipalname) - 1) AS staff_username
            ,LEFT(sr.manager_userprincipalname, CHARINDEX('@', sr.manager_userprincipalname) - 1) AS manager_username
+           ,sr.primary_site_school_level
 
            ,osr.gender AS observer_gender
            ,osr.primary_ethnicity AS observer_ethnicity

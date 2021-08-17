@@ -26,30 +26,29 @@ WITH grades_unpivot AS (
         ,CASE WHEN value = '' THEN NULL ELSE value END AS value
   FROM
       (
-       SELECT fg.student_number      
+       SELECT fg.student_number
              ,fg.studentid
-             ,fg.academic_year      
-             ,fg.term_name                  
-             ,fg.course_number                                       
+             ,fg.academic_year
+             ,fg.term_name
+             ,fg.course_number
              ,fg.course_name
              ,fg.credittype
              ,fg.credit_hours
-             ,fg.reporting_term                                      
-             ,fg.sectionid                              
+             ,fg.reporting_term
+             ,fg.sectionid
              ,fg.teacher_name
              ,fg.is_curterm
              ,fg.excludefromgpa
-                          
              ,fg.e1_adjusted AS e1_grade_percent /* using only F* adjusted, when applicable */
-             ,fg.e2_adjusted AS e2_grade_percent /* using only F* adjusted, when applicable */             
-             ,fg.y1_grade_percent_adjusted AS y1_grade_percent /* using only F* adjusted, when applicable */             
+             ,fg.e2_adjusted AS e2_grade_percent /* using only F* adjusted, when applicable */
+             ,fg.y1_grade_percent_adjusted AS y1_grade_percent /* using only F* adjusted, when applicable */
              ,fg.y1_grade_letter AS y1_grade_letter
-             
+
              /* empty strings preserve term_name structure when there aren't any grades */
              ,ISNULL(CONVERT(VARCHAR(25),fg.term_grade_letter),'') AS term_grade_letter
              ,ISNULL(CONVERT(VARCHAR(25),fg.term_grade_percent),'') AS term_grade_percent
              ,ISNULL(CONVERT(VARCHAR(25),fg.term_grade_letter_adjusted),'') AS term_grade_letter_adjusted
-             ,ISNULL(CONVERT(VARCHAR(25),fg.term_grade_percent_adjusted),'') AS term_grade_percent_adjusted                          
+             ,ISNULL(CONVERT(VARCHAR(25),fg.term_grade_percent_adjusted),'') AS term_grade_percent_adjusted
 
              ,fg.need_90
              ,fg.need_80
@@ -60,30 +59,30 @@ WITH grades_unpivot AS (
 
        UNION ALL
 
-       SELECT fg.student_number      
+       SELECT fg.student_number
              ,fg.studentid
-             ,fg.academic_year      
+             ,fg.academic_year
              ,fg.term_name
-             ,fg.course_number                                       
+             ,fg.course_number
              ,fg.course_name
              ,fg.credittype
              ,fg.credit_hours
              ,'CUR' AS reporting_term
-             ,fg.sectionid                              
+             ,fg.sectionid
              ,fg.teacher_name
              ,fg.is_curterm
              ,fg.excludefromgpa
              
              ,fg.e1_adjusted AS e1_grade_percent /* using only F* adjusted, when applicable */
-             ,fg.e2_adjusted AS e2_grade_percent /* using only F* adjusted, when applicable */             
-             ,fg.y1_grade_percent_adjusted AS y1_grade_percent /* using only F* adjusted, when applicable */             
+             ,fg.e2_adjusted AS e2_grade_percent /* using only F* adjusted, when applicable */
+             ,fg.y1_grade_percent_adjusted AS y1_grade_percent /* using only F* adjusted, when applicable */
              ,fg.y1_grade_letter AS y1_grade_letter
-             
+
              /* empty strings preserve term_name structure when there aren't any grades */
              ,ISNULL(CONVERT(VARCHAR(25),fg.term_grade_letter),'') AS term_grade_letter
              ,ISNULL(CONVERT(VARCHAR(25),fg.term_grade_percent),'') AS term_grade_percent
              ,ISNULL(CONVERT(VARCHAR(25),fg.term_grade_letter_adjusted),'') AS term_grade_letter_adjusted
-             ,ISNULL(CONVERT(VARCHAR(25),fg.term_grade_percent_adjusted),'') AS term_grade_percent_adjusted                          
+             ,ISNULL(CONVERT(VARCHAR(25),fg.term_grade_percent_adjusted),'') AS term_grade_percent_adjusted
 
              ,fg.need_90
              ,fg.need_80
@@ -97,7 +96,7 @@ WITH grades_unpivot AS (
     FOR field IN (term_grade_letter
                  ,term_grade_percent
                  ,term_grade_letter_adjusted
-                 ,term_grade_percent_adjusted)                 
+                 ,term_grade_percent_adjusted)
    ) u
  )
 
@@ -127,17 +126,14 @@ SELECT student_number
       ,MAX(rt1_term_grade_letter_adjusted) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS rt1_term_grade_letter_adjusted
       ,MAX(rt1_term_grade_percent) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS rt1_term_grade_percent
       ,MAX(rt1_term_grade_percent_adjusted) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS rt1_term_grade_percent_adjusted      
-      
       ,MAX(rt2_term_grade_letter) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS rt2_term_grade_letter
       ,MAX(rt2_term_grade_letter_adjusted) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS rt2_term_grade_letter_adjusted
       ,MAX(rt2_term_grade_percent) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS rt2_term_grade_percent
-      ,MAX(rt2_term_grade_percent_adjusted) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS rt2_term_grade_percent_adjusted      
-      
+      ,MAX(rt2_term_grade_percent_adjusted) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS rt2_term_grade_percent_adjusted
       ,MAX(rt3_term_grade_letter) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS rt3_term_grade_letter
       ,MAX(rt3_term_grade_letter_adjusted) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS rt3_term_grade_letter_adjusted
       ,MAX(rt3_term_grade_percent) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS rt3_term_grade_percent
-      ,MAX(rt3_term_grade_percent_adjusted) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS rt3_term_grade_percent_adjusted      
-      
+      ,MAX(rt3_term_grade_percent_adjusted) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS rt3_term_grade_percent_adjusted
       ,MAX(rt4_term_grade_letter) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS rt4_term_grade_letter
       ,MAX(rt4_term_grade_letter_adjusted) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS rt4_term_grade_letter_adjusted
       ,MAX(rt4_term_grade_percent) OVER(PARTITION BY student_number, academic_year, course_name ORDER BY term_name ASC) AS rt4_term_grade_percent
@@ -157,15 +153,15 @@ PIVOT(
   FOR pivot_field IN ([rt1_term_grade_letter]
                      ,[rt1_term_grade_letter_adjusted]
                      ,[rt1_term_grade_percent]
-                     ,[rt1_term_grade_percent_adjusted]                     
+                     ,[rt1_term_grade_percent_adjusted]
                      ,[rt2_term_grade_letter]
                      ,[rt2_term_grade_letter_adjusted]
                      ,[rt2_term_grade_percent]
-                     ,[rt2_term_grade_percent_adjusted]                     
+                     ,[rt2_term_grade_percent_adjusted]
                      ,[rt3_term_grade_letter]
                      ,[rt3_term_grade_letter_adjusted]
                      ,[rt3_term_grade_percent]
-                     ,[rt3_term_grade_percent_adjusted]                     
+                     ,[rt3_term_grade_percent_adjusted]
                      ,[rt4_term_grade_letter]
                      ,[rt4_term_grade_letter_adjusted]
                      ,[rt4_term_grade_percent]

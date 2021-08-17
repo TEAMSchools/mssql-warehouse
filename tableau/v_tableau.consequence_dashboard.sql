@@ -62,6 +62,7 @@ LEFT JOIN gabby.powerschool.students s
 LEFT JOIN gabby.deanslist.incidents_clean_static dli
   ON co.student_number = dli.student_school_id
  AND co.academic_year = dli.create_academic_year
+ AND co.[db_name] = dli.[db_name]
 LEFT JOIN gabby.reporting.reporting_terms d
   ON co.schoolid = d.schoolid
  AND CONVERT(DATE, dli.create_ts) BETWEEN d.[start_date] AND d.end_date
@@ -69,8 +70,10 @@ LEFT JOIN gabby.reporting.reporting_terms d
  AND d._fivetran_deleted = 0
 LEFT JOIN deanslist.incidents_penalties_static dlp
   ON dli.incident_id = dlp.incident_id
+ AND dli.[db_name] = dlp.[db_name]
 LEFT JOIN gabby.deanslist.incidents_custom_fields_wide cf
   ON dli.incident_id = cf.incident_id
+ AND dli.[db_name] = cf.[db_name]
 WHERE co.academic_year IN (gabby.utilities.GLOBAL_ACADEMIC_YEAR(), gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
   AND co.rn_year = 1
   AND co.grade_level <> 99

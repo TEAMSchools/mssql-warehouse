@@ -44,6 +44,7 @@ SELECT o.student_number
       ,cat.P_CUR AS P_term
       ,cat.W_CUR AS W_term
 
+      ,comm.citizenship AS conduct
       ,REPLACE(comm.comment_value, '"', '''') AS comment_value
 FROM gabby.powerschool.course_section_scaffold_current_static o
 JOIN gabby.powerschool.sections sec
@@ -106,7 +107,7 @@ SELECT comm.student_number
       ,NULL AS M_term
       ,NULL AS P_term
       ,NULL AS W_term
-
+      ,NULL AS conduct
       ,REPLACE(comm.comment, '"', '''') COLLATE Latin1_General_BIN AS comment_value
 FROM gabby.reporting.illuminate_report_card_comments comm
 WHERE comm.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()

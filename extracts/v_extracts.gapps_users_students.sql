@@ -45,7 +45,7 @@ FROM
              ELSE 'OD'
             END AS school_level
            ,CASE
-             WHEN sp.specprog_name = 'Out of District' THEN sp.specprog_name
+             WHEN sp.specprog_name = 'Out of District' THEN 'Out of District'
              WHEN sch.abbreviation = 'TEAM' THEN 'TEAM Academy'
              WHEN sch.abbreviation = 'KSA' THEN 'Sunrise Academy'
              WHEN sch.abbreviation = 'NLH' THEN 'Newark Lab'
@@ -53,15 +53,14 @@ FROM
              WHEN sch.abbreviation = 'NCP' THEN 'Newark Community'
              WHEN sch.abbreviation = 'LIB' THEN 'Liberty Academy'
              WHEN sch.abbreviation = 'COU' THEN 'Courage'
+             WHEN sch.abbreviation = 'KRA' THEN 'Royalty Academy'
              ELSE sch.abbreviation
             END AS school_name
-           ,sch.abbreviation
-           ,sch.name
 
            ,saa.student_web_id + '@teamstudents.org' AS email
            ,saa.student_web_password
      FROM gabby.powerschool.students s
-     LEFT JOIN powerschool.spenrollments_gen_static sp
+     LEFT JOIN gabby.powerschool.spenrollments_gen_static sp
        ON s.id = sp.studentid
       AND s.entrydate BETWEEN sp.enter_date AND sp.exit_date
       AND s.[db_name] = sp.[db_name]

@@ -7,7 +7,7 @@ SELECT CONCAT(sub.employee_number, '@kippnj.org') AS [Username]
       ,sub.[Email]
       ,sub.[Single Sign On ID]
       ,sub.employee_number AS [Employee ID]
-      ,CASE WHEN sub.[status] = 'Terminated' THEN 'Disabled' ELSE 'Active' END AS [Status]
+      ,CASE WHEN sub.position_status = 'Terminated' THEN 'Disabled' ELSE 'Active' END AS [Status]
       ,sub.[First name]
       ,sub.[Last name]
       ,CASE 
@@ -24,7 +24,7 @@ FROM
      SELECT scw.employee_number
            ,scw.first_name AS [First name] -- legal name
            ,scw.last_name AS [Last name] -- legal name
-           ,scw.[status]
+           ,scw.position_status
            ,COALESCE(scw.rehire_date, scw.original_hire_date) AS hire_date
            ,scw.termination_date
            ,scw.[location]
@@ -37,7 +37,7 @@ FROM
      JOIN gabby.adsi.user_attributes_static ad
        ON scw.employee_number = ad.employeenumber
       AND ISNUMERIC(ad.employeenumber) = 1
-     WHERE scw.home_department NOT IN ('Interns')
+     WHERE (scw.worker_category NOT IN ('Intern', 'Part Time') OR scw.worker_category IS NULL)
        AND COALESCE(scw.termination_date, GETDATE()) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
     ) sub
 LEFT JOIN gabby.egencia.traveler_groups tg

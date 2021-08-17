@@ -156,7 +156,7 @@ SELECT co.student_number
       ,CONVERT(VARCHAR(125), dlb.behavior_category) AS dl_category
       ,dlb.point_value AS dl_point_value
       ,dlb.roster
-      ,dlb.assignment
+      ,NULL AS assignment
       ,dlb.notes
 
       ,r.subject_name AS roster_subject_name
@@ -174,9 +174,11 @@ FROM gabby.deanslist.behavior dlb
 JOIN gabby.powerschool.cohort_identifiers_static co
   ON co.student_number = dlb.student_school_id
  AND dlb.behavior_date BETWEEN co.entrydate AND co.exitdate
+ AND dlb.[db_name] = co.[db_name]
  AND co.rn_year = 1
-LEFT JOIN deanslist.rosters_all r
+LEFT JOIN deanslist.rosters r
   ON dlb.roster_id = r.roster_id
+ AND dlb.[db_name] = r.[db_name]
 JOIN gabby.reporting.reporting_terms d
   ON co.schoolid = d.schoolid
  AND dlb.behavior_date BETWEEN d.[start_date] AND d.end_date 

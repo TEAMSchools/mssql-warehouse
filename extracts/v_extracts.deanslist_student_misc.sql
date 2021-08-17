@@ -5,7 +5,7 @@ CREATE OR ALTER VIEW extracts.deanslist_student_misc AS
 
 WITH ug_school AS (
   SELECT student_number
-        ,schoolid        
+        ,schoolid
         ,[db_name]
   FROM gabby.powerschool.cohort_identifiers_static
   WHERE rn_undergrad = 1
@@ -18,7 +18,7 @@ WITH ug_school AS (
         ,[db_name]
         ,CONVERT(VARCHAR, MIN(entrydate)) AS school_entrydate
         ,CONVERT(VARCHAR, MAX(exitdate)) AS school_exitdate
-  FROM gabby.powerschool.cohort_identifiers_static s  
+  FROM gabby.powerschool.cohort_identifiers_static s
   GROUP BY student_number, schoolid, [db_name]
  )
 
@@ -46,6 +46,7 @@ SELECT co.student_number
       ,CONCAT(co.street, ', ', co.city, ', ', co.[state], ' ', co.zip) AS home_address
       ,co.student_web_id + '@teamstudents.org' AS student_email
       ,co.student_web_password
+      ,co.student_web_id + '.fam' AS family_access_id
 
       ,s.sched_nextyeargrade
 
@@ -53,7 +54,7 @@ SELECT co.student_number
       ,ed.school_exitdate
 
       ,nav.counselor_name AS ktc_counselor_name
-      
+
       ,df.mobile_number AS ktc_counselor_phone
       ,df.mail AS ktc_counselor_email
 

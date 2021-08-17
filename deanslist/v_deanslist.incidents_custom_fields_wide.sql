@@ -1,6 +1,3 @@
-USE gabby
-GO
-
 CREATE OR ALTER VIEW deanslist.incidents_custom_fields_wide AS
 
 SELECT incident_id
@@ -29,11 +26,11 @@ FROM
     (
      SELECT incident_id
            ,field_name
-           ,[value]
-     FROM gabby.deanslist.incidents_custom_fields
+           ,[Value]
+     FROM deanslist.incidents_custom_fields
     ) sub
 PIVOT(
-  MAX([value])
+  MAX([Value])
   FOR field_name IN ([Approver Name]
                     ,[Behavior Category]
                     ,[Board Approval Date]

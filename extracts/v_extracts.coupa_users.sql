@@ -41,6 +41,7 @@ WITH roles AS (
         ,sr.business_unit_code
         ,sr.home_department
         ,sr.job_title
+        ,sr.[location]
 
         ,cu.active
         ,CASE
@@ -59,7 +60,7 @@ WITH roles AS (
   LEFT JOIN business_groups bg
     ON cu.id = bg.[user_id]
   WHERE sr.position_status <> 'Prestart'
-    AND sr.worker_category NOT IN ('Intern', 'Part Time')
+    AND (sr.worker_category NOT IN ('Intern', 'Part Time') OR sr.worker_category IS NULL)
     AND COALESCE(sr.termination_date, CONVERT(DATE, GETDATE())) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1, 7, 1)
 
   UNION ALL
@@ -72,6 +73,7 @@ WITH roles AS (
         ,sr.business_unit_code
         ,sr.home_department
         ,sr.job_title
+        ,sr.[location]
 
         ,1 AS active
         ,'No' AS purchasing_user
@@ -85,61 +87,84 @@ WITH roles AS (
     AND cu.employee_number IS NULL
  )
 
-SELECT sub.[Login]
-      ,sub.[Status]
-      ,sub.[Purchasing User]
-      ,sub.[Expense User]
-      ,sub.[Authentication Method]
-      ,sub.[Sso Identifier]
-      ,sub.[Generate Password And Notify User]
-      ,sub.[Email]
-      ,sub.[First Name]
-      ,sub.[Last Name]
-      ,sub.[Employee Number]
-      ,sub.[User Role Names]
-      ,sub.[Content Groups]
-      ,sub.[Mention Name]
-      ,COALESCE(sna.coupa_school_name, sub.[coupa_school_name]) AS [School Name]
+SELECT sub.samaccountname AS [Login]
+      ,sub.userprincipalname AS [Sso Identifier]
+      ,sub.mail AS [Email]
+      ,sub.first_name AS [First Name]
+      ,sub.last_name AS [Last Name]
+      ,sub.employee_number AS [Employee Number]
+      ,sub.roles AS [User Role Names]
+      ,sub.location_code AS [Default Address Location Code]
+      ,sub.street_1 AS [Default Address Street 1]
+      ,sub.street_2 AS [Default Address Street 2]
+      ,sub.city AS [Default Address City]
+      ,sub.[state] AS [Default Address State]
+      ,sub.postal_code AS [Default Address Postal Code]
+      ,'US' AS [Default Address Country Code]
+      ,sub.attention AS [Default Address Attention]
+      ,sub.address_name AS [Default Address Name]
+      ,CASE
+        WHEN sub.position_status <> 'Active' THEN 'inactive'
+        ELSE 'active'
+       END AS [Status]
+      ,CASE 
+        WHEN sub.position_status <> 'Active' THEN 'No' 
+        ELSE 'Yes' 
+       END AS [Expense User]
+      ,COALESCE(
+          CASE 
+           WHEN sub.position_status <> 'Active' THEN 'No' 
+           WHEN sub.active = 0 THEN 'No'
+          END
+         ,sub.purchasing_user
+         ,'No'
+        ) AS [Purchasing User] /* preserve Coupa, otherwise No */
+      ,COALESCE(
+          sub.content_groups
+         ,CASE
+           WHEN sub.business_unit_code = 'KIPP_TAF' THEN 'KIPP NJ'
+           WHEN sub.business_unit_code = 'KIPP_MIAMI' THEN 'MIA'
+           ELSE sub.business_unit_code
+          END
+        ) AS [Content Groups] /* preserve Coupa, otherwise use HRIS */
+      ,CONCAT(
+          CASE WHEN sub.position_status = 'Terminated' THEN 'X' END
+         ,gabby.utilities.STRIP_CHARACTERS(CONCAT(sub.first_name, sub.last_name ), '^A-Z')
+         ,CASE WHEN ISNUMERIC(RIGHT(sub.samaccountname, 1)) = 1 THEN RIGHT(sub.samaccountname, 1) END
+        ) AS [Mention Name]
+
+      ,CASE 
+        WHEN sna.coupa_school_name = '<BLANK>' THEN NULL
+        ELSE COALESCE(sna.coupa_school_name, sub.[coupa_school_name]) 
+       END AS [School Name]
+
+      ,'SAML' AS [Authentication Method]
+      ,'No' AS [Generate Password And Notify User]
 FROM
     (
-     SELECT LOWER(ad.samaccountname) AS [Login]
-           ,CASE
-             WHEN au.position_status <> 'Active' THEN 'inactive'
-             ELSE 'active'
-            END AS [Status]
-           ,COALESCE(
-               CASE 
-                WHEN au.position_status <> 'Active' THEN 'No' 
-                WHEN au.active = 0 THEN 'No'
-               END
-              ,au.purchasing_user
-              ,'No'
-             ) AS [Purchasing User] /* preserve Coupa, otherwise No */
-           ,CASE 
-             WHEN au.position_status <> 'Active' THEN 'No' 
-             ELSE 'Yes' 
-            END AS [Expense User]
-           ,'SAML' AS [Authentication Method]
-           ,LOWER(ad.userprincipalname) AS [Sso Identifier]
-           ,'No' AS [Generate Password And Notify User]
-           ,LOWER(ad.mail) AS [Email] /* some are missing the AD mail attribute `\(o_O)/` */
-           ,au.first_name AS [First Name]
-           ,au.last_name AS [Last Name]
-           ,au.employee_number AS [Employee Number]
-           ,au.roles AS [User Role Names]
-           ,COALESCE(
-               au.content_groups
-              ,CASE
-                WHEN au.business_unit_code = 'KIPP_TAF' THEN 'KIPP NJ'
-                WHEN au.business_unit_code = 'KIPP_MIAMI' THEN 'MIA'
-                ELSE au.business_unit_code
-               END
-             ) AS [Content Groups] /* preserve Coupa, otherwise use HRIS */
-           ,CONCAT(
-               CASE WHEN au.position_status = 'Terminated' THEN 'X' END
-              ,gabby.utilities.STRIP_CHARACTERS(CONCAT(au.first_name, au.last_name ), '^A-Z')
-              ,CASE WHEN ISNUMERIC(RIGHT(ad.samaccountname, 1)) = 1 THEN RIGHT(ad.samaccountname, 1) END
-             ) AS [Mention Name]
+     SELECT au.employee_number
+           ,au.first_name
+           ,au.last_name
+           ,au.roles
+           ,au.position_status
+           ,au.active
+           ,au.purchasing_user
+           ,au.content_groups
+           ,au.business_unit_code
+
+           ,LOWER(ad.samaccountname) AS samaccountname
+           ,LOWER(ad.userprincipalname) AS userprincipalname
+           ,LOWER(ad.mail) AS mail
+
+           ,a.location_code
+           ,a.street_1
+           ,a.city
+           ,a.[state]
+           ,a.postal_code
+           ,a.[name] AS address_name
+           ,CASE WHEN a.street_2 <> '' THEN a.street_2 END AS street_2
+           ,CASE WHEN a.attention <> '' THEN a.attention END AS attention
+
            ,COALESCE(
                x.coupa_school_name
               ,CASE 
@@ -165,6 +190,12 @@ FROM
       AND sn2.job_title = 'Default'
      LEFT JOIN gabby.coupa.user_exceptions x
        ON au.employee_number = x.employee_number
+     LEFT JOIN gabby.coupa.address_name_crosswalk anc
+       ON au.[location] = anc.adp_location
+     LEFT JOIN gabby.coupa.[address] a
+       ON anc.coupa_address_name = a.[name]
+      AND a.active = 1
+      AND a.id <> 2735 /* temp exclude extra KCNA */
     ) sub
 LEFT JOIN gabby.coupa.school_name_aliases sna
   ON sub.coupa_school_name = sna.physical_delivery_office_name

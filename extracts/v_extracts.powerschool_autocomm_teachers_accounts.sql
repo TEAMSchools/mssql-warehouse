@@ -80,11 +80,11 @@ SELECT df.teachernumber
       ,df.[status]
       ,CASE WHEN df.[status] = 1 THEN 1 ELSE 0 END AS teacherldapenabled
       ,CASE WHEN df.[status] = 1 THEN 1 ELSE 0 END AS adminldapenabled
-      --,CASE WHEN df.[status] = 1 THEN 1 ELSE 0 END AS ptaccess
-      ,CASE 
-        WHEN df.legal_entity_name = 'KIPP TEAM and Family Schools Inc.' AND df.[status] = 1 THEN 1 
-        ELSE 0 
-       END AS ptaccess /* temporarily shut off teacher gradebook access */
+      ,CASE WHEN df.[status] = 1 THEN 1 ELSE 0 END AS ptaccess
+      --,CASE 
+      --  WHEN df.legal_entity_name = 'KIPP TEAM and Family Schools Inc.' AND df.[status] = 1 THEN 1 
+      --  ELSE 0 
+      -- END AS ptaccess /* temporarily shut off teacher gradebook access */
       ,CONVERT(VARCHAR, df.birth_date, 101) AS dob
       ,df.legal_entity_name
 FROM users_clean df
