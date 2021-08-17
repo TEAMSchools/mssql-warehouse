@@ -18,7 +18,7 @@ SELECT p.entity AS entity
       ,NULL AS accounting_line
       ,NULL AS notes
 FROM gabby.payroll.new_hire_tracker p 
-LEFT JOIN gabby.adp.staff_roster r
+LEFT JOIN gabby.people.staff_roster r
   ON p.salesforce_position_number = r.salesforce_job_position_name_custom
  AND r.rn_curr = 1
 
@@ -39,7 +39,7 @@ SELECT e.entity AS entity
       ,NULL As accounting_line
       ,e.[description] AS notes
 FROM gabby.payroll.payroll_edit_tracker e
-LEFT JOIN gabby.adp.staff_roster r
+LEFT JOIN gabby.people.staff_roster r
   ON e.associate_id = r.associate_id
  AND r.rn_curr = 1
 WHERE e._fivetran_deleted IS NULL
