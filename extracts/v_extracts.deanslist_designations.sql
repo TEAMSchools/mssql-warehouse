@@ -114,27 +114,28 @@ FROM
     (
      SELECT student_number
            ,academic_year
-
-           ,CAST(is_iep AS VARCHAR(250)) AS is_iep
-           ,CAST(is_504 AS VARCHAR(250)) AS is_504
-           ,CAST(is_lep AS VARCHAR(250)) AS is_lep
-           ,CAST(is_quarter_gpa_3plus AS VARCHAR(250)) AS is_quarter_gpa_3plus
-           ,CAST(is_quarter_gpa_35plus AS VARCHAR(250)) AS is_quarter_gpa_35plus
-           ,CAST(is_ood AS VARCHAR(250)) AS is_ood
-           ,CAST(is_nccs AS VARCHAR(250)) AS is_nccs
-           ,CAST(is_pathways AS VARCHAR(250)) AS is_pathways
-           ,CAST(is_home_instruction AS VARCHAR(250)) AS is_home_instruction
-           ,CAST(is_chronic_absentee AS VARCHAR(250)) AS is_chronic_absentee
-           ,CAST(is_hybrid_a AS VARCHAR(250)) AS is_hybrid_a
-           ,CAST(is_hybrid_b AS VARCHAR(250)) AS is_hybrid_b
-           ,CAST(is_remote_c AS VARCHAR(250)) AS is_remote_c
-           ,CAST(is_hybrid_d AS VARCHAR(250)) AS is_hybrid_d
-           ,CAST(is_remote_instruction AS VARCHAR(250)) AS is_remote_instruction
-           ,CAST(is_counseling AS VARCHAR(250)) AS is_counseling
-
+           ,CAST(is_iep AS NVARCHAR(32)) AS is_iep
+           ,CAST(is_504 AS NVARCHAR(32)) AS is_504
+           ,CAST(is_lep AS NVARCHAR(32)) AS is_lep
+           ,CAST(is_quarter_gpa_3plus AS NVARCHAR(32)) AS is_quarter_gpa_3plus
+           ,CAST(is_quarter_gpa_35plus AS NVARCHAR(32)) AS is_quarter_gpa_35plus
+           ,CAST(is_ood AS NVARCHAR(32)) AS is_ood
+           ,CAST(is_nccs AS NVARCHAR(32)) AS is_nccs
+           ,CAST(is_pathways AS NVARCHAR(32)) AS is_pathways
+           ,CAST(is_home_instruction AS NVARCHAR(32)) AS is_home_instruction
+           ,CAST(is_chronic_absentee AS NVARCHAR(32)) AS is_chronic_absentee
+           ,CAST(is_hybrid_a AS NVARCHAR(32)) AS is_hybrid_a
+           ,CAST(is_hybrid_b AS NVARCHAR(32)) AS is_hybrid_b
+           ,CAST(is_remote_c AS NVARCHAR(32)) AS is_remote_c
+           ,CAST(is_hybrid_d AS NVARCHAR(32)) AS is_hybrid_d
+           ,CAST(is_remote_instruction AS NVARCHAR(32)) AS is_remote_instruction
+           ,CAST(is_counseling AS NVARCHAR(32)) AS is_counseling
      FROM designation
     ) sub
 UNPIVOT (
   [value]
-  FOR field IN (is_iep, is_504, is_lep, is_quarter_gpa_3plus, is_quarter_gpa_35plus, is_ood, is_nccs, is_pathways, is_home_instruction, is_chronic_absentee, is_hybrid_a, is_hybrid_b, is_remote_c, is_hybrid_d, is_remote_instruction, is_counseling)
+  FOR field IN (is_iep, is_504, is_lep, is_quarter_gpa_3plus, is_quarter_gpa_35plus
+               ,is_ood, is_nccs, is_pathways, is_home_instruction, is_chronic_absentee
+               ,is_hybrid_a, is_hybrid_b, is_remote_c, is_hybrid_d, is_remote_instruction
+               ,is_counseling)
  ) u
