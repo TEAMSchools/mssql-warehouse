@@ -12,6 +12,7 @@ WITH schoolids AS (
 
 ,terms AS (
   SELECT t.term_name
+        ,t.term_id
         ,CONVERT(DATE, JSON_VALUE(t.[start_date], '$.date')) AS [start_date]
         ,CONVERT(DATE, JSON_VALUE(t.end_date, '$.date')) AS end_date
 
@@ -33,6 +34,8 @@ SELECT pl.student_id
         , 2) * 100 AS pct_passed
 
      ,t.term_name
+     ,t.term_id
+
 FROM gabby.iready.personalized_instruction_by_lesson pl
 JOIN gabby.people.school_crosswalk sc
   ON pl.school = sc.site_name
@@ -43,3 +46,4 @@ WHERE pl.academic_year = '2020-2021' -- update for production
 GROUP BY pl.student_id
         ,pl.[subject]
         ,t.term_name
+        ,t.term_id
