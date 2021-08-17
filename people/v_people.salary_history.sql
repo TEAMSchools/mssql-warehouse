@@ -6,6 +6,7 @@ GO
 SELECT sub.employee_number
       ,sub.associate_id
       ,sub.position_id
+      ,sub.file_number
       ,sub.annual_salary
       ,sub.regular_pay_rate_amount
       ,sub.compensation_change_reason_description
@@ -31,6 +32,7 @@ FROM
      /* ADP */
      SELECT sh.associate_id
            ,sh.position_id
+           ,sh.file_number
            ,CASE 
              WHEN CONVERT(DATE, sh.regular_pay_effective_date) > '2021-01-01' THEN CONVERT(DATE, sh.regular_pay_effective_date)
              ELSE '2021-01-01'
@@ -58,6 +60,7 @@ FROM
      SELECT sr.associate_id
 
            ,ds.position_id
+           ,ds.number AS file_number
            ,ds.effective_start AS regular_pay_effective_date
            ,CASE 
              WHEN ds.effective_end < '2020-12-31' THEN ds.effective_end

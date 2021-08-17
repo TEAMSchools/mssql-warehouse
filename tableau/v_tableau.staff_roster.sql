@@ -1,10 +1,12 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW tableau.staff_roster AS
+--CREATE OR ALTER VIEW tableau.staff_roster AS
 
 SELECT df.df_employee_number
       ,df.adp_associate_id AS associate_id
+      ,df.position_id
+      ,df.file_number
       ,df.first_name
       ,df.last_name
       ,df.preferred_first_name AS preferred_first
@@ -50,6 +52,4 @@ SELECT df.df_employee_number
       ,LOWER(df.mail) AS mail
       ,LOWER(df.userprincipalname) AS userprincipalname
       ,LOWER(df.manager_mail) AS manager_mail
-      ,active_file_number AS file_number --need to add
-      ,active_position_id as position_id --need to add
 FROM gabby.people.staff_crosswalk_static df

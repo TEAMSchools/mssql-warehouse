@@ -1,10 +1,12 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW people.staff_crosswalk AS
+--CREATE OR ALTER VIEW people.staff_crosswalk AS
 
 SELECT sub.employee_number AS df_employee_number
       ,sub.associate_id AS adp_associate_id
+      ,sub.position_id
+      ,sub.file_number
       ,CONVERT(NVARCHAR(32), NULL) AS salesforce_id
       ,sub.first_name
       ,sub.last_name
@@ -71,6 +73,8 @@ FROM
     (
      SELECT sr.employee_number
            ,sr.associate_id
+           ,sr.position_id
+           ,sr.file_number
            ,sr.first_name
            ,sr.last_name
            ,sr.sex
@@ -136,9 +140,6 @@ FROM
            ,adm.samaccountname AS manager_samaccountname
            ,adm.userprincipalname AS manager_userprincipalname
            ,adm.mail AS manager_mail
-
-           ,active_file_number AS file_number --need to add
-           ,active_position_id as position_id --need to add
      FROM gabby.people.staff_roster sr
      LEFT JOIN gabby.people.id_crosswalk_powerschool idps
        ON sr.employee_number = idps.df_employee_number

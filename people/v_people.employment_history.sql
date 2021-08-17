@@ -1,12 +1,13 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW people.employment_history AS
+--CREATE OR ALTER VIEW people.employment_history AS
 
 WITH validdates AS (
   SELECT employee_number
         ,associate_id
         ,position_id
+        ,file_number
         ,source_system
         ,status_effective_date AS effective_start_date
   FROM gabby.people.status_history_static
@@ -16,6 +17,7 @@ WITH validdates AS (
   SELECT employee_number
         ,associate_id
         ,position_id
+        ,file_number
         ,source_system
         ,position_effective_date
   FROM gabby.people.work_assignment_history_static
@@ -25,6 +27,7 @@ WITH validdates AS (
   SELECT employee_number
         ,associate_id
         ,position_id
+        ,file_number
         ,source_system
         ,regular_pay_effective_date
   FROM gabby.people.salary_history_static
@@ -34,6 +37,7 @@ WITH validdates AS (
   SELECT employee_number
         ,associate_id
         ,position_id
+        ,file_number
         ,source_system
         ,reports_to_effective_date
   FROM gabby.people.manager_history_static
@@ -43,6 +47,7 @@ WITH validdates AS (
   SELECT d.employee_number
         ,d.associate_id
         ,d.position_id
+        ,d.file_number
         ,d.source_system
         ,d.effective_start_date
         ,COALESCE(DATEADD(DAY, -1, LEAD(d.effective_start_date, 1) OVER(PARTITION BY d.position_id ORDER BY d.effective_start_date))
@@ -62,6 +67,7 @@ WITH validdates AS (
 SELECT r.employee_number
       ,r.associate_id
       ,r.position_id
+      ,r.file_number
       ,r.effective_start_date
       ,r.effective_end_date
       ,CASE WHEN GETDATE() BETWEEN r.effective_start_date AND r.effective_end_date THEN 1 END AS is_current_record
