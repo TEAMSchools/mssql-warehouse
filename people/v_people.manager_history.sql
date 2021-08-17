@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW people.manager_history AS
+--CREATE OR ALTER VIEW people.manager_history AS
 
 SELECT sub.employee_number
       ,sub.associate_id
@@ -37,18 +37,18 @@ FROM
             END AS reports_to_effective_date
            ,CONVERT(DATE, mh.reports_to_effective_end_date) AS reports_to_effective_end_date
 
-           ,sre.file_number AS employee_number
+           ,sre.employee_number
 
-           ,srm.file_number AS reports_to_employee_number
+           ,srm.employee_number AS reports_to_employee_number
 
            ,'ADP' AS source_system
      FROM gabby.adp.manager_history mh
-     JOIN gabby.adp.employees_all sre
+     JOIN gabby.people.employee_numbers sre
        ON mh.associate_id = sre.associate_id
-      AND sre.file_number NOT IN (100814, 102496, 101652, 102634, 102641, 300082) /*  HR incapable of fixing these multiple employee numbers */
-     JOIN gabby.adp.employees_all srm
+      AND sre.is_active = 1
+     JOIN gabby.people.employee_numbers srm
        ON mh.reports_to_associate_id = srm.associate_id
-      AND srm.file_number NOT IN (100814, 102496, 101652, 102634, 102641, 300082) /*  HR incapable of fixing these multiple employee numbers */
+      AND srm.is_active = 1
      WHERE '2021-01-01' BETWEEN CONVERT(DATE, mh.reports_to_effective_date) AND COALESCE(CONVERT(DATE, mh.reports_to_effective_end_date), GETDATE())
         OR CONVERT(DATE, mh.reports_to_effective_date) > '2021-01-01'
 
@@ -70,11 +70,11 @@ FROM
            ,dm.manager_employee_number AS reports_to_employee_number
            ,'DF' AS source_system
      FROM gabby.dayforce.employee_manager_clean dm
-     JOIN gabby.adp.employees_all sre
-       ON dm.employee_reference_code = sre.file_number
-      AND sre.file_number NOT IN (101640, 102602, 400011, 102641, 300082) /*  HR incapable of fixing these multiple employee numbers */
-     JOIN gabby.adp.employees_all srm
-       ON dm.manager_employee_number = srm.file_number
-      AND srm.file_number NOT IN (101640, 102602, 400011, 102641, 300082) /*  HR incapable of fixing these multiple employee numbers */
+     JOIN gabby.people.employee_numbers sre
+       ON dm.employee_reference_code = sre.employee_number
+      AND sre.is_active = 1
+     JOIN gabby.people.employee_numbers srm
+       ON dm.manager_employee_number = srm.employee_number
+      AND srm.is_active = 1
      WHERE CONVERT(DATE, dm.manager_effective_start) <= '2020-12-31'
     ) sub

@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW people.salary_history AS
+--CREATE OR ALTER VIEW people.salary_history AS
 
 SELECT sub.employee_number
       ,sub.associate_id
@@ -40,13 +40,13 @@ FROM
            ,CONVERT(MONEY, sh.regular_pay_rate_amount) AS regular_pay_rate_amount
            ,sh.compensation_change_reason_description
 
-           ,sr.file_number AS employee_number
+           ,sr.employee_number
 
            ,'ADP' AS source_system
      FROM gabby.adp.salary_history sh
-     JOIN gabby.adp.employees_all sr
+     JOIN gabby.people.employee_numbers sr
        ON sh.associate_id = sr.associate_id
-      AND sr.file_number NOT IN (100814, 102496, 101652, 102634, 102641, 300082) /*  HR incapable of fixing these multiple employee numbers */
+      AND sr.is_active = 1
      WHERE (CONVERT(DATE, sh.regular_pay_effective_date) < CONVERT(DATE, sh.regular_pay_effective_end_date)
               OR sh.regular_pay_effective_end_date IS NULL)
        AND ('2021-01-01' BETWEEN CONVERT(DATE, sh.regular_pay_effective_date) AND COALESCE(CONVERT(DATE, sh.regular_pay_effective_end_date), GETDATE())
@@ -66,14 +66,13 @@ FROM
            ,ds.base_salary AS annual_salary
            ,NULL AS regular_pay_rate_amount
            ,ds.status_reason_description AS compensation_change_reason_description
-
-           ,sr.file_number AS employee_number
+           ,ds.number AS employee_number
 
            ,'DF' AS source_system
      FROM gabby.dayforce.employee_status_clean ds
-     JOIN gabby.adp.employees_all sr
-       ON ds.number = sr.file_number
-      AND sr.file_number NOT IN (101640, 102602, 400011, 102641, 300082) /*  HR incapable of fixing these multiple employee numbers */
+     JOIN gabby.people.employee_numbers sr
+       ON ds.number = sr.employee_number
+      AND sr.is_active = 1
      WHERE CONVERT(DATE, ds.effective_start) <= '2020-12-31'
     ) sub
 WHERE sub.annual_salary > 0
