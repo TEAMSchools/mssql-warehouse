@@ -1,7 +1,7 @@
 USE gabby
 GO
 
---CREATE OR ALTER VIEW people.employment_history AS
+CREATE OR ALTER VIEW people.employment_history AS
 
 WITH validdates AS (
   SELECT employee_number

@@ -1,7 +1,7 @@
 USE gabby
 GO
 
---CREATE OR ALTER VIEW people.work_assignment_history AS
+CREATE OR ALTER VIEW people.work_assignment_history AS
 
 SELECT sub.employee_number
       ,sub.associate_id

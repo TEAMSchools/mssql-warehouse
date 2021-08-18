@@ -1,7 +1,7 @@
 USE gabby
 GO
 
---CREATE OR ALTER VIEW tableau.staff_roster AS
+CREATE OR ALTER VIEW tableau.staff_roster AS
 
 SELECT df.df_employee_number
       ,df.adp_associate_id AS associate_id

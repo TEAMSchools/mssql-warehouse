@@ -1,7 +1,7 @@
 USE gabby
 GO
 
---CREATE OR ALTER VIEW people.staff_crosswalk AS
+CREATE OR ALTER VIEW people.staff_crosswalk AS
 
 SELECT sub.employee_number AS df_employee_number
       ,sub.associate_id AS adp_associate_id
