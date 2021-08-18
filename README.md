@@ -11,15 +11,10 @@ Based on a work at [http://www.sqlstyle.guide][sqlstyleguide] and the [Kickstart
 * Use [snake_case][snake_case] for all identifiers.
 * Use consistent and descriptive identifiers and names.
 * Make judicious use of white space and indentation to make code easier to read.
-* Store [ISO-8601][iso-8601] compliant time and date information
-  (`YYYY-MM-DD HH:MM:SS.SSSSS`).
-* Try to use only standard SQL functions instead of vendor specific functions for
-  reasons of portability.
-* Keep code succinct and devoid of redundant SQL—such as unnecessary quoting or
-  parentheses or `WHERE` clauses that can otherwise be derived.
-* Include comments in SQL code where necessary. Use the C style opening `/*` and
-  closing `*/` where possible otherwise precede comments with `--` and finish
-  them with a new line.
+* Store [ISO-8601][iso-8601] compliant time and date information (`YYYY-MM-DD HH:MM:SS.SSSSS`).
+* Try to use only standard SQL functions instead of vendor specific functions for reasons of portability.
+* Keep code succinct and devoid of redundant SQL—such as unnecessary quoting or parentheses or `WHERE` clauses that can otherwise be derived.
+* Include comments in SQL code where necessary. Use the C style opening `/*` and closing `*/` where possible otherwise precede comments with `--` and finish them with a new line.
 
 ```sql
 SELECT file_hash  -- stored ssdeep hash
@@ -38,11 +33,9 @@ UPDATE file_system
 
 * CamelCase—it is difficult to scan quickly.
 * Descriptive prefixes or Hungarian notation such as `sp_` or `tbl`.
-* Plurals—use the more natural collective term where possible instead. For example
-  `staff` instead of `employees` or `people` instead of `individuals`.
+* Plurals—use the more natural collective term where possible instead. For example `staff` instead of `employees` or `people` instead of `individuals`.
 * Quoted identifiers.
-* Object oriented design principles should not be applied to SQL or database
-  structures.
+* Object oriented design principles should not be applied to SQL or database structures.
 
 ## Naming conventions
 
@@ -63,7 +56,6 @@ SELECT first_name
 
 ### Tables
 
-* 
 * Use a collective name or, less ideally, a plural form. For example (in order of preference) `staff` and `employees`.
 * Never give a table the same name as one of its columns and vice versa.
 * Do not prefix with `tbl` or any other such descriptive prefix or Hungarian notation.
@@ -79,75 +71,53 @@ SELECT first_name
 
 * Always include the `AS` keyword—makes it easier to read as it is explicit.
 * Should relate in some way to the object or expression they are aliasing.
-* As a rule of thumb, a table alias should be the first letter of each word
-  in the object's name.
+* As a rule of thumb, a table alias should be the first letter of each word in the object's name.
 * If there is already a table alias with the same name then append a number.
-* For computed data (`SUM()` or `AVG()`) use the name you would give it were it
-  a column defined in the schema.
+* For computed data (`SUM()` or `AVG()`) use the name you would give it were it a column defined in the schema.
 
 ```sql
 SELECT first_name AS fn
-  FROM staff AS s1
-  JOIN students AS s2
-    ON s2.mentor_id = s1.staff_num;
+FROM staff AS s1
+JOIN students AS s2
+  ON s2.mentor_id = s1.staff_num;
 ```
+
 ```sql
 SELECT SUM(s.monitor_tally) AS monitor_total
-  FROM staff AS s;
+FROM staff AS s;
 ```
 
 ### Stored procedures
 
 * The name must contain a verb.
-* Do not prefix with `sp_` or any other such descriptive prefix or Hungarian
-  notation.
+* Do not prefix with `sp_` or any other such descriptive prefix or Hungarian notation.
 
 ### Uniform suffixes
 
 The following suffixes have a universal meaning ensuring the columns can be read
 and understood easily from SQL code. Use the correct suffix where appropriate.
 
-* `_id`—a unique identifier such as a column that is a primary key.
-* `_status`—flag value or some other status of any type such as `publication_status`.
-* `_total`—the total or sum of a collection of values.
-* `_num`—denotes the field contains any kind of number.
-* `_name`—signifies a name such as `first_name`.
-* `_seq`—contains a contiguous sequence of values.
-* `_date`—denotes a column that contains the date of something.
-* `_tally`—a count.
-* `_size`—the size of something such as a file size or clothing.
-* `_addr`—an address for the record could be physical or intangible such as `ip_addr`.
+* `_id`: a unique identifier such as a column that is a primary key.
+* `_name`: signifies a name such as `first_name`.
+* `_date`: denotes a column that contains the date of something.
+* `_num`: denotes the field contains any kind of number.
+* `_total`: the total or sum of a collection of values.
 
 ## Query syntax
 
 ### Reserved words
 
-Always use uppercase for the [reserved keywords][reserved-keywords]
-like `SELECT` and `WHERE`.
-
-It is best to avoid the abbreviated keywords and use the full length ones where
-available (prefer `ABSOLUTE` to `ABS`).
-
-Do not use database server specific keywords where an ANSI SQL keyword already
-exists performing the same function. This helps to make code more portable.
-
-```sql
-SELECT model_num
-  FROM phones AS p
- WHERE p.release_date > '2014-09-30';
-```
+* Always use uppercase for the [reserved keywords][reserved-keywords] like `SELECT` and `WHERE`.
+* It is best to avoid the abbreviated keywords and use the full length ones where available (prefer `ABSOLUTE` to `ABS`).
+* Do not use database server specific keywords where an ANSI SQL keyword already exists performing the same function. This helps to make code more portable.
 
 ### White space
 
-To make the code easier to read it is important that the correct compliment of
-spacing is used. Do not crowd code or remove natural language spaces.
+To make the code easier to read it is important that the correct compliment of spacing is used. Do not crowd code or remove natural language spaces.
 
 #### Spaces
 
-Spaces should be used to line up the code so that the root keywords all end on
-the same character boundary. This forms a river down the middle making it easy for
-the readers eye to scan over the code and separate the keywords from the
-implementation detail. Rivers are [bad in typography][rivers], but helpful here.
+<!-- Spaces should be used to line up the code so that the root keywords all end on the same character boundary. This forms a river down the middle making it easy for the readers eye to scan over the code and separate the keywords from the implementation detail. Rivers are [bad in typography][rivers], but helpful here.
 
 ```sql
 (SELECT f.species_name,
@@ -170,20 +140,19 @@ implementation detail. Rivers are [bad in typography][rivers], but helpful here.
 ```
 
 Notice that `SELECT`, `FROM`, etc. are all right aligned while the actual column
-names and implementation specific details are left aligned.
+names and implementation specific details are left aligned. -->
 
 Although not exhaustive always include spaces:
 
 * before and after equals (`=`)
 * after commas (`,`)
-* surrounding apostrophes (`'`) where not within parentheses or with a trailing
-  comma or semicolon.
+* surrounding apostrophes (`'`) where not within parentheses or with a trailing comma or semicolon.
 
 ```sql
 SELECT a.title, a.release_date, a.recording_date
-  FROM albums AS a
- WHERE (a.title = 'Charcoal Lane'
-          OR a.title = 'The New Danger');
+FROM albums a
+WHERE (a.title = 'Charcoal Lane' 
+        OR a.title = 'The New Danger');
 ```
 
 #### Line spacing
@@ -194,12 +163,9 @@ Always include newlines/vertical space:
 * after semicolons to separate queries for easier reading
 * after each column identifier
 * after a comma when separating multiple columns into logical groups
-* to separate code into related sections, which helps to ease the readability of
-  large chunks of code.
+* to separate code into related sections, which helps to ease the readability of large chunks of code.
 
-Keeping all the keywords aligned to the righthand side and the values left aligned
-creates a uniform gap down the middle of query. It makes it much easier to scan
-the query definition over quickly too.
+<!-- Keeping all the keywords aligned to the righthand side and the values left aligned creates a uniform gap down the middle of query. It makes it much easier to scan the query definition over quickly too. -->
 
 ```sql
 INSERT INTO albums (title, release_date, recording_date)
@@ -209,16 +175,16 @@ VALUES ('Charcoal Lane', '1990-01-01 01:01:01.00000', '1990-01-01 01:01:01.00000
 
 ```sql
 UPDATE albums
-   SET release_date = '1990-01-01 01:01:01.00000'
- WHERE title = 'The New Danger';
+SET release_date = '1990-01-01 01:01:01.00000'
+WHERE title = 'The New Danger';
 ```
 
 ```sql
 SELECT a.title,
        a.release_date, a.recording_date, a.production_date -- grouped dates together
-  FROM albums AS a
- WHERE (a.title = 'Charcoal Lane'
-          OR a.title = 'The New Danger');
+FROM albums AS a
+WHERE (a.title = 'Charcoal Lane'
+        OR a.title = 'The New Danger');
 ```
 
 ### Joins
@@ -229,9 +195,6 @@ SELECT a.title,
 * Additional filters in the `INNER JOIN` go on new indented lines.
 * Begin with `INNER JOIN`s and then list `LEFT JOIN`s, order them semantically, and do not intermingle them unless necessary.
 
-```
-example...
-```
 
 ### Subqueries
 
@@ -242,42 +205,41 @@ example...
 ```sql
 SELECT r.last_name,
        (SELECT MAX(YEAR(championship_date))
-          FROM champions AS c
-         WHERE c.last_name = r.last_name
-           AND c.confirmed = 'Y') AS last_championship_year
-  FROM riders AS r
- WHERE r.last_name IN
-       (SELECT c.last_name
-          FROM champions AS c
-         WHERE YEAR(championship_date) > '2008'
-           AND c.confirmed = 'Y');
+        FROM champions AS c
+        WHERE c.last_name = r.last_name
+          AND c.confirmed = 'Y') AS last_championship_year
+FROM riders AS r
+WHERE r.last_name IN (
+    SELECT c.last_name
+    FROM champions AS c
+    WHERE YEAR(championship_date) > '2008'
+      AND c.confirmed = 'Y'
+  );
 ```
 
 ### Preferred formalisms
 
 * Make use of `BETWEEN` where possible instead of combining multiple statements with `AND`.
-* Similarly, use `IN()` instead of multiple `OR` clauses.
+* Similarly, use `IN ()` instead of multiple `OR` clauses.
 * Where a value needs to be interpreted before leaving the database use the `CASE` expression. `CASE` statements can be nested to form more complex logical structures.
-* Avoid the use of `UNION` clauses and temporary tables where possible. If the schema can be optimised to remove the reliance on these features then it most likely should be.
+<!-- * Avoid the use of `UNION` clauses and temporary tables where possible. If the schema can be optimised to remove the reliance on these features then it most likely should be. -->
 
 ```sql
 SELECT CASE postcode
-       WHEN 'BN1' THEN 'Brighton'
-       WHEN 'EH1' THEN 'Edinburgh'
+        WHEN 'BN1' THEN 'Brighton'
+        WHEN 'EH1' THEN 'Edinburgh'
        END AS city
-  FROM office_locations
- WHERE country = 'United Kingdom'
-   AND opening_time BETWEEN 8 AND 9
-   AND postcode IN ('EH1', 'BN1', 'NN1', 'KW1')
+FROM office_locations
+WHERE country = 'United Kingdom'
+  AND opening_time BETWEEN 8 AND 9
+  AND postcode IN ('EH1', 'BN1', 'NN1', 'KW1')
 ```
 
-## Create syntax
+<!-- ## Create syntax
 
-When declaring schema information it is also important to maintain human
-readable code. To facilitate this ensure the column definitions are ordered and
-grouped where it makes sense to do so.
+When declaring schema information it is also important to maintain human readable code. To facilitate this ensure the column definitions are ordered and grouped where it makes sense to do so.
 
-Indent column definitions by four (4) spaces within the `CREATE` definition.
+Indent column definitions by four (4) spaces within the `CREATE` definition. -->
 
 ### Choosing data types
 
@@ -290,63 +252,41 @@ Indent column definitions by four (4) spaces within the `CREATE` definition.
 
 ### Constraints and keys
 
-Constraints and their subset, keys, are a very important component of any
-database definition. They can quickly become very difficult to read and reason
-about though so it is important that a standard set of guidelines are followed.
+Constraints and their subset, keys, are a very important component of any database definition. They can quickly become very difficult to read and reason about though so it is important that a standard set of guidelines are followed.
 
 #### Choosing keys
 
-Deciding the column(s) that will form the keys in the definition should be a
-carefully considered activity as it will effect performance and data integrity.
+Deciding the column(s) that will form the keys in the definition should be a carefully considered activity as it will effect performance and data integrity.
 
 1. The key should be unique to some degree.
-2. Consistency in terms of data type for the value across the schema and a lower
-   likelihood of this changing in the future.
-3. Can the value be validated against a standard format (such as one published by
-   ISO)? Encouraging conformity to point 2.
-4. Keeping the key as simple as possible whilst not being scared to use compound
-   keys where necessary.
+2. Consistency in terms of data type for the value across the schema and a lower likelihood of this changing in the future.
+3. Can the value be validated against a standard format (such as one published by ISO)? Encouraging conformity to point 2.
+4. Keeping the key as simple as possible whilst not being scared to use compound keys where necessary.
 
-It is a reasoned and considered balancing act to be performed at the definition
-of a database. Should requirements evolve in the future it is possible to make
-changes to the definitions to keep them up to date.
+It is a reasoned and considered balancing act to be performed at the definition of a database. Should requirements evolve in the future it is possible to make changes to the definitions to keep them up to date.
 
 #### Defining constraints
 
-Once the keys are decided it is possible to define them in the system using
-constraints along with field value validation.
+Once the keys are decided it is possible to define them in the system using constraints along with field value validation.
 
 ##### General
 
 * Tables must have at least one key to be complete and useful.
-* Constraints should be given a custom name excepting `UNIQUE`, `PRIMARY KEY`
-  and `FOREIGN KEY` where the database vendor will generally supply sufficiently
-  intelligible names automatically.
+* Constraints should be given a custom name excepting `UNIQUE`, `PRIMARY KEY` and `FOREIGN KEY` where the database vendor will generally supply sufficiently intelligible names automatically.
 
 ##### Layout and order
 
 * Specify the primary key first right after the `CREATE TABLE` statement.
-* Constraints should be defined directly beneath the column they correspond to.
-  Indent the constraint so that it aligns to the right of the column name.
-* If it is a multi-column constraint then consider putting it as close to both
-  column definitions as possible and where this is difficult as a last resort
-  include them at the end of the `CREATE TABLE` definition.
-* If it is a table level constraint that applies to the entire table then it
-  should also appear at the end.
+* Constraints should be defined directly beneath the column they correspond to. Indent the constraint so that it aligns to the right of the column name.
+* If it is a multi-column constraint then consider putting it as close to both column definitions as possible and where this is difficult as a last resort include them at the end of the `CREATE TABLE` definition.
+* If it is a table level constraint that applies to the entire table then it should also appear at the end.
 * Use alphabetical order where `ON DELETE` comes before `ON UPDATE`.
-* If it make senses to do so align each aspect of the query on the same character
-  position. For example all `NOT NULL` definitions could start at the same
-  character position. This is not hard and fast, but it certainly makes the code
-  much easier to scan and read.
+* If it make senses to do so align each aspect of the query on the same character position. For example all `NOT NULL` definitions could start at the same character position. This is not hard and fast, but it certainly makes the code much easier to scan and read.
 
 ##### Validation
 
-* Use `LIKE` and `SIMILAR TO` constraints to ensure the integrity of strings
-  where the format is known.
-* Where the ultimate range of a numerical value is known it must be written as a
-  range `CHECK()` to prevent incorrect values entering the database or the silent
-  truncation of data too large to fit the column definition. In the least it
-  should check that the value is greater than zero in most cases.
+* Use `LIKE` and `SIMILAR TO` constraints to ensure the integrity of strings where the format is known.
+* Where the ultimate range of a numerical value is known it must be written as a range `CHECK()` to prevent incorrect values entering the database or the silent truncation of data too large to fit the column definition. In the least it should check that the value is greater than zero in most cases.
 * `CHECK()` constraints should be kept in separate clauses to ease debugging.
 
 ##### Example
@@ -365,8 +305,7 @@ CREATE TABLE staff (
 ### Designs to avoid
 
 * Object oriented design principles do not effectively translate to relational database designs—avoid this pitfall.
-* Placing the value in one column and the units in another column. The column should make the units self evident to prevent the requirement to combine
-  columns again later in the application. Use `CHECK()` to ensure valid data is inserted into the column.
+* Placing the value in one column and the units in another column. The column should make the units self evident to prevent the requirement to combine columns again later in the application. Use `CHECK()` to ensure valid data is inserted into the column.
 * [EAV (Entity Attribute Value)][eav] tables—use a specialist product intended for handling such schema-less data instead.
 * Splitting up data that should be in one table across many because of arbitrary concerns such as time-based archiving or location in a multi-national organisation. Later queries must then work across multiple tables with `UNION` rather than just simply querying one table.
 
