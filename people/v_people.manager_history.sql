@@ -31,8 +31,7 @@ FROM
      /* ADP */
      SELECT mh.associate_id
            ,mh.position_id
-           --,sre.employee_number AS file_number
-           ,NULL AS file_number
+           ,mh.file_number
            ,mh.reports_to_associate_id
            ,CASE 
              WHEN CONVERT(DATE, mh.reports_to_effective_date) > '2021-01-01' THEN CONVERT(DATE, mh.reports_to_effective_date)
@@ -61,8 +60,7 @@ FROM
      SELECT sre.associate_id AS associate_id
 
            ,dm.position_id
-           --,dm.employee_reference_code AS file_number
-           ,NULL AS file_number
+           ,dm.employee_reference_code AS file_number
 
            ,srm.associate_id AS reports_to_associate_id
 

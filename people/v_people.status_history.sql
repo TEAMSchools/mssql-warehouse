@@ -39,8 +39,7 @@ FROM
      /* ADP */
      SELECT sh.associate_id
            ,sh.position_id
-           --,sh.file_number
-           ,NULL AS file_number
+           ,sh.file_number
            ,sh.position_status
            ,CASE 
              WHEN CONVERT(DATE, status_effective_date) > '2021-01-01' THEN CONVERT(DATE, status_effective_date)
@@ -67,8 +66,7 @@ FROM
      SELECT sr.associate_id
 
            ,ds.position_id
-           --,ds.number AS file_number
-           ,NULL AS file_number
+           ,ds.number AS file_number
            ,ds.[status] AS position_status
            ,ds.effective_start AS status_effective_date
            ,CASE
