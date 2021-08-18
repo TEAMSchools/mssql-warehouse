@@ -8,6 +8,7 @@ WITH all_staff AS (
   SELECT eh.employee_number
         ,eh.associate_id
         ,eh.position_id
+        ,eh.file_number
         ,eh.termination_reason
         ,eh.job_title
         ,eh.home_department
@@ -31,6 +32,7 @@ WITH all_staff AS (
   SELECT ps.employee_number
         ,ps.associate_id
         ,ps.position_id
+        ,ps.file_number
         ,ps.termination_reason
         ,ps.job_title
         ,ps.home_department
@@ -56,6 +58,7 @@ WITH all_staff AS (
         ,sub.associate_id
         ,sub.associate_oid
         ,sub.position_id
+        ,sub.file_number
         ,sub.first_name
         ,sub.last_name
         ,sub.position_status
@@ -123,6 +126,7 @@ WITH all_staff AS (
        SELECT eh.employee_number
              ,eh.associate_id
              ,eh.position_id
+             ,eh.file_number
              ,eh.termination_reason
              ,eh.job_title
              ,eh.home_department
@@ -258,6 +262,7 @@ SELECT c.employee_number
       ,c.associate_id
       ,c.associate_oid
       ,c.position_id
+      ,c.file_number
       ,c.first_name
       ,c.last_name
       ,c.position_status

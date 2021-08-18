@@ -5,6 +5,8 @@ CREATE OR ALTER VIEW tableau.staff_roster AS
 
 SELECT df.df_employee_number
       ,df.adp_associate_id AS associate_id
+      ,df.position_id
+      ,df.file_number
       ,df.first_name
       ,df.last_name
       ,df.preferred_first_name AS preferred_first

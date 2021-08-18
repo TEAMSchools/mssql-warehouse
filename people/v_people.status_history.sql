@@ -6,6 +6,7 @@ CREATE OR ALTER VIEW people.status_history AS
 SELECT sub.employee_number
       ,sub.associate_id
       ,sub.position_id
+      ,sub.file_number
       ,sub.position_status
       ,sub.leave_reason_description
       ,sub.paid_leave_of_absence
@@ -38,6 +39,8 @@ FROM
      /* ADP */
      SELECT sh.associate_id
            ,sh.position_id
+           --,sh.file_number
+           ,sr.employee_number AS file_number
            ,sh.position_status
            ,CASE 
              WHEN CONVERT(DATE, status_effective_date) > '2021-01-01' THEN CONVERT(DATE, status_effective_date)
@@ -48,13 +51,13 @@ FROM
            ,sh.leave_reason_description
            ,sh.paid_leave_of_absence
 
-           ,sr.file_number AS employee_number
+           ,sr.employee_number
 
            ,'ADP' AS source_system
      FROM gabby.adp.status_history sh
-     JOIN gabby.adp.employees_all sr
+     JOIN gabby.people.employee_numbers sr
        ON sh.associate_id = sr.associate_id
-      AND sr.file_number NOT IN (100814, 102496, 101652, 102634, 102641, 300082) /*  HR incapable of fixing these multiple employee numbers */
+      AND sr.is_active = 1
      WHERE CONVERT(DATE, sh.status_effective_date) > '2021-01-01'
              OR COALESCE(CONVERT(DATE, sh.status_effective_end_date), GETDATE()) > '2021-01-01'
 
@@ -64,6 +67,7 @@ FROM
      SELECT sr.associate_id
 
            ,ds.position_id
+           ,ds.number AS file_number
            ,ds.[status] AS position_status
            ,ds.effective_start AS status_effective_date
            ,CASE
@@ -73,13 +77,11 @@ FROM
            ,CASE WHEN ds.[status] = 'Terminated' THEN ds.status_reason_description END AS termination_reason_description
            ,CASE WHEN ds.[status] IN ('Administrative Leave', 'Medical Leave of Absence', 'Personal Leave of Absence') THEN ds.status_reason_description END AS leave_reason_description
            ,NULL AS paid_leave_of_absence
-
-           ,sr.file_number AS employee_number
-
+           ,ds.number AS employee_number
            ,'DF' AS source_system
      FROM gabby.dayforce.employee_status_clean ds
-     JOIN gabby.adp.employees_all sr
-       ON ds.number = sr.file_number
-      AND sr.file_number NOT IN (101640, 102602, 400011, 102641, 300082) /*  HR incapable of fixing these multiple employee numbers */
+     JOIN gabby.people.employee_numbers sr
+       ON ds.number = sr.employee_number
+      AND sr.is_active = 1
      WHERE ds.effective_start <= '2020-12-31'
     ) sub

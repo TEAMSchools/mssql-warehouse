@@ -5,6 +5,8 @@ CREATE OR ALTER VIEW people.staff_crosswalk AS
 
 SELECT sub.employee_number AS df_employee_number
       ,sub.associate_id AS adp_associate_id
+      ,sub.position_id
+      ,sub.file_number
       ,CONVERT(NVARCHAR(32), NULL) AS salesforce_id
       ,sub.first_name
       ,sub.last_name
@@ -71,6 +73,8 @@ FROM
     (
      SELECT sr.employee_number
            ,sr.associate_id
+           ,sr.position_id
+           ,sr.file_number
            ,sr.first_name
            ,sr.last_name
            ,sr.sex
