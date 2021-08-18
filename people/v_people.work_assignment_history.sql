@@ -37,7 +37,8 @@ FROM
      /* ADP */
      SELECT wah.associate_id
            ,wah.position_id
-           ,wah.file_number
+           --,wah.file_number
+           ,NULL AS file_number
            ,wah.business_unit_code
            ,wah.business_unit_description
            ,wah.home_department_description
@@ -68,7 +69,8 @@ FROM
      SELECT sr.associate_id
 
            ,dwa.position_id
-           ,dwa.employee_reference_code AS file_number
+           --,dwa.employee_reference_code AS file_number
+           ,NULL AS file_number
            ,dwa.legal_entity_code AS business_unit_code
            ,dwa.legal_entity_name AS business_unit_description
            ,dwa.department_name AS home_department_description
