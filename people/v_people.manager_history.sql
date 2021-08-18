@@ -1,7 +1,7 @@
 USE gabby
 GO
 
---CREATE OR ALTER VIEW people.manager_history AS
+CREATE OR ALTER VIEW people.manager_history AS
 
 SELECT sub.employee_number
       ,sub.associate_id
@@ -31,7 +31,8 @@ FROM
      /* ADP */
      SELECT mh.associate_id
            ,mh.position_id
-           ,mh.file_number
+           --,mh.file_number
+           ,sre.employee_number AS file_number
            ,mh.reports_to_associate_id
            ,CASE 
              WHEN CONVERT(DATE, mh.reports_to_effective_date) > '2021-01-01' THEN CONVERT(DATE, mh.reports_to_effective_date)
