@@ -53,6 +53,22 @@ WITH all_staff AS (
     AND (ps.position_status_cur IS NULL OR ps.position_status_cur = 'Terminated')
  )
 
+,rehires AS (
+  SELECT associate_id
+        ,MAX(status_effective_date) AS rehire_date
+  FROM
+      (
+       SELECT associate_id
+             ,position_status
+             ,status_effective_date
+             ,LAG(position_status) OVER(PARTITION BY position_id ORDER BY status_effective_date) AS position_status_prev
+       FROM gabby.people.status_history_static
+      ) sub
+  WHERE position_status_prev = 'Terminated'
+    AND position_status <> 'Terminated'
+  GROUP BY associate_id
+ )
+
 ,clean_staff AS (
   SELECT sub.employee_number
         ,sub.associate_id
@@ -228,7 +244,6 @@ WITH all_staff AS (
              ,w.preferred_name_given AS preferred_first_name
              ,w.preferred_name_family AS preferred_last_name
              ,w.associate_oid
-             ,w.original_hire_date
 
              ,cf.[WFMgr Pay Rule] AS wfmgr_pay_rule
 
@@ -237,19 +252,23 @@ WITH all_staff AS (
              ,p.worker_category_description AS worker_category
              ,p.flsa_description AS flsa
 
+             ,COALESCE(w.original_hire_date, eh.status_effective_start_date) AS original_hire_date
              ,CASE
                WHEN eh.position_status = 'Prestart' THEN NULL
                ELSE w.termination_date
               END AS termination_date
              ,CASE 
+               WHEN eh.position_status = 'Prestart' AND w.termination_date IS NULL THEN NULL
                WHEN eh.position_status = 'Prestart' THEN eh.status_effective_start_date
-               ELSE w.rehire_date
+               ELSE rh.rehire_date
               END AS rehire_date
        FROM all_staff eh
        JOIN gabby.adp.employees_all ea
          ON eh.associate_id = ea.associate_id
        LEFT JOIN gabby.adp.workers_clean_static w
          ON eh.associate_id = w.worker_id
+       LEFT JOIN rehires rh
+         ON eh.associate_id = rh.associate_id
        LEFT JOIN gabby.adp.workers_custom_field_group_wide_static cf
          ON eh.associate_id = cf.worker_id
        LEFT JOIN gabby.people.id_crosswalk_adp cw
