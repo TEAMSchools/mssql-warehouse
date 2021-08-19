@@ -53,7 +53,7 @@ WITH all_staff AS (
     AND (ps.position_status_cur IS NULL OR ps.position_status_cur = 'Terminated')
  )
 
-,status_dates AS (
+,hire_dates AS (
   SELECT associate_id
         ,MIN(CASE WHEN position_status = 'Active' THEN status_effective_date END) AS original_hire_date
         ,MAX(CASE WHEN position_status = 'Terminated' THEN status_effective_date END) AS termination_date
@@ -61,7 +61,23 @@ WITH all_staff AS (
   GROUP BY associate_id
  )
 
-,rehires AS (
+,termination_dates AS (
+  SELECT associate_id
+        ,MAX(status_effective_date) AS termination_date
+  FROM
+      (
+       SELECT associate_id
+             ,position_status
+             ,status_effective_date
+             ,LAG(position_status) OVER(PARTITION BY associate_id ORDER BY status_effective_date) AS position_status_prev
+       FROM gabby.people.status_history_static
+      ) sub
+  WHERE position_status_prev <> 'Terminated'
+    AND position_status = 'Terminated'
+  GROUP BY associate_id
+ )
+
+,rehire_dates AS (
   SELECT associate_id
         ,MAX(status_effective_date) AS rehire_date
   FROM
@@ -260,8 +276,8 @@ WITH all_staff AS (
              ,p.worker_category_description AS worker_category
              ,p.flsa_description AS flsa
 
-             ,COALESCE(w.original_hire_date, sd.original_hire_date) AS original_hire_date
-             ,CASE WHEN eh.position_status = 'Terminated' THEN COALESCE(w.termination_date, sd.termination_date) END AS termination_date
+             ,COALESCE(w.original_hire_date, hd.original_hire_date) AS original_hire_date
+             ,CASE WHEN eh.position_status = 'Terminated' THEN COALESCE(w.termination_date, td.termination_date) END AS termination_date
              ,CASE 
                WHEN eh.position_status = 'Prestart' AND w.termination_date IS NULL THEN NULL
                WHEN eh.position_status = 'Prestart' THEN eh.status_effective_start_date
@@ -272,9 +288,11 @@ WITH all_staff AS (
          ON eh.associate_id = ea.associate_id
        LEFT JOIN gabby.adp.workers_clean_static w
          ON eh.associate_id = w.worker_id
-       LEFT JOIN status_dates sd
-         ON eh.associate_id = sd.associate_id
-       LEFT JOIN rehires rh
+       LEFT JOIN hire_dates hd
+         ON eh.associate_id = hd.associate_id
+       LEFT JOIN termination_dates td
+         ON eh.associate_id = td.associate_id
+       LEFT JOIN rehire_dates rh
          ON eh.associate_id = rh.associate_id
        LEFT JOIN gabby.adp.workers_custom_field_group_wide_static cf
          ON eh.associate_id = cf.worker_id
