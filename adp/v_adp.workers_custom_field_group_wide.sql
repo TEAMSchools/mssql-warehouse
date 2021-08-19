@@ -11,10 +11,13 @@ SELECT associate_oid
       ,[WFMgr Accrual Profile]
       ,[WFMgr EE Type]
       ,[WFMgr Home Hyperfind]
-      ,[WFMgr LOA]
       ,[WFMgr LOA Return Date]
       ,[WFMgr Pay Rule]
       ,[WFMgr Trigger]
+      ,CASE 
+        WHEN [WFMgr LOA] = 'true' THEN 1
+        WHEN [WFMgr LOA] = 'false' THEN 0
+       END AS [WFMgr LOA]
 FROM
     (
      SELECT associate_oid

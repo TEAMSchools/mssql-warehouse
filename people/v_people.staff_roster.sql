@@ -72,7 +72,7 @@ WITH all_staff AS (
         ,sub.annual_salary
         ,sub.position_effective_start_date
         ,sub.position_effective_end_date
-        ,sub.hire_date
+        ,sub.original_hire_date
         ,sub.rehire_date
         ,sub.termination_date
         ,sub.termination_reason
@@ -228,31 +228,35 @@ WITH all_staff AS (
              ,w.preferred_name_given AS preferred_first_name
              ,w.preferred_name_family AS preferred_last_name
              ,w.associate_oid
+             ,w.original_hire_date
 
-             ,p.wfmgr_pay_rule
-             ,p.worker_category_description AS worker_category
-             ,p.flsa_description AS flsa
-             ,CONVERT(DATE, p.rehire_date) AS rehire_date
-             ,CASE 
-               WHEN eh.position_status = 'Prestart' THEN NULL
-               ELSE CONVERT(DATE, p.termination_date) 
-              END AS termination_date
-             ,CASE
-               WHEN eh.position_status = 'Prestart' THEN eh.position_effective_start_date
-               ELSE CONVERT(DATE, p.hire_date)
-              END AS hire_date
+             ,cf.[WFMgr Pay Rule] AS wfmgr_pay_rule
 
              ,cw.adp_associate_id AS associate_id_legacy
+
+             ,p.worker_category_description AS worker_category
+             ,p.flsa_description AS flsa
+
+             ,CASE
+               WHEN eh.position_status = 'Prestart' THEN NULL
+               ELSE w.termination_date
+              END AS termination_date
+             ,CASE 
+               WHEN eh.position_status = 'Prestart' THEN eh.status_effective_start_date
+               ELSE w.rehire_date
+              END AS rehire_date
        FROM all_staff eh
        JOIN gabby.adp.employees_all ea
          ON eh.associate_id = ea.associate_id
        LEFT JOIN gabby.adp.workers_clean_static w
          ON eh.associate_id = w.worker_id
-       LEFT JOIN gabby.adp.employees p
-         ON eh.position_id = p.position_id
+       LEFT JOIN gabby.adp.workers_custom_field_group_wide_static cf
+         ON eh.associate_id = cf.worker_id
        LEFT JOIN gabby.people.id_crosswalk_adp cw
          ON eh.employee_number = cw.df_employee_number
         AND cw.rn_curr = 1
+       LEFT JOIN gabby.adp.employees p
+         ON eh.position_id = p.position_id
        WHERE eh.employee_number IS NOT NULL
       ) sub
   WHERE rn = 1
@@ -275,7 +279,7 @@ SELECT c.employee_number
       ,c.annual_salary
       ,c.position_effective_start_date
       ,c.position_effective_end_date
-      ,c.hire_date AS original_hire_date
+      ,c.original_hire_date
       ,c.rehire_date
       ,c.termination_date
       ,c.termination_reason

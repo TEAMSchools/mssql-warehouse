@@ -16,6 +16,9 @@ SELECT CONVERT(NVARCHAR(32), associate_oid) AS associate_oid
       ,CONVERT(NVARCHAR(64), preferred_name_given) AS preferred_name_given
       ,CONVERT(NVARCHAR(64), preferred_name_middle) AS preferred_name_middle
       ,CONVERT(NVARCHAR(64), preferred_name_family) AS preferred_name_family
+      ,CONVERT(DATE, original_hire_date) AS original_hire_date
+      ,CONVERT(DATE, termination_date) AS termination_date
+      ,CONVERT(DATE, rehire_date) AS rehire_date
 FROM
     (
      SELECT associate_oid
@@ -33,5 +36,9 @@ FROM
            ,JSON_VALUE(person, '$.preferredName.givenName') AS preferred_name_given
            ,JSON_VALUE(person, '$.preferredName.middleName') AS preferred_name_middle
            ,JSON_VALUE(person, '$.preferredName.familyName1') AS preferred_name_family
+
+           ,JSON_VALUE(worker_dates, '$.originalHireDate') AS original_hire_date
+           ,JSON_VALUE(worker_dates, '$.terminationDate') AS termination_date
+           ,JSON_VALUE(worker_dates, '$.rehireDate') AS rehire_date
      FROM gabby.adp.workers
     ) sub
