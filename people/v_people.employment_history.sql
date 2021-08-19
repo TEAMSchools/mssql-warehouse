@@ -70,7 +70,7 @@ SELECT r.employee_number
       ,r.file_number
       ,r.effective_start_date
       ,r.effective_end_date
-      ,CASE WHEN GETDATE() BETWEEN r.effective_start_date AND r.effective_end_date THEN 1 END AS is_current_record
+      ,CASE WHEN CONVERT(DATE, GETDATE()) BETWEEN r.effective_start_date AND r.effective_end_date THEN 1 END AS is_current_record
 
       ,s.position_status
       ,s.termination_reason_description AS termination_reason
