@@ -4,7 +4,10 @@ GO
 CREATE OR ALTER VIEW extracts.deanslist_iready_lessons AS
 
 WITH schoolids AS (
-  SELECT DISTINCT u.[db_name], u.dlschool_id, sc.ps_school_id
+  SELECT DISTINCT 
+         u.[db_name]
+        ,u.dlschool_id
+        ,sc.ps_school_id
   FROM gabby.deanslist.users u
   JOIN gabby.people.school_crosswalk sc
     ON u.school_name = sc.site_name COLLATE Latin1_General_BIN
@@ -28,14 +31,12 @@ SELECT pl.student_id
       ,pl.[subject]
       ,CAST(SUM(CASE WHEN pl.passed_or_not_passed = 'Passed' THEN 1 ELSE 0 END) AS FLOAT) AS lessons_passed
       ,CAST(COUNT(DISTINCT pl.lesson_id) AS FLOAT) AS total_lessons
-      ,ROUND(
-          CAST(SUM(CASE WHEN pl.passed_or_not_passed = 'Passed' THEN 1 ELSE 0 END) AS FLOAT)
-          / CAST(COUNT(pl.lesson_id) AS FLOAT)
-        , 2) * 100 AS pct_passed
+      ,ROUND(CAST(SUM(CASE WHEN pl.passed_or_not_passed = 'Passed' THEN 1 ELSE 0 END) AS FLOAT)
+               / CAST(COUNT(pl.lesson_id) AS FLOAT)
+            ,2) * 100 AS pct_passed
 
      ,t.term_name
      ,t.term_id
-
 FROM gabby.iready.personalized_instruction_by_lesson pl
 JOIN gabby.people.school_crosswalk sc
   ON pl.school = sc.site_name
