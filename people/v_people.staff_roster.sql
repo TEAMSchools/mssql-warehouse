@@ -53,6 +53,14 @@ WITH all_staff AS (
     AND (ps.position_status_cur IS NULL OR ps.position_status_cur = 'Terminated')
  )
 
+,status_dates AS (
+  SELECT associate_id
+        ,MIN(CASE WHEN position_status = 'Active' THEN status_effective_date END) AS original_hire_date
+        ,MAX(CASE WHEN position_status = 'Terminated' THEN status_effective_date END) AS termination_date
+  FROM gabby.people.status_history_static
+  GROUP BY associate_id
+ )
+
 ,rehires AS (
   SELECT associate_id
         ,MAX(status_effective_date) AS rehire_date
@@ -252,11 +260,8 @@ WITH all_staff AS (
              ,p.worker_category_description AS worker_category
              ,p.flsa_description AS flsa
 
-             ,COALESCE(w.original_hire_date, eh.status_effective_start_date) AS original_hire_date
-             ,CASE
-               WHEN eh.position_status = 'Prestart' THEN NULL
-               ELSE w.termination_date
-              END AS termination_date
+             ,COALESCE(w.original_hire_date, sd.original_hire_date) AS original_hire_date
+             ,CASE WHEN eh.position_status = 'Terminated' THEN COALESCE(w.termination_date, sd.termination_date) END AS termination_date
              ,CASE 
                WHEN eh.position_status = 'Prestart' AND w.termination_date IS NULL THEN NULL
                WHEN eh.position_status = 'Prestart' THEN eh.status_effective_start_date
@@ -267,6 +272,8 @@ WITH all_staff AS (
          ON eh.associate_id = ea.associate_id
        LEFT JOIN gabby.adp.workers_clean_static w
          ON eh.associate_id = w.worker_id
+       LEFT JOIN status_dates sd
+         ON eh.associate_id = sd.associate_id
        LEFT JOIN rehires rh
          ON eh.associate_id = rh.associate_id
        LEFT JOIN gabby.adp.workers_custom_field_group_wide_static cf
