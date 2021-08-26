@@ -27,26 +27,6 @@ WITH academic_years AS (
         ,CASE WHEN app.type_for_roll_ups IN ('Alternative Program', 'Organization', 'Other') THEN 1 END AS is_cert
         ,CASE WHEN app.application_account_type IN ('Public 2 yr', 'Private 2 yr') THEN 1 END AS is_2yr
         ,CASE WHEN app.application_account_type IN ('Private 4 yr', 'Public 4 yr') THEN 1 END AS is_4yr
-        --,CASE 
-        --  WHEN app.application_submission_status = 'Submitted' 
-        --   AND app.application_status = 'Accepted'
-        --   AND app.type_for_roll_ups = 'College' 
-        --   AND app.application_account_type IN ('Public 2 yr', 'Private 2 yr')
-        --       THEN 1
-        -- END AS is_accepted_aa
-        --,CASE 
-        --  WHEN app.application_submission_status = 'Submitted' 
-        --   AND app.application_status = 'Accepted'
-        --   AND app.type_for_roll_ups = 'College' 
-        --   AND app.application_account_type IN ('Private 4 yr', 'Public 4 yr')
-        --       THEN 1
-        -- END AS is_accepted_ba
-        --,CASE 
-        --  WHEN app.application_submission_status = 'Submitted' 
-        --   AND app.application_status = 'Accepted'
-        --   AND app.type_for_roll_ups IN ('Alternative Program', 'Organization', 'Other')
-        --       THEN 1
-        -- END AS is_accepted_cert
         ,CASE
           WHEN app.matriculation_decision = 'Matriculated (Intent to Enroll)' 
            AND app.transfer_application = 0
