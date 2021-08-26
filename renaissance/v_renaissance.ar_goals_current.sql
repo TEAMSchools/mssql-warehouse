@@ -39,34 +39,34 @@ WITH roster AS (
           ,reporting_term
  )
 
-,ms_goals AS (
-  SELECT sub.student_number
-        ,sub.term
+--,ms_goals AS (
+--  SELECT sub.student_number
+--        ,sub.term
 
-        ,CONVERT(INT, tiers.words_goal) AS words_goal
-  FROM
-      (
-       SELECT achv.student_number
-             ,COALESCE(s1.[value], s2.[value]) AS term
-             ,COALESCE(COALESCE(achv.indep_lvl_num, achv.lvl_num)
-                      ,LAG(COALESCE(achv.indep_lvl_num, achv.lvl_num), 2) OVER(
-                         PARTITION BY achv.student_number, achv.academic_year 
-                           ORDER BY achv.[start_date])
-                ) AS indep_lvl_num /* Q1 & Q2 are set by BOY, carry them forward for setting goals at beginning of year */
-       FROM gabby.lit.achieved_by_round_static achv
-       LEFT JOIN STRING_SPLIT('AR1,AR2', ',') s1
-         ON achv.reporting_term = 'LIT1'
-       LEFT JOIN STRING_SPLIT('AR3,AR4', ',') s2
-         ON achv.reporting_term = 'LIT2'
-       WHERE achv.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-         AND achv.reporting_term IN ('LIT1','LIT2')
-      ) sub
-  LEFT JOIN gabby.renaissance.ar_goal_criteria goal
-    ON sub.indep_lvl_num BETWEEN goal.[min] AND goal.[max]
-   AND goal.criteria_clean = 'lvl_num'
-  LEFT JOIN gabby.renaissance.ar_tier_goals tiers
-    ON goal.tier = tiers.tier
- )
+--        ,CONVERT(INT, tiers.words_goal) AS words_goal
+--  FROM
+--      (
+--       SELECT achv.student_number
+--             ,COALESCE(s1.[value], s2.[value]) AS term
+--             ,COALESCE(COALESCE(achv.indep_lvl_num, achv.lvl_num)
+--                      ,LAG(COALESCE(achv.indep_lvl_num, achv.lvl_num), 2) OVER(
+--                         PARTITION BY achv.student_number, achv.academic_year 
+--                           ORDER BY achv.[start_date])
+--                ) AS indep_lvl_num /* Q1 & Q2 are set by BOY, carry them forward for setting goals at beginning of year */
+--       FROM gabby.lit.achieved_by_round_static achv
+--       LEFT JOIN STRING_SPLIT('AR1,AR2', ',') s1
+--         ON achv.reporting_term = 'LIT1'
+--       LEFT JOIN STRING_SPLIT('AR3,AR4', ',') s2
+--         ON achv.reporting_term = 'LIT2'
+--       WHERE achv.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+--         AND achv.reporting_term IN ('LIT1','LIT2')
+--      ) sub
+--  LEFT JOIN gabby.renaissance.ar_goal_criteria goal
+--    ON sub.indep_lvl_num BETWEEN goal.[min] AND goal.[max]
+--   AND goal.criteria_clean = 'lvl_num'
+--  LEFT JOIN gabby.renaissance.ar_tier_goals tiers
+--    ON goal.tier = tiers.tier
+-- )
 
 ,indiv_goals AS (
   SELECT student_number
@@ -108,7 +108,8 @@ WITH roster AS (
                WHEN r.is_enrolled = 0 THEN NULL
                WHEN r.grade_level >= 9 THEN NULL
                WHEN r.enroll_status <> 0 THEN -1
-               ELSE COALESCE(g.adjusted_goal, ms.words_goal, CONVERT(INT, df.words_goal))
+               --ELSE COALESCE(g.adjusted_goal, ms.words_goal, CONVERT(INT, df.words_goal))
+               ELSE COALESCE(g.adjusted_goal, CONVERT(INT, df.words_goal))
               END AS words_goal
              ,CASE
                WHEN r.is_enrolled = 0 THEN NULL
@@ -117,9 +118,9 @@ WITH roster AS (
                ELSE COALESCE(g.adjusted_goal, CONVERT(INT, df.points_goal))
               END AS points_goal             
        FROM roster r
-       LEFT JOIN ms_goals ms
-         ON r.student_number = ms.student_number
-        AND r.reporting_term = ms.term
+       --LEFT JOIN ms_goals ms
+       --  ON r.student_number = ms.student_number
+       -- AND r.reporting_term = ms.term
        LEFT JOIN gabby.renaissance.ar_default_goals df
          ON r.grade_level = df.grade_level
         AND r.reporting_term = df.time_period_name
