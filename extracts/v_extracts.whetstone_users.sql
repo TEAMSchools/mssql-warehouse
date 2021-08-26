@@ -15,6 +15,16 @@ WITH managers AS (
   WHERE s.primary_job IN ('School Leader', 'Assistant School Leader', 'Assistant School Leader, SPED')
  )
 
+,existing_roles AS (
+  SELECT sogm.[user_id]
+        ,gabby.dbo.GROUP_CONCAT(DISTINCT '"' + r._id + '"') AS role_ids
+  FROM gabby.whetstone.schools_observation_groups_membership sogm
+  JOIN gabby.whetstone.roles r
+    ON sogm.role_category = r.category
+   AND r.[name] IN ('Teacher', 'Coach')
+  GROUP BY sogm.[user_id]
+ )
+
 SELECT sub.user_internal_id
       ,sub.[user_name]
       ,sub.user_email
@@ -30,7 +40,7 @@ SELECT sub.user_internal_id
       ,sch._id AS school_id
       ,gr._id AS grade_id
       ,cou._id AS course_id
-      ,r._id AS role_id
+      ,'[' + COALESCE(er.role_ids, '"' + r._id + '"') + ']' AS role_id
 FROM
     (
      SELECT CONVERT(VARCHAR(25), scw.df_employee_number) AS user_internal_id
@@ -71,3 +81,5 @@ LEFT JOIN gabby.whetstone.courses cou
  AND cou.archived_at IS NULL
 LEFT JOIN gabby.whetstone.roles r
   ON sub.role_name = r.[name]
+LEFT JOIN existing_roles er
+  ON u.[user_id] = er.[user_id]
