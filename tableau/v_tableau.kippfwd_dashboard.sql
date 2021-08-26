@@ -22,26 +22,31 @@ WITH academic_years AS (
         ,app.application_enrollment_status
         ,app.application_pursuing_degree_type
         ,CASE WHEN app.application_submission_status = 'Submitted' THEN 1 END AS is_submitted
-        ,CASE 
-          WHEN app.application_submission_status = 'Submitted' 
-           AND app.application_status = 'Accepted'
-           AND app.type_for_roll_ups = 'College' 
-           AND app.application_account_type IN ('Public 2 yr', 'Private 2 yr')
-               THEN 1
-         END AS is_accepted_aa
-        ,CASE 
-          WHEN app.application_submission_status = 'Submitted' 
-           AND app.application_status = 'Accepted'
-           AND app.type_for_roll_ups = 'College' 
-           AND app.application_account_type IN ('Private 4 yr', 'Public 4 yr')
-               THEN 1
-         END AS is_accepted_ba
-        ,CASE 
-          WHEN app.application_submission_status = 'Submitted' 
-           AND app.application_status = 'Accepted'
-           AND app.type_for_roll_ups IN ('Alternative Program', 'Organization', 'Other')
-               THEN 1
-         END AS is_accepted_cert
+        ,CASE WHEN app.application_status = 'Accepted' THEN 1 END AS is_accepted
+        ,CASE WHEN app.type_for_roll_ups = 'College' THEN 1 END AS is_college
+        ,CASE WHEN app.type_for_roll_ups IN ('Alternative Program', 'Organization', 'Other') THEN 1 END AS is_cert
+        ,CASE WHEN app.application_account_type IN ('Public 2 yr', 'Private 2 yr') THEN 1 END AS is_2yr
+        ,CASE WHEN app.application_account_type IN ('Private 4 yr', 'Public 4 yr') THEN 1 END AS is_4yr
+        --,CASE 
+        --  WHEN app.application_submission_status = 'Submitted' 
+        --   AND app.application_status = 'Accepted'
+        --   AND app.type_for_roll_ups = 'College' 
+        --   AND app.application_account_type IN ('Public 2 yr', 'Private 2 yr')
+        --       THEN 1
+        -- END AS is_accepted_aa
+        --,CASE 
+        --  WHEN app.application_submission_status = 'Submitted' 
+        --   AND app.application_status = 'Accepted'
+        --   AND app.type_for_roll_ups = 'College' 
+        --   AND app.application_account_type IN ('Private 4 yr', 'Public 4 yr')
+        --       THEN 1
+        -- END AS is_accepted_ba
+        --,CASE 
+        --  WHEN app.application_submission_status = 'Submitted' 
+        --   AND app.application_status = 'Accepted'
+        --   AND app.type_for_roll_ups IN ('Alternative Program', 'Organization', 'Other')
+        --       THEN 1
+        -- END AS is_accepted_cert
         ,CASE
           WHEN app.matriculation_decision = 'Matriculated (Intent to Enroll)' 
            AND app.transfer_application = 0
@@ -61,12 +66,49 @@ WITH academic_years AS (
 
 ,apps_rollup AS (
   SELECT sf_contact_id
-        ,SUM(is_submitted) AS n_submitted
         ,MAX(is_eof) AS is_eof_applicant
-        ,MAX(is_accepted_aa) AS is_accepted_aa
-        ,MAX(is_accepted_ba) AS is_accepted_ba
-        ,MAX(is_accepted_cert) AS is_accepted_cert
         ,MAX(is_matriculated) AS is_matriculated
+
+        ,SUM(is_submitted) AS n_submitted
+        ,MAX(CASE
+              WHEN is_submitted = 1
+               AND is_college = 1
+               AND is_2yr = 1
+                   THEN 1
+             END) AS is_submitted_aa
+        ,MAX(CASE 
+              WHEN is_submitted = 1
+               AND is_college = 1
+               AND is_4yr = 1
+                   THEN 1
+             END) AS is_submitted_ba
+        ,MAX(CASE 
+              WHEN is_submitted = 1
+               AND is_cert = 1
+                   THEN 1
+             END) AS is_submitted_cert
+
+        ,SUM(is_accepted) AS n_accepted
+        ,MAX(CASE 
+              WHEN is_submitted = 1
+               AND is_college = 1
+               AND is_2yr = 1
+               AND is_accepted = 1
+                   THEN 1
+             END) AS is_accepted_aa
+        ,MAX(CASE 
+              WHEN is_submitted = 1
+               AND is_college = 1
+               AND is_4yr = 1
+               AND is_accepted = 1
+                   THEN 1
+             END) AS is_accepted_ba
+        ,MAX(CASE 
+              WHEN is_submitted = 1
+               AND is_cert = 1
+               AND is_accepted =1
+                   THEN 1
+             END) AS is_accepted_cert
   FROM apps
   GROUP BY sf_contact_id
  )
@@ -178,10 +220,14 @@ SELECT c.sf_contact_id
       ,c.efc_from_fafsa
       ,c.ethnicity
       ,c.gender
+      ,c.last_successful_contact_date
+      ,c.last_successful_advisor_contact_date
+      ,c.last_outreach_date
 
       ,ay.academic_year
 
       ,ei.cur_school_name
+      ,ei.cur_account_type
       ,ei.cur_pursuing_degree_type
       ,ei.cur_status
       ,ei.cur_start_date
@@ -190,6 +236,7 @@ SELECT c.sf_contact_id
       ,ei.cur_credits_required_for_graduation
       ,ei.cur_date_last_verified
       ,ei.ecc_school_name
+      ,ei.ecc_account_type
       ,ei.ecc_pursuing_degree_type
       ,ei.ecc_status
       ,ei.ecc_start_date
@@ -199,18 +246,33 @@ SELECT c.sf_contact_id
       ,ei.ecc_date_last_verified
 
       ,ar.n_submitted
-      ,ar.is_eof_applicant
+      ,ar.is_submitted_aa
+      ,ar.is_submitted_ba
+      ,ar.is_submitted_cert
+      ,ar.n_accepted
       ,ar.is_accepted_aa
       ,ar.is_accepted_ba
       ,ar.is_accepted_cert
+      ,ar.is_eof_applicant
       ,ar.is_matriculated
 
-      ,cnr.AASF
-      ,cnr.AASS
+      ,cnr.[AAS1F]
+      ,cnr.[AAS2F]
+      ,cnr.[AAS3F]
+      ,cnr.[AAS4F]
+      ,cnr.[AAS5F]
+      ,cnr.[AAS6F]
+      ,cnr.[AAS1S]
+      ,cnr.[AAS2S]
+      ,cnr.[AAS3S]
+      ,cnr.[AAS4S]
+      ,cnr.[AAS5S]
+      ,cnr.[AAS6S]
       ,cnr.CCDM
       ,cnr.PSCF
       ,cnr.PSCS
       ,cnr.SC
+      ,cnr.HV
 
       ,gpa.fall_cumulative_credits_earned
       ,gpa.fall_cumulative_gpa

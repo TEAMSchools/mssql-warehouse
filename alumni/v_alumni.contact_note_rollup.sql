@@ -15,10 +15,14 @@ SELECT contact_id
       ,[AAS2F]
       ,[AAS3F]
       ,[AAS4F]
+      ,[AAS5F]
+      ,[AAS6F]
       ,[AAS1S]
       ,[AAS2S]
       ,[AAS3S]
       ,[AAS4S]
+      ,[AAS5S]
+      ,[AAS6S]
 
       ,[PSCF]
       ,[PSCS]
@@ -43,6 +47,8 @@ SELECT contact_id
       ,[SM2Q3]
       ,[SM1Q4]
       ,[SM2Q4]
+
+      ,[HV]
 FROM
     (
      SELECT sub.contact_id
@@ -56,6 +62,7 @@ FROM
                 ,CASE
                   WHEN c.subject_c IN ('Summer AAS', 'CCDM') THEN ''
                   WHEN c.subject_c LIKE 'MC%' THEN ''
+                  WHEN c.subject_c LIKE '%HV' THEN ''
                   WHEN c.subject_c LIKE 'SC[0-9]%' THEN ''
                   WHEN c.subject_c LIKE 'Q%' THEN 'Q' + SUBSTRING(c.subject_c, 2, 1)
                   WHEN MONTH(c.date_c) >= 7 THEN 'F'
@@ -67,6 +74,7 @@ FROM
                   WHEN c.subject_c = 'Summer AAS' THEN 'AASS'
                   WHEN c.subject_c LIKE 'Grad Plan%' THEN 'GP'
                   WHEN c.subject_c LIKE 'Q%SM%' THEN 'SM' + SUBSTRING(c.subject_c, 7, 1)
+                  WHEN c.subject_c LIKE '%HV' THEN 'HV'
                   ELSE c.subject_c 
                  END AS contact_subject
                 ,c.date_c AS contact_date
@@ -79,6 +87,7 @@ FROM
                    OR c.subject_c LIKE 'MC%'
                    OR c.subject_c LIKE 'Q%SM%'
                    OR c.subject_c LIKE 'Q%Check%In%'
+                   OR c.subject_c LIKE '%HV'
                   )
             AND c.is_deleted = 0
 
@@ -110,6 +119,10 @@ PIVOT(
                       ,[AAS3S]
                       ,[AAS4F]
                       ,[AAS4S]
+                      ,[AAS5F]
+                      ,[AAS6F]
+                      ,[AAS5S]
+                      ,[AAS6S]
                       ,[PSCF]
                       ,[PSCS]
                       ,[BBBF]
@@ -129,5 +142,6 @@ PIVOT(
                       ,[SM2Q3]
                       ,[SM2Q4]
                       ,[SC]
-                      ,[CCDM])
+                      ,[CCDM]
+                      ,[HV])
  ) p
