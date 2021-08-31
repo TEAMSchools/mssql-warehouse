@@ -125,26 +125,27 @@ SELECT co.studentid
       ,saa.student_web_id
       ,saa.student_web_password
 
-      ,CONVERT(VARCHAR(5),UPPER(
+      ,CONVERT(VARCHAR(5), UPPER(
          CASE
-          WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
-           AND co.rn_year = 1 THEN CASE
-                                    WHEN DB_NAME() = 'kippmiami' THEN (CASE WHEN s.lunchstatus = 'NoD' THEN NULL ELSE s.lunchstatus END)
-                                    ELSE tp.eligibility_name
-                                   END
-          WHEN co.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
-           AND co.entrydate = s.entrydate THEN (CASE WHEN s.lunchstatus = 'NoD' THEN NULL ELSE s.lunchstatus END)
+          WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() AND co.rn_year = 1 
+               THEN CASE
+                     WHEN DB_NAME() = 'kippmiami' THEN (CASE WHEN s.lunchstatus = 'NoD' THEN NULL ELSE s.lunchstatus END)
+                     WHEN tp.is_directly_certified = 1 THEN 'F'
+                     ELSE ti.eligibility_name
+                    END
+          WHEN co.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() AND co.entrydate = s.entrydate 
+               THEN (CASE WHEN s.lunchstatus = 'NoD' THEN NULL ELSE s.lunchstatus END)
           ELSE co.lunchstatus
          END)) AS lunchstatus
       ,CONVERT(VARCHAR(125),
          CASE
-          WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
-           AND co.rn_year = 1 THEN CASE
-                                    WHEN DB_NAME() = 'kippmiami' THEN s.lunchstatus
-                                    WHEN tp.is_directly_certified = 1 THEN 'Direct Certification'
-                                    WHEN COALESCE(tp.application_approved_benefit_type, tp.eligibility_name + ' - ' + tp.eligibility_determination_reason) IS NULL THEN 'No Application'
-                                    ELSE COALESCE(tp.application_approved_benefit_type, tp.eligibility_name + ' - ' + tp.eligibility_determination_reason)
-                                   END
+          WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() AND co.rn_year = 1
+               THEN CASE
+                     WHEN DB_NAME() = 'kippmiami' THEN s.lunchstatus
+                     WHEN tp.is_directly_certified = 1 THEN 'Direct Certification'
+                     WHEN ti.eligibility_name IS NULL THEN 'No Application'
+                     ELSE ti.eligibility_name + ' - ' + 'Income Form'
+                    END
           WHEN co.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
            AND co.entrydate = s.entrydate 
                THEN s.lunchstatus
@@ -184,5 +185,9 @@ LEFT JOIN powerschool.spenrollments_gen_static sp
 LEFT JOIN titan.person_data_clean tp
   ON co.student_number = tp.person_identifier
  AND co.academic_year = tp.application_academic_school_year_clean
+LEFT JOIN titan.income_form_data_clean ti
+  ON co.student_number = ti.student_identifier
+ AND co.academic_year = ti.academic_year_clean
+ AND ti.rn = 1
 LEFT JOIN powerschool.student_contacts_wide_static scw
   ON co.student_number = scw.student_number
