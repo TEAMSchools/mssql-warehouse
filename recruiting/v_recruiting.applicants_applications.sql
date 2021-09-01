@@ -13,32 +13,32 @@ WITH upvt AS (
              ORDER BY date_value DESC) AS rn_curr
   FROM
       (
-       SELECT CONVERT(NVARCHAR(100), apl.candidate_id) AS candidate_id
-             ,CONVERT(NVARCHAR(100), apl.candidate_first_name) AS candidate_first_name
-             ,CONVERT(NVARCHAR(100), apl.candidate_last_name) AS candidate_last_name
-             ,CONVERT(NVARCHAR(100), apl.candidate_email) AS candidate_email
-             ,CONVERT(NVARCHAR(100), apl.taf_current_or_former_kipp_employee) AS taf_current_or_former_kipp_employee
-             ,CONVERT(NVARCHAR(100), apl.mia_teacher_certification_question) AS mia_teacher_certification_question
-             ,CONVERT(NVARCHAR(100), apl.mia_out_of_state_teaching_certification_details) AS mia_out_of_state_teaching_certification_details
-             ,CONVERT(NVARCHAR(100), apl.nj_teacher_certification_question) AS nj_teacher_certification_question
-             ,CONVERT(NVARCHAR(100), apl.nj_out_of_state_teacher_certification_details) AS nj_out_of_state_teacher_certification_details
-             ,CONVERT(NVARCHAR(100), apl.nj_out_of_state_teacher_certification_sped_credits) AS nj_out_of_state_teacher_certification_sped_credits
-             ,CONVERT(NVARCHAR(100), apl.current_employer) AS current_employer
-             ,CONVERT(NVARCHAR(100), apl.taf_affiliated_orgs) AS taf_affiliated_orgs
-             ,CONVERT(NVARCHAR(100), apl.taf_other_orgs) AS taf_other_orgs
-             ,CONVERT(NVARCHAR(100), apl.taf_city_of_interest) AS taf_city_of_interest
-             ,CONVERT(NVARCHAR(100), apl.taf_expected_salary) AS taf_expected_salary
-             ,CONVERT(NVARCHAR(100), apl.kf_race) AS kf_race
-             ,CONVERT(NVARCHAR(100), apl.kf_gender) AS kf_gender
-             ,CONVERT(NVARCHAR(100), apl.kf_are_you_alumnus) AS kf_are_you_alumnus
-             ,CONVERT(NVARCHAR(100), apl.kf_in_which_regions_alumnus) AS kf_in_which_regions_alumnus
-             ,CONVERT(NVARCHAR(100), apl.candidate_tags_values) AS candidate_tags_values
-             ,CONVERT(NVARCHAR(100), NULL) AS school_shared_with --not a live field, but we're adding it later
-             ,CONVERT(NVARCHAR(100), COALESCE(apl.nj_undergrad_gpa
+       SELECT apl.candidate_id
+             ,CONVERT(NVARCHAR(1024), apl.candidate_first_name) AS candidate_first_name
+             ,CONVERT(NVARCHAR(1024), apl.candidate_last_name) AS candidate_last_name
+             ,CONVERT(NVARCHAR(1024), apl.candidate_email) AS candidate_email
+             ,CONVERT(NVARCHAR(1024), apl.taf_current_or_former_kipp_employee) AS taf_current_or_former_kipp_employee
+             ,CONVERT(NVARCHAR(1024), apl.mia_teacher_certification_question) AS mia_teacher_certification_question
+             ,CONVERT(NVARCHAR(1024), apl.mia_out_of_state_teaching_certification_details) AS mia_out_of_state_teaching_certification_details
+             ,CONVERT(NVARCHAR(1024), apl.nj_teacher_certification_question) AS nj_teacher_certification_question
+             ,CONVERT(NVARCHAR(1024), apl.nj_out_of_state_teacher_certification_details) AS nj_out_of_state_teacher_certification_details
+             ,CONVERT(NVARCHAR(1024), apl.nj_out_of_state_teacher_certification_sped_credits) AS nj_out_of_state_teacher_certification_sped_credits
+             ,CONVERT(NVARCHAR(1024), apl.current_employer) AS current_employer
+             ,CONVERT(NVARCHAR(1024), apl.taf_affiliated_orgs) AS taf_affiliated_orgs
+             ,CONVERT(NVARCHAR(1024), apl.taf_other_orgs) AS taf_other_orgs
+             ,CONVERT(NVARCHAR(1024), apl.taf_city_of_interest) AS taf_city_of_interest
+             ,CONVERT(NVARCHAR(1024), apl.taf_expected_salary) AS taf_expected_salary
+             ,CONVERT(NVARCHAR(1024), apl.kf_race) AS kf_race
+             ,CONVERT(NVARCHAR(1024), apl.kf_gender) AS kf_gender
+             ,CONVERT(NVARCHAR(1024), apl.kf_are_you_alumnus) AS kf_are_you_alumnus
+             ,CONVERT(NVARCHAR(1024), apl.kf_in_which_regions_alumnus) AS kf_in_which_regions_alumnus
+             ,CONVERT(NVARCHAR(1024), apl.candidate_tags_values) AS candidate_tags_values
+             ,CONVERT(NVARCHAR(1024), NULL) AS school_shared_with --not a live field, but we're adding it later
+             ,CONVERT(NVARCHAR(1024), COALESCE(apl.nj_undergrad_gpa
                                              ,apl.mia_undergrad_gpa)) AS undergrad_gpa
-             ,CONVERT(NVARCHAR(100), COALESCE(apl.nj_grad_gpa
+             ,CONVERT(NVARCHAR(1024), COALESCE(apl.nj_grad_gpa
                                              ,apl.mia_grad_gpa)) AS grad_gpa
-             ,CONVERT(NVARCHAR(100), COALESCE(apl.taf_current_or_former_kipp_employee
+             ,CONVERT(NVARCHAR(1024), COALESCE(apl.taf_current_or_former_kipp_employee
                                              ,apl.taf_current_or_former_kipp_njmia_employee)) AS current_or_former_kippnjmiataf_employee
              
              ,COALESCE(app.application_state_lead_date
