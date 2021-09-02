@@ -23,7 +23,6 @@ SELECT co.student_number
       ,t.total_balance
 
       ,co.advisor_name AS home_room
-
       ,co.[db_name]
 FROM gabby.powerschool.cohort_identifiers_static co
 LEFT JOIN gabby.titan.person_data_clean t
