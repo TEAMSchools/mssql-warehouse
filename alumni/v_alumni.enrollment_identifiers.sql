@@ -10,6 +10,7 @@ WITH enrollments AS (
         ,MAX(CASE WHEN sub.pursuing_degree_level = 'Vocational' AND sub.rn_degree_desc = 1 THEN sub.enrollment_id END) AS vocational_enrollment_id
         ,MAX(CASE WHEN sub.pursuing_degree_level = 'Secondary' AND sub.rn_degree_desc = 1 THEN sub.enrollment_id END) AS secondary_enrollment_id
         ,MAX(CASE WHEN sub.pursuing_degree_level = 'Graduate' AND sub.rn_degree_desc = 1 THEN sub.enrollment_id END) AS graduate_enrollment_id
+        ,MAX(CASE WHEN sub.pursuing_degree_level = 'Employment' AND sub.rn_degree_desc = 1 THEN sub.enrollment_id END) AS employment_enrollment_id
         ,MAX(CASE WHEN sub.is_ecc_degree_type = 1 AND sub.is_ecc_dated = 1 AND sub.rn_ecc_asc = 1 THEN sub.enrollment_id END) AS ecc_enrollment_id
         ,MAX(CASE WHEN sub.rn_current = 1 THEN sub.enrollment_id END) AS curr_enrollment_id
   FROM
@@ -60,6 +61,22 @@ WITH enrollments AS (
              AND c.is_deleted = 0
             WHERE e.is_deleted = 0
               AND e.status_c <> 'Did Not Enroll'
+
+            UNION ALL
+
+            SELECT e.contact_c
+                  ,e.id AS enrollment_id
+                  ,COALESCE(start_date_c, enlist_date_c, bmt_start_date_c, meps_start_date_c) AS [start_date]
+                  ,COALESCE(
+                      COALESCE(end_date_c, discharge_date_c, bmt_end_date_c, meps_end_date_c)
+                     ,DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1, 6, 30)
+                    ) AS end_date
+                  ,'Employment' AS pursuing_degree_level
+                  ,NULL AS is_graduated
+                  ,NULL AS is_ecc_degree_type
+                  ,NULL AS is_ecc_dated
+            FROM gabby.alumni.employment_c e
+            WHERE e.is_deleted = 0
            ) sub
       ) sub
   GROUP BY sub.student_c
@@ -146,6 +163,14 @@ SELECT sub.student_c
       ,sub.cur_ncesid
       ,sub.cur_adjusted_6_year_minority_graduation_rate
       ,sub.cur_date_last_verified
+      ,sub.emp_status
+      ,sub.emp_category
+      ,sub.emp_date_last_verified
+      ,sub.emp_start_date
+      ,sub.emp_actual_end_date
+      ,sub.emp_billing_state
+      ,sub.emp_ncesid
+      ,sub.emp_name
 
       ,ug.[name] AS ugrad_school_name
       ,ug.pursuing_degree_type_c AS ugrad_pursuing_degree_type
@@ -221,7 +246,7 @@ FROM
            ,ecca.[name] AS ecc_account_name
            ,ecca.adjusted_6_year_minority_graduation_rate_c AS ecc_adjusted_6_year_minority_graduation_rate
 
-           ,hs.name AS hs_school_name      
+           ,hs.[name] AS hs_school_name      
            ,hs.pursuing_degree_type_c AS hs_pursuing_degree_type
            ,hs.status_c AS hs_status
            ,hs.start_date_c AS hs_start_date
@@ -255,6 +280,18 @@ FROM
            ,cura.billing_state AS cur_billing_state
            ,cura.ncesid_c AS cur_ncesid
            ,cura.adjusted_6_year_minority_graduation_rate_c AS cur_adjusted_6_year_minority_graduation_rate
+
+           ,emp.status_c AS emp_status
+           ,emp.category_c AS emp_category
+           ,emp.last_verified_date_c AS emp_date_last_verified
+           ,COALESCE(emp.start_date_c, emp.enlist_date_c, emp.bmt_start_date_c, emp.meps_start_date_c) AS emp_start_date
+           ,COALESCE(emp.end_date_c, emp.discharge_date_c, emp.bmt_end_date_c, emp.meps_end_date_c) AS emp_actual_end_date
+           /*,emp.anticipated_graduation_c AS emp_anticipated_graduation*/
+           /*,emp.of_credits_required_for_graduation_c AS emp_credits_required_for_graduation*/
+           ,empa.billing_state AS emp_billing_state
+           ,empa.ncesid_c AS emp_ncesid
+           /*,empa.adjusted_6_year_minority_graduation_rate_c AS emp_adjusted_6_year_minority_graduation_rate*/
+           ,COALESCE(emp.employer_c, empa.[name], emp.[name]) AS emp_name
      FROM enrollments e
      LEFT JOIN gabby.alumni.enrollment_c ba
        ON e.ba_enrollment_id = ba.id
@@ -292,6 +329,12 @@ FROM
      LEFT JOIN gabby.alumni.account cura
        ON cur.school_c = cura.id
       AND cura.is_deleted = 0
+     LEFT JOIN gabby.alumni.employment_c emp
+       ON e.employment_enrollment_id = emp.id
+      AND emp.is_deleted = 0
+     LEFT JOIN gabby.alumni.account empa
+       ON emp.employer_organization_look_up_c = empa.id
+      AND empa.is_deleted = 0
     ) sub
 LEFT JOIN gabby.alumni.enrollment_c ug
   ON sub.ugrad_enrollment_id = ug.id

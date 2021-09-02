@@ -224,6 +224,14 @@ SELECT c.sf_contact_id
       ,ei.ecc_anticipated_graduation
       ,ei.ecc_credits_required_for_graduation
       ,ei.ecc_date_last_verified
+      ,ei.emp_status
+      ,ei.emp_category
+      ,ei.emp_date_last_verified
+      ,ei.emp_start_date
+      ,ei.emp_actual_end_date
+      ,ei.emp_billing_state
+      ,ei.emp_ncesid
+      ,ei.emp_name
 
       ,ar.n_submitted
       ,ar.is_submitted_aa
