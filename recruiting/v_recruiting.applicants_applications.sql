@@ -185,7 +185,8 @@ SELECT apl.candidate_id
       ,app.time_in_application_state_offered
       ,app.time_in_application_status_in_review_resume_review
       ,CASE 
-        WHEN MONTH(COALESCE(app.application_state_new_date, app.application_state_lead_date)) >= 9 THEN YEAR(COALESCE(app.application_state_new_date, app.application_state_lead_date)) + 1
+        WHEN MONTH(COALESCE(app.application_state_new_date, app.application_state_lead_date)) >= 9
+             THEN YEAR(COALESCE(app.application_state_new_date, app.application_state_lead_date)) + 1
         ELSE YEAR(COALESCE(app.application_state_new_date, app.application_state_lead_date))
        END AS recruiting_year
 FROM applicants_repivot apl
@@ -194,12 +195,14 @@ JOIN gabby.smartrecruiters.report_applications app
 
 UNION ALL
 
-SELECT COALESCE(a.profile_id,a.jobapp_id) AS candidate_id
-      ,SUBSTRING(a.name,0, CHARINDEX(' ', a.name)) AS candidate_first_name
-      ,SUBSTRING(a.name,CHARINDEX(' ', a.name)+1,LEN(a.name)-CHARINDEX(' ', a.name)) AS candidate_last_name
+SELECT COALESCE(a.profile_id, a.jobapp_id) AS candidate_id
+      ,SUBSTRING(a.[name], 1, CHARINDEX(' ', a.[name])) AS candidate_first_name
+      ,SUBSTRING(a.[name]
+                ,CHARINDEX(' ', a.[name]) + 1
+                ,LEN(a.[name])) AS candidate_last_name
       ,a.email AS candidate_email
-      ,CONVERT(nvarchar, a.degree_1_gpa) AS undergrad_gpa
-      ,CONVERT(nvarchar,a.degree_2_gpa) AS grad_gpa
+      ,CONVERT(NVARCHAR, a.degree_1_gpa) AS undergrad_gpa
+      ,CONVERT(NVARCHAR,a.degree_2_gpa) AS grad_gpa
       ,NULL AS taf_current_or_former_kipp_employee
       ,NULL AS mia_teacher_certification_question
       ,NULL AS mia_out_of_state_teaching_certification_details
@@ -217,7 +220,6 @@ SELECT COALESCE(a.profile_id,a.jobapp_id) AS candidate_id
       ,NULL AS kf_are_you_alumnus
       ,NULL AS kf_in_which_regions_alumnus
       ,NULL AS candidate_tags_values
-
       ,a.jobapp_id AS application_id
       ,NULL AS application_reason_for_rejection
       ,a.selection_stage AS application_state
@@ -247,8 +249,7 @@ SELECT COALESCE(a.profile_id,a.jobapp_id) AS candidate_id
       ,NULL AS time_in_application_state_offered
       ,NULL AS time_in_application_status_in_review_resume_review
       ,CASE 
-        WHEN MONTH(CONVERT(DATE,a.submitted_date)) >= 9 THEN YEAR(CONVERT(DATE,a.submitted_date)) + 1
-        ELSE YEAR(CONVERT(DATE,a.submitted_date))
+        WHEN MONTH(CONVERT(DATE, a.submitted_date)) >= 9 THEN YEAR(CONVERT(DATE, a.submitted_date)) + 1
+        ELSE YEAR(CONVERT(DATE, a.submitted_date))
        END AS recruiting_year
-FROM recruiting.applicants a
-
+FROM gabby.recruiting.applicants a
