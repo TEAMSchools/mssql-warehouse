@@ -184,6 +184,71 @@ SELECT apl.candidate_id
       ,app.time_in_application_state_new
       ,app.time_in_application_state_offered
       ,app.time_in_application_status_in_review_resume_review
+      ,CASE 
+        WHEN MONTH(COALESCE(app.application_state_new_date, app.application_state_lead_date)) >= 9 THEN YEAR(COALESCE(app.application_state_new_date, app.application_state_lead_date)) + 1
+        ELSE YEAR(COALESCE(app.application_state_new_date, app.application_state_lead_date))
+       END AS recruiting_year
 FROM applicants_repivot apl
 JOIN gabby.smartrecruiters.report_applications app
   ON apl.candidate_id = app.candidate_id
+
+UNION ALL
+
+SELECT COALESCE(a.profile_id,a.jobapp_id) AS candidate_id
+      ,SUBSTRING(a.name,0, CHARINDEX(' ', a.name)) AS candidate_first_name
+      ,SUBSTRING(a.name,CHARINDEX(' ', a.name)+1,LEN(a.name)-CHARINDEX(' ', a.name)) AS candidate_last_name
+      ,a.email AS candidate_email
+      ,CONVERT(nvarchar, a.degree_1_gpa) AS undergrad_gpa
+      ,CONVERT(nvarchar,a.degree_2_gpa) AS grad_gpa
+      ,NULL AS taf_current_or_former_kipp_employee
+      ,NULL AS mia_teacher_certification_question
+      ,NULL AS mia_out_of_state_teaching_certification_details
+      ,NULL AS nj_teacher_certification_question
+      ,NULL AS nj_out_of_state_teacher_certification_details
+      ,NULL AS nj_out_of_state_teacher_certification_sped_credits
+      ,a.previous_employer AS current_employer
+      ,NULL AS taf_affiliated_orgs
+      ,NULL AS taf_other_orgs
+      ,NULL AS taf_city_of_interest
+      ,NULL AS current_or_former_kippnjmiataf_employee
+      ,NULL AS taf_expected_salary
+      ,a.race_ethnicity AS kf_race
+      ,a.gender AS kf_gender
+      ,NULL AS kf_are_you_alumnus
+      ,NULL AS kf_in_which_regions_alumnus
+      ,NULL AS candidate_tags_values
+
+      ,a.jobapp_id AS application_id
+      ,NULL AS application_reason_for_rejection
+      ,a.selection_stage AS application_state
+      ,a.hired_status_date AS application_state_hired_date
+      ,NULL AS application_state_in_review_date
+      ,a.interview_date AS application_state_interview_date
+      ,NULL AS application_state_lead_date
+      ,a.submitted_date AS application_state_new_date
+      ,a.offer_date AS application_state_offer_date
+      ,a.rejected_date AS application_state_rejected_date
+      ,a.selection_status AS application_status
+      ,NULL AS application_status_in_review_resume_review_date
+      ,a.interview_date AS application_status_interview_demo_date
+      ,a.phone_screen_or_contact_date AS application_status_interview_phone_screen_date
+      ,a.last_modified_date AS application_status_last_change_date
+      ,a.sub_type AS department_internal
+      ,a.city AS job_city
+      ,a.job_posting AS job_title
+      ,a.recruiter AS recruiters
+      ,a.applicant_source AS [source]
+      ,NULL AS source_subtype
+      ,NULL AS source_type
+      ,NULL AS time_in_application_state_in_review
+      ,NULL AS time_in_application_state_interview
+      ,NULL AS time_in_application_state_lead
+      ,NULL AS time_in_application_state_new
+      ,NULL AS time_in_application_state_offered
+      ,NULL AS time_in_application_status_in_review_resume_review
+      ,CASE 
+        WHEN MONTH(CONVERT(DATE,a.submitted_date)) >= 9 THEN YEAR(CONVERT(DATE,a.submitted_date)) + 1
+        ELSE YEAR(CONVERT(DATE,a.submitted_date))
+       END AS recruiting_year
+FROM recruiting.applicants a
+
