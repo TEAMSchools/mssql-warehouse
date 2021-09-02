@@ -7,25 +7,21 @@ WITH all_grades AS (
   SELECT fg.student_number
         ,fg.schoolid
         ,fg.academic_year
-        ,'Y1' AS term              
-        ,fg.course_number                
-        ,fg.course_name      
-        ,fg.credit_hours            
+        ,'Y1' AS term
+        ,fg.course_number
+        ,fg.course_name
+        ,fg.credit_hours
         ,fg.y1_grade_percent_adjusted AS y1_grade_percent
         ,fg.y1_grade_letter
-        ,CASE
-          WHEN fg.schoolid = 73252 THEN 'Rise Academy'
-          WHEN fg.schoolid = 73253 THEN 'Newark Collegiate Academy'
-          WHEN fg.schoolid = 73258 THEN 'BOLD Academy'
-          WHEN fg.schoolid = 179902 THEN 'Lanning Sq Middle School'
-          WHEN fg.schoolid = 179903 THEN 'Whittier Middle School'
-          WHEN fg.schoolid = 133570965 THEN 'TEAM Academy'
-         END AS schoolname        
+        ,sch.[name] AS schoolname
         ,0 AS is_stored
   FROM gabby.powerschool.final_grades_static fg 
-  WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-    AND is_curterm = 1
-    AND ISNULL(excludefromgpa, 0) = 0
+  JOIN gabby.powerschool.schools sch
+    ON fg.schoolid = sch.school_number
+   AND fg.[db_name] = sch.[db_name]
+   AND sch.high_grade IN (8, 12)
+  WHERE fg.is_curterm = 1
+    AND fg.excludefromgpa = 0
 
   UNION ALL
 
@@ -43,7 +39,7 @@ WITH all_grades AS (
   FROM gabby.powerschool.storedgrades sg
   JOIN gabby.powerschool.students s
     ON sg.studentid = s.id
-   AND sg.db_name = s.db_name
+   AND sg.[db_name] = s.[db_name]
   WHERE ISNULL(sg.excludefromgpa, 0) = 0
     AND ISNULL(sg.excludefromtranscripts, 0) = 0
     AND sg.storecode = 'Y1'
