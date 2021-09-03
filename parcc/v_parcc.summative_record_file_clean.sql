@@ -4,12 +4,12 @@ GO
 CREATE OR ALTER VIEW parcc.summative_record_file_clean AS
 
 SELECT state_abbreviation
-      ,COALESCE(CONVERT(VARCHAR(25), testing_district_code), eoy_testing_district_identifier) AS testing_district_code
+      ,COALESCE(CONVERT(NVARCHAR(32), testing_district_code), eoy_testing_district_identifier) AS testing_district_code
       ,COALESCE(testing_school_code, eoy_testing_school_institution_identifier) AS testing_school_code
       ,COALESCE(responsible_accountable_district_code, responsible_district_code, responsible_district_identifier) AS responsible_district_code
       ,COALESCE(responsible_accountable_school_code, responsible_school_code, responsible_school_institution_identifier) AS responsible_school_code
-      ,state_student_identifier
-      ,CONVERT(INT, local_student_identifier) AS local_student_identifier
+      ,CONVERT(NVARCHAR(32), state_student_identifier) AS state_student_identifier
+      ,local_student_identifier
       ,COALESCE(parccstudent_identifier, parcc_student_identifier) AS parccstudent_identifier
       ,COALESCE(last_or_surname, last_name) AS last_or_surname
       ,first_name
@@ -42,8 +42,8 @@ SELECT state_abbreviation
       ,state_field_9
       ,state_field_10
       ,class_name
-      ,CONVERT(VARCHAR(25), test_administrator) AS test_administrator
-      ,CONVERT(VARCHAR(25), staff_member_identifier) AS staff_member_identifier
+      ,CONVERT(NVARCHAR(32), test_administrator) AS test_administrator
+      ,CONVERT(NVARCHAR(32), staff_member_identifier) AS staff_member_identifier
       ,test_code
       ,retest
       ,elaccommodation
@@ -59,8 +59,8 @@ SELECT state_abbreviation
       ,COALESCE(student_reads_assessment_aloudto_self, student_reads_assessment_aloud_to_themselves) AS student_reads_assessment_aloud_to_self
       ,human_signer_for_test_directions
       ,calculation_device_and_mathematics_tools
-      ,COALESCE(CONVERT(VARCHAR, elalconstructed_response), elal_constructed_response) AS elalconstructed_response
-      ,COALESCE(CONVERT(VARCHAR, elalselected_response_or_technology_enhanced_items), elal_selected_response_or_technology_enhanced_items) AS elalselected_response_or_technology_enhanced_items
+      ,COALESCE(CONVERT(NVARCHAR(32), elalconstructed_response), elal_constructed_response) AS elalconstructed_response
+      ,COALESCE(CONVERT(NVARCHAR(32), elalselected_response_or_technology_enhanced_items), elal_selected_response_or_technology_enhanced_items) AS elalselected_response_or_technology_enhanced_items
       ,mathematics_response
       ,monitor_test_response
       ,word_prediction
@@ -121,7 +121,7 @@ SELECT state_abbreviation
       ,unit_4_online_test_end_date_time
       ,assessment_year
       ,assessment_grade
-      ,CONVERT(VARCHAR(125), [subject]) AS [subject]
+      ,CONVERT(VARCHAR(128), [subject]) AS [subject]
       ,federal_race_ethnicity
       ,[period]
       ,testing_organizational_type
@@ -131,9 +131,9 @@ SELECT state_abbreviation
       ,responsible_organizational_type
       ,responsible_district_name
       ,COALESCE(responsible_school_name, responsible_school_institution_name) AS responsible_school_name
-      ,CONVERT(INT, COALESCE(test_scale_score, summative_scale_score)) AS test_scale_score
+      ,COALESCE(test_scale_score, summative_scale_score) AS test_scale_score
       ,COALESCE(test_csemprobable_range, summative_csem) AS test_csemprobable_range
-      ,CONVERT(INT, COALESCE(test_performance_level, summative_performance_level)) AS test_performance_level
+      ,COALESCE(test_performance_level, summative_performance_level) AS test_performance_level
       ,COALESCE(test_reading_scale_score, summative_reading_scale_score) AS test_reading_scale_score
       ,COALESCE(test_reading_csem, summative_reading_csem) AS test_reading_csem
       ,COALESCE(test_writing_scale_score, summative_writing_scale_score) AS test_writing_scale_score
@@ -184,12 +184,12 @@ GO
 CREATE OR ALTER VIEW parcc.summative_record_file_clean AS
 
 SELECT state_abbreviation
-      ,CONVERT(VARCHAR(25),testing_district_code) AS testing_district_code
+      ,CONVERT(NVARCHAR(32), testing_district_code) AS testing_district_code
       ,testing_school_code
       ,COALESCE(responsible_accountable_district_code, responsible_district_code) AS responsible_district_code
       ,COALESCE(responsible_accountable_school_code, responsible_school_code) AS responsible_school_code
-      ,state_student_identifier
-      ,CONVERT(INT,local_student_identifier) AS local_student_identifier
+      ,CONVERT(NVARCHAR(32), state_student_identifier) AS state_student_identifier
+      ,local_student_identifier
       ,parccstudent_identifier
       ,last_or_surname AS last_or_surname
       ,first_name
@@ -222,8 +222,8 @@ SELECT state_abbreviation
       ,state_field_9
       ,NULL AS state_field_10
       ,class_name
-      ,CONVERT(VARCHAR(25), test_administrator) AS test_administrator
-      ,CONVERT(VARCHAR(25), staff_member_identifier) AS staff_member_identifier
+      ,CONVERT(NVARCHAR(32), test_administrator) AS test_administrator
+      ,CONVERT(NVARCHAR(32), staff_member_identifier) AS staff_member_identifier
       ,test_code
       ,retest
       ,elaccommodation
@@ -301,7 +301,7 @@ SELECT state_abbreviation
       ,unit_4_online_test_end_date_time
       ,assessment_year
       ,assessment_grade
-      ,CONVERT(VARCHAR(125), [subject]) AS [subject]
+      ,CONVERT(VARCHAR(128), [subject]) AS [subject]
       ,federal_race_ethnicity
       ,[period]
       ,testing_organizational_type
@@ -311,9 +311,9 @@ SELECT state_abbreviation
       ,responsible_organizational_type
       ,responsible_district_name
       ,responsible_school_name
-      ,CONVERT(INT, test_scale_score) AS test_scale_score
+      ,test_scale_score
       ,test_csemprobable_range
-      ,CONVERT(INT, test_performance_level) AS test_performance_level
+      ,test_performance_level
       ,test_reading_scale_score
       ,test_reading_csem
       ,test_writing_scale_score
