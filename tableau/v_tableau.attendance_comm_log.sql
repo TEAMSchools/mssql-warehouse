@@ -25,7 +25,7 @@ WITH commlog AS (
   LEFT JOIN gabby.deanslist.followups f
     ON c.followup_id = f.followup_id
    AND c.[db_name] = f.[db_name]
-  WHERE (c.reason LIKE 'att:%' OR c.reason LIKE 'chronic%')
+  WHERE (c.reason LIKE 'Att:%' OR c.reason LIKE 'Chronic%')
  )
 
 ,ada AS (

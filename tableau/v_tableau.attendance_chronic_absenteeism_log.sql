@@ -24,7 +24,7 @@ WITH commlog AS (
   LEFT JOIN gabby.deanslist.followups f
     ON c.followup_id = f.followup_id
    AND c.[db_name] = f.[db_name]
-  WHERE c.reason LIKE 'chronic%'
+  WHERE c.reason LIKE 'Chronic%'
  )
 
 SELECT sub.student_number
