@@ -1,6 +1,6 @@
 SELECT gabby.illuminate_dna_repositories.repository_unpivot(r.repository_id, DEFAULT, DEFAULT) 
          + CASE WHEN ROW_NUMBER() OVER(ORDER BY r.repository_id DESC) = 1 THEN '' ELSE ' UNION ALL ' END 
-         AS select_sql
+         COLLATE Latin1_General_BIN AS select_sql
       ,CASE WHEN atc.table_name IS NULL THEN 1 ELSE 0 END AS is_missing
 FROM gabby.illuminate_dna_repositories.repositories r
 JOIN gabby.illuminate_codes.dna_scopes s
