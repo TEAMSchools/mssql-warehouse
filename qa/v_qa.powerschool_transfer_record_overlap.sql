@@ -22,4 +22,4 @@ FROM
            ,LAG(exitdate) OVER(PARTITION BY student_number, academic_year ORDER BY exitdate) AS exitdate_prev
      FROM gabby.powerschool.cohort_identifiers_static
     ) sub
-WHERE entrydate = exitdate_prev
+WHERE entrydate <= exitdate_prev
