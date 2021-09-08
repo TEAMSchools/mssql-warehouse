@@ -42,9 +42,13 @@ WITH roles AS (
         ,sr.home_department
         ,sr.job_title
         ,sr.[location]
+        ,sr.worker_category
+        ,sr.wfmgr_pay_rule
 
         ,cu.active
         ,CASE
+          WHEN sr.worker_category IN ('Part Time', 'Intern') THEN 'No'
+          WHEN sr.wfmgr_pay_rule = 'PT Hourly' THEN 'No'
           WHEN cu.purchasing_user = 1 THEN 'Yes'
           WHEN cu.purchasing_user = 0 THEN 'No'
          END AS purchasing_user
@@ -60,7 +64,6 @@ WITH roles AS (
   LEFT JOIN business_groups bg
     ON cu.id = bg.[user_id]
   WHERE sr.position_status <> 'Prestart'
-    AND (sr.worker_category NOT IN ('Intern', 'Part Time') OR sr.worker_category IS NULL)
     AND COALESCE(sr.termination_date, CONVERT(DATE, GETDATE())) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1, 7, 1)
 
   UNION ALL
@@ -74,6 +77,8 @@ WITH roles AS (
         ,sr.home_department
         ,sr.job_title
         ,sr.[location]
+        ,sr.worker_category
+        ,sr.wfmgr_pay_rule
 
         ,1 AS active
         ,'No' AS purchasing_user
@@ -84,6 +89,7 @@ WITH roles AS (
     ON sr.employee_number = cu.employee_number
   WHERE sr.position_status NOT IN ('Prestart', 'Terminated')
     AND sr.worker_category NOT IN ('Intern', 'Part Time')
+    AND sr.wfmgr_pay_rule <> 'PT Hourly'
     AND cu.employee_number IS NULL
  )
 
@@ -104,17 +110,22 @@ SELECT sub.samaccountname AS [Login]
       ,sub.attention AS [Default Address Attention]
       ,sub.address_name AS [Default Address Name]
       ,CASE
+        WHEN sub.worker_category IN ('Part Time', 'Intern') THEN 'inactive'
+        WHEN sub.wfmgr_pay_rule = 'PT Hourly' THEN 'inactive'
         WHEN sub.position_status <> 'Active' THEN 'inactive'
         ELSE 'active'
        END AS [Status]
       ,CASE 
+        WHEN sub.worker_category IN ('Part Time', 'Intern') THEN 'No'
+        WHEN sub.wfmgr_pay_rule = 'PT Hourly' THEN 'No'
         WHEN sub.position_status <> 'Active' THEN 'No' 
         ELSE 'Yes' 
        END AS [Expense User]
       ,COALESCE(
           CASE 
+           WHEN sub.worker_category IN ('Part Time', 'Intern') THEN 'No'
+           WHEN sub.wfmgr_pay_rule = 'PT Hourly' THEN 'No'
            WHEN sub.position_status <> 'Active' THEN 'No' 
-           WHEN sub.active = 0 THEN 'No'
           END
          ,sub.purchasing_user
          ,'No'
@@ -151,6 +162,8 @@ FROM
            ,au.purchasing_user
            ,au.content_groups
            ,au.business_unit_code
+           ,au.worker_category
+           ,au.wfmgr_pay_rule
 
            ,LOWER(ad.samaccountname) AS samaccountname
            ,LOWER(ad.userprincipalname) AS userprincipalname
