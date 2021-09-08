@@ -15,26 +15,22 @@ WITH dsos AS (
     AND df.primary_job IN ('Director of Campus Operations', 'Director Campus Operations', 'Director School Operations')
  )
 
-SELECT cc.id
-      ,cc.termid
-      ,s.student_number AS studentid
-      ,cc.section_number
-      ,cc.schoolid
-      ,cc.course_number
-      ,c.course_name
-      ,t.teachernumber AS teacher
-      ,cc.expression
-FROM gabby.powerschool.cc
-JOIN gabby.powerschool.students s
-  ON cc.studentid = s.id
- AND cc.[db_name] = s.[db_name]
-JOIN gabby.powerschool.courses c
-  ON cc.course_number = c.course_number
- AND cc.[db_name] = c.[db_name]
-JOIN gabby.powerschool.teachers_static t
-  ON cc.teacherid = t.id
- AND cc.[db_name] = t.[db_name]
-WHERE cc.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+SELECT CONVERT(BIGINT, enr.cc_id) AS id
+      ,enr.termid
+      ,enr.student_number AS studentid
+      ,enr.section_number
+      ,enr.schoolid
+      ,enr.course_number
+      ,enr.course_name
+      ,enr.teachernumber AS teacher
+      ,enr.expression
+FROM gabby.powerschool.course_enrollments_current_static enr
+JOIN gabby.powerschool.schools sch
+  ON enr.schoolid = sch.school_number
+ AND enr.[db_name] = sch.[db_name]
+ AND sch.high_grade = 8
+WHERE enr.course_enroll_status = 0
+  AND enr.section_enroll_status = 0
 
 UNION ALL
 
@@ -55,4 +51,4 @@ LEFT JOIN dsos
   ON s.school_number = dsos.schoolid
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.rn_year = 1
-  AND co.grade_level <> 99
+  AND co.school_level = 'MS'
