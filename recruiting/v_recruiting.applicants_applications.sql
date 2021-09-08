@@ -34,7 +34,7 @@ WITH upvt AS (
              ,CONVERT(NVARCHAR(1024), apl.kf_in_which_regions_alumnus) AS kf_in_which_regions_alumnus
              ,CONVERT(NVARCHAR(1024), apl.candidate_tags_values) AS candidate_tags_values
              ,CONVERT(NVARCHAR(1024), COALESCE(apl.application_field_school_shared_with_nj_
-											 ,apl.application_field_school_shared_with_miami_)) AS school_shared_with
+											 ,apl.application_field_school_shared_with_mia)) AS school_shared_with
              ,CONVERT(NVARCHAR(1024), COALESCE(apl.nj_undergrad_gpa
                                              ,apl.mia_undergrad_gpa)) AS undergrad_gpa
              ,CONVERT(NVARCHAR(1024), COALESCE(apl.nj_grad_gpa
