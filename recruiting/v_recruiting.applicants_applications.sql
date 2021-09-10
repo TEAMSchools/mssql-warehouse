@@ -33,15 +33,19 @@ WITH upvt AS (
              ,CONVERT(NVARCHAR(1024), apl.kf_are_you_alumnus) AS kf_are_you_alumnus
              ,CONVERT(NVARCHAR(1024), apl.kf_in_which_regions_alumnus) AS kf_in_which_regions_alumnus
              ,CONVERT(NVARCHAR(1024), apl.candidate_tags_values) AS candidate_tags_values
-             ,CONVERT(NVARCHAR(1024), COALESCE(apl.application_field_school_shared_with_nj_
-											 ,apl.application_field_school_shared_with_mia)) AS school_shared_with
-             ,CONVERT(NVARCHAR(1024), COALESCE(apl.nj_undergrad_gpa
-                                             ,apl.mia_undergrad_gpa)) AS undergrad_gpa
-             ,CONVERT(NVARCHAR(1024), COALESCE(apl.nj_grad_gpa
-                                             ,apl.mia_grad_gpa)) AS grad_gpa
-             ,CONVERT(NVARCHAR(1024), COALESCE(apl.taf_current_or_former_kipp_employee
-                                             ,apl.taf_current_or_former_kipp_njmia_employee)) AS current_or_former_kippnjmiataf_employee
-             
+             ,CONVERT(NVARCHAR(1024), 
+                COALESCE(apl.application_field_school_shared_with_nj_
+                        ,apl.application_field_school_shared_with_mia)) AS school_shared_with
+             ,CONVERT(NVARCHAR(1024), 
+                COALESCE(apl.nj_undergrad_gpa
+                        ,apl.mia_undergrad_gpa)) AS undergrad_gpa
+             ,CONVERT(NVARCHAR(1024),
+                COALESCE(apl.nj_grad_gpa
+                        ,apl.mia_grad_gpa)) AS grad_gpa
+             ,CONVERT(NVARCHAR(1024), 
+                COALESCE(apl.taf_current_or_former_kipp_employee
+                        ,apl.taf_current_or_former_kipp_njmia_employee)) AS current_or_former_kippnjmiataf_employee
+
              ,COALESCE(app.application_state_lead_date
                       ,app.application_state_new_date
                       ,app.application_state_transferred_date
@@ -104,7 +108,7 @@ WITH upvt AS (
         ,kf_are_you_alumnus
         ,kf_in_which_regions_alumnus
         ,candidate_tags_values
-		,school_shared_with
+        ,school_shared_with
   FROM upvt
   PIVOT(
     MAX([value])
@@ -130,7 +134,7 @@ WITH upvt AS (
                  ,kf_are_you_alumnus
                  ,kf_in_which_regions_alumnus
                  ,candidate_tags_values
-				 ,school_shared_with)
+                 ,school_shared_with)
    ) p
   WHERE rn_curr = 1
  )
@@ -158,8 +162,7 @@ SELECT apl.candidate_id
       ,apl.kf_are_you_alumnus
       ,apl.kf_in_which_regions_alumnus
       ,apl.candidate_tags_values
-	  ,apl.school_shared_with
-
+      ,apl.school_shared_with
 
       ,app.application_id
       ,app.application_reason_for_rejection
@@ -225,7 +228,7 @@ SELECT COALESCE(a.profile_id, a.jobapp_id) AS candidate_id
       ,NULL AS kf_are_you_alumnus
       ,NULL AS kf_in_which_regions_alumnus
       ,NULL AS candidate_tags_values
-	  ,NULL AS school_shared_with
+      ,NULL AS school_shared_with
       ,a.jobapp_id AS application_id
       ,NULL AS application_reason_for_rejection
       ,a.selection_stage AS application_state
