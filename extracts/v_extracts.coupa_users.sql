@@ -47,8 +47,6 @@ WITH roles AS (
 
         ,cu.active
         ,CASE
-          WHEN sr.worker_category IN ('Part Time', 'Intern') THEN 'No'
-          WHEN sr.wfmgr_pay_rule = 'PT Hourly' THEN 'No'
           WHEN cu.purchasing_user = 1 THEN 'Yes'
           WHEN cu.purchasing_user = 0 THEN 'No'
          END AS purchasing_user
@@ -123,8 +121,6 @@ SELECT sub.samaccountname AS [Login]
        END AS [Expense User]
       ,COALESCE(
           CASE 
-           WHEN sub.worker_category IN ('Part Time', 'Intern') THEN 'No'
-           WHEN sub.wfmgr_pay_rule = 'PT Hourly' THEN 'No'
            WHEN sub.position_status <> 'Active' THEN 'No' 
           END
          ,sub.purchasing_user
@@ -208,7 +204,6 @@ FROM
      LEFT JOIN gabby.coupa.[address] a
        ON anc.coupa_address_name = a.[name]
       AND a.active = 1
-      AND a.id <> 2735 /* temp exclude extra KCNA */
     ) sub
 LEFT JOIN gabby.coupa.school_name_aliases sna
   ON sub.coupa_school_name = sna.physical_delivery_office_name
