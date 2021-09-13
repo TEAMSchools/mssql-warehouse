@@ -22,3 +22,4 @@ JOIN gabby.iready.diagnostic_and_instruction di
       WHEN dr._file LIKE '%math%' THEN 'Math'
       WHEN dr._file LIKE '%ela%' THEN 'Reading'
      END = di.[subject]
+WHERE dr.[start_date] >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)

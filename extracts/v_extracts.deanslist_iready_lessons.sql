@@ -43,7 +43,7 @@ JOIN gabby.people.school_crosswalk sc
 JOIN terms t
   ON sc.ps_school_id = t.ps_school_id
  AND CONVERT(DATE, pl.completion_date) BETWEEN t.[start_date] AND t.end_date
-WHERE pl.academic_year = '2020-2021' -- update for production
+WHERE pl.completion_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
 GROUP BY pl.student_id
         ,pl.[subject]
         ,t.term_name
