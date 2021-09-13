@@ -16,6 +16,7 @@ WITH survey_term_staff_scaffold AS (
 
         ,r.df_employee_number AS employee_number
         ,r.preferred_name
+        ,r.legal_entity_name AS survey_taker_legal_entity_name
         ,r.primary_site AS [location]
         ,r.[status] AS position_status
         ,LOWER(r.samaccountname) AS survey_taker_samaccount
@@ -81,6 +82,7 @@ WITH survey_term_staff_scaffold AS (
 
 SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
       ,COALESCE(st.preferred_name, c.survey_taker_name) AS survey_taker_name
+      ,st.survey_taker_legal_entity_name
       ,COALESCE(st.[location], c.location_custom) AS survey_taker_location
       ,COALESCE(st.position_status, c.position_status) AS survey_taker_adp_status
       ,COALESCE(st.survey_taker_samaccount,c.survey_taker_samaccount) AS survey_taker_samaccount
@@ -128,6 +130,7 @@ UNION ALL
 
 SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
       ,COALESCE(st.preferred_name, c.survey_taker_name) AS survey_taker_name
+      ,st.survey_taker_legal_entity_name
       ,COALESCE(st.[location], c.location_custom) AS survey_taker_location
       ,COALESCE(st.position_status, c.position_status) AS survey_taker_adp_status
       ,COALESCE(st.survey_taker_samaccount,c.survey_taker_samaccount) AS survey_taker_samaccount
@@ -176,6 +179,7 @@ UNION ALL
 
 SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
       ,COALESCE(st.preferred_name, c.survey_taker_name) AS survey_taker_name
+      ,st.survey_taker_legal_entity_name
       ,COALESCE(st.[location], c.location_custom) AS survey_taker_location
       ,COALESCE(st.position_status, c.position_status) AS survey_taker_adp_status
       ,COALESCE(st.survey_taker_samaccount,c.survey_taker_samaccount) AS survey_taker_samaccount
@@ -213,6 +217,7 @@ UNION
 
 SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
       ,COALESCE(st.preferred_name, c.survey_taker_name) AS survey_taker_name
+      ,st.survey_taker_legal_entity_name
       ,COALESCE(st.[location], c.location_custom) AS survey_taker_location
       ,COALESCE(st.position_status, c.position_status) AS survey_taker_adp_status
       ,COALESCE(st.survey_taker_samaccount,c.survey_taker_samaccount) AS survey_taker_samaccount
@@ -250,6 +255,7 @@ UNION ALL
 
 SELECT st.employee_number AS survey_taker_id
       ,st.preferred_name AS survey_taker_name
+      ,st.survey_taker_legal_entity_name
       ,st.[location] AS survey_taker_location
       ,st.position_status AS survey_taker_adp_status
       ,st.survey_taker_samaccount AS survey_taker_samaccount
@@ -289,6 +295,7 @@ UNION ALL
 
 SELECT st.employee_number AS survey_taker_id
       ,st.preferred_name AS survey_taker_name
+      ,st.survey_taker_legal_entity_name
       ,st.[location] AS survey_taker_location
       ,st.position_status AS survey_taker_adp_status
       ,st.survey_taker_samaccount AS survey_taker_samaccount
@@ -326,6 +333,7 @@ UNION ALL
 
 SELECT st.employee_number AS survey_taker_id
       ,st.preferred_name AS survey_taker_name
+      ,st.survey_taker_legal_entity_name
       ,st.[location] AS survey_taker_location
       ,st.[position_status] AS survey_taker_adp_status
       ,st.survey_taker_samaccount AS survey_taker_samaccount
