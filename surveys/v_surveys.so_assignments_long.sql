@@ -42,14 +42,17 @@ LEFT JOIN gabby.people.staff_crosswalk_static r
 
 UNION ALL
 
-SELECT manager_df_employee_number  AS survey_taker_id
+SELECT c.manager_df_employee_number  AS survey_taker_id
       ,'Yes' AS survey_round_status
-      ,CONCAT(preferred_name, ' [', df_employee_number, '] ') AS assignment
-      ,df_employee_number AS assignment_employee_id
-      ,preferred_name AS assignment_preferred_name
-      ,primary_site AS assignment_location
-      ,[status] AS assignment_adp_status
+      ,CONCAT(c.preferred_name,' - ',c.primary_site, ' [', c.df_employee_number, '] ') AS assignment
+      ,c.df_employee_number AS assignment_employee_id
+      ,c.preferred_name AS assignment_preferred_name
+      ,c.primary_site AS assignment_location
+      ,c.[status] AS assignment_adp_status
       ,'Self & Others - Manager Feedback' AS assignment_type
-FROM gabby.people.staff_crosswalk_static
-WHERE [status] <> 'TERMINATED'
-  AND COALESCE(rehire_date, original_hire_date) < DATEADD(DAY, -30, GETDATE())
+FROM gabby.people.staff_crosswalk_static c
+JOIN gabby.surveys.so_assignments s
+  ON c.df_employee_number = s.employee_number
+WHERE c.[status] <> 'TERMINATED'
+  AND COALESCE(c.rehire_date, c.original_hire_date) < DATEADD(DAY, -30, GETDATE())
+  AND s.survey_taker = 'Yes'
