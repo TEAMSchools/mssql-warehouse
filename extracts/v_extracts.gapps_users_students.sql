@@ -12,6 +12,7 @@ SELECT sub.student_number
       ,sub.email
       ,sub.student_web_password AS [password]
       ,sub.group_email
+      ,sub.region
       ,CASE WHEN sub.school_level IN ('MS','HS') THEN 'on' ELSE 'off' END AS changepassword
       ,'/Students/'
          + CASE
