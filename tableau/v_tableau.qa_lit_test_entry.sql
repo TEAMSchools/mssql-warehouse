@@ -12,6 +12,8 @@ SELECT co.student_number
       ,co.school_level
       ,co.boy_status
       ,co.team
+      ,co.iep_status
+      ,co.lep_status
 
       ,CONVERT(VARCHAR(5),term.alt_name) AS lit_term
       ,term.is_curterm
