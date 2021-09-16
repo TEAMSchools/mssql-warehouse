@@ -53,6 +53,6 @@ SELECT c.manager_df_employee_number  AS survey_taker_id
 FROM gabby.people.staff_crosswalk_static c
 JOIN gabby.surveys.so_assignments s
   ON c.df_employee_number = s.employee_number
+ AND s.survey_taker = 'Yes'
 WHERE c.[status] <> 'TERMINATED'
   AND COALESCE(c.rehire_date, c.original_hire_date) < DATEADD(DAY, -30, GETDATE())
-  AND s.survey_taker = 'Yes'
