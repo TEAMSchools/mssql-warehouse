@@ -16,9 +16,13 @@ WITH survey_term_staff_scaffold AS (
 
         ,r.df_employee_number AS employee_number
         ,r.preferred_name
+        ,r.legal_entity_name AS survey_taker_legal_entity_name
         ,r.primary_site AS [location]
         ,r.[status] AS position_status
         ,LOWER(r.samaccountname) AS survey_taker_samaccount
+        ,r.manager_df_employee_number
+        ,r.manager_name
+        ,m.legal_entity_name AS manager_legal_entity_name
   FROM
       (
        SELECT c.survey_id
@@ -40,6 +44,8 @@ WITH survey_term_staff_scaffold AS (
       ) sub
   JOIN gabby.people.staff_crosswalk_static r
     ON r.[status] NOT IN ('Terminated', 'Prestart')
+  LEFT JOIN gabby.people.staff_crosswalk_static m
+    ON r.manager_df_employee_number = m.df_employee_number
   WHERE sub.rn = 1
  )
 
@@ -76,9 +82,13 @@ WITH survey_term_staff_scaffold AS (
 
 SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
       ,COALESCE(st.preferred_name, c.survey_taker_name) AS survey_taker_name
+      ,st.survey_taker_legal_entity_name
       ,COALESCE(st.[location], c.location_custom) AS survey_taker_location
       ,COALESCE(st.position_status, c.position_status) AS survey_taker_adp_status
       ,COALESCE(st.survey_taker_samaccount,c.survey_taker_samaccount) AS survey_taker_samaccount
+      ,st.manager_df_employee_number
+      ,st.manager_name
+      ,st.manager_legal_entity_name
 
       ,s.survey_round_status
       ,COALESCE(s.assignment,c.subject_name) AS assignment
@@ -120,9 +130,13 @@ UNION ALL
 
 SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
       ,COALESCE(st.preferred_name, c.survey_taker_name) AS survey_taker_name
+      ,st.survey_taker_legal_entity_name
       ,COALESCE(st.[location], c.location_custom) AS survey_taker_location
       ,COALESCE(st.position_status, c.position_status) AS survey_taker_adp_status
       ,COALESCE(st.survey_taker_samaccount,c.survey_taker_samaccount) AS survey_taker_samaccount
+      ,st.manager_df_employee_number
+      ,st.manager_name
+      ,st.manager_legal_entity_name
 
       ,'Yes' AS survey_round_status
       ,c.subject_name AS assignment
@@ -165,9 +179,13 @@ UNION ALL
 
 SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
       ,COALESCE(st.preferred_name, c.survey_taker_name) AS survey_taker_name
+      ,st.survey_taker_legal_entity_name
       ,COALESCE(st.[location], c.location_custom) AS survey_taker_location
       ,COALESCE(st.position_status, c.position_status) AS survey_taker_adp_status
       ,COALESCE(st.survey_taker_samaccount,c.survey_taker_samaccount) AS survey_taker_samaccount
+      ,st.manager_df_employee_number
+      ,st.manager_name
+      ,st.manager_legal_entity_name
 
       ,'Yes' AS survey_round_status
       ,'Your Manager' AS assignment
@@ -199,9 +217,13 @@ UNION
 
 SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
       ,COALESCE(st.preferred_name, c.survey_taker_name) AS survey_taker_name
+      ,st.survey_taker_legal_entity_name
       ,COALESCE(st.[location], c.location_custom) AS survey_taker_location
       ,COALESCE(st.position_status, c.position_status) AS survey_taker_adp_status
       ,COALESCE(st.survey_taker_samaccount,c.survey_taker_samaccount) AS survey_taker_samaccount
+      ,st.manager_df_employee_number
+      ,st.manager_name
+      ,st.manager_legal_entity_name
 
       ,'Yes' AS survey_round_status
       ,'Your Manager' AS assignment
@@ -233,9 +255,13 @@ UNION ALL
 
 SELECT st.employee_number AS survey_taker_id
       ,st.preferred_name AS survey_taker_name
+      ,st.survey_taker_legal_entity_name
       ,st.[location] AS survey_taker_location
       ,st.position_status AS survey_taker_adp_status
       ,st.survey_taker_samaccount AS survey_taker_samaccount
+      ,st.manager_df_employee_number
+      ,st.manager_name
+      ,st.manager_legal_entity_name
 
       ,'Yes' AS survey_round_status
       ,sa.engagement_survey_assignment AS assignment
@@ -269,9 +295,13 @@ UNION ALL
 
 SELECT st.employee_number AS survey_taker_id
       ,st.preferred_name AS survey_taker_name
+      ,st.survey_taker_legal_entity_name
       ,st.[location] AS survey_taker_location
       ,st.position_status AS survey_taker_adp_status
       ,st.survey_taker_samaccount AS survey_taker_samaccount
+      ,st.manager_df_employee_number
+      ,st.manager_name
+      ,st.manager_legal_entity_name
 
       ,'Yes' AS survey_round_status
       ,'Update Your Staff Info' AS assignment
@@ -303,9 +333,13 @@ UNION ALL
 
 SELECT st.employee_number AS survey_taker_id
       ,st.preferred_name AS survey_taker_name
+      ,st.survey_taker_legal_entity_name
       ,st.[location] AS survey_taker_location
       ,st.[position_status] AS survey_taker_adp_status
       ,st.survey_taker_samaccount AS survey_taker_samaccount
+      ,st.manager_df_employee_number
+      ,st.manager_name
+      ,st.manager_legal_entity_name
 
       ,'Yes' AS survey_round_status
       ,'One Off Staff Survey' AS assignment
