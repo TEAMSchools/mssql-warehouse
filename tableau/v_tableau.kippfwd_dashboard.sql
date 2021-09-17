@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW tableau.kippfwd_dashboard AS
+--CREATE OR ALTER VIEW tableau.kippfwd_dashboard AS
 
 WITH academic_years AS (
   SELECT gabby.utilities.GLOBAL_ACADEMIC_YEAR() AS academic_year UNION
@@ -262,14 +262,14 @@ SELECT c.sf_contact_id
       ,cnr.SC
       ,cnr.HV
 
-      ,gpa.fall_cumulative_credits_earned
+      ,COALESCE(gpa.fall_cumulative_credits_earned,LAG(gpa.fall_cumulative_credits_earned,1) OVER(PARTITION BY c.sf_contact_id ORDER BY ay.academic_year ASC)) AS fall_cumulative_credits_earned
       ,gpa.fall_cumulative_gpa
-      ,gpa.fall_semester_credits_earned
+      ,COALESCE(gpa.fall_semester_credits_earned,LAG(gpa.fall_semester_credits_earned,1) OVER(PARTITION BY c.sf_contact_id ORDER BY ay.academic_year ASC)) AS fall_semester_credits_earned
       ,gpa.fall_semester_gpa
       ,gpa.fall_transcript_date
-      ,gpa.spr_cumulative_credits_earned
+      ,COALESCE(gpa.spr_cumulative_credits_earned,LAG(gpa.spr_cumulative_credits_earned,1) OVER(PARTITION BY c.sf_contact_id ORDER BY ay.academic_year ASC)) AS spr_cumulative_credits_earned
       ,gpa.spr_cumulative_gpa
-      ,gpa.spr_semester_credits_earned
+      ,COALESCE(gpa.spr_semester_credits_earned,LAG(gpa.spr_semester_credits_earned,1) OVER(PARTITION BY c.sf_contact_id ORDER BY ay.academic_year ASC)) AS spr_semester_credits_earned
       ,gpa.spr_semester_gpa
       ,gpa.spr_transcript_date
 FROM gabby.alumni.ktc_roster c
@@ -285,3 +285,4 @@ LEFT JOIN semester_gpa_pivot gpa
   ON c.sf_contact_id = gpa.sf_contact_id
  AND ay.academic_year = gpa.academic_year
 WHERE c.sf_contact_id IS NOT NULL
+  AND c.lastfirst = 'Abanda, Collins'
