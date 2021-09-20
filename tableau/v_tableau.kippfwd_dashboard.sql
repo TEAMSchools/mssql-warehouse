@@ -262,16 +262,28 @@ SELECT c.sf_contact_id
       ,cnr.SC
       ,cnr.HV
 
-      ,gpa.fall_cumulative_credits_earned
       ,gpa.fall_cumulative_gpa
-      ,gpa.fall_semester_credits_earned
       ,gpa.fall_semester_gpa
       ,gpa.fall_transcript_date
-      ,gpa.spr_cumulative_credits_earned
       ,gpa.spr_cumulative_gpa
-      ,gpa.spr_semester_credits_earned
       ,gpa.spr_semester_gpa
       ,gpa.spr_transcript_date
+      ,COALESCE(
+         gpa.fall_cumulative_credits_earned
+        ,LAG(gpa.fall_cumulative_credits_earned, 1) OVER(PARTITION BY c.sf_contact_id ORDER BY ay.academic_year ASC)
+       ) AS fall_cumulative_credits_earned
+      ,COALESCE(
+         gpa.fall_semester_credits_earned
+        ,LAG(gpa.fall_semester_credits_earned, 1) OVER(PARTITION BY c.sf_contact_id ORDER BY ay.academic_year ASC)
+       ) AS fall_semester_credits_earned 
+      ,COALESCE(
+         gpa.spr_cumulative_credits_earned
+        ,LAG(gpa.spr_cumulative_credits_earned, 1) OVER(PARTITION BY c.sf_contact_id ORDER BY ay.academic_year ASC)
+       ) AS spr_cumulative_credits_earned
+      ,COALESCE(
+         gpa.spr_semester_credits_earned
+        ,LAG(gpa.spr_semester_credits_earned, 1) OVER(PARTITION BY c.sf_contact_id ORDER BY ay.academic_year ASC)
+       ) AS spr_semester_credits_earned
 FROM gabby.alumni.ktc_roster c
 CROSS JOIN academic_years ay
 LEFT JOIN gabby.alumni.enrollment_identifiers ei
