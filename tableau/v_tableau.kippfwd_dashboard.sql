@@ -203,6 +203,7 @@ SELECT c.sf_contact_id
       ,c.last_successful_contact_date
       ,c.last_successful_advisor_contact_date
       ,c.last_outreach_date
+      ,c.contact_description
 
       ,ay.academic_year
 
@@ -244,23 +245,25 @@ SELECT c.sf_contact_id
       ,ar.is_eof_applicant
       ,ar.is_matriculated
 
-      ,cnr.[AAS1F]
-      ,cnr.[AAS2F]
-      ,cnr.[AAS3F]
-      ,cnr.[AAS4F]
-      ,cnr.[AAS5F]
-      ,cnr.[AAS6F]
-      ,cnr.[AAS1S]
-      ,cnr.[AAS2S]
-      ,cnr.[AAS3S]
-      ,cnr.[AAS4S]
-      ,cnr.[AAS5S]
-      ,cnr.[AAS6S]
+      ,cnr.[AS1F]
+      ,cnr.[AS2F]
+      ,cnr.[AS3F]
+      ,cnr.[AS4F]
+      ,cnr.[AS5F]
+      ,cnr.[AS6F]
+      ,cnr.[AS1S]
+      ,cnr.[AS2S]
+      ,cnr.[AS3S]
+      ,cnr.[AS4S]
+      ,cnr.[AS5S]
+      ,cnr.[AS6S]
       ,cnr.CCDM
       ,cnr.PSCF
       ,cnr.PSCS
       ,cnr.SC
       ,cnr.HV
+      ,cnr.DPF
+      ,cnr.DPS
 
       ,gpa.fall_cumulative_gpa
       ,gpa.fall_semester_gpa
@@ -270,19 +273,19 @@ SELECT c.sf_contact_id
       ,gpa.spr_transcript_date
       ,COALESCE(
          gpa.fall_cumulative_credits_earned
-        ,LAG(gpa.fall_cumulative_credits_earned, 1) OVER(PARTITION BY c.sf_contact_id ORDER BY ay.academic_year ASC)
+        ,LAG(gpa.spr_cumulative_credits_earned, 1) OVER(PARTITION BY c.sf_contact_id ORDER BY ay.academic_year ASC)
        ) AS fall_cumulative_credits_earned
       ,COALESCE(
          gpa.fall_semester_credits_earned
-        ,LAG(gpa.fall_semester_credits_earned, 1) OVER(PARTITION BY c.sf_contact_id ORDER BY ay.academic_year ASC)
+        ,LAG(gpa.spr_semester_credits_earned, 1) OVER(PARTITION BY c.sf_contact_id ORDER BY ay.academic_year ASC)
        ) AS fall_semester_credits_earned 
       ,COALESCE(
          gpa.spr_cumulative_credits_earned
-        ,LAG(gpa.spr_cumulative_credits_earned, 1) OVER(PARTITION BY c.sf_contact_id ORDER BY ay.academic_year ASC)
+        ,LAG(gpa.fall_cumulative_credits_earned, 1) OVER(PARTITION BY c.sf_contact_id ORDER BY ay.academic_year ASC)
        ) AS spr_cumulative_credits_earned
       ,COALESCE(
          gpa.spr_semester_credits_earned
-        ,LAG(gpa.spr_semester_credits_earned, 1) OVER(PARTITION BY c.sf_contact_id ORDER BY ay.academic_year ASC)
+        ,LAG(gpa.fall_semester_credits_earned, 1) OVER(PARTITION BY c.sf_contact_id ORDER BY ay.academic_year ASC)
        ) AS spr_semester_credits_earned
 FROM gabby.alumni.ktc_roster c
 CROSS JOIN academic_years ay
