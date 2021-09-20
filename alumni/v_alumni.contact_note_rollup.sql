@@ -9,20 +9,18 @@ SELECT contact_id
       ,[SC]
       ,[CCDM]
 
-      ,[AASS]
-      ,[AASF]
-      ,[AAS1F]
-      ,[AAS2F]
-      ,[AAS3F]
-      ,[AAS4F]
-      ,[AAS5F]
-      ,[AAS6F]
-      ,[AAS1S]
-      ,[AAS2S]
-      ,[AAS3S]
-      ,[AAS4S]
-      ,[AAS5S]
-      ,[AAS6S]
+      ,[AS1F]
+      ,[AS2F]
+      ,[AS3F]
+      ,[AS4F]
+      ,[AS5F]
+      ,[AS6F]
+      ,[AS1S]
+      ,[AS2S]
+      ,[AS3S]
+      ,[AS4S]
+      ,[AS5S]
+      ,[AS6S]
 
       ,[PSCF]
       ,[PSCS]
@@ -49,6 +47,9 @@ SELECT contact_id
       ,[SM2Q4]
 
       ,[HV]
+
+      ,[DPF]
+      ,[DPS]
 FROM
     (
      SELECT sub.contact_id
@@ -70,26 +71,17 @@ FROM
                  END AS contact_term
                 ,CASE 
                   WHEN c.subject_c LIKE 'SC[0-9]%' THEN 'SC'
-                  WHEN c.subject_c LIKE 'Advising Session%' THEN 'AAS'
-                  WHEN c.subject_c = 'Summer AAS' THEN 'AASS'
+                  WHEN c.subject_c LIKE 'Advising Session%' THEN 'AS'
+                  WHEN c.subject_c = 'Summer AAS' THEN 'AS'
                   WHEN c.subject_c LIKE 'Grad Plan%' THEN 'GP'
                   WHEN c.subject_c LIKE 'Q%SM%' THEN 'SM' + SUBSTRING(c.subject_c, 7, 1)
                   WHEN c.subject_c LIKE '%HV' THEN 'HV'
+                  WHEN c.subject_c LIKE 'DP%' THEN 'DP'
                   ELSE c.subject_c 
                  END AS contact_subject
                 ,c.date_c AS contact_date
           FROM gabby.alumni.contact_note_c c
-          WHERE (c.subject_c IN ('CCDM', 'PSC', 'BBB', 'Summer AAS', 'Pre-CTE Site Visit', 'Pre-CTE Benchmark')
-                   OR c.subject_c LIKE 'SC[0-9]%'
-                   OR c.subject_c LIKE 'Advising Session%'
-                   OR c.subject_c LIKE 'Grad Plan%'
-                   OR c.subject_c LIKE 'AAS%'
-                   OR c.subject_c LIKE 'MC%'
-                   OR c.subject_c LIKE 'Q%SM%'
-                   OR c.subject_c LIKE 'Q%Check%In%'
-                   OR c.subject_c LIKE '%HV'
-                  )
-            AND c.is_deleted = 0
+          WHERE c.is_deleted = 0
 
           UNION ALL
 
@@ -109,20 +101,18 @@ FROM
     ) sub
 PIVOT(
   COUNT(contact_date)
-  FOR contact_type IN ([AASS]
-                      ,[AASF]
-                      ,[AAS1F]
-                      ,[AAS2F]
-                      ,[AAS1S]
-                      ,[AAS2S]
-                      ,[AAS3F]
-                      ,[AAS3S]
-                      ,[AAS4F]
-                      ,[AAS4S]
-                      ,[AAS5F]
-                      ,[AAS6F]
-                      ,[AAS5S]
-                      ,[AAS6S]
+  FOR contact_type IN ([AS1F]
+                      ,[AS2F]
+                      ,[AS1S]
+                      ,[AS2S]
+                      ,[AS3F]
+                      ,[AS3S]
+                      ,[AS4F]
+                      ,[AS4S]
+                      ,[AS5F]
+                      ,[AS6F]
+                      ,[AS5S]
+                      ,[AS6S]
                       ,[PSCF]
                       ,[PSCS]
                       ,[BBBF]
@@ -143,5 +133,7 @@ PIVOT(
                       ,[SM2Q4]
                       ,[SC]
                       ,[CCDM]
-                      ,[HV])
+                      ,[HV]
+                      ,[DPF]
+                      ,[DPS])
  ) p
