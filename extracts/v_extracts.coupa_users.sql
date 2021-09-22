@@ -63,6 +63,8 @@ WITH roles AS (
     ON cu.id = bg.[user_id]
   WHERE sr.position_status <> 'Prestart'
     AND COALESCE(sr.termination_date, CONVERT(DATE, GETDATE())) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1, 7, 1)
+    AND ISNULL(sr.worker_category, '') NOT IN ('Intern', 'Part Time')
+    AND ISNULL(sr.wfmgr_pay_rule, '') <> 'PT Hourly'
 
   UNION ALL
 
@@ -86,8 +88,8 @@ WITH roles AS (
   LEFT JOIN gabby.coupa.[user] cu
     ON sr.employee_number = cu.employee_number
   WHERE sr.position_status NOT IN ('Prestart', 'Terminated')
-    AND sr.worker_category NOT IN ('Intern', 'Part Time')
-    AND sr.wfmgr_pay_rule <> 'PT Hourly'
+    AND ISNULL(sr.worker_category, '') NOT IN ('Intern', 'Part Time')
+    AND ISNULL(sr.wfmgr_pay_rule, '') <> 'PT Hourly'
     AND cu.employee_number IS NULL
  )
 
