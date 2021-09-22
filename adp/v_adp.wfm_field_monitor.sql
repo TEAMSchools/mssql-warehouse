@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW extracts.adp_wfm_field_monitor AS
+CREATE OR ALTER VIEW adp.wfm_field_monitor AS
 
 WITH unpivoted AS (
   SELECT associate_id
@@ -24,7 +24,7 @@ WITH unpivoted AS (
              ,CONVERT(NVARCHAR(MAX), flsa_description) AS flsa_description
              ,CONVERT(NVARCHAR(MAX), wfmgr_pay_rule) AS wfmgr_pay_rule
              ,CONVERT(NVARCHAR(MAX), wfmgr_accrual_profile) AS wfmgr_accrual_profile
-             ,CONVERT(NVARCHAR(MAX), NULL) AS wfmgr_ee_type
+             ,CONVERT(NVARCHAR(MAX), wfmgr_ee_type) AS wfmgr_ee_type
        FROM gabby.adp.employees_archive
        WHERE position_id IS NOT NULL
          AND CONVERT(DATE, _modified) BETWEEN DATEADD(DAY, -3, CONVERT(DATE, GETDATE()))
