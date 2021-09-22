@@ -46,6 +46,10 @@ SELECT co.student_number
       ,CONCAT(co.street, ', ', co.city, ', ', co.[state], ' ', co.zip) AS home_address
       ,co.student_web_id + '@teamstudents.org' AS student_email
       ,co.student_web_password
+      --,CASE
+      --  WHEN LEN(co.student_web_password) < 6 THEN LEFT(CONCAT(co.student_web_password, 'xxxxxx'), 6)
+      --  ELSE co.student_web_password
+      -- END AS student_web_password
       ,co.student_web_id + '.fam' AS family_access_id
 
       ,s.sched_nextyeargrade
