@@ -108,8 +108,7 @@ SELECT sub.samaccountname AS [Login]
       ,sub.attention AS [Default Address Attention]
       ,sub.address_name AS [Default Address Name]
       ,CASE
-        WHEN sub.worker_category IN ('Part Time', 'Intern') THEN 'inactive'
-        WHEN sub.wfmgr_pay_rule = 'PT Hourly' THEN 'inactive'
+        WHEN sub.worker_category = 'Intern' THEN 'inactive'
         WHEN sub.position_status <> 'Active' THEN 'inactive'
         ELSE 'active'
        END AS [Status]
@@ -120,9 +119,7 @@ SELECT sub.samaccountname AS [Login]
         ELSE 'Yes' 
        END AS [Expense User]
       ,COALESCE(
-          CASE 
-           WHEN sub.position_status <> 'Active' THEN 'No' 
-          END
+          CASE WHEN sub.position_status <> 'Active' THEN 'No' END
          ,sub.purchasing_user
          ,'No'
         ) AS [Purchasing User] /* preserve Coupa, otherwise No */
