@@ -127,21 +127,26 @@ SELECT co.studentid
 
       ,CONVERT(VARCHAR(5), UPPER(
          CASE
-          WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() AND co.rn_year = 1 
+          WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
+           AND co.rn_year = 1 
                THEN CASE
                      WHEN DB_NAME() = 'kippmiami' THEN (CASE WHEN s.lunchstatus = 'NoD' THEN NULL ELSE s.lunchstatus END)
+                     WHEN DB_NAME() = 'kippcamden' THEN ifc.lunch_status COLLATE Latin1_General_BIN
                      WHEN tp.is_directly_certified = 1 THEN 'F'
                      ELSE ti.eligibility_name
                     END
-          WHEN co.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() AND co.entrydate = s.entrydate 
+          WHEN co.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
+           AND co.entrydate = s.entrydate 
                THEN (CASE WHEN s.lunchstatus = 'NoD' THEN NULL ELSE s.lunchstatus END)
           ELSE co.lunchstatus
          END)) AS lunchstatus
       ,CONVERT(VARCHAR(125),
          CASE
-          WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() AND co.rn_year = 1
+          WHEN co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
+           AND co.rn_year = 1
                THEN CASE
                      WHEN DB_NAME() = 'kippmiami' THEN s.lunchstatus
+                     WHEN DB_NAME() = 'kippcamden' THEN ifc.lunch_app_status COLLATE Latin1_General_BIN
                      WHEN tp.is_directly_certified = 1 THEN 'Direct Certification'
                      WHEN ti.eligibility_name IS NULL THEN 'No Application'
                      ELSE ti.eligibility_name + ' - ' + 'Income Form'
@@ -182,6 +187,8 @@ LEFT JOIN powerschool.spenrollments_gen_static sp
   ON co.studentid = sp.studentid
  AND co.entrydate BETWEEN sp.enter_date AND sp.exit_date
  AND sp.specprog_name IN ('Out of District', 'Self-Contained Special Education', 'Pathways ES', 'Pathways MS', 'Whittier ES')
+LEFT JOIN powerschool.student_contacts_wide_static scw
+  ON co.student_number = scw.student_number
 LEFT JOIN titan.person_data_clean tp
   ON co.student_number = tp.person_identifier
  AND co.academic_year = tp.application_academic_school_year_clean
@@ -189,5 +196,6 @@ LEFT JOIN titan.income_form_data_clean ti
   ON co.student_number = ti.student_identifier
  AND co.academic_year = ti.academic_year_clean
  AND ti.rn = 1
-LEFT JOIN powerschool.student_contacts_wide_static scw
-  ON co.student_number = scw.student_number
+LEFT JOIN gabby.ops.income_form_data_clean ifc
+  ON co.student_number = ifc.student_number
+ AND ifc.rn =1
