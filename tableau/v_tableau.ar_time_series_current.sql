@@ -21,10 +21,10 @@ SELECT student_number
       ,homeroom_section
       ,homeroom_teacher
       ,words_goal_yr
-      ,points_goal_yr
+      ,NULL AS points_goal_yr
       ,goal_term
       ,words_goal_term
-      ,points_goal_term
+      ,NULL AS points_goal_term
       ,n_words_read
       ,n_points_earned
       ,n_books_read
@@ -71,11 +71,9 @@ FROM
            ,homeroom_section
            ,homeroom_teacher
            ,words_goal_yr
-           ,points_goal_yr
            ,goal_term
            ,is_curterm
            ,words_goal_term
-           ,points_goal_term
            ,n_words_read
            ,n_points_earned
            ,n_books_read
@@ -132,10 +130,8 @@ FROM
                 ,hr.teacher_name AS homeroom_teacher
 
                 ,CASE WHEN y1_goal.words_goal > 0 THEN y1_goal.words_goal END AS words_goal_yr
-                ,CASE WHEN y1_goal.points_goal > 0 THEN y1_goal.points_goal END AS points_goal_yr
 
                 ,CASE WHEN term_goal.words_goal > 0 THEN term_goal.words_goal END AS words_goal_term
-                ,CASE WHEN term_goal.points_goal > 0 THEN term_goal.points_goal END AS points_goal_term
 
                 ,ar.n_words_read
                 ,ar.n_points_earned
@@ -194,7 +190,7 @@ FROM
             ON co.student_number = ar.student_number
            AND co.[date] = ar.date_taken
           WHERE co.enroll_status = 0
-            AND co.grade_level <> 99
+            AND co.grade_level BETWEEN 5 AND 8
             AND co.[date] <= CONVERT(DATE, GETDATE())
          ) sub
     ) sub

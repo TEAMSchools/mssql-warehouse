@@ -31,6 +31,7 @@ WITH roster AS (
         AND dts.time_per_name <> 'ARY'
         AND dts._fivetran_deleted = 0
        WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+         AND co.grade_level BETWEEN 5 AND 8
       ) sub
   GROUP BY student_number
           ,academic_year
@@ -68,42 +69,19 @@ WITH roster AS (
 --    ON goal.tier = tiers.tier
 -- )
 
-,indiv_goals AS (
-  SELECT student_number
-        ,REPLACE(reporting_term, 'q_', 'AR') AS reporting_term
-        ,CONVERT(INT, adjusted_goal) AS adjusted_goal
-  FROM
-      (
-       SELECT CONVERT(INT, student_number) AS student_number
-             ,q_1
-             ,q_2
-             ,q_3
-             ,q_4
-             ,ROW_NUMBER() OVER(PARTITION BY student_number ORDER BY _row DESC) AS rn
-       FROM gabby.renaissance.ar_individualized_goals
-       WHERE _fivetran_deleted = 0
-      ) sub
-  UNPIVOT(
-    adjusted_goal
-    FOR reporting_term IN (q_1, q_2, q_3, q_4)
-   ) u
-  WHERE rn = 1
- )
-
 ,term_goals AS (
   SELECT student_number
         ,academic_year
         ,reporting_term
         ,words_goal
-        ,points_goal
         ,ROW_NUMBER() OVER(
            PARTITION BY student_number, academic_year, reporting_term
-             ORDER BY words_goal DESC, points_goal DESC) AS rn_dupe
+             ORDER BY words_goal DESC) AS rn_dupe
   FROM
       (
        SELECT r.student_number
              ,r.academic_year
-             ,r.reporting_term             
+             ,r.reporting_term
              ,CASE
                WHEN r.is_enrolled = 0 THEN NULL
                WHEN r.grade_level >= 9 THEN NULL
@@ -111,20 +89,14 @@ WITH roster AS (
                --ELSE COALESCE(g.adjusted_goal, ms.words_goal, CONVERT(INT, df.words_goal))
                ELSE COALESCE(g.adjusted_goal, CONVERT(INT, df.words_goal))
               END AS words_goal
-             ,CASE
-               WHEN r.is_enrolled = 0 THEN NULL
-               WHEN r.grade_level <= 8 THEN NULL
-               WHEN r.enroll_status <> 0 THEN -1
-               ELSE COALESCE(g.adjusted_goal, CONVERT(INT, df.points_goal))
-              END AS points_goal             
        FROM roster r
        --LEFT JOIN ms_goals ms
        --  ON r.student_number = ms.student_number
        -- AND r.reporting_term = ms.term
-       LEFT JOIN gabby.renaissance.ar_default_goals df
+       JOIN gabby.renaissance.ar_default_goals df
          ON r.grade_level = df.grade_level
         AND r.reporting_term = df.time_period_name
-       LEFT JOIN indiv_goals g
+       LEFT JOIN gabby.renaissance.ar_individualized_goals_long_static g
          ON r.student_number = g.student_number
         AND r.reporting_term = g.reporting_term
       ) sub
@@ -134,14 +106,13 @@ SELECT student_number
       ,academic_year
       ,reporting_term
       ,CASE WHEN words_goal < 0 THEN -1 ELSE words_goal END AS words_goal
-      ,CASE WHEN points_goal < 0 THEN -1 ELSE points_goal END AS points_goal
+      ,NULL AS points_goal
 FROM
     (
      SELECT student_number
            ,academic_year
            ,reporting_term
            ,words_goal
-           ,points_goal
      FROM term_goals
      WHERE rn_dupe = 1
 
@@ -151,7 +122,6 @@ FROM
            ,academic_year
            ,'ARY' AS reporting_term
            ,SUM(words_goal) AS words_goal
-           ,SUM(points_goal) AS points_goal
      FROM term_goals
      WHERE rn_dupe = 1
      GROUP BY student_number
