@@ -16,7 +16,7 @@ SELECT sr.df_employee_number
       ,sr.original_hire_date
       ,sr.primary_ethnicity AS observee_ethnicity
       ,sr.gender AS observee_gender
-	  ,sr.primary_race_ethnicity_reporting AS observee_race_ethnicity
+      ,sr.primary_race_ethnicity_reporting AS observee_race_ethnicity
       ,LEFT(sr.userprincipalname, CHARINDEX('@', sr.userprincipalname) - 1) AS staff_username
       ,LEFT(sr.manager_userprincipalname, CHARINDEX('@', sr.manager_userprincipalname) - 1) AS manager_username
 
@@ -32,7 +32,7 @@ SELECT sr.df_employee_number
 
       ,osr.primary_ethnicity AS observer_ethnicity
       ,osr.gender AS observer_gender
-	  ,osr.primary_race_ethnicity_reporting AS observer_race_ethnicity
+      ,osr.primary_race_ethnicity_reporting AS observer_race_ethnicity
 
       ,wos.score_percentage
       ,wos.score_value
