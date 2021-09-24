@@ -27,6 +27,7 @@ WITH unpivoted AS (
              ,CONVERT(NVARCHAR(MAX), wfmgr_ee_type) AS wfmgr_ee_type
        FROM gabby.adp.employees_archive
        WHERE position_id IS NOT NULL
+         AND position_status <> 'Terminated'
          AND CONVERT(DATE, _modified) BETWEEN DATEADD(DAY, -3, CONVERT(DATE, GETDATE()))
                                           AND CONVERT(DATE, GETDATE())
       ) sub
