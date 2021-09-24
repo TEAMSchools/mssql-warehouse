@@ -4,6 +4,7 @@ SELECT job_title
 ,first_name
 ,last_name
 ,NULL AS SSN
+,position_id
 ,business_unit
 ,employee_number
 ,original_hire_date
