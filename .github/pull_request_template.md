@@ -6,5 +6,5 @@
 5) Does every table `JOIN` and `SELECT` column help the view achieve its purpose? Remove superfluous `JOIN`s and columns.
 6) Does your SQL formatting conform to the style guide?
 
-8) What is the view's purpose?
+**What is the purpose of this view?**
 > *[extract|feed|clean-up|other] Brief explanation...*
