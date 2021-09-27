@@ -18,18 +18,3 @@ FROM gabby.people.staff_crosswalk_static df
 WHERE df.[status] NOT IN ('TERMINATED', 'PRESTART')
   AND df.primary_site_schoolid IS NOT NULL
   AND df.df_employee_number IS NOT NULL
-
-UNION ALL
-
-/* testing account */
-SELECT 73253 AS [School_id]
-      ,'data_test' AS [Teacher_id]
-      ,'data_test' AS [Teacher_number]
-      ,'data_test' AS [State_teacher_id]
-      ,'data_test@kippnj.org' AS [Teacher_email]
-      ,'Demo_Test' AS [First_name]
-      ,NULL AS [Middle_name]
-      ,'Data_Test' AS [Last_name]
-      ,'Teacher' AS [Title]
-      ,'data_test' AS [Username]
-      ,NULL AS [Password]

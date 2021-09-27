@@ -70,6 +70,28 @@ WHERE df.[status] NOT IN ('TERMINATED', 'PRESTART')
 
 UNION ALL
 
+/* All NJ */
+SELECT CONVERT(VARCHAR(25), sch.school_number) AS [School_id]
+      ,df.ps_teachernumber AS [Staff_id]
+      ,df.userprincipalname AS [Staff_email]
+      ,df.preferred_first_name AS [First_name]
+      ,df.preferred_last_name AS [Last_name]
+      ,df.primary_on_site_department AS [Department]
+      ,'School Admin' AS [Title]
+      ,df.samaccountname AS [Username]
+      ,NULL AS [Password]
+      ,CASE WHEN df.primary_on_site_department = 'Operations' THEN 'School Tech Lead' END AS [Role]
+FROM gabby.adsi.group_membership adg
+JOIN gabby.people.staff_crosswalk_static df
+  ON adg.employee_number = df.df_employee_number
+ AND df.[status] NOT IN ('TERMINATED', 'PRESTART')
+JOIN gabby.powerschool.schools sch
+  ON sch.schoolstate = 'NJ'
+ AND sch.state_excludefromreporting = 0
+WHERE adg.group_cn = 'Group Staff NJ Regional'
+
+UNION ALL
+
 /* ad hoc drivel */
 SELECT s.school_number AS School_id
       ,'100107' AS Staff_id
@@ -84,14 +106,3 @@ SELECT s.school_number AS School_id
 FROM kippnewark.powerschool.schools s
 WHERE s.high_grade = 8
   AND s.school_number <> 732510 /* already assigned by default */
-UNION ALL
-SELECT '73253' AS [School_id]
-      ,'data_test' AS [Staff_id]
-      ,'data_test@kippnj.org' AS [Staff_email]
-      ,'Demo_Test' AS [First_name]
-      ,'Data_Test' AS [Last_name]
-      ,NULL AS [Department]
-      ,'School Admin' AS [Title]
-      ,'data_test' AS [Username]
-      ,NULL AS [Password]
-      ,'School Tech Lead' AS [Role]
