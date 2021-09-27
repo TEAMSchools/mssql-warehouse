@@ -1,6 +1,6 @@
 **Code checks:**
 1) Is your branch up to date with `main`? Update from `main` and resolve and merge conflicts before submitting.
-2) Are all objects referenced in three-parts ([db_name].[schema_name].[table_name])?
+2) Are all objects referenced in three-parts: `{database}.{schema}.{table}`?
 3) Are there subqueries that could be refactored as simple `JOIN`s?
 4) Are there CTEs that could be refactored as simple `JOIN`s?
 5) Will every `SELECT` column be used downstream? Remove superfluous columns.
