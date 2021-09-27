@@ -50,6 +50,7 @@ WITH survey_term_staff_scaffold AS (
           WHEN c.survey_id = 4561325 THEN 'Self & Others'
           WHEN c.survey_id = 4561288 THEN 'Manager'
           WHEN c.survey_id = 5300913 THEN 'R9/Engagement' 
+          WHEN c.survey_id = 6330385 THEN 'Staff Update'
          END AS survey_type
         ,SUBSTRING(c.[name], CHARINDEX(' ', c.[name])+1, LEN(c.[name])) AS reporting_term
 
@@ -108,6 +109,7 @@ SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
 FROM survey_term_staff_scaffold st
 JOIN gabby.surveys.so_assignments_long s
   ON st.employee_number = s.survey_taker_id
+ AND s.survey_round_status = 'Yes'
 LEFT JOIN clean_responses c
   ON s.assignment_employee_id = c.subject_employee_id
  AND s.survey_taker_id = c.df_employee_number
@@ -169,7 +171,7 @@ SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
       ,COALESCE(st.position_status, c.position_status) AS survey_taker_adp_status
       ,COALESCE(st.survey_taker_samaccount,c.survey_taker_samaccount) AS survey_taker_samaccount
 
-      ,'Yes' AS survey_round_status
+      ,s.survey_taker AS survey_round_status
       ,'Your Manager' AS assignment
       ,NULL AS assingment_employee_id
       ,NULL AS assignment_preferred_name
@@ -193,6 +195,9 @@ LEFT JOIN clean_responses c
  AND st.academic_year = c.academic_year
  AND st.reporting_term_code = c.reporting_term
  AND st.survey_id = c.survey_id
+JOIN gabby.surveys.so_assignments s
+  ON st.employee_number = s.employee_number
+ AND s.survey_taker IN ('Yes', 'Yes - Should take manager survey only')
 WHERE st.survey_id = 4561288 /* MGR Survey Code */
 
 UNION
