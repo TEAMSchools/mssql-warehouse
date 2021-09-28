@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW extracts.mdcps_aces_survey AS
+--CREATE OR ALTER VIEW extracts.mdcps_aces_survey AS
 
 SELECT job_title 
       ,location
@@ -13,8 +13,8 @@ SELECT job_title
       ,business_unit
       ,employee_number
       ,original_hire_date
-      ,NULL as miami_aces
-      ,flsa as Payclass
+      ,NULL AS miami_aces
+      ,flsa AS payclass
       ,NULL AS pay_frequency
       ,NULL AS highest_education_level
       ,NULL AS duty_days
@@ -28,6 +28,6 @@ SELECT job_title
       ,NULL AS Contribution504B
       ,NULL AS BasicLifePlan
       ,annual_salary
-FROM people.staff_roster
+FROM gabby.people.staff_roster
 WHERE business_unit = 'KIPP Miami'
-AND position_status <> 'Terminated'
+  AND position_status <> 'Terminated'
