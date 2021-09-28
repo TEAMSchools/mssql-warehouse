@@ -1,10 +1,10 @@
 USE gabby
 GO
 
---CREATE OR ALTER VIEW extracts.mdcps_aces_survey AS
+CREATE OR ALTER VIEW extracts.mdcps_aces_survey AS
 
 SELECT job_title 
-      ,location
+      ,[location]
       ,position_status
       ,first_name
       ,last_name
@@ -31,3 +31,4 @@ SELECT job_title
 FROM gabby.people.staff_roster
 WHERE business_unit = 'KIPP Miami'
   AND position_status <> 'Terminated'
+  
