@@ -49,7 +49,9 @@ WITH response_pivot AS (
                      ,respondent_userprincipalname
                      ,respondent_adp_associate_id
                      ,subject_df_employee_number
-                     ,is_manager)
+                     ,is_manager
+                     ,employee_number
+                     ,email)
    ) p
  )
 

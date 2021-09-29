@@ -17,7 +17,7 @@ SELECT id AS survey_question_id
        END AS is_open_ended
       ,CASE 
         WHEN [shortname] IN ('respondent_df_employee_number', 'respondent_userprincipalname', 'respondent_adp_associate_id'
-                            ,'subject_df_employee_number', 'is_manager') THEN 1
+                            ,'subject_df_employee_number', 'is_manager', 'employee_number', 'email') THEN 1
         ELSE 0
        END AS is_identifier_question
 
