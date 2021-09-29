@@ -8,19 +8,19 @@ WITH response_pivot AS (
         ,p.survey_id
         ,p.date_started
         ,CONVERT(VARCHAR(25), p.respondent_adp_associate_id) AS respondent_adp_associate_id
-        ,CONVERT(VARCHAR(125), LOWER(p.respondent_userprincipalname)) AS respondent_userprincipalname
+        ,CONVERT(VARCHAR(125), LOWER(COALESCE(p.respondent_userprincipalname,p.email))) AS respondent_userprincipalname
         ,CONVERT(INT, CASE
                        WHEN ISNUMERIC(p.respondent_df_employee_number) = 1 THEN p.respondent_df_employee_number
-                       WHEN CHARINDEX('[', p.respondent_df_employee_number) = 0 THEN NULL
-                       ELSE SUBSTRING(p.respondent_df_employee_number
-                                     ,CHARINDEX('[', p.respondent_df_employee_number) + 1
-                                     ,CHARINDEX(']', p.respondent_df_employee_number) - CHARINDEX('[', p.respondent_df_employee_number) - 1)
+                       WHEN CHARINDEX('[', COALESCE(p.respondent_df_employee_number,p.employee_preferred_name)) = 0 THEN NULL
+                       ELSE SUBSTRING(COALESCE(p.respondent_df_employee_number,p.employee_preferred_name)
+                                     ,CHARINDEX('[', COALESCE(p.respondent_df_employee_number,p.employee_preferred_name)) + 1
+                                     ,CHARINDEX(']', COALESCE(p.respondent_df_employee_number,p.employee_preferred_name)) - CHARINDEX('[', COALESCE(p.respondent_df_employee_number,p.employee_preferred_name)) - 1)
                       END) AS respondent_df_employee_number
         ,CONVERT(INT, CASE
-                       WHEN CHARINDEX('[', p.subject_df_employee_number) = 0 THEN NULL
-                       ELSE SUBSTRING(p.subject_df_employee_number
-                                     ,CHARINDEX('[', p.subject_df_employee_number) + 1
-                                     ,CHARINDEX(']', p.subject_df_employee_number) - CHARINDEX('[', p.subject_df_employee_number) - 1)
+                       WHEN CHARINDEX('[', COALESCE(p.subject_df_employee_number,p.employee_preferred_name)) = 0 THEN NULL
+                       ELSE SUBSTRING(COALESCE(p.subject_df_employee_number,p.employee_preferred_name)
+                                     ,CHARINDEX('[', COALESCE(p.subject_df_employee_number,p.employee_preferred_name)) + 1
+                                     ,CHARINDEX(']', COALESCE(p.subject_df_employee_number,p.employee_preferred_name)) - CHARINDEX('[', COALESCE(p.subject_df_employee_number,p.employee_preferred_name)) - 1)
                       END) AS subject_df_employee_number
         ,CASE WHEN CHARINDEX('[', p.subject_df_employee_number) = 0 THEN p.subject_df_employee_number END AS subject_preferred_name
         ,CASE
@@ -51,7 +51,8 @@ WITH response_pivot AS (
                      ,subject_df_employee_number
                      ,is_manager
                      ,employee_number
-                     ,email)
+                     ,email
+                     ,employee_preferred_name)
    ) p
  )
 
