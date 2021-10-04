@@ -17,6 +17,8 @@ WITH survey_term_staff_scaffold AS (
         ,r.df_employee_number AS employee_number
         ,r.preferred_name
         ,r.legal_entity_name AS survey_taker_legal_entity_name
+        ,r.primary_on_site_department AS survey_taker_department
+        ,r.primary_job AS survey_taker_primary_job
         ,r.primary_site AS [location]
         ,r.[status] AS position_status
         ,LOWER(r.samaccountname) AS survey_taker_samaccount
@@ -69,6 +71,8 @@ WITH survey_term_staff_scaffold AS (
         ,i.subject_df_employee_number AS subject_employee_id
 
         ,sc.[status] AS position_status
+        ,sc.primary_on_site_department AS survey_taker_department
+        ,sc.primary_job AS survey_taker_primary_job
         ,LOWER(sc.samaccountname) AS survey_taker_samaccount
   FROM gabby.surveygizmo.survey_campaign_clean_static c
   JOIN gabby.surveygizmo.survey_response_identifiers_static i
@@ -85,6 +89,8 @@ SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
       ,COALESCE(st.preferred_name, c.survey_taker_name) AS survey_taker_name
       ,st.survey_taker_legal_entity_name
       ,COALESCE(st.[location], c.location_custom) AS survey_taker_location
+      ,COALESCE(st.survey_taker_department, c.survey_taker_department) AS survey_taker_department
+      ,COALESCE(st.survey_taker_primary_job, c.survey_taker_primary_job) AS survey_taker_primary_job
       ,COALESCE(st.position_status, c.position_status) AS survey_taker_adp_status
       ,COALESCE(st.survey_taker_samaccount,c.survey_taker_samaccount) AS survey_taker_samaccount
       ,st.manager_df_employee_number
@@ -134,6 +140,8 @@ SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
       ,COALESCE(st.preferred_name, c.survey_taker_name) AS survey_taker_name
       ,st.survey_taker_legal_entity_name
       ,COALESCE(st.[location], c.location_custom) AS survey_taker_location
+      ,COALESCE(st.survey_taker_department, c.survey_taker_department) AS survey_taker_department
+      ,COALESCE(st.survey_taker_primary_job, c.survey_taker_primary_job) AS survey_taker_primary_job
       ,COALESCE(st.position_status, c.position_status) AS survey_taker_adp_status
       ,COALESCE(st.survey_taker_samaccount,c.survey_taker_samaccount) AS survey_taker_samaccount
       ,st.manager_df_employee_number
@@ -183,6 +191,8 @@ SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
       ,COALESCE(st.preferred_name, c.survey_taker_name) AS survey_taker_name
       ,st.survey_taker_legal_entity_name
       ,COALESCE(st.[location], c.location_custom) AS survey_taker_location
+      ,COALESCE(st.survey_taker_department, c.survey_taker_department) AS survey_taker_department
+      ,COALESCE(st.survey_taker_primary_job, c.survey_taker_primary_job) AS survey_taker_primary_job
       ,COALESCE(st.position_status, c.position_status) AS survey_taker_adp_status
       ,COALESCE(st.survey_taker_samaccount,c.survey_taker_samaccount) AS survey_taker_samaccount
       ,st.manager_df_employee_number
@@ -224,6 +234,8 @@ SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
       ,COALESCE(st.preferred_name, c.survey_taker_name) AS survey_taker_name
       ,st.survey_taker_legal_entity_name
       ,COALESCE(st.[location], c.location_custom) AS survey_taker_location
+      ,COALESCE(st.survey_taker_department, c.survey_taker_department) AS survey_taker_department
+      ,COALESCE(st.survey_taker_primary_job, c.survey_taker_primary_job) AS survey_taker_primary_job
       ,COALESCE(st.position_status, c.position_status) AS survey_taker_adp_status
       ,COALESCE(st.survey_taker_samaccount,c.survey_taker_samaccount) AS survey_taker_samaccount
       ,st.manager_df_employee_number
@@ -262,6 +274,8 @@ SELECT st.employee_number AS survey_taker_id
       ,st.preferred_name AS survey_taker_name
       ,st.survey_taker_legal_entity_name
       ,st.[location] AS survey_taker_location
+      ,st.survey_taker_department
+      ,st.survey_taker_primary_job
       ,st.position_status AS survey_taker_adp_status
       ,st.survey_taker_samaccount AS survey_taker_samaccount
       ,st.manager_df_employee_number
@@ -302,6 +316,8 @@ SELECT st.employee_number AS survey_taker_id
       ,st.preferred_name AS survey_taker_name
       ,st.survey_taker_legal_entity_name
       ,st.[location] AS survey_taker_location
+      ,st.survey_taker_department
+      ,st.survey_taker_primary_job
       ,st.position_status AS survey_taker_adp_status
       ,st.survey_taker_samaccount AS survey_taker_samaccount
       ,st.manager_df_employee_number
@@ -340,6 +356,8 @@ SELECT st.employee_number AS survey_taker_id
       ,st.preferred_name AS survey_taker_name
       ,st.survey_taker_legal_entity_name
       ,st.[location] AS survey_taker_location
+      ,st.survey_taker_department
+      ,st.survey_taker_primary_job
       ,st.[position_status] AS survey_taker_adp_status
       ,st.survey_taker_samaccount AS survey_taker_samaccount
       ,st.manager_df_employee_number
