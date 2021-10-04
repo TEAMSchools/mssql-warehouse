@@ -204,6 +204,9 @@ SELECT c.sf_contact_id
       ,c.last_successful_advisor_contact_date
       ,c.last_outreach_date
       ,c.contact_description
+      ,c.high_school_graduated_from
+      ,c.college_graduated_from
+      ,c.current_college_semester_gpa
 
       ,ay.academic_year
 
