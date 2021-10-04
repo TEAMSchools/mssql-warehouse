@@ -12,7 +12,7 @@ WITH managers AS (
 
   SELECT s.df_employee_number
   FROM gabby.people.staff_crosswalk_static s
-  WHERE s.primary_job IN ('School Leader', 'Assistant School Leader', 'Assistant School Leader, SPED')
+  WHERE s.primary_job IN ('School Leader', 'Assistant School Leader', 'Assistant School Leader, SPED', 'School Leader in Residence')
  )
 
 ,existing_roles AS (
