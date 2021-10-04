@@ -236,6 +236,9 @@ SELECT c.sf_contact_id
       ,ei.emp_billing_state
       ,ei.emp_ncesid
       ,ei.emp_name
+      ,ei.ba_status
+      ,ei.aa_status
+      ,ei.cte_status
 
       ,ar.n_submitted
       ,ar.is_submitted_aa
