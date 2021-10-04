@@ -45,7 +45,7 @@ WITH enrollments AS (
                     WHEN e.pursuing_degree_type_c IN ('High School Diploma', 'GED') THEN 'Secondary'
                     WHEN e.pursuing_degree_type_c = 'Elementary Certificate' THEN 'Primary'
                     WHEN e.pursuing_degree_type_c = 'Certificate'
-                     AND e.account_type_c NOT IN ('Traditional Public School', 'Alternative High School', 'KIPP School')
+                     AND ISNULL(e.account_type_c, '') NOT IN ('Traditional Public School', 'Alternative High School', 'KIPP School')
                          THEN 'Vocational'
                    END AS pursuing_degree_level
                   ,CASE WHEN e.status_c = 'Graduated' THEN 1 ELSE 0 END AS is_graduated
