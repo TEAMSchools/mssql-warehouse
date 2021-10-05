@@ -3,7 +3,7 @@ GO
 
 CREATE OR ALTER VIEW njdoe.background_check_approval_history AS
 
-SELECT bg.df_employee_number
+SELECT bg.employee_number
 
       ,ah.approvaldate
       ,ah.countycode
