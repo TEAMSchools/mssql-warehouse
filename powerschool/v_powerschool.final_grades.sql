@@ -22,7 +22,7 @@ WITH roster AS (
         ,css.gradescaleid
   FROM powerschool.cohort_identifiers_static co
   JOIN powerschool.course_section_scaffold css
-    ON co.studentid = css.studentid
+    ON co.student_number = css.student_number
    AND co.yearid = css.yearid
    AND css.course_number <> 'ALL'
   JOIN powerschool.sections sec

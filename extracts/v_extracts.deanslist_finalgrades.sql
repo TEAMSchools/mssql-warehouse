@@ -4,7 +4,7 @@ GO
 CREATE OR ALTER VIEW extracts.deanslist_finalgrades AS
 
 SELECT o.student_number
-      ,(o.yearid + 1990) AS academic_year
+      ,gabby.utilities.GLOBAL_ACADEMIC_YEAR() AS academic_year
       ,o.term_name AS term
       ,o.course_number
       ,o.sectionid
@@ -61,61 +61,20 @@ JOIN gabby.powerschool.cc
   ON o.studentid = cc.studentid
  AND o.sectionid = cc.sectionid
  AND o.[db_name] = cc.[db_name]
-LEFT JOIN gabby.powerschool.final_grades_wide fg
+LEFT JOIN gabby.powerschool.final_grades_wide_static fg
   ON o.student_number = fg.student_number
- AND (o.yearid + 1990) = fg.academic_year
  AND o.course_number = fg.course_number
  AND o.term_name = fg.term_name
  AND o.[db_name] = fg.[db_name]
+ AND fg.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
  AND fg.reporting_term <> 'CUR'
-LEFT JOIN gabby.powerschool.category_grades_wide cat
+LEFT JOIN gabby.powerschool.category_grades_wide_static cat
   ON o.student_number = cat.student_number
- AND (o.yearid + 1990) = cat.academic_year
  AND o.course_number = cat.course_number
  AND o.[db_name] = cat.[db_name]
  AND fg.reporting_term = cat.reporting_term 
 LEFT JOIN gabby.powerschool.pgfinalgrades comm
   ON fg.studentid = comm.studentid
  AND fg.sectionid = comm.sectionid
- AND fg.term_name = comm.finalgradename_clean
+ AND fg.term_name = comm.finalgradename
  AND fg.[db_name] = comm.[db_name]
-
-UNION ALL
-
-SELECT comm.student_number
-      ,comm.academic_year
-      ,comm.term_name COLLATE Latin1_General_BIN AS term_name
-      ,comm.comment_subject COLLATE Latin1_General_BIN AS course_number
-      ,NULL AS sectionid
-      ,NULL AS sections_dcid
-      ,NULL AS section_number
-      ,comm.comment_subject COLLATE Latin1_General_BIN AS course_name
-      ,NULL AS credit_hours
-      ,0 AS include_grades_display
-      ,NULL AS currentabsences
-      ,NULL AS currenttardies
-      ,NULL AS teacher_name
-      ,NULL AS Q1_pct
-      ,NULL AS Q1_letter
-      ,NULL AS Q2_pct
-      ,NULL AS Q2_letter
-      ,NULL AS Q3_pct
-      ,NULL AS Q3_letter
-      ,NULL AS Q4_pct
-      ,NULL AS Q4_letter
-      ,NULL AS E1_pct
-      ,NULL AS E2_pct
-      ,NULL AS Y1_pct
-      ,NULL AS Y1_letter
-      ,NULL AS need_60
-      ,NULL AS M_term
-      ,NULL AS P_term
-      ,NULL AS W_term
-      ,NULL AS W_RT1
-      ,NULL AS W_RT2
-      ,NULL AS W_RT3
-      ,NULL AS W_RT4
-      ,NULL AS conduct
-      ,REPLACE(comm.comment, '"', '''') COLLATE Latin1_General_BIN AS comment_value
-FROM gabby.reporting.illuminate_report_card_comments comm
-WHERE comm.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
