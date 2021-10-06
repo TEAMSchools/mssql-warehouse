@@ -133,6 +133,7 @@ LEFT JOIN clean_responses c
  AND st.reporting_term_code = c.reporting_term
  AND st.survey_id = c.survey_id
 WHERE st.survey_id = 4561325 /* S&O Survey Code */
+  AND c.subject_employee_id <> COALESCE(st.employee_number, c.df_employee_number)
 
 UNION ALL
 
@@ -184,6 +185,7 @@ LEFT JOIN gabby.surveys.so_assignments_long s
  AND c.df_employee_number = s.survey_taker_id
 WHERE c.survey_id = 4561325 /* S&O Survey Code */
   AND s.assignment IS NULL
+  AND c.subject_employee_id <> COALESCE(st.employee_number, c.df_employee_number)
 
 UNION ALL
 
@@ -227,6 +229,7 @@ JOIN gabby.surveys.so_assignments s
   ON st.employee_number = s.employee_number
  AND s.survey_taker IN ('Yes', 'Yes - Should take manager survey only')
 WHERE st.survey_id = 4561288 /* MGR Survey Code */
+  AND c.subject_employee_id <> COALESCE(st.employee_number, c.df_employee_number)
 
 UNION
 
@@ -267,6 +270,7 @@ LEFT JOIN survey_term_staff_scaffold st
  AND c.reporting_term = st.reporting_term_code
  AND c.survey_id = st.survey_id
 WHERE st.survey_id = 4561288 /* MGR Survey Code */
+  AND c.subject_employee_id <> COALESCE(st.employee_number, c.df_employee_number)
 
 UNION ALL
 
