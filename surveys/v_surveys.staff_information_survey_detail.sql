@@ -4,17 +4,17 @@ GO
 CREATE OR ALTER VIEW surveys.staff_information_survey_detail AS 
 
 WITH survey_identifier AS (
-  SELECT survey_id
-        ,survey_response_id
-        ,employee_number
-        ,employee_preferred_name
-        ,CASE WHEN employee_number = CASE
-                                       WHEN CHARINDEX('[', employee_preferred_name) = 0 THEN NULL
+  SELECT p.survey_id
+        ,p.survey_response_id
+        ,p.employee_number
+        ,p.employee_preferred_name
+        ,CASE WHEN p.employee_number = CASE
+                                       WHEN CHARINDEX('[', p.employee_preferred_name) = 0 THEN NULL
                                        ELSE SUBSTRING(
-                                              employee_preferred_name
-                                             ,CHARINDEX('[', employee_preferred_name) + 1
-                                             ,CHARINDEX(']', employee_preferred_name) 
-                                                - CHARINDEX('[', employee_preferred_name) - 1
+                                              p.employee_preferred_name
+                                             ,CHARINDEX('[', p.employee_preferred_name) + 1
+                                             ,CHARINDEX(']', p.employee_preferred_name) 
+                                                - CHARINDEX('[', p.employee_preferred_name) - 1
                                             )
                                       END
                THEN 1
@@ -38,22 +38,22 @@ WITH survey_identifier AS (
 
   )
 
-SELECT employee_number
-      ,survey_id
-      ,survey_response_id
-      ,campaign_academic_year
-      ,campaign_reporting_term
-      ,campaign_name
-      ,date_started
-      ,date_submitted
-      ,question_id
+SELECT sub.employee_number
+      ,sub.survey_id
+      ,sub.survey_response_id
+      ,sub.campaign_academic_year
+      ,sub.campaign_reporting_term
+      ,sub.campaign_name
+      ,sub.date_started
+      ,sub.date_submitted
+      ,sub.question_id
       ,CASE 
-        WHEN question_id IN (5, 8, 21, 30) THEN question_shortname + CONVERT(VARCHAR(2),rn_multiselect)
-        ELSE question_shortname
+        WHEN sub.question_id IN (5, 8, 21, 30) THEN sub.question_shortname + CONVERT(VARCHAR(2),sub.rn_multiselect)
+        ELSE sub.question_shortname
        END as question_shortname
-      ,answer
-      ,ROW_NUMBER() OVER( PARTITION BY employee_number, survey_id, campaign_name, question_shortname, rn_multiselect ORDER BY date_submitted DESC, survey_response_id DESC) AS rn_campaign
-      ,ROW_NUMBER() OVER( PARTITION BY employee_number, survey_id,question_shortname, rn_multiselect ORDER BY date_submitted DESC, survey_response_id DESC) AS rn_cur
+      ,sub.answer
+      ,ROW_NUMBER() OVER( PARTITION BY sub.employee_number, sub.survey_id, sub.campaign_name, sub.question_shortname,sub. rn_multiselect ORDER BY sub.date_submitted DESC, sub.survey_response_id DESC) AS rn_campaign
+      ,ROW_NUMBER() OVER( PARTITION BY sub.employee_number, sub.survey_id, sub.question_shortname, sub.rn_multiselect ORDER BY sub.date_submitted DESC, sub.survey_response_id DESC) AS rn_cur
 FROM (
       SELECT si.employee_number
             ,si.survey_id
