@@ -38,74 +38,82 @@ BEGIN
       RETURN;
     END;
 
-  /* if destination table does not exist, create and exit */
-  IF OBJECT_ID(@destination_table_name) IS NULL
-    BEGIN
-      SET @sql = N'
-        SELECT *
-        INTO ' + @destination_table_name + N'
-        FROM ' + @source_view + N';
-      ';
-      PRINT (@sql);
-      EXEC (@sql);
-    END;
-  ELSE
-    BEGIN
-      /* drop temp table, if exists... */
-      SET @sql_drop = N'
-        IF OBJECT_ID(N''' + @temp_table_name + N''') IS NOT NULL
+  BEGIN TRY
+    /* if destination table does not exist, create and exit */
+    IF OBJECT_ID(@destination_table_name) IS NULL
+      BEGIN
+        SET @sql = N'
+          SELECT *
+          INTO ' + @destination_table_name + N'
+          FROM ' + @source_view + N';
+        ';
+        BEGIN TRANSACTION
+          PRINT (@sql);
+          EXEC (@sql);
+        COMMIT
+      END;
+    ELSE
+      BEGIN
+        /* drop temp table, if exists... */
+        SET @sql_drop = N'
+          IF OBJECT_ID(N''' + @temp_table_name + N''') IS NOT NULL
+            BEGIN
+              DROP TABLE ' + @temp_table_name + N';
+            END
+        '
+        BEGIN TRANSACTION
+          PRINT(@sql_drop);
+          EXEC (@sql_drop);
+        COMMIT
+
+        /* load data from view into temp table... */
+        SET @sql_selectinto = N'
+          SELECT *
+          INTO ' + @temp_table_name + N'
+          FROM ' + @source_view + N';
+        '
+        BEGIN TRANSACTION
+          PRINT(@sql_selectinto);
+          EXEC (@sql_selectinto);
+        COMMIT
+
+        /* truncate destination table... */
+        /* insert into destination table */
+        SET @sql_truncateinsert = N'
+          TRUNCATE TABLE ' + @destination_table_name + N';
+          INSERT INTO ' + @destination_table_name + N' WITH(TABLOCKX)
+          SELECT * 
+          FROM ' + @temp_table_name + N';
+        ';
+        IF @@ROWCOUNT > 0
           BEGIN
-            DROP TABLE ' + @temp_table_name + N';
-          END
-      '
-      PRINT(@sql_drop);
-      EXEC (@sql_drop);
-
-      /* load data from view into temp table... */
-      SET @sql_selectinto = N'
-        SELECT *
-        INTO ' + @temp_table_name + N'
-        FROM ' + @source_view + N';
-      '
-      PRINT(@sql_selectinto);
-      EXEC (@sql_selectinto);
-
-      /* truncate destination table... */
-      /* insert into destination table */
-      SET @sql_truncateinsert = N'
-        TRUNCATE TABLE ' + @destination_table_name + N';
-        INSERT INTO ' + @destination_table_name + N' WITH(TABLOCKX)
-        SELECT * 
-        FROM ' + @temp_table_name + N';
-      ';
-      IF @@ROWCOUNT > 0
-        BEGIN
-          BEGIN TRY
             BEGIN TRANSACTION
               PRINT(@sql_truncateinsert);
               EXEC (@sql_truncateinsert);
             COMMIT
-          END TRY
-          BEGIN CATCH
-            ROLLBACK;
-            SET @email_body = ERROR_MESSAGE();
-            SET @email_subject = @destination_table_name + N' refresh failed';
-            EXEC msdb.dbo.sp_send_dbmail @profile_name = 'datarobot'
-                                        ,@recipients = 'u7c1r1b1c5n4p0q0@kippnj.slack.com'
-                                        ,@subject = @email_subject
-                                        ,@body = @email_body;
-            THROW;
-          END CATCH;
-        END
-
-      /* drop temp table, if exists... */
-      SET @sql_drop = N'
-        IF OBJECT_ID(N''' + @temp_table_name + N''') IS NOT NULL
-          BEGIN
-            DROP TABLE ' + @temp_table_name + N';
           END
-      '
-      PRINT(@sql_drop);
-      EXEC (@sql_drop);
-    END
+
+        /* drop temp table, if exists... */
+        SET @sql_drop = N'
+          IF OBJECT_ID(N''' + @temp_table_name + N''') IS NOT NULL
+            BEGIN
+              DROP TABLE ' + @temp_table_name + N';
+            END
+        '
+        BEGIN TRANSACTION
+          PRINT(@sql_drop);
+          EXEC (@sql_drop);
+        COMMIT
+      END
+  END TRY
+  BEGIN CATCH
+    ROLLBACK;
+    SET @email_body = ERROR_MESSAGE();
+    SET @email_subject = @destination_table_name + N' refresh failed';
+    EXEC msdb.dbo.sp_send_dbmail @profile_name = 'datarobot'
+                                ,@recipients = 'u7c1r1b1c5n4p0q0@kippnj.slack.com'
+                                ,@subject = @email_subject
+                                ,@body = @email_body;
+    THROW;
+  END CATCH;
 END;
