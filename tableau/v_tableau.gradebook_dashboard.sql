@@ -80,7 +80,7 @@ LEFT JOIN gabby.powerschool.final_grades_static gr
 LEFT JOIN gabby.powerschool.pgfinalgrades pgf
   ON gr.studentid = pgf.studentid
  AND gr.sectionid = pgf.sectionid
- AND gr.term_name = pgf.finalgradename_clean
+ AND gr.term_name = pgf.finalgradename
  AND gr.[db_name] = pgf.[db_name]
 LEFT JOIN section_teacher st 
   ON co.studentid = st.studentid

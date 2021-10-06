@@ -58,7 +58,7 @@ FROM
      LEFT JOIN powerschool.pgfinalgrades pgf
        ON enr.studentid = pgf.studentid
       AND enr.sectionid = pgf.sectionid
-      AND tb.storecode = pgf.finalgradename_clean
+      AND tb.storecode = pgf.finalgradename
      WHERE enr.course_enroll_status = 0
        AND enr.section_enroll_status = 0
     ) sub

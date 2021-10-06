@@ -59,7 +59,7 @@ WITH roster AS (
              ,enr.course_number
              ,enr.academic_year
 
-             ,pgf.finalgradename_clean AS term_name
+             ,pgf.finalgradename AS term_name
 
              ,CONVERT(VARCHAR(5), sg.grade) AS stored_letter
              ,ROUND(sg.[percent], 0) AS stored_pct
@@ -80,7 +80,7 @@ WITH roster AS (
               END AS term_gpa_points
 
              ,ROW_NUMBER() OVER(
-                PARTITION BY enr.studentid, enr.yearid, enr.course_number, pgf.finalgradename_clean
+                PARTITION BY enr.studentid, enr.yearid, enr.course_number, pgf.finalgradename
                   ORDER BY sg.[percent] DESC, enr.section_enroll_status, enr.dateleft DESC) AS rn
        FROM powerschool.course_enrollments_current_static enr
        JOIN powerschool.pgfinalgrades pgf
@@ -90,7 +90,7 @@ WITH roster AS (
        LEFT JOIN powerschool.storedgrades sg
          ON enr.studentid = sg.studentid
         AND enr.abs_sectionid = sg.sectionid
-        AND pgf.finalgradename_clean = sg.storecode
+        AND pgf.finalgradename = sg.storecode
        LEFT JOIN powerschool.gradescaleitem_lookup_static scale
          ON enr.gradescaleid = scale.gradescaleid
         AND pgf.[percent] BETWEEN scale.min_cutoffpercentage AND scale.max_cutoffpercentage
