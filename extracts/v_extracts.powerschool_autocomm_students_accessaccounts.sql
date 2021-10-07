@@ -18,16 +18,11 @@ SELECT co.student_number
         WHEN co.grade_level IN (3, 8, 12) THEN 'D'
         WHEN co.grade_level = 4 THEN 'E'
        END AS track
-
-      ,t.eligibility_name
-      ,t.total_balance
-
+      ,co.lunchstatus AS eligibility_name
+      ,co.lunch_balance AS total_balance
       ,co.advisor_name AS home_room
       ,co.[db_name]
 FROM gabby.powerschool.cohort_identifiers_static co
-LEFT JOIN gabby.titan.person_data_clean t
-  ON co.student_number = t.person_identifier
- AND co.academic_year = t.application_academic_school_year_clean
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.rn_year = 1
   AND co.grade_level <> 99
