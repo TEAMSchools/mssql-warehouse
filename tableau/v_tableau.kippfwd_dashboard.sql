@@ -268,8 +268,19 @@ SELECT c.sf_contact_id
       ,cnr.PSCS
       ,cnr.SC
       ,cnr.HV
-      ,cnr.DPF
-      ,cnr.DPS
+      ,cnr.DP_2yearF
+      ,cnr.DP_4yearF
+      ,cnr.DP_CTEF
+      ,cnr.DP_MilitaryF
+      ,cnr.DP_WorkforceF
+      ,cnr.DP_UnknownF
+      ,cnr.DP_2yearS
+      ,cnr.DP_4yearS
+      ,cnr.DP_CTES
+      ,cnr.DP_MilitaryS
+      ,cnr.DP_WorkforceS
+      ,cnr.DP_UnknownS
+
 
       ,gpa.fall_transcript_date
       ,gpa.fall_semester_gpa
