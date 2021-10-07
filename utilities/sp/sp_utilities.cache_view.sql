@@ -94,7 +94,8 @@ BEGIN
       SET @sql_selectinto = N'
         SELECT *
         INTO ' + @temp_table_name + N'
-        FROM ' + @source_view + N';
+        FROM ' + @source_view + N'
+        OPTION (MAXDOP 1);
       '
       BEGIN TRY
         BEGIN TRANSACTION
@@ -113,8 +114,7 @@ BEGIN
         THROW;
       END CATCH;
 
-      /* truncate destination table... */
-      /* insert into destination table */
+      /* truncate/insert into destination table */
       SET @sql_truncateinsert = N'
         TRUNCATE TABLE ' + @destination_table_name + N';
         INSERT INTO ' + @destination_table_name + N' WITH(TABLOCKX)
