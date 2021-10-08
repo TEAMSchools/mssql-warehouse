@@ -102,12 +102,12 @@ SELECT co.student_number
       ,co.exit_code_kf
       ,co.exit_code_ts
 
-      ,LEAD(co.schoolid, 1) OVER(PARTITION BY co.student_number ORDER BY co.academic_year  ASC) AS next_schoolid
-      ,LEAD(co.exitdate, 1) OVER(PARTITION BY co.student_number ORDER BY co.academic_year  ASC) AS next_exitdate
-      ,LEAD(co.exitcode, 1) OVER(PARTITION BY co.student_number ORDER BY co.academic_year  ASC) AS next_exitcode
-      ,LEAD(co.exit_code_kf, 1) OVER(PARTITION BY co.student_number ORDER BY co.academic_year  ASC) AS next_exit_code_kf
-      ,LEAD(co.exit_code_ts, 1) OVER(PARTITION BY co.student_number ORDER BY co.academic_year  ASC) AS next_exit_code_ts
-      ,LEAD(co.exitcomment, 1) OVER(PARTITION BY co.student_number ORDER BY co.academic_year  ASC) AS next_exitcomment
+      ,LEAD(co.schoolid, 1) OVER(PARTITION BY co.student_number ORDER BY co.academic_year ASC) AS next_schoolid
+      ,LEAD(co.exitdate, 1) OVER(PARTITION BY co.student_number ORDER BY co.academic_year ASC) AS next_exitdate
+      ,LEAD(co.exitcode, 1) OVER(PARTITION BY co.student_number ORDER BY co.academic_year ASC) AS next_exitcode
+      ,LEAD(co.exit_code_kf, 1) OVER(PARTITION BY co.student_number ORDER BY co.academic_year ASC) AS next_exit_code_kf
+      ,LEAD(co.exit_code_ts, 1) OVER(PARTITION BY co.student_number ORDER BY co.academic_year ASC) AS next_exit_code_ts
+      ,LEAD(co.exitcomment, 1) OVER(PARTITION BY co.student_number ORDER BY co.academic_year ASC) AS next_exitcomment
       ,LEAD(co.is_enrolled_oct01, 1, 0) OVER(PARTITION BY co.student_number ORDER BY co.academic_year) AS is_enrolled_oct01_next
       ,LEAD(co.is_enrolled_oct15, 1, 0) OVER(PARTITION BY co.student_number ORDER BY co.academic_year) AS is_enrolled_oct15_next
 
@@ -125,17 +125,17 @@ SELECT co.student_number
       ,nj.parent_consent_intial_iep_date
       ,nj.annual_iep_review_meeting_date
       ,nj.reevaluation_date
-      ,CONVERT(VARCHAR(1),nj.parent_consent_obtain_code) AS parent_consent_obtain_code
-      ,CONVERT(VARCHAR(5),nj.initial_process_delay_reason) AS initial_process_delay_reason
-      ,CONVERT(VARCHAR(5),nj.special_education_placement) AS special_education_placement
-      ,CONVERT(VARCHAR(5),nj.time_in_regular_program) AS time_in_regular_program
-      ,CONVERT(VARCHAR(1),nj.early_intervention_yn) AS early_intervention_yn
-      ,CONVERT(VARCHAR(1),nj.determined_ineligible_yn) AS determined_ineligible_yn
-      ,CONVERT(VARCHAR(1),nj.counseling_services_yn) AS counseling_services_yn
-      ,CONVERT(VARCHAR(1),nj.occupational_therapy_serv_yn) AS occupational_therapy_serv_yn
-      ,CONVERT(VARCHAR(1),nj.physical_therapy_services_yn) AS physical_therapy_services_yn
-      ,CONVERT(VARCHAR(1),nj.speech_lang_theapy_services_yn) AS speech_lang_theapy_services_yn
-      ,CONVERT(VARCHAR(1),nj.other_related_services_yn) AS other_related_services_yn
+      ,CONVERT(VARCHAR(1), nj.parent_consent_obtain_code) AS parent_consent_obtain_code
+      ,CONVERT(VARCHAR(5), nj.initial_process_delay_reason) AS initial_process_delay_reason
+      ,CONVERT(VARCHAR(5), nj.special_education_placement) AS special_education_placement
+      ,CONVERT(VARCHAR(5), nj.time_in_regular_program) AS time_in_regular_program
+      ,CONVERT(VARCHAR(1), nj.early_intervention_yn) AS early_intervention_yn
+      ,CONVERT(VARCHAR(1), nj.determined_ineligible_yn) AS determined_ineligible_yn
+      ,CONVERT(VARCHAR(1), nj.counseling_services_yn) AS counseling_services_yn
+      ,CONVERT(VARCHAR(1), nj.occupational_therapy_serv_yn) AS occupational_therapy_serv_yn
+      ,CONVERT(VARCHAR(1), nj.physical_therapy_services_yn) AS physical_therapy_services_yn
+      ,CONVERT(VARCHAR(1), nj.speech_lang_theapy_services_yn) AS speech_lang_theapy_services_yn
+      ,CONVERT(VARCHAR(1), nj.other_related_services_yn) AS other_related_services_yn
 
       ,t.target_enrollment
       ,t.target_enrollment_finance
