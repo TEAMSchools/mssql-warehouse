@@ -229,7 +229,7 @@ JOIN gabby.surveys.so_assignments s
   ON st.employee_number = s.employee_number
  AND s.survey_taker IN ('Yes', 'Yes - Should take manager survey only')
 WHERE st.survey_id = 4561288 /* MGR Survey Code */
-  AND c.subject_employee_id <> COALESCE(st.employee_number, c.df_employee_number)
+  AND (c.subject_employee_id <> COALESCE(st.employee_number, c.df_employee_number) OR c.subject_employee_id IS NULL)
 
 UNION
 
@@ -270,7 +270,7 @@ LEFT JOIN survey_term_staff_scaffold st
  AND c.reporting_term = st.reporting_term_code
  AND c.survey_id = st.survey_id
 WHERE st.survey_id = 4561288 /* MGR Survey Code */
-  AND c.subject_employee_id <> COALESCE(st.employee_number, c.df_employee_number)
+  AND (c.subject_employee_id <> COALESCE(st.employee_number, c.df_employee_number) OR c.subject_employee_id IS NULL)
 
 UNION ALL
 
