@@ -89,20 +89,3 @@ JOIN gabby.powerschool.schools sch
   ON sch.schoolstate = 'NJ'
  AND sch.state_excludefromreporting = 0
 WHERE adg.group_cn = 'Group Staff NJ Regional'
-
-UNION ALL
-
-/* ad hoc drivel */
-SELECT s.school_number AS School_id
-      ,'100107' AS Staff_id
-      ,'lcooke@kippnj.org' AS Staff_email
-      ,'Lauren' AS First_name
-      ,'Cooke' AS Last_name
-      ,'Math' AS Department
-      ,'School Admin' AS Title
-      ,'lcooke' AS Username
-      ,NULL AS [Password]
-      ,NULL AS [Role]
-FROM kippnewark.powerschool.schools s
-WHERE s.high_grade = 8
-  AND s.school_number <> 732510 /* already assigned by default */
