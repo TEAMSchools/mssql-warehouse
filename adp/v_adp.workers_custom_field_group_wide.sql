@@ -14,6 +14,7 @@ SELECT associate_oid
       ,[WFMgr LOA Return Date]
       ,[WFMgr Pay Rule]
       ,[WFMgr Trigger]
+      ,[WFMgr Badge Number]
       ,CASE 
         WHEN [WFMgr LOA] = 'true' THEN 1
         WHEN [WFMgr LOA] = 'false' THEN 0
@@ -37,5 +38,6 @@ PIVOT(
                     ,[WFMgr LOA]
                     ,[WFMgr LOA Return Date]
                     ,[WFMgr Pay Rule]
-                    ,[WFMgr Trigger])
+                    ,[WFMgr Trigger]
+                    ,[WFMgr Badge Number])
  ) p
