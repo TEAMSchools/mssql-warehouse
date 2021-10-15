@@ -68,7 +68,7 @@ FROM
            ,CONVERT(VARCHAR(25), JSON_VALUE(sr.url_variables, '$.sguid')) AS url_sguid
            ,CONVERT(VARCHAR(250), JSON_VALUE(sr.url_variables, '$.__pathdata')) AS url_pathdata
            ,CONVERT(NVARCHAR(MAX), sr.data_quality) AS data_quality_json
-           ,CONVERT(NVARCHAR(MAX), sr.survey_data) AS survey_data_json
+           ,CONVERT(NVARCHAR(MAX), COALESCE(sr.survey_data_list, sr.survey_data)) AS survey_data_json
 
            ,ROW_NUMBER() OVER(PARTITION BY sr.id, sr.survey_id ORDER BY sr._modified DESC) AS rn
      FROM gabby.surveygizmo.survey_response sr
