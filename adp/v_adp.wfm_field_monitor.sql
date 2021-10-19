@@ -25,6 +25,7 @@ WITH unpivoted AS (
              ,CONVERT(NVARCHAR(MAX), wfmgr_pay_rule) AS wfmgr_pay_rule
              ,CONVERT(NVARCHAR(MAX), wfmgr_accrual_profile) AS wfmgr_accrual_profile
              ,CONVERT(NVARCHAR(MAX), wfmgr_ee_type) AS wfmgr_ee_type
+             ,CONVERT(NVARCHAR(MAX), wfmgr_badge_number) AS wfmgr_badge_number
        FROM gabby.adp.employees_archive
        WHERE position_id IS NOT NULL
          AND position_status <> 'Terminated'
@@ -44,6 +45,7 @@ WITH unpivoted AS (
       ,wfmgr_pay_rule
       ,wfmgr_accrual_profile
       ,wfmgr_ee_type
+      ,wfmgr_badge_number
      )
    ) u
  )
