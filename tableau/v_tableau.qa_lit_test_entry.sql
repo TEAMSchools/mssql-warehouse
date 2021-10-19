@@ -46,4 +46,4 @@ LEFT JOIN gabby.lit.guided_reading_roster gr
 WHERE co.rn_year = 1
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.enroll_status = 0
-  AND co.grade_level < 8
+  AND co.grade_level <= 4
