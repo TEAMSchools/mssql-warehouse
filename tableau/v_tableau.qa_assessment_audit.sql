@@ -5,7 +5,7 @@ CREATE OR ALTER VIEW tableau.qa_assessment_audit AS
 
 WITH standards_grouped AS (
   SELECT fs.field_id
-      
+
         ,gabby.dbo.GROUP_CONCAT_D(s.custom_code, '; ') AS standard_codes
   FROM gabby.illuminate_dna_assessments.field_standards fs
   JOIN gabby.illuminate_standards.standards s
@@ -16,7 +16,7 @@ WITH standards_grouped AS (
 SELECT a.assessment_id
       ,a.title
       ,a.academic_year_clean AS academic_year
-      ,a.administered_at            
+      ,a.administered_at
       ,a.module_type
       ,a.module_number
       ,a.scope
@@ -25,7 +25,7 @@ SELECT a.assessment_id
       ,a.is_normed_scope
       ,a.creator_first_name + ' ' + a.creator_last_name AS created_by
 
-      ,pbs.description AS performance_band_set_description
+      ,pbs.[description] AS performance_band_set_description
 
       ,gr.short_name AS assessment_grade_level
 
@@ -55,7 +55,7 @@ LEFT JOIN gabby.illuminate_dna_assessments.fields_reporting_groups frg
   ON f.field_id = frg.field_id 
  AND (frg.reporting_group_id IN (SELECT reporting_group_id 
                                  FROM gabby.illuminate_dna_assessments.reporting_groups 
-                                 WHERE label IN ('Multiple Choice','Open Ended Response','Open-Ended Response'))
+                                 WHERE [label] IN ('Multiple Choice','Open Ended Response','Open-Ended Response'))
       OR frg.reporting_group_id IS NULL)
 LEFT JOIN standards_grouped sg
   ON f.field_id = sg.field_id
