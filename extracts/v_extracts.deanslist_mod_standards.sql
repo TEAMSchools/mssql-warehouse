@@ -44,11 +44,11 @@ SELECT sa.local_student_id AS student_number
       ,sa.subject_area
       ,sa.standard_description
       ,CASE
-        WHEN pbl.label_number = 5 THEN 'Above Target'
-        WHEN pbl.label_number = 4 THEN 'Target'
-        WHEN pbl.label_number = 3 THEN 'Near Target'
-        WHEN pbl.label_number = 2 THEN 'Below Target'
-        WHEN pbl.label_number = 1 THEN 'Far Below Target'
+        WHEN pbl.label_number = 5 THEN 'Advanced Mastery'
+        WHEN pbl.label_number = 4 THEN 'Mastery'
+        WHEN pbl.label_number = 3 THEN 'Approaching Mastery'
+        WHEN pbl.label_number = 2 THEN 'Below Mastery'
+        WHEN pbl.label_number = 1 THEN 'Far Below Mastery'
        END AS standard_proficiency
 FROM std_avg sa
 JOIN gabby.illuminate_dna_assessments.performance_band_lookup_static pbl

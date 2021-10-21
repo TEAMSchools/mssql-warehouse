@@ -123,10 +123,10 @@ SELECT rc.survey_response_id
       ,rsch.school_level AS respondent_primary_site_school_level
       ,reh.reports_to_employee_number AS respondent_manager_df_employee_number
 
-      ,rmgr.manager_name AS respondent_manager_name
-      ,rmgr.manager_mail AS respondent_manager_mail
-      ,rmgr.manager_userprincipalname AS respondent_manager_userprincipalname
-      ,rmgr.manager_samaccountname AS respondent_manager_samaccountname
+      ,rmgr.preferred_name AS respondent_manager_name
+      ,rmgr.mail AS respondent_manager_mail
+      ,rmgr.userprincipalname AS respondent_manager_userprincipalname
+      ,rmgr.samaccountname AS respondent_manager_samaccountname
 
       ,subj.preferred_name AS subject_preferred_name
       ,subj.adp_associate_id AS subject_adp_associate_id
@@ -142,10 +142,10 @@ SELECT rc.survey_response_id
       ,ssch.school_level AS subject_primary_site_school_level
       ,seh.reports_to_employee_number AS subject_manager_df_employee_number
 
-      ,smgr.manager_name AS subject_manager_name
-      ,smgr.manager_mail AS subject_manager_mail
-      ,smgr.manager_userprincipalname AS subject_manager_userprincipalname
-      ,smgr.manager_samaccountname AS subject_manager_samaccountname
+      ,smgr.preferred_name AS subject_manager_name
+      ,smgr.mail AS subject_manager_mail
+      ,smgr.userprincipalname AS subject_manager_userprincipalname
+      ,smgr.samaccountname AS subject_manager_samaccountname
 
       ,ROW_NUMBER() OVER(
          PARTITION BY rc.survey_id, sc.academic_year, sc.[name], rc.respondent_employee_number, rc.subject_employee_number
