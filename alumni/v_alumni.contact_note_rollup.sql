@@ -1,15 +1,17 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW alumni.contact_note_rollup AS
+--CREATE OR ALTER VIEW alumni.contact_note_rollup AS
 
-SELECT contact_id
+SELECT --top 50
+       contact_id
       ,academic_year
 
       ,[SC]
       ,[CCDM]
 
-      ,[AS1F]
+      ,ISDATE(CONVERT(varchar,[AS1F])) AS [AS1F]
+      ,[AS1F] AS [AS1F_date]
       ,[AS2F]
       ,[AS3F]
       ,[AS4F]
@@ -68,7 +70,8 @@ FROM
            ,sub.contact_date
      FROM
          (
-          SELECT c.contact_c AS contact_id
+          SELECT --top 50
+                 c.contact_c AS contact_id
                 ,gabby.utilities.DATE_TO_SY(c.date_c) AS academic_year
                 ,CASE
                   WHEN c.subject_c IN ('Summer AAS', 'CCDM') THEN ''
@@ -110,7 +113,7 @@ FROM
          ) sub
     ) sub
 PIVOT(
-  COUNT(contact_date)
+  MIN(contact_date) --CHANGE FROM COUNT TO MIN
   FOR contact_type IN ([AS1F]
                       ,[AS2F]
                       ,[AS1S]
