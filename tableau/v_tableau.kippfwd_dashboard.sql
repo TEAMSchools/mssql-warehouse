@@ -237,8 +237,11 @@ SELECT c.sf_contact_id
       ,ei.emp_ncesid
       ,ei.emp_name
       ,ei.ba_status
+      ,ei.ba_actual_end_date
       ,ei.aa_status
+      ,ei.aa_actual_end_date
       ,ei.cte_status
+      ,ei.cte_actual_end_date
 
       ,ar.n_submitted
       ,ar.is_submitted_aa
