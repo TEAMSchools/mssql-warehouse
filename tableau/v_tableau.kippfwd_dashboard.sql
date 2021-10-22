@@ -237,8 +237,11 @@ SELECT c.sf_contact_id
       ,ei.emp_ncesid
       ,ei.emp_name
       ,ei.ba_status
+      ,ei.ba_actual_end_date
       ,ei.aa_status
+      ,ei.aa_actual_end_date
       ,ei.cte_status
+      ,ei.cte_actual_end_date
 
       ,ar.n_submitted
       ,ar.is_submitted_aa
@@ -263,6 +266,19 @@ SELECT c.sf_contact_id
       ,cnr.[AS4S]
       ,cnr.[AS5S]
       ,cnr.[AS6S]
+      ,cnr.[AS1F_date]
+      ,cnr.[AS2F_date]
+      ,cnr.[AS3F_date]
+      ,cnr.[AS4F_date]
+      ,cnr.[AS5F_date]
+      ,cnr.[AS6F_date]
+      ,cnr.[AS1S_date]
+      ,cnr.[AS2S_date]
+      ,cnr.[AS3S_date]
+      ,cnr.[AS4S_date]
+      ,cnr.[AS5S_date]
+      ,cnr.[AS6S_date]
+
       ,cnr.CCDM
       ,cnr.PSCF
       ,cnr.PSCS
