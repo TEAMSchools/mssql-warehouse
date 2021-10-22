@@ -64,6 +64,7 @@ SELECT sub.employee_number AS df_employee_number
       ,sub.samaccountname
       ,sub.userprincipalname
       ,sub.mail
+      ,sub.is_active_ad
       ,sub.google_email
       ,sub.manager_samaccountname
       ,sub.manager_userprincipalname
@@ -132,6 +133,7 @@ FROM
            ,ads.samaccountname
            ,ads.userprincipalname
            ,ads.mail
+           ,ads.is_active AS is_active_ad
            ,CASE
              WHEN sr.business_unit = 'KIPP Miami' THEN LOWER(LEFT(ads.userprincipalname, CHARINDEX('@', ads.userprincipalname))) + 'kippmiami.org'
              ELSE LOWER(LEFT(ads.userprincipalname, CHARINDEX('@', ads.userprincipalname))) + 'apps.teamschools.org' 
