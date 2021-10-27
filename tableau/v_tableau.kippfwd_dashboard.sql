@@ -266,6 +266,19 @@ SELECT c.sf_contact_id
       ,cnr.[AS4S]
       ,cnr.[AS5S]
       ,cnr.[AS6S]
+      ,cnr.[AS1F_date]
+      ,cnr.[AS2F_date]
+      ,cnr.[AS3F_date]
+      ,cnr.[AS4F_date]
+      ,cnr.[AS5F_date]
+      ,cnr.[AS6F_date]
+      ,cnr.[AS1S_date]
+      ,cnr.[AS2S_date]
+      ,cnr.[AS3S_date]
+      ,cnr.[AS4S_date]
+      ,cnr.[AS5S_date]
+      ,cnr.[AS6S_date]
+
       ,cnr.CCDM
       ,cnr.PSCF
       ,cnr.PSCS
