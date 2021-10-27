@@ -42,7 +42,7 @@ WITH survey_term_staff_scaffold AS (
        JOIN gabby.surveygizmo.survey_clean s
          ON c.survey_id = s.survey_id
        WHERE c.link_type = 'email'
-         AND c.survey_id IN (4561325, 4561288, 5300913, 6330385)
+         AND c.survey_id IN (4561325, 4561288, 5300913, 6330385, 6580731)
       ) sub
   JOIN gabby.people.staff_crosswalk_static r
     ON r.[status] NOT IN ('Terminated', 'Prestart')
@@ -59,6 +59,7 @@ WITH survey_term_staff_scaffold AS (
           WHEN c.survey_id = 4561288 THEN 'Manager'
           WHEN c.survey_id = 5300913 THEN 'R9/Engagement' 
           WHEN c.survey_id = 6330385 THEN 'Staff Update'
+          WHEN c.survey_id = 6580731 THEN 'Intent to Return'
          END AS survey_type
         ,SUBSTRING(c.[name], CHARINDEX(' ', c.[name])+1, LEN(c.[name])) AS reporting_term
 
@@ -82,7 +83,7 @@ WITH survey_term_staff_scaffold AS (
   JOIN gabby.people.staff_crosswalk_static sc
     ON i.respondent_df_employee_number = sc.df_employee_number
   WHERE c.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-    AND c.survey_id IN (4561325, 4561288, 5300913, 6330385)
+    AND c.survey_id IN (4561325, 4561288, 5300913, 6330385, 6580731)
  )
 
 SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
@@ -393,3 +394,44 @@ LEFT JOIN clean_responses c
  AND st.reporting_term_code = c.reporting_term
  AND st.survey_id = c.survey_id
 WHERE st.survey_id = 6330385 /* UP Survey Code */
+
+UNION ALL
+
+SELECT st.employee_number AS survey_taker_id
+      ,st.preferred_name AS survey_taker_name
+      ,st.survey_taker_legal_entity_name
+      ,st.[location] AS survey_taker_location
+      ,st.survey_taker_department
+      ,st.survey_taker_primary_job
+      ,st.position_status AS survey_taker_adp_status
+      ,st.survey_taker_samaccount AS survey_taker_samaccount
+      ,st.manager_df_employee_number
+      ,st.manager_name
+      ,st.manager_legal_entity_name
+
+      ,'Yes' AS survey_round_status
+      ,'Intent to Return' AS assignment
+      ,NULL AS assingment_employee_id
+      ,NULL AS assignment_preferred_name
+      ,NULL AS assignment_location
+      ,NULL AS assignment_adp_status
+      ,'Intent to Return' AS assignment_type
+
+      ,st.academic_year
+      ,st.reporting_term_code AS reporting_term
+      ,st.survey_round_open_minus_fifteen
+      ,st.survey_round_open
+      ,st.survey_round_close
+      ,st.survey_default_link
+
+      ,c.subject_name AS completed_survey_subject_name
+      ,c.date_submitted AS survey_completion_date
+      ,c.is_manager
+FROM survey_term_staff_scaffold st
+LEFT JOIN clean_responses c
+  ON st.employee_number = c.df_employee_number
+ AND st.academic_year = c.academic_year
+ AND st.reporting_term_code = c.reporting_term
+ AND st.survey_id = c.survey_id
+WHERE st.survey_id = 6580731 /* UP Survey Code */
+  AND st.survey_taker_legal_entity_name <> 'KIPP TEAM and Family Schools Inc.'
