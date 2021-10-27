@@ -434,3 +434,4 @@ LEFT JOIN clean_responses c
  AND st.reporting_term_code = c.reporting_term
  AND st.survey_id = c.survey_id
 WHERE st.survey_id = 6580731 /* UP Survey Code */
+  AND st.survey_taker_legal_entity_name <> 'KIPP TEAM and Family Schools Inc.'
