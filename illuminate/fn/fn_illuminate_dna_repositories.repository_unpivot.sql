@@ -9,17 +9,25 @@ CREATE OR ALTER FUNCTION illuminate_dna_repositories.repository_unpivot (
 RETURNS NVARCHAR(MAX)
 AS
 BEGIN
-  SELECT @field_names = gabby.dbo.GROUP_CONCAT_D(f.name, ', ')
-  FROM gabby.illuminate_dna_repositories.fields f
+
+  SELECT @field_names = gabby.dbo.GROUP_CONCAT_D(f.[name], ', ')
+  FROM illuminate_dna_repositories.fields f 
+  JOIN gabby.utilities.all_tables_columns atc
+    ON CONCAT('repository_', f.repository_id) = atc.table_name
+   AND f.[name] = atc.column_name COLLATE Latin1_General_BIN
+   AND atc.[schema_name] = 'illuminate_dna_repositories'
   WHERE f.repository_id = @repository_id
     AND f.deleted_at IS NULL;
 
-  SELECT @sql = CONCAT('SELECT sub.repository_id, sub.repository_row_id, sub.[value], CONVERT(NVARCHAR(32), f.[label]) AS [label], s.local_student_id, CONVERT(DATE, r.date_administered) AS date_administered FROM (', ' '
-                      ,'SELECT', ' '
-                      ,@repository_id, ' AS repository_id, repository_row_id, student_id, CONVERT(VARCHAR(125), field) AS field, CONVERT(VARCHAR(25), [value]) AS [value]', ' '
+  SELECT @sql = CONCAT('SELECT sub.repository_id, sub.repository_row_id, sub.[value], CONVERT(NVARCHAR(32), f.[label]) AS [label], s.local_student_id, CONVERT(DATE, r.date_administered) AS date_administered', ' '
+                      ,'FROM (', ' '
+                      ,'SELECT ', @repository_id, ' AS repository_id, repository_row_id, student_id, CONVERT(VARCHAR(125), field) AS field, CONVERT(VARCHAR(25), [value]) AS [value]', ' '
                       ,'FROM illuminate_dna_repositories.repository_', @repository_id, ' '
                       ,'UNPIVOT([value] FOR field IN (', @field_names, ')) u', ' '
-                      ,'WHERE u.repository_row_id IN (SELECT repository_row_id FROM illuminate_dna_repositories.repository_row_ids WHERE repository_id = ', @repository_id, ')', ' '
+                      ,'WHERE u.repository_row_id IN (', ' '
+                      ,'SELECT repository_row_id', ' '
+                      ,'FROM illuminate_dna_repositories.repository_row_ids', ' '
+                      ,'WHERE repository_id = ', @repository_id, ')', ' '
                       ,') sub', ' '
                       ,'JOIN illuminate_dna_repositories.fields f ON sub.repository_id = f.repository_id AND sub.field = f.[name] AND f.deleted_at IS NULL', ' '
                       ,'JOIN illuminate_public.students s ON sub.student_id = s.student_id', ' '
@@ -27,4 +35,5 @@ BEGIN
                       );
 
   RETURN @sql
+
 END
