@@ -89,7 +89,7 @@ FROM
            ,a.administration_window_start_date
            ,a.administration_window_end_date
            ,a.is_hybrid_x
-           ,a.academic_year_clean
+           ,a.academic_year - 1 AS academic_year_clean
 
            ,u.local_user_id AS creator_local_user_id
            ,u.username AS creator_username
@@ -155,17 +155,17 @@ FROM
      FROM gabby.illuminate_dna_assessments.assessments a
      JOIN gabby.illuminate_public.users u
        ON a.[user_id] = u.[user_id]
-     JOIN gabby.illuminate_dna_assessments.performance_band_sets pbs WITH(FORCESEEK)
+     JOIN gabby.illuminate_dna_assessments.performance_band_sets pbs
        ON a.performance_band_set_id = pbs.performance_band_set_id
-     LEFT JOIN gabby.illuminate_codes.dna_scopes ds WITH(FORCESEEK)
+     LEFT JOIN gabby.illuminate_codes.dna_scopes ds
        ON a.code_scope_id = ds.code_id
-     LEFT JOIN gabby.illuminate_codes.dna_subject_areas dsa WITH(FORCESEEK)
+     LEFT JOIN gabby.illuminate_codes.dna_subject_areas dsa
        ON a.code_subject_area_id = dsa.code_id
      LEFT JOIN gabby.assessments.normed_scopes n
-       ON a.academic_year_clean = n.academic_year
+       ON a.academic_year = (n.academic_year + 1)
       AND ds.code_translation = n.scope
       AND n._fivetran_deleted = 0
-     LEFT JOIN gabby.reporting.reporting_terms rt WITH(FORCESEEK)
+     LEFT JOIN gabby.reporting.reporting_terms rt
        ON a.administered_at BETWEEN rt.[start_date] AND rt.end_date
       AND rt.identifier = 'RT'
       AND rt.schoolid = 0

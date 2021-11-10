@@ -92,6 +92,6 @@ SELECT cd.unique_id
       ,CONVERT(INT, instr.fp_lvl_num) AS instr_lvl_num
 FROM clean_data cd
 LEFT JOIN gabby.lit.gleq achv
-  ON cd.achieved_independent_level = achv.read_lvl_clean
+  ON cd.achieved_independent_level = achv.read_lvl
 LEFT JOIN gabby.lit.gleq instr
-  ON cd.instructional_level_tested = instr.read_lvl_clean
+  ON cd.instructional_level_tested = instr.read_lvl

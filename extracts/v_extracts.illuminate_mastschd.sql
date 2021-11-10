@@ -33,4 +33,4 @@ JOIN gabby.powerschool.terms tr
 JOIN gabby.powerschool.teachers_static t
   ON sec.teacher = t.id
  AND sec.[db_name] = t.[db_name]
-WHERE sec.yearid = (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990);
+WHERE sec.termid >= ((gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990) * 100)

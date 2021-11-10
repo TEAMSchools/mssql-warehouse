@@ -73,7 +73,7 @@ FROM
            AND gsec.[type] = 'Admin'
           LEFT JOIN powerschool.gradeschoolconfig gsch
             ON sch.dcid = gsch.schoolsdcid
-           AND sec.yearid = gsch.yearid
+           AND LEFT(sec.termid, 2) = gsch.yearid
           LEFT JOIN powerschool.gradeschoolformulaassoc gsfa
             ON gsch.gradeschoolconfigid = gsfa.gradeschoolconfigid
            AND gsfa.isdefaultformulaset = 1

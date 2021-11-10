@@ -11,8 +11,8 @@ SELECT sub.studentid
       ,NULL AS lastgradeupdate
       ,sub.sectionid
       ,sub.expression
-      ,sub.yearid
-      ,sub.academic_year
+      ,gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990 AS yearid
+      ,gabby.utilities.GLOBAL_ACADEMIC_YEAR() AS academic_year
       ,sub.student_number
       ,sub.students_dcid
       ,sub.credittype
@@ -31,13 +31,13 @@ SELECT sub.studentid
       ,sub.course_enroll_status
       ,sub.sections_dcid
       ,CONVERT(INT, ROW_NUMBER() OVER(
-         PARTITION BY sub.studentid, sub.credittype, sub.section_enroll_status
-           ORDER BY sub.termid DESC, sub.course_number DESC, sub.dateenrolled DESC, sub.dateleft DESC)) AS rn_subject
+         PARTITION BY sub.student_number, sub.credittype
+           ORDER BY sub.termid DESC, sub.dateenrolled DESC, sub.dateleft DESC)) AS rn_subject
       ,CONVERT(INT, ROW_NUMBER() OVER(
-         PARTITION BY sub.studentid, sub.course_number, sub.academic_year, sub.schoolid
+         PARTITION BY sub.student_number, sub.course_number
            ORDER BY sub.termid DESC, sub.dateenrolled DESC, sub.dateleft DESC)) AS rn_course_yr
       ,CONVERT(INT, ROW_NUMBER() OVER(
-         PARTITION BY sub.student_number, sub.academic_year, sub.illuminate_subject, sub.course_enroll_status, sub.section_enroll_status
+         PARTITION BY sub.student_number, sub.illuminate_subject
            ORDER BY sub.termid DESC, sub.dateenrolled DESC, sub.dateleft DESC)) AS rn_illuminate_subject
 FROM
     (
@@ -51,8 +51,6 @@ FROM
            ,sub.dateleft
            ,sub.sectionid
            ,sub.expression
-           ,sub.yearid
-           ,sub.academic_year
            ,sub.student_number
            ,sub.students_dcid
            ,sub.credittype
@@ -69,8 +67,8 @@ FROM
            ,sub.abs_termid
            ,sub.sections_dcid
            ,sub.courses_gradescaleid
-           ,SUM(sub.section_enroll_status) OVER(PARTITION BY sub.studentid, sub.yearid, sub.course_number)
-              / COUNT(sub.sectionid) OVER(PARTITION BY sub.studentid, sub.yearid, sub.course_number) AS course_enroll_status
+           ,SUM(sub.section_enroll_status) OVER(PARTITION BY sub.studentid, sub.course_number)
+              / COUNT(sub.sectionid) OVER(PARTITION BY sub.studentid, sub.course_number) AS course_enroll_status
      FROM
          (
           SELECT CONVERT(INT, cc.studentid) AS studentid
@@ -84,9 +82,7 @@ FROM
                 ,CONVERT(INT, cc.sectionid) AS sectionid
                 ,CONVERT(VARCHAR(25), cc.expression) AS expression
                 ,ABS(CONVERT(INT, cc.termid)) AS abs_termid
-                ,cc.abs_sectionid
-                ,cc.yearid
-                ,cc.academic_year
+                ,ABS(cc.sectionid) AS abs_sectionid
                 ,CASE 
                   WHEN cc.sectionid < 0 AND s.enroll_status = 2 AND s.exitdate = cc.dateleft THEN 0
                   WHEN cc.sectionid < 0 THEN 1
@@ -123,10 +119,9 @@ FROM
           JOIN powerschool.teachers_static t
             ON cc.teacherid = t.id
           JOIN powerschool.sections sec
-            ON cc.abs_sectionid = sec.id
+            ON ABS(cc.sectionid) = sec.id
           LEFT JOIN gabby.assessments.normed_subjects sj
             ON cc.course_number = sj.course_number COLLATE Latin1_General_BIN
-           AND sj._fivetran_deleted = 0
-          WHERE cc.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+          WHERE cc.dateenrolled >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
          ) sub
     ) sub

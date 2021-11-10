@@ -7,10 +7,16 @@ WITH gdoc_long AS (
   SELECT student_number
         ,academic_year        
         ,UPPER(LEFT(field, CHARINDEX('_', field) - 1)) AS test_round
-        ,CONVERT(VARCHAR(25),goal) AS goal
+        ,CONVERT(VARCHAR(25), goal) AS goal
   FROM 
       (
-       SELECT CONVERT(INT,SUBSTRING(name, (CHARINDEX('[', name) + 1), (CHARINDEX(']', name)) - (CHARINDEX('[', name) + 1))) AS student_number
+       SELECT CONVERT(INT, 
+                 SUBSTRING(
+                    [name]
+                   ,(CHARINDEX('[', [name]) + 1)
+                   ,(CHARINDEX(']', [name])) - (CHARINDEX('[', [name]) + 1)
+                  )
+               ) AS student_number
              ,gabby.utilities.GLOBAL_ACADEMIC_YEAR() AS academic_year
              ,SUBSTRING([diagnostic_goal], CHARINDEX(' ',[diagnostic_goal]) + 1, LEN([diagnostic_goal])) AS diagnostic_goal
              ,SUBSTRING([q_1_goal], CHARINDEX(' ',[q_1_goal]) + 1, LEN([q_1_goal])) AS q1_goal
@@ -32,12 +38,13 @@ WITH gdoc_long AS (
 
 SELECT g.student_number
       ,g.academic_year
-      ,CONVERT(VARCHAR(5),REPLACE(g.test_round,'DIAGNOSTIC','DR')) AS test_round
+      ,CONVERT(VARCHAR(5), REPLACE(g.test_round, 'DIAGNOSTIC', 'DR')) AS test_round
       ,g.goal      
-      ,CONVERT(INT,CASE 
-        WHEN gleq.testid = 3273 THEN gleq.fp_lvl_num /* when F&P, use F&P number */
-        ELSE gleq.lvl_num
-       END) AS lvl_num
+      ,CONVERT(INT,
+         CASE 
+          WHEN gleq.testid = 3273 THEN gleq.fp_lvl_num /* when F&P, use F&P number */
+          ELSE gleq.lvl_num
+         END) AS lvl_num
 FROM gdoc_long g
 LEFT OUTER JOIN gabby.lit.gleq
-  ON g.goal = gleq.read_lvl_clean
+  ON g.goal = gleq.read_lvl
