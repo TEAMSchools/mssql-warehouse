@@ -2,7 +2,9 @@ CREATE OR ALTER VIEW easyiep.njsmart_powerschool_clean AS
 
 SELECT [state_studentnumber]
       ,[student_number]
+      ,academic_year
       ,special_education
+      ,_modified
       ,CONVERT(VARCHAR(2),[nj_se_delayreason]) AS nj_se_delayreason
       ,CONVERT(VARCHAR(2),[nj_se_placement]) AS nj_se_placement
       ,CONVERT(VARCHAR(1),[nj_se_parental_consentobtained]) AS nj_se_parental_consentobtained
@@ -19,7 +21,6 @@ SELECT [state_studentnumber]
       ,CONVERT(DATE,[nj_se_consenttoimplementdate]) AS nj_se_consenttoimplementdate
       ,CONVERT(DATE,[nj_se_lastiepmeetingdate]) AS nj_se_lastiepmeetingdate
       ,CONVERT(DATE,[nj_se_reevaluationdate]) AS nj_se_reevaluationdate
-      ,COALESCE(academic_year, gabby.utilities.GLOBAL_ACADEMIC_YEAR()) AS academic_year
       ,CASE
         WHEN special_education = '' THEN NULL
         WHEN special_education IS NULL THEN NULL
@@ -70,7 +71,11 @@ FROM
            ,e.[ti_serv_physical]
            ,e.[ti_serv_speech]
            ,e.[ti_serv_other]
-           ,e.academic_year
+           ,e._modified
            ,RIGHT('0' + CONVERT(VARCHAR,e.[special_education]), 2) AS [special_education]
+           ,CASE
+             WHEN gabby.utilities.STRIP_CHARACTERS(e._file, '^0-9') = '' COLLATE Latin1_General_BIN THEN gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+             ELSE CAST(gabby.utilities.STRIP_CHARACTERS(e._file, '^0-9') AS INT)
+            END AS academic_year
      FROM easyiep.njsmart_powerschool e
     ) sub
