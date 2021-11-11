@@ -3,41 +3,41 @@ GO
 
 CREATE OR ALTER VIEW extracts.gclassroom_sections AS
 
-SELECT CONCAT(s.schoolid, '-'
-             ,s.course_number, '-'
-             ,s.id, '-'
-             ,s.termid) AS class_alias
+SELECT CONCAT(sec.schoolid, '-'
+             ,sec.course_number, '-'
+             ,sec.id, '-'
+             ,sec.termid) AS class_alias
 
       ,CONCAT(c.course_name
              ,' (' + c.course_number + ') - '
-             ,s.section_number + ' - '
+             ,sec.section_number + ' - '
              ,gabby.utilities.GLOBAL_ACADEMIC_YEAR(), '-'
              ,RIGHT(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 2) + 1) AS class_name
 
-      ,s.id AS sectionid
-      ,s.[db_name]
-      ,s.section_number
-      ,s.external_expression AS [period]
-      ,s.schoolid
-      ,s.termid
-      ,s.course_number
-      ,s.room
+      ,sec.id AS sectionid
+      ,sec.[db_name]
+      ,sec.section_number
+      ,sec.external_expression AS [period]
+      ,sec.schoolid
+      ,sec.termid
+      ,sec.course_number
+      ,sec.room
 
       ,sch.[name] AS school_name
 
       ,scw.google_email AS teacher_gsuite_email
-FROM gabby.powerschool.sections s
+FROM gabby.powerschool.sections sec
 JOIN gabby.powerschool.schools sch
-  ON s.schoolid = sch.school_number
+  ON sec.schoolid = sch.school_number
 JOIN gabby.powerschool.courses c
-  ON s.course_number = c.course_number
- AND s.[db_name] = c.[db_name] 
+  ON sec.course_number = c.course_number
+ AND sec.[db_name] = c.[db_name] 
  AND c.credittype <> 'LOG'
 JOIN gabby.powerschool.teachers_static t
-  ON s.teacher = t.id
- AND s.schoolid = t.schoolid
- AND s.[db_name] = t.[db_name]
+  ON sec.teacher = t.id
+ AND sec.schoolid = t.schoolid
+ AND sec.[db_name] = t.[db_name]
 JOIN gabby.people.staff_crosswalk_static scw
   ON t.teachernumber = scw.ps_teachernumber COLLATE Latin1_General_BIN
-WHERE s.yearid = (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990)
-  AND s.no_of_students > 0
+WHERE sec.termid >= ((gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990) * 100)
+  AND sec.no_of_students > 0
