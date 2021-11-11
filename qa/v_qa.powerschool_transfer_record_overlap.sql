@@ -5,6 +5,7 @@ CREATE OR ALTER VIEW qa.powerschool_transfer_record_overlap AS
 
 SELECT [db_name]
       ,student_number
+      ,studentid
       ,academic_year
       ,schoolid
       ,grade_level
@@ -14,6 +15,7 @@ FROM
     (
      SELECT [db_name]
            ,student_number
+           ,studentid
            ,academic_year
            ,schoolid
            ,grade_level
