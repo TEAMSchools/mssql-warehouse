@@ -37,6 +37,7 @@ SELECT co.studentid
       ,co.school_level
       ,co.schoolid
       ,co.reporting_schoolid
+      ,co.school_name
       ,co.grade_level
       ,co.cohort
       ,co.team
