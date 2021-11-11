@@ -1,46 +1,32 @@
+USE gabby
+GO
+
+CREATE OR ALTER VIEW tableau.hs_early_warning AS
+
 WITH attendance AS (
-
-  SELECT sub.studentid
-        ,sub.[db_name]
-        ,ROUND(AVG(sub.is_present),3) AS ada
-
-
-  FROM
-      (
-       SELECT mem.studentid
-             ,mem.[db_name]
-             ,cal.date_value
-             ,CONVERT(FLOAT, mem.attendancevalue) AS is_present
-
-       FROM powerschool.ps_adaadm_daily_ctod_current_static mem
-       JOIN powerschool.calendar_day cal
-         ON mem.schoolid = cal.schoolid
-        AND mem.calendardate = cal.date_value
-
-       WHERE mem.membershipvalue = 1
-      ) sub
-
-   GROUP BY sub.studentid
-           ,sub.[db_name]
-  )
+  SELECT mem.studentid
+        ,mem.[db_name]
+        ,ROUND(AVG(CONVERT(FLOAT, mem.attendancevalue)), 3) AS ada
+  FROM gabby.powerschool.ps_adaadm_daily_ctod_current_static mem
+  WHERE mem.membershipvalue = 1
+  GROUP BY mem.studentid
+          ,mem.[db_name]
+ )
 
 ,suspension AS (
-  
   SELECT ics.student_school_id
         ,ics.create_academic_year
+
         ,COUNT(ips.incidentpenaltyid) AS suspension_count
         ,SUM(ips.numdays) AS suspension_days
-
   FROM gabby.deanslist.incidents_penalties_static ips
   LEFT JOIN gabby.deanslist.incidents_clean_static ics
     ON ips.incident_id = ics.incident_id
    AND ips.[db_name] = ics.[db_name]
-
-WHERE ips.issuspension = 1
-
-GROUP BY ics.student_school_id
-        ,ics.create_academic_year
-  )
+  WHERE ips.issuspension = 1
+  GROUP BY ics.student_school_id
+          ,ics.create_academic_year
+ )
 
 SELECT co.studentid
       ,co.student_number
@@ -97,34 +83,32 @@ SELECT co.studentid
 
       ,sus.suspension_count
       ,sus.suspension_days
-
 FROM gabby.powerschool.cohort_identifiers_static co
 JOIN gabby.reporting.reporting_terms dt
   ON co.academic_year = dt.academic_year
  AND co.schoolid = dt.schoolid
  AND dt.identifier = 'RT'
  AND dt._fivetran_deleted = 0
- AND dt.alt_name NOT IN ('Summer School','Y1')
+ AND dt.alt_name NOT IN ('Summer School', 'Y1')
 LEFT JOIN gabby.powerschool.final_grades_static gr
   ON co.student_number = gr.student_number
  AND co.academic_year = gr.academic_year
- AND dt.time_per_name COLLATE Latin1_General_BIN = gr.reporting_term
+ AND dt.time_per_name = gr.reporting_term COLLATE Latin1_General_BIN
  AND gr.excludefromgpa = 0
 LEFT JOIN gabby.powerschool.gpa_detail gpa
-  ON gpa.student_number = co.student_number
- AND gpa.academic_year = co.academic_year
- AND gpa.reporting_term COLLATE Latin1_General_BIN = dt.time_per_name
+  ON co.student_number = gpa.student_number
+ AND co.academic_year = gpa.academic_year
+ AND dt.time_per_name = gpa.reporting_term COLLATE Latin1_General_BIN
 LEFT JOIN gabby.powerschool.gpa_cumulative gpc
-  ON gpc.studentid = co.studentid
- AND gpc.schoolid = co.schoolid
- AND gpc.[db_name] = co.[db_name]
+  ON co.studentid = gpc.studentid
+ AND co.schoolid = gpc.schoolid
+ AND co.[db_name] = gpc.[db_name]
 LEFT JOIN attendance att
-  ON att.studentid = co.studentid
- AND att.[db_name] = co.[db_name]
+  ON co.studentid = att.studentid
+ AND co.[db_name] = att.[db_name]
 LEFT JOIN suspension AS sus
-  ON sus.student_school_id = co.student_number
- AND sus.create_academic_year = co.academic_year
-
+  ON co.student_number = sus.student_school_id
+ AND co.academic_year = sus.create_academic_year
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.rn_year = 1
   AND co.is_enrolled_recent = 1
