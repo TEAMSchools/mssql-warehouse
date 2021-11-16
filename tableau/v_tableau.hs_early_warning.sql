@@ -62,6 +62,7 @@ SELECT co.studentid
       ,gr.credittype
       ,gr.course_name
       ,gr.course_number
+      ,gr.credit_hours
       ,gr.teacher_name
       ,gr.term_grade_percent_adjusted
       ,gr.term_grade_letter_adjusted
