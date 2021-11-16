@@ -32,6 +32,6 @@ LEFT JOIN gabby.pm.teacher_goals_exemption_clean_static ex
 LEFT JOIN gabby.whetstone.observations_clean wo
   ON CONVERT(VARCHAR(25), r.df_employee_number) = wo.teacher_internal_id
  AND wo.observed_at BETWEEN rt.[start_date] AND rt.end_date
- AND wo.rubric_name IN ('Coaching Tool: Coach ETR and Reflection','Coaching Tool: Teacher Reflection 19-20') 
+ AND wo.rubric_name IN ('Coaching Tool: Coach ETR and Reflection','Coaching Tool: Coach ETR and Reflection 20-21', 'Coaching Tool: Teacher Reflection 19-20') 
  AND r.samaccountname <> LEFT(wo.observer_email, CHARINDEX('@', wo.observer_email) - 1)
 WHERE r.is_active = 1
