@@ -161,6 +161,16 @@ WITH all_staff AS (
                                       ELSE '' 
                                      END)
          END AS race_ethnicity_reporting
+
+        ,sub.years_teaching_in_any_state
+        ,sub.years_teaching_in_nj_or_fl
+        ,sub.kipp_alumni_status
+        ,sub.years_of_professional_experience_before_joining
+        ,sub.life_experience_in_communities_we_serve
+        ,sub.teacher_prep_program
+        ,sub.professional_experience_in_communities_we_serve
+        ,sub.attended_relay
+
   FROM
       (
        SELECT eh.employee_number
@@ -246,6 +256,11 @@ WITH all_staff AS (
                WHEN CHARINDEX('White', ea.preferred_race_ethnicity) > 0 THEN 1
                ELSE 0
               END AS is_race_white
+             ,CASE 
+               WHEN CHARINDEX('Native American/First Nation', ea.preferred_race_ethnicity) > 0 THEN 1
+               ELSE 0
+              END AS is_race_nafirstnation
+               
              ,CASE
                WHEN ea.race_description = 'Two or more races (Not Hispanic or Latino)' THEN 1
                WHEN CHARINDEX('Bi/Multiracial', ea.preferred_race_ethnicity) > 0 THEN 1
@@ -261,7 +276,9 @@ WITH all_staff AS (
                ELSE 0
               END AS is_race_decline
              ,CASE
+               WHEN CHARINDEX('I decline to state my preferred racial/ethnic identity',ea.preferred_race_ethnicity) >0 THEN 'I decline to state my preferred racial/ethnic identity'
                WHEN CHARINDEX(';', ea.preferred_race_ethnicity) > 0 THEN 'Bi/Multiracial'
+               WHEN ea.preferred_race_ethnicity IN ('Asian/Pacific Islander', 'Asian') THEN 'Asian'
                ELSE COALESCE(ea.preferred_race_ethnicity, ea.race_description)
               END AS race_reporting
 
@@ -283,6 +300,16 @@ WITH all_staff AS (
                WHEN eh.position_status = 'Prestart' THEN eh.status_effective_start_date
                ELSE rh.rehire_date
               END AS rehire_date
+
+             ,p.years_teaching_in_any_state
+             ,p.years_teaching_in_nj_or_fl
+             ,p.kipp_alumni_status
+             ,p.years_of_professional_experience_before_joining
+             ,p.life_experience_in_communities_we_serve
+             ,p.teacher_prep_program
+             ,p.professional_experience_in_communities_we_serve
+             ,p.attended_relay
+
        FROM all_staff eh
        JOIN gabby.adp.employees_all ea
          ON eh.associate_id = ea.associate_id
@@ -385,6 +412,16 @@ SELECT c.employee_number
       ,m.preferred_first_name AS manager_preferred_first_name
       ,m.preferred_last_name AS manager_preferred_last_name
       ,m.preferred_last_name + ', ' + m.preferred_first_name AS manager_name
+
+      ,c.years_teaching_in_any_state
+      ,c.years_teaching_in_nj_or_fl
+      ,c.kipp_alumni_status
+      ,c.years_of_professional_experience_before_joining
+      ,c.life_experience_in_communities_we_serve
+      ,c.teacher_prep_program
+      ,c.professional_experience_in_communities_we_serve
+      ,c.attended_relay
+
 FROM clean_staff c
 LEFT JOIN gabby.people.school_crosswalk s
   ON c.[location] = s.site_name
