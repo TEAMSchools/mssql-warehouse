@@ -9,6 +9,7 @@ WITH attendance AS (
         ,ROUND(AVG(CONVERT(FLOAT, mem.attendancevalue)), 3) AS ada
   FROM gabby.powerschool.ps_adaadm_daily_ctod_current_static mem
   WHERE mem.membershipvalue = 1
+    AND mem.calendardate <= GETDATE()
   GROUP BY mem.studentid
           ,mem.[db_name]
  )
