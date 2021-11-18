@@ -193,41 +193,41 @@ CROSS APPLY OPENJSON(w.person, '$.customFieldGroup.indicatorFields')
 WHERE JSON_QUERY(w.person, '$.customFieldGroup.indicatorFields') <> '{}'
   AND cfg.indicatorValue IS NOT NULL
 
---UNION ALL
+UNION ALL
 
---SELECT sub.associate_oid
---      ,sub.worker_id
---      ,'person' AS parent_object
---      ,'multiCodeFields' AS custom_field_group
---      ,sub.item_id
---      ,cfg.codeValue AS string_value
---      ,NULL AS date_value
---      ,NULL AS bit_value
---      ,CASE WHEN ISNUMERIC(cfg.codeValue) = 1 THEN CONVERT(INT, cfg.codeValue) END AS numeric_value
---      ,sub.code_value
---      ,sub.short_name
---FROM
---    (
---     SELECT w.associate_oid
---           ,CONVERT(NVARCHAR(16), JSON_VALUE(w.worker_id, '$.idValue')) AS worker_id
+SELECT sub.associate_oid
+      ,sub.worker_id
+      ,'person' AS parent_object
+      ,'multiCodeFields' AS custom_field_group
+      ,sub.item_id
+      ,cfg.codeValue AS string_value
+      ,NULL AS date_value
+      ,NULL AS bit_value
+      ,CASE WHEN ISNUMERIC(cfg.codeValue) = 1 THEN CONVERT(INT, cfg.codeValue) END AS numeric_value
+      ,sub.code_value
+      ,sub.short_name
+FROM
+    (
+     SELECT w.associate_oid
+           ,CONVERT(NVARCHAR(16), JSON_VALUE(w.worker_id, '$.idValue')) AS worker_id
 
---           ,cfg.itemID AS item_id
---           ,cfg.codes
---           ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.codeValue')) AS code_value
---           ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.shortName')) AS short_name
---     FROM gabby.adp.workers w
---     CROSS APPLY OPENJSON(w.person, '$.customFieldGroup.multiCodeFields') 
---       WITH(
---         itemID NVARCHAR(128)
---        ,nameCode NVARCHAR(MAX) AS JSON
---        ,codes NVARCHAR(MAX) AS JSON
---      ) cfg
---     WHERE JSON_QUERY(w.person, '$.customFieldGroup.multiCodeFields') <> '{}'
---    ) sub
---CROSS APPLY OPENJSON(sub.codes, '$') 
---  WITH(
---    codeValue NVARCHAR(128)
---   ,longName NVARCHAR(MAX)
---   ,shortName NVARCHAR(MAX)
--- ) cfg
---WHERE sub.codes <> '[]'
+           ,cfg.itemID AS item_id
+           ,cfg.codes
+           ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.codeValue')) AS code_value
+           ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.shortName')) AS short_name
+     FROM gabby.adp.workers w
+     CROSS APPLY OPENJSON(w.person, '$.customFieldGroup.multiCodeFields') 
+       WITH(
+         itemID NVARCHAR(128)
+        ,nameCode NVARCHAR(MAX) AS JSON
+        ,codes NVARCHAR(MAX) AS JSON
+      ) cfg
+     WHERE JSON_QUERY(w.person, '$.customFieldGroup.multiCodeFields') <> '{}'
+    ) sub
+CROSS APPLY OPENJSON(sub.codes, '$') 
+  WITH(
+    codeValue NVARCHAR(128)
+   ,longName NVARCHAR(MAX)
+   ,shortName NVARCHAR(MAX)
+ ) cfg
+WHERE sub.codes <> '[]'
