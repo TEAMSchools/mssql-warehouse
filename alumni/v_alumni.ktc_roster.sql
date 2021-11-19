@@ -66,16 +66,13 @@ FROM
     (
      SELECT co.student_number
            ,co.studentid
-           ,co.lastfirst
-           ,co.first_name
-           ,co.last_name
            ,co.academic_year AS exit_academic_year
            ,co.schoolid AS exit_schoolid
            ,co.school_name AS exit_school_name
            ,co.grade_level AS exit_grade_level
            ,co.exitdate AS exit_date
            ,co.exitcode AS exit_code
-           ,co.db_name AS exit_db_name
+           ,co.[db_name] AS exit_db_name
            ,(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - co.academic_year) + co.grade_level AS current_grade_level_projection
 
            ,c.id AS sf_contact_id
@@ -125,6 +122,10 @@ FROM
 
            ,u.id AS counselor_sf_id
            ,u.[name] AS counselor_name
+
+           ,COALESCE(c.first_name, co.first_name) COLLATE LATIN1_GENERAL_BIN AS first_name
+           ,COALESCE(c.last_name, co.last_name) COLLATE LATIN1_GENERAL_BIN AS last_name
+           ,COALESCE(CONCAT(c.last_name, ', ', c.first_name), co.lastfirst) COLLATE LATIN1_GENERAL_BIN AS lastfirst
 
            ,CASE
              WHEN (co.school_level = 'HS' AND co.exitcode = 'G1') OR c.kipp_hs_graduate_c = 1 THEN 'HSG'
