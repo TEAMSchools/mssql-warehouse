@@ -61,6 +61,8 @@ SELECT sub.student_number
       ,sub.record_type_name
       ,sub.counselor_sf_id
       ,sub.counselor_name
+      ,sub.counselor_email
+      ,sub.counselor_phone
       ,sub.ktc_status
 FROM 
     (
@@ -122,6 +124,8 @@ FROM
 
            ,u.id AS counselor_sf_id
            ,u.[name] AS counselor_name
+           ,u.email AS counselor_email
+           ,u.mobile_phone AS counselor_phone
 
            ,COALESCE(c.first_name, co.first_name) COLLATE LATIN1_GENERAL_BIN AS first_name
            ,COALESCE(c.last_name, co.last_name) COLLATE LATIN1_GENERAL_BIN AS last_name
