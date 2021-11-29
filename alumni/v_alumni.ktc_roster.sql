@@ -129,7 +129,7 @@ FROM
 
            ,COALESCE(c.first_name, co.first_name) COLLATE LATIN1_GENERAL_BIN AS first_name
            ,COALESCE(c.last_name, co.last_name) COLLATE LATIN1_GENERAL_BIN AS last_name
-           ,COALESCE(c.last_name + ', ' + c.first_name), co.lastfirst) COLLATE LATIN1_GENERAL_BIN AS lastfirst
+           ,COALESCE(c.last_name + ', ' + c.first_name, co.lastfirst) COLLATE LATIN1_GENERAL_BIN AS lastfirst
 
            ,CASE
              WHEN (co.school_level = 'HS' AND co.exitcode = 'G1') OR c.kipp_hs_graduate_c = 1 THEN 'HSG'
