@@ -147,7 +147,7 @@ SELECT w.associate_oid
       ,NULL AS date_value
       ,NULL AS bit_value
       ,CASE WHEN ISNUMERIC(cfg.numberValue) = 1 THEN CONVERT(FLOAT, cfg.numberValue) END AS numeric_value
-      ,cfg.numberValue AS code_value
+      ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.codeValue')) AS code_value
       ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.codeValue')) AS short_name
 
 FROM gabby.adp.workers w
