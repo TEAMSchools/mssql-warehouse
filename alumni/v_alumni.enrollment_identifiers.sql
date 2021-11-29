@@ -12,7 +12,7 @@ WITH enrollments AS (
         ,MAX(CASE WHEN sub.pursuing_degree_level = 'Graduate' AND sub.rn_degree_desc = 1 THEN sub.enrollment_id END) AS graduate_enrollment_id
         ,MAX(CASE WHEN sub.pursuing_degree_level = 'Employment' AND sub.rn_degree_desc = 1 THEN sub.enrollment_id END) AS employment_enrollment_id
         ,MAX(CASE WHEN sub.is_ecc_degree_type = 1 AND sub.is_ecc_dated = 1 AND sub.rn_ecc_asc = 1 THEN sub.enrollment_id END) AS ecc_enrollment_id
-        ,MAX(CASE WHEN sub.rn_current = 1 THEN sub.enrollment_id END) AS curr_enrollment_id
+        ,MAX(CASE WHEN sub.rn_current = 1 AND sub.is_employment = 0 THEN sub.enrollment_id END) AS curr_enrollment_id
   FROM
       (
        SELECT sub.student_c
@@ -20,6 +20,7 @@ WITH enrollments AS (
              ,sub.pursuing_degree_level
              ,sub.is_ecc_degree_type
              ,sub.is_ecc_dated
+             ,sub.is_employment
              ,ROW_NUMBER() OVER(
                 PARTITION BY sub.student_c, sub.pursuing_degree_level
                   ORDER BY sub.start_date_c ASC, sub.actual_end_date_c ASC) AS rn_degree_asc
@@ -30,7 +31,7 @@ WITH enrollments AS (
                 PARTITION BY sub.student_c, sub.pursuing_degree_level
                   ORDER BY sub.is_graduated DESC, sub.start_date_c DESC, sub.actual_end_date_c DESC) AS rn_degree_desc
              ,ROW_NUMBER() OVER(
-                PARTITION BY sub.student_c
+                PARTITION BY sub.student_c, sub.is_employment
                   ORDER BY sub.start_date_c DESC, sub.actual_end_date_c DESC) AS rn_current
        FROM
            (
@@ -55,6 +56,7 @@ WITH enrollments AS (
                            BETWEEN e.start_date_c AND COALESCE(e.actual_end_date_c, DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1, 6, 30)) THEN 1 
                     ELSE 0 
                    END AS is_ecc_dated
+                  ,0 AS is_employment
             FROM gabby.alumni.enrollment_c e
             JOIN gabby.alumni.contact c
               ON e.student_c = c.id
@@ -75,6 +77,7 @@ WITH enrollments AS (
                   ,NULL AS is_graduated
                   ,NULL AS is_ecc_degree_type
                   ,NULL AS is_ecc_dated
+                  ,1 AS is_employment
             FROM gabby.alumni.employment_c e
             WHERE e.is_deleted = 0
            ) sub
