@@ -332,4 +332,4 @@ LEFT JOIN gabby.alumni.contact_note_rollup cnr
 LEFT JOIN semester_gpa_pivot gpa
   ON c.sf_contact_id = gpa.sf_contact_id
  AND ay.academic_year = gpa.academic_year
-WHERE c.sf_contact_id IS NOT NULL
+WHERE c.ktc_status IN ('HS9', 'HS10', 'HS11', 'HS12', 'HSG', 'TAF', 'TAFHS')
