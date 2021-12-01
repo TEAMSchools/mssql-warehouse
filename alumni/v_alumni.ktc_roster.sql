@@ -132,11 +132,18 @@ FROM
            ,COALESCE(c.last_name + ', ' + c.first_name, co.lastfirst) COLLATE LATIN1_GENERAL_BIN AS lastfirst
 
            ,CASE
-             WHEN (co.school_level = 'HS' AND co.exitcode = 'G1') OR c.kipp_hs_graduate_c = 1 THEN 'HSG'
+             WHEN c.kipp_hs_graduate_c = 1 THEN 'HSG'
+             WHEN co.school_level = 'HS' AND co.exitcode = 'G1' THEN 'HSG'
+             WHEN c.kipp_ms_graduate_c = 1 AND c.kipp_hs_graduate_c = 0 AND rt.[name] = 'HS Student' THEN 'TAFHS'
+             WHEN c.kipp_ms_graduate_c = 1 AND c.kipp_hs_graduate_c = 0 THEN 'TAF'
              WHEN co.enroll_status = 0 THEN CONCAT('HS', co.grade_level)
-             WHEN ((co.grade_level = 8 AND co.exitcode IN ('G1', 'T2')) OR (c.kipp_ms_graduate_c = 1 AND c.kipp_hs_graduate_c = 0))
-              AND rt.[name] = 'HS Student' THEN 'TAFHS'
-             WHEN (co.grade_level = 8 AND co.exitcode IN ('G1', 'T2')) OR (c.kipp_ms_graduate_c = 1 AND c.kipp_hs_graduate_c = 0) THEN 'TAF'
+             WHEN rt.[name] = 'HS Student'
+              AND co.grade_level = 8
+              AND (co.exitcode = 'G1' OR co.exitcode LIKE 'T%' AND co.exitcode <> 'T2')
+                  THEN 'TAFHS'
+             WHEN co.grade_level = 8
+              AND (co.exitcode = 'G1' OR co.exitcode LIKE 'T%' AND co.exitcode <> 'T2')
+                  THEN 'TAF'
             END AS ktc_status
      FROM gabby.powerschool.cohort_identifiers_static co
      LEFT JOIN gabby.alumni.contact c
