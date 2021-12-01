@@ -143,6 +143,14 @@ WITH all_staff AS (
         ,sub.is_race_nhpi
         ,sub.is_race_other
         ,sub.is_race_white
+        ,sub.years_teaching_in_any_state
+        ,sub.years_teaching_in_nj_or_fl
+        ,sub.kipp_alumni_status
+        ,sub.years_of_professional_experience_before_joining
+        ,sub.life_experience_in_communities_we_serve
+        ,sub.teacher_prep_program
+        ,sub.professional_experience_in_communities_we_serve
+        ,sub.attended_relay
         ,COALESCE(sub.preferred_first_name, sub.first_name) AS preferred_first_name
         ,COALESCE(sub.preferred_last_name , sub.last_name) AS preferred_last_name
         ,CASE
@@ -156,21 +164,8 @@ WITH all_staff AS (
           WHEN sub.race_reporting = 'Latinx/Hispanic/Chicana(o)' THEN 'Latinx/Hispanic/Chicana(o)'
           WHEN sub.race_reporting = 'Black or African American' THEN 'Black/African American'
           WHEN sub.race_reporting = 'Two or more races (Not Hispanic or Latino)' THEN 'Bi/Multiracial'
-          ELSE sub.race_reporting + (CASE 
-                                      WHEN sub.ethnicity = 'Hispanic or Latino' THEN ' - Latinx/Hispanic/Chicana(o)'
-                                      ELSE ''
-                                     END)
+          ELSE sub.race_reporting + (CASE WHEN sub.ethnicity = 'Hispanic or Latino' THEN ' - Latinx/Hispanic/Chicana(o)' ELSE '' END)
          END AS race_ethnicity_reporting
-
-        ,sub.years_teaching_in_any_state
-        ,sub.years_teaching_in_nj_or_fl
-        ,sub.kipp_alumni_status
-        ,sub.years_of_professional_experience_before_joining
-        ,sub.life_experience_in_communities_we_serve
-        ,sub.teacher_prep_program
-        ,sub.professional_experience_in_communities_we_serve
-        ,sub.attended_relay
-
   FROM
       (
        SELECT eh.employee_number
@@ -208,10 +203,8 @@ WITH all_staff AS (
              ,ea.primary_address_city AS address_city
              ,ea.primary_address_state_territory_code AS address_state
              ,ea.primary_address_zip_postal_code AS address_zip
-             ,ea.personal_contact_personal_email AS personal_email
-             ,cf.[Preferred Gender] AS preferred_gender
+             ,ea.personal_contact_personal_email AS personal_email             
              ,ea.race_description AS race
-             ,cf.[Preferred Race/Ethnicity] AS preferred_race_ethnicity
              /* transformations */
              ,CONVERT(DATE, ea.birth_date) AS birth_date
              ,LEFT(UPPER(ea.gender_for_insurance_coverage), 1) AS sex
@@ -225,6 +218,36 @@ WITH all_staff AS (
                         WHEN ea.gender_for_insurance_coverage = 'Male' THEN 'Man'
                         WHEN ea.gender_for_insurance_coverage = 'Female' THEN 'Woman'
                        END) AS gender_reporting
+
+             ,w.preferred_name_given AS preferred_first_name
+             ,w.preferred_name_family AS preferred_last_name
+             ,w.associate_oid
+
+             ,COALESCE(w.original_hire_date, hd.original_hire_date) AS original_hire_date
+             ,CASE WHEN eh.position_status = 'Terminated' THEN COALESCE(w.termination_date, td.termination_date) END AS termination_date
+             ,CASE 
+               WHEN eh.position_status = 'Prestart' AND w.termination_date IS NULL THEN NULL
+               WHEN eh.position_status = 'Prestart' THEN eh.status_effective_start_date
+               ELSE rh.rehire_date
+              END AS rehire_date
+
+             ,cf.[Years Teaching - In any State] AS years_teaching_in_any_state
+             ,cf.[Years Teaching - In NJ or FL] AS years_teaching_in_nj_or_fl
+             ,cf.[KIPP Alumni Status] AS kipp_alumni_status
+             ,cf.[Years of Professional Experience before joining] AS years_of_professional_experience_before_joining
+             ,cf.[Life Experience in Communities We Serve] AS life_experience_in_communities_we_serve
+             ,cf.[Teacher Prep Program] AS teacher_prep_program
+             ,cf.[Professional Experience in Communities We Serve] AS professional_experience_in_communities_we_serve
+             ,cf.[Attended Relay] AS attended_relay
+             ,cf.[WFMgr Pay Rule] AS wfmgr_pay_rule
+             ,cf.[Preferred Gender] AS preferred_gender
+             ,cf.[Preferred Race/Ethnicity] AS preferred_race_ethnicity
+
+             ,cw.adp_associate_id AS associate_id_legacy
+
+             ,p.worker_category_description AS worker_category
+             ,p.flsa_description AS flsa
+
              ,CASE
                WHEN ea.ethnicity IS NULL AND cf.[Preferred Race/Ethnicity] IS NULL THEN NULL
                WHEN CHARINDEX('Decline to state', cf.[Preferred Race/Ethnicity]) > 0 THEN NULL
@@ -260,7 +283,6 @@ WITH all_staff AS (
                WHEN CHARINDEX('Native American/First Nation', cf.[Preferred Race/Ethnicity]) > 0 THEN 1
                ELSE 0
               END AS is_race_nafirstnation
-               
              ,CASE
                WHEN ea.race_description = 'Two or more races (Not Hispanic or Latino)' THEN 1
                WHEN CHARINDEX('Bi/Multiracial', cf.[Preferred Race/Ethnicity]) > 0 THEN 1
@@ -283,35 +305,6 @@ WITH all_staff AS (
                WHEN ea.race_description = 'Black or African American' AND cf.[Preferred Race/Ethnicity] IS NULL THEN 'Black/African American'
                ELSE COALESCE(cf.[Preferred Race/Ethnicity], ea.race_description)
               END AS race_reporting
-
-             ,w.preferred_name_given AS preferred_first_name
-             ,w.preferred_name_family AS preferred_last_name
-             ,w.associate_oid
-
-             ,cf.[WFMgr Pay Rule] AS wfmgr_pay_rule
-
-             ,cw.adp_associate_id AS associate_id_legacy
-
-             ,p.worker_category_description AS worker_category
-             ,p.flsa_description AS flsa
-
-             ,COALESCE(w.original_hire_date, hd.original_hire_date) AS original_hire_date
-             ,CASE WHEN eh.position_status = 'Terminated' THEN COALESCE(w.termination_date, td.termination_date) END AS termination_date
-             ,CASE 
-               WHEN eh.position_status = 'Prestart' AND w.termination_date IS NULL THEN NULL
-               WHEN eh.position_status = 'Prestart' THEN eh.status_effective_start_date
-               ELSE rh.rehire_date
-              END AS rehire_date
-
-             ,cf.[Years Teaching - In any State] AS years_teaching_in_any_state
-             ,cf.[Years Teaching - In NJ or FL] AS years_teaching_in_nj_or_fl
-             ,cf.[KIPP Alumni Status] AS kipp_alumni_status
-             ,cf.[Years of Professional Experience before joining] AS years_of_professional_experience_before_joining
-             ,cf.[Life Experience in Communities We Serve] AS life_experience_in_communities_we_serve
-             ,cf.[Teacher Prep Program] AS teacher_prep_program
-             ,cf.[Professional Experience in Communities We Serve] AS professional_experience_in_communities_we_serve
-             ,cf.[Attended Relay] AS attended_relay
-
        FROM all_staff eh
        JOIN gabby.adp.employees_all ea
          ON eh.associate_id = ea.associate_id
