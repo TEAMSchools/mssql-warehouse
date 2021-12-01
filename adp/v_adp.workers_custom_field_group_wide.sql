@@ -1,32 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW adp.workers_custom_field_group_wide AS (
-
-WITH multi_pivot AS (
-SELECT worker_id
-      ,[Life Experience in Communities We Serve]
-      ,[Preferred Race/Ethnicity]
-      ,[Professional Experience in Communities We Serve]
-      ,[Teacher Prep Program]
-
-FROM (
-  
-  SELECT worker_id
-        ,code_value
-        ,gabby.dbo.GROUP_CONCAT(string_value) AS string_value
-  FROM gabby.adp.workers_custom_field_group
-  WHERE code_value IN ('Preferred Race/Ethnicity', 'Life Experience in Communities We Serve', 'Professional Experience in Communities We Serve', 'Teacher Prep Program')
-  GROUP BY worker_id, code_value
-       ) sub
-  PIVOT(MAX(string_value) FOR code_value IN ([Life Experience in Communities We Serve]
-                                            ,[Preferred Race/Ethnicity]
-                                            ,[Professional Experience in Communities We Serve]
-                                            ,[Teacher Prep Program]
-                                            )
-      ) p
-  )
-  
+CREATE OR ALTER VIEW adp.workers_custom_field_group_wide AS
 
 SELECT p.associate_oid
       ,p.worker_id
@@ -53,10 +28,10 @@ SELECT p.associate_oid
         WHEN p.[WFMgr LOA] = 'false' THEN 0
        END AS [WFMgr LOA]
 
-      ,m.[Life Experience in Communities We Serve]
-      ,m.[Preferred Race/Ethnicity]
-      ,m.[Professional Experience in Communities We Serve]
-      ,m.[Teacher Prep Program]
+      ,p.[Life Experience in Communities We Serve]
+      ,p.[Preferred Race/Ethnicity]
+      ,p.[Professional Experience in Communities We Serve]
+      ,p.[Teacher Prep Program]
 
 FROM
     (
@@ -65,6 +40,18 @@ FROM
            ,code_value
            ,string_value
      FROM gabby.adp.workers_custom_field_group
+     WHERE code_value NOT IN ('Preferred Race/Ethnicity', 'Life Experience in Communities We Serve', 'Professional Experience in Communities We Serve', 'Teacher Prep Program')
+
+     UNION ALL
+
+     SELECT associate_oid
+           ,worker_id
+           ,code_value
+           ,gabby.dbo.GROUP_CONCAT(string_value) AS string_value
+     FROM gabby.adp.workers_custom_field_group
+     WHERE code_value IN ('Preferred Race/Ethnicity', 'Life Experience in Communities We Serve', 'Professional Experience in Communities We Serve', 'Teacher Prep Program')
+     GROUP BY associate_oid, worker_id, code_value
+
     ) sub
 PIVOT(
   MAX(string_value)
@@ -87,8 +74,9 @@ PIVOT(
        ,[Years Teaching - In NJ or FL]
        ,[Years of Professional Experience before joining]
        ,[Years Teaching - In any State]
+       ,[Life Experience in Communities We Serve]
+       ,[Preferred Race/Ethnicity]
+       ,[Professional Experience in Communities We Serve]
+       ,[Teacher Prep Program]
       )
  ) p
-
- LEFT JOIN multi_pivot m
-   ON p.worker_id = m.worker_id
