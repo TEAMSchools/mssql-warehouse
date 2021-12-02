@@ -170,7 +170,7 @@ SELECT student_number
       ,pickup_3_address_home
       ,pickup_3_email_current
       ,pickup_3_phone_primary
-FROM contacts c WITH(FORCESEEK)
+FROM contacts c
 PIVOT(
   MAX(pivot_value)
   FOR pivot_field IN (contact_1_name,contact_1_relationship,contact_1_address_home,contact_1_email_current
