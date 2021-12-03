@@ -1,3 +1,8 @@
+USE gabby
+GO
+
+CREATE OR ALTER VIEW illuminate_dna_repositories.sight_words_quiz_index_generator AS
+
 SELECT atc.table_name
       ,'DROP INDEX [E: student_id, repository_row_id] ON [illuminate_dna_repositories].[' + atc.table_name + '];' AS drop_index_sql
       ,'CREATE UNIQUE NONCLUSTERED INDEX [E: student_id, repository_row_id] ON [illuminate_dna_repositories].[' + atc.table_name
@@ -11,11 +16,10 @@ JOIN gabby.illuminate_codes.dna_scopes s
  AND s.code_translation = 'Sight Words Quiz'
 LEFT JOIN gabby.utilities.all_tables_columns atc
   ON CONCAT('repository_', r.repository_id) = atc.table_name
- AND atc.schema_name = 'illuminate_dna_repositories'
+ AND atc.[schema_name] = 'illuminate_dna_repositories'
  AND atc.column_id > 0
 WHERE r.deleted_at IS NULL
   AND r.repository_id IN (SELECT DISTINCT repository_id FROM gabby.illuminate_dna_repositories.repository_row_ids)
   AND atc.column_name NOT IN ('repository_row_id', 'student_id')
   AND atc.column_name NOT LIKE '_fivetran%'
 GROUP BY atc.table_name
-ORDER BY atc.table_name DESC;

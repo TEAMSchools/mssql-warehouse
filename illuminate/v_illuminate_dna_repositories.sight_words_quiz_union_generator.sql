@@ -1,3 +1,8 @@
+USE gabby
+GO
+
+CREATE OR ALTER VIEW illuminate_dna_repositories.sight_words_quiz_union_generator AS
+
 SELECT r.repository_id
       ,r.title
       ,gabby.illuminate_dna_repositories.repository_unpivot(r.repository_id, DEFAULT, DEFAULT) 
@@ -14,4 +19,3 @@ LEFT JOIN gabby.utilities.all_tables_columns atc
  AND atc.column_id = -1
 WHERE r.deleted_at IS NULL
   AND r.date_administered >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
-ORDER BY r.repository_id;
