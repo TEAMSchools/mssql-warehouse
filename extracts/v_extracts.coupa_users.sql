@@ -111,6 +111,10 @@ SELECT sub.samaccountname AS [Login]
       ,sub.address_name AS [Default Address Name]
       ,CASE
         WHEN sub.worker_category = 'Intern' THEN 'inactive'
+        WHEN sub.position_status = 'Terminated' THEN 'inactive'
+        WHEN sub.roles LIKE '%Edit Expense Report as Approver%'
+          OR sub.roles LIKE '%Edit Requisition as Approver%'
+             THEN 'active'
         WHEN sub.position_status <> 'Active' THEN 'inactive'
         ELSE 'active'
        END AS [Status]
