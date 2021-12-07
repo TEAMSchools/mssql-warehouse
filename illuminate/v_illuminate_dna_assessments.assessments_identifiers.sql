@@ -5,10 +5,10 @@ CREATE OR ALTER VIEW illuminate_dna_assessments.assessments_identifiers AS
 
 WITH tnl_uids AS (
   SELECT u.[user_id]
-  FROM gabby.dayforce.employee_work_assignment sr
+  FROM gabby.people.work_assignment_history_static sr
   JOIN gabby.illuminate_public.users u
-    ON CONVERT(VARCHAR(25), sr.employee_reference_code) = u.state_id
-  WHERE sr.department_name = 'Teaching and Learning'
+    ON CONVERT(VARCHAR(25), sr.employee_number) = u.state_id
+  WHERE sr.home_department_description = 'Teaching and Learning'
 
   UNION
 
