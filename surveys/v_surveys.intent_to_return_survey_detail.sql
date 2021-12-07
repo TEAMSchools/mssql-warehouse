@@ -23,8 +23,6 @@ SELECT d.survey_id
       ,d.respondent_df_employee_number AS subject_df_employee_number
       ,d.respondent_adp_associate_id AS subject_adp_associate_id
       ,d.respondent_preferred_name AS subject_preferred_name
-      ,s.legal_entity_name AS subject_legal_entity_name
-      ,s.primary_site AS subject_primary_site
       ,d.respondent_primary_site_schoolid AS subject_primary_site_schoolid
       ,d.respondent_primary_site_school_level AS subject_primary_site_school_level
       ,d.respondent_manager_df_employee_number AS subject_manager_df_employee_number
@@ -32,15 +30,18 @@ SELECT d.survey_id
       ,d.respondent_samaccountname AS subject_samaccountname
       ,d.respondent_manager_name AS subject_manager_name
       ,d.respondent_manager_samaccountname AS subject_manager_samaccountname
-      ,w.department_name AS subject_department_name
-      ,w.job_name AS subject_dayforce_role
+
+      ,s.legal_entity_name AS subject_legal_entity_name
+      ,s.primary_site AS subject_primary_site
       ,s.primary_race_ethnicity_reporting AS subject_primary_race_ethnicity
       ,s.gender AS subject_gender
+
+      ,w.home_department_description AS subject_department_name
+      ,w.job_title_description AS subject_dayforce_role
 FROM gabby.surveygizmo.survey_detail d
 LEFT JOIN gabby.people.work_assignment_history_static w
   ON d.respondent_df_employee_number = w.employee_number
- AND d.date_submitted BETWEEN w.position_effective_date AND COALESCE(w.work_assignment_effective_end,DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR()+1,6,30))
- AND w.primary_work_assignment = 1
+ AND d.date_submitted BETWEEN w.position_effective_date AND w.position_effective_end_date_eoy
 LEFT JOIN gabby.people.staff_crosswalk_static s
   ON d.respondent_df_employee_number = s.df_employee_number
 WHERE d.survey_title = 'Intent to Return'
