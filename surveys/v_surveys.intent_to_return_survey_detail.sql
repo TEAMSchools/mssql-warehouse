@@ -37,9 +37,9 @@ SELECT d.survey_id
       ,s.primary_race_ethnicity_reporting AS subject_primary_race_ethnicity
       ,s.gender AS subject_gender
 FROM gabby.surveygizmo.survey_detail d
-LEFT JOIN gabby.dayforce.employee_work_assignment w
-  ON d.respondent_df_employee_number = w.employee_reference_code
- AND d.date_submitted BETWEEN w.work_assignment_effective_start AND COALESCE(w.work_assignment_effective_end,DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR()+1,6,30))
+LEFT JOIN gabby.people.work_assignment_history_static w
+  ON d.respondent_df_employee_number = w.employee_number
+ AND d.date_submitted BETWEEN w.position_effective_date AND COALESCE(w.work_assignment_effective_end,DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR()+1,6,30))
  AND w.primary_work_assignment = 1
 LEFT JOIN gabby.people.staff_crosswalk_static s
   ON d.respondent_df_employee_number = s.df_employee_number
