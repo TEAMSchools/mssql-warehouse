@@ -28,7 +28,6 @@ FROM gabby.powerschool.course_enrollments_current_static enr
 JOIN gabby.powerschool.schools sch
   ON enr.schoolid = sch.school_number
  AND enr.[db_name] = sch.[db_name]
- AND sch.high_grade = 8
 WHERE enr.course_enroll_status = 0
   AND enr.section_enroll_status = 0
 
@@ -51,4 +50,3 @@ LEFT JOIN dsos
   ON s.school_number = dsos.schoolid
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.rn_year = 1
-  AND co.school_level = 'MS'
