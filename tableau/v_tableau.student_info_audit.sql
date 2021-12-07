@@ -156,7 +156,11 @@ SELECT co.schoolid
       ,co.lastfirst
       ,co.grade_level
       ,'Missing or Incorrect FTEID' AS element
-      ,CONVERT(VARCHAR,co.fteid) AS detail
+      ,CASE 
+        WHEN co.fteid <> fte.id THEN CONCAT(co.fteid, ' <> ', fte.id)
+        WHEN co.fteid IS NULL THEN 'FTE IS NULL'
+        WHEN co.fteid = 0 THEN 'FTE = 0'
+       END AS detail
       ,CASE 
         WHEN co.fteid <> fte.id THEN 1
         WHEN co.fteid IS NULL THEN 1
@@ -167,7 +171,7 @@ FROM gabby.powerschool.cohort_identifiers_static co
 JOIN gabby.powerschool.fte
   ON co.schoolid = fte.schoolid
  AND co.yearid = fte.yearid
- AND co.db_name = fte.db_name
- AND fte.name = 'Full Time Students'
+ AND co.[db_name] = fte.[db_name]
+ AND fte.[name] LIKE 'Full Time Student%'
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.schoolid <> 999999  
