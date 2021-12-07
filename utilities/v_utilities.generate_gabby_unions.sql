@@ -69,7 +69,7 @@ WITH all_tables_columns_pivot AS (
                   ,column_type
             FROM gabby.utilities.all_tables_columns
             WHERE column_id > -1
-              AND [db_name] <> 'gabby'
+              AND [db_name] IN ('kippnewark', 'kippcamden', 'kippmiami')
            ) sub
        PIVOT(
          MAX(column_type)
