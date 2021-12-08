@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW surveys.self_and_others_survey_detail AS
+--CREATE OR ALTER VIEW surveys.self_and_others_survey_detail AS
 
 SELECT d.survey_id
       ,d.survey_title
@@ -31,7 +31,7 @@ SELECT d.survey_id
       ,d.subject_samaccountname
       ,s.manager_preferred_last_name + ', ' + s.manager_preferred_first_name AS subject_manager_name
       ,s.manager_samaccountname AS subject_manager_samaccountname
-      ,d.subject_primary_job AS subject_dayforce_role
+      ,d.subject_primary_job AS subject_dayforce_role --should change column name alias
       ,CASE 
         WHEN d.is_open_ended = 'Y' THEN NULL
         WHEN ISNUMERIC(d.answer_value) = 0 THEN NULL
@@ -105,10 +105,10 @@ SELECT NULL AS survey_id
       ,a.subject_username AS subject_samaccountname
       ,a.subject_manager_name
       ,a.subject_manager_username AS subject_manager_samaccountname
-      ,w.job_name AS subject_dayforce_role
+      ,w.job_title AS subject_dayforce_role
       ,a.response_weight
       ,a.response_value_weighted AS answer_value_weighted
 FROM gabby.surveys.self_and_others_survey_detail_archive a 
-LEFT JOIN gabby.dayforce.work_assignment_status w
-  ON a.subject_employee_number = w.df_employee_id
+LEFT JOIN gabby.people.employment_history w
+  ON a.subject_employee_number = w.employee_number
  AND a.date_submitted BETWEEN w.effective_start_date AND w.effective_end_date

@@ -20,16 +20,16 @@ SELECT d.survey_id
       ,d.respondent_preferred_name
       ,d.respondent_mail
       ,d.is_manager
-      ,w.department_name AS respondent_department_name
-      ,w.legal_entity_name AS respondent_legal_entity_name
+      ,w.home_department AS respondent_department_name
+      ,w.business_unit AS respondent_legal_entity_name
       ,d.respondent_manager_name
-      ,w.job_name AS respondent_primary_job
-      ,w.physical_location_name AS respondent_primary_site
+      ,w.job_title AS respondent_primary_job
+      ,w.[location] AS respondent_primary_site
       ,s.race_ethnicity_reporting AS primary_ethnicity
       ,s.gender_reporting AS gender
 FROM gabby.surveygizmo.survey_detail d
-LEFT JOIN gabby.dayforce.work_assignment_status w
-  ON d.respondent_df_employee_number = w.df_employee_id
+LEFT JOIN gabby.people.employment_history w
+  ON d.respondent_df_employee_number = w.employee_number
  AND d.date_submitted BETWEEN w.effective_start_date 
                           AND COALESCE(w.effective_end_date, DATEFROMPARTS((d.campaign_academic_year + 1), 7, 1))
 LEFT JOIN gabby.people.staff_roster s
