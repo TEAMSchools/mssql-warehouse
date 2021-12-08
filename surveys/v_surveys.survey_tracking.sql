@@ -313,7 +313,10 @@ LEFT JOIN clean_responses c
  AND st.survey_id = c.survey_id
 LEFT JOIN gabby.surveys.so_assignments sa
   ON st.employee_number = sa.employee_number
+LEFT JOIN gabby.surveys.so_assignments s
+  ON st.employee_number = s.employee_number
 WHERE st.survey_id = 5300913 /* R9S Survey Code */
+  AND (s.survey_taker <> 'No (Should not take any surveys!)'
 
 UNION ALL
 
@@ -433,5 +436,5 @@ LEFT JOIN clean_responses c
  AND st.academic_year = c.academic_year
  AND st.reporting_term_code = c.reporting_term
  AND st.survey_id = c.survey_id
-WHERE st.survey_id = 6580731 /* UP Survey Code */
+WHERE st.survey_id = 6580731 /* ITR Survey Code */
   AND st.survey_taker_legal_entity_name <> 'KIPP TEAM and Family Schools Inc.'
