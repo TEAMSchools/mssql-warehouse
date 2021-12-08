@@ -8,19 +8,23 @@ WITH wfm_updates AS (
   FROM gabby.adp.wfm_field_monitor
  )
 
-SELECT w.associate_oid
+SELECT scw.employee_number
+      ,scw.preferred_race_ethnicity
 
-      ,scw.df_employee_number AS employee_number
-      ,LOWER(scw.mail) AS mail
+      ,w.associate_oid
+
+      ,LOWER(ads.mail) AS mail
 
       ,CASE 
         WHEN wfm.associate_id IS NOT NULL
              THEN CONCAT('DR', CONVERT(NVARCHAR(8), GETDATE(), 112))
        END AS wfm_trigger
-FROM gabby.people.staff_crosswalk_static scw
+FROM gabby.people.staff_roster scw
 JOIN gabby.adp.workers_clean_static w
-  ON scw.adp_associate_id = w.worker_id
+  ON scw.associate_id = w.worker_id
+LEFT JOIN gabby.adsi.user_attributes_static ads
+  ON CONVERT(VARCHAR(25), scw.employee_number) = ads.employeenumber
 LEFT JOIN wfm_updates wfm
-  ON scw.adp_associate_id = wfm.associate_id
-WHERE scw.[status] <> 'Terminated'
-  AND scw.mail IS NOT NULL
+  ON scw.associate_id = wfm.associate_id
+WHERE scw.position_status <> 'Terminated'
+  AND ads.mail IS NOT NULL
