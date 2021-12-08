@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW surveys.self_and_others_survey_detail AS
+--CREATE OR ALTER VIEW surveys.self_and_others_survey_detail AS
 
 SELECT d.survey_id
       ,d.survey_title
@@ -18,11 +18,15 @@ SELECT d.survey_id
       ,d.answer_value
       ,d.respondent_df_employee_number
       ,d.respondent_preferred_name
+      ,r.primary_race_ethnicity_reporting AS respondent_race_ethnicity_reporting
+      ,r.gender AS respondent_gender
       ,d.respondent_mail
       ,d.is_manager
       ,d.subject_df_employee_number
       ,d.subject_adp_associate_id
       ,d.subject_preferred_name
+      ,s.primary_race_ethnicity_reporting AS subject_race_ethnicity_reporting
+      ,s.gender AS subject_gender
       ,s.legal_entity_name AS subject_legal_entity_name
       ,s.primary_site AS subject_primary_site
       ,d.subject_primary_site_schoolid
@@ -71,6 +75,8 @@ SELECT d.survey_id
 FROM gabby.surveygizmo.survey_detail d
 LEFT JOIN gabby.people.staff_crosswalk_static s
   ON d.subject_df_employee_number = s.df_employee_number
+LEFT JOIN gabby.people.staff_crosswalk_static r
+  ON d.respondent_df_employee_number = r.df_employee_number
 WHERE d.survey_title = 'Self and Others'
   AND d.rn_respondent_subject = 1
   AND d.campaign_academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
@@ -92,11 +98,15 @@ SELECT NULL AS survey_id
       ,a.response_value AS answer_value
       ,NULL AS respondent_df_employee_number
       ,a.respondent_name AS respondent_preferred_name
+      ,r.primary_race_ethnicity_reporting AS respondent_race_ethnicity_reporting
+      ,r.gender AS respondent_gender
       ,a.respondent_email_address AS respondent_mail
       ,a.is_manager
       ,a.subject_employee_number AS subject_df_employee_number
       ,a.subject_associate_id AS subject_adp_associate_id
       ,a.subject_name AS subject_preferred_name
+      ,s.primary_race_ethnicity_reporting AS subject_race_ethnicity_reporting
+      ,s.gender AS subject_gender
       ,a.subject_legal_entity_name
       ,a.subject_location AS subject_primary_site
       ,a.subject_primary_site_schoolid
@@ -105,10 +115,14 @@ SELECT NULL AS survey_id
       ,a.subject_username AS subject_samaccountname
       ,a.subject_manager_name
       ,a.subject_manager_username AS subject_manager_samaccountname
-      ,w.job_name AS subject_dayforce_role
+      ,w.job_title AS subject_dayforce_role
       ,a.response_weight
       ,a.response_value_weighted AS answer_value_weighted
 FROM gabby.surveys.self_and_others_survey_detail_archive a 
-LEFT JOIN gabby.dayforce.work_assignment_status w
-  ON a.subject_employee_number = w.df_employee_id
+LEFT JOIN gabby.people.employment_history w
+  ON a.subject_employee_number = w.employee_number
  AND a.date_submitted BETWEEN w.effective_start_date AND w.effective_end_date
+LEFT JOIN gabby.people.staff_crosswalk_static s
+  ON a.subject_employee_number = s.df_employee_number
+LEFT JOIN gabby.people.staff_crosswalk_static r
+  ON a.respondent_email_address = r.samaccountname
