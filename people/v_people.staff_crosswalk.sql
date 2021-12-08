@@ -10,7 +10,7 @@ SELECT sub.employee_number AS df_employee_number
       ,CONVERT(NVARCHAR(32), NULL) AS salesforce_id
       ,sub.first_name
       ,sub.last_name
-      ,sub.gender_reporting AS gender
+      ,CONVERT(NVARCHAR(32), sub.gender_reporting) AS gender
       ,sub.ethnicity AS primary_ethnicity
       ,sub.race_ethnicity_reporting AS primary_race_ethnicity_reporting
       ,sub.is_hispanic
