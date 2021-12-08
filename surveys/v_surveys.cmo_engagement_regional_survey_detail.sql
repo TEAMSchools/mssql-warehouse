@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW surveys.cmo_engagement_regional_survey_detail AS
+CREATE OR ALTER VIEW surveys.cmo_engagemknt_regional_survey_detail AS
 
 SELECT d.survey_id
       ,d.survey_title
@@ -27,6 +27,17 @@ SELECT d.survey_id
       ,w.[location] AS respondent_primary_site
       ,s.race_ethnicity_reporting AS primary_ethnicity
       ,s.gender_reporting AS gender
+      ,s.is_hispanic
+      ,s.is_race_asian
+      ,s.is_race_black
+      ,s.is_race_decline
+      ,s.is_race_mideast
+      ,s.is_race_multi
+      ,s.is_race_nhpi
+      ,s.is_race_other
+      ,s.is_race_white
+
+
 FROM gabby.surveygizmo.survey_detail d
 LEFT JOIN gabby.people.employment_history w
   ON d.respondent_df_employee_number = w.employee_number
@@ -64,6 +75,19 @@ SELECT d.survey_id
       ,d.respondent_primary_site
       ,s.primary_ethnicity
       ,s.gender
+      ,sr.is_hispanic
+      ,sr.is_race_asian
+      ,sr.is_race_black
+      ,sr.is_race_decline
+      ,sr.is_race_mideast
+      ,sr.is_race_multi
+      ,sr.is_race_nhpi
+      ,sr.is_race_other
+      ,sr.is_race_white
+
+
 FROM gabby.surveys.cmo_engagement_regional_survey_detail_archive d
 LEFT JOIN gabby.people.staff_crosswalk_static s
   ON d.respondent_df_employee_number = s.df_employee_number
+LEFT JOIN gabby.people.staff_roster sr
+  ON s.df_employee_number = sr.employee_number
