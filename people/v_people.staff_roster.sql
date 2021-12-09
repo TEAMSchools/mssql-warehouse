@@ -205,7 +205,7 @@ WITH all_staff AS (
              ,ea.race_description AS race
              /* transformations */
              ,CONVERT(DATE, ea.birth_date) AS birth_date
-             ,LEFT(UPPER(e.gender), 1) AS sex
+             ,LEFT(UPPER(ea.gender), 1) AS sex
              ,CASE 
                WHEN ea.primary_address_address_line_1 IS NOT NULL 
                     THEN CONCAT(ea.primary_address_address_line_1, ', ' + ea.primary_address_address_line_2)
@@ -213,8 +213,8 @@ WITH all_staff AS (
              ,CONVERT(NVARCHAR(256), gabby.utilities.STRIP_CHARACTERS(ea.personal_contact_personal_mobile, '^0-9')) AS personal_mobile
              ,COALESCE(ea.preferred_gender
                       ,CASE
-                        WHEN e.gender = 'Male' THEN 'Man'
-                        WHEN e.gender = 'Female' THEN 'Woman'
+                        WHEN ea.gender = 'Male' THEN 'Man'
+                        WHEN ea.gender = 'Female' THEN 'Woman'
                        END) AS gender_reporting
 
              ,w.preferred_name_given AS preferred_first_name
@@ -298,8 +298,6 @@ WITH all_staff AS (
        FROM all_staff eh
        JOIN gabby.adp.employees_all ea
          ON eh.associate_id = ea.associate_id
-       JOIN gabby.adp.employees e
-         ON eh.associate_id = e.associate_id
        LEFT JOIN gabby.adp.workers_clean_static w
          ON eh.associate_id = w.worker_id
        LEFT JOIN hire_dates hd
