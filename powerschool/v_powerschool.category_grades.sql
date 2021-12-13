@@ -11,11 +11,10 @@ SELECT sub.student_number
       ,sub.reporting_term
       ,sub.grade_category
       ,sub.grade_category_pct
-
+      ,sub.citizenship
       ,ROUND(AVG(sub.grade_category_pct) OVER(
          PARTITION BY sub.student_number, sub.academic_year, sub.course_number, sub.grade_category 
            ORDER BY sub.startdate), 0) AS grade_category_pct_y1
-
       ,CASE
         WHEN CONVERT(DATE, GETDATE()) BETWEEN sub.startdate AND sub.enddate THEN 1 
         WHEN sub.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
@@ -41,6 +40,7 @@ FROM
            ,CONVERT(VARCHAR(5), CONCAT('RT', RIGHT(tb.storecode, 1))) AS reporting_term
 
            ,ROUND(CASE WHEN pgf.grade = '--' THEN NULL ELSE pgf.[percent] END, 0) AS grade_category_pct
+           ,CASE WHEN pgf.citizenship <> '' THEN pgf.citizenship END AS citizenship
 
            ,ROW_NUMBER() OVER(
               PARTITION BY enr.student_number, enr.academic_year, enr.course_number, tb.storecode
