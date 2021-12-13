@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW surveys.cmo_engagemknt_regional_survey_detail AS
+CREATE OR ALTER VIEW surveys.cmo_engagement_regional_survey_detail AS
 
 SELECT d.survey_id
       ,d.survey_title
@@ -73,8 +73,8 @@ SELECT d.survey_id
       ,d.respondent_manager_name
       ,d.respondent_primary_job
       ,d.respondent_primary_site
-      ,s.primary_ethnicity
-      ,s.gender
+      ,sr.race_ethnicity_reporting AS primary_ethnicity
+      ,sr.gender_reporting AS gender
       ,sr.is_hispanic
       ,sr.is_race_asian
       ,sr.is_race_black
@@ -85,9 +85,6 @@ SELECT d.survey_id
       ,sr.is_race_other
       ,sr.is_race_white
 
-
 FROM gabby.surveys.cmo_engagement_regional_survey_detail_archive d
-LEFT JOIN gabby.people.staff_crosswalk_static s
-  ON d.respondent_df_employee_number = s.df_employee_number
 LEFT JOIN gabby.people.staff_roster sr
-  ON s.df_employee_number = sr.employee_number
+  ON d.respondent_df_employee_number = sr.employee_number

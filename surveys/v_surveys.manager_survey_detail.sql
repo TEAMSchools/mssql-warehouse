@@ -37,7 +37,6 @@ FROM gabby.surveygizmo.survey_detail d
 LEFT JOIN gabby.people.employment_history w
   ON d.subject_df_employee_number = w.employee_number
  AND d.date_submitted BETWEEN w.effective_start_date AND w.effective_end_date
- AND w.is_current_record = 1
 LEFT JOIN gabby.people.staff_crosswalk_static s
   ON d.subject_df_employee_number = s.df_employee_number
 WHERE d.survey_title = 'Manager Survey'
@@ -84,4 +83,3 @@ LEFT JOIN gabby.people.staff_crosswalk_static mgr
 LEFT JOIN gabby.people.employment_history w
   ON sda.subject_df_employee_number = w.employee_number
  AND sda.date_submitted BETWEEN w.effective_start_date AND w.effective_end_date
- AND w.is_current_record = 1
