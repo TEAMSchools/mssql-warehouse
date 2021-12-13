@@ -106,6 +106,7 @@ WITH roster AS (
                WHEN r.is_enrolled = 0 THEN NULL
                WHEN r.grade_level >= 9 THEN NULL
                WHEN r.enroll_status <> 0 THEN -1
+               WHEN COALESCE(g.adjusted_goal, df2.words_goal, df.words_goal) = 0 THEN -1
                ELSE COALESCE(g.adjusted_goal, df2.words_goal, df.words_goal)
               END AS words_goal
        FROM roster r
