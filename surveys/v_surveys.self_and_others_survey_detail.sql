@@ -35,7 +35,7 @@ SELECT d.survey_id
       ,d.subject_samaccountname
       ,s.manager_preferred_last_name + ', ' + s.manager_preferred_first_name AS subject_manager_name
       ,s.manager_samaccountname AS subject_manager_samaccountname
-      ,d.subject_primary_job AS subject_dayforce_role
+      ,d.subject_primary_job AS subject_dayforce_role --should change column name alias
       ,CASE 
         WHEN d.is_open_ended = 'Y' THEN NULL
         WHEN ISNUMERIC(d.answer_value) = 0 THEN NULL
