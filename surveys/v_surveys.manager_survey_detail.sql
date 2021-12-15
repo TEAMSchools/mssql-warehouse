@@ -35,10 +35,10 @@ SELECT d.survey_id
       ,w.job_title AS subject_dayforce_role --should change column name alias
 
       ,s.primary_race_ethnicity_reporting AS subject_race_ethnicity_reporting
-      ,s.gender AS subject_race_ethnicity_reporting
+      ,s.gender AS subject_gender_reporting
 
       ,r.primary_race_ethnicity_reporting AS respondent_race_ethnicity_reporting
-      ,r.gender AS respondent_race_ethnicity_reporting
+      ,r.gender AS respondent_gender_reporting
 
 
 
@@ -88,10 +88,10 @@ SELECT NULL AS survey_id
       ,w.job_title AS subject_dayforce_role --should change column name alias
 
       ,NULL AS subject_race_ethnicity_reporting
-      ,NULL AS subject_race_ethnicity_reporting
+      ,NULL AS subject_gender_reporting
 
       ,NULL AS respondent_race_ethnicity_reporting
-      ,NULL AS respondent_race_ethnicity_reporting
+      ,NULL AS respondent_gender_reporting
 
 FROM surveys.manager_survey_detail_archive  sda
 LEFT JOIN gabby.people.staff_crosswalk_static sbjt
