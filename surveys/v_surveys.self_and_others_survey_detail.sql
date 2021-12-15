@@ -35,7 +35,7 @@ SELECT d.survey_id
       ,d.subject_samaccountname
       ,s.manager_preferred_last_name + ', ' + s.manager_preferred_first_name AS subject_manager_name
       ,s.manager_samaccountname AS subject_manager_samaccountname
-      ,d.subject_primary_job AS subject_dayforce_role --should change column name alias
+      ,d.subject_primary_job AS subject_role 
       ,CASE 
         WHEN d.is_open_ended = 'Y' THEN NULL
         WHEN ISNUMERIC(d.answer_value) = 0 THEN NULL
@@ -115,7 +115,7 @@ SELECT NULL AS survey_id
       ,a.subject_username AS subject_samaccountname
       ,a.subject_manager_name
       ,a.subject_manager_username AS subject_manager_samaccountname
-      ,w.job_title AS subject_dayforce_role
+      ,w.job_title AS subject_role
       ,a.response_weight
       ,a.response_value_weighted AS answer_value_weighted
 FROM gabby.surveys.self_and_others_survey_detail_archive a 
