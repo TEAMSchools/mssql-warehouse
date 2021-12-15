@@ -32,13 +32,22 @@ SELECT d.survey_id
       ,d.subject_samaccountname
       ,d.subject_manager_name
       ,d.subject_manager_samaccountname
-      ,w.job_title AS subject_role 
+
+      ,w.job_title AS subject_role
+      
+      ,s.primary_race_ethnicity_reporting AS subject_race_ethnicity_reporting
+      ,s.gender AS subject_gender_reporting
+
+      ,r.primary_race_ethnicity_reporting AS respondent_race_ethnicity_reporting
+      ,r.gender AS respondent_gender_reporting
 FROM gabby.surveygizmo.survey_detail d
 LEFT JOIN gabby.people.employment_history w
   ON d.subject_df_employee_number = w.employee_number
  AND d.date_submitted BETWEEN w.effective_start_date AND w.effective_end_date
 LEFT JOIN gabby.people.staff_crosswalk_static s
   ON d.subject_df_employee_number = s.df_employee_number
+LEFT JOIN gabby.people.staff_crosswalk_static r
+  ON d.respondent_df_employee_number = r.df_employee_number
 WHERE d.survey_title = 'Manager Survey'
   AND d.rn_respondent_subject = 1
   AND d.campaign_academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
@@ -74,7 +83,13 @@ SELECT NULL AS survey_id
       ,COALESCE(sbjt.samaccountname, sda.subject_username) AS subject_samaccountname
       ,sda.subject_manager_name
       ,COALESCE(mgr.samaccountname, sda.subject_manager_username) AS subject_manager_samaccountname
-      ,w.job_title AS subject_role 
+
+      ,w.job_title AS subject_role
+
+      ,NULL AS subject_race_ethnicity_reporting
+      ,NULL AS subject_gender_reporting
+      ,NULL AS respondent_race_ethnicity_reporting
+      ,NULL AS respondent_gender_reporting
 FROM surveys.manager_survey_detail_archive  sda
 LEFT JOIN gabby.people.staff_crosswalk_static sbjt
   ON sda.subject_df_employee_number = sbjt.df_employee_number
@@ -83,3 +98,4 @@ LEFT JOIN gabby.people.staff_crosswalk_static mgr
 LEFT JOIN gabby.people.employment_history w
   ON sda.subject_df_employee_number = w.employee_number
  AND sda.date_submitted BETWEEN w.effective_start_date AND w.effective_end_date
+ 
