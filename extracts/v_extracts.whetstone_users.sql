@@ -16,13 +16,24 @@ WITH managers AS (
  )
 
 ,existing_roles AS (
-  SELECT sogm.[user_id]
-        ,gabby.dbo.GROUP_CONCAT(DISTINCT '"' + r._id + '"') AS role_ids
-  FROM gabby.whetstone.schools_observation_groups_membership sogm
-  JOIN gabby.whetstone.roles r
-    ON sogm.role_category = r.category
-   AND r.[name] IN ('Teacher', 'Coach')
-  GROUP BY sogm.[user_id]
+  SELECT sub.[user_id]
+        ,gabby.dbo.GROUP_CONCAT(DISTINCT '"' + sub.role_id + '"') AS role_ids
+  FROM
+      (
+       SELECT sogm.[user_id]
+             ,r._id AS role_id
+       FROM gabby.whetstone.schools_observation_groups_membership sogm
+       JOIN gabby.whetstone.roles r
+         ON sogm.role_category = r.category
+        AND r.[name] IN ('Teacher', 'Coach')
+
+       UNION ALL
+
+       SELECT ur.[user_id]
+             ,ur.role_id
+       FROM gabby.whetstone.users_roles ur
+      ) sub
+  GROUP BY sub.[user_id]
  )
 
 SELECT sub.user_internal_id
