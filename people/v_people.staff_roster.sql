@@ -415,7 +415,6 @@ SELECT c.employee_number
       ,gl.student_grade_level AS primary_grade_taught
 
       ,ads.userprincipalname
-
 FROM clean_staff c
 LEFT JOIN gabby.people.school_crosswalk s
   ON c.[location] = s.site_name
@@ -424,10 +423,8 @@ LEFT JOIN clean_staff m
   ON c.reports_to_associate_id = m.associate_id
 LEFT JOIN gabby.people.years_experience y
   ON c.employee_number = y.df_employee_number
-LEFT JOIN gabby.people.id_crosswalk_powerschool idps
-  ON c.employee_number = idps.df_employee_number
 LEFT JOIN gabby.pm.teacher_grade_levels gl
-  ON idps.ps_teachernumber = gl.teachernumber COLLATE Latin1_General_BIN
+  ON c.employee_number = gl.employee_number
  AND gl.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
  AND gl.is_primary_gl = 1
 LEFT JOIN gabby.adsi.user_attributes_static ads
