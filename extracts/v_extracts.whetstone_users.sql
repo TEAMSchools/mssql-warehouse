@@ -53,63 +53,60 @@ SELECT sub.user_internal_id
         ELSE 'Teachers'
        END AS group_name
 
+      ,u.[user_id]
+      ,u.inactive AS inactive_ws
+      ,CONVERT(DATE, u.archived_at) AS archived_at
+
+      ,um.[user_id] AS coach_id
+      ,sch._id AS school_id
       ,gr._id AS grade_id
-
       ,cou._id AS course_id
-
-      ,CASE 
-        WHEN si.group_name = 'No Role' THEN er.role_ids_old
-        WHEN er.role_ids_old IS NULL THEN '"' + r._id + '"'
-        WHEN CHARINDEX(r._id, er.role_ids_old) > 0 THEN er.role_ids_old
-        ELSE '"' + r._id + '", ' + er.role_ids_old
-       END AS role_id
+      ,'[' 
+        + CASE 
+           WHEN er.role_ids IS NULL THEN '"' + r._id + '"' /* no roles = add assigned role */
+           WHEN CHARINDEX(r._id, er.role_ids) > 0 THEN er.role_ids /* assigned role already exists = use existing */
+           ELSE '"' + r._id + '",' + er.role_ids /* add assigned role */
+          END
+        + ']' AS role_id
 FROM
     (
      SELECT CONVERT(VARCHAR(25), scw.df_employee_number) AS user_internal_id
-           ,scw.google_email AS user_email
-           ,scw.primary_job as primary_job
-           ,scw.primary_on_site_department AS department
-           ,scw.primary_on_site_department AS course_name
-           ,scw.manager_name
-           ,scw.manager_df_employee_number AS manager_id
+           ,CONVERT(VARCHAR(25), scw.manager_df_employee_number) AS manager_internal_id
            ,scw.preferred_first_name + ' ' + scw.preferred_last_name AS [user_name]
            ,CONVERT(BIT, CASE WHEN scw.[status] = 'TERMINATED' THEN 1 ELSE 0 END) AS inactive
+           ,scw.google_email AS user_email
+           ,CASE WHEN scw.primary_site_schoolid = 0 THEN NULL ELSE scw.primary_site END AS school_name
+           ,scw.primary_on_site_department AS course_name
            ,CASE WHEN scw.grades_taught = 0 THEN 'K' ELSE CONVERT(VARCHAR, scw.grades_taught) END AS grade_abbreviation
            ,CASE
-              WHEN scw.primary_on_site_department IN ('Executive') THEN 'Regional Admin' -- network admin
-              WHEN scw.primary_on_site_department IN ('Teaching and Learning', 'School Support', 'New Teacher Development') THEN 'Sub Admin' -- network admin
-              WHEN scw.primary_on_site_department = 'Special Education'
-               AND scw.primary_job NOT IN ('Teacher', 'Teacher ESL', 'Co-Teacher', 'Learning Specialist', 'Learning Specialist Coordinator'
-                                          ,'Teacher in Residence', 'Teaching Fellow', 'Paraprofessional', 'Learning Disabilities Teacher Consultant'
-                                          ,'Occupational Therapist', 'School Psychologist', 'Specialist', 'Speech Language Pathologist')
-                   THEN 'Sub Admin' -- network admin
-              WHEN scw.primary_job IN ('School Leader') THEN 'School Admin'
-              WHEN scw.primary_on_site_department IN ('School Leadership') THEN 'School Assistant Admin'
-              WHEN scw.primary_on_site_department IN ('Data') THEN 'System Admin' -- network admin
-              WHEN scw.is_manager = 1 THEN 'Coach'-- ?
-              WHEN scw.primary_job IN ('Teacher', 'Teacher ESL', 'Co-Teacher', 'Learning Specialist', 'Learning Specialist Coordinator'
-                                      ,'Teacher in Residence', 'Teaching Fellow', 'Paraprofessional') 
-                   THEN 'Teacher'
-              ELSE 'No Role'
-             END AS group_name
-
-            ,um.[user_id] AS [user_id]
-            ,um.coach_id AS coach_id
-            ,um.inactive AS inactive_ws
-            ,CONVERT(DATE, um.archived_at) AS archived_at
-
-            ,sch._id AS school_id
+             WHEN scw.primary_on_site_department IN ('Executive') THEN 'Regional Admin' -- network admin
+             WHEN scw.primary_on_site_department IN ('Teaching and Learning', 'School Support', 'New Teacher Development') THEN 'Sub Admin' -- network admin # TODO: FILTER ON JOB
+             WHEN scw.primary_on_site_department = 'Special Education' AND scw.primary_job IN ('Managing Director', 'Director', 'Achievement Director') THEN 'Sub Admin' -- network admin
+             WHEN scw.primary_job IN ('School Leader') THEN 'School Admin'
+             WHEN scw.primary_on_site_department IN ('School Leadership') THEN 'School Assistant Admin' -- TODO: CHECK WHICH JOBS ARE INCLUDED HERE
+             WHEN scw.is_manager = 1 THEN 'Coach'-- ?
+             WHEN scw.primary_job IN ('Teacher', 'Teacher ESL', 'Co-Teacher', 'Learning Specialist', 'Learning Specialist Coordinator','Teacher in Residence', 'Teaching Fellow', 'Paraprofessional') THEN 'Teacher'
+             ELSE 'No Role'
+            END AS role_name
      FROM gabby.people.staff_crosswalk_static scw
-     LEFT JOIN gabby.whetstone.users_clean um
-       ON scw.df_employee_number = um.internal_id
-     LEFT JOIN gabby.whetstone.schools sch
-       ON scw.primary_site = sch.[name]
-    ) si
+     LEFT JOIN managers m
+       ON scw.df_employee_number = m.manager_df_employee_number
+     WHERE scw.userprincipalname IS NOT NULL
+       AND COALESCE(scw.termination_date, CURRENT_TIMESTAMP) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1, 7, 1)
+    ) sub
+LEFT JOIN gabby.whetstone.users_clean u
+  ON sub.user_internal_id = u.internal_id
+LEFT JOIN gabby.whetstone.users_clean um
+  ON sub.manager_internal_id = um.internal_id
+LEFT JOIN gabby.whetstone.schools sch
+  ON sub.school_name = sch.[name]
 LEFT JOIN gabby.whetstone.grades gr
-  ON si.grade_abbreviation = gr.abbreviation
+  ON sub.grade_abbreviation = gr.abbreviation
 LEFT JOIN gabby.whetstone.courses cou
-  ON si.course_name = cou.[name]
+  ON sub.course_name = cou.[name]
+ AND cou.archived_at IS NULL
 LEFT JOIN gabby.whetstone.roles r
-  ON si.group_name = r.[name]
+  ON sub.role_name = r.[name]
 LEFT JOIN existing_roles er
-  ON si.[user_id] = er.[user_id]
+  ON u.[user_id] = er.[user_id]
+WHERE sub.role_name <> 'No Role'
