@@ -17,7 +17,7 @@ WITH managers AS (
 
 ,existing_roles AS (
   SELECT sub.[user_id]
-        ,gabby.dbo.GROUP_CONCAT(DISTINCT '"' + sub.role_id + '"') AS role_ids
+        ,gabby.dbo.GROUP_CONCAT_S(DISTINCT '"' + sub.role_id + '"', 1) AS role_ids
   FROM
       (
        SELECT sogm.[user_id]
