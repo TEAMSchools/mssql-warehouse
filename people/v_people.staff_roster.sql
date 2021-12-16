@@ -406,9 +406,26 @@ SELECT c.employee_number
       ,c.professional_experience_in_communities_we_serve
       ,c.attended_relay
 
+      ,y.years_at_kipp_total
+      ,y.years_at_kipp_total + c.years_of_professional_experience_before_joining AS total_professional_experience
+      ,y.years_teaching_at_kipp
+      ,y.years_teaching_at_kipp + c.years_teaching_in_nj_or_fl AS nj_fl_total_years_teaching
+      ,y.years_teaching_at_kipp + c.years_teaching_in_any_state AS total_years_teaching
+
+      ,gl.student_grade_level AS primary_grade_taught
+
+      ,ads.userprincipalname
 FROM clean_staff c
 LEFT JOIN gabby.people.school_crosswalk s
   ON c.[location] = s.site_name
  AND s._fivetran_deleted = 0
 LEFT JOIN clean_staff m
   ON c.reports_to_associate_id = m.associate_id
+LEFT JOIN gabby.people.years_experience y
+  ON c.employee_number = y.df_employee_number
+LEFT JOIN gabby.pm.teacher_grade_levels gl
+  ON c.employee_number = gl.employee_number
+ AND gl.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+ AND gl.is_primary_gl = 1
+LEFT JOIN gabby.adsi.user_attributes_static ads
+  ON CONVERT(VARCHAR(25), c.employee_number) = ads.employeenumber
