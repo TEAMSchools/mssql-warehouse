@@ -4,16 +4,16 @@ GO
 CREATE OR ALTER VIEW extracts.powerschool_autocomm_students_easyiep AS
 
 SELECT student_number
-      ,CONVERT(VARCHAR,nj_se_referraldate, 101) AS [S_NJ_STU_X.Referral_Date]
-      ,CONVERT(VARCHAR,nj_se_parentalconsentdate, 101) AS [S_NJ_STU_X.Parental_Consent_Eval_Date]
-      ,CONVERT(VARCHAR,nj_se_eligibilityddate, 101) AS [S_NJ_STU_X.Eligibility_Determ_Date]
+      ,CONVERT(VARCHAR, nj_se_referraldate, 101) AS [S_NJ_STU_X.Referral_Date]
+      ,CONVERT(VARCHAR, nj_se_parentalconsentdate, 101) AS [S_NJ_STU_X.Parental_Consent_Eval_Date]
+      ,CONVERT(VARCHAR, nj_se_eligibilityddate, 101) AS [S_NJ_STU_X.Eligibility_Determ_Date]
       ,NULL AS [S_NJ_STU_X.Early_Intervention_YN]
-      ,CONVERT(VARCHAR,nj_se_initialiepmeetingdate, 101) AS [S_NJ_STU_X.Initial_IEP_Meeting_Date]
+      ,CONVERT(VARCHAR, nj_se_initialiepmeetingdate, 101) AS [S_NJ_STU_X.Initial_IEP_Meeting_Date]
       ,nj_se_parental_consentobtained AS [S_NJ_STU_X.Parent_Consent_Obtain_Code]
-      ,CONVERT(VARCHAR,nj_se_consenttoimplementdate, 101) AS [S_NJ_STU_X.Parent_Consent_Intial_IEP_Date]
-      ,CONVERT(VARCHAR,nj_se_lastiepmeetingdate, 101) AS [S_NJ_STU_X.Annual_IEP_Review_Meeting_Date]
+      ,CONVERT(VARCHAR, nj_se_consenttoimplementdate, 101) AS [S_NJ_STU_X.Parent_Consent_Intial_IEP_Date]
+      ,CONVERT(VARCHAR, nj_se_lastiepmeetingdate, 101) AS [S_NJ_STU_X.Annual_IEP_Review_Meeting_Date]
       ,special_education_code AS [S_NJ_STU_X.SpecialEd_Classification]
-      ,CONVERT(VARCHAR,nj_se_reevaluationdate, 101) AS [S_NJ_STU_X.Reevaluation_Date]
+      ,CONVERT(VARCHAR, nj_se_reevaluationdate, 101) AS [S_NJ_STU_X.Reevaluation_Date]
       ,nj_se_delayreason AS [S_NJ_STU_X.Initial_Process_Delay_Reason]
       ,nj_se_placement AS [S_NJ_STU_X.Special_Education_Placement]
       ,nj_timeinregularprogram AS [S_NJ_STU_X.Time_In_Regular_Program]
@@ -39,6 +39,6 @@ SELECT student_number
        END AS [S_NJ_STU_X.Other_Related_Services_YN]
       ,spedlep AS [STUDENTCOREFIELDS.SPEDLEP]
       ,CASE WHEN special_education_code = '00' THEN '1' END AS [S_NJ_STU_X.Determined_Ineligible_YN]
-      ,db_name
+      ,[db_name]
 FROM gabby.easyiep.njsmart_powerschool_clean
 WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()

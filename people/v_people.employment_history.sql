@@ -3,7 +3,7 @@ GO
 
 CREATE OR ALTER VIEW people.employment_history AS
 
-WITH validdates AS (
+WITH date_scaffold AS (
   SELECT employee_number
         ,associate_id
         ,position_id
@@ -43,7 +43,7 @@ WITH validdates AS (
   FROM gabby.people.manager_history_static
  )
 
-,validranges AS (
+,range_scaffold AS (
   SELECT d.employee_number
         ,d.associate_id
         ,d.position_id
@@ -61,7 +61,7 @@ WITH validdates AS (
                                       THEN gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 2
                                  ELSE gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1
                                 END, 6, 30)) AS effective_end_date
-  FROM validdates d
+  FROM date_scaffold d
  )
 
 SELECT r.employee_number
@@ -79,7 +79,7 @@ SELECT r.employee_number
       ,s.status_effective_date AS status_effective_start_date
       ,s.status_effective_end_date
       ,LAG(s.position_status, 1) OVER(PARTITION BY r.position_id ORDER BY r.effective_start_date) AS position_status_prev
-      ,MAX(CASE 
+      ,MIN(CASE 
             WHEN CONVERT(DATE, GETDATE()) BETWEEN s.status_effective_date AND s.status_effective_end_date
                    THEN s.position_status
            END) OVER(PARTITION BY r.associate_id) AS position_status_cur
@@ -101,7 +101,7 @@ SELECT r.employee_number
 
       ,mh.reports_to_associate_id
       ,mh.reports_to_employee_number
-FROM validranges r
+FROM range_scaffold r
 LEFT JOIN gabby.people.status_history_static s
   ON r.position_id = s.position_id
  AND r.effective_start_date BETWEEN s.status_effective_date AND s.status_effective_end_date_eoy

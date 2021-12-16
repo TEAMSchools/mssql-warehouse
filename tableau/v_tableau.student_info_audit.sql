@@ -3,12 +3,22 @@ GO
 
 CREATE OR ALTER VIEW tableau.student_info_audit AS 
 
-SELECT schoolid
+WITH race AS (
+  SELECT sr.studentid
+        ,sr.[db_name]
+        ,gabby.dbo.GROUP_CONCAT(racecd) AS racecds
+  FROM gabby.powerschool.studentrace sr
+  GROUP BY sr.studentid, sr.[db_name]
+ )
+
+SELECT [db_name]
+      ,schoolid
       ,school_name
       ,student_number
       ,region
       ,lastfirst
       ,grade_level
+      ,team
       ,'Name Spelling' AS element
       ,lastfirst AS detail
       ,CASE 
@@ -17,6 +27,7 @@ SELECT schoolid
         WHEN lastfirst LIKE '%/%' THEN 1
         WHEN lastfirst LIKE '%\%' THEN 1
         WHEN lastfirst LIKE '%.%' THEN 1
+        WHEN lastfirst LIKE '%`%' THEN 1
         ELSE 0 
        END AS flag
 FROM gabby.powerschool.cohort_identifiers_static
@@ -26,87 +37,14 @@ WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 
 UNION ALL
 
-SELECT schoolid
+SELECT [db_name]
+      ,schoolid
       ,school_name
       ,student_number
       ,region
       ,lastfirst
       ,grade_level
-      ,'Email' AS element
-      ,CASE WHEN guardianemail IS NULL THEN '[Missing]' ELSE guardianemail END AS detail
-      ,CASE 
-        WHEN guardianemail LIKE '%;%' THEN 1
-        WHEN guardianemail LIKE '%:%' THEN 1
-        WHEN guardianemail LIKE '% %' THEN 1
-        WHEN guardianemail LIKE '%  %' THEN 1
-        WHEN guardianemail LIKE '%/%' THEN 1
-        WHEN guardianemail LIKE '%\%' THEN 1
-        WHEN guardianemail LIKE '%''%' THEN 1
-        WHEN guardianemail LIKE '%@ %' THEN 1
-        WHEN guardianemail IS NULL THEN 1
-        ELSE 0 
-       END AS flag
-FROM gabby.powerschool.cohort_identifiers_static
-WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-  AND schoolid <> 999999
-  AND rn_year = 1
-
-UNION ALL
-         
-SELECT schoolid
-      ,school_name
-      ,student_number
-      ,region
-      ,lastfirst
-      ,grade_level
-      ,'Phone - Mother Cell' AS element
-      ,mother_cell AS detail
-      ,CASE WHEN mother_cell NOT LIKE '%-%-%' THEN 1 ELSE 0 END AS flag
-FROM gabby.powerschool.cohort_identifiers_static
-WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-  AND schoolid <> 999999
-  AND rn_year = 1
-      
-UNION ALL
-      
-SELECT schoolid
-      ,school_name
-      ,student_number
-      ,region
-      ,lastfirst
-      ,grade_level
-      ,'Phone - Father Cell' AS element
-      ,FATHER_CELL AS detail
-      ,CASE WHEN father_cell NOT LIKE '%-%-%' THEN 1 ELSE 0 END AS flag
-FROM gabby.powerschool.cohort_identifiers_static
-WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-  AND schoolid <> 999999
-  AND rn_year = 1
-
-UNION ALL
-
-SELECT schoolid
-      ,school_name
-      ,student_number
-      ,region
-      ,lastfirst
-      ,grade_level
-      ,'Phone - Home' AS element
-      ,FATHER_CELL AS detail
-      ,CASE WHEN home_phone NOT LIKE '%-%-%' THEN 1 ELSE 0 END AS flag
-FROM gabby.powerschool.cohort_identifiers_static
-WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-  AND schoolid <> 999999
-  AND rn_year = 1
-
-UNION ALL
-
-SELECT schoolid
-      ,school_name
-      ,student_number
-      ,region
-      ,lastfirst
-      ,grade_level
+      ,team
       ,'Missing Ethnicity' AS element
       ,ethnicity AS detail
       ,CASE WHEN ethnicity IS NULL THEN 1 ELSE 0 END AS flag
@@ -117,12 +55,14 @@ WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 
 UNION ALL
 
-SELECT schoolid
+SELECT [db_name]
+      ,schoolid
       ,school_name
       ,student_number
       ,region
       ,lastfirst
       ,grade_level
+      ,team
       ,'Missing Gender' AS element
       ,gender AS detail
       ,CASE WHEN gender IS NULL THEN 1 ELSE 0 END AS flag
@@ -133,14 +73,16 @@ WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 
 UNION ALL
 
-SELECT co.schoolid
+SELECT co.[db_name]
+      ,co.schoolid
       ,co.school_name
       ,co.student_number
       ,co.region
       ,co.lastfirst
       ,co.grade_level
+      ,co.team
       ,'Missing SID' AS element
-      ,CONVERT(VARCHAR,co.state_studentnumber) AS detail
+      ,CONVERT(VARCHAR, co.state_studentnumber) AS detail
       ,CASE WHEN co.state_studentnumber IS NULL THEN 1 ELSE 0 END AS flag
 FROM gabby.powerschool.cohort_identifiers_static co
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
@@ -149,14 +91,20 @@ WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 
 UNION ALL
 
-SELECT co.schoolid
+SELECT co.[db_name]
+      ,co.schoolid
       ,co.school_name
       ,co.student_number
       ,co.region
       ,co.lastfirst
       ,co.grade_level
+      ,co.team
       ,'Missing or Incorrect FTEID' AS element
-      ,CONVERT(VARCHAR,co.fteid) AS detail
+      ,CASE 
+        WHEN co.fteid <> fte.id THEN CONCAT(co.fteid, ' <> ', fte.id)
+        WHEN co.fteid IS NULL THEN 'FTE IS NULL'
+        WHEN co.fteid = 0 THEN 'FTE = 0'
+       END AS detail
       ,CASE 
         WHEN co.fteid <> fte.id THEN 1
         WHEN co.fteid IS NULL THEN 1
@@ -167,7 +115,156 @@ FROM gabby.powerschool.cohort_identifiers_static co
 JOIN gabby.powerschool.fte
   ON co.schoolid = fte.schoolid
  AND co.yearid = fte.yearid
- AND co.db_name = fte.db_name
- AND fte.name = 'Full Time Students'
+ AND co.[db_name] = fte.[db_name]
+ AND fte.[name] LIKE 'Full Time Student%'
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.schoolid <> 999999  
+
+UNION ALL
+
+
+SELECT co.[db_name]
+      ,co.schoolid
+      ,co.school_name
+      ,co.student_number
+      ,co.region
+      ,co.lastfirst
+      ,co.grade_level
+      ,co.team
+      ,'Missing DOB' AS element
+      ,CONVERT(VARCHAR, co.dob) AS detail
+      ,CASE 
+        WHEN co.dob IS NULL THEN 1
+        ELSE 0
+       END AS flag
+FROM gabby.powerschool.cohort_identifiers_static co
+WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+  AND co.schoolid <> 999999
+  AND co.rn_year = 1
+
+UNION ALL
+
+SELECT co.[db_name]
+      ,schoolid
+      ,school_name
+      ,student_number 
+      ,region
+      ,lastfirst
+      ,grade_level
+      ,team
+      ,'Missing Race' AS element
+      ,CASE WHEN r.racecds IS NULL THEN 'Missing racecd' END AS detail
+      ,CASE WHEN r.racecds IS NULL THEN 1 ELSE 0 END AS flag
+FROM gabby.powerschool.cohort_identifiers_static co
+LEFT JOIN race r
+ON co.studentid = r.studentid
+AND co.[db_name] = r.[db_name]
+WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+  AND schoolid <> 999999
+  AND rn_year = 1
+
+UNION ALL
+
+SELECT co.[db_name]
+      ,schoolid
+      ,school_name
+      ,student_number 
+      ,region
+      ,lastfirst
+      ,grade_level
+      ,team
+      ,'Missing Ethnicity' AS element
+      ,CASE WHEN co.ethnicity IS NULL THEN 'Missing ethnicity' END AS detail
+      ,CASE WHEN co.ethnicity IS NULL THEN 1 ELSE 0 END AS flag
+FROM gabby.powerschool.cohort_identifiers_static co
+WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+  AND schoolid <> 999999
+  AND rn_year = 1
+
+UNION ALL
+
+SELECT [db_name]
+      ,schoolid
+      ,school_name
+      ,student_number
+      ,region
+      ,lastfirst
+      ,grade_level
+      ,team
+      ,'Enrollment Dupes' AS element
+      ,CONCAT(course_number, ' - ', section_number, ' - ', dateenrolled, '-', dateleft) AS detail
+      ,CASE
+        WHEN next_enrollment_date BETWEEN dateenrolled AND DATEADD(DAY, -1, dateleft) THEN 1
+        ELSE 0
+       END AS flag
+FROM
+    (
+     SELECT ce.[db_name]
+           ,ce.schoolid
+           ,ce.student_number
+           ,ce.course_number
+           ,ce.course_name
+           ,ce.section_number
+           ,ce.dateenrolled
+           ,ce.dateleft
+           ,LEAD(ce.dateenrolled) OVER(PARTITION BY ce.student_number, ce.course_number ORDER BY ce.dateenrolled) as next_enrollment_date
+           ,co.school_name
+           ,co.region
+           ,co.lastfirst
+           ,co.team
+           ,co.grade_level
+           ,'Enrollment Dupes' AS element
+     FROM gabby.powerschool.course_enrollments_current_static ce
+     JOIN gabby.powerschool.cohort_identifiers_static co
+       ON ce.student_number = co.student_number
+      AND ce.academic_year = co.academic_year
+      AND co.rn_year = 1
+     WHERE ce.section_enroll_status = 0
+       AND ce.course_enroll_status = 0
+       AND ce.course_number NOT LIKE 'LOG%'
+    ) sub
+
+UNION ALL
+
+SELECT [db_name]
+      ,schoolid
+      ,school_name
+      ,student_number
+      ,region
+      ,lastfirst
+      ,grade_level
+      ,team
+      ,'Under Enrolled' AS element
+      ,CONVERT(VARCHAR, total_sections) AS detail
+      ,CASE WHEN total_sections < 3 THEN 1 ELSE 0 END as flag
+FROM
+    (
+     SELECT  co.[db_name]
+            ,co.schoolid
+            ,co.school_name
+            ,co.student_number
+            ,co.region
+            ,co.lastfirst
+            ,co.grade_level
+            ,co.team
+            ,COUNT(ce.sectionid) AS total_sections
+     FROM gabby.powerschool.cohort_identifiers_static co
+     LEFT JOIN gabby.powerschool.course_enrollments_current_static ce
+       ON ce.student_number = co.student_number
+      AND ce.[db_name] = co.[db_name]
+      AND co.academic_year = ce.academic_year
+      AND ce.course_enroll_status = 0
+      AND ce.section_enroll_status = 0
+     WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+       AND co.rn_year = 1
+       AND co.enroll_status = 0
+       AND co.school_name <> 'Out of District'
+     GROUP BY co.[db_name]
+             ,co.schoolid
+             ,co.school_name
+             ,co.student_number
+             ,co.region
+             ,co.lastfirst
+             ,co.grade_level
+             ,co.team
+    ) sub

@@ -54,10 +54,9 @@ SELECT co.student_number
       ,ed.school_entrydate
       ,ed.school_exitdate
 
-      ,nav.counselor_name AS ktc_counselor_name
-
-      ,df.mobile_number AS ktc_counselor_phone
-      ,df.mail AS ktc_counselor_email
+      ,ktc.counselor_name AS ktc_counselor_name
+      ,ktc.counselor_phone AS ktc_counselor_phone
+      ,ktc.counselor_email AS ktc_counselor_email
 
       ,gpa.GPA_Y1
       ,gpa.gpa_term
@@ -72,10 +71,8 @@ LEFT JOIN enroll_dates ed
   ON co.student_number = ed.student_number
  AND co.[db_name] = ed.[db_name]
  AND CASE WHEN co.schoolid = 999999 THEN ug.schoolid ELSE co.schoolid END = ed.schoolid
-LEFT JOIN gabby.naviance.students nav 
-  ON co.student_number = nav.hs_student_id
-LEFT JOIN gabby.people.staff_crosswalk_static df
-  ON nav.counselor_name = CONCAT(df.preferred_first_name, ' ', df.preferred_last_name)
+LEFT JOIN gabby.alumni.ktc_roster ktc
+  ON co.student_number = ktc.student_number
 LEFT JOIN gabby.powerschool.gpa_detail gpa
   ON co.student_number = gpa.student_number
  AND co.academic_year = gpa.academic_year

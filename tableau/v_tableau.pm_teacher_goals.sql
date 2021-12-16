@@ -135,7 +135,7 @@ WITH reading_level AS (
     ON wo.teacher_internal_id = ex.df_employee_number
    AND rt.academic_year = ex.academic_year
    AND rt.time_per_name = REPLACE(ex.pm_term, 'PM', 'ETR')
-  WHERE wo.rubric_name IN ('Coaching Tool: Coach ETR and Reflection', 'Coaching Tool: Coach ETR and Reflection 19-20')
+  WHERE wo.rubric_name IN ('Coaching Tool: Coach ETR and Reflection', 'Coaching Tool: Coach ETR and Reflection 20-21', 'Coaching Tool: Coach ETR and Reflection 19-20')
     AND wo.score IS NOT NULL
     AND wo.observer_email <> wo.teacher_email
     AND ex.exemption IS NULL

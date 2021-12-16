@@ -109,19 +109,15 @@ SELECT sub.samaccountname AS [Login]
       ,'US' AS [Default Address Country Code]
       ,sub.attention AS [Default Address Attention]
       ,sub.address_name AS [Default Address Name]
+      ,sub.coupa_status AS [Status]
       ,CASE
-        WHEN sub.worker_category = 'Intern' THEN 'inactive'
-        WHEN sub.position_status <> 'Active' THEN 'inactive'
-        ELSE 'active'
-       END AS [Status]
-      ,CASE 
         WHEN sub.worker_category IN ('Part Time', 'Intern') THEN 'No'
         WHEN sub.wfmgr_pay_rule = 'PT Hourly' THEN 'No'
-        WHEN sub.position_status <> 'Active' THEN 'No' 
-        ELSE 'Yes' 
+        WHEN sub.coupa_status = 'inactive' THEN 'No'
+        ELSE 'Yes'
        END AS [Expense User]
       ,COALESCE(
-          CASE WHEN sub.position_status <> 'Active' THEN 'No' END
+          CASE WHEN sub.coupa_status = 'inactive' THEN 'No' END
          ,sub.purchasing_user
          ,'No'
         ) AS [Purchasing User] /* preserve Coupa, otherwise No */
@@ -139,7 +135,7 @@ SELECT sub.samaccountname AS [Login]
          ,CASE WHEN ISNUMERIC(RIGHT(sub.samaccountname, 1)) = 1 THEN RIGHT(sub.samaccountname, 1) END
         ) AS [Mention Name]
 
-      ,CASE 
+      ,CASE
         WHEN sna.coupa_school_name = '<BLANK>' THEN NULL
         ELSE COALESCE(sna.coupa_school_name, sub.[coupa_school_name]) 
        END AS [School Name]
@@ -159,6 +155,15 @@ FROM
            ,au.business_unit_code
            ,au.worker_category
            ,au.wfmgr_pay_rule
+           ,CASE
+             WHEN au.worker_category = 'Intern' THEN 'inactive'
+             WHEN au.position_status = 'Terminated' THEN 'inactive'
+             WHEN au.roles LIKE '%Edit Expense Report as Approver%'
+               OR au.roles LIKE '%Edit Requisition as Approver%'
+                  THEN 'active'
+             WHEN au.position_status <> 'Active' THEN 'inactive'
+             ELSE 'active'
+            END AS coupa_status
 
            ,LOWER(ad.samaccountname) AS samaccountname
            ,LOWER(ad.userprincipalname) AS userprincipalname

@@ -14,4 +14,5 @@ SELECT cs.Staff_id AS id
 FROM gabby.extracts.clever_staff cs
 JOIN gabby.extracts.clever_schools ch
   ON cs.School_id = ch.School_id
- AND ch.High_grade = 8
+ AND (ch.High_grade = 8 
+      OR ch.School_number = 73256) /* ad hoc rule for Seek */

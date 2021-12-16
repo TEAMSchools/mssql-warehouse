@@ -136,3 +136,37 @@ INNER JOIN [kippmiami].sys.columns c
 INNER JOIN kippmiami.sys.types y
    ON c.user_type_id = y.user_type_id
 WHERE s.[schema_id] BETWEEN 5 AND 16383
+
+UNION ALL
+
+SELECT 'kipptaf' AS [db_name]
+      ,s.[name] COLLATE Latin1_General_BIN AS [schema_name]
+      ,t.[name] COLLATE Latin1_General_BIN AS table_name
+      ,t.[type]
+      ,-1 AS column_id
+      ,NULL AS column_name
+      ,NULL AS column_max_length
+      ,NULL AS column_type
+FROM kipptaf.sys.schemas AS s
+INNER JOIN kipptaf.sys.objects AS t
+   ON s.[schema_id] = t.[schema_id]
+  AND t.[type] IN ('U', 'V')
+WHERE s.[schema_id] BETWEEN 5 AND 16383
+UNION ALL
+SELECT 'kipptaf' AS [db_name]
+      ,s.[name] COLLATE Latin1_General_BIN AS [schema_name]
+      ,t.[name] COLLATE Latin1_General_BIN AS table_name
+      ,t.[type]
+      ,c.column_id
+      ,c.[name] COLLATE Latin1_General_BIN AS column_name
+      ,c.max_length AS column_max_length
+      ,y.[name] COLLATE Latin1_General_BIN AS column_type
+FROM kipptaf.sys.schemas AS s
+INNER JOIN kipptaf.sys.objects AS t
+   ON s.[schema_id] = t.[schema_id]
+  AND t.[type] IN ('U', 'V')
+INNER JOIN kipptaf.sys.columns c
+   ON t.[object_id] = c.[object_id]
+INNER JOIN kipptaf.sys.types y
+   ON c.user_type_id = y.user_type_id
+WHERE s.[schema_id] BETWEEN 5 AND 16383

@@ -16,7 +16,7 @@ FROM
            ,CONVERT(INT, cc.sectionid) AS sectionid
            ,cc.dateleft
            ,CONVERT(INT, LEFT(ABS(cc.termid), 2)) AS yearid
-           ,cc.abs_sectionid
+           ,ABS(cc.sectionid) AS abs_sectionid
            ,CASE WHEN cc.sectionid < 0 THEN 1 ELSE 0 END AS is_dropped
 
            ,CONVERT(INT, sec.gradescaleid) AS gradescaleid
@@ -27,7 +27,7 @@ FROM
             END AS term_name
      FROM powerschool.cc
      JOIN powerschool.sections sec
-       ON cc.abs_sectionid = sec.id
+       ON ABS(cc.sectionid) = sec.id
      JOIN gabby.reporting.reporting_terms terms
        ON cc.schoolid = terms.schoolid
       AND terms.identifier = 'RT'

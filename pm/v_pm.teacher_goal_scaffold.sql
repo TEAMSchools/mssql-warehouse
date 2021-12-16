@@ -8,7 +8,7 @@ WITH ps_section_teacher AS (
         ,sec.section_number
         ,sec.section_type
         ,sec.course_number
-        ,sec.yearid + 1990 AS academic_year
+        ,LEFT(sec.termid, 2) + 1990 AS academic_year
         ,sec.[db_name]
                 
         ,t.teachernumber

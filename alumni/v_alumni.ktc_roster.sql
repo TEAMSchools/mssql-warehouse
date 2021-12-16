@@ -61,21 +61,20 @@ SELECT sub.student_number
       ,sub.record_type_name
       ,sub.counselor_sf_id
       ,sub.counselor_name
+      ,sub.counselor_email
+      ,sub.counselor_phone
       ,sub.ktc_status
 FROM 
     (
      SELECT co.student_number
            ,co.studentid
-           ,co.lastfirst
-           ,co.first_name
-           ,co.last_name
            ,co.academic_year AS exit_academic_year
            ,co.schoolid AS exit_schoolid
            ,co.school_name AS exit_school_name
            ,co.grade_level AS exit_grade_level
            ,co.exitdate AS exit_date
            ,co.exitcode AS exit_code
-           ,co.db_name AS exit_db_name
+           ,co.[db_name] AS exit_db_name
            ,(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - co.academic_year) + co.grade_level AS current_grade_level_projection
 
            ,c.id AS sf_contact_id
@@ -125,22 +124,38 @@ FROM
 
            ,u.id AS counselor_sf_id
            ,u.[name] AS counselor_name
+           ,u.email AS counselor_email
+           ,u.mobile_phone AS counselor_phone
+
+           ,COALESCE(c.first_name, co.first_name) COLLATE LATIN1_GENERAL_BIN AS first_name
+           ,COALESCE(c.last_name, co.last_name) COLLATE LATIN1_GENERAL_BIN AS last_name
+           ,COALESCE(c.last_name + ', ' + c.first_name, co.lastfirst) COLLATE LATIN1_GENERAL_BIN AS lastfirst
 
            ,CASE
-             WHEN (co.school_level = 'HS' AND co.exitcode = 'G1') OR c.kipp_hs_graduate_c = 1 THEN 'HSG'
+             WHEN c.kipp_hs_graduate_c = 1 THEN 'HSG'
+             WHEN co.school_level = 'HS' AND co.exitcode = 'G1' THEN 'HSG'
+             WHEN c.kipp_ms_graduate_c = 1 AND c.kipp_hs_graduate_c = 0 AND rt.[name] = 'HS Student' THEN 'TAFHS'
+             WHEN c.kipp_ms_graduate_c = 1 AND c.kipp_hs_graduate_c = 0 THEN 'TAF'
              WHEN co.enroll_status = 0 THEN CONCAT('HS', co.grade_level)
-             WHEN ((co.grade_level = 8 AND co.exitcode IN ('G1', 'T2')) OR (c.kipp_ms_graduate_c = 1 AND c.kipp_hs_graduate_c = 0))
-              AND rt.[name] = 'HS Student' THEN 'TAFHS'
-             WHEN (co.grade_level = 8 AND co.exitcode IN ('G1', 'T2')) OR (c.kipp_ms_graduate_c = 1 AND c.kipp_hs_graduate_c = 0) THEN 'TAF'
+             WHEN rt.[name] = 'HS Student'
+              AND co.grade_level = 8
+              AND MONTH(co.exitdate) IN (6, 7)
+              AND (co.exitcode = 'G1' OR co.exitcode LIKE 'T%' AND co.exitcode <> 'T2')
+                  THEN 'TAFHS'
+             WHEN co.grade_level = 8
+              AND MONTH(co.exitdate) IN (6, 7)
+              AND (co.exitcode = 'G1' OR co.exitcode LIKE 'T%' AND co.exitcode <> 'T2')
+                  THEN 'TAF'
             END AS ktc_status
      FROM gabby.powerschool.cohort_identifiers_static co
      LEFT JOIN gabby.alumni.contact c
        ON co.student_number = c.school_specific_id_c
+      AND c.is_deleted = 0
      LEFT JOIN gabby.alumni.record_type rt
        ON c.record_type_id = rt.id
      LEFT JOIN gabby.alumni.[user] u
        ON c.owner_id = u.id
      WHERE co.rn_undergrad = 1
-       AND co.grade_level <> 99
+       AND co.grade_level BETWEEN 8 AND 12
     ) sub
 WHERE sub.ktc_status IS NOT NULL

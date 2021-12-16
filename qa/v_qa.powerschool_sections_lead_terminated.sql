@@ -19,4 +19,4 @@ JOIN gabby.powerschool.teachers_static t
 JOIN gabby.people.staff_crosswalk_static scw
   ON t.teachernumber = scw.ps_teachernumber COLLATE Latin1_General_BIN
  AND scw.[status] = 'TERMINATED'
-WHERE sec.yearid = (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990)
+WHERE sec.termid >= ((gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990) * 100)

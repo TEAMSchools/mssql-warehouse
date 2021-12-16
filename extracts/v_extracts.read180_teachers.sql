@@ -28,6 +28,6 @@ JOIN gabby.people.staff_crosswalk_static scw
 JOIN gabby.powerschool.schools sch
   ON sec.schoolid = sch.school_number
  AND sec.[db_name] = sch.[db_name]
-WHERE sec.yearid = (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990)
+WHERE sec.termid >= ((gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990) * 100)
   AND sec.course_number IN ('ELA01068G1', 'ENG01051F1', 'ENG01051F2', 'ENG01051S1',
                             'ENG01051S2', 'MAT02052F1', 'MAT02072F2', 'MAT02999G1')

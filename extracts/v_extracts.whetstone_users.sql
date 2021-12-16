@@ -3,14 +3,37 @@ GO
 
 --CREATE OR ALTER VIEW extracts.whetstone_users AS
 
-WITH existing_roles AS (
-  SELECT sogm.[user_id]
+WITH managers AS (
+  SELECT DISTINCT
+         manager_df_employee_number
+  FROM gabby.people.staff_crosswalk_static
 
-        ,gabby.dbo.GROUP_CONCAT(DISTINCT '"' + r._id + '"') AS role_ids_old 
-  FROM gabby.whetstone.schools_observation_groups_membership sogm
-  JOIN gabby.whetstone.roles r
-    ON sogm.role_category = r.category
-  GROUP BY sogm.[user_id]
+  UNION
+
+  SELECT s.df_employee_number
+  FROM gabby.people.staff_crosswalk_static s
+  WHERE s.primary_job IN ('School Leader', 'Assistant School Leader', 'Assistant School Leader, SPED', 'School Leader in Residence')
+ )
+
+,existing_roles AS (
+  SELECT sub.[user_id]
+        ,gabby.dbo.GROUP_CONCAT_S(DISTINCT '"' + sub.role_id + '"', 1) AS role_ids
+  FROM
+      (
+       SELECT sogm.[user_id]
+             ,r._id AS role_id
+       FROM gabby.whetstone.schools_observation_groups_membership sogm
+       JOIN gabby.whetstone.roles r
+         ON sogm.role_category = r.category
+        AND r.[name] IN ('Teacher', 'Coach')
+
+       UNION ALL
+
+       SELECT ur.[user_id]
+             ,ur.role_id
+       FROM gabby.whetstone.users_roles ur
+      ) sub
+  GROUP BY sub.[user_id]
  )
 
 SELECT si.user_internal_id
