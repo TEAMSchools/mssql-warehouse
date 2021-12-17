@@ -3,7 +3,20 @@ GO
 
 CREATE OR ALTER VIEW tableau.fsa_iready_analysis AS
 
-WITH current_week AS (
+WITH subjects AS (
+  SELECT s.[value] AS iready_subject
+        ,CASE 
+          WHEN s.[value] = 'Reading' THEN 'ELA' 
+          ELSE s.[value] 
+         END AS fsa_subject
+        ,CASE
+           WHEN s.[value] = 'Reading' THEN 'ENG'
+           WHEN s.[value] = 'Math' THEN 'MATH'
+          END AS credittype
+  FROM STRING_SPLIT ('Reading,Math', ',') s
+ )
+
+,current_week AS (
   SELECT tw.[date]
   FROM gabby.utilities.reporting_days td
   JOIN gabby.utilities.reporting_days tw
@@ -27,18 +40,45 @@ WITH current_week AS (
           ,pl.[subject]
  )
 
-,subjects AS (
-  SELECT s.[value] AS iready_subject
+,fsp AS (
+  SELECT student_id
+        ,fsa_year
+        ,fsa_grade
+        ,fsa_level
+        ,fsa_scale
+        ,iready_subject
+        ,test_name
         ,CASE 
-          WHEN s.[value] = 'Reading' THEN 'ELA' 
-          ELSE s.[value] 
-         END AS fsa_subject
-        ,CASE
-           WHEN s.[value] = 'Reading' THEN 'ENG'
-           WHEN s.[value] = 'Math' THEN 'MATH'
-          END AS credittype
-  FROM STRING_SPLIT ('Reading,Math', ',') s
-)
+          WHEN fsa_scale IS NULL THEN NULL
+          ELSE CAST(
+                 RANK() OVER(
+                   PARTITION BY fsa_grade, iready_subject
+                   ORDER BY CASE WHEN fsa_scale IS NULL THEN 1 ELSE 0 END, fsa_scale ASC)
+                AS FLOAT)
+         END AS fsa_gr_sujb_rank
+        ,CASE 
+          WHEN fsa_scale IS NULL THEN NULL
+          ELSE CAST(COUNT(*) OVER(PARTITION BY fsa_grade, iready_subject) AS FLOAT)
+         END AS fsa_gr_sujb_count
+  FROM
+      (
+       SELECT student_id
+             ,fsa_year
+             ,fsa_grade
+             ,fsa_level
+             ,CASE WHEN fsa_scale_s <> '' THEN fsa_scale_s END AS fsa_scale
+             ,CASE
+               WHEN _file LIKE '%Math%' THEN 'Math'
+               WHEN _file LIKE '%ELA%' THEN 'Reading'
+              END AS iready_subject
+             ,CASE
+               WHEN fsa_scale_s IS NULL THEN NULL
+               WHEN _file LIKE '%Math%' THEN CONCAT('MATH', ' ', fsa_grade)
+               WHEN _file LIKE '%ELA%' THEN CONCAT('ELA', ' ', fsa_grade)
+              END AS test_name
+       FROM kippmiami.fsa.student_scores_previous
+      ) sub
+ )
 
 SELECT co.student_number
       ,co.state_studentnumber AS mdcps_id
@@ -79,32 +119,8 @@ SELECT co.student_number
       ,fsp.fsa_year
       ,fsp.fsa_grade
       ,fsp.fsa_level
-      ,CASE WHEN fsp.fsa_scale_s <> '' THEN fsp.fsa_scale_s END AS fsa_scale
-      ,CASE 
-        WHEN fsa_scale_s = '' THEN NULL
-        WHEN fsa_scale_s IS NULL THEN NULL
-        ELSE CAST(RANK() OVER(
-                    PARTITION BY fsp.fsa_grade, subjects.iready_subject
-                      ORDER BY CASE 
-                                WHEN fsp.fsa_scale_s = '' THEN 1 
-                                WHEN fsp.fsa_scale_s IS NULL THEN 1 
-                                ELSE 0 
-                               END
-                              ,fsp.fsa_scale_s ASC)
-                  AS FLOAT)
-       END
-         / CASE 
-            WHEN fsa_scale_s = '' THEN NULL
-            WHEN fsa_scale_s IS NULL THEN NULL
-            ELSE CAST(COUNT(*) OVER(
-                        PARTITION BY fsp.fsa_grade, subjects.iready_subject
-                          ORDER BY CASE 
-                                    WHEN fsp.fsa_scale_s = '' THEN 1 
-                                    WHEN fsp.fsa_scale_s IS NULL THEN 1 
-                                    ELSE 0 
-                                   END)
-                      AS FLOAT)
-           END AS fl_fsa_percentile
+      ,fsp.fsa_scale
+      ,fsp.fsa_gr_sujb_rank / fsp.fsa_gr_sujb_count AS fl_fsa_percentile
 
       ,cw1.sublevel_name AS fsa_sublevel_name
       ,cw1.sublevel_number AS fsa_sublevel_number
@@ -135,20 +151,13 @@ LEFT JOIN gabby.iready.diagnostic_and_instruction di
 LEFT JOIN iready_lessons ir
   ON co.student_number = ir.student_id
  AND subjects.iready_subject = ir.[subject]
-LEFT JOIN kippmiami.fsa.student_scores_previous fsp
+LEFT JOIN fsp
   ON co.state_studentnumber = fsp.student_id
  AND co.academic_year = fsp.fsa_year
- AND subjects.iready_subject = CASE
-                         WHEN fsp._file LIKE '%Math%' THEN 'Math'
-                         WHEN fsp._file LIKE '%ELA%' THEN 'Reading'
-                        END
+ AND subjects.iready_subject = fsp.iready_subject
 LEFT JOIN gabby.assessments.fsa_iready_crosswalk cw1
-  ON cw1.test_name = CASE
-                      WHEN fsp.fsa_scale_s IS NULL THEN NULL
-                      WHEN fsp._file LIKE '%Math%' THEN CONCAT('MATH', ' ', fsp.fsa_grade)
-                      WHEN fsp._file LIKE '%ELA%' THEN CONCAT('ELA', ' ', fsp.fsa_grade)
-                     END
- AND fsp.fsa_scale_s BETWEEN cw1.scale_low AND cw1.scale_high
+  ON cw1.test_name = fsp.test_name
+ AND fsp.fsa_scale BETWEEN cw1.scale_low AND cw1.scale_high
  AND cw1.source_system = 'FSA'
 LEFT JOIN gabby.assessments.fsa_iready_crosswalk cw2
   ON co.grade_level = cw2.grade_level
