@@ -3,7 +3,16 @@ GO
 
 CREATE OR ALTER VIEW tableau.fsa_iready_analysis AS
 
-WITH iready_lessons AS (
+WITH current_week AS (
+  SELECT tw.[date]
+  FROM gabby.utilities.reporting_days td
+  JOIN gabby.utilities.reporting_days tw
+    ON td.week_part = tw.week_part
+   AND td.year_part = tw.year_part
+  WHERE td.[date] = CAST(GETDATE() AS DATE)
+ )
+
+,iready_lessons AS (
   SELECT pl.student_id
         ,pl.[subject]
         ,CAST(SUM(CASE WHEN pl.passed_or_not_passed = 'Passed' THEN 1 ELSE 0 END) AS FLOAT) AS lessons_passed
@@ -13,11 +22,7 @@ WITH iready_lessons AS (
              / CAST(COUNT(pl.lesson_id) AS FLOAT)
           ,2) AS pct_passed
   FROM gabby.iready.personalized_instruction_by_lesson pl
-  JOIN gabby.utilities.reporting_days rd
-    ON pl.completion_date = rd.[date]
-  JOIN gabby.utilities.reporting_days rd2
-    ON rd.week_part = rd2.week_part
-   AND rd2.[date] = CAST(GETDATE() AS DATE)
+  WHERE pl.completion_date IN (SELECT [date] FROM current_week)
   GROUP BY pl.student_id
           ,pl.[subject]
  )
