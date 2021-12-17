@@ -55,11 +55,11 @@ WITH subjects AS (
                    PARTITION BY fsa_grade, iready_subject
                    ORDER BY CASE WHEN fsa_scale IS NULL THEN 1 ELSE 0 END, fsa_scale ASC)
                 AS FLOAT)
-         END AS fsa_gr_sujb_rank
+         END AS fsa_gr_subj_rank
         ,CASE 
           WHEN fsa_scale IS NULL THEN NULL
           ELSE CAST(COUNT(*) OVER(PARTITION BY fsa_grade, iready_subject) AS FLOAT)
-         END AS fsa_gr_sujb_count
+         END AS fsa_gr_subj_count
   FROM
       (
        SELECT student_id
@@ -120,7 +120,7 @@ SELECT co.student_number
       ,fsp.fsa_grade
       ,fsp.fsa_level
       ,fsp.fsa_scale
-      ,fsp.fsa_gr_sujb_rank / fsp.fsa_gr_sujb_count AS fl_fsa_percentile
+      ,fsp.fsa_gr_subj_rank / fsp.fsa_gr_subj_count AS fl_fsa_percentile
 
       ,cw1.sublevel_name AS fsa_sublevel_name
       ,cw1.sublevel_number AS fsa_sublevel_number
