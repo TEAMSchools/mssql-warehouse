@@ -1,7 +1,7 @@
 USE gabby
 GO
 
---CREATE OR ALTER VIEW extracts.whetstone_users AS
+CREATE OR ALTER VIEW extracts.whetstone_users AS
 
 WITH managers AS (
   SELECT DISTINCT
@@ -15,7 +15,7 @@ WITH managers AS (
   WHERE s.primary_job IN ('School Leader', 'Assistant School Leader', 'Assistant School Leader, SPED', 'School Leader in Residence')
  )
 
-,existing_roles AS (
+, existing_roles AS (
   SELECT sub.[user_id]
         ,gabby.dbo.GROUP_CONCAT_S(DISTINCT '"' + sub.role_id + '"', 1) AS role_ids
         ,gabby.dbo.GROUP_CONCAT_S(DISTINCT '"' + sub.role_name + '"', 1) AS role_names
@@ -77,13 +77,14 @@ FROM
            ,scw.google_email AS user_email
            ,CASE WHEN scw.primary_site_schoolid = 0 THEN NULL ELSE scw.primary_site END AS school_name
            ,scw.primary_on_site_department AS course_name
+           ,scw.primary_job
            ,CASE WHEN scw.grades_taught = 0 THEN 'K' ELSE CONVERT(VARCHAR, scw.grades_taught) END AS grade_abbreviation
            ,CASE
              WHEN scw.primary_on_site_department IN ('Executive') THEN 'Regional Admin' -- network admin
-             WHEN scw.primary_on_site_department IN ('Teaching and Learning', 'School Support', 'New Teacher Development') THEN 'Sub Admin' -- network admin # TODO: FILTER ON JOB
+             WHEN scw.primary_on_site_department IN ('Teaching and Learning', 'School Support', 'New Teacher Development') AND scw.primary_job IN ('Achievement Director','Chief Academic Officer','Chief Of Staff','Director','Head of Schools','Director High School Literacy Curriculum','Director Literacy Achievement','Director Math Achievement','Director Middle School Literacy Curriculum') THEN 'Sub Admin' -- network admin 
              WHEN scw.primary_on_site_department = 'Special Education' AND scw.primary_job IN ('Managing Director', 'Director', 'Achievement Director') THEN 'Sub Admin' -- network admin
              WHEN scw.primary_job IN ('School Leader') THEN 'School Admin'
-             WHEN scw.primary_on_site_department IN ('School Leadership') THEN 'School Assistant Admin' -- TODO: CHECK WHICH JOBS ARE INCLUDED HERE
+             WHEN scw.primary_on_site_department IN ('School Leadership') AND scw.primary_job IN ('Assistant Dean', 'Assistant School Leader', 'Assistant School Leader, SPED','Dean','Dean of Students','Director of New Teacher Development') THEN 'School Assistant Admin' 
              WHEN scw.is_manager = 1 THEN 'Coach'-- ?
              WHEN scw.primary_job IN ('Teacher', 'Teacher ESL', 'Co-Teacher', 'Learning Specialist', 'Learning Specialist Coordinator','Teacher in Residence', 'Teaching Fellow', 'Paraprofessional') THEN 'Teacher'
              ELSE 'No Role'
