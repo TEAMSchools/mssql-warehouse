@@ -16,7 +16,7 @@ WITH response_ids AS (
              ,srd.survey_response_id
              ,srd.answer
        FROM gabby.surveygizmo.survey_question_clean_static sq
-       JOIN gabby.surveygizmo.survey_response_data_static srd
+       JOIN gabby.surveygizmo.survey_response_data srd
          ON sq.survey_id = srd.survey_id
         AND sq.survey_question_id = srd.question_id
         AND srd.answer IS NOT NULL
@@ -53,11 +53,11 @@ JOIN gabby.surveygizmo.survey_question_clean_static sq
   ON s.survey_id = sq.survey_id
  AND sq.base_type = 'Question'
  AND sq.[type] IN ('RADIO', 'ESSAY', 'TEXTBOX')
-JOIN gabby.surveygizmo.survey_response_data_static srd
+JOIN gabby.surveygizmo.survey_response_data srd
   ON sq.survey_id = srd.survey_id
  AND sq.survey_question_id = srd.question_id
  AND srd.answer IS NOT NULL
-JOIN gabby.surveygizmo.survey_response_clean_static sr
+JOIN gabby.surveygizmo.survey_response_clean sr
   ON sq.survey_id = sr.survey_id
  AND srd.survey_response_id = sr.survey_response_id
  AND sr.[status] = 'Complete'

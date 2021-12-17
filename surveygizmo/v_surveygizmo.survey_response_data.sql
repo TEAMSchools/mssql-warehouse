@@ -3,27 +3,30 @@ GO
 
 CREATE OR ALTER VIEW surveygizmo.survey_response_data AS
 
-SELECT sr.survey_response_id
-      ,sr.survey_id
-      ,sr.date_started
+SELECT cur.survey_response_id
+      ,cur.survey_id
+      ,cur.date_started
+      ,cur.question_id
+      ,cur.section_id
+      ,cur.[type]
+      ,cur.question
+      ,cur.answer_id
+      ,cur.answer
+      ,cur.options
+      ,cur.shown
+FROM gabby.surveygizmo.survey_response_data_current_static cur
 
-      ,sd.id AS question_id
-      ,sd.section_id
-      ,sd.[type]
-      ,sd.question
-      ,sd.answer_id
-      ,sd.answer
-      ,sd.options
-      ,sd.shown
-FROM gabby.surveygizmo.survey_response_clean_static sr
-CROSS APPLY OPENJSON(sr.survey_data_json, '$')
-  WITH (
-    id INT,
-    section_id INT,
-    answer_id VARCHAR(125),
-    [type] VARCHAR(125),
-    question NVARCHAR(512),
-    answer NVARCHAR(MAX),
-    options NVARCHAR(MAX) AS JSON,
-    shown BIT
-   ) AS sd
+UNION ALL
+
+SELECT rcv.survey_response_id
+      ,rcv.survey_id
+      ,rcv.date_started
+      ,rcv.question_id
+      ,rcv.section_id
+      ,rcv.[type]
+      ,rcv.question
+      ,rcv.answer_id
+      ,rcv.answer
+      ,rcv.options
+      ,rcv.shown
+FROM gabby.surveygizmo.survey_response_data_archive rcv

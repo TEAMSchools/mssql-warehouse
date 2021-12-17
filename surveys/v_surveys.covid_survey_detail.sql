@@ -33,7 +33,7 @@ WITH identifiers AS (
         ,CASE WHEN JSON_QUERY(rd.options, '$."11199"') IS NOT NULL THEN 1 ELSE 0 END AS is_pacificislander
         ,CASE WHEN JSON_QUERY(rd.options, '$."11200"') IS NOT NULL THEN 1 ELSE 0 END AS is_na
         ,CASE WHEN JSON_QUERY(rd.options, '$."11202"') IS NOT NULL THEN 1 ELSE 0 END AS is_other
-  FROM gabby.surveygizmo.survey_response_data_static rd
+  FROM gabby.surveygizmo.survey_response_data rd
   WHERE rd.survey_id = 5560557
     AND rd.question_id = 325
  )
