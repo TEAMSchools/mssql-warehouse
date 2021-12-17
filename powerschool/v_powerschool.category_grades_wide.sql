@@ -170,7 +170,7 @@ WITH grades_long AS (
                   ORDER BY gr.reporting_term ASC) AS schoolid
        FROM grades_unpivot gr
        WHERE gr.field = 'citizenship'
-         AND gr.grade_category = 'W'
+         AND gr.grade_category = 'Q'
       ) sub
   PIVOT(
     MAX([value])

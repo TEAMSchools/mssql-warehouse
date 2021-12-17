@@ -144,6 +144,7 @@ WITH roster AS (
         ,gr.grade_category AS finalgradename
   FROM gabby.powerschool.category_grades_static gr
   WHERE gr.academic_year IN (gabby.utilities.GLOBAL_ACADEMIC_YEAR(), gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
+    AND gr.grade_category <> 'Q'
   GROUP BY gr.student_number
           ,gr.academic_year
           ,gr.grade_category

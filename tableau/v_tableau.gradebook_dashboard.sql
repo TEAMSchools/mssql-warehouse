@@ -434,6 +434,7 @@ LEFT JOIN gabby.powerschool.category_grades_static cg
   ON co.student_number = cg.student_number
  AND co.academic_year = cg.academic_year 
  AND co.[db_name] = cg.[db_name]
+ AND cg.grade_category <> 'Q'
 LEFT JOIN section_teacher st
   ON co.studentid = st.studentid
  AND co.yearid = st.yearid
@@ -501,6 +502,7 @@ LEFT JOIN gabby.powerschool.category_grades_static cy
   ON co.student_number = cy.student_number
  AND co.academic_year = cy.academic_year 
  AND co.[db_name] = cy.[db_name]
+ AND cy.grade_category <> 'Q'
  AND cy.is_curterm = 1
 LEFT JOIN section_teacher st
   ON co.studentid = st.studentid

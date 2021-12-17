@@ -53,7 +53,6 @@ FROM
      JOIN powerschool.termbins tb
        ON t.schoolid = tb.schoolid
       AND t.id = tb.termid
-      AND LEFT(tb.storecode, 1) NOT IN ('Q', 'T', 'Y', 'E')
       AND tb.date_1 <= GETDATE()
      LEFT JOIN powerschool.pgfinalgrades pgf
        ON enr.studentid = pgf.studentid
