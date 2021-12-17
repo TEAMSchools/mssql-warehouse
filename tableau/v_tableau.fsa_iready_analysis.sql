@@ -42,41 +42,31 @@ WITH subjects AS (
 
 ,fsp AS (
   SELECT student_id
-        ,fsa_year
         ,fsa_grade
         ,fsa_level
         ,fsa_scale
         ,iready_subject
-        ,test_name
-        ,CASE 
-          WHEN fsa_scale IS NULL THEN NULL
-          ELSE CAST(
-                 RANK() OVER(
-                   PARTITION BY fsa_grade, iready_subject
-                   ORDER BY CASE WHEN fsa_scale IS NULL THEN 1 ELSE 0 END, fsa_scale ASC)
-                AS FLOAT)
-         END AS fsa_gr_subj_rank
-        ,CASE 
-          WHEN fsa_scale IS NULL THEN NULL
-          ELSE CAST(COUNT(*) OVER(PARTITION BY fsa_grade, iready_subject) AS FLOAT)
-         END AS fsa_gr_subj_count
+        ,CONVERT(INT, CONCAT('20', LEFT(fsa_year, 2))) AS fsa_year
+        ,CONCAT(fsa_subject, ' ', fsa_grade) AS test_name
+        ,RANK() OVER(PARTITION BY fsa_grade, iready_subject ORDER BY fsa_scale ASC) AS fsa_gr_subj_rank
+        ,COUNT(*) OVER(PARTITION BY fsa_grade, iready_subject) AS fsa_gr_subj_count
   FROM
       (
        SELECT student_id
              ,fsa_year
              ,fsa_grade
              ,fsa_level
-             ,CASE WHEN fsa_scale_s <> '' THEN fsa_scale_s END AS fsa_scale
+             ,fsa_scale_s AS fsa_scale
+             ,CASE
+               WHEN _file LIKE '%Math%' THEN 'MATH'
+               WHEN _file LIKE '%ELA%' THEN 'ELA'
+              END AS fsa_subject
              ,CASE
                WHEN _file LIKE '%Math%' THEN 'Math'
                WHEN _file LIKE '%ELA%' THEN 'Reading'
               END AS iready_subject
-             ,CASE
-               WHEN fsa_scale_s IS NULL THEN NULL
-               WHEN _file LIKE '%Math%' THEN CONCAT('MATH', ' ', fsa_grade)
-               WHEN _file LIKE '%ELA%' THEN CONCAT('ELA', ' ', fsa_grade)
-              END AS test_name
        FROM kippmiami.fsa.student_scores_previous
+       WHERE fsa_scale_s <> ''
       ) sub
  )
 
@@ -120,7 +110,7 @@ SELECT co.student_number
       ,fsp.fsa_grade
       ,fsp.fsa_level
       ,fsp.fsa_scale
-      ,fsp.fsa_gr_subj_rank / fsp.fsa_gr_subj_count AS fl_fsa_percentile
+      ,CAST(fsp.fsa_gr_subj_rank AS FLOAT) / CAST(fsp.fsa_gr_subj_count AS FLOAT) AS fl_fsa_percentile
 
       ,cw1.sublevel_name AS fsa_sublevel_name
       ,cw1.sublevel_number AS fsa_sublevel_number
