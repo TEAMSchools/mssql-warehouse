@@ -27,6 +27,19 @@ WITH current_week AS (
           ,pl.[subject]
  )
 
+,subjects AS (
+  SELECT s.[value] AS iready_subject
+        ,CASE 
+          WHEN s.[value] = 'Reading' THEN 'ELA' 
+          ELSE s.[value] 
+         END AS fsa_subject
+        ,CASE
+           WHEN s.[value] = 'Reading' THEN 'ENG'
+           WHEN s.[value] = 'Math' THEN 'MATH'
+          END AS credittype
+  FROM STRING_SPLIT ('Reading,Math', ',') s
+)
+
 SELECT co.student_number
       ,co.state_studentnumber AS mdcps_id
       ,co.lastfirst
@@ -42,8 +55,26 @@ SELECT co.student_number
 
       ,suf.fleid
 
-      ,subjects.[value] AS iready_subject
-      ,CASE WHEN subjects.[value] = 'Reading' THEN 'ELA' ELSE subjects.[value] END AS fsa_subject
+      ,subjects.iready_subject
+      ,subjects.fsa_subject
+
+      ,ce.course_number
+      ,ce.course_name
+      ,ce.teacher_name
+
+      ,di.diagnostic_overall_scale_score_most_recent_
+      ,di.diagnostic_completion_date_most_recent_
+      ,di.diagnostic_overall_relative_placement_most_recent_
+      ,di.diagnostic_percentile_most_recent_
+      ,di.[subject]
+      ,di.annual_stretch_growth_measure
+      ,di.annual_typical_growth_measure
+      ,di.diagnostic_gain_note_negative_gains_zero_
+      ,COALESCE(di.diagnostic_overall_scale_score_1_, di.diagnostic_overall_scale_score_most_recent_) AS iready_scale_boy
+
+      ,ir.total_lessons
+      ,ir.lessons_passed
+      ,ir.pct_passed
 
       ,fsp.fsa_year
       ,fsp.fsa_grade
@@ -52,52 +83,62 @@ SELECT co.student_number
       ,CASE 
         WHEN fsa_scale_s = '' THEN NULL
         WHEN fsa_scale_s IS NULL THEN NULL
-        ELSE CAST(
-               RANK() OVER(
-                 PARTITION BY fsp.fsa_grade, subjects.[value]
-                   ORDER BY CASE WHEN fsp.fsa_scale_s = '' THEN 1 WHEN fsp.fsa_scale_s IS NULL THEN 1 ELSE 0 END, fsp.fsa_scale_s ASC) 
-              AS FLOAT)
+        ELSE CAST(RANK() OVER(
+                    PARTITION BY fsp.fsa_grade, subjects.iready_subject
+                      ORDER BY CASE 
+                                WHEN fsp.fsa_scale_s = '' THEN 1 
+                                WHEN fsp.fsa_scale_s IS NULL THEN 1 
+                                ELSE 0 
+                               END
+                              ,fsp.fsa_scale_s ASC)
+                  AS FLOAT)
        END
-       /
-       CASE WHEN fsa_scale_s = '' THEN NULL
+         / CASE 
+            WHEN fsa_scale_s = '' THEN NULL
             WHEN fsa_scale_s IS NULL THEN NULL
-         ELSE CAST(COUNT(*) OVER (PARTITION BY fsp.fsa_grade, subjects.[value] ORDER BY CASE WHEN fsp.fsa_scale_s = '' THEN 1 WHEN fsp.fsa_scale_s IS NULL THEN 1 ELSE 0 END) AS float) END AS fl_fsa_percentile
-
-      ,di.diagnostic_overall_scale_score_most_recent_
-      ,di.diagnostic_completion_date_most_recent_
-      ,di.diagnostic_overall_relative_placement_most_recent_
-      ,di.diagnostic_percentile_most_recent_
-      ,di.[subject]
-      ,COALESCE(di.diagnostic_overall_scale_score_1_, di.diagnostic_overall_scale_score_most_recent_) AS iready_scale_boy
-      ,di.annual_stretch_growth_measure
-      ,di.annual_typical_growth_measure
-      ,di.diagnostic_gain_note_negative_gains_zero_
-
-      ,ir.total_lessons
-      ,ir.lessons_passed
-      ,ir.pct_passed
+            ELSE CAST(COUNT(*) OVER(
+                        PARTITION BY fsp.fsa_grade, subjects.iready_subject
+                          ORDER BY CASE 
+                                    WHEN fsp.fsa_scale_s = '' THEN 1 
+                                    WHEN fsp.fsa_scale_s IS NULL THEN 1 
+                                    ELSE 0 
+                                   END)
+                      AS FLOAT)
+           END AS fl_fsa_percentile
 
       ,cw1.sublevel_name AS fsa_sublevel_name
       ,cw1.sublevel_number AS fsa_sublevel_number
+
       ,cw2.sublevel_name AS iready_sublevel_predict_name
       ,cw2.sublevel_number AS iready_sublevel_predict_number
+
       ,cw3.scale_low AS predicted_proficiency_scale
-      ,cw6.scale_low AS predicted_growth_scale
+
       ,cw4.scale_low AS fsa_scale_for_growth
+
       ,cw5.scale_low AS fsa_scale_for_proficiency
 
-      ,ce.course_number
-      ,ce.course_name
-      ,ce.teacher_name
-
+      ,cw6.scale_low AS predicted_growth_scale
 FROM kippmiami.powerschool.cohort_identifiers_static co
 LEFT JOIN kippmiami.powerschool.u_studentsuserfields suf
   ON co.students_dcid = suf.studentsdcid
-CROSS JOIN STRING_SPLIT ('Reading,Math', ',') subjects
+CROSS JOIN subjects
+LEFT JOIN kippmiami.powerschool.course_enrollments_current_static ce
+  ON ce.student_number = co.student_number
+ AND ce.credittype = subjects.credittype
+ AND ce.section_enroll_status = 0
+ AND ce.rn_subject = 1
+LEFT JOIN gabby.iready.diagnostic_and_instruction di
+  ON di.student_id = co.student_number
+ AND LEFT(di.academic_year, 4) = co.academic_year
+ AND di.[subject] = subjects.iready_subject
+LEFT JOIN iready_lessons ir
+  ON co.student_number = ir.student_id
+ AND subjects.iready_subject = ir.[subject]
 LEFT JOIN kippmiami.fsa.student_scores_previous fsp
   ON co.state_studentnumber = fsp.student_id
  AND co.academic_year = fsp.fsa_year
- AND subjects.[value] = CASE
+ AND subjects.iready_subject = CASE
                          WHEN fsp._file LIKE '%Math%' THEN 'Math'
                          WHEN fsp._file LIKE '%ELA%' THEN 'Reading'
                         END
@@ -109,10 +150,6 @@ LEFT JOIN gabby.assessments.fsa_iready_crosswalk cw1
                      END
  AND fsp.fsa_scale_s BETWEEN cw1.scale_low AND cw1.scale_high
  AND cw1.source_system = 'FSA'
-LEFT JOIN gabby.iready.diagnostic_and_instruction di
-  ON di.student_id = co.student_number
- AND LEFT(di.academic_year, 4) = co.academic_year
- AND di.[subject] = subjects.[value]
 LEFT JOIN gabby.assessments.fsa_iready_crosswalk cw2
   ON co.grade_level = cw2.grade_level
  AND di.[subject] = cw2.test_name
@@ -124,29 +161,18 @@ LEFT JOIN gabby.assessments.fsa_iready_crosswalk cw3
  AND cw3.source_system = 'i-Ready'
  AND cw3.sublevel_name = 'Level 3'
 LEFT JOIN gabby.assessments.fsa_iready_crosswalk cw4
-  ON cw4.test_name = CONCAT(CASE WHEN subjects.[value] = 'Reading' THEN 'ELA' ELSE subjects.[value] END, ' ', co.grade_level)
+  ON cw4.test_name = CONCAT(subjects.fsa_subject, ' ', co.grade_level)
  AND (cw1.sublevel_number + 1) = cw4.sublevel_number
  AND cw4.source_system = 'FSA'
 LEFT JOIN gabby.assessments.fsa_iready_crosswalk cw5
-  ON cw5.test_name = CONCAT(CASE WHEN subjects.[value] = 'Reading' THEN 'ELA' ELSE subjects.[value] END, ' ', co.grade_level)
+  ON cw5.test_name = CONCAT(subjects.fsa_subject, ' ', co.grade_level)
  AND cw5.sublevel_name = 'Level 3'
  AND cw5.source_system = 'FSA'
 LEFT JOIN gabby.assessments.fsa_iready_crosswalk cw6
-  ON cw6.test_name = subjects.[value]
+  ON cw6.test_name = subjects.iready_subject
  AND cw1.sublevel_number + 1 = cw6.sublevel_number
  AND cw6.grade_level = co.grade_level
  AND cw6.source_system = 'i-Ready'
-LEFT JOIN kippmiami.powerschool.course_enrollments_current_static ce
-  ON ce.student_number = co.student_number
- AND ce.credittype = CASE
-                      WHEN subjects.[value] = 'Reading' THEN 'ENG'
-                      WHEN subjects.[value] = 'Math' THEN 'MATH'
-                     END
- AND ce.section_enroll_status = 0
- AND ce.rn_subject = 1
-LEFT JOIN iready_lessons ir
-  ON co.student_number = ir.student_id
- AND subjects.[value] = ir.[subject]
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.rn_year = 1
   AND co.enroll_status = 0
