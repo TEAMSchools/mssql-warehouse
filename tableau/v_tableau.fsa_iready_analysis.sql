@@ -8,31 +8,22 @@ WITH iready_lessons AS (
         ,pl.[subject]
         ,CAST(SUM(CASE WHEN pl.passed_or_not_passed = 'Passed' THEN 1 ELSE 0 END) AS FLOAT) AS lessons_passed
         ,CAST(COUNT(DISTINCT pl.lesson_id) AS FLOAT) AS total_lessons
-        ,ROUND(CAST(SUM(CASE WHEN pl.passed_or_not_passed = 'Passed' THEN 1 ELSE 0 END) AS FLOAT)
-                 / CAST(COUNT(pl.lesson_id) AS FLOAT)
-              ,2) AS pct_passed
-
+        ,ROUND(
+           SUM(CASE WHEN pl.passed_or_not_passed = 'Passed' THEN 1.0 ELSE 0.0 END) 
+             / CAST(COUNT(pl.lesson_id) AS FLOAT)
+          ,2) AS pct_passed
   FROM gabby.iready.personalized_instruction_by_lesson pl
   JOIN gabby.utilities.reporting_days rd
     ON pl.completion_date = rd.[date]
-  JOIN (
-    SELECT rd.week_part AS previous_week
-
-    FROM gabby.utilities.reporting_days rd
-
-    WHERE rd.[date] = CAST(GETDATE() AS date)
-  ) sub
-
-  ON rd.week_part = sub.previous_week
-
+  JOIN gabby.utilities.reporting_days rd2
+    ON rd.week_part = rd2.week_part
+   AND rd2.[date] = CAST(GETDATE() AS DATE)
   GROUP BY pl.student_id
           ,pl.[subject]
-
  )
 
 SELECT co.student_number
       ,co.state_studentnumber AS mdcps_id
-      ,suf.fleid      
       ,co.lastfirst
       ,co.grade_level
       ,co.schoolid
@@ -43,6 +34,8 @@ SELECT co.student_number
       ,co.ethnicity
       ,co.iep_status
       ,co.lep_status
+
+      ,suf.fleid
 
       ,subjects.[value] AS iready_subject
       ,CASE WHEN subjects.[value] = 'Reading' THEN 'ELA' ELSE subjects.[value] END AS fsa_subject
@@ -99,10 +92,10 @@ CROSS JOIN STRING_SPLIT ('Reading,Math', ',') subjects
 LEFT JOIN kippmiami.fsa.student_scores_previous fsp
   ON co.state_studentnumber = fsp.student_id
  AND co.academic_year = fsp.fsa_year
- AND subjects.[value] = CASE 
+ AND subjects.[value] = CASE
                          WHEN fsp._file LIKE '%Math%' THEN 'Math'
                          WHEN fsp._file LIKE '%ELA%' THEN 'Reading'
-                        END 
+                        END
 LEFT JOIN gabby.assessments.fsa_iready_crosswalk cw1
   ON cw1.test_name = CASE
                       WHEN fsp.fsa_scale_s IS NULL THEN NULL
@@ -140,17 +133,16 @@ LEFT JOIN gabby.assessments.fsa_iready_crosswalk cw6
  AND cw6.source_system = 'i-Ready'
 LEFT JOIN kippmiami.powerschool.course_enrollments_current_static ce
   ON ce.student_number = co.student_number
- AND ce.section_enroll_status = 0
  AND ce.credittype = CASE
                       WHEN subjects.[value] = 'Reading' THEN 'ENG'
                       WHEN subjects.[value] = 'Math' THEN 'MATH'
                      END
+ AND ce.section_enroll_status = 0
  AND ce.rn_subject = 1
 LEFT JOIN iready_lessons ir
   ON co.student_number = ir.student_id
  AND subjects.[value] = ir.[subject]
-
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.rn_year = 1
-  AND co.grade_level >= 3
   AND co.enroll_status = 0
+  AND co.grade_level >= 3
