@@ -118,7 +118,8 @@ JOIN gabby.powerschool.fte
  AND co.[db_name] = fte.[db_name]
  AND fte.[name] LIKE 'Full Time Student%'
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-  AND co.schoolid <> 999999  
+  AND co.schoolid <> 999999
+  AND co.rn_year = 1
 
 UNION ALL
 
