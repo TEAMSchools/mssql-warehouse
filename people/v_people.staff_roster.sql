@@ -134,7 +134,6 @@ WITH all_staff AS (
         ,sub.preferred_race_ethnicity
         ,sub.ethnicity
         ,sub.race
-        ,sub.race_reporting
         ,sub.is_race_asian
         ,sub.is_race_black
         ,sub.is_race_decline
@@ -158,13 +157,12 @@ WITH all_staff AS (
           WHEN sub.ethnicity = 'Not Hispanic or Latino' THEN 0
          END AS is_hispanic
         ,CASE
-          WHEN sub.race_reporting IS NULL AND sub.ethnicity = 'Hispanic or Latino' THEN 'Hispanic or Latino'
-          WHEN sub.race_reporting = 'I decline to state my preferred racial/ethnic identity' THEN 'Decline to state'
-          WHEN sub.race_reporting = 'My racial/ethnic identity is not listed' THEN 'Not Listed'
-          WHEN sub.race_reporting = 'Latinx/Hispanic/Chicana(o)' THEN 'Latinx/Hispanic/Chicana(o)'
-          WHEN sub.race_reporting = 'Black or African American' THEN 'Black/African American'
-          WHEN sub.race_reporting = 'Two or more races (Not Hispanic or Latino)' THEN 'Bi/Multiracial'
-          ELSE sub.race_reporting + (CASE WHEN sub.ethnicity = 'Hispanic or Latino' THEN ' - Latinx/Hispanic/Chicana(o)' ELSE '' END)
+          WHEN sub.ethnicity = 'Hispanic or Latino' THEN 'Latinx/Hispanic/Chicana(o)'
+          WHEN sub.is_race_decline = 1 THEN 'Decline to state'
+          WHEN sub.is_race_multi = 1 THEN 'Bi/Multiracial'
+          WHEN COALESCE(sub.preferred_race_ethnicity,sub.race) = 'Black or African American' THEN 'Black/African American'
+          WHEN COALESCE(sub.preferred_race_ethnicity,sub.race) = 'Asian/Pacific Islander' THEN 'Asian'
+          ELSE COALESCE(sub.preferred_race_ethnicity,sub.race,'Missing')
          END AS race_ethnicity_reporting
   FROM
       (
@@ -203,11 +201,11 @@ WITH all_staff AS (
              ,ea.primary_address_city AS address_city
              ,ea.primary_address_state_territory_code AS address_state
              ,ea.primary_address_zip_postal_code AS address_zip
-             ,ea.personal_contact_personal_email AS personal_email             
+             ,ea.personal_contact_personal_email AS personal_email
              ,ea.race_description AS race
              /* transformations */
              ,CONVERT(DATE, ea.birth_date) AS birth_date
-             ,LEFT(UPPER(ea.gender_for_insurance_coverage), 1) AS sex
+             ,LEFT(UPPER(ea.gender), 1) AS sex
              ,CASE 
                WHEN ea.primary_address_address_line_1 IS NOT NULL 
                     THEN CONCAT(ea.primary_address_address_line_1, ', ' + ea.primary_address_address_line_2)
@@ -215,8 +213,8 @@ WITH all_staff AS (
              ,CONVERT(NVARCHAR(256), gabby.utilities.STRIP_CHARACTERS(ea.personal_contact_personal_mobile, '^0-9')) AS personal_mobile
              ,COALESCE(ea.preferred_gender
                       ,CASE
-                        WHEN ea.gender_for_insurance_coverage = 'Male' THEN 'Man'
-                        WHEN ea.gender_for_insurance_coverage = 'Female' THEN 'Woman'
+                        WHEN ea.gender = 'Male' THEN 'Man'
+                        WHEN ea.gender = 'Female' THEN 'Woman'
                        END) AS gender_reporting
 
              ,w.preferred_name_given AS preferred_first_name
@@ -252,22 +250,22 @@ WITH all_staff AS (
                WHEN ea.ethnicity IS NULL AND cf.[Preferred Race/Ethnicity] IS NULL THEN NULL
                WHEN CHARINDEX('Decline to state', cf.[Preferred Race/Ethnicity]) > 0 THEN NULL
                WHEN CHARINDEX('Latinx/Hispanic/Chicana(o)', cf.[Preferred Race/Ethnicity]) > 0 THEN 'Hispanic or Latino'
-               WHEN ea.ethnicity = 'Hispanic or Latino' THEN 'Hispanic or Latino'
+               WHEN cf.[Preferred Race/Ethnicity] IS NULL AND ea.ethnicity = 'Hispanic or Latino' THEN 'Hispanic or Latino'
                ELSE 'Not Hispanic or Latino'
               END AS ethnicity
              ,CASE 
-               WHEN ea.race_description = 'Black or African American' THEN 1
+               WHEN cf.[Preferred Race/Ethnicity] IS NULL AND ea.race_description = 'Black or African American' THEN 1
                WHEN CHARINDEX('Black/African American', cf.[Preferred Race/Ethnicity]) > 0 THEN 1
                ELSE 0
               END AS is_race_black
              ,CASE 
-               WHEN ea.race_description = 'Asian' THEN 1
+               WHEN cf.[Preferred Race/Ethnicity] IS NULL AND ea.race_description = 'Asian' THEN 1
                WHEN CHARINDEX('Asian', cf.[Preferred Race/Ethnicity]) > 0 THEN 1
                ELSE 0
               END AS is_race_asian
              ,CASE 
-               WHEN ea.race_description = 'Native Hawaiian or Other Pacific Islander' THEN 1
-               WHEN CHARINDEX('Pacific Islander', cf.[Preferred Race/Ethnicity]) > 0 THEN 1
+               WHEN cf.[Preferred Race/Ethnicity] IS NULL AND ea.race_description = 'Native Hawaiian or Other Pacific Islander' THEN 1
+               WHEN CHARINDEX('Native Hawaiian or Other Pacific Islander', cf.[Preferred Race/Ethnicity]) > 0 THEN 1
                ELSE 0
               END AS is_race_nhpi
              ,CASE 
@@ -275,7 +273,7 @@ WITH all_staff AS (
                ELSE 0
               END AS is_race_mideast
              ,CASE 
-               WHEN ea.race_description = 'White' THEN 1
+               WHEN cf.[Preferred Race/Ethnicity] IS NULL AND ea.race_description = 'White' THEN 1
                WHEN CHARINDEX('White', cf.[Preferred Race/Ethnicity]) > 0 THEN 1
                ELSE 0
               END AS is_race_white
@@ -284,9 +282,9 @@ WITH all_staff AS (
                ELSE 0
               END AS is_race_nafirstnation
              ,CASE
-               WHEN ea.race_description = 'Two or more races (Not Hispanic or Latino)' THEN 1
+               WHEN cf.[Preferred Race/Ethnicity] IS NULL AND ea.race_description = 'Two or more races (Not Hispanic or Latino)' THEN 1
                WHEN CHARINDEX('Bi/Multiracial', cf.[Preferred Race/Ethnicity]) > 0 THEN 1
-               WHEN CHARINDEX(';', cf.[Preferred Race/Ethnicity]) > 0 THEN 1
+               WHEN CHARINDEX(',', cf.[Preferred Race/Ethnicity]) > 0 THEN 1
                ELSE 0
               END AS is_race_multi
              ,CASE
@@ -297,14 +295,6 @@ WITH all_staff AS (
                WHEN CHARINDEX('Decline to state', cf.[Preferred Race/Ethnicity]) > 0 THEN 1
                ELSE 0
               END AS is_race_decline
-             ,CASE
-               WHEN CHARINDEX('I decline to state my preferred racial/ethnic identity',cf.[Preferred Race/Ethnicity]) >0 THEN 'I decline to state my preferred racial/ethnic identity'
-               WHEN CHARINDEX(',', cf.[Preferred Race/Ethnicity]) > 0 THEN 'Bi/Multiracial'
-               WHEN cf.[Preferred Race/Ethnicity] IN ('Asian/Pacific Islander', 'Asian') THEN 'Asian'
-               WHEN ea.race_description = 'Two or more races (Not Hispanic or Latino)' AND cf.[Preferred Race/Ethnicity] IS NULL THEN 'Bi/Multiracial'
-               WHEN ea.race_description = 'Black or African American' AND cf.[Preferred Race/Ethnicity] IS NULL THEN 'Black/African American'
-               ELSE COALESCE(cf.[Preferred Race/Ethnicity], ea.race_description)
-              END AS race_reporting
        FROM all_staff eh
        JOIN gabby.adp.employees_all ea
          ON eh.associate_id = ea.associate_id
@@ -370,7 +360,6 @@ SELECT c.employee_number
       ,c.preferred_race_ethnicity
       ,c.ethnicity
       ,c.is_hispanic
-      ,c.race_reporting
       ,c.is_race_asian
       ,c.is_race_black
       ,c.is_race_decline
@@ -417,9 +406,26 @@ SELECT c.employee_number
       ,c.professional_experience_in_communities_we_serve
       ,c.attended_relay
 
+      ,y.years_at_kipp_total
+      ,y.years_at_kipp_total + c.years_of_professional_experience_before_joining AS total_professional_experience
+      ,y.years_teaching_at_kipp
+      ,y.years_teaching_at_kipp + c.years_teaching_in_nj_or_fl AS nj_fl_total_years_teaching
+      ,y.years_teaching_at_kipp + c.years_teaching_in_any_state AS total_years_teaching
+
+      ,gl.student_grade_level AS primary_grade_taught
+
+      ,ads.userprincipalname
 FROM clean_staff c
 LEFT JOIN gabby.people.school_crosswalk s
   ON c.[location] = s.site_name
  AND s._fivetran_deleted = 0
 LEFT JOIN clean_staff m
   ON c.reports_to_associate_id = m.associate_id
+LEFT JOIN gabby.people.years_experience y
+  ON c.employee_number = y.df_employee_number
+LEFT JOIN gabby.pm.teacher_grade_levels gl
+  ON c.employee_number = gl.employee_number
+ AND gl.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+ AND gl.is_primary_gl = 1
+LEFT JOIN gabby.adsi.user_attributes_static ads
+  ON CONVERT(VARCHAR(25), c.employee_number) = ads.employeenumber

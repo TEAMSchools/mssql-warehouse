@@ -24,7 +24,7 @@ WITH survey_identifier AS (
               ,s.survey_response_id
               ,CONVERT(VARCHAR(250),sq.shortname) AS shortname
               ,s.answer
-        FROM gabby.surveygizmo.survey_response_data_static s
+        FROM gabby.surveygizmo.survey_response_data s
         JOIN gabby.surveygizmo.survey_question_clean_static sq
           ON s.survey_id = sq.survey_id
          AND s.question_id = sq.survey_question_id
@@ -78,7 +78,7 @@ FROM (
             ,COALESCE(sd.answer,qo.option_value) AS answer
             ,ROW_NUMBER() OVER( PARTITION BY sd.survey_id, sd.survey_response_id, sd.question_id ORDER BY qo.option_value) AS rn_multiselect
       FROM survey_identifier si
-      JOIN gabby.surveygizmo.survey_response_data_static sd
+      JOIN gabby.surveygizmo.survey_response_data sd
         ON si.survey_id = sd.survey_id
        AND si.survey_response_id = sd.survey_response_id
        AND si.valid_respondant = 1

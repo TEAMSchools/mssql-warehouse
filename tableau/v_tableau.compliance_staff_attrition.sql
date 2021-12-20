@@ -29,6 +29,7 @@ WITH term AS (
         ,sub.preferred_first_name
         ,sub.preferred_last_name
         ,sub.race_ethnicity_reporting
+        ,sub.gender_reporting
         ,sub.original_hire_date
         ,sub.rehire_date
         ,sub.position_start_date
@@ -50,6 +51,7 @@ WITH term AS (
              ,r.preferred_first_name
              ,r.preferred_last_name
              ,r.race_ethnicity_reporting
+             ,r.gender_reporting
              ,r.original_hire_date
              ,r.rehire_date
 
@@ -79,6 +81,7 @@ WITH term AS (
         ,sub.preferred_first_name
         ,sub.preferred_last_name
         ,sub.race_ethnicity_reporting
+        ,sub.gender_reporting
         ,sub.original_hire_date
         ,sub.rehire_date
         ,sub.academic_year
@@ -102,6 +105,7 @@ WITH term AS (
              ,r.preferred_first_name
              ,r.preferred_last_name
              ,r.race_ethnicity_reporting
+             ,r.gender_reporting
              ,r.original_hire_date
              ,r.rehire_date
              ,r.status_reason
@@ -133,6 +137,7 @@ SELECT d.employee_number AS df_employee_number
       ,d.preferred_first_name
       ,d.preferred_last_name
       ,d.race_ethnicity_reporting AS primary_ethnicity
+      ,d.gender_reporting
       ,d.academic_year
       ,d.academic_year_entrydate
       ,d.academic_year_exitdate

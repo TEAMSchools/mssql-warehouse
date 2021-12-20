@@ -20,16 +20,27 @@ SELECT d.survey_id
       ,d.respondent_preferred_name
       ,d.respondent_mail
       ,d.is_manager
-      ,w.department_name AS respondent_department_name
-      ,w.legal_entity_name AS respondent_legal_entity_name
+      ,w.home_department AS respondent_department_name
+      ,w.business_unit AS respondent_legal_entity_name
       ,d.respondent_manager_name
-      ,w.job_name AS respondent_primary_job
-      ,w.physical_location_name AS respondent_primary_site
+      ,w.job_title AS respondent_primary_job
+      ,w.[location] AS respondent_primary_site
       ,s.race_ethnicity_reporting AS primary_ethnicity
       ,s.gender_reporting AS gender
+      ,s.is_hispanic
+      ,s.is_race_asian
+      ,s.is_race_black
+      ,s.is_race_decline
+      ,s.is_race_mideast
+      ,s.is_race_multi
+      ,s.is_race_nhpi
+      ,s.is_race_other
+      ,s.is_race_white
+
+
 FROM gabby.surveygizmo.survey_detail d
-LEFT JOIN gabby.dayforce.work_assignment_status w
-  ON d.respondent_df_employee_number = w.df_employee_id
+LEFT JOIN gabby.people.employment_history w
+  ON d.respondent_df_employee_number = w.employee_number
  AND d.date_submitted BETWEEN w.effective_start_date 
                           AND COALESCE(w.effective_end_date, DATEFROMPARTS((d.campaign_academic_year + 1), 7, 1))
 LEFT JOIN gabby.people.staff_roster s
@@ -62,8 +73,18 @@ SELECT d.survey_id
       ,d.respondent_manager_name
       ,d.respondent_primary_job
       ,d.respondent_primary_site
-      ,s.primary_ethnicity
-      ,s.gender
+      ,sr.race_ethnicity_reporting AS primary_ethnicity
+      ,sr.gender_reporting AS gender
+      ,sr.is_hispanic
+      ,sr.is_race_asian
+      ,sr.is_race_black
+      ,sr.is_race_decline
+      ,sr.is_race_mideast
+      ,sr.is_race_multi
+      ,sr.is_race_nhpi
+      ,sr.is_race_other
+      ,sr.is_race_white
+
 FROM gabby.surveys.cmo_engagement_regional_survey_detail_archive d
-LEFT JOIN gabby.people.staff_crosswalk_static s
-  ON d.respondent_df_employee_number = s.df_employee_number
+LEFT JOIN gabby.people.staff_roster sr
+  ON d.respondent_df_employee_number = sr.employee_number

@@ -74,4 +74,9 @@ SELECT p.teachernumber
       ,ROW_NUMBER() OVER(
          PARTITION BY p.teachernumber, p.academic_year
            ORDER BY p.pct_students_gl DESC) AS is_primary_gl
+
+      ,COALESCE(idps.df_employee_number, CASE WHEN ISNUMERIC(p.teachernumber) = 1 THEN p.teachernumber END) AS employee_number
 FROM percentages p
+LEFT JOIN gabby.people.id_crosswalk_powerschool idps
+  ON p.teachernumber = idps.ps_teachernumber COLLATE LATIN1_GENERAL_BIN
+ AND idps.is_master = 1

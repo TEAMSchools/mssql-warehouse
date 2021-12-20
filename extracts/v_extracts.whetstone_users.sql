@@ -16,21 +16,42 @@ WITH managers AS (
  )
 
 ,existing_roles AS (
-  SELECT sogm.[user_id]
-        ,gabby.dbo.GROUP_CONCAT(DISTINCT '"' + r._id + '"') AS role_ids
-  FROM gabby.whetstone.schools_observation_groups_membership sogm
-  JOIN gabby.whetstone.roles r
-    ON sogm.role_category = r.category
-   AND r.[name] IN ('Teacher', 'Coach')
-  GROUP BY sogm.[user_id]
+  SELECT sub.[user_id]
+        ,gabby.dbo.GROUP_CONCAT_S(DISTINCT '"' + sub.role_id + '"', 1) AS role_ids
+        ,gabby.dbo.GROUP_CONCAT_S(DISTINCT '"' + sub.role_name + '"', 1) AS role_names
+  FROM
+      (
+       SELECT sogm.[user_id]
+             ,r._id AS role_id
+             ,r.[name] AS role_name
+       FROM gabby.whetstone.schools_observation_groups_membership sogm
+       JOIN gabby.whetstone.roles r
+         ON sogm.role_category = r.category
+        AND r.[name] IN ('Teacher', 'Coach')
+
+       UNION ALL
+
+       SELECT ur.[user_id]
+             ,ur.role_id
+             ,ur.role_name
+       FROM gabby.whetstone.users_roles ur
+      ) sub
+  GROUP BY sub.[user_id]
  )
 
 SELECT sub.user_internal_id
       ,sub.[user_name]
       ,sub.user_email
       ,sub.inactive
-      ,sub.group_type
-      ,'Teachers' AS group_name
+      ,CASE
+        WHEN er.role_names LIKE '%Admin%' THEN NULL
+        WHEN sub.role_name = 'Coach' THEN 'observers'
+        ELSE 'observees'
+       END AS group_type
+      ,CASE
+        WHEN er.role_names LIKE '%Admin%' THEN NULL
+        ELSE 'Teachers'
+       END AS group_name
 
       ,u.[user_id]
       ,u.inactive AS inactive_ws
@@ -55,10 +76,6 @@ FROM
              WHEN m.manager_df_employee_number IS NOT NULL THEN 'Coach'
              ELSE 'Teacher'
             END AS role_name
-           ,CASE
-             WHEN m.manager_df_employee_number IS NOT NULL THEN 'observers'
-             ELSE 'observees'
-            END AS group_type
      FROM gabby.people.staff_crosswalk_static scw
      LEFT JOIN managers m
        ON scw.df_employee_number = m.manager_df_employee_number

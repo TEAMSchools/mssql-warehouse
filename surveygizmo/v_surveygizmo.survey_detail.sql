@@ -68,7 +68,7 @@ JOIN gabby.surveygizmo.survey_question_clean_static sq
 JOIN gabby.surveygizmo.survey_response_identifiers_static sri
   ON s.survey_id = sri.survey_id
  AND sri.[status] = 'Complete'
-LEFT JOIN gabby.surveygizmo.survey_response_data_static srd
+LEFT JOIN gabby.surveygizmo.survey_response_data srd
   ON sri.survey_id = srd.survey_id
  AND sri.survey_response_id = srd.survey_response_id
  AND sq.survey_question_id = srd.question_id
