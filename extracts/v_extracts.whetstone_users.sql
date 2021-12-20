@@ -15,7 +15,7 @@ WITH managers AS (
   WHERE s.primary_job IN ('School Leader', 'Assistant School Leader', 'Assistant School Leader, SPED', 'School Leader in Residence')
  )
 
-, existing_roles AS (
+,existing_roles AS (
   SELECT sub.[user_id]
         ,gabby.dbo.GROUP_CONCAT_S(DISTINCT '"' + sub.role_id + '"', 1) AS role_ids
         ,gabby.dbo.GROUP_CONCAT_S(DISTINCT '"' + sub.role_name + '"', 1) AS role_names
@@ -72,20 +72,31 @@ FROM
     (
      SELECT CONVERT(VARCHAR(25), scw.df_employee_number) AS user_internal_id
            ,CONVERT(VARCHAR(25), scw.manager_df_employee_number) AS manager_internal_id
-           ,scw.preferred_first_name + ' ' + scw.preferred_last_name AS [user_name]
-           ,CONVERT(BIT, CASE WHEN scw.[status] = 'TERMINATED' THEN 1 ELSE 0 END) AS inactive
            ,scw.google_email AS user_email
-           ,CASE WHEN scw.primary_site_schoolid = 0 THEN NULL ELSE scw.primary_site END AS school_name
            ,scw.primary_on_site_department AS course_name
-           ,scw.primary_job
+           ,scw.preferred_first_name + ' ' + scw.preferred_last_name AS [user_name]
+           ,CASE WHEN scw.primary_site_schoolid <> 0 THEN scw.primary_site END AS school_name
+           ,CONVERT(BIT, CASE WHEN scw.[status] = 'TERMINATED' THEN 1 ELSE 0 END) AS inactive
            ,CASE WHEN scw.grades_taught = 0 THEN 'K' ELSE CONVERT(VARCHAR, scw.grades_taught) END AS grade_abbreviation
            ,CASE
-             WHEN scw.primary_on_site_department IN ('Executive') THEN 'Regional Admin' -- network admin
-             WHEN scw.primary_on_site_department IN ('Teaching and Learning', 'School Support', 'New Teacher Development') AND scw.primary_job IN ('Achievement Director','Chief Academic Officer','Chief Of Staff','Director','Head of Schools','Director High School Literacy Curriculum','Director Literacy Achievement','Director Math Achievement','Director Middle School Literacy Curriculum') THEN 'Sub Admin' -- network admin 
-             WHEN scw.primary_on_site_department = 'Special Education' AND scw.primary_job IN ('Managing Director', 'Director', 'Achievement Director') THEN 'Sub Admin' -- network admin
-             WHEN scw.primary_job IN ('School Leader') THEN 'School Admin'
-             WHEN scw.primary_on_site_department IN ('School Leadership') AND scw.primary_job IN ('Assistant Dean', 'Assistant School Leader', 'Assistant School Leader, SPED','Dean','Dean of Students','Director of New Teacher Development') THEN 'School Assistant Admin' 
-             WHEN scw.is_manager = 1 THEN 'Coach'-- ?
+             /* network admins */
+             WHEN scw.primary_on_site_department = 'Executive' THEN 'Regional Admin'
+             WHEN scw.primary_on_site_department IN ('Teaching and Learning', 'School Support', 'New Teacher Development') 
+              AND scw.primary_job IN ('Achievement Director', 'Chief Academic Officer', 'Chief Of Staff', 'Director', 'Head of Schools'
+                                     ,'Director High School Literacy Curriculum', 'Director Literacy Achievement', 'Director Math Achievement'
+                                     ,'Director Middle School Literacy Curriculum') 
+                  THEN 'Sub Admin'
+             WHEN scw.primary_on_site_department = 'Special Education' 
+              AND scw.primary_job IN ('Managing Director', 'Director', 'Achievement Director') 
+                  THEN 'Sub Admin'
+             /* school admins */
+             WHEN scw.primary_job = 'School Leader' THEN 'School Admin'
+             WHEN scw.primary_on_site_department = 'School Leadership' 
+              AND scw.primary_job IN ('Assistant Dean', 'Assistant School Leader', 'Assistant School Leader, SPED', 'Dean'
+                                     ,'Dean of Students', 'Director of New Teacher Development') 
+                  THEN 'School Assistant Admin' 
+             /* basic roles */
+             WHEN scw.is_manager = 1 THEN 'Coach'
              WHEN scw.primary_job IN ('Teacher', 'Teacher ESL', 'Co-Teacher', 'Learning Specialist', 'Learning Specialist Coordinator','Teacher in Residence', 'Teaching Fellow', 'Paraprofessional') THEN 'Teacher'
              ELSE 'No Role'
             END AS role_name
