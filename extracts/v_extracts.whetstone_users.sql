@@ -45,11 +45,13 @@ SELECT sub.user_internal_id
       ,sub.inactive
       ,CASE
         WHEN er.role_names LIKE '%Admin%' THEN NULL
+        WHEN sub.role_name LIKE '%Admin%' THEN NULL
         WHEN sub.role_name = 'Coach' THEN 'observers'
         ELSE 'observees'
        END AS group_type
       ,CASE
         WHEN er.role_names LIKE '%Admin%' THEN NULL
+        WHEN sub.role_name LIKE '%Admin%' THEN NULL
         ELSE 'Teachers'
        END AS group_name
 
