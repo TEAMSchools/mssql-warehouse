@@ -154,20 +154,26 @@ SELECT co.[db_name]
       ,co.grade_level
       ,co.team
       ,'Missing Race/Ethnicity' AS element
-      ,CASE WHEN co.region = 'KMS' THEN co.ethnicity
-            WHEN co.region <> 'KMS' THEN r.racecds ELSE NULL END AS detail
-      ,CASE WHEN co.region = 'KMS' AND co.ethnicity IS NULL THEN 1
-            WHEN co.region = 'KMS' AND co.ethnicity = '' THEN 1
-            WHEN co.region <> 'KMS' AND r.racecds IS NULL AND s.fedethnicity IS NULL THEN 1 ELSE 0 END AS flag
+      ,CASE 
+        WHEN co.region = 'KMS' THEN co.ethnicity
+        WHEN co.region <> 'KMS' THEN r.racecds 
+        ELSE NULL
+       END AS detail
+      ,CASE 
+        WHEN co.region = 'KMS' AND co.ethnicity IS NULL THEN 1
+        WHEN co.region = 'KMS' AND co.ethnicity = '' THEN 1
+        WHEN co.region <> 'KMS' AND r.racecds IS NULL AND s.fedethnicity IS NULL THEN 1 
+        ELSE 0
+       END AS flag
 FROM gabby.powerschool.cohort_identifiers_static co
 LEFT JOIN gabby.powerschool.students s
   ON co.student_number = s.student_number
 LEFT JOIN race r 
-ON co.studentid = r.studentid
-AND co.[db_name] = r.[db_name]
-WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+  ON co.studentid = r.studentid
+ AND co.[db_name] = r.[db_name]
+WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.schoolid <> 999999
-  AND rn_year = 1
+  AND co.rn_year = 1
 
 UNION ALL
 
