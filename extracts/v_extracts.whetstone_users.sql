@@ -35,6 +35,7 @@ WITH managers AS (
              ,ur.role_id
              ,ur.role_name
        FROM gabby.whetstone.users_roles ur
+       WHERE role_name <> 'No Role'
       ) sub
   GROUP BY sub.[user_id]
  )
@@ -43,6 +44,19 @@ SELECT sub.user_internal_id
       ,sub.[user_name]
       ,sub.user_email
       ,sub.inactive
+
+      ,u.[user_id]
+      ,u.inactive AS inactive_ws
+      ,CONVERT(DATE, u.archived_at) AS archived_at
+
+      ,um.[user_id] AS coach_id
+
+      ,sch._id AS school_id
+
+      ,gr._id AS grade_id
+
+      ,cou._id AS course_id
+
       ,CASE
         WHEN er.role_names LIKE '%Admin%' THEN NULL
         WHEN sub.role_name LIKE '%Admin%' THEN NULL
@@ -54,15 +68,11 @@ SELECT sub.user_internal_id
         WHEN sub.role_name LIKE '%Admin%' THEN NULL
         ELSE 'Teachers'
        END AS group_name
-
-      ,u.[user_id]
-      ,u.inactive AS inactive_ws
-      ,CONVERT(DATE, u.archived_at) AS archived_at
-
-      ,um.[user_id] AS coach_id
-      ,sch._id AS school_id
-      ,gr._id AS grade_id
-      ,cou._id AS course_id
+      ,CASE 
+        WHEN er.role_names IS NULL THEN '"' + sub.role_name + '"' /* no roles = add assigned role */
+        WHEN CHARINDEX(sub.role_name, er.role_names) > 0 THEN er.role_names /* assigned role already exists = use existing */
+        ELSE '"' + sub.role_name + '",' + er.role_names /* add assigned role */
+       END AS role_names
       ,'[' 
         + CASE 
            WHEN er.role_ids IS NULL THEN '"' + r._id + '"' /* no roles = add assigned role */
