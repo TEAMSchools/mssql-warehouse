@@ -94,6 +94,7 @@ SELECT r.employee_number
       ,w.job_change_reason_description AS job_change_reason
       ,w.position_effective_date AS position_effective_start_date
       ,w.position_effective_end_date
+      ,w.primary_position
 
       ,sal.annual_salary
       ,sal.regular_pay_rate_amount

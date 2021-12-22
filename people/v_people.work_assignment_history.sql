@@ -15,6 +15,7 @@ SELECT sub.employee_number
       ,sub.job_title_description
       ,sub.job_change_reason_code
       ,sub.job_change_reason_description
+      ,sub.primary_position
       ,sub.position_effective_date
       ,sub.source_system
       ,COALESCE(
@@ -46,6 +47,7 @@ FROM
            ,wah.job_title_description
            ,wah.job_change_reason_code
            ,wah.job_change_reason_description
+           ,wah.primary_position
            ,CASE 
              WHEN CONVERT(DATE, wah.position_effective_date) > '2021-01-01' THEN CONVERT(DATE, wah.position_effective_date)
              ELSE '2021-01-01'
@@ -77,6 +79,7 @@ FROM
            ,dwa.job_name AS job_title_description
            ,NULL job_change_reason_code
            ,NULL job_change_reason_description
+           ,'Yes' AS primary_position
            ,dwa.work_assignment_effective_start AS position_effective_date
            ,CASE
              WHEN dwa.work_assignment_effective_end < '2020-12-31' THEN dwa.work_assignment_effective_end

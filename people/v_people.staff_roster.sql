@@ -23,6 +23,7 @@ WITH all_staff AS (
         ,eh.annual_salary
         ,eh.effective_start_date
         ,eh.status_effective_start_date
+        ,eh.primary_position
   FROM gabby.people.employment_history eh
   WHERE CONVERT(DATE, GETDATE()) BETWEEN eh.effective_start_date AND eh.effective_end_date
 
@@ -47,6 +48,7 @@ WITH all_staff AS (
         ,ps.annual_salary
         ,ps.effective_start_date
         ,ps.status_effective_start_date
+        ,ps.primary_position
   FROM gabby.people.employment_history ps
   WHERE ps.status_effective_start_date > CONVERT(DATE, GETDATE())
     AND ps.position_status = 'Active'
@@ -110,6 +112,7 @@ WITH all_staff AS (
         ,sub.is_manager
         ,sub.reports_to_associate_id
         ,sub.annual_salary
+        ,sub.primary_position
         ,sub.position_effective_start_date
         ,sub.position_effective_end_date
         ,sub.original_hire_date
@@ -181,6 +184,7 @@ WITH all_staff AS (
              ,eh.position_effective_start_date
              ,eh.position_effective_end_date
              ,eh.annual_salary
+             ,eh.primary_position
              ,CONVERT(NVARCHAR(256), NULL) AS job_family -- on the way
              ,CASE 
                WHEN eh.associate_id IN (SELECT reports_to_associate_id
@@ -192,7 +196,8 @@ WITH all_staff AS (
              /* dedupe positions */
              ,ROW_NUMBER() OVER(
                 PARTITION BY eh.associate_id
-                  ORDER BY eh.status_effective_start_date DESC
+                  ORDER BY eh.primary_position DESC
+                          ,eh.status_effective_start_date DESC
                           ,CASE WHEN eh.position_status = 'Terminated' THEN 0 ELSE 1 END DESC
                           ,eh.effective_start_date DESC) AS rn
 
@@ -333,6 +338,7 @@ SELECT c.employee_number
       ,c.is_manager
       ,c.reports_to_associate_id
       ,c.annual_salary
+      ,c.primary_position
       ,c.position_effective_start_date
       ,c.position_effective_end_date
       ,c.original_hire_date
