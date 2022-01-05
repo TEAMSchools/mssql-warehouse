@@ -109,6 +109,7 @@ SELECT rc.survey_response_id
       ,sc.academic_year AS campaign_academic_year
       ,sc.[name] AS campaign_name
       ,sc.reporting_term_code AS campaign_reporting_term
+
       ,resp.preferred_name AS respondent_preferred_name
       ,resp.adp_associate_id AS respondent_adp_associate_id
       ,resp.userprincipalname AS respondent_userprincipalname
@@ -119,8 +120,10 @@ SELECT rc.survey_response_id
       ,reh.[location] AS respondent_primary_site
       ,reh.home_department AS respondent_department_name
       ,reh.job_title AS respondent_primary_job
+
       ,rsch.ps_school_id AS respondent_primary_site_schoolid
       ,rsch.school_level AS respondent_primary_site_school_level
+
       ,reh.reports_to_employee_number AS respondent_manager_df_employee_number
 
       ,rmgr.preferred_name AS respondent_manager_name
@@ -138,8 +141,10 @@ SELECT rc.survey_response_id
       ,seh.[location] AS subject_primary_site
       ,seh.home_department AS subject_department_name
       ,seh.job_title AS subject_primary_job
+
       ,ssch.ps_school_id AS subject_primary_site_schoolid
       ,ssch.school_level AS subject_primary_site_school_level
+
       ,seh.reports_to_employee_number AS subject_manager_df_employee_number
 
       ,smgr.preferred_name AS subject_manager_name
