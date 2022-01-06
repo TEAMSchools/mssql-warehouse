@@ -105,7 +105,7 @@ FROM
              WHEN scw.primary_job = 'School Leader' THEN 'School Admin'
              WHEN scw.primary_on_site_department = 'School Leadership' 
               AND scw.primary_job IN ('Assistant Dean', 'Assistant School Leader', 'Assistant School Leader, SPED', 'Dean'
-                                     ,'Dean of Students', 'Director of New Teacher Development') 
+                                     ,'Dean of Students', 'Director of New Teacher Development','School Leader in Residence') 
                   THEN 'School Assistant Admin' 
              /* basic roles */
              WHEN scw.is_manager = 1 THEN 'Coach'
