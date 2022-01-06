@@ -4,21 +4,21 @@ GO
 CREATE OR ALTER VIEW payroll.payroll_audit AS
 
 WITH payroll_rollup AS (
-  SELECT _file
-        ,SUBSTRING(_file, 9, 4) AS fiscal_year
+  SELECT SUBSTRING(_file, 9, 4) AS fiscal_year
         ,SUBSTRING(_file, 14, CHARINDEX('-',_file,14)-14) AS payroll_week
         ,REPLACE(SUBSTRING(_file, CHARINDEX('-',_file,14)+1,2),'-','') AS payroll_run
         ,SUBSTRING(_file,CHARINDEX(' ',_file)-3,3) AS company_code
         ,CONVERT(DATE,SUBSTRING(_file,CHARINDEX(' ',_file),11)) AS payroll_date
         ,file_nbr
+        ,CONCAT(SUBSTRING(_file,CHARINDEX(' ',_file)-3,3), file_nbr) AS postion_id
         ,dept
         ,cost_nbr
-        ,MAX(fli_code) AS fli_code
-        ,MAX(rt) AS rt
-        ,MAX(state_cd_1) AS state_cd_1
-        ,MAX(state_cd_2) AS state_cd_2
-        ,MAX(sui_sdi_code) AS sui_sdi_code
-        ,MAX(void_ind) AS void_ind
+        ,gabby.dbo.GROUP_CONCAT(DISTINCT fli_code) AS fli_code
+        ,gabby.dbo.GROUP_CONCAT(DISTINCT rt) AS rt
+        ,gabby.dbo.GROUP_CONCAT(DISTINCT state_cd_1) AS state_cd_1
+        ,gabby.dbo.GROUP_CONCAT(DISTINCT state_cd_2) AS state_cd_2
+        ,gabby.dbo.GROUP_CONCAT(DISTINCT sui_sdi_code) AS sui_sdi_code
+        ,gabby.dbo.GROUP_CONCAT(DISTINCT void_ind) AS void_ind
         ,SUM(ded_cd_3) AS ded_cd_3
         ,SUM(ded_cd_4) AS ded_cd_4
         ,SUM(ded_cd_403) AS ded_cd_403
@@ -118,6 +118,16 @@ WITH payroll_rollup AS (
         ,SUM(state_tax_2) AS state_tax_2
         ,SUM(sui_tax) AS sui_tax
         ,SUM(1) AS n_records
+        ,SUM(COALESCE(ded_cd_ck_1,0) + 
+             COALESCE(ded_cd_ck_2,0) + 
+             COALESCE(ded_cd_ck_3,0) + 
+             COALESCE(ded_cd_ck_4,0) + 
+             COALESCE(ded_cd_sv_1,0) + 
+             COALESCE(ded_cd_sv_2,0) + 
+             COALESCE(ded_cd_sv_3,0) + 
+             COALESCE(ded_cd_sv_4,0) + 
+             COALESCE(net_pay,0)
+                                 ) AS take_home_pay
   FROM gabby.adp.payroll_register
   GROUP BY _file, file_nbr, dept, cost_nbr
  )
@@ -151,7 +161,7 @@ WITH payroll_rollup AS (
              ,company_code
              ,payroll_date
              ,file_nbr
-             ,CONCAT(company_code, file_nbr) AS position_id
+             ,position_id
              ,dept
              ,cost_nbr
              ,fli_code
@@ -163,16 +173,7 @@ WITH payroll_rollup AS (
              ,CONVERT(NVARCHAR(16), fed_tax) AS fed_tax
              ,CONVERT(NVARCHAR(16), gross) AS gross
              ,CONVERT(NVARCHAR(16), net_pay) AS net_pay
-             ,CONVERT(NVARCHAR(16), COALESCE(ded_cd_ck_1,0) + 
-                                    COALESCE(ded_cd_ck_2,0) + 
-                                    COALESCE(ded_cd_ck_3,0) + 
-                                    COALESCE(ded_cd_ck_4,0) + 
-                                    COALESCE(ded_cd_sv_1,0) + 
-                                    COALESCE(ded_cd_sv_2,0) + 
-                                    COALESCE(ded_cd_sv_3,0) + 
-                                    COALESCE(ded_cd_sv_4,0) + 
-                                    COALESCE(net_pay,0)
-                                                       ) AS take_home_pay
+             ,CONVERT(NVARCHAR(16), take_home_pay) AS take_home_pay
              ,CONVERT(NVARCHAR(16), ded_cd_3) AS ded_cd_3
              ,CONVERT(NVARCHAR(16), ded_cd_4) AS ded_cd_4
              ,CONVERT(NVARCHAR(16), ded_cd_403) AS ded_cd_403
@@ -341,13 +342,11 @@ FROM payroll_unpivot u
 LEFT JOIN gabby.payroll.register_code_lookup rcl
   ON u.company_code = rcl.company_code
  AND u.code = rcl.field_name
-JOIN people.employment_history eh
+JOIN gabby.people.employment_history eh
   ON u.position_id = eh.position_id
  AND u.payroll_date BETWEEN eh.effective_start_date AND eh.effective_end_date
-JOIN people.employment_history ehp
+JOIN gabby.people.employment_history ehp
   ON u.position_id = ehp.position_id
  AND u.prev_payroll_date BETWEEN ehp.effective_start_date AND ehp.effective_end_date
-JOIN people.staff_roster r
-  ON u.employee_number = r.employee_number
-
-WHERE CONVERT(DATE,u.payroll_date) > CONVERT(DATE,'2021-10-31')
+JOIN gabby.people.staff_roster r
+  ON eh.employee_number = r.employee_number
