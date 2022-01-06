@@ -48,7 +48,11 @@ SELECT o.student_number
       ,cat.W_RT3
       ,cat.W_RT4
 
-      ,comm.citizenship AS conduct
+      ,cat.CTZ_CUR
+      ,cat.CTZ_RT1
+      ,cat.CTZ_RT2
+      ,cat.CTZ_RT3
+      ,cat.CTZ_RT4
       ,REPLACE(comm.comment_value, '"', '''') AS comment_value
 FROM gabby.powerschool.course_section_scaffold_current_static o
 JOIN gabby.powerschool.sections sec
