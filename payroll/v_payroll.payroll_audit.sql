@@ -286,7 +286,7 @@ WITH payroll_rollup AS (
          ,rate, rate_2, rate_3, rate_used
          ,rg_ern, rg_hrs
          ,sdi_tax, ss_tax
-         ,state_tax_1, state_tax_2, sui_tax
+         ,state_tax_1, state_tax_2, sui_tax, take_home_pay
         )
    ) u
  )
@@ -323,6 +323,8 @@ SELECT sub.position_id
       ,sub.job_title_curr
       ,sub.salary_curr
       ,sub.status_curr
+      ,sub.prev_code_value
+      ,sub.prev_payroll_date
       ,sub.code_value - sub.prev_code_value AS code_value_diff
       ,CASE 
         WHEN sub.payroll_date = sub.prev_payroll_date THEN 'New Payroll Code'
