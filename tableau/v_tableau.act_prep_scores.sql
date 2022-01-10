@@ -3,55 +3,20 @@ GO
 
 CREATE OR ALTER VIEW tableau.act_prep_scores AS
 
-WITH real_act AS (
-  SELECT student_number      
-        ,test_date
-        ,scale_score
-        ,CONCAT(LEFT(DATENAME(MONTH,test_date),3), ' ''', RIGHT(DATEPART(YEAR,test_date),2)) AS administration_round        
-        ,CASE WHEN act_subject = 'math' THEN 'Mathematics' ELSE act_subject END AS act_subject        
-  FROM gabby.naviance.act_scores_clean
-  UNPIVOT(
-    scale_score
-    FOR act_subject IN (English
-                       ,Math
-                       ,Reading
-                       ,Science
-                       ,Composite)
-   ) u
- )
-
-,real_tests AS (
-  SELECT student_number
-        ,administration_round
-        ,test_date
-        ,act_subject
-        ,scale_score
-        ,is_converted_sat
-
-        ,ROW_NUMBER() OVER(
+WITH real_tests AS (
+	SELECT ktc.student_number
+   	      ,stl.date_c AS test_date
+   	      ,stl.score AS scale_score
+          ,CONCAT(LEFT(DATENAME(MONTH,stl.date_c),3), ' ''', RIGHT(DATEPART(YEAR,stl.date_c),2)) AS administration_round
+          ,ROW_NUMBER() OVER(
            PARTITION BY student_number
-             ORDER BY scale_score DESC) AS rn_highest             
-  FROM
-      (
-       SELECT student_number
-             ,administration_round
-             ,test_date        
-             ,act_subject
-             ,scale_score
-             ,0 AS is_converted_sat
-       FROM real_act
-       WHERE act_subject = 'Composite'
+             ORDER BY stl.score DESC) AS rn_highest
 
-       UNION ALL
+	FROM gabby.alumni.standardized_test_long stl
+	JOIN gabby.alumni.ktc_roster ktc
+  	  ON stl.contact_c = ktc.sf_contact_id
 
-       SELECT student_number
-             ,CONCAT(LEFT(DATENAME(MONTH,test_date),3), ' ''', RIGHT(DATEPART(YEAR,test_date),2)) AS administration_round
-             ,test_date        
-             ,act_subject
-             ,scale_score
-             ,1 AS is_converted_sat
-       FROM gabby.naviance.sat_act_conversion
-      ) sub
+    WHERE stl.score_type = 'act_composite_c'
  )
 
 ,ms_grad AS (
@@ -136,7 +101,7 @@ SELECT co.academic_year
       ,CONVERT(VARCHAR,co.cohort) AS administration_round
 
       ,r.test_date
-      ,r.act_subject AS subject_area
+      ,'composite' AS subject_area
       ,NULL AS overall_percent_correct
       ,NULL AS overall_number_correct
       ,NULL AS number_of_questions
