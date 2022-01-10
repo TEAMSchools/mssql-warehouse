@@ -46,7 +46,13 @@ SELECT sub.user_internal_id
       ,sub.inactive
 
       ,u.[user_id]
+      ,u.[user_email] AS user_email_ws
+      ,u.[user_name] AS user_name_ws
       ,u.inactive AS inactive_ws
+      ,u.default_school_id AS school_id_ws
+      ,u.default_grade_level_id AS grade_id_ws
+      ,u.default_course_id AS course_id_ws
+      ,u.coach_id AS coach_id_ws
       ,CONVERT(DATE, u.archived_at) AS archived_at
 
       ,um.[user_id] AS coach_id
@@ -56,6 +62,8 @@ SELECT sub.user_internal_id
       ,gr._id AS grade_id
 
       ,cou._id AS course_id
+
+      ,'[' + er.role_ids + ']' AS role_id_ws
 
       ,CASE
         WHEN er.role_names LIKE '%Admin%' THEN NULL
