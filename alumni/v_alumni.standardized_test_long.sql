@@ -7,7 +7,31 @@ SELECT id
       ,contact_c
       ,date_c
       ,test_type_c AS test_type
-      ,CASE WHEN subject_c <> '' THEN subject_c END AS test_subject
+      ,CASE 
+        WHEN score_type = 'ap_c' THEN subject_c
+        WHEN score_type = 'act_composite_c' THEN NULL
+        WHEN score_type = 'sat_total_score_c' THEN NULL
+        WHEN score_type = 'act_ela_c' THEN 'ELA'
+        WHEN score_type = 'act_english_c' THEN 'English'
+        WHEN score_type = 'act_math_c' THEN 'Math'
+        WHEN score_type = 'act_reading_c' THEN 'Reading'
+        WHEN score_type = 'act_science_c' THEN 'Science'
+        WHEN score_type = 'act_stem_c' THEN 'STEM'
+        WHEN score_type = 'act_writing_c' THEN 'Writing'
+        WHEN score_type = 'sat_ebrw_c' THEN 'EBRW'
+        WHEN score_type = 'sat_essay_analysis_c' THEN 'Essay Analysis'
+        WHEN score_type = 'sat_essay_reading_c' THEN 'Essay Reading'
+        WHEN score_type = 'sat_essay_writing_c' THEN 'Essay Writing'
+        WHEN score_type = 'sat_math_c' THEN 'Math'
+        WHEN score_type = 'sat_math_pre_2016_c' THEN 'Math'
+        WHEN score_type = 'sat_critical_reading_pre_2016_c' THEN 'Reading'
+        WHEN score_type = 'sat_math_test_score_c' THEN 'Math'
+        WHEN score_type = 'sat_reading_test_score_c' THEN 'Reading'
+        WHEN score_type = 'sat_verbal_c' THEN 'Verbal'
+        WHEN score_type = 'sat_writing_and_language_test_score_c' THEN 'Writing and Language'
+        WHEN score_type = 'sat_writing_c' THEN 'Writing'
+        WHEN score_type = 'sat_writing_pre_2016_c' THEN 'Writing'
+       END AS test_subject
 
       ,score_type
       ,score
