@@ -13,6 +13,8 @@ SELECT stl.contact_c AS [Student ID]
           ELSE stl.test_type 
          END
         ,' ' + CASE 
+                WHEN stl.test_subject IN ('Composite', 'Total') THEN NULL
+                WHEN stl.test_subject = 'EBRW' THEN 'Reading and Writing'
                 WHEN stl.test_subject = 'Physics 1' THEN 'Physics 1: Algebra-Based'
                 WHEN stl.test_subject = 'Studio Art: 2-D Design Portfolio' THEN 'Studio Art: 2-D Design'
                 WHEN stl.test_subject = 'Studio Art: Drawing Portfolio' THEN 'Studio Art: Drawing'
