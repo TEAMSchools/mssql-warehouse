@@ -4,19 +4,21 @@ GO
 CREATE OR ALTER VIEW tableau.act_prep_scores AS
 
 WITH real_tests AS (
-	SELECT ktc.student_number
-   	      ,stl.date_c AS test_date
-   	      ,stl.score AS scale_score
-          ,CONCAT(LEFT(DATENAME(MONTH,stl.date_c),3), ' ''', RIGHT(DATEPART(YEAR,stl.date_c),2)) AS administration_round
-          ,ROW_NUMBER() OVER(
-           PARTITION BY student_number
+  SELECT stl.contact_c
+        ,stl.date_c AS test_date
+        ,stl.score AS scale_score
+        ,CONCAT(LEFT(DATENAME(MONTH, stl.date_c), 3), ' '''
+               ,RIGHT(DATEPART(YEAR, stl.date_c), 2)) AS administration_round
+
+        ,ktc.school_specific_id_c AS student_number
+
+        ,ROW_NUMBER() OVER(
+           PARTITION BY stl.contact_c
              ORDER BY stl.score DESC) AS rn_highest
-
-	FROM gabby.alumni.standardized_test_long stl
-	JOIN gabby.alumni.ktc_roster ktc
-  	  ON stl.contact_c = ktc.sf_contact_id
-
-    WHERE stl.score_type = 'act_composite_c'
+  FROM gabby.alumni.standardized_test_long stl
+  JOIN gabby.alumni.contact ktc
+    ON stl.contact_c = ktc.id
+  WHERE stl.score_type = 'act_composite_c'
  )
 
 ,ms_grad AS (
@@ -66,7 +68,7 @@ SELECT co.academic_year
       ,act.standard_percent_correct      
       ,act.standard_mastered      
       ,act.rn_dupe AS rn_assessment /* 1 row per student, per test (overall) */      
-      
+
       ,ms.ms_attended
 
       ,ROW_NUMBER() OVER(
@@ -101,7 +103,7 @@ SELECT co.academic_year
       ,CONVERT(VARCHAR,co.cohort) AS administration_round
 
       ,r.test_date
-      ,'composite' AS subject_area
+      ,'Composite' AS subject_area
       ,NULL AS overall_percent_correct
       ,NULL AS overall_number_correct
       ,NULL AS number_of_questions
