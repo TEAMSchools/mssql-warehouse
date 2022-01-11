@@ -4,7 +4,7 @@ GO
 CREATE OR ALTER VIEW extracts.overgrad_standardized_test_scores AS
 
 SELECT stl.contact_c AS [Student ID]
-      ,stl.date_c AS [Test Date]
+      ,CONVERT(VARCHAR, stl.date_c, 101) AS [Test Date]
       ,CONCAT(
          CASE
           WHEN stl.test_type = 'Advanced Placement' THEN 'AP'
@@ -23,6 +23,9 @@ SELECT stl.contact_c AS [Student ID]
       ,stl.score AS [Score]
 
       ,ei.hs_account_name AS [High School]
+
+      ,stl.date_c AS test_date_filter
+      ,stl.test_type AS test_type_filter
 FROM gabby.alumni.standardized_test_long stl
 JOIN gabby.alumni.enrollment_identifiers ei
   ON stl.contact_c = ei.student_c
