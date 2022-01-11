@@ -3,55 +3,22 @@ GO
 
 CREATE OR ALTER VIEW tableau.act_prep_scores AS
 
-WITH real_act AS (
-  SELECT student_number      
-        ,test_date
-        ,scale_score
-        ,CONCAT(LEFT(DATENAME(MONTH,test_date),3), ' ''', RIGHT(DATEPART(YEAR,test_date),2)) AS administration_round        
-        ,CASE WHEN act_subject = 'math' THEN 'Mathematics' ELSE act_subject END AS act_subject        
-  FROM gabby.naviance.act_scores_clean
-  UNPIVOT(
-    scale_score
-    FOR act_subject IN (English
-                       ,Math
-                       ,Reading
-                       ,Science
-                       ,Composite)
-   ) u
- )
+WITH real_tests AS (
+  SELECT stl.contact_c
+        ,stl.date_c AS test_date
+        ,stl.score AS scale_score
+        ,CONCAT(LEFT(DATENAME(MONTH, stl.date_c), 3), ' '''
+               ,RIGHT(DATEPART(YEAR, stl.date_c), 2)) AS administration_round
 
-,real_tests AS (
-  SELECT student_number
-        ,administration_round
-        ,test_date
-        ,act_subject
-        ,scale_score
-        ,is_converted_sat
+        ,ktc.school_specific_id_c AS student_number
 
         ,ROW_NUMBER() OVER(
-           PARTITION BY student_number
-             ORDER BY scale_score DESC) AS rn_highest             
-  FROM
-      (
-       SELECT student_number
-             ,administration_round
-             ,test_date        
-             ,act_subject
-             ,scale_score
-             ,0 AS is_converted_sat
-       FROM real_act
-       WHERE act_subject = 'Composite'
-
-       UNION ALL
-
-       SELECT student_number
-             ,CONCAT(LEFT(DATENAME(MONTH,test_date),3), ' ''', RIGHT(DATEPART(YEAR,test_date),2)) AS administration_round
-             ,test_date        
-             ,act_subject
-             ,scale_score
-             ,1 AS is_converted_sat
-       FROM gabby.naviance.sat_act_conversion
-      ) sub
+           PARTITION BY stl.contact_c
+             ORDER BY stl.score DESC) AS rn_highest
+  FROM gabby.alumni.standardized_test_long stl
+  JOIN gabby.alumni.contact ktc
+    ON stl.contact_c = ktc.id
+  WHERE stl.score_type = 'act_composite_c'
  )
 
 ,ms_grad AS (
@@ -101,7 +68,7 @@ SELECT co.academic_year
       ,act.standard_percent_correct      
       ,act.standard_mastered      
       ,act.rn_dupe AS rn_assessment /* 1 row per student, per test (overall) */      
-      
+
       ,ms.ms_attended
 
       ,ROW_NUMBER() OVER(
@@ -136,7 +103,7 @@ SELECT co.academic_year
       ,CONVERT(VARCHAR,co.cohort) AS administration_round
 
       ,r.test_date
-      ,r.act_subject AS subject_area
+      ,'Composite' AS subject_area
       ,NULL AS overall_percent_correct
       ,NULL AS overall_number_correct
       ,NULL AS number_of_questions
