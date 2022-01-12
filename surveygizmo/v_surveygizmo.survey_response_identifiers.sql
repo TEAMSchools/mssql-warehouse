@@ -163,6 +163,7 @@ JOIN gabby.surveygizmo.survey_response_clean sr
 LEFT JOIN gabby.surveygizmo.survey_campaign_clean_static sc
   ON rc.survey_id = sc.survey_id
  AND rc.date_started BETWEEN sc.link_open_date AND sc.link_close_date
+ AND sc.[status] <> 'Deleted'
 LEFT JOIN gabby.people.staff_crosswalk_static resp
   ON rc.respondent_employee_number = resp.df_employee_number
 LEFT JOIN gabby.people.employment_history reh
