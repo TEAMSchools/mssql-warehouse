@@ -31,6 +31,11 @@ SELECT cis.student_number
       ,di.diagnostic_overall_placement_most_recent_
       ,di.diagnostic_overall_relative_placement_most_recent_
       ,di.diagnostic_percentile_most_recent_
+      ,di.diagnostic_completion_date_1_
+      ,di.diagnostic_overall_scale_score_1_
+      ,di.diagnostic_overall_placement_1_
+      ,di.diagnostic_overall_relative_placement_1_
+      ,di.diagnostic_percentile_1_
       ,di.annual_stretch_growth_measure
       ,di.annual_typical_growth_measure
       ,di.diagnostic_gain_note_negative_gains_zero_
