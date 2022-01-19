@@ -35,6 +35,7 @@ SELECT p.associate_oid
       ,p.[Preferred Race/Ethnicity]
       ,p.[Professional Experience in Communities We Serve]
       ,p.[Teacher Prep Program]
+      ,p.[Miami - ACES Number]
       ,CASE
         WHEN p.[WFMgr LOA] = 'true' THEN 1
         WHEN p.[WFMgr LOA] = 'false' THEN 0
@@ -65,5 +66,6 @@ PIVOT(
        ,[Preferred Race/Ethnicity]
        ,[Professional Experience in Communities We Serve]
        ,[Teacher Prep Program]
+       ,[Miami - ACES Number]
       )
  ) p
