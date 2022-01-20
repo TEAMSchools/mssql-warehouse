@@ -48,11 +48,11 @@ SELECT o.student_number
       ,cat.W_RT3
       ,cat.W_RT4
 
-      ,cat.CTZ_CUR
-      ,cat.CTZ_RT1
-      ,cat.CTZ_RT2
-      ,cat.CTZ_RT3
-      ,cat.CTZ_RT4
+      ,COALESCE(cat.CTZ_CUR, kctz.CTZ_CUR) AS CTZ_CUR
+      ,COALESCE(cat.CTZ_RT1, kctz.CTZ_RT1) AS CTZ_RT1
+      ,COALESCE(cat.CTZ_RT2, kctz.CTZ_RT2) AS CTZ_RT2
+      ,COALESCE(cat.CTZ_RT3, kctz.CTZ_RT3) AS CTZ_RT3
+      ,COALESCE(cat.CTZ_RT4, kctz.CTZ_RT4) AS CTZ_RT4
 
       ,REPLACE(comm.comment_value, '"', '''') AS comment_value
 FROM gabby.powerschool.course_section_scaffold_current_static o
@@ -78,6 +78,12 @@ LEFT JOIN gabby.powerschool.category_grades_wide_static cat
  AND o.course_number = cat.course_number
  AND o.[db_name] = cat.[db_name]
  AND fg.reporting_term = cat.reporting_term 
+LEFT JOIN gabby.powerschool.category_grades_wide_static kctz
+  ON o.student_number = kctz.student_number
+ AND o.[db_name] = kctz.[db_name]
+ AND fg.reporting_term = kctz.reporting_term 
+ AND kctz.course_number = 'HR'
+ AND sec.section_number LIKE '0%'
 LEFT JOIN gabby.powerschool.pgfinalgrades comm
   ON fg.studentid = comm.studentid
  AND fg.sectionid = comm.sectionid
