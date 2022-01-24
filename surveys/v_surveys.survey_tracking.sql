@@ -21,10 +21,11 @@ WITH survey_term_staff_scaffold AS (
         ,r.primary_job AS survey_taker_primary_job
         ,r.primary_site AS [location]
         ,r.[status] AS position_status
-        ,LOWER(r.samaccountname) AS survey_taker_samaccount
         ,r.manager_df_employee_number
         ,r.manager_name
         ,r.payclass AS worker_category
+        ,LOWER(r.samaccountname) AS survey_taker_samaccount
+
         ,m.legal_entity_name AS manager_legal_entity_name
   FROM
       (
@@ -124,7 +125,6 @@ SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
       ,c.subject_name AS completed_survey_subject_name
       ,c.date_submitted AS survey_completion_date
       ,c.is_manager
-
 FROM survey_term_staff_scaffold st
 JOIN gabby.surveys.so_assignments_long s
   ON st.employee_number = s.survey_taker_id
@@ -177,7 +177,6 @@ SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
       ,c.subject_name AS completed_survey_subject_name
       ,c.date_submitted AS survey_completion_date
       ,c.is_manager
-
 FROM clean_responses c
 JOIN survey_term_staff_scaffold st
   ON st.employee_number = c.df_employee_number
