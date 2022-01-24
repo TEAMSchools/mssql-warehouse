@@ -24,6 +24,7 @@ WITH survey_term_staff_scaffold AS (
         ,LOWER(r.samaccountname) AS survey_taker_samaccount
         ,r.manager_df_employee_number
         ,r.manager_name
+        ,r.payclass AS worker_category
         ,m.legal_entity_name AS manager_legal_entity_name
   FROM
       (
@@ -97,6 +98,7 @@ SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
       ,st.manager_df_employee_number
       ,st.manager_name
       ,st.manager_legal_entity_name
+      ,st.worker_category
 
       ,s.survey_round_status
       ,COALESCE(s.assignment,c.subject_name) AS assignment
@@ -149,6 +151,7 @@ SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
       ,st.manager_df_employee_number
       ,st.manager_name
       ,st.manager_legal_entity_name
+      ,st.worker_category
 
       ,'Yes' AS survey_round_status
       ,c.subject_name AS assignment
@@ -201,6 +204,7 @@ SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
       ,st.manager_df_employee_number
       ,st.manager_name
       ,st.manager_legal_entity_name
+      ,st.worker_category
 
       ,s.survey_taker AS survey_round_status
       ,'Your Manager' AS assignment
@@ -245,6 +249,7 @@ SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
       ,st.manager_df_employee_number
       ,st.manager_name
       ,st.manager_legal_entity_name
+      ,st.worker_category
 
       ,'Yes' AS survey_round_status
       ,'Your Manager' AS assignment
@@ -286,6 +291,7 @@ SELECT st.employee_number AS survey_taker_id
       ,st.manager_df_employee_number
       ,st.manager_name
       ,st.manager_legal_entity_name
+      ,st.worker_category
 
       ,'Yes' AS survey_round_status
       ,sa.engagement_survey_assignment AS assignment
@@ -329,6 +335,7 @@ SELECT st.employee_number AS survey_taker_id
       ,st.manager_df_employee_number
       ,st.manager_name
       ,st.manager_legal_entity_name
+      ,st.worker_category
 
       ,'Yes' AS survey_round_status
       ,'Update Your Staff Info' AS assignment
@@ -369,6 +376,7 @@ SELECT st.employee_number AS survey_taker_id
       ,st.manager_df_employee_number
       ,st.manager_name
       ,st.manager_legal_entity_name
+      ,st.worker_category
 
       ,'Yes' AS survey_round_status
       ,'One Off Staff Survey' AS assignment
@@ -409,6 +417,7 @@ SELECT st.employee_number AS survey_taker_id
       ,st.manager_df_employee_number
       ,st.manager_name
       ,st.manager_legal_entity_name
+      ,st.worker_category
 
       ,'Yes' AS survey_round_status
       ,'Intent to Return' AS assignment
