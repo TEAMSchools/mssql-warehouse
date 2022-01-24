@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW people.staff_roster AS
+--CREATE OR ALTER VIEW people.staff_roster AS
 
 WITH all_staff AS (
   /* current */
@@ -106,14 +106,20 @@ WITH all_staff AS (
 
 ,race_ethnicity_clean AS (
   SELECT cw.df_employee_number
-        ,REPLACE(
-           REPLACE(
-             REPLACE(
-               COALESCE(cf.[Preferred Race/Ethnicity], sre.preferred_race_ethnicity,CONCAT(ea.race_description,CASE WHEN ea.ethnicity IS NULL OR ea.ethnicity = 'Hispanic or Latino' THEN '' ELSE ', ' + 'Latinx/Hispanic/Chicana(o)' END))
-                    ,'Black or African American', 'Black/African American') --Replace 'Black or African American' with 'Black/African American'
-                  ,'American Indian or Alaska Native', 'Native American/First Nation') --Replace 'American Indian or Alaska Native' with 'Native American/First Nation'
-               ,'Two or more races (Not Hispanic or Latino)', 'Bi/Multiracial') --Replace 'Two or more races (Not Hispanic or Latino)' with 'Bi/Multiracial'
-             AS preferred_race_ethnicity
+        ,REPLACE(REPLACE(REPLACE(
+            COALESCE(
+              cf.[Preferred Race/Ethnicity]
+             ,sre.preferred_race_ethnicity
+             ,CONCAT(ea.race_description
+                    ,CASE 
+                      WHEN ea.ethnicity IS NULL OR ea.ethnicity = 'Hispanic or Latino' THEN '' 
+                      ELSE ', ' + 'Latinx/Hispanic/Chicana(o)' 
+                     END)
+            )
+           ,'Black or African American', 'Black/African American')
+           ,'American Indian or Alaska Native', 'Native American/First Nation')
+           ,'Two or more races (Not Hispanic or Latino)', 'Bi/Multiracial')
+           AS preferred_race_ethnicity
   FROM gabby.people.staff_crosswalk_static cw
   LEFT JOIN gabby.adp.employees_all ea
     ON ea.associate_id = cw.adp_associate_id
@@ -162,9 +168,6 @@ WITH all_staff AS (
         ,sub.sex
         ,sub.preferred_gender
         ,sub.gender_reporting
-        ,CASE WHEN sub.preferred_race_ethnicity = '' THEN NULL ELSE sub.preferred_race_ethnicity END AS preferred_race_ethnicity
-        ,CASE WHEN sub.preferred_race_ethnicity = '' THEN NULL ELSE sub.ethnicity END AS ethnicity
-        ,CASE WHEN sub.preferred_race_ethnicity = '' THEN NULL ELSE sub.race END AS race
         ,sub.is_race_asian
         ,sub.is_race_black
         ,sub.is_race_decline
@@ -182,7 +185,10 @@ WITH all_staff AS (
         ,sub.professional_experience_in_communities_we_serve
         ,sub.attended_relay
         ,COALESCE(sub.preferred_first_name, sub.first_name) AS preferred_first_name
-        ,COALESCE(sub.preferred_last_name , sub.last_name) AS preferred_last_name
+        ,COALESCE(sub.preferred_last_name, sub.last_name) AS preferred_last_name
+        ,CASE WHEN sub.preferred_race_ethnicity <> '' THEN sub.preferred_race_ethnicity END AS preferred_race_ethnicity
+        ,CASE WHEN sub.preferred_race_ethnicity <> '' THEN sub.ethnicity END AS ethnicity
+        ,CASE WHEN sub.preferred_race_ethnicity <> '' THEN sub.race END AS race
         ,CASE
           WHEN sub.ethnicity = 'Hispanic or Latino' THEN 1
           WHEN sub.ethnicity = 'Not Hispanic or Latino' THEN 0
@@ -215,10 +221,12 @@ WITH all_staff AS (
              ,eh.primary_position
              ,CONVERT(NVARCHAR(256), NULL) AS job_family -- on the way
              ,CASE 
-               WHEN eh.associate_id IN (SELECT reports_to_associate_id
-                                        FROM gabby.people.manager_history_static
-                                        WHERE CONVERT(DATE, GETDATE()) BETWEEN reports_to_effective_date 
-                                                                           AND reports_to_effective_end_date_eoy) THEN 1
+               WHEN eh.associate_id IN (
+                      SELECT reports_to_associate_id
+                      FROM gabby.people.manager_history_static
+                      WHERE CONVERT(DATE, GETDATE()) BETWEEN reports_to_effective_date 
+                                                         AND reports_to_effective_end_date_eoy
+                    ) THEN 1
                ELSE 0
               END AS is_manager
              /* dedupe positions */
@@ -272,7 +280,7 @@ WITH all_staff AS (
              ,cf.[Attended Relay] AS attended_relay
              ,cf.[WFMgr Pay Rule] AS wfmgr_pay_rule
              ,cf.[Preferred Gender] AS preferred_gender
-             
+
              ,rec.preferred_race_ethnicity
 
              ,cw.adp_associate_id AS associate_id_legacy
