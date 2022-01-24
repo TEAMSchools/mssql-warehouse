@@ -95,6 +95,34 @@ WITH all_staff AS (
   GROUP BY associate_id
  )
 
+,survey_race_ethnicity AS (
+  SELECT employee_number
+        ,gabby.dbo.GROUP_CONCAT(answer) AS preferred_race_ethnicity
+  FROM gabby.surveys.staff_information_survey_detail
+  WHERE rn_cur = 1
+    AND question_shortname LIKE 'race_ethnicity%'
+  GROUP BY employee_number
+ )
+
+,race_ethnicity_clean AS (
+  SELECT cw.df_employee_number
+        ,REPLACE(
+           REPLACE(
+             REPLACE(
+               COALESCE(cf.[Preferred Race/Ethnicity], sre.preferred_race_ethnicity,CONCAT(ea.race_description,CASE WHEN ea.ethnicity IS NULL OR ea.ethnicity = 'Hispanic or Latino' THEN '' ELSE ', ' + 'Latinx/Hispanic/Chicana(o)' END))
+                    ,'Black or African American', 'Black/African American') --Replace 'Black or African American' with 'Black/African American'
+                  ,'American Indian or Alaska Native', 'Native American/First Nation') --Replace 'American Indian or Alaska Native' with 'Native American/First Nation'
+               ,'Two or more races (Not Hispanic or Latino)', 'Bi/Multiracial') --Replace 'Two or more races (Not Hispanic or Latino)' with 'Bi/Multiracial'
+             AS preferred_race_ethnicity
+  FROM gabby.people.staff_crosswalk_static cw
+  LEFT JOIN gabby.adp.employees_all ea
+    ON ea.associate_id = cw.adp_associate_id
+  LEFT JOIN gabby.adp.workers_custom_field_group_wide_static cf
+    ON cw.adp_associate_id = cf.worker_id
+  LEFT JOIN survey_race_ethnicity sre
+    ON cw.df_employee_number = sre.employee_number
+ )
+
 ,clean_staff AS (
   SELECT sub.employee_number
         ,sub.associate_id
@@ -134,9 +162,9 @@ WITH all_staff AS (
         ,sub.sex
         ,sub.preferred_gender
         ,sub.gender_reporting
-        ,sub.preferred_race_ethnicity
-        ,sub.ethnicity
-        ,sub.race
+        ,CASE WHEN sub.preferred_race_ethnicity = '' THEN NULL ELSE sub.preferred_race_ethnicity END AS preferred_race_ethnicity
+        ,CASE WHEN sub.preferred_race_ethnicity = '' THEN NULL ELSE sub.ethnicity END AS ethnicity
+        ,CASE WHEN sub.preferred_race_ethnicity = '' THEN NULL ELSE sub.race END AS race
         ,sub.is_race_asian
         ,sub.is_race_black
         ,sub.is_race_decline
@@ -158,14 +186,14 @@ WITH all_staff AS (
         ,CASE
           WHEN sub.ethnicity = 'Hispanic or Latino' THEN 1
           WHEN sub.ethnicity = 'Not Hispanic or Latino' THEN 0
+          ELSE 0
          END AS is_hispanic
         ,CASE
-          WHEN sub.ethnicity = 'Hispanic or Latino' THEN 'Latinx/Hispanic/Chicana(o)'
           WHEN sub.is_race_decline = 1 THEN 'Decline to state'
+          WHEN sub.ethnicity = 'Hispanic or Latino' THEN 'Latinx/Hispanic/Chicana(o)'
           WHEN sub.is_race_multi = 1 THEN 'Bi/Multiracial'
-          WHEN COALESCE(sub.preferred_race_ethnicity,sub.race) = 'Black or African American' THEN 'Black/African American'
-          WHEN COALESCE(sub.preferred_race_ethnicity,sub.race) = 'Asian/Pacific Islander' THEN 'Asian'
-          ELSE COALESCE(sub.preferred_race_ethnicity,sub.race,'Missing')
+          WHEN sub.preferred_race_ethnicity = '' THEN 'Missing'
+          ELSE sub.preferred_race_ethnicity
          END AS race_ethnicity_reporting
   FROM
       (
@@ -207,7 +235,7 @@ WITH all_staff AS (
              ,ea.primary_address_state_territory_code AS address_state
              ,ea.primary_address_zip_postal_code AS address_zip
              ,ea.personal_contact_personal_email AS personal_email
-             ,ea.race_description AS race
+             ,rec.preferred_race_ethnicity AS race
              /* transformations */
              ,CONVERT(DATE, ea.birth_date) AS birth_date
              ,LEFT(UPPER(ea.gender), 1) AS sex
@@ -244,7 +272,8 @@ WITH all_staff AS (
              ,cf.[Attended Relay] AS attended_relay
              ,cf.[WFMgr Pay Rule] AS wfmgr_pay_rule
              ,cf.[Preferred Gender] AS preferred_gender
-             ,COALESCE(cf.[Preferred Race/Ethnicity], sre.preferred_race_ethnicity) AS preferred_race_ethnicity
+             
+             ,rec.preferred_race_ethnicity
 
              ,cw.adp_associate_id AS associate_id_legacy
 
@@ -252,52 +281,46 @@ WITH all_staff AS (
              ,p.flsa_description AS flsa
 
              ,CASE
-               WHEN ea.ethnicity IS NULL AND cf.[Preferred Race/Ethnicity] IS NULL AND sre.preferred_race_ethnicity IS NULL THEN NULL
-               WHEN CHARINDEX('Decline to state', COALESCE(cf.[Preferred Race/Ethnicity], sre.preferred_race_ethnicity)) > 0 THEN NULL
-               WHEN CHARINDEX('Latinx/Hispanic/Chicana(o)', COALESCE(cf.[Preferred Race/Ethnicity], sre.preferred_race_ethnicity)) > 0 THEN 'Hispanic or Latino'
-               WHEN COALESCE(cf.[Preferred Race/Ethnicity], sre.preferred_race_ethnicity) IS NULL AND ea.ethnicity = 'Hispanic or Latino' THEN 'Hispanic or Latino'
+               WHEN rec.preferred_race_ethnicity IS NULL THEN NULL
+               WHEN CHARINDEX('Decline to state', rec.preferred_race_ethnicity) > 0 THEN NULL
+               WHEN CHARINDEX('Latinx/Hispanic/Chicana(o)', rec.preferred_race_ethnicity) > 0 THEN 'Hispanic or Latino'
                ELSE 'Not Hispanic or Latino'
               END AS ethnicity
              ,CASE 
-               WHEN COALESCE(cf.[Preferred Race/Ethnicity], sre.preferred_race_ethnicity) IS NULL AND ea.race_description = 'Black or African American' THEN 1
-               WHEN CHARINDEX('Black/African American', COALESCE(cf.[Preferred Race/Ethnicity], sre.preferred_race_ethnicity)) > 0 THEN 1
+               WHEN CHARINDEX('Black/African American', rec.preferred_race_ethnicity) > 0 THEN 1
                ELSE 0
               END AS is_race_black
              ,CASE 
-               WHEN COALESCE(cf.[Preferred Race/Ethnicity], sre.preferred_race_ethnicity) IS NULL AND ea.race_description = 'Asian' THEN 1
-               WHEN CHARINDEX('Asian', cf.[Preferred Race/Ethnicity]) > 0 THEN 1
+               WHEN CHARINDEX('Asian', rec.preferred_race_ethnicity) > 0 THEN 1
                ELSE 0
               END AS is_race_asian
              ,CASE 
-               WHEN COALESCE(cf.[Preferred Race/Ethnicity], sre.preferred_race_ethnicity) IS NULL AND ea.race_description = 'Native Hawaiian or Other Pacific Islander' THEN 1
-               WHEN CHARINDEX('Native Hawaiian or Other Pacific Islander', COALESCE(cf.[Preferred Race/Ethnicity], sre.preferred_race_ethnicity)) > 0 THEN 1
+               WHEN CHARINDEX('Native Hawaiian or Other Pacific Islander', rec.preferred_race_ethnicity) > 0 THEN 1
                ELSE 0
               END AS is_race_nhpi
              ,CASE 
-               WHEN CHARINDEX('Middle Eastern', COALESCE(cf.[Preferred Race/Ethnicity], sre.preferred_race_ethnicity)) > 0 THEN 1
+               WHEN CHARINDEX('Middle Eastern', rec.preferred_race_ethnicity) > 0 THEN 1
                ELSE 0
               END AS is_race_mideast
              ,CASE 
-               WHEN COALESCE(cf.[Preferred Race/Ethnicity], sre.preferred_race_ethnicity) IS NULL AND ea.race_description = 'White' THEN 1
-               WHEN CHARINDEX('White', COALESCE(cf.[Preferred Race/Ethnicity], sre.preferred_race_ethnicity)) > 0 THEN 1
+               WHEN CHARINDEX('White', rec.preferred_race_ethnicity) > 0 THEN 1
                ELSE 0
               END AS is_race_white
              ,CASE 
-               WHEN CHARINDEX('Native American/First Nation', COALESCE(cf.[Preferred Race/Ethnicity], sre.preferred_race_ethnicity)) > 0 THEN 1
+               WHEN CHARINDEX('Native American/First Nation', rec.preferred_race_ethnicity) > 0 THEN 1
                ELSE 0
               END AS is_race_nafirstnation
              ,CASE
-               WHEN COALESCE(cf.[Preferred Race/Ethnicity], sre.preferred_race_ethnicity) IS NULL AND ea.race_description = 'Two or more races (Not Hispanic or Latino)' THEN 1
-               WHEN CHARINDEX('Bi/Multiracial', COALESCE(cf.[Preferred Race/Ethnicity], sre.preferred_race_ethnicity)) > 0 THEN 1
-               WHEN CHARINDEX(',', COALESCE(cf.[Preferred Race/Ethnicity], sre.preferred_race_ethnicity)) > 0 THEN 1
+               WHEN CHARINDEX('Bi/Multiracial', rec.preferred_race_ethnicity) > 0 THEN 1
+               WHEN CHARINDEX(',', rec.preferred_race_ethnicity) > 0 THEN 1
                ELSE 0
               END AS is_race_multi
              ,CASE
-               WHEN CHARINDEX('My racial/ethnic identity is not listed', COALESCE(cf.[Preferred Race/Ethnicity], sre.preferred_race_ethnicity)) > 0 THEN 1
+               WHEN CHARINDEX('My racial/ethnic identity is not listed', rec.preferred_race_ethnicity) > 0 THEN 1
                ELSE 0
               END AS is_race_other
              ,CASE
-               WHEN CHARINDEX('Decline to state', COALESCE(cf.[Preferred Race/Ethnicity], sre.preferred_race_ethnicity)) > 0 THEN 1
+               WHEN CHARINDEX('Decline to state', rec.preferred_race_ethnicity) > 0 THEN 1
                ELSE 0
               END AS is_race_decline
        FROM all_staff eh
@@ -318,14 +341,8 @@ WITH all_staff AS (
         AND cw.rn_curr = 1
        LEFT JOIN gabby.adp.employees p
          ON eh.position_id = p.position_id
-       LEFT JOIN (SELECT employee_number
-                        ,gabby.dbo.GROUP_CONCAT(answer) AS preferred_race_ethnicity
-                  FROM surveys.staff_information_survey_detail
-                  WHERE rn_cur = 1
-                    AND question_shortname LIKE 'race_ethnicity%'
-                  GROUP BY employee_number) sre
-         ON eh.employee_number = sre.employee_number
-
+       LEFT JOIN race_ethnicity_clean rec
+         ON eh.employee_number = rec.df_employee_number
        WHERE eh.employee_number IS NOT NULL
       ) sub
   WHERE rn = 1
@@ -338,7 +355,10 @@ SELECT c.employee_number
       ,c.file_number
       ,c.first_name
       ,c.last_name
-      ,c.position_status
+      ,CASE 
+        WHEN c.position_status = 'Deceased' THEN 'Terminated'
+        ELSE c.position_status
+       END AS position_status
       ,c.business_unit
       ,c.[location]
       ,c.home_department
