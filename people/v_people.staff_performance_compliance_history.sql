@@ -74,6 +74,7 @@ LEFT JOIN gabby.people.employment_history e
   ON s.df_employee_number = e.employee_number
  AND y.effective_date BETWEEN e.effective_start_date AND e.effective_end_date
  AND e.job_title IS NOT NULL
+ AND e.position_status NOT IN ('Terminated', 'Deceased')
 LEFT JOIN gabby.pm.teacher_goals_overall_scores_static pm
    ON s.df_employee_number = pm.df_employee_number
   AND y.academic_year = pm.academic_year
