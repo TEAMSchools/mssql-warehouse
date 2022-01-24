@@ -320,6 +320,7 @@ SELECT c.sf_contact_id
        ) AS spr_cumulative_credits_earned
 
       ,LAG(gpa.spr_semester_credits_earned, 1) OVER(PARTITION BY c.sf_contact_id ORDER BY ay.academic_year ASC) prev_spr_semester_credits_earned
+NULL AS TEST_FIELD
 FROM gabby.alumni.ktc_roster c
 CROSS JOIN academic_years ay
 LEFT JOIN gabby.alumni.enrollment_identifiers ei
