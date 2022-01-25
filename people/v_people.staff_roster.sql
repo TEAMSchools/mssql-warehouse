@@ -14,7 +14,10 @@ WITH all_staff AS (
         ,eh.home_department
         ,eh.reports_to_associate_id
         ,eh.reports_to_employee_number
-        ,eh.position_status
+        ,CASE 
+          WHEN eh.position_status = 'Deceased' THEN 'Terminated' 
+          ELSE eh.position_status 
+         END AS position_status
         ,eh.business_unit_code
         ,eh.business_unit
         ,eh.[location]
@@ -58,7 +61,10 @@ WITH all_staff AS (
 ,hire_dates AS (
   SELECT associate_id
         ,MIN(CASE WHEN position_status = 'Active' THEN status_effective_date END) AS original_hire_date
-        ,MAX(CASE WHEN position_status = 'Terminated' THEN status_effective_date END) AS termination_date
+        ,MAX(CASE 
+              WHEN position_status IN ('Terminated', 'Deceased') THEN status_effective_date 
+              END
+             ) AS termination_date
   FROM gabby.people.status_history_static
   GROUP BY associate_id
  )
@@ -75,7 +81,7 @@ WITH all_staff AS (
        FROM gabby.people.status_history_static
       ) sub
   WHERE position_status_prev <> 'Terminated'
-    AND position_status = 'Terminated'
+    AND position_status IN ('Terminated', 'Deceased')
   GROUP BY associate_id
  )
 
@@ -363,10 +369,7 @@ SELECT c.employee_number
       ,c.file_number
       ,c.first_name
       ,c.last_name
-      ,CASE 
-        WHEN c.position_status = 'Deceased' THEN 'Terminated'
-        ELSE c.position_status
-       END AS position_status
+      ,c.position_status
       ,c.business_unit
       ,c.[location]
       ,c.home_department
