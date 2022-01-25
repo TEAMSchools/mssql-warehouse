@@ -243,9 +243,9 @@ SELECT c.sf_contact_id
       ,ei.cte_status
       ,ei.cte_actual_end_date
 
-      ,ar.application_name
-      ,ar.application_account_type
-      ,ar.matriculation_decision
+      ,apps.application_name
+      ,apps.application_account_type
+
       ,ar.n_submitted
       ,ar.is_submitted_aa
       ,ar.is_submitted_ba
@@ -283,10 +283,10 @@ SELECT c.sf_contact_id
       ,cnr.[AS6S_date]
 
       ,cnr.CCDM
-      ,cnr.Housing Deposit Paid
-      ,cnr.Housing Deposit Not Required
-      ,cnr.Tuition Deposit Paid
-      ,cnr.Tuition Deposit Not Required
+      ,cnr.[HD_P]
+      ,cnr.[HD_NR]
+      ,cnr.[TD_P]
+      ,cnr.[TD_NR]
       ,cnr.PSCF
       ,cnr.PSCS
       ,cnr.SC
@@ -331,6 +331,11 @@ FROM gabby.alumni.ktc_roster c
 CROSS JOIN academic_years ay
 LEFT JOIN gabby.alumni.enrollment_identifiers ei
   ON c.sf_contact_id = ei.student_c
+LEFT JOIN apps
+  ON c.sf_contact_id = apps.sf_contact_id
+ AND apps.matriculation_decision = 'Matriculated (Intent to Enroll)'
+ AND apps.transfer_application = 0
+ AND apps.rn = 1
 LEFT JOIN apps_rollup ar
   ON c.sf_contact_id = ar.sf_contact_id
 LEFT JOIN gabby.alumni.contact_note_rollup cnr
