@@ -1,7 +1,7 @@
 USE gabby
 GO
 
---CREATE OR ALTER VIEW people.staff_roster AS
+CREATE OR ALTER VIEW people.staff_roster AS
 
 WITH all_staff AS (
   /* current */
@@ -102,37 +102,49 @@ WITH all_staff AS (
  )
 
 ,survey_race_ethnicity AS (
-  SELECT employee_number
-        ,gabby.dbo.GROUP_CONCAT(answer) AS preferred_race_ethnicity
-  FROM gabby.surveys.staff_information_survey_detail
-  WHERE rn_cur = 1
-    AND question_shortname LIKE 'race_ethnicity%'
-  GROUP BY employee_number
+  SELECT sub.subject_adp_associate_id
+        ,gabby.dbo.GROUP_CONCAT(qo.option_value) AS preferred_race_ethnicity
+  FROM
+      (
+       SELECT sri.subject_adp_associate_id
+             ,sri.survey_id
+             ,sri.survey_response_id
+             ,ROW_NUMBER() OVER(PARTITION BY sri.subject_df_employee_number ORDER BY sri.date_submitted DESC) AS rn
+       FROM gabby.surveygizmo.survey_response_identifiers_static sri
+       WHERE sri.[status] = 'Complete'
+         AND sri.survey_id = 6330385
+      ) sub
+  INNER JOIN gabby.surveygizmo.survey_response_data sd
+    ON sub.survey_id = sd.survey_id
+   AND sub.survey_response_id = sd.survey_response_id
+   AND sd.question_id = 5
+  LEFT JOIN gabby.surveygizmo.survey_question_options_static qo
+    ON sub.survey_id = qo.survey_id
+   AND sd.question_id = qo.question_id
+   AND qo.option_disabled = 0
+   AND CHARINDEX(qo.option_id, sd.options) > 0
+  WHERE sub.rn = 1
+  GROUP BY sub.subject_adp_associate_id
  )
 
 ,race_ethnicity_clean AS (
-  SELECT cw.df_employee_number
+  SELECT ea.associate_id
+
         ,REPLACE(REPLACE(REPLACE(
-            COALESCE(
-              cf.[Preferred Race/Ethnicity]
-             ,sre.preferred_race_ethnicity
-             ,CONCAT(ea.race_description
-                    ,CASE 
-                      WHEN ea.ethnicity IS NULL OR ea.ethnicity = 'Hispanic or Latino' THEN '' 
-                      ELSE ', ' + 'Latinx/Hispanic/Chicana(o)' 
-                     END)
-            )
-           ,'Black or African American', 'Black/African American')
-           ,'American Indian or Alaska Native', 'Native American/First Nation')
-           ,'Two or more races (Not Hispanic or Latino)', 'Bi/Multiracial')
+           COALESCE(
+             cf.[Preferred Race/Ethnicity]
+            ,sre.preferred_race_ethnicity
+            ,ea.race_description + CASE WHEN ISNULL(ea.ethnicity, '') IN ('Not Hispanic or Latino', '') THEN '' ELSE ',Latinx/Hispanic/Chicana(o)' END
+           )
+          ,'Black or African American', 'Black/African American')
+          ,'American Indian or Alaska Native', 'Native American/First Nation')
+          ,'Two or more races (Not Hispanic or Latino)', 'Bi/Multiracial')
            AS preferred_race_ethnicity
-  FROM gabby.people.staff_crosswalk_static cw
-  LEFT JOIN gabby.adp.employees_all ea
-    ON ea.associate_id = cw.adp_associate_id
+  FROM gabby.adp.employees_all ea
   LEFT JOIN gabby.adp.workers_custom_field_group_wide_static cf
-    ON cw.adp_associate_id = cf.worker_id
+    ON ea.associate_id = cf.worker_id
   LEFT JOIN survey_race_ethnicity sre
-    ON cw.df_employee_number = sre.employee_number
+    ON ea.associate_id = sre.subject_adp_associate_id
  )
 
 ,clean_staff AS (
@@ -356,7 +368,7 @@ WITH all_staff AS (
        LEFT JOIN gabby.adp.employees p
          ON eh.position_id = p.position_id
        LEFT JOIN race_ethnicity_clean rec
-         ON eh.employee_number = rec.df_employee_number
+         ON eh.associate_id = rec.associate_id
        WHERE eh.employee_number IS NOT NULL
       ) sub
   WHERE rn = 1
