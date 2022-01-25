@@ -34,7 +34,6 @@ SELECT contact_id
       ,ISDATE(CONVERT(VARCHAR(10), [AS6S])) AS [AS6S]
       ,[AS6S] AS [AS6S_date]
 
-
       ,ISDATE(CONVERT(VARCHAR(10) ,[PSCF])) AS [PSCF]
       ,ISDATE(CONVERT(VARCHAR(10) ,[PSCS])) AS [PSCS]
 
@@ -74,6 +73,10 @@ SELECT contact_id
       ,ISDATE(CONVERT(VARCHAR(10) ,[DP_WorkforceS])) AS [DP_WorkforceS]
       ,ISDATE(CONVERT(VARCHAR(10) ,[DP_UnknownS])) AS [DP_UnknownS]
 
+      ,ISDATE(CONVERT(VARCHAR(10), [HD_P])) AS [HD_P]
+      ,ISDATE(CONVERT(VARCHAR(10), [HD_NR])) AS [HD_NR]
+      ,ISDATE(CONVERT(VARCHAR(10), [TD_P])) AS [TD_P]
+      ,ISDATE(CONVERT(VARCHAR(10), [TD_NR])) AS [TD_NR]
 FROM
     (
      SELECT sub.contact_id
@@ -89,6 +92,8 @@ FROM
                   WHEN c.subject_c LIKE 'MC%' THEN ''
                   WHEN c.subject_c LIKE '%HV' THEN ''
                   WHEN c.subject_c LIKE 'SC[0-9]%' THEN ''
+                  WHEN c.subject_c LIKE 'Housing Deposit%' THEN ''
+                  WHEN c.subject_c LIKE 'Tuition Deposit%' THEN ''
                   WHEN c.subject_c LIKE 'Q%' THEN 'Q' + SUBSTRING(c.subject_c, 2, 1)
                   WHEN MONTH(c.date_c) >= 7 THEN 'F'
                   WHEN MONTH(c.date_c) < 7 THEN 'S'
@@ -101,6 +106,10 @@ FROM
                   WHEN c.subject_c LIKE 'Q%SM%' THEN 'SM' + SUBSTRING(c.subject_c, 7, 1)
                   WHEN c.subject_c LIKE '%HV' THEN 'HV'
                   WHEN c.subject_c LIKE 'DP%' THEN REPLACE(gabby.utilities.STRIP_CHARACTERS(c.subject_c, ':-'), ' ', '_')
+                  WHEN c.subject_c = 'Housing Deposit Paid' THEN 'HD_P'
+                  WHEN c.subject_c = 'Housing Deposit Not Required' THEN 'HD_NR'
+                  WHEN c.subject_c = 'Tuition Deposit Paid' THEN 'TD_P'
+                  WHEN c.subject_c = 'Tuition Deposit Not Required' THEN 'TD_NR'
                   ELSE c.subject_c 
                  END AS contact_subject
                 ,c.date_c AS contact_date
@@ -125,49 +134,17 @@ FROM
     ) sub
 PIVOT(
   MIN(contact_date)
-  FOR contact_type IN ([AS1F]
-                      ,[AS2F]
-                      ,[AS1S]
-                      ,[AS2S]
-                      ,[AS3F]
-                      ,[AS3S]
-                      ,[AS4F]
-                      ,[AS4S]
-                      ,[AS5F]
-                      ,[AS6F]
-                      ,[AS5S]
-                      ,[AS6S]
-                      ,[PSCF]
-                      ,[PSCS]
-                      ,[BBBF]
-                      ,[BBBS]
-                      ,[BMF]
-                      ,[BMS]
-                      ,[GPF]
-                      ,[GPS]
-                      ,[MC1]
-                      ,[MC2]
-                      ,[SM1Q1]
-                      ,[SM1Q2]
-                      ,[SM1Q3]
-                      ,[SM1Q4]
-                      ,[SM2Q1]
-                      ,[SM2Q2]
-                      ,[SM2Q3]
-                      ,[SM2Q4]
-                      ,[SC]
-                      ,[CCDM]
-                      ,[HV]
-                      ,[DP_4yearF]
-                      ,[DP_2yearF]
-                      ,[DP_CTEF]
-                      ,[DP_MilitaryF]
-                      ,[DP_WorkforceF]
-                      ,[DP_UnknownF]
-                      ,[DP_4yearS]
-                      ,[DP_2yearS]
-                      ,[DP_CTES]
-                      ,[DP_MilitaryS]
-                      ,[DP_WorkforceS]
-                      ,[DP_UnknownS])
+  FOR contact_type IN ([AS1F],[AS2F],[AS3F],[AS4F],[AS5F],[AS6F]
+                      ,[AS1S],[AS2S],[AS3S],[AS4S],[AS5S],[AS6S]
+                      ,[PSCF],[PSCS]
+                      ,[BBBF],[BBBS]
+                      ,[BMF],[BMS]
+                      ,[GPF],[GPS]
+                      ,[MC1],[MC2]
+                      ,[SM1Q1],[SM1Q2],[SM1Q3],[SM1Q4]
+                      ,[SM2Q1],[SM2Q2],[SM2Q3],[SM2Q4]
+                      ,[SC],[CCDM],[HV]
+                      ,[DP_4yearF],[DP_2yearF],[DP_CTEF],[DP_MilitaryF],[DP_WorkforceF],[DP_UnknownF]
+                      ,[DP_4yearS],[DP_2yearS],[DP_CTES],[DP_MilitaryS],[DP_WorkforceS],[DP_UnknownS]
+                      ,[HD_P],[HD_NR],[TD_P],[TD_NR])
  ) p
