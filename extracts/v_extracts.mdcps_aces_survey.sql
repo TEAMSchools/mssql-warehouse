@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW extracts.mdcps_aces_survey AS
+--CREATE OR ALTER VIEW extracts.mdcps_aces_survey AS
 
 SELECT sr.job_title 
       ,sr.[location]
@@ -30,6 +30,6 @@ SELECT sr.job_title
       ,sr.position_effective_start_date
       ,sr.termination_date
 FROM gabby.people.staff_roster sr
-LEFT JOIN gabby.adp.workers_custom_field_group_wide cf
+LEFT JOIN gabby.adp.workers_custom_field_group_wide_static cf
   ON sr.employee_number = cf.[Employee Number]
 WHERE sr.business_unit = 'KIPP Miami'
