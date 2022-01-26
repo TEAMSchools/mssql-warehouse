@@ -1,10 +1,10 @@
 USE gabby
 GO
---CREATE OR ALTER VIEW tableau.zendesk_tickets AS
-WITH original_group AS
-(SELECT 
-       sub.ticket_id
-      ,g.[name] AS group_name
+CREATE OR ALTER VIEW tableau.zendesk_tickets AS
+
+WITH original_group AS (
+  SELECT sub.ticket_id
+         ,g.[name] AS group_name
   FROM
       (SELECT *,
               ROW_NUMBER() OVER(
@@ -13,41 +13,42 @@ WITH original_group AS
               FROM gabby.zendesk.ticket_field_history fh
               WHERE field_name = 'group_id')
               AS sub
-JOIN zendesk.[group] g
-ON sub.[value] = g.id
-WHERE sub.group_rn = 1
-)
-,group_updated AS
-(SELECT 
-        ticket_id
-       ,MAX(updated) AS group_updated
-FROM gabby.zendesk.ticket_field_history fh
-WHERE field_name = 'group_id'
-GROUP BY ticket_id
-)
-,original_assignee AS
-(SELECT 
-       sub.ticket_id
-      ,sub.assignee_rn
-      ,sub.updated AS assignee_updated
-      ,u.name AS assignee_name
-      ,scw.primary_on_site_department as orig_assignee_dept
-      ,scw.primary_job AS orig_assignee_job
-      ,scw.legal_entity_name
-      
-FROM (SELECT *,
-           ROW_NUMBER() OVER(
-           PARTITION BY ticket_id, field_name
-           ORDER BY updated) AS assignee_rn
-      FROM gabby.zendesk.ticket_field_history fh
-       WHERE field_name = 'assignee_id' )
-       AS sub
-JOIN zendesk.[user] u
-ON sub.[value] = u.id
-JOIN gabby.people.staff_crosswalk_static scw
-ON u.email = scw.userprincipalname
-WHERE sub.assignee_rn = 1
-)
+  JOIN zendesk.[group] g
+  ON sub.[value] = g.id
+  WHERE sub.group_rn = 1
+ )
+
+,group_updated AS(
+  SELECT ticket_id
+        ,MAX(updated) AS group_updated
+  FROM gabby.zendesk.ticket_field_history fh
+  WHERE field_name = 'group_id'
+  GROUP BY ticket_id
+ )
+
+,original_assignee AS (
+  SELECT sub.ticket_id
+        ,sub.assignee_rn
+        ,sub.updated AS assignee_updated
+        ,u.name AS assignee_name
+        ,scw.primary_on_site_department as orig_assignee_dept
+        ,scw.primary_job AS orig_assignee_job
+        ,scw.legal_entity_name
+  FROM (
+        SELECT *,
+               ROW_NUMBER() OVER(
+               PARTITION BY ticket_id, field_name
+               ORDER BY updated) AS assignee_rn
+          FROM gabby.zendesk.ticket_field_history fh
+        WHERE field_name = 'assignee_id' )
+        AS sub
+  JOIN zendesk.[user] u
+  ON sub.[value] = u.id
+  JOIN gabby.people.staff_crosswalk_static scw
+  ON u.email = scw.userprincipalname
+  WHERE sub.assignee_rn = 1
+ )
+
 ,submitter_crosswalk AS (
   SELECT
         a.id
@@ -60,18 +61,19 @@ WHERE sub.assignee_rn = 1
   ON a.email = c.userprincipalname
   WHERE c.userprincipalname IS NOT NULL
   )
-SELECT 
-       t.id AS ticket_id
+
+SELECT t.id AS ticket_id
       ,CONVERT(VARCHAR(500), t.[subject]) AS ticket_subject
       ,CASE 
-       WHEN tm.assignee_stations < tm.group_stations THEN g.[name]
-       WHEN c.primary_on_site_department IS NULL THEN g.[name]
-       ELSE c.primary_on_site_department END AS last_assigned_dept_group -- if fewer assignees than groups, then the Zendesk group, if ADP department is null then the Zendesk group, otherwise, the last assignee's ADP department
+        WHEN tm.assignee_stations < tm.group_stations THEN g.[name]
+        WHEN c.primary_on_site_department IS NULL THEN g.[name]
+        ELSE c.primary_on_site_department END AS last_assigned_dept_group -- if fewer assignees than groups, then the Zendesk group, if ADP department is null then the Zendesk group, otherwise, the last assignee's ADP department
       ,a.[name] AS assignee
       ,c.primary_job AS assignee_primary_job
       ,c.primary_site AS assignee_primary_site
       ,c.legal_entity_name AS assignee_legal_entity
-      --time differences--
+
+      --time metrics--
       ,tm.assignee_updated_at
       ,tm.initially_assigned_at
       ,gu.group_updated AS group_updated
@@ -80,22 +82,25 @@ SELECT
       ,tm.replies AS comments_count --remove?
       ,tm.full_resolution_time_in_minutes_business AS total_bh_minutes
       ,tm.reply_time_in_minutes_business
-      ,DATEDIFF(WEEKDAY,t.created_at, tm.initially_assigned_at) AS created_to_first_assigned
-      ,DATEDIFF(WEEKDAY,t.created_at,tm.assignee_updated_at) AS created_to_last_assigned
-      ,DATEDIFF(WEEKDAY,t.created_at,gu.group_updated) AS created_to_last_group
-      ,DATEDIFF(WEEKDAY,t.created_at,tm.solved_at) AS created_to_solved
+      ,DATEDIFF(WEEKDAY,t.created_at, tm.initially_assigned_at) AS weekdays_created_to_first_assigned
+      ,DATEDIFF(WEEKDAY,t.created_at,tm.assignee_updated_at) AS weekdays_created_to_last_assigned
+      ,DATEDIFF(WEEKDAY,t.created_at,gu.group_updated) AS weekdays_created_to_last_group
+      ,DATEDIFF(WEEKDAY,t.created_at,tm.solved_at) AS weekdays_created_to_solved
+
       --first assignee info--
       ,oa.assignee_name AS original_assignee
       ,CASE
-       WHEN tm.assignee_stations < tm.group_stations THEN og.group_name
-       WHEN oa.orig_assignee_dept IS NULL THEN og.group_name
-       ELSE oa.orig_assignee_dept END AS og_group
-       --if fewer assignees than groups, then the original Zendesk group, if original assignee's ADP department null then the Zendesk group, otherwise, the original assignee's ADP department
+        WHEN tm.assignee_stations < tm.group_stations THEN og.group_name
+        WHEN oa.orig_assignee_dept IS NULL THEN og.group_name
+        ELSE oa.orig_assignee_dept END AS og_group
+        --if fewer assignees than groups, then the original Zendesk group, if original assignee's ADP department null then the Zendesk group, otherwise, the original assignee's ADP department
       ,oa.orig_assignee_job
+
       --ticket info--
       ,t.[status] AS ticket_status
       ,t.custom_category AS category
       ,t.custom_tech_tier AS tech_tier
+
       --submitter info--
       ,sx.primary_on_site_department AS submitter_dept
       ,s.[name] AS submitter_name
