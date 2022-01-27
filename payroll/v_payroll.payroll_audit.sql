@@ -398,7 +398,7 @@ FROM
      LEFT JOIN gabby.payroll.register_code_lookup rcl
        ON u.company_code = rcl.company_code
       AND u.code = rcl.field_name
-     JOIN gabby.people.employment_history eh
+     JOIN gabby.people.employment_history_static eh
        ON u.position_id = eh.position_id
       AND u.payroll_date BETWEEN eh.effective_start_date AND eh.effective_end_date
      JOIN gabby.people.staff_crosswalk_static r

@@ -36,10 +36,8 @@ SELECT d.survey_id
       ,s.is_race_nhpi
       ,s.is_race_other
       ,s.is_race_white
-
-
 FROM gabby.surveygizmo.survey_detail d
-LEFT JOIN gabby.people.employment_history w
+LEFT JOIN gabby.people.employment_history_static w
   ON d.respondent_df_employee_number = w.employee_number
  AND d.date_submitted BETWEEN w.effective_start_date 
                           AND COALESCE(w.effective_end_date, DATEFROMPARTS((d.campaign_academic_year + 1), 7, 1))
@@ -84,7 +82,6 @@ SELECT d.survey_id
       ,sr.is_race_nhpi
       ,sr.is_race_other
       ,sr.is_race_white
-
 FROM gabby.surveys.cmo_engagement_regional_survey_detail_archive d
 LEFT JOIN gabby.people.staff_roster sr
   ON d.respondent_df_employee_number = sr.employee_number

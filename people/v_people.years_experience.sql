@@ -15,7 +15,7 @@ WITH months AS (
                ELSE 'inactive'
               END AS status_clean
              ,DATEDIFF(MONTH, effective_start_date, effective_end_date) AS months
-       FROM gabby.people.employment_history
+       FROM gabby.people.employment_history_static
        WHERE position_status NOT IN ('Terminated', 'Pre-Start')
          AND job_title <> 'Intern'
       ) sub
@@ -28,7 +28,7 @@ WITH months AS (
 ,years_teaching_at_kipp AS (
   SELECT was.employee_number
         ,SUM(DATEDIFF(MONTH, was.effective_start_date, was.effective_end_date)) AS months_as_teacher
-  FROM gabby.people.employment_history was
+  FROM gabby.people.employment_history_static was
   WHERE was.position_status NOT IN ('Terminated', 'Pre-Start')
     AND was.job_title IN ('Teacher', 'Learning Specialist', 'Learning Specialist Coordinator', 'Teacher in Residence', 'Teacher, ESL', 'Teacher ESL', 'Co-Teacher')
   GROUP BY was.employee_number

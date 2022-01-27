@@ -42,7 +42,7 @@ WITH response_pivot AS (
              ,srd.survey_response_id
              ,srd.date_started
              ,srd.answer
-       FROM gabby.surveygizmo.survey_question_clean sq
+       FROM gabby.surveygizmo.survey_question_clean_static sq
        JOIN gabby.surveygizmo.survey_response_data srd
          ON sq.survey_id = srd.survey_id
         AND sq.survey_question_id = srd.question_id
@@ -166,7 +166,7 @@ LEFT JOIN gabby.surveygizmo.survey_campaign_clean_static sc
  AND sc.[status] <> 'Deleted'
 LEFT JOIN gabby.people.staff_crosswalk_static resp
   ON rc.respondent_employee_number = resp.df_employee_number
-LEFT JOIN gabby.people.employment_history reh
+LEFT JOIN gabby.people.employment_history_static reh
   ON resp.position_id = reh.position_id
  AND CONVERT(DATE, sc.link_close_date) BETWEEN reh.effective_start_date AND reh.effective_end_date
 LEFT JOIN gabby.people.staff_crosswalk_static rmgr
@@ -175,7 +175,7 @@ LEFT JOIN gabby.people.school_crosswalk rsch
   ON reh.[location] = rsch.site_name
 LEFT JOIN gabby.people.staff_crosswalk_static subj
   ON rc.subject_employee_number = subj.df_employee_number
-LEFT JOIN gabby.people.employment_history seh
+LEFT JOIN gabby.people.employment_history_static seh
   ON subj.position_id = seh.position_id
  AND CONVERT(DATE, sc.link_close_date) BETWEEN seh.effective_start_date AND seh.effective_end_date
 LEFT JOIN gabby.people.staff_crosswalk_static smgr

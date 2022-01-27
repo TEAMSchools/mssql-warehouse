@@ -25,7 +25,7 @@ SELECT h.employee_number
       ,r.[status]
 
       ,ROW_NUMBER() OVER(PARTITION BY h.employee_number ORDER BY h.effective_start_date DESC) AS rn_curr
-FROM gabby.people.employment_history h
+FROM gabby.people.employment_history_static h
 JOIN gabby.people.staff_crosswalk_static r
   ON h.associate_id = r.adp_associate_id
 WHERE (h.job_title IS NOT NULL OR h.annual_salary IS NOT NULL)

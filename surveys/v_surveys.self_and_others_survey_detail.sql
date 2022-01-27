@@ -119,9 +119,11 @@ SELECT NULL AS survey_id
       ,a.response_weight
       ,a.response_value_weighted AS answer_value_weighted
 FROM gabby.surveys.self_and_others_survey_detail_archive a 
-LEFT JOIN gabby.people.employment_history w
+LEFT JOIN gabby.people.employment_history_static w
   ON a.subject_employee_number = w.employee_number
  AND a.date_submitted BETWEEN w.effective_start_date AND w.effective_end_date
+ AND w.primary_position = 'Yes'
+ AND w.position_status <> 'Terminated'
 LEFT JOIN gabby.people.staff_crosswalk_static s
   ON a.subject_employee_number = s.df_employee_number
 LEFT JOIN gabby.people.staff_crosswalk_static r

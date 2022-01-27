@@ -27,7 +27,7 @@ WITH all_staff AS (
         ,eh.effective_start_date
         ,eh.status_effective_start_date
         ,eh.primary_position
-  FROM gabby.people.employment_history eh
+  FROM gabby.people.employment_history_static eh
   WHERE CONVERT(DATE, GETDATE()) BETWEEN eh.effective_start_date AND eh.effective_end_date
 
   UNION ALL
@@ -52,7 +52,7 @@ WITH all_staff AS (
         ,ps.effective_start_date
         ,ps.status_effective_start_date
         ,ps.primary_position
-  FROM gabby.people.employment_history ps
+  FROM gabby.people.employment_history_static ps
   WHERE ps.status_effective_start_date > CONVERT(DATE, GETDATE())
     AND ps.position_status = 'Active'
     AND (ps.position_status_cur IS NULL OR ps.position_status_cur = 'Terminated')
@@ -109,7 +109,7 @@ WITH all_staff AS (
        SELECT sri.subject_adp_associate_id
              ,sri.survey_id
              ,sri.survey_response_id
-             ,ROW_NUMBER() OVER(PARTITION BY sri.subject_df_employee_number ORDER BY sri.date_submitted DESC) AS rn
+             ,ROW_NUMBER() OVER(PARTITION BY sri.subject_adp_associate_id ORDER BY sri.date_submitted DESC) AS rn
        FROM gabby.surveygizmo.survey_response_identifiers_static sri
        WHERE sri.[status] = 'Complete'
          AND sri.survey_id = 6330385
@@ -365,6 +365,14 @@ SELECT c.employee_number
       ,c.is_race_nhpi
       ,c.is_race_other
       ,c.is_race_white
+      ,c.years_teaching_in_any_state
+      ,c.years_teaching_in_nj_or_fl
+      ,c.kipp_alumni_status
+      ,c.years_of_professional_experience_before_joining
+      ,c.life_experience_in_communities_we_serve
+      ,c.teacher_prep_program
+      ,c.professional_experience_in_communities_we_serve
+      ,c.attended_relay
       ,c.preferred_last_name + ', ' + c.preferred_first_name AS preferred_name
       ,SUBSTRING(c.personal_mobile, 1, 3) + '-'
          + SUBSTRING(c.personal_mobile, 4, 3) + '-'
@@ -404,15 +412,6 @@ SELECT c.employee_number
       ,m.preferred_first_name AS manager_preferred_first_name
       ,m.preferred_last_name AS manager_preferred_last_name
       ,m.preferred_last_name + ', ' + m.preferred_first_name AS manager_name
-
-      ,c.years_teaching_in_any_state
-      ,c.years_teaching_in_nj_or_fl
-      ,c.kipp_alumni_status
-      ,c.years_of_professional_experience_before_joining
-      ,c.life_experience_in_communities_we_serve
-      ,c.teacher_prep_program
-      ,c.professional_experience_in_communities_we_serve
-      ,c.attended_relay
 
       ,y.years_at_kipp_total
       ,y.years_at_kipp_total + c.years_of_professional_experience_before_joining AS total_professional_experience

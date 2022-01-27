@@ -70,7 +70,7 @@ JOIN years y
 LEFT JOIN cert_history c
   ON s.df_employee_number = c.employee_number
  AND y.academic_year = c.academic_year
-LEFT JOIN gabby.people.employment_history e
+LEFT JOIN gabby.people.employment_history_static e
   ON s.df_employee_number = e.employee_number
  AND y.effective_date BETWEEN e.effective_start_date AND e.effective_end_date
  AND e.job_title IS NOT NULL

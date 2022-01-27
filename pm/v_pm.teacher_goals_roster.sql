@@ -32,12 +32,12 @@ WITH academic_years AS (
 
              ,sc.ps_school_id
              ,sc.site_name_clean
-       FROM gabby.people.employment_history wa
+       FROM gabby.people.employment_history_static wa
        LEFT JOIN gabby.people.school_crosswalk sc
          ON wa.[location] = sc.site_name
         AND sc._fivetran_deleted = 0
-       WHERE wa.position_status NOT IN ('Terminated', 'Pre-Start')
-         AND wa.job_title IN ('Teacher', 'Teacher Fellow', 'Teacher in Residence', 'Co-Teacher', 'Learning Specialist', 'Learning Specialist Coordinator', 'Teacher, ESL', 'Teacher ESL')
+       WHERE wa.job_title IN ('Teacher', 'Teacher Fellow', 'Teacher in Residence', 'Co-Teacher', 'Learning Specialist', 'Learning Specialist Coordinator', 'Teacher, ESL', 'Teacher ESL')
+         AND wa.position_status NOT IN ('Terminated', 'Pre-Start')
       ) sub
  )
 

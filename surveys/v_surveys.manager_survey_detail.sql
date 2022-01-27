@@ -34,9 +34,11 @@ SELECT d.survey_id
       ,d.subject_manager_samaccountname
       ,w.job_title AS subject_role 
 FROM gabby.surveygizmo.survey_detail d
-LEFT JOIN gabby.people.employment_history w
+LEFT JOIN gabby.people.employment_history_static w
   ON d.subject_df_employee_number = w.employee_number
  AND d.date_submitted BETWEEN w.effective_start_date AND w.effective_end_date
+ AND w.primary_position = 'Yes'
+ AND w.position_status <> 'Terminated'
 LEFT JOIN gabby.people.staff_crosswalk_static s
   ON d.subject_df_employee_number = s.df_employee_number
 WHERE d.survey_title = 'Manager Survey'
@@ -80,6 +82,8 @@ LEFT JOIN gabby.people.staff_crosswalk_static sbjt
   ON sda.subject_df_employee_number = sbjt.df_employee_number
 LEFT JOIN gabby.people.staff_crosswalk_static mgr
   ON sda.subject_manager_df_employee_number = mgr.df_employee_number
-LEFT JOIN gabby.people.employment_history w
+LEFT JOIN gabby.people.employment_history_static w
   ON sda.subject_df_employee_number = w.employee_number
  AND sda.date_submitted BETWEEN w.effective_start_date AND w.effective_end_date
+ AND w.primary_position = 'Yes'
+ AND w.position_status <> 'Terminated'

@@ -124,7 +124,7 @@ WITH term AS (
        JOIN years y
          ON y.academic_year BETWEEN r.start_academic_year AND r.end_academic_year
       ) sub
-  LEFT JOIN gabby.people.employment_history w
+  LEFT JOIN gabby.people.employment_history_static w
     ON sub.position_id = w.position_id
    AND sub.effective_date BETWEEN w.effective_start_date AND w.effective_end_date
   LEFT JOIN gabby.people.school_crosswalk scw
