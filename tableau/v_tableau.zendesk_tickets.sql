@@ -30,14 +30,14 @@ WITH original_group AS (
 ,original_assignee AS (
   SELECT sub.ticket_id
         ,sub.assignee_rn
-        ,sub.updated AS assignee_updated
-        ,u.name AS assignee_name
+        ,u.[name] AS assignee_name
         ,scw.primary_on_site_department as orig_assignee_dept
         ,scw.primary_job AS orig_assignee_job
         ,scw.legal_entity_name
   FROM (
-        SELECT *,
-               ROW_NUMBER() OVER(
+        SELECT ticket_id
+              ,[value]
+              ,ROW_NUMBER() OVER(
                PARTITION BY ticket_id, field_name
                ORDER BY updated) AS assignee_rn
           FROM gabby.zendesk.ticket_field_history fh
@@ -49,19 +49,6 @@ WITH original_group AS (
     ON u.email = scw.userprincipalname
   WHERE sub.assignee_rn = 1
  )
-
-,submitter_crosswalk AS (
-  SELECT
-        a.id
-       ,c.df_employee_number
-       ,c.legal_entity_name
-       ,c.primary_job
-       ,c.primary_on_site_department
-       ,c.primary_site
-  FROM zendesk.[user] a
-  JOIN gabby.people.staff_crosswalk_static c
-    ON a.email = c.userprincipalname
-  )
 
 SELECT t.id AS ticket_id
       ,CONVERT(VARCHAR(500), t.[subject]) AS ticket_subject
@@ -120,8 +107,8 @@ LEFT JOIN gabby.zendesk.[group] g
   ON t.group_id = g.id
 LEFT JOIN gabby.people.staff_crosswalk_static c
   ON a.email = c.userprincipalname
---LEFT JOIN gabby.people.staff_crosswalk_static sx
---  ON s.email = c.userprincipalname
+LEFT JOIN gabby.people.staff_crosswalk_static sx
+  ON s.email = sx.userprincipalname
 LEFT JOIN gabby.zendesk.ticket_metrics_clean tm
   ON t.id = tm.ticket_id
 LEFT JOIN original_group og
@@ -130,6 +117,4 @@ LEFT JOIN group_updated gu
   ON t.id = gu.ticket_id
 LEFT JOIN original_assignee oa
   ON t.id = oa.ticket_id
-LEFT JOIN submitter_crosswalk sx
-  ON t.submitter_id = sx.id
 WHERE t.[status] <> 'deleted'
