@@ -11,19 +11,19 @@ SELECT studentid
            ORDER BY is_dropped, dateleft DESC, sectionid DESC) AS rn_term
 FROM
     (
-     SELECT CONVERT(INT, cc.studentid) AS studentid
-           ,CONVERT(VARCHAR(25), cc.course_number) AS course_number
-           ,CONVERT(INT, cc.sectionid) AS sectionid
+     SELECT cc.studentid
+           ,cc.course_number
+           ,cc.sectionid
            ,cc.dateleft
            ,CONVERT(INT, LEFT(ABS(cc.termid), 2)) AS yearid
            ,ABS(cc.sectionid) AS abs_sectionid
            ,CASE WHEN cc.sectionid < 0 THEN 1 ELSE 0 END AS is_dropped
 
-           ,CONVERT(INT, sec.gradescaleid) AS gradescaleid
+           ,sec.gradescaleid
 
            ,CASE
              WHEN terms.alt_name = 'Summer School' THEN 'Q1'
-             ELSE CONVERT(VARCHAR, terms.alt_name) COLLATE Latin1_General_BIN
+             ELSE terms.alt_name COLLATE Latin1_General_BIN
             END AS term_name
      FROM powerschool.cc
      JOIN powerschool.sections sec
