@@ -57,6 +57,7 @@ WITH original_group AS (
        ,c.legal_entity_name
        ,c.primary_job
        ,c.primary_on_site_department
+       ,c.primary_site
   FROM zendesk.[user] a
   JOIN gabby.people.staff_crosswalk_static c
     ON a.email = c.userprincipalname
@@ -97,6 +98,7 @@ SELECT t.id AS ticket_id
 
       ,sx.primary_on_site_department AS submitter_dept
       ,sx.primary_job AS submitter_job
+      ,sx.primary_site AS submitter_site
       ,sx.legal_entity_name AS submitter_entity
 
       ,CASE
@@ -118,6 +120,8 @@ LEFT JOIN gabby.zendesk.[group] g
   ON t.group_id = g.id
 LEFT JOIN gabby.people.staff_crosswalk_static c
   ON a.email = c.userprincipalname
+--LEFT JOIN gabby.people.staff_crosswalk_static sx
+--  ON s.email = c.userprincipalname
 LEFT JOIN gabby.zendesk.ticket_metrics_clean tm
   ON t.id = tm.ticket_id
 LEFT JOIN original_group og
