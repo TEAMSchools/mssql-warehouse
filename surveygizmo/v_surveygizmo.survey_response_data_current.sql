@@ -14,6 +14,7 @@ SELECT sr.survey_response_id
       ,sd.answer_id
       ,sd.answer
       ,sd.options
+      ,sd.options_list
       ,sd.shown
 FROM gabby.surveygizmo.survey_response_clean_current_static sr
 CROSS APPLY OPENJSON(sr.survey_data_json, '$')
@@ -25,5 +26,6 @@ CROSS APPLY OPENJSON(sr.survey_data_json, '$')
     question NVARCHAR(512),
     answer NVARCHAR(MAX),
     options NVARCHAR(MAX) AS JSON,
+    options_list NVARCHAR(MAX) AS JSON,
     shown BIT
    ) AS sd

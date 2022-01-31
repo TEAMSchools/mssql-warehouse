@@ -13,6 +13,7 @@ SELECT cur.survey_response_id
       ,cur.answer_id
       ,cur.answer
       ,cur.options
+      ,cur.options_list
       ,cur.shown
 FROM gabby.surveygizmo.survey_response_data_current_static cur
 
@@ -28,5 +29,6 @@ SELECT rcv.survey_response_id
       ,rcv.answer_id
       ,rcv.answer
       ,rcv.options
+      ,rcv.options_list
       ,rcv.shown
 FROM gabby.surveygizmo.survey_response_data_archive rcv

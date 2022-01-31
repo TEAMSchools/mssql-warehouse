@@ -6,12 +6,14 @@ CREATE OR ALTER VIEW surveygizmo.survey_detail AS
 SELECT s.survey_id
       ,s.title AS survey_title
 
+      ,sq.survey_question_id
       ,sq.shortname AS question_shortname
       ,sq.title_clean AS question_title
       ,sq.[type] AS question_type
       ,sq.is_open_ended
 
       ,srd.survey_response_id
+      ,srd.answer_id
 
       ,CASE WHEN ISNUMERIC(qo.option_value) = 0 THEN NULL ELSE qo.option_value END AS answer_value
 
