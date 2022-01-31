@@ -15,6 +15,8 @@ SELECT s.survey_id
       ,srd.survey_response_id
       ,srd.answer_id
 
+      ,srdo.option_id
+
       ,CASE WHEN ISNUMERIC(qo.option_value) = 0 THEN NULL ELSE qo.option_value END AS answer_value
 
       ,sri.contact_id
@@ -61,20 +63,23 @@ SELECT s.survey_id
       ,sri.is_manager
       ,sri.rn_respondent_subject
 
-      ,COALESCE(qo.option_title_english, srd.answer) AS answer
+      ,COALESCE(qo.option_title_english, srd.answer, srdo.answer) AS answer
 FROM gabby.surveygizmo.survey_clean s
 INNER JOIN gabby.surveygizmo.survey_question_clean_static sq
   ON s.survey_id = sq.survey_id
  AND sq.base_type = 'Question'
  AND sq.is_identifier_question = 0
- AND sq.[type] IN ('RADIO', 'ESSAY', 'TEXTBOX')
 INNER JOIN gabby.surveygizmo.survey_response_data srd
   ON sq.survey_id = srd.survey_id
  AND sq.survey_question_id = srd.question_id
+LEFT JOIN gabby.surveygizmo.survey_response_data_options srdo
+  ON srd.survey_id = srdo.survey_id
+ AND srd.survey_response_id = srdo.survey_response_id
+ AND srd.question_id = srdo.question_id
 LEFT JOIN gabby.surveygizmo.survey_question_options_static qo
   ON srd.survey_id = qo.survey_id
  AND srd.question_id = qo.question_id
- AND srd.answer_id = qo.option_id
+ AND COALESCE(srd.answer_id, srdo.option_id) = qo.option_id
 LEFT JOIN gabby.surveygizmo.survey_response_identifiers_static sri
   ON srd.survey_id = sri.survey_id
  AND srd.survey_response_id = sri.survey_response_id
