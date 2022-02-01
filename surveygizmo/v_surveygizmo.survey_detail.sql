@@ -75,7 +75,7 @@ LEFT JOIN gabby.surveygizmo.survey_question_options_static qo
   ON srd.survey_id = qo.survey_id
  AND srd.question_id = qo.question_id
  AND srd.answer_id = qo.option_id
-LEFT JOIN gabby.surveygizmo.survey_response_identifiers_static sri
+INNER JOIN gabby.surveygizmo.survey_response_identifiers_static sri
   ON srd.survey_id = sri.survey_id
  AND srd.survey_response_id = sri.survey_response_id
  AND sri.[status] = 'Complete'
