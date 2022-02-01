@@ -38,7 +38,7 @@ FROM
      SELECT sr.id AS survey_response_id
            ,sr.survey_id
            ,sr.contact_id
-           ,CONVERT(VARCHAR(25), COALESCE(dq.[status], sr.[status])) AS [status]
+           ,COALESCE(dq.[status], sr.[status]) AS [status]
            ,sr.is_test_data
            ,CONVERT(DATETIME2, LEFT(sr.date_started, 19)) AS datetime_started
            ,CONVERT(DATE, CONVERT(DATETIME2, LEFT(sr.date_started, 19))) AS date_started
@@ -49,28 +49,30 @@ FROM
               CASE WHEN ISDATE(LEFT(sr.date_submitted, 19)) = 1 THEN LEFT(sr.date_submitted, 19) END
              )) AS date_submitted
            ,sr.response_time
-           ,CONVERT(VARCHAR(25), sr.city) AS city
-           ,CONVERT(VARCHAR(25), sr.postal) AS postal
-           ,CONVERT(VARCHAR(5), sr.region) AS region
-           ,CONVERT(VARCHAR(125), sr.country) AS country
+           ,sr.city
+           ,sr.postal
+           ,sr.region
+           ,sr.country
            ,sr.latitude
            ,sr.longitude
            ,sr.dma
-           ,CONVERT(VARCHAR(25), sr.[language]) AS [language]
-           ,CONVERT(VARCHAR(25), sr.ip_address) AS ip_address
+           ,sr.[language]
+           ,sr.ip_address
            ,sr.link_id
-           ,CONVERT(VARCHAR(500), sr.referer) AS referer
-           ,CONVERT(VARCHAR(125), sr.session_id) AS session_id
-           ,CONVERT(VARCHAR(250), sr.user_agent) AS user_agent
-           ,CONVERT(VARCHAR(1), JSON_VALUE(sr.url_variables, '$._privatedomain')) AS url_privatedomain
-           ,CONVERT(VARCHAR(25), JSON_VALUE(sr.url_variables, '$.__contact')) AS url_contact
-           ,CONVERT(VARCHAR(25), JSON_VALUE(sr.url_variables, '$.__messageid')) AS url_messageid
-           ,CONVERT(VARCHAR(25), JSON_VALUE(sr.url_variables, '$.sguid')) AS url_sguid
-           ,CONVERT(VARCHAR(250), JSON_VALUE(sr.url_variables, '$.__pathdata')) AS url_pathdata
+           ,sr.referer
+           ,sr.session_id
+           ,sr.user_agent
            ,CONVERT(NVARCHAR(MAX), sr.data_quality) AS data_quality_json
            ,CONVERT(NVARCHAR(MAX), COALESCE(sr.survey_data_list, sr.survey_data)) AS survey_data_json
+           ,CONVERT(NVARCHAR(1), JSON_VALUE(sr.url_variables, '$._privatedomain')) AS url_privatedomain
+           ,CONVERT(NVARCHAR(32), JSON_VALUE(sr.url_variables, '$.__contact')) AS url_contact
+           ,CONVERT(NVARCHAR(32), JSON_VALUE(sr.url_variables, '$.__messageid')) AS url_messageid
+           ,CONVERT(NVARCHAR(32), JSON_VALUE(sr.url_variables, '$.sguid')) AS url_sguid
+           ,CONVERT(NVARCHAR(256), JSON_VALUE(sr.url_variables, '$.__pathdata')) AS url_pathdata
 
-           ,ROW_NUMBER() OVER(PARTITION BY sr.id, sr.survey_id ORDER BY sr._modified DESC) AS rn
+           ,ROW_NUMBER() OVER(
+              PARTITION BY sr.id, sr.survey_id
+                ORDER BY CASE WHEN sr.[status] = 'Complete' THEN 1 ELSE 0 END DESC, sr._modified DESC) AS rn
      FROM gabby.surveygizmo.survey_response sr
      LEFT JOIN gabby.surveygizmo.survey_response_disqualified dq
        ON sr.id = dq.id
