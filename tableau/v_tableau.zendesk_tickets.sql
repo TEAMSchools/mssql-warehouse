@@ -15,7 +15,7 @@ WITH field_crosswalk AS (
         ,u.email AS field_value
         ,'assignee_id' AS field_name
   FROM gabby.zendesk.[user] u
- )
+)
 
 ,original_value AS (
   SELECT fh.ticket_id
@@ -81,8 +81,8 @@ SELECT t.id AS ticket_id
 
       ,CASE
         WHEN tm.assignee_stations < tm.group_stations THEN og.field_value  -- if fewer assignees than groups, then the original Zendesk group
-        WHEN oa.field_value IS NULL THEN og.field_value  -- if original assignee's ADP department null then the Zendesk group
-        ELSE oa.field_value  -- original assignee's ADP department
+        WHEN oad.primary_on_site_department IS NULL THEN og.field_value  -- if original assignee's ADP department null then the Zendesk group
+        ELSE oad.primary_on_site_department  -- original assignee's ADP department
        END AS og_group
       ,CASE
         WHEN tm.assignee_stations < tm.group_stations THEN g.[name]  -- if fewer assignees than groups, then the Zendesk group
