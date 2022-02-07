@@ -8,8 +8,8 @@ WITH unpivoted AS (
         ,position_id
         ,date_modified
         ,field
-        ,[value] AS new_value
-        ,LAG([value], 1) OVER(PARTITION BY position_id, field ORDER BY date_modified) AS prev_value
+        ,ISNULL([value], '') AS new_value
+        ,LAG([value], 1, '') OVER(PARTITION BY position_id, field ORDER BY date_modified) AS prev_value
   FROM
       (
        SELECT associate_id
@@ -59,4 +59,4 @@ SELECT u.associate_id
 FROM unpivoted u
 JOIN gabby.adp.workers_clean_static w
   ON u.associate_id = w.worker_id
-WHERE (u.new_value <> u.prev_value OR u.prev_value IS NULL)
+WHERE u.new_value <> u.prev_value
