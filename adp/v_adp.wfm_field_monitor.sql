@@ -29,8 +29,6 @@ WITH unpivoted AS (
        FROM gabby.adp.employees_archive
        WHERE position_id IS NOT NULL
          AND position_status <> 'Terminated'
-         AND CONVERT(DATE, _modified) BETWEEN DATEADD(DAY, -4, CONVERT(DATE, GETDATE()))
-                                          AND CONVERT(DATE, GETDATE())
       ) sub
   UNPIVOT(
     [value]
@@ -61,4 +59,4 @@ SELECT u.associate_id
 FROM unpivoted u
 JOIN gabby.adp.workers_clean_static w
   ON u.associate_id = w.worker_id
-WHERE u.new_value <> u.prev_value
+WHERE (u.new_value <> u.prev_value OR u.prev_value IS NULL)
