@@ -92,14 +92,14 @@ SELECT NULL AS survey_id
       ,r.gender AS respondent_gender
       ,r.primary_race_ethnicity_reporting AS respondent_race_ethnicity_reporting
 FROM surveys.manager_survey_detail_archive  sda
-LEFT JOIN gabby.people.staff_crosswalk_static sbjt
-  ON sda.subject_df_employee_number = sbjt.df_employee_number
-LEFT JOIN gabby.people.staff_crosswalk_static mgr
-  ON sda.subject_manager_df_employee_number = mgr.df_employee_number
 LEFT JOIN gabby.people.employment_history_static w
   ON sda.subject_df_employee_number = w.employee_number
  AND sda.date_submitted BETWEEN w.effective_start_date AND w.effective_end_date
  AND w.primary_position = 'Yes'
  AND w.position_status <> 'Terminated'
+LEFT JOIN gabby.people.staff_crosswalk_static sbjt
+  ON sda.subject_df_employee_number = sbjt.df_employee_number
+LEFT JOIN gabby.people.staff_crosswalk_static mgr
+  ON sda.subject_manager_df_employee_number = mgr.df_employee_number
 LEFT JOIN gabby.people.staff_crosswalk_static r
   ON sda.respondent_email_address = r.samaccountname
