@@ -10,16 +10,16 @@ WITH subjects AS (
           ELSE s.[value] 
          END AS fsa_subject
         ,CASE
-           WHEN s.[value] = 'Reading' THEN 'ENG'
-           WHEN s.[value] = 'Math' THEN 'MATH'
-          END AS credittype
+          WHEN s.[value] = 'Reading' THEN 'ENG'
+          WHEN s.[value] = 'Math' THEN 'MATH'
+         END AS credittype
   FROM STRING_SPLIT('Reading,Math', ',') s
  )
 
 ,current_week AS (
   SELECT tw.[date]
   FROM gabby.utilities.reporting_days td
-  JOIN gabby.utilities.reporting_days tw
+  INNER JOIN gabby.utilities.reporting_days tw
     ON td.week_part = tw.week_part
    AND td.year_part = tw.year_part
   WHERE td.[date] = CAST(GETDATE() AS DATE)
