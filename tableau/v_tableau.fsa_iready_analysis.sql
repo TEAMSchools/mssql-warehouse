@@ -82,6 +82,7 @@ SELECT co.student_number
       ,co.ethnicity
       ,co.iep_status
       ,co.lep_status
+      ,co.lunchstatus
 
       ,subj.iready_subject
       ,subj.fsa_subject
