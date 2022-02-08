@@ -41,12 +41,12 @@ WITH survey_term_staff_scaffold AS (
              ,s.default_link AS survey_default_link
              ,s.[title]
        FROM gabby.surveygizmo.survey_campaign_clean_static c
-       JOIN gabby.surveygizmo.survey_clean s
+       INNER JOIN gabby.surveygizmo.survey_clean s
          ON c.survey_id = s.survey_id
        WHERE c.link_type = 'email'
          AND c.survey_id IN (4561325, 4561288, 5300913, 6330385, 6580731)
       ) sub
-  JOIN gabby.people.staff_crosswalk_static r
+  INNER JOIN gabby.people.staff_crosswalk_static r
     ON r.[status] NOT IN ('Terminated', 'Prestart')
   LEFT JOIN gabby.people.staff_crosswalk_static m
     ON r.manager_df_employee_number = m.df_employee_number
@@ -73,16 +73,30 @@ WITH survey_term_staff_scaffold AS (
         ,i.subject_preferred_name AS subject_name
         ,i.subject_df_employee_number AS subject_employee_id
 
-        ,sc.[status] AS position_status
-        ,sc.primary_on_site_department AS survey_taker_department
-        ,sc.primary_job AS survey_taker_primary_job
+        ,sr.position_status
+        ,sr.attended_relay
+        ,sr.kipp_alumni_status
+        ,sr.life_experience_in_communities_we_serve
+        ,sr.preferred_gender
+        ,sr.preferred_race_ethnicity
+        ,sr.professional_experience_in_communities_we_serve
+        ,sr.years_of_professional_experience_before_joining
+        ,sr.years_teaching_in_any_state
+        ,sr.years_teaching_in_nj_or_fl
+        ,sr.teacher_prep_program
+        ,sr.home_department AS survey_taker_department
+        ,sr.job_title AS survey_taker_primary_job
+
+        ,sc.userprincipalname
         ,LOWER(sc.samaccountname) AS survey_taker_samaccount
   FROM gabby.surveygizmo.survey_campaign_clean_static c
-  JOIN gabby.surveygizmo.survey_response_identifiers_static i
+  INNER JOIN gabby.surveygizmo.survey_response_identifiers_static i
     ON c.survey_id = i.survey_id
    AND i.date_started BETWEEN c.link_open_date AND c.link_close_date
    AND i.rn_respondent_subject = 1
-  JOIN gabby.people.staff_crosswalk_static sc
+  INNER JOIN gabby.people.staff_roster sr
+    ON i.respondent_df_employee_number = sr.employee_number
+  INNER JOIN gabby.people.staff_crosswalk_static sc
     ON i.respondent_df_employee_number = sc.df_employee_number
   WHERE c.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
     AND c.survey_id IN (4561325, 4561288, 5300913, 6330385, 6580731)
@@ -95,7 +109,7 @@ SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
       ,COALESCE(st.survey_taker_department, c.survey_taker_department) AS survey_taker_department
       ,COALESCE(st.survey_taker_primary_job, c.survey_taker_primary_job) AS survey_taker_primary_job
       ,COALESCE(st.position_status, c.position_status) AS survey_taker_adp_status
-      ,COALESCE(st.survey_taker_samaccount,c.survey_taker_samaccount) AS survey_taker_samaccount
+      ,COALESCE(st.survey_taker_samaccount, c.survey_taker_samaccount) AS survey_taker_samaccount
       ,st.manager_df_employee_number
       ,st.manager_name
       ,st.manager_legal_entity_name
@@ -125,8 +139,19 @@ SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
       ,c.subject_name AS completed_survey_subject_name
       ,c.date_submitted AS survey_completion_date
       ,c.is_manager
+      ,c.attended_relay
+      ,c.kipp_alumni_status
+      ,c.life_experience_in_communities_we_serve
+      ,c.preferred_gender
+      ,c.preferred_race_ethnicity
+      ,c.professional_experience_in_communities_we_serve
+      ,c.years_of_professional_experience_before_joining
+      ,c.years_teaching_in_any_state
+      ,c.years_teaching_in_nj_or_fl
+      ,c.teacher_prep_program
+      ,c.userprincipalname
 FROM survey_term_staff_scaffold st
-JOIN gabby.surveys.so_assignments_long s
+INNER JOIN gabby.surveys.so_assignments_long s
   ON st.employee_number = s.survey_taker_id
  AND s.survey_round_status = 'Yes'
 LEFT JOIN clean_responses c
@@ -177,8 +202,19 @@ SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
       ,c.subject_name AS completed_survey_subject_name
       ,c.date_submitted AS survey_completion_date
       ,c.is_manager
+      ,c.attended_relay
+      ,c.kipp_alumni_status
+      ,c.life_experience_in_communities_we_serve
+      ,c.preferred_gender
+      ,c.preferred_race_ethnicity
+      ,c.professional_experience_in_communities_we_serve
+      ,c.years_of_professional_experience_before_joining
+      ,c.years_teaching_in_any_state
+      ,c.years_teaching_in_nj_or_fl
+      ,c.teacher_prep_program
+      ,c.userprincipalname
 FROM clean_responses c
-JOIN survey_term_staff_scaffold st
+INNER JOIN survey_term_staff_scaffold st
   ON st.employee_number = c.df_employee_number
  AND st.academic_year = c.academic_year
  AND st.reporting_term_code = c.reporting_term
@@ -213,8 +249,8 @@ SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
       ,NULL AS assignment_adp_status
       ,'Manager Survey' AS assignment_type
 
-      ,COALESCE(st.academic_year,c.academic_year) AS academic_year
-      ,COALESCE(st.reporting_term_code,c.reporting_term) AS reporting_term
+      ,COALESCE(st.academic_year, c.academic_year) AS academic_year
+      ,COALESCE(st.reporting_term_code, c.reporting_term) AS reporting_term
       ,st.survey_round_open_minus_fifteen
       ,st.survey_round_open
       ,st.survey_round_close
@@ -223,15 +259,26 @@ SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
       ,c.subject_name AS completed_survey_subject_name
       ,c.date_submitted AS survey_completion_date
       ,c.is_manager
+      ,c.attended_relay
+      ,c.kipp_alumni_status
+      ,c.life_experience_in_communities_we_serve
+      ,c.preferred_gender
+      ,c.preferred_race_ethnicity
+      ,c.professional_experience_in_communities_we_serve
+      ,c.years_of_professional_experience_before_joining
+      ,c.years_teaching_in_any_state
+      ,c.years_teaching_in_nj_or_fl
+      ,c.teacher_prep_program
+      ,c.userprincipalname
 FROM survey_term_staff_scaffold st
+INNER JOIN gabby.surveys.so_assignments s
+  ON st.employee_number = s.employee_number
+ AND s.survey_taker IN ('Yes', 'Yes - Should take manager survey only')
 LEFT JOIN clean_responses c
   ON st.employee_number = c.df_employee_number
  AND st.academic_year = c.academic_year
  AND st.reporting_term_code = c.reporting_term
  AND st.survey_id = c.survey_id
-JOIN gabby.surveys.so_assignments s
-  ON st.employee_number = s.employee_number
- AND s.survey_taker IN ('Yes', 'Yes - Should take manager survey only')
 WHERE st.survey_id = 4561288 /* MGR Survey Code */
   AND (c.subject_employee_id <> COALESCE(st.employee_number, c.df_employee_number) OR c.subject_employee_id IS NULL)
 
@@ -268,6 +315,17 @@ SELECT COALESCE(st.employee_number, c.df_employee_number) AS survey_taker_id
       ,c.subject_name AS completed_survey_subject_name
       ,c.date_submitted AS survey_completion_date
       ,c.is_manager
+      ,c.attended_relay
+      ,c.kipp_alumni_status
+      ,c.life_experience_in_communities_we_serve
+      ,c.preferred_gender
+      ,c.preferred_race_ethnicity
+      ,c.professional_experience_in_communities_we_serve
+      ,c.years_of_professional_experience_before_joining
+      ,c.years_teaching_in_any_state
+      ,c.years_teaching_in_nj_or_fl
+      ,c.teacher_prep_program
+      ,c.userprincipalname
 FROM clean_responses c
 LEFT JOIN survey_term_staff_scaffold st
   ON c.df_employee_number = st.employee_number
@@ -310,6 +368,17 @@ SELECT st.employee_number AS survey_taker_id
       ,c.subject_name AS completed_survey_subject_name
       ,c.date_submitted AS survey_completion_date
       ,c.is_manager
+      ,c.attended_relay
+      ,c.kipp_alumni_status
+      ,c.life_experience_in_communities_we_serve
+      ,c.preferred_gender
+      ,c.preferred_race_ethnicity
+      ,c.professional_experience_in_communities_we_serve
+      ,c.years_of_professional_experience_before_joining
+      ,c.years_teaching_in_any_state
+      ,c.years_teaching_in_nj_or_fl
+      ,c.teacher_prep_program
+      ,c.userprincipalname
 FROM survey_term_staff_scaffold st
 LEFT JOIN clean_responses c
   ON st.employee_number = c.df_employee_number
@@ -354,6 +423,17 @@ SELECT st.employee_number AS survey_taker_id
       ,c.subject_name AS completed_survey_subject_name
       ,c.date_submitted AS survey_completion_date
       ,c.is_manager
+      ,c.attended_relay
+      ,c.kipp_alumni_status
+      ,c.life_experience_in_communities_we_serve
+      ,c.preferred_gender
+      ,c.preferred_race_ethnicity
+      ,c.professional_experience_in_communities_we_serve
+      ,c.years_of_professional_experience_before_joining
+      ,c.years_teaching_in_any_state
+      ,c.years_teaching_in_nj_or_fl
+      ,c.teacher_prep_program
+      ,c.userprincipalname
 FROM survey_term_staff_scaffold st
 LEFT JOIN clean_responses c
   ON st.employee_number = c.df_employee_number
@@ -395,6 +475,17 @@ SELECT st.employee_number AS survey_taker_id
       ,'Cannot be tracked' AS completed_survey_subject_name
       ,NULL AS survey_completion_date
       ,0 AS is_manager
+      ,c.attended_relay
+      ,c.kipp_alumni_status
+      ,c.life_experience_in_communities_we_serve
+      ,c.preferred_gender
+      ,c.preferred_race_ethnicity
+      ,c.professional_experience_in_communities_we_serve
+      ,c.years_of_professional_experience_before_joining
+      ,c.years_teaching_in_any_state
+      ,c.years_teaching_in_nj_or_fl
+      ,c.teacher_prep_program
+      ,c.userprincipalname
 FROM survey_term_staff_scaffold st  
 LEFT JOIN clean_responses c
   ON st.employee_number = c.df_employee_number
@@ -436,6 +527,17 @@ SELECT st.employee_number AS survey_taker_id
       ,c.subject_name AS completed_survey_subject_name
       ,c.date_submitted AS survey_completion_date
       ,c.is_manager
+      ,c.attended_relay
+      ,c.kipp_alumni_status
+      ,c.life_experience_in_communities_we_serve
+      ,c.preferred_gender
+      ,c.preferred_race_ethnicity
+      ,c.professional_experience_in_communities_we_serve
+      ,c.years_of_professional_experience_before_joining
+      ,c.years_teaching_in_any_state
+      ,c.years_teaching_in_nj_or_fl
+      ,c.teacher_prep_program
+      ,c.userprincipalname
 FROM survey_term_staff_scaffold st
 LEFT JOIN clean_responses c
   ON st.employee_number = c.df_employee_number
