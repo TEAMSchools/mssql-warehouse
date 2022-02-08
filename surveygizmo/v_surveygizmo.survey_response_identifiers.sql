@@ -156,7 +156,7 @@ SELECT rc.survey_response_id
          PARTITION BY rc.survey_id, sc.academic_year, sc.[name], rc.respondent_employee_number, rc.subject_employee_number
            ORDER BY sr.datetime_submitted DESC) AS rn_respondent_subject
 FROM response_clean rc
-JOIN gabby.surveygizmo.survey_response_clean sr
+INNER JOIN gabby.surveygizmo.survey_response_clean sr
   ON rc.survey_id = sr.survey_id
  AND rc.survey_response_id = sr.survey_response_id
  AND sr.[status] = 'Complete'
