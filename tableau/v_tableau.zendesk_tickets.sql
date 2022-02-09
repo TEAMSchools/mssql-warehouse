@@ -1,7 +1,7 @@
 USE gabby
 GO
 
---CREATE OR ALTER VIEW tableau.zendesk_tickets AS
+CREATE OR ALTER VIEW tableau.zendesk_tickets AS
 
 WITH field_crosswalk AS (
   SELECT g.id
@@ -85,10 +85,6 @@ SELECT t.id AS ticket_id
       ,oad.preferred_name AS original_assignee
       ,oad.primary_job AS orig_assignee_job
       ,oad.primary_on_site_department AS orig_assignee_dept
-
-
-
-
 FROM gabby.zendesk.ticket t
 LEFT JOIN gabby.zendesk.[user] s
   ON t.submitter_id = s.id
@@ -100,10 +96,6 @@ LEFT JOIN original_value og
   ON t.id = og.ticket_id
  AND og.field_name = 'group_id'
  AND og.field_rn = 1
-LEFT JOIN original_value oa
-  ON t.id = oa.ticket_id
- AND oa.field_name = 'assignee_id'
- AND oa.field_rn = 1
 LEFT JOIN group_updated gu
   ON t.id = gu.ticket_id
 LEFT JOIN gabby.zendesk.[group] g
@@ -112,8 +104,10 @@ LEFT JOIN gabby.people.staff_crosswalk_static c
   ON a.email = c.userprincipalname
 LEFT JOIN gabby.people.staff_crosswalk_static sx
   ON s.email = sx.userprincipalname
+LEFT JOIN original_value oa
+  ON t.id = oa.ticket_id
+ AND oa.field_name = 'assignee_id'
+ AND oa.field_rn = 1
 LEFT JOIN gabby.people.staff_crosswalk_static oad
   ON oa.field_value = oad.userprincipalname
 WHERE t.[status] <> 'deleted'
-
-
