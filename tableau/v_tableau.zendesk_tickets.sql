@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW tableau.zendesk_tickets AS
+--CREATE OR ALTER VIEW tableau.zendesk_tickets AS
 
 WITH field_crosswalk AS (
   SELECT g.id
@@ -62,10 +62,16 @@ SELECT t.id AS ticket_id
       ,tm.replies AS comments_count
       ,tm.full_resolution_time_in_minutes_business AS total_bh_minutes
       ,tm.reply_time_in_minutes_business
+      ,tm.assignee_stations
+      ,tm.group_stations
       ,DATEDIFF(WEEKDAY, t.created_at, tm.initially_assigned_at) AS weekdays_created_to_first_assigned
       ,DATEDIFF(WEEKDAY, t.created_at, tm.assignee_updated_at) AS weekdays_created_to_last_assigned
 
+      ,og.field_value AS original_group
+
       ,gu.group_updated AS group_updated
+
+      ,g.[name] AS last_group
 
       ,c.primary_job AS assignee_primary_job
       ,c.primary_site AS assignee_primary_site
@@ -78,17 +84,11 @@ SELECT t.id AS ticket_id
 
       ,oad.preferred_name AS original_assignee
       ,oad.primary_job AS orig_assignee_job
+      ,oad.primary_on_site_department AS orig_assignee_dept
 
-      ,CASE
-        WHEN tm.assignee_stations < tm.group_stations THEN og.field_value  -- if fewer assignees than groups, then the original Zendesk group
-        WHEN oad.primary_on_site_department IS NULL THEN og.field_value  -- if original assignee's ADP department null then the Zendesk group
-        ELSE oad.primary_on_site_department  -- original assignee's ADP department
-       END AS og_group
-      ,CASE
-        WHEN tm.assignee_stations < tm.group_stations THEN g.[name]  -- if fewer assignees than groups, then the Zendesk group
-        WHEN c.primary_on_site_department IS NULL THEN g.[name]  -- if ADP department is null then the Zendesk group
-        ELSE c.primary_on_site_department  -- last assignee's ADP department
-       END AS last_assigned_dept_group
+
+
+
 FROM gabby.zendesk.ticket t
 LEFT JOIN gabby.zendesk.[user] s
   ON t.submitter_id = s.id
@@ -115,3 +115,5 @@ LEFT JOIN gabby.people.staff_crosswalk_static sx
 LEFT JOIN gabby.people.staff_crosswalk_static oad
   ON oa.field_value = oad.userprincipalname
 WHERE t.[status] <> 'deleted'
+
+
