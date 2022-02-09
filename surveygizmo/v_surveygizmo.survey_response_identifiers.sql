@@ -120,6 +120,7 @@ SELECT rc.survey_response_id
       ,reh.[location] AS respondent_primary_site
       ,reh.home_department AS respondent_department_name
       ,reh.job_title AS respondent_primary_job
+      ,reh.position_status AS respondent_position_status
 
       ,rsch.ps_school_id AS respondent_primary_site_schoolid
       ,rsch.school_level AS respondent_primary_site_school_level

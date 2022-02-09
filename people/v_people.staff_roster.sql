@@ -412,6 +412,7 @@ SELECT c.employee_number
       ,m.preferred_first_name AS manager_preferred_first_name
       ,m.preferred_last_name AS manager_preferred_last_name
       ,m.preferred_last_name + ', ' + m.preferred_first_name AS manager_name
+      ,m.business_unit AS manager_business_unit
 
       ,y.years_at_kipp_total
       ,y.years_at_kipp_total + c.years_of_professional_experience_before_joining AS total_professional_experience

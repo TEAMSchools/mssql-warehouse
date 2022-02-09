@@ -58,6 +58,7 @@ SELECT sub.employee_number AS df_employee_number
       ,sub.manager_preferred_first_name
       ,sub.manager_preferred_last_name
       ,sub.manager_name
+      ,sub.manager_business_unit
       ,sub.[db_name]
       ,sub.associate_id_legacy AS adp_associate_id_legacy
       ,sub.ps_teachernumber
@@ -118,6 +119,7 @@ FROM
            ,sr.manager_preferred_first_name
            ,sr.manager_preferred_last_name
            ,sr.manager_name
+           ,sr.manager_business_unit
            ,sr.[db_name]
            ,sr.associate_id_legacy
            ,sr.personal_email
