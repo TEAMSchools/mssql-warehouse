@@ -333,22 +333,22 @@ SELECT sub.position_id
 
       ,LAG(sub.business_unit_paydate, 1, sub.business_unit_paydate) OVER(
          PARTITION BY sub.fiscal_year, sub.code, sub.employee_number
-           ORDER BY sub.payroll_week, sub.payroll_run) AS business_unit_prev_paydate
+           ORDER BY sub.payroll_date) AS business_unit_prev_paydate
       ,LAG(sub.location_paydate, 1, sub.location_paydate) OVER(
          PARTITION BY sub.fiscal_year, sub.code, sub.employee_number
-           ORDER BY sub.payroll_week, sub.payroll_run) AS location_prev_paydate
+           ORDER BY sub.payroll_date) AS location_prev_paydate
       ,LAG(sub.department_paydate, 1, sub.department_paydate) OVER(
          PARTITION BY sub.fiscal_year, sub.code, sub.employee_number
-           ORDER BY sub.payroll_week, sub.payroll_run) AS department_prev_paydate
+           ORDER BY sub.payroll_date) AS department_prev_paydate
       ,LAG(sub.job_title_paydate, 1, sub.job_title_paydate) OVER(
          PARTITION BY sub.fiscal_year, sub.code, sub.employee_number
-           ORDER BY sub.payroll_week, sub.payroll_run) AS job_title_prev_paydate
+           ORDER BY sub.payroll_date) AS job_title_prev_paydate
       ,LAG(sub.salary_paydate, 1, sub.salary_paydate) OVER(
          PARTITION BY sub.fiscal_year, sub.code, sub.employee_number
-           ORDER BY sub.payroll_week, sub.payroll_run) AS salary_prev_paydate
+           ORDER BY sub.payroll_date) AS salary_prev_paydate
       ,LAG(sub.status_paydate, 1, sub.status_paydate) OVER(
          PARTITION BY sub.fiscal_year, sub.code, sub.employee_number
-           ORDER BY sub.payroll_week, sub.payroll_run) AS status_prev_paydate
+           ORDER BY sub.payroll_date) AS status_prev_paydate
 FROM
     (
      SELECT u.position_id
@@ -390,10 +390,10 @@ FROM
 
            ,LAG(u.code_value, 1) OVER(
               PARTITION BY u.fiscal_year, u.code, eh.employee_number
-                ORDER BY u.payroll_week, u.payroll_run) AS prev_code_value
+                ORDER BY u.payroll_date) AS prev_code_value
            ,LAG(u.payroll_date, 1) OVER(
               PARTITION BY u.fiscal_year, u.code, eh.employee_number
-                ORDER BY u.payroll_week, u.payroll_run) AS prev_payroll_date
+                ORDER BY u.payroll_date) AS prev_payroll_date
      FROM payroll_unpivot u
      LEFT JOIN gabby.payroll.register_code_lookup rcl
        ON u.company_code = rcl.company_code
