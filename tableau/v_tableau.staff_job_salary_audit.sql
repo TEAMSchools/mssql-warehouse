@@ -16,6 +16,13 @@ SELECT h.employee_number
       ,LAG(h.job_title, 1) OVER(PARTITION BY h.employee_number ORDER BY h.effective_start_date ASC) AS prev_job_title
       ,LAG(h.annual_salary, 1) OVER(PARTITION BY h.employee_number ORDER BY h.effective_start_date ASC) AS prev_annual_salary
       ,h.is_current_record
+       /* dedupe positions */
+       ,ROW_NUMBER() OVER(
+          PARTITION BY h.associate_id
+            ORDER BY h.primary_position DESC
+                    ,h.status_effective_start_date DESC
+                    ,CASE WHEN h.position_status = 'Terminated' THEN 0 ELSE 1 END DESC
+                    ,h.effective_start_date DESC) AS rn_position
 
       ,r.preferred_first_name
       ,r.preferred_last_name
