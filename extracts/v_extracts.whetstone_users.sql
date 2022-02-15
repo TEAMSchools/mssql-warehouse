@@ -1,7 +1,7 @@
 USE gabby
 GO
 
---CREATE OR ALTER VIEW extracts.whetstone_users AS
+CREATE OR ALTER VIEW extracts.whetstone_users AS
 
 WITH managers AS (
   SELECT DISTINCT
