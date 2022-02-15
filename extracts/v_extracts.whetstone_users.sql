@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW extracts.whetstone_users AS
+--CREATE OR ALTER VIEW extracts.whetstone_users AS
 
 WITH managers AS (
   SELECT DISTINCT
@@ -108,6 +108,8 @@ FROM
                   THEN 'Sub Admin'
              WHEN scw.primary_on_site_department = 'Special Education' 
               AND scw.primary_job IN ('Managing Director', 'Director', 'Achievement Director') 
+                  THEN 'Sub Admin'
+             WHEN scw.primary_on_site_department = 'Human Resources'
                   THEN 'Sub Admin'
              /* school admins */
              WHEN scw.primary_job = 'School Leader' THEN 'School Admin'
