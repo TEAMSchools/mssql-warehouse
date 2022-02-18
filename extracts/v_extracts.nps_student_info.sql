@@ -23,6 +23,7 @@ SELECT co.student_number
       ,co.c_504_status
       ,co.ethnicity --need fed ethnicity
       ,co.students_dcid
+      ,co.specialed_classification
 
       ,scw.contact_1_phone_primary  AS home_phone --confirm with pedro
       ,scw.contact_1_phone_primary  AS mother_cell
