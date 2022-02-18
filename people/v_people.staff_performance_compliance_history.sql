@@ -5,7 +5,10 @@ CREATE OR ALTER VIEW people.staff_performance_compliance_history AS
 
 WITH years AS (
   SELECT n AS academic_year
-        ,DATEFROMPARTS((n + 1), 4, 30) AS effective_date
+        ,CASE
+          WHEN n = gabby.utilities.GLOBAL_ACADEMIC_YEAR() THEN GETDATE()
+          ELSE DATEFROMPARTS((n + 1), 4, 30)
+         END AS effective_date
   FROM gabby.utilities.row_generator_smallint
   WHERE n BETWEEN 2002 AND (gabby.utilities.GLOBAL_ACADEMIC_YEAR())
  )
