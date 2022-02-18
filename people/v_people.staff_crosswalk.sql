@@ -144,6 +144,8 @@ FROM
            ,adm.samaccountname AS manager_samaccountname
            ,adm.userprincipalname AS manager_userprincipalname
            ,adm.mail AS manager_mail
+
+           ,sr.work_assignment_start_date
      FROM gabby.people.staff_roster sr
      LEFT JOIN gabby.people.id_crosswalk_powerschool idps
        ON sr.employee_number = idps.df_employee_number

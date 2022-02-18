@@ -27,6 +27,7 @@ WITH all_staff AS (
         ,eh.effective_start_date
         ,eh.status_effective_start_date
         ,eh.primary_position
+        ,eh.work_assignment_start_date
   FROM gabby.people.employment_history_static eh
   WHERE CONVERT(DATE, GETDATE()) BETWEEN eh.effective_start_date AND eh.effective_end_date
 
@@ -52,6 +53,7 @@ WITH all_staff AS (
         ,ps.effective_start_date
         ,ps.status_effective_start_date
         ,ps.primary_position
+        ,ps.work_assignment_start_date
   FROM gabby.people.employment_history_static ps
   WHERE ps.status_effective_start_date > CONVERT(DATE, GETDATE())
     AND ps.position_status = 'Active'
@@ -147,6 +149,7 @@ WITH all_staff AS (
         ,sub.primary_position
         ,sub.position_effective_start_date
         ,sub.position_effective_end_date
+        ,sub.work_assignment_start_date
         ,sub.original_hire_date
         ,sub.rehire_date
         ,sub.termination_date
@@ -232,7 +235,7 @@ WITH all_staff AS (
                           ,eh.status_effective_start_date DESC
                           ,CASE WHEN eh.position_status = 'Terminated' THEN 0 ELSE 1 END DESC
                           ,eh.effective_start_date DESC) AS rn
-
+             ,eh.work_assignment_start_date
              ,ea.first_name
              ,ea.last_name
              ,ea.primary_address_city AS address_city
@@ -423,6 +426,8 @@ SELECT c.employee_number
       ,gl.student_grade_level AS primary_grade_taught
 
       ,ads.userprincipalname
+
+      ,COALESCE(c.work_assignment_start_date,c.position_effective_start_date) AS work_assignment_start_date
 FROM clean_staff c
 LEFT JOIN gabby.people.school_crosswalk s
   ON c.[location] = s.site_name
