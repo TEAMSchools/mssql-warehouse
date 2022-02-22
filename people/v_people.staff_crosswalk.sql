@@ -36,6 +36,7 @@ SELECT sub.employee_number AS df_employee_number
       ,sub.job_family
       ,sub.position_effective_start_date AS position_effective_from_date
       ,sub.position_effective_end_date AS position_effective_to_date
+      ,sub.work_assignment_start_date
       ,sub.manager_employee_number AS manager_df_employee_number
       ,sub.worker_category AS payclass
       ,sub.wfmgr_pay_rule AS paytype
@@ -102,6 +103,7 @@ FROM
            ,sr.job_family
            ,sr.position_effective_start_date
            ,sr.position_effective_end_date
+           ,sr.work_assignment_start_date
            ,sr.manager_employee_number
            ,sr.worker_category
            ,sr.wfmgr_pay_rule
