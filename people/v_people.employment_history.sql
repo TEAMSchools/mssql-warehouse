@@ -66,8 +66,8 @@ WITH date_scaffold AS (
 
 ,wa_dates AS (
   SELECT position_id
-        ,location_description
-        ,home_department_description
+        --,location_description
+        --,home_department_description
         ,job_title_description
         ,MIN(position_effective_date) AS work_assignment_start_date
         ,CASE 
@@ -76,8 +76,8 @@ WITH date_scaffold AS (
          END AS work_assignment_end_date
   FROM gabby.people.work_assignment_history_static
   GROUP BY position_id
-          ,location_description
-          ,home_department_description
+          --,location_description
+          --,home_department_description
           ,job_title_description
  )
 
