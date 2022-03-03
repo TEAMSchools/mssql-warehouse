@@ -66,8 +66,6 @@ WITH date_scaffold AS (
 
 ,wa_dates AS (
   SELECT position_id
-        --,location_description
-        --,home_department_description
         ,job_title_description
         ,MIN(position_effective_date) AS work_assignment_start_date
         ,CASE 
@@ -76,8 +74,6 @@ WITH date_scaffold AS (
          END AS work_assignment_end_date
   FROM gabby.people.work_assignment_history_static
   GROUP BY position_id
-          --,location_description
-          --,home_department_description
           ,job_title_description
  )
 
@@ -137,6 +133,4 @@ LEFT JOIN gabby.people.manager_history_static mh
  AND r.effective_start_date BETWEEN mh.reports_to_effective_date AND mh.reports_to_effective_end_date_eoy
 LEFT JOIN wa_dates wad
   ON r.position_id = wad.position_id
- AND w.location_description = wad.location_description
- AND w.home_department_description = wad.home_department_description
  AND w.job_title_description = wad.job_title_description
