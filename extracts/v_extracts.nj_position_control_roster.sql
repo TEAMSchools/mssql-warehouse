@@ -46,5 +46,4 @@ FROM gabby.people.staff_roster sr
 JOIN nj_reportable nj
   ON sr.employee_number = nj.employee_number
 WHERE position_status IN ('Active','Leave') AND nj_reportable = 1
-ORDER BY employee_number
 
