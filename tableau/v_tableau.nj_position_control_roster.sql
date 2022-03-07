@@ -2,7 +2,7 @@ USE gabby
 GO
 
 
-CREATE OR ALTER VIEW extracts.nj_position_control_roster AS
+CREATE OR ALTER VIEW tableau.nj_position_control_roster AS
 
 SELECT sr.preferred_first_name
       ,sr.preferred_last_name
