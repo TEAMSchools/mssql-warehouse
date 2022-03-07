@@ -1,19 +1,8 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW extracts.nj_position_control_roster AS
 
---CTE for only titles and entities needed (including all NJ staff and CEO and CFO from KTAF)--
-WITH nj_reportable AS (
-    SELECT
-       employee_number
-      ,CASE 
-       WHEN sr.job_title = 'Chief Financial Officer' THEN '1'
-       WHEN sr.job_title = 'Chief Executive Officer' THEN '1'
-       WHEN sr.business_unit IN ('TEAM Academy Charter School','KIPP Cooper Norcross Academy') THEN 1
-       ELSE 0 END AS nj_reportable
-    FROM people.staff_roster sr
-  )
+CREATE OR ALTER VIEW extracts.nj_position_control_roster AS
 
 SELECT sr.preferred_first_name
       ,sr.preferred_last_name
@@ -43,7 +32,5 @@ SELECT sr.preferred_first_name
        ELSE sr.job_title
        END AS report_job_title
 FROM gabby.people.staff_roster sr
-JOIN nj_reportable nj
-  ON sr.employee_number = nj.employee_number
-WHERE position_status IN ('Active','Leave') AND nj_reportable = 1
+WHERE job_title IN ('Chief Executive Officer','Chief Financial Officer') OR sr.business_unit IN ('TEAM Academy Charter School','KIPP Cooper Norcross Academy') AND sr.position_status IN ('Active','Leave')
 
