@@ -54,8 +54,8 @@ SELECT c.candidate_id
 	  ,c.kf_are_you_alumnus
 	  ,c.kf_in_which_regions_alumnus
 
-FROM smartrecruiters.report_applications AS app
-JOIN smartrecruiters.report_applicants AS c
+FROM gabby.smartrecruiters.report_applications AS app
+JOIN gabby.smartrecruiters.report_applicants AS c
   ON app.candidate_id = c.candidate_id
  AND app.application_id = c.application_id
 WHERE job_title != 'New Jersey - data migrated from Salesforce'
