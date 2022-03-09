@@ -2,6 +2,7 @@ CREATE OR ALTER VIEW easyiep.njsmart_powerschool_clean AS
 
 SELECT [state_studentnumber]
       ,[student_number]
+      ,CONCAT(last_name, ', ', first_name) AS lastfirst
       ,academic_year
       ,special_education
       ,_modified
@@ -55,6 +56,8 @@ FROM
     (
      SELECT CONVERT(INT, TRY_PARSE(CONVERT(VARCHAR(25), e.[student_number]) AS INT)) AS [student_number]
            ,e.[state_studentnumber]
+           ,e.first_name
+           ,e.last_name
            ,e.[nj_se_referraldate]
            ,e.[nj_se_parentalconsentdate]
            ,e.[nj_se_eligibilityddate]
