@@ -66,10 +66,10 @@ LEFT JOIN gabby.powerschool.gpa_detail gpad
   ON co.student_number = gpad.student_number
  AND co.academic_year = gpad.academic_year
  AND co.schoolid = gpad.schoolid
- AND co.db_name = gpad.db_name
+ AND co.[db_name] = gpad.[db_name]
 LEFT JOIN gabby.powerschool.gpa_cumulative gpac
   ON co.studentid = gpac.studentid 
  AND co.schoolid = gpac.schoolid
- AND co.db_name = gpac.db_name
+ AND co.[db_name] = gpac.[db_name]
 WHERE co.school_level IN ('MS', 'HS')
   AND co.rn_year = 1
