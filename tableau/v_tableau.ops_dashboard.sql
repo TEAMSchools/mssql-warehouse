@@ -21,6 +21,7 @@ WITH att_mem AS (
         ,sub.schoolid
         ,sub.is_pathways
         ,sub.grade_level
+        ,sub.[db_name]
         ,SUM(sub.target_enrollment) AS target_enrollment
         ,SUM(sub.target_enrollment_finance) AS target_enrollment_finance
         ,MAX(grade_band_ratio) AS grade_band_ratio
@@ -41,8 +42,13 @@ WITH att_mem AS (
              ,at_risk_only_ratio
              ,lep_only_ratio
              ,sped_ratio
+             ,CASE 
+               WHEN schoolid = 133570965 THEN 'kippnewark'
+               WHEN LEFT(schoolid, 1) = '7' THEN 'kippnewark'
+               WHEN LEFT(schoolid, 1) = '1' THEN 'kippcamden'
+               WHEN LEFT(schoolid, 1) = '3' THEN 'kippmiami'
+              END AS [db_name]
        FROM gabby.finance.enrollment_targets
-       WHERE _fivetran_deleted = 0
 
        UNION ALL
 
@@ -58,6 +64,7 @@ WITH att_mem AS (
              ,NULL AS at_risk_only_ratio
              ,NULL AS lep_only_ratio
              ,NULL AS sped_ratio
+             ,[db_name]
        FROM gabby.powerschool.cohort_identifiers_static
        WHERE (is_pathways = 1 OR school_name = 'Out of District')
          AND rn_year = 1
@@ -67,6 +74,7 @@ WITH att_mem AS (
           ,sub.schoolid
           ,sub.grade_level
           ,sub.is_pathways
+          ,sub.[db_name]
  )
 
 SELECT co.student_number
@@ -163,4 +171,5 @@ LEFT JOIN targets t
  AND co.reporting_schoolid = t.schoolid
  AND co.grade_level = t.grade_level
  AND co.is_pathways = t.is_pathways
+ AND co.[db_name] = t.[db_name]
 WHERE co.rn_year = 1
