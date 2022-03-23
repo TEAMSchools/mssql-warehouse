@@ -1,11 +1,15 @@
 USE gabby
 GO
-
 CREATE OR ALTER VIEW extracts.gsheets_survey_completion AS
 
-SELECT sc.survey_type
-      ,sc.subject_name
-      ,sc.responder_email
-      ,sc.date_created AS date_completed
-FROM gabby.surveys.survey_completion sc
-WHERE sc.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+SELECT academic_year
+      ,reporting_term
+      ,survey_taker_id
+      ,survey_taker_name
+      ,survey_taker_location
+      ,manager_name
+      ,survey_round_open
+      ,survey_round_close
+      ,survey_completion_date 
+FROM gabby.surveys.survey_tracking 
+WHERE CONVERT(DATE,GETDATE()) BETWEEN survey_round_open AND survey_round_close
