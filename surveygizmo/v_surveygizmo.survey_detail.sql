@@ -28,6 +28,7 @@ SELECT s.survey_id
       ,sri.respondent_userprincipalname
       ,sri.respondent_mail
       ,sri.respondent_samaccountname
+      ,sri.respondent_salesforce_id
       ,sri.respondent_legal_entity_name
       ,sri.respondent_primary_site
       ,sri.respondent_department_name

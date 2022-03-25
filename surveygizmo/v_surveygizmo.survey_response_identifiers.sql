@@ -7,6 +7,7 @@ WITH response_pivot AS (
   SELECT p.survey_response_id
         ,p.survey_id
         ,p.date_started
+        ,p.salesforce_id
         ,CONVERT(VARCHAR(25), p.respondent_adp_associate_id) AS respondent_associate_id
         ,CONVERT(VARCHAR(125), LOWER(COALESCE(p.respondent_userprincipalname, p.email))) AS respondent_userprincipalname
         ,CONVERT(INT, CASE
@@ -58,7 +59,8 @@ WITH response_pivot AS (
                      ,is_manager
                      ,employee_number
                      ,email
-                     ,employee_preferred_name)
+                     ,employee_preferred_name
+                     ,salesforce_id)
    ) p
  )
 
@@ -68,6 +70,7 @@ WITH response_pivot AS (
         ,rp.date_started
         ,rp.subject_preferred_name
         ,rp.is_manager
+        ,rp.salesforce_id
 
         ,ab.subject_preferred_name_duplicate
 
@@ -95,6 +98,7 @@ SELECT rc.survey_response_id
       ,CONVERT(DATE, rc.date_started) AS date_started
       ,rc.subject_employee_number AS subject_df_employee_number
       ,rc.respondent_employee_number AS respondent_df_employee_number
+      ,rc.salesforce_id AS respondent_salesforce_id
       ,COALESCE(rc.is_manager
                ,CASE 
                  WHEN rc.respondent_employee_number = seh.reports_to_employee_number THEN 1 
