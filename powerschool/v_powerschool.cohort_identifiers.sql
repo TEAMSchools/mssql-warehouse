@@ -183,6 +183,7 @@ LEFT JOIN powerschool.advisory_static adv
 LEFT JOIN easyiep.njsmart_powerschool_clean sped
   ON co.student_number = sped.student_number
  AND co.academic_year  = sped.academic_year
+ AND sped.rn_stu_yr = 1
 LEFT JOIN powerschool.spenrollments_gen_static sp
   ON co.studentid = sp.studentid
  AND co.entrydate BETWEEN sp.enter_date AND sp.exit_date
