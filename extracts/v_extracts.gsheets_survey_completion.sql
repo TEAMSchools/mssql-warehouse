@@ -16,9 +16,8 @@ SELECT t.academic_year
       ,c.primary_site
       ,c.manager_name
       ,c.manager_mail
-
 FROM gabby.surveys.survey_tracking t
 JOIN gabby.people.staff_crosswalk_static c
   ON t.survey_taker_id = c.df_employee_number
+ AND c.[status] = 'Active'
 WHERE CONVERT(DATE, GETDATE()) BETWEEN t.survey_round_open AND t.survey_round_close
-AND c.[status] = 'Active'
