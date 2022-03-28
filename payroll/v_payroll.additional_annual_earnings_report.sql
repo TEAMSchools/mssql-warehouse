@@ -10,14 +10,16 @@ WITH annual_additional_earnings AS (
         ,additional_earnings_code
         ,additional_earnings_description
         ,SUM(gross_pay) AS ay_additional_earnings_amount
-
-  FROM (SELECT gabby.utilities.DATE_TO_SY(pay_date) AS academic_year
-              ,payroll_company_code + CONVERT(nvarchar(6),file_number_pay_statements_) AS position_id
-              ,additional_earnings_code
-              ,additional_earnings_description
-              ,CONVERT(FLOAT,REPLACE(REPLACE(gross_pay,'$',''),',','')) AS gross_pay
-        FROM gabby.adp.additional_earnings_report
-        WHERE additional_earnings_description NOT IN ('Sick', 'C-SICK')) sub
+  FROM 
+      (
+       SELECT gabby.utilities.DATE_TO_SY(pay_date) AS academic_year
+             ,payroll_company_code + CONVERT(nvarchar(6),file_number_pay_statements_) AS position_id
+             ,additional_earnings_code
+             ,additional_earnings_description
+             ,CONVERT(FLOAT,REPLACE(REPLACE(gross_pay,'$',''),',','')) AS gross_pay
+       FROM gabby.adp.additional_earnings_report
+       WHERE additional_earnings_description NOT IN ('Sick', 'C-SICK')
+      ) sub
   GROUP BY position_id, additional_earnings_code, additional_earnings_description, academic_year
   )
 
