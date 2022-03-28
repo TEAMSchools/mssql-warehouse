@@ -42,3 +42,4 @@ SELECT student_number
       ,[db_name]
 FROM gabby.easyiep.njsmart_powerschool_clean
 WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+  AND rn_stu_yr = 1

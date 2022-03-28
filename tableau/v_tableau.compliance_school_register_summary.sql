@@ -32,12 +32,12 @@ SELECT co.student_number
       ,ISNULL(co.lep_status, 0) AS lep_status
 
       ,nj.programtypecode
-      
+
       ,iep.nj_se_placement AS special_education_placement 
-      
+
       ,d.days_total AS n_days_school
       ,d.days_remaining AS n_days_remaining
-      
+
       ,sub.n_mem
       ,sub.n_att
       ,sub.n_mem_ytd
@@ -49,12 +49,13 @@ LEFT JOIN gabby.easyiep.njsmart_powerschool_clean iep
   ON co.student_number = iep.student_number
  AND co.academic_year = iep.academic_year
  AND co.[db_name] = iep.[db_name]
-JOIN gabby.powerschool.calendar_rollup_static d
+ AND iep.rn_stu_yr = 1
+INNER JOIN gabby.powerschool.calendar_rollup_static d
   ON co.schoolid = d.schoolid
  AND co.yearid = d.yearid
  AND co.track = d.track
  AND co.[db_name] = d.[db_name]
-JOIN att_mem sub
+INNER JOIN att_mem sub
   ON co.studentid = sub.studentid
  AND co.yearid = sub.yearid
  AND co.[db_name] = sub.[db_name]
