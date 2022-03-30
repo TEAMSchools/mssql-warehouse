@@ -4,20 +4,19 @@ GO
 CREATE OR ALTER VIEW extracts.gsheets_survey_completion AS
 
 WITH incomplete_surveys AS (
-SELECT academic_year
-      ,reporting_term
-      ,survey_taker_id
-      ,survey_round_open
-      ,survey_round_close
-      ,survey_completion_date 
-      ,ROW_NUMBER() OVER(
+  SELECT academic_year
+        ,reporting_term
+        ,survey_taker_id
+        ,survey_round_open
+        ,survey_round_close
+        ,survey_completion_date 
+        ,ROW_NUMBER() OVER(
            PARTITION BY survey_taker_id
              ORDER BY reporting_term DESC) AS rn_null
-FROM gabby.surveys.survey_tracking t
-WHERE survey_completion_date IS NULL
-  AND CONVERT(DATE, GETDATE()) BETWEEN survey_round_open AND survey_round_close
-
-  )
+  FROM gabby.surveys.survey_tracking t
+  WHERE survey_completion_date IS NULL
+    AND CONVERT(DATE, GETDATE()) BETWEEN survey_round_open AND survey_round_close
+ )
 
 SELECT i.academic_year
       ,i.reporting_term
@@ -34,7 +33,6 @@ SELECT i.academic_year
       ,c.manager_mail
       ,GETDATE() AS date_of_extract
 FROM incomplete_surveys i
-JOIN gabby.people.staff_crosswalk_static c
+INNER JOIN gabby.people.staff_crosswalk_static c
   ON i.survey_taker_id = c.df_employee_number
 WHERE rn_null = 1
-
