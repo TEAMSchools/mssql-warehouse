@@ -1,7 +1,7 @@
 USE gabby
 GO
 
---CREATE OR ALTER VIEW extracts.gsheets_survey_completion AS
+CREATE OR ALTER VIEW extracts.gsheets_survey_completion AS
 
 WITH incomplete_surveys AS (
 SELECT academic_year
@@ -16,6 +16,7 @@ SELECT academic_year
 FROM gabby.surveys.survey_tracking t
 WHERE survey_completion_date IS NULL
   AND CONVERT(DATE, GETDATE()) BETWEEN survey_round_open AND survey_round_close
+
   )
 
 SELECT i.academic_year
@@ -31,8 +32,9 @@ SELECT i.academic_year
       ,c.primary_site
       ,c.manager_name
       ,c.manager_mail
+      ,GETDATE() AS date_of_extract
 FROM incomplete_surveys i
 JOIN gabby.people.staff_crosswalk_static c
   ON i.survey_taker_id = c.df_employee_number
 WHERE rn_null = 1
-ORDER BY survey_taker_id
+
