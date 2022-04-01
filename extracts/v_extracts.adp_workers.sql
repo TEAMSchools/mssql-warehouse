@@ -11,7 +11,6 @@ WITH wfm_updates AS (
  )
 
 SELECT scw.employee_number
-      ,scw.preferred_race_ethnicity
 
       ,w.associate_oid
 
