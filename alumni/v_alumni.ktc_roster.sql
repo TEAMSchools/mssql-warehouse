@@ -140,11 +140,11 @@ FROM
              WHEN rt.[name] = 'HS Student'
               AND co.grade_level = 8
               AND MONTH(co.exitdate) IN (6, 7)
-              AND (co.exitcode = 'G1' OR co.exitcode LIKE 'T%' AND co.exitcode <> 'T2')
+              AND (co.exitcode = 'G1' OR (co.exitcode LIKE 'T%' AND co.exitcode <> 'T2'))
                   THEN 'TAFHS'
              WHEN co.grade_level = 8
               AND MONTH(co.exitdate) IN (6, 7)
-              AND (co.exitcode = 'G1' OR co.exitcode LIKE 'T%' AND co.exitcode <> 'T2')
+              AND (co.exitcode = 'G1' OR (co.exitcode LIKE 'T%' AND co.exitcode <> 'T2'))
                   THEN 'TAF'
             END AS ktc_status
      FROM gabby.powerschool.cohort_identifiers_static co
