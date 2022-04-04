@@ -40,6 +40,6 @@ SELECT student_number
       ,spedlep AS [STUDENTCOREFIELDS.SPEDLEP]
       ,CASE WHEN special_education_code = '00' THEN '1' END AS [S_NJ_STU_X.Determined_Ineligible_YN]
       ,[db_name]
-FROM gabby.easyiep.njsmart_powerschool_clean
+FROM gabby.easyiep.njsmart_powerschool_clean_static
 WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND rn_stu_yr = 1

@@ -45,7 +45,7 @@ FROM gabby.powerschool.cohort_identifiers_static co
 LEFT JOIN gabby.powerschool.s_nj_stu_x nj
   ON co.students_dcid = nj.studentsdcid
  AND co.[db_name] = nj.[db_name]
-LEFT JOIN gabby.easyiep.njsmart_powerschool_clean iep
+LEFT JOIN gabby.easyiep.njsmart_powerschool_clean_static iep
   ON co.student_number = iep.student_number
  AND co.academic_year = iep.academic_year
  AND co.[db_name] = iep.[db_name]
