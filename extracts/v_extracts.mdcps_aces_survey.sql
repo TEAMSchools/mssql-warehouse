@@ -1,7 +1,7 @@
 USE gabby
 GO
 
---CREATE OR ALTER VIEW extracts.mdcps_aces_survey AS
+CREATE OR ALTER VIEW extracts.mdcps_aces_survey AS
 
 SELECT s.primary_job
       ,s.primary_site
