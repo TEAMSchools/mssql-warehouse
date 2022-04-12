@@ -30,6 +30,7 @@ SELECT s.primary_job
       ,'N/A' AS teacher_eval
       ,'N/A' AS Contribution504B
       ,'B' AS BasicLifePlan
+      ,gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 
 FROM gabby.people.staff_crosswalk_static s
 LEFT JOIN gabby.adp.workers_custom_field_group_wide_static cf
@@ -39,4 +40,5 @@ LEFT JOIN gabby.surveys.staff_information_survey_detail si
 WHERE s.legal_entity_name = 'KIPP Miami'
   AND si.question_shortname = 'education_level'
   AND si.rn_cur = 1
+  AND (YEAR(s.termination_date) IN (gabby.utilities.GLOBAL_ACADEMIC_YEAR(),gabby.utilities.GLOBAL_ACADEMIC_YEAR()+ 1) OR termination_date IS NULL)
 ORDER BY s.[primary_site],s.last_name
