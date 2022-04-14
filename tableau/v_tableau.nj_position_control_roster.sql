@@ -1,7 +1,7 @@
 USE gabby
 GO
 
---CREATE OR ALTER VIEW tableau.nj_position_control_roster AS
+CREATE OR ALTER VIEW tableau.nj_position_control_roster AS
 
 WITH pivot_table AS (
   SELECT position_id
@@ -22,12 +22,12 @@ WITH pivot_table AS (
    ) AS pivot_table
 )
 
-,cost_numbers AS (
+,cost_number AS (
   SELECT associate_id
-        ,cost_number
-        ,custom_area_3 AS grant_number
+        ,gabby.dbo.GROUP_CONCAT(custom_area_3) AS grant_number
+        ,gabby.dbo.GROUP_CONCAT(cost_number) AS cost_number
   FROM adp.restricted_grant_coding
-  GROUP BY associate_id, cost_number,custom_area_3
+  GROUP BY associate_id
 )
 
 SELECT sr.first_name
@@ -66,7 +66,7 @@ SELECT sr.first_name
 FROM gabby.people.staff_roster sr
 LEFT JOIN pivot_table pvt
   ON sr.position_id = pvt.position_id
-LEFT JOIN cost_numbers cn
+LEFT JOIN cost_number cn
   ON sr.associate_id = cn.associate_id
 WHERE sr.position_status IN ('Active','Leave')
   AND (job_title IN ('Chief Executive Officer','Chief Financial Officer')
