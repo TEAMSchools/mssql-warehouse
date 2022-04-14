@@ -71,4 +71,3 @@ LEFT JOIN cost_number cn
 WHERE sr.position_status IN ('Active','Leave')
   AND (job_title IN ('Chief Executive Officer','Chief Financial Officer')
          OR sr.business_unit IN ('TEAM Academy Charter School','KIPP Cooper Norcross Academy'))
-ORDER BY employee_number
