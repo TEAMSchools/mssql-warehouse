@@ -4,7 +4,7 @@ GO
 CREATE OR ALTER VIEW extracts.deanslist_college_admission_tests AS
 
 SELECT ktc.student_number
-	  ,'ACT' AS test_type
+      ,'ACT' AS test_type
       ,CONCAT(LEFT(DATENAME(MONTH, st.date_c), 3), ' ', DATENAME(YEAR, st.date_c)) AS test_date
       ,st.act_composite_c AS act_composite
       ,st.act_math_c AS act_math
@@ -14,11 +14,10 @@ SELECT ktc.student_number
       ,st.act_writing_c AS act_writing
       ,NULL AS sat_total
       ,NULL AS sat_math
-      ,NULL AS sat_reading      
+      ,NULL AS sat_reading
       ,NULL AS sat_writing
       ,NULL AS sat_mc
       ,NULL AS sat_essay
-
 FROM gabby.alumni.standardized_test_c st
 LEFT JOIN gabby.alumni.ktc_roster ktc
   ON st.contact_c = ktc.sf_contact_id
@@ -27,7 +26,7 @@ WHERE st.act_composite_c IS NOT NULL
 UNION ALL
 
 SELECT ktc.student_number
-	  ,'SAT' AS test_type
+      ,'SAT' AS test_type
       ,CONCAT(LEFT(DATENAME(MONTH, st.date_c), 3), ' ', DATENAME(YEAR, st.date_c)) AS test_date
       ,NULL AS act_composite
       ,NULL AS act_math
@@ -37,11 +36,10 @@ SELECT ktc.student_number
       ,NULL AS act_writing
       ,st.sat_total_score_c AS sat_total
       ,COALESCE(st.sat_math_c, st.sat_math_pre_2016_c) AS sat_math
-      ,COALESCE(st.sat_ebrw_c, st.sat_verbal_c, st.sat_critical_reading_pre_2016_c) AS sat_reading      
+      ,COALESCE(st.sat_ebrw_c, st.sat_verbal_c, st.sat_critical_reading_pre_2016_c) AS sat_reading
       ,COALESCE(st.sat_writing_c, st.sat_writing_pre_2016_c) AS sat_writing
       ,NULL AS sat_mc
       ,NULL AS sat_essay
-
 FROM gabby.alumni.standardized_test_c st
 LEFT JOIN gabby.alumni.ktc_roster ktc
   ON st.contact_c = ktc.sf_contact_id
