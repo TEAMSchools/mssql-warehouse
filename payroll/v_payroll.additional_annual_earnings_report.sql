@@ -43,6 +43,6 @@ SELECT ade.academic_year
 FROM annual_additional_earnings ade
 INNER JOIN gabby.people.employment_history_static eh
   ON ade.position_id = eh.position_id
- AND DATEFROMPARTS(ade.academic_year+1, 4, 30) BETWEEN eh.effective_start_date AND eh.effective_end_date /* April 30 is the reporting date */
+ AND DATEFROMPARTS((ade.academic_year + 1), 4, 30) BETWEEN eh.effective_start_date AND eh.effective_end_date /* April 30 is the reporting date */
 INNER JOIN gabby.people.staff_roster sr
   ON eh.employee_number = sr.employee_number

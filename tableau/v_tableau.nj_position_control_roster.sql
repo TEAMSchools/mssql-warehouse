@@ -13,22 +13,21 @@ WITH pivot_table AS (
        SELECT position_id
              ,plan_type
              ,plan_name
-       FROM adp.comprehensive_benefits_report
-      ) AS source_table
-
+       FROM gabby.adp.comprehensive_benefits_report
+      ) sub
   PIVOT (
     MAX(plan_name)
     FOR plan_type IN ([Medical],[Dental],[Vision])
-   ) AS pivot_table
-)
+   ) p
+ )
 
 ,cost_number AS (
   SELECT associate_id
         ,gabby.dbo.GROUP_CONCAT(custom_area_3) AS grant_number
         ,gabby.dbo.GROUP_CONCAT(cost_number) AS cost_number
-  FROM adp.restricted_grant_coding
+  FROM gabby.adp.restricted_grant_coding
   GROUP BY associate_id
-)
+ )
 
 SELECT sr.first_name
       ,sr.last_name
@@ -51,7 +50,7 @@ SELECT sr.first_name
         WHEN sr.job_title = 'Chief Executive Officer' THEN 'Superintendent'
         ELSE sr.job_title
        END AS report_job_title
-      
+
       ,pvt.Medical
       ,pvt.Dental
       ,pvt.Vision
@@ -68,6 +67,6 @@ LEFT JOIN pivot_table pvt
   ON sr.position_id = pvt.position_id
 LEFT JOIN cost_number cn
   ON sr.associate_id = cn.associate_id
-WHERE sr.position_status IN ('Active','Leave')
-  AND (job_title IN ('Chief Executive Officer','Chief Financial Officer')
-         OR sr.business_unit IN ('TEAM Academy Charter School','KIPP Cooper Norcross Academy'))
+WHERE sr.position_status IN ('Active', 'Leave')
+  AND (job_title IN ('Chief Executive Officer', 'Chief Financial Officer')
+         OR sr.business_unit IN ('TEAM Academy Charter School', 'KIPP Cooper Norcross Academy'))
