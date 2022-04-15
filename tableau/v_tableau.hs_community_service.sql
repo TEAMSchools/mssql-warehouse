@@ -13,7 +13,8 @@ SELECT co.student_number
       ,co.enroll_status
       ,co.grade_level
       ,co.advisor_name
-      ,co.school_name
+
+      ,sch.[name] AS school_name
 
       ,b.behavior_date
       ,b.behavior
@@ -21,6 +22,9 @@ SELECT co.student_number
       ,CONCAT(b.staff_last_name, ', ', b.staff_first_name) AS staff_name
       ,CAST(LEFT(b.behavior, LEN(b.behavior) - 5) AS INT) AS cs_hours
 FROM gabby.powerschool.cohort_identifiers_static co
+LEFT JOIN gabby.powerschool.schools sch
+  ON co.schoolid = sch.school_number
+ AND co.[db_name] = sch.[db_name]
 LEFT JOIN gabby.deanslist.behavior b
   ON co.student_number = b.student_school_id
  AND co.[db_name] = b.[db_name]
