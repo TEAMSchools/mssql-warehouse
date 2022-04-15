@@ -103,9 +103,16 @@ WITH all_staff AS (
   GROUP BY associate_id
  )
 
-,survey_race_ethnicity AS (
+,survey_multiselect AS (
+  SELECT subject_adp_associate_id
+        ,preferred_race_ethnicity
+        ,community_grow_up
+        ,community_professional_experience
+        ,teacher_path
+  FROM (
   SELECT sub.subject_adp_associate_id
-        ,gabby.dbo.GROUP_CONCAT(qo.option_value) AS preferred_race_ethnicity
+        ,qc.shortname
+        ,gabby.dbo.GROUP_CONCAT(qo.option_value) AS answer
   FROM
       (
        SELECT sri.subject_adp_associate_id
@@ -119,14 +126,74 @@ WITH all_staff AS (
   INNER JOIN gabby.surveygizmo.survey_response_data sd
     ON sub.survey_id = sd.survey_id
    AND sub.survey_response_id = sd.survey_response_id
-   AND sd.question_id = 5
   LEFT JOIN gabby.surveygizmo.survey_question_options_static qo
     ON sub.survey_id = qo.survey_id
    AND sd.question_id = qo.question_id
    AND qo.option_disabled = 0
    AND CHARINDEX(qo.option_id, sd.options) > 0
+  JOIN gabby.surveygizmo.survey_question_clean_static qc
+       ON sd.survey_id = qc.survey_id
+       AND sd.question_id = qc.survey_question_id
+       AND qc.shortname IN ('preferred_race_ethnicity'
+                           ,'community_grow_up'
+                           ,'community_professional_experience'
+                           ,'teacher_path')
   WHERE sub.rn = 1
-  GROUP BY sub.subject_adp_associate_id
+  GROUP BY sub.subject_adp_associate_id, qc.shortname
+  ) s
+  PIVOT(MAX(answer) FOR shortname in (preferred_race_ethnicity
+                                     ,community_grow_up
+                                     ,community_professional_experience
+                                     ,teacher_path)
+        ) p
+ )
+
+,other_survey_responses AS (
+    SELECT subject_adp_associate_id
+          ,preferred_gender
+          ,education_level
+          ,undergrad_university
+          ,professional_experience_before_KIPP
+          ,years_teaching_nj_and_fl
+          ,years_teaching_any_state
+          ,kipp_alumni
+          ,relay
+    FROM (
+          SELECT sub.subject_adp_associate_id
+                ,shortname
+                ,answer
+          FROM
+              (
+               SELECT sri.subject_adp_associate_id
+                     ,sri.survey_id
+                     ,sri.survey_response_id
+                     ,ROW_NUMBER() OVER(PARTITION BY sri.subject_adp_associate_id ORDER BY sri.date_submitted DESC) AS rn
+               FROM gabby.surveygizmo.survey_response_identifiers_static sri
+               WHERE sri.[status] = 'Complete'
+                 AND sri.survey_id = 6330385
+              ) sub
+          INNER JOIN gabby.surveygizmo.survey_response_data sd
+            ON sub.survey_id = sd.survey_id
+           AND sub.survey_response_id = sd.survey_response_id
+          LEFT JOIN gabby.surveygizmo.survey_question_clean_static qc
+            ON sd.survey_id = qc.survey_id
+           AND sd.question_id = qc.survey_question_id
+          LEFT JOIN gabby.surveygizmo.survey_question_options_static qo
+            ON sub.survey_id = qo.survey_id
+           AND sd.question_id = qo.question_id
+           AND qo.option_disabled = 0
+           AND CHARINDEX(qo.option_id, sd.options) > 0
+          WHERE sub.rn = 1
+             ) s
+             PIVOT(MAX(answer) FOR shortname IN (preferred_gender
+                                                ,education_level
+                                                ,undergrad_university
+                                                ,professional_experience_before_KIPP
+                                                ,years_teaching_nj_and_fl
+                                                ,years_teaching_any_state
+                                                ,kipp_alumni
+                                                ,relay) 
+                   ) p
  )
 
 ,clean_staff AS (
@@ -200,6 +267,8 @@ WITH all_staff AS (
           WHEN sub.preferred_race_ethnicity LIKE '%Latinx/Hispanic/Chicana(o)%' THEN 'Hispanic or Latino'
           ELSE 'Not Hispanic or Latino'
          END AS ethnicity
+        ,sub.education_level
+        ,sub.undergrad_university
   FROM
       (
        SELECT eh.employee_number
@@ -267,16 +336,19 @@ WITH all_staff AS (
                ELSE rh.rehire_date
               END AS rehire_date
 
-             ,cf.[Years Teaching - In any State] AS years_teaching_in_any_state
-             ,cf.[Years Teaching - In NJ or FL] AS years_teaching_in_nj_or_fl
-             ,cf.[KIPP Alumni Status] AS kipp_alumni_status
-             ,cf.[Years of Professional Experience before joining] AS years_of_professional_experience_before_joining
-             ,cf.[Life Experience in Communities We Serve] AS life_experience_in_communities_we_serve
-             ,cf.[Teacher Prep Program] AS teacher_prep_program
-             ,cf.[Professional Experience in Communities We Serve] AS professional_experience_in_communities_we_serve
-             ,cf.[Attended Relay] AS attended_relay
+             ,COALESCE(osr.years_teaching_any_state, cf.[Years Teaching - In any State]) AS years_teaching_in_any_state
+             ,COALESCE(osr.years_teaching_nj_and_fl, cf.[Years Teaching - In NJ or FL]) AS years_teaching_in_nj_or_fl
+             ,COALESCE(osr.kipp_alumni, cf.[KIPP Alumni Status]) AS kipp_alumni_status
+             ,COALESCE(osr.professional_experience_before_KIPP, cf.[Years of Professional Experience before joining]) AS years_of_professional_experience_before_joining
+             ,COALESCE(sms.community_grow_up, cf.[Life Experience in Communities We Serve]) AS life_experience_in_communities_we_serve
+             ,COALESCE(sms.teacher_path, cf.[Teacher Prep Program]) AS teacher_prep_program
+             ,COALESCE(sms.community_professional_experience, cf.[Professional Experience in Communities We Serve]) AS professional_experience_in_communities_we_serve
+             ,COALESCE(osr.relay, cf.[Attended Relay]) AS attended_relay
              ,cf.[WFMgr Pay Rule] AS wfmgr_pay_rule
-             ,cf.[Preferred Gender] AS preferred_gender
+             ,COALESCE(osr.preferred_gender, cf.[Preferred Gender]) AS preferred_gender
+             
+             ,osr.education_level
+             ,osr.undergrad_university
 
              ,cw.adp_associate_id AS associate_id_legacy
 
@@ -285,8 +357,8 @@ WITH all_staff AS (
 
              ,REPLACE(REPLACE(REPLACE(
                 COALESCE(
-                  cf.[Preferred Race/Ethnicity]
-                 ,sre.preferred_race_ethnicity
+                  sms.preferred_race_ethnicity
+                 ,cf.[Preferred Race/Ethnicity]
                  ,ea.race_description + CASE WHEN ISNULL(ea.ethnicity, '') IN ('Not Hispanic or Latino', '') THEN '' ELSE ',Latinx/Hispanic/Chicana(o)' END
                 )
                ,'Black or African American', 'Black/African American')
@@ -311,8 +383,10 @@ WITH all_staff AS (
         AND cw.rn_curr = 1
        LEFT JOIN gabby.adp.employees p
          ON eh.position_id = p.position_id
-       LEFT JOIN survey_race_ethnicity sre
-         ON eh.associate_id = sre.subject_adp_associate_id
+       LEFT JOIN survey_multiselect sms
+         ON eh.associate_id = sms.subject_adp_associate_id
+       LEFT JOIN other_survey_responses osr
+         ON eh.associate_id = osr.subject_adp_associate_id
        WHERE eh.employee_number IS NOT NULL
       ) sub
   WHERE rn = 1
@@ -423,6 +497,9 @@ SELECT c.employee_number
       ,y.years_teaching_at_kipp
       ,y.years_teaching_at_kipp + c.years_teaching_in_nj_or_fl AS nj_fl_total_years_teaching
       ,y.years_teaching_at_kipp + c.years_teaching_in_any_state AS total_years_teaching
+
+      ,c.education_level
+      ,c.undergrad_university
 
       ,gl.student_grade_level AS primary_grade_taught
 
