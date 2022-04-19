@@ -169,6 +169,6 @@ LEFT JOIN gabby.renaissance.ar_most_recent_quiz_static bk
   ON co.student_number = bk.student_number
  AND co.academic_year = bk.academic_year
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-  AND co.school_level = 'MS'
+  AND (co.school_level = 'MS' OR (co.schoolid = 73256 AND co.grade_level = 4)) /* ad-hoc exception for Seek 4*/
   AND co.enroll_status = 0
   AND co.rn_year = 1
