@@ -431,8 +431,6 @@ SELECT st.respondent_employee_number AS survey_taker_id
 FROM survey_term_staff_scaffold st
 LEFT JOIN clean_responses c
   ON st.respondent_employee_number = c.respondent_employee_number
- AND st.academic_year = c.academic_year
- AND st.reporting_term_code = c.reporting_term
  AND st.survey_id = c.survey_id
 WHERE st.survey_id = 6330385 /* UP Survey Code */
 
