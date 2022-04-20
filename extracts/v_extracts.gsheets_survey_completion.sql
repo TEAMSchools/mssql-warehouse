@@ -10,11 +10,14 @@ WITH incomplete_surveys AS (
         ,survey_round_open
         ,survey_round_close
         ,survey_completion_date 
+        ,survey_id
         ,ROW_NUMBER() OVER(
            PARTITION BY survey_taker_id
-             ORDER BY reporting_term DESC) AS rn_null
+             ORDER BY reporting_term) AS rn_null
   FROM gabby.surveys.survey_tracking t
   WHERE survey_completion_date IS NULL
+  /*Limiting to non-Staff Update surveys*/
+    AND survey_id <> '6330385'
     AND CONVERT(DATE, GETDATE()) BETWEEN survey_round_open AND survey_round_close
  )
 
@@ -24,6 +27,7 @@ SELECT i.academic_year
       ,i.survey_round_open
       ,i.survey_round_close
       ,i.survey_completion_date 
+      ,i.survey_id
 
       ,c.preferred_first_name
       ,c.preferred_last_name

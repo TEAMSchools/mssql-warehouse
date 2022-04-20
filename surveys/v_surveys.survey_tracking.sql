@@ -129,6 +129,7 @@ SELECT COALESCE(st.respondent_employee_number, c.respondent_employee_number) AS 
       ,st.survey_round_open
       ,st.survey_round_close
       ,st.survey_default_link
+      ,st.survey_id
 
       ,sa.survey_round_status
       ,COALESCE(sa.assignment, c.subject_name) AS assignment
@@ -191,6 +192,7 @@ SELECT COALESCE(st.respondent_employee_number, c.respondent_employee_number) AS 
       ,st.survey_round_open
       ,st.survey_round_close
       ,st.survey_default_link
+      ,st.survey_id
 
       ,'Yes' AS survey_round_status
       ,c.subject_name AS assignment
@@ -254,6 +256,7 @@ SELECT COALESCE(st.respondent_employee_number, c.respondent_employee_number) AS 
       ,st.survey_round_open
       ,st.survey_round_close
       ,st.survey_default_link
+      ,st.survey_id
 
       ,sa.survey_taker AS survey_round_status
       ,'Your Manager' AS assignment
@@ -310,6 +313,7 @@ SELECT COALESCE(st.respondent_employee_number, c.respondent_employee_number) AS 
       ,st.survey_round_open
       ,st.survey_round_close
       ,st.survey_default_link
+      ,st.survey_id
 
       ,'Yes' AS survey_round_status
       ,'Your Manager' AS assignment
@@ -363,6 +367,7 @@ SELECT st.respondent_employee_number AS survey_taker_id
       ,st.survey_round_open
       ,st.survey_round_close
       ,st.survey_default_link
+      ,st.survey_id
 
       ,'Yes' AS survey_round_status
       ,sa.engagement_survey_assignment AS assignment
@@ -417,6 +422,7 @@ SELECT st.respondent_employee_number AS survey_taker_id
       ,st.survey_round_open
       ,st.survey_round_close
       ,st.survey_default_link
+      ,st.survey_id
 
       ,'Yes' AS survey_round_status
       ,'Update Your Staff Info' AS assignment
@@ -466,6 +472,7 @@ SELECT st.respondent_employee_number AS survey_taker_id
       ,st.survey_round_open
       ,st.survey_round_close
       ,st.survey_default_link
+      ,st.survey_id
 
       ,'Yes' AS survey_round_status
       ,'One Off Staff Survey' AS assignment
@@ -517,6 +524,7 @@ SELECT st.respondent_employee_number AS survey_taker_id
       ,st.survey_round_open
       ,st.survey_round_close
       ,st.survey_default_link
+      ,st.survey_id
 
       ,'Yes' AS survey_round_status
       ,'Intent to Return' AS assignment
