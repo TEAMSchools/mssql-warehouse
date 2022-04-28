@@ -55,5 +55,5 @@ SELECT d.employee_number
 FROM days_active d
 LEFT JOIN years_teaching_at_kipp y
   ON d.employee_number = y.employee_number
-LEFT JOIN gabby.surveys.staff_information_survey_wide sdf
+LEFT JOIN gabby.surveys.staff_information_survey_wide_static sdf
   ON d.employee_number = sdf.employee_number
