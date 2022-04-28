@@ -18,7 +18,6 @@ SELECT s.job_title
       ,s.address_state
       ,s.address_zip
       ,s.annual_salary
-      ,s.userprincipalname
       ,s.termination_date
       ,s.education_level
 
