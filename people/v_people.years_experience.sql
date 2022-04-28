@@ -14,13 +14,13 @@ WITH days_active AS (
                WHEN position_status = 'Active' THEN 'active'
                ELSE 'inactive'
               END AS status_clean
-             ,DATEDIFF(DAY, effective_start_date, effective_end_date) AS days
+             ,DATEDIFF(DAY, effective_start_date, effective_end_date) AS [days]
        FROM gabby.people.employment_history_static
        WHERE position_status NOT IN ('Terminated', 'Pre-Start')
          AND job_title <> 'Intern'
       ) sub
   PIVOT (
-    SUM(days)
+    SUM([days])
     FOR status_clean IN (active, inactive)
    ) p
  )
@@ -55,5 +55,5 @@ SELECT d.employee_number
 FROM days_active d
 LEFT JOIN years_teaching_at_kipp y
   ON d.employee_number = y.employee_number
-LEFT JOIN gabby.people.survey_demographics_fields sdf
+LEFT JOIN gabby.surveys.staff_information_survey_wide sdf
   ON d.employee_number = sdf.employee_number

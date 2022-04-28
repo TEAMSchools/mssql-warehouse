@@ -63,10 +63,7 @@ WITH all_staff AS (
 ,hire_dates AS (
   SELECT associate_id
         ,MIN(CASE WHEN position_status = 'Active' THEN status_effective_date END) AS original_hire_date
-        ,MAX(CASE 
-              WHEN position_status IN ('Terminated', 'Deceased') THEN status_effective_date 
-              END
-             ) AS termination_date
+        ,MAX(CASE WHEN position_status IN ('Terminated', 'Deceased') THEN status_effective_date END) AS termination_date
   FROM gabby.people.status_history_static
   GROUP BY associate_id
  )
@@ -247,9 +244,9 @@ WITH all_staff AS (
              ,COALESCE(sdf.years_teaching_nj_and_fl, cf.[Years Teaching - In NJ or FL]) AS years_teaching_in_nj_or_fl
              ,COALESCE(sdf.kipp_alumni, cf.[KIPP Alumni Status]) AS kipp_alumni_status
              ,COALESCE(sdf.professional_experience_before_KIPP, cf.[Years of Professional Experience before joining]) AS years_of_professional_experience_before_joining
-             ,COALESCE(sdf.community_grow_up, cf.[Life Experience in Communities We Serve]) AS life_experience_in_communities_we_serve
-             ,COALESCE(sdf.teacher_path, cf.[Teacher Prep Program]) AS teacher_prep_program
-             ,COALESCE(sdf.community_professional_experience, cf.[Professional Experience in Communities We Serve]) AS professional_experience_in_communities_we_serve
+             ,COALESCE(sdf.community_live, cf.[Life Experience in Communities We Serve]) AS life_experience_in_communities_we_serve
+             ,COALESCE(sdf.teacher_prep, cf.[Teacher Prep Program]) AS teacher_prep_program
+             ,COALESCE(sdf.community_work, cf.[Professional Experience in Communities We Serve]) AS professional_experience_in_communities_we_serve
              ,COALESCE(sdf.relay, cf.[Attended Relay]) AS attended_relay
              ,cf.[WFMgr Pay Rule] AS wfmgr_pay_rule
              ,COALESCE(sdf.preferred_gender, cf.[Preferred Gender]) AS preferred_gender
@@ -264,7 +261,7 @@ WITH all_staff AS (
 
              ,REPLACE(REPLACE(REPLACE(
                 COALESCE(
-                  sdf.preferred_race_ethnicity
+                  sdf.race_ethnicity
                  ,cf.[Preferred Race/Ethnicity]
                  ,ea.race_description + CASE WHEN ISNULL(ea.ethnicity, '') IN ('Not Hispanic or Latino', '') THEN '' ELSE ',Latinx/Hispanic/Chicana(o)' END
                 )
@@ -273,7 +270,7 @@ WITH all_staff AS (
                ,'Two or more races (Not Hispanic or Latino)', 'Bi/Multiracial'
               ) AS preferred_race_ethnicity
        FROM all_staff eh
-       JOIN gabby.adp.employees_all ea
+       INNER JOIN gabby.adp.employees_all ea
          ON eh.associate_id = ea.associate_id
        LEFT JOIN gabby.adp.workers_clean_static w
          ON eh.associate_id = w.worker_id
@@ -290,8 +287,8 @@ WITH all_staff AS (
         AND cw.rn_curr = 1
        LEFT JOIN gabby.adp.employees p
          ON eh.position_id = p.position_id
-       LEFT JOIN gabby.people.survey_demographics_fields sdf
-         ON eh.associate_id = sdf.adp_associate_id
+       LEFT JOIN gabby.surveys.staff_information_survey_wide_static sdf
+         ON eh.employee_number = sdf.employee_number
        WHERE eh.employee_number IS NOT NULL
       ) sub
   WHERE rn = 1
