@@ -1,7 +1,7 @@
 USE gabby
 GO
 
---CREATE OR ALTER VIEW extracts.mdcps_aces_survey AS
+CREATE OR ALTER VIEW extracts.mdcps_aces_survey AS
 
 SELECT s.job_title
       ,s.[location]
@@ -30,8 +30,9 @@ SELECT s.job_title
       ,'B' AS BasicLifePlan
 
 FROM gabby.people.staff_roster s
-LEFT JOIN gabby.adp.workers_custom_field_group_wide_static cf
+JOIN gabby.adp.workers_custom_field_group_wide_static cf
   ON s.associate_id = cf.worker_id
 WHERE s.business_unit = 'KIPP Miami'
-  AND (termination_date >'2021-06-30' OR termination_date IS NULL)
-ORDER BY s.[location],s.last_name
+  AND (s.termination_date > DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(),06,30)
+   OR s.termination_date IS NULL)
+
