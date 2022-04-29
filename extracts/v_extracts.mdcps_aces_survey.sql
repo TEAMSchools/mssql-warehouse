@@ -28,11 +28,8 @@ SELECT s.job_title
       ,'N/A' AS teacher_eval
       ,'N/A' AS Contribution504B
       ,'B' AS BasicLifePlan
-
 FROM gabby.people.staff_roster s
-JOIN gabby.adp.workers_custom_field_group_wide_static cf
+INNER JOIN gabby.adp.workers_custom_field_group_wide_static cf
   ON s.associate_id = cf.worker_id
 WHERE s.business_unit = 'KIPP Miami'
-  AND (s.termination_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(),07,01)
-   OR s.termination_date IS NULL)
-
+  AND (s.termination_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1) OR s.termination_date IS NULL)
