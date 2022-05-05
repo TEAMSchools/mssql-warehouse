@@ -4,7 +4,8 @@ GO
 CREATE OR ALTER VIEW extracts.deanslist_college_admission_tests AS
 
 SELECT ktc.student_number
-      ,'ACT' AS test_type
+
+      ,st.test_type_c AS test_type
       ,CONCAT(LEFT(DATENAME(MONTH, st.date_c), 3), ' ', DATENAME(YEAR, st.date_c)) AS test_date
       ,st.act_composite_c AS act_composite
       ,st.act_math_c AS act_math
@@ -21,12 +22,14 @@ SELECT ktc.student_number
 FROM gabby.alumni.standardized_test_c st
 LEFT JOIN gabby.alumni.ktc_roster ktc
   ON st.contact_c = ktc.sf_contact_id
-WHERE st.act_composite_c IS NOT NULL
+WHERE st.test_type_c = 'ACT'
+  AND st.act_composite_c IS NOT NULL
 
 UNION ALL
 
 SELECT ktc.student_number
-      ,'SAT' AS test_type
+
+      ,st.test_type_c AS test_type
       ,CONCAT(LEFT(DATENAME(MONTH, st.date_c), 3), ' ', DATENAME(YEAR, st.date_c)) AS test_date
       ,NULL AS act_composite
       ,NULL AS act_math
@@ -44,3 +47,4 @@ FROM gabby.alumni.standardized_test_c st
 LEFT JOIN gabby.alumni.ktc_roster ktc
   ON st.contact_c = ktc.sf_contact_id
 WHERE st.sat_total_score_c IS NOT NULL
+AND st.test_type_c ='SAT'
