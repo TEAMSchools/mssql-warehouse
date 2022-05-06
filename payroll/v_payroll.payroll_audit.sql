@@ -1,7 +1,7 @@
 USE gabby
 GO
 
---CREATE OR ALTER VIEW payroll.payroll_audit AS
+CREATE OR ALTER VIEW payroll.payroll_audit AS
 
 WITH final_data AS (
 
@@ -136,6 +136,7 @@ WITH final_data AS (
         ,pas.void_ind
         ,pas.code
         ,pas.code_value
+        ,pas.max_final_payroll_date
 
         ,pas.code_display
 
@@ -172,16 +173,104 @@ WITH final_data AS (
         ,fd.status_paydate AS status_prev_paydate
   FROM gabby.payroll.payroll_audit_scaffold pas
   LEFT JOIN final_data fd
-    ON fd.max_final_payroll_date = fd.payroll_date --compare to the most recent final payroll date
-   AND fd.employee_number = pas.employee_number
+    ON fd.employee_number = pas.employee_number
    AND fd.code = pas.code
   WHERE pas.preview_or_final = 'Prev'
+    AND fd.max_final_payroll_date = fd.payroll_date --compare to the most recent final payroll date
   )
 
-SELECT *
+SELECT position_id
+      ,fiscal_year
+      ,payroll_week
+      ,preview_or_final
+      ,preview_number
+      ,payroll_run
+      ,company_code
+      ,payroll_date
+      ,file_nbr
+      ,dept
+      ,cost_nbr
+      ,fli_code
+      ,rt
+      ,state_cd_1
+      ,state_cd_2
+      ,sui_sdi_code
+      ,void_ind
+      ,code
+      ,code_value
+      ,max_final_payroll_date
+      ,code_display
+      ,employee_number
+      ,business_unit_paydate
+      ,location_paydate
+      ,department_paydate
+      ,job_title_paydate
+      ,salary_paydate
+      ,status_paydate
+      ,preferred_name
+      ,business_unit_curr
+      ,location_curr
+      ,department_curr
+      ,job_title_curr
+      ,salary_curr
+      ,status_curr
+      ,prev_code_value
+      ,prev_payroll_date
+      ,code_value_diff
+      ,audit_type
+      ,business_unit_prev_paydate
+      ,location_prev_paydate
+      ,department_prev_paydate
+      ,job_title_prev_paydate
+      ,salary_prev_paydate
+      ,status_prev_paydate
 FROM final_data
 
-UNION ALL
+UNION
 
-SELECT *
+SELECT position_id
+      ,fiscal_year
+      ,payroll_week
+      ,preview_or_final
+      ,preview_number
+      ,payroll_run
+      ,company_code
+      ,payroll_date
+      ,file_nbr
+      ,dept
+      ,cost_nbr
+      ,fli_code
+      ,rt
+      ,state_cd_1
+      ,state_cd_2
+      ,sui_sdi_code
+      ,void_ind
+      ,code
+      ,code_value
+      ,max_final_payroll_date
+      ,code_display
+      ,employee_number
+      ,business_unit_paydate
+      ,location_paydate
+      ,department_paydate
+      ,job_title_paydate
+      ,salary_paydate
+      ,status_paydate
+      ,preferred_name
+      ,business_unit_curr
+      ,location_curr
+      ,department_curr
+      ,job_title_curr
+      ,salary_curr
+      ,status_curr
+      ,prev_code_value
+      ,prev_payroll_date
+      ,code_value_diff
+      ,audit_type
+      ,business_unit_prev_paydate
+      ,location_prev_paydate
+      ,department_prev_paydate
+      ,job_title_prev_paydate
+      ,salary_prev_paydate
+      ,status_prev_paydate
 FROM preview_data
