@@ -17,7 +17,7 @@ WITH payroll_rollup AS (
           ELSE 'Final'
          END AS preview_or_final
         ,CASE
-          WHEN CHARINDEX('PREV', _file) > 0 THEN CONVERT(INT,SUBSTRING(_file, 38, 1))
+          WHEN CHARINDEX('PREV', _file) > 0 THEN CONVERT(INT,SUBSTRING(_file, 39, 1))
           ELSE NULL
          END AS preview_number
         ,CONVERT(DATE, SUBSTRING(_file, 23, 10)) AS payroll_date
