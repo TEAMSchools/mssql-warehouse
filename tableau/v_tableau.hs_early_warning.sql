@@ -17,16 +17,18 @@ WITH attendance AS (
 ,suspension AS (
   SELECT ics.student_school_id
         ,ics.create_academic_year
+        ,ics.[db_name]
 
         ,COUNT(ips.incidentpenaltyid) AS suspension_count
         ,SUM(ips.numdays) AS suspension_days
-  FROM gabby.deanslist.incidents_penalties_static ips
-  LEFT JOIN gabby.deanslist.incidents_clean_static ics
+  FROM gabby.deanslist.incidents_clean_static ics
+  INNER JOIN gabby.deanslist.incidents_penalties_static ips
     ON ips.incident_id = ics.incident_id
    AND ips.[db_name] = ics.[db_name]
   WHERE ips.issuspension = 1
   GROUP BY ics.student_school_id
           ,ics.create_academic_year
+          ,ics.[db_name]
  )
 
 SELECT co.studentid
@@ -87,7 +89,7 @@ SELECT co.studentid
       ,sus.suspension_count
       ,sus.suspension_days
 FROM gabby.powerschool.cohort_identifiers_static co
-JOIN gabby.reporting.reporting_terms dt
+INNER JOIN gabby.reporting.reporting_terms dt
   ON co.academic_year = dt.academic_year
  AND co.schoolid = dt.schoolid
  AND dt.identifier = 'RT'
@@ -96,11 +98,13 @@ JOIN gabby.reporting.reporting_terms dt
 LEFT JOIN gabby.powerschool.final_grades_static gr
   ON co.student_number = gr.student_number
  AND co.academic_year = gr.academic_year
+ AND co.[db_name] = gr.[db_name]
  AND dt.time_per_name = gr.reporting_term COLLATE Latin1_General_BIN
  AND gr.excludefromgpa = 0
 LEFT JOIN gabby.powerschool.gpa_detail gpa
   ON co.student_number = gpa.student_number
  AND co.academic_year = gpa.academic_year
+ AND co.[db_name] = gpa.[db_name]
  AND dt.time_per_name = gpa.reporting_term COLLATE Latin1_General_BIN
 LEFT JOIN gabby.powerschool.gpa_cumulative gpc
   ON co.studentid = gpc.studentid
@@ -112,6 +116,7 @@ LEFT JOIN attendance att
 LEFT JOIN suspension AS sus
   ON co.student_number = sus.student_school_id
  AND co.academic_year = sus.create_academic_year
+ AND co.[db_name] = sus.[db_name]
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.rn_year = 1
   AND co.is_enrolled_recent = 1
