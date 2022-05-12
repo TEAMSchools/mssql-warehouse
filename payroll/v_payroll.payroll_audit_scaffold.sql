@@ -383,8 +383,8 @@ FROM payroll_unpivot u
 LEFT JOIN gabby.payroll.register_code_lookup rcl
   ON u.company_code = rcl.company_code
  AND u.code = rcl.field_name
-JOIN gabby.people.employment_history_static eh
+INNER JOIN gabby.people.employment_history_static eh
   ON u.position_id = eh.position_id
  AND u.payroll_date BETWEEN eh.effective_start_date AND eh.effective_end_date
-JOIN gabby.people.staff_crosswalk_static r
+INNER JOIN gabby.people.staff_crosswalk_static r
   ON eh.employee_number = r.df_employee_number
