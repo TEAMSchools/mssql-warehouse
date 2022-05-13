@@ -1,14 +1,16 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW recruiting.leading_indicators AS
+--CREATE OR ALTER VIEW recruiting.leading_indicators AS
 
 SELECT a.application_id
       ,a.application_state_new_date AS application_date
       ,a.application_status_interview_phone_screen_requested_date AS phone_screen_requested
       ,a.application_status_interview_phone_screen_complete_date AS phone_screen_completed
+      ,a.application_status_interview_demo_date AS final_interview_demo
       ,a.application_state_offer_date AS offer_made
       ,a.application_state_hired_date AS offer_accepted
+      ,a.application_status
       ,a.department_internal
       ,a.job_city
       ,a.job_title
@@ -35,6 +37,7 @@ SELECT a.application_id
       ,DATENAME(WW, a.application_state_new_date) AS application_date_week
       ,DATENAME(WW, a.application_status_interview_phone_screen_requested_date) AS phone_screen_requested_week
       ,DATENAME(WW, a.application_status_interview_phone_screen_complete_date) AS phone_screen_completed_week
+      ,DATENAME(WW, a.application_status_interview_demo_date) AS interview_demo_week
       ,DATENAME(WW, a.application_state_offer_date) AS offer_made_week
       ,DATENAME(WW, a.application_state_hired_date)AS offer_accepted_week
 
