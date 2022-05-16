@@ -1,36 +1,35 @@
 USE gabby
 GO
 
---CREATE OR ALTER VIEW recruiting.leading_indicators AS
+CREATE OR ALTER VIEW recruiting.leading_indicators AS
 
 WITH latest_update_date AS (
-SELECT application_id
-      ,MAX(latest_update) AS last_update_date
-FROM
-
-      (SELECT a.application_id 
-            ,a.application_state_new_date AS application_date
-            ,a.application_state_in_review_date AS review_date
-            ,a.application_state_interview_date AS interview_date
-            ,a.application_status_interview_phone_screen_requested_date AS phone_screen_requested
-            ,a.application_status_interview_phone_screen_complete_date AS phone_screen_complete
-            ,a.application_status_interview_demo_date AS final_interview_demo
-            ,a.application_state_offer_date AS offer_date
-            ,a.application_state_hired_date AS hired_date
-      FROM smartrecruiters.report_applications a) AS p
-
-UNPIVOT
-   (latest_update FOR date_val IN
-    (application_date
-    ,review_date
-    ,interview_date
-    ,phone_screen_requested
-    ,phone_screen_complete
-    ,final_interview_demo
-    ,offer_date
-    ,hired_date) ) AS unpvt
-GROUP BY application_id
-)
+  SELECT application_id
+        ,MAX(latest_update) AS last_update_date
+  FROM
+    (SELECT a.application_id 
+        ,a.application_state_new_date AS application_date
+        ,a.application_state_in_review_date AS review_date
+        ,a.application_state_interview_date AS interview_date
+        ,a.application_status_interview_phone_screen_requested_date AS phone_screen_requested
+        ,a.application_status_interview_phone_screen_complete_date AS phone_screen_complete
+        ,a.application_status_interview_demo_date AS final_interview_demo
+        ,a.application_state_offer_date AS offer_date
+        ,a.application_state_hired_date AS hired_date
+     FROM smartrecruiters.report_applications a) AS p
+  
+  UNPIVOT(
+  latest_update 
+  FOR date_val IN (application_date
+                  ,review_date
+                  ,interview_date
+                  ,phone_screen_requested
+                  ,phone_screen_complete
+                  ,final_interview_demo
+                  ,offer_date
+                  ,hired_date) ) AS unpvt
+                  GROUP BY application_id
+  )
 
 
 SELECT a.application_id
