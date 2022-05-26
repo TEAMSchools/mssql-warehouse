@@ -5,7 +5,7 @@ CREATE OR ALTER VIEW illuminate_dna_repositories.sight_words_quiz_union_generato
 
 SELECT r.repository_id
       ,r.title
-      ,gabby.illuminate_dna_repositories.repository_unpivot(r.repository_id, DEFAULT, DEFAULT) 
+      ,gabby.illuminate_dna_repositories.repository_unpivot(r.repository_id) 
          + CASE WHEN ROW_NUMBER() OVER(ORDER BY r.repository_id DESC) = 1 THEN '' ELSE ' UNION ALL ' END 
          COLLATE Latin1_General_BIN AS select_sql
       ,CASE WHEN atc.table_name IS NULL THEN 1 ELSE 0 END AS is_missing
