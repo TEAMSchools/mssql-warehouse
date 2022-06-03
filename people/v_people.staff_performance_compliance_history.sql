@@ -10,7 +10,7 @@ WITH years AS (
           ELSE DATEFROMPARTS((n + 1), 4, 30)
          END AS effective_date
   FROM gabby.utilities.row_generator_smallint
-  WHERE n BETWEEN 2002 AND (gabby.utilities.GLOBAL_ACADEMIC_YEAR())
+  WHERE n BETWEEN 2018 AND (gabby.utilities.GLOBAL_ACADEMIC_YEAR())
  )
 
 ,cert_history AS (
@@ -53,7 +53,7 @@ SELECT s.df_employee_number
       ,e.home_department AS historic_dept
       ,e.annual_salary AS historic_salary
 
-      ,pm.pm_term
+      ,tm.pm_term
       ,pm.etr_score
       ,pm.etr_tier
       ,pm.so_score
@@ -70,6 +70,9 @@ FROM gabby.people.staff_crosswalk_static s
 JOIN years y
   ON y.effective_date BETWEEN s.original_hire_date 
                           AND COALESCE(s.termination_date, DATEFROMPARTS(y.academic_year + 1, 6, 30))
+LEFT JOIN pm.teacher_goals_term_map tm
+  ON y.academic_year = tm.academic_year
+ AND tm.metric_name = 'etr_overall_score'
 LEFT JOIN cert_history c
   ON s.df_employee_number = c.employee_number
  AND y.academic_year = c.academic_year
@@ -81,6 +84,7 @@ LEFT JOIN gabby.people.employment_history_static e
 LEFT JOIN gabby.pm.teacher_goals_overall_scores_static pm
    ON s.df_employee_number = pm.df_employee_number
   AND y.academic_year = pm.academic_year
+  AND tm.pm_term = pm.pm_term
 LEFT JOIN gabby.people.staff_attendance_rollup a
   ON s.df_employee_number = a.df_employee_number
  AND y.academic_year = a.academic_year
