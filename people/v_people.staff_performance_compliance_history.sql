@@ -18,7 +18,7 @@ WITH years AS (
         ,y.academic_year
         ,COUNT(c.certificate_type) AS n_certs
   FROM gabby.people.certification_history c
-  JOIN years y
+  INNER JOIN years y
     ON y.effective_date > c.issued_date
   WHERE c.valid_cert = 1
   GROUP BY c.employee_number
@@ -45,7 +45,7 @@ SELECT s.df_employee_number
 
       ,y.academic_year
 
-      ,CASE WHEN c.n_certs > 0 THEN 1 ELSE 0 END AS is_certified
+      ,tm.pm_term
 
       ,e.business_unit AS historic_legal_entity
       ,e.[location] AS historic_location
@@ -53,7 +53,8 @@ SELECT s.df_employee_number
       ,e.home_department AS historic_dept
       ,e.annual_salary AS historic_salary
 
-      ,tm.pm_term
+      ,CASE WHEN c.n_certs > 0 THEN 1 ELSE 0 END AS is_certified
+
       ,pm.etr_score
       ,pm.etr_tier
       ,pm.so_score
@@ -67,20 +68,20 @@ SELECT s.df_employee_number
       ,a.left_early_approved AS ay_approved_left_early
       ,a.left_early_unapproved AS ay_unapproved_left_early
 FROM gabby.people.staff_crosswalk_static s
-JOIN years y
+INNER JOIN years y
   ON y.effective_date BETWEEN s.original_hire_date 
                           AND COALESCE(s.termination_date, DATEFROMPARTS(y.academic_year + 1, 6, 30))
-LEFT JOIN pm.teacher_goals_term_map tm
+INNER JOIN pm.teacher_goals_term_map tm
   ON y.academic_year = tm.academic_year
  AND tm.metric_name = 'etr_overall_score'
-LEFT JOIN cert_history c
-  ON s.df_employee_number = c.employee_number
- AND y.academic_year = c.academic_year
 LEFT JOIN gabby.people.employment_history_static e
   ON s.df_employee_number = e.employee_number
  AND y.effective_date BETWEEN e.effective_start_date AND e.effective_end_date
  AND e.job_title IS NOT NULL
  AND e.position_status NOT IN ('Terminated', 'Deceased')
+LEFT JOIN cert_history c
+  ON s.df_employee_number = c.employee_number
+ AND y.academic_year = c.academic_year
 LEFT JOIN gabby.pm.teacher_goals_overall_scores_static pm
    ON s.df_employee_number = pm.df_employee_number
   AND y.academic_year = pm.academic_year
