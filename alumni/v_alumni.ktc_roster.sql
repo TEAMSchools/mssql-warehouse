@@ -45,6 +45,7 @@ SELECT sub.student_number
       ,sub.sf_email
       ,sub.current_kipp_student
       ,sub.post_hs_simple_admin
+      ,sub.postsecondary_status
       ,sub.college_status
       ,sub.currently_enrolled_school
       ,sub.middle_school_attended
@@ -103,6 +104,7 @@ FROM
            ,c.other_phone AS sf_other_phone
            ,c.email AS sf_email
            ,c.post_hs_simple_admin_c AS post_hs_simple_admin
+           ,c.postsecondary_status_c AS postsecondary_status
            ,c.college_status_c AS college_status
            ,c.currently_enrolled_school_c AS currently_enrolled_school
            ,c.middle_school_attended_c AS middle_school_attended
