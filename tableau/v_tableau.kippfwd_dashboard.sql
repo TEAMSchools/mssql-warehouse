@@ -188,6 +188,30 @@ WITH academic_years AS (
     AND (subject_c LIKE 'Advising Session%' OR subject_c = 'Summer AAS')
  )
 
+,matric AS (
+  SELECT e.student_c AS contact_id
+        ,e.id AS enrollment_id
+        ,ROW_NUMBER() OVER(PARTITION BY e.student_c ORDER BY e.start_date_c DESC) AS rn_matric
+  FROM gabby.alumni.enrollment_c e
+  WHERE e.is_deleted = 0
+    AND e.status_c = 'Matriculated'
+ )
+
+,finaid AS (
+  SELECT e.contact_id
+
+        --,fa.applicable_school_year_c
+        --,fa.offer_date_c
+        ,fa.unmet_need_c
+        ,ROW_NUMBER() OVER(PARTITION BY e.enrollment_id ORDER BY fa.offer_date_c DESC) AS rn_finaid
+  FROM matric e
+  INNER JOIN gabby.alumni.subsequent_financial_aid_award_c fa
+    ON e.enrollment_id = fa.enrollment_c
+   AND fa.is_deleted = 0
+   AND fa.status_c = 'Offered'
+  WHERE e.rn_matric = 1
+ )
+
 SELECT c.sf_contact_id
       ,c.lastfirst AS student_name
       ,c.ktc_cohort
@@ -347,6 +371,8 @@ SELECT c.sf_contact_id
 
       ,ln.comments_c AS latest_as_comments
       ,ln.next_steps_c AS latest_as_next_steps
+
+      ,fa.unmet_need_c AS unmet_need
 FROM gabby.alumni.ktc_roster c
 CROSS JOIN academic_years ay
 LEFT JOIN gabby.alumni.enrollment_identifiers ei
@@ -368,5 +394,8 @@ LEFT JOIN latest_note ln
   ON c.sf_contact_id = ln.contact_c
  AND ay.academic_year = ln.academic_year
  AND ln.rn = 1
+LEFT JOIN finaid fa
+  ON c.sf_contact_id = fa.contact_id
+ AND fa.rn_finaid = 1
 WHERE c.ktc_status IN ('HS9', 'HS10', 'HS11', 'HS12', 'HSG', 'TAF', 'TAFHS')
   AND c.sf_contact_id IS NOT NULL
