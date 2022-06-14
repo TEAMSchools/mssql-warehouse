@@ -17,6 +17,7 @@ SELECT candidate_id
       ,community_application_state_contacted_date
       ,community_application_state_not_interested_date
       ,community_application_state_not_selected_date
+      ,community_application_last_update_date
       ,brand_org_field_value
 FROM gabby.smartrecruiters.report_prospects
 WHERE community_name LIKE 'New Jami%'
