@@ -6,7 +6,7 @@ CREATE OR ALTER VIEW people.staff_performance_compliance_history AS
 WITH years AS (
   SELECT n AS academic_year
         ,CASE
-          WHEN n = gabby.utilities.GLOBAL_ACADEMIC_YEAR() THEN GETDATE()
+          WHEN n = gabby.utilities.GLOBAL_ACADEMIC_YEAR() THEN CAST(GETDATE() as DATE)
           ELSE DATEFROMPARTS((n + 1), 4, 30)
          END AS effective_date
   FROM gabby.utilities.row_generator_smallint
