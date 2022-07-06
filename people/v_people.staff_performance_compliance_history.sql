@@ -1,13 +1,13 @@
 USE gabby
 GO 
 
-CREATE OR ALTER VIEW people.staff_performance_compliance_history AS
+--CREATE OR ALTER VIEW people.staff_performance_compliance_history AS
 
 WITH years AS (
   SELECT n AS academic_year
         ,CASE
-          WHEN n = gabby.utilities.GLOBAL_ACADEMIC_YEAR() THEN DATEFROMPARTS((n + 1), 6, 30)
-          ELSE DATEFROMPARTS((n + 1), 4, 30)
+          WHEN n = gabby.utilities.GLOBAL_ACADEMIC_YEAR() THEN CAST(GETDATE() AS DATE)
+          ELSE DATEFROMPARTS((n + 1), 6, 30)
          END AS effective_date
   FROM gabby.utilities.row_generator_smallint
   WHERE n BETWEEN 2018 AND (gabby.utilities.GLOBAL_ACADEMIC_YEAR())
