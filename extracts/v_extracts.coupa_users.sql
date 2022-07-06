@@ -45,8 +45,6 @@ WITH roles AS (
         ,sr.worker_category
         ,sr.wfmgr_pay_rule
 
-        ,ad.is_active AS is_active_ad
-
         ,cu.active
         ,CASE
           WHEN cu.purchasing_user = 1 THEN 'Yes'
@@ -57,8 +55,6 @@ WITH roles AS (
 
         ,bg.business_group_names AS content_groups
   FROM gabby.people.staff_roster sr
-  LEFT JOIN gabby.adsi.user_attributes_static ad
-    ON sr.associate_id = ad.idautopersonalternateid
   INNER JOIN gabby.coupa.[user] cu
     ON sr.employee_number = cu.employee_number
   INNER JOIN roles r
@@ -84,15 +80,11 @@ WITH roles AS (
         ,sr.worker_category
         ,sr.wfmgr_pay_rule
 
-        ,ad.is_active AS is_active_ad
-
         ,1 AS active
         ,'No' AS purchasing_user
         ,'Expense User' AS roles
         ,NULL AS content_groups
   FROM gabby.people.staff_roster sr
-  LEFT JOIN gabby.adsi.user_attributes_static ad
-    ON sr.associate_id = ad.idautopersonalternateid
   LEFT JOIN gabby.coupa.[user] cu
     ON sr.employee_number = cu.employee_number
   WHERE sr.position_status NOT IN ('Prestart', 'Terminated')
@@ -169,7 +161,7 @@ FROM
               AND (au.roles LIKE '%Edit Expense Report as Approver%' OR au.roles LIKE '%Edit Requisition as Approver%')
                     THEN 'active' /* keep Approvers active while on leave */
              WHEN au.position_status = 'Leave' THEN 'inactive' /* deactivate all others on leave */
-             WHEN au.is_active_ad = 1 THEN 'active'
+             WHEN ad.is_active = 1 THEN 'active'
              ELSE 'inactive'
             END AS coupa_status
 
