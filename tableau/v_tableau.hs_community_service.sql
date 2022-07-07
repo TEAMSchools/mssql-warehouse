@@ -13,8 +13,8 @@ SELECT co.student_number
       ,co.enroll_status
       ,co.grade_level
       ,co.advisor_name
-      ,CONCAT(co.student_web_id, '@teamstudents.org') AS student_email
       ,co.guardianemail
+      ,CONCAT(co.student_web_id, '@teamstudents.org') AS student_email
 
       ,sch.[name] AS school_name
 
