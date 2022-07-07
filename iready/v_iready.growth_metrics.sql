@@ -6,11 +6,12 @@ CREATE OR ALTER VIEW iready.growth_metrics AS
 WITH baseline AS(
   SELECT dr.student_id AS student_number
         ,CAST(dr.overall_scale_score AS FLOAT) AS baseline_scale
+        ,dr.[percentile] AS baseline_percentile
         ,LEFT(dr.academic_year, 4) AS academic_year
         ,CASE 
           WHEN dr._file LIKE '%_ela%' THEN 'Reading'
           WHEN dr._file LIKE '%_math%' THEN 'Math'
-          ELSE NULL 
+          ELSE NULL
          END AS [subject]
   FROM gabby.iready.diagnostic_results dr
   WHERE dr.diagnostic_used_to_establish_growth_measures_y_n_ = 'Y'
@@ -19,6 +20,7 @@ WITH baseline AS(
 ,recent AS(
   SELECT dr.student_id AS student_number
         ,CAST(dr.overall_scale_score AS FLOAT) AS recent_scale
+        ,dr.[percentile] AS recent_percentile
         ,LEFT(dr.academic_year, 4) AS academic_year
         ,CASE 
           WHEN dr._file LIKE '%_ela%' THEN 'Reading'
@@ -33,6 +35,10 @@ WITH baseline AS(
 SELECT bl.student_number
       ,bl.academic_year
       ,bl.[subject]
+      ,bl.baseline_scale
+      ,bl.baseline_percentile
+      ,re.recent_scale
+      ,re.recent_percentile
       ,di.annual_typical_growth_measure
       ,di.annual_stretch_growth_measure
       ,CASE 
@@ -58,4 +64,6 @@ LEFT JOIN recent re
 LEFT JOIN gabby.iready.diagnostic_and_instruction di
   ON bl.student_number = di.student_id
  AND bl.[subject] = di.[subject]
- AND bl.academic_year = re.academic_year
+ AND bl.academic_year = LEFT(di.academic_year, 4)
+
+ORDER BY bl.student_number, bl.academic_year, bl.subject
