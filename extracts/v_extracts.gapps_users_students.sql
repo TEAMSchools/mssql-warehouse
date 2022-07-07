@@ -66,9 +66,9 @@ FROM
       AND s.entrydate BETWEEN sp.enter_date AND sp.exit_date
       AND s.[db_name] = sp.[db_name]
       AND sp.specprog_name IN ('Out of District', 'Self-Contained Special Education', 'Pathways ES', 'Pathways MS', 'Whittier ES')
-     JOIN gabby.powerschool.schools sch
+     INNER JOIN gabby.powerschool.schools sch
        ON s.schoolid = sch.school_number
       AND s.[db_name] = sch.[db_name]
-     JOIN gabby.powerschool.student_access_accounts_static saa
+     INNER JOIN gabby.powerschool.student_access_accounts_static saa
        ON s.student_number = saa.student_number
     ) sub
