@@ -82,15 +82,15 @@ FROM
             END AS lunchstatus
            ,CASE
              WHEN rn_year > 1 THEN NULL
-             ELSE CONVERT(INT,ROW_NUMBER() OVER(
-                                PARTITION BY sub.studentid, sub.schoolid, sub.rn_year
-                                  ORDER BY sub.yearid ASC, sub.exitdate ASC))
+             ELSE ROW_NUMBER() OVER(
+                    PARTITION BY sub.studentid, sub.schoolid, sub.rn_year
+                      ORDER BY sub.yearid ASC, sub.exitdate ASC)
             END AS year_in_school
            ,CASE
              WHEN rn_year > 1 THEN NULL
-             ELSE CONVERT(INT,ROW_NUMBER() OVER(
-                                PARTITION BY sub.studentid, sub.rn_year
-                                  ORDER BY sub.yearid ASC, sub.exitdate ASC))
+             ELSE ROW_NUMBER() OVER(
+                    PARTITION BY sub.studentid, sub.rn_year
+                      ORDER BY sub.yearid ASC, sub.exitdate ASC)
             END AS year_in_network
            ,MIN(prev_grade_level) OVER(PARTITION BY studentid, yearid ORDER BY yearid ASC) AS prev_grade_level
            ,CASE
@@ -122,42 +122,42 @@ FROM
                 ,LAG(yearid, 1) OVER(PARTITION BY sub.studentid ORDER BY sub.yearid ASC) AS prev_yearid
                 ,LAG(grade_level, 1) OVER(PARTITION BY sub.studentid ORDER BY sub.yearid ASC) AS prev_grade_level
 
-                ,CONVERT(INT,ROW_NUMBER() OVER(
+                ,ROW_NUMBER() OVER(
                    PARTITION BY sub.studentid, sub.yearid
-                     ORDER BY sub.yearid DESC, sub.exitdate DESC)) AS rn_year
-                ,CONVERT(INT,ROW_NUMBER() OVER(
+                     ORDER BY sub.yearid DESC, sub.exitdate DESC) AS rn_year
+                ,ROW_NUMBER() OVER(
                    PARTITION BY sub.studentid, sub.schoolid
-                     ORDER BY sub.yearid DESC, sub.exitdate DESC)) AS rn_school
-                ,CONVERT(INT,ROW_NUMBER() OVER(
+                     ORDER BY sub.yearid DESC, sub.exitdate DESC) AS rn_school
+                ,ROW_NUMBER() OVER(
                    PARTITION BY sub.studentid, CASE WHEN sub.grade_level = 99 THEN 1 ELSE 0 END
-                     ORDER BY sub.yearid DESC, sub.exitdate DESC)) AS rn_undergrad
-                ,CONVERT(INT,ROW_NUMBER() OVER(
+                     ORDER BY sub.yearid DESC, sub.exitdate DESC) AS rn_undergrad
+                ,ROW_NUMBER() OVER(
                    PARTITION BY sub.studentid
-                     ORDER BY sub.yearid DESC, sub.exitdate DESC)) AS rn_all
+                     ORDER BY sub.yearid DESC, sub.exitdate DESC) AS rn_all
           FROM
               (
                /* terminal (current & transfers) */
-               SELECT CONVERT(INT, s.id) AS studentid
-                     ,CONVERT(INT, s.dcid) AS studentsdcid
-                     ,CONVERT(INT, s.student_number) AS student_number
-                     ,CONVERT(INT, s.grade_level) AS grade_level
-                     ,CONVERT(INT, s.schoolid) AS schoolid
+               SELECT s.id AS studentid
+                     ,s.dcid AS studentsdcid
+                     ,s.student_number
+                     ,s.grade_level
+                     ,s.schoolid
                      ,s.entrydate
                      ,s.exitdate
-                     ,CONVERT(VARCHAR, s.entrycode) AS entrycode
-                     ,CONVERT(VARCHAR, s.exitcode) AS exitcode
-                     ,CONVERT(VARCHAR(250), s.exitcomment) AS exitcomment
-                     ,CONVERT(VARCHAR, s.lunchstatus) AS lunchstatus
-                     ,CONVERT(INT, s.fteid) AS fteid
-                     ,CONVERT(VARCHAR(1), s.track) AS track
+                     ,s.entrycode
+                     ,s.exitcode
+                     ,s.exitcomment
+                     ,s.lunchstatus
+                     ,s.fteid
+                     ,s.track
 
-                     ,CONVERT(INT, terms.yearid) AS yearid
+                     ,terms.yearid
 
                      ,x1.exit_code AS exit_code_kf
 
                      ,x2.exit_code AS exit_code_ts
                FROM powerschool.students s
-               JOIN powerschool.terms terms
+               INNER JOIN powerschool.terms terms
                  ON s.schoolid = terms.schoolid
                 AND s.entrydate BETWEEN terms.firstday AND terms.lastday
                 AND terms.isyearrec = 1
@@ -173,11 +173,11 @@ FROM
                UNION ALL
 
                /* terminal (grads) */
-               SELECT CONVERT(INT, s.id) AS studentid
-                     ,CONVERT(INT, s.dcid) AS studentsdcid
-                     ,CONVERT(INT, s.student_number) AS student_number
-                     ,CONVERT(INT, s.grade_level) AS grade_level
-                     ,CONVERT(INT, s.schoolid) AS schoolid
+               SELECT s.id AS studentid
+                     ,s.dcid AS studentsdcid
+                     ,s.student_number
+                     ,s.grade_level
+                     ,s.schoolid
                      ,NULL AS entrydate
                      ,NULL AS exitdate
                      ,NULL AS entrycode
@@ -187,12 +187,12 @@ FROM
                      ,NULL AS fteid
                      ,NULL AS track
 
-                     ,CONVERT(INT, terms.yearid) AS yearid
+                     ,terms.yearid
 
                      ,NULL AS exit_code_kf
                      ,NULL AS exit_code_ts
                FROM powerschool.students s
-               JOIN powerschool.terms terms
+               INNER JOIN powerschool.terms terms
                  ON s.schoolid = terms.schoolid
                 AND s.entrydate <= terms.firstday
                 AND terms.isyearrec = 1
@@ -201,29 +201,29 @@ FROM
                UNION ALL
 
                /* re-enrollments */
-               SELECT CONVERT(INT, re.studentid) AS studentid
-                     ,CONVERT(INT, s.dcid) AS studentsdcid
-                     ,CONVERT(INT, s.student_number) AS student_number
-                     ,CONVERT(INT, re.grade_level) AS grade_level
-                     ,CONVERT(INT, re.schoolid) AS schoolid
+               SELECT re.studentid AS studentid
+                     ,s.dcid AS studentsdcid
+                     ,s.student_number
+                     ,re.grade_level
+                     ,re.schoolid
                      ,re.entrydate
                      ,re.exitdate
-                     ,CONVERT(VARCHAR, re.entrycode) AS entrycode
-                     ,CONVERT(VARCHAR, re.exitcode) AS exitcode
-                     ,CONVERT(VARCHAR(250), re.exitcomment) AS exitcomment
-                     ,CONVERT(VARCHAR, re.lunchstatus) AS lunchstatus
-                     ,CONVERT(INT, re.fteid) AS fteid
-                     ,CONVERT(VARCHAR(1), re.track) AS track
+                     ,re.entrycode
+                     ,re.exitcode
+                     ,re.exitcomment
+                     ,re.lunchstatus
+                     ,re.fteid
+                     ,re.track
 
-                     ,CONVERT(INT, terms.yearid) AS yearid
+                     ,terms.yearid
 
                      ,x1.exit_code AS exit_code_kf
 
                      ,x2.exit_code AS exit_code_ts
                FROM powerschool.reenrollments re
-               JOIN powerschool.students s
+               INNER JOIN powerschool.students s
                  ON re.studentid = s.id
-               JOIN powerschool.terms terms
+               INNER JOIN powerschool.terms terms
                  ON re.schoolid = terms.schoolid
                 AND re.entrydate BETWEEN terms.firstday AND terms.lastday
                 AND terms.isyearrec = 1
