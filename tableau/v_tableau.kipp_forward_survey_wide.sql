@@ -1,7 +1,7 @@
 USE gabby
 GO
 
---CREATE OR ALTER VIEW tableau.kipp_forward_survey_wide AS
+CREATE OR ALTER VIEW tableau.kipp_forward_survey_wide AS
 
 WITH alumni_data AS (
   SELECT e.student_c
