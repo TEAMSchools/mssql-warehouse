@@ -18,6 +18,7 @@ WITH alumni_data AS (
 
         ,c.first_name
         ,c.last_name
+        ,c.[email]
         ,c.kipp_ms_graduate_c
         ,c.kipp_hs_graduate_c
         ,c.kipp_hs_class_c
@@ -26,7 +27,6 @@ WITH alumni_data AS (
         ,c.[description]
         ,c.gender_c
         ,c.ethnicity_c
-        ,CAST(CAST(c.birthdate AS datetime) AS float) AS alumni_birthdate_id
   FROM gabby.alumni.enrollment_c e
   JOIN gabby.alumni.contact c
     ON e.student_c = c.id
@@ -35,119 +35,109 @@ WITH alumni_data AS (
  )
 
 ,survey_pivot AS (
-  SELECT survey_id
-		,survey_title
-		,survey_response_id
-		,campaign_academic_year
-		,campaign_name
-		,campaign_reporting_term
-		,date_started
-		,date_submitted
-		,response_time
-		,contact_id
-		,respondent_salesforce_id
-		,[first_name]
-		,[last_name]
-		,[after_grad] 
-		,CAST(CAST([alumni_dob] AS datetime) AS float) AS alumni_birthdate_id
-		,[alumni_phone]
-		,[imp_1]
-		,[imp_2]
-		,[imp_3]
-		,[imp_4]
-		,[imp_5]
-		,[imp_6]
-		,[imp_7]
-		,[imp_8]
-		,[imp_9]
-		,[cur_1]
-		,[cur_2]
-		,[cur_3]
-		,[cur_4]
-		,[cur_5]
-		,[cur_6]
-		,[cur_7]
-		,[cur_8]
-		,[cur_9]
-		,[cur_10]
-		,[job_sat]
-		,[ladder]
-		,[covid]
-		,[linkedin]
-		,[linkedin_link]
-		,[debt_binary]
-		,[debt_amount]
-		,[annual_income]
+SELECT  respondent_salesforce_id
+       ,date_submitted
+       ,survey_response_id
+       ,survey_title
+       ,survey_id
+       ,[first_name]
+       ,[last_name]
+       ,[after_grad] 
+       ,[alumni_dob]
+       ,[alumni_email]
+       ,[alumni_phone]
+       ,[imp_1]
+       ,[imp_2]
+       ,[imp_3]
+       ,[imp_4]
+       ,[imp_5]
+       ,[imp_6]
+       ,[imp_7]
+       ,[imp_8]
+       ,[imp_9]
+       ,[cur_1]
+       ,[cur_2]
+       ,[cur_3]
+       ,[cur_4]
+       ,[cur_5]
+       ,[cur_6]
+       ,[cur_7]
+       ,[cur_8]
+       ,[cur_9]
+       ,[cur_10]
+       ,[job_sat]
+       ,[ladder]
+       ,[covid]
+       ,[linkedin]
+       ,[linkedin_link]
+       ,[debt_binary]
+       ,[debt_amount]
+       ,[annual_income]
 
+  
  FROM
      (
-      SELECT survey_id
-			,survey_title
-			,survey_response_id
-			,campaign_academic_year
-			,campaign_name
-			,campaign_reporting_term
-			,date_started
-			,date_submitted
-			,response_time
-			,contact_id
-			,respondent_salesforce_id
-			,question_shortname
-			,answer
-       FROM gabby.surveygizmo.survey_detail s
+  SELECT  respondent_salesforce_id
+	     ,question_shortname
+	     ,answer
+	     ,survey_title
+	     ,date_submitted
+         ,survey_response_id
+         ,survey_id
+       FROM gabby.surveygizmo.survey_detail
        WHERE survey_id = '6734664'
-         --AND date_submitted > '2022-03-01'
          ) sub
-  PIVOT(
+  PIVOT (
     MAX(answer)
-    FOR question_shortname IN ( [first_name]
-						       ,[last_name]
-						       ,[alumni_dob]
-						       ,[alumni_phone]
-						       ,[after_grad]  
-						       ,[imp_1]
-						       ,[imp_2]
-						       ,[imp_3]
-						       ,[imp_4]
-						       ,[imp_5]
-						       ,[imp_6]
-						       ,[imp_7]
-						       ,[imp_8]
-						       ,[imp_9]
-						       ,[cur_1]
-						       ,[cur_2]
-						       ,[cur_3]
-						       ,[cur_4]
-						       ,[cur_5]
-						       ,[cur_6]
-						       ,[cur_7]
-						       ,[cur_8]
-						       ,[cur_9]
-						       ,[cur_10]
-						       ,[job_sat]
-						       ,[ladder]
-						       ,[covid]
-						       ,[linkedin]
-						       ,[linkedin_link]
-						       ,[debt_binary]
-						       ,[debt_amount]
-						       ,[annual_income])
+    FOR question_shortname IN (
+        [first_name]
+       ,[last_name]
+       ,[alumni_dob]
+       ,[alumni_email]
+       ,[alumni_phone]
+       ,[after_grad]  
+       ,[imp_1]
+       ,[imp_2]
+       ,[imp_3]
+       ,[imp_4]
+       ,[imp_5]
+       ,[imp_6]
+       ,[imp_7]
+       ,[imp_8]
+       ,[imp_9]
+       ,[cur_1]
+       ,[cur_2]
+       ,[cur_3]
+       ,[cur_4]
+       ,[cur_5]
+       ,[cur_6]
+       ,[cur_7]
+       ,[cur_8]
+       ,[cur_9]
+       ,[cur_10]
+       ,[job_sat]
+       ,[ladder]
+       ,[covid]
+       ,[linkedin]
+       ,[linkedin_link]
+       ,[debt_binary]
+       ,[debt_amount]
+       ,[annual_income]
+       
+       )
    ) p
 )
 
-SELECT  s.survey_id
-       ,s.survey_title
+SELECT  s.survey_title
        ,s.survey_response_id
-       ,s.date_started
        ,s.date_submitted
-       ,s.response_time
-       ,s.contact_id
        ,s.respondent_salesforce_id
-       ,s.alumni_birthdate_id
        ,s.first_name
        ,s.last_name
        ,s.alumni_phone
+       ,s.alumni_email
        ,s.after_grad
+       ,s.alumni_dob
        ,s.imp_1
        ,s.imp_2
        ,s.imp_3
@@ -194,7 +184,6 @@ SELECT  s.survey_id
 
 FROM survey_pivot s
 LEFT JOIN alumni_data a
-/*replace all this with email*/
-  ON s.alumni_birthdate_id = a.alumni_birthdate_id
+  ON s.alumni_email = a.email
  AND a.rn_latest = 1
 WHERE s.survey_id = '6734664'
