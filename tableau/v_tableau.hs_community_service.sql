@@ -4,6 +4,7 @@ GO
 CREATE OR ALTER VIEW tableau.hs_community_service AS
 
 SELECT co.student_number
+      ,co.academic_year
       ,co.lastfirst
       ,co.gender
       ,co.ethnicity
@@ -31,5 +32,7 @@ LEFT JOIN gabby.deanslist.behavior b
   ON co.student_number = b.student_school_id
  AND co.[db_name] = b.[db_name]
  AND b.behavior_category = 'Community Service'
-WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+ AND b.behavior_date BETWEEN co.entrydate AND co.exitdate
+WHERE co.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 5
   AND co.grade_level >= 9
+  AND co.enroll_status = 0
