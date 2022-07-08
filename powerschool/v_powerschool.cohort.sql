@@ -116,8 +116,8 @@ FROM
                 ,sub.exitcomment
                 ,sub.lunchstatus
                 ,sub.fteid
-                ,sub.track
                 ,sub.yearid
+                ,CASE WHEN sub.track = '' THEN NULL ELSE sub.track END AS track
                 ,(sub.yearid + 1990) AS academic_year
                 ,LAG(yearid, 1) OVER(PARTITION BY sub.studentid ORDER BY sub.yearid ASC) AS prev_yearid
                 ,LAG(grade_level, 1) OVER(PARTITION BY sub.studentid ORDER BY sub.yearid ASC) AS prev_grade_level
