@@ -11,8 +11,8 @@ SELECT co.student_number
       ,co.iep_status
       ,co.lep_status
       ,co.c_504_status
-      ,co.enroll_status
       ,co.grade_level
+      ,co.cohort
       ,co.advisor_name
       ,co.guardianemail
       ,CONCAT(co.student_web_id, '@teamstudents.org') AS student_email
@@ -33,6 +33,6 @@ LEFT JOIN gabby.deanslist.behavior b
  AND co.[db_name] = b.[db_name]
  AND b.behavior_category = 'Community Service'
  AND b.behavior_date BETWEEN co.entrydate AND co.exitdate
-WHERE co.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 5
-  AND co.grade_level >= 9
+WHERE co.grade_level >= 9
   AND co.enroll_status = 0
+  AND co.rn_year = 1
