@@ -38,6 +38,9 @@ FROM
              WHEN s.[db_name] = 'kippmiami' THEN 'group-students-miami@teamstudents.org'
             END AS group_email
 
+           ,saa.student_web_id + '@teamstudents.org' AS email
+           ,saa.student_web_password
+
            ,CASE
              WHEN sp.specprog_name = 'Out of District' THEN 'OD'
              WHEN sch.high_grade = 12 THEN 'HS'
@@ -57,18 +60,15 @@ FROM
              WHEN sch.abbreviation = 'KRA' THEN 'Royalty Academy'
              ELSE sch.abbreviation
             END AS school_name
-
-           ,saa.student_web_id + '@teamstudents.org' AS email
-           ,saa.student_web_password
      FROM gabby.powerschool.students s
+     INNER JOIN gabby.powerschool.student_access_accounts_static saa
+       ON s.student_number = saa.student_number
+     INNER JOIN gabby.powerschool.schools sch
+       ON s.schoolid = sch.school_number
+      AND s.[db_name] = sch.[db_name]
      LEFT JOIN gabby.powerschool.spenrollments_gen_static sp
        ON s.id = sp.studentid
       AND s.entrydate BETWEEN sp.enter_date AND sp.exit_date
       AND s.[db_name] = sp.[db_name]
       AND sp.specprog_name IN ('Out of District', 'Self-Contained Special Education', 'Pathways ES', 'Pathways MS', 'Whittier ES')
-     INNER JOIN gabby.powerschool.schools sch
-       ON s.schoolid = sch.school_number
-      AND s.[db_name] = sch.[db_name]
-     INNER JOIN gabby.powerschool.student_access_accounts_static saa
-       ON s.student_number = saa.student_number
     ) sub

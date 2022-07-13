@@ -29,7 +29,7 @@ SELECT df.google_email AS [user]
         /* KCNA */
         WHEN df.primary_site_schoolid = 179901 THEN '/Students/KCNA/LSP'
         WHEN df.primary_site_schoolid = 179902 THEN '/Students/KCNA/LSM'
-        WHEN df.primary_site_schoolid = 179903 THEN '/Students/KCNA/WMS'
+        WHEN df.primary_site_schoolid = 179903 THEN '/Students/KCNA/KHM'
         WHEN df.primary_site_schoolid = 179904 THEN '/Students/KCNA/KCNHS'
         WHEN df.primary_site_schoolid = 179905 THEN '/Students/KCNA/KSE'
         /* KMS */
