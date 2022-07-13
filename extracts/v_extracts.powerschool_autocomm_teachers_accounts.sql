@@ -21,10 +21,10 @@ WITH users_clean AS (
           ELSE 2
          END AS [status]
   FROM gabby.people.staff_crosswalk_static df
-  JOIN gabby.people.school_crosswalk sc
+  INNER JOIN gabby.people.school_crosswalk sc
     ON df.primary_site = sc.site_name
    AND sc._fivetran_deleted = 0
-  JOIN gabby.powerschool.users u
+  INNER JOIN gabby.powerschool.users u
     ON df.ps_teachernumber = u.teachernumber COLLATE Latin1_General_BIN
    AND df.primary_site_schoolid = u.homeschoolid
    AND CASE 
@@ -54,7 +54,7 @@ WITH users_clean AS (
           ELSE 2
          END AS [status]
   FROM gabby.people.staff_crosswalk_static df
-  JOIN gabby.people.school_crosswalk sc
+  INNER JOIN gabby.people.school_crosswalk sc
     ON df.primary_site = sc.site_name
    AND sc._fivetran_deleted = 0
   LEFT JOIN gabby.powerschool.users u
