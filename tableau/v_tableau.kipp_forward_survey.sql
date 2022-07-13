@@ -28,105 +28,74 @@ WITH alumni_data AS (
         ,c.gender_c
         ,c.ethnicity_c
   FROM gabby.alumni.enrollment_c e
-  JOIN gabby.alumni.contact c
+  INNER JOIN gabby.alumni.contact c
     ON e.student_c = c.id
   WHERE e.status_c = 'Graduated'
     AND e.is_deleted = 0
  )
 
 ,survey_pivot AS (
-SELECT  respondent_salesforce_id
-       ,date_submitted
-       ,survey_response_id
-       ,survey_title
-       ,survey_id
-       ,[first_name]
-       ,[last_name]
-       ,[after_grad] 
-       ,[alumni_dob]
-       ,[alumni_email]
-       ,[alumni_phone]
-       ,[imp_1]
-       ,[imp_2]
-       ,[imp_3]
-       ,[imp_4]
-       ,[imp_5]
-       ,[imp_6]
-       ,[imp_7]
-       ,[imp_8]
-       ,[imp_9]
-       ,[cur_1]
-       ,[cur_2]
-       ,[cur_3]
-       ,[cur_4]
-       ,[cur_5]
-       ,[cur_6]
-       ,[cur_7]
-       ,[cur_8]
-       ,[cur_9]
-       ,[cur_10]
-       ,[job_sat]
-       ,[ladder]
-       ,[covid]
-       ,[linkedin]
-       ,[linkedin_link]
-       ,[debt_binary]
-       ,[debt_amount]
-       ,[annual_income]
-
-  
- FROM
-     (
-  SELECT  respondent_salesforce_id
-	     ,question_shortname
-	     ,answer
-	     ,survey_title
-	     ,date_submitted
-         ,survey_response_id
-         ,survey_id
-       FROM gabby.surveygizmo.survey_detail
-       WHERE survey_id = '6734664'
-         ) sub
+  SELECT respondent_salesforce_id
+        ,date_submitted
+        ,survey_response_id
+        ,survey_title
+        ,survey_id
+        ,[first_name]
+        ,[last_name]
+        ,[after_grad] 
+        ,[alumni_dob]
+        ,[alumni_email]
+        ,[alumni_phone]
+        ,[imp_1]
+        ,[imp_2]
+        ,[imp_3]
+        ,[imp_4]
+        ,[imp_5]
+        ,[imp_6]
+        ,[imp_7]
+        ,[imp_8]
+        ,[imp_9]
+        ,[cur_1]
+        ,[cur_2]
+        ,[cur_3]
+        ,[cur_4]
+        ,[cur_5]
+        ,[cur_6]
+        ,[cur_7]
+        ,[cur_8]
+        ,[cur_9]
+        ,[cur_10]
+        ,[job_sat]
+        ,[ladder]
+        ,[covid]
+        ,[linkedin]
+        ,[linkedin_link]
+        ,[debt_binary]
+        ,[debt_amount]
+        ,[annual_income]
+  FROM
+      (
+       SELECT respondent_salesforce_id
+             ,question_shortname
+             ,answer
+             ,survey_title
+             ,date_submitted
+             ,survey_response_id
+             ,survey_id
+         FROM gabby.surveygizmo.survey_detail
+         WHERE survey_id = 6734664
+        ) sub
   PIVOT (
     MAX(answer)
     FOR question_shortname IN (
-        [first_name]
-       ,[last_name]
-       ,[alumni_dob]
-       ,[alumni_email]
-       ,[alumni_phone]
-       ,[after_grad]  
-       ,[imp_1]
-       ,[imp_2]
-       ,[imp_3]
-       ,[imp_4]
-       ,[imp_5]
-       ,[imp_6]
-       ,[imp_7]
-       ,[imp_8]
-       ,[imp_9]
-       ,[cur_1]
-       ,[cur_2]
-       ,[cur_3]
-       ,[cur_4]
-       ,[cur_5]
-       ,[cur_6]
-       ,[cur_7]
-       ,[cur_8]
-       ,[cur_9]
-       ,[cur_10]
-       ,[job_sat]
-       ,[ladder]
-       ,[covid]
-       ,[linkedin]
-       ,[linkedin_link]
-       ,[debt_binary]
-       ,[debt_amount]
-       ,[annual_income]
-       
-       )
+          [first_name], [last_name], [alumni_dob], [alumni_email], [alumni_phone], [after_grad]
+         ,[imp_1], [imp_2], [imp_3], [imp_4], [imp_5], [imp_6], [imp_7], [imp_8], [imp_9]
+         ,[cur_1], [cur_2], [cur_3], [cur_4], [cur_5], [cur_6], [cur_7], [cur_8], [cur_9]
+         ,[cur_10], [job_sat], [ladder], [covid], [linkedin], [linkedin_link], [debt_binary]
+         ,[debt_amount], [annual_income]
+        )
    ) p
-)
+ )
 
 SELECT  s.survey_title
        ,s.survey_response_id
@@ -165,7 +134,7 @@ SELECT  s.survey_title
        ,s.debt_binary
        ,s.debt_amount
        ,s.annual_income
-       
+
        ,a.[name]
        ,a.kipp_ms_graduate_c
        ,a.kipp_hs_graduate_c
@@ -181,9 +150,7 @@ SELECT  s.survey_title
        ,a.actual_end_date_c
        ,a.major_c
        ,a.status_c
-
 FROM survey_pivot s
 LEFT JOIN alumni_data a
   ON s.alumni_email = a.email
  AND a.rn_latest = 1
-WHERE s.survey_id = '6734664'
