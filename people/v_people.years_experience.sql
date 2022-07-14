@@ -14,7 +14,7 @@ WITH days_active AS (
                WHEN position_status = 'Active' THEN 'active'
                ELSE 'inactive'
               END AS status_clean
-             ,DATEDIFF(DAY, effective_start_date, effective_end_date) AS [days]
+             ,DATEDIFF(DAY, effective_start_date, CASE WHEN effective_end_date>GETDATE() THEN GETDATE() ELSE effective_end_date END) AS [days]
        FROM gabby.people.employment_history_static
        WHERE position_status NOT IN ('Terminated', 'Pre-Start')
          AND job_title <> 'Intern'
