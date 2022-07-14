@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW pm.assignment_roster
+--CREATE OR ALTER VIEW pm.assignment_roster
 
 
 WITH elementary_grade AS (
@@ -20,7 +20,7 @@ SELECT
       ,s.google_email
       ,s.userprincipalname AS user_email
       ,CASE 
-       WHEN s.primary_on_site_department = 'Elementary' AND e.student_grade_level IS NOT NULL
+       WHEN s.primary_on_site_department = 'Elementary'
        THEN CONCAT(s.primary_on_site_department,', Grade ',e.student_grade_level) 
        ELSE s.primary_on_site_department
        END AS department_grade
@@ -61,3 +61,4 @@ LEFT JOIN elementary_grade e
 WHERE s.status = 'ACTIVE'
   AND s.primary_job <> 'Intern'
   AND s.primary_job NOT LIKE '%temp%'
+
