@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW pm.assignment_roster
+CREATE OR ALTER VIEW extracts.gsheets.pm_assignment_roster
 
 
 WITH elementary_grade AS (
