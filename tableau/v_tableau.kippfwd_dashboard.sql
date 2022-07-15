@@ -35,7 +35,7 @@ WITH academic_years AS (
         ,CASE
           WHEN app.application_submission_status = 'Submitted'
            AND app.honors_special_program_name = 'EOF/EOP'
-           AND app.honors_special_program_status IN ('Applied', 'Accepted')
+           AND app.honors_special_program_status IN ('Accepted')
                THEN 1 
          END AS is_eof
         ,ROW_NUMBER() OVER(
@@ -234,7 +234,8 @@ SELECT c.sf_contact_id
       ,c.currently_enrolled_school
       ,c.latest_fafsa_date
       ,c.latest_state_financial_aid_app_date
-      ,c.latest_resume_date
+      ,c.most_recent_iep_date_c
+	  ,c.latest_resume_date
       ,c.efc_from_fafsa
       ,c.ethnicity
       ,c.gender
