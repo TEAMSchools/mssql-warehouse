@@ -17,5 +17,6 @@ SELECT student_number
         ELSE LEFT([status], 1)
        END AS lunch_status
       ,ROW_NUMBER() OVER(PARTITION BY student_number ORDER BY _row DESC) AS rn
+      ,2021 AS academic_year
 FROM gabby.ops.income_form_data
 WHERE student_number  IS NOT NULL

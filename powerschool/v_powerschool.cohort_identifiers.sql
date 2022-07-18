@@ -199,4 +199,5 @@ LEFT JOIN titan.income_form_data_clean ti
  AND ti.rn = 1
 LEFT JOIN gabby.ops.income_form_data_clean ifc
   ON co.student_number = ifc.student_number
+ AND ifc.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
  AND ifc.rn =1
