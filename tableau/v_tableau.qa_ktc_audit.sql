@@ -7,14 +7,14 @@ WITH roster AS (
   SELECT c.id AS contact_id
         ,c.[name] AS contact_name
         ,c.kipp_hs_class_c AS cohort
-        ,c.post_hs_simple_admin_c
+        ,c.dep_post_hs_simple_admin_c
 
         ,u.[name] AS ktc_counselor_name
   FROM gabby.alumni.contact c
-  JOIN gabby.alumni.record_type r
+  INNER JOIN gabby.alumni.record_type r
     ON c.record_type_id = r.id
    AND r.[name] IN ('College Student', 'Post-Education')
-  JOIN gabby.alumni.[user] u
+  INNER JOIN gabby.alumni.[user] u
     ON c.owner_id = u.id
   WHERE c.is_deleted = 0
     AND (c.kipp_hs_graduate_c = 1 OR c.kipp_ms_graduate_c = 1)
@@ -24,7 +24,7 @@ WITH roster AS (
   SELECT [value] AS semester
         ,CONVERT(VARCHAR(5), RIGHT(rg.n + 1, 2)) AS [year]
   FROM STRING_SPLIT('FA,SP', ',') ss
-  JOIN gabby.utilities.row_generator rg
+  INNER JOIN gabby.utilities.row_generator rg
     ON rg.n BETWEEN gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 2 AND gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1
  )
 
@@ -70,9 +70,9 @@ WITH roster AS (
 
         ,u.[name] AS updated_by
   FROM gabby.alumni.enrollment_history eh
-  JOIN gabby.alumni.enrollment_c e
+  INNER JOIN gabby.alumni.enrollment_c e
     ON eh.parent_id = e.id
-  JOIN gabby.alumni.[user] u
+  INNER JOIN gabby.alumni.[user] u
     ON eh.created_by_id = u.id
   WHERE eh.field = 'Status__c'
     AND eh.is_deleted = 0
@@ -90,9 +90,9 @@ WITH roster AS (
 
         ,u.[name] AS updated_by
   FROM gabby.alumni.enrollment_history eh
-  JOIN gabby.alumni.enrollment_c e
+  INNER JOIN gabby.alumni.enrollment_c e
     ON eh.parent_id = e.id
-  JOIN gabby.alumni.[user] u
+  INNER JOIN gabby.alumni.[user] u
     ON eh.created_by_id = u.id
   WHERE eh.field = 'Status__c'
     AND eh.is_deleted = 0
@@ -119,7 +119,7 @@ WITH roster AS (
 
              ,ISNULL(CONVERT(NVARCHAR(MAX),c.[description]), '') AS [description]
        FROM gabby.alumni.enrollment_c e
-       JOIN gabby.alumni.contact c
+       INNER JOIN gabby.alumni.contact c
          ON e.student_c = c.id
        WHERE e.type_c = 'College'
       ) sub
@@ -156,75 +156,4 @@ LEFT JOIN attachments_clean a
  AND s.semester = a.semester
  AND s.[year] = a.[year] 
  AND d.document_type = a.document_type
-WHERE r.post_hs_simple_admin_c IN ('College Persisting', 'College Grad - AA')
-
-UNION ALL
-
-SELECT r.contact_id
-      ,ea.enrollment_name
-      ,r.cohort      
-      ,r.ktc_counselor_name
-
-      ,'Enrollment Audit' AS audit_type
-      ,eh.enrollment_id AS record_id
-      ,eh.status_change_date
-      ,eh.updated_by
-      
-      ,ea.audit_name
-      ,ea.audit_value
-      ,CASE
-        WHEN ea.audit_name IN ('actual_end_date_c', 'description', 'notes_c', 'transfer_reason_c')
-         AND ea.audit_value <> ''
-               THEN 1
-        WHEN ea.audit_name = 'date_last_verified_c'
-         AND CONVERT(DATE, ea.audit_value) >= eh.status_change_date 
-               THEN 1
-        WHEN ea.audit_name = 'date_last_verified_ontime'
-         AND CONVERT(DATE, ea.audit_value) >= DATEADD(DAY, 30, eh.status_change_date)
-               THEN 1
-        ELSE 0
-       END AS audit_result
-FROM roster r
-JOIN enr_hist_attmat eh
-  ON r.contact_id = eh.contact_id
- AND eh.rn = 1
-JOIN enrollment_unpivot ea
-  ON eh.enrollment_id = ea.enrollment_id
- AND ea.audit_name NOT IN ('major_or_area', 'college_major_declared_c')
-
-UNION ALL
-
-SELECT r.contact_id
-      ,ea.enrollment_name
-      ,r.cohort      
-      ,r.ktc_counselor_name
-
-      ,'Graduation Audit' AS audit_type
-      ,eh.enrollment_id AS record_id
-      ,eh.status_change_date
-      ,eh.updated_by
-      
-      ,ea.audit_name
-      ,ea.audit_value
-      ,CASE
-        WHEN ea.audit_name = 'college_major_declared_c' 
-         AND ea.audit_value = '1'
-               THEN 1
-        WHEN ea.audit_name IN ('actual_end_date_c', 'major_or_area')
-         AND ea.audit_value <> ''
-               THEN 1
-        WHEN ea.audit_name = 'date_last_verified_c'
-         AND CONVERT(DATE, ea.audit_value) >= eh.status_change_date 
-               THEN 1
-        WHEN ea.audit_name = 'date_last_verified_ontime'
-         AND CONVERT(DATE, ea.audit_value) >= DATEADD(DAY, 30, eh.status_change_date)
-               THEN 1
-        ELSE 0
-       END AS audit_result
-FROM roster r
-JOIN enr_hist_grad eh
-  ON r.contact_id = eh.contact_id
- AND eh.rn = 1
-JOIN enrollment_unpivot ea
-  ON eh.enrollment_id = ea.enrollment_id
- AND ea.audit_name NOT IN ('description', 'notes_c', 'transfer_reason_c')
+WHERE r.dep_post_hs_simple_admin_c IN ('College Persisting', 'College Grad - AA')
