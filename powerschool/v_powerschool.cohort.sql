@@ -109,8 +109,8 @@ FROM
                 ,sub.grade_level
                 ,sub.entrydate
                 ,sub.exitdate
-                ,sub.entrycode
-                ,sub.exitcode
+                ,CASE WHEN sub.entrycode = '' THEN NULL ELSE sub.entrycode END AS entrycode
+                ,CASE WHEN sub.exitcode = '' THEN NULL ELSE sub.exitcode END AS exitcode
                 ,sub.exit_code_kf
                 ,sub.exit_code_ts
                 ,sub.exitcomment
