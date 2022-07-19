@@ -25,7 +25,8 @@ INNER JOIN powerschool.ps_adaadm_daily_ctod ada
  AND ada.calendardate BETWEEN de.entrydate AND de.exitdate
  AND ada.membershipvalue = 1
  AND ada.attendancevalue = 1
-WHERE de.exitcode_prev IS NULL OR de.exitcode_prev NOT IN ('T1', 'T2')
+WHERE (de.exitcode_prev IS NULL OR de.exitcode_prev NOT IN ('T1', 'T2'))
+  AND (de.entrycode IS NULL OR de.entrycode NOT IN ('R1', 'R2'))
 GROUP BY de.studentid
         ,de.entrycode
         ,de.exitcode
