@@ -24,7 +24,7 @@ SELECT ppna.personid
       ,'(' + LEFT(pn.phonenumber, 3) + ') '
         + SUBSTRING(pn.phonenumber, 4, 3) + '-'
         + SUBSTRING(pn.phonenumber, 7, 4)
-        + CASE WHEN pn.phonenumberext <> '' THEN ' x' + CONVERT(VARCHAR(5), pn.phonenumberext) ELSE '' END AS contact
+        + CASE WHEN pn.phonenumberext <> '' THEN ' x' + CONVERT(NVARCHAR(16), pn.phonenumberext) ELSE '' END AS contact
 FROM powerschool.personphonenumberassoc ppna
 INNER JOIN powerschool.codeset pncs
   ON ppna.phonetypecodesetid = pncs.codesetid
