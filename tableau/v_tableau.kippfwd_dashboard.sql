@@ -35,7 +35,7 @@ WITH academic_years AS (
         ,CASE
           WHEN app.application_submission_status = 'Submitted'
            AND app.honors_special_program_name = 'EOF/EOP'
-           AND app.honors_special_program_status IN ('Accepted')
+           AND app.honors_special_program_status = 'Accepted'
                THEN 1 
          END AS is_eof
         ,ROW_NUMBER() OVER(
@@ -228,14 +228,12 @@ SELECT c.sf_contact_id
       ,c.college_match_display_gpa
       ,c.current_college_cumulative_gpa
       ,c.kipp_region_name
-      --,c.kipp_region_school
       ,c.post_hs_simple_admin
-      --,c.ktc_status
       ,c.currently_enrolled_school
       ,c.latest_fafsa_date
       ,c.latest_state_financial_aid_app_date
-      ,c.most_recent_iep_date_c
-	  ,c.latest_resume_date
+      ,c.most_recent_iep_date
+      ,c.latest_resume_date
       ,c.efc_from_fafsa
       ,c.ethnicity
       ,c.gender
@@ -250,6 +248,8 @@ SELECT c.sf_contact_id
       ,c.sf_mobile_phone AS mobile_phone
       ,c.middle_school_attended
       ,c.postsecondary_status
+      --,c.kipp_region_school
+      --,c.ktc_status
 
       ,ay.academic_year
 
@@ -300,18 +300,6 @@ SELECT c.sf_contact_id
       ,ar.is_eof_applicant
       ,ar.is_matriculated
 
-      --,cnr.[AS1F]
-      --,cnr.[AS2F]
-      --,cnr.[AS3F]
-      --,cnr.[AS4F]
-      --,cnr.[AS5F]
-      --,cnr.[AS6F]
-      --,cnr.[AS1S]
-      --,cnr.[AS2S]
-      --,cnr.[AS3S]
-      --,cnr.[AS4S]
-      --,cnr.[AS5S]
-      --,cnr.[AS6S]
       ,cnr.[AS1F_date]
       ,cnr.[AS2F_date]
       ,cnr.[AS3F_date]
@@ -324,7 +312,6 @@ SELECT c.sf_contact_id
       ,cnr.[AS4S_date]
       ,cnr.[AS5S_date]
       ,cnr.[AS6S_date]
-
       ,cnr.CCDM
       ,cnr.[HD_P]
       ,cnr.[HD_NR]
@@ -351,23 +338,21 @@ SELECT c.sf_contact_id
       ,gpa.fall_semester_gpa
       ,gpa.fall_cumulative_gpa
       ,gpa.fall_semester_credits_earned
+      ,gpa.spr_transcript_date
+      ,gpa.spr_semester_gpa
+      ,gpa.spr_cumulative_gpa
+      ,gpa.spr_semester_credits_earned
       ,COALESCE(
          gpa.fall_cumulative_credits_earned
         ,LAG(gpa.spr_cumulative_credits_earned, 1) OVER(PARTITION BY c.sf_contact_id ORDER BY ay.academic_year ASC) /* prev spring */
         ,LAG(gpa.fall_cumulative_credits_earned, 1) OVER(PARTITION BY c.sf_contact_id ORDER BY ay.academic_year ASC) /* prev fall */
        ) AS fall_cumulative_credits_earned
-      
-      ,gpa.spr_transcript_date
-      ,gpa.spr_semester_gpa
-      ,gpa.spr_cumulative_gpa
-      ,gpa.spr_semester_credits_earned
       ,COALESCE(
          gpa.spr_cumulative_credits_earned
         ,gpa.fall_cumulative_credits_earned
         ,LAG(gpa.spr_cumulative_credits_earned, 1) OVER(PARTITION BY c.sf_contact_id ORDER BY ay.academic_year ASC) /* prev spring */
         ,LAG(gpa.fall_cumulative_credits_earned, 1) OVER(PARTITION BY c.sf_contact_id ORDER BY ay.academic_year ASC) /* prev fall */
        ) AS spr_cumulative_credits_earned
-
       ,LAG(gpa.spr_semester_credits_earned, 1) OVER(PARTITION BY c.sf_contact_id ORDER BY ay.academic_year ASC) prev_spr_semester_credits_earned
 
       ,ln.comments_c AS latest_as_comments
