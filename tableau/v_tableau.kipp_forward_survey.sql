@@ -74,7 +74,6 @@ WITH alumni_data AS (
         ,[debt_binary]
         ,[debt_amount]
         ,[annual_income]
-
   FROM
       (
        SELECT respondent_salesforce_id
@@ -98,8 +97,6 @@ WITH alumni_data AS (
         )
    ) p
  )
-  		
-
 
 SELECT  s.survey_title
        ,s.survey_response_id
