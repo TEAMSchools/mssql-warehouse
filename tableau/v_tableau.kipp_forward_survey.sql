@@ -46,25 +46,26 @@ WITH alumni_data AS (
         ,[alumni_dob]
         ,[alumni_email]
         ,[alumni_phone]
-        ,[imp_1]
-        ,[imp_2]
-        ,[imp_3]
-        ,[imp_4]
-        ,[imp_5]
-        ,[imp_6]
-        ,[imp_7]
-        ,[imp_8]
-        ,[imp_9]
-        ,[cur_1]
-        ,[cur_2]
-        ,[cur_3]
-        ,[cur_4]
-        ,[cur_5]
-        ,[cur_6]
-        ,[cur_7]
-        ,[cur_8]
-        ,[cur_9]
-        ,[cur_10]
+        ,[imp_1] 
+        ,[imp_2] 
+        ,[imp_3] 
+        ,[imp_4] 
+        ,[imp_5] 
+        ,[imp_6] 
+        ,[imp_7] 
+        ,[imp_8] 
+        ,[imp_9] 
+        ,[imp_10] 
+        ,[cur_1] 
+        ,[cur_2] 
+        ,[cur_3] 
+        ,[cur_4] 
+        ,[cur_5] 
+        ,[cur_6] 
+        ,[cur_7] 
+        ,[cur_8] 
+        ,[cur_9] 
+        ,[cur_10] 
         ,[job_sat]
         ,[ladder]
         ,[covid]
@@ -73,6 +74,7 @@ WITH alumni_data AS (
         ,[debt_binary]
         ,[debt_amount]
         ,[annual_income]
+
   FROM
       (
        SELECT respondent_salesforce_id
@@ -89,13 +91,15 @@ WITH alumni_data AS (
     MAX(answer)
     FOR question_shortname IN (
           [first_name], [last_name], [alumni_dob], [alumni_email], [alumni_phone], [after_grad]
-         ,[imp_1], [imp_2], [imp_3], [imp_4], [imp_5], [imp_6], [imp_7], [imp_8], [imp_9]
+         ,[imp_1], [imp_2], [imp_3], [imp_4], [imp_5], [imp_6], [imp_7], [imp_8], [imp_9],[imp_10]
          ,[cur_1], [cur_2], [cur_3], [cur_4], [cur_5], [cur_6], [cur_7], [cur_8], [cur_9]
          ,[cur_10], [job_sat], [ladder], [covid], [linkedin], [linkedin_link], [debt_binary]
          ,[debt_amount], [annual_income]
         )
    ) p
  )
+  		
+
 
 SELECT  s.survey_title
        ,s.survey_response_id
@@ -116,6 +120,7 @@ SELECT  s.survey_title
        ,s.imp_7
        ,s.imp_8
        ,s.imp_9
+       ,s.imp_10
        ,s.cur_1
        ,s.cur_2
        ,s.cur_3
