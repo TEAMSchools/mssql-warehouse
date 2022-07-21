@@ -54,6 +54,7 @@ SELECT sub.student_number
       ,sub.gender
       ,sub.ethnicity
       ,sub.contact_description
+      ,sub.most_recent_iep_date
       ,sub.latest_resume_date
       ,sub.last_outreach_date
       ,sub.last_successful_contact_date
@@ -112,6 +113,7 @@ FROM
            ,c.college_graduated_from_c AS college_graduated_from
            ,c.gender_c AS gender
            ,c.ethnicity_c AS ethnicity
+           ,c.most_recent_iep_date_c AS most_recent_iep_date
            ,c.latest_resume_c AS latest_resume_date
            ,c.last_outreach_c AS last_outreach_date
            ,c.last_successful_contact_c AS last_successful_contact_date
