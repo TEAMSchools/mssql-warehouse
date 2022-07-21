@@ -380,7 +380,7 @@ SELECT 'staff_retention' AS domain
       ,sa.academic_year
       ,cw.ps_school_id
       ,'ALL' AS grade_band
-      ,ROUND(1-SUM(sa.is_attrition)/CONVERT(FLOAT,SUM(sa.is_denominator)), 2) AS pct_met_goal
+      ,ROUND(1 - SUM(sa.is_attrition) / CAST(SUM(sa.is_denominator) AS FLOAT), 2) AS pct_met_goal
       ,NULL AS pct_met_iep
       ,NULL AS pct_met_no_iep
       ,NULL AS pct_met_f
