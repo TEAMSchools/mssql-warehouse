@@ -300,39 +300,44 @@ SELECT c.sf_contact_id
       ,ar.is_eof_applicant
       ,ar.is_matriculated
 
-      ,cnr.[AS1F_date]
-      ,cnr.[AS2F_date]
-      ,cnr.[AS3F_date]
-      ,cnr.[AS4F_date]
-      ,cnr.[AS5F_date]
-      ,cnr.[AS6F_date]
-      ,cnr.[AS1S_date]
-      ,cnr.[AS2S_date]
-      ,cnr.[AS3S_date]
-      ,cnr.[AS4S_date]
-      ,cnr.[AS5S_date]
-      ,cnr.[AS6S_date]
+      ,cnr.[AS1_date]
+      ,cnr.[AS2_date]
+      ,cnr.[AS3_date]
+      ,cnr.[AS4_date]
+      ,cnr.[AS5_date]
+      ,cnr.[AS6_date]
+      ,cnr.[AS7_date]
+      ,cnr.[AS8_date]
+      ,cnr.[AS9_date]
+      ,cnr.[AS10_date]
+      ,cnr.[AS11_date]
+      ,cnr.[AS12_date]
+      ,cnr.[AS13_date]
+      ,cnr.[AS14_date]
+      ,cnr.[AS15_date]
+      ,cnr.[AS16_date]
+      ,cnr.[AS17_date]
+      ,cnr.[AS18_date]
+      ,cnr.[AS19_date]
+      ,cnr.[AS20_date]
+      ,cnr.[AS21_date]
+      ,cnr.[AS22_date]
+      ,cnr.[AS23_date]
+      ,cnr.[AS24_date]
       ,cnr.CCDM
       ,cnr.[HD_P]
       ,cnr.[HD_NR]
       ,cnr.[TD_P]
       ,cnr.[TD_NR]
-      ,cnr.PSCF
-      ,cnr.PSCS
+      ,cnr.PSC
       ,cnr.SC
       ,cnr.HV
-      ,cnr.DP_2yearF
-      ,cnr.DP_4yearF
-      ,cnr.DP_CTEF
-      ,cnr.DP_MilitaryF
-      ,cnr.DP_WorkforceF
-      ,cnr.DP_UnknownF
-      ,cnr.DP_2yearS
-      ,cnr.DP_4yearS
-      ,cnr.DP_CTES
-      ,cnr.DP_MilitaryS
-      ,cnr.DP_WorkforceS
-      ,cnr.DP_UnknownS
+      ,cnr.DP_2year
+      ,cnr.DP_4year
+      ,cnr.DP_CTE
+      ,cnr.DP_Military
+      ,cnr.DP_Workforce
+      ,cnr.DP_Unknown
 
       ,gpa.fall_transcript_date
       ,gpa.fall_semester_gpa
