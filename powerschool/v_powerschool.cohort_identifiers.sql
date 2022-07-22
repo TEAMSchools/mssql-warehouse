@@ -131,9 +131,8 @@ SELECT co.studentid
            AND co.rn_year = 1 
                THEN CASE
                      WHEN DB_NAME() = 'kippmiami' THEN (CASE WHEN s.lunchstatus = 'NoD' THEN NULL ELSE s.lunchstatus END)
-                     WHEN DB_NAME() = 'kippcamden' THEN ifc.lunch_status COLLATE Latin1_General_BIN
                      WHEN tp.is_directly_certified = 1 THEN 'F'
-                     ELSE ti.eligibility_name
+                     ELSE ifc.lunch_status COLLATE Latin1_General_BIN
                     END
           WHEN co.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
            AND co.entrydate = s.entrydate 
@@ -146,10 +145,9 @@ SELECT co.studentid
            AND co.rn_year = 1
                THEN CASE
                      WHEN DB_NAME() = 'kippmiami' THEN s.lunchstatus
-                     WHEN DB_NAME() = 'kippcamden' THEN ifc.lunch_app_status COLLATE Latin1_General_BIN
                      WHEN tp.is_directly_certified = 1 THEN 'Direct Certification'
-                     WHEN ti.eligibility_name IS NULL THEN 'No Application'
-                     ELSE ti.eligibility_name + ' - ' + 'Income Form'
+                     WHEN ifc.lunch_app_status IS NULL THEN 'No Application'
+                     ELSE ifc.lunch_app_status COLLATE Latin1_General_BIN
                     END
           WHEN co.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
            AND co.entrydate = s.entrydate 
@@ -192,12 +190,8 @@ LEFT JOIN powerschool.student_contacts_wide_static scw
   ON co.student_number = scw.student_number
 LEFT JOIN titan.person_data_clean tp
   ON co.student_number = tp.person_identifier
- AND co.academic_year = tp.application_academic_school_year_clean
-LEFT JOIN titan.income_form_data_clean ti
-  ON co.student_number = ti.student_identifier
- AND co.academic_year = ti.academic_year_clean
- AND ti.rn = 1
 LEFT JOIN gabby.ops.income_form_data_clean ifc
   ON co.student_number = ifc.student_number
- AND ifc.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+ AND co.academic_year = ifc.academic_year
+ AND ifc.[db_name] = DB_NAME()
  AND ifc.rn =1
