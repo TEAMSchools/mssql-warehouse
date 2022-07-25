@@ -301,30 +301,30 @@ SELECT c.sf_contact_id
       ,ar.is_matriculated
 
       ,cnr.AS1
-	  ,cnr.AS2
+      ,cnr.AS2
       ,cnr.AS3
-	  ,cnr.AS4
-	  ,cnr.AS5
-	  ,cnr.AS6
+      ,cnr.AS4
+      ,cnr.AS5
+      ,cnr.AS6
       ,cnr.AS7
-	  ,cnr.AS8
-	  ,cnr.AS9
-	  ,cnr.AS10
+      ,cnr.AS8
+      ,cnr.AS9
+      ,cnr.AS10
       ,cnr.AS11
-	  ,cnr.AS12
-	  ,cnr.AS13
-	  ,cnr.AS14
+      ,cnr.AS12
+      ,cnr.AS13
+      ,cnr.AS14
       ,cnr.AS15
-	  ,cnr.AS16
-	  ,cnr.AS17
-	  ,cnr.AS18
-	  ,cnr.AS19
-	  ,cnr.AS20
+      ,cnr.AS16
+      ,cnr.AS17
+      ,cnr.AS18
+      ,cnr.AS19
+      ,cnr.AS20
       ,cnr.AS21
-	  ,cnr.AS22
-	  ,cnr.AS23
-	  ,cnr.AS24
-	  ,cnr.[AS1_date]
+      ,cnr.AS22
+      ,cnr.AS23
+      ,cnr.AS24
+      ,cnr.[AS1_date]
       ,cnr.[AS2_date]
       ,cnr.[AS3_date]
       ,cnr.[AS4_date]
@@ -362,12 +362,12 @@ SELECT c.sf_contact_id
       ,cnr.DP_Military
       ,cnr.DP_Workforce
       ,cnr.DP_Unknown
-	  ,cnr.BGP_2year
-	  ,cnr.BGP_4year
-	  ,cnr.BGP_CTE
-	  ,cnr.BGP_Military
-	  ,cnr.BGP_Workforce
-	  ,cnr.BGP_Unknown
+      ,cnr.BGP_2year
+      ,cnr.BGP_4year
+      ,cnr.BGP_CTE
+      ,cnr.BGP_Military
+      ,cnr.BGP_Workforce
+      ,cnr.BGP_Unknown
 
       ,gpa.fall_transcript_date
       ,gpa.fall_semester_gpa
