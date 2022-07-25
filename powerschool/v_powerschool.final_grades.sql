@@ -208,10 +208,7 @@ SELECT sub.student_number
       ,sub.teacher_name
       ,sub.excludefromgpa
       ,sub.gradescaleid
-      ,CASE
-        WHEN y1.potentialcrhrs IS NOT NULL THEN y1.potentialcrhrs
-        ELSE sub.credit_hours
-       END AS credit_hours
+      ,COALESCE(y1.potentialcrhrs, sub.credit_hours) AS credit_hours
       ,sub.term_gpa_points
       ,sub.term_grade_letter
       ,sub.term_grade_percent
