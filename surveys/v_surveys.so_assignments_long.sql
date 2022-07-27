@@ -3,59 +3,66 @@ GO
 
 CREATE OR ALTER VIEW surveys.so_assignments_long AS
 
-WITH surveys_unpivoted AS (
-  SELECT u.employee_number AS survey_taker_id
-        ,u.survey_taker AS survey_round_status
-        ,u.assignment
-        ,CASE 
-          WHEN CHARINDEX('[', u.assignment) = 0 THEN NULL
-          ELSE SUBSTRING(u.assignment, CHARINDEX('[', u.assignment) + 1, 6)
-         END AS assignment_employee_id
-  FROM gabby.surveys.so_assignments
+/*Matches data types for unpivot*/
+WITH assignments_reformat AS (
+  SELECT df_employee_number 
+        ,survey_round_status
+        ,manager_df_employee_number
+        ,CAST([so_1] AS BIGINT) AS so_1
+        ,CAST([so_2] AS BIGINT) AS so_2
+        ,CAST([so_3] AS BIGINT) AS so_3
+        ,CAST([so_4] AS BIGINT) AS so_4
+        ,CAST([so_5] AS BIGINT) AS so_5
+        ,CAST([so_6] AS BIGINT) AS so_6
+        ,CAST([so_7] AS BIGINT) AS so_7
+        ,CAST([so_8] AS BIGINT) AS so_8
+        ,CAST([so_9] AS BIGINT) AS so_9
+        ,CAST([so_10] AS BIGINT) AS so_10
+  FROM gabby.pm.assignments
+)
+
+,assignment_unpivot AS (
+  SELECT df_employee_number 
+        ,survey_round_status
+        ,manager_df_employee_number
+        ,assignment
+  FROM assignments_reformat
   UNPIVOT(
     assignment
-    FOR number IN (so_assignment_1
-                  ,so_assignment_2
-                  ,so_assignment_3
-                  ,so_assignment_4
-                  ,so_assignment_5
-                  ,so_assignment_6
-                  ,so_assignment_7
-                  ,so_assignment_8
-                  ,so_assignment_9
-                  ,so_assignment_10)
+    FOR number IN (
+       [so_1], [so_2], [so_3], [so_4], [so_5], [so_6], [so_7], [so_8], [so_9], [so_10]
+      )
    ) u
  )
 
-SELECT u.survey_taker_id
-      ,u.survey_round_status
-      ,u.assignment
-      ,u.assignment_employee_id
+SELECT a.df_employee_number AS survey_taker_id
+      ,a.survey_round_status
+      ,CONCAT(c.preferred_name,' - ',c.primary_site,' [',c.df_employee_number,'] ') AS assignment
+      ,a.assignment AS assignment_employee_id
 
-      ,COALESCE(r.preferred_name, u.assignment) AS assignment_preferred_name
-      ,r.primary_site AS assignment_location
-      ,r.[status] AS assignment_adp_status
+      ,c.preferred_name AS assignment_preferred_name
+      ,c.primary_site AS assignment_location
+      ,c.[status] AS assignment_adp_status
       ,'Self & Others - Peer Feedback' AS assignment_type
-FROM surveys_unpivoted u
-LEFT JOIN gabby.people.staff_crosswalk_static r
-  ON u.assignment_employee_id = r.df_employee_number
+FROM assignment_unpivot a
+INNER JOIN gabby.people.staff_crosswalk_static c
+  ON a.assignment = c.df_employee_number
+WHERE a.assignment <> 0
 
 UNION ALL
 
-SELECT c.manager_df_employee_number  AS survey_taker_id
-      ,'Yes' AS survey_round_status
-      ,CONCAT(c.preferred_name,' - ',c.primary_site, ' [', c.df_employee_number, '] ') AS assignment
+SELECT c.manager_df_employee_number AS survey_taker_id
+      ,m.survey_round_status
+      ,CONCAT(c.preferred_name,' - ',c.primary_site,' [',c.df_employee_number,'] ') AS assignment
       ,c.df_employee_number AS assignment_employee_id
       ,c.preferred_name AS assignment_preferred_name
       ,c.primary_site AS assignment_location
       ,c.[status] AS assignment_adp_status
       ,'Self & Others - Manager Feedback' AS assignment_type
 FROM gabby.people.staff_crosswalk_static c
-JOIN gabby.surveys.so_assignments s
-  ON c.df_employee_number = s.employee_number
- AND s.survey_taker = 'Yes'
-JOIN gabby.surveys.so_assignments m
-  ON c.manager_df_employee_number = m.employee_number
- AND m.survey_taker = 'Yes'
+INNER JOIN gabby.pm.assignments s
+  ON c.df_employee_number = s.df_employee_number
+INNER JOIN gabby.pm.assignments m
+  ON c.manager_df_employee_number = m.df_employee_number
 WHERE c.[status] <> 'TERMINATED'
   AND COALESCE(c.rehire_date, c.original_hire_date) < DATEADD(DAY, -30, GETDATE())
