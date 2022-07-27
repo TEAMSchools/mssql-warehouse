@@ -4,16 +4,14 @@ GO
 CREATE OR ALTER VIEW extracts.gapps_users_students AS
 
 SELECT sub.student_number
-      ,sub.school_level
-      ,sub.schoolid
-      ,sub.first_name AS firstname
-      ,sub.last_name AS lastname
       ,sub.suspended
       ,sub.email
-      ,sub.student_web_password AS [password]
       ,sub.group_email
       ,sub.region
-      ,CASE WHEN sub.school_level IN ('MS','HS') THEN 'on' ELSE 'off' END AS changepassword
+      ,sub.changepassword
+      ,sub.first_name AS firstname
+      ,sub.last_name AS lastname
+      ,sub.student_web_password AS [password]
       ,'/Students/'
          + CASE
             WHEN sub.suspended = 'on' THEN 'Disabled'
@@ -23,9 +21,9 @@ SELECT sub.student_number
 FROM
     (
      SELECT s.student_number
-           ,s.schoolid
            ,s.first_name
            ,s.last_name
+           ,CASE WHEN s.grade_level >= 3 THEN 'on' ELSE 'off' END AS changepassword
            ,CASE WHEN s.enroll_status = 0 THEN 'off' ELSE 'on' END AS suspended
            ,CASE
              WHEN s.[db_name] = 'kippcamden' THEN 'KCNA'
@@ -41,13 +39,6 @@ FROM
            ,saa.student_web_id + '@teamstudents.org' AS email
            ,saa.student_web_password
 
-           ,CASE
-             WHEN sp.specprog_name = 'Out of District' THEN 'OD'
-             WHEN sch.high_grade = 12 THEN 'HS'
-             WHEN sch.high_grade = 8 THEN 'MS'
-             WHEN sch.high_grade = 4 THEN 'ES'
-             ELSE 'OD'
-            END AS school_level
            ,CASE
              WHEN sp.specprog_name = 'Out of District' THEN 'Out of District'
              WHEN sch.abbreviation = 'TEAM' THEN 'TEAM Academy'
