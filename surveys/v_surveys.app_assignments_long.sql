@@ -3,7 +3,7 @@ GO
 
 --CREATE OR ALTER VIEW gabby.surveys.app_assignments_long
 
-/*Matches data types for unpivot, might need to filter on assignment <> 0 in JOIN to survey_tracking*/
+/*Matches data types for unpivot*/
 WITH assignments_reformat AS (
   SELECT df_employee_number 
         ,survey_round_status
@@ -74,5 +74,4 @@ JOIN gabby.pm.assignments m
   ON c.manager_df_employee_number = m.df_employee_number
  AND m.survey_round_status = 'Yes'
 WHERE c.[status] <> 'TERMINATED'
-  AND COALESCE(c.rehire_date, c.original_hire_date) < DATEADD(DAY, -30, GETDATE()) 
-
+  AND COALESCE(c.rehire_date, c.original_hire_date) < DATEADD(DAY, -30, GETDATE())
