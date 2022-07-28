@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW surveygizmo.survey_detail AS
+--CREATE OR ALTER VIEW surveygizmo.survey_detail AS
 
 SELECT s.survey_id
       ,s.title AS survey_title
@@ -67,7 +67,7 @@ INNER JOIN gabby.surveygizmo.survey_question_clean_static sq
   ON s.survey_id = sq.survey_id
  AND sq.base_type = 'Question'
  AND sq.is_identifier_question = 0
- AND sq.[type] IN ('RADIO', 'ESSAY', 'TEXTBOX')
+ AND sq.[type] IN ('RADIO', 'ESSAY', 'TEXTBOX', 'MENU')
 INNER JOIN gabby.surveygizmo.survey_response_data srd
   ON sq.survey_id = srd.survey_id
  AND sq.survey_question_id = srd.question_id
