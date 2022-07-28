@@ -1,7 +1,7 @@
 USE gabby
 GO
 
---CREATE OR ALTER VIEW surveygizmo.survey_detail AS
+CREATE OR ALTER VIEW surveygizmo.survey_detail AS
 
 SELECT s.survey_id
       ,s.title AS survey_title
