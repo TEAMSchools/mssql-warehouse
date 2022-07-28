@@ -17,8 +17,9 @@ SELECT s.survey_id
 
       ,srdo.option_id
 
-      ,COALESCE(qo.option_title_english, srd.answer, srdo.answer) AS answer
       ,CASE WHEN ISNUMERIC(qo.option_value) = 0 THEN NULL ELSE qo.option_value END AS answer_value
+      
+      ,COALESCE(qo.option_title_english, srd.answer, srdo.answer) AS answer      
 
       ,sri.contact_id
       ,sri.date_started
