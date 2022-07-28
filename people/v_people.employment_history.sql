@@ -64,6 +64,19 @@ WITH date_scaffold AS (
   FROM date_scaffold d
  )
 
+,wa_dates AS (
+  SELECT position_id
+        ,job_title_description
+        ,MIN(position_effective_date) AS work_assignment_start_date
+        ,CASE 
+          WHEN MAX(position_effective_end_date_eoy) = DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1, 6, 30) THEN NULL
+          ELSE MAX(position_effective_end_date_eoy)
+         END AS work_assignment_end_date
+  FROM gabby.people.work_assignment_history_static
+  GROUP BY position_id
+          ,job_title_description
+ )
+
 SELECT r.employee_number
       ,r.associate_id
       ,r.position_id
@@ -78,11 +91,8 @@ SELECT r.employee_number
       ,s.paid_leave_of_absence
       ,s.status_effective_date AS status_effective_start_date
       ,s.status_effective_end_date
-      ,LAG(s.position_status, 1) OVER(PARTITION BY r.position_id ORDER BY r.effective_start_date) AS position_status_prev
-      ,MIN(CASE 
-            WHEN CONVERT(DATE, GETDATE()) BETWEEN s.status_effective_date AND s.status_effective_end_date
-                   THEN s.position_status
-           END) OVER(PARTITION BY r.associate_id) AS position_status_cur
+      ,s.position_status_prev
+      ,s.position_status_cur
 
       ,w.business_unit_code
       ,w.business_unit_description AS business_unit
@@ -102,6 +112,9 @@ SELECT r.employee_number
 
       ,mh.reports_to_associate_id
       ,mh.reports_to_employee_number
+
+      ,wad.work_assignment_start_date
+      ,wad.work_assignment_end_date
 FROM range_scaffold r
 LEFT JOIN gabby.people.status_history_static s
   ON r.position_id = s.position_id
@@ -115,3 +128,6 @@ LEFT JOIN gabby.people.salary_history_static sal
 LEFT JOIN gabby.people.manager_history_static mh
   ON r.position_id = mh.position_id
  AND r.effective_start_date BETWEEN mh.reports_to_effective_date AND mh.reports_to_effective_end_date_eoy
+LEFT JOIN wa_dates wad
+  ON r.position_id = wad.position_id
+ AND w.job_title_description = wad.job_title_description

@@ -1,20 +1,8 @@
 /* gabby */
-EXEC gabby.dbo.sp_generate_merge @table_name='ar_goals_current_static'
-                                ,@target_table='ar_goals_archive'
-                                ,@schema='renaissance'
-                                ,@cols_to_join_on="'student_number','academic_year','reporting_term'"
-                                ,@include_values=0
-                                ,@delete_if_not_matched=0;
-EXEC gabby.dbo.sp_generate_merge @table_name='sight_words_data_current_static'
-                                ,@target_table='sight_words_data_archive'
-                                ,@schema='illuminate_dna_repositories'
-                                ,@cols_to_join_on="'repository_id','repository_row_id','label'"
-                                ,@include_values=0
-                                ,@delete_if_not_matched=0;
-EXEC gabby.dbo.sp_generate_merge @table_name='ar_time_series_current_static'
-                                ,@target_table='ar_time_series_archive'
-                                ,@schema='tableau'
-                                ,@cols_to_join_on="'student_number','date'"
+EXEC gabby.dbo.sp_generate_merge @table_name='agg_student_responses_all_current'
+                                ,@target_table='agg_student_responses_all_archive'
+                                ,@schema='illuminate_dna_assessments'
+                                ,@cols_to_join_on="'assessment_id','standard_id','local_student_id','is_replacement','response_type'"
                                 ,@include_values=0
                                 ,@delete_if_not_matched=0;
 EXEC gabby.dbo.sp_generate_merge @table_name='student_assessment_scaffold_current_static'
@@ -23,17 +11,50 @@ EXEC gabby.dbo.sp_generate_merge @table_name='student_assessment_scaffold_curren
                                 ,@cols_to_join_on="'assessment_id','student_id'"
                                 ,@include_values=0
                                 ,@delete_if_not_matched=0;
-EXEC gabby.dbo.sp_generate_merge @table_name='agg_student_responses_all_current'
-                                ,@target_table='agg_student_responses_all_archive'
-                                ,@schema='illuminate_dna_assessments'
-                                ,@cols_to_join_on="'assessment_id','standard_id','local_student_id','is_replacement','response_type'"
+EXEC gabby.dbo.sp_generate_merge @table_name='sight_words_data_current_static'
+                                ,@target_table='sight_words_data_archive'
+                                ,@schema='illuminate_dna_repositories'
+                                ,@cols_to_join_on="'repository_id','repository_row_id','label'"
+                                ,@include_values=0
+                                ,@delete_if_not_matched=0;
+EXEC gabby.dbo.sp_generate_merge @table_name='ar_goals_current_static'
+                                ,@target_table='ar_goals_archive'
+                                ,@schema='renaissance'
+                                ,@cols_to_join_on="'student_number','academic_year','reporting_term'"
+                                ,@include_values=0
+                                ,@delete_if_not_matched=0;
+EXEC gabby.dbo.sp_generate_merge @table_name='ar_time_series_current_static'
+                                ,@target_table='ar_time_series_archive'
+                                ,@schema='tableau'
+                                ,@cols_to_join_on="'student_number','date'"
+                                ,@include_values=0
+                                ,@delete_if_not_matched=0;
+EXEC gabby.dbo.sp_generate_merge @table_name='survey_response_clean_current_static'
+                                ,@target_table='survey_response_clean_archive'
+                                ,@schema='surveygizmo'
+                                ,@cols_to_join_on="'survey_id','survey_response_id'"
+                                ,@include_values=0
+                                ,@delete_if_not_matched=0;
+EXEC gabby.dbo.sp_generate_merge @table_name='survey_response_data_current_static'
+                                ,@target_table='survey_response_data_archive'
+                                ,@schema='surveygizmo'
+                                ,@cols_to_join_on="'survey_id','survey_response_id','question_id'"
+                                ,@include_values=0
+                                ,@delete_if_not_matched=0;
+EXEC gabby.dbo.sp_generate_merge @table_name='survey_response_data_options_current_static'
+                                ,@target_table='survey_response_data_options_archive'
+                                ,@schema='surveygizmo'
+                                ,@cols_to_join_on="'survey_id','survey_response_id','question_id','option_id'"
                                 ,@include_values=0
                                 ,@delete_if_not_matched=0;
 /*
-TRUNCATE TABLE gabby.renaissance.ar_goals_current_static;
-TRUNCATE TABLE gabby.illuminate_dna_repositories.sight_words_data_current_static;
-TRUNCATE TABLE gabby.tableau.ar_time_series_current_static;
 TRUNCATE TABLE gabby.illuminate_dna_assessments.student_assessment_scaffold_current_static;
+TRUNCATE TABLE gabby.illuminate_dna_repositories.sight_words_data_current_static;
+TRUNCATE TABLE gabby.renaissance.ar_goals_current_static;
+TRUNCATE TABLE gabby.tableau.ar_time_series_current_static;
+TRUNCATE TABLE gabby.surveygizmo.survey_response_clean_current_static;
+TRUNCATE TABLE gabby.surveygizmo.survey_response_data_current_static;
+TRUNCATE TABLE gabby.surveygizmo.survey_response_data_options_current_static;
 */
 
 /* kippnewark */
@@ -91,6 +112,7 @@ EXEC kippnewark.dbo.sp_generate_merge @table_name='attendance_dashboard_current_
                                      ,@cols_to_join_on="'student_number','calendardate'"
                                      ,@include_values=0
                                      ,@delete_if_not_matched=0;
+/*
 INSERT INTO [kippnewark].[powerschool].[course_enrollments_archive] (
    [studentid],[schoolid],[termid],[cc_id],[course_number],[section_number],[dateenrolled],[dateleft],[lastgradeupdate],[sectionid],[expression],[yearid],[academic_year]
   ,[student_number],[students_dcid],[credittype],[course_name],[credit_hours],[gradescaleid],[excludefromgpa],[excludefromstoredgrades],[teachernumber],[teacher_name]
@@ -102,6 +124,7 @@ SELECT [studentid],[schoolid],[termid],[cc_id],[course_number],[section_number],
       ,[section_enroll_status],[map_measurementscale],[illuminate_subject],[abs_sectionid],[abs_termid],[course_enroll_status],[sections_dcid],[rn_subject],[rn_course_yr]
       ,[rn_illuminate_subject]
 FROM [kippnewark].[powerschool].[course_enrollments_current_static];
+*/
 /*
 TRUNCATE TABLE kippnewark.powerschool.attendance_clean_current_static;
 TRUNCATE TABLE kippnewark.powerschool.cohort_identifiers_scaffold_current_static;
@@ -170,6 +193,7 @@ EXEC kippcamden.dbo.sp_generate_merge @table_name='attendance_dashboard_current_
                                      ,@cols_to_join_on="'student_number','calendardate'"
                                      ,@include_values=0
                                      ,@delete_if_not_matched=0;
+/*
 INSERT INTO [kippcamden].[powerschool].[course_enrollments_archive] (
    [studentid],[schoolid],[termid],[cc_id],[course_number],[section_number],[dateenrolled],[dateleft],[lastgradeupdate],[sectionid],[expression],[yearid],[academic_year]
   ,[student_number],[students_dcid],[credittype],[course_name],[credit_hours],[gradescaleid],[excludefromgpa],[excludefromstoredgrades],[teachernumber],[teacher_name]
@@ -181,6 +205,7 @@ SELECT [studentid],[schoolid],[termid],[cc_id],[course_number],[section_number],
       ,[section_enroll_status],[map_measurementscale],[illuminate_subject],[abs_sectionid],[abs_termid],[course_enroll_status],[sections_dcid],[rn_subject],[rn_course_yr]
       ,[rn_illuminate_subject]
 FROM [kippcamden].[powerschool].[course_enrollments_current_static];
+*/
 /*
 TRUNCATE TABLE kippcamden.powerschool.attendance_clean_current_static;
 TRUNCATE TABLE kippcamden.powerschool.cohort_identifiers_scaffold_current_static;
@@ -249,6 +274,7 @@ EXEC kippmiami.dbo.sp_generate_merge @table_name='attendance_dashboard_current_s
                                     ,@cols_to_join_on="'student_number','calendardate'"
                                     ,@include_values=0
                                     ,@delete_if_not_matched=0;
+/*
 INSERT INTO [kippmiami].[powerschool].[course_enrollments_archive] (
    [studentid],[schoolid],[termid],[cc_id],[course_number],[section_number],[dateenrolled],[dateleft],[lastgradeupdate],[sectionid],[expression],[yearid],[academic_year]
   ,[student_number],[students_dcid],[credittype],[course_name],[credit_hours],[gradescaleid],[excludefromgpa],[excludefromstoredgrades],[teachernumber],[teacher_name]
@@ -260,6 +286,7 @@ SELECT [studentid],[schoolid],[termid],[cc_id],[course_number],[section_number],
       ,[section_enroll_status],[map_measurementscale],[illuminate_subject],[abs_sectionid],[abs_termid],[course_enroll_status],[sections_dcid],[rn_subject],[rn_course_yr]
       ,[rn_illuminate_subject]
 FROM [kippmiami].[powerschool].[course_enrollments_current_static];
+*/
 /*
 TRUNCATE TABLE kippmiami.powerschool.attendance_clean_current_static;
 TRUNCATE TABLE kippmiami.powerschool.cohort_identifiers_scaffold_current_static;

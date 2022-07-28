@@ -40,6 +40,16 @@ WITH managers AS (
   GROUP BY sub.[user_id]
  )
 
+,obsv_grp AS (
+  SELECT [user_id]
+        ,school_id
+        ,observation_group_name
+        ,gabby.dbo.GROUP_CONCAT_DS(role_name, ';', 1) AS role_names
+  FROM gabby.whetstone.schools_observation_groups_membership
+  WHERE observation_group_name = 'Teachers'
+  GROUP BY [user_id], school_id, observation_group_name
+ )
+
 SELECT sub.user_internal_id
       ,sub.[user_name]
       ,sub.user_email
@@ -65,10 +75,12 @@ SELECT sub.user_internal_id
 
       ,'[' + er.role_ids + ']' AS role_id_ws
 
+      ,og.role_names AS group_type_ws
+
       ,CASE
         WHEN er.role_names LIKE '%Admin%' THEN NULL
         WHEN sub.role_name LIKE '%Admin%' THEN NULL
-        WHEN sub.role_name = 'Coach' THEN 'observers'
+        WHEN sub.role_name = 'Coach' THEN 'observees;observers'
         ELSE 'observees'
        END AS group_type
       ,CASE
@@ -109,6 +121,8 @@ FROM
              WHEN scw.primary_on_site_department = 'Special Education' 
               AND scw.primary_job IN ('Managing Director', 'Director', 'Achievement Director') 
                   THEN 'Sub Admin'
+             WHEN scw.primary_on_site_department = 'Human Resources'
+                  THEN 'Sub Admin'
              /* school admins */
              WHEN scw.primary_job = 'School Leader' THEN 'School Admin'
              WHEN scw.primary_on_site_department = 'School Leadership' 
@@ -141,4 +155,7 @@ LEFT JOIN gabby.whetstone.roles r
   ON sub.role_name = r.[name]
 LEFT JOIN existing_roles er
   ON u.[user_id] = er.[user_id]
+LEFT JOIN obsv_grp og
+  ON u.[user_id] = og.[user_id]
+ AND sch._id = og.school_id
 WHERE sub.role_name <> 'No Role'

@@ -8,8 +8,8 @@ WITH unpivoted AS (
         ,position_id
         ,date_modified
         ,field
-        ,[value] AS new_value
-        ,LAG([value], 1) OVER(PARTITION BY position_id, field ORDER BY date_modified) AS prev_value
+        ,ISNULL([value], '') AS new_value
+        ,LAG([value], 1, '') OVER(PARTITION BY position_id, field ORDER BY date_modified) AS prev_value
   FROM
       (
        SELECT associate_id
@@ -29,8 +29,6 @@ WITH unpivoted AS (
        FROM gabby.adp.employees_archive
        WHERE position_id IS NOT NULL
          AND position_status <> 'Terminated'
-         AND CONVERT(DATE, _modified) BETWEEN DATEADD(DAY, -4, CONVERT(DATE, GETDATE()))
-                                          AND CONVERT(DATE, GETDATE())
       ) sub
   UNPIVOT(
     [value]

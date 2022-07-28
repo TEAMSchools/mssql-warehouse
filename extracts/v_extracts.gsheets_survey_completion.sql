@@ -3,9 +3,40 @@ GO
 
 CREATE OR ALTER VIEW extracts.gsheets_survey_completion AS
 
-SELECT sc.survey_type
-      ,sc.subject_name
-      ,sc.responder_email
-      ,sc.date_created AS date_completed
-FROM gabby.surveys.survey_completion sc
-WHERE sc.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+WITH incomplete_surveys AS (
+  SELECT academic_year
+        ,reporting_term
+        ,survey_taker_id
+        ,survey_round_open
+        ,survey_round_close
+        ,survey_completion_date 
+        ,survey_id
+        ,ROW_NUMBER() OVER(
+           PARTITION BY survey_taker_id
+             ORDER BY reporting_term) AS rn_null
+  FROM gabby.surveys.survey_tracking t
+  WHERE survey_completion_date IS NULL
+  /*Limiting to non-Staff Update surveys*/
+    AND survey_id <> '6330385'
+    AND CONVERT(DATE, GETDATE()) BETWEEN survey_round_open AND survey_round_close
+ )
+
+SELECT i.academic_year
+      ,i.reporting_term
+      ,i.survey_taker_id
+      ,i.survey_round_open
+      ,i.survey_round_close
+      ,i.survey_completion_date 
+      ,i.survey_id
+
+      ,c.preferred_first_name
+      ,c.preferred_last_name
+      ,c.userprincipalname
+      ,c.primary_site
+      ,c.manager_name
+      ,c.manager_mail
+      ,GETDATE() AS date_of_extract
+FROM incomplete_surveys i
+INNER JOIN gabby.people.staff_crosswalk_static c
+  ON i.survey_taker_id = c.df_employee_number
+WHERE rn_null = 1

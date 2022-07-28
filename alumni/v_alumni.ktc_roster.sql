@@ -45,6 +45,7 @@ SELECT sub.student_number
       ,sub.sf_email
       ,sub.current_kipp_student
       ,sub.post_hs_simple_admin
+      ,sub.postsecondary_status
       ,sub.college_status
       ,sub.currently_enrolled_school
       ,sub.middle_school_attended
@@ -53,6 +54,7 @@ SELECT sub.student_number
       ,sub.gender
       ,sub.ethnicity
       ,sub.contact_description
+      ,sub.most_recent_iep_date
       ,sub.latest_resume_date
       ,sub.last_outreach_date
       ,sub.last_successful_contact_date
@@ -103,6 +105,7 @@ FROM
            ,c.other_phone AS sf_other_phone
            ,c.email AS sf_email
            ,c.post_hs_simple_admin_c AS post_hs_simple_admin
+           ,c.postsecondary_status_c AS postsecondary_status
            ,c.college_status_c AS college_status
            ,c.currently_enrolled_school_c AS currently_enrolled_school
            ,c.middle_school_attended_c AS middle_school_attended
@@ -110,6 +113,7 @@ FROM
            ,c.college_graduated_from_c AS college_graduated_from
            ,c.gender_c AS gender
            ,c.ethnicity_c AS ethnicity
+           ,c.most_recent_iep_date_c AS most_recent_iep_date
            ,c.latest_resume_c AS latest_resume_date
            ,c.last_outreach_c AS last_outreach_date
            ,c.last_successful_contact_c AS last_successful_contact_date
@@ -140,11 +144,11 @@ FROM
              WHEN rt.[name] = 'HS Student'
               AND co.grade_level = 8
               AND MONTH(co.exitdate) IN (6, 7)
-              AND (co.exitcode = 'G1' OR co.exitcode LIKE 'T%' AND co.exitcode <> 'T2')
+              AND (co.exitcode = 'G1' OR (co.exitcode LIKE 'T%' AND co.exitcode <> 'T2'))
                   THEN 'TAFHS'
              WHEN co.grade_level = 8
               AND MONTH(co.exitdate) IN (6, 7)
-              AND (co.exitcode = 'G1' OR co.exitcode LIKE 'T%' AND co.exitcode <> 'T2')
+              AND (co.exitcode = 'G1' OR (co.exitcode LIKE 'T%' AND co.exitcode <> 'T2'))
                   THEN 'TAF'
             END AS ktc_status
      FROM gabby.powerschool.cohort_identifiers_static co

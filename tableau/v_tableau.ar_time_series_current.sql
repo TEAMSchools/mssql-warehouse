@@ -175,22 +175,22 @@ FROM
            AND hr.course_enroll_status = 0
            AND hr.section_enroll_status = 0
            AND hr.rn_course_yr = 1
-          LEFT JOIN gabby.renaissance.ar_goals_current_static y1_goal WITH(FORCESEEK)
+          LEFT JOIN gabby.renaissance.ar_goals_current_static y1_goal
             ON co.student_number = y1_goal.student_number
            AND co.academic_year = y1_goal.academic_year
            AND y1_goal.reporting_term = 'ARY'
-          LEFT JOIN gabby.renaissance.ar_goals_current_static term_goal WITH(FORCESEEK)
+          LEFT JOIN gabby.renaissance.ar_goals_current_static term_goal
             ON co.student_number = term_goal.student_number   
            AND co.academic_year = term_goal.academic_year
            AND dts.time_per_name = term_goal.reporting_term      
           LEFT JOIN gabby.renaissance.ar_most_recent_quiz_static bk
             ON co.student_number = bk.student_number
            AND co.academic_year = bk.academic_year
-          LEFT JOIN gabby.renaissance.ar_studentpractice_rollup_static ar WITH(FORCESEEK)
+          LEFT JOIN gabby.renaissance.ar_studentpractice_rollup_static ar
             ON co.student_number = ar.student_number
            AND co.[date] = ar.date_taken
           WHERE co.enroll_status = 0
-            AND co.grade_level BETWEEN 5 AND 8
+            AND (co.school_level = 'MS' OR (co.schoolid = 73256 AND co.grade_level = 4)) /* ad-hoc exception for Seek 4*/
             AND co.[date] <= CONVERT(DATE, GETDATE())
          ) sub
     ) sub

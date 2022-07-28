@@ -156,13 +156,13 @@ FROM
            ,au.worker_category
            ,au.wfmgr_pay_rule
            ,CASE
-             WHEN au.worker_category = 'Intern' THEN 'inactive'
-             WHEN au.position_status = 'Terminated' THEN 'inactive'
-             WHEN au.roles LIKE '%Edit Expense Report as Approver%'
-               OR au.roles LIKE '%Edit Requisition as Approver%'
-                  THEN 'active'
-             WHEN au.position_status <> 'Active' THEN 'inactive'
-             ELSE 'active'
+             WHEN au.worker_category = 'Intern' THEN 'inactive' /* no interns */
+             WHEN au.position_status = 'Leave'
+              AND (au.roles LIKE '%Edit Expense Report as Approver%' OR au.roles LIKE '%Edit Requisition as Approver%')
+                    THEN 'active' /* keep Approvers active while on leave */
+             WHEN au.position_status = 'Leave' THEN 'inactive' /* deactivate all others on leave */
+             WHEN ad.is_active = 1 THEN 'active'
+             ELSE 'inactive'
             END AS coupa_status
 
            ,LOWER(ad.samaccountname) AS samaccountname

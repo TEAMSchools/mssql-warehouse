@@ -68,4 +68,5 @@ FROM
       AND CHARINDEX(qo.option_id, sd.options) > 0
      WHERE sri.survey_id = 6330385
        AND sri.[status] = 'Complete'
+       AND sri.rn_respondent_subject = 1
     ) sub

@@ -28,14 +28,14 @@ WITH roster AS (
              ,dts.time_per_name AS reporting_term
              ,dts.alt_name AS term_name
        FROM gabby.powerschool.cohort_identifiers_static co
-       JOIN gabby.reporting.reporting_terms dts
+       INNER JOIN gabby.reporting.reporting_terms dts
          ON co.schoolid = dts.schoolid
         AND co.academic_year = dts.academic_year
         AND dts.identifier = 'AR'
         AND dts.time_per_name <> 'ARY'
         AND dts._fivetran_deleted = 0
        WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-         AND co.grade_level BETWEEN 5 AND 8
+         AND (co.school_level = 'MS' OR (co.schoolid = 73256 AND co.grade_level = 4))
       ) sub
   GROUP BY student_number
           ,academic_year
@@ -104,13 +104,12 @@ WITH roster AS (
              ,r.reporting_term
              ,CASE
                WHEN r.is_enrolled = 0 THEN NULL
-               WHEN r.grade_level >= 9 THEN NULL
                WHEN r.enroll_status <> 0 THEN -1
                WHEN COALESCE(g.adjusted_goal, df2.words_goal, df.words_goal) = 0 THEN -1
                ELSE COALESCE(g.adjusted_goal, df2.words_goal, df.words_goal)
               END AS words_goal
        FROM roster r
-       JOIN default_goals df
+       LEFT JOIN default_goals df
          ON r.grade_level = df.grade_level
         AND r.term_name = df.term_name
         AND df.school_id = 0

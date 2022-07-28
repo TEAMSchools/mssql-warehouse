@@ -27,6 +27,7 @@ WITH all_staff AS (
         ,eh.effective_start_date
         ,eh.status_effective_start_date
         ,eh.primary_position
+        ,COALESCE(eh.work_assignment_start_date, eh.position_effective_start_date) AS work_assignment_start_date
   FROM gabby.people.employment_history_static eh
   WHERE CONVERT(DATE, GETDATE()) BETWEEN eh.effective_start_date AND eh.effective_end_date
 
@@ -52,6 +53,7 @@ WITH all_staff AS (
         ,ps.effective_start_date
         ,ps.status_effective_start_date
         ,ps.primary_position
+        ,COALESCE(ps.work_assignment_start_date, ps.position_effective_start_date) AS work_assignment_start_date
   FROM gabby.people.employment_history_static ps
   WHERE ps.status_effective_start_date > CONVERT(DATE, GETDATE())
     AND ps.position_status = 'Active'
@@ -61,10 +63,7 @@ WITH all_staff AS (
 ,hire_dates AS (
   SELECT associate_id
         ,MIN(CASE WHEN position_status = 'Active' THEN status_effective_date END) AS original_hire_date
-        ,MAX(CASE 
-              WHEN position_status IN ('Terminated', 'Deceased') THEN status_effective_date 
-              END
-             ) AS termination_date
+        ,MAX(CASE WHEN position_status IN ('Terminated', 'Deceased') THEN status_effective_date END) AS termination_date
   FROM gabby.people.status_history_static
   GROUP BY associate_id
  )
@@ -101,32 +100,6 @@ WITH all_staff AS (
   GROUP BY associate_id
  )
 
-,survey_race_ethnicity AS (
-  SELECT sub.subject_adp_associate_id
-        ,gabby.dbo.GROUP_CONCAT(qo.option_value) AS preferred_race_ethnicity
-  FROM
-      (
-       SELECT sri.subject_adp_associate_id
-             ,sri.survey_id
-             ,sri.survey_response_id
-             ,ROW_NUMBER() OVER(PARTITION BY sri.subject_adp_associate_id ORDER BY sri.date_submitted DESC) AS rn
-       FROM gabby.surveygizmo.survey_response_identifiers_static sri
-       WHERE sri.[status] = 'Complete'
-         AND sri.survey_id = 6330385
-      ) sub
-  INNER JOIN gabby.surveygizmo.survey_response_data sd
-    ON sub.survey_id = sd.survey_id
-   AND sub.survey_response_id = sd.survey_response_id
-   AND sd.question_id = 5
-  LEFT JOIN gabby.surveygizmo.survey_question_options_static qo
-    ON sub.survey_id = qo.survey_id
-   AND sd.question_id = qo.question_id
-   AND qo.option_disabled = 0
-   AND CHARINDEX(qo.option_id, sd.options) > 0
-  WHERE sub.rn = 1
-  GROUP BY sub.subject_adp_associate_id
- )
-
 ,clean_staff AS (
   SELECT sub.employee_number
         ,sub.associate_id
@@ -147,6 +120,7 @@ WITH all_staff AS (
         ,sub.primary_position
         ,sub.position_effective_start_date
         ,sub.position_effective_end_date
+        ,sub.work_assignment_start_date
         ,sub.original_hire_date
         ,sub.rehire_date
         ,sub.termination_date
@@ -197,6 +171,8 @@ WITH all_staff AS (
           WHEN sub.preferred_race_ethnicity LIKE '%Latinx/Hispanic/Chicana(o)%' THEN 'Hispanic or Latino'
           ELSE 'Not Hispanic or Latino'
          END AS ethnicity
+        ,sub.education_level
+        ,sub.undergrad_university
   FROM
       (
        SELECT eh.employee_number
@@ -213,6 +189,7 @@ WITH all_staff AS (
              ,eh.[location]
              ,eh.position_effective_start_date
              ,eh.position_effective_end_date
+             ,eh.work_assignment_start_date
              ,eh.annual_salary
              ,eh.primary_position
              ,CONVERT(NVARCHAR(256), NULL) AS job_family -- on the way
@@ -232,7 +209,6 @@ WITH all_staff AS (
                           ,eh.status_effective_start_date DESC
                           ,CASE WHEN eh.position_status = 'Terminated' THEN 0 ELSE 1 END DESC
                           ,eh.effective_start_date DESC) AS rn
-
              ,ea.first_name
              ,ea.last_name
              ,ea.primary_address_city AS address_city
@@ -264,16 +240,19 @@ WITH all_staff AS (
                ELSE rh.rehire_date
               END AS rehire_date
 
-             ,cf.[Years Teaching - In any State] AS years_teaching_in_any_state
-             ,cf.[Years Teaching - In NJ or FL] AS years_teaching_in_nj_or_fl
-             ,cf.[KIPP Alumni Status] AS kipp_alumni_status
-             ,cf.[Years of Professional Experience before joining] AS years_of_professional_experience_before_joining
-             ,cf.[Life Experience in Communities We Serve] AS life_experience_in_communities_we_serve
-             ,cf.[Teacher Prep Program] AS teacher_prep_program
-             ,cf.[Professional Experience in Communities We Serve] AS professional_experience_in_communities_we_serve
-             ,cf.[Attended Relay] AS attended_relay
+             ,COALESCE(sdf.years_teaching_any_state, cf.[Years Teaching - In any State]) AS years_teaching_in_any_state
+             ,COALESCE(sdf.years_teaching_nj_and_fl, cf.[Years Teaching - In NJ or FL]) AS years_teaching_in_nj_or_fl
+             ,COALESCE(sdf.kipp_alumni, cf.[KIPP Alumni Status]) AS kipp_alumni_status
+             ,COALESCE(sdf.professional_experience_before_KIPP, cf.[Years of Professional Experience before joining]) AS years_of_professional_experience_before_joining
+             ,COALESCE(sdf.community_live, cf.[Life Experience in Communities We Serve]) AS life_experience_in_communities_we_serve
+             ,COALESCE(sdf.teacher_prep, cf.[Teacher Prep Program]) AS teacher_prep_program
+             ,COALESCE(sdf.community_work, cf.[Professional Experience in Communities We Serve]) AS professional_experience_in_communities_we_serve
+             ,COALESCE(sdf.relay, cf.[Attended Relay]) AS attended_relay
              ,cf.[WFMgr Pay Rule] AS wfmgr_pay_rule
-             ,cf.[Preferred Gender] AS preferred_gender
+             ,COALESCE(sdf.preferred_gender, cf.[Preferred Gender]) AS preferred_gender
+             
+             ,sdf.education_level
+             ,sdf.undergrad_university
 
              ,cw.adp_associate_id AS associate_id_legacy
 
@@ -282,8 +261,8 @@ WITH all_staff AS (
 
              ,REPLACE(REPLACE(REPLACE(
                 COALESCE(
-                  cf.[Preferred Race/Ethnicity]
-                 ,sre.preferred_race_ethnicity
+                  sdf.race_ethnicity
+                 ,cf.[Preferred Race/Ethnicity]
                  ,ea.race_description + CASE WHEN ISNULL(ea.ethnicity, '') IN ('Not Hispanic or Latino', '') THEN '' ELSE ',Latinx/Hispanic/Chicana(o)' END
                 )
                ,'Black or African American', 'Black/African American')
@@ -291,7 +270,7 @@ WITH all_staff AS (
                ,'Two or more races (Not Hispanic or Latino)', 'Bi/Multiracial'
               ) AS preferred_race_ethnicity
        FROM all_staff eh
-       JOIN gabby.adp.employees_all ea
+       INNER JOIN gabby.adp.employees_all ea
          ON eh.associate_id = ea.associate_id
        LEFT JOIN gabby.adp.workers_clean_static w
          ON eh.associate_id = w.worker_id
@@ -308,8 +287,8 @@ WITH all_staff AS (
         AND cw.rn_curr = 1
        LEFT JOIN gabby.adp.employees p
          ON eh.position_id = p.position_id
-       LEFT JOIN survey_race_ethnicity sre
-         ON eh.associate_id = sre.subject_adp_associate_id
+       LEFT JOIN gabby.surveys.staff_information_survey_wide_static sdf
+         ON eh.employee_number = sdf.employee_number
        WHERE eh.employee_number IS NOT NULL
       ) sub
   WHERE rn = 1
@@ -333,6 +312,7 @@ SELECT c.employee_number
       ,c.primary_position
       ,c.position_effective_start_date
       ,c.position_effective_end_date
+      ,c.work_assignment_start_date
       ,c.original_hire_date
       ,c.rehire_date
       ,c.termination_date
@@ -412,12 +392,16 @@ SELECT c.employee_number
       ,m.preferred_first_name AS manager_preferred_first_name
       ,m.preferred_last_name AS manager_preferred_last_name
       ,m.preferred_last_name + ', ' + m.preferred_first_name AS manager_name
+      ,m.business_unit AS manager_business_unit
 
       ,y.years_at_kipp_total
       ,y.years_at_kipp_total + c.years_of_professional_experience_before_joining AS total_professional_experience
       ,y.years_teaching_at_kipp
       ,y.years_teaching_at_kipp + c.years_teaching_in_nj_or_fl AS nj_fl_total_years_teaching
       ,y.years_teaching_at_kipp + c.years_teaching_in_any_state AS total_years_teaching
+
+      ,c.education_level
+      ,c.undergrad_university
 
       ,gl.student_grade_level AS primary_grade_taught
 

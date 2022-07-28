@@ -24,8 +24,8 @@ WITH academic_years AS (
         ,CASE WHEN app.application_submission_status = 'Submitted' THEN 1 END AS is_submitted
         ,CASE WHEN app.application_status = 'Accepted' THEN 1 END AS is_accepted
         ,CASE WHEN app.type_for_roll_ups = 'College' THEN 1 END AS is_college
-        ,CASE WHEN app.type_for_roll_ups IN ('Alternative Program', 'Organization', 'Other') THEN 1 END AS is_cert
-        ,CASE WHEN app.application_account_type IN ('Public 2 yr', 'Private 2 yr') THEN 1 END AS is_2yr
+        ,CASE WHEN app.type_for_roll_ups IN ('Alternative Program', 'Organization', 'Other', 'Private 2 yr') THEN 1 END AS is_cert
+        ,CASE WHEN app.application_account_type = 'Public 2 yr' THEN 1 END AS is_2yr
         ,CASE WHEN app.application_account_type IN ('Private 4 yr', 'Public 4 yr') THEN 1 END AS is_4yr
         ,CASE
           WHEN app.matriculation_decision = 'Matriculated (Intent to Enroll)' 
@@ -35,7 +35,7 @@ WITH academic_years AS (
         ,CASE
           WHEN app.application_submission_status = 'Submitted'
            AND app.honors_special_program_name = 'EOF/EOP'
-           AND app.honors_special_program_status IN ('Applied', 'Accepted')
+           AND app.honors_special_program_status = 'Accepted'
                THEN 1 
          END AS is_eof
         ,ROW_NUMBER() OVER(
@@ -174,6 +174,44 @@ WITH academic_years AS (
    ) p
  )
 
+,latest_note AS (
+  SELECT [contact_c]
+        ,[comments_c]
+        ,[next_steps_c]
+        ,gabby.utilities.DATE_TO_SY([date_c]) AS academic_year
+        ,ROW_NUMBER() OVER(
+           PARTITION BY contact_c, gabby.utilities.DATE_TO_SY([date_c]) 
+             ORDER BY date_c DESC) AS rn
+  FROM [gabby].[alumni].[contact_note_c]
+  WHERE is_deleted = 0
+    AND status_c = 'Successful'
+    AND (subject_c LIKE 'Advising Session%' OR subject_c = 'Summer AAS')
+ )
+
+,matric AS (
+  SELECT e.student_c AS contact_id
+        ,e.id AS enrollment_id
+        ,ROW_NUMBER() OVER(PARTITION BY e.student_c ORDER BY e.start_date_c DESC) AS rn_matric
+  FROM gabby.alumni.enrollment_c e
+  WHERE e.is_deleted = 0
+    AND e.status_c = 'Matriculated'
+ )
+
+,finaid AS (
+  SELECT e.contact_id
+
+        --,fa.applicable_school_year_c
+        --,fa.offer_date_c
+        ,fa.unmet_need_c
+        ,ROW_NUMBER() OVER(PARTITION BY e.enrollment_id ORDER BY fa.offer_date_c DESC) AS rn_finaid
+  FROM matric e
+  INNER JOIN gabby.alumni.subsequent_financial_aid_award_c fa
+    ON e.enrollment_id = fa.enrollment_c
+   AND fa.is_deleted = 0
+   AND fa.status_c = 'Offered'
+  WHERE e.rn_matric = 1
+ )
+
 SELECT c.sf_contact_id
       ,c.lastfirst AS student_name
       ,c.ktc_cohort
@@ -190,12 +228,11 @@ SELECT c.sf_contact_id
       ,c.college_match_display_gpa
       ,c.current_college_cumulative_gpa
       ,c.kipp_region_name
-      ,c.kipp_region_school
       ,c.post_hs_simple_admin
-      ,c.ktc_status
       ,c.currently_enrolled_school
       ,c.latest_fafsa_date
       ,c.latest_state_financial_aid_app_date
+      ,c.most_recent_iep_date
       ,c.latest_resume_date
       ,c.efc_from_fafsa
       ,c.ethnicity
@@ -207,6 +244,12 @@ SELECT c.sf_contact_id
       ,c.high_school_graduated_from
       ,c.college_graduated_from
       ,c.current_college_semester_gpa
+      ,c.sf_email AS email
+      ,c.sf_mobile_phone AS mobile_phone
+      ,c.middle_school_attended
+      ,c.postsecondary_status
+      --,c.kipp_region_school
+      --,c.ktc_status
 
       ,ay.academic_year
 
@@ -233,8 +276,8 @@ SELECT c.sf_contact_id
       ,ei.emp_date_last_verified
       ,ei.emp_start_date
       ,ei.emp_actual_end_date
-      ,ei.emp_billing_state
-      ,ei.emp_ncesid
+      --,ei.emp_billing_state
+      --,ei.emp_ncesid
       ,ei.emp_name
       ,ei.ba_status
       ,ei.ba_actual_end_date
@@ -257,76 +300,100 @@ SELECT c.sf_contact_id
       ,ar.is_eof_applicant
       ,ar.is_matriculated
 
-      ,cnr.[AS1F]
-      ,cnr.[AS2F]
-      ,cnr.[AS3F]
-      ,cnr.[AS4F]
-      ,cnr.[AS5F]
-      ,cnr.[AS6F]
-      ,cnr.[AS1S]
-      ,cnr.[AS2S]
-      ,cnr.[AS3S]
-      ,cnr.[AS4S]
-      ,cnr.[AS5S]
-      ,cnr.[AS6S]
-      ,cnr.[AS1F_date]
-      ,cnr.[AS2F_date]
-      ,cnr.[AS3F_date]
-      ,cnr.[AS4F_date]
-      ,cnr.[AS5F_date]
-      ,cnr.[AS6F_date]
-      ,cnr.[AS1S_date]
-      ,cnr.[AS2S_date]
-      ,cnr.[AS3S_date]
-      ,cnr.[AS4S_date]
-      ,cnr.[AS5S_date]
-      ,cnr.[AS6S_date]
-
+      ,cnr.AS1
+      ,cnr.AS2
+      ,cnr.AS3
+      ,cnr.AS4
+      ,cnr.AS5
+      ,cnr.AS6
+      ,cnr.AS7
+      ,cnr.AS8
+      ,cnr.AS9
+      ,cnr.AS10
+      ,cnr.AS11
+      ,cnr.AS12
+      ,cnr.AS13
+      ,cnr.AS14
+      ,cnr.AS15
+      ,cnr.AS16
+      ,cnr.AS17
+      ,cnr.AS18
+      ,cnr.AS19
+      ,cnr.AS20
+      ,cnr.AS21
+      ,cnr.AS22
+      ,cnr.AS23
+      ,cnr.AS24
+      ,cnr.[AS1_date]
+      ,cnr.[AS2_date]
+      ,cnr.[AS3_date]
+      ,cnr.[AS4_date]
+      ,cnr.[AS5_date]
+      ,cnr.[AS6_date]
+      ,cnr.[AS7_date]
+      ,cnr.[AS8_date]
+      ,cnr.[AS9_date]
+      ,cnr.[AS10_date]
+      ,cnr.[AS11_date]
+      ,cnr.[AS12_date]
+      ,cnr.[AS13_date]
+      ,cnr.[AS14_date]
+      ,cnr.[AS15_date]
+      ,cnr.[AS16_date]
+      ,cnr.[AS17_date]
+      ,cnr.[AS18_date]
+      ,cnr.[AS19_date]
+      ,cnr.[AS20_date]
+      ,cnr.[AS21_date]
+      ,cnr.[AS22_date]
+      ,cnr.[AS23_date]
+      ,cnr.[AS24_date]
       ,cnr.CCDM
       ,cnr.[HD_P]
       ,cnr.[HD_NR]
       ,cnr.[TD_P]
       ,cnr.[TD_NR]
-      ,cnr.PSCF
-      ,cnr.PSCS
+      ,cnr.PSC
       ,cnr.SC
       ,cnr.HV
-      ,cnr.DP_2yearF
-      ,cnr.DP_4yearF
-      ,cnr.DP_CTEF
-      ,cnr.DP_MilitaryF
-      ,cnr.DP_WorkforceF
-      ,cnr.DP_UnknownF
-      ,cnr.DP_2yearS
-      ,cnr.DP_4yearS
-      ,cnr.DP_CTES
-      ,cnr.DP_MilitaryS
-      ,cnr.DP_WorkforceS
-      ,cnr.DP_UnknownS
-
+      ,cnr.DP_2year
+      ,cnr.DP_4year
+      ,cnr.DP_CTE
+      ,cnr.DP_Military
+      ,cnr.DP_Workforce
+      ,cnr.DP_Unknown
+      ,cnr.BGP_2year
+      ,cnr.BGP_4year
+      ,cnr.BGP_CTE
+      ,cnr.BGP_Military
+      ,cnr.BGP_Workforce
+      ,cnr.BGP_Unknown
 
       ,gpa.fall_transcript_date
       ,gpa.fall_semester_gpa
       ,gpa.fall_cumulative_gpa
       ,gpa.fall_semester_credits_earned
+      ,gpa.spr_transcript_date
+      ,gpa.spr_semester_gpa
+      ,gpa.spr_cumulative_gpa
+      ,gpa.spr_semester_credits_earned
       ,COALESCE(
          gpa.fall_cumulative_credits_earned
         ,LAG(gpa.spr_cumulative_credits_earned, 1) OVER(PARTITION BY c.sf_contact_id ORDER BY ay.academic_year ASC) /* prev spring */
         ,LAG(gpa.fall_cumulative_credits_earned, 1) OVER(PARTITION BY c.sf_contact_id ORDER BY ay.academic_year ASC) /* prev fall */
        ) AS fall_cumulative_credits_earned
-      
-      ,gpa.spr_transcript_date
-      ,gpa.spr_semester_gpa
-      ,gpa.spr_cumulative_gpa
-      ,gpa.spr_semester_credits_earned
       ,COALESCE(
          gpa.spr_cumulative_credits_earned
         ,gpa.fall_cumulative_credits_earned
         ,LAG(gpa.spr_cumulative_credits_earned, 1) OVER(PARTITION BY c.sf_contact_id ORDER BY ay.academic_year ASC) /* prev spring */
         ,LAG(gpa.fall_cumulative_credits_earned, 1) OVER(PARTITION BY c.sf_contact_id ORDER BY ay.academic_year ASC) /* prev fall */
        ) AS spr_cumulative_credits_earned
-
       ,LAG(gpa.spr_semester_credits_earned, 1) OVER(PARTITION BY c.sf_contact_id ORDER BY ay.academic_year ASC) prev_spr_semester_credits_earned
+
+      ,ln.comments_c AS latest_as_comments
+      ,ln.next_steps_c AS latest_as_next_steps
+
+      ,fa.unmet_need_c AS unmet_need
 FROM gabby.alumni.ktc_roster c
 CROSS JOIN academic_years ay
 LEFT JOIN gabby.alumni.enrollment_identifiers ei
@@ -344,5 +411,12 @@ LEFT JOIN gabby.alumni.contact_note_rollup cnr
 LEFT JOIN semester_gpa_pivot gpa
   ON c.sf_contact_id = gpa.sf_contact_id
  AND ay.academic_year = gpa.academic_year
+LEFT JOIN latest_note ln
+  ON c.sf_contact_id = ln.contact_c
+ AND ay.academic_year = ln.academic_year
+ AND ln.rn = 1
+LEFT JOIN finaid fa
+  ON c.sf_contact_id = fa.contact_id
+ AND fa.rn_finaid = 1
 WHERE c.ktc_status IN ('HS9', 'HS10', 'HS11', 'HS12', 'HSG', 'TAF', 'TAFHS')
   AND c.sf_contact_id IS NOT NULL

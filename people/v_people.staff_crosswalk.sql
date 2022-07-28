@@ -36,6 +36,7 @@ SELECT sub.employee_number AS df_employee_number
       ,sub.job_family
       ,sub.position_effective_start_date AS position_effective_from_date
       ,sub.position_effective_end_date AS position_effective_to_date
+      ,sub.work_assignment_start_date
       ,sub.manager_employee_number AS manager_df_employee_number
       ,sub.worker_category AS payclass
       ,sub.wfmgr_pay_rule AS paytype
@@ -58,6 +59,7 @@ SELECT sub.employee_number AS df_employee_number
       ,sub.manager_preferred_first_name
       ,sub.manager_preferred_last_name
       ,sub.manager_name
+      ,sub.manager_business_unit
       ,sub.[db_name]
       ,sub.associate_id_legacy AS adp_associate_id_legacy
       ,sub.ps_teachernumber
@@ -101,6 +103,7 @@ FROM
            ,sr.job_family
            ,sr.position_effective_start_date
            ,sr.position_effective_end_date
+           ,sr.work_assignment_start_date
            ,sr.manager_employee_number
            ,sr.worker_category
            ,sr.wfmgr_pay_rule
@@ -118,6 +121,7 @@ FROM
            ,sr.manager_preferred_first_name
            ,sr.manager_preferred_last_name
            ,sr.manager_name
+           ,sr.manager_business_unit
            ,sr.[db_name]
            ,sr.associate_id_legacy
            ,sr.personal_email

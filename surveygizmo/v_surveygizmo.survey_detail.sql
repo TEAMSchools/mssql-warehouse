@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW surveygizmo.survey_detail AS
+--CREATE OR ALTER VIEW surveygizmo.survey_detail AS
 
 SELECT s.survey_id
       ,s.title AS survey_title
@@ -17,6 +17,7 @@ SELECT s.survey_id
 
       ,srdo.option_id
 
+      ,COALESCE(qo.option_title_english, srd.answer, srdo.answer) AS answer
       ,CASE WHEN ISNUMERIC(qo.option_value) = 0 THEN NULL ELSE qo.option_value END AS answer_value
 
       ,sri.contact_id
@@ -32,6 +33,7 @@ SELECT s.survey_id
       ,sri.respondent_userprincipalname
       ,sri.respondent_mail
       ,sri.respondent_samaccountname
+      ,sri.respondent_salesforce_id
       ,sri.respondent_legal_entity_name
       ,sri.respondent_primary_site
       ,sri.respondent_department_name
@@ -62,8 +64,6 @@ SELECT s.survey_id
       ,sri.subject_manager_samaccountname
       ,sri.is_manager
       ,sri.rn_respondent_subject
-
-      ,COALESCE(qo.option_title_english, srd.answer, srdo.answer) AS answer
 FROM gabby.surveygizmo.survey_clean s
 INNER JOIN gabby.surveygizmo.survey_question_clean_static sq
   ON s.survey_id = sq.survey_id

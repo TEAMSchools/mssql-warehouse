@@ -3,33 +3,33 @@ GO
 
 CREATE OR ALTER VIEW extracts.mdcps_aces_survey AS
 
-SELECT sr.job_title 
-      ,sr.[location]
-      ,sr.position_status
-      ,sr.first_name
-      ,sr.last_name
-      ,sr.position_id
-      ,sr.business_unit
-      ,sr.employee_number
-      ,sr.original_hire_date
+SELECT s.job_title
+      ,s.[location]
+      ,s.position_status
+      ,s.termination_date
+      ,s.first_name
+      ,s.last_name
+      ,s.position_id
+      ,s.business_unit
+      ,s.employee_number
+      ,s.original_hire_date
+      ,s.flsa AS payclass
+      ,s.address_street
+      ,s.address_city
+      ,s.address_state
+      ,s.address_zip
+      ,s.annual_salary
+      ,s.education_level
+
       ,cf.[Miami - ACES Number] AS miami_aces
-      ,sr.flsa AS payclass
+
       ,'2x Month' AS pay_frequency
-      ,NULL AS highest_education_level
-      ,NULL AS duty_days
+      ,'' AS duty_days
       ,'N/A' AS teacher_eval
-      ,sr.address_street
-      ,sr.address_city
-      ,sr.address_state
-      ,sr.address_zip
-      ,NULL AS MonthlyCarrierCost
-      ,NULL AS MedicalCoverage
       ,'N/A' AS Contribution504B
       ,'B' AS BasicLifePlan
-      ,sr.annual_salary
-      ,sr.position_effective_start_date
-      ,sr.termination_date
-FROM gabby.people.staff_roster sr
-LEFT JOIN gabby.adp.workers_custom_field_group_wide_static cf
-  ON sr.associate_id = cf.worker_id
-WHERE sr.business_unit = 'KIPP Miami'
+FROM gabby.people.staff_roster s
+INNER JOIN gabby.adp.workers_custom_field_group_wide_static cf
+  ON s.associate_id = cf.worker_id
+WHERE s.business_unit = 'KIPP Miami'
+  AND (s.termination_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1) OR s.termination_date IS NULL)

@@ -9,13 +9,13 @@ SELECT student_number
 FROM
     (
      SELECT student_number
-           ,q_1
-           ,q_2
-           ,q_3
-           ,q_4
+           ,CONVERT(INT, q_1) AS q_1
+           ,CONVERT(INT, q_2) AS q_2
+           ,CONVERT(INT, q_3) AS q_3
+           ,CONVERT(INT, q_4) AS q_4
            ,ROW_NUMBER() OVER(PARTITION BY student_number ORDER BY _row DESC) AS rn
      FROM gabby.renaissance.ar_individualized_goals
-     WHERE _fivetran_deleted = 0
+     WHERE student_number IS NOT NULL
     ) sub
 UNPIVOT(
   adjusted_goal

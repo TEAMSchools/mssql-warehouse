@@ -155,8 +155,7 @@ SELECT au.student_number
       ,CONVERT(VARCHAR(125),
          CASE
           WHEN spo.student_number IS NOT NULL THEN spo.default_password COLLATE Latin1_General_BIN
-          WHEN au.grade_level >= 2 THEN last_name_clean + dob_year
-          ELSE LOWER(au.school_name) + '1'
+          ELSE last_name_clean + dob_year
          END) AS student_web_password
 FROM alt_username au
 LEFT JOIN gabby.people.student_password_override spo

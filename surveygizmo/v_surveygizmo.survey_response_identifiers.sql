@@ -7,6 +7,7 @@ WITH response_pivot AS (
   SELECT p.survey_response_id
         ,p.survey_id
         ,p.date_started
+        ,p.salesforce_id
         ,CONVERT(VARCHAR(25), p.respondent_adp_associate_id) AS respondent_associate_id
         ,CONVERT(VARCHAR(125), LOWER(COALESCE(p.respondent_userprincipalname, p.email))) AS respondent_userprincipalname
         ,CONVERT(INT, CASE
@@ -58,7 +59,8 @@ WITH response_pivot AS (
                      ,is_manager
                      ,employee_number
                      ,email
-                     ,employee_preferred_name)
+                     ,employee_preferred_name
+                     ,salesforce_id)
    ) p
  )
 
@@ -68,6 +70,7 @@ WITH response_pivot AS (
         ,rp.date_started
         ,rp.subject_preferred_name
         ,rp.is_manager
+        ,rp.salesforce_id
 
         ,ab.subject_preferred_name_duplicate
 
@@ -95,6 +98,7 @@ SELECT rc.survey_response_id
       ,CONVERT(DATE, rc.date_started) AS date_started
       ,rc.subject_employee_number AS subject_df_employee_number
       ,rc.respondent_employee_number AS respondent_df_employee_number
+      ,rc.salesforce_id AS respondent_salesforce_id
       ,COALESCE(rc.is_manager
                ,CASE 
                  WHEN rc.respondent_employee_number = seh.reports_to_employee_number THEN 1 
@@ -120,6 +124,7 @@ SELECT rc.survey_response_id
       ,reh.[location] AS respondent_primary_site
       ,reh.home_department AS respondent_department_name
       ,reh.job_title AS respondent_primary_job
+      ,reh.position_status AS respondent_position_status
 
       ,rsch.ps_school_id AS respondent_primary_site_schoolid
       ,rsch.school_level AS respondent_primary_site_school_level
@@ -156,7 +161,7 @@ SELECT rc.survey_response_id
          PARTITION BY rc.survey_id, sc.academic_year, sc.[name], rc.respondent_employee_number, rc.subject_employee_number
            ORDER BY sr.datetime_submitted DESC) AS rn_respondent_subject
 FROM response_clean rc
-JOIN gabby.surveygizmo.survey_response_clean sr
+INNER JOIN gabby.surveygizmo.survey_response_clean sr
   ON rc.survey_id = sr.survey_id
  AND rc.survey_response_id = sr.survey_response_id
  AND sr.[status] = 'Complete'

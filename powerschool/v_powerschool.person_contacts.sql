@@ -24,11 +24,11 @@ SELECT ppna.personid
       ,'(' + LEFT(pn.phonenumber, 3) + ') '
         + SUBSTRING(pn.phonenumber, 4, 3) + '-'
         + SUBSTRING(pn.phonenumber, 7, 4)
-        + CASE WHEN pn.phonenumberext <> '' THEN ' x' + CONVERT(VARCHAR(5), pn.phonenumberext) ELSE '' END AS contact
+        + CASE WHEN pn.phonenumberext <> '' THEN ' x' + CONVERT(NVARCHAR(16), pn.phonenumberext) ELSE '' END AS contact
 FROM powerschool.personphonenumberassoc ppna
-LEFT JOIN powerschool.codeset pncs
+INNER JOIN powerschool.codeset pncs
   ON ppna.phonetypecodesetid = pncs.codesetid
-LEFT JOIN powerschool.phonenumber pn
+INNER JOIN powerschool.phonenumber pn
   ON ppna.phonenumberid = pn.phonenumberid
 
 UNION ALL
@@ -41,7 +41,7 @@ SELECT peaa.personid
       ,CASE WHEN eacs.code = 'Not Set' THEN 'Current' ELSE eacs.code END AS contact_type
       ,ea.emailaddress AS contact
 FROM powerschool.personemailaddressassoc peaa
-LEFT JOIN powerschool.codeset eacs
+INNER JOIN powerschool.codeset eacs
   ON peaa.emailtypecodesetid = eacs.codesetid
-LEFT JOIN powerschool.emailaddress ea
+INNER JOIN powerschool.emailaddress ea
   ON peaa.emailaddressid = ea.emailaddressid

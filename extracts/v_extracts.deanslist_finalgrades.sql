@@ -56,13 +56,13 @@ SELECT o.student_number
 
       ,REPLACE(comm.comment_value, '"', '''') AS comment_value
 FROM gabby.powerschool.course_section_scaffold_current_static o
-JOIN gabby.powerschool.sections sec
+INNER JOIN gabby.powerschool.sections sec
   ON o.sectionid = sec.id
  AND o.[db_name] = sec.[db_name]
-JOIN gabby.powerschool.courses cou
+INNER JOIN gabby.powerschool.courses cou
   ON o.course_number = cou.course_number
  AND o.[db_name] = cou.[db_name]
-JOIN gabby.powerschool.cc
+LEFT JOIN gabby.powerschool.cc
   ON o.studentid = cc.studentid
  AND o.sectionid = cc.sectionid
  AND o.[db_name] = cc.[db_name]

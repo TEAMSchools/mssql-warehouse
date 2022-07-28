@@ -10,7 +10,7 @@ WITH section_teacher AS (
         ,scaff.sectionid
         ,scaff.[db_name]
 
-        ,CONVERT(VARCHAR(125), sec.section_number) AS section_number
+        ,sec.section_number
         ,sec.external_expression
         ,sec.termid
 
@@ -273,10 +273,10 @@ SELECT co.student_number
       ,sg.excludefromgpa
       ,sg.potentialcrhrs AS credit_hours
       ,sg.[percent] AS term_grade_percent_adjusted
-      ,CONVERT(VARCHAR(5), sg.grade) AS term_grade_letter_adjusted
+      ,sg.grade AS term_grade_letter_adjusted
       ,sg.gpa_points AS term_gpa_points
       ,sg.[percent] AS y1_grade_percent_adjusted
-      ,CONVERT(VARCHAR(5), sg.grade) AS y1_grade_letter
+      ,sg.grade AS y1_grade_letter
       ,sg.gpa_points AS y1_gpa_points
 
       ,sg.earnedcrhrs
@@ -334,24 +334,24 @@ SELECT COALESCE(co.student_number, e1.student_number) AS student_number
       ,CASE WHEN sp.studentid IS NOT NULL THEN 1 END AS is_counselingservices
 
       ,'TRANSFER' AS credittype
-      ,CONVERT(VARCHAR(125), CONCAT('TRANSFER', tr.termid, tr.[db_name], tr.dcid)) COLLATE Latin1_General_BIN AS course_number
-      ,CONVERT(VARCHAR(125), tr.course_name) AS course_name
+      ,CONCAT('TRANSFER', tr.termid, tr.[db_name], tr.dcid) COLLATE Latin1_General_BIN AS course_number
+      ,tr.course_name
       ,'Y1' AS reporting_term
       ,'Y1' AS finalgradename
       ,1 AS is_curterm
-      ,CONVERT(INT, tr.excludefromgpa) AS excludefromgpa
+      ,tr.excludefromgpa
       ,tr.potentialcrhrs AS credit_hours
       ,tr.[percent] AS term_grade_percent_adjusted
-      ,CONVERT(VARCHAR(5), tr.grade) AS term_grade_letter_adjusted
+      ,tr.grade AS term_grade_letter_adjusted
       ,tr.gpa_points AS term_gpa_points
       ,tr.[percent] AS y1_grade_percent_adjusted
-      ,CONVERT(VARCHAR(5), tr.grade) AS y1_grade_letter
+      ,tr.grade AS y1_grade_letter
       ,tr.gpa_points AS y1_gpa_points
       ,tr.earnedcrhrs
       ,NULL AS citizenship
       ,NULL AS comment_value
 
-      ,CONVERT(INT, tr.sectionid) AS sectionid
+      ,tr.sectionid
       ,tr.termid
       ,'TRANSFER' AS teacher_name
       ,'TRANSFER' AS section_number

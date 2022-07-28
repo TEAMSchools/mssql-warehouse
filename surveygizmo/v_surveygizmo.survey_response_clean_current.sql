@@ -3,7 +3,7 @@ GO
 
 CREATE OR ALTER VIEW surveygizmo.survey_response_clean_current AS
 
-SELECT sub.survey_response_id
+SELECT sub.id AS survey_response_id
       ,sub.survey_id
       ,sub.contact_id
       ,sub.[status]
@@ -35,11 +35,31 @@ SELECT sub.survey_response_id
       ,sub.survey_data_json
 FROM
     (
-     SELECT sr.id AS survey_response_id
+     SELECT sr.id
            ,sr.survey_id
            ,sr.contact_id
-           ,CONVERT(VARCHAR(25), COALESCE(dq.[status], sr.[status])) AS [status]
            ,sr.is_test_data
+           ,sr.response_time
+           ,sr.latitude
+           ,sr.longitude
+           ,sr.dma
+           ,sr.link_id
+           ,CONVERT(NVARCHAR(64), sr.city) AS city
+           ,CONVERT(NVARCHAR(32), sr.postal) AS postal
+           ,CONVERT(NVARCHAR(8), sr.region) AS region
+           ,CONVERT(NVARCHAR(64), sr.country) AS country
+           ,CONVERT(NVARCHAR(16), sr.[language]) AS [language]
+           ,CONVERT(NVARCHAR(32), sr.ip_address) AS ip_address
+           ,CONVERT(NVARCHAR(128), sr.session_id) AS session_id
+           ,CONVERT(NVARCHAR(512), sr.user_agent) AS user_agent
+           ,CONVERT(NVARCHAR(1024), sr.referer) AS referer
+           ,CONVERT(NVARCHAR(MAX), sr.data_quality) AS data_quality_json
+           ,CONVERT(NVARCHAR(1), JSON_VALUE(sr.url_variables, '$._privatedomain')) AS url_privatedomain
+           ,CONVERT(NVARCHAR(32), JSON_VALUE(sr.url_variables, '$.__contact')) AS url_contact
+           ,CONVERT(NVARCHAR(32), JSON_VALUE(sr.url_variables, '$.__messageid')) AS url_messageid
+           ,CONVERT(NVARCHAR(32), JSON_VALUE(sr.url_variables, '$.sguid')) AS url_sguid
+           ,CONVERT(NVARCHAR(256), JSON_VALUE(sr.url_variables, '$.__pathdata')) AS url_pathdata
+           ,CONVERT(NVARCHAR(MAX), COALESCE(sr.survey_data_list, sr.survey_data)) AS survey_data_json
            ,CONVERT(DATETIME2, LEFT(sr.date_started, 19)) AS datetime_started
            ,CONVERT(DATE, CONVERT(DATETIME2, LEFT(sr.date_started, 19))) AS date_started
            ,CONVERT(DATETIME2,
@@ -48,29 +68,11 @@ FROM
            ,CONVERT(DATE, CONVERT(DATETIME2, 
               CASE WHEN ISDATE(LEFT(sr.date_submitted, 19)) = 1 THEN LEFT(sr.date_submitted, 19) END
              )) AS date_submitted
-           ,sr.response_time
-           ,CONVERT(VARCHAR(25), sr.city) AS city
-           ,CONVERT(VARCHAR(25), sr.postal) AS postal
-           ,CONVERT(VARCHAR(5), sr.region) AS region
-           ,CONVERT(VARCHAR(125), sr.country) AS country
-           ,sr.latitude
-           ,sr.longitude
-           ,sr.dma
-           ,CONVERT(VARCHAR(25), sr.[language]) AS [language]
-           ,CONVERT(VARCHAR(25), sr.ip_address) AS ip_address
-           ,sr.link_id
-           ,CONVERT(VARCHAR(500), sr.referer) AS referer
-           ,CONVERT(VARCHAR(125), sr.session_id) AS session_id
-           ,CONVERT(VARCHAR(250), sr.user_agent) AS user_agent
-           ,CONVERT(VARCHAR(1), JSON_VALUE(sr.url_variables, '$._privatedomain')) AS url_privatedomain
-           ,CONVERT(VARCHAR(25), JSON_VALUE(sr.url_variables, '$.__contact')) AS url_contact
-           ,CONVERT(VARCHAR(25), JSON_VALUE(sr.url_variables, '$.__messageid')) AS url_messageid
-           ,CONVERT(VARCHAR(25), JSON_VALUE(sr.url_variables, '$.sguid')) AS url_sguid
-           ,CONVERT(VARCHAR(250), JSON_VALUE(sr.url_variables, '$.__pathdata')) AS url_pathdata
-           ,CONVERT(NVARCHAR(MAX), sr.data_quality) AS data_quality_json
-           ,CONVERT(NVARCHAR(MAX), COALESCE(sr.survey_data_list, sr.survey_data)) AS survey_data_json
 
-           ,ROW_NUMBER() OVER(PARTITION BY sr.id, sr.survey_id ORDER BY sr._modified DESC) AS rn
+           ,CONVERT(NVARCHAR(32), COALESCE(dq.[status], sr.[status])) AS [status]
+           ,ROW_NUMBER() OVER(
+              PARTITION BY sr.id, sr.survey_id
+                ORDER BY CASE WHEN sr.[status] = 'Complete' THEN 1 ELSE 0 END DESC, sr._modified DESC) AS rn
      FROM gabby.surveygizmo.survey_response sr
      LEFT JOIN gabby.surveygizmo.survey_response_disqualified dq
        ON sr.id = dq.id

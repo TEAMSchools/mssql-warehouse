@@ -21,20 +21,20 @@ WITH roster AS (
 
         ,css.gradescaleid
   FROM powerschool.cohort_identifiers_static co
-  JOIN powerschool.course_section_scaffold css
+  INNER JOIN powerschool.course_section_scaffold_current_static css
     ON co.student_number = css.student_number
    AND co.yearid = css.yearid
    AND css.course_number <> 'ALL'
-  JOIN powerschool.sections sec
+  INNER JOIN powerschool.sections sec
     ON css.sectionid = sec.id
-  JOIN powerschool.teachers_static t
+  INNER JOIN powerschool.teachers_static t
     ON sec.teacher = t.id
   WHERE co.rn_year = 1
     AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
  )
 
 ,enr_grades AS (
-  SELECT studentid
+  SELECT student_number
         ,academic_year
         ,course_number
         ,term_name
@@ -55,7 +55,7 @@ WITH roster AS (
          END AS term_grade_percent_adjusted
   FROM
       (
-       SELECT enr.studentid
+       SELECT enr.student_number
              ,enr.course_number
              ,enr.academic_year
 
@@ -83,7 +83,7 @@ WITH roster AS (
                 PARTITION BY enr.studentid, enr.yearid, enr.course_number, fg.finalgradename
                   ORDER BY sg.[percent] DESC, enr.section_enroll_status, enr.dateleft DESC) AS rn
        FROM powerschool.course_enrollments_current_static enr
-       JOIN powerschool.pgfinalgrades fg
+       INNER JOIN powerschool.pgfinalgrades fg
          ON enr.studentid = fg.studentid
         AND enr.abs_sectionid = fg.sectionid
         AND fg.finalgrade_type IN ('T', 'Q')
@@ -183,7 +183,7 @@ WITH roster AS (
          END AS e2_grade_weight
   FROM roster r
   LEFT JOIN enr_grades gr
-    ON r.studentid = gr.studentid
+    ON r.student_number = gr.student_number
    AND r.academic_year = gr.academic_year
    AND r.term_name = gr.term_name
    AND r.course_number = gr.course_number
@@ -208,10 +208,7 @@ SELECT sub.student_number
       ,sub.teacher_name
       ,sub.excludefromgpa
       ,sub.gradescaleid
-      ,CASE
-        WHEN y1.potentialcrhrs IS NOT NULL THEN y1.potentialcrhrs
-        ELSE sub.credit_hours
-       END AS credit_hours
+      ,COALESCE(y1.potentialcrhrs, sub.credit_hours) AS credit_hours
       ,sub.term_gpa_points
       ,sub.term_grade_letter
       ,sub.term_grade_percent
