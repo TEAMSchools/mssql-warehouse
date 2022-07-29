@@ -141,16 +141,16 @@ SELECT  s.survey_title
        ,s.alumni_dob
        
        /*weighted satisfaction scores based on relative importance of each*/
-       ,s.cur_1*p.imp_1*10 AS weighted_satisfaction_01
-       ,s.cur_2*p.imp_2*10 AS weighted_satisfaction_02
-       ,s.cur_3*p.imp_3*10 AS weighted_satisfaction_03
-       ,s.cur_4*p.imp_4*10 AS weighted_satisfaction_04
-       ,s.cur_5*p.imp_5*10 AS weighted_satisfaction_05
-       ,s.cur_6*p.imp_6*10 AS weighted_satisfaction_06
-       ,s.cur_7*p.imp_7*10 AS weighted_satisfaction_07
-       ,s.cur_8*p.imp_8*10 AS weighted_satisfaction_08
-       ,s.cur_9*p.imp_9*10 AS weighted_satisfaction_09
-       ,s.cur_10*p.imp_10*10 AS weighted_satisfaction_10
+       ,s.cur_1*p.imp_1*10 AS weighted_level_pay
+       ,s.cur_2*p.imp_2*10 AS weighted_stable_pay
+       ,s.cur_3*p.imp_3*10 AS weighted_stable_hours
+       ,s.cur_4*p.imp_4*10 AS weighted_control_hours_location
+       ,s.cur_5*p.imp_5*10 AS weighted_job_security
+       ,s.cur_6*p.imp_6*10 AS weighted_benefits
+       ,s.cur_7*p.imp_7*10 AS weighted_advancement
+       ,s.cur_8*p.imp_8*10 AS weighted_enjoyment
+       ,s.cur_9*p.imp_9*10 AS weighted_purpose
+       ,s.cur_10*p.imp_10*10 AS weighted_power
        ,s.job_sat
        ,s.ladder
        ,s.covid
