@@ -109,18 +109,8 @@ FROM
                   ELSE c.subject_c 
                  END AS contact_subject
                 ,CASE
-                  WHEN c.subject_c IN ('Summer AAS', 'CCDM', 'PSC', 'BBB') THEN ''
-                  WHEN c.subject_c LIKE 'Grad Plan%' THEN ''
-                  WHEN c.subject_c LIKE 'Advising Session%' THEN ''
-                  WHEN c.subject_c LIKE 'MC%' THEN ''
-                  WHEN c.subject_c LIKE '%HV' THEN ''
-                  WHEN c.subject_c LIKE 'SC[0-9]%' THEN ''
-                  WHEN c.subject_c LIKE 'Housing Deposit%' THEN ''
-                  WHEN c.subject_c LIKE 'Tuition Deposit%' THEN ''
-                  WHEN c.subject_c LIKE 'Q%' THEN 'Q' + SUBSTRING(c.subject_c, 2, 1)
-                  /* catch-all for unspecified subjects */
-                  WHEN MONTH(c.date_c) >= 7 THEN 'F'
-                  WHEN MONTH(c.date_c) < 7 THEN 'S'
+                  WHEN c.subject_c LIKE 'Q[0-9]%' THEN 'Q' + SUBSTRING(c.subject_c, 2, 1)
+                  ELSE ''
                  END AS contact_term
                 ,gabby.utilities.DATE_TO_SY(c.date_c) AS academic_year
           FROM gabby.alumni.contact_note_c c
