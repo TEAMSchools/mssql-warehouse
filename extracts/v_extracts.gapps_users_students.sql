@@ -42,13 +42,12 @@ FROM
            ,CASE
              WHEN sp.specprog_name = 'Out of District' THEN 'Out of District'
              WHEN sch.abbreviation = 'TEAM' THEN 'TEAM Academy'
-             WHEN sch.abbreviation = 'KSA' THEN 'Sunrise Academy'
+             WHEN sch.abbreviation = 'Sunrise' THEN 'Sunrise Academy'
              WHEN sch.abbreviation = 'NLH' THEN 'Newark Lab'
-             WHEN sch.abbreviation = 'URA' THEN 'Upper Roseville'
+             WHEN sch.abbreviation = 'KURA' THEN 'Upper Roseville'
              WHEN sch.abbreviation = 'NCP' THEN 'Newark Community'
-             WHEN sch.abbreviation = 'LIB' THEN 'Liberty Academy'
-             WHEN sch.abbreviation = 'COU' THEN 'Courage'
-             WHEN sch.abbreviation = 'KRA' THEN 'Royalty Academy'
+             WHEN sch.abbreviation = 'Liberty' THEN 'Liberty Academy'
+             WHEN sch.abbreviation = 'Royalty' THEN 'Royalty Academy'
              ELSE sch.abbreviation
             END AS school_name
      FROM gabby.powerschool.students s
