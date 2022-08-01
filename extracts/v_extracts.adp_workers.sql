@@ -21,7 +21,7 @@ SELECT scw.employee_number
              THEN CONCAT('DR', CONVERT(NVARCHAR(8), GETDATE(), 112))
        END AS wfm_trigger
 FROM gabby.people.staff_roster scw
-JOIN gabby.adp.workers_clean_static w
+INNER JOIN gabby.adp.workers_clean_static w
   ON scw.associate_id = w.worker_id
 LEFT JOIN gabby.adsi.user_attributes_static ads
   ON CONVERT(VARCHAR(25), scw.employee_number) = ads.employeenumber
