@@ -6,7 +6,6 @@ CREATE OR ALTER VIEW extracts.mdcps_aces_survey AS
 SELECT s.job_title
       ,s.[location]
       ,s.position_status
-      ,s.termination_date
       ,s.first_name
       ,s.last_name
       ,s.position_id
@@ -19,6 +18,7 @@ SELECT s.job_title
       ,s.address_state
       ,s.address_zip
       ,s.annual_salary
+      ,s.termination_date
       ,s.education_level
 
       ,cf.[Miami - ACES Number] AS miami_aces
@@ -32,4 +32,4 @@ FROM gabby.people.staff_roster s
 INNER JOIN gabby.adp.workers_custom_field_group_wide_static cf
   ON s.associate_id = cf.worker_id
 WHERE s.business_unit = 'KIPP Miami'
-  AND (s.termination_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1) OR s.termination_date IS NULL)
+  AND (s.termination_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(),07,01) OR s.termination_date IS NULL)
