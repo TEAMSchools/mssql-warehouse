@@ -41,14 +41,29 @@ FROM
 
            ,CASE
              WHEN sp.specprog_name = 'Out of District' THEN 'Out of District'
-             WHEN sch.abbreviation = 'TEAM' THEN 'TEAM Academy'
-             WHEN sch.abbreviation = 'Sunrise' THEN 'Sunrise Academy'
-             WHEN sch.abbreviation = 'NLH' THEN 'Newark Lab'
-             WHEN sch.abbreviation = 'KURA' THEN 'Upper Roseville'
-             WHEN sch.abbreviation = 'NCP' THEN 'Newark Community'
+             WHEN sch.abbreviation = 'KHS' THEN 'KCNHS'
+             WHEN sch.abbreviation = 'Hatch' THEN 'KHM'
+             WHEN sch.abbreviation = 'Sumner' THEN 'KSE'
+             WHEN sch.abbreviation = 'LSM' THEN 'LSM'
+             WHEN sch.abbreviation = 'LSP' THEN 'LSP'
+             WHEN sch.abbreviation = 'Courage' THEN 'Courage'
              WHEN sch.abbreviation = 'Liberty' THEN 'Liberty Academy'
              WHEN sch.abbreviation = 'Royalty' THEN 'Royalty Academy'
-             ELSE sch.abbreviation
+             WHEN sch.abbreviation = 'Sunrise' THEN 'Sunrise Academy'
+             WHEN sch.abbreviation = 'BOLD' THEN 'BOLD'
+             WHEN sch.abbreviation = 'Justice' THEN 'KJA'
+             WHEN sch.abbreviation = 'Purpose' THEN 'KPA'
+             WHEN sch.abbreviation = 'Truth' THEN 'KTA'
+             WHEN sch.abbreviation = 'Life' THEN 'Life'
+             WHEN sch.abbreviation = 'NCA' THEN 'NCA'
+             WHEN sch.abbreviation = 'NCP' THEN 'Newark Community'
+             WHEN sch.abbreviation = 'NLH' THEN 'Newark Lab'
+             WHEN sch.abbreviation = 'Rise' THEN 'Rise'
+             WHEN sch.abbreviation = 'Seek' THEN 'Seek'
+             WHEN sch.abbreviation = 'SPARK' THEN 'SPARK'
+             WHEN sch.abbreviation = 'TEAM' THEN 'TEAM Academy'
+             WHEN sch.abbreviation = 'THRIVE' THEN 'THRIVE'
+             WHEN sch.abbreviation = 'KURA' THEN 'Upper Roseville'
             END AS school_name
      FROM gabby.powerschool.students s
      INNER JOIN gabby.powerschool.student_access_accounts_static saa
