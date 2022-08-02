@@ -19,7 +19,7 @@ SELECT academic_year
       ,enroll_status
       ,entrydate
       ,exitdate      
-      ,date      
+      ,[date]
       ,term      
       ,is_enrolled
       ,region
@@ -46,7 +46,7 @@ SELECT academic_year
       ,enroll_status
       ,entrydate
       ,exitdate      
-      ,date      
+      ,[date]
       ,term      
       ,is_enrolled
       ,region
