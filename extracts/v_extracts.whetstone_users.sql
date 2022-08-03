@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW extracts.whetstone_users AS
+--CREATE OR ALTER VIEW extracts.whetstone_users AS
 
 WITH managers AS (
   SELECT DISTINCT
@@ -89,12 +89,14 @@ SELECT sub.user_internal_id
         ELSE 'Teachers'
        END AS group_name
       ,CASE 
+        WHEN CONVERT(DATE,GETDATE())=DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(),8,4) THEN '"' + sub.role_name + '"' /*removing last year roles every August*/
         WHEN er.role_names IS NULL THEN '"' + sub.role_name + '"' /* no roles = add assigned role */
         WHEN CHARINDEX(sub.role_name, er.role_names) > 0 THEN er.role_names /* assigned role already exists = use existing */
         ELSE '"' + sub.role_name + '",' + er.role_names /* add assigned role */
        END AS role_names
       ,'[' 
         + CASE 
+           WHEN CONVERT(DATE,GETDATE())=DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(),8,4) THEN '"' + r._id + '"' /*removing last year roles every August*/
            WHEN er.role_ids IS NULL THEN '"' + r._id + '"' /* no roles = add assigned role */
            WHEN CHARINDEX(r._id, er.role_ids) > 0 THEN er.role_ids /* assigned role already exists = use existing */
            ELSE '"' + r._id + '",' + er.role_ids /* add assigned role */
