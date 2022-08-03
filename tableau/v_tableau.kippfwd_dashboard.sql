@@ -188,6 +188,18 @@ WITH academic_years AS (
     AND (subject_c LIKE 'Advising Session%' OR subject_c = 'Summer AAS')
  )
 
+,tier AS (
+  SELECT [contact_c]
+        ,subject_c AS tier
+        ,gabby.utilities.DATE_TO_SY([date_c]) AS academic_year
+        ,ROW_NUMBER() OVER(
+           PARTITION BY contact_c, gabby.utilities.DATE_TO_SY([date_c])
+             ORDER BY date_c DESC) AS rn
+  FROM [gabby].[alumni].[contact_note_c]
+  WHERE is_deleted = 0
+    AND subject_c LIKE 'Tier%'
+ )
+
 ,matric AS (
   SELECT e.student_c AS contact_id
         ,e.id AS enrollment_id
@@ -200,8 +212,6 @@ WITH academic_years AS (
 ,finaid AS (
   SELECT e.contact_id
 
-        --,fa.applicable_school_year_c
-        --,fa.offer_date_c
         ,fa.unmet_need_c
         ,ROW_NUMBER() OVER(PARTITION BY e.enrollment_id ORDER BY fa.offer_date_c DESC) AS rn_finaid
   FROM matric e
@@ -248,8 +258,6 @@ SELECT c.sf_contact_id
       ,c.sf_mobile_phone AS mobile_phone
       ,c.middle_school_attended
       ,c.postsecondary_status
-      --,c.kipp_region_school
-      --,c.ktc_status
 
       ,ay.academic_year
 
@@ -276,8 +284,6 @@ SELECT c.sf_contact_id
       ,ei.emp_date_last_verified
       ,ei.emp_start_date
       ,ei.emp_actual_end_date
-      --,ei.emp_billing_state
-      --,ei.emp_ncesid
       ,ei.emp_name
       ,ei.ba_status
       ,ei.ba_actual_end_date
