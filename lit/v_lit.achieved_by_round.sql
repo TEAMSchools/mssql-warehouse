@@ -9,15 +9,15 @@ WITH roster_scaffold AS (
         ,r.grade_level
         ,r.academic_year
 
-        ,CONVERT(VARCHAR(25), terms.time_per_name) AS reporting_term
-        ,CONVERT(VARCHAR(25), terms.alt_name) AS test_round
+        ,terms.time_per_name AS reporting_term
+        ,terms.alt_name AS test_round
         ,terms.[start_date]
         ,terms.end_date
-        ,CONVERT(INT, RIGHT(terms.time_per_name, 1)) AS round_num
+        ,CAST(RIGHT(terms.time_per_name, 1) AS INT) AS round_num
 
         ,terms.is_curterm
   FROM gabby.powerschool.cohort_identifiers_static r
-  JOIN gabby.reporting.reporting_terms terms
+  INNER JOIN gabby.reporting.reporting_terms terms
     ON r.academic_year = terms.academic_year
    AND r.schoolid = terms.schoolid
    AND terms.identifier = 'LIT'
@@ -171,6 +171,7 @@ WITH roster_scaffold AS (
 
        UNION ALL
 
+       /* TEAM T3 2014 */
        SELECT r.student_number
              ,r.schoolid
              ,r.grade_level
@@ -221,7 +222,7 @@ WITH roster_scaffold AS (
              ,NULL AS hard_read_lvl
              ,NULL AS hard_lvl_num
        FROM roster_scaffold r
-       JOIN gabby.lit.all_test_events_static fp
+       INNER JOIN gabby.lit.all_test_events_static fp
          ON r.student_number = fp.student_number
         AND r.academic_year = fp.academic_year
         AND fp.recent_yr = 1

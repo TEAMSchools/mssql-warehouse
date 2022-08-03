@@ -53,8 +53,8 @@ WITH classes_dedupe AS (
        SELECT CONCAT('FPBAS', LEFT(fp.year_of_assessment, 4), fp._line) AS unique_id
              ,fp.student_identifier
              ,fp.year_of_assessment
-             ,CONVERT(INT,LEFT(fp.year_of_assessment, 4)) AS academic_year      
-             ,CONVERT(DATE,fp.assessment_date) AS assessment_date
+             ,CONVERT(INT, LEFT(fp.year_of_assessment, 4)) AS academic_year
+             ,CONVERT(DATE, fp.assessment_date) AS assessment_date
              ,fp.genre
              ,fp.data_type
              ,fp.class_name
@@ -72,7 +72,7 @@ WITH classes_dedupe AS (
              ,fp.wpm_rate
              ,fp.writing
              ,fp.self_corrections /* how should this be parsed? */
-             ,CONVERT(VARCHAR(5),fp.text_level) AS text_level
+             ,CONVERT(VARCHAR(5), fp.text_level) AS text_level
              ,CASE
                WHEN fp.benchmark_level = 'Independent' THEN 'Achieved'
                WHEN fp.benchmark_level = 'Instructional' THEN 'Did Not Achieve'
@@ -82,7 +82,7 @@ WITH classes_dedupe AS (
                WHEN fp.benchmark_level = 'Independent' THEN 1
                ELSE 0
               END AS is_achieved
-             
+
              ,sch.school_number AS schoolid
 
              ,c.teacher_first_name + ', ' + c.teacher_last_name AS test_administered_by
@@ -90,8 +90,10 @@ WITH classes_dedupe AS (
              ,3273 AS testid
              ,1 AS is_fp
        FROM gabby.fpodms.bas_assessments fp
+       LEFT JOIN gabby.people.school_crosswalk sc
+         ON fp.school_name = sc.site_name
        LEFT JOIN gabby.powerschool.schools sch
-         ON fp.school_name = sch.[name] COLLATE Latin1_General_BIN
+         ON sc.ps_school_id = sch.school_number
        LEFT JOIN classes_dedupe c
          ON fp.school_name = c.school_name
         AND fp.year_of_assessment = c.school_year
@@ -209,10 +211,10 @@ SELECT cd.unique_id
 
       ,rt.alt_name AS test_round
       ,rt.time_per_name AS reporting_term
-      ,CONVERT(INT,RIGHT(rt.time_per_name, 1)) AS round_num
+      ,CONVERT(INT, RIGHT(rt.time_per_name, 1)) AS round_num
 
       ,gleq.fp_lvl_num AS lvl_num
-      ,gleq.gleq AS gleq      
+      ,gleq.gleq AS gleq
       ,gleq.lvl_num AS gleq_lvl_num
       ,CASE WHEN cd.benchmark_level = 'Instructional' THEN gleq.fp_lvl_num END AS dna_lvl_num
       ,CASE WHEN cd.benchmark_level = 'Instructional' THEN gleq.fp_lvl_num END AS instruct_lvl_num      
