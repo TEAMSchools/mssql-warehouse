@@ -95,9 +95,13 @@ WITH surveys AS (
     ON c.survey_id = i.survey_id
    AND i.date_started BETWEEN c.link_open_date AND c.link_close_date
    AND i.rn_respondent_subject = 1
-  WHERE (c.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-    AND c.survey_id IN (4561325, 4561288, 5300913, 6580731))
-     OR c.survey_id = 6330385
+  WHERE (
+         c.survey_id = 6330385 
+         OR (
+             c.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
+             AND c.survey_id IN (4561325, 4561288, 5300913, 6580731)
+            )
+        )
  )
 
 SELECT COALESCE(st.respondent_employee_number, c.respondent_employee_number) AS survey_taker_id
