@@ -45,17 +45,7 @@ WITH alumni_data AS (
         ,[after_grad] 
         ,[alumni_dob]
         ,[alumni_email]
-        ,[alumni_phone]
-        ,[imp_1] 
-        ,[imp_2] 
-        ,[imp_3] 
-        ,[imp_4] 
-        ,[imp_5] 
-        ,[imp_6] 
-        ,[imp_7] 
-        ,[imp_8] 
-        ,[imp_9] 
-        ,[imp_10] 
+        ,[alumni_phone] 
         ,[cur_1] 
         ,[cur_2] 
         ,[cur_3] 
@@ -83,20 +73,61 @@ WITH alumni_data AS (
              ,date_submitted
              ,survey_response_id
              ,survey_id
-         FROM gabby.surveygizmo.survey_detail
+         FROM gabby.surveygizmo.survey_detail 
          WHERE survey_id = 6734664
         ) sub
   PIVOT (
     MAX(answer)
     FOR question_shortname IN (
           [first_name], [last_name], [alumni_dob], [alumni_email], [alumni_phone], [after_grad]
-         ,[imp_1], [imp_2], [imp_3], [imp_4], [imp_5], [imp_6], [imp_7], [imp_8], [imp_9],[imp_10]
          ,[cur_1], [cur_2], [cur_3], [cur_4], [cur_5], [cur_6], [cur_7], [cur_8], [cur_9]
          ,[cur_10], [job_sat], [ladder], [covid], [linkedin], [linkedin_link], [debt_binary]
          ,[debt_amount], [annual_income]
         )
    ) p
  )
+
+
+,weight_denominator AS (
+  SELECT survey_id
+        ,SUM(CAST(answer_value AS float)) AS answer_total
+  FROM surveygizmo.survey_detail
+  WHERE survey_id = 6734664
+  AND question_shortname IN ('imp_1','imp_2','imp_3','imp_4','imp_5','imp_6','imp_7','imp_8','imp_9','imp_10')
+  GROUP BY survey_id
+)
+
+,weight_table AS (
+  SELECT question_shortname
+        ,SUM(CAST(s.answer_value AS float))/a.answer_total AS item_weight
+  FROM surveygizmo.survey_detail s
+  RIGHT JOIN weight_denominator a
+    ON s.survey_id = a.survey_id
+  WHERE s.survey_id = 6734664
+    AND question_shortname IN ('imp_1','imp_2','imp_3','imp_4','imp_5','imp_6','imp_7','imp_8','imp_9','imp_10')
+  GROUP BY s.question_shortname, a.answer_total
+)
+
+,weight_pivot AS (
+  SELECT '6734664' AS survey_id
+         ,[imp_1]
+         ,[imp_2]
+         ,[imp_3]
+         ,[imp_4]
+         ,[imp_5]
+         ,[imp_6]
+         ,[imp_7]
+         ,[imp_8]
+         ,[imp_9]
+         ,[imp_10]
+  FROM weight_table
+  PIVOT (
+    MAX(item_weight)
+    FOR question_shortname IN ([imp_1], [imp_2], [imp_3], [imp_4], [imp_5], [imp_6], [imp_7], [imp_8], [imp_9],[imp_10]
+        )
+   ) p
+)
+
 
 SELECT  s.survey_title
        ,s.survey_response_id
@@ -108,26 +139,18 @@ SELECT  s.survey_title
        ,s.alumni_email
        ,s.after_grad
        ,s.alumni_dob
-       ,s.imp_1
-       ,s.imp_2
-       ,s.imp_3
-       ,s.imp_4
-       ,s.imp_5
-       ,s.imp_6
-       ,s.imp_7
-       ,s.imp_8
-       ,s.imp_9
-       ,s.imp_10
-       ,s.cur_1
-       ,s.cur_2
-       ,s.cur_3
-       ,s.cur_4
-       ,s.cur_5
-       ,s.cur_6
-       ,s.cur_7
-       ,s.cur_8
-       ,s.cur_9
-       ,s.cur_10
+       
+       /*weighted satisfaction scores based on relative importance of each*/
+       ,s.cur_1*p.imp_1*10 AS weighted_level_pay
+       ,s.cur_2*p.imp_2*10 AS weighted_stable_pay
+       ,s.cur_3*p.imp_3*10 AS weighted_stable_hours
+       ,s.cur_4*p.imp_4*10 AS weighted_control_hours_location
+       ,s.cur_5*p.imp_5*10 AS weighted_job_security
+       ,s.cur_6*p.imp_6*10 AS weighted_benefits
+       ,s.cur_7*p.imp_7*10 AS weighted_advancement
+       ,s.cur_8*p.imp_8*10 AS weighted_enjoyment
+       ,s.cur_9*p.imp_9*10 AS weighted_purpose
+       ,s.cur_10*p.imp_10*10 AS weighted_power
        ,s.job_sat
        ,s.ladder
        ,s.covid
@@ -156,3 +179,9 @@ FROM survey_pivot s
 LEFT JOIN alumni_data a
   ON s.alumni_email = a.email
  AND a.rn_latest = 1
+LEFT JOIN weight_pivot p
+  ON s.survey_id = p.survey_id
+LEFT JOIN surveygizmo.survey_response_disqualified dq
+  ON s.survey_id = dq.survey_id 
+ AND s.survey_response_id = dq.id
+WHERE dq.id IS NULL
