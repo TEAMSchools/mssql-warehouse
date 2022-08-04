@@ -3,23 +3,24 @@ GO
 
 CREATE OR ALTER VIEW extracts.mdcps_aces_survey AS
 
-SELECT s.job_title
-      ,s.[location]
-      ,s.position_status
-      ,s.termination_date
+SELECT s.primary_job
+      ,s.primary_site
+      ,s.[status]
       ,s.first_name
       ,s.last_name
       ,s.position_id
-      ,s.business_unit
-      ,s.employee_number
+      ,s.legal_entity_name
+      ,s.df_employee_number
       ,s.original_hire_date
-      ,s.flsa AS payclass
-      ,s.address_street
-      ,s.address_city
-      ,s.address_state
-      ,s.address_zip
+      ,s.flsa_status AS payclass
+      ,s.address
+      ,s.city
+      ,s.state
+      ,s.postal_code
       ,s.annual_salary
-      ,s.education_level
+      ,s.termination_date
+      
+      ,e.education_level
 
       ,cf.[Miami - ACES Number] AS miami_aces
 
@@ -28,8 +29,11 @@ SELECT s.job_title
       ,'N/A' AS teacher_eval
       ,'N/A' AS Contribution504B
       ,'B' AS BasicLifePlan
-FROM gabby.people.staff_roster s
-INNER JOIN gabby.adp.workers_custom_field_group_wide_static cf
-  ON s.associate_id = cf.worker_id
-WHERE s.business_unit = 'KIPP Miami'
-  AND (s.termination_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1) OR s.termination_date IS NULL)
+
+FROM gabby.people.staff_crosswalk_static s
+LEFT JOIN gabby.adp.workers_custom_field_group_wide_static cf
+  ON s.adp_associate_id = cf.worker_id
+LEFT JOIN gabby.surveys.staff_information_survey_wide_static e
+  ON s.df_employee_number = e.employee_number
+WHERE s.legal_entity_name = 'KIPP Miami'
+  AND (s.termination_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(),07,01) OR s.termination_date IS NULL)
