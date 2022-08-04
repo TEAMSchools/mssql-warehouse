@@ -178,14 +178,14 @@ WITH academic_years AS (
   SELECT [contact_c]
         ,[comments_c]
         ,[next_steps_c]
+        ,subject_c
         ,gabby.utilities.DATE_TO_SY([date_c]) AS academic_year
         ,ROW_NUMBER() OVER(
            PARTITION BY contact_c, gabby.utilities.DATE_TO_SY([date_c]) 
              ORDER BY date_c DESC) AS rn
   FROM [gabby].[alumni].[contact_note_c]
   WHERE is_deleted = 0
-    AND status_c = 'Successful'
-    AND (subject_c LIKE 'Advising Session%' OR subject_c = 'Summer AAS')
+    AND subject_c LIKE 'AS[0-9]%'
  )
 
 ,tier AS (
