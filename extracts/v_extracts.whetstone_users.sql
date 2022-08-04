@@ -1,7 +1,7 @@
 USE gabby
 GO
 
---CREATE OR ALTER VIEW extracts.whetstone_users AS
+CREATE OR ALTER VIEW extracts.whetstone_users AS
 
 WITH managers AS (
   SELECT DISTINCT
@@ -118,7 +118,6 @@ FROM
            ,CASE WHEN scw.grades_taught = 0 THEN 'K' ELSE CONVERT(VARCHAR, scw.grades_taught) END AS grade_abbreviation
            ,CASE
              /* network admins */
-             WHEN scw.primary_on_site_department = 'Data' THEN 'Admin'
              WHEN scw.primary_on_site_department = 'Executive' THEN 'Regional Admin'
              WHEN scw.primary_on_site_department IN ('Teaching and Learning', 'School Support', 'New Teacher Development') 
               AND scw.primary_job IN ('Achievement Director', 'Chief Academic Officer', 'Chief Of Staff', 'Director', 'Head of Schools'
@@ -146,6 +145,7 @@ FROM
        ON scw.df_employee_number = m.manager_df_employee_number
      WHERE scw.userprincipalname IS NOT NULL
        AND COALESCE(scw.termination_date, CURRENT_TIMESTAMP) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1, 7, 1)
+       AND scw.primary_on_site_department <> 'Data'
     ) sub
 LEFT JOIN gabby.whetstone.users_clean u
   ON sub.user_internal_id = u.internal_id
