@@ -87,7 +87,6 @@ WITH alumni_data AS (
    ) p
  )
 
-
 ,weight_denominator AS (
   SELECT survey_id
         ,SUM(CAST(answer_value AS FLOAT)) AS answer_total
@@ -132,7 +131,6 @@ WITH alumni_data AS (
         )
    ) p
  )
-
 
 SELECT  s.survey_title
        ,s.survey_response_id
