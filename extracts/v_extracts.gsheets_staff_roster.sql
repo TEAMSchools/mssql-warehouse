@@ -18,7 +18,7 @@ SELECT df.adp_associate_id AS associate_id
       ,df.[status] AS position_status
       ,CONVERT(VARCHAR, df.termination_date) AS termination_date
       ,df.mail AS email_addr 
-      ,CONVERT(VARCHAR, df.original_hire_date) AS hire_date
+      ,CONVERT(VARCHAR, COALESCE(df.rehire_date, df.original_hire_date)) AS hire_date
       ,CONVERT(VARCHAR, df.work_assignment_start_date) AS position_start_date
       ,df.df_employee_number
       ,df.manager_df_employee_number
