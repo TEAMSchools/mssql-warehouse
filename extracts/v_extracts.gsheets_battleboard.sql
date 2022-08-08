@@ -53,6 +53,7 @@ WITH elementary_grade AS (
 	 )
 
 SELECT c.df_employee_number
+      ,c.[status]
       ,c.preferred_name
       ,c.primary_site
       ,c.primary_job
@@ -67,21 +68,12 @@ SELECT c.df_employee_number
        ELSE c.primary_on_site_department
        END AS department_grade 
 
-      ,ROUND(p.PM4,2) AS 'Last Year Final PM'
+      ,ROUND(p.PM4,2) AS 'Last Year Final'
       ,ROUND(e.PM1,2) AS 'PM1'
       ,ROUND(e.PM2,2) AS 'PM2'
       ,ROUND(e.PM3,2) AS 'PM3'
      
-      
       ,i.answer AS itr_response
-      
-     /*AppSheet entry fields*/
-
-      ,'' AS seat_status
-      ,'' AS next_year_teammate
-      ,'' AS recruiter_sl_notes
-      ,'' AS moy_gut_check
-      ,'' AS eoy_gut_check
 
 FROM people.staff_crosswalk_static c
 LEFT JOIN etr_pivot e
