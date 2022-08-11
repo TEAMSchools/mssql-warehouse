@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW tableau.kfwd_contact_notes
+CREATE OR ALTER VIEW tableau.kfwd_contact_notes AS
 
 SELECT ktc.sf_contact_id
       ,ktc.first_name
