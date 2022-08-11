@@ -3,7 +3,6 @@ GO
 
 CREATE OR ALTER VIEW tableau.kfwd_contact_notes
 
-
 SELECT ktc.sf_contact_id
       ,ktc.first_name
       ,ktc.last_name
@@ -17,6 +16,7 @@ SELECT ktc.sf_contact_id
       ,ktc.last_successful_contact_date
       ,ktc.last_outreach_date
       ,ktc.counselor_name
+      
       ,cn.created_by_id
       ,cn.subject_c
       ,cn.date_c
