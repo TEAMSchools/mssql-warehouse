@@ -30,6 +30,7 @@ WITH cal_long AS (
        INNER JOIN powerschool.bell_schedule bs
          ON t.schoolid = bs.schoolid
         AND t.yearid = bs.year_id
+        AND cd.bell_schedule_id = bs.id
        WHERE cd.insession = 1
          AND cd.membershipvalue > 0
       ) sub
