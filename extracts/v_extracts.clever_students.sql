@@ -6,7 +6,10 @@ CREATE OR ALTER VIEW extracts.clever_students AS
 SELECT CONVERT(VARCHAR(25), co.schoolid) AS [School_id]
       ,CONVERT(VARCHAR(25), co.student_number) AS [Student_id]
       ,CONVERT(VARCHAR(25), co.student_number) AS [Student_number]
-      ,NULL AS [State_id]
+      ,CASE 
+        WHEN co.region = 'KMS' THEN suf.fleid 
+        ELSE co.state_studentnumber 
+       END AS [State_id]
       ,co.last_name AS [Last_name]
       ,co.middle_name AS [Middle_name]
       ,co.first_name AS [First_name]
@@ -59,6 +62,10 @@ LEFT JOIN gabby.powerschool.gpa_cumulative gpa
   ON co.studentid = gpa.studentid
  AND co.schoolid = gpa.schoolid
  AND co.[db_name] = gpa.[db_name]
+LEFT JOIN gabby.powerschool.u_studentsuserfields suf
+  ON co.students_dcid = suf.studentsdcid
+ AND co.[db_name] = suf.[db_name]
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.rn_year = 1
   AND co.grade_level <> 99
+  
