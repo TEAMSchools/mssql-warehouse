@@ -36,6 +36,19 @@ WITH managers AS (
              ,ur.role_name
        FROM gabby.whetstone.users_roles ur
        WHERE role_name <> 'No Role'
+
+       UNION
+
+       SELECT u.[user_id]
+             ,r._id AS role_id
+             ,r.[name] AS role_name
+       FROM gabby.people.staff_crosswalk_static s
+       INNER JOIN gabby.whetstone.users_clean u
+         ON s.df_employee_number = u.internal_id
+       INNER JOIN gabby.whetstone.roles r
+         ON r.[name] = 'School Admin'
+       WHERE s.primary_job = 'School Leader'
+
       ) sub
   GROUP BY sub.[user_id]
  )
@@ -79,7 +92,7 @@ SELECT sub.user_internal_id
 
       ,CASE
         WHEN er.role_names LIKE '%Admin%'
-         AND CONVERT(DATE, GETDATE()) <> DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 8, 4)
+         AND CONVERT(DATE, GETDATE()) <> DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 8, 1)
              THEN NULL
         WHEN sub.role_name LIKE '%Admin%' THEN NULL
         WHEN sub.role_name = 'Coach' THEN 'observees;observers'
@@ -87,20 +100,20 @@ SELECT sub.user_internal_id
        END AS group_type
       ,CASE
         WHEN er.role_names LIKE '%Admin%' 
-         AND CONVERT(DATE, GETDATE()) <> DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 8, 4) 
+         AND CONVERT(DATE, GETDATE()) <> DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 8, 1) 
              THEN NULL
         WHEN sub.role_name LIKE '%Admin%' THEN NULL
         ELSE 'Teachers'
        END AS group_name
       ,CASE 
-        WHEN CONVERT(DATE, GETDATE()) = DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 8, 4) THEN '"' + sub.role_name + '"' /*removing last year roles every August*/
+        WHEN CONVERT(DATE, GETDATE()) = DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 8, 1) THEN '"' + sub.role_name + '"' /*removing last year roles every August*/
         WHEN er.role_names IS NULL THEN '"' + sub.role_name + '"' /* no roles = add assigned role */
         WHEN CHARINDEX(sub.role_name, er.role_names) > 0 THEN er.role_names /* assigned role already exists = use existing */
         ELSE '"' + sub.role_name + '",' + er.role_names /* add assigned role */
        END AS role_names
       ,'[' 
         + CASE 
-           WHEN CONVERT(DATE, GETDATE()) = DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 8, 4) THEN '"' + r._id + '"' /*removing last year roles every August*/
+           WHEN CONVERT(DATE, GETDATE()) = DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 8, 1) THEN '"' + r._id + '"' /*removing last year roles every August*/
            WHEN er.role_ids IS NULL THEN '"' + r._id + '"' /* no roles = add assigned role */
            WHEN CHARINDEX(r._id, er.role_ids) > 0 THEN er.role_ids /* assigned role already exists = use existing */
            ELSE '"' + r._id + '",' + er.role_ids /* add assigned role */
