@@ -21,6 +21,7 @@ SELECT co.student_number
       ,co.lunchstatus AS eligibility_name
       ,co.lunch_balance AS total_balance
       ,co.advisor_name AS home_room
+      ,gabby.utilities.GLOBAL_ACADEMIC_YEAR() + (13 - co.grade_level) AS graduation_year
       ,co.[db_name]
 FROM gabby.powerschool.cohort_identifiers_static co
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
