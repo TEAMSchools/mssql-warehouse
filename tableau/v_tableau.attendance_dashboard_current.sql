@@ -4,7 +4,7 @@ SELECT sub.student_number
       ,sub.studentid
       ,sub.lastfirst
       ,sub.academic_year
-      ,sub.schoolid
+      ,sub.reporting_schoolid AS schoolid
       ,sub.grade_level
       ,sub.region
       ,sub.school_level
@@ -33,30 +33,30 @@ SELECT sub.student_number
       ,sub.is_remote
 FROM
     (
-     SELECT co.academic_year
-           ,co.studentid
-           ,co.student_number
-           ,co.lastfirst
-           ,co.reporting_schoolid AS schoolid
-           ,co.grade_level
-           ,co.region
-           ,co.school_level
-           ,co.team
-           ,co.enroll_status
-           ,co.iep_status
-           ,co.lep_status
-           ,co.c_504_status
-           ,0 AS is_pathways
-           ,co.gender
-           ,co.ethnicity
-
-           ,enr.section_number
-           ,enr.teacher_name
-
+     SELECT mem.studentid
            ,mem.calendardate
            ,mem.membershipvalue
            ,CONVERT(FLOAT, mem.attendancevalue) AS is_present
            ,ABS(mem.attendancevalue - 1) AS is_absent
+
+           ,co.student_number
+           ,co.lastfirst
+           ,co.enroll_status
+           ,co.academic_year
+           ,co.region
+           ,co.school_level
+           ,co.reporting_schoolid
+           ,co.grade_level
+           ,co.team
+           ,co.iep_status
+           ,co.lep_status
+           ,co.c_504_status
+           ,co.gender
+           ,co.ethnicity
+           ,0 AS is_pathways
+
+           ,enr.section_number
+           ,enr.teacher_name
 
            ,att.att_code
            ,CASE WHEN att.att_code IN ('T', 'T10') THEN 0.0 ELSE 1.0 END AS is_ontime
@@ -64,7 +64,7 @@ FROM
            ,CASE WHEN att.att_code IN ('S', 'ISS') THEN 1.0 ELSE 0.0 END AS is_iss
            ,CASE WHEN att.att_code IN ('OS', 'OSS', 'OSSP', 'S', 'ISS') THEN 1.0 ELSE 0.0 END AS is_suspended
 
-           ,CONVERT(VARCHAR(25), dt.alt_name) AS term
+           ,dt.alt_name AS term
 
            ,CASE WHEN sp.studentid IS NOT NULL THEN 1 END AS is_counselingservices
 
@@ -77,13 +77,13 @@ FROM
              ELSE 0
             END AS is_remote
      FROM powerschool.ps_adaadm_daily_ctod_current_static mem
-     JOIN powerschool.calendar_day cal
-       ON mem.schoolid = cal.schoolid
-      AND mem.calendardate = cal.date_value
-     JOIN powerschool.cohort_identifiers_static co
+     INNER JOIN powerschool.cohort_identifiers_static co
        ON mem.studentid = co.studentid
       AND mem.schoolid = co.schoolid
       AND mem.calendardate BETWEEN co.entrydate AND co.exitdate
+     INNER JOIN powerschool.calendar_day cal
+       ON mem.schoolid = cal.schoolid
+      AND mem.calendardate = cal.date_value
      LEFT JOIN powerschool.course_enrollments_current_static enr
        ON co.studentid = enr.studentid
       AND co.academic_year = enr.academic_year 
