@@ -10,6 +10,7 @@ SELECT [db_name]
       ,schoolid
       ,grade_level
       ,entrydate
+      ,exitdate
       ,exitdate_prev
 FROM
     (
@@ -23,7 +24,7 @@ FROM
            ,LAG(pea.exitdate) OVER(PARTITION BY pea.[db_name], pea.studentid, pea.yearid ORDER BY pea.exitdate) AS exitdate_prev
 
            ,s.student_number
-     FROM gabby.powerschool.ps_enrollment_all_static pea
+     FROM gabby.powerschool.ps_enrollment_all pea
      INNER JOIN gabby.powerschool.students s
        ON pea.studentid = s.id
       AND pea.[db_name] = s.[db_name]
