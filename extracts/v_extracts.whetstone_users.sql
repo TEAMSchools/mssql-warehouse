@@ -25,7 +25,7 @@ WITH managers AS (
              ,r._id AS role_id
              ,r.[name] AS role_name
        FROM gabby.whetstone.schools_observation_groups_membership sogm
-       JOIN gabby.whetstone.roles r
+       INNER JOIN gabby.whetstone.roles r
          ON sogm.role_category = r.category
         AND r.[name] IN ('Teacher', 'Coach')
 
