@@ -1,7 +1,7 @@
 USE gabby 
 GO
 
---CREATE OR ALTER view tableau.staff_attendance_tracking AS
+CREATE OR ALTER view tableau.staff_attendance_tracking AS
 
 WITH school_ids AS (
   SELECT sub.[location]
@@ -18,6 +18,14 @@ WITH school_ids AS (
   LEFT JOIN gabby.people.school_crosswalk cw
     ON sub.school_name = cw.site_name
   )
+
+,school_leaders AS (
+  SELECT primary_site AS sl_primary_site
+        ,samaccountname AS sl_samaccountname
+  FROM gabby.people.staff_crosswalk_static
+  WHERE primary_job = 'School Leader'
+    AND [status] <> 'Terminated'
+    )
 
 ,holidays AS (
   SELECT [location]
@@ -97,6 +105,7 @@ SELECT gabby.utilities.DATE_TO_SY(td.transaction_apply_date) AS academic_year
       ,cw.primary_site AS location_current
       ,LOWER(cw.samaccountname) AS staff_samaccountname
       ,LOWER(cw.manager_samaccountname) AS manager_samaccountname
+      ,LOWER(sl.sl_samaccountname) AS sl_samaccountname
 FROM gabby.adp.wfm_time_details td
 JOIN school_ids id
   ON td.[location] = id.[location]
@@ -108,5 +117,7 @@ LEFT JOIN snow_days sd
  AND sd.date_value = CONVERT(DATE,td.transaction_apply_date)
 LEFT JOIN gabby.people.staff_crosswalk_static cw
   ON SUBSTRING(td.employee_name,LEN(td.employee_name)-9,9) = cw.adp_associate_id
+LEFT JOIN school_leaders sl
+  ON  cw.primary_site = sl.sl_primary_site
 WHERE td.transaction_type <> 'Worked Holiday Edit'
   AND td.transaction_apply_date >= DATEFROMPARTS(2022,08,15)
