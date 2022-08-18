@@ -48,6 +48,7 @@ SELECT co.studentid
       ,CONVERT(NVARCHAR(1), UPPER(s.ethnicity)) AS ethnicity
 
       ,sch.[name] AS school_name
+      ,sch.abbreviation AS school_abbreviation
 
       ,t.team
 
