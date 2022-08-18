@@ -8,25 +8,26 @@ SELECT s.student_number
       ,s.grade_level
       ,s.lastfirst
       ,s.home_phone
-      ,s.mother
-      ,s.father
       ,s.[db_name]
+
+      ,scw.contact_1_name AS mother
+      ,scw.contact_1_phone_mobile AS mother_cell
+      ,scw.contact_2_name AS father
+      ,scw.contact_2_phone_mobile AS father_cell
+      ,scw.pickup_1_name AS release_1_name
+      ,scw.pickup_1_phone_primary AS release_1_phone
+      ,scw.pickup_2_name AS release_2_name
+      ,scw.pickup_2_phone_primary AS release_2_phone
+      ,scw.pickup_3_name AS release_3_name
+      ,scw.pickup_3_phone_primary AS release_3_phone
+      ,NULL AS release_4_name
+      ,NULL AS release_4_phone
+      ,NULL AS release_5_name
+      ,NULL AS release_5_phone
 
       ,suf.bus_info_am
       ,suf.bus_info_pm
       ,suf.bus_info_fridays AS bus_info_pm_early
-      ,suf.mother_cell
-      ,suf.father_cell
-      ,suf.release_1_name
-      ,suf.release_1_phone
-      ,suf.release_2_name
-      ,suf.release_2_phone
-      ,suf.release_3_name
-      ,suf.release_3_phone
-      ,suf.release_4_name
-      ,suf.release_4_phone
-      ,suf.release_5_name
-      ,suf.release_5_phone
       ,CONVERT(DATETIME2, suf._modified) AS last_modified
       ,CASE 
         WHEN suf.bus_info_am NOT LIKE '%-%-%' THEN suf.bus_info_am
@@ -77,6 +78,9 @@ SELECT s.student_number
 
       ,SYSDATETIME() AS systimestamp
 FROM gabby.powerschool.students s WITH(NOLOCK)
+LEFT JOIN gabby.powerschool.student_contacts_wide_static scw
+  ON s.student_number = scw.student_number
+ AND s.[db_name] = scw.[db_name]
 LEFT JOIN gabby.powerschool.u_studentsuserfields suf WITH(NOLOCK)
   ON s.dcid = suf.studentsdcid
  AND s.[db_name] = suf.[db_name]
