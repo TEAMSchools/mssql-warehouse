@@ -21,8 +21,14 @@ SELECT co.student_number
       ,co.lunchstatus AS eligibility_name
       ,co.lunch_balance AS total_balance
       ,co.advisor_name AS home_room
+      ,gabby.utilities.GLOBAL_ACADEMIC_YEAR() + (13 - co.grade_level) AS graduation_year
+      ,de.district_entry_date AS DistrictEntryDate
+      ,de.district_entry_date AS SchoolEntryDate
       ,co.[db_name]
 FROM gabby.powerschool.cohort_identifiers_static co
+LEFT gabby.powerschool.district_entry_date de
+  ON co.studentid = de.studentid
+ AND co.[db_name] = de.[db_name]
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.rn_year = 1
   AND co.grade_level <> 99
