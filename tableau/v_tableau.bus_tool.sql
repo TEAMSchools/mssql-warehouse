@@ -8,7 +8,7 @@ SELECT s.student_number
       ,s.grade_level
       ,s.lastfirst
       ,s.home_phone
-      ,s.[db_name]
+      ,'kippmiami' AS [db_name]
 
       ,scw.contact_1_name AS mother
       ,scw.contact_1_phone_mobile AS mother_cell
@@ -77,30 +77,24 @@ SELECT s.student_number
       ,code.att_code
 
       ,SYSDATETIME() AS systimestamp
-FROM gabby.powerschool.students s WITH(NOLOCK)
-LEFT JOIN gabby.powerschool.student_contacts_wide_static scw
+FROM kippmiami.powerschool.students s WITH(NOLOCK)
+LEFT JOIN kippmiami.powerschool.student_contacts_wide_static scw
   ON s.student_number = scw.student_number
- AND s.[db_name] = scw.[db_name]
-LEFT JOIN gabby.powerschool.u_studentsuserfields suf WITH(NOLOCK)
+LEFT JOIN kippmiami.powerschool.u_studentsuserfields suf WITH(NOLOCK)
   ON s.dcid = suf.studentsdcid
- AND s.[db_name] = suf.[db_name]
-LEFT JOIN gabby.powerschool.cc WITH(NOLOCK)
+LEFT JOIN kippmiami.powerschool.cc WITH(NOLOCK)
   ON s.id = cc.studentid
- AND s.[db_name] = cc.[db_name]
  AND cc.course_number = 'HR'
  AND CASE WHEN cc.dateenrolled > CONVERT(DATE, GETDATE()) THEN cc.dateenrolled ELSE CONVERT(DATE, GETDATE()) END BETWEEN cc.dateenrolled AND cc.dateleft
-LEFT JOIN gabby.powerschool.[log] WITH(NOLOCK)
+LEFT JOIN kippmiami.powerschool.[log] WITH(NOLOCK)
   ON s.id = [log].studentid
- AND s.[db_name] = [log].[db_name]
- AND [log].logtypeid = 3964
+ AND [log].logtypeid = 1582
  AND [log].discipline_incidentdate = CONVERT(DATE, GETDATE())
-LEFT JOIN gabby.powerschool.attendance_clean_current_static att WITH(NOLOCK)
+LEFT JOIN kippmiami.powerschool.attendance_clean_current_static att WITH(NOLOCK)
   ON s.id = att.studentid
- AND s.[db_name] = att.[db_name]
  AND att.att_mode_code = 'ATT_ModeDaily'
  AND CONVERT(DATE, att.att_date) = CONVERT(DATE, GETDATE())
-LEFT JOIN gabby.powerschool.attendance_code code WITH(NOLOCK)
+LEFT JOIN kippmiami.powerschool.attendance_code code WITH(NOLOCK)
   ON att.attendance_codeid = code.id
- AND att.[db_name] = code.[db_name]
  AND (code.att_code LIKE 'A%' OR code.att_code = 'OSS')
 WHERE s.enroll_status = 0
