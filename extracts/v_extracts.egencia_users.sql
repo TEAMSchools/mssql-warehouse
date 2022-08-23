@@ -38,7 +38,7 @@ FROM
            ,ad.mail AS [Email]
            ,ad.userprincipalname AS [Single Sign On ID]
      FROM gabby.people.staff_roster scw
-     JOIN gabby.adsi.user_attributes_static ad
+     INNER JOIN gabby.adsi.user_attributes_static ad
        ON scw.employee_number = ad.employeenumber
       AND ISNUMERIC(ad.employeenumber) = 1
      WHERE (scw.worker_category NOT IN ('Intern', 'Part Time') OR scw.worker_category IS NULL)
