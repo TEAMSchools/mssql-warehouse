@@ -28,6 +28,7 @@ SELECT s.student_number
       ,suf.bus_info_am
       ,suf.bus_info_pm
       ,suf.bus_info_fridays AS bus_info_pm_early
+      ,suf.bus_notes
       ,CONVERT(DATETIME2, suf._modified) AS last_modified
       ,CASE 
         WHEN suf.bus_info_am NOT LIKE '%-%-%' THEN suf.bus_info_am
@@ -68,7 +69,6 @@ SELECT s.student_number
         ,CHARINDEX('-', suf.bus_info_fridays, (CHARINDEX('-', suf.bus_info_fridays) + 1)) + 2
         ,LEN(suf.bus_info_fridays)
        ) AS bus_stop_pm_early
-      ,suf.bus_notes
 
       ,cc.section_number AS hr_section_number
 
@@ -79,7 +79,7 @@ SELECT s.student_number
 
       ,SYSDATETIME() AS systimestamp
 FROM kippmiami.powerschool.students s WITH(NOLOCK)
-LEFT JOIN kippmiami.powerschool.student_contacts_wide_static scw
+LEFT JOIN kippmiami.powerschool.student_contacts_wide_static scw WITH(NOLOCK)
   ON s.student_number = scw.student_number
 LEFT JOIN kippmiami.powerschool.u_studentsuserfields suf WITH(NOLOCK)
   ON s.dcid = suf.studentsdcid
