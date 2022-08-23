@@ -68,6 +68,7 @@ SELECT s.student_number
         ,CHARINDEX('-', suf.bus_info_fridays, (CHARINDEX('-', suf.bus_info_fridays) + 1)) + 2
         ,LEN(suf.bus_info_fridays)
        ) AS bus_stop_pm_early
+      ,suf.bus_notes
 
       ,cc.section_number AS hr_section_number
 
