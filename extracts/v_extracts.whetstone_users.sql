@@ -48,7 +48,6 @@ WITH managers AS (
        INNER JOIN gabby.whetstone.roles r
          ON r.[name] = 'School Admin'
        WHERE s.primary_job = 'School Leader'
-
       ) sub
   GROUP BY sub.[user_id]
  )

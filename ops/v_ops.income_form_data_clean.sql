@@ -6,13 +6,13 @@ CREATE OR ALTER VIEW ops.income_form_data_clean AS
 SELECT student_number
       ,academic_year
       ,CASE 
-        WHEN [status] IS NULL OR [status] = 'No App' THEN 'No Application'
-        WHEN [status] = 'Direct Cert' THEN 'Direct Certification'
+        WHEN [status] IS NULL OR [status] = 'No Application' THEN 'No Application'
+        WHEN [status] = 'Direct Certification' THEN 'Direct Certification'
         ELSE LEFT([status], 1) + ' - ' + 'Income Form'
        END AS lunch_app_status
       ,CASE
-        WHEN [status] IN ('No App', 'App Rec''d') THEN NULL
-        WHEN [status] = 'Direct Cert' THEN 'F'
+        WHEN [status] IN ('No Application', 'Application Received') THEN NULL
+        WHEN [status] = 'Direct Certification' THEN 'F'
         ELSE LEFT([status], 1)
        END AS lunch_status
       ,ROW_NUMBER() OVER(PARTITION BY student_number, academic_year ORDER BY _row DESC) AS rn
