@@ -105,12 +105,14 @@ SELECT sub.user_internal_id
         WHEN sub.role_name LIKE '%Admin%' THEN NULL
         ELSE 'Teachers'
        END AS group_name
-      ,CASE 
-        WHEN CONVERT(DATE, GETDATE()) = DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 8, 1) THEN '"' + sub.role_name + '"' /*removing last year roles every August*/
-        WHEN er.role_names IS NULL THEN '"' + sub.role_name + '"' /* no roles = add assigned role */
-        WHEN CHARINDEX(sub.role_name, er.role_names) > 0 THEN er.role_names /* assigned role already exists = use existing */
-        ELSE '"' + sub.role_name + '",' + er.role_names /* add assigned role */
-       END AS role_names
+      ,'['
+        + CASE 
+           WHEN CONVERT(DATE, GETDATE()) = DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 8, 1) THEN '"' + sub.role_name + '"' /*removing last year roles every August*/
+           WHEN er.role_names IS NULL THEN '"' + sub.role_name + '"' /* no roles = add assigned role */
+           WHEN CHARINDEX(sub.role_name, er.role_names) > 0 THEN er.role_names /* assigned role already exists = use existing */
+           ELSE '"' + sub.role_name + '",' + er.role_names /* add assigned role */
+          END 
+        + ']' AS role_names
       ,'[' 
         + CASE 
            WHEN CONVERT(DATE, GETDATE()) = DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 8, 1) THEN '"' + r._id + '"' /*removing last year roles every August*/
