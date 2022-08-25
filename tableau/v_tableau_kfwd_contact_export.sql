@@ -29,4 +29,3 @@ LEFT JOIN gabby.powerschool.students s
 INNER JOIN gabby.deanslist.communication c
   ON c.student_school_id = ktc.student_number
  AND c.reason LIKE 'KF:%'
- 

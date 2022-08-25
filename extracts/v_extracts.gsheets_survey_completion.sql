@@ -11,19 +11,28 @@ WITH incomplete_surveys AS (
         ,survey_round_close
         ,survey_completion_date 
         ,survey_id
-        /*Ordering surveys by term (most recent campaign) and staff updates by completion date for row numbering, to filter out complete staff updates from prior campaigns*/
+        /*
+           Ordering surveys by term (most recent campaign) and
+           staff updates by completion date to filter out 
+           complete staff updates from prior campaigns
+        */
         ,CASE
-         WHEN survey_id <> '6330385'
-         THEN ROW_NUMBER() OVER(
-           PARTITION BY survey_taker_id
-             ORDER BY reporting_term) 
-         ELSE ROW_NUMBER() OVER(
-           PARTITION BY survey_taker_id
-             ORDER BY survey_completion_date DESC) 
+          WHEN survey_id <> '6330385' 
+               THEN ROW_NUMBER() OVER(
+                      PARTITION BY survey_taker_id
+                      ORDER BY reporting_term
+                    )
+          ELSE ROW_NUMBER() OVER(
+                 PARTITION BY survey_taker_id
+                 ORDER BY survey_completion_date DESC
+               )
          END AS rn_null
   FROM gabby.surveys.survey_tracking t
   WHERE survey_id = '6330385' 
-     OR (survey_completion_date IS NULL AND CONVERT(DATE, GETDATE()) BETWEEN survey_round_open AND survey_round_close)
+     OR (survey_completion_date IS NULL
+           AND CONVERT(DATE, GETDATE()) BETWEEN survey_round_open 
+                                            AND survey_round_close
+        )
 )
 
 SELECT i.academic_year
