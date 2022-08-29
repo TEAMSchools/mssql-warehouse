@@ -1,7 +1,7 @@
 USE gabby
 GO
 
---CREATE OR ALTER VIEW recruiting.leading_indicators AS
+CREATE OR ALTER VIEW recruiting.leading_indicators AS
 
 WITH app_unpivot AS (
   SELECT application_id
