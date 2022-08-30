@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW tableau.nj_position_control_roster AS
+CREATE OR ALTER VIEW tableau.position_control_roster AS
 
 WITH pivot_table AS (
   SELECT position_id
@@ -69,4 +69,4 @@ LEFT JOIN cost_number cn
   ON sr.associate_id = cn.associate_id
 WHERE sr.position_status IN ('Active', 'Leave')
   AND (job_title IN ('Chief Executive Officer', 'Chief Financial Officer')
-         OR sr.business_unit IN ('TEAM Academy Charter School', 'KIPP Cooper Norcross Academy'))
+         OR sr.business_unit IN ('TEAM Academy Charter School', 'KIPP Cooper Norcross Academy','KIPP Miami'))

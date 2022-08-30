@@ -10,15 +10,16 @@ SELECT ktc.currently_enrolled_school AS [Currently Enrolled School]
       ,s.dob AS [Birthdate]
       ,ktc.ktc_cohort AS [HS Cohort]
       ,c.reason AS [Subject]
-      ,CASE WHEN c.call_type = 'P' OR c.call_type = 'VC' THEN 'Call'
-            WHEN c.call_type = 'IP' THEN 'In Person'
-            WHEN c.call_type = 'SMS' THEN 'Text'
-            WHEN c.call_type = 'E' THEN 'Email'
-            WHEN c.call_type = 'L' THEN 'Mail (Letter/Postcard)'
-       ELSE NULL END AS [Type]
-      ,CONVERT(varchar, c.call_date_time, 1) AS [Contact Date]
-      ,CASE WHEN c.call_status = 'Completed' THEN 'Successful'
-       ELSE 'Outreach' END AS [Status]
+      ,CASE
+        WHEN c.call_type = 'P' OR c.call_type = 'VC' THEN 'Call'
+        WHEN c.call_type = 'IP' THEN 'In Person'
+        WHEN c.call_type = 'SMS' THEN 'Text'
+        WHEN c.call_type = 'E' THEN 'Email'
+        WHEN c.call_type = 'L' THEN 'Mail (Letter/Postcard)'
+        ELSE NULL
+       END AS [Type]
+      ,CONVERT(VARCHAR, c.call_date_time, 1) AS [Contact Date]
+      ,CASE WHEN c.call_status = 'Completed' THEN 'Successful' ELSE 'Outreach' END AS [Status]
       ,NULL AS [Category]
       ,NULL AS [Current Category Ranking]
       ,c.call_topic AS [Comments]
@@ -26,6 +27,6 @@ SELECT ktc.currently_enrolled_school AS [Currently Enrolled School]
 FROM gabby.alumni.ktc_roster ktc
 LEFT JOIN gabby.powerschool.students s
   ON ktc.student_number = s.student_number
-JOIN gabby.deanslist.communication c
+INNER JOIN gabby.deanslist.communication c
   ON c.student_school_id = ktc.student_number
  AND c.reason LIKE 'KF:%'

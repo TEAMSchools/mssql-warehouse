@@ -11,15 +11,29 @@ WITH incomplete_surveys AS (
         ,survey_round_close
         ,survey_completion_date 
         ,survey_id
-        ,ROW_NUMBER() OVER(
-           PARTITION BY survey_taker_id
-             ORDER BY reporting_term) AS rn_null
+        /*
+           Ordering surveys by term (most recent campaign) and
+           staff updates by completion date to filter out 
+           complete staff updates from prior campaigns
+        */
+        ,CASE
+          WHEN survey_id <> '6330385' 
+               THEN ROW_NUMBER() OVER(
+                      PARTITION BY survey_taker_id
+                      ORDER BY reporting_term
+                    )
+          ELSE ROW_NUMBER() OVER(
+                 PARTITION BY survey_taker_id
+                 ORDER BY survey_completion_date DESC
+               )
+         END AS rn_null
   FROM gabby.surveys.survey_tracking t
-  WHERE survey_completion_date IS NULL
-  /*Limiting to non-Staff Update surveys*/
-    AND survey_id <> '6330385'
-    AND CONVERT(DATE, GETDATE()) BETWEEN survey_round_open AND survey_round_close
- )
+  WHERE survey_id = '6330385' 
+     OR (survey_completion_date IS NULL
+           AND CONVERT(DATE, GETDATE()) BETWEEN survey_round_open 
+                                            AND survey_round_close
+        )
+)
 
 SELECT i.academic_year
       ,i.reporting_term
@@ -36,7 +50,9 @@ SELECT i.academic_year
       ,c.manager_name
       ,c.manager_mail
       ,GETDATE() AS date_of_extract
+
 FROM incomplete_surveys i
 INNER JOIN gabby.people.staff_crosswalk_static c
   ON i.survey_taker_id = c.df_employee_number
 WHERE rn_null = 1
+  AND survey_completion_date IS NULL
