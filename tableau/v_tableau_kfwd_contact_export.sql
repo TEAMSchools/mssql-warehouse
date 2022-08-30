@@ -22,6 +22,7 @@ SELECT ktc.currently_enrolled_school AS [Currently Enrolled School]
       ,NULL AS [Category]
       ,NULL AS [Current Category Ranking]
       ,c.call_topic AS [Comments]
+      ,c.dlcall_log_id
 FROM gabby.alumni.ktc_roster ktc
 LEFT JOIN gabby.powerschool.students s
   ON ktc.student_number = s.student_number
