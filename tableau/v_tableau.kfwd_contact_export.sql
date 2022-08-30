@@ -7,7 +7,7 @@ SELECT ktc.currently_enrolled_school AS [Currently Enrolled School]
       ,ktc.last_name AS [Last Name]
       ,ktc.first_name AS [First Name]
       ,ktc.sf_contact_id AS [Salesforce ID]
-      ,s.dob AS [Birthdate]
+      ,CONVERT(VARCHAR, s.dob, 101) AS [Birthdate]
       ,ktc.ktc_cohort AS [HS Cohort]
       ,c.reason AS [Subject]
       ,CASE
@@ -18,7 +18,7 @@ SELECT ktc.currently_enrolled_school AS [Currently Enrolled School]
         WHEN c.call_type = 'L' THEN 'Mail (Letter/Postcard)'
         ELSE NULL
        END AS [Type]
-      ,CONVERT(VARCHAR, c.call_date_time, 1) AS [Contact Date]
+      ,CONVERT(VARCHAR, c.call_date_time, 101) AS [Contact Date]
       ,CASE WHEN c.call_status = 'Completed' THEN 'Successful' ELSE 'Outreach' END AS [Status]
       ,NULL AS [Category]
       ,NULL AS [Current Category Ranking]
