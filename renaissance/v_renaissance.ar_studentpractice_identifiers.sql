@@ -51,7 +51,7 @@ FROM
              WHEN fiction_non_fiction = 'NonFiction' THEN 'NF'
             END AS fiction_non_fiction
            ,CONVERT(INT, LEFT(school_year, 4)) AS academic_year
-     FROM gabby.renaissance.generic_ar_extract
+     FROM gabby.renaissance.accelerated_reader
      WHERE quiz_deleted = 0
        AND quiz_type = 'Reading Practice Quiz'
     ) sub
