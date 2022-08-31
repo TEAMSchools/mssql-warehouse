@@ -4,15 +4,19 @@ GO
 CREATE OR ALTER VIEW reporting.promotional_status AS
 
 WITH failing AS (
-  SELECT student_number
-        ,academic_year
-        ,term_name COLLATE Latin1_General_BIN AS term_name
-        ,SUM(CASE WHEN y1_grade_letter IN ('F', 'F*') THEN 1 ELSE 0 END) AS n_failing
-        ,SUM(CASE WHEN y1_grade_letter IN ('F', 'F*') AND credittype IN ('MATH', 'ENG', 'SCI', 'SOC') THEN 1 ELSE 0 END) AS n_failing_ms_core
-  FROM gabby.powerschool.final_grades_static
-  GROUP BY student_number
-          ,academic_year
-          ,term_name
+  SELECT fg.studentid
+        ,fg.yearid
+        ,fg.storecode
+        ,SUM(CASE WHEN fg.y1_grade_letter IN ('F', 'F*') THEN 1 ELSE 0 END) AS n_failing
+
+        ,SUM(CASE WHEN fg.y1_grade_letter IN ('F', 'F*') AND c.credittype IN ('MATH', 'ENG', 'SCI', 'SOC') THEN 1 ELSE 0 END) AS n_failing_ms_core
+  FROM gabby.powerschool.final_grades_static fg
+  INNER JOIN gabby.powerschool.courses c
+    ON fg.course_number = c.course_number
+   AND fg.[db_name] = c.[db_name]
+  GROUP BY fg.studentid
+          ,fg.yearid
+          ,fg.storecode
  )
 
 ,credits AS (
@@ -222,9 +226,9 @@ FROM
            AND co.academic_year = lit.academic_year
            AND rt.alt_name = lit.test_round
           LEFT JOIN failing f
-            ON co.student_number = f.student_number
-           AND co.academic_year = f.academic_year
-           AND rt.alt_name = f.term_name
+            ON co.studentid = f.studentid
+           AND co.yearid = f.yearid
+           AND rt.alt_name = f.storecode COLLATE Latin1_General_BIN
           LEFT JOIN credits cr
             ON co.studentid = cr.studentid
            AND co.schoolid = cr.schoolid
