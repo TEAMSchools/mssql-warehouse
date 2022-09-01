@@ -54,7 +54,7 @@ SELECT CASE
                    END)) AS [Parent 1 Last Name]
       ,co.parent_motherdayphone AS [Parent 1 Work Phone]
       ,co.mother_home_phone AS [Parent 1 Home Phone]
-      ,REPLACE(REPLACE(CONVERT(VARCHAR(MAX), co.guardianemail), CHAR(10), ''), CHAR(13), '') AS [Parent 1 E-mail]
+      ,REPLACE(REPLACE(CAST(co.guardianemail AS VARCHAR(MAX)), CHAR(10), ''), CHAR(13), '') AS [Parent 1 E-mail]
       ,LTRIM(RTRIM(CASE
                      WHEN CHARINDEX(',', co.father) = 0 AND CHARINDEX(' ', co.father) = 0 THEN co.father
                      WHEN (CHARINDEX(',', co.father) - 1) < 0 THEN LEFT(co.father, (CHARINDEX(' ', co.father) - 1))

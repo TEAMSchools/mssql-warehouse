@@ -21,7 +21,7 @@ WITH historical AS (
         END AS is_open_ended
        ,c.question AS question_shortname
        ,NULL AS question_title
-       ,CONVERT(NVARCHAR(MAX), c.response_text) AS answer
+       ,CAST(c.response_text AS NVARCHAR(MAX)) AS answer
        ,c.response_value AS answer_value
        ,c.df_employee_number AS respondent_df_employee_number
        ,NULL AS respondent_adp_associate_id
@@ -48,7 +48,7 @@ WITH historical AS (
        ,'N' AS is_open_ended
        ,e.question_code AS question_shortname
        ,q.question_text AS question_title
-       ,CONVERT(NVARCHAR(MAX), e.response_value) AS answer
+       ,CAST(e.response_value AS NVARCHAR(MAX)) AS answer
        ,e.response_value AS answer_value
        ,NULL AS respondent_df_employee_number
        ,e.associate_id AS respondent_adp_associate_id
@@ -79,7 +79,7 @@ WITH historical AS (
        ,'Y' AS is_open_ended
        ,oe.question_code AS question_shortname
        ,q.question_text AS question_title
-       ,CONVERT(NVARCHAR(MAX), oe.response_value) AS answer
+       ,CAST(oe.response_value AS NVARCHAR(MAX)) AS answer
        ,NULL AS answer_value
        ,NULL AS respondent_df_employee_number
        ,oe.associate_id AS respondent_adp_associate_id
@@ -109,7 +109,7 @@ SELECT CAST(h.survey_id AS BIGINT) AS survey_id
       ,CAST(h.is_open_ended AS VARCHAR(1)) AS is_open_ended
       ,CAST(h.question_shortname AS NVARCHAR(256)) AS question_shortname
       ,CAST(h.question_title AS VARCHAR(500)) AS question_title
-      ,CONVERT(NVARCHAR(MAX), h.answer) AS answer
+      ,CAST(h.answer AS NVARCHAR(MAX)) AS answer
       ,CAST(h.answer_value AS VARCHAR(500)) AS answer_value
       ,CAST(h.respondent_df_employee_number AS BIGINT) AS respondent_df_employee_number
       ,CAST(h.respondent_adp_associate_id AS VARCHAR(25)) AS respondent_adp_associate_id

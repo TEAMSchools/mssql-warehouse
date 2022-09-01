@@ -109,13 +109,13 @@ WITH roster AS (
        SELECT e.id AS enrollment_id
              ,e.[name] AS enrollment_name
              ,e.status_c
-             ,ISNULL(CONVERT(NVARCHAR(MAX),e.actual_end_date_c), '') AS actual_end_date_c
-             ,ISNULL(CONVERT(NVARCHAR(MAX),e.date_last_verified_c), '') AS date_last_verified_c
-             ,ISNULL(CONVERT(NVARCHAR(MAX),e.date_last_verified_c), '') AS date_last_verified_ontime
-             ,ISNULL(CONVERT(NVARCHAR(MAX),e.notes_c), '') AS notes_c
-             ,ISNULL(CONVERT(NVARCHAR(MAX),e.transfer_reason_c), '') AS transfer_reason_c
+             ,ISNULL(CAST(e.actual_end_date_c AS NVARCHAR(MAX)), '') AS actual_end_date_c
+             ,ISNULL(CAST(e.date_last_verified_c AS NVARCHAR(MAX)), '') AS date_last_verified_c
+             ,ISNULL(CAST(e.date_last_verified_c AS NVARCHAR(MAX)), '') AS date_last_verified_ontime
+             ,ISNULL(CAST(e.notes_c AS NVARCHAR(MAX)), '') AS notes_c
+             ,ISNULL(CAST(e.transfer_reason_c AS NVARCHAR(MAX)), '') AS transfer_reason_c
              ,ISNULL(CONVERT(NVARCHAR(MAX),COALESCE(e.major_c, e.major_area_c)), '') AS major_or_area
-             ,ISNULL(CONVERT(NVARCHAR(MAX),e.college_major_declared_c), '') AS college_major_declared_c
+             ,ISNULL(CAST(e.college_major_declared_c AS NVARCHAR(MAX)), '') AS college_major_declared_c
 
              ,ISNULL(CONVERT(NVARCHAR(MAX),c.[description]), '') AS [description]
        FROM gabby.alumni.enrollment_c e

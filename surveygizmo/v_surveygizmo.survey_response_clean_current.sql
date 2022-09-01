@@ -53,7 +53,7 @@ FROM
            ,CAST(sr.session_id AS NVARCHAR(128)) AS session_id
            ,CAST(sr.user_agent AS NVARCHAR(512)) AS user_agent
            ,CAST(sr.referer AS NVARCHAR(1024)) AS referer
-           ,CONVERT(NVARCHAR(MAX), sr.data_quality) AS data_quality_json
+           ,CAST(sr.data_quality AS NVARCHAR(MAX)) AS data_quality_json
            ,CONVERT(NVARCHAR(1), JSON_VALUE(sr.url_variables, '$._privatedomain')) AS url_privatedomain
            ,CONVERT(NVARCHAR(32), JSON_VALUE(sr.url_variables, '$.__contact')) AS url_contact
            ,CONVERT(NVARCHAR(32), JSON_VALUE(sr.url_variables, '$.__messageid')) AS url_messageid
