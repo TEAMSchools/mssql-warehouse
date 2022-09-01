@@ -184,7 +184,7 @@ FROM
                 ,CASE WHEN co.is_retained_year + co.is_retained_ever >= 1 THEN 1 ELSE 0 END AS is_retained_flag
 
                 ,s.sched_nextyeargrade
-      
+
                 ,rt.time_per_name AS reporting_term_name
                 ,rt.alt_name
                 ,rt.is_curterm
@@ -210,9 +210,9 @@ FROM
 
                 ,qas.avg_performance_band_number AS qa_avg_performance_band_number
           FROM gabby.powerschool.cohort_identifiers_static co
-          LEFT JOIN gabby.powerschool.students s
+          INNER JOIN gabby.powerschool.students s
             ON co.student_number = s.student_number
-          JOIN gabby.reporting.reporting_terms rt
+          INNER JOIN gabby.reporting.reporting_terms rt
             ON co.schoolid = rt.schoolid
            AND co.academic_year = rt.academic_year
            AND rt.identifier = 'RT'

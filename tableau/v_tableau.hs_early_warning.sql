@@ -62,18 +62,23 @@ SELECT co.studentid
       ,dt.[start_date] AS term_start_date
       ,dt.[end_date] AS term_end_date
 
-      ,gr.credittype
-      ,gr.course_name
       ,gr.course_number
-      ,gr.credit_hours
-      ,gr.teacher_name
-      ,gr.term_grade_percent_adjusted
-      ,gr.term_grade_letter_adjusted
-      ,gr.y1_grade_percent_adjusted
+      ,gr.potential_credit_hours AS credit_hours
+      ,gr.term_grade_percent_adj AS term_grade_percent_adjusted
+      ,gr.term_grade_letter_adj AS term_grade_letter_adjusted
+      ,gr.y1_grade_percent_adj AS y1_grade_percent_adjusted
       ,gr.y1_grade_letter
-      ,gr.need_65
-      ,gr.is_curterm
-      
+      ,gr.need_60 AS need_65
+      ,CASE 
+        WHEN CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN gr.termbin_start_date AND gr.termbin_end_date 
+             THEN 1 
+        ELSE 0 
+       END AS is_curterm
+
+      ,si.credittype
+      ,si.course_name
+      ,si.teacher_lastfirst AS teacher_name
+
       ,gpa.gpa_y1
       ,gpa.gpa_y1_unweighted
       ,gpa.gpa_term
@@ -96,11 +101,14 @@ INNER JOIN gabby.reporting.reporting_terms dt
  AND dt._fivetran_deleted = 0
  AND dt.alt_name NOT IN ('Summer School', 'Y1')
 LEFT JOIN gabby.powerschool.final_grades_static gr
-  ON co.student_number = gr.student_number
- AND co.academic_year = gr.academic_year
+  ON co.studentid = gr.studentid
+ AND co.yearid = gr.yearid
  AND co.[db_name] = gr.[db_name]
- AND dt.time_per_name = gr.reporting_term COLLATE Latin1_General_BIN
- AND gr.excludefromgpa = 0
+ AND dt.time_per_name = gr.storecode COLLATE Latin1_General_BIN
+ AND gr.exclude_from_gpa = 0
+LEFT JOIN gabby.powerschool.sections_identifiers si
+  ON gr.sectionid = si.sectionid
+ AND gr.[db_name] = si.[db_name]
 LEFT JOIN gabby.powerschool.gpa_detail gpa
   ON co.student_number = gpa.student_number
  AND co.academic_year = gpa.academic_year

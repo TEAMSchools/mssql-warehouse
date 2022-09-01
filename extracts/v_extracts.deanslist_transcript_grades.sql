@@ -27,7 +27,7 @@ WITH all_grades AS (
 
   SELECT s.student_number
         ,s.schoolid
-        ,rt.academic_year
+        ,fg.yearid + 1990 AS academic_year
         ,fg.course_number
         ,c.course_name
         ,fg.potential_credit_hours AS credit_hours
@@ -41,15 +41,10 @@ WITH all_grades AS (
     ON fg.studentid = s.id
    AND fg.[db_name] = s.[db_name]
    AND fg.exclude_from_gpa = 0
+   AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN fg.termbin_start_date AND fg.termbin_end_date 
   INNER JOIN gabby.powerschool.courses c
     ON fg.course_number = c.course_number
    AND fg.[db_name] = c.[db_name]
-  INNER JOIN gabby.reporting.reporting_terms rt
-    ON s.schoolid = rt.schoolid
-   AND fg.yearid = rt.yearid
-   AND fg.storecode = rt.alt_name COLLATE Latin1_General_BIN
-   AND rt.identifier = 'RT'
-   AND rt.is_curterm = 1
   INNER JOIN gabby.powerschool.schools sch
     ON s.schoolid = sch.school_number
    AND s.[db_name] = sch.[db_name]
