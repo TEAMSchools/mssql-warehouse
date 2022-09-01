@@ -151,16 +151,7 @@ SELECT  s.survey_title
        ,CAST(s.debt_amount AS money) AS debt_amount
        ,CAST(s.annual_income AS money) AS annual_income
        /*weighted satisfaction scores based on relative importance of each*/
-       ,p.imp_1 / 10 AS level_pay_weight
-       ,p.imp_2 / 10 AS stable_pay_weight
-       ,p.imp_3 / 10 AS stable_hours_weight
-       ,p.imp_4 / 10 AS control_hours_weight
-       ,p.imp_5 / 10 AS job_security_weight
-       ,p.imp_6 / 10 AS benefits_weight
-       ,p.imp_7 / 10 AS advancement_weight
-       ,p.imp_8 / 10 AS enjoyment_weight
-       ,p.imp_9 / 10 AS purpose_weight
-       ,p.imp_10 / 10 AS power_weight
+
        ,s.cur_1 * p.imp_1 AS level_pay_quality
        ,s.cur_2 * p.imp_2 AS stable_pay_quality
        ,s.cur_3 * p.imp_3 AS stable_hours_quality
