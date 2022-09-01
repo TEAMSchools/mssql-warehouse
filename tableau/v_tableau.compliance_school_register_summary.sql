@@ -9,7 +9,7 @@ WITH att_mem AS (
         ,[db_name]
         ,SUM(attendancevalue) AS n_att
         ,SUM(membershipvalue) AS n_mem
-        ,SUM(CASE WHEN calendardate <= GETDATE() THEN membershipvalue END) AS n_mem_ytd
+        ,SUM(CASE WHEN calendardate <= CURRENT_TIMESTAMP THEN membershipvalue END) AS n_mem_ytd
   FROM gabby.powerschool.ps_adaadm_daily_ctod
   WHERE membershipvalue = 1
   GROUP BY studentid

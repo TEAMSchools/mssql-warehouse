@@ -6,7 +6,7 @@ CREATE OR ALTER VIEW extracts.clever_teachers AS
 SELECT df.primary_site_schoolid AS [School_id]
       ,df.ps_teachernumber AS [Teacher_id]
       ,df.ps_teachernumber AS [Teacher_number]
-      ,CONVERT(VARCHAR(25), df.df_employee_number) AS [State_teacher_id]
+      ,CAST(df.df_employee_number AS VARCHAR(25)) AS [State_teacher_id]
       ,df.userprincipalname AS [Teacher_email]
       ,df.preferred_first_name AS [First_name]
       ,NULL AS [Middle_name]

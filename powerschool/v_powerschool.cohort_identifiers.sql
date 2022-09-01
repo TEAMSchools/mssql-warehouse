@@ -44,8 +44,8 @@ SELECT co.studentid
       ,s.zip
       ,s.home_phone
       ,s.grade_level AS highest_achieved
-      ,CONVERT(NVARCHAR(1), UPPER(s.gender)) AS gender
-      ,CONVERT(NVARCHAR(1), UPPER(s.ethnicity)) AS ethnicity
+      ,CAST(UPPER(s.gender) AS NVARCHAR(1)) AS gender
+      ,CAST(UPPER(s.ethnicity) AS NVARCHAR(1)) AS ethnicity
 
       ,sch.[name] AS school_name
       ,sch.abbreviation AS school_abbreviation
@@ -85,12 +85,12 @@ SELECT co.studentid
 
       ,CASE
         WHEN sp.specprog_name = 'Out of District' THEN sp.programid
-        WHEN co.academic_year <= 2017 THEN CONCAT(co.schoolid, sp.programid) /* Pathways as a separate school era */
+        WHEN co.academic_year <= 2017 THEN CONCAT(co.schoolid, sp.programid) /* Pathways AS a separate school era */
         ELSE co.schoolid
        END AS reporting_schoolid
       ,CASE
         WHEN sp.specprog_name = 'Out of District' THEN sp.specprog_name
-        WHEN co.academic_year <= 2017 THEN COALESCE(sp.specprog_name, sch.[name]) /* Pathways as a separate school era */
+        WHEN co.academic_year <= 2017 THEN COALESCE(sp.specprog_name, sch.[name]) /* Pathways AS a separate school era */
         ELSE sch.[name]
        END AS reporting_school_name
       ,CASE

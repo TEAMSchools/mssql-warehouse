@@ -288,7 +288,7 @@ WITH roster_scaffold AS (
     ON tests.student_number = dna_prev.student_number           
    AND tests.meta_achv_round < dna_prev.meta_achv_round
    AND dna_prev.dna_lvl IS NOT NULL                    
-   AND tests.[start_date] <= CONVERT(DATE, GETDATE()) /* preserves the scaffold but will not carry scores to a future term */
+   AND tests.[start_date] <= CAST(CURRENT_TIMESTAMP AS DATE) /* preserves the scaffold but will not carry scores to a future term */
  )
 
 ,hard AS (
@@ -309,7 +309,7 @@ WITH roster_scaffold AS (
     ON tests.student_number = hard_prev.student_number
    AND tests.meta_achv_round < hard_prev.meta_achv_round
    AND hard_prev.hard_lvl_num IS NOT NULL
-   AND tests.[start_date] <= CONVERT(DATE, GETDATE()) /* preserves the scaffold but will not carry scores to a future term */
+   AND tests.[start_date] <= CAST(CURRENT_TIMESTAMP AS DATE) /* preserves the scaffold but will not carry scores to a future term */
  )
 
 /* falls back to most recently achieved reading level for each round, if NULL */
@@ -415,7 +415,7 @@ FROM
            ,sub.hard_lvl_num           
            ,sub.is_new_test
            ,MIN(CASE WHEN sub.lvl_num IS NOT NULL THEN sub.reporting_term END) OVER(PARTITION BY sub.student_number, sub.academic_year) AS min_reporting_term_ytd
-           ,MAX(CASE WHEN GETDATE() >= sub.[start_date] THEN sub.reporting_term END) OVER(PARTITION BY sub.student_number, sub.academic_year) AS max_reporting_term_ytd
+           ,MAX(CASE WHEN CURRENT_TIMESTAMP >= sub.[start_date] THEN sub.reporting_term END) OVER(PARTITION BY sub.student_number, sub.academic_year) AS max_reporting_term_ytd
 
            ,CASE
              WHEN sub.academic_year >= 2018 THEN sub.fp_read_lvl
@@ -515,13 +515,13 @@ FROM
                 ,hard.hard_lvl_num
                 ,hard.hard_unique_id
 
-                ,CONVERT(VARCHAR(5), goals.fp_read_lvl) AS fp_read_lvl
-                ,CONVERT(VARCHAR(5), goals.step_read_lvl) AS step_read_lvl
-                ,CONVERT(INT, goals.fp_lvl_num) AS fp_lvl_num
-                ,CONVERT(INT, goals.step_lvl_num) AS step_lvl_num
+                ,CAST(goals.fp_read_lvl AS VARCHAR(5)) AS fp_read_lvl
+                ,CAST(goals.step_read_lvl AS VARCHAR(5)) AS step_read_lvl
+                ,CAST(goals.fp_lvl_num AS INT) AS fp_lvl_num
+                ,CAST(goals.step_lvl_num AS INT) AS step_lvl_num
 
-                ,CONVERT(VARCHAR(5), indiv.goal) AS indiv_goal_lvl
-                ,CONVERT(INT, indiv.lvl_num) AS indiv_lvl_num
+                ,CAST(indiv.goal AS VARCHAR(5)) AS indiv_goal_lvl
+                ,CAST(indiv.lvl_num AS INT) AS indiv_lvl_num
 
                 ,CASE 
                   WHEN achieved.academic_year = atid.academic_year AND achieved.round_num = atid.round_num THEN 1 

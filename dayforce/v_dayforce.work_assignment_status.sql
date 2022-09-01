@@ -21,10 +21,10 @@ WITH status_clean AS (
              ,[status]
              ,base_salary
              ,CASE
-               WHEN status = 'Terminated' THEN DATEADD(DAY, 1, CONVERT(DATE, effective_start))
-               ELSE CONVERT(DATE,effective_start)
+               WHEN status = 'Terminated' THEN DATEADD(DAY, 1, CAST(effective_start AS DATE))
+               ELSE CAST(effective_start AS DATE)
               END AS effective_start
-             ,CONVERT(DATE, effective_end) AS effective_end
+             ,CAST(effective_end AS DATE) AS effective_end
        FROM gabby.dayforce.employee_status
       ) sub
  )
@@ -54,8 +54,8 @@ WITH status_clean AS (
              ,department_name
              ,job_name
              ,flsa_status_name
-             ,CONVERT(DATE, CASE WHEN work_assignment_effective_start <> '' THEN work_assignment_effective_start END) AS work_assignment_effective_start
-             ,CONVERT(DATE, CASE WHEN work_assignment_effective_end <> '' THEN work_assignment_effective_end END) AS work_assignment_effective_end
+             ,CAST(CASE WHEN work_assignment_effective_start <> '' THEN work_assignment_effective_start END AS DATE) AS work_assignment_effective_start
+             ,CAST(CASE WHEN work_assignment_effective_end <> '' THEN work_assignment_effective_end END AS DATE) AS work_assignment_effective_end
        FROM gabby.dayforce.employee_work_assignment
        WHERE primary_work_assignment = 1
       ) sub

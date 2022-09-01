@@ -3,12 +3,12 @@ GO
 
 CREATE OR ALTER VIEW lit.guided_reading_roster AS
 
-SELECT CONVERT(INT,SUBSTRING(student_name, (CHARINDEX('[', student_name) + 1), (CHARINDEX(']', student_name)) - (CHARINDEX('[', student_name) + 1))) AS student_number  
+SELECT CAST(SUBSTRING(student_name, (CHARINDEX('[', student_name) + 1), (CHARINDEX(']', student_name)) - (CHARINDEX('[', student_name) + 1)) AS INT) AS student_number  
       ,gabby.utilities.GLOBAL_ACADEMIC_YEAR() AS academic_year
-      ,CONVERT(VARCHAR(5),CONCAT('LIT', SUBSTRING(field, PATINDEX('%[0-9]%', field), 1))) AS reporting_term_name
-      ,CONVERT(VARCHAR(5),CONCAT('Q', SUBSTRING(field, PATINDEX('%[0-9]%', field), 1))) AS test_round
-      ,CONVERT(INT,SUBSTRING(field, PATINDEX('%[0-9]%', field), 1)) AS round_num
-      ,CONVERT(VARCHAR(125),gr_teacher) AS gr_teacher
+      ,CAST(CONCAT('LIT', SUBSTRING(field, PATINDEX('%[0-9]%', field), 1)) AS VARCHAR(5)) AS reporting_term_name
+      ,CAST(CONCAT('Q', SUBSTRING(field, PATINDEX('%[0-9]%', field), 1)) AS VARCHAR(5)) AS test_round
+      ,CAST(SUBSTRING(field, PATINDEX('%[0-9]%', field), 1) AS INT) AS round_num
+      ,CAST(gr_teacher AS VARCHAR(125)) AS gr_teacher
 FROM gabby.lit.guided_reading_groups
 UNPIVOT(
   gr_teacher

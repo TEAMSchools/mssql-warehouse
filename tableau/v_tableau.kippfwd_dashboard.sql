@@ -97,12 +97,12 @@ WITH academic_years AS (
   SELECT sf_contact_id
         ,academic_year
         ,semester
-        ,CONVERT(NVARCHAR(16), transcript_date) AS transcript_date
-        ,CONVERT(NVARCHAR(16), semester_gpa) AS semester_gpa
-        ,CONVERT(NVARCHAR(16), cumulative_gpa) AS cumulative_gpa
-        ,CONVERT(NVARCHAR(16), semester_credits_earned) AS semester_credits_earned
-        ,CONVERT(NVARCHAR(16), cumulative_credits_earned) AS cumulative_credits_earned
-        ,CONVERT(NVARCHAR(16), credits_required_for_graduation) AS credits_required_for_graduation
+        ,CAST(transcript_date AS NVARCHAR(16)) AS transcript_date
+        ,CAST(semester_gpa AS NVARCHAR(16)) AS semester_gpa
+        ,CAST(cumulative_gpa AS NVARCHAR(16)) AS cumulative_gpa
+        ,CAST(semester_credits_earned AS NVARCHAR(16)) AS semester_credits_earned
+        ,CAST(cumulative_credits_earned AS NVARCHAR(16)) AS cumulative_credits_earned
+        ,CAST(credits_required_for_graduation AS NVARCHAR(16)) AS credits_required_for_graduation
         ,ROW_NUMBER() OVER(
            PARTITION BY sf_contact_id, academic_year, semester
              ORDER BY transcript_date DESC) AS rn_semester
@@ -131,18 +131,18 @@ WITH academic_years AS (
 ,semester_gpa_pivot AS ( 
   SELECT sf_contact_id
         ,academic_year
-        ,CONVERT(DATE, fall_transcript_date) AS fall_transcript_date
-        ,CONVERT(FLOAT, fall_credits_required_for_graduation) AS fall_credits_required_for_graduation
-        ,CONVERT(FLOAT, fall_cumulative_credits_earned) AS fall_cumulative_credits_earned
-        ,CONVERT(FLOAT, fall_semester_credits_earned) AS fall_semester_credits_earned
-        ,CONVERT(FLOAT, fall_semester_gpa) AS fall_semester_gpa
-        ,CONVERT(FLOAT, fall_cumulative_gpa) AS fall_cumulative_gpa
-        ,CONVERT(DATE, spr_transcript_date) AS spr_transcript_date
-        ,CONVERT(FLOAT, spr_credits_required_for_graduation) AS spr_credits_required_for_graduation
-        ,CONVERT(FLOAT, spr_cumulative_credits_earned) AS spr_cumulative_credits_earned
-        ,CONVERT(FLOAT, spr_semester_credits_earned) AS spr_semester_credits_earned
-        ,CONVERT(FLOAT, spr_semester_gpa) AS spr_semester_gpa
-        ,CONVERT(FLOAT, spr_cumulative_gpa) AS spr_cumulative_gpa
+        ,CAST(fall_transcript_date AS DATE) AS fall_transcript_date
+        ,CAST(fall_credits_required_for_graduation AS FLOAT) AS fall_credits_required_for_graduation
+        ,CAST(fall_cumulative_credits_earned AS FLOAT) AS fall_cumulative_credits_earned
+        ,CAST(fall_semester_credits_earned AS FLOAT) AS fall_semester_credits_earned
+        ,CAST(fall_semester_gpa AS FLOAT) AS fall_semester_gpa
+        ,CAST(fall_cumulative_gpa AS FLOAT) AS fall_cumulative_gpa
+        ,CAST(spr_transcript_date AS DATE) AS spr_transcript_date
+        ,CAST(spr_credits_required_for_graduation AS FLOAT) AS spr_credits_required_for_graduation
+        ,CAST(spr_cumulative_credits_earned AS FLOAT) AS spr_cumulative_credits_earned
+        ,CAST(spr_semester_credits_earned AS FLOAT) AS spr_semester_credits_earned
+        ,CAST(spr_semester_gpa AS FLOAT) AS spr_semester_gpa
+        ,CAST(spr_cumulative_gpa AS FLOAT) AS spr_cumulative_gpa
   FROM
       (
        SELECT sf_contact_id

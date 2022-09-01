@@ -44,24 +44,24 @@ FROM
            ,sr.longitude
            ,sr.dma
            ,sr.link_id
-           ,CONVERT(NVARCHAR(64), sr.city) AS city
-           ,CONVERT(NVARCHAR(32), sr.postal) AS postal
-           ,CONVERT(NVARCHAR(8), sr.region) AS region
-           ,CONVERT(NVARCHAR(64), sr.country) AS country
-           ,CONVERT(NVARCHAR(16), sr.[language]) AS [language]
-           ,CONVERT(NVARCHAR(32), sr.ip_address) AS ip_address
-           ,CONVERT(NVARCHAR(128), sr.session_id) AS session_id
-           ,CONVERT(NVARCHAR(512), sr.user_agent) AS user_agent
-           ,CONVERT(NVARCHAR(1024), sr.referer) AS referer
-           ,CONVERT(NVARCHAR(MAX), sr.data_quality) AS data_quality_json
-           ,CONVERT(NVARCHAR(1), JSON_VALUE(sr.url_variables, '$._privatedomain')) AS url_privatedomain
-           ,CONVERT(NVARCHAR(32), JSON_VALUE(sr.url_variables, '$.__contact')) AS url_contact
-           ,CONVERT(NVARCHAR(32), JSON_VALUE(sr.url_variables, '$.__messageid')) AS url_messageid
-           ,CONVERT(NVARCHAR(32), JSON_VALUE(sr.url_variables, '$.sguid')) AS url_sguid
-           ,CONVERT(NVARCHAR(256), JSON_VALUE(sr.url_variables, '$.__pathdata')) AS url_pathdata
-           ,CONVERT(NVARCHAR(MAX), COALESCE(sr.survey_data_list, sr.survey_data)) AS survey_data_json
-           ,CONVERT(DATETIME2, LEFT(sr.date_started, 19)) AS datetime_started
-           ,CONVERT(DATE, CONVERT(DATETIME2, LEFT(sr.date_started, 19))) AS date_started
+           ,CAST(sr.city AS NVARCHAR(64)) AS city
+           ,CAST(sr.postal AS NVARCHAR(32)) AS postal
+           ,CAST(sr.region AS NVARCHAR(8)) AS region
+           ,CAST(sr.country AS NVARCHAR(64)) AS country
+           ,CAST(sr.[language] AS NVARCHAR(16)) AS [language]
+           ,CAST(sr.ip_address AS NVARCHAR(32)) AS ip_address
+           ,CAST(sr.session_id AS NVARCHAR(128)) AS session_id
+           ,CAST(sr.user_agent AS NVARCHAR(512)) AS user_agent
+           ,CAST(sr.referer AS NVARCHAR(1024)) AS referer
+           ,CAST(sr.data_quality AS NVARCHAR(MAX)) AS data_quality_json
+           ,CAST(JSON_VALUE(sr.url_variables, '$._privatedomain') AS NVARCHAR(1)) AS url_privatedomain
+           ,CAST(JSON_VALUE(sr.url_variables, '$.__contact') AS NVARCHAR(32)) AS url_contact
+           ,CAST(JSON_VALUE(sr.url_variables, '$.__messageid') AS NVARCHAR(32)) AS url_messageid
+           ,CAST(JSON_VALUE(sr.url_variables, '$.sguid') AS NVARCHAR(32)) AS url_sguid
+           ,CAST(JSON_VALUE(sr.url_variables, '$.__pathdata') AS NVARCHAR(256)) AS url_pathdata
+           ,CAST(COALESCE(sr.survey_data_list, sr.survey_data) AS NVARCHAR(MAX)) AS survey_data_json
+           ,CAST(LEFT(sr.date_started, 19) AS DATETIME2) AS datetime_started
+           ,CAST(CONVERT(DATETIME2, LEFT(sr.date_started, 19)) AS DATE) AS date_started
            ,CONVERT(DATETIME2,
               CASE WHEN ISDATE(LEFT(sr.date_submitted, 19)) = 1 THEN LEFT(sr.date_submitted, 19) END
              ) AS datetime_submitted
@@ -69,7 +69,7 @@ FROM
               CASE WHEN ISDATE(LEFT(sr.date_submitted, 19)) = 1 THEN LEFT(sr.date_submitted, 19) END
              )) AS date_submitted
 
-           ,CONVERT(NVARCHAR(32), COALESCE(dq.[status], sr.[status])) AS [status]
+           ,CAST(COALESCE(dq.[status], sr.[status]) AS NVARCHAR(32)) AS [status]
            ,ROW_NUMBER() OVER(
               PARTITION BY sr.id, sr.survey_id
                 ORDER BY CASE WHEN sr.[status] = 'Complete' THEN 1 ELSE 0 END DESC, sr._modified DESC) AS rn
@@ -77,6 +77,6 @@ FROM
      LEFT JOIN gabby.surveygizmo.survey_response_disqualified dq
        ON sr.id = dq.id
       AND sr.survey_id = dq.survey_id
-     WHERE CONVERT(DATETIME2, LEFT(sr.date_started, 19)) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
+     WHERE CAST(LEFT(sr.date_started, 19)) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1 AS DATETIME2)
     ) sub
 WHERE sub.rn = 1

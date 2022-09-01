@@ -217,7 +217,7 @@ FROM
            
            ,std.description AS strand
            
-           ,CONVERT(FLOAT,r.percent_correct) AS score
+           ,CAST(r.percent_correct AS FLOAT) AS score
 
            ,1 AS prompt_number
      FROM gabby.illuminate_dna_assessments.assessments a

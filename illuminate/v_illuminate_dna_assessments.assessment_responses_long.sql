@@ -84,8 +84,8 @@ SELECT a.student_id
       ,asrs.percent_correct             
       ,asrs.standard_id
 
-      ,CONVERT(VARCHAR(125),std.custom_code) AS standard_code
-      ,CONVERT(VARCHAR(2000),std.description) AS standard_description
+      ,CAST(std.custom_code AS VARCHAR(125)) AS standard_code
+      ,CAST(std.description AS VARCHAR(2000)) AS standard_description
 
       ,dom.domain_description
 FROM asmts a  

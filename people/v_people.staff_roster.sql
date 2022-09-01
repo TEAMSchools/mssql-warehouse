@@ -29,7 +29,7 @@ WITH all_staff AS (
         ,eh.primary_position
         ,COALESCE(eh.work_assignment_start_date, eh.position_effective_start_date) AS work_assignment_start_date
   FROM gabby.people.employment_history_static eh
-  WHERE CONVERT(DATE, GETDATE()) BETWEEN eh.effective_start_date AND eh.effective_end_date
+  WHERE CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN eh.effective_start_date AND eh.effective_end_date
 
   UNION ALL
 
@@ -55,7 +55,7 @@ WITH all_staff AS (
         ,ps.primary_position
         ,COALESCE(ps.work_assignment_start_date, ps.position_effective_start_date) AS work_assignment_start_date
   FROM gabby.people.employment_history_static ps
-  WHERE ps.status_effective_start_date > CONVERT(DATE, GETDATE())
+  WHERE ps.status_effective_start_date > CAST(CURRENT_TIMESTAMP AS DATE)
     AND ps.position_status = 'Active'
     AND (ps.position_status_cur IS NULL OR ps.position_status_cur = 'Terminated')
  )
@@ -192,12 +192,12 @@ WITH all_staff AS (
              ,eh.work_assignment_start_date
              ,eh.annual_salary
              ,eh.primary_position
-             ,CONVERT(NVARCHAR(256), NULL) AS job_family -- on the way
+             ,CAST(NULL AS NVARCHAR(256)) AS job_family -- on the way
              ,CASE 
                WHEN eh.associate_id IN (
                       SELECT reports_to_associate_id
                       FROM gabby.people.manager_history_static
-                      WHERE CONVERT(DATE, GETDATE()) BETWEEN reports_to_effective_date 
+                      WHERE CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN reports_to_effective_date 
                                                          AND reports_to_effective_end_date_eoy
                     ) THEN 1
                ELSE 0
@@ -215,13 +215,13 @@ WITH all_staff AS (
              ,ea.primary_address_state_territory_code AS address_state
              ,ea.primary_address_zip_postal_code AS address_zip
              ,ea.personal_contact_personal_email AS personal_email
-             ,CONVERT(DATE, ea.birth_date) AS birth_date
+             ,CAST(ea.birth_date AS DATE) AS birth_date
              ,LEFT(UPPER(ea.gender), 1) AS sex
              ,CASE 
                WHEN ea.primary_address_address_line_1 IS NOT NULL 
                     THEN CONCAT(ea.primary_address_address_line_1, ', ' + ea.primary_address_address_line_2)
               END AS address_street
-             ,CONVERT(NVARCHAR(256), gabby.utilities.STRIP_CHARACTERS(ea.personal_contact_personal_mobile, '^0-9')) AS personal_mobile
+             ,CAST(gabby.utilities.STRIP_CHARACTERS(ea.personal_contact_personal_mobile, '^0-9') AS NVARCHAR(256)) AS personal_mobile
              ,COALESCE(ea.preferred_gender
                       ,CASE
                         WHEN ea.gender = 'Male' THEN 'Man'
@@ -419,4 +419,4 @@ LEFT JOIN gabby.pm.teacher_grade_levels gl
  AND gl.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
  AND gl.is_primary_gl = 1
 LEFT JOIN gabby.adsi.user_attributes_static ads
-  ON CONVERT(VARCHAR(25), c.employee_number) = ads.employeenumber
+  ON CAST(c.employee_number AS VARCHAR(25)) = ads.employeenumber

@@ -30,7 +30,7 @@ SELECT c.created_date
       ,df.status
       ,DATEDIFF(DAY
                ,COALESCE(df.rehire_date, df.original_hire_date)
-               ,COALESCE(df.termination_date, GETDATE())) AS days_at_kipp
+               ,COALESCE(df.termination_date, CURRENT_TIMESTAMP)) AS days_at_kipp
       ,CASE WHEN df.df_employee_number IS NULL THEN 'Not matched in Dayforce - need to look up manually to verify' END AS dayforce_notes      
 FROM gabby.recruiting.cultivation_c c
 LEFT JOIN gabby.recruiting.job_application_c a 

@@ -16,7 +16,7 @@ SELECT sub.student_number
          PARTITION BY sub.student_number, sub.academic_year, sub.course_number, sub.grade_category 
            ORDER BY sub.startdate), 0) AS grade_category_pct_y1
       ,CASE
-        WHEN CONVERT(DATE, GETDATE()) BETWEEN sub.startdate AND sub.enddate THEN 1 
+        WHEN CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sub.startdate AND sub.enddate THEN 1 
         WHEN sub.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
          AND sub.startdate = MAX(sub.startdate) OVER(PARTITION BY student_number, sub.academic_year)
                THEN 1
@@ -37,7 +37,7 @@ FROM
            ,tb.date_1 AS startdate
            ,tb.date_2 AS enddate
            ,LEFT(tb.storecode, 1) AS grade_category
-           ,CONVERT(VARCHAR(5), CONCAT('RT', RIGHT(tb.storecode, 1))) AS reporting_term
+           ,CAST(CONCAT('RT', RIGHT(tb.storecode, 1)) AS VARCHAR(5)) AS reporting_term
 
            ,ROUND(CASE WHEN pgf.grade = '--' THEN NULL ELSE pgf.[percent] END, 0) AS grade_category_pct
            ,CASE WHEN pgf.citizenship <> '' THEN pgf.citizenship END AS citizenship
@@ -53,7 +53,7 @@ FROM
      JOIN powerschool.termbins tb
        ON t.schoolid = tb.schoolid
       AND t.id = tb.termid
-      AND tb.date_1 <= GETDATE()
+      AND tb.date_1 <= CURRENT_TIMESTAMP
      LEFT JOIN powerschool.pgfinalgrades pgf
        ON enr.studentid = pgf.studentid
       AND enr.sectionid = pgf.sectionid

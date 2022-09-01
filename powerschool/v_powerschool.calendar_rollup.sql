@@ -4,7 +4,7 @@ WITH cal_long AS (
   SELECT u.schoolid
         ,u.date_value
         ,u.yearid
-        ,CONVERT(NVARCHAR(1), UPPER(u.field)) AS track
+        ,CAST(UPPER(u.field) AS NVARCHAR(1)) AS track
         ,u.[value]
   FROM
       (
@@ -46,7 +46,7 @@ SELECT cl.schoolid
       ,MIN(cl.date_value) AS min_calendardate
       ,MAX(cl.date_value) AS max_calendardate
       ,COUNT(cl.date_value) AS days_total
-      ,SUM(CASE WHEN cl.date_value > GETDATE() THEN 1 ELSE 0 END) AS days_remaining
+      ,SUM(CASE WHEN cl.date_value > CURRENT_TIMESTAMP THEN 1 ELSE 0 END) AS days_remaining
 FROM cal_long cl
 WHERE cl.[value] = 1
 GROUP BY cl.schoolid

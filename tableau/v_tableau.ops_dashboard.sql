@@ -133,17 +133,17 @@ SELECT co.student_number
       ,nj.parent_consent_intial_iep_date
       ,nj.annual_iep_review_meeting_date
       ,nj.reevaluation_date
-      ,CONVERT(VARCHAR(1), nj.parent_consent_obtain_code) AS parent_consent_obtain_code
-      ,CONVERT(VARCHAR(5), nj.initial_process_delay_reason) AS initial_process_delay_reason
-      ,CONVERT(VARCHAR(5), nj.special_education_placement) AS special_education_placement
-      ,CONVERT(VARCHAR(5), nj.time_in_regular_program) AS time_in_regular_program
-      ,CONVERT(VARCHAR(1), nj.early_intervention_yn) AS early_intervention_yn
-      ,CONVERT(VARCHAR(1), nj.determined_ineligible_yn) AS determined_ineligible_yn
-      ,CONVERT(VARCHAR(1), nj.counseling_services_yn) AS counseling_services_yn
-      ,CONVERT(VARCHAR(1), nj.occupational_therapy_serv_yn) AS occupational_therapy_serv_yn
-      ,CONVERT(VARCHAR(1), nj.physical_therapy_services_yn) AS physical_therapy_services_yn
-      ,CONVERT(VARCHAR(1), nj.speech_lang_theapy_services_yn) AS speech_lang_theapy_services_yn
-      ,CONVERT(VARCHAR(1), nj.other_related_services_yn) AS other_related_services_yn
+      ,CAST(nj.parent_consent_obtain_code AS VARCHAR(1)) AS parent_consent_obtain_code
+      ,CAST(nj.initial_process_delay_reason AS VARCHAR(5)) AS initial_process_delay_reason
+      ,CAST(nj.special_education_placement AS VARCHAR(5)) AS special_education_placement
+      ,CAST(nj.time_in_regular_program AS VARCHAR(5)) AS time_in_regular_program
+      ,CAST(nj.early_intervention_yn AS VARCHAR(1)) AS early_intervention_yn
+      ,CAST(nj.determined_ineligible_yn AS VARCHAR(1)) AS determined_ineligible_yn
+      ,CAST(nj.counseling_services_yn AS VARCHAR(1)) AS counseling_services_yn
+      ,CAST(nj.occupational_therapy_serv_yn AS VARCHAR(1)) AS occupational_therapy_serv_yn
+      ,CAST(nj.physical_therapy_services_yn AS VARCHAR(1)) AS physical_therapy_services_yn
+      ,CAST(nj.speech_lang_theapy_services_yn AS VARCHAR(1)) AS speech_lang_theapy_services_yn
+      ,CAST(nj.other_related_services_yn AS VARCHAR(1)) AS other_related_services_yn
 
       ,t.target_enrollment
       ,t.target_enrollment_finance

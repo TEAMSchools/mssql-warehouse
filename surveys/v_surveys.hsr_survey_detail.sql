@@ -132,7 +132,7 @@ FROM
      UNION ALL
 
      SELECT school 
-           ,CONVERT(INT,LEFT(school_year, 4)) AS academic_year
+           ,CAST(LEFT(school_year, 4) AS INT) AS academic_year
            ,role
            ,survey_question
            ,school_responded

@@ -17,7 +17,7 @@ FROM gabby.powerschool.cc
 JOIN gabby.powerschool.students s
   ON cc.studentid = s.id
  AND cc.[db_name] = s.[db_name]
-WHERE cc.dateleft >= CONVERT(DATE, GETDATE())
+WHERE cc.dateleft >= CAST(CURRENT_TIMESTAMP AS DATE)
 
 UNION ALL
 

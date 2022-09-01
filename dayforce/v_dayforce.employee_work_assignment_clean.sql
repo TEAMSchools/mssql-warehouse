@@ -35,10 +35,10 @@ FROM
                     WHEN e.legal_entity_name = 'KIPP Miami' THEN '47S'
                    END
                   ,ewa.employee_reference_code) AS position_id
-           ,CONVERT(DATE, ewa.work_assignment_effective_start) AS work_assignment_effective_start
-           ,LEAD(CONVERT(DATE, ewa.work_assignment_effective_start), 1) OVER(
+           ,CAST(ewa.work_assignment_effective_start AS DATE) AS work_assignment_effective_start
+           ,LEAD(CAST(ewa.work_assignment_effective_start AS DATE), 1) OVER(
                    PARTITION BY ewa.employee_reference_code
-                     ORDER BY CONVERT(DATE, ewa.work_assignment_effective_start)) AS work_assignment_effective_start_next
+                     ORDER BY CAST(ewa.work_assignment_effective_start AS DATE)) AS work_assignment_effective_start_next
      FROM gabby.dayforce.employee_work_assignment ewa
      JOIN gabby.dayforce.employees e
        ON ewa.employee_reference_code = e.df_employee_number

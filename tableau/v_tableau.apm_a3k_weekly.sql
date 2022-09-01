@@ -49,4 +49,4 @@ LEFT JOIN gabby.achieve3k.students_english ae
  AND cis.[date] = CAST(LEFT(RIGHT(ae._file, 22), 10) AS DATE)
 WHERE cis.grade_level > 8
   AND cis.is_enrolled = 1
-  AND cis.[date] <= GETDATE()
+  AND cis.[date] <= CURRENT_TIMESTAMP

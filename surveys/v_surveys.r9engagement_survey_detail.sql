@@ -24,269 +24,269 @@ WITH survey_unpivoted AS (
              ,email
              ,location
              ,n
-             ,CONVERT(FLOAT,academicsupportdataanalyticsandstudentinformation_1_s) AS academicsupportdataanalyticsandstudentinformation_1_s
-             ,CONVERT(FLOAT,academicsupportdataanalyticsandstudentinformation_2_s) AS academicsupportdataanalyticsandstudentinformation_2_s
-             ,CONVERT(FLOAT,academicsupportdataanalyticsandstudentinformation_3_s) AS academicsupportdataanalyticsandstudentinformation_3_s
-             ,CONVERT(FLOAT,academicsupportdataanalyticsandstudentinformation_4_s) AS academicsupportdataanalyticsandstudentinformation_4_s
-             ,CONVERT(FLOAT,academicsupportdataanalyticsandstudentinformation_5_s) AS academicsupportdataanalyticsandstudentinformation_5_s
-             ,CONVERT(FLOAT,academicsupportdataanalyticsandstudentinformation_6_s) AS academicsupportdataanalyticsandstudentinformation_6_s
-             ,CONVERT(FLOAT,academicsupportdataanalyticsandstudentinformation_7_s) AS academicsupportdataanalyticsandstudentinformation_7_s
-             ,CONVERT(FLOAT,academicsupportdataanalyticsandstudentinformation_8_s) AS academicsupportdataanalyticsandstudentinformation_8_s
-             ,CONVERT(FLOAT,academicsupportdataanalyticsandstudentinformation_9_s) AS academicsupportdataanalyticsandstudentinformation_9_s
-             ,CONVERT(FLOAT,academicsupportteam_1) AS academicsupportteam_1
-             ,CONVERT(FLOAT,academicsupportteam_10) AS academicsupportteam_10
-             ,CONVERT(FLOAT,academicsupportteam_11) AS academicsupportteam_11
-             ,CONVERT(FLOAT,academicsupportteam_2) AS academicsupportteam_2
-             ,CONVERT(FLOAT,academicsupportteam_3) AS academicsupportteam_3
-             ,CONVERT(FLOAT,academicsupportteam_4) AS academicsupportteam_4
-             ,CONVERT(FLOAT,academicsupportteam_5) AS academicsupportteam_5
-             ,CONVERT(FLOAT,academicsupportteam_6) AS academicsupportteam_6
-             ,CONVERT(FLOAT,academicsupportteam_7) AS academicsupportteam_7
-             ,CONVERT(FLOAT,academicsupportteam_8) AS academicsupportteam_8
-             ,CONVERT(FLOAT,academicsupportteam_9) AS academicsupportteam_9
-             ,CONVERT(FLOAT,advocacysl_1) AS advocacysl_1
-             ,CONVERT(FLOAT,advocacysl_2) AS advocacysl_2
-             ,CONVERT(FLOAT,advocacysl_3) AS advocacysl_3
-             ,CONVERT(FLOAT,benefits_1) AS benefits_1
-             ,CONVERT(FLOAT,benefits_2) AS benefits_2
-             ,CONVERT(FLOAT,benefits_3) AS benefits_3
-             ,CONVERT(FLOAT,blendedlearning_1) AS blendedlearning_1
-             ,CONVERT(FLOAT,blendedlearning_2) AS blendedlearning_2
-             ,CONVERT(FLOAT,blendedlearning_3) AS blendedlearning_3
-             ,CONVERT(FLOAT,dataandanalysis_1) AS dataandanalysis_1
-             ,CONVERT(FLOAT,dataandanalysis_2) AS dataandanalysis_2
-             ,CONVERT(FLOAT,enrollmentschoolleadersonly_1) AS enrollmentschoolleadersonly_1
-             ,CONVERT(FLOAT,enrollmentschoolleadersonly_2) AS enrollmentschoolleadersonly_2
-             ,CONVERT(FLOAT,enrollmentschoolleadersonly_3) AS enrollmentschoolleadersonly_3
-             ,CONVERT(FLOAT,enrollmentschoolleadersonly_4) AS enrollmentschoolleadersonly_4
-             ,CONVERT(FLOAT,enrollmentschoolleadersonly_5) AS enrollmentschoolleadersonly_5
-             ,CONVERT(FLOAT,enrollmentschoolleadersonly_6) AS enrollmentschoolleadersonly_6
-             ,CONVERT(FLOAT,facilities_1) AS facilities_1
-             ,CONVERT(FLOAT,facilities_1_s) AS facilities_1_s
-             ,CONVERT(FLOAT,facilities_2) AS facilities_2
-             ,CONVERT(FLOAT,facilities_2_s) AS facilities_2_s
-             ,CONVERT(FLOAT,facilities_3) AS facilities_3
-             ,CONVERT(FLOAT,facilities_3_s) AS facilities_3_s
-             ,CONVERT(FLOAT,facilities_4) AS facilities_4
-             ,CONVERT(FLOAT,facilities_4_s) AS facilities_4_s
-             ,CONVERT(FLOAT,facilities_5) AS facilities_5
-             ,CONVERT(FLOAT,facilities_6) AS facilities_6
-             ,CONVERT(FLOAT,facilitiesschoolleadersonly_1) AS facilitiesschoolleadersonly_1
-             ,CONVERT(FLOAT,facilitiesschoolleadersonly_2) AS facilitiesschoolleadersonly_2
-             ,CONVERT(FLOAT,facilitiesschoolleadersonly_3) AS facilitiesschoolleadersonly_3
-             ,CONVERT(FLOAT,facilitiessl) AS facilitiessl
-             ,CONVERT(FLOAT,financeaccounting_1_s) AS financeaccounting_1_s
-             ,CONVERT(FLOAT,financeaccounting_2_s) AS financeaccounting_2_s
-             ,CONVERT(FLOAT,financeaccounting_3_s) AS financeaccounting_3_s
-             ,CONVERT(FLOAT,financeaccounting_4_s) AS financeaccounting_4_s
-             ,CONVERT(FLOAT,financeaccountingschoolleadersonly_1_s) AS financeaccountingschoolleadersonly_1_s
-             ,CONVERT(FLOAT,financeaccountingschoolleadersonly_2_s) AS financeaccountingschoolleadersonly_2_s
-             ,CONVERT(FLOAT,financeaccountingschoolleadersonly_3_s) AS financeaccountingschoolleadersonly_3_s
-             ,CONVERT(FLOAT,financeaccountingsl_1) AS financeaccountingsl_1
-             ,CONVERT(FLOAT,financeaccountingsl_2) AS financeaccountingsl_2
-             ,CONVERT(FLOAT,financeaccountingsl_3) AS financeaccountingsl_3
-             ,CONVERT(FLOAT,financeaccountingsl_4) AS financeaccountingsl_4
-             ,CONVERT(FLOAT,financeaccountingsl_5) AS financeaccountingsl_5
-             ,CONVERT(FLOAT,financeaccountingsl_6) AS financeaccountingsl_6
-             ,CONVERT(FLOAT,financeaccountingsl_7) AS financeaccountingsl_7
-             ,CONVERT(FLOAT,hasl) AS hasl
-             ,CONVERT(FLOAT,humanassets_1) AS humanassets_1
-             ,CONVERT(FLOAT,humanassets_1_s) AS humanassets_1_s
-             ,CONVERT(FLOAT,humanassets_10) AS humanassets_10
-             ,CONVERT(FLOAT,humanassets_11) AS humanassets_11
-             ,CONVERT(FLOAT,humanassets_12) AS humanassets_12
-             ,CONVERT(FLOAT,humanassets_13) AS humanassets_13
-             ,CONVERT(FLOAT,humanassets_14) AS humanassets_14
-             ,CONVERT(FLOAT,humanassets_15) AS humanassets_15
-             ,CONVERT(FLOAT,humanassets_16) AS humanassets_16
-             ,CONVERT(FLOAT,humanassets_2) AS humanassets_2
-             ,CONVERT(FLOAT,humanassets_2_s) AS humanassets_2_s
-             ,CONVERT(FLOAT,humanassets_3) AS humanassets_3
-             ,CONVERT(FLOAT,humanassets_3_s) AS humanassets_3_s
-             ,CONVERT(FLOAT,humanassets_4) AS humanassets_4
-             ,CONVERT(FLOAT,humanassets_4_s) AS humanassets_4_s
-             ,CONVERT(FLOAT,humanassets_5) AS humanassets_5
-             ,CONVERT(FLOAT,humanassets_5_s) AS humanassets_5_s
-             ,CONVERT(FLOAT,humanassets_6) AS humanassets_6
-             ,CONVERT(FLOAT,humanassets_6_s) AS humanassets_6_s
-             ,CONVERT(FLOAT,humanassets_7) AS humanassets_7
-             ,CONVERT(FLOAT,humanassets_8) AS humanassets_8
-             ,CONVERT(FLOAT,humanassets_9) AS humanassets_9
-             ,CONVERT(FLOAT,humanassetsschoolleadersonly_1) AS humanassetsschoolleadersonly_1
-             ,CONVERT(FLOAT,humanassetsschoolleadersonly_2) AS humanassetsschoolleadersonly_2
-             ,CONVERT(FLOAT,humanassetsschoolleadersonly_3) AS humanassetsschoolleadersonly_3
-             ,CONVERT(FLOAT,kippsharefrequency_5_s) AS kippsharefrequency_5_s
-             ,CONVERT(FLOAT,kippthroughcollege_1) AS kippthroughcollege_1
-             ,CONVERT(FLOAT,maintenance_1) AS maintenance_1
-             ,CONVERT(FLOAT,maintenance_11) AS maintenance_11
-             ,CONVERT(FLOAT,maintenance_12) AS maintenance_12
-             ,CONVERT(FLOAT,maintenance_13) AS maintenance_13
-             ,CONVERT(FLOAT,maintenance_14) AS maintenance_14
-             ,CONVERT(FLOAT,maintenance_15) AS maintenance_15
-             ,CONVERT(FLOAT,maintenance_2) AS maintenance_2
-             ,CONVERT(FLOAT,maintenance_21) AS maintenance_21
-             ,CONVERT(FLOAT,maintenance_22) AS maintenance_22
-             ,CONVERT(FLOAT,maintenance_23) AS maintenance_23
-             ,CONVERT(FLOAT,maintenance_3) AS maintenance_3
-             ,CONVERT(FLOAT,maintenance_4) AS maintenance_4
-             ,CONVERT(FLOAT,maintenance_5) AS maintenance_5
-             ,CONVERT(FLOAT,maintenance_6) AS maintenance_6
-             ,CONVERT(FLOAT,maintenance_7) AS maintenance_7
-             ,CONVERT(FLOAT,maintenance_8) AS maintenance_8
-             ,CONVERT(FLOAT,maintenance_9_a) AS maintenance_9_a
-             ,CONVERT(FLOAT,maintenance_9_b) AS maintenance_9_b
-             ,CONVERT(FLOAT,maintenance_9_c) AS maintenance_9_c
-             ,CONVERT(FLOAT,maintenance_9_d) AS maintenance_9_d
-             ,CONVERT(FLOAT,maintenance_9_e) AS maintenance_9_e
-             ,CONVERT(FLOAT,marketing_1) AS marketing_1
-             ,CONVERT(FLOAT,marketing_2) AS marketing_2
-             ,CONVERT(FLOAT,marketingschoolleadersonly_1) AS marketingschoolleadersonly_1
-             ,CONVERT(FLOAT,marketingschoolleadersonly_2) AS marketingschoolleadersonly_2
-             ,CONVERT(FLOAT,noninstructionalhiringdsor_9_directors_1) AS noninstructionalhiringdsor_9_directors_1
-             ,CONVERT(FLOAT,noninstructionalhiringdsor_9_directors_2) AS noninstructionalhiringdsor_9_directors_2
-             ,CONVERT(FLOAT,noninstructionalhiringdsor_9_directors_3) AS noninstructionalhiringdsor_9_directors_3
-             ,CONVERT(FLOAT,noninstructionalhiringdsor_9_directors_4) AS noninstructionalhiringdsor_9_directors_4
-             ,CONVERT(FLOAT,noninstructionalhiringdsor_9_directors_5) AS noninstructionalhiringdsor_9_directors_5
-             ,CONVERT(FLOAT,noninstructionalhiringdsor_9_directors_6) AS noninstructionalhiringdsor_9_directors_6
-             ,CONVERT(FLOAT,noninstructionalhiringdsor_9_directors_7) AS noninstructionalhiringdsor_9_directors_7
-             ,CONVERT(FLOAT,nutritionprogramfoodservice_1) AS nutritionprogramfoodservice_1
-             ,CONVERT(FLOAT,nutritionprogramfoodservice_1_s) AS nutritionprogramfoodservice_1_s
-             ,CONVERT(FLOAT,nutritionprogramfoodservice_2) AS nutritionprogramfoodservice_2
-             ,CONVERT(FLOAT,nutritionprogramfoodservice_3) AS nutritionprogramfoodservice_3
-             ,CONVERT(FLOAT,nutritionprogramfoodservice_4) AS nutritionprogramfoodservice_4
-             ,CONVERT(FLOAT,nutritionprogramfoodservice_5) AS nutritionprogramfoodservice_5
-             ,CONVERT(FLOAT,nutritionprogramfoodservice_6) AS nutritionprogramfoodservice_6
-             ,CONVERT(FLOAT,nutritionprogramfoodservice_7) AS nutritionprogramfoodservice_7
-             ,CONVERT(FLOAT,nutritionprogramfoodserviceschoolleadersonly_1) AS nutritionprogramfoodserviceschoolleadersonly_1
-             ,CONVERT(FLOAT,nutritionprogramfoodserviceschoolleadersonly_2) AS nutritionprogramfoodserviceschoolleadersonly_2
-             ,CONVERT(FLOAT,nutritionprogramfoodserviceschoolleadersonly_3) AS nutritionprogramfoodserviceschoolleadersonly_3
-             ,CONVERT(FLOAT,nutritionschoolleadersonly_1) AS nutritionschoolleadersonly_1
-             ,CONVERT(FLOAT,nutritionschoolleadersonly_2) AS nutritionschoolleadersonly_2
-             ,CONVERT(FLOAT,nutritionschoolleadersonly_3) AS nutritionschoolleadersonly_3
-             ,CONVERT(FLOAT,nutritionschoolleadersonly_4) AS nutritionschoolleadersonly_4
-             ,CONVERT(FLOAT,purchasing_1) AS purchasing_1
-             ,CONVERT(FLOAT,purchasing_1_s) AS purchasing_1_s
-             ,CONVERT(FLOAT,purchasing_2) AS purchasing_2
-             ,CONVERT(FLOAT,purchasing_2_s) AS purchasing_2_s
-             ,CONVERT(FLOAT,purchasing_3) AS purchasing_3
-             ,CONVERT(FLOAT,purchasing_3_s) AS purchasing_3_s
-             ,CONVERT(FLOAT,purchasing_4) AS purchasing_4
-             ,CONVERT(FLOAT,purchasing_4_s) AS purchasing_4_s
-             ,CONVERT(FLOAT,purchasing_5) AS purchasing_5
-             ,CONVERT(FLOAT,purchasing_5_s) AS purchasing_5_s
-             ,CONVERT(FLOAT,purchasing_6) AS purchasing_6
-             ,CONVERT(FLOAT,purchasing_7) AS purchasing_7
-             ,CONVERT(FLOAT,purchasing_8) AS purchasing_8
-             ,CONVERT(FLOAT,purchasingsl) AS purchasingsl
-             ,CONVERT(FLOAT,r_9_q_1201) AS r_9_q_1201
-             ,CONVERT(FLOAT,r_9_q_1202) AS r_9_q_1202
-             ,CONVERT(FLOAT,r_9_q_1203) AS r_9_q_1203
-             ,CONVERT(FLOAT,r_9_q_1204) AS r_9_q_1204
-             ,CONVERT(FLOAT,r_9_q_1205) AS r_9_q_1205
-             ,CONVERT(FLOAT,r_9_q_1206) AS r_9_q_1206
-             ,CONVERT(FLOAT,r_9_q_1207) AS r_9_q_1207
-             ,CONVERT(FLOAT,r_9_q_1208) AS r_9_q_1208
-             ,CONVERT(FLOAT,r_9_q_1209) AS r_9_q_1209
-             ,CONVERT(FLOAT,r_9_q_1210) AS r_9_q_1210
-             ,CONVERT(FLOAT,r_9_q_1211) AS r_9_q_1211
-             ,CONVERT(FLOAT,r_9_q_1212) AS r_9_q_1212
-             ,CONVERT(FLOAT,recruitingschoolleadersonly_1_s) AS recruitingschoolleadersonly_1_s
-             ,CONVERT(FLOAT,recruitingschoolleadersonly_10_s) AS recruitingschoolleadersonly_10_s
-             ,CONVERT(FLOAT,recruitingschoolleadersonly_2_s) AS recruitingschoolleadersonly_2_s
-             ,CONVERT(FLOAT,recruitingschoolleadersonly_3_s) AS recruitingschoolleadersonly_3_s
-             ,CONVERT(FLOAT,recruitingschoolleadersonly_4_s) AS recruitingschoolleadersonly_4_s
-             ,CONVERT(FLOAT,recruitingschoolleadersonly_5_s) AS recruitingschoolleadersonly_5_s
-             ,CONVERT(FLOAT,recruitingschoolleadersonly_6_s) AS recruitingschoolleadersonly_6_s
-             ,CONVERT(FLOAT,recruitingschoolleadersonly_7_s) AS recruitingschoolleadersonly_7_s
-             ,CONVERT(FLOAT,recruitingschoolleadersonly_8_s) AS recruitingschoolleadersonly_8_s
-             ,CONVERT(FLOAT,recruitingschoolleadersonly_9_s) AS recruitingschoolleadersonly_9_s
-             ,CONVERT(FLOAT,recruitmentschoolleadersonly_1) AS recruitmentschoolleadersonly_1
-             ,CONVERT(FLOAT,recruitmentschoolleadersonly_10) AS recruitmentschoolleadersonly_10
-             ,CONVERT(FLOAT,recruitmentschoolleadersonly_11) AS recruitmentschoolleadersonly_11
-             ,CONVERT(FLOAT,recruitmentschoolleadersonly_2) AS recruitmentschoolleadersonly_2
-             ,CONVERT(FLOAT,recruitmentschoolleadersonly_3) AS recruitmentschoolleadersonly_3
-             ,CONVERT(FLOAT,recruitmentschoolleadersonly_4) AS recruitmentschoolleadersonly_4
-             ,CONVERT(FLOAT,recruitmentschoolleadersonly_5) AS recruitmentschoolleadersonly_5
-             ,CONVERT(FLOAT,recruitmentschoolleadersonly_6) AS recruitmentschoolleadersonly_6
-             ,CONVERT(FLOAT,recruitmentschoolleadersonly_7) AS recruitmentschoolleadersonly_7
-             ,CONVERT(FLOAT,recruitmentschoolleadersonly_8) AS recruitmentschoolleadersonly_8
-             ,CONVERT(FLOAT,recruitmentschoolleadersonly_9) AS recruitmentschoolleadersonly_9
-             ,CONVERT(FLOAT,schooloperations_1) AS schooloperations_1
-             ,CONVERT(FLOAT,schooloperations_10) AS schooloperations_10
-             ,CONVERT(FLOAT,schooloperations_2) AS schooloperations_2
-             ,CONVERT(FLOAT,schooloperations_3) AS schooloperations_3
-             ,CONVERT(FLOAT,schooloperations_4) AS schooloperations_4
-             ,CONVERT(FLOAT,schooloperations_5) AS schooloperations_5
-             ,CONVERT(FLOAT,schooloperations_6) AS schooloperations_6
-             ,CONVERT(FLOAT,schooloperations_7) AS schooloperations_7
-             ,CONVERT(FLOAT,schooloperations_8) AS schooloperations_8
-             ,CONVERT(FLOAT,schooloperations_9) AS schooloperations_9
-             ,CONVERT(FLOAT,sharing_1_s) AS sharing_1_s
-             ,CONVERT(FLOAT,sharing_2_s) AS sharing_2_s
-             ,CONVERT(FLOAT,sharing_3_s) AS sharing_3_s
-             ,CONVERT(FLOAT,sharing_4_s) AS sharing_4_s
-             ,CONVERT(FLOAT,specialed_1) AS specialed_1
-             ,CONVERT(FLOAT,specialeducation_1) AS specialeducation_1
-             ,CONVERT(FLOAT,specialeducation_1_s) AS specialeducation_1_s
-             ,CONVERT(FLOAT,specialeducation_2) AS specialeducation_2
-             ,CONVERT(FLOAT,specialeducation_2_s) AS specialeducation_2_s
-             ,CONVERT(FLOAT,specialeducation_3) AS specialeducation_3
-             ,CONVERT(FLOAT,specialeducation_4) AS specialeducation_4
-             ,CONVERT(FLOAT,specialeducation_5) AS specialeducation_5
-             ,CONVERT(FLOAT,studentinformation_1) AS studentinformation_1
-             ,CONVERT(FLOAT,studentinformation_2) AS studentinformation_2
-             ,CONVERT(FLOAT,studentinformation_3) AS studentinformation_3
-             ,CONVERT(FLOAT,teachinglearning_1) AS teachinglearning_1
-             ,CONVERT(FLOAT,teachinglearning_10) AS teachinglearning_10
-             ,CONVERT(FLOAT,teachinglearning_2) AS teachinglearning_2
-             ,CONVERT(FLOAT,teachinglearning_3) AS teachinglearning_3
-             ,CONVERT(FLOAT,teachinglearning_4) AS teachinglearning_4
-             ,CONVERT(FLOAT,teachinglearning_5) AS teachinglearning_5
-             ,CONVERT(FLOAT,teachinglearning_6) AS teachinglearning_6
-             ,CONVERT(FLOAT,teachinglearning_7) AS teachinglearning_7
-             ,CONVERT(FLOAT,teachinglearning_8) AS teachinglearning_8
-             ,CONVERT(FLOAT,teachinglearning_9) AS teachinglearning_9
-             ,CONVERT(FLOAT,technology_1) AS technology_1
-             ,CONVERT(FLOAT,technology_1_s) AS technology_1_s
-             ,CONVERT(FLOAT,technology_2) AS technology_2
-             ,CONVERT(FLOAT,technology_2_s) AS technology_2_s
-             ,CONVERT(FLOAT,technology_3) AS technology_3
-             ,CONVERT(FLOAT,technology_3_s) AS technology_3_s
-             ,CONVERT(FLOAT,technology_4) AS technology_4
-             ,CONVERT(FLOAT,technology_4_s) AS technology_4_s
-             ,CONVERT(FLOAT,technology_5) AS technology_5
-             ,CONVERT(FLOAT,technology_6) AS technology_6
-             ,CONVERT(FLOAT,technologyschoolleadersonly_1) AS technologyschoolleadersonly_1
-             ,CONVERT(FLOAT,technologyschoolleadersonly_2) AS technologyschoolleadersonly_2
-             ,CONVERT(FLOAT,technologyschoolleadersonly_3) AS technologyschoolleadersonly_3
-             ,CONVERT(FLOAT,technologysl) AS technologysl
-             ,CONVERT(FLOAT,NULL) AS data_1
-             ,CONVERT(FLOAT,NULL) AS data_2
-             ,CONVERT(FLOAT,NULL) AS ER_1
-             ,CONVERT(FLOAT,NULL) AS ER_2
-             ,CONVERT(FLOAT,NULL) AS facilities_7
-             ,CONVERT(FLOAT,NULL) AS facilities_8
-             ,CONVERT(FLOAT,NULL) AS humanresources_1
-             ,CONVERT(FLOAT,NULL) AS humanresources_2
-             ,CONVERT(FLOAT,NULL) AS humanresource_3
-             ,CONVERT(FLOAT,NULL) AS marketing_3
-             ,CONVERT(FLOAT,NULL) AS purchasing_9
-             ,CONVERT(FLOAT,NULL) AS purchasing_10
-             ,CONVERT(FLOAT,NULL) AS specialeducation_7
-             ,CONVERT(FLOAT,NULL) AS specialeducation_6
-             ,CONVERT(FLOAT,NULL) AS region_1
-             ,CONVERT(FLOAT,NULL) AS region_2
-             ,CONVERT(FLOAT,NULL) AS schooloperations_11
-             ,CONVERT(FLOAT,NULL) AS region_3
-             ,CONVERT(FLOAT,NULL) AS region_4
-             ,CONVERT(FLOAT,NULL) AS region_5
-             ,CONVERT(FLOAT,NULL) AS teachinglearning_11
-             ,CONVERT(FLOAT,NULL) AS teachinglearning_12
-             ,CONVERT(FLOAT,NULL) AS teachinglearning_13
-             ,CONVERT(FLOAT,NULL) AS technology_14
-             ,CONVERT(FLOAT,NULL) AS technology_16
-             ,CONVERT(FLOAT,NULL) AS technology_15
-             ,CONVERT(FLOAT,NULL) AS region_8
+             ,CAST(academicsupportdataanalyticsandstudentinformation_1_s AS FLOAT) AS academicsupportdataanalyticsandstudentinformation_1_s
+             ,CAST(academicsupportdataanalyticsandstudentinformation_2_s AS FLOAT) AS academicsupportdataanalyticsandstudentinformation_2_s
+             ,CAST(academicsupportdataanalyticsandstudentinformation_3_s AS FLOAT) AS academicsupportdataanalyticsandstudentinformation_3_s
+             ,CAST(academicsupportdataanalyticsandstudentinformation_4_s AS FLOAT) AS academicsupportdataanalyticsandstudentinformation_4_s
+             ,CAST(academicsupportdataanalyticsandstudentinformation_5_s AS FLOAT) AS academicsupportdataanalyticsandstudentinformation_5_s
+             ,CAST(academicsupportdataanalyticsandstudentinformation_6_s AS FLOAT) AS academicsupportdataanalyticsandstudentinformation_6_s
+             ,CAST(academicsupportdataanalyticsandstudentinformation_7_s AS FLOAT) AS academicsupportdataanalyticsandstudentinformation_7_s
+             ,CAST(academicsupportdataanalyticsandstudentinformation_8_s AS FLOAT) AS academicsupportdataanalyticsandstudentinformation_8_s
+             ,CAST(academicsupportdataanalyticsandstudentinformation_9_s AS FLOAT) AS academicsupportdataanalyticsandstudentinformation_9_s
+             ,CAST(academicsupportteam_1 AS FLOAT) AS academicsupportteam_1
+             ,CAST(academicsupportteam_10 AS FLOAT) AS academicsupportteam_10
+             ,CAST(academicsupportteam_11 AS FLOAT) AS academicsupportteam_11
+             ,CAST(academicsupportteam_2 AS FLOAT) AS academicsupportteam_2
+             ,CAST(academicsupportteam_3 AS FLOAT) AS academicsupportteam_3
+             ,CAST(academicsupportteam_4 AS FLOAT) AS academicsupportteam_4
+             ,CAST(academicsupportteam_5 AS FLOAT) AS academicsupportteam_5
+             ,CAST(academicsupportteam_6 AS FLOAT) AS academicsupportteam_6
+             ,CAST(academicsupportteam_7 AS FLOAT) AS academicsupportteam_7
+             ,CAST(academicsupportteam_8 AS FLOAT) AS academicsupportteam_8
+             ,CAST(academicsupportteam_9 AS FLOAT) AS academicsupportteam_9
+             ,CAST(advocacysl_1 AS FLOAT) AS advocacysl_1
+             ,CAST(advocacysl_2 AS FLOAT) AS advocacysl_2
+             ,CAST(advocacysl_3 AS FLOAT) AS advocacysl_3
+             ,CAST(benefits_1 AS FLOAT) AS benefits_1
+             ,CAST(benefits_2 AS FLOAT) AS benefits_2
+             ,CAST(benefits_3 AS FLOAT) AS benefits_3
+             ,CAST(blendedlearning_1 AS FLOAT) AS blendedlearning_1
+             ,CAST(blendedlearning_2 AS FLOAT) AS blendedlearning_2
+             ,CAST(blendedlearning_3 AS FLOAT) AS blendedlearning_3
+             ,CAST(dataandanalysis_1 AS FLOAT) AS dataandanalysis_1
+             ,CAST(dataandanalysis_2 AS FLOAT) AS dataandanalysis_2
+             ,CAST(enrollmentschoolleadersonly_1 AS FLOAT) AS enrollmentschoolleadersonly_1
+             ,CAST(enrollmentschoolleadersonly_2 AS FLOAT) AS enrollmentschoolleadersonly_2
+             ,CAST(enrollmentschoolleadersonly_3 AS FLOAT) AS enrollmentschoolleadersonly_3
+             ,CAST(enrollmentschoolleadersonly_4 AS FLOAT) AS enrollmentschoolleadersonly_4
+             ,CAST(enrollmentschoolleadersonly_5 AS FLOAT) AS enrollmentschoolleadersonly_5
+             ,CAST(enrollmentschoolleadersonly_6 AS FLOAT) AS enrollmentschoolleadersonly_6
+             ,CAST(facilities_1 AS FLOAT) AS facilities_1
+             ,CAST(facilities_1_s AS FLOAT) AS facilities_1_s
+             ,CAST(facilities_2 AS FLOAT) AS facilities_2
+             ,CAST(facilities_2_s AS FLOAT) AS facilities_2_s
+             ,CAST(facilities_3 AS FLOAT) AS facilities_3
+             ,CAST(facilities_3_s AS FLOAT) AS facilities_3_s
+             ,CAST(facilities_4 AS FLOAT) AS facilities_4
+             ,CAST(facilities_4_s AS FLOAT) AS facilities_4_s
+             ,CAST(facilities_5 AS FLOAT) AS facilities_5
+             ,CAST(facilities_6 AS FLOAT) AS facilities_6
+             ,CAST(facilitiesschoolleadersonly_1 AS FLOAT) AS facilitiesschoolleadersonly_1
+             ,CAST(facilitiesschoolleadersonly_2 AS FLOAT) AS facilitiesschoolleadersonly_2
+             ,CAST(facilitiesschoolleadersonly_3 AS FLOAT) AS facilitiesschoolleadersonly_3
+             ,CAST(facilitiessl AS FLOAT) AS facilitiessl
+             ,CAST(financeaccounting_1_s AS FLOAT) AS financeaccounting_1_s
+             ,CAST(financeaccounting_2_s AS FLOAT) AS financeaccounting_2_s
+             ,CAST(financeaccounting_3_s AS FLOAT) AS financeaccounting_3_s
+             ,CAST(financeaccounting_4_s AS FLOAT) AS financeaccounting_4_s
+             ,CAST(financeaccountingschoolleadersonly_1_s AS FLOAT) AS financeaccountingschoolleadersonly_1_s
+             ,CAST(financeaccountingschoolleadersonly_2_s AS FLOAT) AS financeaccountingschoolleadersonly_2_s
+             ,CAST(financeaccountingschoolleadersonly_3_s AS FLOAT) AS financeaccountingschoolleadersonly_3_s
+             ,CAST(financeaccountingsl_1 AS FLOAT) AS financeaccountingsl_1
+             ,CAST(financeaccountingsl_2 AS FLOAT) AS financeaccountingsl_2
+             ,CAST(financeaccountingsl_3 AS FLOAT) AS financeaccountingsl_3
+             ,CAST(financeaccountingsl_4 AS FLOAT) AS financeaccountingsl_4
+             ,CAST(financeaccountingsl_5 AS FLOAT) AS financeaccountingsl_5
+             ,CAST(financeaccountingsl_6 AS FLOAT) AS financeaccountingsl_6
+             ,CAST(financeaccountingsl_7 AS FLOAT) AS financeaccountingsl_7
+             ,CAST(hasl AS FLOAT) AS hasl
+             ,CAST(humanassets_1 AS FLOAT) AS humanassets_1
+             ,CAST(humanassets_1_s AS FLOAT) AS humanassets_1_s
+             ,CAST(humanassets_10 AS FLOAT) AS humanassets_10
+             ,CAST(humanassets_11 AS FLOAT) AS humanassets_11
+             ,CAST(humanassets_12 AS FLOAT) AS humanassets_12
+             ,CAST(humanassets_13 AS FLOAT) AS humanassets_13
+             ,CAST(humanassets_14 AS FLOAT) AS humanassets_14
+             ,CAST(humanassets_15 AS FLOAT) AS humanassets_15
+             ,CAST(humanassets_16 AS FLOAT) AS humanassets_16
+             ,CAST(humanassets_2 AS FLOAT) AS humanassets_2
+             ,CAST(humanassets_2_s AS FLOAT) AS humanassets_2_s
+             ,CAST(humanassets_3 AS FLOAT) AS humanassets_3
+             ,CAST(humanassets_3_s AS FLOAT) AS humanassets_3_s
+             ,CAST(humanassets_4 AS FLOAT) AS humanassets_4
+             ,CAST(humanassets_4_s AS FLOAT) AS humanassets_4_s
+             ,CAST(humanassets_5 AS FLOAT) AS humanassets_5
+             ,CAST(humanassets_5_s AS FLOAT) AS humanassets_5_s
+             ,CAST(humanassets_6 AS FLOAT) AS humanassets_6
+             ,CAST(humanassets_6_s AS FLOAT) AS humanassets_6_s
+             ,CAST(humanassets_7 AS FLOAT) AS humanassets_7
+             ,CAST(humanassets_8 AS FLOAT) AS humanassets_8
+             ,CAST(humanassets_9 AS FLOAT) AS humanassets_9
+             ,CAST(humanassetsschoolleadersonly_1 AS FLOAT) AS humanassetsschoolleadersonly_1
+             ,CAST(humanassetsschoolleadersonly_2 AS FLOAT) AS humanassetsschoolleadersonly_2
+             ,CAST(humanassetsschoolleadersonly_3 AS FLOAT) AS humanassetsschoolleadersonly_3
+             ,CAST(kippsharefrequency_5_s AS FLOAT) AS kippsharefrequency_5_s
+             ,CAST(kippthroughcollege_1 AS FLOAT) AS kippthroughcollege_1
+             ,CAST(maintenance_1 AS FLOAT) AS maintenance_1
+             ,CAST(maintenance_11 AS FLOAT) AS maintenance_11
+             ,CAST(maintenance_12 AS FLOAT) AS maintenance_12
+             ,CAST(maintenance_13 AS FLOAT) AS maintenance_13
+             ,CAST(maintenance_14 AS FLOAT) AS maintenance_14
+             ,CAST(maintenance_15 AS FLOAT) AS maintenance_15
+             ,CAST(maintenance_2 AS FLOAT) AS maintenance_2
+             ,CAST(maintenance_21 AS FLOAT) AS maintenance_21
+             ,CAST(maintenance_22 AS FLOAT) AS maintenance_22
+             ,CAST(maintenance_23 AS FLOAT) AS maintenance_23
+             ,CAST(maintenance_3 AS FLOAT) AS maintenance_3
+             ,CAST(maintenance_4 AS FLOAT) AS maintenance_4
+             ,CAST(maintenance_5 AS FLOAT) AS maintenance_5
+             ,CAST(maintenance_6 AS FLOAT) AS maintenance_6
+             ,CAST(maintenance_7 AS FLOAT) AS maintenance_7
+             ,CAST(maintenance_8 AS FLOAT) AS maintenance_8
+             ,CAST(maintenance_9_a AS FLOAT) AS maintenance_9_a
+             ,CAST(maintenance_9_b AS FLOAT) AS maintenance_9_b
+             ,CAST(maintenance_9_c AS FLOAT) AS maintenance_9_c
+             ,CAST(maintenance_9_d AS FLOAT) AS maintenance_9_d
+             ,CAST(maintenance_9_e AS FLOAT) AS maintenance_9_e
+             ,CAST(marketing_1 AS FLOAT) AS marketing_1
+             ,CAST(marketing_2 AS FLOAT) AS marketing_2
+             ,CAST(marketingschoolleadersonly_1 AS FLOAT) AS marketingschoolleadersonly_1
+             ,CAST(marketingschoolleadersonly_2 AS FLOAT) AS marketingschoolleadersonly_2
+             ,CAST(noninstructionalhiringdsor_9_directors_1 AS FLOAT) AS noninstructionalhiringdsor_9_directors_1
+             ,CAST(noninstructionalhiringdsor_9_directors_2 AS FLOAT) AS noninstructionalhiringdsor_9_directors_2
+             ,CAST(noninstructionalhiringdsor_9_directors_3 AS FLOAT) AS noninstructionalhiringdsor_9_directors_3
+             ,CAST(noninstructionalhiringdsor_9_directors_4 AS FLOAT) AS noninstructionalhiringdsor_9_directors_4
+             ,CAST(noninstructionalhiringdsor_9_directors_5 AS FLOAT) AS noninstructionalhiringdsor_9_directors_5
+             ,CAST(noninstructionalhiringdsor_9_directors_6 AS FLOAT) AS noninstructionalhiringdsor_9_directors_6
+             ,CAST(noninstructionalhiringdsor_9_directors_7 AS FLOAT) AS noninstructionalhiringdsor_9_directors_7
+             ,CAST(nutritionprogramfoodservice_1 AS FLOAT) AS nutritionprogramfoodservice_1
+             ,CAST(nutritionprogramfoodservice_1_s AS FLOAT) AS nutritionprogramfoodservice_1_s
+             ,CAST(nutritionprogramfoodservice_2 AS FLOAT) AS nutritionprogramfoodservice_2
+             ,CAST(nutritionprogramfoodservice_3 AS FLOAT) AS nutritionprogramfoodservice_3
+             ,CAST(nutritionprogramfoodservice_4 AS FLOAT) AS nutritionprogramfoodservice_4
+             ,CAST(nutritionprogramfoodservice_5 AS FLOAT) AS nutritionprogramfoodservice_5
+             ,CAST(nutritionprogramfoodservice_6 AS FLOAT) AS nutritionprogramfoodservice_6
+             ,CAST(nutritionprogramfoodservice_7 AS FLOAT) AS nutritionprogramfoodservice_7
+             ,CAST(nutritionprogramfoodserviceschoolleadersonly_1 AS FLOAT) AS nutritionprogramfoodserviceschoolleadersonly_1
+             ,CAST(nutritionprogramfoodserviceschoolleadersonly_2 AS FLOAT) AS nutritionprogramfoodserviceschoolleadersonly_2
+             ,CAST(nutritionprogramfoodserviceschoolleadersonly_3 AS FLOAT) AS nutritionprogramfoodserviceschoolleadersonly_3
+             ,CAST(nutritionschoolleadersonly_1 AS FLOAT) AS nutritionschoolleadersonly_1
+             ,CAST(nutritionschoolleadersonly_2 AS FLOAT) AS nutritionschoolleadersonly_2
+             ,CAST(nutritionschoolleadersonly_3 AS FLOAT) AS nutritionschoolleadersonly_3
+             ,CAST(nutritionschoolleadersonly_4 AS FLOAT) AS nutritionschoolleadersonly_4
+             ,CAST(purchasing_1 AS FLOAT) AS purchasing_1
+             ,CAST(purchasing_1_s AS FLOAT) AS purchasing_1_s
+             ,CAST(purchasing_2 AS FLOAT) AS purchasing_2
+             ,CAST(purchasing_2_s AS FLOAT) AS purchasing_2_s
+             ,CAST(purchasing_3 AS FLOAT) AS purchasing_3
+             ,CAST(purchasing_3_s AS FLOAT) AS purchasing_3_s
+             ,CAST(purchasing_4 AS FLOAT) AS purchasing_4
+             ,CAST(purchasing_4_s AS FLOAT) AS purchasing_4_s
+             ,CAST(purchasing_5 AS FLOAT) AS purchasing_5
+             ,CAST(purchasing_5_s AS FLOAT) AS purchasing_5_s
+             ,CAST(purchasing_6 AS FLOAT) AS purchasing_6
+             ,CAST(purchasing_7 AS FLOAT) AS purchasing_7
+             ,CAST(purchasing_8 AS FLOAT) AS purchasing_8
+             ,CAST(purchasingsl AS FLOAT) AS purchasingsl
+             ,CAST(r_9_q_1201 AS FLOAT) AS r_9_q_1201
+             ,CAST(r_9_q_1202 AS FLOAT) AS r_9_q_1202
+             ,CAST(r_9_q_1203 AS FLOAT) AS r_9_q_1203
+             ,CAST(r_9_q_1204 AS FLOAT) AS r_9_q_1204
+             ,CAST(r_9_q_1205 AS FLOAT) AS r_9_q_1205
+             ,CAST(r_9_q_1206 AS FLOAT) AS r_9_q_1206
+             ,CAST(r_9_q_1207 AS FLOAT) AS r_9_q_1207
+             ,CAST(r_9_q_1208 AS FLOAT) AS r_9_q_1208
+             ,CAST(r_9_q_1209 AS FLOAT) AS r_9_q_1209
+             ,CAST(r_9_q_1210 AS FLOAT) AS r_9_q_1210
+             ,CAST(r_9_q_1211 AS FLOAT) AS r_9_q_1211
+             ,CAST(r_9_q_1212 AS FLOAT) AS r_9_q_1212
+             ,CAST(recruitingschoolleadersonly_1_s AS FLOAT) AS recruitingschoolleadersonly_1_s
+             ,CAST(recruitingschoolleadersonly_10_s AS FLOAT) AS recruitingschoolleadersonly_10_s
+             ,CAST(recruitingschoolleadersonly_2_s AS FLOAT) AS recruitingschoolleadersonly_2_s
+             ,CAST(recruitingschoolleadersonly_3_s AS FLOAT) AS recruitingschoolleadersonly_3_s
+             ,CAST(recruitingschoolleadersonly_4_s AS FLOAT) AS recruitingschoolleadersonly_4_s
+             ,CAST(recruitingschoolleadersonly_5_s AS FLOAT) AS recruitingschoolleadersonly_5_s
+             ,CAST(recruitingschoolleadersonly_6_s AS FLOAT) AS recruitingschoolleadersonly_6_s
+             ,CAST(recruitingschoolleadersonly_7_s AS FLOAT) AS recruitingschoolleadersonly_7_s
+             ,CAST(recruitingschoolleadersonly_8_s AS FLOAT) AS recruitingschoolleadersonly_8_s
+             ,CAST(recruitingschoolleadersonly_9_s AS FLOAT) AS recruitingschoolleadersonly_9_s
+             ,CAST(recruitmentschoolleadersonly_1 AS FLOAT) AS recruitmentschoolleadersonly_1
+             ,CAST(recruitmentschoolleadersonly_10 AS FLOAT) AS recruitmentschoolleadersonly_10
+             ,CAST(recruitmentschoolleadersonly_11 AS FLOAT) AS recruitmentschoolleadersonly_11
+             ,CAST(recruitmentschoolleadersonly_2 AS FLOAT) AS recruitmentschoolleadersonly_2
+             ,CAST(recruitmentschoolleadersonly_3 AS FLOAT) AS recruitmentschoolleadersonly_3
+             ,CAST(recruitmentschoolleadersonly_4 AS FLOAT) AS recruitmentschoolleadersonly_4
+             ,CAST(recruitmentschoolleadersonly_5 AS FLOAT) AS recruitmentschoolleadersonly_5
+             ,CAST(recruitmentschoolleadersonly_6 AS FLOAT) AS recruitmentschoolleadersonly_6
+             ,CAST(recruitmentschoolleadersonly_7 AS FLOAT) AS recruitmentschoolleadersonly_7
+             ,CAST(recruitmentschoolleadersonly_8 AS FLOAT) AS recruitmentschoolleadersonly_8
+             ,CAST(recruitmentschoolleadersonly_9 AS FLOAT) AS recruitmentschoolleadersonly_9
+             ,CAST(schooloperations_1 AS FLOAT) AS schooloperations_1
+             ,CAST(schooloperations_10 AS FLOAT) AS schooloperations_10
+             ,CAST(schooloperations_2 AS FLOAT) AS schooloperations_2
+             ,CAST(schooloperations_3 AS FLOAT) AS schooloperations_3
+             ,CAST(schooloperations_4 AS FLOAT) AS schooloperations_4
+             ,CAST(schooloperations_5 AS FLOAT) AS schooloperations_5
+             ,CAST(schooloperations_6 AS FLOAT) AS schooloperations_6
+             ,CAST(schooloperations_7 AS FLOAT) AS schooloperations_7
+             ,CAST(schooloperations_8 AS FLOAT) AS schooloperations_8
+             ,CAST(schooloperations_9 AS FLOAT) AS schooloperations_9
+             ,CAST(sharing_1_s AS FLOAT) AS sharing_1_s
+             ,CAST(sharing_2_s AS FLOAT) AS sharing_2_s
+             ,CAST(sharing_3_s AS FLOAT) AS sharing_3_s
+             ,CAST(sharing_4_s AS FLOAT) AS sharing_4_s
+             ,CAST(specialed_1 AS FLOAT) AS specialed_1
+             ,CAST(specialeducation_1 AS FLOAT) AS specialeducation_1
+             ,CAST(specialeducation_1_s AS FLOAT) AS specialeducation_1_s
+             ,CAST(specialeducation_2 AS FLOAT) AS specialeducation_2
+             ,CAST(specialeducation_2_s AS FLOAT) AS specialeducation_2_s
+             ,CAST(specialeducation_3 AS FLOAT) AS specialeducation_3
+             ,CAST(specialeducation_4 AS FLOAT) AS specialeducation_4
+             ,CAST(specialeducation_5 AS FLOAT) AS specialeducation_5
+             ,CAST(studentinformation_1 AS FLOAT) AS studentinformation_1
+             ,CAST(studentinformation_2 AS FLOAT) AS studentinformation_2
+             ,CAST(studentinformation_3 AS FLOAT) AS studentinformation_3
+             ,CAST(teachinglearning_1 AS FLOAT) AS teachinglearning_1
+             ,CAST(teachinglearning_10 AS FLOAT) AS teachinglearning_10
+             ,CAST(teachinglearning_2 AS FLOAT) AS teachinglearning_2
+             ,CAST(teachinglearning_3 AS FLOAT) AS teachinglearning_3
+             ,CAST(teachinglearning_4 AS FLOAT) AS teachinglearning_4
+             ,CAST(teachinglearning_5 AS FLOAT) AS teachinglearning_5
+             ,CAST(teachinglearning_6 AS FLOAT) AS teachinglearning_6
+             ,CAST(teachinglearning_7 AS FLOAT) AS teachinglearning_7
+             ,CAST(teachinglearning_8 AS FLOAT) AS teachinglearning_8
+             ,CAST(teachinglearning_9 AS FLOAT) AS teachinglearning_9
+             ,CAST(technology_1 AS FLOAT) AS technology_1
+             ,CAST(technology_1_s AS FLOAT) AS technology_1_s
+             ,CAST(technology_2 AS FLOAT) AS technology_2
+             ,CAST(technology_2_s AS FLOAT) AS technology_2_s
+             ,CAST(technology_3 AS FLOAT) AS technology_3
+             ,CAST(technology_3_s AS FLOAT) AS technology_3_s
+             ,CAST(technology_4 AS FLOAT) AS technology_4
+             ,CAST(technology_4_s AS FLOAT) AS technology_4_s
+             ,CAST(technology_5 AS FLOAT) AS technology_5
+             ,CAST(technology_6 AS FLOAT) AS technology_6
+             ,CAST(technologyschoolleadersonly_1 AS FLOAT) AS technologyschoolleadersonly_1
+             ,CAST(technologyschoolleadersonly_2 AS FLOAT) AS technologyschoolleadersonly_2
+             ,CAST(technologyschoolleadersonly_3 AS FLOAT) AS technologyschoolleadersonly_3
+             ,CAST(technologysl AS FLOAT) AS technologysl
+             ,CAST(NULL AS FLOAT) AS data_1
+             ,CAST(NULL AS FLOAT) AS data_2
+             ,CAST(NULL AS FLOAT) AS ER_1
+             ,CAST(NULL AS FLOAT) AS ER_2
+             ,CAST(NULL AS FLOAT) AS facilities_7
+             ,CAST(NULL AS FLOAT) AS facilities_8
+             ,CAST(NULL AS FLOAT) AS humanresources_1
+             ,CAST(NULL AS FLOAT) AS humanresources_2
+             ,CAST(NULL AS FLOAT) AS humanresource_3
+             ,CAST(NULL AS FLOAT) AS marketing_3
+             ,CAST(NULL AS FLOAT) AS purchasing_9
+             ,CAST(NULL AS FLOAT) AS purchasing_10
+             ,CAST(NULL AS FLOAT) AS specialeducation_7
+             ,CAST(NULL AS FLOAT) AS specialeducation_6
+             ,CAST(NULL AS FLOAT) AS region_1
+             ,CAST(NULL AS FLOAT) AS region_2
+             ,CAST(NULL AS FLOAT) AS schooloperations_11
+             ,CAST(NULL AS FLOAT) AS region_3
+             ,CAST(NULL AS FLOAT) AS region_4
+             ,CAST(NULL AS FLOAT) AS region_5
+             ,CAST(NULL AS FLOAT) AS teachinglearning_11
+             ,CAST(NULL AS FLOAT) AS teachinglearning_12
+             ,CAST(NULL AS FLOAT) AS teachinglearning_13
+             ,CAST(NULL AS FLOAT) AS technology_14
+             ,CAST(NULL AS FLOAT) AS technology_16
+             ,CAST(NULL AS FLOAT) AS technology_15
+             ,CAST(NULL AS FLOAT) AS region_8
        FROM gabby.surveys.r9engagement_survey_archive
 
        UNION ALL

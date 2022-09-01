@@ -22,8 +22,8 @@ SELECT co.student_number
       ,co.lunch_balance AS total_balance
       ,co.advisor_name AS home_room
       ,gabby.utilities.GLOBAL_ACADEMIC_YEAR() + (13 - co.grade_level) AS graduation_year
-      ,CONVERT(VARCHAR, de.district_entry_date, 101) AS district_entry_date
-      ,CONVERT(VARCHAR, de.district_entry_date, 101) AS school_entry_date
+      ,CAST(de.district_entry_date, 101 AS VARCHAR) AS district_entry_date
+      ,CAST(de.district_entry_date, 101 AS VARCHAR) AS school_entry_date
       ,co.[db_name]
 FROM gabby.powerschool.cohort_identifiers_static co
 LEFT JOIN gabby.powerschool.district_entry_date de

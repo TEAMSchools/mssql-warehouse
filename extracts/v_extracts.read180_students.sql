@@ -9,7 +9,7 @@ SELECT co.student_web_id AS [USER_NAME]
       ,co.first_name AS FIRST_NAME
       ,NULL AS MIDDLE_NAME
       ,co.last_name AS LAST_NAME
-      ,CASE WHEN co.grade_level = 0 THEN 'K' ELSE CONVERT(VARCHAR(2), co.grade_level) END AS GRADE /* PK, K, 1-12 */
+      ,CASE WHEN co.grade_level = 0 THEN 'K' ELSE CAST(co.grade_level AS VARCHAR(2)) END AS GRADE /* PK, K, 1-12 */
       ,s.[name] AS SCHOOL_NAME
       ,CONCAT(enr.course_number, '.', UPPER(enr.section_number)) AS CLASS_NAME
       ,NULL AS LEXILE_SCORE

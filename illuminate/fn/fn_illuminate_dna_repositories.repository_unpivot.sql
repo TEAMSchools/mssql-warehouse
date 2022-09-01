@@ -14,7 +14,7 @@ BEGIN
     @sql NVARCHAR(MAX) = '';
 
   SELECT @field_names = gabby.dbo.GROUP_CONCAT_D(f.[name], ', ')
-        ,@field_names_converted = gabby.dbo.GROUP_CONCAT_D('CONVERT(NVARCHAR(256),' + f.[name] + ') AS ' + f.[name], ', ')
+        ,@field_names_converted = gabby.dbo.GROUP_CONCAT_D('CAST(' + f.[name] + ') AS ' + f.[name], ', ' AS NVARCHAR(256))
   FROM illuminate_dna_repositories.fields f 
   JOIN gabby.utilities.all_tables_columns atc
     ON CONCAT('repository_', f.repository_id) = atc.table_name
@@ -23,9 +23,9 @@ BEGIN
   WHERE f.repository_id = @repository_id
     AND f.deleted_at IS NULL;
 
-  SELECT @sql = CONCAT('SELECT sub.repository_id, sub.repository_row_id, sub.[value], CONVERT(NVARCHAR(32), f.[label]) AS [label], s.local_student_id, CONVERT(DATE, r.date_administered) AS date_administered', ' '
+  SELECT @sql = CONCAT('SELECT sub.repository_id, sub.repository_row_id, sub.[value], CAST(f.[label] AS NVARCHAR(32)) AS [label], s.local_student_id, CAST(r.date_administered AS DATE) AS date_administered', ' '
                       ,'FROM (', ' '
-                      ,'SELECT repository_id, repository_row_id, student_id, CONVERT(VARCHAR(125), field) AS field, CONVERT(VARCHAR(25), [value]) AS [value] FROM (', ' '
+                      ,'SELECT repository_id, repository_row_id, student_id, CAST(field AS VARCHAR(125)) AS field, CAST([value] AS VARCHAR(25)) AS [value] FROM (', ' '
                       ,'SELECT ', @repository_id, ' AS repository_id, repository_row_id, student_id, ', @field_names_converted, ' '
                       ,'FROM illuminate_dna_repositories.repository_', @repository_id, ') sub', ' '
                       ,'UNPIVOT([value] FOR field IN (', @field_names, ')) u', ' '

@@ -15,17 +15,17 @@ WITH unpivoted AS (
        SELECT associate_id
              ,position_id
              ,_modified AS date_modified
-             ,CONVERT(NVARCHAR(MAX), business_unit_description) AS business_unit_description
-             ,CONVERT(NVARCHAR(MAX), location_description) AS location_description
-             ,CONVERT(NVARCHAR(MAX), home_department_description) AS home_department_description
-             ,CONVERT(NVARCHAR(MAX), job_title_description) AS job_title_description
-             ,CONVERT(NVARCHAR(MAX), reports_to_associate_id) AS reports_to_associate_id
-             ,CONVERT(NVARCHAR(MAX), annual_salary) AS annual_salary
-             ,CONVERT(NVARCHAR(MAX), flsa_description) AS flsa_description
-             ,CONVERT(NVARCHAR(MAX), wfmgr_pay_rule) AS wfmgr_pay_rule
-             ,CONVERT(NVARCHAR(MAX), wfmgr_accrual_profile) AS wfmgr_accrual_profile
-             ,CONVERT(NVARCHAR(MAX), wfmgr_ee_type) AS wfmgr_ee_type
-             ,CONVERT(NVARCHAR(MAX), wfmgr_badge_number) AS wfmgr_badge_number
+             ,CAST(business_unit_description AS NVARCHAR(MAX)) AS business_unit_description
+             ,CAST(location_description AS NVARCHAR(MAX)) AS location_description
+             ,CAST(home_department_description AS NVARCHAR(MAX)) AS home_department_description
+             ,CAST(job_title_description AS NVARCHAR(MAX)) AS job_title_description
+             ,CAST(reports_to_associate_id AS NVARCHAR(MAX)) AS reports_to_associate_id
+             ,CAST(annual_salary AS NVARCHAR(MAX)) AS annual_salary
+             ,CAST(flsa_description AS NVARCHAR(MAX)) AS flsa_description
+             ,CAST(wfmgr_pay_rule AS NVARCHAR(MAX)) AS wfmgr_pay_rule
+             ,CAST(wfmgr_accrual_profile AS NVARCHAR(MAX)) AS wfmgr_accrual_profile
+             ,CAST(wfmgr_ee_type AS NVARCHAR(MAX)) AS wfmgr_ee_type
+             ,CAST(wfmgr_badge_number AS NVARCHAR(MAX)) AS wfmgr_badge_number
        FROM gabby.adp.employees_archive
        WHERE position_id IS NOT NULL
          AND position_status <> 'Terminated'

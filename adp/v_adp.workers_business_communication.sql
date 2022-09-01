@@ -8,8 +8,8 @@ SELECT w.associate_oid
 
       ,bc.itemID AS item_id
       ,bc.emailUri AS email_uri
-      ,CONVERT(NVARCHAR(128), JSON_VALUE(bc.nameCode, '$.codeValue')) AS code_value
-      ,CONVERT(NVARCHAR(128), JSON_VALUE(bc.nameCode, '$.shortName')) AS short_name
+      ,CAST(JSON_VALUE(bc.nameCode, '$.codeValue') AS NVARCHAR(128)) AS code_value
+      ,CAST(JSON_VALUE(bc.nameCode, '$.shortName') AS NVARCHAR(128)) AS short_name
 FROM gabby.adp.workers w
 CROSS APPLY OPENJSON(w.business_communication, '$.emails') 
   WITH(

@@ -24,7 +24,7 @@ FROM
            ,CONCAT('<ElectronicAddress>', ad.mail, '</ElectronicAddress>') AS ElectronicAddress
      FROM gabby.dayforce.employees df
      JOIN gabby.adsi.user_attributes_static ad
-       ON df.df_employee_number = CONVERT(VARCHAR, ad.employeenumber)
+       ON df.df_employee_number = CAST(ad.employeenumber AS VARCHAR)
       AND ISNUMERIC(ad.employeenumber) = 1
      WHERE df.[status] <> 'TERMINATED'
     ) sub

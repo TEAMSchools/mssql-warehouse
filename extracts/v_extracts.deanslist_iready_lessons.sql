@@ -16,8 +16,8 @@ WITH schoolids AS (
 ,terms AS (
   SELECT t.term_name
         ,t.term_id
-        ,CONVERT(DATE, JSON_VALUE(t.[start_date], '$.date')) AS [start_date]
-        ,CONVERT(DATE, JSON_VALUE(t.end_date, '$.date')) AS end_date
+        ,CAST(JSON_VALUE(t.[start_date], '$.date') AS DATE) AS [start_date]
+        ,CAST(JSON_VALUE(t.end_date, '$.date') AS DATE) AS end_date
 
         ,s.ps_school_id
   FROM gabby.deanslist.terms t
@@ -42,7 +42,7 @@ JOIN gabby.people.school_crosswalk sc
   ON pl.school = sc.site_name
 JOIN terms t
   ON sc.ps_school_id = t.ps_school_id
- AND CONVERT(DATE, pl.completion_date) BETWEEN t.[start_date] AND t.end_date
+ AND CAST(pl.completion_date AS DATE) BETWEEN t.[start_date] AND t.end_date
 WHERE pl.completion_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
 GROUP BY pl.student_id
         ,pl.[subject]

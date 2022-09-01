@@ -57,11 +57,11 @@ SELECT rr.assessment_id
       ,rr.academic_year
       ,rr.administered_at
       ,rr.date_taken
-      ,CONVERT(VARCHAR(250), rr.title) AS title
-      ,CONVERT(VARCHAR(125), rr.scope) AS scope
-      ,CONVERT(VARCHAR(125), rr.subject_area) AS subject_area
-      ,CONVERT(VARCHAR(25), rr.module_type) AS module_type
-      ,CONVERT(VARCHAR(5), rr.module_number) AS module_number
+      ,CAST(rr.title AS VARCHAR(250)) AS title
+      ,CAST(rr.scope AS VARCHAR(125)) AS scope
+      ,CAST(rr.subject_area AS VARCHAR(125)) AS subject_area
+      ,CAST(rr.module_type AS VARCHAR(25)) AS module_type
+      ,CAST(rr.module_number AS VARCHAR(5)) AS module_number
       ,rr.response_type
       ,rr.standard_id
       ,rr.points
@@ -73,10 +73,10 @@ SELECT rr.assessment_id
       ,rr.performance_band_set_id
       ,rr.is_normed_scope
 
-      ,CONVERT(INT, s.local_student_id) AS local_student_id
+      ,CAST(s.local_student_id AS INT) AS local_student_id
 
-      ,CONVERT(VARCHAR(5), rta.alt_name) AS term_administered
-      ,CONVERT(VARCHAR(5), rtt.alt_name) AS term_taken
+      ,CAST(rta.alt_name AS VARCHAR(5)) AS term_administered
+      ,CAST(rtt.alt_name AS VARCHAR(5)) AS term_taken
       
       ,pbl.label_number AS performance_band_number
       ,pbl.[label] AS performance_band_label

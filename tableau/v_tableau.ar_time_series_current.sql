@@ -85,11 +85,11 @@ FROM
            ,last_book_lexile
            ,last_book_pct_correct
 
-           ,words_goal_yr * (CONVERT(FLOAT, DATEDIFF(DAY, y1_start_date, [date])) / DATEDIFF(DAY, y1_start_date, y1_end_date)) AS ontrack_words_yr
-           ,words_goal_term * (CONVERT(FLOAT, DATEDIFF(DAY, term_start_date, [date])) / DATEDIFF(DAY, term_start_date, term_end_date)) AS ontrack_words_term
+           ,words_goal_yr * (CAST(DATEDIFF(DAY, y1_start_date, [date])) / DATEDIFF(DAY, y1_start_date, y1_end_date) AS FLOAT) AS ontrack_words_yr
+           ,words_goal_term * (CAST(DATEDIFF(DAY, term_start_date, [date])) / DATEDIFF(DAY, term_start_date, term_end_date) AS FLOAT) AS ontrack_words_term
 
            ,CASE
-             WHEN DATEPART(WEEK, [date]) = DATEPART(WEEK, CONVERT(DATE, GETDATE())) THEN 1
+             WHEN DATEPART(WEEK, [date]) = DATEPART(WEEK, CAST(CURRENT_TIMESTAMP AS DATE)) THEN 1
              WHEN DATEPART(WEEK, [date]) = DATEPART(WEEK, MAX([date]) OVER(PARTITION BY schoolid, academic_year, student_number)) THEN 1
              ELSE 0
             END AS is_current_week
@@ -112,8 +112,8 @@ FROM
                 ,co.[date]
                 ,co.region
 
-                ,CONVERT(VARCHAR(25), dts.alt_name) AS term
-                ,CONVERT(VARCHAR(25), dts.time_per_name) AS goal_term
+                ,CAST(dts.alt_name AS VARCHAR(25)) AS term
+                ,CAST(dts.time_per_name AS VARCHAR(25)) AS goal_term
                 ,dts.[start_date] AS term_start_date
                 ,dts.end_date AS term_end_date
                 ,dts.is_curterm
@@ -191,6 +191,6 @@ FROM
            AND co.[date] = ar.date_taken
           WHERE co.enroll_status = 0
             AND (co.school_level = 'MS' OR (co.schoolid = 73256 AND co.grade_level = 4)) /* ad-hoc exception for Seek 4*/
-            AND co.[date] <= CONVERT(DATE, GETDATE())
+            AND co.[date] <= CAST(CURRENT_TIMESTAMP AS DATE)
          ) sub
     ) sub

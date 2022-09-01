@@ -28,12 +28,12 @@ SELECT id AS survey_question_id
       ,JSON_VALUE(properties, '$.url') AS [url]
       ,JSON_VALUE(properties, '$.orientation') AS orientation
       ,JSON_QUERY(properties, '$.custom_css') AS custom_css
-      ,CONVERT(BIT, JSON_VALUE(properties, '$.question_description_above')) AS question_description_above
-      ,CONVERT(BIT, JSON_VALUE(properties, '$."soft-required"')) AS soft_required
-      ,CONVERT(BIT, JSON_VALUE(properties, '$.disabled')) AS [disabled]
-      ,CONVERT(BIT, JSON_VALUE(properties, '$.hide_after_response')) AS hide_after_response
-      ,CONVERT(BIT, JSON_VALUE(properties, '$.break_after')) AS break_after
-      ,CONVERT(VARCHAR(500), gabby.utilities.STRIP_HTML(JSON_VALUE(title, '$.English'))) AS title_clean
+      ,CAST(JSON_VALUE(properties, '$.question_description_above') AS BIT) AS question_description_above
+      ,CAST(JSON_VALUE(properties, '$."soft-required"') AS BIT) AS soft_required
+      ,CAST(JSON_VALUE(properties, '$.disabled') AS BIT) AS [disabled]
+      ,CAST(JSON_VALUE(properties, '$.hide_after_response') AS BIT) AS hide_after_response
+      ,CAST(JSON_VALUE(properties, '$.break_after') AS BIT) AS break_after
+      ,CAST(gabby.utilities.STRIP_HTML(JSON_VALUE(title, '$.English')) AS VARCHAR(500)) AS title_clean
 
       ,JSON_QUERY(properties, '$.messages') AS messages_json
       ,JSON_QUERY(properties, '$.show_rules') AS show_rules_json

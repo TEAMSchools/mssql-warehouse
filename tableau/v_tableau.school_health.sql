@@ -187,7 +187,7 @@ SELECT 'ada' AS domain
       ,co.academic_year
       ,co.schoolid
       ,'ALL' AS grade_band      
-      ,ROUND(AVG(CONVERT(FLOAT, mem.attendancevalue)), 3) AS pct_met_goal
+      ,ROUND(AVG(CAST(mem.attendancevalue AS FLOAT)), 3) AS pct_met_goal
       ,ROUND(AVG(CASE WHEN co.iep_status = 'SPED' THEN CAST(mem.attendancevalue AS FLOAT) ELSE NULL END), 2) AS pct_met_iep
       ,ROUND(AVG(CASE WHEN co.iep_status <> 'SPED' THEN CAST(mem.attendancevalue AS FLOAT) ELSE NULL END), 2) AS pct_met_no_iep
       ,ROUND(AVG(CASE WHEN co.gender = 'F' THEN CAST(mem.attendancevalue AS FLOAT) ELSE NULL END), 2) AS pct_met_f
@@ -200,7 +200,7 @@ INNER JOIN gabby.powerschool.cohort_identifiers_static co
  AND co.rn_year = 1
  AND co.is_enrolled_y1 = 1
 WHERE mem.membershipvalue = 1
-  AND mem.calendardate <= GETDATE()
+  AND mem.calendardate <= CURRENT_TIMESTAMP
   AND mem.yearid >= ((gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 2) - 1990)
 GROUP BY co.academic_year
         ,co.schoolid

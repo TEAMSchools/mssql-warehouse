@@ -28,8 +28,8 @@ SELECT sub.employee_number
                                WHEN DATEPART(YEAR, sub.position_effective_date) > gabby.utilities.GLOBAL_ACADEMIC_YEAR()
                                 AND DATEPART(MONTH, sub.position_effective_date) >= 7
                                     THEN DATEPART(YEAR, sub.position_effective_date) + 1
-                               WHEN DATEPART(YEAR, GETDATE()) = gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1
-                                AND DATEPART(MONTH, GETDATE()) >= 7
+                               WHEN DATEPART(YEAR, CURRENT_TIMESTAMP) = gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1
+                                AND DATEPART(MONTH, CURRENT_TIMESTAMP) >= 7
                                     THEN gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 2
                                ELSE gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1
                               END, 6, 30)) AS position_effective_end_date_eoy
@@ -49,10 +49,10 @@ FROM
            ,wah.job_change_reason_description
            ,wah.primary_position
            ,CASE 
-             WHEN CONVERT(DATE, wah.position_effective_date) > '2021-01-01' THEN CONVERT(DATE, wah.position_effective_date)
+             WHEN CAST(wah.position_effective_date AS DATE) > '2021-01-01' THEN CAST(wah.position_effective_date AS DATE)
              ELSE '2021-01-01'
             END AS position_effective_date
-           ,CONVERT(DATE, wah.position_effective_end_date) AS position_effective_end_date
+           ,CAST(wah.position_effective_end_date AS DATE) AS position_effective_end_date
 
            ,sr.employee_number
 
@@ -61,8 +61,8 @@ FROM
      JOIN gabby.people.employee_numbers sr
        ON wah.associate_id = sr.associate_id
       AND sr.is_active = 1
-     WHERE '2021-01-01' BETWEEN CONVERT(DATE, wah.position_effective_date) AND COALESCE(CONVERT(DATE, wah.position_effective_end_date), GETDATE())
-        OR CONVERT(DATE, wah.position_effective_date) > '2021-01-01'
+     WHERE '2021-01-01' BETWEEN CAST(wah.position_effective_date AS DATE) AND COALESCE(CAST(wah.position_effective_end_date AS DATE), CURRENT_TIMESTAMP)
+        OR CAST(wah.position_effective_date AS DATE) > '2021-01-01'
 
      UNION ALL
 

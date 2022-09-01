@@ -9,7 +9,7 @@ SELECT u.df_employee_number
       ,u.[value] AS exemption
 FROM
     (
-     SELECT CONVERT(INT,SUBSTRING(name_school_id_, (CHARINDEX('[', name_school_id_) + 1), 6)) AS df_employee_number
+     SELECT CAST(SUBSTRING(name_school_id_, (CHARINDEX('[', name_school_id_) + 1), 6) AS INT) AS df_employee_number
            ,academic_year
            ,pm_1 AS PM1
            ,pm_2 AS PM2

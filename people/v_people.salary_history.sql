@@ -22,8 +22,8 @@ SELECT sub.employee_number
                                WHEN DATEPART(YEAR, sub.regular_pay_effective_date) > gabby.utilities.GLOBAL_ACADEMIC_YEAR()
                                 AND DATEPART(MONTH, sub.regular_pay_effective_date) >= 7
                                     THEN DATEPART(YEAR, sub.regular_pay_effective_date) + 1
-                               WHEN DATEPART(YEAR, GETDATE()) = gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1
-                                AND DATEPART(MONTH, GETDATE()) >= 7
+                               WHEN DATEPART(YEAR, CURRENT_TIMESTAMP) = gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1
+                                AND DATEPART(MONTH, CURRENT_TIMESTAMP) >= 7
                                     THEN gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 2
                                ELSE gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1
                               END, 6, 30)) AS regular_pay_effective_end_date_eoy
@@ -34,12 +34,12 @@ FROM
            ,sh.position_id
            ,sh.file_number
            ,CASE 
-             WHEN CONVERT(DATE, sh.regular_pay_effective_date) > '2021-01-01' THEN CONVERT(DATE, sh.regular_pay_effective_date)
+             WHEN CAST(sh.regular_pay_effective_date AS DATE) > '2021-01-01' THEN CAST(sh.regular_pay_effective_date AS DATE)
              ELSE '2021-01-01'
             END AS regular_pay_effective_date
-           ,CONVERT(DATE, sh.regular_pay_effective_end_date) AS regular_pay_effective_end_date
-           ,CONVERT(MONEY, sh.annual_salary) AS annual_salary
-           ,CONVERT(MONEY, sh.regular_pay_rate_amount) AS regular_pay_rate_amount
+           ,CAST(sh.regular_pay_effective_end_date AS DATE) AS regular_pay_effective_end_date
+           ,CAST(sh.annual_salary AS MONEY) AS annual_salary
+           ,CAST(sh.regular_pay_rate_amount AS MONEY) AS regular_pay_rate_amount
            ,sh.compensation_change_reason_description
 
            ,sr.employee_number
@@ -49,10 +49,10 @@ FROM
      JOIN gabby.people.employee_numbers sr
        ON sh.associate_id = sr.associate_id
       AND sr.is_active = 1
-     WHERE (CONVERT(DATE, sh.regular_pay_effective_date) < CONVERT(DATE, sh.regular_pay_effective_end_date)
+     WHERE (CAST(sh.regular_pay_effective_date AS DATE) < CAST(sh.regular_pay_effective_end_date AS DATE)
               OR sh.regular_pay_effective_end_date IS NULL)
-       AND ('2021-01-01' BETWEEN CONVERT(DATE, sh.regular_pay_effective_date) AND COALESCE(CONVERT(DATE, sh.regular_pay_effective_end_date), GETDATE())
-              OR CONVERT(DATE, sh.regular_pay_effective_date) > '2021-01-01')
+       AND ('2021-01-01' BETWEEN CAST(sh.regular_pay_effective_date AS DATE) AND COALESCE(CAST(sh.regular_pay_effective_end_date AS DATE), CURRENT_TIMESTAMP)
+              OR CAST(sh.regular_pay_effective_date AS DATE) > '2021-01-01')
 
      UNION ALL
 
@@ -76,6 +76,6 @@ FROM
      JOIN gabby.people.employee_numbers sr
        ON ds.number = sr.employee_number
       AND sr.is_active = 1
-     WHERE CONVERT(DATE, ds.effective_start) <= '2020-12-31'
+     WHERE CAST(ds.effective_start AS DATE) <= '2020-12-31'
     ) sub
 WHERE sub.annual_salary > 0

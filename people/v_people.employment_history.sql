@@ -56,8 +56,8 @@ WITH date_scaffold AS (
                                  WHEN DATEPART(YEAR,d.effective_start_date) > gabby.utilities.GLOBAL_ACADEMIC_YEAR()
                                   AND DATEPART(MONTH,d.effective_start_date) >= 7
                                       THEN DATEPART(YEAR,d.effective_start_date) + 1
-                                 WHEN DATEPART(YEAR, GETDATE()) = gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1
-                                  AND DATEPART(MONTH, GETDATE()) >= 7
+                                 WHEN DATEPART(YEAR, CURRENT_TIMESTAMP) = gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1
+                                  AND DATEPART(MONTH, CURRENT_TIMESTAMP) >= 7
                                       THEN gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 2
                                  ELSE gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1
                                 END, 6, 30)) AS effective_end_date
@@ -83,7 +83,7 @@ SELECT r.employee_number
       ,r.file_number
       ,r.effective_start_date
       ,r.effective_end_date
-      ,CASE WHEN CONVERT(DATE, GETDATE()) BETWEEN r.effective_start_date AND r.effective_end_date THEN 1 END AS is_current_record
+      ,CASE WHEN CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN r.effective_start_date AND r.effective_end_date THEN 1 END AS is_current_record
 
       ,s.position_status
       ,s.termination_reason_description AS termination_reason

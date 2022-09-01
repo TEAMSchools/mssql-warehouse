@@ -27,7 +27,7 @@ WITH webhook_feed AS (
   FROM gabby.surveys.self_and_others_survey s
   JOIN gabby.surveygizmo.survey_campaign_clean_static c
     ON c.survey_id = 4561325
-   AND CONVERT(DATETIME2, s._created) BETWEEN c.link_open_date AND c.link_close_date
+   AND CAST(s._created AS DATETIME2) BETWEEN c.link_open_date AND c.link_close_date
   WHERE gabby.utilities.DATE_TO_SY(s._created) = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
     AND s.subject_name IS NOT NULL
 
@@ -56,7 +56,7 @@ WITH webhook_feed AS (
   FROM gabby.surveys.manager_survey m
   JOIN gabby.surveygizmo.survey_campaign_clean_static c
     ON c.survey_id = 4561288
-   AND CONVERT(DATETIME2, m._created) BETWEEN c.link_open_date AND c.link_close_date
+   AND CAST(m._created AS DATETIME2) BETWEEN c.link_open_date AND c.link_close_date
   WHERE gabby.utilities.DATE_TO_SY(m._created) = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
     AND m.subject_name IS NOT NULL
     AND m.q_1 IS NOT NULL
@@ -81,7 +81,7 @@ WITH webhook_feed AS (
   FROM gabby.surveys.r_9_engagement_survey e
   JOIN gabby.surveygizmo.survey_campaign_clean_static c
     ON c.survey_id = 5300913
-   AND CONVERT(DATETIME2, e._created) BETWEEN c.link_open_date AND c.link_close_date
+   AND CAST(e._created AS DATETIME2) BETWEEN c.link_open_date AND c.link_close_date
   WHERE gabby.utilities.DATE_TO_SY(e._created) = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   )
 
@@ -140,7 +140,7 @@ WITH webhook_feed AS (
           WHEN sr.[status] IN ('INACTIVE', 'ADMIN_LEAVE') THEN 'LEAVE' 
           ELSE sr.[status] 
          END AS position_status
-        ,LOWER(sr.userprincipalname) as email1
+        ,LOWER(sr.userprincipalname) AS email1
         ,CASE 
           WHEN LOWER(REPLACE(sr.userprincipalname, '-', '')) = LOWER(sr.userprincipalname) THEN NULL
           ELSE LOWER(REPLACE(sr.userprincipalname, '-', ''))
@@ -169,7 +169,7 @@ WITH webhook_feed AS (
           WHEN sr.[status] IN ('INACTIVE', 'ADMIN_LEAVE') THEN 'LEAVE' 
           ELSE sr.[status] 
          END AS position_status
-        ,LOWER(sr.userprincipalname) as email1
+        ,LOWER(sr.userprincipalname) AS email1
         ,CASE 
           WHEN LOWER(REPLACE(sr.userprincipalname, '-', '')) = LOWER(sr.userprincipalname) THEN NULL
           ELSE LOWER(REPLACE(sr.userprincipalname, '-', ''))
@@ -199,7 +199,7 @@ WITH webhook_feed AS (
           ELSE sr.[status]
          END AS position_status
 
-        ,LOWER(sr.userprincipalname) as email1
+        ,LOWER(sr.userprincipalname) AS email1
         ,CASE 
           WHEN LOWER(REPLACE(sr.userprincipalname, '-', '')) = LOWER(sr.userprincipalname) THEN NULL
           ELSE LOWER(REPLACE(sr.userprincipalname, '-', ''))

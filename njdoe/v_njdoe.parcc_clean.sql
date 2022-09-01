@@ -19,8 +19,8 @@ SELECT academic_year
         WHEN test_code LIKE 'ELA00%' THEN REPLACE(test_code, '00', '0')
         ELSE test_code
        END AS test_code
-      ,CONVERT(INT, CASE WHEN reg_to_test <> '' THEN reg_to_test END) AS reg_to_test
-      ,CONVERT(INT, CASE WHEN not_tested <> '' THEN not_tested END) AS not_tested
+      ,CAST(CASE WHEN reg_to_test <> '' THEN reg_to_test END AS INT) AS reg_to_test
+      ,CAST(CASE WHEN not_tested <> '' THEN not_tested END AS INT) AS not_tested
       ,valid_scores
       ,mean_score
       ,l_1_percent

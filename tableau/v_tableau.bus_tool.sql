@@ -29,7 +29,7 @@ SELECT s.student_number
       ,suf.bus_info_pm
       ,suf.bus_info_fridays AS bus_info_pm_early
       ,suf.bus_notes
-      ,CONVERT(DATETIME2, suf._modified) AS last_modified
+      ,CAST(suf._modified AS DATETIME2) AS last_modified
       ,CASE 
         WHEN suf.bus_info_am NOT LIKE '%-%-%' THEN suf.bus_info_am
         ELSE SUBSTRING(
@@ -86,15 +86,15 @@ LEFT JOIN kippmiami.powerschool.u_studentsuserfields suf WITH(NOLOCK)
 LEFT JOIN kippmiami.powerschool.cc WITH(NOLOCK)
   ON s.id = cc.studentid
  AND cc.course_number = 'HR'
- AND CASE WHEN cc.dateenrolled > CONVERT(DATE, GETDATE()) THEN cc.dateenrolled ELSE CONVERT(DATE, GETDATE()) END BETWEEN cc.dateenrolled AND cc.dateleft
+ AND CASE WHEN cc.dateenrolled > CAST(CURRENT_TIMESTAMP AS DATE) THEN cc.dateenrolled ELSE CAST(CURRENT_TIMESTAMP AS DATE) END BETWEEN cc.dateenrolled AND cc.dateleft
 LEFT JOIN kippmiami.powerschool.[log] WITH(NOLOCK)
   ON s.id = [log].studentid
  AND [log].logtypeid = 1582
- AND [log].discipline_incidentdate = CONVERT(DATE, GETDATE())
+ AND [log].discipline_incidentdate = CAST(CURRENT_TIMESTAMP AS DATE)
 LEFT JOIN kippmiami.powerschool.attendance_clean_current_static att WITH(NOLOCK)
   ON s.id = att.studentid
  AND att.att_mode_code = 'ATT_ModeDaily'
- AND CONVERT(DATE, att.att_date) = CONVERT(DATE, GETDATE())
+ AND CAST(att.att_date AS DATE) = CAST(CURRENT_TIMESTAMP AS DATE)
 LEFT JOIN kippmiami.powerschool.attendance_code code WITH(NOLOCK)
   ON att.attendance_codeid = code.id
  AND (code.att_code LIKE 'A%' OR code.att_code = 'OSS')

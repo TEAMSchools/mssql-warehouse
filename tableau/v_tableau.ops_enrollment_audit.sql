@@ -35,16 +35,16 @@ WITH residency_verification AS (
         ,sub.entry_status
         ,sub.registration_status
         
-        ,CONVERT(VARCHAR(500), sub.lunch_app_status) COLLATE Latin1_General_BIN AS lunch_app_status
-        ,CONVERT(VARCHAR(500), sub.lunch_balance) COLLATE Latin1_General_BIN AS lunch_balance
-        ,CONVERT(VARCHAR(500), sub.iep_registration_followup) COLLATE Latin1_General_BIN AS iep_registration_followup_required
-        ,CONVERT(VARCHAR(500), sub.lep_registration_followup) COLLATE Latin1_General_BIN AS lep_registration_followup_required
-        ,CONVERT(VARCHAR(500), sub.birth_certificate_proof) COLLATE Latin1_General_BIN AS birth_certificate_proof
-        ,CONVERT(VARCHAR(500), sub.residency_proof_1) COLLATE Latin1_General_BIN AS residency_proof_1
-        ,CONVERT(VARCHAR(500), sub.residency_proof_2) COLLATE Latin1_General_BIN AS residency_proof_2
-        ,CONVERT(VARCHAR(500), sub.residency_proof_3) COLLATE Latin1_General_BIN AS residency_proof_3
+        ,CAST(sub.lunch_app_status AS VARCHAR(500)) COLLATE Latin1_General_BIN AS lunch_app_status
+        ,CAST(sub.lunch_balance AS VARCHAR(500)) COLLATE Latin1_General_BIN AS lunch_balance
+        ,CAST(sub.iep_registration_followup AS VARCHAR(500)) COLLATE Latin1_General_BIN AS iep_registration_followup_required
+        ,CAST(sub.lep_registration_followup AS VARCHAR(500)) COLLATE Latin1_General_BIN AS lep_registration_followup_required
+        ,CAST(sub.birth_certificate_proof AS VARCHAR(500)) COLLATE Latin1_General_BIN AS birth_certificate_proof
+        ,CAST(sub.residency_proof_1 AS VARCHAR(500)) COLLATE Latin1_General_BIN AS residency_proof_1
+        ,CAST(sub.residency_proof_2 AS VARCHAR(500)) COLLATE Latin1_General_BIN AS residency_proof_2
+        ,CAST(sub.residency_proof_3 AS VARCHAR(500)) COLLATE Latin1_General_BIN AS residency_proof_3
         
-        ,CONVERT(VARCHAR(500), sub.region + sub.city) COLLATE Latin1_General_BIN AS region_city
+        ,CAST(sub.region + sub.city AS VARCHAR(500)) COLLATE Latin1_General_BIN AS region_city
         
         ,CONVERT(VARCHAR(500), 
            CASE
@@ -89,7 +89,7 @@ WITH residency_verification AS (
              ,ISNULL(co.specialed_classification, '') AS specialed_classification
              ,ISNULL(co.lep_status, '') AS lep_status
              ,ISNULL(co.lunch_app_status, '') AS lunch_app_status
-             ,CONVERT(MONEY, ISNULL(co.lunch_balance, 0)) AS lunch_balance
+             ,CAST(ISNULL(co.lunch_balance, 0) AS MONEY) AS lunch_balance
              ,CASE
                WHEN s.enroll_status = -1 THEN 'Pre-Registered'
                WHEN COALESCE(co.year_in_network, 1) = 1 THEN 'New to KIPP NJ'
@@ -194,9 +194,9 @@ SELECT a.student_number
         WHEN u.field = 'lep_registration_followup_complete' AND u.[value] = 'N' THEN -1
         WHEN u.field = 'lunch_app_status' AND u.[value] NOT IN ('No Application', '') THEN 1
         WHEN u.field = 'lunch_app_status' AND u.[value] IN ('No Application', '') THEN -1
-        WHEN u.field = 'lunch_balance' AND CONVERT(MONEY, u.[value]) > 0 THEN 1
-        WHEN u.field = 'lunch_balance' AND CONVERT(MONEY, u.[value]) = 0 THEN 0
-        WHEN u.field = 'lunch_balance' AND CONVERT(MONEY, u.[value]) < 0 THEN -1
+        WHEN u.field = 'lunch_balance' AND CAST(u.[value] AS MONEY) > 0 THEN 1
+        WHEN u.field = 'lunch_balance' AND CAST(u.[value] AS MONEY) = 0 THEN 0
+        WHEN u.field = 'lunch_balance' AND CAST(u.[value] AS MONEY) < 0 THEN -1
         WHEN u.field = 'birth_certificate_proof' AND u.[value] NOT IN ('','N') THEN 1
         WHEN u.field = 'birth_certificate_proof' AND u.[value] IN ('','N') THEN -1
         WHEN u.field = 'residency_proof_1' AND u.[value] NOT IN ('','Missing') THEN 1

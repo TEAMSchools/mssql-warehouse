@@ -2,7 +2,7 @@ SELECT 'H1' AS ColA
       ,'601193' AS ColB /* account number */
       ,'00' AS ColC
       ,'KIPP THROUGH COLLEGE NEW JERSEY' AS ColD /* organization name */
-      ,CONVERT(VARCHAR,REPLACE(CONVERT(DATE,GETDATE()), '-', '')) AS ColE /* file creation date */
+      ,CAST(REPLACE(CAST(CURRENT_TIMESTAMP AS DATE), '-', '') AS VARCHAR) AS ColE /* file creation date */
       ,'DA' AS ColF /* inquiry purpose */
       ,'S' AS ColG
       ,NULL AS ColH
@@ -19,12 +19,12 @@ SELECT 'D1' AS ColA
       ,NULL AS ColD /* middle initial */
       ,last_name AS ColE
       ,NULL AS ColF /* name suffix */
-      ,CONVERT(VARCHAR,REPLACE(CONVERT(DATE,dob), '-', '')) AS ColG /* date of birth */
-      ,CONVERT(VARCHAR,REPLACE(CONVERT(DATE,exitdate), '-', '')) AS ColH /* search begin date */
+      ,CAST(REPLACE(CAST(dob AS DATE), '-', '') AS VARCHAR) AS ColG /* date of birth */
+      ,CAST(REPLACE(CAST(exitdate AS DATE), '-', '') AS VARCHAR) AS ColH /* search begin date */
       ,NULL AS ColI /* leave blank */
       ,NULL AS ColJ /* leave blank */
       ,'00' AS ColK
-      ,CONVERT(VARCHAR,student_number) AS ColL /* requestor return field */
+      ,CAST(student_number AS VARCHAR) AS ColL /* requestor return field */
 FROM gabby.powerschool.cohort_identifiers_static
 WHERE rn_undergrad = 1
   AND exitcode = 'G1'
@@ -34,7 +34,7 @@ WHERE rn_undergrad = 1
 UNION ALL
 
 SELECT 'T1'
-      ,CONVERT(VARCHAR,COUNT(student_number) + 2)
+      ,CAST(COUNT(student_number) + 2 AS VARCHAR)
       ,NULL
       ,NULL
       ,NULL

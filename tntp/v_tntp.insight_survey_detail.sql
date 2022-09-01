@@ -14,7 +14,7 @@ SELECT ird.administration_year
       ,ird.survey_type
       ,ird.[index]
       ,ird.variable
-      ,CONVERT(FLOAT,ird.value) AS value
+      ,CAST(ird.value AS FLOAT) AS value
       ,COALESCE(ird.state_cmo, ird.region) AS state_cmo
       ,CASE
         WHEN school = 'KIPP BOLD Academy' THEN 73258
@@ -50,7 +50,7 @@ LEFT JOIN gabby.tntp.insight_variables vars
   ON ird.variable = vars.variable
 LEFT JOIN gabby.tntp.insight_values vals
   ON ird.variable = vals.variable
- AND CONVERT(FLOAT,ird.value) = vals.value
+ AND CAST(ird.value AS FLOAT) = vals.value
 LEFT JOIN gabby.tntp.insight_variables_metadata ivm
   ON ird.variable = ivm.variable
  AND ivm._fivetran_deleted = 0

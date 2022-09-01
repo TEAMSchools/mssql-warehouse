@@ -62,7 +62,7 @@ WITH roles AS (
   LEFT JOIN business_groups bg
     ON cu.id = bg.[user_id]
   WHERE sr.position_status <> 'Prestart'
-    AND COALESCE(sr.termination_date, CONVERT(DATE, GETDATE())) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1, 7, 1)
+    AND COALESCE(sr.termination_date, CAST(CURRENT_TIMESTAMP AS DATE)) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1, 7, 1)
     AND ISNULL(sr.worker_category, '') NOT IN ('Intern', 'Part Time')
     AND ISNULL(sr.wfmgr_pay_rule, '') <> 'PT Hourly'
 
@@ -158,7 +158,7 @@ FROM
            ,CASE
              WHEN au.worker_category = 'Intern' THEN 'inactive' /* no interns */
              WHEN au.position_status = 'Leave'
-              AND (au.roles LIKE '%Edit Expense Report as Approver%' OR au.roles LIKE '%Edit Requisition as Approver%')
+              AND (au.roles LIKE '%Edit Expense Report AS Approver%' OR au.roles LIKE '%Edit Requisition AS Approver%')
                     THEN 'active' /* keep Approvers active while on leave */
              WHEN au.position_status = 'Leave' THEN 'inactive' /* deactivate all others on leave */
              WHEN ad.is_active = 1 THEN 'active'

@@ -53,8 +53,8 @@ WITH classes_dedupe AS (
        SELECT CONCAT('FPBAS', LEFT(fp.year_of_assessment, 4), fp._line) AS unique_id
              ,fp.student_identifier
              ,fp.year_of_assessment
-             ,CONVERT(INT, LEFT(fp.year_of_assessment, 4)) AS academic_year
-             ,CONVERT(DATE, fp.assessment_date) AS assessment_date
+             ,CAST(LEFT(fp.year_of_assessment, 4) AS INT) AS academic_year
+             ,CAST(fp.assessment_date AS DATE) AS assessment_date
              ,fp.genre
              ,fp.data_type
              ,fp.class_name
@@ -72,7 +72,7 @@ WITH classes_dedupe AS (
              ,fp.wpm_rate
              ,fp.writing
              ,fp.self_corrections /* how should this be parsed? */
-             ,CONVERT(VARCHAR(5), fp.text_level) AS text_level
+             ,CAST(fp.text_level AS VARCHAR(5)) AS text_level
              ,CASE
                WHEN fp.benchmark_level = 'Independent' THEN 'Achieved'
                WHEN fp.benchmark_level = 'Instructional' THEN 'Did Not Achieve'
@@ -211,7 +211,7 @@ SELECT cd.unique_id
 
       ,rt.alt_name AS test_round
       ,rt.time_per_name AS reporting_term
-      ,CONVERT(INT, RIGHT(rt.time_per_name, 1)) AS round_num
+      ,CAST(RIGHT(rt.time_per_name, 1) AS INT) AS round_num
 
       ,gleq.fp_lvl_num AS lvl_num
       ,gleq.gleq AS gleq

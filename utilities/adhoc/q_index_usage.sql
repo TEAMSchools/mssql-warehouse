@@ -6,8 +6,8 @@ SELECT DB_NAME() AS [db_name]
       ,ISNULL(ixus.user_updates, 0) AS total_writes
       ,CASE
         WHEN (ISNULL(ixus.user_seeks, 0) + ISNULL(ixus.user_scans, 0) + ISNULL(ixus.user_lookups, 0) + ISNULL(ixus.user_updates, 0)) = 0 THEN 0
-        ELSE CONVERT(FLOAT, (ISNULL(ixus.user_seeks, 0) + ISNULL(ixus.user_scans, 0) + ISNULL(ixus.user_lookups, 0))
-               / CONVERT(FLOAT, (ISNULL(ixus.user_seeks, 0) + ISNULL(ixus.user_scans, 0) + ISNULL(ixus.user_lookups, 0) + ISNULL(ixus.user_updates, 0))))
+        ELSE CAST((ISNULL(ixus.user_seeks, 0) + ISNULL(ixus.user_scans, 0) + ISNULL(ixus.user_lookups, 0) AS FLOAT)
+               / CAST((ISNULL(ixus.user_seeks, 0) + ISNULL(ixus.user_scans, 0) + ISNULL(ixus.user_lookups, 0) + ISNULL(ixus.user_updates, 0))) AS FLOAT)
        END AS pct_reads
 
       ,(SELECT MAX(dates.d) FROM (VALUES (ixus.last_user_seek),(ixus.last_user_scan),(ixus.last_user_lookup)) dates (d)) AS last_user_read

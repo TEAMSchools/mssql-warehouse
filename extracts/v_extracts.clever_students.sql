@@ -3,9 +3,9 @@ GO
 
 CREATE OR ALTER VIEW extracts.clever_students AS
 
-SELECT CONVERT(VARCHAR(25), co.schoolid) AS [School_id]
-      ,CONVERT(VARCHAR(25), co.student_number) AS [Student_id]
-      ,CONVERT(VARCHAR(25), co.student_number) AS [Student_number]
+SELECT CAST(co.schoolid AS VARCHAR(25)) AS [School_id]
+      ,CAST(co.student_number AS VARCHAR(25)) AS [Student_id]
+      ,CAST(co.student_number AS VARCHAR(25)) AS [Student_number]
       ,CASE 
         WHEN co.region = 'KMS' THEN suf.fleid 
         ELSE co.state_studentnumber 
@@ -15,11 +15,11 @@ SELECT CONVERT(VARCHAR(25), co.schoolid) AS [School_id]
       ,co.first_name AS [First_name]
       ,CASE
         WHEN co.grade_level = 0 THEN 'Kindergarten'
-        ELSE CONVERT(VARCHAR(5), co.grade_level)
+        ELSE CAST(co.grade_level AS VARCHAR(5))
        END AS [Grade]
       ,co.gender AS [Gender]
       ,co.cohort AS [Graduation_year]
-      ,CONVERT(VARCHAR(25), dob, 101) AS [DOB]
+      ,CAST(dob, 101 AS VARCHAR(25)) AS [DOB]
       ,co.ethnicity AS [Race]
       ,NULL AS [Hispanic_Latino]
       ,NULL AS [Home_language]
@@ -40,7 +40,7 @@ SELECT CONVERT(VARCHAR(25), co.schoolid) AS [School_id]
       ,sc.person_relationship AS [Contact_relationship]
       ,CASE WHEN sc.person_type IN ('mother', 'father', 'contact1', 'contact2') THEN 'primary' ELSE sc.person_type END AS [Contact_type]
       ,COALESCE(sc.person_name, sc.person_type) AS [Contact_name]
-      ,CONVERT(VARCHAR(25), LEFT(gabby.utilities.STRIP_CHARACTERS(sc.contact, '^0-9'), 10)) AS [Contact_phone]
+      ,CAST(LEFT(gabby.utilities.STRIP_CHARACTERS(sc.contact, '^0-9'), 10) AS VARCHAR(25)) AS [Contact_phone]
       ,CASE
         WHEN sc.contact_type = 'home' THEN 'Home'
         WHEN sc.contact_type = 'mobile' THEN 'Cell'

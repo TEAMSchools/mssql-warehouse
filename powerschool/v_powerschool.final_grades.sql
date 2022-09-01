@@ -1,381 +1,349 @@
 CREATE OR ALTER VIEW powerschool.final_grades AS
 
-WITH roster AS (
-  SELECT co.student_number
-        ,co.studentid
-        ,co.academic_year
-        ,co.schoolid
-        ,co.grade_level
-
-        ,css.term_name
-        ,css.is_curterm
-        ,css.course_number
-        ,css.sectionid
-        ,css.excludefromgpa
-        ,css.course_name
-        ,css.credittype
-        ,css.credit_hours
-        ,CONCAT('RT', RIGHT(css.term_name, 1)) AS reporting_term
-
-        ,t.lastfirst AS teacher_name
-
-        ,css.gradescaleid
-  FROM powerschool.cohort_identifiers_static co
-  INNER JOIN powerschool.course_section_scaffold_current_static css
-    ON co.student_number = css.student_number
-   AND co.yearid = css.yearid
-   AND css.course_number <> 'ALL'
-  INNER JOIN powerschool.sections sec
-    ON css.sectionid = sec.id
-  INNER JOIN powerschool.teachers_static t
-    ON sec.teacher = t.id
-  WHERE co.rn_year = 1
-    AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
- )
-
-,enr_grades AS (
-  SELECT student_number
-        ,academic_year
-        ,course_number
-        ,term_name
-        ,term_gpa_points
-
-        /* if stored grade exists, use that */
-        ,COALESCE(stored_letter, pgf_letter) AS term_grade_letter
-        ,COALESCE(stored_pct, pgf_pct) AS term_grade_percent
-
-        /* F* rule */
-        ,CASE 
-          WHEN COALESCE(stored_pct, pgf_pct) < 50 THEN 'F*'
-          ELSE COALESCE(stored_letter, pgf_letter)
-         END AS term_grade_letter_adjusted
-        ,CASE
-          WHEN COALESCE(stored_pct, pgf_pct) < 50 THEN 50
-          ELSE COALESCE(stored_pct, pgf_pct)
-         END AS term_grade_percent_adjusted
+WITH enr AS (
+  SELECT sub.studentid
+        ,sub.schoolid
+        ,sub.yearid
+        ,sub.termid
+        ,sub.termbin_start_date
+        ,sub.termbin_end_date
+        ,sub.course_number
+        ,sub.gradescaleid
+        ,sub.gradescaleid_unweighted
+        ,sub.potential_credit_hours
+        ,sub.excludefromgpa
+        ,sub.sectionid
+        ,sub.is_dropped_section
+        ,sub.dateleft
+        ,sub.storecode
+        ,sub.term_weighted_pts_poss
+        ,AVG(sub.is_dropped_section) OVER(PARTITION BY sub.yearid, sub.course_number, sub.studentid) AS is_dropped_course
   FROM
       (
-       SELECT enr.student_number
-             ,enr.course_number
-             ,enr.academic_year
+       SELECT cc.studentid
+             ,cc.schoolid
+             ,cc.dateenrolled
+             ,cc.dateleft
+             ,CASE WHEN cc.sectionid < 0 THEN 1.0 ELSE 0.0 END AS is_dropped_section
 
-             ,fg.finalgradename AS term_name
+             ,sec.id AS sectionid
+             ,sec.course_number
+             ,sec.termid
 
-             ,sg.grade AS stored_letter
-             ,ROUND(sg.[percent], 0) AS stored_pct
+             ,cou.gradescaleid
+             ,cou.excludefromgpa
+             ,cou.credit_hours AS potential_credit_hours
+             ,CASE
+               WHEN cou.gradescaleid = 712 THEN 874 /* unweighted 2016-2018 */
+               WHEN cou.gradescaleid = 991 THEN 976 /* unweighted 2019+ */
+               WHEN cou.gradescaleid IS NULL THEN 874 /* MISSING GRADESCALE - default 2016+ */
+               ELSE cou.gradescaleid
+              END AS gradescaleid_unweighted
+
+             ,tb.yearid
+             ,tb.storecode
+             ,tb.date_1 AS termbin_start_date
+             ,tb.date_2 AS termbin_end_date
 
              ,CASE
-               WHEN enr.sectionid < 0 AND sg.[percent] IS NULL THEN NULL
-               ELSE fg.grade
-              END AS pgf_letter
+               WHEN MIN(tb.storecode) OVER(PARTITION BY sec.id) LIKE 'Q%' THEN 25.0
+               WHEN tb.storecode LIKE 'Q%' THEN 22.5
+               WHEN tb.storecode LIKE 'E%' THEN 5.0
+              END AS term_weighted_pts_poss
+       FROM powerschool.cc
+       INNER JOIN powerschool.sections sec
+         ON ABS(cc.sectionid) = sec.id
+       INNER JOIN powerschool.courses cou
+         ON sec.course_number = cou.course_number
+       INNER JOIN powerschool.termbins tb
+         ON cc.schoolid = tb.schoolid
+        AND (tb.storecode LIKE 'Q%' OR tb.storecode LIKE 'E%')
+        AND tb.yearid = (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990)
+        AND tb.termid = CAST(CONCAT((gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990), '00') AS INT)
+       WHERE cc.dateenrolled >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
+         AND cc.course_number <> 'HR'
+      ) sub
+ )
+
+,enr_gr AS (
+  SELECT sub.studentid
+        ,sub.schoolid
+        ,sub.yearid
+        ,sub.termid
+        ,sub.termbin_start_date
+        ,sub.termbin_end_date
+        ,sub.course_number
+        ,sub.gradescaleid
+        ,sub.gradescaleid_unweighted
+        ,sub.fg_potential_credit_hours
+        ,sub.sg_potential_credit_hours
+        ,sub.sectionid
+        ,sub.is_dropped_section
+        ,sub.storecode
+        ,sub.fg_letter
+        ,sub.fg_letter_adj
+        ,sub.fg_percent
+        ,sub.fg_percent_adj
+        ,sub.fg_grade_pts
+        ,sub.fg_exclude_from_gpa
+        ,0 AS fg_exclude_from_graduation
+        ,sub.sg_letter
+        ,sub.sg_percent
+        ,sub.sg_grade_pts
+        ,sub.sg_exclude_from_gpa
+        ,sub.sg_exclude_from_graduation
+        ,sub.term_weighted_pts_poss
+        ,COALESCE(sub.sg_potential_credit_hours, sub.fg_potential_credit_hours) AS potential_credit_hours
+        ,COALESCE(sub.sg_exclude_from_gpa, sub.fg_exclude_from_gpa) AS exclude_from_gpa
+        ,COALESCE(sub.sg_exclude_from_graduation, 0) AS exclude_from_graduation
+        ,COALESCE(sub.sg_letter, sub.fg_letter) AS term_grade_letter
+        ,COALESCE(sub.sg_letter, sub.fg_letter_adj) AS term_grade_letter_adj
+        ,COALESCE(sub.sg_percent, sub.fg_percent) AS term_grade_percent
+        ,COALESCE(sub.sg_percent, sub.fg_percent_adj) AS term_grade_percent_adj
+        ,COALESCE(sub.sg_grade_pts, sub.fg_grade_pts) AS term_grade_pts
+        ,SUM(sub.term_weighted_pts_poss) OVER(PARTITION BY sub.yearid, sub.course_number, sub.studentid) AS y1_weighted_pts_poss
+        ,SUM(sub.term_weighted_pts_poss) OVER(
+           PARTITION BY sub.yearid, sub.course_number, sub.studentid 
+             ORDER BY sub.termbin_end_date ASC) AS y1_weighted_pts_poss_running
+  FROM
+      (
+       SELECT te.studentid
+             ,te.schoolid
+             ,te.yearid
+             ,te.termid
+             ,te.termbin_start_date
+             ,te.termbin_end_date
+             ,te.course_number
+             ,te.gradescaleid
+             ,te.gradescaleid_unweighted
+             ,te.sectionid
+             ,te.is_dropped_section
+             ,te.storecode
+             ,te.potential_credit_hours AS fg_potential_credit_hours
+             ,te.excludefromgpa AS fg_exclude_from_gpa
+
+             ,CASE
+               WHEN sg.grade IS NULL AND fg.grade IS NULL THEN NULL
+               WHEN sg.grade IS NOT NULL THEN te.term_weighted_pts_poss
+               WHEN fg.grade = '--' THEN NULL
+               ELSE te.term_weighted_pts_poss
+              END AS term_weighted_pts_poss
              ,CASE 
-               WHEN enr.sectionid < 0 AND sg.[percent] IS NULL THEN NULL
-               WHEN fg.grade = '--' THEN NULL
-               ELSE ROUND(fg.[percent], 0)
-              END AS pgf_pct
+               WHEN te.is_dropped_section = 1.0 AND sg.[percent] IS NULL THEN NULL
+               WHEN fg.grade <> '--' THEN fg.grade
+              END AS fg_letter
+             ,CASE 
+               WHEN te.is_dropped_section = 1.0 AND sg.[percent] IS NULL THEN NULL
+               WHEN fg.grade <> '--' THEN fg.[percent] / 100.0
+              END AS fg_percent
              ,CASE
-               WHEN enr.sectionid < 0 AND sg.[percent] IS NULL THEN NULL
+               WHEN te.is_dropped_section = 1.0 AND sg.[percent] IS NULL THEN NULL
                WHEN fg.grade = '--' THEN NULL
-               ELSE COALESCE(sgs.grade_points, fgs.grade_points)
-              END AS term_gpa_points
+               WHEN fg.[percent] < 50.0 THEN 'F*'
+               ELSE fg.grade
+              END AS fg_letter_adj
+             ,CASE 
+               WHEN te.is_dropped_section = 1 AND sg.[percent] IS NULL THEN NULL
+               WHEN fg.grade = '--' THEN NULL
+               WHEN fg.[percent] < 50.0 THEN 0.5
+               ELSE fg.[percent] / 100.0
+              END AS fg_percent_adj
+             ,CASE
+               WHEN te.is_dropped_section = 1 AND sg.[percent] IS NULL THEN NULL
+               WHEN fg.grade = '--' THEN NULL
+               ELSE fgs.grade_points
+              END AS fg_grade_pts
+
+             ,sg.grade AS sg_letter
+             ,sg.excludefromgpa AS sg_exclude_from_gpa
+             ,sg.excludefromgraduation AS sg_exclude_from_graduation
+             ,sg.[percent] / 100.0 AS sg_percent
+             ,CASE WHEN sg.potentialcrhrs <> 0.0 THEN sg.potentialcrhrs END AS sg_potential_credit_hours
+
+             ,sgs.grade_points AS sg_grade_pts
 
              ,ROW_NUMBER() OVER(
-                PARTITION BY enr.studentid, enr.yearid, enr.course_number, fg.finalgradename
-                  ORDER BY sg.[percent] DESC, enr.section_enroll_status, enr.dateleft DESC) AS rn
-       FROM powerschool.course_enrollments_current_static enr
-       INNER JOIN powerschool.pgfinalgrades fg
-         ON enr.studentid = fg.studentid
-        AND enr.abs_sectionid = fg.sectionid
-        AND fg.finalgrade_type IN ('T', 'Q')
-       LEFT JOIN powerschool.storedgrades sg
-         ON enr.studentid = sg.studentid
-        AND enr.abs_sectionid = sg.sectionid
-        AND fg.finalgradename = sg.storecode
+                PARTITION BY te.studentid, te.yearid, te.course_number, te.storecode
+                  ORDER BY sg.[percent] DESC, te.is_dropped_section ASC, te.dateleft DESC, te.sectionid DESC) AS rn_enr_fg
+       FROM enr te
+       LEFT JOIN powerschool.pgfinalgrades fg
+         ON te.studentid = fg.studentid
+        AND te.storecode = fg.finalgradename
+        AND te.sectionid = fg.sectionid
        LEFT JOIN powerschool.gradescaleitem_lookup_static fgs
-         ON enr.gradescaleid = fgs.gradescaleid
+         ON te.gradescaleid = fgs.gradescaleid
         AND fg.[percent] BETWEEN fgs.min_cutoffpercentage AND fgs.max_cutoffpercentage
+       LEFT JOIN powerschool.storedgrades sg
+         ON te.studentid = sg.studentid
+        AND te.course_number = sg.course_number
+        AND te.storecode = sg.storecode
+        AND te.termid = sg.termid
+        AND te.sectionid = sg.sectionid
        LEFT JOIN powerschool.gradescaleitem_lookup_static sgs
-         ON enr.gradescaleid = sgs.gradescaleid
+         ON te.gradescaleid = sgs.gradescaleid
         AND sg.[percent] BETWEEN sgs.min_cutoffpercentage AND sgs.max_cutoffpercentage
-       WHERE enr.course_enroll_status = 0
+       WHERE te.is_dropped_course < 1.0
       ) sub
-  WHERE rn = 1
+  WHERE sub.rn_enr_fg = 1
  )
 
-,exams AS (
-  SELECT studentid
-        ,academic_year
-        ,course_number
-        ,E1 AS e1
-        ,E2 AS e2
-        ,CASE WHEN E1 < 50 THEN 50 ELSE E1 END AS e1_adjusted
-        ,CASE WHEN E2 < 50 THEN 50 ELSE E2 END AS e2_adjusted
+,y1 AS (
+  SELECT sub.studentid
+        ,sub.schoolid
+        ,sub.yearid
+        ,sub.termid
+        ,sub.termbin_start_date
+        ,sub.termbin_end_date
+        ,sub.course_number
+        ,sub.gradescaleid
+        ,sub.gradescaleid_unweighted
+        ,sub.sectionid
+        ,sub.is_dropped_section
+        ,sub.storecode
+        ,sub.fg_potential_credit_hours
+        ,sub.sg_potential_credit_hours
+        ,sub.potential_credit_hours
+        ,sub.fg_exclude_from_gpa
+        ,sub.sg_exclude_from_gpa
+        ,sub.exclude_from_gpa
+        ,sub.fg_exclude_from_graduation
+        ,sub.sg_exclude_from_graduation
+        ,sub.exclude_from_graduation
+        ,sub.fg_letter
+        ,sub.fg_percent
+        ,sub.fg_letter_adj
+        ,sub.fg_percent_adj
+        ,sub.fg_grade_pts
+        ,sub.sg_letter
+        ,sub.sg_percent
+        ,sub.sg_grade_pts
+        ,sub.term_grade_letter
+        ,sub.term_grade_letter_adj
+        ,sub.term_grade_percent
+        ,sub.term_grade_percent_adj
+        ,sub.term_grade_pts
+        ,sub.term_weighted_pts_poss
+        ,sub.term_weighted_pts_earned
+        ,sub.term_weighted_pts_earned_adj
+        ,sub.y1_weighted_pts_poss
+        ,sub.y1_weighted_pts_poss_running
+        ,sub.y1_weighted_pts_earned_running
+        ,sub.y1_weighted_pts_earned_adj_running
+        ,sub.y1_weighted_pts_earned_running / sub.y1_weighted_pts_poss_running AS y1_grade_percent
+        ,sub.y1_weighted_pts_earned_adj_running / sub.y1_weighted_pts_poss_running AS y1_grade_percent_adj
   FROM
       (
-       SELECT studentid
-             ,academic_year
-             ,course_number
-             ,storecode
-             ,[percent]
-       FROM powerschool.storedgrades
-       WHERE storecode_type = 'E'
-         AND academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+       SELECT eg.studentid
+             ,eg.schoolid
+             ,eg.yearid
+             ,eg.termid
+             ,eg.termbin_start_date
+             ,eg.termbin_end_date
+             ,eg.course_number
+             ,eg.gradescaleid
+             ,eg.gradescaleid_unweighted
+             ,eg.sectionid
+             ,eg.is_dropped_section
+             ,eg.storecode
+             ,eg.fg_potential_credit_hours
+             ,eg.sg_potential_credit_hours
+             ,eg.potential_credit_hours
+             ,eg.fg_exclude_from_gpa
+             ,eg.sg_exclude_from_gpa
+             ,eg.exclude_from_gpa
+             ,eg.fg_exclude_from_graduation
+             ,eg.sg_exclude_from_graduation
+             ,eg.exclude_from_graduation
+             ,eg.fg_letter
+             ,eg.fg_percent
+             ,eg.fg_letter_adj
+             ,eg.fg_percent_adj
+             ,eg.fg_grade_pts
+             ,eg.sg_letter
+             ,eg.sg_percent
+             ,eg.sg_grade_pts
+             ,eg.term_grade_letter
+             ,eg.term_grade_letter_adj
+             ,eg.term_grade_percent
+             ,eg.term_grade_percent_adj
+             ,eg.term_grade_pts
+             ,eg.term_weighted_pts_poss
+             ,eg.y1_weighted_pts_poss
+             ,eg.y1_weighted_pts_poss_running
+             ,eg.term_grade_percent * eg.term_weighted_pts_poss AS term_weighted_pts_earned
+             ,eg.term_grade_percent_adj * eg.term_weighted_pts_poss AS term_weighted_pts_earned_adj
+             ,SUM(eg.term_grade_percent * eg.term_weighted_pts_poss) OVER(
+                PARTITION BY eg.studentid, eg.yearid, eg.course_number
+                  ORDER BY eg.storecode ASC) AS y1_weighted_pts_earned_running
+             ,SUM(eg.term_grade_percent_adj * eg.term_weighted_pts_poss) OVER(
+                PARTITION BY eg.studentid, eg.yearid, eg.course_number
+                  ORDER BY eg.storecode ASC) AS y1_weighted_pts_earned_adj_running
+       FROM enr_gr eg
       ) sub
-  PIVOT(
-    MAX([percent])
-    FOR storecode IN ([E1], [E2])
-   ) p
  )
 
-,grades_long AS (
-  SELECT r.student_number
-        ,r.studentid
-        ,r.academic_year
-        ,r.schoolid
-        ,r.grade_level
-        ,r.reporting_term
-        ,r.term_name
-        ,r.is_curterm
-        ,r.credittype
-        ,r.course_number
-        ,r.course_name
-        ,r.credit_hours
-        ,r.gradescaleid 
-        ,r.excludefromgpa
-        ,r.sectionid
-        ,r.teacher_name
-
-        ,gr.term_grade_percent
-        ,gr.term_grade_letter
-        ,gr.term_grade_percent_adjusted
-        ,gr.term_grade_letter_adjusted
-        ,gr.term_gpa_points
-        
-        /* exam grades for Y1 calc, only for applicable terms */
-        ,CASE WHEN r.term_name = 'Q2' THEN e.e1 ELSE NULL END AS e1
-        ,CASE WHEN r.term_name = 'Q2' THEN e.e1_adjusted ELSE NULL END AS e1_adjusted
-        ,CASE WHEN r.term_name = 'Q4' THEN e.e2 ELSE NULL END AS e2
-        ,CASE WHEN r.term_name = 'Q4' THEN e.e2_adjusted ELSE NULL END AS e2_adjusted
-
-        /* prior to 2016-2017, NCA used exam terms as 10% of the final grade */
-        ,CASE
-          WHEN gr.term_grade_percent IS NULL THEN NULL
-          WHEN r.grade_level >= 9 THEN 0.225
-          WHEN r.grade_level <= 8
-               THEN 1.0 / CONVERT(FLOAT, COUNT(r.student_number) OVER(PARTITION BY r.student_number, r.academic_year, gr.course_number))
-         END AS term_grade_weight
-        ,CASE
-          WHEN r.grade_level >= 9 THEN 0.225
-          WHEN r.grade_level <= 8
-               THEN 1.0 / CONVERT(FLOAT, COUNT(r.student_number) OVER(PARTITION BY r.student_number, r.academic_year, gr.course_number))
-         END AS term_grade_weight_possible
-        ,CASE
-          WHEN r.grade_level >= 9
-           AND r.term_name = 'Q2'
-           AND e.e1 IS NOT NULL
-               THEN 0.05
-         END AS e1_grade_weight
-        ,CASE
-          WHEN r.grade_level >= 9
-           AND r.term_name = 'Q4'
-           AND e.e2 IS NOT NULL
-               THEN 0.05
-         END AS e2_grade_weight
-  FROM roster r
-  LEFT JOIN enr_grades gr
-    ON r.student_number = gr.student_number
-   AND r.academic_year = gr.academic_year
-   AND r.term_name = gr.term_name
-   AND r.course_number = gr.course_number
-  LEFT JOIN exams e
-    ON r.studentid = e.studentid
-   AND r.academic_year = e.academic_year
-   AND r.course_number = e.course_number
- )
-
-SELECT sub.student_number
-      ,sub.studentid
-      ,sub.academic_year
-      ,sub.schoolid
-      ,sub.grade_level
-      ,sub.reporting_term
-      ,sub.term_name
-      ,sub.is_curterm
-      ,sub.credittype
-      ,sub.course_number
-      ,sub.course_name
-      ,sub.sectionid
-      ,sub.teacher_name
-      ,sub.excludefromgpa
-      ,sub.gradescaleid
-      ,COALESCE(y1.potentialcrhrs, sub.credit_hours) AS credit_hours
-      ,sub.term_gpa_points
-      ,sub.term_grade_letter
-      ,sub.term_grade_percent
-      ,sub.term_grade_letter_adjusted
-      ,sub.term_grade_percent_adjusted
-      ,sub.e1
-      ,sub.e1_adjusted
-      ,sub.e2
-      ,sub.e2_adjusted
-      ,sub.weighted_grade_total
-      ,sub.weighted_points_total
-      ,sub.y1_grade_percent AS y1_grade_percent
-      /* these use the adjusted Y1 */
-      ,CASE
-        WHEN y1.[percent] IS NOT NULL THEN y1.[percent]
-        ELSE sub.y1_grade_percent_adjusted
-       END AS y1_grade_percent_adjusted
-      ,CASE
-        WHEN y1.grade IS NOT NULL THEN y1.grade
-        WHEN sub.y1_grade_percent_adjusted = 50 AND sub.y1_grade_percent < 50 THEN 'F*'
-        ELSE y1s.letter_grade
-       END AS y1_grade_letter
-      ,CASE
-        WHEN y1.gpa_points IS NOT NULL THEN y1.gpa_points
-        ELSE y1s.grade_points
-       END AS y1_gpa_points
-      ,y1u.grade_points AS y1_gpa_points_unweighted
-
-       /* Need To Get calcs */
+SELECT y1.studentid
+      ,y1.yearid
+      ,y1.course_number
+      ,y1.sectionid
+      ,y1.is_dropped_section
+      ,y1.storecode
+      ,y1.termbin_start_date
+      ,y1.termbin_end_date
+      ,y1.term_grade_letter
+      ,y1.term_grade_letter_adj
+      ,y1.term_grade_pts
+      ,y1.term_weighted_pts_poss
+      ,y1.term_weighted_pts_earned
+      ,y1.term_weighted_pts_earned_adj
+      ,y1.potential_credit_hours
+      ,y1.exclude_from_gpa
+      ,y1.exclude_from_graduation
+      ,y1.gradescaleid
+      ,y1.gradescaleid_unweighted
+      ,y1.fg_potential_credit_hours
+      ,y1.sg_potential_credit_hours
+      ,y1.fg_exclude_from_gpa
+      ,y1.sg_exclude_from_gpa
+      ,y1.fg_exclude_from_graduation
+      ,y1.sg_exclude_from_graduation
+      ,y1.fg_letter
+      ,y1.sg_letter
+      ,y1.fg_letter_adj
+      ,y1.fg_grade_pts
+      ,y1.sg_grade_pts
+      ,y1.y1_weighted_pts_poss
+      ,y1.y1_weighted_pts_poss_running
+      ,y1.y1_weighted_pts_earned_running
+      ,ROUND(y1.fg_percent * 100.0, 0) AS fg_percent
+      ,ROUND(y1.fg_percent_adj * 100.0, 0) AS fg_percent_adj
+      ,ROUND(y1.sg_percent * 100.0, 0) AS sg_percent
+      ,ROUND(y1.term_grade_percent * 100.0, 0) AS term_grade_percent
+      ,ROUND(y1.term_grade_percent_adj * 100.0, 0) AS term_grade_percent_adj
+      ,ROUND(y1.y1_grade_percent * 100.0, 0) AS y1_grade_percent
+      ,ROUND(y1.y1_grade_percent_adj * 100.0, 0) AS y1_grade_percent_adj
        /*
-          - Target % of total points possible
-          - Subtract points earned to-date, including current term
-          - Divide by current term weights
+         need-to-get calc:
+         - target % x y1 points possible to-date
+         - minus y1 points earned to-date
+         - minus current term points
+         - divided by current term weight
        */
-      ,ROUND(
-         ((weighted_points_possible_total * 0.9)
-           - (ISNULL(weighted_grade_total_adjusted, 0) - (ISNULL(term_grade_weighted, 0) + ISNULL(e1_grade_weighted, 0) + ISNULL(e2_grade_weighted, 0))))
-          / (term_grade_weight_possible + ISNULL(e1_grade_weight, 0) + ISNULL(e2_grade_weight, 0))
-        , 0) AS need_90
-      ,ROUND(
-         ((weighted_points_possible_total * 0.8)
-           - (ISNULL(weighted_grade_total_adjusted, 0) - (ISNULL(term_grade_weighted, 0) + ISNULL(e1_grade_weighted, 0) + ISNULL(e2_grade_weighted, 0))))
-          / (term_grade_weight_possible + ISNULL(e1_grade_weight, 0) + ISNULL(e2_grade_weight, 0))
-        , 0) AS need_80
-      ,ROUND(
-         ((weighted_points_possible_total * 0.7)
-           - (ISNULL(weighted_grade_total_adjusted, 0) - (ISNULL(term_grade_weighted, 0) + ISNULL(e1_grade_weighted, 0) + ISNULL(e2_grade_weighted, 0))))
-          / (term_grade_weight_possible + ISNULL(e1_grade_weight, 0) + ISNULL(e2_grade_weight, 0))
-        , 0) AS need_70 
-      ,ROUND(
-         ((weighted_points_possible_total * 0.6)
-           - (ISNULL(weighted_grade_total_adjusted, 0) - (ISNULL(term_grade_weighted, 0) + ISNULL(e1_grade_weighted, 0) + ISNULL(e2_grade_weighted, 0))))
-          / (term_grade_weight_possible + ISNULL(e1_grade_weight, 0) + ISNULL(e2_grade_weight, 0))
-        , 0) AS need_65
-FROM
-    (
-     SELECT student_number
-           ,studentid
-           ,academic_year
-           ,schoolid
-           ,grade_level
-           ,reporting_term
-           ,term_name
-           ,is_curterm
-           ,credittype
-           ,course_number
-           ,course_name
-           ,sectionid
-           ,teacher_name
-           ,excludefromgpa
-           ,gradescaleid
-           ,credit_hours
-           ,term_gpa_points
-           ,term_grade_letter
-           ,term_grade_percent
-           ,term_grade_letter_adjusted
-           ,term_grade_percent_adjusted
-           ,e1
-           ,e1_adjusted
-           ,e2
-           ,e2_adjusted
-           ,weighted_grade_total
-           ,weighted_grade_total_adjusted
-           ,weighted_points_total
-           ,term_grade_weight_possible
-           ,e1_grade_weight
-           ,e2_grade_weight
-           ,CASE
-             WHEN sub.gradescaleid = 712 THEN 874 /* unweighted 2016-2018 */
-             WHEN sub.gradescaleid = 991 THEN 976 /* unweighted 2019+ */
-             WHEN sub.gradescaleid IS NULL THEN 874 /* MISSING GRADESCALE - default 2016+ */
-             ELSE sub.gradescaleid
-            END AS unweighted_gradescaleid
+      ,((y1.y1_weighted_pts_poss_running * 0.9) - (ISNULL(y1.y1_weighted_pts_earned_running, 0.0) - ISNULL(y1.term_weighted_pts_earned, 0.0))) / (y1.term_weighted_pts_poss / 100.0) AS need_90
+      ,((y1.y1_weighted_pts_poss_running * 0.8) - (ISNULL(y1.y1_weighted_pts_earned_running, 0.0) - ISNULL(y1.term_weighted_pts_earned, 0.0))) / (y1.term_weighted_pts_poss / 100.0) AS need_80
+      ,((y1.y1_weighted_pts_poss_running * 0.7) - (ISNULL(y1.y1_weighted_pts_earned_running, 0.0) - ISNULL(y1.term_weighted_pts_earned, 0.0))) / (y1.term_weighted_pts_poss / 100.0) AS need_70
+      ,((y1.y1_weighted_pts_poss_running * 0.6) - (ISNULL(y1.y1_weighted_pts_earned_running, 0.0) - ISNULL(y1.term_weighted_pts_earned, 0.0))) / (y1.term_weighted_pts_poss / 100.0) AS need_60
 
-           /* Y1 calcs */
-           ,ROUND((weighted_grade_total / weighted_points_total) * 100, 0) AS y1_grade_percent
-           ,ROUND((weighted_grade_total_adjusted / weighted_points_total) * 100, 0) AS y1_grade_percent_adjusted
+      ,y1gs.letter_grade AS y1_grade_letter
+      ,y1gs.grade_points AS y1_grade_pts
 
-           ,CASE
-             WHEN term_grade_percent_adjusted IS NULL THEN ISNULL(weighted_points_total, 0) + (term_grade_weight_possible * 100)
-             ELSE weighted_points_total
-            END + ISNULL(e1_grade_weight, 0) + ISNULL(e2_grade_weight, 0) AS weighted_points_possible_total
-           ,(term_grade_percent_adjusted * term_grade_weight) AS term_grade_weighted
-           ,ISNULL((e1 * e1_grade_weight), 0) AS e1_grade_weighted
-           ,ISNULL((e2 * e2_grade_weight), 0) AS e2_grade_weighted
-     FROM
-         (
-          SELECT student_number
-                ,studentid
-                ,academic_year
-                ,schoolid
-                ,grade_level
-                ,reporting_term
-                ,term_name
-                ,is_curterm
-                ,credittype
-                ,course_number
-                ,course_name
-                ,sectionid
-                ,teacher_name
-                ,excludefromgpa
-                ,gradescaleid
-                ,credit_hours
-                ,term_gpa_points
-                ,term_grade_letter
-                ,term_grade_percent
-                ,term_grade_letter_adjusted
-                ,term_grade_percent_adjusted
-                ,e1
-                ,e1_adjusted
-                ,e2
-                ,e2_adjusted
-                ,term_grade_weight
-                ,term_grade_weight_possible
-                ,e1_grade_weight
-                ,e2_grade_weight
-                /* Y1 calc -- weighted avg */
-                /* (weighted term grade + weighted exam grades) / total weighted points possible */
-                ,SUM(
-                   (term_grade_percent * term_grade_weight)
-                     + ISNULL((e1 * e1_grade_weight), 0)
-                     + ISNULL((e2 * e2_grade_weight), 0)
-                  ) OVER(PARTITION BY student_number, academic_year, course_number 
-                           ORDER BY reporting_term ASC) AS weighted_grade_total /* does NOT use F* grades */
-                ,SUM(
-                   (term_grade_percent_adjusted * term_grade_weight)
-                     + ISNULL((e1_adjusted * e1_grade_weight), 0)
-                     + ISNULL((e2_adjusted * e2_grade_weight), 0)
-                  ) OVER(PARTITION BY student_number, academic_year, course_number
-                           ORDER BY reporting_term ASC) AS weighted_grade_total_adjusted /* uses F* adjusted grade */
-                ,SUM(
-                   (term_grade_weight * 100)
-                     + ISNULL((e1_grade_weight * 100), 0)
-                     + ISNULL((e2_grade_weight * 100), 0)
-                  ) OVER(PARTITION BY student_number, academic_year, course_number
-                           ORDER BY reporting_term ASC) AS weighted_points_total
-          FROM grades_long
-         ) sub
-    ) sub
-LEFT JOIN powerschool.storedgrades y1
-  ON sub.studentid = y1.studentid
- AND sub.academic_year = y1.academic_year
- AND sub.course_number = y1.course_number
- AND y1.storecode = 'Y1'
-LEFT JOIN powerschool.gradescaleitem_lookup_static y1s
-  ON sub.gradescaleid = y1s.gradescaleid
- AND sub.y1_grade_percent_adjusted BETWEEN y1s.min_cutoffpercentage AND y1s.max_cutoffpercentage
-LEFT JOIN powerschool.gradescaleitem_lookup_static y1u
-  ON sub.unweighted_gradescaleid = y1u.gradescaleid
- AND sub.y1_grade_percent_adjusted BETWEEN y1u.min_cutoffpercentage AND y1u.max_cutoffpercentage
+      ,y1gsu.grade_points AS y1_grade_pts_unweighted
+
+      ,CASE WHEN y1.y1_grade_percent < 0.5 THEN 'F*' ELSE y1gs.letter_grade END AS y1_grade_letter_adj
+FROM y1
+LEFT JOIN powerschool.gradescaleitem_lookup_static y1gs
+  ON y1.gradescaleid = y1gs.gradescaleid
+ AND (y1.y1_grade_percent * 100.0) BETWEEN y1gs.min_cutoffpercentage AND y1gs.max_cutoffpercentage
+LEFT JOIN powerschool.gradescaleitem_lookup_static y1gsu
+  ON y1.gradescaleid_unweighted = y1gsu.gradescaleid
+ AND (y1.y1_grade_percent * 100.0) BETWEEN y1gsu.min_cutoffpercentage AND y1gsu.max_cutoffpercentage

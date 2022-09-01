@@ -29,7 +29,7 @@ SELECT so.survey_type
       ,COALESCE(CONCAT(dfid.preferred_first_name, ' ', dfid.preferred_last_name) 
                ,CONCAT(adpid.preferred_first_name, ' ', adpid.preferred_last_name)) AS subject_name
       ,COALESCE(dfid.legal_entity_name, adpid.legal_entity_name) AS subject_legal_entity_name
-      ,CONVERT(VARCHAR,COALESCE(dfid.primary_site, adpid.primary_site)) AS subject_location
+      ,CAST(COALESCE(dfid.primary_site, adpid.primary_site) AS VARCHAR) AS subject_location
       ,COALESCE(dfid.primary_site_schoolid, adpid.primary_site_schoolid) AS subject_primary_site_schoolid
       ,COALESCE(dfid.primary_site_school_level, adpid.primary_site_school_level) AS subject_primary_site_school_level
       ,COALESCE(dfid.manager_df_employee_number, adpid.manager_df_employee_number) AS subject_manager_id      
@@ -48,6 +48,6 @@ SELECT so.survey_type
       ,NULL AS avg_response_value_location
 FROM gabby.surveys.self_and_others_survey_long_static so
 LEFT JOIN gabby.people.staff_crosswalk_static dfid
-  ON so.subject_associate_id = CONVERT(VARCHAR,dfid.df_employee_number)
+  ON so.subject_associate_id = CAST(dfid.df_employee_number AS VARCHAR)
 LEFT JOIN gabby.people.staff_crosswalk_static adpid
   ON so.subject_associate_id = adpid.adp_associate_id

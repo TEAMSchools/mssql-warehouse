@@ -1,6 +1,6 @@
 CREATE OR ALTER VIEW deanslist.incidents_penalties AS
 
-SELECT CONVERT(INT, dli.incident_id) AS incident_id
+SELECT CAST(dli.incident_id AS INT) AS incident_id
       ,NULL AS penalties_json
 
       ,dlip.incidentpenaltyid

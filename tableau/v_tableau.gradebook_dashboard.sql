@@ -21,8 +21,43 @@ WITH section_teacher AS (
    AND scaff.[db_name] = sec.[db_name]
   LEFT JOIN gabby.powerschool.teachers_static t 
     ON sec.teacher = t.id 
+   AND sec.schoolid = t.schoolid
    AND sec.[db_name] = t.[db_name]
   WHERE scaff.is_curterm = 1
+ )
+
+,final_grades AS (
+  SELECT fg.studentid
+        ,fg.yearid
+        ,fg.[db_name]
+        ,fg.course_number
+        ,fg.sectionid
+        ,fg.storecode
+        ,fg.exclude_from_gpa
+        ,fg.potential_credit_hours
+        ,fg.term_grade_percent_adj
+        ,fg.term_grade_letter_adj
+        ,fg.term_grade_pts
+        ,fg.y1_grade_percent_adj
+        ,fg.y1_grade_letter
+        ,fg.y1_grade_pts
+        ,fg.need_60
+        ,fg.need_70
+        ,fg.need_80
+        ,fg.need_90
+        ,CASE 
+          WHEN CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN fg.termbin_start_date AND fg.termbin_end_date 
+               THEN 1 
+          ELSE 0 
+         END AS is_curterm
+
+        ,cou.credittype
+        ,cou.course_name
+  FROM gabby.powerschool.final_grades_static fg
+  INNER JOIN gabby.powerschool.courses cou
+    ON fg.course_number = cou.course_number
+   AND fg.[db_name] = cou.[db_name]
+  WHERE fg.termbin_start_date <= CURRENT_TIMESTAMP
  )
 
 /* current year - term grades */
@@ -42,20 +77,20 @@ SELECT co.student_number
 
       ,CASE WHEN sp.studentid IS NOT NULL THEN 1 END AS is_counselingservices
 
-      ,gr.credittype
       ,gr.course_number
-      ,gr.course_name
-      ,gr.term_name
-      ,gr.term_name AS finalgradename
-      ,gr.is_curterm
-      ,gr.excludefromgpa
-      ,gr.credit_hours
-      ,gr.term_grade_percent_adjusted
-      ,gr.term_grade_letter_adjusted
-      ,gr.term_gpa_points
-      ,gr.y1_grade_percent_adjusted
+      ,gr.storecode AS term_name
+      ,gr.storecode AS finalgradename
+      ,gr.exclude_from_gpa AS excludefromgpa
+      ,gr.potential_credit_hours AS credit_hours
+      ,gr.term_grade_percent_adj AS term_grade_percent_adjusted
+      ,gr.term_grade_letter_adj AS term_grade_letter_adjusted
+      ,gr.term_grade_pts AS term_gpa_points
+      ,gr.y1_grade_percent_adj AS y1_grade_percent_adjusted
       ,gr.y1_grade_letter
-      ,gr.y1_gpa_points
+      ,gr.y1_grade_pts AS y1_gpa_points
+      ,gr.is_curterm
+      ,gr.credittype
+      ,gr.course_name
       ,NULL AS earnedcrhrs
 
       ,CASE WHEN pgf.citizenship <> '' THEN pgf.citizenship END AS citizenship
@@ -68,19 +103,19 @@ SELECT co.student_number
       ,st.section_number AS [period]
       ,st.external_expression
 
-      ,MAX(CASE WHEN gr.is_curterm = 1 THEN gr.need_65 ELSE NULL END) OVER(PARTITION BY co.student_number, co.academic_year, gr.course_number) AS need_65
+      ,MAX(CASE WHEN gr.is_curterm = 1 THEN gr.need_60 ELSE NULL END) OVER(PARTITION BY co.student_number, co.academic_year, gr.course_number) AS need_65
       ,MAX(CASE WHEN gr.is_curterm = 1 THEN gr.need_70 ELSE NULL END) OVER(PARTITION BY co.student_number, co.academic_year, gr.course_number) AS need_70
       ,MAX(CASE WHEN gr.is_curterm = 1 THEN gr.need_80 ELSE NULL END) OVER(PARTITION BY co.student_number, co.academic_year, gr.course_number) AS need_80
       ,MAX(CASE WHEN gr.is_curterm = 1 THEN gr.need_90 ELSE NULL END) OVER(PARTITION BY co.student_number, co.academic_year, gr.course_number) AS need_90
 FROM gabby.powerschool.cohort_identifiers_static co 
-LEFT JOIN gabby.powerschool.final_grades_static gr 
-  ON co.student_number = gr.student_number
- AND co.academic_year = gr.academic_year 
+LEFT JOIN final_grades gr
+  ON co.studentid = gr.studentid
+ AND co.yearid = gr.yearid
  AND co.[db_name] = gr.[db_name]
 LEFT JOIN gabby.powerschool.pgfinalgrades pgf
   ON gr.studentid = pgf.studentid
  AND gr.sectionid = pgf.sectionid
- AND gr.term_name = pgf.finalgradename
+ AND gr.storecode = pgf.finalgradename
  AND gr.[db_name] = pgf.[db_name]
 LEFT JOIN section_teacher st 
   ON co.studentid = st.studentid
@@ -89,7 +124,7 @@ LEFT JOIN section_teacher st
  AND gr.course_number = st.course_number
 LEFT JOIN gabby.powerschool.spenrollments_gen_static sp
   ON co.studentid = sp.studentid
- AND CONVERT(DATE, GETDATE()) BETWEEN sp.enter_date AND sp.exit_date
+ AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sp.enter_date AND sp.exit_date
  AND sp.specprog_name = 'Counseling Services'
  AND co.[db_name] = sp.[db_name]
 WHERE co.rn_year = 1
@@ -121,14 +156,14 @@ SELECT co.student_number
       ,'Y1' AS reporting_term
       ,'Y1' AS finalgradename
       ,gr.is_curterm
-      ,gr.excludefromgpa
-      ,gr.credit_hours
-      ,gr.y1_grade_percent_adjusted AS term_grade_percent_adjusted
+      ,gr.exclude_from_gpa AS excludefromgpa
+      ,gr.potential_credit_hours AS credit_hours
+      ,gr.y1_grade_percent_adj AS term_grade_percent_adjusted
       ,gr.y1_grade_letter AS term_grade_letter_adjusted
-      ,gr.y1_gpa_points AS term_gpa_points
-      ,gr.y1_grade_percent_adjusted
+      ,gr.y1_grade_pts AS term_gpa_points
+      ,gr.y1_grade_percent_adj AS y1_grade_percent_adjusted
       ,gr.y1_grade_letter
-      ,gr.y1_gpa_points
+      ,gr.y1_grade_pts AS y1_gpa_points
 
       ,y1.earnedcrhrs
       ,NULL AS citizenship
@@ -141,14 +176,14 @@ SELECT co.student_number
       ,st.section_number AS [period]
       ,st.external_expression
 
-      ,MAX(CASE WHEN gr.is_curterm = 1 THEN gr.need_65 ELSE NULL END) OVER(PARTITION BY co.student_number, co.academic_year, gr.course_number) AS need_65
+      ,MAX(CASE WHEN gr.is_curterm = 1 THEN gr.need_60 ELSE NULL END) OVER(PARTITION BY co.student_number, co.academic_year, gr.course_number) AS need_65
       ,MAX(CASE WHEN gr.is_curterm = 1 THEN gr.need_70 ELSE NULL END) OVER(PARTITION BY co.student_number, co.academic_year, gr.course_number) AS need_70
       ,MAX(CASE WHEN gr.is_curterm = 1 THEN gr.need_80 ELSE NULL END) OVER(PARTITION BY co.student_number, co.academic_year, gr.course_number) AS need_80
       ,MAX(CASE WHEN gr.is_curterm = 1 THEN gr.need_90 ELSE NULL END) OVER(PARTITION BY co.student_number, co.academic_year, gr.course_number) AS need_90
 FROM gabby.powerschool.cohort_identifiers_static co 
-LEFT JOIN gabby.powerschool.final_grades_static gr 
-  ON co.student_number = gr.student_number
- AND co.academic_year = gr.academic_year 
+LEFT JOIN final_grades gr
+  ON co.studentid = gr.studentid
+ AND co.yearid = gr.yearid
  AND co.[db_name] = gr.[db_name]
  AND gr.is_curterm = 1
 LEFT JOIN gabby.powerschool.storedgrades y1
@@ -164,85 +199,11 @@ LEFT JOIN section_teacher st
  AND gr.course_number = st.course_number
 LEFT JOIN gabby.powerschool.spenrollments_gen_static sp
   ON co.studentid = sp.studentid
- AND CONVERT(DATE, GETDATE()) BETWEEN sp.enter_date AND sp.exit_date
+ AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sp.enter_date AND sp.exit_date
  AND sp.specprog_name = 'Counseling Services'
  AND co.[db_name] = sp.[db_name]
 WHERE co.rn_year = 1
   AND co.grade_level <> 99
-  AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-
-UNION ALL
-
-/* current year - HS exam grades */
-SELECT co.student_number
-      ,co.lastfirst
-      ,co.reporting_schoolid AS schoolid
-      ,co.grade_level
-      ,co.team
-      ,co.advisor_name
-      ,co.enroll_status
-      ,co.academic_year
-      ,co.iep_status
-      ,co.cohort
-      ,co.region
-      ,co.gender
-      ,co.school_level
-
-      ,CASE WHEN sp.studentid IS NOT NULL THEN 1 END AS is_counselingservices
-
-      ,ex.credittype
-      ,ex.course_number
-      ,ex.course_name
-      ,CASE
-        WHEN ex.e1 IS NOT NULL THEN 'Q2' 
-        WHEN ex.e2 IS NOT NULL THEN 'Q4'
-       END AS term_name
-      ,CASE
-        WHEN ex.e1 IS NOT NULL THEN 'E1'
-        WHEN ex.e2 IS NOT NULL THEN 'E2'
-       END AS finalgradename
-      ,ex.is_curterm
-      ,ex.excludefromgpa
-      ,ex.credit_hours
-      ,COALESCE(ex.e1, ex.e2) AS term_grade_percent_adjusted
-      ,NULL AS term_grade_letter_adjusted
-      ,NULL AS term_gpa_points
-      ,NULL AS y1_grade_percent_adjusted
-      ,NULL AS y1_grade_letter
-      ,NULL AS y1_gpa_points
-      ,NULL AS earnedcrhrs
-      ,NULL AS citizenship
-      ,NULL AS comment_value
-
-      ,st.sectionid
-      ,st.termid
-      ,st.teacher_name
-      ,st.section_number
-      ,st.section_number AS [period]
-      ,st.external_expression
-
-      ,NULL AS need_65
-      ,NULL AS need_70
-      ,NULL AS need_80
-      ,NULL AS need_90
-FROM gabby.powerschool.cohort_identifiers_static co 
-LEFT JOIN gabby.powerschool.final_grades_static ex
-  ON co.student_number = ex.student_number
- AND co.academic_year = ex.academic_year
- AND co.[db_name] = ex.[db_name]
- AND (ex.e1 IS NOT NULL OR ex.e2 IS NOT NULL)
-LEFT JOIN section_teacher st
-  ON co.studentid = st.studentid
- AND co.yearid = st.yearid
- AND co.[db_name] = st.[db_name]
- AND ex.course_number = st.course_number
-LEFT JOIN gabby.powerschool.spenrollments_gen_static sp
-  ON co.studentid = sp.studentid
- AND CONVERT(DATE, GETDATE()) BETWEEN sp.enter_date AND sp.exit_date
- AND sp.specprog_name = 'Counseling Services'
- AND co.[db_name] = sp.[db_name]
-WHERE co.rn_year = 1
-  AND co.school_level = 'HS'
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 
 UNION ALL
@@ -308,7 +269,7 @@ LEFT JOIN section_teacher st
  AND sg.course_number = st.course_number
 LEFT JOIN gabby.powerschool.spenrollments_gen_static sp
   ON co.studentid = sp.studentid
- AND CONVERT(DATE, GETDATE()) BETWEEN sp.enter_date AND sp.exit_date
+ AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sp.enter_date AND sp.exit_date
  AND sp.specprog_name = 'Counseling Services'
  AND co.[db_name] = sp.[db_name]
 WHERE co.rn_year = 1
@@ -375,7 +336,7 @@ LEFT JOIN gabby.powerschool.cohort_identifiers_static e1
  AND e1.year_in_school = 1
 LEFT JOIN gabby.powerschool.spenrollments_gen_static sp
   ON co.studentid = sp.studentid
- AND CONVERT(DATE, GETDATE()) BETWEEN sp.enter_date AND sp.exit_date
+ AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sp.enter_date AND sp.exit_date
  AND sp.specprog_name = 'Counseling Services'
  AND co.[db_name] = sp.[db_name]
 WHERE tr.storecode = 'Y1'
@@ -442,7 +403,7 @@ LEFT JOIN section_teacher st
  AND cg.course_number = st.course_number
 LEFT JOIN gabby.powerschool.spenrollments_gen_static sp
   ON co.studentid = sp.studentid
- AND CONVERT(DATE, GETDATE()) BETWEEN sp.enter_date AND sp.exit_date
+ AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sp.enter_date AND sp.exit_date
  AND sp.specprog_name = 'Counseling Services'
  AND co.[db_name] = sp.[db_name]
 WHERE co.rn_year = 1
@@ -511,9 +472,83 @@ LEFT JOIN section_teacher st
  AND cy.course_number = st.course_number
 LEFT JOIN gabby.powerschool.spenrollments_gen_static sp
   ON co.studentid = sp.studentid
- AND CONVERT(DATE, GETDATE()) BETWEEN sp.enter_date AND sp.exit_date
+ AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sp.enter_date AND sp.exit_date
  AND sp.specprog_name = 'Counseling Services'
  AND co.[db_name] = sp.[db_name]
 WHERE co.rn_year = 1
   AND co.grade_level <> 99
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+
+--UNION ALL
+
+--/* current year - HS exam grades */
+--SELECT co.student_number
+--      ,co.lastfirst
+--      ,co.reporting_schoolid AS schoolid
+--      ,co.grade_level
+--      ,co.team
+--      ,co.advisor_name
+--      ,co.enroll_status
+--      ,co.academic_year
+--      ,co.iep_status
+--      ,co.cohort
+--      ,co.region
+--      ,co.gender
+--      ,co.school_level
+
+--      ,CASE WHEN sp.studentid IS NOT NULL THEN 1 END AS is_counselingservices
+
+--      ,ex.credittype
+--      ,ex.course_number
+--      ,ex.course_name
+--      ,CASE
+--        WHEN ex.e1 IS NOT NULL THEN 'Q2' 
+--        WHEN ex.e2 IS NOT NULL THEN 'Q4'
+--       END AS term_name
+--      ,CASE
+--        WHEN ex.e1 IS NOT NULL THEN 'E1'
+--        WHEN ex.e2 IS NOT NULL THEN 'E2'
+--       END AS finalgradename
+--      ,ex.is_curterm
+--      ,ex.excludefromgpa
+--      ,ex.credit_hours
+--      ,COALESCE(ex.e1, ex.e2) AS term_grade_percent_adjusted
+--      ,NULL AS term_grade_letter_adjusted
+--      ,NULL AS term_gpa_points
+--      ,NULL AS y1_grade_percent_adjusted
+--      ,NULL AS y1_grade_letter
+--      ,NULL AS y1_gpa_points
+--      ,NULL AS earnedcrhrs
+--      ,NULL AS citizenship
+--      ,NULL AS comment_value
+
+--      ,st.sectionid
+--      ,st.termid
+--      ,st.teacher_name
+--      ,st.section_number
+--      ,st.section_number AS [period]
+--      ,st.external_expression
+
+--      ,NULL AS need_65
+--      ,NULL AS need_70
+--      ,NULL AS need_80
+--      ,NULL AS need_90
+--FROM gabby.powerschool.cohort_identifiers_static co 
+--LEFT JOIN gabby.powerschool.final_grades_static ex
+--  ON co.student_number = ex.student_number
+-- AND co.academic_year = ex.academic_year
+-- AND co.[db_name] = ex.[db_name]
+-- AND (ex.e1 IS NOT NULL OR ex.e2 IS NOT NULL)
+--LEFT JOIN section_teacher st
+--  ON co.studentid = st.studentid
+-- AND co.yearid = st.yearid
+-- AND co.[db_name] = st.[db_name]
+-- AND ex.course_number = st.course_number
+--LEFT JOIN gabby.powerschool.spenrollments_gen_static sp
+--  ON co.studentid = sp.studentid
+-- AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sp.enter_date AND sp.exit_date
+-- AND sp.specprog_name = 'Counseling Services'
+-- AND co.[db_name] = sp.[db_name]
+--WHERE co.rn_year = 1
+--  AND co.school_level = 'HS'
+--  AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()

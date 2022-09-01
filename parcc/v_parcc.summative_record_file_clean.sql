@@ -4,11 +4,11 @@ GO
 CREATE OR ALTER VIEW parcc.summative_record_file_clean AS
 
 SELECT state_abbreviation
-      ,COALESCE(CONVERT(NVARCHAR(32), testing_district_code), eoy_testing_district_identifier) AS testing_district_code
+      ,COALESCE(CAST(testing_district_code AS NVARCHAR(32)), eoy_testing_district_identifier) AS testing_district_code
       ,COALESCE(testing_school_code, eoy_testing_school_institution_identifier) AS testing_school_code
       ,COALESCE(responsible_accountable_district_code, responsible_district_code, responsible_district_identifier) AS responsible_district_code
       ,COALESCE(responsible_accountable_school_code, responsible_school_code, responsible_school_institution_identifier) AS responsible_school_code
-      ,CONVERT(NVARCHAR(32), state_student_identifier) AS state_student_identifier
+      ,CAST(state_student_identifier AS NVARCHAR(32)) AS state_student_identifier
       ,local_student_identifier
       ,COALESCE(parccstudent_identifier, parcc_student_identifier) AS parccstudent_identifier
       ,COALESCE(last_or_surname, last_name) AS last_or_surname
@@ -42,8 +42,8 @@ SELECT state_abbreviation
       ,state_field_9
       ,state_field_10
       ,class_name
-      ,CONVERT(NVARCHAR(32), test_administrator) AS test_administrator
-      ,CONVERT(NVARCHAR(32), staff_member_identifier) AS staff_member_identifier
+      ,CAST(test_administrator AS NVARCHAR(32)) AS test_administrator
+      ,CAST(staff_member_identifier AS NVARCHAR(32)) AS staff_member_identifier
       ,test_code
       ,retest
       ,elaccommodation
@@ -59,8 +59,8 @@ SELECT state_abbreviation
       ,COALESCE(student_reads_assessment_aloudto_self, student_reads_assessment_aloud_to_themselves) AS student_reads_assessment_aloud_to_self
       ,human_signer_for_test_directions
       ,calculation_device_and_mathematics_tools
-      ,COALESCE(CONVERT(NVARCHAR(32), elalconstructed_response), elal_constructed_response) AS elalconstructed_response
-      ,COALESCE(CONVERT(NVARCHAR(32), elalselected_response_or_technology_enhanced_items), elal_selected_response_or_technology_enhanced_items) AS elalselected_response_or_technology_enhanced_items
+      ,COALESCE(CAST(elalconstructed_response AS NVARCHAR(32)), elal_constructed_response) AS elalconstructed_response
+      ,COALESCE(CAST(elalselected_response_or_technology_enhanced_items AS NVARCHAR(32)), elal_selected_response_or_technology_enhanced_items) AS elalselected_response_or_technology_enhanced_items
       ,mathematics_response
       ,monitor_test_response
       ,word_prediction
@@ -121,7 +121,7 @@ SELECT state_abbreviation
       ,unit_4_online_test_end_date_time
       ,assessment_year
       ,assessment_grade
-      ,CONVERT(VARCHAR(128), [subject]) AS [subject]
+      ,CAST([subject] AS VARCHAR(128)) AS [subject]
       ,federal_race_ethnicity
       ,[period]
       ,testing_organizational_type
@@ -171,7 +171,7 @@ SELECT state_abbreviation
       ,pba_unit_2_total_number_of_items
       ,pba_unit_3_number_of_attempted_items
       ,pba_unit_3_total_number_of_items
-      ,CONVERT(INT, LEFT(assessment_year, 4)) AS academic_year
+      ,CAST(LEFT(assessment_year, 4) AS INT) AS academic_year
 FROM parcc.summative_record_file
 WHERE (assessment_year = '2014-2015' AND record_type = 1 AND reported_summative_score_flag = 'Y')
    OR (assessment_year <> '2014-2015' AND test_status = 'Attempt' AND summative_flag = 'Y');
@@ -184,11 +184,11 @@ GO
 CREATE OR ALTER VIEW parcc.summative_record_file_clean AS
 
 SELECT state_abbreviation
-      ,CONVERT(NVARCHAR(32), testing_district_code) AS testing_district_code
+      ,CAST(testing_district_code AS NVARCHAR(32)) AS testing_district_code
       ,testing_school_code
       ,COALESCE(responsible_accountable_district_code, responsible_district_code) AS responsible_district_code
       ,COALESCE(responsible_accountable_school_code, responsible_school_code) AS responsible_school_code
-      ,CONVERT(NVARCHAR(32), state_student_identifier) AS state_student_identifier
+      ,CAST(state_student_identifier AS NVARCHAR(32)) AS state_student_identifier
       ,local_student_identifier
       ,parccstudent_identifier
       ,last_or_surname AS last_or_surname
@@ -222,8 +222,8 @@ SELECT state_abbreviation
       ,state_field_9
       ,NULL AS state_field_10
       ,class_name
-      ,CONVERT(NVARCHAR(32), test_administrator) AS test_administrator
-      ,CONVERT(NVARCHAR(32), staff_member_identifier) AS staff_member_identifier
+      ,CAST(test_administrator AS NVARCHAR(32)) AS test_administrator
+      ,CAST(staff_member_identifier AS NVARCHAR(32)) AS staff_member_identifier
       ,test_code
       ,retest
       ,elaccommodation
@@ -301,7 +301,7 @@ SELECT state_abbreviation
       ,unit_4_online_test_end_date_time
       ,assessment_year
       ,assessment_grade
-      ,CONVERT(VARCHAR(128), [subject]) AS [subject]
+      ,CAST([subject] AS VARCHAR(128)) AS [subject]
       ,federal_race_ethnicity
       ,[period]
       ,testing_organizational_type
@@ -351,7 +351,7 @@ SELECT state_abbreviation
       ,NULL AS pba_unit_2_total_number_of_items
       ,NULL AS pba_unit_3_number_of_attempted_items
       ,NULL AS pba_unit_3_total_number_of_items
-      ,CONVERT(INT, LEFT(assessment_year, 4)) AS academic_year
+      ,CAST(LEFT(assessment_year, 4) AS INT) AS academic_year
 FROM parcc.summative_record_file
 WHERE test_status = 'Attempt' 
   AND summative_flag = 'Y';

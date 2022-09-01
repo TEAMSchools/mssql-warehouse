@@ -24,8 +24,8 @@ WITH survey_unpivoted AS (
              ,email
              ,location
              ,NULL AS n
-             ,CONVERT(NVARCHAR(MAX),region_6) AS region_6
-             ,CONVERT(NVARCHAR(MAX),region_7) AS region_7
+             ,CAST(region_6 AS NVARCHAR(MAX)) AS region_6
+             ,CAST(region_7 AS NVARCHAR(MAX)) AS region_7
        FROM gabby.surveys.r9engagement_survey_final
       ) sub
   UNPIVOT(

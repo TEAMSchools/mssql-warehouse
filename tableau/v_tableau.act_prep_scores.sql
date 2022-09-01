@@ -100,7 +100,7 @@ SELECT co.academic_year
       ,'REAL' AS ACT_type
       ,NULL AS assessment_id
       ,NULL AS assessment_title
-      ,CONVERT(VARCHAR,co.cohort) AS administration_round
+      ,CAST(co.cohort AS VARCHAR) AS administration_round
 
       ,r.test_date
       ,'Composite' AS subject_area

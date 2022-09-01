@@ -15,7 +15,7 @@ SELECT co.student_number
       ,co.iep_status
       ,co.lep_status
 
-      ,CONVERT(VARCHAR(5),term.alt_name) AS lit_term
+      ,CAST(term.alt_name AS VARCHAR(5)) AS lit_term
       ,term.is_curterm
 
       ,testid.read_lvl

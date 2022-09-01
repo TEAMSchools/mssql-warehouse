@@ -3,13 +3,13 @@ GO
 
 CREATE OR ALTER VIEW extracts.clever_schools AS
 
-SELECT CONVERT(VARCHAR(25), school_number) AS [School_id]
+SELECT CAST(school_number AS VARCHAR(25)) AS [School_id]
       ,[name] AS [School_name]
-      ,CONVERT(VARCHAR(25), school_number) AS [School_number]
+      ,CAST(school_number AS VARCHAR(25)) AS [School_number]
       ,NULL AS [State_id]
       ,CASE
         WHEN low_grade = 0 THEN 'Kindergarten'
-        ELSE CONVERT(VARCHAR(5), low_grade)
+        ELSE CAST(low_grade AS VARCHAR(5))
        END AS [Low_grade]
       ,high_grade AS [High_grade]
       ,principal AS [Principal]
@@ -24,9 +24,9 @@ WHERE state_excludefromreporting = 0 /* filter out summer school and graduated s
 
 UNION ALL
 
-SELECT CONVERT(VARCHAR(25), 0) AS [School_id]
+SELECT CAST(0 AS VARCHAR(25)) AS [School_id]
       ,'District Office' AS [School_name]
-      ,CONVERT(VARCHAR(25), 0) AS [School_number]
+      ,CAST(0 AS VARCHAR(25)) AS [School_number]
       ,NULL AS [State_id]
       ,'Kindergarten' AS [Low_grade]
       ,'12' AS [High_grade]

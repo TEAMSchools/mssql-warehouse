@@ -25,8 +25,8 @@ FROM
      SELECT mh.associate_id
            ,mh.position_id
            ,mh.reports_to_associate_id
-           ,CONVERT(DATE, mh.reports_to_effective_date) AS reports_to_effective_date
-           ,CONVERT(DATE, mh.reports_to_effective_end_date) AS reports_to_effective_end_date
+           ,CAST(mh.reports_to_effective_date AS DATE) AS reports_to_effective_date
+           ,CAST(mh.reports_to_effective_end_date AS DATE) AS reports_to_effective_end_date
 
            ,sr.file_number AS employee_number
      FROM gabby.adp.manager_history mh

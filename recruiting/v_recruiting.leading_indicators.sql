@@ -61,6 +61,13 @@ SELECT a.application_id
       ,a.[source]
       ,a.source_type
       ,a.source_subtype
+      ,a.application_status_before_rejection
+      ,a.application_reason_for_rejection
+      ,a.application_status_before_withdrawal
+      ,a.application_reason_for_withdrawal
+      ,DATEDIFF(day,a.application_state_new_date,a.application_state_hired_date) AS days_to_hire
+      ,DATEDIFF(day,a.application_state_offer_date,a.application_state_hired_date) AS days_offer_to_acceptance
+      ,DATEDIFF(day,a.application_status_interview_demo_date,a.application_state_hired_date) AS days_demo_to_hire
       /*List of titles tracked by Recruiting Team include these words*/
       ,CASE
         WHEN a.job_title LIKE '%Teacher%' 
@@ -81,10 +88,13 @@ SELECT a.application_id
       ,p.candidate_email
       ,p.candidate_first_name
       ,p.candidate_last_name
+      ,p.kf_race
+      ,p.kf_gender
+      ,p.kf_are_you_alumnus
 
       ,d.last_updated
 
-      ,DATENAME(WW, GETDATE()) AS current_week
+      ,DATENAME(WW, CURRENT_TIMESTAMP) AS current_week
 FROM gabby.smartrecruiters.report_applicants p
 INNER JOIN gabby.smartrecruiters.report_applications a
   ON p.application_id = a.application_id

@@ -5,15 +5,15 @@ CREATE OR ALTER VIEW extracts.deanslist_transcript_gpas AS
 
 SELECT student_number
       ,academic_year
-      ,CONVERT(FLOAT, ROUND(CONVERT(DECIMAL(4,3), (weighted_points / credit_hours)), 2)) AS GPA_Y1_weighted
-      ,CONVERT(FLOAT, ROUND(CONVERT(DECIMAL(4,3), (unweighted_points / credit_hours)), 2)) AS GPA_Y1_unweighted
+      ,CAST(ROUND(CONVERT(DECIMAL(4,3), (weighted_points / credit_hours)), 2) AS FLOAT) AS GPA_Y1_weighted
+      ,CAST(ROUND(CONVERT(DECIMAL(4,3), (unweighted_points / credit_hours)), 2) AS FLOAT) AS GPA_Y1_unweighted
 FROM
     (
      SELECT student_number
            ,academic_year
-           ,ROUND(SUM(CONVERT(FLOAT, weighted_points)),3) AS weighted_points
-           ,ROUND(SUM(CONVERT(FLOAT, unweighted_points)),3) AS unweighted_points
-           ,CASE WHEN SUM(CONVERT(FLOAT, potentialcrhrs)) = 0 THEN NULL ELSE SUM(CONVERT(FLOAT, potentialcrhrs)) END AS credit_hours
+           ,ROUND(SUM(CAST(weighted_points AS FLOAT)),3) AS weighted_points
+           ,ROUND(SUM(CAST(unweighted_points AS FLOAT)),3) AS unweighted_points
+           ,CASE WHEN SUM(CAST(potentialcrhrs AS FLOAT)) = 0 THEN NULL ELSE SUM(CAST(potentialcrhrs AS FLOAT)) END AS credit_hours
      FROM
          (
           SELECT sg.potentialcrhrs

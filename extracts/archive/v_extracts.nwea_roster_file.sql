@@ -22,8 +22,8 @@ SELECT DISTINCT
       ,cst.First_name AS [Student First Name]
       ,UPPER(LEFT(cst.Middle_name, 1)) AS [Student Middle Initial]
       ,CASE 
-        WHEN cst.DOB >= GETDATE() THEN CONVERT(DATE,GETDATE()) 
-        WHEN cst.DOB IS NULL THEN CONVERT(DATE,GETDATE())
+        WHEN cst.DOB >= CURRENT_TIMESTAMP THEN CAST(CURRENT_TIMESTAMP AS DATE) 
+        WHEN cst.DOB IS NULL THEN CAST(CURRENT_TIMESTAMP AS DATE)
         ELSE cst.DOB 
        END AS [Student Date Of Birth]
       ,CASE

@@ -30,41 +30,41 @@ FROM
      SELECT sub.sectionsdcid
            ,sub.gradeformulasetid
 
-           ,CONVERT(VARCHAR(125), gfs.[name]) AS grade_formula_set_name
+           ,CAST(gfs.[name] AS VARCHAR(125)) AS grade_formula_set_name
 
-           ,CONVERT(VARCHAR(5), t.abbreviation) AS term_abbreviation
+           ,CAST(t.abbreviation AS VARCHAR(5)) AS term_abbreviation
 
-           ,CONVERT(VARCHAR(5), tb.storecode) AS storecode
+           ,CAST(tb.storecode AS VARCHAR(5)) AS storecode
            ,tb.date_1 AS term_start_date
            ,tb.date_2 AS term_end_date
 
-           ,CONVERT(INT, gct.gradecalculationtypeid) AS gradecalculationtypeid
-           ,CONVERT(VARCHAR(25), gct.[type]) AS grade_calculation_type
+           ,CAST(gct.gradecalculationtypeid AS INT) AS gradecalculationtypeid
+           ,CAST(gct.[type] AS VARCHAR(25)) AS grade_calculation_type
 
-           ,CONVERT(INT, gcfw.gradecalcformulaweightid) AS gradecalcformulaweightid
-           ,CONVERT(VARCHAR(25), gcfw.[type]) AS grade_calc_formula_weight_type
-           ,CONVERT(INT, gcfw.teachercategoryid) AS teachercategoryid
-           ,CONVERT(INT, gcfw.districtteachercategoryid) AS districtteachercategoryid
+           ,CAST(gcfw.gradecalcformulaweightid AS INT) AS gradecalcformulaweightid
+           ,CAST(gcfw.[type] AS VARCHAR(25)) AS grade_calc_formula_weight_type
+           ,CAST(gcfw.teachercategoryid AS INT) AS teachercategoryid
+           ,CAST(gcfw.districtteachercategoryid AS INT) AS districtteachercategoryid
            ,gcfw.[weight]
 
-           ,CONVERT(VARCHAR(125), tc.[name]) AS tc_name
-           ,CONVERT(INT, tc.defaultscoretype) AS tc_defaultscoretype
-           ,CONVERT(INT, tc.isinfinalgrades) AS tc_isinfinalgrades
+           ,CAST(tc.[name] AS VARCHAR(125)) AS tc_name
+           ,CAST(tc.defaultscoretype AS INT) AS tc_defaultscoretype
+           ,CAST(tc.isinfinalgrades AS INT) AS tc_isinfinalgrades
 
-           ,CONVERT(VARCHAR(125), dtc.[name]) AS dtc_name
-           ,CONVERT(INT, dtc.defaultscoretype) AS dtc_defaultscoretype
-           ,CONVERT(INT, dtc.isinfinalgrades) AS dtc_isinfinalgrades
+           ,CAST(dtc.[name] AS VARCHAR(125)) AS dtc_name
+           ,CAST(dtc.defaultscoretype AS INT) AS dtc_defaultscoretype
+           ,CAST(dtc.isinfinalgrades AS INT) AS dtc_isinfinalgrades
      FROM 
          (
-          SELECT CONVERT(INT, sec.dcid) AS sectionsdcid
-                ,CONVERT(INT, sec.schoolid) AS schoolid
-                ,CONVERT(INT, sec.termid) AS termid
+          SELECT CAST(sec.dcid AS INT) AS sectionsdcid
+                ,CAST(sec.schoolid AS INT) AS schoolid
+                ,CAST(sec.termid AS INT) AS termid
 
                 ,gsec.gradeformulasetid AS section_gradeformulasetid
 
                 ,gsfa.gradeformulasetid AS school_gradeformulasetid
 
-                ,CONVERT(INT, COALESCE(gsec.gradeformulasetid, gsfa.gradeformulasetid, 0)) AS gradeformulasetid
+                ,CAST(COALESCE(gsec.gradeformulasetid, gsfa.gradeformulasetid, 0) AS INT) AS gradeformulasetid
           FROM powerschool.sections sec
           INNER JOIN powerschool.schools sch
              ON sec.schoolid = sch.school_number

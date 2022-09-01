@@ -23,18 +23,18 @@ WITH so_long AS (
         ,COUNT(sub.respondent_email_address) OVER(PARTITION BY sub.academic_year, sub.reporting_term, sub.subject_associate_id, sub.question_code) AS n_total
   FROM
       (
-       SELECT CONVERT(INT,u.response_id) AS response_id
-             ,CONVERT(INT,u.academic_year) AS academic_year
-             ,CONVERT(VARCHAR(5),u.term_name) AS term_name
-             ,CONVERT(VARCHAR(5),u.reporting_term) AS reporting_term
+       SELECT CAST(u.response_id AS INT) AS response_id
+             ,CAST(u.academic_year AS INT) AS academic_year
+             ,CAST(u.term_name AS VARCHAR(5)) AS term_name
+             ,CAST(u.reporting_term AS VARCHAR(5)) AS reporting_term
              ,u.time_started
              ,u.date_submitted
-             ,CONVERT(VARCHAR(125),u.your_name_) AS respondent_name
-             ,CONVERT(VARCHAR(125),u.your_kipp_nj_email_account) AS respondent_email_address
-             ,CONVERT(VARCHAR(125),u.subject_name) AS subject_name
-             ,CONVERT(VARCHAR(25),u.subject_associate_id) AS subject_associate_id
-             ,CONVERT(INT,u.is_manager) AS is_manager
-             ,CONVERT(VARCHAR(25),u.question_code) AS question_code
+             ,CAST(u.your_name_ AS VARCHAR(125)) AS respondent_name
+             ,CAST(u.your_kipp_nj_email_account AS VARCHAR(125)) AS respondent_email_address
+             ,CAST(u.subject_name AS VARCHAR(125)) AS subject_name
+             ,CAST(u.subject_associate_id AS VARCHAR(25)) AS subject_associate_id
+             ,CAST(u.is_manager AS INT) AS is_manager
+             ,CAST(u.question_code AS VARCHAR(25)) AS question_code
              ,u.response
              ,CASE WHEN u.academic_year <= 2017 THEN 'SO' ELSE 'SO2018' END AS survey_type
        FROM gabby.surveys.self_and_others_survey_final
@@ -88,14 +88,14 @@ SELECT so.survey_type
       ,so.n_total           
       ,CASE 
         WHEN so.academic_year <= 2017 THEN 1.0
-        WHEN so.is_manager = 1 THEN CONVERT(FLOAT,so.n_total) / 2.0 /* manager response weight */
-        WHEN so.is_manager = 0 THEN (CONVERT(FLOAT,so.n_total) / 2.0) / CONVERT(FLOAT,so.n_peers) /* peer response weight */
+        WHEN so.is_manager = 1 THEN CAST(so.n_total AS FLOAT) / 2.0 /* manager response weight */
+        WHEN so.is_manager = 0 THEN (CAST(so.n_total AS FLOAT) / 2.0) / CAST(so.n_peers AS FLOAT) /* peer response weight */
        END AS response_weight
 
       ,qk.question_text
-      ,CONVERT(VARCHAR(5),qk.open_ended) AS open_ended
+      ,CAST(qk.open_ended AS VARCHAR(5)) AS open_ended
 
-      ,CONVERT(FLOAT,rs.response_value) AS response_value
+      ,CAST(rs.response_value AS FLOAT) AS response_value
 FROM so_long so
 JOIN gabby.surveys.question_key qk
   ON so.question_code = qk.question_code

@@ -17,10 +17,10 @@ WITH payroll_rollup AS (
           ELSE 'Final'
          END AS preview_or_final
         ,CASE
-          WHEN CHARINDEX('PREV', _file) > 0 THEN CONVERT(INT,SUBSTRING(_file, 39, 1))
+          WHEN CHARINDEX('PREV', _file) > 0 THEN CAST(SUBSTRING(_file, 39, 1) AS INT)
           ELSE NULL
          END AS preview_number
-        ,CONVERT(DATE, SUBSTRING(_file, 23, 10)) AS payroll_date
+        ,CAST(SUBSTRING(_file, 23, 10) AS DATE) AS payroll_date
         ,CONCAT(SUBSTRING(_file, 19, 3), file_nbr) AS position_id
 
         ,gabby.dbo.GROUP_CONCAT(DISTINCT fli_code) AS fli_code
@@ -205,116 +205,116 @@ WITH payroll_rollup AS (
              ,r.state_cd_2
              ,r.sui_sdi_code
              ,r.void_ind
-             ,CONVERT(FLOAT, r.fed_tax) AS fed_tax
-             ,CONVERT(FLOAT, r.gross) AS gross
-             ,CONVERT(FLOAT, r.net_pay) AS net_pay
-             ,CONVERT(FLOAT, r.take_home_pay) AS take_home_pay
-             ,CONVERT(FLOAT, r.ded_cd_3) AS ded_cd_3
-             ,CONVERT(FLOAT, r.ded_cd_4) AS ded_cd_4
-             ,CONVERT(FLOAT, r.ded_cd_403) AS ded_cd_403
-             ,CONVERT(FLOAT, r.ded_cd_73) AS ded_cd_73
-             ,CONVERT(FLOAT, r.ded_cd_74) AS ded_cd_74
-             ,CONVERT(FLOAT, r.ded_cd_75) AS ded_cd_75
-             ,CONVERT(FLOAT, r.ded_cd_76) AS ded_cd_76
-             ,CONVERT(FLOAT, r.ded_cd_acc) AS ded_cd_acc
-             ,CONVERT(FLOAT, r.ded_cd_add) AS ded_cd_add
-             ,CONVERT(FLOAT, r.ded_cd_bcp) AS ded_cd_bcp
-             ,CONVERT(FLOAT, r.ded_cd_bct) AS ded_cd_bct
-             ,CONVERT(FLOAT, r.ded_cd_c) AS ded_cd_c
-             ,CONVERT(FLOAT, r.ded_cd_den) AS ded_cd_den
-             ,CONVERT(FLOAT, r.ded_cd_dfs) AS ded_cd_dfs
-             ,CONVERT(FLOAT, r.ded_cd_e) AS ded_cd_e
-             ,CONVERT(FLOAT, r.ded_cd_ed) AS ded_cd_ed
-             ,CONVERT(FLOAT, r.ded_cd_em) AS ded_cd_em
-             ,CONVERT(FLOAT, r.ded_cd_ev) AS ded_cd_ev
-             ,CONVERT(FLOAT, r.ded_cd_hos) AS ded_cd_hos
-             ,CONVERT(FLOAT, r.ded_cd_hsa) AS ded_cd_hsa
-             ,CONVERT(FLOAT, r.ded_cd_i) AS ded_cd_i
-             ,CONVERT(FLOAT, r.ded_cd_j) AS ded_cd_j
-             ,CONVERT(FLOAT, r.ded_cd_k) AS ded_cd_k
-             ,CONVERT(FLOAT, r.ded_cd_l) AS ded_cd_l
-             ,CONVERT(FLOAT, r.ded_cd_ln_1) AS ded_cd_ln_1
-             ,CONVERT(FLOAT, r.ded_cd_ln_2) AS ded_cd_ln_2
-             ,CONVERT(FLOAT, r.ded_cd_med) AS ded_cd_med
-             ,CONVERT(FLOAT, r.ded_cd_mfs) AS ded_cd_mfs
-             ,CONVERT(FLOAT, r.ded_cd_p) AS ded_cd_p
-             ,CONVERT(FLOAT, r.ded_cd_psc) AS ded_cd_psc
-             ,CONVERT(FLOAT, r.ded_cd_q) AS ded_cd_q
-             ,CONVERT(FLOAT, r.ded_cd_trn) AS ded_cd_trn
-             ,CONVERT(FLOAT, r.ded_cd_ver) AS ded_cd_ver
-             ,CONVERT(FLOAT, r.ded_cd_vis) AS ded_cd_vis
-             ,CONVERT(FLOAT, r.ern_3_bon) AS ern_3_bon
-             ,CONVERT(FLOAT, r.ern_3_ds) AS ern_3_ds
-             ,CONVERT(FLOAT, r.ern_3_ecl) AS ern_3_ecl
-             ,CONVERT(FLOAT, r.ern_3_glc) AS ern_3_glc
-             ,CONVERT(FLOAT, r.ern_3_hwb) AS ern_3_hwb
-             ,CONVERT(FLOAT, r.ern_3_lp) AS ern_3_lp
-             ,CONVERT(FLOAT, r.ern_3_oob) AS ern_3_oob
-             ,CONVERT(FLOAT, r.ern_3_ret) AS ern_3_ret
-             ,CONVERT(FLOAT, r.ern_4_ac) AS ern_4_ac
-             ,CONVERT(FLOAT, r.ern_4_ba) AS ern_4_ba
-             ,CONVERT(FLOAT, r.ern_4_bon) AS ern_4_bon
-             ,CONVERT(FLOAT, r.ern_4_db) AS ern_4_db
-             ,CONVERT(FLOAT, r.ern_4_dc) AS ern_4_dc
-             ,CONVERT(FLOAT, r.ern_4_dei) AS ern_4_dei
-             ,CONVERT(FLOAT, r.ern_4_ds) AS ern_4_ds
-             ,CONVERT(FLOAT, r.ern_4_ecl) AS ern_4_ecl
-             ,CONVERT(FLOAT, r.ern_4_emh) AS ern_4_emh
-             ,CONVERT(FLOAT, r.ern_4_epc) AS ern_4_epc
-             ,CONVERT(FLOAT, r.ern_4_glc) AS ern_4_glc
-             ,CONVERT(FLOAT, r.ern_4_hb) AS ern_4_hb
-             ,CONVERT(FLOAT, r.ern_4_ic) AS ern_4_ic
-             ,CONVERT(FLOAT, r.ern_4_lp) AS ern_4_lp
-             ,CONVERT(FLOAT, r.ern_4_ntp) AS ern_4_ntp
-             ,CONVERT(FLOAT, r.ern_4_oob) AS ern_4_oob
-             ,CONVERT(FLOAT, r.ern_4_ret) AS ern_4_ret
-             ,CONVERT(FLOAT, r.ern_4_trs) AS ern_4_trs
-             ,CONVERT(FLOAT, r.ern_5_ret) AS ern_5_ret
-             ,CONVERT(FLOAT, r.fli_amount) AS fli_amount
-             ,CONVERT(FLOAT, r.hrs_4_bev) AS hrs_4_bev
-             ,CONVERT(FLOAT, r.hrs_4_cvd) AS hrs_4_cvd
-             ,CONVERT(FLOAT, r.hrs_4_prd) AS hrs_4_prd
-             ,CONVERT(FLOAT, r.hrs_4_pto) AS hrs_4_pto
-             ,CONVERT(FLOAT, r.hrs_4_rel) AS hrs_4_rel
-             ,CONVERT(FLOAT, r.hrs_4_sic) AS hrs_4_sic
-             ,CONVERT(FLOAT, r.local_cd_1) AS local_cd_1
-             ,CONVERT(FLOAT, r.local_cd_2) AS local_cd_2
-             ,CONVERT(FLOAT, r.local_tax_1) AS local_tax_1
-             ,CONVERT(FLOAT, r.local_tax_2) AS local_tax_2
-             ,CONVERT(FLOAT, r.med_surtax) AS med_surtax
-             ,CONVERT(FLOAT, r.med_tax) AS med_tax
-             ,CONVERT(FLOAT, r.ot_ern) AS ot_ern
-             ,CONVERT(FLOAT, r.ot_hrs) AS ot_hrs
-             ,CONVERT(FLOAT, r.rate) AS rate
-             ,CONVERT(FLOAT, r.rate_2) AS rate_2
-             ,CONVERT(FLOAT, r.rate_3) AS rate_3
-             ,CONVERT(FLOAT, r.rate_used) AS rate_used
-             ,CONVERT(FLOAT, r.rg_ern) AS rg_ern
-             ,CONVERT(FLOAT, r.rg_hrs) AS rg_hrs
-             ,CONVERT(FLOAT, r.sdi_tax) AS sdi_tax
-             ,CONVERT(FLOAT, r.ss_tax) AS ss_tax
-             ,CONVERT(FLOAT, r.state_tax_1) AS state_tax_1
-             ,CONVERT(FLOAT, r.state_tax_2) AS state_tax_2
-             ,CONVERT(FLOAT, r.sui_tax) AS sui_tax
-             ,CONVERT(FLOAT, ern_3_hb) AS ern_3_hb
-             ,CONVERT(FLOAT, ern_4_sev) AS ern_4_sev
-             ,CONVERT(FLOAT, ded_cd_mis) AS ded_cd_mis
-             ,CONVERT(FLOAT, ern_4_sic) AS ern_4_sic
-             ,CONVERT(FLOAT, memo_cd_b_input) AS memo_cd_b_input
-             ,CONVERT(FLOAT, ern_3_rlb) AS ern_3_rlb
-             ,CONVERT(FLOAT, ded_cd_rpe) AS ded_cd_rpe
-             ,CONVERT(FLOAT, memo_cd_epn_calc) AS memo_cd_epn_calc
-             ,CONVERT(FLOAT, hrs_4_jd) AS hrs_4_jd
-             ,CONVERT(FLOAT, ern_4_awa) AS ern_4_awa
-             ,CONVERT(FLOAT, hrs_4_awa) AS hrs_4_awa
-             ,CONVERT(FLOAT, hrs_4_ret) AS hrs_4_ret
-             ,CONVERT(FLOAT, ern_3_dc) AS ern_3_dc
-             ,CONVERT(FLOAT, memo_cd_epn_input) AS memo_cd_epn_input
-             ,CONVERT(FLOAT, ded_cd_71) AS ded_cd_71
-             ,CONVERT(FLOAT, ern_5_bp) AS ern_5_bp
-             ,CONVERT(FLOAT, ern_4_bp) AS ern_4_bp
-             ,CONVERT(FLOAT, ern_4_ssc) AS ern_4_ssc
-             ,CONVERT(FLOAT, r.n_records) AS n_records
+             ,CAST(r.fed_tax AS FLOAT) AS fed_tax
+             ,CAST(r.gross AS FLOAT) AS gross
+             ,CAST(r.net_pay AS FLOAT) AS net_pay
+             ,CAST(r.take_home_pay AS FLOAT) AS take_home_pay
+             ,CAST(r.ded_cd_3 AS FLOAT) AS ded_cd_3
+             ,CAST(r.ded_cd_4 AS FLOAT) AS ded_cd_4
+             ,CAST(r.ded_cd_403 AS FLOAT) AS ded_cd_403
+             ,CAST(r.ded_cd_73 AS FLOAT) AS ded_cd_73
+             ,CAST(r.ded_cd_74 AS FLOAT) AS ded_cd_74
+             ,CAST(r.ded_cd_75 AS FLOAT) AS ded_cd_75
+             ,CAST(r.ded_cd_76 AS FLOAT) AS ded_cd_76
+             ,CAST(r.ded_cd_acc AS FLOAT) AS ded_cd_acc
+             ,CAST(r.ded_cd_add AS FLOAT) AS ded_cd_add
+             ,CAST(r.ded_cd_bcp AS FLOAT) AS ded_cd_bcp
+             ,CAST(r.ded_cd_bct AS FLOAT) AS ded_cd_bct
+             ,CAST(r.ded_cd_c AS FLOAT) AS ded_cd_c
+             ,CAST(r.ded_cd_den AS FLOAT) AS ded_cd_den
+             ,CAST(r.ded_cd_dfs AS FLOAT) AS ded_cd_dfs
+             ,CAST(r.ded_cd_e AS FLOAT) AS ded_cd_e
+             ,CAST(r.ded_cd_ed AS FLOAT) AS ded_cd_ed
+             ,CAST(r.ded_cd_em AS FLOAT) AS ded_cd_em
+             ,CAST(r.ded_cd_ev AS FLOAT) AS ded_cd_ev
+             ,CAST(r.ded_cd_hos AS FLOAT) AS ded_cd_hos
+             ,CAST(r.ded_cd_hsa AS FLOAT) AS ded_cd_hsa
+             ,CAST(r.ded_cd_i AS FLOAT) AS ded_cd_i
+             ,CAST(r.ded_cd_j AS FLOAT) AS ded_cd_j
+             ,CAST(r.ded_cd_k AS FLOAT) AS ded_cd_k
+             ,CAST(r.ded_cd_l AS FLOAT) AS ded_cd_l
+             ,CAST(r.ded_cd_ln_1 AS FLOAT) AS ded_cd_ln_1
+             ,CAST(r.ded_cd_ln_2 AS FLOAT) AS ded_cd_ln_2
+             ,CAST(r.ded_cd_med AS FLOAT) AS ded_cd_med
+             ,CAST(r.ded_cd_mfs AS FLOAT) AS ded_cd_mfs
+             ,CAST(r.ded_cd_p AS FLOAT) AS ded_cd_p
+             ,CAST(r.ded_cd_psc AS FLOAT) AS ded_cd_psc
+             ,CAST(r.ded_cd_q AS FLOAT) AS ded_cd_q
+             ,CAST(r.ded_cd_trn AS FLOAT) AS ded_cd_trn
+             ,CAST(r.ded_cd_ver AS FLOAT) AS ded_cd_ver
+             ,CAST(r.ded_cd_vis AS FLOAT) AS ded_cd_vis
+             ,CAST(r.ern_3_bon AS FLOAT) AS ern_3_bon
+             ,CAST(r.ern_3_ds AS FLOAT) AS ern_3_ds
+             ,CAST(r.ern_3_ecl AS FLOAT) AS ern_3_ecl
+             ,CAST(r.ern_3_glc AS FLOAT) AS ern_3_glc
+             ,CAST(r.ern_3_hwb AS FLOAT) AS ern_3_hwb
+             ,CAST(r.ern_3_lp AS FLOAT) AS ern_3_lp
+             ,CAST(r.ern_3_oob AS FLOAT) AS ern_3_oob
+             ,CAST(r.ern_3_ret AS FLOAT) AS ern_3_ret
+             ,CAST(r.ern_4_ac AS FLOAT) AS ern_4_ac
+             ,CAST(r.ern_4_ba AS FLOAT) AS ern_4_ba
+             ,CAST(r.ern_4_bon AS FLOAT) AS ern_4_bon
+             ,CAST(r.ern_4_db AS FLOAT) AS ern_4_db
+             ,CAST(r.ern_4_dc AS FLOAT) AS ern_4_dc
+             ,CAST(r.ern_4_dei AS FLOAT) AS ern_4_dei
+             ,CAST(r.ern_4_ds AS FLOAT) AS ern_4_ds
+             ,CAST(r.ern_4_ecl AS FLOAT) AS ern_4_ecl
+             ,CAST(r.ern_4_emh AS FLOAT) AS ern_4_emh
+             ,CAST(r.ern_4_epc AS FLOAT) AS ern_4_epc
+             ,CAST(r.ern_4_glc AS FLOAT) AS ern_4_glc
+             ,CAST(r.ern_4_hb AS FLOAT) AS ern_4_hb
+             ,CAST(r.ern_4_ic AS FLOAT) AS ern_4_ic
+             ,CAST(r.ern_4_lp AS FLOAT) AS ern_4_lp
+             ,CAST(r.ern_4_ntp AS FLOAT) AS ern_4_ntp
+             ,CAST(r.ern_4_oob AS FLOAT) AS ern_4_oob
+             ,CAST(r.ern_4_ret AS FLOAT) AS ern_4_ret
+             ,CAST(r.ern_4_trs AS FLOAT) AS ern_4_trs
+             ,CAST(r.ern_5_ret AS FLOAT) AS ern_5_ret
+             ,CAST(r.fli_amount AS FLOAT) AS fli_amount
+             ,CAST(r.hrs_4_bev AS FLOAT) AS hrs_4_bev
+             ,CAST(r.hrs_4_cvd AS FLOAT) AS hrs_4_cvd
+             ,CAST(r.hrs_4_prd AS FLOAT) AS hrs_4_prd
+             ,CAST(r.hrs_4_pto AS FLOAT) AS hrs_4_pto
+             ,CAST(r.hrs_4_rel AS FLOAT) AS hrs_4_rel
+             ,CAST(r.hrs_4_sic AS FLOAT) AS hrs_4_sic
+             ,CAST(r.local_cd_1 AS FLOAT) AS local_cd_1
+             ,CAST(r.local_cd_2 AS FLOAT) AS local_cd_2
+             ,CAST(r.local_tax_1 AS FLOAT) AS local_tax_1
+             ,CAST(r.local_tax_2 AS FLOAT) AS local_tax_2
+             ,CAST(r.med_surtax AS FLOAT) AS med_surtax
+             ,CAST(r.med_tax AS FLOAT) AS med_tax
+             ,CAST(r.ot_ern AS FLOAT) AS ot_ern
+             ,CAST(r.ot_hrs AS FLOAT) AS ot_hrs
+             ,CAST(r.rate AS FLOAT) AS rate
+             ,CAST(r.rate_2 AS FLOAT) AS rate_2
+             ,CAST(r.rate_3 AS FLOAT) AS rate_3
+             ,CAST(r.rate_used AS FLOAT) AS rate_used
+             ,CAST(r.rg_ern AS FLOAT) AS rg_ern
+             ,CAST(r.rg_hrs AS FLOAT) AS rg_hrs
+             ,CAST(r.sdi_tax AS FLOAT) AS sdi_tax
+             ,CAST(r.ss_tax AS FLOAT) AS ss_tax
+             ,CAST(r.state_tax_1 AS FLOAT) AS state_tax_1
+             ,CAST(r.state_tax_2 AS FLOAT) AS state_tax_2
+             ,CAST(r.sui_tax AS FLOAT) AS sui_tax
+             ,CAST(ern_3_hb AS FLOAT) AS ern_3_hb
+             ,CAST(ern_4_sev AS FLOAT) AS ern_4_sev
+             ,CAST(ded_cd_mis AS FLOAT) AS ded_cd_mis
+             ,CAST(ern_4_sic AS FLOAT) AS ern_4_sic
+             ,CAST(memo_cd_b_input AS FLOAT) AS memo_cd_b_input
+             ,CAST(ern_3_rlb AS FLOAT) AS ern_3_rlb
+             ,CAST(ded_cd_rpe AS FLOAT) AS ded_cd_rpe
+             ,CAST(memo_cd_epn_calc AS FLOAT) AS memo_cd_epn_calc
+             ,CAST(hrs_4_jd AS FLOAT) AS hrs_4_jd
+             ,CAST(ern_4_awa AS FLOAT) AS ern_4_awa
+             ,CAST(hrs_4_awa AS FLOAT) AS hrs_4_awa
+             ,CAST(hrs_4_ret AS FLOAT) AS hrs_4_ret
+             ,CAST(ern_3_dc AS FLOAT) AS ern_3_dc
+             ,CAST(memo_cd_epn_input AS FLOAT) AS memo_cd_epn_input
+             ,CAST(ded_cd_71 AS FLOAT) AS ded_cd_71
+             ,CAST(ern_5_bp AS FLOAT) AS ern_5_bp
+             ,CAST(ern_4_bp AS FLOAT) AS ern_4_bp
+             ,CAST(ern_4_ssc AS FLOAT) AS ern_4_ssc
+             ,CAST(r.n_records AS FLOAT) AS n_records
        FROM payroll_rollup r
       ) sub
   UNPIVOT(

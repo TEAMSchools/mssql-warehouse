@@ -8,8 +8,8 @@ SELECT id AS survey_id
       ,[type]
       ,[status]
       ,team
-      ,CONVERT(DATETIME2, created_on) AS created_on
-      ,CONVERT(DATETIME2, modified_on) AS modified_on
+      ,CAST(created_on AS DATETIME2) AS created_on
+      ,CAST(modified_on AS DATETIME2) AS modified_on
       ,JSON_VALUE(links, '$.edit') AS edit_link
       ,JSON_VALUE(links, '$.publish') AS publish_link
       ,JSON_VALUE(links, '$.default') AS default_link

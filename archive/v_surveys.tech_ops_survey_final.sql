@@ -27,7 +27,7 @@ WITH to_survey AS (
         ,sur._system_date_system_time_
         ,sur.url_redirect
         ,CASE 
-          WHEN MONTH(CONVERT(DATE,sur.date_submitted)) < 6 THEN 'spring'
+          WHEN MONTH(CAST(sur.date_submitted AS DATE)) < 6 THEN 'spring'
           ELSE 'fall'
          END AS term_name
         ,gabby.utilities.DATE_TO_SY(sur.date_submitted) AS academic_year
