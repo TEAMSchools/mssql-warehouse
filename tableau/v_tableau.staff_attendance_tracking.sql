@@ -56,6 +56,56 @@ WITH school_ids AS (
   WHERE cal.[type] = 'WS'
  )
 
+,last_accrual_day AS (
+  SELECT last_updated
+        ,employee_name_id_
+        ,accrual_code
+        ,accrual_code + '_2' AS accrual_code_2
+        ,accrual_taken_to_date_hours_
+        ,accrual_available_balance_hours_
+  FROM (SELECT _modified AS last_updated
+              ,employee_name_id_
+              ,accrual_code
+              ,accrual_taken_to_date_hours_
+              ,accrual_available_balance_hours_
+              ,MAX(_modified) OVER(PARTITION BY employee_name_id_, accrual_code) AS max_last_updated
+        FROM gabby.adp.wfm_accrual_reporting_period_summary
+          ) sub
+  WHERE last_updated = max_last_updated
+ )
+
+,accruals_taken AS (
+  SELECT last_updated
+        ,employee_name_id_
+        ,[Vacation] AS vacation_taken
+        ,[PTO] AS pto_taken
+        ,[No Accrual] AS no_accrual_taken
+        ,[Unused PTO] AS unused_pto_taken
+        ,[Sick] AS sick_taken
+  FROM (SELECT last_updated
+              ,employee_name_id_
+              ,accrual_code
+              ,accrual_taken_to_date_hours_
+        FROM last_accrual_day) sub
+   PIVOT( MAX(accrual_taken_to_date_hours_) FOR accrual_code IN ([Vacation],[PTO],[No Accrual],[Unused PTO],[Sick])) p
+  )
+
+,accruals_balance AS (
+  SELECT last_updated
+        ,employee_name_id_
+        ,[Vacation] AS vacation_balance
+        ,[PTO] AS pto_balance
+        ,[No Accrual] AS no_accrual_balance
+        ,[Unused PTO] AS unused_pto_balance
+        ,[Sick] AS sick_balance
+  FROM (SELECT last_updated
+              ,employee_name_id_
+              ,accrual_code
+              ,accrual_available_balance_hours_
+        FROM last_accrual_day) sub
+   PIVOT( MAX(accrual_available_balance_hours_) FOR accrual_code IN ([Vacation],[PTO],[No Accrual],[Unused PTO],[Sick])) p
+ )
+
 SELECT td.job AS job_title
       ,td.[location] AS budget_location
       ,td.transaction_apply_to
@@ -127,6 +177,19 @@ SELECT td.job AS job_title
         WHEN td.transaction_apply_to IS NULL THEN 1 
         ELSE 0 
        END AS present_status
+
+      ,act.last_updated AS accrual_last_update
+      ,act.no_accrual_taken
+      ,act.pto_taken
+      ,act.sick_taken
+      ,act.unused_pto_taken
+      ,act.vacation_taken
+
+      ,acb.no_accrual_balance
+      ,acb.pto_balance
+      ,acb.sick_balance
+      ,acb.unused_pto_balance
+      ,acb.vacation_balance
 FROM gabby.adp.wfm_time_details td
 INNER JOIN school_ids id
   ON td.[location] = id.[location]
@@ -140,5 +203,9 @@ LEFT JOIN gabby.people.staff_crosswalk_static cw
   ON SUBSTRING(td.employee_name, LEN(td.employee_name) - 9, 9) = cw.adp_associate_id
 LEFT JOIN school_leaders sl
   ON  cw.primary_site = sl.sl_primary_site
+LEFT JOIN accruals_taken act
+  ON td.employee_name = act.employee_name_id_
+LEFT JOIN accruals_balance acb
+  ON td.employee_name = acb.employee_name_id_
 WHERE td.transaction_type <> 'Worked Holiday Edit'
   AND td.transaction_apply_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 8, 15)
