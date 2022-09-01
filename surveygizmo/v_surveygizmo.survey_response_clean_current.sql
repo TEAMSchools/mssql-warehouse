@@ -44,15 +44,15 @@ FROM
            ,sr.longitude
            ,sr.dma
            ,sr.link_id
-           ,CONVERT(NVARCHAR(64), sr.city) AS city
-           ,CONVERT(NVARCHAR(32), sr.postal) AS postal
-           ,CONVERT(NVARCHAR(8), sr.region) AS region
-           ,CONVERT(NVARCHAR(64), sr.country) AS country
+           ,CAST(sr.city AS NVARCHAR(64)) AS city
+           ,CAST(sr.postal AS NVARCHAR(32)) AS postal
+           ,CAST(sr.region AS NVARCHAR(8)) AS region
+           ,CAST(sr.country AS NVARCHAR(64)) AS country
            ,CONVERT(NVARCHAR(16), sr.[language]) AS [language]
-           ,CONVERT(NVARCHAR(32), sr.ip_address) AS ip_address
-           ,CONVERT(NVARCHAR(128), sr.session_id) AS session_id
-           ,CONVERT(NVARCHAR(512), sr.user_agent) AS user_agent
-           ,CONVERT(NVARCHAR(1024), sr.referer) AS referer
+           ,CAST(sr.ip_address AS NVARCHAR(32)) AS ip_address
+           ,CAST(sr.session_id AS NVARCHAR(128)) AS session_id
+           ,CAST(sr.user_agent AS NVARCHAR(512)) AS user_agent
+           ,CAST(sr.referer AS NVARCHAR(1024)) AS referer
            ,CONVERT(NVARCHAR(MAX), sr.data_quality) AS data_quality_json
            ,CONVERT(NVARCHAR(1), JSON_VALUE(sr.url_variables, '$._privatedomain')) AS url_privatedomain
            ,CONVERT(NVARCHAR(32), JSON_VALUE(sr.url_variables, '$.__contact')) AS url_contact

@@ -98,9 +98,9 @@ WITH state_assessments AS (
             SELECT co.state_studentnumber       
                   ,co.grade_level
                   ,a.subject
-                  ,CONVERT(NVARCHAR,a.test_type) AS assessment_type
-                  ,CONVERT(NVARCHAR,a.performance_level) AS performance_level
-                  ,CONVERT(NVARCHAR,a.scaled_score) AS scaled_score
+                  ,CAST(a.test_type AS NVARCHAR) AS assessment_type
+                  ,CAST(a.performance_level AS NVARCHAR) AS performance_level
+                  ,CAST(a.scaled_score AS NVARCHAR) AS scaled_score
             FROM gabby.njsmart.all_state_assessments a
             JOIN gabby.powerschool.cohort_identifiers_static co
               ON a.local_student_id = co.student_number
@@ -121,8 +121,8 @@ WITH state_assessments AS (
                     ELSE LEFT(test_code, 3)
                    END AS subject
                   ,N'PARCC' AS assessment_type
-                  ,CONVERT(NVARCHAR,test_performance_level)
-                  ,CONVERT(NVARCHAR,test_scale_score)
+                  ,CAST(test_performance_level AS NVARCHAR)
+                  ,CAST(test_scale_score AS NVARCHAR)
             FROM gabby.parcc.summative_record_file_clean
            ) sub 
        UNPIVOT(

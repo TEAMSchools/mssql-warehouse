@@ -11,8 +11,8 @@ BEGIN
  DECLARE @End INT;
  DECLARE @Length INT;
 
- -- Replace the HTML entity &amp; with the '&' character (this needs to be done first, as
- -- '&' might be double encoded as '&amp;amp;')
+ -- Replace the HTML entity &amp; with the '&' character (this needs to be done first, AS
+ -- '&' might be double encoded AS '&amp;amp;')
  SET @Start = CHARINDEX('&amp;', @HTMLText);
  SET @End = @Start + 4;
  SET @Length = (@End - @Start) + 1;

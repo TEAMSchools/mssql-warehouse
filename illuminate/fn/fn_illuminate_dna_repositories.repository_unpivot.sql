@@ -23,9 +23,9 @@ BEGIN
   WHERE f.repository_id = @repository_id
     AND f.deleted_at IS NULL;
 
-  SELECT @sql = CONCAT('SELECT sub.repository_id, sub.repository_row_id, sub.[value], CONVERT(NVARCHAR(32), f.[label]) AS [label], s.local_student_id, CONVERT(DATE, r.date_administered) AS date_administered', ' '
+  SELECT @sql = CONCAT('SELECT sub.repository_id, sub.repository_row_id, sub.[value], CONVERT(NVARCHAR(32), f.[label]) AS [label], s.local_student_id, CAST(r.date_administered AS DATE) AS date_administered', ' '
                       ,'FROM (', ' '
-                      ,'SELECT repository_id, repository_row_id, student_id, CONVERT(VARCHAR(125), field) AS field, CONVERT(VARCHAR(25), [value]) AS [value] FROM (', ' '
+                      ,'SELECT repository_id, repository_row_id, student_id, CAST(field AS VARCHAR(125)) AS field, CONVERT(VARCHAR(25), [value]) AS [value] FROM (', ' '
                       ,'SELECT ', @repository_id, ' AS repository_id, repository_row_id, student_id, ', @field_names_converted, ' '
                       ,'FROM illuminate_dna_repositories.repository_', @repository_id, ') sub', ' '
                       ,'UNPIVOT([value] FOR field IN (', @field_names, ')) u', ' '

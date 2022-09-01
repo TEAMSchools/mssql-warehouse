@@ -35,14 +35,14 @@ WITH residency_verification AS (
         ,sub.entry_status
         ,sub.registration_status
         
-        ,CONVERT(VARCHAR(500), sub.lunch_app_status) COLLATE Latin1_General_BIN AS lunch_app_status
-        ,CONVERT(VARCHAR(500), sub.lunch_balance) COLLATE Latin1_General_BIN AS lunch_balance
-        ,CONVERT(VARCHAR(500), sub.iep_registration_followup) COLLATE Latin1_General_BIN AS iep_registration_followup_required
-        ,CONVERT(VARCHAR(500), sub.lep_registration_followup) COLLATE Latin1_General_BIN AS lep_registration_followup_required
-        ,CONVERT(VARCHAR(500), sub.birth_certificate_proof) COLLATE Latin1_General_BIN AS birth_certificate_proof
-        ,CONVERT(VARCHAR(500), sub.residency_proof_1) COLLATE Latin1_General_BIN AS residency_proof_1
-        ,CONVERT(VARCHAR(500), sub.residency_proof_2) COLLATE Latin1_General_BIN AS residency_proof_2
-        ,CONVERT(VARCHAR(500), sub.residency_proof_3) COLLATE Latin1_General_BIN AS residency_proof_3
+        ,CAST(sub.lunch_app_status AS VARCHAR(500)) COLLATE Latin1_General_BIN AS lunch_app_status
+        ,CAST(sub.lunch_balance AS VARCHAR(500)) COLLATE Latin1_General_BIN AS lunch_balance
+        ,CAST(sub.iep_registration_followup AS VARCHAR(500)) COLLATE Latin1_General_BIN AS iep_registration_followup_required
+        ,CAST(sub.lep_registration_followup AS VARCHAR(500)) COLLATE Latin1_General_BIN AS lep_registration_followup_required
+        ,CAST(sub.birth_certificate_proof AS VARCHAR(500)) COLLATE Latin1_General_BIN AS birth_certificate_proof
+        ,CAST(sub.residency_proof_1 AS VARCHAR(500)) COLLATE Latin1_General_BIN AS residency_proof_1
+        ,CAST(sub.residency_proof_2 AS VARCHAR(500)) COLLATE Latin1_General_BIN AS residency_proof_2
+        ,CAST(sub.residency_proof_3 AS VARCHAR(500)) COLLATE Latin1_General_BIN AS residency_proof_3
         
         ,CONVERT(VARCHAR(500), sub.region + sub.city) COLLATE Latin1_General_BIN AS region_city
         

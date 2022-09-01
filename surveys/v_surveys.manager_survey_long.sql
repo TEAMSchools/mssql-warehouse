@@ -44,25 +44,25 @@ WITH manager_long AS (
  )
 
 SELECT 'MGR' AS survey_type
-      ,CONVERT(INT,mgr.response_id) AS response_id
-      ,CONVERT(INT,mgr.academic_year) AS academic_year
-      ,CONVERT(VARCHAR(5),mgr.reporting_term) AS reporting_term
-      ,CONVERT(VARCHAR(5),mgr.term_name) AS term_name      
+      ,CAST(mgr.response_id AS INT) AS response_id
+      ,CAST(mgr.academic_year AS INT) AS academic_year
+      ,CAST(mgr.reporting_term AS VARCHAR(5)) AS reporting_term
+      ,CAST(mgr.term_name AS VARCHAR(5)) AS term_name      
       ,CONVERT(DATETIME2,CASE WHEN ISDATE(mgr.time_started) = 0 THEN NULL ELSE mgr.time_started END) AS time_started
       ,CONVERT(DATETIME2,CASE WHEN ISDATE(mgr.date_submitted) = 0 THEN NULL ELSE mgr.date_submitted END) AS date_submitted
-      ,CONVERT(VARCHAR(25),mgr.status) AS status
-      ,CONVERT(VARCHAR(25),mgr.associate_id) AS respondent_associate_id
-      ,CONVERT(VARCHAR(25),mgr.salesforce_id) AS respondent_salesforce_id
-      ,CONVERT(VARCHAR(125),mgr.email_address) AS respondent_email_address
-      ,CONVERT(VARCHAR(125),mgr.respondent_name) AS respondent_name
-      ,CONVERT(VARCHAR(25),mgr.manager_associate_id) AS subject_associate_id
-      ,CONVERT(VARCHAR(25),mgr.question_code) AS question_code
+      ,CAST(mgr.status AS VARCHAR(25)) AS status
+      ,CAST(mgr.associate_id AS VARCHAR(25)) AS respondent_associate_id
+      ,CAST(mgr.salesforce_id AS VARCHAR(25)) AS respondent_salesforce_id
+      ,CAST(mgr.email_address AS VARCHAR(125)) AS respondent_email_address
+      ,CAST(mgr.respondent_name AS VARCHAR(125)) AS respondent_name
+      ,CAST(mgr.manager_associate_id AS VARCHAR(25)) AS subject_associate_id
+      ,CAST(mgr.question_code AS VARCHAR(25)) AS question_code
       ,mgr.response
 
       ,qk.question_text
-      ,CONVERT(VARCHAR(5),qk.open_ended) AS open_ended
+      ,CAST(qk.open_ended AS VARCHAR(5)) AS open_ended
 
-      ,CONVERT(FLOAT,rs.response_value) AS response_value
+      ,CAST(rs.response_value AS FLOAT) AS response_value
 FROM manager_long mgr     
 JOIN gabby.surveys.question_key qk
   ON mgr.question_code = qk.question_code

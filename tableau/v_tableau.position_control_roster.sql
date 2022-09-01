@@ -42,7 +42,7 @@ SELECT sr.first_name
       ,sr.annual_salary AS base_salary 
       ,sr.work_assignment_start_date
       ,sr.worker_category AS ft_pt
-      ,DATEDIFF(YEAR, sr.work_assignment_start_date, GETDATE()) AS longevity
+      ,DATEDIFF(YEAR, sr.work_assignment_start_date, CURRENT_TIMESTAMP) AS longevity
       ,CASE WHEN sr.worker_category LIKE '%part%' THEN 0.5 ELSE 1.0 END AS fte
       /*Aliasing CEO/CFO for report terminology */
       ,CASE 

@@ -27,8 +27,8 @@ WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 --      ,ROUND(SUM(k_5_progress), 0) AS progress
 --      ,ROUND((MAX(days_elapsed) / MAX(total_days)) * 100, 0) AS goal
 --      ,CASE
---        WHEN CONVERT(DATE,GETDATE()) >= MAX(term_end_date) AND ROUND(SUM(k_5_progress), 0) >= ROUND((MAX(days_elapsed) / MAX(total_days)) * 100, 0) THEN 'Met Goal'
---        WHEN CONVERT(DATE,GETDATE()) >= MAX(term_end_date) AND ROUND(SUM(k_5_progress), 0) < ROUND((MAX(days_elapsed) / MAX(total_days)) * 100, 0) THEN 'Missed Goal'
+--        WHEN CAST(CURRENT_TIMESTAMP AS DATE) >= MAX(term_end_date) AND ROUND(SUM(k_5_progress), 0) >= ROUND((MAX(days_elapsed) / MAX(total_days)) * 100, 0) THEN 'Met Goal'
+--        WHEN CAST(CURRENT_TIMESTAMP AS DATE) >= MAX(term_end_date) AND ROUND(SUM(k_5_progress), 0) < ROUND((MAX(days_elapsed) / MAX(total_days)) * 100, 0) THEN 'Missed Goal'
 --        WHEN ROUND(SUM(k_5_progress), 0) >= ROUND((MAX(days_elapsed) / MAX(total_days)) * 100, 0) THEN 'On Track'        
 --        WHEN ROUND(SUM(k_5_progress), 0) < ROUND((MAX(days_elapsed) / MAX(total_days)) * 100, 0) THEN 'Off Track'
 --       END AS goal_status
@@ -49,8 +49,8 @@ WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 --      ,progress
 --      ,goal
 --      ,CASE
---        WHEN CONVERT(DATE,GETDATE()) >= end_date AND progress >= goal THEN 'Met Goal'
---        WHEN CONVERT(DATE,GETDATE()) >= end_date AND progress < goal THEN 'Missed Goal'
+--        WHEN CAST(CURRENT_TIMESTAMP AS DATE) >= end_date AND progress >= goal THEN 'Met Goal'
+--        WHEN CAST(CURRENT_TIMESTAMP AS DATE) >= end_date AND progress < goal THEN 'Missed Goal'
 --        WHEN progress >= goal THEN 'On Track'        
 --        WHEN progress < goal THEN 'Off Track'
 --       END AS goal_status
@@ -60,15 +60,15 @@ WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 --           ,lex.academic_year
 
 --           ,dt.time_per_name AS term
---           ,CONVERT(DATE,dt.start_date) AS start_date
---           ,CONVERT(DATE,dt.end_date) AS end_date
+--           ,CAST(dt.start_date AS DATE) AS start_date
+--           ,CAST(dt.end_date AS DATE) AS end_date
            
 --           ,'Lexia' AS it_program
            
 --           ,ROUND(lex.pct_to_target * 100, 0) AS progress
---           ,ROUND((CONVERT(FLOAT,DATEDIFF(DAY, CONVERT(DATE,dt.start_date), CASE 
---                                                                             WHEN CONVERT(DATE,GETDATE()) > CONVERT(DATE,dt.end_date) THEN CONVERT(DATE,dt.end_date) 
---                                                                             ELSE CONVERT(DATE,GETDATE()) 
+--           ,ROUND((CONVERT(FLOAT,DATEDIFF(DAY, CAST(dt.start_date AS DATE), CASE 
+--                                                                             WHEN CAST(CURRENT_TIMESTAMP AS DATE) > CAST(dt.end_date AS DATE) THEN CAST(dt.end_date AS DATE) 
+--                                                                             ELSE CAST(CURRENT_TIMESTAMP AS DATE) 
 --                                                                            END)) 
 --                     / CONVERT(FLOAT,DATEDIFF(DAY, dt.start_date, dt.end_date))) * 100,0) AS goal
 --     FROM gabby.tableau.lexia_tracker lex

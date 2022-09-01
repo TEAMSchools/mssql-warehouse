@@ -15,9 +15,9 @@ WITH users_clean AS (
         ,LOWER(df.samaccountname) AS teacherloginid
         ,LOWER(df.mail) AS email_addr
         ,CASE
-          WHEN DATEDIFF(DAY, ISNULL(df.termination_date, CONVERT(DATE, GETDATE())), GETDATE()) <= 7 THEN 1
+          WHEN DATEDIFF(DAY, ISNULL(df.termination_date, CAST(CURRENT_TIMESTAMP AS DATE)), CURRENT_TIMESTAMP) <= 7 THEN 1
           WHEN df.[status] IN ('ACTIVE','INACTIVE','PRESTART', 'PLOA', 'ADMIN_LEAVE') THEN 1
-          WHEN df.termination_date >= CONVERT(DATE, GETDATE()) THEN 1
+          WHEN df.termination_date >= CAST(CURRENT_TIMESTAMP AS DATE) THEN 1
           ELSE 2
          END AS [status]
   FROM gabby.people.staff_crosswalk_static df
@@ -32,7 +32,7 @@ WITH users_clean AS (
         WHEN sc.region = 'KIPP Cooper Norcross Academy' THEN 'kippcamden'
         WHEN sc.region = 'KIPP Miami' THEN 'kippmiami'
        END = u.[db_name]
-  WHERE DATEDIFF(DAY, ISNULL(df.termination_date, CONVERT(DATE, GETDATE())), GETDATE()) <= 14 /* import terminated staff up to a week after termination date */
+  WHERE DATEDIFF(DAY, ISNULL(df.termination_date, CAST(CURRENT_TIMESTAMP AS DATE)), CURRENT_TIMESTAMP) <= 14 /* import terminated staff up to a week after termination date */
     AND (df.primary_on_site_department <> 'Data' OR df.primary_on_site_department IS NULL)
 
   UNION ALL
@@ -48,9 +48,9 @@ WITH users_clean AS (
         ,LOWER(df.samaccountname) AS teacherloginid
         ,LOWER(df.mail) AS email_addr
         ,CASE
-          WHEN DATEDIFF(DAY, ISNULL(df.termination_date, CONVERT(DATE, GETDATE())), GETDATE()) <= 7 THEN 1
+          WHEN DATEDIFF(DAY, ISNULL(df.termination_date, CAST(CURRENT_TIMESTAMP AS DATE)), CURRENT_TIMESTAMP) <= 7 THEN 1
           WHEN df.[status] IN ('ACTIVE','INACTIVE','PRESTART', 'PLOA', 'ADMIN_LEAVE') THEN 1
-          WHEN df.termination_date >= CONVERT(DATE, GETDATE()) THEN 1
+          WHEN df.termination_date >= CAST(CURRENT_TIMESTAMP AS DATE) THEN 1
           ELSE 2
          END AS [status]
   FROM gabby.people.staff_crosswalk_static df
@@ -64,7 +64,7 @@ WITH users_clean AS (
         WHEN sc.region = 'KIPP Cooper Norcross Academy' THEN 'kippcamden'
         WHEN sc.region = 'KIPP Miami' THEN 'kippmiami'
        END = u.[db_name]
-  WHERE DATEDIFF(DAY, ISNULL(df.termination_date, CONVERT(DATE, GETDATE())), GETDATE()) <= 14 /* import terminated staff up to a week after termination date */
+  WHERE DATEDIFF(DAY, ISNULL(df.termination_date, CAST(CURRENT_TIMESTAMP AS DATE)), CURRENT_TIMESTAMP) <= 14 /* import terminated staff up to a week after termination date */
     AND (df.primary_on_site_department <> 'Data' OR df.primary_on_site_department IS NULL)
     AND u.dcid IS NULL
  )

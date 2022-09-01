@@ -29,7 +29,7 @@ WHERE df.[status] NOT IN ('TERMINATED', 'PRESTART')
 UNION ALL
 
 /* T&L/EDs/Data to all schools under CMO */
-SELECT CONVERT(VARCHAR(25), sch.school_number) AS [School_id]
+SELECT CAST(sch.school_number AS VARCHAR(25)) AS [School_id]
       ,df.ps_teachernumber AS [Staff_id]
       ,df.userprincipalname AS [Staff_email]
       ,df.preferred_first_name AS [First_name]
@@ -50,7 +50,7 @@ WHERE df.[status] NOT IN ('TERMINATED', 'PRESTART')
 UNION ALL
 
 /* All region */
-SELECT CONVERT(VARCHAR(25), sch.school_number) AS [School_id]
+SELECT CAST(sch.school_number AS VARCHAR(25)) AS [School_id]
       ,df.ps_teachernumber AS [Staff_id]
       ,df.userprincipalname AS [Staff_email]
       ,df.preferred_first_name AS [First_name]
@@ -71,7 +71,7 @@ WHERE df.[status] NOT IN ('TERMINATED', 'PRESTART')
 UNION ALL
 
 /* All NJ */
-SELECT CONVERT(VARCHAR(25), sch.school_number) AS [School_id]
+SELECT CAST(sch.school_number AS VARCHAR(25)) AS [School_id]
       ,df.ps_teachernumber AS [Staff_id]
       ,df.userprincipalname AS [Staff_email]
       ,df.preferred_first_name AS [First_name]

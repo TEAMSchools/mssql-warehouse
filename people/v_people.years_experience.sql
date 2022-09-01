@@ -18,7 +18,7 @@ WITH days_active AS (
                 DAY
                ,effective_start_date
                ,CASE
-                 WHEN effective_end_date > CONVERT(DATE, GETDATE()) THEN CONVERT(DATE, GETDATE()) 
+                 WHEN effective_end_date > CAST(CURRENT_TIMESTAMP AS DATE) THEN CAST(CURRENT_TIMESTAMP AS DATE) 
                  ELSE effective_end_date 
                 END
               ) AS [days]

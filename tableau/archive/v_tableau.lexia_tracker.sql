@@ -51,7 +51,7 @@ SELECT co.student_number
       ,lex.struggling_indicator
 
       ,ISNULL(g.target_units,0) - ISNULL(lex.units_to_target,0) AS units_completed
-      ,CONVERT(FLOAT,(ISNULL(g.target_units,0.0) - ISNULL(lex.units_to_target,0.0))) / CONVERT(FLOAT,g.target_units) AS pct_to_target      
+      ,CONVERT(FLOAT,(ISNULL(g.target_units,0.0) - ISNULL(lex.units_to_target,0.0))) / CAST(g.target_units AS FLOAT) AS pct_to_target      
 
       ,ROW_NUMBER() OVER(
          PARTITION BY co.student_number, co.academic_year

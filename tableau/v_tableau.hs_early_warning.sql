@@ -6,10 +6,10 @@ CREATE OR ALTER VIEW tableau.hs_early_warning AS
 WITH attendance AS (
   SELECT mem.studentid
         ,mem.[db_name]
-        ,ROUND(AVG(CONVERT(FLOAT, mem.attendancevalue)), 3) AS ada
+        ,ROUND(AVG(CAST(mem.attendancevalue AS FLOAT)), 3) AS ada
   FROM gabby.powerschool.ps_adaadm_daily_ctod_current_static mem
   WHERE mem.membershipvalue = 1
-    AND mem.calendardate <= GETDATE()
+    AND mem.calendardate <= CURRENT_TIMESTAMP
   GROUP BY mem.studentid
           ,mem.[db_name]
  )

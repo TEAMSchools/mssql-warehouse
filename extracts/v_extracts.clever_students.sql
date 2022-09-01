@@ -3,9 +3,9 @@ GO
 
 CREATE OR ALTER VIEW extracts.clever_students AS
 
-SELECT CONVERT(VARCHAR(25), co.schoolid) AS [School_id]
-      ,CONVERT(VARCHAR(25), co.student_number) AS [Student_id]
-      ,CONVERT(VARCHAR(25), co.student_number) AS [Student_number]
+SELECT CAST(co.schoolid AS VARCHAR(25)) AS [School_id]
+      ,CAST(co.student_number AS VARCHAR(25)) AS [Student_id]
+      ,CAST(co.student_number AS VARCHAR(25)) AS [Student_number]
       ,CASE 
         WHEN co.region = 'KMS' THEN suf.fleid 
         ELSE co.state_studentnumber 
@@ -15,7 +15,7 @@ SELECT CONVERT(VARCHAR(25), co.schoolid) AS [School_id]
       ,co.first_name AS [First_name]
       ,CASE
         WHEN co.grade_level = 0 THEN 'Kindergarten'
-        ELSE CONVERT(VARCHAR(5), co.grade_level)
+        ELSE CAST(co.grade_level AS VARCHAR(5))
        END AS [Grade]
       ,co.gender AS [Gender]
       ,co.cohort AS [Graduation_year]

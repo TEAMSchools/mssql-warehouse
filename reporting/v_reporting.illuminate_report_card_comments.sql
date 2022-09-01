@@ -5,7 +5,7 @@ CREATE OR ALTER VIEW reporting.illuminate_report_card_comments AS
 
 WITH repos_union AS (
   SELECT sub.repository_id
-        ,CONVERT(INT,sub.repository_row_id) AS repository_row_id        
+        ,CAST(sub.repository_row_id AS INT) AS repository_row_id        
         ,sub.field_term
         ,sub.field_math_comment_1
         ,sub.field_math_comment_2
@@ -16,7 +16,7 @@ WITH repos_union AS (
         ,sub.field_character_comment_1
         ,sub.field_character_comment_2
 
-        ,CONVERT(INT,s.local_student_id) AS local_student_id
+        ,CAST(s.local_student_id AS INT) AS local_student_id
 
         ,gabby.utilities.GLOBAL_ACADEMIC_YEAR() AS academic_year
   FROM
@@ -94,7 +94,7 @@ WITH repos_union AS (
         ,local_student_id
         ,academic_year
         ,field_term
-        ,CONVERT(VARCHAR(125),comment_field) AS comment_field
+        ,CAST(comment_field AS VARCHAR(125)) AS comment_field
         ,comment_code
         ,CONVERT(INT,RIGHT(comment_field, 1)) AS comment_number
   FROM repos_union
@@ -120,9 +120,9 @@ SELECT cu.repository_id
       ,cu.comment_code
       ,cu.comment_number
       
-      ,CONVERT(VARCHAR(25),cb.subject) AS comment_subject
-      ,CONVERT(VARCHAR(125),cb.subcategory) AS subcategory
-      ,CONVERT(VARCHAR(250),cb.comment) AS comment
+      ,CAST(cb.subject AS VARCHAR(25)) AS comment_subject
+      ,CAST(cb.subcategory AS VARCHAR(125)) AS subcategory
+      ,CAST(cb.comment AS VARCHAR(250)) AS comment
 FROM comm_unpivot cu
 JOIN gabby.reporting.report_card_comment_bank cb
   ON cu.comment_code = cb.code

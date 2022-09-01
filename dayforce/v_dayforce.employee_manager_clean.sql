@@ -19,10 +19,10 @@ FROM
          (
           SELECT em.employee_reference_code
                 ,em.manager_employee_number
-                ,CONVERT(DATE, em.manager_effective_start) AS manager_effective_start
+                ,CAST(em.manager_effective_start AS DATE) AS manager_effective_start
                 ,ROW_NUMBER() OVER(
-                  PARTITION BY em.employee_reference_code, CONVERT(DATE, em.manager_effective_start)
-                    ORDER BY COALESCE(CONVERT(DATE, em.manager_effective_end), '2020-12-31') DESC) AS rn_start
+                  PARTITION BY em.employee_reference_code, CAST(em.manager_effective_start AS DATE)
+                    ORDER BY COALESCE(CAST(em.manager_effective_end AS DATE), '2020-12-31') DESC) AS rn_start
 
                 ,CONCAT(CASE
                          WHEN e.legal_entity_name = 'KIPP New Jersey' THEN '9AM'

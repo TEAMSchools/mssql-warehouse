@@ -96,7 +96,7 @@ WITH dsos AS (
          ON sec.termid = terms.id
         AND sec.schoolid = terms.schoolid
         AND sec.[db_name] = terms.[db_name]
-        AND CONVERT(DATE, GETDATE()) BETWEEN terms.firstday AND terms.lastday
+        AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN terms.firstday AND terms.lastday
        WHERE sec.no_of_students > 0
 
        UNION ALL
@@ -126,7 +126,7 @@ WITH dsos AS (
              ,CONVERT(VARCHAR(25), DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1, 6, 30), 101) AS [Term_end]
 
              ,NULL AS [Name]
-             ,CASE WHEN r.n = 0 THEN 'Kindergarten' ELSE CONVERT(VARCHAR(5), r.n) END AS [Grade]
+             ,CASE WHEN r.n = 0 THEN 'Kindergarten' ELSE CAST(r.n AS VARCHAR(5)) END AS [Grade]
              ,NULL AS [Course_description]
        FROM dsos
        JOIN gabby.powerschool.schools s

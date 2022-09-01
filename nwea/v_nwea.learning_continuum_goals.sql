@@ -18,22 +18,22 @@ WITH long_data AS (
              ,measurement_scale
              ,test_id
              ,test_name
-             ,CONVERT(VARCHAR(125), goal_1_adjective) AS goal_1_adjective
-             ,CONVERT(VARCHAR(125), goal_1_name) AS goal_1_name
-             ,CONVERT(VARCHAR(125), goal_1_range) AS goal_1_range
-             ,CONVERT(VARCHAR(125), goal_1_rit_score) AS goal_1_rit_score
-             ,CONVERT(VARCHAR(125), goal_2_adjective) AS goal_2_adjective
-             ,CONVERT(VARCHAR(125), goal_2_name) AS goal_2_name
-             ,CONVERT(VARCHAR(125), goal_2_range) AS goal_2_range
-             ,CONVERT(VARCHAR(125), goal_2_rit_score) AS goal_2_rit_score
-             ,CONVERT(VARCHAR(125), goal_3_adjective) AS goal_3_adjective
-             ,CONVERT(VARCHAR(125), goal_3_name) AS goal_3_name
-             ,CONVERT(VARCHAR(125), goal_3_range) AS goal_3_range
-             ,CONVERT(VARCHAR(125), goal_3_rit_score) AS goal_3_rit_score
-             ,CONVERT(VARCHAR(125), goal_4_adjective) AS goal_4_adjective
-             ,CONVERT(VARCHAR(125), goal_4_name) AS goal_4_name
-             ,CONVERT(VARCHAR(125), goal_4_range) AS goal_4_range
-             ,CONVERT(VARCHAR(125), goal_4_rit_score) AS goal_4_rit_score
+             ,CAST(goal_1_adjective AS VARCHAR(125)) AS goal_1_adjective
+             ,CAST(goal_1_name AS VARCHAR(125)) AS goal_1_name
+             ,CAST(goal_1_range AS VARCHAR(125)) AS goal_1_range
+             ,CAST(goal_1_rit_score AS VARCHAR(125)) AS goal_1_rit_score
+             ,CAST(goal_2_adjective AS VARCHAR(125)) AS goal_2_adjective
+             ,CAST(goal_2_name AS VARCHAR(125)) AS goal_2_name
+             ,CAST(goal_2_range AS VARCHAR(125)) AS goal_2_range
+             ,CAST(goal_2_rit_score AS VARCHAR(125)) AS goal_2_rit_score
+             ,CAST(goal_3_adjective AS VARCHAR(125)) AS goal_3_adjective
+             ,CAST(goal_3_name AS VARCHAR(125)) AS goal_3_name
+             ,CAST(goal_3_range AS VARCHAR(125)) AS goal_3_range
+             ,CAST(goal_3_rit_score AS VARCHAR(125)) AS goal_3_rit_score
+             ,CAST(goal_4_adjective AS VARCHAR(125)) AS goal_4_adjective
+             ,CAST(goal_4_name AS VARCHAR(125)) AS goal_4_name
+             ,CAST(goal_4_range AS VARCHAR(125)) AS goal_4_range
+             ,CAST(goal_4_rit_score AS VARCHAR(125)) AS goal_4_rit_score
        FROM nwea.assessment_result_identifiers
       ) sub
   UNPIVOT(
@@ -65,7 +65,7 @@ SELECT student_id AS student_number
       ,test_name
       ,goal_number
       ,name
-      ,CONVERT(INT,rit_score) AS ritscore
+      ,CAST(rit_score AS INT) AS ritscore
       ,range
       ,adjective
 FROM long_data

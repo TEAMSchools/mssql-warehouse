@@ -23,9 +23,9 @@ WITH att_counts AS (
                WHEN att.att_code = 'T10' THEN 'T10'
               END AS att_code
                   
-             ,CONVERT(INT,dates.academic_year) AS academic_year
-             ,CONVERT(VARCHAR,dates.time_per_name) COLLATE Latin1_General_BIN AS reporting_term     
-             ,CONVERT(VARCHAR,dates.alt_name) COLLATE Latin1_General_BIN AS term_name
+             ,CAST(dates.academic_year AS INT) AS academic_year
+             ,CAST(dates.time_per_name AS VARCHAR) COLLATE Latin1_General_BIN AS reporting_term     
+             ,CAST(dates.alt_name AS VARCHAR) COLLATE Latin1_General_BIN AS term_name
              ,dates.start_date
              ,dates.end_date
              ,dates.is_curterm
@@ -64,8 +64,8 @@ WITH att_counts AS (
              ,mem.membershipvalue
              ,(mem.yearid + 1990) AS academic_year
 
-             ,CONVERT(VARCHAR,d.time_per_name) AS reporting_term
-             ,CONVERT(VARCHAR,d.alt_name) AS term_name
+             ,CAST(d.time_per_name AS VARCHAR) AS reporting_term
+             ,CAST(d.alt_name AS VARCHAR) AS term_name
              ,d.start_date
              ,d.end_date     
              ,d.is_curterm        
@@ -74,7 +74,7 @@ WITH att_counts AS (
          ON mem.schoolid = d.schoolid 
         AND mem.calendardate BETWEEN d.start_date AND d.end_date
         AND d.identifier = 'RT'
-       WHERE mem.calendardate BETWEEN DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1, 7, 1) AND GETDATE()
+       WHERE mem.calendardate BETWEEN DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1, 7, 1) AND CURRENT_TIMESTAMP
       ) sub
   GROUP BY sub.studentid
           ,sub.academic_year

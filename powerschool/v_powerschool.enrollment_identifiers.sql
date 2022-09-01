@@ -18,7 +18,7 @@ FROM
            ,CASE WHEN DATEFROMPARTS(co.academic_year, 10, 15) BETWEEN co.entrydate AND co.exitdate THEN 1 END AS is_enrolled_oct15
            ,CASE 
              WHEN co.exitdate >= c.max_calendardate THEN 1
-             WHEN CONVERT(DATE, GETDATE()) BETWEEN co.entrydate AND co.exitdate THEN 1
+             WHEN CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN co.entrydate AND co.exitdate THEN 1
             END AS is_enrolled_recent
             /* enrolled week of 10/15 */
            ,CASE

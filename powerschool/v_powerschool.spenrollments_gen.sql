@@ -13,15 +13,15 @@ SELECT sub.studentid
       ,sub.specprog_name
 FROM
     (
-     SELECT CONVERT(INT, sp.studentid) AS studentid
-           ,CONVERT(INT, sp.dcid) AS dcid
+     SELECT CAST(sp.studentid AS INT) AS studentid
+           ,CAST(sp.dcid AS INT) AS dcid
            ,sp.enter_date
            ,sp.exit_date
-           ,CONVERT(INT, sp.id) AS id
-           ,CONVERT(VARCHAR(5), sp.exitcode) AS exitcode
-           ,CONVERT(INT, sp.programid) AS programid
-           ,CONVERT(VARCHAR(125), sp.sp_comment) AS sp_comment
-           ,CONVERT(INT, sp.gradelevel) AS gradelevel
+           ,CAST(sp.id AS INT) AS id
+           ,CAST(sp.exitcode AS VARCHAR(5)) AS exitcode
+           ,CAST(sp.programid AS INT) AS programid
+           ,CAST(sp.sp_comment AS VARCHAR(125)) AS sp_comment
+           ,CAST(sp.gradelevel AS INT) AS gradelevel
            ,gabby.utilities.DATE_TO_SY(sp.enter_date) AS academic_year
 
            ,gen.[name] AS specprog_name

@@ -5,14 +5,14 @@ CREATE OR ALTER VIEW renaissance.ar_individualized_goals_long AS
 
 SELECT student_number
       ,CONVERT(NVARCHAR(4), REPLACE(reporting_term, 'q_', 'AR')) AS reporting_term
-      ,CONVERT(INT, adjusted_goal) AS adjusted_goal
+      ,CAST(adjusted_goal AS INT) AS adjusted_goal
 FROM
     (
      SELECT student_number
-           ,CONVERT(INT, q_1) AS q_1
-           ,CONVERT(INT, q_2) AS q_2
-           ,CONVERT(INT, q_3) AS q_3
-           ,CONVERT(INT, q_4) AS q_4
+           ,CAST(q_1 AS INT) AS q_1
+           ,CAST(q_2 AS INT) AS q_2
+           ,CAST(q_3 AS INT) AS q_3
+           ,CAST(q_4 AS INT) AS q_4
            ,ROW_NUMBER() OVER(PARTITION BY student_number ORDER BY _row DESC) AS rn
      FROM gabby.renaissance.ar_individualized_goals
      WHERE student_number IS NOT NULL

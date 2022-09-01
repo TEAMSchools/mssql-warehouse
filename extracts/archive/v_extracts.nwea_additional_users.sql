@@ -3,7 +3,7 @@ GO
 
 CREATE OR ALTER VIEW extracts.nwea_additional_users AS
 
-SELECT CASE WHEN sr.primary_site_schoolid = 0 THEN NULL ELSE CONVERT(VARCHAR(25),sr.primary_site_schoolid) END AS [School State Code]
+SELECT CASE WHEN sr.primary_site_schoolid = 0 THEN NULL ELSE CAST(sr.primary_site_schoolid AS VARCHAR(25)) END AS [School State Code]
       ,CASE 
         WHEN sr.primary_site_schoolid = 0 THEN NULL 
         WHEN sr.primary_site = 'KIPP Pathways at Bragaw' THEN 'Life Academy'

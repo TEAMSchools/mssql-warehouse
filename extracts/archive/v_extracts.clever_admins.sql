@@ -4,7 +4,7 @@ GO
 CREATE OR ALTER VIEW extracts.clever_admins AS
 
 /* School staff assigned to primary school only */
-SELECT CONVERT(VARCHAR(25), df.primary_site_schoolid) AS [School_id]
+SELECT CAST(df.primary_site_schoolid AS VARCHAR(25)) AS [School_id]
       ,df.ps_teachernumber AS [Staff_id]      
       ,df.userprincipalname AS [Admin_email]
       ,df.preferred_first_name AS [First_name]      
@@ -21,7 +21,7 @@ WHERE df.status <> 'TERMINATED'
 UNION ALL
 
 /* Campus staff assigned to all schools at campus */
-SELECT CONVERT(VARCHAR(25), cc.ps_school_id) AS [School_id]
+SELECT CAST(cc.ps_school_id AS VARCHAR(25)) AS [School_id]
       ,df.ps_teachernumber AS [Staff_id]      
       ,df.userprincipalname AS [Admin_email]
       ,df.preferred_first_name AS [First_name]      
@@ -42,7 +42,7 @@ WHERE df.status <> 'TERMINATED'
 UNION ALL
 
 /* T&L to all schools under CMO */
-SELECT CONVERT(VARCHAR(25), sch.school_number) AS [School_id]
+SELECT CAST(sch.school_number AS VARCHAR(25)) AS [School_id]
       ,df.ps_teachernumber AS [Staff_id]
       ,df.userprincipalname AS [Admin_email]
       ,df.preferred_first_name AS [First_name]      

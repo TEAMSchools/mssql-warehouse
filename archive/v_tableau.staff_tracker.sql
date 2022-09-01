@@ -26,8 +26,8 @@ WITH emp_att AS (
 
 ,tafw AS (
   SELECT sub.df_employee_number
-        ,CONVERT(DATE, sub.tafw_start_date) AS tafw_start_date
-        ,CONVERT(DATE, sub.tafw_end_date) AS tafw_end_date
+        ,CAST(sub.tafw_start_date AS DATE) AS tafw_start_date
+        ,CAST(sub.tafw_end_date AS DATE) AS tafw_end_date
         ,CASE
           WHEN DATEDIFF(HOUR, sub.tafw_start_date, sub.tafw_end_date) > 9 THEN 9.5
           ELSE DATEDIFF(HOUR, sub.tafw_start_date, sub.tafw_end_date)
@@ -35,8 +35,8 @@ WITH emp_att AS (
   FROM
       (
        SELECT t.reference_code AS df_employee_number
-             ,DATEADD(MINUTE, DATEPART(TZOFFSET, t.start_date_time), CONVERT(DATETIME2, t.start_date_time)) AS tafw_start_date
-             ,DATEADD(MINUTE, DATEPART(TZOFFSET, t.end_date_time), CONVERT(DATETIME2, t.end_date_time)) AS tafw_end_date
+             ,DATEADD(MINUTE, DATEPART(TZOFFSET, t.start_date_time), CAST(t.start_date_time AS DATETIME2)) AS tafw_start_date
+             ,DATEADD(MINUTE, DATEPART(TZOFFSET, t.end_date_time), CAST(t.end_date_time AS DATETIME2)) AS tafw_end_date
        FROM gabby.dayforce.tafw_requests t
        WHERE t.tafw_status IN ('Approved', 'Pending', 'Cancellation Pending')
       ) sub
@@ -45,8 +45,8 @@ WITH emp_att AS (
 ,leave AS (
   SELECT s.number AS df_employee_number
         ,s.[status]
-        ,CONVERT(DATE, s.effective_start) AS effective_start
-        ,COALESCE(CONVERT(DATE, s.effective_end), CONVERT(DATE, GETDATE())) AS effective_end
+        ,CAST(s.effective_start AS DATE) AS effective_start
+        ,COALESCE(CAST(s.effective_end AS DATE), CAST(CURRENT_TIMESTAMP AS DATE)) AS effective_end
   FROM gabby.dayforce.employee_status s
   WHERE s.[status] IN ('Administrative Leave', 'Medical Leave of Absence', 'Personal Leave of Absence')
  )
@@ -61,7 +61,7 @@ SELECT df.df_employee_number
       ,df.manager_name AS manager
       ,df.[status] AS position_status
       ,df.position_effective_from_date AS academic_year_start_date
-      ,COALESCE(df.termination_date, CONVERT(DATE,GETDATE())) AS academic_year_end_date
+      ,COALESCE(df.termination_date, CAST(CURRENT_TIMESTAMP AS DATE)) AS academic_year_end_date
       ,df.userprincipalname AS email_address
       ,LOWER(df.samaccountname) AS staff_username_short
       ,LOWER(df.manager_samaccountname) AS mgr_username_short
@@ -79,7 +79,7 @@ SELECT df.df_employee_number
        END AS insession
       ,gabby.utilities.DATE_TO_SY(cal.date_value) AS academic_year
 
-      ,CONVERT(VARCHAR(5), dt.alt_name) AS term
+      ,CAST(dt.alt_name AS VARCHAR(5)) AS term
 
       ,COALESCE(CASE 
                  WHEN t.tafw_hours = 9.5 THEN 'PTO'
@@ -134,7 +134,7 @@ JOIN gabby.powerschool.calendar_day cal
   ON df.primary_site_schoolid = cal.schoolid 
  AND df.[db_name]= cal.[db_name]
  AND (cal.insession = 1 OR cal.[type] = 'PD') 
- AND cal.date_value BETWEEN DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1, 7, 1) AND GETDATE()
+ AND cal.date_value BETWEEN DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1, 7, 1) AND CURRENT_TIMESTAMP
 JOIN gabby.reporting.reporting_terms dt
   ON cal.schoolid = dt.schoolid
  AND cal.date_value BETWEEN dt.[start_date] AND dt.end_date
@@ -156,4 +156,4 @@ LEFT JOIN gabby.people.staff_attendance_clean_static a
 LEFT JOIN leave l
   ON df.df_employee_number = l.df_employee_number
  AND cal.date_value BETWEEN l.effective_start AND l.effective_end
-WHERE COALESCE(df.termination_date, GETDATE()) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
+WHERE COALESCE(df.termination_date, CURRENT_TIMESTAMP) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)

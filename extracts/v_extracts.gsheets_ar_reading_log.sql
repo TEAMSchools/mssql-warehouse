@@ -15,7 +15,7 @@ WITH fp AS (
              ORDER BY [start_date] DESC) AS rn_curr
   FROM gabby.lit.achieved_by_round_static
   WHERE read_lvl IS NOT NULL
-    AND [start_date] BETWEEN DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1) AND GETDATE()
+    AND [start_date] BETWEEN DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1) AND CURRENT_TIMESTAMP
  )
 
 ,ar_wide AS (
@@ -49,21 +49,21 @@ WITH fp AS (
                     ELSE 'cur'
                    END AS reporting_term
 
-                  ,CONVERT(VARCHAR, words) AS words
-                  ,CONVERT(VARCHAR, words_goal) AS words_goal
-                  ,CONVERT(VARCHAR, stu_status_words) AS stu_status_words
-                  ,CONVERT(VARCHAR, mastery) AS mastery
-                  ,CONVERT(VARCHAR, mastery_fiction) AS mastery_fiction
-                  ,CONVERT(VARCHAR, mastery_nonfiction) AS mastery_nonfiction
+                  ,CAST(words AS VARCHAR) AS words
+                  ,CAST(words_goal AS VARCHAR) AS words_goal
+                  ,CAST(stu_status_words AS VARCHAR) AS stu_status_words
+                  ,CAST(mastery AS VARCHAR) AS mastery
+                  ,CAST(mastery_fiction AS VARCHAR) AS mastery_fiction
+                  ,CAST(mastery_nonfiction AS VARCHAR) AS mastery_nonfiction
                   ,CONVERT(VARCHAR, 100 - pct_fiction) AS pct_nonfiction            
                   ,CONVERT(VARCHAR,
                      CASE
-                      WHEN CONVERT(INT, ontrack_words) - CONVERT(INT, words) < 0 THEN 0
-                      ELSE CONVERT(INT, ontrack_words) - CONVERT(INT, words)
+                      WHEN CAST(ontrack_words AS INT) - CAST(words AS INT) < 0 THEN 0
+                      ELSE CAST(ontrack_words AS INT) - CAST(words AS INT)
                      END) AS words_needed
             FROM gabby.renaissance.ar_progress_to_goals
             WHERE words_goal > 0
-              AND (CONVERT(DATE, GETDATE()) BETWEEN [start_date] AND end_date)
+              AND (CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN [start_date] AND end_date)
            ) sub
        UNPIVOT (
          value
@@ -130,26 +130,26 @@ SELECT co.student_number
 
       /* gradebook grades */
       ,gr.term_grade_percent AS cur_term_rdg_gr
-      ,gr.y1_grade_percent_adjusted AS y1_rdg_gr
+      ,gr.y1_grade_percent_adj AS y1_rdg_gr
       
       ,ele.grade_category_pct AS cur_term_rdg_hw_avg
 
       ,bk.vch_content_title AS last_book_title
-      ,CONVERT(VARCHAR, bk.dt_taken) AS last_book_quiz_date
+      ,CAST(bk.dt_taken AS VARCHAR) AS last_book_quiz_date
       ,bk.d_percent_correct * 100 AS last_book_quiz_pct_correct
 FROM gabby.powerschool.cohort_identifiers_static co
 LEFT JOIN gabby.powerschool.course_enrollments_current_static enr
   ON co.student_number = enr.student_number
  AND co.[db_name] = enr.[db_name]
  AND enr.credittype = 'ENG'
- AND CONVERT(DATE, GETDATE()) BETWEEN enr.dateenrolled AND enr.dateleft
+ AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN enr.dateenrolled AND enr.dateleft
  AND enr.rn_subject = 1
 LEFT JOIN gabby.powerschool.final_grades_static gr
-  ON co.student_number = gr.student_number
- AND co.academic_year = gr.academic_year
+  ON co.studentid = gr.studentid
+ AND co.yearid = gr.yearid
  AND co.[db_name] = gr.[db_name]
  AND enr.course_number = gr.course_number
- AND gr.is_curterm = 1
+ AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN gr.termbin_start_date AND gr.termbin_end_date
 LEFT JOIN gabby.powerschool.category_grades_static ele
   ON co.student_number = ele.student_number
  AND co.academic_year = ele.academic_year 

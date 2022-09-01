@@ -3,7 +3,7 @@ GO
 
 CREATE OR ALTER VIEW lit.illuminate_test_events_current AS
 
-SELECT CONVERT(INT,s.local_student_id) AS local_student_id
+SELECT CAST(s.local_student_id AS INT) AS local_student_id
       ,sub.date_administered
       ,sub.about_the_text
       ,sub.beyond_the_text
@@ -26,25 +26,25 @@ FROM
      SELECT student_id 
            ,academic_year        
            ,test_round
-           ,CONVERT(DATE,date_administered) AS date_administered
-           ,CONVERT(FLOAT,about_the_text) AS about_the_text
-           ,CONVERT(FLOAT,beyond_the_text) AS beyond_the_text
-           ,CONVERT(FLOAT,within_the_text) AS within_the_text
-           ,CONVERT(FLOAT,accuracy) AS accuracy
-           ,CONVERT(FLOAT,fluency_score) AS fluency
-           ,CONVERT(FLOAT,reading_rate_wpm) AS reading_rate_wpm        
-           ,CONVERT(VARCHAR(5),reading_level) AS instructional_level_tested
-           ,CONVERT(VARCHAR(25),rate_proficiency) AS rate_proficiency
-           ,CONVERT(VARCHAR(25),key_lever) AS key_lever
-           ,CONVERT(VARCHAR(5),fiction_nonfiction) AS fiction_nonfiction
-           --,CONVERT(VARCHAR(125),test_administered_by) AS test_administered_by             
+           ,CAST(date_administered AS DATE) AS date_administered
+           ,CAST(about_the_text AS FLOAT) AS about_the_text
+           ,CAST(beyond_the_text AS FLOAT) AS beyond_the_text
+           ,CAST(within_the_text AS FLOAT) AS within_the_text
+           ,CAST(accuracy AS FLOAT) AS accuracy
+           ,CAST(fluency_score AS FLOAT) AS fluency
+           ,CAST(reading_rate_wpm AS FLOAT) AS reading_rate_wpm        
+           ,CAST(reading_level AS VARCHAR(5)) AS instructional_level_tested
+           ,CAST(rate_proficiency AS VARCHAR(25)) AS rate_proficiency
+           ,CAST(key_lever AS VARCHAR(25)) AS key_lever
+           ,CAST(fiction_nonfiction AS VARCHAR(5)) AS fiction_nonfiction
+           --,CAST(test_administered_by AS VARCHAR(125)) AS test_administered_by             
            ,CONCAT('IL', repository_id, repository_row_id) AS unique_id                     
            ,CASE
              WHEN LTRIM(RTRIM([status])) LIKE '%Did Not Achieve%' THEN 'Did Not Achieve'
              WHEN LTRIM(RTRIM([status])) LIKE '%Achieved%' THEN 'Achieved'
              ELSE CONVERT(VARCHAR(25),LTRIM(RTRIM([status])))
             END AS [status]
-           ,CASE WHEN [status] LIKE '%Achieved%' THEN CONVERT(VARCHAR(5),reading_level) END AS achieved_independent_level
+           ,CASE WHEN [status] LIKE '%Achieved%' THEN CAST(reading_level AS VARCHAR(5)) END AS achieved_independent_level
      FROM
          ( 
           SELECT 194 AS repository_id                  

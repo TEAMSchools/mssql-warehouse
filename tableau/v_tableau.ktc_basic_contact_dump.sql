@@ -36,8 +36,8 @@ WITH next_yr_enrollment AS (
                     WHEN transcript_date_c = '2018-12-31' THEN 'fall'
                     WHEN transcript_date_c = '2019-05-31' THEN 'spring'
                    END AS semester
-                  ,CONVERT(VARCHAR,semester_gpa_c) AS semester_gpa
-                  ,CONVERT(VARCHAR,academic_status_c) AS academic_status
+                  ,CAST(semester_gpa_c AS VARCHAR) AS semester_gpa
+                  ,CAST(academic_status_c AS VARCHAR) AS academic_status
             FROM gabby.alumni.gpa_c
             WHERE transcript_date_c >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1, 7, 1)
            ) sub
@@ -104,11 +104,11 @@ WITH next_yr_enrollment AS (
        SELECT Contact_c AS contact_id
              ,Date_c AS last_successful_contact_date
              ,DATEADD(MONTH, 12, Date_c) AS missing_start_date
-             ,COALESCE(LEAD(Date_c, 1) OVER(PARTITION BY Contact_c ORDER BY Date_c ASC), GETDATE()) AS found_date
+             ,COALESCE(LEAD(Date_c, 1) OVER(PARTITION BY Contact_c ORDER BY Date_c ASC), CURRENT_TIMESTAMP) AS found_date
              ,CASE WHEN LEAD(Date_c, 1) OVER(PARTITION BY Contact_c ORDER BY Date_c ASC) IS NULL THEN 1 END AS is_still_missing
              ,DATEDIFF(MONTH
                       ,Date_c
-                      ,COALESCE(LEAD(Date_c, 1) OVER(PARTITION BY Contact_c ORDER BY Date_c), GETDATE())) AS n_months_elapsed
+                      ,COALESCE(LEAD(Date_c, 1) OVER(PARTITION BY Contact_c ORDER BY Date_c), CURRENT_TIMESTAMP)) AS n_months_elapsed
        FROM gabby.alumni.contact_note_c c
        WHERE Status_c = 'Successful'
          AND is_deleted = 0
@@ -250,9 +250,9 @@ SELECT c.sf_contact_id AS contact_id
       ,gpa.fall_academic_status 
       ,gpa.spring_academic_status
       ,gpa.prev_spring_academic_status
-      ,CONVERT(FLOAT,gpa.fall_semester_gpa) AS gpa_mp1
-      ,CONVERT(FLOAT,gpa.spring_semester_gpa) AS gpa_mp2      
-      ,CONVERT(FLOAT,gpa.prev_spring_semester_gpa) AS gpa_prev_mp2 
+      ,CAST(gpa.fall_semester_gpa AS FLOAT) AS gpa_mp1
+      ,CAST(gpa.spring_semester_gpa AS FLOAT) AS gpa_mp2      
+      ,CAST(gpa.prev_spring_semester_gpa AS FLOAT) AS gpa_prev_mp2 
       ,CONVERT(FLOAT,COALESCE(gpa.spring_semester_gpa, gpa.fall_semester_gpa, gpa.prev_spring_semester_gpa)) AS gpa_recent
       ,CASE
         WHEN gpa.prev_spring_semester_gpa IS NOT NULL THEN 1        

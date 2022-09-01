@@ -6,9 +6,9 @@ CREATE OR ALTER VIEW steptool.component_scores AS
 SELECT unique_id
       ,student_id
       ,step AS lvl_num
-      ,CONVERT(VARCHAR(125),field) AS field
+      ,CAST(field AS VARCHAR(125)) AS field
       ,score
-      ,CASE WHEN step = 0 THEN 'Pre' ELSE CONVERT(VARCHAR(5),step) END AS read_lvl
+      ,CASE WHEN step = 0 THEN 'Pre' ELSE CAST(step AS VARCHAR(5)) END AS read_lvl
       ,CASE               
         WHEN step = 0 THEN 3280
         WHEN step = 1 THEN 3281
@@ -31,272 +31,272 @@ SELECT unique_id
 FROM 
     (
      SELECT CONVERT(VARCHAR(125),CONCAT('UC', gabby.utilities.DATE_TO_SY(date), [_line])) AS unique_id
-           ,CONVERT(INT,CONVERT(FLOAT,student_id)) AS student_id
-           ,CONVERT(INT,step) AS step
+           ,CONVERT(INT,CAST(student_id AS FLOAT)) AS student_id
+           ,CAST(step AS INT) AS step
            ,passed              
              
-           ,CONVERT(VARCHAR(25),c_confusion_10_) AS c_confusion_10_
-           ,CONVERT(VARCHAR(25),c_confusion_11_) AS c_confusion_11_
-           ,CONVERT(VARCHAR(25),c_confusion_12_) AS c_confusion_12_
-           ,CONVERT(VARCHAR(25),c_confusion_2_) AS c_confusion_2_
-           ,CONVERT(VARCHAR(25),c_confusion_3_) AS c_confusion_3_
-           ,CONVERT(VARCHAR(25),c_confusion_4_) AS c_confusion_4_
-           ,CONVERT(VARCHAR(25),c_confusion_5_) AS c_confusion_5_
-           ,CONVERT(VARCHAR(25),c_confusion_6_) AS c_confusion_6_
-           ,CONVERT(VARCHAR(25),c_confusion_7_) AS c_confusion_7_
-           ,CONVERT(VARCHAR(25),c_confusion_8_) AS c_confusion_8_
-           ,CONVERT(VARCHAR(25),c_confusion_9_) AS c_confusion_9_
-           ,CONVERT(VARCHAR(25),comprehension_conversation_2_) AS comprehension_conversation_2_
-           ,CONVERT(VARCHAR(25),comprehension_conversation_3_) AS comprehension_conversation_3_
-           ,CONVERT(VARCHAR(25),comprehension_conversation_4_) AS comprehension_conversation_4_
-           ,CONVERT(VARCHAR(25),comprehension_conversation_5_) AS comprehension_conversation_5_
-           ,CONVERT(VARCHAR(25),comprehension_conversation_8_) AS comprehension_conversation_8_
-           ,CONVERT(VARCHAR(25),comprehension_conversation_critical_thinking_3_) AS comprehension_conversation_critical_thinking_3_
-           ,CONVERT(VARCHAR(25),comprehension_conversation_critical_thinking_4_) AS comprehension_conversation_critical_thinking_4_
-           ,CONVERT(VARCHAR(25),comprehension_conversation_critical_thinking_5_) AS comprehension_conversation_critical_thinking_5_
-           ,CONVERT(VARCHAR(25),comprehension_conversation_critical_thinking_8_) AS comprehension_conversation_critical_thinking_8_
-           ,CONVERT(VARCHAR(25),comprehension_conversation_factual_2_) AS comprehension_conversation_factual_2_
-           ,CONVERT(VARCHAR(25),comprehension_conversation_factual_3_) AS comprehension_conversation_factual_3_
-           ,CONVERT(VARCHAR(25),comprehension_conversation_factual_4_) AS comprehension_conversation_factual_4_
-           ,CONVERT(VARCHAR(25),comprehension_conversation_factual_5_) AS comprehension_conversation_factual_5_
-           ,CONVERT(VARCHAR(25),comprehension_conversation_factual_8_) AS comprehension_conversation_factual_8_
-           ,CONVERT(VARCHAR(25),comprehension_conversation_inferential_2_) AS comprehension_conversation_inferential_2_
-           ,CONVERT(VARCHAR(25),comprehension_conversation_inferential_3_) AS comprehension_conversation_inferential_3_
-           ,CONVERT(VARCHAR(25),comprehension_conversation_inferential_4_) AS comprehension_conversation_inferential_4_
-           ,CONVERT(VARCHAR(25),comprehension_conversation_inferential_5_) AS comprehension_conversation_inferential_5_
-           ,CONVERT(VARCHAR(25),comprehension_conversation_inferential_8_) AS comprehension_conversation_inferential_8_
-           ,CONVERT(VARCHAR(25),comprehension_conversation_other_2_) AS comprehension_conversation_other_2_
-           ,CONVERT(VARCHAR(25),concepts_about_print_0_) AS concepts_about_print_0_
-           ,CONVERT(VARCHAR(25),concepts_about_print_1_) AS concepts_about_print_1_
-           ,CONVERT(VARCHAR(25),concepts_about_print_one_to_one_matching_0_) AS concepts_about_print_one_to_one_matching_0_
-           ,CONVERT(VARCHAR(25),concepts_about_print_one_to_one_matching_1_) AS concepts_about_print_one_to_one_matching_1_
-           ,CONVERT(VARCHAR(25),concepts_about_print_orientation_0_) AS concepts_about_print_orientation_0_
-           ,CONVERT(VARCHAR(25),concepts_about_print_orientation_1_) AS concepts_about_print_orientation_1_
-           ,CONVERT(VARCHAR(25),concepts_about_print_sense_of_letter_vs_word_0_) AS concepts_about_print_sense_of_letter_vs_word_0_
-           ,CONVERT(VARCHAR(25),concepts_about_print_sense_of_letter_vs_word_1_) AS concepts_about_print_sense_of_letter_vs_word_1_
-           ,CONVERT(VARCHAR(25),developmental_spelling_1_) AS developmental_spelling_1_
-           ,CONVERT(VARCHAR(25),developmental_spelling_10_) AS developmental_spelling_10_
-           ,CONVERT(VARCHAR(25),developmental_spelling_11_) AS developmental_spelling_11_
-           ,CONVERT(VARCHAR(25),developmental_spelling_12_) AS developmental_spelling_12_
-           ,CONVERT(VARCHAR(25),developmental_spelling_2_) AS developmental_spelling_2_
-           ,CONVERT(VARCHAR(25),developmental_spelling_3_) AS developmental_spelling_3_
-           ,CONVERT(VARCHAR(25),developmental_spelling_4_) AS developmental_spelling_4_
-           ,CONVERT(VARCHAR(25),developmental_spelling_5_) AS developmental_spelling_5_
-           ,CONVERT(VARCHAR(25),developmental_spelling_6_) AS developmental_spelling_6_
-           ,CONVERT(VARCHAR(25),developmental_spelling_7_) AS developmental_spelling_7_
-           ,CONVERT(VARCHAR(25),developmental_spelling_8_) AS developmental_spelling_8_
-           ,CONVERT(VARCHAR(25),developmental_spelling_9_) AS developmental_spelling_9_
-           ,CONVERT(VARCHAR(25),developmental_spelling_complex_blend_10_) AS developmental_spelling_complex_blend_10_
-           ,CONVERT(VARCHAR(25),developmental_spelling_complex_blend_8_) AS developmental_spelling_complex_blend_8_
-           ,CONVERT(VARCHAR(25),developmental_spelling_complex_blend_9_) AS developmental_spelling_complex_blend_9_
-           ,CONVERT(VARCHAR(25),developmental_spelling_doubling_at_syllable_juncture_11_) AS developmental_spelling_doubling_at_syllable_juncture_11_
-           ,CONVERT(VARCHAR(25),developmental_spelling_doubling_at_syllable_juncture_12_) AS developmental_spelling_doubling_at_syllable_juncture_12_
-           ,CONVERT(VARCHAR(25),developmental_spelling_ed_ing_endings_11_) AS developmental_spelling_ed_ing_endings_11_
-           ,CONVERT(VARCHAR(25),developmental_spelling_ed_ing_endings_12_) AS developmental_spelling_ed_ing_endings_12_
-           ,CONVERT(VARCHAR(25),developmental_spelling_final_sound_1_) AS developmental_spelling_final_sound_1_
-           ,CONVERT(VARCHAR(25),developmental_spelling_final_sound_2_) AS developmental_spelling_final_sound_2_
-           ,CONVERT(VARCHAR(25),developmental_spelling_final_sound_3_) AS developmental_spelling_final_sound_3_
-           ,CONVERT(VARCHAR(25),developmental_spelling_first_sound_1_) AS developmental_spelling_first_sound_1_
-           ,CONVERT(VARCHAR(25),developmental_spelling_first_sound_2_) AS developmental_spelling_first_sound_2_
-           ,CONVERT(VARCHAR(25),developmental_spelling_first_sound_3_) AS developmental_spelling_first_sound_3_
-           ,CONVERT(VARCHAR(25),developmental_spelling_initial_final_blend_digraph_5_) AS developmental_spelling_initial_final_blend_digraph_5_
-           ,CONVERT(VARCHAR(25),developmental_spelling_initial_final_blend_digraphs_4_) AS developmental_spelling_initial_final_blend_digraphs_4_
-           ,CONVERT(VARCHAR(25),developmental_spelling_long_vowel_2_syllable_words_11_) AS developmental_spelling_long_vowel_2_syllable_words_11_
-           ,CONVERT(VARCHAR(25),developmental_spelling_long_vowel_2_syllable_words_12_) AS developmental_spelling_long_vowel_2_syllable_words_12_
-           ,CONVERT(VARCHAR(25),developmental_spelling_long_vowel_pattern_10_) AS developmental_spelling_long_vowel_pattern_10_
-           ,CONVERT(VARCHAR(25),developmental_spelling_long_vowel_pattern_6_) AS developmental_spelling_long_vowel_pattern_6_
-           ,CONVERT(VARCHAR(25),developmental_spelling_long_vowel_pattern_8_) AS developmental_spelling_long_vowel_pattern_8_
-           ,CONVERT(VARCHAR(25),developmental_spelling_long_vowel_pattern_9_) AS developmental_spelling_long_vowel_pattern_9_
-           ,CONVERT(VARCHAR(25),developmental_spelling_r_controlled_2_syllable_words_11_) AS developmental_spelling_r_controlled_2_syllable_words_11_
-           ,CONVERT(VARCHAR(25),developmental_spelling_r_controlled_2_syllable_words_12_) AS developmental_spelling_r_controlled_2_syllable_words_12_
-           ,CONVERT(VARCHAR(25),developmental_spelling_r_controlled_vowel_10_) AS developmental_spelling_r_controlled_vowel_10_
-           ,CONVERT(VARCHAR(25),developmental_spelling_r_controlled_vowel_6_) AS developmental_spelling_r_controlled_vowel_6_
-           ,CONVERT(VARCHAR(25),developmental_spelling_r_controlled_vowel_7_) AS developmental_spelling_r_controlled_vowel_7_
-           ,CONVERT(VARCHAR(25),developmental_spelling_r_controlled_vowel_8_) AS developmental_spelling_r_controlled_vowel_8_
-           ,CONVERT(VARCHAR(25),developmental_spelling_r_controlled_vowel_9_) AS developmental_spelling_r_controlled_vowel_9_
-           ,CONVERT(VARCHAR(25),developmental_spelling_short_vowel_sound_1_) AS developmental_spelling_short_vowel_sound_1_
-           ,CONVERT(VARCHAR(25),developmental_spelling_short_vowel_sound_2_) AS developmental_spelling_short_vowel_sound_2_
-           ,CONVERT(VARCHAR(25),developmental_spelling_short_vowel_sound_3_) AS developmental_spelling_short_vowel_sound_3_
-           ,CONVERT(VARCHAR(25),developmental_spelling_short_vowel_sound_4_) AS developmental_spelling_short_vowel_sound_4_
-           ,CONVERT(VARCHAR(25),developmental_spelling_short_vowel_sound_5_) AS developmental_spelling_short_vowel_sound_5_
-           ,CONVERT(VARCHAR(25),developmental_spelling_v_c_e_long_vowel_pattern_7_) AS developmental_spelling_v_c_e_long_vowel_pattern_7_
-           ,CONVERT(VARCHAR(25),developmental_spelling_vowel_digraphs_10_) AS developmental_spelling_vowel_digraphs_10_
-           ,CONVERT(VARCHAR(25),developmental_spelling_vowel_digraphs_8_) AS developmental_spelling_vowel_digraphs_8_
-           ,CONVERT(VARCHAR(25),developmental_spelling_vowel_digraphs_9_) AS developmental_spelling_vowel_digraphs_9_
-           ,CONVERT(VARCHAR(25),f_overreliance_on_facts_for_the_text_10_) AS f_overreliance_on_facts_for_the_text_10_
-           ,CONVERT(VARCHAR(25),f_overreliance_on_facts_for_the_text_11_) AS f_overreliance_on_facts_for_the_text_11_
-           ,CONVERT(VARCHAR(25),f_overreliance_on_facts_for_the_text_12_) AS f_overreliance_on_facts_for_the_text_12_
-           ,CONVERT(VARCHAR(25),f_overreliance_on_facts_for_the_text_2_) AS f_overreliance_on_facts_for_the_text_2_
-           ,CONVERT(VARCHAR(25),f_overreliance_on_facts_for_the_text_3_) AS f_overreliance_on_facts_for_the_text_3_
-           ,CONVERT(VARCHAR(25),f_overreliance_on_facts_for_the_text_4_) AS f_overreliance_on_facts_for_the_text_4_
-           ,CONVERT(VARCHAR(25),f_overreliance_on_facts_for_the_text_5_) AS f_overreliance_on_facts_for_the_text_5_
-           ,CONVERT(VARCHAR(25),f_overreliance_on_facts_for_the_text_6_) AS f_overreliance_on_facts_for_the_text_6_
-           ,CONVERT(VARCHAR(25),f_overreliance_on_facts_for_the_text_7_) AS f_overreliance_on_facts_for_the_text_7_
-           ,CONVERT(VARCHAR(25),f_overreliance_on_facts_for_the_text_8_) AS f_overreliance_on_facts_for_the_text_8_
-           ,CONVERT(VARCHAR(25),f_overreliance_on_facts_for_the_text_9_) AS f_overreliance_on_facts_for_the_text_9_
-           ,CONVERT(VARCHAR(25),fluency_10_) AS fluency_10_
-           ,CONVERT(VARCHAR(25),fluency_11_) AS fluency_11_
-           ,CONVERT(VARCHAR(25),fluency_12_) AS fluency_12_
-           ,CONVERT(VARCHAR(25),fluency_4_) AS fluency_4_
-           ,CONVERT(VARCHAR(25),fluency_5_) AS fluency_5_
-           ,CONVERT(VARCHAR(25),fluency_6_) AS fluency_6_
-           ,CONVERT(VARCHAR(25),fluency_7_) AS fluency_7_
-           ,CONVERT(VARCHAR(25),fluency_8_) AS fluency_8_
-           ,CONVERT(VARCHAR(25),fluency_9_) AS fluency_9_
-           ,CONVERT(VARCHAR(25),l_limited_10_) AS l_limited_10_
-           ,CONVERT(VARCHAR(25),l_limited_11_) AS l_limited_11_
-           ,CONVERT(VARCHAR(25),l_limited_12_) AS l_limited_12_
-           ,CONVERT(VARCHAR(25),l_limited_2_) AS l_limited_2_
-           ,CONVERT(VARCHAR(25),l_limited_3_) AS l_limited_3_
-           ,CONVERT(VARCHAR(25),l_limited_4_) AS l_limited_4_
-           ,CONVERT(VARCHAR(25),l_limited_5_) AS l_limited_5_
-           ,CONVERT(VARCHAR(25),l_limited_6_) AS l_limited_6_
-           ,CONVERT(VARCHAR(25),l_limited_7_) AS l_limited_7_
-           ,CONVERT(VARCHAR(25),l_limited_8_) AS l_limited_8_
-           ,CONVERT(VARCHAR(25),l_limited_9_) AS l_limited_9_
-           ,CONVERT(VARCHAR(25),letter_name_identification_0_) AS letter_name_identification_0_
-           ,CONVERT(VARCHAR(25),letter_name_identification_1_) AS letter_name_identification_1_
-           ,CONVERT(VARCHAR(25),letter_name_identification_2_) AS letter_name_identification_2_
-           ,CONVERT(VARCHAR(25),letter_sound_identification_0_) AS letter_sound_identification_0_
-           ,CONVERT(VARCHAR(25),letter_sound_identification_1_) AS letter_sound_identification_1_
-           ,CONVERT(VARCHAR(25),letter_sound_identification_2_) AS letter_sound_identification_2_
-           ,CONVERT(VARCHAR(25),letter_sound_identification_3_) AS letter_sound_identification_3_
-           ,CONVERT(VARCHAR(25),meaning_10_) AS meaning_10_
-           ,CONVERT(VARCHAR(25),meaning_11_) AS meaning_11_
-           ,CONVERT(VARCHAR(25),meaning_12_) AS meaning_12_
-           ,CONVERT(VARCHAR(25),meaning_3_) AS meaning_3_
-           ,CONVERT(VARCHAR(25),meaning_4_) AS meaning_4_
-           ,CONVERT(VARCHAR(25),meaning_5_) AS meaning_5_
-           ,CONVERT(VARCHAR(25),meaning_6_) AS meaning_6_
-           ,CONVERT(VARCHAR(25),meaning_7_) AS meaning_7_
-           ,CONVERT(VARCHAR(25),meaning_8_) AS meaning_8_
-           ,CONVERT(VARCHAR(25),meaning_9_) AS meaning_9_
-           ,CONVERT(VARCHAR(25),name_assessment_0_) AS name_assessment_0_
-           ,CONVERT(VARCHAR(25),oral_comprehension_10_) AS oral_comprehension_10_
-           ,CONVERT(VARCHAR(25),oral_comprehension_11_) AS oral_comprehension_11_
-           ,CONVERT(VARCHAR(25),oral_comprehension_12_) AS oral_comprehension_12_
-           ,CONVERT(VARCHAR(25),oral_comprehension_6_) AS oral_comprehension_6_
-           ,CONVERT(VARCHAR(25),oral_comprehension_7_) AS oral_comprehension_7_
-           ,CONVERT(VARCHAR(25),oral_comprehension_9_) AS oral_comprehension_9_
-           ,CONVERT(VARCHAR(25),oral_comprehension_critical_thinking_10_) AS oral_comprehension_critical_thinking_10_
-           ,CONVERT(VARCHAR(25),oral_comprehension_critical_thinking_11_) AS oral_comprehension_critical_thinking_11_
-           ,CONVERT(VARCHAR(25),oral_comprehension_critical_thinking_12_) AS oral_comprehension_critical_thinking_12_
-           ,CONVERT(VARCHAR(25),oral_comprehension_critical_thinking_6_purple_only_) AS oral_comprehension_critical_thinking_6_purple_only_
-           ,CONVERT(VARCHAR(25),oral_comprehension_critical_thinking_7_purple_only_) AS oral_comprehension_critical_thinking_7_purple_only_
-           ,CONVERT(VARCHAR(25),oral_comprehension_critical_thinking_9_) AS oral_comprehension_critical_thinking_9_
-           ,CONVERT(VARCHAR(25),oral_comprehension_factual_10_yellow_only_) AS oral_comprehension_factual_10_yellow_only_
-           ,CONVERT(VARCHAR(25),oral_comprehension_factual_11_yellow_only_) AS oral_comprehension_factual_11_yellow_only_
-           ,CONVERT(VARCHAR(25),oral_comprehension_factual_12_) AS oral_comprehension_factual_12_
-           ,CONVERT(VARCHAR(25),oral_comprehension_factual_6_) AS oral_comprehension_factual_6_
-           ,CONVERT(VARCHAR(25),oral_comprehension_factual_7_) AS oral_comprehension_factual_7_
-           ,CONVERT(VARCHAR(25),oral_comprehension_factual_9_) AS oral_comprehension_factual_9_
-           ,CONVERT(VARCHAR(25),oral_comprehension_inferential_10_) AS oral_comprehension_inferential_10_
-           ,CONVERT(VARCHAR(25),oral_comprehension_inferential_11_) AS oral_comprehension_inferential_11_
-           ,CONVERT(VARCHAR(25),oral_comprehension_inferential_12_) AS oral_comprehension_inferential_12_
-           ,CONVERT(VARCHAR(25),oral_comprehension_inferential_6_yellow_only_) AS oral_comprehension_inferential_6_yellow_only_
-           ,CONVERT(VARCHAR(25),oral_comprehension_inferential_7_) AS oral_comprehension_inferential_7_
-           ,CONVERT(VARCHAR(25),oral_comprehension_inferential_9_) AS oral_comprehension_inferential_9_
-           ,CONVERT(VARCHAR(25),pe_personal_experience_10_) AS pe_personal_experience_10_
-           ,CONVERT(VARCHAR(25),pe_personal_experience_11_) AS pe_personal_experience_11_
-           ,CONVERT(VARCHAR(25),pe_personal_experience_12_) AS pe_personal_experience_12_
-           ,CONVERT(VARCHAR(25),pe_personal_experience_2_) AS pe_personal_experience_2_
-           ,CONVERT(VARCHAR(25),pe_personal_experience_3_) AS pe_personal_experience_3_
-           ,CONVERT(VARCHAR(25),pe_personal_experience_4_) AS pe_personal_experience_4_
-           ,CONVERT(VARCHAR(25),pe_personal_experience_5_) AS pe_personal_experience_5_
-           ,CONVERT(VARCHAR(25),pe_personal_experience_6_) AS pe_personal_experience_6_
-           ,CONVERT(VARCHAR(25),pe_personal_experience_7_) AS pe_personal_experience_7_
-           ,CONVERT(VARCHAR(25),pe_personal_experience_8_) AS pe_personal_experience_8_
-           ,CONVERT(VARCHAR(25),pe_personal_experience_9_) AS pe_personal_experience_9_
-           ,CONVERT(VARCHAR(25),phonemic_awareness_matching_first_sounds_1_) AS phonemic_awareness_matching_first_sounds_1_
-           ,CONVERT(VARCHAR(25),phonemic_awareness_rhyming_words_0_) AS phonemic_awareness_rhyming_words_0_
-           ,CONVERT(VARCHAR(25),phonemic_awareness_segmentation_2_) AS phonemic_awareness_segmentation_2_
-           ,CONVERT(VARCHAR(25),phonemic_awareness_segmentation_3_) AS phonemic_awareness_segmentation_3_
-           ,CONVERT(VARCHAR(25),q_answers_a_different_question_10_) AS q_answers_a_different_question_10_
-           ,CONVERT(VARCHAR(25),q_answers_a_different_question_11_) AS q_answers_a_different_question_11_
-           ,CONVERT(VARCHAR(25),q_answers_a_different_question_12_) AS q_answers_a_different_question_12_
-           ,CONVERT(VARCHAR(25),q_answers_a_different_question_2_) AS q_answers_a_different_question_2_
-           ,CONVERT(VARCHAR(25),q_answers_a_different_question_3_) AS q_answers_a_different_question_3_
-           ,CONVERT(VARCHAR(25),q_answers_a_different_question_4_) AS q_answers_a_different_question_4_
-           ,CONVERT(VARCHAR(25),q_answers_a_different_question_5_) AS q_answers_a_different_question_5_
-           ,CONVERT(VARCHAR(25),q_answers_a_different_question_6_) AS q_answers_a_different_question_6_
-           ,CONVERT(VARCHAR(25),q_answers_a_different_question_7_) AS q_answers_a_different_question_7_
-           ,CONVERT(VARCHAR(25),q_answers_a_different_question_8_) AS q_answers_a_different_question_8_
-           ,CONVERT(VARCHAR(25),q_answers_a_different_question_9_) AS q_answers_a_different_question_9_
-           ,CONVERT(VARCHAR(25),reading_accuracy_10_) AS reading_accuracy_10_
-           ,CONVERT(VARCHAR(25),reading_accuracy_11_) AS reading_accuracy_11_
-           ,CONVERT(VARCHAR(25),reading_accuracy_12_) AS reading_accuracy_12_
-           ,CONVERT(VARCHAR(25),reading_accuracy_2_) AS reading_accuracy_2_
-           ,CONVERT(VARCHAR(25),reading_accuracy_2_2_) AS reading_accuracy_2_2_
-           ,CONVERT(VARCHAR(25),reading_accuracy_3_) AS reading_accuracy_3_
-           ,CONVERT(VARCHAR(25),reading_accuracy_4_) AS reading_accuracy_4_
-           ,CONVERT(VARCHAR(25),reading_accuracy_5_) AS reading_accuracy_5_
-           ,CONVERT(VARCHAR(25),reading_accuracy_6_) AS reading_accuracy_6_
-           ,CONVERT(VARCHAR(25),reading_accuracy_7_) AS reading_accuracy_7_
-           ,CONVERT(VARCHAR(25),reading_accuracy_8_) AS reading_accuracy_8_
-           ,CONVERT(VARCHAR(25),reading_accuracy_9_) AS reading_accuracy_9_
-           ,CONVERT(VARCHAR(25),reading_rate_10_) AS reading_rate_10_
-           ,CONVERT(VARCHAR(25),reading_rate_11_) AS reading_rate_11_
-           ,CONVERT(VARCHAR(25),reading_rate_12_) AS reading_rate_12_
-           ,CONVERT(VARCHAR(25),reading_rate_4_) AS reading_rate_4_
-           ,CONVERT(VARCHAR(25),reading_rate_5_) AS reading_rate_5_
-           ,CONVERT(VARCHAR(25),reading_rate_6_) AS reading_rate_6_
-           ,CONVERT(VARCHAR(25),reading_rate_7_) AS reading_rate_7_
-           ,CONVERT(VARCHAR(25),reading_rate_8_) AS reading_rate_8_
-           ,CONVERT(VARCHAR(25),reading_rate_9_) AS reading_rate_9_
-           ,CONVERT(VARCHAR(25),reading_record_1_) AS reading_record_1_
-           ,CONVERT(VARCHAR(25),reading_record_holds_pattern_1_) AS reading_record_holds_pattern_1_
-           ,CONVERT(VARCHAR(25),reading_record_one_to_one_matching_1_) AS reading_record_one_to_one_matching_1_
-           ,CONVERT(VARCHAR(25),reading_record_understanding_1_) AS reading_record_understanding_1_
-           ,CONVERT(VARCHAR(25),retelling_10_) AS retelling_10_
-           ,CONVERT(VARCHAR(25),retelling_11_) AS retelling_11_
-           ,CONVERT(VARCHAR(25),retelling_12_) AS retelling_12_
-           ,CONVERT(VARCHAR(25),retelling_8_) AS retelling_8_
-           ,CONVERT(VARCHAR(25),retelling_9_) AS retelling_9_
-           ,CONVERT(VARCHAR(25),silent_comprehension_6_) AS silent_comprehension_6_
-           ,CONVERT(VARCHAR(25),silent_comprehension_7_) AS silent_comprehension_7_
-           ,CONVERT(VARCHAR(25),silent_comprehension_critical_thinking_6_) AS silent_comprehension_critical_thinking_6_
-           ,CONVERT(VARCHAR(25),silent_comprehension_critical_thinking_7_) AS silent_comprehension_critical_thinking_7_
-           ,CONVERT(VARCHAR(25),silent_comprehension_factual_6_) AS silent_comprehension_factual_6_
-           ,CONVERT(VARCHAR(25),silent_comprehension_factual_7_) AS silent_comprehension_factual_7_
-           ,CONVERT(VARCHAR(25),silent_comprehension_inferential_6_) AS silent_comprehension_inferential_6_
-           ,CONVERT(VARCHAR(25),silent_comprehension_inferential_7_) AS silent_comprehension_inferential_7_
-           ,CONVERT(VARCHAR(25),syntax_10_) AS syntax_10_
-           ,CONVERT(VARCHAR(25),syntax_11_) AS syntax_11_
-           ,CONVERT(VARCHAR(25),syntax_12_) AS syntax_12_
-           ,CONVERT(VARCHAR(25),syntax_3_) AS syntax_3_
-           ,CONVERT(VARCHAR(25),syntax_4_) AS syntax_4_
-           ,CONVERT(VARCHAR(25),syntax_5_) AS syntax_5_
-           ,CONVERT(VARCHAR(25),syntax_6_) AS syntax_6_
-           ,CONVERT(VARCHAR(25),syntax_7_) AS syntax_7_
-           ,CONVERT(VARCHAR(25),syntax_8_) AS syntax_8_
-           ,CONVERT(VARCHAR(25),syntax_9_) AS syntax_9_
-           ,CONVERT(VARCHAR(25),total_vowel_attempts_3_) AS total_vowel_attempts_3_
-           ,CONVERT(VARCHAR(25),visual_10_) AS visual_10_
-           ,CONVERT(VARCHAR(25),visual_11_) AS visual_11_
-           ,CONVERT(VARCHAR(25),visual_12_) AS visual_12_
-           ,CONVERT(VARCHAR(25),visual_3_) AS visual_3_
-           ,CONVERT(VARCHAR(25),visual_4_) AS visual_4_
-           ,CONVERT(VARCHAR(25),visual_5_) AS visual_5_
-           ,CONVERT(VARCHAR(25),visual_6_) AS visual_6_
-           ,CONVERT(VARCHAR(25),visual_7_) AS visual_7_
-           ,CONVERT(VARCHAR(25),visual_8_) AS visual_8_
-           ,CONVERT(VARCHAR(25),visual_9_) AS visual_9_
-           ,CONVERT(VARCHAR(25),written_comprehension_10_) AS written_comprehension_10_
-           ,CONVERT(VARCHAR(25),written_comprehension_11_) AS written_comprehension_11_
-           ,CONVERT(VARCHAR(25),written_comprehension_12_) AS written_comprehension_12_
-           ,CONVERT(VARCHAR(25),written_comprehension_9_) AS written_comprehension_9_
-           ,CONVERT(VARCHAR(25),written_comprehension_critical_thinking_10_) AS written_comprehension_critical_thinking_10_
-           ,CONVERT(VARCHAR(25),written_comprehension_critical_thinking_11_) AS written_comprehension_critical_thinking_11_
-           ,CONVERT(VARCHAR(25),written_comprehension_critical_thinking_12_) AS written_comprehension_critical_thinking_12_
-           ,CONVERT(VARCHAR(25),written_comprehension_critical_thinking_9_yellow_only_) AS written_comprehension_critical_thinking_9_yellow_only_
-           ,CONVERT(VARCHAR(25),written_comprehension_factual_10_) AS written_comprehension_factual_10_
-           ,CONVERT(VARCHAR(25),written_comprehension_factual_11_) AS written_comprehension_factual_11_
-           ,CONVERT(VARCHAR(25),written_comprehension_factual_12_) AS written_comprehension_factual_12_
-           ,CONVERT(VARCHAR(25),written_comprehension_factual_9_) AS written_comprehension_factual_9_
-           ,CONVERT(VARCHAR(25),written_comprehension_inferential_10_) AS written_comprehension_inferential_10_
-           ,CONVERT(VARCHAR(25),written_comprehension_inferential_11_purple_only_) AS written_comprehension_inferential_11_purple_only_
-           ,CONVERT(VARCHAR(25),written_comprehension_inferential_12_) AS written_comprehension_inferential_12_
-           ,CONVERT(VARCHAR(25),written_comprehension_inferential_9_) AS written_comprehension_inferential_9_
+           ,CAST(c_confusion_10_ AS VARCHAR(25)) AS c_confusion_10_
+           ,CAST(c_confusion_11_ AS VARCHAR(25)) AS c_confusion_11_
+           ,CAST(c_confusion_12_ AS VARCHAR(25)) AS c_confusion_12_
+           ,CAST(c_confusion_2_ AS VARCHAR(25)) AS c_confusion_2_
+           ,CAST(c_confusion_3_ AS VARCHAR(25)) AS c_confusion_3_
+           ,CAST(c_confusion_4_ AS VARCHAR(25)) AS c_confusion_4_
+           ,CAST(c_confusion_5_ AS VARCHAR(25)) AS c_confusion_5_
+           ,CAST(c_confusion_6_ AS VARCHAR(25)) AS c_confusion_6_
+           ,CAST(c_confusion_7_ AS VARCHAR(25)) AS c_confusion_7_
+           ,CAST(c_confusion_8_ AS VARCHAR(25)) AS c_confusion_8_
+           ,CAST(c_confusion_9_ AS VARCHAR(25)) AS c_confusion_9_
+           ,CAST(comprehension_conversation_2_ AS VARCHAR(25)) AS comprehension_conversation_2_
+           ,CAST(comprehension_conversation_3_ AS VARCHAR(25)) AS comprehension_conversation_3_
+           ,CAST(comprehension_conversation_4_ AS VARCHAR(25)) AS comprehension_conversation_4_
+           ,CAST(comprehension_conversation_5_ AS VARCHAR(25)) AS comprehension_conversation_5_
+           ,CAST(comprehension_conversation_8_ AS VARCHAR(25)) AS comprehension_conversation_8_
+           ,CAST(comprehension_conversation_critical_thinking_3_ AS VARCHAR(25)) AS comprehension_conversation_critical_thinking_3_
+           ,CAST(comprehension_conversation_critical_thinking_4_ AS VARCHAR(25)) AS comprehension_conversation_critical_thinking_4_
+           ,CAST(comprehension_conversation_critical_thinking_5_ AS VARCHAR(25)) AS comprehension_conversation_critical_thinking_5_
+           ,CAST(comprehension_conversation_critical_thinking_8_ AS VARCHAR(25)) AS comprehension_conversation_critical_thinking_8_
+           ,CAST(comprehension_conversation_factual_2_ AS VARCHAR(25)) AS comprehension_conversation_factual_2_
+           ,CAST(comprehension_conversation_factual_3_ AS VARCHAR(25)) AS comprehension_conversation_factual_3_
+           ,CAST(comprehension_conversation_factual_4_ AS VARCHAR(25)) AS comprehension_conversation_factual_4_
+           ,CAST(comprehension_conversation_factual_5_ AS VARCHAR(25)) AS comprehension_conversation_factual_5_
+           ,CAST(comprehension_conversation_factual_8_ AS VARCHAR(25)) AS comprehension_conversation_factual_8_
+           ,CAST(comprehension_conversation_inferential_2_ AS VARCHAR(25)) AS comprehension_conversation_inferential_2_
+           ,CAST(comprehension_conversation_inferential_3_ AS VARCHAR(25)) AS comprehension_conversation_inferential_3_
+           ,CAST(comprehension_conversation_inferential_4_ AS VARCHAR(25)) AS comprehension_conversation_inferential_4_
+           ,CAST(comprehension_conversation_inferential_5_ AS VARCHAR(25)) AS comprehension_conversation_inferential_5_
+           ,CAST(comprehension_conversation_inferential_8_ AS VARCHAR(25)) AS comprehension_conversation_inferential_8_
+           ,CAST(comprehension_conversation_other_2_ AS VARCHAR(25)) AS comprehension_conversation_other_2_
+           ,CAST(concepts_about_print_0_ AS VARCHAR(25)) AS concepts_about_print_0_
+           ,CAST(concepts_about_print_1_ AS VARCHAR(25)) AS concepts_about_print_1_
+           ,CAST(concepts_about_print_one_to_one_matching_0_ AS VARCHAR(25)) AS concepts_about_print_one_to_one_matching_0_
+           ,CAST(concepts_about_print_one_to_one_matching_1_ AS VARCHAR(25)) AS concepts_about_print_one_to_one_matching_1_
+           ,CAST(concepts_about_print_orientation_0_ AS VARCHAR(25)) AS concepts_about_print_orientation_0_
+           ,CAST(concepts_about_print_orientation_1_ AS VARCHAR(25)) AS concepts_about_print_orientation_1_
+           ,CAST(concepts_about_print_sense_of_letter_vs_word_0_ AS VARCHAR(25)) AS concepts_about_print_sense_of_letter_vs_word_0_
+           ,CAST(concepts_about_print_sense_of_letter_vs_word_1_ AS VARCHAR(25)) AS concepts_about_print_sense_of_letter_vs_word_1_
+           ,CAST(developmental_spelling_1_ AS VARCHAR(25)) AS developmental_spelling_1_
+           ,CAST(developmental_spelling_10_ AS VARCHAR(25)) AS developmental_spelling_10_
+           ,CAST(developmental_spelling_11_ AS VARCHAR(25)) AS developmental_spelling_11_
+           ,CAST(developmental_spelling_12_ AS VARCHAR(25)) AS developmental_spelling_12_
+           ,CAST(developmental_spelling_2_ AS VARCHAR(25)) AS developmental_spelling_2_
+           ,CAST(developmental_spelling_3_ AS VARCHAR(25)) AS developmental_spelling_3_
+           ,CAST(developmental_spelling_4_ AS VARCHAR(25)) AS developmental_spelling_4_
+           ,CAST(developmental_spelling_5_ AS VARCHAR(25)) AS developmental_spelling_5_
+           ,CAST(developmental_spelling_6_ AS VARCHAR(25)) AS developmental_spelling_6_
+           ,CAST(developmental_spelling_7_ AS VARCHAR(25)) AS developmental_spelling_7_
+           ,CAST(developmental_spelling_8_ AS VARCHAR(25)) AS developmental_spelling_8_
+           ,CAST(developmental_spelling_9_ AS VARCHAR(25)) AS developmental_spelling_9_
+           ,CAST(developmental_spelling_complex_blend_10_ AS VARCHAR(25)) AS developmental_spelling_complex_blend_10_
+           ,CAST(developmental_spelling_complex_blend_8_ AS VARCHAR(25)) AS developmental_spelling_complex_blend_8_
+           ,CAST(developmental_spelling_complex_blend_9_ AS VARCHAR(25)) AS developmental_spelling_complex_blend_9_
+           ,CAST(developmental_spelling_doubling_at_syllable_juncture_11_ AS VARCHAR(25)) AS developmental_spelling_doubling_at_syllable_juncture_11_
+           ,CAST(developmental_spelling_doubling_at_syllable_juncture_12_ AS VARCHAR(25)) AS developmental_spelling_doubling_at_syllable_juncture_12_
+           ,CAST(developmental_spelling_ed_ing_endings_11_ AS VARCHAR(25)) AS developmental_spelling_ed_ing_endings_11_
+           ,CAST(developmental_spelling_ed_ing_endings_12_ AS VARCHAR(25)) AS developmental_spelling_ed_ing_endings_12_
+           ,CAST(developmental_spelling_final_sound_1_ AS VARCHAR(25)) AS developmental_spelling_final_sound_1_
+           ,CAST(developmental_spelling_final_sound_2_ AS VARCHAR(25)) AS developmental_spelling_final_sound_2_
+           ,CAST(developmental_spelling_final_sound_3_ AS VARCHAR(25)) AS developmental_spelling_final_sound_3_
+           ,CAST(developmental_spelling_first_sound_1_ AS VARCHAR(25)) AS developmental_spelling_first_sound_1_
+           ,CAST(developmental_spelling_first_sound_2_ AS VARCHAR(25)) AS developmental_spelling_first_sound_2_
+           ,CAST(developmental_spelling_first_sound_3_ AS VARCHAR(25)) AS developmental_spelling_first_sound_3_
+           ,CAST(developmental_spelling_initial_final_blend_digraph_5_ AS VARCHAR(25)) AS developmental_spelling_initial_final_blend_digraph_5_
+           ,CAST(developmental_spelling_initial_final_blend_digraphs_4_ AS VARCHAR(25)) AS developmental_spelling_initial_final_blend_digraphs_4_
+           ,CAST(developmental_spelling_long_vowel_2_syllable_words_11_ AS VARCHAR(25)) AS developmental_spelling_long_vowel_2_syllable_words_11_
+           ,CAST(developmental_spelling_long_vowel_2_syllable_words_12_ AS VARCHAR(25)) AS developmental_spelling_long_vowel_2_syllable_words_12_
+           ,CAST(developmental_spelling_long_vowel_pattern_10_ AS VARCHAR(25)) AS developmental_spelling_long_vowel_pattern_10_
+           ,CAST(developmental_spelling_long_vowel_pattern_6_ AS VARCHAR(25)) AS developmental_spelling_long_vowel_pattern_6_
+           ,CAST(developmental_spelling_long_vowel_pattern_8_ AS VARCHAR(25)) AS developmental_spelling_long_vowel_pattern_8_
+           ,CAST(developmental_spelling_long_vowel_pattern_9_ AS VARCHAR(25)) AS developmental_spelling_long_vowel_pattern_9_
+           ,CAST(developmental_spelling_r_controlled_2_syllable_words_11_ AS VARCHAR(25)) AS developmental_spelling_r_controlled_2_syllable_words_11_
+           ,CAST(developmental_spelling_r_controlled_2_syllable_words_12_ AS VARCHAR(25)) AS developmental_spelling_r_controlled_2_syllable_words_12_
+           ,CAST(developmental_spelling_r_controlled_vowel_10_ AS VARCHAR(25)) AS developmental_spelling_r_controlled_vowel_10_
+           ,CAST(developmental_spelling_r_controlled_vowel_6_ AS VARCHAR(25)) AS developmental_spelling_r_controlled_vowel_6_
+           ,CAST(developmental_spelling_r_controlled_vowel_7_ AS VARCHAR(25)) AS developmental_spelling_r_controlled_vowel_7_
+           ,CAST(developmental_spelling_r_controlled_vowel_8_ AS VARCHAR(25)) AS developmental_spelling_r_controlled_vowel_8_
+           ,CAST(developmental_spelling_r_controlled_vowel_9_ AS VARCHAR(25)) AS developmental_spelling_r_controlled_vowel_9_
+           ,CAST(developmental_spelling_short_vowel_sound_1_ AS VARCHAR(25)) AS developmental_spelling_short_vowel_sound_1_
+           ,CAST(developmental_spelling_short_vowel_sound_2_ AS VARCHAR(25)) AS developmental_spelling_short_vowel_sound_2_
+           ,CAST(developmental_spelling_short_vowel_sound_3_ AS VARCHAR(25)) AS developmental_spelling_short_vowel_sound_3_
+           ,CAST(developmental_spelling_short_vowel_sound_4_ AS VARCHAR(25)) AS developmental_spelling_short_vowel_sound_4_
+           ,CAST(developmental_spelling_short_vowel_sound_5_ AS VARCHAR(25)) AS developmental_spelling_short_vowel_sound_5_
+           ,CAST(developmental_spelling_v_c_e_long_vowel_pattern_7_ AS VARCHAR(25)) AS developmental_spelling_v_c_e_long_vowel_pattern_7_
+           ,CAST(developmental_spelling_vowel_digraphs_10_ AS VARCHAR(25)) AS developmental_spelling_vowel_digraphs_10_
+           ,CAST(developmental_spelling_vowel_digraphs_8_ AS VARCHAR(25)) AS developmental_spelling_vowel_digraphs_8_
+           ,CAST(developmental_spelling_vowel_digraphs_9_ AS VARCHAR(25)) AS developmental_spelling_vowel_digraphs_9_
+           ,CAST(f_overreliance_on_facts_for_the_text_10_ AS VARCHAR(25)) AS f_overreliance_on_facts_for_the_text_10_
+           ,CAST(f_overreliance_on_facts_for_the_text_11_ AS VARCHAR(25)) AS f_overreliance_on_facts_for_the_text_11_
+           ,CAST(f_overreliance_on_facts_for_the_text_12_ AS VARCHAR(25)) AS f_overreliance_on_facts_for_the_text_12_
+           ,CAST(f_overreliance_on_facts_for_the_text_2_ AS VARCHAR(25)) AS f_overreliance_on_facts_for_the_text_2_
+           ,CAST(f_overreliance_on_facts_for_the_text_3_ AS VARCHAR(25)) AS f_overreliance_on_facts_for_the_text_3_
+           ,CAST(f_overreliance_on_facts_for_the_text_4_ AS VARCHAR(25)) AS f_overreliance_on_facts_for_the_text_4_
+           ,CAST(f_overreliance_on_facts_for_the_text_5_ AS VARCHAR(25)) AS f_overreliance_on_facts_for_the_text_5_
+           ,CAST(f_overreliance_on_facts_for_the_text_6_ AS VARCHAR(25)) AS f_overreliance_on_facts_for_the_text_6_
+           ,CAST(f_overreliance_on_facts_for_the_text_7_ AS VARCHAR(25)) AS f_overreliance_on_facts_for_the_text_7_
+           ,CAST(f_overreliance_on_facts_for_the_text_8_ AS VARCHAR(25)) AS f_overreliance_on_facts_for_the_text_8_
+           ,CAST(f_overreliance_on_facts_for_the_text_9_ AS VARCHAR(25)) AS f_overreliance_on_facts_for_the_text_9_
+           ,CAST(fluency_10_ AS VARCHAR(25)) AS fluency_10_
+           ,CAST(fluency_11_ AS VARCHAR(25)) AS fluency_11_
+           ,CAST(fluency_12_ AS VARCHAR(25)) AS fluency_12_
+           ,CAST(fluency_4_ AS VARCHAR(25)) AS fluency_4_
+           ,CAST(fluency_5_ AS VARCHAR(25)) AS fluency_5_
+           ,CAST(fluency_6_ AS VARCHAR(25)) AS fluency_6_
+           ,CAST(fluency_7_ AS VARCHAR(25)) AS fluency_7_
+           ,CAST(fluency_8_ AS VARCHAR(25)) AS fluency_8_
+           ,CAST(fluency_9_ AS VARCHAR(25)) AS fluency_9_
+           ,CAST(l_limited_10_ AS VARCHAR(25)) AS l_limited_10_
+           ,CAST(l_limited_11_ AS VARCHAR(25)) AS l_limited_11_
+           ,CAST(l_limited_12_ AS VARCHAR(25)) AS l_limited_12_
+           ,CAST(l_limited_2_ AS VARCHAR(25)) AS l_limited_2_
+           ,CAST(l_limited_3_ AS VARCHAR(25)) AS l_limited_3_
+           ,CAST(l_limited_4_ AS VARCHAR(25)) AS l_limited_4_
+           ,CAST(l_limited_5_ AS VARCHAR(25)) AS l_limited_5_
+           ,CAST(l_limited_6_ AS VARCHAR(25)) AS l_limited_6_
+           ,CAST(l_limited_7_ AS VARCHAR(25)) AS l_limited_7_
+           ,CAST(l_limited_8_ AS VARCHAR(25)) AS l_limited_8_
+           ,CAST(l_limited_9_ AS VARCHAR(25)) AS l_limited_9_
+           ,CAST(letter_name_identification_0_ AS VARCHAR(25)) AS letter_name_identification_0_
+           ,CAST(letter_name_identification_1_ AS VARCHAR(25)) AS letter_name_identification_1_
+           ,CAST(letter_name_identification_2_ AS VARCHAR(25)) AS letter_name_identification_2_
+           ,CAST(letter_sound_identification_0_ AS VARCHAR(25)) AS letter_sound_identification_0_
+           ,CAST(letter_sound_identification_1_ AS VARCHAR(25)) AS letter_sound_identification_1_
+           ,CAST(letter_sound_identification_2_ AS VARCHAR(25)) AS letter_sound_identification_2_
+           ,CAST(letter_sound_identification_3_ AS VARCHAR(25)) AS letter_sound_identification_3_
+           ,CAST(meaning_10_ AS VARCHAR(25)) AS meaning_10_
+           ,CAST(meaning_11_ AS VARCHAR(25)) AS meaning_11_
+           ,CAST(meaning_12_ AS VARCHAR(25)) AS meaning_12_
+           ,CAST(meaning_3_ AS VARCHAR(25)) AS meaning_3_
+           ,CAST(meaning_4_ AS VARCHAR(25)) AS meaning_4_
+           ,CAST(meaning_5_ AS VARCHAR(25)) AS meaning_5_
+           ,CAST(meaning_6_ AS VARCHAR(25)) AS meaning_6_
+           ,CAST(meaning_7_ AS VARCHAR(25)) AS meaning_7_
+           ,CAST(meaning_8_ AS VARCHAR(25)) AS meaning_8_
+           ,CAST(meaning_9_ AS VARCHAR(25)) AS meaning_9_
+           ,CAST(name_assessment_0_ AS VARCHAR(25)) AS name_assessment_0_
+           ,CAST(oral_comprehension_10_ AS VARCHAR(25)) AS oral_comprehension_10_
+           ,CAST(oral_comprehension_11_ AS VARCHAR(25)) AS oral_comprehension_11_
+           ,CAST(oral_comprehension_12_ AS VARCHAR(25)) AS oral_comprehension_12_
+           ,CAST(oral_comprehension_6_ AS VARCHAR(25)) AS oral_comprehension_6_
+           ,CAST(oral_comprehension_7_ AS VARCHAR(25)) AS oral_comprehension_7_
+           ,CAST(oral_comprehension_9_ AS VARCHAR(25)) AS oral_comprehension_9_
+           ,CAST(oral_comprehension_critical_thinking_10_ AS VARCHAR(25)) AS oral_comprehension_critical_thinking_10_
+           ,CAST(oral_comprehension_critical_thinking_11_ AS VARCHAR(25)) AS oral_comprehension_critical_thinking_11_
+           ,CAST(oral_comprehension_critical_thinking_12_ AS VARCHAR(25)) AS oral_comprehension_critical_thinking_12_
+           ,CAST(oral_comprehension_critical_thinking_6_purple_only_ AS VARCHAR(25)) AS oral_comprehension_critical_thinking_6_purple_only_
+           ,CAST(oral_comprehension_critical_thinking_7_purple_only_ AS VARCHAR(25)) AS oral_comprehension_critical_thinking_7_purple_only_
+           ,CAST(oral_comprehension_critical_thinking_9_ AS VARCHAR(25)) AS oral_comprehension_critical_thinking_9_
+           ,CAST(oral_comprehension_factual_10_yellow_only_ AS VARCHAR(25)) AS oral_comprehension_factual_10_yellow_only_
+           ,CAST(oral_comprehension_factual_11_yellow_only_ AS VARCHAR(25)) AS oral_comprehension_factual_11_yellow_only_
+           ,CAST(oral_comprehension_factual_12_ AS VARCHAR(25)) AS oral_comprehension_factual_12_
+           ,CAST(oral_comprehension_factual_6_ AS VARCHAR(25)) AS oral_comprehension_factual_6_
+           ,CAST(oral_comprehension_factual_7_ AS VARCHAR(25)) AS oral_comprehension_factual_7_
+           ,CAST(oral_comprehension_factual_9_ AS VARCHAR(25)) AS oral_comprehension_factual_9_
+           ,CAST(oral_comprehension_inferential_10_ AS VARCHAR(25)) AS oral_comprehension_inferential_10_
+           ,CAST(oral_comprehension_inferential_11_ AS VARCHAR(25)) AS oral_comprehension_inferential_11_
+           ,CAST(oral_comprehension_inferential_12_ AS VARCHAR(25)) AS oral_comprehension_inferential_12_
+           ,CAST(oral_comprehension_inferential_6_yellow_only_ AS VARCHAR(25)) AS oral_comprehension_inferential_6_yellow_only_
+           ,CAST(oral_comprehension_inferential_7_ AS VARCHAR(25)) AS oral_comprehension_inferential_7_
+           ,CAST(oral_comprehension_inferential_9_ AS VARCHAR(25)) AS oral_comprehension_inferential_9_
+           ,CAST(pe_personal_experience_10_ AS VARCHAR(25)) AS pe_personal_experience_10_
+           ,CAST(pe_personal_experience_11_ AS VARCHAR(25)) AS pe_personal_experience_11_
+           ,CAST(pe_personal_experience_12_ AS VARCHAR(25)) AS pe_personal_experience_12_
+           ,CAST(pe_personal_experience_2_ AS VARCHAR(25)) AS pe_personal_experience_2_
+           ,CAST(pe_personal_experience_3_ AS VARCHAR(25)) AS pe_personal_experience_3_
+           ,CAST(pe_personal_experience_4_ AS VARCHAR(25)) AS pe_personal_experience_4_
+           ,CAST(pe_personal_experience_5_ AS VARCHAR(25)) AS pe_personal_experience_5_
+           ,CAST(pe_personal_experience_6_ AS VARCHAR(25)) AS pe_personal_experience_6_
+           ,CAST(pe_personal_experience_7_ AS VARCHAR(25)) AS pe_personal_experience_7_
+           ,CAST(pe_personal_experience_8_ AS VARCHAR(25)) AS pe_personal_experience_8_
+           ,CAST(pe_personal_experience_9_ AS VARCHAR(25)) AS pe_personal_experience_9_
+           ,CAST(phonemic_awareness_matching_first_sounds_1_ AS VARCHAR(25)) AS phonemic_awareness_matching_first_sounds_1_
+           ,CAST(phonemic_awareness_rhyming_words_0_ AS VARCHAR(25)) AS phonemic_awareness_rhyming_words_0_
+           ,CAST(phonemic_awareness_segmentation_2_ AS VARCHAR(25)) AS phonemic_awareness_segmentation_2_
+           ,CAST(phonemic_awareness_segmentation_3_ AS VARCHAR(25)) AS phonemic_awareness_segmentation_3_
+           ,CAST(q_answers_a_different_question_10_ AS VARCHAR(25)) AS q_answers_a_different_question_10_
+           ,CAST(q_answers_a_different_question_11_ AS VARCHAR(25)) AS q_answers_a_different_question_11_
+           ,CAST(q_answers_a_different_question_12_ AS VARCHAR(25)) AS q_answers_a_different_question_12_
+           ,CAST(q_answers_a_different_question_2_ AS VARCHAR(25)) AS q_answers_a_different_question_2_
+           ,CAST(q_answers_a_different_question_3_ AS VARCHAR(25)) AS q_answers_a_different_question_3_
+           ,CAST(q_answers_a_different_question_4_ AS VARCHAR(25)) AS q_answers_a_different_question_4_
+           ,CAST(q_answers_a_different_question_5_ AS VARCHAR(25)) AS q_answers_a_different_question_5_
+           ,CAST(q_answers_a_different_question_6_ AS VARCHAR(25)) AS q_answers_a_different_question_6_
+           ,CAST(q_answers_a_different_question_7_ AS VARCHAR(25)) AS q_answers_a_different_question_7_
+           ,CAST(q_answers_a_different_question_8_ AS VARCHAR(25)) AS q_answers_a_different_question_8_
+           ,CAST(q_answers_a_different_question_9_ AS VARCHAR(25)) AS q_answers_a_different_question_9_
+           ,CAST(reading_accuracy_10_ AS VARCHAR(25)) AS reading_accuracy_10_
+           ,CAST(reading_accuracy_11_ AS VARCHAR(25)) AS reading_accuracy_11_
+           ,CAST(reading_accuracy_12_ AS VARCHAR(25)) AS reading_accuracy_12_
+           ,CAST(reading_accuracy_2_ AS VARCHAR(25)) AS reading_accuracy_2_
+           ,CAST(reading_accuracy_2_2_ AS VARCHAR(25)) AS reading_accuracy_2_2_
+           ,CAST(reading_accuracy_3_ AS VARCHAR(25)) AS reading_accuracy_3_
+           ,CAST(reading_accuracy_4_ AS VARCHAR(25)) AS reading_accuracy_4_
+           ,CAST(reading_accuracy_5_ AS VARCHAR(25)) AS reading_accuracy_5_
+           ,CAST(reading_accuracy_6_ AS VARCHAR(25)) AS reading_accuracy_6_
+           ,CAST(reading_accuracy_7_ AS VARCHAR(25)) AS reading_accuracy_7_
+           ,CAST(reading_accuracy_8_ AS VARCHAR(25)) AS reading_accuracy_8_
+           ,CAST(reading_accuracy_9_ AS VARCHAR(25)) AS reading_accuracy_9_
+           ,CAST(reading_rate_10_ AS VARCHAR(25)) AS reading_rate_10_
+           ,CAST(reading_rate_11_ AS VARCHAR(25)) AS reading_rate_11_
+           ,CAST(reading_rate_12_ AS VARCHAR(25)) AS reading_rate_12_
+           ,CAST(reading_rate_4_ AS VARCHAR(25)) AS reading_rate_4_
+           ,CAST(reading_rate_5_ AS VARCHAR(25)) AS reading_rate_5_
+           ,CAST(reading_rate_6_ AS VARCHAR(25)) AS reading_rate_6_
+           ,CAST(reading_rate_7_ AS VARCHAR(25)) AS reading_rate_7_
+           ,CAST(reading_rate_8_ AS VARCHAR(25)) AS reading_rate_8_
+           ,CAST(reading_rate_9_ AS VARCHAR(25)) AS reading_rate_9_
+           ,CAST(reading_record_1_ AS VARCHAR(25)) AS reading_record_1_
+           ,CAST(reading_record_holds_pattern_1_ AS VARCHAR(25)) AS reading_record_holds_pattern_1_
+           ,CAST(reading_record_one_to_one_matching_1_ AS VARCHAR(25)) AS reading_record_one_to_one_matching_1_
+           ,CAST(reading_record_understanding_1_ AS VARCHAR(25)) AS reading_record_understanding_1_
+           ,CAST(retelling_10_ AS VARCHAR(25)) AS retelling_10_
+           ,CAST(retelling_11_ AS VARCHAR(25)) AS retelling_11_
+           ,CAST(retelling_12_ AS VARCHAR(25)) AS retelling_12_
+           ,CAST(retelling_8_ AS VARCHAR(25)) AS retelling_8_
+           ,CAST(retelling_9_ AS VARCHAR(25)) AS retelling_9_
+           ,CAST(silent_comprehension_6_ AS VARCHAR(25)) AS silent_comprehension_6_
+           ,CAST(silent_comprehension_7_ AS VARCHAR(25)) AS silent_comprehension_7_
+           ,CAST(silent_comprehension_critical_thinking_6_ AS VARCHAR(25)) AS silent_comprehension_critical_thinking_6_
+           ,CAST(silent_comprehension_critical_thinking_7_ AS VARCHAR(25)) AS silent_comprehension_critical_thinking_7_
+           ,CAST(silent_comprehension_factual_6_ AS VARCHAR(25)) AS silent_comprehension_factual_6_
+           ,CAST(silent_comprehension_factual_7_ AS VARCHAR(25)) AS silent_comprehension_factual_7_
+           ,CAST(silent_comprehension_inferential_6_ AS VARCHAR(25)) AS silent_comprehension_inferential_6_
+           ,CAST(silent_comprehension_inferential_7_ AS VARCHAR(25)) AS silent_comprehension_inferential_7_
+           ,CAST(syntax_10_ AS VARCHAR(25)) AS syntax_10_
+           ,CAST(syntax_11_ AS VARCHAR(25)) AS syntax_11_
+           ,CAST(syntax_12_ AS VARCHAR(25)) AS syntax_12_
+           ,CAST(syntax_3_ AS VARCHAR(25)) AS syntax_3_
+           ,CAST(syntax_4_ AS VARCHAR(25)) AS syntax_4_
+           ,CAST(syntax_5_ AS VARCHAR(25)) AS syntax_5_
+           ,CAST(syntax_6_ AS VARCHAR(25)) AS syntax_6_
+           ,CAST(syntax_7_ AS VARCHAR(25)) AS syntax_7_
+           ,CAST(syntax_8_ AS VARCHAR(25)) AS syntax_8_
+           ,CAST(syntax_9_ AS VARCHAR(25)) AS syntax_9_
+           ,CAST(total_vowel_attempts_3_ AS VARCHAR(25)) AS total_vowel_attempts_3_
+           ,CAST(visual_10_ AS VARCHAR(25)) AS visual_10_
+           ,CAST(visual_11_ AS VARCHAR(25)) AS visual_11_
+           ,CAST(visual_12_ AS VARCHAR(25)) AS visual_12_
+           ,CAST(visual_3_ AS VARCHAR(25)) AS visual_3_
+           ,CAST(visual_4_ AS VARCHAR(25)) AS visual_4_
+           ,CAST(visual_5_ AS VARCHAR(25)) AS visual_5_
+           ,CAST(visual_6_ AS VARCHAR(25)) AS visual_6_
+           ,CAST(visual_7_ AS VARCHAR(25)) AS visual_7_
+           ,CAST(visual_8_ AS VARCHAR(25)) AS visual_8_
+           ,CAST(visual_9_ AS VARCHAR(25)) AS visual_9_
+           ,CAST(written_comprehension_10_ AS VARCHAR(25)) AS written_comprehension_10_
+           ,CAST(written_comprehension_11_ AS VARCHAR(25)) AS written_comprehension_11_
+           ,CAST(written_comprehension_12_ AS VARCHAR(25)) AS written_comprehension_12_
+           ,CAST(written_comprehension_9_ AS VARCHAR(25)) AS written_comprehension_9_
+           ,CAST(written_comprehension_critical_thinking_10_ AS VARCHAR(25)) AS written_comprehension_critical_thinking_10_
+           ,CAST(written_comprehension_critical_thinking_11_ AS VARCHAR(25)) AS written_comprehension_critical_thinking_11_
+           ,CAST(written_comprehension_critical_thinking_12_ AS VARCHAR(25)) AS written_comprehension_critical_thinking_12_
+           ,CAST(written_comprehension_critical_thinking_9_yellow_only_ AS VARCHAR(25)) AS written_comprehension_critical_thinking_9_yellow_only_
+           ,CAST(written_comprehension_factual_10_ AS VARCHAR(25)) AS written_comprehension_factual_10_
+           ,CAST(written_comprehension_factual_11_ AS VARCHAR(25)) AS written_comprehension_factual_11_
+           ,CAST(written_comprehension_factual_12_ AS VARCHAR(25)) AS written_comprehension_factual_12_
+           ,CAST(written_comprehension_factual_9_ AS VARCHAR(25)) AS written_comprehension_factual_9_
+           ,CAST(written_comprehension_inferential_10_ AS VARCHAR(25)) AS written_comprehension_inferential_10_
+           ,CAST(written_comprehension_inferential_11_purple_only_ AS VARCHAR(25)) AS written_comprehension_inferential_11_purple_only_
+           ,CAST(written_comprehension_inferential_12_ AS VARCHAR(25)) AS written_comprehension_inferential_12_
+           ,CAST(written_comprehension_inferential_9_ AS VARCHAR(25)) AS written_comprehension_inferential_9_
      FROM gabby.steptool.all_steps
      WHERE student_id IS NOT NULL
     ) sub

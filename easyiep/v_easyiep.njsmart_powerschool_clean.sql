@@ -78,26 +78,26 @@ FROM
            ,case_manager
            ,effective_date
            ,academic_year
-           ,CONVERT(DATE, nj_se_referraldate) AS nj_se_referraldate
-           ,CONVERT(DATE, nj_se_parentalconsentdate) AS nj_se_parentalconsentdate
-           ,CONVERT(DATE, nj_se_eligibilityddate) AS nj_se_eligibilityddate
-           ,CONVERT(DATE, nj_se_initialiepmeetingdate) AS nj_se_initialiepmeetingdate
-           ,CONVERT(DATE, nj_se_consenttoimplementdate) AS nj_se_consenttoimplementdate
-           ,CONVERT(DATE, nj_se_lastiepmeetingdate) AS nj_se_lastiepmeetingdate
-           ,CONVERT(DATE, nj_se_reevaluationdate) AS nj_se_reevaluationdate
-           ,CONVERT(DATE, iepbegin_date) AS iepbegin_date
-           ,CONVERT(DATE, iepend_date) AS iepend_date
-           ,CONVERT(FLOAT, nj_timeinregularprogram) AS nj_timeinregularprogram
-           ,CONVERT(VARCHAR(2), nj_se_delayreason) AS nj_se_delayreason
-           ,CONVERT(VARCHAR(2), nj_se_placement) AS nj_se_placement
-           ,CONVERT(VARCHAR(1), nj_se_parental_consentobtained) AS nj_se_parental_consentobtained
-           ,CONVERT(VARCHAR(1), ti_serv_counseling) AS ti_serv_counseling
-           ,CONVERT(VARCHAR(1), ti_serv_occup) AS ti_serv_occup
-           ,CONVERT(VARCHAR(1), ti_serv_physical) AS ti_serv_physical
-           ,CONVERT(VARCHAR(1), ti_serv_speech) AS ti_serv_speech
-           ,CONVERT(VARCHAR(1), ti_serv_other) AS ti_serv_other
-           ,CONVERT(INT, TRY_PARSE(CONVERT(VARCHAR(32), student_number) AS INT)) AS student_number
-           ,RIGHT('0' + CONVERT(VARCHAR, special_education), 2) AS special_education
+           ,CAST(nj_se_referraldate AS DATE) AS nj_se_referraldate
+           ,CAST(nj_se_parentalconsentdate AS DATE) AS nj_se_parentalconsentdate
+           ,CAST(nj_se_eligibilityddate AS DATE) AS nj_se_eligibilityddate
+           ,CAST(nj_se_initialiepmeetingdate AS DATE) AS nj_se_initialiepmeetingdate
+           ,CAST(nj_se_consenttoimplementdate AS DATE) AS nj_se_consenttoimplementdate
+           ,CAST(nj_se_lastiepmeetingdate AS DATE) AS nj_se_lastiepmeetingdate
+           ,CAST(nj_se_reevaluationdate AS DATE) AS nj_se_reevaluationdate
+           ,CAST(iepbegin_date AS DATE) AS iepbegin_date
+           ,CAST(iepend_date AS DATE) AS iepend_date
+           ,CAST(nj_timeinregularprogram AS FLOAT) AS nj_timeinregularprogram
+           ,CAST(nj_se_delayreason AS VARCHAR(2)) AS nj_se_delayreason
+           ,CAST(nj_se_placement AS VARCHAR(2)) AS nj_se_placement
+           ,CAST(nj_se_parental_consentobtained AS VARCHAR(1)) AS nj_se_parental_consentobtained
+           ,CAST(ti_serv_counseling AS VARCHAR(1)) AS ti_serv_counseling
+           ,CAST(ti_serv_occup AS VARCHAR(1)) AS ti_serv_occup
+           ,CAST(ti_serv_physical AS VARCHAR(1)) AS ti_serv_physical
+           ,CAST(ti_serv_speech AS VARCHAR(1)) AS ti_serv_speech
+           ,CAST(ti_serv_other AS VARCHAR(1)) AS ti_serv_other
+           ,CONVERT(INT, TRY_PARSE(CAST(student_number AS VARCHAR(32)) AS INT)) AS student_number
+           ,RIGHT('0' + CAST(special_education AS VARCHAR), 2) AS special_education
            ,ROW_NUMBER() OVER(PARTITION BY row_hash, academic_year ORDER BY effective_date ASC) AS rn_row_asc
      FROM easyiep.njsmart_powerschool
     ) sub

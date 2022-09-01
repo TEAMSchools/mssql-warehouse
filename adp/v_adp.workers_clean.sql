@@ -3,22 +3,22 @@ GO
 
 CREATE OR ALTER VIEW adp.workers_clean AS
 
-SELECT CONVERT(NVARCHAR(32), associate_oid) AS associate_oid
-      ,CONVERT(NVARCHAR(32), worker_id) AS worker_id
-      ,CONVERT(NVARCHAR(32), legal_name_formatted) AS legal_name_formatted
-      ,CONVERT(NVARCHAR(8), legal_name_preferred_salutations) AS legal_name_preferred_salutations
-      ,CONVERT(NVARCHAR(64), legal_name_given) AS legal_name_given
-      ,CONVERT(NVARCHAR(64), legal_name_nick) AS legal_name_nick
-      ,CONVERT(NVARCHAR(64), legal_name_middle) AS legal_name_middle
-      ,CONVERT(NVARCHAR(64), legal_name_family) AS legal_name_family
-      ,CONVERT(NVARCHAR(8), legal_name_generation_affix_code) AS legal_name_generation_affix_code
-      ,CONVERT(NVARCHAR(8), legal_name_qualification_affix_code) AS legal_name_qualification_affix_code
-      ,CONVERT(NVARCHAR(64), preferred_name_given) AS preferred_name_given
-      ,CONVERT(NVARCHAR(64), preferred_name_middle) AS preferred_name_middle
-      ,CONVERT(NVARCHAR(64), preferred_name_family) AS preferred_name_family
-      ,CONVERT(DATE, original_hire_date) AS original_hire_date
-      ,CONVERT(DATE, termination_date) AS termination_date
-      ,CONVERT(DATE, rehire_date) AS rehire_date
+SELECT CAST(associate_oid AS NVARCHAR(32)) AS associate_oid
+      ,CAST(worker_id AS NVARCHAR(32)) AS worker_id
+      ,CAST(legal_name_formatted AS NVARCHAR(32)) AS legal_name_formatted
+      ,CAST(legal_name_preferred_salutations AS NVARCHAR(8)) AS legal_name_preferred_salutations
+      ,CAST(legal_name_given AS NVARCHAR(64)) AS legal_name_given
+      ,CAST(legal_name_nick AS NVARCHAR(64)) AS legal_name_nick
+      ,CAST(legal_name_middle AS NVARCHAR(64)) AS legal_name_middle
+      ,CAST(legal_name_family AS NVARCHAR(64)) AS legal_name_family
+      ,CAST(legal_name_generation_affix_code AS NVARCHAR(8)) AS legal_name_generation_affix_code
+      ,CAST(legal_name_qualification_affix_code AS NVARCHAR(8)) AS legal_name_qualification_affix_code
+      ,CAST(preferred_name_given AS NVARCHAR(64)) AS preferred_name_given
+      ,CAST(preferred_name_middle AS NVARCHAR(64)) AS preferred_name_middle
+      ,CAST(preferred_name_family AS NVARCHAR(64)) AS preferred_name_family
+      ,CAST(original_hire_date AS DATE) AS original_hire_date
+      ,CAST(termination_date AS DATE) AS termination_date
+      ,CAST(rehire_date AS DATE) AS rehire_date
 FROM
     (
      SELECT associate_oid

@@ -49,7 +49,7 @@ WITH roster AS (
 ,default_goals AS (
   SELECT school_id
         ,grade_level
-        ,CONVERT(INT, words_goal) AS words_goal
+        ,CAST(words_goal AS INT) AS words_goal
         ,UPPER(REPLACE(term_name, '_', '')) AS term_name
   FROM gabby.renaissance.ar_default_goals
   UNPIVOT(
@@ -63,7 +63,7 @@ WITH roster AS (
   SELECT sub.student_number
         ,sub.term
 
-        ,CONVERT(INT, tiers.words_goal) AS words_goal
+        ,CAST(tiers.words_goal AS INT) AS words_goal
   FROM
       (
        SELECT achv.student_number

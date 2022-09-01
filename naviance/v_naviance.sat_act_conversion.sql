@@ -7,7 +7,7 @@ SELECT sub.student_number
       ,sub.academic_year
       ,sub.test_date         
       ,'Composite' AS act_subject
-      ,CASE WHEN sub.total_score < 560 THEN 11 ELSE CONVERT(INT,sac.act_composite_score) END AS scale_score /* concordance data does not exist for < 560 */
+      ,CASE WHEN sub.total_score < 560 THEN 11 ELSE CAST(sac.act_composite_score AS INT) END AS scale_score /* concordance data does not exist for < 560 */
 FROM
     (
      SELECT sat.student_number

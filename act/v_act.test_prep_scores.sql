@@ -26,11 +26,11 @@ WITH long_data AS (
   FROM
       (    
        SELECT a.assessment_id
-             ,CONVERT(VARCHAR(125),a.title) AS assessment_title        
+             ,CAST(a.title AS VARCHAR(125)) AS assessment_title        
              ,a.academic_year_clean AS academic_year
              ,a.administered_at
 
-             ,CONVERT(VARCHAR(125),a.subject_area) AS subject_area        
+             ,CAST(a.subject_area AS VARCHAR(125)) AS subject_area        
         
              ,ovr.student_id AS illuminate_student_id
              ,ovr.performance_band_level AS overall_performance_band                      
@@ -38,10 +38,10 @@ WITH long_data AS (
              ,ovr.number_of_questions
              ,ROUND(((ovr.percent_correct / 100) * ovr.number_of_questions), 0) AS overall_number_correct
 
-             ,CONVERT(INT,s.local_student_id) AS student_number             
+             ,CAST(s.local_student_id AS INT) AS student_number             
         
-             ,CONVERT(VARCHAR,d.time_per_name) AS time_per_name
-             ,CONVERT(VARCHAR,d.alt_name) AS administration_round
+             ,CAST(d.time_per_name AS VARCHAR) AS time_per_name
+             ,CAST(d.alt_name AS VARCHAR) AS administration_round
 
              ,co.grade_level
              ,co.schoolid
@@ -79,7 +79,7 @@ WITH long_data AS (
         ,d.overall_percent_correct        
         ,d.overall_performance_band
         
-        ,CONVERT(INT,act.scale_score) AS scale_score
+        ,CAST(act.scale_score AS INT) AS scale_score
   FROM long_data d
   LEFT JOIN gabby.act.scale_score_key act
     ON d.academic_year = act.academic_year
@@ -124,7 +124,7 @@ WITH long_data AS (
              ,d.number_of_questions
              ,d.overall_number_correct             
              
-             ,CONVERT(INT,act.scale_score) AS scale_score
+             ,CAST(act.scale_score AS INT) AS scale_score
        FROM long_data d
        LEFT JOIN gabby.act.scale_score_key act
          ON d.academic_year = act.academic_year
@@ -163,10 +163,10 @@ SELECT sub.student_number
       ,sub.pretest_scale_score
       ,sub.growth_from_pretest
       
-      ,CONVERT(VARCHAR(125),s.custom_code) AS standard_code
-      ,CONVERT(VARCHAR(2000),s.description) AS standard_description
+      ,CAST(s.custom_code AS VARCHAR(125)) AS standard_code
+      ,CAST(s.description AS VARCHAR(2000)) AS standard_description
       
-      ,CONVERT(FLOAT,std.percent_correct) AS standard_percent_correct      
+      ,CAST(std.percent_correct AS FLOAT) AS standard_percent_correct      
       ,std.mastered AS standard_mastered
       
       ,CONVERT(VARCHAR(125),COALESCE(ps2.state_num, ps.state_num)) AS standard_strand

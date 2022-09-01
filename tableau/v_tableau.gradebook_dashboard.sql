@@ -89,7 +89,7 @@ LEFT JOIN section_teacher st
  AND gr.course_number = st.course_number
 LEFT JOIN gabby.powerschool.spenrollments_gen_static sp
   ON co.studentid = sp.studentid
- AND CONVERT(DATE, GETDATE()) BETWEEN sp.enter_date AND sp.exit_date
+ AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sp.enter_date AND sp.exit_date
  AND sp.specprog_name = 'Counseling Services'
  AND co.[db_name] = sp.[db_name]
 WHERE co.rn_year = 1
@@ -164,7 +164,7 @@ LEFT JOIN section_teacher st
  AND gr.course_number = st.course_number
 LEFT JOIN gabby.powerschool.spenrollments_gen_static sp
   ON co.studentid = sp.studentid
- AND CONVERT(DATE, GETDATE()) BETWEEN sp.enter_date AND sp.exit_date
+ AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sp.enter_date AND sp.exit_date
  AND sp.specprog_name = 'Counseling Services'
  AND co.[db_name] = sp.[db_name]
 WHERE co.rn_year = 1
@@ -238,7 +238,7 @@ LEFT JOIN section_teacher st
  AND ex.course_number = st.course_number
 LEFT JOIN gabby.powerschool.spenrollments_gen_static sp
   ON co.studentid = sp.studentid
- AND CONVERT(DATE, GETDATE()) BETWEEN sp.enter_date AND sp.exit_date
+ AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sp.enter_date AND sp.exit_date
  AND sp.specprog_name = 'Counseling Services'
  AND co.[db_name] = sp.[db_name]
 WHERE co.rn_year = 1
@@ -308,7 +308,7 @@ LEFT JOIN section_teacher st
  AND sg.course_number = st.course_number
 LEFT JOIN gabby.powerschool.spenrollments_gen_static sp
   ON co.studentid = sp.studentid
- AND CONVERT(DATE, GETDATE()) BETWEEN sp.enter_date AND sp.exit_date
+ AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sp.enter_date AND sp.exit_date
  AND sp.specprog_name = 'Counseling Services'
  AND co.[db_name] = sp.[db_name]
 WHERE co.rn_year = 1
@@ -375,7 +375,7 @@ LEFT JOIN gabby.powerschool.cohort_identifiers_static e1
  AND e1.year_in_school = 1
 LEFT JOIN gabby.powerschool.spenrollments_gen_static sp
   ON co.studentid = sp.studentid
- AND CONVERT(DATE, GETDATE()) BETWEEN sp.enter_date AND sp.exit_date
+ AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sp.enter_date AND sp.exit_date
  AND sp.specprog_name = 'Counseling Services'
  AND co.[db_name] = sp.[db_name]
 WHERE tr.storecode = 'Y1'
@@ -442,7 +442,7 @@ LEFT JOIN section_teacher st
  AND cg.course_number = st.course_number
 LEFT JOIN gabby.powerschool.spenrollments_gen_static sp
   ON co.studentid = sp.studentid
- AND CONVERT(DATE, GETDATE()) BETWEEN sp.enter_date AND sp.exit_date
+ AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sp.enter_date AND sp.exit_date
  AND sp.specprog_name = 'Counseling Services'
  AND co.[db_name] = sp.[db_name]
 WHERE co.rn_year = 1
@@ -511,7 +511,7 @@ LEFT JOIN section_teacher st
  AND cy.course_number = st.course_number
 LEFT JOIN gabby.powerschool.spenrollments_gen_static sp
   ON co.studentid = sp.studentid
- AND CONVERT(DATE, GETDATE()) BETWEEN sp.enter_date AND sp.exit_date
+ AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sp.enter_date AND sp.exit_date
  AND sp.specprog_name = 'Counseling Services'
  AND co.[db_name] = sp.[db_name]
 WHERE co.rn_year = 1

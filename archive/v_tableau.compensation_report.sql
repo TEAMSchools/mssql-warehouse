@@ -27,7 +27,7 @@ WITH salary AS (
              ORDER BY ea._modified DESC) AS rn_salary_desc
   FROM gabby.payroll.pay_periods pp
   JOIN gabby.dayforce.employees_archive ea
-    ON CONVERT(DATE,ea._modified) BETWEEN pp.start_date AND pp.end_date  
+    ON CAST(ea._modified AS DATE) BETWEEN pp.start_date AND pp.end_date  
   LEFT JOIN gabby.people.id_crosswalk_adp adp
     ON ea.adp_associate_id = adp.adp_associate_id   
  )

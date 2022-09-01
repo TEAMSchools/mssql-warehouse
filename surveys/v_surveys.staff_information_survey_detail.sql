@@ -14,7 +14,7 @@ SELECT sub.employee_number
       ,sub.question_id
       ,sub.answer
       ,CASE 
-        WHEN sub.question_id IN (5, 8, 21, 30) THEN sub.question_shortname + CONVERT(VARCHAR(2), sub.rn_multiselect)
+        WHEN sub.question_id IN (5, 8, 21, 30) THEN sub.question_shortname + CAST(sub.rn_multiselect AS VARCHAR(2))
         ELSE sub.question_shortname
        END AS question_shortname
       ,ROW_NUMBER() OVER(

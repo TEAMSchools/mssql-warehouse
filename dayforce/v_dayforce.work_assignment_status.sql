@@ -21,10 +21,10 @@ WITH status_clean AS (
              ,[status]
              ,base_salary
              ,CASE
-               WHEN status = 'Terminated' THEN DATEADD(DAY, 1, CONVERT(DATE, effective_start))
-               ELSE CONVERT(DATE,effective_start)
+               WHEN status = 'Terminated' THEN DATEADD(DAY, 1, CAST(effective_start AS DATE))
+               ELSE CAST(effective_start AS DATE)
               END AS effective_start
-             ,CONVERT(DATE, effective_end) AS effective_end
+             ,CAST(effective_end AS DATE) AS effective_end
        FROM gabby.dayforce.employee_status
       ) sub
  )

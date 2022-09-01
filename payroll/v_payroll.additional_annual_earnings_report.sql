@@ -4,7 +4,7 @@ GO
 CREATE OR ALTER VIEW payroll.additional_annual_earnings_report AS
 
 WITH annual_additional_earnings AS (
-  /*sum up total additional earnings by year. Current year will add up as additional earnings are committed to payroll*/
+  /*sum up total additional earnings by year. Current year will add up AS additional earnings are committed to payroll*/
   SELECT academic_year
         ,position_id
         ,additional_earnings_code
@@ -13,10 +13,10 @@ WITH annual_additional_earnings AS (
   FROM
       (
        SELECT gabby.utilities.DATE_TO_SY(pay_date) AS academic_year
-             ,payroll_company_code + CONVERT(NVARCHAR(8), file_number_pay_statements_) AS position_id
+             ,payroll_company_code + CAST(file_number_pay_statements_ AS NVARCHAR(8)) AS position_id
              ,additional_earnings_code
              ,additional_earnings_description
-             ,CONVERT(MONEY, gross_pay) AS gross_pay
+             ,CAST(gross_pay AS MONEY) AS gross_pay
        FROM gabby.adp.additional_earnings_report
        WHERE additional_earnings_description NOT IN ('Sick', 'C-SICK')
       ) sub

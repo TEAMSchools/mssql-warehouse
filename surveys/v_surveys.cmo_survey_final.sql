@@ -10,7 +10,7 @@ WITH cmo_survey AS (
         ,sur.time_started AS time_started
         ,sur.job_position AS primary_job
         ,sur.location AS primary_site        
-        ,CASE WHEN MONTH(CONVERT(DATE, sur.date_submitted)) < 6 THEN 'spring' ELSE 'fall' END AS term_name
+        ,CASE WHEN MONTH(CAST(sur.date_submitted AS DATE)) < 6 THEN 'spring' ELSE 'fall' END AS term_name
         ,gabby.utilities.DATE_TO_SY(sur.date_submitted) AS academic_year
 
         ,CONVERT(VARCHAR(MAX), sur.what_is_one_thing_the_accounts_payable_team_could_improve_) AS accounts_payable_improve_oe

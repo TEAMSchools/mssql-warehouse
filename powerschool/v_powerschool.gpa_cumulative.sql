@@ -119,7 +119,7 @@ WITH grades_union AS (
    AND (CAST(LEFT(sg.termid, 2) AS INT) + 1990) = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
    AND sg.storecode = 'Y1'
   WHERE fg.yearid = (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990)
-    AND fg.storecode = 'Q2' /* Y1 as of Q2 (aka Semester 1) */
+    AND fg.storecode = 'Q2' /* Y1 AS of Q2 (aka Semester 1) */
     AND fg.exclude_from_gpa = 0
     AND sg.studentid IS NULL /* ensures already stored grades are excluded */
  )

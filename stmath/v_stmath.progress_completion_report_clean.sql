@@ -21,8 +21,8 @@ SELECT iid
       ,uuid
       ,state_id
       ,alt_src_time
-      ,CONVERT(DATE,first_login_date) AS first_login_date						
-      ,CONVERT(DATE,last_login_date) AS last_login_date						
+      ,CAST(first_login_date AS DATE) AS first_login_date						
+      ,CAST(last_login_date AS DATE) AS last_login_date						
 
       ,CASE WHEN ISNUMERIC(school_student_id) = 1 THEN school_student_id ELSE NULL END AS school_student_id
       ,CASE WHEN ISNUMERIC(curr_hurdle_num_tries) = 1 THEN curr_hurdle_num_tries ELSE NULL END AS curr_hurdle_num_tries            
@@ -34,13 +34,13 @@ SELECT iid
       ,CONVERT(DATE,REPLACE(RIGHT(_file, 14),'.csv','')) AS week_end_date
 
       ,dt.time_per_name AS reporting_term
-      ,CONVERT(DATE,dt.start_date) AS term_start_date
-      ,CONVERT(DATE,dt.end_date) AS term_end_date      
-      ,CONVERT(FLOAT,DATEDIFF(DAY, CONVERT(DATE,dt.start_date), CASE 
-                                                                 WHEN CONVERT(DATE,GETDATE()) > CONVERT(DATE,dt.end_date) THEN CONVERT(DATE,dt.end_date)
-                                                                 ELSE CONVERT(DATE,GETDATE()) 
+      ,CAST(dt.start_date AS DATE) AS term_start_date
+      ,CAST(dt.end_date AS DATE) AS term_end_date      
+      ,CONVERT(FLOAT,DATEDIFF(DAY, CAST(dt.start_date AS DATE), CASE 
+                                                                 WHEN CAST(CURRENT_TIMESTAMP AS DATE) > CAST(dt.end_date AS DATE) THEN CAST(dt.end_date AS DATE)
+                                                                 ELSE CAST(CURRENT_TIMESTAMP AS DATE) 
                                                                 END)) AS days_elapsed
-      ,CONVERT(FLOAT,DATEDIFF(DAY, CONVERT(DATE,dt.start_date), CONVERT(DATE,dt.end_date))) AS total_days
+      ,CONVERT(FLOAT,DATEDIFF(DAY, CAST(dt.start_date AS DATE), CAST(dt.end_date AS DATE))) AS total_days
       
       ,ROW_NUMBER() OVER(
          PARTITION BY stm.school_student_id, stm.start_year, stm.GCD

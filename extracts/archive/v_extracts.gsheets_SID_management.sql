@@ -15,7 +15,7 @@ WITH att AS (
        SELECT mem.studentid
              ,mem.[db_name]
              ,mem.membershipvalue
-             ,CONVERT(FLOAT, mem.attendancevalue) AS attendancevalue
+             ,CAST(mem.attendancevalue AS FLOAT) AS attendancevalue
 
              ,CASE
                WHEN hb.specprog_name = 'Hybrid (SC) - Cohort D' AND cal.[type] <> 'AR' THEN 1
@@ -33,7 +33,7 @@ WITH att AS (
         AND mem.calendardate BETWEEN hb.enter_date AND hb.exit_date
         AND mem.[db_name] = hb.[db_name]
         AND hb.specprog_name IN ('Hybrid - Cohort A', 'Hybrid - Cohort B', 'Remote - Cohort C', 'Hybrid (SC) - Cohort D')
-       WHERE mem.calendardate <= GETDATE()
+       WHERE mem.calendardate <= CURRENT_TIMESTAMP
          AND mem.membershipvalue > 0
       ) sub
   GROUP BY sub.studentid
@@ -162,7 +162,7 @@ SELECT co.region AS helper_region
        END AS FreeandReducedRateLunchStatus
       ,CASE 
         WHEN co.grade_level = 0 THEN 'KF'
-        ELSE CONVERT(VARCHAR, co.grade_level) 
+        ELSE CAST(co.grade_level AS VARCHAR) 
        END AS GradeLevel
       ,nj.programtypecode AS ProgramTypeCode
       ,CASE 

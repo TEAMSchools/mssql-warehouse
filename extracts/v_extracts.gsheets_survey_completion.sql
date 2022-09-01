@@ -30,7 +30,7 @@ WITH incomplete_surveys AS (
   FROM gabby.surveys.survey_tracking t
   WHERE survey_id = '6330385' 
      OR (survey_completion_date IS NULL
-           AND CONVERT(DATE, GETDATE()) BETWEEN survey_round_open 
+           AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN survey_round_open 
                                             AND survey_round_close
         )
 )
@@ -49,7 +49,7 @@ SELECT i.academic_year
       ,c.primary_site
       ,c.manager_name
       ,c.manager_mail
-      ,GETDATE() AS date_of_extract
+      ,CURRENT_TIMESTAMP AS date_of_extract
 
 FROM incomplete_surveys i
 INNER JOIN gabby.people.staff_crosswalk_static c

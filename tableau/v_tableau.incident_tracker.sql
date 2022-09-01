@@ -38,7 +38,7 @@ SELECT co.student_number
       ,NULL AS notes
       ,NULL AS roster_subject_name
       
-      ,CONVERT(VARCHAR(5), d.alt_name) AS term
+      ,CAST(d.alt_name AS VARCHAR(5)) AS term
 
       ,cf.[Behavior Category]
       ,cf.[NJ State Reporting]
@@ -53,7 +53,7 @@ JOIN gabby.deanslist.incidents_clean_static dli
  AND co.academic_year = dli.create_academic_year
 JOIN gabby.reporting.reporting_terms d
   ON co.schoolid = d.schoolid
- AND CONVERT(DATE, dli.create_ts) BETWEEN d.[start_date] AND d.end_date
+ AND CAST(dli.create_ts AS DATE) BETWEEN d.[start_date] AND d.end_date
  AND d.identifier = 'RT'
  AND d._fivetran_deleted = 0
 LEFT JOIN gabby.deanslist.incidents_custom_fields_wide cf
@@ -99,7 +99,7 @@ SELECT co.student_number
       ,NULL AS notes
       ,NULL AS roster_subject_name
 
-      ,CONVERT(VARCHAR(5), d.alt_name) AS term
+      ,CAST(d.alt_name AS VARCHAR(5)) AS term
 
       ,NULL AS [Behavior Category]
       ,NULL AS [NJ State Reporting]
@@ -116,7 +116,7 @@ JOIN gabby.deanslist.incidents_penalties_static dlip
   ON dli.incident_id = dlip.incident_id
 JOIN gabby.reporting.reporting_terms d
   ON co.schoolid = d.schoolid
- AND ISNULL(dlip.startdate, CONVERT(DATE, dli.create_ts)) BETWEEN d.[start_date] AND d.end_date 
+ AND ISNULL(dlip.startdate, CAST(dli.create_ts AS DATE)) BETWEEN d.[start_date] AND d.end_date 
  AND d.identifier = 'RT'
  AND d._fivetran_deleted = 0
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
@@ -141,7 +141,7 @@ SELECT co.student_number
       ,NULL AS dl_rostername
 
       ,dlb.dlstudent_id AS dl_student_id
-      ,CONVERT(INT, dlb.dlsaid) AS dl_id
+      ,CAST(dlb.dlsaid AS INT) AS dl_id
       ,NULL AS [status]
       ,NULL [location]
       ,NULL AS reported_details
@@ -151,9 +151,9 @@ SELECT co.student_number
       ,NULL AS reviewed_by
       ,dlb.behavior_date AS dl_timestamp
       ,NULL AS infraction
-      ,CONVERT(VARCHAR(250), dlb.behavior) AS dl_behavior
+      ,CAST(dlb.behavior AS VARCHAR(250)) AS dl_behavior
       ,NULL AS dl_numdays
-      ,CONVERT(VARCHAR(125), dlb.behavior_category) AS dl_category
+      ,CAST(dlb.behavior_category AS VARCHAR(125)) AS dl_category
       ,dlb.point_value AS dl_point_value
       ,dlb.roster
       ,NULL AS assignment
@@ -161,7 +161,7 @@ SELECT co.student_number
 
       ,r.subject_name AS roster_subject_name
 
-      ,CONVERT(VARCHAR(5), d.alt_name) AS term
+      ,CAST(d.alt_name AS VARCHAR(5)) AS term
 
       ,NULL AS [Behavior Category]
       ,NULL AS [NJ State Reporting]

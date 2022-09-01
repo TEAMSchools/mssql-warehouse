@@ -43,20 +43,20 @@ FROM
            ,sub1.ela
            ,sub1.stem
            ,gabby.utilities.DATE_TO_SY(test_date) AS academic_year
-           ,CASE WHEN sub1.test_date <= CONVERT(DATE, GETDATE()) THEN sub1.test_date ELSE NULL END AS test_date
+           ,CASE WHEN sub1.test_date <= CAST(CURRENT_TIMESTAMP AS DATE) THEN sub1.test_date ELSE NULL END AS test_date
            ,CASE WHEN sub1.composite <> ROUND((ISNULL(sub1.english, 0) + ISNULL(sub1.math, 0) + ISNULL(sub1.reading, 0) + ISNULL(sub1.science, 0)) / 4, 0) THEN 1 END AS composite_flag
            ,ROW_NUMBER() OVER(
               PARTITION BY sub1.student_number, test_date
                 ORDER BY composite DESC) AS dupe_audit
      FROM
          (
-          SELECT CONVERT(INT, studentid) AS naviance_studentid
-                ,CONVERT(INT, hs_student_id) AS student_number
+          SELECT CAST(studentid AS INT) AS naviance_studentid
+                ,CAST(hs_student_id AS INT) AS student_number
                 ,'ACT' AS test_type
                 ,CASE
                   WHEN test_date = '0000-00-00' THEN NULL
                   WHEN RIGHT(test_date, 2) = '00' THEN DATEFROMPARTS(LEFT(test_date, 4), SUBSTRING(test_date, 6, 2), 01)
-                  ELSE CONVERT(DATE, test_date)
+                  ELSE CAST(test_date AS DATE)
                  END AS test_date
                 ,CONVERT(INT, CASE WHEN composite BETWEEN 1 AND 36 THEN composite END) AS composite
                 ,CONVERT(INT, CASE WHEN english BETWEEN 1 AND 36 THEN english END) AS english

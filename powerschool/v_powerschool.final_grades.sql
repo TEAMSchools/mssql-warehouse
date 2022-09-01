@@ -5,6 +5,7 @@ WITH enr AS (
         ,sub.schoolid
         ,sub.yearid
         ,sub.termid
+        ,sub.termbin_start_date
         ,sub.termbin_end_date
         ,sub.course_number
         ,sub.gradescaleid
@@ -41,6 +42,7 @@ WITH enr AS (
 
              ,tb.yearid
              ,tb.storecode
+             ,tb.date_1 AS termbin_start_date
              ,tb.date_2 AS termbin_end_date
 
              ,CASE
@@ -68,6 +70,7 @@ WITH enr AS (
         ,sub.schoolid
         ,sub.yearid
         ,sub.termid
+        ,sub.termbin_start_date
         ,sub.termbin_end_date
         ,sub.course_number
         ,sub.gradescaleid
@@ -108,6 +111,7 @@ WITH enr AS (
              ,te.schoolid
              ,te.yearid
              ,te.termid
+             ,te.termbin_start_date
              ,te.termbin_end_date
              ,te.course_number
              ,te.gradescaleid
@@ -188,6 +192,7 @@ WITH enr AS (
         ,sub.schoolid
         ,sub.yearid
         ,sub.termid
+        ,sub.termbin_start_date
         ,sub.termbin_end_date
         ,sub.course_number
         ,sub.gradescaleid
@@ -232,6 +237,7 @@ WITH enr AS (
              ,eg.schoolid
              ,eg.yearid
              ,eg.termid
+             ,eg.termbin_start_date
              ,eg.termbin_end_date
              ,eg.course_number
              ,eg.gradescaleid
@@ -282,6 +288,8 @@ SELECT y1.studentid
       ,y1.sectionid
       ,y1.is_dropped_section
       ,y1.storecode
+      ,y1.termbin_start_date
+      ,y1.termbin_end_date
       ,y1.term_grade_letter
       ,y1.term_grade_letter_adj
       ,y1.term_grade_pts

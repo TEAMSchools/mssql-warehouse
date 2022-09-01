@@ -37,30 +37,30 @@ SELECT rs.unique_id AS unique_id
          PARTITION BY rs.student_number, rs.academic_year
            ORDER BY rs.round_num DESC, rs.test_date DESC, rs.lvl_num DESC) AS recent_yr 
 FROM (
-      SELECT CONVERT(VARCHAR(25), ps.unique_id) AS unique_id
-            ,CONVERT(INT, ps.student_number) AS student_number
-            ,CONVERT(INT, ps.academic_year) AS academic_year
-            ,CONVERT(VARCHAR(5), ps.test_round) AS test_round
-            ,CONVERT(INT, ps.round_num) AS round_num
+      SELECT CAST(ps.unique_id AS VARCHAR(25)) AS unique_id
+            ,CAST(ps.student_number AS INT) AS student_number
+            ,CAST(ps.academic_year AS INT) AS academic_year
+            ,CAST(ps.test_round AS VARCHAR(5)) AS test_round
+            ,CAST(ps.round_num AS INT) AS round_num
             ,ps.test_date
             ,CONVERT(INT ,ps.testid) AS testid
-            ,CONVERT(INT, ps.is_fp) AS is_fp
+            ,CAST(ps.is_fp AS INT) AS is_fp
             ,CONVERT(VARCHAR(25), ps.[status]) AS [status]
-            ,CONVERT(VARCHAR(25), ps.read_lvl) AS read_lvl
-            ,CONVERT(INT, ps.lvl_num) AS lvl_num
-            ,CONVERT(INT, ps.gleq) AS gleq
-            ,CONVERT(VARCHAR(25), ps.color) AS color
+            ,CAST(ps.read_lvl AS VARCHAR(25)) AS read_lvl
+            ,CAST(ps.lvl_num AS INT) AS lvl_num
+            ,CAST(ps.gleq AS INT) AS gleq
+            ,CAST(ps.color AS VARCHAR(25)) AS color
             ,CONVERT(VARCHAR(25) ,ps.genre) AS genre
-            ,CONVERT(VARCHAR(5), ps.dna_lvl) AS dna_lvl
-            ,CONVERT(INT, ps.dna_lvl_num) AS dna_lvl_num
-            ,CONVERT(VARCHAR(5), ps.instruct_lvl) AS instruct_lvl
-            ,CONVERT(INT, ps.instruct_lvl_num) AS instruct_lvl_num
-            ,CONVERT(VARCHAR(25), ps.indep_lvl) AS indep_lvl
-            ,CONVERT(INT, ps.indep_lvl_num) AS indep_lvl_num
+            ,CAST(ps.dna_lvl AS VARCHAR(5)) AS dna_lvl
+            ,CAST(ps.dna_lvl_num AS INT) AS dna_lvl_num
+            ,CAST(ps.instruct_lvl AS VARCHAR(5)) AS instruct_lvl
+            ,CAST(ps.instruct_lvl_num AS INT) AS instruct_lvl_num
+            ,CAST(ps.indep_lvl AS VARCHAR(25)) AS indep_lvl
+            ,CAST(ps.indep_lvl_num AS INT) AS indep_lvl_num
             ,NULL AS gleq_lvl_num
-            ,CONVERT(INT, ps.fp_wpmrate) AS fp_wpmrate
-            ,CONVERT(VARCHAR(25), ps.fp_keylever) AS fp_keylever
-            ,CONVERT(VARCHAR(5), ps.coaching_code) AS coaching_code
+            ,CAST(ps.fp_wpmrate AS INT) AS fp_wpmrate
+            ,CAST(ps.fp_keylever AS VARCHAR(25)) AS fp_keylever
+            ,CAST(ps.coaching_code AS VARCHAR(5)) AS coaching_code
             ,NULL AS test_administered_by        
             ,NULL AS schoolid
       FROM gabby.lit.powerschool_test_events_archive ps

@@ -28,7 +28,7 @@ SELECT sub.student_number
       ,a.[type] AS account_type
 
       ,CASE
-        WHEN DATEFROMPARTS(sub.academic_year, 10, 31) > CONVERT(DATE, GETDATE()) THEN NULL
+        WHEN DATEFROMPARTS(sub.academic_year, 10, 31) > CAST(CURRENT_TIMESTAMP AS DATE) THEN NULL
         WHEN e.actual_end_date_c >= DATEFROMPARTS(sub.academic_year, 10, 31) THEN 1
         WHEN e.actual_end_date_c < DATEFROMPARTS(sub.academic_year, 10, 31) AND e.status_c = 'Graduated' THEN 1
         WHEN e.actual_end_date_c IS NULL AND ei.ugrad_status IN ('Graduated', 'Attending') THEN 1

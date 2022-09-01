@@ -22,7 +22,7 @@ WITH subjects AS (
   INNER JOIN gabby.utilities.reporting_days tw
     ON td.week_part = tw.week_part
    AND td.year_part = tw.year_part
-  WHERE td.[date] = CAST(GETDATE() AS DATE)
+  WHERE td.[date] = CAST(CURRENT_TIMESTAMP AS DATE)
  )
 
 ,iready_lessons AS (

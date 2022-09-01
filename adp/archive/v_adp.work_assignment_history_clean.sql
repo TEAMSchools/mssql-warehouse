@@ -37,13 +37,13 @@ FROM
            ,wah.job_title_description
            ,wah.job_change_reason_code
            ,wah.job_change_reason_description
-           ,CONVERT(DATE, wah.position_effective_date) AS position_effective_date
-           ,CONVERT(DATE, wah.position_effective_end_date) AS position_effective_end_date
+           ,CAST(wah.position_effective_date AS DATE) AS position_effective_date
+           ,CAST(wah.position_effective_end_date AS DATE) AS position_effective_end_date
 
            ,sr.file_number AS employee_number
      FROM gabby.adp.work_assignment_history wah
      JOIN gabby.adp.employees_all sr
        ON wah.associate_id = sr.associate_id
-     WHERE CONVERT(DATE, wah.position_effective_date) < CONVERT(DATE, wah.position_effective_end_date)
+     WHERE CAST(wah.position_effective_date AS DATE) < CAST(wah.position_effective_end_date AS DATE)
              OR wah.position_effective_end_date IS NULL
     ) sub

@@ -14,7 +14,7 @@ WITH wf AS (
   FROM
       (
        SELECT rs.employee_reference_code AS affected_employee_number
-             ,CONVERT(DATETIME2, rs.workflow_data_last_modified_timestamp) AS renewal_status_updated
+             ,CAST(rs.workflow_data_last_modified_timestamp AS DATETIME2) AS renewal_status_updated
              ,CASE 
                WHEN rs.workflow_status = 'completed' AND rs.workflow_data_saved = 1 THEN 'Offer Accepted'
                WHEN rs.workflow_status = 'completed' AND rs.workflow_data_saved = 0 THEN 'SL, HR, or Employee Rejected'
@@ -63,7 +63,7 @@ WITH wf AS (
        SELECT sta.number AS df_employee_number
              ,sta.[status] AS future_status
              ,sta.base_salary AS future_salary
-             ,CONVERT(DATE, sta.effective_start) AS future_status_effective_start
+             ,CAST(sta.effective_start AS DATE) AS future_status_effective_start
        FROM gabby.dayforce.employee_status sta
       ) sub
  )

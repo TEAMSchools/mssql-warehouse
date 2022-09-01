@@ -50,12 +50,12 @@ SELECT sr.df_employee_number
       ,tg.is_sped_goal
       ,tg.ps_course_number
       ,tg.metric_label
-      ,CONVERT(VARCHAR(125), tg.metric_name) AS metric_name
-      ,CONVERT(FLOAT, tg.tier_1) AS tier_1
-      ,CONVERT(FLOAT, tg.tier_2) AS tier_2
-      ,CONVERT(FLOAT, tg.tier_3) AS tier_3
-      ,CONVERT(FLOAT, tg.tier_4) AS tier_4
-      ,CONVERT(FLOAT, tg.prior_year_outcome) AS prior_year_outcome
+      ,CAST(tg.metric_name AS VARCHAR(125)) AS metric_name
+      ,CAST(tg.tier_1 AS FLOAT) AS tier_1
+      ,CAST(tg.tier_2 AS FLOAT) AS tier_2
+      ,CAST(tg.tier_3 AS FLOAT) AS tier_3
+      ,CAST(tg.tier_4 AS FLOAT) AS tier_4
+      ,CAST(tg.prior_year_outcome AS FLOAT) AS prior_year_outcome
       ,tg.data_type
 
       ,NULL AS sectionid
@@ -108,12 +108,12 @@ SELECT sr.df_employee_number
       ,tg.is_sped_goal
       ,tg.ps_course_number
       ,tg.metric_label
-      ,CONVERT(VARCHAR(125), tg.metric_name) AS metric_name
-      ,CONVERT(FLOAT, tg.tier_1) AS tier_1
-      ,CONVERT(FLOAT, tg.tier_2) AS tier_2
-      ,CONVERT(FLOAT, tg.tier_3) AS tier_3
-      ,CONVERT(FLOAT, tg.tier_4) AS tier_4
-      ,CONVERT(FLOAT, tg.prior_year_outcome) AS prior_year_outcome
+      ,CAST(tg.metric_name AS VARCHAR(125)) AS metric_name
+      ,CAST(tg.tier_1 AS FLOAT) AS tier_1
+      ,CAST(tg.tier_2 AS FLOAT) AS tier_2
+      ,CAST(tg.tier_3 AS FLOAT) AS tier_3
+      ,CAST(tg.tier_4 AS FLOAT) AS tier_4
+      ,CAST(tg.prior_year_outcome AS FLOAT) AS prior_year_outcome
       ,tg.data_type
 
       ,NULL AS sectionid
@@ -167,12 +167,12 @@ SELECT sr.df_employee_number
       ,tg.is_sped_goal
       ,tg.ps_course_number
       ,tg.metric_label
-      ,CONVERT(VARCHAR(125), tg.metric_name) AS metric_name
-      ,CONVERT(FLOAT, tg.tier_1) AS tier_1
-      ,CONVERT(FLOAT, tg.tier_2) AS tier_2
-      ,CONVERT(FLOAT, tg.tier_3) AS tier_3
-      ,CONVERT(FLOAT, tg.tier_4) AS tier_4
-      ,CONVERT(FLOAT, tg.prior_year_outcome) AS prior_year_outcome
+      ,CAST(tg.metric_name AS VARCHAR(125)) AS metric_name
+      ,CAST(tg.tier_1 AS FLOAT) AS tier_1
+      ,CAST(tg.tier_2 AS FLOAT) AS tier_2
+      ,CAST(tg.tier_3 AS FLOAT) AS tier_3
+      ,CAST(tg.tier_4 AS FLOAT) AS tier_4
+      ,CAST(tg.prior_year_outcome AS FLOAT) AS prior_year_outcome
       ,tg.data_type
 
       ,st.sectionid
@@ -243,12 +243,12 @@ SELECT sr.df_employee_number
       ,tg.is_sped_goal
       ,tg.ps_course_number
       ,tg.metric_label
-      ,CONVERT(VARCHAR(125), tg.metric_name) AS metric_name
-      ,CONVERT(FLOAT, tg.tier_1) AS tier_1
-      ,CONVERT(FLOAT, tg.tier_2) AS tier_2
-      ,CONVERT(FLOAT, tg.tier_3) AS tier_3
-      ,CONVERT(FLOAT, tg.tier_4) AS tier_4
-      ,CONVERT(FLOAT, tg.prior_year_outcome) AS prior_year_outcome
+      ,CAST(tg.metric_name AS VARCHAR(125)) AS metric_name
+      ,CAST(tg.tier_1 AS FLOAT) AS tier_1
+      ,CAST(tg.tier_2 AS FLOAT) AS tier_2
+      ,CAST(tg.tier_3 AS FLOAT) AS tier_3
+      ,CAST(tg.tier_4 AS FLOAT) AS tier_4
+      ,CAST(tg.prior_year_outcome AS FLOAT) AS prior_year_outcome
       ,tg.data_type
 
       ,st.sectionid

@@ -15,7 +15,7 @@ WITH dsos AS (
     AND df.primary_job IN ('Director of Campus Operations', 'Director Campus Operations', 'Director School Operations')
  )
 
-SELECT CONVERT(BIGINT, enr.cc_id) AS id
+SELECT CAST(enr.cc_id AS BIGINT) AS id
       ,enr.termid
       ,enr.student_number AS studentid
       ,enr.section_number

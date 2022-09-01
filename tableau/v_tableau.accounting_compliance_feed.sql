@@ -5,23 +5,23 @@ CREATE OR ALTER VIEW tableau.accounting_compliance_feed AS
 
 WITH status_curr AS (
   SELECT number
-        ,CONVERT(DATETIME2,effective_start) AS last_status_or_salary_change
+        ,CAST(effective_start AS DATETIME2) AS last_status_or_salary_change
         ,base_salary AS base_salary_curr
         ,status AS status_curr
-        ,LAG(base_salary, 1) OVER(PARTITION BY number ORDER BY CONVERT(DATETIME2,effective_start)) AS base_salary_prev
-        ,LAG(status, 1) OVER(PARTITION BY number ORDER BY CONVERT(DATETIME2,effective_start)) AS status_prev
-        ,ROW_NUMBER() OVER(PARTITION BY number ORDER BY CONVERT(DATETIME2,effective_start) DESC) AS rn_curr
+        ,LAG(base_salary, 1) OVER(PARTITION BY number ORDER BY CAST(effective_start AS DATETIME2)) AS base_salary_prev
+        ,LAG(status, 1) OVER(PARTITION BY number ORDER BY CAST(effective_start AS DATETIME2)) AS status_prev
+        ,ROW_NUMBER() OVER(PARTITION BY number ORDER BY CAST(effective_start AS DATETIME2) DESC) AS rn_curr
   FROM dayforce.employee_status
  )
 
 ,properites_curr AS (
   SELECT employee_reference_code
-        ,CONVERT(DATETIME2, employee_property_value_effective_start) AS pension_start_date
+        ,CAST(employee_property_value_effective_start AS DATETIME2) AS pension_start_date
         ,RIGHT(employee_property_value_name, 4) AS pension_type
         ,property_value AS pension_number
         ,ROW_NUMBER() OVER(
            PARTITION BY employee_reference_code, employee_property_value_name
-             ORDER BY CONVERT(DATETIME2, employee_property_value_effective_start)) AS rn_curr
+             ORDER BY CAST(employee_property_value_effective_start AS DATETIME2)) AS rn_curr
   FROM dayforce.employee_properties
   WHERE employee_property_value_name IN ('Pension Number - DCRP', 'Pension Number - PERS', 'Pension Number - TPAF')
  )

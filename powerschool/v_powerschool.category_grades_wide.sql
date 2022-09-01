@@ -96,8 +96,8 @@ WITH grades_long AS (
              ,rt
              ,is_curterm
              ,grade_category
-             ,CONVERT(NVARCHAR(8), grade_category_pct) AS grade_category_pct
-             ,CONVERT(NVARCHAR(8), citizenship) AS citizenship
+             ,CAST(grade_category_pct AS NVARCHAR(8)) AS grade_category_pct
+             ,CAST(citizenship AS NVARCHAR(8)) AS citizenship
        FROM grades_long
       ) sub
   UNPIVOT(
@@ -114,26 +114,26 @@ WITH grades_long AS (
         ,reporting_term
         ,is_curterm
         ,schoolid
-        ,CONVERT(FLOAT, M_CUR) AS M_CUR
-        ,CONVERT(FLOAT, M_RT1) AS M_RT1
-        ,CONVERT(FLOAT, M_RT2) AS M_RT2
-        ,CONVERT(FLOAT, M_RT3) AS M_RT3
-        ,CONVERT(FLOAT, M_RT4) AS M_RT4
-        ,CONVERT(FLOAT, P_CUR) AS P_CUR
-        ,CONVERT(FLOAT, P_RT1) AS P_RT1
-        ,CONVERT(FLOAT, P_RT2) AS P_RT2
-        ,CONVERT(FLOAT, P_RT3) AS P_RT3
-        ,CONVERT(FLOAT, P_RT4) AS P_RT4
-        ,CONVERT(FLOAT, W_CUR) AS W_CUR
-        ,CONVERT(FLOAT, W_RT1) AS W_RT1
-        ,CONVERT(FLOAT, W_RT2) AS W_RT2
-        ,CONVERT(FLOAT, W_RT3) AS W_RT3
-        ,CONVERT(FLOAT, W_RT4) AS W_RT4
-        ,CONVERT(FLOAT, E_CUR) AS E_CUR
-        ,CONVERT(FLOAT, E_RT1) AS E_RT1
-        ,CONVERT(FLOAT, E_RT2) AS E_RT2
-        ,CONVERT(FLOAT, E_RT3) AS E_RT3
-        ,CONVERT(FLOAT, E_RT4) AS E_RT4
+        ,CAST(M_CUR AS FLOAT) AS M_CUR
+        ,CAST(M_RT1 AS FLOAT) AS M_RT1
+        ,CAST(M_RT2 AS FLOAT) AS M_RT2
+        ,CAST(M_RT3 AS FLOAT) AS M_RT3
+        ,CAST(M_RT4 AS FLOAT) AS M_RT4
+        ,CAST(P_CUR AS FLOAT) AS P_CUR
+        ,CAST(P_RT1 AS FLOAT) AS P_RT1
+        ,CAST(P_RT2 AS FLOAT) AS P_RT2
+        ,CAST(P_RT3 AS FLOAT) AS P_RT3
+        ,CAST(P_RT4 AS FLOAT) AS P_RT4
+        ,CAST(W_CUR AS FLOAT) AS W_CUR
+        ,CAST(W_RT1 AS FLOAT) AS W_RT1
+        ,CAST(W_RT2 AS FLOAT) AS W_RT2
+        ,CAST(W_RT3 AS FLOAT) AS W_RT3
+        ,CAST(W_RT4 AS FLOAT) AS W_RT4
+        ,CAST(E_CUR AS FLOAT) AS E_CUR
+        ,CAST(E_RT1 AS FLOAT) AS E_RT1
+        ,CAST(E_RT2 AS FLOAT) AS E_RT2
+        ,CAST(E_RT3 AS FLOAT) AS E_RT3
+        ,CAST(E_RT4 AS FLOAT) AS E_RT4
         ,CTZ_CUR
         ,CTZ_RT1
         ,CTZ_RT2
@@ -145,7 +145,7 @@ WITH grades_long AS (
              ,gr.academic_year
              ,gr.credittype
              ,gr.course_number
-             ,CONVERT(VARCHAR(5), gr.reporting_term) AS reporting_term
+             ,CAST(gr.reporting_term AS VARCHAR(5)) AS reporting_term
              ,gr.is_curterm
              ,CONCAT(gr.grade_category, '_', gr.rt) AS pivot_field
              ,gr.[value]
@@ -161,7 +161,7 @@ WITH grades_long AS (
              ,gr.academic_year
              ,gr.credittype
              ,gr.course_number
-             ,CONVERT(VARCHAR(5), gr.reporting_term) AS reporting_term
+             ,CAST(gr.reporting_term AS VARCHAR(5)) AS reporting_term
              ,gr.is_curterm
              ,CONCAT('CTZ_', gr.rt) AS pivot_field
              ,gr.[value]

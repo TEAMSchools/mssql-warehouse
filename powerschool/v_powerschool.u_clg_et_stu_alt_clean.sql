@@ -6,10 +6,10 @@ SELECT sub.id
       ,sub.exit_code
 FROM
     (
-     SELECT CONVERT(INT, id) AS id
-           ,CONVERT(INT, studentsdcid) AS studentsdcid
+     SELECT CAST(id AS INT) AS id
+           ,CAST(studentsdcid AS INT) AS studentsdcid
            ,exit_date
-           ,CONVERT(VARCHAR(5), exit_code) AS exit_code
+           ,CAST(exit_code AS VARCHAR(5)) AS exit_code
            ,ROW_NUMBER() OVER(
               PARTITION BY studentsdcid, exit_date
                 ORDER BY id DESC) AS rn

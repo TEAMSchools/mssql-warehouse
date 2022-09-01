@@ -1,7 +1,7 @@
 WITH ada AS (
   SELECT studentid
         ,yearid
-        ,AVG(CONVERT(FLOAT,attendancevalue)) AS ada
+        ,AVG(CAST(attendancevalue AS FLOAT)) AS ada
   FROM gabby.powerschool.ps_adaadm_daily_ctod_static
   GROUP BY studentid
           ,yearid

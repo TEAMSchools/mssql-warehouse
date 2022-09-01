@@ -71,17 +71,17 @@ FROM
               / COUNT(sub.sectionid) OVER(PARTITION BY sub.studentid, sub.course_number) AS course_enroll_status
      FROM
          (
-          SELECT CONVERT(INT, cc.studentid) AS studentid
-                ,CONVERT(INT, cc.schoolid) AS schoolid
-                ,CONVERT(INT, cc.termid) AS termid
-                ,CONVERT(INT, cc.id) AS cc_id
+          SELECT CAST(cc.studentid AS INT) AS studentid
+                ,CAST(cc.schoolid AS INT) AS schoolid
+                ,CAST(cc.termid AS INT) AS termid
+                ,CAST(cc.id AS INT) AS cc_id
                 ,cc.course_number
-                ,CONVERT(VARCHAR(25), cc.section_number) AS section_number
+                ,CAST(cc.section_number AS VARCHAR(25)) AS section_number
                 ,cc.dateenrolled
                 ,cc.dateleft
-                ,CONVERT(INT, cc.sectionid) AS sectionid
-                ,CONVERT(VARCHAR(25), cc.expression) AS expression
-                ,ABS(CONVERT(INT, cc.termid)) AS abs_termid
+                ,CAST(cc.sectionid AS INT) AS sectionid
+                ,CAST(cc.expression AS VARCHAR(25)) AS expression
+                ,ABS(CAST(cc.termid AS INT)) AS abs_termid
                 ,ABS(cc.sectionid) AS abs_sectionid
                 ,CASE 
                   WHEN cc.sectionid < 0 AND s.enroll_status = 2 AND s.exitdate = cc.dateleft THEN 0
@@ -89,15 +89,15 @@ FROM
                   ELSE 0
                  END AS section_enroll_status
 
-                ,CONVERT(INT, s.student_number) AS student_number
-                ,CONVERT(INT, s.dcid) AS students_dcid
+                ,CAST(s.student_number AS INT) AS student_number
+                ,CAST(s.dcid AS INT) AS students_dcid
 
-                ,CONVERT(VARCHAR(25), cou.credittype) AS credittype
-                ,CONVERT(VARCHAR(125), cou.course_name) AS course_name
+                ,CAST(cou.credittype AS VARCHAR(25)) AS credittype
+                ,CAST(cou.course_name AS VARCHAR(125)) AS course_name
                 ,cou.credit_hours
-                ,CONVERT(INT, cou.excludefromgpa) AS excludefromgpa
-                ,CONVERT(INT, cou.excludefromstoredgrades) AS excludefromstoredgrades
-                ,CONVERT(INT, cou.gradescaleid) AS courses_gradescaleid
+                ,CAST(cou.excludefromgpa AS INT) AS excludefromgpa
+                ,CAST(cou.excludefromstoredgrades AS INT) AS excludefromstoredgrades
+                ,CAST(cou.gradescaleid AS INT) AS courses_gradescaleid
                 ,CASE
                   WHEN cou.credittype IN ('ENG','READ') THEN 'Reading'
                   WHEN cou.credittype = 'MATH' THEN 'Mathematics'
@@ -108,9 +108,9 @@ FROM
                 ,t.teachernumber
                 ,t.lastfirst AS teacher_name
 
-                ,CONVERT(INT, sec.dcid) AS sections_dcid
+                ,CAST(sec.dcid AS INT) AS sections_dcid
 
-                ,CONVERT(VARCHAR(125), sj.illuminate_subject) AS illuminate_subject
+                ,CAST(sj.illuminate_subject AS VARCHAR(125)) AS illuminate_subject
           FROM powerschool.cc
           JOIN powerschool.students s
             ON cc.studentid = s.id

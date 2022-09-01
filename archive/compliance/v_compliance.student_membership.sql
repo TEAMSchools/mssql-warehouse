@@ -13,9 +13,9 @@ SELECT co.student_number
       ,co.lep_status
       ,co.lunchstatus
 
-      ,SUM(CONVERT(INT,mem.attendancevalue)) AS att
-      ,SUM(CONVERT(INT,mem.membershipvalue)) AS mem
-      ,SUM(CONVERT(INT,mem.membershipvalue)) - SUM(CONVERT(INT,mem.attendancevalue)) AS absences
+      ,SUM(CAST(mem.attendancevalue AS INT)) AS att
+      ,SUM(CAST(mem.membershipvalue AS INT)) AS mem
+      ,SUM(CAST(mem.membershipvalue AS INT)) - SUM(CAST(mem.attendancevalue AS INT)) AS absences
 FROM gabby.powerschool.cohort_identifiers_static co
 JOIN gabby.powerschool.ps_adaadm_daily_ctod_static mem
   ON co.studentid = mem.studentid

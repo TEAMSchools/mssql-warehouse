@@ -40,7 +40,7 @@ BEGIN
       AND repository_id IN (SELECT CONVERT(INT, RIGHT([table], LEN([table]) - CHARINDEX('_', [table])))
                             FROM gabby.illuminate_dna_repositories.fivetran_audit
                             WHERE ISNUMERIC(RIGHT([table], 1)) = 1
-                              AND done >= DATEADD(HOUR, -24, GETDATE()))
+                              AND done >= DATEADD(HOUR, -24, CURRENT_TIMESTAMP))
     ORDER BY repository_id DESC;
 
   /* 4.) Do work son */

@@ -32,7 +32,7 @@ SELECT co.student_number
       ,'Referral' AS dl_category
       ,NULL AS dl_point_value
       
-      ,CONVERT(VARCHAR(5),d.alt_name) AS term
+      ,CAST(d.alt_name AS VARCHAR(5)) AS term
 
       ,cf.[Final approval]
       ,CONCAT(u.first_name,' ',u.last_name) AS [Approver Name]
@@ -56,7 +56,7 @@ JOIN gabby.powerschool.cohort_identifiers_static co
  AND co.rn_year = 1
 JOIN gabby.reporting.reporting_terms d
   ON co.schoolid = d.schoolid
- AND CONVERT(DATE, dli.create_ts) BETWEEN d.[start_date] AND d.end_date
+ AND CAST(dli.create_ts AS DATE) BETWEEN d.[start_date] AND d.end_date
  AND d.identifier = 'RT'
  AND d._fivetran_deleted = 0
 WHERE dli.create_academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()

@@ -82,7 +82,7 @@ SELECT co.[db_name]
       ,co.grade_level
       ,co.team
       ,'Missing SID' AS element
-      ,CONVERT(VARCHAR, co.state_studentnumber) AS detail
+      ,CAST(co.state_studentnumber AS VARCHAR) AS detail
       ,CASE WHEN co.state_studentnumber IS NULL THEN 1 ELSE 0 END AS flag
 FROM gabby.powerschool.cohort_identifiers_static co
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
@@ -133,7 +133,7 @@ SELECT co.[db_name]
       ,co.grade_level
       ,co.team
       ,'Missing DOB' AS element
-      ,CONVERT(VARCHAR, co.dob) AS detail
+      ,CAST(co.dob AS VARCHAR) AS detail
       ,CASE 
         WHEN co.dob IS NULL THEN 1
         ELSE 0
@@ -201,7 +201,7 @@ FROM
            ,ce.section_number
            ,ce.dateenrolled
            ,ce.dateleft
-           ,LEAD(ce.dateenrolled) OVER(PARTITION BY ce.student_number, ce.course_number ORDER BY ce.dateenrolled) as next_enrollment_date
+           ,LEAD(ce.dateenrolled) OVER(PARTITION BY ce.student_number, ce.course_number ORDER BY ce.dateenrolled) AS next_enrollment_date
            ,co.school_name
            ,co.region
            ,co.lastfirst
@@ -229,8 +229,8 @@ SELECT [db_name]
       ,grade_level
       ,team
       ,'Under Enrolled' AS element
-      ,CONVERT(VARCHAR, total_sections) AS detail
-      ,CASE WHEN total_sections < 3 THEN 1 ELSE 0 END as flag
+      ,CAST(total_sections AS VARCHAR) AS detail
+      ,CASE WHEN total_sections < 3 THEN 1 ELSE 0 END AS flag
 FROM
     (
      SELECT  co.[db_name]

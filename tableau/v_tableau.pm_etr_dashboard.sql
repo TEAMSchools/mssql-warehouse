@@ -50,11 +50,11 @@ SELECT sr.df_employee_number
       ,ex.exemption
 FROM gabby.people.staff_crosswalk_static sr
 JOIN gabby.whetstone.observations_clean wo
-  ON CONVERT(VARCHAR(25), sr.df_employee_number) = wo.teacher_internal_id
+  ON CAST(sr.df_employee_number AS VARCHAR(25)) = wo.teacher_internal_id
  AND sr.samaccountname <> LEFT(wo.observer_email, CHARINDEX('@', wo.observer_email) - 1)
  AND wo.rubric_name IN ('Coaching Tool: Coach ETR and Reflection', 'Coaching Tool: Coach ETR and Reflection 20-21', 'Coaching Tool: Coach ETR and Reflection 19-20')
 LEFT JOIN gabby.people.staff_crosswalk_static osr
-  ON wo.observer_internal_id = CONVERT(VARCHAR(25), osr.df_employee_number)
+  ON wo.observer_internal_id = CAST(osr.df_employee_number AS VARCHAR(25))
 LEFT JOIN gabby.whetstone.observations_scores wos
   ON wo.observation_id = wos.observation_id
 LEFT JOIN gabby.whetstone.measurements wm
@@ -71,4 +71,4 @@ LEFT JOIN gabby.pm.teacher_goals_exemption_clean_static ex
   ON sr.df_employee_number = ex.df_employee_number
  AND rt.academic_year = ex.academic_year
  AND rt.time_per_name = REPLACE(ex.pm_term, 'PM', 'ETR')
-WHERE ISNULL(sr.termination_date, GETDATE()) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
+WHERE ISNULL(sr.termination_date, CURRENT_TIMESTAMP) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)

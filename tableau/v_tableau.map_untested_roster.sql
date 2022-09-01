@@ -27,7 +27,7 @@ WITH subjects AS (
   JOIN gabby.reporting.reporting_terms terms
     ON co.academic_year = terms.academic_year
    AND terms.identifier = 'MAP'
-   AND terms.start_date <= GETDATE()
+   AND terms.start_date <= CURRENT_TIMESTAMP
    AND terms._fivetran_deleted = 0
   CROSS JOIN subjects
   WHERE co.rn_year = 1

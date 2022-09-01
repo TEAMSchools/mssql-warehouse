@@ -5,8 +5,8 @@ CREATE OR ALTER VIEW tableau.lli_tracker AS
 
 SELECT 54 AS repository_id
       ,r.repository_row_id             
-      ,gabby.utilities.DATE_TO_SY(CONVERT(DATE,r.field_date_administered)) AS academic_year
-      ,CONVERT(DATE,r.field_date_administered) AS date_administered
+      ,gabby.utilities.DATE_TO_SY(CAST(r.field_date_administered AS DATE)) AS academic_year
+      ,CAST(r.field_date_administered AS DATE) AS date_administered
       ,r.field_level_tested AS level_tested
       ,r.field_pass_fall AS test_status
       ,r.field_fiction_nonfiction AS genre
@@ -33,6 +33,6 @@ JOIN gabby.illuminate_public.students s
   ON r.student_id = s.student_id
 JOIN gabby.powerschool.cohort_identifiers_static co
   ON s.local_student_id = co.student_number
- AND gabby.utilities.DATE_TO_SY(CONVERT(DATE,r.field_date_administered)) = co.academic_year
+ AND gabby.utilities.DATE_TO_SY(CAST(r.field_date_administered AS DATE)) = co.academic_year
  AND co.rn_year = 1
 WHERE CONCAT(54, '_', r.repository_row_id) IN (SELECT row_hash FROM gabby.illuminate_dna_repositories.repository_row_ids)

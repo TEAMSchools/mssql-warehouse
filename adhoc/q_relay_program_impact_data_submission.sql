@@ -28,7 +28,7 @@ WHERE academic_year BETWEEN 2014 AND 2016
 ----State summative test data (ELA, Math, Science, Social Studies)
 ----Test name
 ----Overall score in each subject
-----Test characteristics data, such as standard errors of measurement (SEMs)
+----Test characteristics data, such AS standard errors of measurement (SEMs)
 ----Regents exam scores in all subjects
 ----Interim assessment scores (e.g. MAP data)
 SELECT student_number
@@ -105,7 +105,7 @@ WHERE academic_year BETWEEN 2014 AND 2016
 ----Subject area taught (if available)
 ----Relay Indicator
 
-SELECT COALESCE(CONVERT(VARCHAR,link.teachernumber), adp.associate_id) AS teacher_id
+SELECT COALESCE(CAST(link.teachernumber AS VARCHAR), adp.associate_id) AS teacher_id
       ,CONCAT(adp.preferred_first, ' ', adp.preferred_last) AS teacher_name
       ,adp.hire_date AS district_hire_date
       ,ad.mail AS district_email_address

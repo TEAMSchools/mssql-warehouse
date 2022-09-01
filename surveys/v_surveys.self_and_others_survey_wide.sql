@@ -22,7 +22,7 @@ WITH survey_unpivot AS (
              ,subject_manager_name
       
              ,CONVERT(NVARCHAR(MAX),COUNT(CASE WHEN open_ended = 'N' THEN response_value END)) AS n_responses
-             ,CONVERT(NVARCHAR(MAX),ROUND(AVG(CONVERT(FLOAT,response_value)), 1)) AS avg_response_value_subject      
+             ,CONVERT(NVARCHAR(MAX),ROUND(AVG(CAST(response_value AS FLOAT)), 1)) AS avg_response_value_subject      
              ,CONVERT(NVARCHAR(MAX),MAX(avg_response_value_location)) AS avg_response_value_location
              ,CONVERT(NVARCHAR(MAX),gabby.dbo.GROUP_CONCAT_D(DISTINCT respondent_name, CHAR(10))) AS respondent_names
              ,CONVERT(NVARCHAR(MAX),gabby.dbo.GROUP_CONCAT_D(CASE WHEN open_ended = 'Y' THEN response END, CHAR(10))) AS response_text

@@ -78,9 +78,9 @@ WITH act AS (
                   ,module_type
                   ,module_number
                   ,CASE WHEN subject_area = 'Text Study' THEN 'ela' ELSE 'math' END AS subject_area
-                  ,CONVERT(FLOAT,performance_band_number) AS performance_band_number
-                  ,CONVERT(FLOAT,percent_correct) AS percent_correct                  
-                  ,CONVERT(FLOAT,is_mastery) AS is_mastery
+                  ,CAST(performance_band_number AS FLOAT) AS performance_band_number
+                  ,CAST(percent_correct AS FLOAT) AS percent_correct                  
+                  ,CAST(is_mastery AS FLOAT) AS is_mastery
       
                   ,CONVERT(FLOAT,ROW_NUMBER() OVER(
                      PARTITION BY local_student_id, academic_year, CASE WHEN subject_area = 'Text Study' THEN 'ela' ELSE 'math' END
@@ -117,7 +117,7 @@ WITH act AS (
            PARTITION BY student_number, academic_year
              ORDER BY end_date DESC) AS rn_most_recent
   FROM gabby.lit.achieved_by_round_static
-  WHERE end_date <= CONVERT(DATE,GETDATE())
+  WHERE end_date <= CAST(CURRENT_TIMESTAMP AS DATE)
  )
 
 ,lit_growth AS (
@@ -140,7 +140,7 @@ WITH act AS (
                   ORDER BY start_date DESC) AS rn_curr
        FROM gabby.lit.achieved_by_round_static
        WHERE gleq IS NOT NULL    
-         AND end_date <= CONVERT(DATE,GETDATE())
+         AND end_date <= CAST(CURRENT_TIMESTAMP AS DATE)
       ) sub
   GROUP BY student_number
           ,academic_year
@@ -151,12 +151,12 @@ WITH act AS (
   SELECT studentid
         ,db_name
         ,(yearid + 1990) AS academic_year
-        ,SUM(CONVERT(FLOAT,attendancevalue)) AS n_days_attendance
-        ,SUM(CONVERT(FLOAT,membershipvalue)) AS n_days_membership
-        ,ROUND(AVG(CONVERT(FLOAT,attendancevalue)), 2) AS ada
+        ,SUM(CAST(attendancevalue AS FLOAT)) AS n_days_attendance
+        ,SUM(CAST(membershipvalue AS FLOAT)) AS n_days_membership
+        ,ROUND(AVG(CAST(attendancevalue AS FLOAT)), 2) AS ada
   FROM gabby.powerschool.ps_adaadm_daily_ctod
   WHERE membershipvalue > 0
-    AND calendardate <= CONVERT(DATE,GETDATE())
+    AND calendardate <= CAST(CURRENT_TIMESTAMP AS DATE)
   GROUP BY studentid
           ,yearid
           ,db_name
@@ -208,7 +208,7 @@ WITH act AS (
         ,CASE 
           WHEN d.enroll_status = 3 THEN 0.0
           WHEN d.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() AND n.student_number IS NULL THEN 1.0 
-          WHEN d.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() AND CONVERT(DATE,GETDATE()) >= d.exitdate THEN 1.0          
+          WHEN d.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() AND CAST(CURRENT_TIMESTAMP AS DATE) >= d.exitdate THEN 1.0          
           ELSE 0.0 
          END AS is_attrition
   FROM
@@ -231,13 +231,13 @@ WITH act AS (
 
 ,teacher_attrition AS (
   SELECT ISNULL(region, 'All') AS region
-        ,ISNULL(CONVERT(VARCHAR(5),school_level), 'All') AS school_level
+        ,ISNULL(CAST(school_level AS VARCHAR(5)), 'All') AS school_level
         ,ISNULL(reporting_schoolid, 0) AS reporting_schoolid
         ,academic_year
-        ,AVG(CONVERT(FLOAT,is_attrition)) AS pct_attrition
-        ,AVG(CONVERT(FLOAT,is_attrition_termination)) AS pct_attrition_termination
-        ,AVG(CONVERT(FLOAT,is_attrition_resignation)) AS pct_attrition_resignation
-        ,AVG(CONVERT(FLOAT,is_attrition_other)) AS pct_attrition_other
+        ,AVG(CAST(is_attrition AS FLOAT)) AS pct_attrition
+        ,AVG(CAST(is_attrition_termination AS FLOAT)) AS pct_attrition_termination
+        ,AVG(CAST(is_attrition_resignation AS FLOAT)) AS pct_attrition_resignation
+        ,AVG(CAST(is_attrition_other AS FLOAT)) AS pct_attrition_other
   FROM
       (
        SELECT primary_site
@@ -307,7 +307,7 @@ WITH act AS (
       (
        SELECT ISNULL(reporting_schoolid, 0) AS reporting_schoolid
              ,ISNULL(region, 'All') AS region
-             ,ISNULL(CONVERT(VARCHAR(5),school_level), 'All') AS school_level
+             ,ISNULL(CAST(school_level AS VARCHAR(5)), 'All') AS school_level
              ,academic_year
              ,survey_round      
              ,field
@@ -328,7 +328,7 @@ WITH act AS (
 ,manager_survey AS (
   SELECT ISNULL(reporting_schoolid, 0) AS reporting_schoolid
         ,ISNULL(region, 'All') AS region
-        ,ISNULL(CONVERT(VARCHAR(5),school_level), 'All') AS school_level
+        ,ISNULL(CAST(school_level AS VARCHAR(5)), 'All') AS school_level
         ,academic_year      
         ,reporting_term
         ,AVG(is_agree) AS pct_agree
@@ -365,7 +365,7 @@ WITH act AS (
       (
        SELECT ISNULL(reporting_schoolid, 0) AS reporting_schoolid
              ,ISNULL(region, 'All') AS region
-             ,ISNULL(CONVERT(VARCHAR(5),school_level), 'All') AS school_level
+             ,ISNULL(CAST(school_level AS VARCHAR(5)), 'All') AS school_level
              ,academic_year
              ,role      
              ,SUM(n_responses_positive) / SUM(n_responses) AS pct_responded_positive
@@ -411,9 +411,9 @@ WITH act AS (
 ,student_level_rollup_y1 AS (
   SELECT sub.academic_year
         ,ISNULL(sub.region,'All') AS region
-        ,ISNULL(CONVERT(VARCHAR(5),sub.school_level),'All') AS school_level
+        ,ISNULL(CAST(sub.school_level AS VARCHAR(5)),'All') AS school_level
         ,ISNULL(sub.reporting_schoolid, 0) AS reporting_schoolid
-        ,ISNULL(CONVERT(VARCHAR(5),sub.grade_level), 'All') AS grade_level
+        ,ISNULL(CAST(sub.grade_level AS VARCHAR(5)), 'All') AS grade_level
 
         /* student-level percentages */
         ,CONVERT(FLOAT,AVG(sub.is_free_or_reduced)) AS free_or_reduced_pct
@@ -515,7 +515,7 @@ WITH act AS (
               END AS module_math_is_parcc_predictive
 
              /*Literacy */
-             ,CONVERT(FLOAT,la.met_goal) AS lit_meeting_goal
+             ,CAST(la.met_goal AS FLOAT) AS lit_meeting_goal
 
              ,lg.is_making_1yr_growth AS lit_making_1yr_growth
 
@@ -605,22 +605,22 @@ WITH act AS (
         ,slr.n_iss      
 
         /* school-level metrics */
-        ,CONVERT(FLOAT,ta.pct_attrition) AS teacher_attrition_pct
-        ,CONVERT(FLOAT,ta.pct_attrition_termination) AS teacher_attrition_termination_pct
-        ,CONVERT(FLOAT,ta.pct_attrition_resignation) AS teacher_attrition_resignation_pct
-        ,CONVERT(FLOAT,ta.pct_attrition_other) AS teacher_attrition_other_pct
+        ,CAST(ta.pct_attrition AS FLOAT) AS teacher_attrition_pct
+        ,CAST(ta.pct_attrition_termination AS FLOAT) AS teacher_attrition_termination_pct
+        ,CAST(ta.pct_attrition_resignation AS FLOAT) AS teacher_attrition_resignation_pct
+        ,CAST(ta.pct_attrition_other AS FLOAT) AS teacher_attrition_other_pct
              
-        ,CONVERT(FLOAT,ekg.overallaverage) AS ekg_walkthough_overall_avg
-        ,CONVERT(FLOAT,ekg.threecsaverage) AS ekg_walkthough_three_cs_avg
+        ,CAST(ekg.overallaverage AS FLOAT) AS ekg_walkthough_overall_avg
+        ,CAST(ekg.threecsaverage AS FLOAT) AS ekg_walkthough_three_cs_avg
 
         /* Surveys */
-        ,CONVERT(FLOAT,q12.avg_response_value) AS q12_response_avg      
+        ,CAST(q12.avg_response_value AS FLOAT) AS q12_response_avg      
      
-        ,CONVERT(FLOAT,hsr.parent_pct_responded_positive) AS hsr_parent_positive_pct
-        ,CONVERT(FLOAT,hsr.student_pct_responded_positive) AS hsr_student_positive_pct
+        ,CAST(hsr.parent_pct_responded_positive AS FLOAT) AS hsr_parent_positive_pct
+        ,CAST(hsr.student_pct_responded_positive AS FLOAT) AS hsr_student_positive_pct
      
-        ,CONVERT(FLOAT,tntp.ici_percentile) AS ici_percentile
-        ,CONVERT(FLOAT,tntp.is_top_quartile_learning_environment_score) AS learning_environment_score_top_quartile             
+        ,CAST(tntp.ici_percentile AS FLOAT) AS ici_percentile
+        ,CAST(tntp.is_top_quartile_learning_environment_score AS FLOAT) AS learning_environment_score_top_quartile             
   FROM student_level_rollup_y1 slr
   LEFT JOIN teacher_attrition ta
     ON slr.reporting_schoolid = ta.reporting_schoolid

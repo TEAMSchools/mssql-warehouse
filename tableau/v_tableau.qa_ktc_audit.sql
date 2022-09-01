@@ -63,7 +63,7 @@ WITH roster AS (
 
 ,enr_hist_attmat AS (
   SELECT eh.parent_id AS enrollment_id
-        ,CONVERT(DATE,eh.created_date) AS status_change_date
+        ,CAST(eh.created_date AS DATE) AS status_change_date
         ,ROW_NUMBER() OVER(PARTITION BY eh.parent_id ORDER BY eh.created_date DESC) AS rn
 
         ,e.student_c AS contact_id
@@ -83,7 +83,7 @@ WITH roster AS (
 
 ,enr_hist_grad AS (
   SELECT eh.parent_id AS enrollment_id
-        ,CONVERT(DATE, eh.created_date) AS status_change_date
+        ,CAST(eh.created_date AS DATE) AS status_change_date
         ,ROW_NUMBER() OVER(PARTITION BY eh.parent_id ORDER BY eh.created_date DESC) AS rn
 
         ,e.student_c AS contact_id

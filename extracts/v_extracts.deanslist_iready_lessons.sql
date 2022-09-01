@@ -42,7 +42,7 @@ JOIN gabby.people.school_crosswalk sc
   ON pl.school = sc.site_name
 JOIN terms t
   ON sc.ps_school_id = t.ps_school_id
- AND CONVERT(DATE, pl.completion_date) BETWEEN t.[start_date] AND t.end_date
+ AND CAST(pl.completion_date AS DATE) BETWEEN t.[start_date] AND t.end_date
 WHERE pl.completion_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
 GROUP BY pl.student_id
         ,pl.[subject]

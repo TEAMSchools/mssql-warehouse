@@ -51,7 +51,7 @@ WITH ps_section_teacher AS (
         ,sub.n_sections_gl
         ,sub.n_students_gl
         ,sub.n_students_total
-        ,CONVERT(FLOAT, sub.n_students_gl) / sub.n_students_total AS pct_students_gl
+        ,CAST(sub.n_students_gl AS FLOAT) / sub.n_students_total AS pct_students_gl
   FROM
       (
        SELECT teachernumber

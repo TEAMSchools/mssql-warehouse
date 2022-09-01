@@ -7,7 +7,7 @@ WITH gdoc_long AS (
   SELECT student_number
         ,academic_year        
         ,UPPER(LEFT(field, CHARINDEX('_', field) - 1)) AS test_round
-        ,CONVERT(VARCHAR(25), goal) AS goal
+        ,CAST(goal AS VARCHAR(25)) AS goal
   FROM 
       (
        SELECT CONVERT(INT, 

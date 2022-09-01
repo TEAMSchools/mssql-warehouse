@@ -65,4 +65,4 @@ INNER JOIN gabby.pm.assignments s
 INNER JOIN gabby.pm.assignments m
   ON c.manager_df_employee_number = m.df_employee_number
 WHERE c.[status] <> 'TERMINATED'
-  AND COALESCE(c.rehire_date, c.original_hire_date) < DATEADD(DAY, -30, GETDATE())
+  AND COALESCE(c.rehire_date, c.original_hire_date) < DATEADD(DAY, -30, CURRENT_TIMESTAMP)

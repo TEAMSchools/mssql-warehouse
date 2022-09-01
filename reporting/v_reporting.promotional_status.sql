@@ -65,10 +65,10 @@ WITH failing AS (
   SELECT mem.studentid
         ,mem.[db_name]
         ,mem.yearid
-        ,ROUND(AVG(CONVERT(FLOAT, mem.attendancevalue)) * 100, 1) AS ada_y1_running
+        ,ROUND(AVG(CAST(mem.attendancevalue AS FLOAT)) * 100, 1) AS ada_y1_running
   FROM gabby.powerschool.ps_adaadm_daily_ctod mem
   WHERE mem.membershipvalue > 0
-    AND mem.calendardate <= CONVERT(DATE, GETDATE())
+    AND mem.calendardate <= CAST(CURRENT_TIMESTAMP AS DATE)
   GROUP BY mem.studentid
           ,mem.[db_name]
           ,mem.yearid

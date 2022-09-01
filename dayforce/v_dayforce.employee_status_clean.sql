@@ -15,11 +15,11 @@ FROM
      SELECT ds.number
            ,ds.[status]
            ,ds.status_reason_description
-           ,CONVERT(DATE, ds.effective_start) AS effective_start
-           ,CONVERT(MONEY, ds.base_salary) AS base_salary
-           ,LEAD(CONVERT(DATE, ds.effective_start), 1) OVER(
+           ,CAST(ds.effective_start AS DATE) AS effective_start
+           ,CAST(ds.base_salary AS MONEY) AS base_salary
+           ,LEAD(CAST(ds.effective_start AS DATE), 1) OVER(
               PARTITION BY ds.number 
-                ORDER BY CONVERT(DATE, ds.effective_start)) AS effective_start_next
+                ORDER BY CAST(ds.effective_start AS DATE)) AS effective_start_next
 
            ,CONCAT(CASE
                     WHEN e.legal_entity_name = 'KIPP New Jersey' THEN '9AM'

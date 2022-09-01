@@ -13,7 +13,7 @@ SELECT w.associate_oid
       ,NULL AS code_value
       ,NULL AS date_value
       ,NULL AS bit_value
-      ,CASE WHEN ISNUMERIC(cfg.stringValue) = 1 THEN CONVERT(INT, cfg.stringValue) END AS numeric_value
+      ,CASE WHEN ISNUMERIC(cfg.stringValue) = 1 THEN CAST(cfg.stringValue AS INT) END AS numeric_value
       ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.codeValue')) AS name_code_value
       ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.shortName')) AS name_code_short_name
       ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.longName')) AS name_code_long_name
@@ -40,7 +40,7 @@ SELECT w.associate_oid
       ,cfg.codeValue AS code_value
       ,NULL AS date_value
       ,NULL AS bit_value
-      ,CASE WHEN ISNUMERIC(cfg.codeValue) = 1 THEN CONVERT(INT, cfg.codeValue) END AS numeric_value
+      ,CASE WHEN ISNUMERIC(cfg.codeValue) = 1 THEN CAST(cfg.codeValue AS INT) END AS numeric_value
       ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.codeValue')) AS name_code_value
       ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.shortName')) AS name_code_short_name
       ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.longName')) AS name_code_long_name
@@ -65,7 +65,7 @@ SELECT w.associate_oid
       ,cfg.itemID AS item_id
       ,cfg.dateValue AS string_value
       ,NULL AS code_value
-      ,CONVERT(DATE, cfg.dateValue) AS date_value
+      ,CAST(cfg.dateValue AS DATE) AS date_value
       ,NULL AS bit_value
       ,NULL AS numeric_value
       ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.codeValue')) AS name_code_value
@@ -93,7 +93,7 @@ SELECT w.associate_oid
       ,cfg.indicatorValue AS string_value
       ,NULL AS code_value
       ,NULL AS date_value
-      ,CONVERT(BIT, cfg.indicatorValue) AS bit_value
+      ,CAST(cfg.indicatorValue AS BIT) AS bit_value
       ,NULL AS numeric_value
       ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.codeValue')) AS name_code_value
       ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.shortName')) AS name_code_short_name
@@ -121,7 +121,7 @@ SELECT w.associate_oid
       ,NULL AS code_value
       ,NULL AS date_value
       ,NULL AS bit_value
-      ,CASE WHEN ISNUMERIC(cfg.stringValue) = 1 THEN CONVERT(INT, cfg.stringValue) END AS numeric_value
+      ,CASE WHEN ISNUMERIC(cfg.stringValue) = 1 THEN CAST(cfg.stringValue AS INT) END AS numeric_value
       ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.codeValue')) AS name_code_value
       ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.shortName')) AS name_code_short_name
       ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.longName')) AS name_code_long_name
@@ -148,7 +148,7 @@ SELECT w.associate_oid
       ,cfg.codeValue AS code_value
       ,NULL AS date_value
       ,NULL AS bit_value
-      ,CASE WHEN ISNUMERIC(cfg.codeValue) = 1 THEN CONVERT(INT, cfg.codeValue) END AS numeric_value
+      ,CASE WHEN ISNUMERIC(cfg.codeValue) = 1 THEN CAST(cfg.codeValue AS INT) END AS numeric_value
       ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.codeValue')) AS name_code_value
       ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.shortName')) AS name_code_short_name
       ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.longName')) AS name_code_long_name
@@ -173,7 +173,7 @@ SELECT w.associate_oid
       ,cfg.itemID AS item_id
       ,cfg.dateValue AS string_value
       ,NULL AS code_value
-      ,CONVERT(DATE, cfg.dateValue) AS date_value
+      ,CAST(cfg.dateValue AS DATE) AS date_value
       ,NULL AS bit_value
       ,NULL AS numeric_value
       ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.codeValue')) AS name_code_value
@@ -201,7 +201,7 @@ SELECT w.associate_oid
       ,cfg.indicatorValue AS string_value
       ,NULL AS code_value
       ,NULL AS date_value
-      ,CONVERT(BIT, cfg.indicatorValue) AS bit_value
+      ,CAST(cfg.indicatorValue AS BIT) AS bit_value
       ,NULL AS numeric_value
       ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.codeValue')) AS name_code_value
       ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.shortName')) AS name_code_short_name
@@ -229,7 +229,7 @@ SELECT w.associate_oid
       ,NULL AS code_value
       ,NULL AS date_value
       ,NULL AS bit_value
-      ,CASE WHEN ISNUMERIC(cfg.numberValue) = 1 THEN CONVERT(FLOAT, cfg.numberValue) END AS numeric_value
+      ,CASE WHEN ISNUMERIC(cfg.numberValue) = 1 THEN CAST(cfg.numberValue AS FLOAT) END AS numeric_value
       ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.codeValue')) AS name_code_value
       ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.shortName')) AS name_code_short_name
       ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.longName')) AS name_code_long_name
@@ -255,7 +255,7 @@ SELECT sub.associate_oid
       ,cfg.codeValue AS code_value
       ,NULL AS date_value
       ,NULL AS bit_value
-      ,CASE WHEN ISNUMERIC(cfg.codeValue) = 1 THEN CONVERT(INT, cfg.codeValue) END AS numeric_value
+      ,CASE WHEN ISNUMERIC(cfg.codeValue) = 1 THEN CAST(cfg.codeValue AS INT) END AS numeric_value
       ,sub.name_code_value
       ,sub.name_code_short_name
       ,sub.name_code_long_name

@@ -30,10 +30,10 @@ WITH progress_rollup AS (
        SELECT co.student_number
              ,co.academic_year
         
-             ,CONVERT(VARCHAR(5), rt.time_per_name) AS reporting_term
+             ,CAST(rt.time_per_name AS VARCHAR(5)) AS reporting_term
              ,rt.[start_date]
              ,rt.end_date
-             ,CONVERT(FLOAT, DATEDIFF(DAY, rt.[start_date], GETDATE())) AS n_days_elapsed
+             ,CONVERT(FLOAT, DATEDIFF(DAY, rt.[start_date], CURRENT_TIMESTAMP)) AS n_days_elapsed
              ,CONVERT(FLOAT, DATEDIFF(DAY, rt.[start_date], rt.end_date)) AS n_days_term
 
              ,arsp.dt_taken
@@ -98,7 +98,7 @@ SELECT pr.student_number
         /* any time */
         WHEN (pr.words IS NULL OR goals.words_goal IS NULL) THEN NULL
         /* after term */
-        WHEN CONVERT(DATE,GETDATE()) > pr.end_date THEN goals.words_goal
+        WHEN CAST(CURRENT_TIMESTAMP AS DATE) > pr.end_date THEN goals.words_goal
         /* during term */
         ELSE ROUND((pr.n_days_elapsed / pr.n_days_term) * goals.words_goal, 0) 
        END AS ontrack_words
@@ -107,14 +107,14 @@ SELECT pr.student_number
         WHEN (pr.words IS NULL OR goals.words_goal IS NULL) THEN NULL
         WHEN pr.words >= goals.words_goal THEN 'Met Goal'
         /* after term */
-        WHEN CONVERT(DATE, GETDATE()) > pr.end_date AND pr.words < goals.words_goal  THEN 'Missed Goal'
+        WHEN CAST(CURRENT_TIMESTAMP AS DATE) > pr.end_date AND pr.words < goals.words_goal  THEN 'Missed Goal'
         WHEN pr.words >= ROUND((pr.n_days_elapsed / pr.n_days_term) * goals.words_goal, 0) THEN 'On Track'
         /* during term */
         WHEN pr.words < ROUND((pr.n_days_elapsed / pr.n_days_term) * goals.words_goal, 0) THEN 'Off Track'        
        END AS stu_status_words
       ,CASE
         /* after term */
-        WHEN CONVERT(DATE, GETDATE()) NOT BETWEEN pr.[start_date] AND pr.[end_date] THEN NULL
+        WHEN CAST(CURRENT_TIMESTAMP AS DATE) NOT BETWEEN pr.[start_date] AND pr.[end_date] THEN NULL
         /* during term */
         ELSE CASE
               WHEN (pr.words IS NULL OR goals.words_goal IS NULL) THEN NULL

@@ -11,8 +11,8 @@ SELECT id AS survey_campaign_id
       ,CONVERT(DATETIME2, CASE WHEN link_close_date = '0000-00-00 00:00:00' THEN NULL ELSE link_close_date END) AS link_close_date
       ,[status]
       ,close_message
-      ,CONVERT(DATETIME2, date_created) AS date_created
-      ,CONVERT(DATETIME2, date_modified) AS date_modified
+      ,CAST(date_created AS DATETIME2) AS date_created
+      ,CAST(date_modified AS DATETIME2) AS date_modified
       ,invite_id
       ,[language]
       ,link_type

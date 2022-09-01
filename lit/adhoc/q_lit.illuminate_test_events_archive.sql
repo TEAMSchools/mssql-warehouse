@@ -3,8 +3,8 @@ SELECT s.local_student_id AS student_number
       ,CONVERT(FLOAT,sub.[About the Text]) AS about_the_text
       ,CONVERT(FLOAT,sub.[Beyond the Text]) AS beyond_the_text
       ,CONVERT(FLOAT,sub.[Within the Text]) AS within_the_text
-      ,CONVERT(FLOAT,sub.Accuracy) AS accuracy
-      ,CONVERT(FLOAT,sub.Fluency) AS fluency
+      ,CAST(sub.Accuracy AS FLOAT) AS accuracy
+      ,CAST(sub.Fluency AS FLOAT) AS fluency
       ,CONVERT(FLOAT,sub.[Reading Rate (wpm)]) AS reading_rate_wpm
         
       ,sub.[Instructional Level Tested] AS instructional_level_tested
@@ -28,7 +28,7 @@ FROM
            ,repository_row_id  
            ,student_id  
            ,field_about_the_text AS [About the Text]
-           ,LEFT(CONVERT(INT,field_academic_year), 4) AS [Academic Year]
+           ,LEFT(CAST(field_academic_year AS INT), 4) AS [Academic Year]
            ,field_accuracy_1 AS [Accuracy]
            ,field_level_tested AS [Achieved Independent Level]
            ,field_beyond_the_text AS [Beyond the Text]

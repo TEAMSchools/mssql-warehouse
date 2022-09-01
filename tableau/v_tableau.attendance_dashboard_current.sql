@@ -36,7 +36,7 @@ FROM
      SELECT mem.studentid
            ,mem.calendardate
            ,mem.membershipvalue
-           ,CONVERT(FLOAT, mem.attendancevalue) AS is_present
+           ,CAST(mem.attendancevalue AS FLOAT) AS is_present
            ,ABS(mem.attendancevalue - 1) AS is_absent
 
            ,co.student_number
@@ -107,6 +107,6 @@ FROM
       AND mem.calendardate BETWEEN hb.enter_date AND hb.exit_date
       AND hb.specprog_name IN ('Hybrid - Cohort A', 'Hybrid - Cohort B', 'Remote - Cohort C', 'Hybrid (SC) - Cohort D', 'Learning Centers - Cohort D')
      WHERE mem.attendancevalue IS NOT NULL
-       AND mem.calendardate <= GETDATE()
+       AND mem.calendardate <= CURRENT_TIMESTAMP
        AND mem.membershipvalue > 0
     ) sub

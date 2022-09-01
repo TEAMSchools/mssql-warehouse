@@ -67,9 +67,9 @@ WITH clean_people AS (
                                      END)
          END AS race_ethnicity_reporting
         ,CASE
-          WHEN COALESCE(sub.rehire_date, sub.original_hire_date) > GETDATE() OR sub.[status] IS NULL THEN 'PRESTART'
+          WHEN COALESCE(sub.rehire_date, sub.original_hire_date) > CURRENT_TIMESTAMP OR sub.[status] IS NULL THEN 'PRESTART'
           WHEN sub.[status] = 'Leave' THEN 'INACTIVE'
-          WHEN sub.termination_date > GETDATE() THEN 'ACTIVE'
+          WHEN sub.termination_date > CURRENT_TIMESTAMP THEN 'ACTIVE'
           ELSE UPPER(sub.[status])
          END AS [status]
         /* redundant combined fields */
@@ -87,9 +87,9 @@ WITH clean_people AS (
              ,ea.primary_address_state_territory_code AS [state]
              ,ea.primary_address_zip_postal_code AS postal_code
              ,ea.personal_contact_personal_email AS personal_email
-             ,CONVERT(NVARCHAR(256), NULL) AS job_family -- on the way
+             ,CAST(NULL AS NVARCHAR(256)) AS job_family -- on the way
              /* transformations */
-             ,CONVERT(DATE, ea.birth_date) AS birth_date
+             ,CAST(ea.birth_date AS DATE) AS birth_date
              ,CONCAT(ea.primary_address_address_line_1, ', ' + ea.primary_address_address_line_2) AS [address]
              ,CONVERT(NVARCHAR(256), gabby.utilities.STRIP_CHARACTERS(ea.personal_contact_personal_mobile, '^0-9')) AS mobile_number
              ,LEFT(UPPER(ea.gender), 1) AS gender
@@ -163,12 +163,12 @@ WITH clean_people AS (
              ,e.position_status AS [status]
              ,e.worker_category_description AS payclass
              ,e.wfmgr_pay_rule AS paytype
-             ,CONVERT(DATE, e.hire_date) AS original_hire_date
-             ,CONVERT(DATE, e.termination_date) AS termination_date
-             ,CONVERT(DATE, e.rehire_date) AS rehire_date
-             ,CONVERT(DATE, e.position_start_date) AS position_effective_from_date
-             ,CONVERT(DATE, e.position_effective_end_date) AS position_effective_to_date
-             ,CONVERT(MONEY, e.annual_salary) AS annual_salary
+             ,CAST(e.hire_date AS DATE) AS original_hire_date
+             ,CAST(e.termination_date AS DATE) AS termination_date
+             ,CAST(e.rehire_date AS DATE) AS rehire_date
+             ,CAST(e.position_start_date AS DATE) AS position_effective_from_date
+             ,CAST(e.position_effective_end_date AS DATE) AS position_effective_to_date
+             ,CAST(e.annual_salary AS MONEY) AS annual_salary
              ,UPPER(e.flsa_description) AS flsa_status
              ,CASE
                WHEN e.business_unit_description = 'TEAM Academy Charter School' THEN 'TEAM Academy Charter Schools'
@@ -189,7 +189,7 @@ WITH clean_people AS (
 
              ,ROW_NUMBER() OVER(
                 PARTITION BY ea.associate_id 
-                  ORDER BY CONVERT(DATE, e.position_start_date) DESC) AS rn
+                  ORDER BY CAST(e.position_start_date AS DATE) DESC) AS rn
 
               /* use DF until fixed */
              ,df.preferred_last_name

@@ -36,7 +36,7 @@ FROM
            ,sat.sat_scale
            ,sat.is_old_sat
            ,test_date
-           ,CASE WHEN sat.test_date > CONVERT(DATE, GETDATE()) THEN 1 END AS test_date_flag
+           ,CASE WHEN sat.test_date > CAST(CURRENT_TIMESTAMP AS DATE) THEN 1 END AS test_date_flag
            ,CASE WHEN evidence_based_reading_writing BETWEEN 200 AND 800 THEN evidence_based_reading_writing END AS verbal
            ,CASE WHEN math BETWEEN 200 AND 800 THEN math END AS math
            ,CASE WHEN writing BETWEEN 200 AND 800 THEN writing END AS writing
@@ -84,7 +84,7 @@ FROM
                  ,CASE
                    WHEN test_date = '0000-00-00' THEN NULL
                    WHEN RIGHT(test_date, 2) = '00' THEN DATEFROMPARTS(LEFT(test_date, 4), SUBSTRING(test_date, 6, 2), 01)
-                   ELSE CONVERT(DATE, test_date)
+                   ELSE CAST(test_date AS DATE)
                   END AS test_date
                  ,2400 AS sat_scale
                  ,1 AS is_old_sat

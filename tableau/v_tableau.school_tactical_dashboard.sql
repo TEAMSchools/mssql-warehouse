@@ -10,8 +10,8 @@ WITH roster AS (
         ,co.yearid
         ,co.region
         ,co.school_level
-        ,CONVERT(VARCHAR(25), co.reporting_schoolid) AS reporting_schoolid
-        ,CONVERT(VARCHAR(5), co.grade_level) AS grade_level
+        ,CAST(co.reporting_schoolid AS VARCHAR(25)) AS reporting_schoolid
+        ,CAST(co.grade_level AS VARCHAR(5)) AS grade_level
         ,co.iep_status
         ,co.lunchstatus
         ,co.exitdate
@@ -447,9 +447,9 @@ WITH roster AS (
        SELECT y1.student_number      
              ,y1.academic_year
              ,y1.region
-             ,CONVERT(VARCHAR(5), y1.school_level) AS school_level
-             ,CONVERT(VARCHAR(25), y1.reporting_schoolid) AS reporting_schoolid
-             ,CONVERT(VARCHAR(5), y1.grade_level) AS grade_level
+             ,CAST(y1.school_level AS VARCHAR(5)) AS school_level
+             ,CAST(y1.reporting_schoolid AS VARCHAR(25)) AS reporting_schoolid
+             ,CAST(y1.grade_level AS VARCHAR(5)) AS grade_level
 
              ,CASE
                /* graduates <> attrition */
@@ -621,8 +621,8 @@ WITH roster AS (
 
                   ,achv.reporting_term                        
 
-                  ,CONVERT(FLOAT, achv.met_goal) AS is_on_gradelevel
-                  ,CASE WHEN achv.reporting_term = 'LIT1' THEN NULL ELSE CONVERT(FLOAT, achv.moved_levels) END AS moved_reading_level
+                  ,CAST(achv.met_goal AS FLOAT) AS is_on_gradelevel
+                  ,CASE WHEN achv.reporting_term = 'LIT1' THEN NULL ELSE CAST(achv.moved_levels AS FLOAT) END AS moved_reading_level
             FROM roster r
             JOIN gabby.lit.achieved_by_round_static achv
               ON r.student_number = achv.student_number
@@ -657,7 +657,7 @@ WITH roster AS (
              ,reporting_term
              ,subject_legal_entity_name COLLATE Latin1_General_BIN AS subject_legal_entity_name
              ,subject_primary_site_school_level
-             ,CONVERT(VARCHAR, subject_primary_site_schoolid) AS subject_primary_site_schoolid            
+             ,CAST(subject_primary_site_schoolid AS VARCHAR) AS subject_primary_site_schoolid            
              ,subject_username
              ,SUM(total_weighted_response_value) / SUM(total_response_weight) AS avg_survey_weighted_response_value
        FROM gabby.surveys.self_and_others_survey_rollup_static
@@ -690,7 +690,7 @@ WITH roster AS (
              ,reporting_term
              ,subject_legal_entity_name COLLATE Latin1_General_BIN AS subject_legal_entity_name
              ,subject_primary_site_school_level
-             ,CONVERT(VARCHAR, subject_primary_site_schoolid) AS subject_primary_site_schoolid            
+             ,CAST(subject_primary_site_schoolid AS VARCHAR) AS subject_primary_site_schoolid            
              ,subject_username
              ,AVG(avg_response_value) AS avg_survey_response_value
        FROM gabby.surveys.manager_survey_rollup

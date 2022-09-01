@@ -10,7 +10,7 @@ WITH commlog AS (
         ,c.call_topic AS commlog_topic
         ,c.call_date_time AS commlog_datetime
         ,c.[db_name]
-        ,CONVERT(DATE,c.call_date_time) AS commlog_date
+        ,CAST(c.call_date_time AS DATE) AS commlog_date
         
         ,CONCAT(u.first_name, ' ', u.last_name) AS commlog_staff_name
         

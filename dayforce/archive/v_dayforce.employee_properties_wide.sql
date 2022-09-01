@@ -68,13 +68,13 @@ FROM
            ,sy.academic_year
      FROM
          (
-          SELECT CONVERT(VARCHAR(25), ep.employee_reference_code) AS employee_reference_code
-                ,CONVERT(DATE, ep.employee_property_value_effective_start) AS effective_start_date
+          SELECT CAST(ep.employee_reference_code AS VARCHAR(25)) AS employee_reference_code
+                ,CAST(ep.employee_property_value_effective_start AS DATE) AS effective_start_date
                 ,CONVERT(DATE,COALESCE(CASE 
-                                        WHEN ep.employee_property_value_effective_end = '' THEN GETDATE() 
+                                        WHEN ep.employee_property_value_effective_end = '' THEN CURRENT_TIMESTAMP 
                                         ELSE ep.employee_property_value_effective_end 
                                        END
-                                      ,GETDATE())) AS effective_end_date
+                                      ,CURRENT_TIMESTAMP)) AS effective_end_date
                 ,CONVERT(VARCHAR(25),LOWER(CASE
                                             WHEN ep.employee_property_value_name IN ('Grade Taught', 'Subject')
                                                    THEN CONCAT(REPLACE(ep.employee_property_value_name, ' ', '_') 
@@ -88,13 +88,13 @@ FROM
                                             WHEN ep.employee_property_value_name = '(KIPP Miami) If yes for prev, what is expiry date of ESOL?' THEN 'miami_esol_expiry'
                                             WHEN ep.employee_property_value_name = '(KIPP Miami) If yes for prev, what is expiry Statement of Eligib' THEN 'miami_statement_eligibility_expiry'
                                             WHEN ep.employee_property_value_name = '(KIPP Miami) What is your ACES number?' THEN 'miami_ACES_number'
-                                            WHEN ep.employee_property_value_name = 'Additional Certificates:  Do you have any additional cert?' THEN 'additional_cert_yn'
-                                            WHEN ep.employee_property_value_name = 'Additional Certificates:  If yes, please list additional certs' THEN 'additional_certs'
+                                            WHEN ep.employee_property_value_name = 'Additional Certificates: ï¿½Do you have any additional cert?' THEN 'additional_cert_yn'
+                                            WHEN ep.employee_property_value_name = 'Additional Certificates: ï¿½If yes, please list additional certs' THEN 'additional_certs'
                                             WHEN ep.employee_property_value_name = 'Are you currently enrolled in an Alternate Route Program?' THEN 'alternate_route_currently_enrolled'
                                             WHEN ep.employee_property_value_name = 'Certificate 1: In which State to do you hold a Certificate?' THEN 'cert1_state'
                                             WHEN ep.employee_property_value_name = 'Certificate 1: What is the expiry date of your certificate?' THEN 'cert1_expiry'
                                             WHEN ep.employee_property_value_name = 'Certificate 1: What is the subject listed on your certificate?' THEN 'cert1_subject'
-                                            WHEN ep.employee_property_value_name = 'Certificate 1: What type of Certificate do you have?' THEN 'cert1_type'
+                                            WHEN ep.employee_property_value_name = 'Certificate 1: What typeï¿½of Certificate do you have?' THEN 'cert1_type'
                                             WHEN ep.employee_property_value_name = 'Certificate 1:What is the grade level listed on the certificate?' THEN 'cert1_grade_level'
                                             WHEN ep.employee_property_value_name = 'Certificate 2: In which State to do you hold a Certificate?' THEN 'cert2_state'
                                             WHEN ep.employee_property_value_name = 'Certificate 2: What is the expiry date of your certificate?' THEN 'cert2_expiry'

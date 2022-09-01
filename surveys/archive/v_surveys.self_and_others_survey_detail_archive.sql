@@ -48,6 +48,6 @@ SELECT so.survey_type
       ,NULL AS avg_response_value_location
 FROM gabby.surveys.self_and_others_survey_long_static so
 LEFT JOIN gabby.people.staff_crosswalk_static dfid
-  ON so.subject_associate_id = CONVERT(VARCHAR,dfid.df_employee_number)
+  ON so.subject_associate_id = CAST(dfid.df_employee_number AS VARCHAR)
 LEFT JOIN gabby.people.staff_crosswalk_static adpid
   ON so.subject_associate_id = adpid.adp_associate_id

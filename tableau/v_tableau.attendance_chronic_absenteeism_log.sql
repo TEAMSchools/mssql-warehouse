@@ -9,7 +9,7 @@ WITH commlog AS (
         ,c.response AS commlog_notes        
         ,c.call_topic AS commlog_topic
         ,c.[db_name]
-        ,CONVERT(DATE, c.call_date_time) AS commlog_date
+        ,CAST(c.call_date_time AS DATE) AS commlog_date
 
         ,CONCAT(u.first_name, ' ', u.last_name) AS commlog_staff_name
 
@@ -68,7 +68,7 @@ FROM
      LEFT JOIN gabby.powerschool.cc
        ON att.studentid = cc.studentid
       AND att.[db_name] = cc.[db_name]
-      AND CONVERT(DATE, GETDATE()) BETWEEN cc.dateenrolled AND cc.dateleft
+      AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN cc.dateenrolled AND cc.dateleft
       AND cc.course_number = 'HR'
      JOIN gabby.powerschool.cohort_identifiers_static co
        ON att.studentid = co.studentid

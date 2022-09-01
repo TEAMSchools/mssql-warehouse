@@ -13,7 +13,7 @@ SELECT sub.studentnumber
       ,sub.balance
 FROM
     (
-     SELECT CONVERT(INT,s.studentnumber) AS studentnumber
+     SELECT CAST(s.studentnumber AS INT) AS studentnumber
            ,s.applicationid AS currentapplicationid
            ,CASE
              WHEN s.isdc = 1 THEN 'Direct Certification'
@@ -40,7 +40,7 @@ FROM
 
      UNION ALL
 
-     SELECT CONVERT(INT,s.studentnumber) AS studentnumber
+     SELECT CAST(s.studentnumber AS INT) AS studentnumber
            ,s.applicationid AS currentapplicationid
            ,CASE
              WHEN s.isdc = 1 THEN 'Direct Certification'

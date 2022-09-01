@@ -54,7 +54,7 @@ WITH classes_dedupe AS (
              ,fp.student_identifier
              ,fp.year_of_assessment
              ,CONVERT(INT, LEFT(fp.year_of_assessment, 4)) AS academic_year
-             ,CONVERT(DATE, fp.assessment_date) AS assessment_date
+             ,CAST(fp.assessment_date AS DATE) AS assessment_date
              ,fp.genre
              ,fp.data_type
              ,fp.class_name
@@ -72,7 +72,7 @@ WITH classes_dedupe AS (
              ,fp.wpm_rate
              ,fp.writing
              ,fp.self_corrections /* how should this be parsed? */
-             ,CONVERT(VARCHAR(5), fp.text_level) AS text_level
+             ,CAST(fp.text_level AS VARCHAR(5)) AS text_level
              ,CASE
                WHEN fp.benchmark_level = 'Independent' THEN 'Achieved'
                WHEN fp.benchmark_level = 'Instructional' THEN 'Did Not Achieve'

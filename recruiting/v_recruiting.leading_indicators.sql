@@ -84,7 +84,7 @@ SELECT a.application_id
 
       ,d.last_updated
 
-      ,DATENAME(WW, GETDATE()) AS current_week
+      ,DATENAME(WW, CURRENT_TIMESTAMP) AS current_week
 FROM gabby.smartrecruiters.report_applicants p
 INNER JOIN gabby.smartrecruiters.report_applications a
   ON p.application_id = a.application_id

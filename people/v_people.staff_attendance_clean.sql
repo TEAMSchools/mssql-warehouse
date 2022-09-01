@@ -29,7 +29,7 @@ SELECT a.df_number
 
       ,ROW_NUMBER() OVER(
          PARTITION BY a.df_number, a.attendance_date
-           ORDER BY CONVERT(DATETIME,a.submitted_on) DESC) AS rn_curr
+           ORDER BY CAST(a.submitted_on AS DATETIME) DESC) AS rn_curr
 FROM
     (
      SELECT SUBSTRING(a.staff_member, CHARINDEX('(', a.staff_member) + 1, 6) AS df_number
@@ -39,7 +39,7 @@ FROM
            ,a.submitter_apps_account AS submitted_by
            ,a.attendance_status
            ,a.additional_notes
-           ,CONVERT(DATE, a.attendance_date) AS attendance_date
+           ,CAST(a.attendance_date AS DATE) AS attendance_date
            ,CONVERT(DATETIME, a.[timestamp]) AS submitted_on
            ,CASE WHEN attendance_status LIKE '%Sick Day%' THEN 1 ELSE 0 END AS sick_day
            ,CASE WHEN attendance_status LIKE '%Personal Day%' THEN 1 ELSE 0 END AS personal_day
