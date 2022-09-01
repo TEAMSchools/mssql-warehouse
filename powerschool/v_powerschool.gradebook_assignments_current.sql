@@ -4,7 +4,7 @@ SELECT CAST(asec.assignmentsectionid AS INT) AS assignmentsectionid
       ,CAST(asec.sectionsdcid AS INT) AS sectionsdcid
       ,CAST(asec.assignmentid AS INT) AS assignmentid
       ,asec.duedate AS assign_date
-      ,CONVERT(VARCHAR(125), asec.[name]) AS assign_name
+      ,CAST(asec.[name] AS VARCHAR(125)) AS assign_name
       ,asec.totalpointvalue AS pointspossible
       ,asec.[weight]
       ,asec.extracreditpoints

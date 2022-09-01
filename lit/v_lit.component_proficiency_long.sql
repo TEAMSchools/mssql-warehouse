@@ -68,7 +68,7 @@ WITH illuminate_fp AS (
   SELECT CAST(rs.unique_id AS VARCHAR(25)) AS unique_id
         ,CAST(rs.student_number AS INT) AS student_number
         ,CAST(rs.testid AS INT) AS testid
-        ,CASE WHEN rs.[status] <> '' THEN CONVERT(VARCHAR(25), rs.[status]) END AS [status]
+        ,CASE WHEN rs.[status] <> '' THEN CAST(rs.[status] AS VARCHAR(25)) END AS [status]
         ,CAST(rs.field AS VARCHAR(25)) AS field
         ,CAST(rs.score AS FLOAT) AS score
         ,CASE WHEN rs.read_lvl <> '' THEN CAST(rs.read_lvl AS VARCHAR(5)) END AS read_lvl

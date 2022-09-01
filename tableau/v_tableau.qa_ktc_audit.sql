@@ -117,7 +117,7 @@ WITH roster AS (
              ,ISNULL(CONVERT(NVARCHAR(MAX),COALESCE(e.major_c, e.major_area_c)), '') AS major_or_area
              ,ISNULL(CAST(e.college_major_declared_c AS NVARCHAR(MAX)), '') AS college_major_declared_c
 
-             ,ISNULL(CONVERT(NVARCHAR(MAX),c.[description]), '') AS [description]
+             ,ISNULL(CAST(c.[description] AS NVARCHAR(MAX)), '') AS [description]
        FROM gabby.alumni.enrollment_c e
        INNER JOIN gabby.alumni.contact c
          ON e.student_c = c.id

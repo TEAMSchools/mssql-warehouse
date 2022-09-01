@@ -8,7 +8,7 @@ SELECT p.entity AS entity
       ,r.associate_id AS associate_id
       ,r.position_id AS position_id
       ,p.preferred_name AS [name]
-      ,CONVERT(DATE, p.[start_date]) AS effective_date
+      ,CAST(p.[start_date] AS DATE) AS effective_date
       ,'New Hire' AS [source]
       ,CAST(p.salary AS NVARCHAR) AS salary
       ,p.leadership_stipend

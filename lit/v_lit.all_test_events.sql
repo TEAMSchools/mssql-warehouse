@@ -45,7 +45,7 @@ FROM (
             ,ps.test_date
             ,CONVERT(INT ,ps.testid) AS testid
             ,CAST(ps.is_fp AS INT) AS is_fp
-            ,CONVERT(VARCHAR(25), ps.[status]) AS [status]
+            ,CAST(ps.[status] AS VARCHAR(25)) AS [status]
             ,CAST(ps.read_lvl AS VARCHAR(25)) AS read_lvl
             ,CAST(ps.lvl_num AS INT) AS lvl_num
             ,CAST(ps.gleq AS INT) AS gleq

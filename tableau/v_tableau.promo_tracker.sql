@@ -469,7 +469,7 @@ WITH roster AS (
         ,academic_year
         ,test_date
         ,test_name
-        ,CONVERT(VARCHAR(25),[subject]) AS [subject]
+        ,CAST([subject] AS VARCHAR(25)) AS [subject]
         ,scale_score
         ,NULL AS performance_level
         ,NULL AS performance_level_label
@@ -517,7 +517,7 @@ WITH roster AS (
         ,academic_year
         ,test_date      
         ,'SAT' AS test_name
-        ,CONVERT(VARCHAR(25),[subject]) AS [subject]
+        ,CAST([subject] AS VARCHAR(25)) AS [subject]
         ,scale_score
         ,NULL AS performance_level
         ,NULL AS performance_level_label
@@ -575,7 +575,7 @@ WITH roster AS (
                        ELSE REPLACE(test_date,'-00','-01') 
                       END) AS test_date     
         ,'EXPLORE' AS test_name
-        ,CONVERT(VARCHAR(25),[subject]) AS [subject]
+        ,CAST([subject] AS VARCHAR(25)) AS [subject]
         ,CAST(scale_score AS INT) AS scale_score
         ,NULL AS performance_level
         ,NULL AS performance_level_label
@@ -601,7 +601,7 @@ WITH roster AS (
                        ELSE REPLACE(test_date,'-00','-01') 
                       END) AS test_date 
         ,'PSAT' AS test_name
-        ,CONVERT(VARCHAR(25),[subject]) AS [subject]
+        ,CAST([subject] AS VARCHAR(25)) AS [subject]
         ,CAST(scale_score AS INT) AS scale_score
         ,NULL AS performance_level
         ,NULL AS performance_level_label
@@ -628,7 +628,7 @@ WITH roster AS (
       ( 
        SELECT CAST(app.hs_student_id AS INT) AS student_number
              ,CAST(app.collegename AS VARCHAR(125)) AS collegename
-             ,CONVERT(VARCHAR(25),app.[level]) AS [level]
+             ,CAST(app.[level] AS VARCHAR(25)) AS [level]
              ,CONVERT(VARCHAR(125),CASE 
                WHEN app.result_code IN ('unknown') 
                  OR app.result_code IS NULL 
@@ -663,7 +663,7 @@ WITH roster AS (
         ,reporting_term_name
         ,CAST(field AS VARCHAR) AS subdomain
         ,CASE WHEN field LIKE '%status%' THEN [value] ELSE NULL END AS text_value
-        ,CASE WHEN field LIKE '%status%' THEN NULL ELSE CONVERT(FLOAT,[value]) END AS numeric_value
+        ,CASE WHEN field LIKE '%status%' THEN NULL ELSE CAST([value] AS FLOAT) END AS numeric_value
   FROM
       (
        SELECT student_number

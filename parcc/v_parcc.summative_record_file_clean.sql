@@ -121,7 +121,7 @@ SELECT state_abbreviation
       ,unit_4_online_test_end_date_time
       ,assessment_year
       ,assessment_grade
-      ,CONVERT(VARCHAR(128), [subject]) AS [subject]
+      ,CAST([subject] AS VARCHAR(128)) AS [subject]
       ,federal_race_ethnicity
       ,[period]
       ,testing_organizational_type
@@ -301,7 +301,7 @@ SELECT state_abbreviation
       ,unit_4_online_test_end_date_time
       ,assessment_year
       ,assessment_grade
-      ,CONVERT(VARCHAR(128), [subject]) AS [subject]
+      ,CAST([subject] AS VARCHAR(128)) AS [subject]
       ,federal_race_ethnicity
       ,[period]
       ,testing_organizational_type

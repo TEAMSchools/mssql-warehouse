@@ -60,11 +60,11 @@ WITH clean_people AS (
              ,CASE WHEN e.last_name <> '' THEN CAST(e.last_name AS VARCHAR(25)) END AS last_name
              ,CASE WHEN e.common_name <> '' THEN CAST(e.common_name AS VARCHAR(25)) END AS common_name
              ,CASE WHEN e.preferred_last_name <> '' THEN CAST(e.preferred_last_name AS VARCHAR(25)) END AS preferred_last_name
-             ,CASE WHEN e.[address] <> '' THEN CONVERT(VARCHAR(125), e.[address]) END AS [address]
+             ,CASE WHEN e.[address] <> '' THEN CAST(e.[address] AS VARCHAR(125)) END AS [address]
              ,CASE WHEN e.city <> '' THEN CAST(e.city AS VARCHAR(125)) END AS city
-             ,CASE WHEN e.[state] <> '' THEN CONVERT(VARCHAR(5), e.[state]) END AS [state]
+             ,CASE WHEN e.[state] <> '' THEN CAST(e.[state] AS VARCHAR(5)) END AS [state]
              ,CASE WHEN e.postal_code <> '' THEN CAST(e.postal_code AS VARCHAR(25)) END AS postal_code
-             ,CASE WHEN e.[status] <> '' THEN CONVERT(VARCHAR(25), e.[status]) END AS [status]
+             ,CASE WHEN e.[status] <> '' THEN CAST(e.[status] AS VARCHAR(25)) END AS [status]
              ,CASE WHEN e.status_reason <> '' THEN CAST(e.status_reason AS VARCHAR(125)) END AS status_reason
              ,CASE WHEN e.is_manager <> '' THEN CAST(e.is_manager AS VARCHAR(5)) END AS is_manager
              ,CASE WHEN e.primary_job <> '' THEN CAST(e.primary_job AS VARCHAR(125)) END AS primary_job

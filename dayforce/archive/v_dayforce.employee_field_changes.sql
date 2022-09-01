@@ -31,14 +31,14 @@ WITH data_long AS (
              ,CAST(primary_job AS VARCHAR(MAX)) AS primary_job
              ,CAST(position_title AS VARCHAR(MAX)) AS position_title
              ,CAST(position_effective_from_date AS VARCHAR(MAX)) AS position_effective_from_date
-             ,CONVERT(VARCHAR(MAX), [status]) AS [status]
+             ,CAST([status] AS VARCHAR(MAX)) AS [status]
              ,CAST(rehire_date AS VARCHAR(MAX)) AS rehire_date
              ,CAST(termination_date AS VARCHAR(MAX)) AS termination_date
              ,CAST(status_reason AS VARCHAR(MAX)) AS status_reason
              ,CAST(mobile_number AS VARCHAR(MAX)) AS mobile_number
-             ,CONVERT(VARCHAR(MAX), [address]) AS [address]
+             ,CAST([address] AS VARCHAR(MAX)) AS [address]
              ,CAST(city AS VARCHAR(MAX)) AS [city]
-             ,CONVERT(VARCHAR(MAX), [state]) AS [state]
+             ,CAST([state] AS VARCHAR(MAX)) AS [state]
              ,CAST(postal_code AS VARCHAR(MAX)) AS postal_code
              ,CAST(paytype AS VARCHAR(MAX)) AS paytype
              ,CAST(payclass AS VARCHAR(MAX)) AS payclass

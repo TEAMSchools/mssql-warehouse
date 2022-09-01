@@ -28,8 +28,8 @@ FROM
     (
      SELECT CONVERT(VARCHAR(25), CONCAT('UC', gabby.utilities.DATE_TO_SY(step.[date]), step.[_line])) AS unique_id
            ,CONVERT(INT, CAST(step.student_id AS FLOAT)) AS student_number
-           ,gabby.utilities.DATE_TO_SY(CONVERT(DATE, step.[date])) AS academic_year
-           ,CONVERT(DATE, step.[date]) AS test_date
+           ,gabby.utilities.DATE_TO_SY(CAST(step.[date] AS DATE)) AS academic_year
+           ,CAST(step.[date] AS DATE) AS test_date
            ,CASE WHEN step.step = 0 THEN 'Pre' ELSE CAST(step.step AS VARCHAR(5)) END AS read_lvl
            ,step.step AS lvl_num
            ,CASE
@@ -67,8 +67,8 @@ FROM
      /* ACHIEVED PRE DNA */
      SELECT CONVERT(VARCHAR(25), CONCAT('UCDNA', gabby.utilities.DATE_TO_SY(step.[date]), step.[_line])) AS unique_id
            ,CONVERT(INT, CAST(step.student_id AS FLOAT)) AS student_number
-           ,gabby.utilities.DATE_TO_SY(CONVERT(DATE, step.[date])) AS academic_year
-           ,CONVERT(DATE, step.[date]) AS test_date
+           ,gabby.utilities.DATE_TO_SY(CAST(step.[date] AS DATE)) AS academic_year
+           ,CAST(step.[date] AS DATE) AS test_date
            ,'Pre DNA' AS read_lvl
            ,-1 AS lvl_num
            ,'Achieved' AS [status]

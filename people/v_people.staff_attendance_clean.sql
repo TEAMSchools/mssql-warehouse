@@ -40,7 +40,7 @@ FROM
            ,a.attendance_status
            ,a.additional_notes
            ,CAST(a.attendance_date AS DATE) AS attendance_date
-           ,CONVERT(DATETIME, a.[timestamp]) AS submitted_on
+           ,CAST(a.[timestamp] AS DATETIME) AS submitted_on
            ,CASE WHEN attendance_status LIKE '%Sick Day%' THEN 1 ELSE 0 END AS sick_day
            ,CASE WHEN attendance_status LIKE '%Personal Day%' THEN 1 ELSE 0 END AS personal_day
            ,CASE WHEN attendance_status LIKE '%Late/Tardy%' THEN 1 ELSE 0 END AS late_tardy

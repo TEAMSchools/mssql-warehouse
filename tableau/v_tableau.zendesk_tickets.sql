@@ -47,7 +47,7 @@ SELECT t.id AS ticket_id
       ,t.custom_category AS category
       ,t.custom_tech_tier AS tech_tier
       ,t.custom_location AS [location]
-      ,CONVERT(NVARCHAR(512), t.[subject]) AS ticket_subject
+      ,CAST(t.[subject] AS NVARCHAR(512)) AS ticket_subject
       ,CONCAT('https://teamschools.zendesk.com/agent/tickets/', t.id) AS ticket_url
       ,DATEDIFF(WEEKDAY, t.created_at, gu.group_updated) AS weekdays_created_to_last_group
       ,DATEDIFF(WEEKDAY, t.created_at, tm.solved_at) AS weekdays_created_to_solved

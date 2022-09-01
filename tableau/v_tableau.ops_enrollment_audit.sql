@@ -194,9 +194,9 @@ SELECT a.student_number
         WHEN u.field = 'lep_registration_followup_complete' AND u.[value] = 'N' THEN -1
         WHEN u.field = 'lunch_app_status' AND u.[value] NOT IN ('No Application', '') THEN 1
         WHEN u.field = 'lunch_app_status' AND u.[value] IN ('No Application', '') THEN -1
-        WHEN u.field = 'lunch_balance' AND CONVERT(MONEY, u.[value]) > 0 THEN 1
-        WHEN u.field = 'lunch_balance' AND CONVERT(MONEY, u.[value]) = 0 THEN 0
-        WHEN u.field = 'lunch_balance' AND CONVERT(MONEY, u.[value]) < 0 THEN -1
+        WHEN u.field = 'lunch_balance' AND CAST(u.[value] AS MONEY) > 0 THEN 1
+        WHEN u.field = 'lunch_balance' AND CAST(u.[value] AS MONEY) = 0 THEN 0
+        WHEN u.field = 'lunch_balance' AND CAST(u.[value] AS MONEY) < 0 THEN -1
         WHEN u.field = 'birth_certificate_proof' AND u.[value] NOT IN ('','N') THEN 1
         WHEN u.field = 'birth_certificate_proof' AND u.[value] IN ('','N') THEN -1
         WHEN u.field = 'residency_proof_1' AND u.[value] NOT IN ('','Missing') THEN 1

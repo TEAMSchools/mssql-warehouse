@@ -43,7 +43,7 @@ WITH clean_data AS (
         ,CAST(academic_year AS INT) AS academic_year
         ,CAST(unique_id AS VARCHAR(125)) AS unique_id
         ,CASE WHEN test_round <> '' THEN CAST(test_round AS VARCHAR(25)) END AS test_round
-        ,CASE WHEN [status] <> '' THEN CONVERT(VARCHAR(25), [status]) END AS [status]
+        ,CASE WHEN [status] <> '' THEN CAST([status] AS VARCHAR(25)) END AS [status]
         ,CASE WHEN achieved_independent_level <> '' THEN CAST(achieved_independent_level AS VARCHAR(5)) END AS achieved_independent_level
   FROM gabby.lit.illuminate_test_events_archive
  )

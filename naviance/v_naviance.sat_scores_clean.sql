@@ -52,17 +52,17 @@ FROM
              WHEN total NOT BETWEEN 400 AND 2400 THEN 1
             END AS total_flag
      FROM (
-           SELECT CONVERT(INT, [student_id]) AS student_id
-                 ,CONVERT(INT, [hs_student_id]) AS hs_student_id
-                 ,CONVERT(FLOAT, [evidence_based_reading_writing]) AS evidence_based_reading_writing
-                 ,CONVERT(FLOAT, [math]) AS math
-                 ,CONVERT(FLOAT, [total]) AS total
-                 ,CONVERT(FLOAT, [reading_test]) AS reading_test
-                 ,CONVERT(FLOAT, [writing_test]) AS writing_test
-                 ,CONVERT(FLOAT, [math_test]) AS math_test
+           SELECT CAST([student_id] AS INT) AS student_id
+                 ,CAST([hs_student_id] AS INT) AS hs_student_id
+                 ,CAST([evidence_based_reading_writing] AS FLOAT) AS evidence_based_reading_writing
+                 ,CAST([math] AS FLOAT) AS math
+                 ,CAST([total] AS FLOAT) AS total
+                 ,CAST([reading_test] AS FLOAT) AS reading_test
+                 ,CAST([writing_test] AS FLOAT) AS writing_test
+                 ,CAST([math_test] AS FLOAT) AS math_test
                  ,NULL AS writing
                  ,NULL AS essay_subscore
-                 ,CONVERT(FLOAT, [math_test]) + CONVERT(FLOAT, [reading_test]) AS mc_subscore
+                 ,CAST([math_test] AS FLOAT) + CAST([reading_test] AS FLOAT) AS mc_subscore
                  ,DATEFROMPARTS(RIGHT(test_date, 4), LEFT(test_date, CHARINDEX('/', test_date) - 1), 1) AS test_date
                  ,1600 AS sat_scale
                  ,0 AS is_old_sat
@@ -70,17 +70,17 @@ FROM
 
            UNION ALL
 
-           SELECT CONVERT(INT, [studentid]) AS student_id
-                 ,CONVERT(INT, [hs_student_id]) AS hs_student_id
-                 ,CONVERT(FLOAT, [verbal])
-                 ,CONVERT(FLOAT, [math])
-                 ,CONVERT(FLOAT, [total])
+           SELECT CAST([studentid] AS INT) AS student_id
+                 ,CAST([hs_student_id] AS INT) AS hs_student_id
+                 ,CAST([verbal] AS FLOAT)
+                 ,CAST([math] AS FLOAT)
+                 ,CAST([total] AS FLOAT)
                  ,NULL AS [reading_test]
-                 ,CONVERT(FLOAT, [essay_subscore]) AS writing_test
+                 ,CAST([essay_subscore] AS FLOAT) AS writing_test
                  ,NULL AS [math_test]
-                 ,CONVERT(FLOAT, [writing])
-                 ,CONVERT(FLOAT, [essay_subscore])
-                 ,CONVERT(FLOAT, [mc_subscore])
+                 ,CAST([writing] AS FLOAT)
+                 ,CAST([essay_subscore] AS FLOAT)
+                 ,CAST([mc_subscore] AS FLOAT)
                  ,CASE
                    WHEN test_date = '0000-00-00' THEN NULL
                    WHEN RIGHT(test_date, 2) = '00' THEN DATEFROMPARTS(LEFT(test_date, 4), SUBSTRING(test_date, 6, 2), 01)

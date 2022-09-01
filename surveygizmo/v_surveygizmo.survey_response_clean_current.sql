@@ -48,7 +48,7 @@ FROM
            ,CAST(sr.postal AS NVARCHAR(32)) AS postal
            ,CAST(sr.region AS NVARCHAR(8)) AS region
            ,CAST(sr.country AS NVARCHAR(64)) AS country
-           ,CONVERT(NVARCHAR(16), sr.[language]) AS [language]
+           ,CAST(sr.[language] AS NVARCHAR(16)) AS [language]
            ,CAST(sr.ip_address AS NVARCHAR(32)) AS ip_address
            ,CAST(sr.session_id AS NVARCHAR(128)) AS session_id
            ,CAST(sr.user_agent AS NVARCHAR(512)) AS user_agent
