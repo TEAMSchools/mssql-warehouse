@@ -169,7 +169,7 @@ SELECT sub.student_number
       ,CAST(std.percent_correct AS FLOAT) AS standard_percent_correct      
       ,std.mastered AS standard_mastered
       
-      ,CONVERT(VARCHAR(125),COALESCE(ps2.state_num, ps.state_num)) AS standard_strand
+      ,CAST(COALESCE(ps2.state_num, ps.state_num) AS VARCHAR(125)) AS standard_strand
       
       ,ROW_NUMBER() OVER(
          PARTITION BY sub.student_number, sub.academic_year, sub.administration_round, sub.subject_area

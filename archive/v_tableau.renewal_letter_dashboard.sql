@@ -44,7 +44,7 @@ WITH wf AS (
              ,was.physical_location_name AS future_location
              ,was.department_name AS future_department
              ,was.job_name AS future_role
-             ,CONVERT(DATE, CASE WHEN work_assignment_effective_start <> '' THEN work_assignment_effective_start END) AS future_work_assignment_effective_start
+             ,CAST(CASE WHEN work_assignment_effective_start <> '' THEN work_assignment_effective_start END AS DATE) AS future_work_assignment_effective_start
        FROM gabby.dayforce.employee_work_assignment was
        WHERE was.primary_work_assignment = 1
       ) sub

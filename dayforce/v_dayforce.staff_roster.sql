@@ -41,15 +41,15 @@ WITH clean_people AS (
         ,sub.gender
         ,sub.is_hispanic
 
-        ,CONVERT(VARCHAR(125), REPLACE(sub.primary_site_clean, ' - Regional', '')) AS primary_site
-        ,CONVERT(VARCHAR(25), COALESCE(sub.common_name, sub.first_name)) AS preferred_first_name
-        ,CONVERT(VARCHAR(25), COALESCE(sub.preferred_last_name , sub.last_name)) AS preferred_last_name
+        ,CAST(REPLACE(sub.primary_site_clean, ' - Regional', '') AS VARCHAR(125)) AS primary_site
+        ,CAST(COALESCE(sub.common_name, sub.first_name) AS VARCHAR(25)) AS preferred_first_name
+        ,CAST(COALESCE(sub.preferred_last_name , sub.last_name) AS VARCHAR(25)) AS preferred_last_name
         ,CASE
           WHEN sub.ethnicity = 'Hispanic or Latino' THEN 'Hispanic or Latino'
           WHEN sub.ethnicity = 'Decline to Answer' THEN NULL
-          ELSE CONVERT(VARCHAR(125), RTRIM(LEFT(sub.ethnicity, CHARINDEX(' (', sub.ethnicity))))
+          ELSE CAST(RTRIM(LEFT(sub.ethnicity, CHARINDEX(' (', sub.ethnicity))) AS VARCHAR(125))
          END AS primary_ethnicity
-        ,CONVERT(VARCHAR(25), gabby.utilities.STRIP_CHARACTERS(sub.mobile_number, '^0-9')) AS mobile_number
+        ,CAST(gabby.utilities.STRIP_CHARACTERS(sub.mobile_number, '^0-9') AS VARCHAR(25)) AS mobile_number
         ,CASE WHEN sub.primary_site_clean LIKE '% - Regional%' THEN 1 ELSE 0 END AS is_regional_staff
   FROM
       (
@@ -92,7 +92,7 @@ WITH clean_people AS (
              ,CAST(position_title AS VARCHAR(125)) AS position_title 
              ,CAST(primary_on_site_department_entity_ AS VARCHAR(125)) AS primary_on_site_department_entity
              ,CAST(primary_site_entity_ AS VARCHAR(125)) AS primary_site_entity
-             ,CONVERT(VARCHAR(1), UPPER(e.gender)) AS gender
+             ,CAST(UPPER(e.gender) AS VARCHAR(1)) AS gender
              ,CASE WHEN e.ethnicity LIKE '%Hispanic%' THEN 1 ELSE 0 END AS is_hispanic
        FROM gabby.dayforce.employees e
       ) sub
@@ -138,7 +138,7 @@ SELECT c.df_employee_number
       ,c.position_title
       ,c.primary_on_site_department_entity
       ,c.primary_site_entity
-      ,CONVERT(VARCHAR(125), c.preferred_last_name + ', ' + c.preferred_first_name) AS preferred_name
+      ,CAST(c.preferred_last_name + ', ' + c.preferred_first_name AS VARCHAR(125)) AS preferred_name
       ,SUBSTRING(c.mobile_number, 1, 3) + '-'
          + SUBSTRING(c.mobile_number, 4, 3) + '-'
          + SUBSTRING(c.mobile_number, 7, 4) AS mobile_number
@@ -162,7 +162,7 @@ SELECT c.df_employee_number
       ,m.adp_associate_id AS manager_adp_associate_id
       ,m.preferred_first_name AS manager_preferred_first_name
       ,m.preferred_last_name AS manager_preferred_last_name
-      ,CONVERT(VARCHAR(125), m.preferred_last_name + ', ' + m.preferred_first_name) AS manager_name
+      ,CAST(m.preferred_last_name + ', ' + m.preferred_first_name AS VARCHAR(125)) AS manager_name
 FROM clean_people c
 LEFT JOIN gabby.people.school_crosswalk s
   ON c.primary_site = s.site_name

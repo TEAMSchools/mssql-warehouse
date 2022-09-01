@@ -46,7 +46,7 @@ WITH subjects AS (
         ,fsa_level
         ,fsa_scale
         ,iready_subject
-        ,CONVERT(INT, CONCAT('20', RIGHT(fsa_year, 2))) AS fsa_year
+        ,CAST(CONCAT('20', RIGHT(fsa_year, 2)) AS INT) AS fsa_year
         ,CONCAT(fsa_subject, ' ', fsa_grade) AS test_name
         ,RANK() OVER(PARTITION BY fsa_grade, iready_subject ORDER BY fsa_scale ASC) AS fsa_gr_subj_rank
         ,COUNT(*) OVER(PARTITION BY fsa_grade, iready_subject) AS fsa_gr_subj_count

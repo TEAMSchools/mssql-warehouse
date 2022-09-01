@@ -34,7 +34,7 @@ SELECT sub.student_identifier AS student_number
        END AS rn_quiz
 FROM
     (
-     SELECT CONVERT(INT, CASE WHEN ISNUMERIC(student_identifier) = 1 THEN student_identifier END) AS student_identifier
+     SELECT CAST(CASE WHEN ISNUMERIC(student_identifier) = 1 THEN student_identifier END AS INT) AS student_identifier
            ,quiz_number
            ,content_title
            ,CAST(date_quiz_completed_local AS DATE) AS date_quiz_completed_local
@@ -50,7 +50,7 @@ FROM
              WHEN fiction_non_fiction = 'Fiction' THEN 'F'
              WHEN fiction_non_fiction = 'NonFiction' THEN 'NF'
             END AS fiction_non_fiction
-           ,CONVERT(INT, LEFT(school_year, 4)) AS academic_year
+           ,CAST(LEFT(school_year, 4) AS INT) AS academic_year
      FROM gabby.renaissance.accelerated_reader
      WHERE quiz_deleted = 0
        AND quiz_type = 'Reading Practice Quiz'

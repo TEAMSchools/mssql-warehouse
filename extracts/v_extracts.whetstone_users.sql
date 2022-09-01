@@ -128,7 +128,7 @@ FROM
            ,scw.primary_on_site_department AS course_name
            ,scw.preferred_first_name + ' ' + scw.preferred_last_name AS [user_name]
            ,CASE WHEN scw.primary_site_schoolid <> 0 THEN scw.primary_site END AS school_name
-           ,CONVERT(BIT, CASE WHEN scw.[status] = 'TERMINATED' THEN 1 ELSE 0 END) AS inactive
+           ,CAST(CASE WHEN scw.[status] = 'TERMINATED' THEN 1 ELSE 0 END AS BIT) AS inactive
            ,CASE WHEN scw.grades_taught = 0 THEN 'K' ELSE CAST(scw.grades_taught AS VARCHAR) END AS grade_abbreviation
            ,CASE
              /* network admins */

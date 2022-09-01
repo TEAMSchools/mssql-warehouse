@@ -7,7 +7,7 @@ CREATE OR ALTER VIEW extracts.clever_staff AS
   School staff assigned to primary school only
   Campus staff assigned to all schools at campus
 */
-SELECT CONVERT(VARCHAR(25), COALESCE(ccw.ps_school_id, df.primary_site_schoolid)) AS [School_id]
+SELECT CAST(COALESCE(ccw.ps_school_id, df.primary_site_schoolid) AS VARCHAR(25)) AS [School_id]
       ,df.ps_teachernumber AS [Staff_id]
       ,df.userprincipalname AS [Staff_email]
       ,df.preferred_first_name AS [First_name]

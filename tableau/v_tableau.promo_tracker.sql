@@ -921,7 +921,7 @@ SELECT r.studentid
       ,std.test_name COLLATE Latin1_General_BIN AS subdomain
       ,std.[subject] COLLATE Latin1_General_BIN AS [subject]
       ,NULL AS course_name
-      ,CONVERT(VARCHAR(250),NEWID()) COLLATE Latin1_General_BIN AS measure_name
+      ,CAST(NEWID() AS VARCHAR(250)) COLLATE Latin1_General_BIN AS measure_name
       ,std.test_scale_score AS measure_value
       ,std.test_date AS measure_date
       ,std.test_performance_level AS performance_level

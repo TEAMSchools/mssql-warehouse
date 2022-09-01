@@ -63,7 +63,7 @@ WITH clean_data AS (
 
 ,unpivoted AS (
   SELECT u.region
-        ,CONVERT(INT,'20' + RIGHT(u.field, 2)) AS fiscal_year
+        ,CAST('20' + RIGHT(u.field, 2) AS INT) AS fiscal_year
         ,u.snapshot_month
         ,u.snapshot_date
 

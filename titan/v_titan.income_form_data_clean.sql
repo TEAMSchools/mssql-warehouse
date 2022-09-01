@@ -3,7 +3,7 @@ CREATE OR ALTER VIEW titan.income_form_data_clean AS
 SELECT student_identifier
       ,reference_code
       ,CAST(date_signed AS DATE) AS date_signed
-      ,CONVERT(INT, LEFT(academic_year, 4)) AS academic_year_clean
+      ,CAST(LEFT(academic_year, 4) AS INT) AS academic_year_clean
       ,eligibility_result
       ,CASE
         WHEN eligibility_result = '1' THEN 'F'

@@ -42,7 +42,7 @@ FROM
            ,CASE
              WHEN LTRIM(RTRIM([status])) LIKE '%Did Not Achieve%' THEN 'Did Not Achieve'
              WHEN LTRIM(RTRIM([status])) LIKE '%Achieved%' THEN 'Achieved'
-             ELSE CONVERT(VARCHAR(25),LTRIM(RTRIM([status])))
+             ELSE CAST(LTRIM(RTRIM([status])) AS VARCHAR(25))
             END AS [status]
            ,CASE WHEN [status] LIKE '%Achieved%' THEN CAST(reading_level AS VARCHAR(5)) END AS achieved_independent_level
      FROM

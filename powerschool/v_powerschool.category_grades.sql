@@ -37,7 +37,7 @@ FROM
            ,tb.date_1 AS startdate
            ,tb.date_2 AS enddate
            ,LEFT(tb.storecode, 1) AS grade_category
-           ,CONVERT(VARCHAR(5), CONCAT('RT', RIGHT(tb.storecode, 1))) AS reporting_term
+           ,CAST(CONCAT('RT', RIGHT(tb.storecode, 1)) AS VARCHAR(5)) AS reporting_term
 
            ,ROUND(CASE WHEN pgf.grade = '--' THEN NULL ELSE pgf.[percent] END, 0) AS grade_category_pct
            ,CASE WHEN pgf.citizenship <> '' THEN pgf.citizenship END AS citizenship

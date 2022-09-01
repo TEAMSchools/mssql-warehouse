@@ -12,7 +12,7 @@ WITH combined_unpivot AS (
   FROM
       (
        SELECT CAST(local_student_id AS INT) AS local_student_id
-             ,CONVERT(INT, SUBSTRING(_file, PATINDEX('%- [0-9][0-9][0-9][0-9]%', _file) + 2, 4)) AS academic_year
+             ,CAST(SUBSTRING(_file, PATINDEX('%- [0-9][0-9][0-9][0-9]%', _file) + 2, 4) AS INT) AS academic_year
              ,'NJASK' AS test_type
       
              ,CAST(scaled_score_lal AS VARCHAR(50)) AS scaled_score_lal
@@ -34,7 +34,7 @@ WITH combined_unpivot AS (
        UNION ALL
 
        SELECT CAST(local_student_id AS INT) AS local_student_id
-             ,CONVERT(INT,(testing_year - 1)) AS academic_year
+             ,CAST((testing_year - 1) AS INT) AS academic_year
              ,'NJASK' AS test_type
              ,NULL
              ,NULL
@@ -46,14 +46,14 @@ WITH combined_unpivot AS (
              ,NULL
              ,CAST(science_scale_score AS VARCHAR(50)) AS science_scale_score
              ,CAST(science_proficiency_level AS VARCHAR(50)) AS science_proficiency_level
-             ,CONVERT(VARCHAR(50),CASE WHEN science_invalid_scale_score_reason = '' THEN NULL ELSE science_invalid_scale_score_reason END) AS science_invalid_scale_score_reason
-             ,CONVERT(VARCHAR(50),CASE WHEN void_reason_science = '' THEN NULL ELSE void_reason_science END) AS void_reason_science
+             ,CAST(CASE WHEN science_invalid_scale_score_reason = '' THEN NULL ELSE science_invalid_scale_score_reason END AS VARCHAR(50)) AS science_invalid_scale_score_reason
+             ,CAST(CASE WHEN void_reason_science = '' THEN NULL ELSE void_reason_science END AS VARCHAR(50)) AS void_reason_science
        FROM gabby.njsmart.njask
 
        UNION ALL
 
        SELECT CAST(local_student_id AS INT) AS local_student_id
-             ,CONVERT(INT,(testing_year - 1)) AS academic_year
+             ,CAST((testing_year - 1) AS INT) AS academic_year
              ,'NJBCT' AS test_type
       
              ,NULL AS scaled_score_lal
@@ -66,16 +66,16 @@ WITH combined_unpivot AS (
              ,NULL AS invalid_scale_score_reason_math
              ,NULL AS void_reason_math
 
-             ,CONVERT(VARCHAR(50),scale_score ) AS scaled_score_science
+             ,CAST(scale_score  AS VARCHAR(50)) AS scaled_score_science
              ,CAST(proficiency_level AS VARCHAR(50)) AS performance_level_science
              ,NULL AS invalid_scale_score_reason
-             ,CONVERT(VARCHAR(50),CASE WHEN void_reason = '' THEN NULL ELSE void_reason END) AS void_reason_science
+             ,CAST(CASE WHEN void_reason = '' THEN NULL ELSE void_reason END AS VARCHAR(50)) AS void_reason_science
        FROM gabby.njsmart.njbct n
 
        UNION ALL
 
-       SELECT CONVERT(BIGINT,CONVERT(FLOAT,REPLACE(local_student_id, ' ', ''))) AS local_student_id
-             ,CONVERT(INT, SUBSTRING(_file, PATINDEX('%- [0-9][0-9][0-9][0-9]%', _file) + 2, 4)) AS academic_year
+       SELECT CAST(CONVERT(FLOAT,REPLACE(local_student_id, ' ', '')) AS BIGINT) AS local_student_id
+             ,CAST(SUBSTRING(_file, PATINDEX('%- [0-9][0-9][0-9][0-9]%', _file) + 2, 4) AS INT) AS academic_year
              ,'HSPA' AS test_type
       
              ,CAST(scaled_score_lal AS VARCHAR(50)) AS scaled_score_lal
@@ -97,7 +97,7 @@ WITH combined_unpivot AS (
        UNION ALL
 
        SELECT CAST(local_student_id AS INT) AS local_student_id
-             ,CONVERT(INT, SUBSTRING(_file, PATINDEX('%- [0-9][0-9][0-9][0-9]%', _file) + 2, 4)) AS academic_year
+             ,CAST(SUBSTRING(_file, PATINDEX('%- [0-9][0-9][0-9][0-9]%', _file) + 2, 4) AS INT) AS academic_year
              ,'GEPA' AS test_type
       
              ,CAST(scaled_score_lang AS VARCHAR(50)) AS scaled_score_lal

@@ -28,7 +28,7 @@ WITH academic_years AS (
              ,wa.business_unit AS legal_entity_name
              ,CASE WHEN (wa.job_title IN ('Learning Specialist', 'Learning Specialist Coordinator') OR wa.home_department = 'Special Education') THEN 1 ELSE 0 END AS is_sped_teacher
              ,CAST(wa.effective_start_date AS DATE) AS work_assignment_effective_start
-             ,CONVERT(DATE, COALESCE(wa.effective_end_date, DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1, 6, 30))) AS work_assignment_effective_end
+             ,CAST(COALESCE(wa.effective_end_date, DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1, 6, 30)) AS DATE) AS work_assignment_effective_end
 
              ,sc.ps_school_id
              ,sc.site_name_clean

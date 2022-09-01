@@ -96,7 +96,7 @@ FROM
            ,CAST(ti_serv_physical AS VARCHAR(1)) AS ti_serv_physical
            ,CAST(ti_serv_speech AS VARCHAR(1)) AS ti_serv_speech
            ,CAST(ti_serv_other AS VARCHAR(1)) AS ti_serv_other
-           ,CONVERT(INT, TRY_PARSE(CAST(student_number AS VARCHAR(32)) AS INT)) AS student_number
+           ,CAST(TRY_PARSE(CAST(student_number AS VARCHAR(32)) AS INT) AS INT) AS student_number
            ,RIGHT('0' + CAST(special_education AS VARCHAR), 2) AS special_education
            ,ROW_NUMBER() OVER(PARTITION BY row_hash, academic_year ORDER BY effective_date ASC) AS rn_row_asc
      FROM easyiep.njsmart_powerschool

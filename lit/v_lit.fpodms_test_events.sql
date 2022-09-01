@@ -53,7 +53,7 @@ WITH classes_dedupe AS (
        SELECT CONCAT('FPBAS', LEFT(fp.year_of_assessment, 4), fp._line) AS unique_id
              ,fp.student_identifier
              ,fp.year_of_assessment
-             ,CONVERT(INT, LEFT(fp.year_of_assessment, 4)) AS academic_year
+             ,CAST(LEFT(fp.year_of_assessment, 4) AS INT) AS academic_year
              ,CAST(fp.assessment_date AS DATE) AS assessment_date
              ,fp.genre
              ,fp.data_type
@@ -211,7 +211,7 @@ SELECT cd.unique_id
 
       ,rt.alt_name AS test_round
       ,rt.time_per_name AS reporting_term
-      ,CONVERT(INT, RIGHT(rt.time_per_name, 1)) AS round_num
+      ,CAST(RIGHT(rt.time_per_name, 1) AS INT) AS round_num
 
       ,gleq.fp_lvl_num AS lvl_num
       ,gleq.gleq AS gleq

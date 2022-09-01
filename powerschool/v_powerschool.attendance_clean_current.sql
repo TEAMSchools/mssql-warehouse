@@ -12,6 +12,6 @@ SELECT CAST(att.id AS INT) AS id
       ,CAST(att.periodid AS INT) AS periodid
       ,CAST(att.programid AS INT) AS programid
       ,CAST(att.total_minutes AS INT) AS total_minutes
-      ,CONVERT(VARCHAR(1000), CASE WHEN att.att_comment <> '' THEN att.att_comment END) AS att_comment
+      ,CAST(CASE WHEN att.att_comment <> '' THEN att.att_comment END AS VARCHAR(1000)) AS att_comment
 FROM powerschool.attendance att
 WHERE att.yearid = gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990

@@ -4,7 +4,7 @@ WITH cal_long AS (
   SELECT u.schoolid
         ,u.date_value
         ,u.yearid
-        ,CONVERT(NVARCHAR(1), UPPER(u.field)) AS track
+        ,CAST(UPPER(u.field) AS NVARCHAR(1)) AS track
         ,u.[value]
   FROM
       (

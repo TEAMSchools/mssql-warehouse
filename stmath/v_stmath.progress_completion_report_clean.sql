@@ -31,20 +31,20 @@ SELECT iid
       ,CASE WHEN ISNUMERIC(fluency_time_spent) = 1 THEN fluency_time_spent ELSE NULL END AS fluency_time_spent      
       ,CASE WHEN ISNUMERIC(minutes_logged_last_week) = 1 THEN minutes_logged_last_week ELSE NULL END AS minutes_logged_last_week						
       ,CASE WHEN fluency_path = '\N' THEN NULL ELSE fluency_path END AS fluency_path      
-      ,CONVERT(DATE,REPLACE(RIGHT(_file, 14),'.csv','')) AS week_end_date
+      ,CAST(REPLACE(RIGHT(_file, 14),'.csv','') AS DATE) AS week_end_date
 
       ,dt.time_per_name AS reporting_term
       ,CAST(dt.start_date AS DATE) AS term_start_date
       ,CAST(dt.end_date AS DATE) AS term_end_date      
-      ,CONVERT(FLOAT,DATEDIFF(DAY, CAST(dt.start_date AS DATE), CASE 
+      ,CAST(DATEDIFF(DAY, CAST(dt.start_date AS DATE AS FLOAT), CASE 
                                                                  WHEN CAST(CURRENT_TIMESTAMP AS DATE) > CAST(dt.end_date AS DATE) THEN CAST(dt.end_date AS DATE)
                                                                  ELSE CAST(CURRENT_TIMESTAMP AS DATE) 
                                                                 END)) AS days_elapsed
-      ,CONVERT(FLOAT,DATEDIFF(DAY, CAST(dt.start_date AS DATE), CAST(dt.end_date AS DATE))) AS total_days
+      ,CAST(DATEDIFF(DAY, CAST(dt.start_date AS DATE), CAST(dt.end_date AS DATE)) AS FLOAT) AS total_days
       
       ,ROW_NUMBER() OVER(
          PARTITION BY stm.school_student_id, stm.start_year, stm.GCD
-           ORDER BY CONVERT(DATE,REPLACE(RIGHT(_file, 14),'.csv','')) DESC) AS rn_gcd
+           ORDER BY CAST(REPLACE(RIGHT(_file, 14),'.csv','')) DESC AS DATE) AS rn_gcd
 FROM gabby.stmath.progress_completion_report stm
 JOIN gabby.reporting.reporting_terms dt
   ON stm.start_year = dt.academic_year

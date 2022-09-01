@@ -5,8 +5,8 @@ CREATE OR ALTER VIEW extracts.deanslist_transcript_gpas AS
 
 SELECT student_number
       ,academic_year
-      ,CONVERT(FLOAT, ROUND(CONVERT(DECIMAL(4,3), (weighted_points / credit_hours)), 2)) AS GPA_Y1_weighted
-      ,CONVERT(FLOAT, ROUND(CONVERT(DECIMAL(4,3), (unweighted_points / credit_hours)), 2)) AS GPA_Y1_unweighted
+      ,CAST(ROUND(CONVERT(DECIMAL(4,3), (weighted_points / credit_hours)), 2) AS FLOAT) AS GPA_Y1_weighted
+      ,CAST(ROUND(CONVERT(DECIMAL(4,3), (unweighted_points / credit_hours)), 2) AS FLOAT) AS GPA_Y1_unweighted
 FROM
     (
      SELECT student_number

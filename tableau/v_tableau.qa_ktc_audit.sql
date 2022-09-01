@@ -22,7 +22,7 @@ WITH roster AS (
 
 ,valid_semesters AS (
   SELECT [value] AS semester
-        ,CONVERT(VARCHAR(5), RIGHT(rg.n + 1, 2)) AS [year]
+        ,CAST(RIGHT(rg.n + 1, 2) AS VARCHAR(5)) AS [year]
   FROM STRING_SPLIT('FA,SP', ',') ss
   INNER JOIN gabby.utilities.row_generator rg
     ON rg.n BETWEEN gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 2 AND gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1
@@ -114,7 +114,7 @@ WITH roster AS (
              ,ISNULL(CAST(e.date_last_verified_c AS NVARCHAR(MAX)), '') AS date_last_verified_ontime
              ,ISNULL(CAST(e.notes_c AS NVARCHAR(MAX)), '') AS notes_c
              ,ISNULL(CAST(e.transfer_reason_c AS NVARCHAR(MAX)), '') AS transfer_reason_c
-             ,ISNULL(CONVERT(NVARCHAR(MAX),COALESCE(e.major_c, e.major_area_c)), '') AS major_or_area
+             ,ISNULL(CAST(COALESCE(e.major_c, e.major_area_c)), '' AS NVARCHAR(MAX)) AS major_or_area
              ,ISNULL(CAST(e.college_major_declared_c AS NVARCHAR(MAX)), '') AS college_major_declared_c
 
              ,ISNULL(CAST(c.[description] AS NVARCHAR(MAX)), '') AS [description]

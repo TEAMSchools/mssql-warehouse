@@ -14,7 +14,7 @@ SELECT p.entity AS entity
       ,p.leadership_stipend
       ,p.relocation_stipend
       ,p.other_stipend
-      ,CONVERT(NVARCHAR, ISNULL(p.leadership_stipend, 0) + ISNULL(p.relocation_stipend, 0) + ISNULL(p.other_stipend, 0)) AS total_stipend
+      ,CAST(ISNULL(p.leadership_stipend, 0) + ISNULL(p.relocation_stipend, 0) + ISNULL(p.other_stipend, 0) AS NVARCHAR) AS total_stipend
       ,NULL AS accounting_line
       ,NULL AS notes
 FROM gabby.payroll.new_hire_tracker p 

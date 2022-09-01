@@ -16,8 +16,8 @@ WITH schoolids AS (
 ,terms AS (
   SELECT t.term_name
         ,t.term_id
-        ,CONVERT(DATE, JSON_VALUE(t.[start_date], '$.date')) AS [start_date]
-        ,CONVERT(DATE, JSON_VALUE(t.end_date, '$.date')) AS end_date
+        ,CAST(JSON_VALUE(t.[start_date], '$.date') AS DATE) AS [start_date]
+        ,CAST(JSON_VALUE(t.end_date, '$.date') AS DATE) AS end_date
 
         ,s.ps_school_id
   FROM gabby.deanslist.terms t

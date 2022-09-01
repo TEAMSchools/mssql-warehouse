@@ -15,7 +15,7 @@ FROM
            ,cc.course_number
            ,cc.sectionid
            ,cc.dateleft
-           ,CONVERT(INT, LEFT(ABS(cc.termid), 2)) AS yearid
+           ,CAST(LEFT(ABS(cc.termid), 2) AS INT) AS yearid
            ,ABS(cc.sectionid) AS abs_sectionid
            ,CASE WHEN cc.sectionid < 0 THEN 1 ELSE 0 END AS is_dropped
 

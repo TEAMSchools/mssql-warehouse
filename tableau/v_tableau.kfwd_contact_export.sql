@@ -18,7 +18,7 @@ SELECT ktc.currently_enrolled_school AS [Currently Enrolled School]
         WHEN c.call_type = 'L' THEN 'Mail (Letter/Postcard)'
         ELSE NULL
        END AS [Type]
-      ,CONVERT(VARCHAR, c.call_date_time, 1) AS [Contact Date]
+      ,CAST(c.call_date_time, 1 AS VARCHAR) AS [Contact Date]
       ,CASE WHEN c.call_status = 'Completed' THEN 'Successful' ELSE 'Outreach' END AS [Status]
       ,NULL AS [Category]
       ,NULL AS [Current Category Ranking]

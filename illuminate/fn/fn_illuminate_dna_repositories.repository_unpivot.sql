@@ -14,7 +14,7 @@ BEGIN
     @sql NVARCHAR(MAX) = '';
 
   SELECT @field_names = gabby.dbo.GROUP_CONCAT_D(f.[name], ', ')
-        ,@field_names_converted = gabby.dbo.GROUP_CONCAT_D('CONVERT(NVARCHAR(256),' + f.[name] + ') AS ' + f.[name], ', ')
+        ,@field_names_converted = gabby.dbo.GROUP_CONCAT_D('CAST(' + f.[name] + ') AS ' + f.[name], ', ' AS NVARCHAR(256))
   FROM illuminate_dna_repositories.fields f 
   JOIN gabby.utilities.all_tables_columns atc
     ON CONCAT('repository_', f.repository_id) = atc.table_name

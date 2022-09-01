@@ -64,7 +64,7 @@ FROM
 
                 ,gsfa.gradeformulasetid AS school_gradeformulasetid
 
-                ,CONVERT(INT, COALESCE(gsec.gradeformulasetid, gsfa.gradeformulasetid, 0)) AS gradeformulasetid
+                ,CAST(COALESCE(gsec.gradeformulasetid, gsfa.gradeformulasetid, 0) AS INT) AS gradeformulasetid
           FROM powerschool.sections sec
           INNER JOIN powerschool.schools sch
              ON sec.schoolid = sch.school_number

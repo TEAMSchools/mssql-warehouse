@@ -30,8 +30,8 @@ SELECT unique_id
        END AS status
 FROM 
     (
-     SELECT CONVERT(VARCHAR(125),CONCAT('UC', gabby.utilities.DATE_TO_SY(date), [_line])) AS unique_id
-           ,CONVERT(INT,CAST(student_id AS FLOAT)) AS student_id
+     SELECT CAST(CONCAT('UC', gabby.utilities.DATE_TO_SY(date), [_line]) AS VARCHAR(125)) AS unique_id
+           ,CAST(CAST(student_id AS FLOAT) AS INT) AS student_id
            ,CAST(step AS INT) AS step
            ,passed              
              

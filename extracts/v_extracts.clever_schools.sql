@@ -24,9 +24,9 @@ WHERE state_excludefromreporting = 0 /* filter out summer school and graduated s
 
 UNION ALL
 
-SELECT CONVERT(VARCHAR(25), 0) AS [School_id]
+SELECT CAST(0 AS VARCHAR(25)) AS [School_id]
       ,'District Office' AS [School_name]
-      ,CONVERT(VARCHAR(25), 0) AS [School_number]
+      ,CAST(0 AS VARCHAR(25)) AS [School_number]
       ,NULL AS [State_id]
       ,'Kindergarten' AS [Low_grade]
       ,'12' AS [High_grade]

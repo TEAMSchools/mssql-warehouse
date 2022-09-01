@@ -66,8 +66,8 @@ SELECT cr.fund_code
 FROM gabby.mip.compensation_report cr
 LEFT JOIN salary s
   ON cr.employee_code = s.adp_position_id
- AND CONVERT(INT,SUBSTRING(cr._file, PATINDEX('%[0-9][0-9][0-9][0-9]-%', cr._file), 4)) = s.year_part
- AND CONVERT(INT,SUBSTRING(cr._file, PATINDEX('%-[0-9][0-9]-%', cr._file) + 1, 2)) = s.month
- AND CONVERT(INT,SUBSTRING(cr._file, PATINDEX('%PP[0-9]%', cr._file) + 2, 1)) = s.pay_period
+ AND CAST(SUBSTRING(cr._file, PATINDEX('%[0-9][0-9][0-9][0-9]-%', cr._file), 4) AS INT) = s.year_part
+ AND CAST(SUBSTRING(cr._file, PATINDEX('%-[0-9][0-9]-%', cr._file) + 1, 2) AS INT) = s.month
+ AND CAST(SUBSTRING(cr._file, PATINDEX('%PP[0-9]%', cr._file) + 2, 1) AS INT) = s.pay_period
  AND s.rn_salary_desc = 1
 WHERE cr.employee_code <> '0'

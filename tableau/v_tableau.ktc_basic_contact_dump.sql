@@ -253,7 +253,7 @@ SELECT c.sf_contact_id AS contact_id
       ,CAST(gpa.fall_semester_gpa AS FLOAT) AS gpa_mp1
       ,CAST(gpa.spring_semester_gpa AS FLOAT) AS gpa_mp2      
       ,CAST(gpa.prev_spring_semester_gpa AS FLOAT) AS gpa_prev_mp2 
-      ,CONVERT(FLOAT,COALESCE(gpa.spring_semester_gpa, gpa.fall_semester_gpa, gpa.prev_spring_semester_gpa)) AS gpa_recent
+      ,CAST(COALESCE(gpa.spring_semester_gpa, gpa.fall_semester_gpa, gpa.prev_spring_semester_gpa) AS FLOAT) AS gpa_recent
       ,CASE
         WHEN gpa.prev_spring_semester_gpa IS NOT NULL THEN 1        
         ELSE 0

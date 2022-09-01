@@ -96,7 +96,7 @@ WITH repos_union AS (
         ,field_term
         ,CAST(comment_field AS VARCHAR(125)) AS comment_field
         ,comment_code
-        ,CONVERT(INT,RIGHT(comment_field, 1)) AS comment_number
+        ,CAST(RIGHT(comment_field, 1) AS INT) AS comment_number
   FROM repos_union
   UNPIVOT(
     comment_code

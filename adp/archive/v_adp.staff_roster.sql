@@ -91,7 +91,7 @@ WITH clean_people AS (
              /* transformations */
              ,CAST(ea.birth_date AS DATE) AS birth_date
              ,CONCAT(ea.primary_address_address_line_1, ', ' + ea.primary_address_address_line_2) AS [address]
-             ,CONVERT(NVARCHAR(256), gabby.utilities.STRIP_CHARACTERS(ea.personal_contact_personal_mobile, '^0-9')) AS mobile_number
+             ,CAST(gabby.utilities.STRIP_CHARACTERS(ea.personal_contact_personal_mobile, '^0-9') AS NVARCHAR(256)) AS mobile_number
              ,LEFT(UPPER(ea.gender), 1) AS gender
              ,COALESCE(ea.preferred_gender
                       ,CASE

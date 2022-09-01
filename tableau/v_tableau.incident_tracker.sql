@@ -147,7 +147,7 @@ SELECT co.student_number
       ,NULL AS reported_details
       ,NULL AS admin_summary
       ,NULL AS context
-      ,CONVERT(VARCHAR(125), dlb.staff_first_name + ' ' + dlb.staff_last_name) AS referring_teacher_name
+      ,CAST(dlb.staff_first_name + ' ' + dlb.staff_last_name AS VARCHAR(125)) AS referring_teacher_name
       ,NULL AS reviewed_by
       ,dlb.behavior_date AS dl_timestamp
       ,NULL AS infraction

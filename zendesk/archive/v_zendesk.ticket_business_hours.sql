@@ -21,10 +21,10 @@ WITH ticket_dates AS (
       (
        SELECT DATEADD(MINUTE
                      ,start_time_utc
-                     ,DATEADD(DAY, -(DATEPART(WEEKDAY, CURRENT_TIMESTAMP) - 1), CONVERT(DATETIME2,CAST(CURRENT_TIMESTAMP AS DATE)))) AS business_hours_start
+                     ,DATEADD(DAY, -(DATEPART(WEEKDAY, CURRENT_TIMESTAMP) - 1), CAST(CAST(CURRENT_TIMESTAMP AS DATE))) AS DATETIME2) AS business_hours_start
              ,DATEADD(MINUTE
                      ,end_time_utc
-                     ,DATEADD(DAY, -(DATEPART(WEEKDAY, CURRENT_TIMESTAMP) - 1), CONVERT(DATETIME2,CAST(CURRENT_TIMESTAMP AS DATE)))) AS business_hours_end
+                     ,DATEADD(DAY, -(DATEPART(WEEKDAY, CURRENT_TIMESTAMP) - 1), CAST(CAST(CURRENT_TIMESTAMP AS DATE))) AS DATETIME2) AS business_hours_end
        FROM gabby.zendesk.schedule
       ) sub
  )

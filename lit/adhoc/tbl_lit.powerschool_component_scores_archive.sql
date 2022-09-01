@@ -60,7 +60,7 @@ WITH ps_scores_long AS (
                  WHEN testid IN (3493,3511,3527) AND reading_rate IN ('Above','Target') THEN 75        
                 END) AS reading_rate             
              ,CAST(fluency AS VARCHAR) AS fluency
-             ,CONVERT(VARCHAR,ROUND(fp_wpmrate,0)) AS fp_wpmrate
+             ,CAST(ROUND(fp_wpmrate,0) AS VARCHAR) AS fp_wpmrate
              ,CAST(fp_fluency AS VARCHAR) AS fp_fluency
              ,CAST(fp_accuracy AS VARCHAR) AS fp_accuracy
              ,CAST(fp_comp_within AS VARCHAR) AS fp_comp_within

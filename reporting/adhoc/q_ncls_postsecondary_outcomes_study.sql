@@ -112,7 +112,7 @@ WITH state_assessments AS (
             SELECT state_student_identifier
                   ,CASE
                     WHEN LEFT(test_code, 3) IN ('ALG','GEO') THEN NULL
-                    ELSE CONVERT(INT,RIGHT(test_code, 2))
+                    ELSE CAST(RIGHT(test_code, 2) AS INT)
                    END AS grade_level
                   ,CASE
                     WHEN LEFT(test_code, 3) = 'ALG' THEN test_code

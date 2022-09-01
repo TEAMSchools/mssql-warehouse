@@ -455,7 +455,7 @@ WITH roster AS (
                /* graduates <> attrition */
                WHEN y1.exitcode = 'G1' THEN 0.0
                /* handles re-enrollments during the year */
-               WHEN s.exitdate >= y1.exitdate AND s.exitdate >= CONVERT(DATE,SYSDATETIME()) THEN 0.0
+               WHEN s.exitdate >= y1.exitdate AND s.exitdate >= CAST(SYSDATETIME() AS DATE) THEN 0.0
                /* was not enrolled on 10/1 next year */
                WHEN y1.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() AND y1.exitdate <= SYSDATETIME() AND y2.entrydate IS NULL THEN 1.0
                /* left after 10/1 this year */

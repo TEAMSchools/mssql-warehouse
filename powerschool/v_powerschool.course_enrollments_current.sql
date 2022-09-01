@@ -30,13 +30,13 @@ SELECT sub.studentid
       ,sub.abs_termid
       ,sub.course_enroll_status
       ,sub.sections_dcid
-      ,CONVERT(INT, ROW_NUMBER() OVER(
+      ,CAST(ROW_NUMBER( AS INT) OVER(
          PARTITION BY sub.student_number, sub.credittype
            ORDER BY sub.termid DESC, sub.dateenrolled DESC, sub.dateleft DESC)) AS rn_subject
-      ,CONVERT(INT, ROW_NUMBER() OVER(
+      ,CAST(ROW_NUMBER( AS INT) OVER(
          PARTITION BY sub.student_number, sub.course_number
            ORDER BY sub.termid DESC, sub.dateenrolled DESC, sub.dateleft DESC)) AS rn_course_yr
-      ,CONVERT(INT, ROW_NUMBER() OVER(
+      ,CAST(ROW_NUMBER( AS INT) OVER(
          PARTITION BY sub.student_number, sub.illuminate_subject
            ORDER BY sub.termid DESC, sub.dateenrolled DESC, sub.dateleft DESC)) AS rn_illuminate_subject
 FROM

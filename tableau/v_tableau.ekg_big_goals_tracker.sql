@@ -82,7 +82,7 @@ WITH act AS (
                   ,CAST(percent_correct AS FLOAT) AS percent_correct                  
                   ,CAST(is_mastery AS FLOAT) AS is_mastery
       
-                  ,CONVERT(FLOAT,ROW_NUMBER() OVER(
+                  ,CAST(ROW_NUMBER( AS FLOAT) OVER(
                      PARTITION BY local_student_id, academic_year, CASE WHEN subject_area = 'Text Study' THEN 'ela' ELSE 'math' END
                        ORDER BY administered_at DESC)) AS rn_most_recent_subject
             FROM gabby.illuminate_dna_assessments.agg_student_responses_all
@@ -416,33 +416,33 @@ WITH act AS (
         ,ISNULL(CAST(sub.grade_level AS VARCHAR(5)), 'All') AS grade_level
 
         /* student-level percentages */
-        ,CONVERT(FLOAT,AVG(sub.is_free_or_reduced)) AS free_or_reduced_pct
-        ,CONVERT(FLOAT,AVG(sub.highest_act_composite_seniors)) AS act_composite_seniors_avg
-        ,CONVERT(FLOAT,AVG(sub.highest_act_composite_juniors)) AS act_composite_juniors_avg
-        ,CONVERT(FLOAT,AVG(sub.parcc_ela_proficient)) AS parcc_ela_proficient_pct
-        ,CONVERT(FLOAT,AVG(sub.parcc_math_proficient)) AS parcc_math_proficient_pct
-        ,CONVERT(FLOAT,AVG(sub.parcc_ela_proficient_iep)) AS parcc_ela_proficient_iep_pct
-        ,CONVERT(FLOAT,AVG(sub.parcc_math_proficient_iep)) AS parcc_math_proficient_iep_pct
-        ,CONVERT(FLOAT,AVG(sub.parcc_ela_approaching_iep)) AS parcc_ela_approaching_iep_pct
-        ,CONVERT(FLOAT,AVG(sub.parcc_math_approaching_iep)) AS parcc_math_approaching_iep_pct
-        ,CONVERT(FLOAT,AVG(sub.module_ela_is_mastery)) AS module_ela_mastery_pct
-        ,CONVERT(FLOAT,AVG(sub.module_math_is_mastery)) AS module_math_mastery_pct
-        ,CONVERT(FLOAT,AVG(sub.module_ela_is_parcc_predictive)) AS module_ela_parcc_predictive_pct
-        ,CONVERT(FLOAT,AVG(sub.module_math_is_parcc_predictive)) AS module_math_parcc_predictive_pct
-        ,CONVERT(FLOAT,AVG(sub.lit_meeting_goal)) AS lit_meeting_goal_pct
-        ,CONVERT(FLOAT,AVG(sub.lit_making_1yr_growth)) AS lit_making_1yr_growth_pct
-        ,CONVERT(FLOAT,AVG(sub.is_student_attrition)) AS student_attrition_pct
-        ,CONVERT(FLOAT,SUM(sub.n_days_attendance) / SUM(sub.n_days_membership)) AS ada
-        ,CONVERT(FLOAT,AVG(sub.is_chronically_absent)) AS chronically_absent_pct
-        ,CONVERT(FLOAT,SUM(sub.n_days_tardy) / SUM(sub.n_days_membership)) AS tardy_pct
-        ,CONVERT(FLOAT,AVG(sub.is_OSS)) AS oss_pct
-        ,CONVERT(FLOAT,AVG(sub.is_ISS)) AS iss_pct
-        ,CONVERT(FLOAT,AVG(sub.is_OSS_iep)) AS oss_iep_pct
-        ,CONVERT(FLOAT,AVG(sub.is_ISS_iep)) AS iss_iep_pct
+        ,CAST(AVG(sub.is_free_or_reduced) AS FLOAT) AS free_or_reduced_pct
+        ,CAST(AVG(sub.highest_act_composite_seniors) AS FLOAT) AS act_composite_seniors_avg
+        ,CAST(AVG(sub.highest_act_composite_juniors) AS FLOAT) AS act_composite_juniors_avg
+        ,CAST(AVG(sub.parcc_ela_proficient) AS FLOAT) AS parcc_ela_proficient_pct
+        ,CAST(AVG(sub.parcc_math_proficient) AS FLOAT) AS parcc_math_proficient_pct
+        ,CAST(AVG(sub.parcc_ela_proficient_iep) AS FLOAT) AS parcc_ela_proficient_iep_pct
+        ,CAST(AVG(sub.parcc_math_proficient_iep) AS FLOAT) AS parcc_math_proficient_iep_pct
+        ,CAST(AVG(sub.parcc_ela_approaching_iep) AS FLOAT) AS parcc_ela_approaching_iep_pct
+        ,CAST(AVG(sub.parcc_math_approaching_iep) AS FLOAT) AS parcc_math_approaching_iep_pct
+        ,CAST(AVG(sub.module_ela_is_mastery) AS FLOAT) AS module_ela_mastery_pct
+        ,CAST(AVG(sub.module_math_is_mastery) AS FLOAT) AS module_math_mastery_pct
+        ,CAST(AVG(sub.module_ela_is_parcc_predictive) AS FLOAT) AS module_ela_parcc_predictive_pct
+        ,CAST(AVG(sub.module_math_is_parcc_predictive) AS FLOAT) AS module_math_parcc_predictive_pct
+        ,CAST(AVG(sub.lit_meeting_goal) AS FLOAT) AS lit_meeting_goal_pct
+        ,CAST(AVG(sub.lit_making_1yr_growth) AS FLOAT) AS lit_making_1yr_growth_pct
+        ,CAST(AVG(sub.is_student_attrition) AS FLOAT) AS student_attrition_pct
+        ,CAST(SUM(sub.n_days_attendance) / SUM(sub.n_days_membership) AS FLOAT) AS ada
+        ,CAST(AVG(sub.is_chronically_absent) AS FLOAT) AS chronically_absent_pct
+        ,CAST(SUM(sub.n_days_tardy) / SUM(sub.n_days_membership) AS FLOAT) AS tardy_pct
+        ,CAST(AVG(sub.is_OSS) AS FLOAT) AS oss_pct
+        ,CAST(AVG(sub.is_ISS) AS FLOAT) AS iss_pct
+        ,CAST(AVG(sub.is_OSS_iep) AS FLOAT) AS oss_iep_pct
+        ,CAST(AVG(sub.is_ISS_iep) AS FLOAT) AS iss_iep_pct
 
         /* student-level totals */
-        ,CONVERT(FLOAT,SUM(sub.n_OSS)) AS n_oss
-        ,CONVERT(FLOAT,SUM(sub.n_ISS)) AS n_iss  
+        ,CAST(SUM(sub.n_OSS) AS FLOAT) AS n_oss
+        ,CAST(SUM(sub.n_ISS) AS FLOAT) AS n_iss  
   FROM
       (
        SELECT co.student_number      

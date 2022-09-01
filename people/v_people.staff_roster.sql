@@ -221,7 +221,7 @@ WITH all_staff AS (
                WHEN ea.primary_address_address_line_1 IS NOT NULL 
                     THEN CONCAT(ea.primary_address_address_line_1, ', ' + ea.primary_address_address_line_2)
               END AS address_street
-             ,CONVERT(NVARCHAR(256), gabby.utilities.STRIP_CHARACTERS(ea.personal_contact_personal_mobile, '^0-9')) AS personal_mobile
+             ,CAST(gabby.utilities.STRIP_CHARACTERS(ea.personal_contact_personal_mobile, '^0-9') AS NVARCHAR(256)) AS personal_mobile
              ,COALESCE(ea.preferred_gender
                       ,CASE
                         WHEN ea.gender = 'Male' THEN 'Man'

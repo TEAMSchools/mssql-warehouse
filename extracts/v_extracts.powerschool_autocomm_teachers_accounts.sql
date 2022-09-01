@@ -75,8 +75,8 @@ SELECT df.teachernumber
       ,CASE WHEN df.[status] = 1 THEN df.loginid END AS loginid
       ,CASE WHEN df.[status] = 1 THEN df.teacherloginid END AS teacherloginid
       ,df.email_addr
-      ,CONVERT(INT, COALESCE(df.homeschoolid, 0)) AS schoolid
-      ,CONVERT(INT, COALESCE(df.homeschoolid, 0)) AS homeschoolid
+      ,CAST(COALESCE(df.homeschoolid, 0) AS INT) AS schoolid
+      ,CAST(COALESCE(df.homeschoolid, 0) AS INT) AS homeschoolid
       ,df.[status]
       ,CASE WHEN df.[status] = 1 THEN 1 ELSE 0 END AS teacherldapenabled
       ,CASE WHEN df.[status] = 1 THEN 1 ELSE 0 END AS adminldapenabled
@@ -85,6 +85,6 @@ SELECT df.teachernumber
       --  WHEN df.legal_entity_name = 'KIPP TEAM and Family Schools Inc.' AND df.[status] = 1 THEN 1 
       --  ELSE 0 
       -- END AS ptaccess /* temporarily shut off teacher gradebook access */
-      ,CONVERT(VARCHAR, df.birth_date, 101) AS dob
+      ,CAST(df.birth_date, 101 AS VARCHAR) AS dob
       ,df.legal_entity_name
 FROM users_clean df

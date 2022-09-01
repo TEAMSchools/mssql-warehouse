@@ -220,7 +220,7 @@ FROM
            ,norms_2011.student_percentile AS percentile_2011_norms
            ,norms_2015.student_percentile AS percentile_2015_norms
 
-           ,CONVERT(INT,ROW_NUMBER() OVER(
+           ,CAST(ROW_NUMBER( AS INT) OVER(
               PARTITION BY sub.student_id
                           ,sub.term_name
                           ,sub.measurement_scale

@@ -7,8 +7,8 @@ SELECT co.student_number AS [studentIdentifier]
       ,co.first_name AS [firstName]
       ,co.last_name AS [lastName]
       ,co.grade_level + 1 AS [gradeId]
-      ,CONVERT(VARCHAR, CAST(co.entrydate AS DATETIME2), 126) AS [classStudentStartDate]
-      ,CONVERT(VARCHAR, CAST(co.exitdate AS DATETIME2), 126) AS [classStudentEndDate]
+      ,CAST(CAST(co.entrydate AS DATETIME2), 126 AS VARCHAR) AS [classStudentStartDate]
+      ,CAST(CAST(co.exitdate AS DATETIME2), 126 AS VARCHAR) AS [classStudentEndDate]
 
       ,sch.[name] AS [schoolName]
 FROM gabby.powerschool.cohort_identifiers_static co

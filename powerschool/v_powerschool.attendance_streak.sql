@@ -25,14 +25,14 @@ WITH streaks AS (
 
              ,ISNULL(att.att_code, 'P') AS att_code
 
-             ,CONVERT(INT,ROW_NUMBER() OVER(
+             ,CAST(ROW_NUMBER( AS INT) OVER(
                 PARTITION BY mem.studentid, mem.yearid
                   ORDER BY mem.calendardate ASC)) AS day_number
 
-             ,CONVERT(INT,ROW_NUMBER() OVER(
+             ,CAST(ROW_NUMBER( AS INT) OVER(
                 PARTITION BY mem.studentid, mem.yearid, att.att_code
                   ORDER BY mem.calendardate)) AS streak_rn
-             ,CONVERT(INT,ROW_NUMBER() OVER(
+             ,CAST(ROW_NUMBER( AS INT) OVER(
                 PARTITION BY mem.studentid, mem.yearid, mem.attendancevalue
                   ORDER BY mem.calendardate)) AS streak_att_rn
        FROM powerschool.ps_adaadm_daily_ctod mem

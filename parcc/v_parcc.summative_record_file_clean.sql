@@ -171,7 +171,7 @@ SELECT state_abbreviation
       ,pba_unit_2_total_number_of_items
       ,pba_unit_3_number_of_attempted_items
       ,pba_unit_3_total_number_of_items
-      ,CONVERT(INT, LEFT(assessment_year, 4)) AS academic_year
+      ,CAST(LEFT(assessment_year, 4) AS INT) AS academic_year
 FROM parcc.summative_record_file
 WHERE (assessment_year = '2014-2015' AND record_type = 1 AND reported_summative_score_flag = 'Y')
    OR (assessment_year <> '2014-2015' AND test_status = 'Attempt' AND summative_flag = 'Y');
@@ -351,7 +351,7 @@ SELECT state_abbreviation
       ,NULL AS pba_unit_2_total_number_of_items
       ,NULL AS pba_unit_3_number_of_attempted_items
       ,NULL AS pba_unit_3_total_number_of_items
-      ,CONVERT(INT, LEFT(assessment_year, 4)) AS academic_year
+      ,CAST(LEFT(assessment_year, 4) AS INT) AS academic_year
 FROM parcc.summative_record_file
 WHERE test_status = 'Attempt' 
   AND summative_flag = 'Y';

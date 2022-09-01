@@ -54,8 +54,8 @@ WITH status_clean AS (
              ,department_name
              ,job_name
              ,flsa_status_name
-             ,CONVERT(DATE, CASE WHEN work_assignment_effective_start <> '' THEN work_assignment_effective_start END) AS work_assignment_effective_start
-             ,CONVERT(DATE, CASE WHEN work_assignment_effective_end <> '' THEN work_assignment_effective_end END) AS work_assignment_effective_end
+             ,CAST(CASE WHEN work_assignment_effective_start <> '' THEN work_assignment_effective_start END AS DATE) AS work_assignment_effective_start
+             ,CAST(CASE WHEN work_assignment_effective_end <> '' THEN work_assignment_effective_end END AS DATE) AS work_assignment_effective_end
        FROM gabby.dayforce.employee_work_assignment
        WHERE primary_work_assignment = 1
       ) sub

@@ -66,11 +66,11 @@ WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 --           ,'Lexia' AS it_program
            
 --           ,ROUND(lex.pct_to_target * 100, 0) AS progress
---           ,ROUND((CONVERT(FLOAT,DATEDIFF(DAY, CAST(dt.start_date AS DATE), CASE 
+--           ,ROUND((CAST(DATEDIFF(DAY, CAST(dt.start_date AS DATE AS FLOAT), CASE 
 --                                                                             WHEN CAST(CURRENT_TIMESTAMP AS DATE) > CAST(dt.end_date AS DATE) THEN CAST(dt.end_date AS DATE) 
 --                                                                             ELSE CAST(CURRENT_TIMESTAMP AS DATE) 
 --                                                                            END)) 
---                     / CONVERT(FLOAT,DATEDIFF(DAY, dt.start_date, dt.end_date))) * 100,0) AS goal
+--                     / CAST(DATEDIFF(DAY, dt.start_date, dt.end_date))) * 100,0 AS FLOAT) AS goal
 --     FROM gabby.tableau.lexia_tracker lex
 --     JOIN gabby.reporting.reporting_terms dt 
 --       ON lex.academic_year = dt.academic_year

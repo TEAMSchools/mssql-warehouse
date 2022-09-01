@@ -44,8 +44,8 @@ SELECT co.studentid
       ,s.zip
       ,s.home_phone
       ,s.grade_level AS highest_achieved
-      ,CONVERT(NVARCHAR(1), UPPER(s.gender)) AS gender
-      ,CONVERT(NVARCHAR(1), UPPER(s.ethnicity)) AS ethnicity
+      ,CAST(UPPER(s.gender) AS NVARCHAR(1)) AS gender
+      ,CAST(UPPER(s.ethnicity) AS NVARCHAR(1)) AS ethnicity
 
       ,sch.[name] AS school_name
       ,sch.abbreviation AS school_abbreviation

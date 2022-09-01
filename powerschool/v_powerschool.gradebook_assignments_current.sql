@@ -10,9 +10,9 @@ SELECT CAST(asec.assignmentsectionid AS INT) AS assignmentsectionid
       ,asec.extracreditpoints
       ,CAST(asec.iscountedinfinalgrade AS INT) AS isfinalscorecalculated
 
-      ,CONVERT(INT, COALESCE(tc.districtteachercategoryid, tc.teachercategoryid)) AS categoryid
+      ,CAST(COALESCE(tc.districtteachercategoryid, tc.teachercategoryid) AS INT) AS categoryid
 
-      ,CONVERT(VARCHAR(125), COALESCE(dtc.[name], tc.[name])) AS category_name
+      ,CAST(COALESCE(dtc.[name], tc.[name]) AS VARCHAR(125)) AS category_name
 FROM powerschool.assignmentsection asec
 LEFT JOIN powerschool.assignmentcategoryassoc aca
   ON asec.assignmentsectionid = aca.assignmentsectionid

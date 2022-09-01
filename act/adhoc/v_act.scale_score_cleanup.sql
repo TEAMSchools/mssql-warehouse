@@ -1,7 +1,7 @@
 WITH key_clean AS (
   SELECT subject
         ,CASE        
-          WHEN raw_score LIKE '%-%' THEN CONVERT(INT,LEFT(raw_score, CHARINDEX('-',raw_score)-1))
+          WHEN raw_score LIKE '%-%' THEN CAST(LEFT(raw_score, CHARINDEX('-',raw_score)-1) AS INT)
           WHEN ISNUMERIC(raw_score) = 0 THEN NULL
           ELSE CAST(raw_score AS INT)
          END AS raw_score

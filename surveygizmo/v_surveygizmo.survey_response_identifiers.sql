@@ -9,7 +9,7 @@ WITH response_pivot AS (
         ,p.date_started
         ,p.salesforce_id
         ,CAST(p.respondent_adp_associate_id AS VARCHAR(25)) AS respondent_associate_id
-        ,CONVERT(VARCHAR(125), LOWER(COALESCE(p.respondent_userprincipalname, p.email))) AS respondent_userprincipalname
+        ,CAST(LOWER(COALESCE(p.respondent_userprincipalname, p.email)) AS VARCHAR(125)) AS respondent_userprincipalname
         ,CONVERT(INT, CASE
                        WHEN ISNUMERIC(p.respondent_df_employee_number) = 1 THEN p.respondent_df_employee_number
                        WHEN CHARINDEX('[', COALESCE(p.respondent_df_employee_number, p.employee_preferred_name)) = 0 THEN NULL

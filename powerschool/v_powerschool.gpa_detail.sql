@@ -91,7 +91,7 @@ SELECT student_number
       ,SUM(gpa_points_total_term) OVER(PARTITION BY student_number, academic_year, semester) AS gpa_points_total_semester
       ,SUM(weighted_gpa_points_term) OVER(PARTITION BY student_number, academic_year, semester) AS weighted_gpa_points_semester
       ,SUM(total_credit_hours) OVER(PARTITION BY student_number, academic_year, semester) AS total_credit_hours_semester
-      ,CONVERT(FLOAT,ROUND(CONVERT(DECIMAL(4,3),SUM(weighted_gpa_points_term) OVER(PARTITION BY student_number, academic_year, semester)
+      ,CAST(ROUND(CONVERT(DECIMAL(4,3),SUM(weighted_gpa_points_term) OVER(PARTITION BY student_number, academic_year, semester AS FLOAT)
          / SUM(credit_hours_term) OVER(PARTITION BY student_number, academic_year, semester)),2)) AS gpa_semester
 FROM
     (
@@ -113,7 +113,7 @@ FROM
            ,SUM((potential_credit_hours * term_grade_pts)) AS weighted_gpa_points_term      
            ,SUM(CASE WHEN term_grade_percent IS NULL THEN NULL ELSE potential_credit_hours END) AS credit_hours_term
            /* when no term_name pct, then exclude credit hours */
-           ,CONVERT(FLOAT,ROUND(CONVERT(DECIMAL(4,3),
+           ,CAST(ROUND(CONVERT(DECIMAL(4,3 AS FLOAT),
               SUM(potential_credit_hours * term_grade_pts)
                 / CASE 
                    WHEN SUM(CASE WHEN term_grade_percent IS NULL THEN NULL ELSE potential_credit_hours END) = 0 THEN NULL
@@ -125,13 +125,13 @@ FROM
            ,SUM(y1_grade_pts) AS gpa_points_total_y1
            ,SUM((potential_credit_hours * y1_grade_pts)) AS weighted_gpa_points_y1
            /* when no y1 pct, then exclude credit hours */
-           ,CONVERT(FLOAT,ROUND(CONVERT(DECIMAL(4,3),
+           ,CAST(ROUND(CONVERT(DECIMAL(4,3 AS FLOAT),
               SUM((potential_credit_hours * y1_grade_pts)) 
                 / CASE
                    WHEN SUM(CASE WHEN y1_grade_percent_adj IS NULL THEN NULL ELSE potential_credit_hours END) = 0 THEN NULL
                    ELSE SUM(CASE WHEN y1_grade_percent_adj IS NULL THEN NULL ELSE potential_credit_hours END)
                   END), 2)) AS gpa_y1
-           ,CONVERT(FLOAT,ROUND(CONVERT(DECIMAL(4,3),
+           ,CAST(ROUND(CONVERT(DECIMAL(4,3 AS FLOAT),
               SUM((potential_credit_hours * y1_grade_pts_unweighted)) 
                 / CASE
                    WHEN SUM(CASE WHEN y1_grade_percent_adj IS NULL THEN NULL ELSE potential_credit_hours END) = 0 THEN NULL

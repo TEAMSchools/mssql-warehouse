@@ -72,8 +72,8 @@ WITH dsos AS (
               END AS [Subject]
 
              ,terms.abbreviation [Term_name]
-             ,CONVERT(VARCHAR(25), terms.firstday, 101) AS [Term_start]
-             ,CONVERT(VARCHAR(25), terms.lastday, 101) AS [Term_end]
+             ,CAST(terms.firstday, 101 AS VARCHAR(25)) AS [Term_start]
+             ,CAST(terms.lastday, 101 AS VARCHAR(25)) AS [Term_end]
 
              ,NULL AS [Name]
              ,NULL AS [Grade]
@@ -122,8 +122,8 @@ WITH dsos AS (
 
              ,CONCAT(RIGHT(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 2), '-'
                     ,RIGHT(gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1, 2))  [Term_name]
-             ,CONVERT(VARCHAR(25), DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1), 101) AS [Term_start]
-             ,CONVERT(VARCHAR(25), DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1, 6, 30), 101) AS [Term_end]
+             ,CAST(DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1), 101 AS VARCHAR(25)) AS [Term_start]
+             ,CAST(DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1, 6, 30), 101 AS VARCHAR(25)) AS [Term_end]
 
              ,NULL AS [Name]
              ,CASE WHEN r.n = 0 THEN 'Kindergarten' ELSE CAST(r.n AS VARCHAR(5)) END AS [Grade]

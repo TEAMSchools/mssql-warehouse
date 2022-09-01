@@ -7,7 +7,7 @@ WITH long_data AS (
         ,measurement_scale
         ,test_id
         ,test_name
-        ,CONVERT(INT,SUBSTRING(field, 6, 1)) AS goal_number
+        ,CAST(SUBSTRING(field, 6, 1) AS INT) AS goal_number
         ,SUBSTRING(field, 8, 10) AS goal_field
         ,value
   FROM

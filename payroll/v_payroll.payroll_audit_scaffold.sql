@@ -17,10 +17,10 @@ WITH payroll_rollup AS (
           ELSE 'Final'
          END AS preview_or_final
         ,CASE
-          WHEN CHARINDEX('PREV', _file) > 0 THEN CONVERT(INT,SUBSTRING(_file, 39, 1))
+          WHEN CHARINDEX('PREV', _file) > 0 THEN CAST(SUBSTRING(_file, 39, 1) AS INT)
           ELSE NULL
          END AS preview_number
-        ,CONVERT(DATE, SUBSTRING(_file, 23, 10)) AS payroll_date
+        ,CAST(SUBSTRING(_file, 23, 10) AS DATE) AS payroll_date
         ,CONCAT(SUBSTRING(_file, 19, 3), file_nbr) AS position_id
 
         ,gabby.dbo.GROUP_CONCAT(DISTINCT fli_code) AS fli_code

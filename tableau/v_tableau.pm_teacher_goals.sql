@@ -46,7 +46,7 @@ WITH reading_level AS (
     ON gpa.academic_year = rt.academic_year
    AND gpa.reporting_term = rt.time_per_name COLLATE Latin1_General_BIN
    AND gpa.schoolid = rt.schoolid
-   AND rt.[start_date] <= CONVERT(DATE, SYSDATETIME())
+   AND rt.[start_date] <= CAST(SYSDATETIME() AS DATE)
  )
 
 ,gpa AS (

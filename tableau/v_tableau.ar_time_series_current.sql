@@ -85,8 +85,8 @@ FROM
            ,last_book_lexile
            ,last_book_pct_correct
 
-           ,words_goal_yr * (CONVERT(FLOAT, DATEDIFF(DAY, y1_start_date, [date])) / DATEDIFF(DAY, y1_start_date, y1_end_date)) AS ontrack_words_yr
-           ,words_goal_term * (CONVERT(FLOAT, DATEDIFF(DAY, term_start_date, [date])) / DATEDIFF(DAY, term_start_date, term_end_date)) AS ontrack_words_term
+           ,words_goal_yr * (CAST(DATEDIFF(DAY, y1_start_date, [date])) / DATEDIFF(DAY, y1_start_date, y1_end_date) AS FLOAT) AS ontrack_words_yr
+           ,words_goal_term * (CAST(DATEDIFF(DAY, term_start_date, [date])) / DATEDIFF(DAY, term_start_date, term_end_date) AS FLOAT) AS ontrack_words_term
 
            ,CASE
              WHEN DATEPART(WEEK, [date]) = DATEPART(WEEK, CAST(CURRENT_TIMESTAMP AS DATE)) THEN 1

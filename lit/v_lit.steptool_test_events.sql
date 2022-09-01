@@ -23,11 +23,11 @@ SELECT sub.unique_id
       ,co.grade_level
 
       ,CAST(dt.alt_name AS VARCHAR(5)) AS test_round
-      ,CONVERT(INT, RIGHT(dt.time_per_name, 1)) AS round_num
+      ,CAST(RIGHT(dt.time_per_name, 1) AS INT) AS round_num
 FROM
     (
-     SELECT CONVERT(VARCHAR(25), CONCAT('UC', gabby.utilities.DATE_TO_SY(step.[date]), step.[_line])) AS unique_id
-           ,CONVERT(INT, CAST(step.student_id AS FLOAT)) AS student_number
+     SELECT CAST(CONCAT('UC', gabby.utilities.DATE_TO_SY(step.[date]), step.[_line]) AS VARCHAR(25)) AS unique_id
+           ,CAST(CAST(step.student_id AS FLOAT) AS INT) AS student_number
            ,gabby.utilities.DATE_TO_SY(CAST(step.[date] AS DATE)) AS academic_year
            ,CAST(step.[date] AS DATE) AS test_date
            ,CASE WHEN step.step = 0 THEN 'Pre' ELSE CAST(step.step AS VARCHAR(5)) END AS read_lvl
@@ -65,8 +65,8 @@ FROM
      UNION ALL
 
      /* ACHIEVED PRE DNA */
-     SELECT CONVERT(VARCHAR(25), CONCAT('UCDNA', gabby.utilities.DATE_TO_SY(step.[date]), step.[_line])) AS unique_id
-           ,CONVERT(INT, CAST(step.student_id AS FLOAT)) AS student_number
+     SELECT CAST(CONCAT('UCDNA', gabby.utilities.DATE_TO_SY(step.[date]), step.[_line]) AS VARCHAR(25)) AS unique_id
+           ,CAST(CAST(step.student_id AS FLOAT) AS INT) AS student_number
            ,gabby.utilities.DATE_TO_SY(CAST(step.[date] AS DATE)) AS academic_year
            ,CAST(step.[date] AS DATE) AS test_date
            ,'Pre DNA' AS read_lvl

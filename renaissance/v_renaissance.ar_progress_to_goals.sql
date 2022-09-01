@@ -33,8 +33,8 @@ WITH progress_rollup AS (
              ,CAST(rt.time_per_name AS VARCHAR(5)) AS reporting_term
              ,rt.[start_date]
              ,rt.end_date
-             ,CONVERT(FLOAT, DATEDIFF(DAY, rt.[start_date], CURRENT_TIMESTAMP)) AS n_days_elapsed
-             ,CONVERT(FLOAT, DATEDIFF(DAY, rt.[start_date], rt.end_date)) AS n_days_term
+             ,CAST(DATEDIFF(DAY, rt.[start_date], CURRENT_TIMESTAMP) AS FLOAT) AS n_days_elapsed
+             ,CAST(DATEDIFF(DAY, rt.[start_date], rt.end_date) AS FLOAT) AS n_days_term
 
              ,arsp.dt_taken
              ,CASE WHEN arsp.rn_quiz = 1 THEN arsp.i_word_count END AS words_attempted

@@ -38,7 +38,7 @@ WITH gdoc_long AS (
 
 SELECT g.student_number
       ,g.academic_year
-      ,CONVERT(VARCHAR(5), REPLACE(g.test_round, 'DIAGNOSTIC', 'DR')) AS test_round
+      ,CAST(REPLACE(g.test_round, 'DIAGNOSTIC', 'DR') AS VARCHAR(5)) AS test_round
       ,g.goal      
       ,CONVERT(INT,
          CASE 

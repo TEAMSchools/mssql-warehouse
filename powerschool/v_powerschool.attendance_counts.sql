@@ -93,7 +93,7 @@ WITH att_counts AS (
         ,start_date
         ,end_date                
         ,is_curterm
-        ,CONVERT(FLOAT,n) AS n
+        ,CAST(n AS FLOAT) AS n
         ,CONCAT(LOWER(att_code),'_',field) AS pivot_field                
   FROM
       (

@@ -55,7 +55,7 @@ WITH fp AS (
                   ,CAST(mastery AS VARCHAR) AS mastery
                   ,CAST(mastery_fiction AS VARCHAR) AS mastery_fiction
                   ,CAST(mastery_nonfiction AS VARCHAR) AS mastery_nonfiction
-                  ,CONVERT(VARCHAR, 100 - pct_fiction) AS pct_nonfiction            
+                  ,CAST(100 - pct_fiction AS VARCHAR) AS pct_nonfiction            
                   ,CONVERT(VARCHAR,
                      CASE
                       WHEN CAST(ontrack_words AS INT) - CAST(words AS INT) < 0 THEN 0

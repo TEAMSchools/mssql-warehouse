@@ -44,7 +44,7 @@ WITH residency_verification AS (
         ,CAST(sub.residency_proof_2 AS VARCHAR(500)) COLLATE Latin1_General_BIN AS residency_proof_2
         ,CAST(sub.residency_proof_3 AS VARCHAR(500)) COLLATE Latin1_General_BIN AS residency_proof_3
         
-        ,CONVERT(VARCHAR(500), sub.region + sub.city) COLLATE Latin1_General_BIN AS region_city
+        ,CAST(sub.region + sub.city AS VARCHAR(500)) COLLATE Latin1_General_BIN AS region_city
         
         ,CONVERT(VARCHAR(500), 
            CASE
@@ -89,7 +89,7 @@ WITH residency_verification AS (
              ,ISNULL(co.specialed_classification, '') AS specialed_classification
              ,ISNULL(co.lep_status, '') AS lep_status
              ,ISNULL(co.lunch_app_status, '') AS lunch_app_status
-             ,CONVERT(MONEY, ISNULL(co.lunch_balance, 0)) AS lunch_balance
+             ,CAST(ISNULL(co.lunch_balance, 0) AS MONEY) AS lunch_balance
              ,CASE
                WHEN s.enroll_status = -1 THEN 'Pre-Registered'
                WHEN COALESCE(co.year_in_network, 1) = 1 THEN 'New to KIPP NJ'
