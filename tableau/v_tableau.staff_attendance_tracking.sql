@@ -63,14 +63,16 @@ WITH school_ids AS (
         ,accrual_code + '_2' AS accrual_code_2
         ,accrual_taken_to_date_hours_
         ,accrual_available_balance_hours_
-  FROM (SELECT _modified AS last_updated
-              ,employee_name_id_
-              ,accrual_code
-              ,accrual_taken_to_date_hours_
-              ,accrual_available_balance_hours_
-              ,MAX(_modified) OVER(PARTITION BY employee_name_id_, accrual_code) AS max_last_updated
-        FROM gabby.adp.wfm_accrual_reporting_period_summary
-          ) sub
+  FROM
+      (
+       SELECT _modified AS last_updated
+             ,employee_name_id_
+             ,accrual_code
+             ,accrual_taken_to_date_hours_
+             ,accrual_available_balance_hours_
+             ,MAX(_modified) OVER(PARTITION BY employee_name_id_, accrual_code) AS max_last_updated
+       FROM gabby.adp.wfm_accrual_reporting_period_summary
+      ) sub
   WHERE last_updated = max_last_updated
  )
 
@@ -82,13 +84,19 @@ WITH school_ids AS (
         ,[No Accrual] AS no_accrual_taken
         ,[Unused PTO] AS unused_pto_taken
         ,[Sick] AS sick_taken
-  FROM (SELECT last_updated
-              ,employee_name_id_
-              ,accrual_code
-              ,accrual_taken_to_date_hours_
-        FROM last_accrual_day) sub
-   PIVOT( MAX(accrual_taken_to_date_hours_) FOR accrual_code IN ([Vacation],[PTO],[No Accrual],[Unused PTO],[Sick])) p
-  )
+  FROM
+      (
+       SELECT last_updated
+             ,employee_name_id_
+             ,accrual_code
+             ,accrual_taken_to_date_hours_
+       FROM last_accrual_day
+      ) sub
+   PIVOT(
+     MAX(accrual_taken_to_date_hours_)
+     FOR accrual_code IN ([Vacation], [PTO], [No Accrual], [Unused PTO], [Sick])
+   ) p
+ )
 
 ,accruals_balance AS (
   SELECT last_updated
@@ -98,12 +106,18 @@ WITH school_ids AS (
         ,[No Accrual] AS no_accrual_balance
         ,[Unused PTO] AS unused_pto_balance
         ,[Sick] AS sick_balance
-  FROM (SELECT last_updated
-              ,employee_name_id_
-              ,accrual_code
-              ,accrual_available_balance_hours_
-        FROM last_accrual_day) sub
-   PIVOT( MAX(accrual_available_balance_hours_) FOR accrual_code IN ([Vacation],[PTO],[No Accrual],[Unused PTO],[Sick])) p
+  FROM 
+      (
+       SELECT last_updated
+             ,employee_name_id_
+             ,accrual_code
+             ,accrual_available_balance_hours_
+       FROM last_accrual_day
+      ) sub
+  PIVOT(
+    MAX(accrual_available_balance_hours_) 
+    FOR accrual_code IN ([Vacation], [PTO], [No Accrual], [Unused PTO], [Sick])
+  ) p
  )
 
 SELECT td.job AS job_title

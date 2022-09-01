@@ -65,9 +65,9 @@ SELECT a.application_id
       ,a.application_reason_for_rejection
       ,a.application_status_before_withdrawal
       ,a.application_reason_for_withdrawal
-      ,DATEDIFF(day,a.application_state_new_date,a.application_state_hired_date) AS days_to_hire
-      ,DATEDIFF(day,a.application_state_offer_date,a.application_state_hired_date) AS days_offer_to_acceptance
-      ,DATEDIFF(day,a.application_status_interview_demo_date,a.application_state_hired_date) AS days_demo_to_hire
+      ,DATEDIFF(DAY, a.application_state_new_date, a.application_state_hired_date) AS days_to_hire
+      ,DATEDIFF(DAY, a.application_state_offer_date, a.application_state_hired_date) AS days_offer_to_acceptance
+      ,DATEDIFF(DAY, a.application_status_interview_demo_date, a.application_state_hired_date) AS days_demo_to_hire
       /*List of titles tracked by Recruiting Team include these words*/
       ,CASE
         WHEN a.job_title LIKE '%Teacher%' 
