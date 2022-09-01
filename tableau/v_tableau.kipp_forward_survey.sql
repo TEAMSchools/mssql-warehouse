@@ -93,7 +93,7 @@ WITH alumni_data AS (
   FROM gabby.surveygizmo.survey_detail
   WHERE survey_id = 6734664
   AND question_shortname IN (
-        'imp_1', 'imp_2', 'imp_3', 'imp_4', 'imp_5', 'imp_6', 'imp_7', 'imp_8',' imp_9', 'imp_10'
+        'imp_1', 'imp_2', 'imp_3', 'imp_4', 'imp_5', 'imp_6', 'imp_7', 'imp_8','imp_9', 'imp_10'
       )
   GROUP BY survey_id
  )
@@ -148,20 +148,29 @@ SELECT  s.survey_title
        ,s.linkedin
        ,s.linkedin_link
        ,s.debt_binary
-       ,s.debt_amount
-       ,s.annual_income
-
+       ,CAST(s.debt_amount AS money) AS debt_amount
+       ,CAST(s.annual_income AS money) AS annual_income
        /*weighted satisfaction scores based on relative importance of each*/
-       ,s.cur_1 * p.imp_1 AS weighted_level_pay
-       ,s.cur_2 * p.imp_2 AS weighted_stable_pay
-       ,s.cur_3 * p.imp_3 AS weighted_stable_hours
-       ,s.cur_4 * p.imp_4 AS weighted_control_hours_location
-       ,s.cur_5 * p.imp_5 AS weighted_job_security
-       ,s.cur_6 * p.imp_6 AS weighted_benefits
-       ,s.cur_7 * p.imp_7 AS weighted_advancement
-       ,s.cur_8 * p.imp_8 AS weighted_enjoyment
-       ,s.cur_9 * p.imp_9 AS weighted_purpose
-       ,s.cur_10 * p.imp_10 AS weighted_power
+       ,p.imp_1/10 AS level_pay_weight
+       ,p.imp_2/10 AS stable_pay_weight
+       ,p.imp_3/10 AS stable_hours_weight
+       ,p.imp_4/10 AS control_hours_weight
+       ,p.imp_5/10 AS job_security_weight
+       ,p.imp_6/10 AS benefits_weight
+       ,p.imp_7/10 AS advancement_weight
+       ,p.imp_8/10 AS enjoyment_weight
+       ,p.imp_9/10 AS purpose_weight
+       ,p.imp_10/10 AS power_weight
+       ,s.cur_1 * p.imp_1 AS level_pay_quality
+       ,s.cur_2 * p.imp_2 AS stable_pay_quality
+       ,s.cur_3 * p.imp_3 AS stable_hours_quality
+       ,s.cur_4 * p.imp_4 AS control_hours_location_quality
+       ,s.cur_5 * p.imp_5 AS job_security_quality
+       ,s.cur_6 * p.imp_6 AS benefits_quality
+       ,s.cur_7 * p.imp_7 AS advancement_quality
+       ,s.cur_8 * p.imp_8 AS enjoyment_quality
+       ,s.cur_9 * p.imp_9 AS purpose_quality
+       ,s.cur_10 * p.imp_10 AS power_quality
 
        ,a.[name]
        ,a.kipp_ms_graduate_c
