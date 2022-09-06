@@ -15,17 +15,17 @@ WITH unpivoted AS (
        SELECT associate_id
              ,position_id
              ,_modified AS date_modified
-             ,CAST(business_unit_description AS NVARCHAR(MAX)) AS business_unit_description
-             ,CAST(location_description AS NVARCHAR(MAX)) AS location_description
-             ,CAST(home_department_description AS NVARCHAR(MAX)) AS home_department_description
-             ,CAST(job_title_description AS NVARCHAR(MAX)) AS job_title_description
-             ,CAST(reports_to_associate_id AS NVARCHAR(MAX)) AS reports_to_associate_id
-             ,CAST(annual_salary AS NVARCHAR(MAX)) AS annual_salary
-             ,CAST(flsa_description AS NVARCHAR(MAX)) AS flsa_description
-             ,CAST(wfmgr_pay_rule AS NVARCHAR(MAX)) AS wfmgr_pay_rule
-             ,CAST(wfmgr_accrual_profile AS NVARCHAR(MAX)) AS wfmgr_accrual_profile
-             ,CAST(wfmgr_ee_type AS NVARCHAR(MAX)) AS wfmgr_ee_type
-             ,CAST(wfmgr_badge_number AS NVARCHAR(MAX)) AS wfmgr_badge_number
+             ,CAST(business_unit_description AS NVARCHAR(64)) AS business_unit_description
+             ,CAST(location_description AS NVARCHAR(64)) AS location_description
+             ,CAST(home_department_description AS NVARCHAR(64)) AS home_department_description
+             ,CAST(job_title_description AS NVARCHAR(64)) AS job_title_description
+             ,CAST(reports_to_associate_id AS NVARCHAR(64)) AS reports_to_associate_id
+             ,CAST(annual_salary AS NVARCHAR(64)) AS annual_salary
+             ,CAST(flsa_description AS NVARCHAR(64)) AS flsa_description
+             ,CAST(wfmgr_pay_rule AS NVARCHAR(64)) AS wfmgr_pay_rule
+             ,CAST(wfmgr_accrual_profile AS NVARCHAR(64)) AS wfmgr_accrual_profile
+             ,CAST(wfmgr_ee_type AS NVARCHAR(64)) AS wfmgr_ee_type
+             ,CAST(wfmgr_badge_number AS NVARCHAR(64)) AS wfmgr_badge_number
        FROM gabby.adp.employees_archive
        WHERE position_id IS NOT NULL
          AND position_status <> 'Terminated'
@@ -57,6 +57,6 @@ SELECT u.associate_id
 
       ,w.associate_oid
 FROM unpivoted u
-JOIN gabby.adp.workers_clean_static w
+INNER JOIN gabby.adp.workers_clean_static w
   ON u.associate_id = w.worker_id
 WHERE u.new_value <> u.prev_value

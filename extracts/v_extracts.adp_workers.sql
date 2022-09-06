@@ -18,7 +18,7 @@ SELECT scw.employee_number
 
       ,CASE 
         WHEN wfm.associate_id IS NOT NULL
-             THEN CONCAT('DR', CAST(CURRENT_TIMESTAMP, 112) AS NVARCHAR(8))
+             THEN CONCAT('DR', CONVERT(NVARCHAR(8), CURRENT_TIMESTAMP, 112))
        END AS wfm_trigger
 FROM gabby.people.staff_roster scw
 INNER JOIN gabby.adp.workers_clean_static w
