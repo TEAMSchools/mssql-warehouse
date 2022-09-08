@@ -68,4 +68,4 @@ LEFT JOIN gabby.powerschool.u_studentsuserfields suf
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.rn_year = 1
   AND co.grade_level <> 99
-  AND co.reporting_schoolid <> 'Out of District'
+  AND co.reporting_school_name <> 'Out of District'
