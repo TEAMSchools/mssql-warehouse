@@ -10,6 +10,8 @@ WITH section_teacher AS (
         ,scaff.sectionid
         ,scaff.[db_name]
 
+        ,sec.credittype
+        ,sec.course_name
         ,sec.section_number
         ,sec.external_expression
         ,sec.termid
@@ -356,22 +358,27 @@ SELECT co.student_number
 
       ,cg.course_number
       ,REPLACE(cg.reporting_term,'RT','Q') AS term_name
-      ,cg.grade_category AS finalgradename
+      ,cg.storecode_type AS finalgradename
       ,NULL AS excludefromgpa
       ,NULL AS credit_hours
-      ,cg.grade_category_pct AS term_grade_percent_adjusted
+      ,cg.category_pct AS term_grade_percent_adjusted
       ,NULL AS term_grade_letter_adjusted
       ,NULL AS term_gpa_points
-      ,cg.grade_category_pct_y1 AS y1_grade_percent_adjusted
+      ,cg.category_pct_y1 AS y1_grade_percent_adjusted
       ,NULL AS y1_grade_letter
       ,NULL AS y1_gpa_points
-      ,cg.is_curterm
-      ,cg.credittype
-      ,cg.course_name
+      ,CASE 
+          WHEN CAST(CURRENT_TIMESTAMP AS DATE)
+               BETWEEN cg.termbin_start_date AND cg.termbin_end_date 
+               THEN 1 
+          ELSE 0 
+         END AS is_curterm
+
+      ,st.credittype
+      ,st.course_name
       ,NULL AS earnedcrhrs
       ,NULL AS citizenship
       ,NULL AS comment_value
-
       ,st.sectionid
       ,st.termid
       ,st.teacher_name
@@ -384,10 +391,10 @@ SELECT co.student_number
       ,NULL AS need_90
 FROM gabby.powerschool.cohort_identifiers_static co 
 LEFT JOIN gabby.powerschool.category_grades_static cg
-  ON co.student_number = cg.student_number
- AND co.academic_year = cg.academic_year 
+  ON co.studentid = cg.studentid
+ AND co.yearid = cg.yearid 
  AND co.[db_name] = cg.[db_name]
- AND cg.grade_category <> 'Q'
+ AND cg.storecode_type  <> 'Q'
 LEFT JOIN section_teacher st
   ON co.studentid = st.studentid
  AND co.yearid = st.yearid
@@ -423,22 +430,22 @@ SELECT co.student_number
 
       ,cy.course_number
       ,'Y1' AS term_name
-      ,CONCAT(cy.grade_category, 'Y1') AS finalgradename
+      ,CONCAT(cy.storecode_type, 'Y1') AS finalgradename
       ,NULL AS excludefromgpa
       ,NULL AS credit_hours
-      ,cy.grade_category_pct_y1 AS term_grade_percent_adjusted
+      ,cy.category_pct_y1 AS term_grade_percent_adjusted
       ,NULL AS term_grade_letter_adjusted
       ,NULL AS term_gpa_points
-      ,cy.grade_category_pct_y1 AS y1_grade_percent_adjusted
+      ,cy.category_pct_y1 AS y1_grade_percent_adjusted
       ,NULL AS y1_grade_letter
       ,NULL AS y1_gpa_points
-      ,cy.is_curterm
-      ,cy.credittype
-      ,cy.course_name
+      ,1 AS is_curterm
+
+      ,st.credittype
+      ,st.course_name
       ,NULL AS earnedcrhrs
       ,NULL AS citizenship
       ,NULL AS comment_value
-
       ,st.sectionid
       ,st.termid
       ,st.teacher_name
@@ -451,11 +458,11 @@ SELECT co.student_number
       ,NULL AS need_90
 FROM gabby.powerschool.cohort_identifiers_static co 
 LEFT JOIN gabby.powerschool.category_grades_static cy
-  ON co.student_number = cy.student_number
- AND co.academic_year = cy.academic_year 
+  ON co.studentid = cy.studentid
+ AND co.yearid = cy.yearid
  AND co.[db_name] = cy.[db_name]
- AND cy.grade_category <> 'Q'
- AND cy.is_curterm = 1
+ AND cy.storecode_type <> 'Q'
+ AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN cy.termbin_start_date AND cy.termbin_end_date 
 LEFT JOIN section_teacher st
   ON co.studentid = st.studentid
  AND co.yearid = st.yearid

@@ -132,7 +132,7 @@ SELECT co.student_number
       ,gr.term_grade_percent AS cur_term_rdg_gr
       ,gr.y1_grade_percent_adj AS y1_rdg_gr
       
-      ,ele.grade_category_pct AS cur_term_rdg_hw_avg
+      ,ele.category_pct AS cur_term_rdg_hw_avg
 
       ,bk.vch_content_title AS last_book_title
       ,CAST(bk.dt_taken AS VARCHAR) AS last_book_quiz_date
@@ -151,12 +151,12 @@ LEFT JOIN gabby.powerschool.final_grades_static gr
  AND enr.course_number = gr.course_number
  AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN gr.termbin_start_date AND gr.termbin_end_date
 LEFT JOIN gabby.powerschool.category_grades_static ele
-  ON co.student_number = ele.student_number
- AND co.academic_year = ele.academic_year 
+  ON co.studentid = ele.studentid
+ AND co.yearid = ele.yearid
  AND co.[db_name] = ele.[db_name]
  AND enr.course_number = ele.course_number
- AND ele.grade_category = 'H'
- AND ele.is_curterm = 1
+ AND ele.storecode_type = 'H'
+ AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN ele.termbin_start_date AND ele.termbin_end_date
 LEFT JOIN fp fp_base
   ON co.student_number = fp_base.student_number
  AND fp_base.rn_base = 1

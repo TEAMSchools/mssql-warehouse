@@ -38,8 +38,8 @@ SELECT co.student_number
        ) AS need_60
 
       /* category grades */
-      ,cat.m_cur AS a_term
-      ,cat.p_cur AS p_term
+      ,cat.f_cur AS f_term
+      ,cat.s_cur AS s_term
       ,cat.w_cur AS w_term
       ,cat.w_rt1
       ,cat.w_rt2
@@ -67,12 +67,12 @@ LEFT JOIN gabby.powerschool.cc
  AND fg.sectionid = cc.sectionid
  AND fg.[db_name] = cc.[db_name]
 LEFT JOIN gabby.powerschool.category_grades_wide_static cat
-  ON co.student_number = cat.student_number
+  ON co.studentid = cat.studentid
  AND fg.course_number = cat.course_number
  AND fg.reporting_term = cat.reporting_term
  AND fg.[db_name] = cat.[db_name]
 LEFT JOIN gabby.powerschool.category_grades_wide_static kctz
-  ON co.student_number = kctz.student_number
+  ON co.studentid = kctz.studentid
  AND fg.reporting_term = kctz.reporting_term
  AND fg.[db_name] = kctz.[db_name]
  AND kctz.course_number = 'HR'

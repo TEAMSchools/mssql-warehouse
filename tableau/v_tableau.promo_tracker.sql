@@ -89,7 +89,7 @@ WITH roster AS (
         ,'TERM' AS subdomain
         ,'Term' AS finalgradename
   FROM gabby.powerschool.final_grades_static gr
-  WHERE gr.academic_year IN (gabby.utilities.GLOBAL_ACADEMIC_YEAR(), gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
+  WHERE gr.yearid >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990) - 1
     AND gr.excludefromgpa = 0
 
   UNION ALL
