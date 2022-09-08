@@ -37,7 +37,7 @@ FROM
            ,tb.date_1 AS startdate
            ,tb.date_2 AS enddate
            ,LEFT(tb.storecode, 1) AS grade_category
-           ,CAST(CONCAT('RT', RIGHT(tb.storecode, 1)) AS VARCHAR(5)) AS reporting_term
+           ,CAST(CONCAT('RT', RIGHT(tb.storecode, 1)) AS NVARCHAR(8)) AS reporting_term
 
            ,ROUND(CASE WHEN pgf.grade = '--' THEN NULL ELSE pgf.[percent] END, 0) AS grade_category_pct
            ,CASE WHEN pgf.citizenship <> '' THEN pgf.citizenship END AS citizenship
@@ -46,11 +46,11 @@ FROM
               PARTITION BY enr.student_number, enr.academic_year, enr.course_number, tb.storecode
                 ORDER BY pgf.[percent] DESC, enr.sectionid DESC) AS rn_year
      FROM powerschool.course_enrollments_current_static enr
-     JOIN powerschool.terms t
+     INNER JOIN powerschool.terms t
        ON enr.schoolid = t.schoolid
       AND t.yearid = (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990)
       AND t.isyearrec = 1
-     JOIN powerschool.termbins tb
+     INNER JOIN powerschool.termbins tb
        ON t.schoolid = tb.schoolid
       AND t.id = tb.termid
       AND tb.date_1 <= CURRENT_TIMESTAMP

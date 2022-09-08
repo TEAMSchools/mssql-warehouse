@@ -19,7 +19,7 @@ SELECT CAST(co.schoolid AS VARCHAR(25)) AS [School_id]
        END AS [Grade]
       ,co.gender AS [Gender]
       ,co.cohort AS [Graduation_year]
-      ,CAST(dob, 101 AS VARCHAR(25)) AS [DOB]
+      ,CONVERT(VARCHAR, dob, 101) AS [DOB]
       ,co.ethnicity AS [Race]
       ,NULL AS [Hispanic_Latino]
       ,NULL AS [Home_language]
@@ -68,4 +68,4 @@ LEFT JOIN gabby.powerschool.u_studentsuserfields suf
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.rn_year = 1
   AND co.grade_level <> 99
-  
+  AND co.reporting_schoolid <> 'Out of District'
