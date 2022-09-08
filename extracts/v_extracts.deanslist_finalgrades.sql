@@ -24,12 +24,10 @@ SELECT co.student_number
 
       ,sec.dcid AS sections_dcid
       ,sec.section_number
-      
-      ,t.lastfirst AS teacher_name
-
-      ,cou.course_name
-      ,cou.credit_hours
-      ,ABS(cou.excludefromgpa - 1) AS include_grades_display
+      ,sec.teacher_lastfirst AS teacher_name
+      ,sec.course_name
+      ,sec.credit_hours
+      ,ABS(sec.excludefromgpa - 1) AS include_grades_display
 
       ,ISNULL(cc.currentabsences, 0) AS currentabsences
       ,ISNULL(cc.currenttardies, 0) AS currenttardies
@@ -61,15 +59,9 @@ INNER JOIN gabby.powerschool.final_grades_wide_static fg
  AND co.yearid = fg.yearid
  AND co.[db_name] = fg.[db_name]
  AND fg.reporting_term <> 'CUR'
-INNER JOIN gabby.powerschool.sections sec
-  ON fg.sectionid = sec.id
+INNER JOIN gabby.powerschool.sections_identifiers sec
+  ON fg.sectionid = sec.sectionid
  AND fg.[db_name] = sec.[db_name]
-INNER JOIN gabby.powerschool.teachers_static t
-  ON sec.teacher = t.id
- AND sec.[db_name] = t.[db_name]
-INNER JOIN gabby.powerschool.courses cou
-  ON fg.course_number = cou.course_number
- AND fg.[db_name] = cou.[db_name]
 LEFT JOIN gabby.powerschool.cc
   ON fg.studentid = cc.studentid
  AND fg.sectionid = cc.sectionid

@@ -26,18 +26,17 @@ WITH enr AS (
              ,cc.dateleft
              ,CASE WHEN cc.sectionid < 0 THEN 1.0 ELSE 0.0 END AS is_dropped_section
 
-             ,sec.id AS sectionid
+             ,sec.sectionid
              ,sec.course_number
              ,sec.termid
-
-             ,cou.gradescaleid
-             ,cou.excludefromgpa
-             ,cou.credit_hours AS potential_credit_hours
+             ,sec.excludefromgpa
+             ,sec.courses_gradescaleid AS gradescaleid
+             ,sec.credit_hours AS potential_credit_hours
              ,CASE
-               WHEN cou.gradescaleid = 712 THEN 874 /* unweighted 2016-2018 */
-               WHEN cou.gradescaleid = 991 THEN 976 /* unweighted 2019+ */
-               WHEN cou.gradescaleid IS NULL THEN 874 /* MISSING GRADESCALE - default 2016+ */
-               ELSE cou.gradescaleid
+               WHEN sec.courses_gradescaleid = 712 THEN 874 /* unweighted 2016-2018 */
+               WHEN sec.courses_gradescaleid = 991 THEN 976 /* unweighted 2019+ */
+               WHEN sec.courses_gradescaleid IS NULL THEN 874 /* MISSING GRADESCALE - default 2016+ */
+               ELSE sec.courses_gradescaleid
               END AS gradescaleid_unweighted
 
              ,tb.yearid
@@ -46,15 +45,13 @@ WITH enr AS (
              ,tb.date_2 AS termbin_end_date
 
              ,CASE
-               WHEN MIN(tb.storecode) OVER(PARTITION BY sec.id) LIKE 'Q%' THEN 25.0
+               WHEN MIN(tb.storecode) OVER(PARTITION BY sec.sectionid) LIKE 'Q%' THEN 25.0
                WHEN tb.storecode LIKE 'Q%' THEN 22.5
                WHEN tb.storecode LIKE 'E%' THEN 5.0
               END AS term_weighted_pts_poss
        FROM powerschool.cc
-       INNER JOIN powerschool.sections sec
-         ON ABS(cc.sectionid) = sec.id
-       INNER JOIN powerschool.courses cou
-         ON sec.course_number = cou.course_number
+       INNER JOIN powerschool.sections_identifiers sec
+         ON ABS(cc.sectionid) = sec.sectionid
        INNER JOIN powerschool.termbins tb
          ON cc.schoolid = tb.schoolid
         AND (tb.storecode LIKE 'Q%' OR tb.storecode LIKE 'E%')
