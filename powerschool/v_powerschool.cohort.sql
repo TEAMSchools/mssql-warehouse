@@ -49,10 +49,11 @@ SELECT studentid
       ,CASE 
         WHEN academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() THEN NULL
         WHEN exitcode = 'G1' THEN 'Graduated'
-        WHEN exitcode LIKE 'T%' THEN 'Transferred'
-        WHEN prev_grade_level < grade_level THEN 'Promoted'
-        WHEN prev_grade_level = grade_level THEN 'Retained'
-        WHEN prev_grade_level > grade_level THEN 'Demoted'
+        /* this is wrong or N/A */
+        --WHEN exitcode LIKE 'T%' THEN 'Transferred'
+        --WHEN prev_grade_level < grade_level THEN 'Promoted'
+        --WHEN prev_grade_level = grade_level THEN 'Retained'
+        --WHEN prev_grade_level > grade_level THEN 'Demoted'
        END AS eoy_status
 FROM
     (
