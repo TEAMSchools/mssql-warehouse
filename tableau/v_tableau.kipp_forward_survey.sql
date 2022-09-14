@@ -1,7 +1,7 @@
 USE gabby
 GO
 
---CREATE OR ALTER VIEW tableau.kipp_forward_survey AS
+CREATE OR ALTER VIEW tableau.kipp_forward_survey AS
 
 WITH alumni_data AS (
   SELECT e.student_c
@@ -19,6 +19,7 @@ WITH alumni_data AS (
         ,c.first_name
         ,c.last_name
         ,c.[email]
+        ,c.secondary_email_c AS [email2]
         ,c.kipp_ms_graduate_c
         ,c.kipp_hs_graduate_c
         ,c.kipp_hs_class_c
@@ -193,7 +194,7 @@ FROM survey_pivot s
 LEFT JOIN weight_pivot p
   ON s.survey_id = p.survey_id
 LEFT JOIN alumni_data a
-  ON s.alumni_email = a.email
+  ON (s.alumni_email = a.email OR s.alumni_email = a.email2)
  AND a.rn_latest = 1
 LEFT JOIN surveygizmo.survey_response_disqualified dq
   ON s.survey_id = dq.survey_id 
