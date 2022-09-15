@@ -167,6 +167,7 @@ LEFT JOIN gabby.powerschool.student_access_accounts_static saa
   ON co.student_number = saa.student_number
 LEFT JOIN titan.person_data_clean tp
   ON co.student_number = tp.person_identifier
+ AND co.academic_year = tp.application_academic_school_year_clean
 LEFT JOIN powerschool.enrollment_identifiers_static enr
   ON co.student_number = enr.student_number
  AND co.yearid = enr.yearid
