@@ -9,14 +9,14 @@ SELECT co.student_number
       ,fg.course_number
       ,fg.sectionid
       ,fg.storecode AS term
-      ,fg.rt1_term_grade_percent_adjusted AS q1_pct
-      ,fg.rt1_term_grade_letter_adjusted AS q1_letter
-      ,fg.rt2_term_grade_percent_adjusted AS q2_pct
-      ,fg.rt2_term_grade_letter_adjusted AS q2_letter
-      ,fg.rt3_term_grade_percent_adjusted AS q3_pct
-      ,fg.rt3_term_grade_letter_adjusted AS q3_letter
-      ,fg.rt4_term_grade_percent_adjusted AS q4_pct
-      ,fg.rt4_term_grade_letter_adjusted AS q4_letter
+      ,fg.rt1_term_grade_percent_adjusted AS Q1_pct
+      ,fg.rt1_term_grade_letter_adjusted AS Q1_letter
+      ,fg.rt2_term_grade_percent_adjusted AS Q2_pct
+      ,fg.rt2_term_grade_letter_adjusted AS Q2_letter
+      ,fg.rt3_term_grade_percent_adjusted AS Q3_pct
+      ,fg.rt3_term_grade_letter_adjusted AS Q3_letter
+      ,fg.rt4_term_grade_percent_adjusted AS Q4_pct
+      ,fg.rt4_term_grade_letter_adjusted AS Q4_letter
       ,fg.y1_grade_percent_adj AS y1_pct
       ,fg.y1_grade_letter AS y1_letter
       ,NULL AS e1_pct
