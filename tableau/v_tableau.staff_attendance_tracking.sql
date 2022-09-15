@@ -137,6 +137,7 @@ WITH school_ids AS (
         ,transaction_end_date_time
         ,employee_payrule
   FROM gabby.adp.wfm_time_details td
+  WHERE transaction_type <> 'Historical Correction'
   GROUP BY _modified
           ,employee_name
           ,job
