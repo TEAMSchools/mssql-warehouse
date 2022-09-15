@@ -36,7 +36,7 @@ WITH school_ids AS (
 ,holidays AS (
   SELECT [location]
         ,transaction_apply_date
-        ,transaction_type
+        ,transaction_type AS holiday_status
   FROM gabby.adp.wfm_time_details
   WHERE transaction_type = 'Worked Holiday Edit'
   GROUP BY [location], transaction_apply_date, transaction_type
@@ -120,6 +120,41 @@ WITH school_ids AS (
   ) p
  )
 
+,time_details_clean AS (
+  SELECT _modified
+        ,employee_name
+        ,job
+        ,[location]
+        ,transaction_apply_date
+        ,transaction_apply_to
+        ,transaction_type
+        ,transaction_in_exceptions
+        ,transaction_out_exceptions
+        ,[hours]
+        ,[money]
+        ,[days]
+        ,transaction_start_date_time
+        ,transaction_end_date_time
+        ,employee_payrule
+  FROM gabby.adp.wfm_time_details td
+  WHERE transaction_type <> 'Historical Correction'
+  GROUP BY _modified
+          ,employee_name
+          ,job
+          ,[location]
+          ,transaction_apply_date
+          ,transaction_apply_to
+          ,transaction_type
+          ,transaction_in_exceptions
+          ,transaction_out_exceptions
+          ,[hours]
+          ,[money]
+          ,[days]
+          ,transaction_start_date_time
+          ,transaction_end_date_time
+          ,employee_payrule
+  )
+
 SELECT td.job AS job_title
       ,td.[location] AS budget_location
       ,td.transaction_apply_to
@@ -168,10 +203,10 @@ SELECT td.job AS job_title
       ,LOWER(sl.sl_samaccountname) AS sl_samaccountname
 
       ,CASE 
-        WHEN h.transaction_type = 'Worked Holiday Edit' 
+        WHEN h.holiday_status = 'Worked Holiday Edit' 
          AND td.transaction_apply_to = 'Worked Shift Segment' 
              THEN 1
-        WHEN h.transaction_type = 'Worked Holiday Edit' THEN 0
+        WHEN h.holiday_status = 'Worked Holiday Edit' THEN 0
         WHEN sd.[type] = 'WS' 
          AND td.transaction_start_date_time IS NULL 
          AND td.transaction_end_date_time IS NULL 
@@ -180,8 +215,7 @@ SELECT td.job AS job_title
         ELSE 1
        END AS denominator_day
       ,CASE 
-        WHEN h.transaction_type = 'Worked Holiday Edit' 
-         AND td.transaction_type = 'Worked Shift Segment' 
+        WHEN h.holiday_status = 'Worked Holiday Edit' 
              THEN 1
         WHEN sd.[type] = 'WS' 
          AND td.transaction_start_date_time IS NOT NULL 
@@ -204,7 +238,7 @@ SELECT td.job AS job_title
       ,acb.sick_balance
       ,acb.unused_pto_balance
       ,acb.vacation_balance
-FROM gabby.adp.wfm_time_details td
+FROM time_details_clean td
 INNER JOIN school_ids id
   ON td.[location] = id.[location]
 LEFT JOIN holidays h
