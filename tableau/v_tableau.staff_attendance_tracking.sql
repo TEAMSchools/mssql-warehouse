@@ -8,7 +8,7 @@ WITH school_ids AS (
 
         ,cw.ps_school_id
         ,cw.site_name_clean
-        --,cw.site_abbreviation --add this after Charlie pushes update
+        ,cw.site_abbreviation
   FROM
       (
        SELECT td.[location]
@@ -191,7 +191,7 @@ SELECT td.job AS job_title
 
       ,id.ps_school_id
       ,id.site_name_clean
-      --,id.site_abbreviation --Add back later
+      ,id.site_abbreviation
 
       ,cw.df_employee_number
       ,cw.preferred_name
