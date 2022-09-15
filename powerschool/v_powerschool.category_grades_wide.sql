@@ -7,7 +7,7 @@ WITH grades_long AS (
         ,cat.course_number
         ,cat.reporting_term
         ,cat.reporting_term AS rt
-        ,cat.storecode
+        ,cat.storecode_type
         ,cat.category_pct
         ,cat.citizenship
         ,CASE
@@ -32,7 +32,7 @@ WITH grades_long AS (
         ,'ALL' AS course_number
         ,cat.reporting_term
         ,cat.reporting_term AS rt
-        ,cat.storecode
+        ,cat.storecode_type
         ,ROUND(AVG(cat.category_pct), 0) AS category_pct
         ,NULL AS citizenship
         ,CASE
@@ -48,7 +48,7 @@ WITH grades_long AS (
           ,cat.schoolid
           ,cat.yearid
           ,cat.reporting_term
-          ,cat.storecode
+          ,cat.storecode_type
           ,cat.termbin_start_date
           ,cat.termbin_end_date
 
@@ -60,7 +60,7 @@ WITH grades_long AS (
         ,cat.course_number
         ,cat.reporting_term
         ,'CUR' AS rt
-        ,cat.storecode
+        ,cat.storecode_type
         ,cat.category_pct
         ,cat.citizenship
         ,1 AS is_curterm
@@ -80,7 +80,7 @@ WITH grades_long AS (
         ,'ALL' AS course_number
         ,cat.reporting_term
         ,'CUR' AS rt
-        ,cat.storecode
+        ,cat.storecode_type
         ,ROUND(AVG(cat.category_pct), 0) AS category_pct
         ,NULL AS citizenship
         ,1 AS is_curterm
@@ -92,7 +92,7 @@ WITH grades_long AS (
           ,cat.schoolid
           ,cat.yearid
           ,cat.reporting_term
-          ,cat.storecode
+          ,cat.storecode_type
  )
 
 
@@ -105,7 +105,7 @@ WITH grades_long AS (
         ,reporting_term
         ,rt
         ,is_curterm
-        ,storecode
+        ,storecode_type
         ,field
         ,[value]
   FROM
@@ -118,7 +118,7 @@ WITH grades_long AS (
              ,reporting_term
              ,rt
              ,is_curterm
-             ,storecode
+             ,storecode_type
              ,CAST(category_pct AS NVARCHAR(8)) AS category_pct
              ,CAST(citizenship AS NVARCHAR(8)) AS citizenship
        FROM grades_long
@@ -171,7 +171,7 @@ WITH grades_long AS (
              ,gr.reporting_term
              ,gr.is_curterm
              ,gr.[value]
-             ,CONCAT(gr.storecode, '_', gr.rt) AS pivot_field
+             ,CONCAT(gr.storecode_type, '_', gr.rt) AS pivot_field
              ,MAX(gr.schoolid) OVER(
                 PARTITION BY gr.studentid, gr.yearid, gr.course_number, gr.reporting_term 
                   ORDER BY gr.reporting_term ASC) AS schoolid
@@ -193,7 +193,7 @@ WITH grades_long AS (
                   ORDER BY gr.reporting_term ASC) AS schoolid
        FROM grades_unpivot gr
        WHERE gr.field = 'citizenship'
-         AND gr.storecode = 'Q'
+         AND gr.storecode_type = 'Q'
       ) sub
   PIVOT(
     MAX([value])
