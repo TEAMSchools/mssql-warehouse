@@ -144,8 +144,7 @@ FROM
             END AS ktc_status
      FROM gabby.powerschool.cohort_identifiers_static co
      LEFT JOIN gabby.alumni.contact c
-       ON co.student_number = c.school_specific_id_c
-      AND ISNUMERIC(c.school_specific_id_c) = 1
+       ON CAST(co.student_number AS NVARCHAR(8)) = c.school_specific_id_c
       AND c.is_deleted = 0
      LEFT JOIN gabby.alumni.record_type rt
        ON c.record_type_id = rt.id
