@@ -120,39 +120,71 @@ WITH school_ids AS (
   ) p
  )
 
-,time_details_clean AS (
-  SELECT _modified
-        ,employee_name
-        ,job
-        ,[location]
+,missed_punches AS (
+  SELECT employee_name
         ,transaction_apply_date
-        ,transaction_apply_to
-        ,transaction_type
-        ,transaction_in_exceptions
-        ,transaction_out_exceptions
-        ,[hours]
-        ,[money]
-        ,[days]
-        ,transaction_start_date_time
-        ,transaction_end_date_time
-        ,employee_payrule
+        ,MAX(CASE WHEN transaction_in_exceptions = 'Missed In Punch' THEN transaction_in_exceptions ELSE NULL END) AS transaction_in_exceptions
+        ,MAX(CASE WHEN transaction_out_exceptions = 'Missed Out Punch' THEN transaction_out_exceptions ELSE NULL END) AS transaction_out_exceptions
   FROM gabby.adp.wfm_time_details td
-  WHERE transaction_type <> 'Historical Correction'
-  GROUP BY _modified
-          ,employee_name
-          ,job
-          ,[location]
-          ,transaction_apply_date
-          ,transaction_apply_to
-          ,transaction_type
-          ,transaction_in_exceptions
-          ,transaction_out_exceptions
-          ,[hours]
-          ,[money]
-          ,[days]
-          ,transaction_start_date_time
-          ,transaction_end_date_time
-          ,employee_payrule
+  WHERE (transaction_in_exceptions = 'Missed In Punch' OR transaction_out_exceptions = 'Missed Out Punch')
+  GROUP BY employee_name, transaction_apply_date
+  )
+
+,time_details_clean AS (
+  SELECT sub._modified
+        ,sub.employee_name
+        ,sub.job
+        ,sub.[location]
+        ,sub.transaction_apply_date
+        ,sub.transaction_apply_to
+        ,sub.transaction_type
+        ,COALESCE(sub.transaction_in_exceptions,mp.transaction_in_exceptions + ' (Corrected)') AS transaction_in_exceptions
+        ,COALESCE(sub.transaction_out_exceptions,mp.transaction_out_exceptions + ' (Corrected)') AS transaction_out_exceptions
+        ,sub.[hours]
+        ,sub.[money]
+        ,sub.[days]
+        ,sub.transaction_start_date_time
+        ,sub.transaction_end_date_time
+        ,sub.employee_payrule
+        ,sub.rn_adj
+  FROM (
+        SELECT _modified
+              ,employee_name
+              ,job
+              ,[location]
+              ,transaction_apply_date
+              ,transaction_apply_to
+              ,transaction_type
+              ,transaction_in_exceptions
+              ,transaction_out_exceptions
+              ,[hours]
+              ,[money]
+              ,[days]
+              ,transaction_start_date_time
+              ,transaction_end_date_time
+              ,employee_payrule
+              ,ROW_NUMBER() OVER(PARTITION BY employee_name, transaction_apply_date ORDER BY _modified DESC) AS rn_adj
+        FROM gabby.adp.wfm_time_details td
+        WHERE transaction_type <> 'Historical Correction'
+        GROUP BY _modified
+                ,employee_name
+                ,job
+                ,[location]
+                ,transaction_apply_date
+                ,transaction_apply_to
+                ,transaction_type
+                ,transaction_in_exceptions
+                ,transaction_out_exceptions
+                ,[hours]
+                ,[money]
+                ,[days]
+                ,transaction_start_date_time
+                ,transaction_end_date_time
+                ,employee_payrule) sub
+      LEFT JOIN missed_punches mp
+        ON sub.employee_name = mp.employee_name
+       AND sub.transaction_apply_date = mp.transaction_apply_date
+    WHERE sub.rn_adj = 1
   )
 
 SELECT td.job AS job_title
@@ -173,19 +205,17 @@ SELECT td.job AS job_title
        ) AS adp_associate_id
       ,CASE 
         WHEN td.transaction_in_exceptions = 'Late In' THEN 1 
-        WHEN td.transaction_in_exceptions = 'Entrada tardía' THEN 1
         ELSE 0 
        END AS late_status
       ,CASE 
         WHEN td.transaction_out_exceptions = 'Early Out' THEN 1 
-        WHEN td.transaction_out_exceptions = 'Salida temprana' THEN 1
         ELSE 0 
        END AS early_out_status
       ,CASE 
         WHEN td.transaction_in_exceptions = 'Missed In Punch' THEN 1
         WHEN td.transaction_out_exceptions = 'Missed Out Punch' THEN 1
-        WHEN td.transaction_in_exceptions = 'Marcaje de entrada omitido' THEN 1
-        WHEN td.transaction_out_exceptions = 'Marcaje de salida omitido' THEN 1
+        WHEN td.transaction_in_exceptions = 'Missed In Punch (Corrected)' THEN 1
+        WHEN td.transaction_out_exceptions = 'Missed Out Punch (Corrected)' THEN 1
         ELSE 0 
        END AS missed_punch_status
 
