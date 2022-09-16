@@ -16,8 +16,8 @@ WITH ug_school AS (
   SELECT student_number
         ,schoolid
         ,[db_name]
-        ,CAST(MIN(entrydate) AS VARCHAR) AS school_entrydate
-        ,CAST(MAX(exitdate) AS VARCHAR) AS school_exitdate
+        ,MIN(entrydate) AS school_entrydate
+        ,MAX(exitdate) AS school_exitdate
   FROM gabby.powerschool.cohort_identifiers_static s
   GROUP BY student_number, schoolid, [db_name]
  )
@@ -25,7 +25,7 @@ WITH ug_school AS (
 SELECT co.student_number
       ,co.state_studentnumber AS [SID]
       ,co.team
-      ,CAST(co.dob AS VARCHAR) AS dob
+      ,CONVERT(NVARCHAR, co.dob, 101) AS dob
       ,co.home_phone
       ,co.mother AS parent1_name
       ,co.father AS parent2_name
@@ -46,13 +46,12 @@ SELECT co.student_number
       ,CONCAT(co.street, ', ', co.city, ', ', co.[state], ' ', co.zip) AS home_address
       ,co.student_web_id + '@teamstudents.org' AS student_email
       ,CONCAT(co.student_web_password, 'kipp') AS student_web_password
-
       ,co.student_web_id + '.fam' AS family_access_id
 
       ,s.sched_nextyeargrade
 
-      ,ed.school_entrydate
-      ,ed.school_exitdate
+      ,CONVERT(NVARCHAR, ed.school_entrydate, 101) AS school_entrydate
+      ,CONVERT(NVARCHAR, ed.school_exitdate, 101) AS school_exitdate
 
       ,ktc.counselor_name AS ktc_counselor_name
       ,ktc.counselor_phone AS ktc_counselor_phone
@@ -61,10 +60,10 @@ SELECT co.student_number
       ,gpa.GPA_Y1
       ,gpa.gpa_term
 FROM gabby.powerschool.cohort_identifiers_static co
-JOIN gabby.powerschool.students s
+INNER JOIN gabby.powerschool.students s
   ON co.student_number = s.student_number
  AND co.[db_name] = s.[db_name]
-JOIN ug_school ug
+INNER JOIN ug_school ug
   ON co.student_number = ug.student_number
  AND co.[db_name] = ug.[db_name]
 LEFT JOIN enroll_dates ed
