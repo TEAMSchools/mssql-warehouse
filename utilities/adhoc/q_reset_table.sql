@@ -1,6 +1,6 @@
-DECLARE @db_name NVARCHAR(MAX) = DB_NAME()
-       ,@schema_name NVARCHAR(MAX) = ''
+DECLARE @schema_name NVARCHAR(MAX) = ''
        ,@view_name NVARCHAR(MAX) = ''
+       ,@db_name NVARCHAR(MAX) = DB_NAME()
        ,@objname NVARCHAR(MAX)
        ,@table_name NVARCHAR(MAX)
        ,@table_name_old NVARCHAR(MAX)
