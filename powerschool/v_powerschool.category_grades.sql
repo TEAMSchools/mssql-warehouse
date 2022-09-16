@@ -52,12 +52,14 @@ SELECT sub.studentid
       ,sub.citizenship
       ,sub.rn_storecode_course
 
-      ,ROUND(
-         AVG(sub.category_pct) OVER(
-           PARTITION BY sub.studentid, sub.yearid, sub.course_number, sub.storecode_type
-           ORDER BY sub.termbin_start_date
-         )
-        ,0
+      ,CAST(
+         ROUND(
+           AVG(sub.category_pct) OVER(
+             PARTITION BY sub.studentid, sub.yearid, sub.course_number, sub.storecode_type
+             ORDER BY sub.termbin_start_date
+           )
+          ,0
+         ) AS DECIMAL(3, 0)
        ) AS category_pct_y1
 FROM
     (
@@ -74,13 +76,12 @@ FROM
            ,enr.termbin_end_date
            ,enr.is_dropped_course
 
-           ,ROUND(
-              CASE 
+           ,CASE 
                WHEN pgf.grade = '--' THEN NULL
-               ELSE pgf.[percent]
+               ELSE CAST(pgf.[percent] AS DECIMAL(3, 0))
               END
-             ,0
-            ) AS category_pct
+            
+             AS category_pct
            ,CASE WHEN pgf.citizenship <> '' THEN pgf.citizenship END AS citizenship
 
            ,ROW_NUMBER() OVER(

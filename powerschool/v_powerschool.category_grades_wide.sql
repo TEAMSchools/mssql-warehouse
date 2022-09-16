@@ -33,7 +33,7 @@ WITH grades_long AS (
         ,cat.reporting_term
         ,cat.reporting_term AS rt
         ,cat.storecode_type
-        ,ROUND(AVG(cat.category_pct), 0) AS category_pct
+        ,CAST(ROUND(AVG(cat.category_pct), 0) AS DECIMAL(3, 0)) AS category_pct
         ,NULL AS citizenship
         ,CASE
           WHEN CAST(CURRENT_TIMESTAMP AS DATE)
@@ -81,7 +81,7 @@ WITH grades_long AS (
         ,cat.reporting_term
         ,'CUR' AS rt
         ,cat.storecode_type
-        ,ROUND(AVG(cat.category_pct), 0) AS category_pct
+        ,CAST(ROUND(AVG(cat.category_pct), 0) AS DECIMAL(3, 0)) AS category_pct
         ,NULL AS citizenship
         ,1 AS is_curterm
         ,'ALL' AS credittype
@@ -119,8 +119,8 @@ WITH grades_long AS (
              ,rt
              ,is_curterm
              ,storecode_type
-             ,CAST(category_pct AS NVARCHAR(8)) AS category_pct
-             ,CAST(citizenship AS NVARCHAR(8)) AS citizenship
+             ,CAST(category_pct AS NVARCHAR(4)) AS category_pct
+             ,CAST(citizenship AS NVARCHAR(4)) AS citizenship
        FROM grades_long
       ) sub
   UNPIVOT(
@@ -220,27 +220,27 @@ SELECT studentid
       ,[W_CUR] /* work habits */
       ,[E_CUR] /* homework quality for MS, exams for HS */
 
-      ,ROUND(AVG([F_CUR]) OVER(PARTITION BY studentid, yearid, course_number ORDER BY reporting_term ASC),0) AS F_Y1
-      ,ROUND(AVG([S_CUR]) OVER(PARTITION BY studentid, yearid, course_number ORDER BY reporting_term ASC),0) AS S_Y1
-      ,ROUND(AVG([W_CUR]) OVER(PARTITION BY studentid, yearid, course_number ORDER BY reporting_term ASC),0) AS W_Y1
-      ,ROUND(AVG([E_CUR]) OVER(PARTITION BY studentid, yearid, course_number ORDER BY reporting_term ASC),0) AS E_Y1
+      ,CAST(ROUND(AVG([F_CUR]) OVER(PARTITION BY studentid, yearid, course_number ORDER BY reporting_term ASC),0) AS DECIMAL(3, 0)) AS F_Y1
+      ,CAST(ROUND(AVG([S_CUR]) OVER(PARTITION BY studentid, yearid, course_number ORDER BY reporting_term ASC),0) AS DECIMAL(3, 0)) AS S_Y1
+      ,CAST(ROUND(AVG([W_CUR]) OVER(PARTITION BY studentid, yearid, course_number ORDER BY reporting_term ASC),0) AS DECIMAL(3, 0)) AS W_Y1
+      ,CAST(ROUND(AVG([E_CUR]) OVER(PARTITION BY studentid, yearid, course_number ORDER BY reporting_term ASC),0) AS DECIMAL(3, 0)) AS E_Y1
 
-      ,MAX([F_RT1]) OVER(PARTITION BY studentid, yearid, course_number ORDER BY reporting_term ASC) AS [F_RT1]
-      ,MAX([F_RT2]) OVER(PARTITION BY studentid, yearid, course_number ORDER BY reporting_term ASC) AS [F_RT2]
-      ,MAX([F_RT3]) OVER(PARTITION BY studentid, yearid, course_number ORDER BY reporting_term ASC) AS [F_RT3]
-      ,MAX([F_RT4]) OVER(PARTITION BY studentid, yearid, course_number ORDER BY reporting_term ASC) AS [F_RT4]
-      ,MAX([S_RT1]) OVER(PARTITION BY studentid, yearid, course_number ORDER BY reporting_term ASC) AS [S_RT1]
-      ,MAX([S_RT2]) OVER(PARTITION BY studentid, yearid, course_number ORDER BY reporting_term ASC) AS [S_RT2]
-      ,MAX([S_RT3]) OVER(PARTITION BY studentid, yearid, course_number ORDER BY reporting_term ASC) AS [S_RT3]
-      ,MAX([S_RT4]) OVER(PARTITION BY studentid, yearid, course_number ORDER BY reporting_term ASC) AS [S_RT4]
-      ,MAX([W_RT1]) OVER(PARTITION BY studentid, yearid, course_number ORDER BY reporting_term ASC) AS [W_RT1]
-      ,MAX([W_RT2]) OVER(PARTITION BY studentid, yearid, course_number ORDER BY reporting_term ASC) AS [W_RT2]
-      ,MAX([W_RT3]) OVER(PARTITION BY studentid, yearid, course_number ORDER BY reporting_term ASC) AS [W_RT3]
-      ,MAX([W_RT4]) OVER(PARTITION BY studentid, yearid, course_number ORDER BY reporting_term ASC) AS [W_RT4]
-      ,MAX([E_RT1]) OVER(PARTITION BY studentid, yearid, course_number ORDER BY reporting_term ASC) AS [E_RT1]
-      ,MAX([E_RT2]) OVER(PARTITION BY studentid, yearid, course_number ORDER BY reporting_term ASC) AS [E_RT2]
-      ,MAX([E_RT3]) OVER(PARTITION BY studentid, yearid, course_number ORDER BY reporting_term ASC) AS [E_RT3]
-      ,MAX([E_RT4]) OVER(PARTITION BY studentid, yearid, course_number ORDER BY reporting_term ASC) AS [E_RT4]
+      ,CAST(MAX([F_RT1]) OVER(PARTITION BY studentid, yearid, course_number ORDER BY reporting_term ASC) AS DECIMAL(3, 0)) AS [F_RT1]
+      ,CAST(MAX([F_RT2]) OVER(PARTITION BY studentid, yearid, course_number ORDER BY reporting_term ASC) AS DECIMAL(3, 0)) AS [F_RT2]
+      ,CAST(MAX([F_RT3]) OVER(PARTITION BY studentid, yearid, course_number ORDER BY reporting_term ASC) AS DECIMAL(3, 0)) AS [F_RT3]
+      ,CAST(MAX([F_RT4]) OVER(PARTITION BY studentid, yearid, course_number ORDER BY reporting_term ASC) AS DECIMAL(3, 0)) AS [F_RT4]
+      ,CAST(MAX([S_RT1]) OVER(PARTITION BY studentid, yearid, course_number ORDER BY reporting_term ASC) AS DECIMAL(3, 0)) AS [S_RT1]
+      ,CAST(MAX([S_RT2]) OVER(PARTITION BY studentid, yearid, course_number ORDER BY reporting_term ASC) AS DECIMAL(3, 0)) AS [S_RT2]
+      ,CAST(MAX([S_RT3]) OVER(PARTITION BY studentid, yearid, course_number ORDER BY reporting_term ASC) AS DECIMAL(3, 0)) AS [S_RT3]
+      ,CAST(MAX([S_RT4]) OVER(PARTITION BY studentid, yearid, course_number ORDER BY reporting_term ASC) AS DECIMAL(3, 0)) AS [S_RT4]
+      ,CAST(MAX([W_RT1]) OVER(PARTITION BY studentid, yearid, course_number ORDER BY reporting_term ASC) AS DECIMAL(3, 0)) AS [W_RT1]
+      ,CAST(MAX([W_RT2]) OVER(PARTITION BY studentid, yearid, course_number ORDER BY reporting_term ASC) AS DECIMAL(3, 0)) AS [W_RT2]
+      ,CAST(MAX([W_RT3]) OVER(PARTITION BY studentid, yearid, course_number ORDER BY reporting_term ASC) AS DECIMAL(3, 0)) AS [W_RT3]
+      ,CAST(MAX([W_RT4]) OVER(PARTITION BY studentid, yearid, course_number ORDER BY reporting_term ASC) AS DECIMAL(3, 0)) AS [W_RT4]
+      ,CAST(MAX([E_RT1]) OVER(PARTITION BY studentid, yearid, course_number ORDER BY reporting_term ASC) AS DECIMAL(3, 0)) AS [E_RT1]
+      ,CAST(MAX([E_RT2]) OVER(PARTITION BY studentid, yearid, course_number ORDER BY reporting_term ASC) AS DECIMAL(3, 0)) AS [E_RT2]
+      ,CAST(MAX([E_RT3]) OVER(PARTITION BY studentid, yearid, course_number ORDER BY reporting_term ASC) AS DECIMAL(3, 0)) AS [E_RT3]
+      ,CAST(MAX([E_RT4]) OVER(PARTITION BY studentid, yearid, course_number ORDER BY reporting_term ASC) AS DECIMAL(3, 0)) AS [E_RT4]
 
       ,CTZ_CUR
       ,CTZ_RT1
