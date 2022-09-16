@@ -8,13 +8,13 @@ WITH grade_detail AS (
         ,co.academic_year
 
         ,fg.storecode
-        ,fg.potential_credit_hours
-        ,fg.term_grade_percent
-        ,fg.term_grade_pts
-        ,fg.y1_grade_percent_adj
         ,fg.y1_grade_letter
-        ,fg.y1_grade_pts
-        ,fg.y1_grade_pts_unweighted
+        ,CAST(fg.term_grade_percent AS DECIMAL(3, 0)) AS term_grade_percent
+        ,CAST(fg.y1_grade_percent_adj AS DECIMAL(3, 0)) AS y1_grade_percent_adj
+        ,CAST(fg.potential_credit_hours AS DECIMAL(5, 2)) AS potential_credit_hours
+        ,CAST(fg.term_grade_pts AS DECIMAL(3, 2)) AS term_grade_pts
+        ,CAST(fg.y1_grade_pts AS DECIMAL(3, 2)) AS y1_grade_pts
+        ,CAST(fg.y1_grade_pts_unweighted AS DECIMAL(3, 2)) AS y1_grade_pts_unweighted
 
         ,rt.time_per_name AS reporting_term
         ,rt.is_curterm
@@ -40,13 +40,14 @@ WITH grade_detail AS (
         ,sg.academic_year
         ,sg.storecode
 
-        ,c.credit_hours AS potential_credit_hours
-        ,sg.[percent] AS term_grade_percent
-        ,sg.gpa_points AS term_gpa_points
-        ,y1.[percent] AS y1_grade_percent_adjusted
         ,y1.grade AS y1_grade_letter
-        ,y1.gpa_points AS y1_gpa_points
-        ,NULL AS y1_gpa_points_unweighted
+
+        ,CAST(sg.[percent] AS DECIMAL(3, 0)) AS term_grade_percent
+        ,CAST(y1.[percent] AS DECIMAL(3, 0)) AS y1_grade_percent_adjusted
+        ,CAST(c.credit_hours AS DECIMAL(5, 2)) AS potential_credit_hours
+        ,CAST(sg.gpa_points AS DECIMAL(3, 2)) AS term_grade_pts
+        ,CAST(y1.gpa_points AS DECIMAL(3, 2)) AS y1_grade_pts
+        ,NULL AS y1_grade_pts_unweighted
 
         ,NULL AS reporting_term
         ,CASE WHEN sg.storecode IN ('Q4', 'T3') THEN 1 ELSE 0 END AS is_curterm
@@ -74,25 +75,31 @@ SELECT student_number
       ,semester
       ,reporting_term
       ,is_curterm
-      ,total_credit_hours
-      ,grade_avg_term
       ,gpa_points_total_term
-      ,weighted_gpa_points_term
       ,gpa_term
-      ,grade_avg_y1
+      
       ,gpa_points_total_y1
-      ,weighted_gpa_points_y1
       ,gpa_y1
       ,gpa_y1_unweighted
       ,n_failing_y1
+      ,total_credit_hours
+      ,CAST(grade_avg_term AS DECIMAL(3, 0)) AS grade_avg_term
+      ,CAST(grade_avg_y1 AS DECIMAL(3, 0)) AS grade_avg_y1
+      ,CAST(ROUND(weighted_gpa_points_term, 2) AS DECIMAL(5, 2)) AS weighted_gpa_points_term
+      ,CAST(ROUND(weighted_gpa_points_y1, 2) AS DECIMAL(5, 2)) AS weighted_gpa_points_y1
 
       /* gpa semester */
-      ,AVG(grade_avg_term) OVER(PARTITION BY student_number, academic_year, semester) AS grade_avg_semester
       ,SUM(gpa_points_total_term) OVER(PARTITION BY student_number, academic_year, semester) AS gpa_points_total_semester
-      ,SUM(weighted_gpa_points_term) OVER(PARTITION BY student_number, academic_year, semester) AS weighted_gpa_points_semester
-      ,SUM(total_credit_hours) OVER(PARTITION BY student_number, academic_year, semester) AS total_credit_hours_semester
-      ,CAST(ROUND(CONVERT(DECIMAL(4,3),SUM(weighted_gpa_points_term) OVER(PARTITION BY student_number, academic_year, semester AS FLOAT)
-         / SUM(credit_hours_term) OVER(PARTITION BY student_number, academic_year, semester)),2)) AS gpa_semester
+      ,CAST(ROUND(AVG(grade_avg_term) OVER(PARTITION BY student_number, academic_year, semester), 0) AS DECIMAL(3, 0)) AS grade_avg_semester
+      ,CAST(ROUND(SUM(weighted_gpa_points_term) OVER(PARTITION BY student_number, academic_year, semester), 2) AS DECIMAL(5, 2)) AS weighted_gpa_points_semester
+      ,CAST(ROUND(SUM(total_credit_hours) OVER(PARTITION BY student_number, academic_year, semester), 2) AS DECIMAL(5, 2)) AS total_credit_hours_semester
+      ,CAST(
+         ROUND(
+           SUM(weighted_gpa_points_term) OVER(PARTITION BY student_number, academic_year, semester)
+            / SUM(credit_hours_term) OVER(PARTITION BY student_number, academic_year, semester)
+          ,2
+         ) AS DECIMAL(4, 2)
+       ) AS gpa_semester
 FROM
     (
      SELECT student_number
@@ -108,35 +115,49 @@ FROM
             END AS semester
 
            /* gpa term */
-           ,ROUND(AVG(term_grade_percent),0) AS grade_avg_term
+           ,ROUND(AVG(term_grade_percent), 0) AS grade_avg_term
            ,SUM(term_grade_pts) AS gpa_points_total_term
-           ,SUM((potential_credit_hours * term_grade_pts)) AS weighted_gpa_points_term      
+           ,SUM((potential_credit_hours * term_grade_pts)) AS weighted_gpa_points_term
            ,SUM(CASE WHEN term_grade_percent IS NULL THEN NULL ELSE potential_credit_hours END) AS credit_hours_term
-           /* when no term_name pct, then exclude credit hours */
-           ,CAST(ROUND(CONVERT(DECIMAL(4,3 AS FLOAT),
-              SUM(potential_credit_hours * term_grade_pts)
-                / CASE 
-                   WHEN SUM(CASE WHEN term_grade_percent IS NULL THEN NULL ELSE potential_credit_hours END) = 0 THEN NULL
-                   ELSE SUM(CASE WHEN term_grade_percent IS NULL THEN NULL ELSE potential_credit_hours END)
-                  END), 2)) AS gpa_term
+           ,CAST(
+              ROUND(
+                SUM(potential_credit_hours * term_grade_pts)
+                 / CASE
+                    /* when no term_name pct, then exclude credit hours */
+                    WHEN SUM(CASE WHEN term_grade_percent IS NULL THEN NULL ELSE potential_credit_hours END) = 0 THEN NULL
+                    ELSE SUM(CASE WHEN term_grade_percent IS NULL THEN NULL ELSE potential_credit_hours END)
+                   END
+               ,2
+              ) AS DECIMAL(3, 2)
+            ) AS gpa_term
            
            /* gpa Y1 */
-           ,ROUND(AVG(y1_grade_percent_adj),0) AS grade_avg_y1      
+           ,ROUND(AVG(y1_grade_percent_adj), 0) AS grade_avg_y1
            ,SUM(y1_grade_pts) AS gpa_points_total_y1
            ,SUM((potential_credit_hours * y1_grade_pts)) AS weighted_gpa_points_y1
-           /* when no y1 pct, then exclude credit hours */
-           ,CAST(ROUND(CONVERT(DECIMAL(4,3 AS FLOAT),
-              SUM((potential_credit_hours * y1_grade_pts)) 
-                / CASE
-                   WHEN SUM(CASE WHEN y1_grade_percent_adj IS NULL THEN NULL ELSE potential_credit_hours END) = 0 THEN NULL
-                   ELSE SUM(CASE WHEN y1_grade_percent_adj IS NULL THEN NULL ELSE potential_credit_hours END)
-                  END), 2)) AS gpa_y1
-           ,CAST(ROUND(CONVERT(DECIMAL(4,3 AS FLOAT),
-              SUM((potential_credit_hours * y1_grade_pts_unweighted)) 
-                / CASE
-                   WHEN SUM(CASE WHEN y1_grade_percent_adj IS NULL THEN NULL ELSE potential_credit_hours END) = 0 THEN NULL
-                   ELSE SUM(CASE WHEN y1_grade_percent_adj IS NULL THEN NULL ELSE potential_credit_hours END)
-                  END), 2)) AS gpa_y1_unweighted
+           ,CAST(
+              ROUND(
+                SUM((potential_credit_hours * y1_grade_pts))
+                 / CASE
+                    /* when no y1 pct, then exclude credit hours */
+                    WHEN SUM(CASE WHEN y1_grade_percent_adj IS NULL THEN NULL ELSE potential_credit_hours END) = 0 THEN NULL
+                    ELSE SUM(CASE WHEN y1_grade_percent_adj IS NULL THEN NULL ELSE potential_credit_hours END)
+                   END
+               ,2
+              ) AS DECIMAL(3, 2)
+            ) AS gpa_y1
+           ,CAST(
+              ROUND(
+                SUM((potential_credit_hours * y1_grade_pts_unweighted)) 
+                 / CASE
+                    /* when no y1 pct, then exclude credit hours */
+                    WHEN SUM(CASE WHEN y1_grade_percent_adj IS NULL THEN NULL ELSE potential_credit_hours END) = 0 THEN NULL
+                    ELSE SUM(CASE WHEN y1_grade_percent_adj IS NULL THEN NULL ELSE potential_credit_hours END)
+                   END
+               ,2
+              ) AS DECIMAL(3, 2)
+            ) AS gpa_y1_unweighted
+
            /* other */
            ,SUM(CASE WHEN y1_grade_percent_adj IS NULL THEN NULL ELSE potential_credit_hours END) AS total_credit_hours
            ,SUM(CASE WHEN y1_grade_letter LIKE 'F%' THEN 1 ELSE 0 END) AS n_failing_y1

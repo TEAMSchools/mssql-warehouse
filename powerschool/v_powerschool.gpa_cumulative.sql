@@ -128,18 +128,18 @@ WITH grades_union AS (
   SELECT studentid
         ,academic_year
         ,schoolid
-        ,potentialcrhrs
-        ,earnedcrhrs
-        ,potentialcrhrs_projected
-        ,potentialcrhrs_projected_s1
-        ,potentialcrhrs_core
-        ,earnedcrhrs_projected
-        ,earnedcrhrs_projected_s1
-        ,potentialcrhrs * gpa_points AS weighted_points
-        ,potentialcrhrs * unweighted_grade_points AS unweighted_points
-        ,potentialcrhrs_core * gpa_points_core AS weighted_points_core
-        ,potentialcrhrs_projected * gpa_points_projected AS weighted_points_projected
-        ,potentialcrhrs_projected_s1 * gpa_points_projected_s1 AS weighted_points_projected_s1
+        ,CAST(potentialcrhrs AS DECIMAL(5, 2)) AS potentialcrhrs
+        ,CAST(earnedcrhrs AS DECIMAL(5, 2)) AS earnedcrhrs
+        ,CAST(potentialcrhrs_projected AS DECIMAL(5, 2)) AS potentialcrhrs_projected
+        ,CAST(potentialcrhrs_projected_s1 AS DECIMAL(5, 2)) AS potentialcrhrs_projected_s1
+        ,CAST(potentialcrhrs_core AS DECIMAL(5, 2)) AS potentialcrhrs_core
+        ,CAST(earnedcrhrs_projected AS DECIMAL(5, 2)) AS earnedcrhrs_projected
+        ,CAST(earnedcrhrs_projected_s1 AS DECIMAL(5, 2)) AS earnedcrhrs_projected_s1
+        ,CAST(potentialcrhrs AS DECIMAL(5, 2)) * CAST(gpa_points AS DECIMAL(3, 2)) AS weighted_points
+        ,CAST(potentialcrhrs AS DECIMAL(5, 2)) * CAST(unweighted_grade_points AS DECIMAL(3, 2)) AS unweighted_points
+        ,CAST(potentialcrhrs_core AS DECIMAL(5, 2)) * CAST(gpa_points_core AS DECIMAL(3, 2)) AS weighted_points_core
+        ,CAST(potentialcrhrs_projected AS DECIMAL(5, 2)) * CAST(gpa_points_projected AS DECIMAL(3, 2)) AS weighted_points_projected
+        ,CAST(potentialcrhrs_projected_s1 AS DECIMAL(5, 2)) * CAST(gpa_points_projected_s1 AS DECIMAL(3, 2)) AS weighted_points_projected_s1
   FROM grades_union
  )
 
@@ -174,9 +174,9 @@ SELECT studentid
       ,potential_credits_cum
       ,earned_credits_cum_projected
       ,earned_credits_cum_projected_s1
-      ,ROUND(CAST((weighted_points / potentialcrhrs) AS DECIMAL(4,3)), 2) AS cumulative_y1_gpa
-      ,ROUND(CAST((unweighted_points / potentialcrhrs) AS DECIMAL(4,3)), 2) AS cumulative_y1_gpa_unweighted
-      ,ROUND(CAST((weighted_points_projected / potentialcrhrs_projected) AS DECIMAL(4,3)), 2) AS cumulative_y1_gpa_projected
-      ,ROUND(CAST((weighted_points_projected_s1 / potentialcrhrs_projected_s1) AS DECIMAL(4,3)), 2) AS cumulative_y1_gpa_projected_s1
-      ,ROUND(CAST((weighted_points_core / potentialcrhrs_core) AS DECIMAL(4,3)), 2) AS core_cumulative_y1_gpa
+      ,CAST(ROUND((weighted_points / potentialcrhrs), 2) AS DECIMAL(3, 2)) AS cumulative_y1_gpa
+      ,CAST(ROUND((unweighted_points / potentialcrhrs), 2) AS DECIMAL(3, 2)) AS cumulative_y1_gpa_unweighted
+      ,CAST(ROUND((weighted_points_projected / potentialcrhrs_projected), 2) AS DECIMAL(3, 2)) AS cumulative_y1_gpa_projected
+      ,CAST(ROUND((weighted_points_projected_s1 / potentialcrhrs_projected_s1), 2) AS DECIMAL(3, 2)) AS cumulative_y1_gpa_projected_s1
+      ,CAST(ROUND((weighted_points_core / potentialcrhrs_core), 2) AS DECIMAL(3, 2)) AS core_cumulative_y1_gpa
 FROM pts_rollup

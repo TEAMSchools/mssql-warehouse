@@ -44,11 +44,13 @@ WITH enr AS (
              ,tb.date_1 AS termbin_start_date
              ,tb.date_2 AS termbin_end_date
 
-             ,CASE
-               WHEN MIN(tb.storecode) OVER(PARTITION BY sec.sectionid) LIKE 'Q%' THEN 25.0
-               WHEN tb.storecode LIKE 'Q%' THEN 22.5
-               WHEN tb.storecode LIKE 'E%' THEN 5.0
-              END AS term_weighted_pts_poss
+             ,CAST(
+                CASE
+                 WHEN MIN(tb.storecode) OVER(PARTITION BY sec.sectionid) LIKE 'Q%' THEN 25
+                 WHEN tb.storecode LIKE 'Q%' THEN 22
+                 WHEN tb.storecode LIKE 'E%' THEN 5
+                END AS DECIMAL(3, 0)
+              ) AS term_weighted_pts_poss
        FROM powerschool.cc
        INNER JOIN powerschool.sections_identifiers sec
          ON ABS(cc.sectionid) = sec.sectionid
@@ -59,7 +61,7 @@ WITH enr AS (
        WHERE cc.dateenrolled >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
          AND cc.course_number <> 'HR'
       ) sub
- )
+)
 
 ,enr_gr AS (
   SELECT sub.studentid
@@ -124,13 +126,13 @@ WITH enr AS (
                WHEN fg.grade = '--' THEN NULL
                ELSE te.term_weighted_pts_poss
               END AS term_weighted_pts_poss
-             ,CASE 
+             ,CASE
                WHEN te.is_dropped_section = 1.0 AND sg.[percent] IS NULL THEN NULL
                WHEN fg.grade <> '--' THEN fg.grade
               END AS fg_letter
-             ,CASE 
+             ,CASE
                WHEN te.is_dropped_section = 1.0 AND sg.[percent] IS NULL THEN NULL
-               WHEN fg.grade <> '--' THEN fg.[percent] / 100.0
+               WHEN fg.grade <> '--' THEN CAST((fg.[percent] / 100.0) AS DECIMAL(3, 2))
               END AS fg_percent
              ,CASE
                WHEN te.is_dropped_section = 1.0 AND sg.[percent] IS NULL THEN NULL
@@ -138,25 +140,25 @@ WITH enr AS (
                WHEN fg.[percent] < 50.0 THEN 'F*'
                ELSE fg.grade
               END AS fg_letter_adj
-             ,CASE 
+             ,CASE
                WHEN te.is_dropped_section = 1 AND sg.[percent] IS NULL THEN NULL
                WHEN fg.grade = '--' THEN NULL
-               WHEN fg.[percent] < 50.0 THEN 0.5
-               ELSE fg.[percent] / 100.0
+               WHEN fg.[percent] < 50.0 THEN 0.50
+               ELSE CAST((fg.[percent] / 100.0) AS DECIMAL(3, 2))
               END AS fg_percent_adj
              ,CASE
                WHEN te.is_dropped_section = 1 AND sg.[percent] IS NULL THEN NULL
                WHEN fg.grade = '--' THEN NULL
-               ELSE fgs.grade_points
+               ELSE CAST(fgs.grade_points AS DECIMAL(3, 2))
               END AS fg_grade_pts
 
              ,sg.grade AS sg_letter
              ,sg.excludefromgpa AS sg_exclude_from_gpa
              ,sg.excludefromgraduation AS sg_exclude_from_graduation
-             ,sg.[percent] / 100.0 AS sg_percent
-             ,CASE WHEN sg.potentialcrhrs <> 0.0 THEN sg.potentialcrhrs END AS sg_potential_credit_hours
+             ,CAST(sg.[percent] / 100.0 AS DECIMAL(3, 2)) AS sg_percent
+             ,CASE WHEN sg.potentialcrhrs <> 0.0 THEN CAST(sg.potentialcrhrs AS DECIMAL(5, 2)) END AS sg_potential_credit_hours
 
-             ,sgs.grade_points AS sg_grade_pts
+             ,CAST(sgs.grade_points AS DECIMAL(3, 2)) AS sg_grade_pts
 
              ,ROW_NUMBER() OVER(
                 PARTITION BY te.studentid, te.yearid, te.course_number, te.storecode
@@ -181,7 +183,7 @@ WITH enr AS (
        WHERE te.is_dropped_course < 1.0
       ) sub
   WHERE sub.rn_enr_fg = 1
- )
+)
 
 ,y1 AS (
   SELECT sub.studentid
@@ -276,7 +278,7 @@ WITH enr AS (
                   ORDER BY eg.storecode ASC) AS y1_weighted_pts_earned_adj_running
        FROM enr_gr eg
       ) sub
- )
+)
 
 SELECT y1.studentid
       ,y1.yearid
@@ -311,13 +313,13 @@ SELECT y1.studentid
       ,y1.y1_weighted_pts_poss
       ,y1.y1_weighted_pts_poss_running
       ,y1.y1_weighted_pts_earned_running
-      ,ROUND(y1.fg_percent * 100.0, 0) AS fg_percent
-      ,ROUND(y1.fg_percent_adj * 100.0, 0) AS fg_percent_adj
-      ,ROUND(y1.sg_percent * 100.0, 0) AS sg_percent
-      ,ROUND(y1.term_grade_percent * 100.0, 0) AS term_grade_percent
-      ,ROUND(y1.term_grade_percent_adj * 100.0, 0) AS term_grade_percent_adj
-      ,ROUND(y1.y1_grade_percent * 100.0, 0) AS y1_grade_percent
-      ,ROUND(y1.y1_grade_percent_adj * 100.0, 0) AS y1_grade_percent_adj
+      ,CAST(ROUND(y1.fg_percent * 100.0, 0) AS DECIMAL(3, 0)) AS fg_percent
+      ,CAST(ROUND(y1.fg_percent_adj * 100.0, 0) AS DECIMAL(3, 0)) AS fg_percent_adj
+      ,CAST(ROUND(y1.sg_percent * 100.0, 0) AS DECIMAL(3, 0)) AS sg_percent
+      ,CAST(ROUND(y1.term_grade_percent * 100.0, 0) AS DECIMAL(3, 0)) AS term_grade_percent
+      ,CAST(ROUND(y1.term_grade_percent_adj * 100.0, 0) AS DECIMAL(3, 0)) AS term_grade_percent_adj
+      ,CAST(ROUND(y1.y1_grade_percent * 100.0, 0) AS DECIMAL(3, 0)) AS y1_grade_percent
+      ,CAST(ROUND(y1.y1_grade_percent_adj * 100.0, 0) AS DECIMAL(3, 0)) AS y1_grade_percent_adj
        /*
          need-to-get calc:
          - target % x y1 points possible to-date
@@ -325,15 +327,31 @@ SELECT y1.studentid
          - minus current term points
          - divided by current term weight
        */
-      ,((y1.y1_weighted_pts_poss_running * 0.9) - (ISNULL(y1.y1_weighted_pts_earned_running, 0.0) - ISNULL(y1.term_weighted_pts_earned, 0.0))) / (y1.term_weighted_pts_poss / 100.0) AS need_90
-      ,((y1.y1_weighted_pts_poss_running * 0.8) - (ISNULL(y1.y1_weighted_pts_earned_running, 0.0) - ISNULL(y1.term_weighted_pts_earned, 0.0))) / (y1.term_weighted_pts_poss / 100.0) AS need_80
-      ,((y1.y1_weighted_pts_poss_running * 0.7) - (ISNULL(y1.y1_weighted_pts_earned_running, 0.0) - ISNULL(y1.term_weighted_pts_earned, 0.0))) / (y1.term_weighted_pts_poss / 100.0) AS need_70
-      ,((y1.y1_weighted_pts_poss_running * 0.6) - (ISNULL(y1.y1_weighted_pts_earned_running, 0.0) - ISNULL(y1.term_weighted_pts_earned, 0.0))) / (y1.term_weighted_pts_poss / 100.0) AS need_60
+      ,CAST(
+         ((y1.y1_weighted_pts_poss_running * 0.9) - (ISNULL(y1.y1_weighted_pts_earned_running, 0.0) - ISNULL(y1.term_weighted_pts_earned, 0.0)))
+         / (y1.term_weighted_pts_poss / 100.0)
+         AS DECIMAL(3, 0)
+       ) AS need_90
+      ,CAST(
+         ((y1.y1_weighted_pts_poss_running * 0.8) - (ISNULL(y1.y1_weighted_pts_earned_running, 0.0) - ISNULL(y1.term_weighted_pts_earned, 0.0))) 
+         / (y1.term_weighted_pts_poss / 100.0) 
+         AS DECIMAL(3, 0)
+       ) AS need_80
+      ,CAST(
+         ((y1.y1_weighted_pts_poss_running * 0.7) - (ISNULL(y1.y1_weighted_pts_earned_running, 0.0) - ISNULL(y1.term_weighted_pts_earned, 0.0))) 
+         / (y1.term_weighted_pts_poss / 100.0)
+         AS DECIMAL(3, 0)
+       ) AS need_70
+      ,CAST(
+         ((y1.y1_weighted_pts_poss_running * 0.6) - (ISNULL(y1.y1_weighted_pts_earned_running, 0.0) - ISNULL(y1.term_weighted_pts_earned, 0.0))) 
+         / (y1.term_weighted_pts_poss / 100.0) 
+         AS DECIMAL(3, 0)
+       ) AS need_60
 
       ,y1gs.letter_grade AS y1_grade_letter
-      ,y1gs.grade_points AS y1_grade_pts
+      ,CAST(y1gs.grade_points AS DECIMAL(3, 2)) AS y1_grade_pts
 
-      ,y1gsu.grade_points AS y1_grade_pts_unweighted
+      ,CAST(y1gsu.grade_points AS DECIMAL(3, 2)) AS y1_grade_pts_unweighted
 
       ,CASE WHEN y1.y1_grade_percent < 0.5 THEN 'F*' ELSE y1gs.letter_grade END AS y1_grade_letter_adj
 FROM y1
