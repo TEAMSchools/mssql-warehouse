@@ -35,6 +35,7 @@ WITH term AS (
         ,sub.position_start_date
         ,sub.termination_date
         ,sub.status_reason
+        ,sub.kipp_alumni_status
         ,CASE 
           WHEN MONTH(sub.position_start_date) >= 9 THEN YEAR(sub.position_start_date)
           WHEN MONTH(sub.position_start_date) < 9 THEN YEAR(sub.position_start_date) - 1
@@ -54,6 +55,7 @@ WITH term AS (
              ,r.gender_reporting
              ,r.original_hire_date
              ,r.rehire_date
+             ,r.kipp_alumni_status
 
              ,COALESCE(r.rehire_date, r.original_hire_date) AS position_start_date
              ,CASE
@@ -89,6 +91,7 @@ WITH term AS (
         ,sub.status_reason
         ,sub.academic_year_entrydate
         ,sub.academic_year_exitdate
+        ,sub.kipp_alumni_status
         ,LEAD(sub.academic_year_exitdate, 1) OVER(PARTITION BY sub.position_id ORDER BY sub.academic_year) AS academic_year_exitdate_next
 
         ,w.business_unit
@@ -109,6 +112,7 @@ WITH term AS (
              ,r.original_hire_date
              ,r.rehire_date
              ,r.status_reason
+             ,r.kipp_alumni_status
 
              ,y.academic_year
              ,y.effective_date
@@ -151,6 +155,7 @@ SELECT d.employee_number AS df_employee_number
       ,d.business_unit AS legal_entity_name
       ,d.reporting_school_id AS primary_site_reporting_schoolid
       ,d.school_level AS primary_site_school_level
+      ,d.kipp_alumni_status
       ,d.academic_year_exitdate_next AS next_academic_year_exitdate
       ,COALESCE(d.academic_year_exitdate_next, d.termination_date) AS attrition_exitdate
       ,CASE
