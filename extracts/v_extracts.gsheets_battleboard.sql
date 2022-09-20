@@ -1,14 +1,83 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW extracts.gsheets_battleboard AS
+--CREATE OR ALTER VIEW extracts.gsheets_battleboard AS
 
-WITH elementary_grade AS (
-  SELECT employee_number
-        ,MAX(student_grade_level) AS student_grade_level
-  FROM gabby.pm.teacher_grade_levels
-  GROUP BY employee_number
- )
+WITH leads AS (
+SELECT x.df_employee_number
+      ,x.primary_site_school_level
+      ,x.primary_job
+      ,x.primary_on_site_department
+      
+      ,CASE 
+       WHEN x.primary_job = 'Teacher' THEN 'LEAD'
+       ELSE x.primary_job 
+       END AS staffing_job_code
+      ,CASE
+       WHEN x.primary_site_school_level = 'ES' THEN UPPER(RIGHT(course_name,3))
+       WHEN x.primary_site_school_level IN ('MS','HS') THEN credittype
+       ELSE credittype
+       END AS modifier
+      
+      ,UPPER(s.abbreviation) AS abbreviation
+     
+      ,ROW_NUMBER() OVER (
+       PARTITION BY df_employee_number ORDER BY df_employee_number) AS rn
+FROM gabby.people.staff_crosswalk_static x
+LEFT JOIN gabby.powerschool.sections_identifiers p
+  ON p.teachernumber COLLATE SQL_Latin1_General_CP1_CI_AS = x.ps_teachernumber COLLATE SQL_Latin1_General_CP1_CI_AS
+JOIN gabby.powerschool.schools s
+  ON x.primary_site COLLATE SQL_Latin1_General_CP1_CI_AS = s.name COLLATE SQL_Latin1_General_CP1_CI_AS
+WHERE primary_job = 'Teacher'
+AND termid >= 3200
+AND course_number <> 'HR'
+
+UNION ALL
+
+SELECT
+       x.df_employee_number
+      ,x.primary_site_school_level
+      ,x.primary_job
+      ,x.primary_on_site_department
+      
+      ,CASE
+       WHEN x.primary_job = 'Teacher in Residence' THEN 'TIR'
+	   WHEN x.primary_job = 'Learning Specialist' THEN 'LS'
+	   WHEN x.primary_job = 'Paraprofessional' THEN 'PARA'
+       ELSE x.primary_job 
+       END AS staffing_job_code
+      
+      ,NULL AS modifier
+      
+      ,UPPER(s.abbreviation) AS abbreviation
+      
+      ,ROW_NUMBER() OVER (
+       PARTITION BY df_employee_number ORDER BY df_employee_number) AS rn
+FROM gabby.people.staff_crosswalk_static x
+LEFT JOIN gabby.powerschool.schools s
+  ON x.primary_site COLLATE SQL_Latin1_General_CP1_CI_AS = s.name COLLATE SQL_Latin1_General_CP1_CI_AS
+WHERE x.primary_job <> 'Teacher'
+AND x.[status] IN ('Active','Leave')
+
+)
+
+,id_generator AS (
+SELECT df_employee_number
+      ,CASE
+       WHEN primary_job = 'Teacher' THEN CONCAT(primary_site_school_level,'-',abbreviation COLLATE SQL_Latin1_General_CP1_CI_AS,'-',modifier,'-',staffing_job_code)
+       ELSE CONCAT(primary_site_school_level,'-',abbreviation COLLATE SQL_Latin1_General_CP1_CI_AS,'-',staffing_job_code)
+       END AS staffing_model_id
+FROM leads
+WHERE rn = 1
+)
+
+,seat_number AS (
+SELECT df_employee_number
+      ,staffing_model_id
+      ,RIGHT(100 + ROW_NUMBER() OVER (
+       PARTITION BY staffing_model_id ORDER BY df_employee_number), 2) AS seat_number
+FROM id_generator
+)
 
 ,etr_pivot AS (
   SELECT df_employee_number
@@ -50,12 +119,8 @@ SELECT c.df_employee_number
 
       ,i.answer AS itr_response
 
-      ,CASE
-        WHEN c.primary_on_site_department = 'Elementary'
-         AND g.student_grade_level IS NOT NULL
-             THEN CONCAT(c.primary_on_site_department, ', Grade ', g.student_grade_level)
-        ELSE c.primary_on_site_department
-       END AS department_grade
+      ,CONCAT(staffing_model_id,'-',seat_number) AS staffing_model_id
+      
 FROM gabby.people.staff_crosswalk_static c
 LEFT JOIN etr_pivot e
   ON c.df_employee_number = e.df_employee_number
@@ -63,8 +128,8 @@ LEFT JOIN etr_pivot e
 LEFT JOIN etr_pivot p
   ON c.df_employee_number = p.df_employee_number
  AND p.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1
-LEFT JOIN elementary_grade g 
-  ON c.df_employee_number = g.employee_number
+LEFT JOIN seat_number s
+  ON c.df_employee_number = s.df_employee_number
 LEFT JOIN gabby.surveys.intent_to_return_survey_detail i
   ON c.df_employee_number = i.respondent_df_employee_number
  AND i.question_shortname = 'intent_to_return'
