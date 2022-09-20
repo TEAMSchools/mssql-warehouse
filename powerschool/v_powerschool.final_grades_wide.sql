@@ -89,25 +89,25 @@ SELECT studentid
 
       ,MAX(rt1_term_grade_letter) OVER(PARTITION BY studentid, yearid, course_number ORDER BY storecode ASC) AS rt1_term_grade_letter
       ,MAX(rt1_term_grade_letter_adj) OVER(PARTITION BY studentid, yearid, course_number ORDER BY storecode ASC) AS rt1_term_grade_letter_adjusted
-      ,MAX(CAST(rt1_term_grade_percent AS DECIMAL(3, 0))) OVER(PARTITION BY studentid, yearid, course_number ORDER BY storecode ASC) AS rt1_term_grade_percent
-      ,MAX(CAST(rt1_term_grade_percent_adj AS DECIMAL(3, 0))) OVER(PARTITION BY studentid, yearid, course_number ORDER BY storecode ASC) AS rt1_term_grade_percent_adjusted
+      ,MAX(CAST(rt1_term_grade_percent AS DECIMAL(4, 0))) OVER(PARTITION BY studentid, yearid, course_number ORDER BY storecode ASC) AS rt1_term_grade_percent
+      ,MAX(CAST(rt1_term_grade_percent_adj AS DECIMAL(4, 0))) OVER(PARTITION BY studentid, yearid, course_number ORDER BY storecode ASC) AS rt1_term_grade_percent_adjusted
       ,MAX(rt2_term_grade_letter) OVER(PARTITION BY studentid, yearid, course_number ORDER BY storecode ASC) AS rt2_term_grade_letter
       ,MAX(rt2_term_grade_letter_adj) OVER(PARTITION BY studentid, yearid, course_number ORDER BY storecode ASC) AS rt2_term_grade_letter_adjusted
-      ,MAX(CAST(rt2_term_grade_percent AS DECIMAL(3, 0))) OVER(PARTITION BY studentid, yearid, course_number ORDER BY storecode ASC) AS rt2_term_grade_percent
-      ,MAX(CAST(rt2_term_grade_percent_adj AS DECIMAL(3, 0))) OVER(PARTITION BY studentid, yearid, course_number ORDER BY storecode ASC) AS rt2_term_grade_percent_adjusted
+      ,MAX(CAST(rt2_term_grade_percent AS DECIMAL(4, 0))) OVER(PARTITION BY studentid, yearid, course_number ORDER BY storecode ASC) AS rt2_term_grade_percent
+      ,MAX(CAST(rt2_term_grade_percent_adj AS DECIMAL(4, 0))) OVER(PARTITION BY studentid, yearid, course_number ORDER BY storecode ASC) AS rt2_term_grade_percent_adjusted
       ,MAX(rt3_term_grade_letter) OVER(PARTITION BY studentid, yearid, course_number ORDER BY storecode ASC) AS rt3_term_grade_letter
       ,MAX(rt3_term_grade_letter_adj) OVER(PARTITION BY studentid, yearid, course_number ORDER BY storecode ASC) AS rt3_term_grade_letter_adjusted
-      ,MAX(CAST(rt3_term_grade_percent AS DECIMAL(3, 0))) OVER(PARTITION BY studentid, yearid, course_number ORDER BY storecode ASC) AS rt3_term_grade_percent
-      ,MAX(CAST(rt3_term_grade_percent_adj AS DECIMAL(3, 0))) OVER(PARTITION BY studentid, yearid, course_number ORDER BY storecode ASC) AS rt3_term_grade_percent_adjusted
+      ,MAX(CAST(rt3_term_grade_percent AS DECIMAL(4, 0))) OVER(PARTITION BY studentid, yearid, course_number ORDER BY storecode ASC) AS rt3_term_grade_percent
+      ,MAX(CAST(rt3_term_grade_percent_adj AS DECIMAL(4, 0))) OVER(PARTITION BY studentid, yearid, course_number ORDER BY storecode ASC) AS rt3_term_grade_percent_adjusted
       ,MAX(rt4_term_grade_letter) OVER(PARTITION BY studentid, yearid, course_number ORDER BY storecode ASC) AS rt4_term_grade_letter
       ,MAX(rt4_term_grade_letter_adj) OVER(PARTITION BY studentid, yearid, course_number ORDER BY storecode ASC) AS rt4_term_grade_letter_adjusted
-      ,MAX(CAST(rt4_term_grade_percent AS DECIMAL(3, 0))) OVER(PARTITION BY studentid, yearid, course_number ORDER BY storecode ASC) AS rt4_term_grade_percent
-      ,MAX(CAST(rt4_term_grade_percent_adj AS DECIMAL(3, 0))) OVER(PARTITION BY studentid, yearid, course_number ORDER BY storecode ASC) AS rt4_term_grade_percent_adjusted
+      ,MAX(CAST(rt4_term_grade_percent AS DECIMAL(4, 0))) OVER(PARTITION BY studentid, yearid, course_number ORDER BY storecode ASC) AS rt4_term_grade_percent
+      ,MAX(CAST(rt4_term_grade_percent_adj AS DECIMAL(4, 0))) OVER(PARTITION BY studentid, yearid, course_number ORDER BY storecode ASC) AS rt4_term_grade_percent_adjusted
 
       ,[cur_term_grade_letter]
       ,[cur_term_grade_letter_adj] AS [cur_term_grade_letter_adjusted]
-      ,CAST([cur_term_grade_percent] AS DECIMAL(3, 0)) [cur_term_grade_percent]
-      ,CAST(cur_term_grade_percent_adj AS DECIMAL(3, 0)) AS [cur_term_grade_percent_adjusted]
+      ,CAST([cur_term_grade_percent] AS DECIMAL(4, 0)) [cur_term_grade_percent]
+      ,CAST(cur_term_grade_percent_adj AS DECIMAL(4, 0)) AS [cur_term_grade_percent_adjusted]
 
       ,NULL AS rn_credittype
 FROM grades_unpivot gr

@@ -59,7 +59,7 @@ SELECT sub.studentid
              ORDER BY sub.termbin_start_date
            )
           ,0
-         ) AS DECIMAL(3, 0)
+         ) AS DECIMAL(4, 0)
        ) AS category_pct_y1
 FROM
     (
@@ -77,11 +77,9 @@ FROM
            ,enr.is_dropped_course
 
            ,CASE 
-               WHEN pgf.grade = '--' THEN NULL
-               ELSE CAST(pgf.[percent] AS DECIMAL(3, 0))
-              END
-            
-             AS category_pct
+             WHEN pgf.grade = '--' THEN NULL
+             ELSE CAST(pgf.[percent] AS DECIMAL(4, 0))
+            END AS category_pct
            ,CASE WHEN pgf.citizenship <> '' THEN pgf.citizenship END AS citizenship
 
            ,ROW_NUMBER() OVER(
