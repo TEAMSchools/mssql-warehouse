@@ -22,16 +22,14 @@ SELECT cc.studentid
       ,cc.schoolid
       ,cc.course_number
       ,sec.course_name
-      ,sec.sectionid
+      ,cc.sectionid
       ,cc.dateenrolled
       ,cc.dateleft
-      ,cc.dateleft_prev
       ,cc.[db_name]
-FROM cc_lag cc
+FROM gabby.powerschool.cc
 INNER JOIN gabby.powerschool.students s
   ON cc.studentid = s.id
 INNER JOIN gabby.powerschool.sections_identifiers sec
   ON ABS(cc.sectionid) = sec.sectionid
  AND cc.[db_name] = sec.[db_name]
-WHERE cc.dateleft <= cc.dateleft_prev
-  AND cc.dateenrolled >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
+WHERE CONCAT(cc.studentid, cc.studyear, cc.course_number, cc.[db_name]) IN (SELECT CONCAT(studentid, studyear, course_number, [db_name]) COLLATE Latin1_General_BIN FROM cc_lag WHERE dateleft <= dateleft_prev)
