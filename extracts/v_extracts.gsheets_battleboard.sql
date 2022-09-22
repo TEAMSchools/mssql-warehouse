@@ -15,8 +15,9 @@ SELECT x.df_employee_number
        END AS staffing_job_code
       ,CASE
        WHEN x.primary_site_school_level = 'ES' THEN UPPER(RIGHT(course_name,3))
-       WHEN x.primary_site_school_level IN ('MS','HS') THEN credittype
-       ELSE credittype
+       WHEN x.primary_site_school_level = 'MS' THEN CONCAT(credittype,'-',UPPER(RIGHT(course_name,3)))
+       WHEN x.primary_site_school_level = 'HS' THEN credittype
+       ELSE NULL
        END AS modifier
       
       ,UPPER(s.abbreviation) AS abbreviation
@@ -24,13 +25,15 @@ SELECT x.df_employee_number
       ,ROW_NUMBER() OVER (
        PARTITION BY df_employee_number ORDER BY df_employee_number) AS rn
 FROM gabby.people.staff_crosswalk_static x
+/*THIS JOIN ISN'T LEFTING SO I MADE THE UNION BELOW, BUT STILL MISSING TEACHERS NOT ON PS TABLE*/
 LEFT JOIN gabby.powerschool.sections_identifiers p
   ON p.teachernumber COLLATE SQL_Latin1_General_CP1_CI_AS = x.ps_teachernumber COLLATE SQL_Latin1_General_CP1_CI_AS
 JOIN gabby.powerschool.schools s
   ON x.primary_site COLLATE SQL_Latin1_General_CP1_CI_AS = s.name COLLATE SQL_Latin1_General_CP1_CI_AS
 WHERE primary_job = 'Teacher'
-AND termid >= 3200
-AND course_number <> 'HR'
+AND p.termid >= 3200
+AND p.course_number <> 'HR'
+AND x.[status] IN ('Active','Leave')
 
 UNION ALL
 
@@ -40,10 +43,15 @@ SELECT
       ,x.primary_job
       ,x.primary_on_site_department
       
-      ,CASE
+      ,CASE      
        WHEN x.primary_job = 'Teacher in Residence' THEN 'TIR'
 	   WHEN x.primary_job = 'Learning Specialist' THEN 'LS'
 	   WHEN x.primary_job = 'Paraprofessional' THEN 'PARA'
+       WHEN x.primary_job = 'School Leader' THEN 'SL'
+       WHEN x.primary_job = 'Assistant School Leader' THEN 'AP'
+       WHEN x.primary_job = 'Assistant School Leader, SPED' THEN 'APSPED'
+       WHEN x.primary_job = 'School Leader' THEN 'SL'
+       WHEN x.primary_job LIKE '%Dean%' THEN 'DEAN'
        ELSE x.primary_job 
        END AS staffing_job_code
       
@@ -64,7 +72,7 @@ AND x.[status] IN ('Active','Leave')
 ,id_generator AS (
 SELECT df_employee_number
       ,CASE
-       WHEN primary_job = 'Teacher' THEN CONCAT(primary_site_school_level,'-',abbreviation COLLATE SQL_Latin1_General_CP1_CI_AS,'-',modifier,'-',staffing_job_code)
+       WHEN primary_job = 'Teacher' THEN CONCAT(primary_site_school_level,'-',abbreviation COLLATE SQL_Latin1_General_CP1_CI_AS,'-',staffing_job_code,'-',modifier)
        ELSE CONCAT(primary_site_school_level,'-',abbreviation COLLATE SQL_Latin1_General_CP1_CI_AS,'-',staffing_job_code)
        END AS staffing_model_id
 FROM leads
@@ -81,7 +89,7 @@ FROM id_generator
 
 ,etr_pivot AS (
   SELECT df_employee_number
-        ,academic_year
+        ,academic_year  
         ,[PM1]
         ,[PM2]
         ,[PM3]
@@ -100,6 +108,7 @@ FROM id_generator
     FOR pm_term IN ([PM1],[PM2],[PM3],[PM4])
    ) p
  )
+
 
 SELECT c.df_employee_number
       ,c.[status]
@@ -122,7 +131,7 @@ SELECT c.df_employee_number
       ,CONCAT(staffing_model_id,'-',seat_number) AS staffing_model_id
       
 FROM gabby.people.staff_crosswalk_static c
-LEFT JOIN etr_pivot e
+LEFT JOIN etr_pivot e 
   ON c.df_employee_number = e.df_employee_number
  AND e.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 LEFT JOIN etr_pivot p
@@ -134,4 +143,5 @@ LEFT JOIN gabby.surveys.intent_to_return_survey_detail i
   ON c.df_employee_number = i.respondent_df_employee_number
  AND i.question_shortname = 'intent_to_return'
  AND i.campaign_academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-WHERE c.[status] IN ('Active','Leave','Prestart')
+WHERE c.[status] IN ('Active','Leave','Prestart') 
+ AND c.legal_entity_name <> 'KIPP TEAM and Family Schools Inc.'
