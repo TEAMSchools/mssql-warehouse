@@ -4,19 +4,21 @@ GO
 --CREATE OR ALTER VIEW extracts.gsheets_battleboard AS
 
 WITH leads AS (
-SELECT x.df_employee_number
-      ,x.primary_site_school_level
-      ,x.primary_job
-      ,x.primary_on_site_department
+SELECT c.df_employee_number
+      ,c.primary_site_school_level
+      ,c.primary_job
+      ,c.primary_on_site_department
       
       ,CASE 
-       WHEN x.primary_job = 'Teacher' THEN 'LEAD'
-       ELSE x.primary_job 
+       WHEN c.primary_job = 'Teacher' THEN 'LEAD'
+       ELSE c.primary_job 
        END AS staffing_job_code
       ,CASE
-       WHEN x.primary_site_school_level = 'ES' THEN UPPER(RIGHT(course_name,3))
-       WHEN x.primary_site_school_level = 'MS' THEN CONCAT(credittype,'-',UPPER(RIGHT(course_name,3)))
-       WHEN x.primary_site_school_level = 'HS' THEN credittype
+       WHEN c.primary_site_school_level = 'ES' THEN UPPER(RIGHT(course_name,3))
+       WHEN c.primary_site_school_level = 'MS' AND p.credittype IN ('ELA','MATH','SCI','SOC') THEN CONCAT(credittype,'-',UPPER(RIGHT(course_name,3)))
+       WHEN c.primary_site_school_level = 'MS' AND p.credittype NOT IN ('ELA','MATH','SCI','SOC') THEN CONCAT('OTH','-',UPPER(RIGHT(course_name,3)))
+       WHEN c.primary_site_school_level = 'HS' AND p.credittype IN ('ENG','MATH','SCI','SOC') THEN credittype
+       WHEN c.primary_site_school_level = 'HS' AND p.credittype NOT IN ('ENG','MATH','SCI','SOC','WLANG') THEN 'OTH'
        ELSE NULL
        END AS modifier
       
@@ -24,35 +26,45 @@ SELECT x.df_employee_number
      
       ,ROW_NUMBER() OVER (
        PARTITION BY df_employee_number ORDER BY df_employee_number) AS rn
-FROM gabby.people.staff_crosswalk_static x
+FROM gabby.people.staff_crosswalk_static c
 /*THIS JOIN ISN'T LEFTING SO I MADE THE UNION BELOW, BUT STILL MISSING TEACHERS NOT ON PS TABLE*/
 LEFT JOIN gabby.powerschool.sections_identifiers p
-  ON p.teachernumber COLLATE SQL_Latin1_General_CP1_CI_AS = x.ps_teachernumber COLLATE SQL_Latin1_General_CP1_CI_AS
+  ON p.teachernumber COLLATE SQL_Latin1_General_CP1_CI_AS = c.ps_teachernumber COLLATE SQL_Latin1_General_CP1_CI_AS
 JOIN gabby.powerschool.schools s
-  ON x.primary_site COLLATE SQL_Latin1_General_CP1_CI_AS = s.name COLLATE SQL_Latin1_General_CP1_CI_AS
+  ON c.primary_site COLLATE SQL_Latin1_General_CP1_CI_AS = s.name COLLATE SQL_Latin1_General_CP1_CI_AS
 WHERE primary_job = 'Teacher'
 AND p.termid >= 3200
 AND p.course_number <> 'HR'
-AND x.[status] IN ('Active','Leave')
+AND c.[status] IN ('Active','Leave')
 
 UNION ALL
 
 SELECT
-       x.df_employee_number
-      ,x.primary_site_school_level
-      ,x.primary_job
-      ,x.primary_on_site_department
+       c.df_employee_number
+      ,c.primary_site_school_level
+      ,c.primary_job
+      ,c.primary_on_site_department
       
       ,CASE      
-       WHEN x.primary_job = 'Teacher in Residence' THEN 'TIR'
-	   WHEN x.primary_job = 'Learning Specialist' THEN 'LS'
-	   WHEN x.primary_job = 'Paraprofessional' THEN 'PARA'
-       WHEN x.primary_job = 'School Leader' THEN 'SL'
-       WHEN x.primary_job = 'Assistant School Leader' THEN 'AP'
-       WHEN x.primary_job = 'Assistant School Leader, SPED' THEN 'APSPED'
-       WHEN x.primary_job = 'School Leader' THEN 'SL'
-       WHEN x.primary_job LIKE '%Dean%' THEN 'DEAN'
-       ELSE x.primary_job 
+       WHEN c.primary_job = 'Teacher in Residence' THEN 'TIR'
+	   WHEN c.primary_job = 'Learning Specialist' THEN 'LS'
+	   WHEN c.primary_job = 'Paraprofessional' THEN 'PARA'
+       WHEN c.primary_job = 'School Leader' THEN 'SL'
+       WHEN c.primary_job = 'School Leader In Residence' THEN 'SLIR'
+       WHEN c.primary_job = 'Assistant School Leader' THEN 'AP'
+       WHEN c.primary_job = 'Assistant School Leader, SPED' THEN 'APSPED'
+       WHEN c.primary_job = 'School Leader' THEN 'SL'
+       WHEN c.primary_job LIKE '%facilities%' THEN 'FM'
+       WHEN c.primary_job LIKE '%custodian%' THEN 'POR'
+       WHEN c.primary_job LIKE '%porter%' THEN 'POR'
+       WHEN c.primary_job IN ('School Operations Manager','Associate Director of School Operations') THEN 'SOM'
+       WHEN c.primary_job IN ('Director of School Operations', 'Director of Campus Operations','Director Campus Operations', 'Director School Operations') THEN 'DSO'
+       WHEN c.primary_job = 'Social Worker' THEN 'SW'
+       WHEN c.primary_job LIKE '%Nurse%' THEN 'NURSE'
+       WHEN c.primary_job LIKE '%Receptionist%' THEN 'REC'
+       WHEN c.primary_job LIKE '%Dean%' THEN 'DEAN'
+       WHEN c.primary_job ='Student Support Advocate' THEN 'SSA'
+       ELSE c.primary_job 
        END AS staffing_job_code
       
       ,NULL AS modifier
@@ -61,11 +73,11 @@ SELECT
       
       ,ROW_NUMBER() OVER (
        PARTITION BY df_employee_number ORDER BY df_employee_number) AS rn
-FROM gabby.people.staff_crosswalk_static x
+FROM gabby.people.staff_crosswalk_static c
 LEFT JOIN gabby.powerschool.schools s
-  ON x.primary_site COLLATE SQL_Latin1_General_CP1_CI_AS = s.name COLLATE SQL_Latin1_General_CP1_CI_AS
-WHERE x.primary_job <> 'Teacher'
-AND x.[status] IN ('Active','Leave')
+  ON c.primary_site COLLATE SQL_Latin1_General_CP1_CI_AS = s.name COLLATE SQL_Latin1_General_CP1_CI_AS
+WHERE c.primary_job <> 'Teacher'
+AND c.[status] IN ('Active','Leave')
 
 )
 
