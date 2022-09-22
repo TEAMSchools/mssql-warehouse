@@ -1,7 +1,7 @@
 USE gabby
 GO
 
---CREATE OR ALTER VIEW extracts.gsheets_battleboard AS
+CREATE OR ALTER VIEW extracts.gsheets_battleboard AS
 
 WITH leads AS (
 SELECT c.df_employee_number
@@ -11,7 +11,25 @@ SELECT c.df_employee_number
       
       ,CASE 
        WHEN c.primary_job = 'Teacher' THEN 'LEAD'
-       ELSE c.primary_job 
+       WHEN c.primary_job = 'Teacher in Residence' THEN 'TIR'
+	   WHEN c.primary_job = 'Learning Specialist' THEN 'LS'
+	   WHEN c.primary_job = 'Paraprofessional' THEN 'PARA'
+       WHEN c.primary_job = 'School Leader' THEN 'SL'
+       WHEN c.primary_job = 'School Leader In Residence' THEN 'SLIR'
+       WHEN c.primary_job = 'Assistant School Leader' THEN 'AP'
+       WHEN c.primary_job = 'Assistant School Leader, SPED' THEN 'APSPED'
+       WHEN c.primary_job = 'School Leader' THEN 'SL'
+       WHEN c.primary_job LIKE '%Facilities%' THEN 'FM'
+       WHEN c.primary_job LIKE '%Custodian%' THEN 'POR'
+       WHEN c.primary_job LIKE '%Porter%' THEN 'POR'
+       WHEN c.primary_job IN ('School Operations Manager','Associate Director of School Operations','Academic Operations Manager') THEN 'OPS'
+       WHEN c.primary_job IN ('Director of School Operations', 'Director of Campus Operations','Director Campus Operations', 'Director School Operations') THEN 'DSO'
+       WHEN c.primary_job = 'Social Worker' THEN 'SW'
+       WHEN c.primary_job LIKE '%Nurse%' THEN 'NURSE'
+       WHEN c.primary_job LIKE '%Receptionist%' THEN 'REC'
+       WHEN c.primary_job LIKE '%Dean%' THEN 'DEAN'
+       WHEN c.primary_job ='Student Support Advocate' THEN 'SSA'
+       ELSE c.primary_job
        END AS staffing_job_code
       ,CASE
        WHEN c.primary_site_school_level = 'ES' THEN UPPER(RIGHT(course_name,3))
@@ -30,53 +48,10 @@ FROM gabby.people.staff_crosswalk_static c
 /*THIS JOIN ISN'T LEFTING SO I MADE THE UNION BELOW, BUT STILL MISSING TEACHERS NOT ON PS TABLE*/
 LEFT JOIN gabby.powerschool.sections_identifiers p
   ON p.teachernumber COLLATE SQL_Latin1_General_CP1_CI_AS = c.ps_teachernumber COLLATE SQL_Latin1_General_CP1_CI_AS
-JOIN gabby.powerschool.schools s
-  ON c.primary_site COLLATE SQL_Latin1_General_CP1_CI_AS = s.name COLLATE SQL_Latin1_General_CP1_CI_AS
-WHERE primary_job = 'Teacher'
-AND p.termid >= 3200
-AND p.course_number <> 'HR'
-AND c.[status] IN ('Active','Leave')
-
-UNION ALL
-
-SELECT
-       c.df_employee_number
-      ,c.primary_site_school_level
-      ,c.primary_job
-      ,c.primary_on_site_department
-      
-      ,CASE      
-       WHEN c.primary_job = 'Teacher in Residence' THEN 'TIR'
-	   WHEN c.primary_job = 'Learning Specialist' THEN 'LS'
-	   WHEN c.primary_job = 'Paraprofessional' THEN 'PARA'
-       WHEN c.primary_job = 'School Leader' THEN 'SL'
-       WHEN c.primary_job = 'School Leader In Residence' THEN 'SLIR'
-       WHEN c.primary_job = 'Assistant School Leader' THEN 'AP'
-       WHEN c.primary_job = 'Assistant School Leader, SPED' THEN 'APSPED'
-       WHEN c.primary_job = 'School Leader' THEN 'SL'
-       WHEN c.primary_job LIKE '%facilities%' THEN 'FM'
-       WHEN c.primary_job LIKE '%custodian%' THEN 'POR'
-       WHEN c.primary_job LIKE '%porter%' THEN 'POR'
-       WHEN c.primary_job IN ('School Operations Manager','Associate Director of School Operations') THEN 'SOM'
-       WHEN c.primary_job IN ('Director of School Operations', 'Director of Campus Operations','Director Campus Operations', 'Director School Operations') THEN 'DSO'
-       WHEN c.primary_job = 'Social Worker' THEN 'SW'
-       WHEN c.primary_job LIKE '%Nurse%' THEN 'NURSE'
-       WHEN c.primary_job LIKE '%Receptionist%' THEN 'REC'
-       WHEN c.primary_job LIKE '%Dean%' THEN 'DEAN'
-       WHEN c.primary_job ='Student Support Advocate' THEN 'SSA'
-       ELSE c.primary_job 
-       END AS staffing_job_code
-      
-      ,NULL AS modifier
-      
-      ,UPPER(s.abbreviation) AS abbreviation
-      
-      ,ROW_NUMBER() OVER (
-       PARTITION BY df_employee_number ORDER BY df_employee_number) AS rn
-FROM gabby.people.staff_crosswalk_static c
+  AND p.termid >= 3200
+  AND p.course_number <> 'HR'
 LEFT JOIN gabby.powerschool.schools s
   ON c.primary_site COLLATE SQL_Latin1_General_CP1_CI_AS = s.name COLLATE SQL_Latin1_General_CP1_CI_AS
-WHERE c.primary_job <> 'Teacher'
 AND c.[status] IN ('Active','Leave')
 
 )
@@ -157,3 +132,5 @@ LEFT JOIN gabby.surveys.intent_to_return_survey_detail i
  AND i.campaign_academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 WHERE c.[status] IN ('Active','Leave','Prestart') 
  AND c.legal_entity_name <> 'KIPP TEAM and Family Schools Inc.'
+ AND c.primary_site NOT IN ('Room 9 - 60 Park Pl','Room 10 - 121 Market St','Room 11 - 1951 NW 7th Ave')
+ AND c.primary_site NOT LIKE '%Campus%'
