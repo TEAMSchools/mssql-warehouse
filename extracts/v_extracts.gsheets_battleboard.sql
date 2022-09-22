@@ -33,9 +33,9 @@ SELECT c.df_employee_number
        END AS staffing_job_code
       ,CASE
        WHEN c.primary_site_school_level = 'ES' THEN UPPER(RIGHT(course_name,3))
-       WHEN c.primary_site_school_level = 'MS' AND p.credittype IN ('ELA','MATH','SCI','SOC') THEN CONCAT(credittype,'-',UPPER(RIGHT(course_name,3)))
-       WHEN c.primary_site_school_level = 'MS' AND p.credittype NOT IN ('ELA','MATH','SCI','SOC') THEN CONCAT('OTH','-',UPPER(RIGHT(course_name,3)))
-       WHEN c.primary_site_school_level = 'HS' AND p.credittype IN ('ENG','MATH','SCI','SOC') THEN credittype
+       WHEN c.primary_site_school_level = 'MS' AND p.credittype IN ('ELA','MATH','SCI','SOC','WLANG') THEN CONCAT(credittype,'-',UPPER(RIGHT(course_name,3)))
+       WHEN c.primary_site_school_level = 'MS' AND p.credittype NOT IN ('ELA','MATH','SCI','SOC','WLANG') THEN CONCAT('OTH','-',UPPER(RIGHT(course_name,3)))
+       WHEN c.primary_site_school_level = 'HS' AND p.credittype IN ('ENG','MATH','SCI','SOC','WLANG') THEN credittype
        WHEN c.primary_site_school_level = 'HS' AND p.credittype NOT IN ('ENG','MATH','SCI','SOC','WLANG') THEN 'OTH'
        ELSE NULL
        END AS modifier
@@ -140,6 +140,7 @@ SELECT m.include AS seat_open
       ,m.academic_year
       ,m.staffing_model_id
       ,m.display_name
+      ,r.staffing_model_id
       ,r.df_employee_number
       ,r.preferred_name
       ,r.primary_site
@@ -151,7 +152,8 @@ SELECT m.include AS seat_open
       ,r.PM3
       ,r.last_year_final
       ,r.itr_response
+      ,r.[status]
 
 FROM gabby.people.staffing_model m
-LEFT JOIN current_roster r
+FULL OUTER JOIN current_roster r
 ON m.staffing_model_id = r.staffing_model_id
