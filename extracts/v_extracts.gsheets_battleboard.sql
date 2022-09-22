@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW extracts.gsheets_battleboard AS
+--CREATE OR ALTER VIEW extracts.gsheets_battleboard AS
 
 WITH leads AS (
 SELECT c.df_employee_number
@@ -96,7 +96,7 @@ FROM id_generator
    ) p
  )
 
-
+,current_roster AS (
 SELECT c.df_employee_number
       ,c.[status]
       ,c.preferred_name
@@ -111,7 +111,7 @@ SELECT c.df_employee_number
       ,ROUND(e.[PM2], 2) AS [PM2]
       ,ROUND(e.[PM3], 2) AS [PM3]
 
-      ,ROUND(p.[PM4], 2) AS [Last Year Final]
+      ,ROUND(p.[PM4], 2) AS last_year_final
 
       ,i.answer AS itr_response
 
@@ -134,3 +134,24 @@ WHERE c.[status] IN ('Active','Leave','Prestart') 
  AND c.legal_entity_name <> 'KIPP TEAM and Family Schools Inc.'
  AND c.primary_site NOT IN ('Room 9 - 60 Park Pl','Room 10 - 121 Market St','Room 11 - 1951 NW 7th Ave')
  AND c.primary_site NOT LIKE '%Campus%'
+ )
+
+SELECT m.include AS seat_open
+      ,m.academic_year
+      ,m.staffing_model_id
+      ,m.display_name
+      ,r.df_employee_number
+      ,r.preferred_name
+      ,r.primary_site
+      ,r.primary_job
+      ,r.google_email
+      ,r.original_hire_date
+      ,r.PM1
+      ,r.PM2
+      ,r.PM3
+      ,r.last_year_final
+      ,r.itr_response
+
+FROM gabby.people.staffing_model m
+LEFT JOIN current_roster r
+ON m.staffing_model_id = r.staffing_model_id
