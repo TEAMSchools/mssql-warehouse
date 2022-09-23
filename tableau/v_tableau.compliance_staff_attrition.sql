@@ -8,7 +8,10 @@ WITH term AS (
         ,sub.position_id
         ,sub.status_effective_date
         ,sub.termination_reason_description
-        ,ROW_NUMBER() OVER(PARTITION BY sub.position_id ORDER BY sub.status_effective_date DESC) AS rn
+        ,ROW_NUMBER() OVER(
+           PARTITION BY sub.position_id 
+           ORDER BY sub.status_effective_date DESC
+         ) AS rn
   FROM
       (
        SELECT t.employee_number
@@ -16,12 +19,15 @@ WITH term AS (
              ,t.status_effective_date
              ,t.status_effective_end_date
              ,t.termination_reason_description
-             ,LAG(t.status_effective_end_date) OVER(PARTITION BY t.position_id ORDER BY t.status_effective_date) AS prev_end_date
+             ,LAG(t.status_effective_end_date) OVER(
+                PARTITION BY t.position_id 
+                ORDER BY t.status_effective_date
+              ) AS prev_end_date
        FROM gabby.people.status_history_static t
        WHERE t.position_status = 'Terminated'
       ) sub
   WHERE ISNULL(DATEDIFF(DAY, sub.prev_end_date, sub.status_effective_date), 2) > 1
- )
+)
 
 ,roster AS (
   SELECT sub.employee_number
@@ -40,11 +46,13 @@ WITH term AS (
           WHEN MONTH(sub.position_start_date) >= 9 THEN YEAR(sub.position_start_date)
           WHEN MONTH(sub.position_start_date) < 9 THEN YEAR(sub.position_start_date) - 1
          END AS start_academic_year
-        ,COALESCE(CASE 
-                   WHEN MONTH(sub.termination_date) >= 9 THEN YEAR(sub.termination_date)
-                   WHEN MONTH(sub.termination_date) < 9 THEN YEAR(sub.termination_date) - 1
-                  END
-                 ,gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1) AS end_academic_year
+        ,COALESCE(
+           CASE 
+            WHEN MONTH(sub.termination_date) >= 9 THEN YEAR(sub.termination_date)
+            WHEN MONTH(sub.termination_date) < 9 THEN YEAR(sub.termination_date) - 1
+           END
+          ,gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1
+         ) AS end_academic_year
   FROM 
       (
        SELECT r.employee_number
@@ -68,14 +76,14 @@ WITH term AS (
          ON r.position_id = t.position_id
         AND t.rn = 1
       ) sub
- )
+)
 
 ,years AS (
   SELECT n AS academic_year
         ,DATEFROMPARTS((n + 1), 4, 30) AS effective_date
   FROM gabby.utilities.row_generator_smallint
   WHERE n BETWEEN 2002 AND (gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1)
- )
+)
 
 ,scaffold AS (
   SELECT sub.employee_number
@@ -92,7 +100,10 @@ WITH term AS (
         ,sub.academic_year_entrydate
         ,sub.academic_year_exitdate
         ,sub.kipp_alumni_status
-        ,LEAD(sub.academic_year_exitdate, 1) OVER(PARTITION BY sub.position_id ORDER BY sub.academic_year) AS academic_year_exitdate_next
+        ,LEAD(sub.academic_year_exitdate, 1) OVER(
+           PARTITION BY sub.position_id 
+           ORDER BY sub.academic_year
+         ) AS academic_year_exitdate_next
 
         ,w.business_unit
         ,w.job_title
@@ -122,10 +133,12 @@ WITH term AS (
                WHEN r.start_academic_year = y.academic_year THEN r.position_start_date
                ELSE DATEFROMPARTS(y.academic_year, 7, 1)
               END AS academic_year_entrydate
-             ,COALESCE(CASE WHEN r.end_academic_year = y.academic_year THEN r.termination_date END
-                      ,DATEFROMPARTS((y.academic_year + 1), 6, 30)) AS academic_year_exitdate
+             ,COALESCE(
+                CASE WHEN r.end_academic_year = y.academic_year THEN r.termination_date END
+               ,DATEFROMPARTS((y.academic_year + 1), 6, 30)
+              ) AS academic_year_exitdate
        FROM roster r
-       JOIN years y
+       INNER JOIN years y
          ON y.academic_year BETWEEN r.start_academic_year AND r.end_academic_year
       ) sub
   LEFT JOIN gabby.people.employment_history_static w
@@ -135,7 +148,7 @@ WITH term AS (
     ON w.[location] = scw.site_name
    AND scw._fivetran_deleted = 0
   WHERE sub.academic_year_exitdate > sub.academic_year_entrydate
- )
+)
 
 SELECT d.employee_number AS df_employee_number
       ,d.preferred_first_name

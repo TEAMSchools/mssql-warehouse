@@ -23,7 +23,7 @@ WITH school_ids AS (
       ) sub
   LEFT JOIN gabby.people.school_crosswalk cw
     ON sub.school_name = cw.site_name
-  )
+)
 
 ,school_leaders AS (
   SELECT primary_site AS sl_primary_site
@@ -31,7 +31,7 @@ WITH school_ids AS (
   FROM gabby.people.staff_crosswalk_static
   WHERE primary_job = 'School Leader'
     AND [status] <> 'Terminated'
- )
+)
 
 ,holidays AS (
   SELECT [location]
@@ -40,7 +40,7 @@ WITH school_ids AS (
   FROM gabby.adp.wfm_time_details
   WHERE transaction_type = 'Worked Holiday Edit'
   GROUP BY [location], transaction_apply_date, transaction_type
- )
+)
 
 ,snow_days AS (
   SELECT cal.[db_name]
@@ -54,7 +54,7 @@ WITH school_ids AS (
     ON cal.schoolid = sch.school_number
    AND cal.[db_name] = sch.[db_name]
   WHERE cal.[type] = 'WS'
- )
+)
 
 ,last_accrual_day AS (
   SELECT last_updated
@@ -74,7 +74,7 @@ WITH school_ids AS (
        FROM gabby.adp.wfm_accrual_reporting_period_summary
       ) sub
   WHERE last_updated = max_last_updated
- )
+)
 
 ,accruals_taken AS (
   SELECT last_updated
@@ -96,7 +96,7 @@ WITH school_ids AS (
      MAX(accrual_taken_to_date_hours_)
      FOR accrual_code IN ([Vacation], [PTO], [No Accrual], [Unused PTO], [Sick])
    ) p
- )
+)
 
 ,accruals_balance AS (
   SELECT last_updated
@@ -118,7 +118,7 @@ WITH school_ids AS (
     MAX(accrual_available_balance_hours_) 
     FOR accrual_code IN ([Vacation], [PTO], [No Accrual], [Unused PTO], [Sick])
   ) p
- )
+)
 
 ,missed_punches AS (
   SELECT employee_name
@@ -128,7 +128,7 @@ WITH school_ids AS (
   FROM gabby.adp.wfm_time_details td
   WHERE (transaction_in_exceptions = 'Missed In Punch' OR transaction_out_exceptions = 'Missed Out Punch')
   GROUP BY employee_name, transaction_apply_date
-  )
+)
 
 ,time_details_clean AS (
   SELECT sub._modified
@@ -138,8 +138,6 @@ WITH school_ids AS (
         ,sub.transaction_apply_date
         ,sub.transaction_apply_to
         ,sub.transaction_type
-        ,COALESCE(sub.transaction_in_exceptions,mp.transaction_in_exceptions + ' (Corrected)') AS transaction_in_exceptions
-        ,COALESCE(sub.transaction_out_exceptions,mp.transaction_out_exceptions + ' (Corrected)') AS transaction_out_exceptions
         ,sub.[hours]
         ,sub.[money]
         ,sub.[days]
@@ -147,45 +145,37 @@ WITH school_ids AS (
         ,sub.transaction_end_date_time
         ,sub.employee_payrule
         ,sub.rn_adj
-  FROM (
-        SELECT _modified
-              ,employee_name
-              ,job
-              ,[location]
-              ,transaction_apply_date
-              ,transaction_apply_to
-              ,transaction_type
-              ,transaction_in_exceptions
-              ,transaction_out_exceptions
-              ,[hours]
-              ,[money]
-              ,[days]
-              ,transaction_start_date_time
-              ,transaction_end_date_time
-              ,employee_payrule
-              ,ROW_NUMBER() OVER(PARTITION BY employee_name, transaction_apply_date ORDER BY _modified DESC) AS rn_adj
-        FROM gabby.adp.wfm_time_details td
-        WHERE transaction_type <> 'Historical Correction'
-        GROUP BY _modified
-                ,employee_name
-                ,job
-                ,[location]
-                ,transaction_apply_date
-                ,transaction_apply_to
-                ,transaction_type
-                ,transaction_in_exceptions
-                ,transaction_out_exceptions
-                ,[hours]
-                ,[money]
-                ,[days]
-                ,transaction_start_date_time
-                ,transaction_end_date_time
-                ,employee_payrule) sub
-      LEFT JOIN missed_punches mp
-        ON sub.employee_name = mp.employee_name
-       AND sub.transaction_apply_date = mp.transaction_apply_date
-    WHERE sub.rn_adj = 1
-  )
+        ,COALESCE(sub.transaction_in_exceptions, mp.transaction_in_exceptions + ' (Corrected)') AS transaction_in_exceptions
+        ,COALESCE(sub.transaction_out_exceptions, mp.transaction_out_exceptions + ' (Corrected)') AS transaction_out_exceptions
+  FROM
+      (
+       SELECT _modified
+             ,employee_name
+             ,job
+             ,[location]
+             ,transaction_apply_to
+             ,transaction_type
+             ,transaction_in_exceptions
+             ,transaction_out_exceptions
+             ,[hours]
+             ,[money]
+             ,[days]
+             ,employee_payrule
+             ,CAST(td.transaction_apply_date AS DATE) AS transaction_apply_date
+             ,CAST(td.transaction_start_date_time AS DATETIME2) AS transaction_start_date_time
+             ,CAST(td.transaction_end_date_time AS DATETIME2) AS transaction_end_date_time
+             ,ROW_NUMBER() OVER(
+                PARTITION BY employee_name, transaction_apply_date 
+                ORDER BY _modified DESC
+              ) AS rn_adj
+       FROM gabby.adp.wfm_time_details td
+       WHERE transaction_type <> 'Historical Correction'
+      ) sub
+  LEFT JOIN missed_punches mp
+    ON sub.employee_name = mp.employee_name
+   AND sub.transaction_apply_date = mp.transaction_apply_date
+  WHERE sub.rn_adj = 1
+)
 
 SELECT td.job AS job_title
       ,td.[location] AS budget_location
@@ -194,23 +184,13 @@ SELECT td.job AS job_title
       ,td.transaction_in_exceptions
       ,td.transaction_out_exceptions
       ,td.[hours]
-      ,CONVERT(DATE, td.transaction_apply_date) AS work_date
-      ,CONVERT(DATETIME2, td.transaction_start_date_time) AS transaction_start_date_time
-      ,CONVERT(DATETIME2, td.transaction_end_date_time) AS transaction_end_date_time
+      ,td.transaction_apply_date AS work_date
+      ,td.transaction_start_date_time AS transaction_start_date_time
+      ,td.transaction_end_date_time AS transaction_end_date_time
       ,gabby.utilities.DATE_TO_SY(td.transaction_apply_date) AS academic_year
-      ,SUBSTRING(
-         td.employee_name
-        ,LEN(td.employee_name) - 9
-        ,9
-       ) AS adp_associate_id
-      ,CASE 
-        WHEN td.transaction_in_exceptions = 'Late In' THEN 1 
-        ELSE 0 
-       END AS late_status
-      ,CASE 
-        WHEN td.transaction_out_exceptions = 'Early Out' THEN 1 
-        ELSE 0 
-       END AS early_out_status
+      ,SUBSTRING(td.employee_name, (LEN(td.employee_name) - 9), 9) AS adp_associate_id
+      ,CASE WHEN td.transaction_in_exceptions = 'Late In' THEN 1 ELSE 0 END AS late_status
+      ,CASE WHEN td.transaction_out_exceptions = 'Early Out' THEN 1 ELSE 0 END AS early_out_status
       ,CASE 
         WHEN td.transaction_in_exceptions = 'Missed In Punch' THEN 1
         WHEN td.transaction_out_exceptions = 'Missed Out Punch' THEN 1
@@ -276,7 +256,7 @@ LEFT JOIN holidays h
  AND td.transaction_apply_date = h.transaction_apply_date
 LEFT JOIN snow_days sd
   ON sd.schoolid = id.ps_school_id
- AND sd.date_value = CONVERT(DATE, td.transaction_apply_date)
+ AND sd.date_value = td.transaction_apply_date
 LEFT JOIN gabby.people.staff_crosswalk_static cw
   ON SUBSTRING(td.employee_name, LEN(td.employee_name) - 9, 9) = cw.adp_associate_id
 LEFT JOIN school_leaders sl
