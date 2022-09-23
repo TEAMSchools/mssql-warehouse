@@ -3,7 +3,7 @@ GO
 
 --CREATE OR ALTER VIEW extracts.gsheets_battleboard AS
 
-WITH leads AS (
+WITH job_codes AS (
 SELECT c.df_employee_number
       ,c.primary_site_school_level
       ,c.primary_job
@@ -12,7 +12,7 @@ SELECT c.df_employee_number
       ,CASE 
        WHEN c.primary_job = 'Teacher' THEN 'LEAD'
        WHEN c.primary_job = 'Teacher in Residence' THEN 'TIR'
-	   WHEN c.primary_job = 'Learning Specialist' THEN 'LS'
+	   WHEN c.primary_job IN ('Learning Specialist','Behavior Specialist') THEN 'LS'
 	   WHEN c.primary_job = 'Paraprofessional' THEN 'PARA'
        WHEN c.primary_job = 'School Leader' THEN 'SL'
        WHEN c.primary_job = 'School Leader In Residence' THEN 'SLIR'
@@ -28,15 +28,21 @@ SELECT c.df_employee_number
        WHEN c.primary_job LIKE '%Nurse%' THEN 'NURSE'
        WHEN c.primary_job LIKE '%Receptionist%' THEN 'REC'
        WHEN c.primary_job LIKE '%Dean%' THEN 'DEAN'
+       WHEN c.primary_job LIKE '%Counselor%' THEN 'KFWD'
        WHEN c.primary_job ='Student Support Advocate' THEN 'SSA'
-       ELSE c.primary_job
+       ELSE 'OTHNI'
        END AS staffing_job_code
+      ,p.course_name
+      ,p.credittype
       ,CASE
+       WHEN c.primary_site_school_level = 'ES' AND p.credittype IS NULL THEN 'FLEX'
        WHEN c.primary_site_school_level = 'ES' THEN UPPER(RIGHT(course_name,3))
-       WHEN c.primary_site_school_level = 'MS' AND p.credittype IN ('ELA','MATH','SCI','SOC','WLANG') THEN CONCAT(credittype,'-',UPPER(RIGHT(course_name,3)))
-       WHEN c.primary_site_school_level = 'MS' AND p.credittype NOT IN ('ELA','MATH','SCI','SOC','WLANG') THEN CONCAT('OTH','-',UPPER(RIGHT(course_name,3)))
-       WHEN c.primary_site_school_level = 'HS' AND p.credittype IN ('ENG','MATH','SCI','SOC','WLANG') THEN credittype
-       WHEN c.primary_site_school_level = 'HS' AND p.credittype NOT IN ('ENG','MATH','SCI','SOC','WLANG') THEN 'OTH'
+       WHEN c.primary_site_school_level = 'MS' AND p.credittype IS NULL THEN 'FLEX'
+       WHEN c.primary_site_school_level = 'MS' AND p.credittype IN ('ELA','ENG','MATH','SCI','SOC','WLANG') THEN CONCAT(credittype,'-',UPPER(RIGHT(course_name,3)))
+       WHEN c.primary_site_school_level = 'MS' AND p.credittype NOT IN ('ELA','ENG','MATH','SCI','SOC','WLANG') THEN CONCAT('OTH','-',UPPER(RIGHT(course_name,3)))
+       WHEN c.primary_site_school_level = 'HS' AND p.credittype IS NULL THEN 'FLEX'
+       WHEN c.primary_site_school_level = 'HS' AND p.credittype IN ('ENG','MATH','SCI','SOC') THEN credittype
+       WHEN c.primary_site_school_level = 'HS' AND p.credittype NOT IN ('ENG','MATH','SCI','SOC') THEN 'OTH'
        ELSE NULL
        END AS modifier
       
@@ -45,7 +51,6 @@ SELECT c.df_employee_number
       ,ROW_NUMBER() OVER (
        PARTITION BY df_employee_number ORDER BY df_employee_number) AS rn
 FROM gabby.people.staff_crosswalk_static c
-/*THIS JOIN ISN'T LEFTING SO I MADE THE UNION BELOW, BUT STILL MISSING TEACHERS NOT ON PS TABLE*/
 LEFT JOIN gabby.powerschool.sections_identifiers p
   ON p.teachernumber COLLATE SQL_Latin1_General_CP1_CI_AS = c.ps_teachernumber COLLATE SQL_Latin1_General_CP1_CI_AS
   AND p.termid >= 3200
@@ -58,17 +63,21 @@ AND c.[status] IN ('Active','Leave')
 
 ,id_generator AS (
 SELECT df_employee_number
+      ,course_name
+      ,credittype
       ,CASE
        WHEN primary_job = 'Teacher' THEN CONCAT(primary_site_school_level,'-',abbreviation COLLATE SQL_Latin1_General_CP1_CI_AS,'-',staffing_job_code,'-',modifier)
        ELSE CONCAT(primary_site_school_level,'-',abbreviation COLLATE SQL_Latin1_General_CP1_CI_AS,'-',staffing_job_code)
        END AS staffing_model_id
-FROM leads
+FROM job_codes
 WHERE rn = 1
 )
 
 ,seat_number AS (
 SELECT df_employee_number
       ,staffing_model_id
+      ,course_name
+      ,credittype
       ,RIGHT(100 + ROW_NUMBER() OVER (
        PARTITION BY staffing_model_id ORDER BY df_employee_number), 2) AS seat_number
 FROM id_generator
@@ -107,6 +116,9 @@ SELECT c.df_employee_number
       ,c.google_email
       ,c.original_hire_date
 
+      ,s.course_name
+      ,s.credittype
+
       ,ROUND(e.[PM1], 2) AS [PM1]
       ,ROUND(e.[PM2], 2) AS [PM2]
       ,ROUND(e.[PM3], 2) AS [PM3]
@@ -140,7 +152,10 @@ SELECT m.include AS seat_open
       ,m.academic_year
       ,m.staffing_model_id
       ,m.display_name
-      ,r.staffing_model_id
+      
+      ,r.staffing_model_id AS generated_id
+      ,r.course_name AS powerschool_course
+      ,r.credittype AS powerschool_credit
       ,r.df_employee_number
       ,r.preferred_name
       ,r.primary_site
