@@ -1,7 +1,7 @@
 USE gabby
 GO
 
---CREATE OR ALTER VIEW extracts.gsheets_battleboard AS
+CREATE OR ALTER VIEW extracts.gsheets_battleboard AS
 
 WITH job_codes AS (
 SELECT c.df_employee_number
@@ -143,9 +143,7 @@ LEFT JOIN gabby.surveys.intent_to_return_survey_detail i
  AND i.question_shortname = 'intent_to_return'
  AND i.campaign_academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 WHERE c.[status] IN ('Active','Leave','Prestart') 
- AND c.legal_entity_name <> 'KIPP TEAM and Family Schools Inc.'
- AND c.primary_site NOT IN ('Room 9 - 60 Park Pl','Room 10 - 121 Market St','Room 11 - 1951 NW 7th Ave')
- AND c.primary_site NOT LIKE '%Campus%'
+
  )
 
 SELECT m.include AS seat_open
@@ -159,6 +157,7 @@ SELECT m.include AS seat_open
       ,r.df_employee_number
       ,r.preferred_name
       ,r.primary_site
+      ,r.primary_on_site_department
       ,r.primary_job
       ,r.google_email
       ,r.original_hire_date
