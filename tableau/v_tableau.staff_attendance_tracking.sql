@@ -206,6 +206,7 @@ SELECT td.job AS job_title
       ,cw.df_employee_number
       ,cw.preferred_name
       ,cw.manager_name
+      ,cw.legal_entity_name AS legal_entity_current
       ,cw.primary_site AS location_current
       ,LOWER(cw.samaccountname) AS staff_samaccountname
       ,LOWER(cw.manager_samaccountname) AS manager_samaccountname
@@ -266,4 +267,7 @@ LEFT JOIN accruals_taken act
 LEFT JOIN accruals_balance acb
   ON td.employee_name = acb.employee_name_id_
 WHERE td.transaction_type <> 'Worked Holiday Edit'
-  AND td.transaction_apply_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 8, 15)
+  AND (
+       (cw.legal_entity_name <> 'KIPP Miami' AND td.transaction_apply_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 8, 15))
+    OR (cw.legal_entity_name = 'KIPP Miami' AND td.transaction_apply_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 10, 31))
+      )
