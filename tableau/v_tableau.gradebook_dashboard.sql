@@ -73,6 +73,7 @@ SELECT co.student_number
       ,co.school_level
 
       ,CASE WHEN sp.studentid IS NOT NULL THEN 1 END AS is_counselingservices
+      ,CASE WHEN sa.studentid IS NOT NULL THEN 1 END AS is_studentathlete
 
       ,gr.course_number
       ,gr.storecode AS term_name
@@ -124,6 +125,11 @@ LEFT JOIN gabby.powerschool.spenrollments_gen_static sp
  AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sp.enter_date AND sp.exit_date
  AND sp.specprog_name = 'Counseling Services'
  AND co.[db_name] = sp.[db_name]
+LEFT JOIN powerschool.spenrollments_gen_static sa
+  ON co.studentid = sa.studentid
+ AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sa.enter_date AND sa.exit_date
+ AND sa.specprog_name = 'Student Athlete'
+ AND co.[db_name] = sa.[db_name]
 WHERE co.rn_year = 1
   AND co.grade_level <> 99
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
@@ -146,6 +152,7 @@ SELECT co.student_number
       ,co.school_level
 
       ,CASE WHEN sp.studentid IS NOT NULL THEN 1 END AS is_counselingservices
+      ,CASE WHEN sa.studentid IS NOT NULL THEN 1 END AS is_studentathlete
 
       ,gr.course_number
       ,'Y1' AS term_name
@@ -199,6 +206,11 @@ LEFT JOIN gabby.powerschool.spenrollments_gen_static sp
  AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sp.enter_date AND sp.exit_date
  AND sp.specprog_name = 'Counseling Services'
  AND co.[db_name] = sp.[db_name]
+LEFT JOIN powerschool.spenrollments_gen_static sa
+  ON co.studentid = sa.studentid
+ AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sa.enter_date AND sa.exit_date
+ AND sa.specprog_name = 'Student Athlete'
+ AND co.[db_name] = sa.[db_name]
 WHERE co.rn_year = 1
   AND co.grade_level <> 99
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
@@ -221,6 +233,7 @@ SELECT co.student_number
       ,co.school_level
 
       ,CASE WHEN sp.studentid IS NOT NULL THEN 1 END AS is_counselingservices
+      ,CASE WHEN sa.studentid IS NOT NULL THEN 1 END AS is_studentathlete
 
       ,sg.course_number
       ,'Y1' AS term_name
@@ -268,6 +281,11 @@ LEFT JOIN gabby.powerschool.spenrollments_gen_static sp
  AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sp.enter_date AND sp.exit_date
  AND sp.specprog_name = 'Counseling Services'
  AND co.[db_name] = sp.[db_name]
+LEFT JOIN powerschool.spenrollments_gen_static sa
+  ON co.studentid = sa.studentid
+ AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sa.enter_date AND sa.exit_date
+ AND sa.specprog_name = 'Student Athlete'
+ AND co.[db_name] = sa.[db_name]
 WHERE co.rn_year = 1
   AND co.academic_year <> gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 
@@ -289,6 +307,7 @@ SELECT COALESCE(co.student_number, e1.student_number) AS student_number
       ,COALESCE(co.school_level, e1.school_level) AS school_level
 
       ,CASE WHEN sp.studentid IS NOT NULL THEN 1 END AS is_counselingservices
+      ,CASE WHEN sa.studentid IS NOT NULL THEN 1 END AS is_studentathlete
 
       ,CONCAT('TRANSFER', tr.termid, tr.[db_name], tr.dcid) COLLATE Latin1_General_BIN AS course_number
       ,'Y1' AS term_name
@@ -334,6 +353,11 @@ LEFT JOIN gabby.powerschool.spenrollments_gen_static sp
  AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sp.enter_date AND sp.exit_date
  AND sp.specprog_name = 'Counseling Services'
  AND co.[db_name] = sp.[db_name]
+LEFT JOIN powerschool.spenrollments_gen_static sa
+  ON co.studentid = sa.studentid
+ AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sa.enter_date AND sa.exit_date
+ AND sa.specprog_name = 'Student Athlete'
+ AND co.[db_name] = sa.[db_name]
 WHERE tr.storecode = 'Y1'
   AND tr.course_number IS NULL
 
@@ -355,6 +379,7 @@ SELECT co.student_number
       ,co.school_level
 
       ,CASE WHEN sp.studentid IS NOT NULL THEN 1 END AS is_counselingservices
+      ,CASE WHEN sa.studentid IS NOT NULL THEN 1 END AS is_studentathlete
 
       ,cg.course_number
       ,REPLACE(cg.reporting_term,'RT','Q') AS term_name
@@ -405,6 +430,11 @@ LEFT JOIN gabby.powerschool.spenrollments_gen_static sp
  AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sp.enter_date AND sp.exit_date
  AND sp.specprog_name = 'Counseling Services'
  AND co.[db_name] = sp.[db_name]
+LEFT JOIN powerschool.spenrollments_gen_static sa
+  ON co.studentid = sa.studentid
+ AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sa.enter_date AND sa.exit_date
+ AND sa.specprog_name = 'Student Athlete'
+ AND co.[db_name] = sa.[db_name]
 WHERE co.rn_year = 1
   AND co.grade_level <> 99
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
@@ -427,6 +457,7 @@ SELECT co.student_number
       ,co.school_level
 
       ,CASE WHEN sp.studentid IS NOT NULL THEN 1 END AS is_counselingservices
+      ,CASE WHEN sa.studentid IS NOT NULL THEN 1 END AS is_studentathlete
 
       ,cy.course_number
       ,'Y1' AS term_name
@@ -473,6 +504,11 @@ LEFT JOIN gabby.powerschool.spenrollments_gen_static sp
  AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sp.enter_date AND sp.exit_date
  AND sp.specprog_name = 'Counseling Services'
  AND co.[db_name] = sp.[db_name]
+LEFT JOIN powerschool.spenrollments_gen_static sa
+  ON co.studentid = sa.studentid
+ AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sa.enter_date AND sa.exit_date
+ AND sa.specprog_name = 'Student Athlete'
+ AND co.[db_name] = sa.[db_name]
 WHERE co.rn_year = 1
   AND co.grade_level <> 99
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
