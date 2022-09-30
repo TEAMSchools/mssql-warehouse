@@ -269,5 +269,5 @@ LEFT JOIN accruals_balance acb
 WHERE td.transaction_type <> 'Worked Holiday Edit'
   AND (
        (cw.legal_entity_name <> 'KIPP Miami' AND td.transaction_apply_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 8, 15))
-    OR (cw.legal_entity_name = 'KIPP Miami' AND td.transaction_apply_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 10, 31))
+        OR (cw.legal_entity_name = 'KIPP Miami' AND td.transaction_apply_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 10, 31))
       )
