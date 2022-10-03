@@ -197,7 +197,7 @@ WITH academic_years AS (
              ORDER BY date_c DESC) AS rn
   FROM [gabby].[alumni].[contact_note_c]
   WHERE is_deleted = 0
-    AND subject_c LIKE 'Tier%'
+    AND subject_c LIKE 'Tier [0-9]'
  )
 
 ,matric AS (
@@ -400,6 +400,8 @@ SELECT c.sf_contact_id
       ,ln.next_steps_c AS latest_as_next_steps
 
       ,fa.unmet_need_c AS unmet_need
+
+      ,tier.tier
 FROM gabby.alumni.ktc_roster c
 CROSS JOIN academic_years ay
 LEFT JOIN gabby.alumni.enrollment_identifiers ei
@@ -424,5 +426,9 @@ LEFT JOIN latest_note ln
 LEFT JOIN finaid fa
   ON c.sf_contact_id = fa.contact_id
  AND fa.rn_finaid = 1
+LEFT JOIN tier
+  ON c.sf_contact_id = tier.contact_c
+ AND ay.academic_year = tier.academic_year
+ AND tier.rn = 1
 WHERE c.ktc_status IN ('HS9', 'HS10', 'HS11', 'HS12', 'HSG', 'TAF', 'TAFHS')
   AND c.sf_contact_id IS NOT NULL
