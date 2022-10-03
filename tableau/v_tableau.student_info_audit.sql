@@ -123,7 +123,6 @@ WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 
 UNION ALL
 
-
 SELECT co.[db_name]
       ,co.schoolid
       ,co.school_name
@@ -181,7 +180,11 @@ SELECT qa.[db_name]
       ,qa.schoolid
       ,sch.[name] AS school_name
       ,qa.student_number
-      ,REPLACE(qa.[db_name], 'kipp', '') COLLATE Latin1_General_BIN AS region
+      ,CASE 
+        WHEN qa.[db_name] = 'kippnewark' THEN 'TEAM'
+        WHEN qa.[db_name] = 'kippcamden' THEN 'KCNA'
+        WHEN qa.[db_name] = 'kippmiami' THEN 'KMS'
+       END AS region
       ,qa.lastfirst
       ,qa.grade_level
       ,qa.team
