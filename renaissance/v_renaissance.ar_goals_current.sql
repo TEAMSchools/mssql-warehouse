@@ -35,7 +35,7 @@ WITH roster AS (
         AND dts.time_per_name <> 'ARY'
         AND dts._fivetran_deleted = 0
        WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-         AND (co.school_level = 'MS' OR (co.schoolid = 73256 AND co.grade_level = 4))
+         AND (co.school_level = 'MS' OR (co.schoolid = 73256 AND co.grade_level >= 3))
       ) sub
   GROUP BY student_number
           ,academic_year

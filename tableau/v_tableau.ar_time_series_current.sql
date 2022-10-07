@@ -85,8 +85,14 @@ FROM
            ,last_book_lexile
            ,last_book_pct_correct
 
-           ,words_goal_yr * (CAST(DATEDIFF(DAY, y1_start_date, [date])) / DATEDIFF(DAY, y1_start_date, y1_end_date) AS FLOAT) AS ontrack_words_yr
-           ,words_goal_term * (CAST(DATEDIFF(DAY, term_start_date, [date])) / DATEDIFF(DAY, term_start_date, term_end_date) AS FLOAT) AS ontrack_words_term
+           ,words_goal_yr * (
+              CAST(DATEDIFF(DAY, y1_start_date, [date]) AS FLOAT)
+              / CAST(DATEDIFF(DAY, y1_start_date, y1_end_date) AS FLOAT)
+            ) AS ontrack_words_yr
+           ,words_goal_term * (
+              CAST(DATEDIFF(DAY, term_start_date, [date]) AS FLOAT)
+              / CAST(DATEDIFF(DAY, term_start_date, term_end_date) AS FLOAT)
+            ) AS ontrack_words_term
 
            ,CASE
              WHEN DATEPART(WEEK, [date]) = DATEPART(WEEK, CAST(CURRENT_TIMESTAMP AS DATE)) THEN 1
@@ -190,7 +196,7 @@ FROM
             ON co.student_number = ar.student_number
            AND co.[date] = ar.date_taken
           WHERE co.enroll_status = 0
-            AND (co.school_level = 'MS' OR (co.schoolid = 73256 AND co.grade_level = 4)) /* ad-hoc exception for Seek 4*/
+            AND (co.school_level = 'MS' OR (co.schoolid = 73256 AND co.grade_level >= 3)) /* ad-hoc exception for Seek 4*/
             AND co.[date] <= CAST(CURRENT_TIMESTAMP AS DATE)
          ) sub
     ) sub

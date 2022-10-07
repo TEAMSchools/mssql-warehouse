@@ -6,7 +6,7 @@ CREATE OR ALTER VIEW extracts.adp_workers AS
 WITH wfm_updates AS (
   SELECT DISTINCT associate_id
   FROM gabby.adp.wfm_field_monitor
-  WHERE date_modified BETWEEN DATEADD(DAY, -7, CAST(CURRENT_TIMESTAMP AS DATE)) 
+  WHERE date_modified BETWEEN DATEADD(DAY, -7, CAST(CURRENT_TIMESTAMP AS DATE))
                           AND CAST(CURRENT_TIMESTAMP AS DATE)
  )
 

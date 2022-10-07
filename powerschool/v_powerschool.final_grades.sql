@@ -56,8 +56,8 @@ WITH enr AS (
          ON ABS(cc.sectionid) = sec.sectionid
        INNER JOIN powerschool.termbins tb
          ON cc.schoolid = tb.schoolid
+        AND ABS(cc.termid) = tb.termid
         AND (tb.storecode LIKE 'Q%' OR tb.storecode LIKE 'E%')
-        AND tb.termid = CAST(CONCAT((gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990), '00') AS INT)
        WHERE cc.dateenrolled >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
          AND cc.course_number <> 'HR'
       ) sub

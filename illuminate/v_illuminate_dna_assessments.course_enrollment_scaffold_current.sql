@@ -78,6 +78,10 @@ FROM
            ,subject_area
            ,DATEADD(DAY, -1, leave_date) AS leave_date
            ,MAX(is_advanced_math) OVER(PARTITION BY student_id, academic_year, credittype) AS is_advanced_math_student
+           ,ROW_NUMBER() OVER(
+              PARTITION BY student_id, entry_date, leave_date, subject_area
+                ORDER BY entry_date DESC, leave_date DESC) AS rn
      FROM enr
      WHERE is_dropped_course < 1.0
     ) sub
+WHERE rn = 1

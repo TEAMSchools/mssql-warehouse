@@ -104,7 +104,7 @@ LEFT JOIN gabby.powerschool.final_grades_static gr
   ON co.studentid = gr.studentid
  AND co.yearid = gr.yearid
  AND co.[db_name] = gr.[db_name]
- AND dt.time_per_name = gr.storecode COLLATE Latin1_General_BIN
+ AND dt.alt_name = gr.storecode COLLATE Latin1_General_BIN
  AND gr.exclude_from_gpa = 0
 LEFT JOIN gabby.powerschool.sections_identifiers si
   ON gr.sectionid = si.sectionid
