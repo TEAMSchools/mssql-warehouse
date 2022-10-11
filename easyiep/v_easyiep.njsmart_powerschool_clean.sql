@@ -2,7 +2,7 @@ CREATE OR ALTER VIEW easyiep.njsmart_powerschool_clean AS
 
 SELECT _file
       ,_line
-      ,state_studentnumber
+      ,COALESCE(state_studentnumber, student_number) AS state_studentnumber
       ,student_number
       ,academic_year
       ,case_manager
@@ -72,12 +72,12 @@ FROM
      SELECT _file
            ,_line
            ,row_hash
-           ,state_studentnumber
            ,iepgraduation_attendance
            ,iepgraduation_course_requirement
            ,case_manager
            ,effective_date
            ,academic_year
+           ,CAST(state_studentnumber AS BIGINT) AS state_studentnumber
            ,CAST(nj_se_referraldate AS DATE) AS nj_se_referraldate
            ,CAST(nj_se_parentalconsentdate AS DATE) AS nj_se_parentalconsentdate
            ,CAST(nj_se_eligibilityddate AS DATE) AS nj_se_eligibilityddate
@@ -96,7 +96,7 @@ FROM
            ,CAST(ti_serv_physical AS VARCHAR(1)) AS ti_serv_physical
            ,CAST(ti_serv_speech AS VARCHAR(1)) AS ti_serv_speech
            ,CAST(ti_serv_other AS VARCHAR(1)) AS ti_serv_other
-           ,CAST(TRY_PARSE(CAST(student_number AS VARCHAR(32)) AS INT) AS INT) AS student_number
+           ,CAST(TRY_PARSE(CAST(student_number AS VARCHAR(32)) AS INT) AS BIGINT) AS student_number
            ,RIGHT('0' + CAST(special_education AS VARCHAR), 2) AS special_education
            ,ROW_NUMBER() OVER(PARTITION BY row_hash, academic_year ORDER BY effective_date ASC) AS rn_row_asc
      FROM easyiep.njsmart_powerschool
