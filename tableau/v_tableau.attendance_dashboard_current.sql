@@ -30,10 +30,6 @@ SELECT sub.student_number
       ,sub.is_iss AS is_iss_running
       ,sub.is_suspended AS is_suspended_running
       ,sub.is_counselingservices
-<<<<<<< Updated upstream
-=======
-      ,sub.is_remote
->>>>>>> Stashed changes
       ,sub.is_studentathlete
 FROM
     (
@@ -72,20 +68,7 @@ FROM
 
            ,CASE WHEN sp.studentid IS NOT NULL THEN 1 END AS is_counselingservices
 
-<<<<<<< Updated upstream
 	       ,CASE WHEN sa.studentid IS NOT NULL THEN 1 END AS is_studentathlete
-=======
-           ,CASE
-             WHEN hb.specprog_name IN ('Hybrid (SC) - Cohort D', 'Learning Centers - Cohort D') AND cal.[type] = 'AR' THEN 0
-             WHEN hb.specprog_name = 'Remote - Cohort C' OR cal.[type] = 'AR' THEN 1
-             WHEN hb.specprog_name = 'Hybrid - Cohort A' AND cal.[type] = 'ACR' THEN 1
-             WHEN hb.specprog_name = 'Hybrid - Cohort B' AND cal.[type] = 'BCR' THEN 1
-             WHEN hb.specprog_name IS NOT NULL AND cal.[type] NOT IN ('AR', 'ACR', 'BCR') THEN 1
-             ELSE 0
-            END AS is_remote
-            
-           ,CASE WHEN sa.studentid IS NOT NULL THEN 1 END AS is_studentathlete
->>>>>>> Stashed changes
      FROM powerschool.ps_adaadm_daily_ctod_current_static mem
      INNER JOIN powerschool.cohort_identifiers_static co
        ON mem.studentid = co.studentid
@@ -112,13 +95,6 @@ FROM
        ON mem.studentid = sp.studentid
       AND mem.calendardate BETWEEN sp.enter_date AND sp.exit_date
       AND sp.specprog_name = 'Counseling Services'
-<<<<<<< Updated upstream
-=======
-     LEFT JOIN powerschool.spenrollments_gen_static hb
-       ON mem.studentid = hb.studentid
-      AND mem.calendardate BETWEEN hb.enter_date AND hb.exit_date
-      AND hb.specprog_name IN ('Hybrid - Cohort A', 'Hybrid - Cohort B', 'Remote - Cohort C', 'Hybrid (SC) - Cohort D', 'Learning Centers - Cohort D')
->>>>>>> Stashed changes
      LEFT JOIN powerschool.spenrollments_gen_static sa
        ON mem.studentid = sa.studentid
       AND mem.calendardate BETWEEN sa.enter_date AND sa.exit_date

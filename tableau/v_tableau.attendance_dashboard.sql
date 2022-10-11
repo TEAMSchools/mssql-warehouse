@@ -25,10 +25,6 @@ SELECT academic_year
       ,att_code
       ,term
       ,is_counselingservices
-<<<<<<< Updated upstream
-=======
-      ,is_remote
->>>>>>> Stashed changes
       ,is_studentathlete
       ,AVG(is_present) OVER(PARTITION BY studentid, academic_year ORDER BY calendardate) AS ada_running
       ,AVG(pct_ontime_running) OVER(PARTITION BY student_number, academic_year ORDER BY calendardate) AS pct_ontime_running
@@ -64,10 +60,6 @@ SELECT academic_year
       ,att_code
       ,term
       ,NULL AS is_counselingservices
-<<<<<<< Updated upstream
-=======
-      ,NULL AS is_remote
->>>>>>> Stashed changes
       ,NULL AS is_studentathlete
       ,AVG(is_present) OVER(PARTITION BY studentid, academic_year ORDER BY calendardate) AS ada_running
       ,AVG(pct_ontime_running) OVER(PARTITION BY student_number, academic_year ORDER BY calendardate) AS pct_ontime_running
