@@ -67,8 +67,7 @@ FROM
            ,dt.alt_name AS term
 
            ,CASE WHEN sp.studentid IS NOT NULL THEN 1 END AS is_counselingservices
-
-	       ,CASE WHEN sa.studentid IS NOT NULL THEN 1 END AS is_studentathlete
+           ,CASE WHEN sa.studentid IS NOT NULL THEN 1 END AS is_studentathlete
      FROM powerschool.ps_adaadm_daily_ctod_current_static mem
      INNER JOIN powerschool.cohort_identifiers_static co
        ON mem.studentid = co.studentid
