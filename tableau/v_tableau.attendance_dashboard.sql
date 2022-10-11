@@ -25,7 +25,8 @@ SELECT academic_year
       ,att_code
       ,term
       ,is_counselingservices
-      ,is_remote
+      ,NULL AS is_remote
+      ,is_studentathlete
       ,AVG(is_present) OVER(PARTITION BY studentid, academic_year ORDER BY calendardate) AS ada_running
       ,AVG(pct_ontime_running) OVER(PARTITION BY student_number, academic_year ORDER BY calendardate) AS pct_ontime_running
       ,MAX(is_oss_running) OVER(PARTITION BY student_number, academic_year ORDER BY calendardate) AS is_oss_running
@@ -59,8 +60,9 @@ SELECT academic_year
       ,is_absent
       ,att_code
       ,term
-      ,NULL AS is_counselingservices
-      ,NULL AS is_remote
+      ,is_counselingservices
+      ,is_remote
+      ,NULL AS is_studentathlete
       ,AVG(is_present) OVER(PARTITION BY studentid, academic_year ORDER BY calendardate) AS ada_running
       ,AVG(pct_ontime_running) OVER(PARTITION BY student_number, academic_year ORDER BY calendardate) AS pct_ontime_running
       ,MAX(is_oss_running) OVER(PARTITION BY student_number, academic_year ORDER BY calendardate) AS is_oss_running
