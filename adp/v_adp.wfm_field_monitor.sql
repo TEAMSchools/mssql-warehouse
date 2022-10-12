@@ -33,7 +33,7 @@ WITH unpivoted AS (
        FROM gabby.adp.employees_archive
        WHERE position_id IS NOT NULL
          AND position_status <> 'Terminated'
-         AND CAST(COALESCE(rehire_date, hire_date) AS DATE) >= CAST(CURRENT_TIMESTAMP AS DATE)
+         AND CAST(COALESCE(rehire_date, hire_date) AS DATE) <= CAST(CURRENT_TIMESTAMP AS DATE)
       ) sub
  )
 
