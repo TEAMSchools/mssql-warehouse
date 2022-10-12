@@ -35,6 +35,7 @@ SELECT cc.studentid
 FROM gabby.powerschool.cc
 INNER JOIN gabby.powerschool.students s
   ON cc.studentid = s.id
+ AND cc.[db_name] = s.[db_name]
 INNER JOIN gabby.powerschool.sections_identifiers sec
   ON ABS(cc.sectionid) = sec.sectionid
  AND cc.[db_name] = sec.[db_name]
