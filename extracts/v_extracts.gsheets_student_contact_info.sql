@@ -12,12 +12,12 @@ SELECT co.student_number
       ,co.lastfirst
       ,co.schoolid
       ,co.school_name
-      ,CASE WHEN co.grade_level = 0 THEN 'K' ELSE CAST(co.grade_level AS VARCHAR) END AS grade_level
+      ,CASE WHEN co.grade_level = 0 THEN 'K' ELSE CAST(co.grade_level AS VARCHAR(2)) END AS grade_level
       ,co.team
       ,co.advisor_name
-      ,CAST(co.entrydate AS VARCHAR) AS entrydate
+      ,co.entrydate
       ,co.boy_status
-      ,CAST(co.dob AS VARCHAR) AS dob
+      ,co.dob
       ,co.gender
       ,co.lunchstatus
       ,CASE

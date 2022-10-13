@@ -19,7 +19,7 @@ WITH promo AS (
     MAX(grade_level)
     FOR school_level IN ([ES],[MS])
    ) p
- )
+)
 
 ,external_prof AS (
   SELECT academic_year
@@ -55,11 +55,9 @@ WITH promo AS (
       ) sub
   PIVOT(
     MAX(pct_proficient)
-    FOR entity IN ([NJ]
-                  ,[NPS]
-                  ,[CPS])
-   ) p
- ) 
+    FOR entity IN ([NJ], [NPS], [CPS])
+  ) p
+)
 
 ,ms_grad AS (
   SELECT student_number
@@ -70,23 +68,24 @@ WITH promo AS (
              ,school_name AS ms_attended
              ,ROW_NUMBER() OVER(
                 PARTITION BY student_number
-                  ORDER BY exitdate DESC) AS rn
+                ORDER BY exitdate DESC
+              ) AS rn
        FROM gabby.powerschool.cohort_identifiers_static
        WHERE school_level = 'MS'
       ) sub
   WHERE rn = 1
- )
+)
 
 ,ps_users AS (
-  SELECT DISTINCT 
-         u.sif_stateprid      
+  SELECT DISTINCT
+         u.sif_stateprid
         ,u.lastfirst
   FROM gabby.powerschool.users u
-  JOIN gabby.powerschool.schools sch
+  INNER JOIN gabby.powerschool.schools sch
     ON u.homeschoolid = sch.school_number
-   AND u.db_name = sch.db_name
-  WHERE u.sif_stateprid IS NOT NULL
- )
+   AND u.[db_name] = sch.[db_name]
+  WHERE u.sif_stateprid <> ''
+)
 
 SELECT co.student_number
       ,co.lastfirst
@@ -103,19 +102,19 @@ SELECT co.student_number
       ,co.lunchstatus      
       ,co.ethnicity
       ,co.gender
-      
+
       ,'PARCC' AS test_type
       ,parcc.test_code COLLATE SQL_Latin1_General_CP1_CI_AS AS test_code
-      ,parcc.subject COLLATE SQL_Latin1_General_CP1_CI_AS AS subject
+      ,parcc.[subject] COLLATE SQL_Latin1_General_CP1_CI_AS AS [subject]
       ,parcc.test_scale_score
       ,parcc.test_performance_level
       ,parcc.test_reading_csem AS test_standard_error
       ,parcc.staff_member_identifier
       ,CASE
-      	WHEN parcc.subject = 'Science' AND parcc.test_performance_level >= 3 THEN 1
-      	WHEN parcc.subject = 'Science' AND parcc.test_performance_level < 3 THEN 0
-        WHEN parcc.subject <> 'Science' AND parcc.test_performance_level >= 4 THEN 1
-        WHEN parcc.subject <> 'Science' AND parcc.test_performance_level < 4 THEN 0
+        WHEN parcc.[subject] = 'Science' AND parcc.test_performance_level >= 3 THEN 1
+        WHEN parcc.[subject] = 'Science' AND parcc.test_performance_level < 3 THEN 0
+        WHEN parcc.test_performance_level >= 4 THEN 1
+        WHEN parcc.test_performance_level < 4 THEN 0
        END AS is_proficient
       ,CASE
         WHEN parcc.student_with_disabilities IN ('IEP', 'Y', 'B') THEN 'SPED'
@@ -134,7 +133,7 @@ SELECT co.student_number
 
       ,pu.lastfirst AS teacher_lastfirst
 FROM gabby.powerschool.cohort_identifiers_static co
-JOIN gabby.parcc.summative_record_file_clean parcc
+INNER JOIN gabby.parcc.summative_record_file_clean parcc
   ON co.student_number = parcc.local_student_identifier
  AND co.academic_year = parcc.academic_year
 LEFT JOIN external_prof ext
@@ -155,7 +154,7 @@ SELECT co.student_number
       ,co.academic_year
       ,co.region      
       ,co.school_level     
-      ,co.reporting_schoolid AS schoolid           
+      ,co.reporting_schoolid AS schoolid
       ,co.grade_level 
       ,co.cohort
       ,co.entry_schoolid
@@ -167,8 +166,8 @@ SELECT co.student_number
       ,co.gender
       
       ,asa.test_type
-      ,CONCAT(LEFT(asa.subject, 3), RIGHT(CONCAT('0', co.grade_level), 2)) AS test_code
-      ,asa.subject      
+      ,CONCAT(LEFT(asa.[subject], 3), RIGHT(CONCAT('0', co.grade_level), 2)) AS test_code
+      ,asa.[subject]
       ,asa.scaled_score
       ,CASE
         WHEN asa.performance_level = 'Advanced Proficient' THEN 5
@@ -197,7 +196,7 @@ SELECT co.student_number
 
       ,NULL AS teacher_lastfirst
 FROM gabby.powerschool.cohort_identifiers_static co
-JOIN gabby.njsmart.all_state_assessments asa
+INNER JOIN gabby.njsmart.all_state_assessments asa
   ON co.student_number = asa.local_student_id
  AND co.academic_year = asa.academic_year
 LEFT JOIN promo
