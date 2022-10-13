@@ -93,6 +93,7 @@ SELECT co.student_number
       ,co.region      
       ,co.school_level     
       ,co.reporting_schoolid AS schoolid           
+      ,co.school_abbreviation
       ,co.grade_level 
       ,co.cohort
       ,co.entry_schoolid
@@ -155,6 +156,7 @@ SELECT co.student_number
       ,co.region      
       ,co.school_level     
       ,co.reporting_schoolid AS schoolid
+      ,co.school_abbreviation
       ,co.grade_level 
       ,co.cohort
       ,co.entry_schoolid

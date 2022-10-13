@@ -49,7 +49,7 @@ SELECT s.df_employee_number
       /*default School Based assignments based on legal entity/location*/
       ,CASE
         WHEN s.legal_entity_name <> 'KIPP TEAM and Family Schools Inc.'
-	 AND s.primary_site NOT IN ('Room 9 - 60 Park Pl', 'Room 10 - 121 Market St', 'Room 11 - 1951 NW 7th Ave') 
+         AND s.primary_site NOT IN ('Room 9 - 60 Park Pl', 'Room 10 - 121 Market St', 'Room 11 - 1951 NW 7th Ave') 
              THEN 'school-based'
        END AS school_based
 FROM gabby.people.staff_crosswalk_static s
