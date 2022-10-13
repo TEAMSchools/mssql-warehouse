@@ -4,7 +4,10 @@ GO
 CREATE OR ALTER VIEW extracts.gsheets_student_contact_info AS
 
 SELECT co.student_number
-      ,co.newark_enrollment_number
+      ,CASE 
+        WHEN co.region = 'KMS' THEN suf.fleid 
+        ELSE co.newark_enrollment_number
+       END AS newark_enrollment_number 
       ,co.state_studentnumber
       ,co.lastfirst
       ,co.schoolid
