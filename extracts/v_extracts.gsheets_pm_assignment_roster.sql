@@ -11,9 +11,8 @@ WITH elementary_grade AS (
  )
 
 /*active staff info*/
-SELECT 
-       s.df_employee_number
-      ,CONCAT(s.preferred_name,' - ',s.primary_site) AS preferred_name
+SELECT s.df_employee_number
+      ,CONCAT(s.preferred_name, ' - ', s.primary_site) AS preferred_name
       ,s.primary_job
       ,s.google_email
       ,s.userprincipalname AS user_email
@@ -46,11 +45,12 @@ SELECT
              THEN CONCAT(s.primary_on_site_department, ', Grade ', e.student_grade_level)
         ELSE s.primary_on_site_department
        END AS department_grade
-	  ,s.manager_name
-	  /*default School Based assignments based on legal entity/location*/
+      ,s.manager_name
+      /*default School Based assignments based on legal entity/location*/
       ,CASE
-       WHEN s.legal_entity_name <> 'KIPP TEAM and Family Schools Inc.' AND s.primary_site NOT IN ('Room 9 - 60 Park Pl', 'Room 10 - 121 Market St', 'Room 11 - 1951 NW 7th Ave') 
-       THEN 'school-based'
+        WHEN s.legal_entity_name <> 'KIPP TEAM and Family Schools Inc.'
+	 AND s.primary_site NOT IN ('Room 9 - 60 Park Pl', 'Room 10 - 121 Market St', 'Room 11 - 1951 NW 7th Ave') 
+             THEN 'school-based'
        END AS school_based
 FROM gabby.people.staff_crosswalk_static s
 LEFT JOIN elementary_grade e
