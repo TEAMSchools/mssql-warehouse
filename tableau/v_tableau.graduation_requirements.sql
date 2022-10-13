@@ -72,6 +72,7 @@ SELECT co.student_number
       ,co.c_504_status
       ,co.is_retained_year
       ,co.is_retained_ever
+      ,co.school_abbreviation
 
       ,a.test_type
       ,a.test_score

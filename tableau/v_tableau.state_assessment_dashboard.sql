@@ -112,8 +112,10 @@ SELECT co.student_number
       ,parcc.test_reading_csem AS test_standard_error
       ,parcc.staff_member_identifier
       ,CASE
-        WHEN parcc.test_performance_level >= 4 THEN 1
-        WHEN parcc.test_performance_level < 4 THEN 0
+      	WHEN parcc.subject = 'Science' AND parcc.test_performance_level >= 3 THEN 1
+      	WHEN parcc.subject = 'Science' AND parcc.test_performance_level < 3 THEN 0
+        WHEN parcc.subject <> 'Science' AND parcc.test_performance_level >= 4 THEN 1
+        WHEN parcc.subject <> 'Science' AND parcc.test_performance_level < 4 THEN 0
        END AS is_proficient
       ,CASE
         WHEN parcc.student_with_disabilities IN ('IEP', 'Y', 'B') THEN 'SPED'
