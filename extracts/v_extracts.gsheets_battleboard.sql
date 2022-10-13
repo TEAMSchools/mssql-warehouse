@@ -69,4 +69,4 @@ LEFT JOIN gabby.surveys.intent_to_return_survey_detail i
   ON c.df_employee_number = i.respondent_df_employee_number
  AND i.question_shortname = 'intent_to_return'
  AND i.campaign_academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-WHERE c.[status] IN ('Active','Leave','Prestart')
+WHERE c.[status] NOT IN ('TERMINATED')
