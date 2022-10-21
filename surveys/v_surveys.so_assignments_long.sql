@@ -48,6 +48,7 @@ FROM assignment_unpivot a
 INNER JOIN gabby.people.staff_crosswalk_static c
   ON a.assignment = c.df_employee_number
 WHERE a.assignment <> 0
+AND c.[status] <> 'Terminated'
 
 UNION ALL
 
