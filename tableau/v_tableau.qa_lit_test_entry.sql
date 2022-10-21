@@ -15,34 +15,32 @@ SELECT co.student_number
       ,co.iep_status
       ,co.lep_status
 
-      ,CAST(term.alt_name AS VARCHAR(5)) AS lit_term
-      ,term.is_curterm
+      ,CAST(achv.test_round AS VARCHAR(2)) AS lit_term
+      ,achv.is_curterm
 
-      ,testid.read_lvl
-      ,testid.lvl_num
-      ,testid.test_date
-      ,testid.[status]
-      ,testid.is_fp
+      ,COALESCE(achv.read_lvl, testid.read_lvl) AS read_lvl
+      ,COALESCE(achv.lvl_num, testid.lvl_num) AS lvl_num
+      ,COALESCE(CASE WHEN achv.read_lvl IS NOT NULL THEN achv.end_date END, testid.test_date) AS test_date
+      ,COALESCE(CASE WHEN achv.read_lvl IS NOT NULL THEN 'Achieved' END, testid.[status]) AS [status]
+      ,COALESCE(CASE WHEN achv.read_lvl IS NOT NULL THEN 1 END, testid.is_fp) AS is_fp
 
       ,gr.gr_teacher
 
       ,ROW_NUMBER() OVER(
-         PARTITION BY co.student_number, co.academic_year, term.time_per_name, testid.[status]
+         PARTITION BY co.student_number, co.academic_year, achv.test_round, testid.[status]
            ORDER BY testid.lvl_num DESC) AS rn_test_term
 FROM gabby.powerschool.cohort_identifiers_static co
-JOIN gabby.reporting.reporting_terms term
-  ON co.schoolid = term.schoolid
- AND co.academic_year = term.academic_year
- AND term.identifier = 'LIT' 
- AND term._fivetran_deleted = 0
+INNER JOIN gabby.lit.achieved_by_round_static achv
+  ON co.student_number = achv.student_number
+ AND co.academic_year = achv.academic_year
 LEFT JOIN gabby.lit.all_test_events_static testid
   ON co.student_number = testid.student_number
  AND co.academic_year = testid.academic_year
- AND testid.test_date BETWEEN term.[start_date] AND term.end_date
+ AND testid.test_date BETWEEN achv.[start_date] AND achv.end_date
 LEFT JOIN gabby.lit.guided_reading_roster gr
   ON co.student_number = gr.student_number
  AND co.academic_year = gr.academic_year
- AND term.alt_name = gr.test_round
+ AND achv.test_round = gr.test_round
 WHERE co.rn_year = 1
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.enroll_status = 0
