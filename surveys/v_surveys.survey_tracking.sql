@@ -263,7 +263,7 @@ SELECT COALESCE(st.respondent_employee_number, c.respondent_employee_number) AS 
       ,st.survey_default_link
       ,st.survey_id
 
-      ,sa.survey_taker AS survey_round_status
+      ,pm.survey_round_status AS survey_round_status
       ,'Your Manager' AS assignment
       ,NULL AS assingment_employee_id
       ,NULL AS assignment_preferred_name
@@ -274,9 +274,9 @@ SELECT COALESCE(st.respondent_employee_number, c.respondent_employee_number) AS 
       ,c.subject_name AS completed_survey_subject_name
       ,c.date_submitted AS survey_completion_date
 FROM survey_term_staff_scaffold st
-INNER JOIN gabby.surveys.so_assignments sa
-  ON st.respondent_employee_number = sa.employee_number
- AND sa.survey_taker IN ('Yes', 'Yes - Should take manager survey only')
+INNER JOIN gabby.pm.assignments pm
+  ON st.respondent_employee_number = pm.df_employee_number
+ AND pm.survey_round_status = 'Yes'
 LEFT JOIN clean_responses c
   ON st.respondent_employee_number = c.respondent_employee_number
  AND st.academic_year = c.academic_year
@@ -375,8 +375,8 @@ SELECT st.respondent_employee_number AS survey_taker_id
       ,st.survey_id
 
       ,'Yes' AS survey_round_status
-      ,sa.engagement_survey_assignment AS assignment
-      ,NULL AS assingment_employee_id
+      ,pr.engagement_survey_assignment AS assignment
+      ,NULL AS assignment_employee_id
       ,NULL AS assignment_preferred_name
       ,NULL AS assignment_location
       ,NULL AS assignment_adp_status
@@ -390,10 +390,12 @@ LEFT JOIN clean_responses c
  AND st.academic_year = c.academic_year
  AND st.reporting_term_code = c.reporting_term
  AND st.survey_id = c.survey_id
-LEFT JOIN gabby.surveys.so_assignments sa
-  ON st.respondent_employee_number = sa.employee_number
+LEFT JOIN gabby.pm.assignments pm
+  ON st.respondent_employee_number = pm.df_employee_number
+LEFT JOIN gabby.extracts.gsheets_pm_assignment_roster pr
+  ON st.respondent_employee_number = pr.df_employee_number
 WHERE st.survey_id = 5300913 /* R9S Survey Code */
-  AND sa.survey_taker <> 'No (Should not take any surveys!)'
+  AND pm.survey_round_status = 'Yes'
 
 UNION ALL
 
