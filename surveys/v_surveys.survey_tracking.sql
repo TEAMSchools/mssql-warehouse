@@ -155,7 +155,7 @@ SELECT COALESCE(st.respondent_employee_number, c.respondent_employee_number) AS 
 FROM survey_term_staff_scaffold st
 INNER JOIN gabby.surveys.so_assignments_long sa
   ON st.respondent_employee_number = sa.survey_taker_id
- AND sa.survey_round_status = 'Yes'
+ AND sa.survey_round_status IN ('Yes', 'Yes - Manager Survey Only')
 LEFT JOIN clean_responses c
   ON sa.assignment_employee_id = c.subject_employee_number
  AND sa.survey_taker_id = c.respondent_employee_number
@@ -204,7 +204,7 @@ SELECT COALESCE(st.respondent_employee_number, c.respondent_employee_number) AS 
       ,CASE 
         WHEN CHARINDEX('[', c.subject_name) = 0 THEN NULL
         ELSE SUBSTRING(c.subject_name, CHARINDEX('[', c.subject_name) + 1, 6)
-       END AS assingment_employee_id
+       END AS assignment_employee_id
       ,c.subject_name AS assignment_preferred_name
       ,c.respondent_location AS assignment_location
       ,NULL AS assignment_adp_status
@@ -265,7 +265,7 @@ SELECT COALESCE(st.respondent_employee_number, c.respondent_employee_number) AS 
 
       ,pm.survey_round_status AS survey_round_status
       ,'Your Manager' AS assignment
-      ,NULL AS assingment_employee_id
+      ,NULL AS assignment_employee_id
       ,NULL AS assignment_preferred_name
       ,NULL AS assignment_location
       ,NULL AS assignment_adp_status
@@ -276,7 +276,7 @@ SELECT COALESCE(st.respondent_employee_number, c.respondent_employee_number) AS 
 FROM survey_term_staff_scaffold st
 INNER JOIN gabby.pm.assignments pm
   ON st.respondent_employee_number = pm.df_employee_number
- AND pm.survey_round_status = 'Yes'
+ AND pm.survey_round_status IN ('Yes', 'Yes - Manager Survey Only')
 LEFT JOIN clean_responses c
   ON st.respondent_employee_number = c.respondent_employee_number
  AND st.academic_year = c.academic_year
@@ -322,7 +322,7 @@ SELECT COALESCE(st.respondent_employee_number, c.respondent_employee_number) AS 
 
       ,'Yes' AS survey_round_status
       ,'Your Manager' AS assignment
-      ,NULL AS assingment_employee_id
+      ,NULL AS assignment_employee_id
       ,NULL AS assignment_preferred_name
       ,NULL AS assignment_location
       ,NULL AS assignment_adp_status
@@ -395,7 +395,7 @@ LEFT JOIN gabby.pm.assignments pm
 LEFT JOIN gabby.extracts.gsheets_pm_assignment_roster pr
   ON st.respondent_employee_number = pr.df_employee_number
 WHERE st.survey_id = 5300913 /* R9S Survey Code */
-  AND pm.survey_round_status = 'Yes'
+  AND pm.survey_round_status IN ('Yes', 'Yes - Manager Survey Only')
 
 UNION ALL
 
@@ -433,7 +433,7 @@ SELECT st.respondent_employee_number AS survey_taker_id
 
       ,'Yes' AS survey_round_status
       ,'Update Your Staff Info' AS assignment
-      ,NULL AS assingment_employee_id
+      ,NULL AS assignment_employee_id
       ,NULL AS assignment_preferred_name
       ,NULL AS assignment_location
       ,NULL AS assignment_adp_status
@@ -483,7 +483,7 @@ SELECT st.respondent_employee_number AS survey_taker_id
 
       ,'Yes' AS survey_round_status
       ,'One Off Staff Survey' AS assignment
-      ,NULL AS assingment_employee_id
+      ,NULL AS assignment_employee_id
       ,NULL AS assignment_preferred_name
       ,NULL AS assignment_location
       ,NULL AS assignment_adp_status
@@ -535,7 +535,7 @@ SELECT st.respondent_employee_number AS survey_taker_id
 
       ,'Yes' AS survey_round_status
       ,'Intent to Return' AS assignment
-      ,NULL AS assingment_employee_id
+      ,NULL AS assignment_employee_id
       ,NULL AS assignment_preferred_name
       ,NULL AS assignment_location
       ,NULL AS assignment_adp_status
