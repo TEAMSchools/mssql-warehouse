@@ -18,11 +18,11 @@ SELECT co.student_number
       ,CAST(achv.test_round AS VARCHAR(2)) AS lit_term
       ,achv.is_curterm
 
-      ,COALESCE(achv.read_lvl, testid.read_lvl) AS read_lvl
-      ,COALESCE(achv.lvl_num, testid.lvl_num) AS lvl_num
-      ,COALESCE(CASE WHEN achv.read_lvl IS NOT NULL THEN achv.end_date END, testid.test_date) AS test_date
-      ,COALESCE(CASE WHEN achv.read_lvl IS NOT NULL THEN 'Achieved' END, testid.[status]) AS [status]
-      ,COALESCE(CASE WHEN achv.read_lvl IS NOT NULL THEN 1 END, testid.is_fp) AS is_fp
+      ,COALESCE(testid.read_lvl, achv.read_lvl) AS read_lvl
+      ,COALESCE(testid.lvl_num, achv.lvl_num) AS lvl_num
+      ,COALESCE(testid.test_date, CASE WHEN achv.read_lvl IS NOT NULL THEN achv.end_date END) AS test_date
+      ,COALESCE(testid.[status], CASE WHEN achv.read_lvl IS NOT NULL THEN 'Achieved' END) AS [status]
+      ,COALESCE(testid.is_fp, CASE WHEN achv.read_lvl IS NOT NULL THEN 1 END) AS is_fp
 
       ,gr.gr_teacher
 
