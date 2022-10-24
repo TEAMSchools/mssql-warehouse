@@ -20,9 +20,9 @@ SELECT co.student_number
 
       ,COALESCE(testid.read_lvl, achv.read_lvl) AS read_lvl
       ,COALESCE(testid.lvl_num, achv.lvl_num) AS lvl_num
-      ,COALESCE(testid.test_date, CASE WHEN achv.read_lvl IS NOT NULL THEN achv.end_date END) AS test_date
-      ,COALESCE(testid.[status], CASE WHEN achv.read_lvl IS NOT NULL THEN 'Achieved' END) AS [status]
-      ,COALESCE(testid.is_fp, CASE WHEN achv.read_lvl IS NOT NULL THEN 1 END) AS is_fp
+      ,COALESCE(testid.test_date, atid.test_date) AS test_date
+      ,COALESCE(testid.[status], atid.[status]) AS [status]
+      ,COALESCE(testid.is_fp, atid.is_fp) AS is_fp
 
       ,gr.gr_teacher
 
@@ -33,6 +33,8 @@ FROM gabby.powerschool.cohort_identifiers_static co
 INNER JOIN gabby.lit.achieved_by_round_static achv
   ON co.student_number = achv.student_number
  AND co.academic_year = achv.academic_year
+INNER JOIN gabby.lit.all_test_events_static atid
+  ON achv.achv_unique_id = atid.unique_id
 LEFT JOIN gabby.lit.all_test_events_static testid
   ON co.student_number = testid.student_number
  AND co.academic_year = testid.academic_year
