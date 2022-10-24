@@ -155,7 +155,7 @@ SELECT COALESCE(st.respondent_employee_number, c.respondent_employee_number) AS 
 FROM survey_term_staff_scaffold st
 INNER JOIN gabby.surveys.so_assignments_long sa
   ON st.respondent_employee_number = sa.survey_taker_id
- AND sa.survey_round_status IN ('Yes', 'Yes - Manager Survey Only')
+ AND sa.survey_round_status = 'Yes'
 LEFT JOIN clean_responses c
   ON sa.assignment_employee_id = c.subject_employee_number
  AND sa.survey_taker_id = c.respondent_employee_number
