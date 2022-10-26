@@ -129,11 +129,7 @@ FROM
            ,scw.preferred_first_name + ' ' + scw.preferred_last_name AS [user_name]
            ,CASE WHEN scw.primary_site_schoolid <> 0 THEN scw.primary_site END AS school_name
            ,CAST(CASE WHEN scw.[status] = 'TERMINATED' THEN 1 
-                      WHEN scw.primary_job NOT IN ('Achievement Director', 'Chief Academic Officer', 'Chief Of Staff', 'Director', 'Head of Schools'
-                                     ,'Director High School Literacy Curriculum', 'Director Literacy Achievement', 'Director Math Achievement'
-                                     ,'Director Middle School Literacy Curriculum','Head of Schools in Residence','Managing Director', 'Director'
-                                     ,'Achievement Director', 'Teacher', 'Teacher ESL', 'Co-Teacher', 'Learning Specialist','Analyst','Senior Analyst'
-                                     ,'Learning Specialist Coordinator','Teacher in Residence', 'Teaching Fellow') THEN 1
+                      WHEN scw.primary_job = 'Paraprofessional' THEN 1
                       ELSE 0 END AS BIT) AS inactive
            ,CASE WHEN scw.grades_taught = 0 THEN 'K' ELSE CAST(scw.grades_taught AS VARCHAR) END AS grade_abbreviation
            ,CASE
