@@ -180,3 +180,4 @@ LEFT JOIN existing_roles er
 LEFT JOIN obsv_grp og
   ON u.[user_id] = og.[user_id]
  AND sch._id = og.school_id
+ WHERE sub.role_name <> 'No Role'
