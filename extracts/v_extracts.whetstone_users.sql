@@ -153,7 +153,6 @@ FROM
              /* basic roles */
              WHEN scw.is_manager = 1 THEN 'Coach'
              WHEN scw.primary_job IN ('Teacher', 'Teacher ESL', 'Co-Teacher', 'Learning Specialist', 'Learning Specialist Coordinator','Teacher in Residence', 'Teaching Fellow') THEN 'Teacher'
-             WHEN scw.primary_job = 'Paraprofessional' AND scw.primary_site = 'KIPP Life Academy' THEN 'Teacher'
              ELSE 'No Role'
             END AS role_name
      FROM gabby.people.staff_crosswalk_static scw
