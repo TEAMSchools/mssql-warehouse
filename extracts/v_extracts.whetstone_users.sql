@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW extracts.whetstone_users AS
+--CREATE OR ALTER VIEW extracts.whetstone_users AS
 
 WITH managers AS (
   SELECT DISTINCT
@@ -128,7 +128,13 @@ FROM
            ,scw.primary_on_site_department AS course_name
            ,scw.preferred_first_name + ' ' + scw.preferred_last_name AS [user_name]
            ,CASE WHEN scw.primary_site_schoolid <> 0 THEN scw.primary_site END AS school_name
-           ,CAST(CASE WHEN scw.[status] = 'TERMINATED' THEN 1 ELSE 0 END AS BIT) AS inactive
+           ,CAST(CASE WHEN scw.[status] = 'TERMINATED' THEN 1 
+                      WHEN scw.primary_job NOT IN ('Achievement Director', 'Chief Academic Officer', 'Chief Of Staff', 'Director', 'Head of Schools'
+                                     ,'Director High School Literacy Curriculum', 'Director Literacy Achievement', 'Director Math Achievement'
+                                     ,'Director Middle School Literacy Curriculum','Head of Schools in Residence','Managing Director', 'Director'
+                                     ,'Achievement Director', 'Teacher', 'Teacher ESL', 'Co-Teacher', 'Learning Specialist','Analyst','Senior Analyst'
+                                     ,'Learning Specialist Coordinator','Teacher in Residence', 'Teaching Fellow') THEN 1
+                      ELSE 0 END AS BIT) AS inactive
            ,CASE WHEN scw.grades_taught = 0 THEN 'K' ELSE CAST(scw.grades_taught AS VARCHAR) END AS grade_abbreviation
            ,CASE
              /* network admins */
@@ -136,7 +142,8 @@ FROM
              WHEN scw.primary_on_site_department IN ('Teaching and Learning', 'School Support', 'New Teacher Development') 
               AND scw.primary_job IN ('Achievement Director', 'Chief Academic Officer', 'Chief Of Staff', 'Director', 'Head of Schools'
                                      ,'Director High School Literacy Curriculum', 'Director Literacy Achievement', 'Director Math Achievement'
-                                     ,'Director Middle School Literacy Curriculum') 
+                                     ,'Director Middle School Literacy Curriculum','Head of Schools in Residence','Assistant Dean', 'Assistant School Leader', 'Assistant School Leader, SPED', 'Dean'
+                                     ,'Dean of Students', 'Director of New Teacher Development','School Leader in Residence','School Leader') 
                   THEN 'Sub Admin'
              WHEN scw.primary_on_site_department = 'Special Education' 
               AND scw.primary_job IN ('Managing Director', 'Director', 'Achievement Director') 
@@ -151,7 +158,8 @@ FROM
                   THEN 'School Assistant Admin' 
              /* basic roles */
              WHEN scw.is_manager = 1 THEN 'Coach'
-             WHEN scw.primary_job IN ('Teacher', 'Teacher ESL', 'Co-Teacher', 'Learning Specialist', 'Learning Specialist Coordinator','Teacher in Residence', 'Teaching Fellow', 'Paraprofessional') THEN 'Teacher'
+             WHEN scw.primary_job IN ('Teacher', 'Teacher ESL', 'Co-Teacher', 'Learning Specialist', 'Learning Specialist Coordinator','Teacher in Residence', 'Teaching Fellow') THEN 'Teacher'
+             WHEN scw.primary_job = 'Paraprofessional' AND scw.primary_site = 'KIPP Life Academy' THEN 'Teacher'
              ELSE 'No Role'
             END AS role_name
      FROM gabby.people.staff_crosswalk_static scw
@@ -179,4 +187,3 @@ LEFT JOIN existing_roles er
 LEFT JOIN obsv_grp og
   ON u.[user_id] = og.[user_id]
  AND sch._id = og.school_id
-WHERE sub.role_name <> 'No Role'
