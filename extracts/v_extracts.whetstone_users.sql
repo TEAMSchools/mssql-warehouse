@@ -136,8 +136,9 @@ FROM
              WHEN scw.primary_on_site_department IN ('Teaching and Learning', 'School Support', 'New Teacher Development') 
               AND scw.primary_job IN ('Achievement Director', 'Chief Academic Officer', 'Chief Of Staff', 'Director', 'Head of Schools'
                                      ,'Director High School Literacy Curriculum', 'Director Literacy Achievement', 'Director Math Achievement'
-                                     ,'Director Middle School Literacy Curriculum','Head of Schools in Residence','Assistant Dean', 'Assistant School Leader', 'Assistant School Leader, SPED', 'Dean'
-                                     ,'Dean of Students', 'Director of New Teacher Development','School Leader in Residence','School Leader') 
+                                     ,'Director Middle School Literacy Curriculum', 'Head of Schools in Residence', 'Assistant Dean'
+                                     ,'Assistant School Leader', 'Assistant School Leader, SPED', 'Dean', 'Dean of Students'
+                                     ,'Director of New Teacher Development','School Leader in Residence','School Leader')
                   THEN 'Sub Admin'
              WHEN scw.primary_on_site_department = 'Special Education' 
               AND scw.primary_job IN ('Managing Director', 'Director', 'Achievement Director') 
