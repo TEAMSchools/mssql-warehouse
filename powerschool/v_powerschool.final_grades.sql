@@ -59,7 +59,6 @@ WITH enr AS (
         AND ABS(cc.termid) = tb.termid
         AND (tb.storecode LIKE 'Q%' OR tb.storecode LIKE 'E%')
        WHERE cc.dateenrolled >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
-         AND cc.course_number <> 'HR'
       ) sub
 )
 
