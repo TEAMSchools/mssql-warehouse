@@ -126,7 +126,7 @@ LEFT JOIN gabby.people.salary_history_static sal
   ON r.position_id = sal.position_id
  AND r.effective_start_date BETWEEN sal.regular_pay_effective_date AND sal.regular_pay_effective_end_date_eoy
 LEFT JOIN gabby.people.manager_history_static mh
-  ON r.position_id = mh.position_id
+  ON r.employee_number = mh.employee_number
  AND r.effective_start_date BETWEEN mh.reports_to_effective_date AND mh.reports_to_effective_end_date_eoy
 LEFT JOIN wa_dates wad
   ON r.position_id = wad.position_id
