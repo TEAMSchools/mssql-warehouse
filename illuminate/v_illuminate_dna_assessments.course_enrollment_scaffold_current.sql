@@ -12,7 +12,6 @@ WITH enr AS (
            PARTITION BY cc.studyear, cc.course_number
          ) AS is_dropped_course
 
-
         ,co.academic_year + 1 AS academic_year
         ,co.grade_level + 1 AS grade_level_id
 
@@ -76,7 +75,7 @@ FROM
            ,entry_date
            ,credittype
            ,subject_area
-           ,DATEADD(DAY, -1, leave_date) AS leave_date
+           ,leave_date
            ,MAX(is_advanced_math) OVER(PARTITION BY student_id, academic_year, credittype) AS is_advanced_math_student
            ,ROW_NUMBER() OVER(
               PARTITION BY student_id, entry_date, leave_date, subject_area
