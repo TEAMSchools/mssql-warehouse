@@ -207,7 +207,7 @@ SELECT COALESCE(st.respondent_employee_number, c.respondent_employee_number) AS 
        END AS assignment_employee_id
       ,c.subject_name AS assignment_preferred_name
       ,c.respondent_location AS assignment_location
-      ,NULL AS assignment_adp_status
+      ,s.assignment_adp_status
       ,CASE 
         WHEN st.respondent_is_manager = 1 THEN 'Self & Others - Manager Feedback' 
         ELSE 'Self & Others - Peer Feedback' 
