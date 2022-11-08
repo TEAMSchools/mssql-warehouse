@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW extracts.surveygizmo_contacts AS
+CREATE OR ALTER VIEW extracts.alchemer_contacts AS
 
 SELECT LOWER(mail) AS [Email]
       ,NULL AS [Phone (Mobile)]
@@ -24,7 +24,7 @@ SELECT LOWER(mail) AS [Email]
       ,NULL AS [Phone (Home)]
       ,NULL AS [Phone (Fax)]
       ,NULL AS [Phone (Work)]
-      ,df_employee_number AS [DF Employee Number]
-      ,[status]
+      ,df_employee_number AS [Employee Number]
+      ,[Status]
 FROM gabby.people.staff_crosswalk_static
 WHERE [status] <> 'PRESTART'
