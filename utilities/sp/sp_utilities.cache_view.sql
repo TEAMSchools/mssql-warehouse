@@ -57,10 +57,11 @@ BEGIN
         ROLLBACK;
         SET @email_body = ERROR_MESSAGE();
         SET @email_subject = N'CREATE - ' + @destination_table_name + N' failed';
-        EXEC msdb.dbo.sp_send_dbmail @profile_name = 'datarobot'
-                                    ,@recipients = 'u7c1r1b1c5n4p0q0@kippnj.slack.com'
-                                    ,@subject = @email_subject
-                                    ,@body = @email_body;
+        EXEC msdb.dbo.sp_notify_operator 
+               @profile_name=N'datarobot', 
+               @name=N'Data Robot',
+               @subject = @email_subject,
+               @body = @email_body;
         THROW;
       END CATCH;
     END;
@@ -83,10 +84,11 @@ BEGIN
         ROLLBACK;
         SET @email_body = ERROR_MESSAGE();
         SET @email_subject = N'DROP TEMP - ' + @destination_table_name + N' failed';
-        EXEC msdb.dbo.sp_send_dbmail @profile_name = 'datarobot'
-                                    ,@recipients = 'u7c1r1b1c5n4p0q0@kippnj.slack.com'
-                                    ,@subject = @email_subject
-                                    ,@body = @email_body;
+        EXEC msdb.dbo.sp_notify_operator 
+               @profile_name=N'datarobot', 
+               @name=N'Data Robot',
+               @subject = @email_subject,
+               @body = @email_body;
         THROW;
       END CATCH;
 
@@ -107,10 +109,11 @@ BEGIN
         ROLLBACK;
         SET @email_body = ERROR_MESSAGE();
         SET @email_subject = N'INSERT TEMP - ' + @destination_table_name + N' failed';
-        EXEC msdb.dbo.sp_send_dbmail @profile_name = 'datarobot'
-                                    ,@recipients = 'u7c1r1b1c5n4p0q0@kippnj.slack.com'
-                                    ,@subject = @email_subject
-                                    ,@body = @email_body;
+        EXEC msdb.dbo.sp_notify_operator 
+               @profile_name=N'datarobot', 
+               @name=N'Data Robot',
+               @subject = @email_subject,
+               @body = @email_body;
         THROW;
       END CATCH;
 
@@ -133,10 +136,11 @@ BEGIN
             ROLLBACK;
             SET @email_body = ERROR_MESSAGE();
             SET @email_subject = N'TRUNCATE/INSERT DEST - ' + @destination_table_name + N' failed';
-            EXEC msdb.dbo.sp_send_dbmail @profile_name = 'datarobot'
-                                        ,@recipients = 'u7c1r1b1c5n4p0q0@kippnj.slack.com'
-                                        ,@subject = @email_subject
-                                        ,@body = @email_body;
+            EXEC msdb.dbo.sp_notify_operator 
+               @profile_name=N'datarobot', 
+               @name=N'Data Robot',
+               @subject = @email_subject,
+               @body = @email_body;
             THROW;
           END CATCH;
         END
@@ -158,10 +162,11 @@ BEGIN
         ROLLBACK;
         SET @email_body = ERROR_MESSAGE();
         SET @email_subject = N'DROP TEMP - ' + @destination_table_name + N' failed';
-        EXEC msdb.dbo.sp_send_dbmail @profile_name = 'datarobot'
-                                    ,@recipients = 'u7c1r1b1c5n4p0q0@kippnj.slack.com'
-                                    ,@subject = @email_subject
-                                    ,@body = @email_body;
+        EXEC msdb.dbo.sp_notify_operator 
+               @profile_name=N'datarobot', 
+               @name=N'Data Robot',
+               @subject = @email_subject,
+               @body = @email_body;
         THROW;
       END CATCH;
     END
