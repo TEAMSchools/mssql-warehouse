@@ -92,13 +92,16 @@ WITH all_staff AS (
        SELECT associate_id
              ,position_status
              ,status_effective_date
-             ,LAG(position_status) OVER(PARTITION BY position_id ORDER BY status_effective_date) AS position_status_prev
+             ,LAG(position_status) OVER(
+                PARTITION BY position_id 
+                ORDER BY status_effective_date
+              ) AS position_status_prev
        FROM gabby.people.status_history_static
       ) sub
   WHERE position_status_prev = 'Terminated'
     AND position_status <> 'Terminated'
   GROUP BY associate_id
- )
+)
 
 ,clean_staff AS (
   SELECT sub.employee_number
@@ -197,18 +200,20 @@ WITH all_staff AS (
                WHEN eh.associate_id IN (
                       SELECT reports_to_associate_id
                       FROM gabby.people.manager_history_static
-                      WHERE CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN reports_to_effective_date 
-                                                         AND reports_to_effective_end_date_eoy
+                      WHERE CAST(CURRENT_TIMESTAMP AS DATE) 
+                              BETWEEN reports_to_effective_date
+                                  AND reports_to_effective_end_date_eoy
                     ) THEN 1
                ELSE 0
               END AS is_manager
-             /* dedupe positions */
+              /* dedupe positions */
              ,ROW_NUMBER() OVER(
                 PARTITION BY eh.associate_id
-                  ORDER BY eh.primary_position DESC
-                          ,eh.status_effective_start_date DESC
-                          ,CASE WHEN eh.position_status = 'Terminated' THEN 0 ELSE 1 END DESC
-                          ,eh.effective_start_date DESC) AS rn
+                ORDER BY eh.primary_position DESC
+                        ,eh.status_effective_start_date DESC
+                        ,CASE WHEN eh.position_status = 'Terminated' THEN 0 ELSE 1 END DESC
+                        ,eh.effective_start_date DESC
+              ) AS rn
              ,ea.first_name
              ,ea.last_name
              ,ea.primary_address_city AS address_city
@@ -219,14 +224,19 @@ WITH all_staff AS (
              ,LEFT(UPPER(ea.gender), 1) AS sex
              ,CASE 
                WHEN ea.primary_address_address_line_1 IS NOT NULL 
-                    THEN CONCAT(ea.primary_address_address_line_1, ', ' + ea.primary_address_address_line_2)
+                    THEN CONCAT(
+                           ea.primary_address_address_line_1,
+                           ', ' + ea.primary_address_address_line_2
+                         )
               END AS address_street
              ,CAST(gabby.utilities.STRIP_CHARACTERS(ea.personal_contact_personal_mobile, '^0-9') AS NVARCHAR(256)) AS personal_mobile
-             ,COALESCE(ea.preferred_gender
-                      ,CASE
-                        WHEN ea.gender = 'Male' THEN 'Man'
-                        WHEN ea.gender = 'Female' THEN 'Woman'
-                       END) AS gender_reporting
+             ,COALESCE(
+                ea.preferred_gender
+               ,CASE
+                 WHEN ea.gender = 'Male' THEN 'Man'
+                 WHEN ea.gender = 'Female' THEN 'Woman'
+                END
+              ) AS gender_reporting
 
              ,w.preferred_name_given AS preferred_first_name
              ,w.preferred_name_family AS preferred_last_name
@@ -250,7 +260,7 @@ WITH all_staff AS (
              ,COALESCE(sdf.relay, cf.[Attended Relay]) AS attended_relay
              ,cf.[WFMgr Pay Rule] AS wfmgr_pay_rule
              ,COALESCE(sdf.preferred_gender, cf.[Preferred Gender]) AS preferred_gender
-             
+
              ,sdf.education_level
              ,sdf.undergrad_university
 
@@ -259,15 +269,26 @@ WITH all_staff AS (
              ,COALESCE(p.worker_category_description, 'Full Time') AS worker_category
              ,p.flsa_description AS flsa
 
-             ,REPLACE(REPLACE(REPLACE(
-                COALESCE(
-                  sdf.race_ethnicity
-                 ,cf.[Preferred Race/Ethnicity]
-                 ,ea.race_description + CASE WHEN ISNULL(ea.ethnicity, '') IN ('Not Hispanic or Latino', '') THEN '' ELSE ',Latinx/Hispanic/Chicana(o)' END
+             ,REPLACE(
+                REPLACE(
+                  REPLACE(
+                    COALESCE(
+                      sdf.race_ethnicity
+                     ,cf.[Preferred Race/Ethnicity]
+                     ,ea.race_description 
+                        + CASE 
+                           WHEN ISNULL(ea.ethnicity, '') IN ('Not Hispanic or Latino', '') THEN '' 
+                           ELSE ',Latinx/Hispanic/Chicana(o)' 
+                          END
+                    )
+                   ,'Black or African American'
+                   ,'Black/African American'
+                  )
+                 ,'American Indian or Alaska Native'
+                 ,'Native American/First Nation'
                 )
-               ,'Black or African American', 'Black/African American')
-               ,'American Indian or Alaska Native', 'Native American/First Nation')
-               ,'Two or more races (Not Hispanic or Latino)', 'Bi/Multiracial'
+               ,'Two or more races (Not Hispanic or Latino)'
+               , 'Bi/Multiracial'
               ) AS preferred_race_ethnicity
        FROM all_staff eh
        INNER JOIN gabby.adp.employees_all ea
@@ -292,7 +313,7 @@ WITH all_staff AS (
        WHERE eh.employee_number IS NOT NULL
       ) sub
   WHERE rn = 1
- )
+)
 
 SELECT c.employee_number
       ,c.associate_id
