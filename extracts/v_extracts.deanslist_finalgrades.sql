@@ -46,11 +46,11 @@ SELECT co.student_number
       ,cat.w_rt3
       ,cat.w_rt4
 
-      ,COALESCE(cat.ctz_cur, kctz.ctz_cur) AS ctz_cur
-      ,COALESCE(cat.ctz_rt1, kctz.ctz_rt1) AS ctz_rt1
-      ,COALESCE(cat.ctz_rt2, kctz.ctz_rt2) AS ctz_rt2
-      ,COALESCE(cat.ctz_rt3, kctz.ctz_rt3) AS ctz_rt3
-      ,COALESCE(cat.ctz_rt4, kctz.ctz_rt4) AS ctz_rt4
+      ,COALESCE(kctz.ctz_cur, cat.ctz_cur) AS ctz_cur
+      ,COALESCE(kctz.ctz_rt1, cat.ctz_rt1) AS ctz_rt1
+      ,COALESCE(kctz.ctz_rt2, cat.ctz_rt2) AS ctz_rt2
+      ,COALESCE(kctz.ctz_rt3, cat.ctz_rt3) AS ctz_rt3
+      ,COALESCE(kctz.ctz_rt4, cat.ctz_rt4) AS ctz_rt4
 
       ,REPLACE(comm.comment_value, '"', '''') AS comment_value
 FROM gabby.powerschool.cohort_static co
