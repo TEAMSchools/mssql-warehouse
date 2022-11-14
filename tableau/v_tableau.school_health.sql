@@ -5,8 +5,7 @@ CREATE OR ALTER VIEW tableau.school_health AS
 
 WITH act_composite AS (
   SELECT stl.contact_c
-        ,CASE WHEN MAX(stl.score) >= 20 THEN 1 ELSE 0 END AS is_act_20
-
+        ,CASE WHEN MAX(stl.score) >= 16 THEN 1 ELSE 0 END AS is_act_16
         ,ktc.school_specific_id_c AS student_number
   FROM gabby.alumni.standardized_test_long stl
   INNER JOIN gabby.alumni.contact ktc
@@ -34,7 +33,7 @@ WITH act_composite AS (
   WHERE co.rn_year = 1
     AND co.is_enrolled_recent = 1
     AND co.grade_level <= 8
-    AND co.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 2
+    AND co.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 3
 )
 
 SELECT 'f_and_p' AS domain
@@ -60,7 +59,7 @@ FROM
        ON ats.student_number = co.student_number
       AND ats.academic_year = co.academic_year
       AND co.is_enrolled_recent = 1
-     WHERE ats.academic_year >= gabby.utilities.global_academic_year() - 2
+     WHERE ats.academic_year >= gabby.utilities.global_academic_year() - 3
        AND ats.is_curterm = 1
        AND ats.grade_level <= 4
     ) sub
@@ -95,8 +94,9 @@ FROM
       AND co.is_enrolled_recent = 1
       AND co.rn_year = 1
      WHERE gpa.is_curterm = 1
-       AND gpa.academic_year >= gabby.utilities.global_academic_year() - 2
+       AND gpa.academic_year >= gabby.utilities.global_academic_year() - 3
        AND gpa.grade_level >= 5
+       AND co.school_level NOT IN ('OD', 'ES')
     )sub
 GROUP BY sub.academic_year
         ,sub.schoolid
@@ -167,7 +167,7 @@ FROM
      WHERE co.rn_year = 1
        AND co.is_enrolled_recent = 1
        AND co.grade_level <= 2
-       AND co.academic_year >= gabby.utilities.global_academic_year() - 2
+       AND co.academic_year >= gabby.utilities.global_academic_year() - 3
     ) sub
 GROUP BY sub.academic_year
         ,sub.schoolid
@@ -194,7 +194,7 @@ INNER JOIN gabby.powerschool.cohort_identifiers_static co
  AND co.is_enrolled_y1 = 1
 WHERE mem.membershipvalue = 1
   AND mem.calendardate <= CURRENT_TIMESTAMP
-  AND mem.yearid >= ((gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 2) - 1990)
+  AND mem.yearid >= ((gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 3) - 1990)
 GROUP BY co.academic_year
         ,co.schoolid
 
@@ -233,7 +233,7 @@ FROM
       AND ips.issuspension = 1
      WHERE co.rn_year = 1
        AND co.is_enrolled_y1 = 1
-       AND co.academic_year >= gabby.utilities.global_academic_year() - 2
+       AND co.academic_year >= gabby.utilities.global_academic_year() - 3
     ) sub
 GROUP BY sub.academic_year
         ,sub.schoolid
@@ -246,62 +246,25 @@ SELECT 'act' AS domain
       ,co.schoolid
       ,CAST(co.grade_level AS NVARCHAR(2)) AS grade_band
 
-      ,ROUND(AVG(CAST(act.is_act_20 AS FLOAT)), 2) AS pct_met_goal
+      ,ROUND(AVG(CAST(act.is_act_16 AS FLOAT)), 2) AS pct_met_goal
 
-      ,ROUND(AVG(CASE WHEN co.iep_status = 'SPED' THEN CAST(act.is_act_20 AS FLOAT) ELSE NULL END), 2) AS pct_met_iep
-      ,ROUND(AVG(CASE WHEN co.iep_status <> 'SPED' THEN CAST(act.is_act_20 AS FLOAT) ELSE NULL END), 2) AS pct_met_no_iep
-      ,ROUND(AVG(CASE WHEN co.gender = 'F' THEN CAST(act.is_act_20 AS FLOAT) ELSE NULL END), 2) AS pct_met_f
-      ,ROUND(AVG(CASE WHEN co.gender = 'M' THEN CAST(act.is_act_20 AS FLOAT) ELSE NULL END), 2) AS pct_met_m
+      ,ROUND(AVG(CASE WHEN co.iep_status = 'SPED' THEN CAST(act.is_act_16 AS FLOAT) ELSE NULL END), 2) AS pct_met_iep
+      ,ROUND(AVG(CASE WHEN co.iep_status <> 'SPED' THEN CAST(act.is_act_16 AS FLOAT) ELSE NULL END), 2) AS pct_met_no_iep
+      ,ROUND(AVG(CASE WHEN co.gender = 'F' THEN CAST(act.is_act_16 AS FLOAT) ELSE NULL END), 2) AS pct_met_f
+      ,ROUND(AVG(CASE WHEN co.gender = 'M' THEN CAST(act.is_act_16 AS FLOAT) ELSE NULL END), 2) AS pct_met_m
 FROM gabby.powerschool.cohort_identifiers_static co
 LEFT JOIN act_composite act
   ON co.student_number = act.student_number
 WHERE co.rn_year = 1
   AND co.is_enrolled_y1 = 1
   AND co.grade_level IN (11, 12)
-  AND co.academic_year >= gabby.utilities.global_academic_year() - 2
+  AND co.academic_year >= gabby.utilities.global_academic_year() - 3
 GROUP BY co.academic_year
         ,co.schoolid
         ,co.grade_level
 
 UNION ALL
 
-SELECT 'njsla_' + sub.njsla_subject AS domain
-      ,sub.academic_year
-      ,sub.schoolid
-      ,sub.grade_band
-      ,ROUND(AVG(CAST(sub.is_proficient AS FLOAT)), 2) AS pct_met_goal
-      ,ROUND(AVG(CASE WHEN sub.iep_status = 'SPED' THEN CAST(sub.is_proficient AS FLOAT) ELSE NULL END), 2) AS pct_met_iep
-      ,ROUND(AVG(CASE WHEN sub.iep_status <> 'SPED' THEN CAST(sub.is_proficient AS FLOAT) ELSE NULL END), 2) AS pct_met_no_iep
-      ,ROUND(AVG(CASE WHEN sub.gender = 'F' THEN CAST(sub.is_proficient AS FLOAT) ELSE NULL END), 2) AS pct_met_f
-      ,ROUND(AVG(CASE WHEN sub.gender = 'M' THEN CAST(sub.is_proficient AS FLOAT) ELSE NULL END), 2) AS pct_met_m
-FROM
-    (
-     SELECT  co.academic_year
-            ,co.schoolid
-            ,co.iep_status
-            ,co.gender
-            ,CAST(co.grade_level AS NVARCHAR(2)) AS grade_band
-
-            ,CASE 
-              WHEN nj.[subject] IN ('Mathematics', 'Algebra I') THEN 'math'
-              WHEN nj.[subject] = 'English Language Arts/Literacy' THEN 'ela'
-             END AS njsla_subject
-            ,CASE WHEN nj.test_performance_level >= 3 THEN 1 ELSE 0 END AS is_proficient
-     FROM gabby.parcc.summative_record_file_clean nj
-     INNER JOIN gabby.powerschool.cohort_identifiers_static co
-       ON nj.local_student_identifier = co.student_number
-      AND nj.academic_year = co.academic_year
-      AND co.grade_level <= 8
-      AND co.rn_year = 1
-     WHERE nj.academic_year >= gabby.utilities.global_academic_year() - 2
-       AND nj.[subject] IN ('Mathematics', 'Algebra I', 'English Language Arts/Literacy')
-    )sub
-GROUP BY sub.academic_year
-        ,sub.schoolid
-        ,sub.grade_band
-        ,sub.njsla_subject
-
-UNION ALL
 
 SELECT 'student_attrition' AS domain
       ,sub.academic_year
@@ -324,11 +287,11 @@ FROM
              ELSE LEAD(co.is_enrolled_oct01, 1, 0) OVER(PARTITION BY co.student_number ORDER BY co.academic_year)
             END AS is_enrolled_next
 
-           ,'All' AS grade_band
+           ,'ALL' AS grade_band
      FROM gabby.powerschool.cohort_identifiers_static co
      WHERE co.is_enrolled_oct01 = 1
        AND co.rn_year = 1
-       AND co.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 2
+       AND co.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 3
     ) sub
 GROUP BY sub.academic_year
         ,sub.schoolid
@@ -359,7 +322,7 @@ FROM
       AND sc.ps_school_id IS NOT NULL
      WHERE cm.is_open_ended = 'N'
        AND cm.question_shortname LIKE '%Q12%'
-       AND cm.campaign_academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 2
+       AND cm.campaign_academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 3
      GROUP BY sc.ps_school_id
              ,cm.campaign_academic_year
              ,cm.respondent_df_employee_number
@@ -386,9 +349,9 @@ WHERE sa.is_denominator <> 0
   AND sa.primary_job <> 'Intern'
   AND sa.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 3)
 GROUP BY sa.academic_year, cw.ps_school_id
-​
+
 UNION ALL
-​
+
 SELECT 'teacher_retention' AS domain
       ,sa.academic_year
       ,cw.ps_school_id
@@ -432,7 +395,7 @@ INNER JOIN gabby.people.school_crosswalk cw
  AND cw.ps_school_id <> 0
 WHERE lb.metric_name = 'etr_overall_score'
   AND lb.pm_term = 'PM4'
-  AND lb.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 2
+  AND lb.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 3
 GROUP BY lb.academic_year, cw.ps_school_id
 
 UNION ALL
@@ -527,3 +490,74 @@ FROM
       ) u
     )sub
 GROUP BY sub.academic_year, sub.schoolid
+
+UNION ALL
+
+SELECT 'state_asmt' + '_' + sub.[subject] AS domain
+      ,sub.academic_year
+      ,sub.schoolid
+      ,CAST(sub.grade_band AS NVARCHAR)
+      ,ROUND(AVG(CAST(sub.is_proficient AS FLOAT)), 2) AS pct_met_goal
+      ,ROUND(AVG(CASE WHEN sub.iep_status = 'SPED' THEN CAST(sub.is_proficient AS FLOAT) ELSE NULL END), 2) AS pct_met_iep
+      ,ROUND(AVG(CASE WHEN sub.iep_status <> 'SPED' THEN CAST(sub.is_proficient AS FLOAT) ELSE NULL END), 2) AS pct_met_no_iep
+      ,ROUND(AVG(CASE WHEN sub.gender = 'F' THEN CAST(sub.is_proficient AS FLOAT) ELSE NULL END), 2) AS pct_met_f
+      ,ROUND(AVG(CASE WHEN sub.gender = 'M' THEN CAST(sub.is_proficient AS FLOAT) ELSE NULL END), 2) AS pct_met_m
+FROM
+    (
+ 	 SELECT co.academic_year
+	       ,co.schoolid
+	       ,co.grade_level AS grade_band
+	       ,co.iep_status
+	       ,co.gender
+	       ,CASE 
+	         WHEN nj.[subject] IN ('Mathematics', 'Algebra I') THEN 'math'
+	         WHEN nj.[subject] LIKE 'English Language%' THEN 'ela'
+	         ELSE LOWER(nj.[subject])
+	        END AS [subject]
+	       ,CASE
+	         WHEN nj.[subject] = 'Science' AND nj.test_performance_level >= 3 THEN 1
+	         WHEN nj.[subject] = 'Science' AND nj.test_performance_level < 3 THEN 0
+	         WHEN nj.test_performance_level >= 4 THEN 1
+	         WHEN nj.test_performance_level < 4 THEN 0
+	        END AS is_proficient
+	 FROM gabby.parcc.summative_record_file_clean nj
+	 JOIN gabby.powerschool.cohort_identifiers_static co
+	   ON nj.state_student_identifier = co.state_studentnumber
+	  AND nj.academic_year = co.academic_year
+	  AND nj.[db_name] = co.[db_name]
+	  AND co.rn_year = 1
+	  AND co.grade_level BETWEEN 3 AND 8
+	  AND co.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 3
+
+	 UNION ALL
+	 
+	 SELECT co.academic_year
+	       ,co.schoolid
+	       ,co.grade_level AS grade_band
+	       ,co.iep_status
+	       ,co.gender
+	       ,CASE 
+	         WHEN fl.test_name LIKE '%MATH%' THEN 'math'
+	         WHEN fl.test_name LIKE '%ELA%' THEN 'ela'
+	         WHEN fl.test_name LIKE '%SCIENCE%' THEN 'science'
+	         ELSE NULL
+	        END AS [subject]
+	      ,CASE
+	        WHEN fl.performance_level >= 3 THEN 1
+	        WHEN fl.performance_level < 3 THEN 0
+	        ELSE NULL
+	       END AS is_proficient
+	FROM kippmiami.fsa.student_scores fl
+	JOIN kippmiami.powerschool.u_studentsuserfields suf
+	  ON fl.fleid = suf.fleid
+	JOIN kippmiami.powerschool.cohort_identifiers_static co
+	  ON suf.studentsdcid = co.students_dcid
+	 AND LEFT(fl.school_year, 2) = RIGHT(co.academic_year, 2)
+	 AND co.rn_year = 1
+	 AND co.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 3
+	 AND co.grade_level BETWEEN 3 AND 8
+	) sub
+GROUP BY sub.academic_year
+        ,sub.schoolid
+        ,sub.grade_band
+        ,sub.[subject]
