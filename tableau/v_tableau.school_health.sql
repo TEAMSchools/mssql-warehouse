@@ -6,7 +6,6 @@ CREATE OR ALTER VIEW tableau.school_health AS
 WITH act_composite AS (
   SELECT stl.contact_c
         ,CASE WHEN MAX(stl.score) >= 16 THEN 1 ELSE 0 END AS is_act_16
-
         ,ktc.school_specific_id_c AS student_number
   FROM gabby.alumni.standardized_test_long stl
   INNER JOIN gabby.alumni.contact ktc
@@ -266,6 +265,7 @@ GROUP BY co.academic_year
 
 UNION ALL
 
+
 SELECT 'student_attrition' AS domain
       ,sub.academic_year
       ,sub.schoolid
@@ -349,9 +349,9 @@ WHERE sa.is_denominator <> 0
   AND sa.primary_job <> 'Intern'
   AND sa.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 3)
 GROUP BY sa.academic_year, cw.ps_school_id
-​
+
 UNION ALL
-​
+
 SELECT 'teacher_retention' AS domain
       ,sa.academic_year
       ,cw.ps_school_id

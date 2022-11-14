@@ -32,7 +32,6 @@ WITH enr AS (
          ON cc.schoolid = tb.schoolid
         AND ABS(cc.termid) = tb.termid
        WHERE cc.dateenrolled >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
-         AND cc.course_number <> 'HR'
       ) sub
  )
 
