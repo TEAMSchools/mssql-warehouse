@@ -504,59 +504,59 @@ SELECT 'state_asmt' + '_' + sub.[subject] AS domain
       ,ROUND(AVG(CASE WHEN sub.gender = 'M' THEN CAST(sub.is_proficient AS FLOAT) ELSE NULL END), 2) AS pct_met_m
 FROM
     (
- 	 SELECT co.academic_year
-	       ,co.schoolid
-	       ,co.grade_level AS grade_band
-	       ,co.iep_status
-	       ,co.gender
-	       ,CASE 
-	         WHEN nj.[subject] IN ('Mathematics', 'Algebra I') THEN 'math'
-	         WHEN nj.[subject] LIKE 'English Language%' THEN 'ela'
-	         ELSE LOWER(nj.[subject])
-	        END AS [subject]
-	       ,CASE
-	         WHEN nj.[subject] = 'Science' AND nj.test_performance_level >= 3 THEN 1
-	         WHEN nj.[subject] = 'Science' AND nj.test_performance_level < 3 THEN 0
-	         WHEN nj.test_performance_level >= 4 THEN 1
-	         WHEN nj.test_performance_level < 4 THEN 0
-	        END AS is_proficient
-	 FROM gabby.parcc.summative_record_file_clean nj
-	 JOIN gabby.powerschool.cohort_identifiers_static co
-	   ON nj.state_student_identifier = co.state_studentnumber
-	  AND nj.academic_year = co.academic_year
-	  AND nj.[db_name] = co.[db_name]
-	  AND co.rn_year = 1
-	  AND co.grade_level BETWEEN 3 AND 8
-	  AND co.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 3
+     SELECT co.academic_year
+           ,co.schoolid
+           ,co.grade_level AS grade_band
+           ,co.iep_status
+           ,co.gender
+           ,CASE 
+             WHEN nj.[subject] IN ('Mathematics', 'Algebra I') THEN 'math'
+             WHEN nj.[subject] LIKE 'English Language%' THEN 'ela'
+             ELSE LOWER(nj.[subject])
+            END AS [subject]
+           ,CASE
+             WHEN nj.[subject] = 'Science' AND nj.test_performance_level >= 3 THEN 1
+             WHEN nj.[subject] = 'Science' AND nj.test_performance_level < 3 THEN 0
+             WHEN nj.test_performance_level >= 4 THEN 1
+             WHEN nj.test_performance_level < 4 THEN 0
+            END AS is_proficient
+     FROM gabby.parcc.summative_record_file_clean nj
+     INNER JOIN gabby.powerschool.cohort_identifiers_static co
+       ON nj.state_student_identifier = co.state_studentnumber
+      AND nj.academic_year = co.academic_year
+      AND nj.[db_name] = co.[db_name]
+      AND co.rn_year = 1
+      AND co.grade_level BETWEEN 3 AND 8
+      AND co.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 3
 
-	 UNION ALL
-	 
-	 SELECT co.academic_year
-	       ,co.schoolid
-	       ,co.grade_level AS grade_band
-	       ,co.iep_status
-	       ,co.gender
-	       ,CASE 
-	         WHEN fl.test_name LIKE '%MATH%' THEN 'math'
-	         WHEN fl.test_name LIKE '%ELA%' THEN 'ela'
-	         WHEN fl.test_name LIKE '%SCIENCE%' THEN 'science'
-	         ELSE NULL
-	        END AS [subject]
-	      ,CASE
-	        WHEN fl.performance_level >= 3 THEN 1
-	        WHEN fl.performance_level < 3 THEN 0
-	        ELSE NULL
-	       END AS is_proficient
-	FROM kippmiami.fsa.student_scores fl
-	JOIN kippmiami.powerschool.u_studentsuserfields suf
-	  ON fl.fleid = suf.fleid
-	JOIN kippmiami.powerschool.cohort_identifiers_static co
-	  ON suf.studentsdcid = co.students_dcid
-	 AND LEFT(fl.school_year, 2) = RIGHT(co.academic_year, 2)
-	 AND co.rn_year = 1
-	 AND co.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 3
-	 AND co.grade_level BETWEEN 3 AND 8
-	) sub
+     UNION ALL
+
+     SELECT co.academic_year
+           ,co.schoolid
+           ,co.grade_level AS grade_band
+           ,co.iep_status
+           ,co.gender
+           ,CASE 
+             WHEN fl.test_name LIKE '%MATH%' THEN 'math'
+             WHEN fl.test_name LIKE '%ELA%' THEN 'ela'
+             WHEN fl.test_name LIKE '%SCIENCE%' THEN 'science'
+             ELSE NULL
+            END AS [subject]
+          ,CASE
+            WHEN fl.performance_level >= 3 THEN 1
+            WHEN fl.performance_level < 3 THEN 0
+            ELSE NULL
+           END AS is_proficient
+     FROM kippmiami.fsa.student_scores fl
+     INNER JOIN kippmiami.powerschool.u_studentsuserfields suf
+       ON fl.fleid = suf.fleid
+     INNER JOIN kippmiami.powerschool.cohort_identifiers_static co
+       ON suf.studentsdcid = co.students_dcid
+      AND LEFT(fl.school_year, 2) = RIGHT(co.academic_year, 2)
+      AND co.rn_year = 1
+      AND co.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 3
+      AND co.grade_level BETWEEN 3 AND 8
+    ) sub
 GROUP BY sub.academic_year
         ,sub.schoolid
         ,sub.grade_band
