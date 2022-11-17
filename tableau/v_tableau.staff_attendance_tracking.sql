@@ -210,6 +210,10 @@ SELECT td.job AS job_title
       ,cw.primary_site AS location_current
       ,LOWER(cw.samaccountname) AS staff_samaccountname
       ,LOWER(cw.manager_samaccountname) AS manager_samaccountname
+      ,cw.status AS employee_status
+      ,cw.original_hire_date
+      ,cw.rehire_date
+      ,cw.termination_date
 
       ,LOWER(sl.sl_samaccountname) AS sl_samaccountname
 
