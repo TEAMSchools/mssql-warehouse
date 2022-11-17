@@ -8,13 +8,13 @@ SELECT p.entity AS entity
       ,r.associate_id AS associate_id
       ,r.position_id AS position_id
       ,p.preferred_name AS [name]
-      ,CONVERT(DATE, p.[start_date]) AS effective_date
+      ,CAST(p.[start_date] AS DATE) AS effective_date
       ,'New Hire' AS [source]
-      ,CONVERT(NVARCHAR, p.salary) AS salary
+      ,CAST(p.salary AS NVARCHAR) AS salary
       ,p.leadership_stipend
       ,p.relocation_stipend
       ,p.other_stipend
-      ,CONVERT(NVARCHAR, ISNULL(p.leadership_stipend, 0) + ISNULL(p.relocation_stipend, 0) + ISNULL(p.other_stipend, 0)) AS total_stipend
+      ,CAST(ISNULL(p.leadership_stipend, 0) + ISNULL(p.relocation_stipend, 0) + ISNULL(p.other_stipend, 0) AS NVARCHAR) AS total_stipend
       ,NULL AS accounting_line
       ,NULL AS notes
 FROM gabby.payroll.new_hire_tracker p 
@@ -29,9 +29,9 @@ SELECT e.entity AS entity
       ,e.associate_id AS associate_id
       ,e.position_id AS position_id
       ,employee_name AS [name]
-      ,CONVERT(DATE, e.payroll_date) AS effective_date
+      ,CAST(e.payroll_date AS DATE) AS effective_date
       ,'Pay Edits' AS [source]
-      ,CONVERT(NVARCHAR, e.amount_of_edit) AS salary
+      ,CAST(e.amount_of_edit AS NVARCHAR) AS salary
       ,NULL AS leadership_stipend
       ,NULL AS relocation_stipend
       ,NULL AS other_stipend
@@ -51,13 +51,13 @@ SELECT s.entity AS entity
       ,s.employee_associate_id AS associate_id
       ,s.employee_position_id AS position_id
       ,s.employee_name AS [name]
-      ,CONVERT(DATE, s.effective_date_of_change) AS effective_date
+      ,CAST(s.effective_date_of_change AS DATE) AS effective_date
       ,'Status Change' AS [source]
-      ,CONVERT(NVARCHAR, s._new_base_salary_) AS salary
+      ,CAST(s._new_base_salary_ AS NVARCHAR) AS salary
       ,NULL AS leadership_stipend
       ,NULL AS relocation_stipend
       ,NULL AS other_stipend
-      ,CONVERT(NVARCHAR, s.bonus_stipend_amount_) AS total_stipend
+      ,CAST(s.bonus_stipend_amount_ AS NVARCHAR) AS total_stipend
       ,CASE WHEN s.salary_accounting_line IS NULL THEN s.bonus_stipend_accounting_line ELSE s.salary_accounting_line END AS accounting_line
       ,s.bonus_stipend_details AS notes
 FROM gabby.payroll.status_change s 
@@ -73,7 +73,7 @@ SELECT LEFT(r.position_id, 3) AS entity
       ,r.associate_id AS associate_id
       ,r.position_id AS position_id
       ,CASE WHEN r.preferred_name IS NULL THEN r.first_name + ' ' + r.last_name ELSE r.preferred_name END AS [name]
-      ,CONVERT(DATE, r.termination_date) AS effective_date
+      ,CAST(r.termination_date AS DATE) AS effective_date
       ,'Terminations' AS [source]
       ,NULL AS salary
       ,NULL AS leadership_stipend
@@ -85,4 +85,4 @@ SELECT LEFT(r.position_id, 3) AS entity
 FROM gabby.adp.staff_roster r
 WHERE r.rn_curr = 1
   AND position_status = 'Terminated'
-  AND CONVERT(DATE, termination_date) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
+  AND CAST(termination_date AS DATE) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)

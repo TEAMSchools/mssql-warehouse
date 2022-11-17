@@ -80,13 +80,13 @@ WITH ada AS (
         ,CASE WHEN sp.[Out of District] IS NOT NULL THEN 'Out-of-District Placement' ELSE NULL END AS is_ood
         ,CASE WHEN sp.[NCCS] IS NOT NULL THEN 'NCCS' ELSE NULL END AS is_nccs
         ,CASE WHEN sp.[Pathways MS] IS NOT NULL OR sp.[Pathways ES] IS NOT NULL THEN 'Pathways' ELSE NULL END AS is_pathways
-        ,CASE WHEN sp.[Home Instruction] IS NOT NULL AND sp.exit_date > CONVERT(DATE,GETDATE()) THEN 'Home Instruction' ELSE NULL END AS is_home_instruction
-        ,CASE WHEN sp.[Hybrid - Cohort A] IS NOT NULL AND sp.exit_date > CONVERT(DATE,GETDATE()) THEN 'Hybrid - Cohort A' ELSE NULL END AS is_hybrid_a
-        ,CASE WHEN sp.[Hybrid - Cohort B] IS NOT NULL AND sp.exit_date > CONVERT(DATE,GETDATE()) THEN 'Hybrid - Cohort B' ELSE NULL END AS is_hybrid_b
-        ,CASE WHEN sp.[Remote - Cohort C] IS NOT NULL AND sp.exit_date > CONVERT(DATE,GETDATE()) THEN 'Remote - Cohort C' ELSE NULL END AS is_remote_c
-        ,CASE WHEN sp.[Hybrid (SC) - Cohort D] IS NOT NULL AND sp.exit_date > CONVERT(DATE,GETDATE()) THEN 'Hybrid (SC) - Cohort D' ELSE NULL END AS is_hybrid_d
-        ,CASE WHEN sp.[Remote Instruction] IS NOT NULL AND sp.exit_date > CONVERT(DATE,GETDATE()) THEN 'Remote Instruction' ELSE NULL END AS is_remote_instruction
-        ,CASE WHEN sp.[Counseling Services] IS NOT NULL AND sp.exit_date > CONVERT(DATE,GETDATE()) THEN 'Counseling Services' ELSE NULL END AS is_counseling
+        ,CASE WHEN sp.[Home Instruction] IS NOT NULL AND sp.exit_date > CAST(CURRENT_TIMESTAMP AS DATE) THEN 'Home Instruction' ELSE NULL END AS is_home_instruction
+        ,CASE WHEN sp.[Hybrid - Cohort A] IS NOT NULL AND sp.exit_date > CAST(CURRENT_TIMESTAMP AS DATE) THEN 'Hybrid - Cohort A' ELSE NULL END AS is_hybrid_a
+        ,CASE WHEN sp.[Hybrid - Cohort B] IS NOT NULL AND sp.exit_date > CAST(CURRENT_TIMESTAMP AS DATE) THEN 'Hybrid - Cohort B' ELSE NULL END AS is_hybrid_b
+        ,CASE WHEN sp.[Remote - Cohort C] IS NOT NULL AND sp.exit_date > CAST(CURRENT_TIMESTAMP AS DATE) THEN 'Remote - Cohort C' ELSE NULL END AS is_remote_c
+        ,CASE WHEN sp.[Hybrid (SC) - Cohort D] IS NOT NULL AND sp.exit_date > CAST(CURRENT_TIMESTAMP AS DATE) THEN 'Hybrid (SC) - Cohort D' ELSE NULL END AS is_hybrid_d
+        ,CASE WHEN sp.[Remote Instruction] IS NOT NULL AND sp.exit_date > CAST(CURRENT_TIMESTAMP AS DATE) THEN 'Remote Instruction' ELSE NULL END AS is_remote_instruction
+        ,CASE WHEN sp.[Counseling Services] IS NOT NULL AND sp.exit_date > CAST(CURRENT_TIMESTAMP AS DATE) THEN 'Counseling Services' ELSE NULL END AS is_counseling
         
         ,CASE WHEN ada.ada < 0.9 THEN 'Chronic Absence' ELSE NULL END AS is_chronic_absentee
   FROM gabby.powerschool.cohort_identifiers_static co

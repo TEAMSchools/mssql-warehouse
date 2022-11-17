@@ -14,9 +14,9 @@ SELECT employee_number
       ,relay
       ,teacher_prep
       ,undergrad_university
-      ,CONVERT(FLOAT, years_teaching_any_state) AS years_teaching_any_state
-      ,CONVERT(FLOAT, years_teaching_nj_and_fl) AS years_teaching_nj_and_fl
-      ,CONVERT(FLOAT, professional_experience_before_KIPP) AS professional_experience_before_KIPP
+      ,CAST(years_teaching_any_state AS FLOAT) AS years_teaching_any_state
+      ,CAST(years_teaching_nj_and_fl AS FLOAT) AS years_teaching_nj_and_fl
+      ,CAST(professional_experience_before_KIPP AS FLOAT) AS professional_experience_before_KIPP
 FROM
     (
      SELECT employee_number

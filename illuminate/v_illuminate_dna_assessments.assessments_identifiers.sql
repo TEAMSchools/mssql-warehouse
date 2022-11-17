@@ -7,7 +7,7 @@ WITH tnl_uids AS (
   SELECT u.[user_id]
   FROM gabby.people.work_assignment_history_static sr
   JOIN gabby.illuminate_public.users u
-    ON CONVERT(VARCHAR(25), sr.employee_number) = u.state_id
+    ON CAST(sr.employee_number AS VARCHAR(25)) = u.state_id
   WHERE sr.home_department_description = 'Teaching and Learning'
 
   UNION
@@ -151,7 +151,7 @@ FROM
                   THEN LEN(n.module_number_pattern_2) + 1
             END AS module_number_length
 
-           ,CONVERT(VARCHAR(5), rt.alt_name) AS term_administered
+           ,CAST(rt.alt_name AS VARCHAR(5)) AS term_administered
      FROM gabby.illuminate_dna_assessments.assessments a
      JOIN gabby.illuminate_public.users u
        ON a.[user_id] = u.[user_id]

@@ -1,14 +1,14 @@
 CREATE OR ALTER VIEW powerschool.gradebook_assignments_scores_current AS
 
-SELECT CONVERT(INT, a.studentsdcid) AS studentsdcid
+SELECT CAST(a.studentsdcid AS INT) AS studentsdcid
       ,a.scorepoints
-      ,CONVERT(INT, a.islate) AS islate
-      ,CONVERT(INT, a.isexempt) AS isexempt
-      ,CONVERT(INT, a.ismissing) AS ismissing
-      ,CONVERT(INT, a.assignmentsectionid) AS assignmentsectionid
+      ,CAST(a.islate AS INT) AS islate
+      ,CAST(a.isexempt AS INT) AS isexempt
+      ,CAST(a.ismissing AS INT) AS ismissing
+      ,CAST(a.assignmentsectionid AS INT) AS assignmentsectionid
 
-      ,CONVERT(INT, asec.assignmentid) AS assignmentid
-      ,CONVERT(INT, asec.sectionsdcid) AS sectionsdcid
+      ,CAST(asec.assignmentid AS INT) AS assignmentid
+      ,CAST(asec.sectionsdcid AS INT) AS sectionsdcid
 FROM powerschool.assignmentscore a
 JOIN powerschool.assignmentsection asec
   ON a.assignmentsectionid = asec.assignmentsectionid

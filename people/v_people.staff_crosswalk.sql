@@ -7,10 +7,10 @@ SELECT sub.employee_number AS df_employee_number
       ,sub.associate_id AS adp_associate_id
       ,sub.position_id
       ,sub.file_number
-      ,CONVERT(NVARCHAR(32), NULL) AS salesforce_id
+      ,CAST(NULL AS NVARCHAR(32)) AS salesforce_id
       ,sub.first_name
       ,sub.last_name
-      ,CONVERT(NVARCHAR(32), sub.gender_reporting) AS gender
+      ,CAST(sub.gender_reporting AS NVARCHAR(32)) AS gender
       ,sub.ethnicity AS primary_ethnicity
       ,sub.race_ethnicity_reporting AS primary_race_ethnicity_reporting
       ,sub.is_hispanic
@@ -132,7 +132,7 @@ FROM
 
            ,COALESCE(idps.ps_teachernumber
                     ,sr.associate_id_legacy
-                    ,CONVERT(VARCHAR(25), sr.employee_number)) AS ps_teachernumber
+                    ,CAST(sr.employee_number AS VARCHAR(25))) AS ps_teachernumber
 
            ,ads.samaccountname
            ,ads.userprincipalname
@@ -152,9 +152,9 @@ FROM
       AND idps.is_master = 1
       AND idps._fivetran_deleted = 0
      LEFT JOIN gabby.adsi.user_attributes_static ads
-       ON CONVERT(VARCHAR(25), sr.employee_number) = ads.employeenumber
+       ON CAST(sr.employee_number AS VARCHAR(25)) = ads.employeenumber
      LEFT JOIN gabby.adsi.user_attributes_static adm
-       ON CONVERT(VARCHAR(25), sr.manager_employee_number) = adm.employeenumber
+       ON CAST(sr.manager_employee_number AS VARCHAR(25)) = adm.employeenumber
     ) sub
 LEFT JOIN gabby.pm.teacher_grade_levels gl
   ON sub.ps_teachernumber = gl.teachernumber COLLATE Latin1_General_BIN

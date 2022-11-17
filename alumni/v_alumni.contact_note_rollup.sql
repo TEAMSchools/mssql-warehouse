@@ -30,59 +30,59 @@ SELECT contact_id
       ,[AS22] AS [AS22_date]
       ,[AS23] AS [AS23_date]
       ,[AS24] AS [AS24_date]
-      ,ISDATE(CONVERT(VARCHAR(10), [AS1])) AS [AS1]
-      ,ISDATE(CONVERT(VARCHAR(10), [AS2])) AS [AS2]
-      ,ISDATE(CONVERT(VARCHAR(10), [AS3])) AS [AS3]
-      ,ISDATE(CONVERT(VARCHAR(10), [AS4])) AS [AS4]
-      ,ISDATE(CONVERT(VARCHAR(10), [AS5])) AS [AS5]
-      ,ISDATE(CONVERT(VARCHAR(10), [AS6])) AS [AS6]
-      ,ISDATE(CONVERT(VARCHAR(10), [AS7])) AS [AS7]
-      ,ISDATE(CONVERT(VARCHAR(10), [AS8])) AS [AS8]
-      ,ISDATE(CONVERT(VARCHAR(10), [AS9])) AS [AS9]
-      ,ISDATE(CONVERT(VARCHAR(10), [AS10])) AS [AS10]
-      ,ISDATE(CONVERT(VARCHAR(10), [AS11])) AS [AS11]
-      ,ISDATE(CONVERT(VARCHAR(10), [AS12])) AS [AS12]
-      ,ISDATE(CONVERT(VARCHAR(10), [AS13])) AS [AS13]
-      ,ISDATE(CONVERT(VARCHAR(10), [AS14])) AS [AS14]
-      ,ISDATE(CONVERT(VARCHAR(10), [AS15])) AS [AS15]
-      ,ISDATE(CONVERT(VARCHAR(10), [AS16])) AS [AS16]
-      ,ISDATE(CONVERT(VARCHAR(10), [AS17])) AS [AS17]
-      ,ISDATE(CONVERT(VARCHAR(10), [AS18])) AS [AS18]
-      ,ISDATE(CONVERT(VARCHAR(10), [AS19])) AS [AS19]
-      ,ISDATE(CONVERT(VARCHAR(10), [AS20])) AS [AS20]
-      ,ISDATE(CONVERT(VARCHAR(10), [AS21])) AS [AS21]
-      ,ISDATE(CONVERT(VARCHAR(10), [AS22])) AS [AS22]
-      ,ISDATE(CONVERT(VARCHAR(10), [AS23])) AS [AS23]
-      ,ISDATE(CONVERT(VARCHAR(10), [AS24])) AS [AS24]
+      ,ISDATE(CAST([AS1] AS VARCHAR(10))) AS [AS1]
+      ,ISDATE(CAST([AS2] AS VARCHAR(10))) AS [AS2]
+      ,ISDATE(CAST([AS3] AS VARCHAR(10))) AS [AS3]
+      ,ISDATE(CAST([AS4] AS VARCHAR(10))) AS [AS4]
+      ,ISDATE(CAST([AS5] AS VARCHAR(10))) AS [AS5]
+      ,ISDATE(CAST([AS6] AS VARCHAR(10))) AS [AS6]
+      ,ISDATE(CAST([AS7] AS VARCHAR(10))) AS [AS7]
+      ,ISDATE(CAST([AS8] AS VARCHAR(10))) AS [AS8]
+      ,ISDATE(CAST([AS9] AS VARCHAR(10))) AS [AS9]
+      ,ISDATE(CAST([AS10] AS VARCHAR(10))) AS [AS10]
+      ,ISDATE(CAST([AS11] AS VARCHAR(10))) AS [AS11]
+      ,ISDATE(CAST([AS12] AS VARCHAR(10))) AS [AS12]
+      ,ISDATE(CAST([AS13] AS VARCHAR(10))) AS [AS13]
+      ,ISDATE(CAST([AS14] AS VARCHAR(10))) AS [AS14]
+      ,ISDATE(CAST([AS15] AS VARCHAR(10))) AS [AS15]
+      ,ISDATE(CAST([AS16] AS VARCHAR(10))) AS [AS16]
+      ,ISDATE(CAST([AS17] AS VARCHAR(10))) AS [AS17]
+      ,ISDATE(CAST([AS18] AS VARCHAR(10))) AS [AS18]
+      ,ISDATE(CAST([AS19] AS VARCHAR(10))) AS [AS19]
+      ,ISDATE(CAST([AS20] AS VARCHAR(10))) AS [AS20]
+      ,ISDATE(CAST([AS21] AS VARCHAR(10))) AS [AS21]
+      ,ISDATE(CAST([AS22] AS VARCHAR(10))) AS [AS22]
+      ,ISDATE(CAST([AS23] AS VARCHAR(10))) AS [AS23]
+      ,ISDATE(CAST([AS24] AS VARCHAR(10))) AS [AS24]
 
-      ,ISDATE(CONVERT(VARCHAR(10), [SC])) AS [SC]
-      ,ISDATE(CONVERT(VARCHAR(10), [CCDM])) AS [CCDM]
-      ,ISDATE(CONVERT(VARCHAR(10), [PSC])) AS [PSC]
-      ,ISDATE(CONVERT(VARCHAR(10), [BBB])) AS [BBB]
-      ,ISDATE(CONVERT(VARCHAR(10), [BM])) AS [BM]
-      ,ISDATE(CONVERT(VARCHAR(10), [GP])) AS [GP]
-      ,ISDATE(CONVERT(VARCHAR(10), [HV])) AS [HV]
-      ,ISDATE(CONVERT(VARCHAR(10), [MC1])) AS [MC1]
-      ,ISDATE(CONVERT(VARCHAR(10), [MC2])) AS [MC2]
+      ,ISDATE(CAST([SC] AS VARCHAR(10))) AS [SC]
+      ,ISDATE(CAST([CCDM] AS VARCHAR(10))) AS [CCDM]
+      ,ISDATE(CAST([PSC] AS VARCHAR(10))) AS [PSC]
+      ,ISDATE(CAST([BBB] AS VARCHAR(10))) AS [BBB]
+      ,ISDATE(CAST([BM] AS VARCHAR(10))) AS [BM]
+      ,ISDATE(CAST([GP] AS VARCHAR(10))) AS [GP]
+      ,ISDATE(CAST([HV] AS VARCHAR(10))) AS [HV]
+      ,ISDATE(CAST([MC1] AS VARCHAR(10))) AS [MC1]
+      ,ISDATE(CAST([MC2] AS VARCHAR(10))) AS [MC2]
 
-      ,ISDATE(CONVERT(VARCHAR(10), [DP_4year])) AS [DP_4year]
-      ,ISDATE(CONVERT(VARCHAR(10), [DP_2year])) AS [DP_2year]
-      ,ISDATE(CONVERT(VARCHAR(10), [DP_CTE])) AS [DP_CTE]
-      ,ISDATE(CONVERT(VARCHAR(10), [DP_Military])) AS [DP_Military]
-      ,ISDATE(CONVERT(VARCHAR(10), [DP_Workforce])) AS [DP_Workforce]
-      ,ISDATE(CONVERT(VARCHAR(10), [DP_Unknown])) AS [DP_Unknown]
+      ,ISDATE(CAST([DP_4year] AS VARCHAR(10))) AS [DP_4year]
+      ,ISDATE(CAST([DP_2year] AS VARCHAR(10))) AS [DP_2year]
+      ,ISDATE(CAST([DP_CTE] AS VARCHAR(10))) AS [DP_CTE]
+      ,ISDATE(CAST([DP_Military] AS VARCHAR(10))) AS [DP_Military]
+      ,ISDATE(CAST([DP_Workforce] AS VARCHAR(10))) AS [DP_Workforce]
+      ,ISDATE(CAST([DP_Unknown] AS VARCHAR(10))) AS [DP_Unknown]
 
-      ,ISDATE(CONVERT(VARCHAR(10), [BGP_4year])) AS [BGP_4year]
-      ,ISDATE(CONVERT(VARCHAR(10), [BGP_2year])) AS [BGP_2year]
-      ,ISDATE(CONVERT(VARCHAR(10), [BGP_CTE])) AS [BGP_CTE]
-      ,ISDATE(CONVERT(VARCHAR(10), [BGP_Military])) AS [BGP_Military]
-      ,ISDATE(CONVERT(VARCHAR(10), [BGP_Workforce])) AS [BGP_Workforce]
-      ,ISDATE(CONVERT(VARCHAR(10), [BGP_Unknown])) AS [BGP_Unknown]
+      ,ISDATE(CAST([BGP_4year] AS VARCHAR(10))) AS [BGP_4year]
+      ,ISDATE(CAST([BGP_2year] AS VARCHAR(10))) AS [BGP_2year]
+      ,ISDATE(CAST([BGP_CTE] AS VARCHAR(10))) AS [BGP_CTE]
+      ,ISDATE(CAST([BGP_Military] AS VARCHAR(10))) AS [BGP_Military]
+      ,ISDATE(CAST([BGP_Workforce] AS VARCHAR(10))) AS [BGP_Workforce]
+      ,ISDATE(CAST([BGP_Unknown] AS VARCHAR(10))) AS [BGP_Unknown]
 
-      ,ISDATE(CONVERT(VARCHAR(10), [HD_P])) AS [HD_P]
-      ,ISDATE(CONVERT(VARCHAR(10), [HD_NR])) AS [HD_NR]
-      ,ISDATE(CONVERT(VARCHAR(10), [TD_P])) AS [TD_P]
-      ,ISDATE(CONVERT(VARCHAR(10), [TD_NR])) AS [TD_NR]
+      ,ISDATE(CAST([HD_P] AS VARCHAR(10))) AS [HD_P]
+      ,ISDATE(CAST([HD_NR] AS VARCHAR(10))) AS [HD_NR]
+      ,ISDATE(CAST([TD_P] AS VARCHAR(10))) AS [TD_P]
+      ,ISDATE(CAST([TD_NR] AS VARCHAR(10))) AS [TD_NR]
 FROM
     (
      SELECT sub.contact_id
@@ -109,18 +109,8 @@ FROM
                   ELSE c.subject_c 
                  END AS contact_subject
                 ,CASE
-                  WHEN c.subject_c IN ('Summer AAS', 'CCDM', 'PSC', 'BBB') THEN ''
-                  WHEN c.subject_c LIKE 'Grad Plan%' THEN ''
-                  WHEN c.subject_c LIKE 'Advising Session%' THEN ''
-                  WHEN c.subject_c LIKE 'MC%' THEN ''
-                  WHEN c.subject_c LIKE '%HV' THEN ''
-                  WHEN c.subject_c LIKE 'SC[0-9]%' THEN ''
-                  WHEN c.subject_c LIKE 'Housing Deposit%' THEN ''
-                  WHEN c.subject_c LIKE 'Tuition Deposit%' THEN ''
-                  WHEN c.subject_c LIKE 'Q%' THEN 'Q' + SUBSTRING(c.subject_c, 2, 1)
-                  /* catch-all for unspecified subjects */
-                  WHEN MONTH(c.date_c) >= 7 THEN 'F'
-                  WHEN MONTH(c.date_c) < 7 THEN 'S'
+                  WHEN c.subject_c LIKE 'Q[0-9]%' THEN 'Q' + SUBSTRING(c.subject_c, 2, 1)
+                  ELSE ''
                  END AS contact_term
                 ,gabby.utilities.DATE_TO_SY(c.date_c) AS academic_year
           FROM gabby.alumni.contact_note_c c

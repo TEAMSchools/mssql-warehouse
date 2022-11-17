@@ -4,17 +4,20 @@ GO
 CREATE OR ALTER VIEW extracts.gsheets_student_contact_info AS
 
 SELECT co.student_number
-      ,co.newark_enrollment_number
+      ,CASE 
+        WHEN co.region = 'KMS' THEN suf.fleid 
+        ELSE co.newark_enrollment_number
+       END AS newark_enrollment_number 
       ,co.state_studentnumber
       ,co.lastfirst
       ,co.schoolid
       ,co.school_name
-      ,CASE WHEN co.grade_level = 0 THEN 'K' ELSE CONVERT(VARCHAR, co.grade_level) END AS grade_level
+      ,CASE WHEN co.grade_level = 0 THEN 'K' ELSE CAST(co.grade_level AS VARCHAR(2)) END AS grade_level
       ,co.team
       ,co.advisor_name
-      ,CONVERT(VARCHAR, co.entrydate) AS entrydate
+      ,co.entrydate
       ,co.boy_status
-      ,CONVERT(VARCHAR, co.dob) AS dob
+      ,co.dob
       ,co.gender
       ,co.lunchstatus
       ,CASE
@@ -23,7 +26,7 @@ SELECT co.student_number
         WHEN co.lunch_app_status LIKE 'Prior%' THEN 'N'
         ELSE 'Y'
        END AS lunch_app_status 
-      ,CONVERT(MONEY, co.lunch_balance) AS lunch_balance
+      ,CAST(co.lunch_balance AS MONEY) AS lunch_balance
       ,co.home_phone
       ,scw.contact_1_phone_primary  AS mother_cell
       ,scw.contact_2_phone_primary AS father_cell

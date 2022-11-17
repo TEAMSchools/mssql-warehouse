@@ -13,7 +13,7 @@ SELECT student_number
       ,advisor_name
       ,iep_status
       ,term
-      ,date      
+      ,[date]
       ,course_name
       ,course_number
       ,section_number
@@ -57,7 +57,7 @@ SELECT student_number
       ,advisor_name
       ,iep_status
       ,term
-      ,date      
+      ,[date]
       ,course_name
       ,course_number
       ,section_number

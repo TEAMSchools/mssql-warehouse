@@ -27,7 +27,7 @@ WITH salary AS (
              ORDER BY ea._modified DESC) AS rn_salary_desc
   FROM gabby.payroll.pay_periods pp
   JOIN gabby.dayforce.employees_archive ea
-    ON CONVERT(DATE,ea._modified) BETWEEN pp.start_date AND pp.end_date  
+    ON CAST(ea._modified AS DATE) BETWEEN pp.start_date AND pp.end_date  
   LEFT JOIN gabby.people.id_crosswalk_adp adp
     ON ea.adp_associate_id = adp.adp_associate_id   
  )
@@ -66,8 +66,8 @@ SELECT cr.fund_code
 FROM gabby.mip.compensation_report cr
 LEFT JOIN salary s
   ON cr.employee_code = s.adp_position_id
- AND CONVERT(INT,SUBSTRING(cr._file, PATINDEX('%[0-9][0-9][0-9][0-9]-%', cr._file), 4)) = s.year_part
- AND CONVERT(INT,SUBSTRING(cr._file, PATINDEX('%-[0-9][0-9]-%', cr._file) + 1, 2)) = s.month
- AND CONVERT(INT,SUBSTRING(cr._file, PATINDEX('%PP[0-9]%', cr._file) + 2, 1)) = s.pay_period
+ AND CAST(SUBSTRING(cr._file, PATINDEX('%[0-9][0-9][0-9][0-9]-%', cr._file), 4) AS INT) = s.year_part
+ AND CAST(SUBSTRING(cr._file, PATINDEX('%-[0-9][0-9]-%', cr._file) + 1, 2) AS INT) = s.month
+ AND CAST(SUBSTRING(cr._file, PATINDEX('%PP[0-9]%', cr._file) + 2, 1) AS INT) = s.pay_period
  AND s.rn_salary_desc = 1
 WHERE cr.employee_code <> '0'

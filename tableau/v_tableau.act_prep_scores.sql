@@ -7,19 +7,23 @@ WITH real_tests AS (
   SELECT stl.contact_c
         ,stl.date_c AS test_date
         ,stl.score AS scale_score
-        ,CONCAT(LEFT(DATENAME(MONTH, stl.date_c), 3), ' '''
-               ,RIGHT(DATEPART(YEAR, stl.date_c), 2)) AS administration_round
+        ,CONCAT(
+           LEFT(DATENAME(MONTH, stl.date_c), 3)
+          ,' '''
+          ,RIGHT(DATEPART(YEAR, stl.date_c), 2)
+         ) AS administration_round
 
-        ,ktc.school_specific_id_c AS student_number
+        ,ktc.student_number
 
         ,ROW_NUMBER() OVER(
            PARTITION BY stl.contact_c
-             ORDER BY stl.score DESC) AS rn_highest
+           ORDER BY stl.score DESC
+         ) AS rn_highest
   FROM gabby.alumni.standardized_test_long stl
-  JOIN gabby.alumni.contact ktc
-    ON stl.contact_c = ktc.id
+  INNER JOIN gabby.alumni.ktc_roster ktc
+    ON stl.contact_c = ktc.sf_contact_id
   WHERE stl.score_type = 'act_composite_c'
- )
+)
 
 ,ms_grad AS (
   SELECT student_number
@@ -30,12 +34,13 @@ WITH real_tests AS (
              ,school_name AS ms_attended
              ,ROW_NUMBER() OVER(
                 PARTITION BY student_number
-                  ORDER BY exitdate DESC) AS rn
+                ORDER BY exitdate DESC
+              ) AS rn
        FROM gabby.powerschool.cohort_identifiers_static
        WHERE school_level = 'MS'
       ) sub
   WHERE rn = 1
- )
+)
 
 SELECT co.academic_year
       ,co.student_number
@@ -50,7 +55,7 @@ SELECT co.academic_year
 
       ,'PREP' AS ACT_type
       ,act.assessment_id
-      ,act.assessment_title      
+      ,act.assessment_title
       ,act.administration_round
       ,act.administered_at AS test_date
       ,act.subject_area
@@ -71,9 +76,7 @@ SELECT co.academic_year
 
       ,ms.ms_attended
 
-      ,ROW_NUMBER() OVER(
-         PARTITION BY co.student_number, co.academic_year, act.administration_round, act.subject_area, act.standard_code
-           ORDER BY act.student_number) AS rn_assessment_standard /* 1 row per student, per test (by standard) */      
+      ,1 AS rn_assessment_standard /* 1 row per student, per test (by standard) */      
       ,NULL AS rn_highest
 FROM gabby.powerschool.cohort_identifiers_static co 
 LEFT JOIN gabby.act.test_prep_scores act 
@@ -100,7 +103,7 @@ SELECT co.academic_year
       ,'REAL' AS ACT_type
       ,NULL AS assessment_id
       ,NULL AS assessment_title
-      ,CONVERT(VARCHAR,co.cohort) AS administration_round
+      ,CAST(co.cohort AS VARCHAR) AS administration_round
 
       ,r.test_date
       ,'Composite' AS subject_area
@@ -124,7 +127,7 @@ SELECT co.academic_year
       ,1 AS rn_assessment_standard
       ,r.rn_highest
 FROM gabby.powerschool.cohort_identifiers_static co
-JOIN real_tests r
+INNER JOIN real_tests r
   ON co.student_number = r.student_number
  AND r.test_date BETWEEN co.entrydate AND co.exitdate
 LEFT JOIN ms_grad ms

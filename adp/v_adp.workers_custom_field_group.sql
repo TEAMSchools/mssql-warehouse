@@ -4,7 +4,7 @@ GO
 CREATE OR ALTER VIEW adp.workers_custom_field_group AS
 
 SELECT w.associate_oid
-      ,CONVERT(NVARCHAR(16), JSON_VALUE(w.worker_id, '$.idValue')) AS worker_id
+      ,CAST(JSON_VALUE(w.worker_id, '$.idValue') AS NVARCHAR(16)) AS worker_id
       ,'worker' AS parent_object
       ,'stringFields' AS custom_field_group
 
@@ -13,10 +13,10 @@ SELECT w.associate_oid
       ,NULL AS code_value
       ,NULL AS date_value
       ,NULL AS bit_value
-      ,CASE WHEN ISNUMERIC(cfg.stringValue) = 1 THEN CONVERT(INT, cfg.stringValue) END AS numeric_value
-      ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.codeValue')) AS name_code_value
-      ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.shortName')) AS name_code_short_name
-      ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.longName')) AS name_code_long_name
+      ,CASE WHEN ISNUMERIC(cfg.stringValue) = 1 THEN CAST(cfg.stringValue AS INT) END AS numeric_value
+      ,CAST(JSON_VALUE(cfg.nameCode, '$.codeValue') AS NVARCHAR(128)) AS name_code_value
+      ,CAST(JSON_VALUE(cfg.nameCode, '$.shortName') AS NVARCHAR(128)) AS name_code_short_name
+      ,CAST(JSON_VALUE(cfg.nameCode, '$.longName') AS NVARCHAR(128)) AS name_code_long_name
       ,cfg.stringValue AS item_value
 FROM gabby.adp.workers w
 CROSS APPLY OPENJSON(w.custom_field_group, '$.stringFields') 
@@ -31,7 +31,7 @@ WHERE JSON_QUERY(w.custom_field_group, '$.stringFields') <> '{}'
 UNION ALL
 
 SELECT w.associate_oid
-      ,CONVERT(NVARCHAR(16), JSON_VALUE(w.worker_id, '$.idValue')) AS worker_id
+      ,CAST(JSON_VALUE(w.worker_id, '$.idValue') AS NVARCHAR(16)) AS worker_id
       ,'worker' AS parent_object
       ,'codeFields' AS custom_field_group
 
@@ -40,10 +40,10 @@ SELECT w.associate_oid
       ,cfg.codeValue AS code_value
       ,NULL AS date_value
       ,NULL AS bit_value
-      ,CASE WHEN ISNUMERIC(cfg.codeValue) = 1 THEN CONVERT(INT, cfg.codeValue) END AS numeric_value
-      ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.codeValue')) AS name_code_value
-      ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.shortName')) AS name_code_short_name
-      ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.longName')) AS name_code_long_name
+      ,CASE WHEN ISNUMERIC(cfg.codeValue) = 1 THEN CAST(cfg.codeValue AS INT) END AS numeric_value
+      ,CAST(JSON_VALUE(cfg.nameCode, '$.codeValue') AS NVARCHAR(128)) AS name_code_value
+      ,CAST(JSON_VALUE(cfg.nameCode, '$.shortName') AS NVARCHAR(128)) AS name_code_short_name
+      ,CAST(JSON_VALUE(cfg.nameCode, '$.longName') AS NVARCHAR(128)) AS name_code_long_name
       ,cfg.codeValue AS item_value
 FROM gabby.adp.workers w
 CROSS APPLY OPENJSON(w.custom_field_group, '$.codeFields') 
@@ -58,19 +58,19 @@ WHERE JSON_QUERY(w.custom_field_group, '$.codeFields') <> '{}'
 UNION ALL
 
 SELECT w.associate_oid
-      ,CONVERT(NVARCHAR(16), JSON_VALUE(w.worker_id, '$.idValue')) AS worker_id
+      ,CAST(JSON_VALUE(w.worker_id, '$.idValue') AS NVARCHAR(16)) AS worker_id
       ,'worker' AS parent_object
       ,'dateFields' AS custom_field_group
 
       ,cfg.itemID AS item_id
       ,cfg.dateValue AS string_value
       ,NULL AS code_value
-      ,CONVERT(DATE, cfg.dateValue) AS date_value
+      ,CAST(cfg.dateValue AS DATE) AS date_value
       ,NULL AS bit_value
       ,NULL AS numeric_value
-      ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.codeValue')) AS name_code_value
-      ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.shortName')) AS name_code_short_name
-      ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.longName')) AS name_code_long_name
+      ,CAST(JSON_VALUE(cfg.nameCode, '$.codeValue') AS NVARCHAR(128)) AS name_code_value
+      ,CAST(JSON_VALUE(cfg.nameCode, '$.shortName') AS NVARCHAR(128)) AS name_code_short_name
+      ,CAST(JSON_VALUE(cfg.nameCode, '$.longName') AS NVARCHAR(128)) AS name_code_long_name
       ,cfg.dateValue AS item_value
 FROM gabby.adp.workers w
 CROSS APPLY OPENJSON(w.custom_field_group, '$.dateFields') 
@@ -85,7 +85,7 @@ WHERE JSON_QUERY(w.custom_field_group, '$.dateFields') <> '{}'
 UNION ALL
 
 SELECT w.associate_oid
-      ,CONVERT(NVARCHAR(16), JSON_VALUE(w.worker_id, '$.idValue')) AS worker_id
+      ,CAST(JSON_VALUE(w.worker_id, '$.idValue') AS NVARCHAR(16)) AS worker_id
       ,'worker' AS parent_object
       ,'indicatorFields' AS custom_field_group
 
@@ -93,11 +93,11 @@ SELECT w.associate_oid
       ,cfg.indicatorValue AS string_value
       ,NULL AS code_value
       ,NULL AS date_value
-      ,CONVERT(BIT, cfg.indicatorValue) AS bit_value
+      ,CAST(cfg.indicatorValue AS BIT) AS bit_value
       ,NULL AS numeric_value
-      ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.codeValue')) AS name_code_value
-      ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.shortName')) AS name_code_short_name
-      ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.longName')) AS name_code_long_name
+      ,CAST(JSON_VALUE(cfg.nameCode, '$.codeValue') AS NVARCHAR(128)) AS name_code_value
+      ,CAST(JSON_VALUE(cfg.nameCode, '$.shortName') AS NVARCHAR(128)) AS name_code_short_name
+      ,CAST(JSON_VALUE(cfg.nameCode, '$.longName') AS NVARCHAR(128)) AS name_code_long_name
       ,cfg.indicatorValue AS item_value
 FROM gabby.adp.workers w
 CROSS APPLY OPENJSON(w.custom_field_group, '$.indicatorFields') 
@@ -112,7 +112,7 @@ WHERE JSON_QUERY(w.custom_field_group, '$.indicatorFields') <> '{}'
 UNION ALL
 
 SELECT w.associate_oid
-      ,CONVERT(NVARCHAR(16), JSON_VALUE(w.worker_id, '$.idValue')) AS worker_id
+      ,CAST(JSON_VALUE(w.worker_id, '$.idValue') AS NVARCHAR(16)) AS worker_id
       ,'person' AS parent_object
       ,'stringFields' AS custom_field_group
 
@@ -121,10 +121,10 @@ SELECT w.associate_oid
       ,NULL AS code_value
       ,NULL AS date_value
       ,NULL AS bit_value
-      ,CASE WHEN ISNUMERIC(cfg.stringValue) = 1 THEN CONVERT(INT, cfg.stringValue) END AS numeric_value
-      ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.codeValue')) AS name_code_value
-      ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.shortName')) AS name_code_short_name
-      ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.longName')) AS name_code_long_name
+      ,CASE WHEN ISNUMERIC(cfg.stringValue) = 1 THEN CAST(cfg.stringValue AS INT) END AS numeric_value
+      ,CAST(JSON_VALUE(cfg.nameCode, '$.codeValue') AS NVARCHAR(128)) AS name_code_value
+      ,CAST(JSON_VALUE(cfg.nameCode, '$.shortName') AS NVARCHAR(128)) AS name_code_short_name
+      ,CAST(JSON_VALUE(cfg.nameCode, '$.longName') AS NVARCHAR(128)) AS name_code_long_name
       ,cfg.stringValue AS item_value
 FROM gabby.adp.workers w
 CROSS APPLY OPENJSON(w.person, '$.customFieldGroup.stringFields') 
@@ -139,7 +139,7 @@ WHERE JSON_QUERY(w.person, '$.customFieldGroup.stringFields') <> '{}'
 UNION ALL
 
 SELECT w.associate_oid
-      ,CONVERT(NVARCHAR(16), JSON_VALUE(w.worker_id, '$.idValue')) AS worker_id
+      ,CAST(JSON_VALUE(w.worker_id, '$.idValue') AS NVARCHAR(16)) AS worker_id
       ,'person' AS parent_object
       ,'codeFields' AS custom_field_group
 
@@ -148,10 +148,10 @@ SELECT w.associate_oid
       ,cfg.codeValue AS code_value
       ,NULL AS date_value
       ,NULL AS bit_value
-      ,CASE WHEN ISNUMERIC(cfg.codeValue) = 1 THEN CONVERT(INT, cfg.codeValue) END AS numeric_value
-      ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.codeValue')) AS name_code_value
-      ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.shortName')) AS name_code_short_name
-      ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.longName')) AS name_code_long_name
+      ,CASE WHEN ISNUMERIC(cfg.codeValue) = 1 THEN CAST(cfg.codeValue AS INT) END AS numeric_value
+      ,CAST(JSON_VALUE(cfg.nameCode, '$.codeValue') AS NVARCHAR(128)) AS name_code_value
+      ,CAST(JSON_VALUE(cfg.nameCode, '$.shortName') AS NVARCHAR(128)) AS name_code_short_name
+      ,CAST(JSON_VALUE(cfg.nameCode, '$.longName') AS NVARCHAR(128)) AS name_code_long_name
       ,cfg.codeValue AS item_value
 FROM gabby.adp.workers w
 CROSS APPLY OPENJSON(w.person, '$.customFieldGroup.codeFields')
@@ -166,19 +166,19 @@ WHERE JSON_QUERY(w.person, '$.customFieldGroup.codeFields') <> '{}'
 UNION ALL
 
 SELECT w.associate_oid
-      ,CONVERT(NVARCHAR(16), JSON_VALUE(w.worker_id, '$.idValue')) AS worker_id
+      ,CAST(JSON_VALUE(w.worker_id, '$.idValue') AS NVARCHAR(16)) AS worker_id
       ,'person' AS parent_object
       ,'dateFields' AS custom_field_group
 
       ,cfg.itemID AS item_id
       ,cfg.dateValue AS string_value
       ,NULL AS code_value
-      ,CONVERT(DATE, cfg.dateValue) AS date_value
+      ,CAST(cfg.dateValue AS DATE) AS date_value
       ,NULL AS bit_value
       ,NULL AS numeric_value
-      ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.codeValue')) AS name_code_value
-      ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.shortName')) AS name_code_short_name
-      ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.longName')) AS name_code_long_name
+      ,CAST(JSON_VALUE(cfg.nameCode, '$.codeValue') AS NVARCHAR(128)) AS name_code_value
+      ,CAST(JSON_VALUE(cfg.nameCode, '$.shortName') AS NVARCHAR(128)) AS name_code_short_name
+      ,CAST(JSON_VALUE(cfg.nameCode, '$.longName') AS NVARCHAR(128)) AS name_code_long_name
       ,cfg.dateValue AS item_value
 FROM gabby.adp.workers w
 CROSS APPLY OPENJSON(w.person, '$.customFieldGroup.dateFields') 
@@ -193,7 +193,7 @@ WHERE JSON_QUERY(w.person, '$.customFieldGroup.dateFields') <> '{}'
 UNION ALL
 
 SELECT w.associate_oid
-      ,CONVERT(NVARCHAR(16), JSON_VALUE(w.worker_id, '$.idValue')) AS worker_id
+      ,CAST(JSON_VALUE(w.worker_id, '$.idValue') AS NVARCHAR(16)) AS worker_id
       ,'person' AS parent_object
       ,'indicatorFields' AS custom_field_group
 
@@ -201,11 +201,11 @@ SELECT w.associate_oid
       ,cfg.indicatorValue AS string_value
       ,NULL AS code_value
       ,NULL AS date_value
-      ,CONVERT(BIT, cfg.indicatorValue) AS bit_value
+      ,CAST(cfg.indicatorValue AS BIT) AS bit_value
       ,NULL AS numeric_value
-      ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.codeValue')) AS name_code_value
-      ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.shortName')) AS name_code_short_name
-      ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.longName')) AS name_code_long_name
+      ,CAST(JSON_VALUE(cfg.nameCode, '$.codeValue') AS NVARCHAR(128)) AS name_code_value
+      ,CAST(JSON_VALUE(cfg.nameCode, '$.shortName') AS NVARCHAR(128)) AS name_code_short_name
+      ,CAST(JSON_VALUE(cfg.nameCode, '$.longName') AS NVARCHAR(128)) AS name_code_long_name
       ,cfg.indicatorValue AS item_value
 FROM gabby.adp.workers w
 CROSS APPLY OPENJSON(w.person, '$.customFieldGroup.indicatorFields') 
@@ -220,7 +220,7 @@ WHERE JSON_QUERY(w.person, '$.customFieldGroup.indicatorFields') <> '{}'
 UNION ALL
 
 SELECT w.associate_oid
-      ,CONVERT(NVARCHAR(16), JSON_VALUE(w.worker_id, '$.idValue')) AS worker_id
+      ,CAST(JSON_VALUE(w.worker_id, '$.idValue') AS NVARCHAR(16)) AS worker_id
       ,'person' AS parent_object
       ,'numberFields' AS custom_field_group
 
@@ -229,10 +229,10 @@ SELECT w.associate_oid
       ,NULL AS code_value
       ,NULL AS date_value
       ,NULL AS bit_value
-      ,CASE WHEN ISNUMERIC(cfg.numberValue) = 1 THEN CONVERT(FLOAT, cfg.numberValue) END AS numeric_value
-      ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.codeValue')) AS name_code_value
-      ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.shortName')) AS name_code_short_name
-      ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.longName')) AS name_code_long_name
+      ,CASE WHEN ISNUMERIC(cfg.numberValue) = 1 THEN CAST(cfg.numberValue AS FLOAT) END AS numeric_value
+      ,CAST(JSON_VALUE(cfg.nameCode, '$.codeValue') AS NVARCHAR(128)) AS name_code_value
+      ,CAST(JSON_VALUE(cfg.nameCode, '$.shortName') AS NVARCHAR(128)) AS name_code_short_name
+      ,CAST(JSON_VALUE(cfg.nameCode, '$.longName') AS NVARCHAR(128)) AS name_code_long_name
       ,cfg.numberValue AS item_value
 FROM gabby.adp.workers w
 CROSS APPLY OPENJSON(w.person, '$.customFieldGroup.numberFields') 
@@ -255,7 +255,7 @@ SELECT sub.associate_oid
       ,cfg.codeValue AS code_value
       ,NULL AS date_value
       ,NULL AS bit_value
-      ,CASE WHEN ISNUMERIC(cfg.codeValue) = 1 THEN CONVERT(INT, cfg.codeValue) END AS numeric_value
+      ,CASE WHEN ISNUMERIC(cfg.codeValue) = 1 THEN CAST(cfg.codeValue AS INT) END AS numeric_value
       ,sub.name_code_value
       ,sub.name_code_short_name
       ,sub.name_code_long_name
@@ -263,13 +263,13 @@ SELECT sub.associate_oid
 FROM
     (
      SELECT w.associate_oid
-           ,CONVERT(NVARCHAR(16), JSON_VALUE(w.worker_id, '$.idValue')) AS worker_id
+           ,CAST(JSON_VALUE(w.worker_id, '$.idValue') AS NVARCHAR(16)) AS worker_id
 
            ,cfg.itemID AS item_id
            ,cfg.codes
-           ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.codeValue')) AS name_code_value
-           ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.shortName')) AS name_code_short_name
-           ,CONVERT(NVARCHAR(128), JSON_VALUE(cfg.nameCode, '$.longName')) AS name_code_long_name
+           ,CAST(JSON_VALUE(cfg.nameCode, '$.codeValue') AS NVARCHAR(128)) AS name_code_value
+           ,CAST(JSON_VALUE(cfg.nameCode, '$.shortName') AS NVARCHAR(128)) AS name_code_short_name
+           ,CAST(JSON_VALUE(cfg.nameCode, '$.longName') AS NVARCHAR(128)) AS name_code_long_name
      FROM gabby.adp.workers w
      CROSS APPLY OPENJSON(w.person, '$.customFieldGroup.multiCodeFields') 
        WITH(

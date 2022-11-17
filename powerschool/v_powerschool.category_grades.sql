@@ -1,64 +1,94 @@
 CREATE OR ALTER VIEW powerschool.category_grades AS
 
-SELECT sub.student_number
+WITH enr AS (
+  SELECT sub.studentid
+        ,sub.schoolid
+        ,sub.yearid
+        ,sub.course_number
+        ,sub.sectionid
+        ,sub.is_dropped_section
+        ,sub.storecode_type
+        ,sub.storecode
+        ,sub.reporting_term
+        ,sub.termbin_start_date
+        ,sub.termbin_end_date
+        ,AVG(sub.is_dropped_section) OVER(PARTITION BY sub.yearid, sub.course_number, sub.studentid) AS is_dropped_course
+  FROM
+      (
+       SELECT cc.studentid
+             ,cc.schoolid
+             ,cc.course_number
+             ,ABS(cc.sectionid) AS sectionid
+             ,CASE WHEN cc.sectionid < 0 THEN 1.0 ELSE 0.0 END AS is_dropped_section
+
+             ,tb.yearid
+             ,tb.storecode
+             ,tb.date_1 AS termbin_start_date
+             ,tb.date_2 AS termbin_end_date
+             ,LEFT(tb.storecode, 1) AS storecode_type
+             ,CAST(CONCAT('RT', RIGHT(tb.storecode, 1)) AS NVARCHAR(8)) AS reporting_term
+       FROM powerschool.cc
+       INNER JOIN powerschool.termbins tb
+         ON cc.schoolid = tb.schoolid
+        AND ABS(cc.termid) = tb.termid
+       WHERE cc.dateenrolled >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
+      ) sub
+ )
+
+SELECT sub.studentid
       ,sub.schoolid
-      ,sub.academic_year
-      ,sub.credittype
+      ,sub.yearid
       ,sub.course_number
-      ,sub.course_name
       ,sub.sectionid
-      ,sub.teacher_name
+      ,sub.is_dropped_section
+      ,sub.storecode_type
+      ,sub.storecode
       ,sub.reporting_term
-      ,sub.grade_category
-      ,sub.grade_category_pct
+      ,sub.termbin_start_date
+      ,sub.termbin_end_date
+      ,sub.is_dropped_course
+      ,sub.category_pct
       ,sub.citizenship
-      ,ROUND(AVG(sub.grade_category_pct) OVER(
-         PARTITION BY sub.student_number, sub.academic_year, sub.course_number, sub.grade_category 
-           ORDER BY sub.startdate), 0) AS grade_category_pct_y1
-      ,CASE
-        WHEN CONVERT(DATE, GETDATE()) BETWEEN sub.startdate AND sub.enddate THEN 1 
-        WHEN sub.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
-         AND sub.startdate = MAX(sub.startdate) OVER(PARTITION BY student_number, sub.academic_year)
-               THEN 1
-        ELSE 0
-       END AS is_curterm
-      ,NULL AS rn_curterm
+      ,sub.rn_storecode_course
+
+      ,CAST(
+         ROUND(
+           AVG(sub.category_pct) OVER(
+             PARTITION BY sub.studentid, sub.yearid, sub.course_number, sub.storecode_type
+             ORDER BY sub.termbin_start_date
+           )
+          ,0
+         ) AS DECIMAL(4, 0)
+       ) AS category_pct_y1
 FROM
     (
-     SELECT enr.student_number
+     SELECT enr.studentid
            ,enr.schoolid
-           ,enr.academic_year
-           ,enr.credittype
+           ,enr.yearid
            ,enr.course_number
-           ,enr.course_name
            ,enr.sectionid
-           ,enr.teacher_name
+           ,enr.is_dropped_section
+           ,enr.storecode_type
+           ,enr.storecode
+           ,enr.reporting_term
+           ,enr.termbin_start_date
+           ,enr.termbin_end_date
+           ,enr.is_dropped_course
 
-           ,tb.date_1 AS startdate
-           ,tb.date_2 AS enddate
-           ,LEFT(tb.storecode, 1) AS grade_category
-           ,CONVERT(VARCHAR(5), CONCAT('RT', RIGHT(tb.storecode, 1))) AS reporting_term
-
-           ,ROUND(CASE WHEN pgf.grade = '--' THEN NULL ELSE pgf.[percent] END, 0) AS grade_category_pct
+           ,CASE 
+             WHEN pgf.grade = '--' THEN NULL
+             ELSE CAST(pgf.[percent] AS DECIMAL(4, 0))
+            END AS category_pct
            ,CASE WHEN pgf.citizenship <> '' THEN pgf.citizenship END AS citizenship
 
            ,ROW_NUMBER() OVER(
-              PARTITION BY enr.student_number, enr.academic_year, enr.course_number, tb.storecode
-                ORDER BY pgf.[percent] DESC, enr.sectionid DESC) AS rn_year
-     FROM powerschool.course_enrollments_current_static enr
-     JOIN powerschool.terms t
-       ON enr.schoolid = t.schoolid
-      AND t.yearid = (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990)
-      AND t.isyearrec = 1
-     JOIN powerschool.termbins tb
-       ON t.schoolid = tb.schoolid
-      AND t.id = tb.termid
-      AND tb.date_1 <= GETDATE()
+              PARTITION BY enr.studentid, enr.yearid, enr.course_number, enr.storecode
+                ORDER BY enr.is_dropped_section ASC, pgf.[percent] DESC) AS rn_storecode_course
+     FROM enr
      LEFT JOIN powerschool.pgfinalgrades pgf
        ON enr.studentid = pgf.studentid
       AND enr.sectionid = pgf.sectionid
-      AND tb.storecode = pgf.finalgradename
-     WHERE enr.course_enroll_status = 0
-       AND enr.section_enroll_status = 0
+      AND enr.storecode = pgf.finalgradename
+     WHERE enr.is_dropped_course < 1.0
     ) sub
-WHERE rn_year = 1
+WHERE sub.rn_storecode_course = 1

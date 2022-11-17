@@ -5,12 +5,12 @@ CREATE OR ALTER VIEW extracts.nps_student_info AS
 
 SELECT co.student_number
       ,co.state_studentnumber
-      ,CASE WHEN co.grade_level = 0 THEN 'K' ELSE CONVERT(VARCHAR, co.grade_level) END AS grade_level
-      ,CONVERT(VARCHAR, co.entrydate) AS entrydate
+      ,CASE WHEN co.grade_level = 0 THEN 'K' ELSE CAST(co.grade_level AS VARCHAR) END AS grade_level
+      ,CAST(co.entrydate AS VARCHAR) AS entrydate
       ,co.entrycode
       ,co.exitcode
       ,co.exitdate
-      ,CONVERT(VARCHAR, co.dob) AS dob
+      ,CAST(co.dob AS VARCHAR) AS dob
       ,co.gender
       ,co.street
       ,co.city

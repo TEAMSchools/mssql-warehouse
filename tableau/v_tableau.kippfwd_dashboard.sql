@@ -97,12 +97,12 @@ WITH academic_years AS (
   SELECT sf_contact_id
         ,academic_year
         ,semester
-        ,CONVERT(NVARCHAR(16), transcript_date) AS transcript_date
-        ,CONVERT(NVARCHAR(16), semester_gpa) AS semester_gpa
-        ,CONVERT(NVARCHAR(16), cumulative_gpa) AS cumulative_gpa
-        ,CONVERT(NVARCHAR(16), semester_credits_earned) AS semester_credits_earned
-        ,CONVERT(NVARCHAR(16), cumulative_credits_earned) AS cumulative_credits_earned
-        ,CONVERT(NVARCHAR(16), credits_required_for_graduation) AS credits_required_for_graduation
+        ,CAST(transcript_date AS NVARCHAR(16)) AS transcript_date
+        ,CAST(semester_gpa AS NVARCHAR(16)) AS semester_gpa
+        ,CAST(cumulative_gpa AS NVARCHAR(16)) AS cumulative_gpa
+        ,CAST(semester_credits_earned AS NVARCHAR(16)) AS semester_credits_earned
+        ,CAST(cumulative_credits_earned AS NVARCHAR(16)) AS cumulative_credits_earned
+        ,CAST(credits_required_for_graduation AS NVARCHAR(16)) AS credits_required_for_graduation
         ,ROW_NUMBER() OVER(
            PARTITION BY sf_contact_id, academic_year, semester
              ORDER BY transcript_date DESC) AS rn_semester
@@ -131,18 +131,18 @@ WITH academic_years AS (
 ,semester_gpa_pivot AS ( 
   SELECT sf_contact_id
         ,academic_year
-        ,CONVERT(DATE, fall_transcript_date) AS fall_transcript_date
-        ,CONVERT(FLOAT, fall_credits_required_for_graduation) AS fall_credits_required_for_graduation
-        ,CONVERT(FLOAT, fall_cumulative_credits_earned) AS fall_cumulative_credits_earned
-        ,CONVERT(FLOAT, fall_semester_credits_earned) AS fall_semester_credits_earned
-        ,CONVERT(FLOAT, fall_semester_gpa) AS fall_semester_gpa
-        ,CONVERT(FLOAT, fall_cumulative_gpa) AS fall_cumulative_gpa
-        ,CONVERT(DATE, spr_transcript_date) AS spr_transcript_date
-        ,CONVERT(FLOAT, spr_credits_required_for_graduation) AS spr_credits_required_for_graduation
-        ,CONVERT(FLOAT, spr_cumulative_credits_earned) AS spr_cumulative_credits_earned
-        ,CONVERT(FLOAT, spr_semester_credits_earned) AS spr_semester_credits_earned
-        ,CONVERT(FLOAT, spr_semester_gpa) AS spr_semester_gpa
-        ,CONVERT(FLOAT, spr_cumulative_gpa) AS spr_cumulative_gpa
+        ,CAST(fall_transcript_date AS DATE) AS fall_transcript_date
+        ,CAST(fall_credits_required_for_graduation AS FLOAT) AS fall_credits_required_for_graduation
+        ,CAST(fall_cumulative_credits_earned AS FLOAT) AS fall_cumulative_credits_earned
+        ,CAST(fall_semester_credits_earned AS FLOAT) AS fall_semester_credits_earned
+        ,CAST(fall_semester_gpa AS FLOAT) AS fall_semester_gpa
+        ,CAST(fall_cumulative_gpa AS FLOAT) AS fall_cumulative_gpa
+        ,CAST(spr_transcript_date AS DATE) AS spr_transcript_date
+        ,CAST(spr_credits_required_for_graduation AS FLOAT) AS spr_credits_required_for_graduation
+        ,CAST(spr_cumulative_credits_earned AS FLOAT) AS spr_cumulative_credits_earned
+        ,CAST(spr_semester_credits_earned AS FLOAT) AS spr_semester_credits_earned
+        ,CAST(spr_semester_gpa AS FLOAT) AS spr_semester_gpa
+        ,CAST(spr_cumulative_gpa AS FLOAT) AS spr_cumulative_gpa
   FROM
       (
        SELECT sf_contact_id
@@ -178,14 +178,26 @@ WITH academic_years AS (
   SELECT [contact_c]
         ,[comments_c]
         ,[next_steps_c]
+        ,subject_c
         ,gabby.utilities.DATE_TO_SY([date_c]) AS academic_year
         ,ROW_NUMBER() OVER(
            PARTITION BY contact_c, gabby.utilities.DATE_TO_SY([date_c]) 
              ORDER BY date_c DESC) AS rn
   FROM [gabby].[alumni].[contact_note_c]
   WHERE is_deleted = 0
-    AND status_c = 'Successful'
-    AND (subject_c LIKE 'Advising Session%' OR subject_c = 'Summer AAS')
+    AND subject_c LIKE 'AS[0-9]%'
+ )
+
+,tier AS (
+  SELECT [contact_c]
+        ,subject_c AS tier
+        ,gabby.utilities.DATE_TO_SY([date_c]) AS academic_year
+        ,ROW_NUMBER() OVER(
+           PARTITION BY contact_c, gabby.utilities.DATE_TO_SY([date_c])
+             ORDER BY date_c DESC) AS rn
+  FROM [gabby].[alumni].[contact_note_c]
+  WHERE is_deleted = 0
+    AND subject_c LIKE 'Tier [0-9]'
  )
 
 ,matric AS (
@@ -200,8 +212,6 @@ WITH academic_years AS (
 ,finaid AS (
   SELECT e.contact_id
 
-        --,fa.applicable_school_year_c
-        --,fa.offer_date_c
         ,fa.unmet_need_c
         ,ROW_NUMBER() OVER(PARTITION BY e.enrollment_id ORDER BY fa.offer_date_c DESC) AS rn_finaid
   FROM matric e
@@ -248,8 +258,6 @@ SELECT c.sf_contact_id
       ,c.sf_mobile_phone AS mobile_phone
       ,c.middle_school_attended
       ,c.postsecondary_status
-      --,c.kipp_region_school
-      --,c.ktc_status
 
       ,ay.academic_year
 
@@ -276,8 +284,6 @@ SELECT c.sf_contact_id
       ,ei.emp_date_last_verified
       ,ei.emp_start_date
       ,ei.emp_actual_end_date
-      --,ei.emp_billing_state
-      --,ei.emp_ncesid
       ,ei.emp_name
       ,ei.ba_status
       ,ei.ba_actual_end_date
@@ -394,6 +400,8 @@ SELECT c.sf_contact_id
       ,ln.next_steps_c AS latest_as_next_steps
 
       ,fa.unmet_need_c AS unmet_need
+
+      ,tier.tier
 FROM gabby.alumni.ktc_roster c
 CROSS JOIN academic_years ay
 LEFT JOIN gabby.alumni.enrollment_identifiers ei
@@ -418,5 +426,9 @@ LEFT JOIN latest_note ln
 LEFT JOIN finaid fa
   ON c.sf_contact_id = fa.contact_id
  AND fa.rn_finaid = 1
+LEFT JOIN tier
+  ON c.sf_contact_id = tier.contact_c
+ AND ay.academic_year = tier.academic_year
+ AND tier.rn = 1
 WHERE c.ktc_status IN ('HS9', 'HS10', 'HS11', 'HS12', 'HSG', 'TAF', 'TAFHS')
   AND c.sf_contact_id IS NOT NULL

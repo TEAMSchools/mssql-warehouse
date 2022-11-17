@@ -41,7 +41,7 @@ SELECT co.student_number
       ,dli.category AS referral_category
       ,'Referral' AS dl_category
 
-      ,CONVERT(VARCHAR(5), d.alt_name) AS term
+      ,CAST(d.alt_name AS VARCHAR(5)) AS term
 
       ,dlp.penaltyname
       ,dlp.startdate
@@ -65,7 +65,7 @@ LEFT JOIN gabby.deanslist.incidents_clean_static dli
  AND co.[db_name] = dli.[db_name]
 LEFT JOIN gabby.reporting.reporting_terms d
   ON co.schoolid = d.schoolid
- AND CONVERT(DATE, dli.create_ts) BETWEEN d.[start_date] AND d.end_date
+ AND CAST(dli.create_ts AS DATE) BETWEEN d.[start_date] AND d.end_date
  AND d.identifier = 'RT'
  AND d._fivetran_deleted = 0
 LEFT JOIN deanslist.incidents_penalties_static dlp

@@ -28,10 +28,10 @@ UNION ALL
 SELECT 'D'
       ,'Employee'
       ,'Employee'
-      ,CONVERT(VARCHAR,d.df_employee_number)
-      ,CONVERT(VARCHAR,d.df_employee_number)
-      ,CONVERT(VARCHAR,d.first_name)
-      ,CONVERT(VARCHAR,d.last_name)
+      ,CAST(d.df_employee_number AS VARCHAR)
+      ,CAST(d.df_employee_number AS VARCHAR)
+      ,CAST(d.first_name AS VARCHAR)
+      ,CAST(d.last_name AS VARCHAR)
       
       ,ad.userprincipalname
 FROM gabby.dayforce.employees d

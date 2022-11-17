@@ -22,7 +22,7 @@ WITH subjects AS (
   INNER JOIN gabby.utilities.reporting_days tw
     ON td.week_part = tw.week_part
    AND td.year_part = tw.year_part
-  WHERE td.[date] = CAST(GETDATE() AS DATE)
+  WHERE td.[date] = CAST(CURRENT_TIMESTAMP AS DATE)
  )
 
 ,iready_lessons AS (
@@ -46,7 +46,7 @@ WITH subjects AS (
         ,fsa_level
         ,fsa_scale
         ,iready_subject
-        ,CONVERT(INT, CONCAT('20', RIGHT(fsa_year, 2))) AS fsa_year
+        ,CAST(CONCAT('20', RIGHT(fsa_year, 2)) AS INT) AS fsa_year
         ,CONCAT(fsa_subject, ' ', fsa_grade) AS test_name
         ,RANK() OVER(PARTITION BY fsa_grade, iready_subject ORDER BY fsa_scale ASC) AS fsa_gr_subj_rank
         ,COUNT(*) OVER(PARTITION BY fsa_grade, iready_subject) AS fsa_gr_subj_count

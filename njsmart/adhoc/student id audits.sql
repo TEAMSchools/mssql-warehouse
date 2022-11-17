@@ -46,7 +46,7 @@ WITH raw_files AS (
   SELECT _file
         ,_line
         ,state_student_id
-        ,CONVERT(NVARCHAR,local_student_id)
+        ,CAST(local_student_id AS NVARCHAR)
         ,first_name
         ,last_name
         ,'gabby.njsmart.gepa' AS table_name
@@ -89,7 +89,7 @@ WITH raw_files AS (
        LEFT OUTER JOIN gabby.powerschool.students sid
          ON r.state_student_id = sid.state_studentnumber
        LEFT OUTER JOIN gabby.powerschool.students sn
-         ON r.local_student_id = CONVERT(NVARCHAR,sn.student_number)
+         ON r.local_student_id = CAST(sn.student_number AS NVARCHAR)
       ) sub
   WHERE rn_dupe = 1
     AND state_student_id IS NULL

@@ -15,7 +15,7 @@ WITH dsos AS (
     AND df.primary_job IN ('Director of Campus Operations', 'Director Campus Operations', 'Director School Operations')
  )
 
-SELECT CONVERT(BIGINT, enr.cc_id) AS id
+SELECT CAST(enr.cc_id AS BIGINT) AS id
       ,enr.termid
       ,enr.student_number AS studentid
       ,enr.section_number
@@ -34,7 +34,7 @@ WHERE enr.course_enroll_status = 0
 UNION ALL
 
 SELECT CONCAT(co.yearid, co.schoolid, RIGHT(CONCAT(0, co.grade_level), 2)) AS id
-      ,CONVERT(INT, CONCAT(co.yearid, '00')) AS termid
+      ,CAST(CONCAT(co.yearid, '00') AS INT) AS termid
       ,co.student_number AS studentid
       ,CONCAT(co.academic_year, s.abbreviation, co.grade_level) AS section_number
       ,co.schoolid

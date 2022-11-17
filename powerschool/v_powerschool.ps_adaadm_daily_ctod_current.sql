@@ -3,10 +3,10 @@ CREATE OR ALTER VIEW powerschool.ps_adaadm_daily_ctod_current AS
 WITH terms_attendance_code AS (
   SELECT t.firstday
         ,t.lastday
-        ,CONVERT(INT, t.schoolid) AS schoolid
-        ,CONVERT(INT, t.yearid) AS yearid
+        ,CAST(t.schoolid AS INT) AS schoolid
+        ,CAST(t.yearid AS INT) AS yearid
 
-        ,CONVERT(INT, ac.id) AS id
+        ,CAST(ac.id AS INT) AS id
   FROM powerschool.terms t
   LEFT JOIN powerschool.attendance_code ac
     ON t.schoolid = ac.schoolid
@@ -16,10 +16,10 @@ WITH terms_attendance_code AS (
  )
 
 ,aci AS (
-  SELECT CONVERT(INT, attendance_value) AS attendance_value
-        ,CONVERT(INT, fteid) AS fteid
-        ,CONVERT(INT, attendance_conversion_id) AS attendance_conversion_id
-        ,CONVERT(INT, input_value) AS input_value
+  SELECT CAST(attendance_value AS INT) AS attendance_value
+        ,CAST(fteid AS INT) AS fteid
+        ,CAST(attendance_conversion_id AS INT) AS attendance_conversion_id
+        ,CAST(input_value AS INT) AS input_value
   FROM powerschool.attendance_conversion_items 
   WHERE conversion_mode_code = 'codeday'
  )
@@ -34,11 +34,11 @@ SELECT mv.studentid
       ,mv.offtrack
       ,mv.student_track
 
-      ,CONVERT(INT, tac.yearid) AS yearid
+      ,CAST(tac.yearid AS INT) AS yearid
 
       ,(CASE
          WHEN ada_0.id IS NOT NULL THEN 0
-         ELSE CONVERT(INT, aci_real.attendance_value)
+         ELSE CAST(aci_real.attendance_value AS INT)
         END) * mv.ontrack AS attendancevalue
       ,(CASE
          WHEN adm_0.id IS NOT NULL THEN 0
@@ -47,7 +47,7 @@ SELECT mv.studentid
         END) * mv.ontrack AS membershipvalue
       ,(CASE
          WHEN ada_1.id IS NOT NULL THEN 0
-         ELSE CONVERT(INT, aci_potential.attendance_value)
+         ELSE CAST(aci_potential.attendance_value AS INT)
         END) * mv.ontrack AS potential_attendancevalue
 FROM powerschool.ps_membership_reg_current_static mv
 LEFT JOIN terms_attendance_code tac

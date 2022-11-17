@@ -220,7 +220,7 @@ FROM
            ,norms_2011.student_percentile AS percentile_2011_norms
            ,norms_2015.student_percentile AS percentile_2015_norms
 
-           ,CONVERT(INT,ROW_NUMBER() OVER(
+           ,CAST(ROW_NUMBER( AS INT) OVER(
               PARTITION BY sub.student_id
                           ,sub.term_name
                           ,sub.measurement_scale
@@ -229,68 +229,68 @@ FROM
                         ,sub.test_standard_error)) AS rn_term_subj
      FROM
          (
-          SELECT CONVERT(INT,student_id) AS student_id
-                ,CONVERT(VARCHAR(25),term_name) AS term_name
-                ,CONVERT(INT,test_duration_minutes) AS test_duration_minutes
-                ,CONVERT(INT,test_id) AS test_id
-                ,CONVERT(VARCHAR(125),test_name) AS test_name
+          SELECT CAST(student_id AS INT) AS student_id
+                ,CAST(term_name AS VARCHAR(25)) AS term_name
+                ,CAST(test_duration_minutes AS INT) AS test_duration_minutes
+                ,CAST(test_id AS INT) AS test_id
+                ,CAST(test_name AS VARCHAR(125)) AS test_name
                 ,test_percentile
-                ,CONVERT(INT,test_ritscore) AS test_ritscore
+                ,CAST(test_ritscore AS INT) AS test_ritscore
                 ,test_standard_error
-                ,CONVERT(DATE,test_start_date) AS test_start_date
-                ,CONVERT(TIME,test_start_time) AS test_start_time
-                ,CONVERT(VARCHAR(25),test_type) AS test_type
-                ,CONVERT(VARCHAR(25),discipline) AS discipline
+                ,CAST(test_start_date AS DATE) AS test_start_date
+                ,CAST(test_start_time AS TIME) AS test_start_time
+                ,CAST(test_type AS VARCHAR(25)) AS test_type
+                ,CAST(discipline AS VARCHAR(25)) AS discipline
                 ,growth_measure_yn           
-                ,CONVERT(INT,norms_reference_data) AS norms_reference_data
-                ,CONVERT(FLOAT,percent_correct) AS percent_correct
-                ,CONVERT(VARCHAR(125),school_name) AS school_name
+                ,CAST(norms_reference_data AS INT) AS norms_reference_data
+                ,CAST(percent_correct AS FLOAT) AS percent_correct
+                ,CAST(school_name AS VARCHAR(125)) AS school_name
                 ,fall_to_fall_conditional_growth_index
                 ,fall_to_fall_conditional_growth_percentile
-                ,CONVERT(VARCHAR(25),fall_to_fall_met_projected_growth) AS fall_to_fall_met_projected_growth
+                ,CAST(fall_to_fall_met_projected_growth AS VARCHAR(25)) AS fall_to_fall_met_projected_growth
                 ,fall_to_fall_observed_growth
                 ,fall_to_fall_observed_growth_se
                 ,fall_to_fall_projected_growth
                 ,fall_to_spring_conditional_growth_index
                 ,fall_to_spring_conditional_growth_percentile
-                ,CONVERT(VARCHAR(25),fall_to_spring_met_projected_growth) AS fall_to_spring_met_projected_growth
+                ,CAST(fall_to_spring_met_projected_growth AS VARCHAR(25)) AS fall_to_spring_met_projected_growth
                 ,fall_to_spring_observed_growth
                 ,fall_to_spring_observed_growth_se
                 ,fall_to_spring_projected_growth
                 ,fall_to_winter_conditional_growth_index
                 ,fall_to_winter_conditional_growth_percentile
-                ,CONVERT(VARCHAR(25),fall_to_winter_met_projected_growth) AS fall_to_winter_met_projected_growth
+                ,CAST(fall_to_winter_met_projected_growth AS VARCHAR(25)) AS fall_to_winter_met_projected_growth
                 ,fall_to_winter_observed_growth
                 ,fall_to_winter_observed_growth_se
                 ,fall_to_winter_projected_growth
-                ,CONVERT(VARCHAR(25),goal_1_adjective) AS goal_1_adjective
-                ,CONVERT(VARCHAR(50),goal_1_name) AS goal_1_name
-                ,CONVERT(VARCHAR(25),goal_1_range) AS goal_1_range
+                ,CAST(goal_1_adjective AS VARCHAR(25)) AS goal_1_adjective
+                ,CAST(goal_1_name AS VARCHAR(50)) AS goal_1_name
+                ,CAST(goal_1_range AS VARCHAR(25)) AS goal_1_range
                 ,goal_1_rit_score
                 ,goal_1_std_err
-                ,CONVERT(VARCHAR(25),goal_2_adjective) AS goal_2_adjective
-                ,CONVERT(VARCHAR(50),goal_2_name) AS goal_2_name
-                ,CONVERT(VARCHAR(25),goal_2_range) AS goal_2_range
+                ,CAST(goal_2_adjective AS VARCHAR(25)) AS goal_2_adjective
+                ,CAST(goal_2_name AS VARCHAR(50)) AS goal_2_name
+                ,CAST(goal_2_range AS VARCHAR(25)) AS goal_2_range
                 ,goal_2_rit_score
                 ,goal_2_std_err
-                ,CONVERT(VARCHAR(25),goal_3_adjective) AS goal_3_adjective
-                ,CONVERT(VARCHAR(50),goal_3_name) AS goal_3_name
-                ,CONVERT(VARCHAR(25),goal_3_range) AS goal_3_range
+                ,CAST(goal_3_adjective AS VARCHAR(25)) AS goal_3_adjective
+                ,CAST(goal_3_name AS VARCHAR(50)) AS goal_3_name
+                ,CAST(goal_3_range AS VARCHAR(25)) AS goal_3_range
                 ,goal_3_rit_score
                 ,goal_3_std_err
-                ,CONVERT(VARCHAR(25),goal_4_adjective) AS goal_4_adjective
-                ,CONVERT(VARCHAR(50),goal_4_name) AS goal_4_name
-                ,CONVERT(VARCHAR(25),goal_4_range) AS goal_4_range
+                ,CAST(goal_4_adjective AS VARCHAR(25)) AS goal_4_adjective
+                ,CAST(goal_4_name AS VARCHAR(50)) AS goal_4_name
+                ,CAST(goal_4_range AS VARCHAR(25)) AS goal_4_range
                 ,goal_4_rit_score
                 ,goal_4_std_err
-                ,CONVERT(VARCHAR(25),projected_proficiency_level_1) AS projected_proficiency_level_1
-                ,CONVERT(VARCHAR(25),projected_proficiency_level_2) AS projected_proficiency_level_2
-                ,CONVERT(VARCHAR(25),projected_proficiency_level_3) AS projected_proficiency_level_3
-                ,CONVERT(VARCHAR(125),projected_proficiency_study_1) AS projected_proficiency_study_1
-                ,CONVERT(VARCHAR(125),projected_proficiency_study_2) AS projected_proficiency_study_2
-                ,CONVERT(VARCHAR(125),projected_proficiency_study_3) AS projected_proficiency_study_3
-                ,CONVERT(VARCHAR(5),ritto_reading_max) AS ritto_reading_max
-                ,CONVERT(VARCHAR(5),ritto_reading_min) AS ritto_reading_min
+                ,CAST(projected_proficiency_level_1 AS VARCHAR(25)) AS projected_proficiency_level_1
+                ,CAST(projected_proficiency_level_2 AS VARCHAR(25)) AS projected_proficiency_level_2
+                ,CAST(projected_proficiency_level_3 AS VARCHAR(25)) AS projected_proficiency_level_3
+                ,CAST(projected_proficiency_study_1 AS VARCHAR(125)) AS projected_proficiency_study_1
+                ,CAST(projected_proficiency_study_2 AS VARCHAR(125)) AS projected_proficiency_study_2
+                ,CAST(projected_proficiency_study_3 AS VARCHAR(125)) AS projected_proficiency_study_3
+                ,CAST(ritto_reading_max AS VARCHAR(5)) AS ritto_reading_max
+                ,CAST(ritto_reading_min AS VARCHAR(5)) AS ritto_reading_min
                 ,spring_to_spring_conditional_growth_index
                 ,spring_to_spring_conditional_growth_percentile
                 ,spring_to_spring_met_projected_growth
@@ -319,7 +319,7 @@ FROM
                 ,wiprevious_ayspring
                 ,wiprevious_aywinter
                 ,wiselected_ayfall
-                ,CONVERT(FLOAT,wiselected_ayspring) AS wiselected_ayspring
+                ,CAST(wiselected_ayspring AS FLOAT) AS wiselected_ayspring
                 ,wiselected_aywinter
 
                 ,academic_year

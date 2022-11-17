@@ -82,7 +82,7 @@ SELECT co.[db_name]
       ,co.grade_level
       ,co.team
       ,'Missing SID' AS element
-      ,CONVERT(VARCHAR, co.state_studentnumber) AS detail
+      ,CAST(co.state_studentnumber AS VARCHAR) AS detail
       ,CASE WHEN co.state_studentnumber IS NULL THEN 1 ELSE 0 END AS flag
 FROM gabby.powerschool.cohort_identifiers_static co
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
@@ -123,7 +123,6 @@ WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 
 UNION ALL
 
-
 SELECT co.[db_name]
       ,co.schoolid
       ,co.school_name
@@ -133,7 +132,7 @@ SELECT co.[db_name]
       ,co.grade_level
       ,co.team
       ,'Missing DOB' AS element
-      ,CONVERT(VARCHAR, co.dob) AS detail
+      ,CAST(co.dob AS VARCHAR) AS detail
       ,CASE 
         WHEN co.dob IS NULL THEN 1
         ELSE 0
@@ -177,46 +176,30 @@ WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 
 UNION ALL
 
-SELECT [db_name]
-      ,schoolid
-      ,school_name
-      ,student_number
-      ,region
-      ,lastfirst
-      ,grade_level
-      ,team
+SELECT qa.[db_name]
+      ,qa.schoolid
+      ,sch.[name] AS school_name
+      ,qa.student_number
+      ,CASE 
+        WHEN qa.[db_name] = 'kippnewark' THEN 'TEAM'
+        WHEN qa.[db_name] = 'kippcamden' THEN 'KCNA'
+        WHEN qa.[db_name] = 'kippmiami' THEN 'KMS'
+       END AS region
+      ,qa.lastfirst
+      ,qa.grade_level
+      ,qa.team
       ,'Enrollment Dupes' AS element
-      ,CONCAT(course_number, ' - ', section_number, ' - ', dateenrolled, '-', dateleft) AS detail
-      ,CASE
-        WHEN next_enrollment_date BETWEEN dateenrolled AND DATEADD(DAY, -1, dateleft) THEN 1
-        ELSE 0
-       END AS flag
-FROM
-    (
-     SELECT ce.[db_name]
-           ,ce.schoolid
-           ,ce.student_number
-           ,ce.course_number
-           ,ce.course_name
-           ,ce.section_number
-           ,ce.dateenrolled
-           ,ce.dateleft
-           ,LEAD(ce.dateenrolled) OVER(PARTITION BY ce.student_number, ce.course_number ORDER BY ce.dateenrolled) as next_enrollment_date
-           ,co.school_name
-           ,co.region
-           ,co.lastfirst
-           ,co.team
-           ,co.grade_level
-           ,'Enrollment Dupes' AS element
-     FROM gabby.powerschool.course_enrollments_current_static ce
-     JOIN gabby.powerschool.cohort_identifiers_static co
-       ON ce.student_number = co.student_number
-      AND ce.academic_year = co.academic_year
-      AND co.rn_year = 1
-     WHERE ce.section_enroll_status = 0
-       AND ce.course_enroll_status = 0
-       AND ce.course_number NOT LIKE 'LOG%'
-    ) sub
+      ,CONCAT(
+         qa.course_number, ' - '
+        ,qa.section_number, ' - '
+        ,qa.dateenrolled, '-'
+        ,qa.dateleft
+       ) AS detail
+      ,1 AS flag
+FROM gabby.qa.powerschool_course_enrollment_overlap qa
+INNER JOIN gabby.powerschool.schools sch
+  ON qa.schoolid = sch.school_number
+WHERE qa.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
 
 UNION ALL
 
@@ -229,8 +212,8 @@ SELECT [db_name]
       ,grade_level
       ,team
       ,'Under Enrolled' AS element
-      ,CONVERT(VARCHAR, total_sections) AS detail
-      ,CASE WHEN total_sections < 3 THEN 1 ELSE 0 END as flag
+      ,CAST(total_sections AS VARCHAR) AS detail
+      ,CASE WHEN total_sections < 3 THEN 1 ELSE 0 END AS flag
 FROM
     (
      SELECT  co.[db_name]

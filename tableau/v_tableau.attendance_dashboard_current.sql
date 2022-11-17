@@ -4,7 +4,7 @@ SELECT sub.student_number
       ,sub.studentid
       ,sub.lastfirst
       ,sub.academic_year
-      ,sub.schoolid
+      ,sub.reporting_schoolid AS schoolid
       ,sub.grade_level
       ,sub.region
       ,sub.school_level
@@ -30,33 +30,33 @@ SELECT sub.student_number
       ,sub.is_iss AS is_iss_running
       ,sub.is_suspended AS is_suspended_running
       ,sub.is_counselingservices
-      ,sub.is_remote
+      ,sub.is_studentathlete
 FROM
     (
-     SELECT co.academic_year
-           ,co.studentid
+     SELECT mem.studentid
+           ,mem.calendardate
+           ,mem.membershipvalue
+           ,CAST(mem.attendancevalue AS FLOAT) AS is_present
+           ,ABS(mem.attendancevalue - 1) AS is_absent
+
            ,co.student_number
            ,co.lastfirst
-           ,co.reporting_schoolid AS schoolid
-           ,co.grade_level
+           ,co.enroll_status
+           ,co.academic_year
            ,co.region
            ,co.school_level
+           ,co.reporting_schoolid
+           ,co.grade_level
            ,co.team
-           ,co.enroll_status
            ,co.iep_status
            ,co.lep_status
            ,co.c_504_status
-           ,0 AS is_pathways
            ,co.gender
            ,co.ethnicity
+           ,0 AS is_pathways
 
            ,enr.section_number
            ,enr.teacher_name
-
-           ,mem.calendardate
-           ,mem.membershipvalue
-           ,CONVERT(FLOAT, mem.attendancevalue) AS is_present
-           ,ABS(mem.attendancevalue - 1) AS is_absent
 
            ,att.att_code
            ,CASE WHEN att.att_code IN ('T', 'T10') THEN 0.0 ELSE 1.0 END AS is_ontime
@@ -64,26 +64,18 @@ FROM
            ,CASE WHEN att.att_code IN ('S', 'ISS') THEN 1.0 ELSE 0.0 END AS is_iss
            ,CASE WHEN att.att_code IN ('OS', 'OSS', 'OSSP', 'S', 'ISS') THEN 1.0 ELSE 0.0 END AS is_suspended
 
-           ,CONVERT(VARCHAR(25), dt.alt_name) AS term
+           ,dt.alt_name AS term
 
            ,CASE WHEN sp.studentid IS NOT NULL THEN 1 END AS is_counselingservices
-
-           ,CASE
-             WHEN hb.specprog_name IN ('Hybrid (SC) - Cohort D', 'Learning Centers - Cohort D') AND cal.[type] = 'AR' THEN 0
-             WHEN hb.specprog_name = 'Remote - Cohort C' OR cal.[type] = 'AR' THEN 1
-             WHEN hb.specprog_name = 'Hybrid - Cohort A' AND cal.[type] = 'ACR' THEN 1
-             WHEN hb.specprog_name = 'Hybrid - Cohort B' AND cal.[type] = 'BCR' THEN 1
-             WHEN hb.specprog_name IS NOT NULL AND cal.[type] NOT IN ('AR', 'ACR', 'BCR') THEN 1
-             ELSE 0
-            END AS is_remote
+           ,CASE WHEN sa.studentid IS NOT NULL THEN 1 END AS is_studentathlete
      FROM powerschool.ps_adaadm_daily_ctod_current_static mem
-     JOIN powerschool.calendar_day cal
-       ON mem.schoolid = cal.schoolid
-      AND mem.calendardate = cal.date_value
-     JOIN powerschool.cohort_identifiers_static co
+     INNER JOIN powerschool.cohort_identifiers_static co
        ON mem.studentid = co.studentid
       AND mem.schoolid = co.schoolid
       AND mem.calendardate BETWEEN co.entrydate AND co.exitdate
+     INNER JOIN powerschool.calendar_day cal
+       ON mem.schoolid = cal.schoolid
+      AND mem.calendardate = cal.date_value
      LEFT JOIN powerschool.course_enrollments_current_static enr
        ON co.studentid = enr.studentid
       AND co.academic_year = enr.academic_year 
@@ -102,11 +94,11 @@ FROM
        ON mem.studentid = sp.studentid
       AND mem.calendardate BETWEEN sp.enter_date AND sp.exit_date
       AND sp.specprog_name = 'Counseling Services'
-     LEFT JOIN powerschool.spenrollments_gen_static hb
-       ON mem.studentid = hb.studentid
-      AND mem.calendardate BETWEEN hb.enter_date AND hb.exit_date
-      AND hb.specprog_name IN ('Hybrid - Cohort A', 'Hybrid - Cohort B', 'Remote - Cohort C', 'Hybrid (SC) - Cohort D', 'Learning Centers - Cohort D')
+     LEFT JOIN powerschool.spenrollments_gen_static sa
+       ON mem.studentid = sa.studentid
+      AND mem.calendardate BETWEEN sa.enter_date AND sa.exit_date
+      AND sa.specprog_name = 'Student Athlete'
      WHERE mem.attendancevalue IS NOT NULL
-       AND mem.calendardate <= GETDATE()
+       AND mem.calendardate <= CURRENT_TIMESTAMP
        AND mem.membershipvalue > 0
     ) sub

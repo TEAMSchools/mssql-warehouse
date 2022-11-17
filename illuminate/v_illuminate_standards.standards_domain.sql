@@ -6,7 +6,7 @@ CREATE OR ALTER VIEW illuminate_standards.standards_domain AS
 WITH standards_ladder AS (
   SELECT s1.standard_id AS domain_standard_id
         ,s1.custom_code AS domain_custom_code
-        ,CONVERT(VARCHAR(2000), s1.[description]) AS domain_description
+        ,CAST(s1.[description] AS VARCHAR(2000)) AS domain_description
         ,s1.[label] AS domain_label
         ,s1.[level] AS domain_level
         ,s1.standard_id

@@ -22,7 +22,7 @@ SELECT sub.studentid
       ,sub.excludefromgpa
       ,sub.excludefromstoredgrades
       ,sub.teachernumber
-      ,sub.teacher_name
+      ,sub.teacher_lastfirst AS teacher_name
       ,sub.section_enroll_status
       ,sub.map_measurementscale
       ,sub.illuminate_subject
@@ -30,15 +30,18 @@ SELECT sub.studentid
       ,sub.abs_termid
       ,sub.course_enroll_status
       ,sub.sections_dcid
-      ,CONVERT(INT, ROW_NUMBER() OVER(
+      ,ROW_NUMBER() OVER(
          PARTITION BY sub.student_number, sub.credittype
-           ORDER BY sub.termid DESC, sub.dateenrolled DESC, sub.dateleft DESC)) AS rn_subject
-      ,CONVERT(INT, ROW_NUMBER() OVER(
+         ORDER BY sub.termid DESC, sub.dateenrolled DESC, sub.dateleft DESC
+       ) AS rn_subject
+      ,ROW_NUMBER() OVER(
          PARTITION BY sub.student_number, sub.course_number
-           ORDER BY sub.termid DESC, sub.dateenrolled DESC, sub.dateleft DESC)) AS rn_course_yr
-      ,CONVERT(INT, ROW_NUMBER() OVER(
+         ORDER BY sub.termid DESC, sub.dateenrolled DESC, sub.dateleft DESC
+       ) AS rn_course_yr
+      ,ROW_NUMBER() OVER(
          PARTITION BY sub.student_number, sub.illuminate_subject
-           ORDER BY sub.termid DESC, sub.dateenrolled DESC, sub.dateleft DESC)) AS rn_illuminate_subject
+         ORDER BY sub.termid DESC, sub.dateenrolled DESC, sub.dateleft DESC
+       ) AS rn_illuminate_subject
 FROM
     (
      SELECT sub.studentid
@@ -59,7 +62,7 @@ FROM
            ,sub.excludefromgpa
            ,sub.excludefromstoredgrades
            ,sub.teachernumber
-           ,sub.teacher_name
+           ,sub.teacher_lastfirst
            ,sub.section_enroll_status
            ,sub.map_measurementscale
            ,sub.illuminate_subject
@@ -71,55 +74,52 @@ FROM
               / COUNT(sub.sectionid) OVER(PARTITION BY sub.studentid, sub.course_number) AS course_enroll_status
      FROM
          (
-          SELECT CONVERT(INT, cc.studentid) AS studentid
-                ,CONVERT(INT, cc.schoolid) AS schoolid
-                ,CONVERT(INT, cc.termid) AS termid
-                ,CONVERT(INT, cc.id) AS cc_id
+          SELECT cc.studentid
+                ,cc.schoolid
+                ,cc.termid
+                ,cc.id AS cc_id
                 ,cc.course_number
-                ,CONVERT(VARCHAR(25), cc.section_number) AS section_number
+                ,cc.section_number
                 ,cc.dateenrolled
                 ,cc.dateleft
-                ,CONVERT(INT, cc.sectionid) AS sectionid
-                ,CONVERT(VARCHAR(25), cc.expression) AS expression
-                ,ABS(CONVERT(INT, cc.termid)) AS abs_termid
+                ,cc.sectionid
+                ,cc.expression
+                ,ABS(cc.termid) AS abs_termid
                 ,ABS(cc.sectionid) AS abs_sectionid
                 ,CASE 
-                  WHEN cc.sectionid < 0 AND s.enroll_status = 2 AND s.exitdate = cc.dateleft THEN 0
+                  WHEN cc.sectionid < 0 
+                   AND s.enroll_status = 2
+                   AND s.exitdate = cc.dateleft 
+                       THEN 0
                   WHEN cc.sectionid < 0 THEN 1
                   ELSE 0
                  END AS section_enroll_status
 
-                ,CONVERT(INT, s.student_number) AS student_number
-                ,CONVERT(INT, s.dcid) AS students_dcid
+                ,s.student_number
+                ,s.dcid AS students_dcid
 
-                ,CONVERT(VARCHAR(25), cou.credittype) AS credittype
-                ,CONVERT(VARCHAR(125), cou.course_name) AS course_name
-                ,cou.credit_hours
-                ,CONVERT(INT, cou.excludefromgpa) AS excludefromgpa
-                ,CONVERT(INT, cou.excludefromstoredgrades) AS excludefromstoredgrades
-                ,CONVERT(INT, cou.gradescaleid) AS courses_gradescaleid
+                ,sec.dcid AS sections_dcid
+                ,sec.credittype
+                ,sec.course_name
+                ,sec.credit_hours
+                ,sec.excludefromgpa
+                ,sec.excludefromstoredgrades
+                ,sec.courses_gradescaleid
+                ,sec.teachernumber
+                ,sec.teacher_lastfirst
                 ,CASE
-                  WHEN cou.credittype IN ('ENG','READ') THEN 'Reading'
-                  WHEN cou.credittype = 'MATH' THEN 'Mathematics'
-                  WHEN cou.credittype = 'RHET' THEN 'Language Usage'
-                  WHEN cou.credittype = 'SCI' THEN 'Science - General Science'
+                  WHEN sec.credittype IN ('ENG','READ') THEN 'Reading'
+                  WHEN sec.credittype = 'MATH' THEN 'Mathematics'
+                  WHEN sec.credittype = 'RHET' THEN 'Language Usage'
+                  WHEN sec.credittype = 'SCI' THEN 'Science - General Science'
                  END AS map_measurementscale
 
-                ,t.teachernumber
-                ,t.lastfirst AS teacher_name
-
-                ,CONVERT(INT, sec.dcid) AS sections_dcid
-
-                ,CONVERT(VARCHAR(125), sj.illuminate_subject) AS illuminate_subject
+                ,CAST(sj.illuminate_subject AS VARCHAR(125)) AS illuminate_subject
           FROM powerschool.cc
-          JOIN powerschool.students s
+          INNER JOIN powerschool.students s
             ON cc.studentid = s.id
-          JOIN powerschool.courses cou
-            ON cc.course_number = cou.course_number
-          JOIN powerschool.teachers_static t
-            ON cc.teacherid = t.id
-          JOIN powerschool.sections sec
-            ON ABS(cc.sectionid) = sec.id
+          INNER JOIN powerschool.sections_identifiers sec
+            ON ABS(cc.sectionid) = sec.sectionid
           LEFT JOIN gabby.assessments.normed_subjects sj
             ON cc.course_number = sj.course_number COLLATE Latin1_General_BIN
           WHERE cc.dateenrolled >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)

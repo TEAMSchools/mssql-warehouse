@@ -13,9 +13,9 @@ SELECT performance_band_set_id
 FROM
     (
      SELECT pbs.performance_band_set_id
-           ,CONVERT(VARCHAR(125),pbs.[description]) AS [description]
+           ,CAST(pbs.[description] AS VARCHAR(125)) AS [description]
 
-           ,CONVERT(FLOAT,pb.minimum_value) AS minimum_value
+           ,CAST(pb.minimum_value AS FLOAT) AS minimum_value
            ,pb.[label]
            ,pb.label_number
            ,pb.is_mastery

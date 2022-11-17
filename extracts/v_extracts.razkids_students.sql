@@ -14,14 +14,14 @@ SELECT saa.student_web_id + '@teamstudents.org' AS student_id
         ELSE RIGHT(CONCAT('0', s.grade_level), 2)
        END AS grade
 FROM gabby.powerschool.course_enrollments_current_static enr
-JOIN gabby.powerschool.student_access_accounts_static saa
+INNER JOIN gabby.powerschool.student_access_accounts_static saa
   ON enr.student_number = saa.student_number
-JOIN gabby.powerschool.students s
+INNER JOIN gabby.powerschool.students s
   ON enr.student_number = s.student_number
  AND enr.[db_name] = s.[db_name]
  AND s.enroll_status = 0
  AND s.grade_level <= 4
-JOIN gabby.people.staff_crosswalk_static scw
+INNER JOIN gabby.people.staff_crosswalk_static scw
   ON enr.teachernumber = scw.ps_teachernumber COLLATE Latin1_General_BIN
 WHERE enr.course_number = 'HR'
   AND enr.course_enroll_status = 0

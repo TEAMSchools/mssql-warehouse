@@ -1,14 +1,15 @@
 CREATE OR ALTER VIEW powerschool.cohort_identifiers_scaffold_current AS
 
-SELECT co.academic_year
+SELECT co.studentid
+      ,co.student_number
+      ,co.lastfirst
+      ,co.academic_year
+      ,co.region
+      ,co.school_level
       ,co.schoolid
       ,co.reporting_schoolid
       ,co.school_name
-      ,co.school_level
       ,co.grade_level
-      ,co.studentid
-      ,co.student_number
-      ,co.lastfirst
       ,co.team
       ,co.advisor_name
       ,co.gender
@@ -22,13 +23,11 @@ SELECT co.academic_year
 
       ,rd.[date]
 
-      ,CONVERT(VARCHAR(25), dt.alt_name) COLLATE Latin1_General_BIN AS term
+      ,dt.alt_name COLLATE Latin1_General_BIN AS term
 
-      ,CASE WHEN CONVERT(DATE, rd.[date]) BETWEEN co.entrydate AND co.exitdate THEN 1 ELSE 0 END AS is_enrolled
-
-      ,co.region
+      ,CASE WHEN CAST(rd.[date] AS DATE) BETWEEN co.entrydate AND co.exitdate THEN 1 ELSE 0 END AS is_enrolled
 FROM powerschool.cohort_identifiers_static co
-JOIN gabby.utilities.reporting_days rd
+INNER JOIN gabby.utilities.reporting_days rd
   ON co.academic_year = rd.academic_year
  AND co.exitdate >= rd.[date]
 LEFT JOIN gabby.reporting.reporting_terms dt

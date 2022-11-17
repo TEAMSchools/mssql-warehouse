@@ -31,7 +31,7 @@ BEGIN
       BEGIN       
         SELECT @job_name = name FROM msdb.dbo.sysjobs WHERE job_id = @job_id;
         SET @email_subject = 'SQL Server Agent Job Killed'
-        SET @email_body = @job_name + N' was killed because it has been running for over ' + CONVERT(NVARCHAR,DATEPART(MINUTE, @delay_time)) + ' minutes';
+        SET @email_body = @job_name + N' was killed because it has been running for over ' + CAST(DATEPART(MINUTE, @delay_time) AS NVARCHAR) + ' minutes';
         EXEC msdb.dbo.sp_send_dbmail  
           @profile_name = 'datarobot',
           @recipients = 'u7c1r1b1c5n4p0q0@kippnj.slack.com',

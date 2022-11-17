@@ -19,9 +19,9 @@ SELECT co.student_number
       ,ar.dt_taken
       ,ar.d_percent_correct
       ,ar.i_word_count
-      ,CONVERT(INT, ar.rn_quiz) AS rn_quiz
+      ,CAST(ar.rn_quiz AS INT) AS rn_quiz
 
-      ,CONVERT(VARCHAR(25), dts.alt_name) AS term
+      ,CAST(dts.alt_name AS VARCHAR(25)) AS term
       ,dts.is_curterm
 
       ,enr.teacher_name

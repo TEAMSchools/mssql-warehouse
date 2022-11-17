@@ -10,18 +10,27 @@ SELECT [db_name]
       ,schoolid
       ,grade_level
       ,entrydate
+      ,exitdate
       ,exitdate_prev
 FROM
     (
-     SELECT [db_name]
-           ,student_number
-           ,studentid
-           ,academic_year
-           ,schoolid
-           ,grade_level
-           ,entrydate
-           ,exitdate
-           ,LAG(exitdate) OVER(PARTITION BY student_number, academic_year ORDER BY exitdate) AS exitdate_prev
-     FROM gabby.powerschool.cohort_identifiers_static
+     SELECT pea.[db_name]
+           ,pea.studentid
+           ,pea.yearid + 1990 AS academic_year
+           ,pea.schoolid
+           ,pea.grade_level
+           ,pea.entrydate
+           ,pea.exitdate
+           ,LAG(pea.exitdate) OVER(PARTITION BY pea.[db_name], pea.studentid, pea.yearid ORDER BY pea.exitdate) AS exitdate_prev
+
+           ,s.student_number
+     FROM gabby.powerschool.ps_enrollment_all pea
+     INNER JOIN gabby.powerschool.students s
+       ON pea.studentid = s.id
+      AND pea.[db_name] = s.[db_name]
+     INNER JOIN gabby.powerschool.schools sch
+       ON pea.schoolid = sch.school_number
+      AND pea.[db_name] = sch.[db_name]
+      AND sch.state_excludefromreporting = 0 /* exclude grads & ss */
     ) sub
 WHERE entrydate <= exitdate_prev

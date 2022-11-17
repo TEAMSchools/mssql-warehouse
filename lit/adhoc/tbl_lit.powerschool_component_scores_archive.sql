@@ -13,45 +13,45 @@ WITH ps_scores_long AS (
              ,student_number
              ,CASE WHEN academic_year = 2015 AND testid = 3273 THEN instruct_lvl ELSE read_lvl END AS read_lvl
              ,ISNULL(status,'Did Not Achieve') AS status
-             ,CONVERT(VARCHAR,name_ass) AS name_ass
-             ,CONVERT(VARCHAR,ltr_nameid) AS ltr_nameid
-             ,CONVERT(VARCHAR,ltr_soundid) AS ltr_soundid
-             ,CONVERT(VARCHAR,pa_rhymingwds) AS pa_rhymingwds
-             ,CONVERT(VARCHAR,pa_mfs) AS pa_mfs
-             ,CONVERT(VARCHAR,pa_segmentation) AS pa_segmentation
-             ,CONVERT(VARCHAR,cp_orient) AS cp_orient
-             ,CONVERT(VARCHAR,cp_121_match) AS cp_121match
-             ,CONVERT(VARCHAR,cp_slw) AS cp_slw
-             ,CONVERT(VARCHAR,devsp_first) AS devsp_first
-             ,CONVERT(VARCHAR,devsp_svs) AS devsp_svs
-             ,CONVERT(VARCHAR,devsp_final) AS devsp_final             
-             ,CONVERT(VARCHAR,devsp_ifbd) AS devsp_ifbd
-             ,CONVERT(VARCHAR,devsp_longvowel) AS devsp_longvowel
-             ,CONVERT(VARCHAR,devsp_rcontrol) AS devsp_rcontrol                          
-             ,CONVERT(VARCHAR,devsp_vowldig) AS devsp_vowldig
-             ,CONVERT(VARCHAR,devsp_cmplxb) AS devsp_cmplxb
-             ,CONVERT(VARCHAR,devsp_eding) AS devsp_eding
-             ,CONVERT(VARCHAR,devsp_doubsylj) AS devsp_doubsylj             
-             ,CONVERT(VARCHAR,rr_121_match) AS rr_121match
-             ,CONVERT(VARCHAR,rr_holdspattern) AS rr_holdspattern
-             ,CONVERT(VARCHAR,rr_understanding) AS rr_understanding             
-             ,CONVERT(VARCHAR,accuracy_1_a) AS accuracy_1a
-             ,CONVERT(VARCHAR,accuracy_2_b) AS accuracy_2b
-             ,CONVERT(VARCHAR,ra_errors) AS ra_errors
-             ,CONVERT(VARCHAR,cc_factual) AS cc_factual
-             ,CONVERT(VARCHAR,cc_infer) AS cc_infer
-             ,CONVERT(VARCHAR,cc_other) AS cc_other
-             ,CONVERT(VARCHAR,cc_ct) AS cc_ct
-             ,CONVERT(VARCHAR,ocomp_factual) AS ocomp_factual
-             ,CONVERT(VARCHAR,ocomp_ct) AS ocomp_ct
-             ,CONVERT(VARCHAR,ocomp_infer) AS ocomp_infer
-             ,CONVERT(VARCHAR,scomp_factual) AS scomp_factual
-             ,CONVERT(VARCHAR,scomp_infer) AS scomp_infer
-             ,CONVERT(VARCHAR,scomp_ct) AS scomp_ct
-             ,CONVERT(VARCHAR,wcomp_fact) AS wcomp_fact
-             ,CONVERT(VARCHAR,wcomp_infer) AS wcomp_infer
-             ,CONVERT(VARCHAR,wcomp_ct) AS wcomp_ct
-             ,CONVERT(VARCHAR,retelling) AS retelling             
+             ,CAST(name_ass AS VARCHAR) AS name_ass
+             ,CAST(ltr_nameid AS VARCHAR) AS ltr_nameid
+             ,CAST(ltr_soundid AS VARCHAR) AS ltr_soundid
+             ,CAST(pa_rhymingwds AS VARCHAR) AS pa_rhymingwds
+             ,CAST(pa_mfs AS VARCHAR) AS pa_mfs
+             ,CAST(pa_segmentation AS VARCHAR) AS pa_segmentation
+             ,CAST(cp_orient AS VARCHAR) AS cp_orient
+             ,CAST(cp_121_match AS VARCHAR) AS cp_121match
+             ,CAST(cp_slw AS VARCHAR) AS cp_slw
+             ,CAST(devsp_first AS VARCHAR) AS devsp_first
+             ,CAST(devsp_svs AS VARCHAR) AS devsp_svs
+             ,CAST(devsp_final AS VARCHAR) AS devsp_final             
+             ,CAST(devsp_ifbd AS VARCHAR) AS devsp_ifbd
+             ,CAST(devsp_longvowel AS VARCHAR) AS devsp_longvowel
+             ,CAST(devsp_rcontrol AS VARCHAR) AS devsp_rcontrol                          
+             ,CAST(devsp_vowldig AS VARCHAR) AS devsp_vowldig
+             ,CAST(devsp_cmplxb AS VARCHAR) AS devsp_cmplxb
+             ,CAST(devsp_eding AS VARCHAR) AS devsp_eding
+             ,CAST(devsp_doubsylj AS VARCHAR) AS devsp_doubsylj             
+             ,CAST(rr_121_match AS VARCHAR) AS rr_121match
+             ,CAST(rr_holdspattern AS VARCHAR) AS rr_holdspattern
+             ,CAST(rr_understanding AS VARCHAR) AS rr_understanding             
+             ,CAST(accuracy_1_a AS VARCHAR) AS accuracy_1a
+             ,CAST(accuracy_2_b AS VARCHAR) AS accuracy_2b
+             ,CAST(ra_errors AS VARCHAR) AS ra_errors
+             ,CAST(cc_factual AS VARCHAR) AS cc_factual
+             ,CAST(cc_infer AS VARCHAR) AS cc_infer
+             ,CAST(cc_other AS VARCHAR) AS cc_other
+             ,CAST(cc_ct AS VARCHAR) AS cc_ct
+             ,CAST(ocomp_factual AS VARCHAR) AS ocomp_factual
+             ,CAST(ocomp_ct AS VARCHAR) AS ocomp_ct
+             ,CAST(ocomp_infer AS VARCHAR) AS ocomp_infer
+             ,CAST(scomp_factual AS VARCHAR) AS scomp_factual
+             ,CAST(scomp_infer AS VARCHAR) AS scomp_infer
+             ,CAST(scomp_ct AS VARCHAR) AS scomp_ct
+             ,CAST(wcomp_fact AS VARCHAR) AS wcomp_fact
+             ,CAST(wcomp_infer AS VARCHAR) AS wcomp_infer
+             ,CAST(wcomp_ct AS VARCHAR) AS wcomp_ct
+             ,CAST(retelling AS VARCHAR) AS retelling             
              ,CONVERT(VARCHAR,
                 CASE
                  WHEN testid = 3397 AND reading_rate IN ('Above','Target') THEN 30
@@ -59,21 +59,21 @@ WITH ps_scores_long AS (
                  WHEN testid IN (3442,3458,3474) AND reading_rate IN ('Above','Target') THEN 50
                  WHEN testid IN (3493,3511,3527) AND reading_rate IN ('Above','Target') THEN 75        
                 END) AS reading_rate             
-             ,CONVERT(VARCHAR,fluency) AS fluency
-             ,CONVERT(VARCHAR,ROUND(fp_wpmrate,0)) AS fp_wpmrate
-             ,CONVERT(VARCHAR,fp_fluency) AS fp_fluency
-             ,CONVERT(VARCHAR,fp_accuracy) AS fp_accuracy
-             ,CONVERT(VARCHAR,fp_comp_within) AS fp_comp_within
-             ,CONVERT(VARCHAR,fp_comp_beyond) AS fp_comp_beyond
-             ,CONVERT(VARCHAR,fp_comp_about) AS fp_comp_about           
-             ,CONVERT(VARCHAR,cc_prof) AS cc_prof
-             ,CONVERT(VARCHAR,ocomp_prof) AS ocomp_prof
-             ,CONVERT(VARCHAR,scomp_prof) AS scomp_prof
-             ,CONVERT(VARCHAR,wcomp_prof) AS wcomp_prof
-             ,CONVERT(VARCHAR,fp_comp_prof) AS fp_comp_prof
-             ,CONVERT(VARCHAR,cp_prof) AS cp_prof
-             ,CONVERT(VARCHAR,rr_prof) AS rr_prof
-             ,CONVERT(VARCHAR,devsp_prof) AS devsp_prof             
+             ,CAST(fluency AS VARCHAR) AS fluency
+             ,CAST(ROUND(fp_wpmrate,0) AS VARCHAR) AS fp_wpmrate
+             ,CAST(fp_fluency AS VARCHAR) AS fp_fluency
+             ,CAST(fp_accuracy AS VARCHAR) AS fp_accuracy
+             ,CAST(fp_comp_within AS VARCHAR) AS fp_comp_within
+             ,CAST(fp_comp_beyond AS VARCHAR) AS fp_comp_beyond
+             ,CAST(fp_comp_about AS VARCHAR) AS fp_comp_about           
+             ,CAST(cc_prof AS VARCHAR) AS cc_prof
+             ,CAST(ocomp_prof AS VARCHAR) AS ocomp_prof
+             ,CAST(scomp_prof AS VARCHAR) AS scomp_prof
+             ,CAST(wcomp_prof AS VARCHAR) AS wcomp_prof
+             ,CAST(fp_comp_prof AS VARCHAR) AS fp_comp_prof
+             ,CAST(cp_prof AS VARCHAR) AS cp_prof
+             ,CAST(rr_prof AS VARCHAR) AS rr_prof
+             ,CAST(devsp_prof AS VARCHAR) AS devsp_prof             
        FROM gabby.lit.powerschool_readingscores_archive rs
        JOIN gabby.powerschool.students s
          ON rs.studentid = s.id

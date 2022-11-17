@@ -35,8 +35,8 @@ FROM
          (
           SELECT bb.student_number                
                 ,bb.measurementscale COLLATE Latin1_General_BIN AS measurementscale
-                ,CONVERT(FLOAT,bb.test_ritscore) AS rit_baseline
-                ,CONVERT(FLOAT,bb.testpercentile) AS pctl_baseline
+                ,CAST(bb.test_ritscore AS FLOAT) AS rit_baseline
+                ,CAST(bb.testpercentile AS FLOAT) AS pctl_baseline
       
                 ,co.lastfirst      
                 ,co.region
@@ -45,11 +45,11 @@ FROM
                 ,co.team
                 ,co.advisor_name
 
-                ,CONVERT(FLOAT,ku.testritscore) AS rit_keepup
+                ,CAST(ku.testritscore AS FLOAT) AS rit_keepup
 
-                ,CONVERT(FLOAT,gl.testritscore) AS rit_50pctl
+                ,CAST(gl.testritscore AS FLOAT) AS rit_50pctl
 
-                ,CONVERT(FLOAT,tq.testritscore) AS rit_75pctl
+                ,CAST(tq.testritscore AS FLOAT) AS rit_75pctl
           FROM gabby.nwea.best_baseline bb
           JOIN gabby.powerschool.cohort_identifiers_static co
             ON bb.student_number = co.student_number

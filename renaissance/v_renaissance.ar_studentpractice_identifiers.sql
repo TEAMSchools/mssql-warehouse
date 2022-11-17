@@ -8,7 +8,7 @@ SELECT sub.student_identifier AS student_number
       ,sub.percent_correct AS d_percent_correct
       ,sub.points_earned AS d_points_earned
       ,sub.date_quiz_completed_local AS dt_taken
-      ,CONVERT(FLOAT, sub.lexile_level) AS fl_lexile_calc
+      ,CAST(sub.lexile_level AS FLOAT) AS fl_lexile_calc
       ,sub.lexile_level AS i_lexile 
       ,sub.questions_correct AS i_questions_correct
       ,sub.questions_presented AS i_questions_presented
@@ -34,15 +34,15 @@ SELECT sub.student_identifier AS student_number
        END AS rn_quiz
 FROM
     (
-     SELECT CONVERT(INT, CASE WHEN ISNUMERIC(student_identifier) = 1 THEN student_identifier END) AS student_identifier
+     SELECT CAST(CASE WHEN ISNUMERIC(student_identifier) = 1 THEN student_identifier END AS INT) AS student_identifier
            ,quiz_number
            ,content_title
-           ,CONVERT(DATE, date_quiz_completed_local) AS date_quiz_completed_local
+           ,CAST(date_quiz_completed_local AS DATE) AS date_quiz_completed_local
            ,passed
-           ,CONVERT(FLOAT, word_count) AS word_count
+           ,CAST(word_count AS FLOAT) AS word_count
            ,points_earned
-           ,CONVERT(FLOAT, questions_correct) AS questions_correct
-           ,CONVERT(FLOAT, questions_presented) AS questions_presented
+           ,CAST(questions_correct AS FLOAT) AS questions_correct
+           ,CAST(questions_presented AS FLOAT) AS questions_presented
            ,percent_correct
            ,lexile_level
            ,lexile_measure
@@ -50,8 +50,8 @@ FROM
              WHEN fiction_non_fiction = 'Fiction' THEN 'F'
              WHEN fiction_non_fiction = 'NonFiction' THEN 'NF'
             END AS fiction_non_fiction
-           ,CONVERT(INT, LEFT(school_year, 4)) AS academic_year
-     FROM gabby.renaissance.generic_ar_extract
+           ,CAST(LEFT(school_year, 4) AS INT) AS academic_year
+     FROM gabby.renaissance.accelerated_reader
      WHERE quiz_deleted = 0
        AND quiz_type = 'Reading Practice Quiz'
     ) sub

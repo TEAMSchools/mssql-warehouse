@@ -51,4 +51,4 @@ LEFT JOIN gabby.iready.diagnostic_and_instruction di
  AND subjects.[value] = di.[subject]
 WHERE cis.is_enrolled = 1
   AND cis.grade_level < 9
-  AND cis.[date] <= GETDATE()
+  AND cis.[date] <= CURRENT_TIMESTAMP

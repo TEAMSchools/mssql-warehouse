@@ -1,6 +1,6 @@
 CREATE OR ALTER VIEW powerschool.teachers AS
 
-SELECT CONVERT(VARCHAR(125), u.lastfirst) AS lastfirst
+SELECT CAST(u.lastfirst AS VARCHAR(125)) AS lastfirst
       ,u.first_name
       ,u.middle_name
       ,u.last_name
@@ -17,7 +17,7 @@ SELECT CONVERT(VARCHAR(125), u.lastfirst) AS lastfirst
       ,u.loginid
       ,u.defaultstudscrn
       ,u.groupvalue
-      ,CONVERT(VARCHAR(25), u.teachernumber) AS teachernumber
+      ,CAST(u.teachernumber AS VARCHAR(25)) AS teachernumber
       ,u.lunch_id
       ,u.ssn
       ,u.home_phone
@@ -47,12 +47,12 @@ SELECT CONVERT(VARCHAR(125), u.lastfirst) AS lastfirst
       ,u.gradebooktype
       ,u.fedethnicity
       ,u.fedracedecline
-      ,CONVERT(INT, u.homeschoolid) AS homeschoolid
+      ,CAST(u.homeschoolid AS INT) AS homeschoolid
       ,u.ptaccess
 
       ,s.dcid
-      ,CONVERT(INT, s.id) AS id
-      ,CONVERT(INT, s.schoolid) AS schoolid
+      ,CAST(s.id AS INT) AS id
+      ,CAST(s.schoolid AS INT) AS schoolid
       ,s.[status]
       ,s.noofcurclasses
       ,s.[log]

@@ -27,10 +27,10 @@ WITH map_long AS (
         ,sub.next_npr
         ,sub.student_N
 
-        ,AVG(CONVERT(FLOAT,test_duration_minutes)) OVER(PARTITION BY grade_level, measurement_scale) AS global_mean_testdurationminutes
-        ,STDEV(CONVERT(FLOAT,test_duration_minutes)) OVER(PARTITION BY grade_level, measurement_scale) AS global_stdev_testdurationminutes             
-        ,AVG(CONVERT(FLOAT,student_testdurationminutes)) OVER(PARTITION BY student_id, measurement_scale) AS student_mean_testdurationminutes
-        ,STDEV(CONVERT(FLOAT,student_testdurationminutes)) OVER(PARTITION BY student_id, measurement_scale) AS student_stdev_testdurationminutes
+        ,AVG(CAST(test_duration_minutes AS FLOAT)) OVER(PARTITION BY grade_level, measurement_scale) AS global_mean_testdurationminutes
+        ,STDEV(CAST(test_duration_minutes AS FLOAT)) OVER(PARTITION BY grade_level, measurement_scale) AS global_stdev_testdurationminutes             
+        ,AVG(CAST(student_testdurationminutes AS FLOAT)) OVER(PARTITION BY student_id, measurement_scale) AS student_mean_testdurationminutes
+        ,STDEV(CAST(student_testdurationminutes AS FLOAT)) OVER(PARTITION BY student_id, measurement_scale) AS student_stdev_testdurationminutes
         
         ,SUM(student_N) OVER(PARTITION BY sub.measurement_scale, sub.grade_level, sub.term, sub.prev_term) AS global_prev_N
         ,SUM(student_N) OVER(PARTITION BY sub.measurement_scale, sub.grade_level, sub.term, sub.next_term) AS global_next_N

@@ -37,10 +37,10 @@ BEGIN
     SELECT repository_id
     FROM illuminate_dna_repositories.repositories
     WHERE deleted_at IS NULL
-      AND repository_id IN (SELECT CONVERT(INT, RIGHT([table], LEN([table]) - CHARINDEX('_', [table])))
+      AND repository_id IN (SELECT CAST(RIGHT([table], LEN([table]) - CHARINDEX('_', [table])) AS INT)
                             FROM gabby.illuminate_dna_repositories.fivetran_audit
                             WHERE ISNUMERIC(RIGHT([table], 1)) = 1
-                              AND done >= DATEADD(HOUR, -24, GETDATE()))
+                              AND done >= DATEADD(HOUR, -24, CURRENT_TIMESTAMP))
     ORDER BY repository_id DESC;
 
   /* 4.) Do work son */

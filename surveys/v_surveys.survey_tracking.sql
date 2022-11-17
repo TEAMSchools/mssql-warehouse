@@ -95,8 +95,13 @@ WITH surveys AS (
     ON c.survey_id = i.survey_id
    AND i.date_started BETWEEN c.link_open_date AND c.link_close_date
    AND i.rn_respondent_subject = 1
-  WHERE c.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-    AND c.survey_id IN (4561325, 4561288, 5300913, 6330385, 6580731)
+  WHERE (
+         c.survey_id = 6330385 
+         OR (
+             c.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() 
+             AND c.survey_id IN (4561325, 4561288, 5300913, 6580731)
+            )
+        )
  )
 
 SELECT COALESCE(st.respondent_employee_number, c.respondent_employee_number) AS survey_taker_id
@@ -199,10 +204,10 @@ SELECT COALESCE(st.respondent_employee_number, c.respondent_employee_number) AS 
       ,CASE 
         WHEN CHARINDEX('[', c.subject_name) = 0 THEN NULL
         ELSE SUBSTRING(c.subject_name, CHARINDEX('[', c.subject_name) + 1, 6)
-       END AS assingment_employee_id
+       END AS assignment_employee_id
       ,c.subject_name AS assignment_preferred_name
       ,c.respondent_location AS assignment_location
-      ,NULL AS assignment_adp_status
+      ,s.assignment_adp_status
       ,CASE 
         WHEN st.respondent_is_manager = 1 THEN 'Self & Others - Manager Feedback' 
         ELSE 'Self & Others - Peer Feedback' 
@@ -258,9 +263,9 @@ SELECT COALESCE(st.respondent_employee_number, c.respondent_employee_number) AS 
       ,st.survey_default_link
       ,st.survey_id
 
-      ,sa.survey_taker AS survey_round_status
+      ,pm.survey_round_status AS survey_round_status
       ,'Your Manager' AS assignment
-      ,NULL AS assingment_employee_id
+      ,NULL AS assignment_employee_id
       ,NULL AS assignment_preferred_name
       ,NULL AS assignment_location
       ,NULL AS assignment_adp_status
@@ -269,9 +274,9 @@ SELECT COALESCE(st.respondent_employee_number, c.respondent_employee_number) AS 
       ,c.subject_name AS completed_survey_subject_name
       ,c.date_submitted AS survey_completion_date
 FROM survey_term_staff_scaffold st
-INNER JOIN gabby.surveys.so_assignments sa
-  ON st.respondent_employee_number = sa.employee_number
- AND sa.survey_taker IN ('Yes', 'Yes - Should take manager survey only')
+INNER JOIN gabby.pm.assignments pm
+  ON st.respondent_employee_number = pm.df_employee_number
+ AND pm.survey_round_status IN ('Yes', 'Yes - Manager Survey Only')
 LEFT JOIN clean_responses c
   ON st.respondent_employee_number = c.respondent_employee_number
  AND st.academic_year = c.academic_year
@@ -317,7 +322,7 @@ SELECT COALESCE(st.respondent_employee_number, c.respondent_employee_number) AS 
 
       ,'Yes' AS survey_round_status
       ,'Your Manager' AS assignment
-      ,NULL AS assingment_employee_id
+      ,NULL AS assignment_employee_id
       ,NULL AS assignment_preferred_name
       ,NULL AS assignment_location
       ,NULL AS assignment_adp_status
@@ -370,8 +375,8 @@ SELECT st.respondent_employee_number AS survey_taker_id
       ,st.survey_id
 
       ,'Yes' AS survey_round_status
-      ,sa.engagement_survey_assignment AS assignment
-      ,NULL AS assingment_employee_id
+      ,pr.engagement_survey_assignment AS assignment
+      ,NULL AS assignment_employee_id
       ,NULL AS assignment_preferred_name
       ,NULL AS assignment_location
       ,NULL AS assignment_adp_status
@@ -385,10 +390,12 @@ LEFT JOIN clean_responses c
  AND st.academic_year = c.academic_year
  AND st.reporting_term_code = c.reporting_term
  AND st.survey_id = c.survey_id
-LEFT JOIN gabby.surveys.so_assignments sa
-  ON st.respondent_employee_number = sa.employee_number
+LEFT JOIN gabby.pm.assignments pm
+  ON st.respondent_employee_number = pm.df_employee_number
+LEFT JOIN gabby.extracts.gsheets_pm_assignment_roster pr
+  ON st.respondent_employee_number = pr.df_employee_number
 WHERE st.survey_id = 5300913 /* R9S Survey Code */
-  AND sa.survey_taker <> 'No (Should not take any surveys!)'
+  AND pm.survey_round_status IN ('Yes', 'Yes - Manager Survey Only')
 
 UNION ALL
 
@@ -426,7 +433,7 @@ SELECT st.respondent_employee_number AS survey_taker_id
 
       ,'Yes' AS survey_round_status
       ,'Update Your Staff Info' AS assignment
-      ,NULL AS assingment_employee_id
+      ,NULL AS assignment_employee_id
       ,NULL AS assignment_preferred_name
       ,NULL AS assignment_location
       ,NULL AS assignment_adp_status
@@ -476,7 +483,7 @@ SELECT st.respondent_employee_number AS survey_taker_id
 
       ,'Yes' AS survey_round_status
       ,'One Off Staff Survey' AS assignment
-      ,NULL AS assingment_employee_id
+      ,NULL AS assignment_employee_id
       ,NULL AS assignment_preferred_name
       ,NULL AS assignment_location
       ,NULL AS assignment_adp_status
@@ -528,7 +535,7 @@ SELECT st.respondent_employee_number AS survey_taker_id
 
       ,'Yes' AS survey_round_status
       ,'Intent to Return' AS assignment
-      ,NULL AS assingment_employee_id
+      ,NULL AS assignment_employee_id
       ,NULL AS assignment_preferred_name
       ,NULL AS assignment_location
       ,NULL AS assignment_adp_status

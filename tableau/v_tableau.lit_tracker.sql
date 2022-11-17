@@ -3,17 +3,18 @@ GO
 
 CREATE OR ALTER VIEW tableau.lit_tracker AS
 
-SELECT co.school_name
-      ,co.school_level
-      ,co.student_number
+SELECT co.student_number
       ,co.lastfirst AS student_name
+      ,co.enroll_status
+      ,co.academic_year
+      ,co.region
+      ,co.school_level
+      ,co.school_name
+      ,co.school_abbreviation
       ,co.grade_level
       ,co.team
-      ,co.academic_year
       ,co.iep_status
       ,co.lep_status
-      ,co.enroll_status
-      ,co.region
       ,co.is_pathways
       ,co.c_504_status
       ,co.is_pathways AS is_self_contained
@@ -70,14 +71,14 @@ SELECT co.school_name
          PARTITION BY co.student_number, co.academic_year, term.lit, term.ar, achv.achv_unique_id
            ORDER BY achv.achv_unique_id) AS rn_test
 FROM gabby.powerschool.cohort_identifiers_static co
-JOIN gabby.reporting.reporting_term_map term
+INNER JOIN gabby.reporting.reporting_term_map term
   ON co.school_level = term.school_level COLLATE Latin1_General_BIN
  AND co.academic_year BETWEEN term.min_year AND term.max_year 
-JOIN gabby.lit.achieved_by_round_static achv
+INNER JOIN gabby.lit.achieved_by_round_static achv
   ON co.student_number = achv.student_number
  AND co.academic_year = achv.academic_year
  AND term.lit = achv.test_round
- AND achv.[start_date] <= GETDATE()
+ AND achv.[start_date] <= CURRENT_TIMESTAMP
 LEFT JOIN gabby.lit.all_test_events_static atid
   ON achv.achv_unique_id = atid.unique_id
 LEFT JOIN gabby.lit.all_test_events_static dtid
@@ -90,7 +91,7 @@ LEFT JOIN gabby.renaissance.ar_progress_to_goals ar
   ON co.student_number = ar.student_number
  AND co.academic_year = ar.academic_year
  AND term.ar = ar.reporting_term 
- AND ar.[start_date] <= GETDATE()
+ AND ar.[start_date] <= CURRENT_TIMESTAMP
  AND ar.n_total > 0
 WHERE co.rn_year = 1
   AND co.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 3)

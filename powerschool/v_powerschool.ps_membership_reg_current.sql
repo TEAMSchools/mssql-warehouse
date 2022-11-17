@@ -12,16 +12,16 @@ SELECT ev.studentid
       ,ev.yearid
 
       ,cd.date_value AS calendardate
-      ,CONVERT(INT, cd.a) AS a
-      ,CONVERT(INT, cd.b) AS b
-      ,CONVERT(INT, cd.c) AS c
-      ,CONVERT(INT, cd.d) AS d
-      ,CONVERT(INT, cd.e) AS e
-      ,CONVERT(INT, cd.f) AS f
-      ,CONVERT(INT, cd.bell_schedule_id) AS bell_schedule_id
-      ,CONVERT(INT, cd.cycle_day_id) AS cycle_day_id
+      ,cd.a
+      ,cd.b
+      ,cd.c
+      ,cd.d
+      ,cd.e
+      ,cd.f
+      ,cd.bell_schedule_id
+      ,cd.cycle_day_id
 
-      ,CONVERT(INT, bs.attendance_conversion_id) AS attendance_conversion_id
+      ,bs.attendance_conversion_id
 
       ,(CASE
          WHEN ((ev.track='A' AND cd.a = 1)
@@ -39,8 +39,8 @@ SELECT ev.studentid
             OR (ev.track='C' AND cd.c = 1)
             OR (ev.track='D' AND cd.d = 1)
             OR (ev.track='E' AND cd.e = 1)
-            OR (ev.track='F' AND cd.f = 1)) THEN CONVERT(INT, cd.membershipvalue)
-         WHEN (ev.track IS NULL) THEN CONVERT(INT, cd.membershipvalue)
+            OR (ev.track='F' AND cd.f = 1)) THEN cd.membershipvalue
+         WHEN (ev.track IS NULL) THEN cd.membershipvalue
          ELSE 0
         END) AS calendarmembership
       ,(CASE
@@ -63,12 +63,12 @@ SELECT ev.studentid
          WHEN (ev.track IS NULL) THEN 0
          ELSE 1
         END) AS offtrack
-FROM powerschool.bell_schedule bs
-JOIN powerschool.calendar_day cd 
-  ON bs.id = cd.bell_schedule_id
- AND cd.insession = 1
-JOIN powerschool.ps_enrollment_all_static ev 
-  ON cd.schoolid = ev.schoolid
+FROM powerschool.ps_enrollment_all_static ev
+INNER JOIN powerschool.calendar_day cd
+  ON ev.schoolid = cd.schoolid
  AND cd.date_value >= ev.entrydate
  AND cd.date_value < ev.exitdate
-WHERE bs.year_id = (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990)
+ AND cd.insession = 1
+INNER JOIN powerschool.bell_schedule bs
+  ON cd.bell_schedule_id = bs.id
+WHERE ev.yearid = (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990)

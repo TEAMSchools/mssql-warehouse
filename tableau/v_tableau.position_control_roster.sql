@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW tableau.nj_position_control_roster AS
+CREATE OR ALTER VIEW tableau.position_control_roster AS
 
 WITH pivot_table AS (
   SELECT position_id
@@ -42,7 +42,7 @@ SELECT sr.first_name
       ,sr.annual_salary AS base_salary 
       ,sr.work_assignment_start_date
       ,sr.worker_category AS ft_pt
-      ,DATEDIFF(YEAR, sr.work_assignment_start_date, GETDATE()) AS longevity
+      ,DATEDIFF(YEAR, sr.work_assignment_start_date, CURRENT_TIMESTAMP) AS longevity
       ,CASE WHEN sr.worker_category LIKE '%part%' THEN 0.5 ELSE 1.0 END AS fte
       /*Aliasing CEO/CFO for report terminology */
       ,CASE 
@@ -69,4 +69,4 @@ LEFT JOIN cost_number cn
   ON sr.associate_id = cn.associate_id
 WHERE sr.position_status IN ('Active', 'Leave')
   AND (job_title IN ('Chief Executive Officer', 'Chief Financial Officer')
-         OR sr.business_unit IN ('TEAM Academy Charter School', 'KIPP Cooper Norcross Academy'))
+         OR sr.business_unit IN ('TEAM Academy Charter School', 'KIPP Cooper Norcross Academy','KIPP Miami'))

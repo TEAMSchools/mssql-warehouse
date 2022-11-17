@@ -18,10 +18,10 @@ WITH parcc AS (
   FROM
       (
        SELECT sat.hs_student_id
-             ,CONVERT(FLOAT, sat.evidence_based_reading_writing) AS evidence_based_reading_writing
-             ,CONVERT(FLOAT, sat.math) AS math
-             ,CONVERT(FLOAT, sat.reading_test) AS reading_test
-             ,CONVERT(FLOAT, sat.math_test) AS math_test
+             ,CAST(sat.evidence_based_reading_writing AS INT) AS evidence_based_reading_writing
+             ,CAST(sat.math AS INT) AS math
+             ,CAST(sat.reading_test AS INT) AS reading_test
+             ,CAST(sat.math_test AS INT) AS math_test
        FROM gabby.naviance.sat_scores sat
       ) sub
   UNPIVOT(
@@ -72,6 +72,7 @@ SELECT co.student_number
       ,co.c_504_status
       ,co.is_retained_year
       ,co.is_retained_ever
+      ,co.school_abbreviation
 
       ,a.test_type
       ,a.test_score

@@ -7,35 +7,35 @@ SELECT cn
       ,company
       ,createtimestamp
       ,department
-      ,CONVERT(VARCHAR(125),displayname) AS displayname
+      ,CAST(displayname AS VARCHAR(125)) AS displayname
       ,distinguishedname
       ,employeeid
-      ,CONVERT(VARCHAR(125),employeenumber) AS employeenumber
-      ,CONVERT(VARCHAR(125),givenname) AS givenname
+      ,CAST(employeenumber AS VARCHAR(125)) AS employeenumber
+      ,CAST(givenname AS VARCHAR(125)) AS givenname
       ,homephone
       ,homepostaladdress
-      ,CONVERT(VARCHAR(125),idautopersonalternateid) AS idautopersonalternateid
-      ,CONVERT(VARCHAR(1),idautostatus) AS idautostatus
+      ,CAST(idautopersonalternateid AS VARCHAR(125)) AS idautopersonalternateid
+      ,CAST(idautostatus AS VARCHAR(1)) AS idautostatus
       ,l
       ,logoncount
-      ,CONVERT(VARCHAR(125),mail) AS mail
+      ,CAST(mail AS VARCHAR(125)) AS mail
       ,manager
       ,middlename
       ,mobile
       ,modifytimestamp
       ,name
       ,objectcategory
-      ,CONVERT(VARCHAR(125),physicaldeliveryofficename) AS physicaldeliveryofficename
-      ,CONVERT(VARCHAR(125),samaccountname) AS samaccountname
-      ,CONVERT(VARCHAR(125),sn) AS sn
+      ,CAST(physicaldeliveryofficename AS VARCHAR(125)) AS physicaldeliveryofficename
+      ,CAST(samaccountname AS VARCHAR(125)) AS samaccountname
+      ,CAST(sn AS VARCHAR(125)) AS sn
       ,telephonenumber
       ,textencodedoraddress
-      ,CONVERT(VARCHAR(125),title) AS title
+      ,CAST(title AS VARCHAR(125)) AS title
       ,useraccountcontrol
-      ,CONVERT(VARCHAR(125),userprincipalname) AS userprincipalname
+      ,CAST(userprincipalname AS VARCHAR(125)) AS userprincipalname
       ,DATEADD(MINUTE
               /* number of 10 minute intervals (in microseconds) since last reset, offset by time zone...holy shit */
-              ,(CONVERT(BIGINT,pwdlastset) / 600000000) + DATEDIFF(MINUTE,GETUTCDATE(),GETDATE())
+              ,(CAST(pwdlastset AS BIGINT) / 600000000) + DATEDIFF(MINUTE,GETUTCDATE(),CURRENT_TIMESTAMP)
               /* origin date for DATETIME2 */
               ,CAST('1/1/1601' AS DATETIME2)) AS pwdlastset
       ,CASE WHEN useraccountcontrol & 2 = 0 THEN 1 ELSE 0 END AS is_active

@@ -15,7 +15,7 @@ WITH att AS (
        SELECT mem.studentid
              ,mem.[db_name]
              ,mem.membershipvalue
-             ,CONVERT(FLOAT, mem.attendancevalue) AS attendancevalue
+             ,CAST(mem.attendancevalue AS FLOAT) AS attendancevalue
 
              ,CASE
                WHEN hb.specprog_name = 'Hybrid (SC) - Cohort D' AND cal.[type] <> 'AR' THEN 1
@@ -33,7 +33,7 @@ WITH att AS (
         AND mem.calendardate BETWEEN hb.enter_date AND hb.exit_date
         AND mem.[db_name] = hb.[db_name]
         AND hb.specprog_name IN ('Hybrid - Cohort A', 'Hybrid - Cohort B', 'Remote - Cohort C', 'Hybrid (SC) - Cohort D')
-       WHERE mem.calendardate <= GETDATE()
+       WHERE mem.calendardate <= CURRENT_TIMESTAMP
          AND mem.membershipvalue > 0
       ) sub
   GROUP BY sub.studentid
@@ -77,7 +77,7 @@ SELECT co.region AS helper_region
       ,co.last_name AS LastName
       ,NULL AS GenerationCodeSuffix
       ,co.gender AS Gender
-      ,CONVERT(VARCHAR, co.dob, 112) AS DateofBirth
+      ,CAST(co.dob, 112 AS VARCHAR) AS DateofBirth
 
       ,nj.cityofbirth AS CityofBirth
       ,nj.stateofbirth AS StateOfBirth
@@ -106,7 +106,7 @@ SELECT co.region AS helper_region
       ,nj.districtcoderesident AS DistrictCodeResident
       ,nj.schoolcoderesident AS SchoolCodeResident
 
-      ,CONVERT(VARCHAR, s.districtentrydate, 112) AS DistrictEntryDate
+      ,CAST(s.districtentrydate, 112 AS VARCHAR) AS DistrictEntryDate
 
       ,CASE 
         WHEN co.region = 'TEAM' THEN '80'
@@ -139,10 +139,10 @@ SELECT co.region AS helper_region
         ELSE NULL 
        END AS SchoolCodeAttending
       ,co.cohort AS YearOfGraduation
-      ,CONVERT(VARCHAR, s.entrydate, 112) AS SchoolEntryDate
+      ,CAST(s.entrydate, 112 AS VARCHAR) AS SchoolEntryDate
       ,CASE 
         WHEN co.enroll_status = 0 THEN NULL
-        WHEN co.enroll_status IN (2,3) THEN CONVERT(VARCHAR, co.exitdate, 112)
+        WHEN co.enroll_status IN (2,3) THEN CAST(co.exitdate, 112 AS VARCHAR)
         ELSE NULL
        END AS SchoolExitDate
       ,CASE WHEN co.exitcode = 'G1' THEN 'L' ELSE co.exitcode END AS SchoolExitWithdrawalCode
@@ -162,7 +162,7 @@ SELECT co.region AS helper_region
        END AS FreeandReducedRateLunchStatus
       ,CASE 
         WHEN co.grade_level = 0 THEN 'KF'
-        ELSE CONVERT(VARCHAR, co.grade_level) 
+        ELSE CAST(co.grade_level AS VARCHAR) 
        END AS GradeLevel
       ,nj.programtypecode AS ProgramTypeCode
       ,CASE 
@@ -189,10 +189,10 @@ SELECT co.region AS helper_region
         WHEN co.specialed_classification = '99' THEN '99'
         WHEN nj.determined_ineligible_yn = 1 THEN '00'
        END AS SpecialEducationClassification
-      ,CONVERT(VARCHAR, nj.lepbegindate, 112) AS ELLIdentificationDate
+      ,CAST(nj.lepbegindate, 112 AS VARCHAR) AS ELLIdentificationDate
       ,CASE 
         WHEN nj.lep_completion_date_refused = 1 THEN 'REFUSED'
-        ELSE CONVERT(VARCHAR, nj.lependdate, 112)
+        ELSE CAST(nj.lependdate, 112 AS VARCHAR)
        END AS ELLExitDate
       ,NULL AS NonPublic
       ,nj.residentmunicipalcode AS ResidentMunicipalCode

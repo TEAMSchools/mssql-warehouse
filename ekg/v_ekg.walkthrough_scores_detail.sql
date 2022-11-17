@@ -6,7 +6,7 @@ CREATE OR ALTER VIEW ekg.walkthrough_scores_detail AS
 WITH archive_unpivot AS (
   SELECT academic_year
         ,term_name AS reporting_term        
-        ,CONVERT(VARCHAR(250),rubric_strand_field) AS rubric_strand_field
+        ,CAST(rubric_strand_field AS VARCHAR(250)) AS rubric_strand_field
         ,pct_of_classrooms_proficient
         ,LTRIM(RTRIM(school)) AS school
   FROM gabby.ekg.walkthrough_scores_archive
@@ -72,7 +72,7 @@ WITH archive_unpivot AS (
         ,academic_year
         ,reporting_term COLLATE Latin1_General_BIN AS reporting_term
         ,am_pm      
-        ,CONVERT(VARCHAR(250),rubric_strand_field) AS rubric_strand_field
+        ,CAST(rubric_strand_field AS VARCHAR(250)) AS rubric_strand_field
         ,pct_of_classrooms_proficient
   FROM gabby.ekg.walkthrough_scores 
   UNPIVOT(

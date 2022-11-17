@@ -3,20 +3,23 @@ GO
 
 CREATE OR ALTER VIEW extracts.clever_students AS
 
-SELECT CONVERT(VARCHAR(25), co.schoolid) AS [School_id]
-      ,CONVERT(VARCHAR(25), co.student_number) AS [Student_id]
-      ,CONVERT(VARCHAR(25), co.student_number) AS [Student_number]
-      ,NULL AS [State_id]
+SELECT CAST(co.schoolid AS NVARCHAR(16)) AS [School_id]
+      ,CAST(co.student_number AS NVARCHAR(16)) AS [Student_id]
+      ,CAST(co.student_number AS NVARCHAR(16)) AS [Student_number]
+      ,CASE 
+        WHEN co.region = 'KMS' THEN suf.fleid
+        ELSE co.state_studentnumber 
+       END AS [State_id]
       ,co.last_name AS [Last_name]
       ,co.middle_name AS [Middle_name]
       ,co.first_name AS [First_name]
       ,CASE
         WHEN co.grade_level = 0 THEN 'Kindergarten'
-        ELSE CONVERT(VARCHAR(5), co.grade_level)
+        ELSE CAST(co.grade_level AS NVARCHAR(2))
        END AS [Grade]
       ,co.gender AS [Gender]
       ,co.cohort AS [Graduation_year]
-      ,CONVERT(VARCHAR(25), dob, 101) AS [DOB]
+      ,CONVERT(VARCHAR, dob, 101) AS [DOB]
       ,co.ethnicity AS [Race]
       ,NULL AS [Hispanic_Latino]
       ,NULL AS [Home_language]
@@ -37,7 +40,7 @@ SELECT CONVERT(VARCHAR(25), co.schoolid) AS [School_id]
       ,sc.person_relationship AS [Contact_relationship]
       ,CASE WHEN sc.person_type IN ('mother', 'father', 'contact1', 'contact2') THEN 'primary' ELSE sc.person_type END AS [Contact_type]
       ,COALESCE(sc.person_name, sc.person_type) AS [Contact_name]
-      ,CONVERT(VARCHAR(25), LEFT(gabby.utilities.STRIP_CHARACTERS(sc.contact, '^0-9'), 10)) AS [Contact_phone]
+      ,CAST(LEFT(gabby.utilities.STRIP_CHARACTERS(sc.contact, '^0-9'), 10) AS VARCHAR(16)) AS [Contact_phone]
       ,CASE
         WHEN sc.contact_type = 'home' THEN 'Home'
         WHEN sc.contact_type = 'mobile' THEN 'Cell'
@@ -59,6 +62,10 @@ LEFT JOIN gabby.powerschool.gpa_cumulative gpa
   ON co.studentid = gpa.studentid
  AND co.schoolid = gpa.schoolid
  AND co.[db_name] = gpa.[db_name]
+LEFT JOIN gabby.powerschool.u_studentsuserfields suf
+  ON co.students_dcid = suf.studentsdcid
+ AND co.[db_name] = suf.[db_name]
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.rn_year = 1
   AND co.grade_level <> 99
+  AND co.reporting_school_name <> 'Out of District'

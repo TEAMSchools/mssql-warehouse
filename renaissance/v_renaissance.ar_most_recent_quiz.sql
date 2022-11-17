@@ -26,7 +26,7 @@ FROM
            ,rn_quiz
            ,CASE
              WHEN academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR() THEN DATEDIFF(DAY, dt_taken, DATEFROMPARTS((academic_year + 1), 6, 30))
-             ELSE DATEDIFF(DAY, dt_taken, GETDATE())
+             ELSE DATEDIFF(DAY, dt_taken, CURRENT_TIMESTAMP)
             END AS n_days_ago
 
            ,ROW_NUMBER() OVER(

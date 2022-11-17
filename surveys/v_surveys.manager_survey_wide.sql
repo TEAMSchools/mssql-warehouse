@@ -21,11 +21,11 @@ WITH survey_unpivot AS (
              ,subject_location 
              ,subject_manager_name
       
-             ,CONVERT(NVARCHAR(MAX),COUNT(CASE WHEN open_ended = 'N' THEN response_value END)) AS n_responses
-             ,CONVERT(NVARCHAR(MAX),ROUND(AVG(CONVERT(FLOAT,response_value)), 1)) AS avg_response_value_subject      
-             ,CONVERT(NVARCHAR(MAX),MAX(avg_response_value_location)) AS avg_response_value_location
-             ,CONVERT(NVARCHAR(MAX),gabby.dbo.GROUP_CONCAT_D(DISTINCT respondent_name, CHAR(10))) AS respondent_names
-             ,CONVERT(NVARCHAR(MAX),gabby.dbo.GROUP_CONCAT_D(CASE WHEN open_ended = 'Y' THEN response END, CHAR(10))) AS response_text
+             ,CAST(COUNT(CASE WHEN open_ended = 'N' THEN response_value END) AS NVARCHAR(MAX)) AS n_responses
+             ,CAST(ROUND(AVG(CAST(response_value AS FLOAT)), 1) AS NVARCHAR(MAX)) AS avg_response_value_subject      
+             ,CAST(MAX(avg_response_value_location) AS NVARCHAR(MAX)) AS avg_response_value_location
+             ,CAST(gabby.dbo.GROUP_CONCAT_D(DISTINCT respondent_name, CHAR(10)) AS NVARCHAR(MAX)) AS respondent_names
+             ,CAST(gabby.dbo.GROUP_CONCAT_D(CASE WHEN open_ended = 'Y' THEN response END, CHAR(10)) AS NVARCHAR(MAX)) AS response_text
        FROM gabby.surveys.manager_survey_detail      
        GROUP BY academic_year
                ,term_name                    

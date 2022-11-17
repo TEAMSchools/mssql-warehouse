@@ -24,10 +24,10 @@ SELECT [_id] AS assignment_id
       ,JSON_VALUE([grade], '$.name') AS [grade_name]
       ,JSON_VALUE([course], '$._id') AS [course_id]
       ,JSON_VALUE([course], '$.name') AS [course_name]
-      ,CONVERT(FLOAT, JSON_VALUE([progress], '$.percent')) AS progress_percent
+      ,CAST(JSON_VALUE([progress], '$.percent') AS FLOAT) AS progress_percent
       ,JSON_VALUE([progress], '$.assigner') AS progress_assigner
       ,JSON_VALUE([progress], '$.justification') AS progress_justification
-      ,CONVERT(DATETIMEOFFSET, JSON_VALUE([progress], '$.date')) AS progress_date
+      ,CAST(JSON_VALUE([progress], '$.date') AS DATETIMEOFFSET) AS progress_date
 
       /* JSON arrays */
       ,[tags]

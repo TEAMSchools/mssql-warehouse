@@ -8,7 +8,7 @@ WITH illuminate_fp AS (
         ,student_number
         ,testid
         ,[status]
-        ,CONVERT(VARCHAR(25), field) AS field
+        ,CAST(field AS VARCHAR(25)) AS field
         ,score
         ,read_lvl
         ,lvl_num
@@ -65,14 +65,14 @@ WITH illuminate_fp AS (
  )
 
 ,all_scores AS (
-  SELECT CONVERT(VARCHAR(25), rs.unique_id) AS unique_id
-        ,CONVERT(INT, rs.student_number) AS student_number
-        ,CONVERT(INT, rs.testid) AS testid
-        ,CASE WHEN rs.[status] <> '' THEN CONVERT(VARCHAR(25), rs.[status]) END AS [status]
-        ,CONVERT(VARCHAR(25), rs.field) AS field
-        ,CONVERT(FLOAT, rs.score) AS score
-        ,CASE WHEN rs.read_lvl <> '' THEN CONVERT(VARCHAR(5), rs.read_lvl) END AS read_lvl
-        ,CONVERT(INT, rs.lvl_num) AS lvl_num
+  SELECT CAST(rs.unique_id AS VARCHAR(25)) AS unique_id
+        ,CAST(rs.student_number AS INT) AS student_number
+        ,CAST(rs.testid AS INT) AS testid
+        ,CASE WHEN rs.[status] <> '' THEN CAST(rs.[status] AS VARCHAR(25)) END AS [status]
+        ,CAST(rs.field AS VARCHAR(25)) AS field
+        ,CAST(rs.score AS FLOAT) AS score
+        ,CASE WHEN rs.read_lvl <> '' THEN CAST(rs.read_lvl AS VARCHAR(5)) END AS read_lvl
+        ,CAST(rs.lvl_num AS INT) AS lvl_num
   FROM gabby.lit.powerschool_component_scores_archive rs
 
   UNION ALL
@@ -101,13 +101,13 @@ WITH illuminate_fp AS (
  )
 
 ,prof_clean AS (
-  SELECT CONVERT(INT, testid) AS testid
-        ,CONVERT(INT, lvl_num) AS lvl_num
-        ,CONVERT(VARCHAR(125), field_name) AS field_name
-        ,CONVERT(VARCHAR(25), domain) AS domain
-        ,CONVERT(VARCHAR(25), subdomain) AS subdomain
-        ,CONVERT(VARCHAR(125), strand) AS strand
-        ,CONVERT(INT, score) AS score
+  SELECT CAST(testid AS INT) AS testid
+        ,CAST(lvl_num AS INT) AS lvl_num
+        ,CAST(field_name AS VARCHAR(125)) AS field_name
+        ,CAST(domain AS VARCHAR(25)) AS domain
+        ,CAST(subdomain AS VARCHAR(25)) AS subdomain
+        ,CAST(strand AS VARCHAR(125)) AS strand
+        ,CAST(score AS INT) AS score
   FROM gabby.lit.component_proficiency_targets
  )
 

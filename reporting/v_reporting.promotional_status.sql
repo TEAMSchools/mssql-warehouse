@@ -4,15 +4,19 @@ GO
 CREATE OR ALTER VIEW reporting.promotional_status AS
 
 WITH failing AS (
-  SELECT student_number
-        ,academic_year
-        ,term_name COLLATE Latin1_General_BIN AS term_name
-        ,SUM(CASE WHEN y1_grade_letter IN ('F', 'F*') THEN 1 ELSE 0 END) AS n_failing
-        ,SUM(CASE WHEN y1_grade_letter IN ('F', 'F*') AND credittype IN ('MATH', 'ENG', 'SCI', 'SOC') THEN 1 ELSE 0 END) AS n_failing_ms_core
-  FROM gabby.powerschool.final_grades_static
-  GROUP BY student_number
-          ,academic_year
-          ,term_name
+  SELECT fg.studentid
+        ,fg.yearid
+        ,fg.storecode
+        ,SUM(CASE WHEN fg.y1_grade_letter IN ('F', 'F*') THEN 1 ELSE 0 END) AS n_failing
+
+        ,SUM(CASE WHEN fg.y1_grade_letter IN ('F', 'F*') AND c.credittype IN ('MATH', 'ENG', 'SCI', 'SOC') THEN 1 ELSE 0 END) AS n_failing_ms_core
+  FROM gabby.powerschool.final_grades_static fg
+  INNER JOIN gabby.powerschool.courses c
+    ON fg.course_number = c.course_number
+   AND fg.[db_name] = c.[db_name]
+  GROUP BY fg.studentid
+          ,fg.yearid
+          ,fg.storecode
  )
 
 ,credits AS (
@@ -61,10 +65,10 @@ WITH failing AS (
   SELECT mem.studentid
         ,mem.[db_name]
         ,mem.yearid
-        ,ROUND(AVG(CONVERT(FLOAT, mem.attendancevalue)) * 100, 1) AS ada_y1_running
+        ,ROUND(AVG(CAST(mem.attendancevalue AS FLOAT)) * 100, 1) AS ada_y1_running
   FROM gabby.powerschool.ps_adaadm_daily_ctod mem
   WHERE mem.membershipvalue > 0
-    AND mem.calendardate <= CONVERT(DATE, GETDATE())
+    AND mem.calendardate <= CAST(CURRENT_TIMESTAMP AS DATE)
   GROUP BY mem.studentid
           ,mem.[db_name]
           ,mem.yearid
@@ -180,7 +184,7 @@ FROM
                 ,CASE WHEN co.is_retained_year + co.is_retained_ever >= 1 THEN 1 ELSE 0 END AS is_retained_flag
 
                 ,s.sched_nextyeargrade
-      
+
                 ,rt.time_per_name AS reporting_term_name
                 ,rt.alt_name
                 ,rt.is_curterm
@@ -206,9 +210,9 @@ FROM
 
                 ,qas.avg_performance_band_number AS qa_avg_performance_band_number
           FROM gabby.powerschool.cohort_identifiers_static co
-          LEFT JOIN gabby.powerschool.students s
+          INNER JOIN gabby.powerschool.students s
             ON co.student_number = s.student_number
-          JOIN gabby.reporting.reporting_terms rt
+          INNER JOIN gabby.reporting.reporting_terms rt
             ON co.schoolid = rt.schoolid
            AND co.academic_year = rt.academic_year
            AND rt.identifier = 'RT'
@@ -222,9 +226,9 @@ FROM
            AND co.academic_year = lit.academic_year
            AND rt.alt_name = lit.test_round
           LEFT JOIN failing f
-            ON co.student_number = f.student_number
-           AND co.academic_year = f.academic_year
-           AND rt.alt_name = f.term_name
+            ON co.studentid = f.studentid
+           AND co.yearid = f.yearid
+           AND rt.alt_name = f.storecode COLLATE Latin1_General_BIN
           LEFT JOIN credits cr
             ON co.studentid = cr.studentid
            AND co.schoolid = cr.schoolid

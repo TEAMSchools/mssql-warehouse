@@ -1,14 +1,14 @@
 SELECT s.local_student_id AS student_number        
-      ,CONVERT(DATE,sub.[Date Administered]) AS date_administered
-      ,CONVERT(FLOAT,sub.[About the Text]) AS about_the_text
-      ,CONVERT(FLOAT,sub.[Beyond the Text]) AS beyond_the_text
-      ,CONVERT(FLOAT,sub.[Within the Text]) AS within_the_text
-      ,CONVERT(FLOAT,sub.Accuracy) AS accuracy
-      ,CONVERT(FLOAT,sub.Fluency) AS fluency
-      ,CONVERT(FLOAT,sub.[Reading Rate (wpm)]) AS reading_rate_wpm
+      ,CAST(sub.[Date Administered] AS DATE) AS date_administered
+      ,CAST(sub.[About the Text] AS FLOAT) AS about_the_text
+      ,CAST(sub.[Beyond the Text] AS FLOAT) AS beyond_the_text
+      ,CAST(sub.[Within the Text] AS FLOAT) AS within_the_text
+      ,CAST(sub.Accuracy AS FLOAT) AS accuracy
+      ,CAST(sub.Fluency AS FLOAT) AS fluency
+      ,CAST(sub.[Reading Rate (wpm)] AS FLOAT) AS reading_rate_wpm
         
       ,sub.[Instructional Level Tested] AS instructional_level_tested
-      ,CONVERT(NVARCHAR,sub.[Rate Proficiency]) AS rate_proficiency
+      ,CAST(sub.[Rate Proficiency] AS NVARCHAR) AS rate_proficiency
       ,sub.[Key Lever] AS key_lever
       ,sub.[Fiction/ Nonfiction] AS fiction_nonfiction
       ,sub.[Test Administered By] AS test_administered_by
@@ -28,7 +28,7 @@ FROM
            ,repository_row_id  
            ,student_id  
            ,field_about_the_text AS [About the Text]
-           ,LEFT(CONVERT(INT,field_academic_year), 4) AS [Academic Year]
+           ,LEFT(CAST(field_academic_year AS INT), 4) AS [Academic Year]
            ,field_accuracy_1 AS [Accuracy]
            ,field_level_tested AS [Achieved Independent Level]
            ,field_beyond_the_text AS [Beyond the Text]

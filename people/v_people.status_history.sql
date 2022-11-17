@@ -10,10 +10,10 @@ WITH status_union AS (
         ,sh.file_number
         ,sh.position_status
         ,CASE 
-          WHEN CONVERT(DATE, status_effective_date) >= '2021-01-01' THEN CONVERT(DATE, status_effective_date)
+          WHEN CAST(status_effective_date AS DATE) >= '2021-01-01' THEN CAST(status_effective_date AS DATE)
           ELSE '2021-01-01'
          END AS status_effective_date
-        ,CONVERT(DATE, sh.status_effective_end_date) AS status_effective_end_date
+        ,CAST(sh.status_effective_end_date AS DATE) AS status_effective_end_date
         ,sh.termination_reason_description
         ,sh.leave_reason_description
         ,sh.paid_leave_of_absence
@@ -22,11 +22,11 @@ WITH status_union AS (
 
         ,'ADP' AS source_system
   FROM gabby.adp.status_history sh
-  JOIN gabby.people.employee_numbers sr
+  INNER JOIN gabby.people.employee_numbers sr
     ON sh.associate_id = sr.associate_id
    AND sr.is_active = 1
-  WHERE CONVERT(DATE, sh.status_effective_date) >= '2021-01-01'
-          OR COALESCE(CONVERT(DATE, sh.status_effective_end_date), GETDATE()) >= '2021-01-01'
+  WHERE CAST(sh.status_effective_date AS DATE) >= '2021-01-01'
+     OR COALESCE(CAST(sh.status_effective_end_date AS DATE), CURRENT_TIMESTAMP) >= '2021-01-01'
 
   UNION ALL
 
@@ -47,11 +47,11 @@ WITH status_union AS (
         ,ds.number AS employee_number
         ,'DF' AS source_system
   FROM gabby.dayforce.employee_status_clean ds
-  JOIN gabby.people.employee_numbers sr
+  INNER JOIN gabby.people.employee_numbers sr
     ON ds.number = sr.employee_number
    AND sr.is_active = 1
   WHERE ds.effective_start <= '2020-12-31'
- )
+)
 
 ,status_dates AS (
   SELECT employee_number
@@ -62,20 +62,21 @@ WITH status_union AS (
         ,leave_reason_description
         ,paid_leave_of_absence
         ,source_system
-        ,CONVERT(DATE,status_effective_date) AS status_effective_date
+        ,CAST(status_effective_date AS DATE) AS status_effective_date
         ,CASE
           WHEN termination_reason_description = 'Import Created Action'
                THEN LAG(termination_reason_description, 1) OVER(
                       PARTITION BY associate_id
-                        ORDER BY status_effective_date)
+                      ORDER BY status_effective_date
+                    )
           ELSE termination_reason_description
          END AS termination_reason_description -- cover ADP Import status with terminal DF reason
         ,COALESCE(
-             status_effective_end_date
-            ,DATEADD(DAY, -1, LEAD(status_effective_date, 1) OVER(PARTITION BY position_id ORDER BY status_effective_date))
-           ) AS status_effective_end_date
+           status_effective_end_date
+          ,DATEADD(DAY, -1, LEAD(status_effective_date, 1) OVER(PARTITION BY position_id ORDER BY status_effective_date))
+         ) AS status_effective_end_date
   FROM status_union
- )
+)
 
 ,status_clean AS (
   SELECT employee_number
@@ -92,7 +93,7 @@ WITH status_union AS (
         ,position_status_prev
         ,COALESCE(
            CASE WHEN ROW_NUMBER() OVER(PARTITION BY position_id ORDER BY status_effective_date DESC) = 1 THEN eoy_date END
-          ,CONVERT(DATE,status_effective_end_date)
+          ,CAST(status_effective_end_date AS DATE)
           ,DATEADD(DAY, -1, LEAD(status_effective_date, 1) OVER(PARTITION BY position_id ORDER BY status_effective_date))
           ,eoy_date
          ) AS status_effective_end_date_eoy
@@ -110,15 +111,17 @@ WITH status_union AS (
              ,leave_reason_description
              ,source_system
              ,DATEFROMPARTS(
-               CASE
-                WHEN DATEPART(YEAR, status_effective_date) > gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-                 AND DATEPART(MONTH, status_effective_date) >= 7
-                     THEN DATEPART(YEAR, status_effective_date) + 1
-                WHEN DATEPART(YEAR, GETDATE()) = gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1
-                 AND DATEPART(MONTH, GETDATE()) >= 7
-                     THEN gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 2
-                ELSE gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1
-               END, 6, 30
+                CASE
+                 WHEN DATEPART(YEAR, status_effective_date) > gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+                  AND DATEPART(MONTH, status_effective_date) >= 7
+                      THEN DATEPART(YEAR, status_effective_date) + 1
+                 WHEN DATEPART(YEAR, CURRENT_TIMESTAMP) = gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1
+                  AND DATEPART(MONTH, CURRENT_TIMESTAMP) >= 7
+                      THEN gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 2
+                 ELSE gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1
+                END
+               ,6
+               ,30
               ) AS eoy_date
              ,LAG(position_status, 1) OVER(PARTITION BY position_id ORDER BY status_effective_date) AS position_status_prev
        FROM status_dates
@@ -139,8 +142,10 @@ SELECT employee_number
       ,paid_leave_of_absence
       ,leave_reason_description
       ,source_system
-      ,MIN(CASE
-            WHEN CONVERT(DATE, GETDATE()) BETWEEN status_effective_date AND status_effective_end_date_eoy
-                   THEN position_status
-           END) OVER(PARTITION BY associate_id) AS position_status_cur
+      ,MIN(
+         CASE
+          WHEN CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN status_effective_date AND status_effective_end_date_eoy
+               THEN position_status
+         END
+       ) OVER(PARTITION BY associate_id) AS position_status_cur
 FROM status_clean

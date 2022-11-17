@@ -9,7 +9,7 @@ SELECT co.student_web_id AS [USER_NAME]
       ,co.first_name AS FIRST_NAME
       ,NULL AS MIDDLE_NAME
       ,co.last_name AS LAST_NAME
-      ,CASE WHEN co.grade_level = 0 THEN 'K' ELSE CONVERT(VARCHAR(2), co.grade_level) END AS GRADE /* PK, K, 1-12 */
+      ,CASE WHEN co.grade_level = 0 THEN 'K' ELSE CAST(co.grade_level AS VARCHAR(2)) END AS GRADE /* PK, K, 1-12 */
       ,s.[name] AS SCHOOL_NAME
       ,CONCAT(enr.course_number, '.', UPPER(enr.section_number)) AS CLASS_NAME
       ,NULL AS LEXILE_SCORE
@@ -34,8 +34,7 @@ JOIN gabby.powerschool.course_enrollments_current_static enr
   ON co.student_number = enr.student_number
  AND co.academic_year = enr.academic_year
  AND co.[db_name] = enr.[db_name]
- AND enr.course_number IN ('ELA01068G1', 'ENG01051F1', 'ENG01051F2', 'ENG01051S1',
-                           'ENG01051S2', 'MAT02052F1', 'MAT02072F2', 'MAT02999G1')
+ AND enr.course_number IN ('ELA01068G1', 'MAT02999G1')
  AND enr.course_enroll_status = 0
  AND enr.section_enroll_status = 0
 JOIN gabby.powerschool.schools s

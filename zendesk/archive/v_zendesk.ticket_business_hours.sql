@@ -21,10 +21,10 @@ WITH ticket_dates AS (
       (
        SELECT DATEADD(MINUTE
                      ,start_time_utc
-                     ,DATEADD(DAY, -(DATEPART(WEEKDAY, GETDATE()) - 1), CONVERT(DATETIME2,CONVERT(DATE,GETDATE())))) AS business_hours_start
+                     ,DATEADD(DAY, -(DATEPART(WEEKDAY, CURRENT_TIMESTAMP) - 1), CAST(CAST(CURRENT_TIMESTAMP AS DATE))) AS DATETIME2) AS business_hours_start
              ,DATEADD(MINUTE
                      ,end_time_utc
-                     ,DATEADD(DAY, -(DATEPART(WEEKDAY, GETDATE()) - 1), CONVERT(DATETIME2,CONVERT(DATE,GETDATE())))) AS business_hours_end
+                     ,DATEADD(DAY, -(DATEPART(WEEKDAY, CURRENT_TIMESTAMP) - 1), CAST(CAST(CURRENT_TIMESTAMP AS DATE))) AS DATETIME2) AS business_hours_end
        FROM gabby.zendesk.schedule
       ) sub
  )
@@ -66,7 +66,7 @@ WITH ticket_dates AS (
                      ,DATETIME2FROMPARTS(rd.year_part, rd.month_part, rd.day_part, bh.end_hour, 0, 0, 0, 0) AS bh_end_timestamp
                FROM ticket_dates td
                INNER JOIN gabby.utilities.reporting_days rd
-                  ON rd.date BETWEEN CONVERT(DATE,td.created_at) AND CONVERT(DATE,td.solved_at)
+                  ON rd.date BETWEEN CAST(td.created_at AS DATE) AND CAST(td.solved_at AS DATE)
                LEFT JOIN business_hours bh
                   ON rd.dw_numeric = bh.dw_numeric
                WHERE td.ticket_id = 159300

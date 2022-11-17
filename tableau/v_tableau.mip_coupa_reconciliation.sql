@@ -78,8 +78,8 @@ WITH mip AS (
 ,coupa AS (
   SELECT code
         ,owner_name
-        ,CONVERT(FLOAT, REPLACE(amount,',', '')) AS amount
-        ,CONVERT(FLOAT, REPLACE(remaining, ',', '')) AS remaining
+        ,CAST(REPLACE(amount,',', '') AS FLOAT) AS amount
+        ,CAST(REPLACE(remaining, ',', '') AS FLOAT) AS remaining
         ,LEFT(period_name, 4) AS budget_period
   FROM gabby.coupa.budget_line_clean
  )

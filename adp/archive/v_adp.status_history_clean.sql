@@ -28,8 +28,8 @@ FROM
      SELECT sh.associate_id
            ,sh.position_id
            ,sh.position_status
-           ,CONVERT(DATE, sh.status_effective_date) AS status_effective_date
-           ,CONVERT(DATE, sh.status_effective_end_date) AS status_effective_end_date
+           ,CAST(sh.status_effective_date AS DATE) AS status_effective_date
+           ,CAST(sh.status_effective_end_date AS DATE) AS status_effective_end_date
            ,sh.termination_reason_description
            ,sh.leave_reason_description
            ,sh.paid_leave_of_absence
@@ -38,6 +38,6 @@ FROM
      FROM gabby.adp.status_history sh
      JOIN gabby.adp.employees_all sr
        ON sh.associate_id = sr.associate_id
-     WHERE CONVERT(DATE, sh.status_effective_date) < CONVERT(DATE, sh.status_effective_end_date)
+     WHERE CAST(sh.status_effective_date AS DATE) < CAST(sh.status_effective_end_date AS DATE)
              OR sh.status_effective_end_date IS NULL
     ) sub

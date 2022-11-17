@@ -34,7 +34,7 @@ WITH term_scaff AS (
         ,ROW_NUMBER() OVER(PARTITION BY e.id ORDER BY ts.term_start_date ASC) AS rn_term_asc
   FROM gabby.alumni.enrollment_c e
   INNER JOIN term_scaff ts
-    ON ts.term_start_date BETWEEN e.start_date_c AND COALESCE(e.actual_end_date_c, CONVERT(DATE, GETDATE()))
+    ON ts.term_start_date BETWEEN e.start_date_c AND COALESCE(e.actual_end_date_c, CAST(CURRENT_TIMESTAMP AS DATE))
   WHERE e.is_deleted = 0
  )
 
