@@ -1,7 +1,11 @@
-# Pull Request Pre-reqs
+# Pull Request 
 
-1. Create an Asana task here: https://app.asana.com/0/35737884613515/list
-2. Review the code checks listed in the task
-3. Paste the link from the task you created below:
+## If approved, this pull request will:
 
-`< ASANA TASK LINK >`
+-
+
+## Pre-reqs
+
+- [ ] Create an Asana task here: https://app.asana.com/0/35737884613515/list
+- [ ] Review the code checks listed in the task
+- [ ] Paste the link from the task you created in the space below:
