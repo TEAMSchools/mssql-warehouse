@@ -45,7 +45,6 @@ LEFT JOIN gabby.people.staff_roster s
   ON d.respondent_df_employee_number = s.employee_number
 WHERE d.survey_id = 5300913
   AND d.rn_respondent_subject = 1
-  AND d.campaign_academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
 
 UNION ALL
 

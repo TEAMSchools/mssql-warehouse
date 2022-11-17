@@ -23,5 +23,5 @@ SELECT id AS survey_campaign_id
       ,token_variables
       ,LTRIM(RTRIM(RIGHT([name], CHARINDEX(' ', REVERSE([name]))))) AS reporting_term_code
 
-      ,gabby.utilities.DATE_TO_SY(CAST(CASE WHEN link_open_date = '0000-00-00 00:00:00' THEN NULL ELSE link_open_date END) AS DATETIME2) AS academic_year
+      ,gabby.utilities.DATE_TO_SY(CAST(CASE WHEN link_open_date = '0000-00-00 00:00:00' THEN NULL ELSE link_open_date END AS DATETIME2)) AS academic_year
 FROM gabby.surveygizmo.survey_campaign
