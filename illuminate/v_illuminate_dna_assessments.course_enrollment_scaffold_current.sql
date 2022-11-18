@@ -7,7 +7,6 @@ WITH enr AS (
   /* K-12 enrollments */
   SELECT cc.dateenrolled AS entry_date
         ,cc.dateleft AS leave_date
-        ,cc.course_number
         ,AVG(CASE WHEN cc.sectionid < 0 THEN 1.0 ELSE 0.0 END) OVER(
            PARTITION BY cc.studyear, cc.course_number
          ) AS is_dropped_course
@@ -40,23 +39,25 @@ WITH enr AS (
     ON cc.course_number = ns.course_number COLLATE Latin1_General_BIN
   WHERE cc.dateenrolled >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
 
-  --UNION ALL
+  UNION ALL
 
-  --/* ES Writing */
-  --SELECT co.academic_year + 1 AS academic_year
-  --      ,co.entrydate AS entry_date
-  --      ,co.exitdate AS leave_date
-  --      ,'Writing' COLLATE Latin1_General_BIN AS subject_area
-  --      ,'RHET' AS credittype
-  --      ,0 AS is_advanced_math
-  --      ,co.grade_level + 1 AS grade_level_id
+  /* ES Writing */
+  SELECT co.entrydate AS entry_date
+        ,co.exitdate AS leave_date
+        ,0.0 AS is_dropped_course
+        ,co.academic_year + 1 AS academic_year
+        ,co.grade_level + 1 AS grade_level_id
+        ,'RHET' AS credittype
 
-  --      ,ils.student_id
-  --FROM gabby.powerschool.cohort_identifiers_static co
-  --INNER JOIN gabby.illuminate_public.students ils
-  --  ON co.student_number = ils.local_student_id
-  --WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-  --  AND co.grade_level <= 4
+        ,ils.student_id
+        ,'Writing' COLLATE Latin1_General_BIN AS subject_area
+        ,0 AS is_advanced_math
+  FROM gabby.powerschool.cohort_static co
+  INNER JOIN gabby.illuminate_public.students ils
+    ON co.student_number = ils.local_student_id
+  WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+    AND co.grade_level <= 4
+    AND co.[db_name] <> 'kippmiami'
 )
 
 SELECT student_id
