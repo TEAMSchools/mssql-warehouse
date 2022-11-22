@@ -75,8 +75,8 @@ FROM
            ,academic_year
            ,rn_year
            ,rn_school
-           ,rn_undergrad
            ,rn_all
+           ,CASE WHEN grade_level <> 99 THEN rn_undergrad END AS rn_undergrad
            ,CASE 
              WHEN sub.lunchstatus IN ('', 'NoD', '1', '2') THEN NULL
              ELSE sub.lunchstatus
