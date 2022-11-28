@@ -1,7 +1,7 @@
 USE gabby
 GO
 
-CREATE OR ALTER VIEW tableau.teacher_allocation_miami AS
+--CREATE OR ALTER VIEW tableau.teacher_allocation_miami AS
 
 /*assigning row numbers for earliest job title and salary in last academic year*/
 WITH last_year AS (
@@ -43,5 +43,4 @@ SELECT primary_site
 FROM people.staff_crosswalk_static c
 JOIN last_year l
   ON l.employee_number = c.df_employee_number
-WHERE status IN ('Active','Leave')
 AND l.rn = 1
