@@ -173,7 +173,7 @@ LEFT JOIN powerschool.enrollment_identifiers_static enr
  AND co.yearid = enr.yearid
 LEFT JOIN powerschool.spenrollments_gen_static sp
   ON co.studentid = sp.studentid
- AND co.entrydate BETWEEN sp.enter_date AND sp.exit_date
+ AND co.exitdate BETWEEN sp.enter_date AND sp.exit_date
  AND sp.specprog_name IN ('Out of District', 'Self-Contained Special Education', 'Pathways ES', 'Pathways MS', 'Whittier ES')
 LEFT JOIN powerschool.student_contacts_wide_static scw
   ON co.student_number = scw.student_number

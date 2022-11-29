@@ -40,7 +40,7 @@ FROM
            ,saa.student_web_password
 
            ,CASE
-             WHEN sp.specprog_name = 'Out of District' THEN 'Out of District'
+             WHEN sp.specprog_name IS NOT NULL THEN 'Out of District'
              WHEN sch.abbreviation = 'KHS' THEN 'KCNHS'
              WHEN sch.abbreviation = 'Hatch' THEN 'KHM'
              WHEN sch.abbreviation = 'Sumner' THEN 'KSE'
@@ -73,7 +73,7 @@ FROM
       AND s.[db_name] = sch.[db_name]
      LEFT JOIN gabby.powerschool.spenrollments_gen_static sp
        ON s.id = sp.studentid
-      AND s.entrydate BETWEEN sp.enter_date AND sp.exit_date
+      AND s.exitdate BETWEEN sp.enter_date AND sp.exit_date
       AND s.[db_name] = sp.[db_name]
-      AND sp.specprog_name IN ('Out of District', 'Self-Contained Special Education', 'Pathways ES', 'Pathways MS', 'Whittier ES')
+      AND sp.specprog_name = 'Out of District'
     ) sub
