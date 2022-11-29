@@ -1,5 +1,146 @@
 CREATE OR ALTER VIEW powerschool.cohort AS
 
+WITH enr_union AS (
+  /* terminal (current & transfers) */
+  SELECT s.id AS studentid
+        ,s.dcid AS studentsdcid
+        ,s.student_number
+        ,s.grade_level
+        ,s.schoolid
+        ,s.entrydate
+        ,s.exitdate
+        ,s.entrycode
+        ,s.exitcode
+        ,s.exitcomment
+        ,s.lunchstatus
+        ,s.fteid
+        ,s.track
+
+        ,terms.yearid
+
+        ,x1.exit_code AS exit_code_kf
+
+        ,x2.exit_code AS exit_code_ts
+  FROM powerschool.students s
+  INNER JOIN powerschool.terms terms
+    ON s.schoolid = terms.schoolid
+   AND s.entrydate BETWEEN terms.firstday AND terms.lastday
+   AND terms.isyearrec = 1
+  LEFT JOIN powerschool.u_clg_et_stu_clean_static x1
+    ON s.dcid = x1.studentsdcid
+   AND s.exitdate = x1.exit_date
+  LEFT JOIN powerschool.u_clg_et_stu_alt_clean_static x2
+    ON s.dcid = x2.studentsdcid
+   AND s.exitdate = x2.exit_date
+  WHERE s.enroll_status IN (-1, 0, 2)
+    AND s.exitdate > s.entrydate
+
+  UNION ALL
+
+  /* terminal (grads) */
+  SELECT s.id AS studentid
+        ,s.dcid AS studentsdcid
+        ,s.student_number
+        ,s.grade_level
+        ,s.schoolid
+        ,NULL AS entrydate
+        ,NULL AS exitdate
+        ,NULL AS entrycode
+        ,NULL AS exitcode
+        ,NULL AS exitcomment
+        ,NULL AS lunchstatus
+        ,NULL AS fteid
+        ,NULL AS track
+
+        ,terms.yearid
+
+        ,NULL AS exit_code_kf
+        ,NULL AS exit_code_ts
+  FROM powerschool.students s
+  INNER JOIN powerschool.terms terms
+    ON s.schoolid = terms.schoolid
+   AND s.entrydate <= terms.firstday
+   AND terms.isyearrec = 1
+  WHERE s.enroll_status = 3
+
+  UNION ALL
+
+  /* re-enrollments */
+  SELECT re.studentid AS studentid
+        ,s.dcid AS studentsdcid
+        ,s.student_number
+        ,re.grade_level
+        ,re.schoolid
+        ,re.entrydate
+        ,re.exitdate
+        ,re.entrycode
+        ,re.exitcode
+        ,re.exitcomment
+        ,re.lunchstatus
+        ,re.fteid
+        ,re.track
+
+        ,terms.yearid
+
+        ,x1.exit_code AS exit_code_kf
+
+        ,x2.exit_code AS exit_code_ts
+  FROM powerschool.reenrollments re
+  INNER JOIN powerschool.students s
+    ON re.studentid = s.id
+  INNER JOIN powerschool.terms terms
+    ON re.schoolid = terms.schoolid
+   AND re.entrydate BETWEEN terms.firstday AND terms.lastday
+   AND terms.isyearrec = 1
+  LEFT JOIN powerschool.u_clg_et_stu_clean_static x1
+    ON s.dcid = x1.studentsdcid
+   AND re.exitdate = x1.exit_date
+  LEFT JOIN powerschool.u_clg_et_stu_alt_clean_static x2
+    ON s.dcid = x2.studentsdcid
+   AND re.exitdate = x2.exit_date
+  WHERE re.schoolid <> 12345 /* filter out summer school */
+    AND re.exitdate > re.entrydate
+)
+
+,enr_order AS (
+  SELECT studentid
+        ,studentsdcid
+        ,student_number
+        ,schoolid
+        ,grade_level
+        ,entrydate
+        ,exitdate
+        ,exit_code_kf
+        ,exit_code_ts
+        ,exitcomment
+        ,lunchstatus
+        ,fteid
+        ,yearid
+        ,(yearid + 1990) AS academic_year
+        ,CASE WHEN entrycode = '' THEN NULL ELSE entrycode END AS entrycode
+        ,CASE WHEN exitcode = '' THEN NULL ELSE exitcode END AS exitcode
+        ,CASE WHEN track = '' THEN NULL ELSE track END AS track
+        ,LAG(yearid, 1) OVER(PARTITION BY studentid ORDER BY yearid ASC) AS prev_yearid
+        ,LAG(grade_level, 1) OVER(PARTITION BY studentid ORDER BY yearid ASC) AS prev_grade_level
+        ,ROW_NUMBER() OVER(
+           PARTITION BY studentid, yearid
+           ORDER BY yearid DESC, exitdate DESC
+         ) AS rn_year
+        ,ROW_NUMBER() OVER(
+           PARTITION BY studentid, schoolid
+           ORDER BY yearid DESC, exitdate DESC
+         ) AS rn_school
+        ,ROW_NUMBER() OVER(
+           PARTITION BY studentid, CASE WHEN grade_level = 99 THEN 1 ELSE 0 END
+           ORDER BY yearid DESC, exitdate DESC
+         ) AS rn_undergrad
+        ,ROW_NUMBER() OVER(
+           PARTITION BY studentid
+           ORDER BY yearid DESC, exitdate DESC
+         ) AS rn_all
+  FROM enr_union
+)
+
 SELECT studentid
       ,studentsdcid
       ,student_number
@@ -12,14 +153,17 @@ SELECT studentid
       ,exit_code_kf
       ,exit_code_ts
       ,exitcomment
-      ,lunchstatus
+      ,CASE
+        WHEN lunchstatus IN ('', 'NoD', '1', '2') THEN NULL
+        ELSE lunchstatus
+       END AS lunchstatus
       ,fteid
-      ,track
+      ,ISNULL(track, 'A') AS track
       ,yearid
       ,academic_year
       ,rn_year
       ,rn_school
-      ,rn_undergrad
+      ,CASE WHEN grade_level <> 99 THEN rn_undergrad END AS rn_undergrad
       ,rn_all
       ,prev_grade_level
       ,is_retained_year
@@ -70,172 +214,35 @@ FROM
            ,exit_code_ts
            ,exitcomment
            ,fteid
-           ,ISNULL(track, 'A') AS track
+           ,track
            ,yearid
            ,academic_year
            ,rn_year
            ,rn_school
            ,rn_all
-           ,CASE WHEN grade_level <> 99 THEN rn_undergrad END AS rn_undergrad
-           ,CASE 
-             WHEN sub.lunchstatus IN ('', 'NoD', '1', '2') THEN NULL
-             ELSE sub.lunchstatus
-            END AS lunchstatus
+           ,lunchstatus
+           ,rn_undergrad
            ,CASE
              WHEN rn_year > 1 THEN NULL
              ELSE ROW_NUMBER() OVER(
-                    PARTITION BY sub.studentid, sub.schoolid, sub.rn_year
-                      ORDER BY sub.yearid ASC, sub.exitdate ASC)
+                    PARTITION BY studentid, schoolid, rn_year
+                    ORDER BY yearid ASC, exitdate ASC
+                  )
             END AS year_in_school
            ,CASE
              WHEN rn_year > 1 THEN NULL
              ELSE ROW_NUMBER() OVER(
-                    PARTITION BY sub.studentid, sub.rn_year
-                      ORDER BY sub.yearid ASC, sub.exitdate ASC)
+                    PARTITION BY studentid, rn_year
+                    ORDER BY yearid ASC, exitdate ASC
+                  )
             END AS year_in_network
            ,MIN(prev_grade_level) OVER(PARTITION BY studentid, yearid ORDER BY yearid ASC) AS prev_grade_level
            ,CASE
              WHEN yearid = MIN(prev_yearid) OVER(PARTITION BY studentid, yearid ORDER BY yearid ASC) THEN 0
              WHEN grade_level <> 99 
-              AND sub.grade_level <= MIN(prev_grade_level) OVER(PARTITION BY studentid, yearid ORDER BY yearid ASC) 
+              AND grade_level <= MIN(prev_grade_level) OVER(PARTITION BY studentid, yearid ORDER BY yearid ASC) 
                   THEN 1
              ELSE 0
             END AS is_retained_year
-     FROM
-         (
-          SELECT sub.studentid
-                ,sub.studentsdcid
-                ,sub.student_number
-                ,sub.schoolid
-                ,sub.grade_level
-                ,sub.entrydate
-                ,sub.exitdate
-                ,CASE WHEN sub.entrycode = '' THEN NULL ELSE sub.entrycode END AS entrycode
-                ,CASE WHEN sub.exitcode = '' THEN NULL ELSE sub.exitcode END AS exitcode
-                ,sub.exit_code_kf
-                ,sub.exit_code_ts
-                ,sub.exitcomment
-                ,sub.lunchstatus
-                ,sub.fteid
-                ,sub.yearid
-                ,CASE WHEN sub.track = '' THEN NULL ELSE sub.track END AS track
-                ,(sub.yearid + 1990) AS academic_year
-                ,LAG(yearid, 1) OVER(PARTITION BY sub.studentid ORDER BY sub.yearid ASC) AS prev_yearid
-                ,LAG(grade_level, 1) OVER(PARTITION BY sub.studentid ORDER BY sub.yearid ASC) AS prev_grade_level
-
-                ,ROW_NUMBER() OVER(
-                   PARTITION BY sub.studentid, sub.yearid
-                     ORDER BY sub.yearid DESC, sub.exitdate DESC) AS rn_year
-                ,ROW_NUMBER() OVER(
-                   PARTITION BY sub.studentid, sub.schoolid
-                     ORDER BY sub.yearid DESC, sub.exitdate DESC) AS rn_school
-                ,ROW_NUMBER() OVER(
-                   PARTITION BY sub.studentid, CASE WHEN sub.grade_level = 99 THEN 1 ELSE 0 END
-                     ORDER BY sub.yearid DESC, sub.exitdate DESC) AS rn_undergrad
-                ,ROW_NUMBER() OVER(
-                   PARTITION BY sub.studentid
-                     ORDER BY sub.yearid DESC, sub.exitdate DESC) AS rn_all
-          FROM
-              (
-               /* terminal (current & transfers) */
-               SELECT s.id AS studentid
-                     ,s.dcid AS studentsdcid
-                     ,s.student_number
-                     ,s.grade_level
-                     ,s.schoolid
-                     ,s.entrydate
-                     ,s.exitdate
-                     ,s.entrycode
-                     ,s.exitcode
-                     ,s.exitcomment
-                     ,s.lunchstatus
-                     ,s.fteid
-                     ,s.track
-
-                     ,terms.yearid
-
-                     ,x1.exit_code AS exit_code_kf
-
-                     ,x2.exit_code AS exit_code_ts
-               FROM powerschool.students s
-               INNER JOIN powerschool.terms terms
-                 ON s.schoolid = terms.schoolid
-                AND s.entrydate BETWEEN terms.firstday AND terms.lastday
-                AND terms.isyearrec = 1
-               LEFT JOIN powerschool.u_clg_et_stu_clean_static x1
-                 ON s.dcid = x1.studentsdcid
-                AND s.exitdate = x1.exit_date
-               LEFT JOIN powerschool.u_clg_et_stu_alt_clean_static x2
-                 ON s.dcid = x2.studentsdcid
-                AND s.exitdate = x2.exit_date
-               WHERE s.enroll_status IN (-1, 0, 2)
-                 AND s.exitdate > s.entrydate
-
-               UNION ALL
-
-               /* terminal (grads) */
-               SELECT s.id AS studentid
-                     ,s.dcid AS studentsdcid
-                     ,s.student_number
-                     ,s.grade_level
-                     ,s.schoolid
-                     ,NULL AS entrydate
-                     ,NULL AS exitdate
-                     ,NULL AS entrycode
-                     ,NULL AS exitcode
-                     ,NULL AS exitcomment
-                     ,NULL AS lunchstatus
-                     ,NULL AS fteid
-                     ,NULL AS track
-
-                     ,terms.yearid
-
-                     ,NULL AS exit_code_kf
-                     ,NULL AS exit_code_ts
-               FROM powerschool.students s
-               INNER JOIN powerschool.terms terms
-                 ON s.schoolid = terms.schoolid
-                AND s.entrydate <= terms.firstday
-                AND terms.isyearrec = 1
-               WHERE s.enroll_status = 3
-
-               UNION ALL
-
-               /* re-enrollments */
-               SELECT re.studentid AS studentid
-                     ,s.dcid AS studentsdcid
-                     ,s.student_number
-                     ,re.grade_level
-                     ,re.schoolid
-                     ,re.entrydate
-                     ,re.exitdate
-                     ,re.entrycode
-                     ,re.exitcode
-                     ,re.exitcomment
-                     ,re.lunchstatus
-                     ,re.fteid
-                     ,re.track
-
-                     ,terms.yearid
-
-                     ,x1.exit_code AS exit_code_kf
-
-                     ,x2.exit_code AS exit_code_ts
-               FROM powerschool.reenrollments re
-               INNER JOIN powerschool.students s
-                 ON re.studentid = s.id
-               INNER JOIN powerschool.terms terms
-                 ON re.schoolid = terms.schoolid
-                AND re.entrydate BETWEEN terms.firstday AND terms.lastday
-                AND terms.isyearrec = 1
-               LEFT JOIN powerschool.u_clg_et_stu_clean_static x1
-                 ON s.dcid = x1.studentsdcid
-                AND re.exitdate = x1.exit_date
-               LEFT JOIN powerschool.u_clg_et_stu_alt_clean_static x2
-                 ON s.dcid = x2.studentsdcid
-                AND re.exitdate = x2.exit_date
-               WHERE re.schoolid <> 12345 /* filter out summer school */
-                 AND re.exitdate > re.entrydate
-              ) sub
-         ) sub
+     FROM enr_order
     ) sub
