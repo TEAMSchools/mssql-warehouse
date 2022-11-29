@@ -20,3 +20,5 @@ SELECT df.associate_id AS [Associate ID]
       ,NULL AS [Preferred Name]
 FROM gabby.people.staff_roster df
 WHERE COALESCE(df.rehire_date, df.original_hire_date) <= DATEADD(DAY, 10, CURRENT_TIMESTAMP)
+  AND df.business_unit IS NOT NULL
+  AND df.[location] IS NOT NULL
