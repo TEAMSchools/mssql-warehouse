@@ -285,84 +285,131 @@ WITH enr AS (
       ) sub
 )
 
-SELECT y1.studentid
-      ,y1.yearid
-      ,y1.course_number
-      ,y1.sectionid
-      ,y1.is_dropped_section
-      ,y1.storecode
-      ,y1.termbin_start_date
-      ,y1.termbin_end_date
-      ,y1.term_grade_letter
-      ,y1.term_grade_letter_adj
-      ,y1.term_grade_pts
-      ,y1.term_weighted_pts_poss
-      ,y1.term_weighted_pts_earned
-      ,y1.term_weighted_pts_earned_adj
-      ,y1.potential_credit_hours
-      ,y1.exclude_from_gpa
-      ,y1.exclude_from_graduation
-      ,y1.gradescaleid
-      ,y1.gradescaleid_unweighted
-      ,y1.fg_potential_credit_hours
-      ,y1.sg_potential_credit_hours
-      ,y1.fg_exclude_from_gpa
-      ,y1.sg_exclude_from_gpa
-      ,y1.fg_exclude_from_graduation
-      ,y1.sg_exclude_from_graduation
-      ,y1.fg_letter
-      ,y1.sg_letter
-      ,y1.fg_letter_adj
-      ,y1.fg_grade_pts
-      ,y1.sg_grade_pts
-      ,y1.y1_weighted_pts_poss
-      ,y1.y1_weighted_pts_poss_running
-      ,y1.y1_weighted_pts_earned_running
-      ,CAST(ROUND(y1.fg_percent * 100.0, 0) AS DECIMAL(4, 0)) AS fg_percent
-      ,CAST(ROUND(y1.fg_percent_adj * 100.0, 0) AS DECIMAL(4, 0)) AS fg_percent_adj
-      ,CAST(ROUND(y1.sg_percent * 100.0, 0) AS DECIMAL(4, 0)) AS sg_percent
-      ,CAST(ROUND(y1.term_grade_percent * 100.0, 0) AS DECIMAL(4, 0)) AS term_grade_percent
-      ,CAST(ROUND(y1.term_grade_percent_adj * 100.0, 0) AS DECIMAL(4, 0)) AS term_grade_percent_adj
-      ,CAST(ROUND(y1.y1_grade_percent * 100.0, 0) AS DECIMAL(4, 0)) AS y1_grade_percent
-      ,CAST(ROUND(y1.y1_grade_percent_adj * 100.0, 0) AS DECIMAL(4, 0)) AS y1_grade_percent_adj
-       /*
-         need-to-get calc:
-         - target % x y1 points possible to-date
-         - minus y1 points earned to-date
-         - minus current term points
-         - divided by current term weight
-       */
-      ,CAST(
-         ((y1.y1_weighted_pts_poss_running * 0.9) - (ISNULL(y1.y1_weighted_pts_earned_running, 0.0) - ISNULL(y1.term_weighted_pts_earned, 0.0)))
-         / (y1.term_weighted_pts_poss / 100.0)
-         AS DECIMAL(4, 0)
-       ) AS need_90
-      ,CAST(
-         ((y1.y1_weighted_pts_poss_running * 0.8) - (ISNULL(y1.y1_weighted_pts_earned_running, 0.0) - ISNULL(y1.term_weighted_pts_earned, 0.0))) 
-         / (y1.term_weighted_pts_poss / 100.0) 
-         AS DECIMAL(4, 0)
-       ) AS need_80
-      ,CAST(
-         ((y1.y1_weighted_pts_poss_running * 0.7) - (ISNULL(y1.y1_weighted_pts_earned_running, 0.0) - ISNULL(y1.term_weighted_pts_earned, 0.0))) 
-         / (y1.term_weighted_pts_poss / 100.0)
-         AS DECIMAL(4, 0)
-       ) AS need_70
-      ,CAST(
-         ((y1.y1_weighted_pts_poss_running * 0.6) - (ISNULL(y1.y1_weighted_pts_earned_running, 0.0) - ISNULL(y1.term_weighted_pts_earned, 0.0))) 
-         / (y1.term_weighted_pts_poss / 100.0) 
-         AS DECIMAL(4, 0)
-       ) AS need_60
+SELECT sub.studentid
+      ,sub.yearid
+      ,sub.course_number
+      ,sub.sectionid
+      ,sub.is_dropped_section
+      ,sub.storecode
+      ,sub.termbin_start_date
+      ,sub.termbin_end_date
+      ,sub.term_grade_letter
+      ,sub.term_grade_letter_adj
+      ,sub.term_grade_pts
+      ,sub.term_weighted_pts_poss
+      ,sub.term_weighted_pts_earned
+      ,sub.term_weighted_pts_earned_adj
+      ,sub.potential_credit_hours
+      ,sub.exclude_from_gpa
+      ,sub.exclude_from_graduation
+      ,sub.gradescaleid
+      ,sub.gradescaleid_unweighted
+      ,sub.fg_potential_credit_hours
+      ,sub.sg_potential_credit_hours
+      ,sub.fg_exclude_from_gpa
+      ,sub.sg_exclude_from_gpa
+      ,sub.fg_exclude_from_graduation
+      ,sub.sg_exclude_from_graduation
+      ,sub.fg_letter
+      ,sub.sg_letter
+      ,sub.fg_letter_adj
+      ,sub.fg_grade_pts
+      ,sub.sg_grade_pts
+      ,sub.y1_weighted_pts_poss
+      ,sub.y1_weighted_pts_poss_running
+      ,sub.y1_weighted_pts_earned_running
+      ,sub.fg_percent
+      ,sub.fg_percent_adj
+      ,sub.sg_percent
+      ,sub.term_grade_percent
+      ,sub.term_grade_percent_adj
+      ,sub.y1_grade_percent
+      ,sub.y1_grade_percent_adj
+      ,sub.need_90
+      ,sub.need_80
+      ,sub.need_70
+      ,sub.need_60
 
       ,y1gs.letter_grade AS y1_grade_letter
       ,CAST(y1gs.grade_points AS DECIMAL(3, 2)) AS y1_grade_pts
 
       ,CAST(y1gsu.grade_points AS DECIMAL(3, 2)) AS y1_grade_pts_unweighted
 
-      ,CASE WHEN y1.y1_grade_percent < 0.5 THEN 'F*' ELSE y1gs.letter_grade END AS y1_grade_letter_adj
-FROM y1
+      ,CASE WHEN sub.y1_grade_percent < 0.5 THEN 'F*' ELSE y1gs.letter_grade END AS y1_grade_letter_adj
+FROM
+    (
+     SELECT y1.studentid
+           ,y1.yearid
+           ,y1.course_number
+           ,y1.sectionid
+           ,y1.is_dropped_section
+           ,y1.storecode
+           ,y1.termbin_start_date
+           ,y1.termbin_end_date
+           ,y1.term_grade_letter
+           ,y1.term_grade_letter_adj
+           ,y1.term_grade_pts
+           ,y1.term_weighted_pts_poss
+           ,y1.term_weighted_pts_earned
+           ,y1.term_weighted_pts_earned_adj
+           ,y1.potential_credit_hours
+           ,y1.exclude_from_gpa
+           ,y1.exclude_from_graduation
+           ,y1.gradescaleid
+           ,y1.gradescaleid_unweighted
+           ,y1.fg_potential_credit_hours
+           ,y1.sg_potential_credit_hours
+           ,y1.fg_exclude_from_gpa
+           ,y1.sg_exclude_from_gpa
+           ,y1.fg_exclude_from_graduation
+           ,y1.sg_exclude_from_graduation
+           ,y1.fg_letter
+           ,y1.sg_letter
+           ,y1.fg_letter_adj
+           ,y1.fg_grade_pts
+           ,y1.sg_grade_pts
+           ,y1.y1_weighted_pts_poss
+           ,y1.y1_weighted_pts_poss_running
+           ,y1.y1_weighted_pts_earned_running
+           ,CAST(ROUND(y1.fg_percent * 100.0, 0) AS DECIMAL(4, 0)) AS fg_percent
+           ,CAST(ROUND(y1.fg_percent_adj * 100.0, 0) AS DECIMAL(4, 0)) AS fg_percent_adj
+           ,CAST(ROUND(y1.sg_percent * 100.0, 0) AS DECIMAL(4, 0)) AS sg_percent
+           ,CAST(ROUND(y1.term_grade_percent * 100.0, 0) AS DECIMAL(4, 0)) AS term_grade_percent
+           ,CAST(ROUND(y1.term_grade_percent_adj * 100.0, 0) AS DECIMAL(4, 0)) AS term_grade_percent_adj
+           ,CAST(ROUND(y1.y1_grade_percent * 100.0, 0) AS DECIMAL(4, 0)) AS y1_grade_percent
+           ,CAST(ROUND(y1.y1_grade_percent_adj * 100.0, 0) AS DECIMAL(4, 0)) AS y1_grade_percent_adj
+            /*
+              need-to-get calc:
+              - target % x y1 points possible to-date
+              - minus y1 points earned to-date
+              - minus current term points
+              - divided by current term weight
+            */
+           ,CAST(
+              ((y1.y1_weighted_pts_poss_running * 0.9) - (ISNULL(y1.y1_weighted_pts_earned_running, 0.0) - ISNULL(y1.term_weighted_pts_earned, 0.0)))
+              / (y1.term_weighted_pts_poss / 100.0)
+              AS DECIMAL(4, 0)
+            ) AS need_90
+           ,CAST(
+              ((y1.y1_weighted_pts_poss_running * 0.8) - (ISNULL(y1.y1_weighted_pts_earned_running, 0.0) - ISNULL(y1.term_weighted_pts_earned, 0.0))) 
+              / (y1.term_weighted_pts_poss / 100.0) 
+              AS DECIMAL(4, 0)
+            ) AS need_80
+           ,CAST(
+              ((y1.y1_weighted_pts_poss_running * 0.7) - (ISNULL(y1.y1_weighted_pts_earned_running, 0.0) - ISNULL(y1.term_weighted_pts_earned, 0.0))) 
+              / (y1.term_weighted_pts_poss / 100.0)
+              AS DECIMAL(4, 0)
+            ) AS need_70
+           ,CAST(
+              ((y1.y1_weighted_pts_poss_running * 0.6) - (ISNULL(y1.y1_weighted_pts_earned_running, 0.0) - ISNULL(y1.term_weighted_pts_earned, 0.0))) 
+              / (y1.term_weighted_pts_poss / 100.0) 
+              AS DECIMAL(4, 0)
+            ) AS need_60
+     FROM y1
+    ) sub
 LEFT JOIN powerschool.gradescaleitem_lookup_static y1gs
-  ON y1.gradescaleid = y1gs.gradescaleid
- AND (y1.y1_grade_percent * 100.0) BETWEEN y1gs.min_cutoffpercentage AND y1gs.max_cutoffpercentage
+  ON sub.gradescaleid = y1gs.gradescaleid
+ AND sub.y1_grade_percent BETWEEN y1gs.min_cutoffpercentage AND y1gs.max_cutoffpercentage
 LEFT JOIN powerschool.gradescaleitem_lookup_static y1gsu
-  ON y1.gradescaleid_unweighted = y1gsu.gradescaleid
- AND (y1.y1_grade_percent * 100.0) BETWEEN y1gsu.min_cutoffpercentage AND y1gsu.max_cutoffpercentage
+  ON sub.gradescaleid_unweighted = y1gsu.gradescaleid
+ AND sub.y1_grade_percent BETWEEN y1gsu.min_cutoffpercentage AND y1gsu.max_cutoffpercentage
