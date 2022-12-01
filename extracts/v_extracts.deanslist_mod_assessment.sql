@@ -17,13 +17,14 @@ WITH assessments_long AS (
          /* if a student takes a replacement assessment, it will be preferred */
         ,ROW_NUMBER() OVER(
            PARTITION BY local_student_id, subject_area, module_number
-             ORDER BY is_replacement DESC, percent_correct DESC) AS rn_subj_modnum
+           ORDER BY is_replacement DESC, percent_correct DESC
+         ) AS rn_subj_modnum
   FROM gabby.illuminate_dna_assessments.agg_student_responses_all_current
   WHERE response_type = 'O'
     AND subject_area IN ('Text Study','Mathematics')
     AND module_type IN ('QA', 'CRQ', 'CGI', 'CP')
     AND percent_correct IS NOT NULL
- )
+)
 
 SELECT sub.local_student_id AS student_number
       ,sub.academic_year
@@ -78,7 +79,7 @@ FROM
                   ,al.subject_area
                   ,al.module_type
          ) sub
-     JOIN gabby.illuminate_dna_assessments.performance_band_lookup_static pbl
+     INNER JOIN gabby.illuminate_dna_assessments.performance_band_lookup_static pbl
        ON sub.min_performance_band_set_id = pbl.performance_band_set_id
       AND sub.avg_percent_correct BETWEEN pbl.minimum_value AND pbl.maximum_value
      ) sub
@@ -95,7 +96,7 @@ SELECT sub.student_number
       ,sub.module_num
       ,NULL AS rn_unit
       ,sub.avg_pct_correct
-      
+
       ,pbl.[label] AS proficiency_label
 FROM
     (
@@ -109,9 +110,9 @@ FROM
            ,ROUND(AVG(asr.percent_correct), 0) AS avg_pct_correct
            ,MIN(a.performance_band_set_id) AS performance_band_set_id
      FROM gabby.illuminate_dna_assessments.assessments_identifiers_static a
-     JOIN gabby.illuminate_dna_assessments.agg_student_responses asr
+     INNER JOIN gabby.illuminate_dna_assessments.agg_student_responses asr
        ON a.assessment_id = asr.assessment_id
-     JOIN gabby.illuminate_public.students s
+     INNER JOIN gabby.illuminate_public.students s
        ON asr.student_id = s.student_id
      WHERE a.scope = 'Unit Assessment'
        AND a.subject_area NOT IN ('Text Study','Mathematics')
@@ -122,6 +123,6 @@ FROM
              ,a.subject_area
              ,a.term_administered
     ) sub
-JOIN gabby.illuminate_dna_assessments.performance_band_lookup_static pbl
+INNER JOIN gabby.illuminate_dna_assessments.performance_band_lookup_static pbl
   ON sub.performance_band_set_id = pbl.performance_band_set_id
  AND sub.avg_pct_correct BETWEEN pbl.minimum_value AND pbl.maximum_value

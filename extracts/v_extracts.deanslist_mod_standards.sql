@@ -8,22 +8,28 @@ WITH std_avg AS (
         ,asr.academic_year
         ,asr.term_administered
         ,asr.response_type
-        ,asr.subject_area
+        ,CASE 
+          WHEN asr.subject_area = 'Writing' THEN 'Text Study'
+          ELSE asr.subject_area
+         END AS subject_area
         ,asr.performance_band_set_id
         ,asr.standard_description
         ,ROUND(AVG(asr.percent_correct), 0) AS avg_percent_correct
   FROM gabby.illuminate_dna_assessments.agg_student_responses_all_current asr
-  WHERE asr.response_type IN ('S', 'G')
+  WHERE asr.response_type = 'G'
     AND asr.is_normed_scope = 1
-    AND asr.subject_area IN ('Text Study','Mathematics')
+    AND asr.subject_area IN ('Text Study','Mathematics', 'Writing')
   GROUP BY asr.local_student_id
           ,asr.academic_year
           ,asr.term_administered
           ,asr.response_type
-          ,asr.subject_area
           ,asr.standard_description
           ,asr.performance_band_set_id
- )
+          ,CASE 
+            WHEN asr.subject_area = 'Writing' THEN 'Text Study'
+            ELSE asr.subject_area
+           END
+)
 
 SELECT sa.local_student_id AS student_number
       ,sa.academic_year
