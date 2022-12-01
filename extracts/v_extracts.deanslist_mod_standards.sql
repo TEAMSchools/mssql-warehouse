@@ -10,7 +10,7 @@ WITH std_avg AS (
         ,asr.response_type
         ,asr.subject_area
         ,asr.performance_band_set_id
-        ,REPLACE(asr.standard_description, '"', '''') AS standard_description
+        ,asr.standard_description
         ,ROUND(AVG(asr.percent_correct), 0) AS avg_percent_correct
   FROM gabby.illuminate_dna_assessments.agg_student_responses_all_current asr
   WHERE asr.response_type IN ('S', 'G')
@@ -31,7 +31,7 @@ SELECT sa.local_student_id AS student_number
       ,sa.response_type
       ,sa.avg_percent_correct AS percent_correct
       ,sa.subject_area
-      ,sa.standard_description
+      ,REPLACE(sa.standard_description, '"', '''') AS standard_description
 
       ,CASE
         WHEN pbl.label_number = 5 THEN 'Advanced Mastery'
