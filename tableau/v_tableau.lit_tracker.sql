@@ -3,73 +3,66 @@ GO
 
 CREATE OR ALTER VIEW tableau.lit_tracker AS
 
-SELECT co.student_number
-      ,co.lastfirst AS student_name
-      ,co.enroll_status
-      ,co.academic_year
-      ,co.region
-      ,co.school_level
-      ,co.school_name
-      ,co.school_abbreviation
-      ,co.grade_level
-      ,co.team
-      ,co.iep_status
-      ,co.lep_status
-      ,co.is_pathways
-      ,co.c_504_status
-      ,co.is_pathways AS is_self_contained
+WITH lit_round AS (
+  SELECT co.student_number
+        ,co.lastfirst AS student_name
+        ,co.enroll_status
+        ,co.academic_year
+        ,co.region
+        ,co.school_level
+        ,co.school_name
+        ,co.school_abbreviation
+        ,co.grade_level
+        ,co.team
+        ,co.iep_status
+        ,co.lep_status
+        ,co.is_pathways
+        ,co.c_504_status
+        ,co.is_pathways AS is_self_contained
 
-      ,term.lit AS lit_term
-      ,CASE
-        WHEN co.academic_year >= 2015 THEN REPLACE(term.ar,'AR','Q')
-        ELSE REPLACE(term.ar,'AR','Hex ') 
-       END AS AR_term
+        ,term.lit AS lit_term
+        ,CASE
+          WHEN co.academic_year >= 2015 THEN REPLACE(term.ar,'AR','Q')
+          ELSE REPLACE(term.ar,'AR','Hex ') 
+         END AS AR_term
 
-      ,achv.is_curterm
-      ,achv.read_lvl
-      ,achv.lvl_num
-      ,achv.GLEQ
-      ,achv.dna_lvl
-      ,achv.dna_lvl_num
-      ,achv.moved_levels
-      ,achv.achv_unique_id AS unique_id
-      ,achv.dna_unique_id
-      ,achv.n_levels_moved_y1
-      ,achv.gleq_growth_y1
-      ,achv.goal_lvl
-      ,achv.goal_num
-      ,achv.met_goal
-      ,achv.hard_lvl
-      ,achv.goal_status
-      ,achv.lvl_num - achv.goal_num AS distance_from_goal
+        ,achv.is_curterm
+        ,achv.read_lvl
+        ,achv.lvl_num
+        ,achv.GLEQ
+        ,achv.dna_lvl
+        ,achv.dna_lvl_num
+        ,achv.moved_levels
+        ,achv.achv_unique_id AS unique_id
+        ,achv.dna_unique_id
+        ,achv.n_levels_moved_y1
+        ,achv.lvl_num - LAG(achv.lvl_num, 1) OVER (PARTITION BY achv.academic_year, achv.student_number ORDER BY achv.[start_date] ASC) AS n_lvl_moved_round
+        ,achv.gleq_growth_y1
+        ,achv.goal_lvl
+        ,achv.goal_num
+        ,achv.met_goal
+        ,achv.hard_lvl
+        ,achv.goal_status
+        ,achv.lvl_num - achv.goal_num AS distance_from_goal
 
-      ,atid.is_fp
-      ,atid.genre
+        ,atid.is_fp
+        ,atid.genre
 
-      ,(SELECT MAX(v) FROM (VALUES (atid.test_date), (dtid.test_date), (htid.test_date)) AS val(v)) AS test_date
-      ,atid.test_administered_by
+        ,(SELECT MAX(v) FROM (VALUES (atid.test_date), (dtid.test_date), (htid.test_date)) AS val(v)) AS test_date
+        ,atid.test_administered_by
 
-      /* component data */
-      ,long.domain AS component_domain
-      ,long.[label] AS component_strand
-      ,long.specific_label AS component_strand_specific
-      ,long.score AS component_score
-      ,long.benchmark AS component_benchmark
-      ,long.is_prof AS component_prof
-      ,long.margin AS component_margin
-      ,long.dna_filter
+        /* AR */
+        ,ar.words
+        ,ar.mastery
+        ,ar.pct_fiction
+        ,ar.n_passed
+        ,ar.n_total
+        ,CASE WHEN ar.words_goal < 0 THEN NULL ELSE ar.words_goal END AS words_goal
+        
+        ,term.lit
+        ,term.ar
+        ,achv.achv_unique_id
 
-      /* AR */
-      ,ar.words
-      ,ar.mastery
-      ,ar.pct_fiction
-      ,ar.n_passed
-      ,ar.n_total
-      ,CASE WHEN ar.words_goal < 0 THEN NULL ELSE ar.words_goal END AS words_goal
-
-      ,ROW_NUMBER() OVER(
-         PARTITION BY co.student_number, co.academic_year, term.lit, term.ar, achv.achv_unique_id
-           ORDER BY achv.achv_unique_id) AS rn_test
 FROM gabby.powerschool.cohort_identifiers_static co
 INNER JOIN gabby.reporting.reporting_term_map term
   ON co.school_level = term.school_level COLLATE Latin1_General_BIN
@@ -85,8 +78,6 @@ LEFT JOIN gabby.lit.all_test_events_static dtid
   ON achv.dna_unique_id = dtid.unique_id
 LEFT JOIN gabby.lit.all_test_events_static htid
   ON achv.hard_unique_id = htid.unique_id
-LEFT JOIN gabby.lit.component_proficiency_long_static long
-  ON achv.dna_unique_id = long.unique_id
 LEFT JOIN gabby.renaissance.ar_progress_to_goals ar
   ON co.student_number = ar.student_number
  AND co.academic_year = ar.academic_year
@@ -97,3 +88,74 @@ WHERE co.rn_year = 1
   AND co.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 3)
   AND co.grade_level <> 99
   AND co.school_level <> 'OD'
+)
+
+SELECT lr.student_number
+      ,lr.student_name
+        ,lr.enroll_status
+        ,lr.academic_year
+        ,lr.region
+        ,lr.school_level
+        ,lr.school_name
+        ,lr.school_abbreviation
+        ,lr.grade_level
+        ,lr.team
+        ,lr.iep_status
+        ,lr.lep_status
+        ,lr.is_pathways
+        ,lr.c_504_status
+        ,lr.is_self_contained
+
+        ,lr.lit_term
+        ,lr.AR_term
+
+        ,lr.is_curterm
+        ,lr.read_lvl
+        ,lr.lvl_num
+        ,lr.GLEQ
+        ,lr.dna_lvl
+        ,lr.dna_lvl_num
+        ,lr.moved_levels
+        ,lr.unique_id
+        ,lr.dna_unique_id
+        ,lr.n_levels_moved_y1
+        ,lr.n_lvl_moved_round
+        ,lr.gleq_growth_y1
+        ,lr.goal_lvl
+        ,lr.goal_num
+        ,lr.met_goal
+        ,lr.hard_lvl
+        ,lr.goal_status
+        ,lr.distance_from_goal
+
+        ,lr.is_fp
+        ,lr.genre
+
+        ,lr.test_date
+        ,lr.test_administered_by
+        
+        /* component data */
+        ,long.domain AS component_domain
+        ,long.[label] AS component_strand
+        ,long.specific_label AS component_strand_specific
+        ,long.score AS component_score
+        ,long.benchmark AS component_benchmark
+        ,long.is_prof AS component_prof
+        ,long.margin AS component_margin
+        ,long.dna_filter
+        
+        /* AR */
+        ,lr.words
+        ,lr.mastery
+        ,lr.pct_fiction
+        ,lr.n_passed
+        ,lr.n_total
+        ,lr.words_goal
+
+        ,ROW_NUMBER() OVER(
+           PARTITION BY lr.student_number, lr.academic_year, lr.lit, lr.ar, lr.achv_unique_id
+             ORDER BY lr.achv_unique_id) AS rn_test
+
+FROM lit_round lr
+LEFT JOIN gabby.lit.component_proficiency_long_static long
+  ON lr.dna_unique_id = long.unique_id
