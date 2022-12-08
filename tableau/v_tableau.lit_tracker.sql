@@ -35,6 +35,7 @@ SELECT co.student_number
       ,achv.achv_unique_id AS unique_id
       ,achv.dna_unique_id
       ,achv.n_levels_moved_y1
+      ,achv.n_lvl_moved_round
       ,achv.gleq_growth_y1
       ,achv.goal_lvl
       ,achv.goal_num
