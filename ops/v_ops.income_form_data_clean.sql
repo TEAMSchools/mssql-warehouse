@@ -19,7 +19,7 @@ SELECT student_number
       ,ROW_NUMBER() OVER(PARTITION BY student_number, academic_year ORDER BY _row DESC) AS rn
       ,'kippcamden' AS [db_name]
 FROM gabby.ops.income_form_data
-WHERE student_number  IS NOT NULL
+WHERE ISNUMERIC(student_number) = 1
 
 UNION ALL
 
