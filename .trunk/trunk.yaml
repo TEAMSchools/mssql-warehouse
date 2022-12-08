@@ -8,6 +8,7 @@ plugins:
       uri: https://github.com/trunk-io/plugins
 lint:
   enabled:
+    - sql-formatter@12.0.3
     - sqlfluff@1.4.2
     - prettier@2.8.1
     - actionlint@1.6.22
@@ -16,6 +17,16 @@ lint:
     - markdownlint@0.32.2
     - git-diff-check
     - shfmt@3.5.0
+  definitions:
+    - name: sql-formatter
+      direct_configs: [sql-formatter.json]
+      commands:
+        - output: rewrite
+          success_codes:
+            - 0
+          formatter: true
+          run: sql-formatter --config sql-formatter.json
+          stdin: true
 runtimes:
   enabled:
     - go@1.18.3

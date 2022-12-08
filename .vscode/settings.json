@@ -1,0 +1,29 @@
+{
+  "editor.inlineSuggest.enabled": true,
+  "editor.renderControlCharacters": true,
+  "editor.wordWrap": "bounded",
+  "editor.wordWrapColumn": 88,
+  "files.associations": {
+    "*.toml": "toml",
+    "*.env": "shellscript"
+  },
+  "files.exclude": {
+    "**/.trunk/*out": true
+  },
+  "files.watcherExclude": {
+    "**/.trunk/*out": true
+  },
+  "[json]": {
+    "editor.defaultFormatter": "trunk.io"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "trunk.io"
+  },
+  "[python]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "trunk.io"
+  },
+  "[yaml]": {
+    "editor.defaultFormatter": "trunk.io"
+  }
+}
