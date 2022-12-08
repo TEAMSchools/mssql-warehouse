@@ -11,10 +11,15 @@ BEGIN
   SELECT @sql = 'CREATE OR ALTER VIEW illuminate_dna_repositories.sight_words_data_current AS ' + gabby.dbo.GROUP_CONCAT_D(select_sql, '')
   FROM
       (
-       SELECT TOP 100
-              select_sql
+       SELECT TOP 1000
+              select_sql 
+                + CASE 
+                   WHEN ROW_NUMBER() OVER(ORDER BY repository_id DESC) = 1 THEN '' 
+                   ELSE ' UNION ALL ' 
+                  END AS select_sql
        FROM gabby.illuminate_dna_repositories.sight_words_quiz_union_generator
-       WHERE is_missing = 0
+       WHERE select_sql IS NOT NULL
+         AND is_missing = 0
        ORDER BY repository_id
       ) sub
   EXEC(@sql);
