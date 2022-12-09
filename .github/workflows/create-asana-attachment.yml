@@ -12,7 +12,6 @@ jobs:
         id: postAttachment
         with:
           asana-secret: ${{ secrets.ASANA_SECRET }}
-      
+
       - name: Log output status
         run: echo "Status is ${{ steps.postAttachment.outputs.status }}"
-        

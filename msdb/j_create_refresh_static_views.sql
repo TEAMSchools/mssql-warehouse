@@ -1,11 +1,11 @@
-USE [msdb]
-GO
+use[msdb]
+go
 
-/****** Object:  Job [Data | Refresh Static Views | AR | Daily (1:30 AM)]    Script Date: 2/12/2018 11:37:28 AM ******/
-BEGIN TRANSACTION
+/* ***** Object:  Job [Data | Refresh Static Views | AR | Daily (1:30 AM)]    Script Date: 2/12/2018 11:37:28 AM ******/
+begin transaction
 DECLARE @ReturnCode INT
 SELECT @ReturnCode = 0
-/****** Object:  JobCategory [[Uncategorized (Local)]]    Script Date: 2/12/2018 11:37:28 AM ******/
+    /* ***** Object:  JobCategory [[Uncategorized (Local)]]    Script Date: 2/12/2018 11:37:28 AM ******/
 IF NOT EXISTS (SELECT name FROM msdb.dbo.syscategories WHERE name=N'[Uncategorized (Local)]' AND category_class=1)
 BEGIN
 EXEC @ReturnCode = msdb.dbo.sp_add_category @class=N'JOB', @type=N'LOCAL', @name=N'[Uncategorized (Local)]'
@@ -25,7 +25,7 @@ EXEC @ReturnCode =  msdb.dbo.sp_add_job @job_name=N'Data | Refresh Static Views 
 		@category_name=N'[Uncategorized (Local)]', 
 		@owner_login_name=N'TEAMSCHOOLS\CBini', @job_id = @jobId OUTPUT
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
-/****** Object:  Step [cache_view renaissance.ar_studentpractice_identifiers]    Script Date: 2/12/2018 11:37:28 AM ******/
+    /* ***** Object:  Step [cache_view renaissance.ar_studentpractice_identifiers]    Script Date: 2/12/2018 11:37:28 AM ******/
 EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'cache_view renaissance.ar_studentpractice_identifiers', 
 		@step_id=1, 
 		@cmdexec_success_code=0, 
@@ -69,11 +69,11 @@ GO
 USE [msdb]
 GO
 
-/****** Object:  Job [Data | Refresh Static Views | Illuminate | Hourly (45s)]    Script Date: 2/12/2018 11:37:37 AM ******/
+    /* ***** Object:  Job [Data | Refresh Static Views | Illuminate | Hourly (45s)]    Script Date: 2/12/2018 11:37:37 AM ******/
 BEGIN TRANSACTION
 DECLARE @ReturnCode INT
 SELECT @ReturnCode = 0
-/****** Object:  JobCategory [[Uncategorized (Local)]]    Script Date: 2/12/2018 11:37:37 AM ******/
+    /* ***** Object:  JobCategory [[Uncategorized (Local)]]    Script Date: 2/12/2018 11:37:37 AM ******/
 IF NOT EXISTS (SELECT name FROM msdb.dbo.syscategories WHERE name=N'[Uncategorized (Local)]' AND category_class=1)
 BEGIN
 EXEC @ReturnCode = msdb.dbo.sp_add_category @class=N'JOB', @type=N'LOCAL', @name=N'[Uncategorized (Local)]'
@@ -94,7 +94,7 @@ EXEC @ReturnCode =  msdb.dbo.sp_add_job @job_name=N'Data | Refresh Static Views 
 		@owner_login_name=N'sa', 
 		@notify_email_operator_name=N'Data Robot', @job_id = @jobId OUTPUT
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
-/****** Object:  Step [cache_view 'illuminate_dna_assessments','course_enrollment_scaffold';]    Script Date: 2/12/2018 11:37:37 AM ******/
+    /* ***** Object:  Step [cache_view 'illuminate_dna_assessments','course_enrollment_scaffold';]    Script Date: 2/12/2018 11:37:37 AM ******/
 EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'cache_view ''illuminate_dna_assessments'',''course_enrollment_scaffold'';', 
 		@step_id=1, 
 		@cmdexec_success_code=0, 
@@ -109,7 +109,7 @@ EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'cache_vi
 		@database_name=N'master', 
 		@flags=0
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
-/****** Object:  Step [cache_view 'illuminate_dna_assessments', 'student_assessment_scaffold';]    Script Date: 2/12/2018 11:37:37 AM ******/
+    /* ***** Object:  Step [cache_view 'illuminate_dna_assessments', 'student_assessment_scaffold';]    Script Date: 2/12/2018 11:37:37 AM ******/
 EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'cache_view ''illuminate_dna_assessments'', ''student_assessment_scaffold'';', 
 		@step_id=2, 
 		@cmdexec_success_code=0, 
@@ -152,11 +152,11 @@ GO
 USE [msdb]
 GO
 
-/****** Object:  Job [Data | Refresh Static Views | Lit | Daily (12:30 AM)]    Script Date: 2/12/2018 11:37:46 AM ******/
+    /* ***** Object:  Job [Data | Refresh Static Views | Lit | Daily (12:30 AM)]    Script Date: 2/12/2018 11:37:46 AM ******/
 BEGIN TRANSACTION
 DECLARE @ReturnCode INT
 SELECT @ReturnCode = 0
-/****** Object:  JobCategory [[Uncategorized (Local)]]    Script Date: 2/12/2018 11:37:46 AM ******/
+    /* ***** Object:  JobCategory [[Uncategorized (Local)]]    Script Date: 2/12/2018 11:37:46 AM ******/
 IF NOT EXISTS (SELECT name FROM msdb.dbo.syscategories WHERE name=N'[Uncategorized (Local)]' AND category_class=1)
 BEGIN
 EXEC @ReturnCode = msdb.dbo.sp_add_category @class=N'JOB', @type=N'LOCAL', @name=N'[Uncategorized (Local)]'
@@ -177,7 +177,7 @@ EXEC @ReturnCode =  msdb.dbo.sp_add_job @job_name=N'Data | Refresh Static Views 
 		@owner_login_name=N'TEAMSCHOOLS\CBini', 
 		@notify_email_operator_name=N'Data Robot', @job_id = @jobId OUTPUT
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
-/****** Object:  Step [cache_view 'lit', 'all_test_events';]    Script Date: 2/12/2018 11:37:46 AM ******/
+    /* ***** Object:  Step [cache_view 'lit', 'all_test_events';]    Script Date: 2/12/2018 11:37:46 AM ******/
 EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'cache_view ''lit'', ''all_test_events'';', 
 		@step_id=1, 
 		@cmdexec_success_code=0, 
@@ -192,7 +192,7 @@ EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'cache_vi
 		@database_name=N'master', 
 		@flags=0
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
-/****** Object:  Step [cache_view 'lit', 'achieved_by_round';]    Script Date: 2/12/2018 11:37:46 AM ******/
+    /* ***** Object:  Step [cache_view 'lit', 'achieved_by_round';]    Script Date: 2/12/2018 11:37:46 AM ******/
 EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'cache_view ''lit'', ''achieved_by_round'';', 
 		@step_id=2, 
 		@cmdexec_success_code=0, 
@@ -207,7 +207,7 @@ EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'cache_vi
 		@database_name=N'master', 
 		@flags=0
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
-/****** Object:  Step [cache_view 'lit','component_proficiency_long';]    Script Date: 2/12/2018 11:37:46 AM ******/
+    /* ***** Object:  Step [cache_view 'lit','component_proficiency_long';]    Script Date: 2/12/2018 11:37:46 AM ******/
 EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'cache_view ''lit'',''component_proficiency_long'';', 
 		@step_id=3, 
 		@cmdexec_success_code=0, 
@@ -250,11 +250,11 @@ GO
 USE [msdb]
 GO
 
-/****** Object:  Job [Data | Refresh Static Views | PS Attendance | Daily (10:45 AM & 3:45 PM)]    Script Date: 2/12/2018 11:37:56 AM ******/
+    /* ***** Object:  Job [Data | Refresh Static Views | PS Attendance | Daily (10:45 AM & 3:45 PM)]    Script Date: 2/12/2018 11:37:56 AM ******/
 BEGIN TRANSACTION
 DECLARE @ReturnCode INT
 SELECT @ReturnCode = 0
-/****** Object:  JobCategory [[Uncategorized (Local)]]    Script Date: 2/12/2018 11:37:56 AM ******/
+    /* ***** Object:  JobCategory [[Uncategorized (Local)]]    Script Date: 2/12/2018 11:37:56 AM ******/
 IF NOT EXISTS (SELECT name FROM msdb.dbo.syscategories WHERE name=N'[Uncategorized (Local)]' AND category_class=1)
 BEGIN
 EXEC @ReturnCode = msdb.dbo.sp_add_category @class=N'JOB', @type=N'LOCAL', @name=N'[Uncategorized (Local)]'
@@ -275,7 +275,7 @@ EXEC @ReturnCode =  msdb.dbo.sp_add_job @job_name=N'Data | Refresh Static Views 
 		@owner_login_name=N'sa', 
 		@notify_email_operator_name=N'Data Robot', @job_id = @jobId OUTPUT
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
-/****** Object:  Step [cache_view 'powerschool','ps_enrollment_all';]    Script Date: 2/12/2018 11:37:56 AM ******/
+    /* ***** Object:  Step [cache_view 'powerschool','ps_enrollment_all';]    Script Date: 2/12/2018 11:37:56 AM ******/
 EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'cache_view ''powerschool'',''ps_enrollment_all'';', 
 		@step_id=1, 
 		@cmdexec_success_code=0, 
@@ -290,7 +290,7 @@ EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'cache_vi
 		@database_name=N'gabby', 
 		@flags=0
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
-/****** Object:  Step [cache_view 'powerschool','ps_attendance_daily';]    Script Date: 2/12/2018 11:37:56 AM ******/
+    /* ***** Object:  Step [cache_view 'powerschool','ps_attendance_daily';]    Script Date: 2/12/2018 11:37:56 AM ******/
 EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'cache_view ''powerschool'',''ps_attendance_daily'';', 
 		@step_id=2, 
 		@cmdexec_success_code=0, 
@@ -305,7 +305,7 @@ EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'cache_vi
 		@database_name=N'gabby', 
 		@flags=0
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
-/****** Object:  Step [cache_view 'powerschool','ps_membership_reg';]    Script Date: 2/12/2018 11:37:56 AM ******/
+    /* ***** Object:  Step [cache_view 'powerschool','ps_membership_reg';]    Script Date: 2/12/2018 11:37:56 AM ******/
 EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'cache_view ''powerschool'',''ps_membership_reg'';', 
 		@step_id=3, 
 		@cmdexec_success_code=0, 
@@ -320,7 +320,7 @@ EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'cache_vi
 		@database_name=N'gabby', 
 		@flags=0
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
-/****** Object:  Step [cache_view 'powerschool', 'ps_adaadm_daily_ctod';]    Script Date: 2/12/2018 11:37:56 AM ******/
+    /* ***** Object:  Step [cache_view 'powerschool', 'ps_adaadm_daily_ctod';]    Script Date: 2/12/2018 11:37:56 AM ******/
 EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'cache_view ''powerschool'', ''ps_adaadm_daily_ctod'';', 
 		@step_id=4, 
 		@cmdexec_success_code=0, 
@@ -335,7 +335,7 @@ EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'cache_vi
 		@database_name=N'gabby', 
 		@flags=0
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
-/****** Object:  Step [cache_view 'powerschool', 'attendance_counts';]    Script Date: 2/12/2018 11:37:56 AM ******/
+    /* ***** Object:  Step [cache_view 'powerschool', 'attendance_counts';]    Script Date: 2/12/2018 11:37:56 AM ******/
 EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'cache_view ''powerschool'', ''attendance_counts'';', 
 		@step_id=5, 
 		@cmdexec_success_code=0, 
@@ -392,11 +392,11 @@ GO
 USE [msdb]
 GO
 
-/****** Object:  Job [Data | Refresh Static Views | PS Grades | Hourly (45s)]    Script Date: 2/12/2018 11:38:05 AM ******/
+    /* ***** Object:  Job [Data | Refresh Static Views | PS Grades | Hourly (45s)]    Script Date: 2/12/2018 11:38:05 AM ******/
 BEGIN TRANSACTION
 DECLARE @ReturnCode INT
 SELECT @ReturnCode = 0
-/****** Object:  JobCategory [[Uncategorized (Local)]]    Script Date: 2/12/2018 11:38:06 AM ******/
+    /* ***** Object:  JobCategory [[Uncategorized (Local)]]    Script Date: 2/12/2018 11:38:06 AM ******/
 IF NOT EXISTS (SELECT name FROM msdb.dbo.syscategories WHERE name=N'[Uncategorized (Local)]' AND category_class=1)
 BEGIN
 EXEC @ReturnCode = msdb.dbo.sp_add_category @class=N'JOB', @type=N'LOCAL', @name=N'[Uncategorized (Local)]'
@@ -417,7 +417,7 @@ EXEC @ReturnCode =  msdb.dbo.sp_add_job @job_name=N'Data | Refresh Static Views 
 		@owner_login_name=N'sa', 
 		@notify_email_operator_name=N'Data Robot', @job_id = @jobId OUTPUT
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
-/****** Object:  Step [cache_view 'powerschool', 'cohort_identifiers';]    Script Date: 2/12/2018 11:38:07 AM ******/
+    /* ***** Object:  Step [cache_view 'powerschool', 'cohort_identifiers';]    Script Date: 2/12/2018 11:38:07 AM ******/
 EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'cache_view ''powerschool'', ''cohort_identifiers'';', 
 		@step_id=1, 
 		@cmdexec_success_code=0, 
@@ -432,7 +432,7 @@ EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'cache_vi
 		@database_name=N'gabby', 
 		@flags=0
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
-/****** Object:  Step [cache_view 'powerschool', 'course_enrollments';]    Script Date: 2/12/2018 11:38:07 AM ******/
+    /* ***** Object:  Step [cache_view 'powerschool', 'course_enrollments';]    Script Date: 2/12/2018 11:38:07 AM ******/
 EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'cache_view ''powerschool'', ''course_enrollments'';', 
 		@step_id=2, 
 		@cmdexec_success_code=0, 
@@ -447,7 +447,7 @@ EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'cache_vi
 		@database_name=N'gabby', 
 		@flags=0
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
-/****** Object:  Step [cache_view 'powerschool', 'course_section_scaffold';]    Script Date: 2/12/2018 11:38:07 AM ******/
+    /* ***** Object:  Step [cache_view 'powerschool', 'course_section_scaffold';]    Script Date: 2/12/2018 11:38:07 AM ******/
 EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'cache_view ''powerschool'', ''course_section_scaffold'';', 
 		@step_id=3, 
 		@cmdexec_success_code=0, 
@@ -462,7 +462,7 @@ EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'cache_vi
 		@database_name=N'gabby', 
 		@flags=0
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
-/****** Object:  Step [cache_view 'powerschool', 'gradescaleitem_lookup';]    Script Date: 2/12/2018 11:38:07 AM ******/
+    /* ***** Object:  Step [cache_view 'powerschool', 'gradescaleitem_lookup';]    Script Date: 2/12/2018 11:38:07 AM ******/
 EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'cache_view ''powerschool'', ''gradescaleitem_lookup'';', 
 		@step_id=4, 
 		@cmdexec_success_code=0, 
@@ -477,7 +477,7 @@ EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'cache_vi
 		@database_name=N'gabby', 
 		@flags=0
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
-/****** Object:  Step [cache_view 'powerschool', 'final_grades';]    Script Date: 2/12/2018 11:38:07 AM ******/
+    /* ***** Object:  Step [cache_view 'powerschool', 'final_grades';]    Script Date: 2/12/2018 11:38:07 AM ******/
 EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'cache_view ''powerschool'', ''final_grades'';', 
 		@step_id=5, 
 		@cmdexec_success_code=0, 
@@ -492,7 +492,7 @@ EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'cache_vi
 		@database_name=N'gabby', 
 		@flags=0
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
-/****** Object:  Step [cache_view 'powerschool', 'category_grades';]    Script Date: 2/12/2018 11:38:07 AM ******/
+    /* ***** Object:  Step [cache_view 'powerschool', 'category_grades';]    Script Date: 2/12/2018 11:38:07 AM ******/
 EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'cache_view ''powerschool'', ''category_grades'';', 
 		@step_id=6, 
 		@cmdexec_success_code=0, 
@@ -535,11 +535,11 @@ GO
 USE [msdb]
 GO
 
-/****** Object:  Job [Data | Refresh Static Views | Remote Queries | Hourly (30's)]    Script Date: 2/12/2018 11:38:15 AM ******/
+    /* ***** Object:  Job [Data | Refresh Static Views | Remote Queries | Hourly (30's)]    Script Date: 2/12/2018 11:38:15 AM ******/
 BEGIN TRANSACTION
 DECLARE @ReturnCode INT
 SELECT @ReturnCode = 0
-/****** Object:  JobCategory [[Uncategorized (Local)]]    Script Date: 2/12/2018 11:38:15 AM ******/
+    /* ***** Object:  JobCategory [[Uncategorized (Local)]]    Script Date: 2/12/2018 11:38:15 AM ******/
 IF NOT EXISTS (SELECT name FROM msdb.dbo.syscategories WHERE name=N'[Uncategorized (Local)]' AND category_class=1)
 BEGIN
 EXEC @ReturnCode = msdb.dbo.sp_add_category @class=N'JOB', @type=N'LOCAL', @name=N'[Uncategorized (Local)]'
@@ -560,7 +560,7 @@ EXEC @ReturnCode =  msdb.dbo.sp_add_job @job_name=N'Data | Refresh Static Views 
 		@owner_login_name=N'TEAMSCHOOLS\CBini', 
 		@notify_email_operator_name=N'Data Robot', @job_id = @jobId OUTPUT
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
-/****** Object:  Step [cache_view mcs.lunch_info]    Script Date: 2/12/2018 11:38:15 AM ******/
+    /* ***** Object:  Step [cache_view mcs.lunch_info]    Script Date: 2/12/2018 11:38:15 AM ******/
 EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'cache_view mcs.lunch_info', 
 		@step_id=1, 
 		@cmdexec_success_code=0, 
@@ -575,7 +575,7 @@ EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'cache_vi
 		@database_name=N'master', 
 		@flags=0
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
-/****** Object:  Step [cache_view adsi.user_attributes]    Script Date: 2/12/2018 11:38:15 AM ******/
+    /* ***** Object:  Step [cache_view adsi.user_attributes]    Script Date: 2/12/2018 11:38:15 AM ******/
 EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'cache_view adsi.user_attributes', 
 		@step_id=2, 
 		@cmdexec_success_code=0, 
@@ -590,7 +590,7 @@ EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'cache_vi
 		@database_name=N'master', 
 		@flags=0
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
-/****** Object:  Step [illuminate_dna_repositories.repository_row_ids_merge]    Script Date: 2/12/2018 11:38:15 AM ******/
+    /* ***** Object:  Step [illuminate_dna_repositories.repository_row_ids_merge]    Script Date: 2/12/2018 11:38:15 AM ******/
 EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'illuminate_dna_repositories.repository_row_ids_merge', 
 		@step_id=3, 
 		@cmdexec_success_code=0, 
@@ -605,7 +605,7 @@ EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'illumina
 		@database_name=N'master', 
 		@flags=0
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
-/****** Object:  Step [student_session_aff validation and cleanup]    Script Date: 2/12/2018 11:38:15 AM ******/
+    /* ***** Object:  Step [student_session_aff validation and cleanup]    Script Date: 2/12/2018 11:38:15 AM ******/
 EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'student_session_aff validation and cleanup', 
 		@step_id=4, 
 		@cmdexec_success_code=0, 
@@ -623,7 +623,7 @@ WHERE stu_sess_id NOT IN (SELECT stu_sess_id FROM gabby.illuminate_public.studen
 		@database_name=N'master', 
 		@flags=0
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
-/****** Object:  Step [assessment_grade_levels validation and cleanup]    Script Date: 2/12/2018 11:38:15 AM ******/
+    /* ***** Object:  Step [assessment_grade_levels validation and cleanup]    Script Date: 2/12/2018 11:38:15 AM ******/
 EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'assessment_grade_levels validation and cleanup', 
 		@step_id=5, 
 		@cmdexec_success_code=0, 
@@ -641,7 +641,7 @@ WHERE assessment_grade_level_id NOT IN (SELECT assessment_grade_level_id FROM ga
 		@database_name=N'master', 
 		@flags=0
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
-/****** Object:  Step [fields validation and cleanup]    Script Date: 2/12/2018 11:38:15 AM ******/
+    /* ***** Object:  Step [fields validation and cleanup]    Script Date: 2/12/2018 11:38:15 AM ******/
 EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'fields validation and cleanup', 
 		@step_id=6, 
 		@cmdexec_success_code=0, 
@@ -659,7 +659,7 @@ WHERE field_id NOT IN (SELECT field_id FROM gabby.illuminate_dna_assessments.fie
 		@database_name=N'master', 
 		@flags=0
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
-/****** Object:  Step [ss_cube validation and cleanup]    Script Date: 2/12/2018 11:38:15 AM ******/
+    /* ***** Object:  Step [ss_cube validation and cleanup]    Script Date: 2/12/2018 11:38:15 AM ******/
 EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'ss_cube validation and cleanup', 
 		@step_id=7, 
 		@cmdexec_success_code=0, 
@@ -701,4 +701,3 @@ QuitWithRollback:
     IF (@@TRANCOUNT > 0) ROLLBACK TRANSACTION
 EndSave:
 GO
-

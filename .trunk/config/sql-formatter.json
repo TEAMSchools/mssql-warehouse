@@ -1,4 +1,4 @@
 {
   "language": "tsql",
-  "tabWidth": 4
+  "expressionWidth": 88
 }

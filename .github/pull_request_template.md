@@ -1,8 +1,8 @@
-# Pull Request 
+# Pull Request
 
 ## If approved, this pull request will:
 
-- 
+-
 
 ## Pre-reqs
 
@@ -15,7 +15,5 @@
 - [ ] Paste the link from the task you created in the space below:
 
 ---
-
-
 
 ---

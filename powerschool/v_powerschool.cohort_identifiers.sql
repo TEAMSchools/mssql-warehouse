@@ -1,4 +1,4 @@
-CREATE OR ALTER VIEW powerschool.cohort_identifiers AS
+CREATE OR ALTER VIEW powerschool.cohort_identifiers advisory_static AS
 
 SELECT co.studentid
       ,co.student_number
@@ -187,4 +187,4 @@ LEFT JOIN gabby.ops.income_form_data_clean ifc
   ON co.student_number = ifc.student_number
  AND co.academic_year = ifc.academic_year
  AND ifc.[db_name] = DB_NAME()
- AND ifc.rn =1
+ AND ifc.rn = 1

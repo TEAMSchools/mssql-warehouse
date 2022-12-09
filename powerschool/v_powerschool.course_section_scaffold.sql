@@ -1,31 +1,33 @@
-CREATE OR ALTER VIEW powerschool.course_section_scaffold AS 
-
-SELECT studentid
-      ,student_number
-      ,yearid
-      ,term_name
-      ,is_curterm
-      ,course_number
-      ,excludefromgpa
-      ,sectionid      
-      ,course_name
-      ,credittype
-      ,credit_hours
-      ,gradescaleid
-FROM powerschool.course_section_scaffold_current_static
-
+CREATE OR ALTER VIEW
+  powerschool.course_section_scaffold AS
+SELECT
+  studentid,
+  student_number,
+  yearid,
+  term_name,
+  is_curterm,
+  course_number,
+  excludefromgpa,
+  sectionid,
+  course_name,
+  credittype,
+  credit_hours,
+  gradescaleid
+FROM
+  powerschool.course_section_scaffold_current_static
 UNION ALL
-
-SELECT studentid
-      ,student_number
-      ,yearid
-      ,term_name
-      ,is_curterm
-      ,course_number
-      ,excludefromgpa
-      ,sectionid
-      ,course_name
-      ,credittype
-      ,credit_hours
-      ,gradescaleid
-FROM powerschool.course_section_scaffold_archive
+SELECT
+  studentid,
+  student_number,
+  yearid,
+  term_name,
+  is_curterm,
+  course_number,
+  excludefromgpa,
+  sectionid,
+  course_name,
+  credittype,
+  credit_hours,
+  gradescaleid
+FROM
+  powerschool.course_section_scaffold_archive

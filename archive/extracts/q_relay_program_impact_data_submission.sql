@@ -21,7 +21,6 @@ WHERE academic_year BETWEEN 2014 AND 2016
   AND rn_year = 1
   AND schoolid <> 999999
 --*/
-
 /*
 --Assessment Data: all applicable grades for 2014/15  � 2016/17 school years
 ----Student identifier (can be scrambled if scrambled same way each year)
@@ -74,25 +73,23 @@ WHERE academic_year BETWEEN 2014 AND 2016
   AND response_type = 'O'
   AND percent_correct IS NOT NULL
 --*/
-
---/*
---Teacher-Student Data Linkages 
-----Student identifier  (can be scrambled if scrambled same way each year) linked to courses
-----Teacher identifier linked to courses
-----Courses linked to assessment content area
-SELECT student_number
-      ,teachernumber
-      ,academic_year
-      ,course_name
-      ,credittype
-      ,illuminate_subject AS parcc_subject
-      ,illuminate_subject AS interim_subject
-      ,map_measurementscale
-FROM gabby.powerschool.course_enrollments_static
-WHERE academic_year BETWEEN 2014 AND 2016
-  AND illuminate_subject IS NOT NULL  
---*/
-
+-- /*
+-- Teacher-Student Data Linkages 
+-- --Student identifier  (can be scrambled if scrambled same way each year) linked to
+-- courses
+-- --Teacher identifier linked to courses
+-- --Courses linked to assessment content area
+select
+    student_number,
+    teachernumber,
+    academic_year,
+    course_name,
+    credittype,
+    illuminate_subject as parcc_subject,
+    illuminate_subject as interim_subject,
+    map_measurementscale
+from gabby.powerschool.course_enrollments_static
+-- */
 /*
 --Teacher Data
 ----ID crosswalk from HR data to Linkage data
@@ -120,3 +117,4 @@ LEFT JOIN gabby.people.adp_ps_id_link link
  AND link.is_master = 1
 WHERE adp.rn_curr = 1
 --*/
+where academic_year between 2014 and 2016 and illuminate_subject is not null

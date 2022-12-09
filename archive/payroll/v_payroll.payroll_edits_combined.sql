@@ -1,96 +1,96 @@
 USE gabby GO
 CREATE OR ALTER VIEW
-    payroll.payroll_edits_combined AS
+  payroll.payroll_edits_combined AS
 SELECT
-    p.entity AS entity,
-    p.salesforce_position_number AS sf_position_id,
-    r.associate_id AS associate_id,
-    r.position_id AS position_id,
-    p.preferred_name AS [name],
-    CAST(p.[start_date] AS DATE) AS effective_date,
-    'New Hire' AS [source],
-    CAST(p.salary AS NVARCHAR) AS salary,
-    p.leadership_stipend,
-    p.relocation_stipend,
-    p.other_stipend,
-    CAST(
-        ISNULL(p.leadership_stipend, 0) + ISNULL(p.relocation_stipend, 0) + ISNULL(p.other_stipend, 0) AS NVARCHAR
-    ) AS total_stipend,
-    NULL AS accounting_line,
-    NULL AS notes
+  p.entity AS entity,
+  p.salesforce_position_number AS sf_position_id,
+  r.associate_id AS associate_id,
+  r.position_id AS position_id,
+  p.preferred_name AS [name],
+  CAST(p.[start_date] AS DATE) AS effective_date,
+  'New Hire' AS [source],
+  CAST(p.salary AS NVARCHAR) AS salary,
+  p.leadership_stipend,
+  p.relocation_stipend,
+  p.other_stipend,
+  CAST(
+    ISNULL(p.leadership_stipend, 0) + ISNULL(p.relocation_stipend, 0) + ISNULL(p.other_stipend, 0) AS NVARCHAR
+  ) AS total_stipend,
+  NULL AS accounting_line,
+  NULL AS notes
 FROM
-    gabby.payroll.new_hire_tracker p
-    LEFT JOIN gabby.people.staff_roster r ON p.salesforce_position_number = r.salesforce_job_position_name_custom
-    AND r.rn_curr = 1
+  gabby.payroll.new_hire_tracker p
+  LEFT JOIN gabby.people.staff_roster r ON p.salesforce_position_number = r.salesforce_job_position_name_custom
+  AND r.rn_curr = 1
 UNION ALL
 SELECT
-    e.entity AS entity,
-    r.salesforce_job_position_name_custom AS sf_position_id,
-    e.associate_id AS associate_id,
-    e.position_id AS position_id,
-    employee_name AS [name],
-    CAST(e.payroll_date AS DATE) AS effective_date,
-    'Pay Edits' AS [source],
-    CAST(e.amount_of_edit AS NVARCHAR) AS salary,
-    NULL AS leadership_stipend,
-    NULL AS relocation_stipend,
-    NULL AS other_stipend,
-    NULL AS total_stipend,
-    NULL As accounting_line,
-    e.[description] AS notes
+  e.entity AS entity,
+  r.salesforce_job_position_name_custom AS sf_position_id,
+  e.associate_id AS associate_id,
+  e.position_id AS position_id,
+  employee_name AS [name],
+  CAST(e.payroll_date AS DATE) AS effective_date,
+  'Pay Edits' AS [source],
+  CAST(e.amount_of_edit AS NVARCHAR) AS salary,
+  NULL AS leadership_stipend,
+  NULL AS relocation_stipend,
+  NULL AS other_stipend,
+  NULL AS total_stipend,
+  NULL As accounting_line,
+  e.[description] AS notes
 FROM
-    gabby.payroll.payroll_edit_tracker e
-    LEFT JOIN gabby.people.staff_roster r ON e.associate_id = r.associate_id
-    AND r.rn_curr = 1
+  gabby.payroll.payroll_edit_tracker e
+  LEFT JOIN gabby.people.staff_roster r ON e.associate_id = r.associate_id
+  AND r.rn_curr = 1
 WHERE
-    e._fivetran_deleted IS NULL
+  e._fivetran_deleted IS NULL
 UNION ALL
 SELECT
-    s.entity AS entity,
-    r.salesforce_job_position_name_custom AS sf_position_id,
-    s.employee_associate_id AS associate_id,
-    s.employee_position_id AS position_id,
-    s.employee_name AS [name],
-    CAST(s.effective_date_of_change AS DATE) AS effective_date,
-    'Status Change' AS [source],
-    CAST(s._new_base_salary_ AS NVARCHAR) AS salary,
-    NULL AS leadership_stipend,
-    NULL AS relocation_stipend,
-    NULL AS other_stipend,
-    CAST(s.bonus_stipend_amount_ AS NVARCHAR) AS total_stipend,
-    CASE
-        WHEN s.salary_accounting_line IS NULL THEN s.bonus_stipend_accounting_line
-        ELSE s.salary_accounting_line
-    END AS accounting_line,
-    s.bonus_stipend_details AS notes
+  s.entity AS entity,
+  r.salesforce_job_position_name_custom AS sf_position_id,
+  s.employee_associate_id AS associate_id,
+  s.employee_position_id AS position_id,
+  s.employee_name AS [name],
+  CAST(s.effective_date_of_change AS DATE) AS effective_date,
+  'Status Change' AS [source],
+  CAST(s._new_base_salary_ AS NVARCHAR) AS salary,
+  NULL AS leadership_stipend,
+  NULL AS relocation_stipend,
+  NULL AS other_stipend,
+  CAST(s.bonus_stipend_amount_ AS NVARCHAR) AS total_stipend,
+  CASE
+    WHEN s.salary_accounting_line IS NULL THEN s.bonus_stipend_accounting_line
+    ELSE s.salary_accounting_line
+  END AS accounting_line,
+  s.bonus_stipend_details AS notes
 FROM
-    gabby.payroll.status_change s
-    LEFT JOIN gabby.adp.staff_roster r ON s.employee_associate_id = r.associate_id
-    AND r.rn_curr = 1
+  gabby.payroll.status_change s
+  LEFT JOIN gabby.adp.staff_roster r ON s.employee_associate_id = r.associate_id
+  AND r.rn_curr = 1
 WHERE
-    s.effective_date_of_change <> 'varies'
+  s.effective_date_of_change <> 'varies'
 UNION ALL
 SELECT
-    LEFT(r.position_id, 3) AS entity,
-    r.salesforce_job_position_name_custom AS sf_position_id,
-    r.associate_id AS associate_id,
-    r.position_id AS position_id,
-    CASE
-        WHEN r.preferred_name IS NULL THEN r.first_name + ' ' + r.last_name
-        ELSE r.preferred_name
-    END AS [name],
-    CAST(r.termination_date AS DATE) AS effective_date,
-    'Terminations' AS [source],
-    NULL AS salary,
-    NULL AS leadership_stipend,
-    NULL AS relocation_stipend,
-    NULL AS other_stipend,
-    NULL AS total_stipend,
-    'Emplpoyee Accounting Line' As accounting_line,
-    NULL AS notes
+  LEFT(r.position_id, 3) AS entity,
+  r.salesforce_job_position_name_custom AS sf_position_id,
+  r.associate_id AS associate_id,
+  r.position_id AS position_id,
+  CASE
+    WHEN r.preferred_name IS NULL THEN r.first_name + ' ' + r.last_name
+    ELSE r.preferred_name
+  END AS [name],
+  CAST(r.termination_date AS DATE) AS effective_date,
+  'Terminations' AS [source],
+  NULL AS salary,
+  NULL AS leadership_stipend,
+  NULL AS relocation_stipend,
+  NULL AS other_stipend,
+  NULL AS total_stipend,
+  'Emplpoyee Accounting Line' As accounting_line,
+  NULL AS notes
 FROM
-    gabby.adp.staff_roster r
+  gabby.adp.staff_roster r
 WHERE
-    r.rn_curr = 1
-    AND position_status = 'Terminated'
-    AND CAST(termination_date AS DATE) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR (), 7, 1)
+  r.rn_curr = 1
+  AND position_status = 'Terminated'
+  AND CAST(termination_date AS DATE) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR (), 7, 1)

@@ -1,357 +1,348 @@
-WITH state_assessments AS (
-  SELECT state_studentnumber
-
-        ,G3_MATH_assessment_type
-        ,G3_MATH_performance_level
-        ,G3_MATH_scaled_score      
-        ,G4_MATH_assessment_type
-        ,G4_MATH_performance_level
-        ,G4_MATH_scaled_score
-        ,G5_MATH_assessment_type
-        ,G5_MATH_performance_level
-        ,G5_MATH_scaled_score
-        ,G6_MATH_assessment_type
-        ,G6_MATH_performance_level
-        ,G6_MATH_scaled_score
-        ,G7_MATH_assessment_type
-        ,G7_MATH_performance_level
-        ,G7_MATH_scaled_score
-        ,G8_MATH_assessment_type
-        ,G8_MATH_performance_level
-        ,G8_MATH_scaled_score      
-        ,G11_MATH_assessment_type
-        ,G11_MATH_performance_level
-        ,G11_MATH_scaled_score            
-        ,G12_MATH_assessment_type
-        ,G12_MATH_performance_level
-        ,G12_MATH_scaled_score
-        ,ALG01_assessment_type
-        ,ALG01_performance_level
-        ,ALG01_scaled_score      
-        ,GEO_assessment_type
-        ,GEO_performance_level
-        ,GEO_scaled_score
-        ,ALG02_assessment_type
-        ,ALG02_performance_level
-        ,ALG02_scaled_score
-      
-        ,G3_ELA_assessment_type
-        ,G3_ELA_performance_level
-        ,G3_ELA_scaled_score
-        ,G4_ELA_assessment_type
-        ,G4_ELA_performance_level
-        ,G4_ELA_scaled_score
-        ,G5_ELA_assessment_type
-        ,G5_ELA_performance_level
-        ,G5_ELA_scaled_score
-        ,G6_ELA_assessment_type
-        ,G6_ELA_performance_level
-        ,G6_ELA_scaled_score
-        ,G7_ELA_assessment_type
-        ,G7_ELA_performance_level
-        ,G7_ELA_scaled_score
-        ,G8_ELA_assessment_type
-        ,G8_ELA_performance_level
-        ,G8_ELA_scaled_score
-        ,G9_ELA_assessment_type
-        ,G9_ELA_performance_level
-        ,G9_ELA_scaled_score
-        ,G10_ELA_assessment_type
-        ,G10_ELA_performance_level
-        ,G10_ELA_scaled_score      
-        ,G11_ELA_assessment_type
-        ,G11_ELA_performance_level
-        ,G11_ELA_scaled_score
-        ,G12_ELA_assessment_type
-        ,G12_ELA_performance_level
-        ,G12_ELA_scaled_score
-
-        ,G4_SCIENCE_assessment_type
-        ,G4_SCIENCE_performance_level
-        ,G4_SCIENCE_scaled_score
-        ,G8_SCIENCE_assessment_type
-        ,G8_SCIENCE_performance_level
-        ,G8_SCIENCE_scaled_score
-        ,G9_SCIENCE_assessment_type
-        ,G9_SCIENCE_performance_level
-        ,G9_SCIENCE_scaled_score
-        ,G10_SCIENCE_assessment_type
-        ,G10_SCIENCE_performance_level
-        ,G10_SCIENCE_scaled_score
-        ,G11_SCIENCE_assessment_type
-        ,G11_SCIENCE_performance_level
-        ,G11_SCIENCE_scaled_score
-        ,G12_SCIENCE_assessment_type
-        ,G12_SCIENCE_performance_level
-        ,G12_SCIENCE_scaled_score
-  FROM
+with
+  state_assessments as (
+    select
+      state_studentnumber,
+      g3_math_assessment_type,
+      g3_math_performance_level,
+      g3_math_scaled_score,
+      g4_math_assessment_type,
+      g4_math_performance_level,
+      g4_math_scaled_score,
+      g5_math_assessment_type,
+      g5_math_performance_level,
+      g5_math_scaled_score,
+      g6_math_assessment_type,
+      g6_math_performance_level,
+      g6_math_scaled_score,
+      g7_math_assessment_type,
+      g7_math_performance_level,
+      g7_math_scaled_score,
+      g8_math_assessment_type,
+      g8_math_performance_level,
+      g8_math_scaled_score,
+      g11_math_assessment_type,
+      g11_math_performance_level,
+      g11_math_scaled_score,
+      g12_math_assessment_type,
+      g12_math_performance_level,
+      g12_math_scaled_score,
+      alg01_assessment_type,
+      alg01_performance_level,
+      alg01_scaled_score,
+      geo_assessment_type,
+      geo_performance_level,
+      geo_scaled_score,
+      alg02_assessment_type,
+      alg02_performance_level,
+      alg02_scaled_score,
+      g3_ela_assessment_type,
+      g3_ela_performance_level,
+      g3_ela_scaled_score,
+      g4_ela_assessment_type,
+      g4_ela_performance_level,
+      g4_ela_scaled_score,
+      g5_ela_assessment_type,
+      g5_ela_performance_level,
+      g5_ela_scaled_score,
+      g6_ela_assessment_type,
+      g6_ela_performance_level,
+      g6_ela_scaled_score,
+      g7_ela_assessment_type,
+      g7_ela_performance_level,
+      g7_ela_scaled_score,
+      g8_ela_assessment_type,
+      g8_ela_performance_level,
+      g8_ela_scaled_score,
+      g9_ela_assessment_type,
+      g9_ela_performance_level,
+      g9_ela_scaled_score,
+      g10_ela_assessment_type,
+      g10_ela_performance_level,
+      g10_ela_scaled_score,
+      g11_ela_assessment_type,
+      g11_ela_performance_level,
+      g11_ela_scaled_score,
+      g12_ela_assessment_type,
+      g12_ela_performance_level,
+      g12_ela_scaled_score,
+      g4_science_assessment_type,
+      g4_science_performance_level,
+      g4_science_scaled_score,
+      g8_science_assessment_type,
+      g8_science_performance_level,
+      g8_science_scaled_score,
+      g9_science_assessment_type,
+      g9_science_performance_level,
+      g9_science_scaled_score,
+      g10_science_assessment_type,
+      g10_science_performance_level,
+      g10_science_scaled_score,
+      g11_science_assessment_type,
+      g11_science_performance_level,
+      g11_science_scaled_score,
+      g12_science_assessment_type,
+      g12_science_performance_level,
+      g12_science_scaled_score
+    from
       (
-       SELECT state_studentnumber
-             ,CONCAT(CASE
-                      WHEN subject IN ('ALG01','ALG02','GEO') THEN subject
-                      ELSE CONCAT('G', grade_level, '_', subject)
-                     END, '_'
-                    ,field) AS pivot_field
-             ,value
-       FROM
-           (
-            SELECT co.state_studentnumber       
-                  ,co.grade_level
-                  ,a.subject
-                  ,CAST(a.test_type AS NVARCHAR) AS assessment_type
-                  ,CAST(a.performance_level AS NVARCHAR) AS performance_level
-                  ,CAST(a.scaled_score AS NVARCHAR) AS scaled_score
-            FROM gabby.njsmart.all_state_assessments a
-            JOIN gabby.powerschool.cohort_identifiers_static co
-              ON a.local_student_id = co.student_number
-             AND a.academic_year = co.academic_year
-             AND co.rn_year = 1
-
-            UNION ALL
-
-            SELECT state_student_identifier
-                  ,CASE
-                    WHEN LEFT(test_code, 3) IN ('ALG','GEO') THEN NULL
-                    ELSE CAST(RIGHT(test_code, 2) AS INT)
-                   END AS grade_level
-                  ,CASE
-                    WHEN LEFT(test_code, 3) = 'ALG' THEN test_code
-                    WHEN LEFT(test_code, 3) = 'GEO' THEN 'GEO'
-                    WHEN LEFT(test_code, 3) = 'MAT' THEN 'MATH'
-                    ELSE LEFT(test_code, 3)
-                   END AS subject
-                  ,N'PARCC' AS assessment_type
-                  ,CAST(test_performance_level AS NVARCHAR)
-                  ,CAST(test_scale_score AS NVARCHAR)
-            FROM gabby.parcc.summative_record_file_clean
-           ) sub 
-       UNPIVOT(
-         value
-         FOR field IN (assessment_type, performance_level, scaled_score)
-        ) u
-      ) sub
-  PIVOT(
-    MAX(value)
-    FOR pivot_field IN (ALG01_assessment_type
-                       ,ALG01_performance_level
-                       ,ALG01_scaled_score
-                       ,ALG02_assessment_type
-                       ,ALG02_performance_level
-                       ,ALG02_scaled_score
-                       ,G10_ELA_assessment_type
-                       ,G10_ELA_performance_level
-                       ,G10_ELA_scaled_score
-                       ,G10_SCIENCE_assessment_type
-                       ,G10_SCIENCE_performance_level
-                       ,G10_SCIENCE_scaled_score
-                       ,G11_ELA_assessment_type
-                       ,G11_ELA_performance_level
-                       ,G11_ELA_scaled_score
-                       ,G11_MATH_assessment_type
-                       ,G11_MATH_performance_level
-                       ,G11_MATH_scaled_score
-                       ,G11_SCIENCE_assessment_type
-                       ,G11_SCIENCE_performance_level
-                       ,G11_SCIENCE_scaled_score
-                       ,G12_ELA_assessment_type
-                       ,G12_ELA_performance_level
-                       ,G12_ELA_scaled_score
-                       ,G12_MATH_assessment_type
-                       ,G12_MATH_performance_level
-                       ,G12_MATH_scaled_score
-                       ,G12_SCIENCE_assessment_type
-                       ,G12_SCIENCE_performance_level
-                       ,G12_SCIENCE_scaled_score
-                       ,G3_ELA_assessment_type
-                       ,G3_ELA_performance_level
-                       ,G3_ELA_scaled_score
-                       ,G3_MATH_assessment_type
-                       ,G3_MATH_performance_level
-                       ,G3_MATH_scaled_score
-                       ,G4_ELA_assessment_type
-                       ,G4_ELA_performance_level
-                       ,G4_ELA_scaled_score
-                       ,G4_MATH_assessment_type
-                       ,G4_MATH_performance_level
-                       ,G4_MATH_scaled_score
-                       ,G4_SCIENCE_assessment_type
-                       ,G4_SCIENCE_performance_level
-                       ,G4_SCIENCE_scaled_score
-                       ,G5_ELA_assessment_type
-                       ,G5_ELA_performance_level
-                       ,G5_ELA_scaled_score
-                       ,G5_MATH_assessment_type
-                       ,G5_MATH_performance_level
-                       ,G5_MATH_scaled_score
-                       ,G6_ELA_assessment_type
-                       ,G6_ELA_performance_level
-                       ,G6_ELA_scaled_score
-                       ,G6_MATH_assessment_type
-                       ,G6_MATH_performance_level
-                       ,G6_MATH_scaled_score
-                       ,G7_ELA_assessment_type
-                       ,G7_ELA_performance_level
-                       ,G7_ELA_scaled_score
-                       ,G7_MATH_assessment_type
-                       ,G7_MATH_performance_level
-                       ,G7_MATH_scaled_score
-                       ,G8_ELA_assessment_type
-                       ,G8_ELA_performance_level
-                       ,G8_ELA_scaled_score
-                       ,G8_MATH_assessment_type
-                       ,G8_MATH_performance_level
-                       ,G8_MATH_scaled_score
-                       ,G8_SCIENCE_assessment_type
-                       ,G8_SCIENCE_performance_level
-                       ,G8_SCIENCE_scaled_score
-                       ,G9_ELA_assessment_type
-                       ,G9_ELA_performance_level
-                       ,G9_ELA_scaled_score
-                       ,G9_SCIENCE_assessment_type
-                       ,G9_SCIENCE_performance_level
-                       ,G9_SCIENCE_scaled_score
-                       ,GEO_assessment_type
-                       ,GEO_performance_level
-                       ,GEO_scaled_score)
-   ) p
- )
-
-SELECT COALESCE(sid.local_identification_number, sid2.local_identification_number) AS lid
-      ,g.sid
-      ,g.first_name
-      ,COALESCE(sid.middle_name, sid2.middle_name) AS middle_name
-      ,g.last_name
-      ,COALESCE(sid.generation_code_suffix, sid2.generation_code_suffix) AS generation_code_suffix
-      ,g.dob
-      
-      ,g.school_name AS attending_school_name
-      ,g.grade_level
-      ,g.entering_gender
-      ,g.entering_race_or_ethnicity
-      ,g.lunch_status AS entering_lunch_status
-      ,g.retained_display AS retained_last_year      
-      ,g.status
-      ,g.entering_special_education AS entering_special_education_classification
-      ,g.lepprogram_enrollment AS entering_lep_program
-      ,g.four_year_graduation_cohort AS x4_year_graduation_cohort
-      ,g.four_year_graduation_status AS x4_year_graduation_cohort_status
-            
-      ,COALESCE(sid.resident_municipal_code, sid2.resident_municipal_code) AS resident_municipal_code
-      ,COALESCE(sid.city_of_birth, sid2.city_of_birth) AS city_of_birth
-      ,COALESCE(sid.state_of_birth, sid2.state_of_birth) AS state_of_birth
-      ,COALESCE(sid.county_code_attending, sid2.county_code_attending) AS county_code_attending
-      ,COALESCE(sid.district_code_attending, sid2.district_code_attending) AS district_code_attending
-      ,COALESCE(sid.school_code_attending, sid2.school_code_attending) AS school_code_attending
-      ,COALESCE(sid.district_entry_date, sid2.district_entry_date) AS district_entry_date
-      ,COALESCE(sid.school_entry_date, sid2.school_entry_date) AS school_entry_date
-      ,COALESCE(sid.school_exit_date, sid2.school_exit_date) AS school_exit_date
-      ,COALESCE(sid.school_exit_withdrawal_code, sid2.school_exit_withdrawal_code) AS school_exit_withdrawal_code
-
-      ,sat.math AS sat_math_score
-      ,sat.verbal AS sat_test_verbal_score
-      ,sat.writing AS sat_test_writing_score
-      ,sat.all_tests_total AS sat_test_composite_score
-
-      ,act.english AS act_english_score
-      ,act.reading AS act_reading_score
-      ,act.math AS act_math_score
-      ,act.science AS act_science_scoe
-      ,act.composite AS act_composite_score
-
-      ,sa.g3_math_assessment_type
-      ,sa.g3_math_performance_level
-      ,sa.g3_math_scaled_score      
-      ,sa.g4_math_assessment_type
-      ,sa.g4_math_performance_level
-      ,sa.g4_math_scaled_score
-      ,sa.g5_math_assessment_type
-      ,sa.g5_math_performance_level
-      ,sa.g5_math_scaled_score
-      ,sa.g6_math_assessment_type
-      ,sa.g6_math_performance_level
-      ,sa.g6_math_scaled_score
-      ,sa.g7_math_assessment_type
-      ,sa.g7_math_performance_level
-      ,sa.g7_math_scaled_score
-      ,sa.g8_math_assessment_type
-      ,sa.g8_math_performance_level
-      ,sa.g8_math_scaled_score      
-      ,sa.g11_math_assessment_type
-      ,sa.g11_math_performance_level
-      ,sa.g11_math_scaled_score            
-      ,sa.g12_math_assessment_type
-      ,sa.g12_math_performance_level
-      ,sa.g12_math_scaled_score
-      ,sa.alg01_assessment_type
-      ,sa.alg01_performance_level
-      ,sa.alg01_scaled_score      
-      ,sa.geo_assessment_type
-      ,sa.geo_performance_level
-      ,sa.geo_scaled_score
-      ,sa.alg02_assessment_type
-      ,sa.alg02_performance_level
-      ,sa.alg02_scaled_score      
-      ,sa.g3_ela_assessment_type
-      ,sa.g3_ela_performance_level
-      ,sa.g3_ela_scaled_score
-      ,sa.g4_ela_assessment_type
-      ,sa.g4_ela_performance_level
-      ,sa.g4_ela_scaled_score
-      ,sa.g5_ela_assessment_type
-      ,sa.g5_ela_performance_level
-      ,sa.g5_ela_scaled_score
-      ,sa.g6_ela_assessment_type
-      ,sa.g6_ela_performance_level
-      ,sa.g6_ela_scaled_score
-      ,sa.g7_ela_assessment_type
-      ,sa.g7_ela_performance_level
-      ,sa.g7_ela_scaled_score
-      ,sa.g8_ela_assessment_type
-      ,sa.g8_ela_performance_level
-      ,sa.g8_ela_scaled_score
-      ,sa.g9_ela_assessment_type
-      ,sa.g9_ela_performance_level
-      ,sa.g9_ela_scaled_score
-      ,sa.g10_ela_assessment_type
-      ,sa.g10_ela_performance_level
-      ,sa.g10_ela_scaled_score      
-      ,sa.g11_ela_assessment_type
-      ,sa.g11_ela_performance_level
-      ,sa.g11_ela_scaled_score
-      ,sa.g12_ela_assessment_type
-      ,sa.g12_ela_performance_level
-      ,sa.g12_ela_scaled_score
-      ,sa.g4_science_assessment_type
-      ,sa.g4_science_performance_level
-      ,sa.g4_science_scaled_score
-      ,sa.g8_science_assessment_type
-      ,sa.g8_science_performance_level
-      ,sa.g8_science_scaled_score
-      ,sa.g9_science_assessment_type
-      ,sa.g9_science_performance_level
-      ,sa.g9_science_scaled_score
-      ,sa.g10_science_assessment_type
-      ,sa.g10_science_performance_level
-      ,sa.g10_science_scaled_score
-      ,sa.g11_science_assessment_type
-      ,sa.g11_science_performance_level
-      ,sa.g11_science_scaled_score
-      ,sa.g12_science_assessment_type
-      ,sa.g12_science_performance_level
-      ,sa.g12_science_scaled_score      
-FROM gabby.njsmart.high_school_graduation_cohort_status_profile g
-LEFT OUTER JOIN gabby.njsmart.sid_qsac_submission_set_records sid
-  ON g.sid = sid.state_identification_number
-LEFT OUTER JOIN  gabby.powerschool.students s
-  ON g.sid = s.state_studentnumber
-LEFT OUTER JOIN gabby.njsmart.sid_qsac_submission_set_records sid2
-  ON s.student_number = sid2.local_identification_number
-LEFT OUTER JOIN gabby.naviance.sat_scores_clean sat
-  ON COALESCE(sid.local_identification_number, sid2.local_identification_number) = sat.student_number
- AND sat.rn_highest = 1
-LEFT OUTER JOIN gabby.naviance.act_scores_clean act
-  ON COALESCE(sid.local_identification_number, sid2.local_identification_number) = act.student_number
- AND act.rn_highest = 1
-LEFT OUTER JOIN state_assessments sa
-  ON g.sid = sa.state_studentnumber
-WHERE g.four_year_graduation_cohort BETWEEN 2011 AND 2016
+        select
+          state_studentnumber,
+          concat(
+            case
+              when subject in ('ALG01', 'ALG02', 'GEO') then subject
+              else concat('G', grade_level, '_', subject)
+            end,
+            '_',
+            field
+          ) as pivot_field,
+          value
+        from
+          (
+            select
+              co.state_studentnumber,
+              co.grade_level,
+              a.subject,
+              cast(a.test_type as nvarchar) as assessment_type,
+              cast(a.performance_level as nvarchar) as performance_level,
+              cast(a.scaled_score as nvarchar) as scaled_score
+            from
+              gabby.njsmart.all_state_assessments a
+              join gabby.powerschool.cohort_identifiers_static co on a.local_student_id = co.student_number
+              and a.academic_year = co.academic_year
+              and co.rn_year = 1
+            union all
+            select
+              state_student_identifier,
+              case
+                when left(test_code, 3) in ('ALG', 'GEO') then null
+                else cast(right(test_code, 2) as int)
+              end as grade_level,
+              case
+                when left(test_code, 3) = 'ALG' then test_code
+                when left(test_code, 3) = 'GEO' then 'GEO'
+                when left(test_code, 3) = 'MAT' then 'MATH'
+                else left(test_code, 3)
+              end as subject,
+              n 'PARCC' as assessment_type,
+              cast(test_performance_level as nvarchar),
+              cast(test_scale_score as nvarchar)
+            from
+              gabby.parcc.summative_record_file_clean
+          ) sub unpivot (value for field in (assessment_type, performance_level, scaled_score)) u
+      ) sub pivot (
+        max(value) for pivot_field in (
+          alg01_assessment_type,
+          alg01_performance_level,
+          alg01_scaled_score,
+          alg02_assessment_type,
+          alg02_performance_level,
+          alg02_scaled_score,
+          g10_ela_assessment_type,
+          g10_ela_performance_level,
+          g10_ela_scaled_score,
+          g10_science_assessment_type,
+          g10_science_performance_level,
+          g10_science_scaled_score,
+          g11_ela_assessment_type,
+          g11_ela_performance_level,
+          g11_ela_scaled_score,
+          g11_math_assessment_type,
+          g11_math_performance_level,
+          g11_math_scaled_score,
+          g11_science_assessment_type,
+          g11_science_performance_level,
+          g11_science_scaled_score,
+          g12_ela_assessment_type,
+          g12_ela_performance_level,
+          g12_ela_scaled_score,
+          g12_math_assessment_type,
+          g12_math_performance_level,
+          g12_math_scaled_score,
+          g12_science_assessment_type,
+          g12_science_performance_level,
+          g12_science_scaled_score,
+          g3_ela_assessment_type,
+          g3_ela_performance_level,
+          g3_ela_scaled_score,
+          g3_math_assessment_type,
+          g3_math_performance_level,
+          g3_math_scaled_score,
+          g4_ela_assessment_type,
+          g4_ela_performance_level,
+          g4_ela_scaled_score,
+          g4_math_assessment_type,
+          g4_math_performance_level,
+          g4_math_scaled_score,
+          g4_science_assessment_type,
+          g4_science_performance_level,
+          g4_science_scaled_score,
+          g5_ela_assessment_type,
+          g5_ela_performance_level,
+          g5_ela_scaled_score,
+          g5_math_assessment_type,
+          g5_math_performance_level,
+          g5_math_scaled_score,
+          g6_ela_assessment_type,
+          g6_ela_performance_level,
+          g6_ela_scaled_score,
+          g6_math_assessment_type,
+          g6_math_performance_level,
+          g6_math_scaled_score,
+          g7_ela_assessment_type,
+          g7_ela_performance_level,
+          g7_ela_scaled_score,
+          g7_math_assessment_type,
+          g7_math_performance_level,
+          g7_math_scaled_score,
+          g8_ela_assessment_type,
+          g8_ela_performance_level,
+          g8_ela_scaled_score,
+          g8_math_assessment_type,
+          g8_math_performance_level,
+          g8_math_scaled_score,
+          g8_science_assessment_type,
+          g8_science_performance_level,
+          g8_science_scaled_score,
+          g9_ela_assessment_type,
+          g9_ela_performance_level,
+          g9_ela_scaled_score,
+          g9_science_assessment_type,
+          g9_science_performance_level,
+          g9_science_scaled_score,
+          geo_assessment_type,
+          geo_performance_level,
+          geo_scaled_score
+        )
+      ) p
+  )
+select
+  coalesce(sid.local_identification_number, sid2.local_identification_number) as lid,
+  g.sid,
+  g.first_name,
+  coalesce(sid.middle_name, sid2.middle_name) as middle_name,
+  g.last_name,
+  coalesce(sid.generation_code_suffix, sid2.generation_code_suffix) as generation_code_suffix,
+  g.dob,
+  g.school_name as attending_school_name,
+  g.grade_level,
+  g.entering_gender,
+  g.entering_race_or_ethnicity,
+  g.lunch_status as entering_lunch_status,
+  g.retained_display as retained_last_year,
+  g.status,
+  g.entering_special_education as entering_special_education_classification,
+  g.lepprogram_enrollment as entering_lep_program,
+  g.four_year_graduation_cohort as x4_year_graduation_cohort,
+  g.four_year_graduation_status as x4_year_graduation_cohort_status,
+  coalesce(sid.resident_municipal_code, sid2.resident_municipal_code) as resident_municipal_code,
+  coalesce(sid.city_of_birth, sid2.city_of_birth) as city_of_birth,
+  coalesce(sid.state_of_birth, sid2.state_of_birth) as state_of_birth,
+  coalesce(sid.county_code_attending, sid2.county_code_attending) as county_code_attending,
+  coalesce(sid.district_code_attending, sid2.district_code_attending) as district_code_attending,
+  coalesce(sid.school_code_attending, sid2.school_code_attending) as school_code_attending,
+  coalesce(sid.district_entry_date, sid2.district_entry_date) as district_entry_date,
+  coalesce(sid.school_entry_date, sid2.school_entry_date) as school_entry_date,
+  coalesce(sid.school_exit_date, sid2.school_exit_date) as school_exit_date,
+  coalesce(sid.school_exit_withdrawal_code, sid2.school_exit_withdrawal_code) as school_exit_withdrawal_code,
+  sat.math as sat_math_score,
+  sat.verbal as sat_test_verbal_score,
+  sat.writing as sat_test_writing_score,
+  sat.all_tests_total as sat_test_composite_score,
+  act.english as act_english_score,
+  act.reading as act_reading_score,
+  act.math as act_math_score,
+  act.science as act_science_scoe,
+  act.composite as act_composite_score,
+  sa.g3_math_assessment_type,
+  sa.g3_math_performance_level,
+  sa.g3_math_scaled_score,
+  sa.g4_math_assessment_type,
+  sa.g4_math_performance_level,
+  sa.g4_math_scaled_score,
+  sa.g5_math_assessment_type,
+  sa.g5_math_performance_level,
+  sa.g5_math_scaled_score,
+  sa.g6_math_assessment_type,
+  sa.g6_math_performance_level,
+  sa.g6_math_scaled_score,
+  sa.g7_math_assessment_type,
+  sa.g7_math_performance_level,
+  sa.g7_math_scaled_score,
+  sa.g8_math_assessment_type,
+  sa.g8_math_performance_level,
+  sa.g8_math_scaled_score,
+  sa.g11_math_assessment_type,
+  sa.g11_math_performance_level,
+  sa.g11_math_scaled_score,
+  sa.g12_math_assessment_type,
+  sa.g12_math_performance_level,
+  sa.g12_math_scaled_score,
+  sa.alg01_assessment_type,
+  sa.alg01_performance_level,
+  sa.alg01_scaled_score,
+  sa.geo_assessment_type,
+  sa.geo_performance_level,
+  sa.geo_scaled_score,
+  sa.alg02_assessment_type,
+  sa.alg02_performance_level,
+  sa.alg02_scaled_score,
+  sa.g3_ela_assessment_type,
+  sa.g3_ela_performance_level,
+  sa.g3_ela_scaled_score,
+  sa.g4_ela_assessment_type,
+  sa.g4_ela_performance_level,
+  sa.g4_ela_scaled_score,
+  sa.g5_ela_assessment_type,
+  sa.g5_ela_performance_level,
+  sa.g5_ela_scaled_score,
+  sa.g6_ela_assessment_type,
+  sa.g6_ela_performance_level,
+  sa.g6_ela_scaled_score,
+  sa.g7_ela_assessment_type,
+  sa.g7_ela_performance_level,
+  sa.g7_ela_scaled_score,
+  sa.g8_ela_assessment_type,
+  sa.g8_ela_performance_level,
+  sa.g8_ela_scaled_score,
+  sa.g9_ela_assessment_type,
+  sa.g9_ela_performance_level,
+  sa.g9_ela_scaled_score,
+  sa.g10_ela_assessment_type,
+  sa.g10_ela_performance_level,
+  sa.g10_ela_scaled_score,
+  sa.g11_ela_assessment_type,
+  sa.g11_ela_performance_level,
+  sa.g11_ela_scaled_score,
+  sa.g12_ela_assessment_type,
+  sa.g12_ela_performance_level,
+  sa.g12_ela_scaled_score,
+  sa.g4_science_assessment_type,
+  sa.g4_science_performance_level,
+  sa.g4_science_scaled_score,
+  sa.g8_science_assessment_type,
+  sa.g8_science_performance_level,
+  sa.g8_science_scaled_score,
+  sa.g9_science_assessment_type,
+  sa.g9_science_performance_level,
+  sa.g9_science_scaled_score,
+  sa.g10_science_assessment_type,
+  sa.g10_science_performance_level,
+  sa.g10_science_scaled_score,
+  sa.g11_science_assessment_type,
+  sa.g11_science_performance_level,
+  sa.g11_science_scaled_score,
+  sa.g12_science_assessment_type,
+  sa.g12_science_performance_level,
+  sa.g12_science_scaled_score
+from
+  gabby.njsmart.high_school_graduation_cohort_status_profile g
+  left outer join gabby.njsmart.sid_qsac_submission_set_records sid on g.sid = sid.state_identification_number
+  left outer join gabby.powerschool.students s on g.sid = s.state_studentnumber
+  left outer join gabby.njsmart.sid_qsac_submission_set_records sid2 on s.student_number = sid2.local_identification_number
+  left outer join gabby.naviance.sat_scores_clean sat on coalesce(sid.local_identification_number, sid2.local_identification_number) = sat.student_number
+  and sat.rn_highest = 1
+  left outer join gabby.naviance.act_scores_clean act on coalesce(sid.local_identification_number, sid2.local_identification_number) = act.student_number
+  and act.rn_highest = 1
+  left outer join state_assessments sa on g.sid = sa.state_studentnumber
+where
+  g.four_year_graduation_cohort between 2011 and 2016
