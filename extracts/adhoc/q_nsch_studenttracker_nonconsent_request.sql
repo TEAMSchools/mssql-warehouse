@@ -1,67 +1,67 @@
-select
-  'H1' as cola,
+SELECT
+  'H1' AS cola,
   /* account number */
-  '601193' as colb,
-  '00' as colc,
+  '601193' AS colb,
+  '00' AS colc,
   /* organization name */
-  'KIPP THROUGH COLLEGE NEW JERSEY' as cold,
+  'KIPP THROUGH COLLEGE NEW JERSEY' AS cold,
   /* file creation date */
   /* inquiry purpose */
-  cast(replace(cast(current_timestamp as date), '-', '') as varchar) as cole,
-  'DA' as colf,
-  'S' as colg,
-  null as colh,
-  null as coli,
-  null as colj,
-  null as colk,
-  null as coll
-union all
-select
-  'D1' as cola,
+  CAST(REPLACE(CAST(CURRENT_TIMESTAMP AS DATE), '-', '') AS VARCHAR) AS cole,
+  'DA' AS colf,
+  'S' AS colg,
+  NULL AS colh,
+  NULL AS coli,
+  NULL AS colj,
+  NULL AS colk,
+  NULL AS coll
+UNION ALL
+SELECT
+  'D1' AS cola,
   /* leave blank */
-  null as colb,
-  first_name as colc,
+  NULL AS colb,
+  first_name AS colc,
   /* middle initial */
-  null as cold,
-  last_name as cole,
+  NULL AS cold,
+  last_name AS cole,
   /* name suffix */
-  null as colf,
+  NULL AS colf,
   /* date of birth */
   /* search begin date */
-  cast(replace(cast(dob as date), '-', '') as varchar) as colg,
+  CAST(REPLACE(CAST(dob AS DATE), '-', '') AS VARCHAR) AS colg,
   /* leave blank */
-  cast(replace(cast(exitdate as date), '-', '') as varchar) as colh,
-  null as coli,
+  CAST(REPLACE(CAST(exitdate AS DATE), '-', '') AS VARCHAR) AS colh,
+  NULL AS coli,
   /* leave blank */
-  null as colj,
-  '00' as colk,
+  NULL AS colj,
+  '00' AS colk,
   /* requestor return field */
-  cast(student_number as varchar) as coll
-from
+  CAST(student_number AS VARCHAR) AS coll
+FROM
   gabby.powerschool.cohort_identifiers_static
-where
+WHERE
   rn_undergrad = 1
-  and exitcode = 'G1'
-  and grade_level <> 99
-  and cohort <= gabby.utilities.global_academic_year ()
-union all
-select
+  AND exitcode = 'G1'
+  AND grade_level <> 99
+  AND cohort <= gabby.utilities.global_academic_year ()
+UNION ALL
+SELECT
   'T1',
-  cast(count(student_number) + 2 as varchar),
-  null,
-  null,
-  null,
-  null,
-  null,
-  null,
-  null,
-  null,
-  null,
-  null
-from
+  CAST(COUNT(student_number) + 2 AS VARCHAR),
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL
+FROM
   gabby.powerschool.cohort_identifiers_static
-where
+WHERE
   rn_undergrad = 1
-  and exitcode = 'G1'
-  and grade_level <> 99
-  and cohort <= gabby.utilities.global_academic_year ()
+  AND exitcode = 'G1'
+  AND grade_level <> 99
+  AND cohort <= gabby.utilities.global_academic_year ()

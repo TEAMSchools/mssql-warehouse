@@ -6,34 +6,34 @@ DECLARE @schema_name NVARCHAR(MAX) = '',
 @table_name_old NVARCHAR(MAX),
 @drop_sql NVARCHAR(MAX);
 
-set
+SET
   @table_name = @view_name + '_static';
 
-set
-  @objname = concat(@schema_name, '.', @table_name);
+SET
+  @objname = CONCAT(@schema_name, '.', @table_name);
 
-set
+SET
   @table_name_old = @table_name + '_OLD';
 
-set
+SET
   @drop_sql = 'IF OBJECT_ID(N''' + @db_name + '.' + @schema_name + '.' + @table_name_old + ''') IS NOT NULL
   BEGIN
     DROP TABLE ' + @db_name + '.' + @schema_name + '.' + @table_name_old + ';
   END';
 
-exec sp_sqlexec @drop_sql;
+EXEC sp_sqlexec @drop_sql;
 
-exec sp_rename @objname = @objname,
+EXEC sp_rename @objname = @objname,
 @newname = @table_name_old;
 
-exec gabby.utilities.cache_view @db_name = @db_name,
+EXEC gabby.utilities.cache_view @db_name = @db_name,
 @schema_name = @schema_name,
 @view_name = @view_name;
 
-select
+SELECT
   *
-from
+FROM
   gabby.utilities.generate_gabby_unions
-where
+WHERE
   [schema_name] = @schema_name
-  and table_name in (@view_name, @view_name + '_static')
+  AND table_name IN (@view_name, @view_name + '_static')

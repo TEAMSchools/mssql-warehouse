@@ -1,36 +1,36 @@
-with
-  slap as (
-    select
+WITH
+  slap AS (
+    SELECT
       scw.primary_site_schoolid,
-      case
-        when scw.legal_entity_name = 'KIPP Miami' then lower(left(scw.userprincipalname, charindex('@', scw.userprincipalname))) + 'kippmiami.org'
-        else lower(left(scw.userprincipalname, charindex('@', scw.userprincipalname))) + 'apps.teamschools.org'
-      end as gsuite_email
-    from
+      CASE
+        WHEN scw.legal_entity_name = 'KIPP Miami' THEN LOWER(LEFT(scw.userprincipalname, CHARINDEX('@', scw.userprincipalname))) + 'kippmiami.org'
+        ELSE LOWER(LEFT(scw.userprincipalname, CHARINDEX('@', scw.userprincipalname))) + 'apps.teamschools.org'
+      END AS gsuite_email
+    FROM
       gabby.people.staff_crosswalk_static scw
-    where
-      scw.[status] not in ('TERMINATED', 'PRESTART')
-      and scw.primary_job in ('School Leader', 'Assistant School Leader')
+    WHERE
+      scw.[status] NOT IN ('TERMINATED', 'PRESTART')
+      AND scw.primary_job IN ('School Leader', 'Assistant School Leader')
   )
-select distinct
-  concat(
-    case
-      when s.[db_name] = 'kippnewark' then 'nwk'
-      when s.[db_name] = 'kippcamden' then 'cmd'
-      when s.[db_name] = 'kippmiami' then 'mia'
-    end,
+SELECT DISTINCT
+  CONCAT(
+    CASE
+      WHEN s.[db_name] = 'kippnewark' THEN 'nwk'
+      WHEN s.[db_name] = 'kippcamden' THEN 'cmd'
+      WHEN s.[db_name] = 'kippmiami' THEN 'mia'
+    END,
     s.teacher,
     s.course_number_clean
-  ) as alias,
-  sl.gsuite_email as teacher
-from
+  ) AS alias,
+  sl.gsuite_email AS teacher
+FROM
   gabby.powerschool.sections s
-  join gabby.powerschool.courses c on s.course_number_clean = c.course_number_clean
-  and s.[db_name] = c.[db_name]
-  and c.credittype <> 'LOG'
-  join slap sl on s.schoolid = sl.primary_site_schoolid
-where
+  JOIN gabby.powerschool.courses c ON s.course_number_clean = c.course_number_clean
+  AND s.[db_name] = c.[db_name]
+  AND c.credittype <> 'LOG'
+  JOIN slap sl ON s.schoolid = sl.primary_site_schoolid
+WHERE
   s.yearid = (gabby.utilities.global_academic_year () - 1990)
-order by
+ORDER BY
   sl.gsuite_email,
   alias

@@ -8,7 +8,7 @@ WITH
       academic_year,
       test_type,
       field,
-      value
+      VALUE
     FROM
       (
         SELECT
@@ -121,7 +121,7 @@ WITH
         FROM
           gabby.njsmart.gepa
       ) sub UNPIVOT (
-        value FOR field IN (
+        VALUE FOR field IN (
           scaled_score_lal,
           performance_level_lal,
           invalid_scale_score_reason_lal,
@@ -153,13 +153,13 @@ WITH
           local_student_id,
           academic_year,
           test_type,
-          value,
+          VALUE,
           UPPER(REVERSE(LEFT(REVERSE(field), (CHARINDEX('_', REVERSE(field)) - 1)))) AS subject,
           REVERSE(SUBSTRING(REVERSE(field), (CHARINDEX('_', REVERSE(field)) + 1), LEN(field))) AS field
         FROM
           combined_unpivot
       ) sub PIVOT (
-        MAX(value) FOR field IN (scaled_score, performance_level, invalid_scale_score_reason, void_reason)
+        MAX(VALUE) FOR field IN (scaled_score, performance_level, invalid_scale_score_reason, void_reason)
       ) p
   )
 SELECT

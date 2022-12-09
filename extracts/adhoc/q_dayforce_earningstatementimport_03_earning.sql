@@ -1,4 +1,4 @@
-use gabby go
+USE gabby GO
 CREATE OR ALTER VIEW
   extracts.dayforce_earningstatementimport_03_earning AS
   /* 1 - Regular Earnings */

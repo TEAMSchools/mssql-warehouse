@@ -6,7 +6,7 @@ SELECT
   academic_year,
   survey_round,
   field,
-  value,
+  VALUE,
   CASE
     WHEN school IN ('KIPP Rise Academy', 'Rise Academy') THEN 73252
     WHEN school IN ('KIPP Newark Collegiate Academy', 'Newark Collegiate Academy') THEN 73253
@@ -99,7 +99,7 @@ FROM
       academic_year,
       survey_round,
       field,
-      value
+      VALUE
     FROM
       gabby.tntp.teacher_survey_school_sorter
     UNION ALL
@@ -117,14 +117,14 @@ FROM
             'KIPP Top Quartile Schools',
             'KIPP Network Top Quartile',
             'KIPP Top Quartile Average - Aggregated by School'
-          ) THEN value
+          ) THEN VALUE
         END
       ) OVER (
         PARTITION BY
           academic_year,
           survey_round,
           field
-      ) AS value
+      ) AS VALUE
     FROM
       gabby.tntp.teacher_survey_school_sorter
   ) sub

@@ -111,7 +111,7 @@ WITH
       CAST(testid AS INT) AS testid,
       CAST(lvl_num AS INT) AS lvl_num,
       CAST(field_name AS VARCHAR(125)) AS field_name,
-      CAST(domain AS VARCHAR(25)) AS domain,
+      CAST(DOMAIN AS VARCHAR(25)) AS DOMAIN,
       CAST(subdomain AS VARCHAR(25)) AS subdomain,
       CAST(strand AS VARCHAR(125)) AS strand,
       CAST(score AS INT) AS score

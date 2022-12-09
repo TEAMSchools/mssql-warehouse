@@ -79,7 +79,7 @@ WITH
           term_administered
       ) sub
   ),
-  ada AS (
+  ADA AS (
     SELECT
       mem.studentid,
       mem.[db_name],
@@ -219,7 +219,7 @@ FROM
           rt.time_per_name AS reporting_term_name,
           rt.alt_name,
           rt.is_curterm,
-          ada.ada_y1_running,
+          ADA.ada_y1_running,
           lit.read_lvl AS fp_independent_level,
           lit.goal_status AS fp_goal_status,
           CASE
@@ -242,9 +242,9 @@ FROM
           AND co.academic_year = rt.academic_year
           AND rt.identifier = 'RT'
           AND rt._fivetran_deleted = 0
-          LEFT JOIN ada ON co.studentid = ada.studentid
-          AND co.[db_name] = ada.[db_name]
-          AND co.yearid = ada.yearid
+          LEFT JOIN ADA ON co.studentid = ADA.studentid
+          AND co.[db_name] = ADA.[db_name]
+          AND co.yearid = ADA.yearid
           LEFT JOIN gabby.lit.achieved_by_round_static lit ON co.student_number = lit.student_number
           AND co.academic_year = lit.academic_year
           AND rt.alt_name = lit.test_round

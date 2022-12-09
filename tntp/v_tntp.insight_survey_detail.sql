@@ -12,7 +12,7 @@ SELECT
   ird.survey_type,
   ird.[index],
   ird.variable,
-  CAST(ird.value AS FLOAT) AS value,
+  CAST(ird.value AS FLOAT) AS VALUE,
   COALESCE(ird.state_cmo, ird.region) AS state_cmo,
   CASE
     WHEN school = 'KIPP BOLD Academy' THEN 73258

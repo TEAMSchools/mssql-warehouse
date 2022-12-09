@@ -12,31 +12,31 @@ INSERT
   @email_body NVARCHAR(MAX),
   @stage NVARCHAR(MAX);
 
-set
+SET
   @schema_name = 'powerschool'
-set
-  @view_name = 'final_grades' begin begin try
+SET
+  @view_name = 'final_grades' BEGIN BEGIN try
   /* get list of tables referenced by view */
   /* only include non-static table objects */
-set
-  @stage = 'referenced tables' if object_id(n 'tempdb..#referenced_tables') is not null begin
+SET
+  @stage = 'referenced tables' IF OBJECT_ID(n 'tempdb..#referenced_tables') IS NOT NULL BEGIN
 DROP TABLE # referenced_tables;
 
 END;
 
-select
-  table_name into # referenced_tables
-from
+SELECT
+  table_name INTO # referenced_tables
+FROM
   utilities.dependent_objects
-where
+WHERE
   usedbyschemaname = @schema_name
-  and usedbyobjectname = @view_name
-  and table_name not in ('reporting_terms');
+  AND usedbyobjectname = @view_name
+  AND table_name NOT IN ('reporting_terms');
 
 /* manual exclude */
 /* get list of tables updated during current hour */
-set
-  @stage = 'updated tables' if object_id(n 'tempdb..#updated_tables') is not null begin
+SET
+  @stage = 'updated tables' IF OBJECT_ID(n 'tempdb..#updated_tables') IS NOT NULL BEGIN
 DROP TABLE # updated_tables;
 
 END
@@ -58,56 +58,56 @@ WHERE
   ) AND GETUTCDATE();
 
 /* check if updated table is included in view */
-set
+SET
   @stage = 'referenced table check'
-select
-  @is_referenced_table = case
-    when count([table]) > 0 then 1
-    else 0
-  end
-from
+SELECT
+  @is_referenced_table = CASE
+    WHEN COUNT([table]) > 0 THEN 1
+    ELSE 0
+  END
+FROM
   inserted # referenced_tables
-where
-  [table] in (
-    select
+WHERE
+  [table] IN (
+    SELECT
       table_name
-    from
+    FROM
   );
 
-if @is_referenced_table = 0 begin print ('INSERTED table is not included in target view');
+IF @is_referenced_table = 0 BEGIN PRINT ('INSERTED table is not included in target view');
 
-return end
+RETURN END
 /* check if all tables included in view has been updated */
-set
+SET
   @stage = 'updated table check'
-select
-  @update_status = case
-    when count(rt.table_name) = count(ut.table_name) then 1
-    else 0
-  end
-from
+SELECT
+  @update_status = CASE
+    WHEN COUNT(rt.table_name) = COUNT(ut.table_name) THEN 1
+    ELSE 0
+  END
+FROM
   # referenced_tables rt # updated_tables ut ON rt.table_name = ut.table_name;
 
-left outer join if @update_status = 0 begin print ('All tables referenced by view have not yet been updated this hour');
+LEFT OUTER JOIN IF @update_status = 0 BEGIN PRINT ('All tables referenced by view have not yet been updated this hour');
 
-return end
+RETURN END
 /* run refresh */
-set
-  @stage = 'queue' print ('Adding to cache_view queue') begin
+SET
+  @stage = 'queue' PRINT ('Adding to cache_view queue') BEGIN
 INSERT INTO
-  [utilities].[cache_view_queue] (schema_name, view_name, timestamp)
+  [utilities].[cache_view_queue] (SCHEMA_NAME, view_name, TIMESTAMP)
 VALUES
   (@schema_name, @view_name, GETUTCDATE());
 
-end end try begin catch
-set
+END END try BEGIN catch
+SET
   @email_subject = @view_name + ' static refresh failed'
-set
+SET
   @email_body = 'During the trigger, the refresh procedure for ' + @view_name + 'failed during the ' + @stage + 'stage.';
 
-exec msdb.dbo.sp_send_dbmail @profile_name = 'datarobot',
+EXEC msdb.dbo.sp_send_dbmail @profile_name = 'datarobot',
 @recipients = 'u7c1r1b1c5n4p0q0@kippnj.slack.com',
 @subject = @email_subject,
 @body = @email_body;
 
-end catch end go
+END catch END GO

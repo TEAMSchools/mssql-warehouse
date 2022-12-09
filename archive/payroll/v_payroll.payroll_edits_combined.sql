@@ -36,7 +36,7 @@ SELECT
   NULL AS relocation_stipend,
   NULL AS other_stipend,
   NULL AS total_stipend,
-  NULL As accounting_line,
+  NULL AS accounting_line,
   e.[description] AS notes
 FROM
   gabby.payroll.payroll_edit_tracker e
@@ -86,7 +86,7 @@ SELECT
   NULL AS relocation_stipend,
   NULL AS other_stipend,
   NULL AS total_stipend,
-  'Emplpoyee Accounting Line' As accounting_line,
+  'Emplpoyee Accounting Line' AS accounting_line,
   NULL AS notes
 FROM
   gabby.adp.staff_roster r

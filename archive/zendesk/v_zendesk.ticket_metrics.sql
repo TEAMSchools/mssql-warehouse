@@ -47,7 +47,7 @@ WITH
             FROM
               gabby.zendesk.ticket_field_history
             WHERE
-              value = 'solved'
+              VALUE = 'solved'
             GROUP BY
               ticket_id
             UNION ALL
@@ -102,7 +102,7 @@ WITH
         SELECT
           ticket_id,
           field_name + '_value_count_distinct' AS field_name,
-          COUNT(DISTINCT value) AS value_count
+          COUNT(DISTINCT VALUE) AS value_count
         FROM
           gabby.zendesk.ticket_field_history
         WHERE
@@ -122,8 +122,8 @@ WITH
       (
         SELECT
           ticket_id,
-          value AS current_status,
-          LAG(value, 1, 'new') OVER (
+          VALUE AS current_status,
+          LAG(VALUE, 1, 'new') OVER (
             PARTITION BY
               ticket_id
             ORDER BY

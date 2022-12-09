@@ -1,41 +1,41 @@
-select
-  db_name() as [db_name],
-  object_schema_name(ix.[object_id]) as [schema_name],
-  object_name(ix.[object_id]) as table_name,
-  ix.[name] as index_name,
-  isnull(ixus.user_seeks, 0) + isnull(ixus.user_scans, 0) + isnull(ixus.user_lookups, 0) as total_reads,
-  isnull(ixus.user_updates, 0) as total_writes,
-  case
-    when (
-      isnull(ixus.user_seeks, 0) + isnull(ixus.user_scans, 0) + isnull(ixus.user_lookups, 0) + isnull(ixus.user_updates, 0)
-    ) = 0 then 0
-    else cast(
+SELECT
+  DB_NAME() AS [db_name],
+  OBJECT_SCHEMA_NAME(ix.[object_id]) AS [schema_name],
+  OBJECT_NAME(ix.[object_id]) AS table_name,
+  ix.[name] AS index_name,
+  ISNULL(ixus.user_seeks, 0) + ISNULL(ixus.user_scans, 0) + ISNULL(ixus.user_lookups, 0) AS total_reads,
+  ISNULL(ixus.user_updates, 0) AS total_writes,
+  CASE
+    WHEN (
+      ISNULL(ixus.user_seeks, 0) + ISNULL(ixus.user_scans, 0) + ISNULL(ixus.user_lookups, 0) + ISNULL(ixus.user_updates, 0)
+    ) = 0 THEN 0
+    ELSE CAST(
       (
-        isnull(ixus.user_seeks, 0) + isnull(ixus.user_scans, 0) + isnull(ixus.user_lookups, 0) as float
-      ) / cast(
+        ISNULL(ixus.user_seeks, 0) + ISNULL(ixus.user_scans, 0) + ISNULL(ixus.user_lookups, 0) AS FLOAT
+      ) / CAST(
         (
-          isnull(ixus.user_seeks, 0) + isnull(ixus.user_scans, 0) + isnull(ixus.user_lookups, 0) + isnull(ixus.user_updates, 0)
+          ISNULL(ixus.user_seeks, 0) + ISNULL(ixus.user_scans, 0) + ISNULL(ixus.user_lookups, 0) + ISNULL(ixus.user_updates, 0)
         )
-      ) as float
+      ) AS FLOAT
     )
-  end as pct_reads,
+  END AS pct_reads,
   (
-    select
-      max(dates.d)
-    from
+    SELECT
+      MAX(dates.d)
+    FROM
       (
-        values
+        VALUES
           (ixus.last_user_seek),
           (ixus.last_user_scan),
           (ixus.last_user_lookup)
       ) dates (d)
-  ) as last_user_read,
+  ) AS last_user_read,
   ixus.last_user_update
-from
+FROM
   [sys].[indexes] ix
-  left join [sys].[dm_db_index_usage_stats] ixus on ixus.index_id = ix.index_id
-  and ixus.[object_id] = ix.[object_id]
-  and db_name(ixus.database_id) = db_name()
-where
-  objectproperty(ix.[object_id], 'isusertable') = 1
-  and ix.index_id > 1;
+  LEFT JOIN [sys].[dm_db_index_usage_stats] ixus ON ixus.index_id = ix.index_id
+  AND ixus.[object_id] = ix.[object_id]
+  AND DB_NAME(ixus.database_id) = DB_NAME()
+WHERE
+  OBJECTPROPERTY(ix.[object_id], 'isusertable') = 1
+  AND ix.index_id > 1;

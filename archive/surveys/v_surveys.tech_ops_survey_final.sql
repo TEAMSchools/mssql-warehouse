@@ -49,7 +49,7 @@ WITH
       response
     FROM
       to_survey UNPIVOT (
-        response FOR question in (
+        response FOR question IN (
           ops_day_to_day_ops,
           ops_procedures,
           ops_know_who_to_ask,

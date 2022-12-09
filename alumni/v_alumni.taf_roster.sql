@@ -27,7 +27,7 @@ SELECT
   r.exit_schoolid AS schoolid,
   r.exit_school_name AS school_name,
   r.exit_date AS exitdate,
-  r.exit_db_name AS db_name,
+  r.exit_db_name AS DB_NAME,
   r.current_grade_level_projection AS approx_grade_level,
   r.ktc_cohort AS cohort,
   r.expected_hs_graduation_date,

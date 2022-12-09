@@ -78,7 +78,7 @@ SELECT
   u.value
 FROM
   clean_data UNPIVOT (
-    value FOR field IN (
+    VALUE FOR field IN (
       fy_17,
       fy_18,
       fy_19,

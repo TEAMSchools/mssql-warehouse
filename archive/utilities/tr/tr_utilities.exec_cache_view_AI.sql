@@ -18,7 +18,7 @@ SET
 NOCOUNT ON;
 
 SELECT
-  @schema_name = schema_name
+  @schema_name = SCHEMA_NAME
 FROM
   INSERTED;
 
@@ -32,9 +32,9 @@ SELECT
 FROM
   gabby.utilities.cache_view_queue
 WHERE
-  schema_name = @schema_name
+  SCHEMA_NAME = @schema_name
   AND view_name = @view_name
-  AND timestamp BETWEEN DATEADD(MINUTE, -60, GETUTCDATE()) AND GETUTCDATE();
+  AND TIMESTAMP BETWEEN DATEADD(MINUTE, -60, GETUTCDATE()) AND GETUTCDATE();
 
 IF @refresh_status = 0 BEGIN
 SET
@@ -47,8 +47,8 @@ UPDATE gabby.utilities.cache_view_queue
 SET
   done = 1
 WHERE
-  schema_name = @schema_name
+  SCHEMA_NAME = @schema_name
   AND view_name = @view_name
-  AND timestamp BETWEEN DATEADD(MINUTE, -60, GETUTCDATE()) AND GETUTCDATE();
+  AND TIMESTAMP BETWEEN DATEADD(MINUTE, -60, GETUTCDATE()) AND GETUTCDATE();
 
 END GO

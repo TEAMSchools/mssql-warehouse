@@ -1,68 +1,68 @@
-with
-  repos as (
-    select
+WITH
+  repos AS (
+    SELECT
       r.title,
-      dsc.code_translation as scope,
-      dsu.code_translation as subject_area,
-      concat('repository_', r.repository_id) as repo_name,
-      concat(
+      dsc.code_translation AS scope,
+      dsu.code_translation AS subject_area,
+      CONCAT('repository_', r.repository_id) AS repo_name,
+      CONCAT(
         'SELECT ',
         r.repository_id,
         ' AS repository_id',
-        char(10),
-        char(13),
+        CHAR(10),
+        CHAR(13),
         ',repository_row_id',
-        char(10),
-        char(13),
+        CHAR(10),
+        CHAR(13),
         ',student_id',
-        char(10),
-        char(13),
+        CHAR(10),
+        CHAR(13),
         'FROM gabby.illuminate_dna_repositories.',
-        concat('repository_', r.repository_id),
-        char(10),
-        char(13),
+        CONCAT('repository_', r.repository_id),
+        CHAR(10),
+        CHAR(13),
         'UNION ALL '
-      ) as select_statement
-    from
+      ) AS select_statement
+    FROM
       gabby.illuminate_dna_repositories.repositories r
-      join gabby.illuminate_codes.dna_scopes dsc on r.code_scope_id = dsc.code_id
-      join gabby.illuminate_codes.dna_subject_areas dsu on r.code_subject_area_id = dsu.code_id
+      JOIN gabby.illuminate_codes.dna_scopes dsc ON r.code_scope_id = dsc.code_id
+      JOIN gabby.illuminate_codes.dna_subject_areas dsu ON r.code_subject_area_id = dsu.code_id
       /* F&P */
-    where
+    WHERE
       dsc.code_translation = 'Reporting'
-      and dsu.code_translation = 'F&P'
+      AND dsu.code_translation = 'F&P'
       -- WHERE ((dsc.code_translation = 'Unit Assessment' AND dsu.code_translation =
       -- 'English') OR r.title = 'English OE - Quarterly Assessments') /* OER */
   )
-select
+SELECT
   column_name,
   label,
-  coalesce([repository_126], concat(',NULL AS [', label, ']')) as [repository_126],
-  coalesce([repository_169], concat(',NULL AS [', label, ']')) as [repository_169],
-  coalesce([repository_170], concat(',NULL AS [', label, ']')) as [repository_170]
-from
+  COALESCE([repository_126], CONCAT(',NULL AS [', label, ']')) AS [repository_126],
+  COALESCE([repository_169], CONCAT(',NULL AS [', label, ']')) AS [repository_169],
+  COALESCE([repository_170], CONCAT(',NULL AS [', label, ']')) AS [repository_170]
+FROM
   (
-    select
-      t.name as table_name,
-      c.name as column_name,
+    SELECT
+      t.name AS table_name,
+      c.name AS column_name,
       f.label,
-      coalesce(',' + c.name + ' AS [' + ltrim(rtrim(f.label)) + ']', ',' + c.name) as pivot_value
-    from
+      COALESCE(',' + c.name + ' AS [' + LTRIM(RTRIM(f.label)) + ']', ',' + c.name) AS pivot_value
+    FROM
       gabby.sys.tables t
-      join gabby.sys.all_columns c on t.object_id = c.object_id
-      and c.name not like '_fivetran%'
-      join gabby.illuminate_dna_repositories.fields f on c.name = f.name
-      and substring(t.name, charindex('_', t.name) + 1, len(t.name)) = f.repository_id
-      and f.deleted_at is null
-    where
-      t.name in (
-        select
+      JOIN gabby.sys.all_columns c ON t.object_id = c.object_id
+      AND c.name NOT LIKE '_fivetran%'
+      JOIN gabby.illuminate_dna_repositories.fields f ON c.name = f.name
+      AND SUBSTRING(t.name, CHARINDEX('_', t.name) + 1, LEN(t.name)) = f.repository_id
+      AND f.deleted_at IS NULL
+    WHERE
+      t.name IN (
+        SELECT
           repo_name
-        from
+        FROM
           repos
       )
       -- /*
-  ) sub pivot (
-    max(pivot_value) for table_name in ([repository_126], [repository_169], [repository_170])
+  ) sub PIVOT (
+    MAX(pivot_value) FOR table_name IN ([repository_126], [repository_169], [repository_170])
   ) p
   -- */

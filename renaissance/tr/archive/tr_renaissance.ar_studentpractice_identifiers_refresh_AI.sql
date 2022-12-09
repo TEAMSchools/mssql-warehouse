@@ -98,7 +98,7 @@ RETURN END
 SET
   @stage = 'queue' PRINT ('Adding to cache_view queue') BEGIN
 INSERT INTO
-  [utilities].[cache_view_queue] (schema_name, view_name, timestamp)
+  [utilities].[cache_view_queue] (SCHEMA_NAME, view_name, TIMESTAMP)
 VALUES
   (@schema_name, @view_name, GETUTCDATE());
 

@@ -1,42 +1,42 @@
-with
-  this as (
-    select
-      concat(
-        case
-          when co.[db_name] = 'kippnewark' then 'nwk'
-          when co.[db_name] = 'kippcamden' then 'cmd'
-          when co.[db_name] = 'kippmiami' then 'mia'
-        end,
+WITH
+  this AS (
+    SELECT
+      CONCAT(
+        CASE
+          WHEN co.[db_name] = 'kippnewark' THEN 'nwk'
+          WHEN co.[db_name] = 'kippcamden' THEN 'cmd'
+          WHEN co.[db_name] = 'kippmiami' THEN 'mia'
+        END,
         co.schoolid,
         co.grade_level
-      ) as alias,
+      ) AS alias,
       co.schoolid,
-      concat(co.school_name, ' Grade ', co.grade_level) as [name],
-      'all' as section,
-      saa.student_web_id + '@teamstudents.org' as email
-    from
+      CONCAT(co.school_name, ' Grade ', co.grade_level) AS [name],
+      'all' AS SECTION,
+      saa.student_web_id + '@teamstudents.org' AS email
+    FROM
       gabby.powerschool.cohort_identifiers_static co
-      join gabby.powerschool.student_access_accounts_static saa on co.student_number = saa.student_number
-    where
+      JOIN gabby.powerschool.student_access_accounts_static saa ON co.student_number = saa.student_number
+    WHERE
       co.academic_year = 2019
-      and co.rn_year = 1
-      and co.enroll_status = 0
-      and co.school_level = 'HS'
+      AND co.rn_year = 1
+      AND co.enroll_status = 0
+      AND co.school_level = 'HS'
   )
   -- /* Section setup
-select distinct
+SELECT DISTINCT
   t.alias,
   t.[name],
   t.section,
-  case
-    when scw.legal_entity_name = 'KIPP Miami' then lower(left(scw.userprincipalname, charindex('@', scw.userprincipalname))) + 'kippmiami.org'
-    else lower(left(scw.userprincipalname, charindex('@', scw.userprincipalname))) + 'apps.teamschools.org'
-  end as teacher
-from
+  CASE
+    WHEN scw.legal_entity_name = 'KIPP Miami' THEN LOWER(LEFT(scw.userprincipalname, CHARINDEX('@', scw.userprincipalname))) + 'kippmiami.org'
+    ELSE LOWER(LEFT(scw.userprincipalname, CHARINDEX('@', scw.userprincipalname))) + 'apps.teamschools.org'
+  END AS teacher
+FROM
   this t
-  join gabby.people.staff_crosswalk_static scw on t.schoolid = scw.primary_site_schoolid
-  and scw.primary_job = 'School Leader'
-  and scw.[status] not in ('TERMINATED', 'PRESTART')
+  JOIN gabby.people.staff_crosswalk_static scw ON t.schoolid = scw.primary_site_schoolid
+  AND scw.primary_job = 'School Leader'
+  AND scw.[status] NOT IN ('TERMINATED', 'PRESTART')
   -- */
   /*
   SELECT t.alias

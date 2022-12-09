@@ -1,85 +1,85 @@
-with
-  raw_files as (
-    select
-      'gabby.njsmart.njbct' as _file,
-      test_id as _line,
-      sid as state_student_id,
+WITH
+  raw_files AS (
+    SELECT
+      'gabby.njsmart.njbct' AS _file,
+      test_id AS _line,
+      sid AS state_student_id,
       local_student_id,
       first_name,
       last_name,
-      'gabby.njsmart.njbct' as table_name
-    from
+      'gabby.njsmart.njbct' AS table_name
+    FROM
       gabby.njsmart.njbct
-    union all
-    select
-      'gabby.njsmart.njask' as _file,
-      test_id as _line,
-      sid as state_student_id,
+    UNION ALL
+    SELECT
+      'gabby.njsmart.njask' AS _file,
+      test_id AS _line,
+      sid AS state_student_id,
       local_student_id,
       first_name,
       last_name,
-      'gabby.njsmart.njask' as table_name
-    from
+      'gabby.njsmart.njask' AS table_name
+    FROM
       gabby.njsmart.njask
-    union all
-    select
+    UNION ALL
+    SELECT
       _file,
       _line,
       state_student_id,
       local_student_id,
       first_name,
       last_name,
-      'gabby.njsmart.njask_archive' as table_name
-    from
+      'gabby.njsmart.njask_archive' AS table_name
+    FROM
       gabby.njsmart.njask_archive
-    union all
-    select
+    UNION ALL
+    SELECT
       _file,
       _line,
       state_student_id,
       local_student_id,
       first_name,
       last_name,
-      'gabby.njsmart.hspa' as table_name
-    from
+      'gabby.njsmart.hspa' AS table_name
+    FROM
       gabby.njsmart.hspa
-    union all
-    select
+    UNION ALL
+    SELECT
       _file,
       _line,
       state_student_id,
-      cast(local_student_id as nvarchar),
+      CAST(local_student_id AS NVARCHAR),
       first_name,
       last_name,
-      'gabby.njsmart.gepa' as table_name
-    from
+      'gabby.njsmart.gepa' AS table_name
+    FROM
       gabby.njsmart.gepa
-    union all
-    select
+    UNION ALL
+    SELECT
       _file,
       _line,
       state_student_identifier,
       local_student_identifier,
       first_name,
-      coalesce(last_name, last_or_surname) as last_name,
-      'gabby.parcc.summative_record_file' as table_name
-    from
+      COALESCE(last_name, last_or_surname) AS last_name,
+      'gabby.parcc.summative_record_file' AS table_name
+    FROM
       gabby.parcc.summative_record_file
   ),
-  that as (
-    select
+  that AS (
+    SELECT
       *,
-      case
-        when max(rn_dupe) over (
-          partition by
+      CASE
+        WHEN MAX(rn_dupe) OVER (
+          PARTITION BY
             _file,
             _line
-        ) > 1 then 1
-        else 0
-      end as is_dupe
-    from
+        ) > 1 THEN 1
+        ELSE 0
+      END AS is_dupe
+    FROM
       (
-        select
+        SELECT
           r._file,
           r._line,
           r.state_student_id,
@@ -87,28 +87,28 @@ with
           r.first_name,
           r.last_name,
           r.table_name,
-          sid.student_number as sid_student_number,
-          sn.state_studentnumber as sn_state_studentnumber,
-          sn.lastfirst as sn_lastfirst,
-          row_number() over (
-            partition by
+          sid.student_number AS sid_student_number,
+          sn.state_studentnumber AS sn_state_studentnumber,
+          sn.lastfirst AS sn_lastfirst,
+          ROW_NUMBER() OVER (
+            PARTITION BY
               r._file,
               r._line
-            order by
-              sid._line desc,
-              sn._line desc
-          ) as rn_dupe
-        from
+            ORDER BY
+              sid._line DESC,
+              sn._line DESC
+          ) AS rn_dupe
+        FROM
           raw_files r
-          left outer join gabby.powerschool.students sid on r.state_student_id = sid.state_studentnumber
-          left outer join gabby.powerschool.students sn on r.local_student_id = cast(sn.student_number as nvarchar)
+          LEFT OUTER JOIN gabby.powerschool.students sid ON r.state_student_id = sid.state_studentnumber
+          LEFT OUTER JOIN gabby.powerschool.students sn ON r.local_student_id = CAST(sn.student_number AS NVARCHAR)
       ) sub
-    where
+    WHERE
       rn_dupe = 1
-      and state_student_id is null
-      or local_student_id is null
-      or sid_student_number is null
-      or sn_state_studentnumber is null
+      AND state_student_id IS NULL
+      OR local_student_id IS NULL
+      OR sid_student_number IS NULL
+      OR sn_state_studentnumber IS NULL
   )
   /* invalid SN
   SELECT *

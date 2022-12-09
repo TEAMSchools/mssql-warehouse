@@ -92,7 +92,7 @@ WITH
           breakfastorlunchroutines,
           builddiscourse,
           celebrations,
-          character,
+          CHARACTER,
           clarityofcfsobjectives,
           clarityofcontentdelivery,
           cleanlinessbathrooms,

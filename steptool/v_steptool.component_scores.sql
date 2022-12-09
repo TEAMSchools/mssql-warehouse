@@ -33,7 +33,7 @@ SELECT
 FROM
   (
     SELECT
-      CAST(CONCAT('UC', gabby.utilities.DATE_TO_SY (date), [_line]) AS VARCHAR(125)) AS unique_id,
+      CAST(CONCAT('UC', gabby.utilities.DATE_TO_SY (DATE), [_line]) AS VARCHAR(125)) AS unique_id,
       CAST(CAST(student_id AS FLOAT) AS INT) AS student_id,
       CAST(step AS INT) AS step,
       passed,

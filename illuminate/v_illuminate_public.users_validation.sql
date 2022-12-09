@@ -4,7 +4,7 @@ GO
 CREATE OR ALTER VIEW
   illuminate_public.users_validation AS
 SELECT
-  user_id
+  USER_ID
 FROM
   OPENQUERY (ILLUMINATE, '
   SELECT user_id

@@ -6,14 +6,14 @@ WITH
     SELECT
       username,
       academic_year,
-      date,
+      DATE,
       week_time,
       ROW_NUMBER() OVER (
         PARTITION BY
           username,
           academic_year
         ORDER BY
-          date DESC
+          DATE DESC
       ) AS rn
     FROM
       gabby.lexia.units_to_target

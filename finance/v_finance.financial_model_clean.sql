@@ -79,7 +79,7 @@ WITH
       u.value
     FROM
       clean_data UNPIVOT (
-        value FOR field IN (
+        VALUE FOR field IN (
           fy_17,
           fy_18,
           fy_19,
@@ -192,7 +192,7 @@ SELECT
   p.[Avg. Personnel Cost]
 FROM
   unpivoted PIVOT (
-    MAX(value) FOR metric IN (
+    MAX(VALUE) FOR metric IN (
       [Unfinanced Capital Outlays Per Pupil],
       [Unfinanced Capital Outlays],
       [Total Revenue Per Pupil],

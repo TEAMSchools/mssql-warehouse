@@ -17,10 +17,10 @@ WITH
           ELSE REPLACE(variable, 't_', 'T')
         END
       ) AS variable,
-      value
+      VALUE
     FROM
       gabby.tntp.teacher_survey_raw_data UNPIVOT (
-        value FOR variable IN (
+        VALUE FOR variable IN (
           t_120,
           t_135,
           t_138,

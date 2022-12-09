@@ -1,5 +1,5 @@
 USE gabby GO
-CREATE OR ALTER view
+CREATE OR ALTER VIEW
   tableau.staff_attendance_tracking AS
 WITH
   school_ids AS (

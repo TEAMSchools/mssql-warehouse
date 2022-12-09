@@ -11,8 +11,8 @@ SELECT
 FROM
   (
     SELECT
-      date,
-      utilities.DATE_TO_SY (date) AS academic_year,
+      DATE,
+      utilities.DATE_TO_SY (DATE) AS academic_year,
       DATENAME(DW, sub.date) AS day_of_week,
       DATEPART(WEEKDAY, sub.date) AS dw_numeric,
       DATEPART(DAY, sub.date) AS day_part,
@@ -22,7 +22,7 @@ FROM
     FROM
       (
         SELECT
-          DATEADD(DAY, n, '2002-07-01') AS date
+          DATEADD(DAY, n, '2002-07-01') AS DATE
         FROM
           gabby.utilities.row_generator
         WHERE

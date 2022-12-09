@@ -72,7 +72,7 @@ WITH
           module_type,
           module_number,
           CONCAT(subject_area, '_', field) AS pivot_field,
-          value
+          VALUE
         FROM
           (
             SELECT
@@ -108,10 +108,10 @@ WITH
               AND subject_area IN ('Text Study', 'Mathematics', 'Algebra I', 'Geometry', 'Algebra IIA', 'Algebra IIB')
               AND percent_correct IS NOT NULL
           ) sub UNPIVOT (
-            value FOR field IN (percent_correct, is_mastery, performance_band_number, rn_most_recent_subject)
+            VALUE FOR field IN (percent_correct, is_mastery, performance_band_number, rn_most_recent_subject)
           ) u
       ) sub PIVOT (
-        MAX(value) FOR pivot_field IN (
+        MAX(VALUE) FOR pivot_field IN (
           ela_percent_correct,
           ela_is_mastery,
           ela_performance_band_number,
@@ -196,14 +196,14 @@ WITH
     HAVING
       COUNT(gleq) > 1 /* return only students with > 1 term */
   ),
-  ada AS (
+  ADA AS (
     SELECT
       studentid,
-      db_name,
+      DB_NAME,
       (yearid + 1990) AS academic_year,
       SUM(CAST(attendancevalue AS FLOAT)) AS n_days_attendance,
       SUM(CAST(membershipvalue AS FLOAT)) AS n_days_membership,
-      ROUND(AVG(CAST(attendancevalue AS FLOAT)), 2) AS ada
+      ROUND(AVG(CAST(attendancevalue AS FLOAT)), 2) AS ADA
     FROM
       gabby.powerschool.ps_adaadm_daily_ctod
     WHERE
@@ -212,13 +212,13 @@ WITH
     GROUP BY
       studentid,
       yearid,
-      db_name
+      DB_NAME
   ),
   suspensions AS (
     SELECT
       studentid,
       yearid,
-      db_name,
+      DB_NAME,
       MAX(
         CASE
           WHEN sub.att_code_group = 'OSS' THEN sub.n_streaks
@@ -249,7 +249,7 @@ WITH
               studentid,
               yearid,
               streak_length_membership,
-              db_name,
+              DB_NAME,
               CASE
                 WHEN att_code IN ('OS', 'OSS', 'OSSP') THEN 'OSS'
                 WHEN att_code IN ('ISS', 'S') THEN 'ISS'
@@ -264,12 +264,12 @@ WITH
           studentid,
           yearid,
           sub.att_code_group,
-          db_name
+          DB_NAME
       ) sub
     GROUP BY
       studentid,
       yearid,
-      db_name
+      DB_NAME
   ),
   student_attrition AS (
     SELECT
@@ -291,7 +291,7 @@ WITH
           entrydate,
           exitdate,
           enroll_status,
-          db_name
+          DB_NAME
         FROM
           gabby.powerschool.cohort_identifiers_static
         WHERE
@@ -416,7 +416,7 @@ WITH
           academic_year,
           survey_round,
           field,
-          AVG(value) AS avg_value
+          AVG(VALUE) AS avg_value
         FROM
           gabby.tntp.teacher_survey_school_sorter_identifiers
         WHERE
@@ -492,19 +492,19 @@ WITH
           ISNULL(region, 'All') AS region,
           ISNULL(CAST(school_level AS VARCHAR(5)), 'All') AS school_level,
           academic_year,
-        role,
+        ROLE,
         SUM(n_responses_positive) / SUM(n_responses) AS pct_responded_positive
         FROM
           gabby.surveys.hsr_survey_detail
         WHERE
-        role IN ('Parent', 'Student')
+        ROLE IN ('Parent', 'Student')
         GROUP BY
           academic_year,
-        role,
+        ROLE,
         ROLLUP (school_level, region, reporting_schoolid)
       ) sub PIVOT (
         MAX(pct_responded_positive) FOR
-        role IN ([parent], [student])
+        ROLE IN ([parent], [student])
       ) p
   ),
   ekg_walkthrough AS (
@@ -560,7 +560,7 @@ WITH
       CAST(AVG(sub.lit_meeting_goal) AS FLOAT) AS lit_meeting_goal_pct,
       CAST(AVG(sub.lit_making_1yr_growth) AS FLOAT) AS lit_making_1yr_growth_pct,
       CAST(AVG(sub.is_student_attrition) AS FLOAT) AS student_attrition_pct,
-      CAST(SUM(sub.n_days_attendance) / SUM(sub.n_days_membership) AS FLOAT) AS ada,
+      CAST(SUM(sub.n_days_attendance) / SUM(sub.n_days_membership) AS FLOAT) AS ADA,
       CAST(AVG(sub.is_chronically_absent) AS FLOAT) AS chronically_absent_pct,
       CAST(SUM(sub.n_days_tardy) / SUM(sub.n_days_membership) AS FLOAT) AS tardy_pct,
       CAST(AVG(sub.is_OSS) AS FLOAT) AS oss_pct,
@@ -668,10 +668,10 @@ WITH
         lg.is_making_1yr_growth AS lit_making_1yr_growth
         /* ADA */
 ,
-        ada.n_days_attendance,
-        ada.n_days_membership,
+        ADA.n_days_attendance,
+        ADA.n_days_membership,
         CASE
-          WHEN ada.ada < 0.9 THEN 1.0
+          WHEN ADA.ada < 0.9 THEN 1.0
           ELSE 0.0
         END AS is_chronically_absent
         /* Attendance Codes */
@@ -720,9 +720,9 @@ WITH
           AND la.rn_most_recent = 1
           LEFT JOIN lit_growth lg ON co.student_number = lg.student_number
           AND co.academic_year = lg.academic_year
-          LEFT JOIN ada ON co.studentid = ada.studentid
-          AND co.db_name = ada.db_name
-          AND co.academic_year = ada.academic_year
+          LEFT JOIN ADA ON co.studentid = ADA.studentid
+          AND co.db_name = ADA.db_name
+          AND co.academic_year = ADA.academic_year
           LEFT JOIN suspensions sus ON co.studentid = sus.studentid
           AND co.yearid = sus.yearid
           AND co.db_name = sus.db_name
@@ -810,10 +810,10 @@ WITH
       reporting_schoolid,
       grade_level,
       field,
-      value
+      VALUE
     FROM
       school_level_rollup_y1 UNPIVOT (
-        value FOR field IN (
+        VALUE FOR field IN (
           free_or_reduced_pct,
           act_composite_seniors_avg,
           act_composite_juniors_avg,
@@ -830,7 +830,7 @@ WITH
           lit_meeting_goal_pct,
           lit_making_1yr_growth_pct,
           student_attrition_pct,
-          ada,
+          ADA,
           n_oss,
           n_iss,
           teacher_attrition_pct,

@@ -2,12 +2,12 @@ USE gabby GO
 CREATE OR ALTER VIEW
   extracts.deanslist_designations AS
 WITH
-  ada AS (
+  ADA AS (
     SELECT
       psa.studentid,
       psa.[db_name],
       psa.yearid,
-      ROUND(AVG(CAST(psa.attendancevalue AS FLOAT)), 2) AS ada
+      ROUND(AVG(CAST(psa.attendancevalue AS FLOAT)), 2) AS ADA
     FROM
       gabby.powerschool.ps_adaadm_daily_ctod_current_static psa
     WHERE
@@ -143,7 +143,7 @@ WITH
         ELSE NULL
       END AS is_counseling,
       CASE
-        WHEN ada.ada < 0.9 THEN 'Chronic Absence'
+        WHEN ADA.ada < 0.9 THEN 'Chronic Absence'
         ELSE NULL
       END AS is_chronic_absentee
     FROM
@@ -155,9 +155,9 @@ WITH
       LEFT JOIN sp ON co.studentid = sp.studentid
       AND co.academic_year = sp.academic_year
       AND co.[db_name] = sp.[db_name]
-      LEFT JOIN ada ON co.studentid = ada.studentid
-      AND co.yearid = ada.yearid
-      AND co.[db_name] = ada.[db_name]
+      LEFT JOIN ADA ON co.studentid = ADA.studentid
+      AND co.yearid = ADA.yearid
+      AND co.[db_name] = ADA.[db_name]
     WHERE
       co.rn_year = 1
       AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()

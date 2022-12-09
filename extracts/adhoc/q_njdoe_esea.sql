@@ -1,6 +1,6 @@
-with
-  scaffold as (
-    select
+WITH
+  scaffold AS (
+    SELECT
       t.df_employee_number,
       t.preferred_lastfirst,
       t.legal_entity_name,
@@ -8,14 +8,14 @@ with
       t.job_title,
       t.email_address,
       t.academic_year,
-      year(t.date_value) as calendar_year,
-      datename(month, t.date_value) as month_text,
-      month(t.date_value) as month_num,
-      sum(hours_worked) as month_hours_worked,
-      count(t.date_value) * 9.5 as month_possible_hours
-    from
+      YEAR(t.date_value) AS calendar_year,
+      DATENAME(MONTH, t.date_value) AS month_text,
+      MONTH(t.date_value) AS month_num,
+      SUM(hours_worked) AS month_hours_worked,
+      COUNT(t.date_value) * 9.5 AS month_possible_hours
+    FROM
       gabby.tableau.staff_tracker t
-    group by
+    GROUP BY
       t.df_employee_number,
       t.preferred_lastfirst,
       t.legal_entity_name,
@@ -23,66 +23,66 @@ with
       t.job_title,
       t.email_address,
       t.academic_year,
-      year(t.date_value),
-      month(t.date_value),
-      datename(month, t.date_value)
+      YEAR(t.date_value),
+      MONTH(t.date_value),
+      DATENAME(MONTH, t.date_value)
   ),
-  days_table as (
-    select
+  days_table AS (
+    SELECT
       p.df_employee_number,
       p.academic_year,
       p.month_num,
       p.month_max_days,
-      coalesce([1], 0) as day_1,
-      coalesce([2], 0) as day_2,
-      coalesce([3], 0) as day_3,
-      coalesce([4], 0) as day_4,
-      coalesce([5], 0) as day_5,
-      coalesce([6], 0) as day_6,
-      coalesce([7], 0) as day_7,
-      coalesce([8], 0) as day_8,
-      coalesce([9], 0) as day_9,
-      coalesce([10], 0) as day_10,
-      coalesce([11], 0) as day_11,
-      coalesce([12], 0) as day_12,
-      coalesce([13], 0) as day_13,
-      coalesce([14], 0) as day_14,
-      coalesce([15], 0) as day_15,
-      coalesce([16], 0) as day_16,
-      coalesce([17], 0) as day_17,
-      coalesce([18], 0) as day_18,
-      coalesce([19], 0) as day_19,
-      coalesce([20], 0) as day_20,
-      coalesce([21], 0) as day_21,
-      coalesce([22], 0) as day_22,
-      coalesce([23], 0) as day_23,
-      coalesce([24], 0) as day_24,
-      coalesce([25], 0) as day_25,
-      coalesce([26], 0) as day_26,
-      coalesce([27], 0) as day_27,
-      coalesce([28], 0) as day_28,
-      case
-        when month_max_days >= 29 then coalesce([29], 0)
-      end as day_29,
-      case
-        when month_max_days >= 30 then coalesce([30], 0)
-      end as day_30,
-      case
-        when month_max_days = 31 then coalesce([31], 0)
-      end as day_31
-    from
+      COALESCE([1], 0) AS day_1,
+      COALESCE([2], 0) AS day_2,
+      COALESCE([3], 0) AS day_3,
+      COALESCE([4], 0) AS day_4,
+      COALESCE([5], 0) AS day_5,
+      COALESCE([6], 0) AS day_6,
+      COALESCE([7], 0) AS day_7,
+      COALESCE([8], 0) AS day_8,
+      COALESCE([9], 0) AS day_9,
+      COALESCE([10], 0) AS day_10,
+      COALESCE([11], 0) AS day_11,
+      COALESCE([12], 0) AS day_12,
+      COALESCE([13], 0) AS day_13,
+      COALESCE([14], 0) AS day_14,
+      COALESCE([15], 0) AS day_15,
+      COALESCE([16], 0) AS day_16,
+      COALESCE([17], 0) AS day_17,
+      COALESCE([18], 0) AS day_18,
+      COALESCE([19], 0) AS day_19,
+      COALESCE([20], 0) AS day_20,
+      COALESCE([21], 0) AS day_21,
+      COALESCE([22], 0) AS day_22,
+      COALESCE([23], 0) AS day_23,
+      COALESCE([24], 0) AS day_24,
+      COALESCE([25], 0) AS day_25,
+      COALESCE([26], 0) AS day_26,
+      COALESCE([27], 0) AS day_27,
+      COALESCE([28], 0) AS day_28,
+      CASE
+        WHEN month_max_days >= 29 THEN COALESCE([29], 0)
+      END AS day_29,
+      CASE
+        WHEN month_max_days >= 30 THEN COALESCE([30], 0)
+      END AS day_30,
+      CASE
+        WHEN month_max_days = 31 THEN COALESCE([31], 0)
+      END AS day_31
+    FROM
       (
-        select
+        SELECT
           df_employee_number,
           academic_year,
           hours_worked,
-          month(date_value) as month_num,
-          day(date_value) as day_num,
-          day(eomonth(date_value)) as month_max_days
-        from
+          MONTH(date_value) AS month_num,
+          DAY(date_value) AS day_num,
+          DAY(EOMONTH(date_value)) AS month_max_days
+        FROM
           gabby.tableau.staff_tracker
-      ) sub pivot (
-        sum(hours_worked) for day_num in (
+      ) sub PIVOT (
+        SUM(hours_worked) FOR day_num IN (
           [1],
           [2],
           [3],
@@ -117,7 +117,7 @@ with
         )
       ) p
   )
-select
+SELECT
   s.df_employee_number,
   s.preferred_lastfirst,
   s.legal_entity_name,
@@ -130,11 +130,11 @@ select
   s.calendar_year,
   s.month_hours_worked,
   s.month_possible_hours,
-  s.month_possible_hours - s.month_hours_worked as month_hours_not_worked,
-  cast(round((s.month_hours_worked / s.month_possible_hours) * 100, 0) as int) as month_percent_worked,
-  cast(
-    round(((s.month_possible_hours - s.month_hours_worked) / s.month_possible_hours) * 100, 0) as int
-  ) as month_percent_not_worked,
+  s.month_possible_hours - s.month_hours_worked AS month_hours_not_worked,
+  CAST(ROUND((s.month_hours_worked / s.month_possible_hours) * 100, 0) AS INT) AS month_percent_worked,
+  CAST(
+    ROUND(((s.month_possible_hours - s.month_hours_worked) / s.month_possible_hours) * 100, 0) AS INT
+  ) AS month_percent_not_worked,
   d.month_max_days,
   d.day_1,
   d.day_2,
@@ -167,8 +167,8 @@ select
   d.day_29,
   d.day_30,
   d.day_31
-from
+FROM
   scaffold s
-  left join days_table d on s.df_employee_number = d.df_employee_number
-  and s.academic_year = d.academic_year
-  and s.month_num = d.month_num
+  LEFT JOIN days_table d ON s.df_employee_number = d.df_employee_number
+  AND s.academic_year = d.academic_year
+  AND s.month_num = d.month_num

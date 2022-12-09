@@ -1,25 +1,25 @@
-select
+SELECT
   df_employee_number,
   preferred_first_name,
   preferred_last_name,
   userprincipalname,
   primary_site,
   primary_job
-from
+FROM
   gabby.people.staff_crosswalk_static
-where
+WHERE
   [status] <> 'Terminated'
-  and (
+  AND (
     (
-      primary_job in ('Dean', 'Dean of Students', 'Dean of Students and Families')
-      and is_manager = 'No'
+      primary_job IN ('Dean', 'Dean of Students', 'Dean of Students and Families')
+      AND is_manager = 'No'
     )
-    or (
+    OR (
       primary_on_site_department = 'KTC'
-      and primary_site = 'KIPP Newark Collegiate Academy'
+      AND primary_site = 'KIPP Newark Collegiate Academy'
     )
-    or (
-      primary_job in (
+    OR (
+      primary_job IN (
         'Learning Specialist',
         'Learning Specialist Coordinator',
         'Teacher',

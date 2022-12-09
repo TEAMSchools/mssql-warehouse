@@ -1,53 +1,53 @@
-/* gabby */ exec gabby.dbo.sp_generate_merge @table_name = 'agg_student_responses_all_current',
+/* gabby */ EXEC gabby.dbo.sp_generate_merge @table_name = 'agg_student_responses_all_current',
 @target_table = 'agg_student_responses_all_archive',
 @schema = 'illuminate_dna_assessments',
 @cols_to_join_on = "'assessment_id','standard_id','local_student_id','is_replacement','response_type'",
 @include_values = 0,
 @delete_if_not_matched = 0;
 
-exec gabby.dbo.sp_generate_merge @table_name = 'student_assessment_scaffold_current_static',
+EXEC gabby.dbo.sp_generate_merge @table_name = 'student_assessment_scaffold_current_static',
 @target_table = 'student_assessment_scaffold_archive',
 @schema = 'illuminate_dna_assessments',
 @cols_to_join_on = "'assessment_id','student_id'",
 @include_values = 0,
 @delete_if_not_matched = 0;
 
-exec gabby.dbo.sp_generate_merge @table_name = 'sight_words_data_current_static',
+EXEC gabby.dbo.sp_generate_merge @table_name = 'sight_words_data_current_static',
 @target_table = 'sight_words_data_archive',
 @schema = 'illuminate_dna_repositories',
 @cols_to_join_on = "'repository_id','repository_row_id','label'",
 @include_values = 0,
 @delete_if_not_matched = 0;
 
-exec gabby.dbo.sp_generate_merge @table_name = 'ar_goals_current_static',
+EXEC gabby.dbo.sp_generate_merge @table_name = 'ar_goals_current_static',
 @target_table = 'ar_goals_archive',
 @schema = 'renaissance',
 @cols_to_join_on = "'student_number','academic_year','reporting_term'",
 @include_values = 0,
 @delete_if_not_matched = 0;
 
-exec gabby.dbo.sp_generate_merge @table_name = 'ar_time_series_current_static',
+EXEC gabby.dbo.sp_generate_merge @table_name = 'ar_time_series_current_static',
 @target_table = 'ar_time_series_archive',
 @schema = 'tableau',
 @cols_to_join_on = "'student_number','date'",
 @include_values = 0,
 @delete_if_not_matched = 0;
 
-exec gabby.dbo.sp_generate_merge @table_name = 'survey_response_clean_current_static',
+EXEC gabby.dbo.sp_generate_merge @table_name = 'survey_response_clean_current_static',
 @target_table = 'survey_response_clean_archive',
 @schema = 'surveygizmo',
 @cols_to_join_on = "'survey_id','survey_response_id'",
 @include_values = 0,
 @delete_if_not_matched = 0;
 
-exec gabby.dbo.sp_generate_merge @table_name = 'survey_response_data_current_static',
+EXEC gabby.dbo.sp_generate_merge @table_name = 'survey_response_data_current_static',
 @target_table = 'survey_response_data_archive',
 @schema = 'surveygizmo',
 @cols_to_join_on = "'survey_id','survey_response_id','question_id'",
 @include_values = 0,
 @delete_if_not_matched = 0;
 
-exec gabby.dbo.sp_generate_merge @table_name = 'survey_response_data_options_current_static',
+EXEC gabby.dbo.sp_generate_merge @table_name = 'survey_response_data_options_current_static',
 @target_table = 'survey_response_data_options_archive',
 @schema = 'surveygizmo',
 @cols_to_join_on = "'survey_id','survey_response_id','question_id','option_id'",
@@ -64,63 +64,63 @@ TRUNCATE TABLE gabby.surveygizmo.survey_response_data_current_static;
 TRUNCATE TABLE gabby.surveygizmo.survey_response_data_options_current_static;
  */
 /* kippnewark */
-exec kippnewark.dbo.sp_generate_merge @table_name = 'attendance_clean_current_static',
+EXEC kippnewark.dbo.sp_generate_merge @table_name = 'attendance_clean_current_static',
 @target_table = 'attendance_clean_archive',
 @schema = 'powerschool',
 @cols_to_join_on = "'id'",
 @include_values = 0,
 @delete_if_not_matched = 0;
 
-exec kippnewark.dbo.sp_generate_merge @table_name = 'cohort_identifiers_scaffold_current_static',
+EXEC kippnewark.dbo.sp_generate_merge @table_name = 'cohort_identifiers_scaffold_current_static',
 @target_table = 'cohort_identifiers_scaffold_archive',
 @schema = 'powerschool',
 @cols_to_join_on = "'student_number','date'",
 @include_values = 0,
 @delete_if_not_matched = 0;
 
-exec kippnewark.dbo.sp_generate_merge @table_name = 'course_section_scaffold_current_static',
+EXEC kippnewark.dbo.sp_generate_merge @table_name = 'course_section_scaffold_current_static',
 @target_table = 'course_section_scaffold_archive',
 @schema = 'powerschool',
 @cols_to_join_on = "'studentid','yearid','sectionid','term_name','course_number','gradescaleid'",
 @include_values = 0,
 @delete_if_not_matched = 0;
 
-exec kippnewark.dbo.sp_generate_merge @table_name = 'gradebook_assignments_current_static',
+EXEC kippnewark.dbo.sp_generate_merge @table_name = 'gradebook_assignments_current_static',
 @target_table = 'gradebook_assignments_archive',
 @schema = 'powerschool',
 @cols_to_join_on = "'assignmentsectionid'",
 @include_values = 0,
 @delete_if_not_matched = 0;
 
-exec kippnewark.dbo.sp_generate_merge @table_name = 'gradebook_assignments_scores_current_static',
+EXEC kippnewark.dbo.sp_generate_merge @table_name = 'gradebook_assignments_scores_current_static',
 @target_table = 'gradebook_assignments_scores_archive',
 @schema = 'powerschool',
 @cols_to_join_on = "'studentsdcid','assignmentsectionid','assignmentid'",
 @include_values = 0,
 @delete_if_not_matched = 0;
 
-exec kippnewark.dbo.sp_generate_merge @table_name = 'ps_adaadm_daily_ctod_current_static',
+EXEC kippnewark.dbo.sp_generate_merge @table_name = 'ps_adaadm_daily_ctod_current_static',
 @target_table = 'ps_adaadm_daily_ctod_archive',
 @schema = 'powerschool',
 @cols_to_join_on = "'studentid','calendardate'",
 @include_values = 0,
 @delete_if_not_matched = 0;
 
-exec kippnewark.dbo.sp_generate_merge @table_name = 'ps_attendance_daily_current_static',
+EXEC kippnewark.dbo.sp_generate_merge @table_name = 'ps_attendance_daily_current_static',
 @target_table = 'ps_attendance_daily_archive',
 @schema = 'powerschool',
 @cols_to_join_on = "'id'",
 @include_values = 0,
 @delete_if_not_matched = 0;
 
-exec kippnewark.dbo.sp_generate_merge @table_name = 'ps_membership_reg_current_static',
+EXEC kippnewark.dbo.sp_generate_merge @table_name = 'ps_membership_reg_current_static',
 @target_table = 'ps_membership_reg_archive',
 @schema = 'powerschool',
 @cols_to_join_on = "'studentid','calendardate'",
 @include_values = 0,
 @delete_if_not_matched = 0;
 
-exec kippnewark.dbo.sp_generate_merge @table_name = 'attendance_dashboard_current_static',
+EXEC kippnewark.dbo.sp_generate_merge @table_name = 'attendance_dashboard_current_static',
 @target_table = 'attendance_dashboard_archive',
 @schema = 'tableau',
 @cols_to_join_on = "'student_number','calendardate'",
@@ -153,63 +153,63 @@ TRUNCATE TABLE kippnewark.tableau.attendance_dashboard_current_static;
 TRUNCATE TABLE kippnewark.powerschool.course_enrollments_current_static;
  */
 /* kippcamden */
-exec kippcamden.dbo.sp_generate_merge @table_name = 'attendance_clean_current_static',
+EXEC kippcamden.dbo.sp_generate_merge @table_name = 'attendance_clean_current_static',
 @target_table = 'attendance_clean_archive',
 @schema = 'powerschool',
 @cols_to_join_on = "'id'",
 @include_values = 0,
 @delete_if_not_matched = 0;
 
-exec kippcamden.dbo.sp_generate_merge @table_name = 'cohort_identifiers_scaffold_current_static',
+EXEC kippcamden.dbo.sp_generate_merge @table_name = 'cohort_identifiers_scaffold_current_static',
 @target_table = 'cohort_identifiers_scaffold_archive',
 @schema = 'powerschool',
 @cols_to_join_on = "'student_number','date'",
 @include_values = 0,
 @delete_if_not_matched = 0;
 
-exec kippcamden.dbo.sp_generate_merge @table_name = 'course_section_scaffold_current_static',
+EXEC kippcamden.dbo.sp_generate_merge @table_name = 'course_section_scaffold_current_static',
 @target_table = 'course_section_scaffold_archive',
 @schema = 'powerschool',
 @cols_to_join_on = "'studentid','yearid','sectionid','term_name','course_number','gradescaleid'",
 @include_values = 0,
 @delete_if_not_matched = 0;
 
-exec kippcamden.dbo.sp_generate_merge @table_name = 'gradebook_assignments_current_static',
+EXEC kippcamden.dbo.sp_generate_merge @table_name = 'gradebook_assignments_current_static',
 @target_table = 'gradebook_assignments_archive',
 @schema = 'powerschool',
 @cols_to_join_on = "'assignmentsectionid'",
 @include_values = 0,
 @delete_if_not_matched = 0;
 
-exec kippcamden.dbo.sp_generate_merge @table_name = 'gradebook_assignments_scores_current_static',
+EXEC kippcamden.dbo.sp_generate_merge @table_name = 'gradebook_assignments_scores_current_static',
 @target_table = 'gradebook_assignments_scores_archive',
 @schema = 'powerschool',
 @cols_to_join_on = "'studentsdcid','assignmentsectionid','assignmentid'",
 @include_values = 0,
 @delete_if_not_matched = 0;
 
-exec kippcamden.dbo.sp_generate_merge @table_name = 'ps_adaadm_daily_ctod_current_static',
+EXEC kippcamden.dbo.sp_generate_merge @table_name = 'ps_adaadm_daily_ctod_current_static',
 @target_table = 'ps_adaadm_daily_ctod_archive',
 @schema = 'powerschool',
 @cols_to_join_on = "'studentid','calendardate'",
 @include_values = 0,
 @delete_if_not_matched = 0;
 
-exec kippcamden.dbo.sp_generate_merge @table_name = 'ps_attendance_daily_current_static',
+EXEC kippcamden.dbo.sp_generate_merge @table_name = 'ps_attendance_daily_current_static',
 @target_table = 'ps_attendance_daily_archive',
 @schema = 'powerschool',
 @cols_to_join_on = "'id'",
 @include_values = 0,
 @delete_if_not_matched = 0;
 
-exec kippcamden.dbo.sp_generate_merge @table_name = 'ps_membership_reg_current_static',
+EXEC kippcamden.dbo.sp_generate_merge @table_name = 'ps_membership_reg_current_static',
 @target_table = 'ps_membership_reg_archive',
 @schema = 'powerschool',
 @cols_to_join_on = "'studentid','calendardate'",
 @include_values = 0,
 @delete_if_not_matched = 0;
 
-exec kippcamden.dbo.sp_generate_merge @table_name = 'attendance_dashboard_current_static',
+EXEC kippcamden.dbo.sp_generate_merge @table_name = 'attendance_dashboard_current_static',
 @target_table = 'attendance_dashboard_archive',
 @schema = 'tableau',
 @cols_to_join_on = "'student_number','calendardate'",
@@ -242,63 +242,63 @@ TRUNCATE TABLE kippcamden.tableau.attendance_dashboard_current_static;
 TRUNCATE TABLE kippcamden.powerschool.course_enrollments_current_static;
  */
 /* kippmiami */
-exec kippmiami.dbo.sp_generate_merge @table_name = 'attendance_clean_current_static',
+EXEC kippmiami.dbo.sp_generate_merge @table_name = 'attendance_clean_current_static',
 @target_table = 'attendance_clean_archive',
 @schema = 'powerschool',
 @cols_to_join_on = "'id'",
 @include_values = 0,
 @delete_if_not_matched = 0;
 
-exec kippmiami.dbo.sp_generate_merge @table_name = 'cohort_identifiers_scaffold_current_static',
+EXEC kippmiami.dbo.sp_generate_merge @table_name = 'cohort_identifiers_scaffold_current_static',
 @target_table = 'cohort_identifiers_scaffold_archive',
 @schema = 'powerschool',
 @cols_to_join_on = "'student_number','date'",
 @include_values = 0,
 @delete_if_not_matched = 0;
 
-exec kippmiami.dbo.sp_generate_merge @table_name = 'course_section_scaffold_current_static',
+EXEC kippmiami.dbo.sp_generate_merge @table_name = 'course_section_scaffold_current_static',
 @target_table = 'course_section_scaffold_archive',
 @schema = 'powerschool',
 @cols_to_join_on = "'studentid','yearid','sectionid','term_name','course_number','gradescaleid'",
 @include_values = 0,
 @delete_if_not_matched = 0;
 
-exec kippmiami.dbo.sp_generate_merge @table_name = 'gradebook_assignments_current_static',
+EXEC kippmiami.dbo.sp_generate_merge @table_name = 'gradebook_assignments_current_static',
 @target_table = 'gradebook_assignments_archive',
 @schema = 'powerschool',
 @cols_to_join_on = "'assignmentsectionid'",
 @include_values = 0,
 @delete_if_not_matched = 0;
 
-exec kippmiami.dbo.sp_generate_merge @table_name = 'gradebook_assignments_scores_current_static',
+EXEC kippmiami.dbo.sp_generate_merge @table_name = 'gradebook_assignments_scores_current_static',
 @target_table = 'gradebook_assignments_scores_archive',
 @schema = 'powerschool',
 @cols_to_join_on = "'studentsdcid','assignmentsectionid','assignmentid'",
 @include_values = 0,
 @delete_if_not_matched = 0;
 
-exec kippmiami.dbo.sp_generate_merge @table_name = 'ps_adaadm_daily_ctod_current_static',
+EXEC kippmiami.dbo.sp_generate_merge @table_name = 'ps_adaadm_daily_ctod_current_static',
 @target_table = 'ps_adaadm_daily_ctod_archive',
 @schema = 'powerschool',
 @cols_to_join_on = "'studentid','calendardate'",
 @include_values = 0,
 @delete_if_not_matched = 0;
 
-exec kippmiami.dbo.sp_generate_merge @table_name = 'ps_attendance_daily_current_static',
+EXEC kippmiami.dbo.sp_generate_merge @table_name = 'ps_attendance_daily_current_static',
 @target_table = 'ps_attendance_daily_archive',
 @schema = 'powerschool',
 @cols_to_join_on = "'id'",
 @include_values = 0,
 @delete_if_not_matched = 0;
 
-exec kippmiami.dbo.sp_generate_merge @table_name = 'ps_membership_reg_current_static',
+EXEC kippmiami.dbo.sp_generate_merge @table_name = 'ps_membership_reg_current_static',
 @target_table = 'ps_membership_reg_archive',
 @schema = 'powerschool',
 @cols_to_join_on = "'studentid','calendardate'",
 @include_values = 0,
 @delete_if_not_matched = 0;
 
-exec kippmiami.dbo.sp_generate_merge @table_name = 'attendance_dashboard_current_static',
+EXEC kippmiami.dbo.sp_generate_merge @table_name = 'attendance_dashboard_current_static',
 @target_table = 'attendance_dashboard_archive',
 @schema = 'tableau',
 @cols_to_join_on = "'student_number','calendardate'",

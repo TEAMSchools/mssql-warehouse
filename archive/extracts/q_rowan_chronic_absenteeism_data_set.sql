@@ -1,42 +1,42 @@
-with
-  ada as (
-    select
+WITH
+  ADA AS (
+    SELECT
       studentid,
       yearid,
-      avg(cast(attendancevalue as float)) as ada
-    from
+      AVG(CAST(attendancevalue AS FLOAT)) AS ADA
+    FROM
       gabby.powerschool.ps_adaadm_daily_ctod_static
-    group by
+    GROUP BY
       studentid,
       yearid
   ),
-  suspensions as (
-    select
+  suspensions AS (
+    SELECT
       studentid,
-      gabby.utilities.date_to_sy (att_date) as academic_year,
-      max(
-        case
-          when att_code = 'OSS' then 'Y'
-          else 'N'
-        end
-      ) as oss,
-      max(
-        case
-          when att_code = 'ISS' then 'Y'
-          else 'N'
-        end
-      ) as iss
-    from
+      gabby.utilities.date_to_sy (att_date) AS academic_year,
+      MAX(
+        CASE
+          WHEN att_code = 'OSS' THEN 'Y'
+          ELSE 'N'
+        END
+      ) AS oss,
+      MAX(
+        CASE
+          WHEN att_code = 'ISS' THEN 'Y'
+          ELSE 'N'
+        END
+      ) AS iss
+    FROM
       gabby.powerschool.ps_attendance_daily_static
-    group by
+    GROUP BY
       studentid,
       gabby.utilities.date_to_sy (att_date)
   )
-select
+SELECT
   co.student_number,
-  concat(co.first_name, ' ', co.last_name) as student_name,
+  CONCAT(co.first_name, ' ', co.last_name) AS student_name,
   co.dob,
-  concat(co.street, ', ', co.city, ', ', co.state, ' ', co.zip) as home_address,
+  CONCAT(co.street, ', ', co.city, ', ', co.state, ' ', co.zip) AS home_address,
   co.ethnicity,
   nj.home_language,
   co.academic_year,
@@ -48,24 +48,24 @@ select
   co.lunchstatus,
   gpa.gpa_y1,
   lit.read_lvl,
-  ada.ada,
+  ADA.ada,
   sus.iss,
   sus.oss,
-  null as transportation_method
-from
+  NULL AS transportation_method
+FROM
   gabby.powerschool.cohort_identifiers_static co
-  left outer join gabby.powerschool.s_nj_stu_x nj on co.students_dcid = nj.studentsdcid
-  left outer join gabby.powerschool.gpa_detail gpa on co.student_number = gpa.student_number
-  and co.academic_year = gpa.academic_year
-  and gpa.is_curterm = 1
-  left outer join gabby.lit.achieved_by_round_static lit on co.student_number = lit.student_number
-  and co.academic_year = lit.academic_year
-  and lit.is_curterm = 1
-  left outer join ada on co.studentid = ada.studentid
-  and co.yearid = ada.yearid
-  left outer join suspensions sus on co.studentid = sus.studentid
-  and co.academic_year = sus.academic_year
-where
+  LEFT OUTER JOIN gabby.powerschool.s_nj_stu_x nj ON co.students_dcid = nj.studentsdcid
+  LEFT OUTER JOIN gabby.powerschool.gpa_detail gpa ON co.student_number = gpa.student_number
+  AND co.academic_year = gpa.academic_year
+  AND gpa.is_curterm = 1
+  LEFT OUTER JOIN gabby.lit.achieved_by_round_static lit ON co.student_number = lit.student_number
+  AND co.academic_year = lit.academic_year
+  AND lit.is_curterm = 1
+  LEFT OUTER JOIN ADA ON co.studentid = ADA.studentid
+  AND co.yearid = ADA.yearid
+  LEFT OUTER JOIN suspensions sus ON co.studentid = sus.studentid
+  AND co.academic_year = sus.academic_year
+WHERE
   co.region = 'KCNA'
-  and co.academic_year >= 2015
-  and co.rn_year = 1
+  AND co.academic_year >= 2015
+  AND co.rn_year = 1

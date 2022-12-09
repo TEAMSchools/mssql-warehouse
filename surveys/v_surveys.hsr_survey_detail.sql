@@ -6,7 +6,7 @@ WITH
     SELECT
       school,
       academic_year,
-    role,
+    ROLE,
     survey_question,
     COUNT(likert_response_scale_5) AS n_responses,
     SUM(
@@ -20,7 +20,7 @@ WITH
         SELECT
           kipp_new_jersey_select_your_school_ AS school,
           school_year AS academic_year,
-        role,
+        ROLE,
         survey_question,
         CASE
           WHEN response IN (
@@ -116,13 +116,13 @@ WITH
     GROUP BY
       school,
       academic_year,
-    role,
+    ROLE,
     survey_question
   )
 SELECT
   school,
   academic_year,
-role,
+ROLE,
 survey_question,
 n_responses,
 n_responses_positive,
@@ -197,7 +197,7 @@ FROM
     SELECT
       school,
       academic_year,
-    role,
+    ROLE,
     survey_question,
     n_responses,
     n_responses_positive
@@ -207,7 +207,7 @@ FROM
     SELECT
       school,
       CAST(LEFT(school_year, 4) AS INT) AS academic_year,
-    role,
+    ROLE,
     survey_question,
     school_responded,
     ROUND((likert_4_ * school_responded) + (likert_5_ * school_responded), 0) AS responded_positive
