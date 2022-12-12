@@ -2,7 +2,9 @@
 
 ## If approved, this pull request will:
 
-- 
+- ...
+- ...
+- ...
 
 ## Pre-reqs
 
@@ -13,9 +15,3 @@
 - [ ] If this is a hotfix, please mark it as such
 - [ ] Review the code checks listed in the task
 - [ ] Paste the link from the task you created in the space below:
-
----
-
-
-
----
