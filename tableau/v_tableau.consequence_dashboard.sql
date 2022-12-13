@@ -4,22 +4,14 @@ GO
 CREATE OR ALTER VIEW tableau.consequence_dashboard AS
 
 WITH suspension_att AS (
-  SELECT sub.[db_name]
-      ,sub.studentid
-      ,sub.academic_year
-      ,SUM(sub.is_suspended) AS days_suspended_att
-  FROM
-  	  (
-	   SELECT att.[db_name]
-	         ,att.studentid
-	         ,gabby.utilities.DATE_TO_SY(att.att_date) AS academic_year
-	         ,CASE WHEN att.att_code IN ('OS', 'OSS', 'OSSP', 'S', 'ISS', 'SHI') THEN 1.0 ELSE 0.0 END AS is_suspended
-	   FROM gabby.powerschool.ps_attendance_daily att
-      ) sub
-   GROUP BY sub.[db_name]
-        ,sub.studentid
-        ,sub.academic_year
-   )
+  SELECT att.studentid
+        ,att.[db_name]
+        ,gabby.utilities.DATE_TO_SY(att.att_date) AS academic_year
+        ,COUNT(*) AS days_suspended_att
+  FROM gabby.powerschool.ps_attendance_daily att
+  WHERE att.att_code IN ('OS', 'OSS', 'OSSP', 'S', 'ISS', 'SHI')
+  GROUP BY att.studentid, att.[db_name], gabby.utilities.DATE_TO_SY(att.att_date)
+)
 
 SELECT co.student_number
       ,co.state_studentnumber
@@ -59,7 +51,7 @@ SELECT co.student_number
       ,dli.category AS referral_category
       ,'Referral' AS dl_category
 
-      ,CAST(d.alt_name AS VARCHAR(5)) AS term
+      ,CAST(d.alt_name AS NVARCHAR(8)) AS term
 
       ,dlp.penaltyname
       ,dlp.startdate
@@ -74,7 +66,7 @@ SELECT co.student_number
       ,cf.[Perceived Motivation]
       ,cf.[Restraint Used]
       ,cf.[SSDS Incident ID]
-      
+
       ,att.days_suspended_att
 FROM gabby.powerschool.cohort_identifiers_static co
 LEFT JOIN gabby.powerschool.students s
