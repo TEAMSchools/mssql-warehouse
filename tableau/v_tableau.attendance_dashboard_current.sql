@@ -60,9 +60,9 @@ FROM
 
            ,att.att_code
            ,CASE WHEN att.att_code IN ('T', 'T10') THEN 0.0 ELSE 1.0 END AS is_ontime
-           ,CASE WHEN att.att_code IN ('OS', 'OSS', 'OSSP') THEN 1.0 ELSE 0.0 END AS is_oss
+           ,CASE WHEN att.att_code IN ('OS', 'OSS', 'OSSP', 'SHI') THEN 1.0 ELSE 0.0 END AS is_oss
            ,CASE WHEN att.att_code IN ('S', 'ISS') THEN 1.0 ELSE 0.0 END AS is_iss
-           ,CASE WHEN att.att_code IN ('OS', 'OSS', 'OSSP', 'S', 'ISS') THEN 1.0 ELSE 0.0 END AS is_suspended
+           ,CASE WHEN att.att_code IN ('OS', 'OSS', 'OSSP', 'S', 'ISS', 'SHI') THEN 1.0 ELSE 0.0 END AS is_suspended
 
            ,dt.alt_name AS term
 
