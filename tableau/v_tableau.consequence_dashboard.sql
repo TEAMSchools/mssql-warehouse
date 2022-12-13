@@ -3,6 +3,16 @@ GO
 
 CREATE OR ALTER VIEW tableau.consequence_dashboard AS
 
+WITH suspension_att AS (
+  SELECT att.studentid
+        ,att.[db_name]
+        ,gabby.utilities.DATE_TO_SY(att.att_date) AS academic_year
+        ,COUNT(*) AS days_suspended_att
+  FROM gabby.powerschool.ps_attendance_daily att
+  WHERE att.att_code IN ('OS', 'OSS', 'OSSP', 'S', 'ISS', 'SHI')
+  GROUP BY att.studentid, att.[db_name], gabby.utilities.DATE_TO_SY(att.att_date)
+)
+
 SELECT co.student_number
       ,co.state_studentnumber
       ,co.lastfirst
@@ -41,7 +51,7 @@ SELECT co.student_number
       ,dli.category AS referral_category
       ,'Referral' AS dl_category
 
-      ,CAST(d.alt_name AS VARCHAR(5)) AS term
+      ,CAST(d.alt_name AS NVARCHAR(8)) AS term
 
       ,dlp.penaltyname
       ,dlp.startdate
@@ -56,6 +66,8 @@ SELECT co.student_number
       ,cf.[Perceived Motivation]
       ,cf.[Restraint Used]
       ,cf.[SSDS Incident ID]
+
+      ,att.days_suspended_att
 FROM gabby.powerschool.cohort_identifiers_static co
 LEFT JOIN gabby.powerschool.students s
   ON co.student_number = s.student_number
@@ -74,6 +86,10 @@ LEFT JOIN deanslist.incidents_penalties_static dlp
 LEFT JOIN gabby.deanslist.incidents_custom_fields_wide cf
   ON dli.incident_id = cf.incident_id
  AND dli.[db_name] = cf.[db_name]
+LEFT JOIN suspension_att att
+  ON co.studentid = att.studentid
+ AND co.academic_year = att.academic_year
+ AND co.[db_name] = att.[db_name]
 WHERE co.academic_year IN (gabby.utilities.GLOBAL_ACADEMIC_YEAR(), gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
   AND co.rn_year = 1
   AND co.grade_level <> 99
