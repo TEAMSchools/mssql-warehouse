@@ -7,12 +7,12 @@ SELECT co.student_number AS [studentIdentifier]
       ,co.first_name AS [firstName]
       ,co.last_name AS [lastName]
       ,co.grade_level + 1 AS [gradeId]
-      ,CAST(CAST(co.entrydate AS DATETIME2), 126 AS VARCHAR) AS [classStudentStartDate]
-      ,CAST(CAST(co.exitdate AS DATETIME2), 126 AS VARCHAR) AS [classStudentEndDate]
+      ,CONVERT(VARCHAR, CAST(co.entrydate AS DATETIME2), 126) AS [classStudentStartDate]
+      ,CONVERT(VARCHAR, CAST(co.exitdate AS DATETIME2), 126) AS [classStudentEndDate]
 
       ,sch.[name] AS [schoolName]
 FROM gabby.powerschool.cohort_identifiers_static co
-JOIN gabby.powerschool.schools sch
+INNER JOIN gabby.powerschool.schools sch
   ON co.schoolid = sch.school_number
  AND co.[db_name] = sch.[db_name]
 WHERE co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
