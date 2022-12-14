@@ -2,25 +2,29 @@ USE gabby GO
 CREATE OR ALTER VIEW
   adp.workers_custom_field_group AS
 SELECT
-  w.associate_oid,
-  CAST(JSON_VALUE(w.worker_id, '$.idValue') AS NVARCHAR(16)) AS worker_id,
+  gabby.adp.workers.associate_oid,
   'worker' AS parent_object,
   'stringFields' AS custom_field_group,
-  cfg.itemID AS item_id,
-  cfg.stringValue AS string_value,
+  cfg.itemid AS item_id,
+  cfg.stringvalue AS string_value,
   NULL AS code_value,
   NULL AS date_value,
   NULL AS bit_value,
+  cfg.stringvalue AS item_value,
+  CAST(
+      JSON_VALUE(gabby.adp.workers.worker_id, '$.idValue') AS NVARCHAR(16)
+  ) AS worker_id,
   CASE
-    WHEN ISNUMERIC(cfg.stringValue) = 1 THEN CAST(cfg.stringValue AS INT)
+    WHEN ISNUMERIC(cfg.stringvalue) = 1 THEN CAST(cfg.stringvalue AS INT)
   END AS numeric_value,
-  CAST(JSON_VALUE(cfg.nameCode, '$.codeValue') AS NVARCHAR(128)) AS name_code_value,
-  CAST(JSON_VALUE(cfg.nameCode, '$.shortName') AS NVARCHAR(128)) AS name_code_short_name,
-  CAST(JSON_VALUE(cfg.nameCode, '$.longName') AS NVARCHAR(128)) AS name_code_long_name,
-  cfg.stringValue AS item_value
+  CAST(JSON_VALUE(cfg.namecode, '$.codeValue') AS NVARCHAR(128)) AS name_code_value,
+  CAST(
+      JSON_VALUE(cfg.namecode, '$.shortName') AS NVARCHAR(128)
+  ) AS name_code_short_name,
+  CAST(JSON_VALUE(cfg.namecode, '$.longName') AS NVARCHAR(128)) AS name_code_long_name
 FROM
-  gabby.adp.workers w
-  CROSS APPLY OPENJSON (w.custom_field_group, '$.stringFields')
+  gabby.adp.workers
+  CROSS APPLY OPENJSON(gabby.adp.workers.custom_field_group, '$.stringFields')
 WITH
   (itemID NVARCHAR(128), nameCode NVARCHAR(MAX) AS JSON, stringValue NVARCHAR(128)) cfg
 WHERE

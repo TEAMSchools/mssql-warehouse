@@ -9,7 +9,7 @@ FROM
       subject,
       MAX(raw_score) + 1 AS max_score_adjusted,
       MAX(scale_score) AS max_scale_score,
-      COUNT(subject) AS N_records
+      COUNT(subject) AS n_records
     FROM
       gabby.act.scale_score_key
     GROUP BY
@@ -17,7 +17,7 @@ FROM
       grade_level,
       administration_round,
       subject
-  ) sub
+  ) AS sub
 WHERE
-  (max_score_adjusted <> N_records)
+  (max_score_adjusted != n_records)
   OR (RIGHT(max_scale_score, 1) NOT IN (1, 6))

@@ -1,37 +1,58 @@
 version: 0.1
 cli:
-  version: 1.2.0
+  version: 1.2.1
 plugins:
   sources:
     - id: trunk
-      ref: v0.0.6
+      ref: v0.0.8
       uri: https://github.com/trunk-io/plugins
 lint:
   disabled:
+    - sql-formatter
     - sqlfmt
-    - sqlfluff
-    - sqlfluff-fix
   enabled:
-    - sql-formatter@12.0.3
+    - sqlfluff-fix@1.4.3
+    - sqlfluff@1.4.3
     - prettier@2.8.1
     - actionlint@1.6.22
-    - shellcheck@0.8.0
+    - shellcheck@0.9.0
     - gitleaks@8.15.2
     - markdownlint@0.32.2
     - git-diff-check
     - shfmt@3.5.0
   definitions:
-    - name: sql-formatter
+    - name: sqlfluff
+      commands:
+        - output: sarif
+          success_codes:
+            - 0
+          name: lint
+          parser:
+            run: ${plugin}/linters/sqlfluff/sqlfluff_to_sarif.py
+            runtime: python
+          read_output_from: stdout
+          run: sqlfluff lint ${target} --config .trunk/config/.sqlfluff --format json --nofail
+    - name: sqlfluff-fix
       commands:
         - output: rewrite
           success_codes:
             - 0
           formatter: true
-          name: lint
-          run: sql-formatter -c .trunk/config/sql-formatter.json
-          stdin: true
+          in_place: true
+          name: fix
+          run: sqlfluff fix ${target} --config .trunk/config/.sqlfluff --disable-progress-bar --force --FIX-EVEN-UNPARSABLE
+  #   - name: sql-formatter
+  #     commands:
+  #       - output: rewrite
+  #         success_codes:
+  #           - 0
+  #         formatter: true
+  #         name: lint
+  #         run: sql-formatter -c .trunk/config/sql-formatter.json
+  #         stdin: true
 runtimes:
   enabled:
+    - python@3.10.8
     - go@1.18.3
     - node@16.14.2
 actions:

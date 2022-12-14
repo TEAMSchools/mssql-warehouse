@@ -50,21 +50,26 @@ WITH
           gabby.adp.employees_archive
         WHERE
           position_id IS NOT NULL
-          AND position_status <> 'Terminated'
-          AND CAST(COALESCE(rehire_date, hire_date) AS DATE) <= CAST(CURRENT_TIMESTAMP AS DATE)
-      ) sub
+          AND position_status != 'Terminated'
+          AND CAST(
+              COALESCE(rehire_date, hire_date) AS DATE
+          ) <= CAST(CURRENT_TIMESTAMP AS DATE)
+      ) AS sub
   )
+
 SELECT
-  u.associate_id,
-  u.position_id,
-  u.date_modified,
-  u.prev_value,
-  u.new_value,
-  w.associate_oid
+  unpivoted.associate_id,
+  unpivoted.position_id,
+  unpivoted.date_modified,
+  unpivoted.prev_value,
+  unpivoted.new_value,
+  gabby.adp.workers_clean_static.associate_oid
 FROM
-  unpivoted u
-  INNER JOIN gabby.adp.workers_clean_static w ON u.associate_id = w.worker_id
+  unpivoted
+  INNER JOIN
+      gabby.adp.workers_clean_static ON
+          unpivoted.associate_id = gabby.adp.workers_clean_static.worker_id
 WHERE
-  (u.new_value <> u.prev_value)
-  OR u.prev_value IS NULL
-  OR u.new_value IS NULL
+  (unpivoted.new_value != unpivoted.prev_value)
+  OR unpivoted.prev_value IS NULL
+  OR unpivoted.new_value IS NULL
