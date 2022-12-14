@@ -28,13 +28,12 @@ WITH
       gabby.adp.work_assignment_history wah
       INNER JOIN gabby.people.employee_numbers sr ON wah.associate_id = sr.associate_id
       AND sr.is_active = 1
-    WHERE '2021-01-01' 
-      BETWEEN CAST(wah.position_effective_date AS DATE) 
-        AND COALESCE(
-              CAST(wah.position_effective_end_date AS DATE),
-              CURRENT_TIMESTAMP
-            )
-        OR CAST(wah.position_effective_date AS DATE) > '2021-01-01'
+    WHERE
+      '2021-01-01' BETWEEN CAST(wah.position_effective_date AS DATE) AND COALESCE(
+        CAST(wah.position_effective_end_date AS DATE),
+        CURRENT_TIMESTAMP
+      )
+      OR CAST(wah.position_effective_date AS DATE) > '2021-01-01'
     UNION ALL
     /* DF */
     SELECT

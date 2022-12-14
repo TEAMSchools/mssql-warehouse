@@ -1,132 +1,128 @@
-select
-    case
-        when co.schoolid = 133570965
-        then 'TEAM Academy, a KIPP school'
-        when co.schoolid = 73252
-        then 'Rise Academy, a KIPP school'
-        when co.schoolid = 73253
-        then 'Newark Collegiate Academy, a KIPP school'
-        when co.schoolid = 179902
-        then 'KIPP Lanning Square Middle School'
-    end as [kipp school of enrollment],
-    co.last_name as [last name],
-    co.first_name as [first name],
-    left(co.middle_name, 1) as [middle initial],
-    co.cohort as [hs class cohort],
-    'PowerSchool ID' as [student id type],  # ]
-    co.student_number as [
-        student id,
-        u.name as [contact owner name],
-        u.id as [contact owner salesforce id],
-        co.entrydate as [school enrollment date],
-        co.grade_level as [school enrollment grade],
-        case
-            when co.enroll_status = 0
-            then 'Attending'
-            when co.enroll_status = 2
-            then 'Transferred out'
-            when co.enroll_status = 3
-            then 'Graduated'
-        end as [enrollment status],
-        co.grade_level as [school ending grade],
-        co.exitdate as [school exit date],
-        co.dob as [date of birth],
-        case
-            when co.gender = 'M' then 'Male' when co.gender = 'F' then 'Female'
-        end as [gender],
-        case
-            when co.ethnicity = 'I'
-            then 'American Indian/Alaska Native'
-            when co.ethnicity = 'A'
-            then 'Asian'
-            when co.ethnicity = 'B'
-            then 'Black/African American'
-            when co.ethnicity = 'H'
-            then 'Hispanic/Latino'
-            when co.ethnicity = 'P'
-            then 'Native Hawaiian/Pacific Islander'
-            when co.ethnicity = 'W'
-            then 'White'
-            when co.ethnicity = 'T'
-            then 'Two or More Races'
-        end as [ethnicity],
-        co.street as [street address],
-        co.city as [city],
-        co.state as [state],
-        co.zip as [zip],
-        co.student_web_id + '@teamstudents.org' as [student e - mail],
-        null as [student mobile],
-        co.home_phone as [student home phone],
-        ltrim(
-            rtrim(
-                case
-                    when charindex(',', co.mother) = 0 and charindex(' ', co.mother) = 0
-                    then co.mother
-                    when (charindex(',', co.mother) - 1) < 0
-                    then left(co.mother, (charindex(' ', co.mother) - 1))
-                    else
-                        substring(
-                            co.mother, (charindex(',', co.mother) + 2), len(co.mother)
-                        )
-                end
-            )
-        ) as [parent 1 first name],
-        ltrim(
-            rtrim(
-                case
-                    when charindex(',', co.mother) = 0 and charindex(' ', co.mother) = 0
-                    then co.mother
-                    when (charindex(',', co.mother) - 1) < 0
-                    then
-                        substring(
-                            co.mother, (charindex(' ', co.mother) + 1), len(co.mother)
-                        )
-                    else left(co.mother, (charindex(',', co.mother) - 1))
-                end
-            )
-        ) as [parent 1 last name],
-        co.parent_motherdayphone as [parent 1 work phone],
-        co.mother_home_phone as [parent 1 home phone],
-        replace(
-            replace(cast(co.guardianemail as varchar(max)), char(10), ''), char(13), ''
-        ) as [parent 1 e - mail],
-        ltrim(
-            rtrim(
-                case
-                    when charindex(',', co.father) = 0 and charindex(' ', co.father) = 0
-                    then co.father
-                    when (charindex(',', co.father) - 1) < 0
-                    then left(co.father, (charindex(' ', co.father) - 1))
-                    else
-                        substring(
-                            co.father, (charindex(',', co.father) + 2), len(co.father)
-                        )
-                end
-            )
-        ) as [parent 2 first name],
-        ltrim(
-            rtrim(
-                case
-                    when charindex(',', co.father) = 0 and charindex(' ', co.father) = 0
-                    then co.father
-                    when (charindex(',', co.father) - 1) < 0
-                    then
-                        substring(
-                            co.father, (charindex(' ', co.father) + 1), len(co.father)
-                        )
-                    else left(co.father, (charindex(',', co.father) - 1))
-                end
-            )
-        ) as [parent 2 last name],
-        co.parent_fatherdayphone as [parent 2 work phone],
-        co.father_home_phone as [parent 2 home phone],
-        replace(replace(co.guardianemail, char(10), ''), char(13), '') as [
-            parent 2 e - mail
-        ]
-        from gabby.powerschool.cohort_identifiers_static co
-        left join gabby.alumni.contact s on co.student_number = s.school_specific_id_c
-        left join gabby.alumni. [user] u on s.owner_id = u.id
-        where
-            co.schoolid in (73252, 73253, 133570965, 179902)
-            and co.rn_undergrad = 1
-            and co.grade_level <> 99
+SELECT
+  CASE
+    WHEN co.schoolid = 133570965 THEN 'TEAM Academy, a KIPP school'
+    WHEN co.schoolid = 73252 THEN 'Rise Academy, a KIPP school'
+    WHEN co.schoolid = 73253 THEN 'Newark Collegiate Academy, a KIPP school'
+    WHEN co.schoolid = 179902 THEN 'KIPP Lanning Square Middle School'
+  END AS [KIPP School of Enrollment],
+  co.last_name AS [Last Name],
+  co.first_name AS [First Name],
+  LEFT(co.middle_name, 1) AS [Middle Initial],
+  co.cohort AS [HS Class Cohort],
+  'PowerSchool ID' AS [Student ID Type]
+  --   ,co.student_number AS [Student ID #]
+,
+  u.name AS [Contact Owner Name],
+  u.id AS [Contact Owner Salesforce ID],
+  co.entrydate AS [School Enrollment Date],
+  co.grade_level AS [School Enrollment Grade],
+  CASE
+    WHEN co.enroll_status = 0 THEN 'Attending'
+    WHEN co.enroll_status = 2 THEN 'Transferred out'
+    WHEN co.enroll_status = 3 THEN 'Graduated'
+  END AS [Enrollment Status],
+  co.grade_level AS [School Ending Grade],
+  co.exitdate AS [School Exit Date],
+  co.dob AS [Date of Birth],
+  CASE
+    WHEN co.gender = 'M' THEN 'Male'
+    WHEN co.gender = 'F' THEN 'Female'
+  END AS [Gender],
+  CASE
+    WHEN co.ethnicity = 'I' THEN 'American Indian/Alaska Native'
+    WHEN co.ethnicity = 'A' THEN 'Asian'
+    WHEN co.ethnicity = 'B' THEN 'Black/African American'
+    WHEN co.ethnicity = 'H' THEN 'Hispanic/Latino'
+    WHEN co.ethnicity = 'P' THEN 'Native Hawaiian/Pacific Islander'
+    WHEN co.ethnicity = 'W' THEN 'White'
+    WHEN co.ethnicity = 'T' THEN 'Two or More Races'
+  END AS [Ethnicity],
+  co.street AS [Street Address],
+  co.city AS [City],
+  co.state AS [State],
+  co.zip AS [Zip],
+  co.student_web_id + '@teamstudents.org' AS [Student E-mail],
+  NULL AS [Student Mobile],
+  co.home_phone AS [Student Home Phone],
+  LTRIM(
+    RTRIM(
+      CASE
+        WHEN CHARINDEX(',', co.mother) = 0
+        AND CHARINDEX(' ', co.mother) = 0 THEN co.mother
+        WHEN (CHARINDEX(',', co.mother) - 1) < 0 THEN LEFT(co.mother, (CHARINDEX(' ', co.mother) - 1))
+        ELSE SUBSTRING(
+          co.mother,
+          (CHARINDEX(',', co.mother) + 2),
+          LEN(co.mother)
+        )
+      END
+    )
+  ) AS [Parent 1 First Name],
+  LTRIM(
+    RTRIM(
+      CASE
+        WHEN CHARINDEX(',', co.mother) = 0
+        AND CHARINDEX(' ', co.mother) = 0 THEN co.mother
+        WHEN (CHARINDEX(',', co.mother) - 1) < 0 THEN SUBSTRING(
+          co.mother,
+          (CHARINDEX(' ', co.mother) + 1),
+          LEN(co.mother)
+        )
+        ELSE LEFT(co.mother, (CHARINDEX(',', co.mother) - 1))
+      END
+    )
+  ) AS [Parent 1 Last Name],
+  co.parent_motherdayphone AS [Parent 1 Work Phone],
+  co.mother_home_phone AS [Parent 1 Home Phone],
+  REPLACE(
+    REPLACE(
+      CAST(co.guardianemail AS VARCHAR(MAX)),
+      CHAR(10),
+      ''
+    ),
+    CHAR(13),
+    ''
+  ) AS [Parent 1 E-mail],
+  LTRIM(
+    RTRIM(
+      CASE
+        WHEN CHARINDEX(',', co.father) = 0
+        AND CHARINDEX(' ', co.father) = 0 THEN co.father
+        WHEN (CHARINDEX(',', co.father) - 1) < 0 THEN LEFT(co.father, (CHARINDEX(' ', co.father) - 1))
+        ELSE SUBSTRING(
+          co.father,
+          (CHARINDEX(',', co.father) + 2),
+          LEN(co.father)
+        )
+      END
+    )
+  ) AS [Parent 2 First Name],
+  LTRIM(
+    RTRIM(
+      CASE
+        WHEN CHARINDEX(',', co.father) = 0
+        AND CHARINDEX(' ', co.father) = 0 THEN co.father
+        WHEN (CHARINDEX(',', co.father) - 1) < 0 THEN SUBSTRING(
+          co.father,
+          (CHARINDEX(' ', co.father) + 1),
+          LEN(co.father)
+        )
+        ELSE LEFT(co.father, (CHARINDEX(',', co.father) - 1))
+      END
+    )
+  ) AS [Parent 2 Last Name],
+  co.parent_fatherdayphone AS [Parent 2 Work Phone],
+  co.father_home_phone AS [Parent 2 Home Phone],
+  REPLACE(
+    REPLACE(co.guardianemail, CHAR(10), ''),
+    CHAR(13),
+    ''
+  ) AS [Parent 2 E-mail]
+FROM
+  gabby.powerschool.cohort_identifiers_static co
+  LEFT JOIN gabby.alumni.contact s ON co.student_number = s.school_specific_id_c
+  LEFT JOIN gabby.alumni.[user] u ON s.owner_id = u.id
+WHERE
+  co.schoolid IN (73252, 73253, 133570965, 179902)
+  AND co.rn_undergrad = 1
+  AND co.grade_level <> 99

@@ -22,15 +22,16 @@ WITH
       d.pay_date
     FROM
       gabby.adp.staff_roster sr
-      JOIN dates d ON d.pay_date 
---BETWEEN sr.position_start_date AND DATEADD(
-        DAY,
-        16,
-        COALESCE(
-          sr.termination_date,
-          CAST(CURRENT_TIMESTAMP AS DATE)
-        )
-      )
+      -- JOIN dates d ON d.pay_date 
+      --   BETWEEN sr.position_start_date 
+      --     AND DATEADD(
+      --       DAY, 
+      --       16, 
+      --       COALESCE(
+      --         sr.termination_date, 
+      --         CAST(CURRENT_TIMESTAMP AS DATE)
+      --       )
+      --     )
   )
 SELECT
   sub.associate_id,

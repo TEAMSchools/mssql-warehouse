@@ -25,7 +25,7 @@ WITH
     FROM
       gabby.utilities.row_generator_smallint rg
       CROSS JOIN STRING_SPLIT ('Spring,Fall', ',') ss
-    -- WHERE rg.n BETWEEN 2010 AND (gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 2)
+      -- WHERE rg.n BETWEEN 2010 AND (gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 2)
   ),
   enr_scaff AS (
     SELECT
