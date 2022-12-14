@@ -32,9 +32,9 @@ SELECT sub.*
       ,CASE
         WHEN ps_sn IS NULL THEN 'In EasyIEP; Missing from PS'
         WHEN ps_spedlep <> 'No IEP' AND iep_sn IS NULL THEN 'In PS; Missing from EasyIEP export'
-        WHEN ps_spedlep <> iep_spedlep COLLATE Latin1_General_BIN THEN 'Conflicting SPEDLEP'
+        WHEN ps_spedlep <> iep_spedlep THEN 'Conflicting SPEDLEP'
         ELSE 'Match'
-       END AS audit_result
+       END COLLATE Latin1_General_BIN AS audit_result
 FROM
     (
      SELECT ps.student_number AS ps_sn

@@ -15,9 +15,9 @@ FROM
       enr.academic_year,
       enr.schoolid,
       CASE
-        WHEN gabby.utilities.STRIP_CHARACTERS (enr.section_number, '0-9') = '' COLLATE Latin1_General_BIN THEN enr.teacher_name
+        WHEN gabby.utilities.STRIP_CHARACTERS (enr.section_number, '0-9') = '' THEN enr.teacher_name
         ELSE gabby.utilities.STRIP_CHARACTERS (enr.section_number, '0-9')
-      END AS team,
+      END COLLATE Latin1_General_BIN AS team,
       ROW_NUMBER() OVER (
         PARTITION BY
           enr.student_number,

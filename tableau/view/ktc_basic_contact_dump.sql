@@ -71,10 +71,10 @@ WITH next_yr_enrollment AS (
       (
        SELECT a.student_c        
              ,a.date_c
-             ,CASE 
-               WHEN DATEPART(MONTH, a.created_date) BETWEEN 7 AND 12 THEN 'F'
-               ELSE 'S'
-              END AS semester             
+            --  ,CASE 
+            --    WHEN DATEPART(MONTH, a.created_date) BETWEEN 7 AND 12 THEN 'F'
+            --    ELSE 'S'
+            --   END AS semester             
        FROM gabby.alumni.kipp_aid_c a 
        WHERE a.type_c = 'College Book Stipend Program'
          AND a.Status_c = 'Approved'
@@ -289,7 +289,7 @@ LEFT JOIN stipends s
   ON c.sf_contact_id = s.student_c
 LEFT JOIN oot_roster oot
   ON c.sf_contact_id = oot.contact_id
- AND gabby.utilities.GLOBAL_ACADEMIC_YEAR() BETWEEN oot.missing_academic_year AND oot.found_academic_year
+--  AND gabby.utilities.GLOBAL_ACADEMIC_YEAR() BETWEEN oot.missing_academic_year AND oot.found_academic_year
  AND oot.rn = 1
 LEFT JOIN counselor_changes cc
   ON c.sf_contact_id = cc.contact_id

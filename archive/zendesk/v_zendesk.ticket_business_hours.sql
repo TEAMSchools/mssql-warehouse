@@ -46,12 +46,14 @@ WITH ticket_dates AS (
                 ,sub.date
                 ,CASE
                   WHEN solved_at < bh_start_timestamp THEN NULL
-                  WHEN created_at BETWEEN bh_start_timestamp AND bh_end_timestamp THEN created_at
+                  WHEN created_at 
+--BETWEEN bh_start_timestamp AND bh_end_timestamp THEN created_at
                   WHEN created_at < bh_start_timestamp THEN bh_start_timestamp
                  END AS bh_day_start_timestamp
                 ,CASE
                   WHEN sub.created_at > bh_end_timestamp THEN NULL
-                  WHEN solved_at BETWEEN bh_start_timestamp AND bh_end_timestamp THEN sub.solved_at
+                  WHEN solved_at 
+--BETWEEN bh_start_timestamp AND bh_end_timestamp THEN sub.solved_at
                   WHEN solved_at > bh_end_timestamp THEN bh_end_timestamp
                  END AS bh_day_end_timestamp
           FROM
@@ -66,7 +68,8 @@ WITH ticket_dates AS (
                      ,DATETIME2FROMPARTS(rd.year_part, rd.month_part, rd.day_part, bh.end_hour, 0, 0, 0, 0) AS bh_end_timestamp
                FROM ticket_dates td
                INNER JOIN gabby.utilities.reporting_days rd
-                  ON rd.date BETWEEN CAST(td.created_at AS DATE) AND CAST(td.solved_at AS DATE)
+                  ON rd.date 
+--BETWEEN CAST(td.created_at AS DATE) AND CAST(td.solved_at AS DATE)
                LEFT JOIN business_hours bh
                   ON rd.dw_numeric = bh.dw_numeric
                WHERE td.ticket_id = 159300

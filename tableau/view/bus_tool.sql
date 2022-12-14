@@ -118,7 +118,8 @@ WITH
   AND CASE
     WHEN cc.dateenrolled > CAST(CURRENT_TIMESTAMP AS DATE) THEN cc.dateenrolled
     ELSE CAST(CURRENT_TIMESTAMP AS DATE)
-  END BETWEEN cc.dateenrolled AND cc.dateleft
+  END
+  --BETWEEN cc.dateenrolled AND cc.dateleft
   LEFT JOIN kippmiami.powerschool.[log]
 WITH
   (NOLOCK) ON s.id = [log].studentid

@@ -157,7 +157,8 @@ FROM
       LEFT JOIN gabby.alumni.[user] u ON c.owner_id = u.id
     WHERE
       co.rn_undergrad = 1
-      AND co.grade_level BETWEEN 8 AND 12
+      AND co.grade_level
+      --BETWEEN 8 AND 12
   ) sub
 WHERE
   sub.ktc_status IS NOT NULL

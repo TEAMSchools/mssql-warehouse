@@ -98,4 +98,5 @@ FROM
 WHERE
   co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
   AND co.rn_year = 1
-  AND co.cohort BETWEEN (gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1) AND (gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 5)
+  AND co.cohort
+  --BETWEEN (gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1) AND (gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 5)

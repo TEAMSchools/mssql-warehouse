@@ -15,7 +15,7 @@ WITH fp AS (
              ORDER BY [start_date] DESC) AS rn_curr
   FROM gabby.lit.achieved_by_round_static
   WHERE read_lvl IS NOT NULL
-    AND [start_date] BETWEEN DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1) AND CURRENT_TIMESTAMP
+    -- AND [start_date] BETWEEN DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1) AND CURRENT_TIMESTAMP
  )
 
 ,ar_wide AS (
@@ -63,7 +63,7 @@ WITH fp AS (
                      END) AS words_needed
             FROM gabby.renaissance.ar_progress_to_goals
             WHERE words_goal > 0
-              AND (CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN [start_date] AND end_date)
+              -- AND (CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN [start_date] AND end_date)
            ) sub
        UNPIVOT (
          value
@@ -142,21 +142,21 @@ LEFT JOIN gabby.powerschool.course_enrollments_current_static enr
   ON co.student_number = enr.student_number
  AND co.[db_name] = enr.[db_name]
  AND enr.credittype = 'ENG'
- AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN enr.dateenrolled AND enr.dateleft
+--  AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN enr.dateenrolled AND enr.dateleft
  AND enr.rn_subject = 1
 LEFT JOIN gabby.powerschool.final_grades_static gr
   ON co.studentid = gr.studentid
  AND co.yearid = gr.yearid
  AND co.[db_name] = gr.[db_name]
  AND enr.course_number = gr.course_number
- AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN gr.termbin_start_date AND gr.termbin_end_date
+--  AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN gr.termbin_start_date AND gr.termbin_end_date
 LEFT JOIN gabby.powerschool.category_grades_static ele
   ON co.studentid = ele.studentid
  AND co.yearid = ele.yearid
  AND co.[db_name] = ele.[db_name]
  AND enr.course_number = ele.course_number
  AND ele.storecode_type = 'H'
- AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN ele.termbin_start_date AND ele.termbin_end_date
+--  AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN ele.termbin_start_date AND ele.termbin_end_date
 LEFT JOIN fp fp_base
   ON co.student_number = fp_base.student_number
  AND fp_base.rn_base = 1

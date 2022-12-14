@@ -145,7 +145,8 @@ FROM
     FROM
       gabby.utilities.row_generator
     WHERE
-      n BETWEEN 1 AND 4
+      n
+      --BETWEEN 1 AND 4
   ) t
 ORDER BY
   sub.[schema_name],

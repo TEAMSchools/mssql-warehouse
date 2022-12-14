@@ -64,9 +64,9 @@ SELECT r.academic_year
       ,map_long.lexile_score
       ,map_long.testdurationminutes          
       ,CASE 
-        WHEN map_long.pct BETWEEN 0 AND 24 THEN 1
-        WHEN map_long.pct BETWEEN 25 AND 49 THEN 2
-        WHEN map_long.pct BETWEEN 50 AND 74 THEN 3
+        -- WHEN map_long.pct BETWEEN 0 AND 24 THEN 1
+        -- WHEN map_long.pct BETWEEN 25 AND 49 THEN 2
+        -- WHEN map_long.pct BETWEEN 50 AND 74 THEN 3
         WHEN map_long.pct >= 75 THEN 4                
        END AS term_quartile       
            

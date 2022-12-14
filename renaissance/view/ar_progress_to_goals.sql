@@ -61,7 +61,7 @@ WITH progress_rollup AS (
         AND rt._fivetran_deleted = 0
        LEFT OUTER JOIN gabby.renaissance.ar_studentpractice_identifiers_static arsp
          ON co.student_number = arsp.student_number
-        AND arsp.dt_taken BETWEEN rt.[start_date] AND rt.end_date
+        --AND arsp.dt_taken BETWEEN rt.[start_date] AND rt.end_date
        WHERE co.rn_year = 1
          AND co.grade_level <> 99
      ) sub
@@ -114,7 +114,7 @@ SELECT pr.student_number
        END AS stu_status_words
       ,CASE
         /* after term */
-        WHEN CAST(CURRENT_TIMESTAMP AS DATE) NOT BETWEEN pr.[start_date] AND pr.[end_date] THEN NULL
+        --WHEN CAST(CURRENT_TIMESTAMP AS DATE) NOT BETWEEN pr.[start_date] AND pr.[end_date] THEN NULL
         /* during term */
         ELSE CASE
               WHEN (pr.words IS NULL OR goals.words_goal IS NULL) THEN NULL

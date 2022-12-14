@@ -34,7 +34,8 @@ WITH
     FROM
       gabby.people.employment_history_static eh
     WHERE
-      CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN eh.effective_start_date AND eh.effective_end_date
+      CAST(CURRENT_TIMESTAMP AS DATE)
+      --BETWEEN eh.effective_start_date AND eh.effective_end_date
     UNION ALL
     /* prestart */
     SELECT
@@ -266,7 +267,8 @@ WITH
               FROM
                 gabby.people.manager_history_static
               WHERE
-                CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN reports_to_effective_date AND reports_to_effective_end_date_eoy
+                CAST(CURRENT_TIMESTAMP AS DATE)
+                --BETWEEN reports_to_effective_date AND reports_to_effective_end_date_eoy
             ) THEN 1
             ELSE 0
           END AS is_manager

@@ -101,7 +101,8 @@ WITH
           JOIN gabby.powerschool.terms ON sec.termid = terms.id
           AND sec.schoolid = terms.schoolid
           AND sec.[db_name] = terms.[db_name]
-          AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN terms.firstday AND terms.lastday
+          AND CAST(CURRENT_TIMESTAMP AS DATE)
+          --BETWEEN terms.firstday AND terms.lastday
         WHERE
           sec.no_of_students > 0
         UNION ALL
@@ -153,7 +154,8 @@ WITH
         FROM
           dsos
           JOIN gabby.powerschool.schools s ON dsos.School_id = s.school_number
-          JOIN gabby.utilities.row_generator_smallint r ON r.n BETWEEN s.low_grade AND s.high_grade
+          JOIN gabby.utilities.row_generator_smallint r ON r.n
+          --BETWEEN s.low_grade AND s.high_grade
       ) sub
   )
 SELECT

@@ -51,4 +51,5 @@ SELECT
 FROM
   std_avg sa
   INNER JOIN gabby.illuminate_dna_assessments.performance_band_lookup_static pbl ON sa.performance_band_set_id = pbl.performance_band_set_id
-  AND sa.avg_percent_correct BETWEEN pbl.minimum_value AND pbl.maximum_value
+  AND sa.avg_percent_correct
+  --BETWEEN pbl.minimum_value AND pbl.maximum_value

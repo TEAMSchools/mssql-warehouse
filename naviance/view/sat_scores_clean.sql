@@ -37,20 +37,20 @@ FROM
            ,sat.is_old_sat
            ,test_date
            ,CASE WHEN sat.test_date > CAST(CURRENT_TIMESTAMP AS DATE) THEN 1 END AS test_date_flag
-           ,CASE WHEN evidence_based_reading_writing BETWEEN 200 AND 800 THEN evidence_based_reading_writing END AS verbal
-           ,CASE WHEN math BETWEEN 200 AND 800 THEN math END AS math
-           ,CASE WHEN writing BETWEEN 200 AND 800 THEN writing END AS writing
+      --      ,CASE WHEN evidence_based_reading_writing BETWEEN 200 AND 800 THEN evidence_based_reading_writing END AS verbal
+      --      ,CASE WHEN math BETWEEN 200 AND 800 THEN math END AS math
+      --      ,CASE WHEN writing BETWEEN 200 AND 800 THEN writing END AS writing
            ,CASE WHEN essay_subscore = 0 THEN NULL ELSE essay_subscore END AS essay_subscore
            ,CASE WHEN mc_subscore = 0 THEN NULL ELSE mc_subscore END AS mc_subscore
            ,evidence_based_reading_writing + math AS math_verbal_total
            ,CASE WHEN total < 200 THEN NULL ELSE total END AS all_tests_total
-           ,CASE
-             WHEN (ISNULL(CASE WHEN evidence_based_reading_writing BETWEEN 200 AND 800 THEN evidence_based_reading_writing END, 0)
-                    + ISNULL(CASE WHEN math BETWEEN 200 AND 800 THEN math END, 0)
-                    + ISNULL(CASE WHEN writing BETWEEN 200 AND 800 THEN writing END, 0)) <> total
-                  THEN 1
-             WHEN total NOT BETWEEN 400 AND 2400 THEN 1
-            END AS total_flag
+      --      ,CASE
+      --        WHEN (ISNULL(CASE WHEN evidence_based_reading_writing BETWEEN 200 AND 800 THEN evidence_based_reading_writing END, 0)
+      --               + ISNULL(CASE WHEN math BETWEEN 200 AND 800 THEN math END, 0)
+      --               + ISNULL(CASE WHEN writing BETWEEN 200 AND 800 THEN writing END, 0)) <> total
+      --             THEN 1
+      --        WHEN total NOT BETWEEN 400 AND 2400 THEN 1
+      --       END AS total_flag
      FROM (
            SELECT CAST([student_id] AS INT) AS student_id
                  ,CAST([hs_student_id] AS INT) AS hs_student_id

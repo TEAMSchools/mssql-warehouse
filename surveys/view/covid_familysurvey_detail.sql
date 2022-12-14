@@ -61,6 +61,7 @@ FROM
   AND sq.survey_question_id = qo.question_id
   AND srd.answer_id = qo.option_id
   LEFT JOIN gabby.surveygizmo.survey_campaign_clean_static sc ON s.survey_id = sc.survey_id
-  AND srd.date_started BETWEEN sc.link_open_date AND sc.link_close_date
+  AND srd.date_started
+  --BETWEEN sc.link_open_date AND sc.link_close_date
 WHERE
   s.survey_id = 5593585

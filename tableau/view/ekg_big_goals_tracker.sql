@@ -309,12 +309,14 @@ WITH
         FROM
           gabby.powerschool.cohort_identifiers_static
         WHERE
-          DATEFROMPARTS(academic_year, 10, 1) BETWEEN entrydate AND exitdate
+          DATEFROMPARTS(academic_year, 10, 1)
+          --BETWEEN entrydate AND exitdate
       ) d
       LEFT JOIN gabby.powerschool.cohort_identifiers_static n ON d.student_number = n.student_number
       AND d.db_name = n.db_name
       AND d.academic_year = (n.academic_year - 1)
-      AND DATEFROMPARTS(n.academic_year, 10, 1) BETWEEN n.entrydate AND n.exitdate
+      AND DATEFROMPARTS(n.academic_year, 10, 1)
+      --BETWEEN n.entrydate AND n.exitdate
   ),
   teacher_attrition AS (
     SELECT

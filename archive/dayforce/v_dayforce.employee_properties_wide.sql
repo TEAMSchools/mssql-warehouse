@@ -8,7 +8,8 @@ WITH
     FROM
       gabby.utilities.row_generator
     WHERE
-      n BETWEEN 2000 AND gabby.utilities.GLOBAL_ACADEMIC_YEAR  ()
+      n
+      --BETWEEN 2000 AND gabby.utilities.GLOBAL_ACADEMIC_YEAR  ()
   )
 SELECT
   employee_reference_code,
@@ -139,7 +140,8 @@ FROM
           gabby.dayforce.employee_properties ep
           JOIN gabby.people.staff_crosswalk_static s ON ep.employee_reference_code = s.manager_df_employee_number
       ) sub
-      JOIN academic_years sy ON sy.academic_year BETWEEN gabby.utilities.DATE_TO_SY (sub.effective_start_date) AND gabby.utilities.DATE_TO_SY  (sub.effective_end_date)
+      JOIN academic_years sy ON sy.academic_year
+      --BETWEEN gabby.utilities.DATE_TO_SY (sub.effective_start_date) AND gabby.utilities.DATE_TO_SY  (sub.effective_end_date)
   ) sub PIVOT (
     MAX(property_value) FOR property_name IN (
       [salesforce_id],

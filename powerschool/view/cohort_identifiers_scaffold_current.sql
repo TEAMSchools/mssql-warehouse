@@ -25,7 +25,8 @@ SELECT co.studentid
 
       ,dt.alt_name COLLATE Latin1_General_BIN AS term
 
-      ,CASE WHEN CAST(rd.[date] AS DATE) BETWEEN co.entrydate AND co.exitdate THEN 1 ELSE 0 END AS is_enrolled
+      ,CASE WHEN CAST(rd.[date] AS DATE) 
+--BETWEEN co.entrydate AND co.exitdate THEN 1 ELSE 0 END AS is_enrolled
 FROM powerschool.cohort_identifiers_static co
 INNER JOIN gabby.utilities.reporting_days rd
   ON co.academic_year = rd.academic_year
@@ -33,7 +34,8 @@ INNER JOIN gabby.utilities.reporting_days rd
 LEFT JOIN gabby.reporting.reporting_terms dt
   ON co.schoolid = dt.schoolid
  AND dt.identifier = 'RT'
- AND rd.[date] BETWEEN dt.[start_date] AND dt.end_date
+ AND rd.[date] 
+--BETWEEN dt.[start_date] AND dt.end_date
 WHERE co.rn_year = 1
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   AND co.grade_level <> 99

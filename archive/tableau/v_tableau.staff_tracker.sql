@@ -134,26 +134,31 @@ JOIN gabby.powerschool.calendar_day cal
   ON df.primary_site_schoolid = cal.schoolid 
  AND df.[db_name]= cal.[db_name]
  AND (cal.insession = 1 OR cal.[type] = 'PD') 
- AND cal.date_value BETWEEN DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1, 7, 1) AND CURRENT_TIMESTAMP
+ AND cal.date_value 
+--BETWEEN DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1, 7, 1) AND CURRENT_TIMESTAMP
 JOIN gabby.reporting.reporting_terms dt
   ON cal.schoolid = dt.schoolid
- AND cal.date_value BETWEEN dt.[start_date] AND dt.end_date
+ AND cal.date_value 
+--BETWEEN dt.[start_date] AND dt.end_date
  AND dt.identifier = 'RT'
  AND dt._fivetran_deleted = 0
 JOIN gabby.people.employment_history was
   ON df.df_employee_number = was.employee_number
- AND cal.date_value BETWEEN was.effective_start_date AND was.effective_end_date
+ AND cal.date_value 
+--BETWEEN was.effective_start_date AND was.effective_end_date
 LEFT JOIN emp_att pt
   ON df.df_employee_number = pt.employee_number
  AND cal.date_value = pt.pay_date
 LEFT JOIN tafw t
   ON df.df_employee_number = t.df_employee_number
- AND cal.date_value BETWEEN t.tafw_start_date AND t.tafw_end_date
+ AND cal.date_value 
+--BETWEEN t.tafw_start_date AND t.tafw_end_date
 LEFT JOIN gabby.people.staff_attendance_clean_static a
   ON df.df_employee_number = a.df_number
  AND cal.date_value = a.attendance_date
  AND a.rn_curr = 1
 LEFT JOIN leave l
   ON df.df_employee_number = l.df_employee_number
- AND cal.date_value BETWEEN l.effective_start AND l.effective_end
+ AND cal.date_value 
+--BETWEEN l.effective_start AND l.effective_end
 WHERE COALESCE(df.termination_date, CURRENT_TIMESTAMP) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR(), 7, 1)
