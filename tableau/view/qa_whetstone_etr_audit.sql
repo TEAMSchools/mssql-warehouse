@@ -25,8 +25,7 @@ FROM
   AND rt.academic_year = ex.academic_year
   AND rt.time_per_name = REPLACE(ex.pm_term, 'PM', 'ETR')
   LEFT JOIN gabby.whetstone.observations_clean wo ON CAST(r.df_employee_number AS VARCHAR(25)) = wo.teacher_internal_id
-  AND wo.observed_at
-  --BETWEEN rt.[start_date] AND rt.end_date
+  AND wo.observed_at BETWEEN rt.[start_date] AND rt.end_date
   AND wo.rubric_name IN (
     'Coaching Tool: Coach ETR and Reflection',
     'Coaching Tool: Coach ETR and Reflection 20-21',

@@ -23,8 +23,7 @@ WITH
     FROM
       powerschool.students s
       INNER JOIN powerschool.terms terms ON s.schoolid = terms.schoolid
-      AND s.entrydate
-      --BETWEEN terms.firstday AND terms.lastday
+      AND s.entrydate BETWEEN terms.firstday AND terms.lastday
       AND terms.isyearrec = 1
       LEFT JOIN powerschool.u_clg_et_stu_clean_static x1 ON s.dcid = x1.studentsdcid
       AND s.exitdate = x1.exit_date
@@ -82,8 +81,7 @@ WITH
       powerschool.reenrollments re
       INNER JOIN powerschool.students s ON re.studentid = s.id
       INNER JOIN powerschool.terms terms ON re.schoolid = terms.schoolid
-      AND re.entrydate
-      --BETWEEN terms.firstday AND terms.lastday
+      AND re.entrydate BETWEEN terms.firstday AND terms.lastday
       AND terms.isyearrec = 1
       LEFT JOIN powerschool.u_clg_et_stu_clean_static x1 ON s.dcid = x1.studentsdcid
       AND re.exitdate = x1.exit_date

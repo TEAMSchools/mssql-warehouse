@@ -13,8 +13,7 @@ WITH
       cat.category_pct,
       cat.citizenship,
       CASE
-        WHEN CAST(CURRENT_TIMESTAMP AS DATE)
-        --BETWEEN cat.termbin_start_date AND cat.termbin_end_date 
+        WHEN CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN cat.termbin_start_date AND cat.termbin_end_date 
         THEN 1
         ELSE 0
       END AS is_curterm,
@@ -36,8 +35,7 @@ WITH
       CAST(ROUND(AVG(cat.category_pct), 0) AS DECIMAL(4, 0)) AS category_pct,
       NULL AS citizenship,
       CASE
-        WHEN CAST(CURRENT_TIMESTAMP AS DATE)
-        --BETWEEN cat.termbin_start_date AND cat.termbin_end_date 
+        WHEN CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN cat.termbin_start_date AND cat.termbin_end_date 
         THEN 1
         ELSE 0
       END AS is_curterm,
@@ -72,8 +70,7 @@ WITH
       INNER JOIN powerschool.sections_identifiers si ON cat.sectionid = si.sectionid
     WHERE
       cat.yearid = (gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990)
-      AND CAST(CURRENT_TIMESTAMP AS DATE)
-      --BETWEEN cat.termbin_start_date AND cat.termbin_end_date
+      AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN cat.termbin_start_date AND cat.termbin_end_date
     UNION ALL
     SELECT
       cat.studentid,
@@ -91,8 +88,7 @@ WITH
       powerschool.category_grades_static cat
     WHERE
       cat.yearid = (gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990)
-      AND CAST(CURRENT_TIMESTAMP AS DATE)
-      --BETWEEN cat.termbin_start_date AND cat.termbin_end_date
+      AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN cat.termbin_start_date AND cat.termbin_end_date
     GROUP BY
       cat.studentid,
       cat.schoolid,

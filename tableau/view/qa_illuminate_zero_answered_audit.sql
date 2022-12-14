@@ -31,8 +31,7 @@ FROM
   AND co.rn_year = 1
   AND co.enroll_status = 0
   LEFT JOIN gabby.reporting.reporting_terms dt ON co.schoolid = dt.schoolid
-  AND a.administered_at
-  --BETWEEN dt.start_date AND dt.end_date
+  AND a.administered_at BETWEEN dt.start_date AND dt.end_date
   AND dt.identifier = 'RT'
   AND dt._fivetran_deleted = 0
   LEFT JOIN gabby.powerschool.ps_attendance_daily att ON co.studentid = att.studentid

@@ -93,7 +93,6 @@ SELECT
 FROM
   gabby.people.staff_crosswalk_static r
   LEFT JOIN gabby.utilities.row_generator_smallint y ON gabby.utilities.DATE_TO_SY (original_hire_date) < y.n
-  AND y.n
-  --BETWEEN 2020 AND gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+  AND y.n BETWEEN 2020 AND gabby.utilities.GLOBAL_ACADEMIC_YEAR()
   LEFT JOIN attendance_pivot a ON r.df_employee_number = a.df_number
   AND y.n = a.academic_year

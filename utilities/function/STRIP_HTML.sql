@@ -244,8 +244,7 @@ SET
 
 END;
 
--- Remove anything 
---BETWEEN <whatever> tags
+-- Remove anything BETWEEN <whatever> tags
 SET
   @Start = CHARINDEX('<', @HTMLText);
 

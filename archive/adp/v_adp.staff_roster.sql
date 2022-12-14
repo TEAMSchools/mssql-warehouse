@@ -100,7 +100,7 @@ WITH
           ea.primary_address_state_territory_code AS [state],
           ea.primary_address_zip_postal_code AS postal_code,
           ea.personal_contact_personal_email AS personal_email,
-          CAST(NULL AS NVARCHAR(256)) AS job_family -- on the way
+          CAST(NULL AS NVARCHAR(256)) AS job_family /* on the way */
           /* transformations */
 ,
           CAST(ea.birth_date AS DATE) AS birth_date,
@@ -219,8 +219,7 @@ WITH
             WHEN e.location_description = 'Norfolk St. Campus' THEN 'Norfolk St Campus'
             WHEN e.location_description = 'KIPP Lanning Square Campus' THEN 'KIPP Lanning Sq Campus'
             ELSE e.location_description
-          END AS primary_site_clean -- temporary fix for changed names
-,
+          END AS primary_site_clean /* temporary fix for changed names */,
           ROW_NUMBER() OVER (
             PARTITION BY
               ea.associate_id

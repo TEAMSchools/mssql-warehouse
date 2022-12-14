@@ -225,18 +225,15 @@ FROM
   AND rc.survey_response_id = sr.survey_response_id
   AND sr.[status] = 'Complete'
   LEFT JOIN gabby.surveygizmo.survey_campaign_clean_static sc ON rc.survey_id = sc.survey_id
-  AND rc.date_started
-  --BETWEEN sc.link_open_date AND sc.link_close_date
+  AND rc.date_started BETWEEN sc.link_open_date AND sc.link_close_date
   AND sc.[status] <> 'Deleted'
   LEFT JOIN gabby.people.staff_crosswalk_static resp ON rc.respondent_employee_number = resp.df_employee_number
   LEFT JOIN gabby.people.employment_history_static reh ON resp.position_id = reh.position_id
-  AND CAST(sc.link_close_date AS DATE)
-  --BETWEEN reh.effective_start_date AND reh.effective_end_date
+  AND CAST(sc.link_close_date AS DATE) BETWEEN reh.effective_start_date AND reh.effective_end_date
   LEFT JOIN gabby.people.staff_crosswalk_static rmgr ON reh.reports_to_employee_number = rmgr.df_employee_number
   LEFT JOIN gabby.people.school_crosswalk rsch ON reh.[location] = rsch.site_name
   LEFT JOIN gabby.people.staff_crosswalk_static subj ON rc.subject_employee_number = subj.df_employee_number
   LEFT JOIN gabby.people.employment_history_static seh ON subj.position_id = seh.position_id
-  AND CAST(sc.link_close_date AS DATE)
-  --BETWEEN seh.effective_start_date AND seh.effective_end_date
+  AND CAST(sc.link_close_date AS DATE) BETWEEN seh.effective_start_date AND seh.effective_end_date
   LEFT JOIN gabby.people.staff_crosswalk_static smgr ON seh.reports_to_employee_number = smgr.df_employee_number
   LEFT JOIN gabby.people.school_crosswalk ssch ON seh.[location] = ssch.site_name

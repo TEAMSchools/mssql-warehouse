@@ -31,7 +31,7 @@ FROM
   AND co.exitdate >= rd.[date]
   LEFT JOIN gabby.reporting.reporting_terms dt ON co.schoolid = dt.schoolid
   AND dt.identifier = 'RT'
-  --  AND rd.[date] BETWEEN dt.[start_date] AND dt.end_date
+  AND rd.[date] BETWEEN dt.[start_date] AND dt.end_date
 WHERE
   co.rn_year = 1
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()

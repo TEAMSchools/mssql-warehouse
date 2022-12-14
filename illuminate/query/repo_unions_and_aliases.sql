@@ -31,8 +31,6 @@ WITH
     WHERE
       dsc.code_translation = 'Reporting'
       AND dsu.code_translation = 'F&P'
-      -- WHERE ((dsc.code_translation = 'Unit Assessment' AND dsu.code_translation =
-      -- 'English') OR r.title = 'English OE - Quarterly Assessments') /* OER */
   )
 SELECT
   column_name,

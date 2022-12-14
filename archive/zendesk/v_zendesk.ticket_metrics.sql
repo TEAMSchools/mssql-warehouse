@@ -160,7 +160,7 @@ SELECT
   t.id AS ticket_id,
   t.created_at,
   dm.assigned_at
-  --ASSIGNEE_UPDATED_AT is incorrect
+  /* ASSIGNEE_UPDATED_AT is incorrect */
 ,
   dm.initially_assigned_at,
   dm.requester_updated_at,

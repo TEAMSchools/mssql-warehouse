@@ -30,10 +30,8 @@ FROM
   (
     SELECT
       scw.employee_number,
-      scw.first_name AS [First name] -- legal name
-,
-      scw.last_name AS [Last name] -- legal name
-,
+      scw.first_name AS [First name] /* legal name */,
+      scw.last_name AS [Last name] /* legal name */,
       scw.position_status,
       COALESCE(scw.rehire_date, scw.original_hire_date) AS hire_date,
       scw.termination_date,

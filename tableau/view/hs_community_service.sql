@@ -28,8 +28,7 @@ FROM
   LEFT JOIN gabby.deanslist.behavior b ON co.student_number = b.student_school_id
   AND co.[db_name] = b.[db_name]
   AND b.behavior_category = 'Community Service'
-  AND b.behavior_date
-  --BETWEEN co.entrydate AND co.exitdate
+  AND b.behavior_date BETWEEN co.entrydate AND co.exitdate
 WHERE
   co.grade_level >= 9
   AND co.enroll_status = 0

@@ -374,5 +374,4 @@ FROM
   AND act.rn_highest = 1
   LEFT OUTER JOIN state_assessments sa ON g.sid = sa.state_studentnumber
 WHERE
-  g.four_year_graduation_cohort
-  --BETWEEN 2011 AND 2016
+  g.four_year_graduation_cohort BETWEEN 2011 AND 2016

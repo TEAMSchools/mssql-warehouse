@@ -22,13 +22,11 @@ WITH
       INNER JOIN gabby.people.employee_numbers sre ON mh.associate_id = sre.associate_id
       AND sre.is_active = 1
       INNER JOIN gabby.people.employee_numbers srm ON mh.reports_to_associate_id = srm.associate_id
-      AND srm.is_active = 1
-      -- WHERE '2021-01-01' 
-      --   BETWEEN CAST(mh.reports_to_effective_date AS DATE) AND COALESCE(
-      --     CAST(mh.reports_to_effective_end_date AS DATE),
-      --     CURRENT_TIMESTAMP
-      --   )
-      --   OR CAST(mh.reports_to_effective_date AS DATE) > '2021-01-01'
+      AND srm.is_active = 1 HERE '2021-01-01' BETWEEN CAST(mh.reports_to_effective_date AS DATE) AND COALESCE(
+        CAST(mh.reports_to_effective_end_date AS DATE),
+        CURRENT_TIMESTAMP
+      )
+      OR CAST(mh.reports_to_effective_date AS DATE) > '2021-01-01'
     UNION ALL
     /* DF */
     SELECT

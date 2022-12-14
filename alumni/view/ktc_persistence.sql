@@ -54,8 +54,7 @@ FROM
       JOIN gabby.utilities.row_generator n ON n.n <= 5
   ) sub
   LEFT JOIN gabby.alumni.enrollment_c e ON sub.sf_contact_id = e.student_c
-  AND DATEFROMPARTS(sub.academic_year, 10, 31)
-  --BETWEEN e.start_date_c 
+  AND DATEFROMPARTS(sub.academic_year, 10, 31) BETWEEN e.start_date_c 
   AND COALESCE(
     e.actual_end_date_c,
     DATEFROMPARTS(

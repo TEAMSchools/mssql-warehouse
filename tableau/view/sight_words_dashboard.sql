@@ -25,8 +25,7 @@ FROM
   gabby.illuminate_codes.dna_scopes ds
   JOIN gabby.illuminate_dna_repositories.repositories r ON ds.code_id = r.code_scope_id
   AND r.deleted_at IS NULL
-  JOIN gabby.reporting.reporting_terms rt ON r.date_administered
-  --BETWEEN rt.[start_date] AND rt.end_date
+  JOIN gabby.reporting.reporting_terms rt ON r.date_administered BETWEEN rt.[start_date] AND rt.end_date
   AND rt.schoolid = 0
   AND rt.identifier = 'RT'
   AND rt._fivetran_deleted = 0
@@ -67,8 +66,7 @@ FROM
   gabby.illuminate_codes.dna_scopes ds
   JOIN gabby.illuminate_dna_repositories.repositories r ON ds.code_id = r.code_scope_id
   AND r.deleted_at IS NULL
-  JOIN gabby.reporting.reporting_terms rt ON r.date_administered
-  --BETWEEN rt.[start_date] AND rt.end_date
+  JOIN gabby.reporting.reporting_terms rt ON r.date_administered BETWEEN rt.[start_date] AND rt.end_date
   AND rt.schoolid = 0
   AND rt.identifier = 'RT'
   AND rt._fivetran_deleted = 0

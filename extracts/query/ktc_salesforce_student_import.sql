@@ -9,9 +9,8 @@ SELECT
   co.first_name AS [First Name],
   LEFT(co.middle_name, 1) AS [Middle Initial],
   co.cohort AS [HS Class Cohort],
-  'PowerSchool ID' AS [Student ID Type]
-  --   ,co.student_number AS [Student ID #]
-,
+  'PowerSchool ID' AS [Student ID Type],
+  co.student_number AS [Student ID #],
   u.name AS [Contact Owner Name],
   u.id AS [Contact Owner Salesforce ID],
   co.entrydate AS [School Enrollment Date],

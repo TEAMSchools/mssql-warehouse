@@ -24,8 +24,7 @@ WITH
       ) AS term_end_date
     FROM
       gabby.utilities.row_generator_smallint rg
-      CROSS JOIN STRING_SPLIT ('Spring,Fall', ',') ss
-      -- WHERE rg.n BETWEEN 2010 AND (gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 2)
+      CROSS JOIN STRING_SPLIT ('Spring,Fall', ',') ss HERE rg.n BETWEEN 2010 AND (gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 2)
   ),
   enr_scaff AS (
     SELECT
@@ -39,14 +38,11 @@ WITH
           ts.term_start_date ASC
       ) AS rn_term_asc
     FROM
-      gabby.alumni.enrollment_c e
-      -- INNER JOIN term_scaff ts 
-      --   ON ts.term_start_date 
-      --     BETWEEN e.start_date_c 
-      --       AND COALESCE(
-      --         e.actual_end_date_c, 
-      --         CAST(CURRENT_TIMESTAMP AS DATE)
-      --       )
+      gabby.alumni.enrollment_c e NNER
+      JOIN term_scaff ts ON ts.term_start_date BETWEEN e.start_date_c AND COALESCE(
+        e.actual_end_date_c,
+        CAST(CURRENT_TIMESTAMP AS DATE)
+      )
     WHERE
       e.is_deleted = 0
   )

@@ -23,12 +23,10 @@ SELECT
   co.iep_status,
   co.lep_status,
   co.c_504_status,
-  co.ethnicity --need fed ethnicity
-,
+  co.ethnicity /* need fed ethnicity */,
   co.students_dcid,
   co.specialed_classification,
-  scw.contact_1_phone_primary AS home_phone --confirm with pedro
-,
+  scw.contact_1_phone_primary AS home_phone /* confirm with pedro */,
   scw.contact_1_phone_primary AS mother_cell,
   scw.contact_2_phone_primary AS father_cell,
   scw.contact_1_name AS mother,

@@ -37,8 +37,7 @@ FROM
   INNER JOIN gabby.lit.all_test_events_static atid ON achv.achv_unique_id = atid.unique_id
   LEFT JOIN gabby.lit.all_test_events_static testid ON co.student_number = testid.student_number
   AND co.academic_year = testid.academic_year
-  AND testid.test_date
-  --BETWEEN achv.[start_date] AND achv.end_date
+  AND testid.test_date BETWEEN achv.[start_date] AND achv.end_date
   LEFT JOIN gabby.lit.guided_reading_roster gr ON co.student_number = gr.student_number
   AND co.academic_year = gr.academic_year
   AND achv.test_round = gr.test_round

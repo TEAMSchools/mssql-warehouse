@@ -20,9 +20,8 @@ SET
   @linked_server_name = 'ILLUMINATE';
 
 /*
--- 3.) Declare the cursor FOR the set of records it will loop over
--- cursor name MUST be unique within schema 
--- only use tables updated in past 24 hrs
+3.) Declare the cursor FOR the set of records it will loop over cursor name MUST be
+within schema only use tables updated in past 24 hrs
  */
 DECLARE repository_cursor CURSOR FOR
 SELECT
@@ -51,7 +50,7 @@ FETCH NEXT
 FROM
   repository_cursor INTO @repository_id IF @@FETCH_STATUS <> 0 BEGIN BREAK END
   /*
-  -- here's the beef, the cursor is going to iterate over each repo ID, and INSERT INTO the temp table
+  here's the beef, the cursor is going to iterate over each repo ID, and INSERT INTO the temp table
    */
 SET
   @query = N'

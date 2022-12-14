@@ -24,7 +24,9 @@ WITH
     WHERE
       RIGHT(field, 1) = '.'
   )
-  -- UPDATE remove_footnotes
-  -- SET field = new_field
-  -- UPDATE remove_ending_period
-  -- SET field = new_field
+  /* 
+  UPDATE remove_footnotes SET field = new_field 
+  --*/
+  /*
+  UPDATE remove_ending_period SET field = new_field
+  --*/

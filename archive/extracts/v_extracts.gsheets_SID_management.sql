@@ -44,8 +44,7 @@ WITH
           AND mem.calendardate = cal.date_value
           AND mem.[db_name] = cal.[db_name]
           LEFT JOIN gabby.powerschool.spenrollments_gen_static hb ON mem.studentid = hb.studentid
-          AND mem.calendardate
-          --BETWEEN hb.enter_date AND hb.exit_date
+          AND mem.calendardate BETWEEN hb.enter_date AND hb.exit_date
           AND mem.[db_name] = hb.[db_name]
           AND hb.specprog_name IN (
             'Hybrid - Cohort A',
@@ -115,7 +114,7 @@ SELECT
     WHEN co.enroll_status IN (2, 3) THEN 'I'
     ELSE NULL
   END AS [Status],
-  'F' AS EnrollmentType -- needs to be updated to live PS field
+  'F' AS EnrollmentType /* needs to be updated to live PS field */
 ,
   nj.countycoderesident AS CountyCodeResident,
   nj.districtcoderesident AS DistrictCodeResident,

@@ -1,9 +1,12 @@
 SELECT
-  'PH3' AS cola, -- account code
-  '10046698' AS colb, -- account name
+  'PH3' AS cola,
+  /* account code */
+  '10046698' AS colb,
+  /* account name */
   'KIPP NEWARK COLLEGIATE ACADEMY' AS colc,
-  'P' AS cold, -- file transmission date
-  -- diploma period
+  'P' AS cold,
+  /* file transmission date */
+  /* diploma period */
   CAST(
     REPLACE(CAST(CURRENT_TIMESTAMP AS DATE), '-', '') AS VARCHAR
   ) AS cole,
@@ -38,34 +41,53 @@ WHERE
 UNION ALL
 SELECT
   'PD3' AS cola,
-  'NO SSN' AS colb, -- first name
-  co.first_name colc, -- middle name
-  NULL AS cold, -- last name
-  co.last_name AS cole, -- name suffix
-  NULL AS colf, -- prev last name
-  NULL AS colg, -- prev first name
-  NULL AS colh, -- date of birth
-  CAST(REPLACE(CAST(co.dob AS DATE), '-', '') AS VARCHAR) AS coli, -- student ID
-  co.student_number AS colj, -- diploma type
-  'Regular Diploma' AS colk, -- HS graduation date
-  -- FERPA block
+  'NO SSN' AS colb,
+  /* first name */
+  co.first_name colc,
+  /* middle name */
+  NULL AS cold,
+  /* last name */
+  co.last_name AS cole,
+  /* name suffix */
+  NULL AS colf,
+  /* prev last name */
+  NULL AS colg,
+  /* prev first name */
+  NULL AS colh,
+  /* date of birth */
+  CAST(REPLACE(CAST(co.dob AS DATE), '-', '') AS VARCHAR) AS coli,
+  /* student ID */
+  co.student_number AS colj,
+  /* diploma type */
+  'Regular Diploma' AS colk,
+  /* HS graduation date */
+  /* FERPA block */
   CAST(
     REPLACE(CAST(co.exitdate AS DATE), '-', '') AS VARCHAR
   ) AS coll,
-  'N' AS colm, -- high school name
-  'KIPP NEWARK COLLEGIATE ACADEMY' AS coln, -- ACT code
-  '310986' AS colo, -- gender
-  NULL AS colp, -- ethnicity
-  NULL AS colq, -- econ disadvantaged
+  'N' AS colm,
+  /* high school name */
+  'KIPP NEWARK COLLEGIATE ACADEMY' AS coln,
+  /* ACT code */
+  '310986' AS colo,
+  /* gender */
+  NULL AS colp,
+  /* ethnicity */
+  NULL AS colq,
+  /* econ disadvantaged */
   NULL AS colr, -- 8th gr state assessment - math
   NULL AS cols, -- 8th gr state assessment - ela
   NULL AS colt, -- HS state assessment - math
   NULL AS colu, -- HS gr state assessment - ela
-  NULL AS colv, -- ELL
+  NULL AS colv,
+  /* ELL */
   NULL AS colw, -- # semseters of math
-  NULL AS colx, -- dual enrollment
-  NULL AS coly, -- disability code
-  NULL AS colz, -- program code
+  NULL AS colx,
+  /* dual enrollment */
+  NULL AS coly,
+  /* disability code */
+  NULL AS colz,
+  /* program code */
   NULL AS colaa,
   'ED' AS colab
 FROM

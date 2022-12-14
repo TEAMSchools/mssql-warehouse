@@ -88,8 +88,8 @@ FROM
   gabby.powerschool.cohort_identifiers_static co
   INNER JOIN gabby.reporting.reporting_term_map term ON co.school_level = term.school_level
 COLLATE Latin1_General_BIN
-AND co.academic_year
---BETWEEN term.min_year AND term.max_year 
+AND co.academic_yearBETWEEN term.min_year
+AND term.max_year
 INNER JOIN gabby.lit.achieved_by_round_static achv ON co.student_number = achv.student_number
 AND co.academic_year = achv.academic_year
 AND term.lit = achv.test_round

@@ -1,11 +1,11 @@
 /*
 --Demographics: all grades for 2014/15 � 2016/17 school years
 ---- Student identifier (can be scrambled if scrambled same way each year)
----- Gender
+--/* Gender */
 ---- Race/ethnicity
 ---- ELL/LEP
 ---- Free/Reduced Price Lunch
----- Eligible for Special Education Services
+--/* Eligible for Special Education Services */
 
 SELECT student_number      
 ,academic_year
@@ -17,8 +17,7 @@ SELECT student_number
 ,lunchstatus
 ,iep_status
 FROM gabby.powerschool.cohort_identifiers_static
-WHERE academic_year 
---BETWEEN 2014 AND 2016
+WHERE academic_year BETWEEN 2014 AND 2016
 AND rn_year = 1
 AND schoolid <> 999999
 --*/
@@ -26,10 +25,10 @@ AND schoolid <> 999999
 --Assessment Data: all applicable grades for 2014/15  � 2016/17 school years
 ----Student identifier (can be scrambled if scrambled same way each year)
 ----State summative test data (ELA, Math, Science, Social Studies)
-----Test name
-----Overall score in each subject
+--/* Test name */
+--/* Overall score in each subject */
 ----Test characteristics data, such AS standard errors of measurement (SEMs)
-----Regents exam scores in all subjects
+--/* Regents exam scores in all subjects */
 ----Interim assessment scores (e.g. MAP data)
 SELECT student_number
 ,academic_year
@@ -41,8 +40,7 @@ SELECT student_number
 ,test_standard_error
 ,test_performance_level
 FROM gabby.tableau.state_assessment_dashboard
-WHERE academic_year 
---BETWEEN 2014 AND 2016
+WHERE academic_year BETWEEN 2014 AND 2016
 
 UNION ALL
 
@@ -56,8 +54,7 @@ SELECT student_id  AS student_number
 ,test_standard_error
 ,NULL AS test_performance_level      
 FROM gabby.nwea.assessment_result_identifiers
-WHERE academic_year 
---BETWEEN 2014 AND 2016
+WHERE academic_year BETWEEN 2014 AND 2016
 
 UNION ALL
 
@@ -71,8 +68,7 @@ SELECT local_student_id AS student_number
 ,NULL AS test_standard_error
 ,performance_band_number AS test_performance_level      
 FROM gabby.illuminate_dna_assessments.agg_student_responses_all
-WHERE academic_year 
---BETWEEN 2014 AND 2016
+WHERE academic_year BETWEEN 2014 AND 2016
 AND scope = 'CMA - End-of-Module'
 AND response_type = 'O'
 AND percent_correct IS NOT NULL
@@ -80,9 +76,9 @@ AND percent_correct IS NOT NULL
 -- /*
 -- Teacher-Student Data Linkages 
 -- --Student identifier  (can be scrambled if scrambled same way each year) linked to
--- courses
--- --Teacher identifier linked to courses
--- --Courses linked to assessment content area
+/* courses */
+-- /* Teacher identifier linked to courses */
+-- /* Courses linked to assessment content area */
 SELECT
   student_number,
   teachernumber,
@@ -96,16 +92,16 @@ FROM
   gabby.powerschool.course_enrollments_static
   -- */
   /*
-  --Teacher Data
-  ----ID crosswalk from HR data to Linkage data
-  ----Teacher Name
-  ----District hire date or years of teaching experience
-  ----District email address 
-  ----School name 
-  ----School mailing address
+  /* Teacher Data */
+  --/* ID crosswalk from HR data to Linkage data */
+  --/* Teacher Name */
+  --/* District hire date or years of teaching experience */
+  --/* District email address  */
+  --/* School name  */
+  --/* School mailing address */
   ----Grade level taught (if available)
   ----Subject area taught (if available)
-  ----Relay Indicator
+  --/* Relay Indicator */
   
   SELECT COALESCE(CAST(link.teachernumber AS VARCHAR), adp.associate_id) AS teacher_id
   ,CONCAT(adp.preferred_first, ' ', adp.preferred_last) AS teacher_name
@@ -123,5 +119,4 @@ FROM
   WHERE adp.rn_curr = 1
   --*/
 WHERE
-  academic_year
-  --BETWEEN 2014 and 2016 and illuminate_subject is not null
+  academic_year BETWEEN 2014 and 2016 and illuminate_subject is not null

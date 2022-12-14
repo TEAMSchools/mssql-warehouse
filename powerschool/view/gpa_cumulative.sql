@@ -47,8 +47,7 @@ WITH
       END AS unweighted_grade_points
     FROM
       powerschool.storedgrades sg
-      LEFT JOIN powerschool.gradescaleitem_lookup_static su ON sg.[percent]
-      --BETWEEN su.min_cutoffpercentage AND su.max_cutoffpercentage
+      LEFT JOIN powerschool.gradescaleitem_lookup_static su ON sg.[percent] BETWEEN su.min_cutoffpercentage AND su.max_cutoffpercentage
       AND gabby.utilities.PS_UNWEIGHTED_GRADESCALE_NAME (
         (CAST(LEFT(sg.termid, 2) AS INT) + 1990),
         sg.gradescale_name

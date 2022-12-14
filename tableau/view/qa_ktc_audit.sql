@@ -27,8 +27,7 @@ WITH
       CAST(RIGHT(rg.n + 1, 2) AS VARCHAR(5)) AS [year]
     FROM
       STRING_SPLIT ('FA,SP', ',') ss
-      INNER JOIN gabby.utilities.row_generator rg ON rg.n
-      --BETWEEN gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 2 AND gabby.utilities.GLOBAL_ACADEMIC_YEAR  () + 1
+      INNER JOIN gabby.utilities.row_generator rg ON rg.n BETWEEN gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 2 AND gabby.utilities.GLOBAL_ACADEMIC_YEAR  () + 1
   ),
   valid_documents AS (
     SELECT

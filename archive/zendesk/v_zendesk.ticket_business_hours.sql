@@ -43,10 +43,10 @@ WITH
           gabby.zendesk.schedule
       ) sub
   )
-  --SELECT ticket_id
-  --      ,SUM(bh_day_minutes) AS total_bh_minutes
-  --FROM
-  --    (
+  SELECT ticket_id
+    ,SUM(bh_day_minutes) AS total_bh_minutes
+  FROM
+  (
 SELECT
   ticket_id,
   sub.created_at,
@@ -66,12 +66,12 @@ FROM
       sub.date,
       CASE
         WHEN solved_at < bh_start_timestamp THEN NULL
-        -- WHEN created_at BETWEEN bh_start_timestamp AND bh_end_timestamp THEN created_at
+HEN created_at BETWEEN bh_start_timestamp AND bh_end_timestamp THEN created_at
         WHEN created_at < bh_start_timestamp THEN bh_start_timestamp
       END AS bh_day_start_timestamp,
       CASE
         WHEN sub.created_at > bh_end_timestamp THEN NULL
-        -- WHEN solved_at BETWEEN bh_start_timestamp AND bh_end_timestamp THEN sub.solved_at
+HEN solved_at BETWEEN bh_start_timestamp AND bh_end_timestamp THEN sub.solved_at
         WHEN solved_at > bh_end_timestamp THEN bh_end_timestamp
       END AS bh_day_end_timestamp
     FROM
@@ -103,12 +103,12 @@ FROM
           ) AS bh_end_timestamp
         FROM
           ticket_dates td
-          --    INNER JOIN gabby.utilities.reporting_days rd
-          --       ON rd.date BETWEEN CAST(td.created_at AS DATE) AND CAST(td.solved_at AS DATE)
+  INNER JOIN gabby.utilities.reporting_days rd
+     ON rd.date BETWEEN CAST(td.created_at AS DATE) AND CAST(td.solved_at AS DATE)
           LEFT JOIN business_hours bh ON rd.dw_numeric = bh.dw_numeric
         WHERE
           td.ticket_id = 159300
       ) sub
   ) sub
-  --    ) sub
-  --GROUP BY ticket_id
+  ) sub
+  GROUP BY ticket_id

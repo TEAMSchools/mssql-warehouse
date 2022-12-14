@@ -116,8 +116,7 @@ WITH
           gabby.illuminate_dna_repositories.oer_repositories ur
           JOIN gabby.illuminate_public.students s ON ur.student_id = s.student_id
           JOIN gabby.illuminate_dna_repositories.repositories r ON ur.repository_id = r.repository_id
-          LEFT JOIN gabby.reporting.reporting_terms rt ON r.date_administered
-          --BETWEEN rt.start_date AND rt.end_date
+          LEFT JOIN gabby.reporting.reporting_terms rt ON r.date_administered BETWEEN rt.start_date AND rt.end_date
           AND rt.schoolid = 73253
           AND rt.identifier = 'RT'
           AND rt._fivetran_deleted = 0
@@ -230,8 +229,7 @@ FROM
       AND dsc.code_translation = 'DBQ'
       JOIN gabby.illuminate_codes.dna_subject_areas dsu ON a.code_subject_area_id = dsu.code_id
       AND dsu.code_translation = 'History'
-      JOIN gabby.reporting.reporting_terms dts ON a.administered_at
-      --BETWEEN dts.start_date AND dts.end_date
+      JOIN gabby.reporting.reporting_terms dts ON a.administered_at BETWEEN dts.start_date AND dts.end_date
       AND dts.schoolid = 73253
       AND dts.identifier = 'RT'
       AND dts._fivetran_deleted = 0

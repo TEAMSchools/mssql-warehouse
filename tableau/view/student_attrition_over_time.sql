@@ -18,8 +18,7 @@ WITH
     FROM
       gabby.powerschool.cohort_identifiers_static
     WHERE
-      DATEFROMPARTS(academic_year, 10, 1)
-      --BETWEEN entrydate AND exitdate
+      DATEFROMPARTS(academic_year, 10, 1) BETWEEN entrydate AND exitdate
       AND academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 2)
   ),
   attrition_dates AS (
@@ -62,5 +61,4 @@ FROM
   AND d.[date] <= CURRENT_TIMESTAMP
   LEFT JOIN gabby.powerschool.cohort_identifiers_static y2 ON y1.student_number = y2.student_number
   AND y1.academic_year = (y2.academic_year - 1)
-  AND DATEFROMPARTS(y2.academic_year, 10, 1)
-  --BETWEEN y2.entrydate AND y2.exitdate
+  AND DATEFROMPARTS(y2.academic_year, 10, 1) BETWEEN y2.entrydate AND y2.exitdate

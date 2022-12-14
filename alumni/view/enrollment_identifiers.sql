@@ -136,7 +136,7 @@ WITH
                 ) THEN 1
               END AS is_ecc_degree_type,
               CASE
-              -- WHEN DATEFROMPARTS(DATEPART(YEAR, c.actual_hs_graduation_date_c), 10, 31) BETWEEN e.start_date_c AND COALESCE(e.actual_end_date_c, DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1, 6, 30)) THEN 1 
+HEN DATEFROMPARTS(DATEPART(YEAR, c.actual_hs_graduation_date_c), 10, 31) BETWEEN e.start_date_c AND COALESCE(e.actual_end_date_c, DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1, 6, 30)) THEN 1 
                 ELSE 0
               END AS is_ecc_dated,
               0 AS is_employment

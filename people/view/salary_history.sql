@@ -27,14 +27,14 @@ WITH
         CAST(sh.regular_pay_effective_date AS DATE) < CAST(sh.regular_pay_effective_end_date AS DATE)
         OR sh.regular_pay_effective_end_date IS NULL
       )
-      -- AND (
-      --   '2021-01-01' BETWEEN CAST(sh.regular_pay_effective_date AS DATE) 
-      --     AND COALESCE(
-      --       CAST(sh.regular_pay_effective_end_date AS DATE),
-      --       CURRENT_TIMESTAMP
-      --   )
-      --   OR CAST(sh.regular_pay_effective_date AS DATE) > '2021-01-01'
-      -- )
+ND (
+ '2021-01-01' BETWEEN CAST(sh.regular_pay_effective_date AS DATE) 
+   AND COALESCE(
+     CAST(sh.regular_pay_effective_end_date AS DATE),
+     CURRENT_TIMESTAMP
+ )
+ OR CAST(sh.regular_pay_effective_date AS DATE) > '2021-01-01'
+
     UNION ALL
     /* DF */
     SELECT

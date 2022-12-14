@@ -43,8 +43,7 @@ WITH
       fg.need_80,
       fg.need_90,
       CASE
-        WHEN CAST(CURRENT_TIMESTAMP AS DATE)
-        --BETWEEN fg.termbin_start_date AND fg.termbin_end_date 
+        WHEN CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN fg.termbin_start_date AND fg.termbin_end_date 
         THEN 1
         ELSE 0
       END AS is_curterm,
@@ -163,13 +162,11 @@ FROM
   AND co.[db_name] = st.[db_name]
   AND gr.course_number = st.course_number
   LEFT JOIN gabby.powerschool.spenrollments_gen_static sp ON co.studentid = sp.studentid
-  AND CAST(CURRENT_TIMESTAMP AS DATE)
-  --BETWEEN sp.enter_date AND sp.exit_date
+  AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sp.enter_date AND sp.exit_date
   AND sp.specprog_name = 'Counseling Services'
   AND co.[db_name] = sp.[db_name]
   LEFT JOIN powerschool.spenrollments_gen_static sa ON co.studentid = sa.studentid
-  AND CAST(CURRENT_TIMESTAMP AS DATE)
-  --BETWEEN sa.enter_date AND sa.exit_date
+  AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sa.enter_date AND sa.exit_date
   AND sa.specprog_name = 'Student Athlete'
   AND co.[db_name] = sa.[db_name]
 WHERE
@@ -281,13 +278,11 @@ FROM
   AND co.[db_name] = st.[db_name]
   AND gr.course_number = st.course_number
   LEFT JOIN gabby.powerschool.spenrollments_gen_static sp ON co.studentid = sp.studentid
-  AND CAST(CURRENT_TIMESTAMP AS DATE)
-  --BETWEEN sp.enter_date AND sp.exit_date
+  AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sp.enter_date AND sp.exit_date
   AND sp.specprog_name = 'Counseling Services'
   AND co.[db_name] = sp.[db_name]
   LEFT JOIN powerschool.spenrollments_gen_static sa ON co.studentid = sa.studentid
-  AND CAST(CURRENT_TIMESTAMP AS DATE)
-  --BETWEEN sa.enter_date AND sa.exit_date
+  AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sa.enter_date AND sa.exit_date
   AND sa.specprog_name = 'Student Athlete'
   AND co.[db_name] = sa.[db_name]
 WHERE
@@ -355,13 +350,11 @@ FROM
   AND co.[db_name] = st.[db_name]
   AND sg.course_number = st.course_number
   LEFT JOIN gabby.powerschool.spenrollments_gen_static sp ON co.studentid = sp.studentid
-  AND CAST(CURRENT_TIMESTAMP AS DATE)
-  --BETWEEN sp.enter_date AND sp.exit_date
+  AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sp.enter_date AND sp.exit_date
   AND sp.specprog_name = 'Counseling Services'
   AND co.[db_name] = sp.[db_name]
   LEFT JOIN powerschool.spenrollments_gen_static sa ON co.studentid = sa.studentid
-  AND CAST(CURRENT_TIMESTAMP AS DATE)
-  --BETWEEN sa.enter_date AND sa.exit_date
+  AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sa.enter_date AND sa.exit_date
   AND sa.specprog_name = 'Student Athlete'
   AND co.[db_name] = sa.[db_name]
 WHERE
@@ -429,13 +422,11 @@ FROM
   AND tr.[db_name] = e1.[db_name]
   AND e1.year_in_school = 1
   LEFT JOIN gabby.powerschool.spenrollments_gen_static sp ON co.studentid = sp.studentid
-  AND CAST(CURRENT_TIMESTAMP AS DATE)
-  --BETWEEN sp.enter_date AND sp.exit_date
+  AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sp.enter_date AND sp.exit_date
   AND sp.specprog_name = 'Counseling Services'
   AND co.[db_name] = sp.[db_name]
   LEFT JOIN powerschool.spenrollments_gen_static sa ON co.studentid = sa.studentid
-  AND CAST(CURRENT_TIMESTAMP AS DATE)
-  --BETWEEN sa.enter_date AND sa.exit_date
+  AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sa.enter_date AND sa.exit_date
   AND sa.specprog_name = 'Student Athlete'
   AND co.[db_name] = sa.[db_name]
 WHERE
@@ -475,8 +466,7 @@ SELECT
   NULL AS y1_grade_letter,
   NULL AS y1_gpa_points,
   CASE
-    WHEN CAST(CURRENT_TIMESTAMP AS DATE)
-    --BETWEEN cg.termbin_start_date AND cg.termbin_end_date 
+    WHEN CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN cg.termbin_start_date AND cg.termbin_end_date 
     THEN 1
     ELSE 0
   END AS is_curterm,
@@ -506,13 +496,11 @@ FROM
   AND co.[db_name] = st.[db_name]
   AND cg.course_number = st.course_number
   LEFT JOIN gabby.powerschool.spenrollments_gen_static sp ON co.studentid = sp.studentid
-  AND CAST(CURRENT_TIMESTAMP AS DATE)
-  --BETWEEN sp.enter_date AND sp.exit_date
+  AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sp.enter_date AND sp.exit_date
   AND sp.specprog_name = 'Counseling Services'
   AND co.[db_name] = sp.[db_name]
   LEFT JOIN powerschool.spenrollments_gen_static sa ON co.studentid = sa.studentid
-  AND CAST(CURRENT_TIMESTAMP AS DATE)
-  --BETWEEN sa.enter_date AND sa.exit_date
+  AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sa.enter_date AND sa.exit_date
   AND sa.specprog_name = 'Student Athlete'
   AND co.[db_name] = sa.[db_name]
 WHERE
@@ -574,20 +562,17 @@ FROM
   AND co.yearid = cy.yearid
   AND co.[db_name] = cy.[db_name]
   AND cy.storecode_type <> 'Q'
-  AND CAST(CURRENT_TIMESTAMP AS DATE)
-  --BETWEEN cy.termbin_start_date AND cy.termbin_end_date 
+  AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN cy.termbin_start_date AND cy.termbin_end_date 
   LEFT JOIN section_teacher st ON co.studentid = st.studentid
   AND co.yearid = st.yearid
   AND co.[db_name] = st.[db_name]
   AND cy.course_number = st.course_number
   LEFT JOIN gabby.powerschool.spenrollments_gen_static sp ON co.studentid = sp.studentid
-  AND CAST(CURRENT_TIMESTAMP AS DATE)
-  --BETWEEN sp.enter_date AND sp.exit_date
+  AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sp.enter_date AND sp.exit_date
   AND sp.specprog_name = 'Counseling Services'
   AND co.[db_name] = sp.[db_name]
   LEFT JOIN powerschool.spenrollments_gen_static sa ON co.studentid = sa.studentid
-  AND CAST(CURRENT_TIMESTAMP AS DATE)
-  --BETWEEN sa.enter_date AND sa.exit_date
+  AND CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sa.enter_date AND sa.exit_date
   AND sa.specprog_name = 'Student Athlete'
   AND co.[db_name] = sa.[db_name]
 WHERE
@@ -662,8 +647,7 @@ WHERE
   AND ex.course_number = st.course_number
   LEFT JOIN gabby.powerschool.spenrollments_gen_static sp
   ON co.studentid = sp.studentid
-  AND CAST(CURRENT_TIMESTAMP AS DATE) 
-  --BETWEEN sp.enter_date AND sp.exit_date
+  AND CAST(CURRENT_TIMESTAMP AS DATE)  BETWEEN sp.enter_date AND sp.exit_date
   AND sp.specprog_name = 'Counseling Services'
   AND co.[db_name] = sp.[db_name]
   WHERE co.rn_year = 1

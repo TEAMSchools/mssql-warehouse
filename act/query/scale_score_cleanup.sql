@@ -47,7 +47,5 @@ SELECT DISTINCT
 FROM
   scaffold
   LEFT OUTER JOIN key_clean ON scaffold.subject = key_clean.subject
-  AND scaffold.max_raw_score = key_clean.raw_score
-  INNER JOIN gabby.utilities.row_generator ON gabby.utilities.row_generator.n
-  --BETWEEN 9 AND 11
-  /* UPDATE */
+  AND scaffold.max_raw_score = key_clean.raw_score NNER
+  JOIN gabby.utilities.row_generator ON gabby.utilities.row_generator.n BETWEEN 9 AND 11

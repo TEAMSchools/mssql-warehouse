@@ -38,8 +38,7 @@ SELECT
 FROM
   gabby.surveygizmo.survey_detail d
   LEFT JOIN gabby.people.work_assignment_history_static w ON d.respondent_df_employee_number = w.employee_number
-  AND d.date_submitted
-  --BETWEEN w.position_effective_date AND w.position_effective_end_date_eoy
+  AND d.date_submitted BETWEEN w.position_effective_date AND w.position_effective_end_date_eoy
   LEFT JOIN gabby.people.staff_crosswalk_static s ON d.respondent_df_employee_number = s.df_employee_number
 WHERE
   d.survey_title = 'Intent to Return'

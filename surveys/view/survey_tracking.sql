@@ -99,8 +99,7 @@ WITH
     FROM
       gabby.surveygizmo.survey_campaign_clean_static c
       INNER JOIN gabby.surveygizmo.survey_response_identifiers_static i ON c.survey_id = i.survey_id
-      AND i.date_started
-      --BETWEEN c.link_open_date AND c.link_close_date
+      AND i.date_started BETWEEN c.link_open_date AND c.link_close_date
       AND i.rn_respondent_subject = 1
     WHERE
       (

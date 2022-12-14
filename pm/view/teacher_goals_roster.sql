@@ -8,8 +8,7 @@ WITH
     FROM
       gabby.utilities.row_generator_smallint rg
     WHERE
-      rg.n
-      --BETWEEN 2018 AND gabby.utilities.GLOBAL_ACADEMIC_YEAR  () /* 2018 = first year of Teacher Goals */
+      rg.n BETWEEN 2018 AND gabby.utilities.GLOBAL_ACADEMIC_YEAR  () /* 2018 = first year of Teacher Goals */
   ),
   work_assignment AS (
     SELECT
@@ -90,8 +89,7 @@ WITH
       ) AS rn_emp_yr
     FROM
       work_assignment wa
-      JOIN academic_years ay ON ay.academic_year
-      --BETWEEN wa.start_academic_year AND wa.end_academic_year
+      JOIN academic_years ay ON ay.academic_year BETWEEN wa.start_academic_year AND wa.end_academic_year
   )
 SELECT
   cwa.df_employee_number,

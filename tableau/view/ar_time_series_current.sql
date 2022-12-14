@@ -171,8 +171,7 @@ FROM
         FROM
           gabby.powerschool.cohort_identifiers_scaffold_current_static co
           LEFT JOIN gabby.reporting.reporting_terms dts ON co.schoolid = dts.schoolid
-          AND co.[date]
-          --BETWEEN dts.[start_date] AND dts.end_date
+          AND co.[date] BETWEEN dts.[start_date] AND dts.end_date
           AND dts.identifier = 'AR'
           AND dts.time_per_name <> 'ARY'
           AND dts._fivetran_deleted = 0

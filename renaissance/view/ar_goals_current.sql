@@ -88,8 +88,7 @@ WITH
   AND achv.reporting_term IN ('LIT1','LIT2')
   ) sub
   LEFT JOIN gabby.renaissance.ar_goal_criteria goal
-  ON sub.indep_lvl_num 
-  --BETWEEN goal.[min] AND goal.[max]
+  ON sub.indep_lvl_num  BETWEEN goal.[min] AND goal.[max]
   AND goal.criteria_clean = 'lvl_num'
   LEFT JOIN gabby.renaissance.ar_tier_goals tiers
   ON goal.tier = tiers.tier
