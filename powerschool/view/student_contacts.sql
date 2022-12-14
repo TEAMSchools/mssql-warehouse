@@ -18,7 +18,14 @@ SELECT
 FROM
   powerschool.contacts c
   JOIN powerschool.person_contacts pc ON c.personid = pc.personid
-  AND pc.contact_type IN ('Current', 'Daytime', 'Home', 'Mobile', 'Not Set', 'Work')
+  AND pc.contact_type IN (
+    'Current',
+    'Daytime',
+    'Home',
+    'Mobile',
+    'Not Set',
+    'Work'
+  )
   AND (
     (
       pc.contact_category IN ('Address', 'Email')

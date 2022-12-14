@@ -21,8 +21,16 @@ SELECT
   END AS payperiod,
   CASE
     WHEN period_beginning_date IS NOT NULL THEN period_beginning_date
-    WHEN DATEPART(DAY, period_end_date) >= 16 THEN DATEFROMPARTS(DATEPART(YEAR, period_end_date), DATEPART(MONTH, period_end_date), 16)
-    ELSE DATEFROMPARTS(DATEPART(YEAR, period_end_date), DATEPART(MONTH, period_end_date), 1)
+    WHEN DATEPART(DAY, period_end_date) >= 16 THEN DATEFROMPARTS(
+      DATEPART(YEAR, period_end_date),
+      DATEPART(MONTH, period_end_date),
+      16
+    )
+    ELSE DATEFROMPARTS(
+      DATEPART(YEAR, period_end_date),
+      DATEPART(MONTH, period_end_date),
+      1
+    )
   END AS payperiodstart,
   period_beginning_date,
   period_end_date AS payperiodend,

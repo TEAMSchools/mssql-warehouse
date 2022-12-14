@@ -20,7 +20,14 @@ FROM
       CAST([value] AS VARCHAR(25)) AS [value]
     FROM
       illuminate_dna_repositories.repository_360 UNPIVOT (
-        [value] FOR field IN (field_now, field_want, field_dont, field_with, field_come, field_ask)
+        [value] FOR field IN (
+          field_now,
+          field_want,
+          field_dont,
+          field_with,
+          field_come,
+          field_ask
+        )
       ) u
     WHERE
       u.repository_row_id IN (
@@ -186,7 +193,9 @@ FROM
       CAST(field AS VARCHAR(125)) AS field,
       CAST([value] AS VARCHAR(25)) AS [value]
     FROM
-      illuminate_dna_repositories.repository_364 UNPIVOT ([value] FOR field IN (field_want, field_now, field_dont)) u
+      illuminate_dna_repositories.repository_364 UNPIVOT (
+        [value] FOR field IN (field_want, field_now, field_dont)
+      ) u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -219,7 +228,9 @@ FROM
       CAST(field AS VARCHAR(125)) AS field,
       CAST([value] AS VARCHAR(25)) AS [value]
     FROM
-      illuminate_dna_repositories.repository_365 UNPIVOT ([value] FOR field IN (field_want, field_now, field_dont, field_with)) u
+      illuminate_dna_repositories.repository_365 UNPIVOT (
+        [value] FOR field IN (field_want, field_now, field_dont, field_with)
+      ) u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -252,7 +263,15 @@ FROM
       CAST(field AS VARCHAR(125)) AS field,
       CAST([value] AS VARCHAR(25)) AS [value]
     FROM
-      illuminate_dna_repositories.repository_366 UNPIVOT ([value] FOR field IN (field_want, field_now, field_dont, field_with, field_come)) u
+      illuminate_dna_repositories.repository_366 UNPIVOT (
+        [value] FOR field IN (
+          field_want,
+          field_now,
+          field_dont,
+          field_with,
+          field_come
+        )
+      ) u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -285,7 +304,15 @@ FROM
       CAST(field AS VARCHAR(125)) AS field,
       CAST([value] AS VARCHAR(25)) AS [value]
     FROM
-      illuminate_dna_repositories.repository_367 UNPIVOT ([value] FOR field IN (field_want, field_now, field_dont, field_with, field_come)) u
+      illuminate_dna_repositories.repository_367 UNPIVOT (
+        [value] FOR field IN (
+          field_want,
+          field_now,
+          field_dont,
+          field_with,
+          field_come
+        )
+      ) u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -319,7 +346,14 @@ FROM
       CAST([value] AS VARCHAR(25)) AS [value]
     FROM
       illuminate_dna_repositories.repository_368 UNPIVOT (
-        [value] FOR field IN (field_want, field_now, field_dont, field_with, field_come, field_ask)
+        [value] FOR field IN (
+          field_want,
+          field_now,
+          field_dont,
+          field_with,
+          field_come,
+          field_ask
+        )
       ) u
     WHERE
       u.repository_row_id IN (
@@ -486,7 +520,14 @@ FROM
       CAST([value] AS VARCHAR(25)) AS [value]
     FROM
       illuminate_dna_repositories.repository_372 UNPIVOT (
-        [value] FOR field IN (field_want, field_now, field_dont, field_with, field_come, field_ask)
+        [value] FOR field IN (
+          field_want,
+          field_now,
+          field_dont,
+          field_with,
+          field_come,
+          field_ask
+        )
       ) u
     WHERE
       u.repository_row_id IN (
@@ -698,7 +739,14 @@ FROM
       CAST([value] AS VARCHAR(25)) AS [value]
     FROM
       illuminate_dna_repositories.repository_377 UNPIVOT (
-        [value] FOR field IN (field_want, field_now, field_dont, field_come, field_ask, field_just)
+        [value] FOR field IN (
+          field_want,
+          field_now,
+          field_dont,
+          field_come,
+          field_ask,
+          field_just
+        )
       ) u
     WHERE
       u.repository_row_id IN (
@@ -733,7 +781,14 @@ FROM
       CAST([value] AS VARCHAR(25)) AS [value]
     FROM
       illuminate_dna_repositories.repository_378 UNPIVOT (
-        [value] FOR field IN (field_want, field_now, field_dont, field_with, field_come, field_ask)
+        [value] FOR field IN (
+          field_want,
+          field_now,
+          field_dont,
+          field_with,
+          field_come,
+          field_ask
+        )
       ) u
     WHERE
       u.repository_row_id IN (
@@ -768,7 +823,14 @@ FROM
       CAST([value] AS VARCHAR(25)) AS [value]
     FROM
       illuminate_dna_repositories.repository_379 UNPIVOT (
-        [value] FOR field IN (field_want, field_now, field_dont, field_with, field_come, field_ask)
+        [value] FOR field IN (
+          field_want,
+          field_now,
+          field_dont,
+          field_with,
+          field_come,
+          field_ask
+        )
       ) u
     WHERE
       u.repository_row_id IN (
@@ -803,7 +865,14 @@ FROM
       CAST([value] AS VARCHAR(25)) AS [value]
     FROM
       illuminate_dna_repositories.repository_380 UNPIVOT (
-        [value] FOR field IN (field_want, field_now, field_dont, field_with, field_come, field_ask)
+        [value] FOR field IN (
+          field_want,
+          field_now,
+          field_dont,
+          field_with,
+          field_come,
+          field_ask
+        )
       ) u
     WHERE
       u.repository_row_id IN (
@@ -838,7 +907,14 @@ FROM
       CAST([value] AS VARCHAR(25)) AS [value]
     FROM
       illuminate_dna_repositories.repository_381 UNPIVOT (
-        [value] FOR field IN (field_want, field_now, field_dont, field_with, field_come, field_ask)
+        [value] FOR field IN (
+          field_want,
+          field_now,
+          field_dont,
+          field_with,
+          field_come,
+          field_ask
+        )
       ) u
     WHERE
       u.repository_row_id IN (
@@ -873,7 +949,14 @@ FROM
       CAST([value] AS VARCHAR(25)) AS [value]
     FROM
       illuminate_dna_repositories.repository_382 UNPIVOT (
-        [value] FOR field IN (field_want, field_now, field_dont, field_with, field_come, field_ask)
+        [value] FOR field IN (
+          field_want,
+          field_now,
+          field_dont,
+          field_with,
+          field_come,
+          field_ask
+        )
       ) u
     WHERE
       u.repository_row_id IN (
@@ -908,7 +991,14 @@ FROM
       CAST([value] AS VARCHAR(25)) AS [value]
     FROM
       illuminate_dna_repositories.repository_383 UNPIVOT (
-        [value] FOR field IN (field_want, field_now, field_dont, field_with, field_come, field_ask)
+        [value] FOR field IN (
+          field_want,
+          field_now,
+          field_dont,
+          field_with,
+          field_come,
+          field_ask
+        )
       ) u
     WHERE
       u.repository_row_id IN (
@@ -943,7 +1033,14 @@ FROM
       CAST([value] AS VARCHAR(25)) AS [value]
     FROM
       illuminate_dna_repositories.repository_384 UNPIVOT (
-        [value] FOR field IN (field_want, field_now, field_dont, field_with, field_come, field_ask)
+        [value] FOR field IN (
+          field_want,
+          field_now,
+          field_dont,
+          field_with,
+          field_come,
+          field_ask
+        )
       ) u
     WHERE
       u.repository_row_id IN (
@@ -978,7 +1075,14 @@ FROM
       CAST([value] AS VARCHAR(25)) AS [value]
     FROM
       illuminate_dna_repositories.repository_385 UNPIVOT (
-        [value] FOR field IN (field_want, field_now, field_dont, field_with, field_come, field_ask)
+        [value] FOR field IN (
+          field_want,
+          field_now,
+          field_dont,
+          field_with,
+          field_come,
+          field_ask
+        )
       ) u
     WHERE
       u.repository_row_id IN (
@@ -1013,7 +1117,14 @@ FROM
       CAST([value] AS VARCHAR(25)) AS [value]
     FROM
       illuminate_dna_repositories.repository_386 UNPIVOT (
-        [value] FOR field IN (field_want, field_now, field_dont, field_with, field_come, field_ask)
+        [value] FOR field IN (
+          field_want,
+          field_now,
+          field_dont,
+          field_with,
+          field_come,
+          field_ask
+        )
       ) u
     WHERE
       u.repository_row_id IN (
@@ -1048,7 +1159,14 @@ FROM
       CAST([value] AS VARCHAR(25)) AS [value]
     FROM
       illuminate_dna_repositories.repository_387 UNPIVOT (
-        [value] FOR field IN (field_want, field_now, field_dont, field_with, field_come, field_ask)
+        [value] FOR field IN (
+          field_want,
+          field_now,
+          field_dont,
+          field_with,
+          field_come,
+          field_ask
+        )
       ) u
     WHERE
       u.repository_row_id IN (
@@ -1083,7 +1201,14 @@ FROM
       CAST([value] AS VARCHAR(25)) AS [value]
     FROM
       illuminate_dna_repositories.repository_388 UNPIVOT (
-        [value] FOR field IN (field_want, field_now, field_dont, field_with, field_come, field_ask)
+        [value] FOR field IN (
+          field_want,
+          field_now,
+          field_dont,
+          field_with,
+          field_come,
+          field_ask
+        )
       ) u
     WHERE
       u.repository_row_id IN (
@@ -1118,7 +1243,14 @@ FROM
       CAST([value] AS VARCHAR(25)) AS [value]
     FROM
       illuminate_dna_repositories.repository_389 UNPIVOT (
-        [value] FOR field IN (field_want, field_now, field_dont, field_with, field_come, field_ask)
+        [value] FOR field IN (
+          field_want,
+          field_now,
+          field_dont,
+          field_with,
+          field_come,
+          field_ask
+        )
       ) u
     WHERE
       u.repository_row_id IN (
@@ -1153,7 +1285,14 @@ FROM
       CAST([value] AS VARCHAR(25)) AS [value]
     FROM
       illuminate_dna_repositories.repository_390 UNPIVOT (
-        [value] FOR field IN (field_want, field_now, field_dont, field_with, field_come, field_ask)
+        [value] FOR field IN (
+          field_want,
+          field_now,
+          field_dont,
+          field_with,
+          field_come,
+          field_ask
+        )
       ) u
     WHERE
       u.repository_row_id IN (
@@ -1188,7 +1327,14 @@ FROM
       CAST([value] AS VARCHAR(25)) AS [value]
     FROM
       illuminate_dna_repositories.repository_391 UNPIVOT (
-        [value] FOR field IN (field_want, field_now, field_dont, field_with, field_come, field_ask)
+        [value] FOR field IN (
+          field_want,
+          field_now,
+          field_dont,
+          field_with,
+          field_come,
+          field_ask
+        )
       ) u
     WHERE
       u.repository_row_id IN (
@@ -1223,7 +1369,14 @@ FROM
       CAST([value] AS VARCHAR(25)) AS [value]
     FROM
       illuminate_dna_repositories.repository_392 UNPIVOT (
-        [value] FOR field IN (field_want, field_now, field_dont, field_with, field_come, field_ask)
+        [value] FOR field IN (
+          field_want,
+          field_now,
+          field_dont,
+          field_with,
+          field_come,
+          field_ask
+        )
       ) u
     WHERE
       u.repository_row_id IN (
@@ -1258,7 +1411,14 @@ FROM
       CAST([value] AS VARCHAR(25)) AS [value]
     FROM
       illuminate_dna_repositories.repository_393 UNPIVOT (
-        [value] FOR field IN (field_want, field_now, field_dont, field_with, field_come, field_ask)
+        [value] FOR field IN (
+          field_want,
+          field_now,
+          field_dont,
+          field_with,
+          field_come,
+          field_ask
+        )
       ) u
     WHERE
       u.repository_row_id IN (
@@ -1293,7 +1453,14 @@ FROM
       CAST([value] AS VARCHAR(25)) AS [value]
     FROM
       illuminate_dna_repositories.repository_394 UNPIVOT (
-        [value] FOR field IN (field_want, field_now, field_dont, field_with, field_come, field_ask)
+        [value] FOR field IN (
+          field_want,
+          field_now,
+          field_dont,
+          field_with,
+          field_come,
+          field_ask
+        )
       ) u
     WHERE
       u.repository_row_id IN (
@@ -1328,7 +1495,14 @@ FROM
       CAST([value] AS VARCHAR(25)) AS [value]
     FROM
       illuminate_dna_repositories.repository_395 UNPIVOT (
-        [value] FOR field IN (field_want, field_now, field_dont, field_with, field_come, field_ask)
+        [value] FOR field IN (
+          field_want,
+          field_now,
+          field_dont,
+          field_with,
+          field_come,
+          field_ask
+        )
       ) u
     WHERE
       u.repository_row_id IN (
@@ -1363,7 +1537,14 @@ FROM
       CAST([value] AS VARCHAR(25)) AS [value]
     FROM
       illuminate_dna_repositories.repository_396 UNPIVOT (
-        [value] FOR field IN (field_want, field_now, field_dont, field_with, field_come, field_ask)
+        [value] FOR field IN (
+          field_want,
+          field_now,
+          field_dont,
+          field_with,
+          field_come,
+          field_ask
+        )
       ) u
     WHERE
       u.repository_row_id IN (
@@ -1398,7 +1579,14 @@ FROM
       CAST([value] AS VARCHAR(25)) AS [value]
     FROM
       illuminate_dna_repositories.repository_397 UNPIVOT (
-        [value] FOR field IN (field_want, field_now, field_dont, field_with, field_come, field_ask)
+        [value] FOR field IN (
+          field_want,
+          field_now,
+          field_dont,
+          field_with,
+          field_come,
+          field_ask
+        )
       ) u
     WHERE
       u.repository_row_id IN (
@@ -1433,7 +1621,14 @@ FROM
       CAST([value] AS VARCHAR(25)) AS [value]
     FROM
       illuminate_dna_repositories.repository_398 UNPIVOT (
-        [value] FOR field IN (field_want, field_now, field_dont, field_with, field_come, field_ask)
+        [value] FOR field IN (
+          field_want,
+          field_now,
+          field_dont,
+          field_with,
+          field_come,
+          field_ask
+        )
       ) u
     WHERE
       u.repository_row_id IN (
@@ -1468,7 +1663,14 @@ FROM
       CAST([value] AS VARCHAR(25)) AS [value]
     FROM
       illuminate_dna_repositories.repository_399 UNPIVOT (
-        [value] FOR field IN (field_want, field_now, field_dont, field_with, field_come, field_ask)
+        [value] FOR field IN (
+          field_want,
+          field_now,
+          field_dont,
+          field_with,
+          field_come,
+          field_ask
+        )
       ) u
     WHERE
       u.repository_row_id IN (
@@ -1503,7 +1705,14 @@ FROM
       CAST([value] AS VARCHAR(25)) AS [value]
     FROM
       illuminate_dna_repositories.repository_400 UNPIVOT (
-        [value] FOR field IN (field_want, field_now, field_dont, field_with, field_come, field_ask)
+        [value] FOR field IN (
+          field_want,
+          field_now,
+          field_dont,
+          field_with,
+          field_come,
+          field_ask
+        )
       ) u
     WHERE
       u.repository_row_id IN (
@@ -1538,7 +1747,14 @@ FROM
       CAST([value] AS VARCHAR(25)) AS [value]
     FROM
       illuminate_dna_repositories.repository_401 UNPIVOT (
-        [value] FOR field IN (field_want, field_now, field_dont, field_with, field_come, field_ask)
+        [value] FOR field IN (
+          field_want,
+          field_now,
+          field_dont,
+          field_with,
+          field_come,
+          field_ask
+        )
       ) u
     WHERE
       u.repository_row_id IN (
@@ -1573,7 +1789,14 @@ FROM
       CAST([value] AS VARCHAR(25)) AS [value]
     FROM
       illuminate_dna_repositories.repository_402 UNPIVOT (
-        [value] FOR field IN (field_want, field_now, field_dont, field_with, field_come, field_ask)
+        [value] FOR field IN (
+          field_want,
+          field_now,
+          field_dont,
+          field_with,
+          field_come,
+          field_ask
+        )
       ) u
     WHERE
       u.repository_row_id IN (
@@ -1608,7 +1831,14 @@ FROM
       CAST([value] AS VARCHAR(25)) AS [value]
     FROM
       illuminate_dna_repositories.repository_403 UNPIVOT (
-        [value] FOR field IN (field_want, field_now, field_dont, field_with, field_come, field_ask)
+        [value] FOR field IN (
+          field_want,
+          field_now,
+          field_dont,
+          field_with,
+          field_come,
+          field_ask
+        )
       ) u
     WHERE
       u.repository_row_id IN (
@@ -1643,7 +1873,14 @@ FROM
       CAST([value] AS VARCHAR(25)) AS [value]
     FROM
       illuminate_dna_repositories.repository_404 UNPIVOT (
-        [value] FOR field IN (field_want, field_now, field_dont, field_with, field_come, field_ask)
+        [value] FOR field IN (
+          field_want,
+          field_now,
+          field_dont,
+          field_with,
+          field_come,
+          field_ask
+        )
       ) u
     WHERE
       u.repository_row_id IN (
@@ -1678,7 +1915,14 @@ FROM
       CAST([value] AS VARCHAR(25)) AS [value]
     FROM
       illuminate_dna_repositories.repository_405 UNPIVOT (
-        [value] FOR field IN (field_want, field_now, field_dont, field_with, field_come, field_ask)
+        [value] FOR field IN (
+          field_want,
+          field_now,
+          field_dont,
+          field_with,
+          field_come,
+          field_ask
+        )
       ) u
     WHERE
       u.repository_row_id IN (
@@ -1713,7 +1957,14 @@ FROM
       CAST([value] AS VARCHAR(25)) AS [value]
     FROM
       illuminate_dna_repositories.repository_406 UNPIVOT (
-        [value] FOR field IN (field_want, field_now, field_dont, field_with, field_come, field_ask)
+        [value] FOR field IN (
+          field_want,
+          field_now,
+          field_dont,
+          field_with,
+          field_come,
+          field_ask
+        )
       ) u
     WHERE
       u.repository_row_id IN (
@@ -1748,7 +1999,14 @@ FROM
       CAST([value] AS VARCHAR(25)) AS [value]
     FROM
       illuminate_dna_repositories.repository_407 UNPIVOT (
-        [value] FOR field IN (field_want, field_now, field_dont, field_with, field_come, field_ask)
+        [value] FOR field IN (
+          field_want,
+          field_now,
+          field_dont,
+          field_with,
+          field_come,
+          field_ask
+        )
       ) u
     WHERE
       u.repository_row_id IN (
@@ -1783,7 +2041,14 @@ FROM
       CAST([value] AS VARCHAR(25)) AS [value]
     FROM
       illuminate_dna_repositories.repository_408 UNPIVOT (
-        [value] FOR field IN (field_want, field_now, field_dont, field_with, field_come, field_ask)
+        [value] FOR field IN (
+          field_want,
+          field_now,
+          field_dont,
+          field_with,
+          field_come,
+          field_ask
+        )
       ) u
     WHERE
       u.repository_row_id IN (

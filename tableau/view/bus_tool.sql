@@ -33,13 +33,21 @@ SELECT
       suf.bus_info_am,
       (CHARINDEX('-', suf.bus_info_am) + 2),
       (
-        CHARINDEX('-', suf.bus_info_am, (CHARINDEX('-', suf.bus_info_am) + 1)) - (CHARINDEX('-', suf.bus_info_am) + 2)
+        CHARINDEX(
+          '-',
+          suf.bus_info_am,
+          (CHARINDEX('-', suf.bus_info_am) + 1)
+        ) - (CHARINDEX('-', suf.bus_info_am) + 2)
       ) - 1
     )
   END AS bus_name_am,
   SUBSTRING(
     suf.bus_info_am,
-    CHARINDEX('-', suf.bus_info_am, (CHARINDEX('-', suf.bus_info_am) + 1)) + 2,
+    CHARINDEX(
+      '-',
+      suf.bus_info_am,
+      (CHARINDEX('-', suf.bus_info_am) + 1)
+    ) + 2,
     LEN(suf.bus_info_am)
   ) AS bus_stop_am,
   CASE
@@ -48,13 +56,21 @@ SELECT
       suf.bus_info_pm,
       (CHARINDEX('-', suf.bus_info_pm) + 2),
       (
-        CHARINDEX('-', suf.bus_info_pm, (CHARINDEX('-', suf.bus_info_pm) + 1)) - (CHARINDEX('-', suf.bus_info_pm) + 2)
+        CHARINDEX(
+          '-',
+          suf.bus_info_pm,
+          (CHARINDEX('-', suf.bus_info_pm) + 1)
+        ) - (CHARINDEX('-', suf.bus_info_pm) + 2)
       ) - 1
     )
   END AS bus_name_pm,
   SUBSTRING(
     suf.bus_info_pm,
-    CHARINDEX('-', suf.bus_info_pm, (CHARINDEX('-', suf.bus_info_pm) + 1)) + 2,
+    CHARINDEX(
+      '-',
+      suf.bus_info_pm,
+      (CHARINDEX('-', suf.bus_info_pm) + 1)
+    ) + 2,
     LEN(suf.bus_info_pm)
   ) AS bus_stop_pm,
   CASE
@@ -63,13 +79,21 @@ SELECT
       suf.bus_info_fridays,
       (CHARINDEX('-', suf.bus_info_fridays) + 2),
       (
-        CHARINDEX('-', suf.bus_info_fridays, (CHARINDEX('-', suf.bus_info_fridays) + 1)) - (CHARINDEX('-', suf.bus_info_fridays) + 2)
+        CHARINDEX(
+          '-',
+          suf.bus_info_fridays,
+          (CHARINDEX('-', suf.bus_info_fridays) + 1)
+        ) - (CHARINDEX('-', suf.bus_info_fridays) + 2)
       ) - 1
     )
   END AS bus_name_pm_early,
   SUBSTRING(
     suf.bus_info_fridays,
-    CHARINDEX('-', suf.bus_info_fridays, (CHARINDEX('-', suf.bus_info_fridays) + 1)) + 2,
+    CHARINDEX(
+      '-',
+      suf.bus_info_fridays,
+      (CHARINDEX('-', suf.bus_info_fridays) + 1)
+    ) + 2,
     LEN(suf.bus_info_fridays)
   ) AS bus_stop_pm_early,
   cc.section_number AS hr_section_number,

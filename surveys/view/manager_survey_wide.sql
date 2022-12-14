@@ -28,9 +28,13 @@ WITH
               END
             ) AS NVARCHAR(MAX)
           ) AS n_responses,
-          CAST(ROUND(AVG(CAST(response_value AS FLOAT)), 1) AS NVARCHAR(MAX)) AS avg_response_value_subject,
+          CAST(
+            ROUND(AVG(CAST(response_value AS FLOAT)), 1) AS NVARCHAR(MAX)
+          ) AS avg_response_value_subject,
           CAST(MAX(avg_response_value_location) AS NVARCHAR(MAX)) AS avg_response_value_location,
-          CAST(gabby.dbo.GROUP_CONCAT_D (DISTINCT respondent_name, CHAR(10)) AS NVARCHAR(MAX)) AS respondent_names,
+          CAST(
+            gabby.dbo.GROUP_CONCAT_D (DISTINCT respondent_name, CHAR(10)) AS NVARCHAR(MAX)
+          ) AS respondent_names,
           CAST(
             gabby.dbo.GROUP_CONCAT_D (
               CASE
@@ -49,7 +53,12 @@ WITH
           subject_location,
           subject_manager_name
       ) sub UNPIVOT (
-        VALUE FOR field IN (n_responses, avg_response_value_subject, avg_response_value_location, response_text)
+        VALUE FOR field IN (
+          n_responses,
+          avg_response_value_subject,
+          avg_response_value_location,
+          response_text
+        )
       ) u
   )
 SELECT

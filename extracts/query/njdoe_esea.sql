@@ -131,9 +131,19 @@ SELECT
   s.month_hours_worked,
   s.month_possible_hours,
   s.month_possible_hours - s.month_hours_worked AS month_hours_not_worked,
-  CAST(ROUND((s.month_hours_worked / s.month_possible_hours) * 100, 0) AS INT) AS month_percent_worked,
   CAST(
-    ROUND(((s.month_possible_hours - s.month_hours_worked) / s.month_possible_hours) * 100, 0) AS INT
+    ROUND(
+      (s.month_hours_worked / s.month_possible_hours) * 100,
+      0
+    ) AS INT
+  ) AS month_percent_worked,
+  CAST(
+    ROUND(
+      (
+        (s.month_possible_hours - s.month_hours_worked) / s.month_possible_hours
+      ) * 100,
+      0
+    ) AS INT
   ) AS month_percent_not_worked,
   d.month_max_days,
   d.day_1,

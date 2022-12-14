@@ -24,9 +24,21 @@ FROM
         'BusinessEmail',
         '</ContactInformationTypeXrefCode>'
       ) AS ContactInformationTypeXrefCode,
-      CONCAT('<EffectiveStart>', df.original_hire_date, '</EffectiveStart>') AS EffectiveStart,
-      CONCAT('<IsForSystemCommunication>', 1, '</IsForSystemCommunication>') AS IsForSystemCommunication,
-      CONCAT('<ElectronicAddress>', ad.mail, '</ElectronicAddress>') AS ElectronicAddress
+      CONCAT(
+        '<EffectiveStart>',
+        df.original_hire_date,
+        '</EffectiveStart>'
+      ) AS EffectiveStart,
+      CONCAT(
+        '<IsForSystemCommunication>',
+        1,
+        '</IsForSystemCommunication>'
+      ) AS IsForSystemCommunication,
+      CONCAT(
+        '<ElectronicAddress>',
+        ad.mail,
+        '</ElectronicAddress>'
+      ) AS ElectronicAddress
     FROM
       gabby.dayforce.employees df
       JOIN gabby.adsi.user_attributes_static ad ON df.df_employee_number = CAST(ad.employeenumber AS VARCHAR)

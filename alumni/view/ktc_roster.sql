@@ -77,7 +77,9 @@ FROM
       co.exitdate AS exit_date,
       co.exitcode AS exit_code,
       co.[db_name] AS exit_db_name,
-      (gabby.utilities.GLOBAL_ACADEMIC_YEAR () - co.academic_year) + co.grade_level AS current_grade_level_projection,
+      (
+        gabby.utilities.GLOBAL_ACADEMIC_YEAR () - co.academic_year
+      ) + co.grade_level AS current_grade_level_projection,
       c.id AS sf_contact_id,
       c.kipp_region_name_c AS kipp_region_name,
       c.kipp_region_school_c AS kipp_region_school,
@@ -119,7 +121,10 @@ FROM
       c.last_successful_advisor_contact_c AS last_successful_advisor_contact_date,
       c.efc_from_fafsa_c AS efc_from_fafsa,
       c.[description] AS contact_description,
-      COALESCE(c.current_kipp_student_c, 'Missing from Salesforce') AS current_kipp_student,
+      COALESCE(
+        c.current_kipp_student_c,
+        'Missing from Salesforce'
+      ) AS current_kipp_student,
       COALESCE(c.kipp_hs_class_c, co.cohort) AS ktc_cohort,
       (gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1) - DATEPART(YEAR, c.actual_hs_graduation_date_c) AS years_out_of_hs,
       rt.[name] AS record_type_name,

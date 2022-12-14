@@ -41,7 +41,11 @@ SELECT
       'Head of Schools',
       'Executive Director'
     ) THEN 'Instructional Staff'
-    WHEN c.primary_job IN ('Teacher', 'Teacher In Residence', 'Learning Specialist') THEN 'Teachers'
+    WHEN c.primary_job IN (
+      'Teacher',
+      'Teacher In Residence',
+      'Learning Specialist'
+    ) THEN 'Teachers'
     ELSE 'Not Included'
   END AS job_type,
   l.last_year_job,

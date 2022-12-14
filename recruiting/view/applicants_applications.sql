@@ -22,12 +22,24 @@ WITH
           CAST(apl.candidate_first_name AS NVARCHAR(1024)) AS candidate_first_name,
           CAST(apl.candidate_last_name AS NVARCHAR(1024)) AS candidate_last_name,
           CAST(apl.candidate_email AS NVARCHAR(1024)) AS candidate_email,
-          CAST(apl.taf_current_or_former_kipp_employee AS NVARCHAR(1024)) AS taf_current_or_former_kipp_employee,
-          CAST(apl.mia_teacher_certification_question AS NVARCHAR(1024)) AS mia_teacher_certification_question,
-          CAST(apl.mia_out_of_state_teaching_certification_details AS NVARCHAR(1024)) AS mia_out_of_state_teaching_certification_details,
-          CAST(apl.nj_teacher_certification_question AS NVARCHAR(1024)) AS nj_teacher_certification_question,
-          CAST(apl.nj_out_of_state_teacher_certification_details AS NVARCHAR(1024)) AS nj_out_of_state_teacher_certification_details,
-          CAST(apl.nj_out_of_state_teacher_certification_sped_credits AS NVARCHAR(1024)) AS nj_out_of_state_teacher_certification_sped_credits,
+          CAST(
+            apl.taf_current_or_former_kipp_employee AS NVARCHAR(1024)
+          ) AS taf_current_or_former_kipp_employee,
+          CAST(
+            apl.mia_teacher_certification_question AS NVARCHAR(1024)
+          ) AS mia_teacher_certification_question,
+          CAST(
+            apl.mia_out_of_state_teaching_certification_details AS NVARCHAR(1024)
+          ) AS mia_out_of_state_teaching_certification_details,
+          CAST(
+            apl.nj_teacher_certification_question AS NVARCHAR(1024)
+          ) AS nj_teacher_certification_question,
+          CAST(
+            apl.nj_out_of_state_teacher_certification_details AS NVARCHAR(1024)
+          ) AS nj_out_of_state_teacher_certification_details,
+          CAST(
+            apl.nj_out_of_state_teacher_certification_sped_credits AS NVARCHAR(1024)
+          ) AS nj_out_of_state_teacher_certification_sped_credits,
           CAST(apl.current_employer AS NVARCHAR(1024)) AS current_employer,
           CAST(apl.taf_affiliated_orgs AS NVARCHAR(1024)) AS taf_affiliated_orgs,
           CAST(apl.taf_other_orgs AS NVARCHAR(1024)) AS taf_other_orgs,
@@ -45,11 +57,20 @@ WITH
               apl.application_field_school_shared_with_mia
             )
           ) AS school_shared_with,
-          CONVERT(NVARCHAR(1024), COALESCE(apl.nj_undergrad_gpa, apl.mia_undergrad_gpa)) AS undergrad_gpa,
-          CONVERT(NVARCHAR(1024), COALESCE(apl.nj_grad_gpa, apl.mia_grad_gpa)) AS grad_gpa,
           CONVERT(
             NVARCHAR(1024),
-            COALESCE(apl.taf_current_or_former_kipp_employee, apl.taf_current_or_former_kipp_njmia_employee)
+            COALESCE(apl.nj_undergrad_gpa, apl.mia_undergrad_gpa)
+          ) AS undergrad_gpa,
+          CONVERT(
+            NVARCHAR(1024),
+            COALESCE(apl.nj_grad_gpa, apl.mia_grad_gpa)
+          ) AS grad_gpa,
+          CONVERT(
+            NVARCHAR(1024),
+            COALESCE(
+              apl.taf_current_or_former_kipp_employee,
+              apl.taf_current_or_former_kipp_njmia_employee
+            )
           ) AS current_or_former_kippnjmiataf_employee,
           COALESCE(
             app.application_state_lead_date,
@@ -201,8 +222,23 @@ SELECT
   app.time_in_application_state_offered,
   app.time_in_application_status_in_review_resume_review,
   CASE
-    WHEN MONTH(COALESCE(app.application_state_new_date, app.application_state_lead_date)) >= 9 THEN YEAR(COALESCE(app.application_state_new_date, app.application_state_lead_date)) + 1
-    ELSE YEAR(COALESCE(app.application_state_new_date, app.application_state_lead_date))
+    WHEN MONTH(
+      COALESCE(
+        app.application_state_new_date,
+        app.application_state_lead_date
+      )
+    ) >= 9 THEN YEAR(
+      COALESCE(
+        app.application_state_new_date,
+        app.application_state_lead_date
+      )
+    ) + 1
+    ELSE YEAR(
+      COALESCE(
+        app.application_state_new_date,
+        app.application_state_lead_date
+      )
+    )
   END AS recruiting_year
 FROM
   applicants_repivot apl
@@ -211,7 +247,11 @@ UNION ALL
 SELECT
   COALESCE(a.profile_id, a.jobapp_id) AS candidate_id,
   SUBSTRING(a.[name], 1, CHARINDEX(' ', a.[name])) AS candidate_first_name,
-  SUBSTRING(a.[name], CHARINDEX(' ', a.[name]) + 1, LEN(a.[name])) AS candidate_last_name,
+  SUBSTRING(
+    a.[name],
+    CHARINDEX(' ', a.[name]) + 1,
+    LEN(a.[name])
+  ) AS candidate_last_name,
   a.email AS candidate_email,
   CAST(a.degree_1_gpa AS NVARCHAR) AS undergrad_gpa,
   CAST(a.degree_2_gpa AS NVARCHAR) AS grad_gpa,

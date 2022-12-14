@@ -51,11 +51,18 @@ FROM
       FROM
         gabby.illuminate_dna_assessments.reporting_groups
       WHERE
-        [label] IN ('Multiple Choice', 'Open Ended Response', 'Open-Ended Response')
+        [label] IN (
+          'Multiple Choice',
+          'Open Ended Response',
+          'Open-Ended Response'
+        )
     )
     OR frg.reporting_group_id IS NULL
   )
   LEFT JOIN standards_grouped sg ON f.field_id = sg.field_id
 WHERE
   a.deleted_at IS NULL
-  AND a.academic_year_clean IN (gabby.utilities.GLOBAL_ACADEMIC_YEAR (), gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1)
+  AND a.academic_year_clean IN (
+    gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+    gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
+  )

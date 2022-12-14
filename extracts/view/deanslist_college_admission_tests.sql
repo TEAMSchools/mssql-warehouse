@@ -4,7 +4,11 @@ CREATE OR ALTER VIEW
 SELECT
   ktc.student_number,
   st.test_type_c AS test_type,
-  CONCAT(LEFT(DATENAME(MONTH, st.date_c), 3), ' ', DATENAME(YEAR, st.date_c)) AS test_date,
+  CONCAT(
+    LEFT(DATENAME(MONTH, st.date_c), 3),
+    ' ',
+    DATENAME(YEAR, st.date_c)
+  ) AS test_date,
   st.act_composite_c AS act_composite,
   st.act_math_c AS act_math,
   st.act_science_c AS act_science,
@@ -27,7 +31,11 @@ UNION ALL
 SELECT
   ktc.student_number,
   st.test_type_c AS test_type,
-  CONCAT(LEFT(DATENAME(MONTH, st.date_c), 3), ' ', DATENAME(YEAR, st.date_c)) AS test_date,
+  CONCAT(
+    LEFT(DATENAME(MONTH, st.date_c), 3),
+    ' ',
+    DATENAME(YEAR, st.date_c)
+  ) AS test_date,
   NULL AS act_composite,
   NULL AS act_math,
   NULL AS act_science,
@@ -36,7 +44,11 @@ SELECT
   NULL AS act_writing,
   st.sat_total_score_c AS sat_total,
   COALESCE(st.sat_math_c, st.sat_math_pre_2016_c) AS sat_math,
-  COALESCE(st.sat_ebrw_c, st.sat_verbal_c, st.sat_critical_reading_pre_2016_c) AS sat_reading,
+  COALESCE(
+    st.sat_ebrw_c,
+    st.sat_verbal_c,
+    st.sat_critical_reading_pre_2016_c
+  ) AS sat_reading,
   COALESCE(st.sat_writing_c, st.sat_writing_pre_2016_c) AS sat_writing,
   NULL AS sat_mc,
   NULL AS sat_essay

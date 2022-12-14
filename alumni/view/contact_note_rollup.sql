@@ -96,8 +96,16 @@ FROM
             WHEN c.subject_c LIKE 'Grad Plan%' THEN 'GP'
             WHEN c.subject_c LIKE 'Q%SM%' THEN 'SM' + SUBSTRING(c.subject_c, 7, 1)
             WHEN c.subject_c LIKE '%HV' THEN 'HV'
-            WHEN c.subject_c LIKE 'DP%' THEN REPLACE(gabby.utilities.STRIP_CHARACTERS (c.subject_c, ':-'), ' ', '_')
-            WHEN c.subject_c LIKE 'BGP%' THEN REPLACE(gabby.utilities.STRIP_CHARACTERS (c.subject_c, ':-'), ' ', '_')
+            WHEN c.subject_c LIKE 'DP%' THEN REPLACE(
+              gabby.utilities.STRIP_CHARACTERS (c.subject_c, ':-'),
+              ' ',
+              '_'
+            )
+            WHEN c.subject_c LIKE 'BGP%' THEN REPLACE(
+              gabby.utilities.STRIP_CHARACTERS (c.subject_c, ':-'),
+              ' ',
+              '_'
+            )
             WHEN c.subject_c = 'Housing Deposit Paid' THEN 'HD_P'
             WHEN c.subject_c = 'Housing Deposit Not Required' THEN 'HD_NR'
             WHEN c.subject_c = 'Tuition Deposit Paid' THEN 'TD_P'

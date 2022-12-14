@@ -134,7 +134,10 @@ WITH
       COALESCE(r.date_created, w.date_created) AS date_created,
       COALESCE(r.survey_timestamp, w.survey_timestamp) AS date_submitted,
       COALESCE(r.subject_name, w.subject_name) AS subject_name,
-      COALESCE(r.subject_df_employee_number, w.subject_df_employee_number) AS subject_df_employee_number,
+      COALESCE(
+        r.subject_df_employee_number,
+        w.subject_df_employee_number
+      ) AS subject_df_employee_number,
       COALESCE(r.email, w.email) AS responder_email,
       COALESCE(r.academic_year, w.academic_year) AS academic_year,
       COALESCE(r.reporting_term, w.reporting_term) AS reporting_term,
@@ -245,12 +248,36 @@ SELECT
   s.job_title_description,
   s.position_status,
   COALESCE(f1.date_created, f2.date_created, f3.date_created) AS date_created,
-  COALESCE(f1.date_submitted, f2.date_submitted, f3.date_submitted) AS date_submitted,
-  COALESCE(f1.responder_email, f2.responder_email, f3.responder_email, email1) AS responder_email,
+  COALESCE(
+    f1.date_submitted,
+    f2.date_submitted,
+    f3.date_submitted
+  ) AS date_submitted,
+  COALESCE(
+    f1.responder_email,
+    f2.responder_email,
+    f3.responder_email,
+    email1
+  ) AS responder_email,
   COALESCE(f1.subject_name, f2.subject_name, f3.subject_name) AS subject_name,
-  COALESCE(s.academic_year, f1.academic_year, f2.academic_year, f3.academic_year) AS academic_year,
-  COALESCE(s.reporting_term, f1.reporting_term, f2.reporting_term, f3.reporting_term) AS reporting_term,
-  COALESCE(s.survey_type, f1.survey_type, f2.survey_type, f3.survey_type) AS survey_type,
+  COALESCE(
+    s.academic_year,
+    f1.academic_year,
+    f2.academic_year,
+    f3.academic_year
+  ) AS academic_year,
+  COALESCE(
+    s.reporting_term,
+    f1.reporting_term,
+    f2.reporting_term,
+    f3.reporting_term
+  ) AS reporting_term,
+  COALESCE(
+    s.survey_type,
+    f1.survey_type,
+    f2.survey_type,
+    f3.survey_type
+  ) AS survey_type,
   COALESCE(f1.is_manager, f2.is_manager, f3.is_manager) AS is_manager
 FROM
   teacher_scaffold s

@@ -41,7 +41,10 @@ WITH
       ) AS rn_term_asc
     FROM
       gabby.alumni.enrollment_c e
-      INNER JOIN term_scaff ts ON ts.term_start_date BETWEEN e.start_date_c AND COALESCE(e.actual_end_date_c, CAST(CURRENT_TIMESTAMP AS DATE))
+      INNER JOIN term_scaff ts ON ts.term_start_date BETWEEN e.start_date_c AND COALESCE(
+        e.actual_end_date_c,
+        CAST(CURRENT_TIMESTAMP AS DATE)
+      )
     WHERE
       e.is_deleted = 0
   )
@@ -80,5 +83,18 @@ FROM
       AND es.term_season = t.term_season_c
       AND t.is_deleted = 0
   ) sub PIVOT (
-    MAX(is_enrolled_term) FOR rn_term_asc IN ([1], [2], [3], [4], [5], [6], [7], [8], [9], [10], [11], [12])
+    MAX(is_enrolled_term) FOR rn_term_asc IN (
+      [1],
+      [2],
+      [3],
+      [4],
+      [5],
+      [6],
+      [7],
+      [8],
+      [9],
+      [10],
+      [11],
+      [12]
+    )
   ) p

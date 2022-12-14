@@ -37,16 +37,28 @@ WITH
 SELECT
   column_name,
   label,
-  COALESCE([repository_126], CONCAT(',NULL AS [', label, ']')) AS [repository_126],
-  COALESCE([repository_169], CONCAT(',NULL AS [', label, ']')) AS [repository_169],
-  COALESCE([repository_170], CONCAT(',NULL AS [', label, ']')) AS [repository_170]
+  COALESCE(
+    [repository_126],
+    CONCAT(',NULL AS [', label, ']')
+  ) AS [repository_126],
+  COALESCE(
+    [repository_169],
+    CONCAT(',NULL AS [', label, ']')
+  ) AS [repository_169],
+  COALESCE(
+    [repository_170],
+    CONCAT(',NULL AS [', label, ']')
+  ) AS [repository_170]
 FROM
   (
     SELECT
       t.name AS table_name,
       c.name AS column_name,
       f.label,
-      COALESCE(',' + c.name + ' AS [' + LTRIM(RTRIM(f.label)) + ']', ',' + c.name) AS pivot_value
+      COALESCE(
+        ',' + c.name + ' AS [' + LTRIM(RTRIM(f.label)) + ']',
+        ',' + c.name
+      ) AS pivot_value
     FROM
       gabby.sys.tables t
       JOIN gabby.sys.all_columns c ON t.object_id = c.object_id
@@ -63,6 +75,10 @@ FROM
       )
       -- /*
   ) sub PIVOT (
-    MAX(pivot_value) FOR table_name IN ([repository_126], [repository_169], [repository_170])
+    MAX(pivot_value) FOR table_name IN (
+      [repository_126],
+      [repository_169],
+      [repository_170]
+    )
   ) p
   -- */

@@ -26,7 +26,9 @@ SELECT
   CAST(JSON_VALUE([progress], '$.percent') AS FLOAT) AS progress_percent,
   JSON_VALUE([progress], '$.assigner') AS progress_assigner,
   JSON_VALUE([progress], '$.justification') AS progress_justification,
-  CAST(JSON_VALUE([progress], '$.date') AS DATETIMEOFFSET) AS progress_date
+  CAST(
+    JSON_VALUE([progress], '$.date') AS DATETIMEOFFSET
+  ) AS progress_date
   /* JSON arrays */
 ,
   [tags]

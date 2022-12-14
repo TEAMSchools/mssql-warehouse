@@ -55,8 +55,18 @@ FROM
       ) AS position_name_splitter,
       CASE
         WHEN CHARINDEX('_', pn.position_name_c) = 0 THEN NULL
-        WHEN LEN(RIGHT(pn.position_name_c, CHARINDEX('_', REVERSE(pn.position_name_c)) - 1)) > 3 THEN NULL
-        ELSE LEN(RIGHT(pn.position_name_c, CHARINDEX('_', REVERSE(pn.position_name_c)) - 1))
+        WHEN LEN(
+          RIGHT(
+            pn.position_name_c,
+            CHARINDEX('_', REVERSE(pn.position_name_c)) - 1
+          )
+        ) > 3 THEN NULL
+        ELSE LEN(
+          RIGHT(
+            pn.position_name_c,
+            CHARINDEX('_', REVERSE(pn.position_name_c)) - 1
+          )
+        )
       END AS position_count
     FROM
       gabby.recruiting.job_position_c pn

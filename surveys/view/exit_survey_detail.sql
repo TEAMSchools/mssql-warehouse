@@ -22,7 +22,10 @@ SELECT
   df.primary_site AS [location],
   df.manager_name AS manager,
   MONTH(df.original_hire_date) AS hire_month,
-  COALESCE(YEAR(df.termination_date), YEAR(CURRENT_TIMESTAMP)) - YEAR(df.original_hire_date) + 1 AS years_at_kipp,
+  COALESCE(
+    YEAR(df.termination_date),
+    YEAR(CURRENT_TIMESTAMP)
+  ) - YEAR(df.original_hire_date) + 1 AS years_at_kipp,
   gabby.utilities.DATE_TO_SY (df.termination_date) AS termination_academic_year,
   es.[timestamp] AS exit_survey_date,
   es.q_1 AS exit_survey_title,

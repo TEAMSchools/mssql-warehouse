@@ -14,6 +14,10 @@ FROM
   njdoe.certification_application_history_static ah
   CROSS APPLY OPENJSON (ah.checklist, '$.tasks')
 WITH
-  (task NVARCHAR(256), comment NVARCHAR(512), complete BIT) AS cl
+  (
+    task NVARCHAR(256),
+    comment NVARCHAR(512),
+    complete BIT
+  ) AS cl
 WHERE
   ah.checklist <> '[]'

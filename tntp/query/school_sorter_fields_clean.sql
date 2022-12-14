@@ -8,7 +8,12 @@ WITH
     WHERE
       ISNUMERIC(RIGHT(field, 1)) = 1
       AND RIGHT(field, 1) <> '.'
-      AND field NOT IN ('Offer by Aug 1', 'Offer by July 1', 'Offer by June 1', 'Offer by May 1')
+      AND field NOT IN (
+        'Offer by Aug 1',
+        'Offer by July 1',
+        'Offer by June 1',
+        'Offer by May 1'
+      )
   ),
   remove_ending_period AS (
     SELECT

@@ -72,7 +72,15 @@ FROM
         WHERE
           bb.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
           AND bb.measurementscale IN ('Mathematics', 'Reading')
-      ) sub UNPIVOT (VALUE FOR field IN (rit_baseline, pctl_baseline, rit_keepup, rit_50pctl, rit_75pctl)) u
+      ) sub UNPIVOT (
+        VALUE FOR field IN (
+          rit_baseline,
+          pctl_baseline,
+          rit_keepup,
+          rit_50pctl,
+          rit_75pctl
+        )
+      ) u
   ) sub PIVOT (
     MAX(VALUE) FOR pivot_field IN (
       mathematics_pctl_baseline,

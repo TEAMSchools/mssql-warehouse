@@ -35,7 +35,15 @@ SELECT
   r.region,
   r.schoolid,
   r.grade_level,
-  CONCAT(r.school_name, ' ', LEFT(ce.teacher_name, CHARINDEX(',', ce.teacher_name) - 1), ' ELA') AS [Roster Name],
+  CONCAT(
+    r.school_name,
+    ' ',
+    LEFT(
+      ce.teacher_name,
+      CHARINDEX(',', ce.teacher_name) - 1
+    ),
+    ' ELA'
+  ) AS [Roster Name],
   'ELA' AS [Subject],
   NULL AS [Course],
   807325965 AS [School Identifier],
@@ -45,8 +53,14 @@ SELECT
   r.first_name AS [Student Legal First Name],
   r.last_name AS [Student Legal Last Name],
   ce.teachernumber AS [Educator Identifier],
-  RIGHT(ce.teacher_name, LEN(ce.teacher_name) - CHARINDEX(',', ce.teacher_name) - 1) AS [Educator First Name],
-  LEFT(ce.teacher_name, CHARINDEX(',', ce.teacher_name) - 1) AS [Educator Last Name],
+  RIGHT(
+    ce.teacher_name,
+    LEN(ce.teacher_name) - CHARINDEX(',', ce.teacher_name) - 1
+  ) AS [Educator First Name],
+  LEFT(
+    ce.teacher_name,
+    CHARINDEX(',', ce.teacher_name) - 1
+  ) AS [Educator Last Name],
   NULL AS [Remove from Roster]
 FROM
   roster r
@@ -62,7 +76,15 @@ SELECT
   r.region,
   r.schoolid,
   r.grade_level,
-  CONCAT(r.school_name, ' ', LEFT(ce.teacher_name, CHARINDEX(',', ce.teacher_name) - 1), ' Math') AS [Roster Name],
+  CONCAT(
+    r.school_name,
+    ' ',
+    LEFT(
+      ce.teacher_name,
+      CHARINDEX(',', ce.teacher_name) - 1
+    ),
+    ' Math'
+  ) AS [Roster Name],
   'M' AS [Subject],
   NULL AS [Course],
   807325965 AS [School Identifier],
@@ -72,8 +94,14 @@ SELECT
   r.first_name AS [Student Legal First Name],
   r.last_name AS [Student Legal Last Name],
   ce.teachernumber AS [Educator Identifier],
-  RIGHT(ce.teacher_name, LEN(ce.teacher_name) - CHARINDEX(',', ce.teacher_name) - 1) AS [Educator First Name],
-  LEFT(ce.teacher_name, CHARINDEX(',', ce.teacher_name) -1) AS [Educator Last Name],
+  RIGHT(
+    ce.teacher_name,
+    LEN(ce.teacher_name) - CHARINDEX(',', ce.teacher_name) - 1
+  ) AS [Educator First Name],
+  LEFT(
+    ce.teacher_name,
+    CHARINDEX(',', ce.teacher_name) -1
+  ) AS [Educator Last Name],
   NULL AS [Remove from Roster]
 FROM
   roster r

@@ -24,7 +24,11 @@ SELECT
   /*default TNTP assignments based on title/location*/
 ,
   CASE
-    WHEN s.primary_site IN ('Room 9 - 60 Park Pl', 'Room 10 - 121 Market St', 'Room 11 - 1951 NW 7th Ave') THEN 'Regional Staff'
+    WHEN s.primary_site IN (
+      'Room 9 - 60 Park Pl',
+      'Room 10 - 121 Market St',
+      'Room 11 - 1951 NW 7th Ave'
+    ) THEN 'Regional Staff'
     WHEN s.primary_job IN (
       'Teacher',
       'Teacher in Residence',
@@ -70,7 +74,11 @@ SELECT
   END AS engagement_survey_assignment,
   CASE
     WHEN s.primary_on_site_department = 'Elementary'
-    AND e.student_grade_level IS NOT NULL THEN CONCAT(s.primary_on_site_department, ', Grade ', e.student_grade_level)
+    AND e.student_grade_level IS NOT NULL THEN CONCAT(
+      s.primary_on_site_department,
+      ', Grade ',
+      e.student_grade_level
+    )
     ELSE s.primary_on_site_department
   END AS department_grade,
   s.manager_name
@@ -78,7 +86,11 @@ SELECT
 ,
   CASE
     WHEN s.legal_entity_name <> 'KIPP TEAM and Family Schools Inc.'
-    AND s.primary_site NOT IN ('Room 9 - 60 Park Pl', 'Room 10 - 121 Market St', 'Room 11 - 1951 NW 7th Ave') THEN 'school-based'
+    AND s.primary_site NOT IN (
+      'Room 9 - 60 Park Pl',
+      'Room 10 - 121 Market St',
+      'Room 11 - 1951 NW 7th Ave'
+    ) THEN 'school-based'
   END AS school_based
 FROM
   gabby.people.staff_crosswalk_static s

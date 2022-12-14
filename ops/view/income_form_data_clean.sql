@@ -12,7 +12,12 @@ SELECT
     ELSE LEFT([status], 1) + ' - ' + 'Income Form'
   END AS lunch_app_status,
   CASE
-    WHEN [status] IN ('No Application', 'Application Received', 'Jotform', 'No') THEN NULL
+    WHEN [status] IN (
+      'No Application',
+      'Application Received',
+      'Jotform',
+      'No'
+    ) THEN NULL
     WHEN [status] = 'Direct Certification' THEN 'F'
     ELSE LEFT([status], 1)
   END AS lunch_status,

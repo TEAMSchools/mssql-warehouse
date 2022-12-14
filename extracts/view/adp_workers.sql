@@ -15,7 +15,10 @@ SELECT
   w.associate_oid,
   LOWER(ads.mail) AS mail,
   CASE
-    WHEN wfm.associate_id IS NOT NULL THEN CONCAT('DR', CONVERT(NVARCHAR(8), CURRENT_TIMESTAMP, 112))
+    WHEN wfm.associate_id IS NOT NULL THEN CONCAT(
+      'DR',
+      CONVERT(NVARCHAR(8), CURRENT_TIMESTAMP, 112)
+    )
   END AS wfm_trigger
 FROM
   gabby.people.staff_roster scw

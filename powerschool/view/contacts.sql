@@ -5,7 +5,10 @@ SELECT
   s.family_ident,
   sca.personid,
   sca.contactpriorityorder,
-  COALESCE(ocm.originalcontacttype, CONCAT('contact', sca.contactpriorityorder)) AS person_type,
+  COALESCE(
+    ocm.originalcontacttype,
+    CONCAT('contact', sca.contactpriorityorder)
+  ) AS person_type,
   p.firstname,
   p.lastname,
   scd.isemergency,

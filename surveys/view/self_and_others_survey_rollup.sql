@@ -21,7 +21,10 @@ SELECT
   ROUND(AVG(answer_value), 1) AS avg_response_value,
   SUM(answer_weight) AS total_response_weight,
   SUM(answer_value_weighted) AS total_weighted_response_value,
-  ROUND(SUM(answer_value_weighted) / SUM(answer_weight), 1) AS avg_weighted_response_value,
+  ROUND(
+    SUM(answer_value_weighted) / SUM(answer_weight),
+    1
+  ) AS avg_weighted_response_value,
   NULL AS avg_response_value_location
 FROM
   gabby.surveys.self_and_others_survey_detail

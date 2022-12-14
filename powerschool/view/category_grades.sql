@@ -36,7 +36,9 @@ WITH
           tb.date_1 AS termbin_start_date,
           tb.date_2 AS termbin_end_date,
           LEFT(tb.storecode, 1) AS storecode_type,
-          CAST(CONCAT('RT', RIGHT(tb.storecode, 1)) AS NVARCHAR(8)) AS reporting_term
+          CAST(
+            CONCAT('RT', RIGHT(tb.storecode, 1)) AS NVARCHAR(8)
+          ) AS reporting_term
         FROM
           powerschool.cc
           INNER JOIN powerschool.termbins tb ON cc.schoolid = tb.schoolid

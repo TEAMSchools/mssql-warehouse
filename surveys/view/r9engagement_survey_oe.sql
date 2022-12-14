@@ -29,7 +29,9 @@ WITH
           CAST(region_7 AS NVARCHAR(MAX)) AS region_7
         FROM
           gabby.surveys.r9engagement_survey_final
-      ) sub UNPIVOT (response_value FOR question_code IN (region_6, region_7)) u
+      ) sub UNPIVOT (
+        response_value FOR question_code IN (region_6, region_7)
+      ) u
   )
 SELECT
   su.academic_year,

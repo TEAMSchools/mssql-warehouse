@@ -60,7 +60,9 @@ WITH
       CAST(words_goal AS INT) AS words_goal,
       UPPER(REPLACE(term_name, '_', '')) AS term_name
     FROM
-      gabby.renaissance.ar_default_goals UNPIVOT (words_goal FOR term_name IN (q_1, q_2, q_3, q_4, y_1)) u
+      gabby.renaissance.ar_default_goals UNPIVOT (
+        words_goal FOR term_name IN (q_1, q_2, q_3, q_4, y_1)
+      ) u
   )
   /*
   ,ms_goals AS (

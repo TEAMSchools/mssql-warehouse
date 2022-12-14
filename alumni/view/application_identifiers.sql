@@ -97,7 +97,10 @@ FROM
       app.transfer_application_c AS transfer_application,
       app.created_date,
       app.type_for_roll_ups_c AS type_for_roll_ups,
-      COALESCE(app.starting_application_status_c, app.application_status_c) AS starting_application_status,
+      COALESCE(
+        app.starting_application_status_c,
+        app.application_status_c
+      ) AS starting_application_status,
       acc.[name] AS application_name,
       acc.[type] AS application_account_type,
       enr.status_c AS application_enrollment_status,

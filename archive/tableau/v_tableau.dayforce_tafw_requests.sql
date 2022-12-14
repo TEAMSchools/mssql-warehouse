@@ -4,9 +4,21 @@ CREATE OR ALTER VIEW
 SELECT
   t.reference_code AS df_employee_number,
   t.tafw_status,
-  DATEADD(MINUTE, DATEPART(TZOFFSET, t.time_requested), CAST(t.time_requested AS DATETIME2)) AS tafw_request_date,
-  DATEADD(MINUTE, DATEPART(TZOFFSET, t.start_date_time), CAST(t.start_date_time AS DATETIME2)) AS tafw_start_date,
-  DATEADD(MINUTE, DATEPART(TZOFFSET, t.end_date_time), CAST(t.end_date_time AS DATETIME2)) AS tafw_end_date,
+  DATEADD(
+    MINUTE,
+    DATEPART(TZOFFSET, t.time_requested),
+    CAST(t.time_requested AS DATETIME2)
+  ) AS tafw_request_date,
+  DATEADD(
+    MINUTE,
+    DATEPART(TZOFFSET, t.start_date_time),
+    CAST(t.start_date_time AS DATETIME2)
+  ) AS tafw_start_date,
+  DATEADD(
+    MINUTE,
+    DATEPART(TZOFFSET, t.end_date_time),
+    CAST(t.end_date_time AS DATETIME2)
+  ) AS tafw_end_date,
   r.preferred_name AS employee_name,
   r.userprincipalname AS employee_email,
   r.primary_site AS location,

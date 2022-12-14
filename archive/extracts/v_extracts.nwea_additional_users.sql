@@ -11,7 +11,11 @@ SELECT
     WHEN sr.primary_site = 'KIPP Pathways at Bragaw' THEN 'Life Academy'
     WHEN sr.primary_site = 'KIPP Pathways at 18th Ave' THEN 'BOLD Academy'
     WHEN sr.primary_site IN ('KIPP Liberty Academy', 'KIPP Sunrise Academy') THEN sr.primary_site
-    ELSE REPLACE(REPLACE(sr.primary_site, 'KIPP ', ''), 'Square', 'Sq')
+    ELSE REPLACE(
+      REPLACE(sr.primary_site, 'KIPP ', ''),
+      'Square',
+      'Sq'
+    )
   END AS [School Name],
   sr.ps_teachernumber AS [Instructor ID],
   sr.df_employee_number AS [Instructor State ID],

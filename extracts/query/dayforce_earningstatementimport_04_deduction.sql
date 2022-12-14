@@ -15,7 +15,19 @@ SELECT
   other_deduction_description + ' (' + other_deduction_code_pay_statements + ')' AS DeductionName,
   0 AS IsStatutory,
   CASE
-    WHEN other_deduction_code_pay_statements IN ('L', 'D42', 'HCP', 'P', 'E', 'HSA', 'D31', 'Q', 'D40', 'D30', '30') THEN 1
+    WHEN other_deduction_code_pay_statements IN (
+      'L',
+      'D42',
+      'HCP',
+      'P',
+      'E',
+      'HSA',
+      'D31',
+      'Q',
+      'D40',
+      'D30',
+      '30'
+    ) THEN 1
     ELSE 0
   END AS IsPreTax,
   other_deduction_amount_pay_statements AS Amount,

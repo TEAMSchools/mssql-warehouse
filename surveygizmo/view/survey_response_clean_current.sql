@@ -56,14 +56,28 @@ FROM
       CAST(sr.user_agent AS NVARCHAR(512)) AS user_agent,
       CAST(sr.referer AS NVARCHAR(1024)) AS referer,
       CAST(sr.data_quality AS NVARCHAR(MAX)) AS data_quality_json,
-      CAST(JSON_VALUE(sr.url_variables, '$._privatedomain') AS NVARCHAR(1)) AS url_privatedomain,
-      CAST(JSON_VALUE(sr.url_variables, '$.__contact') AS NVARCHAR(32)) AS url_contact,
-      CAST(JSON_VALUE(sr.url_variables, '$.__messageid') AS NVARCHAR(32)) AS url_messageid,
-      CAST(JSON_VALUE(sr.url_variables, '$.sguid') AS NVARCHAR(32)) AS url_sguid,
-      CAST(JSON_VALUE(sr.url_variables, '$.__pathdata') AS NVARCHAR(256)) AS url_pathdata,
-      CAST(COALESCE(sr.survey_data_list, sr.survey_data) AS NVARCHAR(MAX)) AS survey_data_json,
+      CAST(
+        JSON_VALUE(sr.url_variables, '$._privatedomain') AS NVARCHAR(1)
+      ) AS url_privatedomain,
+      CAST(
+        JSON_VALUE(sr.url_variables, '$.__contact') AS NVARCHAR(32)
+      ) AS url_contact,
+      CAST(
+        JSON_VALUE(sr.url_variables, '$.__messageid') AS NVARCHAR(32)
+      ) AS url_messageid,
+      CAST(
+        JSON_VALUE(sr.url_variables, '$.sguid') AS NVARCHAR(32)
+      ) AS url_sguid,
+      CAST(
+        JSON_VALUE(sr.url_variables, '$.__pathdata') AS NVARCHAR(256)
+      ) AS url_pathdata,
+      CAST(
+        COALESCE(sr.survey_data_list, sr.survey_data) AS NVARCHAR(MAX)
+      ) AS survey_data_json,
       CAST(LEFT(sr.date_started, 19) AS DATETIME2) AS datetime_started,
-      CAST(CONVERT(DATETIME2, LEFT(sr.date_started, 19)) AS DATE) AS date_started,
+      CAST(
+        CONVERT(DATETIME2, LEFT(sr.date_started, 19)) AS DATE
+      ) AS date_started,
       CONVERT(
         DATETIME2,
         CASE
@@ -79,7 +93,9 @@ FROM
           END
         )
       ) AS date_submitted,
-      CAST(COALESCE(dq.[status], sr.[status]) AS NVARCHAR(32)) AS [status],
+      CAST(
+        COALESCE(dq.[status], sr.[status]) AS NVARCHAR(32)
+      ) AS [status],
       ROW_NUMBER() OVER (
         PARTITION BY
           sr.id,
@@ -96,7 +112,11 @@ FROM
       LEFT JOIN gabby.surveygizmo.survey_response_disqualified dq ON sr.id = dq.id
       AND sr.survey_id = dq.survey_id
     WHERE
-      CAST(LEFT(sr.date_started, 19)) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR (), 7, 1 AS DATETIME2)
+      CAST(LEFT(sr.date_started, 19)) >= DATEFROMPARTS(
+        gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+        7,
+        1 AS DATETIME2
+      )
   ) sub
 WHERE
   sub.rn = 1

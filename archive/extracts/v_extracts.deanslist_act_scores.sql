@@ -16,7 +16,10 @@ FROM
     SELECT
       student_number,
       academic_year,
-      CONCAT('scale_score_', LOWER(REPLACE(time_per_name, '-', ''))) AS field,
+      CONCAT(
+        'scale_score_',
+        LOWER(REPLACE(time_per_name, '-', ''))
+      ) AS field,
       scale_score
     FROM
       gabby.act.test_prep_scores

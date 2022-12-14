@@ -30,12 +30,20 @@ WITH
         WHERE
           position_status NOT IN ('Terminated', 'Pre-Start')
           AND job_title <> 'Intern'
-      ) sub PIVOT (SUM([days]) FOR status_clean IN (active, inactive)) p
+      ) sub PIVOT (
+        SUM([days]) FOR status_clean IN (active, inactive)
+      ) p
   ),
   years_teaching_at_kipp AS (
     SELECT
       was.employee_number,
-      SUM(DATEDIFF(DAY, was.effective_start_date, was.effective_end_date)) AS days_as_teacher
+      SUM(
+        DATEDIFF(
+          DAY,
+          was.effective_start_date,
+          was.effective_end_date
+        )
+      ) AS days_as_teacher
     FROM
       gabby.people.employment_history_static was
     WHERE

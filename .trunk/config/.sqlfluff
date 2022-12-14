@@ -4,13 +4,12 @@ exclude_rules = L003, L018, L036
 
 [sqlfluff:rules]
 max_line_length = 88
-capitalisation_policy = lower
-extended_capitalisation_policy = lower
 
-[sqlfluff:indentation]
-indented_joins = False
-indented_using_on = True
-template_blocks_indent = False
+[sqlfluff:rules:L010]
+capitalisation_policy = upper
 
-[sqlfluff:rules:L052]
-multiline_newline = True
+[sqlfluff:rules:L011]
+aliasing = implicit
+
+[sqlfluff:rules:L031]
+force_enable = True

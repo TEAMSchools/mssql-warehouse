@@ -83,7 +83,11 @@ WITH
     CONVERT(
       VARCHAR(500),
       CASE
-        WHEN CONCAT(sub.residency_proof_1, sub.residency_proof_2, sub.residency_proof_3) NOT LIKE '%Missing%' THEN 'Y'
+        WHEN CONCAT(
+          sub.residency_proof_1,
+          sub.residency_proof_2,
+          sub.residency_proof_3
+        ) NOT LIKE '%Missing%' THEN 'Y'
         ELSE 'N'
       END
     )

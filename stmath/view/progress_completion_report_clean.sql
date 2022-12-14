@@ -64,7 +64,13 @@ SELECT
       END
     )
   ) AS days_elapsed,
-  CAST(DATEDIFF(DAY, CAST(dt.start_date AS DATE), CAST(dt.end_date AS DATE)) AS FLOAT) AS total_days,
+  CAST(
+    DATEDIFF(
+      DAY,
+      CAST(dt.start_date AS DATE),
+      CAST(dt.end_date AS DATE)
+    ) AS FLOAT
+  ) AS total_days,
   ROW_NUMBER() OVER (
     PARTITION BY
       stm.school_student_id,

@@ -48,12 +48,18 @@ SELECT
   app.application_status_interview_phone_screen_complete_date,
   app.time_in_application_status_interview_phone_screen_requested,
   app.application_status_interview_phone_screen_requested_date,
-  COALESCE(app.application_state_lead_date, app.application_state_new_date) AS enter_sr_date,
+  COALESCE(
+    app.application_state_lead_date,
+    app.application_state_new_date
+  ) AS enter_sr_date,
   ROW_NUMBER() OVER (
     PARTITION BY
       c.candidate_id
     ORDER BY
-      COALESCE(app.application_state_lead_date, app.application_state_new_date)
+      COALESCE(
+        app.application_state_lead_date,
+        app.application_state_new_date
+      )
   ) AS row_most_recent
 FROM
   gabby.smartrecruiters.report_applications AS app

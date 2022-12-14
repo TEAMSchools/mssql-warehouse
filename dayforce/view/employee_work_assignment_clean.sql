@@ -38,7 +38,10 @@ FROM
         ewa.employee_reference_code
       ) AS position_id,
       CAST(ewa.work_assignment_effective_start AS DATE) AS work_assignment_effective_start,
-      LEAD(CAST(ewa.work_assignment_effective_start AS DATE), 1) OVER (
+      LEAD(
+        CAST(ewa.work_assignment_effective_start AS DATE),
+        1
+      ) OVER (
         PARTITION BY
           ewa.employee_reference_code
         ORDER BY

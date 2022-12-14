@@ -19,7 +19,11 @@ FROM
       CAST(score AS INT) AS score,
       CASE
         WHEN test_date = '0000-00-00' THEN NULL
-        WHEN RIGHT(test_date, 2) = '00' THEN DATEFROMPARTS(LEFT(test_date, 4), SUBSTRING(test_date, 6, 2), 01)
+        WHEN RIGHT(test_date, 2) = '00' THEN DATEFROMPARTS(
+          LEFT(test_date, 4),
+          SUBSTRING(test_date, 6, 2),
+          01
+        )
         ELSE CAST(test_date AS DATE)
       END AS test_date
     FROM

@@ -49,7 +49,15 @@ SELECT
     WHEN co.enroll_status = 2 THEN 'Transferred Out'
     WHEN co.enroll_status = 3 THEN 'Graduated'
   END AS enroll_status,
-  CONCAT(co.street, ', ', co.city, ', ', co.[state], ' ', co.zip) AS home_address,
+  CONCAT(
+    co.street,
+    ', ',
+    co.city,
+    ', ',
+    co.[state],
+    ' ',
+    co.zip
+  ) AS home_address,
   co.student_web_id + '@teamstudents.org' AS student_email,
   CONCAT(co.student_web_password, 'kipp') AS student_web_password,
   co.student_web_id + '.fam' AS family_access_id,

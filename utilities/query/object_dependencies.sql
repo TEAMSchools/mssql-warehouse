@@ -1,12 +1,27 @@
 USE gabby GO
 SELECT
-  CONCAT(atc.[db_name], '.', atc.[schema_name], '.', atc.table_name)
+  CONCAT(
+    atc.[db_name],
+    '.',
+    atc.[schema_name],
+    '.',
+    atc.table_name
+  )
 COLLATE latin1_general_bin AS source_object,
 atc.[type],
-CONCAT(DB_NAME(), '.', sre.referencing_schema_name, '.', sre.referencing_entity_name) AS referencing_object
+CONCAT(
+  DB_NAME(),
+  '.',
+  sre.referencing_schema_name,
+  '.',
+  sre.referencing_entity_name
+) AS referencing_object
 FROM
   gabby.utilities.all_tables_columns atc
-  CROSS APPLY [sys].[dm_sql_referencing_entities] (CONCAT(atc.[schema_name], '.', atc.[table_name]), 'OBJECT') sre
+  CROSS APPLY [sys].[dm_sql_referencing_entities] (
+    CONCAT(atc.[schema_name], '.', atc.[table_name]),
+    'OBJECT'
+  ) sre
 WHERE
   atc.column_id = -1
 ORDER BY

@@ -129,14 +129,28 @@ FROM
         WHEN sr.position_status = 'Leave' THEN 'INACTIVE'
         ELSE UPPER(sr.position_status)
       END AS [status],
-      COALESCE(idps.ps_teachernumber, sr.associate_id_legacy, CAST(sr.employee_number AS VARCHAR(25))) AS ps_teachernumber,
+      COALESCE(
+        idps.ps_teachernumber,
+        sr.associate_id_legacy,
+        CAST(sr.employee_number AS VARCHAR(25))
+      ) AS ps_teachernumber,
       ads.samaccountname,
       ads.userprincipalname,
       ads.mail,
       ads.is_active AS is_active_ad,
       CASE
-        WHEN sr.business_unit = 'KIPP Miami' THEN LOWER(LEFT(ads.userprincipalname, CHARINDEX('@', ads.userprincipalname))) + 'kippmiami.org'
-        ELSE LOWER(LEFT(ads.userprincipalname, CHARINDEX('@', ads.userprincipalname))) + 'apps.teamschools.org'
+        WHEN sr.business_unit = 'KIPP Miami' THEN LOWER(
+          LEFT(
+            ads.userprincipalname,
+            CHARINDEX('@', ads.userprincipalname)
+          )
+        ) + 'kippmiami.org'
+        ELSE LOWER(
+          LEFT(
+            ads.userprincipalname,
+            CHARINDEX('@', ads.userprincipalname)
+          )
+        ) + 'apps.teamschools.org'
       END AS google_email,
       adm.samaccountname AS manager_samaccountname,
       adm.userprincipalname AS manager_userprincipalname,

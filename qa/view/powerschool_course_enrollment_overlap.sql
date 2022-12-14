@@ -46,7 +46,12 @@ FROM
   INNER JOIN gabby.powerschool.sections_identifiers sec ON ABS(cc.sectionid) = sec.sectionid
   AND cc.[db_name] = sec.[db_name]
 WHERE
-  CONCAT(cc.studentid, cc.studyear, cc.course_number, cc.[db_name]) IN (
+  CONCAT(
+    cc.studentid,
+    cc.studyear,
+    cc.course_number,
+    cc.[db_name]
+  ) IN (
     SELECT
       CONCAT(studentid, studyear, course_number, [db_name])
     COLLATE Latin1_General_BIN

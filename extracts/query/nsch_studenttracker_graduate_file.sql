@@ -4,7 +4,9 @@ SELECT
   'KIPP NEWARK COLLEGIATE ACADEMY' AS colc,
   'P' AS cold, -- file transmission date
   -- diploma period
-  CAST(REPLACE(CAST(CURRENT_TIMESTAMP AS DATE), '-', '') AS VARCHAR) AS cole,
+  CAST(
+    REPLACE(CAST(CURRENT_TIMESTAMP AS DATE), '-', '') AS VARCHAR
+  ) AS cole,
   CONCAT(MIN(cohort), '-', MAX(cohort)) AS colf,
   NULL AS colg,
   NULL AS colh,
@@ -47,7 +49,9 @@ SELECT
   co.student_number AS colj, -- diploma type
   'Regular Diploma' AS colk, -- HS graduation date
   -- FERPA block
-  CAST(REPLACE(CAST(co.exitdate AS DATE), '-', '') AS VARCHAR) AS coll,
+  CAST(
+    REPLACE(CAST(co.exitdate AS DATE), '-', '') AS VARCHAR
+  ) AS coll,
   'N' AS colm, -- high school name
   'KIPP NEWARK COLLEGIATE ACADEMY' AS coln, -- ACT code
   '310986' AS colo, -- gender

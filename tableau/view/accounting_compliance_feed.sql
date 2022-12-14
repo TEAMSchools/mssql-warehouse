@@ -32,7 +32,9 @@ WITH
   properites_curr AS (
     SELECT
       employee_reference_code,
-      CAST(employee_property_value_effective_start AS DATETIME2) AS pension_start_date,
+      CAST(
+        employee_property_value_effective_start AS DATETIME2
+      ) AS pension_start_date,
       RIGHT(employee_property_value_name, 4) AS pension_type,
       property_value AS pension_number,
       ROW_NUMBER() OVER (
@@ -40,12 +42,18 @@ WITH
           employee_reference_code,
           employee_property_value_name
         ORDER BY
-          CAST(employee_property_value_effective_start AS DATETIME2)
+          CAST(
+            employee_property_value_effective_start AS DATETIME2
+          )
       ) AS rn_curr
     FROM
       dayforce.employee_properties
     WHERE
-      employee_property_value_name IN ('Pension Number - DCRP', 'Pension Number - PERS', 'Pension Number - TPAF')
+      employee_property_value_name IN (
+        'Pension Number - DCRP',
+        'Pension Number - PERS',
+        'Pension Number - TPAF'
+      )
   )
 SELECT
   r.df_employee_number,

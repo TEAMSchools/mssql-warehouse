@@ -17,7 +17,11 @@ WITH
       [value],
       CASE
         WHEN academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR () THEN DATEFROMPARTS(academic_year, 6, 30)
-        ELSE DATEADD(DAY, 1 - (DATEPART(WEEKDAY, SYSDATETIME())), CAST(SYSDATETIME() AS DATE))
+        ELSE DATEADD(
+          DAY,
+          1 - (DATEPART(WEEKDAY, SYSDATETIME())),
+          CAST(SYSDATETIME() AS DATE)
+        )
       END AS week_of_date
     FROM
       gabby.tableau.school_tactical_dashboard

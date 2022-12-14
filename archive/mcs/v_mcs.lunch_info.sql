@@ -17,14 +17,20 @@ FROM
       s.applicationid AS currentapplicationid,
       CASE
         WHEN s.isdc = 1 THEN 'Direct Certification'
-        ELSE COALESCE(s.application_approval_result_description, 'No Application')
+        ELSE COALESCE(
+          s.application_approval_result_description,
+          'No Application'
+        )
       END AS [description],
       CASE
         WHEN s.isdc = 1 THEN 'Free'
         WHEN s.application_approval_result_description = 'Zero Income' THEN 'Free'
         WHEN s.application_approval_result_description LIKE 'Free%' THEN 'Free'
         WHEN s.application_approval_result_description LIKE 'Denied%' THEN 'Paying'
-        ELSE COALESCE(s.application_approval_result_description, 'Paying')
+        ELSE COALESCE(
+          s.application_approval_result_description,
+          'Paying'
+        )
       END AS shortdesc,
       c.reimbursableonlybalance,
       c.unallocatedbalance,
@@ -40,14 +46,20 @@ FROM
       s.applicationid AS currentapplicationid,
       CASE
         WHEN s.isdc = 1 THEN 'Direct Certification'
-        ELSE COALESCE(s.application_approval_result_description, 'No Application')
+        ELSE COALESCE(
+          s.application_approval_result_description,
+          'No Application'
+        )
       END AS [description],
       CASE
         WHEN s.isdc = 1 THEN 'Free'
         WHEN s.application_approval_result_description = 'Zero Income' THEN 'Free'
         WHEN s.application_approval_result_description LIKE 'Free%' THEN 'Free'
         WHEN s.application_approval_result_description LIKE 'Denied%' THEN 'Paying'
-        ELSE COALESCE(s.application_approval_result_description, 'Paying')
+        ELSE COALESCE(
+          s.application_approval_result_description,
+          'Paying'
+        )
       END AS shortdesc,
       c.reimbursableonlybalance,
       c.unallocatedbalance,

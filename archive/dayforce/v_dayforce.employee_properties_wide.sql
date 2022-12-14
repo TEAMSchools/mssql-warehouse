@@ -72,7 +72,9 @@ FROM
       (
         SELECT
           CAST(ep.employee_reference_code AS VARCHAR(25)) AS employee_reference_code,
-          CAST(ep.employee_property_value_effective_start AS DATE) AS effective_start_date,
+          CAST(
+            ep.employee_property_value_effective_start AS DATE
+          ) AS effective_start_date,
           CONVERT(
             DATE,
             COALESCE(

@@ -21,7 +21,11 @@ WITH
         SELECT
           _modified,
           df_employee_number,
-          CONCAT(COALESCE(common_name, first_name), ' ', COALESCE(preferred_last_name, last_name)) AS preferred_name,
+          CONCAT(
+            COALESCE(common_name, first_name),
+            ' ',
+            COALESCE(preferred_last_name, last_name)
+          ) AS preferred_name,
           CAST(preferred_last_name AS VARCHAR(MAX)) AS preferred_last_name,
           CAST(common_name AS VARCHAR(MAX)) AS common_name,
           CAST(last_name AS VARCHAR(MAX)) AS last_name,
@@ -30,7 +34,9 @@ WITH
           CAST(ethnicity AS VARCHAR(MAX)) AS ethnicity,
           CAST(gender AS VARCHAR(MAX)) AS gender,
           CAST(original_hire_date AS VARCHAR(MAX)) AS original_hire_date,
-          CAST(primary_on_site_department_entity_ AS VARCHAR(MAX)) AS primary_on_site_department_entity_,
+          CAST(
+            primary_on_site_department_entity_ AS VARCHAR(MAX)
+          ) AS primary_on_site_department_entity_,
           CAST(primary_on_site_department AS VARCHAR(MAX)) AS primary_on_site_department,
           CAST(primary_site_entity_ AS VARCHAR(MAX)) AS primary_site_entity_,
           CAST(primary_site AS VARCHAR(MAX)) AS primary_site,
@@ -51,7 +57,9 @@ WITH
           CAST(payclass AS VARCHAR(MAX)) AS payclass,
           CAST(jobs_and_positions_flsa_status AS VARCHAR(MAX)) AS jobs_and_positions_flsa_status,
           CAST(is_manager AS VARCHAR(MAX)) AS is_manager,
-          CAST(employee_s_manager_s_df_emp_number_id AS VARCHAR(MAX)) AS employee_s_manager_s_df_emp_number_id,
+          CAST(
+            employee_s_manager_s_df_emp_number_id AS VARCHAR(MAX)
+          ) AS employee_s_manager_s_df_emp_number_id,
           CAST(salesforce_id AS VARCHAR(MAX)) AS salesforce_id,
           CAST(adp_associate_id AS VARCHAR(MAX)) AS adp_associate_id,
           CAST(grades_taught AS VARCHAR(MAX)) AS grades_taught,

@@ -29,7 +29,9 @@ WITH
     SELECT
       s.question_shortname,
       s.question_title,
-      (SUM(CAST(s.answer_value AS FLOAT)) / a.answer_total) * 10.0 AS item_weight
+      (
+        SUM(CAST(s.answer_value AS FLOAT)) / a.answer_total
+      ) * 10.0 AS item_weight
     FROM
       weight_denominator a
       LEFT JOIN surveygizmo.survey_detail s ON a.survey_id = s.survey_id
@@ -71,7 +73,18 @@ WITH
         FROM
           gabby.tableau.kipp_forward_survey
       ) sub UNPIVOT (
-        avg_weighted_scores FOR question_shortname IN (imp_1, imp_2, imp_3, imp_4, imp_5, imp_6, imp_7, imp_8, imp_9, imp_10)
+        avg_weighted_scores FOR question_shortname IN (
+          imp_1,
+          imp_2,
+          imp_3,
+          imp_4,
+          imp_5,
+          imp_6,
+          imp_7,
+          imp_8,
+          imp_9,
+          imp_10
+        )
       ) u
   )
 SELECT

@@ -5,8 +5,14 @@ CREATE OR ALTER VIEW
   parcc.summative_record_file_clean AS
 SELECT
   state_abbreviation,
-  COALESCE(CAST(testing_district_code AS NVARCHAR(32)), eoy_testing_district_identifier) AS testing_district_code,
-  COALESCE(testing_school_code, eoy_testing_school_institution_identifier) AS testing_school_code,
+  COALESCE(
+    CAST(testing_district_code AS NVARCHAR(32)),
+    eoy_testing_district_identifier
+  ) AS testing_district_code,
+  COALESCE(
+    testing_school_code,
+    eoy_testing_school_institution_identifier
+  ) AS testing_school_code,
   COALESCE(
     responsible_accountable_district_code,
     responsible_district_code,
@@ -65,12 +71,20 @@ SELECT
   answer_masking,
   assistive_technology_screen_reader,
   closed_captioning_for_elal,
-  COALESCE(student_reads_assessment_aloudto_self, student_reads_assessment_aloud_to_themselves) AS student_reads_assessment_aloud_to_self,
+  COALESCE(
+    student_reads_assessment_aloudto_self,
+    student_reads_assessment_aloud_to_themselves
+  ) AS student_reads_assessment_aloud_to_self,
   human_signer_for_test_directions,
   calculation_device_and_mathematics_tools,
-  COALESCE(CAST(elalconstructed_response AS NVARCHAR(32)), elal_constructed_response) AS elalconstructed_response,
   COALESCE(
-    CAST(elalselected_response_or_technology_enhanced_items AS NVARCHAR(32)),
+    CAST(elalconstructed_response AS NVARCHAR(32)),
+    elal_constructed_response
+  ) AS elalconstructed_response,
+  COALESCE(
+    CAST(
+      elalselected_response_or_technology_enhanced_items AS NVARCHAR(32)
+    ),
     elal_selected_response_or_technology_enhanced_items
   ) AS elalselected_response_or_technology_enhanced_items,
   mathematics_response,
@@ -91,8 +105,14 @@ SELECT
   COALESCE(online_form_id, eoy_form_id) AS online_form_id,
   test_status,
   COALESCE(total_test_items, eoy_total_test_items) AS total_test_items,
-  COALESCE(test_attemptedness_flag, eoy_test_attemptedness_flag) AS test_attemptedness_flag,
-  COALESCE(total_test_items_attempted, eoy_total_test_items_attempted) AS total_test_items_attempted,
+  COALESCE(
+    test_attemptedness_flag,
+    eoy_test_attemptedness_flag
+  ) AS test_attemptedness_flag,
+  COALESCE(
+    total_test_items_attempted,
+    eoy_total_test_items_attempted
+  ) AS total_test_items_attempted,
   paper_attempt_create_date,
   paper_section_1_total_test_items,
   paper_section_1_numberof_attempted_items,
@@ -104,16 +124,34 @@ SELECT
   paper_section_4_numberof_attempted_items,
   student_unit_1_test_uuid,
   unit_1_form_id,
-  COALESCE(unit_1_total_test_items, eoy_unit_1_total_number_of_items) AS unit_1_total_test_items,
-  COALESCE(unit_1_numberof_attempted_items, eoy_unit_1_number_of_attempted_items) AS unit_1_numberof_attempted_items,
+  COALESCE(
+    unit_1_total_test_items,
+    eoy_unit_1_total_number_of_items
+  ) AS unit_1_total_test_items,
+  COALESCE(
+    unit_1_numberof_attempted_items,
+    eoy_unit_1_number_of_attempted_items
+  ) AS unit_1_numberof_attempted_items,
   student_unit_2_test_uuid,
   unit_2_form_id,
-  COALESCE(unit_2_total_test_items, eoy_unit_2_total_number_of_items) AS unit_2_total_test_items,
-  COALESCE(unit_2_number_of_attempted_items, eoy_unit_2_number_of_attempted_items) AS unit_2_number_of_attempted_items,
+  COALESCE(
+    unit_2_total_test_items,
+    eoy_unit_2_total_number_of_items
+  ) AS unit_2_total_test_items,
+  COALESCE(
+    unit_2_number_of_attempted_items,
+    eoy_unit_2_number_of_attempted_items
+  ) AS unit_2_number_of_attempted_items,
   student_unit_3_test_uuid,
   unit_3_form_id,
-  COALESCE(unit_3_total_test_items, eoy_unit_3_total_number_of_items) AS unit_3_total_test_items,
-  COALESCE(unit_3_number_of_attempted_items, eoy_unit_3_number_of_attempted_items) AS unit_3_number_of_attempted_items,
+  COALESCE(
+    unit_3_total_test_items,
+    eoy_unit_3_total_number_of_items
+  ) AS unit_3_total_test_items,
+  COALESCE(
+    unit_3_number_of_attempted_items,
+    eoy_unit_3_number_of_attempted_items
+  ) AS unit_3_number_of_attempted_items,
   student_unit_4_test_uuid,
   unit_4_form_id,
   unit_4_total_test_items,
@@ -142,17 +180,32 @@ SELECT
   [period],
   testing_organizational_type,
   COALESCE(testing_district_name, eoy_testing_district_name) AS testing_district_name,
-  COALESCE(testing_school_name, eoy_testing_school_institution_name) AS testing_school_name,
+  COALESCE(
+    testing_school_name,
+    eoy_testing_school_institution_name
+  ) AS testing_school_name,
   responsible_organization_code_type,
   responsible_organizational_type,
   responsible_district_name,
-  COALESCE(responsible_school_name, responsible_school_institution_name) AS responsible_school_name,
+  COALESCE(
+    responsible_school_name,
+    responsible_school_institution_name
+  ) AS responsible_school_name,
   COALESCE(test_scale_score, summative_scale_score) AS test_scale_score,
   COALESCE(test_csemprobable_range, summative_csem) AS test_csemprobable_range,
-  COALESCE(test_performance_level, summative_performance_level) AS test_performance_level,
-  COALESCE(test_reading_scale_score, summative_reading_scale_score) AS test_reading_scale_score,
+  COALESCE(
+    test_performance_level,
+    summative_performance_level
+  ) AS test_performance_level,
+  COALESCE(
+    test_reading_scale_score,
+    summative_reading_scale_score
+  ) AS test_reading_scale_score,
   COALESCE(test_reading_csem, summative_reading_csem) AS test_reading_csem,
-  COALESCE(test_writing_scale_score, summative_writing_scale_score) AS test_writing_scale_score,
+  COALESCE(
+    test_writing_scale_score,
+    summative_writing_scale_score
+  ) AS test_writing_scale_score,
   COALESCE(test_writing_csem, summative_writing_csem) AS test_writing_csem,
   subclaim_1_category,
   subclaim_2_category,
@@ -198,8 +251,14 @@ WHERE
 UNION ALL
 SELECT
   state_abbreviation,
-  COALESCE(CAST(testing_district_code AS NVARCHAR(32)), eoy_testing_district_identifier) AS testing_district_code,
-  COALESCE(testing_school_code, eoy_testing_school_institution_identifier) AS testing_school_code,
+  COALESCE(
+    CAST(testing_district_code AS NVARCHAR(32)),
+    eoy_testing_district_identifier
+  ) AS testing_district_code,
+  COALESCE(
+    testing_school_code,
+    eoy_testing_school_institution_identifier
+  ) AS testing_school_code,
   COALESCE(
     responsible_accountable_district_code,
     responsible_district_code,
@@ -258,12 +317,20 @@ SELECT
   answer_masking,
   assistive_technology_screen_reader,
   closed_captioning_for_elal,
-  COALESCE(student_reads_assessment_aloudto_self, student_reads_assessment_aloud_to_themselves) AS student_reads_assessment_aloud_to_self,
+  COALESCE(
+    student_reads_assessment_aloudto_self,
+    student_reads_assessment_aloud_to_themselves
+  ) AS student_reads_assessment_aloud_to_self,
   human_signer_for_test_directions,
   calculation_device_and_mathematics_tools,
-  COALESCE(CAST(elalconstructed_response AS NVARCHAR(32)), elal_constructed_response) AS elalconstructed_response,
   COALESCE(
-    CAST(elalselected_response_or_technology_enhanced_items AS NVARCHAR(32)),
+    CAST(elalconstructed_response AS NVARCHAR(32)),
+    elal_constructed_response
+  ) AS elalconstructed_response,
+  COALESCE(
+    CAST(
+      elalselected_response_or_technology_enhanced_items AS NVARCHAR(32)
+    ),
     elal_selected_response_or_technology_enhanced_items
   ) AS elalselected_response_or_technology_enhanced_items,
   mathematics_response,
@@ -284,8 +351,14 @@ SELECT
   COALESCE(online_form_id, eoy_form_id) AS online_form_id,
   test_status,
   COALESCE(total_test_items, eoy_total_test_items) AS total_test_items,
-  COALESCE(test_attemptedness_flag, eoy_test_attemptedness_flag) AS test_attemptedness_flag,
-  COALESCE(total_test_items_attempted, eoy_total_test_items_attempted) AS total_test_items_attempted,
+  COALESCE(
+    test_attemptedness_flag,
+    eoy_test_attemptedness_flag
+  ) AS test_attemptedness_flag,
+  COALESCE(
+    total_test_items_attempted,
+    eoy_total_test_items_attempted
+  ) AS total_test_items_attempted,
   paper_attempt_create_date,
   paper_section_1_total_test_items,
   paper_section_1_numberof_attempted_items,
@@ -297,16 +370,34 @@ SELECT
   paper_section_4_numberof_attempted_items,
   student_unit_1_test_uuid,
   unit_1_form_id,
-  COALESCE(unit_1_total_test_items, eoy_unit_1_total_number_of_items) AS unit_1_total_test_items,
-  COALESCE(unit_1_numberof_attempted_items, eoy_unit_1_number_of_attempted_items) AS unit_1_numberof_attempted_items,
+  COALESCE(
+    unit_1_total_test_items,
+    eoy_unit_1_total_number_of_items
+  ) AS unit_1_total_test_items,
+  COALESCE(
+    unit_1_numberof_attempted_items,
+    eoy_unit_1_number_of_attempted_items
+  ) AS unit_1_numberof_attempted_items,
   student_unit_2_test_uuid,
   unit_2_form_id,
-  COALESCE(unit_2_total_test_items, eoy_unit_2_total_number_of_items) AS unit_2_total_test_items,
-  COALESCE(unit_2_number_of_attempted_items, eoy_unit_2_number_of_attempted_items) AS unit_2_number_of_attempted_items,
+  COALESCE(
+    unit_2_total_test_items,
+    eoy_unit_2_total_number_of_items
+  ) AS unit_2_total_test_items,
+  COALESCE(
+    unit_2_number_of_attempted_items,
+    eoy_unit_2_number_of_attempted_items
+  ) AS unit_2_number_of_attempted_items,
   student_unit_3_test_uuid,
   unit_3_form_id,
-  COALESCE(unit_3_total_test_items, eoy_unit_3_total_number_of_items) AS unit_3_total_test_items,
-  COALESCE(unit_3_number_of_attempted_items, eoy_unit_3_number_of_attempted_items) AS unit_3_number_of_attempted_items,
+  COALESCE(
+    unit_3_total_test_items,
+    eoy_unit_3_total_number_of_items
+  ) AS unit_3_total_test_items,
+  COALESCE(
+    unit_3_number_of_attempted_items,
+    eoy_unit_3_number_of_attempted_items
+  ) AS unit_3_number_of_attempted_items,
   student_unit_4_test_uuid,
   unit_4_form_id,
   unit_4_total_test_items,
@@ -335,17 +426,32 @@ SELECT
   [period],
   testing_organizational_type,
   COALESCE(testing_district_name, eoy_testing_district_name) AS testing_district_name,
-  COALESCE(testing_school_name, eoy_testing_school_institution_name) AS testing_school_name,
+  COALESCE(
+    testing_school_name,
+    eoy_testing_school_institution_name
+  ) AS testing_school_name,
   responsible_organization_code_type,
   responsible_organizational_type,
   responsible_district_name,
-  COALESCE(responsible_school_name, responsible_school_institution_name) AS responsible_school_name,
+  COALESCE(
+    responsible_school_name,
+    responsible_school_institution_name
+  ) AS responsible_school_name,
   COALESCE(test_scale_score, summative_scale_score) AS test_scale_score,
   COALESCE(test_csemprobable_range, summative_csem) AS test_csemprobable_range,
-  COALESCE(test_performance_level, summative_performance_level) AS test_performance_level,
-  COALESCE(test_reading_scale_score, summative_reading_scale_score) AS test_reading_scale_score,
+  COALESCE(
+    test_performance_level,
+    summative_performance_level
+  ) AS test_performance_level,
+  COALESCE(
+    test_reading_scale_score,
+    summative_reading_scale_score
+  ) AS test_reading_scale_score,
   COALESCE(test_reading_csem, summative_reading_csem) AS test_reading_csem,
-  COALESCE(test_writing_scale_score, summative_writing_scale_score) AS test_writing_scale_score,
+  COALESCE(
+    test_writing_scale_score,
+    summative_writing_scale_score
+  ) AS test_writing_scale_score,
   COALESCE(test_writing_csem, summative_writing_csem) AS test_writing_csem,
   subclaim_1_category,
   subclaim_2_category,
@@ -398,8 +504,14 @@ SELECT
   state_abbreviation,
   CAST(testing_district_code AS NVARCHAR(32)) AS testing_district_code,
   testing_school_code,
-  COALESCE(responsible_accountable_district_code, responsible_district_code) AS responsible_district_code,
-  COALESCE(responsible_accountable_school_code, responsible_school_code) AS responsible_school_code,
+  COALESCE(
+    responsible_accountable_district_code,
+    responsible_district_code
+  ) AS responsible_district_code,
+  COALESCE(
+    responsible_accountable_school_code,
+    responsible_school_code
+  ) AS responsible_school_code,
   CAST(state_student_identifier AS NVARCHAR(32)) AS state_student_identifier,
   local_student_identifier,
   parccstudent_identifier,

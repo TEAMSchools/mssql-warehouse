@@ -28,8 +28,18 @@ WITH
       ) AS position_name_splitter,
       CASE
         WHEN CHARINDEX('_', pn.position_name_c) = 0 THEN NULL
-        WHEN LEN(RIGHT(pn.position_name_c, CHARINDEX('_', REVERSE(pn.position_name_c)) - 1)) > 3 THEN NULL
-        ELSE LEN(RIGHT(pn.position_name_c, CHARINDEX('_', REVERSE(pn.position_name_c)) - 1))
+        WHEN LEN(
+          RIGHT(
+            pn.position_name_c,
+            CHARINDEX('_', REVERSE(pn.position_name_c)) - 1
+          )
+        ) > 3 THEN NULL
+        ELSE LEN(
+          RIGHT(
+            pn.position_name_c,
+            CHARINDEX('_', REVERSE(pn.position_name_c)) - 1
+          )
+        )
       END AS position_count
     FROM
       gabby.recruiting.job_position_c pn
@@ -67,7 +77,10 @@ SELECT
   a.application_review_score_c AS application_review_score,
   a.average_teacher_phone_score_c AS average_teacher_phone_score,
   a.average_teacher_in_person_score_c AS average_teacher_in_person_score,
-  COALESCE(a.cultivation_regional_source_c, a.applicant_source_c) AS applicant_source,
+  COALESCE(
+    a.cultivation_regional_source_c,
+    a.applicant_source_c
+  ) AS applicant_source,
   a.cultivation_regional_source_detail_c AS regional_source_detail,
   a.phone_interview_status_date_c AS phone_screen_or_contact_date,
   a.in_person_interview_status_date_c AS interview_date,
@@ -76,7 +89,10 @@ SELECT
   a.stage_c AS selection_stage,
   a.selection_status_c AS selection_status,
   a.selection_notes_c AS selection_notes,
-  COALESCE(a.submitted_status_date_c, a.in_progress_status_date_c) AS submitted_date,
+  COALESCE(
+    a.submitted_status_date_c,
+    a.in_progress_status_date_c
+  ) AS submitted_date,
   LEFT(
     RIGHT(a.resume_url_c, LEN(a.resume_url_c) -9),
     LEN(RIGHT(a.resume_url_c, LEN(a.resume_url_c) -9)) -39
@@ -169,7 +185,11 @@ SELECT
   NULL AS average_teacher_phone_score,
   NULL AS average_teacher_in_person_score,
   c.regional_source_c AS applicant_source,
-  COALESCE(c.regional_source_detail_c, c.referred_by_c, c.identified_by_c) AS regional_source_detail,
+  COALESCE(
+    c.regional_source_detail_c,
+    c.referred_by_c,
+    c.identified_by_c
+  ) AS regional_source_detail,
   c.first_contact_date_c AS phone_screen_or_contact_date,
   NULL AS interview_date,
   NULL AS offer_date,

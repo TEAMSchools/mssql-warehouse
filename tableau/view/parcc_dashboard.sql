@@ -30,7 +30,9 @@ WITH
             test_code NOT IN ('ALG01', 'ALG02', 'GEO01')
             AND grade_level IS NOT NULL
           )
-      ) sub PIVOT (MAX(pct_proficient) FOR entity IN ([NJ], [NPS], [PARCC], [CPS])) p
+      ) sub PIVOT (
+        MAX(pct_proficient) FOR entity IN ([NJ], [NPS], [PARCC], [CPS])
+      ) p
   )
 SELECT
   co.student_number,
@@ -85,7 +87,10 @@ SELECT
   co.gender,
   asa.test_type
 COLLATE Latin1_General_BIN AS test_type,
-CONCAT(LEFT(asa.subject, 3), RIGHT(CONCAT('0', co.grade_level), 2))
+CONCAT(
+  LEFT(asa.subject, 3),
+  RIGHT(CONCAT('0', co.grade_level), 2)
+)
 COLLATE Latin1_General_BIN AS test_code,
 asa.subject
 COLLATE Latin1_General_BIN AS subject,
@@ -109,6 +114,9 @@ FROM
   JOIN gabby.njsmart.all_state_assessments asa ON co.student_number = asa.local_student_id
   AND co.academic_year = asa.academic_year
   LEFT JOIN external_prof ext ON co.academic_year = ext.academic_year
-  AND CONCAT(LEFT(asa.subject, 3), RIGHT(CONCAT('0', co.grade_level), 2)) = ext.test_code
+  AND CONCAT(
+    LEFT(asa.subject, 3),
+    RIGHT(CONCAT('0', co.grade_level), 2)
+  ) = ext.test_code
 WHERE
   co.rn_year = 1

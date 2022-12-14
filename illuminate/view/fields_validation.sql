@@ -4,7 +4,10 @@ CREATE OR ALTER VIEW
 SELECT
   *
 FROM
-  OPENQUERY (ILLUMINATE, '
+  OPENQUERY (
+    ILLUMINATE,
+    '
   SELECT field_id
   FROM dna_assessments.fields
-')
+'
+  )

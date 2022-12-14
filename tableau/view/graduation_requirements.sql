@@ -11,7 +11,14 @@ WITH
     FROM
       gabby.parcc.summative_record_file_clean parcc
     WHERE
-      parcc.test_code IN ('ELA09', 'ELA10', 'ELA11', 'ALG01', 'GEO01', 'ALG02')
+      parcc.test_code IN (
+        'ELA09',
+        'ELA10',
+        'ELA11',
+        'ALG01',
+        'GEO01',
+        'ALG02'
+      )
   ),
   sat AS (
     SELECT
@@ -29,7 +36,14 @@ WITH
           CAST(sat.math_test AS INT) AS math_test
         FROM
           gabby.naviance.sat_scores sat
-      ) sub UNPIVOT ([value] FOR field IN (evidence_based_reading_writing, math, reading_test, math_test)) u
+      ) sub UNPIVOT (
+        [value] FOR field IN (
+          evidence_based_reading_writing,
+          math,
+          reading_test,
+          math_test
+        )
+      ) u
   ),
   act AS (
     SELECT

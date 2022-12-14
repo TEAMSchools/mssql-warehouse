@@ -15,7 +15,9 @@ WITH
       [home],
       daytime AS [day]
     FROM
-      gabby.powerschool.student_contacts_static PIVOT (MAX(contact) FOR contact_type IN ([mobile], [home], [daytime])) p
+      gabby.powerschool.student_contacts_static PIVOT (
+        MAX(contact) FOR contact_type IN ([mobile], [home], [daytime])
+      ) p
   ),
   contacts_grouped AS (
     SELECT
@@ -45,7 +47,15 @@ SELECT
   co.team,
   co.enroll_status,
   co.[db_name],
-  CONCAT(co.STREET, ' - ', co.city, ', ', co.state, ' ', co.zip) AS street_address,
+  CONCAT(
+    co.STREET,
+    ' - ',
+    co.city,
+    ', ',
+    co.state,
+    ' ',
+    co.zip
+  ) AS street_address,
   s.family_ident,
   suf.infosnap_opt_in,
   c.person AS contact_type,

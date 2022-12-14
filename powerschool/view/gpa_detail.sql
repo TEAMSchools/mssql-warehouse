@@ -83,7 +83,9 @@ SELECT
   total_credit_hours,
   CAST(grade_avg_term AS DECIMAL(3, 0)) AS grade_avg_term,
   CAST(grade_avg_y1 AS DECIMAL(3, 0)) AS grade_avg_y1,
-  CAST(ROUND(weighted_gpa_points_term, 2) AS DECIMAL(5, 2)) AS weighted_gpa_points_term,
+  CAST(
+    ROUND(weighted_gpa_points_term, 2) AS DECIMAL(5, 2)
+  ) AS weighted_gpa_points_term,
   CAST(ROUND(weighted_gpa_points_y1, 2) AS DECIMAL(5, 2)) AS weighted_gpa_points_y1
   /* gpa semester */
 ,
@@ -214,7 +216,9 @@ FROM
       ) AS gpa_y1,
       CAST(
         ROUND(
-          SUM((potential_credit_hours * y1_grade_pts_unweighted)) / CASE
+          SUM(
+            (potential_credit_hours * y1_grade_pts_unweighted)
+          ) / CASE
           /* when no y1 pct, then exclude credit hours */
             WHEN SUM(
               CASE

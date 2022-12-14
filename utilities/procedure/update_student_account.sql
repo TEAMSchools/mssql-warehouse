@@ -22,9 +22,19 @@ IF EXISTS (
     gabby.powerschool.student_access_accounts_static
   WHERE
     student_web_id = @username_new
-) BEGIN RAISERROR ('New username already exists! Terminating...', 18, -1);
+) BEGIN RAISERROR (
+  'New username already exists! Terminating...',
+  18,
+  -1
+);
 
-END ELSE BEGIN RAISERROR ('Updating username %s to %s...', 0, 1, @username_orig, @username_new)
+END ELSE BEGIN RAISERROR (
+  'Updating username %s to %s...',
+  0,
+  1,
+  @username_orig,
+  @username_new
+)
 WITH
   NOWAIT;
 

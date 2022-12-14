@@ -16,7 +16,9 @@ FROM
       sat.student_number,
       gabby.utilities.DATE_TO_SY (sat.test_date) AS academic_year,
       sat.test_date,
-      CAST(COALESCE(onc.new_sat_total_score, sat.all_tests_total) AS INT) AS total_score
+      CAST(
+        COALESCE(onc.new_sat_total_score, sat.all_tests_total) AS INT
+      ) AS total_score
     FROM
       gabby.naviance.sat_scores_clean sat
       LEFT JOIN gabby.collegeboard.sat_old_new_concordance onc ON sat.sat_scale = onc.old_sat_scale

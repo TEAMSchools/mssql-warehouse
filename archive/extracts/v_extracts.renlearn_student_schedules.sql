@@ -41,7 +41,11 @@ WHERE
   AND enr.section_enroll_status = 0
 UNION ALL
 SELECT
-  CONCAT(co.yearid, co.schoolid, RIGHT(CONCAT(0, co.grade_level), 2)) AS id,
+  CONCAT(
+    co.yearid,
+    co.schoolid,
+    RIGHT(CONCAT(0, co.grade_level), 2)
+  ) AS id,
   CAST(CONCAT(co.yearid, '00') AS INT) AS termid,
   co.student_number AS studentid,
   CONCAT(co.academic_year, s.abbreviation, co.grade_level) AS section_number,

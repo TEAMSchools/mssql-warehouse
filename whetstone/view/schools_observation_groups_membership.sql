@@ -13,7 +13,11 @@ WITH
       gabby.whetstone.schools s
       CROSS APPLY OPENJSON (s.observation_groups, '$')
     WITH
-      (_id NVARCHAR(MAX), [name] NVARCHAR(MAX), observers NVARCHAR(MAX) AS JSON) AS ogs
+      (
+        _id NVARCHAR(MAX),
+        [name] NVARCHAR(MAX),
+        observers NVARCHAR(MAX) AS JSON
+      ) AS ogs
     WHERE
       ogs.observers <> '[]'
     UNION ALL
@@ -27,7 +31,11 @@ WITH
       gabby.whetstone.schools s
       CROSS APPLY OPENJSON (s.observation_groups, '$')
     WITH
-      (_id NVARCHAR(MAX), [name] NVARCHAR(MAX), observees NVARCHAR(MAX) AS JSON) AS ogs
+      (
+        _id NVARCHAR(MAX),
+        [name] NVARCHAR(MAX),
+        observees NVARCHAR(MAX) AS JSON
+      ) AS ogs
     WHERE
       ogs.observees <> '[]'
     UNION ALL
@@ -41,7 +49,11 @@ WITH
       gabby.whetstone.schools s
       CROSS APPLY OPENJSON (s.observation_groups, '$')
     WITH
-      (_id NVARCHAR(MAX), [name] NVARCHAR(MAX), admins NVARCHAR(MAX) AS JSON) AS ogs
+      (
+        _id NVARCHAR(MAX),
+        [name] NVARCHAR(MAX),
+        admins NVARCHAR(MAX) AS JSON
+      ) AS ogs
     WHERE
       ogs.admins <> '[]'
   )
@@ -61,4 +73,8 @@ FROM
   observation_groups og
   CROSS APPLY OPENJSON (og.membership)
 WITH
-  (_id NVARCHAR(32), email NVARCHAR(64), [name] NVARCHAR(32)) AS m
+  (
+    _id NVARCHAR(32),
+    email NVARCHAR(64),
+    [name] NVARCHAR(32)
+  ) AS m

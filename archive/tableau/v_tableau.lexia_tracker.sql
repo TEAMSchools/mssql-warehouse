@@ -51,7 +51,11 @@ SELECT
   lex.meeting_target_usage,
   lex.struggling_indicator,
   ISNULL(g.target_units, 0) - ISNULL(lex.units_to_target, 0) AS units_completed,
-  CAST((ISNULL(g.target_units, 0.0) - ISNULL(lex.units_to_target, 0.0))) / CAST(g.target_units AS FLOAT AS FLOAT) AS pct_to_target,
+  CAST(
+    (
+      ISNULL(g.target_units, 0.0) - ISNULL(lex.units_to_target, 0.0)
+    )
+  ) / CAST(g.target_units AS FLOAT AS FLOAT) AS pct_to_target,
   ROW_NUMBER() OVER (
     PARTITION BY
       co.student_number,

@@ -3,7 +3,9 @@ CREATE OR ALTER VIEW
   renaissance.ar_individualized_goals_long AS
 SELECT
   student_number,
-  CAST(REPLACE(reporting_term, 'q_', 'AR') AS NVARCHAR(4)) AS reporting_term,
+  CAST(
+    REPLACE(reporting_term, 'q_', 'AR') AS NVARCHAR(4)
+  ) AS reporting_term,
   CAST(adjusted_goal AS INT) AS adjusted_goal
 FROM
   (
@@ -23,6 +25,8 @@ FROM
       gabby.renaissance.ar_individualized_goals
     WHERE
       student_number IS NOT NULL
-  ) sub UNPIVOT (adjusted_goal FOR reporting_term IN (q_1, q_2, q_3, q_4)) u
+  ) sub UNPIVOT (
+    adjusted_goal FOR reporting_term IN (q_1, q_2, q_3, q_4)
+  ) u
 WHERE
   rn = 1

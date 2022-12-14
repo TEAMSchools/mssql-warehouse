@@ -8,7 +8,9 @@ CREATE OR ALTER VIEW
   Campus staff assigned to all schools at campus
    */
 SELECT
-  CAST(COALESCE(ccw.ps_school_id, df.primary_site_schoolid) AS VARCHAR(25)) AS [School_id],
+  CAST(
+    COALESCE(ccw.ps_school_id, df.primary_site_schoolid) AS VARCHAR(25)
+  ) AS [School_id],
   df.ps_teachernumber AS [Staff_id],
   df.userprincipalname AS [Staff_email],
   df.preferred_first_name AS [First_name],

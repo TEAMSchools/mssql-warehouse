@@ -141,14 +141,23 @@ SELECT
   au.first_init,
   au.last_name_clean,
   CASE
-    WHEN au.alt_dupe_audit = 1 THEN CONCAT(au.first_init, au.last_name_clean, au.dob_month, au.dob_day)
+    WHEN au.alt_dupe_audit = 1 THEN CONCAT(
+      au.first_init,
+      au.last_name_clean,
+      au.dob_month,
+      au.dob_day
+    )
     WHEN au.uses_alt = 1 THEN au.alt_username
     ELSE au.base_username
   END AS student_web_id,
   CASE
     WHEN spo.default_password IS NOT NULL THEN spo.default_password
     WHEN au.grade_level <= 2
-    AND LEN(CONCAT(last_name_clean, dob_year)) <= 7 THEN CONCAT(au.last_name_clean, au.dob_year, RIGHT(au.student_number, 4))
+    AND LEN(CONCAT(last_name_clean, dob_year)) <= 7 THEN CONCAT(
+      au.last_name_clean,
+      au.dob_year,
+      RIGHT(au.student_number, 4)
+    )
     ELSE CONCAT(au.last_name_clean, au.dob_year)
   END AS student_web_password
 FROM

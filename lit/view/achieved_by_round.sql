@@ -280,7 +280,10 @@ WITH
       COALESCE(tests.indep_lvl, achv_prev.indep_lvl) AS indep_lvl,
       COALESCE(tests.indep_lvl_num, achv_prev.indep_lvl_num) AS indep_lvl_num,
       COALESCE(tests.instruct_lvl, achv_prev.instruct_lvl) AS instruct_lvl,
-      COALESCE(tests.instruct_lvl_num, achv_prev.instruct_lvl_num) AS instruct_lvl_num,
+      COALESCE(
+        tests.instruct_lvl_num,
+        achv_prev.instruct_lvl_num
+      ) AS instruct_lvl_num,
       COALESCE(tests.gleq, achv_prev.gleq) AS gleq,
       COALESCE(tests.gleq_lvl_num, achv_prev.gleq_lvl_num) AS gleq_lvl_num,
       COALESCE(tests.fp_wpmrate, achv_prev.fp_wpmrate) AS fp_wpmrate,

@@ -44,7 +44,10 @@ FROM
       ad.title AS [title],
       CASE
         WHEN ad.physicaldeliveryofficename = 'Room 9 - 60 Park Pl' THEN 1000
-        WHEN ad.physicaldeliveryofficename IN ('Room 10 - 121 Market St', 'Room 10 - 740 Chestnut St') THEN 1001
+        WHEN ad.physicaldeliveryofficename IN (
+          'Room 10 - 121 Market St',
+          'Room 10 - 740 Chestnut St'
+        ) THEN 1001
         WHEN ad.physicaldeliveryofficename = '18th Ave Campus' THEN 1002
         WHEN ad.physicaldeliveryofficename = 'KIPP Lanning Sq Campus' THEN 1003
         WHEN ad.physicaldeliveryofficename = 'Norfolk St Campus' THEN 1004

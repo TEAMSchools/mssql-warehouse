@@ -2,7 +2,10 @@ USE gabby;
 
 GO CREATE
 OR ALTER
-FUNCTION utilities.STRIP_CHARACTERS (@string NVARCHAR(MAX), @match_expression VARCHAR(255)) RETURNS NVARCHAR(MAX)
+FUNCTION utilities.STRIP_CHARACTERS (
+  @string NVARCHAR(MAX),
+  @match_expression VARCHAR(255)
+) RETURNS NVARCHAR(MAX)
 WITH
   SCHEMABINDING AS BEGIN
 SET
@@ -10,7 +13,12 @@ SET
 
 WHILE PATINDEX(@match_expression, @string) > 0
 SET
-  @string = STUFF(@string, PATINDEX(@match_expression, @string), 1, '');
+  @string = STUFF(
+    @string,
+    PATINDEX(@match_expression, @string),
+    1,
+    ''
+  );
 
 RETURN @string;
 

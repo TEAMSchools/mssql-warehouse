@@ -128,7 +128,9 @@ WITH
               CAST(test_scale_score AS NVARCHAR)
             FROM
               gabby.parcc.summative_record_file_clean
-          ) sub UNPIVOT (VALUE FOR field IN (assessment_type, performance_level, scaled_score)) u
+          ) sub UNPIVOT (
+            VALUE FOR field IN (assessment_type, performance_level, scaled_score)
+          ) u
       ) sub PIVOT (
         MAX(VALUE) FOR pivot_field IN (
           alg01_assessment_type,
@@ -216,12 +218,18 @@ WITH
       ) p
   )
 SELECT
-  COALESCE(sid.local_identification_number, sid2.local_identification_number) AS lid,
+  COALESCE(
+    sid.local_identification_number,
+    sid2.local_identification_number
+  ) AS lid,
   g.sid,
   g.first_name,
   COALESCE(sid.middle_name, sid2.middle_name) AS middle_name,
   g.last_name,
-  COALESCE(sid.generation_code_suffix, sid2.generation_code_suffix) AS generation_code_suffix,
+  COALESCE(
+    sid.generation_code_suffix,
+    sid2.generation_code_suffix
+  ) AS generation_code_suffix,
   g.dob,
   g.school_name AS attending_school_name,
   g.grade_level,
@@ -234,16 +242,31 @@ SELECT
   g.lepprogram_enrollment AS entering_lep_program,
   g.four_year_graduation_cohort AS x4_year_graduation_cohort,
   g.four_year_graduation_status AS x4_year_graduation_cohort_status,
-  COALESCE(sid.resident_municipal_code, sid2.resident_municipal_code) AS resident_municipal_code,
+  COALESCE(
+    sid.resident_municipal_code,
+    sid2.resident_municipal_code
+  ) AS resident_municipal_code,
   COALESCE(sid.city_of_birth, sid2.city_of_birth) AS city_of_birth,
   COALESCE(sid.state_of_birth, sid2.state_of_birth) AS state_of_birth,
-  COALESCE(sid.county_code_attending, sid2.county_code_attending) AS county_code_attending,
-  COALESCE(sid.district_code_attending, sid2.district_code_attending) AS district_code_attending,
-  COALESCE(sid.school_code_attending, sid2.school_code_attending) AS school_code_attending,
+  COALESCE(
+    sid.county_code_attending,
+    sid2.county_code_attending
+  ) AS county_code_attending,
+  COALESCE(
+    sid.district_code_attending,
+    sid2.district_code_attending
+  ) AS district_code_attending,
+  COALESCE(
+    sid.school_code_attending,
+    sid2.school_code_attending
+  ) AS school_code_attending,
   COALESCE(sid.district_entry_date, sid2.district_entry_date) AS district_entry_date,
   COALESCE(sid.school_entry_date, sid2.school_entry_date) AS school_entry_date,
   COALESCE(sid.school_exit_date, sid2.school_exit_date) AS school_exit_date,
-  COALESCE(sid.school_exit_withdrawal_code, sid2.school_exit_withdrawal_code) AS school_exit_withdrawal_code,
+  COALESCE(
+    sid.school_exit_withdrawal_code,
+    sid2.school_exit_withdrawal_code
+  ) AS school_exit_withdrawal_code,
   sat.math AS sat_math_score,
   sat.verbal AS sat_test_verbal_score,
   sat.writing AS sat_test_writing_score,
@@ -339,9 +362,15 @@ FROM
   LEFT OUTER JOIN gabby.njsmart.sid_qsac_submission_set_records sid ON g.sid = sid.state_identification_number
   LEFT OUTER JOIN gabby.powerschool.students s ON g.sid = s.state_studentnumber
   LEFT OUTER JOIN gabby.njsmart.sid_qsac_submission_set_records sid2 ON s.student_number = sid2.local_identification_number
-  LEFT OUTER JOIN gabby.naviance.sat_scores_clean sat ON COALESCE(sid.local_identification_number, sid2.local_identification_number) = sat.student_number
+  LEFT OUTER JOIN gabby.naviance.sat_scores_clean sat ON COALESCE(
+    sid.local_identification_number,
+    sid2.local_identification_number
+  ) = sat.student_number
   AND sat.rn_highest = 1
-  LEFT OUTER JOIN gabby.naviance.act_scores_clean act ON COALESCE(sid.local_identification_number, sid2.local_identification_number) = act.student_number
+  LEFT OUTER JOIN gabby.naviance.act_scores_clean act ON COALESCE(
+    sid.local_identification_number,
+    sid2.local_identification_number
+  ) = act.student_number
   AND act.rn_highest = 1
   LEFT OUTER JOIN state_assessments sa ON g.sid = sa.state_studentnumber
 WHERE

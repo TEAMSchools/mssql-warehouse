@@ -10,7 +10,15 @@ SELECT
   sec.termid,
   sec.course_number,
   sec.room,
-  CONCAT(sec.schoolid, '-', sec.course_number, '-', sec.id, '-', sec.termid) AS class_alias,
+  CONCAT(
+    sec.schoolid,
+    '-',
+    sec.course_number,
+    '-',
+    sec.id,
+    '-',
+    sec.termid
+  ) AS class_alias,
   sch.[name] AS school_name,
   scw.google_email AS teacher_gsuite_email,
   CONCAT(
@@ -33,5 +41,7 @@ FROM
   INNER JOIN gabby.people.staff_crosswalk_static scw ON t.teachernumber = scw.ps_teachernumber
 COLLATE Latin1_General_BIN
 WHERE
-  sec.termid >= ((gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990) * 100)
+  sec.termid >= (
+    (gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990) * 100
+  )
   AND sec.no_of_students > 0

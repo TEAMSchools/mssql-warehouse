@@ -32,7 +32,12 @@ WITH
             FROM
               gabby.zendesk.ticket_field_history
             WHERE
-              field_name IN ('group_id', 'assignee_id', 'requester_id', 'status')
+              field_name IN (
+                'group_id',
+                'assignee_id',
+                'requester_id',
+                'status'
+              )
             GROUP BY
               ticket_id,
               field_name
@@ -78,7 +83,14 @@ WITH
               gabby.zendesk.ticket_comment
             GROUP BY
               ticket_id
-          ) sub UNPIVOT (field_value FOR metric_name IN (updated_min, updated_max, created_max, created_min)) u
+          ) sub UNPIVOT (
+            field_value FOR metric_name IN (
+              updated_min,
+              updated_max,
+              created_max,
+              created_min
+            )
+          ) u
       ) sub PIVOT (
         MAX(field_value) FOR pivot_field IN (
           assignee_id_updated_max,
@@ -111,7 +123,10 @@ WITH
           ticket_id,
           field_name
       ) sub PIVOT (
-        MAX(value_count) FOR field_name IN (group_id_value_count_distinct, assignee_id_value_count_distinct)
+        MAX(value_count) FOR field_name IN (
+          group_id_value_count_distinct,
+          assignee_id_value_count_distinct
+        )
       ) p
   ),
   reopens AS (

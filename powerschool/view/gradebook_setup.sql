@@ -17,13 +17,37 @@ SELECT
   sub.gradeformulasetid AS finalgradesetupid,
   sub.grade_calculation_type AS finalgradesetuptype,
   sub.gradecalculationtypeid AS fg_reportingtermid,
-  COALESCE(sub.gradecalculationtypeid, sub.gradecalcformulaweightid, -1) AS gradingformulaid,
-  COALESCE(sub.grade_calculation_type, sub.grade_calc_formula_weight_type) AS gradingformulaweightingtype,
-  COALESCE(sub.teachercategoryid, sub.districtteachercategoryid, sub.gradecalculationtypeid, -1) AS assignmentcategoryid,
-  COALESCE(sub.tc_name, sub.dtc_name, sub.grade_calculation_type) AS category_name,
-  COALESCE(sub.tc_name, sub.dtc_name, sub.grade_calculation_type) AS category_abbreviation,
+  COALESCE(
+    sub.gradecalculationtypeid,
+    sub.gradecalcformulaweightid,
+    -1
+  ) AS gradingformulaid,
+  COALESCE(
+    sub.grade_calculation_type,
+    sub.grade_calc_formula_weight_type
+  ) AS gradingformulaweightingtype,
+  COALESCE(
+    sub.teachercategoryid,
+    sub.districtteachercategoryid,
+    sub.gradecalculationtypeid,
+    -1
+  ) AS assignmentcategoryid,
+  COALESCE(
+    sub.tc_name,
+    sub.dtc_name,
+    sub.grade_calculation_type
+  ) AS category_name,
+  COALESCE(
+    sub.tc_name,
+    sub.dtc_name,
+    sub.grade_calculation_type
+  ) AS category_abbreviation,
   COALESCE(sub.tc_defaultscoretype, sub.dtc_defaultscoretype) AS defaultscoretype,
-  COALESCE(sub.tc_isinfinalgrades, sub.dtc_isinfinalgrades, 0) AS includeinfinalgrades
+  COALESCE(
+    sub.tc_isinfinalgrades,
+    sub.dtc_isinfinalgrades,
+    0
+  ) AS includeinfinalgrades
 FROM
   (
     SELECT
@@ -55,7 +79,9 @@ FROM
           CAST(sec.termid AS INT) AS termid,
           gsec.gradeformulasetid AS section_gradeformulasetid,
           gsfa.gradeformulasetid AS school_gradeformulasetid,
-          CAST(COALESCE(gsec.gradeformulasetid, gsfa.gradeformulasetid, 0) AS INT) AS gradeformulasetid
+          CAST(
+            COALESCE(gsec.gradeformulasetid, gsfa.gradeformulasetid, 0) AS INT
+          ) AS gradeformulasetid
         FROM
           powerschool.sections sec
           INNER JOIN powerschool.schools sch ON sec.schoolid = sch.school_number

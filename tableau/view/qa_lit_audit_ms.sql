@@ -93,8 +93,14 @@ WITH
         WHEN ind.lvl_num - g.fp_lvl_num = -2 THEN 'Below'
         WHEN ind.lvl_num - g.fp_lvl_num < -2 THEN 'Far Below'
       END AS goal_status,
-      COALESCE(ins.assessment_academic_year, hard.assessment_academic_year) AS instructional_academic_year,
-      COALESCE(ins.assessment_test_round, hard.assessment_test_round) AS instructional_test_round,
+      COALESCE(
+        ins.assessment_academic_year,
+        hard.assessment_academic_year
+      ) AS instructional_academic_year,
+      COALESCE(
+        ins.assessment_test_round,
+        hard.assessment_test_round
+      ) AS instructional_test_round,
       COALESCE(ins.assessment_date, hard.assessment_date) AS instructional_assessment_date,
       COALESCE(ins.text_level, hard.text_level) AS instructional_level,
       COALESCE(ins.genre, hard.genre) AS instructional_genre

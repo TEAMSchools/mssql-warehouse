@@ -1,4 +1,7 @@
-USE gabby GO IF OBJECT_ID('powerschool.TR_course_section_scaffold_refresh_AI', 'TR') IS NOT NULL DROP
+USE gabby GO IF OBJECT_ID(
+  'powerschool.TR_course_section_scaffold_refresh_AI',
+  'TR'
+) IS NOT NULL DROP
 TRIGGER powerschool.TR_course_section_scaffold_refresh_AI;
 
 GO CREATE
@@ -88,7 +91,9 @@ SELECT
 FROM
   # referenced_tables rt # updated_tables ut ON rt.table_name = ut.table_name;
 
-LEFT OUTER JOIN IF @update_status = 0 BEGIN PRINT ('All tables referenced by view have not yet been updated this hour');
+LEFT OUTER JOIN IF @update_status = 0 BEGIN PRINT (
+  'All tables referenced by view have not yet been updated this hour'
+);
 
 RETURN END
 /* run refresh */

@@ -6,7 +6,10 @@ SELECT
   co.student_number,
   CONCAT(co.yearid, '00') AS termid,
   'ENR' AS course_number,
-  CONCAT(LEFT(LOWER(REPLACE(co.school_name, ' ', '')), 8), co.grade_level) AS section_number,
+  CONCAT(
+    LEFT(LOWER(REPLACE(co.school_name, ' ', '')), 8),
+    co.grade_level
+  ) AS section_number,
   co.entrydate AS dateenrolled,
   co.exitdate AS dateleft
 FROM

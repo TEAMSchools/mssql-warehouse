@@ -209,7 +209,15 @@ SELECT
   qa.grade_level,
   qa.team,
   'Enrollment Dupes' AS element,
-  CONCAT(qa.course_number, ' - ', qa.section_number, ' - ', qa.dateenrolled, '-', qa.dateleft) AS detail,
+  CONCAT(
+    qa.course_number,
+    ' - ',
+    qa.section_number,
+    ' - ',
+    qa.dateenrolled,
+    '-',
+    qa.dateleft
+  ) AS detail,
   1 AS flag
 FROM
   gabby.qa.powerschool_course_enrollment_overlap qa

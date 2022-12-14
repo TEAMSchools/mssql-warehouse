@@ -3,8 +3,18 @@ WITH
     SELECT
       scw.primary_site_schoolid,
       CASE
-        WHEN scw.legal_entity_name = 'KIPP Miami' THEN LOWER(LEFT(scw.userprincipalname, CHARINDEX('@', scw.userprincipalname))) + 'kippmiami.org'
-        ELSE LOWER(LEFT(scw.userprincipalname, CHARINDEX('@', scw.userprincipalname))) + 'apps.teamschools.org'
+        WHEN scw.legal_entity_name = 'KIPP Miami' THEN LOWER(
+          LEFT(
+            scw.userprincipalname,
+            CHARINDEX('@', scw.userprincipalname)
+          )
+        ) + 'kippmiami.org'
+        ELSE LOWER(
+          LEFT(
+            scw.userprincipalname,
+            CHARINDEX('@', scw.userprincipalname)
+          )
+        ) + 'apps.teamschools.org'
       END AS gsuite_email
     FROM
       gabby.people.staff_crosswalk_static scw

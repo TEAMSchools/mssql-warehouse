@@ -8,11 +8,11 @@ plugins:
       uri: https://github.com/trunk-io/plugins
 lint:
   disabled:
+    - sqlfluff
     - sqlfluff-fix
-    - sql-formatter
     - sqlfmt
   enabled:
-    - sqlfluff@1.4.3
+    - sql-formatter@12.0.3
     - prettier@2.8.1
     - actionlint@1.6.22
     - shellcheck@0.9.0
@@ -21,35 +21,25 @@ lint:
     - git-diff-check
     - shfmt@3.5.0
   definitions:
-    - name: sqlfluff
+    - name: sql-formatter
       commands:
-        - output: sarif
+        - output: rewrite
           success_codes:
             - 0
+          formatter: true
           name: lint
-          parser:
-            run: ${plugin}/linters/sqlfluff/sqlfluff_to_sarif.py
-            runtime: python
-          read_output_from: stdout
-          run: sqlfluff lint ${target} --config .trunk/config/.sqlfluff --format json --nofail
-    # - name: sqlfluff-fix
-    #   commands:
-    #     - output: rewrite
-    #       success_codes:
-    #         - 0
-    #       formatter: true
-    #       in_place: true
-    #       name: fix
-    #       run: sqlfluff fix ${target} --config .trunk/config/.sqlfluff --disable-progress-bar --force --FIX-EVEN-UNPARSABLE
-  #   - name: sql-formatter
-  #     commands:
-  #       - output: rewrite
-  #         success_codes:
-  #           - 0
-  #         formatter: true
-  #         name: lint
-  #         run: sql-formatter -c .trunk/config/sql-formatter.json
-  #         stdin: true
+          run: sql-formatter --config .trunk/config/sql-formatter.json
+          stdin: true
+      files:
+        - sql
+      enabled: true
+      known_good_version: 7.0.1
+      package: sql-formatter
+      plugin_url: https://slack.trunk.io
+      runtime: node
+      version_command:
+        parse_regex: ${semver}
+        run: sql-formatter --version
 runtimes:
   enabled:
     - python@3.10.8

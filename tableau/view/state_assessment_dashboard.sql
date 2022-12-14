@@ -68,7 +68,9 @@ WITH
           academic_year,
           test_code,
           entity
-      ) sub PIVOT (MAX(pct_proficient) FOR entity IN ([NJ], [NPS], [CPS])) p
+      ) sub PIVOT (
+        MAX(pct_proficient) FOR entity IN ([NJ], [NPS], [CPS])
+      ) p
   ),
   ms_grad AS (
     SELECT
@@ -181,7 +183,10 @@ SELECT
   co.ethnicity,
   co.gender,
   asa.test_type,
-  CONCAT(LEFT(asa.[subject], 3), RIGHT(CONCAT('0', co.grade_level), 2)) AS test_code,
+  CONCAT(
+    LEFT(asa.[subject], 3),
+    RIGHT(CONCAT('0', co.grade_level), 2)
+  ) AS test_code,
   asa.[subject],
   asa.scaled_score,
   CASE

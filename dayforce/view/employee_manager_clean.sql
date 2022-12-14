@@ -31,7 +31,10 @@ FROM
               em.employee_reference_code,
               CAST(em.manager_effective_start AS DATE)
             ORDER BY
-              COALESCE(CAST(em.manager_effective_end AS DATE), '2020-12-31') DESC
+              COALESCE(
+                CAST(em.manager_effective_end AS DATE),
+                '2020-12-31'
+              ) DESC
           ) AS rn_start,
           CONCAT(
             CASE

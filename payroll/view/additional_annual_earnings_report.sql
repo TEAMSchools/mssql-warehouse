@@ -43,8 +43,12 @@ SELECT
   sr.preferred_name,
   sr.race_ethnicity_reporting,
   sr.gender_reporting,
-  ROUND(sr.total_professional_experience, 0) - (gabby.utilities.GLOBAL_ACADEMIC_YEAR () - ade.academic_year) AS years_professional_experience,
-  ROUND(sr.years_at_kipp_total, 0) - (gabby.utilities.GLOBAL_ACADEMIC_YEAR () - ade.academic_year) AS years_at_kipp
+  ROUND(sr.total_professional_experience, 0) - (
+    gabby.utilities.GLOBAL_ACADEMIC_YEAR () - ade.academic_year
+  ) AS years_professional_experience,
+  ROUND(sr.years_at_kipp_total, 0) - (
+    gabby.utilities.GLOBAL_ACADEMIC_YEAR () - ade.academic_year
+  ) AS years_at_kipp
 FROM
   annual_additional_earnings ade
   INNER JOIN gabby.people.employment_history_static eh ON ade.position_id = eh.position_id

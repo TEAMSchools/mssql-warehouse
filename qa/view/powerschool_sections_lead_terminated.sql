@@ -17,4 +17,6 @@ FROM
 COLLATE Latin1_General_BIN
 AND scw.[status] = 'TERMINATED'
 WHERE
-  sec.termid >= ((gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990) * 100)
+  sec.termid >= (
+    (gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990) * 100
+  )

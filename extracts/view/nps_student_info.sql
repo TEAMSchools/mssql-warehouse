@@ -33,7 +33,10 @@ SELECT
   scw.contact_2_phone_primary AS father_cell,
   scw.contact_1_name AS mother,
   scw.contact_2_name AS father,
-  COALESCE(scw.contact_1_email_current, scw.contact_2_email_current) AS guardianemail,
+  COALESCE(
+    scw.contact_1_email_current,
+    scw.contact_2_email_current
+  ) AS guardianemail,
   s.fedethnicity
 FROM
   kippnewark.powerschool.cohort_identifiers_static co

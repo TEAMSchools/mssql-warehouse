@@ -10,7 +10,11 @@ SELECT
     WHEN legal_entity_name = 'KIPP Miami' THEN 'Miami'
   END AS entity,
   CASE
-    WHEN primary_site IN ('Room 9 - 60 Park Pl', 'Room 10 - 121 Market St', 'Room 11 - 1951 NW 7th Ave') THEN 'Not School Based'
+    WHEN primary_site IN (
+      'Room 9 - 60 Park Pl',
+      'Room 10 - 121 Market St',
+      'Room 11 - 1951 NW 7th Ave'
+    ) THEN 'Not School Based'
     ELSE 'school-based'
   END AS school_based,
   CASE

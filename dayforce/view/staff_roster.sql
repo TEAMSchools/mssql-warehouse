@@ -40,15 +40,27 @@ WITH
       sub.primary_site_entity,
       sub.gender,
       sub.is_hispanic,
-      CAST(REPLACE(sub.primary_site_clean, ' - Regional', '') AS VARCHAR(125)) AS primary_site,
-      CAST(COALESCE(sub.common_name, sub.first_name) AS VARCHAR(25)) AS preferred_first_name,
-      CAST(COALESCE(sub.preferred_last_name, sub.last_name) AS VARCHAR(25)) AS preferred_last_name,
+      CAST(
+        REPLACE(sub.primary_site_clean, ' - Regional', '') AS VARCHAR(125)
+      ) AS primary_site,
+      CAST(
+        COALESCE(sub.common_name, sub.first_name) AS VARCHAR(25)
+      ) AS preferred_first_name,
+      CAST(
+        COALESCE(sub.preferred_last_name, sub.last_name) AS VARCHAR(25)
+      ) AS preferred_last_name,
       CASE
         WHEN sub.ethnicity = 'Hispanic or Latino' THEN 'Hispanic or Latino'
         WHEN sub.ethnicity = 'Decline to Answer' THEN NULL
-        ELSE CAST(RTRIM(LEFT(sub.ethnicity, CHARINDEX(' (', sub.ethnicity))) AS VARCHAR(125))
+        ELSE CAST(
+          RTRIM(
+            LEFT(sub.ethnicity, CHARINDEX(' (', sub.ethnicity))
+          ) AS VARCHAR(125)
+        )
       END AS primary_ethnicity,
-      CAST(gabby.utilities.STRIP_CHARACTERS (sub.mobile_number, '^0-9') AS VARCHAR(25)) AS mobile_number,
+      CAST(
+        gabby.utilities.STRIP_CHARACTERS (sub.mobile_number, '^0-9') AS VARCHAR(25)
+      ) AS mobile_number,
       CASE
         WHEN sub.primary_site_clean LIKE '% - Regional%' THEN 1
         ELSE 0
@@ -100,7 +112,9 @@ WITH
             WHEN e.primary_job <> '' THEN CAST(e.primary_job AS VARCHAR(125))
           END AS primary_job,
           CASE
-            WHEN e.primary_on_site_department_clean <> '' THEN CAST(e.primary_on_site_department_clean AS VARCHAR(125))
+            WHEN e.primary_on_site_department_clean <> '' THEN CAST(
+              e.primary_on_site_department_clean AS VARCHAR(125)
+            )
           END AS primary_on_site_department,
           CASE
             WHEN e.legal_entity_name_clean <> '' THEN CAST(e.legal_entity_name_clean AS VARCHAR(125))
@@ -144,7 +158,9 @@ WITH
           /* redundant combined fields */
 ,
           CAST(position_title AS VARCHAR(125)) AS position_title,
-          CAST(primary_on_site_department_entity_ AS VARCHAR(125)) AS primary_on_site_department_entity,
+          CAST(
+            primary_on_site_department_entity_ AS VARCHAR(125)
+          ) AS primary_on_site_department_entity,
           CAST(primary_site_entity_ AS VARCHAR(125)) AS primary_site_entity,
           CAST(UPPER(e.gender) AS VARCHAR(1)) AS gender,
           CASE
@@ -196,7 +212,9 @@ SELECT
   c.position_title,
   c.primary_on_site_department_entity,
   c.primary_site_entity,
-  CAST(c.preferred_last_name + ', ' + c.preferred_first_name AS VARCHAR(125)) AS preferred_name,
+  CAST(
+    c.preferred_last_name + ', ' + c.preferred_first_name AS VARCHAR(125)
+  ) AS preferred_name,
   SUBSTRING(c.mobile_number, 1, 3) + '-' + SUBSTRING(c.mobile_number, 4, 3) + '-' + SUBSTRING(c.mobile_number, 7, 4) AS mobile_number,
   CASE
     WHEN c.legal_entity_name = 'TEAM Academy Charter Schools' THEN 'YHD'
@@ -219,7 +237,9 @@ SELECT
   m.adp_associate_id AS manager_adp_associate_id,
   m.preferred_first_name AS manager_preferred_first_name,
   m.preferred_last_name AS manager_preferred_last_name,
-  CAST(m.preferred_last_name + ', ' + m.preferred_first_name AS VARCHAR(125)) AS manager_name
+  CAST(
+    m.preferred_last_name + ', ' + m.preferred_first_name AS VARCHAR(125)
+  ) AS manager_name
 FROM
   clean_people c
   LEFT JOIN gabby.people.school_crosswalk s ON c.primary_site = s.site_name

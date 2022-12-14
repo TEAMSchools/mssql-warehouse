@@ -62,6 +62,9 @@ AND hr.course_enroll_status = 0
 AND hr.section_enroll_status = 0
 AND hr.rn_course_yr = 1
 WHERE
-  co.academic_year IN (gabby.utilities.GLOBAL_ACADEMIC_YEAR (), (gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1))
+  co.academic_year IN (
+    gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+    (gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1)
+  )
   AND co.rn_year = 1
   AND co.grade_level <> 99

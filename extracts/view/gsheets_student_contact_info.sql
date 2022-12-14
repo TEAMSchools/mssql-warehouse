@@ -34,13 +34,36 @@ SELECT
   scw.contact_2_phone_primary AS father_cell,
   scw.contact_1_name AS mother,
   scw.contact_2_name AS father,
-  CONCAT(scw.pickup_1_name, ' | ', scw.pickup_1_phone_mobile) AS release_1,
-  CONCAT(scw.pickup_2_name, ' | ', scw.pickup_2_phone_mobile) AS release_2,
-  CONCAT(scw.pickup_3_name, ' | ', scw.pickup_3_phone_mobile) AS release_3,
+  CONCAT(
+    scw.pickup_1_name,
+    ' | ',
+    scw.pickup_1_phone_mobile
+  ) AS release_1,
+  CONCAT(
+    scw.pickup_2_name,
+    ' | ',
+    scw.pickup_2_phone_mobile
+  ) AS release_2,
+  CONCAT(
+    scw.pickup_3_name,
+    ' | ',
+    scw.pickup_3_phone_mobile
+  ) AS release_3,
   NULL AS release_4,
   NULL AS release_5,
-  COALESCE(scw.contact_1_email_current, scw.contact_2_email_current) AS guardianemail,
-  CONCAT(co.street, ', ', co.city, ', ', co.[state], ' ', co.zip) AS [address],
+  COALESCE(
+    scw.contact_1_email_current,
+    scw.contact_2_email_current
+  ) AS guardianemail,
+  CONCAT(
+    co.street,
+    ', ',
+    co.city,
+    ', ',
+    co.[state],
+    ' ',
+    co.zip
+  ) AS [address],
   co.first_name,
   co.last_name,
   co.student_web_id,

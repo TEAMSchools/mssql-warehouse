@@ -7,7 +7,11 @@ WITH
       c.personid,
       'contact' AS person_type,
       c.relationship_type,
-      CONCAT(LTRIM(RTRIM(c.firstname)), ' ', LTRIM(RTRIM(c.lastname))) AS contact_name,
+      CONCAT(
+        LTRIM(RTRIM(c.firstname)),
+        ' ',
+        LTRIM(RTRIM(c.lastname))
+      ) AS contact_name,
       c.contactpriorityorder
     FROM
       powerschool.contacts c
@@ -20,7 +24,11 @@ WITH
       c.personid,
       'emerg' AS person_type,
       c.relationship_type,
-      CONCAT(LTRIM(RTRIM(c.firstname)), ' ', LTRIM(RTRIM(c.lastname))) AS contact_name,
+      CONCAT(
+        LTRIM(RTRIM(c.firstname)),
+        ' ',
+        LTRIM(RTRIM(c.lastname))
+      ) AS contact_name,
       ROW_NUMBER() OVER (
         PARTITION BY
           c.student_number
@@ -39,7 +47,11 @@ WITH
       c.personid,
       'pickup' AS person_type,
       c.relationship_type,
-      CONCAT(LTRIM(RTRIM(c.firstname)), ' ', LTRIM(RTRIM(c.lastname))) AS contact_name,
+      CONCAT(
+        LTRIM(RTRIM(c.firstname)),
+        ' ',
+        LTRIM(RTRIM(c.lastname))
+      ) AS contact_name,
       ROW_NUMBER() OVER (
         PARTITION BY
           c.student_number

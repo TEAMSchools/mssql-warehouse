@@ -1,4 +1,7 @@
-USE gabby GO IF OBJECT_ID('nwea.TR_assessment_result_identifiers_refresh_AI', 'TR') IS NOT NULL DROP
+USE gabby GO IF OBJECT_ID(
+  'nwea.TR_assessment_result_identifiers_refresh_AI',
+  'TR'
+) IS NOT NULL DROP
 TRIGGER nwea.TR_assessment_result_identifiers_refresh_AI;
 
 GO CREATE
@@ -93,7 +96,9 @@ FROM
   #referenced_tables rt
   LEFT OUTER JOIN #updated_tables ut ON rt.table_name = ut.table_name;
 
-IF @update_status = 0 BEGIN PRINT ('All tables referenced by view have not yet been updated this hour');
+IF @update_status = 0 BEGIN PRINT (
+  'All tables referenced by view have not yet been updated this hour'
+);
 
 RETURN END
 /* run refresh */

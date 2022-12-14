@@ -4,7 +4,10 @@ CREATE OR ALTER VIEW
 SELECT
   *
 FROM
-  OPENQUERY (ILLUMINATE, '
+  OPENQUERY (
+    ILLUMINATE,
+    '
   SELECT performance_band_id
   FROM dna_assessments.performance_bands
-')
+'
+  )

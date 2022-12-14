@@ -1,9 +1,6 @@
-USE gabby
-GO
-
+USE gabby GO
 CREATE OR ALTER VIEW
   act.test_prep_scores_wide AS
-
 SELECT
   student_number,
   academic_year,
@@ -42,7 +39,5 @@ FROM
     WHERE
       rn_dupe = 1
   ) AS sub PIVOT (
-    MAX(
-        scale_score
-    ) FOR subject_area IN (english, mathematics, reading, science, composite)
+    MAX(scale_score) FOR subject_area IN (english, mathematics, reading, science, composite)
   ) p

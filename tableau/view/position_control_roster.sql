@@ -16,7 +16,9 @@ WITH
           plan_name
         FROM
           gabby.adp.comprehensive_benefits_report
-      ) sub PIVOT (MAX(plan_name) FOR plan_type IN ([Medical], [Dental], [Vision])) p
+      ) sub PIVOT (
+        MAX(plan_name) FOR plan_type IN ([Medical], [Dental], [Vision])
+      ) p
   ),
   cost_number AS (
     SELECT
@@ -42,7 +44,11 @@ SELECT
   sr.annual_salary AS base_salary,
   sr.work_assignment_start_date,
   sr.worker_category AS ft_pt,
-  DATEDIFF(YEAR, sr.work_assignment_start_date, CURRENT_TIMESTAMP) AS longevity,
+  DATEDIFF(
+    YEAR,
+    sr.work_assignment_start_date,
+    CURRENT_TIMESTAMP
+  ) AS longevity,
   CASE
     WHEN sr.worker_category LIKE '%part%' THEN 0.5
     ELSE 1.0
@@ -70,6 +76,13 @@ FROM
 WHERE
   sr.position_status IN ('Active', 'Leave')
   AND (
-    job_title IN ('Chief Executive Officer', 'Chief Financial Officer')
-    OR sr.business_unit IN ('TEAM Academy Charter School', 'KIPP Cooper Norcross Academy', 'KIPP Miami')
+    job_title IN (
+      'Chief Executive Officer',
+      'Chief Financial Officer'
+    )
+    OR sr.business_unit IN (
+      'TEAM Academy Charter School',
+      'KIPP Cooper Norcross Academy',
+      'KIPP Miami'
+    )
   )

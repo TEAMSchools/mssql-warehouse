@@ -9,7 +9,10 @@ SELECT
   VALUE,
   CASE
     WHEN school IN ('KIPP Rise Academy', 'Rise Academy') THEN 73252
-    WHEN school IN ('KIPP Newark Collegiate Academy', 'Newark Collegiate Academy') THEN 73253
+    WHEN school IN (
+      'KIPP Newark Collegiate Academy',
+      'Newark Collegiate Academy'
+    ) THEN 73253
     WHEN school IN ('KIPP SPARK Academy', 'SPARK Academy') THEN 73254
     WHEN school IN ('KIPP THRIVE Academy', 'THRIVE Academy') THEN 73255
     WHEN school IN ('KIPP Seek Academy', 'Seek Academy') THEN 73256
@@ -59,7 +62,10 @@ SELECT
       'KIPP Lanning Square Middle School',
       'KIPP Whittier Middle School'
     ) THEN 'MS'
-    WHEN school IN ('KIPP Newark Collegiate Academy', 'Newark Collegiate Academy') THEN 'HS'
+    WHEN school IN (
+      'KIPP Newark Collegiate Academy',
+      'Newark Collegiate Academy'
+    ) THEN 'HS'
   END AS school_level,
   CASE
     WHEN school IN (

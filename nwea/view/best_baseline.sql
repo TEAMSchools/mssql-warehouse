@@ -36,7 +36,10 @@ SELECT
   END AS lexile_score
 FROM
   powerschool.cohort_identifiers_static r
-  CROSS JOIN STRING_SPLIT ('Mathematics,Reading,Language Usage,Science - General Science', ',') subj
+  CROSS JOIN STRING_SPLIT (
+    'Mathematics,Reading,Language Usage,Science - General Science',
+    ','
+  ) subj
   LEFT JOIN nwea.assessment_result_identifiers map_fall /* CURRENT YEAR FALL */ ON r.student_number = map_fall.student_id
   AND subj.[value] = map_fall.measurement_scale
   AND r.academic_year = map_fall.academic_year

@@ -31,7 +31,10 @@ WITH
           wa.business_unit AS legal_entity_name,
           CASE
             WHEN (
-              wa.job_title IN ('Learning Specialist', 'Learning Specialist Coordinator')
+              wa.job_title IN (
+                'Learning Specialist',
+                'Learning Specialist Coordinator'
+              )
               OR wa.home_department = 'Special Education'
             ) THEN 1
             ELSE 0
@@ -40,7 +43,11 @@ WITH
           CAST(
             COALESCE(
               wa.effective_end_date,
-              DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1, 6, 30)
+              DATEFROMPARTS(
+                gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1,
+                6,
+                30
+              )
             ) AS DATE
           ) AS work_assignment_effective_end,
           sc.ps_school_id,

@@ -33,7 +33,12 @@ WITH
         WHEN app.type_for_roll_ups = 'College' THEN 1
       END AS is_college,
       CASE
-        WHEN app.type_for_roll_ups IN ('Alternative Program', 'Organization', 'Other', 'Private 2 yr') THEN 1
+        WHEN app.type_for_roll_ups IN (
+          'Alternative Program',
+          'Organization',
+          'Other',
+          'Private 2 yr'
+        ) THEN 1
       END AS is_cert,
       CASE
         WHEN app.application_account_type = 'Public 2 yr' THEN 1
@@ -502,5 +507,13 @@ FROM
   AND ay.academic_year = tier.academic_year
   AND tier.rn = 1
 WHERE
-  c.ktc_status IN ('HS9', 'HS10', 'HS11', 'HS12', 'HSG', 'TAF', 'TAFHS')
+  c.ktc_status IN (
+    'HS9',
+    'HS10',
+    'HS11',
+    'HS12',
+    'HSG',
+    'TAF',
+    'TAFHS'
+  )
   AND c.sf_contact_id IS NOT NULL

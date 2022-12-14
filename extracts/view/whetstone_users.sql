@@ -143,7 +143,11 @@ FROM
       CASE
       /* network admins */
         WHEN scw.primary_on_site_department = 'Executive' THEN 'Regional Admin'
-        WHEN scw.primary_on_site_department IN ('Teaching and Learning', 'School Support', 'New Teacher Development')
+        WHEN scw.primary_on_site_department IN (
+          'Teaching and Learning',
+          'School Support',
+          'New Teacher Development'
+        )
         AND scw.primary_job IN (
           'Achievement Director',
           'Chief Academic Officer',
@@ -165,7 +169,11 @@ FROM
           'School Leader'
         ) THEN 'Sub Admin'
         WHEN scw.primary_on_site_department = 'Special Education'
-        AND scw.primary_job IN ('Managing Director', 'Director', 'Achievement Director') THEN 'Sub Admin'
+        AND scw.primary_job IN (
+          'Managing Director',
+          'Director',
+          'Achievement Director'
+        ) THEN 'Sub Admin'
         WHEN scw.primary_on_site_department = 'Human Resources' THEN 'Sub Admin'
         /* school admins */
         WHEN scw.primary_job = 'School Leader' THEN 'School Admin'

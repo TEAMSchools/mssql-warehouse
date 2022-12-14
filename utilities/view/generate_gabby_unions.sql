@@ -82,7 +82,9 @@ WITH
             WHERE
               column_id > -1
               AND [db_name] IN ('kippnewark', 'kippcamden', 'kippmiami')
-          ) sub PIVOT (MAX(column_type) FOR [db_name] IN ([kippnewark], [kippcamden], [kippmiami])) p
+          ) sub PIVOT (
+            MAX(column_type) FOR [db_name] IN ([kippnewark], [kippcamden], [kippmiami])
+          ) p
       ) sub
   )
 SELECT

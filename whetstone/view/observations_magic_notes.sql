@@ -11,6 +11,11 @@ FROM
   gabby.whetstone.observations wo
   CROSS APPLY OPENJSON (wo.magic_notes, '$')
 WITH
-  (_id VARCHAR(25), shared BIT, created DATETIME2, [text] VARCHAR(4000)) AS mn
+  (
+    _id VARCHAR(25),
+    shared BIT,
+    created DATETIME2,
+    [text] VARCHAR(4000)
+  ) AS mn
 WHERE
   wo.magic_notes <> '[]'

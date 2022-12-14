@@ -36,7 +36,15 @@ SELECT
   co.student_number,
   CONCAT(co.first_name, ' ', co.last_name) AS student_name,
   co.dob,
-  CONCAT(co.street, ', ', co.city, ', ', co.state, ' ', co.zip) AS home_address,
+  CONCAT(
+    co.street,
+    ', ',
+    co.city,
+    ', ',
+    co.state,
+    ' ',
+    co.zip
+  ) AS home_address,
   co.ethnicity,
   nj.home_language,
   co.academic_year,

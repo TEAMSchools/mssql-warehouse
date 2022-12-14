@@ -4,7 +4,12 @@ SELECT
   'CREATE NONCLUSTERED INDEX [' + REPLACE(
     REPLACE(
       CASE
-        WHEN equality_columns + inequality_columns IS NOT NULL THEN CONCAT('E: ', equality_columns, ', I: ', inequality_columns)
+        WHEN equality_columns + inequality_columns IS NOT NULL THEN CONCAT(
+          'E: ',
+          equality_columns,
+          ', I: ',
+          inequality_columns
+        )
         WHEN inequality_columns IS NULL THEN 'E: ' + equality_columns
         WHEN equality_columns IS NULL THEN 'I: ' + inequality_columns
       END,

@@ -29,13 +29,31 @@ WITH
       assignment
     FROM
       assignments_reformat UNPIVOT (
-        assignment FOR number IN ([so_1], [so_2], [so_3], [so_4], [so_5], [so_6], [so_7], [so_8], [so_9], [so_10])
+        assignment FOR number IN (
+          [so_1],
+          [so_2],
+          [so_3],
+          [so_4],
+          [so_5],
+          [so_6],
+          [so_7],
+          [so_8],
+          [so_9],
+          [so_10]
+        )
       ) u
   )
 SELECT
   a.df_employee_number AS survey_taker_id,
   a.survey_round_status,
-  CONCAT(c.preferred_name, ' - ', c.primary_site, ' [', c.df_employee_number, '] ') AS assignment,
+  CONCAT(
+    c.preferred_name,
+    ' - ',
+    c.primary_site,
+    ' [',
+    c.df_employee_number,
+    '] '
+  ) AS assignment,
   a.assignment AS assignment_employee_id,
   c.preferred_name AS assignment_preferred_name,
   c.primary_site AS assignment_location,
@@ -51,7 +69,14 @@ UNION ALL
 SELECT
   c.manager_df_employee_number AS survey_taker_id,
   m.survey_round_status,
-  CONCAT(c.preferred_name, ' - ', c.primary_site, ' [', c.df_employee_number, '] ') AS assignment,
+  CONCAT(
+    c.preferred_name,
+    ' - ',
+    c.primary_site,
+    ' [',
+    c.df_employee_number,
+    '] '
+  ) AS assignment,
   c.df_employee_number AS assignment_employee_id,
   c.preferred_name AS assignment_preferred_name,
   c.primary_site AS assignment_location,

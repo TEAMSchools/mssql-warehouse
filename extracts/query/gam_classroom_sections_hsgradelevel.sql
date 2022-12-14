@@ -29,8 +29,18 @@ SELECT DISTINCT
   t.[name],
   t.section,
   CASE
-    WHEN scw.legal_entity_name = 'KIPP Miami' THEN LOWER(LEFT(scw.userprincipalname, CHARINDEX('@', scw.userprincipalname))) + 'kippmiami.org'
-    ELSE LOWER(LEFT(scw.userprincipalname, CHARINDEX('@', scw.userprincipalname))) + 'apps.teamschools.org'
+    WHEN scw.legal_entity_name = 'KIPP Miami' THEN LOWER(
+      LEFT(
+        scw.userprincipalname,
+        CHARINDEX('@', scw.userprincipalname)
+      )
+    ) + 'kippmiami.org'
+    ELSE LOWER(
+      LEFT(
+        scw.userprincipalname,
+        CHARINDEX('@', scw.userprincipalname)
+      )
+    ) + 'apps.teamschools.org'
   END AS teacher
 FROM
   this t

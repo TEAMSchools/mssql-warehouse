@@ -41,16 +41,30 @@ WITH
       sub.[name],
       LTRIM(
         RTRIM(
-          SUBSTRING(sub.[name], (sub.underscore_1 + 1), (sub.underscore_2 - sub.underscore_1 - 1))
+          SUBSTRING(
+            sub.[name],
+            (sub.underscore_1 + 1),
+            (sub.underscore_2 - sub.underscore_1 - 1)
+          )
         )
       ) AS semester,
       LTRIM(
         RTRIM(
-          SUBSTRING(sub.[name], (sub.underscore_2 + 1), (sub.underscore_3 - sub.underscore_2 - 1))
+          SUBSTRING(
+            sub.[name],
+            (sub.underscore_2 + 1),
+            (sub.underscore_3 - sub.underscore_2 - 1)
+          )
         )
       ) AS [year],
       LTRIM(
-        RTRIM(SUBSTRING(sub.[name], (sub.underscore_3 + 1), (sub.file_ext_dot - sub.underscore_3)))
+        RTRIM(
+          SUBSTRING(
+            sub.[name],
+            (sub.underscore_3 + 1),
+            (sub.file_ext_dot - sub.underscore_3)
+          )
+        )
       ) AS document_type
     FROM
       (
@@ -67,8 +81,16 @@ WITH
           END AS underscore_2,
           CASE
             WHEN CHARINDEX('_', a.[name], CHARINDEX('_', a.[name]) + 1) = 0 THEN NULL
-            WHEN CHARINDEX('_', a.[name], CHARINDEX('_', a.[name], CHARINDEX('_', a.[name]) + 1) + 1) = 0 THEN NULL
-            ELSE CHARINDEX('_', a.[name], CHARINDEX('_', a.[name], CHARINDEX('_', a.[name]) + 1) + 1)
+            WHEN CHARINDEX(
+              '_',
+              a.[name],
+              CHARINDEX('_', a.[name], CHARINDEX('_', a.[name]) + 1) + 1
+            ) = 0 THEN NULL
+            ELSE CHARINDEX(
+              '_',
+              a.[name],
+              CHARINDEX('_', a.[name], CHARINDEX('_', a.[name]) + 1) + 1
+            )
           END AS underscore_3
         FROM
           gabby.alumni.attachment a
@@ -96,7 +118,10 @@ WITH
       eh.field = 'Status__c'
       AND eh.is_deleted = 0
       AND eh.old_value IN ('Attending', 'Matriculated')
-      AND CONCAT(eh.old_value, eh.new_value) NOT IN ('MatriculatedDid Not Enroll', 'MatriculatedAttending')
+      AND CONCAT(eh.old_value, eh.new_value) NOT IN (
+        'MatriculatedDid Not Enroll',
+        'MatriculatedAttending'
+      )
       AND eh.new_value NOT IN ('Graduated')
   ),
   enr_hist_grad AS (
@@ -137,8 +162,14 @@ WITH
           ISNULL(CAST(e.date_last_verified_c AS NVARCHAR(MAX)), '') AS date_last_verified_ontime,
           ISNULL(CAST(e.notes_c AS NVARCHAR(MAX)), '') AS notes_c,
           ISNULL(CAST(e.transfer_reason_c AS NVARCHAR(MAX)), '') AS transfer_reason_c,
-          ISNULL(CAST(COALESCE(e.major_c, e.major_area_c)), '' AS NVARCHAR(MAX)) AS major_or_area,
-          ISNULL(CAST(e.college_major_declared_c AS NVARCHAR(MAX)), '') AS college_major_declared_c,
+          ISNULL(
+            CAST(COALESCE(e.major_c, e.major_area_c)),
+            '' AS NVARCHAR(MAX)
+          ) AS major_or_area,
+          ISNULL(
+            CAST(e.college_major_declared_c AS NVARCHAR(MAX)),
+            ''
+          ) AS college_major_declared_c,
           ISNULL(CAST(c.[description] AS NVARCHAR(MAX)), '') AS [description]
         FROM
           gabby.alumni.enrollment_c e

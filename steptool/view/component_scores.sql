@@ -33,7 +33,9 @@ SELECT
 FROM
   (
     SELECT
-      CAST(CONCAT('UC', gabby.utilities.DATE_TO_SY (DATE), [_line]) AS VARCHAR(125)) AS unique_id,
+      CAST(
+        CONCAT('UC', gabby.utilities.DATE_TO_SY (DATE), [_line]) AS VARCHAR(125)
+      ) AS unique_id,
       CAST(CAST(student_id AS FLOAT) AS INT) AS student_id,
       CAST(step AS INT) AS step,
       passed,
@@ -53,29 +55,71 @@ FROM
       CAST(comprehension_conversation_4_ AS VARCHAR(25)) AS comprehension_conversation_4_,
       CAST(comprehension_conversation_5_ AS VARCHAR(25)) AS comprehension_conversation_5_,
       CAST(comprehension_conversation_8_ AS VARCHAR(25)) AS comprehension_conversation_8_,
-      CAST(comprehension_conversation_critical_thinking_3_ AS VARCHAR(25)) AS comprehension_conversation_critical_thinking_3_,
-      CAST(comprehension_conversation_critical_thinking_4_ AS VARCHAR(25)) AS comprehension_conversation_critical_thinking_4_,
-      CAST(comprehension_conversation_critical_thinking_5_ AS VARCHAR(25)) AS comprehension_conversation_critical_thinking_5_,
-      CAST(comprehension_conversation_critical_thinking_8_ AS VARCHAR(25)) AS comprehension_conversation_critical_thinking_8_,
-      CAST(comprehension_conversation_factual_2_ AS VARCHAR(25)) AS comprehension_conversation_factual_2_,
-      CAST(comprehension_conversation_factual_3_ AS VARCHAR(25)) AS comprehension_conversation_factual_3_,
-      CAST(comprehension_conversation_factual_4_ AS VARCHAR(25)) AS comprehension_conversation_factual_4_,
-      CAST(comprehension_conversation_factual_5_ AS VARCHAR(25)) AS comprehension_conversation_factual_5_,
-      CAST(comprehension_conversation_factual_8_ AS VARCHAR(25)) AS comprehension_conversation_factual_8_,
-      CAST(comprehension_conversation_inferential_2_ AS VARCHAR(25)) AS comprehension_conversation_inferential_2_,
-      CAST(comprehension_conversation_inferential_3_ AS VARCHAR(25)) AS comprehension_conversation_inferential_3_,
-      CAST(comprehension_conversation_inferential_4_ AS VARCHAR(25)) AS comprehension_conversation_inferential_4_,
-      CAST(comprehension_conversation_inferential_5_ AS VARCHAR(25)) AS comprehension_conversation_inferential_5_,
-      CAST(comprehension_conversation_inferential_8_ AS VARCHAR(25)) AS comprehension_conversation_inferential_8_,
-      CAST(comprehension_conversation_other_2_ AS VARCHAR(25)) AS comprehension_conversation_other_2_,
+      CAST(
+        comprehension_conversation_critical_thinking_3_ AS VARCHAR(25)
+      ) AS comprehension_conversation_critical_thinking_3_,
+      CAST(
+        comprehension_conversation_critical_thinking_4_ AS VARCHAR(25)
+      ) AS comprehension_conversation_critical_thinking_4_,
+      CAST(
+        comprehension_conversation_critical_thinking_5_ AS VARCHAR(25)
+      ) AS comprehension_conversation_critical_thinking_5_,
+      CAST(
+        comprehension_conversation_critical_thinking_8_ AS VARCHAR(25)
+      ) AS comprehension_conversation_critical_thinking_8_,
+      CAST(
+        comprehension_conversation_factual_2_ AS VARCHAR(25)
+      ) AS comprehension_conversation_factual_2_,
+      CAST(
+        comprehension_conversation_factual_3_ AS VARCHAR(25)
+      ) AS comprehension_conversation_factual_3_,
+      CAST(
+        comprehension_conversation_factual_4_ AS VARCHAR(25)
+      ) AS comprehension_conversation_factual_4_,
+      CAST(
+        comprehension_conversation_factual_5_ AS VARCHAR(25)
+      ) AS comprehension_conversation_factual_5_,
+      CAST(
+        comprehension_conversation_factual_8_ AS VARCHAR(25)
+      ) AS comprehension_conversation_factual_8_,
+      CAST(
+        comprehension_conversation_inferential_2_ AS VARCHAR(25)
+      ) AS comprehension_conversation_inferential_2_,
+      CAST(
+        comprehension_conversation_inferential_3_ AS VARCHAR(25)
+      ) AS comprehension_conversation_inferential_3_,
+      CAST(
+        comprehension_conversation_inferential_4_ AS VARCHAR(25)
+      ) AS comprehension_conversation_inferential_4_,
+      CAST(
+        comprehension_conversation_inferential_5_ AS VARCHAR(25)
+      ) AS comprehension_conversation_inferential_5_,
+      CAST(
+        comprehension_conversation_inferential_8_ AS VARCHAR(25)
+      ) AS comprehension_conversation_inferential_8_,
+      CAST(
+        comprehension_conversation_other_2_ AS VARCHAR(25)
+      ) AS comprehension_conversation_other_2_,
       CAST(concepts_about_print_0_ AS VARCHAR(25)) AS concepts_about_print_0_,
       CAST(concepts_about_print_1_ AS VARCHAR(25)) AS concepts_about_print_1_,
-      CAST(concepts_about_print_one_to_one_matching_0_ AS VARCHAR(25)) AS concepts_about_print_one_to_one_matching_0_,
-      CAST(concepts_about_print_one_to_one_matching_1_ AS VARCHAR(25)) AS concepts_about_print_one_to_one_matching_1_,
-      CAST(concepts_about_print_orientation_0_ AS VARCHAR(25)) AS concepts_about_print_orientation_0_,
-      CAST(concepts_about_print_orientation_1_ AS VARCHAR(25)) AS concepts_about_print_orientation_1_,
-      CAST(concepts_about_print_sense_of_letter_vs_word_0_ AS VARCHAR(25)) AS concepts_about_print_sense_of_letter_vs_word_0_,
-      CAST(concepts_about_print_sense_of_letter_vs_word_1_ AS VARCHAR(25)) AS concepts_about_print_sense_of_letter_vs_word_1_,
+      CAST(
+        concepts_about_print_one_to_one_matching_0_ AS VARCHAR(25)
+      ) AS concepts_about_print_one_to_one_matching_0_,
+      CAST(
+        concepts_about_print_one_to_one_matching_1_ AS VARCHAR(25)
+      ) AS concepts_about_print_one_to_one_matching_1_,
+      CAST(
+        concepts_about_print_orientation_0_ AS VARCHAR(25)
+      ) AS concepts_about_print_orientation_0_,
+      CAST(
+        concepts_about_print_orientation_1_ AS VARCHAR(25)
+      ) AS concepts_about_print_orientation_1_,
+      CAST(
+        concepts_about_print_sense_of_letter_vs_word_0_ AS VARCHAR(25)
+      ) AS concepts_about_print_sense_of_letter_vs_word_0_,
+      CAST(
+        concepts_about_print_sense_of_letter_vs_word_1_ AS VARCHAR(25)
+      ) AS concepts_about_print_sense_of_letter_vs_word_1_,
       CAST(developmental_spelling_1_ AS VARCHAR(25)) AS developmental_spelling_1_,
       CAST(developmental_spelling_10_ AS VARCHAR(25)) AS developmental_spelling_10_,
       CAST(developmental_spelling_11_ AS VARCHAR(25)) AS developmental_spelling_11_,
@@ -88,54 +132,150 @@ FROM
       CAST(developmental_spelling_7_ AS VARCHAR(25)) AS developmental_spelling_7_,
       CAST(developmental_spelling_8_ AS VARCHAR(25)) AS developmental_spelling_8_,
       CAST(developmental_spelling_9_ AS VARCHAR(25)) AS developmental_spelling_9_,
-      CAST(developmental_spelling_complex_blend_10_ AS VARCHAR(25)) AS developmental_spelling_complex_blend_10_,
-      CAST(developmental_spelling_complex_blend_8_ AS VARCHAR(25)) AS developmental_spelling_complex_blend_8_,
-      CAST(developmental_spelling_complex_blend_9_ AS VARCHAR(25)) AS developmental_spelling_complex_blend_9_,
-      CAST(developmental_spelling_doubling_at_syllable_juncture_11_ AS VARCHAR(25)) AS developmental_spelling_doubling_at_syllable_juncture_11_,
-      CAST(developmental_spelling_doubling_at_syllable_juncture_12_ AS VARCHAR(25)) AS developmental_spelling_doubling_at_syllable_juncture_12_,
-      CAST(developmental_spelling_ed_ing_endings_11_ AS VARCHAR(25)) AS developmental_spelling_ed_ing_endings_11_,
-      CAST(developmental_spelling_ed_ing_endings_12_ AS VARCHAR(25)) AS developmental_spelling_ed_ing_endings_12_,
-      CAST(developmental_spelling_final_sound_1_ AS VARCHAR(25)) AS developmental_spelling_final_sound_1_,
-      CAST(developmental_spelling_final_sound_2_ AS VARCHAR(25)) AS developmental_spelling_final_sound_2_,
-      CAST(developmental_spelling_final_sound_3_ AS VARCHAR(25)) AS developmental_spelling_final_sound_3_,
-      CAST(developmental_spelling_first_sound_1_ AS VARCHAR(25)) AS developmental_spelling_first_sound_1_,
-      CAST(developmental_spelling_first_sound_2_ AS VARCHAR(25)) AS developmental_spelling_first_sound_2_,
-      CAST(developmental_spelling_first_sound_3_ AS VARCHAR(25)) AS developmental_spelling_first_sound_3_,
-      CAST(developmental_spelling_initial_final_blend_digraph_5_ AS VARCHAR(25)) AS developmental_spelling_initial_final_blend_digraph_5_,
-      CAST(developmental_spelling_initial_final_blend_digraphs_4_ AS VARCHAR(25)) AS developmental_spelling_initial_final_blend_digraphs_4_,
-      CAST(developmental_spelling_long_vowel_2_syllable_words_11_ AS VARCHAR(25)) AS developmental_spelling_long_vowel_2_syllable_words_11_,
-      CAST(developmental_spelling_long_vowel_2_syllable_words_12_ AS VARCHAR(25)) AS developmental_spelling_long_vowel_2_syllable_words_12_,
-      CAST(developmental_spelling_long_vowel_pattern_10_ AS VARCHAR(25)) AS developmental_spelling_long_vowel_pattern_10_,
-      CAST(developmental_spelling_long_vowel_pattern_6_ AS VARCHAR(25)) AS developmental_spelling_long_vowel_pattern_6_,
-      CAST(developmental_spelling_long_vowel_pattern_8_ AS VARCHAR(25)) AS developmental_spelling_long_vowel_pattern_8_,
-      CAST(developmental_spelling_long_vowel_pattern_9_ AS VARCHAR(25)) AS developmental_spelling_long_vowel_pattern_9_,
-      CAST(developmental_spelling_r_controlled_2_syllable_words_11_ AS VARCHAR(25)) AS developmental_spelling_r_controlled_2_syllable_words_11_,
-      CAST(developmental_spelling_r_controlled_2_syllable_words_12_ AS VARCHAR(25)) AS developmental_spelling_r_controlled_2_syllable_words_12_,
-      CAST(developmental_spelling_r_controlled_vowel_10_ AS VARCHAR(25)) AS developmental_spelling_r_controlled_vowel_10_,
-      CAST(developmental_spelling_r_controlled_vowel_6_ AS VARCHAR(25)) AS developmental_spelling_r_controlled_vowel_6_,
-      CAST(developmental_spelling_r_controlled_vowel_7_ AS VARCHAR(25)) AS developmental_spelling_r_controlled_vowel_7_,
-      CAST(developmental_spelling_r_controlled_vowel_8_ AS VARCHAR(25)) AS developmental_spelling_r_controlled_vowel_8_,
-      CAST(developmental_spelling_r_controlled_vowel_9_ AS VARCHAR(25)) AS developmental_spelling_r_controlled_vowel_9_,
-      CAST(developmental_spelling_short_vowel_sound_1_ AS VARCHAR(25)) AS developmental_spelling_short_vowel_sound_1_,
-      CAST(developmental_spelling_short_vowel_sound_2_ AS VARCHAR(25)) AS developmental_spelling_short_vowel_sound_2_,
-      CAST(developmental_spelling_short_vowel_sound_3_ AS VARCHAR(25)) AS developmental_spelling_short_vowel_sound_3_,
-      CAST(developmental_spelling_short_vowel_sound_4_ AS VARCHAR(25)) AS developmental_spelling_short_vowel_sound_4_,
-      CAST(developmental_spelling_short_vowel_sound_5_ AS VARCHAR(25)) AS developmental_spelling_short_vowel_sound_5_,
-      CAST(developmental_spelling_v_c_e_long_vowel_pattern_7_ AS VARCHAR(25)) AS developmental_spelling_v_c_e_long_vowel_pattern_7_,
-      CAST(developmental_spelling_vowel_digraphs_10_ AS VARCHAR(25)) AS developmental_spelling_vowel_digraphs_10_,
-      CAST(developmental_spelling_vowel_digraphs_8_ AS VARCHAR(25)) AS developmental_spelling_vowel_digraphs_8_,
-      CAST(developmental_spelling_vowel_digraphs_9_ AS VARCHAR(25)) AS developmental_spelling_vowel_digraphs_9_,
-      CAST(f_overreliance_on_facts_for_the_text_10_ AS VARCHAR(25)) AS f_overreliance_on_facts_for_the_text_10_,
-      CAST(f_overreliance_on_facts_for_the_text_11_ AS VARCHAR(25)) AS f_overreliance_on_facts_for_the_text_11_,
-      CAST(f_overreliance_on_facts_for_the_text_12_ AS VARCHAR(25)) AS f_overreliance_on_facts_for_the_text_12_,
-      CAST(f_overreliance_on_facts_for_the_text_2_ AS VARCHAR(25)) AS f_overreliance_on_facts_for_the_text_2_,
-      CAST(f_overreliance_on_facts_for_the_text_3_ AS VARCHAR(25)) AS f_overreliance_on_facts_for_the_text_3_,
-      CAST(f_overreliance_on_facts_for_the_text_4_ AS VARCHAR(25)) AS f_overreliance_on_facts_for_the_text_4_,
-      CAST(f_overreliance_on_facts_for_the_text_5_ AS VARCHAR(25)) AS f_overreliance_on_facts_for_the_text_5_,
-      CAST(f_overreliance_on_facts_for_the_text_6_ AS VARCHAR(25)) AS f_overreliance_on_facts_for_the_text_6_,
-      CAST(f_overreliance_on_facts_for_the_text_7_ AS VARCHAR(25)) AS f_overreliance_on_facts_for_the_text_7_,
-      CAST(f_overreliance_on_facts_for_the_text_8_ AS VARCHAR(25)) AS f_overreliance_on_facts_for_the_text_8_,
-      CAST(f_overreliance_on_facts_for_the_text_9_ AS VARCHAR(25)) AS f_overreliance_on_facts_for_the_text_9_,
+      CAST(
+        developmental_spelling_complex_blend_10_ AS VARCHAR(25)
+      ) AS developmental_spelling_complex_blend_10_,
+      CAST(
+        developmental_spelling_complex_blend_8_ AS VARCHAR(25)
+      ) AS developmental_spelling_complex_blend_8_,
+      CAST(
+        developmental_spelling_complex_blend_9_ AS VARCHAR(25)
+      ) AS developmental_spelling_complex_blend_9_,
+      CAST(
+        developmental_spelling_doubling_at_syllable_juncture_11_ AS VARCHAR(25)
+      ) AS developmental_spelling_doubling_at_syllable_juncture_11_,
+      CAST(
+        developmental_spelling_doubling_at_syllable_juncture_12_ AS VARCHAR(25)
+      ) AS developmental_spelling_doubling_at_syllable_juncture_12_,
+      CAST(
+        developmental_spelling_ed_ing_endings_11_ AS VARCHAR(25)
+      ) AS developmental_spelling_ed_ing_endings_11_,
+      CAST(
+        developmental_spelling_ed_ing_endings_12_ AS VARCHAR(25)
+      ) AS developmental_spelling_ed_ing_endings_12_,
+      CAST(
+        developmental_spelling_final_sound_1_ AS VARCHAR(25)
+      ) AS developmental_spelling_final_sound_1_,
+      CAST(
+        developmental_spelling_final_sound_2_ AS VARCHAR(25)
+      ) AS developmental_spelling_final_sound_2_,
+      CAST(
+        developmental_spelling_final_sound_3_ AS VARCHAR(25)
+      ) AS developmental_spelling_final_sound_3_,
+      CAST(
+        developmental_spelling_first_sound_1_ AS VARCHAR(25)
+      ) AS developmental_spelling_first_sound_1_,
+      CAST(
+        developmental_spelling_first_sound_2_ AS VARCHAR(25)
+      ) AS developmental_spelling_first_sound_2_,
+      CAST(
+        developmental_spelling_first_sound_3_ AS VARCHAR(25)
+      ) AS developmental_spelling_first_sound_3_,
+      CAST(
+        developmental_spelling_initial_final_blend_digraph_5_ AS VARCHAR(25)
+      ) AS developmental_spelling_initial_final_blend_digraph_5_,
+      CAST(
+        developmental_spelling_initial_final_blend_digraphs_4_ AS VARCHAR(25)
+      ) AS developmental_spelling_initial_final_blend_digraphs_4_,
+      CAST(
+        developmental_spelling_long_vowel_2_syllable_words_11_ AS VARCHAR(25)
+      ) AS developmental_spelling_long_vowel_2_syllable_words_11_,
+      CAST(
+        developmental_spelling_long_vowel_2_syllable_words_12_ AS VARCHAR(25)
+      ) AS developmental_spelling_long_vowel_2_syllable_words_12_,
+      CAST(
+        developmental_spelling_long_vowel_pattern_10_ AS VARCHAR(25)
+      ) AS developmental_spelling_long_vowel_pattern_10_,
+      CAST(
+        developmental_spelling_long_vowel_pattern_6_ AS VARCHAR(25)
+      ) AS developmental_spelling_long_vowel_pattern_6_,
+      CAST(
+        developmental_spelling_long_vowel_pattern_8_ AS VARCHAR(25)
+      ) AS developmental_spelling_long_vowel_pattern_8_,
+      CAST(
+        developmental_spelling_long_vowel_pattern_9_ AS VARCHAR(25)
+      ) AS developmental_spelling_long_vowel_pattern_9_,
+      CAST(
+        developmental_spelling_r_controlled_2_syllable_words_11_ AS VARCHAR(25)
+      ) AS developmental_spelling_r_controlled_2_syllable_words_11_,
+      CAST(
+        developmental_spelling_r_controlled_2_syllable_words_12_ AS VARCHAR(25)
+      ) AS developmental_spelling_r_controlled_2_syllable_words_12_,
+      CAST(
+        developmental_spelling_r_controlled_vowel_10_ AS VARCHAR(25)
+      ) AS developmental_spelling_r_controlled_vowel_10_,
+      CAST(
+        developmental_spelling_r_controlled_vowel_6_ AS VARCHAR(25)
+      ) AS developmental_spelling_r_controlled_vowel_6_,
+      CAST(
+        developmental_spelling_r_controlled_vowel_7_ AS VARCHAR(25)
+      ) AS developmental_spelling_r_controlled_vowel_7_,
+      CAST(
+        developmental_spelling_r_controlled_vowel_8_ AS VARCHAR(25)
+      ) AS developmental_spelling_r_controlled_vowel_8_,
+      CAST(
+        developmental_spelling_r_controlled_vowel_9_ AS VARCHAR(25)
+      ) AS developmental_spelling_r_controlled_vowel_9_,
+      CAST(
+        developmental_spelling_short_vowel_sound_1_ AS VARCHAR(25)
+      ) AS developmental_spelling_short_vowel_sound_1_,
+      CAST(
+        developmental_spelling_short_vowel_sound_2_ AS VARCHAR(25)
+      ) AS developmental_spelling_short_vowel_sound_2_,
+      CAST(
+        developmental_spelling_short_vowel_sound_3_ AS VARCHAR(25)
+      ) AS developmental_spelling_short_vowel_sound_3_,
+      CAST(
+        developmental_spelling_short_vowel_sound_4_ AS VARCHAR(25)
+      ) AS developmental_spelling_short_vowel_sound_4_,
+      CAST(
+        developmental_spelling_short_vowel_sound_5_ AS VARCHAR(25)
+      ) AS developmental_spelling_short_vowel_sound_5_,
+      CAST(
+        developmental_spelling_v_c_e_long_vowel_pattern_7_ AS VARCHAR(25)
+      ) AS developmental_spelling_v_c_e_long_vowel_pattern_7_,
+      CAST(
+        developmental_spelling_vowel_digraphs_10_ AS VARCHAR(25)
+      ) AS developmental_spelling_vowel_digraphs_10_,
+      CAST(
+        developmental_spelling_vowel_digraphs_8_ AS VARCHAR(25)
+      ) AS developmental_spelling_vowel_digraphs_8_,
+      CAST(
+        developmental_spelling_vowel_digraphs_9_ AS VARCHAR(25)
+      ) AS developmental_spelling_vowel_digraphs_9_,
+      CAST(
+        f_overreliance_on_facts_for_the_text_10_ AS VARCHAR(25)
+      ) AS f_overreliance_on_facts_for_the_text_10_,
+      CAST(
+        f_overreliance_on_facts_for_the_text_11_ AS VARCHAR(25)
+      ) AS f_overreliance_on_facts_for_the_text_11_,
+      CAST(
+        f_overreliance_on_facts_for_the_text_12_ AS VARCHAR(25)
+      ) AS f_overreliance_on_facts_for_the_text_12_,
+      CAST(
+        f_overreliance_on_facts_for_the_text_2_ AS VARCHAR(25)
+      ) AS f_overreliance_on_facts_for_the_text_2_,
+      CAST(
+        f_overreliance_on_facts_for_the_text_3_ AS VARCHAR(25)
+      ) AS f_overreliance_on_facts_for_the_text_3_,
+      CAST(
+        f_overreliance_on_facts_for_the_text_4_ AS VARCHAR(25)
+      ) AS f_overreliance_on_facts_for_the_text_4_,
+      CAST(
+        f_overreliance_on_facts_for_the_text_5_ AS VARCHAR(25)
+      ) AS f_overreliance_on_facts_for_the_text_5_,
+      CAST(
+        f_overreliance_on_facts_for_the_text_6_ AS VARCHAR(25)
+      ) AS f_overreliance_on_facts_for_the_text_6_,
+      CAST(
+        f_overreliance_on_facts_for_the_text_7_ AS VARCHAR(25)
+      ) AS f_overreliance_on_facts_for_the_text_7_,
+      CAST(
+        f_overreliance_on_facts_for_the_text_8_ AS VARCHAR(25)
+      ) AS f_overreliance_on_facts_for_the_text_8_,
+      CAST(
+        f_overreliance_on_facts_for_the_text_9_ AS VARCHAR(25)
+      ) AS f_overreliance_on_facts_for_the_text_9_,
       CAST(fluency_10_ AS VARCHAR(25)) AS fluency_10_,
       CAST(fluency_11_ AS VARCHAR(25)) AS fluency_11_,
       CAST(fluency_12_ AS VARCHAR(25)) AS fluency_12_,
@@ -180,14 +320,30 @@ FROM
       CAST(oral_comprehension_6_ AS VARCHAR(25)) AS oral_comprehension_6_,
       CAST(oral_comprehension_7_ AS VARCHAR(25)) AS oral_comprehension_7_,
       CAST(oral_comprehension_9_ AS VARCHAR(25)) AS oral_comprehension_9_,
-      CAST(oral_comprehension_critical_thinking_10_ AS VARCHAR(25)) AS oral_comprehension_critical_thinking_10_,
-      CAST(oral_comprehension_critical_thinking_11_ AS VARCHAR(25)) AS oral_comprehension_critical_thinking_11_,
-      CAST(oral_comprehension_critical_thinking_12_ AS VARCHAR(25)) AS oral_comprehension_critical_thinking_12_,
-      CAST(oral_comprehension_critical_thinking_6_purple_only_ AS VARCHAR(25)) AS oral_comprehension_critical_thinking_6_purple_only_,
-      CAST(oral_comprehension_critical_thinking_7_purple_only_ AS VARCHAR(25)) AS oral_comprehension_critical_thinking_7_purple_only_,
-      CAST(oral_comprehension_critical_thinking_9_ AS VARCHAR(25)) AS oral_comprehension_critical_thinking_9_,
-      CAST(oral_comprehension_factual_10_yellow_only_ AS VARCHAR(25)) AS oral_comprehension_factual_10_yellow_only_,
-      CAST(oral_comprehension_factual_11_yellow_only_ AS VARCHAR(25)) AS oral_comprehension_factual_11_yellow_only_,
+      CAST(
+        oral_comprehension_critical_thinking_10_ AS VARCHAR(25)
+      ) AS oral_comprehension_critical_thinking_10_,
+      CAST(
+        oral_comprehension_critical_thinking_11_ AS VARCHAR(25)
+      ) AS oral_comprehension_critical_thinking_11_,
+      CAST(
+        oral_comprehension_critical_thinking_12_ AS VARCHAR(25)
+      ) AS oral_comprehension_critical_thinking_12_,
+      CAST(
+        oral_comprehension_critical_thinking_6_purple_only_ AS VARCHAR(25)
+      ) AS oral_comprehension_critical_thinking_6_purple_only_,
+      CAST(
+        oral_comprehension_critical_thinking_7_purple_only_ AS VARCHAR(25)
+      ) AS oral_comprehension_critical_thinking_7_purple_only_,
+      CAST(
+        oral_comprehension_critical_thinking_9_ AS VARCHAR(25)
+      ) AS oral_comprehension_critical_thinking_9_,
+      CAST(
+        oral_comprehension_factual_10_yellow_only_ AS VARCHAR(25)
+      ) AS oral_comprehension_factual_10_yellow_only_,
+      CAST(
+        oral_comprehension_factual_11_yellow_only_ AS VARCHAR(25)
+      ) AS oral_comprehension_factual_11_yellow_only_,
       CAST(oral_comprehension_factual_12_ AS VARCHAR(25)) AS oral_comprehension_factual_12_,
       CAST(oral_comprehension_factual_6_ AS VARCHAR(25)) AS oral_comprehension_factual_6_,
       CAST(oral_comprehension_factual_7_ AS VARCHAR(25)) AS oral_comprehension_factual_7_,
@@ -195,7 +351,9 @@ FROM
       CAST(oral_comprehension_inferential_10_ AS VARCHAR(25)) AS oral_comprehension_inferential_10_,
       CAST(oral_comprehension_inferential_11_ AS VARCHAR(25)) AS oral_comprehension_inferential_11_,
       CAST(oral_comprehension_inferential_12_ AS VARCHAR(25)) AS oral_comprehension_inferential_12_,
-      CAST(oral_comprehension_inferential_6_yellow_only_ AS VARCHAR(25)) AS oral_comprehension_inferential_6_yellow_only_,
+      CAST(
+        oral_comprehension_inferential_6_yellow_only_ AS VARCHAR(25)
+      ) AS oral_comprehension_inferential_6_yellow_only_,
       CAST(oral_comprehension_inferential_7_ AS VARCHAR(25)) AS oral_comprehension_inferential_7_,
       CAST(oral_comprehension_inferential_9_ AS VARCHAR(25)) AS oral_comprehension_inferential_9_,
       CAST(pe_personal_experience_10_ AS VARCHAR(25)) AS pe_personal_experience_10_,
@@ -209,8 +367,12 @@ FROM
       CAST(pe_personal_experience_7_ AS VARCHAR(25)) AS pe_personal_experience_7_,
       CAST(pe_personal_experience_8_ AS VARCHAR(25)) AS pe_personal_experience_8_,
       CAST(pe_personal_experience_9_ AS VARCHAR(25)) AS pe_personal_experience_9_,
-      CAST(phonemic_awareness_matching_first_sounds_1_ AS VARCHAR(25)) AS phonemic_awareness_matching_first_sounds_1_,
-      CAST(phonemic_awareness_rhyming_words_0_ AS VARCHAR(25)) AS phonemic_awareness_rhyming_words_0_,
+      CAST(
+        phonemic_awareness_matching_first_sounds_1_ AS VARCHAR(25)
+      ) AS phonemic_awareness_matching_first_sounds_1_,
+      CAST(
+        phonemic_awareness_rhyming_words_0_ AS VARCHAR(25)
+      ) AS phonemic_awareness_rhyming_words_0_,
       CAST(phonemic_awareness_segmentation_2_ AS VARCHAR(25)) AS phonemic_awareness_segmentation_2_,
       CAST(phonemic_awareness_segmentation_3_ AS VARCHAR(25)) AS phonemic_awareness_segmentation_3_,
       CAST(q_answers_a_different_question_10_ AS VARCHAR(25)) AS q_answers_a_different_question_10_,
@@ -247,7 +409,9 @@ FROM
       CAST(reading_rate_9_ AS VARCHAR(25)) AS reading_rate_9_,
       CAST(reading_record_1_ AS VARCHAR(25)) AS reading_record_1_,
       CAST(reading_record_holds_pattern_1_ AS VARCHAR(25)) AS reading_record_holds_pattern_1_,
-      CAST(reading_record_one_to_one_matching_1_ AS VARCHAR(25)) AS reading_record_one_to_one_matching_1_,
+      CAST(
+        reading_record_one_to_one_matching_1_ AS VARCHAR(25)
+      ) AS reading_record_one_to_one_matching_1_,
       CAST(reading_record_understanding_1_ AS VARCHAR(25)) AS reading_record_understanding_1_,
       CAST(retelling_10_ AS VARCHAR(25)) AS retelling_10_,
       CAST(retelling_11_ AS VARCHAR(25)) AS retelling_11_,
@@ -256,12 +420,20 @@ FROM
       CAST(retelling_9_ AS VARCHAR(25)) AS retelling_9_,
       CAST(silent_comprehension_6_ AS VARCHAR(25)) AS silent_comprehension_6_,
       CAST(silent_comprehension_7_ AS VARCHAR(25)) AS silent_comprehension_7_,
-      CAST(silent_comprehension_critical_thinking_6_ AS VARCHAR(25)) AS silent_comprehension_critical_thinking_6_,
-      CAST(silent_comprehension_critical_thinking_7_ AS VARCHAR(25)) AS silent_comprehension_critical_thinking_7_,
+      CAST(
+        silent_comprehension_critical_thinking_6_ AS VARCHAR(25)
+      ) AS silent_comprehension_critical_thinking_6_,
+      CAST(
+        silent_comprehension_critical_thinking_7_ AS VARCHAR(25)
+      ) AS silent_comprehension_critical_thinking_7_,
       CAST(silent_comprehension_factual_6_ AS VARCHAR(25)) AS silent_comprehension_factual_6_,
       CAST(silent_comprehension_factual_7_ AS VARCHAR(25)) AS silent_comprehension_factual_7_,
-      CAST(silent_comprehension_inferential_6_ AS VARCHAR(25)) AS silent_comprehension_inferential_6_,
-      CAST(silent_comprehension_inferential_7_ AS VARCHAR(25)) AS silent_comprehension_inferential_7_,
+      CAST(
+        silent_comprehension_inferential_6_ AS VARCHAR(25)
+      ) AS silent_comprehension_inferential_6_,
+      CAST(
+        silent_comprehension_inferential_7_ AS VARCHAR(25)
+      ) AS silent_comprehension_inferential_7_,
       CAST(syntax_10_ AS VARCHAR(25)) AS syntax_10_,
       CAST(syntax_11_ AS VARCHAR(25)) AS syntax_11_,
       CAST(syntax_12_ AS VARCHAR(25)) AS syntax_12_,
@@ -287,18 +459,34 @@ FROM
       CAST(written_comprehension_11_ AS VARCHAR(25)) AS written_comprehension_11_,
       CAST(written_comprehension_12_ AS VARCHAR(25)) AS written_comprehension_12_,
       CAST(written_comprehension_9_ AS VARCHAR(25)) AS written_comprehension_9_,
-      CAST(written_comprehension_critical_thinking_10_ AS VARCHAR(25)) AS written_comprehension_critical_thinking_10_,
-      CAST(written_comprehension_critical_thinking_11_ AS VARCHAR(25)) AS written_comprehension_critical_thinking_11_,
-      CAST(written_comprehension_critical_thinking_12_ AS VARCHAR(25)) AS written_comprehension_critical_thinking_12_,
-      CAST(written_comprehension_critical_thinking_9_yellow_only_ AS VARCHAR(25)) AS written_comprehension_critical_thinking_9_yellow_only_,
+      CAST(
+        written_comprehension_critical_thinking_10_ AS VARCHAR(25)
+      ) AS written_comprehension_critical_thinking_10_,
+      CAST(
+        written_comprehension_critical_thinking_11_ AS VARCHAR(25)
+      ) AS written_comprehension_critical_thinking_11_,
+      CAST(
+        written_comprehension_critical_thinking_12_ AS VARCHAR(25)
+      ) AS written_comprehension_critical_thinking_12_,
+      CAST(
+        written_comprehension_critical_thinking_9_yellow_only_ AS VARCHAR(25)
+      ) AS written_comprehension_critical_thinking_9_yellow_only_,
       CAST(written_comprehension_factual_10_ AS VARCHAR(25)) AS written_comprehension_factual_10_,
       CAST(written_comprehension_factual_11_ AS VARCHAR(25)) AS written_comprehension_factual_11_,
       CAST(written_comprehension_factual_12_ AS VARCHAR(25)) AS written_comprehension_factual_12_,
       CAST(written_comprehension_factual_9_ AS VARCHAR(25)) AS written_comprehension_factual_9_,
-      CAST(written_comprehension_inferential_10_ AS VARCHAR(25)) AS written_comprehension_inferential_10_,
-      CAST(written_comprehension_inferential_11_purple_only_ AS VARCHAR(25)) AS written_comprehension_inferential_11_purple_only_,
-      CAST(written_comprehension_inferential_12_ AS VARCHAR(25)) AS written_comprehension_inferential_12_,
-      CAST(written_comprehension_inferential_9_ AS VARCHAR(25)) AS written_comprehension_inferential_9_
+      CAST(
+        written_comprehension_inferential_10_ AS VARCHAR(25)
+      ) AS written_comprehension_inferential_10_,
+      CAST(
+        written_comprehension_inferential_11_purple_only_ AS VARCHAR(25)
+      ) AS written_comprehension_inferential_11_purple_only_,
+      CAST(
+        written_comprehension_inferential_12_ AS VARCHAR(25)
+      ) AS written_comprehension_inferential_12_,
+      CAST(
+        written_comprehension_inferential_9_ AS VARCHAR(25)
+      ) AS written_comprehension_inferential_9_
     FROM
       gabby.steptool.all_steps
     WHERE

@@ -6,7 +6,10 @@ FUNCTION illuminate_dna_repositories.repository_unpivot (@repository_id INT) RET
 
 SELECT
   @field_names = gabby.dbo.GROUP_CONCAT_D (f.[name], ', '),
-  @field_names_converted = gabby.dbo.GROUP_CONCAT_D ('CAST(' + f.[name] + ' AS NVARCHAR(256)) AS ' + f.[name], ', ')
+  @field_names_converted = gabby.dbo.GROUP_CONCAT_D (
+    'CAST(' + f.[name] + ' AS NVARCHAR(256)) AS ' + f.[name],
+    ', '
+  )
 FROM
   illuminate_dna_repositories.fields f
   INNER JOIN gabby.utilities.all_tables_columns atc ON CONCAT('repository_', f.repository_id) = atc.table_name

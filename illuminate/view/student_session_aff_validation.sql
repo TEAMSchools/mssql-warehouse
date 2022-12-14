@@ -4,7 +4,10 @@ CREATE OR ALTER VIEW
 SELECT
   stu_sess_id
 FROM
-  OPENQUERY (ILLUMINATE, '
+  OPENQUERY (
+    ILLUMINATE,
+    '
   SELECT stu_sess_id
   FROM public.student_session_aff
-')
+'
+  )

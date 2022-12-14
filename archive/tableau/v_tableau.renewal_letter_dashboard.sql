@@ -19,7 +19,9 @@ WITH
       (
         SELECT
           rs.employee_reference_code AS affected_employee_number,
-          CAST(rs.workflow_data_last_modified_timestamp AS DATETIME2) AS renewal_status_updated,
+          CAST(
+            rs.workflow_data_last_modified_timestamp AS DATETIME2
+          ) AS renewal_status_updated,
           CASE
             WHEN rs.workflow_status = 'completed'
             AND rs.workflow_data_saved = 1 THEN 'Offer Accepted'

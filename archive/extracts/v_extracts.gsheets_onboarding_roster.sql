@@ -10,14 +10,26 @@ SELECT
   CASE
     WHEN ISNULL(CHARINDEX('_', jp.position_name_c), 0) = 0 THEN jp.position_name_c
     WHEN ISNULL(
-      CHARINDEX('_', jp.position_name_c, (CHARINDEX('_', jp.position_name_c) + 1)) - (CHARINDEX('_', jp.position_name_c) - 1),
+      CHARINDEX(
+        '_',
+        jp.position_name_c,
+        (CHARINDEX('_', jp.position_name_c) + 1)
+      ) - (CHARINDEX('_', jp.position_name_c) - 1),
       0
-    ) <= 0 THEN SUBSTRING(jp.position_name_c, (CHARINDEX('_', jp.position_name_c) + 1), LEN(jp.position_name_c))
+    ) <= 0 THEN SUBSTRING(
+      jp.position_name_c,
+      (CHARINDEX('_', jp.position_name_c) + 1),
+      LEN(jp.position_name_c)
+    )
     ELSE SUBSTRING(
       jp.position_name_c,
       (CHARINDEX('_', jp.position_name_c) + 1),
       (
-        CHARINDEX('_', jp.position_name_c, (CHARINDEX('_', jp.position_name_c) + 1)) - CHARINDEX('_', jp.position_name_c) - 1
+        CHARINDEX(
+          '_',
+          jp.position_name_c,
+          (CHARINDEX('_', jp.position_name_c) + 1)
+        ) - CHARINDEX('_', jp.position_name_c) - 1
       )
     )
   END AS salesforce_location,

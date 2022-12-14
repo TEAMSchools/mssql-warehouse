@@ -24,7 +24,14 @@ WITH
       ns.illuminate_subject
     COLLATE Latin1_General_BIN AS subject_area,
     CASE
-      WHEN ns.illuminate_subject IN ('Algebra I', 'Geometry', 'Algebra II', 'Algebra IIA', 'Algebra IIB', 'Pre-Calculus') THEN 1
+      WHEN ns.illuminate_subject IN (
+        'Algebra I',
+        'Geometry',
+        'Algebra II',
+        'Algebra IIA',
+        'Algebra IIB',
+        'Pre-Calculus'
+      ) THEN 1
       ELSE 0
     END AS is_advanced_math
     FROM

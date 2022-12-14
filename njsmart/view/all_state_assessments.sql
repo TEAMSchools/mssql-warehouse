@@ -13,7 +13,13 @@ WITH
       (
         SELECT
           CAST(local_student_id AS INT) AS local_student_id,
-          CAST(SUBSTRING(_file, PATINDEX('%- [0-9][0-9][0-9][0-9]%', _file) + 2, 4) AS INT) AS academic_year,
+          CAST(
+            SUBSTRING(
+              _file,
+              PATINDEX('%- [0-9][0-9][0-9][0-9]%', _file) + 2,
+              4
+            ) AS INT
+          ) AS academic_year,
           'NJASK' AS test_type,
           CAST(scaled_score_lal AS VARCHAR(50)) AS scaled_score_lal,
           CAST(performance_level_lal AS VARCHAR(50)) AS performance_level_lal,
@@ -84,8 +90,16 @@ WITH
           gabby.njsmart.njbct n
         UNION ALL
         SELECT
-          CAST(CONVERT(FLOAT, REPLACE(local_student_id, ' ', '')) AS BIGINT) AS local_student_id,
-          CAST(SUBSTRING(_file, PATINDEX('%- [0-9][0-9][0-9][0-9]%', _file) + 2, 4) AS INT) AS academic_year,
+          CAST(
+            CONVERT(FLOAT, REPLACE(local_student_id, ' ', '')) AS BIGINT
+          ) AS local_student_id,
+          CAST(
+            SUBSTRING(
+              _file,
+              PATINDEX('%- [0-9][0-9][0-9][0-9]%', _file) + 2,
+              4
+            ) AS INT
+          ) AS academic_year,
           'HSPA' AS test_type,
           CAST(scaled_score_lal AS VARCHAR(50)) AS scaled_score_lal,
           CAST(performance_level_lal AS VARCHAR(50)) AS performance_level_lal,
@@ -104,7 +118,13 @@ WITH
         UNION ALL
         SELECT
           CAST(local_student_id AS INT) AS local_student_id,
-          CAST(SUBSTRING(_file, PATINDEX('%- [0-9][0-9][0-9][0-9]%', _file) + 2, 4) AS INT) AS academic_year,
+          CAST(
+            SUBSTRING(
+              _file,
+              PATINDEX('%- [0-9][0-9][0-9][0-9]%', _file) + 2,
+              4
+            ) AS INT
+          ) AS academic_year,
           'GEPA' AS test_type,
           CAST(scaled_score_lang AS VARCHAR(50)) AS scaled_score_lal,
           CAST(performance_level_lang AS VARCHAR(50)) AS performance_level_lal,
@@ -154,12 +174,30 @@ WITH
           academic_year,
           test_type,
           VALUE,
-          UPPER(REVERSE(LEFT(REVERSE(field), (CHARINDEX('_', REVERSE(field)) - 1)))) AS subject,
-          REVERSE(SUBSTRING(REVERSE(field), (CHARINDEX('_', REVERSE(field)) + 1), LEN(field))) AS field
+          UPPER(
+            REVERSE(
+              LEFT(
+                REVERSE(field),
+                (CHARINDEX('_', REVERSE(field)) - 1)
+              )
+            )
+          ) AS subject,
+          REVERSE(
+            SUBSTRING(
+              REVERSE(field),
+              (CHARINDEX('_', REVERSE(field)) + 1),
+              LEN(field)
+            )
+          ) AS field
         FROM
           combined_unpivot
       ) sub PIVOT (
-        MAX(VALUE) FOR field IN (scaled_score, performance_level, invalid_scale_score_reason, void_reason)
+        MAX(VALUE) FOR field IN (
+          scaled_score,
+          performance_level,
+          invalid_scale_score_reason,
+          void_reason
+        )
       ) p
   )
 SELECT

@@ -25,15 +25,33 @@ WITH
           email,
           location,
           n,
-          CAST(academicsupportdataanalyticsandstudentinformation_1_s AS FLOAT) AS academicsupportdataanalyticsandstudentinformation_1_s,
-          CAST(academicsupportdataanalyticsandstudentinformation_2_s AS FLOAT) AS academicsupportdataanalyticsandstudentinformation_2_s,
-          CAST(academicsupportdataanalyticsandstudentinformation_3_s AS FLOAT) AS academicsupportdataanalyticsandstudentinformation_3_s,
-          CAST(academicsupportdataanalyticsandstudentinformation_4_s AS FLOAT) AS academicsupportdataanalyticsandstudentinformation_4_s,
-          CAST(academicsupportdataanalyticsandstudentinformation_5_s AS FLOAT) AS academicsupportdataanalyticsandstudentinformation_5_s,
-          CAST(academicsupportdataanalyticsandstudentinformation_6_s AS FLOAT) AS academicsupportdataanalyticsandstudentinformation_6_s,
-          CAST(academicsupportdataanalyticsandstudentinformation_7_s AS FLOAT) AS academicsupportdataanalyticsandstudentinformation_7_s,
-          CAST(academicsupportdataanalyticsandstudentinformation_8_s AS FLOAT) AS academicsupportdataanalyticsandstudentinformation_8_s,
-          CAST(academicsupportdataanalyticsandstudentinformation_9_s AS FLOAT) AS academicsupportdataanalyticsandstudentinformation_9_s,
+          CAST(
+            academicsupportdataanalyticsandstudentinformation_1_s AS FLOAT
+          ) AS academicsupportdataanalyticsandstudentinformation_1_s,
+          CAST(
+            academicsupportdataanalyticsandstudentinformation_2_s AS FLOAT
+          ) AS academicsupportdataanalyticsandstudentinformation_2_s,
+          CAST(
+            academicsupportdataanalyticsandstudentinformation_3_s AS FLOAT
+          ) AS academicsupportdataanalyticsandstudentinformation_3_s,
+          CAST(
+            academicsupportdataanalyticsandstudentinformation_4_s AS FLOAT
+          ) AS academicsupportdataanalyticsandstudentinformation_4_s,
+          CAST(
+            academicsupportdataanalyticsandstudentinformation_5_s AS FLOAT
+          ) AS academicsupportdataanalyticsandstudentinformation_5_s,
+          CAST(
+            academicsupportdataanalyticsandstudentinformation_6_s AS FLOAT
+          ) AS academicsupportdataanalyticsandstudentinformation_6_s,
+          CAST(
+            academicsupportdataanalyticsandstudentinformation_7_s AS FLOAT
+          ) AS academicsupportdataanalyticsandstudentinformation_7_s,
+          CAST(
+            academicsupportdataanalyticsandstudentinformation_8_s AS FLOAT
+          ) AS academicsupportdataanalyticsandstudentinformation_8_s,
+          CAST(
+            academicsupportdataanalyticsandstudentinformation_9_s AS FLOAT
+          ) AS academicsupportdataanalyticsandstudentinformation_9_s,
           CAST(academicsupportteam_1 AS FLOAT) AS academicsupportteam_1,
           CAST(academicsupportteam_10 AS FLOAT) AS academicsupportteam_10,
           CAST(academicsupportteam_11 AS FLOAT) AS academicsupportteam_11,
@@ -158,9 +176,15 @@ WITH
           CAST(nutritionprogramfoodservice_5 AS FLOAT) AS nutritionprogramfoodservice_5,
           CAST(nutritionprogramfoodservice_6 AS FLOAT) AS nutritionprogramfoodservice_6,
           CAST(nutritionprogramfoodservice_7 AS FLOAT) AS nutritionprogramfoodservice_7,
-          CAST(nutritionprogramfoodserviceschoolleadersonly_1 AS FLOAT) AS nutritionprogramfoodserviceschoolleadersonly_1,
-          CAST(nutritionprogramfoodserviceschoolleadersonly_2 AS FLOAT) AS nutritionprogramfoodserviceschoolleadersonly_2,
-          CAST(nutritionprogramfoodserviceschoolleadersonly_3 AS FLOAT) AS nutritionprogramfoodserviceschoolleadersonly_3,
+          CAST(
+            nutritionprogramfoodserviceschoolleadersonly_1 AS FLOAT
+          ) AS nutritionprogramfoodserviceschoolleadersonly_1,
+          CAST(
+            nutritionprogramfoodserviceschoolleadersonly_2 AS FLOAT
+          ) AS nutritionprogramfoodserviceschoolleadersonly_2,
+          CAST(
+            nutritionprogramfoodserviceschoolleadersonly_3 AS FLOAT
+          ) AS nutritionprogramfoodserviceschoolleadersonly_3,
           CAST(nutritionschoolleadersonly_1 AS FLOAT) AS nutritionschoolleadersonly_1,
           CAST(nutritionschoolleadersonly_2 AS FLOAT) AS nutritionschoolleadersonly_2,
           CAST(nutritionschoolleadersonly_3 AS FLOAT) AS nutritionschoolleadersonly_3,

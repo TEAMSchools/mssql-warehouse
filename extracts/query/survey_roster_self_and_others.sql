@@ -11,7 +11,11 @@ WHERE
   [status] <> 'Terminated'
   AND (
     (
-      primary_job IN ('Dean', 'Dean of Students', 'Dean of Students and Families')
+      primary_job IN (
+        'Dean',
+        'Dean of Students',
+        'Dean of Students and Families'
+      )
       AND is_manager = 'No'
     )
     OR (

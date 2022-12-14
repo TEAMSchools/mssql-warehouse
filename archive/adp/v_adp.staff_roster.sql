@@ -81,7 +81,11 @@ WITH
       END AS [status]
       /* redundant combined fields */
 ,
-      CONCAT(sub.primary_on_site_department, ' - ', sub.primary_job) AS position_title,
+      CONCAT(
+        sub.primary_on_site_department,
+        ' - ',
+        sub.primary_job
+      ) AS position_title,
       sub.primary_site_clean + ' (' + sub.business_unit_code + ') - ' + sub.primary_on_site_department AS primary_on_site_department_entity,
       sub.primary_site_clean + ' (' + sub.business_unit_code + ')' AS primary_site_entity
     FROM
@@ -100,7 +104,10 @@ WITH
           /* transformations */
 ,
           CAST(ea.birth_date AS DATE) AS birth_date,
-          CONCAT(ea.primary_address_address_line_1, ', ' + ea.primary_address_address_line_2) AS [address],
+          CONCAT(
+            ea.primary_address_address_line_1,
+            ', ' + ea.primary_address_address_line_2
+          ) AS [address],
           CAST(
             gabby.utilities.STRIP_CHARACTERS (ea.personal_contact_personal_mobile, '^0-9') AS NVARCHAR(256)
           ) AS mobile_number,
@@ -116,13 +123,19 @@ WITH
             WHEN ea.ethnicity IS NULL
             AND ea.preferred_race_ethnicity IS NULL THEN NULL
             WHEN CHARINDEX('Decline to state', ea.preferred_race_ethnicity) > 0 THEN NULL
-            WHEN CHARINDEX('Latinx/Hispanic/Chicana(o)', ea.preferred_race_ethnicity) > 0 THEN 'Hispanic or Latino'
+            WHEN CHARINDEX(
+              'Latinx/Hispanic/Chicana(o)',
+              ea.preferred_race_ethnicity
+            ) > 0 THEN 'Hispanic or Latino'
             WHEN ea.ethnicity = 'Hispanic or Latino' THEN 'Hispanic or Latino'
             ELSE 'Not Hispanic or Latino'
           END AS ethnicity,
           CASE
             WHEN ea.race_description = 'Black or African American' THEN 1
-            WHEN CHARINDEX('Black/African American', ea.preferred_race_ethnicity) > 0 THEN 1
+            WHEN CHARINDEX(
+              'Black/African American',
+              ea.preferred_race_ethnicity
+            ) > 0 THEN 1
             ELSE 0
           END AS is_race_black,
           CASE
@@ -151,7 +164,10 @@ WITH
             ELSE 0
           END AS is_race_multi,
           CASE
-            WHEN CHARINDEX('My racial/ethnic identity is not listed', ea.preferred_race_ethnicity) > 0 THEN 1
+            WHEN CHARINDEX(
+              'My racial/ethnic identity is not listed',
+              ea.preferred_race_ethnicity
+            ) > 0 THEN 1
             ELSE 0
           END AS is_race_other,
           CASE

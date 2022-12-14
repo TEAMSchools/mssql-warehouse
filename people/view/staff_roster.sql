@@ -27,7 +27,10 @@ WITH
       eh.effective_start_date,
       eh.status_effective_start_date,
       eh.primary_position,
-      COALESCE(eh.work_assignment_start_date, eh.position_effective_start_date) AS work_assignment_start_date
+      COALESCE(
+        eh.work_assignment_start_date,
+        eh.position_effective_start_date
+      ) AS work_assignment_start_date
     FROM
       gabby.people.employment_history_static eh
     WHERE
@@ -54,7 +57,10 @@ WITH
       ps.effective_start_date,
       ps.status_effective_start_date,
       ps.primary_position,
-      COALESCE(ps.work_assignment_start_date, ps.position_effective_start_date) AS work_assignment_start_date
+      COALESCE(
+        ps.work_assignment_start_date,
+        ps.position_effective_start_date
+      ) AS work_assignment_start_date
     FROM
       gabby.people.employment_history_static ps
     WHERE
@@ -287,7 +293,10 @@ WITH
           CAST(ea.birth_date AS DATE) AS birth_date,
           LEFT(UPPER(ea.gender), 1) AS sex,
           CASE
-            WHEN ea.primary_address_address_line_1 IS NOT NULL THEN CONCAT(ea.primary_address_address_line_1, ', ' + ea.primary_address_address_line_2)
+            WHEN ea.primary_address_address_line_1 IS NOT NULL THEN CONCAT(
+              ea.primary_address_address_line_1,
+              ', ' + ea.primary_address_address_line_2
+            )
           END AS address_street,
           CAST(
             gabby.utilities.STRIP_CHARACTERS (ea.personal_contact_personal_mobile, '^0-9') AS NVARCHAR(256)
@@ -312,16 +321,28 @@ WITH
             WHEN eh.position_status = 'Prestart' THEN eh.status_effective_start_date
             ELSE rh.rehire_date
           END AS rehire_date,
-          COALESCE(sdf.years_teaching_any_state, cf.[Years Teaching - In any State]) AS years_teaching_in_any_state,
-          COALESCE(sdf.years_teaching_nj_and_fl, cf.[Years Teaching - In NJ or FL]) AS years_teaching_in_nj_or_fl,
+          COALESCE(
+            sdf.years_teaching_any_state,
+            cf.[Years Teaching - In any State]
+          ) AS years_teaching_in_any_state,
+          COALESCE(
+            sdf.years_teaching_nj_and_fl,
+            cf.[Years Teaching - In NJ or FL]
+          ) AS years_teaching_in_nj_or_fl,
           COALESCE(sdf.kipp_alumni, cf.[KIPP Alumni Status]) AS kipp_alumni_status,
           COALESCE(
             sdf.professional_experience_before_KIPP,
             cf.[Years of Professional Experience before joining]
           ) AS years_of_professional_experience_before_joining,
-          COALESCE(sdf.community_live, cf.[Life Experience in Communities We Serve]) AS life_experience_in_communities_we_serve,
+          COALESCE(
+            sdf.community_live,
+            cf.[Life Experience in Communities We Serve]
+          ) AS life_experience_in_communities_we_serve,
           COALESCE(sdf.teacher_prep, cf.[Teacher Prep Program]) AS teacher_prep_program,
-          COALESCE(sdf.community_work, cf.[Professional Experience in Communities We Serve]) AS professional_experience_in_communities_we_serve,
+          COALESCE(
+            sdf.community_work,
+            cf.[Professional Experience in Communities We Serve]
+          ) AS professional_experience_in_communities_we_serve,
           COALESCE(sdf.relay, cf.[Attended Relay]) AS attended_relay,
           cf.[WFMgr Pay Rule] AS wfmgr_pay_rule,
           COALESCE(sdf.preferred_gender, cf.[Preferred Gender]) AS preferred_gender,

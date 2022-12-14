@@ -36,9 +36,7 @@ SELECT
     MINUTE,
     /* number of 10 minute intervals (in microseconds) since last reset
     offset by time zone...holy shit */
-    (
-        CAST(pwdlastset AS BIGINT) / 600000000
-    ) + DATEDIFF(MINUTE, GETUTCDATE(), CURRENT_TIMESTAMP),
+    (CAST(pwdlastset AS BIGINT) / 600000000) + DATEDIFF(MINUTE, GETUTCDATE(), CURRENT_TIMESTAMP),
     /* origin date for DATETIME2 */
     CAST('1/1/1601' AS DATETIME2)
   ) AS pwdlastset,

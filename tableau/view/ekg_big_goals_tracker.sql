@@ -48,7 +48,9 @@ WITH
           test_performance_level
         FROM
           gabby.parcc.summative_record_file_clean
-      ) sub PIVOT (MAX(test_performance_level) FOR subject IN ([ela], [math])) p
+      ) sub PIVOT (
+        MAX(test_performance_level) FOR subject IN ([ela], [math])
+      ) p
   ),
   modules AS (
     SELECT
@@ -105,10 +107,22 @@ WITH
             WHERE
               response_type = 'O'
               AND module_type IN ('QA', 'CRQ')
-              AND subject_area IN ('Text Study', 'Mathematics', 'Algebra I', 'Geometry', 'Algebra IIA', 'Algebra IIB')
+              AND subject_area IN (
+                'Text Study',
+                'Mathematics',
+                'Algebra I',
+                'Geometry',
+                'Algebra IIA',
+                'Algebra IIB'
+              )
               AND percent_correct IS NOT NULL
           ) sub UNPIVOT (
-            VALUE FOR field IN (percent_correct, is_mastery, performance_band_number, rn_most_recent_subject)
+            VALUE FOR field IN (
+              percent_correct,
+              is_mastery,
+              performance_band_number,
+              rn_most_recent_subject
+            )
           ) u
       ) sub PIVOT (
         MAX(VALUE) FOR pivot_field IN (
@@ -560,9 +574,13 @@ WITH
       CAST(AVG(sub.lit_meeting_goal) AS FLOAT) AS lit_meeting_goal_pct,
       CAST(AVG(sub.lit_making_1yr_growth) AS FLOAT) AS lit_making_1yr_growth_pct,
       CAST(AVG(sub.is_student_attrition) AS FLOAT) AS student_attrition_pct,
-      CAST(SUM(sub.n_days_attendance) / SUM(sub.n_days_membership) AS FLOAT) AS ADA,
+      CAST(
+        SUM(sub.n_days_attendance) / SUM(sub.n_days_membership) AS FLOAT
+      ) AS ADA,
       CAST(AVG(sub.is_chronically_absent) AS FLOAT) AS chronically_absent_pct,
-      CAST(SUM(sub.n_days_tardy) / SUM(sub.n_days_membership) AS FLOAT) AS tardy_pct,
+      CAST(
+        SUM(sub.n_days_tardy) / SUM(sub.n_days_membership) AS FLOAT
+      ) AS tardy_pct,
       CAST(AVG(sub.is_OSS) AS FLOAT) AS oss_pct,
       CAST(AVG(sub.is_ISS) AS FLOAT) AS iss_pct,
       CAST(AVG(sub.is_OSS_iep) AS FLOAT) AS oss_iep_pct,
@@ -734,7 +752,12 @@ WITH
       ) sub
     GROUP BY
       sub.academic_year,
-      ROLLUP (sub.school_level, sub.region, sub.reporting_schoolid, sub.grade_level)
+      ROLLUP (
+        sub.school_level,
+        sub.region,
+        sub.reporting_schoolid,
+        sub.grade_level
+      )
   ),
   school_level_rollup_y1 AS (
     SELECT
@@ -776,7 +799,9 @@ WITH
       CAST(hsr.parent_pct_responded_positive AS FLOAT) AS hsr_parent_positive_pct,
       CAST(hsr.student_pct_responded_positive AS FLOAT) AS hsr_student_positive_pct,
       CAST(tntp.ici_percentile AS FLOAT) AS ici_percentile,
-      CAST(tntp.is_top_quartile_learning_environment_score AS FLOAT) AS learning_environment_score_top_quartile
+      CAST(
+        tntp.is_top_quartile_learning_environment_score AS FLOAT
+      ) AS learning_environment_score_top_quartile
     FROM
       student_level_rollup_y1 slr
       LEFT JOIN teacher_attrition ta ON slr.reporting_schoolid = ta.reporting_schoolid

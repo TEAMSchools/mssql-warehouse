@@ -39,9 +39,17 @@ SELECT
     WHEN s.overall_tier = 2
     AND w.[Years Teaching - In any State] <= 3 THEN 'F'
     WHEN s.overall_tier = 2
-    AND c.original_hire_date <= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 2, 6, 30) THEN 'E'
+    AND c.original_hire_date <= DATEFROMPARTS(
+      gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 2,
+      6,
+      30
+    ) THEN 'E'
     WHEN s.overall_tier = 2
-    AND c.original_hire_date <= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 3, 6, 30) THEN 'F'
+    AND c.original_hire_date <= DATEFROMPARTS(
+      gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 3,
+      6,
+      30
+    ) THEN 'F'
     WHEN s.overall_tier = 1 THEN 'G'
     WHEN c.primary_job NOT IN (
       'Teacher',

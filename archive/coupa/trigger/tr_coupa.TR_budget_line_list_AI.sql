@@ -20,7 +20,11 @@ IF (
 ) BEGIN
 DELETE FROM coupa.budget_line_list
 WHERE
-  CONCAT(budget_line_list.period, '_', budget_line_list.code) IN (
+  CONCAT(
+    budget_line_list.period,
+    '_',
+    budget_line_list.code
+  ) IN (
     SELECT
       CONCAT(period, '_', code)
     FROM

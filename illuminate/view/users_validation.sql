@@ -6,7 +6,10 @@ CREATE OR ALTER VIEW
 SELECT
   USER_ID
 FROM
-  OPENQUERY (ILLUMINATE, '
+  OPENQUERY (
+    ILLUMINATE,
+    '
   SELECT user_id
   FROM public.users
-');
+'
+  );

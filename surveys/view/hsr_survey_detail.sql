@@ -210,7 +210,10 @@ FROM
     ROLE,
     survey_question,
     school_responded,
-    ROUND((likert_4_ * school_responded) + (likert_5_ * school_responded), 0) AS responded_positive
+    ROUND(
+      (likert_4_ * school_responded) + (likert_5_ * school_responded),
+      0
+    ) AS responded_positive
     FROM
       gabby.surveys.hsr_survey_archive
   ) sub

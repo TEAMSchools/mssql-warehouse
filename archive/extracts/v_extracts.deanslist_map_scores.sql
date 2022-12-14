@@ -36,7 +36,10 @@ FROM
     FROM
       gabby.powerschool.cohort_identifiers_static co
       CROSS JOIN STRING_SPLIT ('Fall,Winter,Spring', ',') terms
-      CROSS JOIN STRING_SPLIT ('Mathematics,Reading,Science - General Science,Language Usage', ',') subjects
+      CROSS JOIN STRING_SPLIT (
+        'Mathematics,Reading,Science - General Science,Language Usage',
+        ','
+      ) subjects
       LEFT JOIN gabby.nwea.assessment_result_identifiers map ON co.student_number = map.student_id
       AND co.academic_year = map.academic_year
       AND terms.[value] = map.term

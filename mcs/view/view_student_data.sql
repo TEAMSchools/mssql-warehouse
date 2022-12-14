@@ -6,7 +6,9 @@ CREATE OR ALTER VIEW
 SELECT
   CAST(s.StudentNumber AS INT) AS student_number,
   s.IsDC AS is_dc,
-  CAST(s.Application_Approval_Result_Description AS VARCHAR(25))
+  CAST(
+    s.Application_Approval_Result_Description AS VARCHAR(25)
+  )
 COLLATE Latin1_General_BIN AS application_approval_result_description,
 CAST(s.EligibilityDescription AS VARCHAR(125))
 COLLATE Latin1_General_BIN AS eligibility_description,
@@ -16,8 +18,14 @@ CONVERT(
   VARCHAR(125),
   CASE
     WHEN s.IsDC = 1 THEN 'Direct Certification'
-    WHEN COALESCE(s.Application_Approval_Result_Description, s.EligibilityDescription) LIKE 'Prior%' THEN 'No Application'
-    ELSE COALESCE(s.Application_Approval_Result_Description, s.EligibilityDescription)
+    WHEN COALESCE(
+      s.Application_Approval_Result_Description,
+      s.EligibilityDescription
+    ) LIKE 'Prior%' THEN 'No Application'
+    ELSE COALESCE(
+      s.Application_Approval_Result_Description,
+      s.EligibilityDescription
+    )
   END
 )
 COLLATE Latin1_General_BIN AS lunch_app_status,
@@ -27,7 +35,13 @@ CASE
   WHEN s.Application_Approval_Result_Description IN ('Zero Income') THEN 'F'
   WHEN s.Application_Approval_Result_Description IS NULL
   AND s.EligibilityDescription LIKE 'Prior%' THEN 'P'
-  ELSE LEFT(COALESCE(s.Application_Approval_Result_Description, s.MealBenefitsStatusDescription), 1)
+  ELSE LEFT(
+    COALESCE(
+      s.Application_Approval_Result_Description,
+      s.MealBenefitsStatusDescription
+    ),
+    1
+  )
 END
 COLLATE Latin1_General_BIN AS lunch_status,
 c.ReimbursableOnlyBalance AS reimbursable_only_balance,
@@ -48,7 +62,9 @@ CREATE OR ALTER VIEW
 SELECT
   CAST(s.StudentNumber AS INT) AS student_number,
   s.IsDC AS is_dc,
-  CAST(s.Application_Approval_Result_Description AS VARCHAR(25))
+  CAST(
+    s.Application_Approval_Result_Description AS VARCHAR(25)
+  )
 COLLATE Latin1_General_BIN AS application_approval_result_description,
 CAST(s.EligibilityDescription AS VARCHAR(125))
 COLLATE Latin1_General_BIN AS eligibility_description,
@@ -58,8 +74,14 @@ CONVERT(
   VARCHAR(125),
   CASE
     WHEN s.IsDC = 1 THEN 'Direct Certification'
-    WHEN COALESCE(s.Application_Approval_Result_Description, s.EligibilityDescription) LIKE 'Prior%' THEN 'No Application'
-    ELSE COALESCE(s.Application_Approval_Result_Description, s.EligibilityDescription)
+    WHEN COALESCE(
+      s.Application_Approval_Result_Description,
+      s.EligibilityDescription
+    ) LIKE 'Prior%' THEN 'No Application'
+    ELSE COALESCE(
+      s.Application_Approval_Result_Description,
+      s.EligibilityDescription
+    )
   END
 )
 COLLATE Latin1_General_BIN AS lunch_app_status,
@@ -69,7 +91,13 @@ CASE
   WHEN s.Application_Approval_Result_Description IN ('Zero Income') THEN 'F'
   WHEN s.Application_Approval_Result_Description IS NULL
   AND s.EligibilityDescription LIKE 'Prior%' THEN 'P'
-  ELSE LEFT(COALESCE(s.Application_Approval_Result_Description, s.MealBenefitsStatusDescription), 1)
+  ELSE LEFT(
+    COALESCE(
+      s.Application_Approval_Result_Description,
+      s.MealBenefitsStatusDescription
+    ),
+    1
+  )
 END
 COLLATE Latin1_General_BIN AS lunch_status,
 c.ReimbursableOnlyBalance AS reimbursable_only_balance,

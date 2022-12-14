@@ -291,7 +291,14 @@ SELECT
   am.act_oct,
   am.act_apr,
   CASE
-    WHEN CONCAT(am.sat2_ch, am.sat2_fl, am.sat2_lr, am.sat2_m1, am.sat2_m2, am.sat2_sp) <> '' THEN 1.0
+    WHEN CONCAT(
+      am.sat2_ch,
+      am.sat2_fl,
+      am.sat2_lr,
+      am.sat2_m1,
+      am.sat2_m2,
+      am.sat2_sp
+    ) <> '' THEN 1.0
     ELSE 0.0
   END AS took_sat2,
   ca.n_applications_submitted,
@@ -306,11 +313,19 @@ SELECT
   COALESCE(ca.is_eaed_applicant, 0) AS is_eaed_applicant,
   ei.ecc_adjusted_6_year_minority_graduation_rate AS ecc_rate,
   CASE
-    WHEN SUBSTRING(ei.ecc_pursuing_degree_type, PATINDEX('%[24]%year%', ei.ecc_pursuing_degree_type), 1) = '4' THEN 1.0
+    WHEN SUBSTRING(
+      ei.ecc_pursuing_degree_type,
+      PATINDEX('%[24]%year%', ei.ecc_pursuing_degree_type),
+      1
+    ) = '4' THEN 1.0
     ELSE 0.0
   END AS is_matriculating_4yr,
   CASE
-    WHEN SUBSTRING(ei.ecc_pursuing_degree_type, PATINDEX('%[24]%year%', ei.ecc_pursuing_degree_type), 1) = '2' THEN 1.0
+    WHEN SUBSTRING(
+      ei.ecc_pursuing_degree_type,
+      PATINDEX('%[24]%year%', ei.ecc_pursuing_degree_type),
+      1
+    ) = '2' THEN 1.0
     ELSE 0.0
   END AS is_matriculating_2yr,
   CASE

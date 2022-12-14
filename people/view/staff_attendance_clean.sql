@@ -34,9 +34,19 @@ SELECT
 FROM
   (
     SELECT
-      SUBSTRING(a.staff_member, CHARINDEX('(', a.staff_member) + 1, 6) AS df_number,
-      LEFT(a.staff_member, CHARINDEX('(', a.staff_member) - 2) AS staff_name,
-      RIGHT(a.staff_member, LEN(a.staff_member) - CHARINDEX('-', a.staff_member)) AS attendance_location,
+      SUBSTRING(
+        a.staff_member,
+        CHARINDEX('(', a.staff_member) + 1,
+        6
+      ) AS df_number,
+      LEFT(
+        a.staff_member,
+        CHARINDEX('(', a.staff_member) - 2
+      ) AS staff_name,
+      RIGHT(
+        a.staff_member,
+        LEN(a.staff_member) - CHARINDEX('-', a.staff_member)
+      ) AS attendance_location,
       staff_member AS staff_info_string,
       a.submitter_apps_account AS submitted_by,
       a.attendance_status,

@@ -30,7 +30,9 @@ SELECT
   [ssl],
   limit_responses,
   token_variables,
-  LTRIM(RTRIM(RIGHT([name], CHARINDEX(' ', REVERSE([name]))))) AS reporting_term_code,
+  LTRIM(
+    RTRIM(RIGHT([name], CHARINDEX(' ', REVERSE([name]))))
+  ) AS reporting_term_code,
   gabby.utilities.DATE_TO_SY (
     CAST(
       CASE

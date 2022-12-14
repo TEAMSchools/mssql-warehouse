@@ -89,7 +89,9 @@ FROM
   #referenced_tables rt
   LEFT OUTER JOIN #updated_tables ut ON rt.table_name = ut.table_name;
 
-IF @update_status = 0 BEGIN PRINT ('All tables referenced by view have not yet been updated this hour');
+IF @update_status = 0 BEGIN PRINT (
+  'All tables referenced by view have not yet been updated this hour'
+);
 
 RETURN END
 /* run refresh */

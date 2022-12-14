@@ -7,7 +7,11 @@ WITH
       stl.contact_c,
       stl.date_c AS test_date,
       stl.score AS scale_score,
-      CONCAT(LEFT(DATENAME(MONTH, stl.date_c), 3), ' ''', RIGHT(DATEPART(YEAR, stl.date_c), 2)) AS administration_round,
+      CONCAT(
+        LEFT(DATENAME(MONTH, stl.date_c), 3),
+        ' ''',
+        RIGHT(DATEPART(YEAR, stl.date_c), 2)
+      ) AS administration_round,
       ktc.student_number,
       ROW_NUMBER() OVER (
         PARTITION BY

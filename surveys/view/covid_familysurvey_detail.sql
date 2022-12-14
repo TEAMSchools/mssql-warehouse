@@ -22,7 +22,9 @@ WITH
           AND srd.answer IS NOT NULL
         WHERE
           sq.shortname IN ('grade_level', 'location')
-      ) sub PIVOT (MAX(answer) FOR shortname IN (grade_level, [location])) p
+      ) sub PIVOT (
+        MAX(answer) FOR shortname IN (grade_level, [location])
+      ) p
   )
 SELECT
   s.survey_id,

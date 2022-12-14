@@ -105,7 +105,11 @@ WITH
         WHEN pas.payroll_date = pas.prev_payroll_date THEN 'New Payroll Code'
         ELSE pas.audit_type
       END AS audit_type,
-      LAG(pas.business_unit_paydate, 1, pas.business_unit_paydate) OVER (
+      LAG(
+        pas.business_unit_paydate,
+        1,
+        pas.business_unit_paydate
+      ) OVER (
         PARTITION BY
           pas.fiscal_year,
           pas.code,

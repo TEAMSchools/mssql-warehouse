@@ -36,7 +36,11 @@ FROM
         WHEN primary_on_site_department = 'Data' THEN 1
       END AS is_exclude_department,
       CASE
-        WHEN DATEDIFF(DAY, ISNULL(termination_date, CAST(CURRENT_TIMESTAMP AS DATE)), CURRENT_TIMESTAMP) > 14 THEN 1
+        WHEN DATEDIFF(
+          DAY,
+          ISNULL(termination_date, CAST(CURRENT_TIMESTAMP AS DATE)),
+          CURRENT_TIMESTAMP
+        ) > 14 THEN 1
       END AS is_exclude_termination,
       CASE
         WHEN region IS NULL THEN 1

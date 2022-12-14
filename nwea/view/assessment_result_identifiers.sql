@@ -290,13 +290,17 @@ FROM
           fall_to_fall_projected_growth,
           fall_to_spring_conditional_growth_index,
           fall_to_spring_conditional_growth_percentile,
-          CAST(fall_to_spring_met_projected_growth AS VARCHAR(25)) AS fall_to_spring_met_projected_growth,
+          CAST(
+            fall_to_spring_met_projected_growth AS VARCHAR(25)
+          ) AS fall_to_spring_met_projected_growth,
           fall_to_spring_observed_growth,
           fall_to_spring_observed_growth_se,
           fall_to_spring_projected_growth,
           fall_to_winter_conditional_growth_index,
           fall_to_winter_conditional_growth_percentile,
-          CAST(fall_to_winter_met_projected_growth AS VARCHAR(25)) AS fall_to_winter_met_projected_growth,
+          CAST(
+            fall_to_winter_met_projected_growth AS VARCHAR(25)
+          ) AS fall_to_winter_met_projected_growth,
           fall_to_winter_observed_growth,
           fall_to_winter_observed_growth_se,
           fall_to_winter_projected_growth,

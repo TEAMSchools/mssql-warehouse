@@ -7,7 +7,9 @@ SELECT
   'KIPP THROUGH COLLEGE NEW JERSEY' AS cold,
   /* file creation date */
   /* inquiry purpose */
-  CAST(REPLACE(CAST(CURRENT_TIMESTAMP AS DATE), '-', '') AS VARCHAR) AS cole,
+  CAST(
+    REPLACE(CAST(CURRENT_TIMESTAMP AS DATE), '-', '') AS VARCHAR
+  ) AS cole,
   'DA' AS colf,
   'S' AS colg,
   NULL AS colh,
@@ -30,7 +32,9 @@ SELECT
   /* search begin date */
   CAST(REPLACE(CAST(dob AS DATE), '-', '') AS VARCHAR) AS colg,
   /* leave blank */
-  CAST(REPLACE(CAST(exitdate AS DATE), '-', '') AS VARCHAR) AS colh,
+  CAST(
+    REPLACE(CAST(exitdate AS DATE), '-', '') AS VARCHAR
+  ) AS colh,
   NULL AS coli,
   /* leave blank */
   NULL AS colj,

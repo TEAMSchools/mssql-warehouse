@@ -44,7 +44,12 @@ SELECT
     ELSE sc.person_type
   END AS [Contact_type],
   COALESCE(sc.person_name, sc.person_type) AS [Contact_name],
-  CAST(LEFT(gabby.utilities.STRIP_CHARACTERS (sc.contact, '^0-9'), 10) AS VARCHAR(16)) AS [Contact_phone],
+  CAST(
+    LEFT(
+      gabby.utilities.STRIP_CHARACTERS (sc.contact, '^0-9'),
+      10
+    ) AS VARCHAR(16)
+  ) AS [Contact_phone],
   CASE
     WHEN sc.contact_type = 'home' THEN 'Home'
     WHEN sc.contact_type = 'mobile' THEN 'Cell'

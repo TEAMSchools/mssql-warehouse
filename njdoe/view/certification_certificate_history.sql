@@ -7,7 +7,14 @@ SELECT
   CASE
     WHEN ch.certificate_id <> '' THEN ch.certificate_id
   END AS certificate_id,
-  LTRIM(RTRIM(LEFT(gabby.utilities.STRIP_CHARACTERS (ch.certificate_type, '^A-Z -'), 28))) AS certificate_type,
+  LTRIM(
+    RTRIM(
+      LEFT(
+        gabby.utilities.STRIP_CHARACTERS (ch.certificate_type, '^A-Z -'),
+        28
+      )
+    )
+  ) AS certificate_type,
   CASE
     WHEN CHARINDEX('Charter School Only', ch.certificate_type) > 0 THEN 1
     ELSE 0

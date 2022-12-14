@@ -11,6 +11,10 @@ FROM
   [gabby].[whetstone].[assignments] wa
   CROSS APPLY OPENJSON (wa.[tags], '$')
 WITH
-  (_id VARCHAR(25), [name] VARCHAR(125), [url] VARCHAR(125)) AS wt
+  (
+    _id VARCHAR(25),
+    [name] VARCHAR(125),
+    [url] VARCHAR(125)
+  ) AS wt
 WHERE
   wa.[tags] <> '[]'

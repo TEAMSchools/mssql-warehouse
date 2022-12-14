@@ -30,7 +30,14 @@ WITH
       WHEN sc.region = 'KIPP Miami' THEN 'kippmiami'
     END = u.[db_name]
     WHERE
-      DATEDIFF(DAY, ISNULL(scw.termination_date, CAST(CURRENT_TIMESTAMP AS DATE)), CURRENT_TIMESTAMP) <= 14 /* import terminated staff up to a week after termination date */
+      DATEDIFF(
+        DAY,
+        ISNULL(
+          scw.termination_date,
+          CAST(CURRENT_TIMESTAMP AS DATE)
+        ),
+        CURRENT_TIMESTAMP
+      ) <= 14 /* import terminated staff up to a week after termination date */
       AND (
         scw.primary_on_site_department <> 'Data'
         OR scw.primary_on_site_department IS NULL
@@ -62,7 +69,14 @@ WITH
       WHEN sc.region = 'KIPP Miami' THEN 'kippmiami'
     END = u.[db_name]
     WHERE
-      DATEDIFF(DAY, ISNULL(scw.termination_date, CAST(CURRENT_TIMESTAMP AS DATE)), CURRENT_TIMESTAMP) <= 14 /* import terminated staff up to a week after termination date */
+      DATEDIFF(
+        DAY,
+        ISNULL(
+          scw.termination_date,
+          CAST(CURRENT_TIMESTAMP AS DATE)
+        ),
+        CURRENT_TIMESTAMP
+      ) <= 14 /* import terminated staff up to a week after termination date */
       AND (
         scw.primary_on_site_department <> 'Data'
         OR scw.primary_on_site_department IS NULL
@@ -82,8 +96,18 @@ WITH
       LOWER(samaccountname) AS teacherloginid,
       LOWER(mail) AS email_addr,
       CASE
-        WHEN DATEDIFF(DAY, ISNULL(termination_date, CAST(CURRENT_TIMESTAMP AS DATE)), CURRENT_TIMESTAMP) <= 7 THEN 1
-        WHEN [status] IN ('ACTIVE', 'INACTIVE', 'PRESTART', 'PLOA', 'ADMIN_LEAVE') THEN 1
+        WHEN DATEDIFF(
+          DAY,
+          ISNULL(termination_date, CAST(CURRENT_TIMESTAMP AS DATE)),
+          CURRENT_TIMESTAMP
+        ) <= 7 THEN 1
+        WHEN [status] IN (
+          'ACTIVE',
+          'INACTIVE',
+          'PRESTART',
+          'PLOA',
+          'ADMIN_LEAVE'
+        ) THEN 1
         WHEN termination_date >= CAST(CURRENT_TIMESTAMP AS DATE) THEN 1
         ELSE 2
       END AS [status]

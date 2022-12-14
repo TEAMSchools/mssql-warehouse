@@ -107,9 +107,17 @@ WITH
         UNION ALL
         SELECT
           dsos.School_id,
-          CONCAT(gabby.utilities.GLOBAL_ACADEMIC_YEAR (), s.abbreviation, r.n) AS [Section_number],
+          CONCAT(
+            gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+            s.abbreviation,
+            r.n
+          ) AS [Section_number],
           'ENR' AS [Course_number],
-          CONCAT(gabby.utilities.GLOBAL_ACADEMIC_YEAR (), s.abbreviation, r.n) AS [Period],
+          CONCAT(
+            gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+            s.abbreviation,
+            r.n
+          ) AS [Period],
           CONCAT(
             gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990,
             dsos.School_id,
@@ -124,8 +132,18 @@ WITH
             '-',
             RIGHT(gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1, 2)
           ) [Term_name],
-          CAST(DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR (), 7, 1), 101 AS VARCHAR(25)) AS [Term_start],
-          CAST(DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1, 6, 30), 101 AS VARCHAR(25)) AS [Term_end],
+          CAST(
+            DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR (), 7, 1),
+            101 AS VARCHAR(25)
+          ) AS [Term_start],
+          CAST(
+            DATEFROMPARTS(
+              gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1,
+              6,
+              30
+            ),
+            101 AS VARCHAR(25)
+          ) AS [Term_end],
           NULL AS [Name],
           CASE
             WHEN r.n = 0 THEN 'Kindergarten'

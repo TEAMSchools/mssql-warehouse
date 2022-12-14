@@ -11,6 +11,10 @@ FROM
   gabby.whetstone.observations_scores_static wos
   CROSS APPLY OPENJSON (wos.score_text_boxes_json, '$')
 WITH
-  (_id VARCHAR(25), [key] VARCHAR(125), [value] NVARCHAR(4000)) AS tb
+  (
+    _id VARCHAR(25),
+    [key] VARCHAR(125),
+    [value] NVARCHAR(4000)
+  ) AS tb
 WHERE
   wos.score_text_boxes_json <> '[{"key":"0","value":""}]'

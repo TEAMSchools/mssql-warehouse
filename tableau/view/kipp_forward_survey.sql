@@ -137,7 +137,9 @@ WITH
   weight_table AS (
     SELECT
       s.question_shortname,
-      (SUM(CAST(s.answer_value AS FLOAT)) / a.answer_total) * 10 AS item_weight
+      (
+        SUM(CAST(s.answer_value AS FLOAT)) / a.answer_total
+      ) * 10 AS item_weight
     FROM
       weight_denominator a
       LEFT JOIN surveygizmo.survey_detail s ON a.survey_id = s.survey_id

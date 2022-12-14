@@ -39,8 +39,14 @@ WITH
 ,
           ISNULL(CAST(fg.term_grade_letter AS NVARCHAR(16)), '') AS term_grade_letter,
           ISNULL(CAST(fg.term_grade_percent AS NVARCHAR(16)), '') AS term_grade_percent,
-          ISNULL(CAST(fg.term_grade_letter_adj AS NVARCHAR(16)), '') AS term_grade_letter_adj,
-          ISNULL(CAST(fg.term_grade_percent_adj AS NVARCHAR(16)), '') AS term_grade_percent_adj
+          ISNULL(
+            CAST(fg.term_grade_letter_adj AS NVARCHAR(16)),
+            ''
+          ) AS term_grade_letter_adj,
+          ISNULL(
+            CAST(fg.term_grade_percent_adj AS NVARCHAR(16)),
+            ''
+          ) AS term_grade_percent_adj
         FROM
           powerschool.final_grades_static fg
         UNION ALL
@@ -61,8 +67,14 @@ WITH
 ,
           ISNULL(CAST(fg.term_grade_letter AS NVARCHAR(16)), '') AS term_grade_letter,
           ISNULL(CAST(fg.term_grade_percent AS NVARCHAR(16)), '') AS term_grade_percent,
-          ISNULL(CAST(fg.term_grade_letter_adj AS NVARCHAR(16)), '') AS term_grade_letter_adj,
-          ISNULL(CAST(fg.term_grade_percent_adj AS NVARCHAR(16)), '') AS term_grade_percent_adj
+          ISNULL(
+            CAST(fg.term_grade_letter_adj AS NVARCHAR(16)),
+            ''
+          ) AS term_grade_letter_adj,
+          ISNULL(
+            CAST(fg.term_grade_percent_adj AS NVARCHAR(16)),
+            ''
+          ) AS term_grade_percent_adj
         FROM
           powerschool.final_grades_static fg
           INNER JOIN gabby.reporting.reporting_terms rt ON fg.storecode = rt.alt_name
@@ -72,7 +84,12 @@ WITH
         AND rt.is_curterm = 1
         AND rt.schoolid = 0
       ) sub UNPIVOT (
-        [value] FOR field IN (term_grade_letter, term_grade_percent, term_grade_letter_adj, term_grade_percent_adj)
+        [value] FOR field IN (
+          term_grade_letter,
+          term_grade_percent,
+          term_grade_letter_adj,
+          term_grade_percent_adj
+        )
       ) u
   )
 SELECT

@@ -10,7 +10,12 @@ SELECT
   asec.[weight],
   asec.extracreditpoints,
   CAST(asec.iscountedinfinalgrade AS INT) AS isfinalscorecalculated,
-  CAST(COALESCE(tc.districtteachercategoryid, tc.teachercategoryid) AS INT) AS categoryid,
+  CAST(
+    COALESCE(
+      tc.districtteachercategoryid,
+      tc.teachercategoryid
+    ) AS INT
+  ) AS categoryid,
   CAST(COALESCE(dtc.[name], tc.[name]) AS VARCHAR(125)) AS category_name
 FROM
   powerschool.assignmentsection asec

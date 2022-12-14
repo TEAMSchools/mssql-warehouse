@@ -33,7 +33,9 @@ WHERE
   deleted_at IS NULL
   AND repository_id IN (
     SELECT
-      CAST(RIGHT([table], LEN([table]) - CHARINDEX('_', [table])) AS INT)
+      CAST(
+        RIGHT([table], LEN([table]) - CHARINDEX('_', [table])) AS INT
+      )
     FROM
       gabby.illuminate_dna_repositories.fivetran_audit
     WHERE
@@ -62,7 +64,10 @@ SET
           '')
         '
 SET
-  @message = CONCAT('Loading dna_repositories.repository_', @repository_id) RAISERROR (@message, 0, 1) EXEC (@query) END CLOSE repository_cursor DEALLOCATE repository_cursor;
+  @message = CONCAT(
+    'Loading dna_repositories.repository_',
+    @repository_id
+  ) RAISERROR (@message, 0, 1) EXEC (@query) END CLOSE repository_cursor DEALLOCATE repository_cursor;
 
 /*
 -- 5.) UPSERT: matching on repo, row number, studentid, and field name.  DELETE if on TARGET but not MATCHED by SOURCE 

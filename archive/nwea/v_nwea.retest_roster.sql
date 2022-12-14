@@ -237,11 +237,15 @@ FROM
       sub.mean_next_npr_change,
       sub.stdev_prev_npr_change,
       sub.stdev_next_npr_change,
-      (student_testdurationminutes - global_mean_testdurationminutes) / CASE
+      (
+        student_testdurationminutes - global_mean_testdurationminutes
+      ) / CASE
         WHEN global_stdev_testdurationminutes = 0 THEN NULL
         ELSE global_stdev_testdurationminutes
       END AS global_testdurationminutes_z,
-      (student_testdurationminutes - student_mean_testdurationminutes) / CASE
+      (
+        student_testdurationminutes - student_mean_testdurationminutes
+      ) / CASE
         WHEN student_stdev_testdurationminutes = 0 THEN NULL
         ELSE student_stdev_testdurationminutes
       END AS student_testdurationminutes_z,

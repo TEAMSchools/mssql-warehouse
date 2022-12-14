@@ -73,4 +73,6 @@ SELECT
   range,
   adjective
 FROM
-  long_data PIVOT (MAX(VALUE) FOR goal_field IN ([name], [rit_score], [range], [adjective])) p
+  long_data PIVOT (
+    MAX(VALUE) FOR goal_field IN ([name], [rit_score], [range], [adjective])
+  ) p

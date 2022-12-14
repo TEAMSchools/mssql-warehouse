@@ -55,7 +55,10 @@ SELECT
   t.custom_tech_tier AS tech_tier,
   t.custom_location AS [location],
   CAST(t.[subject] AS NVARCHAR(512)) AS ticket_subject,
-  CONCAT('https://teamschools.zendesk.com/agent/tickets/', t.id) AS ticket_url,
+  CONCAT(
+    'https://teamschools.zendesk.com/agent/tickets/',
+    t.id
+  ) AS ticket_url,
   DATEDIFF(WEEKDAY, t.created_at, gu.group_updated) AS weekdays_created_to_last_group,
   DATEDIFF(WEEKDAY, t.created_at, tm.solved_at) AS weekdays_created_to_solved,
   s.[name] AS submitter_name,

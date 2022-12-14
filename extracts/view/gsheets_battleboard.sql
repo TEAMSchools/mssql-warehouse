@@ -30,7 +30,9 @@ WITH
           gabby.pm.teacher_goals_lockbox_wide
         WHERE
           academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
-      ) sub PIVOT (MAX(metric_value) FOR pm_term IN ([PM1], [PM2], [PM3], [PM4])) p
+      ) sub PIVOT (
+        MAX(metric_value) FOR pm_term IN ([PM1], [PM2], [PM3], [PM4])
+      ) p
   )
 SELECT
   c.df_employee_number,
@@ -49,7 +51,11 @@ SELECT
   i.answer AS itr_response,
   CASE
     WHEN c.primary_on_site_department = 'Elementary'
-    AND g.student_grade_level IS NOT NULL THEN CONCAT(c.primary_on_site_department, ', Grade ', g.student_grade_level)
+    AND g.student_grade_level IS NOT NULL THEN CONCAT(
+      c.primary_on_site_department,
+      ', Grade ',
+      g.student_grade_level
+    )
     ELSE c.primary_on_site_department
   END AS department_grade
 FROM

@@ -15,7 +15,9 @@ WITH
           SUBSTRING(
             td.[location],
             10,
-            LEN(td.[location]) - 10 - (LEN(td.[location]) - CHARINDEX('/', td.[location], 10))
+            LEN(td.[location]) - 10 - (
+              LEN(td.[location]) - CHARINDEX('/', td.[location], 10)
+            )
           ) AS school_name
         FROM
           gabby.adp.wfm_time_details td
@@ -110,7 +112,13 @@ WITH
         FROM
           last_accrual_day
       ) sub PIVOT (
-        MAX(accrual_taken_to_date_hours_) FOR accrual_code IN ([Vacation], [PTO], [No Accrual], [Unused PTO], [Sick])
+        MAX(accrual_taken_to_date_hours_) FOR accrual_code IN (
+          [Vacation],
+          [PTO],
+          [No Accrual],
+          [Unused PTO],
+          [Sick]
+        )
       ) p
   ),
   accruals_balance AS (
@@ -132,7 +140,13 @@ WITH
         FROM
           last_accrual_day
       ) sub PIVOT (
-        MAX(accrual_available_balance_hours_) FOR accrual_code IN ([Vacation], [PTO], [No Accrual], [Unused PTO], [Sick])
+        MAX(accrual_available_balance_hours_) FOR accrual_code IN (
+          [Vacation],
+          [PTO],
+          [No Accrual],
+          [Unused PTO],
+          [Sick]
+        )
       ) p
   ),
   missed_punches AS (
@@ -178,8 +192,14 @@ WITH
       sub.transaction_end_date_time,
       sub.employee_payrule,
       sub.rn_adj,
-      COALESCE(sub.transaction_in_exceptions, mp.transaction_in_exceptions + ' (Corrected)') AS transaction_in_exceptions,
-      COALESCE(sub.transaction_out_exceptions, mp.transaction_out_exceptions + ' (Corrected)') AS transaction_out_exceptions
+      COALESCE(
+        sub.transaction_in_exceptions,
+        mp.transaction_in_exceptions + ' (Corrected)'
+      ) AS transaction_in_exceptions,
+      COALESCE(
+        sub.transaction_out_exceptions,
+        mp.transaction_out_exceptions + ' (Corrected)'
+      ) AS transaction_out_exceptions
     FROM
       (
         SELECT
@@ -265,7 +285,11 @@ SELECT
     WHEN sd.[type] = 'WS'
     AND td.transaction_start_date_time IS NULL
     AND td.transaction_end_date_time IS NULL THEN 0
-    WHEN td.transaction_apply_to IN ('Jury Duty', 'Bereavement', 'Religious Observance') THEN 0
+    WHEN td.transaction_apply_to IN (
+      'Jury Duty',
+      'Bereavement',
+      'Religious Observance'
+    ) THEN 0
     ELSE 1
   END AS denominator_day,
   CASE
