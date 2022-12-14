@@ -8,10 +8,10 @@ plugins:
       uri: https://github.com/trunk-io/plugins
 lint:
   disabled:
+    - sqlfluff-fix
     - sql-formatter
     - sqlfmt
   enabled:
-    - sqlfluff-fix@1.4.3
     - sqlfluff@1.4.3
     - prettier@2.8.1
     - actionlint@1.6.22
@@ -32,15 +32,15 @@ lint:
             runtime: python
           read_output_from: stdout
           run: sqlfluff lint ${target} --config .trunk/config/.sqlfluff --format json --nofail
-    - name: sqlfluff-fix
-      commands:
-        - output: rewrite
-          success_codes:
-            - 0
-          formatter: true
-          in_place: true
-          name: fix
-          run: sqlfluff fix ${target} --config .trunk/config/.sqlfluff --disable-progress-bar --force --FIX-EVEN-UNPARSABLE
+    # - name: sqlfluff-fix
+    #   commands:
+    #     - output: rewrite
+    #       success_codes:
+    #         - 0
+    #       formatter: true
+    #       in_place: true
+    #       name: fix
+    #       run: sqlfluff fix ${target} --config .trunk/config/.sqlfluff --disable-progress-bar --force --FIX-EVEN-UNPARSABLE
   #   - name: sql-formatter
   #     commands:
   #       - output: rewrite
