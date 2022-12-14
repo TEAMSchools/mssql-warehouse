@@ -11,7 +11,7 @@ WITH years AS (
          END AS effective_date
   FROM gabby.utilities.row_generator_smallint
   WHERE n BETWEEN 2015 AND (gabby.utilities.GLOBAL_ACADEMIC_YEAR())
- )
+)
 
 ,additional_earnings AS (
   SELECT ae.employee_number
@@ -19,7 +19,7 @@ WITH years AS (
         ,SUM(ae.ay_additional_earnings_amount) AS additional_earnings_summed
   FROM gabby.payroll.additional_annual_earnings_report ae
   GROUP BY ae.employee_number, ae.academic_year
-  )
+)
 
 ,teacher_goals AS (
   SELECT df_employee_number
@@ -32,7 +32,7 @@ WITH years AS (
           ELSE ROW_NUMBER() OVER(PARTITION BY df_employee_number, academic_year ORDER BY pm_term DESC)
          END AS rn_year_score
   FROM gabby.pm.teacher_goals_overall_scores_static
- )
+)
 
 SELECT cw.df_employee_number AS employee_number
       ,cw.adp_associate_id
@@ -48,7 +48,7 @@ SELECT cw.df_employee_number AS employee_number
       ,cw.is_manager
       ,cw.original_hire_date
       ,cw.rehire_date
-      ,cw.status AS current_status
+      ,cw.[status] AS current_status
       ,cw.termination_date
 
       ,y.academic_year
@@ -56,11 +56,12 @@ SELECT cw.df_employee_number AS employee_number
       ,eh.effective_start_date
       ,eh.effective_end_date
       ,eh.business_unit
-      ,eh.location
+      ,eh.[location]
       ,eh.home_department
       ,eh.job_title
       ,eh.position_status
       ,eh.annual_salary
+
       ,ae.additional_earnings_summed
 
       ,tg.overall_tier AS most_recent_pm_score --if year is over, displays PM4 score
@@ -70,16 +71,17 @@ SELECT cw.df_employee_number AS employee_number
 
       ,ly.business_unit AS last_year_business_unit
       ,ly.job_title AS last_year_job_title
+
       ,ehs.annual_salary AS original_salary_upon_hire
 
       ,ROW_NUMBER() OVER(PARTITION BY cw.df_employee_number ORDER BY y.academic_year DESC) AS rn_curr
 FROM gabby.people.employment_history_static eh
-JOIN years y
+INNER JOIN years y
   ON y.effective_date BETWEEN eh.effective_start_date AND eh.effective_end_date
-JOIN gabby.people.staff_crosswalk_static cw
+INNER JOIN gabby.people.staff_crosswalk_static cw
   ON eh.employee_number = cw.df_employee_number
- AND DATEADD(year,1,COALESCE(cw.termination_date,CAST(CURRENT_TIMESTAMP AS DATE))) > y.effective_date
-JOIN gabby.people.years_experience ye
+ AND DATEADD(YEAR, 1, COALESCE(cw.termination_date, CAST(CURRENT_TIMESTAMP AS DATE))) > y.effective_date
+INNER JOIN gabby.people.years_experience ye
   ON cw.df_employee_number = ye.employee_number
 LEFT JOIN additional_earnings ae
   ON cw.df_employee_number = ae.employee_number
@@ -90,7 +92,7 @@ LEFT JOIN teacher_goals tg
  AND tg.rn_year_score = 1
 LEFT JOIN gabby.people.employment_history_static ly
   ON cw.df_employee_number = ly.employee_number
- AND DATEADD(year,-1,y.effective_date) BETWEEN ly.effective_start_date AND ly.effective_end_date
+ AND DATEADD(YEAR, -1, y.effective_date) BETWEEN ly.effective_start_date AND ly.effective_end_date
 LEFT JOIN gabby.people.employment_history_static ehs
   ON cw.df_employee_number = ehs.employee_number
  AND cw.original_hire_date BETWEEN ehs.effective_start_date AND ehs.effective_end_date
