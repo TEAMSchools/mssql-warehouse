@@ -17,7 +17,7 @@ SELECT student_number
 ,lunchstatus
 ,iep_status
 FROM gabby.powerschool.cohort_identifiers_static
-WHERE academic_year (BETWEEN 2014 AND 2016)
+WHERE (academic_year BETWEEN 2014 AND 2016)
 AND rn_year = 1
 AND schoolid <> 999999
 --*/
@@ -40,7 +40,7 @@ SELECT student_number
 ,test_standard_error
 ,test_performance_level
 FROM gabby.tableau.state_assessment_dashboard
-WHERE academic_year (BETWEEN 2014 AND 2016)
+WHERE (academic_year BETWEEN 2014 AND 2016)
 
 UNION ALL
 
@@ -54,7 +54,7 @@ SELECT student_id  AS student_number
 ,test_standard_error
 ,NULL AS test_performance_level      
 FROM gabby.nwea.assessment_result_identifiers
-WHERE academic_year (BETWEEN 2014 AND 2016)
+WHERE (academic_year BETWEEN 2014 AND 2016)
 
 UNION ALL
 
@@ -68,7 +68,7 @@ SELECT local_student_id AS student_number
 ,NULL AS test_standard_error
 ,performance_band_number AS test_performance_level      
 FROM gabby.illuminate_dna_assessments.agg_student_responses_all
-WHERE academic_year (BETWEEN 2014 AND 2016)
+WHERE (academic_year BETWEEN 2014 AND 2016)
 AND scope = 'CMA - End-of-Module'
 AND response_type = 'O'
 AND percent_correct IS NOT NULL
@@ -119,5 +119,5 @@ FROM
   WHERE adp.rn_curr = 1
   --*/
 WHERE
-  academic_year (BETWEEN 2014 AND 2016)
+  (academic_year BETWEEN 2014 AND 2016)
   AND illuminate_subject IS NOT NULL

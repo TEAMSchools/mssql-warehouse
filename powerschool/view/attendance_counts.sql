@@ -36,7 +36,9 @@ WITH
         FROM
           powerschool.ps_attendance_daily AS att
           INNER JOIN gabby.reporting.reporting_terms AS dates ON att.schoolid = dates.schoolid
-          AND att.att_date (BETWEEN dates.start_date AND dates.end_date)
+          AND (
+            att.att_date BETWEEN dates.start_date AND dates.end_date
+          )
           AND dates.identifier = 'RT'
         WHERE
           att.att_date >= DATEFROMPARTS(
@@ -99,7 +101,9 @@ WITH
         FROM
           powerschool.ps_adaadm_daily_ctod AS mem
           INNER JOIN gabby.reporting.reporting_terms AS d ON mem.schoolid = d.schoolid
-          AND mem.calendardate (BETWEEN d.start_date AND d.end_date)
+          AND (
+            mem.calendardate BETWEEN d.start_date AND d.end_date
+          )
           AND d.identifier = 'RT'
         WHERE
           mem.calendardate (

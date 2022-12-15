@@ -86,16 +86,22 @@ SELECT
 FROM
   gabby.powerschool.attendance_clean_current_static AS att
   INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON att.studentid = co.studentid
-  AND att.att_date (BETWEEN co.entrydate AND co.exitdate)
+  AND (
+    att.att_date BETWEEN co.entrydate AND co.exitdate
+  )
   AND att.[db_name] = co.[db_name]
   INNER JOIN gabby.powerschool.attendance_code AS ac ON att.attendance_codeid = ac.id
   AND att.[db_name] = ac.[db_name]
   AND ac.att_code LIKE 'A%'
   LEFT JOIN gabby.reporting.reporting_terms AS rt ON co.schoolid = rt.schoolid
-  AND att.att_date (BETWEEN rt.[start_date] AND rt.end_date)
+  AND (
+    att.att_date BETWEEN rt.[start_date] AND rt.end_date
+  )
   AND rt.identifier = 'RT'
   LEFT JOIN gabby.powerschool.cc ON att.studentid = cc.studentid
-  AND att.att_date (BETWEEN cc.dateenrolled AND cc.dateleft)
+  AND (
+    att.att_date BETWEEN cc.dateenrolled AND cc.dateleft
+  )
   AND att.[db_name] = cc.[db_name]
   AND cc.course_number = 'HR'
   LEFT JOIN commlog AS cl ON co.student_number = cl.student_school_id

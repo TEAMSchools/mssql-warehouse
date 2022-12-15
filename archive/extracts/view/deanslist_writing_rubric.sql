@@ -64,7 +64,9 @@ FROM
           s.local_student_id AS student_number
         FROM
           gabby.illuminate_dna_assessments.assessments_identifiers_static AS a
-          INNER JOIN gabby.reporting.reporting_terms AS rt ON a.administered_at (BETWEEN rt.[start_date] AND rt.end_date)
+          INNER JOIN gabby.reporting.reporting_terms AS rt ON (
+            a.administered_at BETWEEN rt.[start_date] AND rt.end_date
+          )
           AND rt.identifier = 'RT'
           AND rt.schoolid = 0
           AND rt._fivetran_deleted = 0

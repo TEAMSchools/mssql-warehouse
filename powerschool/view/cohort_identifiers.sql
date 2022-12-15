@@ -171,7 +171,9 @@ FROM
   AND co.academic_year = tp.application_academic_school_year_clean
   LEFT JOIN powerschool.enrollment_identifiers_static AS enr ON co.student_number = enr.student_number
   AND co.yearid = enr.yearid
-  LEFT JOIN powerschool.spenrollments_gen_static AS sp ON co.studentid = sp.studentid ND co.exitdate (BETWEEN sp.enter_date AND sp.exit_date)
+  LEFT JOIN powerschool.spenrollments_gen_static AS sp ON co.studentid = sp.studentid ND (
+    co.exitdate BETWEEN sp.enter_date AND sp.exit_date
+  )
   AND sp.specprog_name IN (
     'Out of District',
     'Self-Contained Special Education',

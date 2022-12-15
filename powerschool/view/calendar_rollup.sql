@@ -25,7 +25,9 @@ WITH
           INNER JOIN powerschool.schools AS s ON cd.schoolid = s.school_number
           INNER JOIN powerschool.cycle_day AS cy ON cd.cycle_day_id = cy.id
           INNER JOIN powerschool.terms AS t ON cd.schoolid = t.schoolid
-          AND cd.date_value (BETWEEN t.firstday AND t.lastday)
+          AND (
+            cd.date_value BETWEEN t.firstday AND t.lastday
+          )
           AND t.isyearrec = 1
           INNER JOIN powerschool.bell_schedule AS bs ON t.schoolid = bs.schoolid
           AND t.yearid = bs.year_id

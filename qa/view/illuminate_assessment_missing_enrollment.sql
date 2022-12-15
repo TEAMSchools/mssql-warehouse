@@ -51,7 +51,9 @@ FROM
   INNER JOIN gabby.illuminate_public.students AS ils ON sa.student_id = ils.student_id
   LEFT JOIN enr ON ils.local_student_id = enr.student_number
   AND a.subject_area = enr.subject_area
-  AND a.administered_at (BETWEEN enr.entry_date AND enr.leave_date)
+  AND (
+    a.administered_at BETWEEN enr.entry_date AND enr.leave_date
+  )
 WHERE
   a.is_normed_scope = 1
   AND a.administered_at <= CAST(CURRENT_TIMESTAMP AS DATE)

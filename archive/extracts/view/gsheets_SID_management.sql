@@ -44,7 +44,9 @@ WITH
           AND mem.calendardate = cal.date_value
           AND mem.[db_name] = cal.[db_name]
           LEFT JOIN gabby.powerschool.spenrollments_gen_static AS hb ON mem.studentid = hb.studentid
-          AND mem.calendardate (BETWEEN hb.enter_date AND hb.exit_date)
+          AND (
+            mem.calendardate BETWEEN hb.enter_date AND hb.exit_date
+          )
           AND mem.[db_name] = hb.[db_name]
           AND hb.specprog_name IN (
             'Hybrid - Cohort A',

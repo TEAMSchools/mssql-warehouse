@@ -24,7 +24,9 @@ FROM
   powerschool.students AS s
   LEFT JOIN powerschool.fte AS f ON s.fteid = f.id
   LEFT JOIN powerschool.terms AS t ON s.schoolid = t.schoolid
-  AND s.entrydate (BETWEEN t.firstday AND t.lastday)
+  AND (
+    s.entrydate BETWEEN t.firstday AND t.lastday
+  )
   AND t.isyearrec = 1
   LEFT JOIN powerschool.prefs AS p1 ON p1.schoolid = s.schoolid
   AND p1.yearid = t.yearid
@@ -59,7 +61,9 @@ FROM
   powerschool.reenrollments AS r
   LEFT JOIN powerschool.fte AS f ON r.fteid = f.id
   LEFT JOIN powerschool.terms AS t ON r.schoolid = t.schoolid
-  AND r.entrydate (BETWEEN t.firstday AND t.lastday)
+  AND (
+    r.entrydate BETWEEN t.firstday AND t.lastday
+  )
   AND t.isyearrec = 1
   LEFT JOIN powerschool.prefs AS p1 ON p1.schoolid = r.schoolid
   AND p1.yearid = t.yearid

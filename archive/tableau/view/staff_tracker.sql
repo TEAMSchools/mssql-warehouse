@@ -220,7 +220,9 @@ FROM
     ) AND CURRENT_TIMESTAMP
   )
   INNER JOIN gabby.reporting.reporting_terms AS dt ON cal.schoolid = dt.schoolid
-  AND cal.date_value (BETWEEN dt.[start_date] AND dt.end_date)
+  AND (
+    cal.date_value BETWEEN dt.[start_date] AND dt.end_date
+  )
   AND dt.identifier = 'RT'
   AND dt._fivetran_deleted = 0
   INNER JOIN gabby.people.employment_history AS was ON df.df_employee_number = was.employee_number

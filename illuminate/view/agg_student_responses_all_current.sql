@@ -90,11 +90,15 @@ FROM
   INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON s.local_student_id = co.student_number
   AND rr.academic_year = co.academic_year
   AND co.rn_year = 1
-  LEFT JOIN gabby.reporting.reporting_terms AS rta ON rr.administered_at (BETWEEN rta.[start_date] AND rta.end_date)
+  LEFT JOIN gabby.reporting.reporting_terms AS rta ON (
+    rr.administered_at BETWEEN rta.[start_date] AND rta.end_date
+  )
   AND co.schoolid = rta.schoolid
   AND rta.identifier = 'RT'
   AND rta._fivetran_deleted = 0
-  LEFT JOIN gabby.reporting.reporting_terms AS rtt ON rr.date_taken (BETWEEN rtt.[start_date] AND rtt.end_date)
+  LEFT JOIN gabby.reporting.reporting_terms AS rtt ON (
+    rr.date_taken BETWEEN rtt.[start_date] AND rtt.end_date
+  )
   AND co.schoolid = rtt.schoolid
   AND rtt.identifier = 'RT'
   AND rtt._fivetran_deleted = 0

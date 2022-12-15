@@ -27,7 +27,7 @@ WITH
       co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
       AND co.rn_year = 1
       AND (
-        co.grade_level (BETWEEN 3 AND 8)
+        (co.grade_level BETWEEN 3 AND 8)
         OR co.grade_level = 11
       )
   )

@@ -29,7 +29,9 @@ FROM
   AND ar.ti_passed = 1
   AND ar.rn_quiz > 1
   LEFT JOIN gabby.reporting.reporting_terms AS dts ON co.schoolid = dts.schoolid
-  AND ar.dt_taken (BETWEEN dts.[start_date] AND dts.end_date)
+  AND (
+    ar.dt_taken BETWEEN dts.[start_date] AND dts.end_date
+  )
   AND dts.identifier = 'AR'
   AND dts.time_per_name <> 'ARY'
   AND dts._fivetran_deleted = 0

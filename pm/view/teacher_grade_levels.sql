@@ -37,7 +37,9 @@ WITH
       INNER JOIN gabby.powerschool.course_enrollments AS enr ON st.sectionid = enr.abs_sectionid
       AND st.[db_name] = enr.[db_name]
       INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON enr.student_number = co.student_number
-      AND enr.dateenrolled (BETWEEN co.entrydate AND co.exitdate)
+      AND (
+        enr.dateenrolled BETWEEN co.entrydate AND co.exitdate
+      )
     GROUP BY
       st.teachernumber,
       enr.academic_year,

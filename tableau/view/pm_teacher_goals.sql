@@ -156,7 +156,9 @@ WITH
       ) AS rn
     FROM
       gabby.whetstone.observations_clean AS wo
-      INNER JOIN gabby.reporting.reporting_terms AS rt ON wo.observed_at (BETWEEN rt.[start_date] AND rt.end_date)
+      INNER JOIN gabby.reporting.reporting_terms AS rt ON (
+        wo.observed_at BETWEEN rt.[start_date] AND rt.end_date
+      )
       AND rt.identifier = 'ETR'
       AND rt.schoolid = 0
       AND rt._fivetran_deleted = 0
@@ -573,7 +575,9 @@ WITH
           AND tgs.metric_name = am.metric_name
           AND tgs.metric_term = am.module_number
           AND tgs.student_number = am.local_student_id
-          AND am.date_taken (BETWEEN tgs.dateenrolled AND tgs.dateleft)
+          AND (
+            am.date_taken BETWEEN tgs.dateenrolled AND tgs.dateleft
+          )
         WHERE
           tgs.goal_type = 'Class'
       ) sub

@@ -1023,7 +1023,7 @@ FROM
           AND nj.academic_year = co.academic_year
           AND nj.[db_name] = co.[db_name]
           AND co.rn_year = 1
-          AND co.grade_level (BETWEEN 3 AND 8)
+          AND (co.grade_level BETWEEN 3 AND 8)
           AND co.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 3
         UNION ALL
         SELECT
@@ -1050,7 +1050,7 @@ FROM
           AND LEFT(fl.school_year, 2) = RIGHT(co.academic_year, 2)
           AND co.rn_year = 1
           AND co.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 3
-          AND co.grade_level (BETWEEN 3 AND 8)
+          AND (co.grade_level BETWEEN 3 AND 8)
       ) sub
     GROUP BY
       sub.academic_year,

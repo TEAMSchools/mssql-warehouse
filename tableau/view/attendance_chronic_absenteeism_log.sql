@@ -67,7 +67,9 @@ FROM
       AND cc.course_number = 'HR'
       INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON att.studentid = co.studentid
       AND att.[db_name] = co.[db_name]
-      AND att.att_date (BETWEEN co.entrydate AND co.exitdate)
+      AND (
+        att.att_date BETWEEN co.entrydate AND co.exitdate
+      )
       AND co.enroll_status = 0
     WHERE
       att.att_mode_code = 'ATT_ModeDaily'

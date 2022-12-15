@@ -99,6 +99,8 @@ FROM
   AND sub.academic_year = co.academic_year
   AND co.rn_year = 1
   INNER JOIN gabby.reporting.reporting_terms AS dt ON co.schoolid = dt.schoolid
-  AND sub.test_date (BETWEEN dt.[start_date] AND dt.end_date)
+  AND (
+    sub.test_date BETWEEN dt.[start_date] AND dt.end_date
+  )
   AND dt.identifier = 'LIT'
   AND dt._fivetran_deleted = 0

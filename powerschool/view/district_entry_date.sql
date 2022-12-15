@@ -35,7 +35,9 @@ SELECT
 FROM
   district_entry AS de
   INNER JOIN powerschool.ps_adaadm_daily_ctod AS ADA ON de.studentid = ADA.studentid
-  AND ADA.calendardate (BETWEEN de.entrydate AND de.exitdate)
+  AND (
+    ADA.calendardate BETWEEN de.entrydate AND de.exitdate
+  )
   AND ADA.membershipvalue = 1
   AND ADA.attendancevalue = 1
 WHERE

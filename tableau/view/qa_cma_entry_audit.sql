@@ -24,7 +24,9 @@ FROM
   INNER JOIN gabby.illuminate_public.students AS s ON saa.student_id = s.student_id
   LEFT JOIN gabby.illuminate_dna_assessments.agg_student_responses AS o ON saa.student_id = o.student_id
   AND saa.assessment_id = o.assessment_id
-  LEFT JOIN gabby.reporting.reporting_terms AS rt ON saa.administered_at (BETWEEN rt.[start_date] AND rt.end_date)
+  LEFT JOIN gabby.reporting.reporting_terms AS rt ON (
+    saa.administered_at BETWEEN rt.[start_date] AND rt.end_date
+  )
   AND rt.identifier = 'RT'
   AND rt.schoolid = 0
   AND rt._fivetran_deleted = 0

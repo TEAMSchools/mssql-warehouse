@@ -1,6 +1,9 @@
 # gabby
 
 ## General Rules & Guidelines
+
+- Use snake_case for all identifiers
+- Prefer standard SQL functions over vendor-specific functions for portability
 - Almost always prefer CTEs over subqueries
 - Alias column and table names explicitly with `AS`
 - `INNER JOIN` should be used explicitly; avoid using a naked `JOIN`

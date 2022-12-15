@@ -129,7 +129,9 @@ SELECT
 FROM
   gabby.powerschool.cohort_identifiers_static AS co
   INNER JOIN real_tests AS r ON co.student_number = r.student_number
-  AND r.test_date (BETWEEN co.entrydate AND co.exitdate)
+  AND (
+    r.test_date BETWEEN co.entrydate AND co.exitdate
+  )
   LEFT JOIN ms_grad AS ms ON co.student_number = ms.student_number
 WHERE
   co.rn_year = 1

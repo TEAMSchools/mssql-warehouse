@@ -120,7 +120,7 @@ WITH
           AND rt.identifier = 'AR'
           AND rt._fivetran_deleted = 0
           LEFT OUTER JOIN gabby.renaissance.ar_studentpractice_identifiers_static AS arsp ON co.student_number = arsp.student_number
-          --AND arsp.dt_taken (BETWEEN rt.[start_date] AND rt.end_date)
+          --AND (arsp.dt_taken BETWEEN rt.[start_date] AND rt.end_date)
         WHERE
           co.rn_year = 1
           AND co.grade_level <> 99
