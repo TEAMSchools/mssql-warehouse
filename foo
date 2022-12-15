@@ -1,0 +1,3086 @@
+version: 0.1
+cli:
+  version: 1.2.1
+plugins:
+  sources:
+    - id: trunk
+      ref: v0.0.8
+      uri: https://github.com/trunk-io/plugins
+downloads:
+  - name: go
+    downloads:
+      - os:
+          macos: ""
+        url: https://golang.org/dl/go${version}.darwin-amd64.tar.gz
+        version: <1.16.0
+        strip_components: 1
+      - os:
+          linux: linux
+          macos: darwin
+        cpu:
+          x86_64: amd64
+          arm_64: arm64
+        url: https://golang.org/dl/go${version}.${os}-${cpu}.tar.gz
+        strip_components: 1
+  - name: jre-11
+    downloads:
+      - os:
+          linux: linux
+        cpu:
+          x86_64: x64
+        url: https://cdn.azul.com/zulu/bin/zulu11.52.13-ca-jre11.0.13-${os}_${cpu}.tar.gz
+        strip_components: 1
+      - os:
+          macos: macosx
+        cpu:
+          x86_64: x64
+          arm_64: aarch64
+        url: https://cdn.azul.com/zulu/bin/zulu11.52.13-ca-jre11.0.13-${os}_${cpu}.tar.gz
+        strip_components: 1
+  - name: jre-17
+    downloads:
+      - os:
+          linux: linux
+          macos: macosx
+        cpu:
+          x86_64: x64
+          arm_64: aarch64
+        url: https://cdn.azul.com/zulu/bin/zulu17.30.15-ca-jre17.0.1-${os}_${cpu}.tar.gz
+        strip_components: 1
+  - name: node
+    downloads:
+      - os:
+          macos: ""
+        url: https://nodejs.org/dist/v${version}/node-v${version}-darwin-x64.tar.gz
+        version: <16.0.0
+        strip_components: 1
+      - os:
+          macos: darwin
+          linux: linux
+        cpu:
+          x86_64: x64
+          arm_64: arm64
+        url: https://nodejs.org/dist/v${version}/node-v${version}-${os}-${cpu}.tar.gz
+        strip_components: 1
+  - name: python
+    downloads:
+      - os:
+          linux: unknown-linux-gnu
+          macos: apple-darwin
+        url: https://github.com/indygreg/python-build-standalone/releases/download/20220318/cpython-${version}+20220318-x86_64-${os}-install_only.tar.gz
+        version: <=3.10.3
+        strip_components: 1
+      - os:
+          macos: apple-darwin
+          linux: unknown-linux-gnu
+        url: https://github.com/indygreg/python-build-standalone/releases/download/20221106/cpython-${version}+20221106-x86_64-${os}-install_only.tar.gz
+        version: <=3.10.8
+        strip_components: 1
+  - name: ruby-build
+    version: 20221206
+    downloads:
+      - url: https://github.com/rbenv/ruby-build/archive/refs/tags/v20221206.tar.gz
+        strip_components: 1
+  - name: rust
+    downloads:
+      - os:
+          macos: ""
+        url: https://static.rust-lang.org/dist/rust-${version}-x86_64-apple-darwin.tar.gz
+        version: <1.49.0
+        strip_components: 2
+      - os:
+          linux: unknown-linux-gnu
+          macos: apple-darwin
+        cpu:
+          arm_64: aarch64
+          x86_64: x86_64
+        url: https://static.rust-lang.org/dist/rust-${version}-${cpu}-${os}.tar.gz
+        strip_components: 2
+environments:
+  - name: SYSTEM
+    environment:
+      - name: PATH
+        list:
+          - ${path}
+runtimes:
+  enabled:
+    - go@1.18.3
+    - node@16.14.2
+    - python@3.10.8
+  definitions:
+    - type: node
+      download: node
+      enabled: true
+      known_good_version: 16.14.2
+      linter_environment:
+        - name: PATH
+          list:
+            - ${linter}/node_modules/.bin
+      runtime_environment:
+        - name: HOME
+          value: ${home}
+        - name: PATH
+          list:
+            - ${runtime}/bin
+            - ${env.PATH}
+      system_version: ignored
+      version: 16.14.2
+      version_commands:
+        - parse_regex: ${semver}
+          run: node --version
+    - type: python
+      download: python
+      enabled: true
+      known_good_version: 3.10.8
+      linter_environment:
+        - name: PATH
+          list:
+            - ${linter}/bin
+        - name: VIRTUAL_ENV
+          value: ${linter}
+      runtime_environment:
+        - name: HOME
+          value: ${home}
+        - name: PATH
+          list:
+            - ${runtime}/bin
+      system_version: ignored
+      version: 3.10.8
+      version_commands:
+        - parse_regex: Python ${semver}
+          run: python --version
+    - type: go
+      download: go
+      enabled: true
+      known_good_version: 1.18.3
+      linter_environment:
+        - name: PATH
+          list:
+            - ${linter}/bin
+        - name: GOPATH
+          value: ${linter}
+      runtime_environment:
+        - name: HOME
+          value: ${home}
+        - name: PATH
+          list:
+            - ${runtime}/bin
+        - name: GOROOT
+          value: ${runtime}
+        - name: GO111MODULE
+          value: on
+        - name: CGO_ENABLED
+          value: 0
+      system_version: ignored
+      version: 1.18.3
+      version_commands:
+        - parse_regex: go version go(.*) (.*)
+          run: go version
+    - type: rust
+      download: rust
+      known_good_version: 1.58.1
+      runtime_environment:
+        - name: HOME
+          value: ${home}
+        - name: PATH
+          list:
+            - ${runtime}/bin
+      version: 1.58.1
+      version_commands:
+        - parse_regex: ${semver}
+          run: rustc --version
+    - type: ruby
+      download: ruby-build
+      known_good_version: 3.1.0
+      linter_environment:
+        - name: PATH
+          list:
+            - ${linter}/bin
+        - name: GEM_HOME
+          value: ${linter}
+      runtime_environment:
+        - name: HOME
+          value: ${home}
+        - name: PATH
+          list:
+            - ${runtime}/bin
+        - name: LD_LIBRARY_PATH
+          list:
+            - ${runtime}/lib
+      version: 3.1.0
+      version_commands:
+        - parse_regex: ruby ([0-9\.]+)(p+.*)
+          run: ruby --version
+    - type: java
+      download: jre-11
+      known_good_version: 11.0.13
+      linter_environment:
+        - name: PATH
+          list:
+            - ${linter}/bin
+      runtime_environment:
+        - name: HOME
+          value: ${home}
+        - name: PATH
+          list:
+            - ${runtime}/bin
+        - name: JAVA_HOME
+          value: ${runtime}
+      version: 11.0.13
+      version_commands:
+        - parse_regex: ${semver}
+          run: java --version
+        - parse_regex: java version "(.*)"
+          run: java -version
+actions:
+  definitions:
+    - autogenerated_definition_path: actions/trunk
+      description: Git hook for displaying commits tagged with '/trunk announce'
+      display_name: Trunk Announce
+      enabled: true
+      id: trunk-announce
+      notify_on_error: false
+      run: trunk show-announcements "${hook}" "${@}"
+      triggers:
+        - git_hooks:
+            - post-checkout
+            - post-merge
+            - pre-rebase
+    - autogenerated_definition_path: actions/git
+      description: Git LFS hooks
+      display_name: Git LFS
+      id: git-lfs
+      notify_on_error: true
+      run: git lfs "${hook}" ${@}
+      triggers:
+        - git_hooks:
+            - post-checkout
+            - post-commit
+            - post-merge
+            - pre-push
+    - autogenerated_definition_path: actions/trunk
+      description: Run 'trunk check' whenever you run 'git push'
+      display_name: Trunk Check Pre-Push Hook
+      enabled: true
+      id: trunk-check-pre-push
+      interactive: true
+      notify_on_error: false
+      run: trunk check -n -t git-push --commit-ref-from-pre-push '${hook_stdin_path}'
+      triggers:
+        - git_hooks:
+            - pre-push
+    - autogenerated_definition_path: actions/trunk
+      description: Periodically prune cached trunk files that are no longer needed
+      display_name: Trunk Cache Prune
+      id: trunk-cache-prune
+      notify_on_error: false
+      run: trunk cache prune
+      triggers:
+        - schedule:
+            interval: 24h
+    - description: Check for and notify about the latest version of the trunk cli
+      display_name: Trunk Upgrade
+      enabled: true
+      id: trunk-upgrade-available
+      notify_on_error: false
+      output_type: notification_v1
+      run: trunk upgrade --notify --allow-daemon-restart=false
+      triggers:
+        - files:
+            - .trunk/trunk.yaml
+        - schedule:
+            interval: 1h
+    - autogenerated_definition_path: actions/trunk
+      description: Run 'trunk fmt' whenever you run 'git commit'
+      display_name: Trunk Fmt Pre-Commit Hook
+      enabled: true
+      id: trunk-fmt-pre-commit
+      interactive: true
+      notify_on_error: false
+      run: trunk fmt -t "git-commit" --index-file '${env.GIT_INDEX_FILE}' --upstream=HEAD
+      triggers:
+        - git_hooks:
+            - pre-commit
+    - enabled: true
+      id: trunk-share-with-everyone
+      notify_on_error: false
+      output_type: notification_v1
+      run: trunk config share --notify --allow-daemon-restart=false
+      triggers:
+        - files:
+            - .git/info/exclude
+        - schedule:
+            interval: 24h
+    - description: Auto-upgrade trunk version for users on single-player mode.
+      enabled: true
+      id: trunk-single-player-auto-upgrade
+      notify_on_error: false
+      run: trunk upgrade cli --single-player-only -n --no-progress --on-upgrade=false --allow-daemon-restart=false
+      triggers:
+        - schedule:
+            delay: 1h
+            interval: 24h
+    - description: Run on-upgrade automatically for users on single-player mode.
+      enabled: true
+      id: trunk-single-player-auto-on-upgrade
+      notify_on_error: false
+      run: trunk on-upgrade --single-player-only -n --no-progress --allow-daemon-restart=false
+      triggers:
+        - schedule:
+            delay: 5m
+            interval: 24h
+    - autogenerated_definition_path: actions/go-mod-tidy-vendor
+      description: Runs go mod tidy followed by go mod vendor.
+      display_name: Go Mod Tidy & Vendor
+      id: go-mod-tidy-vendor
+      notify_on_error: true
+      run: ${plugin}/actions/go-mod-tidy-vendor/go-mod-tidy-vendor.sh
+      runtime: go
+      triggers:
+        - files:
+            - go.mod
+    - autogenerated_definition_path: actions/go-mod-tidy
+      description: Runs go mod tidy when changes are detected to go.mod.
+      display_name: Go Mod Tidy
+      id: go-mod-tidy
+      notify_on_error: true
+      run: go mod tidy
+      runtime: go
+      triggers:
+        - files:
+            - go.mod
+    - autogenerated_definition_path: actions/commitlint
+      id: commitlint
+      notify_on_error: true
+      packages_file: package.json
+      run: commitlint --edit ${1}
+      runtime: node
+      triggers:
+        - git_hooks:
+            - commit-msg
+    - autogenerated_definition_path: actions/buf
+      description: Run 'buf generate' anytime a .proto file changes. Must have a buf.work.yaml to work properly.
+      display_name: Buf generate
+      id: buf-gen
+      notify_on_error: true
+      run: buf generate
+      triggers:
+        - files:
+            - "**/*.proto"
+  enabled:
+    - trunk-announce
+    - trunk-check-pre-push
+    - trunk-fmt-pre-commit
+    - trunk-upgrade-available
+lint:
+  comment_formats:
+    - name: dashes-inline
+      leading_delimiter: --
+    - name: hash
+      leading_delimiter: "#"
+    - name: html-tag
+      leading_delimiter: <!--
+      trailing_delimiter: -->
+    - name: hyphen-hash
+      leading_delimiter: -#
+    - name: percent-inline
+      leading_delimiter: \%
+    - name: slashes-block
+      leading_delimiter: /*
+      trailing_delimiter: "*/"
+    - name: slashes-inline
+      leading_delimiter: //
+    - name: slashes-xml
+      leading_delimiter: ///
+  files:
+    - name: ALL
+      regexes:
+        - .+
+    - name: c++-source
+      comments:
+        - slashes-inline
+        - slashes-block
+      extensions:
+        - cc
+        - cpp
+        - cxx
+        - C
+    - name: c++-header
+      comments:
+        - slashes-inline
+        - slashes-block
+      extensions:
+        - hh
+        - hpp
+        - hxx
+        - H
+    - name: c++
+      inherit:
+        - c++-source
+        - c++-header
+    - name: cue
+      comments:
+        - slashes-inline
+      extensions:
+        - cue
+    - name: python
+      comments:
+        - hash
+      extensions:
+        - py
+        - py2
+        - py3
+      shebangs:
+        - python
+        - python3
+    - name: c-source
+      comments:
+        - slashes-inline
+        - slashes-block
+      extensions:
+        - c
+    - name: c-header
+      comments:
+        - slashes-inline
+        - slashes-block
+      extensions:
+        - h
+    - name: c
+      inherit:
+        - c-source
+        - c-header
+    - name: c#
+      comments:
+        - slashes-inline
+        - slashes-block
+        - slashes-xml
+      extensions:
+        - cs
+    - name: c/c++
+      inherit:
+        - c
+        - c++
+    - name: c/c++-source
+      inherit:
+        - c-source
+        - c++-source
+    - name: bazel-build
+      comments:
+        - hash
+      extensions:
+        - BUILD
+      filenames:
+        - BUILD
+        - BUILD.bazel
+    - name: bazel-workspace
+      comments:
+        - hash
+      filenames:
+        - WORKSPACE
+        - WORKSPACE.bazel
+    - name: starlark
+      comments:
+        - hash
+      extensions:
+        - bzl
+    - name: shell
+      comments:
+        - hash
+      extensions:
+        - sh
+        - bash
+      shebangs:
+        - sh
+        - bash
+    - name: svg
+      comments:
+        - html-tag
+      extensions:
+        - svg
+    - name: zsh
+      comments:
+        - hash
+      extensions:
+        - zsh
+      shebangs:
+        - zsh
+    - name: javascript
+      comments:
+        - slashes-inline
+        - slashes-block
+      extensions:
+        - js
+        - mjs
+        - jsx
+    - name: typescript
+      comments:
+        - slashes-inline
+        - slashes-block
+      extensions:
+        - ts
+        - tsx
+    - name: sql
+      comments:
+        - dashes-inline
+        - slashes-block
+      extensions:
+        - sql
+    - name: yaml
+      comments:
+        - hash
+      extensions:
+        - yml
+        - yaml
+    - name: prettier_supported_configs
+      filenames:
+        - .prettierrc
+        - .stylelintrc
+    - name: css
+      comments:
+        - slashes-block
+      extensions:
+        - css
+    - name: sass
+      comments:
+        - slashes-inline
+        - slashes-block
+      extensions:
+        - sass
+        - scss
+    - name: html
+      comments:
+        - html-tag
+      extensions:
+        - html
+    - name: markdown
+      comments:
+        - html-tag
+      extensions:
+        - md
+        - mdx
+    - name: json
+      extensions:
+        - json
+        - jsonc
+    - name: docker
+      comments:
+        - hash
+      extensions:
+        - Dockerfile
+        - dockerfile
+      filenames:
+        - Dockerfile
+        - dockerfile
+      regexes:
+        - (?i)(?:|.+/)Dockerfile\..+
+    - name: go
+      comments:
+        - slashes-inline
+        - slashes-block
+      extensions:
+        - go
+    - name: php
+      comments:
+        - slashes-inline
+        - slashes-block
+        - hash
+      extensions:
+        - php
+        - phar
+        - phtml
+        - pht
+        - phps
+        - php3
+        - php4
+        - php5
+        - phtml
+    - name: proto
+      comments:
+        - slashes-inline
+        - slashes-block
+      extensions:
+        - proto
+    - name: rust
+      comments:
+        - slashes-inline
+        - slashes-block
+      extensions:
+        - rs
+    - name: terraform
+      extensions:
+        - tf
+        - tf.json
+    - name: ruby
+      extensions:
+        - rb
+      shebangs:
+        - ruby
+    - name: gemspec
+      extensions:
+        - gemspec
+      filenames:
+        - Gemfile
+    - name: kotlin
+      comments:
+        - slashes-inline
+        - slashes-block
+      extensions:
+        - kt
+        - kts
+        - ktm
+    - name: java
+      comments:
+        - slashes-inline
+        - slashes-block
+      extensions:
+        - java
+    - name: toml
+      comments:
+        - hash
+      extensions:
+        - toml
+    - name: haml
+      comments:
+        - hyphen-hash
+      extensions:
+        - haml
+    - name: graphql
+      comments:
+        - hash
+      extensions:
+        - graphql
+    - name: scala
+      comments:
+        - slashes-inline
+        - slashes-block
+      extensions:
+        - scala
+        - sc
+    - name: latex
+      comments:
+        - percent-inline
+      extensions:
+        - tex
+    - name: dotenv
+      comments:
+        - hash
+      extensions:
+        - env
+    - name: swift
+      extensions:
+        - swift
+    - name: strings
+      extensions:
+        - strings
+        - stringsdict
+    - name: xib
+      extensions:
+        - xib
+    - name: storyboard
+      extensions:
+        - storyboard
+    - name: objective-c-source
+      extensions:
+        - m
+    - name: jupyter
+      extensions:
+        - ipynb
+    - name: dml
+      comments:
+        - dashes-inline
+        - slashes-block
+      extensions:
+        - dml
+    - name: ddl
+      comments:
+        - dashes-inline
+        - slashes-block
+      extensions:
+        - ddl
+    - name: sql-j2
+      comments:
+        - dashes-inline
+        - slashes-block
+      extensions:
+        - sql.j2
+    - name: png
+      extensions:
+        - png
+  downloads:
+    - name: actionlint
+      version: 1.6.9
+      downloads:
+        - os:
+            macos: ""
+          url: https://github.com/rhysd/actionlint/releases/download/v${version}/actionlint_${version}_darwin_amd64.tar.gz
+          version: <1.4.1
+        - os:
+            linux: linux
+            macos: darwin
+          cpu:
+            arm_64: arm64
+            x86_64: amd64
+          url: https://github.com/rhysd/actionlint/releases/download/v${version}/actionlint_${version}_${os}_${cpu}.tar.gz
+    - name: buf
+      version: 1.0.0-rc11
+      executable: true
+      downloads:
+        - os:
+            macos: ""
+          url: https://github.com/bufbuild/buf/releases/download/v${version}/buf-Darwin-x86_64
+          version: <0.42.0
+        - os:
+            macos: Darwin
+            linux: Linux
+          cpu:
+            arm_64: arm64
+            x86_64: x86_64
+          url: https://github.com/bufbuild/buf/releases/download/v${version}/buf-${os}-${cpu}
+    - name: buildifier
+      version: 5.1.0
+      executable: true
+      downloads:
+        - os:
+            macos: ""
+          url: https://github.com/bazelbuild/buildtools/releases/download/${version}/buildifier-darwin-amd64
+          version: <4.2.0
+        - os:
+            macos: darwin
+            linux: linux
+          cpu:
+            arm_64: arm64
+            x86_64: amd64
+          url: https://github.com/bazelbuild/buildtools/releases/download/${version}/buildifier-${os}-${cpu}
+          version: ">=4.0.0"
+    - name: clang-format
+      version: 14.0.1
+      downloads:
+        - os:
+            macos: ""
+          url: https://trunk.io/releases/clang-format-${version}-macos-x86_64.tar.gz
+          version: <14.0.0
+        - os:
+            macos: macos
+            linux: linux
+          cpu:
+            arm_64: arm64
+            x86_64: x86_64
+          url: https://trunk.io/releases/clang-format-${version}-${os}-${cpu}.tar.gz
+    - name: clang-tidy
+      version: 14.0.1
+      downloads:
+        - os:
+            macos: ""
+          url: https://trunk.io/releases/clang-tidy-${version}-macos-x86_64.tar.gz
+          version: <14.0.0
+        - os:
+            linux: linux
+            macos: macos
+          cpu:
+            x86_64: x86_64
+            arm_64: arm64
+          url: https://trunk.io/releases/clang-tidy-${version}-${os}-${cpu}.tar.gz
+    - name: detekt
+      version: 1.19.0
+      downloads:
+        - url: https://github.com/detekt/detekt/releases/download/v${version}/detekt-cli-${version}.zip
+          strip_components: 1
+    - name: dotenv-linter
+      version: 3.2.0
+      downloads:
+        - os:
+            macos: ""
+          url: https://github.com/dotenv-linter/dotenv-linter/releases/download/v${version}/dotenv-linter-darwin-x86_64.tar.gz
+          version: <3.1.1
+        - os:
+            macos: darwin
+            linux: linux
+          cpu:
+            arm_64: arm64
+            x86_64: x86_64
+          url: https://github.com/dotenv-linter/dotenv-linter/releases/download/v${version}/dotenv-linter-${os}-${cpu}.tar.gz
+    - name: hadolint
+      version: 2.8.0
+      executable: true
+      downloads:
+        - os:
+            linux: ""
+          cpu:
+            x86_64: ""
+          url: https://github.com/hadolint/hadolint/releases/download/v${version}/hadolint-Linux-x86_64
+        - os:
+            macos: ""
+          cpu:
+            x86_64: ""
+          url: https://github.com/hadolint/hadolint/releases/download/v${version}/hadolint-Darwin-x86_64
+        - os:
+            macos: ""
+          cpu:
+            arm_64: ""
+          url: https://github.com/hadolint/hadolint/releases/download/v${version}/hadolint-Darwin-x86_64
+    - name: include-what-you-use
+      version: 0.38
+      downloads:
+        - os:
+            linux: linux
+            macos: macos
+          cpu:
+            arm_64: arm64
+            x86_64: x86_64
+          url: https://trunk.io/releases/include-what-you-use-${version}-${os}-${cpu}.tar.gz
+    - name: ktlint
+      version: 0.43.2
+      executable: true
+      downloads:
+        - url: https://github.com/pinterest/ktlint/releases/download/${version}/ktlint
+    - name: nancy
+      version: 1.0.41
+      downloads:
+        - os:
+            macos: darwin
+            linux: linux
+          cpu:
+            x86_64: amd64
+            arm_64: arm64
+          url: https://github.com/sonatype-nexus-community/nancy/releases/download/v${version}/nancy-v${version}-${os}-${cpu}.tar.gz
+    - name: oxipng
+      downloads:
+        - os:
+            macos: ""
+          url: https://github.com/shssoichiro/oxipng/releases/download/v${version}/oxipng-${version}-x86_64-apple-darwin.tar.gz
+          strip_components: 1
+        - os:
+            linux: ""
+          cpu:
+            x86_64: ""
+          url: https://github.com/shssoichiro/oxipng/releases/download/v${version}/oxipng-${version}-x86_64-unknown-linux-musl.tar.gz
+          strip_components: 1
+    - name: scalafmt
+      version: 3.4.3
+      executable: true
+      downloads:
+        - os:
+            linux: ""
+          cpu:
+            x86_64: ""
+          url: https://github.com/scalameta/scalafmt/releases/download/v${version}/scalafmt-linux-musl
+        - os:
+            macos: ""
+          cpu:
+            x86_64: ""
+          url: https://github.com/scalameta/scalafmt/releases/download/v${version}/scalafmt-macos
+        - os:
+            macos: ""
+          cpu:
+            arm_64: ""
+          url: https://github.com/scalameta/scalafmt/releases/download/v${version}/scalafmt-macos
+    - name: shellcheck
+      version: 0.8.0
+      downloads:
+        - os:
+            linux: ""
+          cpu:
+            x86_64: ""
+          url: https://github.com/koalaman/shellcheck/releases/download/v${version}/shellcheck-v${version}.linux.x86_64.tar.xz
+          strip_components: 1
+        - os:
+            macos: ""
+          cpu:
+            x86_64: ""
+          url: https://github.com/koalaman/shellcheck/releases/download/v${version}/shellcheck-v${version}.darwin.x86_64.tar.xz
+          strip_components: 1
+        - os:
+            macos: ""
+          cpu:
+            arm_64: ""
+          url: https://github.com/koalaman/shellcheck/releases/download/v${version}/shellcheck-v${version}.darwin.x86_64.tar.xz
+          strip_components: 1
+    - name: stringslint
+      version: 0.1.1
+      downloads:
+        - os:
+            macos: ""
+          url: https://github.com/dral3x/StringsLint/releases/download/${version}/portable_stringslint.zip
+    - name: swiftformat
+      downloads:
+        - os:
+            macos: ""
+          url: https://github.com/nicklockwood/SwiftFormat/releases/download/${version}/swiftformat.zip
+    - name: swiftlint
+      version: 0.49.1
+      downloads:
+        - os:
+            macos: ""
+          url: https://github.com/realm/SwiftLint/releases/download/${version}/portable_swiftlint.zip
+    - name: taplo
+      args:
+        semver: ${version}=>(?:release-cli-|release-taplo-cli-)?(?P<semver>.*)
+      downloads:
+        - os:
+            linux: ""
+          cpu:
+            x86_64: ""
+          url: https://github.com/tamasfe/taplo/releases/download/${semver}/taplo-linux-x86_64.gz
+          version: ">=0.8.0"
+        - os:
+            macos: ""
+          cpu:
+            x86_64: ""
+          url: https://github.com/tamasfe/taplo/releases/download/${semver}/taplo-darwin-x86_64.gz
+          version: ">=0.8.0"
+        - os:
+            macos: ""
+          cpu:
+            arm_64: ""
+          url: https://github.com/tamasfe/taplo/releases/download/${semver}/taplo-darwin-aarch64.gz
+          version: ">=0.8.0"
+        - os:
+            linux: ""
+          cpu:
+            x86_64: ""
+          url: https://github.com/tamasfe/taplo/releases/download/release-taplo-cli-${semver}/taplo-x86_64-unknown-linux-gnu.tar.gz
+          version: ">=0.6.7"
+        - os:
+            macos: ""
+          cpu:
+            x86_64: ""
+          url: https://github.com/tamasfe/taplo/releases/download/release-taplo-cli-${semver}/taplo-x86_64-apple-darwin-gnu.tar.gz
+          version: ">=0.6.7"
+        - os:
+            macos: ""
+          cpu:
+            arm_64: ""
+          url: https://github.com/tamasfe/taplo/releases/download/release-taplo-cli-${semver}/taplo-x86_64-apple-darwin-gnu.tar.gz
+          version: ">=0.6.7"
+        - os:
+            linux: ""
+          cpu:
+            x86_64: ""
+          url: https://github.com/tamasfe/taplo/releases/download/release-cli-${semver}/taplo-${semver}-x86_64-unknown-linux-gnu.tar.gz
+          version: ">=0.6.0"
+        - os:
+            macos: ""
+          cpu:
+            x86_64: ""
+          url: https://github.com/tamasfe/taplo/releases/download/release-cli-${semver}/taplo-${semver}-x86_64-apple-darwin-gnu.tar.gz
+          version: ">=0.6.0"
+        - os:
+            macos: ""
+          cpu:
+            arm_64: ""
+          url: https://github.com/tamasfe/taplo/releases/download/release-cli-${semver}/taplo-${semver}-x86_64-apple-darwin-gnu.tar.gz
+          version: ">=0.6.0"
+        - os:
+            linux: ""
+          cpu:
+            x86_64: ""
+          url: https://github.com/tamasfe/taplo/releases/download/${version}/taplo-x86_64-unknown-linux-gnu.tar.gz
+        - os:
+            macos: ""
+          cpu:
+            x86_64: ""
+          url: https://github.com/tamasfe/taplo/releases/download/${version}/taplo-x86_64-apple-darwin-gnu.tar.gz
+        - os:
+            macos: ""
+          cpu:
+            arm_64: ""
+          url: https://github.com/tamasfe/taplo/releases/download/${version}/taplo-x86_64-apple-darwin-gnu.tar.gz
+    - name: terraform
+      version: 1.1.4
+      downloads:
+        - os:
+            macos: ""
+          url: https://releases.hashicorp.com/terraform/${version}/terraform_${version}_darwin_amd64.zip
+          version: <1.0.2
+        - os:
+            linux: linux
+            macos: darwin
+          cpu:
+            arm_64: arm64
+            x86_64: amd64
+          url: https://releases.hashicorp.com/terraform/${version}/terraform_${version}_${os}_${cpu}.zip
+    - name: tflint
+      version: 0.35.0
+      downloads:
+        - os:
+            macos: ""
+          url: https://github.com/terraform-linters/tflint/releases/download/v${version}/tflint_darwin_amd64.zip
+          version: <0.29.1
+        - os:
+            macos: darwin
+            linux: linux
+          cpu:
+            x86_64: amd64
+            arm_64: arm64
+          url: https://github.com/terraform-linters/tflint/releases/download/v${version}/tflint_${os}_${cpu}.zip
+    - name: trivy
+      downloads:
+        - os:
+            linux: ""
+          cpu:
+            x86_64: 64bit
+            arm_64: ARM
+          url: https://github.com/aquasecurity/trivy/releases/download/v${version}/trivy_${version}_Linux-${cpu}.tar.gz
+        - os:
+            macos: ""
+          cpu:
+            x86_64: 64bit
+            arm_64: ARM64
+          url: https://github.com/aquasecurity/trivy/releases/download/v${version}/trivy_${version}_macOS-${cpu}.tar.gz
+  shared_configs:
+    - file: setup.cfg
+      regex: (?:\[|\[tools?.)([a-zA-Z0-9-_]*)\]
+    - file: pyproject.toml
+      regex: \[tool.([a-zA-Z0-9-_.]+)\]
+  definitions:
+    - name: actionlint
+      type: actionlint
+      files:
+        - yaml
+      command:
+        - actionlint
+        - -format
+        - "{{json .}}"
+        - ${target}
+      success_codes:
+        - 0
+        - 1
+      direct_configs:
+        - .github/actionlint.yaml
+        - .github/actionlint.yml
+      download: actionlint
+      enabled: true
+      environment:
+        - name: PATH
+          list:
+            - ${linter}
+      good_without_config: true
+      issue_url_format: https://github.com/rhysd/actionlint/blob/main/docs/checks.md
+      known_good_version: 1.6.9
+      plugin_url: https://slack.trunk.io
+      version_command:
+        parse_regex: ${semver}
+        run: actionlint --version
+    - name: ansible-lint
+      type: ansible_lint
+      command:
+        - ansible-lint
+        - --parseable-severity
+      success_codes:
+        - 0
+        - 2
+      direct_configs:
+        - .ansible-lint
+      environment:
+        - name: PATH
+          list:
+            - ${env.PATH}
+      extra_packages:
+        - ansible
+      good_without_config: true
+      is_recommended: false
+      issue_url_format: https://ansible-lint.readthedocs.io/en/latest/default_rules.html#{}
+      known_good_version: 5.1.13
+      package: ansible-lint
+      plugin_url: https://slack.trunk.io
+      run_linter_from: directory
+      runtime: python
+      version_command:
+        parse_regex: ${semver}
+        run: ansible-lint --version
+    - name: autopep8
+      type: rewrite
+      files:
+        - python
+      command:
+        - autopep8
+        - --in-place
+        - ${target}
+      success_codes:
+        - 0
+        - 2
+      affects_cache:
+        - .flake8
+        - pyproject.toml
+        - setup.cfg
+        - tox.ini
+      batch: true
+      cache_results: true
+      direct_configs:
+        - .pep8
+      formatter: true
+      in_place: true
+      issue_url_format: https://pycodestyle.pycqa.org/en/latest/intro.html#error-codes
+      known_good_version: 1.5.7
+      package: autopep8
+      plugin_url: https://slack.trunk.io
+      runtime: python
+      version_command:
+        parse_regex: autopep8 ${semver}
+        run: autopep8 --version
+    - name: bandit
+      type: bandit
+      files:
+        - python
+      command:
+        - bandit
+        - --exit-zero
+        - --format
+        - json
+        - ${target}
+      success_codes:
+        - 0
+      batch: true
+      cache_results: true
+      direct_configs:
+        - .bandit
+      issue_url_format: https://pypi.org/project/bandit/
+      known_good_version: 1.7.3
+      package: bandit
+      plugin_url: https://slack.trunk.io
+      runtime: python
+      version_command:
+        parse_regex: ${semver}
+        run: bandit --version
+    - name: black
+      type: rewrite
+      files:
+        - python
+        - jupyter
+      command:
+        - black
+        - -q
+        - ${target}
+      success_codes:
+        - 0
+      affects_cache:
+        - pyproject.toml
+      allow_empty_files: false
+      batch: true
+      cache_results: true
+      formatter: true
+      good_without_config: true
+      in_place: true
+      known_good_version: 22.3.0
+      package: black[python2,jupyter]
+      plugin_url: https://slack.trunk.io
+      runtime: python
+      version_command:
+        parse_regex: black, version (.*)
+        run: black --version
+    - name: black-py
+      type: rewrite
+      files:
+        - python
+      command:
+        - black
+        - -q
+        - ${target}
+      success_codes:
+        - 0
+      affects_cache:
+        - pyproject.toml
+      allow_empty_files: false
+      batch: true
+      cache_results: true
+      formatter: true
+      in_place: true
+      known_good_version: 22.3.0
+      package: black[python2]
+      plugin_url: https://slack.trunk.io
+      runtime: python
+      version_command:
+        parse_regex: black, version (.*)
+        run: black --version
+    - name: brakeman
+      type: brakeman
+      files:
+        - ruby
+      command:
+        - brakeman
+        - -p
+        - ${target}
+        - -f
+        - json
+        - --no-pager
+      success_codes:
+        - 0
+        - 1
+        - 3
+      direct_configs:
+        - brakeman.ignore
+      known_good_version: 5.4.0
+      package: brakeman
+      plugin_url: https://slack.trunk.io
+      run_from_root_target: apps
+      run_linter_from: root_directory
+      runtime: ruby
+      version_command:
+        parse_regex: ${semver}
+        run: brakeman --version
+    - name: buf-breaking
+      type: buf
+      files:
+        - proto
+      command:
+        - buf
+        - breaking
+        - --against
+        - .git#branch=${upstream-ref}
+        - --error-format
+        - json
+        - --path
+        - ${target}
+      success_codes:
+        - 0
+        - 100
+      affects_cache:
+        - buf.yaml
+        - buf.lock
+        - buf.gen.yaml
+        - buf.work.yaml
+      direct_configs:
+        - buf.yaml
+        - buf.work.yaml
+      download: buf
+      environment:
+        - name: PATH
+          list:
+            - ${linter}
+            - ${env.PATH}
+        - name: BUF_TOKEN
+          list:
+            - ${env.BUF_TOKEN}
+          optional: true
+      is_recommended: false
+      issue_url_format: https://docs.buf.build/breaking/rules#{}
+      known_good_version: 1.1.0
+      plugin_url: https://slack.trunk.io
+      run_from_root_file: buf.work.yaml
+      run_linter_from: root_file
+      version_command:
+        parse_regex: ${semver}
+        run: buf --version
+    - name: buf-format
+      type: rewrite
+      files:
+        - proto
+      command:
+        - buf
+        - format
+        - ${target}
+      success_codes:
+        - 0
+        - 100
+      cache_results: true
+      download: buf
+      environment:
+        - name: PATH
+          list:
+            - ${linter}
+            - ${env.PATH}
+        - name: BUF_TOKEN
+          list:
+            - ${env.BUF_TOKEN}
+          optional: true
+      formatter: true
+      issue_url_format: https://docs.buf.build/lint/rules#{}
+      known_good_version: 1.1.0
+      plugin_url: https://slack.trunk.io
+      version_command:
+        parse_regex: ${semver}
+        run: buf --version
+    - name: buf-lint
+      type: buf
+      files:
+        - proto
+      command:
+        - buf
+        - lint
+        - --path
+        - ${target}
+        - --error-format
+        - json
+      success_codes:
+        - 0
+        - 100
+      affects_cache:
+        - buf.yaml
+        - buf.lock
+        - buf.gen.yaml
+        - buf.work.yaml
+      direct_configs:
+        - buf.yaml
+      download: buf
+      environment:
+        - name: PATH
+          list:
+            - ${linter}
+        - name: BUF_TOKEN
+          list:
+            - ${env.BUF_TOKEN}
+          optional: true
+      issue_url_format: https://docs.buf.build/lint/rules#{}
+      known_good_version: 1.1.0
+      plugin_url: https://slack.trunk.io
+      run_from_root_file: buf.yaml
+      run_linter_from: root_file
+      version_command:
+        parse_regex: ${semver}
+        run: buf --version
+    - name: buildifier
+      commands:
+        - output: rewrite
+          success_codes:
+            - 0
+          batch: true
+          cache_results: true
+          formatter: true
+          in_place: true
+          name: fix
+          run: buildifier --lint=fix --warnings=all "${target}"
+        - output: buildifier
+          success_codes:
+            - 0
+          batch: true
+          cache_results: true
+          name: warn
+          run: buildifier --lint=warn --warnings=all --format=json --mode=check "${target}"
+      files:
+        - starlark
+        - bazel-build
+        - bazel-workspace
+      download: buildifier
+      environment:
+        - name: PATH
+          list:
+            - ${linter}
+      good_without_config: true
+      known_good_version: 4.0.1
+      plugin_url: https://slack.trunk.io
+      version_command:
+        parse_regex: ${semver}
+        run: buildifier --version
+    - name: cfnlint
+      type: cfnlint
+      files:
+        - yaml
+      command:
+        - cfn-lint
+        - -t
+        - ${target}
+        - -f=json
+      error_codes:
+        - 32
+      batch: true
+      cache_results: true
+      good_without_config: true
+      issue_url_format: https://github.com/aws-cloudformation/cfn-lint/blob/main/docs/rules.md
+      known_good_version: 0.58.2
+      package: cfn-lint
+      plugin_url: https://slack.trunk.io
+      runtime: python
+      version_command:
+        parse_regex: ${semver}
+        run: cfn-lint --version
+    - name: clang-format
+      type: rewrite
+      files:
+        - c/c++
+        - proto
+      command:
+        - clang-format
+        - --assume-filename=${target}
+      success_codes:
+        - 0
+      cache_results: true
+      direct_configs:
+        - .clang-format
+      download: clang-format
+      environment:
+        - name: PATH
+          list:
+            - ${linter}/bin
+      formatter: true
+      known_good_version: 14.0.0
+      plugin_url: https://slack.trunk.io
+      stdin: true
+      version_command:
+        parse_regex: ${semver}
+        run: clang-format --version
+    - name: clang-tidy
+      type: llvm
+      files:
+        - c/c++-source
+      command:
+        - clang-tidy
+        - --export-fixes=${tmpfile}
+        - ${target}
+        - -p
+        - ${compile_commands_dir}
+      success_codes:
+        - 0
+        - 1
+      cache_results: true
+      direct_configs:
+        - .clang-tidy
+      download: clang-tidy
+      environment:
+        - name: PATH
+          list:
+            - ${linter}/bin
+      include_scanner_type: compile_command
+      issue_url_format: https://clang.llvm.org/extra/clang-tidy/checks/{}.html
+      known_good_version: 14.0.0
+      plugin_url: https://slack.trunk.io
+      query_compile_commands: true
+      read_output_from: tmp_file
+      run_linter_from: compile_command
+      run_timeout: 10m
+      version_command:
+        parse_regex: ${semver}
+        run: clang-tidy --version
+    - name: clippy
+      type: clippy
+      files:
+        - rust
+      command:
+        - cargo
+        - clippy
+        - --message-format
+        - json
+        - --
+        - --cap-lints=warn
+        - --no-deps
+      success_codes:
+        - 0
+        - 101
+        - 383
+      affects_cache:
+        - Cargo.toml
+        - Cargo.lock
+      direct_configs:
+        - clippy.toml
+        - .clippy.toml
+      disable_upstream: true
+      download: rust
+      environment:
+        - name: PATH
+          list:
+            - ${linter}/bin
+            - ${env.PATH}
+        - name: CARGO_HOME
+          value: ${cachedir}/cargo_home
+        - name: CARGO_TARGET_DIR
+          value: ${cachedir}/cargo_target_dir
+      good_without_config: true
+      issue_url_format: https://rust-lang.github.io/rust-clippy/master/#{}
+      known_good_version: 1.65.0
+      plugin_url: https://slack.trunk.io
+      run_linter_from: directory
+      version_command:
+        parse_regex: ${semver}
+        run: cargo clippy --version
+    - name: codespell
+      commands:
+        - output: sarif
+          success_codes:
+            - 0
+            - 65
+          batch: true
+          cache_results: true
+          name: lint
+          parser:
+            run: ${plugin}/linters/codespell/codespell_to_sarif.py
+            runtime: python
+          read_output_from: stdout
+          run: codespell ${target}
+      files:
+        - ALL
+      affects_cache:
+        - pyproject.toml
+        - setup.cfg
+      autogenerated_definition_path: linters/codespell
+      direct_configs:
+        - .codespellrc
+      package: codespell
+      runtime: python
+    - name: cspell
+      commands:
+        - output: regex
+          success_codes:
+            - 0
+            - 1
+          batch: true
+          cache_results: false
+          name: lint
+          parse_regex: ((?P<path>.*):(?P<line>\d+):(?P<col>\d+) - (?P<message>.*))
+          read_output_from: stdout
+          run: cspell --no-progress --no-summary --show-suggestions ${target}
+      files:
+        - ALL
+      affects_cache:
+        - package.json
+      autogenerated_definition_path: linters/cspell
+      direct_configs:
+        - .cspell.json
+        - cspell.json
+        - .cSpell.json
+        - cSpell.json
+        - cspell.config.js
+        - cspell.config.cjs
+        - cspell.config.json
+        - cspell.config.yaml
+        - cspell.config.yml
+        - cspell.yaml
+        - cspell.yml
+      known_good_version: 6.5.0
+      package: cspell
+      runtime: node
+      version_command:
+        parse_regex: ${semver}
+        run: cspell --version
+    - name: cue-fmt
+      type: rewrite
+      files:
+        - cue
+      command:
+        - cue
+        - fmt
+        - ${target}
+      success_codes:
+        - 0
+      formatter: true
+      good_without_config: true
+      in_place: true
+      known_good_version: 0.4.3
+      package: cuelang.org/go/cmd/cue
+      plugin_url: https://slack.trunk.io
+      runtime: go
+      version_command:
+        parse_regex: cue version ${semver} .*
+        run: cue version
+    - name: detekt
+      type: sarif
+      files:
+        - kotlin
+      command:
+        - detekt-cli
+        - --build-upon-default-config
+        - --config
+        - .detekt.yaml
+        - --input
+        - ${target,}
+        - --report
+        - sarif:${tmpfile}
+      success_codes:
+        - 0
+        - 2
+      batch: true
+      cache_results: true
+      direct_configs:
+        - .detekt.yaml
+      download: detekt
+      environment:
+        - name: PATH
+          list:
+            - ${env.PATH}
+      is_recommended: false
+      known_good_version: 1.19.0
+      plugin_url: https://slack.trunk.io
+      read_output_from: tmp_file
+      runtime: java
+      version_command:
+        parse_regex: ${semver}
+        run: detekt-cli --version
+    - name: detekt-explicit
+      type: sarif
+      files:
+        - kotlin
+      command:
+        - detekt-cli
+        - --config
+        - .detekt.yaml
+        - --input
+        - ${target}
+        - --report
+        - sarif:${tmpfile}
+        - --auto-correct
+      success_codes:
+        - 0
+        - 2
+      direct_configs:
+        - .detekt.yaml
+      download: detekt
+      environment:
+        - name: PATH
+          list:
+            - ${env.PATH}
+      is_recommended: false
+      known_good_version: 1.19.0
+      plugin_url: https://slack.trunk.io
+      read_output_from: tmp_file
+      runtime: java
+      version_command:
+        parse_regex: ${semver}
+        run: detekt-cli --version
+    - name: detekt-gradle
+      type: detekt_gradle
+      files:
+        - kotlin
+      command:
+        - ${workspace}/gradlew
+        - detekt
+        - --info
+        - --continue
+      success_codes:
+        - 0
+        - 1
+      disable_upstream: true
+      environment:
+        - name: GRADLE_OPTS
+          optional: true
+          value: ${env.GRADLE_OPTS}
+        - name: GRADLE_USER_HOME
+          optional: true
+          value: ${env.GRADLE_USER_HOME}
+        - name: JAVA_HOME
+          optional: true
+          value: ${env.JAVA_HOME}
+        - name: LANG
+          optional: true
+          value: ${env.LANG}
+        - name: PATH
+          list:
+            - ${env.PATH}
+        - name: GRADLE_ENTERPRISE_ACCESS_KEY
+          optional: true
+          value: ${env.GRADLE_ENTERPRISE_ACCESS_KEY}
+      is_recommended: false
+      plugin_url: https://slack.trunk.io
+      run_timeout: 10m
+    - name: dotenv-linter
+      type: rewrite
+      files:
+        - dotenv
+      command:
+        - dotenv-linter
+        - --not-check-updates
+        - fix
+        - --quiet
+        - --no-backup
+        - ${target}
+      success_codes:
+        - 0
+      cache_results: true
+      download: dotenv-linter
+      environment:
+        - name: PATH
+          list:
+            - ${linter}
+      formatter: true
+      good_without_config: true
+      in_place: true
+      plugin_url: https://slack.trunk.io
+      version_command:
+        parse_regex: dotenv-linter ${semver}
+        run: dotenv-linter --version
+    - name: eslint
+      type: eslint
+      files:
+        - typescript
+        - javascript
+      command:
+        - eslint
+        - --output-file
+        - ${tmpfile}
+        - --format
+        - json
+        - ${target}
+      error_codes:
+        - 2
+      affects_cache:
+        - .eslintignore
+        - package.json
+        - tsconfig.json
+      batch: true
+      direct_configs:
+        - .eslintrc
+        - .eslintrc.cjs
+        - .eslintrc.js
+        - .eslintrc.json
+        - .eslintrc.yaml
+        - .eslintrc.yml
+      issue_url_format: https://eslint.org/docs/rules/{}
+      known_good_version: 8.10.0
+      package: eslint
+      plugin_url: https://slack.trunk.io
+      read_output_from: tmp_file
+      runtime: node
+      version_command:
+        parse_regex: ${semver}
+        run: eslint --version
+    - name: flake8
+      commands:
+        - output: regex
+          success_codes:
+            - 0
+          batch: true
+          cache_results: true
+          name: lint
+          parse_regex: "((?P<path>.*):(?P<line>-?\\d+):(?P<col>-?\\d+): (?P<code>\\S+) (?P<message>.+))"
+          read_output_from: tmp_file
+          run: flake8 ${target} --output-file "${tmpfile}" --exit-zero
+          run_linter_from: parent_directory
+      files:
+        - python
+      affects_cache:
+        - setup.cfg
+        - tox.ini
+      direct_configs:
+        - .flake8
+      issue_url_format: https://www.flake8rules.com/rules/{}.html
+      known_good_version: 4.0.1
+      package: flake8
+      plugin_url: https://slack.trunk.io
+      runtime: python
+      version_command:
+        parse_regex: ${semver}
+        run: flake8 --version
+    - name: git-diff-check
+      commands:
+        - output: regex
+          success_codes:
+            - 0
+            - 1
+            - 2
+          batch: true
+          name: lint
+          parse_regex: ((?P<path>.*):(?P<line>-?\d+):(?P<message>.*))
+          read_output_from: stdout
+          run: git diff --check ${target}
+      files:
+        - ALL
+      enabled: true
+      environment:
+        - name: PATH
+          list:
+            - ${env.PATH}
+      good_without_config: true
+      plugin_url: https://slack.trunk.io
+    - name: gitleaks
+      type: gitleaks
+      files:
+        - ALL
+      command:
+        - gitleaks
+        - --quiet
+        - --no-git
+        - --path=${target}
+        - --leaks-exit-code=101
+        - --append-repo-config
+      success_codes:
+        - 0
+        - 101
+      allow_empty_files: false
+      cache_results: true
+      direct_configs:
+        - .gitleaks.config
+        - .gitleaks.toml
+      enabled: true
+      good_without_config: true
+      in_place: true
+      known_bad_versions:
+        - 8.10.0
+        - 8.10.1
+      known_good_version: 8.8.7
+      package: github.com/zricethezav/gitleaks/v${major_version}
+      plugin_url: https://slack.trunk.io
+      runtime: go
+    - name: gofmt
+      type: rewrite
+      files:
+        - go
+      command:
+        - gofmt
+        - ${target}
+      success_codes:
+        - 0
+      cache_results: true
+      download: go
+      environment:
+        - name: PATH
+          list:
+            - ${linter}/bin
+      formatter: true
+      good_without_config: true
+      known_good_version: 1.19.3
+      plugin_url: https://slack.trunk.io
+      stdin: true
+    - name: goimports
+      type: rewrite
+      files:
+        - go
+      command:
+        - goimports
+        - ${target}
+      success_codes:
+        - 0
+      cache_results: true
+      environment:
+        - name: PATH
+          list:
+            - ${linter}/bin
+      formatter: true
+      known_good_version: 0.1.10
+      package: golang.org/x/tools/cmd/goimports
+      plugin_url: https://slack.trunk.io
+      runtime: go
+      stdin: true
+    - name: golangci-lint
+      type: golangci_lint
+      files:
+        - go
+      command:
+        - golangci-lint
+        - run
+        - --out-format
+        - json
+        - --timeout
+        - 10m
+        - --concurrency
+        - 1
+        - --exclude
+        - gofmt
+        - --allow-parallel-runners
+        - --issues-exit-code
+        - 0
+        - ${target}
+      success_codes:
+        - 0
+        - 2
+        - 7
+      affects_cache:
+        - go.mod
+        - go.sum
+      direct_configs:
+        - .golangci.json
+        - .golangci.toml
+        - .golangci.yaml
+        - .golangci.yml
+      disable_upstream: true
+      environment:
+        - name: GOLANGCI_LINT_CACHE
+          value: ${cachedir}
+        - name: PATH
+          list:
+            - ${env.PATH}
+        - name: GO111MODULE
+          value: auto
+      good_without_config: true
+      issue_url_format: https://golangci-lint.run/usage/linters/
+      known_good_version: 1.46.2
+      package: github.com/golangci/golangci-lint/cmd/golangci-lint
+      plugin_url: https://slack.trunk.io
+      run_from_root_file: go.mod
+      run_linter_from: root_file
+      run_timeout: 10m
+      runtime: go
+      version_command:
+        parse_regex: ${semver}
+        run: golangci-lint --version
+    - name: hadolint
+      type: hadolint
+      files:
+        - docker
+      command:
+        - hadolint
+        - ${target}
+        - -f
+        - json
+        - --no-fail
+      success_codes:
+        - 0
+      cache_results: true
+      direct_configs:
+        - .hadolint.yaml
+        - .hadolint.yml
+      download: hadolint
+      environment:
+        - name: PATH
+          list:
+            - ${linter}
+      issue_url_format: https://github.com/hadolint/hadolint/wiki/{}
+      known_good_version: 2.8.0
+      plugin_url: https://slack.trunk.io
+      version_command:
+        parse_regex: ${semver}
+        run: hadolint --version
+    - name: haml-lint
+      type: haml_lint
+      files:
+        - haml
+      command:
+        - haml-lint
+        - ${target}
+        - --reporter=json
+      success_codes:
+        - 0
+        - 65
+      batch: true
+      cache_results: false
+      direct_configs:
+        - .haml-lint.yml
+      good_without_config: true
+      is_recommended: true
+      known_good_version: 0.40.0
+      package: haml_lint
+      plugin_url: https://slack.trunk.io
+      runtime: ruby
+      version_command:
+        parse_regex: ${semver}
+        run: haml-lint --version
+    - name: include-what-you-use
+      commands:
+        - output: iwyu
+          success_codes:
+            - 0
+          cache_results: true
+          disable_upstream: true
+          name: lint
+          read_output_from: stderr
+          run: include-what-you-use -Xiwyu --no_fwd_decls "${compile_command}"
+          run_linter_from: compile_command
+      type: iwyu
+      files:
+        - c/c++-source
+      success_codes:
+        - 0
+      download: include-what-you-use
+      environment:
+        - name: PATH
+          list:
+            - ${linter}/bin
+      hold_the_line: false
+      include_scanner_type: compile_command
+      known_good_version: 0.18
+      plugin_url: https://slack.trunk.io
+      query_compile_commands: true
+      version_command:
+        parse_regex: include-what-you-use ([^ ]+).*
+        run: include-what-you-use --version
+    - name: isort
+      type: rewrite
+      files:
+        - python
+      command:
+        - isort
+        - -q
+        - --overwrite-in-place
+        - ${target}
+      success_codes:
+        - 0
+      affects_cache:
+        - pyproject.toml
+        - setup.cfg
+        - tox.ini
+        - .editorconfig
+      batch: true
+      direct_configs:
+        - .isort.cfg
+      formatter: true
+      in_place: true
+      issue_url_format: https://pypi.org/project/flake8-isort/
+      known_good_version: 5.9.3
+      package: isort
+      plugin_url: https://slack.trunk.io
+      runtime: python
+      version_command:
+        parse_regex: ${semver}
+        run: isort --version-number
+    - name: ktlint
+      commands:
+        - output: rewrite
+          success_codes:
+            - 0
+            - 1
+          batch: true
+          cache_results: true
+          formatter: true
+          in_place: true
+          name: format
+          run: ktlint -F "${target}"
+      files:
+        - kotlin
+      affects_cache:
+        - .editorconfig
+      download: ktlint
+      environment:
+        - name: PATH
+          list:
+            - ${linter}
+        - name: LANG
+          value: en_US.UTF-8
+      good_without_config: true
+      is_recommended: true
+      known_good_version: 0.43.2
+      plugin_url: https://slack.trunk.io
+      runtime: java
+      version_command:
+        parse_regex: ${semver}
+        run: ktlint --version
+    - name: markdownlint
+      type: markdownlint
+      files:
+        - markdown
+      command:
+        - markdownlint
+        - ${target}
+        - --json
+      success_codes:
+        - 0
+        - 1
+      batch: true
+      cache_results: true
+      direct_configs:
+        - .markdownlint.json
+        - .markdownlint.yaml
+        - .markdownlint.yml
+        - .markdownlintrc
+        - .markdownlint-cli2.json
+        - .markdownlint-cli2.yaml
+        - .markdownlint-cli2.jsonc
+      enabled: true
+      good_without_config: true
+      issue_url_format: https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md#{}
+      known_good_version: 0.31.1
+      package: markdownlint-cli
+      plugin_url: https://slack.trunk.io
+      runtime: node
+      version_command:
+        parse_regex: ${semver}
+        run: markdownlint --version
+    - name: mypy
+      type: mypy
+      files:
+        - python
+      command:
+        - mypy
+        - --ignore-missing-imports
+        - --follow-imports=silent
+        - --show-error-codes
+        - --show-column-numbers
+        - ${target}
+      success_codes:
+        - 0
+        - 1
+      affects_cache:
+        - pyproject.toml
+        - setup.cfg
+      direct_configs:
+        - mypy.ini
+        - .mypy.ini
+      is_recommended: false
+      issue_url_format: https://mypy.readthedocs.io/en/stable/error_code_list.html
+      known_good_version: 0.931
+      package: mypy
+      plugin_url: https://slack.trunk.io
+      runtime: python
+      stdin: false
+      version_command:
+        parse_regex: ${semver}
+        run: mypy --version
+    - name: nancy
+      commands:
+        - output: sarif
+          success_codes:
+            - 0
+            - 1
+          name: lint
+          parser:
+            run: ${plugin}/linters/nancy/parse.py
+            runtime: python
+          read_output_from: stdout
+          run: ${plugin}/linters/nancy/run.sh sleuth
+      autogenerated_definition_path: linters/nancy
+      download: nancy
+      environment:
+        - name: PATH
+          list:
+            - ${runtime}
+            - ${linter}
+            - ${env.PATH}
+      runtime: go
+    - name: oxipng
+      commands:
+        - output: rewrite
+          success_codes:
+            - 0
+          disable_upstream: true
+          in_place: true
+          name: lint
+          run: oxipng --strip safe ${target}
+      files:
+        - png
+      autogenerated_definition_path: linters/oxipng
+      download: oxipng
+      environment:
+        - name: PATH
+          list:
+            - ${linter}
+      good_without_config: true
+      include_lfs: true
+      known_good_version: 7.0.0
+      version_command:
+        parse_regex: ${semver}
+        run: oxipng --version
+    - name: pragma-once
+      commands:
+        - output: rewrite
+          success_codes:
+            - 0
+          batch: false
+          formatter: true
+          name: lint
+          run: ${plugin}/linters/pragma-once/fix.sh ${target}
+      files:
+        - c-header
+        - c++-header
+      autogenerated_definition_path: linters/pragma-once
+    - name: prettier
+      type: rewrite
+      files:
+        - typescript
+        - yaml
+        - css
+        - sass
+        - html
+        - markdown
+        - json
+        - javascript
+        - graphql
+        - prettier_supported_configs
+      command:
+        - prettier
+        - -w
+        - ${target}
+      success_codes:
+        - 0
+      affects_cache:
+        - package.json
+        - .editorconfig
+      batch: true
+      direct_configs:
+        - .prettierrc
+        - .prettierrc.json
+        - .prettierrc.yml
+        - .prettierrc.yaml
+        - .prettierrc.json5
+        - .prettierrc.js
+        - .prettierrc.cjs
+        - prettier.config.js
+        - prettier.config.cjs
+        - .prettierrc.toml
+        - .prettierignore
+      enabled: true
+      formatter: true
+      good_without_config: true
+      in_place: true
+      known_good_version: 2.6.2
+      package: prettier
+      plugin_url: https://slack.trunk.io
+      runtime: node
+      version_command:
+        parse_regex: ${semver}
+        run: prettier --version
+    - name: pylint
+      type: pylint
+      files:
+        - python
+      command:
+        - pylint
+        - --exit-zero
+        - --output
+        - ${tmpfile}
+        - --output-format
+        - json
+        - ${target}
+      success_codes:
+        - 0
+      affects_cache:
+        - pyproject.toml
+        - setup.cfg
+      batch: true
+      cache_results: false
+      direct_configs:
+        - pylintrc
+        - .pylintrc
+      issue_url_format: http://pylint-messages.wikidot.com/messages:{}
+      known_good_version: 2.11.1
+      package: pylint
+      plugin_url: https://slack.trunk.io
+      read_output_from: tmp_file
+      runtime: python
+      version_command:
+        parse_regex: pylint ${semver}
+        run: pylint --version
+    - name: rome
+      commands:
+        - output: regex
+          success_codes:
+            - 0
+            - 1
+          batch: true
+          cache_results: true
+          name: check
+          parse_regex: " *(?P<path>.*?):(?P<line>\\d+):(?P<col>\\d+) (?P<code>[^ ]+)(?:[^×]*\\n).*× (?P<message>.*)\\n"
+          read_output_from: stderr
+          run: rome check ${target}
+        - output: rewrite
+          success_codes:
+            - 0
+            - 1
+          batch: true
+          cache_results: true
+          formatter: true
+          in_place: true
+          name: fmt
+          run: rome format --write "${target}"
+      files:
+        - typescript
+        - javascript
+      affects_cache:
+        - package.json
+        - .editorconfig
+      direct_configs:
+        - .rome.json
+      known_good_version: 10.0.1
+      package: rome
+      plugin_url: https://slack.trunk.io
+      runtime: node
+      version_command:
+        parse_regex: Rome CLI version ${semver}
+        run: rome --version
+    - name: rubocop
+      commands:
+        - output: rubocop
+          success_codes:
+            - 0
+            - 1
+            - 2
+          batch: true
+          name: lint
+          run: rubocop --format json ${target}
+        - output: rewrite
+          success_codes:
+            - 0
+            - 1
+            - 2
+          batch: true
+          formatter: true
+          in_place: true
+          name: fix-layout
+          run: rubocop --fix-layout ${target}
+      type: rubocop
+      files:
+        - ruby
+        - gemspec
+      direct_configs:
+        - .rubocop.yml
+      issue_url_format: https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/{}
+      known_good_version: 1.39.0
+      package: rubocop
+      plugin_url: https://slack.trunk.io
+      runtime: ruby
+      version_command:
+        parse_regex: ${semver}
+        run: rubocop --version
+    - name: rubocop-fmt
+      type: rewrite
+      files:
+        - ruby
+        - gemspec
+      command:
+        - rubocop
+        - --fix-layout
+        - ${target}
+      success_codes:
+        - 0
+        - 1
+      batch: true
+      deprecated: rubocop-fmt is now handled by rubocop. Please delete rubocop-fmt from your config
+      direct_configs:
+        - .rubocop.yml
+      formatter: true
+      in_place: true
+      known_good_version: 1.39.0
+      package: rubocop
+      plugin_url: https://slack.trunk.io
+      runtime: ruby
+      version_command:
+        parse_regex: ${semver}
+        run: rubocop --version
+    - name: rufo
+      type: rewrite
+      files:
+        - ruby
+      command:
+        - rufo
+        - ${target}
+      success_codes:
+        - 0
+        - 3
+      batch: true
+      cache_results: true
+      direct_configs:
+        - .rufo
+      formatter: true
+      in_place: true
+      known_good_version: 0.1.13
+      package: rufo
+      plugin_url: https://slack.trunk.io
+      runtime: ruby
+      version_command:
+        parse_regex: ${semver}
+        run: rufo --version
+    - name: rustfmt
+      type: rewrite
+      files:
+        - rust
+      command:
+        - rustfmt
+      success_codes:
+        - 0
+      affects_cache:
+        - Cargo.toml
+        - Cargo.lock
+      cache_results: true
+      direct_configs:
+        - rustfmt.toml
+        - .rustfmt.toml
+      download: rust
+      environment:
+        - name: PATH
+          list:
+            - ${linter}/bin
+      formatter: true
+      known_good_version: 1.65.0
+      plugin_url: https://slack.trunk.io
+      stdin: true
+      version_command:
+        parse_regex: ${semver}
+        run: rustfmt --version
+    - name: scalafmt
+      type: rewrite
+      files:
+        - scala
+      command:
+        - scalafmt
+        - --stdin
+        - --stdout
+      success_codes:
+        - 0
+      cache_results: true
+      direct_configs:
+        - .scalafmt.conf
+      download: scalafmt
+      environment:
+        - name: PATH
+          list:
+            - ${linter}
+      formatter: true
+      plugin_url: https://slack.trunk.io
+      run_from_root_target: .scalafmt.conf
+      run_linter_from: root_file
+      stdin: true
+      version_command:
+        parse_regex: scalafmt ${semver}
+        run: scalafmt --version
+    - name: semgrep
+      commands:
+        - output: sarif
+          success_codes:
+            - 0
+          batch: true
+          cache_results: true
+          in_place: true
+          name: check
+          read_output_from: tmp_file
+          run: semgrep --config=auto --sarif --output=${tmpfile} --include=${target}
+      files:
+        - ALL
+      affects_cache:
+        - .semgrepignore
+        - .semgrep
+      direct_configs:
+        - .semgrep.yaml
+        - .semgrep.yml
+      environment:
+        - name: PATH
+          list:
+            - ${env.PATH}
+      known_good_version: 0.110.0
+      package: semgrep
+      plugin_url: https://slack.trunk.io
+      runtime: python
+      version_command:
+        parse_regex: ${semver}
+        run: semgrep --version
+    - name: shellcheck
+      type: shellcheck
+      files:
+        - shell
+      command:
+        - shellcheck
+        - ${target}
+        - -f
+        - json
+        - --external-sources
+      error_codes:
+        - 2
+      cache_results: false
+      direct_configs:
+        - .shellcheckrc
+        - shellcheckrc
+      download: shellcheck
+      enabled: true
+      environment:
+        - name: PATH
+          list:
+            - ${linter}
+      issue_url_format: https://github.com/koalaman/shellcheck/wiki/{}
+      known_good_version: 0.8.0
+      plugin_url: https://slack.trunk.io
+      version_command:
+        parse_regex: ${semver}
+        run: shellcheck --version
+    - name: shfmt
+      type: shfmt
+      files:
+        - shell
+      command:
+        - shfmt
+        - -s
+        - -filename
+        - ${target}
+        - "-"
+      success_codes:
+        - 0
+        - 1
+      affects_cache:
+        - .editorconfig
+      cache_results: true
+      enabled: true
+      formatter: true
+      good_without_config: true
+      known_good_version: 3.5.0
+      package: mvdan.cc/sh/v${major_version}/cmd/shfmt
+      plugin_url: https://slack.trunk.io
+      runtime: go
+      stdin: true
+      version_command:
+        parse_regex: ${semver}
+        run: shfmt --version
+    - name: sql-formatter
+      commands:
+        - output: rewrite
+          success_codes:
+            - 0
+          formatter: true
+          name: lint
+          run: sql-formatter --config .trunk/config/sql-formatter.json
+          stdin: true
+      files:
+        - sql
+      enabled: true
+      known_good_version: 7.0.1
+      package: sql-formatter
+      plugin_url: https://slack.trunk.io
+      runtime: node
+      version_command:
+        parse_regex: ${semver}
+        run: sql-formatter --version
+    - name: sqlfluff
+      commands:
+        - output: sarif
+          success_codes:
+            - 0
+          name: lint
+          parser:
+            run: ${plugin}/linters/sqlfluff/sqlfluff_to_sarif.py
+            runtime: python
+          read_output_from: stdout
+          run: sqlfluff lint ${target} --format json --dialect ansi --nofail
+        - output: rewrite
+          success_codes:
+            - 0
+          enabled: false
+          formatter: true
+          in_place: true
+          name: fix
+          run: sqlfluff fix ${target} --dialect ansi --disable-progress-bar --force
+      files:
+        - sql
+        - sql-j2
+        - dml
+        - ddl
+      autogenerated_definition_path: linters/sqlfluff
+      direct_configs:
+        - .sqlfluff
+      enabled: true
+      package: sqlfluff
+      runtime: python
+    - name: sqlfluff-fix
+      commands:
+        - output: rewrite
+          success_codes:
+            - 0
+          formatter: true
+          in_place: true
+          name: fix
+          run: sqlfluff fix ${target} --dialect ansi --disable-progress-bar --force
+      files:
+        - sql
+        - sql-j2
+        - dml
+        - ddl
+      autogenerated_definition_path: linters/sqlfluff
+      deprecated: "'sqlfulff-fix' is now handled by 'sqlfluff'. Please delete 'sqlfluff-fix' from your config"
+      direct_configs:
+        - .sqlfluff
+      disabled: true
+      package: sqlfluff
+      runtime: python
+    - name: sqlfmt
+      commands:
+        - output: rewrite
+          success_codes:
+            - 0
+          formatter: true
+          in_place: true
+          name: lint
+          read_output_from: stderr
+          run: sqlfmt ${target}
+      files:
+        - sql
+        - sql-j2
+      autogenerated_definition_path: linters/sqlfmt
+      disabled: true
+      extra_packages:
+        - shandy-sqlfmt[jinjafmt]
+      package: shandy-sqlfmt
+      runtime: python
+    - name: standardrb
+      type: rubocop
+      files:
+        - ruby
+        - gemspec
+      command:
+        - standardrb
+        - ${target}
+        - --format
+        - json
+      success_codes:
+        - 0
+        - 1
+      batch: true
+      direct_configs:
+        - .standard.yml
+      issue_url_format: https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/{}
+      known_good_version: 1.3.0
+      package: standard
+      plugin_url: https://slack.trunk.io
+      runtime: ruby
+      version_command:
+        parse_regex: ${semver}
+        run: standardrb --version
+    - name: stringslint
+      commands:
+        - output: regex
+          success_codes:
+            - 0
+          batch: true
+          cache_results: true
+          name: lint
+          parse_regex: "(?P<path>.*?):(?P<line>\\d+): (?P<severity>.*?): (?P<message>.*) \\((?P<code>.*?)\\)"
+          run: stringslint lint ${target}
+      files:
+        - swift
+        - objective-c-source
+        - strings
+        - xib
+        - storyboard
+      direct_configs:
+        - .stringslint.yml
+        - .stringslint.yaml
+        - .stringslint
+      download: stringslint
+      environment:
+        - name: PATH
+          list:
+            - ${linter}
+      known_good_version: 0.1.1
+      plugin_url: https://slack.trunk.io
+      version_command:
+        parse_regex: ${semver}
+        run: swiftlint --version
+    - name: stylelint
+      commands:
+        - output: stylelint
+          success_codes:
+            - 0
+            - 2
+          name: lint
+          run: stylelint -f json ${target}
+        - output: rewrite
+          success_codes:
+            - 0
+            - 2
+          formatter: true
+          in_place: true
+          name: fix
+          run: stylelint --fix ${target}
+      files:
+        - css
+        - sass
+      affects_cache:
+        - package.json
+        - .stylelintignore
+      direct_configs:
+        - .stylelintrc
+        - .stylelintrc.json
+        - .stylelintrc.yml
+        - .stylelintrc.yaml
+        - .stylelintrc.js
+        - .stylelintrc.cjs
+      known_good_version: 14.6.1
+      package: stylelint
+      plugin_url: https://slack.trunk.io
+      runtime: node
+      version_command:
+        parse_regex: ${semver}
+        run: stylelint --version
+    - name: stylelint-fmt
+      type: rewrite
+      files:
+        - css
+        - sass
+      command:
+        - stylelint
+        - --fix
+        - ${target}
+      success_codes:
+        - 0
+        - 2
+      affects_cache:
+        - package.json
+        - .stylelintignore
+      deprecated: "'stylelint-fmt' is now handled by 'stylelint'. Please delete 'stylelint-fmt' from your config"
+      direct_configs:
+        - .stylelintrc
+        - .stylelintrc.json
+        - .stylelintrc.yml
+        - .stylelintrc.yaml
+        - .stylelintrc.js
+        - .stylelintrc.cjs
+      formatter: true
+      in_place: true
+      is_recommended: false
+      known_good_version: 14.6.1
+      package: stylelint
+      plugin_url: https://slack.trunk.io
+      runtime: node
+      version_command:
+        parse_regex: ${semver}
+        run: stylelint --version
+    - name: svgo
+      type: rewrite
+      files:
+        - svg
+      command:
+        - svgo
+        - --multipass
+        - ${target}
+      success_codes:
+        - 0
+      batch: true
+      direct_configs:
+        - svgo.config.js
+      in_place: true
+      include_lfs: true
+      known_good_version: 2.8.0
+      package: svgo
+      plugin_url: https://slack.trunk.io
+      runtime: node
+      version_command:
+        parse_regex: ${semver}
+        run: svgo --version
+    - name: swiftformat
+      commands:
+        - output: rewrite
+          success_codes:
+            - 0
+          batch: true
+          cache_results: true
+          formatter: true
+          in_place: true
+          name: lint
+          run: swiftformat "${target}"
+      files:
+        - swift
+      affects_cache:
+        - .swift-version
+      direct_configs:
+        - .swiftformat
+      download: swiftformat
+      environment:
+        - name: PATH
+          list:
+            - ${linter}
+      known_good_version: 0.50.0
+      plugin_url: https://slack.trunk.io
+      version_command:
+        parse_regex: ${semver}
+        run: swiftformat --version
+    - name: swiftlint
+      commands:
+        - output: regex
+          success_codes:
+            - 0
+            - 2
+          batch: true
+          cache_results: true
+          name: lint
+          parse_regex: "(?P<path>.*?):(?P<line>\\d+):(?P<col>\\d+): (?P<severity>.*?): (?P<message>.*) \\((?P<code>.*?)\\)"
+          run: swiftlint --quiet ${target}
+      files:
+        - swift
+      direct_configs:
+        - .swiftlint.yml
+        - .swiftlint.yaml
+        - .swiftlint
+      download: swiftlint
+      environment:
+        - name: PATH
+          list:
+            - ${linter}
+      known_good_version: 0.49.1
+      plugin_url: https://slack.trunk.io
+      version_command:
+        parse_regex: ${semver}
+        run: swiftlint --version
+    - name: taplo
+      commands:
+        - output: taplo
+          success_codes:
+            - 0
+            - 1
+          name: lint
+          run: taplo lint ${target}
+        - output: rewrite
+          success_codes:
+            - 0
+          formatter: true
+          in_place: true
+          name: format
+          run: taplo format ${target}
+      files:
+        - toml
+      cache_results: true
+      direct_configs:
+        - .taplo.toml
+        - taplo.toml
+      download: taplo
+      environment:
+        - name: PATH
+          list:
+            - ${linter}
+      good_without_config: true
+      known_good_version: release-cli-0.6.0
+      plugin_url: https://slack.trunk.io
+      version_command:
+        parse_regex: Taplo TOML Utility ${semver}
+        run: taplo --version
+    - name: taplo-fmt
+      type: rewrite
+      files:
+        - toml
+      command:
+        - taplo
+        - format
+        - ${target}
+      success_codes:
+        - 0
+      cache_results: true
+      deprecated: "'taplo-fmt' is now handled by 'taplo'. Please delete 'taplo-fmt' from your config"
+      direct_configs:
+        - .taplo.toml
+        - taplo.toml
+      download: taplo
+      environment:
+        - name: PATH
+          list:
+            - ${linter}
+      formatter: true
+      good_without_config: true
+      in_place: true
+      is_recommended: false
+      known_good_version: release-cli-0.6.0
+      plugin_url: https://slack.trunk.io
+      version_command:
+        parse_regex: Taplo TOML Utility ${semver}
+        run: taplo --version
+    - name: terraform
+      commands:
+        - output: terraform_validate
+          success_codes:
+            - 0
+            - 1
+          enabled: false
+          name: validate
+          run: terraform validate -json
+          run_linter_from: directory
+        - output: rewrite
+          success_codes:
+            - 0
+          formatter: true
+          name: fmt
+          run: terraform fmt -no-color -
+          stdin: true
+      files:
+        - terraform
+      download: terraform
+      environment:
+        - name: PATH
+          list:
+            - ${linter}
+        - name: GITHUB_APP_ID
+          optional: true
+          value: ${env.GITHUB_APP_ID}
+        - name: GITHUB_APP_INSTALLATION_ID
+          optional: true
+          value: ${env.GITHUB_APP_INSTALLATION_ID}
+        - name: GITHUB_APP_PEM_FILE
+          optional: true
+          value: ${env.GITHUB_APP_PEM_FILE}
+      good_without_config: true
+      is_recommended: false
+      known_good_version: 1.1.0
+      plugin_url: https://slack.trunk.io
+      version_command:
+        parse_regex: ${semver}
+        run: terraform --version
+    - name: terraform-fmt
+      type: rewrite
+      files:
+        - terraform
+      command:
+        - terraform
+        - fmt
+        - -no-color
+        - "-"
+      success_codes:
+        - 0
+      cache_results: true
+      deprecated: terraform-fmt is now handled by terraform. Please delete terraform-fmt from your config
+      download: terraform
+      environment:
+        - name: PATH
+          list:
+            - ${linter}
+      formatter: true
+      good_without_config: true
+      known_good_version: 1.1.0
+      plugin_url: https://slack.trunk.io
+      stdin: true
+      version_command:
+        parse_regex: ${semver}
+        run: terraform --version
+    - name: terraform-validate
+      type: terraform_validate
+      files:
+        - terraform
+      command:
+        - terraform
+        - validate
+        - -json
+      success_codes:
+        - 0
+        - 1
+      download: terraform
+      environment:
+        - name: PATH
+          list:
+            - ${linter}
+        - name: GITHUB_APP_ID
+          optional: true
+          value: ${env.GITHUB_APP_ID}
+        - name: GITHUB_APP_INSTALLATION_ID
+          optional: true
+          value: ${env.GITHUB_APP_INSTALLATION_ID}
+        - name: GITHUB_APP_PEM_FILE
+          optional: true
+          value: ${env.GITHUB_APP_PEM_FILE}
+      good_without_config: true
+      is_recommended: false
+      known_good_version: 1.1.0
+      plugin_url: https://slack.trunk.io
+      run_linter_from: directory
+      version_command:
+        parse_regex: ${semver}
+        run: terraform --version
+    - name: tflint
+      type: sarif
+      files:
+        - terraform
+      command:
+        - tflint
+        - --format=sarif
+        - ${target}
+        - --force
+      success_codes:
+        - 0
+        - 1
+      direct_configs:
+        - .tflint.hcl
+      download: tflint
+      environment:
+        - name: PATH
+          list:
+            - ${linter}
+        - name: TFLINT_PLUGIN_DIR
+          value: ${shared_cachedir}
+        - name: GITHUB_TOKEN
+          optional: true
+          value: ${env.GITHUB_TOKEN}
+      good_without_config: true
+      known_good_version: 0.35.0
+      plugin_url: https://slack.trunk.io
+      prepare_command:
+        - tflint
+        - --init
+      read_output_from: stdout
+      run_from_root_target: .tflint.hcl
+      run_linter_from: root_file
+      version_command:
+        parse_regex: ${semver}
+        run: tflint --version
+    - name: trivy
+      commands:
+        - output: sarif
+          success_codes:
+            - 0
+          name: lint
+          read_output_from: stdout
+          run: trivy fs ${target} --format sarif --no-progress --cache-dir ${shared_cachedir}
+      autogenerated_definition_path: linters/trivy
+      download: trivy
+      environment:
+        - name: PATH
+          list:
+            - ${linter}
+    - name: yamllint
+      commands:
+        - output: regex
+          success_codes:
+            - 0
+            - 1
+            - 2
+          name: lint
+          parse_regex: "((?P<path>.*):(?P<line>\\d+):(?P<col>\\d+): \\[(?P<severity>.*)\\] (?P<message>.*) \\((?P<code>.*)\\))"
+          read_output_from: stdout
+          run: yamllint -f parsable ${target}
+      files:
+        - yaml
+      batch: true
+      direct_configs:
+        - .yamllint
+        - .yamllint.yaml
+        - .yamllint.yml
+      issue_url_format: https://yamllint.readthedocs.io/en/stable/rules.html
+      known_good_version: 1.26.3
+      package: yamllint
+      plugin_url: https://slack.trunk.io
+      runtime: python
+      version_command:
+        parse_regex: ${semver}
+        run: yamllint --version
+    - name: yapf
+      type: rewrite
+      files:
+        - python
+      command:
+        - yapf
+        - --in-place
+        - ${target}
+      success_codes:
+        - 0
+      affects_cache:
+        - setup.cfg
+        - pyproject.toml
+      allow_empty_files: false
+      batch: true
+      cache_results: true
+      direct_configs:
+        - .style.yapf
+        - .yapfignore
+      extra_packages:
+        - toml
+      formatter: true
+      in_place: true
+      known_good_version: 0.32.0
+      package: yapf
+      plugin_url: https://slack.trunk.io
+      runtime: python
+      version_command:
+        parse_regex: yapf ${semver}
+        run: yapf --version
+  enabled:
+    - actionlint@1.6.22
+    - git-diff-check
+    - gitleaks@8.15.2
+    - markdownlint@0.32.2
+    - prettier@2.8.1
+    - shellcheck@0.9.0
+    - shfmt@3.5.0
+    - sql-formatter@12.0.4
+    - sqlfluff@1.4.4
+  bazel:
+    paths:
+      system:
+        - bazel
+        - bazelisk
+      workspace:
+        - tools/bazel
+        - bazelisk
+  compile_commands_roots:
+    - build
+  default_max_file_size: 4194304
+  disabled:
+    - sqlfluff-fix
+    - sqlfmt
+  ignore:
+    - linters:
+        - ALL
+      paths:
+        - "**/trunk"
+        - "**/.terraform.lock.hcl"
+        - "**/*gradle.lockfile"
+        - "**/Berksfile.lock"
+        - "**/Cargo.lock"
+        - "**/Gemfile.lock"
+        - "**/go.sum"
+        - "**/package-lock.json"
+        - "**/pnpm-lock.yaml"
+        - "**/requirements.lock"
+        - "**/yarn.lock"
+notifications:
+  sleep:
+    lsp_proxy:
+      priority:
+        low: 0
+        high: 0
+    cli:
+      priority:
+        high: 0
+        low: 24h
