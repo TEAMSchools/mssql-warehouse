@@ -1,15 +1,2 @@
 [sqlfluff]
 dialect = tsql
-exclude_rules = L003, L018, L036
-
-[sqlfluff:rules]
-max_line_length = 88
-
-[sqlfluff:rules:L010]
-capitalisation_policy = upper
-
-[sqlfluff:rules:L011]
-aliasing = implicit
-
-[sqlfluff:rules:L031]
-force_enable = True
