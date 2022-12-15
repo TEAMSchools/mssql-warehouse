@@ -1,7 +1,7 @@
 USE gabby
 GO
 
---CREATE OR ALTER VIEW extracts.gsheets_comp_events
+CREATE OR ALTER VIEW extracts.gsheets_comp_events
 
 WITH school_approvers AS (
   SELECT x.primary_site
