@@ -25,21 +25,46 @@ SELECT
   (so.response_value * so.response_weight) AS response_value_weighted,
   COALESCE(dfid.df_employee_number, adpid.df_employee_number) AS subject_employee_number,
   COALESCE(
-    CONCAT(dfid.preferred_first_name, ' ', dfid.preferred_last_name),
-    CONCAT(adpid.preferred_first_name, ' ', adpid.preferred_last_name)
+    CONCAT(
+      dfid.preferred_first_name,
+      ' ',
+      dfid.preferred_last_name
+    ),
+    CONCAT(
+      adpid.preferred_first_name,
+      ' ',
+      adpid.preferred_last_name
+    )
   ) AS subject_name,
   COALESCE(dfid.legal_entity_name, adpid.legal_entity_name) AS subject_legal_entity_name,
-  CAST(COALESCE(dfid.primary_site, adpid.primary_site) AS VARCHAR) AS subject_location,
-  COALESCE(dfid.primary_site_schoolid, adpid.primary_site_schoolid) AS subject_primary_site_schoolid,
-  COALESCE(dfid.primary_site_school_level, adpid.primary_site_school_level) AS subject_primary_site_school_level,
-  COALESCE(dfid.manager_df_employee_number, adpid.manager_df_employee_number) AS subject_manager_id,
+  CAST(
+    COALESCE(dfid.primary_site, adpid.primary_site) AS VARCHAR
+  ) AS subject_location,
   COALESCE(
-    LEFT(dfid.userprincipalname, CHARINDEX('@', dfid.userprincipalname) - 1),
+    dfid.primary_site_schoolid,
+    adpid.primary_site_schoolid
+  ) AS subject_primary_site_schoolid,
+  COALESCE(
+    dfid.primary_site_school_level,
+    adpid.primary_site_school_level
+  ) AS subject_primary_site_school_level,
+  COALESCE(
+    dfid.manager_df_employee_number,
+    adpid.manager_df_employee_number
+  ) AS subject_manager_id,
+  COALESCE(
+    LEFT(
+      dfid.userprincipalname,
+      CHARINDEX('@', dfid.userprincipalname) - 1
+    ),
     adpid.samaccountname
   ) AS subject_username,
   COALESCE(dfid.preferred_name, adpid.preferred_name) AS subject_manager_name,
   COALESCE(
-    LEFT(dfid.manager_userprincipalname, CHARINDEX('@', dfid.manager_userprincipalname) - 1),
+    LEFT(
+      dfid.manager_userprincipalname,
+      CHARINDEX('@', dfid.manager_userprincipalname) - 1
+    ),
     adpid.manager_samaccountname
   ) AS subject_manager_username,
   NULL AS avg_response_value_location
