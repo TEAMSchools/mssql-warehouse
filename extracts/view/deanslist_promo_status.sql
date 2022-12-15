@@ -20,12 +20,12 @@ SELECT
   cum.cumulative_y1_gpa AS gpa_cum,
   cum.cumulative_y1_gpa_projected AS gpa_cum_projected
 FROM
-  gabby.reporting.promotional_status ps
-  LEFT JOIN gabby.powerschool.gpa_detail gpa ON ps.student_number = gpa.student_number
+  gabby.reporting.promotional_status AS ps
+  LEFT JOIN gabby.powerschool.gpa_detail AS gpa ON ps.student_number = gpa.student_number
   AND ps.academic_year = gpa.academic_year
   AND ps.alt_name = gpa.term_name
 COLLATE Latin1_General_BIN
-LEFT JOIN gabby.powerschool.gpa_cumulative cum ON ps.studentid = cum.studentid
+LEFT JOIN gabby.powerschool.gpa_cumulative AS cum ON ps.studentid = cum.studentid
 AND ps.schoolid = cum.schoolid
 AND ps.[db_name] = cum.[db_name]
 WHERE

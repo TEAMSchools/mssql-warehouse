@@ -64,15 +64,19 @@ WITH
           ) AS term_weighted_pts_poss
         FROM
           powerschool.cc
-          INNER JOIN powerschool.sections_identifiers sec ON ABS(cc.sectionid) = sec.sectionid
-          INNER JOIN powerschool.termbins tb ON cc.schoolid = tb.schoolid
+          INNER JOIN powerschool.sections_identifiers AS sec ON ABS(cc.sectionid) = sec.sectionid
+          INNER JOIN powerschool.termbins AS tb ON cc.schoolid = tb.schoolid
           AND ABS(cc.termid) = tb.termid
           AND (
             tb.storecode LIKE 'Q%'
             OR tb.storecode LIKE 'E%'
           )
         WHERE
-          cc.dateenrolled >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR (), 7, 1)
+          cc.dateenrolled >= DATEFROMPARTS(
+            gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+            7,
+            1
+          )
       ) sub
   ),
   enr_gr AS (
@@ -108,7 +112,10 @@ WITH
         sub.sg_potential_credit_hours,
         sub.fg_potential_credit_hours
       ) AS potential_credit_hours,
-      COALESCE(sub.sg_exclude_from_gpa, sub.fg_exclude_from_gpa) AS exclude_from_gpa,
+      COALESCE(
+        sub.sg_exclude_from_gpa,
+        sub.fg_exclude_from_gpa
+      ) AS exclude_from_gpa,
       COALESCE(sub.sg_exclude_from_graduation, 0) AS exclude_from_graduation,
       COALESCE(sub.sg_letter, sub.fg_letter) AS term_grade_letter,
       COALESCE(sub.sg_letter, sub.fg_letter_adj) AS term_grade_letter_adj,
@@ -212,20 +219,20 @@ WITH
               te.sectionid DESC
           ) AS rn_enr_fg
         FROM
-          enr te
-          LEFT JOIN powerschool.pgfinalgrades fg ON te.studentid = fg.studentid
+          enr AS te
+          LEFT JOIN powerschool.pgfinalgrades AS fg ON te.studentid = fg.studentid
           AND te.storecode = fg.finalgradename
           AND te.sectionid = fg.sectionid
-          LEFT JOIN powerschool.gradescaleitem_lookup_static fgs ON te.gradescaleid = fgs.gradescaleid
+          LEFT JOIN powerschool.gradescaleitem_lookup_static AS fgs ON te.gradescaleid = fgs.gradescaleid
           AND fg.[percent] (
             BETWEEN fgs.min_cutoffpercentage AND fgs.max_cutoffpercentage
           )
-          LEFT JOIN powerschool.storedgrades sg ON te.studentid = sg.studentid
+          LEFT JOIN powerschool.storedgrades AS sg ON te.studentid = sg.studentid
           AND te.course_number = sg.course_number
           AND te.storecode = sg.storecode
           AND te.termid = sg.termid
           AND te.sectionid = sg.sectionid
-          LEFT JOIN powerschool.gradescaleitem_lookup_static sgs ON te.gradescaleid = sgs.gradescaleid
+          LEFT JOIN powerschool.gradescaleitem_lookup_static AS sgs ON te.gradescaleid = sgs.gradescaleid
           AND sg.[percent] (
             BETWEEN sgs.min_cutoffpercentage AND sgs.max_cutoffpercentage
           )
@@ -322,7 +329,9 @@ WITH
           eg.y1_weighted_pts_poss_running,
           eg.term_grade_percent * eg.term_weighted_pts_poss AS term_weighted_pts_earned,
           eg.term_grade_percent_adj * eg.term_weighted_pts_poss AS term_weighted_pts_earned_adj,
-          SUM(eg.term_grade_percent * eg.term_weighted_pts_poss) OVER (
+          SUM(
+            eg.term_grade_percent * eg.term_weighted_pts_poss
+          ) OVER (
             PARTITION BY
               eg.studentid,
               eg.yearid,
@@ -341,7 +350,7 @@ WITH
               eg.storecode ASC
           ) AS y1_weighted_pts_earned_adj_running
         FROM
-          enr_gr eg
+          enr_gr AS eg
       ) sub
   )
 SELECT
@@ -432,11 +441,15 @@ FROM
       y1.y1_weighted_pts_poss,
       y1.y1_weighted_pts_poss_running,
       y1.y1_weighted_pts_earned_running,
-      CAST(ROUND(y1.fg_percent * 100.0, 0) AS DECIMAL(4, 0)) AS fg_percent,
+      CAST(
+        ROUND(y1.fg_percent * 100.0, 0) AS DECIMAL(4, 0)
+      ) AS fg_percent,
       CAST(
         ROUND(y1.fg_percent_adj * 100.0, 0) AS DECIMAL(4, 0)
       ) AS fg_percent_adj,
-      CAST(ROUND(y1.sg_percent * 100.0, 0) AS DECIMAL(4, 0)) AS sg_percent,
+      CAST(
+        ROUND(y1.sg_percent * 100.0, 0) AS DECIMAL(4, 0)
+      ) AS sg_percent,
       CAST(
         ROUND(y1.term_grade_percent * 100.0, 0) AS DECIMAL(4, 0)
       ) AS term_grade_percent,
@@ -488,11 +501,11 @@ FROM
     FROM
       y1
   ) sub
-  LEFT JOIN powerschool.gradescaleitem_lookup_static y1gs ON sub.gradescaleid = y1gs.gradescaleid
+  LEFT JOIN powerschool.gradescaleitem_lookup_static AS y1gs ON sub.gradescaleid = y1gs.gradescaleid
   AND sub.y1_grade_percent (
     BETWEEN y1gs.min_cutoffpercentage AND y1gs.max_cutoffpercentage
   )
-  LEFT JOIN powerschool.gradescaleitem_lookup_static y1gsu ON sub.gradescaleid_unweighted = y1gsu.gradescaleid
+  LEFT JOIN powerschool.gradescaleitem_lookup_static AS y1gsu ON sub.gradescaleid_unweighted = y1gsu.gradescaleid
   AND sub.y1_grade_percent (
     BETWEEN y1gsu.min_cutoffpercentage AND y1gsu.max_cutoffpercentage
   )

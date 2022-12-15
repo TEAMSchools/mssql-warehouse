@@ -50,7 +50,7 @@ SELECT
     gabby.utilities.GLOBAL_ACADEMIC_YEAR () - ade.academic_year
   ) AS years_at_kipp
 FROM
-  annual_additional_earnings ade
-  INNER JOIN gabby.people.employment_history_static eh ON ade.position_id = eh.position_id
+  annual_additional_earnings AS ade
+  INNER JOIN gabby.people.employment_history_static AS eh ON ade.position_id = eh.position_id
   AND DATEFROMPARTS((ade.academic_year + 1), 4, 30) BETWEEN eh.effective_start_date AND eh.effective_end_date  /* April 30 is the reporting date */
-  INNER JOIN gabby.people.staff_roster sr ON eh.employee_number = sr.employee_number
+  INNER JOIN gabby.people.staff_roster AS sr ON eh.employee_number = sr.employee_number

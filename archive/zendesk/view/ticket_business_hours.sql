@@ -6,8 +6,8 @@ WITH
       t.created_at,
       MIN(tc.created) AS solved_at
     FROM
-      gabby.zendesk.ticket t
-      INNER JOIN gabby.zendesk.ticket_comment tc ON t.id = tc.ticket_id
+      gabby.zendesk.ticket AS t
+      INNER JOIN gabby.zendesk.ticket_comment AS tc ON t.id = tc.ticket_id
       AND t.submitter_id <> tc.user_id
     GROUP BY
       t.id,
@@ -67,12 +67,16 @@ FROM
           sub.date,
           CASE
             WHEN solved_at < bh_start_timestamp THEN NULL
-            WHEN created_at (BETWEEN bh_start_timestamp AND bh_end_timestamp) THEN created_at
+            WHEN created_at (
+              BETWEEN bh_start_timestamp AND bh_end_timestamp
+            ) THEN created_at
             WHEN created_at < bh_start_timestamp THEN bh_start_timestamp
           END AS bh_day_start_timestamp,
           CASE
             WHEN sub.created_at > bh_end_timestamp THEN NULL
-            WHEN solved_at (BETWEEN bh_start_timestamp AND bh_end_timestamp) THEN sub.solved_at
+            WHEN solved_at (
+              BETWEEN bh_start_timestamp AND bh_end_timestamp
+            ) THEN sub.solved_at
             WHEN solved_at > bh_end_timestamp THEN bh_end_timestamp
           END AS bh_day_end_timestamp
         FROM
@@ -103,11 +107,11 @@ FROM
                 0
               ) AS bh_end_timestamp
             FROM
-              ticket_dates td
-              INNER JOIN gabby.utilities.reporting_days rd ON rd.date (
+              ticket_dates AS td
+              INNER JOIN gabby.utilities.reporting_days AS rd ON rd.date (
                 BETWEEN CAST(td.created_at AS DATE) AND CAST(td.solved_at AS DATE)
               )
-              LEFT JOIN business_hours bh ON rd.dw_numeric = bh.dw_numeric
+              LEFT JOIN business_hours AS bh ON rd.dw_numeric = bh.dw_numeric
             WHERE
               td.ticket_id = 159300
           ) sub

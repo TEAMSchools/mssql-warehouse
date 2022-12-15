@@ -150,11 +150,13 @@ SELECT
     END
   ) AS offtrack
 FROM
-  powerschool.ps_enrollment_all_static ev
-  INNER JOIN powerschool.calendar_day cd ON ev.schoolid = cd.schoolid
+  powerschool.ps_enrollment_all_static AS ev
+  INNER JOIN powerschool.calendar_day AS cd ON ev.schoolid = cd.schoolid
   AND cd.date_value >= ev.entrydate
   AND cd.date_value < ev.exitdate
   AND cd.insession = 1
-  INNER JOIN powerschool.bell_schedule bs ON cd.bell_schedule_id = bs.id
+  INNER JOIN powerschool.bell_schedule AS bs ON cd.bell_schedule_id = bs.id
 WHERE
-  ev.yearid = (gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990)
+  ev.yearid = (
+    gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990
+  )

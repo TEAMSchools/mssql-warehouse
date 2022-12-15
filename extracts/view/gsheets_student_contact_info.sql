@@ -84,12 +84,12 @@ SELECT
   suf.infosnap_id,
   suf.rides_staff
 FROM
-  gabby.powerschool.cohort_identifiers_static co
-  LEFT JOIN gabby.powerschool.u_studentsuserfields suf ON co.students_dcid = suf.studentsdcid
+  gabby.powerschool.cohort_identifiers_static AS co
+  LEFT JOIN gabby.powerschool.u_studentsuserfields AS suf ON co.students_dcid = suf.studentsdcid
   AND co.[db_name] = suf.[db_name]
-  LEFT JOIN gabby.powerschool.studentcorefields scf ON co.students_dcid = scf.studentsdcid
+  LEFT JOIN gabby.powerschool.studentcorefields AS scf ON co.students_dcid = scf.studentsdcid
   AND co.[db_name] = scf.[db_name]
-  LEFT JOIN gabby.powerschool.student_contacts_wide_static scw ON co.student_number = scw.student_number
+  LEFT JOIN gabby.powerschool.student_contacts_wide_static AS scw ON co.student_number = scw.student_number
   AND co.[db_name] = scw.[db_name]
 WHERE
   co.enroll_status IN (0, -1)

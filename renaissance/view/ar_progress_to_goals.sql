@@ -20,7 +20,9 @@ WITH
       ROUND(AVG(lexile_calc), 0) AS avg_lexile,
       ROUND(AVG(book_rating), 2) AS avg_rating,
       ROUND(
-        (SUM(questions_correct) / SUM(questions_presented)) * 100,
+        (
+          SUM(questions_correct) / SUM(questions_presented)
+        ) * 100,
         0
       ) AS mastery,
       ROUND(
@@ -36,7 +38,9 @@ WITH
         0
       ) AS mastery_nonfiction,
       ROUND(
-        (SUM(words_attempted_f) / SUM(words_attempted)) * 100,
+        (
+          SUM(words_attempted_f) / SUM(words_attempted)
+        ) * 100,
         0
       ) AS pct_fiction
     FROM
@@ -110,12 +114,12 @@ WITH
             AND arsp.ch_fiction_non_fiction <> 'F' THEN arsp.i_questions_presented
           END AS questions_presented_nf
         FROM
-          gabby.powerschool.cohort_identifiers_static co
-          INNER JOIN gabby.reporting.reporting_terms rt ON co.academic_year = rt.academic_year
+          gabby.powerschool.cohort_identifiers_static AS co
+          INNER JOIN gabby.reporting.reporting_terms AS rt ON co.academic_year = rt.academic_year
           AND co.schoolid = rt.schoolid
           AND rt.identifier = 'AR'
           AND rt._fivetran_deleted = 0
-          LEFT OUTER JOIN gabby.renaissance.ar_studentpractice_identifiers_static arsp ON co.student_number = arsp.student_number
+          LEFT OUTER JOIN gabby.renaissance.ar_studentpractice_identifiers_static AS arsp ON co.student_number = arsp.student_number
           --AND arsp.dt_taken (BETWEEN rt.[start_date] AND rt.end_date)
         WHERE
           co.rn_year = 1
@@ -203,7 +207,7 @@ SELECT
     END
   END AS words_needed
 FROM
-  progress_rollup pr
-  LEFT OUTER JOIN gabby.renaissance.ar_goals goals ON pr.student_number = goals.student_number
+  progress_rollup AS pr
+  LEFT OUTER JOIN gabby.renaissance.ar_goals AS goals ON pr.student_number = goals.student_number
   AND pr.academic_year = goals.academic_year
   AND pr.reporting_term = goals.reporting_term

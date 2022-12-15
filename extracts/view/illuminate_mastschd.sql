@@ -31,11 +31,13 @@ SELECT
   NULL AS [15 Teacher Competency Level],
   NULL AS [16 Is Attendance Enabled]
 FROM
-  gabby.powerschool.terms tr
-  INNER JOIN gabby.powerschool.sections sec ON tr.id = sec.termid
+  gabby.powerschool.terms AS tr
+  INNER JOIN gabby.powerschool.sections AS sec ON tr.id = sec.termid
   AND tr.schoolid = sec.schoolid
   AND tr.[db_name] = sec.[db_name]
-  INNER JOIN gabby.powerschool.teachers_static t ON sec.teacher = t.id
+  INNER JOIN gabby.powerschool.teachers_static AS t ON sec.teacher = t.id
   AND sec.[db_name] = t.[db_name]
 WHERE
-  tr.yearid = (gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990)
+  tr.yearid = (
+    gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990
+  )

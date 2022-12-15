@@ -44,7 +44,9 @@ SELECT
   CAST(
     JSON_VALUE(properties, '$.hide_after_response') AS BIT
   ) AS hide_after_response,
-  CAST(JSON_VALUE(properties, '$.break_after') AS BIT) AS break_after,
+  CAST(
+    JSON_VALUE(properties, '$.break_after') AS BIT
+  ) AS break_after,
   CAST(
     gabby.utilities.STRIP_HTML (JSON_VALUE(title, '$.English')) AS VARCHAR(500)
   ) AS title_clean,

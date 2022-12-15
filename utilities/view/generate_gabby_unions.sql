@@ -57,15 +57,24 @@ WITH
           CASE
             WHEN (
               CONCAT(p.kippcamden, p.kippnewark) <> ''
-              AND CHARINDEX(p.kippmiami, CONCAT(p.kippcamden, p.kippnewark)) = 0
+              AND CHARINDEX(
+                p.kippmiami,
+                CONCAT(p.kippcamden, p.kippnewark)
+              ) = 0
             )
             OR (
               CONCAT(p.kippmiami, p.kippnewark) <> ''
-              AND CHARINDEX(p.kippcamden, CONCAT(p.kippmiami, p.kippnewark)) = 0
+              AND CHARINDEX(
+                p.kippcamden,
+                CONCAT(p.kippmiami, p.kippnewark)
+              ) = 0
             )
             OR (
               CONCAT(p.kippmiami, p.kippcamden) <> ''
-              AND CHARINDEX(p.kippnewark, CONCAT(p.kippmiami, p.kippcamden)) = 0
+              AND CHARINDEX(
+                p.kippnewark,
+                CONCAT(p.kippmiami, p.kippcamden)
+              ) = 0
             ) THEN 1
             ELSE 0
           END AS column_type_mismatch
@@ -131,7 +140,7 @@ FROM
         END
       ) AS kippmiami_count
     FROM
-      all_tables_columns_pivot atc
+      all_tables_columns_pivot AS atc
     WHERE
       atc.table_name NOT LIKE 'fivetran%'
       AND atc.[schema_name] <> 'fivetran_log'

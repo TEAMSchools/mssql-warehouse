@@ -35,7 +35,7 @@ WITH
           END AS read_lvl,
           3273 AS testid
         FROM
-          gabby.lit.illuminate_test_events rs
+          gabby.lit.illuminate_test_events AS rs
         UNION ALL
         SELECT
           rs.unique_id,
@@ -52,7 +52,7 @@ WITH
           rs.text_level AS read_lvl,
           rs.testid
         FROM
-          gabby.lit.fpodms_test_events rs
+          gabby.lit.fpodms_test_events AS rs
       ) sub UNPIVOT (
         score FOR field IN (
           fp_wpmrate,
@@ -80,7 +80,7 @@ WITH
       END AS read_lvl,
       CAST(rs.lvl_num AS INT) AS lvl_num
     FROM
-      gabby.lit.powerschool_component_scores_archive rs
+      gabby.lit.powerschool_component_scores_archive AS rs
     UNION ALL
     SELECT
       rs.unique_id,
@@ -92,7 +92,7 @@ WITH
       rs.read_lvl,
       rs.lvl_num
     FROM
-      gabby.steptool.component_scores_static rs
+      gabby.steptool.component_scores_static AS rs
     UNION ALL
     SELECT
       rs.unique_id,
@@ -104,7 +104,7 @@ WITH
       rs.read_lvl,
       rs.lvl_num
     FROM
-      illuminate_fp rs
+      illuminate_fp AS rs
   ),
   prof_clean AS (
     SELECT
@@ -208,8 +208,8 @@ FROM
           prof.strand DESC
       ) AS score_order
     FROM
-      all_scores rs
-      INNER JOIN prof_clean prof ON rs.testid = prof.testid
+      all_scores AS rs
+      INNER JOIN prof_clean AS prof ON rs.testid = prof.testid
       AND rs.field = prof.field_name
       AND rs.lvl_num = prof.lvl_num
   ) sub

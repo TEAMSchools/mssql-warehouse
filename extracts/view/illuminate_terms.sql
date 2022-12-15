@@ -17,7 +17,7 @@ SELECT
   CONCAT((t.yearid + 1990), '-', (t.yearid + 1991)) AS [08 Academic Year],
   t.dcid AS [09 Local Term ID]
 FROM
-  gabby.powerschool.terms t
-  INNER JOIN gabby.powerschool.schools s ON t.schoolid = s.school_number
+  gabby.powerschool.terms AS t
+  INNER JOIN gabby.powerschool.schools AS s ON t.schoolid = s.school_number
   AND t.[db_name] = s.[db_name]
   AND s.state_excludefromreporting = 0

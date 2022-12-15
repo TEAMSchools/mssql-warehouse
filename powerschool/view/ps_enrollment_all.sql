@@ -21,15 +21,15 @@ SELECT
   END AS att_calccntpresentabsent,
   p2.[value] AS att_intervalduration
 FROM
-  powerschool.students s
-  LEFT JOIN powerschool.fte f ON s.fteid = f.id
-  LEFT JOIN powerschool.terms t ON s.schoolid = t.schoolid
+  powerschool.students AS s
+  LEFT JOIN powerschool.fte AS f ON s.fteid = f.id
+  LEFT JOIN powerschool.terms AS t ON s.schoolid = t.schoolid
   AND s.entrydate (BETWEEN t.firstday AND t.lastday)
   AND t.isyearrec = 1
-  LEFT JOIN powerschool.prefs p1 ON p1.schoolid = s.schoolid
+  LEFT JOIN powerschool.prefs AS p1 ON p1.schoolid = s.schoolid
   AND p1.yearid = t.yearid
   AND p1.[name] = 'ATT_CalcCntPresentsAbsences'
-  LEFT JOIN powerschool.prefs p2 ON p2.schoolid = s.schoolid
+  LEFT JOIN powerschool.prefs AS p2 ON p2.schoolid = s.schoolid
   AND p2.yearid = t.yearid
   AND p2.[name] = 'ATT_IntervalDuration'
 WHERE
@@ -56,15 +56,15 @@ SELECT
   END AS att_calccntpresentabsent,
   p2.[value] AS att_intervalduration
 FROM
-  powerschool.reenrollments r
-  LEFT JOIN powerschool.fte f ON r.fteid = f.id
-  LEFT JOIN powerschool.terms t ON r.schoolid = t.schoolid
+  powerschool.reenrollments AS r
+  LEFT JOIN powerschool.fte AS f ON r.fteid = f.id
+  LEFT JOIN powerschool.terms AS t ON r.schoolid = t.schoolid
   AND r.entrydate (BETWEEN t.firstday AND t.lastday)
   AND t.isyearrec = 1
-  LEFT JOIN powerschool.prefs p1 ON p1.schoolid = r.schoolid
+  LEFT JOIN powerschool.prefs AS p1 ON p1.schoolid = r.schoolid
   AND p1.yearid = t.yearid
   AND p1.[name] = 'ATT_CalcCntPresentsAbsences'
-  LEFT JOIN powerschool.prefs p2 ON p2.schoolid = r.schoolid
+  LEFT JOIN powerschool.prefs AS p2 ON p2.schoolid = r.schoolid
   AND p2.yearid = t.yearid
   AND p2.[name] = 'ATT_IntervalDuration'
 WHERE

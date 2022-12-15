@@ -25,7 +25,10 @@ SELECT
   ) AS responsible_school_code,
   CAST(state_student_identifier AS NVARCHAR(32)) AS state_student_identifier,
   local_student_identifier,
-  COALESCE(parccstudent_identifier, parcc_student_identifier) AS parccstudent_identifier,
+  COALESCE(
+    parccstudent_identifier,
+    parcc_student_identifier
+  ) AS parccstudent_identifier,
   COALESCE(last_or_surname, last_name) AS last_or_surname,
   first_name,
   middle_name,
@@ -100,7 +103,10 @@ SELECT
 ,
   emergency_accommodation,
   extended_time,
-  COALESCE(student_test_uuid, summative_score_record_uuid) AS student_test_uuid,
+  COALESCE(
+    student_test_uuid,
+    summative_score_record_uuid
+  ) AS student_test_uuid,
   COALESCE(paper_form_id, eoy_form_id) AS paper_form_id,
   COALESCE(online_form_id, eoy_form_id) AS online_form_id,
   test_status,
@@ -162,7 +168,10 @@ SELECT
   void_score_reason,
   ship_report_district_code,
   ship_report_school_code,
-  COALESCE(summative_flag, reported_summative_score_flag) AS summative_flag,
+  COALESCE(
+    summative_flag,
+    reported_summative_score_flag
+  ) AS summative_flag,
   multiple_test_registration,
   attempt_create_date,
   unit_1_online_test_start_date_time,
@@ -179,7 +188,10 @@ SELECT
   federal_race_ethnicity,
   [period],
   testing_organizational_type,
-  COALESCE(testing_district_name, eoy_testing_district_name) AS testing_district_name,
+  COALESCE(
+    testing_district_name,
+    eoy_testing_district_name
+  ) AS testing_district_name,
   COALESCE(
     testing_school_name,
     eoy_testing_school_institution_name
@@ -271,7 +283,10 @@ SELECT
   ) AS responsible_school_code,
   CAST(state_student_identifier AS NVARCHAR(32)) AS state_student_identifier,
   local_student_identifier,
-  COALESCE(parccstudent_identifier, parcc_student_identifier) AS parccstudent_identifier,
+  COALESCE(
+    parccstudent_identifier,
+    parcc_student_identifier
+  ) AS parccstudent_identifier,
   COALESCE(last_or_surname, last_name) AS last_or_surname,
   first_name,
   middle_name,
@@ -346,7 +361,10 @@ SELECT
 ,
   emergency_accommodation,
   extended_time,
-  COALESCE(student_test_uuid, summative_score_record_uuid) AS student_test_uuid,
+  COALESCE(
+    student_test_uuid,
+    summative_score_record_uuid
+  ) AS student_test_uuid,
   COALESCE(paper_form_id, eoy_form_id) AS paper_form_id,
   COALESCE(online_form_id, eoy_form_id) AS online_form_id,
   test_status,
@@ -408,7 +426,10 @@ SELECT
   void_score_reason,
   ship_report_district_code,
   ship_report_school_code,
-  COALESCE(summative_flag, reported_summative_score_flag) AS summative_flag,
+  COALESCE(
+    summative_flag,
+    reported_summative_score_flag
+  ) AS summative_flag,
   multiple_test_registration,
   attempt_create_date,
   unit_1_online_test_start_date_time,
@@ -425,7 +446,10 @@ SELECT
   federal_race_ethnicity,
   [period],
   testing_organizational_type,
-  COALESCE(testing_district_name, eoy_testing_district_name) AS testing_district_name,
+  COALESCE(
+    testing_district_name,
+    eoy_testing_district_name
+  ) AS testing_district_name,
   COALESCE(
     testing_school_name,
     eoy_testing_school_institution_name

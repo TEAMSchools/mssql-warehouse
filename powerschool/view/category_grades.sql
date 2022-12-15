@@ -41,10 +41,14 @@ WITH
           ) AS reporting_term
         FROM
           powerschool.cc
-          INNER JOIN powerschool.termbins tb ON cc.schoolid = tb.schoolid
+          INNER JOIN powerschool.termbins AS tb ON cc.schoolid = tb.schoolid
           AND ABS(cc.termid) = tb.termid
         WHERE
-          cc.dateenrolled >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR (), 7, 1)
+          cc.dateenrolled >= DATEFROMPARTS(
+            gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+            7,
+            1
+          )
       ) sub
   )
 SELECT
@@ -111,7 +115,7 @@ FROM
       ) AS rn_storecode_course
     FROM
       enr
-      LEFT JOIN powerschool.pgfinalgrades pgf ON enr.studentid = pgf.studentid
+      LEFT JOIN powerschool.pgfinalgrades AS pgf ON enr.studentid = pgf.studentid
       AND enr.sectionid = pgf.sectionid
       AND enr.storecode = pgf.finalgradename
     WHERE

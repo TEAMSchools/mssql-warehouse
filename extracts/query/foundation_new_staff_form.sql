@@ -14,9 +14,13 @@ WITH
       e.salesforce_id,
       e.mail AS work_email_address
     FROM
-      gabby.people.staff_crosswalk_static e
+      gabby.people.staff_crosswalk_static AS e
     WHERE
-      e.original_hire_date >= DATEFROMPARTS(gabby.utilities.global_academic_year (), 7, 1)
+      e.original_hire_date >= DATEFROMPARTS(
+        gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+        7,
+        1
+      )
   ),
   salesforce AS (
     SELECT
@@ -31,9 +35,9 @@ WITH
       po.grade_c AS grade_taught,
       po.subject_area_c AS subject
     FROM
-      gabby.recruiting.job_application_c j
-      LEFT OUTER JOIN gabby.recruiting.profile_application_c pr ON j.profile_application_c = pr.id
-      LEFT OUTER JOIN gabby.recruiting.job_position_c po ON j.job_position_c = po.id
+      gabby.recruiting.job_application_c AS j
+      LEFT OUTER JOIN gabby.recruiting.profile_application_c AS pr ON j.profile_application_c = pr.id
+      LEFT OUTER JOIN gabby.recruiting.job_position_c AS po ON j.job_position_c = po.id
     WHERE
       j.stage_c = 'Hired'
   )
@@ -56,5 +60,5 @@ SELECT
   s.atp,
   s.atp_city
 FROM
-  dayforce c
-  LEFT JOIN salesforce s ON c.salesforce_id = s.salesforce_position_id
+  dayforce AS c
+  LEFT JOIN salesforce AS s ON c.salesforce_id = s.salesforce_position_id

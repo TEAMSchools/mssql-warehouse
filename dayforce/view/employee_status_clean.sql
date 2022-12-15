@@ -33,8 +33,8 @@ FROM
         ds.number
       ) AS position_id
     FROM
-      gabby.dayforce.employee_status ds
-      INNER JOIN gabby.dayforce.employees e ON ds.number = e.df_employee_number
+      gabby.dayforce.employee_status AS ds
+      INNER JOIN gabby.dayforce.employees AS e ON ds.number = e.df_employee_number
   ) sub
 WHERE
   sub.effective_start <= DATEADD(DAY, -1, sub.effective_start_next)

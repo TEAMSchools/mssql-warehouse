@@ -32,8 +32,8 @@ SELECT
   s.preferred_name,
   s.userprincipalname
 FROM
-  gabby.njdoe.background_check bg
-  LEFT JOIN gabby.people.staff_crosswalk_static s ON bg.df_employee_number = s.df_employee_number
+  gabby.njdoe.background_check AS bg
+  LEFT JOIN gabby.people.staff_crosswalk_static AS s ON bg.df_employee_number = s.df_employee_number
   CROSS APPLY OPENJSON (bg.approval_history, '$')
 WITH
   (

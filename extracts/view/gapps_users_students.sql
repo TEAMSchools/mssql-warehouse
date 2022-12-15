@@ -69,11 +69,11 @@ FROM
         WHEN sch.abbreviation = 'KURA' THEN 'Upper Roseville'
       END AS school_name
     FROM
-      gabby.powerschool.students s
-      INNER JOIN gabby.powerschool.student_access_accounts_static saa ON s.student_number = saa.student_number
-      INNER JOIN gabby.powerschool.schools sch ON s.schoolid = sch.school_number
+      gabby.powerschool.students AS s
+      INNER JOIN gabby.powerschool.student_access_accounts_static AS saa ON s.student_number = saa.student_number
+      INNER JOIN gabby.powerschool.schools AS sch ON s.schoolid = sch.school_number
       AND s.[db_name] = sch.[db_name]
-      LEFT JOIN gabby.powerschool.spenrollments_gen_static sp ON s.id = sp.studentid
+      LEFT JOIN gabby.powerschool.spenrollments_gen_static AS sp ON s.id = sp.studentid
       AND s.exitdate (BETWEEN sp.enter_date AND sp.exit_date)
       AND s.[db_name] = sp.[db_name]
       AND sp.specprog_name = 'Out of District'

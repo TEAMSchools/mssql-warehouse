@@ -7,6 +7,6 @@ SELECT
   esd.pricing_level,
   edr.[name] AS eligibility_determination_reason
 FROM
-  titan.eligibilitybenefittype ebt
-  INNER JOIN titan.eligibilitystatusdata esd ON ebt.eligibility_status_id = esd.eligibility_status_id
-  INNER JOIN titan.eligibilitydeterminationreason edr ON ebt.eligibility_determination_reason_id = edr.eligibility_determination_reason_id
+  titan.eligibilitybenefittype AS ebt
+  INNER JOIN titan.eligibilitystatusdata AS esd ON ebt.eligibility_status_id = esd.eligibility_status_id
+  INNER JOIN titan.eligibilitydeterminationreason AS edr ON ebt.eligibility_determination_reason_id = edr.eligibility_determination_reason_id

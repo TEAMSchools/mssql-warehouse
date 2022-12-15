@@ -52,4 +52,4 @@ SELECT
   LOWER(df.userprincipalname) AS userprincipalname,
   LOWER(df.manager_mail) AS manager_mail
 FROM
-  gabby.people.staff_crosswalk_static df
+  gabby.people.staff_crosswalk_static AS df

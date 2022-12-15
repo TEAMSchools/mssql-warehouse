@@ -138,11 +138,15 @@ FROM
           CAST(sj.illuminate_subject AS VARCHAR(125)) AS illuminate_subject
         FROM
           powerschool.cc
-          INNER JOIN powerschool.students s ON cc.studentid = s.id
-          INNER JOIN powerschool.sections_identifiers sec ON ABS(cc.sectionid) = sec.sectionid
-          LEFT JOIN gabby.assessments.normed_subjects sj ON cc.course_number = sj.course_number
+          INNER JOIN powerschool.students AS s ON cc.studentid = s.id
+          INNER JOIN powerschool.sections_identifiers AS sec ON ABS(cc.sectionid) = sec.sectionid
+          LEFT JOIN gabby.assessments.normed_subjects AS sj ON cc.course_number = sj.course_number
         COLLATE Latin1_General_BIN
         WHERE
-          cc.dateenrolled >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR (), 7, 1)
+          cc.dateenrolled >= DATEFROMPARTS(
+            gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+            7,
+            1
+          )
       ) sub
   ) sub

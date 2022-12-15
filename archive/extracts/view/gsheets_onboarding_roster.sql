@@ -64,9 +64,17 @@ SELECT
   CASE
     WHEN ad.is_active IS NULL THEN 'New Hire'
     WHEN ad.is_active = 1
-    AND ad.createtimestamp >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR (), 6, 1) THEN 'New Hire'
+    AND ad.createtimestamp >= DATEFROMPARTS(
+      gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+      6,
+      1
+    ) THEN 'New Hire'
     WHEN ad.is_active = 1
-    AND ad.createtimestamp < DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR (), 6, 1) THEN 'Returning Staff - Current'
+    AND ad.createtimestamp < DATEFROMPARTS(
+      gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+      6,
+      1
+    ) THEN 'Returning Staff - Current'
     WHEN ad.is_active = 0 THEN 'Returning Staff - Departed'
   END AS ad_account_status,
   CASE
@@ -74,14 +82,14 @@ SELECT
     ELSE 'N'
   END AS in_activedirectory
 FROM
-  gabby.recruiting.job_position_c jp
-  LEFT JOIN gabby.recruiting.job_application_c ja ON jp.id = ja.job_position_c
+  gabby.recruiting.job_position_c AS jp
+  LEFT JOIN gabby.recruiting.job_application_c AS ja ON jp.id = ja.job_position_c
   AND ja.selection_status_c IN ('Complete', 'Withdrew')
   AND ja.stage_c = 'Hired'
   AND ja.is_deleted = 0
-  LEFT JOIN gabby.adp.staff_roster adp ON jp.name = adp.salesforce_job_position_name_custom
+  LEFT JOIN gabby.adp.staff_roster AS adp ON jp.name = adp.salesforce_job_position_name_custom
   AND adp.rn_curr = 1
-  LEFT JOIN gabby.adsi.user_attributes_static ad ON adp.associate_id = ad.idautopersonalternateid
+  LEFT JOIN gabby.adsi.user_attributes_static AS ad ON adp.associate_id = ad.idautopersonalternateid
 WHERE
   jp.region_c = 'New Jersey'
   AND jp.is_deleted = 0

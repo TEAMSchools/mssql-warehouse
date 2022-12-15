@@ -22,7 +22,12 @@ WITH
         FROM
           gabby.dayforce.employee_attendance
       ) sub PIVOT (
-        MAX(excused_status) FOR absence_type IN ([absent], [late], [early out], [partial day])
+        MAX(excused_status) FOR absence_type IN (
+          [absent],
+          [late],
+          [early out],
+          [partial day]
+        )
       ) p
   ),
   tafw AS (
@@ -31,8 +36,16 @@ WITH
       CAST(sub.tafw_start_date AS DATE) AS tafw_start_date,
       CAST(sub.tafw_end_date AS DATE) AS tafw_end_date,
       CASE
-        WHEN DATEDIFF(HOUR, sub.tafw_start_date, sub.tafw_end_date) > 9 THEN 9.5
-        ELSE DATEDIFF(HOUR, sub.tafw_start_date, sub.tafw_end_date)
+        WHEN DATEDIFF(
+          HOUR,
+          sub.tafw_start_date,
+          sub.tafw_end_date
+        ) > 9 THEN 9.5
+        ELSE DATEDIFF(
+          HOUR,
+          sub.tafw_start_date,
+          sub.tafw_end_date
+        )
       END AS tafw_hours
     FROM
       (
@@ -49,9 +62,13 @@ WITH
             CAST(t.end_date_time AS DATETIME2)
           ) AS tafw_end_date
         FROM
-          gabby.dayforce.tafw_requests t
+          gabby.dayforce.tafw_requests AS t
         WHERE
-          t.tafw_status IN ('Approved', 'Pending', 'Cancellation Pending')
+          t.tafw_status IN (
+            'Approved',
+            'Pending',
+            'Cancellation Pending'
+          )
       ) sub
   ),
   leave AS (
@@ -64,7 +81,7 @@ WITH
         CAST(CURRENT_TIMESTAMP AS DATE)
       ) AS effective_end
     FROM
-      gabby.dayforce.employee_status s
+      gabby.dayforce.employee_status AS s
     WHERE
       s.[status] IN (
         'Administrative Leave',
@@ -188,32 +205,44 @@ CASE
   ELSE 9.5 - ISNULL(t.tafw_hours, 0)
 END AS hours_worked
 FROM
-  gabby.people.staff_crosswalk_static df
-  INNER JOIN gabby.powerschool.calendar_day cal ON df.primary_site_schoolid = cal.schoolid
+  gabby.people.staff_crosswalk_static AS df
+  INNER JOIN gabby.powerschool.calendar_day AS cal ON df.primary_site_schoolid = cal.schoolid
   AND df.[db_name] = cal.[db_name]
   AND (
     cal.insession = 1
     OR cal.[type] = 'PD'
   )
   AND cal.date_value (
-    BETWEEN DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1, 7, 1) AND CURRENT_TIMESTAMP
+    BETWEEN DATEFROMPARTS(
+      gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1,
+      7,
+      1
+    ) AND CURRENT_TIMESTAMP
   )
-  INNER JOIN gabby.reporting.reporting_terms dt ON cal.schoolid = dt.schoolid
+  INNER JOIN gabby.reporting.reporting_terms AS dt ON cal.schoolid = dt.schoolid
   AND cal.date_value (BETWEEN dt.[start_date] AND dt.end_date)
   AND dt.identifier = 'RT'
   AND dt._fivetran_deleted = 0
-  INNER JOIN gabby.people.employment_history was ON df.df_employee_number = was.employee_number
+  INNER JOIN gabby.people.employment_history AS was ON df.df_employee_number = was.employee_number
   AND cal.date_value (
     BETWEEN was.effective_start_date AND was.effective_end_date
   )
-  LEFT JOIN emp_att pt ON df.df_employee_number = pt.employee_number
+  LEFT JOIN emp_att AS pt ON df.df_employee_number = pt.employee_number
   AND cal.date_value = pt.pay_date
-  LEFT JOIN tafw t ON df.df_employee_number = t.df_employee_number
-  AND cal.date_value (BETWEEN t.tafw_start_date AND t.tafw_end_date)
-  LEFT JOIN gabby.people.staff_attendance_clean_static a ON df.df_employee_number = a.df_number
+  LEFT JOIN tafw AS t ON df.df_employee_number = t.df_employee_number
+  AND cal.date_value (
+    BETWEEN t.tafw_start_date AND t.tafw_end_date
+  )
+  LEFT JOIN gabby.people.staff_attendance_clean_static AS a ON df.df_employee_number = a.df_number
   AND cal.date_value = a.attendance_date
   AND a.rn_curr = 1
-  LEFT JOIN leave l ON df.df_employee_number = l.df_employee_number
-  AND cal.date_value (BETWEEN l.effective_start AND l.effective_end)
+  LEFT JOIN leave AS l ON df.df_employee_number = l.df_employee_number
+  AND cal.date_value (
+    BETWEEN l.effective_start AND l.effective_end
+  )
 WHERE
-  COALESCE(df.termination_date, CURRENT_TIMESTAMP) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR (), 7, 1)
+  COALESCE(df.termination_date, CURRENT_TIMESTAMP) >= DATEFROMPARTS(
+    gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+    7,
+    1
+  )

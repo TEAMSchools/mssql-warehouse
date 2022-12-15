@@ -10,8 +10,15 @@ WITH
       gabby.alumni.enrollment_c
     WHERE
       type_c = 'College'
-      AND pursuing_degree_type_c IN ('Associate''s (2 year)', 'Bachelor''s (4-year)')
-      AND start_date_c >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1, 1, 1)
+      AND pursuing_degree_type_c IN (
+        'Associate''s (2 year)',
+        'Bachelor''s (4-year)'
+      )
+      AND start_date_c >= DATEFROMPARTS(
+        gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1,
+        1,
+        1
+      )
       AND status_c IN ('Attending', 'Matriculated')
       AND is_deleted = 0
   ),
@@ -45,7 +52,11 @@ WITH
             FROM
               gabby.alumni.gpa_c
             WHERE
-              transcript_date_c >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1, 7, 1)
+              transcript_date_c >= DATEFROMPARTS(
+                gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1,
+                7,
+                1
+              )
           ) sub UNPIVOT (
             VALUE FOR field IN (semester_gpa, academic_status)
           ) u
@@ -81,12 +92,16 @@ WITH
             ELSE 'S'
           END AS semester
         FROM
-          gabby.alumni.kipp_aid_c a
+          gabby.alumni.kipp_aid_c AS a
         WHERE
           a.type_c = 'College Book Stipend Program'
           AND a.Status_c = 'Approved'
           AND a.is_deleted = 0
-          AND a.created_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR (), 7, 1)
+          AND a.created_date >= DATEFROMPARTS(
+            gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+            7,
+            1
+          )
       ) sub PIVOT (MAX(date_c) FOR semester IN ([F], [S])) p
   ),
   oot_roster AS (
@@ -143,7 +158,7 @@ WITH
             )
           ) AS n_months_elapsed
         FROM
-          gabby.alumni.contact_note_c c
+          gabby.alumni.contact_note_c AS c
         WHERE
           Status_c = 'Successful'
           AND is_deleted = 0
@@ -163,7 +178,11 @@ WITH
       gabby.alumni.contact_history
     WHERE
       field = 'Owner'
-      AND created_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR (), 07, 01)
+      AND created_date >= DATEFROMPARTS(
+        gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+        07,
+        01
+      )
       AND old_value IN ('Jessica Gersh', 'Eric Fisher', 'KNJ Admin')
       AND is_deleted = 0
   ),
@@ -194,11 +213,15 @@ WITH
           ) AS school_type,
           COUNT(a.id) AS N
         FROM
-          gabby.alumni.application_c a
-          INNER JOIN gabby.alumni.account s ON a.school_c = s.id
+          gabby.alumni.application_c AS a
+          INNER JOIN gabby.alumni.account AS s ON a.school_c = s.id
         WHERE
           a.application_submission_status_c = 'Submitted'
-          AND a.created_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR (), 07, 01)
+          AND a.created_date >= DATEFROMPARTS(
+            gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+            07,
+            01
+          )
           AND a.is_deleted = 0
         GROUP BY
           a.applicant_c,
@@ -339,20 +362,20 @@ SELECT
   app.[ALL] AS N_apps_all,
   nye.pursuing_degree_type_c AS next_year_pursuing_degree_type
 FROM
-  gabby.alumni.ktc_roster c
-  LEFT JOIN gabby.alumni.enrollment_identifiers e ON c.sf_contact_id = e.student_c
-  LEFT JOIN gabby.alumni.contact_note_rollup cn ON c.sf_contact_id = cn.contact_id
+  gabby.alumni.ktc_roster AS c
+  LEFT JOIN gabby.alumni.enrollment_identifiers AS e ON c.sf_contact_id = e.student_c
+  LEFT JOIN gabby.alumni.contact_note_rollup AS cn ON c.sf_contact_id = cn.contact_id
   AND cn.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
   LEFT JOIN gpa ON c.sf_contact_id = gpa.student_c
-  LEFT JOIN stipends s ON c.sf_contact_id = s.student_c
-  LEFT JOIN oot_roster oot ON c.sf_contact_id = oot.contact_id
+  LEFT JOIN stipends AS s ON c.sf_contact_id = s.student_c
+  LEFT JOIN oot_roster AS oot ON c.sf_contact_id = oot.contact_id
   AND gabby.utilities.GLOBAL_ACADEMIC_YEAR () (
     BETWEEN oot.missing_academic_year AND oot.found_academic_year
   )
   AND oot.rn = 1
-  LEFT JOIN counselor_changes cc ON c.sf_contact_id = cc.contact_id
+  LEFT JOIN counselor_changes AS cc ON c.sf_contact_id = cc.contact_id
   AND cc.rn = 1
-  LEFT JOIN transfer_apps app ON c.sf_contact_id = app.applicant_c
-  LEFT JOIN next_yr_enrollment nye ON c.sf_contact_id = nye.student_c
+  LEFT JOIN transfer_apps AS app ON c.sf_contact_id = app.applicant_c
+  LEFT JOIN next_yr_enrollment AS nye ON c.sf_contact_id = nye.student_c
 WHERE
   c.ktc_status IN ('HSG', 'TAF')

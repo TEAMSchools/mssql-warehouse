@@ -18,10 +18,10 @@ WITH
       scw.[status],
       sc.region
     FROM
-      gabby.people.staff_crosswalk_static scw
-      INNER JOIN gabby.people.school_crosswalk sc ON scw.primary_site = sc.site_name
+      gabby.people.staff_crosswalk_static AS scw
+      INNER JOIN gabby.people.school_crosswalk AS sc ON scw.primary_site = sc.site_name
       AND sc._fivetran_deleted = 0
-      INNER JOIN gabby.powerschool.users u ON scw.ps_teachernumber = u.teachernumber
+      INNER JOIN gabby.powerschool.users AS u ON scw.ps_teachernumber = u.teachernumber
     COLLATE Latin1_General_BIN
     AND scw.primary_site_schoolid = u.homeschoolid
     AND CASE
@@ -58,10 +58,10 @@ WITH
       scw.[status],
       sc.region
     FROM
-      gabby.people.staff_crosswalk_static scw
-      INNER JOIN gabby.people.school_crosswalk sc ON scw.primary_site = sc.site_name
+      gabby.people.staff_crosswalk_static AS scw
+      INNER JOIN gabby.people.school_crosswalk AS sc ON scw.primary_site = sc.site_name
       AND sc._fivetran_deleted = 0
-      LEFT JOIN gabby.powerschool.users u ON scw.ps_teachernumber = u.teachernumber
+      LEFT JOIN gabby.powerschool.users AS u ON scw.ps_teachernumber = u.teachernumber
     COLLATE Latin1_General_BIN
     AND CASE
       WHEN sc.region = 'TEAM Academy Charter School' THEN 'kippnewark'
@@ -98,7 +98,10 @@ WITH
       CASE
         WHEN DATEDIFF(
           DAY,
-          ISNULL(termination_date, CAST(CURRENT_TIMESTAMP AS DATE)),
+          ISNULL(
+            termination_date,
+            CAST(CURRENT_TIMESTAMP AS DATE)
+          ),
           CURRENT_TIMESTAMP
         ) <= 7 THEN 1
         WHEN [status] IN (

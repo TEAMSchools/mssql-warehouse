@@ -58,8 +58,8 @@ FROM
       sh.paid_leave_of_absence,
       sr.file_number AS employee_number
     FROM
-      gabby.adp.status_history sh
-      INNER JOIN gabby.adp.employees_all sr ON sh.associate_id = sr.associate_id
+      gabby.adp.status_history AS sh
+      INNER JOIN gabby.adp.employees_all AS sr ON sh.associate_id = sr.associate_id
     WHERE
       CAST(sh.status_effective_date AS DATE) < CAST(sh.status_effective_end_date AS DATE)
       OR sh.status_effective_end_date IS NULL

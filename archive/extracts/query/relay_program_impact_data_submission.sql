@@ -110,10 +110,10 @@ FROM
   ,adp.location_custom AS school_name
   ,adp.grades_taught_custom
   ,adp.subject_dept_custom            
-  FROM gabby.adp.staff_roster adp
-  LEFT JOIN gabby.adsi.user_attributes ad
+  FROM gabby.adp.staff_roster AS adp
+  LEFT JOIN gabby.adsi.user_attributes AS ad
   ON adp.associate_id = ad.idautopersonalternateid
-  LEFT JOIN gabby.people.adp_ps_id_link link
+  LEFT JOIN gabby.people.adp_ps_id_link AS link
   ON adp.associate_id = link.associate_id
   AND link.is_master = 1
   WHERE adp.rn_curr = 1

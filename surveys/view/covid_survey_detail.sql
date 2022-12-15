@@ -14,7 +14,7 @@ WITH
           d.question_shortname,
           d.answer
         FROM
-          gabby.surveygizmo.survey_detail d
+          gabby.surveygizmo.survey_detail AS d
         WHERE
           d.survey_id = 5560557
           AND d.rn_respondent_subject = 1
@@ -59,7 +59,7 @@ WITH
         ELSE 0
       END AS is_other
     FROM
-      gabby.surveygizmo.survey_response_data rd
+      gabby.surveygizmo.survey_response_data AS rd
     WHERE
       rd.survey_id = 5560557
       AND rd.question_id = 325
@@ -107,8 +107,8 @@ SELECT
     ELSE 0
   END AS is_multiracial
 FROM
-  gabby.surveygizmo.survey_detail d
-  LEFT JOIN gabby.dayforce.employee_work_assignment w ON d.respondent_df_employee_number = w.employee_reference_code
+  gabby.surveygizmo.survey_detail AS d
+  LEFT JOIN gabby.dayforce.employee_work_assignment AS w ON d.respondent_df_employee_number = w.employee_reference_code
   AND d.date_submitted (
     BETWEEN w.work_assignment_effective_start AND COALESCE(
       w.work_assignment_effective_end,
@@ -116,8 +116,8 @@ FROM
     )
   )
   AND w.primary_work_assignment = 1
-  LEFT JOIN identifiers i ON d.survey_response_id = i.survey_response_id
-  LEFT JOIN ethnicity e ON d.survey_response_id = e.survey_response_id
+  LEFT JOIN identifiers AS i ON d.survey_response_id = i.survey_response_id
+  LEFT JOIN ethnicity AS e ON d.survey_response_id = e.survey_response_id
 WHERE
   d.survey_id = 5560557
   AND d.rn_respondent_subject = 1

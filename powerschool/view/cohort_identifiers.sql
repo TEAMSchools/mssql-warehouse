@@ -156,22 +156,22 @@ CASE
 END
 COLLATE Latin1_General_BIN AS lunch_app_status
 FROM
-  powerschool.cohort_static co
-  INNER JOIN powerschool.students s ON co.studentid = s.id
-  INNER JOIN powerschool.schools sch ON co.schoolid = sch.school_number
-  LEFT JOIN powerschool.team_roster_static t ON co.student_number = t.student_number
+  powerschool.cohort_static AS co
+  INNER JOIN powerschool.students AS s ON co.studentid = s.id
+  INNER JOIN powerschool.schools AS sch ON co.schoolid = sch.school_number
+  LEFT JOIN powerschool.team_roster_static AS t ON co.student_number = t.student_number
   AND co.academic_year = t.academic_year
   AND co.schoolid = t.schoolid
-  LEFT JOIN powerschool.advisory_static adv ON co.student_number = adv.student_number
+  LEFT JOIN powerschool.advisory_static AS adv ON co.student_number = adv.student_number
   AND co.academic_year = adv.academic_year
   AND co.schoolid = adv.schoolid
-  LEFT JOIN powerschool.u_studentsuserfields suf ON co.studentsdcid = suf.studentsdcid
-  LEFT JOIN gabby.powerschool.student_access_accounts_static saa ON co.student_number = saa.student_number
-  LEFT JOIN titan.person_data_clean tp ON co.student_number = tp.person_identifier
+  LEFT JOIN powerschool.u_studentsuserfields AS suf ON co.studentsdcid = suf.studentsdcid
+  LEFT JOIN gabby.powerschool.student_access_accounts_static AS saa ON co.student_number = saa.student_number
+  LEFT JOIN titan.person_data_clean AS tp ON co.student_number = tp.person_identifier
   AND co.academic_year = tp.application_academic_school_year_clean
-  LEFT JOIN powerschool.enrollment_identifiers_static enr ON co.student_number = enr.student_number
+  LEFT JOIN powerschool.enrollment_identifiers_static AS enr ON co.student_number = enr.student_number
   AND co.yearid = enr.yearid
-  LEFT JOIN powerschool.spenrollments_gen_static sp ON co.studentid = sp.studentid ND co.exitdate (BETWEEN sp.enter_date AND sp.exit_date)
+  LEFT JOIN powerschool.spenrollments_gen_static AS sp ON co.studentid = sp.studentid ND co.exitdate (BETWEEN sp.enter_date AND sp.exit_date)
   AND sp.specprog_name IN (
     'Out of District',
     'Self-Contained Special Education',
@@ -179,13 +179,13 @@ FROM
     'Pathways MS',
     'Whittier ES'
   )
-  LEFT JOIN powerschool.student_contacts_wide_static scw ON co.student_number = scw.student_number
-  LEFT JOIN powerschool.studentcorefields scf ON co.studentsdcid = scf.studentsdcid
-  LEFT JOIN powerschool.s_nj_stu_x nj ON co.studentsdcid = nj.studentsdcid
-  LEFT JOIN easyiep.njsmart_powerschool_clean_static sped ON co.student_number = sped.student_number
+  LEFT JOIN powerschool.student_contacts_wide_static AS scw ON co.student_number = scw.student_number
+  LEFT JOIN powerschool.studentcorefields AS scf ON co.studentsdcid = scf.studentsdcid
+  LEFT JOIN powerschool.s_nj_stu_x AS nj ON co.studentsdcid = nj.studentsdcid
+  LEFT JOIN easyiep.njsmart_powerschool_clean_static AS sped ON co.student_number = sped.student_number
   AND co.academic_year = sped.academic_year
   AND sped.rn_stu_yr = 1
-  LEFT JOIN gabby.ops.income_form_data_clean ifc ON co.student_number = ifc.student_number
+  LEFT JOIN gabby.ops.income_form_data_clean AS ifc ON co.student_number = ifc.student_number
   AND co.academic_year = ifc.academic_year
   AND ifc.[db_name] = DB_NAME()
   AND ifc.rn = 1

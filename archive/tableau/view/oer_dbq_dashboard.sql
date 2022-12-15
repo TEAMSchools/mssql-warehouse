@@ -20,7 +20,7 @@ WITH
           dateenrolled DESC
       ) AS rn
     FROM
-      gabby.powerschool.course_enrollments_static enr
+      gabby.powerschool.course_enrollments_static AS enr
     WHERE
       enr.academic_year >= 2015
       AND enr.credittype = 'ENG'
@@ -35,7 +35,7 @@ WITH
       enr.teacher_name,
       1 AS rn
     FROM
-      gabby.powerschool.course_enrollments_static enr
+      gabby.powerschool.course_enrollments_static AS enr
     WHERE
       enr.academic_year <= 2014
       AND enr.credittype = 'ENG'
@@ -57,7 +57,11 @@ WITH
       repository_row_id,
       field_label,
       field_value,
-      SUBSTRING(field_label, CHARINDEX('_', field_label) + 1, 1) AS prompt_number,
+      SUBSTRING(
+        field_label,
+        CHARINDEX('_', field_label) + 1,
+        1
+      ) AS prompt_number,
       SUBSTRING(
         field_label,
         CHARINDEX('_', field_label) + 3,
@@ -113,10 +117,10 @@ WITH
           ur.prompt_4_overall,
           ur.prompt_4_quality_of_ideas
         FROM
-          gabby.illuminate_dna_repositories.oer_repositories ur
-          INNER JOIN gabby.illuminate_public.students s ON ur.student_id = s.student_id
-          INNER JOIN gabby.illuminate_dna_repositories.repositories r ON ur.repository_id = r.repository_id
-          LEFT JOIN gabby.reporting.reporting_terms rt ON r.date_administered (BETWEEN rt.start_date AND rt.end_date)
+          gabby.illuminate_dna_repositories.oer_repositories AS ur
+          INNER JOIN gabby.illuminate_public.students AS s ON ur.student_id = s.student_id
+          INNER JOIN gabby.illuminate_dna_repositories.repositories AS r ON ur.repository_id = r.repository_id
+          LEFT JOIN gabby.reporting.reporting_terms AS rt ON r.date_administered (BETWEEN rt.start_date AND rt.end_date)
           AND rt.schoolid = 73253
           AND rt.identifier = 'RT'
           AND rt._fivetran_deleted = 0
@@ -169,11 +173,11 @@ SELECT
   enr.course_period,
   enr.teacher_name
 FROM
-  oer_repos w
-  INNER JOIN gabby.powerschool.cohort_identifiers_static co ON w.student_number = co.student_number
+  oer_repos AS w
+  INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON w.student_number = co.student_number
   AND w.academic_year = co.academic_year
   AND co.rn_year = 1
-  LEFT JOIN enrollments enr
+  LEFT JOIN enrollments AS enr
 WITH
   (NOLOCK) ON co.student_number = enr.student_number
   AND co.academic_year = enr.academic_year
@@ -214,35 +218,43 @@ FROM
       co.db_name,
       dts.alt_name AS term,
       a.title,
-      SUBSTRING(LTRIM(a.title), 1, CHARINDEX(' ', LTRIM(a.title))) AS course_number,
+      SUBSTRING(
+        LTRIM(a.title),
+        1,
+        CHARINDEX(' ', LTRIM(a.title))
+      ) AS course_number,
       CASE
         WHEN a.academic_year_clean <= 2015 THEN SUBSTRING(a.title, PATINDEX('%QE_%', a.title), 3)
-        WHEN PATINDEX('%DBQ [0-9]%', a.title) > 0 THEN SUBSTRING(a.title, PATINDEX('%DBQ [0-9]%', a.title), 5)
+        WHEN PATINDEX('%DBQ [0-9]%', a.title) > 0 THEN SUBSTRING(
+          a.title,
+          PATINDEX('%DBQ [0-9]%', a.title),
+          5
+        )
         WHEN PATINDEX('%DBQ[0-9]%', a.title) > 0 THEN SUBSTRING(a.title, PATINDEX('%DBQ[0-9]%', a.title), 4)
       END AS unit_number,
       std.description AS strand,
       CAST(r.percent_correct AS FLOAT) AS score,
       1 AS prompt_number
     FROM
-      gabby.illuminate_dna_assessments.assessments a
-      INNER JOIN gabby.illuminate_codes.dna_scopes dsc ON a.code_scope_id = dsc.code_id
+      gabby.illuminate_dna_assessments.assessments AS a
+      INNER JOIN gabby.illuminate_codes.dna_scopes AS dsc ON a.code_scope_id = dsc.code_id
       AND dsc.code_translation = 'DBQ'
-      INNER JOIN gabby.illuminate_codes.dna_subject_areas dsu ON a.code_subject_area_id = dsu.code_id
+      INNER JOIN gabby.illuminate_codes.dna_subject_areas AS dsu ON a.code_subject_area_id = dsu.code_id
       AND dsu.code_translation = 'History'
-      INNER JOIN gabby.reporting.reporting_terms dts ON a.administered_at (BETWEEN dts.start_date AND dts.end_date)
+      INNER JOIN gabby.reporting.reporting_terms AS dts ON a.administered_at (BETWEEN dts.start_date AND dts.end_date)
       AND dts.schoolid = 73253
       AND dts.identifier = 'RT'
       AND dts._fivetran_deleted = 0
-      INNER JOIN gabby.illuminate_dna_assessments.agg_student_responses_standard r ON a.assessment_id = r.assessment_id
-      INNER JOIN gabby.illuminate_public.students s ON r.student_id = s.student_id
-      INNER JOIN gabby.powerschool.cohort_identifiers_static co ON s.local_student_id = co.student_number
+      INNER JOIN gabby.illuminate_dna_assessments.agg_student_responses_standard AS r ON a.assessment_id = r.assessment_id
+      INNER JOIN gabby.illuminate_public.students AS s ON r.student_id = s.student_id
+      INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON s.local_student_id = co.student_number
       AND a.academic_year_clean = co.academic_year
       AND co.rn_year = 1
-      INNER JOIN gabby.illuminate_standards.standards std ON r.standard_id = std.standard_id
+      INNER JOIN gabby.illuminate_standards.standards AS std ON r.standard_id = std.standard_id
     WHERE
       a.academic_year_clean >= 2016
   ) sub
-  LEFT JOIN gabby.powerschool.course_enrollments_static enr ON sub.student_number = enr.student_number
+  LEFT JOIN gabby.powerschool.course_enrollments_static AS enr ON sub.student_number = enr.student_number
   AND sub.academic_year = enr.academic_year
   AND sub.course_number = enr.course_number
 COLLATE SQL_Latin1_General_CP1_CI_AS

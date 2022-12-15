@@ -15,7 +15,7 @@ SELECT
   padcc.membershipvalue,
   padcc.potential_attendancevalue
 FROM
-  powerschool.ps_adaadm_daily_ctod_current_static padcc
+  powerschool.ps_adaadm_daily_ctod_current_static AS padcc
 UNION ALL
 SELECT
   padca.studentid,
@@ -32,4 +32,4 @@ SELECT
   padca.membershipvalue,
   padca.potential_attendancevalue
 FROM
-  powerschool.ps_adaadm_daily_ctod_archive padca
+  powerschool.ps_adaadm_daily_ctod_archive AS padca

@@ -32,7 +32,7 @@ WITH
       dependentobjectname,
       1 AS [level]
     FROM
-      dependentobjects a
+      dependentobjects AS a
     UNION ALL
     SELECT
       b.usedbyobjectid,
@@ -45,8 +45,8 @@ WITH
       a.dependentobjectname,
       (b.[level] + 1) AS [level]
     FROM
-      dependentobjects a
-      INNER JOIN dependentobjects2 b ON a.usedbyobjectid = b.dependentobjectid
+      dependentobjects AS a
+      INNER JOIN dependentobjects2 AS b ON a.usedbyobjectid = b.dependentobjectid
   )
 SELECT DISTINCT
   dependentschemaname AS [schema_name],

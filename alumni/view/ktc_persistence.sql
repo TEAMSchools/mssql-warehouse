@@ -50,10 +50,10 @@ FROM
       r.middle_school_attended,
       r.ktc_cohort + n.n AS academic_year
     FROM
-      gabby.alumni.ktc_roster r
-      INNER JOIN gabby.utilities.row_generator n ON n.n <= 5
+      gabby.alumni.ktc_roster AS r
+      INNER JOIN gabby.utilities.row_generator AS n ON n.n <= 5
   ) sub
-  LEFT JOIN gabby.alumni.enrollment_c e ON sub.sf_contact_id = e.student_c
+  LEFT JOIN gabby.alumni.enrollment_c AS e ON sub.sf_contact_id = e.student_c
   AND DATEFROMPARTS(sub.academic_year, 10, 31) (
     BETWEEN e.start_date_c AND COALESCE(
       e.actual_end_date_c,
@@ -65,7 +65,10 @@ FROM
     )
   )
   AND e.is_deleted = 0
-  AND e.pursuing_degree_type_c IN ('Bachelor''s (4-year)', 'Associate''s (2 year)')
+  AND e.pursuing_degree_type_c IN (
+    'Bachelor''s (4-year)',
+    'Associate''s (2 year)'
+  )
   AND e.status_c NOT IN ('Did Not Enroll', 'Deferred')
-  LEFT JOIN gabby.alumni.account a ON e.school_c = a.id
-  LEFT JOIN gabby.alumni.enrollment_identifiers ei ON sub.sf_contact_id = ei.student_c
+  LEFT JOIN gabby.alumni.account AS a ON e.school_c = a.id
+  LEFT JOIN gabby.alumni.enrollment_identifiers AS ei ON sub.sf_contact_id = ei.student_c

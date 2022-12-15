@@ -32,12 +32,14 @@ WITH
         )
       END AS rn_null
     FROM
-      gabby.surveys.survey_tracking t
+      gabby.surveys.survey_tracking AS t
     WHERE
       survey_id = '6330385'
       OR (
         survey_completion_date IS NULL
-        AND CAST(CURRENT_TIMESTAMP AS DATE) (BETWEEN survey_round_open AND survey_round_close)
+        AND CAST(CURRENT_TIMESTAMP AS DATE) (
+          BETWEEN survey_round_open AND survey_round_close
+        )
       )
   )
 SELECT
@@ -56,8 +58,8 @@ SELECT
   c.manager_mail,
   CURRENT_TIMESTAMP AS date_of_extract
 FROM
-  incomplete_surveys i
-  INNER JOIN gabby.people.staff_crosswalk_static c ON i.survey_taker_id = c.df_employee_number
+  incomplete_surveys AS i
+  INNER JOIN gabby.people.staff_crosswalk_static AS c ON i.survey_taker_id = c.df_employee_number
 WHERE
   rn_null = 1
   AND survey_completion_date IS NULL

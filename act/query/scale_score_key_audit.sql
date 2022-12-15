@@ -6,17 +6,17 @@ FROM
       academic_year,
       grade_level,
       administration_round,
-      subject,
+      [subject],
       MAX(raw_score) + 1 AS max_score_adjusted,
       MAX(scale_score) AS max_scale_score,
-      COUNT(subject) AS n_records
+      COUNT([subject]) AS n_records
     FROM
       gabby.act.scale_score_key
     GROUP BY
       academic_year,
       grade_level,
       administration_round,
-      subject
+      [subject]
   ) AS sub
 WHERE
   (max_score_adjusted != n_records)

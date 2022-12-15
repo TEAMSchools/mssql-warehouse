@@ -60,8 +60,8 @@ SELECT
   c.[status] AS assignment_adp_status,
   'Self & Others - Peer Feedback' AS assignment_type
 FROM
-  assignment_unpivot a
-  INNER JOIN gabby.people.staff_crosswalk_static c ON a.assignment = c.df_employee_number
+  assignment_unpivot AS a
+  INNER JOIN gabby.people.staff_crosswalk_static AS c ON a.assignment = c.df_employee_number
 WHERE
   a.assignment <> 0
   AND c.[status] <> 'Terminated'
@@ -83,9 +83,9 @@ SELECT
   c.[status] AS assignment_adp_status,
   'Self & Others - Manager Feedback' AS assignment_type
 FROM
-  gabby.people.staff_crosswalk_static c
-  INNER JOIN gabby.pm.assignments s ON c.df_employee_number = s.df_employee_number
-  INNER JOIN gabby.pm.assignments m ON c.manager_df_employee_number = m.df_employee_number
+  gabby.people.staff_crosswalk_static AS c
+  INNER JOIN gabby.pm.assignments AS s ON c.df_employee_number = s.df_employee_number
+  INNER JOIN gabby.pm.assignments AS m ON c.manager_df_employee_number = m.df_employee_number
 WHERE
   c.[status] <> 'TERMINATED'
   AND COALESCE(c.rehire_date, c.original_hire_date) < DATEADD(DAY, -30, CURRENT_TIMESTAMP)

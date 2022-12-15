@@ -23,7 +23,7 @@ SELECT
   t.teachernumber,
   t.lastfirst AS teacher_lastfirst
 FROM
-  powerschool.sections sec
-  INNER JOIN powerschool.courses cou ON sec.course_number = cou.course_number
-  INNER JOIN powerschool.teachers_static t ON sec.teacher = t.id
+  powerschool.sections AS sec
+  INNER JOIN powerschool.courses AS cou ON sec.course_number = cou.course_number
+  INNER JOIN powerschool.teachers_static AS t ON sec.teacher = t.id
   AND sec.schoolid = t.schoolid

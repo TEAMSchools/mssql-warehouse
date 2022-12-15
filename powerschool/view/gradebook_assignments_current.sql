@@ -16,11 +16,17 @@ SELECT
       tc.teachercategoryid
     ) AS INT
   ) AS categoryid,
-  CAST(COALESCE(dtc.[name], tc.[name]) AS VARCHAR(125)) AS category_name
+  CAST(
+    COALESCE(dtc.[name], tc.[name]) AS VARCHAR(125)
+  ) AS category_name
 FROM
-  powerschool.assignmentsection asec
-  LEFT JOIN powerschool.assignmentcategoryassoc aca ON asec.assignmentsectionid = aca.assignmentsectionid
-  LEFT JOIN powerschool.teachercategory tc ON aca.teachercategoryid = tc.teachercategoryid
-  LEFT JOIN powerschool.districtteachercategory dtc ON tc.districtteachercategoryid = dtc.districtteachercategoryid
+  powerschool.assignmentsection AS asec
+  LEFT JOIN powerschool.assignmentcategoryassoc AS aca ON asec.assignmentsectionid = aca.assignmentsectionid
+  LEFT JOIN powerschool.teachercategory AS tc ON aca.teachercategoryid = tc.teachercategoryid
+  LEFT JOIN powerschool.districtteachercategory AS dtc ON tc.districtteachercategoryid = dtc.districtteachercategoryid
 WHERE
-  asec.duedate >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR (), 7, 1)
+  asec.duedate >= DATEFROMPARTS(
+    gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+    7,
+    1
+  )

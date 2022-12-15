@@ -46,8 +46,8 @@ WITH
         WHEN sg.excludefromgpa = 0 THEN su.grade_points
       END AS unweighted_grade_points
     FROM
-      powerschool.storedgrades sg
-      LEFT JOIN powerschool.gradescaleitem_lookup_static su ON sg.[percent] (
+      powerschool.storedgrades AS sg
+      LEFT JOIN powerschool.gradescaleitem_lookup_static AS su ON sg.[percent] (
         BETWEEN su.min_cutoffpercentage AND su.max_cutoffpercentage
       )
       AND gabby.utilities.PS_UNWEIGHTED_GRADESCALE_NAME (
@@ -81,22 +81,24 @@ WITH
       NULL AS gpa_points_core,
       NULL AS unweighted_grade_points
     FROM
-      powerschool.final_grades_static fg
-      INNER JOIN powerschool.cohort_static co ON fg.studentid = co.studentid
+      powerschool.final_grades_static AS fg
+      INNER JOIN powerschool.cohort_static AS co ON fg.studentid = co.studentid
       AND fg.yearid = co.yearid
       AND co.rn_year = 1
-      INNER JOIN gabby.reporting.reporting_terms rt ON fg.yearid = rt.yearid
+      INNER JOIN gabby.reporting.reporting_terms AS rt ON fg.yearid = rt.yearid
       AND fg.storecode = rt.alt_name
     COLLATE Latin1_General_BIN
     AND co.schoolid = rt.schoolid
     AND rt.identifier = 'RT'
     AND rt.is_curterm = 1
-    LEFT JOIN powerschool.storedgrades sg ON fg.studentid = sg.studentid
+    LEFT JOIN powerschool.storedgrades AS sg ON fg.studentid = sg.studentid
     AND fg.course_number = sg.course_number
     AND rt.academic_year = (CAST(LEFT(sg.termid, 2) AS INT) + 1990)
     AND sg.storecode = 'Y1'
     WHERE
-      fg.yearid = (gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990)
+      fg.yearid = (
+        gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990
+      )
       AND fg.exclude_from_gpa = 0
       AND sg.studentid IS NULL /* ensures already stored grades are excluded */
     UNION ALL
@@ -121,16 +123,18 @@ WITH
       NULL AS gpa_points_core,
       NULL AS unweighted_grade_points
     FROM
-      powerschool.final_grades_static fg
-      INNER JOIN powerschool.cohort_static co ON fg.studentid = co.studentid
+      powerschool.final_grades_static AS fg
+      INNER JOIN powerschool.cohort_static AS co ON fg.studentid = co.studentid
       AND fg.yearid = co.yearid
       AND co.rn_year = 1
-      LEFT JOIN powerschool.storedgrades sg ON fg.studentid = sg.studentid
+      LEFT JOIN powerschool.storedgrades AS sg ON fg.studentid = sg.studentid
       AND fg.course_number = sg.course_number
       AND (CAST(LEFT(sg.termid, 2) AS INT) + 1990) = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
       AND sg.storecode = 'Y1'
     WHERE
-      fg.yearid = (gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990)
+      fg.yearid = (
+        gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990
+      )
       AND fg.storecode = 'Q2' /* Y1 AS of Q2 (aka Semester 1) */
       AND fg.exclude_from_gpa = 0
       AND sg.studentid IS NULL /* ensures already stored grades are excluded */
@@ -143,7 +147,9 @@ WITH
       CAST(potentialcrhrs AS DECIMAL(5, 2)) AS potentialcrhrs,
       CAST(earnedcrhrs AS DECIMAL(5, 2)) AS earnedcrhrs,
       CAST(potentialcrhrs_projected AS DECIMAL(5, 2)) AS potentialcrhrs_projected,
-      CAST(potentialcrhrs_projected_s1 AS DECIMAL(5, 2)) AS potentialcrhrs_projected_s1,
+      CAST(
+        potentialcrhrs_projected_s1 AS DECIMAL(5, 2)
+      ) AS potentialcrhrs_projected_s1,
       CAST(potentialcrhrs_core AS DECIMAL(5, 2)) AS potentialcrhrs_core,
       CAST(earnedcrhrs_projected AS DECIMAL(5, 2)) AS earnedcrhrs_projected,
       CAST(earnedcrhrs_projected_s1 AS DECIMAL(5, 2)) AS earnedcrhrs_projected_s1,
@@ -151,7 +157,9 @@ WITH
       CAST(potentialcrhrs AS DECIMAL(5, 2)) * CAST(unweighted_grade_points AS DECIMAL(3, 2)) AS unweighted_points,
       CAST(potentialcrhrs_core AS DECIMAL(5, 2)) * CAST(gpa_points_core AS DECIMAL(3, 2)) AS weighted_points_core,
       CAST(potentialcrhrs_projected AS DECIMAL(5, 2)) * CAST(gpa_points_projected AS DECIMAL(3, 2)) AS weighted_points_projected,
-      CAST(potentialcrhrs_projected_s1 AS DECIMAL(5, 2)) * CAST(gpa_points_projected_s1 AS DECIMAL(3, 2)) AS weighted_points_projected_s1
+      CAST(
+        potentialcrhrs_projected_s1 AS DECIMAL(5, 2)
+      ) * CAST(gpa_points_projected_s1 AS DECIMAL(3, 2)) AS weighted_points_projected_s1
     FROM
       grades_union
   ),
@@ -221,7 +229,10 @@ SELECT
     ) AS DECIMAL(3, 2)
   ) AS cumulative_y1_gpa_projected_s1,
   CAST(
-    ROUND((weighted_points_core / potentialcrhrs_core), 2) AS DECIMAL(3, 2)
+    ROUND(
+      (weighted_points_core / potentialcrhrs_core),
+      2
+    ) AS DECIMAL(3, 2)
   ) AS core_cumulative_y1_gpa
 FROM
   pts_rollup

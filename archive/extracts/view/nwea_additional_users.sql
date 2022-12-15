@@ -10,7 +10,10 @@ SELECT
     WHEN sr.primary_site_schoolid = 0 THEN NULL
     WHEN sr.primary_site = 'KIPP Pathways at Bragaw' THEN 'Life Academy'
     WHEN sr.primary_site = 'KIPP Pathways at 18th Ave' THEN 'BOLD Academy'
-    WHEN sr.primary_site IN ('KIPP Liberty Academy', 'KIPP Sunrise Academy') THEN sr.primary_site
+    WHEN sr.primary_site IN (
+      'KIPP Liberty Academy',
+      'KIPP Sunrise Academy'
+    ) THEN sr.primary_site
     ELSE REPLACE(
       REPLACE(sr.primary_site, 'KIPP ', ''),
       'Square',
@@ -48,7 +51,7 @@ SELECT
   NULL AS [Role = Interventionist?],
   NULL AS [Role = SN Administrator?]
 FROM
-  gabby.people.staff_crosswalk_static sr
+  gabby.people.staff_crosswalk_static AS sr
 WHERE
   sr.[status] <> 'TERMINATED'
   AND sr.userprincipalname IS NOT NULL

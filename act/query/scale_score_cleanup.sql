@@ -1,7 +1,7 @@
 WITH
   key_clean AS (
     SELECT
-      subject,
+      [subject],
       scale AS scale_score,
       CASE
         WHEN raw_score LIKE '%-%' THEN CAST(
@@ -12,20 +12,20 @@ WITH
       END AS raw_score
     FROM
       gabby.act.key_cleanup UNPIVOT (
-        raw_score FOR subject IN (english, mathematics, reading, science)
+        raw_score FOR [subject] IN (english, mathematics, reading, science)
       ) u
   ),
   scaffold AS (
     SELECT
-      subject,
+      [subject],
       MAX(raw_score) AS max_raw_score
     FROM
       key_clean
     GROUP BY
-      subject
+      [subject]
     UNION ALL
     SELECT
-      subject,
+      [subject],
       max_raw_score - 1 AS max_raw_score
     FROM
       scaffold
@@ -37,7 +37,7 @@ SELECT DISTINCT
   scaffold.max_raw_score AS raw_score /* UPDATE */,
   row_generator.n AS grade_level,
   gabby.utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year,
-  UPPER(LEFT(scaffold.subject, 1)) + SUBSTRING(scaffold.subject, 2, LEN(scaffold.subject)) AS subject,
+  UPPER(LEFT(scaffold.subject, 1)) + SUBSTRING(scaffold.subject, 2, LEN(scaffold.subject)) AS [subject],
   MAX(key_clean.scale_score) OVER (
     PARTITION BY
       scaffold.subject
@@ -47,5 +47,7 @@ SELECT DISTINCT
 FROM
   scaffold
   LEFT OUTER JOIN key_clean ON scaffold.subject = key_clean.subject
-  AND scaffold.max_raw_score = key_clean.raw_score NNER
-  INNER JOIN gabby.utilities.row_generator ON gabby.utilities.row_generator.n (BETWEEN 9 AND 11)
+  AND scaffold.max_raw_score = key_clean.raw_score
+  INNER JOIN gabby.utilities.row_generator ON (
+    gabby.utilities.row_generator.n BETWEEN 9 AND 11
+  )

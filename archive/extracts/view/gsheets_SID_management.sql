@@ -39,11 +39,11 @@ WITH
             ELSE 0
           END AS is_inperson
         FROM
-          gabby.powerschool.ps_adaadm_daily_ctod_current_static mem
-          INNER JOIN gabby.powerschool.calendar_day cal ON mem.schoolid = cal.schoolid
+          gabby.powerschool.ps_adaadm_daily_ctod_current_static AS mem
+          INNER JOIN gabby.powerschool.calendar_day AS cal ON mem.schoolid = cal.schoolid
           AND mem.calendardate = cal.date_value
           AND mem.[db_name] = cal.[db_name]
-          LEFT JOIN gabby.powerschool.spenrollments_gen_static hb ON mem.studentid = hb.studentid
+          LEFT JOIN gabby.powerschool.spenrollments_gen_static AS hb ON mem.studentid = hb.studentid
           AND mem.calendardate (BETWEEN hb.enter_date AND hb.exit_date)
           AND mem.[db_name] = hb.[db_name]
           AND hb.specprog_name IN (
@@ -77,8 +77,10 @@ WITH
           sr.racecd,
           'Y' AS yn
         FROM
-          gabby.powerschool.studentrace sr
-      ) sub PIVOT (MAX(yn) FOR racecd IN ([I], [A], [B], [P], [W])) p
+          gabby.powerschool.studentrace AS sr
+      ) sub PIVOT (
+        MAX(yn) FOR racecd IN ([I], [A], [B], [P], [W])
+      ) p
   )
 SELECT
   co.region AS helper_region,
@@ -252,13 +254,13 @@ SELECT
   a.CumulativeDaysInMembership - a.membership_in_person AS RemoteDaysInMembership,
   a.CumulativeDaysPresent - a.present_in_person AS RemoteDaysPresent
 FROM
-  gabby.powerschool.cohort_identifiers_static co
-  INNER JOIN gabby.powerschool.students s ON co.student_number = s.student_number
-  LEFT JOIN gabby.powerschool.s_nj_stu_x nj ON co.students_dcid = nj.studentsdcid
+  gabby.powerschool.cohort_identifiers_static AS co
+  INNER JOIN gabby.powerschool.students AS s ON co.student_number = s.student_number
+  LEFT JOIN gabby.powerschool.s_nj_stu_x AS nj ON co.students_dcid = nj.studentsdcid
   AND co.[db_name] = nj.[db_name]
-  LEFT JOIN att a ON co.studentid = a.studentid
+  LEFT JOIN att AS a ON co.studentid = a.studentid
   AND co.[db_name] = a.[db_name]
-  LEFT JOIN race r
+  LEFT JOIN race AS r
 WITH
   (FORCESEEK) ON co.studentid = r.studentid
   AND co.[db_name] = r.[db_name]

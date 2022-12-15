@@ -276,8 +276,8 @@ FROM
       map.rubric_strand_label,
       map.rubric_strand_description
     FROM
-      scores_union su
-      LEFT JOIN gabby.ekg.walkthrough_domain_map map ON su.rubric_strand_field = map.rubric_strand_field
+      scores_union AS su
+      LEFT JOIN gabby.ekg.walkthrough_domain_map AS map ON su.rubric_strand_field = map.rubric_strand_field
     COLLATE Latin1_General_BIN
   ) sub
 GROUP BY

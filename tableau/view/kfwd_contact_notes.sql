@@ -24,6 +24,6 @@ SELECT
   cn.type_c
 FROM
   [gabby].[alumni].[contact_note_c] cn
-  INNER JOIN gabby.alumni.ktc_roster ktc ON cn.contact_c = ktc.sf_contact_id
+  INNER JOIN gabby.alumni.ktc_roster AS ktc ON cn.contact_c = ktc.sf_contact_id
 WHERE
   cn.is_deleted = 0

@@ -25,8 +25,8 @@ WITH
       sr.employee_number,
       'ADP' AS source_system
     FROM
-      gabby.adp.work_assignment_history wah
-      INNER JOIN gabby.people.employee_numbers sr ON wah.associate_id = sr.associate_id
+      gabby.adp.work_assignment_history AS wah
+      INNER JOIN gabby.people.employee_numbers AS sr ON wah.associate_id = sr.associate_id
       AND sr.is_active = 1
     WHERE
       '2021-01-01' BETWEEN CAST(wah.position_effective_date AS DATE) AND COALESCE(
@@ -57,8 +57,8 @@ WITH
       dwa.employee_reference_code AS employee_number,
       'DF' AS source_system
     FROM
-      gabby.dayforce.employee_work_assignment_clean dwa
-      INNER JOIN gabby.people.employee_numbers sr ON dwa.employee_reference_code = sr.employee_number
+      gabby.dayforce.employee_work_assignment_clean AS dwa
+      INNER JOIN gabby.people.employee_numbers AS sr ON dwa.employee_reference_code = sr.employee_number
       AND sr.is_active = 1
     WHERE
       dwa.work_assignment_effective_start <= '2020-12-31'

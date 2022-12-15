@@ -9,7 +9,7 @@ SELECT
   a.course_name,
   a.teacher_name
 FROM
-  gabby.tableau.gradebook_assignment_detail a
+  gabby.tableau.gradebook_assignment_detail AS a
 WHERE
   a.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
   AND a.ismissing = 1

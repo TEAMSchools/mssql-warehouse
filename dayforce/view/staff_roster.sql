@@ -54,7 +54,10 @@ WITH
         WHEN sub.ethnicity = 'Decline to Answer' THEN NULL
         ELSE CAST(
           RTRIM(
-            LEFT(sub.ethnicity, CHARINDEX(' (', sub.ethnicity))
+            LEFT(
+              sub.ethnicity,
+              CHARINDEX(' (', sub.ethnicity)
+            )
           ) AS VARCHAR(125)
         )
       END AS primary_ethnicity,
@@ -129,7 +132,9 @@ WITH
             WHEN e.paytype <> '' THEN CAST(e.paytype AS VARCHAR(25))
           END AS paytype,
           CASE
-            WHEN e.jobs_and_positions_flsa_status <> '' THEN CAST(e.jobs_and_positions_flsa_status AS VARCHAR(25))
+            WHEN e.jobs_and_positions_flsa_status <> '' THEN CAST(
+              e.jobs_and_positions_flsa_status AS VARCHAR(25)
+            )
           END AS flsa_status,
           CASE
             WHEN e.grades_taught <> '' THEN CAST(e.grades_taught AS VARCHAR(125))
@@ -146,7 +151,9 @@ WITH
           CASE
             WHEN e.ethnicity <> '' THEN e.ethnicity
           END AS ethnicity,
-          CAST(e.employee_s_manager_s_df_emp_number_id AS INT) AS manager_df_employee_number,
+          CAST(
+            e.employee_s_manager_s_df_emp_number_id AS INT
+          ) AS manager_df_employee_number,
           e.birth_date,
           e.original_hire_date,
           e.termination_date,
@@ -168,7 +175,7 @@ WITH
             ELSE 0
           END AS is_hispanic
         FROM
-          gabby.dayforce.employees e
+          gabby.dayforce.employees AS e
       ) sub
   )
 SELECT
@@ -241,7 +248,7 @@ SELECT
     m.preferred_last_name + ', ' + m.preferred_first_name AS VARCHAR(125)
   ) AS manager_name
 FROM
-  clean_people c
-  LEFT JOIN gabby.people.school_crosswalk s ON c.primary_site = s.site_name
+  clean_people AS c
+  LEFT JOIN gabby.people.school_crosswalk AS s ON c.primary_site = s.site_name
   AND s._fivetran_deleted = 0
-  LEFT JOIN clean_people m ON c.manager_df_employee_number = m.df_employee_number
+  LEFT JOIN clean_people AS m ON c.manager_df_employee_number = m.df_employee_number

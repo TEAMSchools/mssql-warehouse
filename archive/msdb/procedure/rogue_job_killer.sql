@@ -15,8 +15,8 @@ DECLARE job_killer CURSOR FOR
 SELECT
   sj.job_id
 FROM
-  msdb.dbo.sysjobs sj
-  INNER JOIN msdb.dbo.syscategories sc ON sj.category_id = sc.category_id
+  msdb.dbo.sysjobs AS sj
+  INNER JOIN msdb.dbo.syscategories AS sc ON sj.category_id = sc.category_id
   AND sc.name = 'Data Team';
 
 OPEN job_killer

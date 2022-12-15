@@ -20,11 +20,11 @@ WITH
         rv.[timestamp] DESC
     ) AS rn
     FROM
-      gabby.powerschool.u_def_ext_students x
-      INNER JOIN gabby.powerschool.students s ON x.studentsdcid = s.dcid
+      gabby.powerschool.u_def_ext_students AS x
+      INNER JOIN gabby.powerschool.students AS s ON x.studentsdcid = s.dcid
       AND x.[db_name] = s.[db_name]
       AND s.enroll_status = 0
-      LEFT JOIN gabby.enrollment.residency_verification rv ON s.student_number = rv.id
+      LEFT JOIN gabby.enrollment.residency_verification AS rv ON s.student_number = rv.id
       AND rv.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
       AND rv._fivetran_deleted = 0
   ),
@@ -44,9 +44,13 @@ WITH
     COLLATE Latin1_General_BIN AS lunch_app_status,
     CAST(sub.lunch_balance AS VARCHAR(500))
     COLLATE Latin1_General_BIN AS lunch_balance,
-    CAST(sub.iep_registration_followup AS VARCHAR(500))
+    CAST(
+      sub.iep_registration_followup AS VARCHAR(500)
+    )
     COLLATE Latin1_General_BIN AS iep_registration_followup_required,
-    CAST(sub.lep_registration_followup AS VARCHAR(500))
+    CAST(
+      sub.lep_registration_followup AS VARCHAR(500)
+    )
     COLLATE Latin1_General_BIN AS lep_registration_followup_required,
     CAST(sub.birth_certificate_proof AS VARCHAR(500))
     COLLATE Latin1_General_BIN AS birth_certificate_proof,
@@ -137,15 +141,15 @@ WITH
           ISNULL(rv.birth_certificate_proof, 'N') AS birth_certificate_proof,
           gabby.utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year
         FROM
-          gabby.powerschool.students s
-          LEFT JOIN gabby.powerschool.cohort_identifiers_static co ON s.student_number = co.student_number
+          gabby.powerschool.students AS s
+          LEFT JOIN gabby.powerschool.cohort_identifiers_static AS co ON s.student_number = co.student_number
           AND s.[db_name] = co.[db_name]
           AND co.rn_undergrad = 1
-          LEFT JOIN gabby.powerschool.u_studentsuserfields suf ON s.dcid = suf.studentsdcid
+          LEFT JOIN gabby.powerschool.u_studentsuserfields AS suf ON s.dcid = suf.studentsdcid
           AND s.[db_name] = suf.[db_name]
-          LEFT JOIN gabby.powerschool.u_def_ext_students uxs ON s.dcid = uxs.studentsdcid
+          LEFT JOIN gabby.powerschool.u_def_ext_students AS uxs ON s.dcid = uxs.studentsdcid
           AND s.[db_name] = uxs.[db_name]
-          LEFT JOIN residency_verification rv ON s.student_number = rv.student_number
+          LEFT JOIN residency_verification AS rv ON s.student_number = rv.student_number
           AND rv.rn = 1
         WHERE
           s.enroll_status IN (-1, 0)
@@ -258,6 +262,6 @@ SELECT
     AND u.[value] = 'N' THEN -1
   END AS audit_status
 FROM
-  all_data a
-  INNER JOIN unpivoted u ON a.student_number = u.student_number
+  all_data AS a
+  INNER JOIN unpivoted AS u ON a.student_number = u.student_number
   AND a.academic_year = u.academic_year

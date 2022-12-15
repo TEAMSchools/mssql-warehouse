@@ -11,6 +11,6 @@ SELECT
   ADA.membershipvalue,
   ADA.is_present AS attendancevalue
 FROM
-  kippcamden.tableau.attendance_dashboard ADA
+  kippcamden.tableau.attendance_dashboard AS ADA
 WHERE
   ADA.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()

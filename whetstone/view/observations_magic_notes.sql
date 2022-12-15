@@ -8,7 +8,7 @@ SELECT
   mn.[text] AS magic_notes_text,
   mn.shared AS magic_notes_shared
 FROM
-  gabby.whetstone.observations wo
+  gabby.whetstone.observations AS wo
   CROSS APPLY OPENJSON (wo.magic_notes, '$')
 WITH
   (

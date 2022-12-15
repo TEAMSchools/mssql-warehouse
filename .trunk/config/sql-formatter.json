@@ -1,4 +1,5 @@
 {
   "language": "tsql",
-  "keywordCase": "upper"
+  "keywordCase": "upper",
+  "expressionWidth": 44
 }

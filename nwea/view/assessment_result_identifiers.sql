@@ -284,7 +284,9 @@ FROM
           CAST(school_name AS VARCHAR(125)) AS school_name,
           fall_to_fall_conditional_growth_index,
           fall_to_fall_conditional_growth_percentile,
-          CAST(fall_to_fall_met_projected_growth AS VARCHAR(25)) AS fall_to_fall_met_projected_growth,
+          CAST(
+            fall_to_fall_met_projected_growth AS VARCHAR(25)
+          ) AS fall_to_fall_met_projected_growth,
           fall_to_fall_observed_growth,
           fall_to_fall_observed_growth_se,
           fall_to_fall_projected_growth,
@@ -324,12 +326,24 @@ FROM
           CAST(goal_4_range AS VARCHAR(25)) AS goal_4_range,
           goal_4_rit_score,
           goal_4_std_err,
-          CAST(projected_proficiency_level_1 AS VARCHAR(25)) AS projected_proficiency_level_1,
-          CAST(projected_proficiency_level_2 AS VARCHAR(25)) AS projected_proficiency_level_2,
-          CAST(projected_proficiency_level_3 AS VARCHAR(25)) AS projected_proficiency_level_3,
-          CAST(projected_proficiency_study_1 AS VARCHAR(125)) AS projected_proficiency_study_1,
-          CAST(projected_proficiency_study_2 AS VARCHAR(125)) AS projected_proficiency_study_2,
-          CAST(projected_proficiency_study_3 AS VARCHAR(125)) AS projected_proficiency_study_3,
+          CAST(
+            projected_proficiency_level_1 AS VARCHAR(25)
+          ) AS projected_proficiency_level_1,
+          CAST(
+            projected_proficiency_level_2 AS VARCHAR(25)
+          ) AS projected_proficiency_level_2,
+          CAST(
+            projected_proficiency_level_3 AS VARCHAR(25)
+          ) AS projected_proficiency_level_3,
+          CAST(
+            projected_proficiency_study_1 AS VARCHAR(125)
+          ) AS projected_proficiency_study_1,
+          CAST(
+            projected_proficiency_study_2 AS VARCHAR(125)
+          ) AS projected_proficiency_study_2,
+          CAST(
+            projected_proficiency_study_3 AS VARCHAR(125)
+          ) AS projected_proficiency_study_3,
           CAST(ritto_reading_max AS VARCHAR(5)) AS ritto_reading_max,
           CAST(ritto_reading_min AS VARCHAR(5)) AS ritto_reading_min,
           spring_to_spring_conditional_growth_index,
@@ -371,24 +385,24 @@ FROM
         FROM
           nwea.assessment_results
       ) sub
-      INNER JOIN powerschool.cohort_static co ON sub.student_id = co.student_number
+      INNER JOIN powerschool.cohort_static AS co ON sub.student_id = co.student_number
       AND sub.academic_year = co.academic_year
       AND co.rn_year = 1
-      LEFT JOIN gabby.nwea.percentile_norms norms_2008 ON co.grade_level = norms_2008.grade_level
+      LEFT JOIN gabby.nwea.percentile_norms AS norms_2008 ON co.grade_level = norms_2008.grade_level
       AND sub.measurement_scale = norms_2008.measurementscale_clean
     COLLATE Latin1_General_BIN
     AND sub.test_ritscore = norms_2008.testritscore
     AND sub.term = norms_2008.term_clean
     COLLATE Latin1_General_BIN
     AND norms_2008.norms_year = 2008
-    LEFT JOIN gabby.nwea.percentile_norms norms_2011 ON co.grade_level = norms_2011.grade_level
+    LEFT JOIN gabby.nwea.percentile_norms AS norms_2011 ON co.grade_level = norms_2011.grade_level
     AND sub.measurement_scale = norms_2011.measurementscale_clean
     COLLATE Latin1_General_BIN
     AND sub.test_ritscore = norms_2011.testritscore
     AND sub.term = norms_2011.term_clean
     COLLATE Latin1_General_BIN
     AND norms_2011.norms_year = 2011
-    LEFT JOIN gabby.nwea.percentile_norms norms_2015 ON co.grade_level = norms_2015.grade_level
+    LEFT JOIN gabby.nwea.percentile_norms AS norms_2015 ON co.grade_level = norms_2015.grade_level
     AND sub.measurement_scale = norms_2015.measurementscale_clean
     COLLATE Latin1_General_BIN
     AND sub.test_ritscore = norms_2015.testritscore

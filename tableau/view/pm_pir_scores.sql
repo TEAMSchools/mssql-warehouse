@@ -25,5 +25,5 @@ SELECT
   r.userprincipalname,
   r.manager_mail
 FROM
-  gabby.pm.pir_rubric_scores rs
-  LEFT JOIN gabby.people.staff_crosswalk_static r ON rs.df_employee_number = r.df_employee_number
+  gabby.pm.pir_rubric_scores AS rs
+  LEFT JOIN gabby.people.staff_crosswalk_static AS r ON rs.df_employee_number = r.df_employee_number

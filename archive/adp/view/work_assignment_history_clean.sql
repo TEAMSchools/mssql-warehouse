@@ -64,8 +64,8 @@ FROM
       CAST(wah.position_effective_end_date AS DATE) AS position_effective_end_date,
       sr.file_number AS employee_number
     FROM
-      gabby.adp.work_assignment_history wah
-      INNER JOIN gabby.adp.employees_all sr ON wah.associate_id = sr.associate_id
+      gabby.adp.work_assignment_history AS wah
+      INNER JOIN gabby.adp.employees_all AS sr ON wah.associate_id = sr.associate_id
     WHERE
       CAST(wah.position_effective_date AS DATE) < CAST(wah.position_effective_end_date AS DATE)
       OR wah.position_effective_end_date IS NULL

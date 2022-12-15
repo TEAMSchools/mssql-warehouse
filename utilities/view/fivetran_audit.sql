@@ -16,7 +16,7 @@ SELECT
   rows_updated_or_inserted,
   progress
 FROM
-  alumni.fivetran_audit
+  alumni.fivetran_audit AS
 UNION
 SELECT
   id,
@@ -31,7 +31,7 @@ SELECT
   rows_updated_or_inserted,
   progress
 FROM
-  illuminate_groups.fivetran_audit
+  illuminate_groups.fivetran_audit AS
 UNION
 SELECT
   id,
@@ -46,7 +46,7 @@ SELECT
   rows_updated_or_inserted,
   progress
 FROM
-  illuminate_standards.fivetran_audit
+  illuminate_standards.fivetran_audit AS
 UNION
 SELECT
   id,
@@ -61,7 +61,7 @@ SELECT
   rows_updated_or_inserted,
   progress
 FROM
-  illuminate_dna_assessments.fivetran_audit
+  illuminate_dna_assessments.fivetran_audit AS
 UNION
 SELECT
   id,
@@ -76,7 +76,7 @@ SELECT
   rows_updated_or_inserted,
   progress
 FROM
-  illuminate_public.fivetran_audit
+  illuminate_public.fivetran_audit AS
 UNION
 SELECT
   id,
@@ -91,7 +91,7 @@ SELECT
   rows_updated_or_inserted,
   progress
 FROM
-  illuminate_codes.fivetran_audit
+  illuminate_codes.fivetran_audit AS
 UNION
 SELECT
   id,
@@ -106,7 +106,7 @@ SELECT
   rows_updated_or_inserted,
   progress
 FROM
-  illuminate_dna_repositories.fivetran_audit
+  illuminate_dna_repositories.fivetran_audit AS
 UNION
 SELECT
   id,
@@ -121,7 +121,7 @@ SELECT
   rows_updated_or_inserted,
   progress
 FROM
-  recruiting.fivetran_audit
+  recruiting.fivetran_audit AS
 UNION
 SELECT
   id,
@@ -136,7 +136,7 @@ SELECT
   rows_updated_or_inserted,
   progress
 FROM
-  newarkenrolls.fivetran_audit
+  newarkenrolls.fivetran_audit AS
 UNION
 SELECT
   id,
@@ -151,7 +151,7 @@ SELECT
   rows_updated_or_inserted,
   progress
 FROM
-  nwea.fivetran_audit
+  nwea.fivetran_audit AS
 UNION
 SELECT
   id,
@@ -166,7 +166,7 @@ SELECT
   rows_updated_or_inserted,
   progress
 FROM
-  asana.fivetran_audit
+  asana.fivetran_audit AS
 UNION
 SELECT
   id,
@@ -181,7 +181,7 @@ SELECT
   rows_updated_or_inserted,
   progress
 FROM
-  zendesk.fivetran_audit
+  zendesk.fivetran_audit AS
 UNION
 SELECT
   id,
@@ -196,7 +196,7 @@ SELECT
   rows_updated_or_inserted,
   progress
 FROM
-  deanslist.fivetran_audit
+  deanslist.fivetran_audit AS
 UNION
 SELECT
   id,
@@ -211,7 +211,7 @@ SELECT
   rows_updated_or_inserted,
   progress
 FROM
-  naviance.fivetran_audit
+  naviance.fivetran_audit AS
 UNION
 SELECT
   id,
@@ -226,7 +226,7 @@ SELECT
   rows_updated_or_inserted,
   progress
 FROM
-  steptool.fivetran_audit
+  steptool.fivetran_audit AS
 UNION
 SELECT
   id,
@@ -241,7 +241,7 @@ SELECT
   rows_updated_or_inserted,
   progress
 FROM
-  reporting.fivetran_audit
+  reporting.fivetran_audit AS
 UNION
 SELECT
   id,
@@ -256,7 +256,7 @@ SELECT
   rows_updated_or_inserted,
   progress
 FROM
-  stmath.fivetran_audit
+  stmath.fivetran_audit AS
 UNION
 SELECT
   id,
@@ -271,7 +271,7 @@ SELECT
   rows_updated_or_inserted,
   progress
 FROM
-  caredox.fivetran_audit
+  caredox.fivetran_audit AS
 UNION
 SELECT
   id,
@@ -286,7 +286,7 @@ SELECT
   rows_updated_or_inserted,
   progress
 FROM
-  easyiep.fivetran_audit
+  easyiep.fivetran_audit AS
 UNION
 SELECT
   id,
@@ -301,7 +301,7 @@ SELECT
   rows_updated_or_inserted,
   progress
 FROM
-  renaissance.fivetran_audit
+  renaissance.fivetran_audit AS
 UNION
 SELECT
   id,
@@ -316,7 +316,7 @@ SELECT
   rows_updated_or_inserted,
   progress
 FROM
-  finance.fivetran_audit
+  finance.fivetran_audit AS
 UNION
 SELECT
   id,
@@ -331,7 +331,7 @@ SELECT
   rows_updated_or_inserted,
   progress
 FROM
-  lit.fivetran_audit
+  lit.fivetran_audit AS
 UNION
 SELECT
   id,
@@ -346,7 +346,7 @@ SELECT
   rows_updated_or_inserted,
   progress
 FROM
-  enrollment.fivetran_audit
+  enrollment.fivetran_audit AS
 UNION
 SELECT
   id,
@@ -361,7 +361,7 @@ SELECT
   rows_updated_or_inserted,
   progress
 FROM
-  adp.fivetran_audit
+  adp.fivetran_audit AS
 UNION
 SELECT
   id,

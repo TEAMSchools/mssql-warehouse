@@ -64,20 +64,20 @@ SELECT
       lex.activity_start_time DESC
   ) AS rn_curr
 FROM
-  gabby.powerschool.cohort_identifiers_static co
-  INNER JOIN gabby.powerschool.students s ON co.student_number = s.student_number
+  gabby.powerschool.cohort_identifiers_static AS co
+  INNER JOIN gabby.powerschool.students AS s ON co.student_number = s.student_number
   AND co.db_name = s.db_name
-  LEFT JOIN gabby.powerschool.course_enrollments_static enr ON co.student_number = enr.student_number
+  LEFT JOIN gabby.powerschool.course_enrollments_static AS enr ON co.student_number = enr.student_number
   AND co.academic_year = enr.academic_year
   AND co.db_name = enr.db_name
   AND enr.course_number = 'HR'
   AND enr.section_enroll_status = 0
-  LEFT JOIN gabby.lexia.student_goals g ON co.student_number = g.student_number
-  LEFT JOIN prev_week_time pw ON s.student_web_id = pw.username
+  LEFT JOIN gabby.lexia.student_goals AS g ON co.student_number = g.student_number
+  LEFT JOIN prev_week_time AS pw ON s.student_web_id = pw.username
 COLLATE Latin1_General_BIN
 AND co.academic_year = pw.academic_year
 AND pw.rn = 1
-LEFT JOIN gabby.lexia.student_progress lex ON s.student_web_id = lex.username
+LEFT JOIN gabby.lexia.student_progress AS lex ON s.student_web_id = lex.username
 COLLATE Latin1_General_BIN
 WHERE
   co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()

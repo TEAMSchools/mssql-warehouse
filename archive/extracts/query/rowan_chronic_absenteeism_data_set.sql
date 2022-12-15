@@ -61,17 +61,17 @@ SELECT
   sus.oss,
   NULL AS transportation_method
 FROM
-  gabby.powerschool.cohort_identifiers_static co
-  LEFT OUTER JOIN gabby.powerschool.s_nj_stu_x nj ON co.students_dcid = nj.studentsdcid
-  LEFT OUTER JOIN gabby.powerschool.gpa_detail gpa ON co.student_number = gpa.student_number
+  gabby.powerschool.cohort_identifiers_static AS co
+  LEFT OUTER JOIN gabby.powerschool.s_nj_stu_x AS nj ON co.students_dcid = nj.studentsdcid
+  LEFT OUTER JOIN gabby.powerschool.gpa_detail AS gpa ON co.student_number = gpa.student_number
   AND co.academic_year = gpa.academic_year
   AND gpa.is_curterm = 1
-  LEFT OUTER JOIN gabby.lit.achieved_by_round_static lit ON co.student_number = lit.student_number
+  LEFT OUTER JOIN gabby.lit.achieved_by_round_static AS lit ON co.student_number = lit.student_number
   AND co.academic_year = lit.academic_year
   AND lit.is_curterm = 1
   LEFT OUTER JOIN ADA ON co.studentid = ADA.studentid
   AND co.yearid = ADA.yearid
-  LEFT OUTER JOIN suspensions sus ON co.studentid = sus.studentid
+  LEFT OUTER JOIN suspensions AS sus ON co.studentid = sus.studentid
   AND co.academic_year = sus.academic_year
 WHERE
   co.region = 'KCNA'

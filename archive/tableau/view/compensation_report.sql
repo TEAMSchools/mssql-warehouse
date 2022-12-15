@@ -30,9 +30,9 @@ WITH
           ea._modified DESC
       ) AS rn_salary_desc
     FROM
-      gabby.payroll.pay_periods pp
-      INNER JOIN gabby.dayforce.employees_archive ea ON CAST(ea._modified AS DATE) (BETWEEN pp.start_date AND pp.end_date)
-      LEFT JOIN gabby.people.id_crosswalk_adp adp ON ea.adp_associate_id = adp.adp_associate_id
+      gabby.payroll.pay_periods AS pp
+      INNER JOIN gabby.dayforce.employees_archive AS ea ON CAST(ea._modified AS DATE) (BETWEEN pp.start_date AND pp.end_date)
+      LEFT JOIN gabby.people.id_crosswalk_adp AS adp ON ea.adp_associate_id = adp.adp_associate_id
   )
 SELECT
   cr.fund_code,
@@ -66,8 +66,8 @@ SELECT
   COALESCE(s.adp_position_end_date, s.termination_date) AS position_end_date,
   s.annual_salary
 FROM
-  gabby.mip.compensation_report cr
-  LEFT JOIN salary s ON cr.employee_code = s.adp_position_id
+  gabby.mip.compensation_report AS cr
+  LEFT JOIN salary AS s ON cr.employee_code = s.adp_position_id
   AND CAST(
     SUBSTRING(
       cr._file,
@@ -83,7 +83,11 @@ FROM
     ) AS INT
   ) = s.month
   AND CAST(
-    SUBSTRING(cr._file, PATINDEX('%PP[0-9]%', cr._file) + 2, 1) AS INT
+    SUBSTRING(
+      cr._file,
+      PATINDEX('%PP[0-9]%', cr._file) + 2,
+      1
+    ) AS INT
   ) = s.pay_period
   AND s.rn_salary_desc = 1
 WHERE

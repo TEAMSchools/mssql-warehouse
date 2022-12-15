@@ -9,7 +9,7 @@ SELECT
   ol.[option] AS option_name,
   ol.answer
 FROM
-  gabby.surveygizmo.survey_response_data_current_static srd
+  gabby.surveygizmo.survey_response_data_current_static AS srd
   CROSS APPLY OPENJSON (srd.options_list, '$')
 WITH
   (

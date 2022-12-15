@@ -26,13 +26,17 @@ WITH
           scw.job_title,
           NULL
         FROM
-          gabby.people.staff_roster scw
+          gabby.people.staff_roster AS scw
         WHERE
           (
             scw.worker_category NOT IN ('Intern', 'Part Time')
             OR scw.worker_category IS NULL
           )
-          AND COALESCE(scw.termination_date, CURRENT_TIMESTAMP) >= DATEFROMPARTS(gabby.utilities.global_academic_year (), 7, 1)
+          AND COALESCE(scw.termination_date, CURRENT_TIMESTAMP) >= DATEFROMPARTS(
+            gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+            7,
+            1
+          )
         UNION ALL
         SELECT DISTINCT
           scw.[location],
@@ -40,13 +44,17 @@ WITH
           'Default',
           NULL
         FROM
-          gabby.people.staff_roster scw
+          gabby.people.staff_roster AS scw
         WHERE
           (
             scw.worker_category NOT IN ('Intern', 'Part Time')
             OR scw.worker_category IS NULL
           )
-          AND COALESCE(scw.termination_date, CURRENT_TIMESTAMP) >= DATEFROMPARTS(gabby.utilities.global_academic_year (), 7, 1)
+          AND COALESCE(scw.termination_date, CURRENT_TIMESTAMP) >= DATEFROMPARTS(
+            gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+            7,
+            1
+          )
         UNION ALL
         SELECT DISTINCT
           scw.[location],
@@ -54,13 +62,17 @@ WITH
           'Default',
           NULL
         FROM
-          gabby.people.staff_roster scw
+          gabby.people.staff_roster AS scw
         WHERE
           (
             scw.worker_category NOT IN ('Intern', 'Part Time')
             OR scw.worker_category IS NULL
           )
-          AND COALESCE(scw.termination_date, CURRENT_TIMESTAMP) >= DATEFROMPARTS(gabby.utilities.global_academic_year (), 7, 1)
+          AND COALESCE(scw.termination_date, CURRENT_TIMESTAMP) >= DATEFROMPARTS(
+            gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+            7,
+            1
+          )
       ) sub
   )
 SELECT

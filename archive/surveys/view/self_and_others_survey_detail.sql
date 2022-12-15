@@ -23,7 +23,10 @@ SELECT
   so.response_value,
   so.response_weight,
   (so.response_value * so.response_weight) AS response_value_weighted,
-  COALESCE(dfid.df_employee_number, adpid.df_employee_number) AS subject_employee_number,
+  COALESCE(
+    dfid.df_employee_number,
+    adpid.df_employee_number
+  ) AS subject_employee_number,
   COALESCE(
     CONCAT(
       dfid.preferred_first_name,
@@ -36,7 +39,10 @@ SELECT
       adpid.preferred_last_name
     )
   ) AS subject_name,
-  COALESCE(dfid.legal_entity_name, adpid.legal_entity_name) AS subject_legal_entity_name,
+  COALESCE(
+    dfid.legal_entity_name,
+    adpid.legal_entity_name
+  ) AS subject_legal_entity_name,
   CAST(
     COALESCE(dfid.primary_site, adpid.primary_site) AS VARCHAR
   ) AS subject_location,
@@ -69,6 +75,6 @@ SELECT
   ) AS subject_manager_username,
   NULL AS avg_response_value_location
 FROM
-  gabby.surveys.self_and_others_survey_long_static so
-  LEFT JOIN gabby.people.staff_crosswalk_static dfid ON so.subject_associate_id = CAST(dfid.df_employee_number AS VARCHAR)
-  LEFT JOIN gabby.people.staff_crosswalk_static adpid ON so.subject_associate_id = adpid.adp_associate_id
+  gabby.surveys.self_and_others_survey_long_static AS so
+  LEFT JOIN gabby.people.staff_crosswalk_static AS dfid ON so.subject_associate_id = CAST(dfid.df_employee_number AS VARCHAR)
+  LEFT JOIN gabby.people.staff_crosswalk_static AS adpid ON so.subject_associate_id = adpid.adp_associate_id

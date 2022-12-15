@@ -99,9 +99,9 @@ WITH
               sn._line DESC
           ) AS rn_dupe
         FROM
-          raw_files r
-          LEFT OUTER JOIN gabby.powerschool.students sid ON r.state_student_id = sid.state_studentnumber
-          LEFT OUTER JOIN gabby.powerschool.students sn ON r.local_student_id = CAST(sn.student_number AS NVARCHAR)
+          raw_files AS r
+          LEFT OUTER JOIN gabby.powerschool.students AS sid ON r.state_student_id = sid.state_studentnumber
+          LEFT OUTER JOIN gabby.powerschool.students AS sn ON r.local_student_id = CAST(sn.student_number AS NVARCHAR)
       ) sub
     WHERE
       rn_dupe = 1
@@ -174,8 +174,8 @@ WITH
   ,ROW_NUMBER() OVER(
   PARTITION BY t._file, t._line
   ORDER BY s._line DESC) AS rn
-  FROM that t
-  INNER JOIN gabby.powerschool.students s
+  FROM that AS t
+  INNER JOIN gabby.powerschool.students AS s
   ON CHARINDEX(LTRIM(RTRIM(REPLACE(t.last_name,' ',''))), gabby.utilities.STRIP_CHARACTERS(REPLACE(s.last_name,' ',''),'^A-Z')) > 0
   AND CHARINDEX(LTRIM(RTRIM(REPLACE(t.first_name, ' ', ''))), gabby.utilities.STRIP_CHARACTERS(REPLACE(s.first_name,' ',''),'^A-Z')) > 0
   WHERE t.local_student_id IS NULL
@@ -201,8 +201,8 @@ WITH
   ,ROW_NUMBER() OVER(
   PARTITION BY t._file, t._line
   ORDER BY s._line DESC) AS rn
-  FROM that t
-  INNER JOIN gabby.powerschool.students s
+  FROM that AS t
+  INNER JOIN gabby.powerschool.students AS s
   ON CHARINDEX(LTRIM(RTRIM(REPLACE(t.last_name,' ',''))), gabby.utilities.STRIP_CHARACTERS(REPLACE(s.last_name,' ',''),'^A-Z')) > 0
   AND CHARINDEX(LTRIM(RTRIM(REPLACE(t.first_name, ' ', ''))), gabby.utilities.STRIP_CHARACTERS(REPLACE(s.first_name,' ',''),'^A-Z')) > 0
   WHERE t.state_student_id IS NULL
@@ -232,8 +232,8 @@ WITH
   ,s.lastfirst
   
   ,CONCAT('UPDATE gabby.njsmart.njask_archive SET local_student_id =  WHERE _file = ''', n._file, ''' AND _line = ', n._line, ';') AS update_statement
-  FROM gabby.njsmart.njask_archive n
-  LEFT OUTER JOIN gabby.powerschool.students s
+  FROM gabby.njsmart.njask_archive AS n
+  LEFT OUTER JOIN gabby.powerschool.students AS s
   ON n.local_student_id = s.student_number
   WHERE s.student_number IS NULL
    */
@@ -247,10 +247,10 @@ WITH
   
   ,sn.state_studentnumber
   ,sn.lastfirst
-  FROM gabby.njsmart.njask n
-  LEFT OUTER JOIN gabby.powerschool.students sid
+  FROM gabby.njsmart.njask AS n
+  LEFT OUTER JOIN gabby.powerschool.students AS sid
   ON n.sid = sid.state_studentnumber
-  LEFT OUTER JOIN gabby.powerschool.students sn
+  LEFT OUTER JOIN gabby.powerschool.students AS sn
   ON n.local_student_id = sn.student_number
   WHERE sn.lastfirst IS NULL
    */

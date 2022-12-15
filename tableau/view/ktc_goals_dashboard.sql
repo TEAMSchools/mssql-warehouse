@@ -228,8 +228,8 @@ SELECT
   ISNULL(ap.is_submitted_cte, 0) AS is_submitted_cte,
   gabby.utilities.GLOBAL_ACADEMIC_YEAR () AS current_academic_year
 FROM
-  gabby.alumni.ktc_roster c
-  LEFT JOIN gabby.alumni.enrollment_identifiers e ON c.sf_contact_id = e.student_c
-  LEFT JOIN gabby.alumni.contact_note_rollup cn ON c.sf_contact_id = cn.contact_id
+  gabby.alumni.ktc_roster AS c
+  LEFT JOIN gabby.alumni.enrollment_identifiers AS e ON c.sf_contact_id = e.student_c
+  LEFT JOIN gabby.alumni.contact_note_rollup AS cn ON c.sf_contact_id = cn.contact_id
   AND cn.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-  LEFT JOIN app_rollup ap ON c.sf_contact_id = ap.sf_contact_id
+  LEFT JOIN app_rollup AS ap ON c.sf_contact_id = ap.sf_contact_id

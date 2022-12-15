@@ -19,8 +19,8 @@ SELECT
   NULL AS accounting_line,
   NULL AS notes
 FROM
-  gabby.payroll.new_hire_tracker p
-  LEFT JOIN gabby.people.staff_roster r ON p.salesforce_position_number = r.salesforce_job_position_name_custom
+  gabby.payroll.new_hire_tracker AS p
+  LEFT JOIN gabby.people.staff_roster AS r ON p.salesforce_position_number = r.salesforce_job_position_name_custom
   AND r.rn_curr = 1
 UNION ALL
 SELECT
@@ -39,8 +39,8 @@ SELECT
   NULL AS accounting_line,
   e.[description] AS notes
 FROM
-  gabby.payroll.payroll_edit_tracker e
-  LEFT JOIN gabby.people.staff_roster r ON e.associate_id = r.associate_id
+  gabby.payroll.payroll_edit_tracker AS e
+  LEFT JOIN gabby.people.staff_roster AS r ON e.associate_id = r.associate_id
   AND r.rn_curr = 1
 WHERE
   e._fivetran_deleted IS NULL
@@ -64,8 +64,8 @@ SELECT
   END AS accounting_line,
   s.bonus_stipend_details AS notes
 FROM
-  gabby.payroll.status_change s
-  LEFT JOIN gabby.adp.staff_roster r ON s.employee_associate_id = r.associate_id
+  gabby.payroll.status_change AS s
+  LEFT JOIN gabby.adp.staff_roster AS r ON s.employee_associate_id = r.associate_id
   AND r.rn_curr = 1
 WHERE
   s.effective_date_of_change <> 'varies'
@@ -89,8 +89,12 @@ SELECT
   'Emplpoyee Accounting Line' AS accounting_line,
   NULL AS notes
 FROM
-  gabby.adp.staff_roster r
+  gabby.adp.staff_roster AS r
 WHERE
   r.rn_curr = 1
   AND position_status = 'Terminated'
-  AND CAST(termination_date AS DATE) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR (), 7, 1)
+  AND CAST(termination_date AS DATE) >= DATEFROMPARTS(
+    gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+    7,
+    1
+  )

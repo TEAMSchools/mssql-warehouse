@@ -28,11 +28,15 @@ SELECT
     WHEN co.grade_level = 99 THEN 14
     ELSE co.grade_level + 1
   END AS [13 Grade Level ID],
-  CONCAT(enr.academic_year, '-', (enr.academic_year + 1)) AS [14 Academic Year],
+  CONCAT(
+    enr.academic_year,
+    '-',
+    (enr.academic_year + 1)
+  ) AS [14 Academic Year],
   NULL AS [15 Session Type ID]
 FROM
-  gabby.powerschool.course_enrollments_current_static enr
-  INNER JOIN gabby.powerschool.cohort_identifiers_static co ON enr.student_number = co.student_number
+  gabby.powerschool.course_enrollments_current_static AS enr
+  INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON enr.student_number = co.student_number
   AND enr.academic_year = co.academic_year
   AND enr.[db_name] = co.[db_name]
   AND co.rn_year = 1

@@ -32,7 +32,7 @@ WITH
         eh.position_effective_start_date
       ) AS work_assignment_start_date
     FROM
-      gabby.people.employment_history_static eh
+      gabby.people.employment_history_static AS eh
     WHERE
       CAST(CURRENT_TIMESTAMP AS DATE) (
         BETWEEN eh.effective_start_date AND eh.effective_end_date
@@ -64,7 +64,7 @@ WITH
         ps.position_effective_start_date
       ) AS work_assignment_start_date
     FROM
-      gabby.people.employment_history_static ps
+      gabby.people.employment_history_static AS ps
     WHERE
       ps.status_effective_start_date > CAST(CURRENT_TIMESTAMP AS DATE)
       AND ps.position_status = 'Active'
@@ -375,17 +375,17 @@ WITH
             'Bi/Multiracial'
           ) AS preferred_race_ethnicity
         FROM
-          all_staff eh
-          INNER JOIN gabby.adp.employees_all ea ON eh.associate_id = ea.associate_id
-          LEFT JOIN gabby.adp.workers_clean_static w ON eh.associate_id = w.worker_id
-          LEFT JOIN hire_dates hd ON eh.associate_id = hd.associate_id
-          LEFT JOIN termination_dates td ON eh.associate_id = td.associate_id
-          LEFT JOIN rehire_dates rh ON eh.associate_id = rh.associate_id
-          LEFT JOIN gabby.adp.workers_custom_field_group_wide_static cf ON eh.associate_id = cf.worker_id
-          LEFT JOIN gabby.people.id_crosswalk_adp cw ON eh.employee_number = cw.df_employee_number
+          all_staff AS eh
+          INNER JOIN gabby.adp.employees_all AS ea ON eh.associate_id = ea.associate_id
+          LEFT JOIN gabby.adp.workers_clean_static AS w ON eh.associate_id = w.worker_id
+          LEFT JOIN hire_dates AS hd ON eh.associate_id = hd.associate_id
+          LEFT JOIN termination_dates AS td ON eh.associate_id = td.associate_id
+          LEFT JOIN rehire_dates AS rh ON eh.associate_id = rh.associate_id
+          LEFT JOIN gabby.adp.workers_custom_field_group_wide_static AS cf ON eh.associate_id = cf.worker_id
+          LEFT JOIN gabby.people.id_crosswalk_adp AS cw ON eh.employee_number = cw.df_employee_number
           AND cw.rn_curr = 1
-          LEFT JOIN gabby.adp.employees p ON eh.position_id = p.position_id
-          LEFT JOIN gabby.surveys.staff_information_survey_wide_static sdf ON eh.employee_number = sdf.employee_number
+          LEFT JOIN gabby.adp.employees AS p ON eh.position_id = p.position_id
+          LEFT JOIN gabby.surveys.staff_information_survey_wide_static AS sdf ON eh.employee_number = sdf.employee_number
         WHERE
           eh.employee_number IS NOT NULL
       ) sub
@@ -501,12 +501,12 @@ SELECT
   gl.student_grade_level AS primary_grade_taught,
   ads.userprincipalname
 FROM
-  clean_staff c
-  LEFT JOIN gabby.people.school_crosswalk s ON c.[location] = s.site_name
+  clean_staff AS c
+  LEFT JOIN gabby.people.school_crosswalk AS s ON c.[location] = s.site_name
   AND s._fivetran_deleted = 0
-  LEFT JOIN clean_staff m ON c.reports_to_associate_id = m.associate_id
-  LEFT JOIN gabby.people.years_experience y ON c.employee_number = y.employee_number
-  LEFT JOIN gabby.pm.teacher_grade_levels gl ON c.employee_number = gl.employee_number
+  LEFT JOIN clean_staff AS m ON c.reports_to_associate_id = m.associate_id
+  LEFT JOIN gabby.people.years_experience AS y ON c.employee_number = y.employee_number
+  LEFT JOIN gabby.pm.teacher_grade_levels AS gl ON c.employee_number = gl.employee_number
   AND gl.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
   AND gl.is_primary_gl = 1
-  LEFT JOIN gabby.adsi.user_attributes_static ads ON CAST(c.employee_number AS VARCHAR(25)) = ads.employeenumber
+  LEFT JOIN gabby.adsi.user_attributes_static AS ads ON CAST(c.employee_number AS VARCHAR(25)) = ads.employeenumber

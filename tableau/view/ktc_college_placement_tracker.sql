@@ -129,8 +129,8 @@ WITH
           a.composite DESC
       ) AS rn_highest_presenior
     FROM
-      gabby.naviance.act_scores_clean a
-      INNER JOIN gabby.powerschool.cohort_identifiers_static co ON a.student_number = co.student_number
+      gabby.naviance.act_scores_clean AS a
+      INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON a.student_number = co.student_number
       AND a.academic_year = co.academic_year
       AND co.grade_level < 12
       AND co.rn_year = 1
@@ -148,7 +148,9 @@ WITH
       MAX(is_accepted_4yr) AS is_accepted_4yr,
       MAX(is_award_information_entered) AS is_award_information_entered,
       AVG(unmet_need_c) AS avg_unmet_need,
-      SUM(accepted_app_closed_with_reason_not_attending) AS n_closed_with_reason
+      SUM(
+        accepted_app_closed_with_reason_not_attending
+      ) AS n_closed_with_reason
     FROM
       (
         SELECT
@@ -209,8 +211,8 @@ WITH
           END AS accepted_app_closed_with_reason_not_attending,
           s.type
         FROM
-          gabby.alumni.application_c a
-          INNER JOIN gabby.alumni.account s ON a.school_c = s.id
+          gabby.alumni.application_c AS a
+          INNER JOIN gabby.alumni.account AS s ON a.school_c = s.id
           AND s.is_deleted = 0
         WHERE
           a.is_deleted = 0
@@ -331,26 +333,29 @@ SELECT
   CASE
     WHEN SUBSTRING(
       ei.ugrad_pursuing_degree_type,
-      PATINDEX('%[24]%year%', ei.ugrad_pursuing_degree_type),
+      PATINDEX(
+        '%[24]%year%',
+        ei.ugrad_pursuing_degree_type
+      ),
       1
     ) = '4' THEN 1.0
     ELSE 0.0
   END AS is_attending_4yr
 FROM
-  gabby.alumni.ktc_roster co
-  LEFT JOIN gabby.powerschool.gpa_cumulative gpa ON co.studentid = gpa.studentid
+  gabby.alumni.ktc_roster AS co
+  LEFT JOIN gabby.powerschool.gpa_cumulative AS gpa ON co.studentid = gpa.studentid
   AND co.exit_schoolid = gpa.schoolid
   AND co.exit_db_name = gpa.[db_name]
-  LEFT JOIN gabby.naviance.current_task_completion_status ctcs ON co.student_number = ctcs.student_id
-  LEFT JOIN nav_applications na ON co.student_number = na.hs_student_id
-  LEFT JOIN gabby.naviance.act_scores_clean act ON co.student_number = act.student_number
+  LEFT JOIN gabby.naviance.current_task_completion_status AS ctcs ON co.student_number = ctcs.student_id
+  LEFT JOIN nav_applications AS na ON co.student_number = na.hs_student_id
+  LEFT JOIN gabby.naviance.act_scores_clean AS act ON co.student_number = act.student_number
   AND act.rn_highest = 1
-  LEFT JOIN act_presenior ap ON co.student_number = ap.student_number
+  LEFT JOIN act_presenior AS ap ON co.student_number = ap.student_number
   AND ap.rn_highest_presenior = 1
-  LEFT JOIN act_month am ON co.student_number = am.student_number
+  LEFT JOIN act_month AS am ON co.student_number = am.student_number
   AND co.exit_academic_year = am.academic_year
-  LEFT JOIN college_apps ca ON co.sf_contact_id = ca.applicant_c
+  LEFT JOIN college_apps AS ca ON co.sf_contact_id = ca.applicant_c
   AND ca.application_submission_status_c = 'Submitted'
-  LEFT JOIN gabby.alumni.enrollment_identifiers ei ON co.sf_contact_id = ei.student_c
+  LEFT JOIN gabby.alumni.enrollment_identifiers AS ei ON co.sf_contact_id = ei.student_c
 WHERE
   co.ktc_status IN ('HS11', 'HS12')

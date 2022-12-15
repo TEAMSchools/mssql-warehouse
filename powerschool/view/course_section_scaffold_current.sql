@@ -81,8 +81,8 @@ FROM
       cs.is_curterm,
       ss.abs_sectionid
     FROM
-      powerschool.course_scaffold_current_static cs
-      LEFT JOIN powerschool.section_scaffold_current_static ss ON cs.studentid = ss.studentid
+      powerschool.course_scaffold_current_static AS cs
+      LEFT JOIN powerschool.section_scaffold_current_static AS ss ON cs.studentid = ss.studentid
       AND cs.yearid = ss.yearid
       AND cs.term_name = ss.term_name
       AND cs.course_number = ss.course_number

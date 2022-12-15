@@ -100,5 +100,5 @@ SELECT
   --,u.lastmeal
   --,u.wm_alias 
 FROM
-  powerschool.users u
-  INNER JOIN powerschool.schoolstaff s ON u.dcid = s.users_dcid
+  powerschool.users AS u
+  INNER JOIN powerschool.schoolstaff AS s ON u.dcid = s.users_dcid

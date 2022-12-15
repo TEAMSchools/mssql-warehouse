@@ -36,12 +36,12 @@ SELECT
   di.annual_typical_growth_measure,
   di.diagnostic_gain_note_negative_gains_zero_
 FROM
-  gabby.powerschool.cohort_identifiers_scaffold_current_static cis
+  gabby.powerschool.cohort_identifiers_scaffold_current_static AS cis
   CROSS JOIN STRING_SPLIT ('Reading,Math', ',') subjects
-  LEFT JOIN gabby.iready.personalized_instruction_by_lesson pil ON cis.student_number = pil.student_id
+  LEFT JOIN gabby.iready.personalized_instruction_by_lesson AS pil ON cis.student_number = pil.student_id
   AND cis.[date] = pil.completion_date
   AND subjects.[value] = pil.[subject]
-  LEFT JOIN gabby.iready.diagnostic_and_instruction di ON cis.student_number = di.student_id
+  LEFT JOIN gabby.iready.diagnostic_and_instruction AS di ON cis.student_number = di.student_id
   AND cis.academic_year = LEFT(di.academic_year, 4)
   AND subjects.[value] = di.[subject]
 WHERE

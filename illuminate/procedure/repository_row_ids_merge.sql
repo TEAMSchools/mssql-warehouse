@@ -33,7 +33,10 @@ WHERE
   AND repository_id IN (
     SELECT
       CAST(
-        RIGHT([table], LEN([table]) - CHARINDEX('_', [table])) AS INT
+        RIGHT(
+          [table],
+          LEN([table]) - CHARINDEX('_', [table])
+        ) AS INT
       )
     FROM
       gabby.illuminate_dna_repositories.fivetran_audit
@@ -71,7 +74,9 @@ SET
 /*
 -- 5.) UPSERT: matching on repo, row number, studentid, and field name.  DELETE if on TARGET but not MATCHED by SOURCE 
  */
-IF OBJECT_ID(N'illuminate_dna_repositories.repository_row_ids') IS NULL BEGIN
+IF OBJECT_ID(
+  N'illuminate_dna_repositories.repository_row_ids'
+) IS NULL BEGIN
 SET
   @message = 'Creating destination table' RAISERROR (@message, 0, 1)
 SELECT
@@ -113,7 +118,10 @@ WHEN NOT MATCHED BY TARGET THEN
 INSERT
   (repository_id, repository_row_id)
 VALUES
-  (SOURCE.repository_id, SOURCE.repository_row_id)
+  (
+    SOURCE.repository_id,
+    SOURCE.repository_row_id
+  )
 WHEN NOT MATCHED BY SOURCE THEN
 DELETE
 --OUTPUT $ACTION, deleted.*

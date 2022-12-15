@@ -36,17 +36,21 @@ WITH
     END AS is_advanced_math
     FROM
       gabby.powerschool.cc
-      INNER JOIN gabby.powerschool.sections_identifiers si ON ABS(cc.sectionid) = si.sectionid
+      INNER JOIN gabby.powerschool.sections_identifiers AS si ON ABS(cc.sectionid) = si.sectionid
       AND cc.[db_name] = si.[db_name]
-      INNER JOIN gabby.powerschool.cohort_static co ON cc.studentid = co.studentid
+      INNER JOIN gabby.powerschool.cohort_static AS co ON cc.studentid = co.studentid
       AND cc.studyear = CONCAT(co.studentid, co.yearid)
       AND cc.[db_name] = co.[db_name]
       AND co.rn_year = 1
-      INNER JOIN gabby.illuminate_public.students ils ON co.student_number = ils.local_student_id
-      INNER JOIN gabby.assessments.normed_subjects ns ON cc.course_number = ns.course_number
+      INNER JOIN gabby.illuminate_public.students AS ils ON co.student_number = ils.local_student_id
+      INNER JOIN gabby.assessments.normed_subjects AS ns ON cc.course_number = ns.course_number
     COLLATE Latin1_General_BIN
     WHERE
-      cc.dateenrolled >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR (), 7, 1)
+      cc.dateenrolled >= DATEFROMPARTS(
+        gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+        7,
+        1
+      )
     UNION ALL
     /* ES Writing */
     SELECT
@@ -61,8 +65,8 @@ WITH
     COLLATE Latin1_General_BIN AS subject_area,
     0 AS is_advanced_math
     FROM
-      gabby.powerschool.cohort_static co
-      INNER JOIN gabby.illuminate_public.students ils ON co.student_number = ils.local_student_id
+      gabby.powerschool.cohort_static AS co
+      INNER JOIN gabby.illuminate_public.students AS ils ON co.student_number = ils.local_student_id
     WHERE
       co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
       AND co.grade_level <= 4

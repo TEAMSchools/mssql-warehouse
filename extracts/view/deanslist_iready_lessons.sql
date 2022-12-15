@@ -27,13 +27,17 @@ SELECT
   t.term_name,
   t.term_id
 FROM
-  gabby.iready.personalized_instruction_by_lesson pl
-  INNER JOIN gabby.people.school_crosswalk sc ON pl.school = sc.site_name
-  INNER JOIN gabby.deanslist.terms_clean_static t ON sc.dl_school_id = t.school_id
+  gabby.iready.personalized_instruction_by_lesson AS pl
+  INNER JOIN gabby.people.school_crosswalk AS sc ON pl.school = sc.site_name
+  INNER JOIN gabby.deanslist.terms_clean_static AS t ON sc.dl_school_id = t.school_id
   AND CAST(pl.completion_date AS DATE) (BETWEEN t.[start_date] AND t.end_date)
   AND t.term_type = 'Biweeks'
 WHERE
-  pl.completion_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR (), 7, 1)
+  pl.completion_date >= DATEFROMPARTS(
+    gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+    7,
+    1
+  )
 GROUP BY
   pl.student_id,
   pl.[subject],

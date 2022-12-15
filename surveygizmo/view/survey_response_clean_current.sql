@@ -108,8 +108,8 @@ FROM
           sr._modified DESC
       ) AS rn
     FROM
-      gabby.surveygizmo.survey_response sr
-      LEFT JOIN gabby.surveygizmo.survey_response_disqualified dq ON sr.id = dq.id
+      gabby.surveygizmo.survey_response AS sr
+      LEFT JOIN gabby.surveygizmo.survey_response_disqualified AS dq ON sr.id = dq.id
       AND sr.survey_id = dq.survey_id
     WHERE
       CAST(LEFT(sr.date_started, 19)) >= DATEFROMPARTS(

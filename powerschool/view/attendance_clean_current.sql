@@ -19,6 +19,6 @@ SELECT
     END AS VARCHAR(1000)
   ) AS att_comment
 FROM
-  powerschool.attendance att
+  powerschool.attendance AS att
 WHERE
   att.yearid = gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990

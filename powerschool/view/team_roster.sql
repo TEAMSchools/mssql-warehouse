@@ -29,7 +29,7 @@ FROM
         enr.dateenrolled DESC
     ) AS rn_year
     FROM
-      powerschool.course_enrollments enr
+      powerschool.course_enrollments AS enr
     WHERE
       enr.course_number = 'HR'
   ) sub

@@ -50,7 +50,7 @@ SELECT
     END
   ) AS total_lexile
 FROM
-  gabby.renaissance.ar_studentpractice_identifiers_static
+  gabby.renaissance.ar_studentpractice_identifiers_static AS
 GROUP BY
   student_number,
   academic_year,

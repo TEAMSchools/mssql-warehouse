@@ -13,7 +13,11 @@ SELECT
   sub.[Fiction/ Nonfiction] AS fiction_nonfiction,
   sub.[Test Administered By] AS test_administered_by,
   sub.[Academic Year] AS academic_year,
-  CONCAT('IL', sub.repository_id, sub.repository_row_id) AS unique_id,
+  CONCAT(
+    'IL',
+    sub.repository_id,
+    sub.repository_row_id
+  ) AS unique_id,
   sub.[Test Round] AS test_round,
   CASE
     WHEN LTRIM(RTRIM(sub.[Status])) LIKE '%Did Not Achieve%' THEN 'Did Not Achieve'
@@ -97,7 +101,7 @@ FROM
     FROM
       gabby.illuminate_dna_repositories.repository_170
   ) sub
-  INNER JOIN gabby.illuminate_public.students s ON sub.student_id = s.student_id
+  INNER JOIN gabby.illuminate_public.students AS s ON sub.student_id = s.student_id
 WHERE
   CONCAT(repository_id, '_', repository_row_id) IN (
     SELECT

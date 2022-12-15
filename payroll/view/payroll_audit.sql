@@ -57,7 +57,7 @@ WITH
           pas.payroll_date
       ) AS prev_payroll_date
     FROM
-      gabby.payroll.payroll_audit_scaffold pas
+      gabby.payroll.payroll_audit_scaffold AS pas
     WHERE
       pas.preview_or_final = 'Final'
   ),
@@ -117,7 +117,11 @@ WITH
         ORDER BY
           pas.payroll_date
       ) AS business_unit_prev_paydate,
-      LAG(pas.location_paydate, 1, pas.location_paydate) OVER (
+      LAG(
+        pas.location_paydate,
+        1,
+        pas.location_paydate
+      ) OVER (
         PARTITION BY
           pas.fiscal_year,
           pas.code,
@@ -125,7 +129,11 @@ WITH
         ORDER BY
           pas.payroll_date
       ) AS location_prev_paydate,
-      LAG(pas.department_paydate, 1, pas.department_paydate) OVER (
+      LAG(
+        pas.department_paydate,
+        1,
+        pas.department_paydate
+      ) OVER (
         PARTITION BY
           pas.fiscal_year,
           pas.code,
@@ -133,7 +141,11 @@ WITH
         ORDER BY
           pas.payroll_date
       ) AS department_prev_paydate,
-      LAG(pas.job_title_paydate, 1, pas.job_title_paydate) OVER (
+      LAG(
+        pas.job_title_paydate,
+        1,
+        pas.job_title_paydate
+      ) OVER (
         PARTITION BY
           pas.fiscal_year,
           pas.code,
@@ -211,8 +223,8 @@ WITH
         ELSE pas.audit_type
       END AS audit_type
     FROM
-      gabby.payroll.payroll_audit_scaffold pas
-      LEFT JOIN final_data fd ON fd.employee_number = pas.employee_number
+      gabby.payroll.payroll_audit_scaffold AS pas
+      LEFT JOIN final_data AS fd ON fd.employee_number = pas.employee_number
       AND fd.code = pas.code
     WHERE
       pas.preview_or_final = 'Prev'
@@ -265,7 +277,7 @@ SELECT
   salary_prev_paydate,
   status_prev_paydate
 FROM
-  final_data
+  final_data AS
 UNION
 SELECT
   position_id,

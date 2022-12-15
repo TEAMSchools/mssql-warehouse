@@ -10,8 +10,8 @@ WITH
     COLLATE Latin1_General_BIN AS teacher,
     COALESCE(ccw.ps_school_id, df.primary_site_schoolid) AS schoolid
     FROM
-      gabby.people.staff_crosswalk_static df
-      LEFT JOIN gabby.people.campus_crosswalk ccw ON df.primary_site = ccw.campus_name
+      gabby.people.staff_crosswalk_static AS df
+      LEFT JOIN gabby.people.campus_crosswalk AS ccw ON df.primary_site = ccw.campus_name
       AND ccw._fivetran_deleted = 0
       AND ccw.is_pathways = 0
     WHERE
@@ -33,8 +33,8 @@ SELECT
   enr.teachernumber AS teacher,
   enr.expression
 FROM
-  gabby.powerschool.course_enrollments_current_static enr
-  INNER JOIN gabby.powerschool.schools sch ON enr.schoolid = sch.school_number
+  gabby.powerschool.course_enrollments_current_static AS enr
+  INNER JOIN gabby.powerschool.schools AS sch ON enr.schoolid = sch.school_number
   AND enr.[db_name] = sch.[db_name]
 WHERE
   enr.course_enroll_status = 0
@@ -48,15 +48,19 @@ SELECT
   ) AS id,
   CAST(CONCAT(co.yearid, '00') AS INT) AS termid,
   co.student_number AS studentid,
-  CONCAT(co.academic_year, s.abbreviation, co.grade_level) AS section_number,
+  CONCAT(
+    co.academic_year,
+    s.abbreviation,
+    co.grade_level
+  ) AS section_number,
   co.schoolid,
   'ENR' AS course_number,
   'Enroll' AS course_name,
   dsos.teacher,
   '1(A)' expression
 FROM
-  gabby.powerschool.cohort_identifiers_static co
-  INNER JOIN gabby.powerschool.schools s ON co.schoolid = s.school_number
+  gabby.powerschool.cohort_identifiers_static AS co
+  INNER JOIN gabby.powerschool.schools AS s ON co.schoolid = s.school_number
   AND co.[db_name] = s.[db_name]
   LEFT JOIN dsos ON s.school_number = dsos.schoolid
 WHERE

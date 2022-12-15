@@ -36,7 +36,7 @@ WITH
       c.primary_job AS respondent_primary_job,
       c.primary_site AS respondent_primary_site
     FROM
-      surveys.cmo_survey_final c
+      surveys.cmo_survey_final AS c
     UNION ALL
     SELECT
       NULL AS survey_id,
@@ -63,8 +63,8 @@ WITH
       NULL AS respondent_primary_job,
       e.location AS respondent_primary_site
     FROM
-      surveys.r9engagement_survey_detail e
-      LEFT JOIN surveys.question_key q ON e.academic_year = q.academic_year
+      surveys.r9engagement_survey_detail AS e
+      LEFT JOIN surveys.question_key AS q ON e.academic_year = q.academic_year
       AND e.question_code = q.question_code
       AND q.survey_type = 'CMO'
     UNION ALL
@@ -93,8 +93,8 @@ WITH
       NULL AS respondent_primary_job,
       oe.location AS respondent_primary_site
     FROM
-      surveys.r9engagement_survey_oe oe
-      LEFT JOIN surveys.question_key q ON oe.academic_year = q.academic_year
+      surveys.r9engagement_survey_oe AS oe
+      LEFT JOIN surveys.question_key AS q ON oe.academic_year = q.academic_year
       AND oe.question_code = q.question_code
       AND q.survey_type = 'CMO'
   )
@@ -113,14 +113,20 @@ SELECT
   CAST(h.answer AS NVARCHAR(MAX)) AS answer,
   CAST(h.answer_value AS VARCHAR(500)) AS answer_value,
   CAST(h.respondent_df_employee_number AS BIGINT) AS respondent_df_employee_number,
-  CAST(h.respondent_adp_associate_id AS VARCHAR(25)) AS respondent_adp_associate_id,
+  CAST(
+    h.respondent_adp_associate_id AS VARCHAR(25)
+  ) AS respondent_adp_associate_id,
   CAST(h.respondent_preferred_name AS VARCHAR(125)) AS respondent_preferred_name,
   CAST(h.respondent_mail AS VARCHAR(125)) AS respondent_mail,
   CAST(h.is_manager AS INT) AS is_manager,
-  CAST(h.respondent_department_name AS NVARCHAR(256)) AS respondent_department_name,
-  CAST(h.respondent_legal_entity_name AS NVARCHAR(256)) AS respondent_legal_entity_name,
+  CAST(
+    h.respondent_department_name AS NVARCHAR(256)
+  ) AS respondent_department_name,
+  CAST(
+    h.respondent_legal_entity_name AS NVARCHAR(256)
+  ) AS respondent_legal_entity_name,
   CAST(h.respondent_manager_name AS VARCHAR(125)) AS respondent_manager_name,
   CAST(h.respondent_primary_job AS NVARCHAR(256)) AS respondent_primary_job,
   CAST(h.respondent_primary_site AS NVARCHAR(256)) AS respondent_primary_site INTO gabby.surveys.cmo_engagement_regional_survey_detail_archive
 FROM
-  historical h
+  historical AS h

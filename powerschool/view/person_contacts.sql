@@ -15,7 +15,7 @@ SELECT
     ELSE ''
   END + ', ' + ca.city + ', ' + ca.state_code + ' ' + ca.postalcode AS contact
 FROM
-  powerschool.contact_address ca
+  powerschool.contact_address AS ca
 UNION ALL
 /* phone number */
 SELECT
@@ -29,9 +29,9 @@ SELECT
     ELSE ''
   END AS contact
 FROM
-  powerschool.personphonenumberassoc ppna
-  INNER JOIN powerschool.codeset pncs ON ppna.phonetypecodesetid = pncs.codesetid
-  INNER JOIN powerschool.phonenumber pn ON ppna.phonenumberid = pn.phonenumberid
+  powerschool.personphonenumberassoc AS ppna
+  INNER JOIN powerschool.codeset AS pncs ON ppna.phonetypecodesetid = pncs.codesetid
+  INNER JOIN powerschool.phonenumber AS pn ON ppna.phonenumberid = pn.phonenumberid
 UNION ALL
 /* email */
 SELECT
@@ -45,6 +45,6 @@ SELECT
   END AS contact_type,
   ea.emailaddress AS contact
 FROM
-  powerschool.personemailaddressassoc peaa
-  INNER JOIN powerschool.codeset eacs ON peaa.emailtypecodesetid = eacs.codesetid
-  INNER JOIN powerschool.emailaddress ea ON peaa.emailaddressid = ea.emailaddressid
+  powerschool.personemailaddressassoc AS peaa
+  INNER JOIN powerschool.codeset AS eacs ON peaa.emailtypecodesetid = eacs.codesetid
+  INNER JOIN powerschool.emailaddress AS ea ON peaa.emailaddressid = ea.emailaddressid

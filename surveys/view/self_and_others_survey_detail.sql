@@ -130,9 +130,9 @@ SELECT
   / SUM(ABS(d.is_manager - 1)) OVER(PARTITION BY d.survey_id, d.campaign_academic_year, d.campaign_name, d.question_shortname) AS peer_weight
   --*/
 FROM
-  gabby.surveygizmo.survey_detail d
-  LEFT JOIN gabby.people.staff_crosswalk_static s ON d.subject_df_employee_number = s.df_employee_number
-  LEFT JOIN gabby.people.staff_crosswalk_static r ON d.respondent_df_employee_number = r.df_employee_number
+  gabby.surveygizmo.survey_detail AS d
+  LEFT JOIN gabby.people.staff_crosswalk_static AS s ON d.subject_df_employee_number = s.df_employee_number
+  LEFT JOIN gabby.people.staff_crosswalk_static AS r ON d.respondent_df_employee_number = r.df_employee_number
 WHERE
   d.survey_title = 'Self and Others'
   AND d.rn_respondent_subject = 1
@@ -177,12 +177,12 @@ SELECT
   a.response_weight,
   a.response_value_weighted AS answer_value_weighted
 FROM
-  gabby.surveys.self_and_others_survey_detail_archive a
-  LEFT JOIN gabby.people.employment_history_static w ON a.subject_employee_number = w.employee_number
+  gabby.surveys.self_and_others_survey_detail_archive AS a
+  LEFT JOIN gabby.people.employment_history_static AS w ON a.subject_employee_number = w.employee_number
   AND a.date_submitted (
     BETWEEN w.effective_start_date AND w.effective_end_date
   )
   AND w.primary_position = 'Yes'
   AND w.position_status <> 'Terminated'
-  LEFT JOIN gabby.people.staff_crosswalk_static s ON a.subject_employee_number = s.df_employee_number
-  LEFT JOIN gabby.people.staff_crosswalk_static r ON a.respondent_email_address = r.samaccountname
+  LEFT JOIN gabby.people.staff_crosswalk_static AS s ON a.subject_employee_number = s.df_employee_number
+  LEFT JOIN gabby.people.staff_crosswalk_static AS r ON a.respondent_email_address = r.samaccountname

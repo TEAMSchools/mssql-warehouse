@@ -74,5 +74,5 @@ SELECT
     END
   ) AS lvl_num
 FROM
-  gdoc_long g
+  gdoc_long AS g
   LEFT OUTER JOIN gabby.lit.gleq ON g.goal = gleq.read_lvl

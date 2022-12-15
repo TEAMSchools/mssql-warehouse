@@ -16,8 +16,8 @@ SELECT
   pc.contact,
   pc.priority_order AS contact_priority_order
 FROM
-  powerschool.contacts c
-  INNER JOIN powerschool.person_contacts pc ON c.personid = pc.personid
+  powerschool.contacts AS c
+  INNER JOIN powerschool.person_contacts AS pc ON c.personid = pc.personid
   AND pc.contact_type IN (
     'Current',
     'Daytime',

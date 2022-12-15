@@ -39,9 +39,9 @@ SELECT
   co.exitdate AS [Most-Recent Exit Date],
   co.academic_year AS [School Year]
 FROM
-  kippcamden.powerschool.cohort_identifiers_static co
-  LEFT JOIN kippcamden.powerschool.studentcorefields scf ON co.students_dcid = scf.studentsdcid
-  LEFT JOIN kippcamden.powerschool.students s ON co.studentid = s.id
+  kippcamden.powerschool.cohort_identifiers_static AS co
+  LEFT JOIN kippcamden.powerschool.studentcorefields AS scf ON co.students_dcid = scf.studentsdcid
+  LEFT JOIN kippcamden.powerschool.students AS s ON co.studentid = s.id
 WHERE
   co.rn_year = 1
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()

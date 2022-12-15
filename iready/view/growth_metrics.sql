@@ -14,7 +14,7 @@ WITH
         ELSE NULL
       END AS [subject]
     FROM
-      gabby.iready.diagnostic_results dr
+      gabby.iready.diagnostic_results AS dr
     WHERE
       dr.diagnostic_used_to_establish_growth_measures_y_n_ = 'Y'
   ),
@@ -30,7 +30,7 @@ WITH
         ELSE NULL
       END AS [subject]
     FROM
-      gabby.iready.diagnostic_results dr
+      gabby.iready.diagnostic_results AS dr
     WHERE
       dr.diagnostic_used_to_establish_growth_measures_y_n_ = 'N'
       AND dr.most_recent_diagnostic_y_n_ = 'Y'
@@ -67,10 +67,10 @@ SELECT
     ELSE NULL
   END AS progress_stretch
 FROM
-  baseline bl
-  LEFT JOIN recent re ON bl.student_number = re.student_number
+  baseline AS bl
+  LEFT JOIN recent AS re ON bl.student_number = re.student_number
   AND bl.academic_year = re.academic_year
   AND bl.[subject] = re.[subject]
-  LEFT JOIN gabby.iready.diagnostic_and_instruction di ON bl.student_number = di.student_id
+  LEFT JOIN gabby.iready.diagnostic_and_instruction AS di ON bl.student_number = di.student_id
   AND bl.[subject] = di.[subject]
   AND bl.academic_year = di.academic_year

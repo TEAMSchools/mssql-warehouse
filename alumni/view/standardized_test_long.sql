@@ -35,7 +35,7 @@ SELECT
   score_type,
   score
 FROM
-  gabby.alumni.standardized_test_c st UNPIVOT (
+  gabby.alumni.standardized_test_c AS st UNPIVOT (
     score FOR score_type IN (
       ap_c,
       act_composite_c,

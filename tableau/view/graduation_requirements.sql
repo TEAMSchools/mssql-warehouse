@@ -9,7 +9,7 @@ WITH
       CONCAT('parcc_', LOWER(parcc.test_code))
     COLLATE Latin1_General_BIN AS test_type
     FROM
-      gabby.parcc.summative_record_file_clean parcc
+      gabby.parcc.summative_record_file_clean AS parcc
     WHERE
       parcc.test_code IN (
         'ELA09',
@@ -35,7 +35,7 @@ WITH
           CAST(sat.reading_test AS INT) AS reading_test,
           CAST(sat.math_test AS INT) AS math_test
         FROM
-          gabby.naviance.sat_scores sat
+          gabby.naviance.sat_scores AS sat
       ) sub UNPIVOT (
         [value] FOR field IN (
           evidence_based_reading_writing,
@@ -51,8 +51,8 @@ WITH
       LEFT(st.score_type, LEN(st.score_type) - 2) AS test_type,
       ktc.student_number
     FROM
-      gabby.alumni.standardized_test_long st
-      INNER JOIN gabby.alumni.ktc_roster ktc ON st.contact_c = ktc.sf_contact_id
+      gabby.alumni.standardized_test_long AS st
+      INNER JOIN gabby.alumni.ktc_roster AS ktc ON st.contact_c = ktc.sf_contact_id
     WHERE
       st.test_type = 'ACT'
       AND st.score_type IN ('act_reading_c', 'act_math_c')
@@ -93,8 +93,8 @@ SELECT
   a.test_type,
   a.test_score
 FROM
-  gabby.powerschool.cohort_identifiers_static co
-  LEFT JOIN all_tests a ON co.student_number = a.local_student_identifier
+  gabby.powerschool.cohort_identifiers_static AS co
+  LEFT JOIN all_tests AS a ON co.student_number = a.local_student_identifier
 WHERE
   co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
   AND co.rn_year = 1

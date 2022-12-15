@@ -7,7 +7,7 @@ SELECT
   sc.[label] AS checkbox_label,
   sc.[value] AS checkbox_value
 FROM
-  gabby.whetstone.observations_scores_static os
+  gabby.whetstone.observations_scores_static AS os
   CROSS APPLY OPENJSON (os.score_checkboxes_json, '$')
 WITH
   ([label] NVARCHAR(256), [value] BIT) AS sc

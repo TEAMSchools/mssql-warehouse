@@ -14,8 +14,12 @@ SELECT
   t.total_balance,
   s.[db_name]
 FROM
-  gabby.powerschool.students s
-  LEFT JOIN gabby.titan.person_data_clean t ON s.student_number = t.person_identifier
+  gabby.powerschool.students AS s
+  LEFT JOIN gabby.titan.person_data_clean AS t ON s.student_number = t.person_identifier
   AND t.application_academic_school_year_clean = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
 WHERE
-  s.entrydate >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR (), 7, 1)
+  s.entrydate >= DATEFROMPARTS(
+    gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+    7,
+    1
+  )

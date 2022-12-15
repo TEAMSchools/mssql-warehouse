@@ -107,11 +107,11 @@ FROM
       enr.pursuing_degree_type_c AS application_pursuing_degree_type,
       enr.start_date_c AS enrollment_start_date
     FROM
-      gabby.alumni.application_c app
-      INNER JOIN gabby.alumni.account acc ON app.school_c = acc.id
+      gabby.alumni.application_c AS app
+      INNER JOIN gabby.alumni.account AS acc ON app.school_c = acc.id
       AND acc.is_deleted = 0
-      INNER JOIN gabby.alumni.contact c ON app.applicant_c = c.id
-      LEFT JOIN gabby.alumni.enrollment_c enr ON app.applicant_c = enr.student_c
+      INNER JOIN gabby.alumni.contact AS c ON app.applicant_c = c.id
+      LEFT JOIN gabby.alumni.enrollment_c AS enr ON app.applicant_c = enr.student_c
       AND app.school_c = enr.school_c
       AND c.kipp_hs_class_c = YEAR(enr.start_date_c)
       AND enr.is_deleted = 0

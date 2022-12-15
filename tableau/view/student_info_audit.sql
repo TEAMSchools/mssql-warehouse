@@ -8,7 +8,7 @@ WITH
       sr.[db_name],
       gabby.dbo.GROUP_CONCAT (racecd) AS racecds
     FROM
-      gabby.powerschool.studentrace sr
+      gabby.powerschool.studentrace AS sr
     GROUP BY
       sr.studentid,
       sr.[db_name]
@@ -100,7 +100,7 @@ SELECT
     ELSE 0
   END AS flag
 FROM
-  gabby.powerschool.cohort_identifiers_static co
+  gabby.powerschool.cohort_identifiers_static AS co
 WHERE
   co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
   AND co.schoolid <> 999999
@@ -128,7 +128,7 @@ SELECT
     ELSE 0
   END AS flag
 FROM
-  gabby.powerschool.cohort_identifiers_static co
+  gabby.powerschool.cohort_identifiers_static AS co
   INNER JOIN gabby.powerschool.fte ON co.schoolid = fte.schoolid
   AND co.yearid = fte.yearid
   AND co.[db_name] = fte.[db_name]
@@ -154,7 +154,7 @@ SELECT
     ELSE 0
   END AS flag
 FROM
-  gabby.powerschool.cohort_identifiers_static co
+  gabby.powerschool.cohort_identifiers_static AS co
 WHERE
   co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
   AND co.schoolid <> 999999
@@ -186,9 +186,9 @@ SELECT
     ELSE 0
   END AS flag
 FROM
-  gabby.powerschool.cohort_identifiers_static co
-  LEFT JOIN gabby.powerschool.students s ON co.student_number = s.student_number
-  LEFT JOIN race r ON co.studentid = r.studentid
+  gabby.powerschool.cohort_identifiers_static AS co
+  LEFT JOIN gabby.powerschool.students AS s ON co.student_number = s.student_number
+  LEFT JOIN race AS r ON co.studentid = r.studentid
   AND co.[db_name] = r.[db_name]
 WHERE
   co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
@@ -220,8 +220,8 @@ SELECT
   ) AS detail,
   1 AS flag
 FROM
-  gabby.qa.powerschool_course_enrollment_overlap qa
-  INNER JOIN gabby.powerschool.schools sch ON qa.schoolid = sch.school_number
+  gabby.qa.powerschool_course_enrollment_overlap AS qa
+  INNER JOIN gabby.powerschool.schools AS sch ON qa.schoolid = sch.school_number
 WHERE
   qa.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
 UNION ALL
@@ -253,8 +253,8 @@ FROM
       co.team,
       COUNT(ce.sectionid) AS total_sections
     FROM
-      gabby.powerschool.cohort_identifiers_static co
-      LEFT JOIN gabby.powerschool.course_enrollments_current_static ce ON ce.student_number = co.student_number
+      gabby.powerschool.cohort_identifiers_static AS co
+      LEFT JOIN gabby.powerschool.course_enrollments_current_static AS ce ON ce.student_number = co.student_number
       AND ce.[db_name] = co.[db_name]
       AND co.academic_year = ce.academic_year
       AND ce.course_enroll_status = 0

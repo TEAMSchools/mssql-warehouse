@@ -16,10 +16,10 @@ WITH
       f.outstanding,
       CONCAT(f.c_first, ' ', f.c_last) AS followup_staff_name
     FROM
-      gabby.deanslist.communication c
-      INNER JOIN gabby.deanslist.users u ON c.dluser_id = u.dluser_id
+      gabby.deanslist.communication AS c
+      INNER JOIN gabby.deanslist.users AS u ON c.dluser_id = u.dluser_id
       AND c.[db_name] = u.[db_name]
-      LEFT JOIN gabby.deanslist.followups f ON c.followup_id = f.followup_id
+      LEFT JOIN gabby.deanslist.followups AS f ON c.followup_id = f.followup_id
       AND c.[db_name] = f.[db_name]
     WHERE
       c.reason LIKE 'SW:%'
@@ -56,8 +56,8 @@ SELECT
   cl.followup_init_notes,
   cl.followup_close_notes
 FROM
-  gabby.powerschool.cohort_identifiers_static co
-  INNER JOIN commlog cl ON co.student_number = cl.student_school_id
+  gabby.powerschool.cohort_identifiers_static AS co
+  INNER JOIN commlog AS cl ON co.student_number = cl.student_school_id
   AND co.[db_name] = cl.[db_name]
 WHERE
   co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()

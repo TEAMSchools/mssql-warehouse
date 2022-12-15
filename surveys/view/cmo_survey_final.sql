@@ -249,7 +249,7 @@ WITH
         sur.i_can_rely_on_my_region_s_network_internet_access_cmo_sla_available_at_least_99_overall_ AS VARCHAR(MAX)
       ) AS technology_internetaccess
     FROM
-      surveys.cmo_survey sur
+      surveys.cmo_survey AS sur
   ),
   cmo_long AS (
     SELECT

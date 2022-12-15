@@ -35,7 +35,7 @@ FROM
           sp.enter_date DESC
       ) AS rn
     FROM
-      powerschool.spenrollments sp
+      powerschool.spenrollments AS sp
       INNER JOIN powerschool.gen ON sp.programid = gen.id
       AND gen.cat = 'specprog'
   ) sub

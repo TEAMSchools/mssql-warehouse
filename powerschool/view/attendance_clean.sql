@@ -15,7 +15,7 @@ SELECT
   accs.total_minutes,
   accs.att_comment
 FROM
-  powerschool.attendance_clean_current_static accs
+  powerschool.attendance_clean_current_static AS accs
 UNION ALL
 SELECT
   aca.id,
@@ -32,4 +32,4 @@ SELECT
   aca.total_minutes,
   aca.att_comment
 FROM
-  powerschool.attendance_clean_archive aca
+  powerschool.attendance_clean_archive AS aca

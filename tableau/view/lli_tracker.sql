@@ -26,9 +26,9 @@ SELECT
   co.c_504_status,
   co.region
 FROM
-  gabby.illuminate_dna_repositories.repository_54 r
-  INNER JOIN gabby.illuminate_public.students s ON r.student_id = s.student_id
-  INNER JOIN gabby.powerschool.cohort_identifiers_static co ON s.local_student_id = co.student_number
+  gabby.illuminate_dna_repositories.repository_54 AS r
+  INNER JOIN gabby.illuminate_public.students AS s ON r.student_id = s.student_id
+  INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON s.local_student_id = co.student_number
   AND gabby.utilities.DATE_TO_SY (CAST(r.field_date_administered AS DATE)) = co.academic_year
   AND co.rn_year = 1
 WHERE

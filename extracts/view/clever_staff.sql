@@ -23,8 +23,8 @@ SELECT
     WHEN df.primary_on_site_department = 'Operations' THEN 'School Tech Lead'
   END AS [Role]
 FROM
-  gabby.people.staff_crosswalk_static df
-  LEFT JOIN gabby.people.campus_crosswalk ccw ON df.primary_site = ccw.campus_name
+  gabby.people.staff_crosswalk_static AS df
+  LEFT JOIN gabby.people.campus_crosswalk AS ccw ON df.primary_site = ccw.campus_name
   AND ccw._fivetran_deleted = 0
   AND ccw.is_pathways = 0
 WHERE
@@ -47,8 +47,8 @@ SELECT
     WHEN df.primary_on_site_department = 'Operations' THEN 'School Tech Lead'
   END AS [Role]
 FROM
-  gabby.people.staff_crosswalk_static df
-  INNER JOIN gabby.powerschool.schools sch ON sch.state_excludefromreporting = 0
+  gabby.people.staff_crosswalk_static AS df
+  INNER JOIN gabby.powerschool.schools AS sch ON sch.state_excludefromreporting = 0
 WHERE
   df.[status] NOT IN ('TERMINATED', 'PRESTART')
   AND df.legal_entity_name = 'KIPP TEAM and Family Schools Inc.'
@@ -72,13 +72,16 @@ SELECT
     WHEN df.primary_on_site_department = 'Operations' THEN 'School Tech Lead'
   END AS [Role]
 FROM
-  gabby.people.staff_crosswalk_static df
-  INNER JOIN gabby.powerschool.schools sch ON df.[db_name] = sch.[db_name]
+  gabby.people.staff_crosswalk_static AS df
+  INNER JOIN gabby.powerschool.schools AS sch ON df.[db_name] = sch.[db_name]
   AND sch.state_excludefromreporting = 0
 WHERE
   df.[status] NOT IN ('TERMINATED', 'PRESTART')
   AND (
-    df.primary_job IN ('Assistant Superintendent', 'Head of Schools')
+    df.primary_job IN (
+      'Assistant Superintendent',
+      'Head of Schools'
+    )
     OR (
       df.primary_on_site_department = 'Special Education'
       AND df.primary_job LIKE '%Director%'
@@ -100,10 +103,10 @@ SELECT
     WHEN df.primary_on_site_department = 'Operations' THEN 'School Tech Lead'
   END AS [Role]
 FROM
-  gabby.adsi.group_membership adg
-  INNER JOIN gabby.people.staff_crosswalk_static df ON adg.employee_number = df.df_employee_number
+  gabby.adsi.group_membership AS adg
+  INNER JOIN gabby.people.staff_crosswalk_static AS df ON adg.employee_number = df.df_employee_number
   AND df.[status] NOT IN ('TERMINATED', 'PRESTART')
-  INNER JOIN gabby.powerschool.schools sch ON sch.schoolstate = 'NJ'
+  INNER JOIN gabby.powerschool.schools AS sch ON sch.schoolstate = 'NJ'
   AND sch.state_excludefromreporting = 0
 WHERE
   adg.group_cn = 'Group Staff NJ Regional'

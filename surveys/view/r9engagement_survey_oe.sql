@@ -197,7 +197,7 @@ SELECT
   qk.competency,
   qk.question_text
 FROM
-  survey_unpivoted su
-  LEFT JOIN gabby.surveys.question_key qk ON su.question_code = qk.question_code
+  survey_unpivoted AS su
+  LEFT JOIN gabby.surveys.question_key AS qk ON su.question_code = qk.question_code
   AND su.academic_year = qk.academic_year
   AND qk.survey_type = 'R9'

@@ -41,22 +41,26 @@ FROM
       ad.mail AS [Email],
       ad.userprincipalname AS [Single Sign On ID]
     FROM
-      gabby.people.staff_roster scw
-      INNER JOIN gabby.adsi.user_attributes_static ad ON scw.employee_number = ad.employeenumber
+      gabby.people.staff_roster AS scw
+      INNER JOIN gabby.adsi.user_attributes_static AS ad ON scw.employee_number = ad.employeenumber
       AND ISNUMERIC(ad.employeenumber) = 1
     WHERE
       (
         scw.worker_category NOT IN ('Intern', 'Part Time')
         OR scw.worker_category IS NULL
       )
-      AND COALESCE(scw.termination_date, CURRENT_TIMESTAMP) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR (), 7, 1)
+      AND COALESCE(scw.termination_date, CURRENT_TIMESTAMP) >= DATEFROMPARTS(
+        gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+        7,
+        1
+      )
   ) sub
-  LEFT JOIN gabby.egencia.traveler_groups tg ON sub.[location] = tg.[location]
+  LEFT JOIN gabby.egencia.traveler_groups AS tg ON sub.[location] = tg.[location]
   AND sub.home_department = tg.home_department
   AND sub.job_title = tg.job_title
-  LEFT JOIN gabby.egencia.traveler_groups tg2 ON sub.[location] = tg2.[location]
+  LEFT JOIN gabby.egencia.traveler_groups AS tg2 ON sub.[location] = tg2.[location]
   AND sub.home_department = tg2.home_department
   AND tg2.job_title = 'Default'
-  LEFT JOIN gabby.egencia.traveler_groups tg3 ON sub.[location] = tg3.[location]
+  LEFT JOIN gabby.egencia.traveler_groups AS tg3 ON sub.[location] = tg3.[location]
   AND tg3.home_department = 'Default'
   AND tg3.job_title = 'Default'

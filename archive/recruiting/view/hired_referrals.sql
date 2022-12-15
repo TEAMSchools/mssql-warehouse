@@ -32,12 +32,12 @@ SELECT
     WHEN df.df_employee_number IS NULL THEN 'Not matched in Dayforce - need to look up manually to verify'
   END AS dayforce_notes
 FROM
-  gabby.recruiting.cultivation_c c
-  LEFT JOIN gabby.recruiting.job_application_c a ON LEFT(c.contact_c, LEN(c.contact_c) - 3) = a.contact_id_c
+  gabby.recruiting.cultivation_c AS c
+  LEFT JOIN gabby.recruiting.job_application_c AS a ON LEFT(c.contact_c, LEN(c.contact_c) - 3) = a.contact_id_c
   AND a.stage_c = 'Hired'
-  LEFT JOIN gabby.recruiting.profile_application_c pa ON a.profile_application_c = pa.id
-  LEFT JOIN gabby.recruiting.job_position_c p ON a.job_position_c = p.id
-  LEFT JOIN gabby.dayforce.staff_roster df ON p.name = df.salesforce_id
+  LEFT JOIN gabby.recruiting.profile_application_c AS pa ON a.profile_application_c = pa.id
+  LEFT JOIN gabby.recruiting.job_position_c AS p ON a.job_position_c = p.id
+  LEFT JOIN gabby.dayforce.staff_roster AS df ON p.name = df.salesforce_id
 WHERE
   c.regional_source_c = 'Referral'
   AND (

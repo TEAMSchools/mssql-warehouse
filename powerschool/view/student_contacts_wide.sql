@@ -14,7 +14,7 @@ WITH
       ) AS contact_name,
       c.contactpriorityorder
     FROM
-      powerschool.contacts c
+      powerschool.contacts AS c
     WHERE
       c.person_type <> 'self'
       AND c.contactpriorityorder <= 2
@@ -36,7 +36,7 @@ WITH
           c.contactpriorityorder
       ) AS contactpriorityorder
     FROM
-      powerschool.contacts c
+      powerschool.contacts AS c
     WHERE
       c.person_type <> 'self'
       AND c.contactpriorityorder > 2
@@ -59,7 +59,7 @@ WITH
           c.contactpriorityorder
       ) AS contactpriorityorder
     FROM
-      powerschool.contacts c
+      powerschool.contacts AS c
     WHERE
       c.person_type <> 'self'
       AND c.contactpriorityorder > 2
@@ -88,8 +88,8 @@ WITH
               pc.priority_order
           ) AS contact_category_type_priority
         FROM
-          people c
-          INNER JOIN powerschool.person_contacts pc ON c.personid = pc.personid
+          people AS c
+          INNER JOIN powerschool.person_contacts AS pc ON c.personid = pc.personid
         UNION ALL
         SELECT
           c.student_number,
@@ -105,8 +105,8 @@ WITH
               pc.priority_order ASC
           ) AS contact_category_type_priority
         FROM
-          people c
-          INNER JOIN powerschool.person_contacts pc ON c.personid = pc.personid
+          people AS c
+          INNER JOIN powerschool.person_contacts AS pc ON c.personid = pc.personid
           AND pc.contact_category = 'Phone'
         UNION ALL
         SELECT
@@ -116,7 +116,7 @@ WITH
           LTRIM(RTRIM(c.contact_name)) AS contact,
           1 AS contact_category_type_priority
         FROM
-          people c
+          people AS c
         UNION ALL
         SELECT
           c.student_number,
@@ -125,7 +125,7 @@ WITH
           c.relationship_type AS contact,
           1 AS contact_category_type_priority
         FROM
-          people c
+          people AS c
       ) sub
     WHERE
       sub.contact_category_type_priority = 1
@@ -205,7 +205,7 @@ SELECT
   pickup_3_email_current,
   pickup_3_phone_primary
 FROM
-  contacts c PIVOT (
+  contacts AS c PIVOT (
     MAX(pivot_value) FOR pivot_field IN (
       contact_1_name,
       contact_1_relationship,

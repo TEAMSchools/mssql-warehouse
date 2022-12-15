@@ -35,17 +35,17 @@ SELECT
     ELSE map_spr.ritto_reading_score
   END AS lexile_score
 FROM
-  powerschool.cohort_identifiers_static r
+  powerschool.cohort_identifiers_static AS r
   CROSS JOIN STRING_SPLIT (
     'Mathematics,Reading,Language Usage,Science - General Science',
     ','
   ) subj
-  LEFT JOIN nwea.assessment_result_identifiers map_fall /* CURRENT YEAR FALL */ ON r.student_number = map_fall.student_id
+  LEFT JOIN nwea.assessment_result_identifiers AS map_fall /* CURRENT YEAR FALL */ ON r.student_number = map_fall.student_id
   AND subj.[value] = map_fall.measurement_scale
   AND r.academic_year = map_fall.academic_year
   AND map_fall.term = 'Fall'
   AND map_fall.rn_term_subj = 1
-  LEFT JOIN nwea.assessment_result_identifiers map_spr /* PREVIOUS YEAR SPRING */ ON r.student_number = map_spr.student_id
+  LEFT JOIN nwea.assessment_result_identifiers AS map_spr /* PREVIOUS YEAR SPRING */ ON r.student_number = map_spr.student_id
   AND subj.[value] = map_spr.measurement_scale
   AND r.academic_year = map_spr.test_year
   AND map_spr.term = 'Spring'

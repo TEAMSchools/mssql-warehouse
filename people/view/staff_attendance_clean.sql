@@ -82,6 +82,6 @@ FROM
         ELSE 1
       END AS approved
     FROM
-      gabby.people.staff_attendance a
+      gabby.people.staff_attendance AS a
   ) a
-  INNER JOIN gabby.people.staff_crosswalk_static c ON a.df_number = c.df_employee_number
+  INNER JOIN gabby.people.staff_crosswalk_static AS c ON a.df_number = c.df_employee_number

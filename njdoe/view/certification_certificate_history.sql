@@ -55,7 +55,7 @@ SELECT
     )
   END AS expiration_date
 FROM
-  gabby.njdoe.certification_check cc
+  gabby.njdoe.certification_check AS cc
   CROSS APPLY OPENJSON (cc.certificate_history, '$')
 WITH
   (

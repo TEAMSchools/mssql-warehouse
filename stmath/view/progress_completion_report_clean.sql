@@ -50,7 +50,9 @@ SELECT
     WHEN fluency_path = '\N' THEN NULL
     ELSE fluency_path
   END AS fluency_path,
-  CAST(REPLACE(RIGHT(_file, 14), '.csv', '') AS DATE) AS week_end_date,
+  CAST(
+    REPLACE(RIGHT(_file, 14), '.csv', '') AS DATE
+  ) AS week_end_date,
   dt.time_per_name AS reporting_term,
   CAST(dt.start_date AS DATE) AS term_start_date,
   CAST(dt.end_date AS DATE) AS term_end_date,
@@ -80,7 +82,7 @@ SELECT
       CAST(REPLACE(RIGHT(_file, 14), '.csv', '')) DESC AS DATE
   ) AS rn_gcd
 FROM
-  gabby.stmath.progress_completion_report stm
-  INNER JOIN gabby.reporting.reporting_terms dt ON stm.start_year = dt.academic_year
+  gabby.stmath.progress_completion_report AS stm
+  INNER JOIN gabby.reporting.reporting_terms AS dt ON stm.start_year = dt.academic_year
   AND dt.identifier = 'SY'
   AND dt.schoolid = 0

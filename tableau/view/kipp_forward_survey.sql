@@ -31,8 +31,8 @@ WITH
       c.gender_c,
       c.ethnicity_c
     FROM
-      gabby.alumni.enrollment_c e
-      INNER JOIN gabby.alumni.contact c ON e.student_c = c.id
+      gabby.alumni.enrollment_c AS e
+      INNER JOIN gabby.alumni.contact AS c ON e.student_c = c.id
     WHERE
       e.status_c = 'Graduated'
       AND e.is_deleted = 0
@@ -141,8 +141,8 @@ WITH
         SUM(CAST(s.answer_value AS FLOAT)) / a.answer_total
       ) * 10 AS item_weight
     FROM
-      weight_denominator a
-      LEFT JOIN surveygizmo.survey_detail s ON a.survey_id = s.survey_id
+      weight_denominator AS a
+      LEFT JOIN surveygizmo.survey_detail AS s ON a.survey_id = s.survey_id
       AND s.survey_id = 6734664
       AND s.question_shortname IN (
         'imp_1',
@@ -239,14 +239,14 @@ SELECT
   a.major_c,
   a.status_c
 FROM
-  survey_pivot s
-  LEFT JOIN weight_pivot p ON s.survey_id = p.survey_id
-  LEFT JOIN alumni_data a ON (
+  survey_pivot AS s
+  LEFT JOIN weight_pivot AS p ON s.survey_id = p.survey_id
+  LEFT JOIN alumni_data AS a ON (
     s.alumni_email = a.email
     OR s.alumni_email = a.email2
   )
   AND a.rn_latest = 1
-  LEFT JOIN surveygizmo.survey_response_disqualified dq ON s.survey_id = dq.survey_id
+  LEFT JOIN surveygizmo.survey_response_disqualified AS dq ON s.survey_id = dq.survey_id
   AND s.survey_response_id = dq.id
 WHERE
   dq.id IS NULL

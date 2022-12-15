@@ -33,7 +33,7 @@ WITH
             AND rs.workflow_data_saved = 0 THEN 'DSO Withdrew Letter'
           END AS renewal_status
         FROM
-          gabby.dayforce.renewal_status rs
+          gabby.dayforce.renewal_status AS rs
       ) sub
   ),
   was AS (
@@ -66,7 +66,7 @@ WITH
             END AS DATE
           ) AS future_work_assignment_effective_start
         FROM
-          gabby.dayforce.employee_work_assignment was
+          gabby.dayforce.employee_work_assignment AS was
         WHERE
           was.primary_work_assignment = 1
       ) sub
@@ -91,7 +91,7 @@ WITH
           sta.base_salary AS future_salary,
           CAST(sta.effective_start AS DATE) AS future_status_effective_start
         FROM
-          gabby.dayforce.employee_status sta
+          gabby.dayforce.employee_status AS sta
       ) sub
   )
 SELECT
@@ -118,7 +118,7 @@ SELECT
   sta.future_salary,
   sta.future_status_effective_start
 FROM
-  dayforce.staff_roster r
+  dayforce.staff_roster AS r
   LEFT JOIN wf ON r.df_employee_number = wf.affected_employee_number
   LEFT JOIN was ON r.df_employee_number = was.df_employee_number
   AND was.rn_recent_work_assignment = 1

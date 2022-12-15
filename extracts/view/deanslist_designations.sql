@@ -9,7 +9,7 @@ WITH
       psa.yearid,
       ROUND(AVG(CAST(psa.attendancevalue AS FLOAT)), 2) AS ADA
     FROM
-      gabby.powerschool.ps_adaadm_daily_ctod_current_static psa
+      gabby.powerschool.ps_adaadm_daily_ctod_current_static AS psa
     WHERE
       psa.membershipvalue = 1
       AND psa.calendardate <= CAST(SYSDATETIME() AS DATE)
@@ -49,7 +49,7 @@ WITH
           sp.exit_date,
           1 AS n
         FROM
-          gabby.powerschool.spenrollments_gen_static sp
+          gabby.powerschool.spenrollments_gen_static AS sp
         WHERE
           sp.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
       ) sub PIVOT (
@@ -147,8 +147,8 @@ WITH
         ELSE NULL
       END AS is_chronic_absentee
     FROM
-      gabby.powerschool.cohort_identifiers_static co
-      LEFT JOIN gabby.powerschool.gpa_detail gpa ON co.student_number = gpa.student_number
+      gabby.powerschool.cohort_identifiers_static AS co
+      LEFT JOIN gabby.powerschool.gpa_detail AS gpa ON co.student_number = gpa.student_number
       AND co.academic_year = gpa.academic_year
       AND co.[db_name] = gpa.[db_name]
       AND gpa.is_curterm = 1

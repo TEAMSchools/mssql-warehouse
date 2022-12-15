@@ -57,8 +57,8 @@ SELECT
       h.effective_start_date DESC
   ) AS rn_curr
 FROM
-  gabby.people.employment_history_static h
-  INNER JOIN gabby.people.staff_crosswalk_static r ON h.associate_id = r.adp_associate_id
+  gabby.people.employment_history_static AS h
+  INNER JOIN gabby.people.staff_crosswalk_static AS r ON h.associate_id = r.adp_associate_id
 WHERE
   (
     h.job_title IS NOT NULL

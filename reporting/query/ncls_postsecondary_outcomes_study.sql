@@ -106,8 +106,8 @@ WITH
               CAST(a.performance_level AS NVARCHAR) AS performance_level,
               CAST(a.scaled_score AS NVARCHAR) AS scaled_score
             FROM
-              gabby.njsmart.all_state_assessments a
-              INNER JOIN gabby.powerschool.cohort_identifiers_static co ON a.local_student_id = co.student_number
+              gabby.njsmart.all_state_assessments AS a
+              INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON a.local_student_id = co.student_number
               AND a.academic_year = co.academic_year
               AND co.rn_year = 1
             UNION ALL
@@ -129,7 +129,11 @@ WITH
             FROM
               gabby.parcc.summative_record_file_clean
           ) sub UNPIVOT (
-            VALUE FOR field IN (assessment_type, performance_level, scaled_score)
+            VALUE FOR field IN (
+              assessment_type,
+              performance_level,
+              scaled_score
+            )
           ) u
       ) sub PIVOT (
         MAX(VALUE) FOR pivot_field IN (
@@ -260,8 +264,14 @@ SELECT
     sid.school_code_attending,
     sid2.school_code_attending
   ) AS school_code_attending,
-  COALESCE(sid.district_entry_date, sid2.district_entry_date) AS district_entry_date,
-  COALESCE(sid.school_entry_date, sid2.school_entry_date) AS school_entry_date,
+  COALESCE(
+    sid.district_entry_date,
+    sid2.district_entry_date
+  ) AS district_entry_date,
+  COALESCE(
+    sid.school_entry_date,
+    sid2.school_entry_date
+  ) AS school_entry_date,
   COALESCE(sid.school_exit_date, sid2.school_exit_date) AS school_exit_date,
   COALESCE(
     sid.school_exit_withdrawal_code,
@@ -358,20 +368,20 @@ SELECT
   sa.g12_science_performance_level,
   sa.g12_science_scaled_score
 FROM
-  gabby.njsmart.high_school_graduation_cohort_status_profile g
-  LEFT OUTER JOIN gabby.njsmart.sid_qsac_submission_set_records sid ON g.sid = sid.state_identification_number
-  LEFT OUTER JOIN gabby.powerschool.students s ON g.sid = s.state_studentnumber
-  LEFT OUTER JOIN gabby.njsmart.sid_qsac_submission_set_records sid2 ON s.student_number = sid2.local_identification_number
-  LEFT OUTER JOIN gabby.naviance.sat_scores_clean sat ON COALESCE(
+  gabby.njsmart.high_school_graduation_cohort_status_profile AS g
+  LEFT OUTER JOIN gabby.njsmart.sid_qsac_submission_set_records AS sid ON g.sid = sid.state_identification_number
+  LEFT OUTER JOIN gabby.powerschool.students AS s ON g.sid = s.state_studentnumber
+  LEFT OUTER JOIN gabby.njsmart.sid_qsac_submission_set_records AS sid2 ON s.student_number = sid2.local_identification_number
+  LEFT OUTER JOIN gabby.naviance.sat_scores_clean AS sat ON COALESCE(
     sid.local_identification_number,
     sid2.local_identification_number
   ) = sat.student_number
   AND sat.rn_highest = 1
-  LEFT OUTER JOIN gabby.naviance.act_scores_clean act ON COALESCE(
+  LEFT OUTER JOIN gabby.naviance.act_scores_clean AS act ON COALESCE(
     sid.local_identification_number,
     sid2.local_identification_number
   ) = act.student_number
   AND act.rn_highest = 1
-  LEFT OUTER JOIN state_assessments sa ON g.sid = sa.state_studentnumber
+  LEFT OUTER JOIN state_assessments AS sa ON g.sid = sa.state_studentnumber
 WHERE
   g.four_year_graduation_cohort (BETWEEN 2011 AND 2016)

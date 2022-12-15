@@ -70,9 +70,9 @@ SELECT
   'N/A' AS position_tracking,
   'N/A' AS retirement_projection
 FROM
-  gabby.people.staff_roster sr
-  LEFT JOIN pivot_table pvt ON sr.position_id = pvt.position_id
-  LEFT JOIN cost_number cn ON sr.associate_id = cn.associate_id
+  gabby.people.staff_roster AS sr
+  LEFT JOIN pivot_table AS pvt ON sr.position_id = pvt.position_id
+  LEFT JOIN cost_number AS cn ON sr.associate_id = cn.associate_id
 WHERE
   sr.position_status IN ('Active', 'Leave')
   AND (

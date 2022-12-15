@@ -34,13 +34,13 @@ FROM
       map.percentile_2015_norms AS map_percentile,
       map.test_ritscore AS map_ritscore
     FROM
-      gabby.powerschool.cohort_identifiers_static co
+      gabby.powerschool.cohort_identifiers_static AS co
       CROSS JOIN STRING_SPLIT ('Fall,Winter,Spring', ',') terms
       CROSS JOIN STRING_SPLIT (
         'Mathematics,Reading,Science - General Science,Language Usage',
         ','
       ) subjects
-      LEFT JOIN gabby.nwea.assessment_result_identifiers map ON co.student_number = map.student_id
+      LEFT JOIN gabby.nwea.assessment_result_identifiers AS map ON co.student_number = map.student_id
       AND co.academic_year = map.academic_year
       AND terms.[value] = map.term
       AND subjects.[value] = map.measurement_scale

@@ -20,10 +20,12 @@ WITH
       END AS is_curterm,
       si.credittype
     FROM
-      powerschool.category_grades_static cat
-      INNER JOIN powerschool.sections_identifiers si ON cat.sectionid = si.sectionid
+      powerschool.category_grades_static AS cat
+      INNER JOIN powerschool.sections_identifiers AS si ON cat.sectionid = si.sectionid
     WHERE
-      cat.yearid = (gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990)
+      cat.yearid = (
+        gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990
+      )
     UNION ALL
     SELECT
       cat.studentid,
@@ -33,7 +35,9 @@ WITH
       cat.reporting_term,
       cat.reporting_term AS rt,
       cat.storecode_type,
-      CAST(ROUND(AVG(cat.category_pct), 0) AS DECIMAL(4, 0)) AS category_pct,
+      CAST(
+        ROUND(AVG(cat.category_pct), 0) AS DECIMAL(4, 0)
+      ) AS category_pct,
       NULL AS citizenship,
       CASE
         WHEN CAST(CURRENT_TIMESTAMP AS DATE) (
@@ -43,9 +47,11 @@ WITH
       END AS is_curterm,
       'ALL' AS credittype
     FROM
-      powerschool.category_grades_static cat
+      powerschool.category_grades_static AS cat
     WHERE
-      cat.yearid = (gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990)
+      cat.yearid = (
+        gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990
+      )
     GROUP BY
       cat.studentid,
       cat.schoolid,
@@ -68,10 +74,12 @@ WITH
       1 AS is_curterm,
       si.credittype
     FROM
-      powerschool.category_grades_static cat
-      INNER JOIN powerschool.sections_identifiers si ON cat.sectionid = si.sectionid
+      powerschool.category_grades_static AS cat
+      INNER JOIN powerschool.sections_identifiers AS si ON cat.sectionid = si.sectionid
     WHERE
-      cat.yearid = (gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990)
+      cat.yearid = (
+        gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990
+      )
       AND CAST(CURRENT_TIMESTAMP AS DATE) (
         BETWEEN cat.termbin_start_date AND cat.termbin_end_date
       )
@@ -84,14 +92,18 @@ WITH
       cat.reporting_term,
       'CUR' AS rt,
       cat.storecode_type,
-      CAST(ROUND(AVG(cat.category_pct), 0) AS DECIMAL(4, 0)) AS category_pct,
+      CAST(
+        ROUND(AVG(cat.category_pct), 0) AS DECIMAL(4, 0)
+      ) AS category_pct,
       NULL AS citizenship,
       1 AS is_curterm,
       'ALL' AS credittype
     FROM
-      powerschool.category_grades_static cat
+      powerschool.category_grades_static AS cat
     WHERE
-      cat.yearid = (gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990)
+      cat.yearid = (
+        gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990
+      )
       AND CAST(CURRENT_TIMESTAMP AS DATE) (
         BETWEEN cat.termbin_start_date AND cat.termbin_end_date
       )
@@ -131,7 +143,9 @@ WITH
           CAST(citizenship AS NVARCHAR(4)) AS citizenship
         FROM
           grades_long
-      ) sub UNPIVOT ([value] FOR field IN (category_pct, citizenship)) u
+      ) sub UNPIVOT (
+        [value] FOR field IN (category_pct, citizenship)
+      ) u
   ),
   grades_repivot AS (
     SELECT
@@ -188,7 +202,7 @@ WITH
               gr.reporting_term ASC
           ) AS schoolid
         FROM
-          grades_unpivot gr
+          grades_unpivot AS gr
         WHERE
           gr.field = 'category_pct'
         UNION ALL
@@ -211,7 +225,7 @@ WITH
               gr.reporting_term ASC
           ) AS schoolid
         FROM
-          grades_unpivot gr
+          grades_unpivot AS gr
         WHERE
           gr.field = 'citizenship'
           AND gr.storecode_type = 'Q'

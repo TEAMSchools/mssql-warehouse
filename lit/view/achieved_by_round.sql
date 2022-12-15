@@ -15,8 +15,8 @@ WITH
       CAST(RIGHT(terms.time_per_name, 1) AS INT) AS round_num,
       terms.is_curterm
     FROM
-      gabby.powerschool.cohort_identifiers_static r
-      INNER JOIN gabby.reporting.reporting_terms terms ON r.academic_year = terms.academic_year
+      gabby.powerschool.cohort_identifiers_static AS r
+      INNER JOIN gabby.reporting.reporting_terms AS terms ON r.academic_year = terms.academic_year
       AND r.schoolid = terms.schoolid
       AND terms.identifier = 'LIT'
       AND terms._fivetran_deleted = 0
@@ -93,23 +93,23 @@ WITH
           hard.read_lvl AS hard_read_lvl,
           hard.lvl_num AS hard_lvl_num
         FROM
-          roster_scaffold r
-          LEFT JOIN gabby.lit.all_test_events_static ps ON r.student_number = ps.student_number
+          roster_scaffold AS r
+          LEFT JOIN gabby.lit.all_test_events_static AS ps ON r.student_number = ps.student_number
           AND r.academic_year = ps.academic_year
           AND r.test_round = ps.test_round
           AND ps.[status] = 'Mixed'
           AND ps.curr_round = 1
-          LEFT JOIN gabby.lit.all_test_events_static achv ON r.student_number = achv.student_number
+          LEFT JOIN gabby.lit.all_test_events_static AS achv ON r.student_number = achv.student_number
           AND r.academic_year = achv.academic_year
           AND r.test_round = achv.test_round
           AND achv.[status] = 'Achieved'
           AND achv.curr_round = 1
-          LEFT JOIN gabby.lit.all_test_events_static dna ON r.student_number = dna.student_number
+          LEFT JOIN gabby.lit.all_test_events_static AS dna ON r.student_number = dna.student_number
           AND r.academic_year = dna.academic_year
           AND r.test_round = dna.test_round
           AND dna.[status] = 'Did Not Achieve'
           AND dna.curr_round = 1
-          LEFT JOIN gabby.lit.all_test_events_static hard ON r.student_number = hard.student_number
+          LEFT JOIN gabby.lit.all_test_events_static AS hard ON r.student_number = hard.student_number
           AND r.academic_year = hard.academic_year
           AND r.test_round = hard.test_round
           AND hard.[status] = 'DNA - Hard'
@@ -148,13 +148,13 @@ WITH
           NULL AS hard_read_lvl,
           NULL AS hard_lvl_num
         FROM
-          roster_scaffold r
-          LEFT JOIN gabby.lit.all_test_events_static achv ON r.student_number = achv.student_number
+          roster_scaffold AS r
+          LEFT JOIN gabby.lit.all_test_events_static AS achv ON r.student_number = achv.student_number
           AND r.academic_year = achv.academic_year
           AND r.test_round = achv.test_round
           AND achv.[status] = 'Achieved'
           AND achv.curr_round = 1
-          LEFT JOIN gabby.lit.all_test_events_static dna ON r.student_number = dna.student_number
+          LEFT JOIN gabby.lit.all_test_events_static AS dna ON r.student_number = dna.student_number
           AND r.academic_year = dna.academic_year
           AND r.test_round = dna.test_round
           AND dna.[status] = 'Did Not Achieve'
@@ -246,8 +246,8 @@ WITH
           NULL AS hard_read_lvl,
           NULL AS hard_lvl_num
         FROM
-          roster_scaffold r
-          INNER JOIN gabby.lit.all_test_events_static fp ON r.student_number = fp.student_number
+          roster_scaffold AS r
+          INNER JOIN gabby.lit.all_test_events_static AS fp ON r.student_number = fp.student_number
           AND r.academic_year = fp.academic_year
           AND fp.recent_yr = 1
           LEFT JOIN gabby.lit.gleq ON CASE
@@ -278,7 +278,10 @@ WITH
       COALESCE(tests.read_lvl, achv_prev.read_lvl) AS read_lvl,
       COALESCE(tests.lvl_num, achv_prev.lvl_num) AS lvl_num,
       COALESCE(tests.indep_lvl, achv_prev.indep_lvl) AS indep_lvl,
-      COALESCE(tests.indep_lvl_num, achv_prev.indep_lvl_num) AS indep_lvl_num,
+      COALESCE(
+        tests.indep_lvl_num,
+        achv_prev.indep_lvl_num
+      ) AS indep_lvl_num,
       COALESCE(tests.instruct_lvl, achv_prev.instruct_lvl) AS instruct_lvl,
       COALESCE(
         tests.instruct_lvl_num,
@@ -288,7 +291,10 @@ WITH
       COALESCE(tests.gleq_lvl_num, achv_prev.gleq_lvl_num) AS gleq_lvl_num,
       COALESCE(tests.fp_wpmrate, achv_prev.fp_wpmrate) AS fp_wpmrate,
       COALESCE(tests.fp_keylever, achv_prev.fp_keylever) AS fp_keylever,
-      COALESCE(tests.achv_unique_id, achv_prev.achv_unique_id) AS achv_unique_id,
+      COALESCE(
+        tests.achv_unique_id,
+        achv_prev.achv_unique_id
+      ) AS achv_unique_id,
       ROW_NUMBER() OVER (
         PARTITION BY
           tests.student_number,
@@ -298,7 +304,7 @@ WITH
       ) AS rn
     FROM
       tests
-      LEFT JOIN tests achv_prev ON tests.student_number = achv_prev.student_number
+      LEFT JOIN tests AS achv_prev ON tests.student_number = achv_prev.student_number
       AND tests.meta_achv_round < achv_prev.meta_achv_round
       AND achv_prev.read_lvl IS NOT NULL
   ),
@@ -320,7 +326,7 @@ WITH
       ) AS rn
     FROM
       tests
-      LEFT JOIN tests dna_prev ON tests.student_number = dna_prev.student_number
+      LEFT JOIN tests AS dna_prev ON tests.student_number = dna_prev.student_number
       AND tests.meta_achv_round < dna_prev.meta_achv_round
       AND dna_prev.dna_lvl IS NOT NULL
       AND tests.[start_date] <= CAST(CURRENT_TIMESTAMP AS DATE) /* preserves the scaffold but will not carry scores to a future term */
@@ -331,9 +337,15 @@ WITH
       tests.student_number,
       tests.test_round,
       tests.round_num,
-      COALESCE(tests.hard_read_lvl, hard_prev.hard_read_lvl) AS hard_lvl,
+      COALESCE(
+        tests.hard_read_lvl,
+        hard_prev.hard_read_lvl
+      ) AS hard_lvl,
       COALESCE(tests.hard_lvl_num, hard_prev.hard_lvl_num) AS hard_lvl_num,
-      COALESCE(tests.hard_unique_id, hard_prev.hard_unique_id) AS hard_unique_id,
+      COALESCE(
+        tests.hard_unique_id,
+        hard_prev.hard_unique_id
+      ) AS hard_unique_id,
       ROW_NUMBER() OVER (
         PARTITION BY
           tests.student_number,
@@ -343,7 +355,7 @@ WITH
       ) AS rn
     FROM
       tests
-      LEFT JOIN tests hard_prev ON tests.student_number = hard_prev.student_number
+      LEFT JOIN tests AS hard_prev ON tests.student_number = hard_prev.student_number
       AND tests.meta_achv_round < hard_prev.meta_achv_round
       AND hard_prev.hard_lvl_num IS NOT NULL
       AND tests.[start_date] <= CAST(CURRENT_TIMESTAMP AS DATE) /* preserves the scaffold but will not carry scores to a future term */
@@ -650,7 +662,7 @@ FROM
           END AS is_new_test
         FROM
           achieved
-          LEFT JOIN gabby.lit.all_test_events_static atid ON achieved.achv_unique_id = atid.unique_id
+          LEFT JOIN gabby.lit.all_test_events_static AS atid ON achieved.achv_unique_id = atid.unique_id
           AND atid.[status] = 'Achieved'
           LEFT JOIN dna ON achieved.student_number = dna.student_number
           AND achieved.academic_year = dna.academic_year
@@ -660,10 +672,10 @@ FROM
           AND achieved.academic_year = hard.academic_year
           AND achieved.round_num = hard.round_num
           AND hard.rn = 1
-          LEFT JOIN gabby.lit.network_goals goals ON achieved.grade_level = goals.grade_level
+          LEFT JOIN gabby.lit.network_goals AS goals ON achieved.grade_level = goals.grade_level
           AND achieved.test_round = goals.test_round
           AND goals.norms_year = 2021
-          LEFT JOIN gabby.lit.individualized_goals indiv ON achieved.student_number = indiv.student_number
+          LEFT JOIN gabby.lit.individualized_goals AS indiv ON achieved.student_number = indiv.student_number
           AND achieved.test_round = indiv.test_round
           AND achieved.academic_year = indiv.academic_year
         WHERE

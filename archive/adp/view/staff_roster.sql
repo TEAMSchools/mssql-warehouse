@@ -122,7 +122,10 @@ WITH
           CASE
             WHEN ea.ethnicity IS NULL
             AND ea.preferred_race_ethnicity IS NULL THEN NULL
-            WHEN CHARINDEX('Decline to state', ea.preferred_race_ethnicity) > 0 THEN NULL
+            WHEN CHARINDEX(
+              'Decline to state',
+              ea.preferred_race_ethnicity
+            ) > 0 THEN NULL
             WHEN CHARINDEX(
               'Latinx/Hispanic/Chicana(o)',
               ea.preferred_race_ethnicity
@@ -145,11 +148,17 @@ WITH
           END AS is_race_asian,
           CASE
             WHEN ea.race_description = 'Native Hawaiian or Other Pacific Islander' THEN 1
-            WHEN CHARINDEX('Pacific Islander', ea.preferred_race_ethnicity) > 0 THEN 1
+            WHEN CHARINDEX(
+              'Pacific Islander',
+              ea.preferred_race_ethnicity
+            ) > 0 THEN 1
             ELSE 0
           END AS is_race_nhpi,
           CASE
-            WHEN CHARINDEX('Middle Eastern', ea.preferred_race_ethnicity) > 0 THEN 1
+            WHEN CHARINDEX(
+              'Middle Eastern',
+              ea.preferred_race_ethnicity
+            ) > 0 THEN 1
             ELSE 0
           END AS is_race_mideast,
           CASE
@@ -159,7 +168,10 @@ WITH
           END AS is_race_white,
           CASE
             WHEN ea.race_description = 'Two or more races (Not Hispanic or Latino)' THEN 1
-            WHEN CHARINDEX('Bi/Multiracial', ea.preferred_race_ethnicity) > 0 THEN 1
+            WHEN CHARINDEX(
+              'Bi/Multiracial',
+              ea.preferred_race_ethnicity
+            ) > 0 THEN 1
             WHEN CHARINDEX(';', ea.preferred_race_ethnicity) > 0 THEN 1
             ELSE 0
           END AS is_race_multi,
@@ -171,12 +183,18 @@ WITH
             ELSE 0
           END AS is_race_other,
           CASE
-            WHEN CHARINDEX('Decline to state', ea.preferred_race_ethnicity) > 0 THEN 1
+            WHEN CHARINDEX(
+              'Decline to state',
+              ea.preferred_race_ethnicity
+            ) > 0 THEN 1
             ELSE 0
           END AS is_race_decline,
           CASE
             WHEN CHARINDEX(';', ea.preferred_race_ethnicity) > 0 THEN 'Bi/Multiracial'
-            ELSE COALESCE(ea.preferred_race_ethnicity, ea.race_description)
+            ELSE COALESCE(
+              ea.preferred_race_ethnicity,
+              ea.race_description
+            )
           END AS race_reporting,
           CASE
             WHEN ea.associate_id IN (
@@ -231,10 +249,10 @@ WITH
           df.preferred_last_name,
           cw.adp_associate_id AS adp_associate_id_legacy
         FROM
-          gabby.adp.employees_all ea
-          INNER JOIN gabby.adp.employees e ON ea.file_number = e.file_number
-          LEFT JOIN gabby.dayforce.employees df ON ea.file_number = df.df_employee_number
-          LEFT JOIN gabby.people.id_crosswalk_adp cw ON ea.file_number = cw.df_employee_number
+          gabby.adp.employees_all AS ea
+          INNER JOIN gabby.adp.employees AS e ON ea.file_number = e.file_number
+          LEFT JOIN gabby.dayforce.employees AS df ON ea.file_number = df.df_employee_number
+          LEFT JOIN gabby.people.id_crosswalk_adp AS cw ON ea.file_number = cw.df_employee_number
           AND cw.rn_curr = 1
         WHERE
           ea.file_number IS NOT NULL
@@ -320,7 +338,7 @@ SELECT
   m.preferred_last_name AS manager_preferred_last_name,
   m.preferred_last_name + ', ' + m.preferred_first_name AS manager_name
 FROM
-  clean_people c
-  LEFT JOIN gabby.people.school_crosswalk s ON c.primary_site = s.site_name
+  clean_people AS c
+  LEFT JOIN gabby.people.school_crosswalk AS s ON c.primary_site = s.site_name
   AND s._fivetran_deleted = 0
-  LEFT JOIN clean_people m ON c.reports_to_associate_id = m.adp_associate_id
+  LEFT JOIN clean_people AS m ON c.reports_to_associate_id = m.adp_associate_id

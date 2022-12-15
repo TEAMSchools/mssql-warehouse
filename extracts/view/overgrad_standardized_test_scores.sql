@@ -28,5 +28,5 @@ SELECT
   stl.date_c AS test_date_filter,
   stl.test_type AS test_type_filter
 FROM
-  gabby.alumni.standardized_test_long stl
-  INNER JOIN gabby.alumni.enrollment_identifiers ei ON stl.contact_c = ei.student_c
+  gabby.alumni.standardized_test_long AS stl
+  INNER JOIN gabby.alumni.enrollment_identifiers AS ei ON stl.contact_c = ei.student_c

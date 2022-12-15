@@ -31,8 +31,8 @@ FROM
           pb._fivetran_synced DESC
       ) AS rn
     FROM
-      gabby.illuminate_dna_assessments.performance_band_sets pbs
-      INNER JOIN gabby.illuminate_dna_assessments.performance_bands pb ON pbs.performance_band_set_id = pb.performance_band_set_id
+      gabby.illuminate_dna_assessments.performance_band_sets AS pbs
+      INNER JOIN gabby.illuminate_dna_assessments.performance_bands AS pb ON pbs.performance_band_set_id = pb.performance_band_set_id
     WHERE
       pbs.deleted_at IS NULL
   ) sub

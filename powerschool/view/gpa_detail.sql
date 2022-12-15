@@ -19,12 +19,12 @@ WITH
       rt.time_per_name AS reporting_term,
       rt.is_curterm
     FROM
-      powerschool.cohort_static co
-      INNER JOIN powerschool.final_grades_static fg ON co.studentid = fg.studentid
+      powerschool.cohort_static AS co
+      INNER JOIN powerschool.final_grades_static AS fg ON co.studentid = fg.studentid
       AND co.yearid = fg.yearid
       AND fg.exclude_from_gpa = 0
       AND fg.potential_credit_hours > 0
-      INNER JOIN gabby.reporting.reporting_terms rt ON co.schoolid = rt.schoolid
+      INNER JOIN gabby.reporting.reporting_terms AS rt ON co.schoolid = rt.schoolid
       AND co.academic_year = rt.academic_year
       AND fg.storecode = rt.alt_name
     COLLATE Latin1_General_BIN
@@ -52,11 +52,11 @@ WITH
         ELSE 0
       END AS is_curterm
     FROM
-      powerschool.storedgrades sg
-      INNER JOIN powerschool.students s ON sg.studentid = s.id
-      INNER JOIN powerschool.courses c ON sg.course_number = c.course_number
+      powerschool.storedgrades AS sg
+      INNER JOIN powerschool.students AS s ON sg.studentid = s.id
+      INNER JOIN powerschool.courses AS c ON sg.course_number = c.course_number
       AND c.credit_hours > 0
-      LEFT JOIN powerschool.storedgrades y1 ON sg.studentid = y1.studentid
+      LEFT JOIN powerschool.storedgrades AS y1 ON sg.studentid = y1.studentid
       AND LEFT(sg.termid, 2) = LEFT(y1.termid, 2)
       AND sg.course_number = y1.course_number
       AND y1.storecode = 'Y1'
@@ -86,7 +86,9 @@ SELECT
   CAST(
     ROUND(weighted_gpa_points_term, 2) AS DECIMAL(5, 2)
   ) AS weighted_gpa_points_term,
-  CAST(ROUND(weighted_gpa_points_y1, 2) AS DECIMAL(5, 2)) AS weighted_gpa_points_y1
+  CAST(
+    ROUND(weighted_gpa_points_y1, 2) AS DECIMAL(5, 2)
+  ) AS weighted_gpa_points_y1
   /* gpa semester */
 ,
   SUM(gpa_points_total_term) OVER (
@@ -217,7 +219,9 @@ FROM
       CAST(
         ROUND(
           SUM(
-            (potential_credit_hours * y1_grade_pts_unweighted)
+            (
+              potential_credit_hours * y1_grade_pts_unweighted
+            )
           ) / CASE
           /* when no y1 pct, then exclude credit hours */
             WHEN SUM(

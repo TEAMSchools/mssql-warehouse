@@ -21,13 +21,13 @@ WITH
           cd.f,
           t.yearid
         FROM
-          powerschool.calendar_day cd
-          INNER JOIN powerschool.schools s ON cd.schoolid = s.school_number
-          INNER JOIN powerschool.cycle_day cy ON cd.cycle_day_id = cy.id
-          INNER JOIN powerschool.terms t ON cd.schoolid = t.schoolid
+          powerschool.calendar_day AS cd
+          INNER JOIN powerschool.schools AS s ON cd.schoolid = s.school_number
+          INNER JOIN powerschool.cycle_day AS cy ON cd.cycle_day_id = cy.id
+          INNER JOIN powerschool.terms AS t ON cd.schoolid = t.schoolid
           AND cd.date_value (BETWEEN t.firstday AND t.lastday)
           AND t.isyearrec = 1
-          INNER JOIN powerschool.bell_schedule bs ON t.schoolid = bs.schoolid
+          INNER JOIN powerschool.bell_schedule AS bs ON t.schoolid = bs.schoolid
           AND t.yearid = bs.year_id
           AND cd.bell_schedule_id = bs.id
         WHERE
@@ -51,7 +51,7 @@ SELECT
     END
   ) AS days_remaining
 FROM
-  cal_long cl
+  cal_long AS cl
 WHERE
   cl.[value] = 1
 GROUP BY

@@ -26,7 +26,7 @@ SELECT
   pmrc.ontrack,
   pmrc.offtrack
 FROM
-  powerschool.ps_membership_reg_current_static pmrc
+  powerschool.ps_membership_reg_current_static AS pmrc
 UNION ALL
 SELECT
   pmra.studentid,
@@ -54,4 +54,4 @@ SELECT
   pmra.ontrack,
   pmra.offtrack
 FROM
-  powerschool.ps_membership_reg_archive pmra
+  powerschool.ps_membership_reg_archive AS pmra

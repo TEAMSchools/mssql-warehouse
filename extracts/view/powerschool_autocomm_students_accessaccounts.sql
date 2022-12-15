@@ -31,8 +31,8 @@ SELECT
   CONVERT(VARCHAR, de.district_entry_date, 101) AS school_entry_date,
   co.[db_name]
 FROM
-  gabby.powerschool.cohort_identifiers_static co
-  LEFT JOIN gabby.powerschool.district_entry_date de ON co.studentid = de.studentid
+  gabby.powerschool.cohort_identifiers_static AS co
+  LEFT JOIN gabby.powerschool.district_entry_date AS de ON co.studentid = de.studentid
   AND co.[db_name] = de.[db_name]
   AND de.rn_entry = 1
 WHERE

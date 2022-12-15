@@ -20,7 +20,7 @@ WITH
           dateleft DESC
       ) AS rn
     FROM
-      gabby.powerschool.course_enrollments_static enr
+      gabby.powerschool.course_enrollments_static AS enr
     WHERE
       enr.course_enroll_status = 0
       AND enr.section_enroll_status = 0
@@ -85,11 +85,11 @@ SELECT
       stm.week_end_date DESC
   ) AS rn_gcd
 FROM
-  gabby.stmath.progress_completion_report_clean stm
-  INNER JOIN gabby.powerschool.cohort_identifiers_static co ON stm.school_student_id = co.student_number
+  gabby.stmath.progress_completion_report_clean AS stm
+  INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON stm.school_student_id = co.student_number
   AND stm.start_year = co.academic_year
   AND co.rn_year = 1
-  INNER JOIN enrollments enr ON co.student_number = enr.student_number
+  INNER JOIN enrollments AS enr ON co.student_number = enr.student_number
   AND co.academic_Year = enr.academic_year
   AND co.db_name = enr.db_name
   AND enr.rn = 1

@@ -21,13 +21,13 @@ WITH
       x1.exit_code AS exit_code_kf,
       x2.exit_code AS exit_code_ts
     FROM
-      powerschool.students s
-      INNER JOIN powerschool.terms terms ON s.schoolid = terms.schoolid
+      powerschool.students AS s
+      INNER JOIN powerschool.terms AS terms ON s.schoolid = terms.schoolid
       AND s.entrydate (BETWEEN terms.firstday AND terms.lastday)
       AND terms.isyearrec = 1
-      LEFT JOIN powerschool.u_clg_et_stu_clean_static x1 ON s.dcid = x1.studentsdcid
+      LEFT JOIN powerschool.u_clg_et_stu_clean_static AS x1 ON s.dcid = x1.studentsdcid
       AND s.exitdate = x1.exit_date
-      LEFT JOIN powerschool.u_clg_et_stu_alt_clean_static x2 ON s.dcid = x2.studentsdcid
+      LEFT JOIN powerschool.u_clg_et_stu_alt_clean_static AS x2 ON s.dcid = x2.studentsdcid
       AND s.exitdate = x2.exit_date
     WHERE
       s.enroll_status IN (-1, 0, 2)
@@ -52,8 +52,8 @@ WITH
       NULL AS exit_code_kf,
       NULL AS exit_code_ts
     FROM
-      powerschool.students s
-      INNER JOIN powerschool.terms terms ON s.schoolid = terms.schoolid
+      powerschool.students AS s
+      INNER JOIN powerschool.terms AS terms ON s.schoolid = terms.schoolid
       AND s.entrydate <= terms.firstday
       AND terms.isyearrec = 1
     WHERE
@@ -78,14 +78,14 @@ WITH
       x1.exit_code AS exit_code_kf,
       x2.exit_code AS exit_code_ts
     FROM
-      powerschool.reenrollments re
-      INNER JOIN powerschool.students s ON re.studentid = s.id
-      INNER JOIN powerschool.terms terms ON re.schoolid = terms.schoolid
+      powerschool.reenrollments AS re
+      INNER JOIN powerschool.students AS s ON re.studentid = s.id
+      INNER JOIN powerschool.terms AS terms ON re.schoolid = terms.schoolid
       AND re.entrydate (BETWEEN terms.firstday AND terms.lastday)
       AND terms.isyearrec = 1
-      LEFT JOIN powerschool.u_clg_et_stu_clean_static x1 ON s.dcid = x1.studentsdcid
+      LEFT JOIN powerschool.u_clg_et_stu_clean_static AS x1 ON s.dcid = x1.studentsdcid
       AND re.exitdate = x1.exit_date
-      LEFT JOIN powerschool.u_clg_et_stu_alt_clean_static x2 ON s.dcid = x2.studentsdcid
+      LEFT JOIN powerschool.u_clg_et_stu_alt_clean_static AS x2 ON s.dcid = x2.studentsdcid
       AND re.exitdate = x2.exit_date
     WHERE
       re.schoolid <> 12345 /* filter out summer school */

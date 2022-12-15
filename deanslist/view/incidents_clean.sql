@@ -42,13 +42,23 @@ SELECT
   CAST(update_title AS NVARCHAR(16)) AS update_title,
   CAST(JSON_VALUE(return_date, '$.date') AS DATE) AS return_date,
   CAST(JSON_VALUE(issue_ts, '$.date') AS DATETIME2) AS issue_ts,
-  CAST(JSON_VALUE(update_ts, '$.date') AS DATETIME2) AS update_ts,
+  CAST(
+    JSON_VALUE(update_ts, '$.date') AS DATETIME2
+  ) AS update_ts,
   CAST(JSON_VALUE(close_ts, '$.date') AS DATETIME2) AS close_ts,
-  CAST(JSON_VALUE(review_ts, '$.date') AS DATETIME2) AS review_ts,
-  CAST(JSON_VALUE(create_ts, '$.date') AS DATETIME2) AS create_ts,
-  CAST(JSON_VALUE(dl_lastupdate, '$.date') AS DATETIME2) AS dl_lastupdate,
+  CAST(
+    JSON_VALUE(review_ts, '$.date') AS DATETIME2
+  ) AS review_ts,
+  CAST(
+    JSON_VALUE(create_ts, '$.date') AS DATETIME2
+  ) AS create_ts,
+  CAST(
+    JSON_VALUE(dl_lastupdate, '$.date') AS DATETIME2
+  ) AS dl_lastupdate,
   gabby.utilities.DATE_TO_SY (
-    CAST(JSON_VALUE(create_ts, '$.date') AS DATETIME2)
+    CAST(
+      JSON_VALUE(create_ts, '$.date') AS DATETIME2
+    )
   ) AS create_academic_year
 FROM
   deanslist.incidents

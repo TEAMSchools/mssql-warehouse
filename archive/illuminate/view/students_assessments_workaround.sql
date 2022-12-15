@@ -7,7 +7,7 @@ SELECT
   c.student_id,
   c.date_taken
 FROM
-  gabby.illuminate_dna_assessments.students_assessments_workaround_current_static c
+  gabby.illuminate_dna_assessments.students_assessments_workaround_current_static AS c
 UNION ALL
 SELECT
   a.student_assessment_id,
@@ -15,4 +15,4 @@ SELECT
   a.student_id,
   a.date_taken
 FROM
-  gabby.illuminate_dna_assessments.students_assessments_workaround_archive a
+  gabby.illuminate_dna_assessments.students_assessments_workaround_archive AS a

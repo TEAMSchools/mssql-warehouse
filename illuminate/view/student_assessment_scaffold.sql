@@ -16,7 +16,7 @@ SELECT
   cur.student_id,
   cur.is_replacement
 FROM
-  gabby.illuminate_dna_assessments.student_assessment_scaffold_current_static cur
+  gabby.illuminate_dna_assessments.student_assessment_scaffold_current_static AS cur
 UNION ALL
 SELECT
   arc.assessment_id,
@@ -33,4 +33,4 @@ SELECT
   arc.student_id,
   arc.is_replacement
 FROM
-  gabby.illuminate_dna_assessments.student_assessment_scaffold_archive arc
+  gabby.illuminate_dna_assessments.student_assessment_scaffold_archive AS arc

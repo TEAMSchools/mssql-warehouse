@@ -11,8 +11,8 @@ WITH
       END AS is_act_16,
       ktc.school_specific_id_c AS student_number
     FROM
-      gabby.alumni.standardized_test_long stl
-      INNER JOIN gabby.alumni.contact ktc ON stl.contact_c = ktc.id
+      gabby.alumni.standardized_test_long AS stl
+      INNER JOIN gabby.alumni.contact AS ktc ON stl.contact_c = ktc.id
     WHERE
       stl.test_type = 'ACT'
       AND stl.score_type = 'act_composite_c'
@@ -38,8 +38,8 @@ WITH
     COLLATE Latin1_General_BIN AS iready_subject,
     'ALL' AS grade_band
     FROM
-      gabby.powerschool.cohort_identifiers_static co
-      INNER JOIN gabby.iready.growth_metrics gm ON co.student_number = gm.student_number
+      gabby.powerschool.cohort_identifiers_static AS co
+      INNER JOIN gabby.iready.growth_metrics AS gm ON co.student_number = gm.student_number
       AND co.academic_year = gm.academic_year
     WHERE
       co.rn_year = 1
@@ -139,12 +139,12 @@ FROM
           co.iep_status,
           co.gender
         FROM
-          gabby.lit.achieved_by_round_static ats
-          LEFT JOIN gabby.powerschool.cohort_identifiers_static co ON ats.student_number = co.student_number
+          gabby.lit.achieved_by_round_static AS ats
+          LEFT JOIN gabby.powerschool.cohort_identifiers_static AS co ON ats.student_number = co.student_number
           AND ats.academic_year = co.academic_year
           AND co.is_enrolled_recent = 1
         WHERE
-          ats.academic_year >= gabby.utilities.global_academic_year () - 3
+          ats.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 3
           AND ats.is_curterm = 1
           AND ats.grade_level <= 4
       ) sub
@@ -208,14 +208,14 @@ FROM
           co.gender,
           co.school_level AS grade_band
         FROM
-          gabby.powerschool.gpa_detail gpa
-          INNER JOIN gabby.powerschool.cohort_identifiers_static co ON gpa.student_number = co.student_number
+          gabby.powerschool.gpa_detail AS gpa
+          INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON gpa.student_number = co.student_number
           AND gpa.academic_year = co.academic_year
           AND co.is_enrolled_recent = 1
           AND co.rn_year = 1
         WHERE
           gpa.is_curterm = 1
-          AND gpa.academic_year >= gabby.utilities.global_academic_year () - 3
+          AND gpa.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 3
           AND gpa.grade_level >= 5
           AND co.school_level NOT IN ('OD', 'ES')
       ) sub
@@ -267,7 +267,7 @@ FROM
         2
       ) AS pct_met_m
     FROM
-      iready sub
+      iready AS sub
     GROUP BY
       sub.academic_year,
       sub.schoolid,
@@ -317,7 +317,7 @@ FROM
         2
       ) AS pct_met_m
     FROM
-      iready sub
+      iready AS sub
     GROUP BY
       sub.academic_year,
       sub.schoolid,
@@ -380,14 +380,14 @@ FROM
             ELSE 0
           END AS is_on_grade
         FROM
-          gabby.powerschool.cohort_identifiers_static co
-          INNER JOIN gabby.iready.diagnostic_and_instruction di ON co.student_number = di.student_id
+          gabby.powerschool.cohort_identifiers_static AS co
+          INNER JOIN gabby.iready.diagnostic_and_instruction AS di ON co.student_number = di.student_id
           AND co.academic_year = LEFT(di.academic_year, 4)
         WHERE
           co.rn_year = 1
           AND co.is_enrolled_recent = 1
           AND co.grade_level <= 2
-          AND co.academic_year >= gabby.utilities.global_academic_year () - 3
+          AND co.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 3
       ) sub
     GROUP BY
       sub.academic_year,
@@ -438,8 +438,8 @@ FROM
         2
       ) AS pct_met_m
     FROM
-      gabby.powerschool.ps_adaadm_daily_ctod mem
-      INNER JOIN gabby.powerschool.cohort_identifiers_static co ON mem.studentid = co.studentid
+      gabby.powerschool.ps_adaadm_daily_ctod AS mem
+      INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON mem.studentid = co.studentid
       AND mem.yearid = co.yearid
       AND mem.[db_name] = co.[db_name]
       AND co.rn_year = 1
@@ -509,17 +509,17 @@ FROM
           END AS is_suspended,
           'ALL' AS grade_band
         FROM
-          gabby.powerschool.cohort_identifiers_static co
-          LEFT JOIN gabby.deanslist.incidents_clean_static ics ON co.student_number = ics.student_school_id
+          gabby.powerschool.cohort_identifiers_static AS co
+          LEFT JOIN gabby.deanslist.incidents_clean_static AS ics ON co.student_number = ics.student_school_id
           AND co.academic_year = ics.create_academic_year
           AND co.[db_name] = ics.[db_name]
-          LEFT JOIN gabby.deanslist.incidents_penalties_static ips ON ips.incident_id = ics.incident_id
+          LEFT JOIN gabby.deanslist.incidents_penalties_static AS ips ON ips.incident_id = ics.incident_id
           AND ips.[db_name] = ics.[db_name]
           AND ips.issuspension = 1
         WHERE
           co.rn_year = 1
           AND co.is_enrolled_y1 = 1
-          AND co.academic_year >= gabby.utilities.global_academic_year () - 3
+          AND co.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 3
       ) sub
     GROUP BY
       sub.academic_year,
@@ -569,13 +569,13 @@ FROM
         2
       ) AS pct_met_m
     FROM
-      gabby.powerschool.cohort_identifiers_static co
-      LEFT JOIN act_composite act ON co.student_number = act.student_number
+      gabby.powerschool.cohort_identifiers_static AS co
+      LEFT JOIN act_composite AS act ON co.student_number = act.student_number
     WHERE
       co.rn_year = 1
       AND co.is_enrolled_y1 = 1
       AND co.grade_level IN (11, 12)
-      AND co.academic_year >= gabby.utilities.global_academic_year () - 3
+      AND co.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 3
     GROUP BY
       co.academic_year,
       co.schoolid,
@@ -657,7 +657,7 @@ FROM
           END AS is_enrolled_next,
           'ALL' AS grade_band
         FROM
-          gabby.powerschool.cohort_identifiers_static co
+          gabby.powerschool.cohort_identifiers_static AS co
         WHERE
           co.is_enrolled_oct01 = 1
           AND co.rn_year = 1
@@ -689,8 +689,8 @@ FROM
           END AS avg_response,
           sc.ps_school_id AS schoolid
         FROM
-          gabby.surveys.cmo_engagement_regional_survey_detail cm
-          INNER JOIN gabby.people.school_crosswalk sc ON cm.respondent_primary_site = sc.site_name
+          gabby.surveys.cmo_engagement_regional_survey_detail AS cm
+          INNER JOIN gabby.people.school_crosswalk AS sc ON cm.respondent_primary_site = sc.site_name
           AND sc.ps_school_id <> 0
           AND sc.ps_school_id IS NOT NULL
         WHERE
@@ -720,8 +720,8 @@ FROM
       NULL AS pct_met_f,
       NULL AS pct_met_m
     FROM
-      gabby.tableau.compliance_staff_attrition sa
-      INNER JOIN gabby.people.school_crosswalk cw ON sa.primary_site = cw.site_name
+      gabby.tableau.compliance_staff_attrition AS sa
+      INNER JOIN gabby.people.school_crosswalk AS cw ON sa.primary_site = cw.site_name
       AND cw.ps_school_id <> 0
     WHERE
       sa.is_denominator <> 0
@@ -745,8 +745,8 @@ FROM
       NULL AS pct_met_f,
       NULL AS pct_met_m
     FROM
-      gabby.tableau.compliance_staff_attrition sa
-      INNER JOIN gabby.people.school_crosswalk cw ON sa.primary_site = cw.site_name
+      gabby.tableau.compliance_staff_attrition AS sa
+      INNER JOIN gabby.people.school_crosswalk AS cw ON sa.primary_site = cw.site_name
       AND cw.ps_school_id <> 0
     WHERE
       sa.primary_job IN (
@@ -786,13 +786,13 @@ FROM
       NULL AS pct_met_f,
       NULL AS pct_met_m
     FROM
-      gabby.pm.teacher_goals_lockbox_wide lb
-      INNER JOIN gabby.people.employment_history_static eh ON lb.df_employee_number = eh.employee_number
+      gabby.pm.teacher_goals_lockbox_wide AS lb
+      INNER JOIN gabby.people.employment_history_static AS eh ON lb.df_employee_number = eh.employee_number
       AND DATEFROMPARTS(lb.academic_year + 1, 4, 30) (
         BETWEEN eh.effective_start_date AND eh.effective_end_date
       )
       AND eh.primary_position = 'Yes'
-      INNER JOIN gabby.people.school_crosswalk cw ON eh.[location] = cw.site_name
+      INNER JOIN gabby.people.school_crosswalk AS cw ON eh.[location] = cw.site_name
       AND cw.ps_school_id <> 0
     WHERE
       lb.metric_name = 'etr_overall_score'
@@ -920,8 +920,11 @@ FROM
               grade_level,
               student_number
             FROM
-              gabby.surveys.scds sc
-              INNER JOIN gabby.powerschool.cohort_identifiers_static co ON LEFT(sc.email_address, LEN(sc.email_address) - 17) = co.student_web_id
+              gabby.surveys.scds AS sc
+              INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON LEFT(
+                sc.email_address,
+                LEN(sc.email_address) - 17
+              ) = co.student_web_id
             COLLATE Latin1_General_BIN
             AND co.academic_year = 2021
             AND co.rn_year = 1 UNPIVOT (
@@ -1015,8 +1018,8 @@ FROM
             WHEN nj.test_performance_level < 4 THEN 0
           END AS is_proficient
         FROM
-          gabby.parcc.summative_record_file_clean nj
-          INNER JOIN gabby.powerschool.cohort_identifiers_static co ON nj.state_student_identifier = co.state_studentnumber
+          gabby.parcc.summative_record_file_clean AS nj
+          INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON nj.state_student_identifier = co.state_studentnumber
           AND nj.academic_year = co.academic_year
           AND nj.[db_name] = co.[db_name]
           AND co.rn_year = 1
@@ -1041,9 +1044,9 @@ FROM
             ELSE NULL
           END AS is_proficient
         FROM
-          kippmiami.fsa.student_scores fl
-          INNER JOIN kippmiami.powerschool.u_studentsuserfields suf ON fl.fleid = suf.fleid
-          INNER JOIN kippmiami.powerschool.cohort_identifiers_static co ON suf.studentsdcid = co.students_dcid
+          kippmiami.fsa.student_scores AS fl
+          INNER JOIN kippmiami.powerschool.u_studentsuserfields AS suf ON fl.fleid = suf.fleid
+          INNER JOIN kippmiami.powerschool.cohort_identifiers_static AS co ON suf.studentsdcid = co.students_dcid
           AND LEFT(fl.school_year, 2) = RIGHT(co.academic_year, 2)
           AND co.rn_year = 1
           AND co.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 3
@@ -1055,6 +1058,6 @@ FROM
       sub.grade_band,
       sub.[subject]
   ) sub
-  LEFT JOIN gabby.reporting.school_health_metric_lookup ml ON sub.subdomain = ml.subdomain
+  LEFT JOIN gabby.reporting.school_health_metric_lookup AS ml ON sub.subdomain = ml.subdomain
   AND sub.grade_band = ml.grade_band
 COLLATE Latin1_General_BIN

@@ -29,7 +29,7 @@ FROM
         ELSE df.primary_site_schoolid
       END AS [school_id]
     FROM
-      gabby.people.staff_crosswalk_static df
+      gabby.people.staff_crosswalk_static AS df
     WHERE
       df.[status] NOT IN ('TERMINATED', 'PRESTART')
       AND df.mail NOT LIKE '%kippmiami.org'
@@ -54,8 +54,8 @@ FROM
         ELSE scw.ps_school_id
       END AS [school_id]
     FROM
-      gabby.adsi.user_attributes_static ad
-      INNER JOIN gabby.people.school_crosswalk scw ON ad.physicaldeliveryofficename = scw.site_name
+      gabby.adsi.user_attributes_static AS ad
+      INNER JOIN gabby.people.school_crosswalk AS scw ON ad.physicaldeliveryofficename = scw.site_name
     WHERE
       ad.is_active = 1
       AND ad.mail NOT LIKE '%kippmiami.org'

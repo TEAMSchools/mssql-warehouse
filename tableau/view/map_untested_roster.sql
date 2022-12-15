@@ -28,8 +28,8 @@ WITH
       terms.start_date AS term_start_date,
       subjects.measurement_scale
     FROM
-      gabby.powerschool.cohort_identifiers_static co
-      INNER JOIN gabby.reporting.reporting_terms terms ON co.academic_year = terms.academic_year
+      gabby.powerschool.cohort_identifiers_static AS co
+      INNER JOIN gabby.reporting.reporting_terms AS terms ON co.academic_year = terms.academic_year
       AND terms.identifier = 'MAP'
       AND terms.start_date <= CURRENT_TIMESTAMP
       AND terms._fivetran_deleted = 0
@@ -108,13 +108,13 @@ FROM
           map.measurement_scale
       ) AS n_tests
     FROM
-      scaffold r
-      LEFT JOIN gabby.nwea.assessment_result_identifiers map ON r.student_number = map.student_id
+      scaffold AS r
+      LEFT JOIN gabby.nwea.assessment_result_identifiers AS map ON r.student_number = map.student_id
       AND r.academic_year = map.academic_year
       AND r.measurement_scale = map.measurement_scale
       AND r.term_name = map.term
     COLLATE Latin1_General_BIN
-    LEFT JOIN gabby.nwea.best_baseline base ON r.student_number = base.student_number
+    LEFT JOIN gabby.nwea.best_baseline AS base ON r.student_number = base.student_number
     AND r.academic_year = base.academic_year
     AND r.measurement_scale = base.measurementscale
   ) sub

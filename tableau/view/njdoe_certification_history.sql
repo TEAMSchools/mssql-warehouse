@@ -24,5 +24,5 @@ SELECT
   s.primary_site,
   s.userprincipalname
 FROM
-  people.staff_crosswalk_static s
-  LEFT JOIN njdoe.certification_certificate_history_static c ON s.df_employee_number = c.df_employee_number
+  people.staff_crosswalk_static AS s
+  LEFT JOIN njdoe.certification_certificate_history_static AS c ON s.df_employee_number = c.df_employee_number

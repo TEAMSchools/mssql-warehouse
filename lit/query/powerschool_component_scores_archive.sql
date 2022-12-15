@@ -88,8 +88,8 @@ WITH
           CAST(rr_prof AS VARCHAR) AS rr_prof,
           CAST(devsp_prof AS VARCHAR) AS devsp_prof
         FROM
-          gabby.lit.powerschool_readingscores_archive rs
-          INNER JOIN gabby.powerschool.students s ON rs.studentid = s.id
+          gabby.lit.powerschool_readingscores_archive AS rs
+          INNER JOIN gabby.powerschool.students AS s ON rs.studentid = s.id
       ) sub UNPIVOT (
         score FOR field IN (
           name_ass,
@@ -163,7 +163,7 @@ SELECT
     WHEN rs.testid <> 3273 THEN gleq.lvl_num
   END AS lvl_num
 FROM
-  ps_scores_long rs
+  ps_scores_long AS rs
   LEFT OUTER JOIN gabby.lit.gleq ON rs.testid = gleq.testid
   AND rs.read_lvl = gleq.read_lvl
 WHERE

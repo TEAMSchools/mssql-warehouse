@@ -17,7 +17,11 @@ WITH
       gabby.people.employment_history_static
     WHERE
       business_unit_code = 'KIPP_MIAMI'
-      AND work_assignment_start_date <= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR (), 6, 30)
+      AND work_assignment_start_date <= DATEFROMPARTS(
+        gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+        6,
+        30
+      )
   )
 SELECT
   c.df_employee_number,
@@ -63,13 +67,17 @@ SELECT
   END AS personnel_evaluation,
   '2332' AS school_number
 FROM
-  gabby.people.staff_crosswalk_static c
-  LEFT JOIN gabby.adp.workers_custom_field_group_wide_static w ON c.df_employee_number = w.[Employee Number]
-  LEFT JOIN gabby.pm.teacher_goals_overall_scores_static s ON c.df_employee_number = s.df_employee_number
+  gabby.people.staff_crosswalk_static AS c
+  LEFT JOIN gabby.adp.workers_custom_field_group_wide_static AS w ON c.df_employee_number = w.[Employee Number]
+  LEFT JOIN gabby.pm.teacher_goals_overall_scores_static AS s ON c.df_employee_number = s.df_employee_number
   AND s.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
   AND s.pm_term = 'PM4'
-  LEFT JOIN job_last_year j ON c.df_employee_number = j.employee_number
+  LEFT JOIN job_last_year AS j ON c.df_employee_number = j.employee_number
   AND j.rn_latest = 1
 WHERE
   c.legal_entity_name = 'KIPP Miami'
-  AND c.original_hire_date <= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR (), 6, 30)
+  AND c.original_hire_date <= DATEFROMPARTS(
+    gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+    6,
+    30
+  )

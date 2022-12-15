@@ -4,14 +4,16 @@ CREATE OR ALTER VIEW
 SELECT
   ah.df_employee_number,
   ah.application_number,
-  CAST(JSON_VALUE(ah.checklist, '$.filing_date') AS DATE) AS application_filing_date,
+  CAST(
+    JSON_VALUE(ah.checklist, '$.filing_date') AS DATE
+  ) AS application_filing_date,
   cl.task,
   CASE
     WHEN cl.comment <> '' THEN cl.comment
   END AS comment,
   cl.complete
 FROM
-  njdoe.certification_application_history_static ah
+  njdoe.certification_application_history_static AS ah
   CROSS APPLY OPENJSON (ah.checklist, '$.tasks')
 WITH
   (

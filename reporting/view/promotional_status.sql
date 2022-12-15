@@ -21,8 +21,8 @@ WITH
         END
       ) AS n_failing_ms_core
     FROM
-      gabby.powerschool.final_grades_static fg
-      INNER JOIN gabby.powerschool.courses c ON fg.course_number = c.course_number
+      gabby.powerschool.final_grades_static AS fg
+      INNER JOIN gabby.powerschool.courses AS c ON fg.course_number = c.course_number
       AND fg.[db_name] = c.[db_name]
     GROUP BY
       fg.studentid,
@@ -84,9 +84,12 @@ WITH
       mem.studentid,
       mem.[db_name],
       mem.yearid,
-      ROUND(AVG(CAST(mem.attendancevalue AS FLOAT)) * 100, 1) AS ada_y1_running
+      ROUND(
+        AVG(CAST(mem.attendancevalue AS FLOAT)) * 100,
+        1
+      ) AS ada_y1_running
     FROM
-      gabby.powerschool.ps_adaadm_daily_ctod mem
+      gabby.powerschool.ps_adaadm_daily_ctod AS mem
     WHERE
       mem.membershipvalue > 0
       AND mem.calendardate <= CAST(CURRENT_TIMESTAMP AS DATE)
@@ -236,26 +239,26 @@ FROM
           END AS grades_y1_credits_goal,
           qas.avg_performance_band_number AS qa_avg_performance_band_number
         FROM
-          gabby.powerschool.cohort_identifiers_static co
-          INNER JOIN gabby.powerschool.students s ON co.student_number = s.student_number
-          INNER JOIN gabby.reporting.reporting_terms rt ON co.schoolid = rt.schoolid
+          gabby.powerschool.cohort_identifiers_static AS co
+          INNER JOIN gabby.powerschool.students AS s ON co.student_number = s.student_number
+          INNER JOIN gabby.reporting.reporting_terms AS rt ON co.schoolid = rt.schoolid
           AND co.academic_year = rt.academic_year
           AND rt.identifier = 'RT'
           AND rt._fivetran_deleted = 0
           LEFT JOIN ADA ON co.studentid = ADA.studentid
           AND co.[db_name] = ADA.[db_name]
           AND co.yearid = ADA.yearid
-          LEFT JOIN gabby.lit.achieved_by_round_static lit ON co.student_number = lit.student_number
+          LEFT JOIN gabby.lit.achieved_by_round_static AS lit ON co.student_number = lit.student_number
           AND co.academic_year = lit.academic_year
           AND rt.alt_name = lit.test_round
-          LEFT JOIN failing f ON co.studentid = f.studentid
+          LEFT JOIN failing AS f ON co.studentid = f.studentid
           AND co.yearid = f.yearid
           AND rt.alt_name = f.storecode
         COLLATE Latin1_General_BIN
-        LEFT JOIN credits cr ON co.studentid = cr.studentid
+        LEFT JOIN credits AS cr ON co.studentid = cr.studentid
         AND co.schoolid = cr.schoolid
         AND co.[db_name] = cr.[db_name]
-        LEFT JOIN enrolled_credits enr ON co.student_number = enr.student_number
+        LEFT JOIN enrolled_credits AS enr ON co.student_number = enr.student_number
         AND co.academic_year = enr.academic_year
         LEFT JOIN qas ON co.student_number = qas.local_student_id
         AND co.academic_year = qas.academic_year

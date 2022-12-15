@@ -22,7 +22,7 @@ SELECT
   att.streak_end,
   att.streak_length_membership
 FROM
-  gabby.powerschool.cohort_identifiers_static co
-  INNER JOIN gabby.powerschool.attendance_streak att ON co.studentid = att.studentid
+  gabby.powerschool.cohort_identifiers_static AS co
+  INNER JOIN gabby.powerschool.attendance_streak AS att ON co.studentid = att.studentid
   AND co.db_name = att.db_name
   AND att.att_code IN ('OSS', 'ISS')

@@ -20,8 +20,8 @@ WITH
       s.default_link AS survey_default_link,
       s.[title]
     FROM
-      gabby.surveygizmo.survey_campaign_clean_static c
-      INNER JOIN gabby.surveygizmo.survey_clean s ON c.survey_id = s.survey_id
+      gabby.surveygizmo.survey_campaign_clean_static AS c
+      INNER JOIN gabby.surveygizmo.survey_clean AS s ON c.survey_id = s.survey_id
     WHERE
       c.link_type = 'email'
       AND c.survey_id IN (4561325, 4561288, 5300913, 6330385, 6580731)
@@ -62,9 +62,9 @@ WITH
       wcf.[Years Teaching - In NJ or FL] AS years_teaching_in_nj_or_fl,
       wcf.[Teacher Prep Program] AS teacher_prep_program
     FROM
-      surveys s
-      INNER JOIN gabby.people.staff_crosswalk_static r ON r.[status] NOT IN ('Terminated', 'Prestart')
-      LEFT JOIN gabby.adp.workers_custom_field_group_wide_static wcf ON r.adp_associate_id = wcf.worker_id
+      surveys AS s
+      INNER JOIN gabby.people.staff_crosswalk_static AS r ON r.[status] NOT IN ('Terminated', 'Prestart')
+      LEFT JOIN gabby.adp.workers_custom_field_group_wide_static AS wcf ON r.adp_associate_id = wcf.worker_id
     WHERE
       s.rn_survey_recent = 1
   ),
@@ -97,9 +97,11 @@ WITH
       i.subject_df_employee_number AS subject_employee_number,
       i.subject_preferred_name AS subject_name
     FROM
-      gabby.surveygizmo.survey_campaign_clean_static c
-      INNER JOIN gabby.surveygizmo.survey_response_identifiers_static i ON c.survey_id = i.survey_id
-      AND i.date_started (BETWEEN c.link_open_date AND c.link_close_date)
+      gabby.surveygizmo.survey_campaign_clean_static AS c
+      INNER JOIN gabby.surveygizmo.survey_response_identifiers_static AS i ON c.survey_id = i.survey_id
+      AND i.date_started (
+        BETWEEN c.link_open_date AND c.link_close_date
+      )
       AND i.rn_respondent_subject = 1
     WHERE
       (
@@ -120,13 +122,22 @@ SELECT
     st.respondent_legal_entity_name,
     c.respondent_legal_entity_name
   ) AS survey_taker_legal_entity_name,
-  COALESCE(st.respondent_location, c.respondent_location) AS survey_taker_location,
-  COALESCE(st.respondent_department, c.respondent_department) AS survey_taker_department,
+  COALESCE(
+    st.respondent_location,
+    c.respondent_location
+  ) AS survey_taker_location,
+  COALESCE(
+    st.respondent_department,
+    c.respondent_department
+  ) AS survey_taker_department,
   COALESCE(
     st.respondent_primary_job,
     c.respondent_primary_job
   ) AS survey_taker_primary_job,
-  COALESCE(st.respondent_is_manager, c.respondent_is_manager) AS is_manager,
+  COALESCE(
+    st.respondent_is_manager,
+    c.respondent_is_manager
+  ) AS is_manager,
   COALESCE(
     st.respondent_position_status,
     c.respondent_position_status
@@ -170,17 +181,20 @@ SELECT
       )
     END
   ) AS assignment_employee_id,
-  COALESCE(sa.assignment_preferred_name, c.subject_name) AS assignment_preferred_name,
+  COALESCE(
+    sa.assignment_preferred_name,
+    c.subject_name
+  ) AS assignment_preferred_name,
   sa.assignment_location,
   sa.assignment_adp_status,
   sa.assignment_type,
   c.subject_name AS completed_survey_subject_name,
   c.date_submitted AS survey_completion_date
 FROM
-  survey_term_staff_scaffold st
-  INNER JOIN gabby.surveys.so_assignments_long sa ON st.respondent_employee_number = sa.survey_taker_id
+  survey_term_staff_scaffold AS st
+  INNER JOIN gabby.surveys.so_assignments_long AS sa ON st.respondent_employee_number = sa.survey_taker_id
   AND sa.survey_round_status = 'Yes'
-  LEFT JOIN clean_responses c ON sa.assignment_employee_id = c.subject_employee_number
+  LEFT JOIN clean_responses AS c ON sa.assignment_employee_id = c.subject_employee_number
   AND sa.survey_taker_id = c.respondent_employee_number
   AND st.academic_year = c.academic_year
   AND st.reporting_term_code = c.reporting_term
@@ -205,13 +219,22 @@ SELECT
     st.respondent_legal_entity_name,
     c.respondent_legal_entity_name
   ) AS survey_taker_legal_entity_name,
-  COALESCE(st.respondent_location, c.respondent_location) AS survey_taker_location,
-  COALESCE(st.respondent_department, c.respondent_department) AS survey_taker_department,
+  COALESCE(
+    st.respondent_location,
+    c.respondent_location
+  ) AS survey_taker_location,
+  COALESCE(
+    st.respondent_department,
+    c.respondent_department
+  ) AS survey_taker_department,
   COALESCE(
     st.respondent_primary_job,
     c.respondent_primary_job
   ) AS survey_taker_primary_job,
-  COALESCE(st.respondent_is_manager, c.respondent_is_manager) AS is_manager,
+  COALESCE(
+    st.respondent_is_manager,
+    c.respondent_is_manager
+  ) AS is_manager,
   COALESCE(
     st.respondent_position_status,
     c.respondent_position_status
@@ -262,12 +285,12 @@ SELECT
   c.subject_name AS completed_survey_subject_name,
   c.date_submitted AS survey_completion_date
 FROM
-  clean_responses c
-  INNER JOIN survey_term_staff_scaffold st ON st.respondent_employee_number = c.respondent_employee_number
+  clean_responses AS c
+  INNER JOIN survey_term_staff_scaffold AS st ON st.respondent_employee_number = c.respondent_employee_number
   AND st.academic_year = c.academic_year
   AND st.reporting_term_code = c.reporting_term
   AND st.survey_id = c.survey_id
-  LEFT JOIN gabby.surveys.so_assignments_long s ON c.subject_employee_number = s.assignment_employee_id
+  LEFT JOIN gabby.surveys.so_assignments_long AS s ON c.subject_employee_number = s.assignment_employee_id
   AND c.respondent_employee_number = s.survey_taker_id
 WHERE
   c.survey_id = 4561325 /* S&O Survey Code */
@@ -292,13 +315,22 @@ SELECT
     st.respondent_legal_entity_name,
     c.respondent_legal_entity_name
   ) AS survey_taker_legal_entity_name,
-  COALESCE(st.respondent_location, c.respondent_location) AS survey_taker_location,
-  COALESCE(st.respondent_department, c.respondent_department) AS survey_taker_department,
+  COALESCE(
+    st.respondent_location,
+    c.respondent_location
+  ) AS survey_taker_location,
+  COALESCE(
+    st.respondent_department,
+    c.respondent_department
+  ) AS survey_taker_department,
   COALESCE(
     st.respondent_primary_job,
     c.respondent_primary_job
   ) AS survey_taker_primary_job,
-  COALESCE(st.respondent_is_manager, c.respondent_is_manager) AS is_manager,
+  COALESCE(
+    st.respondent_is_manager,
+    c.respondent_is_manager
+  ) AS is_manager,
   COALESCE(
     st.respondent_position_status,
     c.respondent_position_status
@@ -339,10 +371,10 @@ SELECT
   c.subject_name AS completed_survey_subject_name,
   c.date_submitted AS survey_completion_date
 FROM
-  survey_term_staff_scaffold st
-  INNER JOIN gabby.pm.assignments pm ON st.respondent_employee_number = pm.df_employee_number
+  survey_term_staff_scaffold AS st
+  INNER JOIN gabby.pm.assignments AS pm ON st.respondent_employee_number = pm.df_employee_number
   AND pm.survey_round_status IN ('Yes', 'Yes - Manager Survey Only')
-  LEFT JOIN clean_responses c ON st.respondent_employee_number = c.respondent_employee_number
+  LEFT JOIN clean_responses AS c ON st.respondent_employee_number = c.respondent_employee_number
   AND st.academic_year = c.academic_year
   AND st.reporting_term_code = c.reporting_term
   AND st.survey_id = c.survey_id
@@ -368,13 +400,22 @@ SELECT
     st.respondent_legal_entity_name,
     c.respondent_legal_entity_name
   ) AS survey_taker_legal_entity_name,
-  COALESCE(st.respondent_location, c.respondent_location) AS survey_taker_location,
-  COALESCE(st.respondent_department, c.respondent_department) AS survey_taker_department,
+  COALESCE(
+    st.respondent_location,
+    c.respondent_location
+  ) AS survey_taker_location,
+  COALESCE(
+    st.respondent_department,
+    c.respondent_department
+  ) AS survey_taker_department,
   COALESCE(
     st.respondent_primary_job,
     c.respondent_primary_job
   ) AS survey_taker_primary_job,
-  COALESCE(st.respondent_is_manager, c.respondent_is_manager) AS is_manager,
+  COALESCE(
+    st.respondent_is_manager,
+    c.respondent_is_manager
+  ) AS is_manager,
   COALESCE(
     st.respondent_position_status,
     c.respondent_position_status
@@ -415,8 +456,8 @@ SELECT
   c.subject_name AS completed_survey_subject_name,
   c.date_submitted AS survey_completion_date
 FROM
-  clean_responses c
-  LEFT JOIN survey_term_staff_scaffold st ON c.respondent_employee_number = st.respondent_employee_number
+  clean_responses AS c
+  LEFT JOIN survey_term_staff_scaffold AS st ON c.respondent_employee_number = st.respondent_employee_number
   AND c.academic_year = st.academic_year
   AND c.reporting_term = st.reporting_term_code
   AND c.survey_id = st.survey_id
@@ -474,13 +515,13 @@ SELECT
   c.subject_name AS completed_survey_subject_name,
   c.date_submitted AS survey_completion_date
 FROM
-  survey_term_staff_scaffold st
-  LEFT JOIN clean_responses c ON st.respondent_employee_number = c.respondent_employee_number
+  survey_term_staff_scaffold AS st
+  LEFT JOIN clean_responses AS c ON st.respondent_employee_number = c.respondent_employee_number
   AND st.academic_year = c.academic_year
   AND st.reporting_term_code = c.reporting_term
   AND st.survey_id = c.survey_id
-  LEFT JOIN gabby.pm.assignments pm ON st.respondent_employee_number = pm.df_employee_number
-  LEFT JOIN gabby.extracts.gsheets_pm_assignment_roster pr ON st.respondent_employee_number = pr.df_employee_number
+  LEFT JOIN gabby.pm.assignments AS pm ON st.respondent_employee_number = pm.df_employee_number
+  LEFT JOIN gabby.extracts.gsheets_pm_assignment_roster AS pr ON st.respondent_employee_number = pr.df_employee_number
 WHERE
   st.survey_id = 5300913 /* R9S Survey Code */
   AND pm.survey_round_status IN ('Yes', 'Yes - Manager Survey Only')
@@ -527,8 +568,8 @@ SELECT
   c.subject_name AS completed_survey_subject_name,
   c.date_submitted AS survey_completion_date
 FROM
-  survey_term_staff_scaffold st
-  LEFT JOIN clean_responses c ON st.respondent_employee_number = c.respondent_employee_number
+  survey_term_staff_scaffold AS st
+  LEFT JOIN clean_responses AS c ON st.respondent_employee_number = c.respondent_employee_number
   AND st.survey_id = c.survey_id
 WHERE
   st.survey_id = 6330385 /* UP Survey Code */
@@ -575,8 +616,8 @@ SELECT
   'Cannot be tracked' AS completed_survey_subject_name,
   NULL AS survey_completion_date
 FROM
-  survey_term_staff_scaffold st
-  LEFT JOIN clean_responses c ON st.respondent_employee_number = c.respondent_employee_number
+  survey_term_staff_scaffold AS st
+  LEFT JOIN clean_responses AS c ON st.respondent_employee_number = c.respondent_employee_number
   AND st.academic_year = c.academic_year
   AND st.reporting_term_code = c.reporting_term
   AND st.survey_id = c.survey_id
@@ -625,8 +666,8 @@ SELECT
   c.subject_name AS completed_survey_subject_name,
   c.date_submitted AS survey_completion_date
 FROM
-  survey_term_staff_scaffold st
-  LEFT JOIN clean_responses c ON st.respondent_employee_number = c.respondent_employee_number
+  survey_term_staff_scaffold AS st
+  LEFT JOIN clean_responses AS c ON st.respondent_employee_number = c.respondent_employee_number
   AND st.academic_year = c.academic_year
   AND st.reporting_term_code = c.reporting_term
   AND st.survey_id = c.survey_id

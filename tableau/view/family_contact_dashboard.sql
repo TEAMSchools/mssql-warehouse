@@ -67,14 +67,14 @@ SELECT
   cg.[day] AS contact_day_phone,
   co.guardianemail AS contact_email
 FROM
-  gabby.powerschool.cohort_identifiers_static co
-  LEFT JOIN gabby.powerschool.students s ON co.student_number = s.student_number
+  gabby.powerschool.cohort_identifiers_static AS co
+  LEFT JOIN gabby.powerschool.students AS s ON co.student_number = s.student_number
   AND co.[db_name] = s.[db_name]
-  LEFT JOIN gabby.powerschool.u_studentsuserfields suf ON s.dcid = suf.studentsdcid
+  LEFT JOIN gabby.powerschool.u_studentsuserfields AS suf ON s.dcid = suf.studentsdcid
   AND s.[db_name] = suf.[db_name]
-  LEFT JOIN contacts_repivot c ON co.student_number = c.student_number
+  LEFT JOIN contacts_repivot AS c ON co.student_number = c.student_number
   AND co.[db_name] = c.[db_name]
-  LEFT JOIN contacts_grouped cg ON s.family_ident = cg.family_ident
+  LEFT JOIN contacts_grouped AS cg ON s.family_ident = cg.family_ident
   AND s.[db_name] = cg.[db_name]
   AND c.person = cg.person
   AND c.[name] = cg.[name]

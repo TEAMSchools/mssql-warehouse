@@ -81,8 +81,8 @@ WITH
       END AS lexia_grade_level,
       SUM(goals.units) AS units_goal
     FROM
-      min_level sub
-      LEFT OUTER JOIN gabby.lexia.goals_by_level goals ON sub.min_level_number <= goals.level
+      min_level AS sub
+      LEFT OUTER JOIN gabby.lexia.goals_by_level AS goals ON sub.min_level_number <= goals.level
       AND sub.highest_grade_level >= CASE
         WHEN goals.grade_level_material = 'PreK' THEN -1
         ELSE CAST(goals.grade_level_material AS INT)
@@ -116,8 +116,8 @@ FROM
       co.grade_level AS lexia_grade_level,
       g.units_goal
     FROM
-      gabby.powerschool.cohort_identifiers_static co
-      INNER JOIN grade_level_goals g ON co.grade_level = g.grade_level
+      gabby.powerschool.cohort_identifiers_static AS co
+      INNER JOIN grade_level_goals AS g ON co.grade_level = g.grade_level
     WHERE
       co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
       AND co.rn_year = 1
@@ -129,10 +129,10 @@ FROM
       og.lexia_grade_level,
       og.units_goal
     FROM
-      gabby.powerschool.cohort_identifiers_static co
-      INNER JOIN gabby.powerschool.students s ON co.student_number = s.student_number
+      gabby.powerschool.cohort_identifiers_static AS co
+      INNER JOIN gabby.powerschool.students AS s ON co.student_number = s.student_number
       AND co.db_name = s.db_name
-      INNER JOIN other_goals og ON s.student_web_id = og.username
+      INNER JOIN other_goals AS og ON s.student_web_id = og.username
     COLLATE Latin1_General_BIN
     AND co.grade_level <> og.lexia_grade_level
     WHERE

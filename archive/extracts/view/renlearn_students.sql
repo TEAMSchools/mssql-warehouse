@@ -19,7 +19,7 @@ SELECT
   state_studentnumber,
   student_web_id + '@teamstudents.org' AS student_email
 FROM
-  gabby.powerschool.cohort_identifiers_static co
+  gabby.powerschool.cohort_identifiers_static AS co
 WHERE
   co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
   AND co.rn_year = 1

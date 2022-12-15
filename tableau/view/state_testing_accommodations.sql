@@ -32,8 +32,12 @@ WITH
           CAST(parcc_large_print_paper AS VARCHAR(25)) AS parcc_large_print_paper,
           CAST(asmt_human_signer AS VARCHAR(25)) AS asmt_human_signer,
           CAST(asmt_answers_recorded_paper AS VARCHAR(25)) AS asmt_answers_recorded_paper,
-          CAST(calculation_device_math_tools AS VARCHAR(25)) AS calculation_device_math_tools,
-          CAST(parcc_constructed_response_ela AS VARCHAR(25)) AS parcc_constructed_response_ela,
+          CAST(
+            calculation_device_math_tools AS VARCHAR(25)
+          ) AS calculation_device_math_tools,
+          CAST(
+            parcc_constructed_response_ela AS VARCHAR(25)
+          ) AS parcc_constructed_response_ela,
           CAST(asmt_selected_response_ela AS VARCHAR(25)) AS asmt_selected_response_ela,
           CAST(asmt_math_response AS VARCHAR(25)) AS asmt_math_response,
           CAST(asmt_monitor_response AS VARCHAR(25)) AS asmt_monitor_response,
@@ -51,7 +55,7 @@ WITH
           CAST(asmt_extended_time AS VARCHAR(25)) AS asmt_extended_time,
           CAST(asmt_extended_time_math AS VARCHAR(25)) AS asmt_extended_time_math
         FROM
-          gabby.powerschool.s_nj_stu_x nj
+          gabby.powerschool.s_nj_stu_x AS nj
       ) sub UNPIVOT (
         accommodation_value FOR accommodation IN (
           parcc_ell_paper_accom,
@@ -117,10 +121,10 @@ SELECT
   ac.accommodation,
   ac.accommodation_value
 FROM
-  gabby.powerschool.cohort_identifiers_static co
-  LEFT JOIN gabby.powerschool.s_nj_stu_x nj ON co.students_dcid = nj.studentsdcid
+  gabby.powerschool.cohort_identifiers_static AS co
+  LEFT JOIN gabby.powerschool.s_nj_stu_x AS nj ON co.students_dcid = nj.studentsdcid
   AND co.[db_name] = nj.[db_name]
-  LEFT JOIN accom ac ON co.students_dcid = ac.studentsdcid
+  LEFT JOIN accom AS ac ON co.students_dcid = ac.studentsdcid
   AND co.[db_name] = ac.[db_name]
 WHERE
   co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()

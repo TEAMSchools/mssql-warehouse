@@ -8,7 +8,7 @@ SELECT
   scw.google_email AS email,
   scw.primary_site AS school_organization
 FROM
-  gabby.people.staff_crosswalk_static scw
+  gabby.people.staff_crosswalk_static AS scw
 WHERE
   (
     scw.primary_site_school_level = 'ES'

@@ -316,7 +316,7 @@ WITH
           CAST(ern_4_ssc AS FLOAT) AS ern_4_ssc,
           CAST(r.n_records AS FLOAT) AS n_records
         FROM
-          payroll_rollup r
+          payroll_rollup AS r
       ) sub UNPIVOT (
         code_value FOR code IN (
           ded_cd_3,
@@ -469,11 +469,11 @@ SELECT
   r.annual_salary AS salary_curr,
   r.[status] AS status_curr
 FROM
-  payroll_unpivot u
-  LEFT JOIN gabby.payroll.register_code_lookup rcl ON u.company_code = rcl.company_code
+  payroll_unpivot AS u
+  LEFT JOIN gabby.payroll.register_code_lookup AS rcl ON u.company_code = rcl.company_code
   AND u.code = rcl.field_name
-  INNER JOIN gabby.people.employment_history_static eh ON u.position_id = eh.position_id
+  INNER JOIN gabby.people.employment_history_static AS eh ON u.position_id = eh.position_id
   AND u.payroll_date (
     BETWEEN eh.effective_start_date AND eh.effective_end_date
   )
-  INNER JOIN gabby.people.staff_crosswalk_static r ON eh.employee_number = r.df_employee_number
+  INNER JOIN gabby.people.staff_crosswalk_static AS r ON eh.employee_number = r.df_employee_number

@@ -14,7 +14,7 @@ SELECT
   s.student_number AS [Student_id]
 FROM
   gabby.powerschool.cc
-  INNER JOIN gabby.powerschool.students s ON cc.studentid = s.id
+  INNER JOIN gabby.powerschool.students AS s ON cc.studentid = s.id
   AND cc.[db_name] = s.[db_name]
 WHERE
   cc.dateleft >= CAST(CURRENT_TIMESTAMP AS DATE)

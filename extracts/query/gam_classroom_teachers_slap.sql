@@ -17,7 +17,7 @@ WITH
         ) + 'apps.teamschools.org'
       END AS gsuite_email
     FROM
-      gabby.people.staff_crosswalk_static scw
+      gabby.people.staff_crosswalk_static AS scw
     WHERE
       scw.[status] NOT IN ('TERMINATED', 'PRESTART')
       AND scw.primary_job IN ('School Leader', 'Assistant School Leader')
@@ -34,13 +34,15 @@ SELECT DISTINCT
   ) AS alias,
   sl.gsuite_email AS teacher
 FROM
-  gabby.powerschool.sections s
-  INNER JOIN gabby.powerschool.courses c ON s.course_number_clean = c.course_number_clean
+  gabby.powerschool.sections AS s
+  INNER JOIN gabby.powerschool.courses AS c ON s.course_number_clean = c.course_number_clean
   AND s.[db_name] = c.[db_name]
   AND c.credittype <> 'LOG'
-  INNER JOIN slap sl ON s.schoolid = sl.primary_site_schoolid
+  INNER JOIN slap AS sl ON s.schoolid = sl.primary_site_schoolid
 WHERE
-  s.yearid = (gabby.utilities.global_academic_year () - 1990)
+  s.yearid = (
+    gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990
+  )
 ORDER BY
   sl.gsuite_email,
   alias

@@ -14,7 +14,11 @@ SELECT
   sub.pay_type_name,
   sub.position_id,
   sub.work_assignment_effective_start,
-  DATEADD(DAY, -1, sub.work_assignment_effective_start_next) AS work_assignment_effective_end
+  DATEADD(
+    DAY,
+    -1,
+    sub.work_assignment_effective_start_next
+  ) AS work_assignment_effective_end
 FROM
   (
     SELECT
@@ -48,8 +52,8 @@ FROM
           CAST(ewa.work_assignment_effective_start AS DATE)
       ) AS work_assignment_effective_start_next
     FROM
-      gabby.dayforce.employee_work_assignment ewa
-      INNER JOIN gabby.dayforce.employees e ON ewa.employee_reference_code = e.df_employee_number
+      gabby.dayforce.employee_work_assignment AS ewa
+      INNER JOIN gabby.dayforce.employees AS e ON ewa.employee_reference_code = e.df_employee_number
     WHERE
       ewa.primary_work_assignment = 1
   ) sub

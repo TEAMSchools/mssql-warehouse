@@ -33,8 +33,8 @@ SELECT
   c2.work_phone AS "ContactTwo Work Phone",
   c2.emails_emailaddress AS "ContactTwo Email"
 FROM
-  students s
-  INNER JOIN schools sch ON s.schoolid = sch.school_number
+  students AS s
+  INNER JOIN schools AS sch ON s.schoolid = sch.school_number
   LEFT JOIN (
     SELECT
       studentid AS race_studentid,
@@ -70,8 +70,8 @@ FROM
               sca.contactpriorityorder
           ) AS contacts_rn
         FROM
-          studentcontactassoc sca
-          INNER JOIN person p ON sca.personid = p.id
+          studentcontactassoc AS sca
+          INNER JOIN person AS p ON sca.personid = p.id
           AND p.isactive = 1
       ) c
       LEFT JOIN (
@@ -86,8 +86,8 @@ FROM
               ppna.phonenumberpriorityorder
           ) AS p1_filteredpriorityorder
         FROM
-          personphonenumberassoc ppna
-          INNER JOIN codeset c ON ppna.phonetypecodesetid = c.codesetid
+          personphonenumberassoc AS ppna
+          INNER JOIN codeset AS c ON ppna.phonetypecodesetid = c.codesetid
           AND c.code = 'Mobile'
       ) p1 ON c.contacts_personid = p1.p1_personid
       AND p1.p1_filteredpriorityorder = 1
@@ -103,8 +103,8 @@ FROM
               ppna.phonenumberpriorityorder
           ) AS p2_filteredpriorityorder
         FROM
-          personphonenumberassoc ppna
-          INNER JOIN codeset c ON ppna.phonetypecodesetid = c.codesetid
+          personphonenumberassoc AS ppna
+          INNER JOIN codeset AS c ON ppna.phonetypecodesetid = c.codesetid
           AND c.code = 'Home'
       ) p2 ON c.contacts_personid = p2.p2_personid
       AND p2.p2_filteredpriorityorder = 1
@@ -120,8 +120,8 @@ FROM
               ppna.phonenumberpriorityorder
           ) AS p3_filteredpriorityorder
         FROM
-          personphonenumberassoc ppna
-          INNER JOIN codeset c ON ppna.phonetypecodesetid = c.codesetid
+          personphonenumberassoc AS ppna
+          INNER JOIN codeset AS c ON ppna.phonetypecodesetid = c.codesetid
           AND c.code = 'Work'
       ) p3 ON c.contacts_personid = p3.p3_personid
       AND p3.p3_filteredpriorityorder = 1
@@ -138,9 +138,9 @@ FROM
               peaa.emailaddresspriorityorder
           ) AS emails_filteredpriorityorder
         FROM
-          personemailaddressassoc peaa
-          INNER JOIN emailaddress e ON peaa.emailaddressid = e.emailaddressid
-          INNER JOIN codeset c ON peaa.emailtypecodesetid = c.codesetid
+          personemailaddressassoc AS peaa
+          INNER JOIN emailaddress AS e ON peaa.emailaddressid = e.emailaddressid
+          INNER JOIN codeset AS c ON peaa.emailtypecodesetid = c.codesetid
       ) em ON c.contacts_personid = em.emails_personid
       AND em.emails_filteredpriorityorder = 1
       AND em.emailtype = 'Current'
@@ -170,8 +170,8 @@ FROM
               sca.contactpriorityorder
           ) AS contacts_rn
         FROM
-          studentcontactassoc sca
-          INNER JOIN person p ON sca.personid = p.id
+          studentcontactassoc AS sca
+          INNER JOIN person AS p ON sca.personid = p.id
           AND p.isactive = 1
       ) c
       LEFT JOIN (
@@ -186,8 +186,8 @@ FROM
               ppna.phonenumberpriorityorder
           ) AS p1_filteredpriorityorder
         FROM
-          personphonenumberassoc ppna
-          INNER JOIN codeset c ON ppna.phonetypecodesetid = c.codesetid
+          personphonenumberassoc AS ppna
+          INNER JOIN codeset AS c ON ppna.phonetypecodesetid = c.codesetid
           AND c.code = 'Mobile'
       ) p1 ON c.contacts_personid = p1.p1_personid
       AND p1.p1_filteredpriorityorder = 1
@@ -203,8 +203,8 @@ FROM
               ppna.phonenumberpriorityorder
           ) AS p2_filteredpriorityorder
         FROM
-          personphonenumberassoc ppna
-          INNER JOIN codeset c ON ppna.phonetypecodesetid = c.codesetid
+          personphonenumberassoc AS ppna
+          INNER JOIN codeset AS c ON ppna.phonetypecodesetid = c.codesetid
           AND c.code = 'Home'
       ) p2 ON c.contacts_personid = p2.p2_personid
       AND p2.p2_filteredpriorityorder = 1
@@ -220,8 +220,8 @@ FROM
               ppna.phonenumberpriorityorder
           ) AS p3_filteredpriorityorder
         FROM
-          personphonenumberassoc ppna
-          INNER JOIN codeset c ON ppna.phonetypecodesetid = c.codesetid
+          personphonenumberassoc AS ppna
+          INNER JOIN codeset AS c ON ppna.phonetypecodesetid = c.codesetid
           AND c.code = 'Work'
       ) p3 ON c.contacts_personid = p3.p3_personid
       AND p3.p3_filteredpriorityorder = 1
@@ -238,9 +238,9 @@ FROM
               peaa.emailaddresspriorityorder
           ) AS emails_filteredpriorityorder
         FROM
-          personemailaddressassoc peaa
-          INNER JOIN emailaddress e ON peaa.emailaddressid = e.emailaddressid
-          INNER JOIN codeset c ON peaa.emailtypecodesetid = c.codesetid
+          personemailaddressassoc AS peaa
+          INNER JOIN emailaddress AS e ON peaa.emailaddressid = e.emailaddressid
+          INNER JOIN codeset AS c ON peaa.emailtypecodesetid = c.codesetid
       ) em ON c.contacts_personid = em.emails_personid
       AND em.emails_filteredpriorityorder = 1
       AND em.emailtype = 'Current'

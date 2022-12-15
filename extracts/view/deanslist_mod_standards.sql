@@ -16,7 +16,7 @@ WITH
       asr.standard_description,
       ROUND(AVG(asr.percent_correct), 0) AS avg_percent_correct
     FROM
-      gabby.illuminate_dna_assessments.agg_student_responses_all_current asr
+      gabby.illuminate_dna_assessments.agg_student_responses_all_current AS asr
     WHERE
       asr.response_type = 'G'
       AND asr.is_normed_scope = 1
@@ -49,6 +49,8 @@ SELECT
     WHEN pbl.label_number = 1 THEN 'Far Below Mastery'
   END AS standard_proficiency
 FROM
-  std_avg sa
-  INNER JOIN gabby.illuminate_dna_assessments.performance_band_lookup_static pbl ON sa.performance_band_set_id = pbl.performance_band_set_id
-  AND sa.avg_percent_correct (BETWEEN pbl.minimum_value AND pbl.maximum_value)
+  std_avg AS sa
+  INNER JOIN gabby.illuminate_dna_assessments.performance_band_lookup_static AS pbl ON sa.performance_band_set_id = pbl.performance_band_set_id
+  AND sa.avg_percent_correct (
+    BETWEEN pbl.minimum_value AND pbl.maximum_value
+  )

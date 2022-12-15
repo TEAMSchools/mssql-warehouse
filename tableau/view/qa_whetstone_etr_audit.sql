@@ -17,14 +17,14 @@ SELECT
   wo.observer_name,
   wo.score
 FROM
-  gabby.people.staff_crosswalk_static r
-  INNER JOIN gabby.reporting.reporting_terms rt ON rt.identifier = 'ETR'
+  gabby.people.staff_crosswalk_static AS r
+  INNER JOIN gabby.reporting.reporting_terms AS rt ON rt.identifier = 'ETR'
   AND rt.schoolid = 0
   AND rt._fivetran_deleted = 0
-  LEFT JOIN gabby.pm.teacher_goals_exemption_clean_static ex ON r.df_employee_number = ex.df_employee_number
+  LEFT JOIN gabby.pm.teacher_goals_exemption_clean_static AS ex ON r.df_employee_number = ex.df_employee_number
   AND rt.academic_year = ex.academic_year
   AND rt.time_per_name = REPLACE(ex.pm_term, 'PM', 'ETR')
-  LEFT JOIN gabby.whetstone.observations_clean wo ON CAST(r.df_employee_number AS VARCHAR(25)) = wo.teacher_internal_id
+  LEFT JOIN gabby.whetstone.observations_clean AS wo ON CAST(r.df_employee_number AS VARCHAR(25)) = wo.teacher_internal_id
   AND wo.observed_at (BETWEEN rt.[start_date] AND rt.end_date)
   AND wo.rubric_name IN (
     'Coaching Tool: Coach ETR and Reflection',

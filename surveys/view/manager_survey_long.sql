@@ -73,8 +73,8 @@ SELECT
   CAST(qk.open_ended AS VARCHAR(5)) AS open_ended,
   CAST(rs.response_value AS FLOAT) AS response_value
 FROM
-  manager_long mgr
-  INNER JOIN gabby.surveys.question_key qk ON mgr.question_code = qk.question_code
+  manager_long AS mgr
+  INNER JOIN gabby.surveys.question_key AS qk ON mgr.question_code = qk.question_code
   AND qk.survey_type = 'MGR'
-  LEFT JOIN gabby.surveys.response_scales rs ON mgr.response = rs.response_text
+  LEFT JOIN gabby.surveys.response_scales AS rs ON mgr.response = rs.response_text
   AND rs.survey_type = 'MGR'

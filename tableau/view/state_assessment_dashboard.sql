@@ -23,7 +23,9 @@ WITH
           gabby.powerschool.cohort_identifiers_static
         WHERE
           rn_school = 1
-      ) sub PIVOT (MAX(grade_level) FOR school_level IN ([ES], [MS])) p
+      ) sub PIVOT (
+        MAX(grade_level) FOR school_level IN ([ES], [MS])
+      ) p
   ),
   external_prof AS (
     SELECT
@@ -100,8 +102,8 @@ WITH
       u.sif_stateprid,
       u.lastfirst
     FROM
-      gabby.powerschool.users u
-      INNER JOIN gabby.powerschool.schools sch ON u.homeschoolid = sch.school_number
+      gabby.powerschool.users AS u
+      INNER JOIN gabby.powerschool.schools AS sch ON u.homeschoolid = sch.school_number
       AND u.[db_name] = sch.[db_name]
     WHERE
       u.sif_stateprid <> ''
@@ -153,15 +155,15 @@ promo.attended_ms,
 ms.ms_attended,
 pu.lastfirst AS teacher_lastfirst
 FROM
-  gabby.powerschool.cohort_identifiers_static co
-  INNER JOIN gabby.parcc.summative_record_file_clean parcc ON co.student_number = parcc.local_student_identifier
+  gabby.powerschool.cohort_identifiers_static AS co
+  INNER JOIN gabby.parcc.summative_record_file_clean AS parcc ON co.student_number = parcc.local_student_identifier
   AND co.academic_year = parcc.academic_year
-  LEFT JOIN external_prof ext ON co.academic_year = ext.academic_year
+  LEFT JOIN external_prof AS ext ON co.academic_year = ext.academic_year
   AND parcc.test_code = ext.test_code
 COLLATE Latin1_General_BIN
 LEFT JOIN promo ON co.student_number = promo.student_number
-LEFT JOIN ms_grad ms ON co.student_number = ms.student_number
-LEFT JOIN ps_users pu ON parcc.staff_member_identifier = pu.sif_stateprid
+LEFT JOIN ms_grad AS ms ON co.student_number = ms.student_number
+LEFT JOIN ps_users AS pu ON parcc.staff_member_identifier = pu.sif_stateprid
 WHERE
   co.rn_year = 1
 UNION ALL
@@ -211,10 +213,10 @@ SELECT
   ms.ms_attended,
   NULL AS teacher_lastfirst
 FROM
-  gabby.powerschool.cohort_identifiers_static co
-  INNER JOIN gabby.njsmart.all_state_assessments asa ON co.student_number = asa.local_student_id
+  gabby.powerschool.cohort_identifiers_static AS co
+  INNER JOIN gabby.njsmart.all_state_assessments AS asa ON co.student_number = asa.local_student_id
   AND co.academic_year = asa.academic_year
   LEFT JOIN promo ON co.student_number = promo.student_number
-  LEFT JOIN ms_grad ms ON co.student_number = ms.student_number
+  LEFT JOIN ms_grad AS ms ON co.student_number = ms.student_number
 WHERE
   co.rn_year = 1

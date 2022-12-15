@@ -8,7 +8,7 @@ SELECT
   goal,
   lvl_num
 FROM
-  gabby.lit.individualized_goals_current g
+  gabby.lit.individualized_goals_current AS g
 WHERE
   g.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
 UNION ALL
@@ -19,4 +19,4 @@ SELECT
   CAST(goal AS VARCHAR(25)) AS goal,
   CAST(lvl_num AS INT) AS lvl_num
 FROM
-  gabby.lit.individualized_goals_archive g
+  gabby.lit.individualized_goals_archive AS g

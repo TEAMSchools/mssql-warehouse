@@ -24,9 +24,9 @@ WITH
         'UNION ALL '
       ) AS select_statement
     FROM
-      gabby.illuminate_dna_repositories.repositories r
-      INNER JOIN gabby.illuminate_codes.dna_scopes dsc ON r.code_scope_id = dsc.code_id
-      INNER JOIN gabby.illuminate_codes.dna_subject_areas dsu ON r.code_subject_area_id = dsu.code_id
+      gabby.illuminate_dna_repositories.repositories AS r
+      INNER JOIN gabby.illuminate_codes.dna_scopes AS dsc ON r.code_scope_id = dsc.code_id
+      INNER JOIN gabby.illuminate_codes.dna_subject_areas AS dsu ON r.code_subject_area_id = dsu.code_id
       /* F&P */
     WHERE
       dsc.code_translation = 'Reporting'
@@ -58,11 +58,15 @@ FROM
         ',' + c.name
       ) AS pivot_value
     FROM
-      gabby.sys.tables t
-      INNER JOIN gabby.sys.all_columns c ON t.object_id = c.object_id
+      gabby.sys.tables AS t
+      INNER JOIN gabby.sys.all_columns AS c ON t.object_id = c.object_id
       AND c.name NOT LIKE '_fivetran%'
-      INNER JOIN gabby.illuminate_dna_repositories.fields f ON c.name = f.name
-      AND SUBSTRING(t.name, CHARINDEX('_', t.name) + 1, LEN(t.name)) = f.repository_id
+      INNER JOIN gabby.illuminate_dna_repositories.fields AS f ON c.name = f.name
+      AND SUBSTRING(
+        t.name,
+        CHARINDEX('_', t.name) + 1,
+        LEN(t.name)
+      ) = f.repository_id
       AND f.deleted_at IS NULL
     WHERE
       t.name IN (

@@ -6,7 +6,7 @@ SELECT
   dlia.actionid,
   dlia.actionname
 FROM
-  deanslist.incidents dli
+  deanslist.incidents AS dli
   CROSS APPLY OPENJSON (dli.actions, N'$')
 WITH
   (

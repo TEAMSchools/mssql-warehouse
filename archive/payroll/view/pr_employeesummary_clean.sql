@@ -21,7 +21,7 @@ WITH
       sr.termination_date,
       d.pay_date
     FROM
-      gabby.adp.staff_roster sr OIN dates d ON d.pay_date BETWEEN sr.position_start_date AND DATEADD(
+      gabby.adp.staff_roster AS sr OIN dates d ON d.pay_date BETWEEN sr.position_start_date AND DATEADD(
         DAY,
         16,
         COALESCE(
@@ -118,7 +118,7 @@ FROM
           pr.pay_date
       ) AS total_earnings_3_4_5_prev
     FROM
-      scaffold s
-      LEFT JOIN gabby.adp.pr_employeesummary pr ON s.position_id = CONCAT(pr.company, pr.file_)
+      scaffold AS s
+      LEFT JOIN gabby.adp.pr_employeesummary AS pr ON s.position_id = CONCAT(pr.company, pr.file_)
       AND s.pay_date = pr.pay_date
   ) sub

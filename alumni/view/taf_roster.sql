@@ -16,7 +16,7 @@ WITH
           start_date_c DESC
       ) AS rn
     FROM
-      gabby.alumni.enrollment_c enr
+      gabby.alumni.enrollment_c AS enr
     WHERE
       enr.is_deleted = 0
   )
@@ -86,14 +86,14 @@ SELECT
   CAST(suf.release_5_phone AS VARCHAR(125)) AS ps_release_5_phone,
   CAST(suf.release_5_relation AS VARCHAR(125)) AS ps_release_5_relation
 FROM
-  gabby.alumni.ktc_roster r
-  LEFT JOIN enrollments enr ON r.sf_contact_id = enr.salesforce_contact_id
+  gabby.alumni.ktc_roster AS r
+  LEFT JOIN enrollments AS enr ON r.sf_contact_id = enr.salesforce_contact_id
   AND enr.rn = 1
-  LEFT JOIN gabby.powerschool.students s ON r.student_number = s.student_number
+  LEFT JOIN gabby.powerschool.students AS s ON r.student_number = s.student_number
   AND r.exit_db_name = s.db_name
-  LEFT JOIN gabby.powerschool.u_studentsuserfields suf ON s.dcid = suf.studentsdcid
+  LEFT JOIN gabby.powerschool.u_studentsuserfields AS suf ON s.dcid = suf.studentsdcid
   AND s.db_name = suf.db_name
-  LEFT JOIN gabby.powerschool.studentcorefields scf ON s.dcid = scf.studentsdcid
+  LEFT JOIN gabby.powerschool.studentcorefields AS scf ON s.dcid = scf.studentsdcid
   AND s.db_name = scf.db_name
 WHERE
   r.ktc_status IN ('TAF', 'TAFHS')

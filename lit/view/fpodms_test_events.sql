@@ -18,7 +18,7 @@ WITH
           c.student_count DESC
       ) AS rn
     FROM
-      gabby.fpodms.bas_classes c
+      gabby.fpodms.bas_classes AS c
   ),
   clean_data AS (
     SELECT
@@ -63,7 +63,11 @@ WITH
     FROM
       (
         SELECT
-          CONCAT('FPBAS', LEFT(fp.year_of_assessment, 4), fp._line) AS unique_id,
+          CONCAT(
+            'FPBAS',
+            LEFT(fp.year_of_assessment, 4),
+            fp._line
+          ) AS unique_id,
           fp.student_identifier,
           fp.year_of_assessment,
           CAST(LEFT(fp.year_of_assessment, 4) AS INT) AS academic_year,
@@ -100,10 +104,10 @@ WITH
           3273 AS testid,
           1 AS is_fp
         FROM
-          gabby.fpodms.bas_assessments fp
-          LEFT JOIN gabby.people.school_crosswalk sc ON fp.school_name = sc.site_name
-          LEFT JOIN gabby.powerschool.schools sch ON sc.ps_school_id = sch.school_number
-          LEFT JOIN classes_dedupe c ON fp.school_name = c.school_name
+          gabby.fpodms.bas_assessments AS fp
+          LEFT JOIN gabby.people.school_crosswalk AS sc ON fp.school_name = sc.site_name
+          LEFT JOIN gabby.powerschool.schools AS sch ON sc.ps_school_id = sch.school_number
+          LEFT JOIN classes_dedupe AS c ON fp.school_name = c.school_name
           AND fp.year_of_assessment = c.school_year
           AND fp.class_name = c.[name]
           AND c.rn = 1
@@ -234,8 +238,8 @@ SELECT
     WHEN cd.benchmark_level = 'Independent' THEN gleq.fp_lvl_num
   END AS indep_lvl_num
 FROM
-  predna cd
-  LEFT JOIN gabby.reporting.reporting_terms rt ON cd.schoolid = rt.schoolid
+  predna AS cd
+  LEFT JOIN gabby.reporting.reporting_terms AS rt ON cd.schoolid = rt.schoolid
   AND cd.assessment_date (BETWEEN rt.[start_date] AND rt.end_date)
   AND rt.identifier = 'LIT'
   AND rt._fivetran_deleted = 0

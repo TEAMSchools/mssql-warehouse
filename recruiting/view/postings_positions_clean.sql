@@ -41,10 +41,15 @@ WITH
       END AS position_count,
       pg.name AS position_job_posting
     FROM
-      gabby.recruiting.job_position_c pn
-      LEFT JOIN gabby.recruiting.job_posting_c pg ON pn.job_posting_c = pg.id
+      gabby.recruiting.job_position_c AS pn
+      LEFT JOIN gabby.recruiting.job_posting_c AS pg ON pn.job_posting_c = pg.id
     WHERE
-      pn.city_c IN ('Newark', 'Camden', 'Newark & Camden', 'Miami')
+      pn.city_c IN (
+        'Newark',
+        'Camden',
+        'Newark & Camden',
+        'Miami'
+      )
   ),
   positions_clean AS (
     SELECT
@@ -78,7 +83,7 @@ WITH
       END AS position_recruiting_year,
       p.position_job_posting
     FROM
-      position_setup p
+      position_setup AS p
   ),
   postings_clean AS (
     SELECT
@@ -96,9 +101,14 @@ WITH
       pg.publish_end_date_c AS posting_publish_end,
       pg.start_date_c AS posting_start
     FROM
-      gabby.recruiting.job_posting_c pg
+      gabby.recruiting.job_posting_c AS pg
     WHERE
-      city_c IN ('Camden', 'Newark', 'Newark & Camden', 'Miami')
+      city_c IN (
+        'Camden',
+        'Newark',
+        'Newark & Camden',
+        'Miami'
+      )
   )
 SELECT
   pg.job_posting_name,
@@ -131,5 +141,5 @@ SELECT
   pn.position_role_short,
   pn.position_recruiting_year
 FROM
-  postings_clean pg
-  LEFT JOIN positions_clean pn ON pg.job_posting_name = pn.position_job_posting
+  postings_clean AS pg
+  LEFT JOIN positions_clean AS pn ON pg.job_posting_name = pn.position_job_posting

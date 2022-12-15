@@ -118,8 +118,8 @@ SELECT
     ''
   ) AS [Parent 2 E-mail]
 FROM
-  gabby.powerschool.cohort_identifiers_static co
-  LEFT JOIN gabby.alumni.contact s ON co.student_number = s.school_specific_id_c
+  gabby.powerschool.cohort_identifiers_static AS co
+  LEFT JOIN gabby.alumni.contact AS s ON co.student_number = s.school_specific_id_c
   LEFT JOIN gabby.alumni.[user] u ON s.owner_id = u.id
 WHERE
   co.schoolid IN (73252, 73253, 133570965, 179902)

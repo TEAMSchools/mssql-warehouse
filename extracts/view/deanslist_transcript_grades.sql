@@ -16,8 +16,8 @@ WITH
       sg.storecode,
       1 AS is_stored
     FROM
-      gabby.powerschool.storedgrades sg
-      INNER JOIN gabby.powerschool.students s ON sg.studentid = s.id
+      gabby.powerschool.storedgrades AS sg
+      INNER JOIN gabby.powerschool.students AS s ON sg.studentid = s.id
       AND sg.[db_name] = s.[db_name]
     WHERE
       ISNULL(sg.excludefromtranscripts, 0) = 0
@@ -36,16 +36,16 @@ WITH
       'Y1' AS storecode,
       0 AS is_stored
     FROM
-      gabby.powerschool.students s
-      INNER JOIN gabby.powerschool.final_grades_static fg ON fg.studentid = s.id
+      gabby.powerschool.students AS s
+      INNER JOIN gabby.powerschool.final_grades_static AS fg ON fg.studentid = s.id
       AND fg.[db_name] = s.[db_name]
       AND fg.exclude_from_gpa = 0
       AND CAST(CURRENT_TIMESTAMP AS DATE) (
         BETWEEN fg.termbin_start_date AND fg.termbin_end_date
       )
-      INNER JOIN gabby.powerschool.courses c ON fg.course_number = c.course_number
+      INNER JOIN gabby.powerschool.courses AS c ON fg.course_number = c.course_number
       AND fg.[db_name] = c.[db_name]
-      INNER JOIN gabby.powerschool.schools sch ON s.schoolid = sch.school_number
+      INNER JOIN gabby.powerschool.schools AS sch ON s.schoolid = sch.school_number
       AND s.[db_name] = sch.[db_name]
     WHERE
       s.grade_level >= 5

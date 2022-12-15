@@ -180,15 +180,25 @@ SELECT
   nj.annual_iep_review_meeting_date,
   nj.reevaluation_date,
   CAST(nj.parent_consent_obtain_code AS VARCHAR(1)) AS parent_consent_obtain_code,
-  CAST(nj.initial_process_delay_reason AS VARCHAR(5)) AS initial_process_delay_reason,
-  CAST(nj.special_education_placement AS VARCHAR(5)) AS special_education_placement,
+  CAST(
+    nj.initial_process_delay_reason AS VARCHAR(5)
+  ) AS initial_process_delay_reason,
+  CAST(
+    nj.special_education_placement AS VARCHAR(5)
+  ) AS special_education_placement,
   CAST(nj.time_in_regular_program AS VARCHAR(5)) AS time_in_regular_program,
   CAST(nj.early_intervention_yn AS VARCHAR(1)) AS early_intervention_yn,
   CAST(nj.determined_ineligible_yn AS VARCHAR(1)) AS determined_ineligible_yn,
   CAST(nj.counseling_services_yn AS VARCHAR(1)) AS counseling_services_yn,
-  CAST(nj.occupational_therapy_serv_yn AS VARCHAR(1)) AS occupational_therapy_serv_yn,
-  CAST(nj.physical_therapy_services_yn AS VARCHAR(1)) AS physical_therapy_services_yn,
-  CAST(nj.speech_lang_theapy_services_yn AS VARCHAR(1)) AS speech_lang_theapy_services_yn,
+  CAST(
+    nj.occupational_therapy_serv_yn AS VARCHAR(1)
+  ) AS occupational_therapy_serv_yn,
+  CAST(
+    nj.physical_therapy_services_yn AS VARCHAR(1)
+  ) AS physical_therapy_services_yn,
+  CAST(
+    nj.speech_lang_theapy_services_yn AS VARCHAR(1)
+  ) AS speech_lang_theapy_services_yn,
   CAST(nj.other_related_services_yn AS VARCHAR(1)) AS other_related_services_yn,
   t.target_enrollment,
   t.target_enrollment_finance,
@@ -198,18 +208,18 @@ SELECT
   t.lep_only_ratio,
   t.sped_ratio
 FROM
-  gabby.powerschool.cohort_identifiers_static co
-  LEFT JOIN gabby.powerschool.calendar_rollup_static cal ON co.schoolid = cal.schoolid
+  gabby.powerschool.cohort_identifiers_static AS co
+  LEFT JOIN gabby.powerschool.calendar_rollup_static AS cal ON co.schoolid = cal.schoolid
   AND co.yearid = cal.yearid
   AND co.track = cal.track
   AND co.[db_name] = cal.[db_name]
   LEFT JOIN att_mem ON co.studentid = att_mem.studentid
   AND co.yearid = att_mem.yearid
   AND co.[db_name] = att_mem.[db_name]
-  LEFT JOIN gabby.powerschool.s_nj_stu_x nj ON co.students_dcid = nj.studentsdcid
+  LEFT JOIN gabby.powerschool.s_nj_stu_x AS nj ON co.students_dcid = nj.studentsdcid
   AND co.[db_name] = nj.[db_name]
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-  LEFT JOIN targets t ON co.academic_year = t.academic_year
+  LEFT JOIN targets AS t ON co.academic_year = t.academic_year
   AND co.reporting_schoolid = t.schoolid
   AND co.grade_level = t.grade_level
   AND co.is_pathways = t.is_pathways

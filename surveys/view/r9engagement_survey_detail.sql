@@ -98,9 +98,15 @@ WITH
           CAST(financeaccounting_2_s AS FLOAT) AS financeaccounting_2_s,
           CAST(financeaccounting_3_s AS FLOAT) AS financeaccounting_3_s,
           CAST(financeaccounting_4_s AS FLOAT) AS financeaccounting_4_s,
-          CAST(financeaccountingschoolleadersonly_1_s AS FLOAT) AS financeaccountingschoolleadersonly_1_s,
-          CAST(financeaccountingschoolleadersonly_2_s AS FLOAT) AS financeaccountingschoolleadersonly_2_s,
-          CAST(financeaccountingschoolleadersonly_3_s AS FLOAT) AS financeaccountingschoolleadersonly_3_s,
+          CAST(
+            financeaccountingschoolleadersonly_1_s AS FLOAT
+          ) AS financeaccountingschoolleadersonly_1_s,
+          CAST(
+            financeaccountingschoolleadersonly_2_s AS FLOAT
+          ) AS financeaccountingschoolleadersonly_2_s,
+          CAST(
+            financeaccountingschoolleadersonly_3_s AS FLOAT
+          ) AS financeaccountingschoolleadersonly_3_s,
           CAST(financeaccountingsl_1 AS FLOAT) AS financeaccountingsl_1,
           CAST(financeaccountingsl_2 AS FLOAT) AS financeaccountingsl_2,
           CAST(financeaccountingsl_3 AS FLOAT) AS financeaccountingsl_3,
@@ -161,13 +167,27 @@ WITH
           CAST(marketing_2 AS FLOAT) AS marketing_2,
           CAST(marketingschoolleadersonly_1 AS FLOAT) AS marketingschoolleadersonly_1,
           CAST(marketingschoolleadersonly_2 AS FLOAT) AS marketingschoolleadersonly_2,
-          CAST(noninstructionalhiringdsor_9_directors_1 AS FLOAT) AS noninstructionalhiringdsor_9_directors_1,
-          CAST(noninstructionalhiringdsor_9_directors_2 AS FLOAT) AS noninstructionalhiringdsor_9_directors_2,
-          CAST(noninstructionalhiringdsor_9_directors_3 AS FLOAT) AS noninstructionalhiringdsor_9_directors_3,
-          CAST(noninstructionalhiringdsor_9_directors_4 AS FLOAT) AS noninstructionalhiringdsor_9_directors_4,
-          CAST(noninstructionalhiringdsor_9_directors_5 AS FLOAT) AS noninstructionalhiringdsor_9_directors_5,
-          CAST(noninstructionalhiringdsor_9_directors_6 AS FLOAT) AS noninstructionalhiringdsor_9_directors_6,
-          CAST(noninstructionalhiringdsor_9_directors_7 AS FLOAT) AS noninstructionalhiringdsor_9_directors_7,
+          CAST(
+            noninstructionalhiringdsor_9_directors_1 AS FLOAT
+          ) AS noninstructionalhiringdsor_9_directors_1,
+          CAST(
+            noninstructionalhiringdsor_9_directors_2 AS FLOAT
+          ) AS noninstructionalhiringdsor_9_directors_2,
+          CAST(
+            noninstructionalhiringdsor_9_directors_3 AS FLOAT
+          ) AS noninstructionalhiringdsor_9_directors_3,
+          CAST(
+            noninstructionalhiringdsor_9_directors_4 AS FLOAT
+          ) AS noninstructionalhiringdsor_9_directors_4,
+          CAST(
+            noninstructionalhiringdsor_9_directors_5 AS FLOAT
+          ) AS noninstructionalhiringdsor_9_directors_5,
+          CAST(
+            noninstructionalhiringdsor_9_directors_6 AS FLOAT
+          ) AS noninstructionalhiringdsor_9_directors_6,
+          CAST(
+            noninstructionalhiringdsor_9_directors_7 AS FLOAT
+          ) AS noninstructionalhiringdsor_9_directors_7,
           CAST(nutritionprogramfoodservice_1 AS FLOAT) AS nutritionprogramfoodservice_1,
           CAST(nutritionprogramfoodservice_1_s AS FLOAT) AS nutritionprogramfoodservice_1_s,
           CAST(nutritionprogramfoodservice_2 AS FLOAT) AS nutritionprogramfoodservice_2,
@@ -1280,7 +1300,7 @@ SELECT
   qk.competency,
   qk.question_text
 FROM
-  survey_unpivoted su
-  LEFT OUTER JOIN gabby.surveys.question_key qk ON su.question_code = qk.question_code
+  survey_unpivoted AS su
+  LEFT OUTER JOIN gabby.surveys.question_key AS qk ON su.question_code = qk.question_code
   AND su.academic_year = ISNULL(qk.academic_year, su.academic_year)
   AND qk.survey_type = 'R9'

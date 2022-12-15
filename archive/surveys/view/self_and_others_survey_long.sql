@@ -53,7 +53,9 @@ WITH
           u.time_started,
           u.date_submitted,
           CAST(u.your_name_ AS VARCHAR(125)) AS respondent_name,
-          CAST(u.your_kipp_nj_email_account AS VARCHAR(125)) AS respondent_email_address,
+          CAST(
+            u.your_kipp_nj_email_account AS VARCHAR(125)
+          ) AS respondent_email_address,
           CAST(u.subject_name AS VARCHAR(125)) AS subject_name,
           CAST(u.subject_associate_id AS VARCHAR(25)) AS subject_associate_id,
           CAST(u.is_manager AS INT) AS is_manager,
@@ -122,8 +124,8 @@ SELECT
   CAST(qk.open_ended AS VARCHAR(5)) AS open_ended,
   CAST(rs.response_value AS FLOAT) AS response_value
 FROM
-  so_long so
-  INNER JOIN gabby.surveys.question_key qk ON so.question_code = qk.question_code
+  so_long AS so
+  INNER JOIN gabby.surveys.question_key AS qk ON so.question_code = qk.question_code
   AND qk.survey_type = 'SO'
-  LEFT JOIN gabby.surveys.response_scales rs ON so.response = rs.response_text
+  LEFT JOIN gabby.surveys.response_scales AS rs ON so.response = rs.response_text
   AND so.survey_type = rs.survey_type

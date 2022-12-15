@@ -22,6 +22,6 @@ SELECT
   r.manager_userprincipalname AS manager_mail,
   r.personal_email
 FROM
-  gabby.dayforce.onboarding o
-  INNER JOIN gabby.people.staff_crosswalk_static r ON o.employee_reference_code = r.df_employee_number
+  gabby.dayforce.onboarding AS o
+  INNER JOIN gabby.people.staff_crosswalk_static AS r ON o.employee_reference_code = r.df_employee_number
   AND r.[status] <> 'Terminated'

@@ -24,8 +24,8 @@ WITH
       dt.[start_date] AS term_start_date,
       dt.end_date AS term_end_date
     FROM
-      gabby.powerschool.cohort_identifiers_static co
-      INNER JOIN gabby.reporting.reporting_terms dt ON co.academic_year = dt.academic_year
+      gabby.powerschool.cohort_identifiers_static AS co
+      INNER JOIN gabby.reporting.reporting_terms AS dt ON co.academic_year = dt.academic_year
       AND co.schoolid = dt.schoolid
       AND dt.identifier = 'RT'
       AND dt._fivetran_deleted = 0
@@ -60,8 +60,8 @@ WITH
       dt.[start_date] AS term_start_date,
       dt.end_date AS term_end_date
     FROM
-      gabby.powerschool.cohort_identifiers_static co
-      INNER JOIN gabby.reporting.reporting_terms dt ON co.academic_year = dt.academic_year
+      gabby.powerschool.cohort_identifiers_static AS co
+      INNER JOIN gabby.reporting.reporting_terms AS dt ON co.academic_year = dt.academic_year
       AND dt.schoolid = 0
       AND dt.identifier = 'SY'
       AND dt._fivetran_deleted = 0
@@ -95,9 +95,11 @@ WITH
       'TERM' AS subdomain,
       'Term' AS finalgradename
     FROM
-      gabby.powerschool.final_grades_static gr
+      gabby.powerschool.final_grades_static AS gr
     WHERE
-      gr.yearid >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990) - 1
+      gr.yearid >= (
+        gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990
+      ) - 1
       AND gr.excludefromgpa = 0
     UNION ALL
     SELECT
@@ -110,7 +112,7 @@ WITH
       'TERM' AS subdomain,
       'Y1' AS finalgradename
     FROM
-      gabby.powerschool.final_grades_static gr
+      gabby.powerschool.final_grades_static AS gr
     WHERE
       gr.academic_year IN (
         gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
@@ -136,8 +138,8 @@ WITH
         ELSE 'Term'
       END AS finalgradename
     FROM
-      gabby.powerschool.storedgrades gr
-      INNER JOIN gabby.powerschool.students s ON gr.studentid = s.id
+      gabby.powerschool.storedgrades AS gr
+      INNER JOIN gabby.powerschool.students AS s ON gr.studentid = s.id
       AND gr.[db_name] = s.[db_name]
     WHERE
       gr.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
@@ -154,7 +156,7 @@ WITH
       'CATEGORY' AS subdomain,
       gr.grade_category AS finalgradename
     FROM
-      gabby.powerschool.category_grades_static gr
+      gabby.powerschool.category_grades_static AS gr
     WHERE
       gr.academic_year IN (
         gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
@@ -203,7 +205,9 @@ WITH
           att.abs_unexcused_count_term + ROUND((att.TDY_all_count_term / 3), 1, 1) AS attpts_term,
           ROUND(
             (
-              (att.mem_count_term - att.abs_unexcused_count_term) / CASE
+              (
+                att.mem_count_term - att.abs_unexcused_count_term
+              ) / CASE
                 WHEN att.mem_count_term = 0 THEN NULL
                 ELSE att.mem_count_term
               END
@@ -215,8 +219,12 @@ WITH
               (
                 att.mem_count_term - att.abs_unexcused_count_term - att.TDY_all_count_term
               ) / CASE
-                WHEN (att.mem_count_term - att.abs_unexcused_count_term) = 0 THEN NULL
-                ELSE (att.mem_count_term - att.abs_unexcused_count_term)
+                WHEN (
+                  att.mem_count_term - att.abs_unexcused_count_term
+                ) = 0 THEN NULL
+                ELSE (
+                  att.mem_count_term - att.abs_unexcused_count_term
+                )
               END
             ) * 100,
             0
@@ -235,7 +243,7 @@ WITH
             0
           ) AS attptspct_term
         FROM
-          gabby.powerschool.attendance_counts_static att
+          gabby.powerschool.attendance_counts_static AS att
         WHERE
           att.academic_year IN (
             gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
@@ -274,7 +282,9 @@ WITH
           ) AS attptspct_y1,
           ROUND(
             (
-              (att.MEM_count_y1 - att.abs_unexcused_count_y1) / CASE
+              (
+                att.MEM_count_y1 - att.abs_unexcused_count_y1
+              ) / CASE
                 WHEN att.MEM_count_y1 = 0 THEN NULL
                 ELSE att.MEM_count_y1
               END
@@ -286,14 +296,18 @@ WITH
               (
                 att.MEM_count_y1 - att.abs_unexcused_count_y1 - att.TDY_all_count_y1
               ) / CASE
-                WHEN (att.MEM_count_y1 - att.abs_unexcused_count_y1) = 0 THEN NULL
-                ELSE (att.mem_count_y1 - att.abs_unexcused_count_y1)
+                WHEN (
+                  att.MEM_count_y1 - att.abs_unexcused_count_y1
+                ) = 0 THEN NULL
+                ELSE (
+                  att.mem_count_y1 - att.abs_unexcused_count_y1
+                )
               END
             ) * 100,
             0
           ) AS ontimepct_y1
         FROM
-          gabby.powerschool.attendance_counts_static att
+          gabby.powerschool.attendance_counts_static AS att
         WHERE
           att.academic_year IN (
             gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
@@ -353,7 +367,7 @@ WITH
         WHEN a.response_type = 'S' THEN 'STANDARDS'
       END AS subdomain
     FROM
-      gabby.illuminate_dna_assessments.agg_student_responses_all a
+      gabby.illuminate_dna_assessments.agg_student_responses_all AS a
     WHERE
       a.module_type IS NOT NULL
       AND a.response_type IN ('O', 'S')
@@ -402,8 +416,8 @@ WITH
       gpa.cumulative_Y1_gpa AS gpa,
       'GPA CUMULATIVE' AS subdomain
     FROM
-      gabby.powerschool.gpa_cumulative gpa
-      INNER JOIN gabby.powerschool.students s ON gpa.studentid = s.id
+      gabby.powerschool.gpa_cumulative AS gpa
+      INNER JOIN gabby.powerschool.students AS s ON gpa.studentid = s.id
       AND gpa.[db_name] = s.[db_name]
     UNION ALL
     SELECT
@@ -414,8 +428,8 @@ WITH
       gpa.earned_credits_cum AS gpa,
       'CREDITS EARNED' AS subdomain
     FROM
-      gabby.powerschool.gpa_cumulative gpa
-      INNER JOIN gabby.powerschool.students s ON gpa.studentid = s.id
+      gabby.powerschool.gpa_cumulative AS gpa
+      INNER JOIN gabby.powerschool.students AS s ON gpa.studentid = s.id
       AND gpa.[db_name] = s.[db_name]
   ),
   lit AS (
@@ -496,8 +510,8 @@ WITH
       END AS goal_num,
       'GOAL' AS subdomain
     FROM
-      gabby.nwea.assessment_result_identifiers map
-      INNER JOIN gabby.powerschool.students s ON map.student_id = s.student_number
+      gabby.nwea.assessment_result_identifiers AS map
+      INNER JOIN gabby.powerschool.students AS s ON map.student_id = s.student_number
     WHERE
       map.measurement_scale = 'Reading'
       AND map.school_name = 'Newark Collegiate Academy'
@@ -769,8 +783,8 @@ WITH
             WHEN a.competitiveness_ranking_c = 'Less Competitive' THEN 2
           END competitiveness_ranking_int
         FROM
-          gabby.naviance.college_applications app
-          LEFT JOIN gabby.alumni.account a ON app.ceeb_code = CAST(a.ceeb_code_c AS VARCHAR)
+          gabby.naviance.college_applications AS app
+          LEFT JOIN gabby.alumni.account AS a ON app.ceeb_code = CAST(a.ceeb_code_c AS VARCHAR)
           AND a.record_type_id = '01280000000BQEkAAO'
           AND a.competitiveness_ranking_c IS NOT NULL
       ) sub
@@ -865,8 +879,8 @@ SELECT
   NULL AS performance_level,
   NULL AS performance_level_label
 FROM
-  roster r
-  LEFT JOIN grades gr ON r.student_number = gr.student_number
+  roster AS r
+  LEFT JOIN grades AS gr ON r.student_number = gr.student_number
   AND r.academic_year = gr.academic_year
   AND r.reporting_term
 COLLATE Latin1_General_BIN = gr.reporting_term
@@ -900,8 +914,8 @@ NULL AS measure_date,
 NULL AS performance_level,
 NULL AS performance_level_label
 FROM
-  roster r
-  LEFT JOIN attendance att ON r.studentid = att.studentid
+  roster AS r
+  LEFT JOIN attendance AS att ON r.studentid = att.studentid
   AND r.[db_name] = att.[db_name]
   AND r.academic_year = att.academic_year
   AND r.reporting_term
@@ -938,8 +952,8 @@ cma.measure_date,
 cma.assessment_id AS performance_level,
 cma.proficiency_label AS performance_level_label
 FROM
-  roster r
-  LEFT JOIN modules cma ON r.student_number = cma.student_number
+  roster AS r
+  LEFT JOIN modules AS cma ON r.student_number = cma.student_number
   AND r.academic_year = cma.academic_year
 WHERE
   r.term_name = 'Y1'
@@ -972,7 +986,7 @@ SELECT
   NULL AS performance_level,
   NULL AS performance_level_label
 FROM
-  roster r
+  roster AS r
   INNER JOIN gpa ON r.student_number = gpa.student_number
   AND r.schoolid = gpa.schoolid
   AND r.academic_year >= gpa.academic_year
@@ -1008,7 +1022,7 @@ SELECT
   NULL AS performance_level,
   NULL AS performance_level_label
 FROM
-  roster r
+  roster AS r
   LEFT JOIN lit ON r.student_number = lit.student_number
   AND r.academic_year >= lit.academic_year
 WHERE
@@ -1042,7 +1056,7 @@ SELECT
   NULL AS performance_level,
   NULL AS performance_level_label
 FROM
-  roster r
+  roster AS r
   LEFT JOIN map ON r.student_number = map.student_number
 WHERE
   r.term_name = 'Y1'
@@ -1079,8 +1093,8 @@ std.test_date AS measure_date,
 std.test_performance_level AS performance_level,
 std.performance_level_label
 FROM
-  roster r
-  LEFT JOIN standardized_tests std ON r.student_number = std.student_number
+  roster AS r
+  LEFT JOIN standardized_tests AS std ON r.student_number = std.student_number
 WHERE
   r.term_name = 'Y1'
 UNION ALL
@@ -1112,8 +1126,8 @@ SELECT
   apps.competitiveness_ranking AS performance_level,
   apps.[value] AS performance_level_label
 FROM
-  roster r
-  LEFT JOIN collegeapps apps ON r.student_number = apps.student_number
+  roster AS r
+  LEFT JOIN collegeapps AS apps ON r.student_number = apps.student_number
 WHERE
   r.term_name = 'Y1'
 UNION ALL
@@ -1145,8 +1159,8 @@ SELECT
   promo.numeric_value AS performance_level,
   promo.text_value AS performance_level_label
 FROM
-  roster r
-  LEFT JOIN promo_status promo ON r.student_number = promo.student_number
+  roster AS r
+  LEFT JOIN promo_status AS promo ON r.student_number = promo.student_number
   AND r.academic_year = promo.academic_year
 WHERE
   r.term_name = 'Y1'
@@ -1179,8 +1193,8 @@ SELECT
   NULL AS performance_level,
   NULL AS performance_level_label
 FROM
-  roster r
-  LEFT JOIN contact c ON r.student_number = c.student_number
+  roster AS r
+  LEFT JOIN contact AS c ON r.student_number = c.student_number
 WHERE
   r.term_name = 'Y1'
 UNION ALL
@@ -1212,8 +1226,8 @@ SELECT
   b.goal AS performance_level,
   b.goal_status AS performance_level_label
 FROM
-  roster r
-  INNER JOIN instructional_tech b ON r.student_number = b.student_number
+  roster AS r
+  INNER JOIN instructional_tech AS b ON r.student_number = b.student_number
   AND r.academic_year = b.academic_year
   AND r.term_name = b.term_name
 UNION ALL

@@ -42,10 +42,10 @@ SELECT
   enr.expression,
   enr.section_number
 FROM
-  gabby.powerschool.cohort_identifiers_static co
-  INNER JOIN gabby.illuminate_dna_assessments.agg_student_responses_all asr ON co.student_number = asr.local_student_id
+  gabby.powerschool.cohort_identifiers_static AS co
+  INNER JOIN gabby.illuminate_dna_assessments.agg_student_responses_all AS asr ON co.student_number = asr.local_student_id
   AND co.academic_year = asr.academic_year
-  LEFT JOIN gabby.powerschool.course_enrollments enr ON co.student_number = enr.student_number
+  LEFT JOIN gabby.powerschool.course_enrollments AS enr ON co.student_number = enr.student_number
   AND co.academic_year = enr.academic_year
   AND co.[db_name] = enr.[db_name]
   AND asr.subject_area = enr.illuminate_subject
@@ -53,7 +53,7 @@ COLLATE Latin1_General_BIN
 AND enr.course_enroll_status = 0
 AND enr.section_enroll_status = 0
 AND enr.rn_illuminate_subject = 1
-LEFT JOIN gabby.powerschool.course_enrollments hr ON co.student_number = hr.student_number
+LEFT JOIN gabby.powerschool.course_enrollments AS hr ON co.student_number = hr.student_number
 AND co.academic_year = hr.academic_year
 AND co.[db_name] = hr.[db_name]
 AND co.schoolid = hr.schoolid

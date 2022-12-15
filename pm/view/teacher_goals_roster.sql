@@ -6,7 +6,7 @@ WITH
     SELECT
       n AS academic_year
     FROM
-      gabby.utilities.row_generator_smallint rg
+      gabby.utilities.row_generator_smallint AS rg
     WHERE
       rg.n BETWEEN 2018 AND gabby.utilities.GLOBAL_ACADEMIC_YEAR  () /* 2018 = first year of Teacher Goals */
   ),
@@ -53,8 +53,8 @@ WITH
           sc.ps_school_id,
           sc.site_name_clean
         FROM
-          gabby.people.employment_history_static wa
-          LEFT JOIN gabby.people.school_crosswalk sc ON wa.[location] = sc.site_name
+          gabby.people.employment_history_static AS wa
+          LEFT JOIN gabby.people.school_crosswalk AS sc ON wa.[location] = sc.site_name
           AND sc._fivetran_deleted = 0
         WHERE
           wa.job_title IN (
@@ -88,8 +88,8 @@ WITH
           wa.work_assignment_effective_end DESC
       ) AS rn_emp_yr
     FROM
-      work_assignment wa
-      INNER JOIN academic_years ay ON ay.academic_year (
+      work_assignment AS wa
+      INNER JOIN academic_years AS ay ON ay.academic_year (
         BETWEEN wa.start_academic_year AND wa.end_academic_year
       )
   )
@@ -112,7 +112,7 @@ SELECT
   sr.manager_userprincipalname AS manager_username,
   sr.grades_taught
 FROM
-  current_work_assignment cwa
-  INNER JOIN gabby.people.staff_crosswalk_static sr ON cwa.df_employee_number = sr.df_employee_number
+  current_work_assignment AS cwa
+  INNER JOIN gabby.people.staff_crosswalk_static AS sr ON cwa.df_employee_number = sr.df_employee_number
 WHERE
   cwa.rn_emp_yr = 1

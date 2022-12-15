@@ -11,8 +11,8 @@ SELECT
     ', '
   )
 FROM
-  illuminate_dna_repositories.fields f
-  INNER JOIN gabby.utilities.all_tables_columns atc ON CONCAT('repository_', f.repository_id) = atc.table_name
+  illuminate_dna_repositories.fields AS f
+  INNER JOIN gabby.utilities.all_tables_columns AS atc ON CONCAT('repository_', f.repository_id) = atc.table_name
   AND f.[name] = atc.column_name
 COLLATE Latin1_General_BIN
 AND atc.[schema_name] = 'illuminate_dna_repositories'
@@ -54,11 +54,11 @@ SELECT
     ' ',
     ') sub',
     ' ',
-    'INNER JOIN illuminate_dna_repositories.fields f ON sub.repository_id = f.repository_id AND sub.field = f.[name] AND f.deleted_at IS NULL',
+    'INNER JOIN illuminate_dna_repositories.fields AS f ON sub.repository_id = f.repository_id AND sub.field = f.[name] AND f.deleted_at IS NULL',
     ' ',
-    'INNER JOIN illuminate_public.students s ON sub.student_id = s.student_id',
+    'INNER JOIN illuminate_public.students AS s ON sub.student_id = s.student_id',
     ' ',
-    'INNER JOIN illuminate_dna_repositories.repositories r ON sub.repository_id = r.repository_id'
+    'INNER JOIN illuminate_dna_repositories.repositories AS r ON sub.repository_id = r.repository_id'
   );
 
 ELSE

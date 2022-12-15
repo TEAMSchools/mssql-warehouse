@@ -28,8 +28,8 @@ WITH
           fp.lvl_num DESC
       ) AS rn
     FROM
-      gabby.lit.all_test_events_static fp
-      INNER JOIN gabby.powerschool.cohort_identifiers_static co ON fp.student_number = co.student_number
+      gabby.lit.all_test_events_static AS fp
+      INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON fp.student_number = co.student_number
       AND fp.academic_year = co.academic_year
       AND co.rn_year = 1
   ),
@@ -63,8 +63,8 @@ WITH
           fp.lvl_num DESC
       ) AS rn
     FROM
-      gabby.reporting.reporting_terms rt
-      INNER JOIN fp_long fp ON rt.schoolid = fp.schoolid
+      gabby.reporting.reporting_terms AS rt
+      INNER JOIN fp_long AS fp ON rt.schoolid = fp.schoolid
       AND rt.[start_date] > fp.assessment_date
     WHERE
       rt.identifier = 'LIT'
@@ -105,25 +105,25 @@ WITH
       COALESCE(ins.text_level, hard.text_level) AS instructional_level,
       COALESCE(ins.genre, hard.genre) AS instructional_genre
     FROM
-      gabby.powerschool.cohort_identifiers_static co
-      INNER JOIN gabby.reporting.reporting_terms rt ON co.schoolid = rt.schoolid
+      gabby.powerschool.cohort_identifiers_static AS co
+      INNER JOIN gabby.reporting.reporting_terms AS rt ON co.schoolid = rt.schoolid
       AND co.academic_year = rt.academic_year
       AND rt.identifier = 'LIT'
       AND rt._fivetran_deleted = 0
-      INNER JOIN gabby.lit.network_goals g ON co.grade_level = g.grade_level
+      INNER JOIN gabby.lit.network_goals AS g ON co.grade_level = g.grade_level
       AND rt.alt_name = g.test_round
       AND g.norms_year = 2019
-      LEFT JOIN fp_recent ind ON co.student_number = ind.student_identifier
+      LEFT JOIN fp_recent AS ind ON co.student_number = ind.student_identifier
       AND rt.academic_year = ind.academic_year
       AND rt.alt_name = ind.test_round
       AND ind.rn = 1
       AND ind.benchmark_level = 'Achieved'
-      LEFT JOIN fp_recent ins ON co.student_number = ins.student_identifier
+      LEFT JOIN fp_recent AS ins ON co.student_number = ins.student_identifier
       AND rt.academic_year = ins.academic_year
       AND rt.alt_name = ins.test_round
       AND ins.rn = 1
       AND ins.benchmark_level = 'Did Not Achieve'
-      LEFT JOIN fp_recent hard ON co.student_number = hard.student_identifier
+      LEFT JOIN fp_recent AS hard ON co.student_number = hard.student_identifier
       AND rt.academic_year = hard.academic_year
       AND rt.alt_name = hard.test_round
       AND hard.rn = 1
@@ -168,7 +168,7 @@ WITH
         WHEN s.instructional_test_round NOT IN ('Q3', 'Q4') THEN 'More Than 2 Rounds Since Last Test'
       END AS audit_reason
     FROM
-      scaffold s
+      scaffold AS s
     WHERE
       s.test_round = 'DR'
     UNION ALL
@@ -206,7 +206,7 @@ WITH
         WHEN s.instructional_test_round NOT IN ('Q3', 'Q4', 'DR') THEN 'More Than 3 Rounds Since Last Test'
       END AS audit_reason
     FROM
-      scaffold s
+      scaffold AS s
     WHERE
       s.test_round = 'Q1'
     UNION ALL
@@ -242,7 +242,7 @@ WITH
         WHEN s.goal_status IN ('Far Below', 'Below', 'Approaching') THEN s.goal_status
       END AS audit_reason
     FROM
-      scaffold s
+      scaffold AS s
     WHERE
       s.test_round = 'Q2'
     UNION ALL
@@ -278,7 +278,7 @@ WITH
         WHEN s.goal_status IN ('Far Below', 'Below', 'Approaching') THEN s.goal_status
       END AS audit_reason
     FROM
-      scaffold s
+      scaffold AS s
     WHERE
       s.test_round = 'Q3'
     UNION ALL
@@ -315,7 +315,7 @@ WITH
         WHEN s.instructional_test_round <> 'Q3' THEN 'Not Tested in Q3'
       END AS audit_reason
     FROM
-      scaffold s
+      scaffold AS s
     WHERE
       s.test_round = 'Q4'
   )
@@ -346,18 +346,18 @@ SELECT
   END AS audit_status,
   COALESCE(ins.unique_id, hard.unique_id, z.unique_id) AS verify_unique_id
 FROM
-  audits_long al
-  LEFT JOIN fp_long ins ON al.student_number = ins.student_identifier
+  audits_long AS al
+  LEFT JOIN fp_long AS ins ON al.student_number = ins.student_identifier
   AND al.academic_year = ins.assessment_academic_year
   AND al.test_round = ins.assessment_test_round
   AND ins.benchmark_level = 'Did Not Achieve'
   AND ins.rn = 1
-  LEFT JOIN fp_long hard ON al.student_number = hard.student_identifier
+  LEFT JOIN fp_long AS hard ON al.student_number = hard.student_identifier
   AND al.academic_year = hard.assessment_academic_year
   AND al.test_round = hard.assessment_test_round
   AND hard.benchmark_level = 'DNA - Hard'
   AND hard.rn = 1
-  LEFT JOIN fp_long z ON al.student_number = z.student_identifier
+  LEFT JOIN fp_long AS z ON al.student_number = z.student_identifier
   AND al.academic_year = z.assessment_academic_year
   AND al.test_round = z.assessment_test_round
   AND z.benchmark_level = 'Achieved'

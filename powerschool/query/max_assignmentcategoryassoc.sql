@@ -14,13 +14,17 @@ FROM
       asec.[db_name],
       aca.assignmentcategoryassocid
     FROM
-      powerschool.assignmentsection asec
-      LEFT JOIN powerschool.assignmentcategoryassoc aca ON asec.assignmentsectionid = aca.assignmentsectionid
+      powerschool.assignmentsection AS asec
+      LEFT JOIN powerschool.assignmentcategoryassoc AS aca ON asec.assignmentsectionid = aca.assignmentsectionid
       AND asec.[db_name] = aca.[db_name]
     WHERE
-      asec.duedate >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR (), 7, 1)
+      asec.duedate >= DATEFROMPARTS(
+        gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+        7,
+        1
+      )
   ) ga
-  INNER JOIN gabby.reporting.reporting_terms rt ON ga.duedate (BETWEEN rt.[start_date] AND rt.end_date)
+  INNER JOIN gabby.reporting.reporting_terms AS rt ON ga.duedate (BETWEEN rt.[start_date] AND rt.end_date)
   AND rt.identifier = 'RT'
   AND rt.schoolid = 0
 GROUP BY

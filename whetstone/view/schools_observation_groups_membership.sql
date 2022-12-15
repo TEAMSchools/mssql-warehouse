@@ -10,7 +10,7 @@ WITH
       ogs.observers AS membership,
       'observers' AS role_name
     FROM
-      gabby.whetstone.schools s
+      gabby.whetstone.schools AS s
       CROSS APPLY OPENJSON (s.observation_groups, '$')
     WITH
       (
@@ -28,7 +28,7 @@ WITH
       ogs.observees AS membership,
       'observees' AS role_name
     FROM
-      gabby.whetstone.schools s
+      gabby.whetstone.schools AS s
       CROSS APPLY OPENJSON (s.observation_groups, '$')
     WITH
       (
@@ -46,7 +46,7 @@ WITH
       ogs.admins AS membership,
       'admins' AS role_name
     FROM
-      gabby.whetstone.schools s
+      gabby.whetstone.schools AS s
       CROSS APPLY OPENJSON (s.observation_groups, '$')
     WITH
       (
@@ -70,7 +70,7 @@ SELECT
   m.email AS user_email,
   m.[name] AS [user_name]
 FROM
-  observation_groups og
+  observation_groups AS og
   CROSS APPLY OPENJSON (og.membership)
 WITH
   (

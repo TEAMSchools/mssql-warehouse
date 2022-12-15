@@ -10,8 +10,8 @@ WITH
       c.dep_post_hs_simple_admin_c,
       u.[name] AS ktc_counselor_name
     FROM
-      gabby.alumni.contact c
-      INNER JOIN gabby.alumni.record_type r ON c.record_type_id = r.id
+      gabby.alumni.contact AS c
+      INNER JOIN gabby.alumni.record_type AS r ON c.record_type_id = r.id
       AND r.[name] IN ('College Student', 'Post-Education')
       INNER JOIN gabby.alumni.[user] u ON c.owner_id = u.id
     WHERE
@@ -27,7 +27,7 @@ WITH
       CAST(RIGHT(rg.n + 1, 2) AS VARCHAR(5)) AS [year]
     FROM
       STRING_SPLIT ('FA,SP', ',') ss
-      INNER JOIN gabby.utilities.row_generator rg ON rg.n BETWEEN gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 2 AND gabby.utilities.GLOBAL_ACADEMIC_YEAR  () + 1
+      INNER JOIN gabby.utilities.row_generator AS rg ON rg.n BETWEEN gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 2 AND gabby.utilities.GLOBAL_ACADEMIC_YEAR  () + 1
   ),
   valid_documents AS (
     SELECT
@@ -93,7 +93,7 @@ WITH
             )
           END AS underscore_3
         FROM
-          gabby.alumni.attachment a
+          gabby.alumni.attachment AS a
         WHERE
           a.is_deleted = 0
       ) sub
@@ -111,8 +111,8 @@ WITH
       e.student_c AS contact_id,
       u.[name] AS updated_by
     FROM
-      gabby.alumni.enrollment_history eh
-      INNER JOIN gabby.alumni.enrollment_c e ON eh.parent_id = e.id
+      gabby.alumni.enrollment_history AS eh
+      INNER JOIN gabby.alumni.enrollment_c AS e ON eh.parent_id = e.id
       INNER JOIN gabby.alumni.[user] u ON eh.created_by_id = u.id
     WHERE
       eh.field = 'Status__c'
@@ -137,8 +137,8 @@ WITH
       e.student_c AS contact_id,
       u.[name] AS updated_by
     FROM
-      gabby.alumni.enrollment_history eh
-      INNER JOIN gabby.alumni.enrollment_c e ON eh.parent_id = e.id
+      gabby.alumni.enrollment_history AS eh
+      INNER JOIN gabby.alumni.enrollment_c AS e ON eh.parent_id = e.id
       INNER JOIN gabby.alumni.[user] u ON eh.created_by_id = u.id
     WHERE
       eh.field = 'Status__c'
@@ -157,11 +157,23 @@ WITH
           e.id AS enrollment_id,
           e.[name] AS enrollment_name,
           e.status_c,
-          ISNULL(CAST(e.actual_end_date_c AS NVARCHAR(MAX)), '') AS actual_end_date_c,
-          ISNULL(CAST(e.date_last_verified_c AS NVARCHAR(MAX)), '') AS date_last_verified_c,
-          ISNULL(CAST(e.date_last_verified_c AS NVARCHAR(MAX)), '') AS date_last_verified_ontime,
+          ISNULL(
+            CAST(e.actual_end_date_c AS NVARCHAR(MAX)),
+            ''
+          ) AS actual_end_date_c,
+          ISNULL(
+            CAST(e.date_last_verified_c AS NVARCHAR(MAX)),
+            ''
+          ) AS date_last_verified_c,
+          ISNULL(
+            CAST(e.date_last_verified_c AS NVARCHAR(MAX)),
+            ''
+          ) AS date_last_verified_ontime,
           ISNULL(CAST(e.notes_c AS NVARCHAR(MAX)), '') AS notes_c,
-          ISNULL(CAST(e.transfer_reason_c AS NVARCHAR(MAX)), '') AS transfer_reason_c,
+          ISNULL(
+            CAST(e.transfer_reason_c AS NVARCHAR(MAX)),
+            ''
+          ) AS transfer_reason_c,
           ISNULL(
             CAST(COALESCE(e.major_c, e.major_area_c)),
             '' AS NVARCHAR(MAX)
@@ -172,8 +184,8 @@ WITH
           ) AS college_major_declared_c,
           ISNULL(CAST(c.[description] AS NVARCHAR(MAX)), '') AS [description]
         FROM
-          gabby.alumni.enrollment_c e
-          INNER JOIN gabby.alumni.contact c ON e.student_c = c.id
+          gabby.alumni.enrollment_c AS e
+          INNER JOIN gabby.alumni.contact AS c ON e.student_c = c.id
         WHERE
           e.type_c = 'College'
       ) sub UNPIVOT (
@@ -205,10 +217,10 @@ SELECT
     ELSE 0
   END AS audit_result
 FROM
-  roster r
-  CROSS JOIN valid_semesters s
-  CROSS JOIN valid_documents d
-  LEFT JOIN attachments_clean a ON r.contact_id = a.contact_id
+  roster AS r
+  CROSS JOIN valid_semesters AS s
+  CROSS JOIN valid_documents AS d
+  LEFT JOIN attachments_clean AS a ON r.contact_id = a.contact_id
   AND s.semester = a.semester
   AND s.[year] = a.[year]
   AND d.document_type = a.document_type

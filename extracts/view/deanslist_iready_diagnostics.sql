@@ -9,6 +9,6 @@ SELECT
   gm.progress_typical,
   gm.progress_stretch
 FROM
-  gabby.iready.growth_metrics gm
+  gabby.iready.growth_metrics AS gm
 WHERE
   gm.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1

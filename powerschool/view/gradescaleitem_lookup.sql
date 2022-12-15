@@ -13,7 +13,7 @@ SELECT
       items.cutoffpercentage
   ) - 0.1 AS max_cutoffpercentage
 FROM
-  powerschool.gradescaleitem parent
-  INNER JOIN powerschool.gradescaleitem items ON parent.id = items.gradescaleid
+  powerschool.gradescaleitem AS parent
+  INNER JOIN powerschool.gradescaleitem AS items ON parent.id = items.gradescaleid
 WHERE
   parent.gradescaleid = -1

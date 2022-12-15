@@ -102,16 +102,16 @@ SELECT
   code.att_code,
   SYSDATETIME() AS systimestamp
 FROM
-  kippmiami.powerschool.students s
+  kippmiami.powerschool.students AS s
 WITH
   (NOLOCK)
-  LEFT JOIN kippmiami.powerschool.student_contacts_wide_static scw
+  LEFT JOIN kippmiami.powerschool.student_contacts_wide_static AS scw
 WITH
   (NOLOCK) ON s.student_number = scw.student_number
-  LEFT JOIN kippmiami.powerschool.u_studentsuserfields suf
+  LEFT JOIN kippmiami.powerschool.u_studentsuserfields AS suf
 WITH
   (NOLOCK) ON s.dcid = suf.studentsdcid
-  LEFT JOIN kippmiami.powerschool.cc
+  LEFT JOIN kippmiami.powerschool.cc AS
 WITH
   (NOLOCK) ON s.id = cc.studentid
   AND cc.course_number = 'HR'
@@ -124,12 +124,12 @@ WITH
   (NOLOCK) ON s.id = [log].studentid
   AND [log].logtypeid = 1582
   AND [log].discipline_incidentdate = CAST(CURRENT_TIMESTAMP AS DATE)
-  LEFT JOIN kippmiami.powerschool.attendance_clean_current_static att
+  LEFT JOIN kippmiami.powerschool.attendance_clean_current_static AS att
 WITH
   (NOLOCK) ON s.id = att.studentid
   AND att.att_mode_code = 'ATT_ModeDaily'
   AND CAST(att.att_date AS DATE) = CAST(CURRENT_TIMESTAMP AS DATE)
-  LEFT JOIN kippmiami.powerschool.attendance_code code
+  LEFT JOIN kippmiami.powerschool.attendance_code AS code
 WITH
   (NOLOCK) ON att.attendance_codeid = code.id
   AND (

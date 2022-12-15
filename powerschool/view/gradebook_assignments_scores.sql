@@ -10,7 +10,7 @@ SELECT
   gasc.assignmentid,
   gasc.sectionsdcid
 FROM
-  powerschool.gradebook_assignments_scores_current_static gasc
+  powerschool.gradebook_assignments_scores_current_static AS gasc
 UNION ALL
 SELECT
   gasa.studentsdcid,
@@ -22,4 +22,4 @@ SELECT
   gasa.assignmentid,
   gasa.sectionsdcid
 FROM
-  powerschool.gradebook_assignments_scores_archive gasa
+  powerschool.gradebook_assignments_scores_archive AS gasa

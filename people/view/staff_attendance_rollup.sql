@@ -91,10 +91,10 @@ SELECT
   COALESCE(a.left_early_approved, 0) AS left_early_approved,
   COALESCE(a.left_early_unapproved, 0) AS left_early_unapproved
 FROM
-  gabby.people.staff_crosswalk_static r
-  LEFT JOIN gabby.utilities.row_generator_smallint y ON gabby.utilities.DATE_TO_SY (original_hire_date) < y.n
+  gabby.people.staff_crosswalk_static AS r
+  LEFT JOIN gabby.utilities.row_generator_smallint AS y ON gabby.utilities.DATE_TO_SY (original_hire_date) < y.n
   AND y.n (
     BETWEEN 2020 AND gabby.utilities.GLOBAL_ACADEMIC_YEAR  ()
   )
-  LEFT JOIN attendance_pivot a ON r.df_employee_number = a.df_number
+  LEFT JOIN attendance_pivot AS a ON r.df_employee_number = a.df_number
   AND y.n = a.academic_year

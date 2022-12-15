@@ -118,7 +118,7 @@ FROM
           END AS contact_term,
           gabby.utilities.DATE_TO_SY (c.date_c) AS academic_year
         FROM
-          gabby.alumni.contact_note_c c
+          gabby.alumni.contact_note_c AS c
         WHERE
           c.is_deleted = 0
         UNION ALL

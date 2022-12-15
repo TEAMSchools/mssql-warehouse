@@ -66,8 +66,8 @@ WITH
             )
           ) AS streak_att_rn
         FROM
-          powerschool.ps_adaadm_daily_ctod mem
-          LEFT JOIN powerschool.ps_attendance_daily att ON mem.studentid = att.studentid
+          powerschool.ps_adaadm_daily_ctod AS mem
+          LEFT JOIN powerschool.ps_attendance_daily AS att ON mem.studentid = att.studentid
           AND mem.calendardate = att.att_date
         WHERE
           mem.membershipvalue = 1
@@ -80,10 +80,14 @@ SELECT
   sub.streak_id,
   MIN(sub.calendardate) AS streak_start,
   MAX(sub.calendardate) AS streak_end,
-  DATEDIFF(DAY, MIN(sub.calendardate), MAX(sub.calendardate)) + 1 AS streak_length_calendar,
+  DATEDIFF(
+    DAY,
+    MIN(sub.calendardate),
+    MAX(sub.calendardate)
+  ) + 1 AS streak_length_calendar,
   COUNT(sub.calendardate) AS streak_length_membership
 FROM
-  streaks sub
+  streaks AS sub
 GROUP BY
   sub.studentid,
   sub.yearid,
@@ -97,10 +101,14 @@ SELECT
   sub.streak_att_id AS streak_id,
   MIN(sub.calendardate) AS streak_start,
   MAX(sub.calendardate) AS streak_end,
-  DATEDIFF(DAY, MIN(sub.calendardate), MAX(sub.calendardate)) + 1 AS streak_length_calendar,
+  DATEDIFF(
+    DAY,
+    MIN(sub.calendardate),
+    MAX(sub.calendardate)
+  ) + 1 AS streak_length_calendar,
   COUNT(sub.calendardate) AS streak_length_membership
 FROM
-  streaks sub
+  streaks AS sub
 GROUP BY
   sub.studentid,
   sub.yearid,

@@ -56,8 +56,8 @@ FROM
       NULL AS cert_status,
       'NJ' AS cert_state
     FROM
-      gabby.people.staff_crosswalk_static s
-      LEFT JOIN gabby.powerschool.schools pss ON s.primary_site_schoolid = pss.school_number
+      gabby.people.staff_crosswalk_static AS s
+      LEFT JOIN gabby.powerschool.schools AS pss ON s.primary_site_schoolid = pss.school_number
       AND s.[db_name] = pss.[db_name]
-      LEFT JOIN gabby.njdoe.certification_certificate_history_static c ON s.df_employee_number = c.df_employee_number
+      LEFT JOIN gabby.njdoe.certification_certificate_history_static AS c ON s.df_employee_number = c.df_employee_number
   ) sub

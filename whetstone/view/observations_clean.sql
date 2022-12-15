@@ -74,9 +74,9 @@ FROM
       JSON_VALUE(wo.teaching_assignment, '$.course') AS teaching_assignment_course_id,
       JSON_VALUE(wo.teaching_assignment, '$.period') AS teaching_assignment_period_id
     FROM
-      gabby.whetstone.observations wo
+      gabby.whetstone.observations AS wo
     WHERE
       wo.[archived_at] IS NULL
   ) sub
-  LEFT JOIN gabby.whetstone.users_clean t ON sub.teacher_id = t.[user_id]
-  LEFT JOIN gabby.whetstone.users_clean o ON sub.observer_id = o.[user_id]
+  LEFT JOIN gabby.whetstone.users_clean AS t ON sub.teacher_id = t.[user_id]
+  LEFT JOIN gabby.whetstone.users_clean AS o ON sub.observer_id = o.[user_id]

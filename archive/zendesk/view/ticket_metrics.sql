@@ -173,7 +173,7 @@ SELECT
   cm.group_stations,
   r.reopens
 FROM
-  gabby.zendesk.ticket t
-  LEFT JOIN date_metrics dm ON t.id = dm.ticket_id
-  LEFT JOIN count_metrics cm ON t.id = cm.ticket_id
-  LEFT JOIN reopens r ON t.id = r.ticket_id
+  gabby.zendesk.ticket AS t
+  LEFT JOIN date_metrics AS dm ON t.id = dm.ticket_id
+  LEFT JOIN count_metrics AS cm ON t.id = cm.ticket_id
+  LEFT JOIN reopens AS r ON t.id = r.ticket_id

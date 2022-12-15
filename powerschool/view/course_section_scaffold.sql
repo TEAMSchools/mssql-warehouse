@@ -14,7 +14,7 @@ SELECT
   credit_hours,
   gradescaleid
 FROM
-  powerschool.course_section_scaffold_current_static
+  powerschool.course_section_scaffold_current_static AS
 UNION ALL
 SELECT
   studentid,

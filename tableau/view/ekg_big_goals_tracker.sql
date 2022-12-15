@@ -311,7 +311,7 @@ WITH
         WHERE
           DATEFROMPARTS(academic_year, 10, 1) (BETWEEN entrydate AND exitdate)
       ) d
-      LEFT JOIN gabby.powerschool.cohort_identifiers_static n ON d.student_number = n.student_number
+      LEFT JOIN gabby.powerschool.cohort_identifiers_static AS n ON d.student_number = n.student_number
       AND d.db_name = n.db_name
       AND d.academic_year = (n.academic_year - 1)
       AND DATEFROMPARTS(n.academic_year, 10, 1) (BETWEEN n.entrydate AND n.exitdate)
@@ -559,18 +559,28 @@ WITH
       /* student-level percentages */
 ,
       CAST(AVG(sub.is_free_or_reduced) AS FLOAT) AS free_or_reduced_pct,
-      CAST(AVG(sub.highest_act_composite_seniors) AS FLOAT) AS act_composite_seniors_avg,
-      CAST(AVG(sub.highest_act_composite_juniors) AS FLOAT) AS act_composite_juniors_avg,
+      CAST(
+        AVG(sub.highest_act_composite_seniors) AS FLOAT
+      ) AS act_composite_seniors_avg,
+      CAST(
+        AVG(sub.highest_act_composite_juniors) AS FLOAT
+      ) AS act_composite_juniors_avg,
       CAST(AVG(sub.parcc_ela_proficient) AS FLOAT) AS parcc_ela_proficient_pct,
       CAST(AVG(sub.parcc_math_proficient) AS FLOAT) AS parcc_math_proficient_pct,
       CAST(AVG(sub.parcc_ela_proficient_iep) AS FLOAT) AS parcc_ela_proficient_iep_pct,
       CAST(AVG(sub.parcc_math_proficient_iep) AS FLOAT) AS parcc_math_proficient_iep_pct,
       CAST(AVG(sub.parcc_ela_approaching_iep) AS FLOAT) AS parcc_ela_approaching_iep_pct,
-      CAST(AVG(sub.parcc_math_approaching_iep) AS FLOAT) AS parcc_math_approaching_iep_pct,
+      CAST(
+        AVG(sub.parcc_math_approaching_iep) AS FLOAT
+      ) AS parcc_math_approaching_iep_pct,
       CAST(AVG(sub.module_ela_is_mastery) AS FLOAT) AS module_ela_mastery_pct,
       CAST(AVG(sub.module_math_is_mastery) AS FLOAT) AS module_math_mastery_pct,
-      CAST(AVG(sub.module_ela_is_parcc_predictive) AS FLOAT) AS module_ela_parcc_predictive_pct,
-      CAST(AVG(sub.module_math_is_parcc_predictive) AS FLOAT) AS module_math_parcc_predictive_pct,
+      CAST(
+        AVG(sub.module_ela_is_parcc_predictive) AS FLOAT
+      ) AS module_ela_parcc_predictive_pct,
+      CAST(
+        AVG(sub.module_math_is_parcc_predictive) AS FLOAT
+      ) AS module_math_parcc_predictive_pct,
       CAST(AVG(sub.lit_meeting_goal) AS FLOAT) AS lit_meeting_goal_pct,
       CAST(AVG(sub.lit_making_1yr_growth) AS FLOAT) AS lit_making_1yr_growth_pct,
       CAST(AVG(sub.is_student_attrition) AS FLOAT) AS student_attrition_pct,
@@ -719,32 +729,32 @@ WITH
 ,
         sa.is_attrition AS is_student_attrition
         FROM
-          gabby.powerschool.cohort_identifiers_static co
+          gabby.powerschool.cohort_identifiers_static AS co
           LEFT JOIN act ON co.student_number = act.student_number
           AND co.academic_year >= act.academic_year
           AND act.rn_highest = 1
           LEFT JOIN parcc ON co.student_number = parcc.student_number
           AND co.academic_year = parcc.academic_year
-          LEFT JOIN modules modela ON co.student_number = modela.student_number
+          LEFT JOIN modules AS modela ON co.student_number = modela.student_number
           AND co.academic_year = modela.academic_year
           AND modela.ela_rn_most_recent_subject = 1
           AND co.grade_level <= 2
-          LEFT JOIN modules modmath ON co.student_number = modmath.student_number
+          LEFT JOIN modules AS modmath ON co.student_number = modmath.student_number
           AND co.academic_year = modmath.academic_year
           AND modmath.math_rn_most_recent_subject = 1
           AND co.grade_level <= 2
-          LEFT JOIN lit_achievement la ON co.student_number = la.student_number
+          LEFT JOIN lit_achievement AS la ON co.student_number = la.student_number
           AND co.academic_year = la.academic_year
           AND la.rn_most_recent = 1
-          LEFT JOIN lit_growth lg ON co.student_number = lg.student_number
+          LEFT JOIN lit_growth AS lg ON co.student_number = lg.student_number
           AND co.academic_year = lg.academic_year
           LEFT JOIN ADA ON co.studentid = ADA.studentid
           AND co.db_name = ADA.db_name
           AND co.academic_year = ADA.academic_year
-          LEFT JOIN suspensions sus ON co.studentid = sus.studentid
+          LEFT JOIN suspensions AS sus ON co.studentid = sus.studentid
           AND co.yearid = sus.yearid
           AND co.db_name = sus.db_name
-          LEFT JOIN student_attrition sa ON co.student_number = sa.denominator_student_number
+          LEFT JOIN student_attrition AS sa ON co.student_number = sa.denominator_student_number
           AND co.academic_year = sa.denominator_academic_year
         WHERE
           co.reporting_schoolid NOT IN (999999, 5173)
@@ -803,8 +813,8 @@ WITH
         tntp.is_top_quartile_learning_environment_score AS FLOAT
       ) AS learning_environment_score_top_quartile
     FROM
-      student_level_rollup_y1 slr
-      LEFT JOIN teacher_attrition ta ON slr.reporting_schoolid = ta.reporting_schoolid
+      student_level_rollup_y1 AS slr
+      LEFT JOIN teacher_attrition AS ta ON slr.reporting_schoolid = ta.reporting_schoolid
       AND slr.region = ta.region
       AND slr.school_level = ta.school_level
       AND slr.academic_year = ta.academic_year
@@ -822,7 +832,7 @@ WITH
       AND slr.school_level = tntp.school_level
       AND slr.academic_year = tntp.academic_year
       AND tntp.rn_most_recent = 1
-      LEFT JOIN ekg_walkthrough ekg ON slr.reporting_schoolid = ekg.reporting_schoolid
+      LEFT JOIN ekg_walkthrough AS ekg ON slr.reporting_schoolid = ekg.reporting_schoolid
       AND slr.region = ekg.region
       AND slr.school_level = ekg.school_level
       AND slr.academic_year = ekg.academic_year
@@ -891,5 +901,5 @@ SELECT
     WHEN ru.school_level = 'HS' THEN g.points_hs
   END AS points
 FROM
-  rollup_unpivoted_y1 ru
-  LEFT JOIN gabby.ekg.goals g ON ru.field = g.field
+  rollup_unpivoted_y1 AS ru
+  LEFT JOIN gabby.ekg.goals AS g ON ru.field = g.field

@@ -23,7 +23,7 @@ SELECT
     WHEN cf.[Value] <> '' THEN cf.[Value]
   END AS [Value]
 FROM
-  deanslist.incidents dli
+  deanslist.incidents AS dli
   CROSS APPLY OPENJSON (dli.custom_fields, '$')
 WITH
   (

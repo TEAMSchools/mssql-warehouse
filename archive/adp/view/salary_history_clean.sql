@@ -56,8 +56,8 @@ FROM
       sh.compensation_change_reason_description,
       sr.file_number AS employee_number
     FROM
-      gabby.adp.salary_history sh
-      INNER JOIN gabby.adp.employees_all sr ON sh.associate_id = sr.associate_id
+      gabby.adp.salary_history AS sh
+      INNER JOIN gabby.adp.employees_all AS sr ON sh.associate_id = sr.associate_id
     WHERE
       (
         CAST(sh.regular_pay_effective_date AS DATE) < CAST(sh.regular_pay_effective_end_date AS DATE)

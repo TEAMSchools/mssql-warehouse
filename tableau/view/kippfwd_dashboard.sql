@@ -64,7 +64,7 @@ WITH
           app.enrollment_start_date
       ) AS rn
     FROM
-      gabby.alumni.application_identifiers app
+      gabby.alumni.application_identifiers AS app
   ),
   apps_rollup AS (
     SELECT
@@ -131,7 +131,9 @@ WITH
       CAST(cumulative_gpa AS NVARCHAR(16)) AS cumulative_gpa,
       CAST(semester_credits_earned AS NVARCHAR(16)) AS semester_credits_earned,
       CAST(cumulative_credits_earned AS NVARCHAR(16)) AS cumulative_credits_earned,
-      CAST(credits_required_for_graduation AS NVARCHAR(16)) AS credits_required_for_graduation,
+      CAST(
+        credits_required_for_graduation AS NVARCHAR(16)
+      ) AS credits_required_for_graduation,
       ROW_NUMBER() OVER (
         PARTITION BY
           sf_contact_id,
@@ -156,8 +158,8 @@ WITH
             WHEN MONTH(gpa.transcript_date_c) = 5 THEN 'spr'
           END AS semester
         FROM
-          gabby.alumni.gpa_c gpa
-          INNER JOIN gabby.alumni.record_type rt ON gpa.record_type_id = rt.id
+          gabby.alumni.gpa_c AS gpa
+          INNER JOIN gabby.alumni.record_type AS rt ON gpa.record_type_id = rt.id
           AND rt.[name] = 'Cumulative College'
         WHERE
           gpa.is_deleted = 0
@@ -168,13 +170,17 @@ WITH
       sf_contact_id,
       academic_year,
       CAST(fall_transcript_date AS DATE) AS fall_transcript_date,
-      CAST(fall_credits_required_for_graduation AS FLOAT) AS fall_credits_required_for_graduation,
+      CAST(
+        fall_credits_required_for_graduation AS FLOAT
+      ) AS fall_credits_required_for_graduation,
       CAST(fall_cumulative_credits_earned AS FLOAT) AS fall_cumulative_credits_earned,
       CAST(fall_semester_credits_earned AS FLOAT) AS fall_semester_credits_earned,
       CAST(fall_semester_gpa AS FLOAT) AS fall_semester_gpa,
       CAST(fall_cumulative_gpa AS FLOAT) AS fall_cumulative_gpa,
       CAST(spr_transcript_date AS DATE) AS spr_transcript_date,
-      CAST(spr_credits_required_for_graduation AS FLOAT) AS spr_credits_required_for_graduation,
+      CAST(
+        spr_credits_required_for_graduation AS FLOAT
+      ) AS spr_credits_required_for_graduation,
       CAST(spr_cumulative_credits_earned AS FLOAT) AS spr_cumulative_credits_earned,
       CAST(spr_semester_credits_earned AS FLOAT) AS spr_semester_credits_earned,
       CAST(spr_semester_gpa AS FLOAT) AS spr_semester_gpa,
@@ -265,7 +271,7 @@ WITH
           e.start_date_c DESC
       ) AS rn_matric
     FROM
-      gabby.alumni.enrollment_c e
+      gabby.alumni.enrollment_c AS e
     WHERE
       e.is_deleted = 0
       AND e.status_c = 'Matriculated'
@@ -281,8 +287,8 @@ WITH
           fa.offer_date_c DESC
       ) AS rn_finaid
     FROM
-      matric e
-      INNER JOIN gabby.alumni.subsequent_financial_aid_award_c fa ON e.enrollment_id = fa.enrollment_c
+      matric AS e
+      INNER JOIN gabby.alumni.subsequent_financial_aid_award_c AS fa ON e.enrollment_id = fa.enrollment_c
       AND fa.is_deleted = 0
       AND fa.status_c = 'Offered'
     WHERE
@@ -486,22 +492,22 @@ SELECT
   fa.unmet_need_c AS unmet_need,
   tier.tier
 FROM
-  gabby.alumni.ktc_roster c
-  CROSS JOIN academic_years ay
-  LEFT JOIN gabby.alumni.enrollment_identifiers ei ON c.sf_contact_id = ei.student_c
+  gabby.alumni.ktc_roster AS c
+  CROSS JOIN academic_years AS ay
+  LEFT JOIN gabby.alumni.enrollment_identifiers AS ei ON c.sf_contact_id = ei.student_c
   LEFT JOIN apps ON c.sf_contact_id = apps.sf_contact_id
   AND apps.matriculation_decision = 'Matriculated (Intent to Enroll)'
   AND apps.transfer_application = 0
   AND apps.rn = 1
-  LEFT JOIN apps_rollup ar ON c.sf_contact_id = ar.sf_contact_id
-  LEFT JOIN gabby.alumni.contact_note_rollup cnr ON c.sf_contact_id = cnr.contact_id
+  LEFT JOIN apps_rollup AS ar ON c.sf_contact_id = ar.sf_contact_id
+  LEFT JOIN gabby.alumni.contact_note_rollup AS cnr ON c.sf_contact_id = cnr.contact_id
   AND ay.academic_year = cnr.academic_year
-  LEFT JOIN semester_gpa_pivot gpa ON c.sf_contact_id = gpa.sf_contact_id
+  LEFT JOIN semester_gpa_pivot AS gpa ON c.sf_contact_id = gpa.sf_contact_id
   AND ay.academic_year = gpa.academic_year
-  LEFT JOIN latest_note ln ON c.sf_contact_id = ln.contact_c
+  LEFT JOIN latest_note AS ln ON c.sf_contact_id = ln.contact_c
   AND ay.academic_year = ln.academic_year
   AND ln.rn = 1
-  LEFT JOIN finaid fa ON c.sf_contact_id = fa.contact_id
+  LEFT JOIN finaid AS fa ON c.sf_contact_id = fa.contact_id
   AND fa.rn_finaid = 1
   LEFT JOIN tier ON c.sf_contact_id = tier.contact_c
   AND ay.academic_year = tier.academic_year

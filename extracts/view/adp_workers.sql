@@ -21,10 +21,10 @@ SELECT
     )
   END AS wfm_trigger
 FROM
-  gabby.people.staff_roster scw
-  INNER JOIN gabby.adp.workers_clean_static w ON scw.associate_id = w.worker_id
-  LEFT JOIN gabby.adsi.user_attributes_static ads ON CAST(scw.employee_number AS VARCHAR(25)) = ads.employeenumber
-  LEFT JOIN wfm_updates wfm ON scw.associate_id = wfm.associate_id
+  gabby.people.staff_roster AS scw
+  INNER JOIN gabby.adp.workers_clean_static AS w ON scw.associate_id = w.worker_id
+  LEFT JOIN gabby.adsi.user_attributes_static AS ads ON CAST(scw.employee_number AS VARCHAR(25)) = ads.employeenumber
+  LEFT JOIN wfm_updates AS wfm ON scw.associate_id = wfm.associate_id
 WHERE
   scw.position_status <> 'Terminated'
   AND ads.mail IS NOT NULL

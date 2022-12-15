@@ -18,10 +18,10 @@ WITH
           ac.adjusted_6_year_minority_graduation_rate_c DESC
       ) AS rn_grad_rate
     FROM
-      gabby.alumni.application_c a
-      LEFT JOIN gabby.alumni.account ac ON a.school_c = ac.id
+      gabby.alumni.application_c AS a
+      LEFT JOIN gabby.alumni.account AS ac ON a.school_c = ac.id
       AND ac.is_deleted = 0
-      INNER JOIN gabby.alumni.record_type rt ON ac.record_type_id = rt.id
+      INNER JOIN gabby.alumni.record_type AS rt ON ac.record_type_id = rt.id
       AND rt.[name] <> 'High School'
     WHERE
       a.is_deleted = 0
@@ -44,6 +44,6 @@ SELECT
   a.school_description,
   a.record_type_name
 FROM
-  gabby.alumni.ktc_roster c
-  LEFT JOIN apps a ON c.sf_contact_id = a.contact_id
+  gabby.alumni.ktc_roster AS c
+  LEFT JOIN apps AS a ON c.sf_contact_id = a.contact_id
   AND a.rn_grad_rate = 1

@@ -20,13 +20,13 @@ WITH
             )
           ) AS school_name
         FROM
-          gabby.adp.wfm_time_details td
+          gabby.adp.wfm_time_details AS td
         WHERE
           td.[location] LIKE '%KIPP%'
         GROUP BY
           td.[location]
       ) sub
-      LEFT JOIN gabby.people.school_crosswalk cw ON sub.school_name = cw.site_name
+      LEFT JOIN gabby.people.school_crosswalk AS cw ON sub.school_name = cw.site_name
   ),
   school_leaders AS (
     SELECT
@@ -60,8 +60,8 @@ WITH
       cal.[type],
       sch.[name] AS school
     FROM
-      gabby.powerschool.calendar_day cal
-      LEFT JOIN gabby.powerschool.schools sch ON cal.schoolid = sch.school_number
+      gabby.powerschool.calendar_day AS cal
+      LEFT JOIN gabby.powerschool.schools AS sch ON cal.schoolid = sch.school_number
       AND cal.[db_name] = sch.[db_name]
     WHERE
       cal.[type] = 'WS'
@@ -166,7 +166,7 @@ WITH
         END
       ) AS transaction_out_exceptions
     FROM
-      gabby.adp.wfm_time_details td
+      gabby.adp.wfm_time_details AS td
     WHERE
       (
         transaction_in_exceptions = 'Missed In Punch'
@@ -226,11 +226,11 @@ WITH
               _modified DESC
           ) AS rn_adj
         FROM
-          gabby.adp.wfm_time_details td
+          gabby.adp.wfm_time_details AS td
         WHERE
           transaction_type <> 'Historical Correction'
       ) sub
-      LEFT JOIN missed_punches mp ON sub.employee_name = mp.employee_name
+      LEFT JOIN missed_punches AS mp ON sub.employee_name = mp.employee_name
       AND sub.transaction_apply_date = mp.transaction_apply_date
     WHERE
       sub.rn_adj = 1
@@ -247,7 +247,11 @@ SELECT
   td.transaction_start_date_time AS transaction_start_date_time,
   td.transaction_end_date_time AS transaction_end_date_time,
   gabby.utilities.DATE_TO_SY (td.transaction_apply_date) AS academic_year,
-  SUBSTRING(td.employee_name, (LEN(td.employee_name) - 9), 9) AS adp_associate_id,
+  SUBSTRING(
+    td.employee_name,
+    (LEN(td.employee_name) - 9),
+    9
+  ) AS adp_associate_id,
   CASE
     WHEN td.transaction_in_exceptions = 'Late In' THEN 1
     ELSE 0
@@ -313,25 +317,37 @@ SELECT
   acb.unused_pto_balance,
   acb.vacation_balance
 FROM
-  time_details_clean td
-  INNER JOIN school_ids id ON td.[location] = id.[location]
-  LEFT JOIN holidays h ON td.[location] = h.[location]
+  time_details_clean AS td
+  INNER JOIN school_ids AS id ON td.[location] = id.[location]
+  LEFT JOIN holidays AS h ON td.[location] = h.[location]
   AND td.transaction_apply_date = h.transaction_apply_date
-  LEFT JOIN snow_days sd ON sd.schoolid = id.ps_school_id
+  LEFT JOIN snow_days AS sd ON sd.schoolid = id.ps_school_id
   AND sd.date_value = td.transaction_apply_date
-  LEFT JOIN gabby.people.staff_crosswalk_static cw ON SUBSTRING(td.employee_name, LEN(td.employee_name) - 9, 9) = cw.adp_associate_id
-  LEFT JOIN school_leaders sl ON cw.primary_site = sl.sl_primary_site
-  LEFT JOIN accruals_taken act ON td.employee_name = act.employee_name_id_
-  LEFT JOIN accruals_balance acb ON td.employee_name = acb.employee_name_id_
+  LEFT JOIN gabby.people.staff_crosswalk_static AS cw ON SUBSTRING(
+    td.employee_name,
+    LEN(td.employee_name) - 9,
+    9
+  ) = cw.adp_associate_id
+  LEFT JOIN school_leaders AS sl ON cw.primary_site = sl.sl_primary_site
+  LEFT JOIN accruals_taken AS act ON td.employee_name = act.employee_name_id_
+  LEFT JOIN accruals_balance AS acb ON td.employee_name = acb.employee_name_id_
 WHERE
   td.transaction_type <> 'Worked Holiday Edit'
   AND (
     (
       cw.legal_entity_name <> 'KIPP Miami'
-      AND td.transaction_apply_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR (), 8, 15)
+      AND td.transaction_apply_date >= DATEFROMPARTS(
+        gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+        8,
+        15
+      )
     )
     OR (
       cw.legal_entity_name = 'KIPP Miami'
-      AND td.transaction_apply_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR (), 10, 31)
+      AND td.transaction_apply_date >= DATEFROMPARTS(
+        gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+        10,
+        31
+      )
     )
   )

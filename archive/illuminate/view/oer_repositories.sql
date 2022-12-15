@@ -33,5 +33,5 @@ SELECT
   CAST(ur.prompt_4_overall AS FLOAT) AS prompt_4_overall,
   CAST(ur.prompt_4_quality_of_ideas AS FLOAT) AS prompt_4_quality_of_ideas
 FROM
-  gabby.illuminate_dna_repositories.oer_repositories_archive ur
+  gabby.illuminate_dna_repositories.oer_repositories_archive AS ur
   --WHERE CONCAT(ur.repository_id, '_', ur.repository_row_id) IN (SELECT CONCAT(repository_id, '_', repository_row_id) FROM gabby.illuminate_dna_repositories.repository_row_ids)

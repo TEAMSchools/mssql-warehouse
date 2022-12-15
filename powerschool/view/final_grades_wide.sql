@@ -37,8 +37,14 @@ WITH
           REPLACE(fg.storecode, 'Q', 'RT') AS reporting_term
           /* empty strings preserve storecode structure when there aren't any grades */
 ,
-          ISNULL(CAST(fg.term_grade_letter AS NVARCHAR(16)), '') AS term_grade_letter,
-          ISNULL(CAST(fg.term_grade_percent AS NVARCHAR(16)), '') AS term_grade_percent,
+          ISNULL(
+            CAST(fg.term_grade_letter AS NVARCHAR(16)),
+            ''
+          ) AS term_grade_letter,
+          ISNULL(
+            CAST(fg.term_grade_percent AS NVARCHAR(16)),
+            ''
+          ) AS term_grade_percent,
           ISNULL(
             CAST(fg.term_grade_letter_adj AS NVARCHAR(16)),
             ''
@@ -48,7 +54,7 @@ WITH
             ''
           ) AS term_grade_percent_adj
         FROM
-          powerschool.final_grades_static fg
+          powerschool.final_grades_static AS fg
         UNION ALL
         SELECT
           fg.studentid,
@@ -65,8 +71,14 @@ WITH
           'CUR' AS reporting_term
           /* empty strings preserve storecode structure when there aren't any grades */
 ,
-          ISNULL(CAST(fg.term_grade_letter AS NVARCHAR(16)), '') AS term_grade_letter,
-          ISNULL(CAST(fg.term_grade_percent AS NVARCHAR(16)), '') AS term_grade_percent,
+          ISNULL(
+            CAST(fg.term_grade_letter AS NVARCHAR(16)),
+            ''
+          ) AS term_grade_letter,
+          ISNULL(
+            CAST(fg.term_grade_percent AS NVARCHAR(16)),
+            ''
+          ) AS term_grade_percent,
           ISNULL(
             CAST(fg.term_grade_letter_adj AS NVARCHAR(16)),
             ''
@@ -76,8 +88,8 @@ WITH
             ''
           ) AS term_grade_percent_adj
         FROM
-          powerschool.final_grades_static fg
-          INNER JOIN gabby.reporting.reporting_terms rt ON fg.storecode = rt.alt_name
+          powerschool.final_grades_static AS fg
+          INNER JOIN gabby.reporting.reporting_terms AS rt ON fg.storecode = rt.alt_name
         COLLATE Latin1_General_BIN
         AND fg.yearid = rt.yearid
         AND rt.identifier = 'RT'
@@ -121,7 +133,9 @@ SELECT
     ORDER BY
       storecode ASC
   ) AS rt1_term_grade_letter_adjusted,
-  MAX(CAST(rt1_term_grade_percent AS DECIMAL(4, 0))) OVER (
+  MAX(
+    CAST(rt1_term_grade_percent AS DECIMAL(4, 0))
+  ) OVER (
     PARTITION BY
       studentid,
       yearid,
@@ -129,7 +143,9 @@ SELECT
     ORDER BY
       storecode ASC
   ) AS rt1_term_grade_percent,
-  MAX(CAST(rt1_term_grade_percent_adj AS DECIMAL(4, 0))) OVER (
+  MAX(
+    CAST(rt1_term_grade_percent_adj AS DECIMAL(4, 0))
+  ) OVER (
     PARTITION BY
       studentid,
       yearid,
@@ -153,7 +169,9 @@ SELECT
     ORDER BY
       storecode ASC
   ) AS rt2_term_grade_letter_adjusted,
-  MAX(CAST(rt2_term_grade_percent AS DECIMAL(4, 0))) OVER (
+  MAX(
+    CAST(rt2_term_grade_percent AS DECIMAL(4, 0))
+  ) OVER (
     PARTITION BY
       studentid,
       yearid,
@@ -161,7 +179,9 @@ SELECT
     ORDER BY
       storecode ASC
   ) AS rt2_term_grade_percent,
-  MAX(CAST(rt2_term_grade_percent_adj AS DECIMAL(4, 0))) OVER (
+  MAX(
+    CAST(rt2_term_grade_percent_adj AS DECIMAL(4, 0))
+  ) OVER (
     PARTITION BY
       studentid,
       yearid,
@@ -185,7 +205,9 @@ SELECT
     ORDER BY
       storecode ASC
   ) AS rt3_term_grade_letter_adjusted,
-  MAX(CAST(rt3_term_grade_percent AS DECIMAL(4, 0))) OVER (
+  MAX(
+    CAST(rt3_term_grade_percent AS DECIMAL(4, 0))
+  ) OVER (
     PARTITION BY
       studentid,
       yearid,
@@ -193,7 +215,9 @@ SELECT
     ORDER BY
       storecode ASC
   ) AS rt3_term_grade_percent,
-  MAX(CAST(rt3_term_grade_percent_adj AS DECIMAL(4, 0))) OVER (
+  MAX(
+    CAST(rt3_term_grade_percent_adj AS DECIMAL(4, 0))
+  ) OVER (
     PARTITION BY
       studentid,
       yearid,
@@ -217,7 +241,9 @@ SELECT
     ORDER BY
       storecode ASC
   ) AS rt4_term_grade_letter_adjusted,
-  MAX(CAST(rt4_term_grade_percent AS DECIMAL(4, 0))) OVER (
+  MAX(
+    CAST(rt4_term_grade_percent AS DECIMAL(4, 0))
+  ) OVER (
     PARTITION BY
       studentid,
       yearid,
@@ -225,7 +251,9 @@ SELECT
     ORDER BY
       storecode ASC
   ) AS rt4_term_grade_percent,
-  MAX(CAST(rt4_term_grade_percent_adj AS DECIMAL(4, 0))) OVER (
+  MAX(
+    CAST(rt4_term_grade_percent_adj AS DECIMAL(4, 0))
+  ) OVER (
     PARTITION BY
       studentid,
       yearid,
@@ -239,7 +267,7 @@ SELECT
   CAST(cur_term_grade_percent_adj AS DECIMAL(4, 0)) AS [cur_term_grade_percent_adjusted],
   NULL AS rn_credittype
 FROM
-  grades_unpivot gr PIVOT (
+  grades_unpivot AS gr PIVOT (
     MAX([value]) FOR pivot_field IN (
       [rt1_term_grade_letter],
       [rt1_term_grade_letter_adj],

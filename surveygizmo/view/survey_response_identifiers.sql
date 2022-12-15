@@ -8,9 +8,13 @@ WITH
       p.survey_id,
       p.date_started,
       p.salesforce_id,
-      CAST(p.respondent_adp_associate_id AS VARCHAR(25)) AS respondent_associate_id,
       CAST(
-        LOWER(COALESCE(p.respondent_userprincipalname, p.email)) AS VARCHAR(125)
+        p.respondent_adp_associate_id AS VARCHAR(25)
+      ) AS respondent_associate_id,
+      CAST(
+        LOWER(
+          COALESCE(p.respondent_userprincipalname, p.email)
+        ) AS VARCHAR(125)
       ) AS respondent_userprincipalname,
       CONVERT(
         INT,
@@ -106,8 +110,8 @@ WITH
           srd.date_started,
           srd.answer
         FROM
-          gabby.surveygizmo.survey_question_clean_static sq
-          INNER JOIN gabby.surveygizmo.survey_response_data srd ON sq.survey_id = srd.survey_id
+          gabby.surveygizmo.survey_question_clean_static AS sq
+          INNER JOIN gabby.surveygizmo.survey_response_data AS srd ON sq.survey_id = srd.survey_id
           AND sq.survey_question_id = srd.question_id
           AND srd.answer IS NOT NULL
         WHERE
@@ -147,11 +151,11 @@ WITH
         ab.df_employee_number
       ) AS respondent_employee_number
     FROM
-      response_pivot rp
-      LEFT JOIN gabby.people.staff_crosswalk_static upn ON rp.respondent_userprincipalname = upn.userprincipalname
-      LEFT JOIN gabby.people.staff_crosswalk_static adp ON rp.respondent_associate_id = adp.adp_associate_id_legacy
-      LEFT JOIN gabby.people.staff_crosswalk_static mail ON rp.respondent_userprincipalname = mail.mail
-      LEFT JOIN gabby.surveys.surveygizmo_abnormal_respondents ab ON rp.survey_id = ab.survey_id
+      response_pivot AS rp
+      LEFT JOIN gabby.people.staff_crosswalk_static AS upn ON rp.respondent_userprincipalname = upn.userprincipalname
+      LEFT JOIN gabby.people.staff_crosswalk_static AS adp ON rp.respondent_associate_id = adp.adp_associate_id_legacy
+      LEFT JOIN gabby.people.staff_crosswalk_static AS mail ON rp.respondent_userprincipalname = mail.mail
+      LEFT JOIN gabby.surveys.surveygizmo_abnormal_respondents AS ab ON rp.survey_id = ab.survey_id
       AND rp.survey_response_id = ab.survey_response_id
       AND ab._fivetran_deleted = 0
   )
@@ -220,24 +224,26 @@ SELECT
       sr.datetime_submitted DESC
   ) AS rn_respondent_subject
 FROM
-  response_clean rc
-  INNER JOIN gabby.surveygizmo.survey_response_clean sr ON rc.survey_id = sr.survey_id
+  response_clean AS rc
+  INNER JOIN gabby.surveygizmo.survey_response_clean AS sr ON rc.survey_id = sr.survey_id
   AND rc.survey_response_id = sr.survey_response_id
   AND sr.[status] = 'Complete'
-  LEFT JOIN gabby.surveygizmo.survey_campaign_clean_static sc ON rc.survey_id = sc.survey_id
-  AND rc.date_started (BETWEEN sc.link_open_date AND sc.link_close_date)
+  LEFT JOIN gabby.surveygizmo.survey_campaign_clean_static AS sc ON rc.survey_id = sc.survey_id
+  AND rc.date_started (
+    BETWEEN sc.link_open_date AND sc.link_close_date
+  )
   AND sc.[status] <> 'Deleted'
-  LEFT JOIN gabby.people.staff_crosswalk_static resp ON rc.respondent_employee_number = resp.df_employee_number
-  LEFT JOIN gabby.people.employment_history_static reh ON resp.position_id = reh.position_id
+  LEFT JOIN gabby.people.staff_crosswalk_static AS resp ON rc.respondent_employee_number = resp.df_employee_number
+  LEFT JOIN gabby.people.employment_history_static AS reh ON resp.position_id = reh.position_id
   AND CAST(sc.link_close_date AS DATE) (
     BETWEEN reh.effective_start_date AND reh.effective_end_date
   )
-  LEFT JOIN gabby.people.staff_crosswalk_static rmgr ON reh.reports_to_employee_number = rmgr.df_employee_number
-  LEFT JOIN gabby.people.school_crosswalk rsch ON reh.[location] = rsch.site_name
-  LEFT JOIN gabby.people.staff_crosswalk_static subj ON rc.subject_employee_number = subj.df_employee_number
-  LEFT JOIN gabby.people.employment_history_static seh ON subj.position_id = seh.position_id
+  LEFT JOIN gabby.people.staff_crosswalk_static AS rmgr ON reh.reports_to_employee_number = rmgr.df_employee_number
+  LEFT JOIN gabby.people.school_crosswalk AS rsch ON reh.[location] = rsch.site_name
+  LEFT JOIN gabby.people.staff_crosswalk_static AS subj ON rc.subject_employee_number = subj.df_employee_number
+  LEFT JOIN gabby.people.employment_history_static AS seh ON subj.position_id = seh.position_id
   AND CAST(sc.link_close_date AS DATE) (
     BETWEEN seh.effective_start_date AND seh.effective_end_date
   )
-  LEFT JOIN gabby.people.staff_crosswalk_static smgr ON seh.reports_to_employee_number = smgr.df_employee_number
-  LEFT JOIN gabby.people.school_crosswalk ssch ON seh.[location] = ssch.site_name
+  LEFT JOIN gabby.people.staff_crosswalk_static AS smgr ON seh.reports_to_employee_number = smgr.df_employee_number
+  LEFT JOIN gabby.people.school_crosswalk AS ssch ON seh.[location] = ssch.site_name

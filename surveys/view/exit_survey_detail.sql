@@ -54,5 +54,5 @@ SELECT
   es.q_24 AS rating_fun,
   es.q_25 AS rating_teamwork
 FROM
-  gabby.surveys.exit_survey es
-  LEFT JOIN gabby.people.staff_crosswalk_static df ON es.df_id = df.df_employee_number
+  gabby.surveys.exit_survey AS es
+  LEFT JOIN gabby.people.staff_crosswalk_static AS df ON es.df_id = df.df_employee_number

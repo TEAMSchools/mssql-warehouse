@@ -15,8 +15,8 @@ SELECT
   SUM(CAST(mem.membershipvalue AS INT)) AS mem,
   SUM(CAST(mem.membershipvalue AS INT)) - SUM(CAST(mem.attendancevalue AS INT)) AS absences
 FROM
-  gabby.powerschool.cohort_identifiers_static co
-  INNER JOIN gabby.powerschool.ps_adaadm_daily_ctod_static mem ON co.studentid = mem.studentid
+  gabby.powerschool.cohort_identifiers_static AS co
+  INNER JOIN gabby.powerschool.ps_adaadm_daily_ctod_static AS mem ON co.studentid = mem.studentid
   AND co.yearid = mem.yearid
 WHERE
   co.schoolid <> 999999

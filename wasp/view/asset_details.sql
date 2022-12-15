@@ -58,5 +58,5 @@ FROM
   INNER JOIN [WaspTrackAsset].[dbo].[category] ON item.category_id = category.category_id
   INNER JOIN [WaspTrackAsset].[dbo].[condition] ON asset.condition_id = condition.condition_id
   INNER JOIN [WaspTrackAsset].[dbo].[sites] ON location.site_id = sites.site_id
-  LEFT JOIN current_trans ct ON asset.asset_id = ct.asset_id
+  LEFT JOIN current_trans AS ct ON asset.asset_id = ct.asset_id
   AND ct.rn_entrydate = 1

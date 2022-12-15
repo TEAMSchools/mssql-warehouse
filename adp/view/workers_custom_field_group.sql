@@ -68,7 +68,7 @@ SELECT
   ) AS name_code_long_name,
   cfg.codeValue AS item_value
 FROM
-  gabby.adp.workers w
+  gabby.adp.workers AS w
   CROSS APPLY OPENJSON (w.custom_field_group, '$.codeFields')
 WITH
   (
@@ -104,7 +104,7 @@ SELECT
   ) AS name_code_long_name,
   cfg.dateValue AS item_value
 FROM
-  gabby.adp.workers w
+  gabby.adp.workers AS w
   CROSS APPLY OPENJSON (w.custom_field_group, '$.dateFields')
 WITH
   (
@@ -140,7 +140,7 @@ SELECT
   ) AS name_code_long_name,
   cfg.indicatorValue AS item_value
 FROM
-  gabby.adp.workers w
+  gabby.adp.workers AS w
   CROSS APPLY OPENJSON (w.custom_field_group, '$.indicatorFields')
 WITH
   (
@@ -178,7 +178,7 @@ SELECT
   ) AS name_code_long_name,
   cfg.stringValue AS item_value
 FROM
-  gabby.adp.workers w
+  gabby.adp.workers AS w
   CROSS APPLY OPENJSON (w.person, '$.customFieldGroup.stringFields')
 WITH
   (
@@ -216,7 +216,7 @@ SELECT
   ) AS name_code_long_name,
   cfg.codeValue AS item_value
 FROM
-  gabby.adp.workers w
+  gabby.adp.workers AS w
   CROSS APPLY OPENJSON (w.person, '$.customFieldGroup.codeFields')
 WITH
   (
@@ -252,7 +252,7 @@ SELECT
   ) AS name_code_long_name,
   cfg.dateValue AS item_value
 FROM
-  gabby.adp.workers w
+  gabby.adp.workers AS w
   CROSS APPLY OPENJSON (w.person, '$.customFieldGroup.dateFields')
 WITH
   (
@@ -288,8 +288,11 @@ SELECT
   ) AS name_code_long_name,
   cfg.indicatorValue AS item_value
 FROM
-  gabby.adp.workers w
-  CROSS APPLY OPENJSON (w.person, '$.customFieldGroup.indicatorFields')
+  gabby.adp.workers AS w
+  CROSS APPLY OPENJSON (
+    w.person,
+    '$.customFieldGroup.indicatorFields'
+  )
 WITH
   (
     itemID NVARCHAR(128),
@@ -297,7 +300,10 @@ WITH
     indicatorValue NVARCHAR(128)
   ) cfg
 WHERE
-  JSON_QUERY(w.person, '$.customFieldGroup.indicatorFields') <> '{}'
+  JSON_QUERY(
+    w.person,
+    '$.customFieldGroup.indicatorFields'
+  ) <> '{}'
   AND cfg.indicatorValue IS NOT NULL
 UNION ALL
 SELECT
@@ -326,7 +332,7 @@ SELECT
   ) AS name_code_long_name,
   cfg.numberValue AS item_value
 FROM
-  gabby.adp.workers w
+  gabby.adp.workers AS w
   CROSS APPLY OPENJSON (w.person, '$.customFieldGroup.numberFields')
 WITH
   (
@@ -373,8 +379,11 @@ FROM
         JSON_VALUE(cfg.nameCode, '$.longName') AS NVARCHAR(128)
       ) AS name_code_long_name
     FROM
-      gabby.adp.workers w
-      CROSS APPLY OPENJSON (w.person, '$.customFieldGroup.multiCodeFields')
+      gabby.adp.workers AS w
+      CROSS APPLY OPENJSON (
+        w.person,
+        '$.customFieldGroup.multiCodeFields'
+      )
     WITH
       (
         itemID NVARCHAR(128),
@@ -382,7 +391,10 @@ FROM
         codes NVARCHAR(MAX) AS JSON
       ) cfg
     WHERE
-      JSON_QUERY(w.person, '$.customFieldGroup.multiCodeFields') <> '{}'
+      JSON_QUERY(
+        w.person,
+        '$.customFieldGroup.multiCodeFields'
+      ) <> '{}'
   ) sub
   CROSS APPLY OPENJSON (sub.codes, '$')
 WITH

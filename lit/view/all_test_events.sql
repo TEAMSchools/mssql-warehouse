@@ -76,7 +76,7 @@ FROM
       NULL AS test_administered_by,
       NULL AS schoolid
     FROM
-      gabby.lit.powerschool_test_events_archive ps
+      gabby.lit.powerschool_test_events_archive AS ps
     UNION ALL
     SELECT
       unique_id,
@@ -106,7 +106,7 @@ FROM
       recorder AS test_administered_by,
       uc.schoolid
     FROM
-      gabby.lit.steptool_test_events uc
+      gabby.lit.steptool_test_events AS uc
     UNION ALL
     SELECT
       unique_id,
@@ -142,7 +142,7 @@ FROM
       NULL AS test_administered_by,
       NULL AS schoolid
     FROM
-      gabby.lit.illuminate_test_events ill
+      gabby.lit.illuminate_test_events AS ill
     UNION ALL
     SELECT
       unique_id,
@@ -172,5 +172,5 @@ FROM
       test_administered_by,
       schoolid
     FROM
-      gabby.lit.fpodms_test_events fpodms
+      gabby.lit.fpodms_test_events AS fpodms
   ) rs

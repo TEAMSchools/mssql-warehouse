@@ -12,7 +12,7 @@ WITH
       NULL AS checkbox_value,
       'textbox' AS [type]
     FROM
-      gabby.whetstone.observations_scores_text_boxes_static tb
+      gabby.whetstone.observations_scores_text_boxes_static AS tb
     UNION ALL
     SELECT
       cc.observation_id,
@@ -23,7 +23,7 @@ WITH
       CAST(cc.checkbox_value AS FLOAT) AS checkbox_value,
       'checkbox' AS [type]
     FROM
-      gabby.whetstone.observations_scores_checkboxes_static cc
+      gabby.whetstone.observations_scores_checkboxes_static AS cc
   )
 SELECT
   sub.*,
@@ -143,8 +143,8 @@ FROM
           wo.observed_at DESC
       ) AS rn_observation
     FROM
-      gabby.people.staff_crosswalk_static sr
-      INNER JOIN gabby.whetstone.observations_clean wo ON CAST(sr.df_employee_number AS VARCHAR(25)) = wo.teacher_internal_id
+      gabby.people.staff_crosswalk_static AS sr
+      INNER JOIN gabby.whetstone.observations_clean AS wo ON CAST(sr.df_employee_number AS VARCHAR(25)) = wo.teacher_internal_id
       AND wo.rubric_name IN (
         'Development Roadmap',
         'Shadow Session',
@@ -159,15 +159,19 @@ FROM
         'O3 Form v3',
         'Extraordinary Focus Areas Ratings v.1'
       )
-      LEFT JOIN gabby.people.staff_crosswalk_static osr ON wo.observer_internal_id = osr.df_employee_number
-      INNER JOIN gabby.reporting.reporting_terms rt ON wo.observed_at (BETWEEN rt.[start_date] AND rt.end_date)
+      LEFT JOIN gabby.people.staff_crosswalk_static AS osr ON wo.observer_internal_id = osr.df_employee_number
+      INNER JOIN gabby.reporting.reporting_terms AS rt ON wo.observed_at (BETWEEN rt.[start_date] AND rt.end_date)
       AND rt.identifier = 'ETR'
       AND rt.schoolid = 0
       AND rt._fivetran_deleted = 0
     WHERE
-      ISNULL(sr.termination_date, CURRENT_TIMESTAMP) >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR (), 7, 1)
+      ISNULL(sr.termination_date, CURRENT_TIMESTAMP) >= DATEFROMPARTS(
+        gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+        7,
+        1
+      )
   ) sub
-  LEFT JOIN gabby.whetstone.observations_scores_static wos ON sub.observation_id = wos.observation_id
-  LEFT JOIN gabby.whetstone.measurements wm ON wos.score_measurement_id = wm._id
-  LEFT JOIN boxes b ON sub.observation_id = b.observation_id
+  LEFT JOIN gabby.whetstone.observations_scores_static AS wos ON sub.observation_id = wos.observation_id
+  LEFT JOIN gabby.whetstone.measurements AS wm ON wos.score_measurement_id = wm._id
+  LEFT JOIN boxes AS b ON sub.observation_id = b.observation_id
   AND wos.score_measurement_id = b.score_measurement_id

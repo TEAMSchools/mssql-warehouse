@@ -119,6 +119,6 @@ SELECT
   CAST(achv.fp_lvl_num AS INT) AS indep_lvl_num,
   CAST(instr.fp_lvl_num AS INT) AS instr_lvl_num
 FROM
-  clean_data cd
-  LEFT JOIN gabby.lit.gleq achv ON cd.achieved_independent_level = achv.read_lvl
-  LEFT JOIN gabby.lit.gleq instr ON cd.instructional_level_tested = instr.read_lvl
+  clean_data AS cd
+  LEFT JOIN gabby.lit.gleq AS achv ON cd.achieved_independent_level = achv.read_lvl
+  LEFT JOIN gabby.lit.gleq AS instr ON cd.instructional_level_tested = instr.read_lvl

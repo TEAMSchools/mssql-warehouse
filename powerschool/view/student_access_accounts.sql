@@ -33,17 +33,32 @@ WITH
             LOWER(
               CASE
                 WHEN s.last_name LIKE 'St[. ]%' THEN s.last_name
-                WHEN s.last_name LIKE '% II%' THEN LEFT(s.last_name, CHARINDEX(' I', s.last_name) - 1)
+                WHEN s.last_name LIKE '% II%' THEN LEFT(
+                  s.last_name,
+                  CHARINDEX(' I', s.last_name) - 1
+                )
                 WHEN CHARINDEX('-', s.last_name) + CHARINDEX(' ', s.last_name) = 0 THEN REPLACE(s.last_name, ' JR', '')
                 WHEN CHARINDEX(' ', s.last_name) > 0
                 AND CHARINDEX('-', s.last_name) > 0
-                AND CHARINDEX(' ', s.last_name) < CHARINDEX('-', s.last_name) THEN LEFT(s.last_name, CHARINDEX(' ', s.last_name) - 1)
+                AND CHARINDEX(' ', s.last_name) < CHARINDEX('-', s.last_name) THEN LEFT(
+                  s.last_name,
+                  CHARINDEX(' ', s.last_name) - 1
+                )
                 WHEN CHARINDEX('-', s.last_name) > 0
                 AND CHARINDEX(' ', s.last_name) > 0
-                AND CHARINDEX('-', s.last_name) < CHARINDEX(' ', s.last_name) THEN LEFT(s.last_name, CHARINDEX('-', s.last_name) - 1)
+                AND CHARINDEX('-', s.last_name) < CHARINDEX(' ', s.last_name) THEN LEFT(
+                  s.last_name,
+                  CHARINDEX('-', s.last_name) - 1
+                )
                 WHEN s.last_name NOT LIKE 'De %'
-                AND CHARINDEX(' ', s.last_name) > 0 THEN LEFT(s.last_name, CHARINDEX(' ', s.last_name) - 1)
-                WHEN CHARINDEX('-', s.last_name) > 0 THEN LEFT(s.last_name, CHARINDEX('-', s.last_name) - 1)
+                AND CHARINDEX(' ', s.last_name) > 0 THEN LEFT(
+                  s.last_name,
+                  CHARINDEX(' ', s.last_name) - 1
+                )
+                WHEN CHARINDEX('-', s.last_name) > 0 THEN LEFT(
+                  s.last_name,
+                  CHARINDEX('-', s.last_name) - 1
+                )
                 ELSE REPLACE(s.last_name, ' JR', '')
               END
             ),
@@ -51,8 +66,8 @@ WITH
           ) AS last_name_clean,
           sch.abbreviation AS school_abbreviation
         FROM
-          gabby.powerschool.students s
-          INNER JOIN gabby.powerschool.schools sch ON s.schoolid = sch.school_number
+          gabby.powerschool.students AS s
+          INNER JOIN gabby.powerschool.schools AS sch ON s.schoolid = sch.school_number
           AND s.[db_name] = sch.[db_name]
         WHERE
           s.enroll_status = 0
@@ -85,8 +100,8 @@ WITH
         ELSE 0
       END AS base_dupe_audit
     FROM
-      clean_names cn
-      LEFT JOIN gabby.powerschool.student_access_accounts_static sa ON cn.base_username = sa.student_web_id
+      clean_names AS cn
+      LEFT JOIN gabby.powerschool.student_access_accounts_static AS sa ON cn.base_username = sa.student_web_id
       AND cn.student_number <> sa.student_number
   ),
   alt_username AS (
@@ -125,8 +140,8 @@ WITH
         ELSE 0
       END AS alt_dupe_audit
     FROM
-      base_username bu
-      LEFT JOIN gabby.powerschool.student_access_accounts_static sa ON bu.alt_username = sa.student_web_id
+      base_username AS bu
+      LEFT JOIN gabby.powerschool.student_access_accounts_static AS sa ON bu.alt_username = sa.student_web_id
       AND bu.student_number <> sa.student_number
   )
 SELECT
@@ -161,5 +176,5 @@ SELECT
     ELSE CONCAT(au.last_name_clean, au.dob_year)
   END AS student_web_password
 FROM
-  alt_username au
-  LEFT JOIN gabby.people.student_password_override spo ON au.student_number = spo.student_number
+  alt_username AS au
+  LEFT JOIN gabby.people.student_password_override AS spo ON au.student_number = spo.student_number

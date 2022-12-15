@@ -8,7 +8,7 @@ SELECT
   words_goal,
   points_goal
 FROM
-  gabby.renaissance.ar_goals_current_static
+  gabby.renaissance.ar_goals_current_static AS
 UNION ALL
 SELECT
   student_number,

@@ -45,7 +45,7 @@ WITH
         )
       ) AS days_as_teacher
     FROM
-      gabby.people.employment_history_static was
+      gabby.people.employment_history_static AS was
     WHERE
       was.position_status NOT IN ('Terminated', 'Pre-Start')
       AND was.job_title IN (
@@ -71,6 +71,6 @@ SELECT
   ISNULL((y.days_as_teacher / 365.25), 0) + ISNULL(sdf.years_teaching_any_state, 0) AS years_teaching_total,
   ROUND(d.days_active / 365.25, 2) + ROUND(d.days_inactive / 365.25, 2) + ISNULL(sdf.professional_experience_before_KIPP, 0) AS years_experience_total
 FROM
-  days_active d
-  LEFT JOIN years_teaching_at_kipp y ON d.employee_number = y.employee_number
-  LEFT JOIN gabby.surveys.staff_information_survey_wide_static sdf ON d.employee_number = sdf.employee_number
+  days_active AS d
+  LEFT JOIN years_teaching_at_kipp AS y ON d.employee_number = y.employee_number
+  LEFT JOIN gabby.surveys.staff_information_survey_wide_static AS sdf ON d.employee_number = sdf.employee_number

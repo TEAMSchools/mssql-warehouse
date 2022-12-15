@@ -63,12 +63,18 @@ FROM
           r.original_hire_date AS hire_date,
           r.business_unit
         FROM
-          gabby.tableau.pm_teacher_goals tg
-          LEFT JOIN gabby.people.staff_roster r ON tg.df_employee_number = r.employee_number
+          gabby.tableau.pm_teacher_goals AS tg
+          LEFT JOIN gabby.people.staff_roster AS r ON tg.df_employee_number = r.employee_number
         WHERE
-          tg.metric_label IN ('Excellent Teaching Rubric', 'Self & Others')
+          tg.metric_label IN (
+            'Excellent Teaching Rubric',
+            'Self & Others'
+          )
           AND tg.metric_value_stored IS NOT NULL
       ) sub PIVOT (
-        MAX(metric_value_stored) FOR metric_label IN ([Excellent Teaching Rubric], [Self & Others])
+        MAX(metric_value_stored) FOR metric_label IN (
+          [Excellent Teaching Rubric],
+          [Self & Others]
+        )
       ) p
   ) sub

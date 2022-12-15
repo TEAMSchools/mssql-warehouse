@@ -24,7 +24,7 @@ SELECT
   padcs.cycle_day_id,
   padcs.abbreviation
 FROM
-  powerschool.ps_attendance_daily_current_static padcs
+  powerschool.ps_attendance_daily_current_static AS padcs
 UNION ALL
 SELECT
   pada.id,
@@ -50,4 +50,4 @@ SELECT
   pada.cycle_day_id,
   pada.abbreviation
 FROM
-  powerschool.ps_attendance_daily_archive pada
+  powerschool.ps_attendance_daily_archive AS pada

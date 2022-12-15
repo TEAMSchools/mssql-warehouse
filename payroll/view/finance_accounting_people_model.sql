@@ -22,7 +22,7 @@ WITH
       ae.academic_year,
       SUM(ae.ay_additional_earnings_amount) AS additional_earnings_summed
     FROM
-      gabby.payroll.additional_annual_earnings_report ae
+      gabby.payroll.additional_annual_earnings_report AS ae
     GROUP BY
       ae.employee_number,
       ae.academic_year
@@ -90,11 +90,11 @@ SELECT
       y.academic_year DESC
   ) AS rn_curr
 FROM
-  gabby.people.employment_history_static eh
-  INNER JOIN years y ON y.effective_date (
+  gabby.people.employment_history_static AS eh
+  INNER JOIN years AS y ON y.effective_date (
     BETWEEN eh.effective_start_date AND eh.effective_end_date
   )
-  INNER JOIN gabby.people.staff_crosswalk_static cw ON eh.employee_number = cw.df_employee_number
+  INNER JOIN gabby.people.staff_crosswalk_static AS cw ON eh.employee_number = cw.df_employee_number
   AND DATEADD(
     YEAR,
     1,
@@ -103,17 +103,17 @@ FROM
       CAST(CURRENT_TIMESTAMP AS DATE)
     )
   ) > y.effective_date
-  INNER JOIN gabby.people.years_experience ye ON cw.df_employee_number = ye.employee_number
-  LEFT JOIN additional_earnings ae ON cw.df_employee_number = ae.employee_number
+  INNER JOIN gabby.people.years_experience AS ye ON cw.df_employee_number = ye.employee_number
+  LEFT JOIN additional_earnings AS ae ON cw.df_employee_number = ae.employee_number
   AND y.academic_year = ae.academic_year
-  LEFT JOIN teacher_goals tg ON eh.employee_number = tg.df_employee_number
+  LEFT JOIN teacher_goals AS tg ON eh.employee_number = tg.df_employee_number
   AND y.academic_year = tg.academic_year
   AND tg.rn_year_score = 1
-  LEFT JOIN gabby.people.employment_history_static ly ON cw.df_employee_number = ly.employee_number
+  LEFT JOIN gabby.people.employment_history_static AS ly ON cw.df_employee_number = ly.employee_number
   AND DATEADD(YEAR, -1, y.effective_date) (
     BETWEEN ly.effective_start_date AND ly.effective_end_date
   )
-  LEFT JOIN gabby.people.employment_history_static ehs ON cw.df_employee_number = ehs.employee_number
+  LEFT JOIN gabby.people.employment_history_static AS ehs ON cw.df_employee_number = ehs.employee_number
   AND cw.original_hire_date (
     BETWEEN ehs.effective_start_date AND ehs.effective_end_date
   )

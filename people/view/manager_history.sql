@@ -18,10 +18,10 @@ WITH
       srm.employee_number AS reports_to_employee_number,
       'ADP' AS source_system
     FROM
-      gabby.adp.manager_history mh
-      INNER JOIN gabby.people.employee_numbers sre ON mh.associate_id = sre.associate_id
+      gabby.adp.manager_history AS mh
+      INNER JOIN gabby.people.employee_numbers AS sre ON mh.associate_id = sre.associate_id
       AND sre.is_active = 1
-      INNER JOIN gabby.people.employee_numbers srm ON mh.reports_to_associate_id = srm.associate_id
+      INNER JOIN gabby.people.employee_numbers AS srm ON mh.reports_to_associate_id = srm.associate_id
       AND srm.is_active = 1 HERE '2021-01-01' BETWEEN CAST(mh.reports_to_effective_date AS DATE) AND COALESCE(
         CAST(mh.reports_to_effective_end_date AS DATE),
         CURRENT_TIMESTAMP
@@ -43,10 +43,10 @@ WITH
       dm.manager_employee_number AS reports_to_employee_number,
       'DF' AS source_system
     FROM
-      gabby.dayforce.employee_manager_clean dm
-      INNER JOIN gabby.people.employee_numbers sre ON dm.employee_reference_code = sre.employee_number
+      gabby.dayforce.employee_manager_clean AS dm
+      INNER JOIN gabby.people.employee_numbers AS sre ON dm.employee_reference_code = sre.employee_number
       AND sre.is_active = 1
-      INNER JOIN gabby.people.employee_numbers srm ON dm.manager_employee_number = srm.employee_number
+      INNER JOIN gabby.people.employee_numbers AS srm ON dm.manager_employee_number = srm.employee_number
       AND srm.is_active = 1
     WHERE
       CAST(dm.manager_effective_start AS DATE) <= '2020-12-31'

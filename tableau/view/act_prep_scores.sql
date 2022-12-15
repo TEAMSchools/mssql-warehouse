@@ -20,8 +20,8 @@ WITH
           stl.score DESC
       ) AS rn_highest
     FROM
-      gabby.alumni.standardized_test_long stl
-      INNER JOIN gabby.alumni.ktc_roster ktc ON stl.contact_c = ktc.sf_contact_id
+      gabby.alumni.standardized_test_long AS stl
+      INNER JOIN gabby.alumni.ktc_roster AS ktc ON stl.contact_c = ktc.sf_contact_id
     WHERE
       stl.score_type = 'act_composite_c'
   ),
@@ -83,10 +83,10 @@ SELECT
   1 AS rn_assessment_standard /* 1 row per student, per test (by standard) */,
   NULL AS rn_highest
 FROM
-  gabby.powerschool.cohort_identifiers_static co
-  LEFT JOIN gabby.act.test_prep_scores act ON co.student_number = act.student_number
+  gabby.powerschool.cohort_identifiers_static AS co
+  LEFT JOIN gabby.act.test_prep_scores AS act ON co.student_number = act.student_number
   AND co.academic_year = act.academic_year
-  LEFT JOIN ms_grad ms ON co.student_number = ms.student_number
+  LEFT JOIN ms_grad AS ms ON co.student_number = ms.student_number
 WHERE
   co.rn_year = 1
   AND co.school_level = 'HS'
@@ -127,9 +127,9 @@ SELECT
   1 AS rn_assessment_standard,
   r.rn_highest
 FROM
-  gabby.powerschool.cohort_identifiers_static co
-  INNER JOIN real_tests r ON co.student_number = r.student_number
+  gabby.powerschool.cohort_identifiers_static AS co
+  INNER JOIN real_tests AS r ON co.student_number = r.student_number
   AND r.test_date (BETWEEN co.entrydate AND co.exitdate)
-  LEFT JOIN ms_grad ms ON co.student_number = ms.student_number
+  LEFT JOIN ms_grad AS ms ON co.student_number = ms.student_number
 WHERE
   co.rn_year = 1

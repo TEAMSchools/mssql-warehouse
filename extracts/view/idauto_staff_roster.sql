@@ -21,7 +21,7 @@ SELECT
   END AS [Position Status],
   NULL AS [Preferred Name]
 FROM
-  gabby.people.staff_roster df
+  gabby.people.staff_roster AS df
 WHERE
   COALESCE(df.rehire_date, df.original_hire_date) <= DATEADD(DAY, 10, CURRENT_TIMESTAMP)
   AND df.business_unit IS NOT NULL

@@ -12,7 +12,7 @@ SELECT
   COALESCE(df.rehire_date, df.original_hire_date) AS [Latest Hire Date],
   df.legal_entity_name AS [Groups]
 FROM
-  gabby.people.staff_crosswalk_static df
+  gabby.people.staff_crosswalk_static AS df
 WHERE
   df.[status] <> 'TERMINATED'
   AND df.mail IS NOT NULL

@@ -9,6 +9,6 @@ SELECT
   co.student_web_id,
   co.student_web_password
 FROM
-  gabby.powerschool.student_access_accounts_static co
+  gabby.powerschool.student_access_accounts_static AS co
 WHERE
   co.enroll_status = 0

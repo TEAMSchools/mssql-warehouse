@@ -87,8 +87,8 @@ SELECT
   t.prev_exitcode,
   'promoted next school - no show' AS audit_type
 FROM
-  gabby.powerschool.students s
-  INNER JOIN all_enrollments t ON s.id = t.studentid
+  gabby.powerschool.students AS s
+  INNER JOIN all_enrollments AS t ON s.id = t.studentid
   AND s.[db_name] = t.[db_name]
 WHERE
   t.next_gradelevel <> 99
@@ -117,8 +117,8 @@ SELECT
     WHEN t.next_gradelevel IS NOT NULL THEN 'graduated - re-enrolled'
   END AS audit_type
 FROM
-  gabby.powerschool.students s
-  INNER JOIN all_enrollments t ON s.id = t.studentid
+  gabby.powerschool.students AS s
+  INNER JOIN all_enrollments AS t ON s.id = t.studentid
   AND s.[db_name] = t.[db_name]
 WHERE
   t.grade_level = 99
@@ -139,8 +139,8 @@ SELECT
   t.prev_exitcode,
   'no show - merge with previous record' AS audit_type
 FROM
-  gabby.powerschool.students s
-  INNER JOIN all_enrollments t ON s.id = t.studentid
+  gabby.powerschool.students AS s
+  INNER JOIN all_enrollments AS t ON s.id = t.studentid
   AND s.[db_name] = t.[db_name]
 WHERE
   t.next_entrydate = t.next_exitdate

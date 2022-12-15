@@ -17,7 +17,7 @@ SELECT
     WHEN df.primary_on_site_department = 'Operations' THEN 'School Tech Lead'
   END AS [Role]
 FROM
-  gabby.people.staff_crosswalk_static df
+  gabby.people.staff_crosswalk_static AS df
 WHERE
   df.status <> 'TERMINATED'
   AND df.primary_on_site_department NOT IN ('Data', 'Teaching and Learning')
@@ -37,8 +37,8 @@ SELECT
     WHEN df.primary_on_site_department = 'Operations' THEN 'School Tech Lead'
   END AS [Role]
 FROM
-  gabby.people.staff_crosswalk_static df
-  INNER JOIN gabby.people.campus_crosswalk cc ON df.primary_site = cc.campus_name
+  gabby.people.staff_crosswalk_static AS df
+  INNER JOIN gabby.people.campus_crosswalk AS cc ON df.primary_site = cc.campus_name
   AND cc._fivetran_deleted = 0
   AND cc.is_pathways = 0
 WHERE
@@ -60,8 +60,8 @@ SELECT
     WHEN df.primary_on_site_department = 'Operations' THEN 'School Tech Lead'
   END AS [Role]
 FROM
-  gabby.people.staff_crosswalk_static df
-  INNER JOIN gabby.powerschool.schools sch ON sch.state_excludefromreporting = 0
+  gabby.people.staff_crosswalk_static AS df
+  INNER JOIN gabby.powerschool.schools AS sch ON sch.state_excludefromreporting = 0
 WHERE
   df.status <> 'TERMINATED'
   AND df.primary_on_site_department = 'Teaching and Learning'

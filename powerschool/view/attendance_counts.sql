@@ -34,12 +34,16 @@ WITH
         dates.end_date,
         dates.is_curterm
         FROM
-          powerschool.ps_attendance_daily att
-          INNER JOIN gabby.reporting.reporting_terms dates ON att.schoolid = dates.schoolid
+          powerschool.ps_attendance_daily AS att
+          INNER JOIN gabby.reporting.reporting_terms AS dates ON att.schoolid = dates.schoolid
           AND att.att_date (BETWEEN dates.start_date AND dates.end_date)
           AND dates.identifier = 'RT'
         WHERE
-          att.att_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1, 7, 1)
+          att.att_date >= DATEFROMPARTS(
+            gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1,
+            7,
+            1
+          )
           AND att.att_code IN (
             'A',
             'AD',
@@ -93,13 +97,17 @@ WITH
           d.end_date,
           d.is_curterm
         FROM
-          powerschool.ps_adaadm_daily_ctod mem
-          INNER JOIN gabby.reporting.reporting_terms d ON mem.schoolid = d.schoolid
+          powerschool.ps_adaadm_daily_ctod AS mem
+          INNER JOIN gabby.reporting.reporting_terms AS d ON mem.schoolid = d.schoolid
           AND mem.calendardate (BETWEEN d.start_date AND d.end_date)
           AND d.identifier = 'RT'
         WHERE
           mem.calendardate (
-            BETWEEN DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1, 7, 1) AND CURRENT_TIMESTAMP
+            BETWEEN DATEFROMPARTS(
+              gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1,
+              7,
+              1
+            ) AND CURRENT_TIMESTAMP
           )
       ) sub
     GROUP BY

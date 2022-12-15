@@ -16,7 +16,7 @@ SELECT
   df.samaccountname AS [Username],
   NULL AS [Password]
 FROM
-  gabby.people.staff_crosswalk_static df
+  gabby.people.staff_crosswalk_static AS df
 WHERE
   df.is_active_ad = 1
   AND df.[status] <> 'PRESTART'

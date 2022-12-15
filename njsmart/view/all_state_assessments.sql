@@ -23,15 +23,21 @@ WITH
           'NJASK' AS test_type,
           CAST(scaled_score_lal AS VARCHAR(50)) AS scaled_score_lal,
           CAST(performance_level_lal AS VARCHAR(50)) AS performance_level_lal,
-          CAST(invalid_scale_score_reason_lal AS VARCHAR(50)) AS invalid_scale_score_reason_lal,
+          CAST(
+            invalid_scale_score_reason_lal AS VARCHAR(50)
+          ) AS invalid_scale_score_reason_lal,
           CAST(void_reason_lal AS VARCHAR(50)) AS void_reason_lal,
           CAST(scaled_score_math AS VARCHAR(50)) AS scaled_score_math,
           CAST(performance_level_math AS VARCHAR(50)) AS performance_level_math,
-          CAST(invalid_scale_score_reason_math AS VARCHAR(50)) AS invalid_scale_score_reason_math,
+          CAST(
+            invalid_scale_score_reason_math AS VARCHAR(50)
+          ) AS invalid_scale_score_reason_math,
           CAST(void_reason_math AS VARCHAR(50)) AS void_reason_math,
           CAST(scaled_score_science AS VARCHAR(50)) AS scaled_score_science,
           CAST(performance_level_science AS VARCHAR(50)) AS performance_level_science,
-          CAST(invalid_scale_score_reason_science AS VARCHAR(50)) AS invalid_scale_score_reason_science,
+          CAST(
+            invalid_scale_score_reason_science AS VARCHAR(50)
+          ) AS invalid_scale_score_reason_science,
           CAST(void_reason_science AS VARCHAR(50)) AS void_reason_science
         FROM
           gabby.njsmart.njask_archive
@@ -87,7 +93,7 @@ WITH
             END AS VARCHAR(50)
           ) AS void_reason_science
         FROM
-          gabby.njsmart.njbct n
+          gabby.njsmart.njbct AS n
         UNION ALL
         SELECT
           CAST(
@@ -103,11 +109,15 @@ WITH
           'HSPA' AS test_type,
           CAST(scaled_score_lal AS VARCHAR(50)) AS scaled_score_lal,
           CAST(performance_level_lal AS VARCHAR(50)) AS performance_level_lal,
-          CAST(invalid_scale_score_reason_lal AS VARCHAR(50)) AS invalid_scale_score_reason_lal,
+          CAST(
+            invalid_scale_score_reason_lal AS VARCHAR(50)
+          ) AS invalid_scale_score_reason_lal,
           CAST(void_reason_lal AS VARCHAR(50)) AS void_reason_lal,
           CAST(scaled_score_math AS VARCHAR(50)) AS scaled_score_math,
           CAST(performance_level_math AS VARCHAR(50)) AS performance_level_math,
-          CAST(invalid_scale_score_reason_math AS VARCHAR(50)) AS invalid_scale_score_reason_math,
+          CAST(
+            invalid_scale_score_reason_math AS VARCHAR(50)
+          ) AS invalid_scale_score_reason_math,
           CAST(void_reason_math AS VARCHAR(50)) AS void_reason_math,
           NULL AS scaled_score_science,
           NULL AS performance_level_science,

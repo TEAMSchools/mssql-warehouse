@@ -25,13 +25,15 @@ WITH
       CAST(rt.time_per_name AS VARCHAR) AS time_per_name,
       CAST(rt.alt_name AS VARCHAR) AS administration_round
     FROM
-      gabby.illuminate_dna_assessments.assessments_identifiers_static ais
-      INNER JOIN gabby.illuminate_dna_assessments.agg_student_responses asr ON ais.assessment_id = asr.assessment_id
-      INNER JOIN gabby.illuminate_public.students s ON asr.student_id = s.student_id
-      INNER JOIN gabby.reporting.reporting_terms rt ON ais.administered_at (BETWEEN rt.start_date AND rt.end_date)
+      gabby.illuminate_dna_assessments.assessments_identifiers_static AS ais
+      INNER JOIN gabby.illuminate_dna_assessments.agg_student_responses AS asr ON ais.assessment_id = asr.assessment_id
+      INNER JOIN gabby.illuminate_public.students AS s ON asr.student_id = s.student_id
+      INNER JOIN gabby.reporting.reporting_terms AS rt ON (
+        ais.administered_at BETWEEN rt.start_date AND rt.end_date
+      )
       AND rt.identifier = 'ACT'
       AND rt._fivetran_deleted = 0
-      INNER JOIN gabby.powerschool.cohort_identifiers_static co ON s.local_student_id = co.student_number
+      INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON s.local_student_id = co.student_number
       AND ais.academic_year_clean = co.academic_year
       AND co.rn_year = 1
     WHERE
@@ -66,7 +68,7 @@ WITH
       ) AS rn_highscore
     FROM
       long_data
-      LEFT JOIN gabby.act.scale_score_key ssk ON long_data.academic_year = ssk.academic_year
+      LEFT JOIN gabby.act.scale_score_key AS ssk ON long_data.academic_year = ssk.academic_year
       AND long_data.grade_level = ssk.grade_level
       AND long_data.time_per_name = ssk.administration_round
       AND long_data.subject_area = ssk.subject

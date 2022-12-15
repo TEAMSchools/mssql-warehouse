@@ -158,4 +158,4 @@ FROM
           gabby.illuminate_dna_repositories.repository_row_ids
       )
   ) sub
-  INNER JOIN gabby.illuminate_public.students s ON sub.student_id = s.student_id
+  INNER JOIN gabby.illuminate_public.students AS s ON sub.student_id = s.student_id

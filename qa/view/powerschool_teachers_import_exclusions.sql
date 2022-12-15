@@ -15,10 +15,10 @@ WITH
       u.dcid AS users_dcid,
       u.homeschoolid
     FROM
-      gabby.people.staff_crosswalk_static scw
-      LEFT JOIN gabby.people.school_crosswalk sc ON scw.primary_site = sc.site_name
+      gabby.people.staff_crosswalk_static AS scw
+      LEFT JOIN gabby.people.school_crosswalk AS sc ON scw.primary_site = sc.site_name
       AND sc._fivetran_deleted = 0
-      LEFT JOIN gabby.powerschool.users u ON scw.ps_teachernumber = u.teachernumber
+      LEFT JOIN gabby.powerschool.users AS u ON scw.ps_teachernumber = u.teachernumber
     COLLATE Latin1_General_BIN
     AND CASE
       WHEN sc.region = 'TEAM Academy Charter School' THEN 'kippnewark'
@@ -38,7 +38,10 @@ FROM
       CASE
         WHEN DATEDIFF(
           DAY,
-          ISNULL(termination_date, CAST(CURRENT_TIMESTAMP AS DATE)),
+          ISNULL(
+            termination_date,
+            CAST(CURRENT_TIMESTAMP AS DATE)
+          ),
           CURRENT_TIMESTAMP
         ) > 14 THEN 1
       END AS is_exclude_termination,

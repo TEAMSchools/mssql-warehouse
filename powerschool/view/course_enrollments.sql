@@ -35,7 +35,7 @@ SELECT
   rn_course_yr,
   rn_illuminate_subject
 FROM
-  powerschool.course_enrollments_current_static
+  powerschool.course_enrollments_current_static AS
 UNION ALL
 SELECT
   studentid,

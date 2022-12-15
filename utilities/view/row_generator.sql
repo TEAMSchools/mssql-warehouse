@@ -13,35 +13,35 @@ WITH
     SELECT
       0
     FROM
-      t0 a,
+      t0 AS a,
       t0 b
   ),
   t2 (i) AS (
     SELECT
       0
     FROM
-      t1 a,
+      t1 AS a,
       t1 b
   ),
   t3 (i) AS (
     SELECT
       0
     FROM
-      t2 a,
+      t2 AS a,
       t2 b
   ),
   t4 (i) AS (
     SELECT
       0
     FROM
-      t3 a,
+      t3 AS a,
       t3 b
   ),
   t5 (i) AS (
     SELECT
       0
     FROM
-      t4 a,
+      t4 AS a,
       t4 b
   )
 SELECT

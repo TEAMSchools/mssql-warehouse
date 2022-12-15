@@ -6,7 +6,7 @@ SELECT
   r._id AS role_id,
   r.[name] AS role_name
 FROM
-  gabby.whetstone.users u
+  gabby.whetstone.users AS u
   CROSS APPLY OPENJSON (u.roles, '$')
 WITH
   (_id NVARCHAR(32), [name] NVARCHAR(32)) AS r

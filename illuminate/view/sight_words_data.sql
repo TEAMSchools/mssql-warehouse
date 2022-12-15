@@ -11,7 +11,7 @@ SELECT
   c.local_student_id,
   c.date_administered
 FROM
-  gabby.illuminate_dna_repositories.sight_words_data_current_static c
+  gabby.illuminate_dna_repositories.sight_words_data_current_static AS c
 UNION ALL
 SELECT
   a.repository_id,
@@ -21,4 +21,4 @@ SELECT
   a.local_student_id,
   a.date_administered
 FROM
-  gabby.illuminate_dna_repositories.sight_words_data_archive a
+  gabby.illuminate_dna_repositories.sight_words_data_archive AS a

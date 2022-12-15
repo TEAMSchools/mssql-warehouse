@@ -33,7 +33,7 @@ WITH
           r.field_character_comment_1_1 AS field_character_comment_1,
           r.field_character_comment_2_1 AS field_character_comment_2
         FROM
-          gabby.illuminate_dna_repositories.repository_216 r
+          gabby.illuminate_dna_repositories.repository_216 AS r
         UNION ALL
         SELECT
           207 AS repository_id,
@@ -49,7 +49,7 @@ WITH
           r.field_character_comment_1,
           r.field_character_comment_2
         FROM
-          gabby.illuminate_dna_repositories.repository_207 r
+          gabby.illuminate_dna_repositories.repository_207 AS r
         UNION ALL
         SELECT
           208 AS repository_id,
@@ -65,7 +65,7 @@ WITH
           r.field_character_comment_1,
           r.field_character_comment_2
         FROM
-          gabby.illuminate_dna_repositories.repository_208 r
+          gabby.illuminate_dna_repositories.repository_208 AS r
         UNION ALL
         SELECT
           209 AS repository_id,
@@ -81,11 +81,15 @@ WITH
           r.field_character_comment_1,
           r.field_character_comment_2
         FROM
-          gabby.illuminate_dna_repositories.repository_209 r
+          gabby.illuminate_dna_repositories.repository_209 AS r
       ) sub
-      INNER JOIN gabby.illuminate_public.students s ON sub.student_id = s.student_id
+      INNER JOIN gabby.illuminate_public.students AS s ON sub.student_id = s.student_id
     WHERE
-      CONCAT(sub.repository_id, '_', sub.repository_row_id) IN (
+      CONCAT(
+        sub.repository_id,
+        '_',
+        sub.repository_row_id
+      ) IN (
         SELECT
           row_hash
         FROM
@@ -129,6 +133,6 @@ SELECT
   CAST(cb.subcategory AS VARCHAR(125)) AS subcategory,
   CAST(cb.comment AS VARCHAR(250)) AS comment
 FROM
-  comm_unpivot cu
-  INNER JOIN gabby.reporting.report_card_comment_bank cb ON cu.comment_code = cb.code
+  comm_unpivot AS cu
+  INNER JOIN gabby.reporting.report_card_comment_bank AS cb ON cu.comment_code = cb.code
   AND cb._fivetran_deleted = 0

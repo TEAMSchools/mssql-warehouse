@@ -49,22 +49,22 @@ FROM
         CAST(gl.testritscore AS FLOAT) AS rit_50pctl,
         CAST(tq.testritscore AS FLOAT) AS rit_75pctl
         FROM
-          gabby.nwea.best_baseline bb
-          INNER JOIN gabby.powerschool.cohort_identifiers_static co ON bb.student_number = co.student_number
+          gabby.nwea.best_baseline AS bb
+          INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON bb.student_number = co.student_number
           AND bb.academic_year = co.academic_year
           AND co.rn_year = 1
           AND co.school_level IN ('ES', 'MS')
-          LEFT JOIN gabby.nwea.percentile_norms_dense ku ON co.grade_level = ku.grade_level
+          LEFT JOIN gabby.nwea.percentile_norms_dense AS ku ON co.grade_level = ku.grade_level
           AND bb.measurementscale = ku.measurementscale
         COLLATE Latin1_General_BIN
         AND bb.testpercentile = ku.testpercentile
         AND ku.term = 'Spring'
-        LEFT JOIN gabby.nwea.percentile_norms_dense gl ON co.grade_level = gl.grade_level
+        LEFT JOIN gabby.nwea.percentile_norms_dense AS gl ON co.grade_level = gl.grade_level
         AND bb.measurementscale = gl.measurementscale
         COLLATE Latin1_General_BIN
         AND gl.testpercentile = 50
         AND gl.term = 'Spring'
-        LEFT JOIN gabby.nwea.percentile_norms_dense tq ON co.grade_level = tq.grade_level
+        LEFT JOIN gabby.nwea.percentile_norms_dense AS tq ON co.grade_level = tq.grade_level
         AND bb.measurementscale = tq.measurementscale
         COLLATE Latin1_General_BIN
         AND tq.term = 'Spring'

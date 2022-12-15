@@ -25,7 +25,7 @@ SELECT
   is_enrolled,
   region
 FROM
-  powerschool.cohort_identifiers_scaffold_current_static
+  powerschool.cohort_identifiers_scaffold_current_static AS
 UNION ALL
 SELECT
   academic_year,

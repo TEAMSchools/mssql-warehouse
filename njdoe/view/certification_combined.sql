@@ -29,8 +29,8 @@ SELECT
       cah.date_received DESC
   ) AS rn
 FROM
-  njdoe.certification_application_history_static cah
-  INNER JOIN gabby.people.staff_crosswalk_static s ON cah.df_employee_number = s.df_employee_number
+  njdoe.certification_application_history_static AS cah
+  INNER JOIN gabby.people.staff_crosswalk_static AS s ON cah.df_employee_number = s.df_employee_number
 UNION ALL
 SELECT
   cch.df_employee_number,
@@ -58,5 +58,5 @@ SELECT
       cch.issued_date DESC
   ) AS rn
 FROM
-  njdoe.certification_certificate_history_static cch
-  INNER JOIN gabby.people.staff_crosswalk_static s ON cch.df_employee_number = s.df_employee_number
+  njdoe.certification_certificate_history_static AS cch
+  INNER JOIN gabby.people.staff_crosswalk_static AS s ON cch.df_employee_number = s.df_employee_number

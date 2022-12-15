@@ -6,15 +6,15 @@ WITH
     SELECT
       u.[user_id]
     FROM
-      gabby.people.work_assignment_history_static sr
-      INNER JOIN gabby.illuminate_public.users u ON CAST(sr.employee_number AS VARCHAR(25)) = u.state_id
+      gabby.people.work_assignment_history_static AS sr
+      INNER JOIN gabby.illuminate_public.users AS u ON CAST(sr.employee_number AS VARCHAR(25)) = u.state_id
     WHERE
       sr.home_department_description = 'Teaching and Learning'
     UNION
     SELECT
       u.[user_id]
     FROM
-      gabby.illuminate_public.users u
+      gabby.illuminate_public.users AS u
     WHERE
       u.username IN ('login', 'kippfoundation', 'JEsteban')
   )
@@ -195,15 +195,15 @@ FROM
       END AS module_number_length,
       CAST(rt.alt_name AS VARCHAR(5)) AS term_administered
     FROM
-      gabby.illuminate_dna_assessments.assessments a
-      INNER JOIN gabby.illuminate_public.users u ON a.[user_id] = u.[user_id]
-      INNER JOIN gabby.illuminate_dna_assessments.performance_band_sets pbs ON a.performance_band_set_id = pbs.performance_band_set_id
-      LEFT JOIN gabby.illuminate_codes.dna_scopes ds ON a.code_scope_id = ds.code_id
-      LEFT JOIN gabby.illuminate_codes.dna_subject_areas dsa ON a.code_subject_area_id = dsa.code_id
-      LEFT JOIN gabby.assessments.normed_scopes n ON a.academic_year = (n.academic_year + 1)
+      gabby.illuminate_dna_assessments.assessments AS a
+      INNER JOIN gabby.illuminate_public.users AS u ON a.[user_id] = u.[user_id]
+      INNER JOIN gabby.illuminate_dna_assessments.performance_band_sets AS pbs ON a.performance_band_set_id = pbs.performance_band_set_id
+      LEFT JOIN gabby.illuminate_codes.dna_scopes AS ds ON a.code_scope_id = ds.code_id
+      LEFT JOIN gabby.illuminate_codes.dna_subject_areas AS dsa ON a.code_subject_area_id = dsa.code_id
+      LEFT JOIN gabby.assessments.normed_scopes AS n ON a.academic_year = (n.academic_year + 1)
       AND ds.code_translation = n.scope
       AND n._fivetran_deleted = 0
-      LEFT JOIN gabby.reporting.reporting_terms rt ON a.administered_at (BETWEEN rt.[start_date] AND rt.end_date)
+      LEFT JOIN gabby.reporting.reporting_terms AS rt ON a.administered_at (BETWEEN rt.[start_date] AND rt.end_date)
       AND rt.identifier = 'RT'
       AND rt.schoolid = 0
       AND rt._fivetran_deleted = 0

@@ -134,7 +134,7 @@ FROM
             END AS INT
           ) AS stem
         FROM
-          gabby.naviance.act_scores act
+          gabby.naviance.act_scores AS act
         WHERE
           act.test_type IN ('ACT (Legacy)', 'ACT')
       ) sub1

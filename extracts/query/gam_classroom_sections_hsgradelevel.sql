@@ -15,8 +15,8 @@ WITH
       'all' AS SECTION,
       saa.student_web_id + '@teamstudents.org' AS email
     FROM
-      gabby.powerschool.cohort_identifiers_static co
-      INNER JOIN gabby.powerschool.student_access_accounts_static saa ON co.student_number = saa.student_number
+      gabby.powerschool.cohort_identifiers_static AS co
+      INNER JOIN gabby.powerschool.student_access_accounts_static AS saa ON co.student_number = saa.student_number
     WHERE
       co.academic_year = 2019
       AND co.rn_year = 1
@@ -43,13 +43,13 @@ SELECT DISTINCT
     ) + 'apps.teamschools.org'
   END AS teacher
 FROM
-  this t
-  INNER JOIN gabby.people.staff_crosswalk_static scw ON t.schoolid = scw.primary_site_schoolid
+  this AS t
+  INNER JOIN gabby.people.staff_crosswalk_static AS scw ON t.schoolid = scw.primary_site_schoolid
   AND scw.primary_job = 'School Leader'
   AND scw.[status] NOT IN ('TERMINATED', 'PRESTART')
   -- */
   /*
   SELECT t.alias
   ,t.email
-  FROM this t
+  FROM this AS t
   --*/

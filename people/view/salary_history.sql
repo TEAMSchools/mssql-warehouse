@@ -19,8 +19,8 @@ WITH
       sr.employee_number,
       'ADP' AS source_system
     FROM
-      gabby.adp.salary_history sh
-      INNER JOIN gabby.people.employee_numbers sr ON sh.associate_id = sr.associate_id
+      gabby.adp.salary_history AS sh
+      INNER JOIN gabby.people.employee_numbers AS sr ON sh.associate_id = sr.associate_id
       AND sr.is_active = 1
     WHERE
       (
@@ -53,8 +53,8 @@ WITH
       ds.number AS employee_number,
       'DF' AS source_system
     FROM
-      gabby.dayforce.employee_status_clean ds
-      INNER JOIN gabby.people.employee_numbers sr ON ds.number = sr.employee_number
+      gabby.dayforce.employee_status_clean AS ds
+      INNER JOIN gabby.people.employee_numbers AS sr ON ds.number = sr.employee_number
       AND sr.is_active = 1
     WHERE
       CAST(ds.effective_start AS DATE) <= '2020-12-31'

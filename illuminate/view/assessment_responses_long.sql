@@ -27,8 +27,8 @@ WITH
           sa.student_assessment_id DESC
       ) AS rn
     FROM
-      gabby.illuminate_dna_assessments.student_assessment_scaffold_current_static a
-      LEFT JOIN gabby.illuminate_dna_assessments.students_assessments sa ON a.student_id = sa.student_id
+      gabby.illuminate_dna_assessments.student_assessment_scaffold_current_static AS a
+      LEFT JOIN gabby.illuminate_dna_assessments.students_assessments AS sa ON a.student_id = sa.student_id
       AND a.assessment_id = sa.assessment_id
   )
 SELECT
@@ -55,8 +55,8 @@ SELECT
   'Overall' AS standard_description,
   NULL AS domain_description
 FROM
-  asmts a
-  LEFT JOIN gabby.illuminate_dna_assessments.agg_student_responses asr ON a.student_assessment_id = asr.student_assessment_id
+  asmts AS a
+  LEFT JOIN gabby.illuminate_dna_assessments.agg_student_responses AS asr ON a.student_assessment_id = asr.student_assessment_id
   AND asr.points_possible > 0
 WHERE
   a.rn = 1
@@ -85,13 +85,13 @@ SELECT
   CAST(std.[description] AS NVARCHAR(2048)) AS standard_description,
   dom.domain_description
 FROM
-  asmts a
-  INNER JOIN gabby.illuminate_dna_assessments.agg_student_responses_standard asrs ON a.student_assessment_id = asrs.student_assessment_id
+  asmts AS a
+  INNER JOIN gabby.illuminate_dna_assessments.agg_student_responses_standard AS asrs ON a.student_assessment_id = asrs.student_assessment_id
   AND asrs.points_possible > 0
-  INNER JOIN gabby.illuminate_dna_assessments.assessment_standards astd ON asrs.assessment_id = astd.assessment_id
+  INNER JOIN gabby.illuminate_dna_assessments.assessment_standards AS astd ON asrs.assessment_id = astd.assessment_id
   AND asrs.standard_id = astd.standard_id
-  INNER JOIN gabby.illuminate_standards.standards std ON asrs.standard_id = std.standard_id
-  LEFT JOIN gabby.illuminate_standards.standards_domain_static dom ON asrs.standard_id = dom.standard_id
+  INNER JOIN gabby.illuminate_standards.standards AS std ON asrs.standard_id = std.standard_id
+  LEFT JOIN gabby.illuminate_standards.standards_domain_static AS dom ON asrs.standard_id = dom.standard_id
   AND dom.domain_level = 1
   AND dom.domain_label NOT IN ('', 'Standard')
 WHERE
@@ -121,11 +121,11 @@ SELECT
   rg.[label] AS standard_description,
   NULL AS domain_description
 FROM
-  asmts a
-  INNER JOIN gabby.illuminate_dna_assessments.agg_student_responses_group asrg ON a.student_assessment_id = asrg.student_assessment_id
+  asmts AS a
+  INNER JOIN gabby.illuminate_dna_assessments.agg_student_responses_group AS asrg ON a.student_assessment_id = asrg.student_assessment_id
   AND asrg.points_possible > 0
-  INNER JOIN gabby.illuminate_dna_assessments.assessments_reporting_groups arg ON asrg.assessment_id = arg.assessment_id
+  INNER JOIN gabby.illuminate_dna_assessments.assessments_reporting_groups AS arg ON asrg.assessment_id = arg.assessment_id
   AND asrg.reporting_group_id = arg.reporting_group_id
-  INNER JOIN gabby.illuminate_dna_assessments.reporting_groups rg ON asrg.reporting_group_id = rg.reporting_group_id
+  INNER JOIN gabby.illuminate_dna_assessments.reporting_groups AS rg ON asrg.reporting_group_id = rg.reporting_group_id
 WHERE
   a.rn = 1

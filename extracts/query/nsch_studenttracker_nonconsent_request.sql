@@ -30,7 +30,9 @@ SELECT
   NULL AS colf,
   /* date of birth */
   /* search begin date */
-  CAST(REPLACE(CAST(dob AS DATE), '-', '') AS VARCHAR) AS colg,
+  CAST(
+    REPLACE(CAST(dob AS DATE), '-', '') AS VARCHAR
+  ) AS colg,
   /* leave blank */
   CAST(
     REPLACE(CAST(exitdate AS DATE), '-', '') AS VARCHAR
@@ -47,7 +49,7 @@ WHERE
   rn_undergrad = 1
   AND exitcode = 'G1'
   AND grade_level <> 99
-  AND cohort <= gabby.utilities.global_academic_year ()
+  AND cohort <= gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
 UNION ALL
 SELECT
   'T1',
@@ -68,4 +70,4 @@ WHERE
   rn_undergrad = 1
   AND exitcode = 'G1'
   AND grade_level <> 99
-  AND cohort <= gabby.utilities.global_academic_year ()
+  AND cohort <= gabby.utilities.GLOBAL_ACADEMIC_YEAR ()

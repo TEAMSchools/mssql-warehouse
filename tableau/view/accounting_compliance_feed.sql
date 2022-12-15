@@ -90,9 +90,9 @@ SELECT
   b.fsa_hc,
   b.vol_hos
 FROM
-  gabby.people.staff_crosswalk_static r
-  LEFT JOIN status_curr s ON r.df_employee_number = s.number
+  gabby.people.staff_crosswalk_static AS r
+  LEFT JOIN status_curr AS s ON r.df_employee_number = s.number
   AND s.rn_curr = 1
-  LEFT JOIN properites_curr p ON r.df_employee_number = p.employee_reference_code
+  LEFT JOIN properites_curr AS p ON r.df_employee_number = p.employee_reference_code
   AND p.rn_curr = 1
-  LEFT JOIN gabby.dayforce.employee_benefits_current b ON r.df_employee_number = b.employee_number;
+  LEFT JOIN gabby.dayforce.employee_benefits_current AS b ON r.df_employee_number = b.employee_number;

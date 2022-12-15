@@ -26,10 +26,10 @@ SELECT
 COLLATE Latin1_General_BIN AS term
 -- ,CASE WHEN CAST(rd.[date] AS DATE) (BETWEEN co.entrydate AND co.exitdate) THEN 1 ELSE 0 END AS is_enrolled
 FROM
-  powerschool.cohort_identifiers_static co
-  INNER JOIN gabby.utilities.reporting_days rd ON co.academic_year = rd.academic_year
+  powerschool.cohort_identifiers_static AS co
+  INNER JOIN gabby.utilities.reporting_days AS rd ON co.academic_year = rd.academic_year
   AND co.exitdate >= rd.[date]
-  LEFT JOIN gabby.reporting.reporting_terms dt ON co.schoolid = dt.schoolid
+  LEFT JOIN gabby.reporting.reporting_terms AS dt ON co.schoolid = dt.schoolid
   AND dt.identifier = 'RT'
   AND rd.[date] (BETWEEN dt.[start_date] AND dt.end_date)
 WHERE

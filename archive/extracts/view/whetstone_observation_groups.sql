@@ -17,7 +17,7 @@ FROM
           observation_group_name,
           '"' + role_name + '": [' + gabby.dbo.GROUP_CONCAT ('"' + [user_id] + '"') + ']' AS role_user_ids
         FROM
-          gabby.whetstone.schools_observation_groups_membership sogm
+          gabby.whetstone.schools_observation_groups_membership AS sogm
         GROUP BY
           school_id,
           observation_group_id,

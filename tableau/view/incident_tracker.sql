@@ -43,14 +43,14 @@ SELECT
   cf.[Restraint Used],
   cf.[SSDS Incident ID]
 FROM
-  gabby.powerschool.cohort_identifiers_static co
-  INNER JOIN gabby.deanslist.incidents_clean_static dli ON co.student_number = dli.student_school_id
+  gabby.powerschool.cohort_identifiers_static AS co
+  INNER JOIN gabby.deanslist.incidents_clean_static AS dli ON co.student_number = dli.student_school_id
   AND co.academic_year = dli.create_academic_year
-  INNER JOIN gabby.reporting.reporting_terms d ON co.schoolid = d.schoolid
+  INNER JOIN gabby.reporting.reporting_terms AS d ON co.schoolid = d.schoolid
   AND CAST(dli.create_ts AS DATE) (BETWEEN d.[start_date] AND d.end_date)
   AND d.identifier = 'RT'
   AND d._fivetran_deleted = 0
-  LEFT JOIN gabby.deanslist.incidents_custom_fields_wide cf ON dli.incident_id = cf.incident_id
+  LEFT JOIN gabby.deanslist.incidents_custom_fields_wide AS cf ON dli.incident_id = cf.incident_id
 WHERE
   co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
   AND co.rn_year = 1
@@ -98,11 +98,11 @@ SELECT
   NULL AS [Restraint Used],
   NULL AS [SSDS Incident ID]
 FROM
-  gabby.powerschool.cohort_identifiers_static co
-  INNER JOIN gabby.deanslist.incidents_clean_static dli ON co.student_number = dli.student_school_id
+  gabby.powerschool.cohort_identifiers_static AS co
+  INNER JOIN gabby.deanslist.incidents_clean_static AS dli ON co.student_number = dli.student_school_id
   AND co.academic_year = dli.create_academic_year
-  INNER JOIN gabby.deanslist.incidents_penalties_static dlip ON dli.incident_id = dlip.incident_id
-  INNER JOIN gabby.reporting.reporting_terms d ON co.schoolid = d.schoolid
+  INNER JOIN gabby.deanslist.incidents_penalties_static AS dlip ON dli.incident_id = dlip.incident_id
+  INNER JOIN gabby.reporting.reporting_terms AS d ON co.schoolid = d.schoolid
   AND ISNULL(dlip.startdate, CAST(dli.create_ts AS DATE)) (BETWEEN d.[start_date] AND d.end_date)
   AND d.identifier = 'RT'
   AND d._fivetran_deleted = 0
@@ -155,19 +155,23 @@ SELECT
   NULL AS [Restraint Used],
   NULL AS [SSDS Incident ID]
 FROM
-  gabby.deanslist.behavior dlb
-  INNER JOIN gabby.powerschool.cohort_identifiers_static co ON co.student_number = dlb.student_school_id
+  gabby.deanslist.behavior AS dlb
+  INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON co.student_number = dlb.student_school_id
   AND dlb.behavior_date (BETWEEN co.entrydate AND co.exitdate)
   AND dlb.[db_name] = co.[db_name]
   AND co.rn_year = 1
-  LEFT JOIN deanslist.rosters r ON dlb.roster_id = r.roster_id
+  LEFT JOIN deanslist.rosters AS r ON dlb.roster_id = r.roster_id
   AND dlb.[db_name] = r.[db_name]
-  INNER JOIN gabby.reporting.reporting_terms d ON co.schoolid = d.schoolid
+  INNER JOIN gabby.reporting.reporting_terms AS d ON co.schoolid = d.schoolid
   AND dlb.behavior_date (BETWEEN d.[start_date] AND d.end_date)
   AND d.identifier = 'RT'
   AND d._fivetran_deleted = 0
 WHERE
-  dlb.behavior_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR (), 7, 1)
+  dlb.behavior_date >= DATEFROMPARTS(
+    gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+    7,
+    1
+  )
   AND dlb.is_deleted = 0
   AND (
     dlb.school_name IN ('KIPP NCA', 'KIPP Newark Lab High School')

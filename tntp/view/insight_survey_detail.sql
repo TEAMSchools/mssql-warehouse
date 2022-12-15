@@ -40,9 +40,9 @@ SELECT
     WHEN vals.label NOT IN ('Agree', 'Strongly Agree') THEN 0.0
   END AS is_agree
 FROM
-  gabby.tntp.insight_raw_data ird
-  LEFT JOIN gabby.tntp.insight_variables vars ON ird.variable = vars.variable
-  LEFT JOIN gabby.tntp.insight_values vals ON ird.variable = vals.variable
+  gabby.tntp.insight_raw_data AS ird
+  LEFT JOIN gabby.tntp.insight_variables AS vars ON ird.variable = vars.variable
+  LEFT JOIN gabby.tntp.insight_values AS vals ON ird.variable = vals.variable
   AND CAST(ird.value AS FLOAT) = vals.value
-  LEFT JOIN gabby.tntp.insight_variables_metadata ivm ON ird.variable = ivm.variable
+  LEFT JOIN gabby.tntp.insight_variables_metadata AS ivm ON ird.variable = ivm.variable
   AND ivm._fivetran_deleted = 0

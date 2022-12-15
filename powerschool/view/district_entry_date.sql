@@ -33,8 +33,8 @@ SELECT
   ) AS rn_entry,
   MIN(ADA.calendardate) AS district_entry_date
 FROM
-  district_entry de
-  INNER JOIN powerschool.ps_adaadm_daily_ctod ADA ON de.studentid = ADA.studentid
+  district_entry AS de
+  INNER JOIN powerschool.ps_adaadm_daily_ctod AS ADA ON de.studentid = ADA.studentid
   AND ADA.calendardate (BETWEEN de.entrydate AND de.exitdate)
   AND ADA.membershipvalue = 1
   AND ADA.attendancevalue = 1

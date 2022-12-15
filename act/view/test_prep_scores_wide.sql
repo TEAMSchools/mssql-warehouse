@@ -39,5 +39,11 @@ FROM
     WHERE
       rn_dupe = 1
   ) AS sub PIVOT (
-    MAX(scale_score) FOR subject_area IN (english, mathematics, reading, science, composite)
+    MAX(scale_score) FOR subject_area IN (
+      english,
+      mathematics,
+      reading,
+      science,
+      composite
+    )
   ) p

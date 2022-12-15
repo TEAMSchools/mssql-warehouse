@@ -12,7 +12,9 @@ SELECT
 COLLATE Latin1_General_BIN AS application_approval_result_description,
 CAST(s.EligibilityDescription AS VARCHAR(125))
 COLLATE Latin1_General_BIN AS eligibility_description,
-CAST(s.MealBenefitsStatusDescription AS VARCHAR(25))
+CAST(
+  s.MealBenefitsStatusDescription AS VARCHAR(25)
+)
 COLLATE Latin1_General_BIN AS meal_benefits_status_description,
 CONVERT(
   VARCHAR(125),
@@ -68,7 +70,9 @@ SELECT
 COLLATE Latin1_General_BIN AS application_approval_result_description,
 CAST(s.EligibilityDescription AS VARCHAR(125))
 COLLATE Latin1_General_BIN AS eligibility_description,
-CAST(s.MealBenefitsStatusDescription AS VARCHAR(25))
+CAST(
+  s.MealBenefitsStatusDescription AS VARCHAR(25)
+)
 COLLATE Latin1_General_BIN AS meal_benefits_status_description,
 CONVERT(
   VARCHAR(125),

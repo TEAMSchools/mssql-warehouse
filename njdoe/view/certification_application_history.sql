@@ -18,7 +18,7 @@ SELECT
   END AS [status],
   ah.checklist
 FROM
-  gabby.njdoe.certification_check cc
+  gabby.njdoe.certification_check AS cc
   CROSS APPLY OPENJSON (cc.application_history, '$')
 WITH
   (

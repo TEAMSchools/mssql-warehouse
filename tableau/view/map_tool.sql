@@ -17,7 +17,7 @@ WITH
       base.lexile_score,
       NULL AS testdurationminutes
     FROM
-      gabby.nwea.best_baseline base
+      gabby.nwea.best_baseline AS base
     UNION ALL
     SELECT
       base.student_number,
@@ -33,8 +33,8 @@ WITH
       map.ritto_reading_score AS lexile_score,
       map.test_duration_minutes
     FROM
-      gabby.nwea.best_baseline base
-      LEFT JOIN gabby.nwea.assessment_result_identifiers map ON base.student_number = map.student_id
+      gabby.nwea.best_baseline AS base
+      LEFT JOIN gabby.nwea.assessment_result_identifiers AS map ON base.student_number = map.student_id
       AND base.academic_year = map.academic_year
       AND base.measurementscale = map.measurement_scale
       AND map.rn_term_subj = 1
@@ -99,22 +99,22 @@ SELECT
       map_long.measurementscale
   ) AS median_pct
 FROM
-  gabby.powerschool.cohort_identifiers_static r
+  gabby.powerschool.cohort_identifiers_static AS r
   LEFT JOIN map_long ON r.student_number = map_long.student_number
   AND r.academic_year = map_long.academic_year
-  LEFT JOIN gabby.nwea.percentile_norms_dense pct50 ON r.grade_level = pct50.grade_level
+  LEFT JOIN gabby.nwea.percentile_norms_dense AS pct50 ON r.grade_level = pct50.grade_level
   AND map_long.term = pct50.term
 COLLATE Latin1_General_BIN
 AND map_long.measurementscale = pct50.measurementscale
 COLLATE Latin1_General_BIN
 AND pct50.testpercentile = 50
-LEFT JOIN gabby.nwea.percentile_norms_dense pct75 ON r.grade_level = pct75.grade_level
+LEFT JOIN gabby.nwea.percentile_norms_dense AS pct75 ON r.grade_level = pct75.grade_level
 AND map_long.term = pct75.term
 COLLATE Latin1_General_BIN
 AND map_long.measurementscale = pct75.measurementscale
 COLLATE Latin1_General_BIN
 AND pct75.testpercentile = 75
-LEFT JOIN gabby.nwea.learning_continuum_goals DOMAIN ON r.student_number = DOMAIN.student_number
+LEFT JOIN gabby.nwea.learning_continuum_goals AS DOMAIN ON r.student_number = DOMAIN.student_number
 AND map_long.test_id = DOMAIN.test_id
 WHERE
   r.rn_year = 1

@@ -16,10 +16,10 @@ WITH
       f.outstanding AS followup_outstanding,
       CONCAT(f.c_first, ' ', f.c_last) AS followup_staff_name
     FROM
-      gabby.deanslist.communication c
-      INNER JOIN gabby.deanslist.users u ON c.dluser_id = u.dluser_id
+      gabby.deanslist.communication AS c
+      INNER JOIN gabby.deanslist.users AS u ON c.dluser_id = u.dluser_id
       AND c.[db_name] = u.[db_name]
-      LEFT JOIN gabby.deanslist.followups f ON c.followup_id = f.followup_id
+      LEFT JOIN gabby.deanslist.followups AS f ON c.followup_id = f.followup_id
       AND c.[db_name] = f.[db_name]
     WHERE
       c.reason LIKE 'Chronic%'
@@ -57,15 +57,15 @@ FROM
       END AS homeroom,
       COUNT(att.id) AS n_absences
     FROM
-      gabby.powerschool.attendance_clean_current_static att
-      INNER JOIN gabby.powerschool.attendance_code ac ON att.attendance_codeid = ac.id
+      gabby.powerschool.attendance_clean_current_static AS att
+      INNER JOIN gabby.powerschool.attendance_code AS ac ON att.attendance_codeid = ac.id
       AND att.[db_name] = ac.[db_name]
       AND ac.att_code IN ('A', 'AD')
       LEFT JOIN gabby.powerschool.cc ON att.studentid = cc.studentid
       AND att.[db_name] = cc.[db_name]
       AND CAST(CURRENT_TIMESTAMP AS DATE) (BETWEEN cc.dateenrolled AND cc.dateleft)
       AND cc.course_number = 'HR'
-      INNER JOIN gabby.powerschool.cohort_identifiers_static co ON att.studentid = co.studentid
+      INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON att.studentid = co.studentid
       AND att.[db_name] = co.[db_name]
       AND att.att_date (BETWEEN co.entrydate AND co.exitdate)
       AND co.enroll_status = 0
@@ -84,5 +84,5 @@ FROM
         ELSE cc.section_number
       END
   ) sub
-  LEFT JOIN commlog cl ON sub.student_number = cl.student_school_id
+  LEFT JOIN commlog AS cl ON sub.student_number = cl.student_school_id
   AND sub.[db_name] = cl.[db_name]

@@ -30,9 +30,11 @@ WITH
       'Self & Others' AS survey_type,
       c.survey_id AS survey_id
     FROM
-      gabby.surveys.self_and_others_survey s
-      INNER JOIN gabby.surveygizmo.survey_campaign_clean_static c ON c.survey_id = 4561325
-      AND CAST(s._created AS DATETIME2) (BETWEEN c.link_open_date AND c.link_close_date)
+      gabby.surveys.self_and_others_survey AS s
+      INNER JOIN gabby.surveygizmo.survey_campaign_clean_static AS c ON c.survey_id = 4561325
+      AND CAST(s._created AS DATETIME2) (
+        BETWEEN c.link_open_date AND c.link_close_date
+      )
     WHERE
       gabby.utilities.DATE_TO_SY (s._created) = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
       AND s.subject_name IS NOT NULL
@@ -64,9 +66,11 @@ WITH
       'Manager' AS survey_type,
       c.survey_id AS survey_id
     FROM
-      gabby.surveys.manager_survey m
-      INNER JOIN gabby.surveygizmo.survey_campaign_clean_static c ON c.survey_id = 4561288
-      AND CAST(m._created AS DATETIME2) (BETWEEN c.link_open_date AND c.link_close_date)
+      gabby.surveys.manager_survey AS m
+      INNER JOIN gabby.surveygizmo.survey_campaign_clean_static AS c ON c.survey_id = 4561288
+      AND CAST(m._created AS DATETIME2) (
+        BETWEEN c.link_open_date AND c.link_close_date
+      )
     WHERE
       gabby.utilities.DATE_TO_SY (m._created) = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
       AND m.subject_name IS NOT NULL
@@ -89,9 +93,11 @@ WITH
       'R9/Engagement' AS survey_type,
       c.survey_id AS survey_id
     FROM
-      gabby.surveys.r_9_engagement_survey e
-      INNER JOIN gabby.surveygizmo.survey_campaign_clean_static c ON c.survey_id = 5300913
-      AND CAST(e._created AS DATETIME2) (BETWEEN c.link_open_date AND c.link_close_date)
+      gabby.surveys.r_9_engagement_survey AS e
+      INNER JOIN gabby.surveygizmo.survey_campaign_clean_static AS c ON c.survey_id = 5300913
+      AND CAST(e._created AS DATETIME2) (
+        BETWEEN c.link_open_date AND c.link_close_date
+      )
     WHERE
       gabby.utilities.DATE_TO_SY (e._created) = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
   ),
@@ -125,7 +131,7 @@ WITH
       END AS survey_type,
       r.survey_id AS survey_id
     FROM
-      gabby.surveygizmo.survey_response_identifiers_static r
+      gabby.surveygizmo.survey_response_identifiers_static AS r
     WHERE
       r.campaign_academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
   ),
@@ -145,8 +151,8 @@ WITH
       COALESCE(r.survey_type, w.survey_type) AS survey_type,
       COALESCE(r.survey_id, w.survey_id) AS survey_id
     FROM
-      response_identifiers r
-      FULL JOIN webhook_feed w ON r.survey_id = w.survey_id
+      response_identifiers AS r
+      FULL JOIN webhook_feed AS w ON r.survey_id = w.survey_id
       AND r.email = w.email
       AND r.subject_df_employee_number = w.subject_df_employee_number
       AND r.reporting_term = w.reporting_term
@@ -176,7 +182,7 @@ WITH
       ss.[value] AS reporting_term,
       gabby.utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year
     FROM
-      gabby.people.staff_crosswalk_static sr
+      gabby.people.staff_crosswalk_static AS sr
       CROSS JOIN STRING_SPLIT ('SO1,SO2,SO3', ',') ss
     WHERE
       sr.[status] NOT IN ('TERMINATED', 'PRESTART')
@@ -205,7 +211,7 @@ WITH
       ss.[value] AS reporting_term,
       gabby.utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year
     FROM
-      gabby.people.staff_crosswalk_static sr
+      gabby.people.staff_crosswalk_static AS sr
       CROSS JOIN STRING_SPLIT ('R9S1,R9S2,R9S3,R9S4', ',') ss
     WHERE
       sr.[status] NOT IN ('TERMINATED', 'PRESTART')
@@ -234,7 +240,7 @@ WITH
       ss.[value] AS reporting_term,
       gabby.utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year
     FROM
-      gabby.people.staff_crosswalk_static sr
+      gabby.people.staff_crosswalk_static AS sr
       CROSS JOIN STRING_SPLIT ('MGR1,MGR2,MGR3,MGR4', ',') ss
     WHERE
       sr.[status] NOT IN ('TERMINATED', 'PRESTART')
@@ -247,7 +253,11 @@ SELECT
   s.location_custom AS location_custom,
   s.job_title_description,
   s.position_status,
-  COALESCE(f1.date_created, f2.date_created, f3.date_created) AS date_created,
+  COALESCE(
+    f1.date_created,
+    f2.date_created,
+    f3.date_created
+  ) AS date_created,
   COALESCE(
     f1.date_submitted,
     f2.date_submitted,
@@ -259,7 +269,11 @@ SELECT
     f3.responder_email,
     email1
   ) AS responder_email,
-  COALESCE(f1.subject_name, f2.subject_name, f3.subject_name) AS subject_name,
+  COALESCE(
+    f1.subject_name,
+    f2.subject_name,
+    f3.subject_name
+  ) AS subject_name,
   COALESCE(
     s.academic_year,
     f1.academic_year,
@@ -280,16 +294,16 @@ SELECT
   ) AS survey_type,
   COALESCE(f1.is_manager, f2.is_manager, f3.is_manager) AS is_manager
 FROM
-  teacher_scaffold s
-  LEFT JOIN survey_feed f1 ON s.email1 = f1.responder_email
+  teacher_scaffold AS s
+  LEFT JOIN survey_feed AS f1 ON s.email1 = f1.responder_email
   AND s.survey_type = f1.survey_type
   AND s.academic_year = f1.academic_year
   AND s.reporting_term = f1.reporting_term
-  LEFT JOIN survey_feed f2 ON s.email2 = f2.responder_email
+  LEFT JOIN survey_feed AS f2 ON s.email2 = f2.responder_email
   AND s.survey_type = f2.survey_type
   AND s.academic_year = f2.academic_year
   AND s.reporting_term = f2.reporting_term
-  LEFT JOIN survey_feed f3 ON s.email3 = f3.responder_email
+  LEFT JOIN survey_feed AS f3 ON s.email3 = f3.responder_email
   AND s.survey_type = f3.survey_type
   AND s.academic_year = f3.academic_year
   AND s.reporting_term = f3.reporting_term

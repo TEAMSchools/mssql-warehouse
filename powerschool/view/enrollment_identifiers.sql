@@ -33,14 +33,20 @@ FROM
         WHEN co.entrydate <= DATEADD(
           DAY,
           7 - (
-            DATEPART(WEEKDAY, DATEFROMPARTS(co.academic_year, 10, 15))
+            DATEPART(
+              WEEKDAY,
+              DATEFROMPARTS(co.academic_year, 10, 15)
+            )
           ),
           DATEFROMPARTS(co.academic_year, 10, 15)
         ) /* entered before 10/15 week end */
         AND co.exitdate >= DATEADD(
           DAY,
           0 - (
-            DATEPART(WEEKDAY, DATEFROMPARTS(co.academic_year, 10, 15)) - 1
+            DATEPART(
+              WEEKDAY,
+              DATEFROMPARTS(co.academic_year, 10, 15)
+            ) - 1
           ),
           DATEFROMPARTS(co.academic_year, 10, 15)
         ) /* exited after 10/15 week start */ THEN 1
@@ -70,8 +76,8 @@ FROM
         ) /* exited after 01/15 week start */ THEN 1
       END AS is_enrolled_jan15_week
     FROM
-      powerschool.cohort_static co
-      LEFT JOIN powerschool.calendar_rollup_static c ON co.schoolid = c.schoolid
+      powerschool.cohort_static AS co
+      LEFT JOIN powerschool.calendar_rollup_static AS c ON co.schoolid = c.schoolid
       AND co.yearid = c.yearid
       AND co.track = c.track
     WHERE

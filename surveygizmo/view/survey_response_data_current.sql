@@ -15,7 +15,7 @@ SELECT
   sd.options_list,
   sd.shown
 FROM
-  gabby.surveygizmo.survey_response_clean_current_static sr
+  gabby.surveygizmo.survey_response_clean_current_static AS sr
   CROSS APPLY OPENJSON (sr.survey_data_json, '$')
 WITH
   (

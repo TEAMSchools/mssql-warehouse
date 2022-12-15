@@ -34,7 +34,7 @@ SELECT
   NULL AS colaa,
   NULL AS colab
 FROM
-  gabby.powerschool.cohort_identifiers_static co
+  gabby.powerschool.cohort_identifiers_static AS co
 WHERE
   co.grade_level = 12
   AND co.exitcode = 'G1'
@@ -55,7 +55,9 @@ SELECT
   /* prev first name */
   NULL AS colh,
   /* date of birth */
-  CAST(REPLACE(CAST(co.dob AS DATE), '-', '') AS VARCHAR) AS coli,
+  CAST(
+    REPLACE(CAST(co.dob AS DATE), '-', '') AS VARCHAR
+  ) AS coli,
   /* student ID */
   co.student_number AS colj,
   /* diploma type */
@@ -91,7 +93,7 @@ SELECT
   NULL AS colaa,
   'ED' AS colab
 FROM
-  gabby.powerschool.cohort_identifiers_static co
+  gabby.powerschool.cohort_identifiers_static AS co
 WHERE
   co.school_level = 'HS'
   AND co.exitcode = 'G1'
@@ -126,7 +128,7 @@ SELECT
   NULL AS colaa,
   NULL AS colab
 FROM
-  gabby.powerschool.cohort_identifiers_static co
+  gabby.powerschool.cohort_identifiers_static AS co
 WHERE
   co.school_level = 'HS'
   AND co.exitcode = 'G1'

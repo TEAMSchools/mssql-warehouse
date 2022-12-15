@@ -79,7 +79,10 @@ DELETE;
 INSERT INTO
   [utilities].[cache_view_log] ([view_name], [timestamp])
 VALUES
-  ('powerschool.ps_enrollment_all', GETUTCDATE());
+  (
+    'powerschool.ps_enrollment_all',
+    GETUTCDATE()
+  );
 
 END TRY BEGIN CATCH PRINT (ERROR_MESSAGE());
 

@@ -43,7 +43,9 @@ WITH
           CAST(legal_entity_name AS VARCHAR(MAX)) AS legal_entity_name,
           CAST(primary_job AS VARCHAR(MAX)) AS primary_job,
           CAST(position_title AS VARCHAR(MAX)) AS position_title,
-          CAST(position_effective_from_date AS VARCHAR(MAX)) AS position_effective_from_date,
+          CAST(
+            position_effective_from_date AS VARCHAR(MAX)
+          ) AS position_effective_from_date,
           CAST([status] AS VARCHAR(MAX)) AS [status],
           CAST(rehire_date AS VARCHAR(MAX)) AS rehire_date,
           CAST(termination_date AS VARCHAR(MAX)) AS termination_date,
@@ -55,7 +57,9 @@ WITH
           CAST(postal_code AS VARCHAR(MAX)) AS postal_code,
           CAST(paytype AS VARCHAR(MAX)) AS paytype,
           CAST(payclass AS VARCHAR(MAX)) AS payclass,
-          CAST(jobs_and_positions_flsa_status AS VARCHAR(MAX)) AS jobs_and_positions_flsa_status,
+          CAST(
+            jobs_and_positions_flsa_status AS VARCHAR(MAX)
+          ) AS jobs_and_positions_flsa_status,
           CAST(is_manager AS VARCHAR(MAX)) AS is_manager,
           CAST(
             employee_s_manager_s_df_emp_number_id AS VARCHAR(MAX)
@@ -119,6 +123,6 @@ SELECT
   df.new_value,
   df.previous_value
 FROM
-  data_long df
+  data_long AS df
 WHERE
   df.new_value <> df.previous_value

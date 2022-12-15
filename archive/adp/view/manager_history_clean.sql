@@ -52,8 +52,8 @@ FROM
       CAST(mh.reports_to_effective_end_date AS DATE) AS reports_to_effective_end_date,
       sr.file_number AS employee_number
     FROM
-      gabby.adp.manager_history mh
-      INNER JOIN gabby.adp.employees_all sr ON mh.associate_id = sr.associate_id
+      gabby.adp.manager_history AS mh
+      INNER JOIN gabby.adp.employees_all AS sr ON mh.associate_id = sr.associate_id
     WHERE
       mh.reports_to_associate_id IS NOT NULL
   ) sub

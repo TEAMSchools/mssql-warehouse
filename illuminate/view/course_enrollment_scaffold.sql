@@ -11,7 +11,7 @@ SELECT
   subject_area,
   is_advanced_math_student
 FROM
-  gabby.illuminate_dna_assessments.course_enrollment_scaffold_current_static
+  gabby.illuminate_dna_assessments.course_enrollment_scaffold_current_static AS
 UNION ALL
 SELECT
   student_id,

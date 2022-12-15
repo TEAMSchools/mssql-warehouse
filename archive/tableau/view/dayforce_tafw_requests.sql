@@ -29,5 +29,5 @@ SELECT
   r.manager_name,
   r.manager_userprincipalname AS manager_mail
 FROM
-  gabby.dayforce.tafw_requests t
-  INNER JOIN gabby.people.staff_crosswalk_static r ON t.reference_code = r.df_employee_number
+  gabby.dayforce.tafw_requests AS t
+  INNER JOIN gabby.people.staff_crosswalk_static AS r ON t.reference_code = r.df_employee_number

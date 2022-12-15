@@ -78,7 +78,7 @@ WITH
         )
       ) AS effective_end_date
     FROM
-      date_scaffold d
+      date_scaffold AS d
   ),
   wa_dates AS (
     SELECT
@@ -138,22 +138,22 @@ SELECT
   wad.work_assignment_start_date,
   wad.work_assignment_end_date
 FROM
-  range_scaffold r
-  LEFT JOIN gabby.people.status_history_static s ON r.position_id = s.position_id
+  range_scaffold AS r
+  LEFT JOIN gabby.people.status_history_static AS s ON r.position_id = s.position_id
   AND r.effective_start_date (
     BETWEEN s.status_effective_date AND s.status_effective_end_date_eoy
   )
-  LEFT JOIN gabby.people.work_assignment_history_static w ON r.position_id = w.position_id
+  LEFT JOIN gabby.people.work_assignment_history_static AS w ON r.position_id = w.position_id
   AND r.effective_start_date (
     BETWEEN w.position_effective_date AND w.position_effective_end_date_eoy
   )
-  LEFT JOIN gabby.people.salary_history_static sal ON r.position_id = sal.position_id
+  LEFT JOIN gabby.people.salary_history_static AS sal ON r.position_id = sal.position_id
   AND r.effective_start_date (
     BETWEEN sal.regular_pay_effective_date AND sal.regular_pay_effective_end_date_eoy
   )
-  LEFT JOIN gabby.people.manager_history_static mh ON r.position_id = mh.position_id
+  LEFT JOIN gabby.people.manager_history_static AS mh ON r.position_id = mh.position_id
   AND r.effective_start_date (
     BETWEEN mh.reports_to_effective_date AND mh.reports_to_effective_end_date_eoy
   )
-  LEFT JOIN wa_dates wad ON r.position_id = wad.position_id
+  LEFT JOIN wa_dates AS wad ON r.position_id = wad.position_id
   AND w.job_title_description = wad.job_title_description

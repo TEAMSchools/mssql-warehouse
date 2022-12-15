@@ -106,5 +106,5 @@ SELECT
   c.amount - c.remaining AS remaining_budget_coupa
 FROM
   mip
-  LEFT JOIN coupa c ON mip.[AcctCode From Valid Segments] = c.code
+  LEFT JOIN coupa AS c ON mip.[AcctCode From Valid Segments] = c.code
   AND mip.[Budget Period] = c.budget_period

@@ -38,7 +38,7 @@ FROM
           leave_date,
           (gabby.utilities.DATE_TO_SY (entry_date) + 1) AS academic_year
         FROM
-          gabby.illuminate_public.student_session_aff ssa
+          gabby.illuminate_public.student_session_aff AS ssa
       ) sub
   ) sub
 WHERE

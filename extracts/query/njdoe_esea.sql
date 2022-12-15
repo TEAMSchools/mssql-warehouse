@@ -14,7 +14,7 @@ WITH
       SUM(hours_worked) AS month_hours_worked,
       COUNT(t.date_value) * 9.5 AS month_possible_hours
     FROM
-      gabby.tableau.staff_tracker t
+      gabby.tableau.staff_tracker AS t
     GROUP BY
       t.df_employee_number,
       t.preferred_lastfirst,
@@ -133,14 +133,18 @@ SELECT
   s.month_possible_hours - s.month_hours_worked AS month_hours_not_worked,
   CAST(
     ROUND(
-      (s.month_hours_worked / s.month_possible_hours) * 100,
+      (
+        s.month_hours_worked / s.month_possible_hours
+      ) * 100,
       0
     ) AS INT
   ) AS month_percent_worked,
   CAST(
     ROUND(
       (
-        (s.month_possible_hours - s.month_hours_worked) / s.month_possible_hours
+        (
+          s.month_possible_hours - s.month_hours_worked
+        ) / s.month_possible_hours
       ) * 100,
       0
     ) AS INT
@@ -178,7 +182,7 @@ SELECT
   d.day_30,
   d.day_31
 FROM
-  scaffold s
-  LEFT JOIN days_table d ON s.df_employee_number = d.df_employee_number
+  scaffold AS s
+  LEFT JOIN days_table AS d ON s.df_employee_number = d.df_employee_number
   AND s.academic_year = d.academic_year
   AND s.month_num = d.month_num

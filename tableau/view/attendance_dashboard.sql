@@ -64,7 +64,7 @@ SELECT
       calendardate
   ) AS is_suspended_running
 FROM
-  tableau.attendance_dashboard_current_static
+  tableau.attendance_dashboard_current_static AS
 UNION ALL
 SELECT
   academic_year,

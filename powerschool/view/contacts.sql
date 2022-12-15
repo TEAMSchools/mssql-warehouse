@@ -17,13 +17,13 @@ SELECT
   scd.schoolpickupflg,
   sccs.code AS relationship_type
 FROM
-  powerschool.students s
-  INNER JOIN powerschool.studentcontactassoc sca ON s.dcid = sca.studentdcid
-  LEFT JOIN powerschool.originalcontactmap ocm ON sca.studentcontactassocid = ocm.studentcontactassocid
-  INNER JOIN powerschool.person p ON sca.personid = p.id
-  INNER JOIN powerschool.studentcontactdetail scd ON sca.studentcontactassocid = scd.studentcontactassocid
+  powerschool.students AS s
+  INNER JOIN powerschool.studentcontactassoc AS sca ON s.dcid = sca.studentdcid
+  LEFT JOIN powerschool.originalcontactmap AS ocm ON sca.studentcontactassocid = ocm.studentcontactassocid
+  INNER JOIN powerschool.person AS p ON sca.personid = p.id
+  INNER JOIN powerschool.studentcontactdetail AS scd ON sca.studentcontactassocid = scd.studentcontactassocid
   AND scd.isactive = 1
-  INNER JOIN powerschool.codeset sccs ON scd.relationshiptypecodesetid = sccs.codesetid
+  INNER JOIN powerschool.codeset AS sccs ON scd.relationshiptypecodesetid = sccs.codesetid
 UNION ALL
 SELECT
   s.student_number,
@@ -39,6 +39,6 @@ SELECT
   0 AS schoolpickupflg,
   'Self' AS relationship_type
 FROM
-  powerschool.students s
-  INNER JOIN powerschool.person p ON s.person_id = p.id
+  powerschool.students AS s
+  INNER JOIN powerschool.person AS p ON s.person_id = p.id
   AND p.isactive = 1

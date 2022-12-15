@@ -33,8 +33,8 @@ WITH
         SUM(CAST(s.answer_value AS FLOAT)) / a.answer_total
       ) * 10.0 AS item_weight
     FROM
-      weight_denominator a
-      LEFT JOIN surveygizmo.survey_detail s ON a.survey_id = s.survey_id
+      weight_denominator AS a
+      LEFT JOIN surveygizmo.survey_detail AS s ON a.survey_id = s.survey_id
       AND s.survey_id = 6734664
       AND s.question_shortname IN (
         'imp_1',
@@ -93,5 +93,5 @@ SELECT
   w.item_weight / 10.0 AS percent_weight,
   w.question_title
 FROM
-  avg_scores s
-  INNER JOIN score_weights w ON s.question_shortname = w.question_shortname
+  avg_scores AS s
+  INNER JOIN score_weights AS w ON s.question_shortname = w.question_shortname

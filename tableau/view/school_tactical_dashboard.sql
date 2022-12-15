@@ -18,7 +18,7 @@ WITH
       co.enroll_status,
       co.[db_name]
     FROM
-      gabby.powerschool.cohort_identifiers_static co
+      gabby.powerschool.cohort_identifiers_static AS co
     WHERE
       co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
       AND co.rn_year = 1
@@ -70,7 +70,7 @@ WITH
                 ELSE 0.0
               END AS is_attrition_week
             FROM
-              roster r
+              roster AS r
           ) sub
         GROUP BY
           sub.academic_year,
@@ -152,8 +152,8 @@ WITH
                 ELSE 0.0
               END AS is_below_iep
             FROM
-              roster r
-              INNER JOIN gabby.illuminate_dna_assessments.agg_student_responses_all a ON r.student_number = a.local_student_id
+              roster AS r
+              INNER JOIN gabby.illuminate_dna_assessments.agg_student_responses_all AS a ON r.student_number = a.local_student_id
               AND r.academic_year = a.academic_year
               AND a.response_type = 'O'
               AND a.is_replacement = 0
@@ -228,8 +228,8 @@ WITH
   WHEN p.test_performance_level <= 2 THEN 1.0 
   ELSE 0.0 
   END AS is_below_iep
-  FROM roster r
-  INNER JOIN gabby.parcc.summative_record_file_clean p
+  FROM roster AS r
+  INNER JOIN gabby.parcc.summative_record_file_clean AS p
   ON r.student_number = p.local_student_identifier
   AND r.academic_year = p.academic_year
   ) sub
@@ -402,13 +402,13 @@ WITH
         END AS FLOAT
       ) AS is_oss_iep
     FROM
-      roster r
-      INNER JOIN gabby.powerschool.ps_adaadm_daily_ctod_current_static ADA ON r.studentid = ADA.studentid
+      roster AS r
+      INNER JOIN gabby.powerschool.ps_adaadm_daily_ctod_current_static AS ADA ON r.studentid = ADA.studentid
       AND r.yearid = ADA.yearid
       AND r.[db_name] = ADA.[db_name]
       AND ADA.membershipvalue = 1
       AND ADA.calendardate < CAST(SYSDATETIME() AS DATE)
-      LEFT JOIN gabby.powerschool.ps_attendance_daily_current_static att ON r.studentid = att.studentid
+      LEFT JOIN gabby.powerschool.ps_attendance_daily_current_static AS att ON r.studentid = att.studentid
       AND r.[db_name] = att.[db_name]
       AND ADA.calendardate = att.att_date
     GROUP BY
@@ -445,7 +445,9 @@ WITH
           AVG(sub.is_iss_iep) AS pct_iss_iep,
           AVG(sub.is_oss_iep) AS pct_oss_iep,
           SUM(sub.n_present_week) / SUM(sub.n_membership_week) AS pct_ada_week,
-          (SUM(sub.n_present_week) - SUM(sub.n_tardy_week)) / SUM(sub.n_membership_week) AS pct_ontime_week,
+          (
+            SUM(sub.n_present_week) - SUM(sub.n_tardy_week)
+          ) / SUM(sub.n_membership_week) AS pct_ontime_week,
           CAST(
             COUNT(
               DISTINCT CASE
@@ -461,7 +463,7 @@ WITH
             ) AS FLOAT
           ) AS n_oss_week
         FROM
-          student_attendance sub
+          student_attendance AS sub
         GROUP BY
           sub.academic_year,
           ROLLUP (sub.region, sub.reporting_schoolid),
@@ -506,7 +508,7 @@ WITH
             END AS FLOAT
           ) AS is_chronic_absentee
         FROM
-          student_attendance sa
+          student_attendance AS sa
         WHERE
           sa.enroll_status = 0
       ) sub
@@ -563,8 +565,7 @@ WITH
   ELSE 0.0
   END AS FLOAT
   ) AS is_attrition_termination
-  FROM
-  gabby.tableau.compliance_staff_attrition a
+  FROM gabby.tableau.compliance_staff_attrition AS a
   WHERE
   a.is_denominator = 1
   AND a.primary_site_reporting_schoolid <> 0
@@ -618,10 +619,10 @@ WITH
             ELSE 0.0
           END AS is_attrition
         FROM
-          gabby.powerschool.cohort_identifiers_static y1
-          LEFT JOIN gabby.powerschool.students s ON y1.student_number = s.student_number
+          gabby.powerschool.cohort_identifiers_static AS y1
+          LEFT JOIN gabby.powerschool.students AS s ON y1.student_number = s.student_number
           AND y1.[db_name] = s.[db_name]
-          LEFT JOIN gabby.powerschool.cohort_identifiers_static y2 ON y1.student_number = y2.student_number
+          LEFT JOIN gabby.powerschool.cohort_identifiers_static AS y2 ON y1.student_number = y2.student_number
           AND y1.[db_name] = y2.[db_name]
           AND y1.academic_year = (y2.academic_year - 1)
           AND DATEFROMPARTS(y2.academic_year, 10, 01) (BETWEEN y2.entrydate AND y2.exitdate)
@@ -670,8 +671,8 @@ WITH
                 ELSE 0.0
               END AS gpa_ge_2
             FROM
-              roster r
-              INNER JOIN gabby.powerschool.gpa_detail gpa ON r.student_number = gpa.student_number
+              roster AS r
+              INNER JOIN gabby.powerschool.gpa_detail AS gpa ON r.student_number = gpa.student_number
               AND r.academic_year = gpa.academic_year
               AND r.reporting_schoolid = gpa.schoolid
               AND r.[db_name] = gpa.[db_name]
@@ -851,8 +852,8 @@ WITH
                 ELSE CAST(achv.moved_levels AS FLOAT)
               END AS moved_reading_level
             FROM
-              roster r
-              INNER JOIN gabby.lit.achieved_by_round_static achv ON r.student_number = achv.student_number
+              roster AS r
+              INNER JOIN gabby.lit.achieved_by_round_static AS achv ON r.student_number = achv.student_number
               AND r.academic_year = achv.academic_year
               AND achv.achv_unique_id LIKE 'FPBAS%'
               AND achv.[start_date] <= SYSDATETIME()
@@ -966,7 +967,7 @@ SELECT
   d.field,
   d.[value]
 FROM
-  demographics d
+  demographics AS d
 UNION ALL
 SELECT
   m.academic_year,
@@ -982,7 +983,7 @@ m.module_number AS term_name,
 m.field,
 m.[value]
 FROM
-  modules m
+  modules AS m
 UNION ALL
 /*
 SELECT p.academic_year
@@ -996,7 +997,7 @@ SELECT p.academic_year
 ,'PARCC' AS subdomain
 ,p.field
 ,p.[value]
-FROM parcc p
+FROM parcc AS p
 UNION ALL
  */
 SELECT
@@ -1020,7 +1021,7 @@ SELECT
   a.field,
   a.[value]
 FROM
-  student_attendance_rollup a
+  student_attendance_rollup AS a
 UNION ALL
 SELECT
   a.academic_year,
@@ -1035,7 +1036,7 @@ SELECT
   a.field,
   a.[value]
 FROM
-  chronic_absentee a
+  chronic_absentee AS a
 UNION ALL
 /*
 SELECT sa.academic_year
@@ -1049,7 +1050,7 @@ SELECT sa.academic_year
 ,NULL AS subdomain
 ,sa.field
 ,sa.[value]      
-FROM staff_attrition sa
+FROM staff_attrition AS sa
 UNION ALL
  */
 SELECT
@@ -1065,7 +1066,7 @@ SELECT
   sta.field,
   sta.[value]
 FROM
-  student_attrition sta
+  student_attrition AS sta
 UNION ALL
 SELECT
   gpa.academic_year,
@@ -1080,7 +1081,7 @@ SELECT
   gpa.field,
   gpa.[value]
 FROM
-  gpa
+  gpa AS
 UNION ALL
 /*
 SELECT sta.academic_year
@@ -1094,7 +1095,7 @@ SELECT sta.academic_year
 ,NULL AS subdomain
 ,sta.field
 ,sta.[value]
-FROM staff_attendance sta
+FROM staff_attendance AS sta
 UNION ALL
  */
 SELECT
@@ -1110,7 +1111,7 @@ SELECT
   lit.field,
   lit.[value]
 FROM
-  lit
+  lit AS
 UNION ALL
 SELECT
   sos.academic_year,
@@ -1125,7 +1126,7 @@ SELECT
   sos.field,
   sos.[value]
 FROM
-  so_survey sos
+  so_survey AS sos
 UNION ALL
 SELECT
   mgr.academic_year,
@@ -1140,4 +1141,4 @@ SELECT
   mgr.field,
   mgr.[value]
 FROM
-  manager_survey mgr
+  manager_survey AS mgr

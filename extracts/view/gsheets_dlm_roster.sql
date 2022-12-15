@@ -16,8 +16,8 @@ WITH
       nj.state_assessment_name,
       nj.math_state_assessment_name
     FROM
-      gabby.powerschool.cohort_identifiers_static co
-      INNER JOIN gabby.powerschool.s_nj_stu_x nj ON co.students_dcid = nj.studentsdcid
+      gabby.powerschool.cohort_identifiers_static AS co
+      INNER JOIN gabby.powerschool.s_nj_stu_x AS nj ON co.students_dcid = nj.studentsdcid
       AND co.[db_name] = nj.[db_name]
       AND (
         nj.state_assessment_name IN (3, 4)
@@ -63,8 +63,8 @@ SELECT
   ) AS [Educator Last Name],
   NULL AS [Remove from Roster]
 FROM
-  roster r
-  INNER JOIN gabby.powerschool.course_enrollments_current_static ce ON r.student_number = ce.student_number
+  roster AS r
+  INNER JOIN gabby.powerschool.course_enrollments_current_static AS ce ON r.student_number = ce.student_number
   AND r.academic_year = ce.academic_year
   AND ce.course_enroll_status = 0
   AND ce.section_enroll_status = 0
@@ -104,8 +104,8 @@ SELECT
   ) AS [Educator Last Name],
   NULL AS [Remove from Roster]
 FROM
-  roster r
-  INNER JOIN powerschool.course_enrollments_current_static ce ON r.student_number = ce.student_number
+  roster AS r
+  INNER JOIN powerschool.course_enrollments_current_static AS ce ON r.student_number = ce.student_number
   AND r.academic_year = ce.academic_year
   AND ce.course_enroll_status = 0
   AND ce.section_enroll_status = 0

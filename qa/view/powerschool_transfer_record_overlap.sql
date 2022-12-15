@@ -31,10 +31,10 @@ FROM
       ) AS exitdate_prev,
       s.student_number
     FROM
-      gabby.powerschool.ps_enrollment_all pea
-      INNER JOIN gabby.powerschool.students s ON pea.studentid = s.id
+      gabby.powerschool.ps_enrollment_all AS pea
+      INNER JOIN gabby.powerschool.students AS s ON pea.studentid = s.id
       AND pea.[db_name] = s.[db_name]
-      INNER JOIN gabby.powerschool.schools sch ON pea.schoolid = sch.school_number
+      INNER JOIN gabby.powerschool.schools AS sch ON pea.schoolid = sch.school_number
       AND pea.[db_name] = sch.[db_name]
       AND sch.state_excludefromreporting = 0 /* exclude grads & ss */
   ) sub

@@ -5,12 +5,16 @@ SELECT
   CAST(associate_oid AS NVARCHAR(32)) AS associate_oid,
   CAST(worker_id AS NVARCHAR(32)) AS worker_id,
   CAST(legal_name_formatted AS NVARCHAR(32)) AS legal_name_formatted,
-  CAST(legal_name_preferred_salutations AS NVARCHAR(8)) AS legal_name_preferred_salutations,
+  CAST(
+    legal_name_preferred_salutations AS NVARCHAR(8)
+  ) AS legal_name_preferred_salutations,
   CAST(legal_name_given AS NVARCHAR(64)) AS legal_name_given,
   CAST(legal_name_nick AS NVARCHAR(64)) AS legal_name_nick,
   CAST(legal_name_middle AS NVARCHAR(64)) AS legal_name_middle,
   CAST(legal_name_family AS NVARCHAR(64)) AS legal_name_family,
-  CAST(legal_name_generation_affix_code AS NVARCHAR(8)) AS legal_name_generation_affix_code,
+  CAST(
+    legal_name_generation_affix_code AS NVARCHAR(8)
+  ) AS legal_name_generation_affix_code,
   CAST(
     legal_name_qualification_affix_code AS NVARCHAR(8)
   ) AS legal_name_qualification_affix_code,

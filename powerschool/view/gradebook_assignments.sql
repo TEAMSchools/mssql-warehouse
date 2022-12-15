@@ -13,7 +13,7 @@ SELECT
   categoryid,
   category_name
 FROM
-  powerschool.gradebook_assignments_current_static
+  powerschool.gradebook_assignments_current_static AS
 UNION ALL
 SELECT
   assignmentsectionid,

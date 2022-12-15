@@ -49,13 +49,13 @@ WITH
           n.testritscore ASC
       ) AS rn
     FROM
-      gabby.utilities.row_generator u
+      gabby.utilities.row_generator AS u
     WITH
       (NOLOCK)
-      CROSS JOIN measurementscales m
-      CROSS JOIN terms t
-      CROSS JOIN grade_levels gr
-      LEFT OUTER JOIN gabby.nwea.percentile_norms n
+      CROSS JOIN measurementscales AS m
+      CROSS JOIN terms AS t
+      CROSS JOIN grade_levels AS gr
+      LEFT OUTER JOIN gabby.nwea.percentile_norms AS n
     WITH
       (NOLOCK) ON u.n = n.student_percentile
       AND m.measurementscale = n.measurementscale
@@ -128,7 +128,7 @@ WITH
               s1.testpercentile ASC
           ) AS testritscore_lag5
         FROM
-          scaffold s1
+          scaffold AS s1
         WHERE
           rn = 1
       ) sub

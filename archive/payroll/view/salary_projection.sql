@@ -15,7 +15,7 @@ WITH
           c.pay_date DESC
       ) AS rn_most_recent_paydate
     FROM
-      gabby.payroll.pr_employeesummary_clean c
+      gabby.payroll.pr_employeesummary_clean AS c
   )
 SELECT
   r.position_id,
@@ -27,7 +27,7 @@ SELECT
   a.preferred_first,
   a.preferred_last
 FROM
-  gabby.payroll.pr_employeesummary_clean r
+  gabby.payroll.pr_employeesummary_clean AS r
   LEFT OUTER JOIN o ON r.position_id = o.position_id
   AND o.rn_most_recent_paydate = 1
-  LEFT OUTER JOIN gabby.adp.staff_roster a ON a.position_id = r.position_id
+  LEFT OUTER JOIN gabby.adp.staff_roster AS a ON a.position_id = r.position_id

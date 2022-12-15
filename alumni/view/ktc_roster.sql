@@ -136,7 +136,10 @@ FROM
     COLLATE LATIN1_GENERAL_BIN AS first_name,
     COALESCE(c.last_name, co.last_name)
     COLLATE LATIN1_GENERAL_BIN AS last_name,
-    COALESCE(c.last_name + ', ' + c.first_name, co.lastfirst)
+    COALESCE(
+      c.last_name + ', ' + c.first_name,
+      co.lastfirst
+    )
     COLLATE LATIN1_GENERAL_BIN AS lastfirst,
     CASE
       WHEN co.enroll_status = 0 THEN CONCAT(co.school_level, co.grade_level)
@@ -150,10 +153,10 @@ FROM
       AND c.kipp_hs_graduate_c = 0 THEN 'TAF'
     END AS ktc_status
     FROM
-      gabby.powerschool.cohort_identifiers_static co
-      LEFT JOIN gabby.alumni.contact c ON CAST(co.student_number AS NVARCHAR(8)) = c.school_specific_id_c
+      gabby.powerschool.cohort_identifiers_static AS co
+      LEFT JOIN gabby.alumni.contact AS c ON CAST(co.student_number AS NVARCHAR(8)) = c.school_specific_id_c
       AND c.is_deleted = 0
-      LEFT JOIN gabby.alumni.record_type rt ON c.record_type_id = rt.id
+      LEFT JOIN gabby.alumni.record_type AS rt ON c.record_type_id = rt.id
       LEFT JOIN gabby.alumni.[user] u ON c.owner_id = u.id
     WHERE
       co.rn_undergrad = 1

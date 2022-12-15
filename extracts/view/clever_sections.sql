@@ -8,8 +8,8 @@ WITH
     COLLATE Latin1_General_BIN AS [Teacher_id],
     COALESCE(ccw.ps_school_id, df.primary_site_schoolid) AS [School_id]
     FROM
-      gabby.people.staff_crosswalk_static df
-      LEFT JOIN gabby.people.campus_crosswalk ccw ON df.primary_site = ccw.campus_name
+      gabby.people.staff_crosswalk_static AS df
+      LEFT JOIN gabby.people.campus_crosswalk AS ccw ON df.primary_site = ccw.campus_name
       AND ccw._fivetran_deleted = 0
       AND ccw.is_pathways = 0
     WHERE
@@ -88,15 +88,15 @@ WITH
           NULL AS [Grade],
           NULL AS [Course_description]
         FROM
-          gabby.powerschool.sections sec
-          INNER JOIN gabby.powerschool.sectionteacher st ON sec.id = st.sectionid
+          gabby.powerschool.sections AS sec
+          INNER JOIN gabby.powerschool.sectionteacher AS st ON sec.id = st.sectionid
           AND sec.[db_name] = st.[db_name]
-          INNER JOIN gabby.powerschool.roledef r ON st.roleid = r.id
+          INNER JOIN gabby.powerschool.roledef AS r ON st.roleid = r.id
           AND st.[db_name] = r.[db_name]
-          INNER JOIN gabby.powerschool.teachers_static t ON st.teacherid = t.id
+          INNER JOIN gabby.powerschool.teachers_static AS t ON st.teacherid = t.id
           AND sec.schoolid = t.schoolid
           AND sec.[db_name] = t.[db_name]
-          INNER JOIN gabby.powerschool.courses c ON sec.course_number = c.course_number
+          INNER JOIN gabby.powerschool.courses AS c ON sec.course_number = c.course_number
           AND sec.[db_name] = c.[db_name]
           INNER JOIN gabby.powerschool.terms ON sec.termid = terms.id
           AND sec.schoolid = terms.schoolid
@@ -130,10 +130,17 @@ WITH
           CONCAT(
             RIGHT(gabby.utilities.GLOBAL_ACADEMIC_YEAR (), 2),
             '-',
-            RIGHT(gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1, 2)
+            RIGHT(
+              gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1,
+              2
+            )
           ) [Term_name],
           CAST(
-            DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR (), 7, 1),
+            DATEFROMPARTS(
+              gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+              7,
+              1
+            ),
             101 AS VARCHAR(25)
           ) AS [Term_start],
           CAST(
@@ -152,8 +159,8 @@ WITH
           NULL AS [Course_description]
         FROM
           dsos
-          INNER JOIN gabby.powerschool.schools s ON dsos.School_id = s.school_number
-          INNER JOIN gabby.utilities.row_generator_smallint r ON r.n (BETWEEN s.low_grade AND s.high_grade)
+          INNER JOIN gabby.powerschool.schools AS s ON dsos.School_id = s.school_number
+          INNER JOIN gabby.utilities.row_generator_smallint AS r ON r.n (BETWEEN s.low_grade AND s.high_grade)
       ) sub
   )
 SELECT

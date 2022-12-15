@@ -48,7 +48,9 @@ WITH
           CAST(apl.kf_race AS NVARCHAR(1024)) AS kf_race,
           CAST(apl.kf_gender AS NVARCHAR(1024)) AS kf_gender,
           CAST(apl.kf_are_you_alumnus AS NVARCHAR(1024)) AS kf_are_you_alumnus,
-          CAST(apl.kf_in_which_regions_alumnus AS NVARCHAR(1024)) AS kf_in_which_regions_alumnus,
+          CAST(
+            apl.kf_in_which_regions_alumnus AS NVARCHAR(1024)
+          ) AS kf_in_which_regions_alumnus,
           CAST(apl.candidate_tags_values AS NVARCHAR(1024)) AS candidate_tags_values,
           CONVERT(
             NVARCHAR(1024),
@@ -81,8 +83,8 @@ WITH
             app.application_state_hired_date
           ) AS date_value
         FROM
-          gabby.smartrecruiters.report_applicants apl
-          INNER JOIN gabby.smartrecruiters.report_applications app ON apl.application_id = app.application_id
+          gabby.smartrecruiters.report_applicants AS apl
+          INNER JOIN gabby.smartrecruiters.report_applications AS app ON apl.application_id = app.application_id
       ) sub UNPIVOT (
         [value] FOR [key] IN (
           candidate_first_name,
@@ -241,8 +243,8 @@ SELECT
     )
   END AS recruiting_year
 FROM
-  applicants_repivot apl
-  INNER JOIN gabby.smartrecruiters.report_applications app ON apl.candidate_id = app.candidate_id
+  applicants_repivot AS apl
+  INNER JOIN gabby.smartrecruiters.report_applications AS app ON apl.candidate_id = app.candidate_id
 UNION ALL
 SELECT
   COALESCE(a.profile_id, a.jobapp_id) AS candidate_id,
@@ -306,4 +308,4 @@ SELECT
     ELSE YEAR(CAST(a.submitted_date AS DATE))
   END AS recruiting_year
 FROM
-  gabby.recruiting.applicants a
+  gabby.recruiting.applicants AS a
