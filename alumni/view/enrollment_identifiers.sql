@@ -155,7 +155,7 @@ WITH
               0 AS is_employment
             FROM
               gabby.alumni.enrollment_c e
-              JOIN gabby.alumni.contact c ON e.student_c = c.id
+              INNER JOIN gabby.alumni.contact c ON e.student_c = c.id
               AND c.is_deleted = 0
             WHERE
               e.is_deleted = 0

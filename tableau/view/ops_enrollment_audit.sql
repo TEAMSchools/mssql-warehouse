@@ -21,7 +21,7 @@ WITH
     ) AS rn
     FROM
       gabby.powerschool.u_def_ext_students x
-      JOIN gabby.powerschool.students s ON x.studentsdcid = s.dcid
+      INNER JOIN gabby.powerschool.students s ON x.studentsdcid = s.dcid
       AND x.[db_name] = s.[db_name]
       AND s.enroll_status = 0
       LEFT JOIN gabby.enrollment.residency_verification rv ON s.student_number = rv.id
@@ -259,5 +259,5 @@ SELECT
   END AS audit_status
 FROM
   all_data a
-  JOIN unpivoted u ON a.student_number = u.student_number
+  INNER JOIN unpivoted u ON a.student_number = u.student_number
   AND a.academic_year = u.academic_year

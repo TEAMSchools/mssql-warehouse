@@ -83,7 +83,7 @@ WITH
         FROM
           gabby.illuminate_dna_repositories.repository_209 r
       ) sub
-      JOIN gabby.illuminate_public.students s ON sub.student_id = s.student_id
+      INNER JOIN gabby.illuminate_public.students s ON sub.student_id = s.student_id
     WHERE
       CONCAT(sub.repository_id, '_', sub.repository_row_id) IN (
         SELECT
@@ -130,5 +130,5 @@ SELECT
   CAST(cb.comment AS VARCHAR(250)) AS comment
 FROM
   comm_unpivot cu
-  JOIN gabby.reporting.report_card_comment_bank cb ON cu.comment_code = cb.code
+  INNER JOIN gabby.reporting.report_card_comment_bank cb ON cu.comment_code = cb.code
   AND cb._fivetran_deleted = 0

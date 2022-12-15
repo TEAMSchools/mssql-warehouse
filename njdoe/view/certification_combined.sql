@@ -30,7 +30,7 @@ SELECT
   ) AS rn
 FROM
   njdoe.certification_application_history_static cah
-  JOIN gabby.people.staff_crosswalk_static s ON cah.df_employee_number = s.df_employee_number
+  INNER JOIN gabby.people.staff_crosswalk_static s ON cah.df_employee_number = s.df_employee_number
 UNION ALL
 SELECT
   cch.df_employee_number,
@@ -59,4 +59,4 @@ SELECT
   ) AS rn
 FROM
   njdoe.certification_certificate_history_static cch
-  JOIN gabby.people.staff_crosswalk_static s ON cch.df_employee_number = s.df_employee_number
+  INNER JOIN gabby.people.staff_crosswalk_static s ON cch.df_employee_number = s.df_employee_number

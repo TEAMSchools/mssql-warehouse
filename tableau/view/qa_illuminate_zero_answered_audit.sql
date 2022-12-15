@@ -24,9 +24,9 @@ SELECT
   att.att_code
 FROM
   gabby.illuminate_dna_assessments.agg_student_responses ovr
-  JOIN gabby.illuminate_public.students s ON ovr.student_id = s.student_id
-  JOIN gabby.illuminate_dna_assessments.assessments_identifiers a ON ovr.assessment_id = a.assessment_id
-  JOIN gabby.powerschool.cohort_identifiers_static co ON s.local_student_id = co.student_number
+  INNER JOIN gabby.illuminate_public.students s ON ovr.student_id = s.student_id
+  INNER JOIN gabby.illuminate_dna_assessments.assessments_identifiers a ON ovr.assessment_id = a.assessment_id
+  INNER JOIN gabby.powerschool.cohort_identifiers_static co ON s.local_student_id = co.student_number
   AND a.academic_year_clean = co.academic_year
   AND co.rn_year = 1
   AND co.enroll_status = 0

@@ -117,7 +117,7 @@ FROM
       g.units_goal
     FROM
       gabby.powerschool.cohort_identifiers_static co
-      JOIN grade_level_goals g ON co.grade_level = g.grade_level
+      INNER JOIN grade_level_goals g ON co.grade_level = g.grade_level
     WHERE
       co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
       AND co.rn_year = 1
@@ -130,9 +130,9 @@ FROM
       og.units_goal
     FROM
       gabby.powerschool.cohort_identifiers_static co
-      JOIN gabby.powerschool.students s ON co.student_number = s.student_number
+      INNER JOIN gabby.powerschool.students s ON co.student_number = s.student_number
       AND co.db_name = s.db_name
-      JOIN other_goals og ON s.student_web_id = og.username
+      INNER JOIN other_goals og ON s.student_web_id = og.username
     COLLATE Latin1_General_BIN
     AND co.grade_level <> og.lexia_grade_level
     WHERE

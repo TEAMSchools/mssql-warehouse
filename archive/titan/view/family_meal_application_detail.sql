@@ -13,7 +13,7 @@ SELECT
   ma.application_status AS meal_application_status
 FROM
   titan.familymealapplication fma
-  JOIN titan.familymealapplicationstatus fmas ON fma.family_meal_application_status_id = fmas.family_meal_application_status_id
-  JOIN titan.academicyear ay ON fma.academic_year_id = ay.academic_year_id
-  JOIN titan.meal_application_detail ma ON fma.meal_application_id = ma.meal_application_id
+  INNER JOIN titan.familymealapplicationstatus fmas ON fma.family_meal_application_status_id = fmas.family_meal_application_status_id
+  INNER JOIN titan.academicyear ay ON fma.academic_year_id = ay.academic_year_id
+  INNER JOIN titan.meal_application_detail ma ON fma.meal_application_id = ma.meal_application_id
   LEFT JOIN titan.eligibility_benefit_type_detail e ON fma.eligibility_benefit_type_id = e.eligibility_benefit_type_id

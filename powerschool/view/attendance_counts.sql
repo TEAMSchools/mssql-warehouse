@@ -35,7 +35,7 @@ WITH
         dates.is_curterm
         FROM
           powerschool.ps_attendance_daily att
-          JOIN gabby.reporting.reporting_terms dates ON att.schoolid = dates.schoolid
+          INNER JOIN gabby.reporting.reporting_terms dates ON att.schoolid = dates.schoolid
           AND att.att_date (BETWEEN dates.start_date AND dates.end_date)
           AND dates.identifier = 'RT'
         WHERE
@@ -94,7 +94,7 @@ WITH
           d.is_curterm
         FROM
           powerschool.ps_adaadm_daily_ctod mem
-          JOIN gabby.reporting.reporting_terms d ON mem.schoolid = d.schoolid
+          INNER JOIN gabby.reporting.reporting_terms d ON mem.schoolid = d.schoolid
           AND mem.calendardate (BETWEEN d.start_date AND d.end_date)
           AND d.identifier = 'RT'
         WHERE

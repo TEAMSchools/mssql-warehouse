@@ -16,7 +16,7 @@ SELECT
   sj.job_id
 FROM
   msdb.dbo.sysjobs sj
-  JOIN msdb.dbo.syscategories sc ON sj.category_id = sc.category_id
+  INNER JOIN msdb.dbo.syscategories sc ON sj.category_id = sc.category_id
   AND sc.name = 'Data Team';
 
 OPEN job_killer

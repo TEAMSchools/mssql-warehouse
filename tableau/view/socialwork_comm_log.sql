@@ -17,7 +17,7 @@ WITH
       CONCAT(f.c_first, ' ', f.c_last) AS followup_staff_name
     FROM
       gabby.deanslist.communication c
-      JOIN gabby.deanslist.users u ON c.dluser_id = u.dluser_id
+      INNER JOIN gabby.deanslist.users u ON c.dluser_id = u.dluser_id
       AND c.[db_name] = u.[db_name]
       LEFT JOIN gabby.deanslist.followups f ON c.followup_id = f.followup_id
       AND c.[db_name] = f.[db_name]
@@ -57,7 +57,7 @@ SELECT
   cl.followup_close_notes
 FROM
   gabby.powerschool.cohort_identifiers_static co
-  JOIN commlog cl ON co.student_number = cl.student_school_id
+  INNER JOIN commlog cl ON co.student_number = cl.student_school_id
   AND co.[db_name] = cl.[db_name]
 WHERE
   co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()

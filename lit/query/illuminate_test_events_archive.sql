@@ -97,7 +97,7 @@ FROM
     FROM
       gabby.illuminate_dna_repositories.repository_170
   ) sub
-  JOIN gabby.illuminate_public.students s ON sub.student_id = s.student_id
+  INNER JOIN gabby.illuminate_public.students s ON sub.student_id = s.student_id
 WHERE
   CONCAT(repository_id, '_', repository_row_id) IN (
     SELECT

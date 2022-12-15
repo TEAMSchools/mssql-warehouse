@@ -175,7 +175,7 @@ WITH
   PARTITION BY t._file, t._line
   ORDER BY s._line DESC) AS rn
   FROM that t
-  JOIN gabby.powerschool.students s
+  INNER JOIN gabby.powerschool.students s
   ON CHARINDEX(LTRIM(RTRIM(REPLACE(t.last_name,' ',''))), gabby.utilities.STRIP_CHARACTERS(REPLACE(s.last_name,' ',''),'^A-Z')) > 0
   AND CHARINDEX(LTRIM(RTRIM(REPLACE(t.first_name, ' ', ''))), gabby.utilities.STRIP_CHARACTERS(REPLACE(s.first_name,' ',''),'^A-Z')) > 0
   WHERE t.local_student_id IS NULL
@@ -202,7 +202,7 @@ WITH
   PARTITION BY t._file, t._line
   ORDER BY s._line DESC) AS rn
   FROM that t
-  JOIN gabby.powerschool.students s
+  INNER JOIN gabby.powerschool.students s
   ON CHARINDEX(LTRIM(RTRIM(REPLACE(t.last_name,' ',''))), gabby.utilities.STRIP_CHARACTERS(REPLACE(s.last_name,' ',''),'^A-Z')) > 0
   AND CHARINDEX(LTRIM(RTRIM(REPLACE(t.first_name, ' ', ''))), gabby.utilities.STRIP_CHARACTERS(REPLACE(s.first_name,' ',''),'^A-Z')) > 0
   WHERE t.state_student_id IS NULL

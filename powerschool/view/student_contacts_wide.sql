@@ -89,7 +89,7 @@ WITH
           ) AS contact_category_type_priority
         FROM
           people c
-          JOIN powerschool.person_contacts pc ON c.personid = pc.personid
+          INNER JOIN powerschool.person_contacts pc ON c.personid = pc.personid
         UNION ALL
         SELECT
           c.student_number,
@@ -106,7 +106,7 @@ WITH
           ) AS contact_category_type_priority
         FROM
           people c
-          JOIN powerschool.person_contacts pc ON c.personid = pc.personid
+          INNER JOIN powerschool.person_contacts pc ON c.personid = pc.personid
           AND pc.contact_category = 'Phone'
         UNION ALL
         SELECT

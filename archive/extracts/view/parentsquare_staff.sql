@@ -55,7 +55,7 @@ FROM
       END AS [school_id]
     FROM
       gabby.adsi.user_attributes_static ad
-      JOIN gabby.people.school_crosswalk scw ON ad.physicaldeliveryofficename = scw.site_name
+      INNER JOIN gabby.people.school_crosswalk scw ON ad.physicaldeliveryofficename = scw.site_name
     WHERE
       ad.is_active = 1
       AND ad.mail NOT LIKE '%kippmiami.org'

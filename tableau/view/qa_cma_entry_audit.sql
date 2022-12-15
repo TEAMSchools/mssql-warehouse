@@ -21,14 +21,14 @@ SELECT
   co.enroll_status
 FROM
   gabby.illuminate_dna_assessments.student_assessment_scaffold_current_static saa
-  JOIN gabby.illuminate_public.students s ON saa.student_id = s.student_id
+  INNER JOIN gabby.illuminate_public.students s ON saa.student_id = s.student_id
   LEFT JOIN gabby.illuminate_dna_assessments.agg_student_responses o ON saa.student_id = o.student_id
   AND saa.assessment_id = o.assessment_id
   LEFT JOIN gabby.reporting.reporting_terms rt ON saa.administered_at (BETWEEN rt.[start_date] AND rt.end_date)
   AND rt.identifier = 'RT'
   AND rt.schoolid = 0
   AND rt._fivetran_deleted = 0
-  JOIN gabby.powerschool.cohort_identifiers_static co ON s.local_student_id = co.student_number
+  INNER JOIN gabby.powerschool.cohort_identifiers_static co ON s.local_student_id = co.student_number
   AND saa.academic_year = co.academic_year
   AND co.rn_year = 1
   AND co.enroll_status = 0

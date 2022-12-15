@@ -82,7 +82,7 @@ WITH
           ) AS date_value
         FROM
           gabby.smartrecruiters.report_applicants apl
-          JOIN gabby.smartrecruiters.report_applications app ON apl.application_id = app.application_id
+          INNER JOIN gabby.smartrecruiters.report_applications app ON apl.application_id = app.application_id
       ) sub UNPIVOT (
         [value] FOR [key] IN (
           candidate_first_name,
@@ -242,7 +242,7 @@ SELECT
   END AS recruiting_year
 FROM
   applicants_repivot apl
-  JOIN gabby.smartrecruiters.report_applications app ON apl.candidate_id = app.candidate_id
+  INNER JOIN gabby.smartrecruiters.report_applications app ON apl.candidate_id = app.candidate_id
 UNION ALL
 SELECT
   COALESCE(a.profile_id, a.jobapp_id) AS candidate_id,

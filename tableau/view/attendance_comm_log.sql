@@ -18,7 +18,7 @@ WITH
       CONCAT(f.c_first, ' ', f.c_last) AS followup_staff_name
     FROM
       gabby.deanslist.communication c
-      JOIN gabby.deanslist.users u ON c.dluser_id = u.dluser_id
+      INNER JOIN gabby.deanslist.users u ON c.dluser_id = u.dluser_id
       AND c.[db_name] = u.[db_name]
       LEFT JOIN gabby.deanslist.followups f ON c.followup_id = f.followup_id
       AND c.[db_name] = f.[db_name]
@@ -85,10 +85,10 @@ SELECT
   ) AS rn_date
 FROM
   gabby.powerschool.attendance_clean_current_static att
-  JOIN gabby.powerschool.cohort_identifiers_static co ON att.studentid = co.studentid
+  INNER JOIN gabby.powerschool.cohort_identifiers_static co ON att.studentid = co.studentid
   AND att.att_date (BETWEEN co.entrydate AND co.exitdate)
   AND att.[db_name] = co.[db_name]
-  JOIN gabby.powerschool.attendance_code ac ON att.attendance_codeid = ac.id
+  INNER JOIN gabby.powerschool.attendance_code ac ON att.attendance_codeid = ac.id
   AND att.[db_name] = ac.[db_name]
   AND ac.att_code LIKE 'A%'
   LEFT JOIN gabby.reporting.reporting_terms rt ON co.schoolid = rt.schoolid

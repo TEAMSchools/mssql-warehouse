@@ -20,7 +20,7 @@ WITH
       END AS field_name
     FROM
       gabby.illuminate_dna_repositories.repositories r
-      JOIN gabby.illuminate_dna_repositories.fields f ON r.repository_id = f.repository_id
+      INNER JOIN gabby.illuminate_dna_repositories.fields f ON r.repository_id = f.repository_id
       AND f.deleted_at IS NULL
       AND f.[name] <> 'field_term'
     WHERE

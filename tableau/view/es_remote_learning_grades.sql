@@ -14,7 +14,7 @@ SELECT
   b.staff_last_name + ', ' + b.staff_first_name AS staff_name
 FROM
   gabby.deanslist.rosters r
-  JOIN gabby.deanslist.roster_assignments ra ON r.roster_id = ra.dlroster_id
+  INNER JOIN gabby.deanslist.roster_assignments ra ON r.roster_id = ra.dlroster_id
   AND r.[db_name] = ra.[db_name]
   AND ra.grade_level IN ('K', '1st', '2nd', '3rd', '4th')
   LEFT JOIN gabby.deanslist.homework b ON ra.student_school_id = b.student_school_id

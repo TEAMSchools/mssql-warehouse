@@ -38,7 +38,7 @@ SELECT
   END AS [Role]
 FROM
   gabby.people.staff_crosswalk_static df
-  JOIN gabby.people.campus_crosswalk cc ON df.primary_site = cc.campus_name
+  INNER JOIN gabby.people.campus_crosswalk cc ON df.primary_site = cc.campus_name
   AND cc._fivetran_deleted = 0
   AND cc.is_pathways = 0
 WHERE
@@ -61,7 +61,7 @@ SELECT
   END AS [Role]
 FROM
   gabby.people.staff_crosswalk_static df
-  JOIN gabby.powerschool.schools sch ON sch.state_excludefromreporting = 0
+  INNER JOIN gabby.powerschool.schools sch ON sch.state_excludefromreporting = 0
 WHERE
   df.status <> 'TERMINATED'
   AND df.primary_on_site_department = 'Teaching and Learning'

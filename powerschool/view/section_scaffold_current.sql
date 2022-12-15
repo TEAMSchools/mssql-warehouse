@@ -39,8 +39,8 @@ FROM
     COLLATE Latin1_General_BIN AS term_name
     FROM
       powerschool.cc
-      JOIN powerschool.sections sec ON ABS(cc.sectionid) = sec.id
-      JOIN gabby.reporting.reporting_terms terms ON cc.schoolid = terms.schoolid
+      INNER JOIN powerschool.sections sec ON ABS(cc.sectionid) = sec.id
+      INNER JOIN gabby.reporting.reporting_terms terms ON cc.schoolid = terms.schoolid
       AND terms.identifier = 'RT' ND cc.dateenrolled (BETWEEN terms.[start_date] AND terms.end_date)
     WHERE
       cc.dateenrolled BETWEEN DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR (), 7, 1) AND CAST(CURRENT_TIMESTAMP AS DATE)

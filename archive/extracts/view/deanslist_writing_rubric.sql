@@ -31,15 +31,15 @@ FROM
       s.local_student_id AS student_number
     FROM
       gabby.illuminate_dna_assessments.assessments_identifiers_static a
-      JOIN gabby.illuminate_dna_assessments.assessment_standards ast ON a.assessment_id = ast.assessment_id
-      JOIN gabby.illuminate_standards.standards std ON ast.standard_id = std.standard_id
-      JOIN gabby.illuminate_standards.subjects ss ON std.subject_id = ss.subject_id
+      INNER JOIN gabby.illuminate_dna_assessments.assessment_standards ast ON a.assessment_id = ast.assessment_id
+      INNER JOIN gabby.illuminate_standards.standards std ON ast.standard_id = std.standard_id
+      INNER JOIN gabby.illuminate_standards.subjects ss ON std.subject_id = ss.subject_id
       AND ss.title = 'KIPP NJ K-4 Narrative Rubric'
-      JOIN gabby.illuminate_dna_assessments.agg_student_responses_standard asrs ON ast.assessment_id = asrs.assessment_id
+      INNER JOIN gabby.illuminate_dna_assessments.agg_student_responses_standard asrs ON ast.assessment_id = asrs.assessment_id
       AND ast.standard_id = asrs.standard_id
-      JOIN gabby.illuminate_dna_assessments.performance_band_lookup_static pbl ON a.performance_band_set_id = pbl.performance_band_set_id
+      INNER JOIN gabby.illuminate_dna_assessments.performance_band_lookup_static pbl ON a.performance_band_set_id = pbl.performance_band_set_id
       AND asrs.percent_correct (BETWEEN pbl.minimum_value AND pbl.maximum_value)
-      JOIN gabby.illuminate_public.students s ON asrs.student_id = s.student_id
+      INNER JOIN gabby.illuminate_public.students s ON asrs.student_id = s.student_id
     WHERE
       a.academic_year_clean = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
       AND a.scope = 'Process Piece'
@@ -62,17 +62,17 @@ FROM
           s.local_student_id AS student_number
         FROM
           gabby.illuminate_dna_assessments.assessments_identifiers_static a
-          JOIN gabby.reporting.reporting_terms rt ON a.administered_at (BETWEEN rt.[start_date] AND rt.end_date)
+          INNER JOIN gabby.reporting.reporting_terms rt ON a.administered_at (BETWEEN rt.[start_date] AND rt.end_date)
           AND rt.identifier = 'RT'
           AND rt.schoolid = 0
           AND rt._fivetran_deleted = 0
-          JOIN gabby.illuminate_dna_assessments.assessment_standards ast ON a.assessment_id = ast.assessment_id
-          JOIN gabby.illuminate_standards.standards std ON ast.standard_id = std.standard_id
-          JOIN gabby.illuminate_standards.subjects ss ON std.subject_id = ss.subject_id
+          INNER JOIN gabby.illuminate_dna_assessments.assessment_standards ast ON a.assessment_id = ast.assessment_id
+          INNER JOIN gabby.illuminate_standards.standards std ON ast.standard_id = std.standard_id
+          INNER JOIN gabby.illuminate_standards.subjects ss ON std.subject_id = ss.subject_id
           AND ss.title = 'KIPP NJ K-4 Narrative Rubric'
-          JOIN gabby.illuminate_dna_assessments.agg_student_responses_standard asrs ON ast.assessment_id = asrs.assessment_id
+          INNER JOIN gabby.illuminate_dna_assessments.agg_student_responses_standard asrs ON ast.assessment_id = asrs.assessment_id
           AND ast.standard_id = asrs.standard_id
-          JOIN gabby.illuminate_public.students s ON asrs.student_id = s.student_id
+          INNER JOIN gabby.illuminate_public.students s ON asrs.student_id = s.student_id
         WHERE
           a.academic_year_clean = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
           AND a.scope = 'Process Piece'
@@ -83,7 +83,7 @@ FROM
           std.[description],
           s.local_student_id
       ) sub
-      JOIN gabby.illuminate_dna_assessments.performance_band_lookup_static pbl ON sub.min_performance_band_set_id = pbl.performance_band_set_id
+      INNER JOIN gabby.illuminate_dna_assessments.performance_band_lookup_static pbl ON sub.min_performance_band_set_id = pbl.performance_band_set_id
       AND sub.avg_percent_correct (BETWEEN pbl.minimum_value AND pbl.maximum_value)
   ) sub PIVOT (
     MAX(performance_band_label) FOR module_num IN (

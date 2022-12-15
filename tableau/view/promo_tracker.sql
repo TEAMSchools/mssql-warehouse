@@ -25,7 +25,7 @@ WITH
       dt.end_date AS term_end_date
     FROM
       gabby.powerschool.cohort_identifiers_static co
-      JOIN gabby.reporting.reporting_terms dt ON co.academic_year = dt.academic_year
+      INNER JOIN gabby.reporting.reporting_terms dt ON co.academic_year = dt.academic_year
       AND co.schoolid = dt.schoolid
       AND dt.identifier = 'RT'
       AND dt._fivetran_deleted = 0
@@ -61,7 +61,7 @@ WITH
       dt.end_date AS term_end_date
     FROM
       gabby.powerschool.cohort_identifiers_static co
-      JOIN gabby.reporting.reporting_terms dt ON co.academic_year = dt.academic_year
+      INNER JOIN gabby.reporting.reporting_terms dt ON co.academic_year = dt.academic_year
       AND dt.schoolid = 0
       AND dt.identifier = 'SY'
       AND dt._fivetran_deleted = 0
@@ -137,7 +137,7 @@ WITH
       END AS finalgradename
     FROM
       gabby.powerschool.storedgrades gr
-      JOIN gabby.powerschool.students s ON gr.studentid = s.id
+      INNER JOIN gabby.powerschool.students s ON gr.studentid = s.id
       AND gr.[db_name] = s.[db_name]
     WHERE
       gr.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
@@ -403,7 +403,7 @@ WITH
       'GPA CUMULATIVE' AS subdomain
     FROM
       gabby.powerschool.gpa_cumulative gpa
-      JOIN gabby.powerschool.students s ON gpa.studentid = s.id
+      INNER JOIN gabby.powerschool.students s ON gpa.studentid = s.id
       AND gpa.[db_name] = s.[db_name]
     UNION ALL
     SELECT
@@ -415,7 +415,7 @@ WITH
       'CREDITS EARNED' AS subdomain
     FROM
       gabby.powerschool.gpa_cumulative gpa
-      JOIN gabby.powerschool.students s ON gpa.studentid = s.id
+      INNER JOIN gabby.powerschool.students s ON gpa.studentid = s.id
       AND gpa.[db_name] = s.[db_name]
   ),
   lit AS (
@@ -497,7 +497,7 @@ WITH
       'GOAL' AS subdomain
     FROM
       gabby.nwea.assessment_result_identifiers map
-      JOIN gabby.powerschool.students s ON map.student_id = s.student_number
+      INNER JOIN gabby.powerschool.students s ON map.student_id = s.student_number
     WHERE
       map.measurement_scale = 'Reading'
       AND map.school_name = 'Newark Collegiate Academy'
@@ -973,7 +973,7 @@ SELECT
   NULL AS performance_level_label
 FROM
   roster r
-  JOIN gpa ON r.student_number = gpa.student_number
+  INNER JOIN gpa ON r.student_number = gpa.student_number
   AND r.schoolid = gpa.schoolid
   AND r.academic_year >= gpa.academic_year
   AND r.reporting_term
@@ -1213,7 +1213,7 @@ SELECT
   b.goal_status AS performance_level_label
 FROM
   roster r
-  JOIN instructional_tech b ON r.student_number = b.student_number
+  INNER JOIN instructional_tech b ON r.student_number = b.student_number
   AND r.academic_year = b.academic_year
   AND r.term_name = b.term_name
 UNION ALL

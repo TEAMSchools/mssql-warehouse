@@ -34,7 +34,7 @@ SELECT
   c2.emails_emailaddress AS "ContactTwo Email"
 FROM
   students s
-  JOIN schools sch ON s.schoolid = sch.school_number
+  INNER JOIN schools sch ON s.schoolid = sch.school_number
   LEFT JOIN (
     SELECT
       studentid AS race_studentid,
@@ -71,7 +71,7 @@ FROM
           ) AS contacts_rn
         FROM
           studentcontactassoc sca
-          JOIN person p ON sca.personid = p.id
+          INNER JOIN person p ON sca.personid = p.id
           AND p.isactive = 1
       ) c
       LEFT JOIN (
@@ -87,7 +87,7 @@ FROM
           ) AS p1_filteredpriorityorder
         FROM
           personphonenumberassoc ppna
-          JOIN codeset c ON ppna.phonetypecodesetid = c.codesetid
+          INNER JOIN codeset c ON ppna.phonetypecodesetid = c.codesetid
           AND c.code = 'Mobile'
       ) p1 ON c.contacts_personid = p1.p1_personid
       AND p1.p1_filteredpriorityorder = 1
@@ -104,7 +104,7 @@ FROM
           ) AS p2_filteredpriorityorder
         FROM
           personphonenumberassoc ppna
-          JOIN codeset c ON ppna.phonetypecodesetid = c.codesetid
+          INNER JOIN codeset c ON ppna.phonetypecodesetid = c.codesetid
           AND c.code = 'Home'
       ) p2 ON c.contacts_personid = p2.p2_personid
       AND p2.p2_filteredpriorityorder = 1
@@ -121,7 +121,7 @@ FROM
           ) AS p3_filteredpriorityorder
         FROM
           personphonenumberassoc ppna
-          JOIN codeset c ON ppna.phonetypecodesetid = c.codesetid
+          INNER JOIN codeset c ON ppna.phonetypecodesetid = c.codesetid
           AND c.code = 'Work'
       ) p3 ON c.contacts_personid = p3.p3_personid
       AND p3.p3_filteredpriorityorder = 1
@@ -139,8 +139,8 @@ FROM
           ) AS emails_filteredpriorityorder
         FROM
           personemailaddressassoc peaa
-          JOIN emailaddress e ON peaa.emailaddressid = e.emailaddressid
-          JOIN codeset c ON peaa.emailtypecodesetid = c.codesetid
+          INNER JOIN emailaddress e ON peaa.emailaddressid = e.emailaddressid
+          INNER JOIN codeset c ON peaa.emailtypecodesetid = c.codesetid
       ) em ON c.contacts_personid = em.emails_personid
       AND em.emails_filteredpriorityorder = 1
       AND em.emailtype = 'Current'
@@ -171,7 +171,7 @@ FROM
           ) AS contacts_rn
         FROM
           studentcontactassoc sca
-          JOIN person p ON sca.personid = p.id
+          INNER JOIN person p ON sca.personid = p.id
           AND p.isactive = 1
       ) c
       LEFT JOIN (
@@ -187,7 +187,7 @@ FROM
           ) AS p1_filteredpriorityorder
         FROM
           personphonenumberassoc ppna
-          JOIN codeset c ON ppna.phonetypecodesetid = c.codesetid
+          INNER JOIN codeset c ON ppna.phonetypecodesetid = c.codesetid
           AND c.code = 'Mobile'
       ) p1 ON c.contacts_personid = p1.p1_personid
       AND p1.p1_filteredpriorityorder = 1
@@ -204,7 +204,7 @@ FROM
           ) AS p2_filteredpriorityorder
         FROM
           personphonenumberassoc ppna
-          JOIN codeset c ON ppna.phonetypecodesetid = c.codesetid
+          INNER JOIN codeset c ON ppna.phonetypecodesetid = c.codesetid
           AND c.code = 'Home'
       ) p2 ON c.contacts_personid = p2.p2_personid
       AND p2.p2_filteredpriorityorder = 1
@@ -221,7 +221,7 @@ FROM
           ) AS p3_filteredpriorityorder
         FROM
           personphonenumberassoc ppna
-          JOIN codeset c ON ppna.phonetypecodesetid = c.codesetid
+          INNER JOIN codeset c ON ppna.phonetypecodesetid = c.codesetid
           AND c.code = 'Work'
       ) p3 ON c.contacts_personid = p3.p3_personid
       AND p3.p3_filteredpriorityorder = 1
@@ -239,8 +239,8 @@ FROM
           ) AS emails_filteredpriorityorder
         FROM
           personemailaddressassoc peaa
-          JOIN emailaddress e ON peaa.emailaddressid = e.emailaddressid
-          JOIN codeset c ON peaa.emailtypecodesetid = c.codesetid
+          INNER JOIN emailaddress e ON peaa.emailaddressid = e.emailaddressid
+          INNER JOIN codeset c ON peaa.emailtypecodesetid = c.codesetid
       ) em ON c.contacts_personid = em.emails_personid
       AND em.emails_filteredpriorityorder = 1
       AND em.emailtype = 'Current'

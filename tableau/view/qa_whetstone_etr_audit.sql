@@ -18,7 +18,7 @@ SELECT
   wo.score
 FROM
   gabby.people.staff_crosswalk_static r
-  JOIN gabby.reporting.reporting_terms rt ON rt.identifier = 'ETR'
+  INNER JOIN gabby.reporting.reporting_terms rt ON rt.identifier = 'ETR'
   AND rt.schoolid = 0
   AND rt._fivetran_deleted = 0
   LEFT JOIN gabby.pm.teacher_goals_exemption_clean_static ex ON r.df_employee_number = ex.df_employee_number

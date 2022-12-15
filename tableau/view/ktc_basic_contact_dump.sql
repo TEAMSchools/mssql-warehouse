@@ -195,7 +195,7 @@ WITH
           COUNT(a.id) AS N
         FROM
           gabby.alumni.application_c a
-          JOIN gabby.alumni.account s ON a.school_c = s.id
+          INNER JOIN gabby.alumni.account s ON a.school_c = s.id
         WHERE
           a.application_submission_status_c = 'Submitted'
           AND a.created_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR (), 07, 01)

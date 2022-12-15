@@ -57,7 +57,7 @@ FROM
       sr.file_number AS employee_number
     FROM
       gabby.adp.salary_history sh
-      JOIN gabby.adp.employees_all sr ON sh.associate_id = sr.associate_id
+      INNER JOIN gabby.adp.employees_all sr ON sh.associate_id = sr.associate_id
     WHERE
       (
         CAST(sh.regular_pay_effective_date AS DATE) < CAST(sh.regular_pay_effective_end_date AS DATE)

@@ -107,7 +107,7 @@ WITH
           srd.answer
         FROM
           gabby.surveygizmo.survey_question_clean_static sq
-          JOIN gabby.surveygizmo.survey_response_data srd ON sq.survey_id = srd.survey_id
+          INNER JOIN gabby.surveygizmo.survey_response_data srd ON sq.survey_id = srd.survey_id
           AND sq.survey_question_id = srd.question_id
           AND srd.answer IS NOT NULL
         WHERE

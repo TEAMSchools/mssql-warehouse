@@ -12,12 +12,12 @@ WITH
       t.teachernumber
     FROM
       gabby.powerschool.sections sec
-      JOIN gabby.powerschool.sectionteacher st ON sec.id = st.sectionid
+      INNER JOIN gabby.powerschool.sectionteacher st ON sec.id = st.sectionid
       AND sec.[db_name] = st.[db_name]
-      JOIN gabby.powerschool.roledef rd ON st.roleid = rd.id
+      INNER JOIN gabby.powerschool.roledef rd ON st.roleid = rd.id
       AND st.[db_name] = rd.[db_name]
       AND rd.[name] IN ('Lead Teacher', 'Co-teacher')
-      JOIN gabby.powerschool.teachers_static t ON st.teacherid = t.id
+      INNER JOIN gabby.powerschool.teachers_static t ON st.teacherid = t.id
       AND st.[db_name] = t.[db_name]
     WHERE
       (
@@ -34,9 +34,9 @@ WITH
       COUNT(enr.student_number) AS n_students_gl
     FROM
       ps_section_teacher st
-      JOIN gabby.powerschool.course_enrollments enr ON st.sectionid = enr.abs_sectionid
+      INNER JOIN gabby.powerschool.course_enrollments enr ON st.sectionid = enr.abs_sectionid
       AND st.[db_name] = enr.[db_name]
-      JOIN gabby.powerschool.cohort_identifiers_static co ON enr.student_number = co.student_number
+      INNER JOIN gabby.powerschool.cohort_identifiers_static co ON enr.student_number = co.student_number
       AND enr.dateenrolled (BETWEEN co.entrydate AND co.exitdate)
     GROUP BY
       st.teachernumber,

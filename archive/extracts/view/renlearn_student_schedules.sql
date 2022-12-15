@@ -34,7 +34,7 @@ SELECT
   enr.expression
 FROM
   gabby.powerschool.course_enrollments_current_static enr
-  JOIN gabby.powerschool.schools sch ON enr.schoolid = sch.school_number
+  INNER JOIN gabby.powerschool.schools sch ON enr.schoolid = sch.school_number
   AND enr.[db_name] = sch.[db_name]
 WHERE
   enr.course_enroll_status = 0
@@ -56,7 +56,7 @@ SELECT
   '1(A)' expression
 FROM
   gabby.powerschool.cohort_identifiers_static co
-  JOIN gabby.powerschool.schools s ON co.schoolid = s.school_number
+  INNER JOIN gabby.powerschool.schools s ON co.schoolid = s.school_number
   AND co.[db_name] = s.[db_name]
   LEFT JOIN dsos ON s.school_number = dsos.schoolid
 WHERE

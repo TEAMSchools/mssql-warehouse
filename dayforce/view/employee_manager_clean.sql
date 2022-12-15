@@ -47,7 +47,7 @@ FROM
           ) AS position_id
         FROM
           gabby.dayforce.employee_manager em
-          JOIN gabby.dayforce.employees e ON em.employee_reference_code = e.df_employee_number
+          INNER JOIN gabby.dayforce.employees e ON em.employee_reference_code = e.df_employee_number
         WHERE
           em.manager_derived_method = 'Direct Report'
           AND (

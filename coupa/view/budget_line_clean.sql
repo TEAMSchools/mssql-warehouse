@@ -30,5 +30,5 @@ SELECT
   u.[fullname] AS owner_name
 FROM
   [gabby].[coupa].[budget_line] b
-  JOIN gabby.coupa.[period] p ON b.period_id = p.id
+  INNER JOIN gabby.coupa.[period] p ON b.period_id = p.id
   LEFT JOIN gabby.coupa.[user] u ON b.owner_id = u.id

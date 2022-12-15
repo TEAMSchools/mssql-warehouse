@@ -130,7 +130,7 @@ WITH
       ) AS rn_highest_presenior
     FROM
       gabby.naviance.act_scores_clean a
-      JOIN gabby.powerschool.cohort_identifiers_static co ON a.student_number = co.student_number
+      INNER JOIN gabby.powerschool.cohort_identifiers_static co ON a.student_number = co.student_number
       AND a.academic_year = co.academic_year
       AND co.grade_level < 12
       AND co.rn_year = 1
@@ -210,7 +210,7 @@ WITH
           s.type
         FROM
           gabby.alumni.application_c a
-          JOIN gabby.alumni.account s ON a.school_c = s.id
+          INNER JOIN gabby.alumni.account s ON a.school_c = s.id
           AND s.is_deleted = 0
         WHERE
           a.is_deleted = 0

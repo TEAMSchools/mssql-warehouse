@@ -17,13 +17,13 @@ WITH
       ) AS rn
     FROM
       gabby.alumni.contact c
-      JOIN gabby.alumni.application_c app ON c.id = app.applicant_c
+      INNER JOIN gabby.alumni.application_c app ON c.id = app.applicant_c
       AND app.is_deleted = 0
       AND app.transfer_application_c = 0
       AND app.matriculation_decision_c = 'Matriculated (Intent to Enroll)'
-      JOIN gabby.alumni.account acc ON app.school_c = acc.id
+      INNER JOIN gabby.alumni.account acc ON app.school_c = acc.id
       AND acc.is_deleted = 0
-      JOIN gabby.alumni.enrollment_c enr ON app.applicant_c = enr.student_c
+      INNER JOIN gabby.alumni.enrollment_c enr ON app.applicant_c = enr.student_c
       AND app.school_c = enr.school_c
       AND c.kipp_hs_class_c = YEAR(enr.start_date_c)
       AND enr.is_deleted = 0

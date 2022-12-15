@@ -114,8 +114,8 @@ WITH
           ur.prompt_4_quality_of_ideas
         FROM
           gabby.illuminate_dna_repositories.oer_repositories ur
-          JOIN gabby.illuminate_public.students s ON ur.student_id = s.student_id
-          JOIN gabby.illuminate_dna_repositories.repositories r ON ur.repository_id = r.repository_id
+          INNER JOIN gabby.illuminate_public.students s ON ur.student_id = s.student_id
+          INNER JOIN gabby.illuminate_dna_repositories.repositories r ON ur.repository_id = r.repository_id
           LEFT JOIN gabby.reporting.reporting_terms rt ON r.date_administered (BETWEEN rt.start_date AND rt.end_date)
           AND rt.schoolid = 73253
           AND rt.identifier = 'RT'
@@ -170,7 +170,7 @@ SELECT
   enr.teacher_name
 FROM
   oer_repos w
-  JOIN gabby.powerschool.cohort_identifiers_static co ON w.student_number = co.student_number
+  INNER JOIN gabby.powerschool.cohort_identifiers_static co ON w.student_number = co.student_number
   AND w.academic_year = co.academic_year
   AND co.rn_year = 1
   LEFT JOIN enrollments enr
@@ -225,20 +225,20 @@ FROM
       1 AS prompt_number
     FROM
       gabby.illuminate_dna_assessments.assessments a
-      JOIN gabby.illuminate_codes.dna_scopes dsc ON a.code_scope_id = dsc.code_id
+      INNER JOIN gabby.illuminate_codes.dna_scopes dsc ON a.code_scope_id = dsc.code_id
       AND dsc.code_translation = 'DBQ'
-      JOIN gabby.illuminate_codes.dna_subject_areas dsu ON a.code_subject_area_id = dsu.code_id
+      INNER JOIN gabby.illuminate_codes.dna_subject_areas dsu ON a.code_subject_area_id = dsu.code_id
       AND dsu.code_translation = 'History'
-      JOIN gabby.reporting.reporting_terms dts ON a.administered_at (BETWEEN dts.start_date AND dts.end_date)
+      INNER JOIN gabby.reporting.reporting_terms dts ON a.administered_at (BETWEEN dts.start_date AND dts.end_date)
       AND dts.schoolid = 73253
       AND dts.identifier = 'RT'
       AND dts._fivetran_deleted = 0
-      JOIN gabby.illuminate_dna_assessments.agg_student_responses_standard r ON a.assessment_id = r.assessment_id
-      JOIN gabby.illuminate_public.students s ON r.student_id = s.student_id
-      JOIN gabby.powerschool.cohort_identifiers_static co ON s.local_student_id = co.student_number
+      INNER JOIN gabby.illuminate_dna_assessments.agg_student_responses_standard r ON a.assessment_id = r.assessment_id
+      INNER JOIN gabby.illuminate_public.students s ON r.student_id = s.student_id
+      INNER JOIN gabby.powerschool.cohort_identifiers_static co ON s.local_student_id = co.student_number
       AND a.academic_year_clean = co.academic_year
       AND co.rn_year = 1
-      JOIN gabby.illuminate_standards.standards std ON r.standard_id = std.standard_id
+      INNER JOIN gabby.illuminate_standards.standards std ON r.standard_id = std.standard_id
     WHERE
       a.academic_year_clean >= 2016
   ) sub

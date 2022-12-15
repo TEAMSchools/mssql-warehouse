@@ -29,7 +29,7 @@ WITH
       ) AS rn
     FROM
       gabby.lit.all_test_events_static fp
-      JOIN gabby.powerschool.cohort_identifiers_static co ON fp.student_number = co.student_number
+      INNER JOIN gabby.powerschool.cohort_identifiers_static co ON fp.student_number = co.student_number
       AND fp.academic_year = co.academic_year
       AND co.rn_year = 1
   ),
@@ -64,7 +64,7 @@ WITH
       ) AS rn
     FROM
       gabby.reporting.reporting_terms rt
-      JOIN fp_long fp ON rt.schoolid = fp.schoolid
+      INNER JOIN fp_long fp ON rt.schoolid = fp.schoolid
       AND rt.[start_date] > fp.assessment_date
     WHERE
       rt.identifier = 'LIT'
@@ -106,11 +106,11 @@ WITH
       COALESCE(ins.genre, hard.genre) AS instructional_genre
     FROM
       gabby.powerschool.cohort_identifiers_static co
-      JOIN gabby.reporting.reporting_terms rt ON co.schoolid = rt.schoolid
+      INNER JOIN gabby.reporting.reporting_terms rt ON co.schoolid = rt.schoolid
       AND co.academic_year = rt.academic_year
       AND rt.identifier = 'LIT'
       AND rt._fivetran_deleted = 0
-      JOIN gabby.lit.network_goals g ON co.grade_level = g.grade_level
+      INNER JOIN gabby.lit.network_goals g ON co.grade_level = g.grade_level
       AND rt.alt_name = g.test_round
       AND g.norms_year = 2019
       LEFT JOIN fp_recent ind ON co.student_number = ind.student_identifier

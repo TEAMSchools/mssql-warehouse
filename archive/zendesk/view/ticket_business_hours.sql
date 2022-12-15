@@ -7,7 +7,7 @@ WITH
       MIN(tc.created) AS solved_at
     FROM
       gabby.zendesk.ticket t
-      JOIN gabby.zendesk.ticket_comment tc ON t.id = tc.ticket_id
+      INNER JOIN gabby.zendesk.ticket_comment tc ON t.id = tc.ticket_id
       AND t.submitter_id <> tc.user_id
     GROUP BY
       t.id,

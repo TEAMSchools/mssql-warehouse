@@ -18,7 +18,7 @@ SELECT
   s.enroll_status
 FROM
   gabby.titan.income_form_data_clean ti
-  JOIN gabby.powerschool.students s ON ti.student_identifier = s.student_number
+  INNER JOIN gabby.powerschool.students s ON ti.student_identifier = s.student_number
   AND ti.[db_name] = s.[db_name]
 GROUP BY
   ti.student_identifier,

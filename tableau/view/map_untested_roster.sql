@@ -29,7 +29,7 @@ WITH
       subjects.measurement_scale
     FROM
       gabby.powerschool.cohort_identifiers_static co
-      JOIN gabby.reporting.reporting_terms terms ON co.academic_year = terms.academic_year
+      INNER JOIN gabby.reporting.reporting_terms terms ON co.academic_year = terms.academic_year
       AND terms.identifier = 'MAP'
       AND terms.start_date <= CURRENT_TIMESTAMP
       AND terms._fivetran_deleted = 0

@@ -107,7 +107,7 @@ WITH
               CAST(a.scaled_score AS NVARCHAR) AS scaled_score
             FROM
               gabby.njsmart.all_state_assessments a
-              JOIN gabby.powerschool.cohort_identifiers_static co ON a.local_student_id = co.student_number
+              INNER JOIN gabby.powerschool.cohort_identifiers_static co ON a.local_student_id = co.student_number
               AND a.academic_year = co.academic_year
               AND co.rn_year = 1
             UNION ALL

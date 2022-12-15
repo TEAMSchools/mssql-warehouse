@@ -36,7 +36,7 @@ FROM
       ) AS rn
     FROM
       powerschool.spenrollments sp
-      JOIN powerschool.gen ON sp.programid = gen.id
+      INNER JOIN powerschool.gen ON sp.programid = gen.id
       AND gen.cat = 'specprog'
   ) sub
 WHERE

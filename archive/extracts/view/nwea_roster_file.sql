@@ -49,9 +49,9 @@ SELECT DISTINCT
   NULL AS [Student Email]
 FROM
   gabby.extracts.clever_students cst
-  JOIN gabby.extracts.clever_schools csh ON cst.School_id = csh.School_id
-  JOIN gabby.extracts.clever_enrollments cer ON cst.Student_id = cer.Student_id
+  INNER JOIN gabby.extracts.clever_schools csh ON cst.School_id = csh.School_id
+  INNER JOIN gabby.extracts.clever_enrollments cer ON cst.Student_id = cer.Student_id
   AND cst.School_id = cer.School_id
-  JOIN gabby.extracts.clever_sections csc ON cer.Section_id = csc.Section_id
-  JOIN gabby.extracts.clever_teachers ct ON csc.Teacher_id = ct.Teacher_id
+  INNER JOIN gabby.extracts.clever_sections csc ON cer.Section_id = csc.Section_id
+  INNER JOIN gabby.extracts.clever_teachers ct ON csc.Teacher_id = ct.Teacher_id
 COLLATE Latin1_General_BIN

@@ -108,9 +108,9 @@ FROM
       enr.start_date_c AS enrollment_start_date
     FROM
       gabby.alumni.application_c app
-      JOIN gabby.alumni.account acc ON app.school_c = acc.id
+      INNER JOIN gabby.alumni.account acc ON app.school_c = acc.id
       AND acc.is_deleted = 0
-      JOIN gabby.alumni.contact c ON app.applicant_c = c.id
+      INNER JOIN gabby.alumni.contact c ON app.applicant_c = c.id
       LEFT JOIN gabby.alumni.enrollment_c enr ON app.applicant_c = enr.student_c
       AND app.school_c = enr.school_c
       AND c.kipp_hs_class_c = YEAR(enr.start_date_c)

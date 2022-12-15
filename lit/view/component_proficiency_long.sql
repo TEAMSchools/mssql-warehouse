@@ -209,7 +209,7 @@ FROM
       ) AS score_order
     FROM
       all_scores rs
-      JOIN prof_clean prof ON rs.testid = prof.testid
+      INNER JOIN prof_clean prof ON rs.testid = prof.testid
       AND rs.field = prof.field_name
       AND rs.lvl_num = prof.lvl_num
   ) sub

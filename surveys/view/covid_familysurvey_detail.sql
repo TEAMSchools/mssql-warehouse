@@ -17,7 +17,7 @@ WITH
           srd.answer
         FROM
           gabby.surveygizmo.survey_question_clean_static sq
-          JOIN gabby.surveygizmo.survey_response_data srd ON sq.survey_id = srd.survey_id
+          INNER JOIN gabby.surveygizmo.survey_response_data srd ON sq.survey_id = srd.survey_id
           AND sq.survey_question_id = srd.question_id
           AND srd.answer IS NOT NULL
         WHERE
@@ -46,16 +46,16 @@ SELECT
   sc.[name] AS campaign_name
 FROM
   surveygizmo.survey_clean s
-  JOIN gabby.surveygizmo.survey_question_clean_static sq ON s.survey_id = sq.survey_id
+  INNER JOIN gabby.surveygizmo.survey_question_clean_static sq ON s.survey_id = sq.survey_id
   AND sq.base_type = 'Question'
   AND sq.[type] IN ('RADIO', 'ESSAY', 'TEXTBOX')
-  JOIN gabby.surveygizmo.survey_response_data srd ON sq.survey_id = srd.survey_id
+  INNER JOIN gabby.surveygizmo.survey_response_data srd ON sq.survey_id = srd.survey_id
   AND sq.survey_question_id = srd.question_id
   AND srd.answer IS NOT NULL
-  JOIN gabby.surveygizmo.survey_response_clean sr ON sq.survey_id = sr.survey_id
+  INNER JOIN gabby.surveygizmo.survey_response_clean sr ON sq.survey_id = sr.survey_id
   AND srd.survey_response_id = sr.survey_response_id
   AND sr.[status] = 'Complete'
-  JOIN response_ids r ON s.survey_id = r.survey_id
+  INNER JOIN response_ids r ON s.survey_id = r.survey_id
   AND srd.survey_response_id = r.survey_response_id
   LEFT JOIN gabby.surveygizmo.survey_question_options_static qo ON r.survey_id = qo.survey_id
   AND sq.survey_question_id = qo.question_id

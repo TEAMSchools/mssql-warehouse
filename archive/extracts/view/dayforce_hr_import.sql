@@ -32,5 +32,5 @@ SELECT
   ad.userprincipalname
 FROM
   gabby.dayforce.employees d
-  JOIN gabby.adsi.user_attributes_static ad ON d.df_employee_number = ad.employeenumber
+  INNER JOIN gabby.adsi.user_attributes_static ad ON d.df_employee_number = ad.employeenumber
   AND ISNUMERIC(ad.employeenumber) = 1

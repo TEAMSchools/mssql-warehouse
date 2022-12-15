@@ -48,7 +48,7 @@ SELECT
   END AS [Role]
 FROM
   gabby.people.staff_crosswalk_static df
-  JOIN gabby.powerschool.schools sch ON sch.state_excludefromreporting = 0
+  INNER JOIN gabby.powerschool.schools sch ON sch.state_excludefromreporting = 0
 WHERE
   df.[status] NOT IN ('TERMINATED', 'PRESTART')
   AND df.legal_entity_name = 'KIPP TEAM and Family Schools Inc.'
@@ -73,7 +73,7 @@ SELECT
   END AS [Role]
 FROM
   gabby.people.staff_crosswalk_static df
-  JOIN gabby.powerschool.schools sch ON df.[db_name] = sch.[db_name]
+  INNER JOIN gabby.powerschool.schools sch ON df.[db_name] = sch.[db_name]
   AND sch.state_excludefromreporting = 0
 WHERE
   df.[status] NOT IN ('TERMINATED', 'PRESTART')
@@ -101,9 +101,9 @@ SELECT
   END AS [Role]
 FROM
   gabby.adsi.group_membership adg
-  JOIN gabby.people.staff_crosswalk_static df ON adg.employee_number = df.df_employee_number
+  INNER JOIN gabby.people.staff_crosswalk_static df ON adg.employee_number = df.df_employee_number
   AND df.[status] NOT IN ('TERMINATED', 'PRESTART')
-  JOIN gabby.powerschool.schools sch ON sch.schoolstate = 'NJ'
+  INNER JOIN gabby.powerschool.schools sch ON sch.schoolstate = 'NJ'
   AND sch.state_excludefromreporting = 0
 WHERE
   adg.group_cn = 'Group Staff NJ Regional'

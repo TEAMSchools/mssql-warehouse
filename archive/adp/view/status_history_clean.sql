@@ -59,7 +59,7 @@ FROM
       sr.file_number AS employee_number
     FROM
       gabby.adp.status_history sh
-      JOIN gabby.adp.employees_all sr ON sh.associate_id = sr.associate_id
+      INNER JOIN gabby.adp.employees_all sr ON sh.associate_id = sr.associate_id
     WHERE
       CAST(sh.status_effective_date AS DATE) < CAST(sh.status_effective_end_date AS DATE)
       OR sh.status_effective_end_date IS NULL

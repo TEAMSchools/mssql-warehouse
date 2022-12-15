@@ -40,7 +40,7 @@ WITH
           END AS is_inperson
         FROM
           gabby.powerschool.ps_adaadm_daily_ctod_current_static mem
-          JOIN gabby.powerschool.calendar_day cal ON mem.schoolid = cal.schoolid
+          INNER JOIN gabby.powerschool.calendar_day cal ON mem.schoolid = cal.schoolid
           AND mem.calendardate = cal.date_value
           AND mem.[db_name] = cal.[db_name]
           LEFT JOIN gabby.powerschool.spenrollments_gen_static hb ON mem.studentid = hb.studentid
@@ -253,7 +253,7 @@ SELECT
   a.CumulativeDaysPresent - a.present_in_person AS RemoteDaysPresent
 FROM
   gabby.powerschool.cohort_identifiers_static co
-  JOIN gabby.powerschool.students s ON co.student_number = s.student_number
+  INNER JOIN gabby.powerschool.students s ON co.student_number = s.student_number
   LEFT JOIN gabby.powerschool.s_nj_stu_x nj ON co.students_dcid = nj.studentsdcid
   AND co.[db_name] = nj.[db_name]
   LEFT JOIN att a ON co.studentid = a.studentid

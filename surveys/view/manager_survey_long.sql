@@ -74,7 +74,7 @@ SELECT
   CAST(rs.response_value AS FLOAT) AS response_value
 FROM
   manager_long mgr
-  JOIN gabby.surveys.question_key qk ON mgr.question_code = qk.question_code
+  INNER JOIN gabby.surveys.question_key qk ON mgr.question_code = qk.question_code
   AND qk.survey_type = 'MGR'
   LEFT JOIN gabby.surveys.response_scales rs ON mgr.response = rs.response_text
   AND rs.survey_type = 'MGR'

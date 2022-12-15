@@ -22,7 +22,7 @@ SELECT
   l.address AS location_address
 FROM
   gabby.ops.busing_locations l
-  JOIN gabby.ops.busing_students_new s ON l.school_level = CASE
+  INNER JOIN gabby.ops.busing_students_new s ON l.school_level = CASE
     WHEN s.grade_level <= 4 THEN 'ES'
     WHEN s.grade_level <= 8 THEN 'MS'
     WHEN s.grade_level <= 12 THEN 'HS'

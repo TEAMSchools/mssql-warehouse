@@ -32,7 +32,7 @@ SELECT
   NULL AS [15 Session Type ID]
 FROM
   gabby.powerschool.course_enrollments_current_static enr
-  JOIN gabby.powerschool.cohort_identifiers_static co ON enr.student_number = co.student_number
+  INNER JOIN gabby.powerschool.cohort_identifiers_static co ON enr.student_number = co.student_number
   AND enr.academic_year = co.academic_year
   AND enr.[db_name] = co.[db_name]
   AND co.rn_year = 1

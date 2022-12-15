@@ -157,7 +157,7 @@ WITH
           END AS semester
         FROM
           gabby.alumni.gpa_c gpa
-          JOIN gabby.alumni.record_type rt ON gpa.record_type_id = rt.id
+          INNER JOIN gabby.alumni.record_type rt ON gpa.record_type_id = rt.id
           AND rt.[name] = 'Cumulative College'
         WHERE
           gpa.is_deleted = 0

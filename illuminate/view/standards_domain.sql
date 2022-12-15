@@ -28,7 +28,7 @@ WITH
       s2.[level]
     FROM
       gabby.illuminate_standards.standards s2
-      JOIN standards_ladder s3 ON s2.parent_standard_id = s3.standard_id
+      INNER JOIN standards_ladder s3 ON s2.parent_standard_id = s3.standard_id
   )
 SELECT
   standards_ladder.domain_standard_id,

@@ -65,7 +65,7 @@ FROM
       CAST(gleq.lvl_num AS INT) AS gleq_lvl_num
     FROM
       gabby.steptool.all_steps step
-      JOIN gabby.lit.gleq ON step.step = gleq.lvl_num
+      INNER JOIN gabby.lit.gleq ON step.step = gleq.lvl_num
       AND gleq.testid <> 3273
     UNION ALL
     /* ACHIEVED PRE DNA */
@@ -95,10 +95,10 @@ FROM
       step.step = 0
       AND step.passed = 0
   ) sub
-  JOIN gabby.powerschool.cohort_identifiers_static co ON sub.student_number = co.student_number
+  INNER JOIN gabby.powerschool.cohort_identifiers_static co ON sub.student_number = co.student_number
   AND sub.academic_year = co.academic_year
   AND co.rn_year = 1
-  JOIN gabby.reporting.reporting_terms dt ON co.schoolid = dt.schoolid
+  INNER JOIN gabby.reporting.reporting_terms dt ON co.schoolid = dt.schoolid
   AND sub.test_date (BETWEEN dt.[start_date] AND dt.end_date)
   AND dt.identifier = 'LIT'
   AND dt._fivetran_deleted = 0

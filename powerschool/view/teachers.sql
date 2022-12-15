@@ -101,4 +101,4 @@ SELECT
   --,u.wm_alias 
 FROM
   powerschool.users u
-  JOIN powerschool.schoolstaff s ON u.dcid = s.users_dcid
+  INNER JOIN powerschool.schoolstaff s ON u.dcid = s.users_dcid

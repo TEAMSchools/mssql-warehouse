@@ -47,7 +47,7 @@ WITH
       END AS gpa_is_3plus
     FROM
       gabby.powerschool.gpa_detail gpa
-      JOIN gabby.reporting.reporting_terms rt ON gpa.academic_year = rt.academic_year
+      INNER JOIN gabby.reporting.reporting_terms rt ON gpa.academic_year = rt.academic_year
       AND gpa.reporting_term = rt.time_per_name
     COLLATE Latin1_General_BIN
     AND gpa.schoolid = rt.schoolid
@@ -152,7 +152,7 @@ WITH
       ) AS rn
     FROM
       gabby.whetstone.observations_clean wo
-      JOIN gabby.reporting.reporting_terms rt ON wo.observed_at (BETWEEN rt.[start_date] AND rt.end_date)
+      INNER JOIN gabby.reporting.reporting_terms rt ON wo.observed_at (BETWEEN rt.[start_date] AND rt.end_date)
       AND rt.identifier = 'ETR'
       AND rt.schoolid = 0
       AND rt._fivetran_deleted = 0
@@ -318,7 +318,7 @@ WITH
               co.schoolid
             FROM
               gabby.naviance.act_scores_clean act
-              JOIN gabby.powerschool.cohort_identifiers_static co ON act.student_number = co.student_number
+              INNER JOIN gabby.powerschool.cohort_identifiers_static co ON act.student_number = co.student_number
               AND co.rn_undergrad = 1
               AND co.grade_level <> 99
             WHERE

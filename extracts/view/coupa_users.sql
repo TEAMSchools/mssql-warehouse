@@ -13,7 +13,7 @@ WITH
           r.[name] AS role_name
         FROM
           gabby.coupa.user_role_mapping urm
-          JOIN gabby.coupa.[role] r ON urm.role_id = r.id
+          INNER JOIN gabby.coupa.[role] r ON urm.role_id = r.id
         UNION
         SELECT
           u.id AS [user_id],
@@ -30,7 +30,7 @@ WITH
       gabby.dbo.GROUP_CONCAT_D (bg.[name], ', ') AS business_group_names
     FROM
       gabby.coupa.user_business_group_mapping ubgm
-      JOIN gabby.coupa.business_group bg ON ubgm.business_group_id = bg.id
+      INNER JOIN gabby.coupa.business_group bg ON ubgm.business_group_id = bg.id
     GROUP BY
       ubgm.[user_id]
   ),

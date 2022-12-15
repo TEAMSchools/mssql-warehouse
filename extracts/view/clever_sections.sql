@@ -89,16 +89,16 @@ WITH
           NULL AS [Course_description]
         FROM
           gabby.powerschool.sections sec
-          JOIN gabby.powerschool.sectionteacher st ON sec.id = st.sectionid
+          INNER JOIN gabby.powerschool.sectionteacher st ON sec.id = st.sectionid
           AND sec.[db_name] = st.[db_name]
-          JOIN gabby.powerschool.roledef r ON st.roleid = r.id
+          INNER JOIN gabby.powerschool.roledef r ON st.roleid = r.id
           AND st.[db_name] = r.[db_name]
-          JOIN gabby.powerschool.teachers_static t ON st.teacherid = t.id
+          INNER JOIN gabby.powerschool.teachers_static t ON st.teacherid = t.id
           AND sec.schoolid = t.schoolid
           AND sec.[db_name] = t.[db_name]
-          JOIN gabby.powerschool.courses c ON sec.course_number = c.course_number
+          INNER JOIN gabby.powerschool.courses c ON sec.course_number = c.course_number
           AND sec.[db_name] = c.[db_name]
-          JOIN gabby.powerschool.terms ON sec.termid = terms.id
+          INNER JOIN gabby.powerschool.terms ON sec.termid = terms.id
           AND sec.schoolid = terms.schoolid
           AND sec.[db_name] = terms.[db_name]
           AND CAST(CURRENT_TIMESTAMP AS DATE) (BETWEEN terms.firstday AND terms.lastday)
@@ -152,8 +152,8 @@ WITH
           NULL AS [Course_description]
         FROM
           dsos
-          JOIN gabby.powerschool.schools s ON dsos.School_id = s.school_number
-          JOIN gabby.utilities.row_generator_smallint r ON r.n (BETWEEN s.low_grade AND s.high_grade)
+          INNER JOIN gabby.powerschool.schools s ON dsos.School_id = s.school_number
+          INNER JOIN gabby.utilities.row_generator_smallint r ON r.n (BETWEEN s.low_grade AND s.high_grade)
       ) sub
   )
 SELECT

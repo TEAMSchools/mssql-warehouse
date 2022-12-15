@@ -53,7 +53,7 @@ FROM
       sr.file_number AS employee_number
     FROM
       gabby.adp.manager_history mh
-      JOIN gabby.adp.employees_all sr ON mh.associate_id = sr.associate_id
+      INNER JOIN gabby.adp.employees_all sr ON mh.associate_id = sr.associate_id
     WHERE
       mh.reports_to_associate_id IS NOT NULL
   ) sub

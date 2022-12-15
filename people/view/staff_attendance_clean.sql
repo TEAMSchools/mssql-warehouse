@@ -84,4 +84,4 @@ FROM
     FROM
       gabby.people.staff_attendance a
   ) a
-  JOIN gabby.people.staff_crosswalk_static c ON a.df_number = c.df_employee_number
+  INNER JOIN gabby.people.staff_crosswalk_static c ON a.df_number = c.df_employee_number

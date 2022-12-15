@@ -25,8 +25,8 @@ SELECT
   CAST(cy.abbreviation AS VARCHAR(25)) AS abbreviation
 FROM
   powerschool.attendance_clean_current_static att
-  JOIN powerschool.attendance_code ac ON att.attendance_codeid = ac.id
-  JOIN powerschool.calendar_day cd ON att.calendar_dayid = cd.id
-  JOIN powerschool.cycle_day cy ON cd.cycle_day_id = cy.id
+  INNER JOIN powerschool.attendance_code ac ON att.attendance_codeid = ac.id
+  INNER JOIN powerschool.calendar_day cd ON att.calendar_dayid = cd.id
+  INNER JOIN powerschool.cycle_day cy ON cd.cycle_day_id = cy.id
 WHERE
   att.att_mode_code = 'ATT_ModeDaily'

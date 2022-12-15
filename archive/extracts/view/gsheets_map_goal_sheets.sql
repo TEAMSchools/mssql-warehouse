@@ -50,7 +50,7 @@ FROM
         CAST(tq.testritscore AS FLOAT) AS rit_75pctl
         FROM
           gabby.nwea.best_baseline bb
-          JOIN gabby.powerschool.cohort_identifiers_static co ON bb.student_number = co.student_number
+          INNER JOIN gabby.powerschool.cohort_identifiers_static co ON bb.student_number = co.student_number
           AND bb.academic_year = co.academic_year
           AND co.rn_year = 1
           AND co.school_level IN ('ES', 'MS')

@@ -111,7 +111,7 @@ WITH
           END AS questions_presented_nf
         FROM
           gabby.powerschool.cohort_identifiers_static co
-          JOIN gabby.reporting.reporting_terms rt ON co.academic_year = rt.academic_year
+          INNER JOIN gabby.reporting.reporting_terms rt ON co.academic_year = rt.academic_year
           AND co.schoolid = rt.schoolid
           AND rt.identifier = 'AR'
           AND rt._fivetran_deleted = 0

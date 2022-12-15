@@ -153,7 +153,7 @@ WITH
               END AS is_below_iep
             FROM
               roster r
-              JOIN gabby.illuminate_dna_assessments.agg_student_responses_all a ON r.student_number = a.local_student_id
+              INNER JOIN gabby.illuminate_dna_assessments.agg_student_responses_all a ON r.student_number = a.local_student_id
               AND r.academic_year = a.academic_year
               AND a.response_type = 'O'
               AND a.is_replacement = 0
@@ -229,7 +229,7 @@ WITH
   ELSE 0.0 
   END AS is_below_iep
   FROM roster r
-  JOIN gabby.parcc.summative_record_file_clean p
+  INNER JOIN gabby.parcc.summative_record_file_clean p
   ON r.student_number = p.local_student_identifier
   AND r.academic_year = p.academic_year
   ) sub
@@ -403,7 +403,7 @@ WITH
       ) AS is_oss_iep
     FROM
       roster r
-      JOIN gabby.powerschool.ps_adaadm_daily_ctod_current_static ADA ON r.studentid = ADA.studentid
+      INNER JOIN gabby.powerschool.ps_adaadm_daily_ctod_current_static ADA ON r.studentid = ADA.studentid
       AND r.yearid = ADA.yearid
       AND r.[db_name] = ADA.[db_name]
       AND ADA.membershipvalue = 1
@@ -671,7 +671,7 @@ WITH
               END AS gpa_ge_2
             FROM
               roster r
-              JOIN gabby.powerschool.gpa_detail gpa ON r.student_number = gpa.student_number
+              INNER JOIN gabby.powerschool.gpa_detail gpa ON r.student_number = gpa.student_number
               AND r.academic_year = gpa.academic_year
               AND r.reporting_schoolid = gpa.schoolid
               AND r.[db_name] = gpa.[db_name]
@@ -852,7 +852,7 @@ WITH
               END AS moved_reading_level
             FROM
               roster r
-              JOIN gabby.lit.achieved_by_round_static achv ON r.student_number = achv.student_number
+              INNER JOIN gabby.lit.achieved_by_round_static achv ON r.student_number = achv.student_number
               AND r.academic_year = achv.academic_year
               AND achv.achv_unique_id LIKE 'FPBAS%'
               AND achv.[start_date] <= SYSDATETIME()

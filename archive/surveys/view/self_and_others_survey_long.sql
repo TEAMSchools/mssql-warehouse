@@ -123,7 +123,7 @@ SELECT
   CAST(rs.response_value AS FLOAT) AS response_value
 FROM
   so_long so
-  JOIN gabby.surveys.question_key qk ON so.question_code = qk.question_code
+  INNER JOIN gabby.surveys.question_key qk ON so.question_code = qk.question_code
   AND qk.survey_type = 'SO'
   LEFT JOIN gabby.surveys.response_scales rs ON so.response = rs.response_text
   AND so.survey_type = rs.survey_type

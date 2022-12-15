@@ -63,7 +63,7 @@ SELECT
   ext.parcc AS pct_prof_parcc
 FROM
   gabby.powerschool.cohort_identifiers_static co
-  JOIN gabby.parcc.summative_record_file parcc ON co.student_number = parcc.local_student_identifier
+  INNER JOIN gabby.parcc.summative_record_file parcc ON co.student_number = parcc.local_student_identifier
   AND co.academic_year = LEFT(parcc.assessment_year, 4)
   LEFT JOIN external_prof ext ON co.academic_year = ext.academic_year
   AND parcc.test_code = ext.test_code
@@ -111,7 +111,7 @@ ext.cps AS pct_prof_cps,
 ext.parcc AS pct_prof_parcc
 FROM
   gabby.powerschool.cohort_identifiers_static co
-  JOIN gabby.njsmart.all_state_assessments asa ON co.student_number = asa.local_student_id
+  INNER JOIN gabby.njsmart.all_state_assessments asa ON co.student_number = asa.local_student_id
   AND co.academic_year = asa.academic_year
   LEFT JOIN external_prof ext ON co.academic_year = ext.academic_year
   AND CONCAT(

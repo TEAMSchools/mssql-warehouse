@@ -6,6 +6,6 @@ SELECT
   r.roster_type
 FROM
   deanslist.rosters r
-  JOIN deanslist.roster_assignments ra ON r.roster_id = ra.dlroster_id
+  INNER JOIN deanslist.roster_assignments ra ON r.roster_id = ra.dlroster_id
 WHERE
   r.roster_type IN ('Club', 'Athletics')

@@ -97,7 +97,7 @@ FROM
       LEFT JOIN powerschool.gradeformulaset gfs ON sub.gradeformulasetid = gfs.gradeformulasetid
       LEFT JOIN powerschool.terms t ON sub.termid = t.id
       AND sub.schoolid = t.schoolid
-      JOIN powerschool.termbins tb ON t.schoolid = tb.schoolid
+      INNER JOIN powerschool.termbins tb ON t.schoolid = tb.schoolid
       AND t.id = tb.termid
       LEFT JOIN powerschool.gradecalculationtype gct ON gfs.gradeformulasetid = gct.gradeformulasetid
       AND t.abbreviation = gct.abbreviation

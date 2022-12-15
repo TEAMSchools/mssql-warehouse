@@ -31,8 +31,8 @@ FROM
     terms.is_curterm
     FROM
       powerschool.course_enrollments_current_static enr
-      JOIN powerschool.schools ON enr.schoolid = schools.school_number
-      JOIN gabby.reporting.reporting_terms terms ON enr.yearid = terms.yearid
+      INNER JOIN powerschool.schools ON enr.schoolid = schools.school_number
+      INNER JOIN gabby.reporting.reporting_terms terms ON enr.yearid = terms.yearid
       AND enr.schoolid = terms.schoolid
       AND terms.identifier = 'RT'
       AND terms.alt_name NOT IN ('Summer School', 'Capstone', 'EOY')

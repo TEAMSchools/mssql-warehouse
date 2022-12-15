@@ -81,6 +81,6 @@ SELECT
   ) AS rn_gcd
 FROM
   gabby.stmath.progress_completion_report stm
-  JOIN gabby.reporting.reporting_terms dt ON stm.start_year = dt.academic_year
+  INNER JOIN gabby.reporting.reporting_terms dt ON stm.start_year = dt.academic_year
   AND dt.identifier = 'SY'
   AND dt.schoolid = 0

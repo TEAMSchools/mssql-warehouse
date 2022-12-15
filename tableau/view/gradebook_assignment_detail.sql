@@ -37,11 +37,11 @@ SELECT
   s1.ismissing
 FROM
   gabby.powerschool.course_enrollments_current_static enr
-  JOIN gabby.powerschool.cohort_identifiers_static co ON enr.student_number = co.student_number
+  INNER JOIN gabby.powerschool.cohort_identifiers_static co ON enr.student_number = co.student_number
   AND enr.academic_year = co.academic_year
   AND enr.[db_name] = co.[db_name]
   AND co.rn_year = 1
-  JOIN gabby.powerschool.gradebook_setup_static gb ON enr.sections_dcid = gb.sectionsdcid
+  INNER JOIN gabby.powerschool.gradebook_setup_static gb ON enr.sections_dcid = gb.sectionsdcid
   AND enr.[db_name] = gb.[db_name]
   AND gb.finalgradesetuptype = 'Total_Points'
   LEFT JOIN gabby.powerschool.gradebook_assignments_current_static a1 ON gb.sectionsdcid = a1.sectionsdcid
@@ -87,11 +87,11 @@ SELECT
   s2.ismissing
 FROM
   gabby.powerschool.course_enrollments_current_static enr
-  JOIN gabby.powerschool.cohort_identifiers_static co ON enr.student_number = co.student_number
+  INNER JOIN gabby.powerschool.cohort_identifiers_static co ON enr.student_number = co.student_number
   AND enr.academic_year = co.academic_year
   AND enr.[db_name] = co.[db_name]
   AND co.rn_year = 1
-  JOIN gabby.powerschool.gradebook_setup_static gb ON enr.sections_dcid = gb.sectionsdcid
+  INNER JOIN gabby.powerschool.gradebook_setup_static gb ON enr.sections_dcid = gb.sectionsdcid
   AND enr.[db_name] = gb.[db_name]
   AND gb.finalgradesetuptype <> 'Total_Points'
   LEFT JOIN gabby.powerschool.gradebook_assignments_current_static a2 ON gb.sectionsdcid = a2.sectionsdcid

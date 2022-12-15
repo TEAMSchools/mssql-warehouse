@@ -89,7 +89,7 @@ WITH
           CAST(devsp_prof AS VARCHAR) AS devsp_prof
         FROM
           gabby.lit.powerschool_readingscores_archive rs
-          JOIN gabby.powerschool.students s ON rs.studentid = s.id
+          INNER JOIN gabby.powerschool.students s ON rs.studentid = s.id
       ) sub UNPIVOT (
         score FOR field IN (
           name_ass,

@@ -38,7 +38,7 @@ SELECT
   NULL AS rn_category
 FROM
   gabby.powerschool.gradebook_setup_static gb
-  JOIN gabby.powerschool.course_enrollments_current_static enr ON gb.sectionsdcid = enr.sections_dcid
+  INNER JOIN gabby.powerschool.course_enrollments_current_static enr ON gb.sectionsdcid = enr.sections_dcid
   AND gb.[db_name] = enr.[db_name]
   LEFT JOIN gabby.powerschool.gradebook_assignments_current_static a ON gb.sectionsdcid = a.sectionsdcid
   AND gb.assignmentcategoryid = a.categoryid

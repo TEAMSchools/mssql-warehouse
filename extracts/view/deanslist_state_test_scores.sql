@@ -46,7 +46,7 @@ FROM
     END AS is_proficient
     FROM
       gabby.powerschool.cohort_identifiers_static co
-      JOIN gabby.parcc.summative_record_file_clean parcc ON co.state_studentnumber = parcc.state_student_identifier
+      INNER JOIN gabby.parcc.summative_record_file_clean parcc ON co.state_studentnumber = parcc.state_student_identifier
       AND co.academic_year = parcc.academic_year
     WHERE
       co.academic_year >= 2014
@@ -66,7 +66,7 @@ FROM
       END AS is_proficient
     FROM
       gabby.powerschool.cohort_identifiers_static co
-      JOIN gabby.njsmart.all_state_assessments nj ON co.student_number = nj.local_student_id
+      INNER JOIN gabby.njsmart.all_state_assessments nj ON co.student_number = nj.local_student_id
       AND co.academic_year = nj.academic_year
     WHERE
       co.rn_year = 1

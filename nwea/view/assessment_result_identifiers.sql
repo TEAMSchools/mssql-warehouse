@@ -371,7 +371,7 @@ FROM
         FROM
           nwea.assessment_results
       ) sub
-      JOIN powerschool.cohort_static co ON sub.student_id = co.student_number
+      INNER JOIN powerschool.cohort_static co ON sub.student_id = co.student_number
       AND sub.academic_year = co.academic_year
       AND co.rn_year = 1
       LEFT JOIN gabby.nwea.percentile_norms norms_2008 ON co.grade_level = norms_2008.grade_level

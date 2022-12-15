@@ -86,10 +86,10 @@ SELECT
   ) AS rn_gcd
 FROM
   gabby.stmath.progress_completion_report_clean stm
-  JOIN gabby.powerschool.cohort_identifiers_static co ON stm.school_student_id = co.student_number
+  INNER JOIN gabby.powerschool.cohort_identifiers_static co ON stm.school_student_id = co.student_number
   AND stm.start_year = co.academic_year
   AND co.rn_year = 1
-  JOIN enrollments enr ON co.student_number = enr.student_number
+  INNER JOIN enrollments enr ON co.student_number = enr.student_number
   AND co.academic_Year = enr.academic_year
   AND co.db_name = enr.db_name
   AND enr.rn = 1

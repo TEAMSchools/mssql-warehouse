@@ -232,7 +232,7 @@ WITH
           cw.adp_associate_id AS adp_associate_id_legacy
         FROM
           gabby.adp.employees_all ea
-          JOIN gabby.adp.employees e ON ea.file_number = e.file_number
+          INNER JOIN gabby.adp.employees e ON ea.file_number = e.file_number
           LEFT JOIN gabby.dayforce.employees df ON ea.file_number = df.df_employee_number
           LEFT JOIN gabby.people.id_crosswalk_adp cw ON ea.file_number = cw.df_employee_number
           AND cw.rn_curr = 1

@@ -48,7 +48,7 @@ SELECT
   ex.exemption
 FROM
   gabby.people.staff_crosswalk_static sr
-  JOIN gabby.whetstone.observations_clean wo ON CAST(sr.df_employee_number AS VARCHAR(25)) = wo.teacher_internal_id
+  INNER JOIN gabby.whetstone.observations_clean wo ON CAST(sr.df_employee_number AS VARCHAR(25)) = wo.teacher_internal_id
   AND sr.samaccountname <> LEFT(
     wo.observer_email,
     CHARINDEX('@', wo.observer_email) - 1
@@ -63,7 +63,7 @@ FROM
   LEFT JOIN gabby.whetstone.measurements wm ON wos.score_measurement_id = wm._id
   LEFT JOIN gabby.whetstone.observations_scores_text_boxes tb ON wos.score_measurement_id = tb.score_measurement_id
   AND wo.observation_id = tb.observation_id
-  JOIN gabby.reporting.reporting_terms rt ON wo.observed_at (BETWEEN rt.[start_date] AND rt.end_date)
+  INNER JOIN gabby.reporting.reporting_terms rt ON wo.observed_at (BETWEEN rt.[start_date] AND rt.end_date)
   AND rt.identifier = 'ETR'
   AND rt.schoolid = 0
   AND rt._fivetran_deleted = 0

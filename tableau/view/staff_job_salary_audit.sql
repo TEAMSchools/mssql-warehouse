@@ -58,7 +58,7 @@ SELECT
   ) AS rn_curr
 FROM
   gabby.people.employment_history_static h
-  JOIN gabby.people.staff_crosswalk_static r ON h.associate_id = r.adp_associate_id
+  INNER JOIN gabby.people.staff_crosswalk_static r ON h.associate_id = r.adp_associate_id
 WHERE
   (
     h.job_title IS NOT NULL

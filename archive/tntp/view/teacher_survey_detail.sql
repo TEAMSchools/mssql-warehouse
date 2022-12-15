@@ -152,6 +152,6 @@ SELECT
   vl.label AS value_label
 FROM
   survey_long s
-  JOIN gabby.tntp.teacher_insight_variables vr ON s.variable = vr.variable
+  INNER JOIN gabby.tntp.teacher_insight_variables vr ON s.variable = vr.variable
   LEFT OUTER JOIN gabby.tntp.teacher_insight_values vl ON s.variable = vl.variable
   AND s.value = vl.value

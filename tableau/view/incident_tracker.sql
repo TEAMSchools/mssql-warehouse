@@ -44,9 +44,9 @@ SELECT
   cf.[SSDS Incident ID]
 FROM
   gabby.powerschool.cohort_identifiers_static co
-  JOIN gabby.deanslist.incidents_clean_static dli ON co.student_number = dli.student_school_id
+  INNER JOIN gabby.deanslist.incidents_clean_static dli ON co.student_number = dli.student_school_id
   AND co.academic_year = dli.create_academic_year
-  JOIN gabby.reporting.reporting_terms d ON co.schoolid = d.schoolid
+  INNER JOIN gabby.reporting.reporting_terms d ON co.schoolid = d.schoolid
   AND CAST(dli.create_ts AS DATE) (BETWEEN d.[start_date] AND d.end_date)
   AND d.identifier = 'RT'
   AND d._fivetran_deleted = 0
@@ -99,10 +99,10 @@ SELECT
   NULL AS [SSDS Incident ID]
 FROM
   gabby.powerschool.cohort_identifiers_static co
-  JOIN gabby.deanslist.incidents_clean_static dli ON co.student_number = dli.student_school_id
+  INNER JOIN gabby.deanslist.incidents_clean_static dli ON co.student_number = dli.student_school_id
   AND co.academic_year = dli.create_academic_year
-  JOIN gabby.deanslist.incidents_penalties_static dlip ON dli.incident_id = dlip.incident_id
-  JOIN gabby.reporting.reporting_terms d ON co.schoolid = d.schoolid
+  INNER JOIN gabby.deanslist.incidents_penalties_static dlip ON dli.incident_id = dlip.incident_id
+  INNER JOIN gabby.reporting.reporting_terms d ON co.schoolid = d.schoolid
   AND ISNULL(dlip.startdate, CAST(dli.create_ts AS DATE)) (BETWEEN d.[start_date] AND d.end_date)
   AND d.identifier = 'RT'
   AND d._fivetran_deleted = 0
@@ -156,13 +156,13 @@ SELECT
   NULL AS [SSDS Incident ID]
 FROM
   gabby.deanslist.behavior dlb
-  JOIN gabby.powerschool.cohort_identifiers_static co ON co.student_number = dlb.student_school_id
+  INNER JOIN gabby.powerschool.cohort_identifiers_static co ON co.student_number = dlb.student_school_id
   AND dlb.behavior_date (BETWEEN co.entrydate AND co.exitdate)
   AND dlb.[db_name] = co.[db_name]
   AND co.rn_year = 1
   LEFT JOIN deanslist.rosters r ON dlb.roster_id = r.roster_id
   AND dlb.[db_name] = r.[db_name]
-  JOIN gabby.reporting.reporting_terms d ON co.schoolid = d.schoolid
+  INNER JOIN gabby.reporting.reporting_terms d ON co.schoolid = d.schoolid
   AND dlb.behavior_date (BETWEEN d.[start_date] AND d.end_date)
   AND d.identifier = 'RT'
   AND d._fivetran_deleted = 0

@@ -11,7 +11,7 @@ SELECT
   s.grade_level
 FROM
   gabby.renaissance.ar_studentpractice_identifiers_static ar
-  JOIN gabby.powerschool.students s ON ar.student_number = s.student_number
+  INNER JOIN gabby.powerschool.students s ON ar.student_number = s.student_number
 WHERE
   ar.rn_quiz > 1
   AND ar.ti_passed = 1

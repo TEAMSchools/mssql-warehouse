@@ -39,7 +39,7 @@ WITH
       ) AS rn_term_asc
     FROM
       gabby.alumni.enrollment_c e NNER
-      JOIN term_scaff ts ON ts.term_start_date BETWEEN e.start_date_c AND COALESCE(
+      INNER JOIN term_scaff ts ON ts.term_start_date BETWEEN e.start_date_c AND COALESCE(
         e.actual_end_date_c,
         CAST(CURRENT_TIMESTAMP AS DATE)
       )

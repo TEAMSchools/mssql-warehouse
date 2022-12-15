@@ -18,10 +18,10 @@ WITH
       ) AS rn_entrydate
     FROM
       [WaspTrackAsset].[dbo].[asset]
-      JOIN [WaspTrackAsset].[dbo].[asset_transactions] ats ON asset.asset_id = ats.asset_id
+      INNER JOIN [WaspTrackAsset].[dbo].[asset_transactions] ats ON asset.asset_id = ats.asset_id
       AND ats.trans_type IN (300, 350) /* Check In & Check Out */
-      JOIN [WaspTrackAsset].[dbo].[transaction_types] ON ats.trans_type = transaction_types.trans_type_no
-      JOIN [WaspTrackAsset].[dbo].[employees] ON ats.employee_id = employees.employee_id
+      INNER JOIN [WaspTrackAsset].[dbo].[transaction_types] ON ats.trans_type = transaction_types.trans_type_no
+      INNER JOIN [WaspTrackAsset].[dbo].[employees] ON ats.employee_id = employees.employee_id
   )
 SELECT
   asset.[asset_id] AS [Asset ID],

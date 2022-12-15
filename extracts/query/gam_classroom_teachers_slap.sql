@@ -35,10 +35,10 @@ SELECT DISTINCT
   sl.gsuite_email AS teacher
 FROM
   gabby.powerschool.sections s
-  JOIN gabby.powerschool.courses c ON s.course_number_clean = c.course_number_clean
+  INNER JOIN gabby.powerschool.courses c ON s.course_number_clean = c.course_number_clean
   AND s.[db_name] = c.[db_name]
   AND c.credittype <> 'LOG'
-  JOIN slap sl ON s.schoolid = sl.primary_site_schoolid
+  INNER JOIN slap sl ON s.schoolid = sl.primary_site_schoolid
 WHERE
   s.yearid = (gabby.utilities.global_academic_year () - 1990)
 ORDER BY

@@ -25,7 +25,7 @@ ixus.last_user_lookup AS lastlookup,
 -- ,ixus.last_user_update AS LastUpdate
 FROM
   sys.indexes ix
-  JOIN sys.objects t ON ix.[object_id] = t.[object_id]
+  INNER JOIN sys.objects t ON ix.[object_id] = t.[object_id]
   INNER JOIN sys.dm_db_index_usage_stats ixus ON ixus.index_id = ix.index_id
   AND ixus.[object_id] = ix.[object_id]
   INNER JOIN sys.dm_db_partition_stats ps ON ps.[object_id] = ix.[object_id]

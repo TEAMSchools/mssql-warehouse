@@ -16,7 +16,7 @@ WITH
       saa.student_web_id + '@teamstudents.org' AS email
     FROM
       gabby.powerschool.cohort_identifiers_static co
-      JOIN gabby.powerschool.student_access_accounts_static saa ON co.student_number = saa.student_number
+      INNER JOIN gabby.powerschool.student_access_accounts_static saa ON co.student_number = saa.student_number
     WHERE
       co.academic_year = 2019
       AND co.rn_year = 1
@@ -44,7 +44,7 @@ SELECT DISTINCT
   END AS teacher
 FROM
   this t
-  JOIN gabby.people.staff_crosswalk_static scw ON t.schoolid = scw.primary_site_schoolid
+  INNER JOIN gabby.people.staff_crosswalk_static scw ON t.schoolid = scw.primary_site_schoolid
   AND scw.primary_job = 'School Leader'
   AND scw.[status] NOT IN ('TERMINATED', 'PRESTART')
   -- */

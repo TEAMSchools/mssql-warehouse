@@ -43,7 +43,7 @@ SELECT
   enr.section_number
 FROM
   gabby.powerschool.cohort_identifiers_static co
-  JOIN gabby.illuminate_dna_assessments.agg_student_responses_all asr ON co.student_number = asr.local_student_id
+  INNER JOIN gabby.illuminate_dna_assessments.agg_student_responses_all asr ON co.student_number = asr.local_student_id
   AND co.academic_year = asr.academic_year
   LEFT JOIN gabby.powerschool.course_enrollments enr ON co.student_number = enr.student_number
   AND co.academic_year = enr.academic_year

@@ -129,7 +129,7 @@ SELECT
   END AS flag
 FROM
   gabby.powerschool.cohort_identifiers_static co
-  JOIN gabby.powerschool.fte ON co.schoolid = fte.schoolid
+  INNER JOIN gabby.powerschool.fte ON co.schoolid = fte.schoolid
   AND co.yearid = fte.yearid
   AND co.[db_name] = fte.[db_name]
   AND fte.[name] LIKE 'Full Time Student%'

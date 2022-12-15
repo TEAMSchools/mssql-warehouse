@@ -7,7 +7,7 @@ WITH
       u.[user_id]
     FROM
       gabby.people.work_assignment_history_static sr
-      JOIN gabby.illuminate_public.users u ON CAST(sr.employee_number AS VARCHAR(25)) = u.state_id
+      INNER JOIN gabby.illuminate_public.users u ON CAST(sr.employee_number AS VARCHAR(25)) = u.state_id
     WHERE
       sr.home_department_description = 'Teaching and Learning'
     UNION
@@ -196,8 +196,8 @@ FROM
       CAST(rt.alt_name AS VARCHAR(5)) AS term_administered
     FROM
       gabby.illuminate_dna_assessments.assessments a
-      JOIN gabby.illuminate_public.users u ON a.[user_id] = u.[user_id]
-      JOIN gabby.illuminate_dna_assessments.performance_band_sets pbs ON a.performance_band_set_id = pbs.performance_band_set_id
+      INNER JOIN gabby.illuminate_public.users u ON a.[user_id] = u.[user_id]
+      INNER JOIN gabby.illuminate_dna_assessments.performance_band_sets pbs ON a.performance_band_set_id = pbs.performance_band_set_id
       LEFT JOIN gabby.illuminate_codes.dna_scopes ds ON a.code_scope_id = ds.code_id
       LEFT JOIN gabby.illuminate_codes.dna_subject_areas dsa ON a.code_subject_area_id = dsa.code_id
       LEFT JOIN gabby.assessments.normed_scopes n ON a.academic_year = (n.academic_year + 1)

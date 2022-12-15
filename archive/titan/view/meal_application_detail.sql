@@ -11,5 +11,5 @@ SELECT
   esd.pricing_level
 FROM
   titan.mealapplication ma
-  JOIN titan.academicyear ay ON ma.academic_year_id = ay.academic_year_id
+  INNER JOIN titan.academicyear ay ON ma.academic_year_id = ay.academic_year_id
   LEFT JOIN titan.eligibilitystatusdata esd ON ma.eligibility_status_id = esd.eligibility_status_id

@@ -21,10 +21,10 @@ SELECT
   ate.fp_keylever
 FROM
   gabby.lit.achieved_by_round_static achv
-  JOIN gabby.powerschool.cohort_identifiers_static co ON achv.student_number = co.student_number
+  INNER JOIN gabby.powerschool.cohort_identifiers_static co ON achv.student_number = co.student_number
   AND achv.academic_year = co.academic_year
   AND co.rn_year = 1
   AND co.region = 'KCNA'
-  JOIN gabby.lit.all_test_events_static ate ON achv.achv_unique_id = ate.unique_id
+  INNER JOIN gabby.lit.all_test_events_static ate ON achv.achv_unique_id = ate.unique_id
 WHERE
   achv.achv_unique_id LIKE 'FPBAS%'

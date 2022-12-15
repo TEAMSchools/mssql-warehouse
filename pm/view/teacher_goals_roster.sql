@@ -89,7 +89,7 @@ WITH
       ) AS rn_emp_yr
     FROM
       work_assignment wa
-      JOIN academic_years ay ON ay.academic_year (
+      INNER JOIN academic_years ay ON ay.academic_year (
         BETWEEN wa.start_academic_year AND wa.end_academic_year
       )
   )
@@ -113,6 +113,6 @@ SELECT
   sr.grades_taught
 FROM
   current_work_assignment cwa
-  JOIN gabby.people.staff_crosswalk_static sr ON cwa.df_employee_number = sr.df_employee_number
+  INNER JOIN gabby.people.staff_crosswalk_static sr ON cwa.df_employee_number = sr.df_employee_number
 WHERE
   cwa.rn_emp_yr = 1

@@ -21,7 +21,7 @@ WITH
       gabby.alumni.application_c a
       LEFT JOIN gabby.alumni.account ac ON a.school_c = ac.id
       AND ac.is_deleted = 0
-      JOIN gabby.alumni.record_type rt ON ac.record_type_id = rt.id
+      INNER JOIN gabby.alumni.record_type rt ON ac.record_type_id = rt.id
       AND rt.[name] <> 'High School'
     WHERE
       a.is_deleted = 0

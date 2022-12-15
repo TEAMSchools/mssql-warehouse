@@ -65,7 +65,7 @@ SELECT
   ) AS rn_curr
 FROM
   gabby.powerschool.cohort_identifiers_static co
-  JOIN gabby.powerschool.students s ON co.student_number = s.student_number
+  INNER JOIN gabby.powerschool.students s ON co.student_number = s.student_number
   AND co.db_name = s.db_name
   LEFT JOIN gabby.powerschool.course_enrollments_static enr ON co.student_number = enr.student_number
   AND co.academic_year = enr.academic_year

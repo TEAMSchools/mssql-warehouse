@@ -18,7 +18,7 @@ SELECT
   rt.alt_name AS term_name
 FROM
   gabby.illuminate_dna_repositories.sight_words_data_current_static swd
-  JOIN gabby.reporting.reporting_terms rt ON swd.date_administered (BETWEEN rt.[start_date] AND rt.end_date)
+  INNER JOIN gabby.reporting.reporting_terms rt ON swd.date_administered (BETWEEN rt.[start_date] AND rt.end_date)
   AND rt.identifier = 'RT'
   AND rt.schoolid = 0
   AND rt._fivetran_deleted = 0
