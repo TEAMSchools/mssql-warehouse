@@ -748,7 +748,9 @@ SELECT
 FROM
   gabby.pm.teacher_goals_lockbox_wide lb
   INNER JOIN gabby.people.employment_history_static eh ON lb.df_employee_number = eh.employee_number
-  AND DATEFROMPARTS(lb.academic_year + 1, 4, 30) BETWEEN eh.effective_start_date AND eh.effective_end_date
+  AND DATEFROMPARTS(lb.academic_year + 1, 4, 30) (
+    BETWEEN eh.effective_start_date AND eh.effective_end_date
+  )
   AND eh.primary_position = 'Yes'
   INNER JOIN gabby.people.school_crosswalk cw ON eh.[location] = cw.site_name
   AND cw.ps_school_id <> 0
@@ -870,8 +872,7 @@ FROM
     AND co.rn_year = 1 UNPIVOT (
       response FOR question_text IN (
         _1_what_best_describes_expectations_for_students_at_your_school_,
-        _2_what_best_describes_the_interactions_ BETWEEN_staff_and_students_
-,
+        _2_what_best_describes_the_interactions_ BETWEEN_staff_and_students_,
         _3_what_best_describes_how_staff_respond_to_student_behavior_,
         _4_what_best_describes_how_school_handles_activities_for_students_,
         _5_what_best_describes_how_much_input_students_have_on_school_decisions_,
@@ -956,7 +957,7 @@ FROM
       AND nj.academic_year = co.academic_year
       AND nj.[db_name] = co.[db_name]
       AND co.rn_year = 1
-      AND co.grade_level BETWEEN 3 AND 8
+      AND co.grade_level (BETWEEN 3 AND 8)
       AND co.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 3
     UNION ALL
     SELECT
@@ -983,7 +984,7 @@ FROM
       AND LEFT(fl.school_year, 2) = RIGHT(co.academic_year, 2)
       AND co.rn_year = 1
       AND co.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 3
-      AND co.grade_level BETWEEN 3 AND 8
+      AND co.grade_level (BETWEEN 3 AND 8)
   ) sub
 GROUP BY
   sub.academic_year,

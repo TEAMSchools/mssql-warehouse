@@ -45,7 +45,7 @@ FROM
   AND enr.[db_name] = gb.[db_name]
   AND gb.finalgradesetuptype = 'Total_Points'
   LEFT JOIN gabby.powerschool.gradebook_assignments_current_static a1 ON gb.sectionsdcid = a1.sectionsdcid
-  AND a1.assign_date BETWEEN gb.term_start_date and gb.term_end_date 
+  AND a1.assign_date (BETWEEN gb.term_start_date AND gb.term_end_date)
   AND gb.[db_name] = a1.[db_name]
   LEFT JOIN gabby.powerschool.gradebook_assignments_scores_current_static s1 ON a1.assignmentsectionid = s1.assignmentsectionid
   AND a1.[db_name] = s1.[db_name]
@@ -96,7 +96,7 @@ FROM
   AND gb.finalgradesetuptype <> 'Total_Points'
   LEFT JOIN gabby.powerschool.gradebook_assignments_current_static a2 ON gb.sectionsdcid = a2.sectionsdcid
   AND gb.assignmentcategoryid = a2.categoryid
-  AND a2.assign_date BETWEEN gb.term_start_date and gb.term_end_date 
+  AND a2.assign_date (BETWEEN gb.term_start_date AND gb.term_end_date)
   AND gb.[db_name] = a2.[db_name]
   LEFT JOIN gabby.powerschool.gradebook_assignments_scores_current_static s2 ON a2.assignmentsectionid = s2.assignmentsectionid
   AND a2.[db_name] = s2.[db_name]

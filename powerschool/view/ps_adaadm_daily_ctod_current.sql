@@ -59,7 +59,7 @@ SELECT
   ) * mv.ontrack AS potential_attendancevalue
 FROM
   powerschool.ps_membership_reg_current_static mv
-  LEFT JOIN terms_attendance_code tac ON mv.calendardate BETWEEN tac.firstday AND tac.lastday 
+  LEFT JOIN terms_attendance_code tac ON mv.calendardate (BETWEEN tac.firstday AND tac.lastday)
   AND mv.schoolid = tac.schoolid
   LEFT JOIN powerschool.ps_attendance_daily_current_static ada_0 ON mv.studentid = ada_0.studentid
   AND mv.calendardate = ada_0.att_date

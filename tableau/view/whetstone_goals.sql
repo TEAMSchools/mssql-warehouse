@@ -30,9 +30,8 @@ FROM
   AND wt.assignment_type = 'goal'
   LEFT JOIN gabby.whetstone.assignments_clean wa ON wt.assignment_id = wa.assignment_id
   LEFT JOIN gabby.whetstone.users_clean wu ON wa.[user_id] = wu.[user_id]
-  LEFT JOIN gabby.people.staff_crosswalk_static scw ON wu.internal_id = scw.df_employee_number
-EFT JOIN gabby.reporting.reporting_terms rt
- ON CAST(wa.created AS DATE) BETWEEN rt.[start_date] AND rt.end_date
-AND rt.identifier = 'RT'
-AND rt.schoolid = 0
-AND rt._fivetran_deleted = 0
+  LEFT JOIN gabby.people.staff_crosswalk_static scw ON wu.internal_id = scw.df_employee_number EFT
+  JOIN gabby.reporting.reporting_terms rt ON CAST(wa.created AS DATE) (BETWEEN rt.[start_date] AND rt.end_date)
+  AND rt.identifier = 'RT'
+  AND rt.schoolid = 0
+  AND rt._fivetran_deleted = 0

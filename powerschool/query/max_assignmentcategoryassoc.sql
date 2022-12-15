@@ -20,7 +20,7 @@ FROM
     WHERE
       asec.duedate >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR (), 7, 1)
   ) ga
-  INNER JOIN gabby.reporting.reporting_terms rt ON ga.duedate BETWEEN rt.[start_date] AND rt.end_date
+  INNER JOIN gabby.reporting.reporting_terms rt ON ga.duedate (BETWEEN rt.[start_date] AND rt.end_date)
   AND rt.identifier = 'RT'
   AND rt.schoolid = 0
 GROUP BY

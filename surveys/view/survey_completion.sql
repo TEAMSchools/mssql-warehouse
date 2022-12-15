@@ -32,7 +32,7 @@ WITH
     FROM
       gabby.surveys.self_and_others_survey s
       JOIN gabby.surveygizmo.survey_campaign_clean_static c ON c.survey_id = 4561325
-      AND CAST(s._created AS DATETIME2) BETWEEN c.link_open_date AND c.link_close_date
+      AND CAST(s._created AS DATETIME2) (BETWEEN c.link_open_date AND c.link_close_date)
     WHERE
       gabby.utilities.DATE_TO_SY (s._created) = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
       AND s.subject_name IS NOT NULL
@@ -66,7 +66,7 @@ WITH
     FROM
       gabby.surveys.manager_survey m
       JOIN gabby.surveygizmo.survey_campaign_clean_static c ON c.survey_id = 4561288
-      AND CAST(m._created AS DATETIME2) BETWEEN c.link_open_date AND c.link_close_date
+      AND CAST(m._created AS DATETIME2) (BETWEEN c.link_open_date AND c.link_close_date)
     WHERE
       gabby.utilities.DATE_TO_SY (m._created) = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
       AND m.subject_name IS NOT NULL
@@ -91,7 +91,7 @@ WITH
     FROM
       gabby.surveys.r_9_engagement_survey e
       JOIN gabby.surveygizmo.survey_campaign_clean_static c ON c.survey_id = 5300913
-      AND CAST(e._created AS DATETIME2) BETWEEN c.link_open_date AND c.link_close_date
+      AND CAST(e._created AS DATETIME2) (BETWEEN c.link_open_date AND c.link_close_date)
     WHERE
       gabby.utilities.DATE_TO_SY (e._created) = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
   ),

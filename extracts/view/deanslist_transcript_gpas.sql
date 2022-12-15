@@ -38,7 +38,9 @@ FROM
           INNER JOIN gabby.powerschool.students s ON sg.studentid = s.id
           AND sg.[db_name] = s.[db_name]
           LEFT OUTER JOIN gabby.powerschool.gradescaleitem_lookup_static scale_unweighted ON sg.[db_name] = scale_unweighted.[db_name]
-          AND sg.[percent] BETWEEN scale_unweighted.min_cutoffpercentage AND scale_unweighted.max_cutoffpercentage
+          AND sg.[percent] (
+            BETWEEN scale_unweighted.min_cutoffpercentage AND scale_unweighted.max_cutoffpercentage
+          )
           AND gabby.utilities.PS_UNWEIGHTED_GRADESCALE_NAME (sg.academic_year, sg.gradescale_name) = scale_unweighted.gradescale_name
         WHERE
           sg.storecode = 'Y1'

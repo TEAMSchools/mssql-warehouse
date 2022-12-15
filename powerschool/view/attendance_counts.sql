@@ -36,7 +36,7 @@ WITH
         FROM
           powerschool.ps_attendance_daily att
           JOIN gabby.reporting.reporting_terms dates ON att.schoolid = dates.schoolid
-          AND att.att_date BETWEEN dates.start_date AND dates.end_date
+          AND att.att_date (BETWEEN dates.start_date AND dates.end_date)
           AND dates.identifier = 'RT'
         WHERE
           att.att_date >= DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1, 7, 1)
@@ -95,10 +95,12 @@ WITH
         FROM
           powerschool.ps_adaadm_daily_ctod mem
           JOIN gabby.reporting.reporting_terms d ON mem.schoolid = d.schoolid
-          AND mem.calendardate BETWEEN d.start_date AND d.end_date
+          AND mem.calendardate (BETWEEN d.start_date AND d.end_date)
           AND d.identifier = 'RT'
         WHERE
-          mem.calendardate BETWEEN DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1, 7, 1) AND CURRENT_TIMESTAMP
+          mem.calendardate (
+            BETWEEN DATEFROMPARTS(gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1, 7, 1) AND CURRENT_TIMESTAMP
+          )
       ) sub
     GROUP BY
       sub.studentid,

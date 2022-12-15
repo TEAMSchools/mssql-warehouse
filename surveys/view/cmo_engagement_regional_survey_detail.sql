@@ -38,10 +38,12 @@ SELECT
 FROM
   gabby.surveygizmo.survey_detail d
   LEFT JOIN gabby.people.employment_history_static w ON d.respondent_df_employee_number = w.employee_number
-ND d.date_submitted BETWEEN w.effective_start_date AND COALESCE(
- w.effective_end_date,
- DATEFROMPARTS((d.campaign_academic_year + 1), 7, 1)
-
+  AND d.date_submitted (
+    BETWEEN w.effective_start_date AND COALESCE(
+      w.effective_end_date,
+      DATEFROMPARTS((d.campaign_academic_year + 1), 7, 1)
+    )
+  )
   LEFT JOIN gabby.people.staff_roster s ON d.respondent_df_employee_number = s.employee_number
 WHERE
   d.survey_id = 5300913

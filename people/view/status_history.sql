@@ -80,8 +80,7 @@ WITH
             status_effective_date
         )
         ELSE termination_reason_description
-      END AS termination_reason_description /* cover ADP Import status with terminal DF reason */
-,
+      END AS termination_reason_description /* cover ADP Import status with terminal DF reason */,
       COALESCE(
         status_effective_end_date,
         DATEADD(
@@ -187,8 +186,9 @@ SELECT
   source_system,
   MIN(
     CASE
-      WHEN CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN status_effective_date AND status_effective_end_date_eoy
-      THEN position_status
+      WHEN CAST(CURRENT_TIMESTAMP AS DATE) (
+        BETWEEN status_effective_date AND status_effective_end_date_eoy
+      ) THEN position_status
     END
   ) OVER (
     PARTITION BY

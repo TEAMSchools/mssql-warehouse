@@ -56,11 +56,16 @@ WITH
                 ELSE 0.0
               END AS is_fr_lunch,
               CASE
-                WHEN r.exitdate BETWEEN DATEADD(DAY, 1 - (DATEPART(WEEKDAY, SYSDATETIME())), CAST(SYSDATETIME() AS DATE)) /* week start date */
-                AND DATEADD(
-                  DAY,
-                  7 - (DATEPART(WEEKDAY, SYSDATETIME())),
-                  CAST(SYSDATETIME() AS DATE)
+                WHEN r.exitdate (
+                  BETWEEN DATEADD(
+                    DAY,
+                    1 - (DATEPART(WEEKDAY, SYSDATETIME())),
+                    CAST(SYSDATETIME() AS DATE)
+                  ) /* week start date */ AND DATEADD(
+                    DAY,
+                    7 - (DATEPART(WEEKDAY, SYSDATETIME())),
+                    CAST(SYSDATETIME() AS DATE)
+                  )
                 ) /* week end date */ THEN 1.0
                 ELSE 0.0
               END AS is_attrition_week
@@ -172,78 +177,78 @@ WITH
         )
       ) u
   )
-/* 
+  /* 
   --,parcc AS (
-SELECT u.academic_year
-      ,u.region
-      ,u.school_level
-      ,u.reporting_schoolid
-      ,u.grade_level
-      ,u.[subject]
-      ,u.field
-      ,u.[value]
-FROM
-    (
-     SELECT sub.academic_year
-           ,sub.[subject]
-           ,ISNULL(sub.region, 'All') AS region
-           ,ISNULL(sub.school_level, 'All') AS school_level
-           ,ISNULL(sub.reporting_schoolid, 'All') AS reporting_schoolid
-           ,ISNULL(sub.grade_level, 'All') AS grade_level
-           ,AVG(sub.is_target) AS pct_target
-           ,AVG(sub.is_approaching) AS pct_approaching
-           ,AVG(sub.is_below) AS pct_below
-           ,AVG(sub.is_target_iep) AS pct_target_iep
-           ,AVG(sub.is_approaching_iep) AS pct_approaching_iep
-           ,AVG(sub.is_below_iep) AS pct_below_iep
-     FROM
-         (
-          SELECT r.student_number
-                ,r.academic_year
-                ,r.region
-                ,r.school_level
-                ,r.reporting_schoolid
-                ,r.grade_level
-                ,p.[subject]
-                ,CASE WHEN p.test_performance_level >= 4 THEN 1.0 ELSE 0.0 END AS is_target
-                ,CASE WHEN p.test_performance_level = 3 THEN 1.0 ELSE 0.0 END AS is_approaching
-                ,CASE WHEN p.test_performance_level <= 2 THEN 1.0 ELSE 0.0 END AS is_below
-                ,CASE 
-                  WHEN r.iep_status = 'No IEP' THEN NULL
-                  WHEN p.test_performance_level >= 4 THEN 1.0 
-                  ELSE 0.0 
-                 END AS is_target_iep
-                ,CASE 
-                  WHEN r.iep_status = 'No IEP' THEN NULL
-                  WHEN p.test_performance_level = 3 THEN 1.0 
-                  ELSE 0.0 
-                 END AS is_approaching_iep
-                ,CASE 
-                  WHEN r.iep_status = 'No IEP' THEN NULL
-                  WHEN p.test_performance_level <= 2 THEN 1.0 
-                  ELSE 0.0 
-                 END AS is_below_iep
-          FROM roster r
-          JOIN gabby.parcc.summative_record_file_clean p
-            ON r.student_number = p.local_student_identifier
-           AND r.academic_year = p.academic_year
-         ) sub
-     GROUP BY sub.academic_year
-             ,sub.[subject]
-             ,ROLLUP(sub.region, sub.reporting_schoolid)
-             ,CUBE(sub.school_level, sub.grade_level)
-    ) sub
-UNPIVOT (
+  SELECT u.academic_year
+  ,u.region
+  ,u.school_level
+  ,u.reporting_schoolid
+  ,u.grade_level
+  ,u.[subject]
+  ,u.field
+  ,u.[value]
+  FROM
+  (
+  SELECT sub.academic_year
+  ,sub.[subject]
+  ,ISNULL(sub.region, 'All') AS region
+  ,ISNULL(sub.school_level, 'All') AS school_level
+  ,ISNULL(sub.reporting_schoolid, 'All') AS reporting_schoolid
+  ,ISNULL(sub.grade_level, 'All') AS grade_level
+  ,AVG(sub.is_target) AS pct_target
+  ,AVG(sub.is_approaching) AS pct_approaching
+  ,AVG(sub.is_below) AS pct_below
+  ,AVG(sub.is_target_iep) AS pct_target_iep
+  ,AVG(sub.is_approaching_iep) AS pct_approaching_iep
+  ,AVG(sub.is_below_iep) AS pct_below_iep
+  FROM
+  (
+  SELECT r.student_number
+  ,r.academic_year
+  ,r.region
+  ,r.school_level
+  ,r.reporting_schoolid
+  ,r.grade_level
+  ,p.[subject]
+  ,CASE WHEN p.test_performance_level >= 4 THEN 1.0 ELSE 0.0 END AS is_target
+  ,CASE WHEN p.test_performance_level = 3 THEN 1.0 ELSE 0.0 END AS is_approaching
+  ,CASE WHEN p.test_performance_level <= 2 THEN 1.0 ELSE 0.0 END AS is_below
+  ,CASE 
+  WHEN r.iep_status = 'No IEP' THEN NULL
+  WHEN p.test_performance_level >= 4 THEN 1.0 
+  ELSE 0.0 
+  END AS is_target_iep
+  ,CASE 
+  WHEN r.iep_status = 'No IEP' THEN NULL
+  WHEN p.test_performance_level = 3 THEN 1.0 
+  ELSE 0.0 
+  END AS is_approaching_iep
+  ,CASE 
+  WHEN r.iep_status = 'No IEP' THEN NULL
+  WHEN p.test_performance_level <= 2 THEN 1.0 
+  ELSE 0.0 
+  END AS is_below_iep
+  FROM roster r
+  JOIN gabby.parcc.summative_record_file_clean p
+  ON r.student_number = p.local_student_identifier
+  AND r.academic_year = p.academic_year
+  ) sub
+  GROUP BY sub.academic_year
+  ,sub.[subject]
+  ,ROLLUP(sub.region, sub.reporting_schoolid)
+  ,CUBE(sub.school_level, sub.grade_level)
+  ) sub
+  UNPIVOT (
   [value]
   FOR field IN (sub.pct_target
-               ,sub.pct_approaching
-               ,sub.pct_below
-               ,sub.pct_target_iep
-               ,sub.pct_approaching_iep
-               ,sub.pct_below_iep) 
- ) u
-,
-*/  
+  ,sub.pct_approaching
+  ,sub.pct_below
+  ,sub.pct_target_iep
+  ,sub.pct_approaching_iep
+  ,sub.pct_below_iep) 
+  ) u
+  ,
+   */
   student_attendance AS (
     SELECT
       r.student_number,
@@ -258,21 +263,31 @@ UNPIVOT (
       SUM(CAST(ADA.attendancevalue AS FLOAT)) AS n_present,
       SUM(
         CASE
-          WHEN ADA.calendardate BETWEEN DATEADD(DAY, 1 - (DATEPART(WEEKDAY, SYSDATETIME())), CAST(SYSDATETIME() AS DATE)) /* week start date */
-          AND DATEADD(
-            DAY,
-            7 - (DATEPART(WEEKDAY, SYSDATETIME())),
-            CAST(SYSDATETIME() AS DATE)
+          WHEN ADA.calendardate (
+            BETWEEN DATEADD(
+              DAY,
+              1 - (DATEPART(WEEKDAY, SYSDATETIME())),
+              CAST(SYSDATETIME() AS DATE)
+            ) /* week start date */ AND DATEADD(
+              DAY,
+              7 - (DATEPART(WEEKDAY, SYSDATETIME())),
+              CAST(SYSDATETIME() AS DATE)
+            )
           ) /* week end date */ THEN CAST(ADA.membershipvalue AS FLOAT)
         END
       ) AS n_membership_week,
       SUM(
         CASE
-          WHEN ADA.calendardate BETWEEN DATEADD(DAY, 1 - (DATEPART(WEEKDAY, SYSDATETIME())), CAST(SYSDATETIME() AS DATE)) /* week start date */
-          AND DATEADD(
-            DAY,
-            7 - (DATEPART(WEEKDAY, SYSDATETIME())),
-            CAST(SYSDATETIME() AS DATE)
+          WHEN ADA.calendardate (
+            BETWEEN DATEADD(
+              DAY,
+              1 - (DATEPART(WEEKDAY, SYSDATETIME())),
+              CAST(SYSDATETIME() AS DATE)
+            ) /* week start date */ AND DATEADD(
+              DAY,
+              7 - (DATEPART(WEEKDAY, SYSDATETIME())),
+              CAST(SYSDATETIME() AS DATE)
+            )
           ) /* week end date */ THEN CAST(ADA.attendancevalue AS FLOAT)
         END
       ) AS n_present_week,
@@ -306,11 +321,16 @@ UNPIVOT (
       ) AS is_oss,
       SUM(
         CASE
-          WHEN ADA.calendardate BETWEEN DATEADD(DAY, 1 - (DATEPART(WEEKDAY, SYSDATETIME())), CAST(SYSDATETIME() AS DATE)) /* week start date */
-          AND DATEADD(
-            DAY,
-            7 - (DATEPART(WEEKDAY, SYSDATETIME())),
-            CAST(SYSDATETIME() AS DATE)
+          WHEN ADA.calendardate (
+            BETWEEN DATEADD(
+              DAY,
+              1 - (DATEPART(WEEKDAY, SYSDATETIME())),
+              CAST(SYSDATETIME() AS DATE)
+            ) /* week start date */ AND DATEADD(
+              DAY,
+              7 - (DATEPART(WEEKDAY, SYSDATETIME())),
+              CAST(SYSDATETIME() AS DATE)
+            )
           ) /* week end date */ THEN CAST(
             CASE
               WHEN att.att_code IN ('T', 'T10') THEN 1
@@ -321,11 +341,16 @@ UNPIVOT (
       ) AS n_tardy_week,
       SUM(
         CASE
-          WHEN ADA.calendardate BETWEEN DATEADD(DAY, 1 - (DATEPART(WEEKDAY, SYSDATETIME())), CAST(SYSDATETIME() AS DATE)) /* week start date */
-          AND DATEADD(
-            DAY,
-            7 - (DATEPART(WEEKDAY, SYSDATETIME())),
-            CAST(SYSDATETIME() AS DATE)
+          WHEN ADA.calendardate (
+            BETWEEN DATEADD(
+              DAY,
+              1 - (DATEPART(WEEKDAY, SYSDATETIME())),
+              CAST(SYSDATETIME() AS DATE)
+            ) /* week start date */ AND DATEADD(
+              DAY,
+              7 - (DATEPART(WEEKDAY, SYSDATETIME())),
+              CAST(SYSDATETIME() AS DATE)
+            )
           ) /* week end date */ THEN CAST(
             CASE
               WHEN att.att_code = 'ISS' THEN 1
@@ -336,11 +361,16 @@ UNPIVOT (
       ) AS is_iss_week,
       SUM(
         CASE
-          WHEN ADA.calendardate BETWEEN DATEADD(DAY, 1 - (DATEPART(WEEKDAY, SYSDATETIME())), CAST(SYSDATETIME() AS DATE)) /* week start date */
-          AND DATEADD(
-            DAY,
-            7 - (DATEPART(WEEKDAY, SYSDATETIME())),
-            CAST(SYSDATETIME() AS DATE)
+          WHEN ADA.calendardate (
+            BETWEEN DATEADD(
+              DAY,
+              1 - (DATEPART(WEEKDAY, SYSDATETIME())),
+              CAST(SYSDATETIME() AS DATE)
+            ) /* week start date */ AND DATEADD(
+              DAY,
+              7 - (DATEPART(WEEKDAY, SYSDATETIME())),
+              CAST(SYSDATETIME() AS DATE)
+            )
           ) /* week end date */ THEN CAST(
             CASE
               WHEN att.att_code = 'OSS' THEN 1
@@ -486,56 +516,71 @@ UNPIVOT (
       CUBE (sub.school_level, sub.grade_level)
   )
   --,staff_attrition AS (
-SELECT u.academic_year
-      ,u.region
-      ,u.school_level
-      ,u.reporting_schoolid
-      ,u.grade_level
-      ,u.field
-      ,u.[value]
+SELECT
+  u.academic_year,
+  u.region,
+  u.school_level,
+  u.reporting_schoolid,
+  u.grade_level,
+  u.field,
+  u.[value]
 FROM
-    (
-     SELECT sub.academic_year
-           ,ISNULL(sub.region, 'All') AS region        
-           ,ISNULL(sub.school_level, 'All') AS school_level
-           ,ISNULL(sub.reporting_schoolid, 'All') AS reporting_schoolid
-           ,'All' AS grade_level
-           ,AVG(sub.is_attrition) AS pct_attrition
-           ,AVG(sub.is_attrition_resignation) AS pct_attrition_resignation
-           ,AVG(sub.is_attrition_termination) AS pct_attrition_termination
-     FROM
-         (
-          SELECT a.df_employee_number
-                ,a.academic_year
-                ,CASE
-                  WHEN a.legal_entity_name = 'TEAM Academy Charter Schools' THEN 'TEAM'
-                  WHEN a.legal_entity_name = 'KIPP Cooper Norcross Academy' THEN 'KCNA'
-                  WHEN a.legal_entity_name = 'KIPP Miami' THEN 'KMS'
-                 END AS region      
-                ,a.primary_site_school_level COLLATE Latin1_General_BIN AS school_level
-                ,CAST(a.primary_site_reporting_schoolid AS VARCHAR(25)) AS reporting_schoolid
-                ,NULL AS grade_level
-                ,CAST(a.is_attrition AS FLOAT) AS is_attrition
-                ,CAST(CASE WHEN a.status_reason = 'Resignation' THEN 1.0 ELSE 0.0 END AS FLOAT) AS is_attrition_resignation
-                ,CAST(CASE WHEN a.status_reason = 'Termination' THEN 1.0 ELSE 0.0 END AS FLOAT) AS is_attrition_termination
-          FROM gabby.tableau.compliance_staff_attrition a
-          WHERE a.is_denominator = 1
-            AND a.primary_site_reporting_schoolid <> 0
-            AND a.legal_entity_name <> 'KIPP New Jersey'
-            AND a.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-         ) sub
-     GROUP BY sub.academic_year
-             ,ROLLUP(sub.region, sub.reporting_schoolid)
-             ,CUBE(sub.school_level)
-    ) sub
-UNPIVOT(
-  value
-  FOR field IN (sub.pct_attrition
-               ,sub.pct_attrition_resignation
-               ,sub.pct_attrition_termination)
- ) u
-
-,
+  (
+    SELECT
+      sub.academic_year,
+      ISNULL(sub.region, 'All') AS region,
+      ISNULL(sub.school_level, 'All') AS school_level,
+      ISNULL(sub.reporting_schoolid, 'All') AS reporting_schoolid,
+      'All' AS grade_level,
+      AVG(sub.is_attrition) AS pct_attrition,
+      AVG(sub.is_attrition_resignation) AS pct_attrition_resignation,
+      AVG(sub.is_attrition_termination) AS pct_attrition_termination
+    FROM
+      (
+        SELECT
+          a.df_employee_number,
+          a.academic_year,
+          CASE
+            WHEN a.legal_entity_name = 'TEAM Academy Charter Schools' THEN 'TEAM'
+            WHEN a.legal_entity_name = 'KIPP Cooper Norcross Academy' THEN 'KCNA'
+            WHEN a.legal_entity_name = 'KIPP Miami' THEN 'KMS'
+          END AS region,
+          a.primary_site_school_level
+        COLLATE Latin1_General_BIN AS school_level,
+        CAST(a.primary_site_reporting_schoolid AS VARCHAR(25)) AS reporting_schoolid,
+        NULL AS grade_level,
+        CAST(a.is_attrition AS FLOAT) AS is_attrition,
+        CAST(
+          CASE
+            WHEN a.status_reason = 'Resignation' THEN 1.0
+            ELSE 0.0
+          END AS FLOAT
+        ) AS is_attrition_resignation,
+        CAST(
+          CASE
+            WHEN a.status_reason = 'Termination' THEN 1.0
+            ELSE 0.0
+          END AS FLOAT
+        ) AS is_attrition_termination
+        FROM
+          gabby.tableau.compliance_staff_attrition a
+        WHERE
+          a.is_denominator = 1
+          AND a.primary_site_reporting_schoolid <> 0
+          AND a.legal_entity_name <> 'KIPP New Jersey'
+          AND a.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+      ) sub
+    GROUP BY
+      sub.academic_year,
+      ROLLUP (sub.region, sub.reporting_schoolid),
+      CUBE (sub.school_level)
+  ) sub UNPIVOT (
+    VALUE FOR field IN (
+      sub.pct_attrition,
+      sub.pct_attrition_resignation,
+      sub.pct_attrition_termination
+    )
+  ) u,
   student_attrition AS (
     SELECT
       sub.academic_year,
@@ -576,9 +621,9 @@ UNPIVOT(
           LEFT JOIN gabby.powerschool.cohort_identifiers_static y2 ON y1.student_number = y2.student_number
           AND y1.[db_name] = y2.[db_name]
           AND y1.academic_year = (y2.academic_year - 1)
-          AND DATEFROMPARTS(y2.academic_year, 10, 01) BETWEEN y2.entrydate AND y2.exitdate
+          AND DATEFROMPARTS(y2.academic_year, 10, 01) (BETWEEN y2.entrydate AND y2.exitdate)
         WHERE
-          DATEFROMPARTS(y1.academic_year, 10, 01) BETWEEN y1.entrydate AND y1.exitdate
+          DATEFROMPARTS(y1.academic_year, 10, 01) (BETWEEN y1.entrydate AND y1.exitdate)
       ) sub
     GROUP BY
       sub.academic_year,
@@ -638,67 +683,132 @@ UNPIVOT(
       ) u
   )
   --,staff_attendance AS (
-SELECT u.academic_year
-      ,u.region
-      ,u.school_level
-      ,u.reporting_schoolid
-      ,u.grade_level
-      ,u.field
-      ,u.[value]
+SELECT
+  u.academic_year,
+  u.region,
+  u.school_level,
+  u.reporting_schoolid,
+  u.grade_level,
+  u.field,
+  u.[value]
 FROM
-    (
-     SELECT sub.academic_year
-           ,ISNULL(sub.region, 'All') AS region        
-           ,ISNULL(sub.primary_site_school_level, 'All') AS school_level
-           ,ISNULL(sub.reporting_schoolid, 'All') AS reporting_schoolid
-           ,'All' AS grade_level
-           ,AVG(sub.present_lt_90) AS pct_present_lt_90
-           ,AVG(sub.present_ge_90_lt_95) AS pct_present_ge_90_lt_95
-           ,AVG(sub.ontime_lt_90) AS pct_ontime_lt_90
-           ,AVG(sub.ontime_ge_90_lt_95) AS pct_ontime_ge_90_lt_95
-     FROM
-         (
-          SELECT df_employee_number
-                ,academic_year
-                ,CASE 
-                  WHEN legal_entity_name = 'TEAM Academy Charter Schools' THEN 'TEAM'
-                  WHEN legal_entity_name = 'KIPP Cooper Norcross Academy' THEN 'TEAM'
-                  WHEN legal_entity_name = 'KIPP Miami' THEN 'KMS'
-                  ELSE ''
-                 END AS region
-                ,primary_site_school_level
-                ,CAST(schoolid AS VARCHAR(25)) AS reporting_schoolid
-                ,NULL AS grade_level
-                ,SUM(1) AS membershipvalue
-                ,SUM(CASE WHEN [absent] IS NULL OR [absent] = 'excused' THEN 1.0 ELSE 0.0 END) AS is_present
-                ,SUM(CASE WHEN late IS NULL OR late = 'excused' THEN 1.0 ELSE 0.0 END) AS is_ontime
-                ,SUM(CASE WHEN [absent] IS NULL OR [absent] = 'excused' THEN 1.0 ELSE 0.0 END) / SUM(1) AS pct_present
-                ,SUM(CASE WHEN late IS NULL OR late = 'excused' THEN 1.0 ELSE 0.0 END) / SUM(1) AS pct_ontime
-                ,CASE WHEN SUM(CASE WHEN [absent] IS NULL OR [absent] = 'excused' THEN 1.0 ELSE 0.0 END) / SUM(1) < 0.895 THEN 1.0 ELSE 0.0 END AS present_lt_90
-                ,CASE WHEN SUM(CASE WHEN [absent] IS NULL OR [absent] = 'excused' THEN 1.0 ELSE 0.0 END) / SUM(1)  BETWEEN 0.895 AND 0.944 THEN 1.0 ELSE 0.0 END AS present_ge_90_lt_95
-                ,CASE WHEN SUM(CASE WHEN late IS NULL OR late = 'excused' THEN 1.0 ELSE 0.0 END) / SUM(1) < 0.895 THEN 1.0 ELSE 0.0 END AS ontime_lt_90
-                ,CASE WHEN SUM(CASE WHEN late IS NULL OR late = 'excused' THEN 1.0 ELSE 0.0 END) / SUM(1)  BETWEEN 0.895 AND 0.944 THEN 1.0 ELSE 0.0 END AS ontime_ge_90_lt_95           
-          FROM gabby.tableau.staff_tracker
-          WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
-          GROUP BY df_employee_number
-                  ,academic_year
-                  ,legal_entity_name
-                  ,primary_site_school_level
-                  ,schoolid
-         ) sub
-     GROUP BY sub.academic_year
-             ,ROLLUP(sub.region, sub.reporting_schoolid)
-             ,CUBE(sub.primary_site_school_level)
-    ) sub
-UNPIVOT(
-  [value]
-  FOR field IN (sub.pct_present_lt_90
-               ,sub.pct_present_ge_90_lt_95
-               ,sub.pct_ontime_lt_90
-               ,sub.pct_ontime_ge_90_lt_95)
- ) u
-
-,
+  (
+    SELECT
+      sub.academic_year,
+      ISNULL(sub.region, 'All') AS region,
+      ISNULL(sub.primary_site_school_level, 'All') AS school_level,
+      ISNULL(sub.reporting_schoolid, 'All') AS reporting_schoolid,
+      'All' AS grade_level,
+      AVG(sub.present_lt_90) AS pct_present_lt_90,
+      AVG(sub.present_ge_90_lt_95) AS pct_present_ge_90_lt_95,
+      AVG(sub.ontime_lt_90) AS pct_ontime_lt_90,
+      AVG(sub.ontime_ge_90_lt_95) AS pct_ontime_ge_90_lt_95
+    FROM
+      (
+        SELECT
+          df_employee_number,
+          academic_year,
+          CASE
+            WHEN legal_entity_name = 'TEAM Academy Charter Schools' THEN 'TEAM'
+            WHEN legal_entity_name = 'KIPP Cooper Norcross Academy' THEN 'TEAM'
+            WHEN legal_entity_name = 'KIPP Miami' THEN 'KMS'
+            ELSE ''
+          END AS region,
+          primary_site_school_level,
+          CAST(schoolid AS VARCHAR(25)) AS reporting_schoolid,
+          NULL AS grade_level,
+          SUM(1) AS membershipvalue,
+          SUM(
+            CASE
+              WHEN [absent] IS NULL
+              OR [absent] = 'excused' THEN 1.0
+              ELSE 0.0
+            END
+          ) AS is_present,
+          SUM(
+            CASE
+              WHEN late IS NULL
+              OR late = 'excused' THEN 1.0
+              ELSE 0.0
+            END
+          ) AS is_ontime,
+          SUM(
+            CASE
+              WHEN [absent] IS NULL
+              OR [absent] = 'excused' THEN 1.0
+              ELSE 0.0
+            END
+          ) / SUM(1) AS pct_present,
+          SUM(
+            CASE
+              WHEN late IS NULL
+              OR late = 'excused' THEN 1.0
+              ELSE 0.0
+            END
+          ) / SUM(1) AS pct_ontime,
+          CASE
+            WHEN SUM(
+              CASE
+                WHEN [absent] IS NULL
+                OR [absent] = 'excused' THEN 1.0
+                ELSE 0.0
+              END
+            ) / SUM(1) < 0.895 THEN 1.0
+            ELSE 0.0
+          END AS present_lt_90,
+          CASE
+            WHEN SUM(
+              CASE
+                WHEN [absent] IS NULL
+                OR [absent] = 'excused' THEN 1.0
+                ELSE 0.0
+              END
+            ) / SUM(1) (BETWEEN 0.895 AND 0.944) THEN 1.0
+            ELSE 0.0
+          END AS present_ge_90_lt_95,
+          CASE
+            WHEN SUM(
+              CASE
+                WHEN late IS NULL
+                OR late = 'excused' THEN 1.0
+                ELSE 0.0
+              END
+            ) / SUM(1) < 0.895 THEN 1.0
+            ELSE 0.0
+          END AS ontime_lt_90,
+          CASE
+            WHEN SUM(
+              CASE
+                WHEN late IS NULL
+                OR late = 'excused' THEN 1.0
+                ELSE 0.0
+              END
+            ) / SUM(1) (BETWEEN 0.895 AND 0.944) THEN 1.0
+            ELSE 0.0
+          END AS ontime_ge_90_lt_95
+        FROM
+          gabby.tableau.staff_tracker
+        WHERE
+          academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+        GROUP BY
+          df_employee_number,
+          academic_year,
+          legal_entity_name,
+          primary_site_school_level,
+          schoolid
+      ) sub
+    GROUP BY
+      sub.academic_year,
+      ROLLUP (sub.region, sub.reporting_schoolid),
+      CUBE (sub.primary_site_school_level)
+  ) sub UNPIVOT (
+    [value] FOR field IN (
+      sub.pct_present_lt_90,
+      sub.pct_present_ge_90_lt_95,
+      sub.pct_ontime_lt_90,
+      sub.pct_ontime_ge_90_lt_95
+    )
+  ) u,
   lit AS (
     SELECT
       u.academic_year,
@@ -871,19 +981,19 @@ FROM
 UNION ALL
 /*
 SELECT p.academic_year
-     ,p.region
-     ,p.school_level
-     ,p.reporting_schoolid
-     ,p.grade_level
-     ,p.subject COLLATE Latin1_General_BIN AS subject_area
-     ,'Y1' AS term_name
-     ,'Assessments' AS domain
-     ,'PARCC' AS subdomain
-     ,p.field
-     ,p.[value]
+,p.region
+,p.school_level
+,p.reporting_schoolid
+,p.grade_level
+,p.subject COLLATE Latin1_General_BIN AS subject_area
+,'Y1' AS term_name
+,'Assessments' AS domain
+,'PARCC' AS subdomain
+,p.field
+,p.[value]
 FROM parcc p
 UNION ALL
-*/
+ */
 SELECT
   a.academic_year,
   a.region,
@@ -924,19 +1034,19 @@ FROM
 UNION ALL
 /*
 SELECT sa.academic_year
-     ,sa.region
-     ,sa.school_level
-     ,sa.reporting_schoolid
-     ,sa.grade_level
-     ,NULL AS subject_area
-     ,'Y1' AS term_name
-     ,'Staff Attrition' AS domain
-     ,NULL AS subdomain
-     ,sa.field
-     ,sa.[value]      
+,sa.region
+,sa.school_level
+,sa.reporting_schoolid
+,sa.grade_level
+,NULL AS subject_area
+,'Y1' AS term_name
+,'Staff Attrition' AS domain
+,NULL AS subdomain
+,sa.field
+,sa.[value]      
 FROM staff_attrition sa
 UNION ALL
-*/
+ */
 SELECT
   sta.academic_year,
   sta.region,
@@ -969,19 +1079,19 @@ FROM
 UNION ALL
 /*
 SELECT sta.academic_year
-     ,sta.region
-     ,sta.school_level
-     ,sta.reporting_schoolid
-     ,sta.grade_level
-     ,NULL AS subject_area
-     ,'Y1' AS term_name
-     ,'Staff Attendance' AS domain
-     ,NULL AS subdomain
-     ,sta.field
-     ,sta.[value]
+,sta.region
+,sta.school_level
+,sta.reporting_schoolid
+,sta.grade_level
+,NULL AS subject_area
+,'Y1' AS term_name
+,'Staff Attendance' AS domain
+,NULL AS subdomain
+,sta.field
+,sta.[value]
 FROM staff_attendance sta
 UNION ALL
-*/
+ */
 SELECT
   lit.academic_year,
   lit.region,

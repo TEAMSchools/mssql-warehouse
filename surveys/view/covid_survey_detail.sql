@@ -109,10 +109,11 @@ SELECT
 FROM
   gabby.surveygizmo.survey_detail d
   LEFT JOIN gabby.dayforce.employee_work_assignment w ON d.respondent_df_employee_number = w.employee_reference_code
-  AND d.date_submitted BETWEEN w.work_assignment_effective_start 
-  AND COALESCE(
-    w.work_assignment_effective_end,
-    DATEFROMPARTS((d.campaign_academic_year + 1), 6, 30)
+  AND d.date_submitted (
+    BETWEEN w.work_assignment_effective_start AND COALESCE(
+      w.work_assignment_effective_end,
+      DATEFROMPARTS((d.campaign_academic_year + 1), 6, 30)
+    )
   )
   AND w.primary_work_assignment = 1
   LEFT JOIN identifiers i ON d.survey_response_id = i.survey_response_id

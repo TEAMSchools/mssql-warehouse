@@ -85,7 +85,7 @@ FROM
       powerschool.ps_adaadm_daily_ctod_current_static mem
       INNER JOIN powerschool.cohort_identifiers_static co ON mem.studentid = co.studentid
       AND mem.schoolid = co.schoolid
-      AND mem.calendardate BETWEEN co.entrydate AND co.exitdate
+      AND mem.calendardate (BETWEEN co.entrydate AND co.exitdate)
       INNER JOIN powerschool.calendar_day cal ON mem.schoolid = cal.schoolid
       AND mem.calendardate = cal.date_value
       LEFT JOIN powerschool.course_enrollments_current_static enr ON co.studentid = enr.studentid
@@ -96,14 +96,14 @@ FROM
       LEFT JOIN powerschool.ps_attendance_daily_current_static att ON mem.studentid = att.studentid
       AND mem.calendardate = att.att_date
       LEFT JOIN gabby.reporting.reporting_terms dt ON mem.schoolid = dt.schoolid
-      AND mem.calendardate BETWEEN dt.[start_date] AND dt.end_date
+      AND mem.calendardate (BETWEEN dt.[start_date] AND dt.end_date)
       AND dt.identifier = 'RT'
       AND dt._fivetran_deleted = 0
       LEFT JOIN powerschool.spenrollments_gen_static sp ON mem.studentid = sp.studentid
-      AND mem.calendardate BETWEEN sp.enter_date AND sp.exit_date
+      AND mem.calendardate (BETWEEN sp.enter_date AND sp.exit_date)
       AND sp.specprog_name = 'Counseling Services'
       LEFT JOIN powerschool.spenrollments_gen_static sa ON mem.studentid = sa.studentid
-      AND mem.calendardate BETWEEN sa.enter_date AND sa.exit_date
+      AND mem.calendardate (BETWEEN sa.enter_date AND sa.exit_date)
       AND sa.specprog_name = 'Student Athlete'
     WHERE
       mem.attendancevalue IS NOT NULL

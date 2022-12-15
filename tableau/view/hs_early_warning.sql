@@ -72,8 +72,9 @@ SELECT
   gr.y1_grade_letter,
   gr.need_60 AS need_65,
   CASE
-    WHEN CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN gr.termbin_start_date AND gr.termbin_end_date 
-    THEN 1
+    WHEN CAST(CURRENT_TIMESTAMP AS DATE) (
+      BETWEEN gr.termbin_start_date AND gr.termbin_end_date
+    ) THEN 1
     ELSE 0
   END AS is_curterm,
   si.credittype,

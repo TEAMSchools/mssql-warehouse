@@ -89,7 +89,9 @@ WITH
       ) AS rn_emp_yr
     FROM
       work_assignment wa
-      JOIN academic_years ay ON ay.academic_year BETWEEN wa.start_academic_year AND wa.end_academic_year
+      JOIN academic_years ay ON ay.academic_year (
+        BETWEEN wa.start_academic_year AND wa.end_academic_year
+      )
   )
 SELECT
   cwa.df_employee_number,

@@ -169,11 +169,11 @@ FROM
   AND co.academic_year = fsp.fsa_year
   AND subj.iready_subject = fsp.iready_subject
   LEFT JOIN gabby.assessments.fsa_iready_crosswalk cw1 ON cw1.test_name = fsp.test_name
-  AND fsp.fsa_scale BETWEEN cw1.scale_low AND cw1.scale_high
+  AND fsp.fsa_scale (BETWEEN cw1.scale_low AND cw1.scale_high)
   AND cw1.source_system = 'FSA'
   LEFT JOIN gabby.assessments.fsa_iready_crosswalk cw2 ON co.grade_level = cw2.grade_level
   AND di.[subject] = cw2.test_name
-  AND di.diagnostic_overall_scale_score_most_recent_ BETWEEN cw2.scale_low AND cw2.scale_high
+  AND di.diagnostic_overall_scale_score_most_recent_ (BETWEEN cw2.scale_low AND cw2.scale_high)
   AND cw2.source_system = 'i-Ready'
   LEFT JOIN gabby.assessments.fsa_iready_crosswalk cw3 ON co.grade_level = cw3.grade_level
   AND di.[subject] = cw3.test_name

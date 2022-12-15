@@ -30,7 +30,7 @@ WITH
     WITH
       (NOLOCK)
     WHERE
-      N BETWEEN 0 AND 12
+      N (BETWEEN 0 AND 12)
   ),
   scaffold AS (
     SELECT
@@ -63,7 +63,7 @@ WITH
       AND gr.grade_level = n.grade_level
       AND n.norms_year = 2015
     WHERE
-      u.n BETWEEN 1 AND 99
+      u.n (BETWEEN 1 AND 99)
   ),
   norms_dense AS (
     SELECT

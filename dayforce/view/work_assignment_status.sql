@@ -148,6 +148,8 @@ FROM
   validranges r
   JOIN gabby.dayforce.staff_roster sr ON r.df_employee_id = sr.df_employee_number
   LEFT JOIN status_clean s ON r.df_employee_id = s.df_employee_id
-  AND r.effective_start_date BETWEEN s.effective_start AND s.effective_end
+  AND r.effective_start_date (BETWEEN s.effective_start AND s.effective_end)
   LEFT JOIN work_assignment_clean w ON r.df_employee_id = w.df_employee_id
-  AND r.effective_start_date BETWEEN w.work_assignment_effective_start AND w.work_assignment_effective_end
+  AND r.effective_start_date (
+    BETWEEN w.work_assignment_effective_start AND w.work_assignment_effective_end
+  )

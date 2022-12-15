@@ -28,7 +28,7 @@ WITH
       gabby.illuminate_dna_assessments.assessments_identifiers_static ais
       INNER JOIN gabby.illuminate_dna_assessments.agg_student_responses asr ON ais.assessment_id = asr.assessment_id
       INNER JOIN gabby.illuminate_public.students s ON asr.student_id = s.student_id
-      INNER JOIN gabby.reporting.reporting_terms rt ON ais.administered_at BETWEEN rt.start_date AND rt.end_date
+      INNER JOIN gabby.reporting.reporting_terms rt ON ais.administered_at (BETWEEN rt.start_date AND rt.end_date)
       AND rt.identifier = 'ACT'
       AND rt._fivetran_deleted = 0
       INNER JOIN gabby.powerschool.cohort_identifiers_static co ON s.local_student_id = co.student_number

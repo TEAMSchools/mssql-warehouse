@@ -57,7 +57,7 @@ FROM
   AND co.academic_year = dli.create_academic_year
   AND co.[db_name] = dli.[db_name]
   LEFT JOIN gabby.reporting.reporting_terms d ON co.schoolid = d.schoolid
-  AND CAST(dli.create_ts AS DATE) BETWEEN d.[start_date] AND d.end_date
+  AND CAST(dli.create_ts AS DATE) (BETWEEN d.[start_date] AND d.end_date)
   AND d.identifier = 'RT'
   AND d._fivetran_deleted = 0
   LEFT JOIN deanslist.incidents_penalties_static dlp ON dli.incident_id = dlp.incident_id

@@ -27,7 +27,7 @@ FROM
   LEFT JOIN gabby.powerschool.studentcorefields scf ON s.dcid = scf.studentsdcid
   AND s.[db_name] = scf.[db_name]
   LEFT JOIN gabby.powerschool.spenrollments_gen_static sp ON s.id = sp.studentid
-  AND s.entrydate BETWEEN sp.enter_date AND sp.exit_date
+  AND s.entrydate (BETWEEN sp.enter_date AND sp.exit_date)
   AND s.[db_name] = sp.[db_name]
   AND sp.specprog_name IN (
     'Out of District',

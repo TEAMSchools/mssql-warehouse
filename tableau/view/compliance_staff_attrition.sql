@@ -100,7 +100,7 @@ WITH
     FROM
       gabby.utilities.row_generator_smallint
     WHERE
-      n BETWEEN 2002 AND (gabby.utilities.GLOBAL_ACADEMIC_YEAR() + 1)
+      n BETWEEN 2002 AND (gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1)
   ),
   scaffold AS (
     SELECT
@@ -160,10 +160,14 @@ WITH
           ) AS academic_year_exitdate
         FROM
           roster r
-          INNER JOIN years y ON y.academic_year BETWEEN r.start_academic_year AND r.end_academic_year
+          INNER JOIN years y ON y.academic_year (
+            BETWEEN r.start_academic_year AND r.end_academic_year
+          )
       ) sub
       LEFT JOIN gabby.people.employment_history_static w ON sub.position_id = w.position_id
-      AND sub.effective_date BETWEEN w.effective_start_date AND w.effective_end_date
+      AND sub.effective_date (
+        BETWEEN w.effective_start_date AND w.effective_end_date
+      )
       LEFT JOIN gabby.people.school_crosswalk scw ON w.[location] = scw.site_name
       AND scw._fivetran_deleted = 0
     WHERE

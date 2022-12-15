@@ -203,7 +203,7 @@ FROM
       LEFT JOIN gabby.assessments.normed_scopes n ON a.academic_year = (n.academic_year + 1)
       AND ds.code_translation = n.scope
       AND n._fivetran_deleted = 0
-      LEFT JOIN gabby.reporting.reporting_terms rt ON a.administered_at BETWEEN rt.[start_date] AND rt.end_date
+      LEFT JOIN gabby.reporting.reporting_terms rt ON a.administered_at (BETWEEN rt.[start_date] AND rt.end_date)
       AND rt.identifier = 'RT'
       AND rt.schoolid = 0
       AND rt._fivetran_deleted = 0

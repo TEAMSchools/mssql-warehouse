@@ -73,7 +73,7 @@ FROM
       INNER JOIN gabby.illuminate_dna_assessments.course_enrollment_scaffold_current_static ce ON ssa.student_id = ce.student_id
       AND a.subject_area = ce.subject_area
     COLLATE Latin1_General_BIN
-    AND a.administered_at BETWEEN ce.entry_date AND ce.leave_date
+    AND a.administered_at (BETWEEN ce.entry_date AND ce.leave_date)
     AND ce.is_advanced_math_student = 0
     WHERE
       a.subject_area IN (
@@ -105,7 +105,7 @@ FROM
       INNER JOIN gabby.illuminate_dna_assessments.course_enrollment_scaffold_current_static ce ON agl.grade_level_id = ce.grade_level_id
       AND a.subject_area = ce.subject_area
     COLLATE Latin1_General_BIN
-    AND a.administered_at BETWEEN ce.entry_date AND ce.leave_date
+    AND a.administered_at (BETWEEN ce.entry_date AND ce.leave_date)
     WHERE
       a.is_normed_scope = 1
       AND a.subject_area NOT IN (

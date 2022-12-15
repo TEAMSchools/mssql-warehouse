@@ -86,22 +86,41 @@ FROM
               01
             )
             ELSE CAST(test_date AS DATE)
-          END AS test_date
-CAST(CASE WHEN composite BETWEEN 1 AND 36 THEN composite END AS INT) AS composite
-CAST(CASE WHEN english BETWEEN 1 AND 36 THEN english END AS INT) AS english
-CAST(CASE WHEN math BETWEEN 1 AND 36 THEN math END AS INT) AS math
-CAST(CASE WHEN reading BETWEEN 1 AND 36 THEN reading END AS INT) AS reading
-CAST(CASE WHEN science BETWEEN 1 AND 36 THEN science END AS INT) AS science
-CAST(CASE WHEN writing BETWEEN 1 AND 36 THEN writing END AS INT) AS writing
-,
+          END AS test_date CAST(
+            CASE
+              WHEN composite (BETWEEN 1 AND 36) THEN composite
+            END AS INT
+          ) AS composite CAST(
+            CASE
+              WHEN english (BETWEEN 1 AND 36) THEN english
+            END AS INT
+          ) AS english CAST(
+            CASE
+              WHEN math (BETWEEN 1 AND 36) THEN math
+            END AS INT
+          ) AS math CAST(
+            CASE
+              WHEN reading (BETWEEN 1 AND 36) THEN reading
+            END AS INT
+          ) AS reading CAST(
+            CASE
+              WHEN science (BETWEEN 1 AND 36) THEN science
+            END AS INT
+          ) AS science CAST(
+            CASE
+              WHEN writing (BETWEEN 1 AND 36) THEN writing
+            END AS INT
+          ) AS writing,
           CAST(
             CASE
               WHEN ela = 0 THEN NULL
               ELSE ela
             END AS INT
-          ) AS ela
-CAST(CASE WHEN writing_sub BETWEEN 2 AND 12 THEN writing_sub END AS INT) AS writing_sub
-,
+          ) AS ela CAST(
+            CASE
+              WHEN writing_sub (BETWEEN 2 AND 12) THEN writing_sub
+            END AS INT
+          ) AS writing_sub,
           CAST(
             CASE
               WHEN comb_eng_write = 0 THEN NULL

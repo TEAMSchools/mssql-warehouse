@@ -38,7 +38,7 @@ FROM
       JOIN gabby.illuminate_dna_assessments.agg_student_responses_standard asrs ON ast.assessment_id = asrs.assessment_id
       AND ast.standard_id = asrs.standard_id
       JOIN gabby.illuminate_dna_assessments.performance_band_lookup_static pbl ON a.performance_band_set_id = pbl.performance_band_set_id
-      AND asrs.percent_correct BETWEEN pbl.minimum_value AND pbl.maximum_value
+      AND asrs.percent_correct (BETWEEN pbl.minimum_value AND pbl.maximum_value)
       JOIN gabby.illuminate_public.students s ON asrs.student_id = s.student_id
     WHERE
       a.academic_year_clean = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
@@ -62,7 +62,7 @@ FROM
           s.local_student_id AS student_number
         FROM
           gabby.illuminate_dna_assessments.assessments_identifiers_static a
-          JOIN gabby.reporting.reporting_terms rt ON a.administered_at BETWEEN rt.[start_date] AND rt.end_date
+          JOIN gabby.reporting.reporting_terms rt ON a.administered_at (BETWEEN rt.[start_date] AND rt.end_date)
           AND rt.identifier = 'RT'
           AND rt.schoolid = 0
           AND rt._fivetran_deleted = 0
@@ -84,7 +84,7 @@ FROM
           s.local_student_id
       ) sub
       JOIN gabby.illuminate_dna_assessments.performance_band_lookup_static pbl ON sub.min_performance_band_set_id = pbl.performance_band_set_id
-      AND sub.avg_percent_correct BETWEEN pbl.minimum_value AND pbl.maximum_value
+      AND sub.avg_percent_correct (BETWEEN pbl.minimum_value AND pbl.maximum_value)
   ) sub PIVOT (
     MAX(performance_band_label) FOR module_num IN (
       [Q1],
