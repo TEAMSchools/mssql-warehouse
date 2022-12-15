@@ -2,11 +2,29 @@
 
 ## General Rules & Guidelines
 
-- Use snake_case for all identifiers
-- Prefer standard SQL functions over vendor-specific functions for portability
-- Almost always prefer CTEs over subqueries
-- Alias column and table names explicitly with `AS`
+- Use `snake_case`
+- Always prefer CTEs to subqueries for transformations and rollups
+- Avoid going more than one-level-deep for subqueries
+- Always use uppercase for the reserved keywords (e.g. `SELECT` and `WHERE`)
+- Avoid abbreviated keywords; use the full-length ones where available (e.g `ABSOLUTE` > `ABS`)
+- Prefer ANSI SQL functions over vendor-specific functions for maximum portability
+
+## `JOIN`s
+
 - `INNER JOIN` should be used explicitly; avoid using a naked `JOIN`
+- Do not `JOIN` to a subquery; use a CTE and join it to the main clause
+- Begin with `INNER JOIN`s and then `LEFT JOINs`, do not intermingle them unless necessary
+
+## Naming Conventions
+
+- Alias column and table names explicitly with `AS`
+- Ensure names are unique and do not exist as reserved keywords
+- If you must use a keyword as a column name, quote it in `[square brackets]`
+- Avoid abbreviations, but if you must, make sure they are commonly understood
+- Names must begin with a letter and should not end with an underscore
+- Only use letters, numbers, and underscores in names
+- Avoid using multiple consecutive underscores
+- Use underscores where you would normally use a space
 
 ## Known Formatting Issues
 

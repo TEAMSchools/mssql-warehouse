@@ -1,7 +1,7 @@
 [sqlfluff]
 dialect = tsql
 processes = 0
-exclude_rules = L003, L022, L017
+exclude_rules = L003, L022, L017, L031
 
 [sqlfluff:rules]
 max_line_length = 88
