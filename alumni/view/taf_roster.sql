@@ -3,21 +3,21 @@ CREATE OR ALTER VIEW
 WITH
   enrollments AS (
     SELECT
-      CAST(enr.student_c AS VARCHAR(25)) AS salesforce_contact_id,
-      CAST(enr.type_c AS VARCHAR(25)) AS enrollment_type,
-      CAST(enr.status_c AS VARCHAR(25)) AS enrollment_status,
-      CAST(enr.name AS VARCHAR(125)) AS enrollment_name,
-      enr.start_date_c,
+      CAST(student_c AS VARCHAR(25)) AS salesforce_contact_id,
+      CAST(type_c AS VARCHAR(25)) AS enrollment_type,
+      CAST(status_c AS VARCHAR(25)) AS enrollment_status,
+      CAST([name] AS VARCHAR(125)) AS enrollment_name,
+      start_date_c,
       ROW_NUMBER() OVER (
         PARTITION BY
-          enr.student_c
+          student_c
         ORDER BY
           start_date_c DESC
       ) AS rn
     FROM
-      gabby.alumni.enrollment_c AS enr
+      gabby.alumni.enrollment_c
     WHERE
-      enr.is_deleted = 0
+      is_deleted = 0
   )
 SELECT
   r.student_number,
@@ -26,7 +26,7 @@ SELECT
   r.exit_schoolid AS schoolid,
   r.exit_school_name AS school_name,
   r.exit_date AS exitdate,
-  r.exit_db_name AS DB_NAME,
+  r.exit_db_name AS [db_name],
   r.current_grade_level_projection AS approx_grade_level,
   r.ktc_cohort AS cohort,
   r.expected_hs_graduation_date,

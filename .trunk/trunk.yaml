@@ -58,7 +58,7 @@ lint:
           formatter: true
           in_place: true
           name: fix
-          run: sqlfluff fix ${target} --dialect ansi --disable-progress-bar --force
+          run: sqlfluff fix ${target} --disable-progress-bar --force --config .trunk/config/.sqlfluff
       files:
         - sql
         - sql-j2

@@ -4,7 +4,7 @@ SELECT
   jp.name AS job_position_name,
   jp.position_name_c AS salesforce_position_name,
   jp.status_c AS status__c,
-  CAST(jp.created_date AS VARCHAR) ASCREATEddate,
+  CAST(jp.created_date AS VARCHAR) AS createddate,
   CAST(jp.date_position_filled_c AS VARCHAR) AS date_position_filled__c,
   CASE
     WHEN ISNULL(CHARINDEX('_', jp.position_name_c), 0) = 0 THEN jp.position_name_c

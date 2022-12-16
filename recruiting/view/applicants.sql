@@ -212,7 +212,7 @@ SELECT
   j.new_or_replacement,
   j.region,
   j.desired_start_date,
-  COALESCE(j.created_date, c.created_date) ASCREATEd_date,
+  COALESCE(j.created_date, c.created_date) AS created_date,
   j.date_filled,
   j.position_count,
   COALESCE(

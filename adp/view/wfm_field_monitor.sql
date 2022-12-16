@@ -50,7 +50,7 @@ WITH
         WHERE
           position_id IS NOT NULL
           AND position_status != 'Terminated'
-          AND CAST(COALESCE(rehire_date, hire_date) AS DATE) <= CAST(CURRENT_TIMESTAMP AS DATE) --noqa: L016
+          AND CAST(COALESCE(rehire_date, hire_date) AS DATE) <= CAST(CURRENT_TIMESTAMP AS DATE) -- trunk-ignore(sqlfluff/L016)
       ) AS sub
   )
 SELECT
@@ -62,7 +62,7 @@ SELECT
   gabby.adp.workers_clean_static.associate_oid
 FROM
   unpivoted
-  INNER JOIN gabby.adp.workers_clean_static ON unpivoted.associate_id = gabby.adp.workers_clean_static.worker_id --noqa: L016
+  INNER JOIN gabby.adp.workers_clean_static ON unpivoted.associate_id = gabby.adp.workers_clean_static.worker_id -- trunk-ignore(sqlfluff/L016)
 WHERE
   (unpivoted.new_value != unpivoted.prev_value)
   OR unpivoted.prev_value IS NULL

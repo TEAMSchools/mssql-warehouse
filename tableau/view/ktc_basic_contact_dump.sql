@@ -171,13 +171,12 @@ WITH
         PARTITION BY
           contact_id
         ORDER BY
-CREATEd_date DESC
+          created_date DESC
       ) AS rn
     FROM
       gabby.alumni.contact_history
     WHERE
-      field = 'Owner'
-      ANDCREATEd_date >= DATEFROMPARTS(
+      field = 'Owner' ANDcreated_date >= DATEFROMPARTS(
         gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
         07,
         01

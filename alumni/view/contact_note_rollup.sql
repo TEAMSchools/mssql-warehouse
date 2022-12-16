@@ -81,8 +81,8 @@ FROM
     SELECT
       sub.contact_id,
       sub.academic_year,
-      sub.contact_subject + sub.contact_term AS contact_type,
-      sub.contact_date
+      sub.contact_date,
+      sub.contact_subject + sub.contact_term AS contact_type
     FROM
       (
         SELECT
@@ -131,7 +131,7 @@ FROM
           gabby.alumni.college_persistence_c
         WHERE
           benchmark_status_c = 'Complete'
-          AND benchmark_period_c <> 'Pre-College'
+          AND benchmark_period_c != 'Pre-College'
           AND is_deleted = 0
       ) AS sub
   ) AS sub PIVOT (

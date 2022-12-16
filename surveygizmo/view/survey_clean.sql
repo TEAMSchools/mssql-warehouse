@@ -6,7 +6,7 @@ SELECT
   [type],
   [status],
   team,
-  CAST(created_on AS DATETIME2) ASCREATEd_on,
+  CAST(created_on AS DATETIME2) AS created_on,
   CAST(modified_on AS DATETIME2) AS modified_on,
   JSON_VALUE(links, '$.edit') AS edit_link,
   JSON_VALUE(links, '$.publish') AS publish_link,

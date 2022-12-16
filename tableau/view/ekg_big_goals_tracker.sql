@@ -212,7 +212,7 @@ WITH
   ADA AS (
     SELECT
       studentid,
-      DB_NAME,
+      [db_name],
       (yearid + 1990) AS academic_year,
       SUM(CAST(attendancevalue AS FLOAT)) AS n_days_attendance,
       SUM(CAST(membershipvalue AS FLOAT)) AS n_days_membership,
@@ -225,13 +225,13 @@ WITH
     GROUP BY
       studentid,
       yearid,
-      DB_NAME
+      [db_name]
   ),
   suspensions AS (
     SELECT
       studentid,
       yearid,
-      DB_NAME,
+      [db_name],
       MAX(
         CASE
           WHEN sub.att_code_group = 'OSS' THEN sub.n_streaks
@@ -262,7 +262,7 @@ WITH
               studentid,
               yearid,
               streak_length_membership,
-              DB_NAME,
+              [db_name],
               CASE
                 WHEN att_code IN ('OS', 'OSS', 'OSSP') THEN 'OSS'
                 WHEN att_code IN ('ISS', 'S') THEN 'ISS'
@@ -277,12 +277,12 @@ WITH
           studentid,
           yearid,
           sub.att_code_group,
-          DB_NAME
+          [db_name]
       ) AS sub
     GROUP BY
       studentid,
       yearid,
-      DB_NAME
+      [db_name]
   ),
   student_attrition AS (
     SELECT
@@ -304,7 +304,7 @@ WITH
           entrydate,
           exitdate,
           enroll_status,
-          DB_NAME
+          [db_name]
         FROM
           gabby.powerschool.cohort_identifiers_static
         WHERE

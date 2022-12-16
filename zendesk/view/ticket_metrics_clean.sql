@@ -15,7 +15,7 @@ SELECT
   assigned_at,
   solved_at,
   latest_comment_added_at,
-CREATEd_at,
+  created_at,
   updated_at,
   CAST(
     JSON_VALUE(

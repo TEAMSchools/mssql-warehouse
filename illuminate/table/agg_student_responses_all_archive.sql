@@ -1,4 +1,4 @@
- SELECT
+SELECT
   * INTO illuminate_dna_assessments.agg_student_responses_all_archive
 FROM
   illuminate_dna_assessments.agg_student_responses_all

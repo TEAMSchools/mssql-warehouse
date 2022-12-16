@@ -114,7 +114,7 @@ WITH
                 WHEN e.pursuing_degree_type_c = 'Bachelor''s (4-year)' THEN 'BA'
                 WHEN e.pursuing_degree_type_c = 'Associate''s (2 year)' THEN 'AA'
                 WHEN e.pursuing_degree_type_c IN ('Master''s', 'MBA') THEN 'Graduate'
-                WHEN e.pursuing_degree_type_c IN ('High School Diploma', 'GED') THEN 'Secondary'
+                WHEN e.pursuing_degree_type_c IN ('High School Diploma', 'GED') THEN 'Secondary' -- trunk-ignore(sqlfluff/L016)
                 WHEN e.pursuing_degree_type_c = 'Elementary Certificate' THEN 'Primary'
                 WHEN e.pursuing_degree_type_c = 'Certificate'
                 AND ISNULL(e.account_type_c, '') NOT IN (
@@ -135,12 +135,12 @@ WITH
                 ) THEN 1
               END AS is_ecc_degree_type,
               CASE
-                WHEN DATEFROMPARTS(
-                  DATEPART(YEAR, c.actual_hs_graduation_date_c),
-                  10,
-                  31
-                ) (
-                  BETWEEN e.start_date_c AND COALESCE(
+                WHEN (
+                  DATEFROMPARTS(
+                    DATEPART(YEAR, c.actual_hs_graduation_date_c),
+                    10,
+                    31
+                  ) BETWEEN e.start_date_c AND COALESCE(
                     e.actual_end_date_c,
                     DATEFROMPARTS(
                       gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1,
@@ -311,11 +311,6 @@ FROM
       e.secondary_enrollment_id AS hs_enrollment_id,
       e.vocational_enrollment_id AS cte_enrollment_id,
       e.graduate_enrollment_id,
-      CASE
-        WHEN ba.start_date_c > aa.start_date_c THEN e.ba_enrollment_id
-        WHEN aa.start_date_c IS NULL THEN e.ba_enrollment_id
-        ELSE e.aa_enrollment_id
-      END AS ugrad_enrollment_id,
       ba.[name] AS ba_school_name,
       ba.pursuing_degree_type_c AS ba_pursuing_degree_type,
       ba.status_c AS ba_status,
@@ -356,7 +351,7 @@ FROM
       ecc.of_credits_required_for_graduation_c AS ecc_credits_required_for_graduation,
       ecc.date_last_verified_c AS ecc_date_last_verified,
       ecca.[name] AS ecc_account_name,
-      ecca.adjusted_6_year_minority_graduation_rate_c AS ecc_adjusted_6_year_minority_graduation_rate,
+      ecca.adjusted_6_year_minority_graduation_rate_c AS ecc_adjusted_6_year_minority_graduation_rate, -- trunk-ignore(sqlfluff/L016)
       hs.[name] AS hs_school_name,
       hs.pursuing_degree_type_c AS hs_pursuing_degree_type,
       hs.status_c AS hs_status,
@@ -388,10 +383,17 @@ FROM
       cura.[name] AS cur_school_name,
       cura.billing_state AS cur_billing_state,
       cura.ncesid_c AS cur_ncesid,
-      cura.adjusted_6_year_minority_graduation_rate_c AS cur_adjusted_6_year_minority_graduation_rate,
+      cura.adjusted_6_year_minority_graduation_rate_c AS cur_adjusted_6_year_minority_graduation_rate, -- trunk-ignore(sqlfluff/L016)
       emp.status_c AS emp_status,
       emp.category_c AS emp_category,
       emp.last_verified_date_c AS emp_date_last_verified,
+      empa.billing_state AS emp_billing_state,
+      empa.ncesid_c AS emp_ncesid,
+      CASE
+        WHEN ba.start_date_c > aa.start_date_c THEN e.ba_enrollment_id
+        WHEN aa.start_date_c IS NULL THEN e.ba_enrollment_id
+        ELSE e.aa_enrollment_id
+      END AS ugrad_enrollment_id,
       COALESCE(
         emp.start_date_c,
         emp.enlist_date_c,
@@ -403,14 +405,7 @@ FROM
         emp.discharge_date_c,
         emp.bmt_end_date_c,
         emp.meps_end_date_c
-      ) AS emp_actual_end_date
-      /*,emp.anticipated_graduation_c AS emp_anticipated_graduation*/
-      /*,emp.of_credits_required_for_graduation_c AS emp_credits_required_for_graduation*/
-,
-      empa.billing_state AS emp_billing_state,
-      empa.ncesid_c AS emp_ncesid
-      /*,empa.adjusted_6_year_minority_graduation_rate_c AS emp_adjusted_6_year_minority_graduation_rate*/
-,
+      ) AS emp_actual_end_date,
       COALESCE(emp.employer_c, empa.[name], emp.[name]) AS emp_name
     FROM
       enrollments AS e
@@ -440,7 +435,7 @@ FROM
       AND cura.is_deleted = 0
       LEFT JOIN gabby.alumni.employment_c AS emp ON e.employment_enrollment_id = emp.id
       AND emp.is_deleted = 0
-      LEFT JOIN gabby.alumni.account AS empa ON emp.employer_organization_look_up_c = empa.id
+      LEFT JOIN gabby.alumni.account AS empa ON emp.employer_organization_look_up_c = empa.id -- trunk-ignore(sqlfluff/L016)
       AND empa.is_deleted = 0
   ) AS sub
   LEFT JOIN gabby.alumni.enrollment_c AS ug ON sub.ugrad_enrollment_id = ug.id

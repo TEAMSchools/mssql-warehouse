@@ -1,7 +1,7 @@
- SET
+SET
 ANSI_NULLS ON GO
 SET
-QUOTED_IDENTIFIER ON GOCREATE
+QUOTED_IDENTIFIER ON GO CREATE
 OR ALTER
 PROCEDURE adsi.group_membership_merge AS BEGIN
 /* SET NOCOUNT ON added to prevent extra result sets from interfering with SELECT statements */

@@ -13,7 +13,7 @@ WITH
   (
     _id VARCHAR(25),
     shared BIT,
-CREATEd DATETIME2,
+    created DATETIME2,
     [text] VARCHAR(4000)
   ) AS mn
 WHERE

@@ -3,7 +3,7 @@ CREATE OR ALTER VIEW
 SELECT
   cn,
   company,
-CREATEtimestamp,
+  createtimestamp,
   department,
   distinguishedname,
   employeeid,

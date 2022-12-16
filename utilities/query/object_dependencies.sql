@@ -1,4 +1,4 @@
- SELECT
+SELECT
   CONCAT(
     atc.[db_name],
     '.',

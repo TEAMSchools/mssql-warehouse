@@ -30,11 +30,11 @@ SELECT
   CAST(student_first AS NVARCHAR(64)) AS student_first,
   CAST(student_last AS NVARCHAR(64)) AS student_last,
   CAST(student_middle AS NVARCHAR(64)) AS student_middle,
-  CAST(create_by AS NVARCHAR(16)) ASCREATE_by,
-  CAST(create_first AS NVARCHAR(64)) ASCREATE_first,
-  CAST(create_last AS NVARCHAR(64)) ASCREATE_last,
-  CAST(create_middle AS NVARCHAR(64)) ASCREATE_middle,
-  CAST(create_title AS NVARCHAR(16)) ASCREATE_title,
+  CAST(create_by AS NVARCHAR(16)) AS create_by,
+  CAST(create_first AS NVARCHAR(64)) AS create_first,
+  CAST(create_last AS NVARCHAR(64)) AS create_last,
+  CAST(create_middle AS NVARCHAR(64)) AS create_middle,
+  CAST(create_title AS NVARCHAR(16)) AS create_title,
   CAST(update_by AS NVARCHAR(16)) AS update_by,
   CAST(update_first AS NVARCHAR(32)) AS update_first,
   CAST(update_last AS NVARCHAR(64)) AS update_last,
@@ -51,7 +51,7 @@ SELECT
   ) AS review_ts,
   CAST(
     JSON_VALUE(create_ts, '$.date') AS DATETIME2
-  ) ASCREATE_ts,
+  ) AS create_ts,
   CAST(
     JSON_VALUE(dl_lastupdate, '$.date') AS DATETIME2
   ) AS dl_lastupdate,
@@ -59,6 +59,6 @@ SELECT
     CAST(
       JSON_VALUE(create_ts, '$.date') AS DATETIME2
     )
-  ) ASCREATE_academic_year
+  ) AS create_academic_year
 FROM
   deanslist.incidents

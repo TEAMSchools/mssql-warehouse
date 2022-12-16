@@ -37,7 +37,7 @@ SELECT DISTINCT
   scaffold.max_raw_score AS raw_score /* UPDATE */,
   row_generator.n AS grade_level,
   gabby.utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year,
-  UPPER(LEFT(scaffold.subject, 1)) + SUBSTRING(scaffold.subject, 2, LEN(scaffold.subject)) AS [subject], --noqa: L016
+  UPPER(LEFT(scaffold.subject, 1)) + SUBSTRING(scaffold.subject, 2, LEN(scaffold.subject)) AS [subject], -- trunk-ignore(sqlfluff/L016)
   MAX(key_clean.scale_score) OVER (
     PARTITION BY
       scaffold.subject

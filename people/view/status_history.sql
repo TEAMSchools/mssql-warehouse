@@ -72,7 +72,7 @@ WITH
       source_system,
       CAST(status_effective_date AS DATE) AS status_effective_date,
       CASE
-        WHEN termination_reason_description = 'ImportCREATEd Action' THEN LAG(termination_reason_description, 1) OVER (
+        WHEN termination_reason_description = 'Importcreated Action' THEN LAG(termination_reason_description, 1) OVER (
           PARTITION BY
             associate_id
           ORDER BY
