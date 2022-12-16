@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   tableau.hi_approval_queue AS
 SELECT

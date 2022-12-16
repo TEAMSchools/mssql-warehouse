@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   tableau.ops_enrollment_audit AS
 WITH

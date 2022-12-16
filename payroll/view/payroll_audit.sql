@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   payroll.payroll_audit AS
 WITH

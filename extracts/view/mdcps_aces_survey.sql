@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   extracts.mdcps_aces_survey AS
 SELECT

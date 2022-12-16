@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   illuminate_matviews.ss_cube_validation AS
 SELECT

@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   illuminate_dna_assessments.assessments_reporting_groups_validation AS
 SELECT

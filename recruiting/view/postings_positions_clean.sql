@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   recruiting.postings_positions_clean AS
 WITH

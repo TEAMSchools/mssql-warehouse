@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   extracts.overgrad_standardized_test_scores AS
 SELECT

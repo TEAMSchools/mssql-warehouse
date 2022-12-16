@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   tableau.sight_words_dashboard AS
 SELECT

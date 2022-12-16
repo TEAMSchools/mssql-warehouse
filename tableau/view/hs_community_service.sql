@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   tableau.hs_community_service AS
 SELECT

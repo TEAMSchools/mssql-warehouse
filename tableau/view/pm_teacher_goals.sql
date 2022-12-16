@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   tableau.pm_teacher_goals AS
 WITH

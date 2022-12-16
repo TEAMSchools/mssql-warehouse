@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   payroll.additional_annual_earnings_report AS
 WITH

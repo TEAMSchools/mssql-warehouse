@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   illuminate_dna_assessments.agg_student_responses_all_current AS
 WITH

@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   extracts.blissbook_employee_list AS
 SELECT

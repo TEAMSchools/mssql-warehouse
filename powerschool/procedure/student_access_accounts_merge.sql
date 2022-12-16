@@ -1,4 +1,4 @@
-USE gabby GO CREATE
+CREATE
 OR ALTER
 PROCEDURE powerschool.student_access_accounts_merge AS
 WITH

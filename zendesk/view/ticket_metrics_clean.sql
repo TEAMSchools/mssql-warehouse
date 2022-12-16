@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   zendesk.ticket_metrics_clean AS
 SELECT
@@ -16,7 +15,7 @@ SELECT
   assigned_at,
   solved_at,
   latest_comment_added_at,
-  created_at,
+CREATEd_at,
   updated_at,
   CAST(
     JSON_VALUE(

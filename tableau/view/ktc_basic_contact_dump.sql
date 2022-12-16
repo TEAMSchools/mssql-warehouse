@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   tableau.ktc_basic_contact_dump AS
 WITH
@@ -172,13 +171,13 @@ WITH
         PARTITION BY
           contact_id
         ORDER BY
-          created_date DESC
+CREATEd_date DESC
       ) AS rn
     FROM
       gabby.alumni.contact_history
     WHERE
       field = 'Owner'
-      AND created_date >= DATEFROMPARTS(
+      ANDCREATEd_date >= DATEFROMPARTS(
         gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
         07,
         01

@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   whetstone.observations_magic_notes AS
 SELECT
@@ -14,7 +13,7 @@ WITH
   (
     _id VARCHAR(25),
     shared BIT,
-    created DATETIME2,
+CREATEd DATETIME2,
     [text] VARCHAR(4000)
   ) AS mn
 WHERE

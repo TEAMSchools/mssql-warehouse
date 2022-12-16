@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   illuminate_dna_assessments.students_assessments_workaround_current AS
 SELECT

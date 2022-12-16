@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   extracts.gapps_users_students AS
 SELECT

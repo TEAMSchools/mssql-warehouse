@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   extracts.dayforce_earningstatementimport_04_deduction AS
   /* 1 - regular deductions: */

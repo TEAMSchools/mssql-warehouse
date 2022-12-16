@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   tableau.kipp_forward_survey_score_weights AS
 WITH

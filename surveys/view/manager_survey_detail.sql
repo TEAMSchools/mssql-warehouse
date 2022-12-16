@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   surveys.manager_survey_detail AS
 SELECT

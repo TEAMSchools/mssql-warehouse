@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   tntp.insight_index_scores AS
 SELECT

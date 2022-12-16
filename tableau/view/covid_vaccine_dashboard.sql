@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   tableau.covid_vaccine_dashboard AS
 SELECT

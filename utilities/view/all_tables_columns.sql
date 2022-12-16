@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   utilities.all_tables_columns AS
 SELECT

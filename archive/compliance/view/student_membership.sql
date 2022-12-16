@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   compliance.student_membership AS
 SELECT

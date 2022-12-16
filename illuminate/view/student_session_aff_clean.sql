@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   illuminate_public.student_session_aff_clean AS
 SELECT

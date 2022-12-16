@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   qa.powerschool_teachers_import_exclusions AS
 WITH

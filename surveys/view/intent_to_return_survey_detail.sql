@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   surveys.intent_to_return_survey_detail AS
 SELECT

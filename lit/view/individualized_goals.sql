@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   lit.individualized_goals AS
 SELECT

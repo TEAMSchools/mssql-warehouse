@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   reporting.illuminate_report_card_comments AS
 WITH

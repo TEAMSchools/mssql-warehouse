@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   lit.fpodms_test_events AS
 WITH

@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   surveys.so_assignments_long AS
   /*Matches data types for unpivot*/

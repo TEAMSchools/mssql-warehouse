@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   renaissance.ar_goals_current AS
 WITH

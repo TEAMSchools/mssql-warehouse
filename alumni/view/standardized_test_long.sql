@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   alumni.standardized_test_long AS
 SELECT

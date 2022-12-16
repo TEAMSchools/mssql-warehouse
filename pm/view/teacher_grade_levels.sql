@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   pm.teacher_grade_levels AS
 WITH

@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   stmath.progress_completion_report_clean AS
 SELECT

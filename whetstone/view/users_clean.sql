@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   whetstone.users_clean AS
 SELECT

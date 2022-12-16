@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   ops.income_form_data_clean AS
 SELECT

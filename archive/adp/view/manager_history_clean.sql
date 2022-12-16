@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   adp.manager_history_clean AS
 SELECT

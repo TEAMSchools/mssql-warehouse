@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   nwea.retest_roster AS
 WITH

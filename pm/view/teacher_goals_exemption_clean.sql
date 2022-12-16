@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   pm.teacher_goals_exemption_clean AS
 SELECT

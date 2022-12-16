@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   surveys.staff_information_survey_wide AS
 SELECT

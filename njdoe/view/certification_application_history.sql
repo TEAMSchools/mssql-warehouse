@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   njdoe.certification_application_history AS
 SELECT

@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   coupa.budget_line_clean AS
 SELECT

@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   ekg.walkthrough_scores_detail AS
 WITH

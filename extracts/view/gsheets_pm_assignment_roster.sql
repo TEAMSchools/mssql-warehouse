@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   extracts.gsheets_pm_assignment_roster AS
 WITH

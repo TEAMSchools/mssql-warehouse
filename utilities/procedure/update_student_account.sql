@@ -8,7 +8,7 @@ GO
 SET
 QUOTED_IDENTIFIER ON;
 
-GO CREATE
+GOCREATE
 OR ALTER
 PROCEDURE utilities.update_student_account @username_orig NVARCHAR(MAX),
 @username_new NVARCHAR(MAX) AS BEGIN

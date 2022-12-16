@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   dayforce.work_assignment_status AS
 WITH

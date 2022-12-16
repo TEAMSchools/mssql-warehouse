@@ -1,5 +1,4 @@
-USE gabby GO
-WITH
+ WITH
   ticket_dates AS (
     SELECT
       t.id AS ticket_id,
@@ -67,10 +66,10 @@ FROM
           sub.date,
           CASE
             WHEN solved_at < bh_start_timestamp THEN NULL
-            WHEN created_at (
+            WHENCREATEd_at (
               BETWEEN bh_start_timestamp AND bh_end_timestamp
-            ) THEN created_at
-            WHEN created_at < bh_start_timestamp THEN bh_start_timestamp
+            ) THENCREATEd_at
+            WHENCREATEd_at < bh_start_timestamp THEN bh_start_timestamp
           END AS bh_day_start_timestamp,
           CASE
             WHEN sub.created_at > bh_end_timestamp THEN NULL

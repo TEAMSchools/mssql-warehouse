@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   surveygizmo.survey_question_clean AS
 SELECT

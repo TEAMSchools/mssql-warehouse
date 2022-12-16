@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   whetstone.schools_observation_groups_membership AS
 WITH

@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   naviance.act_scores_clean AS
 SELECT

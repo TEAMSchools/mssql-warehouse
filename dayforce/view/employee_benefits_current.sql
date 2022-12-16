@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   dayforce.employee_benefits_current AS
 SELECT

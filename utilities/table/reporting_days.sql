@@ -1,5 +1,4 @@
-USE gabby GO
-SELECT
+ SELECT
   sub.*,
   CASE
     WHEN week_part = '01'

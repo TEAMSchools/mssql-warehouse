@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   tableau.qa_illuminate_zero_answered_audit AS
 SELECT

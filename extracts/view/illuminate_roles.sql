@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   extracts.illuminate_roles AS
   /* KNJ specific departments = all CMO schools */

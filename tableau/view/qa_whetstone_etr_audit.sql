@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   tableau.qa_whetstone_etr_audit AS
 SELECT

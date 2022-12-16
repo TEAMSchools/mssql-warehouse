@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   tableau.teacher_allocation_miami AS
   /*assigning row numbers for earliest job title and salary in last academic year*/

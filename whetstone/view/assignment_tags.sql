@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   whetstone.assignment_tags AS
 SELECT

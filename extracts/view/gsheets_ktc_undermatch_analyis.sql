@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   extracts.gsheets_ktc_undermatch_analyis AS
 WITH

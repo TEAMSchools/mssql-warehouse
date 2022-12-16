@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   payroll.finance_accounting_people_model AS
 WITH

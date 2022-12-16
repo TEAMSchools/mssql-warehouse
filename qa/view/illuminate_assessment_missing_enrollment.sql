@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   qa.illuminate_assessment_missing_enrollment AS
 WITH

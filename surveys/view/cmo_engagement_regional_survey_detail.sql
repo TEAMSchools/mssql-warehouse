@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   surveys.cmo_engagement_regional_survey_detail AS
 SELECT

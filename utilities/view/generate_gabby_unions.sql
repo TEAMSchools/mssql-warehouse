@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   utilities.generate_gabby_unions AS
 WITH

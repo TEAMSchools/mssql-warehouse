@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   lit.achieved_by_round AS
 WITH

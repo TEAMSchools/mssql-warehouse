@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   dayforce.staff_roster AS
 WITH

@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   utilities.row_generator AS
 WITH

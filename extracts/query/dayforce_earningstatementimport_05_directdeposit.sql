@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   extracts.dayforce_earningstatementimport_05_directdeposit AS
 SELECT

@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   qa.powerschool_transfer_record_overlap AS
 SELECT

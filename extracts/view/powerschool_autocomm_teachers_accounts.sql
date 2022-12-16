@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   extracts.powerschool_autocomm_teachers_accounts AS
 WITH

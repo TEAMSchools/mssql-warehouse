@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   illuminate_dna_assessments.performance_band_lookup AS
 SELECT

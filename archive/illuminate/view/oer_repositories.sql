@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   illuminate_dna_repositories.oer_repositories AS
 SELECT

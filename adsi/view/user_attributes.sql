@@ -1,10 +1,9 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   adsi.user_attributes AS
 SELECT
   cn,
   company,
-  createtimestamp,
+CREATEtimestamp,
   department,
   distinguishedname,
   employeeid,

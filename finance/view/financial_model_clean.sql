@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   finance.financial_model_clean AS
 WITH

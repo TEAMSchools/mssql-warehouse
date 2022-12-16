@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   people.staff_attendance_clean AS
 SELECT

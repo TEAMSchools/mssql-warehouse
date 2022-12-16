@@ -1,4 +1,4 @@
-USE [gabby] GO CREATE
+USE [gabby] GOCREATE
 OR ALTER
 PROCEDURE people.merge_employee_numbers AS
 MERGE INTO

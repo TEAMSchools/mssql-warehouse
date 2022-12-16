@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   ops.busing_students_locations AS
 SELECT

@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   qa.powerschool_sections_lead_terminated AS
 SELECT

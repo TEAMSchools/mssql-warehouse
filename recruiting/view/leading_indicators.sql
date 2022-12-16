@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   recruiting.leading_indicators AS
 WITH

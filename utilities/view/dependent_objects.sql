@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   utilities.dependent_objects AS
 WITH

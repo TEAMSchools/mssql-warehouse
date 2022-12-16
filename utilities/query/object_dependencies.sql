@@ -1,5 +1,4 @@
-USE gabby GO
-SELECT
+ SELECT
   CONCAT(
     atc.[db_name],
     '.',

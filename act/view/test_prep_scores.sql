@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   act.test_prep_scores AS
 WITH

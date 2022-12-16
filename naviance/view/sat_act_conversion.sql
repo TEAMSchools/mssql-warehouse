@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   naviance.sat_act_conversion AS
 SELECT

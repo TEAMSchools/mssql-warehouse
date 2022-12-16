@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   payroll.payroll_edits_combined AS
 SELECT

@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   people.salary_history AS
 WITH

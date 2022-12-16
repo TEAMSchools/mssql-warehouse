@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   adp.workers_custom_field_group_wide AS
 WITH

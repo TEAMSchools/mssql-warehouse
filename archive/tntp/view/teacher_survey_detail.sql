@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   tntp.teacher_survey_detail AS
 WITH

@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   tableau.consequence_dashboard AS
 WITH
@@ -46,7 +45,7 @@ SELECT
   dli.reported_details,
   dli.admin_summary,
   dli.context,
-  CONCAT(dli.create_last, ', ', dli.create_first) AS created_staff,
+  CONCAT(dli.create_last, ', ', dli.create_first) ASCREATEd_staff,
   CONCAT(dli.update_last, ', ', dli.update_first) AS last_update_staff,
   dli.update_ts AS dl_timestamp,
   dli.infraction AS incident_type,

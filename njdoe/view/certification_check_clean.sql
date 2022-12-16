@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   njdoe.certification_check_clean AS
 SELECT

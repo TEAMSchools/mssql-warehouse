@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   njdoe.parcc_clean AS
 SELECT

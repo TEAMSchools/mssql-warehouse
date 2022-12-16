@@ -1,4 +1,4 @@
-USE gabby GO CREATE
+CREATE
 OR ALTER
 PROCEDURE tableau.merge_school_tactical_dashboard AS
 WITH

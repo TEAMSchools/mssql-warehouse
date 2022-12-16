@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   extracts.easyiep_autosend_student_roster AS
 SELECT

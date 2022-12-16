@@ -8,7 +8,7 @@ GO
 SET
 QUOTED_IDENTIFIER ON;
 
-GO CREATE
+GOCREATE
 OR ALTER
 PROCEDURE utilities.cache_view @db_name NVARCHAR(MAX),
 @schema_name NVARCHAR(MAX),
@@ -45,7 +45,7 @@ RETURN;
 
 END;
 
-/* if destination table does not exist, create and exit */
+/* if destination table does not exist,CREATE and exit */
 IF OBJECT_ID(@destination_table_name) IS NULL BEGIN
 SET
   @sql_create = N'

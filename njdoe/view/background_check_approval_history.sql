@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   njdoe.background_check_approval_history AS
 SELECT

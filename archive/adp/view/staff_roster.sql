@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   adp.staff_roster AS
 WITH

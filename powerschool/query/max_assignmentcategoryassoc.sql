@@ -1,5 +1,4 @@
-USE gabby GO
-SELECT
+ SELECT
   ga.[db_name],
   MIN(ga.assignmentcategoryassocid) AS min_assignmentcategoryassocid,
   MAX(ga.assignmentcategoryassocid) + 1 AS next_min_assignmentcategoryassocid,

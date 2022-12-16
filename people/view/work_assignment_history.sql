@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   people.work_assignment_history AS
 WITH

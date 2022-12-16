@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   mcs.lunch_info AS
 SELECT

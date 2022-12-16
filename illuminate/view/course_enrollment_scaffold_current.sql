@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   illuminate_dna_assessments.course_enrollment_scaffold_current AS
 WITH

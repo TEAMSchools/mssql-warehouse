@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   people.staff_performance_compliance_history AS
 WITH

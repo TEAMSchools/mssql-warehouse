@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   iready.growth_metrics AS
 WITH

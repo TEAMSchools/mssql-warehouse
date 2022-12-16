@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   tableau.qa_assessment_audit AS
 WITH
@@ -23,7 +22,7 @@ SELECT
   a.subject_area,
   a.tags,
   a.is_normed_scope,
-  a.creator_first_name + ' ' + a.creator_last_name AS created_by,
+  a.creator_first_name + ' ' + a.creator_last_name ASCREATEd_by,
   pbs.[description] AS performance_band_set_description,
   gr.short_name AS assessment_grade_level,
   f.field_id,

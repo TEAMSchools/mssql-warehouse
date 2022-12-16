@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   illuminate_dna_repositories.sight_words_quiz_union_generator AS
 SELECT

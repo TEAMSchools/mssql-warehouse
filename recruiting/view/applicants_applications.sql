@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   recruiting.applicants_applications AS
 WITH

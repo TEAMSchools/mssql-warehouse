@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   zendesk.ticket_metrics AS
 WITH
@@ -27,8 +26,8 @@ WITH
               field_name AS field_name,
               MIN(updated) AS updated_min,
               MAX(updated) AS updated_max,
-              NULL AS created_max,
-              NULL AS created_min
+              NULL ASCREATEd_max,
+              NULL ASCREATEd_min
             FROM
               gabby.zendesk.ticket_field_history
             WHERE
@@ -47,8 +46,8 @@ WITH
               'solved' AS field_name,
               MIN(updated) AS updated_min,
               MAX(updated) AS updated_max,
-              NULL AS created_max,
-              NULL AS created_min
+              NULL ASCREATEd_max,
+              NULL ASCREATEd_min
             FROM
               gabby.zendesk.ticket_field_history
             WHERE
@@ -61,8 +60,8 @@ WITH
               'all' AS field_name,
               MIN(updated) AS updated_min,
               MAX(updated) AS updated_max,
-              NULL AS created_max,
-              NULL AS created_min
+              NULL ASCREATEd_max,
+              NULL ASCREATEd_min
             FROM
               gabby.zendesk.ticket_field_history
             GROUP BY
@@ -73,12 +72,12 @@ WITH
               'comment' AS field_name,
               NULL AS updated_min,
               NULL AS updated_max,
-              MAX(created) AS created_max,
+              MAX(created) ASCREATEd_max,
               MIN(
                 CASE
-                  WHEN [public] = 1 THEN created
+                  WHEN [public] = 1 THENCREATEd
                 END
-              ) AS created_min
+              ) ASCREATEd_min
             FROM
               gabby.zendesk.ticket_comment
             GROUP BY
@@ -87,8 +86,8 @@ WITH
             field_value FOR metric_name IN (
               updated_min,
               updated_max,
-              created_max,
-              created_min
+CREATEd_max,
+CREATEd_min
             )
           ) u
       ) AS sub PIVOT (

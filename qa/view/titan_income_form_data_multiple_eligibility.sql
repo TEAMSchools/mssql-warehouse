@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   qa.titan_income_form_data_multiple_eligibility AS
 SELECT

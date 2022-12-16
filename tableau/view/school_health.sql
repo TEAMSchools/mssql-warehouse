@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   tableau.school_health AS
 WITH
@@ -896,7 +895,7 @@ FROM
                   'Students are welcomed to be themselves and bring their full personality to school.',
                   'Students must show effort and growth to be included in activities.',
                   'Students’ performance is measured through both what grades they are getting and how they are growing. Teachers often meet with students to discuss growth goals and to track progress.',
-                  'Teachers create an environment where most students actively participate, and take academic risks to strengthen their own learning.  Teachers find many different and creative ways to make learning engaging for most students.',
+                  'TeachersCREATE an environment where most students actively participate, and take academic risks to strengthen their own learning.  Teachers find many different and creative ways to make learning engaging for most students.',
                   'The lessons, books, and learning resources used at my school have a diverse representation of cultures and perspectives. Students are able to produce work that reflects and connects their own ideas, thoughts, and opinions.'
                 ) THEN 3
                 WHEN u.response IN (
@@ -908,7 +907,7 @@ FROM
                   'Students are partners with staff and always part of decisions for the school.',
                   'Students are welcomed to be themselves, bring their full personalities AND family culture, and engage with staff about academic and non-academic topics.',
                   'Students’ performance includes grades earned on tests/quizzes, as well as academic and social goals.  Teachers and students work together to set, communicate, and celebrate all goals.',
-                  'Teachers are committed to challenging and helping all students learn.  Teachers create an environment where all students are included and can thrive.',
+                  'Teachers are committed to challenging and helping all students learn.  TeachersCREATE an environment where all students are included and can thrive.',
                   'The lessons, books, and learning resources used by students support the development of who they are as people. Students routinely engage in exploring their own and other cultures, and understand the purpose of what they are learning.'
                 ) THEN 4
                 ELSE NULL

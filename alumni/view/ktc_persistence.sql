@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   alumni.ktc_persistence AS
 SELECT

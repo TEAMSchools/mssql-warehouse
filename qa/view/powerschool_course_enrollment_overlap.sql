@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   qa.powerschool_course_enrollment_overlap AS
 WITH

@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   alumni.enrollment_term_status AS
 WITH

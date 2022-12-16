@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   whetstone.assignments_clean AS
 SELECT

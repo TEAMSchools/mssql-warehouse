@@ -1,4 +1,3 @@
-USE gabby GO
 CREATE OR ALTER VIEW
   extracts.powerschool_autocomm_students_easyiep AS
 SELECT
