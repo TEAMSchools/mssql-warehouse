@@ -11,8 +11,8 @@ WITH
         sub.effective_end,
         DATEFROMPARTS(
           CASE
-            WHEN DATEPART(YEAR, sub.effective_start) > gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-            AND DATEPART(MONTH, sub.effective_start) >= 7 THEN DATEPART(YEAR, sub.effective_start) + 1
+            WHEN DATEPART(YEAR, sub.effective_start) > gabby.utilities.GLOBAL_ACADEMIC_YEAR () -- trunk-ignore(sqlfluff/L016)
+            AND DATEPART(MONTH, sub.effective_start) >= 7 THEN DATEPART(YEAR, sub.effective_start) + 1 -- trunk-ignore(sqlfluff/L016)
             ELSE gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
           END,
           6,
@@ -26,7 +26,7 @@ WITH
           [status],
           base_salary,
           CASE
-            WHEN status = 'Terminated' THEN DATEADD(DAY, 1, CAST(effective_start AS DATE))
+            WHEN status = 'Terminated' THEN DATEADD(DAY, 1, CAST(effective_start AS DATE)) -- trunk-ignore(sqlfluff/L016)
             ELSE CAST(effective_start AS DATE)
           END AS effective_start,
           CAST(effective_end AS DATE) AS effective_end
@@ -48,8 +48,8 @@ WITH
         sub.work_assignment_effective_end,
         DATEFROMPARTS(
           CASE
-            WHEN DATEPART(YEAR, sub.work_assignment_effective_start) > gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-            AND DATEPART(MONTH, sub.work_assignment_effective_start) >= 7 THEN DATEPART(YEAR, sub.work_assignment_effective_start) + 1
+            WHEN DATEPART(YEAR, sub.work_assignment_effective_start) > gabby.utilities.GLOBAL_ACADEMIC_YEAR () -- trunk-ignore(sqlfluff/L016)
+            AND DATEPART(MONTH, sub.work_assignment_effective_start) >= 7 THEN DATEPART(YEAR, sub.work_assignment_effective_start) + 1 -- trunk-ignore(sqlfluff/L016)
             ELSE gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
           END,
           6,
@@ -68,12 +68,12 @@ WITH
           flsa_status_name,
           CAST(
             CASE
-              WHEN work_assignment_effective_start != '' THEN work_assignment_effective_start
+              WHEN work_assignment_effective_start != '' THEN work_assignment_effective_start -- trunk-ignore(sqlfluff/L016)
             END AS DATE
           ) AS work_assignment_effective_start,
           CAST(
             CASE
-              WHEN work_assignment_effective_end != '' THEN work_assignment_effective_end
+              WHEN work_assignment_effective_end != '' THEN work_assignment_effective_end -- trunk-ignore(sqlfluff/L016)
             END AS DATE
           ) AS work_assignment_effective_end
         FROM
@@ -112,8 +112,8 @@ WITH
         ),
         DATEFROMPARTS(
           CASE
-            WHEN DATEPART(YEAR, d.effective_date) > gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-            AND DATEPART(MONTH, d.effective_date) >= 7 THEN DATEPART(YEAR, d.effective_date) + 1
+            WHEN DATEPART(YEAR, d.effective_date) > gabby.utilities.GLOBAL_ACADEMIC_YEAR () -- trunk-ignore(sqlfluff/L016)
+            AND DATEPART(MONTH, d.effective_date) >= 7 THEN DATEPART(YEAR, d.effective_date) + 1 -- trunk-ignore(sqlfluff/L016)
             ELSE gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
           END,
           6,
@@ -145,12 +145,12 @@ SELECT
   ) AS rn_cur
 FROM
   validranges AS r
-  INNER JOIN gabby.dayforce.staff_roster AS sr ON r.df_employee_id = sr.df_employee_number
+  INNER JOIN gabby.dayforce.staff_roster AS sr ON r.df_employee_id = sr.df_employee_number -- trunk-ignore(sqlfluff/L016)
   LEFT JOIN status_clean AS s ON r.df_employee_id = s.df_employee_id
-  AND r.effective_start_date (
-    BETWEEN s.effective_start AND s.effective_end
+  AND (
+    r.effective_start_date BETWEEN s.effective_start AND s.effective_end
   )
   LEFT JOIN work_assignment_clean AS w ON r.df_employee_id = w.df_employee_id
-  AND r.effective_start_date (
-    BETWEEN w.work_assignment_effective_start AND w.work_assignment_effective_end
+  AND (
+    r.effective_start_date BETWEEN w.work_assignment_effective_start AND w.work_assignment_effective_end -- trunk-ignore(sqlfluff/L016)
   )

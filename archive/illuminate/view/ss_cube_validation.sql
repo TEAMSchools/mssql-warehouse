@@ -30,6 +30,6 @@ FROM
         ,entry_date
         ,leave_date
         ,is_primary_teacher
-  FROM matviews.ss_cube  
+  FROM matviews.ss_cube
 '
   )

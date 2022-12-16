@@ -36,7 +36,7 @@ FROM
       CAST(rate_proficiency AS VARCHAR(25)) AS rate_proficiency,
       CAST(key_lever AS VARCHAR(25)) AS key_lever,
       CAST(fiction_nonfiction AS VARCHAR(5)) AS fiction_nonfiction
-      --,CAST(test_administered_by AS VARCHAR(125)) AS test_administered_by             
+      --,CAST(test_administered_by AS VARCHAR(125)) AS test_administered_by
 ,
       CONCAT('IL', repository_id, repository_row_id) AS unique_id,
       CASE

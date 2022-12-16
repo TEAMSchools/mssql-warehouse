@@ -12,7 +12,7 @@ WITH
       survey_id
       /*
       Ordering surveys by term (most recent campaign) and
-      staff updates by completion date to filter out 
+      staff updates by completion date to filter out
       complete staff updates from prior campaigns
        */
 ,

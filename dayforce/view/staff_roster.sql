@@ -70,9 +70,16 @@ WITH
     FROM
       (
         SELECT
+          e.birth_date,
+          e.original_hire_date,
+          e.termination_date,
+          e.rehire_date,
+          e.position_effective_from_date,
+          e.position_effective_to_date,
+          e.annual_salary,
           CAST(e.df_employee_number AS INT) AS df_employee_number,
           CASE
-            WHEN e.adp_associate_id_clean != '' THEN CAST(e.adp_associate_id_clean AS VARCHAR(25))
+            WHEN e.adp_associate_id_clean != '' THEN CAST(e.adp_associate_id_clean AS VARCHAR(25)) -- trunk-ignore(sqlfluff/L016)
           END AS adp_associate_id,
           CASE
             WHEN e.salesforce_id != '' THEN CAST(e.salesforce_id AS VARCHAR(25))
@@ -87,7 +94,7 @@ WITH
             WHEN e.common_name != '' THEN CAST(e.common_name AS VARCHAR(25))
           END AS common_name,
           CASE
-            WHEN e.preferred_last_name != '' THEN CAST(e.preferred_last_name AS VARCHAR(25))
+            WHEN e.preferred_last_name != '' THEN CAST(e.preferred_last_name AS VARCHAR(25)) -- trunk-ignore(sqlfluff/L016)
           END AS preferred_last_name,
           CASE
             WHEN e.[address] != '' THEN CAST(e.[address] AS VARCHAR(125))
@@ -119,7 +126,7 @@ WITH
             )
           END AS primary_on_site_department,
           CASE
-            WHEN e.legal_entity_name_clean != '' THEN CAST(e.legal_entity_name_clean AS VARCHAR(125))
+            WHEN e.legal_entity_name_clean != '' THEN CAST(e.legal_entity_name_clean AS VARCHAR(125)) -- trunk-ignore(sqlfluff/L016)
           END AS legal_entity_name,
           CASE
             WHEN e.job_family != '' THEN CAST(e.job_family AS VARCHAR(25))
@@ -153,16 +160,7 @@ WITH
           CAST(
             e.employee_s_manager_s_df_emp_number_id AS INT
           ) AS manager_df_employee_number,
-          e.birth_date,
-          e.original_hire_date,
-          e.termination_date,
-          e.rehire_date,
-          e.position_effective_from_date,
-          e.position_effective_to_date,
-          e.annual_salary,
-          NULL AS leadership_role /* no data in export */
           /* redundant combined fields */
-,
           CAST(position_title AS VARCHAR(125)) AS position_title,
           CAST(
             primary_on_site_department_entity_ AS VARCHAR(125)
@@ -218,10 +216,17 @@ SELECT
   c.position_title,
   c.primary_on_site_department_entity,
   c.primary_site_entity,
+  s.ps_school_id AS primary_site_schoolid,
+  s.reporting_school_id AS primary_site_reporting_schoolid,
+  s.school_level AS primary_site_school_level,
+  s.is_campus AS is_campus_staff,
+  m.adp_associate_id AS manager_adp_associate_id,
+  m.preferred_first_name AS manager_preferred_first_name,
+  m.preferred_last_name AS manager_preferred_last_name,
   CAST(
     c.preferred_last_name + ', ' + c.preferred_first_name AS VARCHAR(125)
   ) AS preferred_name,
-  SUBSTRING(c.mobile_number, 1, 3) + '-' + SUBSTRING(c.mobile_number, 4, 3) + '-' + SUBSTRING(c.mobile_number, 7, 4) AS mobile_number,
+  SUBSTRING(c.mobile_number, 1, 3) + '-' + SUBSTRING(c.mobile_number, 4, 3) + '-' + SUBSTRING(c.mobile_number, 7, 4) AS mobile_number, -- trunk-ignore(sqlfluff/L016)
   CASE
     WHEN c.legal_entity_name = 'TEAM Academy Charter Schools' THEN 'YHD'
     WHEN c.legal_entity_name = 'KIPP New Jersey' THEN 'D30'
@@ -236,13 +241,6 @@ SELECT
     WHEN c.[status] NOT IN ('TERMINATED', 'PRESTART') THEN 1
     ELSE 0
   END AS is_active,
-  s.ps_school_id AS primary_site_schoolid,
-  s.reporting_school_id AS primary_site_reporting_schoolid,
-  s.school_level AS primary_site_school_level,
-  s.is_campus AS is_campus_staff,
-  m.adp_associate_id AS manager_adp_associate_id,
-  m.preferred_first_name AS manager_preferred_first_name,
-  m.preferred_last_name AS manager_preferred_last_name,
   CAST(
     m.preferred_last_name + ', ' + m.preferred_first_name AS VARCHAR(125)
   ) AS manager_name

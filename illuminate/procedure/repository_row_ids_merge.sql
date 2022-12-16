@@ -71,7 +71,7 @@ SET
   ) RAISERROR (@message, 0, 1) EXEC (@query) END CLOSE repository_cursor DEALLOCATE repository_cursor;
 
 /*
--- 5.) UPSERT: matching on repo, row number, studentid, and field name.  DELETE if on TARGET but not MATCHED by SOURCE 
+-- 5.) UPSERT: matching on repo, row number, studentid, and field name.  DELETE if on TARGET but not MATCHED by SOURCE
  */
 IF OBJECT_ID(
   N'illuminate_dna_repositories.repository_row_ids'

@@ -48,7 +48,9 @@ FROM
   AND dli.[db_name] = co.[db_name]
   AND co.rn_year = 1
   INNER JOIN gabby.reporting.reporting_terms AS d ON co.schoolid = d.schoolid
-  AND CAST(dli.create_ts AS DATE) (BETWEEN d.[start_date] AND d.end_date)
+  AND (
+    CAST(dli.create_ts AS DATE) BETWEEN d.[start_date] AND d.end_date
+  )
   AND d.identifier = 'RT'
   AND d._fivetran_deleted = 0
 WHERE

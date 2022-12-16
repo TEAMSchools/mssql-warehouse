@@ -158,7 +158,9 @@ FROM
   LEFT JOIN gabby.powerschool.course_enrollments_current_static AS enr ON co.student_number = enr.student_number
   AND co.[db_name] = enr.[db_name]
   AND enr.credittype = 'ENG'
-  AND CAST(CURRENT_TIMESTAMP AS DATE) (BETWEEN enr.dateenrolled AND enr.dateleft)
+  AND (
+    CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN enr.dateenrolled AND enr.dateleft
+  )
   AND enr.rn_subject = 1
   LEFT JOIN gabby.powerschool.final_grades_static AS gr ON co.studentid = gr.studentid
   AND co.yearid = gr.yearid

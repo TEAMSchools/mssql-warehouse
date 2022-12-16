@@ -30,7 +30,7 @@ WITH
     WITH
       (NOLOCK)
     WHERE
-      N (BETWEEN 0 AND 12)
+      (N BETWEEN 0 AND 12)
   ),
   scaffold AS (
     SELECT

@@ -15,7 +15,7 @@ SELECT
   middlename,
   mobile,
   modifytimestamp,
-  name,
+  [name],
   objectcategory,
   telephonenumber,
   textencodedoraddress,
@@ -33,11 +33,10 @@ SELECT
   CAST(userprincipalname AS VARCHAR(125)) AS userprincipalname,
   DATEADD(
     MINUTE,
-    /* number of 10 minute intervals (in microseconds) since last reset
-    offset by time zone...holy shit */
-    (CAST(pwdlastset AS BIGINT) / 600000000) + DATEDIFF(MINUTE, GETUTCDATE(), CURRENT_TIMESTAMP),
-    /* origin date for DATETIME2 */
-    CAST('1/1/1601' AS DATETIME2)
+    /* number of 10 minute intervals (in microseconds)
+    since last reset offset by time zone */
+    (CAST(pwdlastset AS BIGINT) / 600000000) + DATEDIFF(MINUTE, GETUTCDATE(), CURRENT_TIMESTAMP), -- trunk-ignore(sqlfluff/L016)
+    CAST('1601-01-01' AS DATETIME2) /* origin date for DATETIME2 */
   ) AS pwdlastset,
   CASE
     WHEN useraccountcontrol & 2 = 0 THEN 1
@@ -51,38 +50,41 @@ FROM
   OPENQUERY (
     ADSI,
     '
-  SELECT cn
-        ,company        
-        ,createTimeStamp                
-        ,department                
-        ,displayName        
-        ,distinguishedname
-        ,employeeID        
-        ,employeenumber
-        ,givenName        
-        ,homePhone
-        ,homePostalAddress 
-        ,idautoPersonALternateID 
-        ,idautostatus       
-        ,l        
-        ,logonCount
-        ,mail        
-        ,manager        
-        ,middleName
-        ,mobile
-        ,modifyTimeStamp        
-        ,name
-        ,objectCategory          
-        ,physicalDeliveryOfficeName  
-        ,pwdLastSet       
-        ,sAMAccountName        
-        ,sn        
-        ,telephoneNumber
-        ,textEncodedORAddress        
-        ,title        
-        ,useraccountcontrol
-        ,userPrincipalName     
-  FROM ''LDAP://KNJDC01.teamschools.kipp.org/OU=Users,OU=TEAM,DC=teamschools,DC=kipp,DC=org''    
-  WHERE objectCategory = ''Person''
-'
+      SELECT
+        cn,
+        company,
+        createTimeStamp,
+        department,
+        displayName,
+        distinguishedname,
+        employeeID,
+        employeenumber,
+        givenName,
+        homePhone,
+        homePostalAddress,
+        idautoPersonALternateID,
+        idautostatus,
+        l,
+        logonCount,
+        mail,
+        manager,
+        middleName,
+        mobile,
+        modifyTimeStamp,
+        name,
+        objectCategory,
+        physicalDeliveryOfficeName,
+        pwdLastSet,
+        sAMAccountName,
+        sn,
+        telephoneNumber,
+        textEncodedORAddress,
+        title,
+        useraccountcontrol,
+        userPrincipalName
+      FROM
+        ''LDAP://KNJDC01.teamschools.kipp.org/OU=Users,OU=TEAM,DC=teamschools,DC=kipp,DC=org''
+      WHERE
+        objectCategory = ''Person''
+    '
   )

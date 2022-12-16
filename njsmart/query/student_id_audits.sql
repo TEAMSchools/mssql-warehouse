@@ -113,8 +113,8 @@ WITH
   /* invalid SN
   SELECT *
   ,CASE
-  WHEN local_student_id LIKE '7325%' THEN CONCAT('UPDATE ', table_name, ' SET local_student_id = NULL WHERE _file = ''', _file, ''' AND _line = ', _line, ';') 
-  WHEN local_student_id LIKE '%.0%' THEN CONCAT('UPDATE ', table_name, ' SET local_student_id = ', REPLACE(local_student_id,'.0',''), ' WHERE _file = ''', _file, ''' AND _line = ', _line, ';') 
+  WHEN local_student_id LIKE '7325%' THEN CONCAT('UPDATE ', table_name, ' SET local_student_id = NULL WHERE _file = ''', _file, ''' AND _line = ', _line, ';')
+  WHEN local_student_id LIKE '%.0%' THEN CONCAT('UPDATE ', table_name, ' SET local_student_id = ', REPLACE(local_student_id,'.0',''), ' WHERE _file = ''', _file, ''' AND _line = ', _line, ';')
   END AS update_statement
   FROM raw_files
   WHERE local_student_id LIKE '7325%'
@@ -169,7 +169,7 @@ WITH
   
   ,s.student_number AS ps_student_number
   ,s.state_studentnumber AS ps_state_studentnumber
-  ,s.lastfirst AS ps_lastfirst 
+  ,s.lastfirst AS ps_lastfirst
   
   ,ROW_NUMBER() OVER(
   PARTITION BY t._file, t._line
@@ -179,7 +179,7 @@ WITH
   ON CHARINDEX(LTRIM(RTRIM(REPLACE(t.last_name,' ',''))), gabby.utilities.STRIP_CHARACTERS(REPLACE(s.last_name,' ',''),'^A-Z')) > 0
   AND CHARINDEX(LTRIM(RTRIM(REPLACE(t.first_name, ' ', ''))), gabby.utilities.STRIP_CHARACTERS(REPLACE(s.first_name,' ',''),'^A-Z')) > 0
   WHERE t.local_student_id IS NULL
-  ) AS sub          
+  ) AS sub
   ) AS sub
   --WHERE max_rn = 1
   --*/
@@ -196,7 +196,7 @@ WITH
   
   ,s.student_number AS ps_student_number
   ,s.state_studentnumber AS ps_state_studentnumber
-  ,s.lastfirst AS ps_lastfirst 
+  ,s.lastfirst AS ps_lastfirst
   
   ,ROW_NUMBER() OVER(
   PARTITION BY t._file, t._line
@@ -207,9 +207,9 @@ WITH
   AND CHARINDEX(LTRIM(RTRIM(REPLACE(t.first_name, ' ', ''))), gabby.utilities.STRIP_CHARACTERS(REPLACE(s.first_name,' ',''),'^A-Z')) > 0
   WHERE t.state_student_id IS NULL
   AND s.state_studentnumber IS NOT NULL
-  ) AS sub          
   ) AS sub
-  WHERE max_rn = 1  
+  ) AS sub
+  WHERE max_rn = 1
   --*/
   /* manual
   SELECT *
@@ -222,7 +222,7 @@ WITH
   WHERE local_student_id IS NULL
   ORDER BY _file, _line
   --*/
-  /* final SN check on njask_archive 
+  /* final SN check on njask_archive
   SELECT n.state_student_id
   ,n.local_student_id
   ,n.first_name

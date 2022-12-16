@@ -75,7 +75,7 @@ WITH
   ,COALESCE(s1.[value], s2.[value]) AS term
   ,COALESCE(COALESCE(achv.indep_lvl_num, achv.lvl_num)
   ,LAG(COALESCE(achv.indep_lvl_num, achv.lvl_num), 2) OVER(
-  PARTITION BY achv.student_number, achv.academic_year 
+  PARTITION BY achv.student_number, achv.academic_year
   ORDER BY achv.[start_date])
   ) AS indep_lvl_num /* Q1 & Q2 are set by BOY, carry them forward for setting goals at beginning of year */
   FROM gabby.lit.achieved_by_round_static AS achv

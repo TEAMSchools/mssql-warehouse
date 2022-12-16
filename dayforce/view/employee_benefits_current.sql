@@ -55,7 +55,7 @@ FROM
             ) THEN 'FSA-HC'
             WHEN ben_plan_name = 'Health Savings Account'
             OR ben_plan_option_name = 'Waive Health Savings Account' THEN 'HSA'
-            WHEN ben_plan_name = 'Imputed Income - Life Insurance' THEN 'Imputed Income - Life Insurance'
+            WHEN ben_plan_name = 'Imputed Income - Life Insurance' THEN 'Imputed Income - Life Insurance' -- trunk-ignore(sqlfluff/L016)
             WHEN ben_plan_option_name IN (
               'Basic Supplemental AD&D (Employer)',
               'Basic Supplemental Life (Employer)',
@@ -63,9 +63,9 @@ FROM
               'Waive Supplemental Employee Life and AD&D Insurance'
             ) THEN 'Life & AD&D supplemental'
             WHEN ben_plan_name = 'Voluntary Accident Coverage'
-            OR ben_plan_option_name = 'Waive Voluntary Accident Coverage' THEN 'Voluntary Accident Coverage'
+            OR ben_plan_option_name = 'Waive Voluntary Accident Coverage' THEN 'Voluntary Accident Coverage' -- trunk-ignore(sqlfluff/L016)
             WHEN ben_plan_name = 'Voluntary Hospital Indemnity'
-            OR ben_plan_option_name = 'Waive Hospital Indemnity' THEN 'Voluntary Hospital Indemnity'
+            OR ben_plan_option_name = 'Waive Hospital Indemnity' THEN 'Voluntary Hospital Indemnity' -- trunk-ignore(sqlfluff/L016)
             ELSE ben_plan_name
           END AS ben_plan_category
         FROM

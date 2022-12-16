@@ -118,14 +118,14 @@ SELECT
   /* DEBUG weighted average
   ,CASE
   WHEN d.is_open_ended = 'Y' THEN NULL
-  ELSE COUNT(d.survey_response_id) OVER(PARTITION BY d.survey_id, d.campaign_academic_year, d.campaign_name, d.question_shortname, d.subject_df_employee_number) 
+  ELSE COUNT(d.survey_response_id) OVER(PARTITION BY d.survey_id, d.campaign_academic_year, d.campaign_name, d.question_shortname, d.subject_df_employee_number)
   END AS n_total
   ,SUM(d.is_manager) OVER(PARTITION BY d.survey_id, d.campaign_academic_year, d.campaign_name, d.question_shortname) AS n_managers
   ,SUM(ABS(d.is_manager - 1)) OVER(PARTITION BY d.survey_id, d.campaign_academic_year, d.campaign_name, d.question_shortname) AS n_peers
   ,COUNT(d.survey_response_id) OVER(PARTITION BY d.survey_id, d.campaign_academic_year, d.campaign_name, d.question_shortname) * 0.5 AS manager_peer_split
-  ,(COUNT(d.survey_response_id) OVER(PARTITION BY d.survey_id, d.campaign_academic_year, d.campaign_name, d.question_shortname) * 0.5) 
+  ,(COUNT(d.survey_response_id) OVER(PARTITION BY d.survey_id, d.campaign_academic_year, d.campaign_name, d.question_shortname) * 0.5)
   / SUM(d.is_manager) OVER(PARTITION BY d.survey_id, d.campaign_academic_year, d.campaign_name, d.question_shortname) AS manager_weight
-  ,(COUNT(d.survey_response_id) OVER(PARTITION BY d.survey_id, d.campaign_academic_year, d.campaign_name, d.question_shortname) * 0.5) 
+  ,(COUNT(d.survey_response_id) OVER(PARTITION BY d.survey_id, d.campaign_academic_year, d.campaign_name, d.question_shortname) * 0.5)
   / SUM(ABS(d.is_manager - 1)) OVER(PARTITION BY d.survey_id, d.campaign_academic_year, d.campaign_name, d.question_shortname) AS peer_weight
   --*/
 FROM

@@ -40,7 +40,7 @@ FROM
         END,
         ewa.employee_reference_code
       ) AS position_id,
-      CAST(ewa.work_assignment_effective_start AS DATE) AS work_assignment_effective_start,
+      CAST(ewa.work_assignment_effective_start AS DATE) AS work_assignment_effective_start, -- trunk-ignore(sqlfluff/L016)
       LEAD(
         CAST(ewa.work_assignment_effective_start AS DATE),
         1
@@ -52,7 +52,7 @@ FROM
       ) AS work_assignment_effective_start_next
     FROM
       gabby.dayforce.employee_work_assignment AS ewa
-      INNER JOIN gabby.dayforce.employees AS e ON ewa.employee_reference_code = e.df_employee_number
+      INNER JOIN gabby.dayforce.employees AS e ON ewa.employee_reference_code = e.df_employee_number -- trunk-ignore(sqlfluff/L016)
     WHERE
       ewa.primary_work_assignment = 1
   ) AS sub

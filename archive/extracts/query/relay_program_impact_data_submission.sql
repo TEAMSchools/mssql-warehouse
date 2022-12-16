@@ -7,7 +7,7 @@
 ---- Free/Reduced Price Lunch
 --/* Eligible for Special Education Services */
 
-SELECT student_number      
+SELECT student_number
 ,academic_year
 ,reporting_schoolid
 ,grade_level
@@ -32,10 +32,10 @@ AND schoolid != 999999
 ----Interim assessment scores (e.g. MAP data)
 SELECT student_number
 ,academic_year
-,test_type      
+,test_type
 ,subject
 ,test_code
-,test_scale_score      
+,test_scale_score
 ,NULL AS test_percentile
 ,test_standard_error
 ,test_performance_level
@@ -52,7 +52,7 @@ SELECT student_id  AS student_number
 ,test_ritscore AS test_scale_score
 ,test_percentile
 ,test_standard_error
-,NULL AS test_performance_level      
+,NULL AS test_performance_level
 FROM gabby.nwea.assessment_result_identifiers
 WHERE (academic_year BETWEEN 2014 AND 2016)
 
@@ -66,7 +66,7 @@ SELECT local_student_id AS student_number
 ,percent_correct AS test_scale_score
 ,NULL AS test_percentile
 ,NULL AS test_standard_error
-,performance_band_number AS test_performance_level      
+,performance_band_number AS test_performance_level
 FROM gabby.illuminate_dna_assessments.agg_student_responses_all
 WHERE (academic_year BETWEEN 2014 AND 2016)
 AND scope = 'CMA - End-of-Module'
@@ -74,7 +74,7 @@ AND response_type = 'O'
 AND percent_correct IS NOT NULL
 --*/
 -- /*
--- Teacher-Student Data Linkages 
+-- Teacher-Student Data Linkages
 -- --Student identifier  (can be scrambled if scrambled same way each year) linked to
 /* courses */
 -- /* Teacher identifier linked to courses */
@@ -109,7 +109,7 @@ FROM
   ,ad.mail AS district_email_address
   ,adp.location_custom AS school_name
   ,adp.grades_taught_custom
-  ,adp.subject_dept_custom            
+  ,adp.subject_dept_custom
   FROM gabby.adp.staff_roster AS adp
   LEFT JOIN gabby.adsi.user_attributes AS ad
   ON adp.associate_id = ad.idautopersonalternateid

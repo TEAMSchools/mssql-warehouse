@@ -176,7 +176,7 @@ WITH
         )
       ) AS u
   )
-  /* 
+  /*
   --,parcc AS (
   SELECT u.academic_year
   ,u.region
@@ -212,20 +212,20 @@ WITH
   ,CASE WHEN p.test_performance_level >= 4 THEN 1.0 ELSE 0.0 END AS is_target
   ,CASE WHEN p.test_performance_level = 3 THEN 1.0 ELSE 0.0 END AS is_approaching
   ,CASE WHEN p.test_performance_level <= 2 THEN 1.0 ELSE 0.0 END AS is_below
-  ,CASE 
+  ,CASE
   WHEN r.iep_status = 'No IEP' THEN NULL
-  WHEN p.test_performance_level >= 4 THEN 1.0 
-  ELSE 0.0 
+  WHEN p.test_performance_level >= 4 THEN 1.0
+  ELSE 0.0
   END AS is_target_iep
-  ,CASE 
+  ,CASE
   WHEN r.iep_status = 'No IEP' THEN NULL
-  WHEN p.test_performance_level = 3 THEN 1.0 
-  ELSE 0.0 
+  WHEN p.test_performance_level = 3 THEN 1.0
+  ELSE 0.0
   END AS is_approaching_iep
-  ,CASE 
+  ,CASE
   WHEN r.iep_status = 'No IEP' THEN NULL
-  WHEN p.test_performance_level <= 2 THEN 1.0 
-  ELSE 0.0 
+  WHEN p.test_performance_level <= 2 THEN 1.0
+  ELSE 0.0
   END AS is_below_iep
   FROM roster AS r
   INNER JOIN gabby.parcc.summative_record_file_clean AS p
@@ -244,7 +244,7 @@ WITH
   ,sub.pct_below
   ,sub.pct_target_iep
   ,sub.pct_approaching_iep
-  ,sub.pct_below_iep) 
+  ,sub.pct_below_iep)
   ) AS u
   ,
    */
@@ -624,9 +624,13 @@ WITH
           LEFT JOIN gabby.powerschool.cohort_identifiers_static AS y2 ON y1.student_number = y2.student_number
           AND y1.[db_name] = y2.[db_name]
           AND y1.academic_year = (y2.academic_year - 1)
-          AND DATEFROMPARTS(y2.academic_year, 10, 01) (BETWEEN y2.entrydate AND y2.exitdate)
+          AND (
+            DATEFROMPARTS(y2.academic_year, 10, 01) BETWEEN y2.entrydate AND y2.exitdate
+          )
         WHERE
-          DATEFROMPARTS(y1.academic_year, 10, 01) (BETWEEN y1.entrydate AND y1.exitdate)
+          (
+            DATEFROMPARTS(y1.academic_year, 10, 01) BETWEEN y1.entrydate AND y1.exitdate
+          )
       ) AS sub
     GROUP BY
       sub.academic_year,
@@ -685,135 +689,6 @@ WITH
         [value] FOR field IN (sub.pct_gpa_ge_3, sub.pct_gpa_ge_2)
       ) AS u
   ),
-  /*
-  staff_attendance AS (
-  SELECT
-  u.academic_year,
-  u.region,
-  u.school_level,
-  u.reporting_schoolid,
-  u.grade_level,
-  u.field,
-  u.[value]
-  FROM
-  (
-  SELECT
-  sub.academic_year,
-  ISNULL(sub.region, 'All') AS region,
-  ISNULL(sub.primary_site_school_level, 'All') AS school_level,
-  ISNULL(sub.reporting_schoolid, 'All') AS reporting_schoolid,
-  'All' AS grade_level,
-  AVG(sub.present_lt_90) AS pct_present_lt_90,
-  AVG(sub.present_ge_90_lt_95) AS pct_present_ge_90_lt_95,
-  AVG(sub.ontime_lt_90) AS pct_ontime_lt_90,
-  AVG(sub.ontime_ge_90_lt_95) AS pct_ontime_ge_90_lt_95
-  FROM
-  (
-  SELECT
-  df_employee_number,
-  academic_year,
-  CASE
-  WHEN legal_entity_name = 'TEAM Academy Charter Schools' THEN 'TEAM'
-  WHEN legal_entity_name = 'KIPP Cooper Norcross Academy' THEN 'TEAM'
-  WHEN legal_entity_name = 'KIPP Miami' THEN 'KMS'
-  ELSE ''
-  END AS region,
-  primary_site_school_level,
-  CAST(schoolid AS VARCHAR(25)) AS reporting_schoolid,
-  NULL AS grade_level,
-  SUM(1) AS membershipvalue,
-  SUM(
-  CASE
-  WHEN [absent] IS NULL
-  OR [absent] = 'excused' THEN 1.0
-  ELSE 0.0
-  END
-  ) AS is_present,
-  SUM(
-  CASE
-  WHEN late IS NULL
-  OR late = 'excused' THEN 1.0
-  ELSE 0.0
-  END
-  ) AS is_ontime,
-  SUM(
-  CASE
-  WHEN [absent] IS NULL
-  OR [absent] = 'excused' THEN 1.0
-  ELSE 0.0
-  END
-  ) / SUM(1) AS pct_present,
-  SUM(
-  CASE
-  WHEN late IS NULL
-  OR late = 'excused' THEN 1.0
-  ELSE 0.0
-  END
-  ) / SUM(1) AS pct_ontime,
-  CASE
-  WHEN SUM(
-  CASE
-  WHEN [absent] IS NULL
-  OR [absent] = 'excused' THEN 1.0
-  ELSE 0.0
-  END
-  ) / SUM(1) < 0.895 THEN 1.0
-  ELSE 0.0
-  END AS present_lt_90,
-  CASE
-  WHEN SUM(
-  CASE
-  WHEN [absent] IS NULL
-  OR [absent] = 'excused' THEN 1.0
-  ELSE 0.0
-  END
-  ) / SUM(1) (BETWEEN 0.895 AND 0.944) THEN 1.0
-  ELSE 0.0
-  END AS present_ge_90_lt_95,
-  CASE
-  WHEN SUM(
-  CASE
-  WHEN late IS NULL
-  OR late = 'excused' THEN 1.0
-  ELSE 0.0
-  END
-  ) / SUM(1) < 0.895 THEN 1.0
-  ELSE 0.0
-  END AS ontime_lt_90,
-  CASE
-  WHEN SUM(
-  CASE
-  WHEN late IS NULL
-  OR late = 'excused' THEN 1.0
-  ELSE 0.0
-  END
-  ) / SUM(1) (BETWEEN 0.895 AND 0.944) THEN 1.0
-  ELSE 0.0
-  END AS ontime_ge_90_lt_95
-  FROM
-  gabby.tableau.staff_tracker
-  WHERE
-  academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-  GROUP BY
-  df_employee_number,
-  academic_year,
-  legal_entity_name,
-  primary_site_school_level,
-  schoolid
-  ) AS sub
-  GROUP BY
-  sub.academic_year,
-  ROLLUP (sub.region, sub.reporting_schoolid),
-  CUBE (sub.primary_site_school_level)
-  ) AS sub UNPIVOT (
-  [value] FOR field IN (
-  sub.pct_present_lt_90,
-  sub.pct_present_ge_90_lt_95,
-  sub.pct_ontime_lt_90,
-  sub.pct_ontime_ge_90_lt_95
-  )
-  ) AS u,
-  --*/
   lit AS (
     SELECT
       u.academic_year,
@@ -1048,7 +923,7 @@ SELECT sa.academic_year
 ,'Staff Attrition' AS domain
 ,NULL AS subdomain
 ,sa.field
-,sa.[value]      
+,sa.[value]
 FROM staff_attrition AS sa
 UNION ALL
  */

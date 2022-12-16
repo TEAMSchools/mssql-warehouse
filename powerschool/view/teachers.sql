@@ -77,17 +77,17 @@ SELECT
   s.users_dcid
   --,s.classpua
   --,s.custom
-  --,s.balance1      
+  --,s.balance1
   --,s.balance2
   --,s.balance3
   --,s.balance4
   --,s.notes
   --,s.sched_gender
-  --,s.sched_homeroom      
+  --,s.sched_homeroom
   --,s.sched_buildingcode
   --,s.sched_activitystatuscode
   --,s.sched_primaryschoolcode
-  --,s.sched_team     
+  --,s.sched_team
   --,u.wm_ta_flag
   --,u.wm_ta_date
   --,u.wm_status
@@ -98,7 +98,7 @@ SELECT
   --,u.ipaddrrestrict
   --,u.accessvalue
   --,u.lastmeal
-  --,u.wm_alias 
+  --,u.wm_alias
 FROM
   powerschool.users AS u
   INNER JOIN powerschool.schoolstaff AS s ON u.dcid = s.users_dcid

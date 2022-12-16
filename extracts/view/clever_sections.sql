@@ -100,7 +100,9 @@ WITH
           INNER JOIN gabby.powerschool.terms ON sec.termid = terms.id
           AND sec.schoolid = terms.schoolid
           AND sec.[db_name] = terms.[db_name]
-          AND CAST(CURRENT_TIMESTAMP AS DATE) (BETWEEN terms.firstday AND terms.lastday)
+          AND (
+            CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN terms.firstday AND terms.lastday
+          )
         WHERE
           sec.no_of_students > 0
         UNION ALL

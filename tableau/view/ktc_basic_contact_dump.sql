@@ -87,7 +87,9 @@ WITH
           a.student_c,
           a.date_c,
           CASE
-            WHEN DATEPART(MONTH, a.created_date) (BETWEEN 7 AND 12) THEN 'F'
+            WHEN (
+              DATEPART(MONTH, a.created_date) BETWEEN 7 AND 12
+            ) THEN 'F'
             ELSE 'S'
           END AS semester
         FROM

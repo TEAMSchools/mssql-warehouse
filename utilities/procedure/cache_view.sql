@@ -145,7 +145,7 @@ SET
   @sql_truncateinsert = N'
         TRUNCATE TABLE ' + @destination_table_name + N';
         INSERT INTO ' + @destination_table_name + N' WITH(TABLOCKX)
-        SELECT * 
+        SELECT *
         FROM ' + @temp_table_name + N';
       ';
 

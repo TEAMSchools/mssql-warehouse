@@ -62,7 +62,9 @@ FROM
       AND ac.att_code IN ('A', 'AD')
       LEFT JOIN gabby.powerschool.cc ON att.studentid = cc.studentid
       AND att.[db_name] = cc.[db_name]
-      AND CAST(CURRENT_TIMESTAMP AS DATE) (BETWEEN cc.dateenrolled AND cc.dateleft)
+      AND (
+        CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN cc.dateenrolled AND cc.dateleft
+      )
       AND cc.course_number = 'HR'
       INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON att.studentid = co.studentid
       AND att.[db_name] = co.[db_name]
