@@ -3,11 +3,11 @@ CREATE OR ALTER VIEW
 WITH
   enrollments AS (
     SELECT
+      start_date_c,
       CAST(student_c AS VARCHAR(25)) AS salesforce_contact_id,
       CAST(type_c AS VARCHAR(25)) AS enrollment_type,
       CAST(status_c AS VARCHAR(25)) AS enrollment_status,
       CAST([name] AS VARCHAR(125)) AS enrollment_name,
-      start_date_c,
       ROW_NUMBER() OVER (
         PARTITION BY
           student_c

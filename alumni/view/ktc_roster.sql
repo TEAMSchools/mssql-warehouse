@@ -76,9 +76,6 @@ FROM
       co.exitdate AS exit_date,
       co.exitcode AS exit_code,
       co.[db_name] AS exit_db_name,
-      (
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR () - co.academic_year
-      ) + co.grade_level AS current_grade_level_projection,
       c.id AS sf_contact_id,
       c.kipp_region_name_c AS kipp_region_name,
       c.kipp_region_school_c AS kipp_region_school,
@@ -120,43 +117,52 @@ FROM
       c.last_successful_advisor_contact_c AS last_successful_advisor_contact_date,
       c.efc_from_fafsa_c AS efc_from_fafsa,
       c.[description] AS contact_description,
+      rt.[name] AS record_type_name,
+      u.id AS counselor_sf_id,
+      u.[name] AS counselor_name,
+      u.email AS counselor_email,
+      u.mobile_phone AS counselor_phone,
+      (
+        gabby.utilities.GLOBAL_ACADEMIC_YEAR () - co.academic_year
+      ) + co.grade_level AS current_grade_level_projection,
       COALESCE(
         c.current_kipp_student_c,
         'Missing from Salesforce'
       ) AS current_kipp_student,
       COALESCE(c.kipp_hs_class_c, co.cohort) AS ktc_cohort,
       (gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1) - DATEPART(YEAR, c.actual_hs_graduation_date_c) AS years_out_of_hs,
-      rt.[name] AS record_type_name,
-      u.id AS counselor_sf_id,
-      u.[name] AS counselor_name,
-      u.email AS counselor_email,
-      u.mobile_phone AS counselor_phone,
-      COALESCE(c.first_name, co.first_name)
-    COLLATE LATIN1_GENERAL_BIN AS first_name,
-    COALESCE(c.last_name, co.last_name)
-    COLLATE LATIN1_GENERAL_BIN AS last_name,
-    COALESCE(
-      c.last_name + ', ' + c.first_name,
-      co.lastfirst
-    )
-    COLLATE LATIN1_GENERAL_BIN AS lastfirst,
-    CASE
-      WHEN co.enroll_status = 0 THEN CONCAT(co.school_level, co.grade_level)
-      WHEN c.kipp_hs_graduate_c = 1 THEN 'HSG'
-      WHEN co.school_level = 'HS'
-      AND co.exitcode = 'G1' THEN 'HSG' /* identify HS grads before SF enr update */
-      WHEN c.kipp_ms_graduate_c = 1
-      AND c.kipp_hs_graduate_c = 0
-      AND rt.[name] = 'HS Student' THEN 'TAFHS'
-      WHEN c.kipp_ms_graduate_c = 1
-      AND c.kipp_hs_graduate_c = 0 THEN 'TAF'
-    END AS ktc_status
+      (
+        COALESCE(c.first_name, co.first_name)
+        COLLATE LATIN1_GENERAL_BIN
+      ) AS first_name,
+      (
+        COALESCE(c.last_name, co.last_name)
+        COLLATE LATIN1_GENERAL_BIN
+      ) AS last_name,
+      (
+        COALESCE(
+          c.last_name + ', ' + c.first_name,
+          co.lastfirst
+        )
+        COLLATE LATIN1_GENERAL_BIN
+      ) AS lastfirst,
+      CASE
+        WHEN co.enroll_status = 0 THEN CONCAT(co.school_level, co.grade_level)
+        WHEN c.kipp_hs_graduate_c = 1 THEN 'HSG'
+        WHEN co.school_level = 'HS'
+        AND co.exitcode = 'G1' THEN 'HSG' /* identify HS grads before SF enr update */
+        WHEN c.kipp_ms_graduate_c = 1
+        AND c.kipp_hs_graduate_c = 0
+        AND rt.[name] = 'HS Student' THEN 'TAFHS'
+        WHEN c.kipp_ms_graduate_c = 1
+        AND c.kipp_hs_graduate_c = 0 THEN 'TAF'
+      END AS ktc_status
     FROM
       gabby.powerschool.cohort_identifiers_static AS co
-      LEFT JOIN gabby.alumni.contact AS c ON CAST(co.student_number AS NVARCHAR(8)) = c.school_specific_id_c
+      LEFT JOIN gabby.alumni.contact AS c ON CAST(co.student_number AS NVARCHAR(8)) = c.school_specific_id_c -- trunk-ignore(sqlfluff/L016)
       AND c.is_deleted = 0
       LEFT JOIN gabby.alumni.record_type AS rt ON c.record_type_id = rt.id
-      LEFT JOIN gabby.alumni.[user] u ON c.owner_id = u.id
+      LEFT JOIN gabby.alumni.[user] AS u ON c.owner_id = u.id
     WHERE
       co.rn_undergrad = 1
       AND (co.grade_level BETWEEN 8 AND 12)

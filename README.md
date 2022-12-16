@@ -30,3 +30,4 @@
 
 - `x BETWEEN y AND z` clauses must be put in **(parenthesis)** for successful parsing
 - User-defined functions will add an extra space in-between the function name and the parenthesis
+- Wrap statements using `COLLATE` in **(parenthesis)** to avoid `sql-formatter` confusion

@@ -4,6 +4,8 @@ SELECT
   id,
   contact_c,
   date_c,
+  score_type,
+  score,
   test_type_c AS test_type,
   CASE
     WHEN score_type = 'ap_c' THEN subject_c
@@ -30,11 +32,9 @@ SELECT
     WHEN score_type = 'sat_verbal_c' THEN 'Verbal'
     WHEN score_type = 'sat_writing_c' THEN 'Writing'
     ELSE subject_c
-  END AS test_subject,
-  score_type,
-  score
+  END AS test_subject
 FROM
-  gabby.alumni.standardized_test_c AS st UNPIVOT (
+  gabby.alumni.standardized_test_c UNPIVOT (
     score FOR score_type IN (
       ap_c,
       act_composite_c,
