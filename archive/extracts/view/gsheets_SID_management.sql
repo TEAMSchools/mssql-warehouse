@@ -31,7 +31,7 @@ WITH
           CAST(mem.attendancevalue AS FLOAT) AS attendancevalue,
           CASE
             WHEN hb.specprog_name = 'Hybrid (SC) - Cohort D'
-            AND cal.[type] <> 'AR' THEN 1
+            AND cal.[type] != 'AR' THEN 1
             WHEN hb.specprog_name = 'Hybrid - Cohort A'
             AND cal.[type] = 'BCR' THEN 1
             WHEN hb.specprog_name = 'Hybrid - Cohort B'
@@ -269,5 +269,5 @@ WITH
 WHERE
   co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
   AND co.rn_year = 1
-  AND co.grade_level <> 99
+  AND co.grade_level != 99
   AND co.[db_name] IN ('kippnewark', 'kippcamden')

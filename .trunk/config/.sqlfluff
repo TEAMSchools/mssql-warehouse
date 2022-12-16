@@ -1,6 +1,6 @@
 [sqlfluff]
 dialect = tsql
-processes = 0
+processes = -1
 exclude_rules = L003, L022, L017, L031
 
 [sqlfluff:rules]
@@ -11,5 +11,8 @@ extended_capitalisation_policy = upper
 [sqlfluff:rules:L036]
 wildcard_policy = multiple
 
+[sqlfluff:rules:L057]
+quoted_identifiers_policy = none
+
 [sqlfluff:rules:L059]
-ignore_words = subject
+ignore_words = subject, value, name, type, start_date

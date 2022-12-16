@@ -17,4 +17,4 @@ WITH
     [value] NVARCHAR(4000)
   ) AS tb
 WHERE
-  wos.score_text_boxes_json <> '[{"key":"0","value":""}]'
+  wos.score_text_boxes_json != '[{"key":"0","value":""}]'

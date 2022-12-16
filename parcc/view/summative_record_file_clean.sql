@@ -259,7 +259,7 @@ FROM
 WHERE
   test_status = 'Attempt'
   AND summative_flag = 'Y'
-  AND assessment_year <> '2014-2015'
+  AND assessment_year != '2014-2015'
 UNION ALL
 SELECT
   state_abbreviation,

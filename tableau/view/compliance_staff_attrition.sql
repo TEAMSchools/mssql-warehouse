@@ -84,7 +84,7 @@ WITH
           r.kipp_alumni_status,
           COALESCE(r.rehire_date, r.original_hire_date) AS position_start_date,
           CASE
-            WHEN r.position_status <> 'Terminated' THEN NULL
+            WHEN r.position_status != 'Terminated' THEN NULL
             ELSE COALESCE(t.status_effective_date, r.termination_date)
           END AS termination_date,
           COALESCE(

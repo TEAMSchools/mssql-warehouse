@@ -33,7 +33,7 @@ FROM
     'Coaching Tool: Coach ETR and Reflection 20-21',
     'Coaching Tool: Teacher Reflection 19-20'
   )
-  AND r.samaccountname <> LEFT(
+  AND r.samaccountname != LEFT(
     wo.observer_email,
     CHARINDEX('@', wo.observer_email) - 1
   )

@@ -66,7 +66,7 @@ FROM
     FROM
       gabby.steptool.all_steps AS step
       INNER JOIN gabby.lit.gleq ON step.step = gleq.lvl_num
-      AND gleq.testid <> 3273
+      AND gleq.testid != 3273
     UNION ALL
     /* ACHIEVED PRE DNA */
     SELECT

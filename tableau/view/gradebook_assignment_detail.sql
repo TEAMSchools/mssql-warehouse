@@ -95,7 +95,7 @@ FROM
   AND co.rn_year = 1
   INNER JOIN gabby.powerschool.gradebook_setup_static AS gb ON enr.sections_dcid = gb.sectionsdcid
   AND enr.[db_name] = gb.[db_name]
-  AND gb.finalgradesetuptype <> 'Total_Points'
+  AND gb.finalgradesetuptype != 'Total_Points'
   LEFT JOIN gabby.powerschool.gradebook_assignments_current_static AS a2 ON gb.sectionsdcid = a2.sectionsdcid
   AND gb.assignmentcategoryid = a2.categoryid
   AND a2.assign_date (

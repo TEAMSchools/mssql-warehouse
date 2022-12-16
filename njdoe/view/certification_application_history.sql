@@ -8,13 +8,13 @@ SELECT
   ah.date_received,
   ah.endorsement,
   CASE
-    WHEN ah.certificate_type <> '' THEN ah.certificate_type
+    WHEN ah.certificate_type != '' THEN ah.certificate_type
   END AS certificate_type,
   CASE
-    WHEN ah.request_type <> '' THEN ah.request_type
+    WHEN ah.request_type != '' THEN ah.request_type
   END AS request_type,
   CASE
-    WHEN ah.[status] <> '' THEN ah.[status]
+    WHEN ah.[status] != '' THEN ah.[status]
   END AS [status],
   ah.checklist
 FROM
@@ -31,4 +31,4 @@ WITH
     checklist NVARCHAR(MAX) AS JSON
   ) AS ah
 WHERE
-  cc.application_history <> '[]'
+  cc.application_history != '[]'

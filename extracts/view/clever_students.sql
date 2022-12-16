@@ -66,7 +66,7 @@ FROM
   LEFT JOIN gabby.powerschool.student_contacts_static AS sc ON co.student_number = sc.student_number
   AND co.[db_name] = sc.[db_name]
   AND sc.contact_category = 'Phone'
-  AND sc.person_type <> 'self'
+  AND sc.person_type != 'self'
   LEFT JOIN gabby.powerschool.gpa_cumulative AS gpa ON co.studentid = gpa.studentid
   AND co.schoolid = gpa.schoolid
   AND co.[db_name] = gpa.[db_name]
@@ -75,5 +75,5 @@ FROM
 WHERE
   co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
   AND co.rn_year = 1
-  AND co.grade_level <> 99
-  AND co.reporting_school_name <> 'Out of District'
+  AND co.grade_level != 99
+  AND co.reporting_school_name != 'Out of District'

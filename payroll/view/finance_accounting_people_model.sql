@@ -34,10 +34,10 @@ WITH
       pm_term,
       overall_tier,
       CASE
-        WHEN academic_year <> gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+        WHEN academic_year != gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
         AND pm_term = 'PM4' THEN 1
-        WHEN academic_year <> gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-        AND pm_term <> 'PM4' THEN NULL
+        WHEN academic_year != gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+        AND pm_term != 'PM4' THEN NULL
         ELSE ROW_NUMBER() OVER (
           PARTITION BY
             df_employee_number,

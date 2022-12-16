@@ -202,7 +202,7 @@ FROM
 WHERE
   st.survey_id = 4561325 /* S&O Survey Code */
   AND (
-    c.subject_employee_number <> COALESCE(
+    c.subject_employee_number != COALESCE(
       st.respondent_employee_number,
       c.respondent_employee_number
     )
@@ -297,7 +297,7 @@ WHERE
   AND s.assignment IS NULL
   AND (
     (
-      c.subject_employee_number <> COALESCE(
+      c.subject_employee_number != COALESCE(
         st.respondent_employee_number,
         c.respondent_employee_number
       )
@@ -382,7 +382,7 @@ WHERE
   st.survey_id = 4561288 /* MGR Survey Code */
   AND (
     (
-      c.subject_employee_number <> COALESCE(
+      c.subject_employee_number != COALESCE(
         st.respondent_employee_number,
         c.respondent_employee_number
       )
@@ -465,7 +465,7 @@ WHERE
   st.survey_id = 4561288 /* MGR Survey Code */
   AND (
     (
-      c.subject_employee_number <> COALESCE(
+      c.subject_employee_number != COALESCE(
         st.respondent_employee_number,
         c.respondent_employee_number
       )
@@ -673,4 +673,4 @@ FROM
   AND st.survey_id = c.survey_id
 WHERE
   st.survey_id = 6580731 /* ITR Survey Code */
-  AND st.respondent_legal_entity_name <> 'KIPP TEAM and Family Schools Inc.'
+  AND st.respondent_legal_entity_name != 'KIPP TEAM and Family Schools Inc.'

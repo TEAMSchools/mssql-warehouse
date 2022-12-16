@@ -6,22 +6,22 @@ SELECT
   COALESCE(test_session, test_season) AS test_session,
   UPPER(county_code) AS county_code,
   CASE
-    WHEN county_name <> '' THEN UPPER(county_name)
+    WHEN county_name != '' THEN UPPER(county_name)
   END AS county_name,
   CASE
-    WHEN district_code <> '' THEN district_code
+    WHEN district_code != '' THEN district_code
   END AS district_code,
   CASE
-    WHEN district_name <> '' THEN UPPER(district_name)
+    WHEN district_name != '' THEN UPPER(district_name)
   END AS district_name,
   CASE
-    WHEN school_code <> '' THEN school_code
+    WHEN school_code != '' THEN school_code
   END AS school_code,
   CASE
-    WHEN school_name <> '' THEN school_name
+    WHEN school_name != '' THEN school_name
   END AS school_name,
   CASE
-    WHEN dfg <> '' THEN dfg
+    WHEN dfg != '' THEN dfg
   END AS dfg,
   UPPER(subgroup) AS subgroup,
   UPPER(subgroup_type) AS subgroup_type,
@@ -32,12 +32,12 @@ SELECT
   END AS test_code,
   CAST(
     CASE
-      WHEN reg_to_test <> '' THEN reg_to_test
+      WHEN reg_to_test != '' THEN reg_to_test
     END AS INT
   ) AS reg_to_test,
   CAST(
     CASE
-      WHEN not_tested <> '' THEN not_tested
+      WHEN not_tested != '' THEN not_tested
     END AS INT
   ) AS not_tested,
   valid_scores,

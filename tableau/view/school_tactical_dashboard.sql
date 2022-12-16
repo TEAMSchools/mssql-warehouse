@@ -22,7 +22,7 @@ WITH
     WHERE
       co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
       AND co.rn_year = 1
-      AND co.grade_level <> 99
+      AND co.grade_level != 99
   ),
   demographics AS (
     SELECT
@@ -568,8 +568,8 @@ WITH
   FROM gabby.tableau.compliance_staff_attrition AS a
   WHERE
   a.is_denominator = 1
-  AND a.primary_site_reporting_schoolid <> 0
-  AND a.legal_entity_name <> 'KIPP New Jersey'
+  AND a.primary_site_reporting_schoolid != 0
+  AND a.legal_entity_name != 'KIPP New Jersey'
   AND a.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
   ) sub
   GROUP BY
@@ -604,7 +604,7 @@ WITH
           CAST(y1.reporting_schoolid AS VARCHAR(25)) AS reporting_schoolid,
           CAST(y1.grade_level AS VARCHAR(5)) AS grade_level,
           CASE
-          /* graduates <> attrition */
+          /* graduates != attrition */
             WHEN y1.exitcode = 'G1' THEN 0.0
             /* handles re-enrollments during the year */
             WHEN s.exitdate >= y1.exitdate

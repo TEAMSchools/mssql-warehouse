@@ -106,7 +106,7 @@ WITH
       INNER JOIN gabby.powerschool.schools AS sch ON u.homeschoolid = sch.school_number
       AND u.[db_name] = sch.[db_name]
     WHERE
-      u.sif_stateprid <> ''
+      u.sif_stateprid != ''
   )
 SELECT
   co.student_number,

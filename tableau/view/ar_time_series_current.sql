@@ -177,7 +177,7 @@ FROM
           LEFT JOIN gabby.reporting.reporting_terms AS dts ON co.schoolid = dts.schoolid
           AND co.[date] (BETWEEN dts.[start_date] AND dts.end_date)
           AND dts.identifier = 'AR'
-          AND dts.time_per_name <> 'ARY'
+          AND dts.time_per_name != 'ARY'
           AND dts._fivetran_deleted = 0
           LEFT JOIN gabby.reporting.reporting_terms AS y1dts ON co.academic_year = y1dts.academic_year
           AND co.schoolid = y1dts.schoolid

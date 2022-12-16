@@ -52,4 +52,4 @@ FROM
   AND map_spr.rn_term_subj = 1
 WHERE
   r.rn_year = 1
-  AND r.grade_level <> 99
+  AND r.grade_level != 99

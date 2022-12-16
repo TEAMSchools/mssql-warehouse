@@ -97,15 +97,15 @@ FROM
       app.transfer_application_c AS transfer_application,
       app.created_date,
       app.type_for_roll_ups_c AS type_for_roll_ups,
-      COALESCE(
-        app.starting_application_status_c,
-        app.application_status_c
-      ) AS starting_application_status,
       acc.[name] AS application_name,
       acc.[type] AS application_account_type,
       enr.status_c AS application_enrollment_status,
       enr.pursuing_degree_type_c AS application_pursuing_degree_type,
-      enr.start_date_c AS enrollment_start_date
+      enr.start_date_c AS enrollment_start_date,
+      COALESCE(
+        app.starting_application_status_c,
+        app.application_status_c
+      ) AS starting_application_status
     FROM
       gabby.alumni.application_c AS app
       INNER JOIN gabby.alumni.account AS acc ON app.school_c = acc.id
@@ -117,4 +117,4 @@ FROM
       AND enr.is_deleted = 0
     WHERE
       app.is_deleted = 0
-  ) sub
+  ) AS sub

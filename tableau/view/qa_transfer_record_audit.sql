@@ -91,8 +91,8 @@ FROM
   INNER JOIN all_enrollments AS t ON s.id = t.studentid
   AND s.[db_name] = t.[db_name]
 WHERE
-  t.next_gradelevel <> 99
-  AND t.exitcode <> 'G1'
+  t.next_gradelevel != 99
+  AND t.exitcode != 'G1'
   AND t.next_gradelevel > t.grade_level
   AND t.next_exitdate <= next_entrydate
   AND t.grade_level IN (4, 8)
@@ -112,7 +112,7 @@ SELECT
   t.prev_exitcode,
   CASE
     WHEN t.prev_exitcode = 'T2' THEN 'graduate - transferred exit code'
-    WHEN t.prev_exitcode <> 'G1' THEN 'transferred - graduated enrollment status'
+    WHEN t.prev_exitcode != 'G1' THEN 'transferred - graduated enrollment status'
     WHEN t.next_gradelevel IS NULL THEN 'graduated - transferred enrollment status'
     WHEN t.next_gradelevel IS NOT NULL THEN 'graduated - re-enrolled'
   END AS audit_type
@@ -122,7 +122,7 @@ FROM
   AND s.[db_name] = t.[db_name]
 WHERE
   t.grade_level = 99
-  AND s.enroll_status <> 3
+  AND s.enroll_status != 3
 UNION ALL
 SELECT
   s.student_number,
@@ -144,4 +144,4 @@ FROM
   AND s.[db_name] = t.[db_name]
 WHERE
   t.next_entrydate = t.next_exitdate
-  AND t.next_gradelevel <> 99;
+  AND t.next_gradelevel != 99;

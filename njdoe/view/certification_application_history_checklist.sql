@@ -9,7 +9,7 @@ SELECT
   ) AS application_filing_date,
   cl.task,
   CASE
-    WHEN cl.comment <> '' THEN cl.comment
+    WHEN cl.comment != '' THEN cl.comment
   END AS comment,
   cl.complete
 FROM
@@ -22,4 +22,4 @@ WITH
     complete BIT
   ) AS cl
 WHERE
-  ah.checklist <> '[]'
+  ah.checklist != '[]'

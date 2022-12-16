@@ -15,8 +15,8 @@ WITH
       AND s.[db_name] = scf.[db_name]
     WHERE
       s.entrydate >= '2021-07-01'
-      AND s.grade_level <> 99
-      AND s.[db_name] <> 'kippmiami'
+      AND s.grade_level != 99
+      AND s.[db_name] != 'kippmiami'
   ),
   iep AS (
     SELECT
@@ -35,9 +35,9 @@ SELECT
   sub.*,
   CASE
     WHEN ps_sn IS NULL THEN 'In EasyIEP; Missing from PS'
-    WHEN ps_spedlep <> 'No IEP'
+    WHEN ps_spedlep != 'No IEP'
     AND iep_sn IS NULL THEN 'In PS; Missing from EasyIEP export'
-    WHEN ps_spedlep <> iep_spedlep THEN 'Conflicting SPEDLEP'
+    WHEN ps_spedlep != iep_spedlep THEN 'Conflicting SPEDLEP'
     ELSE 'Match'
   END
 COLLATE Latin1_General_BIN AS audit_result

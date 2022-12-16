@@ -58,7 +58,7 @@ FROM
         ELSE NULL
       END AS test_date,
       CASE
-        WHEN sub1.composite <> ROUND(
+        WHEN sub1.composite != ROUND(
           (
             ISNULL(sub1.english, 0) + ISNULL(sub1.math, 0) + ISNULL(sub1.reading, 0) + ISNULL(sub1.science, 0)
           ) / 4,

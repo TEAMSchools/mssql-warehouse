@@ -29,7 +29,7 @@ WITH
           gabby.people.employment_history_static
         WHERE
           position_status NOT IN ('Terminated', 'Pre-Start')
-          AND job_title <> 'Intern'
+          AND job_title != 'Intern'
       ) sub PIVOT (
         SUM([days]) FOR status_clean IN (active, inactive)
       ) p

@@ -47,7 +47,7 @@ SELECT
   d.[date],
   y2.entrydate AS y2_entrydate,
   CASE
-    WHEN y1.exitcode = 'G1' THEN 0 /* graduates <> attrition */
+    WHEN y1.exitcode = 'G1' THEN 0 /* graduates != attrition */
     WHEN s.exitdate >= y1.exitdate
     AND s.exitdate >= d.[date] THEN 0 /* handles re-enrollments during the school year */
     WHEN y1.exitdate <= d.[date]

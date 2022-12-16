@@ -33,4 +33,4 @@ WHERE
   OBJECTPROPERTY(ix.[object_id], 'isusertable') = 1
   AND ix.is_primary_key = 0
   AND ix.[type_desc] = 'NONCLUSTERED'
-  AND ix.[name] <> 'CoveringIndex'
+  AND ix.[name] != 'CoveringIndex'

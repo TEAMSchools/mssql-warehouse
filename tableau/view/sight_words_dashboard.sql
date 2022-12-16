@@ -77,7 +77,7 @@ FROM
   INNER JOIN gabby.illuminate_dna_repositories.fields AS f ON r.repository_id = f.repository_id
   AND f.deleted_at IS NULL
   INNER JOIN gabby.illuminate_dna_repositories.repository_grade_levels AS g ON r.repository_id = g.repository_id
-  INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON g.grade_level_id <> (co.grade_level + 1)
+  INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON g.grade_level_id != (co.grade_level + 1)
   AND rt.academic_year = co.academic_year
   AND co.is_enrolled_recent = 1
   AND co.rn_year = 1

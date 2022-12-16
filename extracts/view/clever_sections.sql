@@ -13,7 +13,7 @@ WITH
       AND ccw._fivetran_deleted = 0
       AND ccw.is_pathways = 0
     WHERE
-      df.[status] <> 'TERMINATED'
+      df.[status] != 'TERMINATED'
       AND df.primary_job IN (
         'Director of Campus Operations',
         'Director Campus Operations',

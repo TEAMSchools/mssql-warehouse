@@ -60,7 +60,7 @@ WITH
       INNER JOIN roles AS r ON cu.id = r.[user_id]
       LEFT JOIN business_groups AS bg ON cu.id = bg.[user_id]
     WHERE
-      sr.position_status <> 'Prestart'
+      sr.position_status != 'Prestart'
       AND COALESCE(
         sr.termination_date,
         CAST(CURRENT_TIMESTAMP AS DATE)
@@ -70,7 +70,7 @@ WITH
         1
       )
       AND ISNULL(sr.worker_category, '') NOT IN ('Intern', 'Part Time')
-      AND ISNULL(sr.wfmgr_pay_rule, '') <> 'PT Hourly'
+      AND ISNULL(sr.wfmgr_pay_rule, '') != 'PT Hourly'
     UNION ALL
     /* new users */
     SELECT
@@ -94,7 +94,7 @@ WITH
     WHERE
       sr.position_status NOT IN ('Prestart', 'Terminated')
       AND ISNULL(sr.worker_category, '') NOT IN ('Intern', 'Part Time')
-      AND ISNULL(sr.wfmgr_pay_rule, '') <> 'PT Hourly'
+      AND ISNULL(sr.wfmgr_pay_rule, '') != 'PT Hourly'
       AND cu.employee_number IS NULL
   )
 SELECT
@@ -192,10 +192,10 @@ FROM
       a.postal_code,
       a.[name] AS address_name,
       CASE
-        WHEN a.street_2 <> '' THEN a.street_2
+        WHEN a.street_2 != '' THEN a.street_2
       END AS street_2,
       CASE
-        WHEN a.attention <> '' THEN a.attention
+        WHEN a.attention != '' THEN a.attention
       END AS attention,
       COALESCE(
         x.coupa_school_name,

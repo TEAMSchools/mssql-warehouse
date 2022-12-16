@@ -22,7 +22,7 @@ WITH
       LEFT JOIN gabby.alumni.account AS ac ON a.school_c = ac.id
       AND ac.is_deleted = 0
       INNER JOIN gabby.alumni.record_type AS rt ON ac.record_type_id = rt.id
-      AND rt.[name] <> 'High School'
+      AND rt.[name] != 'High School'
     WHERE
       a.is_deleted = 0
       AND a.application_status_c = 'Accepted'

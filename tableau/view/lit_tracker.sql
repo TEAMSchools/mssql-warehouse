@@ -95,8 +95,8 @@ WITH
     WHERE
       co.rn_year = 1
       AND co.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 3)
-      AND co.grade_level <> 99
-      AND co.school_level <> 'OD'
+      AND co.grade_level != 99
+      AND co.school_level != 'OD'
   )
 SELECT
   lr.student_number,

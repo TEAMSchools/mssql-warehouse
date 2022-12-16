@@ -34,7 +34,7 @@ FROM
   INNER JOIN gabby.powerschool.schools AS sch ON sec.schoolid = sch.school_number
   INNER JOIN gabby.powerschool.courses AS c ON sec.course_number = c.course_number
   AND sec.[db_name] = c.[db_name]
-  AND c.credittype <> 'LOG'
+  AND c.credittype != 'LOG'
   INNER JOIN gabby.powerschool.teachers_static AS t ON sec.teacher = t.id
   AND sec.schoolid = t.schoolid
   AND sec.[db_name] = t.[db_name]

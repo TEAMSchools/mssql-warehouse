@@ -125,4 +125,4 @@ SELECT
 FROM
   data_long AS df
 WHERE
-  df.new_value <> df.previous_value
+  df.new_value != df.previous_value

@@ -111,7 +111,7 @@ WITH
           gabby.people.status_history_static
       ) sub
     WHERE
-      position_status_prev <> 'Terminated'
+      position_status_prev != 'Terminated'
       AND position_status IN ('Terminated', 'Deceased')
     GROUP BY
       associate_id
@@ -137,7 +137,7 @@ WITH
       ) sub
     WHERE
       position_status_prev = 'Terminated'
-      AND position_status <> 'Terminated'
+      AND position_status != 'Terminated'
     GROUP BY
       associate_id
   ),

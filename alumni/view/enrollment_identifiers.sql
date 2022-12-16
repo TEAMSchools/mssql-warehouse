@@ -159,7 +159,7 @@ WITH
               AND c.is_deleted = 0
             WHERE
               e.is_deleted = 0
-              AND e.status_c <> 'Did Not Enroll'
+              AND e.status_c != 'Did Not Enroll'
             UNION ALL
             SELECT
               e.contact_c,

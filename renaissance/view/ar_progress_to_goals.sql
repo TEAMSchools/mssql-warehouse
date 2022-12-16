@@ -100,7 +100,7 @@ WITH
           END AS questions_correct_f,
           CASE
             WHEN arsp.rn_quiz = 1
-            AND arsp.ch_fiction_non_fiction <> 'F' THEN arsp.i_questions_correct
+            AND arsp.ch_fiction_non_fiction != 'F' THEN arsp.i_questions_correct
           END AS questions_correct_nf,
           CASE
             WHEN arsp.rn_quiz = 1 THEN arsp.i_questions_presented
@@ -111,7 +111,7 @@ WITH
           END AS questions_presented_f,
           CASE
             WHEN arsp.rn_quiz = 1
-            AND arsp.ch_fiction_non_fiction <> 'F' THEN arsp.i_questions_presented
+            AND arsp.ch_fiction_non_fiction != 'F' THEN arsp.i_questions_presented
           END AS questions_presented_nf
         FROM
           gabby.powerschool.cohort_identifiers_static AS co
@@ -123,7 +123,7 @@ WITH
           --AND (arsp.dt_taken BETWEEN rt.[start_date] AND rt.end_date)
         WHERE
           co.rn_year = 1
-          AND co.grade_level <> 99
+          AND co.grade_level != 99
       ) sub
     GROUP BY
       student_number,

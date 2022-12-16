@@ -14,5 +14,5 @@ FROM
   AND ccw._fivetran_deleted = 0
   AND ccw.is_pathways = 0
 WHERE
-  scw.[status] <> 'TERMINATED'
-  AND COALESCE(ccw.ps_school_id, scw.primary_site_schoolid) <> 0
+  scw.[status] != 'TERMINATED'
+  AND COALESCE(ccw.ps_school_id, scw.primary_site_schoolid) != 0

@@ -42,7 +42,7 @@ SELECT
   wm.scale_max AS measurement_scale_max,
   MAX(
     CASE
-      WHEN sub.rubric_name <> 'School Leader Moments' THEN NULL
+      WHEN sub.rubric_name != 'School Leader Moments' THEN NULL
       WHEN wm.[name] NOT LIKE '%- type' THEN NULL
       WHEN wos.score_value = 1 THEN 'Observed'
       WHEN wos.score_value = 2 THEN 'Co-Led/Planned'
@@ -88,7 +88,7 @@ SELECT
     wos.score_value
   ) AS score_value,
   CASE
-    WHEN b.[type] <> 'checkbox' THEN NULL
+    WHEN b.[type] != 'checkbox' THEN NULL
     WHEN SUM(b.checkbox_value) OVER (
       PARTITION BY
         sub.observation_id,

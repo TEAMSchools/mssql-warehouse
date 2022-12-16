@@ -57,7 +57,7 @@ FROM
   INNER JOIN gabby.powerschool.final_grades_wide_static AS fg ON co.studentid = fg.studentid
   AND co.yearid = fg.yearid
   AND co.[db_name] = fg.[db_name]
-  AND fg.reporting_term <> 'CUR'
+  AND fg.reporting_term != 'CUR'
   INNER JOIN gabby.powerschool.sections_identifiers AS sec ON fg.sectionid = sec.sectionid
   AND fg.[db_name] = sec.[db_name]
   LEFT JOIN gabby.powerschool.cc ON fg.studentid = cc.studentid
@@ -79,4 +79,4 @@ FROM
 WHERE
   co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
   AND co.rn_year = 1
-  AND co.grade_level <> 99
+  AND co.grade_level != 99

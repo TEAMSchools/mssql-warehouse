@@ -47,7 +47,7 @@ FROM
   payroll.historical_earnings_earnings
 WHERE
   regular_earnings_detail IS NOT NULL
-  AND payroll_company_code <> 'ZS1'
+  AND payroll_company_code != 'ZS1'
 UNION ALL
 /* 2 - Overtime Earnings */
 SELECT
@@ -93,7 +93,7 @@ FROM
   payroll.historical_earnings_earnings
 WHERE
   overtime_earnings_detail IS NOT NULL
-  AND payroll_company_code <> 'ZS1'
+  AND payroll_company_code != 'ZS1'
 UNION ALL
 /* 3 - Additional Earnings */
 SELECT
@@ -144,8 +144,8 @@ SELECT
 FROM
   payroll.historical_earnings_earnings
 WHERE
-  additional_earnings <> 0
-  AND payroll_company_code <> 'ZS1'
+  additional_earnings != 0
+  AND payroll_company_code != 'ZS1'
   AND additional_earnings_code_pay_statements NOT IN ('4', 'F', 'PAV')
 UNION ALL
 /* 4 - Memo */
@@ -181,6 +181,6 @@ SELECT
 FROM
   payroll.historical_earnings_earnings
 WHERE
-  memo_amount <> 0
-  AND payroll_company_code <> 'ZS1'
+  memo_amount != 0
+  AND payroll_company_code != 'ZS1'
   AND memo_code_pay_statements NOT IN ('#', '&', '7', '8', 'X', 'M', 'A')

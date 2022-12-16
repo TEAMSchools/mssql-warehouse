@@ -8,7 +8,7 @@ WITH
     FROM
       gabby.zendesk.ticket AS t
       INNER JOIN gabby.zendesk.ticket_comment AS tc ON t.id = tc.ticket_id
-      AND t.submitter_id <> tc.user_id
+      AND t.submitter_id != tc.user_id
     GROUP BY
       t.id,
       t.created_at

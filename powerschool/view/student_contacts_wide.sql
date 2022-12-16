@@ -16,7 +16,7 @@ WITH
     FROM
       powerschool.contacts AS c
     WHERE
-      c.person_type <> 'self'
+      c.person_type != 'self'
       AND c.contactpriorityorder <= 2
     UNION ALL
     SELECT
@@ -38,7 +38,7 @@ WITH
     FROM
       powerschool.contacts AS c
     WHERE
-      c.person_type <> 'self'
+      c.person_type != 'self'
       AND c.contactpriorityorder > 2
       AND c.isemergency = 1
     UNION ALL
@@ -61,7 +61,7 @@ WITH
     FROM
       powerschool.contacts AS c
     WHERE
-      c.person_type <> 'self'
+      c.person_type != 'self'
       AND c.contactpriorityorder > 2
       AND c.schoolpickupflg = 1
       AND c.isemergency = 0

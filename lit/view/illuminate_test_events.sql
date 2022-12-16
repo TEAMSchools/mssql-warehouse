@@ -37,28 +37,28 @@ WITH
       CAST(fluency AS INT) AS fluency,
       reading_rate_wpm,
       CASE
-        WHEN instructional_level_tested <> '' THEN CAST(instructional_level_tested AS VARCHAR(5))
+        WHEN instructional_level_tested != '' THEN CAST(instructional_level_tested AS VARCHAR(5))
       END AS instructional_level_tested,
       CASE
-        WHEN rate_proficiency <> '' THEN CAST(rate_proficiency AS VARCHAR(25))
+        WHEN rate_proficiency != '' THEN CAST(rate_proficiency AS VARCHAR(25))
       END AS rate_proficiency,
       CASE
-        WHEN key_lever <> '' THEN CAST(key_lever AS VARCHAR(25))
+        WHEN key_lever != '' THEN CAST(key_lever AS VARCHAR(25))
       END AS key_lever,
       CASE
-        WHEN fiction_nonfiction <> '' THEN CAST(fiction_nonfiction AS VARCHAR(5))
+        WHEN fiction_nonfiction != '' THEN CAST(fiction_nonfiction AS VARCHAR(5))
       END AS fiction_nonfiction,
       NULL AS test_administered_by,
       CAST(academic_year AS INT) AS academic_year,
       CAST(unique_id AS VARCHAR(125)) AS unique_id,
       CASE
-        WHEN test_round <> '' THEN CAST(test_round AS VARCHAR(25))
+        WHEN test_round != '' THEN CAST(test_round AS VARCHAR(25))
       END AS test_round,
       CASE
-        WHEN [status] <> '' THEN CAST([status] AS VARCHAR(25))
+        WHEN [status] != '' THEN CAST([status] AS VARCHAR(25))
       END AS [status],
       CASE
-        WHEN achieved_independent_level <> '' THEN CAST(achieved_independent_level AS VARCHAR(5))
+        WHEN achieved_independent_level != '' THEN CAST(achieved_independent_level AS VARCHAR(5))
       END AS achieved_independent_level
     FROM
       gabby.lit.illuminate_test_events_archive

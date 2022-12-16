@@ -87,40 +87,40 @@ FROM
     FROM
       (
         SELECT
-          c.contact_c AS contact_id,
-          c.date_c AS contact_date,
+          contact_c AS contact_id,
+          date_c AS contact_date,
           CASE
-            WHEN c.subject_c LIKE 'SC[0-9]%' THEN 'SC'
-            WHEN c.subject_c LIKE 'Advising Session%' THEN 'AS'
-            WHEN c.subject_c = 'Summer AAS' THEN 'AS'
-            WHEN c.subject_c LIKE 'Grad Plan%' THEN 'GP'
-            WHEN c.subject_c LIKE 'Q%SM%' THEN 'SM' + SUBSTRING(c.subject_c, 7, 1)
-            WHEN c.subject_c LIKE '%HV' THEN 'HV'
-            WHEN c.subject_c LIKE 'DP%' THEN REPLACE(
-              gabby.utilities.STRIP_CHARACTERS (c.subject_c, ':-'),
+            WHEN subject_c LIKE 'SC[0-9]%' THEN 'SC'
+            WHEN subject_c LIKE 'Advising Session%' THEN 'AS'
+            WHEN subject_c = 'Summer AAS' THEN 'AS'
+            WHEN subject_c LIKE 'Grad Plan%' THEN 'GP'
+            WHEN subject_c LIKE 'Q%SM%' THEN 'SM' + SUBSTRING(subject_c, 7, 1)
+            WHEN subject_c LIKE '%HV' THEN 'HV'
+            WHEN subject_c LIKE 'DP%' THEN REPLACE(
+              gabby.utilities.STRIP_CHARACTERS (subject_c, ':-'),
               ' ',
               '_'
             )
-            WHEN c.subject_c LIKE 'BGP%' THEN REPLACE(
-              gabby.utilities.STRIP_CHARACTERS (c.subject_c, ':-'),
+            WHEN subject_c LIKE 'BGP%' THEN REPLACE(
+              gabby.utilities.STRIP_CHARACTERS (subject_c, ':-'),
               ' ',
               '_'
             )
-            WHEN c.subject_c = 'Housing Deposit Paid' THEN 'HD_P'
-            WHEN c.subject_c = 'Housing Deposit Not Required' THEN 'HD_NR'
-            WHEN c.subject_c = 'Tuition Deposit Paid' THEN 'TD_P'
-            WHEN c.subject_c = 'Tuition Deposit Not Required' THEN 'TD_NR'
-            ELSE c.subject_c
+            WHEN subject_c = 'Housing Deposit Paid' THEN 'HD_P'
+            WHEN subject_c = 'Housing Deposit Not Required' THEN 'HD_NR'
+            WHEN subject_c = 'Tuition Deposit Paid' THEN 'TD_P'
+            WHEN subject_c = 'Tuition Deposit Not Required' THEN 'TD_NR'
+            ELSE subject_c
           END AS contact_subject,
           CASE
-            WHEN c.subject_c LIKE 'Q[0-9]%' THEN 'Q' + SUBSTRING(c.subject_c, 2, 1)
+            WHEN subject_c LIKE 'Q[0-9]%' THEN 'Q' + SUBSTRING(subject_c, 2, 1)
             ELSE ''
           END AS contact_term,
-          gabby.utilities.DATE_TO_SY (c.date_c) AS academic_year
+          gabby.utilities.DATE_TO_SY (date_c) AS academic_year
         FROM
-          gabby.alumni.contact_note_c AS c
+          gabby.alumni.contact_note_c
         WHERE
-          c.is_deleted = 0
+          is_deleted = 0
         UNION ALL
         SELECT
           contact_c,
@@ -134,8 +134,8 @@ FROM
           benchmark_status_c = 'Complete'
           AND benchmark_period_c <> 'Pre-College'
           AND is_deleted = 0
-      ) sub
-  ) sub PIVOT (
+      ) AS sub
+  ) AS sub PIVOT (
     MIN(contact_date) FOR contact_type IN (
       [AS1],
       [AS2],
@@ -187,4 +187,4 @@ FROM
       [TD_P],
       [TD_NR]
     )
-  ) p
+  ) AS p

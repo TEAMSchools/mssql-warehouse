@@ -311,8 +311,8 @@ WITH
         WHEN s.independent_level = 'Z' THEN NULL /* Achieved Z */
         WHEN s.entrydate >= s.test_round_start_date THEN 'New to KIPP NJ'
         WHEN s.instructional_assessment_date IS NULL THEN 'No Instructional Level'
-        WHEN s.academic_year <> s.instructional_academic_year THEN 'Not Tested in Q3'
-        WHEN s.instructional_test_round <> 'Q3' THEN 'Not Tested in Q3'
+        WHEN s.academic_year != s.instructional_academic_year THEN 'Not Tested in Q3'
+        WHEN s.instructional_test_round != 'Q3' THEN 'Not Tested in Q3'
       END AS audit_reason
     FROM
       scaffold AS s

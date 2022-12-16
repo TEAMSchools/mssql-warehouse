@@ -41,5 +41,5 @@ FROM
   gabby.people.staff_crosswalk_static AS df
 WHERE
   df.userprincipalname IS NOT NULL
-  AND df.[status] <> 'TERMINATED'
-  AND df.primary_site_schoolid <> 0
+  AND df.[status] != 'TERMINATED'
+  AND df.primary_site_schoolid != 0

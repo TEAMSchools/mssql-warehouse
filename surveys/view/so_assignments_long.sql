@@ -63,8 +63,8 @@ FROM
   assignment_unpivot AS a
   INNER JOIN gabby.people.staff_crosswalk_static AS c ON a.assignment = c.df_employee_number
 WHERE
-  a.assignment <> 0
-  AND c.[status] <> 'Terminated'
+  a.assignment != 0
+  AND c.[status] != 'Terminated'
 UNION ALL
 SELECT
   c.manager_df_employee_number AS survey_taker_id,
@@ -87,5 +87,5 @@ FROM
   INNER JOIN gabby.pm.assignments AS s ON c.df_employee_number = s.df_employee_number
   INNER JOIN gabby.pm.assignments AS m ON c.manager_df_employee_number = m.df_employee_number
 WHERE
-  c.[status] <> 'TERMINATED'
+  c.[status] != 'TERMINATED'
   AND COALESCE(c.rehire_date, c.original_hire_date) < DATEADD(DAY, -30, CURRENT_TIMESTAMP)

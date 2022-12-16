@@ -8,4 +8,4 @@ FROM
 WHERE
   createtimestamp >= CAST(DATEADD(HOUR, -144, SYSDATETIME()) AS DATE)
   AND mail IS NOT NULL
-  AND company <> 'KIPP Miami'
+  AND company != 'KIPP Miami'

@@ -75,7 +75,7 @@ WITH
       co.student_number,
       co.academic_year,
       CASE
-        WHEN co.iep_status <> 'No IEP' THEN 'IEP'
+        WHEN co.iep_status != 'No IEP' THEN 'IEP'
         ELSE NULL
       END AS is_iep,
       CASE

@@ -73,83 +73,83 @@ WITH
         SELECT
           CAST(e.df_employee_number AS INT) AS df_employee_number,
           CASE
-            WHEN e.adp_associate_id_clean <> '' THEN CAST(e.adp_associate_id_clean AS VARCHAR(25))
+            WHEN e.adp_associate_id_clean != '' THEN CAST(e.adp_associate_id_clean AS VARCHAR(25))
           END AS adp_associate_id,
           CASE
-            WHEN e.salesforce_id <> '' THEN CAST(e.salesforce_id AS VARCHAR(25))
+            WHEN e.salesforce_id != '' THEN CAST(e.salesforce_id AS VARCHAR(25))
           END AS salesforce_id,
           CASE
-            WHEN e.first_name <> '' THEN CAST(e.first_name AS VARCHAR(25))
+            WHEN e.first_name != '' THEN CAST(e.first_name AS VARCHAR(25))
           END AS first_name,
           CASE
-            WHEN e.last_name <> '' THEN CAST(e.last_name AS VARCHAR(25))
+            WHEN e.last_name != '' THEN CAST(e.last_name AS VARCHAR(25))
           END AS last_name,
           CASE
-            WHEN e.common_name <> '' THEN CAST(e.common_name AS VARCHAR(25))
+            WHEN e.common_name != '' THEN CAST(e.common_name AS VARCHAR(25))
           END AS common_name,
           CASE
-            WHEN e.preferred_last_name <> '' THEN CAST(e.preferred_last_name AS VARCHAR(25))
+            WHEN e.preferred_last_name != '' THEN CAST(e.preferred_last_name AS VARCHAR(25))
           END AS preferred_last_name,
           CASE
-            WHEN e.[address] <> '' THEN CAST(e.[address] AS VARCHAR(125))
+            WHEN e.[address] != '' THEN CAST(e.[address] AS VARCHAR(125))
           END AS [address],
           CASE
-            WHEN e.city <> '' THEN CAST(e.city AS VARCHAR(125))
+            WHEN e.city != '' THEN CAST(e.city AS VARCHAR(125))
           END AS city,
           CASE
-            WHEN e.[state] <> '' THEN CAST(e.[state] AS VARCHAR(5))
+            WHEN e.[state] != '' THEN CAST(e.[state] AS VARCHAR(5))
           END AS [state],
           CASE
-            WHEN e.postal_code <> '' THEN CAST(e.postal_code AS VARCHAR(25))
+            WHEN e.postal_code != '' THEN CAST(e.postal_code AS VARCHAR(25))
           END AS postal_code,
           CASE
-            WHEN e.[status] <> '' THEN CAST(e.[status] AS VARCHAR(25))
+            WHEN e.[status] != '' THEN CAST(e.[status] AS VARCHAR(25))
           END AS [status],
           CASE
-            WHEN e.status_reason <> '' THEN CAST(e.status_reason AS VARCHAR(125))
+            WHEN e.status_reason != '' THEN CAST(e.status_reason AS VARCHAR(125))
           END AS status_reason,
           CASE
-            WHEN e.is_manager <> '' THEN CAST(e.is_manager AS VARCHAR(5))
+            WHEN e.is_manager != '' THEN CAST(e.is_manager AS VARCHAR(5))
           END AS is_manager,
           CASE
-            WHEN e.primary_job <> '' THEN CAST(e.primary_job AS VARCHAR(125))
+            WHEN e.primary_job != '' THEN CAST(e.primary_job AS VARCHAR(125))
           END AS primary_job,
           CASE
-            WHEN e.primary_on_site_department_clean <> '' THEN CAST(
+            WHEN e.primary_on_site_department_clean != '' THEN CAST(
               e.primary_on_site_department_clean AS VARCHAR(125)
             )
           END AS primary_on_site_department,
           CASE
-            WHEN e.legal_entity_name_clean <> '' THEN CAST(e.legal_entity_name_clean AS VARCHAR(125))
+            WHEN e.legal_entity_name_clean != '' THEN CAST(e.legal_entity_name_clean AS VARCHAR(125))
           END AS legal_entity_name,
           CASE
-            WHEN e.job_family <> '' THEN CAST(e.job_family AS VARCHAR(25))
+            WHEN e.job_family != '' THEN CAST(e.job_family AS VARCHAR(25))
           END AS job_family,
           CASE
-            WHEN e.payclass <> '' THEN CAST(e.payclass AS VARCHAR(5))
+            WHEN e.payclass != '' THEN CAST(e.payclass AS VARCHAR(5))
           END AS payclass,
           CASE
-            WHEN e.paytype <> '' THEN CAST(e.paytype AS VARCHAR(25))
+            WHEN e.paytype != '' THEN CAST(e.paytype AS VARCHAR(25))
           END AS paytype,
           CASE
-            WHEN e.jobs_and_positions_flsa_status <> '' THEN CAST(
+            WHEN e.jobs_and_positions_flsa_status != '' THEN CAST(
               e.jobs_and_positions_flsa_status AS VARCHAR(25)
             )
           END AS flsa_status,
           CASE
-            WHEN e.grades_taught <> '' THEN CAST(e.grades_taught AS VARCHAR(125))
+            WHEN e.grades_taught != '' THEN CAST(e.grades_taught AS VARCHAR(125))
           END AS grades_taught,
           CASE
-            WHEN e.subjects_taught <> '' THEN e.subjects_taught
+            WHEN e.subjects_taught != '' THEN e.subjects_taught
           END AS subjects_taught,
           CASE
-            WHEN e.primary_site_clean <> '' THEN e.primary_site_clean
+            WHEN e.primary_site_clean != '' THEN e.primary_site_clean
           END AS primary_site_clean,
           CASE
-            WHEN e.mobile_number <> '' THEN e.mobile_number
+            WHEN e.mobile_number != '' THEN e.mobile_number
           END AS mobile_number,
           CASE
-            WHEN e.ethnicity <> '' THEN e.ethnicity
+            WHEN e.ethnicity != '' THEN e.ethnicity
           END AS ethnicity,
           CAST(
             e.employee_s_manager_s_df_emp_number_id AS INT

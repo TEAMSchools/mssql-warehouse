@@ -70,7 +70,7 @@ WITH
     WHERE
       co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
       AND co.grade_level <= 4
-      AND co.[db_name] <> 'kippmiami'
+      AND co.[db_name] != 'kippmiami'
   )
 SELECT
   student_id,

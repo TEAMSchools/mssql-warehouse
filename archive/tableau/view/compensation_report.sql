@@ -91,4 +91,4 @@ FROM
   ) = s.pay_period
   AND s.rn_salary_desc = 1
 WHERE
-  cr.employee_code <> '0'
+  cr.employee_code != '0'

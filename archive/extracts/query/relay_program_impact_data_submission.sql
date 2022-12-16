@@ -19,7 +19,7 @@ SELECT student_number
 FROM gabby.powerschool.cohort_identifiers_static
 WHERE (academic_year BETWEEN 2014 AND 2016)
 AND rn_year = 1
-AND schoolid <> 999999
+AND schoolid != 999999
 --*/
 /*
 --Assessment Data: all applicable grades for 2014/15  � 2016/17 school years

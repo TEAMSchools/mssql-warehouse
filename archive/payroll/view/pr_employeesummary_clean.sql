@@ -58,19 +58,19 @@ SELECT
   sub.total_earnings_3_4_5_prev,
   sub.total_reg_earnings_prev - sub.total_reg_earnings AS total_reg_earnings_diff,
   CASE
-    WHEN sub.total_reg_earnings_prev - sub.total_reg_earnings <> 0 THEN 1
+    WHEN sub.total_reg_earnings_prev - sub.total_reg_earnings != 0 THEN 1
     WHEN sub.total_reg_earnings IS NULL THEN 1
     ELSE 0
   END AS total_reg_earnings_diff_flag,
   sub.total_ot_earnings_prev - sub.total_ot_earnings AS total_ot_earnings_diff,
   CASE
-    WHEN sub.total_ot_earnings_prev - sub.total_ot_earnings <> 0 THEN 1
+    WHEN sub.total_ot_earnings_prev - sub.total_ot_earnings != 0 THEN 1
     WHEN sub.total_ot_earnings IS NULL THEN 1
     ELSE 0
   END AS total_ot_earnings_diff_flag,
   sub.total_earnings_3_4_5_prev - sub.total_earnings_3_4_5 AS total_earnings_3_4_5_diff,
   CASE
-    WHEN sub.total_earnings_3_4_5_prev - sub.total_earnings_3_4_5 <> 0 THEN 1
+    WHEN sub.total_earnings_3_4_5_prev - sub.total_earnings_3_4_5 != 0 THEN 1
     WHEN sub.total_earnings_3_4_5 IS NULL THEN 1
     ELSE 0
   END AS total_earnings_3_4_5_diff_flag

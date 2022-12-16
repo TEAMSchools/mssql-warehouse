@@ -232,7 +232,7 @@ FROM
   AND rc.date_started (
     BETWEEN sc.link_open_date AND sc.link_close_date
   )
-  AND sc.[status] <> 'Deleted'
+  AND sc.[status] != 'Deleted'
   LEFT JOIN gabby.people.staff_crosswalk_static AS resp ON rc.respondent_employee_number = resp.df_employee_number
   LEFT JOIN gabby.people.employment_history_static AS reh ON resp.position_id = reh.position_id
   AND CAST(sc.link_close_date AS DATE) (

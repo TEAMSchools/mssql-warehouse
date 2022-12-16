@@ -203,7 +203,7 @@ WITH
               FROM
                 gabby.adp.employees_all
               WHERE
-                position_status <> 'TERMINATED'
+                position_status != 'TERMINATED'
             ) THEN 'Yes'
             ELSE 'No'
           END AS is_manager,

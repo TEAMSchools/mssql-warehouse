@@ -366,4 +366,4 @@ SELECT
 FROM
   cmo_long
 WHERE
-  cmo_long.response <> ''
+  cmo_long.response != ''

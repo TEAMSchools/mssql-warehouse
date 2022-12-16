@@ -92,7 +92,7 @@ WITH
       LEFT JOIN powerschool.u_clg_et_stu_alt_clean_static AS x2 ON s.dcid = x2.studentsdcid
       AND re.exitdate = x2.exit_date
     WHERE
-      re.schoolid <> 12345 /* filter out summer school */
+      re.schoolid != 12345 /* filter out summer school */
       AND re.exitdate > re.entrydate
   ),
   enr_order AS (
@@ -196,7 +196,7 @@ SELECT
   rn_year,
   rn_school,
   CASE
-    WHEN grade_level <> 99 THEN rn_undergrad
+    WHEN grade_level != 99 THEN rn_undergrad
   END AS rn_undergrad,
   rn_all,
   prev_grade_level,
@@ -339,7 +339,7 @@ FROM
           ORDER BY
             yearid ASC
         ) THEN 0
-        WHEN grade_level <> 99
+        WHEN grade_level != 99
         AND grade_level <= MIN(prev_grade_level) OVER (
           PARTITION BY
             studentid,

@@ -24,4 +24,4 @@ SELECT
 FROM
   gabby.dayforce.onboarding AS o
   INNER JOIN gabby.people.staff_crosswalk_static AS r ON o.employee_reference_code = r.df_employee_number
-  AND r.[status] <> 'Terminated'
+  AND r.[status] != 'Terminated'

@@ -30,7 +30,7 @@ FROM
 WHERE
   df.[status] NOT IN ('TERMINATED', 'PRESTART')
   AND df.primary_on_site_department NOT IN ('Data', 'Teaching and Learning')
-  AND COALESCE(ccw.ps_school_id, df.primary_site_schoolid) <> 0
+  AND COALESCE(ccw.ps_school_id, df.primary_site_schoolid) != 0
 UNION ALL
 /* T&L/EDs/Data to all schools under CMO */
 SELECT

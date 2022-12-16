@@ -33,7 +33,7 @@ FROM
     ar.dt_taken BETWEEN dts.[start_date] AND dts.end_date
   )
   AND dts.identifier = 'AR'
-  AND dts.time_per_name <> 'ARY'
+  AND dts.time_per_name != 'ARY'
   AND dts._fivetran_deleted = 0
   LEFT JOIN gabby.powerschool.course_enrollments_current_static AS enr ON co.student_number = enr.student_number
   AND co.academic_year = enr.academic_year
@@ -50,5 +50,5 @@ FROM
   AND hr.rn_course_yr = 1
 WHERE
   co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-  AND co.grade_level <> 99
+  AND co.grade_level != 99
   AND co.enroll_status = 0

@@ -69,12 +69,12 @@ WITH
           flsa_status_name,
           CAST(
             CASE
-              WHEN work_assignment_effective_start <> '' THEN work_assignment_effective_start
+              WHEN work_assignment_effective_start != '' THEN work_assignment_effective_start
             END AS DATE
           ) AS work_assignment_effective_start,
           CAST(
             CASE
-              WHEN work_assignment_effective_end <> '' THEN work_assignment_effective_end
+              WHEN work_assignment_effective_end != '' THEN work_assignment_effective_end
             END AS DATE
           ) AS work_assignment_effective_end
         FROM

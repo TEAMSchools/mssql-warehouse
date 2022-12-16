@@ -11,4 +11,4 @@ FROM
       AND vw.reporting_term = tbl.reporting_term
   ) sub
 WHERE
-  ISNULL(adjusted_goal, '') <> ISNULL(adjusted_goal_tbl, '')
+  ISNULL(adjusted_goal, '') != ISNULL(adjusted_goal_tbl, '')

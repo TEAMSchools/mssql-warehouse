@@ -12,4 +12,4 @@ FROM
 WITH
   ([label] NVARCHAR(256), [value] BIT) AS sc
 WHERE
-  os.score_checkboxes_json <> '[]'
+  os.score_checkboxes_json != '[]'

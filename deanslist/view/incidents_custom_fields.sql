@@ -17,10 +17,10 @@ SELECT
   cf.SourceID,
   cf.SourceType,
   CASE
-    WHEN cf.StringValue <> '' THEN cf.StringValue
+    WHEN cf.StringValue != '' THEN cf.StringValue
   END AS StringValue,
   CASE
-    WHEN cf.[Value] <> '' THEN cf.[Value]
+    WHEN cf.[Value] != '' THEN cf.[Value]
   END AS [Value]
 FROM
   deanslist.incidents AS dli
@@ -45,4 +45,4 @@ WITH
     [Value] NVARCHAR(MAX)
   ) AS cf
 WHERE
-  dli.custom_fields <> '[]'
+  dli.custom_fields != '[]'

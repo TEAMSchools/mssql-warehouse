@@ -49,8 +49,8 @@ FROM
   gabby.payroll.historical_earnings_deductions
 WHERE
   LEFT(other_deduction_code_pay_statements, 2) NOT IN ('CK', 'SV')
-  AND other_deduction_amount_pay_statements <> 0
-  AND payroll_company_code <> 'ZS1'
+  AND other_deduction_amount_pay_statements != 0
+  AND payroll_company_code != 'ZS1'
   /* 2 federal taxes */
 UNION ALL
 SELECT
@@ -83,8 +83,8 @@ SELECT
 FROM
   gabby.payroll.historical_earnings_taxes
 WHERE
-  federal_tax_amount <> 0
-  AND payroll_company_code <> 'ZS1'
+  federal_tax_amount != 0
+  AND payroll_company_code != 'ZS1'
 UNION ALL
 /* 3 lived in local */
 SELECT
@@ -118,8 +118,8 @@ SELECT
 FROM
   gabby.payroll.historical_earnings_taxes
 WHERE
-  lived_in_local_amount_pay_statements <> 0
-  AND payroll_company_code <> 'ZS1'
+  lived_in_local_amount_pay_statements != 0
+  AND payroll_company_code != 'ZS1'
 UNION ALL
 /* 4 Lived in state */
 SELECT
@@ -153,8 +153,8 @@ SELECT
 FROM
   gabby.payroll.historical_earnings_taxes
 WHERE
-  lived_in_state_tax_amount_pay_statements <> 0
-  AND payroll_company_code <> 'ZS1'
+  lived_in_state_tax_amount_pay_statements != 0
+  AND payroll_company_code != 'ZS1'
 UNION ALL
 /* 5 Medicare Surtax */
 SELECT
@@ -187,8 +187,8 @@ SELECT
 FROM
   gabby.payroll.historical_earnings_taxes
 WHERE
-  medicare_surtax_amount <> 0
-  AND payroll_company_code <> 'ZS1'
+  medicare_surtax_amount != 0
+  AND payroll_company_code != 'ZS1'
 UNION ALL
 /* 6 Medicare tax */
 SELECT
@@ -221,8 +221,8 @@ SELECT
 FROM
   gabby.payroll.historical_earnings_taxes
 WHERE
-  medicare_tax_amount <> 0
-  AND payroll_company_code <> 'ZS1'
+  medicare_tax_amount != 0
+  AND payroll_company_code != 'ZS1'
 UNION ALL
 /* 7 school district tax */
 SELECT
@@ -256,8 +256,8 @@ SELECT
 FROM
   gabby.payroll.historical_earnings_taxes
 WHERE
-  school_district_tax_amount_pay_statements <> 0
-  AND payroll_company_code <> 'ZS1'
+  school_district_tax_amount_pay_statements != 0
+  AND payroll_company_code != 'ZS1'
 UNION ALL
 /* 8 social security tax */
 SELECT
@@ -290,8 +290,8 @@ SELECT
 FROM
   gabby.payroll.historical_earnings_taxes
 WHERE
-  social_security_tax_amount <> 0
-  AND payroll_company_code <> 'ZS1'
+  social_security_tax_amount != 0
+  AND payroll_company_code != 'ZS1'
 UNION ALL
 /* 9 SUI/SDI tax */
 SELECT
@@ -325,8 +325,8 @@ SELECT
 FROM
   gabby.payroll.historical_earnings_taxes
 WHERE
-  sui_sdi_tax_amount_pay_statements <> 0
-  AND payroll_company_code <> 'ZS1'
+  sui_sdi_tax_amount_pay_statements != 0
+  AND payroll_company_code != 'ZS1'
 UNION ALL
 /* 9 Worked in state tax */
 SELECT
@@ -360,5 +360,5 @@ SELECT
 FROM
   gabby.payroll.historical_earnings_taxes
 WHERE
-  worked_in_state_tax_amount_pay_statements <> 0
-  AND payroll_company_code <> 'ZS1'
+  worked_in_state_tax_amount_pay_statements != 0
+  AND payroll_company_code != 'ZS1'

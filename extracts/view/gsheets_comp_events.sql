@@ -14,7 +14,7 @@ WITH
       LEFT JOIN gabby.people.staff_crosswalk_static AS m ON x.manager_df_employee_number = m.df_employee_number
     WHERE
       x.primary_job = 'School Leader'
-      AND x.status <> 'TERMINATED'
+      AND x.status != 'TERMINATED'
   ),
   ktaf_approvers AS (
     SELECT
@@ -29,7 +29,7 @@ WITH
       LEFT JOIN gabby.people.staff_crosswalk_static AS m ON x.manager_df_employee_number = m.df_employee_number
       LEFT JOIN gabby.people.staff_crosswalk_static AS gm ON m.manager_df_employee_number = gm.df_employee_number
     WHERE
-      x.primary_job <> 'School Leader'
+      x.primary_job != 'School Leader'
   )
 SELECT
   x.payroll_company_code,
@@ -62,4 +62,4 @@ FROM
   LEFT JOIN school_approvers AS s ON x.primary_site = s.primary_site
   LEFT JOIN ktaf_approvers AS k ON x.df_employee_number = k.df_employee_number
 WHERE
-  x.status <> 'TERMINATED'
+  x.status != 'TERMINATED'

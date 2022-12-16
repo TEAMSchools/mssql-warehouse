@@ -9,7 +9,7 @@ SELECT
   comment,
   has_showhide_deps,
   CASE
-    WHEN shortname <> '' THEN shortname
+    WHEN shortname != '' THEN shortname
   END AS shortname,
   CASE
     WHEN [type] = 'ESSAY' THEN 'Y'

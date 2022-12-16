@@ -44,5 +44,5 @@ FROM
       INNER JOIN gabby.adsi.user_attributes_static AS ad ON df.df_employee_number = CAST(ad.employeenumber AS VARCHAR)
       AND ISNUMERIC(ad.employeenumber) = 1
     WHERE
-      df.[status] <> 'TERMINATED'
+      df.[status] != 'TERMINATED'
   ) sub

@@ -127,7 +127,7 @@ SELECT
       WHEN sub.sched_nextyeargrade > sub.grade_level THEN 'Promoted'
       WHEN sub.sched_nextyeargrade <= sub.grade_level THEN 'Retained'
     END
-    WHEN sub.school_level <> 'HS'
+    WHEN sub.school_level != 'HS'
     AND (
       sub.iep_status = 'SPED'
       OR sub.is_retained_flag = 1

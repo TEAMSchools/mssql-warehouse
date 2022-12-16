@@ -35,4 +35,4 @@ FROM
 WHERE
   co.rn_year = 1
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-  AND co.grade_level <> 99
+  AND co.grade_level != 99

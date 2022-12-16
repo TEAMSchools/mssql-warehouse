@@ -36,7 +36,7 @@ WITH
       gabby.people.staff_crosswalk_static
     WHERE
       primary_job = 'School Leader'
-      AND [status] <> 'Terminated'
+      AND [status] != 'Terminated'
   ),
   holidays AS (
     SELECT
@@ -228,7 +228,7 @@ WITH
         FROM
           gabby.adp.wfm_time_details AS td
         WHERE
-          transaction_type <> 'Historical Correction'
+          transaction_type != 'Historical Correction'
       ) sub
       LEFT JOIN missed_punches AS mp ON sub.employee_name = mp.employee_name
       AND sub.transaction_apply_date = mp.transaction_apply_date
@@ -332,10 +332,10 @@ FROM
   LEFT JOIN accruals_taken AS act ON td.employee_name = act.employee_name_id_
   LEFT JOIN accruals_balance AS acb ON td.employee_name = acb.employee_name_id_
 WHERE
-  td.transaction_type <> 'Worked Holiday Edit'
+  td.transaction_type != 'Worked Holiday Edit'
   AND (
     (
-      cw.legal_entity_name <> 'KIPP Miami'
+      cw.legal_entity_name != 'KIPP Miami'
       AND td.transaction_apply_date >= DATEFROMPARTS(
         gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
         8,

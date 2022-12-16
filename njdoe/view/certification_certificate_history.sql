@@ -5,7 +5,7 @@ SELECT
   cc.df_employee_number,
   ch.seq_number,
   CASE
-    WHEN ch.certificate_id <> '' THEN ch.certificate_id
+    WHEN ch.certificate_id != '' THEN ch.certificate_id
   END AS certificate_id,
   LTRIM(
     RTRIM(
@@ -23,20 +23,20 @@ SELECT
   ch.county_code,
   ch.basis_code,
   CASE
-    WHEN ch.district_code <> '' THEN ch.district_code
+    WHEN ch.district_code != '' THEN ch.district_code
   END AS district_code,
   CASE
-    WHEN ch.month_year_issued <> '' THEN ch.month_year_issued
+    WHEN ch.month_year_issued != '' THEN ch.month_year_issued
   END AS month_year_issued,
   CASE
-    WHEN ch.month_year_issued <> '' THEN DATEFROMPARTS(
+    WHEN ch.month_year_issued != '' THEN DATEFROMPARTS(
       CAST(RIGHT(ch.month_year_issued, 4)),
       CONVERT(INT, LEFT(ch.month_year_issued, 2)),
       1 AS INT
     )
   END AS issued_date,
   CASE
-    WHEN ch.month_year_expiration <> '' THEN ch.month_year_expiration
+    WHEN ch.month_year_expiration != '' THEN ch.month_year_expiration
   END AS month_year_expiration,
   CASE
     WHEN ch.month_year_expiration = '' THEN NULL
@@ -70,4 +70,4 @@ WITH
     certificate_id NVARCHAR(256)
   ) AS ch
 WHERE
-  cc.certificate_history <> '[]'
+  cc.certificate_history != '[]'

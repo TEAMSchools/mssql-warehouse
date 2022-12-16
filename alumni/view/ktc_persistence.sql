@@ -24,7 +24,7 @@ SELECT
   a.[name] AS account_name,
   a.[type] AS account_type,
   CASE
-    WHEN DATEFROMPARTS(sub.academic_year, 10, 31) > CAST(CURRENT_TIMESTAMP AS DATE) THEN NULL
+    WHEN DATEFROMPARTS(sub.academic_year, 10, 31) > CAST(CURRENT_TIMESTAMP AS DATE) THEN NULL -- noqa: L016
     WHEN e.actual_end_date_c >= DATEFROMPARTS(sub.academic_year, 10, 31) THEN 1
     WHEN e.actual_end_date_c < DATEFROMPARTS(sub.academic_year, 10, 31)
     AND e.status_c = 'Graduated' THEN 1
@@ -52,10 +52,10 @@ FROM
     FROM
       gabby.alumni.ktc_roster AS r
       INNER JOIN gabby.utilities.row_generator AS n ON n.n <= 5
-  ) sub
+  ) AS sub
   LEFT JOIN gabby.alumni.enrollment_c AS e ON sub.sf_contact_id = e.student_c
-  AND DATEFROMPARTS(sub.academic_year, 10, 31) (
-    BETWEEN e.start_date_c AND COALESCE(
+  AND (
+    DATEFROMPARTS(sub.academic_year, 10, 31) BETWEEN e.start_date_c AND COALESCE(
       e.actual_end_date_c,
       DATEFROMPARTS(
         (gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1),
@@ -71,4 +71,4 @@ FROM
   )
   AND e.status_c NOT IN ('Did Not Enroll', 'Deferred')
   LEFT JOIN gabby.alumni.account AS a ON e.school_c = a.id
-  LEFT JOIN gabby.alumni.enrollment_identifiers AS ei ON sub.sf_contact_id = ei.student_c
+  LEFT JOIN gabby.alumni.enrollment_identifiers AS ei ON sub.sf_contact_id = ei.student_c -- noqa: L016

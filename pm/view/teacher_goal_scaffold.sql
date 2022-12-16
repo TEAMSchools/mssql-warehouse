@@ -22,7 +22,7 @@ WITH
       AND st.[db_name] = t.[db_name]
     WHERE
       (
-        sec.section_type <> 'SC'
+        sec.section_type != 'SC'
         OR sec.section_type IS NULL
       )
   )

@@ -43,7 +43,7 @@ WITH
         FROM
           gabby.whetstone.users_roles AS ur
         WHERE
-          role_name <> 'No Role'
+          role_name != 'No Role'
         UNION
         SELECT
           u.[user_id],
@@ -96,7 +96,7 @@ SELECT
   og.role_names AS group_type_ws,
   CASE
     WHEN er.role_names LIKE '%Admin%'
-    AND CAST(CURRENT_TIMESTAMP AS DATE) <> DATEFROMPARTS(
+    AND CAST(CURRENT_TIMESTAMP AS DATE) != DATEFROMPARTS(
       gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
       8,
       1
@@ -107,7 +107,7 @@ SELECT
   END AS group_type,
   CASE
     WHEN er.role_names LIKE '%Admin%'
-    AND CAST(CURRENT_TIMESTAMP AS DATE) <> DATEFROMPARTS(
+    AND CAST(CURRENT_TIMESTAMP AS DATE) != DATEFROMPARTS(
       gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
       8,
       1
@@ -146,7 +146,7 @@ FROM
       scw.primary_on_site_department AS course_name,
       scw.preferred_first_name + ' ' + scw.preferred_last_name AS [user_name],
       CASE
-        WHEN scw.primary_site_schoolid <> 0 THEN scw.primary_site
+        WHEN scw.primary_site_schoolid != 0 THEN scw.primary_site
       END AS school_name,
       CAST(
         CASE
@@ -228,7 +228,7 @@ FROM
         7,
         1
       )
-      AND scw.primary_on_site_department <> 'Data'
+      AND scw.primary_on_site_department != 'Data'
   ) sub
   LEFT JOIN gabby.whetstone.users_clean AS u ON sub.user_internal_id = u.internal_id
   LEFT JOIN gabby.whetstone.users_clean AS um ON sub.manager_internal_id = um.internal_id
@@ -241,4 +241,4 @@ FROM
   LEFT JOIN obsv_grp AS og ON u.[user_id] = og.[user_id]
   AND sch._id = og.school_id
 WHERE
-  sub.role_name <> 'No Role'
+  sub.role_name != 'No Role'

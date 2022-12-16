@@ -51,7 +51,7 @@ ORDER BY
 OPEN repository_cursor WHILE 1 = 1 BEGIN
 FETCH NEXT
 FROM
-  repository_cursor INTO @repository_id IF @@FETCH_STATUS <> 0 BEGIN BREAK END
+  repository_cursor INTO @repository_id IF @@FETCH_STATUS != 0 BEGIN BREAK END
   /*
   here's the beef, the cursor is going to iterate over each repo ID, and INSERT INTO the temp table
    */

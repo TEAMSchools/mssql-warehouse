@@ -53,11 +53,11 @@ SELECT
 FROM
   gabby.people.staff_crosswalk_static AS sr
 WHERE
-  sr.[status] <> 'TERMINATED'
+  sr.[status] != 'TERMINATED'
   AND sr.userprincipalname IS NOT NULL
-  AND sr.legal_entity_name <> 'KIPP New Jersey'
+  AND sr.legal_entity_name != 'KIPP New Jersey'
   AND (
-    sr.primary_site_schoolid <> 0
+    sr.primary_site_schoolid != 0
     OR sr.primary_job IN (
       'Academic Operations Manager',
       'Associate Director of School Operations',

@@ -48,7 +48,7 @@ FROM
 WHERE
   rn_undergrad = 1
   AND exitcode = 'G1'
-  AND grade_level <> 99
+  AND grade_level != 99
   AND cohort <= gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
 UNION ALL
 SELECT
@@ -69,5 +69,5 @@ FROM
 WHERE
   rn_undergrad = 1
   AND exitcode = 'G1'
-  AND grade_level <> 99
+  AND grade_level != 99
   AND cohort <= gabby.utilities.GLOBAL_ACADEMIC_YEAR ()

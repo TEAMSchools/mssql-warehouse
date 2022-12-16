@@ -15,5 +15,5 @@ FROM
   gabby.tableau.map_tool
 WHERE
   region = 'KCNA'
-  AND term <> 'Baseline'
+  AND term != 'Baseline'
   AND goal_number = 1

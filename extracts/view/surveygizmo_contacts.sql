@@ -28,4 +28,4 @@ SELECT
 FROM
   gabby.people.staff_crosswalk_static
 WHERE
-  [status] <> 'PRESTART'
+  [status] != 'PRESTART'

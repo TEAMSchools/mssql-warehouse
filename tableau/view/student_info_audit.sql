@@ -37,7 +37,7 @@ FROM
   gabby.powerschool.cohort_identifiers_static
 WHERE
   academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-  AND schoolid <> 999999
+  AND schoolid != 999999
   AND rn_year = 1
 UNION ALL
 SELECT
@@ -59,7 +59,7 @@ FROM
   gabby.powerschool.cohort_identifiers_static
 WHERE
   academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-  AND schoolid <> 999999
+  AND schoolid != 999999
   AND rn_year = 1
 UNION ALL
 SELECT
@@ -81,7 +81,7 @@ FROM
   gabby.powerschool.cohort_identifiers_static
 WHERE
   academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-  AND schoolid <> 999999
+  AND schoolid != 999999
   AND rn_year = 1
 UNION ALL
 SELECT
@@ -103,7 +103,7 @@ FROM
   gabby.powerschool.cohort_identifiers_static AS co
 WHERE
   co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-  AND co.schoolid <> 999999
+  AND co.schoolid != 999999
   AND rn_year = 1
 UNION ALL
 SELECT
@@ -117,12 +117,12 @@ SELECT
   co.team,
   'Missing or Incorrect FTEID' AS element,
   CASE
-    WHEN co.fteid <> fte.id THEN CONCAT(co.fteid, ' <> ', fte.id)
+    WHEN co.fteid != fte.id THEN CONCAT(co.fteid, ' != ', fte.id)
     WHEN co.fteid IS NULL THEN 'FTE IS NULL'
     WHEN co.fteid = 0 THEN 'FTE = 0'
   END AS detail,
   CASE
-    WHEN co.fteid <> fte.id THEN 1
+    WHEN co.fteid != fte.id THEN 1
     WHEN co.fteid IS NULL THEN 1
     WHEN co.fteid = 0 THEN 1
     ELSE 0
@@ -135,7 +135,7 @@ FROM
   AND fte.[name] LIKE 'Full Time Student%'
 WHERE
   co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-  AND co.schoolid <> 999999
+  AND co.schoolid != 999999
   AND co.rn_year = 1
 UNION ALL
 SELECT
@@ -157,7 +157,7 @@ FROM
   gabby.powerschool.cohort_identifiers_static AS co
 WHERE
   co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-  AND co.schoolid <> 999999
+  AND co.schoolid != 999999
   AND co.rn_year = 1
 UNION ALL
 SELECT
@@ -172,7 +172,7 @@ SELECT
   'Missing Race/Ethnicity' AS element,
   CASE
     WHEN co.region = 'KMS' THEN co.ethnicity
-    WHEN co.region <> 'KMS' THEN r.racecds
+    WHEN co.region != 'KMS' THEN r.racecds
     ELSE NULL
   END AS detail,
   CASE
@@ -180,7 +180,7 @@ SELECT
     AND co.ethnicity IS NULL THEN 1
     WHEN co.region = 'KMS'
     AND co.ethnicity = '' THEN 1
-    WHEN co.region <> 'KMS'
+    WHEN co.region != 'KMS'
     AND r.racecds IS NULL
     AND s.fedethnicity IS NULL THEN 1
     ELSE 0
@@ -192,7 +192,7 @@ FROM
   AND co.[db_name] = r.[db_name]
 WHERE
   co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-  AND co.schoolid <> 999999
+  AND co.schoolid != 999999
   AND co.rn_year = 1
 UNION ALL
 SELECT
@@ -263,7 +263,7 @@ FROM
       co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
       AND co.rn_year = 1
       AND co.enroll_status = 0
-      AND co.school_name <> 'Out of District'
+      AND co.school_name != 'Out of District'
     GROUP BY
       co.[db_name],
       co.schoolid,

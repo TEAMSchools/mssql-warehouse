@@ -15,7 +15,7 @@ SELECT
   CAST(att.total_minutes AS INT) AS total_minutes,
   CAST(
     CASE
-      WHEN att.att_comment <> '' THEN att.att_comment
+      WHEN att.att_comment != '' THEN att.att_comment
     END AS VARCHAR(1000)
   ) AS att_comment
 FROM

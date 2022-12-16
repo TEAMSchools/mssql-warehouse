@@ -168,7 +168,7 @@ WITH
           status_dates
       ) sub
     WHERE
-      CONCAT(position_status, position_status_prev) <> 'TerminatedTerminated'
+      CONCAT(position_status, position_status_prev) != 'TerminatedTerminated'
   )
 SELECT
   employee_number,

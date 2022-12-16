@@ -49,7 +49,7 @@ SELECT
 FROM
   gabby.people.staff_crosswalk_static AS sr
   INNER JOIN gabby.whetstone.observations_clean AS wo ON CAST(sr.df_employee_number AS VARCHAR(25)) = wo.teacher_internal_id
-  AND sr.samaccountname <> LEFT(
+  AND sr.samaccountname != LEFT(
     wo.observer_email,
     CHARINDEX('@', wo.observer_email) - 1
   )

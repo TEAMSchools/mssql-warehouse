@@ -39,7 +39,7 @@ WITH
         CURRENT_TIMESTAMP
       ) <= 14 /* import terminated staff up to a week after termination date */
       AND (
-        scw.primary_on_site_department <> 'Data'
+        scw.primary_on_site_department != 'Data'
         OR scw.primary_on_site_department IS NULL
       )
     UNION ALL
@@ -78,7 +78,7 @@ WITH
         CURRENT_TIMESTAMP
       ) <= 14 /* import terminated staff up to a week after termination date */
       AND (
-        scw.primary_on_site_department <> 'Data'
+        scw.primary_on_site_department != 'Data'
         OR scw.primary_on_site_department IS NULL
       )
       AND u.dcid IS NULL

@@ -47,7 +47,7 @@ FROM
   group_cursor INTO @group_adspath,
   @group_cn;
 
-IF @@FETCH_STATUS <> 0 BEGIN BREAK;
+IF @@FETCH_STATUS != 0 BEGIN BREAK;
 
 END
 /* get membership list and insert into temp table */

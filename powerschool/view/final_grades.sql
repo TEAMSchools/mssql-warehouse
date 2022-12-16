@@ -163,13 +163,13 @@ WITH
           CASE
             WHEN te.is_dropped_section = 1.0
             AND sg.[percent] IS NULL THEN NULL
-            WHEN fg.grade <> '--' THEN fg.grade
+            WHEN fg.grade != '--' THEN fg.grade
           END AS fg_letter,
           CAST(
             CASE
               WHEN te.is_dropped_section = 1.0
               AND sg.[percent] IS NULL THEN NULL
-              WHEN fg.grade <> '--' THEN (fg.[percent] / 100.000)
+              WHEN fg.grade != '--' THEN (fg.[percent] / 100.000)
             END AS DECIMAL(5, 3)
           ) AS fg_percent,
           CASE
@@ -202,7 +202,7 @@ WITH
           CAST(sg.[percent] / 100.0 AS DECIMAL(5, 3)) AS sg_percent,
           CAST(
             CASE
-              WHEN sg.potentialcrhrs <> 0.0 THEN sg.potentialcrhrs
+              WHEN sg.potentialcrhrs != 0.0 THEN sg.potentialcrhrs
             END AS DECIMAL(5, 2)
           ) AS sg_potential_credit_hours,
           CAST(sgs.grade_points AS DECIMAL(3, 2)) AS sg_grade_pts,

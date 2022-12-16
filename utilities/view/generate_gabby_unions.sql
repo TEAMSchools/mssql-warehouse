@@ -56,21 +56,21 @@ WITH
           CONCAT(p.kippnewark, p.kippcamden, p.kippmiami) AS column_type_concat,
           CASE
             WHEN (
-              CONCAT(p.kippcamden, p.kippnewark) <> ''
+              CONCAT(p.kippcamden, p.kippnewark) != ''
               AND CHARINDEX(
                 p.kippmiami,
                 CONCAT(p.kippcamden, p.kippnewark)
               ) = 0
             )
             OR (
-              CONCAT(p.kippmiami, p.kippnewark) <> ''
+              CONCAT(p.kippmiami, p.kippnewark) != ''
               AND CHARINDEX(
                 p.kippcamden,
                 CONCAT(p.kippmiami, p.kippnewark)
               ) = 0
             )
             OR (
-              CONCAT(p.kippmiami, p.kippcamden) <> ''
+              CONCAT(p.kippmiami, p.kippcamden) != ''
               AND CHARINDEX(
                 p.kippnewark,
                 CONCAT(p.kippmiami, p.kippcamden)
@@ -143,7 +143,7 @@ FROM
       all_tables_columns_pivot AS atc
     WHERE
       atc.table_name NOT LIKE 'fivetran%'
-      AND atc.[schema_name] <> 'fivetran_log'
+      AND atc.[schema_name] != 'fivetran_log'
     GROUP BY
       atc.table_name,
       atc.[schema_name]

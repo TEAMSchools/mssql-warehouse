@@ -183,6 +183,6 @@ FROM
     BETWEEN w.effective_start_date AND w.effective_end_date
   )
   AND w.primary_position = 'Yes'
-  AND w.position_status <> 'Terminated'
+  AND w.position_status != 'Terminated'
   LEFT JOIN gabby.people.staff_crosswalk_static AS s ON a.subject_employee_number = s.df_employee_number
   LEFT JOIN gabby.people.staff_crosswalk_static AS r ON a.respondent_email_address = r.samaccountname

@@ -66,7 +66,7 @@ WITH
       VARCHAR(500),
       CASE
         WHEN sub.iep_registration_followup = '1'
-        AND sub.specialed_classification <> '' THEN 'Y'
+        AND sub.specialed_classification != '' THEN 'Y'
         WHEN sub.iep_registration_followup = '1'
         AND sub.specialed_classification = '' THEN 'N'
         ELSE ''
@@ -77,7 +77,7 @@ WITH
       VARCHAR(500),
       CASE
         WHEN sub.lep_registration_followup = '1'
-        AND sub.lep_status <> '' THEN 'Y'
+        AND sub.lep_status != '' THEN 'Y'
         WHEN sub.lep_registration_followup = '1'
         AND sub.lep_status = '' THEN 'N'
         ELSE ''

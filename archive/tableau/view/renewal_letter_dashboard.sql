@@ -62,7 +62,7 @@ WITH
           was.job_name AS future_role,
           CAST(
             CASE
-              WHEN work_assignment_effective_start <> '' THEN work_assignment_effective_start
+              WHEN work_assignment_effective_start != '' THEN work_assignment_effective_start
             END AS DATE
           ) AS future_work_assignment_effective_start
         FROM

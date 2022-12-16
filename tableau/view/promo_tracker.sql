@@ -29,7 +29,7 @@ WITH
       AND co.schoolid = dt.schoolid
       AND dt.identifier = 'RT'
       AND dt._fivetran_deleted = 0
-      AND dt.alt_name <> 'Summer School'
+      AND dt.alt_name != 'Summer School'
     WHERE
       co.academic_year IN (
         gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
@@ -37,7 +37,7 @@ WITH
       )
       AND co.rn_year = 1
       AND co.is_enrolled_recent = 1
-      AND co.reporting_schoolid <> 5173
+      AND co.reporting_schoolid != 5173
     UNION ALL
     SELECT
       co.studentid,
@@ -72,7 +72,7 @@ WITH
       )
       AND co.rn_year = 1
       AND co.is_enrolled_recent = 1
-      AND co.reporting_schoolid <> 5173
+      AND co.reporting_schoolid != 5173
   ),
   contact AS (
     SELECT
@@ -162,7 +162,7 @@ WITH
         gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
         gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
       )
-      AND gr.grade_category <> 'Q'
+      AND gr.grade_category != 'Q'
     GROUP BY
       gr.student_number,
       gr.academic_year,
@@ -250,7 +250,7 @@ WITH
             gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
           )
           AND att.mem_count_term > 0
-          AND att.mem_count_term <> att.abs_unexcused_count_term
+          AND att.mem_count_term != att.abs_unexcused_count_term
         UNION ALL
         SELECT
           att.studentid,
@@ -314,7 +314,7 @@ WITH
             gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
           )
           AND att.mem_count_y1 > 0
-          AND att.mem_count_y1 <> att.abs_unexcused_count_y1
+          AND att.mem_count_y1 != att.abs_unexcused_count_y1
           AND att.is_curterm = 1
       ) sub UNPIVOT (
         [value] FOR field IN (

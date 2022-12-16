@@ -32,7 +32,7 @@ WITH
           INNER JOIN gabby.reporting.reporting_terms AS dts ON co.schoolid = dts.schoolid
           AND co.academic_year = dts.academic_year
           AND dts.identifier = 'AR'
-          AND dts.time_per_name <> 'ARY'
+          AND dts.time_per_name != 'ARY'
           AND dts._fivetran_deleted = 0
         WHERE
           co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
@@ -117,7 +117,7 @@ WITH
           r.reporting_term,
           CASE
             WHEN r.is_enrolled = 0 THEN NULL
-            WHEN r.enroll_status <> 0 THEN -1
+            WHEN r.enroll_status != 0 THEN -1
             WHEN COALESCE(
               g.adjusted_goal,
               df2.words_goal,

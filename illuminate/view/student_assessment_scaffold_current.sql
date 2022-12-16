@@ -150,7 +150,7 @@ FROM
       INNER JOIN gabby.illuminate_public.student_session_aff_clean_static AS ssa ON sa.student_id = ssa.student_id
       AND a.academic_year = ssa.academic_year
       AND ssa.rn = 1
-      AND agl.grade_level_id <> ssa.grade_level_id
+      AND agl.grade_level_id != ssa.grade_level_id
     WHERE
       a.is_normed_scope = 1
       AND a.subject_area IN (

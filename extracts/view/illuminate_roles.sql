@@ -16,7 +16,7 @@ FROM
   gabby.people.staff_crosswalk_static AS df
   INNER JOIN gabby.powerschool.schools AS sch ON sch.state_excludefromreporting = 0
 WHERE
-  df.[status] <> 'TERMINATED'
+  df.[status] != 'TERMINATED'
   AND df.primary_on_site_department IN (
     'Teaching and Learning',
     'Data',
@@ -41,7 +41,7 @@ FROM
   AND cc.is_pathways = 0
   AND cc._fivetran_deleted = 0
 WHERE
-  df.[status] <> 'TERMINATED'
+  df.[status] != 'TERMINATED'
   AND df.primary_on_site_department NOT IN (
     'Teaching and Learning',
     'Data',
@@ -63,7 +63,7 @@ SELECT
 FROM
   gabby.people.staff_crosswalk_static AS df
 WHERE
-  df.[status] <> 'TERMINATED'
+  df.[status] != 'TERMINATED'
   AND df.primary_on_site_department NOT IN (
     'Teaching and Learning',
     'Data',

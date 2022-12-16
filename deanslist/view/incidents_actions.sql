@@ -16,4 +16,4 @@ WITH
     sourceid INT N'$.SourceID'
   ) AS dlia
 WHERE
-  dli.actions <> '[]'
+  dli.actions != '[]'

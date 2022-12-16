@@ -355,8 +355,8 @@ WITH
           gabby.tableau.compliance_staff_attrition
         WHERE
           is_denominator = 1
-          AND legal_entity_name <> 'KIPP New Jersey'
-          AND primary_site_reporting_schoolid <> 0
+          AND legal_entity_name != 'KIPP New Jersey'
+          AND primary_site_reporting_schoolid != 0
       ) sub
     GROUP BY
       academic_year,
@@ -634,11 +634,11 @@ WITH
         END AS parcc_math_proficient,
         CASE
           WHEN parcc.ela_performance_level = 3 THEN 1.0
-          WHEN parcc.ela_performance_level <> 3 THEN 0.0
+          WHEN parcc.ela_performance_level != 3 THEN 0.0
         END AS parcc_ela_approaching,
         CASE
           WHEN parcc.math_performance_level = 3 THEN 1.0
-          WHEN parcc.math_performance_level <> 3 THEN 0.0
+          WHEN parcc.math_performance_level != 3 THEN 0.0
         END AS parcc_math_approaching,
         CASE
           WHEN parcc.ela_performance_level <= 2 THEN 1.0

@@ -16,7 +16,7 @@ SELECT
     CONVERT(
       FLOAT,
       CASE
-        WHEN ah.pcn <> '' THEN ah.pcn
+        WHEN ah.pcn != '' THEN ah.pcn
       END
     ) AS BIGINT
   ) AS pcn,
@@ -47,4 +47,4 @@ WITH
     transferind DATE
   ) AS ah
 WHERE
-  bg.approval_history <> '[]'
+  bg.approval_history != '[]'

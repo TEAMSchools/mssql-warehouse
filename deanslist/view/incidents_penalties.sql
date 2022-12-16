@@ -35,4 +35,4 @@ WITH
     numdays FLOAT N'$.NumDays'
   ) AS dlip
 WHERE
-  dli.penalties <> '[]'
+  dli.penalties != '[]'

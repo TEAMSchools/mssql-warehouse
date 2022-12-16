@@ -91,7 +91,7 @@ FROM
             END,
             0
           )
-        ) <> total THEN 1
+        ) != total THEN 1
         WHEN total (NOT BETWEEN 400 AND 2400) THEN 1
       END AS total_flag
     FROM

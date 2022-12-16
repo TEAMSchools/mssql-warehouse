@@ -43,7 +43,7 @@ FROM
     BETWEEN w.effective_start_date AND w.effective_end_date
   )
   AND w.primary_position = 'Yes'
-  AND w.position_status <> 'Terminated'
+  AND w.position_status != 'Terminated'
   LEFT JOIN gabby.people.staff_crosswalk_static AS s ON d.subject_df_employee_number = s.df_employee_number
   LEFT JOIN gabby.people.staff_crosswalk_static AS r ON d.respondent_df_employee_number = r.df_employee_number
 WHERE
@@ -96,7 +96,7 @@ FROM
     BETWEEN w.effective_start_date AND w.effective_end_date
   )
   AND w.primary_position = 'Yes'
-  AND w.position_status <> 'Terminated'
+  AND w.position_status != 'Terminated'
   LEFT JOIN gabby.people.staff_crosswalk_static AS sbjt ON sda.subject_df_employee_number = sbjt.df_employee_number
   LEFT JOIN gabby.people.staff_crosswalk_static AS mgr ON sda.subject_manager_df_employee_number = mgr.df_employee_number
   LEFT JOIN gabby.people.staff_crosswalk_static AS r ON sda.respondent_email_address = r.samaccountname

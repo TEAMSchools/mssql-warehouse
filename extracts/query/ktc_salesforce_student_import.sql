@@ -124,4 +124,4 @@ FROM
 WHERE
   co.schoolid IN (73252, 73253, 133570965, 179902)
   AND co.rn_undergrad = 1
-  AND co.grade_level <> 99
+  AND co.grade_level != 99

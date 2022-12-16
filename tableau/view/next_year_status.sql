@@ -67,7 +67,7 @@ FROM
   gabby.powerschool.students AS s
   LEFT JOIN gabby.powerschool.cohort_identifiers_static AS co ON s.student_number = co.student_number
   AND co.rn_undergrad = 1
-  AND co.grade_level <> 99
+  AND co.grade_level != 99
   LEFT JOIN powerschool.u_studentsuserfields AS suf ON s.dcid = suf.studentsdcid
   AND s.[db_name] = suf.[db_name]
 WHERE

@@ -172,7 +172,7 @@ WITH
         'Coaching Tool: Coach ETR and Reflection 19-20'
       )
       AND wo.score IS NOT NULL
-      AND wo.observer_email <> wo.teacher_email
+      AND wo.observer_email != wo.teacher_email
       AND ex.exemption IS NULL
   ),
   etr AS (
@@ -326,7 +326,7 @@ WITH
               gabby.naviance.act_scores_clean AS act
               INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON act.student_number = co.student_number
               AND co.rn_undergrad = 1
-              AND co.grade_level <> 99
+              AND co.grade_level != 99
             WHERE
               act.rn_highest = 1
           ) sub

@@ -16,5 +16,5 @@ FROM
   AND co.track = c.track
   AND co.[db_name] = c.[db_name]
 WHERE
-  co.grade_level <> 99
+  co.grade_level != 99
   AND c.schoolid IS NULL

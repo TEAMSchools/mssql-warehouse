@@ -8,7 +8,7 @@ SELECT
 FROM
   gabby.people.staff_crosswalk_static
 WHERE
-  [status] <> 'Terminated'
+  [status] != 'Terminated'
   AND (
     (
       primary_job IN (

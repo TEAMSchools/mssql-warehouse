@@ -103,7 +103,7 @@ SELECT
   ) AS grade_level_target,
   SUM(
     CASE
-      WHEN grade_level <> lexia_grade_level THEN units_goal
+      WHEN grade_level != lexia_grade_level THEN units_goal
       ELSE 0
     END
   ) AS other_level_target
@@ -134,7 +134,7 @@ FROM
       AND co.db_name = s.db_name
       INNER JOIN other_goals AS og ON s.student_web_id = og.username
     COLLATE Latin1_General_BIN
-    AND co.grade_level <> og.lexia_grade_level
+    AND co.grade_level != og.lexia_grade_level
     WHERE
       co.rn_year = 1
       AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()

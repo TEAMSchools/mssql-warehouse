@@ -68,7 +68,7 @@ FROM
   LEFT JOIN gabby.adp.staff_roster AS r ON s.employee_associate_id = r.associate_id
   AND r.rn_curr = 1
 WHERE
-  s.effective_date_of_change <> 'varies'
+  s.effective_date_of_change != 'varies'
 UNION ALL
 SELECT
   LEFT(r.position_id, 3) AS entity,

@@ -19,7 +19,7 @@ FROM
   INNER JOIN gabby.powerschool.ps_adaadm_daily_ctod_static AS mem ON co.studentid = mem.studentid
   AND co.yearid = mem.yearid
 WHERE
-  co.schoolid <> 999999
+  co.schoolid != 999999
   AND co.rn_year = 1
 GROUP BY
   co.student_number,

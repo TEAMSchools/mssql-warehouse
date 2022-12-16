@@ -22,7 +22,7 @@ WITH
       gabby.illuminate_dna_repositories.repositories AS r
       INNER JOIN gabby.illuminate_dna_repositories.fields AS f ON r.repository_id = f.repository_id
       AND f.deleted_at IS NULL
-      AND f.[name] <> 'field_term'
+      AND f.[name] != 'field_term'
     WHERE
       r.repository_id IN (216, 207, 208, 209)
   )

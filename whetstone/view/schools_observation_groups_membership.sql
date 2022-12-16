@@ -19,7 +19,7 @@ WITH
         observers NVARCHAR(MAX) AS JSON
       ) AS ogs
     WHERE
-      ogs.observers <> '[]'
+      ogs.observers != '[]'
     UNION ALL
     SELECT
       s._id AS school_id,
@@ -37,7 +37,7 @@ WITH
         observees NVARCHAR(MAX) AS JSON
       ) AS ogs
     WHERE
-      ogs.observees <> '[]'
+      ogs.observees != '[]'
     UNION ALL
     SELECT
       s._id AS school_id,
@@ -55,7 +55,7 @@ WITH
         admins NVARCHAR(MAX) AS JSON
       ) AS ogs
     WHERE
-      ogs.admins <> '[]'
+      ogs.admins != '[]'
   )
 SELECT
   og.school_id,

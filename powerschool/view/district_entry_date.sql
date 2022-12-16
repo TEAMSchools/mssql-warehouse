@@ -17,7 +17,7 @@ WITH
     FROM
       powerschool.cohort_static
     WHERE
-      schoolid <> 999999
+      schoolid != 999999
   )
 SELECT
   de.studentid,

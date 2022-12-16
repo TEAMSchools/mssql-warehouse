@@ -17,4 +17,4 @@ WITH
     [url] VARCHAR(125)
   ) AS wt
 WHERE
-  wa.[tags] <> '[]'
+  wa.[tags] != '[]'

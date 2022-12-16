@@ -71,12 +71,12 @@ WITH
       CAST(rs.student_number AS INT) AS student_number,
       CAST(rs.testid AS INT) AS testid,
       CASE
-        WHEN rs.[status] <> '' THEN CAST(rs.[status] AS VARCHAR(25))
+        WHEN rs.[status] != '' THEN CAST(rs.[status] AS VARCHAR(25))
       END AS [status],
       CAST(rs.field AS VARCHAR(25)) AS field,
       CAST(rs.score AS FLOAT) AS score,
       CASE
-        WHEN rs.read_lvl <> '' THEN CAST(rs.read_lvl AS VARCHAR(5))
+        WHEN rs.read_lvl != '' THEN CAST(rs.read_lvl AS VARCHAR(5))
       END AS read_lvl,
       CAST(rs.lvl_num AS INT) AS lvl_num
     FROM
@@ -137,10 +137,10 @@ SELECT
   ABS(sub.is_prof - 1) AS is_dna,
   sub.score - sub.benchmark AS margin,
   CASE
-    WHEN sub.testid <> 3273
+    WHEN sub.testid != 3273
     AND sub.is_prof = 0 THEN 1
     WHEN sub.testid = 3273
-    AND sub.domain <> 'Comprehension'
+    AND sub.domain != 'Comprehension'
     AND sub.is_prof = 0 THEN 1
     WHEN sub.testid = 3273
     AND sub.domain = 'Comprehension'
@@ -153,10 +153,10 @@ SELECT
     ELSE 0
   END AS dna_filter,
   CASE
-    WHEN sub.testid <> 3273
+    WHEN sub.testid != 3273
     AND sub.is_prof = 0 THEN sub.domain
     WHEN sub.testid = 3273
-    AND sub.domain <> 'Comprehension'
+    AND sub.domain != 'Comprehension'
     AND sub.is_prof = 0 THEN sub.domain
     WHEN sub.testid = 3273
     AND sub.domain = 'Comprehension'
@@ -189,7 +189,7 @@ FROM
       END AS [label],
       CASE
         WHEN prof.strand LIKE '%overall%'
-        AND ISNULL(prof.subdomain, '') <> '' THEN ISNULL(prof.domain + ' (', '') + ISNULL(prof.subdomain + '): ', '') + prof.strand
+        AND ISNULL(prof.subdomain, '') != '' THEN ISNULL(prof.domain + ' (', '') + ISNULL(prof.subdomain + '): ', '') + prof.strand
         WHEN prof.strand LIKE '%overall%'
         AND ISNULL(prof.subdomain, '') = '' THEN ISNULL(prof.domain + ': ', '') + prof.strand
         ELSE ISNULL(prof.subdomain + ': ', '') + prof.strand

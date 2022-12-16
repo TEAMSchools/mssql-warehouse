@@ -119,4 +119,4 @@ AND map_long.test_id = DOMAIN.test_id
 WHERE
   r.rn_year = 1
   AND r.academic_year >= 2008 /* first year of MAP data */
-  AND r.grade_level <> 99
+  AND r.grade_level != 99

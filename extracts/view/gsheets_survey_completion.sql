@@ -18,7 +18,7 @@ WITH
        */
 ,
       CASE
-        WHEN survey_id <> '6330385' THEN ROW_NUMBER() OVER (
+        WHEN survey_id != '6330385' THEN ROW_NUMBER() OVER (
           PARTITION BY
             survey_taker_id
           ORDER BY

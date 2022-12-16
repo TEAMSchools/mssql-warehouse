@@ -105,7 +105,7 @@ FROM
       ROUND(
         AVG(
           CASE
-            WHEN sub.iep_status <> 'SPED' THEN CAST(sub.met_goal AS FLOAT)
+            WHEN sub.iep_status != 'SPED' THEN CAST(sub.met_goal AS FLOAT)
             ELSE NULL
           END
         ),
@@ -171,7 +171,7 @@ FROM
       ROUND(
         AVG(
           CASE
-            WHEN sub.iep_status <> 'SPED' THEN CAST(sub.pct_met_goal AS FLOAT)
+            WHEN sub.iep_status != 'SPED' THEN CAST(sub.pct_met_goal AS FLOAT)
             ELSE NULL
           END
         ),
@@ -242,7 +242,7 @@ FROM
       ROUND(
         AVG(
           CASE
-            WHEN sub.iep_status <> 'SPED' THEN CAST(sub.is_typ_growth AS FLOAT)
+            WHEN sub.iep_status != 'SPED' THEN CAST(sub.is_typ_growth AS FLOAT)
             ELSE NULL
           END
         ),
@@ -292,7 +292,7 @@ FROM
       ROUND(
         AVG(
           CASE
-            WHEN sub.iep_status <> 'SPED' THEN CAST(sub.is_str_growth AS FLOAT)
+            WHEN sub.iep_status != 'SPED' THEN CAST(sub.is_str_growth AS FLOAT)
             ELSE NULL
           END
         ),
@@ -341,7 +341,7 @@ FROM
       ROUND(
         AVG(
           CASE
-            WHEN sub.iep_status <> 'SPED' THEN CAST(sub.is_on_grade AS FLOAT)
+            WHEN sub.iep_status != 'SPED' THEN CAST(sub.is_on_grade AS FLOAT)
             ELSE NULL
           END
         ),
@@ -413,7 +413,7 @@ FROM
       ROUND(
         AVG(
           CASE
-            WHEN co.iep_status <> 'SPED' THEN CAST(mem.attendancevalue AS FLOAT)
+            WHEN co.iep_status != 'SPED' THEN CAST(mem.attendancevalue AS FLOAT)
             ELSE NULL
           END
         ),
@@ -472,7 +472,7 @@ FROM
       ROUND(
         AVG(
           CASE
-            WHEN sub.iep_status <> 'SPED' THEN CAST(sub.is_suspended AS FLOAT)
+            WHEN sub.iep_status != 'SPED' THEN CAST(sub.is_suspended AS FLOAT)
             ELSE NULL
           END
         ),
@@ -544,7 +544,7 @@ FROM
       ROUND(
         AVG(
           CASE
-            WHEN co.iep_status <> 'SPED' THEN CAST(act.is_act_16 AS FLOAT)
+            WHEN co.iep_status != 'SPED' THEN CAST(act.is_act_16 AS FLOAT)
             ELSE NULL
           END
         ),
@@ -606,7 +606,7 @@ FROM
         1 - ROUND(
           AVG(
             CASE
-              WHEN sub.iep_status <> 'SPED' THEN CAST(sub.is_enrolled_next AS FLOAT)
+              WHEN sub.iep_status != 'SPED' THEN CAST(sub.is_enrolled_next AS FLOAT)
               ELSE NULL
             END
           ),
@@ -691,7 +691,7 @@ FROM
         FROM
           gabby.surveys.cmo_engagement_regional_survey_detail AS cm
           INNER JOIN gabby.people.school_crosswalk AS sc ON cm.respondent_primary_site = sc.site_name
-          AND sc.ps_school_id <> 0
+          AND sc.ps_school_id != 0
           AND sc.ps_school_id IS NOT NULL
         WHERE
           cm.is_open_ended = 'N'
@@ -722,10 +722,10 @@ FROM
     FROM
       gabby.tableau.compliance_staff_attrition AS sa
       INNER JOIN gabby.people.school_crosswalk AS cw ON sa.primary_site = cw.site_name
-      AND cw.ps_school_id <> 0
+      AND cw.ps_school_id != 0
     WHERE
-      sa.is_denominator <> 0
-      AND sa.primary_job <> 'Intern'
+      sa.is_denominator != 0
+      AND sa.primary_job != 'Intern'
       AND sa.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 3)
     GROUP BY
       sa.academic_year,
@@ -747,7 +747,7 @@ FROM
     FROM
       gabby.tableau.compliance_staff_attrition AS sa
       INNER JOIN gabby.people.school_crosswalk AS cw ON sa.primary_site = cw.site_name
-      AND cw.ps_school_id <> 0
+      AND cw.ps_school_id != 0
     WHERE
       sa.primary_job IN (
         'Co-Teacher',
@@ -761,7 +761,7 @@ FROM
         'Teacher, ESL',
         'Temporary Teacher'
       )
-      AND sa.is_denominator <> 0
+      AND sa.is_denominator != 0
       AND sa.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 3)
     GROUP BY
       sa.academic_year,
@@ -793,7 +793,7 @@ FROM
       )
       AND eh.primary_position = 'Yes'
       INNER JOIN gabby.people.school_crosswalk AS cw ON eh.[location] = cw.site_name
-      AND cw.ps_school_id <> 0
+      AND cw.ps_school_id != 0
     WHERE
       lb.metric_name = 'etr_overall_score'
       AND lb.pm_term = 'PM4'
@@ -820,7 +820,7 @@ FROM
       ROUND(
         AVG(
           CASE
-            WHEN sub.iep_status <> 'SPED' THEN CAST(sub.met_goal AS FLOAT)
+            WHEN sub.iep_status != 'SPED' THEN CAST(sub.met_goal AS FLOAT)
             ELSE NULL
           END
         ),
@@ -972,7 +972,7 @@ FROM
       ROUND(
         AVG(
           CASE
-            WHEN sub.iep_status <> 'SPED' THEN CAST(sub.is_proficient AS FLOAT)
+            WHEN sub.iep_status != 'SPED' THEN CAST(sub.is_proficient AS FLOAT)
             ELSE NULL
           END
         ),

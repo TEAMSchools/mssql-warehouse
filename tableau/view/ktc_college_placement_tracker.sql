@@ -20,7 +20,7 @@ WITH
     FROM
       gabby.naviance.college_applications
     WHERE
-      stage <> 'cancelled'
+      stage != 'cancelled'
     GROUP BY
       hs_student_id
   ),
@@ -177,7 +177,7 @@ WITH
             ELSE 0.0
           END AS is_eaed_application,
           CASE
-            WHEN a.application_status_c <> 'Unknown' THEN 1.0
+            WHEN a.application_status_c != 'Unknown' THEN 1.0
             ELSE 0.0
           END AS is_closed_application,
           CASE
@@ -199,14 +199,14 @@ WITH
             ELSE 0.0
           END AS is_accepted_4yr,
           CASE
-            WHEN a.application_status_c <> 'Accepted' THEN NULL
+            WHEN a.application_status_c != 'Accepted' THEN NULL
             WHEN a.application_status_c = 'Accepted'
             AND a.matriculation_decision_c = 'Matriculated (Intent to Enroll)' THEN 1
             WHEN a.application_status_c = 'Accepted'
-            AND a.matriculation_decision_c <> 'Matriculated (Intent to Enroll)'
+            AND a.matriculation_decision_c != 'Matriculated (Intent to Enroll)'
             AND a.primary_reason_for_not_attending_c IS NOT NULL THEN 1
             WHEN a.application_status_c = 'Accepted'
-            AND a.matriculation_decision_c <> 'Matriculated (Intent to Enroll)'
+            AND a.matriculation_decision_c != 'Matriculated (Intent to Enroll)'
             AND a.primary_reason_for_not_attending_c IS NULL THEN 0
           END AS accepted_app_closed_with_reason_not_attending,
           s.type
@@ -300,7 +300,7 @@ SELECT
       am.sat2_m1,
       am.sat2_m2,
       am.sat2_sp
-    ) <> '' THEN 1.0
+    ) != '' THEN 1.0
     ELSE 0.0
   END AS took_sat2,
   ca.n_applications_submitted,

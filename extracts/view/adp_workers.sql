@@ -26,5 +26,5 @@ FROM
   LEFT JOIN gabby.adsi.user_attributes_static AS ads ON CAST(scw.employee_number AS VARCHAR(25)) = ads.employeenumber
   LEFT JOIN wfm_updates AS wfm ON scw.associate_id = wfm.associate_id
 WHERE
-  scw.position_status <> 'Terminated'
+  scw.position_status != 'Terminated'
   AND ads.mail IS NOT NULL

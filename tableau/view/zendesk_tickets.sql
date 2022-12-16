@@ -111,4 +111,4 @@ FROM
   AND oa.field_rn = 1
   LEFT JOIN gabby.people.staff_crosswalk_static AS oad ON oa.field_value = oad.userprincipalname
 WHERE
-  t.[status] <> 'deleted'
+  t.[status] != 'deleted'

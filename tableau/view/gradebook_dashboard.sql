@@ -94,10 +94,10 @@ SELECT
   gr.course_name,
   NULL AS earnedcrhrs,
   CASE
-    WHEN pgf.citizenship <> '' THEN pgf.citizenship
+    WHEN pgf.citizenship != '' THEN pgf.citizenship
   END AS citizenship,
   CASE
-    WHEN pgf.comment_value <> '' THEN pgf.comment_value
+    WHEN pgf.comment_value != '' THEN pgf.comment_value
   END AS comment_value,
   st.sectionid,
   st.termid,
@@ -172,7 +172,7 @@ FROM
   AND co.[db_name] = sa.[db_name]
 WHERE
   co.rn_year = 1
-  AND co.grade_level <> 99
+  AND co.grade_level != 99
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
 UNION ALL
 /* current year - Y1 grades */
@@ -288,7 +288,7 @@ FROM
   AND co.[db_name] = sa.[db_name]
 WHERE
   co.rn_year = 1
-  AND co.grade_level <> 99
+  AND co.grade_level != 99
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
 UNION ALL
 /* historical grades */
@@ -360,7 +360,7 @@ FROM
   AND co.[db_name] = sa.[db_name]
 WHERE
   co.rn_year = 1
-  AND co.academic_year <> gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+  AND co.academic_year != gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
 UNION ALL
 /* transfer grades */
 SELECT
@@ -497,7 +497,7 @@ FROM
   LEFT JOIN gabby.powerschool.category_grades_static AS cg ON co.studentid = cg.studentid
   AND co.yearid = cg.yearid
   AND co.[db_name] = cg.[db_name]
-  AND cg.storecode_type <> 'Q'
+  AND cg.storecode_type != 'Q'
   LEFT JOIN section_teacher AS st ON co.studentid = st.studentid
   AND co.yearid = st.yearid
   AND co.[db_name] = st.[db_name]
@@ -512,7 +512,7 @@ FROM
   AND co.[db_name] = sa.[db_name]
 WHERE
   co.rn_year = 1
-  AND co.grade_level <> 99
+  AND co.grade_level != 99
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
 UNION ALL
 /* category grades - year */
@@ -568,7 +568,7 @@ FROM
   LEFT JOIN gabby.powerschool.category_grades_static AS cy ON co.studentid = cy.studentid
   AND co.yearid = cy.yearid
   AND co.[db_name] = cy.[db_name]
-  AND cy.storecode_type <> 'Q'
+  AND cy.storecode_type != 'Q'
   AND CAST(CURRENT_TIMESTAMP AS DATE) (
     BETWEEN cy.termbin_start_date AND cy.termbin_end_date
   )
@@ -586,7 +586,7 @@ FROM
   AND co.[db_name] = sa.[db_name]
 WHERE
   co.rn_year = 1
-  AND co.grade_level <> 99
+  AND co.grade_level != 99
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
   /*
   UNION ALL

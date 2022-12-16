@@ -101,7 +101,7 @@ WITH
         FROM
           kippmiami.fsa.student_scores_previous
         WHERE
-          fsa_scale_s <> ''
+          fsa_scale_s != ''
       ) sub
   )
 SELECT

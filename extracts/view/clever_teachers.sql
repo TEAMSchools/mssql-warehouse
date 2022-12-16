@@ -19,6 +19,6 @@ FROM
   gabby.people.staff_crosswalk_static AS df
 WHERE
   df.is_active_ad = 1
-  AND df.[status] <> 'PRESTART'
+  AND df.[status] != 'PRESTART'
   AND df.primary_site_schoolid IS NOT NULL
   AND df.df_employee_number IS NOT NULL

@@ -18,4 +18,4 @@ WITH
     [text] VARCHAR(4000)
   ) AS mn
 WHERE
-  wo.magic_notes <> '[]'
+  wo.magic_notes != '[]'

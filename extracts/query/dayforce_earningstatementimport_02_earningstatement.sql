@@ -103,4 +103,4 @@ SELECT
 FROM
   gabby.payroll.historical_earnings_statements
 WHERE
-  payroll_company_code <> 'ZS1'
+  payroll_company_code != 'ZS1'

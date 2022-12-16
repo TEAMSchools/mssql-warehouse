@@ -14,5 +14,5 @@ SELECT
 FROM
   gabby.people.staff_crosswalk_static AS df
 WHERE
-  df.[status] <> 'TERMINATED'
+  df.[status] != 'TERMINATED'
   AND df.mail IS NOT NULL

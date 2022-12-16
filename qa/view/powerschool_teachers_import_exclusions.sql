@@ -49,7 +49,7 @@ FROM
         WHEN region IS NULL THEN 1
       END AS is_exclude_primarysite,
       CASE
-        WHEN primary_site_schoolid <> homeschoolid THEN 1
+        WHEN primary_site_schoolid != homeschoolid THEN 1
       END AS is_exclude_homeschoolid
     FROM
       users_clean
@@ -60,4 +60,4 @@ WHERE
     is_exclude_homeschoolid,
     is_exclude_primarysite,
     is_exclude_termination
-  ) <> ''
+  ) != ''

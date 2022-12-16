@@ -102,7 +102,7 @@ WITH
     FROM
       clean_names AS cn
       LEFT JOIN gabby.powerschool.student_access_accounts_static AS sa ON cn.base_username = sa.student_web_id
-      AND cn.student_number <> sa.student_number
+      AND cn.student_number != sa.student_number
   ),
   alt_username AS (
     SELECT
@@ -128,7 +128,7 @@ WITH
       CASE
         WHEN bu.base_dupe_audit = 1 THEN 1
         WHEN LEN(bu.base_username) > 16 THEN 1
-        WHEN bu.base_dupe_audit <> 1 THEN 0
+        WHEN bu.base_dupe_audit != 1 THEN 0
         WHEN LEN(bu.base_username) <= 16 THEN 0
         WHEN sa.student_web_id IS NOT NULL THEN 1
         WHEN ROW_NUMBER() OVER (
@@ -142,7 +142,7 @@ WITH
     FROM
       base_username AS bu
       LEFT JOIN gabby.powerschool.student_access_accounts_static AS sa ON bu.alt_username = sa.student_web_id
-      AND bu.student_number <> sa.student_number
+      AND bu.student_number != sa.student_number
   )
 SELECT
   au.student_number,

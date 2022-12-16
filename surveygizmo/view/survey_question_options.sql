@@ -23,4 +23,4 @@ WITH
     properties NVARCHAR(MAX) AS JSON
   ) AS o
 WHERE
-  q.options <> '[]'
+  q.options != '[]'

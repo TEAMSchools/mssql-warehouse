@@ -26,4 +26,4 @@ WITH
     textBoxes NVARCHAR(MAX) AS JSON
   ) AS ws
 WHERE
-  wo.observation_scores <> '[]'
+  wo.observation_scores != '[]'
