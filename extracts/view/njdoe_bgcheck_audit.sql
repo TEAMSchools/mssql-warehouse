@@ -64,7 +64,7 @@ FROM
         WHERE
           sr.position_status != 'Terminated'
           AND sr.business_unit != 'KIPP Miami'
-      ) sub
-  ) sub
+      ) AS sub
+  ) AS sub
 WHERE
   rn_emp = 1

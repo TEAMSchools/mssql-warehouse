@@ -117,6 +117,6 @@ FROM
         7,
         1 AS DATETIME2
       )
-  ) sub
+  ) AS sub
 WHERE
   sub.rn = 1

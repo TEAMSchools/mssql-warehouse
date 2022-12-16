@@ -176,7 +176,7 @@ WITH
           END AS is_hispanic
         FROM
           gabby.dayforce.employees AS e
-      ) sub
+      ) AS sub
   )
 SELECT
   c.df_employee_number,

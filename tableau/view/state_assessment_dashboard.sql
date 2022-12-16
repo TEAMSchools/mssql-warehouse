@@ -23,7 +23,7 @@ WITH
           gabby.powerschool.cohort_identifiers_static
         WHERE
           rn_school = 1
-      ) sub PIVOT (
+      ) AS sub PIVOT (
         MAX(grade_level) FOR school_level IN ([ES], [MS])
       ) p
   ),
@@ -65,12 +65,12 @@ WITH
                   AND dfg IS NULL
                 )
               )
-          ) sub
+          ) AS sub
         GROUP BY
           academic_year,
           test_code,
           entity
-      ) sub PIVOT (
+      ) AS sub PIVOT (
         MAX(pct_proficient) FOR entity IN ([NJ], [NPS], [CPS])
       ) p
   ),
@@ -93,7 +93,7 @@ WITH
           gabby.powerschool.cohort_identifiers_static
         WHERE
           school_level = 'MS'
-      ) sub
+      ) AS sub
     WHERE
       rn = 1
   ),

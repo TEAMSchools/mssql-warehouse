@@ -121,4 +121,4 @@ FROM
       scaffold AS s
       LEFT JOIN gabby.adp.pr_employeesummary AS pr ON s.position_id = CONCAT(pr.company, pr.file_)
       AND s.pay_date = pr.pay_date
-  ) sub
+  ) AS sub

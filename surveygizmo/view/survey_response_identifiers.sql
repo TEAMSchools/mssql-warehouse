@@ -116,7 +116,7 @@ WITH
           AND srd.answer IS NOT NULL
         WHERE
           sq.is_identifier_question = 1
-      ) sub PIVOT (
+      ) AS sub PIVOT (
         MAX(answer) FOR shortname IN (
           respondent_df_employee_number,
           respondent_userprincipalname,

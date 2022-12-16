@@ -110,7 +110,7 @@ WITH
         END AS likert_response_scale_5
         FROM
           gabby.surveys.hsr_survey
-      ) sub
+      ) AS sub
     WHERE
       likert_response_scale_5 IS NOT NULL
     GROUP BY
@@ -216,4 +216,4 @@ FROM
     ) AS responded_positive
     FROM
       gabby.surveys.hsr_survey_archive
-  ) sub
+  ) AS sub

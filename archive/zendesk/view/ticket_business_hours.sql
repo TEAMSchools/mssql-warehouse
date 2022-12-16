@@ -41,7 +41,7 @@ WITH
           ) AS business_hours_end
         FROM
           gabby.zendesk.schedule
-      ) sub
+      ) AS sub
   )
 SELECT
   ticket_id,
@@ -114,8 +114,8 @@ FROM
               LEFT JOIN business_hours AS bh ON rd.dw_numeric = bh.dw_numeric
             WHERE
               td.ticket_id = 159300
-          ) sub
-      ) sub
-  ) sub
+          ) AS sub
+      ) AS sub
+  ) AS sub
 GROUP BY
   ticket_id

@@ -71,12 +71,12 @@ WITH
               END AS is_attrition_week
             FROM
               roster AS r
-          ) sub
+          ) AS sub
         GROUP BY
           sub.academic_year,
           ROLLUP (sub.region, sub.reporting_schoolid),
           CUBE (sub.school_level, sub.grade_level)
-      ) sub UNPIVOT (
+      ) AS sub UNPIVOT (
         [value] FOR field IN (pct_fr_lunch, n_attrition_week)
       ) u
   ),
@@ -159,14 +159,14 @@ WITH
               AND a.is_replacement = 0
               AND a.module_type IN ('QA', 'CRQ')
               AND a.module_number IS NOT NULL
-          ) sub
+          ) AS sub
         GROUP BY
           sub.academic_year,
           sub.subject_area,
           sub.module_number,
           ROLLUP (sub.region, sub.reporting_schoolid),
           CUBE (sub.school_level, sub.grade_level)
-      ) sub UNPIVOT (
+      ) AS sub UNPIVOT (
         [value] FOR field IN (
           sub.pct_target,
           sub.pct_approaching,
@@ -232,12 +232,12 @@ WITH
   INNER JOIN gabby.parcc.summative_record_file_clean AS p
   ON r.student_number = p.local_student_identifier
   AND r.academic_year = p.academic_year
-  ) sub
+  ) AS sub
   GROUP BY sub.academic_year
   ,sub.[subject]
   ,ROLLUP(sub.region, sub.reporting_schoolid)
   ,CUBE(sub.school_level, sub.grade_level)
-  ) sub
+  ) AS sub
   UNPIVOT (
   [value]
   FOR field IN (sub.pct_target
@@ -468,7 +468,7 @@ WITH
           sub.academic_year,
           ROLLUP (sub.region, sub.reporting_schoolid),
           CUBE (sub.school_level, sub.grade_level)
-      ) sub UNPIVOT (
+      ) AS sub UNPIVOT (
         [value] FOR field IN (
           sub.pct_ada,
           sub.pct_ontime,
@@ -511,7 +511,7 @@ WITH
           student_attendance AS sa
         WHERE
           sa.enroll_status = 0
-      ) sub
+      ) AS sub
     GROUP BY
       sub.academic_year,
       ROLLUP (sub.region, sub.reporting_schoolid),
@@ -571,12 +571,12 @@ WITH
   AND a.primary_site_reporting_schoolid != 0
   AND a.legal_entity_name != 'KIPP New Jersey'
   AND a.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-  ) sub
+  ) AS sub
   GROUP BY
   sub.academic_year,
   ROLLUP (sub.region, sub.reporting_schoolid),
   CUBE (sub.school_level)
-  ) sub UNPIVOT (
+  ) AS sub UNPIVOT (
   VALUE FOR field IN (
   sub.pct_attrition,
   sub.pct_attrition_resignation,
@@ -628,7 +628,7 @@ WITH
           AND DATEFROMPARTS(y2.academic_year, 10, 01) (BETWEEN y2.entrydate AND y2.exitdate)
         WHERE
           DATEFROMPARTS(y1.academic_year, 10, 01) (BETWEEN y1.entrydate AND y1.exitdate)
-      ) sub
+      ) AS sub
     GROUP BY
       sub.academic_year,
       ROLLUP (sub.region, sub.reporting_schoolid),
@@ -677,12 +677,12 @@ WITH
               AND r.reporting_schoolid = gpa.schoolid
               AND r.[db_name] = gpa.[db_name]
               AND gpa.is_curterm = 1
-          ) sub
+          ) AS sub
         GROUP BY
           sub.academic_year,
           ROLLUP (sub.region, sub.reporting_schoolid),
           CUBE (sub.school_level, sub.grade_level)
-      ) sub UNPIVOT (
+      ) AS sub UNPIVOT (
         [value] FOR field IN (sub.pct_gpa_ge_3, sub.pct_gpa_ge_2)
       ) u
   ),
@@ -801,12 +801,12 @@ WITH
   legal_entity_name,
   primary_site_school_level,
   schoolid
-  ) sub
+  ) AS sub
   GROUP BY
   sub.academic_year,
   ROLLUP (sub.region, sub.reporting_schoolid),
   CUBE (sub.primary_site_school_level)
-  ) sub UNPIVOT (
+  ) AS sub UNPIVOT (
   [value] FOR field IN (
   sub.pct_present_lt_90,
   sub.pct_present_ge_90_lt_95,
@@ -857,13 +857,13 @@ WITH
               AND r.academic_year = achv.academic_year
               AND achv.achv_unique_id LIKE 'FPBAS%'
               AND achv.[start_date] <= SYSDATETIME()
-          ) sub
+          ) AS sub
         GROUP BY
           sub.academic_year,
           sub.reporting_term,
           ROLLUP (sub.region, sub.reporting_schoolid),
           CUBE (sub.school_level, sub.grade_level)
-      ) sub UNPIVOT (
+      ) AS sub UNPIVOT (
         [value] FOR field IN (
           sub.pct_on_gradelevel,
           sub.pct_moved_reading_level
@@ -902,7 +902,7 @@ WITH
           subject_primary_site_school_level,
           subject_primary_site_schoolid,
           subject_username
-      ) sub
+      ) AS sub
     GROUP BY
       academic_year,
       reporting_term,
@@ -944,7 +944,7 @@ WITH
           subject_primary_site_school_level,
           subject_primary_site_schoolid,
           subject_username
-      ) sub
+      ) AS sub
     GROUP BY
       academic_year,
       reporting_term,

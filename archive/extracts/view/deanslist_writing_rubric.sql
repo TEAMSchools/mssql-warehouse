@@ -86,12 +86,12 @@ FROM
           rt.alt_name,
           std.[description],
           s.local_student_id
-      ) sub
+      ) AS sub
       INNER JOIN gabby.illuminate_dna_assessments.performance_band_lookup_static AS pbl ON sub.min_performance_band_set_id = pbl.performance_band_set_id
       AND sub.avg_percent_correct (
         BETWEEN pbl.minimum_value AND pbl.maximum_value
       )
-  ) sub PIVOT (
+  ) AS sub PIVOT (
     MAX(performance_band_label) FOR module_num IN (
       [Q1],
       [Q2],

@@ -47,11 +47,11 @@ FROM
         WHERE
           sg.storecode = 'Y1'
           AND sg.excludefromgpa = 0
-      ) sub
+      ) AS sub
     GROUP BY
       student_number,
       academic_year
-  ) sub
+  ) AS sub
 UNION ALL
 SELECT
   co.student_number,

@@ -161,6 +161,6 @@ FROM
     WHERE
       co.rn_undergrad = 1
       AND (co.grade_level BETWEEN 8 AND 12)
-  ) sub
+  ) AS sub
 WHERE
   sub.ktc_status IS NOT NULL

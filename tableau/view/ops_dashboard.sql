@@ -78,7 +78,7 @@ WITH
           )
           AND rn_year = 1
           AND [db_name] IN ('kippnewark', 'kippmiami')
-      ) sub
+      ) AS sub
     GROUP BY
       sub.academic_year,
       sub.schoolid,

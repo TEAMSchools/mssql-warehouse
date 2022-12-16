@@ -77,7 +77,7 @@ WITH
             7,
             1
           )
-      ) sub
+      ) AS sub
   ),
   enr_gr AS (
     SELECT
@@ -238,7 +238,7 @@ WITH
           )
         WHERE
           te.is_dropped_course < 1.0
-      ) sub
+      ) AS sub
     WHERE
       sub.rn_enr_fg = 1
   ),
@@ -351,7 +351,7 @@ WITH
           ) AS y1_weighted_pts_earned_adj_running
         FROM
           enr_gr AS eg
-      ) sub
+      ) AS sub
   )
 SELECT
   sub.studentid,
@@ -500,7 +500,7 @@ FROM
       ) AS need_60
     FROM
       y1
-  ) sub
+  ) AS sub
   LEFT JOIN powerschool.gradescaleitem_lookup_static AS y1gs ON sub.gradescaleid = y1gs.gradescaleid
   AND sub.y1_grade_percent (
     BETWEEN y1gs.min_cutoffpercentage AND y1gs.max_cutoffpercentage

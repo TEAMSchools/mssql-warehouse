@@ -56,4 +56,4 @@ FROM
       INNER JOIN gabby.dayforce.employees AS e ON ewa.employee_reference_code = e.df_employee_number
     WHERE
       ewa.primary_work_assignment = 1
-  ) sub
+  ) AS sub

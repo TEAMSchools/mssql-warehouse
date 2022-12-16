@@ -39,7 +39,7 @@ WITH
           CAST(goal_4_rit_score AS VARCHAR(125)) AS goal_4_rit_score
         FROM
           nwea.assessment_result_identifiers
-      ) sub UNPIVOT (
+      ) AS sub UNPIVOT (
         VALUE FOR field IN (
           goal_1_adjective,
           goal_1_name,

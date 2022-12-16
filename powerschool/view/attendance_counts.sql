@@ -65,7 +65,7 @@ WITH
             'TLE',
             'X'
           )
-      ) sub
+      ) AS sub
     GROUP BY
       studentid,
       academic_year,
@@ -113,7 +113,7 @@ WITH
               1
             ) AND CURRENT_TIMESTAMP
           )
-      ) sub
+      ) AS sub
     GROUP BY
       sub.studentid,
       sub.academic_year,
@@ -176,7 +176,7 @@ WITH
           ) AS count_y1
         FROM
           mem_counts
-      ) sub UNPIVOT (n FOR field IN (count_term, count_y1)) u
+      ) AS sub UNPIVOT (n FOR field IN (count_term, count_y1)) u
   )
 SELECT
   studentid,

@@ -54,7 +54,7 @@ FROM
         7,
         1
       )
-  ) sub
+  ) AS sub
   LEFT JOIN gabby.egencia.traveler_groups AS tg ON sub.[location] = tg.[location]
   AND sub.home_department = tg.home_department
   AND sub.job_title = tg.job_title

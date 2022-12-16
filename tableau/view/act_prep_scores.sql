@@ -44,7 +44,7 @@ WITH
           gabby.powerschool.cohort_identifiers_static
         WHERE
           school_level = 'MS'
-      ) sub
+      ) AS sub
     WHERE
       rn = 1
   )

@@ -54,7 +54,7 @@ WITH
           subject_name,
           subject_location,
           subject_manager_name
-      ) sub UNPIVOT (
+      ) AS sub UNPIVOT (
         VALUE FOR field IN (
           n_responses,
           avg_response_value_subject,

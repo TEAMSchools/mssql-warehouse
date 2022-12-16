@@ -76,7 +76,7 @@ FROM
           repos
       )
       -- /*
-  ) sub PIVOT (
+  ) AS sub PIVOT (
     MAX(pivot_value) FOR table_name IN (
       [repository_126],
       [repository_169],

@@ -52,7 +52,7 @@ WITH
           gabby.powerschool.spenrollments_gen_static AS sp
         WHERE
           sp.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-      ) sub PIVOT (
+      ) AS sub PIVOT (
         MAX(n) FOR specprog_name IN (
           [Pathways ES],
           [Pathways MS],
@@ -189,7 +189,7 @@ FROM
       CAST(is_counseling AS NVARCHAR(32)) AS is_counseling
     FROM
       designation
-  ) sub UNPIVOT (
+  ) AS sub UNPIVOT (
     [value] FOR field IN (
       is_iep,
       is_504,

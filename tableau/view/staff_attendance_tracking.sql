@@ -25,7 +25,7 @@ WITH
           td.[location] LIKE '%KIPP%'
         GROUP BY
           td.[location]
-      ) sub
+      ) AS sub
       LEFT JOIN gabby.people.school_crosswalk AS cw ON sub.school_name = cw.site_name
   ),
   school_leaders AS (
@@ -89,7 +89,7 @@ WITH
           ) AS max_last_updated
         FROM
           gabby.adp.wfm_accrual_reporting_period_summary
-      ) sub
+      ) AS sub
     WHERE
       last_updated = max_last_updated
   ),
@@ -111,7 +111,7 @@ WITH
           accrual_taken_to_date_hours_
         FROM
           last_accrual_day
-      ) sub PIVOT (
+      ) AS sub PIVOT (
         MAX(accrual_taken_to_date_hours_) FOR accrual_code IN (
           [Vacation],
           [PTO],
@@ -139,7 +139,7 @@ WITH
           accrual_available_balance_hours_
         FROM
           last_accrual_day
-      ) sub PIVOT (
+      ) AS sub PIVOT (
         MAX(accrual_available_balance_hours_) FOR accrual_code IN (
           [Vacation],
           [PTO],
@@ -229,7 +229,7 @@ WITH
           gabby.adp.wfm_time_details AS td
         WHERE
           transaction_type != 'Historical Correction'
-      ) sub
+      ) AS sub
       LEFT JOIN missed_punches AS mp ON sub.employee_name = mp.employee_name
       AND sub.transaction_apply_date = mp.transaction_apply_date
     WHERE

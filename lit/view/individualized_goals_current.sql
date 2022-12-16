@@ -49,7 +49,7 @@ WITH
           gabby.lit.individualized_goal_entry
         WHERE
           _fivetran_deleted = 0
-      ) sub UNPIVOT (
+      ) AS sub UNPIVOT (
         goal FOR field IN (
           [diagnostic_goal],
           [q1_goal],

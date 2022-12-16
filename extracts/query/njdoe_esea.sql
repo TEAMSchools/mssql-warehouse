@@ -81,7 +81,7 @@ WITH
           DAY(EOMONTH(date_value)) AS month_max_days
         FROM
           gabby.tableau.staff_tracker
-      ) sub PIVOT (
+      ) AS sub PIVOT (
         SUM(hours_worked) FOR day_num IN (
           [1],
           [2],

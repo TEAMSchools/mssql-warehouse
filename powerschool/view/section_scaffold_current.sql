@@ -50,4 +50,4 @@ FROM
         7,
         1
       ) AND CAST(CURRENT_TIMESTAMP AS DATE)
-  ) sub
+  ) AS sub

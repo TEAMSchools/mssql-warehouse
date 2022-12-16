@@ -83,7 +83,7 @@ WITH
               gabby.zendesk.ticket_comment
             GROUP BY
               ticket_id
-          ) sub UNPIVOT (
+          ) AS sub UNPIVOT (
             field_value FOR metric_name IN (
               updated_min,
               updated_max,
@@ -91,7 +91,7 @@ WITH
               created_min
             )
           ) u
-      ) sub PIVOT (
+      ) AS sub PIVOT (
         MAX(field_value) FOR pivot_field IN (
           assignee_id_updated_max,
           assignee_id_updated_min,
@@ -122,7 +122,7 @@ WITH
         GROUP BY
           ticket_id,
           field_name
-      ) sub PIVOT (
+      ) AS sub PIVOT (
         MAX(value_count) FOR field_name IN (
           group_id_value_count_distinct,
           assignee_id_value_count_distinct
@@ -149,7 +149,7 @@ WITH
           gabby.zendesk.ticket_field_history
         WHERE
           field_name = 'status'
-      ) sub
+      ) AS sub
     WHERE
       current_status = 'open'
       AND prev_status = 'solved'

@@ -22,7 +22,7 @@ WITH
           AND srd.answer IS NOT NULL
         WHERE
           sq.shortname IN ('grade_level', 'location')
-      ) sub PIVOT (
+      ) AS sub PIVOT (
         MAX(answer) FOR shortname IN (grade_level, [location])
       ) p
   )

@@ -96,7 +96,7 @@ WITH
           gabby.alumni.attachment AS a
         WHERE
           a.is_deleted = 0
-      ) sub
+      ) AS sub
   ),
   enr_hist_attmat AS (
     SELECT
@@ -188,7 +188,7 @@ WITH
           INNER JOIN gabby.alumni.contact AS c ON e.student_c = c.id
         WHERE
           e.type_c = 'College'
-      ) sub UNPIVOT (
+      ) AS sub UNPIVOT (
         [value] FOR field IN (
           actual_end_date_c,
           date_last_verified_c,

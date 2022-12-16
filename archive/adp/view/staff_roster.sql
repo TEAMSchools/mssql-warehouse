@@ -256,7 +256,7 @@ WITH
           AND cw.rn_curr = 1
         WHERE
           ea.file_number IS NOT NULL
-      ) sub
+      ) AS sub
     WHERE
       sub.rn = 1
   )

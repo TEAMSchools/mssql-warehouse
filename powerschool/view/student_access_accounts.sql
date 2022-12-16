@@ -72,7 +72,7 @@ WITH
         WHERE
           s.enroll_status = 0
           AND s.dob IS NOT NULL
-      ) sub
+      ) AS sub
   ),
   base_username AS (
     SELECT

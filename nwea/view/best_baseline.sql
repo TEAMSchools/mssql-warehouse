@@ -39,7 +39,7 @@ FROM
   CROSS JOIN STRING_SPLIT (
     'Mathematics,Reading,Language Usage,Science - General Science',
     ','
-  ) subj
+  ) AS subj
   LEFT JOIN nwea.assessment_result_identifiers AS map_fall /* CURRENT YEAR FALL */ ON r.student_number = map_fall.student_id
   AND subj.[value] = map_fall.measurement_scale
   AND r.academic_year = map_fall.academic_year

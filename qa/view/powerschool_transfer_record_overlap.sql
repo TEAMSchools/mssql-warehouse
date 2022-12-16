@@ -37,6 +37,6 @@ FROM
       INNER JOIN gabby.powerschool.schools AS sch ON pea.schoolid = sch.school_number
       AND pea.[db_name] = sch.[db_name]
       AND sch.state_excludefromreporting = 0 /* exclude grads & ss */
-  ) sub
+  ) AS sub
 WHERE
   entrydate <= exitdate_prev

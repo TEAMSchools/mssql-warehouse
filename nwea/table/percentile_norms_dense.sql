@@ -131,7 +131,7 @@ WITH
           scaffold AS s1
         WHERE
           rn = 1
-      ) sub
+      ) AS sub
   )
 SELECT
   *

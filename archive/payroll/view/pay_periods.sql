@@ -46,7 +46,7 @@ FROM
           gabby.utilities.reporting_days
         WHERE
           dw_numeric NOT IN (1, 7)
-      ) sub
-  ) sub
+      ) AS sub
+  ) AS sub
 WHERE
   rn_date_desc = 1

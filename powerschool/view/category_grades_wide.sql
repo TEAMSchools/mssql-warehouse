@@ -143,7 +143,7 @@ WITH
           CAST(citizenship AS NVARCHAR(4)) AS citizenship
         FROM
           grades_long
-      ) sub UNPIVOT (
+      ) AS sub UNPIVOT (
         [value] FOR field IN (category_pct, citizenship)
       ) u
   ),
@@ -229,7 +229,7 @@ WITH
         WHERE
           gr.field = 'citizenship'
           AND gr.storecode_type = 'Q'
-      ) sub PIVOT (
+      ) AS sub PIVOT (
         MAX([value]) FOR pivot_field IN (
           [F_CUR],
           [F_RT1],

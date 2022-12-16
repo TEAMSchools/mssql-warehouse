@@ -56,4 +56,4 @@ FROM
       INNER JOIN gabby.adp.employees_all AS sr ON mh.associate_id = sr.associate_id
     WHERE
       mh.reports_to_associate_id IS NOT NULL
-  ) sub
+  ) AS sub

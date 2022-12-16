@@ -94,7 +94,7 @@ FROM
     WHERE
       step.step = 0
       AND step.passed = 0
-  ) sub
+  ) AS sub
   INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON sub.student_number = co.student_number
   AND sub.academic_year = co.academic_year
   AND co.rn_year = 1

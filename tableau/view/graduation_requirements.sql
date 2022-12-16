@@ -36,7 +36,7 @@ WITH
           CAST(sat.math_test AS INT) AS math_test
         FROM
           gabby.naviance.sat_scores AS sat
-      ) sub UNPIVOT (
+      ) AS sub UNPIVOT (
         [value] FOR field IN (
           evidence_based_reading_writing,
           math,

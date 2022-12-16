@@ -87,4 +87,4 @@ FROM
       AND cs.term_name = ss.term_name
       AND cs.course_number = ss.course_number
       AND ss.rn_term = 1
-  ) sub
+  ) AS sub

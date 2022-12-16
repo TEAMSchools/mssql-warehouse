@@ -260,7 +260,7 @@ WITH
           r.academic_year = 2014
           AND r.schoolid = 133570965
           AND r.test_round = 'T3'
-      ) sub
+      ) AS sub
   ),
   achieved AS (
     SELECT
@@ -680,5 +680,5 @@ FROM
           AND achieved.academic_year = indiv.academic_year
         WHERE
           achieved.rn = 1
-      ) sub
-  ) sub
+      ) AS sub
+  ) AS sub

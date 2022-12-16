@@ -117,4 +117,4 @@ FROM
       mem.attendancevalue IS NOT NULL
       AND mem.calendardate <= CURRENT_TIMESTAMP
       AND mem.membershipvalue > 0
-  ) sub
+  ) AS sub

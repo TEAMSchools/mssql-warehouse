@@ -69,6 +69,6 @@ FROM
     WHERE
       quiz_deleted = 0
       AND quiz_type = 'Reading Practice Quiz'
-  ) sub
+  ) AS sub
 WHERE
   sub.student_identifier IS NOT NULL

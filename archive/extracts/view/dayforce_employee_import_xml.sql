@@ -45,4 +45,4 @@ FROM
       AND ISNUMERIC(ad.employeenumber) = 1
     WHERE
       df.[status] != 'TERMINATED'
-  ) sub
+  ) AS sub

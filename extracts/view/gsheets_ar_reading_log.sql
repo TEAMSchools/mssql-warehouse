@@ -85,7 +85,7 @@ WITH
               words_goal > 0 ND (
                 CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN [start_date] AND end_date
               )
-          ) sub UNPIVOT (
+          ) AS sub UNPIVOT (
             VALUE FOR field IN (
               words,
               words_goal,
@@ -97,7 +97,7 @@ WITH
               words_needed
             )
           ) u
-      ) sub PIVOT (
+      ) AS sub PIVOT (
         MAX([value]) FOR pivot_field IN (
           [cur_words],
           [cur_words_goal],

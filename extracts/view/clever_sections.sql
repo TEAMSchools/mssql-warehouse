@@ -161,7 +161,7 @@ WITH
           dsos
           INNER JOIN gabby.powerschool.schools AS s ON dsos.School_id = s.school_number
           INNER JOIN gabby.utilities.row_generator_smallint AS r ON (r.n BETWEEN s.low_grade AND s.high_grade)
-      ) sub
+      ) AS sub
   )
 SELECT
   p.School_id,

@@ -273,4 +273,4 @@ FROM
       co.lastfirst,
       co.grade_level,
       co.team
-  ) sub
+  ) AS sub

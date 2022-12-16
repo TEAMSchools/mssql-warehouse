@@ -111,7 +111,7 @@ WITH
           AND fp.year_of_assessment = c.school_year
           AND fp.class_name = c.[name]
           AND c.rn = 1
-      ) sub
+      ) AS sub
   ),
   predna AS (
     SELECT

@@ -90,7 +90,7 @@ WITH
         FROM
           gabby.lit.powerschool_readingscores_archive AS rs
           INNER JOIN gabby.powerschool.students AS s ON rs.studentid = s.id
-      ) sub UNPIVOT (
+      ) AS sub UNPIVOT (
         score FOR field IN (
           name_ass,
           ltr_nameid,

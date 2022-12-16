@@ -35,7 +35,7 @@ WITH
         WHERE
           cd.insession = 1
           AND cd.membershipvalue > 0
-      ) sub UNPIVOT (
+      ) AS sub UNPIVOT (
         [value] FOR field IN (sub.a, sub.b, sub.c, sub.d, sub.e, sub.f)
       ) u
   )

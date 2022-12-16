@@ -23,7 +23,7 @@ WITH
           gabby.lit.achieved_by_round_static
         WHERE
           [start_date] <= CAST(CURRENT_TIMESTAMP AS DATE)
-      ) sub
+      ) AS sub
     GROUP BY
       sub.academic_year,
       sub.schoolid,
@@ -130,7 +130,7 @@ WITH
             'Science'
           )
           AND asr.module_type IN ('QA', 'CP')
-      ) sub UNPIVOT (
+      ) AS sub UNPIVOT (
         [value] FOR field IN (
           is_mastery,
           is_mastery_iep45,
@@ -329,13 +329,13 @@ WITH
               AND co.grade_level != 99
             WHERE
               act.rn_highest = 1
-          ) sub
+          ) AS sub
         GROUP BY
           sub.academic_year,
           sub.schoolid,
           sub.grade_level,
           sub.reporting_term
-      ) sub UNPIVOT (
+      ) AS sub UNPIVOT (
         metric_value FOR metric_name IN (
           pct_act_17plus,
           pct_act_19plus,
@@ -580,7 +580,7 @@ WITH
           )
         WHERE
           tgs.goal_type = 'Class'
-      ) sub
+      ) AS sub
     GROUP BY
       sub.df_employee_number,
       sub.preferred_name,

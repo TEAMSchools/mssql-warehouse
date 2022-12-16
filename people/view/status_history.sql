@@ -166,7 +166,7 @@ WITH
           ) AS position_status_prev
         FROM
           status_dates
-      ) sub
+      ) AS sub
     WHERE
       CONCAT(position_status, position_status_prev) != 'TerminatedTerminated'
   )

@@ -43,7 +43,7 @@ WITH
               AND co.grade_level >= 3
             )
           )
-      ) sub
+      ) AS sub
     GROUP BY
       student_number,
       academic_year,
@@ -86,7 +86,7 @@ WITH
   ON achv.reporting_term = 'LIT2'
   WHERE achv.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
   AND achv.reporting_term IN ('LIT1','LIT2')
-  ) sub
+  ) AS sub
   LEFT JOIN gabby.renaissance.ar_goal_criteria AS goal
   ON sub.indep_lvl_num  BETWEEN goal.[min] AND goal.[max]
   AND goal.criteria_clean = 'lvl_num'
@@ -139,7 +139,7 @@ WITH
           AND r.term_name = df2.term_name
           LEFT JOIN gabby.renaissance.ar_individualized_goals_long_static AS g ON r.student_number = g.student_number
           AND r.reporting_term = g.reporting_term
-      ) sub
+      ) AS sub
   )
 SELECT
   student_number,
@@ -174,4 +174,4 @@ FROM
     GROUP BY
       student_number,
       academic_year
-  ) sub
+  ) AS sub

@@ -180,4 +180,4 @@ FROM
       INNER JOIN gabby.illuminate_dna_assessments.students_assessments AS sa ON a.assessment_id = sa.assessment_id
     WHERE
       a.is_normed_scope = 0
-  ) sub
+  ) AS sub

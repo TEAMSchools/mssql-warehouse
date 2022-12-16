@@ -39,7 +39,7 @@ FROM
       CROSS JOIN STRING_SPLIT (
         'Mathematics,Reading,Science - General Science,Language Usage',
         ','
-      ) subjects
+      ) AS subjects
       LEFT JOIN gabby.nwea.assessment_result_identifiers AS map ON co.student_number = map.student_id
       AND co.academic_year = map.academic_year
       AND terms.[value] = map.term
@@ -49,4 +49,4 @@ FROM
       co.grade_level <= 8
       AND co.enroll_status = 0
       AND co.rn_year = 1
-  ) sub
+  ) AS sub

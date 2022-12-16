@@ -73,7 +73,7 @@ WITH
           CAST(subjects_taught AS VARCHAR(MAX)) AS subjects_taught
         FROM
           gabby.dayforce.employees_archive
-      ) sub UNPIVOT (
+      ) AS sub UNPIVOT (
         [value] FOR field IN (
           sub.preferred_last_name,
           sub.common_name,

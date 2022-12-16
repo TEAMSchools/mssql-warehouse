@@ -91,10 +91,10 @@ WITH
             WHERE
               column_id > -1
               AND [db_name] IN ('kippnewark', 'kippcamden', 'kippmiami')
-          ) sub PIVOT (
+          ) AS sub PIVOT (
             MAX(column_type) FOR [db_name] IN ([kippnewark], [kippcamden], [kippmiami])
           ) p
-      ) sub
+      ) AS sub
   )
 SELECT
   TOP 100000 sub.[schema_name],
@@ -147,7 +147,7 @@ FROM
     GROUP BY
       atc.table_name,
       atc.[schema_name]
-  ) sub
+  ) AS sub
   CROSS JOIN (
     SELECT
       n

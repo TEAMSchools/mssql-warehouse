@@ -85,4 +85,4 @@ FROM
       sri.survey_id = 6330385
       AND sri.[status] = 'Complete'
       AND sri.rn_respondent_subject = 1
-  ) sub
+  ) AS sub

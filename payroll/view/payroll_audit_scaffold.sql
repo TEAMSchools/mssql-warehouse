@@ -317,7 +317,7 @@ WITH
           CAST(r.n_records AS FLOAT) AS n_records
         FROM
           payroll_rollup AS r
-      ) sub UNPIVOT (
+      ) AS sub UNPIVOT (
         code_value FOR code IN (
           ded_cd_3,
           ded_cd_4,

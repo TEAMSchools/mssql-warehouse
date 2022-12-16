@@ -65,7 +65,7 @@ WITH
           gabby.finance.financial_model
         WHERE
           _fivetran_deleted = 0
-      ) sub
+      ) AS sub
     WHERE
       sub.rn_month = 1
   )

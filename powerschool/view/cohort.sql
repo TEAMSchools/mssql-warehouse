@@ -351,4 +351,4 @@ FROM
       END AS is_retained_year
     FROM
       enr_order
-  ) sub
+  ) AS sub

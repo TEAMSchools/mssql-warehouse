@@ -22,7 +22,7 @@ FROM
       AND is_missing = 0
     ORDER BY
       repository_id
-  ) sub EXEC (@sql);
+  ) AS sub EXEC (@sql);
 
 /* drop indexes */
 BEGIN TRY

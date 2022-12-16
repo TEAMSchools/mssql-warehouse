@@ -32,6 +32,6 @@ FROM
       powerschool.course_enrollments AS enr
     WHERE
       enr.course_number = 'HR'
-  ) sub
+  ) AS sub
 WHERE
   rn_year = 1

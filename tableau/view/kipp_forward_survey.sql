@@ -82,7 +82,7 @@ WITH
           gabby.surveygizmo.survey_detail
         WHERE
           survey_id = 6734664
-      ) sub PIVOT (
+      ) AS sub PIVOT (
         MAX(answer) FOR question_shortname IN (
           [first_name],
           [last_name],

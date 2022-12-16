@@ -21,6 +21,6 @@ FROM
       ) AS rn
     FROM
       powerschool.u_clg_et_stu_alt
-  ) sub
+  ) AS sub
 WHERE
   rn = 1

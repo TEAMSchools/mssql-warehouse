@@ -22,7 +22,7 @@ WITH
           gabby.adp.additional_earnings_report
         WHERE
           additional_earnings_description NOT IN ('Sick', 'C-SICK')
-      ) sub
+      ) AS sub
     GROUP BY
       position_id,
       additional_earnings_code,

@@ -57,7 +57,7 @@ WITH
         WHERE
           mem.calendardate <= CURRENT_TIMESTAMP
           AND mem.membershipvalue > 0
-      ) sub
+      ) AS sub
     GROUP BY
       sub.studentid,
       sub.[db_name]
@@ -80,7 +80,7 @@ WITH
           'Y' AS yn
         FROM
           gabby.powerschool.studentrace AS sr
-      ) sub PIVOT (
+      ) AS sub PIVOT (
         MAX(yn) FOR racecd IN ([I], [A], [B], [P], [W])
       ) p
   )

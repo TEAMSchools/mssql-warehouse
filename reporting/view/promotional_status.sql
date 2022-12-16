@@ -77,7 +77,7 @@ WITH
           local_student_id,
           academic_year,
           term_administered
-      ) sub
+      ) AS sub
   ),
   ADA AS (
     SELECT
@@ -265,5 +265,5 @@ FROM
         AND rt.alt_name = qas.term_administered
         WHERE
           co.rn_year = 1
-      ) sub
-  ) sub
+      ) AS sub
+  ) AS sub

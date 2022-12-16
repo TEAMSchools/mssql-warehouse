@@ -72,7 +72,7 @@ WITH
           AVG(power_quality) AS imp_10
         FROM
           gabby.tableau.kipp_forward_survey
-      ) sub UNPIVOT (
+      ) AS sub UNPIVOT (
         avg_weighted_scores FOR question_shortname IN (
           imp_1,
           imp_2,

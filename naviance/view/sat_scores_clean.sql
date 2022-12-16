@@ -144,4 +144,4 @@ FROM
         FROM
           gabby.naviance.sat_scores_before_mar_2016
       ) sat
-  ) sub
+  ) AS sub

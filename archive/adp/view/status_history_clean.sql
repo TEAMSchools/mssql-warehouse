@@ -63,4 +63,4 @@ FROM
     WHERE
       CAST(sh.status_effective_date AS DATE) < CAST(sh.status_effective_end_date AS DATE)
       OR sh.status_effective_end_date IS NULL
-  ) sub
+  ) AS sub

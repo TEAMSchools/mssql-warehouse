@@ -25,7 +25,7 @@ FROM
       gabby.renaissance.ar_individualized_goals
     WHERE
       student_number IS NOT NULL
-  ) sub UNPIVOT (
+  ) AS sub UNPIVOT (
     adjusted_goal FOR reporting_term IN (q_1, q_2, q_3, q_4)
   ) u
 WHERE

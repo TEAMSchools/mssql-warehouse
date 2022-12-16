@@ -384,7 +384,7 @@ FROM
           rit_to_readingscore_clean AS ritto_reading_score
         FROM
           nwea.assessment_results
-      ) sub
+      ) AS sub
       INNER JOIN powerschool.cohort_static AS co ON sub.student_id = co.student_number
       AND sub.academic_year = co.academic_year
       AND co.rn_year = 1
@@ -409,4 +409,4 @@ FROM
     AND sub.term = norms_2015.term_clean
     COLLATE Latin1_General_BIN
     AND norms_2015.norms_year = 2015
-  ) sub
+  ) AS sub

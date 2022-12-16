@@ -38,7 +38,7 @@ FROM
     GROUP BY
       employee_number,
       question_shortname
-  ) sub PIVOT (
+  ) AS sub PIVOT (
     MAX(answer) FOR question_shortname IN (
       community_live,
       community_work,

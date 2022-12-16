@@ -92,12 +92,12 @@ FROM
           al.term_administered,
           al.subject_area,
           al.module_type
-      ) sub
+      ) AS sub
       INNER JOIN gabby.illuminate_dna_assessments.performance_band_lookup_static AS pbl ON sub.min_performance_band_set_id = pbl.performance_band_set_id
       AND sub.avg_percent_correct (
         BETWEEN pbl.minimum_value AND pbl.maximum_value
       )
-  ) sub
+  ) AS sub
 UNION ALL
 /* Enrichment UA avgs */
 SELECT
@@ -137,7 +137,7 @@ FROM
       a.academic_year_clean,
       a.subject_area,
       a.term_administered
-  ) sub
+  ) AS sub
   INNER JOIN gabby.illuminate_dna_assessments.performance_band_lookup_static AS pbl ON sub.performance_band_set_id = pbl.performance_band_set_id
   AND sub.avg_pct_correct (
     BETWEEN pbl.minimum_value AND pbl.maximum_value

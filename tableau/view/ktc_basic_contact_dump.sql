@@ -57,10 +57,10 @@ WITH
                 7,
                 1
               )
-          ) sub UNPIVOT (
+          ) AS sub UNPIVOT (
             VALUE FOR field IN (semester_gpa, academic_status)
           ) u
-      ) sub PIVOT (
+      ) AS sub PIVOT (
         MAX(VALUE) FOR pivot_field IN (
           [fall_semester_gpa],
           [fall_academic_status],
@@ -102,7 +102,7 @@ WITH
             7,
             1
           )
-      ) sub PIVOT (MAX(date_c) FOR semester IN ([F], [S])) p
+      ) AS sub PIVOT (MAX(date_c) FOR semester IN ([F], [S])) p
   ),
   oot_roster AS (
     SELECT
@@ -162,7 +162,7 @@ WITH
         WHERE
           Status_c = 'Successful'
           AND is_deleted = 0
-      ) sub
+      ) AS sub
   ),
   counselor_changes AS (
     SELECT
@@ -237,7 +237,7 @@ WITH
               AND a.transfer_application_c = 1 THEN '4YR_T'
             END
           )
-      ) sub PIVOT (
+      ) AS sub PIVOT (
         MAX(N) FOR school_type IN ([4YR], [2YR], [4YR_T], [2YR_T], [ALL])
       ) p
   )

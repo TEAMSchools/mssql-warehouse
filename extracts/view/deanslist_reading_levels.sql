@@ -45,4 +45,4 @@ FROM
     WHERE
       academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
       AND achv_unique_id LIKE 'FPBAS%'
-  ) sub
+  ) AS sub

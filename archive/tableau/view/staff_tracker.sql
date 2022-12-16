@@ -21,7 +21,7 @@ WITH
           absence_type
         FROM
           gabby.dayforce.employee_attendance
-      ) sub PIVOT (
+      ) AS sub PIVOT (
         MAX(excused_status) FOR absence_type IN (
           [absent],
           [late],
@@ -69,7 +69,7 @@ WITH
             'Pending',
             'Cancellation Pending'
           )
-      ) sub
+      ) AS sub
   ),
   leave AS (
     SELECT

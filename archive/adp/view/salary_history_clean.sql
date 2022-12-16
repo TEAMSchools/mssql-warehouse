@@ -63,6 +63,6 @@ FROM
         CAST(sh.regular_pay_effective_date AS DATE) < CAST(sh.regular_pay_effective_end_date AS DATE)
         OR sh.regular_pay_effective_end_date IS NULL
       )
-  ) sub
+  ) AS sub
 WHERE
   sub.annual_salary > 0

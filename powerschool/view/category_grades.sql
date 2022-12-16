@@ -49,7 +49,7 @@ WITH
             7,
             1
           )
-      ) sub
+      ) AS sub
   )
 SELECT
   sub.studentid,
@@ -120,6 +120,6 @@ FROM
       AND enr.storecode = pgf.finalgradename
     WHERE
       enr.is_dropped_course < 1.0
-  ) sub
+  ) AS sub
 WHERE
   sub.rn_storecode_course = 1

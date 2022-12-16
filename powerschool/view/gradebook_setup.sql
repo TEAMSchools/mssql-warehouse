@@ -100,7 +100,7 @@ FROM
           AND gsfa.isdefaultformulaset = 1
         WHERE
           sec.gradebooktype = 2 /* PTP */
-      ) sub
+      ) AS sub
       LEFT JOIN powerschool.gradeformulaset AS gfs ON sub.gradeformulasetid = gfs.gradeformulasetid
       LEFT JOIN powerschool.terms AS t ON sub.termid = t.id
       AND sub.schoolid = t.schoolid
@@ -112,4 +112,4 @@ FROM
       LEFT JOIN powerschool.gradecalcformulaweight AS gcfw ON gct.gradecalculationtypeid = gcfw.gradecalculationtypeid
       LEFT JOIN powerschool.teachercategory AS tc ON gcfw.teachercategoryid = tc.teachercategoryid
       LEFT JOIN powerschool.districtteachercategory AS dtc ON gcfw.districtteachercategoryid = dtc.districtteachercategoryid
-  ) sub
+  ) AS sub

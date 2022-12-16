@@ -26,7 +26,7 @@ FROM
     WHERE
       subject_area = 'Composite'
       AND academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-  ) sub PIVOT (
+  ) AS sub PIVOT (
     MAX(scale_score) FOR field IN (
       [scale_score_act1],
       [scale_score_act2],

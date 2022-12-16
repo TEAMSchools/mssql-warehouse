@@ -53,7 +53,7 @@ WITH
           rs.testid
         FROM
           gabby.lit.fpodms_test_events AS rs
-      ) sub UNPIVOT (
+      ) AS sub UNPIVOT (
         score FOR field IN (
           fp_wpmrate,
           fp_fluency,
@@ -212,4 +212,4 @@ FROM
       INNER JOIN prof_clean AS prof ON rs.testid = prof.testid
       AND rs.field = prof.field_name
       AND rs.lvl_num = prof.lvl_num
-  ) sub
+  ) AS sub

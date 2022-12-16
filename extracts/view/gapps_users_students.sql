@@ -79,4 +79,4 @@ FROM
       )
       AND s.[db_name] = sp.[db_name]
       AND sp.specprog_name = 'Out of District'
-  ) sub
+  ) AS sub

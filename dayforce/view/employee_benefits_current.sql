@@ -71,8 +71,8 @@ FROM
           END AS ben_plan_category
         FROM
           dayforce.employee_benefits_options
-      ) sub
-  ) sub PIVOT (
+      ) AS sub
+  ) AS sub PIVOT (
     MAX(ben_plan_option_name) FOR ben_plan_category IN (
       [Dental],
       [Verizon Wireless],

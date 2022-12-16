@@ -65,11 +65,11 @@ WITH
               CAST(REPLACE(levelname, 'Level ', '') AS INT) AS level_number
             FROM
               gabby.lexia.student_progress
-          ) sub
+          ) AS sub
         GROUP BY
           username,
           grade_level
-      ) sub
+      ) AS sub
   ),
   other_goals AS (
     SELECT
@@ -138,7 +138,7 @@ FROM
     WHERE
       co.rn_year = 1
       AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-  ) sub
+  ) AS sub
 GROUP BY
   student_number,
   academic_year

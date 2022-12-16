@@ -149,7 +149,7 @@ FROM
           repo.field_writing_optional AS writing
         FROM
           [gabby].[illuminate_dna_repositories].[repository_193] repo
-      ) sub
+      ) AS sub
     WHERE
       CONCAT(repository_id, '_', repository_row_id) IN (
         SELECT
@@ -157,5 +157,5 @@ FROM
         FROM
           gabby.illuminate_dna_repositories.repository_row_ids
       )
-  ) sub
+  ) AS sub
   INNER JOIN gabby.illuminate_public.students AS s ON sub.student_id = s.student_id

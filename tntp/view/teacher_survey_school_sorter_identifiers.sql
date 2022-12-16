@@ -133,4 +133,4 @@ FROM
       ) AS VALUE
     FROM
       gabby.tntp.teacher_survey_school_sorter
-  ) sub
+  ) AS sub

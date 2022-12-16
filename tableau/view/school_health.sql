@@ -147,7 +147,7 @@ FROM
           ats.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 3
           AND ats.is_curterm = 1
           AND ats.grade_level <= 4
-      ) sub
+      ) AS sub
     GROUP BY
       sub.academic_year,
       sub.schoolid,
@@ -218,7 +218,7 @@ FROM
           AND gpa.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 3
           AND gpa.grade_level >= 5
           AND co.school_level NOT IN ('OD', 'ES')
-      ) sub
+      ) AS sub
     GROUP BY
       sub.academic_year,
       sub.schoolid,
@@ -388,7 +388,7 @@ FROM
           AND co.is_enrolled_recent = 1
           AND co.grade_level <= 2
           AND co.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 3
-      ) sub
+      ) AS sub
     GROUP BY
       sub.academic_year,
       sub.schoolid,
@@ -520,7 +520,7 @@ FROM
           co.rn_year = 1
           AND co.is_enrolled_y1 = 1
           AND co.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 3
-      ) sub
+      ) AS sub
     GROUP BY
       sub.academic_year,
       sub.schoolid,
@@ -662,7 +662,7 @@ FROM
           co.is_enrolled_oct01 = 1
           AND co.rn_year = 1
           AND co.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 3
-      ) sub
+      ) AS sub
     GROUP BY
       sub.academic_year,
       sub.schoolid,
@@ -701,7 +701,7 @@ FROM
           sc.ps_school_id,
           cm.campaign_academic_year,
           cm.respondent_df_employee_number
-      ) sub
+      ) AS sub
     GROUP BY
       sub.academic_year,
       sub.schoolid
@@ -941,7 +941,7 @@ FROM
                 _10_what_best_describes_family_engagement_at_your_school_
               )
             ) u
-          ) sub
+          ) AS sub
         GROUP BY
           sub.academic_year,
           sub.student_number,
@@ -949,7 +949,7 @@ FROM
           sub.grade_level,
           sub.iep_status,
           sub.gender
-      ) sub
+      ) AS sub
     GROUP BY
       sub.academic_year,
       sub.schoolid
@@ -1051,13 +1051,13 @@ FROM
           AND co.rn_year = 1
           AND co.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 3
           AND (co.grade_level BETWEEN 3 AND 8)
-      ) sub
+      ) AS sub
     GROUP BY
       sub.academic_year,
       sub.schoolid,
       sub.grade_band,
       sub.[subject]
-  ) sub
+  ) AS sub
   LEFT JOIN gabby.reporting.school_health_metric_lookup AS ml ON sub.subdomain = ml.subdomain
   AND sub.grade_band = ml.grade_band
 COLLATE Latin1_General_BIN

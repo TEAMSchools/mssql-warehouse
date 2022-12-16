@@ -100,7 +100,7 @@ FROM
       field_within_the_text AS [Within the Text]
     FROM
       gabby.illuminate_dna_repositories.repository_170
-  ) sub
+  ) AS sub
   INNER JOIN gabby.illuminate_public.students AS s ON sub.student_id = s.student_id
 WHERE
   CONCAT(repository_id, '_', repository_row_id) IN (

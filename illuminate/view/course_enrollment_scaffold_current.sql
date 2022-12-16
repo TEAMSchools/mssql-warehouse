@@ -111,6 +111,6 @@ FROM
       enr
     WHERE
       is_dropped_course < 1.0
-  ) sub
+  ) AS sub
 WHERE
   rn = 1

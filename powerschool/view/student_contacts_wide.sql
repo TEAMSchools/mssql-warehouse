@@ -126,7 +126,7 @@ WITH
           1 AS contact_category_type_priority
         FROM
           people AS c
-      ) sub
+      ) AS sub
     WHERE
       sub.contact_category_type_priority = 1
   )

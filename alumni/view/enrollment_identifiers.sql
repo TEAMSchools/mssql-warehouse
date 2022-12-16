@@ -192,8 +192,8 @@ WITH
               gabby.alumni.employment_c AS e
             WHERE
               e.is_deleted = 0
-          ) sub
-      ) sub
+          ) AS sub
+      ) AS sub
     GROUP BY
       sub.student_c
   )
@@ -443,7 +443,7 @@ FROM
       AND emp.is_deleted = 0
       LEFT JOIN gabby.alumni.account AS empa ON emp.employer_organization_look_up_c = empa.id
       AND empa.is_deleted = 0
-  ) sub
+  ) AS sub
   LEFT JOIN gabby.alumni.enrollment_c AS ug ON sub.ugrad_enrollment_id = ug.id
   AND ug.is_deleted = 0
   LEFT JOIN gabby.alumni.account AS uga ON ug.school_c = uga.id

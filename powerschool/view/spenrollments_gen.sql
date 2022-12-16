@@ -38,6 +38,6 @@ FROM
       powerschool.spenrollments AS sp
       INNER JOIN powerschool.gen ON sp.programid = gen.id
       AND gen.cat = 'specprog'
-  ) sub
+  ) AS sub
 WHERE
   rn = 1

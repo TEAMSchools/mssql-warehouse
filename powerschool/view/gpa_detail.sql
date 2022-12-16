@@ -264,4 +264,4 @@ FROM
       is_curterm,
       schoolid,
       grade_level
-  ) sub
+  ) AS sub

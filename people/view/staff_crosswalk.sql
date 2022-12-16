@@ -162,7 +162,7 @@ FROM
       AND idps._fivetran_deleted = 0
       LEFT JOIN gabby.adsi.user_attributes_static AS ads ON CAST(sr.employee_number AS VARCHAR(25)) = ads.employeenumber
       LEFT JOIN gabby.adsi.user_attributes_static AS adm ON CAST(sr.manager_employee_number AS VARCHAR(25)) = adm.employeenumber
-  ) sub
+  ) AS sub
   LEFT JOIN gabby.pm.teacher_grade_levels AS gl ON sub.ps_teachernumber = gl.teachernumber
 COLLATE Latin1_General_BIN
 AND gl.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()

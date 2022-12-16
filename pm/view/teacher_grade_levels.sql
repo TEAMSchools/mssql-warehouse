@@ -69,7 +69,7 @@ WITH
           ) AS n_students_total
         FROM
           gl_students
-      ) sub
+      ) AS sub
   )
 SELECT
   p.teachernumber,

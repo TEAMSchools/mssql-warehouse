@@ -34,7 +34,7 @@ WITH
           gabby.people.status_history_static AS t
         WHERE
           t.position_status = 'Terminated'
-      ) sub
+      ) AS sub
     WHERE
       ISNULL(
         DATEDIFF(
@@ -95,7 +95,7 @@ WITH
           gabby.people.staff_roster AS r
           LEFT JOIN term AS t /* final termination record */ ON r.position_id = t.position_id
           AND t.rn = 1
-      ) sub
+      ) AS sub
   ),
   years AS (
     SELECT
@@ -167,7 +167,7 @@ WITH
           INNER JOIN years AS y ON y.academic_year (
             BETWEEN r.start_academic_year AND r.end_academic_year
           )
-      ) sub
+      ) AS sub
       LEFT JOIN gabby.people.employment_history_static AS w ON sub.position_id = w.position_id
       AND sub.effective_date (
         BETWEEN w.effective_start_date AND w.effective_end_date

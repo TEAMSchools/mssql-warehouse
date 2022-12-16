@@ -33,7 +33,7 @@ FROM
       measure_values
     FROM
       pm.teacher_goals_lockbox
-  ) sub PIVOT (
+  ) AS sub PIVOT (
     MAX(measure_values) FOR measure_names IN (
       [Metric Value],
       [Goal],

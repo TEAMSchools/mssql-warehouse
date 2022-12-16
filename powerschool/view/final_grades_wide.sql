@@ -95,7 +95,7 @@ WITH
         AND rt.identifier = 'RT'
         AND rt.is_curterm = 1
         AND rt.schoolid = 0
-      ) sub UNPIVOT (
+      ) AS sub UNPIVOT (
         [value] FOR field IN (
           term_grade_letter,
           term_grade_percent,

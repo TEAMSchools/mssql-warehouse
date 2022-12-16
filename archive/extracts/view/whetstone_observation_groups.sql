@@ -23,11 +23,11 @@ FROM
           observation_group_id,
           observation_group_name,
           role_name
-      ) sub
+      ) AS sub
     GROUP BY
       school_id,
       observation_group_id,
       observation_group_name
-  ) sub
+  ) AS sub
 GROUP BY
   school_id

@@ -95,4 +95,4 @@ FROM
       standard_code,
       standard_description,
       domain_description
-  ) sub
+  ) AS sub

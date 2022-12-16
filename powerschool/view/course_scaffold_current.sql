@@ -41,4 +41,4 @@ FROM
       enr.section_enroll_status = 0
       AND enr.course_enroll_status = 0
       AND enr.dateenrolled <= CAST(CURRENT_TIMESTAMP AS DATE)
-  ) sub
+  ) AS sub

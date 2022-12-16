@@ -55,7 +55,7 @@ WITH
           INNER JOIN gabby.whetstone.roles AS r ON r.[name] = 'School Admin'
         WHERE
           s.primary_job = 'School Leader'
-      ) sub
+      ) AS sub
     GROUP BY
       sub.[user_id]
   ),
@@ -229,7 +229,7 @@ FROM
         1
       )
       AND scw.primary_on_site_department != 'Data'
-  ) sub
+  ) AS sub
   LEFT JOIN gabby.whetstone.users_clean AS u ON sub.user_internal_id = u.internal_id
   LEFT JOIN gabby.whetstone.users_clean AS um ON sub.manager_internal_id = um.internal_id
   LEFT JOIN gabby.whetstone.schools AS sch ON sub.school_name = sch.[name]

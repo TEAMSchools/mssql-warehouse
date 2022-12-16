@@ -20,7 +20,7 @@ WITH
           'Expense User' AS role_name
         FROM
           gabby.coupa.[user] u
-      ) sub
+      ) AS sub
     GROUP BY
       [user_id]
   ),
@@ -222,5 +222,5 @@ FROM
       LEFT JOIN gabby.coupa.address_name_crosswalk AS anc ON au.[location] = anc.adp_location
       LEFT JOIN gabby.coupa.[address] a ON anc.coupa_address_name = a.[name]
       AND a.active = 1
-  ) sub
+  ) AS sub
   LEFT JOIN gabby.coupa.school_name_aliases AS sna ON sub.coupa_school_name = sna.physical_delivery_office_name

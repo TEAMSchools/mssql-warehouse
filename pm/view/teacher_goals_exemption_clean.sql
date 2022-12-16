@@ -25,4 +25,4 @@ FROM
       gabby.pm.teacher_goals_exemption
     WHERE
       _fivetran_deleted = 0
-  ) sub UNPIVOT (VALUE FOR field IN (PM1, PM2, PM3, PM4)) u
+  ) AS sub UNPIVOT (VALUE FOR field IN (PM1, PM2, PM3, PM4)) u

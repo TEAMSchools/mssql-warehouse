@@ -33,7 +33,7 @@ WITH
           CAST(effective_end AS DATE) AS effective_end
         FROM
           gabby.dayforce.employee_status
-      ) sub
+      ) AS sub
   ),
   work_assignment_clean AS (
     SELECT
@@ -81,7 +81,7 @@ WITH
           gabby.dayforce.employee_work_assignment
         WHERE
           primary_work_assignment = 1
-      ) sub
+      ) AS sub
   ),
   validdates AS (
     SELECT

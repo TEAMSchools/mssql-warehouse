@@ -28,4 +28,4 @@ FROM
       END AS test_date
     FROM
       gabby.naviance.sat_2_scores
-  ) sub
+  ) AS sub

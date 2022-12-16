@@ -125,6 +125,6 @@ FROM
       ) AS rn_row_asc
     FROM
       easyiep.njsmart_powerschool
-  ) sub
+  ) AS sub
 WHERE
   rn_row_asc = 1

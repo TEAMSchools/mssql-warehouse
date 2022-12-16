@@ -153,7 +153,7 @@ WITH
           AND rv.rn = 1
         WHERE
           s.enroll_status IN (-1, 0)
-      ) sub
+      ) AS sub
   ),
   unpivoted AS (
     SELECT

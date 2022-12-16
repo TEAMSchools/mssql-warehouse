@@ -41,6 +41,6 @@ FROM
       ) AS rn_recent_year
     FROM
       gabby.renaissance.ar_studentpractice_identifiers_static
-  ) sub
+  ) AS sub
 WHERE
   rn_recent_year = 1

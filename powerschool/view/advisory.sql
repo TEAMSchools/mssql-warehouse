@@ -43,6 +43,6 @@ FROM
     COLLATE Latin1_General_BIN
     WHERE
       enr.course_number = 'HR'
-  ) sub
+  ) AS sub
 WHERE
   rn_year = 1

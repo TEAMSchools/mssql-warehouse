@@ -27,5 +27,5 @@ FROM
           gabby.utilities.row_generator
         WHERE
           n < (365 * 40)
-      ) sub
-  ) sub
+      ) AS sub
+  ) AS sub

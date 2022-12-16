@@ -102,7 +102,7 @@ WITH
           raw_files AS r
           LEFT OUTER JOIN gabby.powerschool.students AS sid ON r.state_student_id = sid.state_studentnumber
           LEFT OUTER JOIN gabby.powerschool.students AS sn ON r.local_student_id = CAST(sn.student_number AS NVARCHAR)
-      ) sub
+      ) AS sub
     WHERE
       rn_dupe = 1
       AND state_student_id IS NULL
@@ -179,8 +179,8 @@ WITH
   ON CHARINDEX(LTRIM(RTRIM(REPLACE(t.last_name,' ',''))), gabby.utilities.STRIP_CHARACTERS(REPLACE(s.last_name,' ',''),'^A-Z')) > 0
   AND CHARINDEX(LTRIM(RTRIM(REPLACE(t.first_name, ' ', ''))), gabby.utilities.STRIP_CHARACTERS(REPLACE(s.first_name,' ',''),'^A-Z')) > 0
   WHERE t.local_student_id IS NULL
-  ) sub          
-  ) sub
+  ) AS sub          
+  ) AS sub
   --WHERE max_rn = 1
   --*/
   /* SID matching on name
@@ -207,8 +207,8 @@ WITH
   AND CHARINDEX(LTRIM(RTRIM(REPLACE(t.first_name, ' ', ''))), gabby.utilities.STRIP_CHARACTERS(REPLACE(s.first_name,' ',''),'^A-Z')) > 0
   WHERE t.state_student_id IS NULL
   AND s.state_studentnumber IS NOT NULL
-  ) sub          
-  ) sub
+  ) AS sub          
+  ) AS sub
   WHERE max_rn = 1  
   --*/
   /* manual

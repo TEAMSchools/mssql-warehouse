@@ -85,6 +85,6 @@ FROM
         WHEN co.schoolid = 73253 THEN co.advisor_name
         ELSE cc.section_number
       END
-  ) sub
+  ) AS sub
   LEFT JOIN commlog AS cl ON sub.student_number = cl.student_school_id
   AND sub.[db_name] = cl.[db_name]

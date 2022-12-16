@@ -579,7 +579,7 @@ FROM
       gabby.steptool.all_steps
     WHERE
       student_id IS NOT NULL
-  ) sub UNPIVOT (
+  ) AS sub UNPIVOT (
     score FOR field IN (
       c_confusion_10_,
       c_confusion_11_,

@@ -16,7 +16,7 @@ WITH
           plan_name
         FROM
           gabby.adp.comprehensive_benefits_report
-      ) sub PIVOT (
+      ) AS sub PIVOT (
         MAX(plan_name) FOR plan_type IN ([Medical], [Dental], [Vision])
       ) p
   ),

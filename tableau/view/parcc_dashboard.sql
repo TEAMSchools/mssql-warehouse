@@ -30,7 +30,7 @@ WITH
             test_code NOT IN ('ALG01', 'ALG02', 'GEO01')
             AND grade_level IS NOT NULL
           )
-      ) sub PIVOT (
+      ) AS sub PIVOT (
         MAX(pct_proficient) FOR entity IN ([NJ], [NPS], [PARCC], [CPS])
       ) p
   )

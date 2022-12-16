@@ -19,7 +19,7 @@ WITH
           d.survey_id = 5560557
           AND d.rn_respondent_subject = 1
           AND d.campaign_academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1)
-      ) sub PIVOT (
+      ) AS sub PIVOT (
         MAX(answer) FOR question_shortname IN (covid_living, gender)
       ) p
   ),

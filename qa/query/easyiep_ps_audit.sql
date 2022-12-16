@@ -59,4 +59,4 @@ FROM
     FROM
       ps
       FULL JOIN iep ON ps.student_number = iep.student_number
-  ) sub
+  ) AS sub

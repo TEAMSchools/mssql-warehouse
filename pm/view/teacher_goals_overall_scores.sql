@@ -71,10 +71,10 @@ FROM
             'Self & Others'
           )
           AND tg.metric_value_stored IS NOT NULL
-      ) sub PIVOT (
+      ) AS sub PIVOT (
         MAX(metric_value_stored) FOR metric_label IN (
           [Excellent Teaching Rubric],
           [Self & Others]
         )
       ) p
-  ) sub
+  ) AS sub

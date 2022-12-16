@@ -151,7 +151,7 @@ WITH
           AND co.rn_year = 1
         WHERE
           m.rn_term_subj = 1
-      ) sub
+      ) AS sub
   )
 SELECT
   sub.student_number,
@@ -363,6 +363,6 @@ FROM
               END AS next_npr_change
             FROM
               map_long
-          ) sub
-      ) sub
-  ) sub
+          ) AS sub
+      ) AS sub
+  ) AS sub

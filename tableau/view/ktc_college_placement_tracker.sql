@@ -83,7 +83,7 @@ WITH
           score
         FROM
           gabby.naviance.sat_2_scores_clean
-      ) sub PIVOT (
+      ) AS sub PIVOT (
         MAX(composite) FOR test_month IN (
           [act_jan],
           [act_feb],
@@ -216,7 +216,7 @@ WITH
           AND s.is_deleted = 0
         WHERE
           a.is_deleted = 0
-      ) sub
+      ) AS sub
     GROUP BY
       applicant_c,
       application_submission_status_c

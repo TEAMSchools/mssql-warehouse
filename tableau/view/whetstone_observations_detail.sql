@@ -172,7 +172,7 @@ FROM
         7,
         1
       )
-  ) sub
+  ) AS sub
   LEFT JOIN gabby.whetstone.observations_scores_static AS wos ON sub.observation_id = wos.observation_id
   LEFT JOIN gabby.whetstone.measurements AS wm ON wos.score_measurement_id = wm._id
   LEFT JOIN boxes AS b ON sub.observation_id = b.observation_id

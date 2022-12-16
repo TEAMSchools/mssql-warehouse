@@ -71,7 +71,7 @@ WITH
           AND mem.calendardate = att.att_date
         WHERE
           mem.membershipvalue = 1
-      ) sub
+      ) AS sub
   )
 SELECT
   sub.studentid,

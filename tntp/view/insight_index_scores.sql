@@ -31,7 +31,7 @@ FROM
       reporting_schoolid,
       school,
       variable
-  ) sub
+  ) AS sub
 GROUP BY
   sub.administration_year,
   sub.administration_academic_year,

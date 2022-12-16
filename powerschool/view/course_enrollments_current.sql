@@ -148,5 +148,5 @@ FROM
             7,
             1
           )
-      ) sub
-  ) sub
+      ) AS sub
+  ) AS sub

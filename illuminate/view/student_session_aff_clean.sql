@@ -39,7 +39,7 @@ FROM
           (gabby.utilities.DATE_TO_SY (entry_date) + 1) AS academic_year
         FROM
           gabby.illuminate_public.student_session_aff AS ssa
-      ) sub
-  ) sub
+      ) AS sub
+  ) AS sub
 WHERE
   rn = 1

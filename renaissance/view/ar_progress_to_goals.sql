@@ -124,7 +124,7 @@ WITH
         WHERE
           co.rn_year = 1
           AND co.grade_level != 99
-      ) sub
+      ) AS sub
     GROUP BY
       student_number,
       academic_year,

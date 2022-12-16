@@ -35,6 +35,6 @@ FROM
       INNER JOIN gabby.illuminate_dna_assessments.performance_bands AS pb ON pbs.performance_band_set_id = pb.performance_band_set_id
     WHERE
       pbs.deleted_at IS NULL
-  ) sub
+  ) AS sub
 WHERE
   rn = 1

@@ -219,5 +219,5 @@ FROM
             )
           ) /* ad-hoc exception for Seek 4*/
           AND co.[date] <= CAST(CURRENT_TIMESTAMP AS DATE)
-      ) sub
-  ) sub
+      ) AS sub
+  ) AS sub

@@ -150,7 +150,7 @@ WITH
           CAST(void_reason_science AS VARCHAR(50)) AS void_reason_science
         FROM
           gabby.njsmart.gepa
-      ) sub UNPIVOT (
+      ) AS sub UNPIVOT (
         VALUE FOR field IN (
           scaled_score_lal,
           performance_level_lal,
@@ -201,7 +201,7 @@ WITH
           ) AS field
         FROM
           combined_unpivot
-      ) sub PIVOT (
+      ) AS sub PIVOT (
         MAX(VALUE) FOR field IN (
           scaled_score,
           performance_level,
@@ -251,6 +251,6 @@ FROM
     WHERE
       ISNULL(invalid_scale_score_reason, 'No') = 'No'
       AND ISNULL(void_reason, 'No') = 'No'
-  ) sub
+  ) AS sub
 WHERE
   rn_highscore_yr = 1

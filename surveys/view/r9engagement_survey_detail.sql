@@ -868,7 +868,7 @@ WITH
           END AS region_8
         FROM
           gabby.surveys.r9engagement_survey_final
-      ) sub UNPIVOT (
+      ) AS sub UNPIVOT (
         response_value FOR question_code IN (
           academicsupportdataanalyticsandstudentinformation_1_s,
           academicsupportdataanalyticsandstudentinformation_2_s,

@@ -70,7 +70,7 @@ WITH
           gabby.utilities.DATE_TO_SY (entrydate) AS academic_year
         FROM
           gabby.powerschool.reenrollments
-      ) sub
+      ) AS sub
   )
 SELECT
   s.student_number,

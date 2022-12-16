@@ -128,14 +128,14 @@ WITH
               CAST(test_scale_score AS NVARCHAR)
             FROM
               gabby.parcc.summative_record_file_clean
-          ) sub UNPIVOT (
+          ) AS sub UNPIVOT (
             VALUE FOR field IN (
               assessment_type,
               performance_level,
               scaled_score
             )
           ) u
-      ) sub PIVOT (
+      ) AS sub PIVOT (
         MAX(VALUE) FOR pivot_field IN (
           alg01_assessment_type,
           alg01_performance_level,

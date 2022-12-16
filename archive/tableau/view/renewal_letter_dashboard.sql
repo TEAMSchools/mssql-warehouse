@@ -34,7 +34,7 @@ WITH
           END AS renewal_status
         FROM
           gabby.dayforce.renewal_status AS rs
-      ) sub
+      ) AS sub
   ),
   was AS (
     SELECT
@@ -69,7 +69,7 @@ WITH
           gabby.dayforce.employee_work_assignment AS was
         WHERE
           was.primary_work_assignment = 1
-      ) sub
+      ) AS sub
   ),
   sta AS (
     SELECT
@@ -92,7 +92,7 @@ WITH
           CAST(sta.effective_start AS DATE) AS future_status_effective_start
         FROM
           gabby.dayforce.employee_status AS sta
-      ) sub
+      ) AS sub
   )
 SELECT
   r.df_employee_number,

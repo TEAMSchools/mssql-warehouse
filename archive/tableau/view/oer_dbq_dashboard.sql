@@ -126,7 +126,7 @@ WITH
           AND rt.schoolid = 73253
           AND rt.identifier = 'RT'
           AND rt._fivetran_deleted = 0
-      ) sub UNPIVOT (
+      ) AS sub UNPIVOT (
         field_value FOR field_label IN (
           prompt_1_analysis_of_evidence,
           prompt_1_choice_of_evidence,
@@ -257,7 +257,7 @@ FROM
       INNER JOIN gabby.illuminate_standards.standards AS std ON r.standard_id = std.standard_id
     WHERE
       a.academic_year_clean >= 2016
-  ) sub
+  ) AS sub
   LEFT JOIN gabby.powerschool.course_enrollments_static AS enr ON sub.student_number = enr.student_number
   AND sub.academic_year = enr.academic_year
   AND sub.course_number = enr.course_number

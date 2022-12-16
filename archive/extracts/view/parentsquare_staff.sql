@@ -60,6 +60,6 @@ FROM
       ad.is_active = 1
       AND ad.mail NOT LIKE '%kippmiami.org'
       AND ad.employeeid LIKE 'TMP%'
-  ) sub
+  ) AS sub
 WHERE
   sub.school_id IS NOT NULL

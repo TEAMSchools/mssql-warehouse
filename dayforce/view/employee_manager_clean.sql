@@ -54,7 +54,7 @@ FROM
             em.manager_effective_start < em.manager_effective_end
             OR em.manager_effective_end IS NULL
           )
-      ) sub
+      ) AS sub
     WHERE
       sub.rn_start = 1
-  ) sub
+  ) AS sub

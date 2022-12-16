@@ -96,7 +96,7 @@ WITH
               q_1_6_oe
             )
           ) u
-      ) sub
+      ) AS sub
   )
 SELECT
   so.survey_type,

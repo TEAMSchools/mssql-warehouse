@@ -316,7 +316,7 @@ WITH
           AND att.mem_count_y1 > 0
           AND att.mem_count_y1 != att.abs_unexcused_count_y1
           AND att.is_curterm = 1
-      ) sub UNPIVOT (
+      ) AS sub UNPIVOT (
         [value] FOR field IN (
           a_count_term,
           ad_count_term,
@@ -594,7 +594,7 @@ WITH
           CAST(science AS INT) AS science
         FROM
           gabby.naviance.act_scores_clean
-      ) sub UNPIVOT (
+      ) AS sub UNPIVOT (
         scale_score FOR [subject] IN (composite, english, math, reading, science)
       ) u
     UNION ALL
@@ -787,7 +787,7 @@ WITH
           LEFT JOIN gabby.alumni.account AS a ON app.ceeb_code = CAST(a.ceeb_code_c AS VARCHAR)
           AND a.record_type_id = '01280000000BQEkAAO'
           AND a.competitiveness_ranking_c IS NOT NULL
-      ) sub
+      ) AS sub
   ),
   promo_status AS (
     SELECT
@@ -822,7 +822,7 @@ WITH
             gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
           )
           AND is_curterm = 1
-      ) sub UNPIVOT (
+      ) AS sub UNPIVOT (
         [value] FOR field IN (
           promo_status_overall,
           promo_status_att,

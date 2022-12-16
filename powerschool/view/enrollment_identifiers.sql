@@ -82,7 +82,7 @@ FROM
       AND co.track = c.track
     WHERE
       co.grade_level != 99
-  ) sub
+  ) AS sub
 GROUP BY
   sub.student_number,
   sub.yearid

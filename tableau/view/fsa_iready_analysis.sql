@@ -102,7 +102,7 @@ WITH
           kippmiami.fsa.student_scores_previous
         WHERE
           fsa_scale_s != ''
-      ) sub
+      ) AS sub
   )
 SELECT
   co.student_number,

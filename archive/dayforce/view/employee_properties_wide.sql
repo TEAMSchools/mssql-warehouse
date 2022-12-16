@@ -138,9 +138,9 @@ FROM
         FROM
           gabby.dayforce.employee_properties AS ep
           INNER JOIN gabby.people.staff_crosswalk_static AS s ON ep.employee_reference_code = s.manager_df_employee_number
-      ) sub
+      ) AS sub
       INNER JOIN academic_years AS sy ON sy.academic_year BETWEEN gabby.utilities.DATE_TO_SY (sub.effective_start_date) AND gabby.utilities.DATE_TO_SY  (sub.effective_end_date)
-  ) sub PIVOT (
+  ) AS sub PIVOT (
     MAX(property_value) FOR property_name IN (
       [salesforce_id],
       [grade_taught_kindergarten],

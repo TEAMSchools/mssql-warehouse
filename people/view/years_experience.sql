@@ -30,7 +30,7 @@ WITH
         WHERE
           position_status NOT IN ('Terminated', 'Pre-Start')
           AND job_title != 'Intern'
-      ) sub PIVOT (
+      ) AS sub PIVOT (
         SUM([days]) FOR status_clean IN (active, inactive)
       ) p
   ),

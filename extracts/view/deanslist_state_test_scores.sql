@@ -70,4 +70,4 @@ FROM
       AND co.academic_year = nj.academic_year
     WHERE
       co.rn_year = 1
-  ) sub
+  ) AS sub

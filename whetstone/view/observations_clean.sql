@@ -77,6 +77,6 @@ FROM
       gabby.whetstone.observations AS wo
     WHERE
       wo.[archived_at] IS NULL
-  ) sub
+  ) AS sub
   LEFT JOIN gabby.whetstone.users_clean AS t ON sub.teacher_id = t.[user_id]
   LEFT JOIN gabby.whetstone.users_clean AS o ON sub.observer_id = o.[user_id]

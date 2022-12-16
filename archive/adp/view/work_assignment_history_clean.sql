@@ -69,4 +69,4 @@ FROM
     WHERE
       CAST(wah.position_effective_date AS DATE) < CAST(wah.position_effective_end_date AS DATE)
       OR wah.position_effective_end_date IS NULL
-  ) sub
+  ) AS sub

@@ -73,7 +73,7 @@ WITH
             7,
             1
           )
-      ) sub
+      ) AS sub
   )
 SELECT
   [location],

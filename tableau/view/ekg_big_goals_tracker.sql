@@ -28,7 +28,7 @@ WITH
           scale_score
         FROM
           gabby.naviance.sat_act_conversion
-      ) sub
+      ) AS sub
   ),
   parcc AS (
     SELECT
@@ -48,7 +48,7 @@ WITH
           test_performance_level
         FROM
           gabby.parcc.summative_record_file_clean
-      ) sub PIVOT (
+      ) AS sub PIVOT (
         MAX(test_performance_level) FOR subject IN ([ela], [math])
       ) p
   ),
@@ -116,7 +116,7 @@ WITH
                 'Algebra IIB'
               )
               AND percent_correct IS NOT NULL
-          ) sub UNPIVOT (
+          ) AS sub UNPIVOT (
             VALUE FOR field IN (
               percent_correct,
               is_mastery,
@@ -124,7 +124,7 @@ WITH
               rn_most_recent_subject
             )
           ) u
-      ) sub PIVOT (
+      ) AS sub PIVOT (
         MAX(VALUE) FOR pivot_field IN (
           ela_percent_correct,
           ela_is_mastery,
@@ -203,7 +203,7 @@ WITH
         WHERE
           gleq IS NOT NULL
           AND end_date <= CAST(CURRENT_TIMESTAMP AS DATE)
-      ) sub
+      ) AS sub
     GROUP BY
       student_number,
       academic_year
@@ -273,13 +273,13 @@ WITH
               gabby.powerschool.attendance_streak
             WHERE
               att_code IN ('OS', 'OSS', 'OSSP', 'ISS', 'S', 'T', 'T10')
-          ) sub
+          ) AS sub
         GROUP BY
           studentid,
           yearid,
           sub.att_code_group,
           DB_NAME
-      ) sub
+      ) AS sub
     GROUP BY
       studentid,
       yearid,
@@ -357,7 +357,7 @@ WITH
           is_denominator = 1
           AND legal_entity_name != 'KIPP New Jersey'
           AND primary_site_reporting_schoolid != 0
-      ) sub
+      ) AS sub
     GROUP BY
       academic_year,
       ROLLUP (school_level, region, reporting_schoolid)
@@ -392,7 +392,7 @@ WITH
           gabby.surveys.r9engagement_survey_detail
         WHERE
           competency = 'Q12'
-      ) sub
+      ) AS sub
     WHERE
       reporting_schoolid IS NOT NULL
     GROUP BY
@@ -444,7 +444,7 @@ WITH
           survey_round,
           field,
           ROLLUP (school_level, region, reporting_schoolid)
-      ) sub PIVOT (
+      ) AS sub PIVOT (
         MAX(avg_value) FOR field IN (
           [ICI Percentile],
           [Learning Environment Score],
@@ -483,7 +483,7 @@ WITH
           END AS is_agree
         FROM
           gabby.surveys.manager_survey_detail
-      ) sub
+      ) AS sub
     WHERE
       reporting_schoolid IS NOT NULL
     GROUP BY
@@ -516,7 +516,7 @@ WITH
           academic_year,
         ROLE,
         ROLLUP (school_level, region, reporting_schoolid)
-      ) sub PIVOT (
+      ) AS sub PIVOT (
         MAX(pct_responded_positive) FOR
         ROLE IN ([parent], [student])
       ) p
@@ -545,7 +545,7 @@ WITH
         WHERE
           rubric_strand_field IN ('threecsaverage', 'overallaverage')
           AND rn_most_recent_yr = 1
-      ) sub PIVOT (
+      ) AS sub PIVOT (
         MAX(pct_of_classrooms_proficient) FOR rubric_strand_field IN ([threecsaverage], [overallaverage])
       ) p
   ),
@@ -759,7 +759,7 @@ WITH
         WHERE
           co.reporting_schoolid NOT IN (999999, 5173)
           AND co.rn_year = 1
-      ) sub
+      ) AS sub
     GROUP BY
       sub.academic_year,
       ROLLUP (

@@ -88,6 +88,6 @@ FROM
       ) AS rn
     FROM
       all_grades
-  ) sub
+  ) AS sub
 WHERE
   rn = 1

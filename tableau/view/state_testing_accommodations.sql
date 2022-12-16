@@ -56,7 +56,7 @@ WITH
           CAST(asmt_extended_time_math AS VARCHAR(25)) AS asmt_extended_time_math
         FROM
           gabby.powerschool.s_nj_stu_x AS nj
-      ) sub UNPIVOT (
+      ) AS sub UNPIVOT (
         accommodation_value FOR accommodation IN (
           parcc_ell_paper_accom,
           alternate_access,

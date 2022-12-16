@@ -137,5 +137,5 @@ FROM
           gabby.naviance.act_scores AS act
         WHERE
           act.test_type IN ('ACT (Legacy)', 'ACT')
-      ) sub1
-  ) sub2
+      ) AS sub1
+  ) AS sub2

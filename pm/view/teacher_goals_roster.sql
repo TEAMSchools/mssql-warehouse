@@ -68,7 +68,7 @@ WITH
             'Teacher ESL'
           )
           AND wa.position_status NOT IN ('Terminated', 'Pre-Start')
-      ) sub
+      ) AS sub
   ),
   current_work_assignment AS (
     SELECT

@@ -163,7 +163,7 @@ WITH
           AND rt.[name] = 'Cumulative College'
         WHERE
           gpa.is_deleted = 0
-      ) sub
+      ) AS sub
   ),
   semester_gpa_pivot AS (
     SELECT
@@ -205,7 +205,7 @@ WITH
           ) u
         WHERE
           rn_semester = 1
-      ) sub PIVOT (
+      ) AS sub PIVOT (
         MAX([value]) FOR pivot_field IN (
           fall_credits_required_for_graduation,
           fall_cumulative_credits_earned,

@@ -53,7 +53,7 @@ FROM
       END AS is_exclude_homeschoolid
     FROM
       users_clean
-  ) sub
+  ) AS sub
 WHERE
   CONCAT(
     is_exclude_department,

@@ -117,4 +117,4 @@ FROM
     LEFT JOIN gabby.nwea.best_baseline AS base ON r.student_number = base.student_number
     AND r.academic_year = base.academic_year
     AND r.measurement_scale = base.measurementscale
-  ) sub
+  ) AS sub

@@ -85,7 +85,7 @@ WITH
         FROM
           gabby.smartrecruiters.report_applicants AS apl
           INNER JOIN gabby.smartrecruiters.report_applications AS app ON apl.application_id = app.application_id
-      ) sub UNPIVOT (
+      ) AS sub UNPIVOT (
         [value] FOR [key] IN (
           candidate_first_name,
           candidate_last_name,

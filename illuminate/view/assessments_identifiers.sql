@@ -209,4 +209,4 @@ FROM
       AND rt.identifier = 'RT'
       AND rt.schoolid = 0
       AND rt._fivetran_deleted = 0
-  ) sub
+  ) AS sub

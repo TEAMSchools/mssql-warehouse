@@ -109,7 +109,7 @@ WITH
           ) AS position_status_prev
         FROM
           gabby.people.status_history_static
-      ) sub
+      ) AS sub
     WHERE
       position_status_prev != 'Terminated'
       AND position_status IN ('Terminated', 'Deceased')
@@ -134,7 +134,7 @@ WITH
           ) AS position_status_prev
         FROM
           gabby.people.status_history_static
-      ) sub
+      ) AS sub
     WHERE
       position_status_prev = 'Terminated'
       AND position_status != 'Terminated'
@@ -388,7 +388,7 @@ WITH
           LEFT JOIN gabby.surveys.staff_information_survey_wide_static AS sdf ON eh.employee_number = sdf.employee_number
         WHERE
           eh.employee_number IS NOT NULL
-      ) sub
+      ) AS sub
     WHERE
       rn = 1
   )

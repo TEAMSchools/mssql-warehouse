@@ -82,7 +82,7 @@ WITH
           r.field_character_comment_2
         FROM
           gabby.illuminate_dna_repositories.repository_209 AS r
-      ) sub
+      ) AS sub
       INNER JOIN gabby.illuminate_public.students AS s ON sub.student_id = s.student_id
     WHERE
       CONCAT(

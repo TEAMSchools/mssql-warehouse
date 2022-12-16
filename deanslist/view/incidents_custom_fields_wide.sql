@@ -31,7 +31,7 @@ FROM
       [Value]
     FROM
       deanslist.incidents_custom_fields
-  ) sub PIVOT (
+  ) AS sub PIVOT (
     MAX([Value]) FOR field_name IN (
       [Approver Name],
       [Behavior Category],

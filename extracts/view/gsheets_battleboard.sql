@@ -30,7 +30,7 @@ WITH
           gabby.pm.teacher_goals_lockbox_wide
         WHERE
           academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
-      ) sub PIVOT (
+      ) AS sub PIVOT (
         MAX(metric_value) FOR pm_term IN ([PM1], [PM2], [PM3], [PM4])
       ) p
   )
