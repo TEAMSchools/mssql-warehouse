@@ -32,7 +32,7 @@ WITH
           AND job_title != 'Intern'
       ) AS sub PIVOT (
         SUM([days]) FOR status_clean IN (active, inactive)
-      ) p
+      ) AS p
   ),
   years_teaching_at_kipp AS (
     SELECT

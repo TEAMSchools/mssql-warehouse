@@ -23,7 +23,7 @@ WITH
           sq.shortname IN ('grade_level', 'location')
       ) AS sub PIVOT (
         MAX(answer) FOR shortname IN (grade_level, [location])
-      ) p
+      ) AS p
   )
 SELECT
   s.survey_id,

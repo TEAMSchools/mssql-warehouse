@@ -152,7 +152,7 @@ WITH
           prompt_4_overall,
           prompt_4_quality_of_ideas
         )
-      ) u
+      ) AS u
   )
 SELECT
   co.schoolid,

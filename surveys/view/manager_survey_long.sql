@@ -40,7 +40,7 @@ WITH
           q_17,
           q_18
         )
-      ) u
+      ) AS u
   )
 SELECT
   'MGR' AS survey_type,

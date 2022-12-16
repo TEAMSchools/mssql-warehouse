@@ -42,7 +42,7 @@ WITH
           reading_test,
           math_test
         )
-      ) u
+      ) AS u
   ),
   act AS (
     SELECT

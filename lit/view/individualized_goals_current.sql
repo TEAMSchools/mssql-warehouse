@@ -56,7 +56,7 @@ WITH
           [q3_goal],
           [q4_goal]
         )
-      ) u
+      ) AS u
   )
 SELECT
   g.student_number,

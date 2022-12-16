@@ -198,7 +198,7 @@ WITH
           major_or_area,
           college_major_declared_c
         )
-      ) u
+      ) AS u
   )
 SELECT
   r.contact_id,

@@ -115,7 +115,7 @@ WITH
           [30],
           [31]
         )
-      ) p
+      ) AS p
   )
 SELECT
   s.df_employee_number,

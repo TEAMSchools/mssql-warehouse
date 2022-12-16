@@ -148,7 +148,7 @@ WITH
           rr_prof,
           devsp_prof
         )
-      ) unpiv
+      ) AS unpiv
   )
 SELECT
   rs.unique_id,

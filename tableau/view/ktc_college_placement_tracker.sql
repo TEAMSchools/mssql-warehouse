@@ -115,7 +115,7 @@ WITH
           [sat2_m2],
           [sat2_sp]
         )
-      ) p
+      ) AS p
   ),
   act_presenior AS (
     SELECT

@@ -75,5 +75,5 @@ FROM
           [Excellent Teaching Rubric],
           [Self & Others]
         )
-      ) p
+      ) AS p
   ) AS sub

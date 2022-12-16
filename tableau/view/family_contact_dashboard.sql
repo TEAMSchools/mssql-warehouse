@@ -16,7 +16,7 @@ WITH
     FROM
       gabby.powerschool.student_contacts_static PIVOT (
         MAX(contact) FOR contact_type IN ([mobile], [home], [daytime])
-      ) p
+      ) AS p
   ),
   contacts_grouped AS (
     SELECT

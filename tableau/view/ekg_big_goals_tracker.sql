@@ -49,7 +49,7 @@ WITH
           gabby.parcc.summative_record_file_clean
       ) AS sub PIVOT (
         MAX(test_performance_level) FOR subject IN ([ela], [math])
-      ) p
+      ) AS p
   ),
   modules AS (
     SELECT
@@ -122,7 +122,7 @@ WITH
               performance_band_number,
               rn_most_recent_subject
             )
-          ) u
+          ) AS u
       ) AS sub PIVOT (
         MAX(VALUE) FOR pivot_field IN (
           ela_percent_correct,
@@ -134,7 +134,7 @@ WITH
           math_performance_band_number,
           math_rn_most_recent_subject
         )
-      ) p
+      ) AS p
   ),
   lit_achievement AS (
     SELECT
@@ -449,7 +449,7 @@ WITH
           [Learning Environment Score],
           [Learning Environment Score: Top-Quartile]
         )
-      ) p
+      ) AS p
   ),
   manager_survey AS (
     SELECT
@@ -518,7 +518,7 @@ WITH
       ) AS sub PIVOT (
         MAX(pct_responded_positive) FOR
         ROLE IN ([parent], [student])
-      ) p
+      ) AS p
   ),
   ekg_walkthrough AS (
     SELECT
@@ -546,7 +546,7 @@ WITH
           AND rn_most_recent_yr = 1
       ) AS sub PIVOT (
         MAX(pct_of_classrooms_proficient) FOR rubric_strand_field IN ([threecsaverage], [overallaverage])
-      ) p
+      ) AS p
   ),
   student_level_rollup_y1 AS (
     SELECT
@@ -876,7 +876,7 @@ WITH
           ekg_walkthough_overall_avg,
           ekg_walkthough_three_cs_avg
         )
-      ) u
+      ) AS u
   )
 SELECT
   ru.academic_year,

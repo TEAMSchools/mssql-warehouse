@@ -40,7 +40,7 @@ SELECT
     ' ',
     'UNPIVOT([value] FOR field IN (',
     @field_names,
-    ')) u',
+    ')) AS u',
     ' ',
     'WHERE u.repository_row_id IN (',
     ' ',

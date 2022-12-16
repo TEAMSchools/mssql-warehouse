@@ -24,7 +24,7 @@ WITH
           rn_school = 1
       ) AS sub PIVOT (
         MAX(grade_level) FOR school_level IN ([ES], [MS])
-      ) p
+      ) AS p
   ),
   external_prof AS (
     SELECT
@@ -71,7 +71,7 @@ WITH
           entity
       ) AS sub PIVOT (
         MAX(pct_proficient) FOR entity IN ([NJ], [NPS], [CPS])
-      ) p
+      ) AS p
   ),
   ms_grad AS (
     SELECT

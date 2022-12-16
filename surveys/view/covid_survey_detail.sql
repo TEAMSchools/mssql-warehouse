@@ -20,7 +20,7 @@ WITH
           AND d.campaign_academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1)
       ) AS sub PIVOT (
         MAX(answer) FOR question_shortname IN (covid_living, gender)
-      ) p
+      ) AS p
   ),
   ethnicity AS (
     SELECT

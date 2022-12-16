@@ -92,7 +92,7 @@ WITH
               AND [db_name] IN ('kippnewark', 'kippcamden', 'kippmiami')
           ) AS sub PIVOT (
             MAX(column_type) FOR [db_name] IN ([kippnewark], [kippcamden], [kippmiami])
-          ) p
+          ) AS p
       ) AS sub
   )
 SELECT

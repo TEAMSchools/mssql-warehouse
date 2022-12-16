@@ -176,7 +176,7 @@ WITH
           birth_certificate_proof,
           residency_proof_all
         )
-      ) u
+      ) AS u
   )
 SELECT
   a.student_number,

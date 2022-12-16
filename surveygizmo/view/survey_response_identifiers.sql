@@ -127,7 +127,7 @@ WITH
           employee_preferred_name,
           salesforce_id
         )
-      ) p
+      ) AS p
   ),
   response_clean AS (
     SELECT

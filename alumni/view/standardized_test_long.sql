@@ -60,7 +60,7 @@ FROM
       sat_essay_reading_c,
       sat_essay_writing_c
     )
-  ) u
+  ) AS u
 WHERE
   is_deleted = 0
   AND scoring_irregularity_c = 0

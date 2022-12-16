@@ -118,7 +118,7 @@ WITH
           [Unused PTO],
           [Sick]
         )
-      ) p
+      ) AS p
   ),
   accruals_balance AS (
     SELECT
@@ -146,7 +146,7 @@ WITH
           [Unused PTO],
           [Sick]
         )
-      ) p
+      ) AS p
   ),
   missed_punches AS (
     SELECT

@@ -89,7 +89,7 @@ FROM
           personphonenumberassoc AS ppna
           INNER JOIN codeset AS c ON ppna.phonetypecodesetid = c.codesetid
           AND c.code = 'Mobile'
-      ) p1 ON c.contacts_personid = p1.p1_personid
+      ) AS p1 ON c.contacts_personid = p1.p1_personid
       AND p1.p1_filteredpriorityorder = 1
       LEFT JOIN (
         SELECT
@@ -106,7 +106,7 @@ FROM
           personphonenumberassoc AS ppna
           INNER JOIN codeset AS c ON ppna.phonetypecodesetid = c.codesetid
           AND c.code = 'Home'
-      ) p2 ON c.contacts_personid = p2.p2_personid
+      ) AS p2 ON c.contacts_personid = p2.p2_personid
       AND p2.p2_filteredpriorityorder = 1
       LEFT JOIN (
         SELECT
@@ -123,7 +123,7 @@ FROM
           personphonenumberassoc AS ppna
           INNER JOIN codeset AS c ON ppna.phonetypecodesetid = c.codesetid
           AND c.code = 'Work'
-      ) p3 ON c.contacts_personid = p3.p3_personid
+      ) AS p3 ON c.contacts_personid = p3.p3_personid
       AND p3.p3_filteredpriorityorder = 1
       LEFT JOIN (
         SELECT
@@ -189,7 +189,7 @@ FROM
           personphonenumberassoc AS ppna
           INNER JOIN codeset AS c ON ppna.phonetypecodesetid = c.codesetid
           AND c.code = 'Mobile'
-      ) p1 ON c.contacts_personid = p1.p1_personid
+      ) AS p1 ON c.contacts_personid = p1.p1_personid
       AND p1.p1_filteredpriorityorder = 1
       LEFT JOIN (
         SELECT
@@ -206,7 +206,7 @@ FROM
           personphonenumberassoc AS ppna
           INNER JOIN codeset AS c ON ppna.phonetypecodesetid = c.codesetid
           AND c.code = 'Home'
-      ) p2 ON c.contacts_personid = p2.p2_personid
+      ) AS p2 ON c.contacts_personid = p2.p2_personid
       AND p2.p2_filteredpriorityorder = 1
       LEFT JOIN (
         SELECT
@@ -223,7 +223,7 @@ FROM
           personphonenumberassoc AS ppna
           INNER JOIN codeset AS c ON ppna.phonetypecodesetid = c.codesetid
           AND c.code = 'Work'
-      ) p3 ON c.contacts_personid = p3.p3_personid
+      ) AS p3 ON c.contacts_personid = p3.p3_personid
       AND p3.p3_filteredpriorityorder = 1
       LEFT JOIN (
         SELECT

@@ -135,7 +135,7 @@ WITH
           t_1103_c,
           t_1102_c
         )
-      ) u
+      ) AS u
   )
 SELECT
   s.academic_year,

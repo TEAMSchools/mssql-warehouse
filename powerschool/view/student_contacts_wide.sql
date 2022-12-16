@@ -298,4 +298,4 @@ FROM
       pickup_5_phone_mobile,
       pickup_5_phone_work
     )
-  ) p
+  ) AS p

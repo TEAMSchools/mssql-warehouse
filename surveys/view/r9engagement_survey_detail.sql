@@ -1133,7 +1133,7 @@ WITH
           technology_15,
           region_8
         )
-      ) u
+      ) AS u
   )
 SELECT
   su.academic_year,

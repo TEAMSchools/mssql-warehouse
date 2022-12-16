@@ -60,7 +60,7 @@ WITH
           avg_response_value_location,
           response_text
         )
-      ) u
+      ) AS u
   )
 SELECT
   academic_year,
@@ -241,4 +241,4 @@ FROM
       [q_1_6_oe_n_responses],
       [q_1_6_oe_response_text]
     )
-  ) p
+  ) AS p

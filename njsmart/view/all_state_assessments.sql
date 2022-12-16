@@ -164,7 +164,7 @@ WITH
           invalid_scale_score_reason_science,
           void_reason_science
         )
-      ) u
+      ) AS u
   ),
   combined_repivot AS (
     SELECT
@@ -207,7 +207,7 @@ WITH
           invalid_scale_score_reason,
           void_reason
         )
-      ) p
+      ) AS p
   )
 SELECT
   local_student_id,

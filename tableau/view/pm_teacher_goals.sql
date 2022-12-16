@@ -135,7 +135,7 @@ WITH
           is_mastery_iep45,
           is_mastery_iep345
         )
-      ) u
+      ) AS u
   ),
   etr_long AS (
     SELECT
@@ -340,7 +340,7 @@ WITH
           pct_act_19plus,
           pct_act_21plus
         )
-      ) u
+      ) AS u
   ),
   glt_goal_data AS (
     SELECT

@@ -95,7 +95,7 @@ WITH
           asmt_extended_time,
           asmt_extended_time_math
         )
-      ) u
+      ) AS u
   )
 SELECT
   co.student_number,

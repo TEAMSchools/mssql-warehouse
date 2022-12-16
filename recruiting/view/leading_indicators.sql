@@ -31,7 +31,7 @@ WITH
           offer_date,
           hired_date
         )
-      ) u
+      ) AS u
   ),
   latest_update AS (
     SELECT

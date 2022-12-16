@@ -58,7 +58,7 @@ WITH
               )
           ) AS sub UNPIVOT (
             VALUE FOR field IN (semester_gpa, academic_status)
-          ) u
+          ) AS u
       ) AS sub PIVOT (
         MAX(VALUE) FOR pivot_field IN (
           [fall_semester_gpa],
@@ -68,7 +68,7 @@ WITH
           [prev_spring_semester_gpa],
           [prev_spring_academic_status]
         )
-      ) p
+      ) AS p
   ),
   stipends AS (
     SELECT
@@ -101,7 +101,7 @@ WITH
             7,
             1
           )
-      ) AS sub PIVOT (MAX(date_c) FOR semester IN ([F], [S])) p
+      ) AS sub PIVOT (MAX(date_c) FOR semester IN ([F], [S])) AS p
   ),
   oot_roster AS (
     SELECT
@@ -238,7 +238,7 @@ CREATEd_date DESC
           )
       ) AS sub PIVOT (
         MAX(N) FOR school_type IN ([4YR], [2YR], [4YR_T], [2YR_T], [ALL])
-      ) p
+      ) AS p
   )
 SELECT
   c.sf_contact_id AS contact_id,

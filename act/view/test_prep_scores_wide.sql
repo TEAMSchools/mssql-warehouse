@@ -45,4 +45,4 @@ FROM
       science,
       composite
     )
-  ) p
+  ) AS p

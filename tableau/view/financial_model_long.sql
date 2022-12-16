@@ -98,4 +98,4 @@ FROM
       fy_34,
       fy_35
     )
-  ) u
+  ) AS u

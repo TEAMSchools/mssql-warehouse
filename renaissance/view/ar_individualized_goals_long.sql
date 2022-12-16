@@ -26,6 +26,6 @@ FROM
       student_number IS NOT NULL
   ) AS sub UNPIVOT (
     adjusted_goal FOR reporting_term IN (q_1, q_2, q_3, q_4)
-  ) u
+  ) AS u
 WHERE
   rn = 1

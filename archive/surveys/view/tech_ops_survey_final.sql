@@ -69,7 +69,7 @@ WITH
           tech_training,
           tech_oe
         )
-      ) u
+      ) AS u
   )
 SELECT
   associate_id,

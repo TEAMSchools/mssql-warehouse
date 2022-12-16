@@ -342,7 +342,7 @@ WITH
           technology_improve_oe,
           technology_internetaccess
         )
-      ) u
+      ) AS u
   )
 SELECT
   cmo_long.df_employee_number,

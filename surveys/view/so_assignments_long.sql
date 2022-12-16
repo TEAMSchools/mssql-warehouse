@@ -40,7 +40,7 @@ WITH
           [so_9],
           [so_10]
         )
-      ) u
+      ) AS u
   )
 SELECT
   a.df_employee_number AS survey_taker_id,

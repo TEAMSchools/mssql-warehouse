@@ -112,7 +112,7 @@ WITH
           sub.position_effective_to_date,
           sub.subjects_taught
         )
-      ) u
+      ) AS u
   )
 SELECT
   df.df_employee_number,

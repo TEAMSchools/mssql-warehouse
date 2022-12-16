@@ -64,7 +64,7 @@ WITH
           teacher_warm_demanding,
           teacher_whole_class_feedback
         )
-      ) u
+      ) AS u
   ),
   current_unpivot AS (
     SELECT
@@ -138,7 +138,7 @@ WITH
           wholegrouprelationships,
           worthwhiletaskpractice
         )
-      ) u
+      ) AS u
   ),
   scores_union AS (
     SELECT

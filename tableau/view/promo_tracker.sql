@@ -331,7 +331,7 @@ WITH
           attpts_term,
           attptspct_term
         )
-      ) u
+      ) AS u
   ),
   modules AS (
     SELECT
@@ -595,7 +595,7 @@ WITH
           gabby.naviance.act_scores_clean
       ) AS sub UNPIVOT (
         scale_score FOR [subject] IN (composite, english, math, reading, science)
-      ) u
+      ) AS u
     UNION ALL
     /* ACT Prep */
     SELECT
@@ -632,7 +632,7 @@ WITH
     FROM
       gabby.naviance.sat_scores_clean UNPIVOT (
         scale_score FOR [subject] IN (all_tests_total, math, verbal, writing)
-      ) u
+      ) AS u
     UNION ALL
     /* SAT II */
     SELECT
@@ -701,7 +701,7 @@ WITH
     FROM
       gabby.naviance.explore_scores UNPIVOT (
         scale_score FOR [subject] IN (english, math, reading, science, composite)
-      ) u
+      ) AS u
     UNION ALL
     SELECT
       CAST(hs_student_id AS INT) AS student_number,
@@ -729,7 +729,7 @@ WITH
     FROM
       gabby.naviance.psat_scores UNPIVOT (
         scale_score FOR [subject] IN (critical_reading, math, writing, total)
-      ) u
+      ) AS u
   ),
   collegeapps AS (
     SELECT
@@ -829,7 +829,7 @@ WITH
           promo_status_grades,
           promo_status_qa_math
         )
-      ) u
+      ) AS u
   ),
   instructional_tech AS (
     SELECT

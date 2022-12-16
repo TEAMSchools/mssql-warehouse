@@ -82,5 +82,5 @@ FROM
       [repository_169],
       [repository_170]
     )
-  ) p
+  ) AS p
   -- */

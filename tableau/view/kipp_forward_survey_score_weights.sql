@@ -84,7 +84,7 @@ WITH
           imp_9,
           imp_10
         )
-      ) u
+      ) AS u
   )
 SELECT
   s.question_shortname,

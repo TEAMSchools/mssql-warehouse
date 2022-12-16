@@ -77,7 +77,7 @@ WITH
           CUBE (sub.school_level, sub.grade_level)
       ) AS sub UNPIVOT (
         [value] FOR field IN (pct_fr_lunch, n_attrition_week)
-      ) u
+      ) AS u
   ),
   modules AS (
     SELECT
@@ -174,7 +174,7 @@ WITH
           sub.pct_approaching_iep,
           sub.pct_below_iep
         )
-      ) u
+      ) AS u
   )
   /* 
   --,parcc AS (
@@ -245,7 +245,7 @@ WITH
   ,sub.pct_target_iep
   ,sub.pct_approaching_iep
   ,sub.pct_below_iep) 
-  ) u
+  ) AS u
   ,
    */
   student_attendance AS (
@@ -480,7 +480,7 @@ WITH
           sub.n_iss_week,
           sub.n_oss_week
         )
-      ) u
+      ) AS u
   ),
   chronic_absentee AS (
     SELECT
@@ -581,7 +581,7 @@ WITH
   sub.pct_attrition_resignation,
   sub.pct_attrition_termination
   )
-  ) u
+  ) AS u
   ),
   --*/
   student_attrition AS (
@@ -683,7 +683,7 @@ WITH
           CUBE (sub.school_level, sub.grade_level)
       ) AS sub UNPIVOT (
         [value] FOR field IN (sub.pct_gpa_ge_3, sub.pct_gpa_ge_2)
-      ) u
+      ) AS u
   ),
   /*
   staff_attendance AS (
@@ -812,7 +812,7 @@ WITH
   sub.pct_ontime_lt_90,
   sub.pct_ontime_ge_90_lt_95
   )
-  ) u,
+  ) AS u,
   --*/
   lit AS (
     SELECT
@@ -867,7 +867,7 @@ WITH
           sub.pct_on_gradelevel,
           sub.pct_moved_reading_level
         )
-      ) u
+      ) AS u
   ),
   so_survey AS (
     SELECT

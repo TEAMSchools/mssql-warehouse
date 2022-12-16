@@ -35,4 +35,4 @@ FROM
       [scale_score_act6],
       [scale_score_act7]
     )
-  ) p
+  ) AS p

@@ -117,7 +117,7 @@ WITH
           field_character_comment_1,
           field_character_comment_2
         )
-      ) u
+      ) AS u
   )
 SELECT
   cu.repository_id,

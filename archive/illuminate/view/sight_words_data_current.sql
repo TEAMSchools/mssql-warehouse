@@ -28,7 +28,7 @@ FROM
           field_come,
           field_ask
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -72,7 +72,7 @@ FROM
           field_want_1,
           field_with_1
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -116,7 +116,7 @@ FROM
           field_where,
           field_want_1
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -160,7 +160,7 @@ FROM
           field_always,
           field_enough
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -195,7 +195,7 @@ FROM
     FROM
       illuminate_dna_repositories.repository_364 UNPIVOT (
         [value] FOR field IN (field_want, field_now, field_dont)
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -235,7 +235,7 @@ FROM
           field_dont,
           field_with
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -276,7 +276,7 @@ FROM
           field_with,
           field_come
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -317,7 +317,7 @@ FROM
           field_with,
           field_come
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -359,7 +359,7 @@ FROM
           field_come,
           field_ask
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -403,7 +403,7 @@ FROM
           field_tbd,
           field_tbd_1
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -447,7 +447,7 @@ FROM
           field_tbd,
           field_tbd_1
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -491,7 +491,7 @@ FROM
           field_tbd,
           field_tbd_1
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -533,7 +533,7 @@ FROM
           field_come,
           field_ask
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -577,7 +577,7 @@ FROM
           field_from,
           field_than
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -621,7 +621,7 @@ FROM
           field_tbd_1,
           field_tbd
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -665,7 +665,7 @@ FROM
           field_gone,
           field_enough
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -710,7 +710,7 @@ FROM
           field_just,
           field_tbd
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -752,7 +752,7 @@ FROM
           field_ask,
           field_just
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -794,7 +794,7 @@ FROM
           field_come,
           field_ask
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -836,7 +836,7 @@ FROM
           field_come,
           field_ask
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -878,7 +878,7 @@ FROM
           field_come,
           field_ask
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -920,7 +920,7 @@ FROM
           field_come,
           field_ask
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -962,7 +962,7 @@ FROM
           field_come,
           field_ask
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -1004,7 +1004,7 @@ FROM
           field_come,
           field_ask
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -1046,7 +1046,7 @@ FROM
           field_come,
           field_ask
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -1088,7 +1088,7 @@ FROM
           field_come,
           field_ask
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -1130,7 +1130,7 @@ FROM
           field_come,
           field_ask
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -1172,7 +1172,7 @@ FROM
           field_come,
           field_ask
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -1214,7 +1214,7 @@ FROM
           field_come,
           field_ask
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -1256,7 +1256,7 @@ FROM
           field_come,
           field_ask
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -1298,7 +1298,7 @@ FROM
           field_come,
           field_ask
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -1340,7 +1340,7 @@ FROM
           field_come,
           field_ask
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -1382,7 +1382,7 @@ FROM
           field_come,
           field_ask
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -1424,7 +1424,7 @@ FROM
           field_come,
           field_ask
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -1466,7 +1466,7 @@ FROM
           field_come,
           field_ask
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -1508,7 +1508,7 @@ FROM
           field_come,
           field_ask
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -1550,7 +1550,7 @@ FROM
           field_come,
           field_ask
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -1592,7 +1592,7 @@ FROM
           field_come,
           field_ask
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -1634,7 +1634,7 @@ FROM
           field_come,
           field_ask
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -1676,7 +1676,7 @@ FROM
           field_come,
           field_ask
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -1718,7 +1718,7 @@ FROM
           field_come,
           field_ask
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -1760,7 +1760,7 @@ FROM
           field_come,
           field_ask
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -1802,7 +1802,7 @@ FROM
           field_come,
           field_ask
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -1844,7 +1844,7 @@ FROM
           field_come,
           field_ask
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -1886,7 +1886,7 @@ FROM
           field_come,
           field_ask
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -1928,7 +1928,7 @@ FROM
           field_come,
           field_ask
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -1970,7 +1970,7 @@ FROM
           field_come,
           field_ask
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -2012,7 +2012,7 @@ FROM
           field_come,
           field_ask
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -2054,7 +2054,7 @@ FROM
           field_come,
           field_ask
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -2099,7 +2099,7 @@ FROM
           field_now,
           field_tbd
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT
@@ -2145,7 +2145,7 @@ FROM
           field_done,
           field_now
         )
-      ) u
+      ) AS u
     WHERE
       u.repository_row_id IN (
         SELECT

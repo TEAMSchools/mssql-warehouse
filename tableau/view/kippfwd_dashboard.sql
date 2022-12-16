@@ -201,7 +201,7 @@ WITH
               cumulative_credits_earned,
               credits_required_for_graduation
             )
-          ) u
+          ) AS u
         WHERE
           rn_semester = 1
       ) AS sub PIVOT (
@@ -219,7 +219,7 @@ WITH
           spr_semester_gpa,
           spr_transcript_date
         )
-      ) p
+      ) AS p
   ),
   latest_note AS (
     SELECT
@@ -485,7 +485,7 @@ SELECT
       c.sf_contact_id
     ORDER BY
       ay.academic_year ASC
-  ) prev_spr_semester_credits_earned,
+  ) AS prev_spr_semester_credits_earned,
   ln.comments_c AS latest_as_comments,
   ln.next_steps_c AS latest_as_next_steps,
   fa.unmet_need_c AS unmet_need,

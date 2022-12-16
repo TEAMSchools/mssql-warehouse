@@ -31,7 +31,7 @@ WITH
           )
       ) AS sub PIVOT (
         MAX(pct_proficient) FOR entity IN ([NJ], [NPS], [PARCC], [CPS])
-      ) p
+      ) AS p
   )
 SELECT
   co.student_number,

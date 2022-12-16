@@ -134,7 +134,7 @@ WITH
               performance_level,
               scaled_score
             )
-          ) u
+          ) AS u
       ) AS sub PIVOT (
         MAX(VALUE) FOR pivot_field IN (
           alg01_assessment_type,
@@ -219,7 +219,7 @@ WITH
           geo_performance_level,
           geo_scaled_score
         )
-      ) p
+      ) AS p
   )
 SELECT
   COALESCE(

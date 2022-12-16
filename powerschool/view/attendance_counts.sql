@@ -176,7 +176,7 @@ WITH
           ) AS count_y1
         FROM
           mem_counts
-      ) AS sub UNPIVOT (n FOR field IN (count_term, count_y1)) u
+      ) AS sub UNPIVOT (n FOR field IN (count_term, count_y1)) AS u
   )
 SELECT
   studentid,
@@ -224,4 +224,4 @@ FROM
       [mem_count_term],
       [mem_count_y1]
     )
-  ) p
+  ) AS p

@@ -200,4 +200,4 @@ FROM
       [Teacher_9_id],
       [Teacher_10_id]
     )
-  ) p
+  ) AS p

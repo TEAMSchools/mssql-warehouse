@@ -89,6 +89,6 @@ FROM
       [FSA-HC],
       [Voluntary Hospital Indemnity]
     )
-  ) p
+  ) AS p
 WHERE
   rn_curr = 1

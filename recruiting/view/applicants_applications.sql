@@ -110,7 +110,7 @@ WITH
           candidate_tags_values,
           school_shared_with
         )
-      ) u
+      ) AS u
   ),
   applicants_repivot AS (
     SELECT
@@ -165,7 +165,7 @@ WITH
           candidate_tags_values,
           school_shared_with
         )
-      ) p
+      ) AS p
     WHERE
       rn_curr = 1
   )

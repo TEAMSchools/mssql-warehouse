@@ -95,7 +95,7 @@ WITH
               pct_nonfiction,
               words_needed
             )
-          ) u
+          ) AS u
       ) AS sub PIVOT (
         MAX([value]) FOR pivot_field IN (
           [cur_words],
@@ -115,7 +115,7 @@ WITH
           [y1_words_needed],
           [y1_mastery_nonfiction]
         )
-      ) p
+      ) AS p
   )
 SELECT
   co.student_number,

@@ -102,7 +102,7 @@ WITH
           term_grade_letter_adj,
           term_grade_percent_adj
         )
-      ) u
+      ) AS u
   )
 SELECT
   studentid,
@@ -290,4 +290,4 @@ FROM
       [cur_term_grade_percent],
       [cur_term_grade_percent_adj]
     )
-  ) p
+  ) AS p

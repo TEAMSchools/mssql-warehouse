@@ -94,7 +94,7 @@ WITH
               q_1_6_d,
               q_1_6_oe
             )
-          ) u
+          ) AS u
       ) AS sub
   )
 SELECT

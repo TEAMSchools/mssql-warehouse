@@ -145,7 +145,7 @@ WITH
           grades_long
       ) AS sub UNPIVOT (
         [value] FOR field IN (category_pct, citizenship)
-      ) u
+      ) AS u
   ),
   grades_repivot AS (
     SELECT
@@ -257,7 +257,7 @@ WITH
           [CTZ_RT3],
           [CTZ_RT4]
         )
-      ) p
+      ) AS p
   )
 SELECT
   studentid,

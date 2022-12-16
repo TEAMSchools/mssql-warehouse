@@ -76,4 +76,4 @@ FROM
         'Newark & Camden',
         'Miami'
       )
-  ) p
+  ) AS p

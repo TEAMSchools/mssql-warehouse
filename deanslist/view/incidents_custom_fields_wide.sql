@@ -55,4 +55,4 @@ FROM
       [Restraint Used],
       [SSDS Incident ID]
     )
-  ) p
+  ) AS p

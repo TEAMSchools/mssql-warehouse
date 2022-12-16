@@ -428,7 +428,7 @@ WITH
           ern_4_bp,
           ern_4_ssc
         )
-      ) u
+      ) AS u
   )
 SELECT
   u.position_id,

@@ -108,7 +108,7 @@ WITH
           [debt_amount],
           [annual_income]
         )
-      ) p
+      ) AS p
   ),
   weight_denominator AS (
     SELECT
@@ -186,7 +186,7 @@ WITH
           [imp_9],
           [imp_10]
         )
-      ) p
+      ) AS p
   )
 SELECT
   s.survey_title,

@@ -53,4 +53,4 @@ FROM
       years_teaching_any_state,
       years_teaching_nj_and_fl
     )
-  ) p
+  ) AS p

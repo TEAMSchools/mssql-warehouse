@@ -13,7 +13,7 @@ WITH
     FROM
       gabby.act.key_cleanup UNPIVOT (
         raw_score FOR [subject] IN (english, mathematics, reading, science)
-      ) u
+      ) AS u
   ),
   scaffold AS (
     SELECT

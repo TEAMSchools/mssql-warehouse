@@ -37,7 +37,7 @@ WITH
           AND cd.membershipvalue > 0
       ) AS sub UNPIVOT (
         [value] FOR field IN (sub.a, sub.b, sub.c, sub.d, sub.e, sub.f)
-      ) u
+      ) AS u
   )
 SELECT
   cl.schoolid,

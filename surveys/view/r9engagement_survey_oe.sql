@@ -30,7 +30,7 @@ WITH
           gabby.surveys.r9engagement_survey_final
       ) AS sub UNPIVOT (
         response_value FOR question_code IN (region_6, region_7)
-      ) u
+      ) AS u
   )
 SELECT
   su.academic_year,

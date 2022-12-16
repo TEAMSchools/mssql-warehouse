@@ -89,7 +89,7 @@ WITH
 CREATEd_max,
 CREATEd_min
             )
-          ) u
+          ) AS u
       ) AS sub PIVOT (
         MAX(field_value) FOR pivot_field IN (
           assignee_id_updated_max,
@@ -101,7 +101,7 @@ CREATEd_min
           comment_created_max,
           comment_created_min
         )
-      ) p
+      ) AS p
   ),
   count_metrics AS (
     SELECT
@@ -126,7 +126,7 @@ CREATEd_min
           group_id_value_count_distinct,
           assignee_id_value_count_distinct
         )
-      ) p
+      ) AS p
   ),
   reopens AS (
     SELECT

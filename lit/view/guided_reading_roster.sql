@@ -33,6 +33,6 @@ FROM
       round_3_gr_teacher,
       round_4_gr_teacher
     )
-  ) u
+  ) AS u
 WHERE
   _fivetran_deleted IS NULL

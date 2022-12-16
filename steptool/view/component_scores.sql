@@ -843,4 +843,4 @@ FROM
       written_comprehension_inferential_12_,
       written_comprehension_inferential_9_
     )
-  ) u
+  ) AS u

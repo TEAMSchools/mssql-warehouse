@@ -17,7 +17,7 @@ WITH
           gabby.adp.comprehensive_benefits_report
       ) AS sub PIVOT (
         MAX(plan_name) FOR plan_type IN ([Medical], [Dental], [Vision])
-      ) p
+      ) AS p
   ),
   cost_number AS (
     SELECT

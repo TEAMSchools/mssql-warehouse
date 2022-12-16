@@ -67,7 +67,7 @@ WITH
           [Remote Instruction],
           [Counseling Services]
         )
-      ) p
+      ) AS p
   ),
   designation AS (
     SELECT
@@ -207,4 +207,4 @@ FROM
       is_remote_instruction,
       is_counseling
     )
-  ) u
+  ) AS u

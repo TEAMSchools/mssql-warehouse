@@ -62,7 +62,7 @@ WITH
           fp_comp_about,
           fp_comp_prof
         )
-      ) u
+      ) AS u
   ),
   all_scores AS (
     SELECT

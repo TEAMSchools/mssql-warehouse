@@ -79,7 +79,7 @@ FROM
           rit_50pctl,
           rit_75pctl
         )
-      ) u
+      ) AS u
   ) AS sub PIVOT (
     MAX(VALUE) FOR pivot_field IN (
       mathematics_pctl_baseline,
@@ -93,4 +93,4 @@ FROM
       reading_rit_baseline,
       reading_rit_keepup
     )
-  ) p
+  ) AS p

@@ -99,7 +99,7 @@ WITH
           fy_34,
           fy_35
         )
-      ) u
+      ) AS u
   )
 SELECT
   p.region,
@@ -177,7 +177,7 @@ SELECT
   p.[Core Public Revenue - State, Local],
   p.[Core Public Revenue - Federal Per Pupil],
   p.[Core Public Revenue - Federal],
-  p.[CMO Surplus / (Deficit) Per Pupil],
+  p.[CMO Surplus / (Deficit) AS per Pupil],
   p.[CMO Surplus / (Deficit)],
   p.[CMO Expenses - Total Per Pupil],
   p.[CMO Expenses - Total],
@@ -263,7 +263,7 @@ FROM
       [Core Public Revenue - State, Local],
       [Core Public Revenue - Federal Per Pupil],
       [Core Public Revenue - Federal],
-      [CMO Surplus / (Deficit) Per Pupil],
+      [CMO Surplus / (Deficit) AS per Pupil],
       [CMO Surplus / (Deficit)],
       [CMO Expenses - Total Per Pupil],
       [CMO Expenses - Total],
@@ -276,4 +276,4 @@ FROM
       [Cash Flow Margin],
       [Avg. Personnel Cost]
     )
-  ) p
+  ) AS p

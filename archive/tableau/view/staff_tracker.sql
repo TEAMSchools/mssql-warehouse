@@ -28,7 +28,7 @@ WITH
           [early out],
           [partial day]
         )
-      ) p
+      ) AS p
   ),
   tafw AS (
     SELECT

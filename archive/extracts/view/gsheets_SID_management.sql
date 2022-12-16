@@ -81,7 +81,7 @@ WITH
           gabby.powerschool.studentrace AS sr
       ) AS sub PIVOT (
         MAX(yn) FOR racecd IN ([I], [A], [B], [P], [W])
-      ) p
+      ) AS p
   )
 SELECT
   co.region AS helper_region,

@@ -58,7 +58,7 @@ WITH
           goal_4_range,
           goal_4_rit_score
         )
-      ) u
+      ) AS u
   )
 SELECT
   student_id AS student_number,
@@ -75,4 +75,4 @@ SELECT
 FROM
   long_data PIVOT (
     MAX(VALUE) FOR goal_field IN ([name], [rit_score], [range], [adjective])
-  ) p
+  ) AS p

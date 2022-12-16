@@ -939,7 +939,7 @@ FROM
                 _9_what_best_describes_the_lessons_and_learning_resources_at_your_school_,
                 _10_what_best_describes_family_engagement_at_your_school_
               )
-            ) u
+            ) AS u
           ) AS sub
         GROUP BY
           sub.academic_year,

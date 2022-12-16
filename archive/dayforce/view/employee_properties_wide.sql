@@ -182,4 +182,4 @@ FROM
       [praxis_passed],
       [highest_education_level]
     )
-  ) p
+  ) AS p
