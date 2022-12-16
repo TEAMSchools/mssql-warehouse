@@ -14,7 +14,7 @@ WITH baseline AS(
           ELSE NULL
          END AS [subject]
   FROM gabby.iready.diagnostic_results dr
-  WHERE dr.diagnostic_used_to_establish_growth_measures_y_n_ = 'Y'
+  WHERE dr.baseline_diagnostic_y_n_ = 'Y'
  )
 
 ,recent AS(
@@ -27,8 +27,13 @@ WITH baseline AS(
           WHEN dr._file LIKE '%_math%' THEN 'Math'
           ELSE NULL 
          END AS [subject]
+        ,dr.percent_progress_to_annual_typical_growth_
+        ,dr.percent_progress_to_annual_stretch_growth_
+        ,dr.diagnostic_gain
+        ,dr.annual_typical_growth_measure
+        ,dr.annual_stretch_growth_measure
   FROM gabby.iready.diagnostic_results dr
-  WHERE dr.diagnostic_used_to_establish_growth_measures_y_n_ = 'N'
+  WHERE dr.baseline_diagnostic_y_n_ = 'N'
     AND dr.most_recent_diagnostic_y_n_ = 'Y'
  )
 
@@ -39,23 +44,11 @@ SELECT bl.student_number
       ,bl.baseline_percentile
       ,re.recent_scale
       ,re.recent_percentile
-      ,di.annual_typical_growth_measure
-      ,di.annual_stretch_growth_measure
-      ,CASE 
-        WHEN re.recent_scale - bl.baseline_scale < 0 THEN 0
-        WHEN re.recent_scale - bl.baseline_scale >= 0 THEN re.recent_scale - bl.baseline_scale
-        ELSE NULL 
-       END AS diagnostic_gain
-      ,CASE 
-        WHEN re.recent_scale - bl.baseline_scale <= 0 THEN 0
-        WHEN re.recent_scale - bl.baseline_scale > 0 THEN ROUND((re.recent_scale - bl.baseline_scale) / CAST(di.annual_typical_growth_measure AS FLOAT), 2)
-        ELSE NULL 
-       END AS progress_typical
-      ,CASE 
-        WHEN re.recent_scale - bl.baseline_scale <= 0 THEN 0
-        WHEN re.recent_scale - bl.baseline_scale > 0 THEN ROUND((re.recent_scale - bl.baseline_scale) / CAST(di.annual_stretch_growth_measure AS FLOAT), 2)
-        ELSE NULL 
-       END AS progress_stretch
+      ,re.annual_typical_growth_measure
+      ,re.annual_stretch_growth_measure
+      ,re.diagnostic_gain AS diagnostic_gain
+      ,re.percent_progress_to_annual_typical_growth_ AS progress_typical
+      ,re.percent_progress_to_annual_stretch_growth_ AS progress_stretch
 FROM baseline bl
 LEFT JOIN recent re
   ON bl.student_number = re.student_number
