@@ -1,13 +1,12 @@
-USE gabby;
-
-GOCREATE
+CREATE
 OR ALTER
 FUNCTION utilities.STRIP_CHARACTERS (
   @string NVARCHAR(MAX),
   @match_expression VARCHAR(255)
 ) RETURNS NVARCHAR(MAX)
 WITH
-  SCHEMABINDING AS BEGIN
+  SCHEMABINDING AS BEGIN;
+
 SET
   @match_expression = '%[' + @match_expression + ']%';
 

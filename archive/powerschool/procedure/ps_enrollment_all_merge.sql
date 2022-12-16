@@ -1,14 +1,25 @@
+CREATE
+OR ALTER
+PROCEDURE powerschool.ps_enrollment_all_merge AS
 SET
-ANSI_NULLS ON GO
+ANSI_NULLS ON;
+
 SET
-QUOTED_IDENTIFIER ON GO ALTER
-PROCEDURE powerschool.ps_enrollment_all_merge AS BEGIN DECLARE @email_subject NVARCHAR(MAX),
+QUOTED_IDENTIFIER ON;
+
+BEGIN;
+
+DECLARE @email_subject NVARCHAR(MAX),
 @email_body NVARCHAR(MAX);
 
-BEGIN TRY IF OBJECT_ID(N'#ps_enrollment_all_temp') IS NOT NULL BEGIN
+BEGIN TRY;
+
+IF OBJECT_ID(N'#ps_enrollment_all_temp') IS NOT NULL BEGIN;
+
 DROP TABLE #ps_enrollment_all_temp;
 
-END
+END;
+
 SELECT
   * INTO #ps_enrollment_all_temp
 FROM
@@ -83,10 +94,13 @@ VALUES
     GETUTCDATE()
   );
 
-END TRY BEGIN CATCH PRINT (ERROR_MESSAGE());
+END TRY BEGIN CATCH;
+
+PRINT (ERROR_MESSAGE());
 
 SET
-  @email_subject = 'ps_enrollment_all static refresh failed'
+  @email_subject = 'ps_enrollment_all static refresh failed';
+
 SET
   @email_body = 'The refresh procedure for ps_enrollment_all failed.' + CHAR(10) + ERROR_MESSAGE();
 
@@ -95,4 +109,6 @@ EXEC msdb.dbo.sp_send_dbmail @profile_name = 'datarobot',
 @subject = @email_subject,
 @body = @email_body;
 
-END CATCH END
+END CATCH;
+
+END;

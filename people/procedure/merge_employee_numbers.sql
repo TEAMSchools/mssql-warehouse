@@ -1,10 +1,10 @@
-USE [gabby] GOCREATE
+CREATE
 OR ALTER
 PROCEDURE people.merge_employee_numbers AS
 MERGE INTO
-  [gabby].[people].[employee_numbers] AS [Target] USING [gabby].[adp].[employees_all] AS [Source] ON [Target].[associate_id] = [Source].[associate_id]
+  gabby.people.employee_numbers AS TARGET USING gabby.adp.employees_all AS SOURCE ON Target.associate_id = Source.associate_id
 WHEN NOT MATCHED BY TARGET THEN
 INSERT
-  ([associate_id])
+  (associate_id)
 VALUES
-  ([Source].[associate_id]);
+  (SOURCE.associate_id);

@@ -1,4 +1,5 @@
-USE WaspTrackAsset GO ALTER VIEW asset_details AS
+CREATE OR ALTER VIEW
+  asset_details AS
 WITH
   current_trans AS (
     SELECT
@@ -59,4 +60,4 @@ FROM
   INNER JOIN [WaspTrackAsset].[dbo].[condition] ON asset.condition_id = condition.condition_id
   INNER JOIN [WaspTrackAsset].[dbo].[sites] ON location.site_id = sites.site_id
   LEFT JOIN current_trans AS ct ON asset.asset_id = ct.asset_id
-  AND ct.rn_entrydate = 1
+  AND ct.rn_entrydate = 1;

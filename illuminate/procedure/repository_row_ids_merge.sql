@@ -1,26 +1,39 @@
-SET
-ANSI_NULLS ON GO
-SET
-QUOTED_IDENTIFIER ON GOCREATE
+CREATE
 OR ALTER
-PROCEDURE illuminate_dna_repositories.repository_row_ids_merge AS BEGIN
-/* SET NOCOUNT ON added to prevent extra result sets from interfering with SELECT statements */
+PROCEDURE illuminate_dna_repositories.repository_row_ids_merge AS BEGIN;
+
+SET
+ANSI_NULLS ON;
+
+SET
+QUOTED_IDENTIFIER ON;
+
+/*
+SET NOCOUNT ON added to prevent extra result sets 
+from interfering with SELECT statements
+ */
 SET
 NOCOUNT ON;
 
-/* 1.) Drop and recreate the temp table */
+/* Drop and recreate the temp table */
 IF OBJECT_ID(N'tempdb..#repository_row_ids') IS NOT NULL
 DROP TABLE [#repository_row_ids]
 CREATE TABLE
-  [#repository_row_ids] (repository_id INT, repository_row_id INT)
-  /* 2.) Declare variables */
-  DECLARE @query NVARCHAR(MAX) DECLARE @repository_id NVARCHAR(MAX) DECLARE @linked_server_name NVARCHAR(MAX) DECLARE @message NVARCHAR(MAX)
+  [#repository_row_ids] (repository_id INT, repository_row_id INT);
+
+/* Declare variables */
+DECLARE @query NVARCHAR(MAX),
+@repository_id NVARCHAR(MAX),
+@linked_server_name NVARCHAR(MAX),
+@message NVARCHAR(MAX);
+
 SET
   @linked_server_name = 'ILLUMINATE';
 
 /*
-3.) Declare the cursor FOR the set of records it will loop over cursor name MUST be
-within schema only use tables updated in past 24 hrs
+Declare the cursor FOR the set of records it will loop over
+Cursor name MUST be within schema
+Only use tables updated in past 24 hrs
  */
 DECLARE repository_cursor CURSOR FOR
 SELECT
@@ -46,14 +59,21 @@ WHERE
 ORDER BY
   repository_id DESC;
 
-/* 4.) Do work son */
-OPEN repository_cursor WHILE 1 = 1 BEGIN
+/* Do work son */
+OPEN repository_cursor WHILE 1 = 1 BEGIN;
+
 FETCH NEXT
 FROM
-  repository_cursor INTO @repository_id IF @@FETCH_STATUS != 0 BEGIN BREAK END
-  /*
-  here's the beef, the cursor is going to iterate over each repo ID, and INSERT INTO the temp table
-   */
+  repository_cursor INTO @repository_id IF @@FETCH_STATUS != 0 BEGIN;
+
+BREAK;
+
+END;
+
+/*
+here's the beef: the cursor is going to iterate over each repo ID
+and INSERT INTO the temp table
+ */
 SET
   @query = N'
           INSERT INTO [#repository_row_ids]
@@ -63,25 +83,44 @@ SET
               SELECT repository_row_id
               FROM dna_repositories.repository_' + @repository_id + '
           '')
-        '
+        ';
+
 SET
   @message = CONCAT(
     'Loading dna_repositories.repository_',
     @repository_id
-  ) RAISERROR (@message, 0, 1) EXEC (@query) END CLOSE repository_cursor DEALLOCATE repository_cursor;
+  );
+
+RAISERROR (@message, 0, 1);
+
+EXEC (@query);
+
+END;
+
+CLOSE repository_cursor;
+
+DEALLOCATE repository_cursor;
 
 /*
--- 5.) UPSERT: matching on repo, row number, studentid, and field name.  DELETE if on TARGET but not MATCHED by SOURCE
+UPSERT: matching on repo, row number, studentid, and field name
+DELETE if on TARGET but not MATCHED by SOURCE
  */
 IF OBJECT_ID(
   N'illuminate_dna_repositories.repository_row_ids'
-) IS NULL BEGIN
+) IS NULL BEGIN;
+
 SET
-  @message = 'Creating destination table' RAISERROR (@message, 0, 1)
+  @message = 'Creating destination table' RAISERROR (@message, 0, 1);
+
 SELECT
   * INTO illuminate_dna_repositories.repository_row_ids
 FROM
-  #repository_row_ids END ELSE BEGIN
+  #repository_row_ids;
+
+END;
+
+ELSE BEGIN;
+
 SET
   @message = 'Merging into destination table' RAISERROR (@message, 0, 1);
 
@@ -122,8 +161,8 @@ VALUES
     SOURCE.repository_row_id
   )
 WHEN NOT MATCHED BY SOURCE THEN
-DELETE
---OUTPUT $ACTION, deleted.*
-;
+DELETE;
 
-END END GO
+END;
+
+END;

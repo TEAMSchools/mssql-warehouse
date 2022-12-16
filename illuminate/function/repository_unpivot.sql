@@ -1,6 +1,8 @@
 CREATE
 OR ALTER
-FUNCTION illuminate_dna_repositories.repository_unpivot (@repository_id INT) RETURNS NVARCHAR(MAX) AS BEGIN DECLARE @field_names NVARCHAR(MAX) = '',
+FUNCTION illuminate_dna_repositories.repository_unpivot (@repository_id INT) RETURNS NVARCHAR(MAX) AS BEGIN;
+
+DECLARE @field_names NVARCHAR(MAX) = '',
 @field_names_converted NVARCHAR(MAX) = '',
 @sql NVARCHAR(MAX) = '';
 

@@ -1,6 +1,8 @@
 CREATE
 OR ALTER
-PROCEDURE illuminate_dna_repositories.generate_sight_words_data_current AS BEGIN DECLARE @sql NVARCHAR(MAX);
+PROCEDURE illuminate_dna_repositories.generate_sight_words_data_current AS BEGIN;
+
+DECLARE @sql NVARCHAR(MAX);
 
 /* reset view */
 SELECT
@@ -25,7 +27,8 @@ FROM
   ) AS sub EXEC (@sql);
 
 /* drop indexes */
-BEGIN TRY
+BEGIN TRY;
+
 SELECT
   @sql = gabby.dbo.GROUP_CONCAT_D (drop_index_sql, ' ')
 FROM
@@ -33,11 +36,13 @@ FROM
 
 EXEC (@sql);
 
-END TRY BEGIN CATCH
+END TRY BEGIN CATCH;
+
 SELECT
   1;
 
-END CATCH
+END CATCH;
+
 /* reset indexes */
 SELECT
   @sql = gabby.dbo.GROUP_CONCAT_D (create_index_sql, ' ')
@@ -46,4 +51,4 @@ FROM
 
 EXEC (@sql);
 
-END
+END;

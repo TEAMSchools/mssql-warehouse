@@ -17,9 +17,9 @@ SET
 
 SET
   @drop_sql = 'IF OBJECT_ID(N''' + @db_name + '.' + @schema_name + '.' + @table_name_old + ''') IS NOT NULL
-  BEGIN
+  BEGIN;
     DROP TABLE ' + @db_name + '.' + @schema_name + '.' + @table_name_old + ';
-  END';
+  END;';
 
 EXEC sp_sqlexec @drop_sql;
 
@@ -36,4 +36,4 @@ FROM
   gabby.utilities.generate_gabby_unions
 WHERE
   [schema_name] = @schema_name
-  AND table_name IN (@view_name, @view_name + '_static')
+  AND table_name IN (@view_name, @view_name + '_static');
