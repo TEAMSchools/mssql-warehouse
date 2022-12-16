@@ -79,35 +79,35 @@ WITH roster AS (
  )
 
 ,grades AS (
-  /* term grades */
-  SELECT gr.student_number
-        ,gr.academic_year            
-        ,gr.reporting_term        
-        ,gr.credittype
-        ,gr.course_name
-        ,gr.term_grade_percent_adjusted        
-        ,'TERM' AS subdomain
-        ,'Term' AS finalgradename
-  FROM gabby.powerschool.final_grades_static gr
-  WHERE gr.yearid >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990) - 1
-    AND gr.excludefromgpa = 0
-
-  UNION ALL
-
-  SELECT gr.student_number        
-        ,gr.academic_year      
-        ,'SY1' AS reporting_term        
-        ,gr.credittype
-        ,gr.course_name
-        ,gr.y1_grade_percent_adjusted AS term_grade_percent_adjusted        
-        ,'TERM' AS subdomain
-        ,'Y1' AS finalgradename
-  FROM gabby.powerschool.final_grades_static gr
-  WHERE gr.academic_year IN (gabby.utilities.GLOBAL_ACADEMIC_YEAR(), gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
-    AND gr.is_curterm = 1
-    AND gr.excludefromgpa = 0
-
-  UNION ALL
+--   /* term grades */
+--   SELECT gr.student_number
+--         ,gr.academic_year            
+--         ,gr.reporting_term        
+--         ,gr.credittype
+--         ,gr.course_name
+--         ,gr.term_grade_percent_adjusted        
+--         ,'TERM' AS subdomain
+--         ,'Term' AS finalgradename
+--   FROM gabby.powerschool.final_grades_static gr
+--   WHERE gr.yearid >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1990) - 1
+--     AND gr.excludefromgpa = 0
+-- 
+--   UNION ALL
+-- 
+--   SELECT gr.student_number        
+--         ,gr.academic_year      
+--         ,'SY1' AS reporting_term        
+--         ,gr.credittype
+--         ,gr.course_name
+--         ,gr.y1_grade_percent_adjusted AS term_grade_percent_adjusted        
+--         ,'TERM' AS subdomain
+--         ,'Y1' AS finalgradename
+--   FROM gabby.powerschool.final_grades_static gr
+--   WHERE gr.academic_year IN (gabby.utilities.GLOBAL_ACADEMIC_YEAR(), gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
+--     AND gr.is_curterm = 1
+--     AND gr.excludefromgpa = 0
+-- 
+--   UNION ALL
 
   /* previous year grades */
   SELECT s.student_number
@@ -131,25 +131,25 @@ WITH roster AS (
   WHERE gr.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1
     AND gr.excludefromgpa = 0
   
-  UNION ALL
-  
-  /* category grades */
-  SELECT gr.student_number        
-        ,gr.academic_year            
-        ,'SY1' AS reporting_term        
-        ,gr.credittype
-        ,gr.course_name
-        ,ROUND(AVG(gr.grade_category_pct), 0) AS term_grade_percent_adjusted        
-        ,'CATEGORY' AS subdomain
-        ,gr.grade_category AS finalgradename
-  FROM gabby.powerschool.category_grades_static gr
-  WHERE gr.academic_year IN (gabby.utilities.GLOBAL_ACADEMIC_YEAR(), gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
-    AND gr.grade_category <> 'Q'
-  GROUP BY gr.student_number
-          ,gr.academic_year
-          ,gr.grade_category
-          ,gr.credittype
-          ,gr.course_name
+--   UNION ALL
+--   
+--   /* category grades */
+--   SELECT gr.student_number        
+--         ,gr.academic_year            
+--         ,'SY1' AS reporting_term        
+--         ,gr.credittype
+--         ,gr.course_name
+--         ,ROUND(AVG(gr.grade_category_pct), 0) AS term_grade_percent_adjusted        
+--         ,'CATEGORY' AS subdomain
+--         ,gr.grade_category AS finalgradename
+--   FROM gabby.powerschool.category_grades_static gr
+--   WHERE gr.academic_year IN (gabby.utilities.GLOBAL_ACADEMIC_YEAR(), gabby.utilities.GLOBAL_ACADEMIC_YEAR() - 1)
+--     AND gr.grade_category <> 'Q'
+--   GROUP BY gr.student_number
+--           ,gr.academic_year
+--           ,gr.grade_category
+--           ,gr.credittype
+--           ,gr.course_name
  )
 
 ,attendance AS (
