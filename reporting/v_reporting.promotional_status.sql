@@ -52,7 +52,7 @@ WITH failing AS (
              ,term_administered
              ,AVG(performance_band_number) AS avg_performance_band_number
        FROM gabby.illuminate_dna_assessments.agg_student_responses_all
-       WHERE module_type = 'QA'
+       WHERE module_type LIKE 'QA%'
          AND subject_area IN ('Mathematics', 'Algebra I')
          AND response_type = 'O'
        GROUP BY local_student_id
@@ -103,6 +103,7 @@ SELECT sub.student_number
                    WHEN sub.sched_nextyeargrade <= sub.grade_level THEN 'Retained'
                   END
         WHEN sub.school_level <> 'HS' AND (sub.iep_status = 'SPED' OR sub.is_retained_flag = 1) THEN 'See Teacher'
+        WHEN sub.school_level = 'HS' THEN 'N/A'
         WHEN CONCAT(sub.promo_status_attendance
                    ,sub.promo_status_lit
                    ,sub.promo_status_grades
@@ -138,7 +139,7 @@ FROM
            ,CASE
              WHEN sub.ada_y1_running >= 90.1 THEN 'On Track'
              WHEN sub.ada_y1_running < 90.1 THEN 'Off Track'
-             --WHEN sub.ada_y1_running < 80.0 THEN 'At Risk'
+             WHEN sub.ada_y1_running < 80.0 THEN 'At Risk'
              ELSE 'No Data'
             END AS promo_status_attendance
            ,CASE
@@ -161,7 +162,7 @@ FROM
                   THEN CASE
                         WHEN sub.grades_y1_failing_projected = 0 THEN 'On Track'
                         WHEN sub.grades_y1_failing_projected >= 1 THEN 'Off Track'
-                        --WHEN sub.grades_y1_failing_projected >= 2 THEN 'At Risk'
+                        WHEN sub.grades_y1_failing_projected >= 2 THEN 'At Risk'
                         ELSE 'No Data'
                        END
              WHEN sub.school_level = 'HS'
