@@ -1,6 +1,3 @@
-USE gabby;
-
-GO
 CREATE OR ALTER VIEW
   utilities.fivetran_audit AS
 SELECT

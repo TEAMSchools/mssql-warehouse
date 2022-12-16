@@ -1,6 +1,3 @@
-USE gabby;
-
-GO
 CREATE OR ALTER VIEW
   tableau.staff_tracker AS
 WITH

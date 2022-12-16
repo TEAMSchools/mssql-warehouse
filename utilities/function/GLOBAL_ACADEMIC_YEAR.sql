@@ -1,6 +1,3 @@
-USE gabby;
-
-GO
 SET
 ANSI_NULLS ON;
 

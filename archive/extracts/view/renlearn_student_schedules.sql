@@ -1,6 +1,3 @@
-USE gabby;
-
-GO
 CREATE OR ALTER VIEW
   extracts.renlearn_student_schedules AS
 WITH

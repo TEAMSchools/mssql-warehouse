@@ -1,6 +1,3 @@
-USE gabby;
-
-GO
 CREATE OR ALTER VIEW
   tableau.next_year_status AS
 SELECT

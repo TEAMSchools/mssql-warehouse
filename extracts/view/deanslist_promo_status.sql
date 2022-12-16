@@ -1,6 +1,3 @@
-USE gabby;
-
-GO
 CREATE OR ALTER VIEW
   extracts.deanslist_promo_status AS
 SELECT

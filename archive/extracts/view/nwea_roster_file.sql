@@ -1,6 +1,3 @@
-USE gabby;
-
-GO
 CREATE OR ALTER VIEW
   extracts.nwea_roster_file AS
 SELECT DISTINCT

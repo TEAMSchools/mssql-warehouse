@@ -1,6 +1,3 @@
-USE gabby;
-
-GO
 CREATE OR ALTER VIEW
   extracts.clever_admins AS
   /* School staff assigned to primary school only */

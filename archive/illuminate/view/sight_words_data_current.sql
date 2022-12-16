@@ -1,6 +1,3 @@
-USE gabby;
-
-GO
 CREATE OR ALTER VIEW
   illuminate_dna_repositories.sight_words_data_current AS
 SELECT

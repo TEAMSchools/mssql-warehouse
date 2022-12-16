@@ -1,6 +1,3 @@
-USE gabby;
-
-GO
 CREATE OR ALTER VIEW
   tableau.compliance_staff_attrition AS
 WITH

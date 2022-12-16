@@ -1,6 +1,3 @@
-USE gabby;
-
-GO
 CREATE OR ALTER VIEW
   pm.teacher_goals_lockbox_wide AS
 SELECT
