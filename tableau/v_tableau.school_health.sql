@@ -1,7 +1,7 @@
-USE gabby
-GO
-
-CREATE OR ALTER VIEW tableau.school_health AS
+-- USE gabby
+-- GO
+-- 
+-- CREATE OR ALTER VIEW tableau.school_health AS
 
 WITH act_composite AS (
   SELECT stl.contact_c
@@ -39,9 +39,12 @@ WITH act_composite AS (
 SELECT sub.subdomain
       ,sub.academic_year
       ,sub.schoolid
+      ,sch.[name] AS school_name
+      ,sch.abbreviation AS school_abbreviation
       ,sub.grade_band
       ,sub.pct_met_goal
       ,sub.pct_met_iep
+      ,sub.pct_met_no_iep
       ,sub.pct_met_f
       ,sub.pct_met_m
       ,ml.metric_type
@@ -54,16 +57,26 @@ SELECT sub.subdomain
       ,ml.level_3
       ,ml.level_4
       ,ml.[absolute]
-      ,CASE WHEN ml.metric_type = 'greater' AND sub.pct_met_goal >= ml.level_4 THEN 4 
-            WHEN ml.metric_type = 'greater' AND sub.pct_met_goal >= ml.level_3 THEN 3 
-            WHEN ml.metric_type = 'greater' AND sub.pct_met_goal >= ml.level_2 THEN 2
-            WHEN ml.metric_type = 'greater' AND sub.pct_met_goal < ml.level_2 THEN 1
-            WHEN ml.metric_type = 'less' AND sub.pct_met_goal > ml.level_2 THEN 1 
-            WHEN ml.metric_type = 'less' AND sub.pct_met_goal <= ml.level_3 THEN 2 
-            WHEN ml.metric_type = 'less' AND sub.pct_met_goal <= ml.level_2 THEN 3
-            WHEN ml.metric_type = 'less' AND sub.pct_met_goal <= ml.level_2 THEN 4
-         ELSE NULL END AS subdomain_score
-       ,ROUND(ml.[absolute] - sub.pct_met_goal, 2) AS diff_from_absolute
+      ,CASE 
+        WHEN ml.metric_type = 'greater' AND sub.pct_met_goal >= ml.level_4 THEN 4 
+        WHEN ml.metric_type = 'greater' AND sub.pct_met_goal >= ml.level_3 THEN 3 
+        WHEN ml.metric_type = 'greater' AND sub.pct_met_goal >= ml.level_2 THEN 2
+        WHEN ml.metric_type = 'greater' AND sub.pct_met_goal < ml.level_2 THEN 1
+        WHEN ml.metric_type = 'less' AND sub.pct_met_goal > ml.level_2 THEN 1 
+        WHEN ml.metric_type = 'less' AND sub.pct_met_goal <= ml.level_3 THEN 2 
+        WHEN ml.metric_type = 'less' AND sub.pct_met_goal <= ml.level_2 THEN 3
+        WHEN ml.metric_type = 'less' AND sub.pct_met_goal <= ml.level_2 THEN 4
+        ELSE NULL
+       END AS subdomain_score
+      ,ROUND(sub.pct_met_goal - ml.[absolute], 2) AS diff_from_absolute
+      ,ABS(ROUND(sub.pct_met_f - sub.pct_met_m, 2)) AS gender_diff
+      ,CASE 
+        WHEN ROUND(sub.pct_met_f - sub.pct_met_m, 2) > 0 THEN '+F'
+        WHEN ROUND(sub.pct_met_f - sub.pct_met_m, 2) < 0 THEN '+M'
+        ELSE NULL
+       END AS gender_diff_direction
+      ,ROUND(sub.pct_met_iep - sub.pct_met_no_iep, 2) AS iep_diff
+      ,ROUND(sub.pct_met_goal - ml.level_4, 2) AS diff_level_4
 FROM
 	(
 	SELECT 'f_and_p' AS subdomain
@@ -609,3 +622,5 @@ FROM
 LEFT JOIN gabby.reporting.school_health_metric_lookup ml
   ON sub.subdomain = ml.subdomain
  AND sub.grade_band = ml.grade_band COLLATE Latin1_General_BIN
+LEFT JOIN gabby.powerschool.schools sch
+  ON sub.schoolid = sch.school_number
