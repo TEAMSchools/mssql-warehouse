@@ -163,7 +163,7 @@ FROM
  
  UNION ALL
  
- SELECT 'i-ready_stretch_math' AS subdomain
+ SELECT 'i-ready_stretch_' + sub.iready_subject
        ,sub.academic_year
        ,sub.schoolid
        ,sub.grade_band
@@ -176,6 +176,7 @@ FROM
  GROUP BY sub.academic_year
          ,sub.schoolid
          ,sub.grade_band
+         ,sub.iready_subject
  
  UNION ALL
  
