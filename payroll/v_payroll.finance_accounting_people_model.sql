@@ -74,7 +74,7 @@ SELECT cw.df_employee_number AS employee_number
 
       ,ehs.annual_salary AS original_salary_upon_hire
 
-      ,ROW_NUMBER() OVER(PARTITION BY cw.df_employee_number ORDER BY y.academic_year DESC) AS rn_curr
+      ,ROW_NUMBER() OVER(PARTITION BY cw.df_employee_number ORDER BY y.academic_year DESC, eh.position_status) AS rn_curr
 FROM gabby.people.employment_history_static eh
 INNER JOIN years y
   ON y.effective_date BETWEEN eh.effective_start_date AND eh.effective_end_date
