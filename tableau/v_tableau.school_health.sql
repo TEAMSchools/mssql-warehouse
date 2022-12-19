@@ -618,7 +618,39 @@ FROM
 	        ,sub.schoolid
 	        ,sub.grade_band
 	        ,sub.[subject]
+
+ 	UNION ALL
+	
+	SELECT 'scds_staff' AS subdomain
+	      ,sub.academic_year
+	      ,sub.schoolid
+	      ,'ALL' AS grade_band
+	      ,ROUND(AVG(CAST(sub.average_response_value AS FLOAT)), 2) AS pct_met_goal
+	      ,NULL AS pct_met_iep
+	      ,NULL AS pct_met_no_iep
+	      ,NULL AS pct_met_f
+	      ,NULL AS pct_met_m
+	FROM
+	    (
+		SELECT sd.campaign_academic_year AS academic_year
+		      ,sd.respondent_df_employee_number AS employee_number
+		      ,cw.ps_school_id AS schoolid
+		      ,CASE WHEN ROUND(AVG(CAST(sd.answer_value AS FLOAT)), 3) >= 3.00 THEN 1 
+		       ELSE 0 END AS average_response_value
+		FROM surveygizmo.survey_detail sd
+		JOIN gabby.people.employment_history_static eh
+		  ON sd.respondent_df_employee_number = eh.employee_number
+		 AND DATEFROMPARTS(sd.campaign_academic_year + 1, 4, 30) BETWEEN eh.effective_start_date AND eh.effective_end_date
+		 AND eh.primary_position = 'Yes'
+		INNER JOIN gabby.people.school_crosswalk cw
+		  ON eh.[location] = cw.site_name
+		 AND cw.ps_school_id <> 0
+		WHERE question_shortname LIKE 'scd%'
+		  AND sd.answer_value IS NOT NULL
+		GROUP BY sd.campaign_academic_year, sd.respondent_df_employee_number, cw.ps_school_id
 	) sub
+	GROUP BY sub.academic_year, sub.schoolid
+) sub
 LEFT JOIN gabby.reporting.school_health_metric_lookup ml
   ON sub.subdomain = ml.subdomain
  AND sub.grade_band = ml.grade_band COLLATE Latin1_General_BIN
