@@ -1,7 +1,6 @@
 CREATE
 OR ALTER
-PROCEDURE illuminate_dna_repositories.repository_row_ids_merge AS BEGIN;
-
+PROCEDURE illuminate_dna_repositories.repository_row_ids_merge AS BEGIN
 SET
 ANSI_NULLS ON;
 
@@ -9,23 +8,23 @@ SET
 QUOTED_IDENTIFIER ON;
 
 /*
-SET NOCOUNT ON added to prevent extra result sets 
+SET NOCOUNT ON added to prevent extra result sets
 from interfering with SELECT statements
  */
 SET
 NOCOUNT ON;
-
-/* Drop and recreate the temp table */
-IF OBJECT_ID(N'tempdb..#repository_row_ids') IS NOT NULL
-DROP TABLE [#repository_row_ids]
-CREATE TABLE
-  [#repository_row_ids] (repository_id INT, repository_row_id INT);
 
 /* Declare variables */
 DECLARE @query NVARCHAR(MAX),
 @repository_id NVARCHAR(MAX),
 @linked_server_name NVARCHAR(MAX),
 @message NVARCHAR(MAX);
+
+/* Drop and recreate the temp table */
+DROP TABLE IF EXISTS [#repository_row_ids];
+
+CREATE TABLE
+  [#repository_row_ids] (repository_id INT, repository_row_id INT);
 
 SET
   @linked_server_name = 'ILLUMINATE';
@@ -60,15 +59,16 @@ ORDER BY
   repository_id DESC;
 
 /* Do work son */
-OPEN repository_cursor WHILE 1 = 1 BEGIN;
+OPEN repository_cursor;
 
 FETCH NEXT
 FROM
-  repository_cursor INTO @repository_id IF @@FETCH_STATUS != 0 BEGIN;
+  repository_cursor INTO @repository_id;
 
-BREAK;
-
-END;
+WHILE @@FETCH_STATUS = 0 BEGIN
+FETCH NEXT
+FROM
+  repository_cursor INTO @repository_id;
 
 /*
 here's the beef: the cursor is going to iterate over each repo ID
@@ -107,25 +107,28 @@ DELETE if on TARGET but not MATCHED by SOURCE
  */
 IF OBJECT_ID(
   N'illuminate_dna_repositories.repository_row_ids'
-) IS NULL BEGIN;
-
+) IS NULL BEGIN
 SET
-  @message = 'Creating destination table' RAISERROR (@message, 0, 1);
+  @message = 'Creating destination table';
+
+RAISERROR (@message, 0, 1);
 
 SELECT
-  * INTO illuminate_dna_repositories.repository_row_ids
+  repository_id,
+  repository_row_id INTO illuminate_dna_repositories.repository_row_ids
 FROM
   #repository_row_ids;
 
 END;
 
-ELSE BEGIN;
-
+ELSE BEGIN
 SET
-  @message = 'Merging into destination table' RAISERROR (@message, 0, 1);
+  @message = 'Merging into destination table';
+
+RAISERROR (@message, 0, 1);
 
 WITH
-  TARGET AS (
+  row_ids AS (
     SELECT
       repository_id,
       repository_row_id
@@ -140,29 +143,26 @@ WITH
       )
   )
 MERGE INTO
-  TARGET USING (
+  row_ids AS tgt USING (
     SELECT
       repository_id,
       repository_row_id
     FROM
       #repository_row_ids
-  ) AS SOURCE (repository_id, repository_row_id) ON TARGET.repository_id = SOURCE.repository_id
-  AND TARGET.repository_row_id = SOURCE.repository_row_id
+  ) AS src (repository_id, repository_row_id) ON tgt.repository_id = src.repository_id
+  AND tgt.repository_row_id = src.repository_row_id
 WHEN MATCHED THEN
 UPDATE SET
-  TARGET.repository_id = SOURCE.repository_id,
-  TARGET.repository_row_id = SOURCE.repository_row_id
-WHEN NOT MATCHED BY TARGET THEN
+  tgt.repository_id = src.repository_id,
+  tgt.repository_row_id = src.repository_row_id
+WHEN NOT MATCHED
+  BY tgt THEN
 INSERT
   (repository_id, repository_row_id)
 VALUES
-  (
-    SOURCE.repository_id,
-    SOURCE.repository_row_id
-  )
-WHEN NOT MATCHED BY SOURCE THEN
-DELETE;
-
-END;
+  (src.repository_id, src.repository_row_id)
+WHEN NOT MATCHED
+  BY src THEN
+DELETE END;
 
 END;

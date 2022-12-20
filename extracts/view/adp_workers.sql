@@ -2,8 +2,8 @@ CREATE OR ALTER VIEW
   extracts.adp_workers AS
 WITH
   wfm_updates AS (
+    /* trunk-ignore(sqlfluff/L036) */
     SELECT DISTINCT
-      /* trunk-ignore(sqlfluff/L036) */
       associate_id
     FROM
       gabby.adp.wfm_field_monitor

@@ -2,11 +2,13 @@ CREATE OR ALTER VIEW
   extracts.whetstone_users AS
 WITH
   managers AS (
+    /* trunk-ignore(sqlfluff/L036) */
     SELECT DISTINCT
       manager_df_employee_number
     FROM
       gabby.people.staff_crosswalk_static
     UNION
+    /* trunk-ignore(sqlfluff/L036) */
     SELECT
       s.df_employee_number
     FROM

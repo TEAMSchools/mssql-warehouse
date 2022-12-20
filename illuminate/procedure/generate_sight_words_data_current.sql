@@ -1,22 +1,29 @@
 CREATE
 OR ALTER
-PROCEDURE illuminate_dna_repositories.generate_sight_words_data_current AS BEGIN;
-
-DECLARE @sql NVARCHAR(MAX);
+/* trunk-ignore(sqlfluff/L016) */
+PROCEDURE illuminate_dna_repositories.generate_sight_words_data_current AS BEGIN DECLARE @sql NVARCHAR(MAX);
 
 /* reset view */
+/* trunk-ignore(sqlfluff/L036) */
 SELECT
-  @sql = 'CREATE OR ALTER VIEW illuminate_dna_repositories.sight_words_data_current AS ' + gabby.dbo.GROUP_CONCAT_D (select_sql, '')
+  @sql = CONCAT(
+    'CREATE OR ALTER VIEW illuminate_dna_repositories.sight_words_data_current AS ',
+    gabby.dbo.GROUP_CONCAT_D (select_sql, '')
+  )
 FROM
   (
     SELECT
-      TOP 1000 select_sql + CASE
-        WHEN ROW_NUMBER() OVER (
-          ORDER BY
-            repository_id DESC
-        ) = 1 THEN ''
-        ELSE ' UNION ALL '
-      END AS select_sql
+      /* trunk-ignore(sqlfluff/L041) */
+      TOP 1000 CONCAT(
+        select_sql,
+        CASE
+          WHEN ROW_NUMBER() OVER (
+            ORDER BY
+              repository_id DESC
+          ) = 1 THEN ''
+          ELSE ' UNION ALL '
+        END
+      ) AS select_sql
     FROM
       gabby.illuminate_dna_repositories.sight_words_quiz_union_generator
     WHERE
@@ -29,6 +36,7 @@ FROM
 /* drop indexes */
 BEGIN TRY;
 
+/* trunk-ignore(sqlfluff/L036) */
 SELECT
   @sql = gabby.dbo.GROUP_CONCAT_D (drop_index_sql, ' ')
 FROM
@@ -36,14 +44,15 @@ FROM
 
 EXEC (@sql);
 
-END TRY BEGIN CATCH;
-
+END TRY BEGIN CATCH
+/* trunk-ignore(sqlfluff/L036) */
 SELECT
   1;
 
 END CATCH;
 
 /* reset indexes */
+/* trunk-ignore(sqlfluff/L036) */
 SELECT
   @sql = gabby.dbo.GROUP_CONCAT_D (create_index_sql, ' ')
 FROM
