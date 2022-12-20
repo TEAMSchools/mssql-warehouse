@@ -1,24 +1,24 @@
 SELECT
   s.local_student_id AS student_number,
-  CAST(sub.[Date Administered] AS DATE) AS date_administered,
-  CAST(sub.[About the Text] AS FLOAT) AS about_the_text,
-  CAST(sub.[Beyond the Text] AS FLOAT) AS beyond_the_text,
-  CAST(sub.[Within the Text] AS FLOAT) AS within_the_text,
-  CAST(sub.Accuracy AS FLOAT) AS accuracy,
-  CAST(sub.Fluency AS FLOAT) AS fluency,
-  CAST(sub.[Reading Rate (wpm)] AS FLOAT) AS reading_rate_wpm,
   sub.[Instructional Level Tested] AS instructional_level_tested,
-  CAST(sub.[Rate Proficiency] AS NVARCHAR) AS rate_proficiency,
   sub.[Key Lever] AS key_lever,
   sub.[Fiction/ Nonfiction] AS fiction_nonfiction,
   sub.[Test Administered By] AS test_administered_by,
   sub.[Academic Year] AS academic_year,
+  sub.[Test Round] AS test_round,
+  CAST(sub.[Date Administered] AS DATE) AS date_administered,
+  CAST(sub.[About the Text] AS FLOAT) AS about_the_text,
+  CAST(sub.[Beyond the Text] AS FLOAT) AS beyond_the_text,
+  CAST(sub.[Within the Text] AS FLOAT) AS within_the_text,
+  CAST(sub.[Accuracy] AS FLOAT) AS accuracy,
+  CAST(sub.[Fluency] AS FLOAT) AS fluency,
+  CAST(sub.[Reading Rate (wpm)] AS FLOAT) AS reading_rate_wpm,
+  CAST(sub.[Rate Proficiency] AS NVARCHAR) AS rate_proficiency,
   CONCAT(
     'IL',
     sub.repository_id,
     sub.repository_row_id
   ) AS unique_id,
-  sub.[Test Round] AS test_round,
   CASE
     WHEN LTRIM(RTRIM(sub.[Status])) LIKE '%Did Not Achieve%' THEN 'Did Not Achieve'
     WHEN LTRIM(RTRIM(sub.[Status])) LIKE '%Achieved%' THEN 'Achieved'
@@ -103,11 +103,15 @@ FROM
   ) AS sub
   INNER JOIN gabby.illuminate_public.students AS s ON sub.student_id = s.student_id
 WHERE
-  CONCAT(repository_id, '_', repository_row_id) IN (
+  CONCAT(
+    sub.repository_id,
+    '_',
+    sub.repository_row_id
+  ) IN (
     SELECT
       CONCAT(repository_id, '_', repository_row_id)
     FROM
       gabby.illuminate_dna_repositories.repository_row_ids
   )
 ORDER BY
-  unique_id
+  sub.unique_id

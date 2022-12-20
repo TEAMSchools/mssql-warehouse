@@ -5,7 +5,7 @@ WITH
       testid,
       student_number,
       read_lvl,
-      status,
+      [status],
       field,
       score
     FROM
@@ -19,7 +19,7 @@ WITH
             AND testid = 3273 THEN instruct_lvl
             ELSE read_lvl
           END AS read_lvl,
-          ISNULL(status, 'Did Not Achieve') AS status,
+          ISNULL([status], 'Did Not Achieve') AS [status],
           CAST(name_ass AS VARCHAR) AS name_ass,
           CAST(ltr_nameid AS VARCHAR) AS ltr_nameid,
           CAST(ltr_soundid AS VARCHAR) AS ltr_soundid,
@@ -59,8 +59,7 @@ WITH
           CAST(wcomp_infer AS VARCHAR) AS wcomp_infer,
           CAST(wcomp_ct AS VARCHAR) AS wcomp_ct,
           CAST(retelling AS VARCHAR) AS retelling,
-          CONVERT(
-            VARCHAR,
+          CAST(
             CASE
               WHEN testid = 3397
               AND reading_rate IN ('Above', 'Target') THEN 30
@@ -70,7 +69,7 @@ WITH
               AND reading_rate IN ('Above', 'Target') THEN 50
               WHEN testid IN (3493, 3511, 3527)
               AND reading_rate IN ('Above', 'Target') THEN 75
-            END
+            END AS VARCHAR
           ) AS reading_rate,
           CAST(fluency AS VARCHAR) AS fluency,
           CAST(ROUND(fp_wpmrate, 0) AS VARCHAR) AS fp_wpmrate,
@@ -88,8 +87,7 @@ WITH
           CAST(rr_prof AS VARCHAR) AS rr_prof,
           CAST(devsp_prof AS VARCHAR) AS devsp_prof
         FROM
-          gabby.lit.powerschool_readingscores_archive AS rs
-          INNER JOIN gabby.powerschool.students AS s ON rs.studentid = s.id
+          gabby.lit.powerschool_readingscores_archive
       ) AS sub UNPIVOT (
         score FOR field IN (
           name_ass,
@@ -164,7 +162,9 @@ SELECT
   END AS lvl_num
 FROM
   ps_scores_long AS rs
-  LEFT OUTER JOIN gabby.lit.gleq ON rs.testid = gleq.testid
-  AND rs.read_lvl = gleq.read_lvl
+  LEFT OUTER JOIN gabby.lit.gleq ON (
+    rs.testid = gleq.testid
+    AND rs.read_lvl = gleq.read_lvl
+  )
 WHERE
   rs.testid = 3273

@@ -35,7 +35,9 @@ SELECT
     MINUTE,
     /* number of 10 minute intervals (in microseconds)
     since last reset offset by time zone */
-    (CAST(pwdlastset AS BIGINT) / 600000000) + DATEDIFF(MINUTE, GETUTCDATE(), CURRENT_TIMESTAMP), -- trunk-ignore(sqlfluff/L016)
+    (CAST(pwdlastset AS BIGINT) / 600000000) + (
+      DATEDIFF(MINUTE, GETUTCDATE(), CURRENT_TIMESTAMP)
+    ),
     CAST('1601-01-01' AS DATETIME2) /* origin date for DATETIME2 */
   ) AS pwdlastset,
   CASE

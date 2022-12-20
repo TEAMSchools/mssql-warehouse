@@ -135,9 +135,11 @@ WITH
       AND co.academic_year = gpa.academic_year
       AND co.[db_name] = gpa.[db_name]
       AND gpa.is_curterm = 1
-      LEFT JOIN sp ON co.studentid = sp.studentid
-      AND co.academic_year = sp.academic_year
-      AND co.[db_name] = sp.[db_name]
+      LEFT JOIN sp ON (
+        co.studentid = sp.studentid
+        AND co.academic_year = sp.academic_year
+        AND co.[db_name] = sp.[db_name]
+      )
       LEFT JOIN attendance AS att ON co.studentid = att.studentid
       AND co.yearid = att.yearid
       AND co.[db_name] = att.[db_name]

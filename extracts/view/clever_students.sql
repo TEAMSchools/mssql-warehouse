@@ -60,15 +60,21 @@ SELECT
   gpa.[cumulative_Y1_gpa_unweighted] AS [Weighted_gpa]
 FROM
   gabby.powerschool.cohort_identifiers_static AS co
-  LEFT JOIN gabby.powerschool.student_contacts_static AS sc ON co.student_number = sc.student_number -- trunk-ignore(sqlfluff/L016)
-  AND co.[db_name] = sc.[db_name]
-  AND sc.contact_category = 'Phone'
-  AND sc.person_type != 'self'
-  LEFT JOIN gabby.powerschool.gpa_cumulative AS gpa ON co.studentid = gpa.studentid
-  AND co.schoolid = gpa.schoolid
-  AND co.[db_name] = gpa.[db_name]
-  LEFT JOIN gabby.powerschool.u_studentsuserfields AS suf ON co.students_dcid = suf.studentsdcid -- trunk-ignore(sqlfluff/L016)
-  AND co.[db_name] = suf.[db_name]
+  LEFT JOIN gabby.powerschool.student_contacts_static AS sc ON (
+    co.student_number = sc.student_number
+    AND co.[db_name] = sc.[db_name]
+    AND sc.contact_category = 'Phone'
+    AND sc.person_type != 'self'
+  )
+  LEFT JOIN gabby.powerschool.gpa_cumulative AS gpa ON (
+    co.studentid = gpa.studentid
+    AND co.schoolid = gpa.schoolid
+    AND co.[db_name] = gpa.[db_name]
+  )
+  LEFT JOIN gabby.powerschool.u_studentsuserfields AS suf ON (
+    co.students_dcid = suf.studentsdcid
+    AND co.[db_name] = suf.[db_name]
+  )
 WHERE
   co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
   AND co.rn_year = 1

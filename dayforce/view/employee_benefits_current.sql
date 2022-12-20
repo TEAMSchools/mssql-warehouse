@@ -37,14 +37,22 @@ FROM
           ben_plan_option_name,
           ben_plan_option_effective_start,
           CASE
-            WHEN ben_plan_name = 'Aetna HDHP'
-            OR ben_plan_option_name = 'Waive Medical' THEN 'Medical'
-            WHEN ben_plan_name IN ('Aetna PPO High', 'Aetna PPO Low')
-            OR ben_plan_option_name = 'Waive Dental' THEN 'Dental'
-            WHEN ben_plan_name = 'Aetna Vision'
-            OR ben_plan_option_name = 'Waive Vision' THEN 'Vision'
-            WHEN ben_plan_name = 'Alerus 403b'
-            OR ben_plan_option_name LIKE 'Waive 403b%' THEN '403b'
+            WHEN (
+              ben_plan_name = 'Aetna HDHP'
+              OR ben_plan_option_name = 'Waive Medical'
+            ) THEN 'Medical'
+            WHEN (
+              ben_plan_name IN ('Aetna PPO High', 'Aetna PPO Low')
+              OR ben_plan_option_name = 'Waive Dental'
+            ) THEN 'Dental'
+            WHEN (
+              ben_plan_name = 'Aetna Vision'
+              OR ben_plan_option_name = 'Waive Vision'
+            ) THEN 'Vision'
+            WHEN (
+              ben_plan_name = 'Alerus 403b'
+              OR ben_plan_option_name LIKE 'Waive 403b%'
+            ) THEN '403b'
             WHEN ben_plan_option_name IN (
               'Flexible Spending Account - Dependent Care',
               'Waive Flexible Spending Account - Dependent Care'
@@ -53,19 +61,27 @@ FROM
               'Flexible Spending Account - Health Care',
               'Waive Flexible Spending Account - Health Care'
             ) THEN 'FSA-HC'
-            WHEN ben_plan_name = 'Health Savings Account'
-            OR ben_plan_option_name = 'Waive Health Savings Account' THEN 'HSA'
-            WHEN ben_plan_name = 'Imputed Income - Life Insurance' THEN 'Imputed Income - Life Insurance' -- trunk-ignore(sqlfluff/L016)
+            WHEN (
+              ben_plan_name = 'Health Savings Account'
+              OR ben_plan_option_name = 'Waive Health Savings Account'
+            ) THEN 'HSA'
+            WHEN (
+              ben_plan_name = 'Imputed Income - Life Insurance'
+            ) THEN 'Imputed Income - Life Insurance'
             WHEN ben_plan_option_name IN (
               'Basic Supplemental AD&D (Employer)',
               'Basic Supplemental Life (Employer)',
               'Supplemental Employee Life & AD&D Insurance',
               'Waive Supplemental Employee Life and AD&D Insurance'
             ) THEN 'Life & AD&D supplemental'
-            WHEN ben_plan_name = 'Voluntary Accident Coverage'
-            OR ben_plan_option_name = 'Waive Voluntary Accident Coverage' THEN 'Voluntary Accident Coverage' -- trunk-ignore(sqlfluff/L016)
-            WHEN ben_plan_name = 'Voluntary Hospital Indemnity'
-            OR ben_plan_option_name = 'Waive Hospital Indemnity' THEN 'Voluntary Hospital Indemnity' -- trunk-ignore(sqlfluff/L016)
+            WHEN (
+              ben_plan_name = 'Voluntary Accident Coverage'
+              OR ben_plan_option_name = 'Waive Voluntary Accident Coverage'
+            ) THEN 'Voluntary Accident Coverage'
+            WHEN (
+              ben_plan_name = 'Voluntary Hospital Indemnity'
+              OR ben_plan_option_name = 'Waive Hospital Indemnity'
+            ) THEN 'Voluntary Hospital Indemnity'
             ELSE ben_plan_name
           END AS ben_plan_category
         FROM

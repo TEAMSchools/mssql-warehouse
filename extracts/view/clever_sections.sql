@@ -10,9 +10,11 @@ WITH
       COALESCE(ccw.ps_school_id, df.primary_site_schoolid) AS [School_id]
     FROM
       gabby.people.staff_crosswalk_static AS df
-      LEFT JOIN gabby.people.campus_crosswalk AS ccw ON df.primary_site = ccw.campus_name -- trunk-ignore(sqlfluff/L016)
-      AND ccw._fivetran_deleted = 0
-      AND ccw.is_pathways = 0
+      LEFT JOIN gabby.people.campus_crosswalk AS ccw ON (
+        df.primary_site = ccw.campus_name
+        AND ccw._fivetran_deleted = 0
+        AND ccw.is_pathways = 0
+      )
     WHERE
       df.[status] != 'TERMINATED'
       AND df.primary_job IN (
@@ -72,11 +74,13 @@ WITH
       AND sec.[db_name] = t.[db_name]
       INNER JOIN gabby.powerschool.courses AS c ON sec.course_number = c.course_number
       AND sec.[db_name] = c.[db_name]
-      INNER JOIN gabby.powerschool.terms ON sec.termid = terms.id
-      AND sec.schoolid = terms.schoolid
-      AND sec.[db_name] = terms.[db_name]
-      AND (
-        CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN terms.firstday AND terms.lastday
+      INNER JOIN gabby.powerschool.terms ON (
+        sec.termid = terms.id
+        AND sec.schoolid = terms.schoolid
+        AND sec.[db_name] = terms.[db_name]
+        AND (
+          CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN terms.firstday AND terms.lastday
+        )
       )
     WHERE
       sec.no_of_students > 0
@@ -137,8 +141,8 @@ WITH
       NULL AS [Course_description]
     FROM
       dsos
-      INNER JOIN gabby.powerschool.schools AS s ON dsos.[School_id] = s.school_number
-      INNER JOIN gabby.utilities.row_generator_smallint AS r ON (r.n BETWEEN s.low_grade AND s.high_grade) -- trunk-ignore(sqlfluff/L016)
+      INNER JOIN gabby.powerschool.schools AS s ON (dsos.[School_id] = s.school_number)
+      INNER JOIN gabby.utilities.row_generator_smallint AS r ON (r.n BETWEEN s.low_grade AND s.high_grade)
   ),
   pre_pivot AS (
     SELECT

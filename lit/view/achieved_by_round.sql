@@ -11,14 +11,16 @@ WITH
       terms.alt_name AS test_round,
       terms.[start_date],
       terms.end_date,
-      CAST(RIGHT(terms.time_per_name, 1) AS INT) AS round_num,
-      terms.is_curterm
+      terms.is_curterm,
+      CAST(RIGHT(terms.time_per_name, 1) AS INT) AS round_num
     FROM
       gabby.powerschool.cohort_identifiers_static AS r
-      INNER JOIN gabby.reporting.reporting_terms AS terms ON r.academic_year = terms.academic_year
-      AND r.schoolid = terms.schoolid
-      AND terms.identifier = 'LIT'
-      AND terms._fivetran_deleted = 0
+      INNER JOIN gabby.reporting.reporting_terms AS terms ON (
+        r.academic_year = terms.academic_year
+        AND r.schoolid = terms.schoolid
+        AND terms.identifier = 'LIT'
+        AND terms._fivetran_deleted = 0
+      )
     WHERE
       r.rn_year = 1
   ),
@@ -93,26 +95,34 @@ WITH
           hard.lvl_num AS hard_lvl_num
         FROM
           roster_scaffold AS r
-          LEFT JOIN gabby.lit.all_test_events_static AS ps ON r.student_number = ps.student_number
-          AND r.academic_year = ps.academic_year
-          AND r.test_round = ps.test_round
-          AND ps.[status] = 'Mixed'
-          AND ps.curr_round = 1
-          LEFT JOIN gabby.lit.all_test_events_static AS achv ON r.student_number = achv.student_number
-          AND r.academic_year = achv.academic_year
-          AND r.test_round = achv.test_round
-          AND achv.[status] = 'Achieved'
-          AND achv.curr_round = 1
-          LEFT JOIN gabby.lit.all_test_events_static AS dna ON r.student_number = dna.student_number
-          AND r.academic_year = dna.academic_year
-          AND r.test_round = dna.test_round
-          AND dna.[status] = 'Did Not Achieve'
-          AND dna.curr_round = 1
-          LEFT JOIN gabby.lit.all_test_events_static AS hard ON r.student_number = hard.student_number
-          AND r.academic_year = hard.academic_year
-          AND r.test_round = hard.test_round
-          AND hard.[status] = 'DNA - Hard'
-          AND hard.curr_round = 1
+          LEFT JOIN gabby.lit.all_test_events_static AS ps ON (
+            r.student_number = ps.student_number
+            AND r.academic_year = ps.academic_year
+            AND r.test_round = ps.test_round
+            AND ps.[status] = 'Mixed'
+            AND ps.curr_round = 1
+          )
+          LEFT JOIN gabby.lit.all_test_events_static AS achv ON (
+            r.student_number = achv.student_number
+            AND r.academic_year = achv.academic_year
+            AND r.test_round = achv.test_round
+            AND achv.[status] = 'Achieved'
+            AND achv.curr_round = 1
+          )
+          LEFT JOIN gabby.lit.all_test_events_static AS dna ON (
+            r.student_number = dna.student_number
+            AND r.academic_year = dna.academic_year
+            AND r.test_round = dna.test_round
+            AND dna.[status] = 'Did Not Achieve'
+            AND dna.curr_round = 1
+          )
+          LEFT JOIN gabby.lit.all_test_events_static AS hard ON (
+            r.student_number = hard.student_number
+            AND r.academic_year = hard.academic_year
+            AND r.test_round = hard.test_round
+            AND hard.[status] = 'DNA - Hard'
+            AND hard.curr_round = 1
+          )
         WHERE
           r.academic_year >= 2015
         UNION ALL
@@ -148,16 +158,20 @@ WITH
           NULL AS hard_lvl_num
         FROM
           roster_scaffold AS r
-          LEFT JOIN gabby.lit.all_test_events_static AS achv ON r.student_number = achv.student_number
-          AND r.academic_year = achv.academic_year
-          AND r.test_round = achv.test_round
-          AND achv.[status] = 'Achieved'
-          AND achv.curr_round = 1
-          LEFT JOIN gabby.lit.all_test_events_static AS dna ON r.student_number = dna.student_number
-          AND r.academic_year = dna.academic_year
-          AND r.test_round = dna.test_round
-          AND dna.[status] = 'Did Not Achieve'
-          AND dna.curr_round = 1
+          LEFT JOIN gabby.lit.all_test_events_static AS achv ON (
+            r.student_number = achv.student_number
+            AND r.academic_year = achv.academic_year
+            AND r.test_round = achv.test_round
+            AND achv.[status] = 'Achieved'
+            AND achv.curr_round = 1
+          )
+          LEFT JOIN gabby.lit.all_test_events_static AS dna ON (
+            r.student_number = dna.student_number
+            AND r.academic_year = dna.academic_year
+            AND r.test_round = dna.test_round
+            AND dna.[status] = 'Did Not Achieve'
+            AND dna.curr_round = 1
+          )
         WHERE
           r.academic_year <= 2014
           AND NOT (
@@ -246,15 +260,19 @@ WITH
           NULL AS hard_lvl_num
         FROM
           roster_scaffold AS r
-          INNER JOIN gabby.lit.all_test_events_static AS fp ON r.student_number = fp.student_number
-          AND r.academic_year = fp.academic_year
-          AND fp.recent_yr = 1
-          LEFT JOIN gabby.lit.gleq ON CASE
-            WHEN fp.[status] = 'Achieved'
-            AND fp.indep_lvl IS NULL THEN fp.read_lvl
-            ELSE fp.indep_lvl
-          END = gleq.read_lvl
-          AND gleq.testid = 3273
+          INNER JOIN gabby.lit.all_test_events_static AS fp ON (
+            r.student_number = fp.student_number
+            AND r.academic_year = fp.academic_year
+            AND fp.recent_yr = 1
+          )
+          LEFT JOIN gabby.lit.gleq ON (
+            CASE
+              WHEN fp.[status] = 'Achieved'
+              AND fp.indep_lvl IS NULL THEN fp.read_lvl
+              ELSE fp.indep_lvl
+            END = gleq.read_lvl
+            AND gleq.testid = 3273
+          )
         WHERE
           r.academic_year = 2014
           AND r.schoolid = 133570965
@@ -303,9 +321,11 @@ WITH
       ) AS rn
     FROM
       tests
-      LEFT JOIN tests AS achv_prev ON tests.student_number = achv_prev.student_number
-      AND tests.meta_achv_round < achv_prev.meta_achv_round
-      AND achv_prev.read_lvl IS NOT NULL
+      LEFT JOIN tests AS achv_prev ON (
+        tests.student_number = achv_prev.student_number
+        AND tests.meta_achv_round < achv_prev.meta_achv_round
+        AND achv_prev.read_lvl IS NOT NULL
+      )
   ),
   dna AS (
     SELECT
@@ -325,10 +345,13 @@ WITH
       ) AS rn
     FROM
       tests
-      LEFT JOIN tests AS dna_prev ON tests.student_number = dna_prev.student_number
-      AND tests.meta_achv_round < dna_prev.meta_achv_round
-      AND dna_prev.dna_lvl IS NOT NULL
-      AND tests.[start_date] <= CAST(CURRENT_TIMESTAMP AS DATE) /* preserves the scaffold but will not carry scores to a future term */
+      LEFT JOIN tests AS dna_prev ON (
+        tests.student_number = dna_prev.student_number
+        AND tests.meta_achv_round < dna_prev.meta_achv_round
+        AND dna_prev.dna_lvl IS NOT NULL
+        /* preserves the scaffold but will not carry scores to a future term */
+        AND tests.[start_date] <= CAST(CURRENT_TIMESTAMP AS DATE)
+      )
   ),
   hard AS (
     SELECT
@@ -354,10 +377,13 @@ WITH
       ) AS rn
     FROM
       tests
-      LEFT JOIN tests AS hard_prev ON tests.student_number = hard_prev.student_number
-      AND tests.meta_achv_round < hard_prev.meta_achv_round
-      AND hard_prev.hard_lvl_num IS NOT NULL
-      AND tests.[start_date] <= CAST(CURRENT_TIMESTAMP AS DATE) /* preserves the scaffold but will not carry scores to a future term */
+      LEFT JOIN tests AS hard_prev ON (
+        tests.student_number = hard_prev.student_number
+        AND tests.meta_achv_round < hard_prev.meta_achv_round
+        AND hard_prev.hard_lvl_num IS NOT NULL
+        /* preserves the scaffold but will not carry scores to a future term */
+        AND tests.[start_date] <= CAST(CURRENT_TIMESTAMP AS DATE)
+      )
   )
   /* falls back to most recently achieved reading level for each round, if NULL */
 SELECT
@@ -661,22 +687,32 @@ FROM
           END AS is_new_test
         FROM
           achieved
-          LEFT JOIN gabby.lit.all_test_events_static AS atid ON achieved.achv_unique_id = atid.unique_id
-          AND atid.[status] = 'Achieved'
-          LEFT JOIN dna ON achieved.student_number = dna.student_number
-          AND achieved.academic_year = dna.academic_year
-          AND achieved.round_num = dna.round_num
-          AND dna.rn = 1
-          LEFT JOIN hard ON achieved.student_number = hard.student_number
-          AND achieved.academic_year = hard.academic_year
-          AND achieved.round_num = hard.round_num
-          AND hard.rn = 1
-          LEFT JOIN gabby.lit.network_goals AS goals ON achieved.grade_level = goals.grade_level
-          AND achieved.test_round = goals.test_round
-          AND goals.norms_year = 2021
-          LEFT JOIN gabby.lit.individualized_goals AS indiv ON achieved.student_number = indiv.student_number
-          AND achieved.test_round = indiv.test_round
-          AND achieved.academic_year = indiv.academic_year
+          LEFT JOIN gabby.lit.all_test_events_static AS atid ON (
+            achieved.achv_unique_id = atid.unique_id
+            AND atid.[status] = 'Achieved'
+          )
+          LEFT JOIN dna ON (
+            achieved.student_number = dna.student_number
+            AND achieved.academic_year = dna.academic_year
+            AND achieved.round_num = dna.round_num
+            AND dna.rn = 1
+          )
+          LEFT JOIN hard ON (
+            achieved.student_number = hard.student_number
+            AND achieved.academic_year = hard.academic_year
+            AND achieved.round_num = hard.round_num
+            AND hard.rn = 1
+          )
+          LEFT JOIN gabby.lit.network_goals AS goals ON (
+            achieved.grade_level = goals.grade_level
+            AND achieved.test_round = goals.test_round
+            AND goals.norms_year = 2021
+          )
+          LEFT JOIN gabby.lit.individualized_goals AS indiv ON (
+            achieved.student_number = indiv.student_number
+            AND achieved.test_round = indiv.test_round
+            AND achieved.academic_year = indiv.academic_year
+          )
         WHERE
           achieved.rn = 1
       ) AS sub

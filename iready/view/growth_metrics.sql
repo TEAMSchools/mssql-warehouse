@@ -10,7 +10,6 @@ WITH
       CASE
         WHEN dr._file LIKE '%_ela%' THEN 'Reading'
         WHEN dr._file LIKE '%_math%' THEN 'Math'
-        ELSE NULL
       END AS [subject]
     FROM
       gabby.iready.diagnostic_results AS dr
@@ -26,7 +25,6 @@ WITH
       CASE
         WHEN dr._file LIKE '%_ela%' THEN 'Reading'
         WHEN dr._file LIKE '%_math%' THEN 'Math'
-        ELSE NULL
       END AS [subject]
     FROM
       gabby.iready.diagnostic_results AS dr
@@ -36,7 +34,6 @@ WITH
   )
 SELECT
   bl.student_number,
-  LEFT(bl.academic_year, 4) AS academic_year,
   bl.[subject],
   bl.baseline_scale,
   bl.baseline_percentile,
@@ -44,32 +41,40 @@ SELECT
   re.recent_percentile,
   di.annual_typical_growth_measure,
   di.annual_stretch_growth_measure,
+  LEFT(bl.academic_year, 4) AS academic_year,
   CASE
     WHEN re.recent_scale - bl.baseline_scale < 0 THEN 0
     WHEN re.recent_scale - bl.baseline_scale >= 0 THEN re.recent_scale - bl.baseline_scale
-    ELSE NULL
   END AS diagnostic_gain,
   CASE
     WHEN re.recent_scale - bl.baseline_scale <= 0 THEN 0
-    WHEN re.recent_scale - bl.baseline_scale > 0 THEN ROUND(
-      (re.recent_scale - bl.baseline_scale) / CAST(di.annual_typical_growth_measure AS FLOAT),
-      2
+    WHEN re.recent_scale - bl.baseline_scale > 0 THEN (
+      ROUND(
+        (re.recent_scale - bl.baseline_scale) / (
+          CAST(di.annual_typical_growth_measure AS FLOAT)
+        ),
+        2
+      )
     )
-    ELSE NULL
   END AS progress_typical,
   CASE
     WHEN re.recent_scale - bl.baseline_scale <= 0 THEN 0
     WHEN re.recent_scale - bl.baseline_scale > 0 THEN ROUND(
-      (re.recent_scale - bl.baseline_scale) / CAST(di.annual_stretch_growth_measure AS FLOAT),
+      (re.recent_scale - bl.baseline_scale) / (
+        CAST(di.annual_stretch_growth_measure AS FLOAT)
+      ),
       2
     )
-    ELSE NULL
   END AS progress_stretch
 FROM
   baseline AS bl
-  LEFT JOIN recent AS re ON bl.student_number = re.student_number
-  AND bl.academic_year = re.academic_year
-  AND bl.[subject] = re.[subject]
-  LEFT JOIN gabby.iready.diagnostic_and_instruction AS di ON bl.student_number = di.student_id
-  AND bl.[subject] = di.[subject]
-  AND bl.academic_year = di.academic_year
+  LEFT JOIN recent AS re ON (
+    bl.student_number = re.student_number
+    AND bl.academic_year = re.academic_year
+    AND bl.[subject] = re.[subject]
+  )
+  LEFT JOIN gabby.iready.diagnostic_and_instruction AS di ON (
+    bl.student_number = di.student_id
+    AND bl.[subject] = di.[subject]
+    AND bl.academic_year = di.academic_year
+  )

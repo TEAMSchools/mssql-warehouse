@@ -75,13 +75,13 @@ FROM
     FROM
       asmts AS a
       INNER JOIN gabby.illuminate_dna_assessments.assessment_grade_levels AS agl ON a.assessment_id = agl.assessment_id
-      INNER JOIN gabby.illuminate_public.student_session_aff_clean_static AS ssa 
-        ON (a.academic_year = ssa.academic_year
+      INNER JOIN gabby.illuminate_public.student_session_aff_clean_static AS ssa ON (
+        a.academic_year = ssa.academic_year
         AND agl.grade_level_id = ssa.grade_level_id
         AND ssa.rn = 1
       )
-      INNER JOIN gabby.illuminate_dna_assessments.course_enrollment_scaffold_current_static AS ce 
-        ON ( ssa.student_id = ce.student_id
+      INNER JOIN gabby.illuminate_dna_assessments.course_enrollment_scaffold_current_static AS ce ON (
+        ssa.student_id = ce.student_id
         AND (
           a.subject_area = ce.subject_area
           COLLATE LATIN1_GENERAL_BIN
@@ -156,8 +156,8 @@ FROM
       asmts AS a
       INNER JOIN gabby.illuminate_dna_assessments.assessment_grade_levels AS agl ON a.assessment_id = agl.assessment_id
       INNER JOIN gabby.illuminate_dna_assessments.students_assessments AS sa ON a.assessment_id = sa.assessment_id
-      INNER JOIN gabby.illuminate_public.student_session_aff_clean_static AS ssa 
-        ON ( sa.student_id = ssa.student_id
+      INNER JOIN gabby.illuminate_public.student_session_aff_clean_static AS ssa ON (
+        sa.student_id = ssa.student_id
         AND a.academic_year = ssa.academic_year
         AND ssa.rn = 1
         AND agl.grade_level_id != ssa.grade_level_id

@@ -46,7 +46,9 @@ FROM
           ) AS position_id
         FROM
           gabby.dayforce.employee_manager AS em
-          INNER JOIN gabby.dayforce.employees AS e ON em.employee_reference_code = e.df_employee_number -- trunk-ignore(sqlfluff/L016)
+          INNER JOIN gabby.dayforce.employees AS e ON (
+            em.employee_reference_code = e.df_employee_number
+          )
         WHERE
           em.manager_derived_method = 'Direct Report'
           AND (
