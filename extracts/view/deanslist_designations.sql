@@ -6,7 +6,14 @@ WITH
       studentid,
       [db_name],
       yearid,
-      ROUND(AVG(CAST(attendancevalue AS FLOAT)), 2) AS [ada]
+      ROUND(
+        AVG(
+          CAST(
+            attendancevalue AS FLOAT
+          )
+        ),
+        2
+      ) AS [ada]
     FROM
       gabby.powerschool.ps_adaadm_daily_ctod_current_static
     WHERE
@@ -100,31 +107,45 @@ WITH
       END AS is_pathways,
       CASE
         WHEN sp.[Home Instruction] IS NOT NULL
-        AND sp.exit_date > CAST(CURRENT_TIMESTAMP AS DATE) THEN 'Home Instruction'
+        AND sp.exit_date > CAST(
+          CURRENT_TIMESTAMP AS DATE
+        ) THEN 'Home Instruction'
       END AS is_home_instruction,
       CASE
         WHEN sp.[Hybrid - Cohort A] IS NOT NULL
-        AND sp.exit_date > CAST(CURRENT_TIMESTAMP AS DATE) THEN 'Hybrid - Cohort A'
+        AND sp.exit_date > CAST(
+          CURRENT_TIMESTAMP AS DATE
+        ) THEN 'Hybrid - Cohort A'
       END AS is_hybrid_a,
       CASE
         WHEN sp.[Hybrid - Cohort B] IS NOT NULL
-        AND sp.exit_date > CAST(CURRENT_TIMESTAMP AS DATE) THEN 'Hybrid - Cohort B'
+        AND sp.exit_date > CAST(
+          CURRENT_TIMESTAMP AS DATE
+        ) THEN 'Hybrid - Cohort B'
       END AS is_hybrid_b,
       CASE
         WHEN sp.[Remote - Cohort C] IS NOT NULL
-        AND sp.exit_date > CAST(CURRENT_TIMESTAMP AS DATE) THEN 'Remote - Cohort C'
+        AND sp.exit_date > CAST(
+          CURRENT_TIMESTAMP AS DATE
+        ) THEN 'Remote - Cohort C'
       END AS is_remote_c,
       CASE
         WHEN sp.[Hybrid (SC) - Cohort D] IS NOT NULL
-        AND sp.exit_date > CAST(CURRENT_TIMESTAMP AS DATE) THEN 'Hybrid (SC) - Cohort D'
+        AND sp.exit_date > CAST(
+          CURRENT_TIMESTAMP AS DATE
+        ) THEN 'Hybrid (SC) - Cohort D'
       END AS is_hybrid_d,
       CASE
         WHEN sp.[Remote Instruction] IS NOT NULL
-        AND sp.exit_date > CAST(CURRENT_TIMESTAMP AS DATE) THEN 'Remote Instruction'
+        AND sp.exit_date > CAST(
+          CURRENT_TIMESTAMP AS DATE
+        ) THEN 'Remote Instruction'
       END AS is_remote_instruction,
       CASE
         WHEN sp.[Counseling Services] IS NOT NULL
-        AND sp.exit_date > CAST(CURRENT_TIMESTAMP AS DATE) THEN 'Counseling Services'
+        AND sp.exit_date > CAST(
+          CURRENT_TIMESTAMP AS DATE
+        ) THEN 'Counseling Services'
       END AS is_counseling,
       CASE
         WHEN att.[ada] < 0.9 THEN 'Chronic Absence'
@@ -156,22 +177,54 @@ FROM
     SELECT
       student_number,
       academic_year,
-      CAST(is_iep AS NVARCHAR(32)) AS is_iep,
-      CAST(is_504 AS NVARCHAR(32)) AS is_504,
-      CAST(is_lep AS NVARCHAR(32)) AS is_lep,
-      CAST(is_quarter_gpa_3plus AS NVARCHAR(32)) AS is_quarter_gpa_3plus,
-      CAST(is_quarter_gpa_35plus AS NVARCHAR(32)) AS is_quarter_gpa_35plus,
-      CAST(is_ood AS NVARCHAR(32)) AS is_ood,
-      CAST(is_nccs AS NVARCHAR(32)) AS is_nccs,
-      CAST(is_pathways AS NVARCHAR(32)) AS is_pathways,
-      CAST(is_home_instruction AS NVARCHAR(32)) AS is_home_instruction,
-      CAST(is_chronic_absentee AS NVARCHAR(32)) AS is_chronic_absentee,
-      CAST(is_hybrid_a AS NVARCHAR(32)) AS is_hybrid_a,
-      CAST(is_hybrid_b AS NVARCHAR(32)) AS is_hybrid_b,
-      CAST(is_remote_c AS NVARCHAR(32)) AS is_remote_c,
-      CAST(is_hybrid_d AS NVARCHAR(32)) AS is_hybrid_d,
-      CAST(is_remote_instruction AS NVARCHAR(32)) AS is_remote_instruction,
-      CAST(is_counseling AS NVARCHAR(32)) AS is_counseling
+      CAST(
+        is_iep AS NVARCHAR(32)
+      ) AS is_iep,
+      CAST(
+        is_504 AS NVARCHAR(32)
+      ) AS is_504,
+      CAST(
+        is_lep AS NVARCHAR(32)
+      ) AS is_lep,
+      CAST(
+        is_quarter_gpa_3plus AS NVARCHAR(32)
+      ) AS is_quarter_gpa_3plus,
+      CAST(
+        is_quarter_gpa_35plus AS NVARCHAR(32)
+      ) AS is_quarter_gpa_35plus,
+      CAST(
+        is_ood AS NVARCHAR(32)
+      ) AS is_ood,
+      CAST(
+        is_nccs AS NVARCHAR(32)
+      ) AS is_nccs,
+      CAST(
+        is_pathways AS NVARCHAR(32)
+      ) AS is_pathways,
+      CAST(
+        is_home_instruction AS NVARCHAR(32)
+      ) AS is_home_instruction,
+      CAST(
+        is_chronic_absentee AS NVARCHAR(32)
+      ) AS is_chronic_absentee,
+      CAST(
+        is_hybrid_a AS NVARCHAR(32)
+      ) AS is_hybrid_a,
+      CAST(
+        is_hybrid_b AS NVARCHAR(32)
+      ) AS is_hybrid_b,
+      CAST(
+        is_remote_c AS NVARCHAR(32)
+      ) AS is_remote_c,
+      CAST(
+        is_hybrid_d AS NVARCHAR(32)
+      ) AS is_hybrid_d,
+      CAST(
+        is_remote_instruction AS NVARCHAR(32)
+      ) AS is_remote_instruction,
+      CAST(
+        is_counseling AS NVARCHAR(32)
+      ) AS is_counseling
     FROM
       designation
   ) AS sub UNPIVOT (

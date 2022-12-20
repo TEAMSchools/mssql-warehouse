@@ -9,13 +9,19 @@ SELECT
   LTRIM(
     RTRIM(
       LEFT(
-        gabby.utilities.STRIP_CHARACTERS (ch.certificate_type, '^A-Z -'),
+        gabby.utilities.STRIP_CHARACTERS (
+          ch.certificate_type,
+          '^A-Z -'
+        ),
         28
       )
     )
   ) AS certificate_type,
   CASE
-    WHEN CHARINDEX('Charter School Only', ch.certificate_type) > 0 THEN 1
+    WHEN CHARINDEX(
+      'Charter School Only',
+      ch.certificate_type
+    ) > 0 THEN 1
     ELSE 0
   END AS is_charter_school_only,
   ch.endorsement,
@@ -29,8 +35,19 @@ SELECT
   END AS month_year_issued,
   CASE
     WHEN ch.month_year_issued != '' THEN DATEFROMPARTS(
-      CAST(RIGHT(ch.month_year_issued, 4)),
-      CONVERT(INT, LEFT(ch.month_year_issued, 2)),
+      CAST(
+        RIGHT(
+          ch.month_year_issued,
+          4
+        )
+      ),
+      CONVERT(
+        INT,
+        LEFT(
+          ch.month_year_issued,
+          2
+        )
+      ),
       1 AS INT
     )
   END AS issued_date,
@@ -46,8 +63,19 @@ SELECT
         MONTH,
         1,
         DATEFROMPARTS(
-          CAST(RIGHT(ch.month_year_expiration, 4)),
-          CONVERT(INT, LEFT(ch.month_year_expiration, 2)),
+          CAST(
+            RIGHT(
+              ch.month_year_expiration,
+              4
+            )
+          ),
+          CONVERT(
+            INT,
+            LEFT(
+              ch.month_year_expiration,
+              2
+            )
+          ),
           1
         )
       ) AS INT
@@ -55,7 +83,10 @@ SELECT
   END AS expiration_date
 FROM
   gabby.njdoe.certification_check AS cc
-  CROSS APPLY OPENJSON (cc.certificate_history, '$')
+  CROSS APPLY OPENJSON (
+    cc.certificate_history,
+    '$'
+  )
 WITH
   (
     seq_number INT,

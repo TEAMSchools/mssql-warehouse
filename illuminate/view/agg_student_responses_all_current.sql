@@ -71,14 +71,30 @@ SELECT
   pbl.label_number AS performance_band_number,
   pbl.[label] AS performance_band_label,
   pbl.is_mastery,
-  CAST(rr.title AS VARCHAR(250)) AS title,
-  CAST(rr.scope AS VARCHAR(125)) AS scope,
-  CAST(rr.subject_area AS VARCHAR(125)) AS subject_area,
-  CAST(rr.module_type AS VARCHAR(25)) AS module_type,
-  CAST(rr.module_number AS VARCHAR(5)) AS module_number,
-  CAST(s.local_student_id AS INT) AS local_student_id,
-  CAST(rta.alt_name AS VARCHAR(5)) AS term_administered,
-  CAST(rtt.alt_name AS VARCHAR(5)) AS term_taken
+  CAST(
+    rr.title AS VARCHAR(250)
+  ) AS title,
+  CAST(
+    rr.scope AS VARCHAR(125)
+  ) AS scope,
+  CAST(
+    rr.subject_area AS VARCHAR(125)
+  ) AS subject_area,
+  CAST(
+    rr.module_type AS VARCHAR(25)
+  ) AS module_type,
+  CAST(
+    rr.module_number AS VARCHAR(5)
+  ) AS module_number,
+  CAST(
+    s.local_student_id AS INT
+  ) AS local_student_id,
+  CAST(
+    rta.alt_name AS VARCHAR(5)
+  ) AS term_administered,
+  CAST(
+    rtt.alt_name AS VARCHAR(5)
+  ) AS term_taken
 FROM
   response_rollup AS rr
   INNER JOIN gabby.illuminate_public.students AS s ON rr.student_id = s.student_id

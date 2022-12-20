@@ -23,7 +23,9 @@ WITH
       INNER JOIN gabby.utilities.reporting_days AS tw ON td.week_part = tw.week_part
       AND td.year_part = tw.year_part
     WHERE
-      td.[date] = CAST(CURRENT_TIMESTAMP AS DATE)
+      td.[date] = CAST(
+        CURRENT_TIMESTAMP AS DATE
+      )
   ),
   iready_lessons AS (
     SELECT
@@ -37,14 +39,18 @@ WITH
           END
         ) AS FLOAT
       ) AS lessons_passed,
-      CAST(COUNT(DISTINCT pl.lesson_id) AS FLOAT) AS total_lessons,
+      CAST(
+        COUNT(DISTINCT pl.lesson_id) AS FLOAT
+      ) AS total_lessons,
       ROUND(
         SUM(
           CASE
             WHEN pl.passed_or_not_passed = 'Passed' THEN 1.0
             ELSE 0.0
           END
-        ) / CAST(COUNT(pl.lesson_id) AS FLOAT),
+        ) / CAST(
+          COUNT(pl.lesson_id) AS FLOAT
+        ),
         2
       ) AS pct_passed
     FROM
@@ -67,8 +73,17 @@ WITH
       fsa_level,
       fsa_scale,
       iready_subject,
-      CAST(CONCAT('20', RIGHT(fsa_year, 2)) AS INT) AS fsa_year,
-      CONCAT(fsa_subject, ' ', fsa_grade) AS test_name,
+      CAST(
+        CONCAT(
+          '20',
+          RIGHT(fsa_year, 2)
+        ) AS INT
+      ) AS fsa_year,
+      CONCAT(
+        fsa_subject,
+        ' ',
+        fsa_grade
+      ) AS test_name,
       RANK() OVER (
         PARTITION BY
           fsa_grade,
@@ -142,7 +157,11 @@ SELECT
   fsp.fsa_grade,
   fsp.fsa_level,
   fsp.fsa_scale,
-  CAST(fsp.fsa_gr_subj_rank AS FLOAT) / CAST(fsp.fsa_gr_subj_count AS FLOAT) AS fl_fsa_percentile,
+  CAST(
+    fsp.fsa_gr_subj_rank AS FLOAT
+  ) / CAST(
+    fsp.fsa_gr_subj_count AS FLOAT
+  ) AS fl_fsa_percentile,
   cw1.sublevel_name AS fsa_sublevel_name,
   cw1.sublevel_number AS fsa_sublevel_number,
   cw2.sublevel_name AS iready_sublevel_predict_name,
@@ -182,10 +201,20 @@ FROM
   AND di.[subject] = cw3.test_name
   AND cw3.source_system = 'i-Ready'
   AND cw3.sublevel_name = 'Level 3'
-  LEFT JOIN gabby.assessments.fsa_iready_crosswalk AS cw4 ON cw4.test_name = CONCAT(subj.fsa_subject, ' ', co.grade_level)
-  AND (cw1.sublevel_number + 1) = cw4.sublevel_number
+  LEFT JOIN gabby.assessments.fsa_iready_crosswalk AS cw4 ON cw4.test_name = CONCAT(
+    subj.fsa_subject,
+    ' ',
+    co.grade_level
+  )
+  AND (
+    cw1.sublevel_number + 1
+  ) = cw4.sublevel_number
   AND cw4.source_system = 'FSA'
-  LEFT JOIN gabby.assessments.fsa_iready_crosswalk AS cw5 ON cw5.test_name = CONCAT(subj.fsa_subject, ' ', co.grade_level)
+  LEFT JOIN gabby.assessments.fsa_iready_crosswalk AS cw5 ON cw5.test_name = CONCAT(
+    subj.fsa_subject,
+    ' ',
+    co.grade_level
+  )
   AND cw5.sublevel_name = 'Level 3'
   AND cw5.source_system = 'FSA'
   LEFT JOIN gabby.assessments.fsa_iready_crosswalk AS cw6 ON cw6.test_name = subj.iready_subject

@@ -21,14 +21,18 @@ SELECT
   c.manager_name,
   c.primary_site AS current_location,
   c.legal_entity_name AS current_legal_entity,
-  LOWER(c.manager_samaccountname) AS manager_samaccountname,
+  LOWER(
+    c.manager_samaccountname
+  ) AS manager_samaccountname,
   LOWER(c.samaccountname) AS samaccountname,
   ROW_NUMBER() OVER (
     PARTITION BY
       a.df_number,
       a.attendance_date
     ORDER BY
-      CAST(a.submitted_on AS DATETIME) DESC
+      CAST(
+        a.submitted_on AS DATETIME
+      ) DESC
   ) AS rn_curr
 FROM
   (
@@ -50,8 +54,12 @@ FROM
       a.submitter_apps_account AS submitted_by,
       a.attendance_status,
       a.additional_notes,
-      CAST(a.attendance_date AS DATE) AS attendance_date,
-      CAST(a.[timestamp] AS DATETIME) AS submitted_on,
+      CAST(
+        a.attendance_date AS DATE
+      ) AS attendance_date,
+      CAST(
+        a.[timestamp] AS DATETIME
+      ) AS submitted_on,
       CASE
         WHEN attendance_status LIKE '%Sick Day%' THEN 1
         ELSE 0

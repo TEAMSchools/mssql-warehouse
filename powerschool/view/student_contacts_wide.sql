@@ -70,12 +70,18 @@ WITH
     SELECT
       sub.student_number,
       sub.person_type + '_' + sub.contact_category_type AS pivot_field,
-      CAST(sub.contact AS VARCHAR(250)) AS pivot_value
+      CAST(
+        sub.contact AS VARCHAR(250)
+      ) AS pivot_value
     FROM
       (
         SELECT
           c.student_number,
-          CONCAT(c.person_type, '_', c.contactpriorityorder) AS person_type,
+          CONCAT(
+            c.person_type,
+            '_',
+            c.contactpriorityorder
+          ) AS person_type,
           LOWER(pc.contact_category) + '_' + LOWER(pc.contact_type) AS contact_category_type,
           pc.contact,
           ROW_NUMBER() OVER (
@@ -93,7 +99,11 @@ WITH
         UNION ALL
         SELECT
           c.student_number,
-          CONCAT(c.person_type, '_', c.contactpriorityorder) AS person_type,
+          CONCAT(
+            c.person_type,
+            '_',
+            c.contactpriorityorder
+          ) AS person_type,
           'phone_primary' AS contact_category_type,
           pc.contact,
           ROW_NUMBER() OVER (
@@ -111,7 +121,11 @@ WITH
         UNION ALL
         SELECT
           c.student_number,
-          CONCAT(c.person_type, '_', c.contactpriorityorder) AS person_type,
+          CONCAT(
+            c.person_type,
+            '_',
+            c.contactpriorityorder
+          ) AS person_type,
           'name' AS contact_category_type,
           LTRIM(RTRIM(c.contact_name)) AS contact,
           1 AS contact_category_type_priority
@@ -120,7 +134,11 @@ WITH
         UNION ALL
         SELECT
           c.student_number,
-          CONCAT(c.person_type, '_', c.contactpriorityorder) AS person_type,
+          CONCAT(
+            c.person_type,
+            '_',
+            c.contactpriorityorder
+          ) AS person_type,
           'relationship' AS contact_category_type,
           c.relationship_type AS contact,
           1 AS contact_category_type_priority

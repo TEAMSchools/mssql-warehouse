@@ -1,9 +1,15 @@
 CREATE OR ALTER VIEW
   extracts.clever_students AS
 SELECT
-  CAST(co.schoolid AS NVARCHAR(16)) AS [School_id],
-  CAST(co.student_number AS NVARCHAR(16)) AS [Student_id],
-  CAST(co.student_number AS NVARCHAR(16)) AS [Student_number],
+  CAST(
+    co.schoolid AS NVARCHAR(16)
+  ) AS [School_id],
+  CAST(
+    co.student_number AS NVARCHAR(16)
+  ) AS [Student_id],
+  CAST(
+    co.student_number AS NVARCHAR(16)
+  ) AS [Student_number],
   CASE
     WHEN co.region = 'KMS' THEN suf.fleid
     ELSE co.state_studentnumber
@@ -13,7 +19,9 @@ SELECT
   co.first_name AS [First_name],
   CASE
     WHEN co.grade_level = 0 THEN 'Kindergarten'
-    ELSE CAST(co.grade_level AS NVARCHAR(2))
+    ELSE CAST(
+      co.grade_level AS NVARCHAR(2)
+    )
   END AS [Grade],
   co.gender AS [Gender],
   co.cohort AS [Graduation_year],
@@ -37,10 +45,18 @@ SELECT
   co.student_web_id + '@teamstudents.org' AS [Student_email],
   sc.person_relationship AS [Contact_relationship],
   CASE
-    WHEN sc.person_type IN ('mother', 'father', 'contact1', 'contact2') THEN 'primary'
+    WHEN sc.person_type IN (
+      'mother',
+      'father',
+      'contact1',
+      'contact2'
+    ) THEN 'primary'
     ELSE sc.person_type
   END AS [Contact_type],
-  COALESCE(sc.person_name, sc.person_type) AS [Contact_name],
+  COALESCE(
+    sc.person_name,
+    sc.person_type
+  ) AS [Contact_name],
   CAST(
     LEFT(
       gabby.utilities.STRIP_CHARACTERS (sc.contact, '^0-9'),

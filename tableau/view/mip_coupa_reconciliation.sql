@@ -78,8 +78,12 @@ WITH
     SELECT
       code,
       owner_name,
-      CAST(REPLACE(amount, ',', '') AS FLOAT) AS amount,
-      CAST(REPLACE(remaining, ',', '') AS FLOAT) AS remaining,
+      CAST(
+        REPLACE(amount, ',', '') AS FLOAT
+      ) AS amount,
+      CAST(
+        REPLACE(remaining, ',', '') AS FLOAT
+      ) AS remaining,
       LEFT(period_name, 4) AS budget_period
     FROM
       gabby.coupa.budget_line_clean

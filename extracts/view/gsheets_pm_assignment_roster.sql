@@ -13,7 +13,11 @@ WITH
   /*active staff info*/
 SELECT
   s.df_employee_number,
-  CONCAT(s.preferred_name, ' - ', s.primary_site) AS preferred_name,
+  CONCAT(
+    s.preferred_name,
+    ' - ',
+    s.primary_site
+  ) AS preferred_name,
   s.primary_job,
   s.google_email,
   s.userprincipalname AS user_email,

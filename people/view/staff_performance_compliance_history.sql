@@ -5,7 +5,9 @@ WITH
     SELECT
       n AS academic_year,
       CASE
-        WHEN n = gabby.utilities.GLOBAL_ACADEMIC_YEAR () THEN CAST(CURRENT_TIMESTAMP AS DATE)
+        WHEN n = gabby.utilities.GLOBAL_ACADEMIC_YEAR () THEN CAST(
+          CURRENT_TIMESTAMP AS DATE
+        )
         ELSE DATEFROMPARTS((n + 1), 6, 30)
       END AS effective_date
     FROM
@@ -45,8 +47,13 @@ SELECT
   s.is_hispanic,
   s.gender,
   LOWER(s.samaccountname) AS samaccountname,
-  LOWER(s.manager_samaccountname) AS manager_samaccountname,
-  COALESCE(s.rehire_date, s.original_hire_date) AS hire_date,
+  LOWER(
+    s.manager_samaccountname
+  ) AS manager_samaccountname,
+  COALESCE(
+    s.rehire_date,
+    s.original_hire_date
+  ) AS hire_date,
   y.academic_year,
   tm.pm_term,
   e.business_unit AS historic_legal_entity,
@@ -74,7 +81,11 @@ FROM
   INNER JOIN years AS y ON (
     y.effective_date BETWEEN s.original_hire_date AND COALESCE(
       s.termination_date,
-      DATEFROMPARTS(y.academic_year + 1, 6, 30)
+      DATEFROMPARTS(
+        y.academic_year + 1,
+        6,
+        30
+      )
     )
   )
   INNER JOIN pm.teacher_goals_term_map AS tm ON y.academic_year = tm.academic_year
@@ -84,7 +95,10 @@ FROM
     y.effective_date BETWEEN e.effective_start_date AND e.effective_end_date
   )
   AND e.job_title IS NOT NULL
-  AND e.position_status NOT IN ('Terminated', 'Deceased')
+  AND e.position_status NOT IN (
+    'Terminated',
+    'Deceased'
+  )
   LEFT JOIN cert_history AS c ON s.df_employee_number = c.employee_number
   AND y.academic_year = c.academic_year
   LEFT JOIN gabby.pm.teacher_goals_overall_scores_static AS pm ON s.df_employee_number = pm.df_employee_number

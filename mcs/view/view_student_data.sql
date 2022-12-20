@@ -4,7 +4,9 @@ GO
 CREATE OR ALTER VIEW
   mcs.view_student_data AS
 SELECT
-  CAST(s.StudentNumber AS INT) AS student_number,
+  CAST(
+    s.StudentNumber AS INT
+  ) AS student_number,
   s.IsDC AS is_dc,
   (
     CAST(
@@ -13,7 +15,9 @@ SELECT
     COLLATE LATIN1_GENERAL_BIN
   ) AS application_approval_result_description,
   (
-    CAST(s.EligibilityDescription AS VARCHAR(125))
+    CAST(
+      s.EligibilityDescription AS VARCHAR(125)
+    )
     COLLATE LATIN1_GENERAL_BIN
   ) AS eligibility_description,
   (
@@ -72,7 +76,9 @@ GO
 CREATE OR ALTER VIEW
   mcs.view_student_data AS
 SELECT
-  CAST(s.StudentNumber AS INT) AS student_number,
+  CAST(
+    s.StudentNumber AS INT
+  ) AS student_number,
   s.IsDC AS is_dc,
   (
     CAST(
@@ -81,7 +87,9 @@ SELECT
     COLLATE LATIN1_GENERAL_BIN
   ) AS application_approval_result_description,
   (
-    CAST(s.EligibilityDescription AS VARCHAR(125))
+    CAST(
+      s.EligibilityDescription AS VARCHAR(125)
+    )
     COLLATE LATIN1_GENERAL_BIN
   ) AS eligibility_description,
   (

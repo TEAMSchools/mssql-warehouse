@@ -11,7 +11,10 @@ WITH
     FROM
       gabby.alumni.contact AS c
       INNER JOIN gabby.alumni.record_type AS r ON c.record_type_id = r.id
-      AND r.[name] IN ('College Student', 'Post-Education')
+      AND r.[name] IN (
+        'College Student',
+        'Post-Education'
+      )
       INNER JOIN gabby.alumni.[user] u ON c.owner_id = u.id
     WHERE
       c.is_deleted = 0
@@ -23,7 +26,9 @@ WITH
   valid_semesters AS (
     SELECT
       [value] AS semester,
-      CAST(RIGHT(rg.n + 1, 2) AS VARCHAR(5)) AS [year]
+      CAST(
+        RIGHT(rg.n + 1, 2) AS VARCHAR(5)
+      ) AS [year]
     FROM
       STRING_SPLIT ('FA,SP', ',') ss
       INNER JOIN gabby.utilities.row_generator AS rg ON rg.n BETWEEN gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 2 AND gabby.utilities.GLOBAL_ACADEMIC_YEAR  () + 1
@@ -32,7 +37,10 @@ WITH
     SELECT
       [value] AS document_type
     FROM
-      STRING_SPLIT ('DA,Bill,FAAL,Schedule,Transcript', ',')
+      STRING_SPLIT (
+        'DA,Bill,FAAL,Schedule,Transcript',
+        ','
+      )
   ),
   attachments_clean AS (
     SELECT
@@ -43,7 +51,9 @@ WITH
           SUBSTRING(
             sub.[name],
             (sub.underscore_1 + 1),
-            (sub.underscore_2 - sub.underscore_1 - 1)
+            (
+              sub.underscore_2 - sub.underscore_1 - 1
+            )
           )
         )
       ) AS semester,
@@ -52,7 +62,9 @@ WITH
           SUBSTRING(
             sub.[name],
             (sub.underscore_2 + 1),
-            (sub.underscore_3 - sub.underscore_2 - 1)
+            (
+              sub.underscore_3 - sub.underscore_2 - 1
+            )
           )
         )
       ) AS [year],
@@ -61,7 +73,9 @@ WITH
           SUBSTRING(
             sub.[name],
             (sub.underscore_3 + 1),
-            (sub.file_ext_dot - sub.underscore_3)
+            (
+              sub.file_ext_dot - sub.underscore_3
+            )
           )
         )
       ) AS document_type
@@ -71,24 +85,47 @@ WITH
           a.parent_id AS contact_id,
           a.[name],
           LEN(a.[name]) AS name_len,
-          LEN(a.[name]) - CHARINDEX('.', REVERSE(a.[name])) AS file_ext_dot,
+          LEN(a.[name]) - CHARINDEX(
+            '.',
+            REVERSE(a.[name])
+          ) AS file_ext_dot,
           CHARINDEX('_', a.[name]) AS underscore_1,
           CASE
             WHEN CHARINDEX('_', a.[name]) = 0 THEN NULL
-            WHEN CHARINDEX('_', a.[name], CHARINDEX('_', a.[name]) + 1) = 0 THEN NULL
-            ELSE CHARINDEX('_', a.[name], CHARINDEX('_', a.[name]) + 1)
-          END AS underscore_2,
-          CASE
-            WHEN CHARINDEX('_', a.[name], CHARINDEX('_', a.[name]) + 1) = 0 THEN NULL
             WHEN CHARINDEX(
               '_',
               a.[name],
-              CHARINDEX('_', a.[name], CHARINDEX('_', a.[name]) + 1) + 1
+              CHARINDEX('_', a.[name]) + 1
             ) = 0 THEN NULL
             ELSE CHARINDEX(
               '_',
               a.[name],
-              CHARINDEX('_', a.[name], CHARINDEX('_', a.[name]) + 1) + 1
+              CHARINDEX('_', a.[name]) + 1
+            )
+          END AS underscore_2,
+          CASE
+            WHEN CHARINDEX(
+              '_',
+              a.[name],
+              CHARINDEX('_', a.[name]) + 1
+            ) = 0 THEN NULL
+            WHEN CHARINDEX(
+              '_',
+              a.[name],
+              CHARINDEX(
+                '_',
+                a.[name],
+                CHARINDEX('_', a.[name]) + 1
+              ) + 1
+            ) = 0 THEN NULL
+            ELSE CHARINDEX(
+              '_',
+              a.[name],
+              CHARINDEX(
+                '_',
+                a.[name],
+                CHARINDEX('_', a.[name]) + 1
+              ) + 1
             )
           END AS underscore_3
         FROM
@@ -100,7 +137,9 @@ WITH
   enr_hist_attmat AS (
     SELECT
       eh.parent_id AS enrollment_id,
-      CAST(eh.created_date AS DATE) AS status_change_date,
+      CAST(
+        eh.created_date AS DATE
+      ) AS status_change_date,
       ROW_NUMBER() OVER (
         PARTITION BY
           eh.parent_id
@@ -116,8 +155,14 @@ WITH
     WHERE
       eh.field = 'Status__c'
       AND eh.is_deleted = 0
-      AND eh.old_value IN ('Attending', 'Matriculated')
-      AND CONCAT(eh.old_value, eh.new_value) NOT IN (
+      AND eh.old_value IN (
+        'Attending',
+        'Matriculated'
+      )
+      AND CONCAT(
+        eh.old_value,
+        eh.new_value
+      ) NOT IN (
         'MatriculatedDid Not Enroll',
         'MatriculatedAttending'
       )
@@ -126,7 +171,9 @@ WITH
   enr_hist_grad AS (
     SELECT
       eh.parent_id AS enrollment_id,
-      CAST(eh.created_date AS DATE) AS status_change_date,
+      CAST(
+        eh.created_date AS DATE
+      ) AS status_change_date,
       ROW_NUMBER() OVER (
         PARTITION BY
           eh.parent_id
@@ -157,31 +204,56 @@ WITH
           e.[name] AS enrollment_name,
           e.status_c,
           ISNULL(
-            CAST(e.actual_end_date_c AS NVARCHAR(MAX)),
+            CAST(
+              e.actual_end_date_c AS NVARCHAR(MAX)
+            ),
             ''
           ) AS actual_end_date_c,
           ISNULL(
-            CAST(e.date_last_verified_c AS NVARCHAR(MAX)),
+            CAST(
+              e.date_last_verified_c AS NVARCHAR(MAX)
+            ),
             ''
           ) AS date_last_verified_c,
           ISNULL(
-            CAST(e.date_last_verified_c AS NVARCHAR(MAX)),
+            CAST(
+              e.date_last_verified_c AS NVARCHAR(MAX)
+            ),
             ''
           ) AS date_last_verified_ontime,
-          ISNULL(CAST(e.notes_c AS NVARCHAR(MAX)), '') AS notes_c,
           ISNULL(
-            CAST(e.transfer_reason_c AS NVARCHAR(MAX)),
+            CAST(
+              e.notes_c AS NVARCHAR(MAX)
+            ),
+            ''
+          ) AS notes_c,
+          ISNULL(
+            CAST(
+              e.transfer_reason_c AS NVARCHAR(MAX)
+            ),
             ''
           ) AS transfer_reason_c,
           ISNULL(
-            CAST(COALESCE(e.major_c, e.major_area_c)),
+            CAST(
+              COALESCE(
+                e.major_c,
+                e.major_area_c
+              )
+            ),
             '' AS NVARCHAR(MAX)
           ) AS major_or_area,
           ISNULL(
-            CAST(e.college_major_declared_c AS NVARCHAR(MAX)),
+            CAST(
+              e.college_major_declared_c AS NVARCHAR(MAX)
+            ),
             ''
           ) AS college_major_declared_c,
-          ISNULL(CAST(c.[description] AS NVARCHAR(MAX)), '') AS [description]
+          ISNULL(
+            CAST(
+              c.[description] AS NVARCHAR(MAX)
+            ),
+            ''
+          ) AS [description]
         FROM
           gabby.alumni.enrollment_c AS e
           INNER JOIN gabby.alumni.contact AS c ON e.student_c = c.id
@@ -224,4 +296,7 @@ FROM
   AND s.[year] = a.[year]
   AND d.document_type = a.document_type
 WHERE
-  r.dep_post_hs_simple_admin_c IN ('College Persisting', 'College Grad - AA')
+  r.dep_post_hs_simple_admin_c IN (
+    'College Persisting',
+    'College Grad - AA'
+  )

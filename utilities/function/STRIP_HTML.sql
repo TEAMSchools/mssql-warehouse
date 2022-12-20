@@ -1,6 +1,8 @@
 CREATE
 OR ALTER
-FUNCTION utilities.STRIP_HTML (@HTMLText VARCHAR(MAX)) RETURNS VARCHAR(MAX) AS BEGIN DECLARE @Start INT;
+FUNCTION utilities.STRIP_HTML (
+  @HTMLText VARCHAR(MAX)
+) RETURNS VARCHAR(MAX) AS BEGIN DECLARE @Start INT;
 
 DECLARE @End INT;
 
@@ -23,7 +25,12 @@ WHILE (
   AND @Length > 0
 ) BEGIN
 SET
-  @HTMLText = STUFF(@HTMLText, @Start, @Length, '&');
+  @HTMLText = STUFF(
+    @HTMLText,
+    @Start,
+    @Length,
+    '&'
+  );
 
 SET
   @Start = CHARINDEX('&amp;', @HTMLText);
@@ -52,7 +59,12 @@ WHILE (
   AND @Length > 0
 ) BEGIN
 SET
-  @HTMLText = STUFF(@HTMLText, @Start, @Length, '<');
+  @HTMLText = STUFF(
+    @HTMLText,
+    @Start,
+    @Length,
+    '<'
+  );
 
 SET
   @Start = CHARINDEX('&lt;', @HTMLText);
@@ -81,7 +93,12 @@ WHILE (
   AND @Length > 0
 ) BEGIN
 SET
-  @HTMLText = STUFF(@HTMLText, @Start, @Length, '>');
+  @HTMLText = STUFF(
+    @HTMLText,
+    @Start,
+    @Length,
+    '>'
+  );
 
 SET
   @Start = CHARINDEX('&gt;', @HTMLText);
@@ -96,7 +113,10 @@ END;
 
 -- Replace the HTML entity &amp; with the '&' character
 SET
-  @Start = CHARINDEX('&amp;amp;', @HTMLText);
+  @Start = CHARINDEX(
+    '&amp;amp;',
+    @HTMLText
+  );
 
 SET
   @End = @Start + 4;
@@ -110,10 +130,18 @@ WHILE (
   AND @Length > 0
 ) BEGIN
 SET
-  @HTMLText = STUFF(@HTMLText, @Start, @Length, '&');
+  @HTMLText = STUFF(
+    @HTMLText,
+    @Start,
+    @Length,
+    '&'
+  );
 
 SET
-  @Start = CHARINDEX('&amp;amp;', @HTMLText);
+  @Start = CHARINDEX(
+    '&amp;amp;',
+    @HTMLText
+  );
 
 SET
   @End = @Start + 4;
@@ -139,7 +167,12 @@ WHILE (
   AND @Length > 0
 ) BEGIN
 SET
-  @HTMLText = STUFF(@HTMLText, @Start, @Length, ' ');
+  @HTMLText = STUFF(
+    @HTMLText,
+    @Start,
+    @Length,
+    ' '
+  );
 
 SET
   @Start = CHARINDEX('&nbsp;', @HTMLText);
@@ -169,7 +202,12 @@ WHILE (
 ) BEGIN
 --SET @HTMLText = STUFF(@HTMLText, @Start, @Length, CHAR(13) + CHAR(10));
 SET
-  @HTMLText = STUFF(@HTMLText, @Start, @Length, '');
+  @HTMLText = STUFF(
+    @HTMLText,
+    @Start,
+    @Length,
+    ''
+  );
 
 SET
   @Start = CHARINDEX('<br>', @HTMLText);
@@ -199,7 +237,12 @@ WHILE (
 ) BEGIN
 --SET @HTMLText = STUFF(@HTMLText, @Start, @Length, CHAR(13) + CHAR(10));
 SET
-  @HTMLText = STUFF(@HTMLText, @Start, @Length, '');
+  @HTMLText = STUFF(
+    @HTMLText,
+    @Start,
+    @Length,
+    ''
+  );
 
 SET
   @Start = CHARINDEX('<br/>', @HTMLText);
@@ -229,7 +272,12 @@ WHILE (
 ) BEGIN
 --SET @HTMLText = STUFF(@HTMLText, @Start, @Length, CHAR(13) + CHAR(10));
 SET
-  @HTMLText = STUFF(@HTMLText, @Start, @Length, '');
+  @HTMLText = STUFF(
+    @HTMLText,
+    @Start,
+    @Length,
+    ''
+  );
 
 SET
   @Start = CHARINDEX('<br />', @HTMLText);
@@ -247,7 +295,11 @@ SET
   @Start = CHARINDEX('<', @HTMLText);
 
 SET
-  @End = CHARINDEX('>', @HTMLText, CHARINDEX('<', @HTMLText));
+  @End = CHARINDEX(
+    '>',
+    @HTMLText,
+    CHARINDEX('<', @HTMLText)
+  );
 
 SET
   @Length = (@End - @Start) + 1;
@@ -258,13 +310,22 @@ WHILE (
   AND @Length > 0
 ) BEGIN
 SET
-  @HTMLText = STUFF(@HTMLText, @Start, @Length, '');
+  @HTMLText = STUFF(
+    @HTMLText,
+    @Start,
+    @Length,
+    ''
+  );
 
 SET
   @Start = CHARINDEX('<', @HTMLText);
 
 SET
-  @End = CHARINDEX('>', @HTMLText, CHARINDEX('<', @HTMLText));
+  @End = CHARINDEX(
+    '>',
+    @HTMLText,
+    CHARINDEX('<', @HTMLText)
+  );
 
 SET
   @Length = (@End - @Start) + 1;

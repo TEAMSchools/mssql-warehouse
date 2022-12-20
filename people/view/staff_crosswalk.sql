@@ -8,7 +8,9 @@ SELECT
   CAST(NULL AS NVARCHAR(32)) AS salesforce_id,
   sub.first_name,
   sub.last_name,
-  CAST(sub.gender_reporting AS NVARCHAR(32)) AS gender,
+  CAST(
+    sub.gender_reporting AS NVARCHAR(32)
+  ) AS gender,
   sub.ethnicity AS primary_ethnicity,
   sub.race_ethnicity_reporting AS primary_race_ethnicity_reporting,
   sub.is_hispanic,
@@ -131,7 +133,9 @@ FROM
       COALESCE(
         idps.ps_teachernumber,
         sr.associate_id_legacy,
-        CAST(sr.employee_number AS VARCHAR(25))
+        CAST(
+          sr.employee_number AS VARCHAR(25)
+        )
       ) AS ps_teachernumber,
       ads.samaccountname,
       ads.userprincipalname,
@@ -141,13 +145,19 @@ FROM
         WHEN sr.business_unit = 'KIPP Miami' THEN LOWER(
           LEFT(
             ads.userprincipalname,
-            CHARINDEX('@', ads.userprincipalname)
+            CHARINDEX(
+              '@',
+              ads.userprincipalname
+            )
           )
         ) + 'kippmiami.org'
         ELSE LOWER(
           LEFT(
             ads.userprincipalname,
-            CHARINDEX('@', ads.userprincipalname)
+            CHARINDEX(
+              '@',
+              ads.userprincipalname
+            )
           )
         ) + 'apps.teamschools.org'
       END AS google_email,
@@ -159,8 +169,12 @@ FROM
       LEFT JOIN gabby.people.id_crosswalk_powerschool AS idps ON sr.employee_number = idps.df_employee_number
       AND idps.is_master = 1
       AND idps._fivetran_deleted = 0
-      LEFT JOIN gabby.adsi.user_attributes_static AS ads ON CAST(sr.employee_number AS VARCHAR(25)) = ads.employeenumber
-      LEFT JOIN gabby.adsi.user_attributes_static AS adm ON CAST(sr.manager_employee_number AS VARCHAR(25)) = adm.employeenumber
+      LEFT JOIN gabby.adsi.user_attributes_static AS ads ON CAST(
+        sr.employee_number AS VARCHAR(25)
+      ) = ads.employeenumber
+      LEFT JOIN gabby.adsi.user_attributes_static AS adm ON CAST(
+        sr.manager_employee_number AS VARCHAR(25)
+      ) = adm.employeenumber
   ) AS sub
   LEFT JOIN gabby.pm.teacher_grade_levels AS gl ON (
     sub.ps_teachernumber = gl.teachernumber

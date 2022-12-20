@@ -12,47 +12,113 @@ WITH
         SELECT
           [db_name],
           studentsdcid,
-          CAST(parcc_ell_paper_accom AS VARCHAR(25)) AS parcc_ell_paper_accom,
-          CAST(alternate_access AS VARCHAR(25)) AS alternate_access,
-          CAST(access_test_format_override AS VARCHAR(25)) AS access_test_format_override,
-          CAST(asmt_frequent_breaks AS VARCHAR(25)) AS asmt_frequent_breaks,
-          CAST(asmt_alternate_location AS VARCHAR(25)) AS asmt_alternate_location,
-          CAST(asmt_small_group AS VARCHAR(25)) AS asmt_small_group,
-          CAST(asmt_special_equip AS VARCHAR(25)) AS asmt_special_equip,
-          CAST(asmt_specified_area AS VARCHAR(25)) AS asmt_specified_area,
-          CAST(asmt_time_of_day AS VARCHAR(25)) AS asmt_time_of_day,
-          CAST(asmt_answer_masking AS VARCHAR(25)) AS asmt_answer_masking,
-          CAST(asmt_read_aloud AS VARCHAR(25)) AS asmt_read_aloud,
-          CAST(asmt_asl_video AS VARCHAR(25)) AS asmt_asl_video,
-          CAST(asmt_non_screen_reader AS VARCHAR(25)) AS asmt_non_screen_reader,
-          CAST(asmt_closed_caption_ela AS VARCHAR(25)) AS asmt_closed_caption_ela,
-          CAST(asmt_refresh_braille_ela AS VARCHAR(25)) AS asmt_refresh_braille_ela,
-          CAST(asmt_alt_rep_paper AS VARCHAR(25)) AS asmt_alt_rep_paper,
-          CAST(parcc_large_print_paper AS VARCHAR(25)) AS parcc_large_print_paper,
-          CAST(asmt_human_signer AS VARCHAR(25)) AS asmt_human_signer,
-          CAST(asmt_answers_recorded_paper AS VARCHAR(25)) AS asmt_answers_recorded_paper,
+          CAST(
+            parcc_ell_paper_accom AS VARCHAR(25)
+          ) AS parcc_ell_paper_accom,
+          CAST(
+            alternate_access AS VARCHAR(25)
+          ) AS alternate_access,
+          CAST(
+            access_test_format_override AS VARCHAR(25)
+          ) AS access_test_format_override,
+          CAST(
+            asmt_frequent_breaks AS VARCHAR(25)
+          ) AS asmt_frequent_breaks,
+          CAST(
+            asmt_alternate_location AS VARCHAR(25)
+          ) AS asmt_alternate_location,
+          CAST(
+            asmt_small_group AS VARCHAR(25)
+          ) AS asmt_small_group,
+          CAST(
+            asmt_special_equip AS VARCHAR(25)
+          ) AS asmt_special_equip,
+          CAST(
+            asmt_specified_area AS VARCHAR(25)
+          ) AS asmt_specified_area,
+          CAST(
+            asmt_time_of_day AS VARCHAR(25)
+          ) AS asmt_time_of_day,
+          CAST(
+            asmt_answer_masking AS VARCHAR(25)
+          ) AS asmt_answer_masking,
+          CAST(
+            asmt_read_aloud AS VARCHAR(25)
+          ) AS asmt_read_aloud,
+          CAST(
+            asmt_asl_video AS VARCHAR(25)
+          ) AS asmt_asl_video,
+          CAST(
+            asmt_non_screen_reader AS VARCHAR(25)
+          ) AS asmt_non_screen_reader,
+          CAST(
+            asmt_closed_caption_ela AS VARCHAR(25)
+          ) AS asmt_closed_caption_ela,
+          CAST(
+            asmt_refresh_braille_ela AS VARCHAR(25)
+          ) AS asmt_refresh_braille_ela,
+          CAST(
+            asmt_alt_rep_paper AS VARCHAR(25)
+          ) AS asmt_alt_rep_paper,
+          CAST(
+            parcc_large_print_paper AS VARCHAR(25)
+          ) AS parcc_large_print_paper,
+          CAST(
+            asmt_human_signer AS VARCHAR(25)
+          ) AS asmt_human_signer,
+          CAST(
+            asmt_answers_recorded_paper AS VARCHAR(25)
+          ) AS asmt_answers_recorded_paper,
           CAST(
             calculation_device_math_tools AS VARCHAR(25)
           ) AS calculation_device_math_tools,
           CAST(
             parcc_constructed_response_ela AS VARCHAR(25)
           ) AS parcc_constructed_response_ela,
-          CAST(asmt_selected_response_ela AS VARCHAR(25)) AS asmt_selected_response_ela,
-          CAST(asmt_math_response AS VARCHAR(25)) AS asmt_math_response,
-          CAST(asmt_monitor_response AS VARCHAR(25)) AS asmt_monitor_response,
-          CAST(asmt_word_prediction AS VARCHAR(25)) AS asmt_word_prediction,
-          CAST(asmt_directions_clarified AS VARCHAR(25)) AS asmt_directions_clarified,
-          CAST(asmt_directions_aloud AS VARCHAR(25)) AS asmt_directions_aloud,
-          CAST(asmt_math_response_el AS VARCHAR(25)) AS asmt_math_response_el,
-          CAST(parcc_translation_math_paper AS VARCHAR(25)) AS parcc_translation_math_paper
+          CAST(
+            asmt_selected_response_ela AS VARCHAR(25)
+          ) AS asmt_selected_response_ela,
+          CAST(
+            asmt_math_response AS VARCHAR(25)
+          ) AS asmt_math_response,
+          CAST(
+            asmt_monitor_response AS VARCHAR(25)
+          ) AS asmt_monitor_response,
+          CAST(
+            asmt_word_prediction AS VARCHAR(25)
+          ) AS asmt_word_prediction,
+          CAST(
+            asmt_directions_clarified AS VARCHAR(25)
+          ) AS asmt_directions_clarified,
+          CAST(
+            asmt_directions_aloud AS VARCHAR(25)
+          ) AS asmt_directions_aloud,
+          CAST(
+            asmt_math_response_el AS VARCHAR(25)
+          ) AS asmt_math_response_el,
+          CAST(
+            parcc_translation_math_paper AS VARCHAR(25)
+          ) AS parcc_translation_math_paper
           --,CAST(asmt_dictionary AS VARCHAR(25)) AS asmt_dictionary
 ,
-          CAST(parcc_text_to_speech AS VARCHAR(25)) AS parcc_text_to_speech,
-          CAST(parcc_text_to_speech_math AS VARCHAR(25)) AS parcc_text_to_speech_math,
-          CAST(asmt_humanreader_signer AS VARCHAR(25)) AS asmt_humanreader_signer,
-          CAST(asmt_unique_accommodation AS VARCHAR(25)) AS asmt_unique_accommodation,
-          CAST(asmt_extended_time AS VARCHAR(25)) AS asmt_extended_time,
-          CAST(asmt_extended_time_math AS VARCHAR(25)) AS asmt_extended_time_math
+          CAST(
+            parcc_text_to_speech AS VARCHAR(25)
+          ) AS parcc_text_to_speech,
+          CAST(
+            parcc_text_to_speech_math AS VARCHAR(25)
+          ) AS parcc_text_to_speech_math,
+          CAST(
+            asmt_humanreader_signer AS VARCHAR(25)
+          ) AS asmt_humanreader_signer,
+          CAST(
+            asmt_unique_accommodation AS VARCHAR(25)
+          ) AS asmt_unique_accommodation,
+          CAST(
+            asmt_extended_time AS VARCHAR(25)
+          ) AS asmt_extended_time,
+          CAST(
+            asmt_extended_time_math AS VARCHAR(25)
+          ) AS asmt_extended_time_math
         FROM
           gabby.powerschool.s_nj_stu_x AS nj
       ) AS sub UNPIVOT (

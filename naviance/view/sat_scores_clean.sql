@@ -44,7 +44,9 @@ FROM
       sat.is_old_sat,
       test_date,
       CASE
-        WHEN sat.test_date > CAST(CURRENT_TIMESTAMP AS DATE) THEN 1
+        WHEN sat.test_date > CAST(
+          CURRENT_TIMESTAMP AS DATE
+        ) THEN 1
       END AS test_date_flag,
       CASE
         WHEN (
@@ -52,10 +54,14 @@ FROM
         ) THEN evidence_based_reading_writing
       END AS verbal,
       CASE
-        WHEN (math BETWEEN 200 AND 800) THEN math
+        WHEN (
+          math BETWEEN 200 AND 800
+        ) THEN math
       END AS math,
       CASE
-        WHEN (writing BETWEEN 200 AND 800) THEN writing
+        WHEN (
+          writing BETWEEN 200 AND 800
+        ) THEN writing
       END AS writing,
       CASE
         WHEN essay_subscore = 0 THEN NULL
@@ -81,35 +87,54 @@ FROM
             0
           ) + ISNULL(
             CASE
-              WHEN (math BETWEEN 200 AND 800) THEN math
+              WHEN (
+                math BETWEEN 200 AND 800
+              ) THEN math
             END,
             0
           ) + ISNULL(
             CASE
-              WHEN (writing BETWEEN 200 AND 800) THEN writing
+              WHEN (
+                writing BETWEEN 200 AND 800
+              ) THEN writing
             END,
             0
           )
         ) != total THEN 1
-        WHEN total (NOT BETWEEN 400 AND 2400) THEN 1
+        WHEN total (
+          NOT BETWEEN 400 AND 2400
+        ) THEN 1
       END AS total_flag
     FROM
       (
         SELECT
           CAST([student_id] AS INT) AS student_id,
-          CAST([hs_student_id] AS INT) AS hs_student_id,
-          CAST([evidence_based_reading_writing] AS FLOAT) AS evidence_based_reading_writing,
+          CAST(
+            [hs_student_id] AS INT
+          ) AS hs_student_id,
+          CAST(
+            [evidence_based_reading_writing] AS FLOAT
+          ) AS evidence_based_reading_writing,
           CAST([math] AS FLOAT) AS math,
           CAST([total] AS FLOAT) AS total,
-          CAST([reading_test] AS FLOAT) AS reading_test,
-          CAST([writing_test] AS FLOAT) AS writing_test,
+          CAST(
+            [reading_test] AS FLOAT
+          ) AS reading_test,
+          CAST(
+            [writing_test] AS FLOAT
+          ) AS writing_test,
           CAST([math_test] AS FLOAT) AS math_test,
           NULL AS writing,
           NULL AS essay_subscore,
-          CAST([math_test] AS FLOAT) + CAST([reading_test] AS FLOAT) AS mc_subscore,
+          CAST([math_test] AS FLOAT) + CAST(
+            [reading_test] AS FLOAT
+          ) AS mc_subscore,
           DATEFROMPARTS(
             RIGHT(test_date, 4),
-            LEFT(test_date, CHARINDEX('/', test_date) - 1),
+            LEFT(
+              test_date,
+              CHARINDEX('/', test_date) - 1
+            ),
             1
           ) AS test_date,
           1600 AS sat_scale,
@@ -119,16 +144,24 @@ FROM
         UNION ALL
         SELECT
           CAST([studentid] AS INT) AS student_id,
-          CAST([hs_student_id] AS INT) AS hs_student_id,
+          CAST(
+            [hs_student_id] AS INT
+          ) AS hs_student_id,
           CAST([verbal] AS FLOAT),
           CAST([math] AS FLOAT),
           CAST([total] AS FLOAT),
           NULL AS [reading_test],
-          CAST([essay_subscore] AS FLOAT) AS writing_test,
+          CAST(
+            [essay_subscore] AS FLOAT
+          ) AS writing_test,
           NULL AS [math_test],
           CAST([writing] AS FLOAT),
-          CAST([essay_subscore] AS FLOAT),
-          CAST([mc_subscore] AS FLOAT),
+          CAST(
+            [essay_subscore] AS FLOAT
+          ),
+          CAST(
+            [mc_subscore] AS FLOAT
+          ),
           CASE
             WHEN test_date = '0000-00-00' THEN NULL
             WHEN RIGHT(test_date, 2) = '00' THEN DATEFROMPARTS(

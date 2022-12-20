@@ -9,12 +9,22 @@ WITH
       c.call_topic AS commlog_topic,
       c.call_date_time AS commlog_datetime,
       c.[db_name],
-      CAST(c.call_date_time AS DATE) AS commlog_date,
-      CONCAT(u.first_name, ' ', u.last_name) AS commlog_staff_name,
+      CAST(
+        c.call_date_time AS DATE
+      ) AS commlog_date,
+      CONCAT(
+        u.first_name,
+        ' ',
+        u.last_name
+      ) AS commlog_staff_name,
       f.init_notes AS followup_init_notes,
       f.followup_notes AS followup_close_notes,
       f.outstanding,
-      CONCAT(f.c_first, ' ', f.c_last) AS followup_staff_name
+      CONCAT(
+        f.c_first,
+        ' ',
+        f.c_last
+      ) AS followup_staff_name
     FROM
       gabby.deanslist.communication AS c
       INNER JOIN gabby.deanslist.users AS u ON c.dluser_id = u.dluser_id
@@ -32,7 +42,14 @@ WITH
       psa.studentid,
       psa.[db_name],
       psa.yearid,
-      ROUND(AVG(CAST(psa.attendancevalue AS FLOAT)), 2) AS ADA
+      ROUND(
+        AVG(
+          CAST(
+            psa.attendancevalue AS FLOAT
+          )
+        ),
+        2
+      ) AS ADA
     FROM
       gabby.powerschool.ps_adaadm_daily_ctod_current_static AS psa
     WHERE

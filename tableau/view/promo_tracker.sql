@@ -18,8 +18,12 @@ WITH
       co.iep_status,
       co.enroll_status,
       co.[db_name],
-      CAST(dt.alt_name AS VARCHAR) AS term_name,
-      CAST(dt.time_per_name AS VARCHAR) AS reporting_term,
+      CAST(
+        dt.alt_name AS VARCHAR
+      ) AS term_name,
+      CAST(
+        dt.time_per_name AS VARCHAR
+      ) AS reporting_term,
       dt.[start_date] AS term_start_date,
       dt.end_date AS term_end_date
     FROM
@@ -55,7 +59,9 @@ WITH
       co.enroll_status,
       co.[db_name],
       'Y1' AS term,
-      CAST(dt.time_per_name AS VARCHAR) AS reporting_term,
+      CAST(
+        dt.time_per_name AS VARCHAR
+      ) AS reporting_term,
       dt.[start_date] AS term_start_date,
       dt.end_date AS term_end_date
     FROM
@@ -126,7 +132,11 @@ WITH
       gr.academic_year,
       CASE
         WHEN gr.storecode = 'Y1' THEN 'SY1'
-        ELSE REPLACE(gr.storecode, 'Q', 'RT')
+        ELSE REPLACE(
+          gr.storecode,
+          'Q',
+          'RT'
+        )
       END AS reporting_term,
       gr.credit_type AS credittype,
       gr.course_name,
@@ -151,7 +161,10 @@ WITH
       'SY1' AS reporting_term,
       gr.credittype,
       gr.course_name,
-      ROUND(AVG(gr.grade_category_pct), 0) AS term_grade_percent_adjusted,
+      ROUND(
+        AVG(gr.grade_category_pct),
+        0
+      ) AS term_grade_percent_adjusted,
       'CATEGORY' AS subdomain,
       gr.grade_category AS finalgradename
     FROM
@@ -175,12 +188,20 @@ WITH
       [db_name],
       academic_year,
       reporting_term,
-      UPPER(LEFT(field, CHARINDEX('_', field) - 1)) AS att_code,
+      UPPER(
+        LEFT(
+          field,
+          CHARINDEX('_', field) - 1
+        )
+      ) AS att_code,
       [value] AS att_counts,
       CASE
         WHEN field = 'presentpct_term' THEN 'ABSENT'
         WHEN field = 'ontimepct_term' THEN 'TARDY'
-        WHEN field IN ('attpts_term', 'attptspct_term') THEN 'PROMO'
+        WHEN field IN (
+          'attpts_term',
+          'attptspct_term'
+        ) THEN 'PROMO'
         WHEN field LIKE 'A%' THEN 'ABSENT'
         WHEN field LIKE 'T%' THEN 'TARDY'
         WHEN field LIKE '%SS%' THEN 'SUSPENSION'
@@ -201,7 +222,13 @@ WITH
           att.t10_count_term,
           att.abs_unexcused_count_term,
           att.tdy_all_count_term,
-          att.abs_unexcused_count_term + ROUND((att.TDY_all_count_term / 3), 1, 1) AS attpts_term,
+          att.abs_unexcused_count_term + ROUND(
+            (
+              att.TDY_all_count_term / 3
+            ),
+            1,
+            1
+          ) AS attpts_term,
           ROUND(
             (
               (
@@ -232,7 +259,13 @@ WITH
             (
               (
                 att.mem_count_term - (
-                  att.abs_unexcused_count_term + ROUND((att.TDY_all_count_term / 3), 1, 1)
+                  att.abs_unexcused_count_term + ROUND(
+                    (
+                      att.TDY_all_count_term / 3
+                    ),
+                    1,
+                    1
+                  )
                 )
               ) / CASE
                 WHEN att.mem_count_term = 0 THEN NULL
@@ -265,12 +298,24 @@ WITH
           att.t10_count_y1,
           att.abs_unexcused_count_y1,
           att.tdy_all_count_y1,
-          att.abs_unexcused_count_y1 + ROUND((att.TDY_all_count_y1 / 3), 1, 1) AS attpts_y1,
+          att.abs_unexcused_count_y1 + ROUND(
+            (
+              att.TDY_all_count_y1 / 3
+            ),
+            1,
+            1
+          ) AS attpts_y1,
           ROUND(
             (
               (
                 att.MEM_count_y1 - (
-                  att.abs_unexcused_count_y1 + ROUND((att.TDY_all_count_y1 / 3), 1, 1)
+                  att.abs_unexcused_count_y1 + ROUND(
+                    (
+                      att.TDY_all_count_y1 / 3
+                    ),
+                    1,
+                    1
+                  )
                 )
               ) / CASE
                 WHEN att.MEM_count_y1 = 0 THEN NULL
@@ -408,7 +453,9 @@ WITH
       AND is_curterm = 1
     UNION ALL
     SELECT
-      CAST(s.student_number AS INT) AS student_number,
+      CAST(
+        s.student_number AS INT
+      ) AS student_number,
       gabby.utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year,
       'SY1' AS reporting_Term,
       gpa.schoolid,
@@ -420,7 +467,9 @@ WITH
       AND gpa.[db_name] = s.[db_name]
     UNION ALL
     SELECT
-      CAST(s.student_number AS INT) AS student_number,
+      CAST(
+        s.student_number AS INT
+      ) AS student_number,
       gabby.utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year,
       'SY1' AS reporting_Term,
       gpa.schoolid,
@@ -444,7 +493,9 @@ WITH
       gabby.lit.achieved_by_round_static
     WHERE
       read_lvl IS NOT NULL
-      AND [start_date] <= CAST(CURRENT_TIMESTAMP AS DATE)
+      AND [start_date] <= CAST(
+        CURRENT_TIMESTAMP AS DATE
+      )
     UNION ALL
     SELECT
       student_number,
@@ -457,7 +508,9 @@ WITH
       gabby.lit.achieved_by_round_static
     WHERE
       goal_lvl IS NOT NULL
-      AND [start_date] <= CAST(CURRENT_TIMESTAMP AS DATE)
+      AND [start_date] <= CAST(
+        CURRENT_TIMESTAMP AS DATE
+      )
     UNION ALL
     /* Lexile */
     SELECT
@@ -468,23 +521,50 @@ WITH
         COLLATE LATIN1_GENERAL_BIN
       ) AS test_round,
       (
-        CONCAT(ritto_reading_score, 'L')
+        CONCAT(
+          ritto_reading_score,
+          'L'
+        )
         COLLATE LATIN1_GENERAL_BIN
       ) AS read_lvl,
       CASE
         WHEN ritto_reading_score = 0 THEN -1
-        WHEN (ritto_reading_score BETWEEN 0 AND 100) THEN 1
-        WHEN (ritto_reading_score BETWEEN 100 AND 200) THEN 5
-        WHEN (ritto_reading_score BETWEEN 200 AND 300) THEN 10
-        WHEN (ritto_reading_score BETWEEN 300 AND 400) THEN 14
-        WHEN (ritto_reading_score BETWEEN 400 AND 500) THEN 17
-        WHEN (ritto_reading_score BETWEEN 500 AND 600) THEN 20
-        WHEN (ritto_reading_score BETWEEN 600 AND 700) THEN 22
-        WHEN (ritto_reading_score BETWEEN 700 AND 800) THEN 25
-        WHEN (ritto_reading_score BETWEEN 800 AND 900) THEN 27
-        WHEN (ritto_reading_score BETWEEN 900 AND 1000) THEN 28
-        WHEN (ritto_reading_score BETWEEN 1000 AND 1100) THEN 29
-        WHEN (ritto_reading_score BETWEEN 1100 AND 1200) THEN 30
+        WHEN (
+          ritto_reading_score BETWEEN 0 AND 100
+        ) THEN 1
+        WHEN (
+          ritto_reading_score BETWEEN 100 AND 200
+        ) THEN 5
+        WHEN (
+          ritto_reading_score BETWEEN 200 AND 300
+        ) THEN 10
+        WHEN (
+          ritto_reading_score BETWEEN 300 AND 400
+        ) THEN 14
+        WHEN (
+          ritto_reading_score BETWEEN 400 AND 500
+        ) THEN 17
+        WHEN (
+          ritto_reading_score BETWEEN 500 AND 600
+        ) THEN 20
+        WHEN (
+          ritto_reading_score BETWEEN 600 AND 700
+        ) THEN 22
+        WHEN (
+          ritto_reading_score BETWEEN 700 AND 800
+        ) THEN 25
+        WHEN (
+          ritto_reading_score BETWEEN 800 AND 900
+        ) THEN 27
+        WHEN (
+          ritto_reading_score BETWEEN 900 AND 1000
+        ) THEN 28
+        WHEN (
+          ritto_reading_score BETWEEN 1000 AND 1100
+        ) THEN 29
+        WHEN (
+          ritto_reading_score BETWEEN 1100 AND 1200
+        ) THEN 30
         WHEN ritto_reading_score >= 1200 THEN 31
       END AS lvl_num,
       'ACHIEVED' AS subdomain
@@ -581,7 +661,9 @@ WITH
       academic_year,
       test_date,
       test_name,
-      CAST([subject] AS VARCHAR(25)) AS [subject],
+      CAST(
+        [subject] AS VARCHAR(25)
+      ) AS [subject],
       scale_score,
       NULL AS performance_level,
       NULL AS performance_level_label
@@ -600,7 +682,13 @@ WITH
         FROM
           gabby.naviance.act_scores_clean
       ) AS sub UNPIVOT (
-        scale_score FOR [subject] IN (composite, english, math, reading, science)
+        scale_score FOR [subject] IN (
+          composite,
+          english,
+          math,
+          reading,
+          science
+        )
       ) AS u
     UNION ALL
     /* ACT Prep */
@@ -631,13 +719,20 @@ WITH
       academic_year,
       test_date,
       'SAT' AS test_name,
-      CAST([subject] AS VARCHAR(25)) AS [subject],
+      CAST(
+        [subject] AS VARCHAR(25)
+      ) AS [subject],
       scale_score,
       NULL AS performance_level,
       NULL AS performance_level_label
     FROM
       gabby.naviance.sat_scores_clean UNPIVOT (
-        scale_score FOR [subject] IN (all_tests_total, math, verbal, writing)
+        scale_score FOR [subject] IN (
+          all_tests_total,
+          math,
+          verbal,
+          writing
+        )
       ) AS u
     UNION ALL
     /* SAT II */
@@ -661,7 +756,11 @@ WITH
           DATE,
           CASE
             WHEN test_date = '0000-00-00' THEN NULL
-            ELSE REPLACE(test_date, '-00', '-01')
+            ELSE REPLACE(
+              test_date,
+              '-00',
+              '-01'
+            )
           END
         )
       ) AS academic_year,
@@ -669,11 +768,17 @@ WITH
         DATE,
         CASE
           WHEN test_date = '0000-00-00' THEN NULL
-          ELSE REPLACE(test_date, '-00', '-01')
+          ELSE REPLACE(
+            test_date,
+            '-00',
+            '-01'
+          )
         END
       ) AS test_date,
       'AP' AS test_name,
-      CAST(test_name AS VARCHAR(125)) AS [subject],
+      CAST(
+        test_name AS VARCHAR(125)
+      ) AS [subject],
       CAST(score AS INT) AS scale_score,
       NULL AS performance_level,
       NULL AS performance_level_label
@@ -688,7 +793,11 @@ WITH
           DATE,
           CASE
             WHEN test_date = '0000-00-00' THEN NULL
-            ELSE REPLACE(test_date, '-00', '-01')
+            ELSE REPLACE(
+              test_date,
+              '-00',
+              '-01'
+            )
           END
         )
       ) AS academic_year,
@@ -696,17 +805,29 @@ WITH
         DATE,
         CASE
           WHEN test_date = '0000-00-00' THEN NULL
-          ELSE REPLACE(test_date, '-00', '-01')
+          ELSE REPLACE(
+            test_date,
+            '-00',
+            '-01'
+          )
         END
       ) AS test_date,
       'EXPLORE' AS test_name,
-      CAST([subject] AS VARCHAR(25)) AS [subject],
+      CAST(
+        [subject] AS VARCHAR(25)
+      ) AS [subject],
       CAST(scale_score AS INT) AS scale_score,
       NULL AS performance_level,
       NULL AS performance_level_label
     FROM
       gabby.naviance.explore_scores UNPIVOT (
-        scale_score FOR [subject] IN (english, math, reading, science, composite)
+        scale_score FOR [subject] IN (
+          english,
+          math,
+          reading,
+          science,
+          composite
+        )
       ) AS u
     UNION ALL
     SELECT
@@ -716,7 +837,11 @@ WITH
           DATE,
           CASE
             WHEN test_date = '0000-00-00' THEN NULL
-            ELSE REPLACE(test_date, '-00', '-01')
+            ELSE REPLACE(
+              test_date,
+              '-00',
+              '-01'
+            )
           END
         )
       ) AS academic_year,
@@ -724,17 +849,28 @@ WITH
         DATE,
         CASE
           WHEN test_date = '0000-00-00' THEN NULL
-          ELSE REPLACE(test_date, '-00', '-01')
+          ELSE REPLACE(
+            test_date,
+            '-00',
+            '-01'
+          )
         END
       ) AS test_date,
       'PSAT' AS test_name,
-      CAST([subject] AS VARCHAR(25)) AS [subject],
+      CAST(
+        [subject] AS VARCHAR(25)
+      ) AS [subject],
       CAST(scale_score AS INT) AS scale_score,
       NULL AS performance_level,
       NULL AS performance_level_label
     FROM
       gabby.naviance.psat_scores UNPIVOT (
-        scale_score FOR [subject] IN (critical_reading, math, writing, total)
+        scale_score FOR [subject] IN (
+          critical_reading,
+          math,
+          writing,
+          total
+        )
       ) AS u
   ),
   collegeapps AS (
@@ -753,9 +889,15 @@ WITH
     FROM
       (
         SELECT
-          CAST(app.hs_student_id AS INT) AS student_number,
-          CAST(app.collegename AS VARCHAR(125)) AS collegename,
-          CAST(app.[level] AS VARCHAR(25)) AS [level],
+          CAST(
+            app.hs_student_id AS INT
+          ) AS student_number,
+          CAST(
+            app.collegename AS VARCHAR(125)
+          ) AS collegename,
+          CAST(
+            app.[level] AS VARCHAR(25)
+          ) AS [level],
           CONVERT(
             VARCHAR(125),
             CASE
@@ -769,7 +911,11 @@ WITH
             CONCAT(
               'Type:',
               CHAR(9),
-              REPLACE(app.inst_control, 'p', 'P'),
+              REPLACE(
+                app.inst_control,
+                'p',
+                'P'
+              ),
               CHAR(10),
               'Attending:',
               CHAR(9),
@@ -789,7 +935,9 @@ WITH
           END competitiveness_ranking_int
         FROM
           gabby.naviance.college_applications AS app
-          LEFT JOIN gabby.alumni.account AS a ON app.ceeb_code = CAST(a.ceeb_code_c AS VARCHAR)
+          LEFT JOIN gabby.alumni.account AS a ON app.ceeb_code = CAST(
+            a.ceeb_code_c AS VARCHAR
+          )
           AND a.record_type_id = '01280000000BQEkAAO'
           AND a.competitiveness_ranking_c IS NOT NULL
       ) AS sub
@@ -814,11 +962,21 @@ WITH
           student_number,
           academic_year,
           reporting_term_name,
-          CAST(promo_status_overall AS VARCHAR) AS promo_status_overall,
-          CAST(promo_status_attendance AS VARCHAR) AS promo_status_att,
-          CAST(promo_status_lit AS VARCHAR) AS promo_status_lit,
-          CAST(promo_status_grades AS VARCHAR) AS promo_status_grades,
-          CAST(promo_status_qa_math AS VARCHAR) AS promo_status_qa_math
+          CAST(
+            promo_status_overall AS VARCHAR
+          ) AS promo_status_overall,
+          CAST(
+            promo_status_attendance AS VARCHAR
+          ) AS promo_status_att,
+          CAST(
+            promo_status_lit AS VARCHAR
+          ) AS promo_status_lit,
+          CAST(
+            promo_status_grades AS VARCHAR
+          ) AS promo_status_grades,
+          CAST(
+            promo_status_qa_math AS VARCHAR
+          ) AS promo_status_qa_math
         FROM
           gabby.reporting.promotional_status
         WHERE
@@ -846,7 +1004,11 @@ WITH
       stu_status_words AS goal_status,
       CASE
         WHEN reporting_term = 'ARY' THEN 'Y1'
-        ELSE REPLACE(reporting_term, 'AR', 'Q')
+        ELSE REPLACE(
+          reporting_term,
+          'AR',
+          'Q'
+        )
       END AS term_name,
       'AR' AS subdomain
     FROM
@@ -1011,7 +1173,9 @@ FROM
     r.reporting_term
     COLLATE LATIN1_GENERAL_BIN
   ) = gpa.reporting_term
-  AND r.term_start_date <= CAST(CURRENT_TIMESTAMP AS DATE)
+  AND r.term_start_date <= CAST(
+    CURRENT_TIMESTAMP AS DATE
+  )
 UNION ALL
 --*/
 --/*
@@ -1069,7 +1233,9 @@ SELECT
   map.subdomain,
   map.measurement_scale AS [subject],
   NULL AS course_name,
-  CAST(map.test_ritscore AS VARCHAR) AS measure_name,
+  CAST(
+    map.test_ritscore AS VARCHAR
+  ) AS measure_name,
   map.testpercentile AS measure_value,
   NULL AS measure_date,
   NULL AS performance_level,
@@ -1110,7 +1276,9 @@ SELECT
   ) AS [subject],
   NULL AS course_name,
   (
-    CAST(NEWID() AS VARCHAR(250))
+    CAST(
+      NEWID() AS VARCHAR(250)
+    )
     COLLATE LATIN1_GENERAL_BIN
   ) AS measure_name,
   std.test_scale_score AS measure_value,
@@ -1173,7 +1341,10 @@ SELECT
   r.iep_status,
   r.enroll_status,
   r.term_name,
-  'Q' + RIGHT(promo.reporting_term_name, 1) AS reporting_term,
+  'Q' + RIGHT(
+    promo.reporting_term_name,
+    1
+  ) AS reporting_term,
   'PROMO STATUS' AS DOMAIN,
   promo.subdomain,
   NULL AS [subject],

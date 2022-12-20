@@ -12,7 +12,9 @@ SELECT
   sub.question_id,
   sub.answer,
   CASE
-    WHEN sub.question_id IN (5, 8, 21, 30) THEN sub.question_shortname + CAST(sub.rn_multiselect AS VARCHAR(2))
+    WHEN sub.question_id IN (5, 8, 21, 30) THEN sub.question_shortname + CAST(
+      sub.rn_multiselect AS VARCHAR(2)
+    )
     ELSE sub.question_shortname
   END AS question_shortname,
   ROW_NUMBER() OVER (
@@ -58,9 +60,14 @@ FROM
           WHEN qo.question_id = 30 THEN 'teacher_prep_'
         END,
         sq.shortname,
-        LOWER(REPLACE(sd.question, ' ', '_'))
+        LOWER(
+          REPLACE(sd.question, ' ', '_')
+        )
       ) AS question_shortname,
-      COALESCE(sd.answer, qo.option_value) AS answer,
+      COALESCE(
+        sd.answer,
+        qo.option_value
+      ) AS answer,
       ROW_NUMBER() OVER (
         PARTITION BY
           sd.survey_id,
@@ -79,7 +86,10 @@ FROM
       LEFT JOIN gabby.surveygizmo.survey_question_options_static AS qo ON sd.survey_id = qo.survey_id
       AND sd.question_id = qo.question_id
       AND qo.option_disabled = 0
-      AND CHARINDEX(qo.option_id, sd.options) > 0
+      AND CHARINDEX(
+        qo.option_id,
+        sd.options
+      ) > 0
     WHERE
       sri.survey_id = 6330385
       AND sri.[status] = 'Complete'

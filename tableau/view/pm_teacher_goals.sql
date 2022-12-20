@@ -8,7 +8,9 @@ WITH
       sub.grade_level,
       sub.reporting_term,
       'pct_met_reading_goal' AS metric_name,
-      AVG(CAST(sub.met_goal AS FLOAT)) AS metric_value
+      AVG(
+        CAST(sub.met_goal AS FLOAT)
+      ) AS metric_value
     FROM
       (
         SELECT
@@ -21,7 +23,9 @@ WITH
         FROM
           gabby.lit.achieved_by_round_static
         WHERE
-          [start_date] <= CAST(CURRENT_TIMESTAMP AS DATE)
+          [start_date] <= CAST(
+            CURRENT_TIMESTAMP AS DATE
+          )
       ) AS sub
     GROUP BY
       sub.academic_year,
@@ -94,14 +98,22 @@ WITH
       u.date_taken,
       u.performance_band_number,
       u.[value] AS is_mastery,
-      'pct_' + u.module_type + '_mastery_' + u.subject_area_clean + REPLACE(u.field, 'is_mastery', '') AS metric_name
+      'pct_' + u.module_type + '_mastery_' + u.subject_area_clean + REPLACE(
+        u.field,
+        'is_mastery',
+        ''
+      ) AS metric_name
     FROM
       (
         SELECT
           asr.local_student_id,
           asr.academic_year,
           asr.subject_area,
-          REPLACE(LOWER(asr.subject_area), ' ', '_') AS subject_area_clean,
+          REPLACE(
+            LOWER(asr.subject_area),
+            ' ',
+            '_'
+          ) AS subject_area_clean,
           LOWER(asr.module_type) AS module_type,
           asr.module_number,
           asr.date_taken,
@@ -145,7 +157,11 @@ WITH
       wo.score AS metric_value,
       rt.academic_year,
       rt.time_per_name,
-      REPLACE(rt.time_per_name, 'ETR', 'PM') AS pm_term,
+      REPLACE(
+        rt.time_per_name,
+        'ETR',
+        'PM'
+      ) AS pm_term,
       'etr_overall_score' AS metric_name,
       ROW_NUMBER() OVER (
         PARTITION BY
@@ -165,7 +181,11 @@ WITH
       AND rt._fivetran_deleted = 0
       LEFT JOIN gabby.pm.teacher_goals_exemption_clean_static AS ex ON wo.teacher_internal_id = ex.df_employee_number
       AND rt.academic_year = ex.academic_year
-      AND rt.time_per_name = REPLACE(ex.pm_term, 'PM', 'ETR')
+      AND rt.time_per_name = REPLACE(
+        ex.pm_term,
+        'PM',
+        'ETR'
+      )
     WHERE
       wo.rubric_name IN (
         'Coaching Tool: Coach ETR and Reflection',
@@ -193,7 +213,12 @@ WITH
       e.academic_year,
       'ETRY1' AS time_per_name,
       e.metric_name,
-      AVG(COALESCE(lb.measure_values, e.metric_value)) AS metric_value
+      AVG(
+        COALESCE(
+          lb.measure_values,
+          e.metric_value
+        )
+      ) AS metric_value
     FROM
       etr_long AS e
       LEFT JOIN gabby.pm.teacher_goals_lockbox AS lb ON e.df_employee_number = lb.df_employee_number
@@ -214,14 +239,26 @@ WITH
       so.subject_employee_number,
       so.academic_year,
       so.reporting_term,
-      REPLACE(so.reporting_term, 'SO', 'PM') AS pm_term,
+      REPLACE(
+        so.reporting_term,
+        'SO',
+        'PM'
+      ) AS pm_term,
       'so_survey_overall_score' AS metric_name,
-      SUM(so.total_weighted_response_value) / SUM(so.total_response_weight) AS metric_value
+      SUM(
+        so.total_weighted_response_value
+      ) / SUM(
+        so.total_response_weight
+      ) AS metric_value
     FROM
       gabby.surveys.self_and_others_survey_rollup_static AS so
       LEFT JOIN gabby.pm.teacher_goals_exemption_clean_static AS ex ON so.subject_employee_number = ex.df_employee_number
       AND so.academic_year = ex.academic_year
-      AND so.reporting_term = REPLACE(ex.pm_term, 'PM', 'SO')
+      AND so.reporting_term = REPLACE(
+        ex.pm_term,
+        'PM',
+        'SO'
+      )
     WHERE
       ex.exemption IS NULL
     GROUP BY
@@ -244,7 +281,12 @@ WITH
       s.academic_year,
       'SOY1' AS reporting_term,
       s.metric_name,
-      AVG(COALESCE(lb.measure_values, s.metric_value)) AS metric_value
+      AVG(
+        COALESCE(
+          lb.measure_values,
+          s.metric_value
+        )
+      ) AS metric_value
     FROM
       so_survey_long AS s
       LEFT JOIN gabby.pm.teacher_goals_lockbox AS lb ON s.subject_employee_number = lb.df_employee_number
@@ -518,7 +560,9 @@ WITH
         ) THEN AVG(sub.is_mastery) - sub.prior_year_outcome
         ELSE AVG(sub.is_mastery)
       END AS metric_value,
-      COUNT(DISTINCT sub.student_number) AS n_students
+      COUNT(
+        DISTINCT sub.student_number
+      ) AS n_students
     FROM
       (
         SELECT

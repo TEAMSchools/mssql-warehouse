@@ -1,4 +1,3 @@
--- /* trunk-ignore-all(sqlfluff/L036) */
 CREATE
 OR ALTER
 PROCEDURE illuminate_dna_repositories.repository_row_ids_merge AS BEGIN
@@ -25,7 +24,10 @@ DECLARE @query NVARCHAR(MAX),
 DROP TABLE IF EXISTS [#repository_row_ids];
 
 CREATE TABLE
-  [#repository_row_ids] (repository_id INT, repository_row_id INT);
+  [#repository_row_ids] (
+    repository_id INT,
+    repository_row_id INT
+  );
 
 SET
   @linked_server_name = 'ILLUMINATE';
@@ -54,7 +56,11 @@ WHERE
       illuminate_dna_repositories.fivetran_audit
     WHERE
       ISNUMERIC(RIGHT([table], 1)) = 1
-      AND done >= DATEADD(HOUR, -24, CURRENT_TIMESTAMP)
+      AND done >= DATEADD(
+        HOUR,
+        -24,
+        CURRENT_TIMESTAMP
+      )
   )
 ORDER BY
   repository_id DESC;
@@ -135,7 +141,10 @@ MERGE INTO
       repository_row_id
     FROM
       #repository_row_ids
-  ) AS src (repository_id, repository_row_id) ON tgt.repository_id = src.repository_id
+  ) AS src (
+    repository_id,
+    repository_row_id
+  ) ON tgt.repository_id = src.repository_id
   AND tgt.repository_row_id = src.repository_row_id
 WHEN MATCHED THEN
 UPDATE SET
@@ -143,9 +152,15 @@ UPDATE SET
   tgt.repository_row_id = src.repository_row_id
 WHEN NOT MATCHED BY TARGET THEN
 INSERT
-  (repository_id, repository_row_id)
+  (
+    repository_id,
+    repository_row_id
+  )
 VALUES
-  (src.repository_id, src.repository_row_id)
+  (
+    src.repository_id,
+    src.repository_row_id
+  )
 WHEN NOT MATCHED BY SOURCE
   AND tgt.repository_id IN (
     SELECT

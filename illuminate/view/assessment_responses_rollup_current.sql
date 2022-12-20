@@ -40,7 +40,9 @@ SELECT
       sub.module_number,
       sub.grade_level_id
   ) AS administered_at,
-  MIN(sub.performance_band_set_id) OVER (
+  MIN(
+    sub.performance_band_set_id
+  ) OVER (
     PARTITION BY
       sub.academic_year,
       sub.scope,
@@ -68,12 +70,16 @@ FROM
       MIN(title) AS title,
       MIN(assessment_id) AS assessment_id,
       MIN(administered_at) AS administered_at,
-      MIN(performance_band_set_id) AS performance_band_set_id,
+      MIN(
+        performance_band_set_id
+      ) AS performance_band_set_id,
       MIN(date_taken) AS date_taken,
       MIN(grade_level_id) AS grade_level_id,
       SUM(points) AS points,
       ROUND(
-        (SUM(points) / SUM(points_possible)) * 100,
+        (
+          SUM(points) / SUM(points_possible)
+        ) * 100,
         1
       ) AS percent_correct
     FROM

@@ -88,4 +88,6 @@ SELECT
 FROM
   gabby.tableau.ar_time_series_archive
 WHERE
-  academic_year = (gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1)
+  academic_year = (
+    gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
+  )

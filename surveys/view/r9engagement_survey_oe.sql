@@ -11,7 +11,11 @@ WITH
       email,
       location,
       n,
-      REPLACE(question_code, '_', '') AS question_code,
+      REPLACE(
+        question_code,
+        '_',
+        ''
+      ) AS question_code,
       response_value
     FROM
       (
@@ -24,8 +28,12 @@ WITH
           email,
           location,
           NULL AS n,
-          CAST(region_6 AS NVARCHAR(MAX)) AS region_6,
-          CAST(region_7 AS NVARCHAR(MAX)) AS region_7
+          CAST(
+            region_6 AS NVARCHAR(MAX)
+          ) AS region_6,
+          CAST(
+            region_7 AS NVARCHAR(MAX)
+          ) AS region_7
         FROM
           gabby.surveys.r9engagement_survey_final
       ) AS sub UNPIVOT (

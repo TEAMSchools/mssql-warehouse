@@ -5,14 +5,22 @@ WITH
       scale AS scale_score,
       CASE
         WHEN raw_score LIKE '%-%' THEN CAST(
-          LEFT(raw_score, CHARINDEX('-', raw_score) - 1) AS INT
+          LEFT(
+            raw_score,
+            CHARINDEX('-', raw_score) - 1
+          ) AS INT
         )
         WHEN ISNUMERIC(raw_score) = 0 THEN NULL
         ELSE CAST(raw_score AS INT)
       END AS raw_score
     FROM
       gabby.act.key_cleanup UNPIVOT (
-        raw_score FOR [subject] IN (english, mathematics, reading, science)
+        raw_score FOR [subject] IN (
+          english,
+          mathematics,
+          reading,
+          science
+        )
       ) AS u
   ),
   scaffold AS (
@@ -38,8 +46,14 @@ SELECT DISTINCT
   row_generator.n AS grade_level,
   gabby.utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year,
   (
-    UPPER(LEFT(scaffold.subject, 1)) + (
-      SUBSTRING(scaffold.subject, 2, LEN(scaffold.subject))
+    UPPER(
+      LEFT(scaffold.subject, 1)
+    ) + (
+      SUBSTRING(
+        scaffold.subject,
+        2,
+        LEN(scaffold.subject)
+      )
     )
   ) AS [subject],
   MAX(key_clean.scale_score) OVER (

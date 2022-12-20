@@ -30,10 +30,16 @@ SELECT
     ) AS INT
   ) AS first_resolution_time_in_minutes_business,
   CAST(
-    JSON_VALUE(reply_time_in_minutes, '$.calendar') AS INT
+    JSON_VALUE(
+      reply_time_in_minutes,
+      '$.calendar'
+    ) AS INT
   ) AS reply_time_in_minutes_calendar,
   CAST(
-    JSON_VALUE(reply_time_in_minutes, '$.business') AS INT
+    JSON_VALUE(
+      reply_time_in_minutes,
+      '$.business'
+    ) AS INT
   ) AS reply_time_in_minutes_business,
   CAST(
     JSON_VALUE(
@@ -48,10 +54,16 @@ SELECT
     ) AS INT
   ) AS full_resolution_time_in_minutes_business,
   CAST(
-    JSON_VALUE(agent_wait_time_in_minutes, '$.calendar') AS INT
+    JSON_VALUE(
+      agent_wait_time_in_minutes,
+      '$.calendar'
+    ) AS INT
   ) AS agent_wait_time_in_minutes_calendar,
   CAST(
-    JSON_VALUE(agent_wait_time_in_minutes, '$.business') AS INT
+    JSON_VALUE(
+      agent_wait_time_in_minutes,
+      '$.business'
+    ) AS INT
   ) AS agent_wait_time_in_minutes_business,
   CAST(
     JSON_VALUE(

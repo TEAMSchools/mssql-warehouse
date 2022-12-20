@@ -17,7 +17,11 @@ SELECT
     WHEN tr.schoolid = 73253 THEN sec.expression
     ELSE sec.section_number
   END AS [06 Period],
-  CONCAT((tr.yearid + 1990), '-', (tr.yearid + 1991)) AS [07 Academic Year],
+  CONCAT(
+    (tr.yearid + 1990),
+    '-',
+    (tr.yearid + 1991)
+  ) AS [07 Academic Year],
   NULL AS [08 Room Number],
   NULL AS [09 Session Type ID],
   NULL AS [10 Local Term ID],

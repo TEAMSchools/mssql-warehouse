@@ -8,7 +8,10 @@ SELECT
   tb.[value] AS text_box_text
 FROM
   gabby.whetstone.observations_scores_static AS wos
-  CROSS APPLY OPENJSON (wos.score_text_boxes_json, '$')
+  CROSS APPLY OPENJSON (
+    wos.score_text_boxes_json,
+    '$'
+  )
 WITH
   (
     _id VARCHAR(25),

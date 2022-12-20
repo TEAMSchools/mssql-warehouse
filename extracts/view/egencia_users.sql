@@ -9,13 +9,21 @@ SELECT
   sub.[location],
   sub.home_department,
   sub.job_title,
-  CONCAT(sub.employee_number, '@kippnj.org') AS [Username],
+  CONCAT(
+    sub.employee_number,
+    '@kippnj.org'
+  ) AS [Username],
   CASE
     WHEN sub.position_status = 'Terminated' THEN 'Disabled'
     ELSE 'Active'
   END AS [Status],
   CASE
-    WHEN sub.employee_number IN (100219, 100412, 100566, 102298) THEN 'Travel Manager'
+    WHEN sub.employee_number IN (
+      100219,
+      100412,
+      100566,
+      102298
+    ) THEN 'Travel Manager'
     ELSE 'Traveler'
   END AS [Role],
   /* cascading match on location/dept/job */
@@ -40,7 +48,10 @@ FROM
       scw.job_title,
       ad.mail AS [Email],
       ad.userprincipalname AS [Single Sign On ID],
-      COALESCE(scw.rehire_date, scw.original_hire_date) AS hire_date
+      COALESCE(
+        scw.rehire_date,
+        scw.original_hire_date
+      ) AS hire_date
     FROM
       gabby.people.staff_roster AS scw
       INNER JOIN gabby.adsi.user_attributes_static AS ad ON scw.employee_number = ad.employeenumber
@@ -50,7 +61,10 @@ FROM
         scw.worker_category NOT IN ('Intern', 'Part Time')
         OR scw.worker_category IS NULL
       )
-      AND COALESCE(scw.termination_date, CURRENT_TIMESTAMP) >= DATEFROMPARTS(
+      AND COALESCE(
+        scw.termination_date,
+        CURRENT_TIMESTAMP
+      ) >= DATEFROMPARTS(
         gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
         7,
         1

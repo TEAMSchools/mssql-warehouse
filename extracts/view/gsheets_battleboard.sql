@@ -30,7 +30,12 @@ WITH
         WHERE
           academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
       ) AS sub PIVOT (
-        MAX(metric_value) FOR pm_term IN ([PM1], [PM2], [PM3], [PM4])
+        MAX(metric_value) FOR pm_term IN (
+          [PM1],
+          [PM2],
+          [PM3],
+          [PM4]
+        )
       ) AS p
   )
 SELECT

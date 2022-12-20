@@ -6,7 +6,9 @@ SELECT
   sub.percent_correct AS d_percent_correct,
   sub.points_earned AS d_points_earned,
   sub.date_quiz_completed_local AS dt_taken,
-  CAST(sub.lexile_level AS FLOAT) AS fl_lexile_calc,
+  CAST(
+    sub.lexile_level AS FLOAT
+  ) AS fl_lexile_calc,
   sub.lexile_level AS i_lexile,
   sub.questions_correct AS i_questions_correct,
   sub.questions_presented AS i_questions_presented,
@@ -49,12 +51,18 @@ FROM
       ) AS student_identifier,
       quiz_number,
       content_title,
-      CAST(date_quiz_completed_local AS DATE) AS date_quiz_completed_local,
+      CAST(
+        date_quiz_completed_local AS DATE
+      ) AS date_quiz_completed_local,
       passed,
       CAST(word_count AS FLOAT) AS word_count,
       points_earned,
-      CAST(questions_correct AS FLOAT) AS questions_correct,
-      CAST(questions_presented AS FLOAT) AS questions_presented,
+      CAST(
+        questions_correct AS FLOAT
+      ) AS questions_correct,
+      CAST(
+        questions_presented AS FLOAT
+      ) AS questions_presented,
       percent_correct,
       lexile_level,
       lexile_measure,
@@ -62,7 +70,9 @@ FROM
         WHEN fiction_non_fiction = 'Fiction' THEN 'F'
         WHEN fiction_non_fiction = 'NonFiction' THEN 'NF'
       END AS fiction_non_fiction,
-      CAST(LEFT(school_year, 4) AS INT) AS academic_year
+      CAST(
+        LEFT(school_year, 4) AS INT
+      ) AS academic_year
     FROM
       gabby.renaissance.accelerated_reader
     WHERE

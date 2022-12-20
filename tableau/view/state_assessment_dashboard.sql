@@ -39,7 +39,9 @@ WITH
           academic_year,
           test_code,
           entity,
-          (SUM(proficient_count) / SUM(valid_scores)) * 100 AS pct_proficient
+          (
+            SUM(proficient_count) / SUM(valid_scores)
+          ) * 100 AS pct_proficient
         FROM
           (
             SELECT
@@ -58,7 +60,10 @@ WITH
               subgroup = 'TOTAL'
               AND school_code IS NULL
               AND (
-                district_name IN ('NEWARK CITY', 'CAMDEN CITY')
+                district_name IN (
+                  'NEWARK CITY',
+                  'CAMDEN CITY'
+                )
                 OR (
                   district_name IS NULL
                   AND dfg IS NULL
@@ -192,7 +197,10 @@ SELECT
   asa.test_type,
   CONCAT(
     LEFT(asa.[subject], 3),
-    RIGHT(CONCAT('0', co.grade_level), 2)
+    RIGHT(
+      CONCAT('0', co.grade_level),
+      2
+    )
   ) AS test_code,
   asa.[subject],
   asa.scaled_score,

@@ -4,7 +4,7 @@
 
 - Use `snake_case`
 - Always prefer CTEs to subqueries for transformations and rollups
-- Avoid going more than one-level-deep for subqueries
+- When subqueries are necessary, avoid going more than one level deep
 - Always use uppercase for the reserved keywords (e.g. `SELECT` and `WHERE`)
 - Avoid abbreviated keywords; use the full-length ones where available (e.g `ABSOLUTE` > `ABS`)
 - Prefer ANSI SQL functions over vendor-specific functions for maximum portability
@@ -12,6 +12,7 @@
 ## `JOIN`s
 
 - `INNER JOIN` should be used explicitly; avoid using a naked `JOIN`
+- Wrap join conditions in **(parenthesis)**: `ON (x = y AND z = x)`
 - Do not `JOIN` to a subquery; use a CTE and join it to the main clause
 - Begin with `INNER JOIN`s and then `LEFT JOINs`, do not intermingle them unless necessary
 
@@ -31,3 +32,7 @@
 - `x BETWEEN y AND z` clauses must be put in **(parenthesis)** for successful parsing
 - User-defined functions will add an extra space in-between the function name and the parenthesis
 - Wrap statements using `COLLATE` in **(parenthesis)** to avoid `sql-formatter` confusion
+
+## Troubleshooting Linter Errors
+- `L016`
+- `Found unparsable section: ...`

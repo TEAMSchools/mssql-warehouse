@@ -76,7 +76,10 @@ FROM
   AND srd.question_id = srdo.question_id
   LEFT JOIN gabby.surveygizmo.survey_question_options_static AS qo ON srd.survey_id = qo.survey_id
   AND srd.question_id = qo.question_id
-  AND COALESCE(srd.answer_id, srdo.option_id) = qo.option_id
+  AND COALESCE(
+    srd.answer_id,
+    srdo.option_id
+  ) = qo.option_id
   LEFT JOIN gabby.surveygizmo.survey_response_identifiers_static AS sri ON srd.survey_id = sri.survey_id
   AND srd.survey_response_id = sri.survey_response_id
   AND sri.[status] = 'Complete'

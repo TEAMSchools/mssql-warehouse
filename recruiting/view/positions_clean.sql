@@ -14,19 +14,31 @@ SELECT
   p.date_filled,
   p.position_count,
   CASE
-    WHEN p.n = 4 THEN PARSENAME(p.position_name_splitter, 4)
+    WHEN p.n = 4 THEN PARSENAME(
+      p.position_name_splitter,
+      4
+    )
     ELSE 'Invalid position_name Format'
   END AS recruiter,
   CASE
-    WHEN p.n = 4 THEN PARSENAME(p.position_name_splitter, 3)
+    WHEN p.n = 4 THEN PARSENAME(
+      p.position_name_splitter,
+      3
+    )
     ELSE 'Invalid position_name Format'
   END AS location,
   CASE
-    WHEN p.n = 4 THEN PARSENAME(p.position_name_splitter, 2)
+    WHEN p.n = 4 THEN PARSENAME(
+      p.position_name_splitter,
+      2
+    )
     ELSE 'Invalid position_name Format'
   END AS role_short,
   CASE
-    WHEN p.n = 4 THEN PARSENAME(p.position_name_splitter, 1)
+    WHEN p.n = 4 THEN PARSENAME(
+      p.position_name_splitter,
+      1
+    )
     ELSE 'Invalid position_name Format'
   END AS recruiing_year
 FROM
@@ -43,27 +55,45 @@ FROM
       pn.date_position_filled_c AS date_filled,
       pn.replacement_or_new_position_c AS new_or_replacement,
       pn.region_c AS region,
-      LEN(pn.position_name_c) - LEN(REPLACE(pn.position_name_c, '_', '')) AS n,
+      LEN(pn.position_name_c) - LEN(
+        REPLACE(
+          pn.position_name_c,
+          '_',
+          ''
+        )
+      ) AS n,
       REPLACE(
         LEFT(
           pn.position_name_c,
-          LEN(pn.position_name_c) - CHARINDEX('_', REVERSE(pn.position_name_c))
+          LEN(pn.position_name_c) - CHARINDEX(
+            '_',
+            REVERSE(pn.position_name_c)
+          )
         ),
         '_',
         '.'
       ) AS position_name_splitter,
       CASE
-        WHEN CHARINDEX('_', pn.position_name_c) = 0 THEN NULL
+        WHEN CHARINDEX(
+          '_',
+          pn.position_name_c
+        ) = 0 THEN NULL
         WHEN LEN(
           RIGHT(
             pn.position_name_c,
-            CHARINDEX('_', REVERSE(pn.position_name_c)) - 1
+            CHARINDEX(
+              '_',
+              REVERSE(pn.position_name_c)
+            ) - 1
           )
         ) > 3 THEN NULL
         ELSE LEN(
           RIGHT(
             pn.position_name_c,
-            CHARINDEX('_', REVERSE(pn.position_name_c)) - 1
+            CHARINDEX(
+              '_',
+              REVERSE(pn.position_name_c)
+            ) - 1
           )
         )
       END AS position_count

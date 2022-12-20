@@ -6,7 +6,9 @@ SELECT
   co.grade_level,
   co.team,
   co.school_name,
-  CAST(co.entrydate AS VARCHAR) AS entrydate,
+  CAST(
+    co.entrydate AS VARCHAR
+  ) AS entrydate,
   co.student_web_id,
   co.student_web_password,
   co.student_web_id + '@teamstudents.org' AS student_email,

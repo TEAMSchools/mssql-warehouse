@@ -152,7 +152,11 @@ WITH
         ORDER BY
           pas.payroll_date
       ) AS job_title_prev_paydate,
-      LAG(pas.salary_paydate, 1, pas.salary_paydate) OVER (
+      LAG(
+        pas.salary_paydate,
+        1,
+        pas.salary_paydate
+      ) OVER (
         PARTITION BY
           pas.fiscal_year,
           pas.code,
@@ -160,7 +164,11 @@ WITH
         ORDER BY
           pas.payroll_date
       ) AS salary_prev_paydate,
-      LAG(pas.status_paydate, 1, pas.status_paydate) OVER (
+      LAG(
+        pas.status_paydate,
+        1,
+        pas.status_paydate
+      ) OVER (
         PARTITION BY
           pas.fiscal_year,
           pas.code,

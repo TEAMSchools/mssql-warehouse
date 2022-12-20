@@ -56,7 +56,11 @@ WITH
         SELECT
           student_number,
           [value],
-          CONCAT(reporting_term, '_', field) AS pivot_field
+          CONCAT(
+            reporting_term,
+            '_',
+            field
+          ) AS pivot_field
         FROM
           (
             SELECT
@@ -67,11 +71,19 @@ WITH
               END AS reporting_term,
               CAST(words AS VARCHAR) AS words,
               CAST(words_goal AS VARCHAR) AS words_goal,
-              CAST(stu_status_words AS VARCHAR) AS stu_status_words,
+              CAST(
+                stu_status_words AS VARCHAR
+              ) AS stu_status_words,
               CAST(mastery AS VARCHAR) AS mastery,
-              CAST(mastery_fiction AS VARCHAR) AS mastery_fiction,
-              CAST(mastery_nonfiction AS VARCHAR) AS mastery_nonfiction,
-              CAST(100 - pct_fiction AS VARCHAR) AS pct_nonfiction,
+              CAST(
+                mastery_fiction AS VARCHAR
+              ) AS mastery_fiction,
+              CAST(
+                mastery_nonfiction AS VARCHAR
+              ) AS mastery_nonfiction,
+              CAST(
+                100 - pct_fiction AS VARCHAR
+              ) AS pct_nonfiction,
               CONVERT(
                 VARCHAR,
                 CASE
@@ -84,7 +96,9 @@ WITH
             WHERE
               words_goal > 0
               AND (
-                CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN [start_date] AND end_date
+                CAST(
+                  CURRENT_TIMESTAMP AS DATE
+                ) BETWEEN [start_date] AND end_date
               )
           ) AS sub UNPIVOT (
             [value] FOR field IN (
@@ -150,7 +164,9 @@ SELECT
   gr.y1_grade_percent_adj AS y1_rdg_gr,
   ele.category_pct AS cur_term_rdg_hw_avg,
   bk.vch_content_title AS last_book_title,
-  CAST(bk.dt_taken AS VARCHAR) AS last_book_quiz_date,
+  CAST(
+    bk.dt_taken AS VARCHAR
+  ) AS last_book_quiz_date,
   bk.d_percent_correct * 100 AS last_book_quiz_pct_correct
 FROM
   gabby.powerschool.cohort_identifiers_static AS co
@@ -158,7 +174,9 @@ FROM
   AND co.[db_name] = enr.[db_name]
   AND enr.credittype = 'ENG'
   AND (
-    CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN enr.dateenrolled AND enr.dateleft
+    CAST(
+      CURRENT_TIMESTAMP AS DATE
+    ) BETWEEN enr.dateenrolled AND enr.dateleft
   )
   AND enr.rn_subject = 1
   LEFT JOIN gabby.powerschool.final_grades_static AS gr ON co.studentid = gr.studentid
@@ -166,8 +184,9 @@ FROM
   AND co.[db_name] = gr.[db_name]
   AND enr.course_number = gr.course_number
   AND (
-
-    CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN gr.termbin_start_date AND gr.termbin_end_date
+    CAST(
+      CURRENT_TIMESTAMP AS DATE
+    ) BETWEEN gr.termbin_start_date AND gr.termbin_end_date
   )
   LEFT JOIN gabby.powerschool.category_grades_static AS ele ON co.studentid = ele.studentid
   AND co.yearid = ele.yearid
@@ -175,8 +194,9 @@ FROM
   AND enr.course_number = ele.course_number
   AND ele.storecode_type = 'H'
   AND (
-
-    CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN ele.termbin_start_date AND ele.termbin_end_date
+    CAST(
+      CURRENT_TIMESTAMP AS DATE
+    ) BETWEEN ele.termbin_start_date AND ele.termbin_end_date
   )
   LEFT JOIN fp AS fp_base ON co.student_number = fp_base.student_number
   AND fp_base.rn_base = 1

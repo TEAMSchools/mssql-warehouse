@@ -54,7 +54,9 @@ SELECT
   term_taken,
   performance_band_set_id,
   performance_band_number,
-  CAST(performance_band_number AS VARCHAR(5)) AS performance_band_label,
+  CAST(
+    performance_band_number AS VARCHAR(5)
+  ) AS performance_band_label,
   is_mastery,
   is_normed_scope
 FROM

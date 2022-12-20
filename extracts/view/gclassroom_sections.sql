@@ -26,7 +26,10 @@ SELECT
     sec.section_number + ' - ',
     gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
     '-',
-    RIGHT(gabby.utilities.GLOBAL_ACADEMIC_YEAR (), 2) + 1
+    RIGHT(
+      gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+      2
+    ) + 1
   ) AS class_name
 FROM
   gabby.powerschool.sections AS sec

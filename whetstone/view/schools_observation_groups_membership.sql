@@ -10,7 +10,10 @@ WITH
       'observers' AS role_name
     FROM
       gabby.whetstone.schools AS s
-      CROSS APPLY OPENJSON (s.observation_groups, '$')
+      CROSS APPLY OPENJSON (
+        s.observation_groups,
+        '$'
+      )
     WITH
       (
         _id NVARCHAR(MAX),
@@ -28,7 +31,10 @@ WITH
       'observees' AS role_name
     FROM
       gabby.whetstone.schools AS s
-      CROSS APPLY OPENJSON (s.observation_groups, '$')
+      CROSS APPLY OPENJSON (
+        s.observation_groups,
+        '$'
+      )
     WITH
       (
         _id NVARCHAR(MAX),
@@ -46,7 +52,10 @@ WITH
       'admins' AS role_name
     FROM
       gabby.whetstone.schools AS s
-      CROSS APPLY OPENJSON (s.observation_groups, '$')
+      CROSS APPLY OPENJSON (
+        s.observation_groups,
+        '$'
+      )
     WITH
       (
         _id NVARCHAR(MAX),

@@ -42,7 +42,10 @@ FROM
               OR ben_plan_option_name = 'Waive Medical'
             ) THEN 'Medical'
             WHEN (
-              ben_plan_name IN ('Aetna PPO High', 'Aetna PPO Low')
+              ben_plan_name IN (
+                'Aetna PPO High',
+                'Aetna PPO Low'
+              )
               OR ben_plan_option_name = 'Waive Dental'
             ) THEN 'Dental'
             WHEN (

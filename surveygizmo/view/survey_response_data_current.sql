@@ -15,7 +15,10 @@ SELECT
   sd.shown
 FROM
   gabby.surveygizmo.survey_response_clean_current_static AS sr
-  CROSS APPLY OPENJSON (sr.survey_data_json, '$')
+  CROSS APPLY OPENJSON (
+    sr.survey_data_json,
+    '$'
+  )
 WITH
   (
     id INT,

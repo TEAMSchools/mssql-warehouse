@@ -12,8 +12,12 @@ SELECT
   relay,
   teacher_prep,
   undergrad_university,
-  CAST(years_teaching_any_state AS FLOAT) AS years_teaching_any_state,
-  CAST(years_teaching_nj_and_fl AS FLOAT) AS years_teaching_nj_and_fl,
+  CAST(
+    years_teaching_any_state AS FLOAT
+  ) AS years_teaching_any_state,
+  CAST(
+    years_teaching_nj_and_fl AS FLOAT
+  ) AS years_teaching_nj_and_fl,
   CAST(
     professional_experience_before_KIPP AS FLOAT
   ) AS professional_experience_before_KIPP

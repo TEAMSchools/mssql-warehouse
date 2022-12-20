@@ -33,7 +33,10 @@ SELECT
 FROM
   gabby.njdoe.background_check AS bg
   LEFT JOIN gabby.people.staff_crosswalk_static AS s ON bg.df_employee_number = s.df_employee_number
-  CROSS APPLY OPENJSON (bg.approval_history, '$')
+  CROSS APPLY OPENJSON (
+    bg.approval_history,
+    '$'
+  )
 WITH
   (
     approvaldate DATE,

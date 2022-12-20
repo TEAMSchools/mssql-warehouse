@@ -44,7 +44,11 @@ SELECT
   NULL AS [30 Birth State],
   NULL AS [31 Birth Country],
   NULL AS [32 Lunch ID],
-  CONCAT(academic_year, '-', (academic_year + 1)) AS [33 Academic Year],
+  CONCAT(
+    academic_year,
+    '-',
+    (academic_year + 1)
+  ) AS [33 Academic Year],
   NULL AS [34 Name Suffix],
   NULL AS [35 Aka Last Name],
   NULL AS [36 Aka First Name],

@@ -14,7 +14,9 @@ SELECT
   vc.date_of_last_vaccine,
   vc.covid_19_booster_1_type,
   vc.covid_19_booster_1_date,
-  CAST(MAX(vc._modified) OVER () AS DATETIME2) AS refresh_timestamp
+  CAST(
+    MAX(vc._modified) OVER () AS DATETIME2
+  ) AS refresh_timestamp
 FROM
   gabby.people.staff_crosswalk_static AS sc
   LEFT JOIN gabby.adp.vaccine_records AS vc ON sc.adp_associate_id = vc.associate_id

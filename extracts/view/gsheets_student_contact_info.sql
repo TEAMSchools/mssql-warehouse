@@ -12,7 +12,9 @@ SELECT
   co.school_name,
   CASE
     WHEN co.grade_level = 0 THEN 'K'
-    ELSE CAST(co.grade_level AS VARCHAR(2))
+    ELSE CAST(
+      co.grade_level AS VARCHAR(2)
+    )
   END AS grade_level,
   co.team,
   co.advisor_name,
@@ -27,7 +29,9 @@ SELECT
     WHEN co.lunch_app_status LIKE 'Prior%' THEN 'N'
     ELSE 'Y'
   END AS lunch_app_status,
-  CAST(co.lunch_balance AS MONEY) AS lunch_balance,
+  CAST(
+    co.lunch_balance AS MONEY
+  ) AS lunch_balance,
   co.home_phone,
   scw.contact_1_phone_primary AS mother_cell,
   scw.contact_2_phone_primary AS father_cell,

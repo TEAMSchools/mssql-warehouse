@@ -8,7 +8,9 @@ SELECT
   CONCAT(
     gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
     '-',
-    (gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1)
+    (
+      gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
+    )
   ) AS [04 Academic Year],
   1 AS [05 Session Type ID]
 FROM
@@ -31,7 +33,9 @@ SELECT
   CONCAT(
     gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
     '-',
-    (gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1)
+    (
+      gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
+    )
   ) AS [04 Academic Year],
   1 AS [05 Session Type ID]
 FROM
@@ -56,7 +60,9 @@ SELECT
   CONCAT(
     gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
     '-',
-    (gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1)
+    (
+      gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
+    )
   ) AS [04 Academic Year],
   1 AS [05 Session Type ID]
 FROM

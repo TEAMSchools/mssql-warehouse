@@ -6,7 +6,10 @@ WITH
       parcc.local_student_identifier,
       parcc.test_scale_score AS test_score,
       (
-        CONCAT('parcc_', LOWER(parcc.test_code))
+        CONCAT(
+          'parcc_',
+          LOWER(parcc.test_code)
+        )
         COLLATE LATIN1_GENERAL_BIN
       ) AS test_type
     FROM
@@ -33,9 +36,13 @@ WITH
       (
         SELECT
           sat.hs_student_id,
-          CAST(sat.evidence_based_reading_writing AS INT) AS evidence_based_reading_writing,
+          CAST(
+            sat.evidence_based_reading_writing AS INT
+          ) AS evidence_based_reading_writing,
           CAST(sat.math AS INT) AS math,
-          CAST(sat.reading_test AS INT) AS reading_test,
+          CAST(
+            sat.reading_test AS INT
+          ) AS reading_test,
           CAST(sat.math_test AS INT) AS math_test
         FROM
           gabby.naviance.sat_scores AS sat
@@ -51,14 +58,20 @@ WITH
   act AS (
     SELECT
       st.score AS test_score,
-      LEFT(st.score_type, LEN(st.score_type) - 2) AS test_type,
+      LEFT(
+        st.score_type,
+        LEN(st.score_type) - 2
+      ) AS test_type,
       ktc.student_number
     FROM
       gabby.alumni.standardized_test_long AS st
       INNER JOIN gabby.alumni.ktc_roster AS ktc ON st.contact_c = ktc.sf_contact_id
     WHERE
       st.test_type = 'ACT'
-      AND st.score_type IN ('act_reading_c', 'act_math_c')
+      AND st.score_type IN (
+        'act_reading_c',
+        'act_math_c'
+      )
   ),
   all_tests AS (
     SELECT
@@ -101,4 +114,8 @@ FROM
 WHERE
   co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
   AND co.rn_year = 1
-  AND co.cohort BETWEEN (gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1) AND (gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 5)
+  AND co.cohort BETWEEN (
+    gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
+  ) AND (
+    gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 5
+  )

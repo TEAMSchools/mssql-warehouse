@@ -5,7 +5,11 @@ SELECT
   sub.position_id,
   sub.manager_employee_number,
   sub.manager_effective_start,
-  DATEADD(DAY, -1, sub.manager_effective_start_next) AS manager_effective_end
+  DATEADD(
+    DAY,
+    -1,
+    sub.manager_effective_start_next
+  ) AS manager_effective_end
 FROM
   (
     SELECT
@@ -13,7 +17,10 @@ FROM
       sub.position_id,
       sub.manager_employee_number,
       sub.manager_effective_start,
-      LEAD(sub.manager_effective_start, 1) OVER (
+      LEAD(
+        sub.manager_effective_start,
+        1
+      ) OVER (
         PARTITION BY
           sub.employee_reference_code
         ORDER BY
@@ -24,14 +31,20 @@ FROM
         SELECT
           em.employee_reference_code,
           em.manager_employee_number,
-          CAST(em.manager_effective_start AS DATE) AS manager_effective_start,
+          CAST(
+            em.manager_effective_start AS DATE
+          ) AS manager_effective_start,
           ROW_NUMBER() OVER (
             PARTITION BY
               em.employee_reference_code,
-              CAST(em.manager_effective_start AS DATE)
+              CAST(
+                em.manager_effective_start AS DATE
+              )
             ORDER BY
               COALESCE(
-                CAST(em.manager_effective_end AS DATE),
+                CAST(
+                  em.manager_effective_end AS DATE
+                ),
                 '2020-12-31'
               ) DESC
           ) AS rn_start,

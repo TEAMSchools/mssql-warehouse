@@ -11,7 +11,9 @@ FROM
       CAST(
         SUBSTRING(
           name_school_id_,
-          (CHARINDEX('[', name_school_id_) + 1),
+          (
+            CHARINDEX('[', name_school_id_) + 1
+          ),
           6
         ) AS INT
       ) AS df_employee_number,
@@ -24,4 +26,6 @@ FROM
       gabby.pm.teacher_goals_exemption
     WHERE
       _fivetran_deleted = 0
-  ) AS sub UNPIVOT (VALUE FOR field IN (PM1, PM2, PM3, PM4)) AS u
+  ) AS sub UNPIVOT (
+    VALUE FOR field IN (PM1, PM2, PM3, PM4)
+  ) AS u

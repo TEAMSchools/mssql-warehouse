@@ -34,7 +34,9 @@ WITH
       gabby.people.employment_history_static AS eh
     WHERE
       (
-        CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN eh.effective_start_date AND eh.effective_end_date
+        CAST(
+          CURRENT_TIMESTAMP AS DATE
+        ) BETWEEN eh.effective_start_date AND eh.effective_end_date
       )
     UNION ALL
     /* prestart */
@@ -65,7 +67,9 @@ WITH
     FROM
       gabby.people.employment_history_static AS ps
     WHERE
-      ps.status_effective_start_date > CAST(CURRENT_TIMESTAMP AS DATE)
+      ps.status_effective_start_date > CAST(
+        CURRENT_TIMESTAMP AS DATE
+      )
       AND ps.position_status = 'Active'
       AND (
         ps.position_status_cur IS NULL
@@ -82,7 +86,10 @@ WITH
       ) AS original_hire_date,
       MAX(
         CASE
-          WHEN position_status IN ('Terminated', 'Deceased') THEN status_effective_date
+          WHEN position_status IN (
+            'Terminated',
+            'Deceased'
+          ) THEN status_effective_date
         END
       ) AS termination_date
     FROM
@@ -111,7 +118,10 @@ WITH
       ) AS sub
     WHERE
       position_status_prev != 'Terminated'
-      AND position_status IN ('Terminated', 'Deceased')
+      AND position_status IN (
+        'Terminated',
+        'Deceased'
+      )
     GROUP BY
       associate_id
   ),
@@ -191,8 +201,14 @@ WITH
       sub.attended_relay,
       sub.preferred_race_ethnicity,
       sub.preferred_race_ethnicity AS race,
-      COALESCE(sub.preferred_first_name, sub.first_name) AS preferred_first_name,
-      COALESCE(sub.preferred_last_name, sub.last_name) AS preferred_last_name,
+      COALESCE(
+        sub.preferred_first_name,
+        sub.first_name
+      ) AS preferred_first_name,
+      COALESCE(
+        sub.preferred_last_name,
+        sub.last_name
+      ) AS preferred_last_name,
       CASE
         WHEN sub.preferred_race_ethnicity LIKE '%Decline to state%' THEN 1
         ELSE 0
@@ -267,7 +283,9 @@ WITH
                 gabby.people.manager_history_static
               WHERE
                 (
-                  CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN reports_to_effective_date AND reports_to_effective_end_date_eoy
+                  CAST(
+                    CURRENT_TIMESTAMP AS DATE
+                  ) BETWEEN reports_to_effective_date AND reports_to_effective_end_date_eoy
                 )
             ) THEN 1
             ELSE 0
@@ -301,7 +319,10 @@ WITH
             )
           END AS address_street,
           CAST(
-            gabby.utilities.STRIP_CHARACTERS (ea.personal_contact_personal_mobile, '^0-9') AS NVARCHAR(256)
+            gabby.utilities.STRIP_CHARACTERS (
+              ea.personal_contact_personal_mobile,
+              '^0-9'
+            ) AS NVARCHAR(256)
           ) AS personal_mobile,
           COALESCE(
             ea.preferred_gender,
@@ -313,9 +334,15 @@ WITH
           w.preferred_name_given AS preferred_first_name,
           w.preferred_name_family AS preferred_last_name,
           w.associate_oid,
-          COALESCE(w.original_hire_date, hd.original_hire_date) AS original_hire_date,
+          COALESCE(
+            w.original_hire_date,
+            hd.original_hire_date
+          ) AS original_hire_date,
           CASE
-            WHEN eh.position_status = 'Terminated' THEN COALESCE(w.termination_date, td.termination_date)
+            WHEN eh.position_status = 'Terminated' THEN COALESCE(
+              w.termination_date,
+              td.termination_date
+            )
           END AS termination_date,
           CASE
             WHEN eh.position_status = 'Prestart'
@@ -331,7 +358,10 @@ WITH
             sdf.years_teaching_nj_and_fl,
             cf.[Years Teaching - In NJ or FL]
           ) AS years_teaching_in_nj_or_fl,
-          COALESCE(sdf.kipp_alumni, cf.[KIPP Alumni Status]) AS kipp_alumni_status,
+          COALESCE(
+            sdf.kipp_alumni,
+            cf.[KIPP Alumni Status]
+          ) AS kipp_alumni_status,
           COALESCE(
             sdf.professional_experience_before_KIPP,
             cf.[Years of Professional Experience before joining]
@@ -340,18 +370,30 @@ WITH
             sdf.community_live,
             cf.[Life Experience in Communities We Serve]
           ) AS life_experience_in_communities_we_serve,
-          COALESCE(sdf.teacher_prep, cf.[Teacher Prep Program]) AS teacher_prep_program,
+          COALESCE(
+            sdf.teacher_prep,
+            cf.[Teacher Prep Program]
+          ) AS teacher_prep_program,
           COALESCE(
             sdf.community_work,
             cf.[Professional Experience in Communities We Serve]
           ) AS professional_experience_in_communities_we_serve,
-          COALESCE(sdf.relay, cf.[Attended Relay]) AS attended_relay,
+          COALESCE(
+            sdf.relay,
+            cf.[Attended Relay]
+          ) AS attended_relay,
           cf.[WFMgr Pay Rule] AS wfmgr_pay_rule,
-          COALESCE(sdf.preferred_gender, cf.[Preferred Gender]) AS preferred_gender,
+          COALESCE(
+            sdf.preferred_gender,
+            cf.[Preferred Gender]
+          ) AS preferred_gender,
           sdf.education_level,
           sdf.undergrad_university,
           cw.adp_associate_id AS associate_id_legacy,
-          COALESCE(p.worker_category_description, 'Full Time') AS worker_category,
+          COALESCE(
+            p.worker_category_description,
+            'Full Time'
+          ) AS worker_category,
           p.flsa_description AS flsa,
           REPLACE(
             REPLACE(
@@ -360,7 +402,10 @@ WITH
                   sdf.race_ethnicity,
                   cf.[Preferred Race/Ethnicity],
                   ea.race_description + CASE
-                    WHEN ISNULL(ea.ethnicity, '') IN ('Not Hispanic or Latino', '') THEN ''
+                    WHEN ISNULL(ea.ethnicity, '') IN (
+                      'Not Hispanic or Latino',
+                      ''
+                    ) THEN ''
                     ELSE ',Latinx/Hispanic/Chicana(o)'
                   END
                 ),
@@ -452,7 +497,19 @@ SELECT
   c.professional_experience_in_communities_we_serve,
   c.attended_relay,
   c.preferred_last_name + ', ' + c.preferred_first_name AS preferred_name,
-  SUBSTRING(c.personal_mobile, 1, 3) + '-' + SUBSTRING(c.personal_mobile, 4, 3) + '-' + SUBSTRING(c.personal_mobile, 7, 4) AS personal_mobile,
+  SUBSTRING(
+    c.personal_mobile,
+    1,
+    3
+  ) + '-' + SUBSTRING(
+    c.personal_mobile,
+    4,
+    3
+  ) + '-' + SUBSTRING(
+    c.personal_mobile,
+    7,
+    4
+  ) AS personal_mobile,
   CASE
     WHEN c.business_unit = 'KIPP TEAM and Family Schools Inc.' THEN '9AM'
     WHEN c.business_unit = 'TEAM Academy Charter School' THEN '2Z3'
@@ -465,7 +522,10 @@ SELECT
     WHEN c.business_unit = 'KIPP Miami' THEN 'kippmiami'
   END AS [db_name],
   CASE
-    WHEN c.position_status NOT IN ('Terminated', 'Prestart') THEN 1
+    WHEN c.position_status NOT IN (
+      'Terminated',
+      'Prestart'
+    ) THEN 1
     ELSE 0
   END AS is_active,
   CASE
@@ -477,7 +537,10 @@ SELECT
     WHEN c.is_race_decline = 1 THEN 'Decline to state'
     WHEN c.ethnicity = 'Hispanic or Latino' THEN 'Latinx/Hispanic/Chicana(o)'
     WHEN c.is_race_multi = 1 THEN 'Bi/Multiracial'
-    WHEN ISNULL(c.preferred_race_ethnicity, '') = '' THEN 'Missing'
+    WHEN ISNULL(
+      c.preferred_race_ethnicity,
+      ''
+    ) = '' THEN 'Missing'
     ELSE c.preferred_race_ethnicity
   END AS race_ethnicity_reporting,
   s.ps_school_id AS primary_site_schoolid,
@@ -508,4 +571,6 @@ FROM
   LEFT JOIN gabby.pm.teacher_grade_levels AS gl ON c.employee_number = gl.employee_number
   AND gl.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
   AND gl.is_primary_gl = 1
-  LEFT JOIN gabby.adsi.user_attributes_static AS ads ON CAST(c.employee_number AS VARCHAR(25)) = ads.employeenumber
+  LEFT JOIN gabby.adsi.user_attributes_static AS ads ON CAST(
+    c.employee_number AS VARCHAR(25)
+  ) = ads.employeenumber

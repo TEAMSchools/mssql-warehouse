@@ -7,7 +7,10 @@ SELECT
   sca.contactpriorityorder,
   COALESCE(
     ocm.originalcontacttype,
-    CONCAT('contact', sca.contactpriorityorder)
+    CONCAT(
+      'contact',
+      sca.contactpriorityorder
+    )
   ) AS person_type,
   p.firstname,
   p.lastname,

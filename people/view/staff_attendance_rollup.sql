@@ -83,12 +83,30 @@ SELECT
   r.primary_on_site_department,
   r.primary_job,
   y.n AS academic_year,
-  COALESCE(a.absenses_approved, 0) AS absenses_approved,
-  COALESCE(a.absenses_unapproved, 0) AS absenses_unapproved,
-  COALESCE(a.late_tardy_approved, 0) AS late_tardy_approved,
-  COALESCE(a.late_tardy_unapproved, 0) AS late_tardy_unapproved,
-  COALESCE(a.left_early_approved, 0) AS left_early_approved,
-  COALESCE(a.left_early_unapproved, 0) AS left_early_unapproved
+  COALESCE(
+    a.absenses_approved,
+    0
+  ) AS absenses_approved,
+  COALESCE(
+    a.absenses_unapproved,
+    0
+  ) AS absenses_unapproved,
+  COALESCE(
+    a.late_tardy_approved,
+    0
+  ) AS late_tardy_approved,
+  COALESCE(
+    a.late_tardy_unapproved,
+    0
+  ) AS late_tardy_unapproved,
+  COALESCE(
+    a.left_early_approved,
+    0
+  ) AS left_early_approved,
+  COALESCE(
+    a.left_early_unapproved,
+    0
+  ) AS left_early_unapproved
 FROM
   gabby.people.staff_crosswalk_static AS r
   LEFT JOIN gabby.utilities.row_generator_smallint AS y ON gabby.utilities.DATE_TO_SY (original_hire_date) < y.n

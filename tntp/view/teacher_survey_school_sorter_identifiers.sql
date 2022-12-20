@@ -7,27 +7,45 @@ SELECT
   field,
   VALUE,
   CASE
-    WHEN school IN ('KIPP Rise Academy', 'Rise Academy') THEN 73252
+    WHEN school IN (
+      'KIPP Rise Academy',
+      'Rise Academy'
+    ) THEN 73252
     WHEN school IN (
       'KIPP Newark Collegiate Academy',
       'Newark Collegiate Academy'
     ) THEN 73253
-    WHEN school IN ('KIPP SPARK Academy', 'SPARK Academy') THEN 73254
-    WHEN school IN ('KIPP THRIVE Academy', 'THRIVE Academy') THEN 73255
-    WHEN school IN ('KIPP Seek Academy', 'Seek Academy') THEN 73256
+    WHEN school IN (
+      'KIPP SPARK Academy',
+      'SPARK Academy'
+    ) THEN 73254
+    WHEN school IN (
+      'KIPP THRIVE Academy',
+      'THRIVE Academy'
+    ) THEN 73255
+    WHEN school IN (
+      'KIPP Seek Academy',
+      'Seek Academy'
+    ) THEN 73256
     WHEN school IN (
       'KIPP Life Academy',
       'Life Academy - Lower',
       'Life Academy - Upper',
       'Life Academy at Bragaw'
     ) THEN 73257
-    WHEN school IN ('BOLD Academy', 'KIPP BOLD Academy') THEN 73258
+    WHEN school IN (
+      'BOLD Academy',
+      'KIPP BOLD Academy'
+    ) THEN 73258
     WHEN school IN (
       'KIPP Lanning Square Primary',
       'KIPP Lanning Square Primary School',
       'Revolution Primary'
     ) THEN 179901
-    WHEN school IN ('KIPP TEAM Academy', 'TEAM Academy') THEN 133570965
+    WHEN school IN (
+      'KIPP TEAM Academy',
+      'TEAM Academy'
+    ) THEN 133570965
     WHEN school = 'KIPP Lanning Square Middle School' THEN 179902
     WHEN school = 'KIPP Whittier Middle School' THEN 179903
     WHEN school = 'KIPP Whittier Elementary' THEN 1799015075
@@ -112,7 +130,10 @@ FROM
       school,
       academic_year,
       survey_round,
-      CONCAT(field, ': Top-Quartile') AS field,
+      CONCAT(
+        field,
+        ': Top-Quartile'
+      ) AS field,
       MAX(
         CASE
           WHEN school IN (

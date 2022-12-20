@@ -13,14 +13,24 @@ SELECT
   co.cohort,
   co.advisor_name,
   co.guardianemail,
-  CONCAT(co.student_web_id, '@teamstudents.org') AS student_email,
+  CONCAT(
+    co.student_web_id,
+    '@teamstudents.org'
+  ) AS student_email,
   sch.[name] AS school_name,
   b.behavior_date,
   b.behavior,
   b.notes,
-  CONCAT(b.staff_last_name, ', ', b.staff_first_name) AS staff_name,
+  CONCAT(
+    b.staff_last_name,
+    ', ',
+    b.staff_first_name
+  ) AS staff_name,
   CAST(
-    LEFT(b.behavior, LEN(b.behavior) - 5) AS INT
+    LEFT(
+      b.behavior,
+      LEN(b.behavior) - 5
+    ) AS INT
   ) AS cs_hours
 FROM
   gabby.powerschool.cohort_identifiers_static AS co

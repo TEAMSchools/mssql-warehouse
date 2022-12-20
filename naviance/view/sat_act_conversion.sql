@@ -7,7 +7,9 @@ SELECT
   'Composite' AS act_subject,
   CASE
     WHEN sub.total_score < 560 THEN 11
-    ELSE CAST(sac.act_composite_score AS INT)
+    ELSE CAST(
+      sac.act_composite_score AS INT
+    )
   END AS scale_score /* concordance data does not exist for < 560 */
 FROM
   (

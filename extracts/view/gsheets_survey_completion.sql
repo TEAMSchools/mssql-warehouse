@@ -36,8 +36,9 @@ WITH
       OR (
         survey_completion_date IS NULL
         AND (
-
-          CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN survey_round_open AND survey_round_close
+          CAST(
+            CURRENT_TIMESTAMP AS DATE
+          ) BETWEEN survey_round_open AND survey_round_close
         )
       )
   )

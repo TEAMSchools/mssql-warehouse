@@ -70,7 +70,9 @@ WITH
   )
 SELECT
   u.region,
-  CAST('20' + RIGHT(u.field, 2) AS INT) AS fiscal_year,
+  CAST(
+    '20' + RIGHT(u.field, 2) AS INT
+  ) AS fiscal_year,
   u.snapshot_month,
   u.snapshot_date,
   u.metric,

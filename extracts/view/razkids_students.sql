@@ -9,7 +9,10 @@ SELECT
   NULL AS [password],
   CASE
     WHEN s.grade_level = 0 THEN 'KG'
-    ELSE RIGHT(CONCAT('0', s.grade_level), 2)
+    ELSE RIGHT(
+      CONCAT('0', s.grade_level),
+      2
+    )
   END AS grade
 FROM
   gabby.powerschool.course_enrollments_current_static AS enr

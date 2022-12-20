@@ -41,7 +41,9 @@ FROM
           DAY,
           ISNULL(
             termination_date,
-            CAST(CURRENT_TIMESTAMP AS DATE)
+            CAST(
+              CURRENT_TIMESTAMP AS DATE
+            )
           ),
           CURRENT_TIMESTAMP
         ) > 14 THEN 1

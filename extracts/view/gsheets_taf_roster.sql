@@ -11,7 +11,9 @@ SELECT
   CAST(exitdate AS VARCHAR) AS exitdate,
   is_grad,
   cohort,
-  CAST(expected_hs_graduation_date AS VARCHAR) AS expected_hs_graduation_date,
+  CAST(
+    expected_hs_graduation_date AS VARCHAR
+  ) AS expected_hs_graduation_date,
   ktc_counselor,
   enrollment_type,
   enrollment_name,

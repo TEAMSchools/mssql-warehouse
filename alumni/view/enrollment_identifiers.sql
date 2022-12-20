@@ -115,7 +115,10 @@ WITH
                 WHEN e.pursuing_degree_type_c = 'Associate''s (2 year)' THEN 'AA'
                 WHEN e.pursuing_degree_type_c IN ('Master''s', 'MBA') THEN 'Graduate'
                 WHEN (
-                  e.pursuing_degree_type_c IN ('High School Diploma', 'GED')
+                  e.pursuing_degree_type_c IN (
+                    'High School Diploma',
+                    'GED'
+                  )
                 ) THEN 'Secondary'
                 WHEN e.pursuing_degree_type_c = 'Elementary Certificate' THEN 'Primary'
                 WHEN e.pursuing_degree_type_c = 'Certificate'
@@ -139,7 +142,10 @@ WITH
               CASE
                 WHEN (
                   DATEFROMPARTS(
-                    DATEPART(YEAR, c.actual_hs_graduation_date_c),
+                    DATEPART(
+                      YEAR,
+                      c.actual_hs_graduation_date_c
+                    ),
                     10,
                     31
                   ) BETWEEN e.start_date_c AND COALESCE(
@@ -353,7 +359,7 @@ FROM
       ecc.of_credits_required_for_graduation_c AS ecc_credits_required_for_graduation,
       ecc.date_last_verified_c AS ecc_date_last_verified,
       ecca.[name] AS ecc_account_name,
-      ecca.adjusted_6_year_minority_graduation_rate_c AS ecc_adjusted_6_year_minority_graduation_rate,
+      ecca.adjusted_6_year_minority_graduation_rate_c AS ecc_adjusted_6_year_minority_graduation_rate, /* trunk-ignore(sqlfluff/L016) */
       hs.[name] AS hs_school_name,
       hs.pursuing_degree_type_c AS hs_pursuing_degree_type,
       hs.status_c AS hs_status,
@@ -385,7 +391,7 @@ FROM
       cura.[name] AS cur_school_name,
       cura.billing_state AS cur_billing_state,
       cura.ncesid_c AS cur_ncesid,
-      cura.adjusted_6_year_minority_graduation_rate_c AS cur_adjusted_6_year_minority_graduation_rate,
+      cura.adjusted_6_year_minority_graduation_rate_c AS cur_adjusted_6_year_minority_graduation_rate, /* trunk-ignore(sqlfluff/L016) */
       emp.status_c AS emp_status,
       emp.category_c AS emp_category,
       emp.last_verified_date_c AS emp_date_last_verified,
@@ -408,7 +414,11 @@ FROM
         emp.bmt_end_date_c,
         emp.meps_end_date_c
       ) AS emp_actual_end_date,
-      COALESCE(emp.employer_c, empa.[name], emp.[name]) AS emp_name
+      COALESCE(
+        emp.employer_c,
+        empa.[name],
+        emp.[name]
+      ) AS emp_name
     FROM
       enrollments AS e
       LEFT JOIN gabby.alumni.enrollment_c AS ba ON e.ba_enrollment_id = ba.id

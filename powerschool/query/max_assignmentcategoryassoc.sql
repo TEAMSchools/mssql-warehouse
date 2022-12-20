@@ -1,7 +1,11 @@
 SELECT
   ga.[db_name],
-  MIN(ga.assignmentcategoryassocid) AS min_assignmentcategoryassocid,
-  MAX(ga.assignmentcategoryassocid) + 1 AS next_min_assignmentcategoryassocid,
+  MIN(
+    ga.assignmentcategoryassocid
+  ) AS min_assignmentcategoryassocid,
+  MAX(
+    ga.assignmentcategoryassocid
+  ) + 1 AS next_min_assignmentcategoryassocid,
   rt.alt_name,
   rt.[start_date],
   rt.end_date

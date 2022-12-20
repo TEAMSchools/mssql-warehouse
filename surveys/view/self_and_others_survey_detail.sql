@@ -8,9 +8,13 @@ SELECT
   d.date_started,
   d.date_submitted,
   d.campaign_name,
-  CAST(d.campaign_reporting_term AS VARCHAR(25)) AS campaign_reporting_term,
+  CAST(
+    d.campaign_reporting_term AS VARCHAR(25)
+  ) AS campaign_reporting_term,
   d.is_open_ended,
-  CAST(d.question_shortname AS VARCHAR(250)) AS question_shortname,
+  CAST(
+    d.question_shortname AS VARCHAR(250)
+  ) AS question_shortname,
   d.question_title,
   d.answer,
   d.answer_value,
@@ -135,7 +139,9 @@ FROM
 WHERE
   d.survey_title = 'Self and Others'
   AND d.rn_respondent_subject = 1
-  AND d.campaign_academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1)
+  AND d.campaign_academic_year >= (
+    gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
+  )
 UNION ALL
 SELECT
   NULL AS survey_id,
@@ -143,12 +149,16 @@ SELECT
   a.response_id AS survey_response_id,
   a.academic_year AS campaign_academic_year,
   NULL AS date_started,
-  CAST(a.date_submitted AS DATE),
+  CAST(
+    a.date_submitted AS DATE
+  ),
   a.reporting_term AS campaign_name,
   a.reporting_term AS campaign_reporting_term,
   a.open_ended AS is_open_ended,
   a.question_code AS question_shortname,
-  CAST(a.question_text AS VARCHAR(500)) AS question_title,
+  CAST(
+    a.question_text AS VARCHAR(500)
+  ) AS question_title,
   a.response AS answer,
   a.response_value AS answer_value,
   NULL AS respondent_df_employee_number,

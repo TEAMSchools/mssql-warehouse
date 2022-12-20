@@ -1,15 +1,25 @@
 CREATE OR ALTER VIEW
   powerschool.gradebook_assignments_current AS
 SELECT
-  CAST(asec.assignmentsectionid AS INT) AS assignmentsectionid,
-  CAST(asec.sectionsdcid AS INT) AS sectionsdcid,
-  CAST(asec.assignmentid AS INT) AS assignmentid,
+  CAST(
+    asec.assignmentsectionid AS INT
+  ) AS assignmentsectionid,
+  CAST(
+    asec.sectionsdcid AS INT
+  ) AS sectionsdcid,
+  CAST(
+    asec.assignmentid AS INT
+  ) AS assignmentid,
   asec.duedate AS assign_date,
-  CAST(asec.[name] AS VARCHAR(125)) AS assign_name,
+  CAST(
+    asec.[name] AS VARCHAR(125)
+  ) AS assign_name,
   asec.totalpointvalue AS pointspossible,
   asec.[weight],
   asec.extracreditpoints,
-  CAST(asec.iscountedinfinalgrade AS INT) AS isfinalscorecalculated,
+  CAST(
+    asec.iscountedinfinalgrade AS INT
+  ) AS isfinalscorecalculated,
   CAST(
     COALESCE(
       tc.districtteachercategoryid,

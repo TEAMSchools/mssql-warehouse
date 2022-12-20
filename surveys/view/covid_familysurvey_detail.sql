@@ -20,9 +20,15 @@ WITH
           AND sq.survey_question_id = srd.question_id
           AND srd.answer IS NOT NULL
         WHERE
-          sq.shortname IN ('grade_level', 'location')
+          sq.shortname IN (
+            'grade_level',
+            'location'
+          )
       ) AS sub PIVOT (
-        MAX(answer) FOR shortname IN (grade_level, [location])
+        MAX(answer) FOR shortname IN (
+          grade_level,
+          [location]
+        )
       ) AS p
   )
 SELECT
@@ -35,7 +41,10 @@ SELECT
   srd.date_started,
   r.grade_level,
   r.school_site,
-  COALESCE(qo.option_title_english, srd.answer) AS answer,
+  COALESCE(
+    qo.option_title_english,
+    srd.answer
+  ) AS answer,
   CASE
     WHEN ISNUMERIC(qo.option_value) = 0 THEN NULL
     ELSE qo.option_value
@@ -47,7 +56,11 @@ FROM
   surveygizmo.survey_clean AS s
   INNER JOIN gabby.surveygizmo.survey_question_clean_static AS sq ON s.survey_id = sq.survey_id
   AND sq.base_type = 'Question'
-  AND sq.[type] IN ('RADIO', 'ESSAY', 'TEXTBOX')
+  AND sq.[type] IN (
+    'RADIO',
+    'ESSAY',
+    'TEXTBOX'
+  )
   INNER JOIN gabby.surveygizmo.survey_response_data AS srd ON sq.survey_id = srd.survey_id
   AND sq.survey_question_id = srd.question_id
   AND srd.answer IS NOT NULL

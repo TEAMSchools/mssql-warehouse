@@ -6,7 +6,9 @@ CREATE OR ALTER VIEW
 SELECT
   state_abbreviation,
   COALESCE(
-    CAST(testing_district_code AS NVARCHAR(32)),
+    CAST(
+      testing_district_code AS NVARCHAR(32)
+    ),
     eoy_testing_district_identifier
   ) AS testing_district_code,
   COALESCE(
@@ -23,13 +25,18 @@ SELECT
     responsible_school_code,
     responsible_school_institution_identifier
   ) AS responsible_school_code,
-  CAST(state_student_identifier AS NVARCHAR(32)) AS state_student_identifier,
+  CAST(
+    state_student_identifier AS NVARCHAR(32)
+  ) AS state_student_identifier,
   local_student_identifier,
   COALESCE(
     parccstudent_identifier,
     parcc_student_identifier
   ) AS parccstudent_identifier,
-  COALESCE(last_or_surname, last_name) AS last_or_surname,
+  COALESCE(
+    last_or_surname,
+    last_name
+  ) AS last_or_surname,
   first_name,
   middle_name,
   birthdate,
@@ -42,15 +49,27 @@ SELECT
   native_hawaiian_or_other_pacific_islander,
   white,
   two_or_more_races,
-  COALESCE(english_learner_el, english_learner) AS english_learner_el,
+  COALESCE(
+    english_learner_el,
+    english_learner
+  ) AS english_learner_el,
   title_iiilimited_english_proficient_participation_status,
-  COALESCE(giftedand_talented, gifted_and_talented) AS giftedand_talented,
+  COALESCE(
+    giftedand_talented,
+    gifted_and_talented
+  ) AS giftedand_talented,
   migrant_status,
   economic_disadvantage_status,
   student_with_disabilities,
   primary_disability_type,
-  COALESCE(state_field_1, optional_state_data_1) AS state_field_1,
-  COALESCE(state_field_2, optional_state_data_2) AS state_field_2,
+  COALESCE(
+    state_field_1,
+    optional_state_data_1
+  ) AS state_field_1,
+  COALESCE(
+    state_field_2,
+    optional_state_data_2
+  ) AS state_field_2,
   state_field_3,
   state_field_4,
   state_field_5,
@@ -60,8 +79,12 @@ SELECT
   state_field_9,
   state_field_10,
   class_name,
-  CAST(test_administrator AS NVARCHAR(32)) AS test_administrator,
-  CAST(staff_member_identifier AS NVARCHAR(32)) AS staff_member_identifier,
+  CAST(
+    test_administrator AS NVARCHAR(32)
+  ) AS test_administrator,
+  CAST(
+    staff_member_identifier AS NVARCHAR(32)
+  ) AS staff_member_identifier,
   test_code,
   retest,
   elaccommodation,
@@ -81,7 +104,9 @@ SELECT
   human_signer_for_test_directions,
   calculation_device_and_mathematics_tools,
   COALESCE(
-    CAST(elalconstructed_response AS NVARCHAR(32)),
+    CAST(
+      elalconstructed_response AS NVARCHAR(32)
+    ),
     elal_constructed_response
   ) AS elalconstructed_response,
   COALESCE(
@@ -107,10 +132,19 @@ SELECT
     student_test_uuid,
     summative_score_record_uuid
   ) AS student_test_uuid,
-  COALESCE(paper_form_id, eoy_form_id) AS paper_form_id,
-  COALESCE(online_form_id, eoy_form_id) AS online_form_id,
+  COALESCE(
+    paper_form_id,
+    eoy_form_id
+  ) AS paper_form_id,
+  COALESCE(
+    online_form_id,
+    eoy_form_id
+  ) AS online_form_id,
   test_status,
-  COALESCE(total_test_items, eoy_total_test_items) AS total_test_items,
+  COALESCE(
+    total_test_items,
+    eoy_total_test_items
+  ) AS total_test_items,
   COALESCE(
     test_attemptedness_flag,
     eoy_test_attemptedness_flag
@@ -163,7 +197,10 @@ SELECT
   unit_4_total_test_items,
   unit_4_numberof_attempted_items,
   not_tested_code,
-  COALESCE(not_tested_reason, eoy_not_tested_reason) AS not_tested_reason,
+  COALESCE(
+    not_tested_reason,
+    eoy_not_tested_reason
+  ) AS not_tested_reason,
   void_score_code,
   void_score_reason,
   ship_report_district_code,
@@ -184,7 +221,9 @@ SELECT
   unit_4_online_test_end_date_time,
   assessment_year,
   assessment_grade,
-  CAST([subject] AS NVARCHAR(128)) AS [subject],
+  CAST(
+    [subject] AS NVARCHAR(128)
+  ) AS [subject],
   federal_race_ethnicity,
   [period],
   testing_organizational_type,
@@ -203,8 +242,14 @@ SELECT
     responsible_school_name,
     responsible_school_institution_name
   ) AS responsible_school_name,
-  COALESCE(test_scale_score, summative_scale_score) AS test_scale_score,
-  COALESCE(test_csemprobable_range, summative_csem) AS test_csemprobable_range,
+  COALESCE(
+    test_scale_score,
+    summative_scale_score
+  ) AS test_scale_score,
+  COALESCE(
+    test_csemprobable_range,
+    summative_csem
+  ) AS test_csemprobable_range,
   COALESCE(
     test_performance_level,
     summative_performance_level
@@ -213,12 +258,18 @@ SELECT
     test_reading_scale_score,
     summative_reading_scale_score
   ) AS test_reading_scale_score,
-  COALESCE(test_reading_csem, summative_reading_csem) AS test_reading_csem,
+  COALESCE(
+    test_reading_csem,
+    summative_reading_csem
+  ) AS test_reading_csem,
   COALESCE(
     test_writing_scale_score,
     summative_writing_scale_score
   ) AS test_writing_scale_score,
-  COALESCE(test_writing_csem, summative_writing_csem) AS test_writing_csem,
+  COALESCE(
+    test_writing_csem,
+    summative_writing_csem
+  ) AS test_writing_csem,
   subclaim_1_category,
   subclaim_2_category,
   subclaim_3_category,
@@ -253,7 +304,9 @@ SELECT
   pba_unit_2_total_number_of_items,
   pba_unit_3_number_of_attempted_items,
   pba_unit_3_total_number_of_items,
-  CAST(LEFT(assessment_year, 4) AS INT) AS academic_year
+  CAST(
+    LEFT(assessment_year, 4) AS INT
+  ) AS academic_year
 FROM
   kippnewark.parcc.summative_record_file
 WHERE
@@ -264,7 +317,9 @@ UNION ALL
 SELECT
   state_abbreviation,
   COALESCE(
-    CAST(testing_district_code AS NVARCHAR(32)),
+    CAST(
+      testing_district_code AS NVARCHAR(32)
+    ),
     eoy_testing_district_identifier
   ) AS testing_district_code,
   COALESCE(
@@ -281,13 +336,18 @@ SELECT
     responsible_school_code,
     responsible_school_institution_identifier
   ) AS responsible_school_code,
-  CAST(state_student_identifier AS NVARCHAR(32)) AS state_student_identifier,
+  CAST(
+    state_student_identifier AS NVARCHAR(32)
+  ) AS state_student_identifier,
   local_student_identifier,
   COALESCE(
     parccstudent_identifier,
     parcc_student_identifier
   ) AS parccstudent_identifier,
-  COALESCE(last_or_surname, last_name) AS last_or_surname,
+  COALESCE(
+    last_or_surname,
+    last_name
+  ) AS last_or_surname,
   first_name,
   middle_name,
   birthdate,
@@ -300,15 +360,27 @@ SELECT
   native_hawaiian_or_other_pacific_islander,
   white,
   two_or_more_races,
-  COALESCE(english_learner_el, english_learner) AS english_learner_el,
+  COALESCE(
+    english_learner_el,
+    english_learner
+  ) AS english_learner_el,
   title_iiilimited_english_proficient_participation_status,
-  COALESCE(giftedand_talented, gifted_and_talented) AS giftedand_talented,
+  COALESCE(
+    giftedand_talented,
+    gifted_and_talented
+  ) AS giftedand_talented,
   migrant_status,
   economic_disadvantage_status,
   student_with_disabilities,
   primary_disability_type,
-  COALESCE(state_field_1, optional_state_data_1) AS state_field_1,
-  COALESCE(state_field_2, optional_state_data_2) AS state_field_2,
+  COALESCE(
+    state_field_1,
+    optional_state_data_1
+  ) AS state_field_1,
+  COALESCE(
+    state_field_2,
+    optional_state_data_2
+  ) AS state_field_2,
   state_field_3,
   state_field_4,
   state_field_5,
@@ -318,8 +390,12 @@ SELECT
   state_field_9,
   state_field_10,
   class_name,
-  CAST(test_administrator AS NVARCHAR(32)) AS test_administrator,
-  CAST(staff_member_identifier AS NVARCHAR(32)) AS staff_member_identifier,
+  CAST(
+    test_administrator AS NVARCHAR(32)
+  ) AS test_administrator,
+  CAST(
+    staff_member_identifier AS NVARCHAR(32)
+  ) AS staff_member_identifier,
   test_code,
   retest,
   elaccommodation,
@@ -339,7 +415,9 @@ SELECT
   human_signer_for_test_directions,
   calculation_device_and_mathematics_tools,
   COALESCE(
-    CAST(elalconstructed_response AS NVARCHAR(32)),
+    CAST(
+      elalconstructed_response AS NVARCHAR(32)
+    ),
     elal_constructed_response
   ) AS elalconstructed_response,
   COALESCE(
@@ -365,10 +443,19 @@ SELECT
     student_test_uuid,
     summative_score_record_uuid
   ) AS student_test_uuid,
-  COALESCE(paper_form_id, eoy_form_id) AS paper_form_id,
-  COALESCE(online_form_id, eoy_form_id) AS online_form_id,
+  COALESCE(
+    paper_form_id,
+    eoy_form_id
+  ) AS paper_form_id,
+  COALESCE(
+    online_form_id,
+    eoy_form_id
+  ) AS online_form_id,
   test_status,
-  COALESCE(total_test_items, eoy_total_test_items) AS total_test_items,
+  COALESCE(
+    total_test_items,
+    eoy_total_test_items
+  ) AS total_test_items,
   COALESCE(
     test_attemptedness_flag,
     eoy_test_attemptedness_flag
@@ -421,7 +508,10 @@ SELECT
   unit_4_total_test_items,
   unit_4_numberof_attempted_items,
   not_tested_code,
-  COALESCE(not_tested_reason, eoy_not_tested_reason) AS not_tested_reason,
+  COALESCE(
+    not_tested_reason,
+    eoy_not_tested_reason
+  ) AS not_tested_reason,
   void_score_code,
   void_score_reason,
   ship_report_district_code,
@@ -442,7 +532,9 @@ SELECT
   unit_4_online_test_end_date_time,
   assessment_year,
   assessment_grade,
-  CAST([subject] AS NVARCHAR(128)) AS [subject],
+  CAST(
+    [subject] AS NVARCHAR(128)
+  ) AS [subject],
   federal_race_ethnicity,
   [period],
   testing_organizational_type,
@@ -461,8 +553,14 @@ SELECT
     responsible_school_name,
     responsible_school_institution_name
   ) AS responsible_school_name,
-  COALESCE(test_scale_score, summative_scale_score) AS test_scale_score,
-  COALESCE(test_csemprobable_range, summative_csem) AS test_csemprobable_range,
+  COALESCE(
+    test_scale_score,
+    summative_scale_score
+  ) AS test_scale_score,
+  COALESCE(
+    test_csemprobable_range,
+    summative_csem
+  ) AS test_csemprobable_range,
   COALESCE(
     test_performance_level,
     summative_performance_level
@@ -471,12 +569,18 @@ SELECT
     test_reading_scale_score,
     summative_reading_scale_score
   ) AS test_reading_scale_score,
-  COALESCE(test_reading_csem, summative_reading_csem) AS test_reading_csem,
+  COALESCE(
+    test_reading_csem,
+    summative_reading_csem
+  ) AS test_reading_csem,
   COALESCE(
     test_writing_scale_score,
     summative_writing_scale_score
   ) AS test_writing_scale_score,
-  COALESCE(test_writing_csem, summative_writing_csem) AS test_writing_csem,
+  COALESCE(
+    test_writing_csem,
+    summative_writing_csem
+  ) AS test_writing_csem,
   subclaim_1_category,
   subclaim_2_category,
   subclaim_3_category,
@@ -511,7 +615,9 @@ SELECT
   pba_unit_2_total_number_of_items,
   pba_unit_3_number_of_attempted_items,
   pba_unit_3_total_number_of_items,
-  CAST(LEFT(assessment_year, 4) AS INT) AS academic_year
+  CAST(
+    LEFT(assessment_year, 4) AS INT
+  ) AS academic_year
 FROM
   kippnewark.parcc.summative_record_file
 WHERE
@@ -526,7 +632,9 @@ CREATE OR ALTER VIEW
   parcc.summative_record_file_clean AS
 SELECT
   state_abbreviation,
-  CAST(testing_district_code AS NVARCHAR(32)) AS testing_district_code,
+  CAST(
+    testing_district_code AS NVARCHAR(32)
+  ) AS testing_district_code,
   testing_school_code,
   COALESCE(
     responsible_accountable_district_code,
@@ -536,7 +644,9 @@ SELECT
     responsible_accountable_school_code,
     responsible_school_code
   ) AS responsible_school_code,
-  CAST(state_student_identifier AS NVARCHAR(32)) AS state_student_identifier,
+  CAST(
+    state_student_identifier AS NVARCHAR(32)
+  ) AS state_student_identifier,
   local_student_identifier,
   parccstudent_identifier,
   last_or_surname AS last_or_surname,
@@ -570,8 +680,12 @@ SELECT
   state_field_9,
   NULL AS state_field_10,
   class_name,
-  CAST(test_administrator AS NVARCHAR(32)) AS test_administrator,
-  CAST(staff_member_identifier AS NVARCHAR(32)) AS staff_member_identifier,
+  CAST(
+    test_administrator AS NVARCHAR(32)
+  ) AS test_administrator,
+  CAST(
+    staff_member_identifier AS NVARCHAR(32)
+  ) AS staff_member_identifier,
   test_code,
   retest,
   elaccommodation,
@@ -650,7 +764,9 @@ SELECT
   unit_4_online_test_end_date_time,
   assessment_year,
   assessment_grade,
-  CAST([subject] AS NVARCHAR(128)) AS [subject],
+  CAST(
+    [subject] AS NVARCHAR(128)
+  ) AS [subject],
   federal_race_ethnicity,
   [period],
   testing_organizational_type,
@@ -701,7 +817,9 @@ SELECT
   NULL AS pba_unit_2_total_number_of_items,
   NULL AS pba_unit_3_number_of_attempted_items,
   NULL AS pba_unit_3_total_number_of_items,
-  CAST(LEFT(assessment_year, 4) AS INT) AS academic_year
+  CAST(
+    LEFT(assessment_year, 4) AS INT
+  ) AS academic_year
 FROM
   parcc.summative_record_file
 WHERE

@@ -18,7 +18,10 @@ SELECT
   ah.checklist
 FROM
   gabby.njdoe.certification_check AS cc
-  CROSS APPLY OPENJSON (cc.application_history, '$')
+  CROSS APPLY OPENJSON (
+    cc.application_history,
+    '$'
+  )
 WITH
   (
     application_number INT,

@@ -8,12 +8,16 @@ SELECT
   co.grade_level + 1 AS [gradeId],
   CONVERT(
     VARCHAR,
-    CAST(co.entrydate AS DATETIME2),
+    CAST(
+      co.entrydate AS DATETIME2
+    ),
     126
   ) AS [classStudentStartDate],
   CONVERT(
     VARCHAR,
-    CAST(co.exitdate AS DATETIME2),
+    CAST(
+      co.exitdate AS DATETIME2
+    ),
     126
   ) AS [classStudentEndDate]
 FROM

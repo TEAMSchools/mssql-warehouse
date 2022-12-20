@@ -17,9 +17,13 @@ WITH
       cc.observation_id,
       cc.score_measurement_id,
       cc.checkbox_label AS [label],
-      CAST(cc.checkbox_value AS NVARCHAR) AS [value],
+      CAST(
+        cc.checkbox_value AS NVARCHAR
+      ) AS [value],
       NULL AS text_box_text,
-      CAST(cc.checkbox_value AS FLOAT) AS checkbox_value,
+      CAST(
+        cc.checkbox_value AS FLOAT
+      ) AS checkbox_value,
       'checkbox' AS [type]
     FROM
       gabby.whetstone.observations_scores_checkboxes_static AS cc
@@ -51,7 +55,15 @@ SELECT
   ) OVER (
     PARTITION BY
       sub.observation_id,
-      LTRIM(RTRIM(REPLACE(wm.[name], '- type', '')))
+      LTRIM(
+        RTRIM(
+          REPLACE(
+            wm.[name],
+            '- type',
+            ''
+          )
+        )
+      )
   ) AS score_type,
   CASE
     WHEN (
@@ -114,11 +126,17 @@ FROM
       sr.[status],
       LEFT(
         sr.userprincipalname,
-        CHARINDEX('@', sr.userprincipalname) - 1
+        CHARINDEX(
+          '@',
+          sr.userprincipalname
+        ) - 1
       ) AS staff_username,
       LEFT(
         sr.manager_userprincipalname,
-        CHARINDEX('@', sr.manager_userprincipalname) - 1
+        CHARINDEX(
+          '@',
+          sr.manager_userprincipalname
+        ) - 1
       ) AS manager_username,
       sr.primary_site_school_level,
       osr.gender AS observer_gender,
@@ -143,7 +161,9 @@ FROM
       ) AS rn_observation
     FROM
       gabby.people.staff_crosswalk_static AS sr
-      INNER JOIN gabby.whetstone.observations_clean AS wo ON CAST(sr.df_employee_number AS VARCHAR(25)) = wo.teacher_internal_id
+      INNER JOIN gabby.whetstone.observations_clean AS wo ON CAST(
+        sr.df_employee_number AS VARCHAR(25)
+      ) = wo.teacher_internal_id
       AND wo.rubric_name IN (
         'Development Roadmap',
         'Shadow Session',
@@ -166,7 +186,10 @@ FROM
       AND rt.schoolid = 0
       AND rt._fivetran_deleted = 0
     WHERE
-      ISNULL(sr.termination_date, CURRENT_TIMESTAMP) >= DATEFROMPARTS(
+      ISNULL(
+        sr.termination_date,
+        CURRENT_TIMESTAMP
+      ) >= DATEFROMPARTS(
         gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
         7,
         1

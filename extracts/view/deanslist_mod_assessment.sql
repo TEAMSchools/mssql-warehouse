@@ -27,8 +27,16 @@ WITH
       gabby.illuminate_dna_assessments.agg_student_responses_all_current
     WHERE
       response_type = 'O'
-      AND subject_area IN ('Text Study', 'Mathematics')
-      AND module_type IN ('QA', 'CRQ', 'CGI', 'CP')
+      AND subject_area IN (
+        'Text Study',
+        'Mathematics'
+      )
+      AND module_type IN (
+        'QA',
+        'CRQ',
+        'CGI',
+        'CP'
+      )
       AND percent_correct IS NOT NULL
   )
 SELECT
@@ -78,8 +86,13 @@ FROM
           al.term_administered,
           al.subject_area,
           al.module_type,
-          ROUND(AVG(al.percent_correct), 1) AS avg_percent_correct,
-          MIN(al.performance_band_set_id) AS min_performance_band_set_id
+          ROUND(
+            AVG(al.percent_correct),
+            1
+          ) AS avg_percent_correct,
+          MIN(
+            al.performance_band_set_id
+          ) AS min_performance_band_set_id
         FROM
           assessments_long AS al
         WHERE
@@ -118,16 +131,28 @@ FROM
       a.subject_area AS subject_area_label,
       'ENRICHMENT' AS subject_area,
       'UA' AS scope,
-      REPLACE(a.term_administered, 'Q', 'QA') AS module_num,
-      ROUND(AVG(asr.percent_correct), 0) AS avg_pct_correct,
-      MIN(a.performance_band_set_id) AS performance_band_set_id
+      REPLACE(
+        a.term_administered,
+        'Q',
+        'QA'
+      ) AS module_num,
+      ROUND(
+        AVG(asr.percent_correct),
+        0
+      ) AS avg_pct_correct,
+      MIN(
+        a.performance_band_set_id
+      ) AS performance_band_set_id
     FROM
       gabby.illuminate_dna_assessments.assessments_identifiers_static AS a
       INNER JOIN gabby.illuminate_dna_assessments.agg_student_responses AS asr ON a.assessment_id = asr.assessment_id
       INNER JOIN gabby.illuminate_public.students AS s ON asr.student_id = s.student_id
     WHERE
       a.scope = 'Unit Assessment'
-      AND a.subject_area NOT IN ('Text Study', 'Mathematics')
+      AND a.subject_area NOT IN (
+        'Text Study',
+        'Mathematics'
+      )
       AND a.academic_year_clean = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
       AND a.deleted_at IS NULL
     GROUP BY

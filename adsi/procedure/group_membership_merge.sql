@@ -35,7 +35,11 @@ CREATE TABLE
 /* loop over all AD groups */
 DECLARE group_cursor CURSOR FOR
 SELECT
-  REPLACE(ADsPath, 'LDAP://', '') AS ADsPath,
+  REPLACE(
+    ADsPath,
+    'LDAP://',
+    ''
+  ) AS ADsPath,
   cn
 FROM
   OPENQUERY (
@@ -94,7 +98,9 @@ CLOSE group_cursor;
 
 DEALLOCATE group_cursor;
 
-IF OBJECT_ID(N'gabby.adsi.group_membership') IS NULL BEGIN
+IF OBJECT_ID(
+  N'gabby.adsi.group_membership'
+) IS NULL BEGIN
 SELECT
   * INTO gabby.adsi.group_membership
 FROM

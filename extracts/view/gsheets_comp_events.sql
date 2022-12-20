@@ -33,7 +33,11 @@ WITH
 SELECT
   x.payroll_company_code,
   x.legal_entity_name,
-  CONCAT(x.preferred_name, ' - ', x.primary_site) AS preferred_name,
+  CONCAT(
+    x.preferred_name,
+    ' - ',
+    x.primary_site
+  ) AS preferred_name,
   x.file_number,
   x.primary_site,
   x.primary_on_site_department,

@@ -40,7 +40,10 @@ WITH
       INNER JOIN gabby.powerschool.sections_identifiers AS si ON ABS(cc.sectionid) = si.sectionid
       AND cc.[db_name] = si.[db_name]
       INNER JOIN gabby.powerschool.cohort_static AS co ON cc.studentid = co.studentid
-      AND cc.studyear = CONCAT(co.studentid, co.yearid)
+      AND cc.studyear = CONCAT(
+        co.studentid,
+        co.yearid
+      )
       AND cc.[db_name] = co.[db_name]
       AND co.rn_year = 1
       INNER JOIN gabby.illuminate_public.students AS ils ON co.student_number = ils.local_student_id

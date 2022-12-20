@@ -64,10 +64,21 @@ SELECT
     co.zip
   ) AS home_address,
   co.student_web_id + '@teamstudents.org' AS student_email,
-  CONCAT(co.student_web_password, 'kipp') AS student_web_password,
+  CONCAT(
+    co.student_web_password,
+    'kipp'
+  ) AS student_web_password,
   co.student_web_id + '.fam' AS family_access_id,
-  CONVERT(NVARCHAR, ed.school_entrydate, 101) AS school_entrydate,
-  CONVERT(NVARCHAR, ed.school_exitdate, 101) AS school_exitdate
+  CONVERT(
+    NVARCHAR,
+    ed.school_entrydate,
+    101
+  ) AS school_entrydate,
+  CONVERT(
+    NVARCHAR,
+    ed.school_exitdate,
+    101
+  ) AS school_exitdate
 FROM
   gabby.powerschool.cohort_identifiers_static AS co
   INNER JOIN gabby.powerschool.students AS s ON co.student_number = s.student_number

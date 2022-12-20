@@ -7,7 +7,10 @@ WITH
         df.ps_teachernumber
         COLLATE LATIN1_GENERAL_BIN
       ) AS [Teacher_id],
-      COALESCE(ccw.ps_school_id, df.primary_site_schoolid) AS [School_id]
+      COALESCE(
+        ccw.ps_school_id,
+        df.primary_site_schoolid
+      ) AS [School_id]
     FROM
       gabby.people.staff_crosswalk_static AS df
       LEFT JOIN gabby.people.campus_crosswalk AS ccw ON (
@@ -37,8 +40,16 @@ WITH
       NULL AS [Name],
       NULL AS [Grade],
       NULL AS [Course_description],
-      CONVERT(VARCHAR, terms.firstday, 101) AS [Term_start],
-      CONVERT(VARCHAR, terms.lastday, 101) AS [Term_end],
+      CONVERT(
+        VARCHAR,
+        terms.firstday,
+        101
+      ) AS [Term_start],
+      CONVERT(
+        VARCHAR,
+        terms.lastday,
+        101
+      ) AS [Term_end],
       CONCAT(
         CASE
           WHEN sec.[db_name] = 'kippnewark' THEN 'NWK'
@@ -79,7 +90,9 @@ WITH
         AND sec.schoolid = terms.schoolid
         AND sec.[db_name] = terms.[db_name]
         AND (
-          CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN terms.firstday AND terms.lastday
+          CAST(
+            CURRENT_TIMESTAMP AS DATE
+          ) BETWEEN terms.firstday AND terms.lastday
         )
       )
     WHERE
@@ -108,7 +121,10 @@ WITH
       'Enroll' AS [Course_name],
       'Homeroom/advisory' AS [Subject],
       CONCAT(
-        RIGHT(gabby.utilities.GLOBAL_ACADEMIC_YEAR (), 2),
+        RIGHT(
+          gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+          2
+        ),
         '-',
         RIGHT(
           gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1,
@@ -141,8 +157,12 @@ WITH
       NULL AS [Course_description]
     FROM
       dsos
-      INNER JOIN gabby.powerschool.schools AS s ON (dsos.[School_id] = s.school_number)
-      INNER JOIN gabby.utilities.row_generator_smallint AS r ON (r.n BETWEEN s.low_grade AND s.high_grade)
+      INNER JOIN gabby.powerschool.schools AS s ON (
+        dsos.[School_id] = s.school_number
+      )
+      INNER JOIN gabby.utilities.row_generator_smallint AS r ON (
+        r.n BETWEEN s.low_grade AND s.high_grade
+      )
   ),
   pre_pivot AS (
     SELECT

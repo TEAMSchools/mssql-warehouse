@@ -38,8 +38,12 @@ FROM
       mem.studentid,
       mem.calendardate,
       mem.membershipvalue,
-      CAST(mem.attendancevalue AS FLOAT) AS is_present,
-      ABS(mem.attendancevalue - 1) AS is_absent,
+      CAST(
+        mem.attendancevalue AS FLOAT
+      ) AS is_present,
+      ABS(
+        mem.attendancevalue - 1
+      ) AS is_absent,
       co.student_number,
       co.lastfirst,
       co.enroll_status,
@@ -63,7 +67,12 @@ FROM
         ELSE 1.0
       END AS is_ontime,
       CASE
-        WHEN att.att_code IN ('OS', 'OSS', 'OSSP', 'SHI') THEN 1.0
+        WHEN att.att_code IN (
+          'OS',
+          'OSS',
+          'OSSP',
+          'SHI'
+        ) THEN 1.0
         ELSE 0.0
       END AS is_oss,
       CASE
@@ -71,7 +80,14 @@ FROM
         ELSE 0.0
       END AS is_iss,
       CASE
-        WHEN att.att_code IN ('OS', 'OSS', 'OSSP', 'S', 'ISS', 'SHI') THEN 1.0
+        WHEN att.att_code IN (
+          'OS',
+          'OSS',
+          'OSSP',
+          'S',
+          'ISS',
+          'SHI'
+        ) THEN 1.0
         ELSE 0.0
       END AS is_suspended,
       dt.alt_name AS term,

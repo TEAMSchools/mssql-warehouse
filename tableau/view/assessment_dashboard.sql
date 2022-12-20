@@ -65,7 +65,9 @@ FROM
 WHERE
   co.academic_year IN (
     gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
-    (gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1)
+    (
+      gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
+    )
   )
   AND co.rn_year = 1
   AND co.grade_level != 99

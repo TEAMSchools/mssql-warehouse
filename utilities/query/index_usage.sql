@@ -37,5 +37,8 @@ FROM
   AND ixus.[object_id] = ix.[object_id]
   AND DB_NAME(ixus.database_id) = DB_NAME()
 WHERE
-  OBJECTPROPERTY(ix.[object_id], 'isusertable') = 1
+  OBJECTPROPERTY(
+    ix.[object_id],
+    'isusertable'
+  ) = 1
   AND ix.index_id > 1;

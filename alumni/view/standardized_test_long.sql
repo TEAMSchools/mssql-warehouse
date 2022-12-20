@@ -25,7 +25,9 @@ SELECT
     WHEN score_type = 'sat_essay_writing_c' THEN 'Essay Writing'
     WHEN score_type = 'sat_math_test_score_c' THEN 'Math Subscore'
     WHEN score_type = 'sat_reading_test_score_c' THEN 'Reading Subscore'
-    WHEN score_type = 'sat_writing_and_language_test_score_c' THEN 'Writing and Language Subscore'
+    WHEN (
+      score_type = 'sat_writing_and_language_test_score_c'
+    ) THEN 'Writing and Language Subscore'
     WHEN score_type = 'sat_math_pre_2016_c' THEN 'Math'
     WHEN score_type = 'sat_critical_reading_pre_2016_c' THEN 'Reading'
     WHEN score_type = 'sat_writing_pre_2016_c' THEN 'Writing'
@@ -64,4 +66,8 @@ FROM
 WHERE
   is_deleted = 0
   AND scoring_irregularity_c = 0
-  AND test_type_c IN ('SAT', 'ACT', 'Advanced Placement')
+  AND test_type_c IN (
+    'SAT',
+    'ACT',
+    'Advanced Placement'
+  )

@@ -9,7 +9,10 @@ SELECT
     ' ',
     df.preferred_last_name
   ) AS [Name],
-  COALESCE(df.rehire_date, df.original_hire_date) AS [Latest Hire Date]
+  COALESCE(
+    df.rehire_date,
+    df.original_hire_date
+  ) AS [Latest Hire Date]
 FROM
   gabby.people.staff_crosswalk_static AS df
 WHERE

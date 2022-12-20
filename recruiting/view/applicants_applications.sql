@@ -18,9 +18,15 @@ WITH
       (
         SELECT
           apl.candidate_id,
-          CAST(apl.candidate_first_name AS NVARCHAR(1024)) AS candidate_first_name,
-          CAST(apl.candidate_last_name AS NVARCHAR(1024)) AS candidate_last_name,
-          CAST(apl.candidate_email AS NVARCHAR(1024)) AS candidate_email,
+          CAST(
+            apl.candidate_first_name AS NVARCHAR(1024)
+          ) AS candidate_first_name,
+          CAST(
+            apl.candidate_last_name AS NVARCHAR(1024)
+          ) AS candidate_last_name,
+          CAST(
+            apl.candidate_email AS NVARCHAR(1024)
+          ) AS candidate_email,
           CAST(
             apl.taf_current_or_former_kipp_employee AS NVARCHAR(1024)
           ) AS taf_current_or_former_kipp_employee,
@@ -39,18 +45,36 @@ WITH
           CAST(
             apl.nj_out_of_state_teacher_certification_sped_credits AS NVARCHAR(1024)
           ) AS nj_out_of_state_teacher_certification_sped_credits,
-          CAST(apl.current_employer AS NVARCHAR(1024)) AS current_employer,
-          CAST(apl.taf_affiliated_orgs AS NVARCHAR(1024)) AS taf_affiliated_orgs,
-          CAST(apl.taf_other_orgs AS NVARCHAR(1024)) AS taf_other_orgs,
-          CAST(apl.taf_city_of_interest AS NVARCHAR(1024)) AS taf_city_of_interest,
-          CAST(apl.taf_expected_salary AS NVARCHAR(1024)) AS taf_expected_salary,
-          CAST(apl.kf_race AS NVARCHAR(1024)) AS kf_race,
-          CAST(apl.kf_gender AS NVARCHAR(1024)) AS kf_gender,
-          CAST(apl.kf_are_you_alumnus AS NVARCHAR(1024)) AS kf_are_you_alumnus,
+          CAST(
+            apl.current_employer AS NVARCHAR(1024)
+          ) AS current_employer,
+          CAST(
+            apl.taf_affiliated_orgs AS NVARCHAR(1024)
+          ) AS taf_affiliated_orgs,
+          CAST(
+            apl.taf_other_orgs AS NVARCHAR(1024)
+          ) AS taf_other_orgs,
+          CAST(
+            apl.taf_city_of_interest AS NVARCHAR(1024)
+          ) AS taf_city_of_interest,
+          CAST(
+            apl.taf_expected_salary AS NVARCHAR(1024)
+          ) AS taf_expected_salary,
+          CAST(
+            apl.kf_race AS NVARCHAR(1024)
+          ) AS kf_race,
+          CAST(
+            apl.kf_gender AS NVARCHAR(1024)
+          ) AS kf_gender,
+          CAST(
+            apl.kf_are_you_alumnus AS NVARCHAR(1024)
+          ) AS kf_are_you_alumnus,
           CAST(
             apl.kf_in_which_regions_alumnus AS NVARCHAR(1024)
           ) AS kf_in_which_regions_alumnus,
-          CAST(apl.candidate_tags_values AS NVARCHAR(1024)) AS candidate_tags_values,
+          CAST(
+            apl.candidate_tags_values AS NVARCHAR(1024)
+          ) AS candidate_tags_values,
           CONVERT(
             NVARCHAR(1024),
             COALESCE(
@@ -60,11 +84,17 @@ WITH
           ) AS school_shared_with,
           CONVERT(
             NVARCHAR(1024),
-            COALESCE(apl.nj_undergrad_gpa, apl.mia_undergrad_gpa)
+            COALESCE(
+              apl.nj_undergrad_gpa,
+              apl.mia_undergrad_gpa
+            )
           ) AS undergrad_gpa,
           CONVERT(
             NVARCHAR(1024),
-            COALESCE(apl.nj_grad_gpa, apl.mia_grad_gpa)
+            COALESCE(
+              apl.nj_grad_gpa,
+              apl.mia_grad_gpa
+            )
           ) AS grad_gpa,
           CONVERT(
             NVARCHAR(1024),
@@ -246,16 +276,27 @@ FROM
   INNER JOIN gabby.smartrecruiters.report_applications AS app ON apl.candidate_id = app.candidate_id
 UNION ALL
 SELECT
-  COALESCE(a.profile_id, a.jobapp_id) AS candidate_id,
-  SUBSTRING(a.[name], 1, CHARINDEX(' ', a.[name])) AS candidate_first_name,
+  COALESCE(
+    a.profile_id,
+    a.jobapp_id
+  ) AS candidate_id,
+  SUBSTRING(
+    a.[name],
+    1,
+    CHARINDEX(' ', a.[name])
+  ) AS candidate_first_name,
   SUBSTRING(
     a.[name],
     CHARINDEX(' ', a.[name]) + 1,
     LEN(a.[name])
   ) AS candidate_last_name,
   a.email AS candidate_email,
-  CAST(a.degree_1_gpa AS NVARCHAR) AS undergrad_gpa,
-  CAST(a.degree_2_gpa AS NVARCHAR) AS grad_gpa,
+  CAST(
+    a.degree_1_gpa AS NVARCHAR
+  ) AS undergrad_gpa,
+  CAST(
+    a.degree_2_gpa AS NVARCHAR
+  ) AS grad_gpa,
   NULL AS taf_current_or_former_kipp_employee,
   NULL AS mia_teacher_certification_question,
   NULL AS mia_out_of_state_teaching_certification_details,
@@ -303,8 +344,20 @@ SELECT
   NULL AS time_in_application_state_offered,
   NULL AS time_in_application_status_in_review_resume_review,
   CASE
-    WHEN MONTH(CAST(a.submitted_date AS DATE)) >= 9 THEN YEAR(CAST(a.submitted_date AS DATE)) + 1
-    ELSE YEAR(CAST(a.submitted_date AS DATE))
+    WHEN MONTH(
+      CAST(
+        a.submitted_date AS DATE
+      )
+    ) >= 9 THEN YEAR(
+      CAST(
+        a.submitted_date AS DATE
+      )
+    ) + 1
+    ELSE YEAR(
+      CAST(
+        a.submitted_date AS DATE
+      )
+    )
   END AS recruiting_year
 FROM
   gabby.recruiting.applicants AS a

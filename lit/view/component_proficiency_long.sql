@@ -66,16 +66,26 @@ WITH
   ),
   all_scores AS (
     SELECT
-      CAST(rs.unique_id AS VARCHAR(25)) AS unique_id,
-      CAST(rs.student_number AS INT) AS student_number,
+      CAST(
+        rs.unique_id AS VARCHAR(25)
+      ) AS unique_id,
+      CAST(
+        rs.student_number AS INT
+      ) AS student_number,
       CAST(rs.testid AS INT) AS testid,
       CASE
-        WHEN rs.[status] != '' THEN CAST(rs.[status] AS VARCHAR(25))
+        WHEN rs.[status] != '' THEN CAST(
+          rs.[status] AS VARCHAR(25)
+        )
       END AS [status],
-      CAST(rs.field AS VARCHAR(25)) AS field,
+      CAST(
+        rs.field AS VARCHAR(25)
+      ) AS field,
       CAST(rs.score AS FLOAT) AS score,
       CASE
-        WHEN rs.read_lvl != '' THEN CAST(rs.read_lvl AS VARCHAR(5))
+        WHEN rs.read_lvl != '' THEN CAST(
+          rs.read_lvl AS VARCHAR(5)
+        )
       END AS read_lvl,
       CAST(rs.lvl_num AS INT) AS lvl_num
     FROM
@@ -109,10 +119,16 @@ WITH
     SELECT
       CAST(testid AS INT) AS testid,
       CAST(lvl_num AS INT) AS lvl_num,
-      CAST(field_name AS VARCHAR(125)) AS field_name,
+      CAST(
+        field_name AS VARCHAR(125)
+      ) AS field_name,
       CAST(DOMAIN AS VARCHAR(25)) AS DOMAIN,
-      CAST(subdomain AS VARCHAR(25)) AS subdomain,
-      CAST(strand AS VARCHAR(125)) AS strand,
+      CAST(
+        subdomain AS VARCHAR(25)
+      ) AS subdomain,
+      CAST(
+        strand AS VARCHAR(125)
+      ) AS strand,
       CAST(score AS INT) AS score
     FROM
       gabby.lit.component_proficiency_targets
@@ -183,15 +199,33 @@ FROM
       prof.strand,
       prof.score AS benchmark,
       CASE
-        WHEN prof.strand LIKE '%overall%' THEN ISNULL(prof.domain + ': ', '') + prof.strand
-        ELSE ISNULL(prof.subdomain + ': ', '') + prof.strand
+        WHEN prof.strand LIKE '%overall%' THEN ISNULL(
+          prof.domain + ': ',
+          ''
+        ) + prof.strand
+        ELSE ISNULL(
+          prof.subdomain + ': ',
+          ''
+        ) + prof.strand
       END AS [label],
       CASE
         WHEN prof.strand LIKE '%overall%'
-        AND ISNULL(prof.subdomain, '') != '' THEN ISNULL(prof.domain + ' (', '') + ISNULL(prof.subdomain + '): ', '') + prof.strand
+        AND ISNULL(prof.subdomain, '') != '' THEN ISNULL(
+          prof.domain + ' (',
+          ''
+        ) + ISNULL(
+          prof.subdomain + '): ',
+          ''
+        ) + prof.strand
         WHEN prof.strand LIKE '%overall%'
-        AND ISNULL(prof.subdomain, '') = '' THEN ISNULL(prof.domain + ': ', '') + prof.strand
-        ELSE ISNULL(prof.subdomain + ': ', '') + prof.strand
+        AND ISNULL(prof.subdomain, '') = '' THEN ISNULL(
+          prof.domain + ': ',
+          ''
+        ) + prof.strand
+        ELSE ISNULL(
+          prof.subdomain + ': ',
+          ''
+        ) + prof.strand
       END AS specific_label,
       CASE
         WHEN prof.score IS NULL THEN NULL

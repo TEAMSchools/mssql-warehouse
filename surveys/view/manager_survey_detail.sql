@@ -48,7 +48,9 @@ FROM
 WHERE
   d.survey_title = 'Manager Survey'
   AND d.rn_respondent_subject = 1
-  AND d.campaign_academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1)
+  AND d.campaign_academic_year >= (
+    gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
+  )
 UNION ALL
 SELECT
   NULL AS survey_id,
@@ -77,7 +79,10 @@ SELECT
   sda.school_level AS subject_primary_site_school_level,
   sda.subject_manager_df_employee_number,
   sda.subject_manager_id AS subject_manager_adp_associate_id,
-  COALESCE(sbjt.samaccountname, sda.subject_username) AS subject_samaccountname,
+  COALESCE(
+    sbjt.samaccountname,
+    sda.subject_username
+  ) AS subject_samaccountname,
   sda.subject_manager_name,
   COALESCE(
     mgr.samaccountname,

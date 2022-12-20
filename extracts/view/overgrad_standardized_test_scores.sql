@@ -2,7 +2,11 @@ CREATE OR ALTER VIEW
   extracts.overgrad_standardized_test_scores AS
 SELECT
   stl.contact_c AS [Student ID],
-  CONVERT(VARCHAR, stl.date_c, 101) AS [Test Date],
+  CONVERT(
+    VARCHAR,
+    stl.date_c,
+    101
+  ) AS [Test Date],
   CONCAT(
     CASE
       WHEN stl.test_type = 'Advanced Placement' THEN 'AP'

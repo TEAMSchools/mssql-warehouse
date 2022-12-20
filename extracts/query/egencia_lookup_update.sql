@@ -32,7 +32,10 @@ WITH
             scw.worker_category NOT IN ('Intern', 'Part Time')
             OR scw.worker_category IS NULL
           )
-          AND COALESCE(scw.termination_date, CURRENT_TIMESTAMP) >= DATEFROMPARTS(
+          AND COALESCE(
+            scw.termination_date,
+            CURRENT_TIMESTAMP
+          ) >= DATEFROMPARTS(
             gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
             7,
             1
@@ -50,7 +53,10 @@ WITH
             scw.worker_category NOT IN ('Intern', 'Part Time')
             OR scw.worker_category IS NULL
           )
-          AND COALESCE(scw.termination_date, CURRENT_TIMESTAMP) >= DATEFROMPARTS(
+          AND COALESCE(
+            scw.termination_date,
+            CURRENT_TIMESTAMP
+          ) >= DATEFROMPARTS(
             gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
             7,
             1
@@ -68,7 +74,10 @@ WITH
             scw.worker_category NOT IN ('Intern', 'Part Time')
             OR scw.worker_category IS NULL
           )
-          AND COALESCE(scw.termination_date, CURRENT_TIMESTAMP) >= DATEFROMPARTS(
+          AND COALESCE(
+            scw.termination_date,
+            CURRENT_TIMESTAMP
+          ) >= DATEFROMPARTS(
             gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
             7,
             1

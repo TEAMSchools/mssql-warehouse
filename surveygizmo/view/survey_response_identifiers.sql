@@ -12,13 +12,18 @@ WITH
       ) AS respondent_associate_id,
       CAST(
         LOWER(
-          COALESCE(p.respondent_userprincipalname, p.email)
+          COALESCE(
+            p.respondent_userprincipalname,
+            p.email
+          )
         ) AS VARCHAR(125)
       ) AS respondent_userprincipalname,
       CONVERT(
         INT,
         CASE
-          WHEN ISNUMERIC(p.respondent_df_employee_number) = 1 THEN p.respondent_df_employee_number
+          WHEN ISNUMERIC(
+            p.respondent_df_employee_number
+          ) = 1 THEN p.respondent_df_employee_number
           WHEN CHARINDEX(
             '[',
             COALESCE(
@@ -93,7 +98,10 @@ WITH
         END
       ) AS subject_employee_number,
       CASE
-        WHEN CHARINDEX('[', p.subject_df_employee_number) = 0 THEN p.subject_df_employee_number
+        WHEN CHARINDEX(
+          '[',
+          p.subject_df_employee_number
+        ) = 0 THEN p.subject_df_employee_number
       END AS subject_preferred_name,
       CASE
         WHEN p.is_manager = 'Yes - I am their manager.' THEN 1
@@ -161,7 +169,9 @@ WITH
 SELECT
   rc.survey_response_id,
   rc.survey_id,
-  CAST(rc.date_started AS DATE) AS date_started,
+  CAST(
+    rc.date_started AS DATE
+  ) AS date_started,
   rc.subject_employee_number AS subject_df_employee_number,
   rc.respondent_employee_number AS respondent_df_employee_number,
   rc.salesforce_id AS respondent_salesforce_id,
@@ -235,14 +245,18 @@ FROM
   LEFT JOIN gabby.people.staff_crosswalk_static AS resp ON rc.respondent_employee_number = resp.df_employee_number
   LEFT JOIN gabby.people.employment_history_static AS reh ON resp.position_id = reh.position_id
   AND (
-    CAST(sc.link_close_date AS DATE) BETWEEN reh.effective_start_date AND reh.effective_end_date
+    CAST(
+      sc.link_close_date AS DATE
+    ) BETWEEN reh.effective_start_date AND reh.effective_end_date
   )
   LEFT JOIN gabby.people.staff_crosswalk_static AS rmgr ON reh.reports_to_employee_number = rmgr.df_employee_number
   LEFT JOIN gabby.people.school_crosswalk AS rsch ON reh.[location] = rsch.site_name
   LEFT JOIN gabby.people.staff_crosswalk_static AS subj ON rc.subject_employee_number = subj.df_employee_number
   LEFT JOIN gabby.people.employment_history_static AS seh ON subj.position_id = seh.position_id
   AND (
-    CAST(sc.link_close_date AS DATE) BETWEEN seh.effective_start_date AND seh.effective_end_date
+    CAST(
+      sc.link_close_date AS DATE
+    ) BETWEEN seh.effective_start_date AND seh.effective_end_date
   )
   LEFT JOIN gabby.people.staff_crosswalk_static AS smgr ON seh.reports_to_employee_number = smgr.df_employee_number
   LEFT JOIN gabby.people.school_crosswalk AS ssch ON seh.[location] = ssch.site_name

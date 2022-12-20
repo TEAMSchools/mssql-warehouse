@@ -5,8 +5,14 @@ SELECT
   academic_year,
   CASE
     WHEN [status] IS NULL
-    OR [status] IN ('No Application', 'No') THEN 'No Application'
-    WHEN [status] IN ('Application Received', 'Jotform') THEN 'Application Received'
+    OR [status] IN (
+      'No Application',
+      'No'
+    ) THEN 'No Application'
+    WHEN [status] IN (
+      'Application Received',
+      'Jotform'
+    ) THEN 'Application Received'
     WHEN [status] = 'Direct Certification' THEN 'Direct Certification'
     ELSE LEFT([status], 1) + ' - ' + 'Income Form'
   END AS lunch_app_status,

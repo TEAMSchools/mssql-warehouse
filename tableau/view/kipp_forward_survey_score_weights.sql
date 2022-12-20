@@ -4,7 +4,9 @@ WITH
   weight_denominator AS (
     SELECT
       survey_id,
-      SUM(CAST(answer_value AS FLOAT)) AS answer_total
+      SUM(
+        CAST(answer_value AS FLOAT)
+      ) AS answer_total
     FROM
       gabby.surveygizmo.survey_detail
     WHERE
@@ -29,7 +31,11 @@ WITH
       s.question_shortname,
       s.question_title,
       (
-        SUM(CAST(s.answer_value AS FLOAT)) / a.answer_total
+        SUM(
+          CAST(
+            s.answer_value AS FLOAT
+          )
+        ) / a.answer_total
       ) * 10.0 AS item_weight
     FROM
       weight_denominator AS a
@@ -62,7 +68,9 @@ WITH
           AVG(level_pay_quality) AS imp_1,
           AVG(stable_pay_quality) AS imp_2,
           AVG(stable_hours_quality) AS imp_3,
-          AVG(control_hours_location_quality) AS imp_4,
+          AVG(
+            control_hours_location_quality
+          ) AS imp_4,
           AVG(job_security_quality) AS imp_5,
           AVG(benefits_quality) AS imp_6,
           AVG(advancement_quality) AS imp_7,

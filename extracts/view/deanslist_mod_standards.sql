@@ -13,13 +13,20 @@ WITH
         WHEN asr.subject_area = 'Writing' THEN 'Text Study'
         ELSE asr.subject_area
       END AS subject_area,
-      ROUND(AVG(asr.percent_correct), 0) AS avg_percent_correct
+      ROUND(
+        AVG(asr.percent_correct),
+        0
+      ) AS avg_percent_correct
     FROM
       gabby.illuminate_dna_assessments.agg_student_responses_all_current AS asr
     WHERE
       asr.response_type = 'G'
       AND asr.is_normed_scope = 1
-      AND asr.subject_area IN ('Text Study', 'Mathematics', 'Writing')
+      AND asr.subject_area IN (
+        'Text Study',
+        'Mathematics',
+        'Writing'
+      )
     GROUP BY
       asr.local_student_id,
       asr.academic_year,
@@ -39,7 +46,11 @@ SELECT
   sa.response_type,
   sa.avg_percent_correct AS percent_correct,
   sa.subject_area,
-  REPLACE(sa.standard_description, '"', '''') AS standard_description,
+  REPLACE(
+    sa.standard_description,
+    '"',
+    ''''
+  ) AS standard_description,
   CASE
     WHEN pbl.label_number = 5 THEN 'Advanced Mastery'
     WHEN pbl.label_number = 4 THEN 'Mastery'

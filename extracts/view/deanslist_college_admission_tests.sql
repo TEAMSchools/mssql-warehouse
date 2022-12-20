@@ -4,7 +4,10 @@ SELECT
   ktc.student_number,
   st.test_type_c AS test_type,
   CONCAT(
-    LEFT(DATENAME(MONTH, st.date_c), 3),
+    LEFT(
+      DATENAME(MONTH, st.date_c),
+      3
+    ),
     ' ',
     DATENAME(YEAR, st.date_c)
   ) AS test_date,
@@ -31,7 +34,10 @@ SELECT
   ktc.student_number,
   st.test_type_c AS test_type,
   CONCAT(
-    LEFT(DATENAME(MONTH, st.date_c), 3),
+    LEFT(
+      DATENAME(MONTH, st.date_c),
+      3
+    ),
     ' ',
     DATENAME(YEAR, st.date_c)
   ) AS test_date,
@@ -42,13 +48,19 @@ SELECT
   NULL AS act_reading,
   NULL AS act_writing,
   st.sat_total_score_c AS sat_total,
-  COALESCE(st.sat_math_c, st.sat_math_pre_2016_c) AS sat_math,
+  COALESCE(
+    st.sat_math_c,
+    st.sat_math_pre_2016_c
+  ) AS sat_math,
   COALESCE(
     st.sat_ebrw_c,
     st.sat_verbal_c,
     st.sat_critical_reading_pre_2016_c
   ) AS sat_reading,
-  COALESCE(st.sat_writing_c, st.sat_writing_pre_2016_c) AS sat_writing,
+  COALESCE(
+    st.sat_writing_c,
+    st.sat_writing_pre_2016_c
+  ) AS sat_writing,
   NULL AS sat_mc,
   NULL AS sat_essay
 FROM

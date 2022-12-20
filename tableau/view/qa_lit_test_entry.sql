@@ -12,13 +12,30 @@ SELECT
   co.team,
   co.iep_status,
   co.lep_status,
-  CAST(achv.test_round AS VARCHAR(2)) AS lit_term,
+  CAST(
+    achv.test_round AS VARCHAR(2)
+  ) AS lit_term,
   achv.is_curterm,
-  COALESCE(testid.read_lvl, achv.read_lvl) AS read_lvl,
-  COALESCE(testid.lvl_num, achv.lvl_num) AS lvl_num,
-  COALESCE(testid.test_date, atid.test_date) AS test_date,
-  COALESCE(testid.[status], atid.[status]) AS [status],
-  COALESCE(testid.is_fp, atid.is_fp) AS is_fp,
+  COALESCE(
+    testid.read_lvl,
+    achv.read_lvl
+  ) AS read_lvl,
+  COALESCE(
+    testid.lvl_num,
+    achv.lvl_num
+  ) AS lvl_num,
+  COALESCE(
+    testid.test_date,
+    atid.test_date
+  ) AS test_date,
+  COALESCE(
+    testid.[status],
+    atid.[status]
+  ) AS [status],
+  COALESCE(
+    testid.is_fp,
+    atid.is_fp
+  ) AS is_fp,
   gr.gr_teacher,
   ROW_NUMBER() OVER (
     PARTITION BY

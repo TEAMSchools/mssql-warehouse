@@ -32,7 +32,10 @@ FROM
   AND ixus.[object_id] = ix.[object_id]
   INNER JOIN sys.dm_db_partition_stats AS ps ON ps.[object_id] = ix.[object_id]
 WHERE
-  OBJECTPROPERTY(ix.[object_id], 'isusertable') = 1
+  OBJECTPROPERTY(
+    ix.[object_id],
+    'isusertable'
+  ) = 1
   AND ix.is_primary_key = 0
   AND ix.[type_desc] = 'NONCLUSTERED'
   AND ix.[name] != 'CoveringIndex'

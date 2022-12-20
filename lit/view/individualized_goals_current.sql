@@ -5,7 +5,12 @@ WITH
     SELECT
       student_number,
       academic_year,
-      UPPER(LEFT(field, CHARINDEX('_', field) - 1)) AS test_round,
+      UPPER(
+        LEFT(
+          field,
+          CHARINDEX('_', field) - 1
+        )
+      ) AS test_round,
       CAST(goal AS VARCHAR(25)) AS goal
     FROM
       (
@@ -14,14 +19,23 @@ WITH
             INT,
             SUBSTRING(
               [name],
-              (CHARINDEX('[', [name]) + 1),
-              (CHARINDEX(']', [name])) - (CHARINDEX('[', [name]) + 1)
+              (
+                CHARINDEX('[', [name]) + 1
+              ),
+              (
+                CHARINDEX(']', [name])
+              ) - (
+                CHARINDEX('[', [name]) + 1
+              )
             )
           ) AS student_number,
           gabby.utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year,
           SUBSTRING(
             [diagnostic_goal],
-            CHARINDEX(' ', [diagnostic_goal]) + 1,
+            CHARINDEX(
+              ' ',
+              [diagnostic_goal]
+            ) + 1,
             LEN([diagnostic_goal])
           ) AS diagnostic_goal,
           SUBSTRING(
@@ -62,7 +76,11 @@ SELECT
   g.student_number,
   g.academic_year,
   CAST(
-    REPLACE(g.test_round, 'DIAGNOSTIC', 'DR') AS VARCHAR(5)
+    REPLACE(
+      g.test_round,
+      'DIAGNOSTIC',
+      'DR'
+    ) AS VARCHAR(5)
   ) AS test_round,
   g.goal,
   CONVERT(

@@ -43,7 +43,10 @@ SELECT
   sub.term_administered,
   SUBSTRING(
     sub.title,
-    PATINDEX(sub.module_number_pattern, sub.title),
+    PATINDEX(
+      sub.module_number_pattern,
+      sub.title
+    ),
     sub.module_number_length
   ) AS module_number
 FROM
@@ -87,7 +90,9 @@ FROM
       n.scope AS normed_scope,
       n.module_type,
       a.academic_year - 1 AS academic_year_clean,
-      CAST(rt.alt_name AS VARCHAR(5)) AS term_administered,
+      CAST(
+        rt.alt_name AS VARCHAR(5)
+      ) AS term_administered,
       CASE
         WHEN n.scope IS NOT NULL THEN 1
         ELSE 0
@@ -138,43 +143,63 @@ FROM
         WHEN PATINDEX(
           '%' + n.module_number_pattern_1 + '[0-9][0-9]/[0-9][0-9]%',
           a.title
-        ) > 0 THEN LEN(n.module_number_pattern_1) + 5
+        ) > 0 THEN LEN(
+          n.module_number_pattern_1
+        ) + 5
         WHEN PATINDEX(
           '%' + n.module_number_pattern_1 + '[0-9]/[0-9][0-9]%',
           a.title
-        ) > 0 THEN LEN(n.module_number_pattern_1) + 4
+        ) > 0 THEN LEN(
+          n.module_number_pattern_1
+        ) + 4
         WHEN PATINDEX(
           '%' + n.module_number_pattern_1 + '[0-9]/[0-9]%',
           a.title
-        ) > 0 THEN LEN(n.module_number_pattern_1) + 3
+        ) > 0 THEN LEN(
+          n.module_number_pattern_1
+        ) + 3
         WHEN PATINDEX(
           '%' + n.module_number_pattern_1 + '[0-9][0-9]%',
           a.title
-        ) > 0 THEN LEN(n.module_number_pattern_1) + 2
+        ) > 0 THEN LEN(
+          n.module_number_pattern_1
+        ) + 2
         WHEN PATINDEX(
           '%' + n.module_number_pattern_1 + '[0-9]%',
           a.title
-        ) > 0 THEN LEN(n.module_number_pattern_1) + 1
+        ) > 0 THEN LEN(
+          n.module_number_pattern_1
+        ) + 1
         WHEN PATINDEX(
           '%' + n.module_number_pattern_2 + '[0-9][0-9]/[0-9][0-9]%',
           a.title
-        ) > 0 THEN LEN(n.module_number_pattern_2) + 5
+        ) > 0 THEN LEN(
+          n.module_number_pattern_2
+        ) + 5
         WHEN PATINDEX(
           '%' + n.module_number_pattern_2 + '[0-9]/[0-9][0-9]%',
           a.title
-        ) > 0 THEN LEN(n.module_number_pattern_2) + 4
+        ) > 0 THEN LEN(
+          n.module_number_pattern_2
+        ) + 4
         WHEN PATINDEX(
           '%' + n.module_number_pattern_2 + '[0-9]/[0-9]%',
           a.title
-        ) > 0 THEN LEN(n.module_number_pattern_2) + 3
+        ) > 0 THEN LEN(
+          n.module_number_pattern_2
+        ) + 3
         WHEN PATINDEX(
           '%' + n.module_number_pattern_2 + '[0-9][0-9]%',
           a.title
-        ) > 0 THEN LEN(n.module_number_pattern_2) + 2
+        ) > 0 THEN LEN(
+          n.module_number_pattern_2
+        ) + 2
         WHEN PATINDEX(
           '%' + n.module_number_pattern_2 + '[0-9]%',
           a.title
-        ) > 0 THEN LEN(n.module_number_pattern_2) + 1
+        ) > 0 THEN LEN(
+          n.module_number_pattern_2
+        ) + 1
       END AS module_number_length
     FROM
       gabby.illuminate_dna_assessments.assessments AS a

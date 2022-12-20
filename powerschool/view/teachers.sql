@@ -1,7 +1,9 @@
 CREATE OR ALTER VIEW
   powerschool.teachers AS
 SELECT
-  CAST(u.lastfirst AS VARCHAR(125)) AS lastfirst,
+  CAST(
+    u.lastfirst AS VARCHAR(125)
+  ) AS lastfirst,
   u.first_name,
   u.middle_name,
   u.last_name,
@@ -18,7 +20,9 @@ SELECT
   u.loginid,
   u.defaultstudscrn,
   u.groupvalue,
-  CAST(u.teachernumber AS VARCHAR(25)) AS teachernumber,
+  CAST(
+    u.teachernumber AS VARCHAR(25)
+  ) AS teachernumber,
   u.lunch_id,
   u.ssn,
   u.home_phone,

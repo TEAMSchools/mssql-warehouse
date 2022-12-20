@@ -9,7 +9,11 @@ WITH
       c.reporting_term_code,
       c.link_open_date AS survey_round_open,
       c.link_close_date AS survey_round_close,
-      DATEADD(DAY, -15, c.link_open_date) AS survey_round_open_minus_fifteen,
+      DATEADD(
+        DAY,
+        -15,
+        c.link_open_date
+      ) AS survey_round_open_minus_fifteen,
       ROW_NUMBER() OVER (
         PARTITION BY
           c.survey_id
@@ -23,7 +27,13 @@ WITH
       INNER JOIN gabby.surveygizmo.survey_clean AS s ON c.survey_id = s.survey_id
     WHERE
       c.link_type = 'email'
-      AND c.survey_id IN (4561325, 4561288, 5300913, 6330385, 6580731)
+      AND c.survey_id IN (
+        4561325,
+        4561288,
+        5300913,
+        6330385,
+        6580731
+      )
   ),
   survey_term_staff_scaffold AS (
     SELECT
@@ -62,7 +72,10 @@ WITH
       wcf.[Teacher Prep Program] AS teacher_prep_program
     FROM
       surveys AS s
-      INNER JOIN gabby.people.staff_crosswalk_static AS r ON r.[status] NOT IN ('Terminated', 'Prestart')
+      INNER JOIN gabby.people.staff_crosswalk_static AS r ON r.[status] NOT IN (
+        'Terminated',
+        'Prestart'
+      )
       LEFT JOIN gabby.adp.workers_custom_field_group_wide_static AS wcf ON r.adp_associate_id = wcf.worker_id
     WHERE
       s.rn_survey_recent = 1
@@ -107,7 +120,12 @@ WITH
         c.survey_id = 6330385
         OR (
           c.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-          AND c.survey_id IN (4561325, 4561288, 5300913, 6580731)
+          AND c.survey_id IN (
+            4561325,
+            4561288,
+            5300913,
+            6580731
+          )
         )
       )
   )
@@ -116,7 +134,10 @@ SELECT
     st.respondent_employee_number,
     c.respondent_employee_number
   ) AS survey_taker_id,
-  COALESCE(st.respondent_name, c.respondent_name) AS survey_taker_name,
+  COALESCE(
+    st.respondent_name,
+    c.respondent_name
+  ) AS survey_taker_name,
   COALESCE(
     st.respondent_legal_entity_name,
     c.respondent_legal_entity_name
@@ -145,8 +166,14 @@ SELECT
     st.respondent_samaccountname,
     c.respondent_samaccountname
   ) AS survey_taker_samaccount,
-  COALESCE(st.academic_year, c.academic_year) AS academic_year,
-  COALESCE(st.reporting_term_code, c.reporting_term) AS reporting_term,
+  COALESCE(
+    st.academic_year,
+    c.academic_year
+  ) AS academic_year,
+  COALESCE(
+    st.reporting_term_code,
+    c.reporting_term
+  ) AS reporting_term,
   st.respondent_manager_employee_number AS manager_df_employee_number,
   st.respondent_manager_name AS manager_name,
   st.respondent_manager_legal_entity_name AS manager_legal_entity_name,
@@ -168,7 +195,10 @@ SELECT
   st.survey_default_link,
   st.survey_id,
   sa.survey_round_status,
-  COALESCE(sa.assignment, c.subject_name) AS assignment,
+  COALESCE(
+    sa.assignment,
+    c.subject_name
+  ) AS assignment,
   COALESCE(
     sa.assignment_employee_id,
     CASE
@@ -213,7 +243,10 @@ SELECT
     st.respondent_employee_number,
     c.respondent_employee_number
   ) AS survey_taker_id,
-  COALESCE(st.respondent_name, c.respondent_name) AS survey_taker_name,
+  COALESCE(
+    st.respondent_name,
+    c.respondent_name
+  ) AS survey_taker_name,
   COALESCE(
     st.respondent_legal_entity_name,
     c.respondent_legal_entity_name
@@ -242,8 +275,14 @@ SELECT
     st.respondent_samaccountname,
     c.respondent_samaccountname
   ) AS survey_taker_samaccount,
-  COALESCE(st.academic_year, c.academic_year) AS academic_year,
-  COALESCE(st.reporting_term_code, c.reporting_term) AS reporting_term,
+  COALESCE(
+    st.academic_year,
+    c.academic_year
+  ) AS academic_year,
+  COALESCE(
+    st.reporting_term_code,
+    c.reporting_term
+  ) AS reporting_term,
   st.respondent_manager_employee_number AS manager_df_employee_number,
   st.respondent_manager_name AS manager_name,
   st.respondent_manager_legal_entity_name AS manager_legal_entity_name,
@@ -301,7 +340,9 @@ WHERE
         c.respondent_employee_number
       )
     )
-    OR (c.subject_employee_number IS NULL)
+    OR (
+      c.subject_employee_number IS NULL
+    )
   )
 UNION ALL
 SELECT
@@ -309,7 +350,10 @@ SELECT
     st.respondent_employee_number,
     c.respondent_employee_number
   ) AS survey_taker_id,
-  COALESCE(st.respondent_name, c.respondent_name) AS survey_taker_name,
+  COALESCE(
+    st.respondent_name,
+    c.respondent_name
+  ) AS survey_taker_name,
   COALESCE(
     st.respondent_legal_entity_name,
     c.respondent_legal_entity_name
@@ -338,8 +382,14 @@ SELECT
     st.respondent_samaccountname,
     c.respondent_samaccountname
   ) AS survey_taker_samaccount,
-  COALESCE(st.academic_year, c.academic_year) AS academic_year,
-  COALESCE(st.reporting_term_code, c.reporting_term) AS reporting_term,
+  COALESCE(
+    st.academic_year,
+    c.academic_year
+  ) AS academic_year,
+  COALESCE(
+    st.reporting_term_code,
+    c.reporting_term
+  ) AS reporting_term,
   st.respondent_manager_employee_number AS manager_df_employee_number,
   st.respondent_manager_name AS manager_name,
   st.respondent_manager_legal_entity_name AS manager_legal_entity_name,
@@ -372,7 +422,10 @@ SELECT
 FROM
   survey_term_staff_scaffold AS st
   INNER JOIN gabby.pm.assignments AS pm ON st.respondent_employee_number = pm.df_employee_number
-  AND pm.survey_round_status IN ('Yes', 'Yes - Manager Survey Only')
+  AND pm.survey_round_status IN (
+    'Yes',
+    'Yes - Manager Survey Only'
+  )
   LEFT JOIN clean_responses AS c ON st.respondent_employee_number = c.respondent_employee_number
   AND st.academic_year = c.academic_year
   AND st.reporting_term_code = c.reporting_term
@@ -386,7 +439,9 @@ WHERE
         c.respondent_employee_number
       )
     )
-    OR (c.subject_employee_number IS NULL)
+    OR (
+      c.subject_employee_number IS NULL
+    )
   )
 UNION
 SELECT
@@ -394,7 +449,10 @@ SELECT
     st.respondent_employee_number,
     c.respondent_employee_number
   ) AS survey_taker_id,
-  COALESCE(st.respondent_name, c.respondent_name) AS survey_taker_name,
+  COALESCE(
+    st.respondent_name,
+    c.respondent_name
+  ) AS survey_taker_name,
   COALESCE(
     st.respondent_legal_entity_name,
     c.respondent_legal_entity_name
@@ -423,8 +481,14 @@ SELECT
     st.respondent_samaccountname,
     c.respondent_samaccountname
   ) AS survey_taker_samaccount,
-  COALESCE(st.academic_year, c.academic_year) AS academic_year,
-  COALESCE(st.reporting_term_code, c.reporting_term) AS reporting_term,
+  COALESCE(
+    st.academic_year,
+    c.academic_year
+  ) AS academic_year,
+  COALESCE(
+    st.reporting_term_code,
+    c.reporting_term
+  ) AS reporting_term,
   st.respondent_manager_employee_number AS manager_df_employee_number,
   st.respondent_manager_name AS manager_name,
   st.respondent_manager_legal_entity_name AS manager_legal_entity_name,
@@ -469,7 +533,9 @@ WHERE
         c.respondent_employee_number
       )
     )
-    OR (c.subject_employee_number IS NULL)
+    OR (
+      c.subject_employee_number IS NULL
+    )
   )
 UNION ALL
 SELECT
@@ -523,7 +589,10 @@ FROM
   LEFT JOIN gabby.extracts.gsheets_pm_assignment_roster AS pr ON st.respondent_employee_number = pr.df_employee_number
 WHERE
   st.survey_id = 5300913 /* R9S Survey Code */
-  AND pm.survey_round_status IN ('Yes', 'Yes - Manager Survey Only')
+  AND pm.survey_round_status IN (
+    'Yes',
+    'Yes - Manager Survey Only'
+  )
 UNION ALL
 SELECT
   st.respondent_employee_number AS survey_taker_id,

@@ -10,7 +10,11 @@ SET
   @table_name = @view_name + '_static';
 
 SET
-  @objname = CONCAT(@schema_name, '.', @table_name);
+  @objname = CONCAT(
+    @schema_name,
+    '.',
+    @table_name
+  );
 
 SET
   @table_name_old = @table_name + '_OLD';
@@ -36,4 +40,7 @@ FROM
   gabby.utilities.generate_gabby_unions
 WHERE
   [schema_name] = @schema_name
-  AND table_name IN (@view_name, @view_name + '_static');
+  AND table_name IN (
+    @view_name,
+    @view_name + '_static'
+  );

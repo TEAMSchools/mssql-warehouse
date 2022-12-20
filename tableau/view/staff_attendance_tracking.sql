@@ -15,7 +15,11 @@ WITH
             td.[location],
             10,
             LEN(td.[location]) - 10 - (
-              LEN(td.[location]) - CHARINDEX('/', td.[location], 10)
+              LEN(td.[location]) - CHARINDEX(
+                '/',
+                td.[location],
+                10
+              )
             )
           ) AS school_name
         FROM
@@ -111,7 +115,9 @@ WITH
         FROM
           last_accrual_day
       ) AS sub PIVOT (
-        MAX(accrual_taken_to_date_hours_) FOR accrual_code IN (
+        MAX(
+          accrual_taken_to_date_hours_
+        ) FOR accrual_code IN (
           [Vacation],
           [PTO],
           [No Accrual],
@@ -139,7 +145,9 @@ WITH
         FROM
           last_accrual_day
       ) AS sub PIVOT (
-        MAX(accrual_available_balance_hours_) FOR accrual_code IN (
+        MAX(
+          accrual_available_balance_hours_
+        ) FOR accrual_code IN (
           [Vacation],
           [PTO],
           [No Accrual],
@@ -214,9 +222,15 @@ WITH
           [money],
           [days],
           employee_payrule,
-          CAST(td.transaction_apply_date AS DATE) AS transaction_apply_date,
-          CAST(td.transaction_start_date_time AS DATETIME2) AS transaction_start_date_time,
-          CAST(td.transaction_end_date_time AS DATETIME2) AS transaction_end_date_time,
+          CAST(
+            td.transaction_apply_date AS DATE
+          ) AS transaction_apply_date,
+          CAST(
+            td.transaction_start_date_time AS DATETIME2
+          ) AS transaction_start_date_time,
+          CAST(
+            td.transaction_end_date_time AS DATETIME2
+          ) AS transaction_end_date_time,
           ROW_NUMBER() OVER (
             PARTITION BY
               employee_name,
@@ -245,10 +259,14 @@ SELECT
   td.transaction_apply_date AS work_date,
   td.transaction_start_date_time AS transaction_start_date_time,
   td.transaction_end_date_time AS transaction_end_date_time,
-  gabby.utilities.DATE_TO_SY (td.transaction_apply_date) AS academic_year,
+  gabby.utilities.DATE_TO_SY (
+    td.transaction_apply_date
+  ) AS academic_year,
   SUBSTRING(
     td.employee_name,
-    (LEN(td.employee_name) - 9),
+    (
+      LEN(td.employee_name) - 9
+    ),
     9
   ) AS adp_associate_id,
   CASE
@@ -275,7 +293,9 @@ SELECT
   cw.legal_entity_name AS legal_entity_current,
   cw.primary_site AS location_current,
   LOWER(cw.samaccountname) AS staff_samaccountname,
-  LOWER(cw.manager_samaccountname) AS manager_samaccountname,
+  LOWER(
+    cw.manager_samaccountname
+  ) AS manager_samaccountname,
   cw.status AS employee_status,
   cw.original_hire_date,
   cw.rehire_date,

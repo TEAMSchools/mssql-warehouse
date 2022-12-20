@@ -8,7 +8,13 @@ SELECT
   /* file creation date */
   /* inquiry purpose */
   CAST(
-    REPLACE(CAST(CURRENT_TIMESTAMP AS DATE), '-', '') AS VARCHAR
+    REPLACE(
+      CAST(
+        CURRENT_TIMESTAMP AS DATE
+      ),
+      '-',
+      ''
+    ) AS VARCHAR
   ) AS cole,
   'DA' AS colf,
   'S' AS colg,
@@ -31,18 +37,28 @@ SELECT
   /* date of birth */
   /* search begin date */
   CAST(
-    REPLACE(CAST(dob AS DATE), '-', '') AS VARCHAR
+    REPLACE(
+      CAST(dob AS DATE),
+      '-',
+      ''
+    ) AS VARCHAR
   ) AS colg,
   /* leave blank */
   CAST(
-    REPLACE(CAST(exitdate AS DATE), '-', '') AS VARCHAR
+    REPLACE(
+      CAST(exitdate AS DATE),
+      '-',
+      ''
+    ) AS VARCHAR
   ) AS colh,
   NULL AS coli,
   /* leave blank */
   NULL AS colj,
   '00' AS colk,
   /* requestor return field */
-  CAST(student_number AS VARCHAR) AS coll
+  CAST(
+    student_number AS VARCHAR
+  ) AS coll
 FROM
   gabby.powerschool.cohort_identifiers_static
 WHERE
@@ -53,7 +69,9 @@ WHERE
 UNION ALL
 SELECT
   'T1' AS cola,
-  CAST(COUNT(student_number) + 2 AS VARCHAR) AS colb,
+  CAST(
+    COUNT(student_number) + 2 AS VARCHAR
+  ) AS colb,
   NULL AS colc,
   NULL AS cold,
   NULL AS cole,

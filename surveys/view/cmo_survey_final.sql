@@ -10,7 +10,11 @@ WITH
       sur.job_position AS primary_job,
       sur.location AS primary_site,
       CASE
-        WHEN MONTH(CAST(sur.date_submitted AS DATE)) < 6 THEN 'spring'
+        WHEN MONTH(
+          CAST(
+            sur.date_submitted AS DATE
+          )
+        ) < 6 THEN 'spring'
         ELSE 'fall'
       END AS term_name,
       gabby.utilities.DATE_TO_SY (sur.date_submitted) AS academic_year,

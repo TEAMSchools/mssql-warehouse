@@ -41,16 +41,22 @@ FROM
         ewa.employee_reference_code
       ) AS position_id,
       (
-        CAST(ewa.work_assignment_effective_start AS DATE)
+        CAST(
+          ewa.work_assignment_effective_start AS DATE
+        )
       ) AS work_assignment_effective_start,
       LEAD(
-        CAST(ewa.work_assignment_effective_start AS DATE),
+        CAST(
+          ewa.work_assignment_effective_start AS DATE
+        ),
         1
       ) OVER (
         PARTITION BY
           ewa.employee_reference_code
         ORDER BY
-          CAST(ewa.work_assignment_effective_start AS DATE)
+          CAST(
+            ewa.work_assignment_effective_start AS DATE
+          )
       ) AS work_assignment_effective_start_next
     FROM
       gabby.dayforce.employee_work_assignment AS ewa

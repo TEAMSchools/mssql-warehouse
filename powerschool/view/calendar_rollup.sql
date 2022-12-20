@@ -6,7 +6,9 @@ WITH
       u.schoolid,
       u.date_value,
       u.yearid,
-      CAST(UPPER(u.field) AS NVARCHAR(1)) AS track,
+      CAST(
+        UPPER(u.field) AS NVARCHAR(1)
+      ) AS track,
       u.[value]
     FROM
       (
@@ -36,7 +38,14 @@ WITH
           cd.insession = 1
           AND cd.membershipvalue > 0
       ) AS sub UNPIVOT (
-        [value] FOR field IN (sub.a, sub.b, sub.c, sub.d, sub.e, sub.f)
+        [value] FOR field IN (
+          sub.a,
+          sub.b,
+          sub.c,
+          sub.d,
+          sub.e,
+          sub.f
+        )
       ) AS u
   )
 SELECT

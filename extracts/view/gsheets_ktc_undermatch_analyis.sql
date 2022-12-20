@@ -28,7 +28,11 @@ WITH
   )
 SELECT
   c.sf_contact_id AS salesforce_contact_id,
-  CONCAT(c.first_name, ' ', c.last_name) AS student_name,
+  CONCAT(
+    c.first_name,
+    ' ',
+    c.last_name
+  ) AS student_name,
   c.ktc_cohort AS kipp_hs_class,
   c.kipp_region_name,
   c.currently_enrolled_school,
@@ -39,7 +43,6 @@ SELECT
   a.school_name,
   a.school_type,
   a.application_status,
-
   a.adjusted_6_year_minority_graduation_rate_c AS adjusted_6_year_minority_graduation_rate,
   a.school_description,
   a.record_type_name

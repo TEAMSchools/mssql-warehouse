@@ -13,7 +13,9 @@ SELECT
       END
     ) AS FLOAT
   ) AS lessons_passed,
-  CAST(COUNT(DISTINCT pl.lesson_id) AS FLOAT) AS total_lessons,
+  CAST(
+    COUNT(DISTINCT pl.lesson_id) AS FLOAT
+  ) AS total_lessons,
   ROUND(
     CAST(
       SUM(
@@ -22,7 +24,9 @@ SELECT
           ELSE 0
         END
       ) AS FLOAT
-    ) / CAST(COUNT(pl.lesson_id) AS FLOAT),
+    ) / CAST(
+      COUNT(pl.lesson_id) AS FLOAT
+    ),
     2
   ) * 100 AS pct_passed
 FROM
@@ -30,7 +34,9 @@ FROM
   INNER JOIN gabby.people.school_crosswalk AS sc ON pl.school = sc.site_name
   INNER JOIN gabby.deanslist.terms_clean_static AS t ON sc.dl_school_id = t.school_id
   AND (
-    CAST(pl.completion_date AS DATE) BETWEEN t.[start_date] AND t.end_date
+    CAST(
+      pl.completion_date AS DATE
+    ) BETWEEN t.[start_date] AND t.end_date
   )
   AND t.term_type = 'Biweeks'
 WHERE

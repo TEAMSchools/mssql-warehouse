@@ -18,9 +18,18 @@ SELECT
   /* unparsed JSON objects */
   u.[usertype],
   u.[preferences],
-  JSON_VALUE(u.[default_information], '$.school') AS default_school_id,
-  JSON_VALUE(u.[default_information], '$.gradeLevel') AS default_grade_level_id,
-  JSON_VALUE(u.[default_information], '$.course') AS default_course_id,
+  JSON_VALUE(
+    u.[default_information],
+    '$.school'
+  ) AS default_school_id,
+  JSON_VALUE(
+    u.[default_information],
+    '$.gradeLevel'
+  ) AS default_grade_level_id,
+  JSON_VALUE(
+    u.[default_information],
+    '$.course'
+  ) AS default_course_id,
   /* nested JSON arrays */
   u.[districts] AS districts_json,
   u.[additional_emails] AS additional_emails_json,

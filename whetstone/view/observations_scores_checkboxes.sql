@@ -7,8 +7,14 @@ SELECT
   sc.[value] AS checkbox_value
 FROM
   gabby.whetstone.observations_scores_static AS os
-  CROSS APPLY OPENJSON (os.score_checkboxes_json, '$')
+  CROSS APPLY OPENJSON (
+    os.score_checkboxes_json,
+    '$'
+  )
 WITH
-  ([label] NVARCHAR(256), [value] BIT) AS sc
+  (
+    [label] NVARCHAR(256),
+    [value] BIT
+  ) AS sc
 WHERE
   os.score_checkboxes_json != '[]'

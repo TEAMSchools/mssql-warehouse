@@ -32,7 +32,9 @@ SELECT
   cc.dateenrolled,
   cc.dateleft,
   cc.[db_name],
-  CAST(RIGHT(cc.studyear, 2) AS INT) + 1990 AS academic_year,
+  CAST(
+    RIGHT(cc.studyear, 2) AS INT
+  ) + 1990 AS academic_year,
   s.student_number,
   s.lastfirst,
   s.grade_level,

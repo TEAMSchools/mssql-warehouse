@@ -17,7 +17,9 @@ SELECT
   ar.d_percent_correct,
   ar.i_word_count,
   CAST(ar.rn_quiz AS INT) AS rn_quiz,
-  CAST(dts.alt_name AS VARCHAR(25)) AS term,
+  CAST(
+    dts.alt_name AS VARCHAR(25)
+  ) AS term,
   dts.is_curterm,
   enr.teacher_name,
   hr.teacher_name AS homeroom_teacher

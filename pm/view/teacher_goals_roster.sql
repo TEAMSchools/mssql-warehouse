@@ -19,8 +19,12 @@ WITH
       sub.department_name,
       sub.legal_entity_name,
       sub.work_assignment_effective_end,
-      gabby.utilities.DATE_TO_SY (sub.work_assignment_effective_start) AS start_academic_year,
-      gabby.utilities.DATE_TO_SY (sub.work_assignment_effective_end) AS end_academic_year
+      gabby.utilities.DATE_TO_SY (
+        sub.work_assignment_effective_start
+      ) AS start_academic_year,
+      gabby.utilities.DATE_TO_SY (
+        sub.work_assignment_effective_end
+      ) AS end_academic_year
     FROM
       (
         SELECT
@@ -38,7 +42,9 @@ WITH
             ) THEN 1
             ELSE 0
           END AS is_sped_teacher,
-          CAST(wa.effective_start_date AS DATE) AS work_assignment_effective_start,
+          CAST(
+            wa.effective_start_date AS DATE
+          ) AS work_assignment_effective_start,
           CAST(
             COALESCE(
               wa.effective_end_date,
@@ -66,7 +72,10 @@ WITH
             'Teacher, ESL',
             'Teacher ESL'
           )
-          AND wa.position_status NOT IN ('Terminated', 'Pre-Start')
+          AND wa.position_status NOT IN (
+            'Terminated',
+            'Pre-Start'
+          )
       ) AS sub
   ),
   current_work_assignment AS (

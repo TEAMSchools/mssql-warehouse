@@ -10,7 +10,11 @@ WITH
       subject_manager_name,
       respondent_names,
       VALUE,
-      CONCAT(question_code, '_', field) AS pivot_field
+      CONCAT(
+        question_code,
+        '_',
+        field
+      ) AS pivot_field
     FROM
       (
         SELECT
@@ -28,13 +32,25 @@ WITH
             ) AS NVARCHAR(MAX)
           ) AS n_responses,
           CAST(
-            ROUND(AVG(CAST(response_value AS FLOAT)), 1) AS NVARCHAR(MAX)
+            ROUND(
+              AVG(
+                CAST(
+                  response_value AS FLOAT
+                )
+              ),
+              1
+            ) AS NVARCHAR(MAX)
           ) AS avg_response_value_subject,
           CAST(
-            MAX(avg_response_value_location) AS NVARCHAR(MAX)
+            MAX(
+              avg_response_value_location
+            ) AS NVARCHAR(MAX)
           ) AS avg_response_value_location,
           CAST(
-            gabby.dbo.GROUP_CONCAT_D (DISTINCT respondent_name, CHAR(10)) AS NVARCHAR(MAX)
+            gabby.dbo.GROUP_CONCAT_D (
+              DISTINCT respondent_name,
+              CHAR(10)
+            ) AS NVARCHAR(MAX)
           ) AS respondent_names,
           CAST(
             gabby.dbo.GROUP_CONCAT_D (

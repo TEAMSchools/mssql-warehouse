@@ -4,10 +4,20 @@ SELECT
   student_number,
   academic_year,
   CAST(
-    ROUND((weighted_points / credit_hours), 2) AS DECIMAL(3, 2)
+    ROUND(
+      (
+        weighted_points / credit_hours
+      ),
+      2
+    ) AS DECIMAL(3, 2)
   ) AS [GPA_Y1_weighted],
   CAST(
-    ROUND((unweighted_points / credit_hours), 2) AS DECIMAL(3, 2)
+    ROUND(
+      (
+        unweighted_points / credit_hours
+      ),
+      2
+    ) AS DECIMAL(3, 2)
   ) AS [GPA_Y1_unweighted]
 FROM
   (
@@ -25,12 +35,20 @@ FROM
         SELECT
           sg.academic_year,
           s.student_number,
-          CAST(sg.potentialcrhrs AS DECIMAL(5, 2)) AS potentialcrhrs,
+          CAST(
+            sg.potentialcrhrs AS DECIMAL(5, 2)
+          ) AS potentialcrhrs,
           (
-            CAST(sg.potentialcrhrs AS DECIMAL(5, 2)) * CAST(sg.gpa_points AS DECIMAL(3, 2))
+            CAST(
+              sg.potentialcrhrs AS DECIMAL(5, 2)
+            ) * CAST(
+              sg.gpa_points AS DECIMAL(3, 2)
+            )
           ) AS weighted_points,
           (
-            CAST(sg.potentialcrhrs AS DECIMAL(5, 2)) * CAST(
+            CAST(
+              sg.potentialcrhrs AS DECIMAL(5, 2)
+            ) * CAST(
               scale_unweighted.grade_points AS DECIMAL(3, 2)
             )
           ) AS unweighted_points
@@ -42,7 +60,10 @@ FROM
           AND (
             sg.[percent] BETWEEN scale_unweighted.min_cutoffpercentage AND scale_unweighted.max_cutoffpercentage
           )
-          AND gabby.utilities.PS_UNWEIGHTED_GRADESCALE_NAME (sg.academic_year, sg.gradescale_name) = scale_unweighted.gradescale_name
+          AND gabby.utilities.PS_UNWEIGHTED_GRADESCALE_NAME (
+            sg.academic_year,
+            sg.gradescale_name
+          ) = scale_unweighted.gradescale_name
         WHERE
           sg.storecode = 'Y1'
           AND sg.excludefromgpa = 0

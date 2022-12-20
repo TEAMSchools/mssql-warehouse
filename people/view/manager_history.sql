@@ -9,10 +9,16 @@ WITH
       mh.file_number,
       mh.reports_to_associate_id,
       CASE
-        WHEN CAST(mh.reports_to_effective_date AS DATE) > '2021-01-01' THEN CAST(mh.reports_to_effective_date AS DATE)
+        WHEN CAST(
+          mh.reports_to_effective_date AS DATE
+        ) > '2021-01-01' THEN CAST(
+          mh.reports_to_effective_date AS DATE
+        )
         ELSE '2021-01-01'
       END AS reports_to_effective_date,
-      CAST(mh.reports_to_effective_end_date AS DATE) AS reports_to_effective_end_date,
+      CAST(
+        mh.reports_to_effective_end_date AS DATE
+      ) AS reports_to_effective_end_date,
       sre.employee_number,
       srm.employee_number AS reports_to_employee_number,
       'ADP' AS source_system
@@ -23,11 +29,17 @@ WITH
       INNER JOIN gabby.people.employee_numbers AS srm ON mh.reports_to_associate_id = srm.associate_id
       AND srm.is_active = 1
     WHERE
-      '2021-01-01' BETWEEN CAST(mh.reports_to_effective_date AS DATE) AND COALESCE(
-        CAST(mh.reports_to_effective_end_date AS DATE),
+      '2021-01-01' BETWEEN CAST(
+        mh.reports_to_effective_date AS DATE
+      ) AND COALESCE(
+        CAST(
+          mh.reports_to_effective_end_date AS DATE
+        ),
         CURRENT_TIMESTAMP
       )
-      OR CAST(mh.reports_to_effective_date AS DATE) > '2021-01-01'
+      OR CAST(
+        mh.reports_to_effective_date AS DATE
+      ) > '2021-01-01'
     UNION ALL
     /* DF */
     SELECT
@@ -50,7 +62,9 @@ WITH
       INNER JOIN gabby.people.employee_numbers AS srm ON dm.manager_employee_number = srm.employee_number
       AND srm.is_active = 1
     WHERE
-      CAST(dm.manager_effective_start AS DATE) <= '2020-12-31'
+      CAST(
+        dm.manager_effective_start AS DATE
+      ) <= '2020-12-31'
   )
 SELECT
   employee_number,
@@ -66,7 +80,10 @@ SELECT
     DATEADD(
       DAY,
       -1,
-      LEAD(reports_to_effective_date, 1) OVER (
+      LEAD(
+        reports_to_effective_date,
+        1
+      ) OVER (
         PARTITION BY
           position_id
         ORDER BY
@@ -79,7 +96,10 @@ SELECT
     DATEADD(
       DAY,
       -1,
-      LEAD(reports_to_effective_date, 1) OVER (
+      LEAD(
+        reports_to_effective_date,
+        1
+      ) OVER (
         PARTITION BY
           position_id
         ORDER BY
@@ -88,10 +108,25 @@ SELECT
     ),
     DATEFROMPARTS(
       CASE
-        WHEN DATEPART(YEAR, reports_to_effective_date) > gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-        AND DATEPART(MONTH, reports_to_effective_date) >= 7 THEN DATEPART(YEAR, reports_to_effective_date) + 1
-        WHEN DATEPART(YEAR, CURRENT_TIMESTAMP) = gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
-        AND DATEPART(MONTH, CURRENT_TIMESTAMP) >= 7 THEN gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 2
+        WHEN DATEPART(
+          YEAR,
+          reports_to_effective_date
+        ) > gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+        AND DATEPART(
+          MONTH,
+          reports_to_effective_date
+        ) >= 7 THEN DATEPART(
+          YEAR,
+          reports_to_effective_date
+        ) + 1
+        WHEN DATEPART(
+          YEAR,
+          CURRENT_TIMESTAMP
+        ) = gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
+        AND DATEPART(
+          MONTH,
+          CURRENT_TIMESTAMP
+        ) >= 7 THEN gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 2
         ELSE gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
       END,
       6,

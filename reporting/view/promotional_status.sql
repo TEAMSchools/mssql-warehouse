@@ -15,7 +15,12 @@ WITH
       SUM(
         CASE
           WHEN fg.y1_grade_letter IN ('F', 'F*')
-          AND c.credittype IN ('MATH', 'ENG', 'SCI', 'SOC') THEN 1
+          AND c.credittype IN (
+            'MATH',
+            'ENG',
+            'SCI',
+            'SOC'
+          ) THEN 1
           ELSE 0
         END
       ) AS n_failing_ms_core
@@ -65,12 +70,17 @@ WITH
           local_student_id,
           academic_year,
           term_administered,
-          AVG(performance_band_number) AS avg_performance_band_number
+          AVG(
+            performance_band_number
+          ) AS avg_performance_band_number
         FROM
           gabby.illuminate_dna_assessments.agg_student_responses_all
         WHERE
           module_type = 'QA'
-          AND subject_area IN ('Mathematics', 'Algebra I')
+          AND subject_area IN (
+            'Mathematics',
+            'Algebra I'
+          )
           AND response_type = 'O'
         GROUP BY
           local_student_id,
@@ -84,14 +94,20 @@ WITH
       mem.[db_name],
       mem.yearid,
       ROUND(
-        AVG(CAST(mem.attendancevalue AS FLOAT)) * 100,
+        AVG(
+          CAST(
+            mem.attendancevalue AS FLOAT
+          )
+        ) * 100,
         1
       ) AS ada_y1_running
     FROM
       gabby.powerschool.ps_adaadm_daily_ctod AS mem
     WHERE
       mem.membershipvalue > 0
-      AND mem.calendardate <= CAST(CURRENT_TIMESTAMP AS DATE)
+      AND mem.calendardate <= CAST(
+        CURRENT_TIMESTAMP AS DATE
+      )
     GROUP BY
       mem.studentid,
       mem.[db_name],
@@ -176,8 +192,15 @@ FROM
       END AS promo_status_attendance,
       CASE
         WHEN sub.school_level IN ('HS', 'MS') THEN 'N/A'
-        WHEN sub.fp_goal_status IN ('Target', 'Above Target', 'Achieved Z') THEN 'On Track'
-        WHEN sub.fp_goal_status IN ('Below', 'Approaching') THEN 'Off Track'
+        WHEN sub.fp_goal_status IN (
+          'Target',
+          'Above Target',
+          'Achieved Z'
+        ) THEN 'On Track'
+        WHEN sub.fp_goal_status IN (
+          'Below',
+          'Approaching'
+        ) THEN 'Off Track'
         WHEN sub.fp_goal_status = 'Far Below' THEN 'At Risk'
         ELSE 'No Data'
       END AS promo_status_lit,
@@ -229,7 +252,13 @@ FROM
             ELSE f.n_failing
           END AS grades_y1_failing_projected,
           cr.earned_credits_cum_projected AS grades_y1_credits_projected,
-          ISNULL(cr.earned_credits_cum, 0) + ISNULL(enr.credit_hours_enrolled, 0) AS grades_y1_credits_enrolled,
+          ISNULL(
+            cr.earned_credits_cum,
+            0
+          ) + ISNULL(
+            enr.credit_hours_enrolled,
+            0
+          ) AS grades_y1_credits_enrolled,
           CASE
             WHEN co.grade_level = 9 THEN 25
             WHEN co.grade_level = 10 THEN 50

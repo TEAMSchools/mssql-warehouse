@@ -17,10 +17,16 @@ WITH
       wah.job_change_reason_description,
       wah.primary_position,
       CASE
-        WHEN CAST(wah.position_effective_date AS DATE) > '2021-01-01' THEN CAST(wah.position_effective_date AS DATE)
+        WHEN CAST(
+          wah.position_effective_date AS DATE
+        ) > '2021-01-01' THEN CAST(
+          wah.position_effective_date AS DATE
+        )
         ELSE '2021-01-01'
       END AS position_effective_date,
-      CAST(wah.position_effective_end_date AS DATE) AS position_effective_end_date,
+      CAST(
+        wah.position_effective_end_date AS DATE
+      ) AS position_effective_end_date,
       sr.employee_number,
       'ADP' AS source_system
     FROM
@@ -28,11 +34,17 @@ WITH
       INNER JOIN gabby.people.employee_numbers AS sr ON wah.associate_id = sr.associate_id
       AND sr.is_active = 1
     WHERE
-      '2021-01-01' BETWEEN CAST(wah.position_effective_date AS DATE) AND COALESCE(
-        CAST(wah.position_effective_end_date AS DATE),
+      '2021-01-01' BETWEEN CAST(
+        wah.position_effective_date AS DATE
+      ) AND COALESCE(
+        CAST(
+          wah.position_effective_end_date AS DATE
+        ),
         CURRENT_TIMESTAMP
       )
-      OR CAST(wah.position_effective_date AS DATE) > '2021-01-01'
+      OR CAST(
+        wah.position_effective_date AS DATE
+      ) > '2021-01-01'
     UNION ALL
     /* DF */
     SELECT
@@ -83,7 +95,10 @@ SELECT
     DATEADD(
       DAY,
       -1,
-      LEAD(position_effective_date, 1) OVER (
+      LEAD(
+        position_effective_date,
+        1
+      ) OVER (
         PARTITION BY
           position_id
         ORDER BY
@@ -96,7 +111,10 @@ SELECT
     DATEADD(
       DAY,
       -1,
-      LEAD(position_effective_date, 1) OVER (
+      LEAD(
+        position_effective_date,
+        1
+      ) OVER (
         PARTITION BY
           position_id
         ORDER BY
@@ -105,10 +123,25 @@ SELECT
     ),
     DATEFROMPARTS(
       CASE
-        WHEN DATEPART(YEAR, position_effective_date) > gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-        AND DATEPART(MONTH, position_effective_date) >= 7 THEN DATEPART(YEAR, position_effective_date) + 1
-        WHEN DATEPART(YEAR, CURRENT_TIMESTAMP) = gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
-        AND DATEPART(MONTH, CURRENT_TIMESTAMP) >= 7 THEN gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 2
+        WHEN DATEPART(
+          YEAR,
+          position_effective_date
+        ) > gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+        AND DATEPART(
+          MONTH,
+          position_effective_date
+        ) >= 7 THEN DATEPART(
+          YEAR,
+          position_effective_date
+        ) + 1
+        WHEN DATEPART(
+          YEAR,
+          CURRENT_TIMESTAMP
+        ) = gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
+        AND DATEPART(
+          MONTH,
+          CURRENT_TIMESTAMP
+        ) >= 7 THEN gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 2
         ELSE gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
       END,
       6,

@@ -20,7 +20,11 @@ SELECT
 FROM
   gabby.utilities.all_tables_columns AS atc
   CROSS APPLY [sys].[dm_sql_referencing_entities] (
-    CONCAT(atc.[schema_name], '.', atc.[table_name]),
+    CONCAT(
+      atc.[schema_name],
+      '.',
+      atc.[table_name]
+    ),
     'OBJECT'
   ) sre
 WHERE

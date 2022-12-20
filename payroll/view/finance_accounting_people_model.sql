@@ -5,7 +5,9 @@ WITH
     SELECT
       n AS academic_year,
       CASE
-        WHEN n = gabby.utilities.GLOBAL_ACADEMIC_YEAR () THEN CAST(CURRENT_TIMESTAMP AS DATE)
+        WHEN n = gabby.utilities.GLOBAL_ACADEMIC_YEAR () THEN CAST(
+          CURRENT_TIMESTAMP AS DATE
+        )
         ELSE DATEFROMPARTS((n + 1), 4, 30)
       END AS effective_date
     FROM
@@ -19,7 +21,9 @@ WITH
     SELECT
       ae.employee_number,
       ae.academic_year,
-      SUM(ae.ay_additional_earnings_amount) AS additional_earnings_summed
+      SUM(
+        ae.ay_additional_earnings_amount
+      ) AS additional_earnings_summed
     FROM
       gabby.payroll.additional_annual_earnings_report AS ae
     GROUP BY
@@ -99,7 +103,9 @@ FROM
     1,
     COALESCE(
       cw.termination_date,
-      CAST(CURRENT_TIMESTAMP AS DATE)
+      CAST(
+        CURRENT_TIMESTAMP AS DATE
+      )
     )
   ) > y.effective_date
   INNER JOIN gabby.people.years_experience AS ye ON cw.df_employee_number = ye.employee_number
@@ -110,7 +116,11 @@ FROM
   AND tg.rn_year_score = 1
   LEFT JOIN gabby.people.employment_history_static AS ly ON cw.df_employee_number = ly.employee_number
   AND (
-    DATEADD(YEAR, -1, y.effective_date) BETWEEN ly.effective_start_date AND ly.effective_end_date
+    DATEADD(
+      YEAR,
+      -1,
+      y.effective_date
+    ) BETWEEN ly.effective_start_date AND ly.effective_end_date
   )
   LEFT JOIN gabby.people.employment_history_static AS ehs ON cw.df_employee_number = ehs.employee_number
   AND (

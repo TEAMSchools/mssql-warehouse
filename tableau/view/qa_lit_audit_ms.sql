@@ -8,7 +8,10 @@ WITH
       fp.academic_year AS assessment_academic_year,
       fp.test_round AS assessment_test_round,
       CASE
-        WHEN fp.[status] IN ('Did Not Achieve', 'DNA - Hard') THEN 'Did Not Achieve'
+        WHEN fp.[status] IN (
+          'Did Not Achieve',
+          'DNA - Hard'
+        ) THEN 'Did Not Achieve'
         ELSE fp.[status]
       END AS benchmark_level,
       fp.test_date AS assessment_date,
@@ -100,8 +103,14 @@ WITH
         ins.assessment_test_round,
         hard.assessment_test_round
       ) AS instructional_test_round,
-      COALESCE(ins.assessment_date, hard.assessment_date) AS instructional_assessment_date,
-      COALESCE(ins.text_level, hard.text_level) AS instructional_level,
+      COALESCE(
+        ins.assessment_date,
+        hard.assessment_date
+      ) AS instructional_assessment_date,
+      COALESCE(
+        ins.text_level,
+        hard.text_level
+      ) AS instructional_level,
       COALESCE(ins.genre, hard.genre) AS instructional_genre
     FROM
       gabby.powerschool.cohort_identifiers_static AS co
@@ -238,7 +247,11 @@ WITH
         WHEN s.independent_level = 'Z' THEN NULL /* Achieved Z */
         WHEN s.entrydate >= s.test_round_start_date THEN 'New to KIPP NJ'
         WHEN s.instructional_assessment_date IS NULL THEN 'No Instructional Level'
-        WHEN s.goal_status IN ('Far Below', 'Below', 'Approaching') THEN s.goal_status
+        WHEN s.goal_status IN (
+          'Far Below',
+          'Below',
+          'Approaching'
+        ) THEN s.goal_status
       END AS audit_reason
     FROM
       scaffold AS s
@@ -274,7 +287,11 @@ WITH
         WHEN s.independent_level = 'Z' THEN NULL /* Achieved Z */
         WHEN s.entrydate >= s.test_round_start_date THEN 'New to KIPP NJ'
         WHEN s.instructional_assessment_date IS NULL THEN 'No Instructional Level'
-        WHEN s.goal_status IN ('Far Below', 'Below', 'Approaching') THEN s.goal_status
+        WHEN s.goal_status IN (
+          'Far Below',
+          'Below',
+          'Approaching'
+        ) THEN s.goal_status
       END AS audit_reason
     FROM
       scaffold AS s
@@ -343,7 +360,11 @@ SELECT
     WHEN al.audit_reason IS NOT NULL THEN 1
     ELSE 0
   END AS audit_status,
-  COALESCE(ins.unique_id, hard.unique_id, z.unique_id) AS verify_unique_id
+  COALESCE(
+    ins.unique_id,
+    hard.unique_id,
+    z.unique_id
+  ) AS verify_unique_id
 FROM
   audits_long AS al
   LEFT JOIN fp_long AS ins ON al.student_number = ins.student_identifier

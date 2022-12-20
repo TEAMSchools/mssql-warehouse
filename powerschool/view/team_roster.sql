@@ -15,8 +15,14 @@ FROM
       enr.schoolid,
       (
         CASE
-          WHEN gabby.utilities.STRIP_CHARACTERS (enr.section_number, '0-9') = '' THEN enr.teacher_name
-          ELSE gabby.utilities.STRIP_CHARACTERS (enr.section_number, '0-9')
+          WHEN gabby.utilities.STRIP_CHARACTERS (
+            enr.section_number,
+            '0-9'
+          ) = '' THEN enr.teacher_name
+          ELSE gabby.utilities.STRIP_CHARACTERS (
+            enr.section_number,
+            '0-9'
+          )
         END
         COLLATE LATIN1_GENERAL_BIN
       ) AS team,

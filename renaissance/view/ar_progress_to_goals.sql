@@ -32,7 +32,9 @@ WITH
       ) AS mastery_fiction,
       ROUND(
         (
-          SUM(questions_correct_nf) / SUM(questions_presented_nf)
+          SUM(questions_correct_nf) / SUM(
+            questions_presented_nf
+          )
         ) * 100,
         0
       ) AS mastery_nonfiction,
@@ -47,14 +49,24 @@ WITH
         SELECT
           co.student_number,
           co.academic_year,
-          CAST(rt.time_per_name AS VARCHAR(5)) AS reporting_term,
+          CAST(
+            rt.time_per_name AS VARCHAR(5)
+          ) AS reporting_term,
           rt.[start_date],
           rt.end_date,
           CAST(
-            DATEDIFF(DAY, rt.[start_date], CURRENT_TIMESTAMP) AS FLOAT
+            DATEDIFF(
+              DAY,
+              rt.[start_date],
+              CURRENT_TIMESTAMP
+            ) AS FLOAT
           ) AS n_days_elapsed,
           CAST(
-            DATEDIFF(DAY, rt.[start_date], rt.end_date) AS FLOAT
+            DATEDIFF(
+              DAY,
+              rt.[start_date],
+              rt.end_date
+            ) AS FLOAT
           ) AS n_days_term,
           arsp.dt_taken,
           CASE
@@ -159,10 +171,14 @@ SELECT
       OR goals.words_goal IS NULL
     ) THEN NULL
     /* after term */
-    WHEN CAST(CURRENT_TIMESTAMP AS DATE) > pr.end_date THEN goals.words_goal
+    WHEN CAST(
+      CURRENT_TIMESTAMP AS DATE
+    ) > pr.end_date THEN goals.words_goal
     /* during term */
     ELSE ROUND(
-      (pr.n_days_elapsed / pr.n_days_term) * goals.words_goal,
+      (
+        pr.n_days_elapsed / pr.n_days_term
+      ) * goals.words_goal,
       0
     )
   END AS ontrack_words,
@@ -174,15 +190,21 @@ SELECT
     ) THEN NULL
     WHEN pr.words >= goals.words_goal THEN 'Met Goal'
     /* after term */
-    WHEN CAST(CURRENT_TIMESTAMP AS DATE) > pr.end_date
+    WHEN CAST(
+      CURRENT_TIMESTAMP AS DATE
+    ) > pr.end_date
     AND pr.words < goals.words_goal THEN 'Missed Goal'
     WHEN pr.words >= ROUND(
-      (pr.n_days_elapsed / pr.n_days_term) * goals.words_goal,
+      (
+        pr.n_days_elapsed / pr.n_days_term
+      ) * goals.words_goal,
       0
     ) THEN 'On Track'
     /* during term */
     WHEN pr.words < ROUND(
-      (pr.n_days_elapsed / pr.n_days_term) * goals.words_goal,
+      (
+        pr.n_days_elapsed / pr.n_days_term
+      ) * goals.words_goal,
       0
     ) THEN 'Off Track'
   END AS stu_status_words,
@@ -196,11 +218,15 @@ SELECT
         OR goals.words_goal IS NULL
       ) THEN NULL
       WHEN pr.words >= ROUND(
-        (pr.n_days_elapsed / pr.n_days_term) * goals.words_goal,
+        (
+          pr.n_days_elapsed / pr.n_days_term
+        ) * goals.words_goal,
         0
       ) THEN NULL
       ELSE ROUND(
-        (pr.n_days_elapsed / pr.n_days_term) * goals.words_goal,
+        (
+          pr.n_days_elapsed / pr.n_days_term
+        ) * goals.words_goal,
         0
       ) - pr.words
     END

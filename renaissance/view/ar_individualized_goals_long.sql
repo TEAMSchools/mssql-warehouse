@@ -3,7 +3,11 @@ CREATE OR ALTER VIEW
 SELECT
   student_number,
   CAST(
-    REPLACE(reporting_term, 'q_', 'AR') AS NVARCHAR(4)
+    REPLACE(
+      reporting_term,
+      'q_',
+      'AR'
+    ) AS NVARCHAR(4)
   ) AS reporting_term,
   CAST(adjusted_goal AS INT) AS adjusted_goal
 FROM

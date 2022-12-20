@@ -85,7 +85,10 @@ SELECT
     AND sub.pct_met_goal <= ml.level_2 THEN 4
     ELSE NULL
   END AS subdomain_score,
-  ROUND(ml.[absolute] - sub.pct_met_goal, 2) AS diff_from_absolute
+  ROUND(
+    ml.[absolute] - sub.pct_met_goal,
+    2
+  ) AS diff_from_absolute
 FROM
   (
     SELECT
@@ -93,7 +96,12 @@ FROM
       sub.academic_year,
       sub.schoolid,
       sub.grade_band,
-      ROUND(AVG(CAST(sub.met_goal AS FLOAT)), 2) AS pct_met_goal,
+      ROUND(
+        AVG(
+          CAST(sub.met_goal AS FLOAT)
+        ),
+        2
+      ) AS pct_met_goal,
       ROUND(
         AVG(
           CASE
@@ -135,7 +143,9 @@ FROM
         SELECT
           ats.academic_year,
           ats.schoolid,
-          CAST(ats.grade_level AS NVARCHAR(2)) AS grade_band,
+          CAST(
+            ats.grade_level AS NVARCHAR(2)
+          ) AS grade_band,
           ats.met_goal,
           co.iep_status,
           co.gender
@@ -159,11 +169,20 @@ FROM
       sub.academic_year,
       sub.schoolid,
       sub.grade_band,
-      ROUND(AVG(CAST(sub.pct_met_goal AS FLOAT)), 2) AS pct_met_goal,
+      ROUND(
+        AVG(
+          CAST(
+            sub.pct_met_goal AS FLOAT
+          )
+        ),
+        2
+      ) AS pct_met_goal,
       ROUND(
         AVG(
           CASE
-            WHEN sub.iep_status = 'SPED' THEN CAST(sub.pct_met_goal AS FLOAT)
+            WHEN sub.iep_status = 'SPED' THEN CAST(
+              sub.pct_met_goal AS FLOAT
+            )
             ELSE NULL
           END
         ),
@@ -172,7 +191,9 @@ FROM
       ROUND(
         AVG(
           CASE
-            WHEN sub.iep_status != 'SPED' THEN CAST(sub.pct_met_goal AS FLOAT)
+            WHEN sub.iep_status != 'SPED' THEN CAST(
+              sub.pct_met_goal AS FLOAT
+            )
             ELSE NULL
           END
         ),
@@ -181,7 +202,9 @@ FROM
       ROUND(
         AVG(
           CASE
-            WHEN sub.gender = 'F' THEN CAST(sub.pct_met_goal AS FLOAT)
+            WHEN sub.gender = 'F' THEN CAST(
+              sub.pct_met_goal AS FLOAT
+            )
             ELSE NULL
           END
         ),
@@ -190,7 +213,9 @@ FROM
       ROUND(
         AVG(
           CASE
-            WHEN sub.gender = 'M' THEN CAST(sub.pct_met_goal AS FLOAT)
+            WHEN sub.gender = 'M' THEN CAST(
+              sub.pct_met_goal AS FLOAT
+            )
             ELSE NULL
           END
         ),
@@ -230,11 +255,20 @@ FROM
       sub.academic_year,
       sub.schoolid,
       sub.grade_band,
-      ROUND(AVG(CAST(sub.is_typ_growth AS FLOAT)), 2) AS pct_met_goal,
+      ROUND(
+        AVG(
+          CAST(
+            sub.is_typ_growth AS FLOAT
+          )
+        ),
+        2
+      ) AS pct_met_goal,
       ROUND(
         AVG(
           CASE
-            WHEN sub.iep_status = 'SPED' THEN CAST(sub.is_typ_growth AS FLOAT)
+            WHEN sub.iep_status = 'SPED' THEN CAST(
+              sub.is_typ_growth AS FLOAT
+            )
             ELSE NULL
           END
         ),
@@ -243,7 +277,9 @@ FROM
       ROUND(
         AVG(
           CASE
-            WHEN sub.iep_status != 'SPED' THEN CAST(sub.is_typ_growth AS FLOAT)
+            WHEN sub.iep_status != 'SPED' THEN CAST(
+              sub.is_typ_growth AS FLOAT
+            )
             ELSE NULL
           END
         ),
@@ -252,7 +288,9 @@ FROM
       ROUND(
         AVG(
           CASE
-            WHEN sub.gender = 'F' THEN CAST(sub.is_typ_growth AS FLOAT)
+            WHEN sub.gender = 'F' THEN CAST(
+              sub.is_typ_growth AS FLOAT
+            )
             ELSE NULL
           END
         ),
@@ -261,7 +299,9 @@ FROM
       ROUND(
         AVG(
           CASE
-            WHEN sub.gender = 'M' THEN CAST(sub.is_typ_growth AS FLOAT)
+            WHEN sub.gender = 'M' THEN CAST(
+              sub.is_typ_growth AS FLOAT
+            )
             ELSE NULL
           END
         ),
@@ -280,11 +320,20 @@ FROM
       sub.academic_year,
       sub.schoolid,
       sub.grade_band,
-      ROUND(AVG(CAST(sub.is_str_growth AS FLOAT)), 2) AS pct_met_goal,
+      ROUND(
+        AVG(
+          CAST(
+            sub.is_str_growth AS FLOAT
+          )
+        ),
+        2
+      ) AS pct_met_goal,
       ROUND(
         AVG(
           CASE
-            WHEN sub.iep_status = 'SPED' THEN CAST(sub.is_str_growth AS FLOAT)
+            WHEN sub.iep_status = 'SPED' THEN CAST(
+              sub.is_str_growth AS FLOAT
+            )
             ELSE NULL
           END
         ),
@@ -293,7 +342,9 @@ FROM
       ROUND(
         AVG(
           CASE
-            WHEN sub.iep_status != 'SPED' THEN CAST(sub.is_str_growth AS FLOAT)
+            WHEN sub.iep_status != 'SPED' THEN CAST(
+              sub.is_str_growth AS FLOAT
+            )
             ELSE NULL
           END
         ),
@@ -302,7 +353,9 @@ FROM
       ROUND(
         AVG(
           CASE
-            WHEN sub.gender = 'F' THEN CAST(sub.is_str_growth AS FLOAT)
+            WHEN sub.gender = 'F' THEN CAST(
+              sub.is_str_growth AS FLOAT
+            )
             ELSE NULL
           END
         ),
@@ -311,7 +364,9 @@ FROM
       ROUND(
         AVG(
           CASE
-            WHEN sub.gender = 'M' THEN CAST(sub.is_str_growth AS FLOAT)
+            WHEN sub.gender = 'M' THEN CAST(
+              sub.is_str_growth AS FLOAT
+            )
             ELSE NULL
           END
         ),
@@ -329,11 +384,20 @@ FROM
       sub.academic_year,
       sub.schoolid,
       sub.grade_band,
-      ROUND(AVG(CAST(sub.is_on_grade AS FLOAT)), 2) AS pct_met_goal,
+      ROUND(
+        AVG(
+          CAST(
+            sub.is_on_grade AS FLOAT
+          )
+        ),
+        2
+      ) AS pct_met_goal,
       ROUND(
         AVG(
           CASE
-            WHEN sub.iep_status = 'SPED' THEN CAST(sub.is_on_grade AS FLOAT)
+            WHEN sub.iep_status = 'SPED' THEN CAST(
+              sub.is_on_grade AS FLOAT
+            )
             ELSE NULL
           END
         ),
@@ -342,7 +406,9 @@ FROM
       ROUND(
         AVG(
           CASE
-            WHEN sub.iep_status != 'SPED' THEN CAST(sub.is_on_grade AS FLOAT)
+            WHEN sub.iep_status != 'SPED' THEN CAST(
+              sub.is_on_grade AS FLOAT
+            )
             ELSE NULL
           END
         ),
@@ -351,7 +417,9 @@ FROM
       ROUND(
         AVG(
           CASE
-            WHEN sub.gender = 'F' THEN CAST(sub.is_on_grade AS FLOAT)
+            WHEN sub.gender = 'F' THEN CAST(
+              sub.is_on_grade AS FLOAT
+            )
             ELSE NULL
           END
         ),
@@ -360,7 +428,9 @@ FROM
       ROUND(
         AVG(
           CASE
-            WHEN sub.gender = 'M' THEN CAST(sub.is_on_grade AS FLOAT)
+            WHEN sub.gender = 'M' THEN CAST(
+              sub.is_on_grade AS FLOAT
+            )
             ELSE NULL
           END
         ),
@@ -373,11 +443,16 @@ FROM
           co.schoolid,
           co.iep_status,
           co.gender,
-          CAST(co.grade_level AS NVARCHAR(2)) AS grade_band,
+          CAST(
+            co.grade_level AS NVARCHAR(2)
+          ) AS grade_band,
           di.diagnostic_overall_relative_placement_most_recent_,
           LOWER(LEFT(di.[subject], 4)) AS iready_subject,
           CASE
-            WHEN di.diagnostic_overall_relative_placement_most_recent_ IN ('On Level', 'Above Level') THEN 1
+            WHEN di.diagnostic_overall_relative_placement_most_recent_ IN (
+              'On Level',
+              'Above Level'
+            ) THEN 1
             ELSE 0
           END AS is_on_grade
         FROM
@@ -401,11 +476,20 @@ FROM
       co.academic_year,
       co.schoolid,
       'ALL' AS grade_band,
-      ROUND(AVG(CAST(mem.attendancevalue AS FLOAT)), 3) AS pct_met_goal,
+      ROUND(
+        AVG(
+          CAST(
+            mem.attendancevalue AS FLOAT
+          )
+        ),
+        3
+      ) AS pct_met_goal,
       ROUND(
         AVG(
           CASE
-            WHEN co.iep_status = 'SPED' THEN CAST(mem.attendancevalue AS FLOAT)
+            WHEN co.iep_status = 'SPED' THEN CAST(
+              mem.attendancevalue AS FLOAT
+            )
             ELSE NULL
           END
         ),
@@ -414,7 +498,9 @@ FROM
       ROUND(
         AVG(
           CASE
-            WHEN co.iep_status != 'SPED' THEN CAST(mem.attendancevalue AS FLOAT)
+            WHEN co.iep_status != 'SPED' THEN CAST(
+              mem.attendancevalue AS FLOAT
+            )
             ELSE NULL
           END
         ),
@@ -423,7 +509,9 @@ FROM
       ROUND(
         AVG(
           CASE
-            WHEN co.gender = 'F' THEN CAST(mem.attendancevalue AS FLOAT)
+            WHEN co.gender = 'F' THEN CAST(
+              mem.attendancevalue AS FLOAT
+            )
             ELSE NULL
           END
         ),
@@ -432,7 +520,9 @@ FROM
       ROUND(
         AVG(
           CASE
-            WHEN co.gender = 'M' THEN CAST(mem.attendancevalue AS FLOAT)
+            WHEN co.gender = 'M' THEN CAST(
+              mem.attendancevalue AS FLOAT
+            )
             ELSE NULL
           END
         ),
@@ -449,7 +539,9 @@ FROM
       mem.membershipvalue = 1
       AND mem.calendardate <= CURRENT_TIMESTAMP
       AND mem.yearid >= (
-        (gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 3) - 1990
+        (
+          gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 3
+        ) - 1990
       )
     GROUP BY
       co.academic_year,
@@ -460,11 +552,20 @@ FROM
       sub.academic_year,
       sub.schoolid,
       sub.grade_band,
-      ROUND(AVG(CAST(sub.is_suspended AS FLOAT)), 2) AS pct_met_goal,
+      ROUND(
+        AVG(
+          CAST(
+            sub.is_suspended AS FLOAT
+          )
+        ),
+        2
+      ) AS pct_met_goal,
       ROUND(
         AVG(
           CASE
-            WHEN sub.iep_status = 'SPED' THEN CAST(sub.is_suspended AS FLOAT)
+            WHEN sub.iep_status = 'SPED' THEN CAST(
+              sub.is_suspended AS FLOAT
+            )
             ELSE NULL
           END
         ),
@@ -473,7 +574,9 @@ FROM
       ROUND(
         AVG(
           CASE
-            WHEN sub.iep_status != 'SPED' THEN CAST(sub.is_suspended AS FLOAT)
+            WHEN sub.iep_status != 'SPED' THEN CAST(
+              sub.is_suspended AS FLOAT
+            )
             ELSE NULL
           END
         ),
@@ -482,7 +585,9 @@ FROM
       ROUND(
         AVG(
           CASE
-            WHEN sub.gender = 'F' THEN CAST(sub.is_suspended AS FLOAT)
+            WHEN sub.gender = 'F' THEN CAST(
+              sub.is_suspended AS FLOAT
+            )
             ELSE NULL
           END
         ),
@@ -491,7 +596,9 @@ FROM
       ROUND(
         AVG(
           CASE
-            WHEN sub.gender = 'M' THEN CAST(sub.is_suspended AS FLOAT)
+            WHEN sub.gender = 'M' THEN CAST(
+              sub.is_suspended AS FLOAT
+            )
             ELSE NULL
           END
         ),
@@ -531,12 +638,23 @@ FROM
       'act' AS subdomain,
       co.academic_year,
       co.schoolid,
-      CAST(co.grade_level AS NVARCHAR(2)) AS grade_band,
-      ROUND(AVG(CAST(act.is_act_16 AS FLOAT)), 2) AS pct_met_goal,
+      CAST(
+        co.grade_level AS NVARCHAR(2)
+      ) AS grade_band,
+      ROUND(
+        AVG(
+          CAST(
+            act.is_act_16 AS FLOAT
+          )
+        ),
+        2
+      ) AS pct_met_goal,
       ROUND(
         AVG(
           CASE
-            WHEN co.iep_status = 'SPED' THEN CAST(act.is_act_16 AS FLOAT)
+            WHEN co.iep_status = 'SPED' THEN CAST(
+              act.is_act_16 AS FLOAT
+            )
             ELSE NULL
           END
         ),
@@ -545,7 +663,9 @@ FROM
       ROUND(
         AVG(
           CASE
-            WHEN co.iep_status != 'SPED' THEN CAST(act.is_act_16 AS FLOAT)
+            WHEN co.iep_status != 'SPED' THEN CAST(
+              act.is_act_16 AS FLOAT
+            )
             ELSE NULL
           END
         ),
@@ -554,7 +674,9 @@ FROM
       ROUND(
         AVG(
           CASE
-            WHEN co.gender = 'F' THEN CAST(act.is_act_16 AS FLOAT)
+            WHEN co.gender = 'F' THEN CAST(
+              act.is_act_16 AS FLOAT
+            )
             ELSE NULL
           END
         ),
@@ -563,7 +685,9 @@ FROM
       ROUND(
         AVG(
           CASE
-            WHEN co.gender = 'M' THEN CAST(act.is_act_16 AS FLOAT)
+            WHEN co.gender = 'M' THEN CAST(
+              act.is_act_16 AS FLOAT
+            )
             ELSE NULL
           END
         ),
@@ -588,14 +712,23 @@ FROM
       sub.schoolid,
       sub.grade_band,
       ROUND(
-        1 - ROUND(AVG(CAST(sub.is_enrolled_next AS FLOAT)), 2),
+        1 - ROUND(
+          AVG(
+            CAST(
+              sub.is_enrolled_next AS FLOAT
+            )
+          ),
+          2
+        ),
         2
       ) AS pct_met_goal,
       ROUND(
         1 - ROUND(
           AVG(
             CASE
-              WHEN sub.iep_status = 'SPED' THEN CAST(sub.is_enrolled_next AS FLOAT)
+              WHEN sub.iep_status = 'SPED' THEN CAST(
+                sub.is_enrolled_next AS FLOAT
+              )
               ELSE NULL
             END
           ),
@@ -607,7 +740,9 @@ FROM
         1 - ROUND(
           AVG(
             CASE
-              WHEN sub.iep_status != 'SPED' THEN CAST(sub.is_enrolled_next AS FLOAT)
+              WHEN sub.iep_status != 'SPED' THEN CAST(
+                sub.is_enrolled_next AS FLOAT
+              )
               ELSE NULL
             END
           ),
@@ -619,7 +754,9 @@ FROM
         1 - ROUND(
           AVG(
             CASE
-              WHEN sub.gender = 'F' THEN CAST(sub.is_enrolled_next AS FLOAT)
+              WHEN sub.gender = 'F' THEN CAST(
+                sub.is_enrolled_next AS FLOAT
+              )
               ELSE NULL
             END
           ),
@@ -631,7 +768,9 @@ FROM
         1 - ROUND(
           AVG(
             CASE
-              WHEN sub.gender = 'M' THEN CAST(sub.is_enrolled_next AS FLOAT)
+              WHEN sub.gender = 'M' THEN CAST(
+                sub.is_enrolled_next AS FLOAT
+              )
               ELSE NULL
             END
           ),
@@ -649,7 +788,11 @@ FROM
           CASE
             WHEN co.exitcode = 'G1' THEN NULL
             WHEN co.exitcode IS NULL THEN NULL
-            ELSE LEAD(co.is_enrolled_oct01, 1, 0) OVER (
+            ELSE LEAD(
+              co.is_enrolled_oct01,
+              1,
+              0
+            ) OVER (
               PARTITION BY
                 co.student_number
               ORDER BY
@@ -674,7 +817,14 @@ FROM
       sub.academic_year,
       sub.schoolid,
       'ALL' AS grade_band,
-      ROUND(AVG(CAST(sub.avg_response AS FLOAT)), 2) AS pct_met_goal,
+      ROUND(
+        AVG(
+          CAST(
+            sub.avg_response AS FLOAT
+          )
+        ),
+        2
+      ) AS pct_met_goal,
       NULL AS pct_met_iep,
       NULL AS pct_met_no_iep,
       NULL AS pct_met_f,
@@ -685,7 +835,14 @@ FROM
           cm.campaign_academic_year AS academic_year,
           cm.respondent_df_employee_number,
           CASE
-            WHEN ROUND(AVG(CAST(cm.answer_value AS FLOAT)), 2) >= 4 THEN 1
+            WHEN ROUND(
+              AVG(
+                CAST(
+                  cm.answer_value AS FLOAT
+                )
+              ),
+              2
+            ) >= 4 THEN 1
             ELSE 0
           END AS avg_response,
           sc.ps_school_id AS schoolid
@@ -713,7 +870,9 @@ FROM
       cw.ps_school_id,
       'ALL' AS grade_band,
       ROUND(
-        1 - SUM(sa.is_attrition) / CAST(SUM(sa.is_denominator) AS FLOAT),
+        1 - SUM(sa.is_attrition) / CAST(
+          SUM(sa.is_denominator) AS FLOAT
+        ),
         2
       ) AS pct_met_goal,
       NULL AS pct_met_iep,
@@ -727,7 +886,9 @@ FROM
     WHERE
       sa.is_denominator != 0
       AND sa.primary_job != 'Intern'
-      AND sa.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 3)
+      AND sa.academic_year >= (
+        gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 3
+      )
     GROUP BY
       sa.academic_year,
       cw.ps_school_id
@@ -738,7 +899,9 @@ FROM
       cw.ps_school_id,
       'ALL' AS grade_band,
       ROUND(
-        1 - SUM(sa.is_attrition) / CAST(SUM(sa.is_denominator) AS FLOAT),
+        1 - SUM(sa.is_attrition) / CAST(
+          SUM(sa.is_denominator) AS FLOAT
+        ),
         2
       ) AS pct_met_goal,
       NULL AS pct_met_iep,
@@ -763,7 +926,9 @@ FROM
         'Temporary Teacher'
       )
       AND sa.is_denominator != 0
-      AND sa.academic_year >= (gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 3)
+      AND sa.academic_year >= (
+        gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 3
+      )
     GROUP BY
       sa.academic_year,
       cw.ps_school_id
@@ -790,7 +955,11 @@ FROM
       gabby.pm.teacher_goals_lockbox_wide AS lb
       INNER JOIN gabby.people.employment_history_static AS eh ON lb.df_employee_number = eh.employee_number
       AND (
-        DATEFROMPARTS(lb.academic_year + 1, 4, 30) BETWEEN eh.effective_start_date AND eh.effective_end_date
+        DATEFROMPARTS(
+          lb.academic_year + 1,
+          4,
+          30
+        ) BETWEEN eh.effective_start_date AND eh.effective_end_date
       )
       AND eh.primary_position = 'Yes'
       INNER JOIN gabby.people.school_crosswalk AS cw ON eh.[location] = cw.site_name
@@ -808,7 +977,12 @@ FROM
       sub.academic_year,
       sub.schoolid,
       'ALL' AS grade_band,
-      ROUND(AVG(CAST(sub.met_goal AS FLOAT)), 2) AS pct_met_goal,
+      ROUND(
+        AVG(
+          CAST(sub.met_goal AS FLOAT)
+        ),
+        2
+      ) AS pct_met_goal,
       ROUND(
         AVG(
           CASE
@@ -856,7 +1030,11 @@ FROM
           gender,
           'ALL' AS grade_band,
           CASE
-            WHEN AVG(CAST(sub.response_value AS FLOAT)) >= 3.00 THEN 1
+            WHEN AVG(
+              CAST(
+                sub.response_value AS FLOAT
+              )
+            ) >= 3.00 THEN 1
             ELSE 0
           END AS met_goal
         FROM
@@ -961,12 +1139,23 @@ FROM
       'state_asmt' + '_' + sub.[subject] AS subdomain,
       sub.academic_year,
       sub.schoolid,
-      CAST(sub.grade_band AS NVARCHAR) AS grade_band,
-      ROUND(AVG(CAST(sub.is_proficient AS FLOAT)), 2) AS pct_met_goal,
+      CAST(
+        sub.grade_band AS NVARCHAR
+      ) AS grade_band,
+      ROUND(
+        AVG(
+          CAST(
+            sub.is_proficient AS FLOAT
+          )
+        ),
+        2
+      ) AS pct_met_goal,
       ROUND(
         AVG(
           CASE
-            WHEN sub.iep_status = 'SPED' THEN CAST(sub.is_proficient AS FLOAT)
+            WHEN sub.iep_status = 'SPED' THEN CAST(
+              sub.is_proficient AS FLOAT
+            )
             ELSE NULL
           END
         ),
@@ -975,7 +1164,9 @@ FROM
       ROUND(
         AVG(
           CASE
-            WHEN sub.iep_status != 'SPED' THEN CAST(sub.is_proficient AS FLOAT)
+            WHEN sub.iep_status != 'SPED' THEN CAST(
+              sub.is_proficient AS FLOAT
+            )
             ELSE NULL
           END
         ),
@@ -984,7 +1175,9 @@ FROM
       ROUND(
         AVG(
           CASE
-            WHEN sub.gender = 'F' THEN CAST(sub.is_proficient AS FLOAT)
+            WHEN sub.gender = 'F' THEN CAST(
+              sub.is_proficient AS FLOAT
+            )
             ELSE NULL
           END
         ),
@@ -993,7 +1186,9 @@ FROM
       ROUND(
         AVG(
           CASE
-            WHEN sub.gender = 'M' THEN CAST(sub.is_proficient AS FLOAT)
+            WHEN sub.gender = 'M' THEN CAST(
+              sub.is_proficient AS FLOAT
+            )
             ELSE NULL
           END
         ),
@@ -1008,7 +1203,10 @@ FROM
           co.iep_status,
           co.gender,
           CASE
-            WHEN nj.[subject] IN ('Mathematics', 'Algebra I') THEN 'math'
+            WHEN nj.[subject] IN (
+              'Mathematics',
+              'Algebra I'
+            ) THEN 'math'
             WHEN nj.[subject] LIKE 'English Language%' THEN 'ela'
             ELSE LOWER(nj.[subject])
           END AS [subject],
@@ -1026,7 +1224,9 @@ FROM
           AND nj.academic_year = co.academic_year
           AND nj.[db_name] = co.[db_name]
           AND co.rn_year = 1
-          AND (co.grade_level BETWEEN 3 AND 8)
+          AND (
+            co.grade_level BETWEEN 3 AND 8
+          )
           AND co.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 3
         UNION ALL
         SELECT
@@ -1053,7 +1253,9 @@ FROM
           AND LEFT(fl.school_year, 2) = RIGHT(co.academic_year, 2)
           AND co.rn_year = 1
           AND co.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 3
-          AND (co.grade_level BETWEEN 3 AND 8)
+          AND (
+            co.grade_level BETWEEN 3 AND 8
+          )
       ) AS sub
     GROUP BY
       sub.academic_year,

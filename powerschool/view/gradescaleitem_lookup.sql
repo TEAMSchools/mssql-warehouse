@@ -6,7 +6,11 @@ SELECT
   items.[name] AS letter_grade,
   items.grade_points,
   items.cutoffpercentage AS min_cutoffpercentage,
-  LEAD(items.cutoffpercentage, 1, 1000) OVER (
+  LEAD(
+    items.cutoffpercentage,
+    1,
+    1000
+  ) OVER (
     PARTITION BY
       parent.id
     ORDER BY

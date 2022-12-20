@@ -25,7 +25,9 @@ SELECT
   'Phone' AS contact_category,
   pncs.code AS contact_type,
   '(' + LEFT(pn.phonenumber, 3) + ') ' + SUBSTRING(pn.phonenumber, 4, 3) + '-' + SUBSTRING(pn.phonenumber, 7, 4) + CASE
-    WHEN pn.phonenumberext != '' THEN ' x' + CAST(pn.phonenumberext AS NVARCHAR(16))
+    WHEN pn.phonenumberext != '' THEN ' x' + CAST(
+      pn.phonenumberext AS NVARCHAR(16)
+    )
     ELSE ''
   END AS contact
 FROM

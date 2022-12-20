@@ -87,7 +87,9 @@ FROM
       sub.abs_termid,
       sub.sections_dcid,
       sub.courses_gradescaleid,
-      SUM(sub.section_enroll_status) OVER (
+      SUM(
+        sub.section_enroll_status
+      ) OVER (
         PARTITION BY
           sub.studentid,
           sub.course_number
@@ -135,7 +137,9 @@ FROM
             WHEN sec.credittype = 'RHET' THEN 'Language Usage'
             WHEN sec.credittype = 'SCI' THEN 'Science - General Science'
           END AS map_measurementscale,
-          CAST(sj.illuminate_subject AS VARCHAR(125)) AS illuminate_subject
+          CAST(
+            sj.illuminate_subject AS VARCHAR(125)
+          ) AS illuminate_subject
         FROM
           powerschool.cc
           INNER JOIN powerschool.students AS s ON cc.studentid = s.id

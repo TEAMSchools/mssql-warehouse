@@ -28,7 +28,10 @@ WITH
     FROM
       gabby.powerschool.cc
       INNER JOIN gabby.powerschool.cohort_static AS co ON cc.studentid = co.studentid
-      AND cc.studyear = CONCAT(co.studentid, co.yearid)
+      AND cc.studyear = CONCAT(
+        co.studentid,
+        co.yearid
+      )
       AND cc.[db_name] = co.[db_name]
       AND co.rn_year = 1
       INNER JOIN gabby.assessments.normed_subjects AS ns ON (
@@ -59,5 +62,7 @@ FROM
   )
 WHERE
   a.is_normed_scope = 1
-  AND a.administered_at <= CAST(CURRENT_TIMESTAMP AS DATE)
+  AND a.administered_at <= CAST(
+    CURRENT_TIMESTAMP AS DATE
+  )
   AND enr.student_number IS NULL

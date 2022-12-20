@@ -56,24 +56,54 @@ FROM
     SELECT
       sub.sectionsdcid,
       sub.gradeformulasetid,
-      CAST(gfs.[name] AS VARCHAR(125)) AS grade_formula_set_name,
-      CAST(t.abbreviation AS VARCHAR(5)) AS term_abbreviation,
-      CAST(tb.storecode AS VARCHAR(5)) AS storecode,
+      CAST(
+        gfs.[name] AS VARCHAR(125)
+      ) AS grade_formula_set_name,
+      CAST(
+        t.abbreviation AS VARCHAR(5)
+      ) AS term_abbreviation,
+      CAST(
+        tb.storecode AS VARCHAR(5)
+      ) AS storecode,
       tb.date_1 AS term_start_date,
       tb.date_2 AS term_end_date,
-      CAST(gct.gradecalculationtypeid AS INT) AS gradecalculationtypeid,
-      CAST(gct.[type] AS VARCHAR(25)) AS grade_calculation_type,
-      CAST(gcfw.gradecalcformulaweightid AS INT) AS gradecalcformulaweightid,
-      CAST(gcfw.[type] AS VARCHAR(25)) AS grade_calc_formula_weight_type,
-      CAST(gcfw.teachercategoryid AS INT) AS teachercategoryid,
-      CAST(gcfw.districtteachercategoryid AS INT) AS districtteachercategoryid,
+      CAST(
+        gct.gradecalculationtypeid AS INT
+      ) AS gradecalculationtypeid,
+      CAST(
+        gct.[type] AS VARCHAR(25)
+      ) AS grade_calculation_type,
+      CAST(
+        gcfw.gradecalcformulaweightid AS INT
+      ) AS gradecalcformulaweightid,
+      CAST(
+        gcfw.[type] AS VARCHAR(25)
+      ) AS grade_calc_formula_weight_type,
+      CAST(
+        gcfw.teachercategoryid AS INT
+      ) AS teachercategoryid,
+      CAST(
+        gcfw.districtteachercategoryid AS INT
+      ) AS districtteachercategoryid,
       gcfw.[weight],
-      CAST(tc.[name] AS VARCHAR(125)) AS tc_name,
-      CAST(tc.defaultscoretype AS INT) AS tc_defaultscoretype,
-      CAST(tc.isinfinalgrades AS INT) AS tc_isinfinalgrades,
-      CAST(dtc.[name] AS VARCHAR(125)) AS dtc_name,
-      CAST(dtc.defaultscoretype AS INT) AS dtc_defaultscoretype,
-      CAST(dtc.isinfinalgrades AS INT) AS dtc_isinfinalgrades
+      CAST(
+        tc.[name] AS VARCHAR(125)
+      ) AS tc_name,
+      CAST(
+        tc.defaultscoretype AS INT
+      ) AS tc_defaultscoretype,
+      CAST(
+        tc.isinfinalgrades AS INT
+      ) AS tc_isinfinalgrades,
+      CAST(
+        dtc.[name] AS VARCHAR(125)
+      ) AS dtc_name,
+      CAST(
+        dtc.defaultscoretype AS INT
+      ) AS dtc_defaultscoretype,
+      CAST(
+        dtc.isinfinalgrades AS INT
+      ) AS dtc_isinfinalgrades
     FROM
       (
         SELECT

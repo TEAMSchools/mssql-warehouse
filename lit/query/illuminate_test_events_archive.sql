@@ -6,14 +6,30 @@ SELECT
   sub.[Test Administered By] AS test_administered_by,
   sub.[Academic Year] AS academic_year,
   sub.[Test Round] AS test_round,
-  CAST(sub.[Date Administered] AS DATE) AS date_administered,
-  CAST(sub.[About the Text] AS FLOAT) AS about_the_text,
-  CAST(sub.[Beyond the Text] AS FLOAT) AS beyond_the_text,
-  CAST(sub.[Within the Text] AS FLOAT) AS within_the_text,
-  CAST(sub.[Accuracy] AS FLOAT) AS accuracy,
-  CAST(sub.[Fluency] AS FLOAT) AS fluency,
-  CAST(sub.[Reading Rate (wpm)] AS FLOAT) AS reading_rate_wpm,
-  CAST(sub.[Rate Proficiency] AS NVARCHAR) AS rate_proficiency,
+  CAST(
+    sub.[Date Administered] AS DATE
+  ) AS date_administered,
+  CAST(
+    sub.[About the Text] AS FLOAT
+  ) AS about_the_text,
+  CAST(
+    sub.[Beyond the Text] AS FLOAT
+  ) AS beyond_the_text,
+  CAST(
+    sub.[Within the Text] AS FLOAT
+  ) AS within_the_text,
+  CAST(
+    sub.[Accuracy] AS FLOAT
+  ) AS accuracy,
+  CAST(
+    sub.[Fluency] AS FLOAT
+  ) AS fluency,
+  CAST(
+    sub.[Reading Rate (wpm)] AS FLOAT
+  ) AS reading_rate_wpm,
+  CAST(
+    sub.[Rate Proficiency] AS NVARCHAR
+  ) AS rate_proficiency,
   CONCAT(
     'IL',
     sub.repository_id,
@@ -37,7 +53,12 @@ FROM
       repository_row_id,
       student_id,
       field_about_the_text AS [About the Text],
-      LEFT(CAST(field_academic_year AS INT), 4) AS [Academic Year],
+      LEFT(
+        CAST(
+          field_academic_year AS INT
+        ),
+        4
+      ) AS [Academic Year],
       field_accuracy_1 AS [Accuracy],
       field_level_tested AS [Achieved Independent Level],
       field_beyond_the_text AS [Beyond the Text],
@@ -109,7 +130,11 @@ WHERE
     sub.repository_row_id
   ) IN (
     SELECT
-      CONCAT(repository_id, '_', repository_row_id)
+      CONCAT(
+        repository_id,
+        '_',
+        repository_row_id
+      )
     FROM
       gabby.illuminate_dna_repositories.repository_row_ids
   )

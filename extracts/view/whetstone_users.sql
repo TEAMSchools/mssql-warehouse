@@ -2,13 +2,11 @@ CREATE OR ALTER VIEW
   extracts.whetstone_users AS
 WITH
   managers AS (
-
     SELECT DISTINCT
       manager_df_employee_number
     FROM
       gabby.people.staff_crosswalk_static
     UNION
-
     SELECT
       s.df_employee_number
     FROM
@@ -24,8 +22,14 @@ WITH
   existing_roles AS (
     SELECT
       sub.[user_id],
-      gabby.dbo.GROUP_CONCAT_S (DISTINCT '"' + sub.role_id + '"', 1) AS role_ids,
-      gabby.dbo.GROUP_CONCAT_S (DISTINCT '"' + sub.role_name + '"', 1) AS role_names
+      gabby.dbo.GROUP_CONCAT_S (
+        DISTINCT '"' + sub.role_id + '"',
+        1
+      ) AS role_ids,
+      gabby.dbo.GROUP_CONCAT_S (
+        DISTINCT '"' + sub.role_name + '"',
+        1
+      ) AS role_names
     FROM
       (
         SELECT
@@ -97,7 +101,9 @@ SELECT
   og.role_names AS group_type_ws,
   CASE
     WHEN er.role_names LIKE '%Admin%'
-    AND CAST(CURRENT_TIMESTAMP AS DATE) != DATEFROMPARTS(
+    AND CAST(
+      CURRENT_TIMESTAMP AS DATE
+    ) != DATEFROMPARTS(
       gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
       8,
       1
@@ -108,7 +114,9 @@ SELECT
   END AS group_type,
   CASE
     WHEN er.role_names LIKE '%Admin%'
-    AND CAST(CURRENT_TIMESTAMP AS DATE) != DATEFROMPARTS(
+    AND CAST(
+      CURRENT_TIMESTAMP AS DATE
+    ) != DATEFROMPARTS(
       gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
       8,
       1
@@ -118,7 +126,9 @@ SELECT
   END AS group_name,
   '[' + CASE
   /*removing last year roles every August*/
-    WHEN CAST(CURRENT_TIMESTAMP AS DATE) = DATEFROMPARTS(
+    WHEN CAST(
+      CURRENT_TIMESTAMP AS DATE
+    ) = DATEFROMPARTS(
       gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
       8,
       1
@@ -126,13 +136,18 @@ SELECT
     /* no roles = add assigned role */
     WHEN er.role_names IS NULL THEN '"' + sub.role_name + '"'
     /* assigned role already exists = use existing */
-    WHEN CHARINDEX(sub.role_name, er.role_names) > 0 THEN er.role_names
+    WHEN CHARINDEX(
+      sub.role_name,
+      er.role_names
+    ) > 0 THEN er.role_names
     /* add assigned role */
     ELSE '"' + sub.role_name + '",' + er.role_names
   END + ']' AS role_names,
   '[' + CASE
   /*removing last year roles every August*/
-    WHEN CAST(CURRENT_TIMESTAMP AS DATE) = DATEFROMPARTS(
+    WHEN CAST(
+      CURRENT_TIMESTAMP AS DATE
+    ) = DATEFROMPARTS(
       gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
       8,
       1
@@ -147,7 +162,9 @@ SELECT
 FROM
   (
     SELECT
-      CAST(scw.df_employee_number AS VARCHAR(25)) AS user_internal_id,
+      CAST(
+        scw.df_employee_number AS VARCHAR(25)
+      ) AS user_internal_id,
       CAST(
         scw.manager_df_employee_number AS VARCHAR(25)
       ) AS manager_internal_id,
@@ -165,7 +182,9 @@ FROM
       ) AS inactive,
       CASE
         WHEN scw.grades_taught = 0 THEN 'K'
-        ELSE CAST(scw.grades_taught AS VARCHAR)
+        ELSE CAST(
+          scw.grades_taught AS VARCHAR
+        )
       END AS grade_abbreviation,
       CASE
       /* network admins */
@@ -232,7 +251,10 @@ FROM
       LEFT JOIN managers AS m ON scw.df_employee_number = m.manager_df_employee_number
     WHERE
       scw.userprincipalname IS NOT NULL
-      AND COALESCE(scw.termination_date, CURRENT_TIMESTAMP) >= DATEFROMPARTS(
+      AND COALESCE(
+        scw.termination_date,
+        CURRENT_TIMESTAMP
+      ) >= DATEFROMPARTS(
         gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1,
         7,
         1

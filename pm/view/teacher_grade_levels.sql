@@ -15,7 +15,10 @@ WITH
       AND sec.[db_name] = st.[db_name]
       INNER JOIN gabby.powerschool.roledef AS rd ON st.roleid = rd.id
       AND st.[db_name] = rd.[db_name]
-      AND rd.[name] IN ('Lead Teacher', 'Co-teacher')
+      AND rd.[name] IN (
+        'Lead Teacher',
+        'Co-teacher'
+      )
       INNER JOIN gabby.powerschool.teachers_static AS t ON st.teacherid = t.id
       AND st.[db_name] = t.[db_name]
     WHERE
@@ -29,7 +32,9 @@ WITH
       st.teachernumber,
       enr.academic_year,
       co.grade_level AS student_grade_level,
-      COUNT(DISTINCT enr.sectionid) AS n_sections_gl,
+      COUNT(
+        DISTINCT enr.sectionid
+      ) AS n_sections_gl,
       COUNT(enr.student_number) AS n_students_gl
     FROM
       ps_section_teacher AS st
@@ -52,7 +57,9 @@ WITH
       sub.n_sections_gl,
       sub.n_students_gl,
       sub.n_students_total,
-      CAST(sub.n_students_gl AS FLOAT) / sub.n_students_total AS pct_students_gl
+      CAST(
+        sub.n_students_gl AS FLOAT
+      ) / sub.n_students_total AS pct_students_gl
     FROM
       (
         SELECT

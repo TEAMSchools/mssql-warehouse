@@ -54,7 +54,10 @@ WITH
         DATEADD(
           DAY,
           -1,
-          LEAD(d.effective_start_date, 1) OVER (
+          LEAD(
+            d.effective_start_date,
+            1
+          ) OVER (
             PARTITION BY
               d.position_id
             ORDER BY
@@ -66,10 +69,25 @@ WITH
         END /* close out DF records */,
         DATEFROMPARTS(
           CASE
-            WHEN DATEPART(YEAR, d.effective_start_date) > gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-            AND DATEPART(MONTH, d.effective_start_date) >= 7 THEN DATEPART(YEAR, d.effective_start_date) + 1
-            WHEN DATEPART(YEAR, CURRENT_TIMESTAMP) = gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
-            AND DATEPART(MONTH, CURRENT_TIMESTAMP) >= 7 THEN gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 2
+            WHEN DATEPART(
+              YEAR,
+              d.effective_start_date
+            ) > gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+            AND DATEPART(
+              MONTH,
+              d.effective_start_date
+            ) >= 7 THEN DATEPART(
+              YEAR,
+              d.effective_start_date
+            ) + 1
+            WHEN DATEPART(
+              YEAR,
+              CURRENT_TIMESTAMP
+            ) = gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
+            AND DATEPART(
+              MONTH,
+              CURRENT_TIMESTAMP
+            ) >= 7 THEN gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 2
             ELSE gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
           END,
           6,
@@ -83,14 +101,20 @@ WITH
     SELECT
       position_id,
       job_title_description,
-      MIN(position_effective_date) AS work_assignment_start_date,
+      MIN(
+        position_effective_date
+      ) AS work_assignment_start_date,
       CASE
-        WHEN MAX(position_effective_end_date_eoy) = DATEFROMPARTS(
+        WHEN MAX(
+          position_effective_end_date_eoy
+        ) = DATEFROMPARTS(
           gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1,
           6,
           30
         ) THEN NULL
-        ELSE MAX(position_effective_end_date_eoy)
+        ELSE MAX(
+          position_effective_end_date_eoy
+        )
       END AS work_assignment_end_date
     FROM
       gabby.people.work_assignment_history_static
@@ -107,7 +131,9 @@ SELECT
   r.effective_end_date,
   CASE
     WHEN (
-      CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN r.effective_start_date AND r.effective_end_date
+      CAST(
+        CURRENT_TIMESTAMP AS DATE
+      ) BETWEEN r.effective_start_date AND r.effective_end_date
     ) THEN 1
   END AS is_current_record,
   s.position_status,

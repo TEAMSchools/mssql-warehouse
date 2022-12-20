@@ -5,7 +5,14 @@ WITH
     SELECT
       mem.studentid,
       mem.[db_name],
-      ROUND(AVG(CAST(mem.attendancevalue AS FLOAT)), 3) AS ADA
+      ROUND(
+        AVG(
+          CAST(
+            mem.attendancevalue AS FLOAT
+          )
+        ),
+        3
+      ) AS ADA
     FROM
       gabby.powerschool.ps_adaadm_daily_ctod_current_static AS mem
     WHERE
@@ -72,7 +79,9 @@ SELECT
   gr.need_60 AS need_65,
   CASE
     WHEN (
-      CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN gr.termbin_start_date AND gr.termbin_end_date
+      CAST(
+        CURRENT_TIMESTAMP AS DATE
+      ) BETWEEN gr.termbin_start_date AND gr.termbin_end_date
     ) THEN 1
     ELSE 0
   END AS is_curterm,

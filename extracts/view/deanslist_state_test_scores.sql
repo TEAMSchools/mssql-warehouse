@@ -8,7 +8,11 @@ SELECT
   scale_score,
   proficiency_level,
   is_proficient,
-  CONCAT(academic_year, '-', (academic_year + 1)) AS academic_year,
+  CONCAT(
+    academic_year,
+    '-',
+    (academic_year + 1)
+  ) AS academic_year,
   ROW_NUMBER() OVER (
     PARTITION BY
       student_number,

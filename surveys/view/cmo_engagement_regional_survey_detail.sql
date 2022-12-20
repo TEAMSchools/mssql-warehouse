@@ -39,7 +39,13 @@ FROM
   LEFT JOIN gabby.people.employment_history_static AS w ON d.respondent_df_employee_number = w.employee_number
   AND d.date_submitted BETWEEN w.effective_start_date AND COALESCE(
     w.effective_end_date,
-    DATEFROMPARTS((d.campaign_academic_year + 1), 7, 1)
+    DATEFROMPARTS(
+      (
+        d.campaign_academic_year + 1
+      ),
+      7,
+      1
+    )
   )
   LEFT JOIN gabby.people.staff_roster AS s ON d.respondent_df_employee_number = s.employee_number
 WHERE

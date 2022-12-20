@@ -12,7 +12,14 @@ SELECT
   secondary_integration_id,
   grade_key,
   stored_grades,
-  CAST(JSON_VALUE([start_date], '$.date') AS DATE) AS [start_date],
-  CAST(JSON_VALUE(end_date, '$.date') AS DATE) AS end_date
+  CAST(
+    JSON_VALUE(
+      [start_date],
+      '$.date'
+    ) AS DATE
+  ) AS [start_date],
+  CAST(
+    JSON_VALUE(end_date, '$.date') AS DATE
+  ) AS end_date
 FROM
   deanslist.terms

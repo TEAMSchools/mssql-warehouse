@@ -15,7 +15,11 @@ SELECT
     WHEN grade_level = 99 THEN 14
     ELSE grade_level + 1
   END AS [10 Grade Level ID],
-  CONCAT(academic_year, '-', (academic_year + 1)) AS [11 Academic Year],
+  CONCAT(
+    academic_year,
+    '-',
+    (academic_year + 1)
+  ) AS [11 Academic Year],
   1 AS [12 Is Primary Ada],
   NULL AS [13 Attendance Program ID],
   NULL AS [14 Exit Code ID],

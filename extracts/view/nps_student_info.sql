@@ -5,9 +5,13 @@ SELECT
   co.state_studentnumber,
   CASE
     WHEN co.grade_level = 0 THEN 'K'
-    ELSE CAST(co.grade_level AS VARCHAR)
+    ELSE CAST(
+      co.grade_level AS VARCHAR
+    )
   END AS grade_level,
-  CAST(co.entrydate AS VARCHAR) AS entrydate,
+  CAST(
+    co.entrydate AS VARCHAR
+  ) AS entrydate,
   co.entrycode,
   co.exitcode,
   co.exitdate,

@@ -7,7 +7,11 @@ SELECT
   [label],
   label_number,
   is_mastery,
-  LEAD(minimum_value, 1, 1001) OVER (
+  LEAD(
+    minimum_value,
+    1,
+    1001
+  ) OVER (
     PARTITION BY
       performance_band_set_id
     ORDER BY
@@ -20,8 +24,12 @@ FROM
       pb.[label],
       pb.label_number,
       pb.is_mastery,
-      CAST(pbs.[description] AS VARCHAR(125)) AS [description],
-      CAST(pb.minimum_value AS FLOAT) AS minimum_value,
+      CAST(
+        pbs.[description] AS VARCHAR(125)
+      ) AS [description],
+      CAST(
+        pb.minimum_value AS FLOAT
+      ) AS minimum_value,
       ROW_NUMBER() OVER (
         PARTITION BY
           pbs.performance_band_set_id,

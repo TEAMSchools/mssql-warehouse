@@ -22,15 +22,28 @@ WITH
           gabby.parcc.external_proficiency_rates
         WHERE
           (
-            test_code IN ('ALG01', 'ALG02', 'GEO01')
+            test_code IN (
+              'ALG01',
+              'ALG02',
+              'GEO01'
+            )
             AND grade_level IS NULL
           )
           OR (
-            test_code NOT IN ('ALG01', 'ALG02', 'GEO01')
+            test_code NOT IN (
+              'ALG01',
+              'ALG02',
+              'GEO01'
+            )
             AND grade_level IS NOT NULL
           )
       ) AS sub PIVOT (
-        MAX(pct_proficient) FOR entity IN ([NJ], [NPS], [PARCC], [CPS])
+        MAX(pct_proficient) FOR entity IN (
+          [NJ],
+          [NPS],
+          [PARCC],
+          [CPS]
+        )
       ) AS p
   )
 SELECT
@@ -63,7 +76,10 @@ SELECT
 FROM
   gabby.powerschool.cohort_identifiers_static AS co
   INNER JOIN gabby.parcc.summative_record_file AS parcc ON co.student_number = parcc.local_student_identifier
-  AND co.academic_year = LEFT(parcc.assessment_year, 4)
+  AND co.academic_year = LEFT(
+    parcc.assessment_year,
+    4
+  )
   LEFT JOIN external_prof AS ext ON co.academic_year = ext.academic_year
   AND (
     parcc.test_code = ext.test_code
@@ -93,7 +109,10 @@ SELECT
   (
     CONCAT(
       LEFT(asa.subject, 3),
-      RIGHT(CONCAT('0', co.grade_level), 2)
+      RIGHT(
+        CONCAT('0', co.grade_level),
+        2
+      )
     )
     COLLATE LATIN1_GENERAL_BIN
   ) AS test_code,
@@ -123,7 +142,10 @@ FROM
   LEFT JOIN external_prof AS ext ON co.academic_year = ext.academic_year
   AND CONCAT(
     LEFT(asa.subject, 3),
-    RIGHT(CONCAT('0', co.grade_level), 2)
+    RIGHT(
+      CONCAT('0', co.grade_level),
+      2
+    )
   ) = ext.test_code
 WHERE
   co.rn_year = 1

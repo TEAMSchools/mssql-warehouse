@@ -25,7 +25,9 @@ WITH
       sub.grade_level,
       sub.[db_name],
       SUM(sub.target_enrollment) AS target_enrollment,
-      SUM(sub.target_enrollment_finance) AS target_enrollment_finance,
+      SUM(
+        sub.target_enrollment_finance
+      ) AS target_enrollment_finance,
       MAX(grade_band_ratio) AS grade_band_ratio,
       MAX(at_risk_and_lep_ratio) AS at_risk_and_lep_ratio,
       MAX(at_risk_only_ratio) AS at_risk_only_ratio,
@@ -76,7 +78,10 @@ WITH
             OR school_name = 'Out of District'
           )
           AND rn_year = 1
-          AND [db_name] IN ('kippnewark', 'kippmiami')
+          AND [db_name] IN (
+            'kippnewark',
+            'kippmiami'
+          )
       ) AS sub
     GROUP BY
       sub.academic_year,
@@ -154,13 +159,21 @@ SELECT
     ORDER BY
       co.academic_year ASC
   ) AS next_exitcomment,
-  LEAD(co.is_enrolled_oct01, 1, 0) OVER (
+  LEAD(
+    co.is_enrolled_oct01,
+    1,
+    0
+  ) OVER (
     PARTITION BY
       co.student_number
     ORDER BY
       co.academic_year
   ) AS is_enrolled_oct01_next,
-  LEAD(co.is_enrolled_oct15, 1, 0) OVER (
+  LEAD(
+    co.is_enrolled_oct15,
+    1,
+    0
+  ) OVER (
     PARTITION BY
       co.student_number
     ORDER BY
@@ -168,8 +181,14 @@ SELECT
   ) AS is_enrolled_oct15_next,
   cal.days_remaining,
   cal.days_total,
-  ISNULL(att_mem.n_attendance, 0) AS n_attendance,
-  ISNULL(att_mem.n_membership, 0) AS n_membership,
+  ISNULL(
+    att_mem.n_attendance,
+    0
+  ) AS n_attendance,
+  ISNULL(
+    att_mem.n_membership,
+    0
+  ) AS n_membership,
   nj.districtcoderesident,
   nj.referral_date,
   nj.parental_consent_eval_date,
@@ -178,17 +197,27 @@ SELECT
   nj.parent_consent_intial_iep_date,
   nj.annual_iep_review_meeting_date,
   nj.reevaluation_date,
-  CAST(nj.parent_consent_obtain_code AS VARCHAR(1)) AS parent_consent_obtain_code,
+  CAST(
+    nj.parent_consent_obtain_code AS VARCHAR(1)
+  ) AS parent_consent_obtain_code,
   CAST(
     nj.initial_process_delay_reason AS VARCHAR(5)
   ) AS initial_process_delay_reason,
   CAST(
     nj.special_education_placement AS VARCHAR(5)
   ) AS special_education_placement,
-  CAST(nj.time_in_regular_program AS VARCHAR(5)) AS time_in_regular_program,
-  CAST(nj.early_intervention_yn AS VARCHAR(1)) AS early_intervention_yn,
-  CAST(nj.determined_ineligible_yn AS VARCHAR(1)) AS determined_ineligible_yn,
-  CAST(nj.counseling_services_yn AS VARCHAR(1)) AS counseling_services_yn,
+  CAST(
+    nj.time_in_regular_program AS VARCHAR(5)
+  ) AS time_in_regular_program,
+  CAST(
+    nj.early_intervention_yn AS VARCHAR(1)
+  ) AS early_intervention_yn,
+  CAST(
+    nj.determined_ineligible_yn AS VARCHAR(1)
+  ) AS determined_ineligible_yn,
+  CAST(
+    nj.counseling_services_yn AS VARCHAR(1)
+  ) AS counseling_services_yn,
   CAST(
     nj.occupational_therapy_serv_yn AS VARCHAR(1)
   ) AS occupational_therapy_serv_yn,
@@ -198,7 +227,9 @@ SELECT
   CAST(
     nj.speech_lang_theapy_services_yn AS VARCHAR(1)
   ) AS speech_lang_theapy_services_yn,
-  CAST(nj.other_related_services_yn AS VARCHAR(1)) AS other_related_services_yn,
+  CAST(
+    nj.other_related_services_yn AS VARCHAR(1)
+  ) AS other_related_services_yn,
   t.target_enrollment,
   t.target_enrollment_finance,
   t.grade_band_ratio,

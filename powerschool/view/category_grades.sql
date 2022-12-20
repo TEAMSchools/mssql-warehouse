@@ -14,7 +14,9 @@ WITH
       sub.reporting_term,
       sub.termbin_start_date,
       sub.termbin_end_date,
-      AVG(sub.is_dropped_section) OVER (
+      AVG(
+        sub.is_dropped_section
+      ) OVER (
         PARTITION BY
           sub.yearid,
           sub.course_number,
@@ -37,7 +39,10 @@ WITH
           tb.date_2 AS termbin_end_date,
           LEFT(tb.storecode, 1) AS storecode_type,
           CAST(
-            CONCAT('RT', RIGHT(tb.storecode, 1)) AS NVARCHAR(8)
+            CONCAT(
+              'RT',
+              RIGHT(tb.storecode, 1)
+            ) AS NVARCHAR(8)
           ) AS reporting_term
         FROM
           powerschool.cc
@@ -98,7 +103,9 @@ FROM
       enr.is_dropped_course,
       CASE
         WHEN pgf.grade = '--' THEN NULL
-        ELSE CAST(pgf.[percent] AS DECIMAL(4, 0))
+        ELSE CAST(
+          pgf.[percent] AS DECIMAL(4, 0)
+        )
       END AS category_pct,
       CASE
         WHEN pgf.citizenship != '' THEN pgf.citizenship

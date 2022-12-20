@@ -5,19 +5,31 @@ WITH
     SELECT
       s.student_number,
       (
-        COALESCE(rv.doc_1, x.residency_proof_1)
+        COALESCE(
+          rv.doc_1,
+          x.residency_proof_1
+        )
         COLLATE LATIN1_GENERAL_BIN
       ) AS residency_proof_1,
       (
-        COALESCE(rv.doc_2, x.residency_proof_2)
+        COALESCE(
+          rv.doc_2,
+          x.residency_proof_2
+        )
         COLLATE LATIN1_GENERAL_BIN
       ) AS residency_proof_2,
       (
-        COALESCE(rv.doc_3, x.residency_proof_3)
+        COALESCE(
+          rv.doc_3,
+          x.residency_proof_3
+        )
         COLLATE LATIN1_GENERAL_BIN
       ) AS residency_proof_3,
       (
-        COALESCE(rv.age, x.birth_certificate_proof)
+        COALESCE(
+          rv.age,
+          x.birth_certificate_proof
+        )
         COLLATE LATIN1_GENERAL_BIN
       ) AS birth_certificate_proof,
       ROW_NUMBER() OVER (
@@ -48,11 +60,15 @@ WITH
       sub.entry_status,
       sub.registration_status,
       (
-        CAST(sub.lunch_app_status AS VARCHAR(500))
+        CAST(
+          sub.lunch_app_status AS VARCHAR(500)
+        )
         COLLATE LATIN1_GENERAL_BIN
       ) AS lunch_app_status,
       (
-        CAST(sub.lunch_balance AS VARCHAR(500))
+        CAST(
+          sub.lunch_balance AS VARCHAR(500)
+        )
         COLLATE LATIN1_GENERAL_BIN
       ) AS lunch_balance,
       (
@@ -68,23 +84,33 @@ WITH
         COLLATE LATIN1_GENERAL_BIN
       ) AS lep_registration_followup_required,
       (
-        CAST(sub.birth_certificate_proof AS VARCHAR(500))
+        CAST(
+          sub.birth_certificate_proof AS VARCHAR(500)
+        )
         COLLATE LATIN1_GENERAL_BIN
       ) AS birth_certificate_proof,
       (
-        CAST(sub.residency_proof_1 AS VARCHAR(500))
+        CAST(
+          sub.residency_proof_1 AS VARCHAR(500)
+        )
         COLLATE LATIN1_GENERAL_BIN
       ) AS residency_proof_1,
       (
-        CAST(sub.residency_proof_2 AS VARCHAR(500))
+        CAST(
+          sub.residency_proof_2 AS VARCHAR(500)
+        )
         COLLATE LATIN1_GENERAL_BIN
       ) AS residency_proof_2,
       (
-        CAST(sub.residency_proof_3 AS VARCHAR(500))
+        CAST(
+          sub.residency_proof_3 AS VARCHAR(500)
+        )
         COLLATE LATIN1_GENERAL_BIN
       ) AS residency_proof_3,
       (
-        CAST(sub.region + sub.city AS VARCHAR(500))
+        CAST(
+          sub.region + sub.city AS VARCHAR(500)
+        )
         COLLATE LATIN1_GENERAL_BIN
       ) AS region_city,
       (
@@ -140,12 +166,23 @@ WITH
             WHEN s.[db_name] = 'kippnewark' THEN 'TEAM'
             WHEN s.[db_name] = 'kippmiami' THEN 'KMS'
           END AS region,
-          COALESCE(co.reporting_schoolid, s.next_school) AS reporting_schoolid,
+          COALESCE(
+            co.reporting_schoolid,
+            s.next_school
+          ) AS reporting_schoolid,
           COALESCE(co.is_pathways, 0) AS is_pathways,
-          ISNULL(co.specialed_classification, '') AS specialed_classification,
+          ISNULL(
+            co.specialed_classification,
+            ''
+          ) AS specialed_classification,
           ISNULL(co.lep_status, '') AS lep_status,
-          ISNULL(co.lunch_app_status, '') AS lunch_app_status,
-          CAST(ISNULL(co.lunch_balance, 0) AS MONEY) AS lunch_balance,
+          ISNULL(
+            co.lunch_app_status,
+            ''
+          ) AS lunch_app_status,
+          CAST(
+            ISNULL(co.lunch_balance, 0) AS MONEY
+          ) AS lunch_balance,
           CASE
             WHEN s.enroll_status = -1 THEN 'Pre-Registered'
             WHEN COALESCE(co.year_in_network, 1) = 1 THEN 'New to KIPP NJ'
@@ -154,22 +191,40 @@ WITH
           END AS entry_status,
           suf.newark_enrollment_number,
           suf.registration_status,
-          ISNULL(uxs.iep_registration_followup, '') AS iep_registration_followup,
-          ISNULL(uxs.lep_registration_followup, '') AS lep_registration_followup,
-          ISNULL(rv.residency_proof_1, 'Missing') AS residency_proof_1,
+          ISNULL(
+            uxs.iep_registration_followup,
+            ''
+          ) AS iep_registration_followup,
+          ISNULL(
+            uxs.lep_registration_followup,
+            ''
+          ) AS lep_registration_followup,
+          ISNULL(
+            rv.residency_proof_1,
+            'Missing'
+          ) AS residency_proof_1,
           CASE
             WHEN (
               s.enroll_status = -1
               OR COALESCE(co.year_in_network, 1) = 1
-            ) THEN ISNULL(rv.residency_proof_2, 'Missing')
+            ) THEN ISNULL(
+              rv.residency_proof_2,
+              'Missing'
+            )
           END AS residency_proof_2,
           CASE
             WHEN (
               s.enroll_status = -1
               OR COALESCE(co.year_in_network, 1) = 1
-            ) THEN ISNULL(rv.residency_proof_3, 'Missing')
+            ) THEN ISNULL(
+              rv.residency_proof_3,
+              'Missing'
+            )
           END AS residency_proof_3,
-          ISNULL(rv.birth_certificate_proof, 'N') AS birth_certificate_proof,
+          ISNULL(
+            rv.birth_certificate_proof,
+            'N'
+          ) AS birth_certificate_proof,
           gabby.utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year
         FROM
           gabby.powerschool.students AS s
@@ -234,7 +289,11 @@ SELECT
   a.lep_registration_followup_complete,
   a.registration_status,
   CASE
-    WHEN a.region_city IN ('TEAMNewark', 'KCNACamden', 'KMSMiami') THEN 'Resident'
+    WHEN a.region_city IN (
+      'TEAMNewark',
+      'KCNACamden',
+      'KMSMiami'
+    ) THEN 'Resident'
     ELSE 'Non-Resident'
   END AS residency_status,
   u.field AS audit_field,
@@ -242,9 +301,17 @@ SELECT
   CASE
   /* 0 = FLAG || -1 = BAD || 1 = OK */
     WHEN u.field = 'region_city'
-    AND u.[value] NOT IN ('TEAMNewark', 'KCNACamden', 'KMSMiami') THEN 0
+    AND u.[value] NOT IN (
+      'TEAMNewark',
+      'KCNACamden',
+      'KMSMiami'
+    ) THEN 0
     WHEN u.field = 'region_city'
-    AND u.[value] IN ('TEAMNewark', 'KCNACamden', 'KMSMiami') THEN 1
+    AND u.[value] IN (
+      'TEAMNewark',
+      'KCNACamden',
+      'KMSMiami'
+    ) THEN 1
     WHEN u.field = 'iep_registration_followup_required'
     AND a.iep_registration_followup_complete = 'Y' THEN 1
     WHEN u.field = 'iep_registration_followup_required'

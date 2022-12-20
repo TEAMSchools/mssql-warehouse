@@ -8,4 +8,7 @@ FROM
   gabby.whetstone.users AS u
   CROSS APPLY OPENJSON (u.roles, '$')
 WITH
-  (_id NVARCHAR(32), [name] NVARCHAR(32)) AS r
+  (
+    _id NVARCHAR(32),
+    [name] NVARCHAR(32)
+  ) AS r

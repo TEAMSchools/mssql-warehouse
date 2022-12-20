@@ -11,7 +11,11 @@ SELECT
   c.call_topic AS [Comments],
   c.response AS [Next Steps],
   c.dlcall_log_id,
-  CONVERT(VARCHAR, c.call_date_time, 101) AS [Contact Date],
+  CONVERT(
+    VARCHAR,
+    c.call_date_time,
+    101
+  ) AS [Contact Date],
   CASE
     WHEN c.call_status = 'Completed' THEN 'Successful'
     ELSE 'Outreach'

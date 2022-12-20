@@ -19,8 +19,12 @@ SELECT
   uuid,
   state_id,
   alt_src_time,
-  CAST(first_login_date AS DATE) AS first_login_date,
-  CAST(last_login_date AS DATE) AS last_login_date,
+  CAST(
+    first_login_date AS DATE
+  ) AS first_login_date,
+  CAST(
+    last_login_date AS DATE
+  ) AS last_login_date,
   CASE
     WHEN ISNUMERIC(school_student_id) = 1 THEN school_student_id
     ELSE NULL
@@ -42,7 +46,9 @@ SELECT
     ELSE NULL
   END AS fluency_time_spent,
   CASE
-    WHEN ISNUMERIC(minutes_logged_last_week) = 1 THEN minutes_logged_last_week
+    WHEN ISNUMERIC(
+      minutes_logged_last_week
+    ) = 1 THEN minutes_logged_last_week
     ELSE NULL
   END AS minutes_logged_last_week,
   CASE
@@ -50,7 +56,11 @@ SELECT
     ELSE fluency_path
   END AS fluency_path,
   CAST(
-    REPLACE(RIGHT(_file, 14), '.csv', '') AS DATE
+    REPLACE(
+      RIGHT(_file, 14),
+      '.csv',
+      ''
+    ) AS DATE
   ) AS week_end_date,
   dt.time_per_name AS reporting_term,
   CAST(dt.start_date AS DATE) AS term_start_date,
@@ -58,10 +68,16 @@ SELECT
   CAST(
     DATEDIFF(
       DAY,
-      CAST(dt.start_date AS DATE AS FLOAT),
+      CAST(
+        dt.start_date AS DATE AS FLOAT
+      ),
       CASE
-        WHEN CAST(CURRENT_TIMESTAMP AS DATE) > CAST(dt.end_date AS DATE) THEN CAST(dt.end_date AS DATE)
-        ELSE CAST(CURRENT_TIMESTAMP AS DATE)
+        WHEN CAST(
+          CURRENT_TIMESTAMP AS DATE
+        ) > CAST(dt.end_date AS DATE) THEN CAST(dt.end_date AS DATE)
+        ELSE CAST(
+          CURRENT_TIMESTAMP AS DATE
+        )
       END
     )
   ) AS days_elapsed,
@@ -78,7 +94,13 @@ SELECT
       stm.start_year,
       stm.GCD
     ORDER BY
-      CAST(REPLACE(RIGHT(_file, 14), '.csv', '')) DESC AS DATE
+      CAST(
+        REPLACE(
+          RIGHT(_file, 14),
+          '.csv',
+          ''
+        )
+      ) DESC AS DATE
   ) AS rn_gcd
 FROM
   gabby.stmath.progress_completion_report AS stm

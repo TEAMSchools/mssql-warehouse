@@ -6,7 +6,9 @@ SELECT
   wa.assignment_id,
   wa.[name] AS assignment_name,
   wa.[type] AS assignment_type,
-  CAST(wa.created AS DATETIME2) AS assignment_date,
+  CAST(
+    wa.created AS DATETIME2
+  ) AS assignment_date,
   NULL AS assignment_status,
   NULL AS [exclude_from_bank],
   NULL AS [mastered_date],

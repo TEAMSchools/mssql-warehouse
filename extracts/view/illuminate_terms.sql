@@ -11,7 +11,11 @@ SELECT
     WHEN t.[name] LIKE '%Summer%' THEN 2
     ELSE 1
   END AS [07 Session Type ID],
-  CONCAT((t.yearid + 1990), '-', (t.yearid + 1991)) AS [08 Academic Year],
+  CONCAT(
+    (t.yearid + 1990),
+    '-',
+    (t.yearid + 1991)
+  ) AS [08 Academic Year],
   t.dcid AS [09 Local Term ID]
 FROM
   gabby.powerschool.terms AS t

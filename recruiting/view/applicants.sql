@@ -16,27 +16,45 @@ WITH
       pn.status_c AS [status],
       pn.replacement_or_new_position_c AS new_or_replacement,
       pn.job_posting_c AS job_posting,
-      LEN(pn.position_name_c) - LEN(REPLACE(pn.position_name_c, '_', '')) AS n,
+      LEN(pn.position_name_c) - LEN(
+        REPLACE(
+          pn.position_name_c,
+          '_',
+          ''
+        )
+      ) AS n,
       REPLACE(
         LEFT(
           pn.position_name_c,
-          LEN(pn.position_name_c) - CHARINDEX('_', REVERSE(pn.position_name_c))
+          LEN(pn.position_name_c) - CHARINDEX(
+            '_',
+            REVERSE(pn.position_name_c)
+          )
         ),
         '_',
         '.'
       ) AS position_name_splitter,
       CASE
-        WHEN CHARINDEX('_', pn.position_name_c) = 0 THEN NULL
+        WHEN CHARINDEX(
+          '_',
+          pn.position_name_c
+        ) = 0 THEN NULL
         WHEN LEN(
           RIGHT(
             pn.position_name_c,
-            CHARINDEX('_', REVERSE(pn.position_name_c)) - 1
+            CHARINDEX(
+              '_',
+              REVERSE(pn.position_name_c)
+            ) - 1
           )
         ) > 3 THEN NULL
         ELSE LEN(
           RIGHT(
             pn.position_name_c,
-            CHARINDEX('_', REVERSE(pn.position_name_c)) - 1
+            CHARINDEX(
+              '_',
+              REVERSE(pn.position_name_c)
+            ) - 1
           )
         )
       END AS position_count
@@ -93,16 +111,28 @@ SELECT
     a.in_progress_status_date_c
   ) AS submitted_date,
   LEFT(
-    RIGHT(a.resume_url_c, LEN(a.resume_url_c) -9),
+    RIGHT(
+      a.resume_url_c,
+      LEN(a.resume_url_c) -9
+    ),
     LEN(
-      RIGHT(a.resume_url_c, LEN(a.resume_url_c) -9)
+      RIGHT(
+        a.resume_url_c,
+        LEN(a.resume_url_c) -9
+      )
     ) -39
   ) AS resume_url,
   a.last_modified_date,
   j.position_number,
   j.position_name,
-  COALESCE(j.job_type, p.job_type_c) AS job_type,
-  COALESCE(j.sub_type, p.job_sub_type_c) AS sub_type,
+  COALESCE(
+    j.job_type,
+    p.job_type_c
+  ) AS job_type,
+  COALESCE(
+    j.sub_type,
+    p.job_sub_type_c
+  ) AS sub_type,
   j.[status],
   j.new_or_replacement,
   j.region,
@@ -113,24 +143,36 @@ SELECT
   COALESCE(
     CASE
       WHEN j.position_name_splitter IS NULL THEN NULL
-      WHEN j.n = 4 THEN PARSENAME(j.position_name_splitter, 4)
+      WHEN j.n = 4 THEN PARSENAME(
+        j.position_name_splitter,
+        4
+      )
       ELSE 'Invalid position_name Format'
     END,
     cr.[name]
   ) AS recruiter,
   CASE
     WHEN j.position_name_splitter IS NULL THEN NULL
-    WHEN j.n = 4 THEN PARSENAME(j.position_name_splitter, 3)
+    WHEN j.n = 4 THEN PARSENAME(
+      j.position_name_splitter,
+      3
+    )
     ELSE 'Invalid position_name Format'
   END AS [location],
   CASE
     WHEN j.position_name_splitter IS NULL THEN NULL
-    WHEN j.n = 4 THEN PARSENAME(j.position_name_splitter, 2)
+    WHEN j.n = 4 THEN PARSENAME(
+      j.position_name_splitter,
+      2
+    )
     ELSE 'Invalid position_name Format'
   END AS role_short,
   CASE
     WHEN j.position_name_splitter IS NULL THEN NULL
-    WHEN j.n = 4 THEN PARSENAME(j.position_name_splitter, 1)
+    WHEN j.n = 4 THEN PARSENAME(
+      j.position_name_splitter,
+      1
+    )
     ELSE 'Invalid position_name Format'
   END AS recruiring_year,
   p.[name] AS job_posting,
@@ -212,34 +254,52 @@ SELECT
   j.new_or_replacement,
   j.region,
   j.desired_start_date,
-  COALESCE(j.created_date, c.created_date) AS created_date,
+  COALESCE(
+    j.created_date,
+    c.created_date
+  ) AS created_date,
   j.date_filled,
   j.position_count,
   COALESCE(
     CASE
       WHEN j.position_name_splitter IS NULL THEN NULL
-      WHEN j.n = 4 THEN PARSENAME(j.position_name_splitter, 4)
+      WHEN j.n = 4 THEN PARSENAME(
+        j.position_name_splitter,
+        4
+      )
       ELSE 'Invalid position_name Format'
     END,
     c.cultivation_owner_c
   ) AS recruiter,
   CASE
     WHEN j.position_name_splitter IS NULL THEN NULL
-    WHEN j.n = 4 THEN PARSENAME(j.position_name_splitter, 3)
+    WHEN j.n = 4 THEN PARSENAME(
+      j.position_name_splitter,
+      3
+    )
     ELSE 'Invalid position_name Format'
   END AS location,
   CASE
     WHEN j.position_name_splitter IS NULL THEN NULL
-    WHEN j.n = 4 THEN PARSENAME(j.position_name_splitter, 2)
+    WHEN j.n = 4 THEN PARSENAME(
+      j.position_name_splitter,
+      2
+    )
     ELSE 'Invalid position_name Format'
   END AS role_short,
   CASE
     WHEN j.position_name_splitter IS NULL THEN NULL
-    WHEN j.n = 4 THEN PARSENAME(j.position_name_splitter, 1)
+    WHEN j.n = 4 THEN PARSENAME(
+      j.position_name_splitter,
+      1
+    )
     ELSE 'Invalid position_name Format'
   END AS recruiring_year,
   p.[name] AS job_posting,
-  COALESCE(p.city_c, c.cultivation_owner_c) AS city,
+  COALESCE(
+    p.city_c,
+    c.cultivation_owner_c
+  ) AS city,
   p.subject_area_c AS posting_subject_area,
   'culitvation' AS candidate_type,
   c.primary_interest_general_grade_level_c AS cult_grade_level_interest,

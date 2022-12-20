@@ -44,7 +44,11 @@ FROM
       p.[Excellent Teaching Rubric] AS etr_score,
       p.[Self & Others] AS so_score,
       COALESCE(
-        (p.[Excellent Teaching Rubric] * 0.8) + (p.[Self & Others] * 0.2),
+        (
+          p.[Excellent Teaching Rubric] * 0.8
+        ) + (
+          p.[Self & Others] * 0.2
+        ),
         p.[Self & Others],
         p.[Excellent Teaching Rubric]
       ) AS overall_score

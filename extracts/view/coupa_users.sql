@@ -62,13 +62,18 @@ WITH
       sr.position_status != 'Prestart'
       AND COALESCE(
         sr.termination_date,
-        CAST(CURRENT_TIMESTAMP AS DATE)
+        CAST(
+          CURRENT_TIMESTAMP AS DATE
+        )
       ) >= DATEFROMPARTS(
         gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1,
         7,
         1
       )
-      AND ISNULL(sr.worker_category, '') NOT IN ('Intern', 'Part Time')
+      AND ISNULL(
+        sr.worker_category,
+        ''
+      ) NOT IN ('Intern', 'Part Time')
       AND ISNULL(sr.wfmgr_pay_rule, '') != 'PT Hourly'
     UNION ALL
     /* new users */
@@ -91,8 +96,14 @@ WITH
       gabby.people.staff_roster AS sr
       LEFT JOIN gabby.coupa.[user] AS cu ON sr.employee_number = cu.employee_number
     WHERE
-      sr.position_status NOT IN ('Prestart', 'Terminated')
-      AND ISNULL(sr.worker_category, '') NOT IN ('Intern', 'Part Time')
+      sr.position_status NOT IN (
+        'Prestart',
+        'Terminated'
+      )
+      AND ISNULL(
+        sr.worker_category,
+        ''
+      ) NOT IN ('Intern', 'Part Time')
       AND ISNULL(sr.wfmgr_pay_rule, '') != 'PT Hourly'
       AND cu.employee_number IS NULL
   )
@@ -144,11 +155,16 @@ SELECT
       WHEN sub.position_status = 'Terminated' THEN 'X'
     END,
     gabby.utilities.STRIP_CHARACTERS (
-      CONCAT(sub.first_name, sub.last_name),
+      CONCAT(
+        sub.first_name,
+        sub.last_name
+      ),
       '^A-Z'
     ),
     CASE
-      WHEN ISNUMERIC(RIGHT(sub.samaccountname, 1)) = 1 THEN RIGHT(sub.samaccountname, 1)
+      WHEN ISNUMERIC(
+        RIGHT(sub.samaccountname, 1)
+      ) = 1 THEN RIGHT(sub.samaccountname, 1)
     END
   ) AS [Mention Name],
   CASE

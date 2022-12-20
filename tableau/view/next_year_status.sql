@@ -41,7 +41,11 @@ SELECT
     '+'
   ) AS gmaps_address,
   CASE
-    WHEN s.home_phone IS NOT NULL THEN REPLACE(CONCAT('+1', s.home_phone), '-', '')
+    WHEN s.home_phone IS NOT NULL THEN REPLACE(
+      CONCAT('+1', s.home_phone),
+      '-',
+      ''
+    )
   END AS tel_home_phone,
   co.academic_year,
   co.region,
@@ -53,10 +57,18 @@ SELECT
   co.year_in_school,
   co.boy_status,
   CASE
-    WHEN co.mother_cell IS NOT NULL THEN REPLACE(CONCAT('+1', co.mother_cell), '-', '')
+    WHEN co.mother_cell IS NOT NULL THEN REPLACE(
+      CONCAT('+1', co.mother_cell),
+      '-',
+      ''
+    )
   END AS tel_mother_cell,
   CASE
-    WHEN co.father_cell IS NOT NULL THEN REPLACE(CONCAT('+1', co.father_cell), '-', '')
+    WHEN co.father_cell IS NOT NULL THEN REPLACE(
+      CONCAT('+1', co.father_cell),
+      '-',
+      ''
+    )
   END AS tel_father_cell,
   suf.mother_cell,
   suf.father_cell

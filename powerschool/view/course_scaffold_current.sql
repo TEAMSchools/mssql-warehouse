@@ -25,7 +25,9 @@ FROM
       enr.excludefromgpa,
       enr.gradescaleid,
       (
-        CAST(terms.alt_name AS VARCHAR(25))
+        CAST(
+          terms.alt_name AS VARCHAR(25)
+        )
         COLLATE LATIN1_GENERAL_BIN
       ) AS term_name,
       terms.[start_date] AS term_start_date,
@@ -37,10 +39,16 @@ FROM
       INNER JOIN gabby.reporting.reporting_terms AS terms ON enr.yearid = terms.yearid
       AND enr.schoolid = terms.schoolid
       AND terms.identifier = 'RT'
-      AND terms.alt_name NOT IN ('Summer School', 'Capstone', 'EOY')
+      AND terms.alt_name NOT IN (
+        'Summer School',
+        'Capstone',
+        'EOY'
+      )
       AND terms._fivetran_deleted = 0
     WHERE
       enr.section_enroll_status = 0
       AND enr.course_enroll_status = 0
-      AND enr.dateenrolled <= CAST(CURRENT_TIMESTAMP AS DATE)
+      AND enr.dateenrolled <= CAST(
+        CURRENT_TIMESTAMP AS DATE
+      )
   ) AS sub

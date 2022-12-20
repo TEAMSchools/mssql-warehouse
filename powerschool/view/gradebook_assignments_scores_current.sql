@@ -6,9 +6,15 @@ SELECT
   CAST(a.islate AS INT) AS islate,
   CAST(a.isexempt AS INT) AS isexempt,
   CAST(a.ismissing AS INT) AS ismissing,
-  CAST(a.assignmentsectionid AS INT) AS assignmentsectionid,
-  CAST(asec.assignmentid AS INT) AS assignmentid,
-  CAST(asec.sectionsdcid AS INT) AS sectionsdcid
+  CAST(
+    a.assignmentsectionid AS INT
+  ) AS assignmentsectionid,
+  CAST(
+    asec.assignmentid AS INT
+  ) AS assignmentid,
+  CAST(
+    asec.sectionsdcid AS INT
+  ) AS sectionsdcid
 FROM
   powerschool.assignmentscore AS a
   INNER JOIN powerschool.assignmentsection AS asec ON a.assignmentsectionid = asec.assignmentsectionid

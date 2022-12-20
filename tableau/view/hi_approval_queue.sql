@@ -24,13 +24,22 @@ SELECT
   dli.update_first + ' ' + dli.update_last AS reviewed_by,
   dli.create_ts AS dl_timestamp,
   dli.infraction,
-  ISNULL(dli.category, 'Referral') AS dl_behavior,
+  ISNULL(
+    dli.category,
+    'Referral'
+  ) AS dl_behavior,
   NULL AS dl_numdays,
   'Referral' AS dl_category,
   NULL AS dl_point_value,
-  CAST(d.alt_name AS VARCHAR(5)) AS term,
+  CAST(
+    d.alt_name AS VARCHAR(5)
+  ) AS term,
   cf.[Final approval],
-  CONCAT(u.first_name, ' ', u.last_name) AS [Approver Name],
+  CONCAT(
+    u.first_name,
+    ' ',
+    u.last_name
+  ) AS [Approver Name],
   cf.[Instructor Source],
   cf.[Instructor Name],
   cf.[Hours per week],

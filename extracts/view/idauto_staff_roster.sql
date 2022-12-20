@@ -11,10 +11,24 @@ SELECT
   df.home_department AS [Home Department Description],
   df.job_title AS [Job Title Description],
   NULL AS [Preferred Name],
-  CAST(df.manager_employee_number AS VARCHAR) AS [Business Unit Code],
-  CONVERT(VARCHAR, df.rehire_date, 101) AS [Rehire Date],
-  CONVERT(VARCHAR, df.termination_date, 101) AS [Termination Date],
-  CONVERT(VARCHAR, df.birth_date, 101) AS [Birth Date],
+  CAST(
+    df.manager_employee_number AS VARCHAR
+  ) AS [Business Unit Code],
+  CONVERT(
+    VARCHAR,
+    df.rehire_date,
+    101
+  ) AS [Rehire Date],
+  CONVERT(
+    VARCHAR,
+    df.termination_date,
+    101
+  ) AS [Termination Date],
+  CONVERT(
+    VARCHAR,
+    df.birth_date,
+    101
+  ) AS [Birth Date],
   CASE
     WHEN df.position_status = 'Prestart' THEN 'Active'
     ELSE df.position_status
@@ -22,6 +36,13 @@ SELECT
 FROM
   gabby.people.staff_roster AS df
 WHERE
-  COALESCE(df.rehire_date, df.original_hire_date) <= DATEADD(DAY, 10, CURRENT_TIMESTAMP)
+  COALESCE(
+    df.rehire_date,
+    df.original_hire_date
+  ) <= DATEADD(
+    DAY,
+    10,
+    CURRENT_TIMESTAMP
+  )
   AND df.business_unit IS NOT NULL
   AND df.[location] IS NOT NULL

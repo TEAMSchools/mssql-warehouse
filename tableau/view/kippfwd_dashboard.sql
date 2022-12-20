@@ -43,7 +43,10 @@ WITH
         WHEN app.application_account_type = 'Public 2 yr' THEN 1
       END AS is_2yr,
       CASE
-        WHEN app.application_account_type IN ('Private 4 yr', 'Public 4 yr') THEN 1
+        WHEN app.application_account_type IN (
+          'Private 4 yr',
+          'Public 4 yr'
+        ) THEN 1
       END AS is_4yr,
       CASE
         WHEN app.matriculation_decision = 'Matriculated (Intent to Enroll)'
@@ -125,11 +128,21 @@ WITH
       sf_contact_id,
       academic_year,
       semester,
-      CAST(transcript_date AS NVARCHAR(16)) AS transcript_date,
-      CAST(semester_gpa AS NVARCHAR(16)) AS semester_gpa,
-      CAST(cumulative_gpa AS NVARCHAR(16)) AS cumulative_gpa,
-      CAST(semester_credits_earned AS NVARCHAR(16)) AS semester_credits_earned,
-      CAST(cumulative_credits_earned AS NVARCHAR(16)) AS cumulative_credits_earned,
+      CAST(
+        transcript_date AS NVARCHAR(16)
+      ) AS transcript_date,
+      CAST(
+        semester_gpa AS NVARCHAR(16)
+      ) AS semester_gpa,
+      CAST(
+        cumulative_gpa AS NVARCHAR(16)
+      ) AS cumulative_gpa,
+      CAST(
+        semester_credits_earned AS NVARCHAR(16)
+      ) AS semester_credits_earned,
+      CAST(
+        cumulative_credits_earned AS NVARCHAR(16)
+      ) AS cumulative_credits_earned,
       CAST(
         credits_required_for_graduation AS NVARCHAR(16)
       ) AS credits_required_for_graduation,
@@ -168,22 +181,42 @@ WITH
     SELECT
       sf_contact_id,
       academic_year,
-      CAST(fall_transcript_date AS DATE) AS fall_transcript_date,
+      CAST(
+        fall_transcript_date AS DATE
+      ) AS fall_transcript_date,
       CAST(
         fall_credits_required_for_graduation AS FLOAT
       ) AS fall_credits_required_for_graduation,
-      CAST(fall_cumulative_credits_earned AS FLOAT) AS fall_cumulative_credits_earned,
-      CAST(fall_semester_credits_earned AS FLOAT) AS fall_semester_credits_earned,
-      CAST(fall_semester_gpa AS FLOAT) AS fall_semester_gpa,
-      CAST(fall_cumulative_gpa AS FLOAT) AS fall_cumulative_gpa,
-      CAST(spr_transcript_date AS DATE) AS spr_transcript_date,
+      CAST(
+        fall_cumulative_credits_earned AS FLOAT
+      ) AS fall_cumulative_credits_earned,
+      CAST(
+        fall_semester_credits_earned AS FLOAT
+      ) AS fall_semester_credits_earned,
+      CAST(
+        fall_semester_gpa AS FLOAT
+      ) AS fall_semester_gpa,
+      CAST(
+        fall_cumulative_gpa AS FLOAT
+      ) AS fall_cumulative_gpa,
+      CAST(
+        spr_transcript_date AS DATE
+      ) AS spr_transcript_date,
       CAST(
         spr_credits_required_for_graduation AS FLOAT
       ) AS spr_credits_required_for_graduation,
-      CAST(spr_cumulative_credits_earned AS FLOAT) AS spr_cumulative_credits_earned,
-      CAST(spr_semester_credits_earned AS FLOAT) AS spr_semester_credits_earned,
-      CAST(spr_semester_gpa AS FLOAT) AS spr_semester_gpa,
-      CAST(spr_cumulative_gpa AS FLOAT) AS spr_cumulative_gpa
+      CAST(
+        spr_cumulative_credits_earned AS FLOAT
+      ) AS spr_cumulative_credits_earned,
+      CAST(
+        spr_semester_credits_earned AS FLOAT
+      ) AS spr_semester_credits_earned,
+      CAST(
+        spr_semester_gpa AS FLOAT
+      ) AS spr_semester_gpa,
+      CAST(
+        spr_cumulative_gpa AS FLOAT
+      ) AS spr_cumulative_gpa
     FROM
       (
         SELECT
@@ -451,13 +484,19 @@ SELECT
   gpa.spr_semester_credits_earned,
   COALESCE(
     gpa.fall_cumulative_credits_earned,
-    LAG(gpa.spr_cumulative_credits_earned, 1) OVER (
+    LAG(
+      gpa.spr_cumulative_credits_earned,
+      1
+    ) OVER (
       PARTITION BY
         c.sf_contact_id
       ORDER BY
         ay.academic_year ASC
     ) /* prev spring */,
-    LAG(gpa.fall_cumulative_credits_earned, 1) OVER (
+    LAG(
+      gpa.fall_cumulative_credits_earned,
+      1
+    ) OVER (
       PARTITION BY
         c.sf_contact_id
       ORDER BY
@@ -467,20 +506,29 @@ SELECT
   COALESCE(
     gpa.spr_cumulative_credits_earned,
     gpa.fall_cumulative_credits_earned,
-    LAG(gpa.spr_cumulative_credits_earned, 1) OVER (
+    LAG(
+      gpa.spr_cumulative_credits_earned,
+      1
+    ) OVER (
       PARTITION BY
         c.sf_contact_id
       ORDER BY
         ay.academic_year ASC
     ) /* prev spring */,
-    LAG(gpa.fall_cumulative_credits_earned, 1) OVER (
+    LAG(
+      gpa.fall_cumulative_credits_earned,
+      1
+    ) OVER (
       PARTITION BY
         c.sf_contact_id
       ORDER BY
         ay.academic_year ASC
     ) /* prev fall */
   ) AS spr_cumulative_credits_earned,
-  LAG(gpa.spr_semester_credits_earned, 1) OVER (
+  LAG(
+    gpa.spr_semester_credits_earned,
+    1
+  ) OVER (
     PARTITION BY
       c.sf_contact_id
     ORDER BY

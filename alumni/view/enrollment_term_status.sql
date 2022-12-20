@@ -25,7 +25,9 @@ WITH
       gabby.utilities.row_generator_smallint AS rg
       CROSS JOIN STRING_SPLIT ('Spring,Fall', ',') AS ss
     WHERE
-      rg.n BETWEEN 2010 AND (gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 2)
+      rg.n BETWEEN 2010 AND (
+        gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 2
+      )
   ),
   enr_scaff AS (
     SELECT
@@ -43,7 +45,9 @@ WITH
       INNER JOIN term_scaff AS ts ON (
         ts.term_start_date BETWEEN e.start_date_c AND COALESCE(
           e.actual_end_date_c,
-          CAST(CURRENT_TIMESTAMP AS DATE)
+          CAST(
+            CURRENT_TIMESTAMP AS DATE
+          )
         )
       )
     WHERE

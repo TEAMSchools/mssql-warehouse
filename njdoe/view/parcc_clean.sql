@@ -2,7 +2,10 @@ CREATE OR ALTER VIEW
   njdoe.parcc_clean AS
 SELECT
   academic_year,
-  COALESCE(test_session, test_season) AS test_session,
+  COALESCE(
+    test_session,
+    test_season
+  ) AS test_session,
   UPPER(county_code) AS county_code,
   CASE
     WHEN county_name != '' THEN UPPER(county_name)
@@ -46,11 +49,25 @@ SELECT
   l_3_percent,
   l_4_percent,
   l_5_percent,
-  ((l_1_percent / 100) * valid_scores) AS l_1_count,
-  ((l_2_percent / 100) * valid_scores) AS l_2_count,
-  ((l_3_percent / 100) * valid_scores) AS l_3_count,
-  ((l_4_percent / 100) * valid_scores) AS l_4_count,
-  ((l_5_percent / 100) * valid_scores) AS l_5_count,
-  ((l_4_percent / 100) * valid_scores) + ((l_5_percent / 100) * valid_scores) AS proficient_count
+  (
+    (l_1_percent / 100) * valid_scores
+  ) AS l_1_count,
+  (
+    (l_2_percent / 100) * valid_scores
+  ) AS l_2_count,
+  (
+    (l_3_percent / 100) * valid_scores
+  ) AS l_3_count,
+  (
+    (l_4_percent / 100) * valid_scores
+  ) AS l_4_count,
+  (
+    (l_5_percent / 100) * valid_scores
+  ) AS l_5_count,
+  (
+    (l_4_percent / 100) * valid_scores
+  ) + (
+    (l_5_percent / 100) * valid_scores
+  ) AS proficient_count
 FROM
   gabby.njdoe.parcc

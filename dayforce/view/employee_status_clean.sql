@@ -7,20 +7,35 @@ SELECT
   sub.status_reason_description,
   sub.base_salary,
   sub.effective_start,
-  DATEADD(DAY, -1, sub.effective_start_next) AS effective_end
+  DATEADD(
+    DAY,
+    -1,
+    sub.effective_start_next
+  ) AS effective_end
 FROM
   (
     SELECT
       ds.number,
       ds.[status],
       ds.status_reason_description,
-      CAST(ds.effective_start AS DATE) AS effective_start,
-      CAST(ds.base_salary AS MONEY) AS base_salary,
-      LEAD(CAST(ds.effective_start AS DATE), 1) OVER (
+      CAST(
+        ds.effective_start AS DATE
+      ) AS effective_start,
+      CAST(
+        ds.base_salary AS MONEY
+      ) AS base_salary,
+      LEAD(
+        CAST(
+          ds.effective_start AS DATE
+        ),
+        1
+      ) OVER (
         PARTITION BY
           ds.number
         ORDER BY
-          CAST(ds.effective_start AS DATE)
+          CAST(
+            ds.effective_start AS DATE
+          )
       ) AS effective_start_next,
       CONCAT(
         CASE
@@ -36,5 +51,9 @@ FROM
       INNER JOIN gabby.dayforce.employees AS e ON ds.number = e.df_employee_number
   ) AS sub
 WHERE
-  sub.effective_start <= DATEADD(DAY, -1, sub.effective_start_next)
+  sub.effective_start <= DATEADD(
+    DAY,
+    -1,
+    sub.effective_start_next
+  )
   OR sub.effective_start_next IS NULL

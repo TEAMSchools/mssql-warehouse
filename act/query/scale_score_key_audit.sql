@@ -19,5 +19,9 @@ FROM
       [subject]
   ) AS sub
 WHERE
-  (max_score_adjusted != n_records)
-  OR (RIGHT(max_scale_score, 1) NOT IN (1, 6))
+  (
+    max_score_adjusted != n_records
+  )
+  OR (
+    RIGHT(max_scale_score, 1) NOT IN (1, 6)
+  )

@@ -47,7 +47,10 @@ SELECT
     ELSE 0
   END AS is_early_decision,
   CASE
-    WHEN sub.application_admission_type IN ('Early Action', 'Early Decision') THEN 1
+    WHEN sub.application_admission_type IN (
+      'Early Action',
+      'Early Decision'
+    ) THEN 1
     ELSE 0
   END AS is_early_actiondecision,
   CASE
@@ -59,7 +62,11 @@ SELECT
     ELSE 0
   END AS is_accepted,
   CASE
-    WHEN sub.match_type IN ('Likely Plus', 'Target', 'Reach') THEN 1
+    WHEN sub.match_type IN (
+      'Likely Plus',
+      'Target',
+      'Reach'
+    ) THEN 1
     ELSE 0
   END AS is_ltr,
   CASE

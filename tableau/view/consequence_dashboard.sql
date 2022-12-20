@@ -10,7 +10,14 @@ WITH
     FROM
       gabby.powerschool.ps_attendance_daily AS att
     WHERE
-      att.att_code IN ('OS', 'OSS', 'OSSP', 'S', 'ISS', 'SHI')
+      att.att_code IN (
+        'OS',
+        'OSS',
+        'OSSP',
+        'S',
+        'ISS',
+        'SHI'
+      )
     GROUP BY
       att.studentid,
       att.[db_name],
@@ -45,14 +52,24 @@ SELECT
   dli.reported_details,
   dli.admin_summary,
   dli.context,
-  CONCAT(dli.create_last, ', ', dli.create_first) AS created_staff,
-  CONCAT(dli.update_last, ', ', dli.update_first) AS last_update_staff,
+  CONCAT(
+    dli.create_last,
+    ', ',
+    dli.create_first
+  ) AS created_staff,
+  CONCAT(
+    dli.update_last,
+    ', ',
+    dli.update_first
+  ) AS last_update_staff,
   dli.update_ts AS dl_timestamp,
   dli.infraction AS incident_type,
   dli.is_referral,
   dli.category AS referral_category,
   'Referral' AS dl_category,
-  CAST(d.alt_name AS NVARCHAR(8)) AS term,
+  CAST(
+    d.alt_name AS NVARCHAR(8)
+  ) AS term,
   dlp.penaltyname,
   dlp.startdate,
   dlp.enddate,
