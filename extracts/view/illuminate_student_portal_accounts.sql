@@ -8,6 +8,6 @@ SELECT
   saa.student_web_password AS [05 Temporary password]
 FROM
   gabby.powerschool.students AS s
-  INNER JOIN gabby.powerschool.student_access_accounts_static AS saa ON s.student_number = saa.student_number /* trunk-ignore(sqlfluff/L016) */
+  INNER JOIN gabby.powerschool.student_access_accounts_static AS saa ON s.student_number = saa.student_number
 WHERE
   s.enroll_status = 0

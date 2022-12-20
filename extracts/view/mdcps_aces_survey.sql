@@ -26,8 +26,8 @@ SELECT
   'B' AS [BasicLifePlan]
 FROM
   gabby.people.staff_crosswalk_static AS s
-  LEFT JOIN gabby.adp.workers_custom_field_group_wide_static AS cf ON s.adp_associate_id = cf.worker_id /* trunk-ignore(sqlfluff/L016) */
-  LEFT JOIN gabby.surveys.staff_information_survey_wide_static AS e ON s.df_employee_number = e.employee_number /* trunk-ignore(sqlfluff/L016) */
+  LEFT JOIN gabby.adp.workers_custom_field_group_wide_static AS cf ON s.adp_associate_id = cf.worker_id
+  LEFT JOIN gabby.surveys.staff_information_survey_wide_static AS e ON s.df_employee_number = e.employee_number
 WHERE
   s.legal_entity_name = 'KIPP Miami'
   AND (

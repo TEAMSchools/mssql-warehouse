@@ -27,7 +27,7 @@ FROM
           s.student_number,
           CAST(sg.potentialcrhrs AS DECIMAL(5, 2)) AS potentialcrhrs,
           (
-            CAST(sg.potentialcrhrs AS DECIMAL(5, 2)) * CAST(sg.gpa_points AS DECIMAL(3, 2)) /* trunk-ignore(sqlfluff/L016) */
+            CAST(sg.potentialcrhrs AS DECIMAL(5, 2)) * CAST(sg.gpa_points AS DECIMAL(3, 2))
           ) AS weighted_points,
           (
             CAST(sg.potentialcrhrs AS DECIMAL(5, 2)) * CAST(
@@ -38,11 +38,11 @@ FROM
           gabby.powerschool.storedgrades AS sg
           INNER JOIN gabby.powerschool.students AS s ON sg.studentid = s.id
           AND sg.[db_name] = s.[db_name]
-          LEFT OUTER JOIN gabby.powerschool.gradescaleitem_lookup_static AS scale_unweighted ON sg.[db_name] = scale_unweighted.[db_name] /* trunk-ignore(sqlfluff/L016) */
+          LEFT OUTER JOIN gabby.powerschool.gradescaleitem_lookup_static AS scale_unweighted ON sg.[db_name] = scale_unweighted.[db_name]
           AND (
-            sg.[percent] BETWEEN scale_unweighted.min_cutoffpercentage AND scale_unweighted.max_cutoffpercentage  /* trunk-ignore(sqlfluff/L016) */
+            sg.[percent] BETWEEN scale_unweighted.min_cutoffpercentage AND scale_unweighted.max_cutoffpercentage
           )
-          AND gabby.utilities.PS_UNWEIGHTED_GRADESCALE_NAME (sg.academic_year, sg.gradescale_name) = scale_unweighted.gradescale_name /* trunk-ignore(sqlfluff/L016) */
+          AND gabby.utilities.PS_UNWEIGHTED_GRADESCALE_NAME (sg.academic_year, sg.gradescale_name) = scale_unweighted.gradescale_name
         WHERE
           sg.storecode = 'Y1'
           AND sg.excludefromgpa = 0

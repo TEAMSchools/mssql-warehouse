@@ -29,5 +29,5 @@ SELECT
 FROM
   gabby.alumni.ktc_roster AS ktc
   INNER JOIN gabby.powerschool.students AS s ON ktc.student_number = s.student_number
-  INNER JOIN gabby.deanslist.communication AS c ON c.student_school_id = ktc.student_number /* trunk-ignore(sqlfluff/L016) */
+  INNER JOIN gabby.deanslist.communication AS c ON c.student_school_id = ktc.student_number
   AND c.reason LIKE 'KF:%'

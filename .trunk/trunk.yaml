@@ -20,6 +20,10 @@ lint:
     - markdownlint@0.32.2
     - git-diff-check
     - shfmt@3.5.0
+  ignore:
+    - linters: [ALL]
+      paths:
+        - archive/**
   definitions:
     - name: sql-formatter
       commands:

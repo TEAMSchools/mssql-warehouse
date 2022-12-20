@@ -70,12 +70,12 @@ FROM
       AND f.deleted_at IS NULL
     WHERE
       t.name IN (
+
         SELECT
           repo_name
         FROM
           repos
       )
-      -- /*
   ) AS sub PIVOT (
     MAX(pivot_value) FOR table_name IN (
       [repository_126],
@@ -83,4 +83,3 @@ FROM
       [repository_170]
     )
   ) AS p
-  -- */

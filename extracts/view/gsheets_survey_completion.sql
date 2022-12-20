@@ -36,7 +36,7 @@ WITH
       OR (
         survey_completion_date IS NULL
         AND (
-          /* trunk-ignore(sqlfluff/L016) */
+
           CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN survey_round_open AND survey_round_close
         )
       )
@@ -58,7 +58,7 @@ SELECT
   CURRENT_TIMESTAMP AS date_of_extract
 FROM
   incomplete_surveys AS i
-  INNER JOIN gabby.people.staff_crosswalk_static AS c ON i.survey_taker_id = c.df_employee_number /* trunk-ignore(sqlfluff/L016) */
+  INNER JOIN gabby.people.staff_crosswalk_static AS c ON i.survey_taker_id = c.df_employee_number
 WHERE
   i.rn_null = 1
   AND i.survey_completion_date IS NULL

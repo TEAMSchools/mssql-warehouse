@@ -26,6 +26,11 @@ SELECT
   sub.administered_at,
   sub.performance_band_set_id,
   sub.academic_year,
+  sub.subject_area,
+  sub.is_normed_scope,
+  sub.grade_level_id,
+  sub.student_id,
+  sub.is_replacement,
   CASE
     WHEN sub.scope IN (
       'Cumulative Review Quizzes',
@@ -49,12 +54,7 @@ SELECT
     )
     AND sub.grade_level_id IN (1, 2) THEN 'Checkpoint'
     ELSE sub.scope
-  END AS scope,
-  sub.subject_area,
-  sub.is_normed_scope,
-  sub.grade_level_id,
-  sub.student_id,
-  sub.is_replacement
+  END AS scope
 FROM
   (
     /* standard curriculum -- K-8 */
@@ -75,18 +75,22 @@ FROM
     FROM
       asmts AS a
       INNER JOIN gabby.illuminate_dna_assessments.assessment_grade_levels AS agl ON a.assessment_id = agl.assessment_id
-      INNER JOIN gabby.illuminate_public.student_session_aff_clean_static AS ssa ON a.academic_year = ssa.academic_year
-      AND agl.grade_level_id = ssa.grade_level_id
-      AND ssa.rn = 1
-      INNER JOIN gabby.illuminate_dna_assessments.course_enrollment_scaffold_current_static AS ce ON ssa.student_id = ce.student_id
-      AND (
-        a.subject_area = ce.subject_area
-        COLLATE LATIN1_GENERAL_BIN
+      INNER JOIN gabby.illuminate_public.student_session_aff_clean_static AS ssa 
+        ON (a.academic_year = ssa.academic_year
+        AND agl.grade_level_id = ssa.grade_level_id
+        AND ssa.rn = 1
       )
-      AND (
-        a.administered_at BETWEEN ce.entry_date AND ce.leave_date
+      INNER JOIN gabby.illuminate_dna_assessments.course_enrollment_scaffold_current_static AS ce 
+        ON ( ssa.student_id = ce.student_id
+        AND (
+          a.subject_area = ce.subject_area
+          COLLATE LATIN1_GENERAL_BIN
+        )
+        AND (
+          a.administered_at BETWEEN ce.entry_date AND ce.leave_date
+        )
+        AND ce.is_advanced_math_student = 0
       )
-      AND ce.is_advanced_math_student = 0
     WHERE
       a.subject_area IN (
         'Text Study',
@@ -114,13 +118,15 @@ FROM
     FROM
       asmts AS a
       INNER JOIN gabby.illuminate_dna_assessments.assessment_grade_levels AS agl ON a.assessment_id = agl.assessment_id
-      INNER JOIN gabby.illuminate_dna_assessments.course_enrollment_scaffold_current_static AS ce ON agl.grade_level_id = ce.grade_level_id
-      AND (
-        a.subject_area = ce.subject_area
-        COLLATE LATIN1_GENERAL_BIN
-      )
-      AND (
-        a.administered_at BETWEEN ce.entry_date AND ce.leave_date
+      INNER JOIN gabby.illuminate_dna_assessments.course_enrollment_scaffold_current_static AS ce ON (
+        agl.grade_level_id = ce.grade_level_id
+        AND (
+          a.subject_area = ce.subject_area
+          COLLATE LATIN1_GENERAL_BIN
+        )
+        AND (
+          a.administered_at BETWEEN ce.entry_date AND ce.leave_date
+        )
       )
     WHERE
       a.is_normed_scope = 1
@@ -150,10 +156,12 @@ FROM
       asmts AS a
       INNER JOIN gabby.illuminate_dna_assessments.assessment_grade_levels AS agl ON a.assessment_id = agl.assessment_id
       INNER JOIN gabby.illuminate_dna_assessments.students_assessments AS sa ON a.assessment_id = sa.assessment_id
-      INNER JOIN gabby.illuminate_public.student_session_aff_clean_static AS ssa ON sa.student_id = ssa.student_id
-      AND a.academic_year = ssa.academic_year
-      AND ssa.rn = 1
-      AND agl.grade_level_id != ssa.grade_level_id
+      INNER JOIN gabby.illuminate_public.student_session_aff_clean_static AS ssa 
+        ON ( sa.student_id = ssa.student_id
+        AND a.academic_year = ssa.academic_year
+        AND ssa.rn = 1
+        AND agl.grade_level_id != ssa.grade_level_id
+      )
     WHERE
       a.is_normed_scope = 1
       AND a.subject_area IN (

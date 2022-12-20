@@ -2,13 +2,13 @@ CREATE OR ALTER VIEW
   extracts.whetstone_users AS
 WITH
   managers AS (
-    /* trunk-ignore(sqlfluff/L036) */
+
     SELECT DISTINCT
       manager_df_employee_number
     FROM
       gabby.people.staff_crosswalk_static
     UNION
-    /* trunk-ignore(sqlfluff/L036) */
+
     SELECT
       s.df_employee_number
     FROM
@@ -244,7 +244,7 @@ FROM
   LEFT JOIN gabby.whetstone.schools AS sch ON sub.school_name = sch.[name]
   LEFT JOIN gabby.whetstone.grades AS gr ON sub.grade_abbreviation = gr.abbreviation
   LEFT JOIN gabby.whetstone.courses AS cou ON sub.course_name = cou.[name]
-  AND cou.archived_at IS NULL /* trunk-ignore(sqlfluff/L016) */
+  AND cou.archived_at IS NULL
   LEFT JOIN gabby.whetstone.roles AS r ON sub.role_name = r.[name]
   LEFT JOIN existing_roles AS er ON u.[user_id] = er.[user_id]
   LEFT JOIN obsv_grp AS og ON u.[user_id] = og.[user_id]

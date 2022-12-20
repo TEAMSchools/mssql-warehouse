@@ -1,7 +1,6 @@
 CREATE
 OR ALTER
-PROCEDURE adsi.group_membership_merge AS BEGIN;
-
+PROCEDURE adsi.group_membership_merge AS BEGIN
 SET
 ANSI_NULLS ON;
 
@@ -20,8 +19,7 @@ DECLARE @group_adspath NVARCHAR(256),
 @sql NVARCHAR(MAX);
 
 /* Drop and recreate the temp tables */
-IF OBJECT_ID(N'tempdb..#ad_group_membership') IS NOT NULL
-DROP TABLE [#ad_group_membership];
+DROP TABLE IF EXISTS [#ad_group_membership];
 
 CREATE TABLE
   [#ad_group_membership] (
@@ -47,34 +45,40 @@ FROM
       FROM ''LDAP://DC=teamschools,DC=kipp,DC=org''
       WHERE objectCategory = ''group''
     '
-  ) OPEN group_cursor;
+  );
 
-WHILE 1 = 1 BEGIN;
+OPEN group_cursor;
 
 FETCH NEXT
 FROM
   group_cursor INTO @group_adspath,
   @group_cn;
 
-IF @@FETCH_STATUS != 0 BEGIN;
-
-BREAK;
-
-END;
+WHILE @@FETCH_STATUS = 0 BEGIN
+FETCH NEXT
+FROM
+  group_cursor INTO @group_adspath,
+  @group_cn;
 
 /* get membership list and insert into temp table */
 SET
   @sql = N'
             INSERT INTO [#ad_group_membership]
-            SELECT objectGUID AS object_guid
-                  ,employeenumber AS employee_number
-                  ,idautopersonalternateid AS associate_id
-                  ,userPrincipalName AS user_principal_name
-                  ,mail
-                  ,''' + @group_cn + ''' AS group_cn
-                  ,''' + @group_adspath + ''' AS group_adspath
+            SELECT 
+              objectGUID AS object_guid,
+              employeenumber AS employee_number,
+              idautopersonalternateid AS associate_id,
+              userPrincipalName AS user_principal_name,
+              mail,
+              ''' + @group_cn + ''' AS group_cn,
+              ''' + @group_adspath + ''' AS group_adspath
             FROM OPENQUERY(ADSI, ''
-              SELECT userPrincipalName, employeenumber, idautopersonalternateid, mail, objectGUID
+              SELECT 
+                userPrincipalName,
+                employeenumber,
+                idautopersonalternateid,
+                mail,
+                objectGUID
               FROM ''''LDAP://DC=teamschools,DC=kipp,DC=org''''
               WHERE memberOf = ''''' + @group_adspath + '''''
             '')
@@ -90,8 +94,7 @@ CLOSE group_cursor;
 
 DEALLOCATE group_cursor;
 
-IF OBJECT_ID(N'gabby.adsi.group_membership') IS NULL BEGIN;
-
+IF OBJECT_ID(N'gabby.adsi.group_membership') IS NULL BEGIN
 SELECT
   * INTO gabby.adsi.group_membership
 FROM
@@ -99,19 +102,18 @@ FROM
 
 END;
 
-ELSE BEGIN;
-
+ELSE BEGIN
 /* merge temp table into destination table */
 MERGE
-  gabby.adsi.group_membership AS TARGET USING [#ad_group_membership] AS SOURCE ON TARGET.group_adspath = SOURCE.group_adspath
-  AND TARGET.object_guid = SOURCE.object_guid
+  gabby.adsi.group_membership AS tgt USING [#ad_group_membership] AS src ON tgt.group_adspath = src.group_adspath
+  AND tgt.object_guid = src.object_guid
 WHEN MATCHED THEN
 UPDATE SET
-  TARGET.employee_number = SOURCE.employee_number,
-  TARGET.associate_id = SOURCE.associate_id,
-  TARGET.user_principal_name = SOURCE.user_principal_name,
-  TARGET.mail = SOURCE.mail,
-  TARGET.group_cn = SOURCE.group_cn
+  tgt.employee_number = src.employee_number,
+  tgt.associate_id = src.associate_id,
+  tgt.user_principal_name = src.user_principal_name,
+  tgt.mail = src.mail,
+  tgt.group_cn = src.group_cn
 WHEN NOT MATCHED BY TARGET THEN
 INSERT
   (
@@ -125,13 +127,13 @@ INSERT
   )
 VALUES
   (
-    SOURCE.group_adspath,
-    SOURCE.object_guid,
-    SOURCE.employee_number,
-    SOURCE.associate_id,
-    SOURCE.user_principal_name,
-    SOURCE.mail,
-    SOURCE.group_cn
+    src.group_adspath,
+    src.object_guid,
+    src.employee_number,
+    src.associate_id,
+    src.user_principal_name,
+    src.mail,
+    src.group_cn
   )
 WHEN NOT MATCHED BY SOURCE THEN
 DELETE;

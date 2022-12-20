@@ -131,7 +131,7 @@ WITH
       END AS is_chronic_absentee
     FROM
       gabby.powerschool.cohort_identifiers_static AS co
-      LEFT JOIN gabby.powerschool.gpa_detail AS gpa ON co.student_number = gpa.student_number /* trunk-ignore(sqlfluff/L016) */
+      LEFT JOIN gabby.powerschool.gpa_detail AS gpa ON co.student_number = gpa.student_number
       AND co.academic_year = gpa.academic_year
       AND co.[db_name] = gpa.[db_name]
       AND gpa.is_curterm = 1

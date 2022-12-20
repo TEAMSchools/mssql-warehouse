@@ -1,22 +1,5 @@
 CREATE OR ALTER VIEW
   illuminate_dna_assessments.assessments_identifiers AS
-WITH
-  tnl_uids AS (
-    SELECT
-      u.[user_id]
-    FROM
-      gabby.people.work_assignment_history_static AS sr
-      INNER JOIN gabby.illuminate_public.users AS u ON CAST(sr.employee_number AS VARCHAR(25)) = u.state_id
-    WHERE
-      sr.home_department_description = 'Teaching and Learning'
-    UNION
-    SELECT
-      u.[user_id]
-    FROM
-      gabby.illuminate_public.users AS u
-    WHERE
-      u.username IN ('login', 'kippfoundation', 'JEsteban')
-  )
 SELECT
   sub.assessment_id,
   sub.title,
@@ -57,12 +40,12 @@ SELECT
   sub.normed_scope,
   sub.is_normed_scope,
   sub.module_type,
+  sub.term_administered,
   SUBSTRING(
     sub.title,
     PATINDEX(sub.module_number_pattern, sub.title),
     sub.module_number_length
-  ) AS module_number,
-  sub.term_administered
+  ) AS module_number
 FROM
   (
     SELECT
@@ -93,7 +76,6 @@ FROM
       a.administration_window_start_date,
       a.administration_window_end_date,
       a.is_hybrid_x,
-      a.academic_year - 1 AS academic_year_clean,
       u.local_user_id AS creator_local_user_id,
       u.username AS creator_username,
       u.email1 AS creator_email1,
@@ -104,6 +86,8 @@ FROM
       dsa.code_translation AS subject_area,
       n.scope AS normed_scope,
       n.module_type,
+      a.academic_year - 1 AS academic_year_clean,
+      CAST(rt.alt_name AS VARCHAR(5)) AS term_administered,
       CASE
         WHEN n.scope IS NOT NULL THEN 1
         ELSE 0
@@ -191,8 +175,7 @@ FROM
           '%' + n.module_number_pattern_2 + '[0-9]%',
           a.title
         ) > 0 THEN LEN(n.module_number_pattern_2) + 1
-      END AS module_number_length,
-      CAST(rt.alt_name AS VARCHAR(5)) AS term_administered
+      END AS module_number_length
     FROM
       gabby.illuminate_dna_assessments.assessments AS a
       INNER JOIN gabby.illuminate_public.users AS u ON a.[user_id] = u.[user_id]

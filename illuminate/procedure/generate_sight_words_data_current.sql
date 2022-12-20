@@ -1,10 +1,9 @@
+-- /* trunk-ignore-all(sqlfluff/L036) */
 CREATE
 OR ALTER
-/* trunk-ignore(sqlfluff/L016) */
 PROCEDURE illuminate_dna_repositories.generate_sight_words_data_current AS BEGIN DECLARE @sql NVARCHAR(MAX);
 
 /* reset view */
-/* trunk-ignore(sqlfluff/L036) */
 SELECT
   @sql = CONCAT(
     'CREATE OR ALTER VIEW illuminate_dna_repositories.sight_words_data_current AS ',
@@ -13,7 +12,6 @@ SELECT
 FROM
   (
     SELECT
-      /* trunk-ignore(sqlfluff/L041) */
       TOP 1000 CONCAT(
         select_sql,
         CASE
@@ -36,7 +34,6 @@ FROM
 /* drop indexes */
 BEGIN TRY;
 
-/* trunk-ignore(sqlfluff/L036) */
 SELECT
   @sql = gabby.dbo.GROUP_CONCAT_D (drop_index_sql, ' ')
 FROM
@@ -45,14 +42,12 @@ FROM
 EXEC (@sql);
 
 END TRY BEGIN CATCH
-/* trunk-ignore(sqlfluff/L036) */
 SELECT
   1;
 
 END CATCH;
 
 /* reset indexes */
-/* trunk-ignore(sqlfluff/L036) */
 SELECT
   @sql = gabby.dbo.GROUP_CONCAT_D (create_index_sql, ' ')
 FROM

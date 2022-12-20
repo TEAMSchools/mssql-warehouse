@@ -1,6 +1,5 @@
 CREATE
 OR ALTER
-/* trunk-ignore(sqlfluff/L016) */
 FUNCTION illuminate_dna_repositories.repository_unpivot (@repository_id INT) RETURNS NVARCHAR(MAX) AS BEGIN DECLARE @field_names NVARCHAR(MAX) = '',
 @field_names_converted NVARCHAR(MAX) = '',
 @sql NVARCHAR(MAX) = '';

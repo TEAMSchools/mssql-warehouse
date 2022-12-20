@@ -7,10 +7,10 @@ SELECT
   entry_date,
   ROW_NUMBER() OVER (
     PARTITION BY
-      sub.student_id,
-      sub.academic_year
+      student_id,
+      academic_year
     ORDER BY
-      sub.entry_date DESC
+      entry_date DESC
   ) AS rn
 FROM
   (
@@ -37,7 +37,7 @@ FROM
           leave_date,
           (gabby.utilities.DATE_TO_SY (entry_date) + 1) AS academic_year
         FROM
-          gabby.illuminate_public.student_session_aff AS ssa
+          gabby.illuminate_public.student_session_aff
       ) AS sub
   ) AS sub
 WHERE

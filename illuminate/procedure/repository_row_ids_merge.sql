@@ -1,3 +1,4 @@
+-- /* trunk-ignore-all(sqlfluff/L036) */
 CREATE
 OR ALTER
 PROCEDURE illuminate_dna_repositories.repository_row_ids_merge AS BEGIN
@@ -50,7 +51,7 @@ WHERE
         ) AS INT
       )
     FROM
-      gabby.illuminate_dna_repositories.fivetran_audit
+      illuminate_dna_repositories.fivetran_audit
     WHERE
       ISNUMERIC(RIGHT([table], 1)) = 1
       AND done >= DATEADD(HOUR, -24, CURRENT_TIMESTAMP)
@@ -127,23 +128,8 @@ SET
 
 RAISERROR (@message, 0, 1);
 
-WITH
-  row_ids AS (
-    SELECT
-      repository_id,
-      repository_row_id
-    FROM
-      gabby.illuminate_dna_repositories.repository_row_ids
-    WHERE
-      repository_id IN (
-        SELECT DISTINCT
-          repository_id
-        FROM
-          #repository_row_ids
-      )
-  )
 MERGE INTO
-  row_ids AS tgt USING (
+  illuminate_dna_repositories.repository_row_ids AS tgt USING (
     SELECT
       repository_id,
       repository_row_id
@@ -155,14 +141,20 @@ WHEN MATCHED THEN
 UPDATE SET
   tgt.repository_id = src.repository_id,
   tgt.repository_row_id = src.repository_row_id
-WHEN NOT MATCHED
-  BY tgt THEN
+WHEN NOT MATCHED BY TARGET THEN
 INSERT
   (repository_id, repository_row_id)
 VALUES
   (src.repository_id, src.repository_row_id)
-WHEN NOT MATCHED
-  BY src THEN
-DELETE END;
+WHEN NOT MATCHED BY SOURCE
+  AND tgt.repository_id IN (
+    SELECT
+      repository_id
+    FROM
+      #repository_row_ids
+  ) THEN
+DELETE;
+
+END;
 
 END;

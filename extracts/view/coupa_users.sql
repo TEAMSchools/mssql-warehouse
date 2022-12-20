@@ -209,27 +209,27 @@ FROM
       COALESCE(
         x.coupa_school_name,
         CASE
-          WHEN sn.coupa_school_name = '<Use PhysicalDeliveryOfficeName>' THEN ad.physicaldeliveryofficename /* trunk-ignore(sqlfluff/L016) */
+          WHEN sn.coupa_school_name = '<Use PhysicalDeliveryOfficeName>' THEN ad.physicaldeliveryofficename
           ELSE sn.coupa_school_name
         END,
         CASE
-          WHEN sn2.coupa_school_name = '<Use PhysicalDeliveryOfficeName>' THEN ad.physicaldeliveryofficename /* trunk-ignore(sqlfluff/L016) */
+          WHEN sn2.coupa_school_name = '<Use PhysicalDeliveryOfficeName>' THEN ad.physicaldeliveryofficename
           ELSE sn2.coupa_school_name
         END
       ) AS coupa_school_name
     FROM
       all_users AS au
-      INNER JOIN gabby.adsi.user_attributes_static AS ad ON au.employee_number = ad.employeenumber /* trunk-ignore(sqlfluff/L016) */
+      INNER JOIN gabby.adsi.user_attributes_static AS ad ON au.employee_number = ad.employeenumber
       AND ISNUMERIC(ad.employeenumber) = 1
-      LEFT JOIN gabby.coupa.school_name_lookup AS sn ON au.business_unit_code = sn.business_unit_code /* trunk-ignore(sqlfluff/L016) */
+      LEFT JOIN gabby.coupa.school_name_lookup AS sn ON au.business_unit_code = sn.business_unit_code
       AND au.home_department = sn.home_department
       AND au.job_title = sn.job_title
-      LEFT JOIN gabby.coupa.school_name_lookup AS sn2 ON au.business_unit_code = sn2.business_unit_code /* trunk-ignore(sqlfluff/L016) */
+      LEFT JOIN gabby.coupa.school_name_lookup AS sn2 ON au.business_unit_code = sn2.business_unit_code
       AND au.home_department = sn2.home_department
       AND sn2.job_title = 'Default'
-      LEFT JOIN gabby.coupa.user_exceptions AS x ON au.employee_number = x.employee_number /* trunk-ignore(sqlfluff/L016) */
-      LEFT JOIN gabby.coupa.address_name_crosswalk AS anc ON au.[location] = anc.adp_location /* trunk-ignore(sqlfluff/L016) */
+      LEFT JOIN gabby.coupa.user_exceptions AS x ON au.employee_number = x.employee_number
+      LEFT JOIN gabby.coupa.address_name_crosswalk AS anc ON au.[location] = anc.adp_location
       LEFT JOIN gabby.coupa.[address] AS a ON anc.coupa_address_name = a.[name]
       AND a.active = 1
   ) AS sub
-  LEFT JOIN gabby.coupa.school_name_aliases AS sna ON sub.coupa_school_name = sna.physical_delivery_office_name /* trunk-ignore(sqlfluff/L016) */
+  LEFT JOIN gabby.coupa.school_name_aliases AS sna ON sub.coupa_school_name = sna.physical_delivery_office_name

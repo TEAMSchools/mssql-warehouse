@@ -39,7 +39,7 @@ SELECT
   a.school_name,
   a.school_type,
   a.application_status,
-  /* trunk-ignore(sqlfluff/L016) */
+
   a.adjusted_6_year_minority_graduation_rate_c AS adjusted_6_year_minority_graduation_rate,
   a.school_description,
   a.record_type_name

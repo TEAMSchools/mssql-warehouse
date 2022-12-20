@@ -1,6 +1,5 @@
 CREATE OR ALTER VIEW
   extracts.illuminate_mastschd AS
-  /* trunk-ignore(sqlfluff/L034) */
 SELECT
   CONCAT(
     CASE

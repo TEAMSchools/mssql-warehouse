@@ -7,8 +7,9 @@ FROM
   OPENQUERY (
     ILLUMINATE,
     '
-  SELECT assessment_id
-        ,standard_id
-  FROM dna_assessments.assessment_standards
-'
+      SELECT
+        assessment_id,
+        standard_id
+      FROM dna_assessments.assessment_standards
+    '
   )

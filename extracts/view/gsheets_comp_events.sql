@@ -10,7 +10,7 @@ WITH
       m.google_email AS second_approver_google
     FROM
       gabby.people.staff_crosswalk_static AS x
-      LEFT JOIN gabby.people.staff_crosswalk_static AS m ON x.manager_df_employee_number = m.df_employee_number /* trunk-ignore(sqlfluff/L016) */
+      LEFT JOIN gabby.people.staff_crosswalk_static AS m ON x.manager_df_employee_number = m.df_employee_number
     WHERE
       x.primary_job = 'School Leader'
       AND x.status != 'TERMINATED'
@@ -25,8 +25,8 @@ WITH
       gm.userprincipalname AS second_approver_email
     FROM
       gabby.people.staff_crosswalk_static AS x
-      LEFT JOIN gabby.people.staff_crosswalk_static AS m ON x.manager_df_employee_number = m.df_employee_number /* trunk-ignore(sqlfluff/L016) */
-      LEFT JOIN gabby.people.staff_crosswalk_static AS gm ON m.manager_df_employee_number = gm.df_employee_number /* trunk-ignore(sqlfluff/L016) */
+      LEFT JOIN gabby.people.staff_crosswalk_static AS m ON x.manager_df_employee_number = m.df_employee_number
+      LEFT JOIN gabby.people.staff_crosswalk_static AS gm ON m.manager_df_employee_number = gm.df_employee_number
     WHERE
       x.primary_job != 'School Leader'
   )

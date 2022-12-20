@@ -13,6 +13,9 @@ SELECT
   sub.standard_code,
   sub.standard_description,
   sub.domain_description,
+  sub.date_taken,
+  sub.points,
+  sub.percent_correct,
   MIN(sub.title) OVER (
     PARTITION BY
       sub.academic_year,
@@ -46,10 +49,7 @@ SELECT
       sub.grade_level_id,
       sub.response_type,
       sub.standard_id
-  ) AS performance_band_set_id,
-  sub.date_taken,
-  sub.points,
-  sub.percent_correct
+  ) AS performance_band_set_id
 FROM
   (
     SELECT

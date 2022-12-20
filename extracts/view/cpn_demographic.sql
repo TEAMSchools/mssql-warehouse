@@ -39,7 +39,7 @@ SELECT
   END AS [Low Income]
 FROM
   kippcamden.powerschool.cohort_identifiers_static AS co
-  LEFT JOIN kippcamden.powerschool.studentcorefields AS scf ON co.students_dcid = scf.studentsdcid /* trunk-ignore(sqlfluff/L016) */
+  LEFT JOIN kippcamden.powerschool.studentcorefields AS scf ON co.students_dcid = scf.studentsdcid
   LEFT JOIN kippcamden.powerschool.students AS s ON co.studentid = s.id
 WHERE
   co.rn_year = 1

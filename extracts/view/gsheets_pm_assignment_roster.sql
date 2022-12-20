@@ -36,7 +36,7 @@ SELECT
       'Teacher, ESL',
       'Teacher ESL'
     ) THEN 'Teacher'
-    WHEN s.primary_on_site_department = 'School Leadership' THEN 'School Leadership Team' /* trunk-ignore(sqlfluff/L016) */
+    WHEN s.primary_on_site_department = 'School Leadership' THEN 'School Leadership Team'
     ELSE 'Non-teaching school based staff'
   END AS tntp_assignment,
   CASE

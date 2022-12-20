@@ -37,7 +37,7 @@ SELECT
   co.student_web_id + '@teamstudents.org' AS [EXTERNAL_ID]
 FROM
   gabby.powerschool.cohort_identifiers_static AS co
-  INNER JOIN gabby.powerschool.course_enrollments_current_static AS enr ON co.student_number = enr.student_number /* trunk-ignore(sqlfluff/L016) */
+  INNER JOIN gabby.powerschool.course_enrollments_current_static AS enr ON co.student_number = enr.student_number
   AND co.academic_year = enr.academic_year
   AND co.[db_name] = enr.[db_name]
   AND enr.course_number IN ('ELA01068G1', 'MAT02999G1')

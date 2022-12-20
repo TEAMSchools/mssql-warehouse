@@ -40,7 +40,7 @@ WITH
       AND fg.[db_name] = s.[db_name]
       AND fg.exclude_from_gpa = 0
       AND (
-        CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN fg.termbin_start_date AND fg.termbin_end_date  /* trunk-ignore(sqlfluff/L016) */
+        CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN fg.termbin_start_date AND fg.termbin_end_date
       )
       INNER JOIN gabby.powerschool.courses AS c ON fg.course_number = c.course_number
       AND fg.[db_name] = c.[db_name]

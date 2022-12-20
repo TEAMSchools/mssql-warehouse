@@ -49,7 +49,7 @@ SELECT
   END AS standard_proficiency
 FROM
   std_avg AS sa
-  INNER JOIN gabby.illuminate_dna_assessments.performance_band_lookup_static AS pbl ON sa.performance_band_set_id = pbl.performance_band_set_id /* trunk-ignore(sqlfluff/L016) */
+  INNER JOIN gabby.illuminate_dna_assessments.performance_band_lookup_static AS pbl ON sa.performance_band_set_id = pbl.performance_band_set_id
   AND (
     sa.avg_percent_correct BETWEEN pbl.minimum_value AND pbl.maximum_value
   )

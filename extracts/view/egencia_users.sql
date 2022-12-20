@@ -43,7 +43,7 @@ FROM
       COALESCE(scw.rehire_date, scw.original_hire_date) AS hire_date
     FROM
       gabby.people.staff_roster AS scw
-      INNER JOIN gabby.adsi.user_attributes_static AS ad ON scw.employee_number = ad.employeenumber /* trunk-ignore(sqlfluff/L016) */
+      INNER JOIN gabby.adsi.user_attributes_static AS ad ON scw.employee_number = ad.employeenumber
       AND ISNUMERIC(ad.employeenumber) = 1
     WHERE
       (

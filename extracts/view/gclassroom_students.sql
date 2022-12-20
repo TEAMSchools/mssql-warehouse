@@ -16,4 +16,4 @@ FROM
   INNER JOIN gabby.powerschool.students AS s ON cc.studentid = s.id
   AND cc.[db_name] = s.[db_name]
   AND s.enroll_status = 0
-  INNER JOIN gabby.powerschool.student_access_accounts_static AS sas ON s.student_number = sas.student_number /* trunk-ignore(sqlfluff/L016) */
+  INNER JOIN gabby.powerschool.student_access_accounts_static AS sas ON s.student_number = sas.student_number

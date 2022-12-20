@@ -13,7 +13,7 @@ SELECT
   END AS grade
 FROM
   gabby.powerschool.course_enrollments_current_static AS enr
-  INNER JOIN gabby.powerschool.student_access_accounts_static AS saa ON enr.student_number = saa.student_number /* trunk-ignore(sqlfluff/L016) */
+  INNER JOIN gabby.powerschool.student_access_accounts_static AS saa ON enr.student_number = saa.student_number
   INNER JOIN gabby.powerschool.students AS s ON enr.student_number = s.student_number
   AND enr.[db_name] = s.[db_name]
   AND s.enroll_status = 0

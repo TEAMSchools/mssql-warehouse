@@ -69,7 +69,7 @@ FROM
       END AS school_name
     FROM
       gabby.powerschool.students AS s
-      INNER JOIN gabby.powerschool.student_access_accounts_static AS saa ON s.student_number = saa.student_number /* trunk-ignore(sqlfluff/L016) */
+      INNER JOIN gabby.powerschool.student_access_accounts_static AS saa ON s.student_number = saa.student_number
       INNER JOIN gabby.powerschool.schools AS sch ON s.schoolid = sch.school_number
       AND s.[db_name] = sch.[db_name]
       LEFT JOIN gabby.powerschool.spenrollments_gen_static AS sp ON s.id = sp.studentid

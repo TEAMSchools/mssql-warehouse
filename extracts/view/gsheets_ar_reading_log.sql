@@ -154,7 +154,7 @@ SELECT
   bk.d_percent_correct * 100 AS last_book_quiz_pct_correct
 FROM
   gabby.powerschool.cohort_identifiers_static AS co
-  LEFT JOIN gabby.powerschool.course_enrollments_current_static AS enr ON co.student_number = enr.student_number /* trunk-ignore(sqlfluff/L016) */
+  LEFT JOIN gabby.powerschool.course_enrollments_current_static AS enr ON co.student_number = enr.student_number
   AND co.[db_name] = enr.[db_name]
   AND enr.credittype = 'ENG'
   AND (
@@ -166,16 +166,16 @@ FROM
   AND co.[db_name] = gr.[db_name]
   AND enr.course_number = gr.course_number
   AND (
-    /* trunk-ignore(sqlfluff/L016) */
+
     CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN gr.termbin_start_date AND gr.termbin_end_date
   )
-  LEFT JOIN gabby.powerschool.category_grades_static AS ele ON co.studentid = ele.studentid /* trunk-ignore(sqlfluff/L016) */
+  LEFT JOIN gabby.powerschool.category_grades_static AS ele ON co.studentid = ele.studentid
   AND co.yearid = ele.yearid
   AND co.[db_name] = ele.[db_name]
   AND enr.course_number = ele.course_number
   AND ele.storecode_type = 'H'
   AND (
-    /* trunk-ignore(sqlfluff/L016) */
+
     CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN ele.termbin_start_date AND ele.termbin_end_date
   )
   LEFT JOIN fp AS fp_base ON co.student_number = fp_base.student_number
@@ -183,7 +183,7 @@ FROM
   LEFT JOIN fp AS fp_curr ON co.student_number = fp_curr.student_number
   AND fp_curr.rn_curr = 1
   LEFT JOIN ar_wide ON co.student_number = ar_wide.student_number
-  LEFT JOIN gabby.renaissance.ar_most_recent_quiz_static AS bk ON co.student_number = bk.student_number /* trunk-ignore(sqlfluff/L016) */
+  LEFT JOIN gabby.renaissance.ar_most_recent_quiz_static AS bk ON co.student_number = bk.student_number
   AND co.academic_year = bk.academic_year
 WHERE
   co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()

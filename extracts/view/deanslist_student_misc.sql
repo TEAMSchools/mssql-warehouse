@@ -81,7 +81,7 @@ FROM
     ELSE co.schoolid
   END = ed.schoolid
   LEFT JOIN gabby.alumni.ktc_roster AS ktc ON co.student_number = ktc.student_number
-  LEFT JOIN gabby.powerschool.gpa_detail AS gpa ON co.student_number = gpa.student_number /* trunk-ignore(sqlfluff/L016) */
+  LEFT JOIN gabby.powerschool.gpa_detail AS gpa ON co.student_number = gpa.student_number
   AND co.academic_year = gpa.academic_year
   AND co.[db_name] = gpa.[db_name]
   AND gpa.is_curterm = 1
