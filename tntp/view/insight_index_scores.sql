@@ -7,12 +7,7 @@ SELECT
   sub.reporting_schoolid,
   sub.school,
   SUM(sub.pct_agree) AS sum_pct_agree,
-  ROUND(
-    (
-      SUM(sub.pct_agree) * 3
-    ) + 1,
-    1
-  ) AS instructional_culture_index
+  ROUND((SUM(sub.pct_agree) * 3) + 1, 1) AS instructional_culture_index
 FROM
   (
     SELECT

@@ -32,9 +32,7 @@ WITH
       gabby.surveys.self_and_others_survey AS s
       INNER JOIN gabby.surveygizmo.survey_campaign_clean_static AS c ON c.survey_id = 4561325
       AND (
-        CAST(
-          s._created AS DATETIME2
-        ) BETWEEN c.link_open_date AND c.link_close_date
+        CAST(s._created AS DATETIME2) BETWEEN c.link_open_date AND c.link_close_date
       )
     WHERE
       gabby.utilities.DATE_TO_SY (s._created) = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
@@ -70,9 +68,7 @@ WITH
       gabby.surveys.manager_survey AS m
       INNER JOIN gabby.surveygizmo.survey_campaign_clean_static AS c ON c.survey_id = 4561288
       AND (
-        CAST(
-          m._created AS DATETIME2
-        ) BETWEEN c.link_open_date AND c.link_close_date
+        CAST(m._created AS DATETIME2) BETWEEN c.link_open_date AND c.link_close_date
       )
     WHERE
       gabby.utilities.DATE_TO_SY (m._created) = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
@@ -99,9 +95,7 @@ WITH
       gabby.surveys.r_9_engagement_survey AS e
       INNER JOIN gabby.surveygizmo.survey_campaign_clean_static AS c ON c.survey_id = 5300913
       AND (
-        CAST(
-          e._created AS DATETIME2
-        ) BETWEEN c.link_open_date AND c.link_close_date
+        CAST(e._created AS DATETIME2) BETWEEN c.link_open_date AND c.link_close_date
       )
     WHERE
       gabby.utilities.DATE_TO_SY (e._created) = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
@@ -142,43 +136,25 @@ WITH
   ),
   survey_feed AS (
     SELECT
-      COALESCE(
-        r.date_created,
-        w.date_created
-      ) AS date_created,
+      COALESCE(r.date_created, w.date_created) AS date_created,
       COALESCE(
         r.survey_timestamp,
         w.survey_timestamp
       ) AS date_submitted,
-      COALESCE(
-        r.subject_name,
-        w.subject_name
-      ) AS subject_name,
+      COALESCE(r.subject_name, w.subject_name) AS subject_name,
       COALESCE(
         r.subject_df_employee_number,
         w.subject_df_employee_number
       ) AS subject_df_employee_number,
       COALESCE(r.email, w.email) AS responder_email,
-      COALESCE(
-        r.academic_year,
-        w.academic_year
-      ) AS academic_year,
+      COALESCE(r.academic_year, w.academic_year) AS academic_year,
       COALESCE(
         r.reporting_term,
         w.reporting_term
       ) AS reporting_term,
-      COALESCE(
-        r.is_manager,
-        w.is_manager
-      ) AS is_manager,
-      COALESCE(
-        r.survey_type,
-        w.survey_type
-      ) AS survey_type,
-      COALESCE(
-        r.survey_id,
-        w.survey_id
-      ) AS survey_id
+      COALESCE(r.is_manager, w.is_manager) AS is_manager,
+      COALESCE(r.survey_type, w.survey_type) AS survey_type,
+      COALESCE(r.survey_id, w.survey_id) AS survey_id
     FROM
       response_identifiers AS r
       FULL JOIN webhook_feed AS w ON r.survey_id = w.survey_id
@@ -195,27 +171,16 @@ WITH
       sr.primary_site AS location_custom,
       sr.primary_job AS job_title_description,
       CASE
-        WHEN sr.[status] IN (
-          'INACTIVE',
-          'ADMIN_LEAVE'
-        ) THEN 'LEAVE'
+        WHEN sr.[status] IN ('INACTIVE', 'ADMIN_LEAVE') THEN 'LEAVE'
         ELSE sr.[status]
       END AS position_status,
       LOWER(sr.userprincipalname) AS email1,
       CASE
         WHEN LOWER(
-          REPLACE(
-            sr.userprincipalname,
-            '-',
-            ''
-          )
+          REPLACE(sr.userprincipalname, '-', '')
         ) = LOWER(sr.userprincipalname) THEN NULL
         ELSE LOWER(
-          REPLACE(
-            sr.userprincipalname,
-            '-',
-            ''
-          )
+          REPLACE(sr.userprincipalname, '-', '')
         )
       END AS email2,
       CASE
@@ -229,10 +194,7 @@ WITH
       gabby.people.staff_crosswalk_static AS sr
       CROSS JOIN STRING_SPLIT ('SO1,SO2,SO3', ',') ss
     WHERE
-      sr.[status] NOT IN (
-        'TERMINATED',
-        'PRESTART'
-      )
+      sr.[status] NOT IN ('TERMINATED', 'PRESTART')
     UNION ALL
     SELECT
       sr.df_employee_number,
@@ -242,27 +204,16 @@ WITH
       sr.primary_site AS location_custom,
       sr.primary_job AS job_title_description,
       CASE
-        WHEN sr.[status] IN (
-          'INACTIVE',
-          'ADMIN_LEAVE'
-        ) THEN 'LEAVE'
+        WHEN sr.[status] IN ('INACTIVE', 'ADMIN_LEAVE') THEN 'LEAVE'
         ELSE sr.[status]
       END AS position_status,
       LOWER(sr.userprincipalname) AS email1,
       CASE
         WHEN LOWER(
-          REPLACE(
-            sr.userprincipalname,
-            '-',
-            ''
-          )
+          REPLACE(sr.userprincipalname, '-', '')
         ) = LOWER(sr.userprincipalname) THEN NULL
         ELSE LOWER(
-          REPLACE(
-            sr.userprincipalname,
-            '-',
-            ''
-          )
+          REPLACE(sr.userprincipalname, '-', '')
         )
       END AS email2,
       CASE
@@ -274,15 +225,9 @@ WITH
       gabby.utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year
     FROM
       gabby.people.staff_crosswalk_static AS sr
-      CROSS JOIN STRING_SPLIT (
-        'R9S1,R9S2,R9S3,R9S4',
-        ','
-      ) ss
+      CROSS JOIN STRING_SPLIT ('R9S1,R9S2,R9S3,R9S4', ',') ss
     WHERE
-      sr.[status] NOT IN (
-        'TERMINATED',
-        'PRESTART'
-      )
+      sr.[status] NOT IN ('TERMINATED', 'PRESTART')
     UNION ALL
     SELECT
       sr.df_employee_number,
@@ -292,27 +237,16 @@ WITH
       sr.primary_site AS location_custom,
       sr.primary_job AS job_title_description,
       CASE
-        WHEN sr.[status] IN (
-          'INACTIVE',
-          'ADMIN_LEAVE'
-        ) THEN 'LEAVE'
+        WHEN sr.[status] IN ('INACTIVE', 'ADMIN_LEAVE') THEN 'LEAVE'
         ELSE sr.[status]
       END AS position_status,
       LOWER(sr.userprincipalname) AS email1,
       CASE
         WHEN LOWER(
-          REPLACE(
-            sr.userprincipalname,
-            '-',
-            ''
-          )
+          REPLACE(sr.userprincipalname, '-', '')
         ) = LOWER(sr.userprincipalname) THEN NULL
         ELSE LOWER(
-          REPLACE(
-            sr.userprincipalname,
-            '-',
-            ''
-          )
+          REPLACE(sr.userprincipalname, '-', '')
         )
       END AS email2,
       CASE
@@ -324,15 +258,9 @@ WITH
       gabby.utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year
     FROM
       gabby.people.staff_crosswalk_static AS sr
-      CROSS JOIN STRING_SPLIT (
-        'MGR1,MGR2,MGR3,MGR4',
-        ','
-      ) ss
+      CROSS JOIN STRING_SPLIT ('MGR1,MGR2,MGR3,MGR4', ',') ss
     WHERE
-      sr.[status] NOT IN (
-        'TERMINATED',
-        'PRESTART'
-      )
+      sr.[status] NOT IN ('TERMINATED', 'PRESTART')
   )
 SELECT
   s.df_employee_number AS df_employee_number,

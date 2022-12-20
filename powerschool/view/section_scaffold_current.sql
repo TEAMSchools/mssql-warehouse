@@ -25,9 +25,7 @@ FROM
       cc.course_number,
       cc.sectionid,
       cc.dateleft,
-      CAST(
-        LEFT(ABS(cc.termid), 2) AS INT
-      ) AS yearid,
+      CAST(LEFT(ABS(cc.termid), 2) AS INT) AS yearid,
       ABS(cc.sectionid) AS abs_sectionid,
       CASE
         WHEN cc.sectionid < 0 THEN 1
@@ -54,7 +52,5 @@ FROM
         gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
         7,
         1
-      ) AND CAST(
-        CURRENT_TIMESTAMP AS DATE
-      )
+      ) AND CAST(CURRENT_TIMESTAMP AS DATE)
   ) AS sub

@@ -9,11 +9,7 @@ SELECT
   stu_status_words AS goal_status,
   CASE
     WHEN reporting_term = 'ARY' THEN 'Y1'
-    ELSE REPLACE(
-      reporting_term,
-      'AR',
-      'Q'
-    )
+    ELSE REPLACE(reporting_term, 'AR', 'Q')
   END AS term
 FROM
   gabby.renaissance.ar_progress_to_goals

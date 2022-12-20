@@ -6,24 +6,12 @@ SELECT
   sub.[Test Administered By] AS test_administered_by,
   sub.[Academic Year] AS academic_year,
   sub.[Test Round] AS test_round,
-  CAST(
-    sub.[Date Administered] AS DATE
-  ) AS date_administered,
-  CAST(
-    sub.[About the Text] AS FLOAT
-  ) AS about_the_text,
-  CAST(
-    sub.[Beyond the Text] AS FLOAT
-  ) AS beyond_the_text,
-  CAST(
-    sub.[Within the Text] AS FLOAT
-  ) AS within_the_text,
-  CAST(
-    sub.[Accuracy] AS FLOAT
-  ) AS accuracy,
-  CAST(
-    sub.[Fluency] AS FLOAT
-  ) AS fluency,
+  CAST(sub.[Date Administered] AS DATE) AS date_administered,
+  CAST(sub.[About the Text] AS FLOAT) AS about_the_text,
+  CAST(sub.[Beyond the Text] AS FLOAT) AS beyond_the_text,
+  CAST(sub.[Within the Text] AS FLOAT) AS within_the_text,
+  CAST(sub.[Accuracy] AS FLOAT) AS accuracy,
+  CAST(sub.[Fluency] AS FLOAT) AS fluency,
   CAST(
     sub.[Reading Rate (wpm)] AS FLOAT
   ) AS reading_rate_wpm,
@@ -54,9 +42,7 @@ FROM
       student_id,
       field_about_the_text AS [About the Text],
       LEFT(
-        CAST(
-          field_academic_year AS INT
-        ),
+        CAST(field_academic_year AS INT),
         4
       ) AS [Academic Year],
       field_accuracy_1 AS [Accuracy],

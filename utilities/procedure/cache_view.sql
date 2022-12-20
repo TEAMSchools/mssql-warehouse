@@ -39,11 +39,7 @@ SET
 /* if source view does not exist, exit */
 IF OBJECT_ID(@source_view, 'V') IS NULL BEGIN;
 
-RAISERROR (
-  'View does not exist',
-  0,
-  1
-)
+RAISERROR ('View does not exist', 0, 1)
 WITH
   NOWAIT;
 
@@ -52,9 +48,7 @@ RETURN;
 END;
 
 /* if destination table does not exist,CREATE and exit */
-IF OBJECT_ID(
-  @destination_table_name
-) IS NULL BEGIN;
+IF OBJECT_ID(@destination_table_name) IS NULL BEGIN;
 
 SET
   @sql_create = N'
@@ -193,11 +187,7 @@ BEGIN TRY;
 
 BEGIN TRANSACTION;
 
-RAISERROR (
-  @sql_truncateinsert,
-  0,
-  1
-)
+RAISERROR (@sql_truncateinsert, 0, 1)
 WITH
   NOWAIT;
 

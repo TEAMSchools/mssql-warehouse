@@ -14,9 +14,7 @@ SELECT
   df.manager_name AS reports_to,
   df.manager_adp_associate_id AS manager_custom_assoc_id,
   df.[status] AS position_status,
-  CAST(
-    df.termination_date AS NVARCHAR
-  ) AS termination_date,
+  CAST(df.termination_date AS NVARCHAR) AS termination_date,
   df.mail AS email_addr,
   CAST(
     COALESCE(

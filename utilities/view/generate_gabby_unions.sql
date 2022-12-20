@@ -59,42 +59,24 @@ WITH
           ) AS column_type_concat,
           CASE
             WHEN (
-              CONCAT(
-                p.kippcamden,
-                p.kippnewark
-              ) != ''
+              CONCAT(p.kippcamden, p.kippnewark) != ''
               AND CHARINDEX(
                 p.kippmiami,
-                CONCAT(
-                  p.kippcamden,
-                  p.kippnewark
-                )
+                CONCAT(p.kippcamden, p.kippnewark)
               ) = 0
             )
             OR (
-              CONCAT(
-                p.kippmiami,
-                p.kippnewark
-              ) != ''
+              CONCAT(p.kippmiami, p.kippnewark) != ''
               AND CHARINDEX(
                 p.kippcamden,
-                CONCAT(
-                  p.kippmiami,
-                  p.kippnewark
-                )
+                CONCAT(p.kippmiami, p.kippnewark)
               ) = 0
             )
             OR (
-              CONCAT(
-                p.kippmiami,
-                p.kippcamden
-              ) != ''
+              CONCAT(p.kippmiami, p.kippcamden) != ''
               AND CHARINDEX(
                 p.kippnewark,
-                CONCAT(
-                  p.kippmiami,
-                  p.kippcamden
-                )
+                CONCAT(p.kippmiami, p.kippcamden)
               ) = 0
             ) THEN 1
             ELSE 0
@@ -147,21 +129,10 @@ FROM
     SELECT
       atc.[schema_name],
       atc.table_name,
-      'SELECT ''kippnewark'' AS [db_name] ' + gabby.dbo.GROUP_CONCAT_D (
-        ',' + atc.kippnewark,
-        ''
-      ) + ' FROM kippnewark.' + atc.[schema_name] + '.' + atc.table_name AS kippnewark,
-      'SELECT ''kippcamden'' AS [db_name] ' + gabby.dbo.GROUP_CONCAT_D (
-        ',' + atc.kippcamden,
-        ''
-      ) + ' FROM kippcamden.' + atc.[schema_name] + '.' + atc.table_name AS kippcamden,
-      'SELECT ''kippmiami'' AS [db_name] ' + gabby.dbo.GROUP_CONCAT_D (
-        ',' + atc.kippmiami,
-        ''
-      ) + ' FROM kippmiami.' + atc.[schema_name] + '.' + atc.table_name AS kippmiami,
-      MAX(
-        atc.column_type_mismatch
-      ) AS column_type_mismatch,
+      'SELECT ''kippnewark'' AS [db_name] ' + gabby.dbo.GROUP_CONCAT_D (',' + atc.kippnewark, '') + ' FROM kippnewark.' + atc.[schema_name] + '.' + atc.table_name AS kippnewark,
+      'SELECT ''kippcamden'' AS [db_name] ' + gabby.dbo.GROUP_CONCAT_D (',' + atc.kippcamden, '') + ' FROM kippcamden.' + atc.[schema_name] + '.' + atc.table_name AS kippcamden,
+      'SELECT ''kippmiami'' AS [db_name] ' + gabby.dbo.GROUP_CONCAT_D (',' + atc.kippmiami, '') + ' FROM kippmiami.' + atc.[schema_name] + '.' + atc.table_name AS kippmiami,
+      MAX(atc.column_type_mismatch) AS column_type_mismatch,
       COUNT(
         CASE
           WHEN atc.kippnewark NOT LIKE '%NULL%' THEN atc.kippnewark

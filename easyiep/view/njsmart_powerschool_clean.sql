@@ -74,11 +74,7 @@ SELECT
           effective_date ASC
       )
     ),
-    DATEFROMPARTS(
-      academic_year + 1,
-      6,
-      30
-    )
+    DATEFROMPARTS(academic_year + 1, 6, 30)
   ) AS effective_end_date,
   ROW_NUMBER() OVER (
     PARTITION BY
@@ -98,70 +94,40 @@ FROM
       case_manager,
       effective_date,
       academic_year,
-      CAST(
-        state_studentnumber AS BIGINT
-      ) AS state_studentnumber,
-      CAST(
-        nj_se_referraldate AS DATE
-      ) AS nj_se_referraldate,
+      CAST(state_studentnumber AS BIGINT) AS state_studentnumber,
+      CAST(nj_se_referraldate AS DATE) AS nj_se_referraldate,
       CAST(
         nj_se_parentalconsentdate AS DATE
       ) AS nj_se_parentalconsentdate,
-      CAST(
-        nj_se_eligibilityddate AS DATE
-      ) AS nj_se_eligibilityddate,
+      CAST(nj_se_eligibilityddate AS DATE) AS nj_se_eligibilityddate,
       CAST(
         nj_se_initialiepmeetingdate AS DATE
       ) AS nj_se_initialiepmeetingdate,
       CAST(
         nj_se_consenttoimplementdate AS DATE
       ) AS nj_se_consenttoimplementdate,
-      CAST(
-        nj_se_lastiepmeetingdate AS DATE
-      ) AS nj_se_lastiepmeetingdate,
-      CAST(
-        nj_se_reevaluationdate AS DATE
-      ) AS nj_se_reevaluationdate,
+      CAST(nj_se_lastiepmeetingdate AS DATE) AS nj_se_lastiepmeetingdate,
+      CAST(nj_se_reevaluationdate AS DATE) AS nj_se_reevaluationdate,
       CAST(iepbegin_date AS DATE) AS iepbegin_date,
       CAST(iepend_date AS DATE) AS iepend_date,
-      CAST(
-        nj_timeinregularprogram AS FLOAT
-      ) AS nj_timeinregularprogram,
-      CAST(
-        nj_se_delayreason AS VARCHAR(2)
-      ) AS nj_se_delayreason,
-      CAST(
-        nj_se_placement AS VARCHAR(2)
-      ) AS nj_se_placement,
+      CAST(nj_timeinregularprogram AS FLOAT) AS nj_timeinregularprogram,
+      CAST(nj_se_delayreason AS VARCHAR(2)) AS nj_se_delayreason,
+      CAST(nj_se_placement AS VARCHAR(2)) AS nj_se_placement,
       CAST(
         nj_se_parental_consentobtained AS VARCHAR(1)
       ) AS nj_se_parental_consentobtained,
-      CAST(
-        ti_serv_counseling AS VARCHAR(1)
-      ) AS ti_serv_counseling,
-      CAST(
-        ti_serv_occup AS VARCHAR(1)
-      ) AS ti_serv_occup,
-      CAST(
-        ti_serv_physical AS VARCHAR(1)
-      ) AS ti_serv_physical,
-      CAST(
-        ti_serv_speech AS VARCHAR(1)
-      ) AS ti_serv_speech,
-      CAST(
-        ti_serv_other AS VARCHAR(1)
-      ) AS ti_serv_other,
+      CAST(ti_serv_counseling AS VARCHAR(1)) AS ti_serv_counseling,
+      CAST(ti_serv_occup AS VARCHAR(1)) AS ti_serv_occup,
+      CAST(ti_serv_physical AS VARCHAR(1)) AS ti_serv_physical,
+      CAST(ti_serv_speech AS VARCHAR(1)) AS ti_serv_speech,
+      CAST(ti_serv_other AS VARCHAR(1)) AS ti_serv_other,
       CAST(
         TRY_PARSE(
-          CAST(
-            student_number AS VARCHAR(32)
-          ) AS INT
+          CAST(student_number AS VARCHAR(32)) AS INT
         ) AS BIGINT
       ) AS student_number,
       RIGHT(
-        '0' + CAST(
-          special_education AS VARCHAR
-        ),
+        '0' + CAST(special_education AS VARCHAR),
         2
       ) AS special_education,
       ROW_NUMBER() OVER (

@@ -145,19 +145,13 @@ FROM
         WHEN sr.business_unit = 'KIPP Miami' THEN LOWER(
           LEFT(
             ads.userprincipalname,
-            CHARINDEX(
-              '@',
-              ads.userprincipalname
-            )
+            CHARINDEX('@', ads.userprincipalname)
           )
         ) + 'kippmiami.org'
         ELSE LOWER(
           LEFT(
             ads.userprincipalname,
-            CHARINDEX(
-              '@',
-              ads.userprincipalname
-            )
+            CHARINDEX('@', ads.userprincipalname)
           )
         ) + 'apps.teamschools.org'
       END AS google_email,

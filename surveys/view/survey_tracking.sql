@@ -9,11 +9,7 @@ WITH
       c.reporting_term_code,
       c.link_open_date AS survey_round_open,
       c.link_close_date AS survey_round_close,
-      DATEADD(
-        DAY,
-        -15,
-        c.link_open_date
-      ) AS survey_round_open_minus_fifteen,
+      DATEADD(DAY, -15, c.link_open_date) AS survey_round_open_minus_fifteen,
       ROW_NUMBER() OVER (
         PARTITION BY
           c.survey_id
@@ -72,10 +68,7 @@ WITH
       wcf.[Teacher Prep Program] AS teacher_prep_program
     FROM
       surveys AS s
-      INNER JOIN gabby.people.staff_crosswalk_static AS r ON r.[status] NOT IN (
-        'Terminated',
-        'Prestart'
-      )
+      INNER JOIN gabby.people.staff_crosswalk_static AS r ON r.[status] NOT IN ('Terminated', 'Prestart')
       LEFT JOIN gabby.adp.workers_custom_field_group_wide_static AS wcf ON r.adp_associate_id = wcf.worker_id
     WHERE
       s.rn_survey_recent = 1
@@ -195,10 +188,7 @@ SELECT
   st.survey_default_link,
   st.survey_id,
   sa.survey_round_status,
-  COALESCE(
-    sa.assignment,
-    c.subject_name
-  ) AS assignment,
+  COALESCE(sa.assignment, c.subject_name) AS assignment,
   COALESCE(
     sa.assignment_employee_id,
     CASE

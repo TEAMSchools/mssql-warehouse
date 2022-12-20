@@ -12,37 +12,25 @@ WITH
       asr.number_of_questions,
       co.grade_level,
       co.schoolid,
-      CAST(
-        ais.title AS NVARCHAR(128)
-      ) AS assessment_title,
+      CAST(ais.title AS NVARCHAR(128)) AS assessment_title,
       CAST(
         ais.subject_area AS NVARCHAR(128)
       ) AS subject_area,
       ROUND(
         (
-          (
-            asr.percent_correct / 100
-          ) * asr.number_of_questions
+          (asr.percent_correct / 100) * asr.number_of_questions
         ),
         0
       ) AS overall_number_correct,
-      CAST(
-        s.local_student_id AS INT
-      ) AS student_number,
-      CAST(
-        rt.time_per_name AS VARCHAR
-      ) AS time_per_name,
-      CAST(
-        rt.alt_name AS VARCHAR
-      ) AS administration_round
+      CAST(s.local_student_id AS INT) AS student_number,
+      CAST(rt.time_per_name AS VARCHAR) AS time_per_name,
+      CAST(rt.alt_name AS VARCHAR) AS administration_round
     FROM
       gabby.illuminate_dna_assessments.assessments_identifiers_static AS ais
       INNER JOIN gabby.illuminate_dna_assessments.agg_student_responses AS asr ON (
         ais.assessment_id = asr.assessment_id
       )
-      INNER JOIN gabby.illuminate_public.students AS s ON (
-        asr.student_id = s.student_id
-      )
+      INNER JOIN gabby.illuminate_public.students AS s ON (asr.student_id = s.student_id)
       INNER JOIN gabby.reporting.reporting_terms AS rt ON (
         (
           ais.administered_at BETWEEN rt.start_date AND rt.end_date
@@ -75,9 +63,7 @@ WITH
       long_data.overall_performance_band,
       long_data.grade_level,
       long_data.schoolid,
-      CAST(
-        ssk.scale_score AS INT
-      ) AS scale_score,
+      CAST(ssk.scale_score AS INT) AS scale_score,
       ROW_NUMBER() OVER (
         PARTITION BY
           long_data.student_number,
@@ -134,14 +120,10 @@ WITH
       administration_round,
       MIN(administered_at) AS administered_at,
       SUM(number_of_questions) AS number_of_questions,
-      SUM(
-        overall_number_correct
-      ) AS overall_number_correct,
+      SUM(overall_number_correct) AS overall_number_correct,
       ROUND(
         (
-          SUM(
-            overall_number_correct
-          ) / SUM(number_of_questions)
+          SUM(overall_number_correct) / SUM(number_of_questions)
         ) * 100,
         0
       ) AS overall_percent_correct,
@@ -181,17 +163,10 @@ SELECT
   sub.growth_from_pretest,
   std.percent_correct AS standard_percent_correct,
   std.mastered AS standard_mastered,
+  CAST(s.custom_code AS NVARCHAR(128)) AS standard_code,
+  CAST(s.description AS NVARCHAR(2048)) AS standard_description,
   CAST(
-    s.custom_code AS NVARCHAR(128)
-  ) AS standard_code,
-  CAST(
-    s.description AS NVARCHAR(2048)
-  ) AS standard_description,
-  CAST(
-    COALESCE(
-      ps2.state_num,
-      ps.state_num
-    ) AS NVARCHAR(128)
+    COALESCE(ps2.state_num, ps.state_num) AS NVARCHAR(128)
   ) AS standard_strand,
   ROW_NUMBER() OVER (
     PARTITION BY
@@ -267,9 +242,7 @@ FROM
     sub.assessment_id = std.assessment_id
     AND sub.illuminate_student_id = std.student_id
   )
-  LEFT JOIN gabby.illuminate_standards.standards AS s ON (
-    std.standard_id = s.standard_id
-  )
+  LEFT JOIN gabby.illuminate_standards.standards AS s ON (std.standard_id = s.standard_id)
   LEFT JOIN gabby.illuminate_standards.standards AS ps ON (
     s.parent_standard_id = ps.standard_id
   )

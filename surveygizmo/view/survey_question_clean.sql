@@ -31,14 +31,8 @@ SELECT
   END AS is_identifier_question,
   JSON_VALUE(title, '$.English') AS title_english,
   JSON_VALUE(properties, '$.url') AS [url],
-  JSON_VALUE(
-    properties,
-    '$.orientation'
-  ) AS orientation,
-  JSON_QUERY(
-    properties,
-    '$.custom_css'
-  ) AS custom_css,
+  JSON_VALUE(properties, '$.orientation') AS orientation,
+  JSON_QUERY(properties, '$.custom_css') AS custom_css,
   CAST(
     JSON_VALUE(
       properties,
@@ -46,16 +40,10 @@ SELECT
     ) AS BIT
   ) AS question_description_above,
   CAST(
-    JSON_VALUE(
-      properties,
-      '$."soft-required"'
-    ) AS BIT
+    JSON_VALUE(properties, '$."soft-required"') AS BIT
   ) AS soft_required,
   CAST(
-    JSON_VALUE(
-      properties,
-      '$.disabled'
-    ) AS BIT
+    JSON_VALUE(properties, '$.disabled') AS BIT
   ) AS [disabled],
   CAST(
     JSON_VALUE(
@@ -64,24 +52,13 @@ SELECT
     ) AS BIT
   ) AS hide_after_response,
   CAST(
-    JSON_VALUE(
-      properties,
-      '$.break_after'
-    ) AS BIT
+    JSON_VALUE(properties, '$.break_after') AS BIT
   ) AS break_after,
   CAST(
-    gabby.utilities.STRIP_HTML (
-      JSON_VALUE(title, '$.English')
-    ) AS VARCHAR(500)
+    gabby.utilities.STRIP_HTML (JSON_VALUE(title, '$.English')) AS VARCHAR(500)
   ) AS title_clean,
-  JSON_QUERY(
-    properties,
-    '$.messages'
-  ) AS messages_json,
-  JSON_QUERY(
-    properties,
-    '$.show_rules'
-  ) AS show_rules_json,
+  JSON_QUERY(properties, '$.messages') AS messages_json,
+  JSON_QUERY(properties, '$.show_rules') AS show_rules_json,
   varname AS varname_json,
   [description] AS description_json
 FROM

@@ -30,9 +30,7 @@ SELECT
   cat.w_rt4,
   NULL AS e1_pct,
   NULL AS e2_pct,
-  ABS(
-    sec.excludefromgpa - 1
-  ) AS include_grades_display,
+  ABS(sec.excludefromgpa - 1) AS include_grades_display,
   ISNULL(cc.currentabsences, 0) AS currentabsences,
   ISNULL(cc.currenttardies, 0) AS currenttardies,
   COALESCE(
@@ -45,31 +43,12 @@ SELECT
     ),
     fg.need_60
   ) AS need_60,
-  COALESCE(
-    kctz.ctz_cur,
-    cat.ctz_cur
-  ) AS ctz_cur,
-  COALESCE(
-    kctz.ctz_rt1,
-    cat.ctz_rt1
-  ) AS ctz_rt1,
-  COALESCE(
-    kctz.ctz_rt2,
-    cat.ctz_rt2
-  ) AS ctz_rt2,
-  COALESCE(
-    kctz.ctz_rt3,
-    cat.ctz_rt3
-  ) AS ctz_rt3,
-  COALESCE(
-    kctz.ctz_rt4,
-    cat.ctz_rt4
-  ) AS ctz_rt4,
-  REPLACE(
-    comm.comment_value,
-    '"',
-    ''''
-  ) AS comment_value
+  COALESCE(kctz.ctz_cur, cat.ctz_cur) AS ctz_cur,
+  COALESCE(kctz.ctz_rt1, cat.ctz_rt1) AS ctz_rt1,
+  COALESCE(kctz.ctz_rt2, cat.ctz_rt2) AS ctz_rt2,
+  COALESCE(kctz.ctz_rt3, cat.ctz_rt3) AS ctz_rt3,
+  COALESCE(kctz.ctz_rt4, cat.ctz_rt4) AS ctz_rt4,
+  REPLACE(comm.comment_value, '"', '''') AS comment_value
 FROM
   gabby.powerschool.cohort_static AS co
   INNER JOIN gabby.powerschool.final_grades_wide_static AS fg ON co.studentid = fg.studentid

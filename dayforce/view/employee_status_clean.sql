@@ -18,24 +18,16 @@ FROM
       ds.number,
       ds.[status],
       ds.status_reason_description,
-      CAST(
-        ds.effective_start AS DATE
-      ) AS effective_start,
-      CAST(
-        ds.base_salary AS MONEY
-      ) AS base_salary,
+      CAST(ds.effective_start AS DATE) AS effective_start,
+      CAST(ds.base_salary AS MONEY) AS base_salary,
       LEAD(
-        CAST(
-          ds.effective_start AS DATE
-        ),
+        CAST(ds.effective_start AS DATE),
         1
       ) OVER (
         PARTITION BY
           ds.number
         ORDER BY
-          CAST(
-            ds.effective_start AS DATE
-          )
+          CAST(ds.effective_start AS DATE)
       ) AS effective_start_next,
       CONCAT(
         CASE

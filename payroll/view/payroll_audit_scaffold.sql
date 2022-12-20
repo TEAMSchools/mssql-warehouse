@@ -15,14 +15,10 @@ WITH
         ELSE 'Final'
       END AS preview_or_final,
       CASE
-        WHEN CHARINDEX('PREV', _file) > 0 THEN CAST(
-          SUBSTRING(_file, 39, 1) AS INT
-        )
+        WHEN CHARINDEX('PREV', _file) > 0 THEN CAST(SUBSTRING(_file, 39, 1) AS INT)
         ELSE NULL
       END AS preview_number,
-      CAST(
-        SUBSTRING(_file, 23, 10) AS DATE
-      ) AS payroll_date,
+      CAST(SUBSTRING(_file, 23, 10) AS DATE) AS payroll_date,
       CONCAT(
         SUBSTRING(_file, 19, 3),
         file_nbr
@@ -214,9 +210,7 @@ WITH
           CAST(r.fed_tax AS FLOAT) AS fed_tax,
           CAST(r.gross AS FLOAT) AS gross,
           CAST(r.net_pay AS FLOAT) AS net_pay,
-          CAST(
-            r.take_home_pay AS FLOAT
-          ) AS take_home_pay,
+          CAST(r.take_home_pay AS FLOAT) AS take_home_pay,
           CAST(r.ded_cd_3 AS FLOAT) AS ded_cd_3,
           CAST(r.ded_cd_4 AS FLOAT) AS ded_cd_4,
           CAST(r.ded_cd_403 AS FLOAT) AS ded_cd_403,
@@ -241,12 +235,8 @@ WITH
           CAST(r.ded_cd_j AS FLOAT) AS ded_cd_j,
           CAST(r.ded_cd_k AS FLOAT) AS ded_cd_k,
           CAST(r.ded_cd_l AS FLOAT) AS ded_cd_l,
-          CAST(
-            r.ded_cd_ln_1 AS FLOAT
-          ) AS ded_cd_ln_1,
-          CAST(
-            r.ded_cd_ln_2 AS FLOAT
-          ) AS ded_cd_ln_2,
+          CAST(r.ded_cd_ln_1 AS FLOAT) AS ded_cd_ln_1,
+          CAST(r.ded_cd_ln_2 AS FLOAT) AS ded_cd_ln_2,
           CAST(r.ded_cd_med AS FLOAT) AS ded_cd_med,
           CAST(r.ded_cd_mfs AS FLOAT) AS ded_cd_mfs,
           CAST(r.ded_cd_p AS FLOAT) AS ded_cd_p,
@@ -291,12 +281,8 @@ WITH
           CAST(r.hrs_4_sic AS FLOAT) AS hrs_4_sic,
           CAST(r.local_cd_1 AS FLOAT) AS local_cd_1,
           CAST(r.local_cd_2 AS FLOAT) AS local_cd_2,
-          CAST(
-            r.local_tax_1 AS FLOAT
-          ) AS local_tax_1,
-          CAST(
-            r.local_tax_2 AS FLOAT
-          ) AS local_tax_2,
+          CAST(r.local_tax_1 AS FLOAT) AS local_tax_1,
+          CAST(r.local_tax_2 AS FLOAT) AS local_tax_2,
           CAST(r.med_surtax AS FLOAT) AS med_surtax,
           CAST(r.med_tax AS FLOAT) AS med_tax,
           CAST(r.ot_ern AS FLOAT) AS ot_ern,
@@ -309,33 +295,23 @@ WITH
           CAST(r.rg_hrs AS FLOAT) AS rg_hrs,
           CAST(r.sdi_tax AS FLOAT) AS sdi_tax,
           CAST(r.ss_tax AS FLOAT) AS ss_tax,
-          CAST(
-            r.state_tax_1 AS FLOAT
-          ) AS state_tax_1,
-          CAST(
-            r.state_tax_2 AS FLOAT
-          ) AS state_tax_2,
+          CAST(r.state_tax_1 AS FLOAT) AS state_tax_1,
+          CAST(r.state_tax_2 AS FLOAT) AS state_tax_2,
           CAST(r.sui_tax AS FLOAT) AS sui_tax,
           CAST(ern_3_hb AS FLOAT) AS ern_3_hb,
           CAST(ern_4_sev AS FLOAT) AS ern_4_sev,
           CAST(ded_cd_mis AS FLOAT) AS ded_cd_mis,
           CAST(ern_4_sic AS FLOAT) AS ern_4_sic,
-          CAST(
-            memo_cd_b_input AS FLOAT
-          ) AS memo_cd_b_input,
+          CAST(memo_cd_b_input AS FLOAT) AS memo_cd_b_input,
           CAST(ern_3_rlb AS FLOAT) AS ern_3_rlb,
           CAST(ded_cd_rpe AS FLOAT) AS ded_cd_rpe,
-          CAST(
-            memo_cd_epn_calc AS FLOAT
-          ) AS memo_cd_epn_calc,
+          CAST(memo_cd_epn_calc AS FLOAT) AS memo_cd_epn_calc,
           CAST(hrs_4_jd AS FLOAT) AS hrs_4_jd,
           CAST(ern_4_awa AS FLOAT) AS ern_4_awa,
           CAST(hrs_4_awa AS FLOAT) AS hrs_4_awa,
           CAST(hrs_4_ret AS FLOAT) AS hrs_4_ret,
           CAST(ern_3_dc AS FLOAT) AS ern_3_dc,
-          CAST(
-            memo_cd_epn_input AS FLOAT
-          ) AS memo_cd_epn_input,
+          CAST(memo_cd_epn_input AS FLOAT) AS memo_cd_epn_input,
           CAST(ded_cd_71 AS FLOAT) AS ded_cd_71,
           CAST(ern_5_bp AS FLOAT) AS ern_5_bp,
           CAST(ern_4_bp AS FLOAT) AS ern_4_bp,

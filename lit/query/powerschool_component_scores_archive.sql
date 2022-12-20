@@ -19,91 +19,44 @@ WITH
             AND testid = 3273 THEN instruct_lvl
             ELSE read_lvl
           END AS read_lvl,
-          ISNULL(
-            [status],
-            'Did Not Achieve'
-          ) AS [status],
+          ISNULL([status], 'Did Not Achieve') AS [status],
           CAST(name_ass AS VARCHAR) AS name_ass,
           CAST(ltr_nameid AS VARCHAR) AS ltr_nameid,
-          CAST(
-            ltr_soundid AS VARCHAR
-          ) AS ltr_soundid,
-          CAST(
-            pa_rhymingwds AS VARCHAR
-          ) AS pa_rhymingwds,
+          CAST(ltr_soundid AS VARCHAR) AS ltr_soundid,
+          CAST(pa_rhymingwds AS VARCHAR) AS pa_rhymingwds,
           CAST(pa_mfs AS VARCHAR) AS pa_mfs,
-          CAST(
-            pa_segmentation AS VARCHAR
-          ) AS pa_segmentation,
+          CAST(pa_segmentation AS VARCHAR) AS pa_segmentation,
           CAST(cp_orient AS VARCHAR) AS cp_orient,
-          CAST(
-            cp_121_match AS VARCHAR
-          ) AS cp_121match,
+          CAST(cp_121_match AS VARCHAR) AS cp_121match,
           CAST(cp_slw AS VARCHAR) AS cp_slw,
-          CAST(
-            devsp_first AS VARCHAR
-          ) AS devsp_first,
+          CAST(devsp_first AS VARCHAR) AS devsp_first,
           CAST(devsp_svs AS VARCHAR) AS devsp_svs,
-          CAST(
-            devsp_final AS VARCHAR
-          ) AS devsp_final,
+          CAST(devsp_final AS VARCHAR) AS devsp_final,
           CAST(devsp_ifbd AS VARCHAR) AS devsp_ifbd,
-          CAST(
-            devsp_longvowel AS VARCHAR
-          ) AS devsp_longvowel,
-          CAST(
-            devsp_rcontrol AS VARCHAR
-          ) AS devsp_rcontrol,
-          CAST(
-            devsp_vowldig AS VARCHAR
-          ) AS devsp_vowldig,
-          CAST(
-            devsp_cmplxb AS VARCHAR
-          ) AS devsp_cmplxb,
-          CAST(
-            devsp_eding AS VARCHAR
-          ) AS devsp_eding,
-          CAST(
-            devsp_doubsylj AS VARCHAR
-          ) AS devsp_doubsylj,
-          CAST(
-            rr_121_match AS VARCHAR
-          ) AS rr_121match,
-          CAST(
-            rr_holdspattern AS VARCHAR
-          ) AS rr_holdspattern,
-          CAST(
-            rr_understanding AS VARCHAR
-          ) AS rr_understanding,
-          CAST(
-            accuracy_1_a AS VARCHAR
-          ) AS accuracy_1a,
-          CAST(
-            accuracy_2_b AS VARCHAR
-          ) AS accuracy_2b,
+          CAST(devsp_longvowel AS VARCHAR) AS devsp_longvowel,
+          CAST(devsp_rcontrol AS VARCHAR) AS devsp_rcontrol,
+          CAST(devsp_vowldig AS VARCHAR) AS devsp_vowldig,
+          CAST(devsp_cmplxb AS VARCHAR) AS devsp_cmplxb,
+          CAST(devsp_eding AS VARCHAR) AS devsp_eding,
+          CAST(devsp_doubsylj AS VARCHAR) AS devsp_doubsylj,
+          CAST(rr_121_match AS VARCHAR) AS rr_121match,
+          CAST(rr_holdspattern AS VARCHAR) AS rr_holdspattern,
+          CAST(rr_understanding AS VARCHAR) AS rr_understanding,
+          CAST(accuracy_1_a AS VARCHAR) AS accuracy_1a,
+          CAST(accuracy_2_b AS VARCHAR) AS accuracy_2b,
           CAST(ra_errors AS VARCHAR) AS ra_errors,
           CAST(cc_factual AS VARCHAR) AS cc_factual,
           CAST(cc_infer AS VARCHAR) AS cc_infer,
           CAST(cc_other AS VARCHAR) AS cc_other,
           CAST(cc_ct AS VARCHAR) AS cc_ct,
-          CAST(
-            ocomp_factual AS VARCHAR
-          ) AS ocomp_factual,
+          CAST(ocomp_factual AS VARCHAR) AS ocomp_factual,
           CAST(ocomp_ct AS VARCHAR) AS ocomp_ct,
-          CAST(
-            ocomp_infer AS VARCHAR
-          ) AS ocomp_infer,
-          CAST(
-            scomp_factual AS VARCHAR
-          ) AS scomp_factual,
-          CAST(
-            scomp_infer AS VARCHAR
-          ) AS scomp_infer,
+          CAST(ocomp_infer AS VARCHAR) AS ocomp_infer,
+          CAST(scomp_factual AS VARCHAR) AS scomp_factual,
+          CAST(scomp_infer AS VARCHAR) AS scomp_infer,
           CAST(scomp_ct AS VARCHAR) AS scomp_ct,
           CAST(wcomp_fact AS VARCHAR) AS wcomp_fact,
-          CAST(
-            wcomp_infer AS VARCHAR
-          ) AS wcomp_infer,
+          CAST(wcomp_infer AS VARCHAR) AS wcomp_infer,
           CAST(wcomp_ct AS VARCHAR) AS wcomp_ct,
           CAST(retelling AS VARCHAR) AS retelling,
           CAST(
@@ -119,29 +72,17 @@ WITH
             END AS VARCHAR
           ) AS reading_rate,
           CAST(fluency AS VARCHAR) AS fluency,
-          CAST(
-            ROUND(fp_wpmrate, 0) AS VARCHAR
-          ) AS fp_wpmrate,
+          CAST(ROUND(fp_wpmrate, 0) AS VARCHAR) AS fp_wpmrate,
           CAST(fp_fluency AS VARCHAR) AS fp_fluency,
-          CAST(
-            fp_accuracy AS VARCHAR
-          ) AS fp_accuracy,
-          CAST(
-            fp_comp_within AS VARCHAR
-          ) AS fp_comp_within,
-          CAST(
-            fp_comp_beyond AS VARCHAR
-          ) AS fp_comp_beyond,
-          CAST(
-            fp_comp_about AS VARCHAR
-          ) AS fp_comp_about,
+          CAST(fp_accuracy AS VARCHAR) AS fp_accuracy,
+          CAST(fp_comp_within AS VARCHAR) AS fp_comp_within,
+          CAST(fp_comp_beyond AS VARCHAR) AS fp_comp_beyond,
+          CAST(fp_comp_about AS VARCHAR) AS fp_comp_about,
           CAST(cc_prof AS VARCHAR) AS cc_prof,
           CAST(ocomp_prof AS VARCHAR) AS ocomp_prof,
           CAST(scomp_prof AS VARCHAR) AS scomp_prof,
           CAST(wcomp_prof AS VARCHAR) AS wcomp_prof,
-          CAST(
-            fp_comp_prof AS VARCHAR
-          ) AS fp_comp_prof,
+          CAST(fp_comp_prof AS VARCHAR) AS fp_comp_prof,
           CAST(cp_prof AS VARCHAR) AS cp_prof,
           CAST(rr_prof AS VARCHAR) AS rr_prof,
           CAST(devsp_prof AS VARCHAR) AS devsp_prof

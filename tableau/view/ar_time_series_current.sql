@@ -85,26 +85,14 @@ FROM
       last_book_pct_correct,
       words_goal_yr * (
         CAST(
-          DATEDIFF(
-            DAY,
-            y1_start_date,
-            [date]
-          ) AS FLOAT
+          DATEDIFF(DAY, y1_start_date, [date]) AS FLOAT
         ) / CAST(
-          DATEDIFF(
-            DAY,
-            y1_start_date,
-            y1_end_date
-          ) AS FLOAT
+          DATEDIFF(DAY, y1_start_date, y1_end_date) AS FLOAT
         )
       ) AS ontrack_words_yr,
       words_goal_term * (
         CAST(
-          DATEDIFF(
-            DAY,
-            term_start_date,
-            [date]
-          ) AS FLOAT
+          DATEDIFF(DAY, term_start_date, [date]) AS FLOAT
         ) / CAST(
           DATEDIFF(
             DAY,
@@ -116,9 +104,7 @@ FROM
       CASE
         WHEN DATEPART(WEEK, [date]) = DATEPART(
           WEEK,
-          CAST(
-            CURRENT_TIMESTAMP AS DATE
-          )
+          CAST(CURRENT_TIMESTAMP AS DATE)
         ) THEN 1
         WHEN DATEPART(WEEK, [date]) = DATEPART(
           WEEK,
@@ -159,12 +145,8 @@ FROM
           co.iep_status,
           co.[date],
           co.region,
-          CAST(
-            dts.alt_name AS VARCHAR(25)
-          ) AS term,
-          CAST(
-            dts.time_per_name AS VARCHAR(25)
-          ) AS goal_term,
+          CAST(dts.alt_name AS VARCHAR(25)) AS term,
+          CAST(dts.time_per_name AS VARCHAR(25)) AS goal_term,
           dts.[start_date] AS term_start_date,
           dts.end_date AS term_end_date,
           dts.is_curterm,
@@ -244,8 +226,6 @@ FROM
               AND co.grade_level >= 3
             )
           ) /* ad-hoc exception for Seek 4*/
-          AND co.[date] <= CAST(
-            CURRENT_TIMESTAMP AS DATE
-          )
+          AND co.[date] <= CAST(CURRENT_TIMESTAMP AS DATE)
       ) AS sub
   ) AS sub

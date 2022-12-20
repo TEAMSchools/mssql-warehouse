@@ -4,10 +4,7 @@ WITH
       r.title,
       dsc.code_translation AS scope,
       dsu.code_translation AS subject_area,
-      CONCAT(
-        'repository_',
-        r.repository_id
-      ) AS repo_name,
+      CONCAT('repository_', r.repository_id) AS repo_name,
       CONCAT(
         'SELECT ',
         r.repository_id,
@@ -21,10 +18,7 @@ WITH
         CHAR(10),
         CHAR(13),
         'FROM gabby.illuminate_dna_repositories.',
-        CONCAT(
-          'repository_',
-          r.repository_id
-        ),
+        CONCAT('repository_', r.repository_id),
         CHAR(10),
         CHAR(13),
         'UNION ALL '
@@ -43,27 +37,15 @@ SELECT
   label,
   COALESCE(
     [repository_126],
-    CONCAT(
-      ',NULL AS [',
-      label,
-      ']'
-    )
+    CONCAT(',NULL AS [', label, ']')
   ) AS [repository_126],
   COALESCE(
     [repository_169],
-    CONCAT(
-      ',NULL AS [',
-      label,
-      ']'
-    )
+    CONCAT(',NULL AS [', label, ']')
   ) AS [repository_169],
   COALESCE(
     [repository_170],
-    CONCAT(
-      ',NULL AS [',
-      label,
-      ']'
-    )
+    CONCAT(',NULL AS [', label, ']')
   ) AS [repository_170]
 FROM
   (

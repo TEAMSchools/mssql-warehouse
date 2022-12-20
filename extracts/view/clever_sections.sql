@@ -40,16 +40,8 @@ WITH
       NULL AS [Name],
       NULL AS [Grade],
       NULL AS [Course_description],
-      CONVERT(
-        VARCHAR,
-        terms.firstday,
-        101
-      ) AS [Term_start],
-      CONVERT(
-        VARCHAR,
-        terms.lastday,
-        101
-      ) AS [Term_end],
+      CONVERT(VARCHAR, terms.firstday, 101) AS [Term_start],
+      CONVERT(VARCHAR, terms.lastday, 101) AS [Term_end],
       CONCAT(
         CASE
           WHEN sec.[db_name] = 'kippnewark' THEN 'NWK'
@@ -90,9 +82,7 @@ WITH
         AND sec.schoolid = terms.schoolid
         AND sec.[db_name] = terms.[db_name]
         AND (
-          CAST(
-            CURRENT_TIMESTAMP AS DATE
-          ) BETWEEN terms.firstday AND terms.lastday
+          CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN terms.firstday AND terms.lastday
         )
       )
     WHERE

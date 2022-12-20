@@ -45,9 +45,7 @@ WITH
       INNER JOIN term_scaff AS ts ON (
         ts.term_start_date BETWEEN e.start_date_c AND COALESCE(
           e.actual_end_date_c,
-          CAST(
-            CURRENT_TIMESTAMP AS DATE
-          )
+          CAST(CURRENT_TIMESTAMP AS DATE)
         )
       )
     WHERE

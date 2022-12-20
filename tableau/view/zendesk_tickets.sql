@@ -33,10 +33,7 @@ WITH
       LEFT JOIN field_crosswalk AS fc ON fh.field_name = fc.field_name
       AND fh.[value] = fc.id
     WHERE
-      fh.field_name IN (
-        'group_id',
-        'assignee_id'
-      )
+      fh.field_name IN ('group_id', 'assignee_id')
   ),
   group_updated AS (
     SELECT
@@ -56,9 +53,7 @@ SELECT
   t.custom_category AS category,
   t.custom_tech_tier AS tech_tier,
   t.custom_location AS [location],
-  CAST(
-    t.[subject] AS NVARCHAR(512)
-  ) AS ticket_subject,
+  CAST(t.[subject] AS NVARCHAR(512)) AS ticket_subject,
   CONCAT(
     'https://teamschools.zendesk.com/agent/tickets/',
     t.id

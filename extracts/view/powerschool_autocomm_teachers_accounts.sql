@@ -36,9 +36,7 @@ WITH
         DAY,
         ISNULL(
           scw.termination_date,
-          CAST(
-            CURRENT_TIMESTAMP AS DATE
-          )
+          CAST(CURRENT_TIMESTAMP AS DATE)
         ),
         CURRENT_TIMESTAMP
       ) <= 14
@@ -80,9 +78,7 @@ WITH
         DAY,
         ISNULL(
           scw.termination_date,
-          CAST(
-            CURRENT_TIMESTAMP AS DATE
-          )
+          CAST(CURRENT_TIMESTAMP AS DATE)
         ),
         CURRENT_TIMESTAMP
       ) <= 14
@@ -100,11 +96,7 @@ WITH
       preferred_last_name AS last_name,
       region AS legal_entity_name,
       primary_site_schoolid AS homeschoolid,
-      CONVERT(
-        NVARCHAR,
-        birth_date,
-        101
-      ) AS dob,
+      CONVERT(NVARCHAR, birth_date, 101) AS dob,
       LOWER(samaccountname) AS loginid,
       LOWER(samaccountname) AS teacherloginid,
       LOWER(mail) AS email_addr,
@@ -113,9 +105,7 @@ WITH
           DAY,
           ISNULL(
             termination_date,
-            CAST(
-              CURRENT_TIMESTAMP AS DATE
-            )
+            CAST(CURRENT_TIMESTAMP AS DATE)
           ),
           CURRENT_TIMESTAMP
         ) <= 7 THEN 1
@@ -126,9 +116,7 @@ WITH
           'PLOA',
           'ADMIN_LEAVE'
         ) THEN 1
-        WHEN termination_date >= CAST(
-          CURRENT_TIMESTAMP AS DATE
-        ) THEN 1
+        WHEN termination_date >= CAST(CURRENT_TIMESTAMP AS DATE) THEN 1
         ELSE 2
       END AS [status]
     FROM
@@ -145,12 +133,8 @@ SELECT
     WHEN [status] = 1 THEN teacherloginid
   END AS teacherloginid,
   email_addr,
-  CAST(
-    COALESCE(homeschoolid, 0) AS INT
-  ) AS schoolid,
-  CAST(
-    COALESCE(homeschoolid, 0) AS INT
-  ) AS homeschoolid,
+  CAST(COALESCE(homeschoolid, 0) AS INT) AS schoolid,
+  CAST(COALESCE(homeschoolid, 0) AS INT) AS homeschoolid,
   [status],
   CASE
     WHEN [status] = 1 THEN 1

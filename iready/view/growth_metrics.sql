@@ -6,9 +6,7 @@ WITH
       dr.student_id AS student_number,
       dr.academic_year,
       dr.[percentile] AS baseline_percentile,
-      CAST(
-        dr.overall_scale_score AS FLOAT
-      ) AS baseline_scale,
+      CAST(dr.overall_scale_score AS FLOAT) AS baseline_scale,
       CASE
         WHEN dr._file LIKE '%_ela%' THEN 'Reading'
         WHEN dr._file LIKE '%_math%' THEN 'Math'
@@ -23,9 +21,7 @@ WITH
       dr.student_id AS student_number,
       dr.academic_year,
       dr.[percentile] AS recent_percentile,
-      CAST(
-        dr.overall_scale_score AS FLOAT
-      ) AS recent_scale,
+      CAST(dr.overall_scale_score AS FLOAT) AS recent_scale,
       CASE
         WHEN dr._file LIKE '%_ela%' THEN 'Reading'
         WHEN dr._file LIKE '%_math%' THEN 'Math'

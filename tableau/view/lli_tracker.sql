@@ -41,11 +41,7 @@ FROM
   ) = co.academic_year
   AND co.rn_year = 1
 WHERE
-  CONCAT(
-    54,
-    '_',
-    r.repository_row_id
-  ) IN (
+  CONCAT(54, '_', r.repository_row_id) IN (
     SELECT
       row_hash
     FROM

@@ -19,12 +19,8 @@ SELECT
   ) AS link_close_date,
   [status],
   close_message,
-  CAST(
-    date_created AS DATETIME2
-  ) AS date_created,
-  CAST(
-    date_modified AS DATETIME2
-  ) AS date_modified,
+  CAST(date_created AS DATETIME2) AS date_created,
+  CAST(date_modified AS DATETIME2) AS date_modified,
   invite_id,
   [language],
   link_type,

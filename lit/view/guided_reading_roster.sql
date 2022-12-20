@@ -4,14 +4,8 @@ SELECT
   CAST(
     SUBSTRING(
       student_name,
-      (
-        CHARINDEX('[', student_name) + 1
-      ),
-      (
-        CHARINDEX(']', student_name)
-      ) - (
-        CHARINDEX('[', student_name) + 1
-      )
+      (CHARINDEX('[', student_name) + 1),
+      (CHARINDEX(']', student_name)) - (CHARINDEX('[', student_name) + 1)
     ) AS INT
   ) AS student_number,
   gabby.utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year,
@@ -42,9 +36,7 @@ SELECT
       1
     ) AS INT
   ) AS round_num,
-  CAST(
-    gr_teacher AS VARCHAR(125)
-  ) AS gr_teacher
+  CAST(gr_teacher AS VARCHAR(125)) AS gr_teacher
 FROM
   gabby.lit.guided_reading_groups UNPIVOT (
     gr_teacher FOR field IN (

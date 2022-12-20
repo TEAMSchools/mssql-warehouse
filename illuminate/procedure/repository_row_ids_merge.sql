@@ -56,11 +56,7 @@ WHERE
       illuminate_dna_repositories.fivetran_audit
     WHERE
       ISNUMERIC(RIGHT([table], 1)) = 1
-      AND done >= DATEADD(
-        HOUR,
-        -24,
-        CURRENT_TIMESTAMP
-      )
+      AND done >= DATEADD(HOUR, -24, CURRENT_TIMESTAMP)
   )
 ORDER BY
   repository_id DESC;
@@ -141,10 +137,7 @@ MERGE INTO
       repository_row_id
     FROM
       #repository_row_ids
-  ) AS src (
-    repository_id,
-    repository_row_id
-  ) ON tgt.repository_id = src.repository_id
+  ) AS src (repository_id, repository_row_id) ON tgt.repository_id = src.repository_id
   AND tgt.repository_row_id = src.repository_row_id
 WHEN MATCHED THEN
 UPDATE SET
@@ -152,10 +145,7 @@ UPDATE SET
   tgt.repository_row_id = src.repository_row_id
 WHEN NOT MATCHED BY TARGET THEN
 INSERT
-  (
-    repository_id,
-    repository_row_id
-  )
+  (repository_id, repository_row_id)
 VALUES
   (
     src.repository_id,

@@ -63,10 +63,7 @@ WITH
           student_number,
           academic_year,
           'act_' + LOWER(
-            LEFT(
-              DATENAME(MONTH, test_date),
-              3
-            )
+            LEFT(DATENAME(MONTH, test_date), 3)
           ) AS test_month,
           composite
         FROM
@@ -76,10 +73,7 @@ WITH
           student_number,
           academic_year,
           'sat_' + LOWER(
-            LEFT(
-              DATENAME(MONTH, test_date),
-              3
-            )
+            LEFT(DATENAME(MONTH, test_date), 3)
           ) AS test_month,
           all_tests_total
         FROM
@@ -155,9 +149,7 @@ WITH
       MAX(is_eaed_application) AS is_eaed_applicant,
       SUM(is_accepted) AS n_accepted,
       MAX(is_accepted_4yr) AS is_accepted_4yr,
-      MAX(
-        is_award_information_entered
-      ) AS is_award_information_entered,
+      MAX(is_award_information_entered) AS is_award_information_entered,
       AVG(unmet_need_c) AS avg_unmet_need,
       SUM(
         accepted_app_closed_with_reason_not_attending
@@ -180,22 +172,11 @@ WITH
           a.unmet_need_c,
           CASE
             WHEN a.match_type_c = 'Unable to Calculate' THEN NULL
-            WHEN a.match_type_c IN (
-              'Likely Plus',
-              'Target',
-              'Reach'
-            ) THEN 1.0
-            WHEN a.match_type_c NOT IN (
-              'Likely Plus',
-              'Target',
-              'Reach'
-            ) THEN 0.0
+            WHEN a.match_type_c IN ('Likely Plus', 'Target', 'Reach') THEN 1.0
+            WHEN a.match_type_c NOT IN ('Likely Plus', 'Target', 'Reach') THEN 0.0
           END AS is_ltr_match,
           CASE
-            WHEN a.application_admission_type_c IN (
-              'Early Action',
-              'Early Decision'
-            ) THEN 1.0
+            WHEN a.application_admission_type_c IN ('Early Action', 'Early Decision') THEN 1.0
             ELSE 0.0
           END AS is_eaed_application,
           CASE
@@ -341,10 +322,7 @@ SELECT
   ca.is_award_information_entered,
   ca.avg_unmet_need,
   ca.n_closed_with_reason,
-  COALESCE(
-    ca.is_eaed_applicant,
-    0
-  ) AS is_eaed_applicant,
+  COALESCE(ca.is_eaed_applicant, 0) AS is_eaed_applicant,
   ei.ecc_adjusted_6_year_minority_graduation_rate AS ecc_rate,
   CASE
     WHEN SUBSTRING(

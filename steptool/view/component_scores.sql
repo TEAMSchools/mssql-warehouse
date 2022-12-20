@@ -39,44 +39,20 @@ FROM
           [_line]
         ) AS VARCHAR(125)
       ) AS unique_id,
-      CAST(
-        CAST(student_id AS FLOAT) AS INT
-      ) AS student_id,
+      CAST(CAST(student_id AS FLOAT) AS INT) AS student_id,
       CAST(step AS INT) AS step,
       passed,
-      CAST(
-        c_confusion_10_ AS VARCHAR(25)
-      ) AS c_confusion_10_,
-      CAST(
-        c_confusion_11_ AS VARCHAR(25)
-      ) AS c_confusion_11_,
-      CAST(
-        c_confusion_12_ AS VARCHAR(25)
-      ) AS c_confusion_12_,
-      CAST(
-        c_confusion_2_ AS VARCHAR(25)
-      ) AS c_confusion_2_,
-      CAST(
-        c_confusion_3_ AS VARCHAR(25)
-      ) AS c_confusion_3_,
-      CAST(
-        c_confusion_4_ AS VARCHAR(25)
-      ) AS c_confusion_4_,
-      CAST(
-        c_confusion_5_ AS VARCHAR(25)
-      ) AS c_confusion_5_,
-      CAST(
-        c_confusion_6_ AS VARCHAR(25)
-      ) AS c_confusion_6_,
-      CAST(
-        c_confusion_7_ AS VARCHAR(25)
-      ) AS c_confusion_7_,
-      CAST(
-        c_confusion_8_ AS VARCHAR(25)
-      ) AS c_confusion_8_,
-      CAST(
-        c_confusion_9_ AS VARCHAR(25)
-      ) AS c_confusion_9_,
+      CAST(c_confusion_10_ AS VARCHAR(25)) AS c_confusion_10_,
+      CAST(c_confusion_11_ AS VARCHAR(25)) AS c_confusion_11_,
+      CAST(c_confusion_12_ AS VARCHAR(25)) AS c_confusion_12_,
+      CAST(c_confusion_2_ AS VARCHAR(25)) AS c_confusion_2_,
+      CAST(c_confusion_3_ AS VARCHAR(25)) AS c_confusion_3_,
+      CAST(c_confusion_4_ AS VARCHAR(25)) AS c_confusion_4_,
+      CAST(c_confusion_5_ AS VARCHAR(25)) AS c_confusion_5_,
+      CAST(c_confusion_6_ AS VARCHAR(25)) AS c_confusion_6_,
+      CAST(c_confusion_7_ AS VARCHAR(25)) AS c_confusion_7_,
+      CAST(c_confusion_8_ AS VARCHAR(25)) AS c_confusion_8_,
+      CAST(c_confusion_9_ AS VARCHAR(25)) AS c_confusion_9_,
       CAST(
         comprehension_conversation_2_ AS VARCHAR(25)
       ) AS comprehension_conversation_2_,
@@ -341,66 +317,26 @@ FROM
       CAST(
         f_overreliance_on_facts_for_the_text_9_ AS VARCHAR(25)
       ) AS f_overreliance_on_facts_for_the_text_9_,
-      CAST(
-        fluency_10_ AS VARCHAR(25)
-      ) AS fluency_10_,
-      CAST(
-        fluency_11_ AS VARCHAR(25)
-      ) AS fluency_11_,
-      CAST(
-        fluency_12_ AS VARCHAR(25)
-      ) AS fluency_12_,
-      CAST(
-        fluency_4_ AS VARCHAR(25)
-      ) AS fluency_4_,
-      CAST(
-        fluency_5_ AS VARCHAR(25)
-      ) AS fluency_5_,
-      CAST(
-        fluency_6_ AS VARCHAR(25)
-      ) AS fluency_6_,
-      CAST(
-        fluency_7_ AS VARCHAR(25)
-      ) AS fluency_7_,
-      CAST(
-        fluency_8_ AS VARCHAR(25)
-      ) AS fluency_8_,
-      CAST(
-        fluency_9_ AS VARCHAR(25)
-      ) AS fluency_9_,
-      CAST(
-        l_limited_10_ AS VARCHAR(25)
-      ) AS l_limited_10_,
-      CAST(
-        l_limited_11_ AS VARCHAR(25)
-      ) AS l_limited_11_,
-      CAST(
-        l_limited_12_ AS VARCHAR(25)
-      ) AS l_limited_12_,
-      CAST(
-        l_limited_2_ AS VARCHAR(25)
-      ) AS l_limited_2_,
-      CAST(
-        l_limited_3_ AS VARCHAR(25)
-      ) AS l_limited_3_,
-      CAST(
-        l_limited_4_ AS VARCHAR(25)
-      ) AS l_limited_4_,
-      CAST(
-        l_limited_5_ AS VARCHAR(25)
-      ) AS l_limited_5_,
-      CAST(
-        l_limited_6_ AS VARCHAR(25)
-      ) AS l_limited_6_,
-      CAST(
-        l_limited_7_ AS VARCHAR(25)
-      ) AS l_limited_7_,
-      CAST(
-        l_limited_8_ AS VARCHAR(25)
-      ) AS l_limited_8_,
-      CAST(
-        l_limited_9_ AS VARCHAR(25)
-      ) AS l_limited_9_,
+      CAST(fluency_10_ AS VARCHAR(25)) AS fluency_10_,
+      CAST(fluency_11_ AS VARCHAR(25)) AS fluency_11_,
+      CAST(fluency_12_ AS VARCHAR(25)) AS fluency_12_,
+      CAST(fluency_4_ AS VARCHAR(25)) AS fluency_4_,
+      CAST(fluency_5_ AS VARCHAR(25)) AS fluency_5_,
+      CAST(fluency_6_ AS VARCHAR(25)) AS fluency_6_,
+      CAST(fluency_7_ AS VARCHAR(25)) AS fluency_7_,
+      CAST(fluency_8_ AS VARCHAR(25)) AS fluency_8_,
+      CAST(fluency_9_ AS VARCHAR(25)) AS fluency_9_,
+      CAST(l_limited_10_ AS VARCHAR(25)) AS l_limited_10_,
+      CAST(l_limited_11_ AS VARCHAR(25)) AS l_limited_11_,
+      CAST(l_limited_12_ AS VARCHAR(25)) AS l_limited_12_,
+      CAST(l_limited_2_ AS VARCHAR(25)) AS l_limited_2_,
+      CAST(l_limited_3_ AS VARCHAR(25)) AS l_limited_3_,
+      CAST(l_limited_4_ AS VARCHAR(25)) AS l_limited_4_,
+      CAST(l_limited_5_ AS VARCHAR(25)) AS l_limited_5_,
+      CAST(l_limited_6_ AS VARCHAR(25)) AS l_limited_6_,
+      CAST(l_limited_7_ AS VARCHAR(25)) AS l_limited_7_,
+      CAST(l_limited_8_ AS VARCHAR(25)) AS l_limited_8_,
+      CAST(l_limited_9_ AS VARCHAR(25)) AS l_limited_9_,
       CAST(
         letter_name_identification_0_ AS VARCHAR(25)
       ) AS letter_name_identification_0_,
@@ -422,36 +358,16 @@ FROM
       CAST(
         letter_sound_identification_3_ AS VARCHAR(25)
       ) AS letter_sound_identification_3_,
-      CAST(
-        meaning_10_ AS VARCHAR(25)
-      ) AS meaning_10_,
-      CAST(
-        meaning_11_ AS VARCHAR(25)
-      ) AS meaning_11_,
-      CAST(
-        meaning_12_ AS VARCHAR(25)
-      ) AS meaning_12_,
-      CAST(
-        meaning_3_ AS VARCHAR(25)
-      ) AS meaning_3_,
-      CAST(
-        meaning_4_ AS VARCHAR(25)
-      ) AS meaning_4_,
-      CAST(
-        meaning_5_ AS VARCHAR(25)
-      ) AS meaning_5_,
-      CAST(
-        meaning_6_ AS VARCHAR(25)
-      ) AS meaning_6_,
-      CAST(
-        meaning_7_ AS VARCHAR(25)
-      ) AS meaning_7_,
-      CAST(
-        meaning_8_ AS VARCHAR(25)
-      ) AS meaning_8_,
-      CAST(
-        meaning_9_ AS VARCHAR(25)
-      ) AS meaning_9_,
+      CAST(meaning_10_ AS VARCHAR(25)) AS meaning_10_,
+      CAST(meaning_11_ AS VARCHAR(25)) AS meaning_11_,
+      CAST(meaning_12_ AS VARCHAR(25)) AS meaning_12_,
+      CAST(meaning_3_ AS VARCHAR(25)) AS meaning_3_,
+      CAST(meaning_4_ AS VARCHAR(25)) AS meaning_4_,
+      CAST(meaning_5_ AS VARCHAR(25)) AS meaning_5_,
+      CAST(meaning_6_ AS VARCHAR(25)) AS meaning_6_,
+      CAST(meaning_7_ AS VARCHAR(25)) AS meaning_7_,
+      CAST(meaning_8_ AS VARCHAR(25)) AS meaning_8_,
+      CAST(meaning_9_ AS VARCHAR(25)) AS meaning_9_,
       CAST(
         name_assessment_0_ AS VARCHAR(25)
       ) AS name_assessment_0_,
@@ -641,36 +557,16 @@ FROM
       CAST(
         reading_accuracy_9_ AS VARCHAR(25)
       ) AS reading_accuracy_9_,
-      CAST(
-        reading_rate_10_ AS VARCHAR(25)
-      ) AS reading_rate_10_,
-      CAST(
-        reading_rate_11_ AS VARCHAR(25)
-      ) AS reading_rate_11_,
-      CAST(
-        reading_rate_12_ AS VARCHAR(25)
-      ) AS reading_rate_12_,
-      CAST(
-        reading_rate_4_ AS VARCHAR(25)
-      ) AS reading_rate_4_,
-      CAST(
-        reading_rate_5_ AS VARCHAR(25)
-      ) AS reading_rate_5_,
-      CAST(
-        reading_rate_6_ AS VARCHAR(25)
-      ) AS reading_rate_6_,
-      CAST(
-        reading_rate_7_ AS VARCHAR(25)
-      ) AS reading_rate_7_,
-      CAST(
-        reading_rate_8_ AS VARCHAR(25)
-      ) AS reading_rate_8_,
-      CAST(
-        reading_rate_9_ AS VARCHAR(25)
-      ) AS reading_rate_9_,
-      CAST(
-        reading_record_1_ AS VARCHAR(25)
-      ) AS reading_record_1_,
+      CAST(reading_rate_10_ AS VARCHAR(25)) AS reading_rate_10_,
+      CAST(reading_rate_11_ AS VARCHAR(25)) AS reading_rate_11_,
+      CAST(reading_rate_12_ AS VARCHAR(25)) AS reading_rate_12_,
+      CAST(reading_rate_4_ AS VARCHAR(25)) AS reading_rate_4_,
+      CAST(reading_rate_5_ AS VARCHAR(25)) AS reading_rate_5_,
+      CAST(reading_rate_6_ AS VARCHAR(25)) AS reading_rate_6_,
+      CAST(reading_rate_7_ AS VARCHAR(25)) AS reading_rate_7_,
+      CAST(reading_rate_8_ AS VARCHAR(25)) AS reading_rate_8_,
+      CAST(reading_rate_9_ AS VARCHAR(25)) AS reading_rate_9_,
+      CAST(reading_record_1_ AS VARCHAR(25)) AS reading_record_1_,
       CAST(
         reading_record_holds_pattern_1_ AS VARCHAR(25)
       ) AS reading_record_holds_pattern_1_,
@@ -680,21 +576,11 @@ FROM
       CAST(
         reading_record_understanding_1_ AS VARCHAR(25)
       ) AS reading_record_understanding_1_,
-      CAST(
-        retelling_10_ AS VARCHAR(25)
-      ) AS retelling_10_,
-      CAST(
-        retelling_11_ AS VARCHAR(25)
-      ) AS retelling_11_,
-      CAST(
-        retelling_12_ AS VARCHAR(25)
-      ) AS retelling_12_,
-      CAST(
-        retelling_8_ AS VARCHAR(25)
-      ) AS retelling_8_,
-      CAST(
-        retelling_9_ AS VARCHAR(25)
-      ) AS retelling_9_,
+      CAST(retelling_10_ AS VARCHAR(25)) AS retelling_10_,
+      CAST(retelling_11_ AS VARCHAR(25)) AS retelling_11_,
+      CAST(retelling_12_ AS VARCHAR(25)) AS retelling_12_,
+      CAST(retelling_8_ AS VARCHAR(25)) AS retelling_8_,
+      CAST(retelling_9_ AS VARCHAR(25)) AS retelling_9_,
       CAST(
         silent_comprehension_6_ AS VARCHAR(25)
       ) AS silent_comprehension_6_,
@@ -719,69 +605,29 @@ FROM
       CAST(
         silent_comprehension_inferential_7_ AS VARCHAR(25)
       ) AS silent_comprehension_inferential_7_,
-      CAST(
-        syntax_10_ AS VARCHAR(25)
-      ) AS syntax_10_,
-      CAST(
-        syntax_11_ AS VARCHAR(25)
-      ) AS syntax_11_,
-      CAST(
-        syntax_12_ AS VARCHAR(25)
-      ) AS syntax_12_,
-      CAST(
-        syntax_3_ AS VARCHAR(25)
-      ) AS syntax_3_,
-      CAST(
-        syntax_4_ AS VARCHAR(25)
-      ) AS syntax_4_,
-      CAST(
-        syntax_5_ AS VARCHAR(25)
-      ) AS syntax_5_,
-      CAST(
-        syntax_6_ AS VARCHAR(25)
-      ) AS syntax_6_,
-      CAST(
-        syntax_7_ AS VARCHAR(25)
-      ) AS syntax_7_,
-      CAST(
-        syntax_8_ AS VARCHAR(25)
-      ) AS syntax_8_,
-      CAST(
-        syntax_9_ AS VARCHAR(25)
-      ) AS syntax_9_,
+      CAST(syntax_10_ AS VARCHAR(25)) AS syntax_10_,
+      CAST(syntax_11_ AS VARCHAR(25)) AS syntax_11_,
+      CAST(syntax_12_ AS VARCHAR(25)) AS syntax_12_,
+      CAST(syntax_3_ AS VARCHAR(25)) AS syntax_3_,
+      CAST(syntax_4_ AS VARCHAR(25)) AS syntax_4_,
+      CAST(syntax_5_ AS VARCHAR(25)) AS syntax_5_,
+      CAST(syntax_6_ AS VARCHAR(25)) AS syntax_6_,
+      CAST(syntax_7_ AS VARCHAR(25)) AS syntax_7_,
+      CAST(syntax_8_ AS VARCHAR(25)) AS syntax_8_,
+      CAST(syntax_9_ AS VARCHAR(25)) AS syntax_9_,
       CAST(
         total_vowel_attempts_3_ AS VARCHAR(25)
       ) AS total_vowel_attempts_3_,
-      CAST(
-        visual_10_ AS VARCHAR(25)
-      ) AS visual_10_,
-      CAST(
-        visual_11_ AS VARCHAR(25)
-      ) AS visual_11_,
-      CAST(
-        visual_12_ AS VARCHAR(25)
-      ) AS visual_12_,
-      CAST(
-        visual_3_ AS VARCHAR(25)
-      ) AS visual_3_,
-      CAST(
-        visual_4_ AS VARCHAR(25)
-      ) AS visual_4_,
-      CAST(
-        visual_5_ AS VARCHAR(25)
-      ) AS visual_5_,
-      CAST(
-        visual_6_ AS VARCHAR(25)
-      ) AS visual_6_,
-      CAST(
-        visual_7_ AS VARCHAR(25)
-      ) AS visual_7_,
-      CAST(
-        visual_8_ AS VARCHAR(25)
-      ) AS visual_8_,
-      CAST(
-        visual_9_ AS VARCHAR(25)
-      ) AS visual_9_,
+      CAST(visual_10_ AS VARCHAR(25)) AS visual_10_,
+      CAST(visual_11_ AS VARCHAR(25)) AS visual_11_,
+      CAST(visual_12_ AS VARCHAR(25)) AS visual_12_,
+      CAST(visual_3_ AS VARCHAR(25)) AS visual_3_,
+      CAST(visual_4_ AS VARCHAR(25)) AS visual_4_,
+      CAST(visual_5_ AS VARCHAR(25)) AS visual_5_,
+      CAST(visual_6_ AS VARCHAR(25)) AS visual_6_,
+      CAST(visual_7_ AS VARCHAR(25)) AS visual_7_,
+      CAST(visual_8_ AS VARCHAR(25)) AS visual_8_,
+      CAST(visual_9_ AS VARCHAR(25)) AS visual_9_,
       CAST(
         written_comprehension_10_ AS VARCHAR(25)
       ) AS written_comprehension_10_,

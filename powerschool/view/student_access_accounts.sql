@@ -31,20 +31,11 @@ WITH
           s.schoolid,
           s.grade_level,
           s.enroll_status,
-          LEFT(
-            LOWER(s.first_name),
-            1
-          ) AS first_init,
+          LEFT(LOWER(s.first_name), 1) AS first_init,
           DATEPART(MONTH, s.dob) AS dob_month,
           DATEPART(DAY, s.dob) AS dob_day,
-          RIGHT(
-            DATEPART(YEAR, s.dob),
-            2
-          ) AS dob_year,
-          gabby.utilities.STRIP_CHARACTERS (
-            LOWER(s.first_name),
-            '^A-Z'
-          ) AS first_name_clean,
+          RIGHT(DATEPART(YEAR, s.dob), 2) AS dob_year,
+          gabby.utilities.STRIP_CHARACTERS (LOWER(s.first_name), '^A-Z') AS first_name_clean,
           gabby.utilities.STRIP_CHARACTERS (
             LOWER(
               CASE
@@ -53,11 +44,7 @@ WITH
                   s.last_name,
                   CHARINDEX(' I', s.last_name) - 1
                 )
-                WHEN CHARINDEX('-', s.last_name) + CHARINDEX(' ', s.last_name) = 0 THEN REPLACE(
-                  s.last_name,
-                  ' JR',
-                  ''
-                )
+                WHEN CHARINDEX('-', s.last_name) + CHARINDEX(' ', s.last_name) = 0 THEN REPLACE(s.last_name, ' JR', '')
                 WHEN CHARINDEX(' ', s.last_name) > 0
                 AND CHARINDEX('-', s.last_name) > 0
                 AND CHARINDEX(' ', s.last_name) < CHARINDEX('-', s.last_name) THEN LEFT(
@@ -79,11 +66,7 @@ WITH
                   s.last_name,
                   CHARINDEX('-', s.last_name) - 1
                 )
-                ELSE REPLACE(
-                  s.last_name,
-                  ' JR',
-                  ''
-                )
+                ELSE REPLACE(s.last_name, ' JR', '')
               END
             ),
             '^A-Z'
@@ -193,19 +176,13 @@ SELECT
     WHEN spo.default_password IS NOT NULL THEN spo.default_password
     WHEN au.grade_level <= 2
     AND LEN(
-      CONCAT(
-        last_name_clean,
-        dob_year
-      )
+      CONCAT(last_name_clean, dob_year)
     ) <= 7 THEN CONCAT(
       au.last_name_clean,
       au.dob_year,
       RIGHT(au.student_number, 4)
     )
-    ELSE CONCAT(
-      au.last_name_clean,
-      au.dob_year
-    )
+    ELSE CONCAT(au.last_name_clean, au.dob_year)
   END AS student_web_password
 FROM
   alt_username AS au

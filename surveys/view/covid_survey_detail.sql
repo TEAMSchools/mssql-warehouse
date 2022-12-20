@@ -28,59 +28,35 @@ WITH
     SELECT
       rd.survey_response_id,
       CASE
-        WHEN JSON_QUERY(
-          rd.options,
-          '$."11194"'
-        ) IS NOT NULL THEN 1
+        WHEN JSON_QUERY(rd.options, '$."11194"') IS NOT NULL THEN 1
         ELSE 0
       END AS is_asian,
       CASE
-        WHEN JSON_QUERY(
-          rd.options,
-          '$."11195"'
-        ) IS NOT NULL THEN 1
+        WHEN JSON_QUERY(rd.options, '$."11195"') IS NOT NULL THEN 1
         ELSE 0
       END AS is_black,
       CASE
-        WHEN JSON_QUERY(
-          rd.options,
-          '$."11196"'
-        ) IS NOT NULL THEN 1
+        WHEN JSON_QUERY(rd.options, '$."11196"') IS NOT NULL THEN 1
         ELSE 0
       END AS is_caucasian,
       CASE
-        WHEN JSON_QUERY(
-          rd.options,
-          '$."11197"'
-        ) IS NOT NULL THEN 1
+        WHEN JSON_QUERY(rd.options, '$."11197"') IS NOT NULL THEN 1
         ELSE 0
       END AS is_hispanic,
       CASE
-        WHEN JSON_QUERY(
-          rd.options,
-          '$."11198"'
-        ) IS NOT NULL THEN 1
+        WHEN JSON_QUERY(rd.options, '$."11198"') IS NOT NULL THEN 1
         ELSE 0
       END AS is_nativeamerican,
       CASE
-        WHEN JSON_QUERY(
-          rd.options,
-          '$."11199"'
-        ) IS NOT NULL THEN 1
+        WHEN JSON_QUERY(rd.options, '$."11199"') IS NOT NULL THEN 1
         ELSE 0
       END AS is_pacificislander,
       CASE
-        WHEN JSON_QUERY(
-          rd.options,
-          '$."11200"'
-        ) IS NOT NULL THEN 1
+        WHEN JSON_QUERY(rd.options, '$."11200"') IS NOT NULL THEN 1
         ELSE 0
       END AS is_na,
       CASE
-        WHEN JSON_QUERY(
-          rd.options,
-          '$."11202"'
-        ) IS NOT NULL THEN 1
+        WHEN JSON_QUERY(rd.options, '$."11202"') IS NOT NULL THEN 1
         ELSE 0
       END AS is_other
     FROM
@@ -138,9 +114,7 @@ FROM
     d.date_submitted BETWEEN w.work_assignment_effective_start AND COALESCE(
       w.work_assignment_effective_end,
       DATEFROMPARTS(
-        (
-          d.campaign_academic_year + 1
-        ),
+        (d.campaign_academic_year + 1),
         6,
         30
       )

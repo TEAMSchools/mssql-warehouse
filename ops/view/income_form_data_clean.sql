@@ -5,10 +5,7 @@ SELECT
   academic_year,
   CASE
     WHEN [status] IS NULL
-    OR [status] IN (
-      'No Application',
-      'No'
-    ) THEN 'No Application'
+    OR [status] IN ('No Application', 'No') THEN 'No Application'
     WHEN [status] IN (
       'Application Received',
       'Jotform'

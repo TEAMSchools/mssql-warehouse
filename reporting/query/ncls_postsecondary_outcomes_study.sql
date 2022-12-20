@@ -89,17 +89,8 @@ WITH
           state_studentnumber,
           CONCAT(
             CASE
-              WHEN subject IN (
-                'ALG01',
-                'ALG02',
-                'GEO'
-              ) THEN subject
-              ELSE CONCAT(
-                'G',
-                grade_level,
-                '_',
-                subject
-              )
+              WHEN subject IN ('ALG01', 'ALG02', 'GEO') THEN subject
+              ELSE CONCAT('G', grade_level, '_', subject)
             END,
             '_',
             field
@@ -111,15 +102,9 @@ WITH
               co.state_studentnumber,
               co.grade_level,
               a.subject,
-              CAST(
-                a.test_type AS NVARCHAR
-              ) AS assessment_type,
-              CAST(
-                a.performance_level AS NVARCHAR
-              ) AS performance_level,
-              CAST(
-                a.scaled_score AS NVARCHAR
-              ) AS scaled_score
+              CAST(a.test_type AS NVARCHAR) AS assessment_type,
+              CAST(a.performance_level AS NVARCHAR) AS performance_level,
+              CAST(a.scaled_score AS NVARCHAR) AS scaled_score
             FROM
               gabby.njsmart.all_state_assessments AS a
               INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON a.local_student_id = co.student_number
@@ -130,9 +115,7 @@ WITH
               state_student_identifier,
               CASE
                 WHEN LEFT(test_code, 3) IN ('ALG', 'GEO') THEN NULL
-                ELSE CAST(
-                  RIGHT(test_code, 2) AS INT
-                )
+                ELSE CAST(RIGHT(test_code, 2) AS INT)
               END AS grade_level,
               CASE
                 WHEN LEFT(test_code, 3) = 'ALG' THEN test_code
@@ -144,9 +127,7 @@ WITH
               CAST(
                 test_performance_level AS NVARCHAR
               ),
-              CAST(
-                test_scale_score AS NVARCHAR
-              )
+              CAST(test_scale_score AS NVARCHAR)
             FROM
               gabby.parcc.summative_record_file_clean
           ) AS sub UNPIVOT (

@@ -43,10 +43,7 @@ WITH
         WHEN app.application_account_type = 'Public 2 yr' THEN 1
       END AS is_2yr,
       CASE
-        WHEN app.application_account_type IN (
-          'Private 4 yr',
-          'Public 4 yr'
-        ) THEN 1
+        WHEN app.application_account_type IN ('Private 4 yr', 'Public 4 yr') THEN 1
       END AS is_4yr,
       CASE
         WHEN app.matriculation_decision = 'Matriculated (Intent to Enroll)'
@@ -128,15 +125,9 @@ WITH
       sf_contact_id,
       academic_year,
       semester,
-      CAST(
-        transcript_date AS NVARCHAR(16)
-      ) AS transcript_date,
-      CAST(
-        semester_gpa AS NVARCHAR(16)
-      ) AS semester_gpa,
-      CAST(
-        cumulative_gpa AS NVARCHAR(16)
-      ) AS cumulative_gpa,
+      CAST(transcript_date AS NVARCHAR(16)) AS transcript_date,
+      CAST(semester_gpa AS NVARCHAR(16)) AS semester_gpa,
+      CAST(cumulative_gpa AS NVARCHAR(16)) AS cumulative_gpa,
       CAST(
         semester_credits_earned AS NVARCHAR(16)
       ) AS semester_credits_earned,
@@ -181,9 +172,7 @@ WITH
     SELECT
       sf_contact_id,
       academic_year,
-      CAST(
-        fall_transcript_date AS DATE
-      ) AS fall_transcript_date,
+      CAST(fall_transcript_date AS DATE) AS fall_transcript_date,
       CAST(
         fall_credits_required_for_graduation AS FLOAT
       ) AS fall_credits_required_for_graduation,
@@ -193,15 +182,9 @@ WITH
       CAST(
         fall_semester_credits_earned AS FLOAT
       ) AS fall_semester_credits_earned,
-      CAST(
-        fall_semester_gpa AS FLOAT
-      ) AS fall_semester_gpa,
-      CAST(
-        fall_cumulative_gpa AS FLOAT
-      ) AS fall_cumulative_gpa,
-      CAST(
-        spr_transcript_date AS DATE
-      ) AS spr_transcript_date,
+      CAST(fall_semester_gpa AS FLOAT) AS fall_semester_gpa,
+      CAST(fall_cumulative_gpa AS FLOAT) AS fall_cumulative_gpa,
+      CAST(spr_transcript_date AS DATE) AS spr_transcript_date,
       CAST(
         spr_credits_required_for_graduation AS FLOAT
       ) AS spr_credits_required_for_graduation,
@@ -211,12 +194,8 @@ WITH
       CAST(
         spr_semester_credits_earned AS FLOAT
       ) AS spr_semester_credits_earned,
-      CAST(
-        spr_semester_gpa AS FLOAT
-      ) AS spr_semester_gpa,
-      CAST(
-        spr_cumulative_gpa AS FLOAT
-      ) AS spr_cumulative_gpa
+      CAST(spr_semester_gpa AS FLOAT) AS spr_semester_gpa,
+      CAST(spr_cumulative_gpa AS FLOAT) AS spr_cumulative_gpa
     FROM
       (
         SELECT

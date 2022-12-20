@@ -26,9 +26,7 @@ WITH
   valid_semesters AS (
     SELECT
       [value] AS semester,
-      CAST(
-        RIGHT(rg.n + 1, 2) AS VARCHAR(5)
-      ) AS [year]
+      CAST(RIGHT(rg.n + 1, 2) AS VARCHAR(5)) AS [year]
     FROM
       STRING_SPLIT ('FA,SP', ',') ss
       INNER JOIN gabby.utilities.row_generator AS rg ON rg.n BETWEEN gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 2 AND gabby.utilities.GLOBAL_ACADEMIC_YEAR  () + 1
@@ -85,10 +83,7 @@ WITH
           a.parent_id AS contact_id,
           a.[name],
           LEN(a.[name]) AS name_len,
-          LEN(a.[name]) - CHARINDEX(
-            '.',
-            REVERSE(a.[name])
-          ) AS file_ext_dot,
+          LEN(a.[name]) - CHARINDEX('.', REVERSE(a.[name])) AS file_ext_dot,
           CHARINDEX('_', a.[name]) AS underscore_1,
           CASE
             WHEN CHARINDEX('_', a.[name]) = 0 THEN NULL
@@ -137,9 +132,7 @@ WITH
   enr_hist_attmat AS (
     SELECT
       eh.parent_id AS enrollment_id,
-      CAST(
-        eh.created_date AS DATE
-      ) AS status_change_date,
+      CAST(eh.created_date AS DATE) AS status_change_date,
       ROW_NUMBER() OVER (
         PARTITION BY
           eh.parent_id
@@ -155,14 +148,8 @@ WITH
     WHERE
       eh.field = 'Status__c'
       AND eh.is_deleted = 0
-      AND eh.old_value IN (
-        'Attending',
-        'Matriculated'
-      )
-      AND CONCAT(
-        eh.old_value,
-        eh.new_value
-      ) NOT IN (
+      AND eh.old_value IN ('Attending', 'Matriculated')
+      AND CONCAT(eh.old_value, eh.new_value) NOT IN (
         'MatriculatedDid Not Enroll',
         'MatriculatedAttending'
       )
@@ -171,9 +158,7 @@ WITH
   enr_hist_grad AS (
     SELECT
       eh.parent_id AS enrollment_id,
-      CAST(
-        eh.created_date AS DATE
-      ) AS status_change_date,
+      CAST(eh.created_date AS DATE) AS status_change_date,
       ROW_NUMBER() OVER (
         PARTITION BY
           eh.parent_id
@@ -222,9 +207,7 @@ WITH
             ''
           ) AS date_last_verified_ontime,
           ISNULL(
-            CAST(
-              e.notes_c AS NVARCHAR(MAX)
-            ),
+            CAST(e.notes_c AS NVARCHAR(MAX)),
             ''
           ) AS notes_c,
           ISNULL(
@@ -235,10 +218,7 @@ WITH
           ) AS transfer_reason_c,
           ISNULL(
             CAST(
-              COALESCE(
-                e.major_c,
-                e.major_area_c
-              )
+              COALESCE(e.major_c, e.major_area_c)
             ),
             '' AS NVARCHAR(MAX)
           ) AS major_or_area,
@@ -249,9 +229,7 @@ WITH
             ''
           ) AS college_major_declared_c,
           ISNULL(
-            CAST(
-              c.[description] AS NVARCHAR(MAX)
-            ),
+            CAST(c.[description] AS NVARCHAR(MAX)),
             ''
           ) AS [description]
         FROM

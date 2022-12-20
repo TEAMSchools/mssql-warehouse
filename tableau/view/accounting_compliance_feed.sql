@@ -4,34 +4,26 @@ WITH
   status_curr AS (
     SELECT
       number,
-      CAST(
-        effective_start AS DATETIME2
-      ) AS last_status_or_salary_change,
+      CAST(effective_start AS DATETIME2) AS last_status_or_salary_change,
       base_salary AS base_salary_curr,
       status AS status_curr,
       LAG(base_salary, 1) OVER (
         PARTITION BY
           number
         ORDER BY
-          CAST(
-            effective_start AS DATETIME2
-          )
+          CAST(effective_start AS DATETIME2)
       ) AS base_salary_prev,
       LAG(status, 1) OVER (
         PARTITION BY
           number
         ORDER BY
-          CAST(
-            effective_start AS DATETIME2
-          )
+          CAST(effective_start AS DATETIME2)
       ) AS status_prev,
       ROW_NUMBER() OVER (
         PARTITION BY
           number
         ORDER BY
-          CAST(
-            effective_start AS DATETIME2
-          ) DESC
+          CAST(effective_start AS DATETIME2) DESC
       ) AS rn_curr
     FROM
       dayforce.employee_status
@@ -42,10 +34,7 @@ WITH
       CAST(
         employee_property_value_effective_start AS DATETIME2
       ) AS pension_start_date,
-      RIGHT(
-        employee_property_value_name,
-        4
-      ) AS pension_type,
+      RIGHT(employee_property_value_name, 4) AS pension_type,
       property_value AS pension_number,
       ROW_NUMBER() OVER (
         PARTITION BY

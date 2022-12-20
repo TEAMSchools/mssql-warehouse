@@ -8,10 +8,7 @@ WITH
       fp.academic_year AS assessment_academic_year,
       fp.test_round AS assessment_test_round,
       CASE
-        WHEN fp.[status] IN (
-          'Did Not Achieve',
-          'DNA - Hard'
-        ) THEN 'Did Not Achieve'
+        WHEN fp.[status] IN ('Did Not Achieve', 'DNA - Hard') THEN 'Did Not Achieve'
         ELSE fp.[status]
       END AS benchmark_level,
       fp.test_date AS assessment_date,
@@ -107,10 +104,7 @@ WITH
         ins.assessment_date,
         hard.assessment_date
       ) AS instructional_assessment_date,
-      COALESCE(
-        ins.text_level,
-        hard.text_level
-      ) AS instructional_level,
+      COALESCE(ins.text_level, hard.text_level) AS instructional_level,
       COALESCE(ins.genre, hard.genre) AS instructional_genre
     FROM
       gabby.powerschool.cohort_identifiers_static AS co

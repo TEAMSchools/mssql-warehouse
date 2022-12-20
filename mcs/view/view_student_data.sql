@@ -4,9 +4,7 @@ GO
 CREATE OR ALTER VIEW
   mcs.view_student_data AS
 SELECT
-  CAST(
-    s.StudentNumber AS INT
-  ) AS student_number,
+  CAST(s.StudentNumber AS INT) AS student_number,
   s.IsDC AS is_dc,
   (
     CAST(
@@ -76,9 +74,7 @@ GO
 CREATE OR ALTER VIEW
   mcs.view_student_data AS
 SELECT
-  CAST(
-    s.StudentNumber AS INT
-  ) AS student_number,
+  CAST(s.StudentNumber AS INT) AS student_number,
   s.IsDC AS is_dc,
   (
     CAST(

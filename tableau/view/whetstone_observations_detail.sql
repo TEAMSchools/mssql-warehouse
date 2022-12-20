@@ -17,13 +17,9 @@ WITH
       cc.observation_id,
       cc.score_measurement_id,
       cc.checkbox_label AS [label],
-      CAST(
-        cc.checkbox_value AS NVARCHAR
-      ) AS [value],
+      CAST(cc.checkbox_value AS NVARCHAR) AS [value],
       NULL AS text_box_text,
-      CAST(
-        cc.checkbox_value AS FLOAT
-      ) AS checkbox_value,
+      CAST(cc.checkbox_value AS FLOAT) AS checkbox_value,
       'checkbox' AS [type]
     FROM
       gabby.whetstone.observations_scores_checkboxes_static AS cc
@@ -56,13 +52,7 @@ SELECT
     PARTITION BY
       sub.observation_id,
       LTRIM(
-        RTRIM(
-          REPLACE(
-            wm.[name],
-            '- type',
-            ''
-          )
-        )
+        RTRIM(REPLACE(wm.[name], '- type', ''))
       )
   ) AS score_type,
   CASE
@@ -126,10 +116,7 @@ FROM
       sr.[status],
       LEFT(
         sr.userprincipalname,
-        CHARINDEX(
-          '@',
-          sr.userprincipalname
-        ) - 1
+        CHARINDEX('@', sr.userprincipalname) - 1
       ) AS staff_username,
       LEFT(
         sr.manager_userprincipalname,

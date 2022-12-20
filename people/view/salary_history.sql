@@ -18,9 +18,7 @@ WITH
       CAST(
         sh.regular_pay_effective_end_date AS DATE
       ) AS regular_pay_effective_end_date,
-      CAST(
-        sh.annual_salary AS MONEY
-      ) AS annual_salary,
+      CAST(sh.annual_salary AS MONEY) AS annual_salary,
       CAST(
         sh.regular_pay_rate_amount AS MONEY
       ) AS regular_pay_rate_amount,
@@ -76,9 +74,7 @@ WITH
       INNER JOIN gabby.people.employee_numbers AS sr ON ds.number = sr.employee_number
       AND sr.is_active = 1
     WHERE
-      CAST(
-        ds.effective_start AS DATE
-      ) <= '2020-12-31'
+      CAST(ds.effective_start AS DATE) <= '2020-12-31'
   )
 SELECT
   employee_number,
@@ -95,10 +91,7 @@ SELECT
     DATEADD(
       DAY,
       -1,
-      LEAD(
-        regular_pay_effective_date,
-        1
-      ) OVER (
+      LEAD(regular_pay_effective_date, 1) OVER (
         PARTITION BY
           position_id
         ORDER BY
@@ -111,10 +104,7 @@ SELECT
     DATEADD(
       DAY,
       -1,
-      LEAD(
-        regular_pay_effective_date,
-        1
-      ) OVER (
+      LEAD(regular_pay_effective_date, 1) OVER (
         PARTITION BY
           position_id
         ORDER BY
@@ -123,25 +113,13 @@ SELECT
     ),
     DATEFROMPARTS(
       CASE
-        WHEN DATEPART(
-          YEAR,
-          regular_pay_effective_date
-        ) > gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+        WHEN DATEPART(YEAR, regular_pay_effective_date) > gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
         AND DATEPART(
           MONTH,
           regular_pay_effective_date
-        ) >= 7 THEN DATEPART(
-          YEAR,
-          regular_pay_effective_date
-        ) + 1
-        WHEN DATEPART(
-          YEAR,
-          CURRENT_TIMESTAMP
-        ) = gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
-        AND DATEPART(
-          MONTH,
-          CURRENT_TIMESTAMP
-        ) >= 7 THEN gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 2
+        ) >= 7 THEN DATEPART(YEAR, regular_pay_effective_date) + 1
+        WHEN DATEPART(YEAR, CURRENT_TIMESTAMP) = gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
+        AND DATEPART(MONTH, CURRENT_TIMESTAMP) >= 7 THEN gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 2
         ELSE gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
       END,
       6,

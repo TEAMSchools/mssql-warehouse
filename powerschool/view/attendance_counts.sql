@@ -25,19 +25,13 @@ WITH
             WHEN att.att_code IN ('TLE', 'T') THEN 'T'
             WHEN att.att_code = 'T10' THEN 'T10'
           END AS att_code,
-          CAST(
-            dates.academic_year AS INT
-          ) AS academic_year,
+          CAST(dates.academic_year AS INT) AS academic_year,
           (
-            CAST(
-              dates.time_per_name AS VARCHAR
-            )
+            CAST(dates.time_per_name AS VARCHAR)
             COLLATE LATIN1_GENERAL_BIN
           ) AS reporting_term,
           (
-            CAST(
-              dates.alt_name AS VARCHAR
-            )
+            CAST(dates.alt_name AS VARCHAR)
             COLLATE LATIN1_GENERAL_BIN
           ) AS term_name,
           dates.start_date,
@@ -103,9 +97,7 @@ WITH
           mem.studentid,
           mem.membershipvalue,
           (mem.yearid + 1990) AS academic_year,
-          CAST(
-            d.time_per_name AS VARCHAR
-          ) AS reporting_term,
+          CAST(d.time_per_name AS VARCHAR) AS reporting_term,
           CAST(d.alt_name AS VARCHAR) AS term_name,
           d.start_date,
           d.end_date,
@@ -145,11 +137,7 @@ WITH
       end_date,
       is_curterm,
       CAST(n AS FLOAT) AS n,
-      CONCAT(
-        LOWER(att_code),
-        '_',
-        field
-      ) AS pivot_field
+      CONCAT(LOWER(att_code), '_', field) AS pivot_field
     FROM
       (
         SELECT

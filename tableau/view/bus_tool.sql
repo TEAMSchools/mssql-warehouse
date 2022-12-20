@@ -25,9 +25,7 @@ SELECT
   suf.bus_info_pm,
   suf.bus_info_fridays AS bus_info_pm_early,
   suf.bus_notes,
-  CAST(
-    suf._modified AS DATETIME2
-  ) AS last_modified,
+  CAST(suf._modified AS DATETIME2) AS last_modified,
   CASE
     WHEN suf.bus_info_am NOT LIKE '%-%-%' THEN suf.bus_info_am
     ELSE SUBSTRING(
@@ -95,26 +93,17 @@ SELECT
     ELSE SUBSTRING(
       suf.bus_info_fridays,
       (
-        CHARINDEX(
-          '-',
-          suf.bus_info_fridays
-        ) + 2
+        CHARINDEX('-', suf.bus_info_fridays) + 2
       ),
       (
         CHARINDEX(
           '-',
           suf.bus_info_fridays,
           (
-            CHARINDEX(
-              '-',
-              suf.bus_info_fridays
-            ) + 1
+            CHARINDEX('-', suf.bus_info_fridays) + 1
           )
         ) - (
-          CHARINDEX(
-            '-',
-            suf.bus_info_fridays
-          ) + 2
+          CHARINDEX('-', suf.bus_info_fridays) + 2
         )
       ) - 1
     )
@@ -125,10 +114,7 @@ SELECT
       '-',
       suf.bus_info_fridays,
       (
-        CHARINDEX(
-          '-',
-          suf.bus_info_fridays
-        ) + 1
+        CHARINDEX('-', suf.bus_info_fridays) + 1
       )
     ) + 2,
     LEN(suf.bus_info_fridays)
@@ -154,28 +140,20 @@ WITH
   AND cc.course_number = 'HR'
   AND (
     CASE
-      WHEN cc.dateenrolled > CAST(
-        CURRENT_TIMESTAMP AS DATE
-      ) THEN cc.dateenrolled
-      ELSE CAST(
-        CURRENT_TIMESTAMP AS DATE
-      )
+      WHEN cc.dateenrolled > CAST(CURRENT_TIMESTAMP AS DATE) THEN cc.dateenrolled
+      ELSE CAST(CURRENT_TIMESTAMP AS DATE)
     END BETWEEN cc.dateenrolled AND cc.dateleft
   )
   LEFT JOIN kippmiami.powerschool.[log]
 WITH
   (NOLOCK) ON s.id = [log].studentid
   AND [log].logtypeid = 1582
-  AND [log].discipline_incidentdate = CAST(
-    CURRENT_TIMESTAMP AS DATE
-  )
+  AND [log].discipline_incidentdate = CAST(CURRENT_TIMESTAMP AS DATE)
   LEFT JOIN kippmiami.powerschool.attendance_clean_current_static AS att
 WITH
   (NOLOCK) ON s.id = att.studentid
   AND att.att_mode_code = 'ATT_ModeDaily'
-  AND CAST(att.att_date AS DATE) = CAST(
-    CURRENT_TIMESTAMP AS DATE
-  )
+  AND CAST(att.att_date AS DATE) = CAST(CURRENT_TIMESTAMP AS DATE)
   LEFT JOIN kippmiami.powerschool.attendance_code AS code
 WITH
   (NOLOCK) ON att.attendance_codeid = code.id

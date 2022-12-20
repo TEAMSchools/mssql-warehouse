@@ -7,9 +7,7 @@ WITH
       academic_year,
     ROLE,
     survey_question,
-    COUNT(
-      likert_response_scale_5
-    ) AS n_responses,
+    COUNT(likert_response_scale_5) AS n_responses,
     SUM(
       CASE
         WHEN likert_response_scale_5 >= 4 THEN 1.0
@@ -207,18 +205,12 @@ FROM
     UNION ALL
     SELECT
       school,
-      CAST(
-        LEFT(school_year, 4) AS INT
-      ) AS academic_year,
+      CAST(LEFT(school_year, 4) AS INT) AS academic_year,
     ROLE,
     survey_question,
     school_responded,
     ROUND(
-      (
-        likert_4_ * school_responded
-      ) + (
-        likert_5_ * school_responded
-      ),
+      (likert_4_ * school_responded) + (likert_5_ * school_responded),
       0
     ) AS responded_positive
     FROM

@@ -2,12 +2,7 @@ WITH
   remove_footnotes AS (
     SELECT
       field,
-      STUFF(
-        field,
-        LEN(field),
-        1,
-        ''
-      ) AS new_field
+      STUFF(field, LEN(field), 1, '') AS new_field
     FROM
       gabby.tntp.teacher_survey_school_sorter
     WHERE
@@ -23,12 +18,7 @@ WITH
   remove_ending_period AS (
     SELECT
       field,
-      STUFF(
-        field,
-        LEN(field),
-        1,
-        ''
-      ) AS new_field
+      STUFF(field, LEN(field), 1, '') AS new_field
     FROM
       gabby.tntp.teacher_survey_school_sorter
     WHERE

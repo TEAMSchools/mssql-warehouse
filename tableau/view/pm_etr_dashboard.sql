@@ -17,10 +17,7 @@ SELECT
   sr.primary_race_ethnicity_reporting AS observee_race_ethnicity,
   LEFT(
     sr.userprincipalname,
-    CHARINDEX(
-      '@',
-      sr.userprincipalname
-    ) - 1
+    CHARINDEX('@', sr.userprincipalname) - 1
   ) AS staff_username,
   LEFT(
     sr.manager_userprincipalname,
@@ -58,10 +55,7 @@ FROM
   ) = wo.teacher_internal_id
   AND sr.samaccountname != LEFT(
     wo.observer_email,
-    CHARINDEX(
-      '@',
-      wo.observer_email
-    ) - 1
+    CHARINDEX('@', wo.observer_email) - 1
   )
   AND wo.rubric_name IN (
     'Coaching Tool: Coach ETR and Reflection',
@@ -83,11 +77,7 @@ FROM
   AND rt._fivetran_deleted = 0
   LEFT JOIN gabby.pm.teacher_goals_exemption_clean_static AS ex ON sr.df_employee_number = ex.df_employee_number
   AND rt.academic_year = ex.academic_year
-  AND rt.time_per_name = REPLACE(
-    ex.pm_term,
-    'PM',
-    'ETR'
-  )
+  AND rt.time_per_name = REPLACE(ex.pm_term, 'PM', 'ETR')
 WHERE
   ISNULL(
     sr.termination_date,

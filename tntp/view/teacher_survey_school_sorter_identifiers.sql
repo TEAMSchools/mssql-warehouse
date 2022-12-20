@@ -130,10 +130,7 @@ FROM
       school,
       academic_year,
       survey_round,
-      CONCAT(
-        field,
-        ': Top-Quartile'
-      ) AS field,
+      CONCAT(field, ': Top-Quartile') AS field,
       MAX(
         CASE
           WHEN school IN (

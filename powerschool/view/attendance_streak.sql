@@ -17,9 +17,7 @@ WITH
         '_',
         sub.att_code,
         '_',
-        (
-          sub.day_number - sub.streak_rn
-        )
+        (sub.day_number - sub.streak_rn)
       ) AS streak_id,
       CONCAT(
         sub.studentid,
@@ -101,9 +99,7 @@ UNION ALL
 SELECT
   sub.studentid,
   sub.yearid,
-  CAST(
-    sub.attendancevalue AS VARCHAR
-  ) AS att_code,
+  CAST(sub.attendancevalue AS VARCHAR) AS att_code,
   sub.streak_att_id AS streak_id,
   MIN(sub.calendardate) AS streak_start,
   MAX(sub.calendardate) AS streak_end,

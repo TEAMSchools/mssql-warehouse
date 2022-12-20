@@ -44,11 +44,7 @@ SELECT
       'Cumulative Review Quizzes',
       'Cold Read Quizzes'
     )
-    AND sub.grade_level_id IN (1, 2) THEN REPLACE(
-      sub.module_number,
-      'CRQ',
-      'CP'
-    )
+    AND sub.grade_level_id IN (1, 2) THEN REPLACE(sub.module_number, 'CRQ', 'CP')
     ELSE sub.module_number
   END AS module_number,
   CASE

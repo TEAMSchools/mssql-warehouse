@@ -113,9 +113,7 @@ WITH
   weight_denominator AS (
     SELECT
       survey_id,
-      SUM(
-        CAST(answer_value AS FLOAT)
-      ) AS answer_total
+      SUM(CAST(answer_value AS FLOAT)) AS answer_total
     FROM
       gabby.surveygizmo.survey_detail
     WHERE
@@ -139,11 +137,7 @@ WITH
     SELECT
       s.question_shortname,
       (
-        SUM(
-          CAST(
-            s.answer_value AS FLOAT
-          )
-        ) / a.answer_total
+        SUM(CAST(s.answer_value AS FLOAT)) / a.answer_total
       ) * 10 AS item_weight
     FROM
       weight_denominator AS a
@@ -211,12 +205,8 @@ SELECT
   s.linkedin,
   s.linkedin_link,
   s.debt_binary,
-  CAST(
-    s.debt_amount AS money
-  ) AS debt_amount,
-  CAST(
-    s.annual_income AS money
-  ) AS annual_income
+  CAST(s.debt_amount AS money) AS debt_amount,
+  CAST(s.annual_income AS money) AS annual_income
   /*weighted satisfaction scores based on relative importance of each*/
 ,
   s.cur_1 * p.imp_1 AS level_pay_quality,

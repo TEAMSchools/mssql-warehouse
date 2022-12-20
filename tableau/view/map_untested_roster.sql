@@ -59,15 +59,9 @@ SELECT
   base_percentile,
   base_lexile,
   n_tests,
-  COALESCE(
-    test_date,
-    term_start_date
-  ) AS tested_on,
+  COALESCE(test_date, term_start_date) AS tested_on,
   COALESCE(rit, base_rit) AS current_rit,
-  COALESCE(
-    percentile,
-    base_percentile
-  ) AS current_percentile,
+  COALESCE(percentile, base_percentile) AS current_percentile,
   COALESCE(lexile, base_lexile) AS current_lexile,
   CASE
     WHEN n_tests > 1 THEN 'Multiple test events'

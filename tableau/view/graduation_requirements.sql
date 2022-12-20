@@ -6,10 +6,7 @@ WITH
       parcc.local_student_identifier,
       parcc.test_scale_score AS test_score,
       (
-        CONCAT(
-          'parcc_',
-          LOWER(parcc.test_code)
-        )
+        CONCAT('parcc_', LOWER(parcc.test_code))
         COLLATE LATIN1_GENERAL_BIN
       ) AS test_type
     FROM
@@ -40,9 +37,7 @@ WITH
             sat.evidence_based_reading_writing AS INT
           ) AS evidence_based_reading_writing,
           CAST(sat.math AS INT) AS math,
-          CAST(
-            sat.reading_test AS INT
-          ) AS reading_test,
+          CAST(sat.reading_test AS INT) AS reading_test,
           CAST(sat.math_test AS INT) AS math_test
         FROM
           gabby.naviance.sat_scores AS sat
@@ -68,10 +63,7 @@ WITH
       INNER JOIN gabby.alumni.ktc_roster AS ktc ON st.contact_c = ktc.sf_contact_id
     WHERE
       st.test_type = 'ACT'
-      AND st.score_type IN (
-        'act_reading_c',
-        'act_math_c'
-      )
+      AND st.score_type IN ('act_reading_c', 'act_math_c')
   ),
   all_tests AS (
     SELECT

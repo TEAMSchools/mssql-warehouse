@@ -18,13 +18,9 @@ WITH
   ),
   aci AS (
     SELECT
-      CAST(
-        attendance_value AS INT
-      ) AS attendance_value,
+      CAST(attendance_value AS INT) AS attendance_value,
       CAST(fteid AS INT) AS fteid,
-      CAST(
-        attendance_conversion_id AS INT
-      ) AS attendance_conversion_id,
+      CAST(attendance_conversion_id AS INT) AS attendance_conversion_id,
       CAST(input_value AS INT) AS input_value
     FROM
       powerschool.attendance_conversion_items
@@ -45,9 +41,7 @@ SELECT
   (
     CASE
       WHEN ada_0.id IS NOT NULL THEN 0
-      ELSE CAST(
-        aci_real.attendance_value AS INT
-      )
+      ELSE CAST(aci_real.attendance_value AS INT)
     END
   ) * mv.ontrack AS attendancevalue,
   (
@@ -82,10 +76,7 @@ FROM
   AND adm_0.count_for_adm = 0
   LEFT JOIN aci AS aci_real ON mv.fteid = aci_real.fteid
   AND mv.attendance_conversion_id = aci_real.attendance_conversion_id
-  AND ISNULL(
-    ada_1.attendance_codeid,
-    tac.id
-  ) = aci_real.input_value
+  AND ISNULL(ada_1.attendance_codeid, tac.id) = aci_real.input_value
   LEFT JOIN aci AS aci_potential ON mv.fteid = aci_potential.fteid
   AND mv.attendance_conversion_id = aci_potential.attendance_conversion_id
   AND tac.id = aci_potential.input_value

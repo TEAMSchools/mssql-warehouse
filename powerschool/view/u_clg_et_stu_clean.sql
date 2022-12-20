@@ -11,9 +11,7 @@ FROM
       CAST(id AS INT) AS id,
       CAST(studentsdcid AS INT) AS studentsdcid,
       exit_date,
-      CAST(
-        exit_code AS VARCHAR(5)
-      ) AS exit_code,
+      CAST(exit_code AS VARCHAR(5)) AS exit_code,
       ROW_NUMBER() OVER (
         PARTITION BY
           studentsdcid,

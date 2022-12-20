@@ -22,11 +22,7 @@ FROM
   AND rt._fivetran_deleted = 0
   LEFT JOIN gabby.pm.teacher_goals_exemption_clean_static AS ex ON r.df_employee_number = ex.df_employee_number
   AND rt.academic_year = ex.academic_year
-  AND rt.time_per_name = REPLACE(
-    ex.pm_term,
-    'PM',
-    'ETR'
-  )
+  AND rt.time_per_name = REPLACE(ex.pm_term, 'PM', 'ETR')
   LEFT JOIN gabby.whetstone.observations_clean AS wo ON CAST(
     r.df_employee_number AS VARCHAR(25)
   ) = wo.teacher_internal_id
@@ -40,10 +36,7 @@ FROM
   )
   AND r.samaccountname != LEFT(
     wo.observer_email,
-    CHARINDEX(
-      '@',
-      wo.observer_email
-    ) - 1
+    CHARINDEX('@', wo.observer_email) - 1
   )
 WHERE
   r.is_active = 1

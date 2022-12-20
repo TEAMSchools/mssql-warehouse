@@ -28,11 +28,7 @@ WITH
   )
 SELECT
   c.sf_contact_id AS salesforce_contact_id,
-  CONCAT(
-    c.first_name,
-    ' ',
-    c.last_name
-  ) AS student_name,
+  CONCAT(c.first_name, ' ', c.last_name) AS student_name,
   c.ktc_cohort AS kipp_hs_class,
   c.kipp_region_name,
   c.currently_enrolled_school,

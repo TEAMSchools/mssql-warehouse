@@ -44,18 +44,10 @@ WITH
   )
 SELECT
   'MGR' AS survey_type,
-  CAST(
-    mgr.response_id AS INT
-  ) AS response_id,
-  CAST(
-    mgr.academic_year AS INT
-  ) AS academic_year,
-  CAST(
-    mgr.reporting_term AS VARCHAR(5)
-  ) AS reporting_term,
-  CAST(
-    mgr.term_name AS VARCHAR(5)
-  ) AS term_name,
+  CAST(mgr.response_id AS INT) AS response_id,
+  CAST(mgr.academic_year AS INT) AS academic_year,
+  CAST(mgr.reporting_term AS VARCHAR(5)) AS reporting_term,
+  CAST(mgr.term_name AS VARCHAR(5)) AS term_name,
   CAST(
     CASE
       WHEN ISDATE(mgr.time_started) = 0 THEN NULL
@@ -68,15 +60,9 @@ SELECT
       ELSE mgr.date_submitted
     END AS DATETIME2
   ) AS date_submitted,
-  CAST(
-    mgr.status AS VARCHAR(25)
-  ) AS status,
-  CAST(
-    mgr.associate_id AS VARCHAR(25)
-  ) AS respondent_associate_id,
-  CAST(
-    mgr.salesforce_id AS VARCHAR(25)
-  ) AS respondent_salesforce_id,
+  CAST(mgr.status AS VARCHAR(25)) AS status,
+  CAST(mgr.associate_id AS VARCHAR(25)) AS respondent_associate_id,
+  CAST(mgr.salesforce_id AS VARCHAR(25)) AS respondent_salesforce_id,
   CAST(
     mgr.email_address AS VARCHAR(125)
   ) AS respondent_email_address,
@@ -86,17 +72,11 @@ SELECT
   CAST(
     mgr.manager_associate_id AS VARCHAR(25)
   ) AS subject_associate_id,
-  CAST(
-    mgr.question_code AS VARCHAR(25)
-  ) AS question_code,
+  CAST(mgr.question_code AS VARCHAR(25)) AS question_code,
   mgr.response,
   qk.question_text,
-  CAST(
-    qk.open_ended AS VARCHAR(5)
-  ) AS open_ended,
-  CAST(
-    rs.response_value AS FLOAT
-  ) AS response_value
+  CAST(qk.open_ended AS VARCHAR(5)) AS open_ended,
+  CAST(rs.response_value AS FLOAT) AS response_value
 FROM
   manager_long AS mgr
   INNER JOIN gabby.surveys.question_key AS qk ON mgr.question_code = qk.question_code

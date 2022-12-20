@@ -21,9 +21,7 @@ WITH
           t.status_effective_date,
           t.status_effective_end_date,
           t.termination_reason_description,
-          LAG(
-            t.status_effective_end_date
-          ) OVER (
+          LAG(t.status_effective_end_date) OVER (
             PARTITION BY
               t.position_id
             ORDER BY
@@ -59,16 +57,8 @@ WITH
       sub.status_reason,
       sub.kipp_alumni_status,
       CASE
-        WHEN MONTH(
-          sub.position_start_date
-        ) >= 9 THEN YEAR(
-          sub.position_start_date
-        )
-        WHEN MONTH(
-          sub.position_start_date
-        ) < 9 THEN YEAR(
-          sub.position_start_date
-        ) - 1
+        WHEN MONTH(sub.position_start_date) >= 9 THEN YEAR(sub.position_start_date)
+        WHEN MONTH(sub.position_start_date) < 9 THEN YEAR(sub.position_start_date) - 1
       END AS start_academic_year,
       COALESCE(
         CASE
@@ -137,10 +127,7 @@ WITH
       sub.academic_year_entrydate,
       sub.academic_year_exitdate,
       sub.kipp_alumni_status,
-      LEAD(
-        sub.academic_year_exitdate,
-        1
-      ) OVER (
+      LEAD(sub.academic_year_exitdate, 1) OVER (
         PARTITION BY
           sub.position_id
         ORDER BY
@@ -178,11 +165,7 @@ WITH
             CASE
               WHEN r.end_academic_year = y.academic_year THEN r.termination_date
             END,
-            DATEFROMPARTS(
-              (y.academic_year + 1),
-              6,
-              30
-            )
+            DATEFROMPARTS((y.academic_year + 1), 6, 30)
           ) AS academic_year_exitdate
         FROM
           roster AS r
@@ -231,22 +214,14 @@ SELECT
       d.academic_year_exitdate
     ) <= 0 THEN 0
     WHEN d.academic_year_exitdate >= DATEFROMPARTS(d.academic_year, 9, 1)
-    AND d.academic_year_entrydate <= DATEFROMPARTS(
-      (d.academic_year + 1),
-      4,
-      30
-    ) THEN 1
+    AND d.academic_year_entrydate <= DATEFROMPARTS((d.academic_year + 1), 4, 30) THEN 1
     ELSE 0
   END AS is_denominator,
   CASE
     WHEN COALESCE(
       d.academic_year_exitdate_next,
       d.termination_date
-    ) < DATEFROMPARTS(
-      (d.academic_year + 1),
-      9,
-      1
-    ) THEN 1
+    ) < DATEFROMPARTS((d.academic_year + 1), 9, 1) THEN 1
     ELSE 0
   END AS is_attrition,
   CASE

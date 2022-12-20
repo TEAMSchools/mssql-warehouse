@@ -58,24 +58,15 @@ FROM
       wo.[assign_action_step_widget_text],
       wo.[quick_hits],
       wo.[private_notes_4],
-      JSON_VALUE(
-        wo.[list_two_column_a],
-        '$[0]'
-      ) AS list_two_column_a /* list_glows */,
-      JSON_VALUE(
-        wo.[list_two_column_b],
-        '$[0]'
-      ) AS list_two_column_b /* list_grows */,
+      JSON_VALUE(wo.[list_two_column_a], '$[0]') AS list_two_column_a /* list_glows */,
+      JSON_VALUE(wo.[list_two_column_b], '$[0]') AS list_two_column_b /* list_grows */,
       JSON_VALUE(wo.observer, '$._id') AS observer_id,
       JSON_VALUE(wo.observer, '$.name') AS observer_name,
       JSON_VALUE(wo.teacher, '$._id') AS teacher_id,
       JSON_VALUE(wo.teacher, '$.name') AS teacher_name,
       JSON_VALUE(wo.rubric, '$._id') AS rubric_id,
       JSON_VALUE(wo.rubric, '$.name') AS rubric_name,
-      JSON_VALUE(
-        wo.teaching_assignment,
-        '$._id'
-      ) AS teaching_assignment_id,
+      JSON_VALUE(wo.teaching_assignment, '$._id') AS teaching_assignment_id,
       JSON_VALUE(
         wo.teaching_assignment,
         '$.school'

@@ -10,11 +10,7 @@ SET
   @table_name = @view_name + '_static';
 
 SET
-  @objname = CONCAT(
-    @schema_name,
-    '.',
-    @table_name
-  );
+  @objname = CONCAT(@schema_name, '.', @table_name);
 
 SET
   @table_name_old = @table_name + '_OLD';

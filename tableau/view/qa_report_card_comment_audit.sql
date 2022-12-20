@@ -11,9 +11,7 @@ WITH
         WHEN r.repository_id = 208 THEN 'Q3'
         WHEN r.repository_id = 209 THEN 'Q4'
       END AS term_name,
-      CAST(
-        f.[label] AS VARCHAR(250)
-      ) AS field_label,
+      CAST(f.[label] AS VARCHAR(250)) AS field_label,
       CASE
         WHEN f.[name] = 'field_character_comment_1_1' THEN 'field_character_comment_1'
         WHEN f.[name] = 'field_character_comment_2_1' THEN 'field_character_comment_2'

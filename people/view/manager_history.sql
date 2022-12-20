@@ -80,10 +80,7 @@ SELECT
     DATEADD(
       DAY,
       -1,
-      LEAD(
-        reports_to_effective_date,
-        1
-      ) OVER (
+      LEAD(reports_to_effective_date, 1) OVER (
         PARTITION BY
           position_id
         ORDER BY
@@ -96,10 +93,7 @@ SELECT
     DATEADD(
       DAY,
       -1,
-      LEAD(
-        reports_to_effective_date,
-        1
-      ) OVER (
+      LEAD(reports_to_effective_date, 1) OVER (
         PARTITION BY
           position_id
         ORDER BY
@@ -108,25 +102,10 @@ SELECT
     ),
     DATEFROMPARTS(
       CASE
-        WHEN DATEPART(
-          YEAR,
-          reports_to_effective_date
-        ) > gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-        AND DATEPART(
-          MONTH,
-          reports_to_effective_date
-        ) >= 7 THEN DATEPART(
-          YEAR,
-          reports_to_effective_date
-        ) + 1
-        WHEN DATEPART(
-          YEAR,
-          CURRENT_TIMESTAMP
-        ) = gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
-        AND DATEPART(
-          MONTH,
-          CURRENT_TIMESTAMP
-        ) >= 7 THEN gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 2
+        WHEN DATEPART(YEAR, reports_to_effective_date) > gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+        AND DATEPART(MONTH, reports_to_effective_date) >= 7 THEN DATEPART(YEAR, reports_to_effective_date) + 1
+        WHEN DATEPART(YEAR, CURRENT_TIMESTAMP) = gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
+        AND DATEPART(MONTH, CURRENT_TIMESTAMP) >= 7 THEN gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 2
         ELSE gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
       END,
       6,

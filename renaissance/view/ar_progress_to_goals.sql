@@ -32,9 +32,7 @@ WITH
       ) AS mastery_fiction,
       ROUND(
         (
-          SUM(questions_correct_nf) / SUM(
-            questions_presented_nf
-          )
+          SUM(questions_correct_nf) / SUM(questions_presented_nf)
         ) * 100,
         0
       ) AS mastery_nonfiction,
@@ -49,9 +47,7 @@ WITH
         SELECT
           co.student_number,
           co.academic_year,
-          CAST(
-            rt.time_per_name AS VARCHAR(5)
-          ) AS reporting_term,
+          CAST(rt.time_per_name AS VARCHAR(5)) AS reporting_term,
           rt.[start_date],
           rt.end_date,
           CAST(
@@ -171,9 +167,7 @@ SELECT
       OR goals.words_goal IS NULL
     ) THEN NULL
     /* after term */
-    WHEN CAST(
-      CURRENT_TIMESTAMP AS DATE
-    ) > pr.end_date THEN goals.words_goal
+    WHEN CAST(CURRENT_TIMESTAMP AS DATE) > pr.end_date THEN goals.words_goal
     /* during term */
     ELSE ROUND(
       (
@@ -190,9 +184,7 @@ SELECT
     ) THEN NULL
     WHEN pr.words >= goals.words_goal THEN 'Met Goal'
     /* after term */
-    WHEN CAST(
-      CURRENT_TIMESTAMP AS DATE
-    ) > pr.end_date
+    WHEN CAST(CURRENT_TIMESTAMP AS DATE) > pr.end_date
     AND pr.words < goals.words_goal THEN 'Missed Goal'
     WHEN pr.words >= ROUND(
       (

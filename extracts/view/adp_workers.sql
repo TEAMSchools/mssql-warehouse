@@ -11,12 +11,8 @@ WITH
         CAST(date_modified AS DATE) BETWEEN DATEADD(
           DAY,
           -7,
-          CAST(
-            CURRENT_TIMESTAMP AS DATE
-          )
-        ) AND CAST(
-          CURRENT_TIMESTAMP AS DATE
-        )
+          CAST(CURRENT_TIMESTAMP AS DATE)
+        ) AND CAST(CURRENT_TIMESTAMP AS DATE)
       )
   )
 SELECT

@@ -1,9 +1,7 @@
 CREATE OR ALTER VIEW
   lit.illuminate_test_events_current AS
 SELECT
-  CAST(
-    s.local_student_id AS INT
-  ) AS local_student_id,
+  CAST(s.local_student_id AS INT) AS local_student_id,
   sub.date_administered,
   sub.about_the_text,
   sub.beyond_the_text,
@@ -27,37 +25,17 @@ FROM
       student_id,
       academic_year,
       test_round,
-      CAST(
-        date_administered AS DATE
-      ) AS date_administered,
-      CAST(
-        about_the_text AS FLOAT
-      ) AS about_the_text,
-      CAST(
-        beyond_the_text AS FLOAT
-      ) AS beyond_the_text,
-      CAST(
-        within_the_text AS FLOAT
-      ) AS within_the_text,
+      CAST(date_administered AS DATE) AS date_administered,
+      CAST(about_the_text AS FLOAT) AS about_the_text,
+      CAST(beyond_the_text AS FLOAT) AS beyond_the_text,
+      CAST(within_the_text AS FLOAT) AS within_the_text,
       CAST(accuracy AS FLOAT) AS accuracy,
-      CAST(
-        fluency_score AS FLOAT
-      ) AS fluency,
-      CAST(
-        reading_rate_wpm AS FLOAT
-      ) AS reading_rate_wpm,
-      CAST(
-        reading_level AS VARCHAR(5)
-      ) AS instructional_level_tested,
-      CAST(
-        rate_proficiency AS VARCHAR(25)
-      ) AS rate_proficiency,
-      CAST(
-        key_lever AS VARCHAR(25)
-      ) AS key_lever,
-      CAST(
-        fiction_nonfiction AS VARCHAR(5)
-      ) AS fiction_nonfiction
+      CAST(fluency_score AS FLOAT) AS fluency,
+      CAST(reading_rate_wpm AS FLOAT) AS reading_rate_wpm,
+      CAST(reading_level AS VARCHAR(5)) AS instructional_level_tested,
+      CAST(rate_proficiency AS VARCHAR(25)) AS rate_proficiency,
+      CAST(key_lever AS VARCHAR(25)) AS key_lever,
+      CAST(fiction_nonfiction AS VARCHAR(5)) AS fiction_nonfiction
       --,CAST(test_administered_by AS VARCHAR(125)) AS test_administered_by
 ,
       CONCAT(
@@ -73,9 +51,7 @@ FROM
         )
       END AS [status],
       CASE
-        WHEN [status] LIKE '%Achieved%' THEN CAST(
-          reading_level AS VARCHAR(5)
-        )
+        WHEN [status] LIKE '%Achieved%' THEN CAST(reading_level AS VARCHAR(5))
       END AS achieved_independent_level
     FROM
       (

@@ -12,10 +12,7 @@ SELECT
   s.fteid,
   s.membershipshare,
   s.track,
-  ISNULL(
-    f.dflt_att_mode_code,
-    '-1'
-  ) AS dflt_att_mode_code,
+  ISNULL(f.dflt_att_mode_code, '-1') AS dflt_att_mode_code,
   ISNULL(
     f.dflt_conversion_mode_code,
     '-1'
@@ -55,10 +52,7 @@ SELECT
   r.fteid,
   r.membershipshare,
   r.track,
-  ISNULL(
-    f.dflt_att_mode_code,
-    '-1'
-  ) AS dflt_att_mode_code,
+  ISNULL(f.dflt_att_mode_code, '-1') AS dflt_att_mode_code,
   ISNULL(
     f.dflt_conversion_mode_code,
     '-1'

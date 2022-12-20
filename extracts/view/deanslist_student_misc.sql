@@ -64,10 +64,7 @@ SELECT
     co.zip
   ) AS home_address,
   co.student_web_id + '@teamstudents.org' AS student_email,
-  CONCAT(
-    co.student_web_password,
-    'kipp'
-  ) AS student_web_password,
+  CONCAT(co.student_web_password, 'kipp') AS student_web_password,
   co.student_web_id + '.fam' AS family_access_id,
   CONVERT(
     NVARCHAR,

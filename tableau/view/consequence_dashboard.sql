@@ -67,9 +67,7 @@ SELECT
   dli.is_referral,
   dli.category AS referral_category,
   'Referral' AS dl_category,
-  CAST(
-    d.alt_name AS NVARCHAR(8)
-  ) AS term,
+  CAST(d.alt_name AS NVARCHAR(8)) AS term,
   dlp.penaltyname,
   dlp.startdate,
   dlp.enddate,

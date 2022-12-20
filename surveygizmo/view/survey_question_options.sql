@@ -7,10 +7,7 @@ SELECT
   o.[value] AS option_value,
   JSON_VALUE(o.title, '$.English') AS option_title_english,
   CAST(
-    JSON_VALUE(
-      o.properties,
-      '$.disabled'
-    ) AS BIT
+    JSON_VALUE(o.properties, '$.disabled') AS BIT
   ) AS option_disabled,
   JSON_QUERY(
     o.properties,

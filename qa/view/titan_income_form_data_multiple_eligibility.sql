@@ -4,9 +4,7 @@ SELECT
   ti.student_identifier,
   ti.date_signed,
   gabby.dbo.GROUP_CONCAT (ti.reference_code) AS reference_codes,
-  COUNT(
-    DISTINCT ti.eligibility_result
-  ) AS N,
+  COUNT(DISTINCT ti.eligibility_result) AS N,
   ROW_NUMBER() OVER (
     PARTITION BY
       ti.student_identifier
@@ -29,6 +27,4 @@ GROUP BY
   s.grade_level,
   s.enroll_status
 HAVING
-  COUNT(
-    DISTINCT ti.eligibility_result
-  ) > 1
+  COUNT(DISTINCT ti.eligibility_result) > 1

@@ -22,9 +22,7 @@ WITH
       CAST(
         fg.term_grade_pts AS DECIMAL(3, 2)
       ) AS term_grade_pts,
-      CAST(
-        fg.y1_grade_pts AS DECIMAL(3, 2)
-      ) AS y1_grade_pts,
+      CAST(fg.y1_grade_pts AS DECIMAL(3, 2)) AS y1_grade_pts,
       CAST(
         fg.y1_grade_pts_unweighted AS DECIMAL(3, 2)
       ) AS y1_grade_pts_unweighted,
@@ -54,21 +52,11 @@ WITH
       sg.academic_year,
       sg.storecode,
       y1.grade AS y1_grade_letter,
-      CAST(
-        sg.[percent] AS DECIMAL(3, 0)
-      ) AS term_grade_percent,
-      CAST(
-        y1.[percent] AS DECIMAL(3, 0)
-      ) AS y1_grade_percent_adjusted,
-      CAST(
-        c.credit_hours AS DECIMAL(5, 2)
-      ) AS potential_credit_hours,
-      CAST(
-        sg.gpa_points AS DECIMAL(3, 2)
-      ) AS term_grade_pts,
-      CAST(
-        y1.gpa_points AS DECIMAL(3, 2)
-      ) AS y1_grade_pts,
+      CAST(sg.[percent] AS DECIMAL(3, 0)) AS term_grade_percent,
+      CAST(y1.[percent] AS DECIMAL(3, 0)) AS y1_grade_percent_adjusted,
+      CAST(c.credit_hours AS DECIMAL(5, 2)) AS potential_credit_hours,
+      CAST(sg.gpa_points AS DECIMAL(3, 2)) AS term_grade_pts,
+      CAST(y1.gpa_points AS DECIMAL(3, 2)) AS y1_grade_pts,
       NULL AS y1_grade_pts_unweighted,
       NULL AS reporting_term,
       CASE
@@ -105,23 +93,13 @@ SELECT
   gpa_y1_unweighted,
   n_failing_y1,
   total_credit_hours,
+  CAST(grade_avg_term AS DECIMAL(3, 0)) AS grade_avg_term,
+  CAST(grade_avg_y1 AS DECIMAL(3, 0)) AS grade_avg_y1,
   CAST(
-    grade_avg_term AS DECIMAL(3, 0)
-  ) AS grade_avg_term,
-  CAST(
-    grade_avg_y1 AS DECIMAL(3, 0)
-  ) AS grade_avg_y1,
-  CAST(
-    ROUND(
-      weighted_gpa_points_term,
-      2
-    ) AS DECIMAL(5, 2)
+    ROUND(weighted_gpa_points_term, 2) AS DECIMAL(5, 2)
   ) AS weighted_gpa_points_term,
   CAST(
-    ROUND(
-      weighted_gpa_points_y1,
-      2
-    ) AS DECIMAL(5, 2)
+    ROUND(weighted_gpa_points_y1, 2) AS DECIMAL(5, 2)
   ) AS weighted_gpa_points_y1
   /* gpa semester */
 ,
@@ -144,9 +122,7 @@ SELECT
   ) AS grade_avg_semester,
   CAST(
     ROUND(
-      SUM(
-        weighted_gpa_points_term
-      ) OVER (
+      SUM(weighted_gpa_points_term) OVER (
         PARTITION BY
           student_number,
           academic_year,
@@ -168,9 +144,7 @@ SELECT
   ) AS total_credit_hours_semester,
   CAST(
     ROUND(
-      SUM(
-        weighted_gpa_points_term
-      ) OVER (
+      SUM(weighted_gpa_points_term) OVER (
         PARTITION BY
           student_number,
           academic_year,
@@ -200,10 +174,7 @@ FROM
       END AS semester
       /* gpa term */
 ,
-      ROUND(
-        AVG(term_grade_percent),
-        0
-      ) AS grade_avg_term,
+      ROUND(AVG(term_grade_percent), 0) AS grade_avg_term,
       SUM(term_grade_pts) AS gpa_points_total_term,
       SUM(
         (
@@ -240,10 +211,7 @@ FROM
       ) AS gpa_term
       /* gpa Y1 */
 ,
-      ROUND(
-        AVG(y1_grade_percent_adj),
-        0
-      ) AS grade_avg_y1,
+      ROUND(AVG(y1_grade_percent_adj), 0) AS grade_avg_y1,
       SUM(y1_grade_pts) AS gpa_points_total_y1,
       SUM(
         (

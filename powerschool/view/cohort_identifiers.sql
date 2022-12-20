@@ -44,9 +44,7 @@ SELECT
   s.zip,
   s.home_phone,
   s.grade_level AS highest_achieved,
-  CAST(
-    UPPER(s.gender) AS NVARCHAR(1)
-  ) AS gender,
+  CAST(UPPER(s.gender) AS NVARCHAR(1)) AS gender,
   CAST(
     UPPER(s.ethnicity) AS NVARCHAR(1)
   ) AS ethnicity,
@@ -68,26 +66,11 @@ SELECT
   saa.student_web_password,
   tp.total_balance AS lunch_balance,
   ISNULL(enr.is_enrolled_y1, 0) AS is_enrolled_y1,
-  ISNULL(
-    enr.is_enrolled_oct01,
-    0
-  ) AS is_enrolled_oct01,
-  ISNULL(
-    enr.is_enrolled_oct15,
-    0
-  ) AS is_enrolled_oct15,
-  ISNULL(
-    enr.is_enrolled_recent,
-    0
-  ) AS is_enrolled_recent,
-  ISNULL(
-    enr.is_enrolled_oct15_week,
-    0
-  ) AS is_enrolled_oct15_week,
-  ISNULL(
-    enr.is_enrolled_jan15_week,
-    0
-  ) AS is_enrolled_jan15_week,
+  ISNULL(enr.is_enrolled_oct01, 0) AS is_enrolled_oct01,
+  ISNULL(enr.is_enrolled_oct15, 0) AS is_enrolled_oct15,
+  ISNULL(enr.is_enrolled_recent, 0) AS is_enrolled_recent,
+  ISNULL(enr.is_enrolled_oct15_week, 0) AS is_enrolled_oct15_week,
+  ISNULL(enr.is_enrolled_jan15_week, 0) AS is_enrolled_jan15_week,
   CASE
     WHEN sp.specprog_name IN (
       'Self-Contained Special Education',
@@ -125,19 +108,13 @@ SELECT
   ISNULL(
     CASE
       WHEN DB_NAME() = 'kippmiami' THEN scf.spedlep
-      WHEN DB_NAME() IN (
-        'kippnewark',
-        'kippcamden'
-      ) THEN sped.spedlep
+      WHEN DB_NAME() IN ('kippnewark', 'kippcamden') THEN sped.spedlep
     END,
     'No IEP'
   ) AS iep_status,
   CASE
     WHEN DB_NAME() = 'kippmiami' THEN scf.spedlep
-    WHEN DB_NAME() IN (
-      'kippnewark',
-      'kippcamden'
-    ) THEN sped.special_education_code
+    WHEN DB_NAME() IN ('kippnewark', 'kippcamden') THEN sped.special_education_code
   END AS specialed_classification,
   CASE
     WHEN DB_NAME() = 'kippmiami'

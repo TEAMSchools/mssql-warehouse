@@ -217,29 +217,14 @@ SELECT
   ISNULL(ap.n_wishlist_ltr, 0) AS n_wishlist_ltr,
   ISNULL(ap.is_eof_applied, 0) AS is_eof_applied,
   ISNULL(ap.is_eof_accepted, 0) AS is_eof_accepted,
-  ISNULL(
-    ap.is_submitted_eaed_4yr,
-    0
-  ) AS is_submitted_eaed_4yr,
-  ISNULL(
-    ap.is_accepted_eaed_4yr,
-    0
-  ) AS is_accepted_eaed_4yr,
+  ISNULL(ap.is_submitted_eaed_4yr, 0) AS is_submitted_eaed_4yr,
+  ISNULL(ap.is_accepted_eaed_4yr, 0) AS is_accepted_eaed_4yr,
   ISNULL(ap.is_accepted_4yr, 0) AS is_accepted_4yr,
   ISNULL(ap.is_accepted_2yr, 0) AS is_accepted_2yr,
   ISNULL(ap.is_accepted_cte, 0) AS is_accepted_cte,
-  ISNULL(
-    ap.is_submitted_4yr,
-    0
-  ) AS is_submitted_4yr,
-  ISNULL(
-    ap.is_submitted_2yr,
-    0
-  ) AS is_submitted_2yr,
-  ISNULL(
-    ap.is_submitted_cte,
-    0
-  ) AS is_submitted_cte,
+  ISNULL(ap.is_submitted_4yr, 0) AS is_submitted_4yr,
+  ISNULL(ap.is_submitted_2yr, 0) AS is_submitted_2yr,
+  ISNULL(ap.is_submitted_cte, 0) AS is_submitted_cte,
   gabby.utilities.GLOBAL_ACADEMIC_YEAR () AS current_academic_year
 FROM
   gabby.alumni.ktc_roster AS c

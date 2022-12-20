@@ -9,10 +9,7 @@ SELECT
   LTRIM(
     RTRIM(
       LEFT(
-        gabby.utilities.STRIP_CHARACTERS (
-          ch.certificate_type,
-          '^A-Z -'
-        ),
+        gabby.utilities.STRIP_CHARACTERS (ch.certificate_type, '^A-Z -'),
         28
       )
     )
@@ -35,18 +32,10 @@ SELECT
   END AS month_year_issued,
   CASE
     WHEN ch.month_year_issued != '' THEN DATEFROMPARTS(
-      CAST(
-        RIGHT(
-          ch.month_year_issued,
-          4
-        )
-      ),
+      CAST(RIGHT(ch.month_year_issued, 4)),
       CONVERT(
         INT,
-        LEFT(
-          ch.month_year_issued,
-          2
-        )
+        LEFT(ch.month_year_issued, 2)
       ),
       1 AS INT
     )
@@ -64,17 +53,11 @@ SELECT
         1,
         DATEFROMPARTS(
           CAST(
-            RIGHT(
-              ch.month_year_expiration,
-              4
-            )
+            RIGHT(ch.month_year_expiration, 4)
           ),
           CONVERT(
             INT,
-            LEFT(
-              ch.month_year_expiration,
-              2
-            )
+            LEFT(ch.month_year_expiration, 2)
           ),
           1
         )
@@ -83,10 +66,7 @@ SELECT
   END AS expiration_date
 FROM
   gabby.njdoe.certification_check AS cc
-  CROSS APPLY OPENJSON (
-    cc.certificate_history,
-    '$'
-  )
+  CROSS APPLY OPENJSON (cc.certificate_history, '$')
 WITH
   (
     seq_number INT,

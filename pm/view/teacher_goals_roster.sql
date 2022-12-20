@@ -42,9 +42,7 @@ WITH
             ) THEN 1
             ELSE 0
           END AS is_sped_teacher,
-          CAST(
-            wa.effective_start_date AS DATE
-          ) AS work_assignment_effective_start,
+          CAST(wa.effective_start_date AS DATE) AS work_assignment_effective_start,
           CAST(
             COALESCE(
               wa.effective_end_date,
@@ -72,10 +70,7 @@ WITH
             'Teacher, ESL',
             'Teacher ESL'
           )
-          AND wa.position_status NOT IN (
-            'Terminated',
-            'Pre-Start'
-          )
+          AND wa.position_status NOT IN ('Terminated', 'Pre-Start')
       ) AS sub
   ),
   current_work_assignment AS (

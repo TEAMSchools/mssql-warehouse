@@ -8,9 +8,7 @@ WITH
       sub.grade_level,
       sub.reporting_term,
       'pct_met_reading_goal' AS metric_name,
-      AVG(
-        CAST(sub.met_goal AS FLOAT)
-      ) AS metric_value
+      AVG(CAST(sub.met_goal AS FLOAT)) AS metric_value
     FROM
       (
         SELECT
@@ -23,9 +21,7 @@ WITH
         FROM
           gabby.lit.achieved_by_round_static
         WHERE
-          [start_date] <= CAST(
-            CURRENT_TIMESTAMP AS DATE
-          )
+          [start_date] <= CAST(CURRENT_TIMESTAMP AS DATE)
       ) AS sub
     GROUP BY
       sub.academic_year,
@@ -98,11 +94,7 @@ WITH
       u.date_taken,
       u.performance_band_number,
       u.[value] AS is_mastery,
-      'pct_' + u.module_type + '_mastery_' + u.subject_area_clean + REPLACE(
-        u.field,
-        'is_mastery',
-        ''
-      ) AS metric_name
+      'pct_' + u.module_type + '_mastery_' + u.subject_area_clean + REPLACE(u.field, 'is_mastery', '') AS metric_name
     FROM
       (
         SELECT
@@ -157,11 +149,7 @@ WITH
       wo.score AS metric_value,
       rt.academic_year,
       rt.time_per_name,
-      REPLACE(
-        rt.time_per_name,
-        'ETR',
-        'PM'
-      ) AS pm_term,
+      REPLACE(rt.time_per_name, 'ETR', 'PM') AS pm_term,
       'etr_overall_score' AS metric_name,
       ROW_NUMBER() OVER (
         PARTITION BY
@@ -181,11 +169,7 @@ WITH
       AND rt._fivetran_deleted = 0
       LEFT JOIN gabby.pm.teacher_goals_exemption_clean_static AS ex ON wo.teacher_internal_id = ex.df_employee_number
       AND rt.academic_year = ex.academic_year
-      AND rt.time_per_name = REPLACE(
-        ex.pm_term,
-        'PM',
-        'ETR'
-      )
+      AND rt.time_per_name = REPLACE(ex.pm_term, 'PM', 'ETR')
     WHERE
       wo.rubric_name IN (
         'Coaching Tool: Coach ETR and Reflection',
@@ -239,26 +223,14 @@ WITH
       so.subject_employee_number,
       so.academic_year,
       so.reporting_term,
-      REPLACE(
-        so.reporting_term,
-        'SO',
-        'PM'
-      ) AS pm_term,
+      REPLACE(so.reporting_term, 'SO', 'PM') AS pm_term,
       'so_survey_overall_score' AS metric_name,
-      SUM(
-        so.total_weighted_response_value
-      ) / SUM(
-        so.total_response_weight
-      ) AS metric_value
+      SUM(so.total_weighted_response_value) / SUM(so.total_response_weight) AS metric_value
     FROM
       gabby.surveys.self_and_others_survey_rollup_static AS so
       LEFT JOIN gabby.pm.teacher_goals_exemption_clean_static AS ex ON so.subject_employee_number = ex.df_employee_number
       AND so.academic_year = ex.academic_year
-      AND so.reporting_term = REPLACE(
-        ex.pm_term,
-        'PM',
-        'SO'
-      )
+      AND so.reporting_term = REPLACE(ex.pm_term, 'PM', 'SO')
     WHERE
       ex.exemption IS NULL
     GROUP BY
@@ -560,9 +532,7 @@ WITH
         ) THEN AVG(sub.is_mastery) - sub.prior_year_outcome
         ELSE AVG(sub.is_mastery)
       END AS metric_value,
-      COUNT(
-        DISTINCT sub.student_number
-      ) AS n_students
+      COUNT(DISTINCT sub.student_number) AS n_students
     FROM
       (
         SELECT

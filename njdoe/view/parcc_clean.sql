@@ -2,10 +2,7 @@ CREATE OR ALTER VIEW
   njdoe.parcc_clean AS
 SELECT
   academic_year,
-  COALESCE(
-    test_session,
-    test_season
-  ) AS test_session,
+  COALESCE(test_session, test_season) AS test_session,
   UPPER(county_code) AS county_code,
   CASE
     WHEN county_name != '' THEN UPPER(county_name)

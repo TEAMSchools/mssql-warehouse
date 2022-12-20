@@ -90,8 +90,4 @@ WHERE
   AND COALESCE(
     c.rehire_date,
     c.original_hire_date
-  ) < DATEADD(
-    DAY,
-    -30,
-    CURRENT_TIMESTAMP
-  )
+  ) < DATEADD(DAY, -30, CURRENT_TIMESTAMP)

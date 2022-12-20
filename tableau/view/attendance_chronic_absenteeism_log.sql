@@ -8,22 +8,12 @@ WITH
       c.response AS commlog_notes,
       c.call_topic AS commlog_topic,
       c.[db_name],
-      CAST(
-        c.call_date_time AS DATE
-      ) AS commlog_date,
-      CONCAT(
-        u.first_name,
-        ' ',
-        u.last_name
-      ) AS commlog_staff_name,
+      CAST(c.call_date_time AS DATE) AS commlog_date,
+      CONCAT(u.first_name, ' ', u.last_name) AS commlog_staff_name,
       f.init_notes AS followup_init_notes,
       f.followup_notes AS followup_close_notes,
       f.outstanding AS followup_outstanding,
-      CONCAT(
-        f.c_first,
-        ' ',
-        f.c_last
-      ) AS followup_staff_name
+      CONCAT(f.c_first, ' ', f.c_last) AS followup_staff_name
     FROM
       gabby.deanslist.communication AS c
       INNER JOIN gabby.deanslist.users AS u ON c.dluser_id = u.dluser_id
@@ -73,9 +63,7 @@ FROM
       LEFT JOIN gabby.powerschool.cc ON att.studentid = cc.studentid
       AND att.[db_name] = cc.[db_name]
       AND (
-        CAST(
-          CURRENT_TIMESTAMP AS DATE
-        ) BETWEEN cc.dateenrolled AND cc.dateleft
+        CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN cc.dateenrolled AND cc.dateleft
       )
       AND cc.course_number = 'HR'
       INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON att.studentid = co.studentid

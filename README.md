@@ -9,12 +9,13 @@
 - Avoid abbreviated keywords; use the full-length ones where available (e.g `ABSOLUTE` > `ABS`)
 - Prefer ANSI SQL functions over vendor-specific functions for maximum portability
 
-## `JOIN`s
+## Joins
 
 - `INNER JOIN` should be used explicitly; avoid using a naked `JOIN`
 - Wrap join conditions in **(parenthesis)**: `ON (x = y AND z = x)`
 - Do not `JOIN` to a subquery; use a CTE and join it to the main clause
-- Begin with `INNER JOIN`s and then `LEFT JOINs`, do not intermingle them unless necessary
+- Order `INNER JOIN` tables first and then `LEFT JOIN` tables
+  - Do not intermingle them unless totally necessary
 
 ## Naming Conventions
 
@@ -27,12 +28,16 @@
 - Avoid using multiple consecutive underscores
 - Use underscores where you would normally use a space
 
-## Known Formatting Issues
+## Formatting Best Practices
 
 - `x BETWEEN y AND z` clauses must be put in **(parenthesis)** for successful parsing
 - User-defined functions will add an extra space in-between the function name and the parenthesis
-- Wrap statements using `COLLATE` in **(parenthesis)** to avoid `sql-formatter` confusion
+- Complex logical statements should be wrapped in **(parenthesis)** for optimal formatting
+  - e.g. `CASE WHEN (... AND ...) THEN ...`
+- Wrap `COLLATE` statements in **(parenthesis)** to avoid `sql-formatter` confusion:
+  - e.g. `(tbl.col COLLATE LATIN1_GENERAL_BIN) AS foo,`
 
 ## Troubleshooting Linter Errors
+
 - `L016`
 - `Found unparsable section: ...`

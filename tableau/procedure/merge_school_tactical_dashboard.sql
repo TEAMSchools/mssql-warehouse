@@ -19,12 +19,7 @@ WITH
         WHEN academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR () THEN DATEFROMPARTS(academic_year, 6, 30)
         ELSE DATEADD(
           DAY,
-          1 - (
-            DATEPART(
-              WEEKDAY,
-              SYSDATETIME()
-            )
-          ),
+          1 - (DATEPART(WEEKDAY, SYSDATETIME())),
           CAST(SYSDATETIME() AS DATE)
         )
       END AS week_of_date
@@ -40,24 +35,12 @@ MERGE
   AND MySource.reporting_schoolid = MyTarget.reporting_schoolid
   AND MySource.grade_level = MyTarget.grade_level
   AND (
-    ISNULL(
-      MySource.subject_area,
-      ''
-    ) = ISNULL(
-      MyTarget.subject_area,
-      ''
-    )
+    ISNULL(MySource.subject_area, '') = ISNULL(MyTarget.subject_area, '')
     COLLATE LATIN1_GENERAL_BIN
   )
   AND MySource.term_name = MyTarget.term_name
   AND MySource.domain = MyTarget.domain
-  AND ISNULL(
-    MySource.subdomain,
-    ''
-  ) = ISNULL(
-    MyTarget.subdomain,
-    ''
-  )
+  AND ISNULL(MySource.subdomain, '') = ISNULL(MyTarget.subdomain, '')
   AND MySource.field = MyTarget.field
   AND MySource.week_of_date = MyTarget.week_of_date
 WHEN MATCHED THEN

@@ -30,10 +30,7 @@ FROM
     'CMA - End-of-Module',
     'CMA - Mid-Module'
   )
-  AND asr.subject_area IN (
-    'Text Study',
-    'Mathematics'
-  )
+  AND asr.subject_area IN ('Text Study', 'Mathematics')
   AND asr.is_replacement = 0
   AND asr.response_type = 'O'
   INNER JOIN gabby.parcc.summative_record_file_clean AS parcc ON co.student_number = parcc.local_student_identifier

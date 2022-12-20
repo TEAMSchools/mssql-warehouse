@@ -65,9 +65,5 @@ FROM
   LEFT JOIN gabby.powerschool.cohort_identifiers_static AS y2 ON y1.student_number = y2.student_number
   AND y1.academic_year = (y2.academic_year - 1)
   AND (
-    DATEFROMPARTS(
-      y2.academic_year,
-      10,
-      1
-    ) BETWEEN y2.entrydate AND y2.exitdate
+    DATEFROMPARTS(y2.academic_year, 10, 1) BETWEEN y2.entrydate AND y2.exitdate
   )

@@ -118,11 +118,7 @@ SELECT
   co.team,
   'Missing or Incorrect FTEID' AS element,
   CASE
-    WHEN co.fteid != fte.id THEN CONCAT(
-      co.fteid,
-      ' != ',
-      fte.id
-    )
+    WHEN co.fteid != fte.id THEN CONCAT(co.fteid, ' != ', fte.id)
     WHEN co.fteid IS NULL THEN 'FTE IS NULL'
     WHEN co.fteid = 0 THEN 'FTE = 0'
   END AS detail,
@@ -240,9 +236,7 @@ SELECT
   grade_level,
   team,
   'Under Enrolled' AS element,
-  CAST(
-    total_sections AS VARCHAR
-  ) AS detail,
+  CAST(total_sections AS VARCHAR) AS detail,
   CASE
     WHEN total_sections < 3 THEN 1
     ELSE 0

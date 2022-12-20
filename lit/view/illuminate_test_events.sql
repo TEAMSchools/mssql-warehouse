@@ -30,12 +30,8 @@ WITH
       CAST(student_number AS INT) AS student_number,
       date_administered,
       CAST(about_the_text AS INT) AS about_the_text,
-      CAST(
-        beyond_the_text AS INT
-      ) AS beyond_the_text,
-      CAST(
-        within_the_text AS INT
-      ) AS within_the_text,
+      CAST(beyond_the_text AS INT) AS beyond_the_text,
+      CAST(within_the_text AS INT) AS within_the_text,
       CAST(accuracy AS INT) AS accuracy,
       CAST(fluency AS INT) AS fluency,
       reading_rate_wpm,
@@ -45,34 +41,22 @@ WITH
         )
       END AS instructional_level_tested,
       CASE
-        WHEN rate_proficiency != '' THEN CAST(
-          rate_proficiency AS VARCHAR(25)
-        )
+        WHEN rate_proficiency != '' THEN CAST(rate_proficiency AS VARCHAR(25))
       END AS rate_proficiency,
       CASE
-        WHEN key_lever != '' THEN CAST(
-          key_lever AS VARCHAR(25)
-        )
+        WHEN key_lever != '' THEN CAST(key_lever AS VARCHAR(25))
       END AS key_lever,
       CASE
-        WHEN fiction_nonfiction != '' THEN CAST(
-          fiction_nonfiction AS VARCHAR(5)
-        )
+        WHEN fiction_nonfiction != '' THEN CAST(fiction_nonfiction AS VARCHAR(5))
       END AS fiction_nonfiction,
       NULL AS test_administered_by,
       CAST(academic_year AS INT) AS academic_year,
-      CAST(
-        unique_id AS VARCHAR(125)
-      ) AS unique_id,
+      CAST(unique_id AS VARCHAR(125)) AS unique_id,
       CASE
-        WHEN test_round != '' THEN CAST(
-          test_round AS VARCHAR(25)
-        )
+        WHEN test_round != '' THEN CAST(test_round AS VARCHAR(25))
       END AS test_round,
       CASE
-        WHEN [status] != '' THEN CAST(
-          [status] AS VARCHAR(25)
-        )
+        WHEN [status] != '' THEN CAST([status] AS VARCHAR(25))
       END AS [status],
       CASE
         WHEN achieved_independent_level != '' THEN CAST(
@@ -135,12 +119,8 @@ SELECT
   END AS comp_overall,
   achv.gleq,
   CAST(achv.lvl_num AS INT) AS gleq_lvl_num,
-  CAST(
-    achv.fp_lvl_num AS INT
-  ) AS indep_lvl_num,
-  CAST(
-    instr.fp_lvl_num AS INT
-  ) AS instr_lvl_num
+  CAST(achv.fp_lvl_num AS INT) AS indep_lvl_num,
+  CAST(instr.fp_lvl_num AS INT) AS instr_lvl_num
 FROM
   clean_data AS cd
   LEFT JOIN gabby.lit.gleq AS achv ON cd.achieved_independent_level = achv.read_lvl

@@ -13,10 +13,7 @@ WITH
       terms.end_date,
       terms.is_curterm,
       CAST(
-        RIGHT(
-          terms.time_per_name,
-          1
-        ) AS INT
+        RIGHT(terms.time_per_name, 1) AS INT
       ) AS round_num
     FROM
       gabby.powerschool.cohort_identifiers_static AS r
@@ -81,22 +78,10 @@ WITH
           r.end_date,
           r.is_curterm,
           COALESCE(achv.is_fp, ps.is_fp) AS is_fp,
-          COALESCE(
-            achv.unique_id,
-            ps.unique_id
-          ) AS achv_unique_id,
-          COALESCE(
-            achv.read_lvl,
-            ps.read_lvl
-          ) AS read_lvl,
-          COALESCE(
-            achv.lvl_num,
-            ps.lvl_num
-          ) AS lvl_num,
-          COALESCE(
-            achv.indep_lvl,
-            ps.indep_lvl
-          ) AS indep_lvl,
+          COALESCE(achv.unique_id, ps.unique_id) AS achv_unique_id,
+          COALESCE(achv.read_lvl, ps.read_lvl) AS read_lvl,
+          COALESCE(achv.lvl_num, ps.lvl_num) AS lvl_num,
+          COALESCE(achv.indep_lvl, ps.indep_lvl) AS indep_lvl,
           COALESCE(
             achv.indep_lvl_num,
             ps.indep_lvl_num
@@ -106,18 +91,9 @@ WITH
             achv.gleq_lvl_num,
             ps.gleq_lvl_num
           ) AS gleq_lvl_num,
-          COALESCE(
-            achv.fp_wpmrate,
-            ps.fp_wpmrate
-          ) AS fp_wpmrate,
-          COALESCE(
-            achv.fp_keylever,
-            ps.fp_keylever
-          ) AS fp_keylever,
-          COALESCE(
-            dna.unique_id,
-            ps.unique_id
-          ) AS dna_unique_id,
+          COALESCE(achv.fp_wpmrate, ps.fp_wpmrate) AS fp_wpmrate,
+          COALESCE(achv.fp_keylever, ps.fp_keylever) AS fp_keylever,
+          COALESCE(dna.unique_id, ps.unique_id) AS dna_unique_id,
           COALESCE(
             dna.instruct_lvl,
             ps.instruct_lvl
@@ -126,14 +102,8 @@ WITH
             dna.instruct_lvl_num,
             ps.instruct_lvl_num
           ) AS instruct_lvl_num,
-          COALESCE(
-            dna.read_lvl,
-            ps.dna_lvl
-          ) AS dna_lvl,
-          COALESCE(
-            dna.lvl_num,
-            ps.dna_lvl_num
-          ) AS dna_lvl_num,
+          COALESCE(dna.read_lvl, ps.dna_lvl) AS dna_lvl,
+          COALESCE(dna.lvl_num, ps.dna_lvl_num) AS dna_lvl_num,
           hard.unique_id AS hard_unique_id,
           hard.read_lvl AS hard_read_lvl,
           hard.lvl_num AS hard_lvl_num
@@ -239,31 +209,19 @@ WITH
           fp.is_fp,
           fp.unique_id AS achv_unique_id,
           CASE
-            WHEN fp.[status] = 'Achieved' THEN COALESCE(
-              fp.read_lvl,
-              fp.indep_lvl
-            )
+            WHEN fp.[status] = 'Achieved' THEN COALESCE(fp.read_lvl, fp.indep_lvl)
             ELSE fp.indep_lvl
           END AS read_lvl,
           CASE
-            WHEN fp.[status] = 'Achieved' THEN COALESCE(
-              fp.lvl_num,
-              fp.indep_lvl_num
-            )
+            WHEN fp.[status] = 'Achieved' THEN COALESCE(fp.lvl_num, fp.indep_lvl_num)
             ELSE fp.indep_lvl_num
           END AS lvl_num,
           CASE
-            WHEN fp.[status] = 'Achieved' THEN COALESCE(
-              fp.read_lvl,
-              fp.indep_lvl
-            )
+            WHEN fp.[status] = 'Achieved' THEN COALESCE(fp.read_lvl, fp.indep_lvl)
             ELSE fp.indep_lvl
           END AS indep_lvl,
           CASE
-            WHEN fp.[status] = 'Achieved' THEN COALESCE(
-              fp.lvl_num,
-              fp.indep_lvl_num
-            )
+            WHEN fp.[status] = 'Achieved' THEN COALESCE(fp.lvl_num, fp.indep_lvl_num)
             ELSE fp.indep_lvl_num
           END AS indep_lvl_num,
           gleq.gleq,
@@ -353,18 +311,12 @@ WITH
       tests.[start_date],
       tests.end_date,
       tests.is_curterm,
-      COALESCE(
-        tests.is_fp,
-        achv_prev.is_fp
-      ) AS is_fp,
+      COALESCE(tests.is_fp, achv_prev.is_fp) AS is_fp,
       COALESCE(
         tests.read_lvl,
         achv_prev.read_lvl
       ) AS read_lvl,
-      COALESCE(
-        tests.lvl_num,
-        achv_prev.lvl_num
-      ) AS lvl_num,
+      COALESCE(tests.lvl_num, achv_prev.lvl_num) AS lvl_num,
       COALESCE(
         tests.indep_lvl,
         achv_prev.indep_lvl
@@ -381,10 +333,7 @@ WITH
         tests.instruct_lvl_num,
         achv_prev.instruct_lvl_num
       ) AS instruct_lvl_num,
-      COALESCE(
-        tests.gleq,
-        achv_prev.gleq
-      ) AS gleq,
+      COALESCE(tests.gleq, achv_prev.gleq) AS gleq,
       COALESCE(
         tests.gleq_lvl_num,
         achv_prev.gleq_lvl_num
@@ -422,10 +371,7 @@ WITH
       tests.student_number,
       tests.test_round,
       tests.round_num,
-      COALESCE(
-        tests.dna_lvl,
-        dna_prev.dna_lvl
-      ) AS dna_lvl,
+      COALESCE(tests.dna_lvl, dna_prev.dna_lvl) AS dna_lvl,
       COALESCE(
         tests.dna_lvl_num,
         dna_prev.dna_lvl_num
@@ -448,9 +394,7 @@ WITH
         AND tests.meta_achv_round < dna_prev.meta_achv_round
         AND dna_prev.dna_lvl IS NOT NULL
         /* preserves the scaffold but will not carry scores to a future term */
-        AND tests.[start_date] <= CAST(
-          CURRENT_TIMESTAMP AS DATE
-        )
+        AND tests.[start_date] <= CAST(CURRENT_TIMESTAMP AS DATE)
       )
   ),
   hard AS (
@@ -485,9 +429,7 @@ WITH
         AND tests.meta_achv_round < hard_prev.meta_achv_round
         AND hard_prev.hard_lvl_num IS NOT NULL
         /* preserves the scaffold but will not carry scores to a future term */
-        AND tests.[start_date] <= CAST(
-          CURRENT_TIMESTAMP AS DATE
-        )
+        AND tests.[start_date] <= CAST(CURRENT_TIMESTAMP AS DATE)
       )
   )
   /* falls back to most recently achieved reading level for each round, if NULL */
@@ -670,10 +612,7 @@ FROM
           AND sub.step_lvl_num IS NOT NULL
         )
         AND sub.is_fp = 0 THEN sub.step_lvl_num
-        ELSE COALESCE(
-          sub.fp_lvl_num,
-          sub.step_lvl_num
-        )
+        ELSE COALESCE(sub.fp_lvl_num, sub.step_lvl_num)
       END AS default_goal_num,
       sub.indiv_goal_lvl,
       sub.indiv_lvl_num,
@@ -735,10 +674,7 @@ FROM
             AND sub.step_lvl_num IS NOT NULL
           )
           AND sub.is_fp = 0 THEN sub.step_lvl_num
-          ELSE COALESCE(
-            sub.fp_lvl_num,
-            sub.step_lvl_num
-          )
+          ELSE COALESCE(sub.fp_lvl_num, sub.step_lvl_num)
         END
       ) AS goal_num,
       sub.lvl_num - COALESCE(
@@ -755,10 +691,7 @@ FROM
             AND sub.step_lvl_num IS NOT NULL
           )
           AND sub.is_fp = 0 THEN sub.step_lvl_num
-          ELSE COALESCE(
-            sub.fp_lvl_num,
-            sub.step_lvl_num
-          )
+          ELSE COALESCE(sub.fp_lvl_num, sub.step_lvl_num)
         END
       ) AS levels_behind
     FROM
@@ -792,21 +725,13 @@ FROM
           hard.hard_lvl,
           hard.hard_lvl_num,
           hard.hard_unique_id,
-          CAST(
-            goals.fp_read_lvl AS VARCHAR(5)
-          ) AS fp_read_lvl,
+          CAST(goals.fp_read_lvl AS VARCHAR(5)) AS fp_read_lvl,
           CAST(
             goals.step_read_lvl AS VARCHAR(5)
           ) AS step_read_lvl,
-          CAST(
-            goals.fp_lvl_num AS INT
-          ) AS fp_lvl_num,
-          CAST(
-            goals.step_lvl_num AS INT
-          ) AS step_lvl_num,
-          CAST(
-            indiv.goal AS VARCHAR(5)
-          ) AS indiv_goal_lvl,
+          CAST(goals.fp_lvl_num AS INT) AS fp_lvl_num,
+          CAST(goals.step_lvl_num AS INT) AS step_lvl_num,
+          CAST(indiv.goal AS VARCHAR(5)) AS indiv_goal_lvl,
           CAST(indiv.lvl_num AS INT) AS indiv_lvl_num,
           CASE
             WHEN achieved.academic_year = atid.academic_year

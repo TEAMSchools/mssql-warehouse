@@ -13,10 +13,7 @@ WITH
         WHEN asr.subject_area = 'Writing' THEN 'Text Study'
         ELSE asr.subject_area
       END AS subject_area,
-      ROUND(
-        AVG(asr.percent_correct),
-        0
-      ) AS avg_percent_correct
+      ROUND(AVG(asr.percent_correct), 0) AS avg_percent_correct
     FROM
       gabby.illuminate_dna_assessments.agg_student_responses_all_current AS asr
     WHERE

@@ -80,9 +80,7 @@ SELECT
   asrs.points_possible,
   asrs.percent_correct,
   asrs.standard_id,
-  CAST(
-    std.custom_code AS NVARCHAR(128)
-  ) AS standard_code,
+  CAST(std.custom_code AS NVARCHAR(128)) AS standard_code,
   CAST(
     std.[description] AS NVARCHAR(2048)
   ) AS standard_description,

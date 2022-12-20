@@ -6,9 +6,7 @@ WITH
       u.schoolid,
       u.date_value,
       u.yearid,
-      CAST(
-        UPPER(u.field) AS NVARCHAR(1)
-      ) AS track,
+      CAST(UPPER(u.field) AS NVARCHAR(1)) AS track,
       u.[value]
     FROM
       (

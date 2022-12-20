@@ -15,9 +15,7 @@ WITH
           CAST(
             parcc_ell_paper_accom AS VARCHAR(25)
           ) AS parcc_ell_paper_accom,
-          CAST(
-            alternate_access AS VARCHAR(25)
-          ) AS alternate_access,
+          CAST(alternate_access AS VARCHAR(25)) AS alternate_access,
           CAST(
             access_test_format_override AS VARCHAR(25)
           ) AS access_test_format_override,
@@ -27,27 +25,19 @@ WITH
           CAST(
             asmt_alternate_location AS VARCHAR(25)
           ) AS asmt_alternate_location,
-          CAST(
-            asmt_small_group AS VARCHAR(25)
-          ) AS asmt_small_group,
+          CAST(asmt_small_group AS VARCHAR(25)) AS asmt_small_group,
           CAST(
             asmt_special_equip AS VARCHAR(25)
           ) AS asmt_special_equip,
           CAST(
             asmt_specified_area AS VARCHAR(25)
           ) AS asmt_specified_area,
-          CAST(
-            asmt_time_of_day AS VARCHAR(25)
-          ) AS asmt_time_of_day,
+          CAST(asmt_time_of_day AS VARCHAR(25)) AS asmt_time_of_day,
           CAST(
             asmt_answer_masking AS VARCHAR(25)
           ) AS asmt_answer_masking,
-          CAST(
-            asmt_read_aloud AS VARCHAR(25)
-          ) AS asmt_read_aloud,
-          CAST(
-            asmt_asl_video AS VARCHAR(25)
-          ) AS asmt_asl_video,
+          CAST(asmt_read_aloud AS VARCHAR(25)) AS asmt_read_aloud,
+          CAST(asmt_asl_video AS VARCHAR(25)) AS asmt_asl_video,
           CAST(
             asmt_non_screen_reader AS VARCHAR(25)
           ) AS asmt_non_screen_reader,
@@ -63,9 +53,7 @@ WITH
           CAST(
             parcc_large_print_paper AS VARCHAR(25)
           ) AS parcc_large_print_paper,
-          CAST(
-            asmt_human_signer AS VARCHAR(25)
-          ) AS asmt_human_signer,
+          CAST(asmt_human_signer AS VARCHAR(25)) AS asmt_human_signer,
           CAST(
             asmt_answers_recorded_paper AS VARCHAR(25)
           ) AS asmt_answers_recorded_paper,

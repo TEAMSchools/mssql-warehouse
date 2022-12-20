@@ -48,9 +48,7 @@ WITH
         FROM
           gabby.parcc.summative_record_file_clean
       ) AS sub PIVOT (
-        MAX(
-          test_performance_level
-        ) FOR subject IN ([ela], [math])
+        MAX(test_performance_level) FOR subject IN ([ela], [math])
       ) AS p
   ),
   modules AS (
@@ -74,11 +72,7 @@ WITH
           academic_year,
           module_type,
           module_number,
-          CONCAT(
-            subject_area,
-            '_',
-            field
-          ) AS pivot_field,
+          CONCAT(subject_area, '_', field) AS pivot_field,
           VALUE
         FROM
           (
@@ -91,12 +85,8 @@ WITH
                 WHEN subject_area = 'Text Study' THEN 'ela'
                 ELSE 'math'
               END AS subject_area,
-              CAST(
-                performance_band_number AS FLOAT
-              ) AS performance_band_number,
-              CAST(
-                percent_correct AS FLOAT
-              ) AS percent_correct,
+              CAST(performance_band_number AS FLOAT) AS performance_band_number,
+              CAST(percent_correct AS FLOAT) AS percent_correct,
               CAST(is_mastery AS FLOAT) AS is_mastery,
               CAST(
                 ROW_NUMBER(AS FLOAT) OVER (
@@ -161,9 +151,7 @@ WITH
     FROM
       gabby.lit.achieved_by_round_static
     WHERE
-      end_date <= CAST(
-        CURRENT_TIMESTAMP AS DATE
-      )
+      end_date <= CAST(CURRENT_TIMESTAMP AS DATE)
   ),
   lit_growth AS (
     SELECT
@@ -213,9 +201,7 @@ WITH
           gabby.lit.achieved_by_round_static
         WHERE
           gleq IS NOT NULL
-          AND end_date <= CAST(
-            CURRENT_TIMESTAMP AS DATE
-          )
+          AND end_date <= CAST(CURRENT_TIMESTAMP AS DATE)
       ) AS sub
     GROUP BY
       student_number,
@@ -228,31 +214,17 @@ WITH
       studentid,
       [db_name],
       (yearid + 1990) AS academic_year,
-      SUM(
-        CAST(
-          attendancevalue AS FLOAT
-        )
-      ) AS n_days_attendance,
-      SUM(
-        CAST(
-          membershipvalue AS FLOAT
-        )
-      ) AS n_days_membership,
+      SUM(CAST(attendancevalue AS FLOAT)) AS n_days_attendance,
+      SUM(CAST(membershipvalue AS FLOAT)) AS n_days_membership,
       ROUND(
-        AVG(
-          CAST(
-            attendancevalue AS FLOAT
-          )
-        ),
+        AVG(CAST(attendancevalue AS FLOAT)),
         2
       ) AS ADA
     FROM
       gabby.powerschool.ps_adaadm_daily_ctod
     WHERE
       membershipvalue > 0
-      AND calendardate <= CAST(
-        CURRENT_TIMESTAMP AS DATE
-      )
+      AND calendardate <= CAST(CURRENT_TIMESTAMP AS DATE)
     GROUP BY
       studentid,
       yearid,
@@ -286,9 +258,7 @@ WITH
           sub.att_code_group,
           sub.db_name,
           COUNT(studentid) AS n_streaks,
-          SUM(
-            sub.streak_length_membership
-          ) AS n_days
+          SUM(sub.streak_length_membership) AS n_days
         FROM
           (
             SELECT
@@ -334,9 +304,7 @@ WITH
         WHEN d.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
         AND n.student_number IS NULL THEN 1.0
         WHEN d.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-        AND CAST(
-          CURRENT_TIMESTAMP AS DATE
-        ) >= d.exitdate THEN 1.0
+        AND CAST(CURRENT_TIMESTAMP AS DATE) >= d.exitdate THEN 1.0
         ELSE 0.0
       END AS is_attrition
     FROM
@@ -359,27 +327,19 @@ WITH
       AND d.db_name = n.db_name
       AND d.academic_year = (n.academic_year - 1)
       AND (
-        DATEFROMPARTS(
-          n.academic_year,
-          10,
-          1
-        ) BETWEEN n.entrydate AND n.exitdate
+        DATEFROMPARTS(n.academic_year, 10, 1) BETWEEN n.entrydate AND n.exitdate
       )
   ),
   teacher_attrition AS (
     SELECT
       ISNULL(region, 'All') AS region,
       ISNULL(
-        CAST(
-          school_level AS VARCHAR(5)
-        ),
+        CAST(school_level AS VARCHAR(5)),
         'All'
       ) AS school_level,
       ISNULL(reporting_schoolid, 0) AS reporting_schoolid,
       academic_year,
-      AVG(
-        CAST(is_attrition AS FLOAT)
-      ) AS pct_attrition,
+      AVG(CAST(is_attrition AS FLOAT)) AS pct_attrition,
       AVG(
         CAST(
           is_attrition_termination AS FLOAT
@@ -391,9 +351,7 @@ WITH
         )
       ) AS pct_attrition_resignation,
       AVG(
-        CAST(
-          is_attrition_other AS FLOAT
-        )
+        CAST(is_attrition_other AS FLOAT)
       ) AS pct_attrition_other
     FROM
       (
@@ -417,10 +375,7 @@ WITH
             ELSE 0
           END AS is_attrition_resignation,
           CASE
-            WHEN status_reason NOT IN (
-              'Termination',
-              'Resignation'
-            ) THEN is_attrition
+            WHEN status_reason NOT IN ('Termination', 'Resignation') THEN is_attrition
             ELSE 0
           END AS is_attrition_other
         FROM
@@ -507,9 +462,7 @@ WITH
           ISNULL(reporting_schoolid, 0) AS reporting_schoolid,
           ISNULL(region, 'All') AS region,
           ISNULL(
-            CAST(
-              school_level AS VARCHAR(5)
-            ),
+            CAST(school_level AS VARCHAR(5)),
             'All'
           ) AS school_level,
           academic_year,
@@ -546,9 +499,7 @@ WITH
       ISNULL(reporting_schoolid, 0) AS reporting_schoolid,
       ISNULL(region, 'All') AS region,
       ISNULL(
-        CAST(
-          school_level AS VARCHAR(5)
-        ),
+        CAST(school_level AS VARCHAR(5)),
         'All'
       ) AS school_level,
       academic_year,
@@ -603,9 +554,7 @@ WITH
           ISNULL(reporting_schoolid, 0) AS reporting_schoolid,
           ISNULL(region, 'All') AS region,
           ISNULL(
-            CAST(
-              school_level AS VARCHAR(5)
-            ),
+            CAST(school_level AS VARCHAR(5)),
             'All'
           ) AS school_level,
           academic_year,
@@ -624,9 +573,7 @@ WITH
           reporting_schoolid
         )
       ) AS sub PIVOT (
-        MAX(
-          pct_responded_positive
-        ) FOR
+        MAX(pct_responded_positive) FOR
         ROLE IN ([parent], [student])
       ) AS p
   ),
@@ -658,9 +605,7 @@ WITH
           )
           AND rn_most_recent_yr = 1
       ) AS sub PIVOT (
-        MAX(
-          pct_of_classrooms_proficient
-        ) FOR rubric_strand_field IN (
+        MAX(pct_of_classrooms_proficient) FOR rubric_strand_field IN (
           [threecsaverage],
           [overallaverage]
         )
@@ -671,27 +616,18 @@ WITH
       sub.academic_year,
       ISNULL(sub.region, 'All') AS region,
       ISNULL(
-        CAST(
-          sub.school_level AS VARCHAR(5)
-        ),
+        CAST(sub.school_level AS VARCHAR(5)),
         'All'
       ) AS school_level,
+      ISNULL(sub.reporting_schoolid, 0) AS reporting_schoolid,
       ISNULL(
-        sub.reporting_schoolid,
-        0
-      ) AS reporting_schoolid,
-      ISNULL(
-        CAST(
-          sub.grade_level AS VARCHAR(5)
-        ),
+        CAST(sub.grade_level AS VARCHAR(5)),
         'All'
       ) AS grade_level
       /* student-level percentages */
 ,
       CAST(
-        AVG(
-          sub.is_free_or_reduced
-        ) AS FLOAT
+        AVG(sub.is_free_or_reduced) AS FLOAT
       ) AS free_or_reduced_pct,
       CAST(
         AVG(
@@ -704,44 +640,28 @@ WITH
         ) AS FLOAT
       ) AS act_composite_juniors_avg,
       CAST(
-        AVG(
-          sub.parcc_ela_proficient
-        ) AS FLOAT
+        AVG(sub.parcc_ela_proficient) AS FLOAT
       ) AS parcc_ela_proficient_pct,
       CAST(
-        AVG(
-          sub.parcc_math_proficient
-        ) AS FLOAT
+        AVG(sub.parcc_math_proficient) AS FLOAT
       ) AS parcc_math_proficient_pct,
       CAST(
-        AVG(
-          sub.parcc_ela_proficient_iep
-        ) AS FLOAT
+        AVG(sub.parcc_ela_proficient_iep) AS FLOAT
       ) AS parcc_ela_proficient_iep_pct,
       CAST(
-        AVG(
-          sub.parcc_math_proficient_iep
-        ) AS FLOAT
+        AVG(sub.parcc_math_proficient_iep) AS FLOAT
       ) AS parcc_math_proficient_iep_pct,
       CAST(
-        AVG(
-          sub.parcc_ela_approaching_iep
-        ) AS FLOAT
+        AVG(sub.parcc_ela_approaching_iep) AS FLOAT
       ) AS parcc_ela_approaching_iep_pct,
       CAST(
-        AVG(
-          sub.parcc_math_approaching_iep
-        ) AS FLOAT
+        AVG(sub.parcc_math_approaching_iep) AS FLOAT
       ) AS parcc_math_approaching_iep_pct,
       CAST(
-        AVG(
-          sub.module_ela_is_mastery
-        ) AS FLOAT
+        AVG(sub.module_ela_is_mastery) AS FLOAT
       ) AS module_ela_mastery_pct,
       CAST(
-        AVG(
-          sub.module_math_is_mastery
-        ) AS FLOAT
+        AVG(sub.module_math_is_mastery) AS FLOAT
       ) AS module_math_mastery_pct,
       CAST(
         AVG(
@@ -757,46 +677,28 @@ WITH
         AVG(sub.lit_meeting_goal) AS FLOAT
       ) AS lit_meeting_goal_pct,
       CAST(
-        AVG(
-          sub.lit_making_1yr_growth
-        ) AS FLOAT
+        AVG(sub.lit_making_1yr_growth) AS FLOAT
       ) AS lit_making_1yr_growth_pct,
       CAST(
-        AVG(
-          sub.is_student_attrition
-        ) AS FLOAT
+        AVG(sub.is_student_attrition) AS FLOAT
       ) AS student_attrition_pct,
       CAST(
         SUM(sub.n_days_attendance) / SUM(sub.n_days_membership) AS FLOAT
       ) AS ADA,
       CAST(
-        AVG(
-          sub.is_chronically_absent
-        ) AS FLOAT
+        AVG(sub.is_chronically_absent) AS FLOAT
       ) AS chronically_absent_pct,
       CAST(
         SUM(sub.n_days_tardy) / SUM(sub.n_days_membership) AS FLOAT
       ) AS tardy_pct,
-      CAST(
-        AVG(sub.is_OSS) AS FLOAT
-      ) AS oss_pct,
-      CAST(
-        AVG(sub.is_ISS) AS FLOAT
-      ) AS iss_pct,
-      CAST(
-        AVG(sub.is_OSS_iep) AS FLOAT
-      ) AS oss_iep_pct,
-      CAST(
-        AVG(sub.is_ISS_iep) AS FLOAT
-      ) AS iss_iep_pct
+      CAST(AVG(sub.is_OSS) AS FLOAT) AS oss_pct,
+      CAST(AVG(sub.is_ISS) AS FLOAT) AS iss_pct,
+      CAST(AVG(sub.is_OSS_iep) AS FLOAT) AS oss_iep_pct,
+      CAST(AVG(sub.is_ISS_iep) AS FLOAT) AS iss_iep_pct
       /* student-level totals */
 ,
-      CAST(
-        SUM(sub.n_OSS) AS FLOAT
-      ) AS n_oss,
-      CAST(
-        SUM(sub.n_ISS) AS FLOAT
-      ) AS n_iss
+      CAST(SUM(sub.n_OSS) AS FLOAT) AS n_oss,
+      CAST(SUM(sub.n_ISS) AS FLOAT) AS n_iss
     FROM
       (
         SELECT
@@ -999,38 +901,26 @@ WITH
       slr.n_iss
       /* school-level metrics */
 ,
-      CAST(
-        ta.pct_attrition AS FLOAT
-      ) AS teacher_attrition_pct,
+      CAST(ta.pct_attrition AS FLOAT) AS teacher_attrition_pct,
       CAST(
         ta.pct_attrition_termination AS FLOAT
       ) AS teacher_attrition_termination_pct,
       CAST(
         ta.pct_attrition_resignation AS FLOAT
       ) AS teacher_attrition_resignation_pct,
-      CAST(
-        ta.pct_attrition_other AS FLOAT
-      ) AS teacher_attrition_other_pct,
-      CAST(
-        ekg.overallaverage AS FLOAT
-      ) AS ekg_walkthough_overall_avg,
-      CAST(
-        ekg.threecsaverage AS FLOAT
-      ) AS ekg_walkthough_three_cs_avg
+      CAST(ta.pct_attrition_other AS FLOAT) AS teacher_attrition_other_pct,
+      CAST(ekg.overallaverage AS FLOAT) AS ekg_walkthough_overall_avg,
+      CAST(ekg.threecsaverage AS FLOAT) AS ekg_walkthough_three_cs_avg
       /* Surveys */
 ,
-      CAST(
-        q12.avg_response_value AS FLOAT
-      ) AS q12_response_avg,
+      CAST(q12.avg_response_value AS FLOAT) AS q12_response_avg,
       CAST(
         hsr.parent_pct_responded_positive AS FLOAT
       ) AS hsr_parent_positive_pct,
       CAST(
         hsr.student_pct_responded_positive AS FLOAT
       ) AS hsr_student_positive_pct,
-      CAST(
-        tntp.ici_percentile AS FLOAT
-      ) AS ici_percentile,
+      CAST(tntp.ici_percentile AS FLOAT) AS ici_percentile,
       CAST(
         tntp.is_top_quartile_learning_environment_score AS FLOAT
       ) AS learning_environment_score_top_quartile

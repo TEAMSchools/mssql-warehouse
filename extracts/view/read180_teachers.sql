@@ -38,7 +38,4 @@ WHERE
       )
     ) * 100
   )
-  AND sec.course_number IN (
-    'ELA01068G1',
-    'MAT02999G1'
-  )
+  AND sec.course_number IN ('ELA01068G1', 'MAT02999G1')

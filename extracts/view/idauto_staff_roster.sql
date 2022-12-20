@@ -14,21 +14,13 @@ SELECT
   CAST(
     df.manager_employee_number AS VARCHAR
   ) AS [Business Unit Code],
-  CONVERT(
-    VARCHAR,
-    df.rehire_date,
-    101
-  ) AS [Rehire Date],
+  CONVERT(VARCHAR, df.rehire_date, 101) AS [Rehire Date],
   CONVERT(
     VARCHAR,
     df.termination_date,
     101
   ) AS [Termination Date],
-  CONVERT(
-    VARCHAR,
-    df.birth_date,
-    101
-  ) AS [Birth Date],
+  CONVERT(VARCHAR, df.birth_date, 101) AS [Birth Date],
   CASE
     WHEN df.position_status = 'Prestart' THEN 'Active'
     ELSE df.position_status
@@ -39,10 +31,6 @@ WHERE
   COALESCE(
     df.rehire_date,
     df.original_hire_date
-  ) <= DATEADD(
-    DAY,
-    10,
-    CURRENT_TIMESTAMP
-  )
+  ) <= DATEADD(DAY, 10, CURRENT_TIMESTAMP)
   AND df.business_unit IS NOT NULL
   AND df.[location] IS NOT NULL

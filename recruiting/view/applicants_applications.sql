@@ -60,12 +60,8 @@ WITH
           CAST(
             apl.taf_expected_salary AS NVARCHAR(1024)
           ) AS taf_expected_salary,
-          CAST(
-            apl.kf_race AS NVARCHAR(1024)
-          ) AS kf_race,
-          CAST(
-            apl.kf_gender AS NVARCHAR(1024)
-          ) AS kf_gender,
+          CAST(apl.kf_race AS NVARCHAR(1024)) AS kf_race,
+          CAST(apl.kf_gender AS NVARCHAR(1024)) AS kf_gender,
           CAST(
             apl.kf_are_you_alumnus AS NVARCHAR(1024)
           ) AS kf_are_you_alumnus,
@@ -276,10 +272,7 @@ FROM
   INNER JOIN gabby.smartrecruiters.report_applications AS app ON apl.candidate_id = app.candidate_id
 UNION ALL
 SELECT
-  COALESCE(
-    a.profile_id,
-    a.jobapp_id
-  ) AS candidate_id,
+  COALESCE(a.profile_id, a.jobapp_id) AS candidate_id,
   SUBSTRING(
     a.[name],
     1,
@@ -291,12 +284,8 @@ SELECT
     LEN(a.[name])
   ) AS candidate_last_name,
   a.email AS candidate_email,
-  CAST(
-    a.degree_1_gpa AS NVARCHAR
-  ) AS undergrad_gpa,
-  CAST(
-    a.degree_2_gpa AS NVARCHAR
-  ) AS grad_gpa,
+  CAST(a.degree_1_gpa AS NVARCHAR) AS undergrad_gpa,
+  CAST(a.degree_2_gpa AS NVARCHAR) AS grad_gpa,
   NULL AS taf_current_or_former_kipp_employee,
   NULL AS mia_teacher_certification_question,
   NULL AS mia_out_of_state_teaching_certification_details,
@@ -344,20 +333,8 @@ SELECT
   NULL AS time_in_application_state_offered,
   NULL AS time_in_application_status_in_review_resume_review,
   CASE
-    WHEN MONTH(
-      CAST(
-        a.submitted_date AS DATE
-      )
-    ) >= 9 THEN YEAR(
-      CAST(
-        a.submitted_date AS DATE
-      )
-    ) + 1
-    ELSE YEAR(
-      CAST(
-        a.submitted_date AS DATE
-      )
-    )
+    WHEN MONTH(CAST(a.submitted_date AS DATE)) >= 9 THEN YEAR(CAST(a.submitted_date AS DATE)) + 1
+    ELSE YEAR(CAST(a.submitted_date AS DATE))
   END AS recruiting_year
 FROM
   gabby.recruiting.applicants AS a

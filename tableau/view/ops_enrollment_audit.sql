@@ -5,24 +5,15 @@ WITH
     SELECT
       s.student_number,
       (
-        COALESCE(
-          rv.doc_1,
-          x.residency_proof_1
-        )
+        COALESCE(rv.doc_1, x.residency_proof_1)
         COLLATE LATIN1_GENERAL_BIN
       ) AS residency_proof_1,
       (
-        COALESCE(
-          rv.doc_2,
-          x.residency_proof_2
-        )
+        COALESCE(rv.doc_2, x.residency_proof_2)
         COLLATE LATIN1_GENERAL_BIN
       ) AS residency_proof_2,
       (
-        COALESCE(
-          rv.doc_3,
-          x.residency_proof_3
-        )
+        COALESCE(rv.doc_3, x.residency_proof_3)
         COLLATE LATIN1_GENERAL_BIN
       ) AS residency_proof_3,
       (
@@ -171,15 +162,9 @@ WITH
             s.next_school
           ) AS reporting_schoolid,
           COALESCE(co.is_pathways, 0) AS is_pathways,
-          ISNULL(
-            co.specialed_classification,
-            ''
-          ) AS specialed_classification,
+          ISNULL(co.specialed_classification, '') AS specialed_classification,
           ISNULL(co.lep_status, '') AS lep_status,
-          ISNULL(
-            co.lunch_app_status,
-            ''
-          ) AS lunch_app_status,
+          ISNULL(co.lunch_app_status, '') AS lunch_app_status,
           CAST(
             ISNULL(co.lunch_balance, 0) AS MONEY
           ) AS lunch_balance,
@@ -199,32 +184,20 @@ WITH
             uxs.lep_registration_followup,
             ''
           ) AS lep_registration_followup,
-          ISNULL(
-            rv.residency_proof_1,
-            'Missing'
-          ) AS residency_proof_1,
+          ISNULL(rv.residency_proof_1, 'Missing') AS residency_proof_1,
           CASE
             WHEN (
               s.enroll_status = -1
               OR COALESCE(co.year_in_network, 1) = 1
-            ) THEN ISNULL(
-              rv.residency_proof_2,
-              'Missing'
-            )
+            ) THEN ISNULL(rv.residency_proof_2, 'Missing')
           END AS residency_proof_2,
           CASE
             WHEN (
               s.enroll_status = -1
               OR COALESCE(co.year_in_network, 1) = 1
-            ) THEN ISNULL(
-              rv.residency_proof_3,
-              'Missing'
-            )
+            ) THEN ISNULL(rv.residency_proof_3, 'Missing')
           END AS residency_proof_3,
-          ISNULL(
-            rv.birth_certificate_proof,
-            'N'
-          ) AS birth_certificate_proof,
+          ISNULL(rv.birth_certificate_proof, 'N') AS birth_certificate_proof,
           gabby.utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year
         FROM
           gabby.powerschool.students AS s

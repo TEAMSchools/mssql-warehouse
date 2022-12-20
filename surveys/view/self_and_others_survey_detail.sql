@@ -149,16 +149,12 @@ SELECT
   a.response_id AS survey_response_id,
   a.academic_year AS campaign_academic_year,
   NULL AS date_started,
-  CAST(
-    a.date_submitted AS DATE
-  ),
+  CAST(a.date_submitted AS DATE),
   a.reporting_term AS campaign_name,
   a.reporting_term AS campaign_reporting_term,
   a.open_ended AS is_open_ended,
   a.question_code AS question_shortname,
-  CAST(
-    a.question_text AS VARCHAR(500)
-  ) AS question_title,
+  CAST(a.question_text AS VARCHAR(500)) AS question_title,
   a.response AS answer,
   a.response_value AS answer_value,
   NULL AS respondent_df_employee_number,

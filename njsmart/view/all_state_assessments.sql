@@ -11,9 +11,7 @@ WITH
     FROM
       (
         SELECT
-          CAST(
-            local_student_id AS INT
-          ) AS local_student_id,
+          CAST(local_student_id AS INT) AS local_student_id,
           CAST(
             SUBSTRING(
               _file,
@@ -25,30 +23,22 @@ WITH
             ) AS INT
           ) AS academic_year,
           'NJASK' AS test_type,
-          CAST(
-            scaled_score_lal AS VARCHAR(50)
-          ) AS scaled_score_lal,
+          CAST(scaled_score_lal AS VARCHAR(50)) AS scaled_score_lal,
           CAST(
             performance_level_lal AS VARCHAR(50)
           ) AS performance_level_lal,
           CAST(
             invalid_scale_score_reason_lal AS VARCHAR(50)
           ) AS invalid_scale_score_reason_lal,
-          CAST(
-            void_reason_lal AS VARCHAR(50)
-          ) AS void_reason_lal,
-          CAST(
-            scaled_score_math AS VARCHAR(50)
-          ) AS scaled_score_math,
+          CAST(void_reason_lal AS VARCHAR(50)) AS void_reason_lal,
+          CAST(scaled_score_math AS VARCHAR(50)) AS scaled_score_math,
           CAST(
             performance_level_math AS VARCHAR(50)
           ) AS performance_level_math,
           CAST(
             invalid_scale_score_reason_math AS VARCHAR(50)
           ) AS invalid_scale_score_reason_math,
-          CAST(
-            void_reason_math AS VARCHAR(50)
-          ) AS void_reason_math,
+          CAST(void_reason_math AS VARCHAR(50)) AS void_reason_math,
           CAST(
             scaled_score_science AS VARCHAR(50)
           ) AS scaled_score_science,
@@ -65,12 +55,8 @@ WITH
           gabby.njsmart.njask_archive
         UNION ALL
         SELECT
-          CAST(
-            local_student_id AS INT
-          ) AS local_student_id,
-          CAST(
-            (testing_year - 1) AS INT
-          ) AS academic_year,
+          CAST(local_student_id AS INT) AS local_student_id,
+          CAST((testing_year - 1) AS INT) AS academic_year,
           'NJASK' AS test_type,
           NULL,
           NULL,
@@ -102,12 +88,8 @@ WITH
           gabby.njsmart.njask
         UNION ALL
         SELECT
-          CAST(
-            local_student_id AS INT
-          ) AS local_student_id,
-          CAST(
-            (testing_year - 1) AS INT
-          ) AS academic_year,
+          CAST(local_student_id AS INT) AS local_student_id,
+          CAST((testing_year - 1) AS INT) AS academic_year,
           'NJBCT' AS test_type,
           NULL AS scaled_score_lal,
           NULL AS performance_level_lal,
@@ -117,12 +99,8 @@ WITH
           NULL AS performance_level_math,
           NULL AS invalid_scale_score_reason_math,
           NULL AS void_reason_math,
-          CAST(
-            scale_score AS VARCHAR(50)
-          ) AS scaled_score_science,
-          CAST(
-            proficiency_level AS VARCHAR(50)
-          ) AS performance_level_science,
+          CAST(scale_score AS VARCHAR(50)) AS scaled_score_science,
+          CAST(proficiency_level AS VARCHAR(50)) AS performance_level_science,
           NULL AS invalid_scale_score_reason,
           CAST(
             CASE
@@ -137,11 +115,7 @@ WITH
           CAST(
             CONVERT(
               FLOAT,
-              REPLACE(
-                local_student_id,
-                ' ',
-                ''
-              )
+              REPLACE(local_student_id, ' ', '')
             ) AS BIGINT
           ) AS local_student_id,
           CAST(
@@ -155,30 +129,22 @@ WITH
             ) AS INT
           ) AS academic_year,
           'HSPA' AS test_type,
-          CAST(
-            scaled_score_lal AS VARCHAR(50)
-          ) AS scaled_score_lal,
+          CAST(scaled_score_lal AS VARCHAR(50)) AS scaled_score_lal,
           CAST(
             performance_level_lal AS VARCHAR(50)
           ) AS performance_level_lal,
           CAST(
             invalid_scale_score_reason_lal AS VARCHAR(50)
           ) AS invalid_scale_score_reason_lal,
-          CAST(
-            void_reason_lal AS VARCHAR(50)
-          ) AS void_reason_lal,
-          CAST(
-            scaled_score_math AS VARCHAR(50)
-          ) AS scaled_score_math,
+          CAST(void_reason_lal AS VARCHAR(50)) AS void_reason_lal,
+          CAST(scaled_score_math AS VARCHAR(50)) AS scaled_score_math,
           CAST(
             performance_level_math AS VARCHAR(50)
           ) AS performance_level_math,
           CAST(
             invalid_scale_score_reason_math AS VARCHAR(50)
           ) AS invalid_scale_score_reason_math,
-          CAST(
-            void_reason_math AS VARCHAR(50)
-          ) AS void_reason_math,
+          CAST(void_reason_math AS VARCHAR(50)) AS void_reason_math,
           NULL AS scaled_score_science,
           NULL AS performance_level_science,
           NULL AS invalid_scale_score_reason_science,
@@ -187,9 +153,7 @@ WITH
           gabby.njsmart.hspa
         UNION ALL
         SELECT
-          CAST(
-            local_student_id AS INT
-          ) AS local_student_id,
+          CAST(local_student_id AS INT) AS local_student_id,
           CAST(
             SUBSTRING(
               _file,
@@ -201,26 +165,18 @@ WITH
             ) AS INT
           ) AS academic_year,
           'GEPA' AS test_type,
-          CAST(
-            scaled_score_lang AS VARCHAR(50)
-          ) AS scaled_score_lal,
+          CAST(scaled_score_lang AS VARCHAR(50)) AS scaled_score_lal,
           CAST(
             performance_level_lang AS VARCHAR(50)
           ) AS performance_level_lal,
           NULL AS invalid_scale_score_reason_lal,
-          CAST(
-            void_reason_lang AS VARCHAR(50)
-          ) AS void_reason_lal,
-          CAST(
-            scaled_score_math AS VARCHAR(50)
-          ) AS scaled_score_math,
+          CAST(void_reason_lang AS VARCHAR(50)) AS void_reason_lal,
+          CAST(scaled_score_math AS VARCHAR(50)) AS scaled_score_math,
           CAST(
             performance_level_math AS VARCHAR(50)
           ) AS performance_level_math,
           NULL AS invalid_scale_score_reason_math,
-          CAST(
-            void_reason_math AS VARCHAR(50)
-          ) AS void_reason_math,
+          CAST(void_reason_math AS VARCHAR(50)) AS void_reason_math,
           CAST(
             scaled_score_science AS VARCHAR(50)
           ) AS scaled_score_science,
@@ -255,9 +211,7 @@ WITH
       local_student_id,
       academic_year,
       test_type,
-      CAST(
-        subject AS VARCHAR(250)
-      ) AS subject,
+      CAST(subject AS VARCHAR(250)) AS subject,
       CAST(scaled_score AS FLOAT) AS scaled_score,
       performance_level,
       invalid_scale_score_reason,
@@ -338,10 +292,7 @@ FROM
     FROM
       combined_repivot
     WHERE
-      ISNULL(
-        invalid_scale_score_reason,
-        'No'
-      ) = 'No'
+      ISNULL(invalid_scale_score_reason, 'No') = 'No'
       AND ISNULL(void_reason, 'No') = 'No'
   ) AS sub
 WHERE

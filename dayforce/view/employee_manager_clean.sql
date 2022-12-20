@@ -17,10 +17,7 @@ FROM
       sub.position_id,
       sub.manager_employee_number,
       sub.manager_effective_start,
-      LEAD(
-        sub.manager_effective_start,
-        1
-      ) OVER (
+      LEAD(sub.manager_effective_start, 1) OVER (
         PARTITION BY
           sub.employee_reference_code
         ORDER BY
@@ -42,9 +39,7 @@ FROM
               )
             ORDER BY
               COALESCE(
-                CAST(
-                  em.manager_effective_end AS DATE
-                ),
+                CAST(em.manager_effective_end AS DATE),
                 '2020-12-31'
               ) DESC
           ) AS rn_start,

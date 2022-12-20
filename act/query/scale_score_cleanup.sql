@@ -46,9 +46,7 @@ SELECT DISTINCT
   row_generator.n AS grade_level,
   gabby.utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year,
   (
-    UPPER(
-      LEFT(scaffold.subject, 1)
-    ) + (
+    UPPER(LEFT(scaffold.subject, 1)) + (
       SUBSTRING(
         scaffold.subject,
         2,

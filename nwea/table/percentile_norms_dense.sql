@@ -37,20 +37,14 @@ WITH
       m.measurementscale,
       t.term,
       gr.grade_level,
-      COALESCE(
-        u.n,
-        n.student_percentile
-      ) AS testpercentile,
+      COALESCE(u.n, n.student_percentile) AS testpercentile,
       n.testritscore,
       ROW_NUMBER() OVER (
         PARTITION BY
           m.measurementscale,
           t.term,
           gr.grade_level,
-          COALESCE(
-            u.n,
-            n.student_percentile
-          )
+          COALESCE(u.n, n.student_percentile)
         ORDER BY
           n.testritscore ASC
       ) AS rn

@@ -9,18 +9,12 @@ SELECT
   /* diploma period */
   CAST(
     REPLACE(
-      CAST(
-        CURRENT_TIMESTAMP AS DATE
-      ),
+      CAST(CURRENT_TIMESTAMP AS DATE),
       '-',
       ''
     ) AS VARCHAR
   ) AS cole,
-  CONCAT(
-    MIN(cohort),
-    '-',
-    MAX(cohort)
-  ) AS colf,
+  CONCAT(MIN(cohort), '-', MAX(cohort)) AS colf,
   NULL AS colg,
   NULL AS colh,
   NULL AS coli,
@@ -66,11 +60,7 @@ SELECT
   NULL AS colh,
   /* date of birth */
   CAST(
-    REPLACE(
-      CAST(dob AS DATE),
-      '-',
-      ''
-    ) AS VARCHAR
+    REPLACE(CAST(dob AS DATE), '-', '') AS VARCHAR
   ) AS coli,
   /* student ID */
   student_number AS colj,
@@ -79,11 +69,7 @@ SELECT
   /* HS graduation date */
   /* FERPA block */
   CAST(
-    REPLACE(
-      CAST(exitdate AS DATE),
-      '-',
-      ''
-    ) AS VARCHAR
+    REPLACE(CAST(exitdate AS DATE), '-', '') AS VARCHAR
   ) AS coll,
   'N' AS colm,
   /* high school name */

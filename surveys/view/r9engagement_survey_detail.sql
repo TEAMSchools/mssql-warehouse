@@ -11,11 +11,7 @@ WITH
       email,
       location,
       n,
-      REPLACE(
-        question_code,
-        '_',
-        ''
-      ) AS question_code,
+      REPLACE(question_code, '_', '') AS question_code,
       response_value
     FROM
       (
@@ -55,60 +51,28 @@ WITH
           CAST(
             academicsupportdataanalyticsandstudentinformation_9_s AS FLOAT
           ) AS academicsupportdataanalyticsandstudentinformation_9_s,
-          CAST(
-            academicsupportteam_1 AS FLOAT
-          ) AS academicsupportteam_1,
-          CAST(
-            academicsupportteam_10 AS FLOAT
-          ) AS academicsupportteam_10,
-          CAST(
-            academicsupportteam_11 AS FLOAT
-          ) AS academicsupportteam_11,
-          CAST(
-            academicsupportteam_2 AS FLOAT
-          ) AS academicsupportteam_2,
-          CAST(
-            academicsupportteam_3 AS FLOAT
-          ) AS academicsupportteam_3,
-          CAST(
-            academicsupportteam_4 AS FLOAT
-          ) AS academicsupportteam_4,
-          CAST(
-            academicsupportteam_5 AS FLOAT
-          ) AS academicsupportteam_5,
-          CAST(
-            academicsupportteam_6 AS FLOAT
-          ) AS academicsupportteam_6,
-          CAST(
-            academicsupportteam_7 AS FLOAT
-          ) AS academicsupportteam_7,
-          CAST(
-            academicsupportteam_8 AS FLOAT
-          ) AS academicsupportteam_8,
-          CAST(
-            academicsupportteam_9 AS FLOAT
-          ) AS academicsupportteam_9,
+          CAST(academicsupportteam_1 AS FLOAT) AS academicsupportteam_1,
+          CAST(academicsupportteam_10 AS FLOAT) AS academicsupportteam_10,
+          CAST(academicsupportteam_11 AS FLOAT) AS academicsupportteam_11,
+          CAST(academicsupportteam_2 AS FLOAT) AS academicsupportteam_2,
+          CAST(academicsupportteam_3 AS FLOAT) AS academicsupportteam_3,
+          CAST(academicsupportteam_4 AS FLOAT) AS academicsupportteam_4,
+          CAST(academicsupportteam_5 AS FLOAT) AS academicsupportteam_5,
+          CAST(academicsupportteam_6 AS FLOAT) AS academicsupportteam_6,
+          CAST(academicsupportteam_7 AS FLOAT) AS academicsupportteam_7,
+          CAST(academicsupportteam_8 AS FLOAT) AS academicsupportteam_8,
+          CAST(academicsupportteam_9 AS FLOAT) AS academicsupportteam_9,
           CAST(advocacysl_1 AS FLOAT) AS advocacysl_1,
           CAST(advocacysl_2 AS FLOAT) AS advocacysl_2,
           CAST(advocacysl_3 AS FLOAT) AS advocacysl_3,
           CAST(benefits_1 AS FLOAT) AS benefits_1,
           CAST(benefits_2 AS FLOAT) AS benefits_2,
           CAST(benefits_3 AS FLOAT) AS benefits_3,
-          CAST(
-            blendedlearning_1 AS FLOAT
-          ) AS blendedlearning_1,
-          CAST(
-            blendedlearning_2 AS FLOAT
-          ) AS blendedlearning_2,
-          CAST(
-            blendedlearning_3 AS FLOAT
-          ) AS blendedlearning_3,
-          CAST(
-            dataandanalysis_1 AS FLOAT
-          ) AS dataandanalysis_1,
-          CAST(
-            dataandanalysis_2 AS FLOAT
-          ) AS dataandanalysis_2,
+          CAST(blendedlearning_1 AS FLOAT) AS blendedlearning_1,
+          CAST(blendedlearning_2 AS FLOAT) AS blendedlearning_2,
+          CAST(blendedlearning_3 AS FLOAT) AS blendedlearning_3,
+          CAST(dataandanalysis_1 AS FLOAT) AS dataandanalysis_1,
+          CAST(dataandanalysis_2 AS FLOAT) AS dataandanalysis_2,
           CAST(
             enrollmentschoolleadersonly_1 AS FLOAT
           ) AS enrollmentschoolleadersonly_1,
@@ -128,21 +92,13 @@ WITH
             enrollmentschoolleadersonly_6 AS FLOAT
           ) AS enrollmentschoolleadersonly_6,
           CAST(facilities_1 AS FLOAT) AS facilities_1,
-          CAST(
-            facilities_1_s AS FLOAT
-          ) AS facilities_1_s,
+          CAST(facilities_1_s AS FLOAT) AS facilities_1_s,
           CAST(facilities_2 AS FLOAT) AS facilities_2,
-          CAST(
-            facilities_2_s AS FLOAT
-          ) AS facilities_2_s,
+          CAST(facilities_2_s AS FLOAT) AS facilities_2_s,
           CAST(facilities_3 AS FLOAT) AS facilities_3,
-          CAST(
-            facilities_3_s AS FLOAT
-          ) AS facilities_3_s,
+          CAST(facilities_3_s AS FLOAT) AS facilities_3_s,
           CAST(facilities_4 AS FLOAT) AS facilities_4,
-          CAST(
-            facilities_4_s AS FLOAT
-          ) AS facilities_4_s,
+          CAST(facilities_4_s AS FLOAT) AS facilities_4_s,
           CAST(facilities_5 AS FLOAT) AS facilities_5,
           CAST(facilities_6 AS FLOAT) AS facilities_6,
           CAST(
@@ -155,18 +111,10 @@ WITH
             facilitiesschoolleadersonly_3 AS FLOAT
           ) AS facilitiesschoolleadersonly_3,
           CAST(facilitiessl AS FLOAT) AS facilitiessl,
-          CAST(
-            financeaccounting_1_s AS FLOAT
-          ) AS financeaccounting_1_s,
-          CAST(
-            financeaccounting_2_s AS FLOAT
-          ) AS financeaccounting_2_s,
-          CAST(
-            financeaccounting_3_s AS FLOAT
-          ) AS financeaccounting_3_s,
-          CAST(
-            financeaccounting_4_s AS FLOAT
-          ) AS financeaccounting_4_s,
+          CAST(financeaccounting_1_s AS FLOAT) AS financeaccounting_1_s,
+          CAST(financeaccounting_2_s AS FLOAT) AS financeaccounting_2_s,
+          CAST(financeaccounting_3_s AS FLOAT) AS financeaccounting_3_s,
+          CAST(financeaccounting_4_s AS FLOAT) AS financeaccounting_4_s,
           CAST(
             financeaccountingschoolleadersonly_1_s AS FLOAT
           ) AS financeaccountingschoolleadersonly_1_s,
@@ -176,94 +124,36 @@ WITH
           CAST(
             financeaccountingschoolleadersonly_3_s AS FLOAT
           ) AS financeaccountingschoolleadersonly_3_s,
-          CAST(
-            financeaccountingsl_1 AS FLOAT
-          ) AS financeaccountingsl_1,
-          CAST(
-            financeaccountingsl_2 AS FLOAT
-          ) AS financeaccountingsl_2,
-          CAST(
-            financeaccountingsl_3 AS FLOAT
-          ) AS financeaccountingsl_3,
-          CAST(
-            financeaccountingsl_4 AS FLOAT
-          ) AS financeaccountingsl_4,
-          CAST(
-            financeaccountingsl_5 AS FLOAT
-          ) AS financeaccountingsl_5,
-          CAST(
-            financeaccountingsl_6 AS FLOAT
-          ) AS financeaccountingsl_6,
-          CAST(
-            financeaccountingsl_7 AS FLOAT
-          ) AS financeaccountingsl_7,
+          CAST(financeaccountingsl_1 AS FLOAT) AS financeaccountingsl_1,
+          CAST(financeaccountingsl_2 AS FLOAT) AS financeaccountingsl_2,
+          CAST(financeaccountingsl_3 AS FLOAT) AS financeaccountingsl_3,
+          CAST(financeaccountingsl_4 AS FLOAT) AS financeaccountingsl_4,
+          CAST(financeaccountingsl_5 AS FLOAT) AS financeaccountingsl_5,
+          CAST(financeaccountingsl_6 AS FLOAT) AS financeaccountingsl_6,
+          CAST(financeaccountingsl_7 AS FLOAT) AS financeaccountingsl_7,
           CAST(hasl AS FLOAT) AS hasl,
-          CAST(
-            humanassets_1 AS FLOAT
-          ) AS humanassets_1,
-          CAST(
-            humanassets_1_s AS FLOAT
-          ) AS humanassets_1_s,
-          CAST(
-            humanassets_10 AS FLOAT
-          ) AS humanassets_10,
-          CAST(
-            humanassets_11 AS FLOAT
-          ) AS humanassets_11,
-          CAST(
-            humanassets_12 AS FLOAT
-          ) AS humanassets_12,
-          CAST(
-            humanassets_13 AS FLOAT
-          ) AS humanassets_13,
-          CAST(
-            humanassets_14 AS FLOAT
-          ) AS humanassets_14,
-          CAST(
-            humanassets_15 AS FLOAT
-          ) AS humanassets_15,
-          CAST(
-            humanassets_16 AS FLOAT
-          ) AS humanassets_16,
-          CAST(
-            humanassets_2 AS FLOAT
-          ) AS humanassets_2,
-          CAST(
-            humanassets_2_s AS FLOAT
-          ) AS humanassets_2_s,
-          CAST(
-            humanassets_3 AS FLOAT
-          ) AS humanassets_3,
-          CAST(
-            humanassets_3_s AS FLOAT
-          ) AS humanassets_3_s,
-          CAST(
-            humanassets_4 AS FLOAT
-          ) AS humanassets_4,
-          CAST(
-            humanassets_4_s AS FLOAT
-          ) AS humanassets_4_s,
-          CAST(
-            humanassets_5 AS FLOAT
-          ) AS humanassets_5,
-          CAST(
-            humanassets_5_s AS FLOAT
-          ) AS humanassets_5_s,
-          CAST(
-            humanassets_6 AS FLOAT
-          ) AS humanassets_6,
-          CAST(
-            humanassets_6_s AS FLOAT
-          ) AS humanassets_6_s,
-          CAST(
-            humanassets_7 AS FLOAT
-          ) AS humanassets_7,
-          CAST(
-            humanassets_8 AS FLOAT
-          ) AS humanassets_8,
-          CAST(
-            humanassets_9 AS FLOAT
-          ) AS humanassets_9,
+          CAST(humanassets_1 AS FLOAT) AS humanassets_1,
+          CAST(humanassets_1_s AS FLOAT) AS humanassets_1_s,
+          CAST(humanassets_10 AS FLOAT) AS humanassets_10,
+          CAST(humanassets_11 AS FLOAT) AS humanassets_11,
+          CAST(humanassets_12 AS FLOAT) AS humanassets_12,
+          CAST(humanassets_13 AS FLOAT) AS humanassets_13,
+          CAST(humanassets_14 AS FLOAT) AS humanassets_14,
+          CAST(humanassets_15 AS FLOAT) AS humanassets_15,
+          CAST(humanassets_16 AS FLOAT) AS humanassets_16,
+          CAST(humanassets_2 AS FLOAT) AS humanassets_2,
+          CAST(humanassets_2_s AS FLOAT) AS humanassets_2_s,
+          CAST(humanassets_3 AS FLOAT) AS humanassets_3,
+          CAST(humanassets_3_s AS FLOAT) AS humanassets_3_s,
+          CAST(humanassets_4 AS FLOAT) AS humanassets_4,
+          CAST(humanassets_4_s AS FLOAT) AS humanassets_4_s,
+          CAST(humanassets_5 AS FLOAT) AS humanassets_5,
+          CAST(humanassets_5_s AS FLOAT) AS humanassets_5_s,
+          CAST(humanassets_6 AS FLOAT) AS humanassets_6,
+          CAST(humanassets_6_s AS FLOAT) AS humanassets_6_s,
+          CAST(humanassets_7 AS FLOAT) AS humanassets_7,
+          CAST(humanassets_8 AS FLOAT) AS humanassets_8,
+          CAST(humanassets_9 AS FLOAT) AS humanassets_9,
           CAST(
             humanassetsschoolleadersonly_1 AS FLOAT
           ) AS humanassetsschoolleadersonly_1,
@@ -273,75 +163,29 @@ WITH
           CAST(
             humanassetsschoolleadersonly_3 AS FLOAT
           ) AS humanassetsschoolleadersonly_3,
-          CAST(
-            kippsharefrequency_5_s AS FLOAT
-          ) AS kippsharefrequency_5_s,
-          CAST(
-            kippthroughcollege_1 AS FLOAT
-          ) AS kippthroughcollege_1,
-          CAST(
-            maintenance_1 AS FLOAT
-          ) AS maintenance_1,
-          CAST(
-            maintenance_11 AS FLOAT
-          ) AS maintenance_11,
-          CAST(
-            maintenance_12 AS FLOAT
-          ) AS maintenance_12,
-          CAST(
-            maintenance_13 AS FLOAT
-          ) AS maintenance_13,
-          CAST(
-            maintenance_14 AS FLOAT
-          ) AS maintenance_14,
-          CAST(
-            maintenance_15 AS FLOAT
-          ) AS maintenance_15,
-          CAST(
-            maintenance_2 AS FLOAT
-          ) AS maintenance_2,
-          CAST(
-            maintenance_21 AS FLOAT
-          ) AS maintenance_21,
-          CAST(
-            maintenance_22 AS FLOAT
-          ) AS maintenance_22,
-          CAST(
-            maintenance_23 AS FLOAT
-          ) AS maintenance_23,
-          CAST(
-            maintenance_3 AS FLOAT
-          ) AS maintenance_3,
-          CAST(
-            maintenance_4 AS FLOAT
-          ) AS maintenance_4,
-          CAST(
-            maintenance_5 AS FLOAT
-          ) AS maintenance_5,
-          CAST(
-            maintenance_6 AS FLOAT
-          ) AS maintenance_6,
-          CAST(
-            maintenance_7 AS FLOAT
-          ) AS maintenance_7,
-          CAST(
-            maintenance_8 AS FLOAT
-          ) AS maintenance_8,
-          CAST(
-            maintenance_9_a AS FLOAT
-          ) AS maintenance_9_a,
-          CAST(
-            maintenance_9_b AS FLOAT
-          ) AS maintenance_9_b,
-          CAST(
-            maintenance_9_c AS FLOAT
-          ) AS maintenance_9_c,
-          CAST(
-            maintenance_9_d AS FLOAT
-          ) AS maintenance_9_d,
-          CAST(
-            maintenance_9_e AS FLOAT
-          ) AS maintenance_9_e,
+          CAST(kippsharefrequency_5_s AS FLOAT) AS kippsharefrequency_5_s,
+          CAST(kippthroughcollege_1 AS FLOAT) AS kippthroughcollege_1,
+          CAST(maintenance_1 AS FLOAT) AS maintenance_1,
+          CAST(maintenance_11 AS FLOAT) AS maintenance_11,
+          CAST(maintenance_12 AS FLOAT) AS maintenance_12,
+          CAST(maintenance_13 AS FLOAT) AS maintenance_13,
+          CAST(maintenance_14 AS FLOAT) AS maintenance_14,
+          CAST(maintenance_15 AS FLOAT) AS maintenance_15,
+          CAST(maintenance_2 AS FLOAT) AS maintenance_2,
+          CAST(maintenance_21 AS FLOAT) AS maintenance_21,
+          CAST(maintenance_22 AS FLOAT) AS maintenance_22,
+          CAST(maintenance_23 AS FLOAT) AS maintenance_23,
+          CAST(maintenance_3 AS FLOAT) AS maintenance_3,
+          CAST(maintenance_4 AS FLOAT) AS maintenance_4,
+          CAST(maintenance_5 AS FLOAT) AS maintenance_5,
+          CAST(maintenance_6 AS FLOAT) AS maintenance_6,
+          CAST(maintenance_7 AS FLOAT) AS maintenance_7,
+          CAST(maintenance_8 AS FLOAT) AS maintenance_8,
+          CAST(maintenance_9_a AS FLOAT) AS maintenance_9_a,
+          CAST(maintenance_9_b AS FLOAT) AS maintenance_9_b,
+          CAST(maintenance_9_c AS FLOAT) AS maintenance_9_c,
+          CAST(maintenance_9_d AS FLOAT) AS maintenance_9_d,
+          CAST(maintenance_9_e AS FLOAT) AS maintenance_9_e,
           CAST(marketing_1 AS FLOAT) AS marketing_1,
           CAST(marketing_2 AS FLOAT) AS marketing_2,
           CAST(
@@ -417,25 +261,15 @@ WITH
             nutritionschoolleadersonly_4 AS FLOAT
           ) AS nutritionschoolleadersonly_4,
           CAST(purchasing_1 AS FLOAT) AS purchasing_1,
-          CAST(
-            purchasing_1_s AS FLOAT
-          ) AS purchasing_1_s,
+          CAST(purchasing_1_s AS FLOAT) AS purchasing_1_s,
           CAST(purchasing_2 AS FLOAT) AS purchasing_2,
-          CAST(
-            purchasing_2_s AS FLOAT
-          ) AS purchasing_2_s,
+          CAST(purchasing_2_s AS FLOAT) AS purchasing_2_s,
           CAST(purchasing_3 AS FLOAT) AS purchasing_3,
-          CAST(
-            purchasing_3_s AS FLOAT
-          ) AS purchasing_3_s,
+          CAST(purchasing_3_s AS FLOAT) AS purchasing_3_s,
           CAST(purchasing_4 AS FLOAT) AS purchasing_4,
-          CAST(
-            purchasing_4_s AS FLOAT
-          ) AS purchasing_4_s,
+          CAST(purchasing_4_s AS FLOAT) AS purchasing_4_s,
           CAST(purchasing_5 AS FLOAT) AS purchasing_5,
-          CAST(
-            purchasing_5_s AS FLOAT
-          ) AS purchasing_5_s,
+          CAST(purchasing_5_s AS FLOAT) AS purchasing_5_s,
           CAST(purchasing_6 AS FLOAT) AS purchasing_6,
           CAST(purchasing_7 AS FLOAT) AS purchasing_7,
           CAST(purchasing_8 AS FLOAT) AS purchasing_8,
@@ -515,117 +349,49 @@ WITH
           CAST(
             recruitmentschoolleadersonly_9 AS FLOAT
           ) AS recruitmentschoolleadersonly_9,
-          CAST(
-            schooloperations_1 AS FLOAT
-          ) AS schooloperations_1,
-          CAST(
-            schooloperations_10 AS FLOAT
-          ) AS schooloperations_10,
-          CAST(
-            schooloperations_2 AS FLOAT
-          ) AS schooloperations_2,
-          CAST(
-            schooloperations_3 AS FLOAT
-          ) AS schooloperations_3,
-          CAST(
-            schooloperations_4 AS FLOAT
-          ) AS schooloperations_4,
-          CAST(
-            schooloperations_5 AS FLOAT
-          ) AS schooloperations_5,
-          CAST(
-            schooloperations_6 AS FLOAT
-          ) AS schooloperations_6,
-          CAST(
-            schooloperations_7 AS FLOAT
-          ) AS schooloperations_7,
-          CAST(
-            schooloperations_8 AS FLOAT
-          ) AS schooloperations_8,
-          CAST(
-            schooloperations_9 AS FLOAT
-          ) AS schooloperations_9,
+          CAST(schooloperations_1 AS FLOAT) AS schooloperations_1,
+          CAST(schooloperations_10 AS FLOAT) AS schooloperations_10,
+          CAST(schooloperations_2 AS FLOAT) AS schooloperations_2,
+          CAST(schooloperations_3 AS FLOAT) AS schooloperations_3,
+          CAST(schooloperations_4 AS FLOAT) AS schooloperations_4,
+          CAST(schooloperations_5 AS FLOAT) AS schooloperations_5,
+          CAST(schooloperations_6 AS FLOAT) AS schooloperations_6,
+          CAST(schooloperations_7 AS FLOAT) AS schooloperations_7,
+          CAST(schooloperations_8 AS FLOAT) AS schooloperations_8,
+          CAST(schooloperations_9 AS FLOAT) AS schooloperations_9,
           CAST(sharing_1_s AS FLOAT) AS sharing_1_s,
           CAST(sharing_2_s AS FLOAT) AS sharing_2_s,
           CAST(sharing_3_s AS FLOAT) AS sharing_3_s,
           CAST(sharing_4_s AS FLOAT) AS sharing_4_s,
           CAST(specialed_1 AS FLOAT) AS specialed_1,
-          CAST(
-            specialeducation_1 AS FLOAT
-          ) AS specialeducation_1,
-          CAST(
-            specialeducation_1_s AS FLOAT
-          ) AS specialeducation_1_s,
-          CAST(
-            specialeducation_2 AS FLOAT
-          ) AS specialeducation_2,
-          CAST(
-            specialeducation_2_s AS FLOAT
-          ) AS specialeducation_2_s,
-          CAST(
-            specialeducation_3 AS FLOAT
-          ) AS specialeducation_3,
-          CAST(
-            specialeducation_4 AS FLOAT
-          ) AS specialeducation_4,
-          CAST(
-            specialeducation_5 AS FLOAT
-          ) AS specialeducation_5,
-          CAST(
-            studentinformation_1 AS FLOAT
-          ) AS studentinformation_1,
-          CAST(
-            studentinformation_2 AS FLOAT
-          ) AS studentinformation_2,
-          CAST(
-            studentinformation_3 AS FLOAT
-          ) AS studentinformation_3,
-          CAST(
-            teachinglearning_1 AS FLOAT
-          ) AS teachinglearning_1,
-          CAST(
-            teachinglearning_10 AS FLOAT
-          ) AS teachinglearning_10,
-          CAST(
-            teachinglearning_2 AS FLOAT
-          ) AS teachinglearning_2,
-          CAST(
-            teachinglearning_3 AS FLOAT
-          ) AS teachinglearning_3,
-          CAST(
-            teachinglearning_4 AS FLOAT
-          ) AS teachinglearning_4,
-          CAST(
-            teachinglearning_5 AS FLOAT
-          ) AS teachinglearning_5,
-          CAST(
-            teachinglearning_6 AS FLOAT
-          ) AS teachinglearning_6,
-          CAST(
-            teachinglearning_7 AS FLOAT
-          ) AS teachinglearning_7,
-          CAST(
-            teachinglearning_8 AS FLOAT
-          ) AS teachinglearning_8,
-          CAST(
-            teachinglearning_9 AS FLOAT
-          ) AS teachinglearning_9,
+          CAST(specialeducation_1 AS FLOAT) AS specialeducation_1,
+          CAST(specialeducation_1_s AS FLOAT) AS specialeducation_1_s,
+          CAST(specialeducation_2 AS FLOAT) AS specialeducation_2,
+          CAST(specialeducation_2_s AS FLOAT) AS specialeducation_2_s,
+          CAST(specialeducation_3 AS FLOAT) AS specialeducation_3,
+          CAST(specialeducation_4 AS FLOAT) AS specialeducation_4,
+          CAST(specialeducation_5 AS FLOAT) AS specialeducation_5,
+          CAST(studentinformation_1 AS FLOAT) AS studentinformation_1,
+          CAST(studentinformation_2 AS FLOAT) AS studentinformation_2,
+          CAST(studentinformation_3 AS FLOAT) AS studentinformation_3,
+          CAST(teachinglearning_1 AS FLOAT) AS teachinglearning_1,
+          CAST(teachinglearning_10 AS FLOAT) AS teachinglearning_10,
+          CAST(teachinglearning_2 AS FLOAT) AS teachinglearning_2,
+          CAST(teachinglearning_3 AS FLOAT) AS teachinglearning_3,
+          CAST(teachinglearning_4 AS FLOAT) AS teachinglearning_4,
+          CAST(teachinglearning_5 AS FLOAT) AS teachinglearning_5,
+          CAST(teachinglearning_6 AS FLOAT) AS teachinglearning_6,
+          CAST(teachinglearning_7 AS FLOAT) AS teachinglearning_7,
+          CAST(teachinglearning_8 AS FLOAT) AS teachinglearning_8,
+          CAST(teachinglearning_9 AS FLOAT) AS teachinglearning_9,
           CAST(technology_1 AS FLOAT) AS technology_1,
-          CAST(
-            technology_1_s AS FLOAT
-          ) AS technology_1_s,
+          CAST(technology_1_s AS FLOAT) AS technology_1_s,
           CAST(technology_2 AS FLOAT) AS technology_2,
-          CAST(
-            technology_2_s AS FLOAT
-          ) AS technology_2_s,
+          CAST(technology_2_s AS FLOAT) AS technology_2_s,
           CAST(technology_3 AS FLOAT) AS technology_3,
-          CAST(
-            technology_3_s AS FLOAT
-          ) AS technology_3_s,
+          CAST(technology_3_s AS FLOAT) AS technology_3_s,
           CAST(technology_4 AS FLOAT) AS technology_4,
-          CAST(
-            technology_4_s AS FLOAT
-          ) AS technology_4_s,
+          CAST(technology_4_s AS FLOAT) AS technology_4_s,
           CAST(technology_5 AS FLOAT) AS technology_5,
           CAST(technology_6 AS FLOAT) AS technology_6,
           CAST(

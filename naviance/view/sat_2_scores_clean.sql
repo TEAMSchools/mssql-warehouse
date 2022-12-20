@@ -13,12 +13,8 @@ FROM
     SELECT
       CAST(studentid AS INT) AS studentid,
       CAST(hs_student_id AS INT) AS hs_student_id,
-      CAST(
-        test_code AS VARCHAR(5)
-      ) AS test_code,
-      CAST(
-        test_name AS VARCHAR(25)
-      ) AS test_name,
+      CAST(test_code AS VARCHAR(5)) AS test_code,
+      CAST(test_name AS VARCHAR(25)) AS test_name,
       CAST(score AS INT) AS score,
       CASE
         WHEN test_date = '0000-00-00' THEN NULL

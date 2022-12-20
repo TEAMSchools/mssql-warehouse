@@ -48,9 +48,7 @@ WITH
       _file,
       _line,
       state_student_id,
-      CAST(
-        local_student_id AS NVARCHAR
-      ),
+      CAST(local_student_id AS NVARCHAR),
       first_name,
       last_name,
       'gabby.njsmart.gepa' AS table_name
@@ -63,10 +61,7 @@ WITH
       state_student_identifier,
       local_student_identifier,
       first_name,
-      COALESCE(
-        last_name,
-        last_or_surname
-      ) AS last_name,
+      COALESCE(last_name, last_or_surname) AS last_name,
       'gabby.parcc.summative_record_file' AS table_name
     FROM
       gabby.parcc.summative_record_file
@@ -106,9 +101,7 @@ WITH
         FROM
           raw_files AS r
           LEFT OUTER JOIN gabby.powerschool.students AS sid ON r.state_student_id = sid.state_studentnumber
-          LEFT OUTER JOIN gabby.powerschool.students AS sn ON r.local_student_id = CAST(
-            sn.student_number AS NVARCHAR
-          )
+          LEFT OUTER JOIN gabby.powerschool.students AS sn ON r.local_student_id = CAST(sn.student_number AS NVARCHAR)
       ) AS sub
     WHERE
       rn_dupe = 1

@@ -18,10 +18,7 @@ WITH
         1,
         1
       )
-      AND status_c IN (
-        'Attending',
-        'Matriculated'
-      )
+      AND status_c IN ('Attending', 'Matriculated')
       AND is_deleted = 0
   ),
   gpa AS (
@@ -49,12 +46,8 @@ WITH
                 WHEN transcript_date_c = '2018-12-31' THEN 'fall'
                 WHEN transcript_date_c = '2019-05-31' THEN 'spring'
               END AS semester,
-              CAST(
-                semester_gpa_c AS VARCHAR
-              ) AS semester_gpa,
-              CAST(
-                academic_status_c AS VARCHAR
-              ) AS academic_status
+              CAST(semester_gpa_c AS VARCHAR) AS semester_gpa,
+              CAST(academic_status_c AS VARCHAR) AS academic_status
             FROM
               gabby.alumni.gpa_c
             WHERE
@@ -64,10 +57,7 @@ WITH
                 1
               )
           ) AS sub UNPIVOT (
-            VALUE FOR field IN (
-              semester_gpa,
-              academic_status
-            )
+            VALUE FOR field IN (semester_gpa, academic_status)
           ) AS u
       ) AS sub PIVOT (
         MAX(VALUE) FOR pivot_field IN (
@@ -217,15 +207,9 @@ WITH
           ISNULL(
             CASE
               WHEN s.type LIKE '%2 yr'
-              AND ISNULL(
-                a.transfer_application_c,
-                0
-              ) = 0 THEN '2YR'
+              AND ISNULL(a.transfer_application_c, 0) = 0 THEN '2YR'
               WHEN s.type LIKE '%4 yr'
-              AND ISNULL(
-                a.transfer_application_c,
-                0
-              ) = 0 THEN '4YR'
+              AND ISNULL(a.transfer_application_c, 0) = 0 THEN '4YR'
               WHEN s.type LIKE '%2 yr'
               AND a.transfer_application_c = 1 THEN '2YR_T'
               WHEN s.type LIKE '%4 yr'
@@ -250,15 +234,9 @@ WITH
           CUBE (
             CASE
               WHEN s.type LIKE '%2 yr'
-              AND ISNULL(
-                a.transfer_application_c,
-                0
-              ) = 0 THEN '2YR'
+              AND ISNULL(a.transfer_application_c, 0) = 0 THEN '2YR'
               WHEN s.type LIKE '%4 yr'
-              AND ISNULL(
-                a.transfer_application_c,
-                0
-              ) = 0 THEN '4YR'
+              AND ISNULL(a.transfer_application_c, 0) = 0 THEN '4YR'
               WHEN s.type LIKE '%2 yr'
               AND a.transfer_application_c = 1 THEN '2YR_T'
               WHEN s.type LIKE '%4 yr'
@@ -278,11 +256,7 @@ WITH
 SELECT
   c.sf_contact_id AS contact_id,
   c.student_number,
-  CONCAT(
-    c.first_name,
-    ' ',
-    c.last_name
-  ) AS Full_Name_c,
+  CONCAT(c.first_name, ' ', c.last_name) AS Full_Name_c,
   c.first_name AS FirstName,
   c.last_name AS LastName,
   c.ktc_cohort AS kipp_hs_class_c,
@@ -369,12 +343,8 @@ SELECT
   gpa.fall_academic_status,
   gpa.spring_academic_status,
   gpa.prev_spring_academic_status,
-  CAST(
-    gpa.fall_semester_gpa AS FLOAT
-  ) AS gpa_mp1,
-  CAST(
-    gpa.spring_semester_gpa AS FLOAT
-  ) AS gpa_mp2,
+  CAST(gpa.fall_semester_gpa AS FLOAT) AS gpa_mp1,
+  CAST(gpa.spring_semester_gpa AS FLOAT) AS gpa_mp2,
   CAST(
     gpa.prev_spring_semester_gpa AS FLOAT
   ) AS gpa_prev_mp2,

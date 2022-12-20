@@ -40,9 +40,7 @@ FROM
   AND d.date_submitted BETWEEN w.effective_start_date AND COALESCE(
     w.effective_end_date,
     DATEFROMPARTS(
-      (
-        d.campaign_academic_year + 1
-      ),
+      (d.campaign_academic_year + 1),
       7,
       1
     )

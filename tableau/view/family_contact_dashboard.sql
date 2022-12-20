@@ -15,11 +15,7 @@ WITH
       daytime AS [day]
     FROM
       gabby.powerschool.student_contacts_static PIVOT (
-        MAX(contact) FOR contact_type IN (
-          [mobile],
-          [home],
-          [daytime]
-        )
+        MAX(contact) FOR contact_type IN ([mobile], [home], [daytime])
       ) AS p
   ),
   contacts_grouped AS (
@@ -28,18 +24,9 @@ WITH
       person,
       [name],
       [db_name],
-      gabby.dbo.GROUP_CONCAT_D (
-        DISTINCT cell,
-        CHAR(10)
-      ) AS cell,
-      gabby.dbo.GROUP_CONCAT_D (
-        DISTINCT home,
-        CHAR(10)
-      ) AS home,
-      gabby.dbo.GROUP_CONCAT_D (
-        DISTINCT [day],
-        CHAR(10)
-      ) AS [day]
+      gabby.dbo.GROUP_CONCAT_D (DISTINCT cell, CHAR(10)) AS cell,
+      gabby.dbo.GROUP_CONCAT_D (DISTINCT home, CHAR(10)) AS home,
+      gabby.dbo.GROUP_CONCAT_D (DISTINCT [day], CHAR(10)) AS [day]
     FROM
       contacts_repivot
     WHERE

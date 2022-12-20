@@ -18,12 +18,7 @@ SELECT
     ELSE 'Active'
   END AS [Status],
   CASE
-    WHEN sub.employee_number IN (
-      100219,
-      100412,
-      100566,
-      102298
-    ) THEN 'Travel Manager'
+    WHEN sub.employee_number IN (100219, 100412, 100566, 102298) THEN 'Travel Manager'
     ELSE 'Traveler'
   END AS [Role],
   /* cascading match on location/dept/job */

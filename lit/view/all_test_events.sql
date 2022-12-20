@@ -48,58 +48,30 @@ SELECT
 FROM
   (
     SELECT
-      CAST(
-        ps.unique_id AS VARCHAR(25)
-      ) AS unique_id,
-      CAST(
-        ps.student_number AS INT
-      ) AS student_number,
-      CAST(
-        ps.academic_year AS INT
-      ) AS academic_year,
-      CAST(
-        ps.test_round AS VARCHAR(5)
-      ) AS test_round,
+      CAST(ps.unique_id AS VARCHAR(25)) AS unique_id,
+      CAST(ps.student_number AS INT) AS student_number,
+      CAST(ps.academic_year AS INT) AS academic_year,
+      CAST(ps.test_round AS VARCHAR(5)) AS test_round,
       CAST(ps.round_num AS INT) AS round_num,
       ps.test_date,
       CONVERT(INT, ps.testid) AS testid,
       CAST(ps.is_fp AS INT) AS is_fp,
-      CAST(
-        ps.[status] AS VARCHAR(25)
-      ) AS [status],
-      CAST(
-        ps.read_lvl AS VARCHAR(25)
-      ) AS read_lvl,
+      CAST(ps.[status] AS VARCHAR(25)) AS [status],
+      CAST(ps.read_lvl AS VARCHAR(25)) AS read_lvl,
       CAST(ps.lvl_num AS INT) AS lvl_num,
       CAST(ps.gleq AS INT) AS gleq,
-      CAST(
-        ps.color AS VARCHAR(25)
-      ) AS color,
+      CAST(ps.color AS VARCHAR(25)) AS color,
       CONVERT(VARCHAR(25), ps.genre) AS genre,
-      CAST(
-        ps.dna_lvl AS VARCHAR(5)
-      ) AS dna_lvl,
+      CAST(ps.dna_lvl AS VARCHAR(5)) AS dna_lvl,
       CAST(ps.dna_lvl_num AS INT) AS dna_lvl_num,
-      CAST(
-        ps.instruct_lvl AS VARCHAR(5)
-      ) AS instruct_lvl,
-      CAST(
-        ps.instruct_lvl_num AS INT
-      ) AS instruct_lvl_num,
-      CAST(
-        ps.indep_lvl AS VARCHAR(25)
-      ) AS indep_lvl,
-      CAST(
-        ps.indep_lvl_num AS INT
-      ) AS indep_lvl_num,
+      CAST(ps.instruct_lvl AS VARCHAR(5)) AS instruct_lvl,
+      CAST(ps.instruct_lvl_num AS INT) AS instruct_lvl_num,
+      CAST(ps.indep_lvl AS VARCHAR(25)) AS indep_lvl,
+      CAST(ps.indep_lvl_num AS INT) AS indep_lvl_num,
       NULL AS gleq_lvl_num,
       CAST(ps.fp_wpmrate AS INT) AS fp_wpmrate,
-      CAST(
-        ps.fp_keylever AS VARCHAR(25)
-      ) AS fp_keylever,
-      CAST(
-        ps.coaching_code AS VARCHAR(5)
-      ) AS coaching_code,
+      CAST(ps.fp_keylever AS VARCHAR(25)) AS fp_keylever,
+      CAST(ps.coaching_code AS VARCHAR(5)) AS coaching_code,
       NULL AS test_administered_by,
       NULL AS schoolid
     FROM

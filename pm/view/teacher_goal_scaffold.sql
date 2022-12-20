@@ -16,10 +16,7 @@ WITH
       AND sec.[db_name] = st.[db_name]
       INNER JOIN gabby.powerschool.roledef AS rd ON st.roleid = rd.id
       AND st.[db_name] = rd.[db_name]
-      AND rd.[name] IN (
-        'Lead Teacher',
-        'Co-teacher'
-      )
+      AND rd.[name] IN ('Lead Teacher', 'Co-teacher')
       INNER JOIN gabby.powerschool.teachers_static AS t ON st.teacherid = t.id
       AND st.[db_name] = t.[db_name]
     WHERE
@@ -52,16 +49,12 @@ SELECT
   tg.is_sped_goal,
   tg.ps_course_number,
   tg.metric_label,
-  CAST(
-    tg.metric_name AS VARCHAR(125)
-  ) AS metric_name,
+  CAST(tg.metric_name AS VARCHAR(125)) AS metric_name,
   CAST(tg.tier_1 AS FLOAT) AS tier_1,
   CAST(tg.tier_2 AS FLOAT) AS tier_2,
   CAST(tg.tier_3 AS FLOAT) AS tier_3,
   CAST(tg.tier_4 AS FLOAT) AS tier_4,
-  CAST(
-    tg.prior_year_outcome AS FLOAT
-  ) AS prior_year_outcome,
+  CAST(tg.prior_year_outcome AS FLOAT) AS prior_year_outcome,
   tg.data_type,
   NULL AS sectionid,
   NULL AS student_number,
@@ -109,16 +102,12 @@ SELECT
   tg.is_sped_goal,
   tg.ps_course_number,
   tg.metric_label,
-  CAST(
-    tg.metric_name AS VARCHAR(125)
-  ) AS metric_name,
+  CAST(tg.metric_name AS VARCHAR(125)) AS metric_name,
   CAST(tg.tier_1 AS FLOAT) AS tier_1,
   CAST(tg.tier_2 AS FLOAT) AS tier_2,
   CAST(tg.tier_3 AS FLOAT) AS tier_3,
   CAST(tg.tier_4 AS FLOAT) AS tier_4,
-  CAST(
-    tg.prior_year_outcome AS FLOAT
-  ) AS prior_year_outcome,
+  CAST(tg.prior_year_outcome AS FLOAT) AS prior_year_outcome,
   tg.data_type,
   NULL AS sectionid,
   NULL AS student_number,
@@ -167,16 +156,12 @@ SELECT
   tg.is_sped_goal,
   tg.ps_course_number,
   tg.metric_label,
-  CAST(
-    tg.metric_name AS VARCHAR(125)
-  ) AS metric_name,
+  CAST(tg.metric_name AS VARCHAR(125)) AS metric_name,
   CAST(tg.tier_1 AS FLOAT) AS tier_1,
   CAST(tg.tier_2 AS FLOAT) AS tier_2,
   CAST(tg.tier_3 AS FLOAT) AS tier_3,
   CAST(tg.tier_4 AS FLOAT) AS tier_4,
-  CAST(
-    tg.prior_year_outcome AS FLOAT
-  ) AS prior_year_outcome,
+  CAST(tg.prior_year_outcome AS FLOAT) AS prior_year_outcome,
   tg.data_type,
   st.sectionid,
   enr.student_number,
@@ -243,16 +228,12 @@ SELECT
   tg.is_sped_goal,
   tg.ps_course_number,
   tg.metric_label,
-  CAST(
-    tg.metric_name AS VARCHAR(125)
-  ) AS metric_name,
+  CAST(tg.metric_name AS VARCHAR(125)) AS metric_name,
   CAST(tg.tier_1 AS FLOAT) AS tier_1,
   CAST(tg.tier_2 AS FLOAT) AS tier_2,
   CAST(tg.tier_3 AS FLOAT) AS tier_3,
   CAST(tg.tier_4 AS FLOAT) AS tier_4,
-  CAST(
-    tg.prior_year_outcome AS FLOAT
-  ) AS prior_year_outcome,
+  CAST(tg.prior_year_outcome AS FLOAT) AS prior_year_outcome,
   tg.data_type,
   st.sectionid,
   enr.student_number,

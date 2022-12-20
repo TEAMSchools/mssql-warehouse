@@ -6,9 +6,7 @@ WITH
       studentid,
       yearid,
       storecode,
-      CAST(
-        reporting_term AS NVARCHAR(4)
-      ) AS reporting_term,
+      CAST(reporting_term AS NVARCHAR(4)) AS reporting_term,
       course_number,
       sectionid,
       y1_grade_letter,
@@ -40,11 +38,7 @@ WITH
           fg.need_80,
           fg.need_70,
           fg.need_60,
-          REPLACE(
-            fg.storecode,
-            'Q',
-            'RT'
-          ) AS reporting_term
+          REPLACE(fg.storecode, 'Q', 'RT') AS reporting_term
           /* empty strings preserve storecode structure when there aren't any grades */
 ,
           ISNULL(
@@ -153,9 +147,7 @@ SELECT
     ORDER BY
       storecode ASC
   ) AS rt1_term_grade_letter,
-  MAX(
-    rt1_term_grade_letter_adj
-  ) OVER (
+  MAX(rt1_term_grade_letter_adj) OVER (
     PARTITION BY
       studentid,
       yearid,
@@ -195,9 +187,7 @@ SELECT
     ORDER BY
       storecode ASC
   ) AS rt2_term_grade_letter,
-  MAX(
-    rt2_term_grade_letter_adj
-  ) OVER (
+  MAX(rt2_term_grade_letter_adj) OVER (
     PARTITION BY
       studentid,
       yearid,
@@ -237,9 +227,7 @@ SELECT
     ORDER BY
       storecode ASC
   ) AS rt3_term_grade_letter,
-  MAX(
-    rt3_term_grade_letter_adj
-  ) OVER (
+  MAX(rt3_term_grade_letter_adj) OVER (
     PARTITION BY
       studentid,
       yearid,
@@ -279,9 +267,7 @@ SELECT
     ORDER BY
       storecode ASC
   ) AS rt4_term_grade_letter,
-  MAX(
-    rt4_term_grade_letter_adj
-  ) OVER (
+  MAX(rt4_term_grade_letter_adj) OVER (
     PARTITION BY
       studentid,
       yearid,

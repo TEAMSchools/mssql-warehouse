@@ -23,9 +23,7 @@ WITH
       END AS is_open_ended,
       c.question AS question_shortname,
       NULL AS question_title,
-      CAST(
-        c.response_text AS NVARCHAR(MAX)
-      ) AS answer,
+      CAST(c.response_text AS NVARCHAR(MAX)) AS answer,
       c.response_value AS answer_value,
       c.df_employee_number AS respondent_df_employee_number,
       NULL AS respondent_adp_associate_id,
@@ -106,42 +104,22 @@ WITH
   )
 SELECT
   CAST(h.survey_id AS BIGINT) AS survey_id,
-  CAST(
-    h.survey_title AS NVARCHAR(256)
-  ) AS survey_title,
-  CAST(
-    h.survey_response_id AS BIGINT
-  ) AS survey_response_id,
-  CAST(
-    h.campaign_academic_year AS INT
-  ) AS campaign_academic_year,
-  CAST(
-    h.date_started AS DATE
-  ) AS date_started,
-  CAST(
-    h.date_submitted AS DATE
-  ) AS date_submitted,
-  CAST(
-    h.campaign_name AS NVARCHAR(256)
-  ) AS campaign_name,
+  CAST(h.survey_title AS NVARCHAR(256)) AS survey_title,
+  CAST(h.survey_response_id AS BIGINT) AS survey_response_id,
+  CAST(h.campaign_academic_year AS INT) AS campaign_academic_year,
+  CAST(h.date_started AS DATE) AS date_started,
+  CAST(h.date_submitted AS DATE) AS date_submitted,
+  CAST(h.campaign_name AS NVARCHAR(256)) AS campaign_name,
   CAST(
     h.campaign_reporting_term AS NVARCHAR(256)
   ) AS campaign_reporting_term,
-  CAST(
-    h.is_open_ended AS VARCHAR(1)
-  ) AS is_open_ended,
+  CAST(h.is_open_ended AS VARCHAR(1)) AS is_open_ended,
   CAST(
     h.question_shortname AS NVARCHAR(256)
   ) AS question_shortname,
-  CAST(
-    h.question_title AS VARCHAR(500)
-  ) AS question_title,
-  CAST(
-    h.answer AS NVARCHAR(MAX)
-  ) AS answer,
-  CAST(
-    h.answer_value AS VARCHAR(500)
-  ) AS answer_value,
+  CAST(h.question_title AS VARCHAR(500)) AS question_title,
+  CAST(h.answer AS NVARCHAR(MAX)) AS answer,
+  CAST(h.answer_value AS VARCHAR(500)) AS answer_value,
   CAST(
     h.respondent_df_employee_number AS BIGINT
   ) AS respondent_df_employee_number,

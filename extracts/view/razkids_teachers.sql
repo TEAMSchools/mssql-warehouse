@@ -13,7 +13,4 @@ WHERE
     scw.primary_site_school_level = 'ES'
     OR scw.primary_site = 'KIPP Hatch Middle'
   )
-  AND scw.[status] NOT IN (
-    'TERMINATED',
-    'PRESTART'
-  )
+  AND scw.[status] NOT IN ('TERMINATED', 'PRESTART')

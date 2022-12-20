@@ -33,10 +33,7 @@ SELECT
     parccstudent_identifier,
     parcc_student_identifier
   ) AS parccstudent_identifier,
-  COALESCE(
-    last_or_surname,
-    last_name
-  ) AS last_or_surname,
+  COALESCE(last_or_surname, last_name) AS last_or_surname,
   first_name,
   middle_name,
   birthdate,
@@ -132,14 +129,8 @@ SELECT
     student_test_uuid,
     summative_score_record_uuid
   ) AS student_test_uuid,
-  COALESCE(
-    paper_form_id,
-    eoy_form_id
-  ) AS paper_form_id,
-  COALESCE(
-    online_form_id,
-    eoy_form_id
-  ) AS online_form_id,
+  COALESCE(paper_form_id, eoy_form_id) AS paper_form_id,
+  COALESCE(online_form_id, eoy_form_id) AS online_form_id,
   test_status,
   COALESCE(
     total_test_items,
@@ -221,9 +212,7 @@ SELECT
   unit_4_online_test_end_date_time,
   assessment_year,
   assessment_grade,
-  CAST(
-    [subject] AS NVARCHAR(128)
-  ) AS [subject],
+  CAST([subject] AS NVARCHAR(128)) AS [subject],
   federal_race_ethnicity,
   [period],
   testing_organizational_type,
@@ -304,9 +293,7 @@ SELECT
   pba_unit_2_total_number_of_items,
   pba_unit_3_number_of_attempted_items,
   pba_unit_3_total_number_of_items,
-  CAST(
-    LEFT(assessment_year, 4) AS INT
-  ) AS academic_year
+  CAST(LEFT(assessment_year, 4) AS INT) AS academic_year
 FROM
   kippnewark.parcc.summative_record_file
 WHERE
@@ -344,10 +331,7 @@ SELECT
     parccstudent_identifier,
     parcc_student_identifier
   ) AS parccstudent_identifier,
-  COALESCE(
-    last_or_surname,
-    last_name
-  ) AS last_or_surname,
+  COALESCE(last_or_surname, last_name) AS last_or_surname,
   first_name,
   middle_name,
   birthdate,
@@ -443,14 +427,8 @@ SELECT
     student_test_uuid,
     summative_score_record_uuid
   ) AS student_test_uuid,
-  COALESCE(
-    paper_form_id,
-    eoy_form_id
-  ) AS paper_form_id,
-  COALESCE(
-    online_form_id,
-    eoy_form_id
-  ) AS online_form_id,
+  COALESCE(paper_form_id, eoy_form_id) AS paper_form_id,
+  COALESCE(online_form_id, eoy_form_id) AS online_form_id,
   test_status,
   COALESCE(
     total_test_items,
@@ -532,9 +510,7 @@ SELECT
   unit_4_online_test_end_date_time,
   assessment_year,
   assessment_grade,
-  CAST(
-    [subject] AS NVARCHAR(128)
-  ) AS [subject],
+  CAST([subject] AS NVARCHAR(128)) AS [subject],
   federal_race_ethnicity,
   [period],
   testing_organizational_type,
@@ -615,9 +591,7 @@ SELECT
   pba_unit_2_total_number_of_items,
   pba_unit_3_number_of_attempted_items,
   pba_unit_3_total_number_of_items,
-  CAST(
-    LEFT(assessment_year, 4) AS INT
-  ) AS academic_year
+  CAST(LEFT(assessment_year, 4) AS INT) AS academic_year
 FROM
   kippnewark.parcc.summative_record_file
 WHERE
@@ -764,9 +738,7 @@ SELECT
   unit_4_online_test_end_date_time,
   assessment_year,
   assessment_grade,
-  CAST(
-    [subject] AS NVARCHAR(128)
-  ) AS [subject],
+  CAST([subject] AS NVARCHAR(128)) AS [subject],
   federal_race_ethnicity,
   [period],
   testing_organizational_type,
@@ -817,9 +789,7 @@ SELECT
   NULL AS pba_unit_2_total_number_of_items,
   NULL AS pba_unit_3_number_of_attempted_items,
   NULL AS pba_unit_3_total_number_of_items,
-  CAST(
-    LEFT(assessment_year, 4) AS INT
-  ) AS academic_year
+  CAST(LEFT(assessment_year, 4) AS INT) AS academic_year
 FROM
   parcc.summative_record_file
 WHERE

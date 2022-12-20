@@ -4,16 +4,10 @@ WITH
   enrollments AS (
     SELECT
       start_date_c,
-      CAST(
-        student_c AS VARCHAR(25)
-      ) AS salesforce_contact_id,
+      CAST(student_c AS VARCHAR(25)) AS salesforce_contact_id,
       CAST(type_c AS VARCHAR(25)) AS enrollment_type,
-      CAST(
-        status_c AS VARCHAR(25)
-      ) AS enrollment_status,
-      CAST(
-        [name] AS VARCHAR(125)
-      ) AS enrollment_name,
+      CAST(status_c AS VARCHAR(25)) AS enrollment_status,
+      CAST([name] AS VARCHAR(125)) AS enrollment_name,
       ROW_NUMBER() OVER (
         PARTITION BY
           student_c
@@ -49,81 +43,49 @@ SELECT
   enr.enrollment_type,
   enr.enrollment_name,
   enr.enrollment_status,
-  CAST(
-    s.home_phone AS VARCHAR(125)
-  ) AS ps_home_phone,
-  CAST(
-    s.mother AS VARCHAR(125)
-  ) AS ps_mother,
-  CAST(
-    s.father AS VARCHAR(125)
-  ) AS ps_father,
-  CAST(
-    s.doctor_name AS VARCHAR(125)
-  ) AS ps_doctor_name,
-  CAST(
-    s.doctor_phone AS VARCHAR(125)
-  ) AS ps_doctor_phone,
+  CAST(s.home_phone AS VARCHAR(125)) AS ps_home_phone,
+  CAST(s.mother AS VARCHAR(125)) AS ps_mother,
+  CAST(s.father AS VARCHAR(125)) AS ps_father,
+  CAST(s.doctor_name AS VARCHAR(125)) AS ps_doctor_name,
+  CAST(s.doctor_phone AS VARCHAR(125)) AS ps_doctor_phone,
   CAST(
     s.emerg_contact_1 AS VARCHAR(125)
   ) AS ps_emerg_contact_1,
-  CAST(
-    s.emerg_phone_1 AS VARCHAR(125)
-  ) AS ps_emerg_phone_1,
+  CAST(s.emerg_phone_1 AS VARCHAR(125)) AS ps_emerg_phone_1,
   CAST(
     s.emerg_contact_2 AS VARCHAR(125)
   ) AS ps_emerg_contact_2,
-  CAST(
-    s.emerg_phone_2 AS VARCHAR(125)
-  ) AS ps_emerg_phone_2,
+  CAST(s.emerg_phone_2 AS VARCHAR(125)) AS ps_emerg_phone_2,
   CAST(
     scf.mother_home_phone AS VARCHAR(125)
   ) AS ps_mother_home,
   CAST(
     scf.father_home_phone AS VARCHAR(125)
   ) AS ps_father_home,
-  CAST(
-    scf.emerg_1_rel AS VARCHAR(125)
-  ) AS ps_emerg_1_rel,
-  CAST(
-    scf.emerg_2_rel AS VARCHAR(125)
-  ) AS ps_emerg_2_rel,
+  CAST(scf.emerg_1_rel AS VARCHAR(125)) AS ps_emerg_1_rel,
+  CAST(scf.emerg_2_rel AS VARCHAR(125)) AS ps_emerg_2_rel,
   CAST(
     scf.emerg_contact_3 AS VARCHAR(125)
   ) AS ps_emerg_contact_3,
-  CAST(
-    scf.emerg_3_rel AS VARCHAR(125)
-  ) AS ps_emerg_3_rel,
+  CAST(scf.emerg_3_rel AS VARCHAR(125)) AS ps_emerg_3_rel,
   CAST(
     scf.emerg_3_phone AS VARCHAR(125)
   ) AS ps_emerg_3_phone,
-  CAST(
-    suf.mother_cell AS VARCHAR(125)
-  ) AS ps_mother_cell,
+  CAST(suf.mother_cell AS VARCHAR(125)) AS ps_mother_cell,
   CAST(
     suf.parent_motherdayphone AS VARCHAR(125)
   ) AS ps_mother_day,
-  CAST(
-    suf.father_cell AS VARCHAR(125)
-  ) AS ps_father_cell,
+  CAST(suf.father_cell AS VARCHAR(125)) AS ps_father_cell,
   CAST(
     suf.parent_fatherdayphone AS VARCHAR(125)
   ) AS ps_father_day,
-  CAST(
-    suf.emerg_4_name AS VARCHAR(125)
-  ) AS ps_emerg_4_name,
-  CAST(
-    suf.emerg_4_rel AS VARCHAR(125)
-  ) AS ps_emerg_4_rel,
+  CAST(suf.emerg_4_name AS VARCHAR(125)) AS ps_emerg_4_name,
+  CAST(suf.emerg_4_rel AS VARCHAR(125)) AS ps_emerg_4_rel,
   CAST(
     suf.emerg_4_phone AS VARCHAR(125)
   ) AS ps_emerg_4_phone,
-  CAST(
-    suf.emerg_5_name AS VARCHAR(125)
-  ) AS ps_emerg_5_name,
-  CAST(
-    suf.emerg_5_rel AS VARCHAR(125)
-  ) AS ps_emerg_5_rel,
+  CAST(suf.emerg_5_name AS VARCHAR(125)) AS ps_emerg_5_name,
+  CAST(suf.emerg_5_rel AS VARCHAR(125)) AS ps_emerg_5_rel,
   CAST(
     suf.emerg_5_phone AS VARCHAR(125)
   ) AS ps_emerg_5_phone,

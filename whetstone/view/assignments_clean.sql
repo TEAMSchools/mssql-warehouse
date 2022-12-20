@@ -23,19 +23,10 @@ SELECT
   JSON_VALUE([course], '$._id') AS [course_id],
   JSON_VALUE([course], '$.name') AS [course_name],
   CAST(
-    JSON_VALUE(
-      [progress],
-      '$.percent'
-    ) AS FLOAT
+    JSON_VALUE([progress], '$.percent') AS FLOAT
   ) AS progress_percent,
-  JSON_VALUE(
-    [progress],
-    '$.assigner'
-  ) AS progress_assigner,
-  JSON_VALUE(
-    [progress],
-    '$.justification'
-  ) AS progress_justification,
+  JSON_VALUE([progress], '$.assigner') AS progress_assigner,
+  JSON_VALUE([progress], '$.justification') AS progress_justification,
   CAST(
     JSON_VALUE([progress], '$.date') AS DATETIMEOFFSET
   ) AS progress_date

@@ -27,10 +27,7 @@ SELECT
     b.staff_first_name
   ) AS staff_name,
   CAST(
-    LEFT(
-      b.behavior,
-      LEN(b.behavior) - 5
-    ) AS INT
+    LEFT(b.behavior, LEN(b.behavior) - 5) AS INT
   ) AS cs_hours
 FROM
   gabby.powerschool.cohort_identifiers_static AS co

@@ -87,9 +87,7 @@ FROM
       sub.abs_termid,
       sub.sections_dcid,
       sub.courses_gradescaleid,
-      SUM(
-        sub.section_enroll_status
-      ) OVER (
+      SUM(sub.section_enroll_status) OVER (
         PARTITION BY
           sub.studentid,
           sub.course_number

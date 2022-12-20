@@ -267,41 +267,21 @@ FROM
       (
         SELECT
           CAST(student_id AS INT) AS student_id,
-          CAST(
-            term_name AS VARCHAR(25)
-          ) AS term_name,
-          CAST(
-            test_duration_minutes AS INT
-          ) AS test_duration_minutes,
+          CAST(term_name AS VARCHAR(25)) AS term_name,
+          CAST(test_duration_minutes AS INT) AS test_duration_minutes,
           CAST(test_id AS INT) AS test_id,
-          CAST(
-            test_name AS VARCHAR(125)
-          ) AS test_name,
+          CAST(test_name AS VARCHAR(125)) AS test_name,
           test_percentile,
           CAST(test_ritscore AS INT) AS test_ritscore,
           test_standard_error,
-          CAST(
-            test_start_date AS DATE
-          ) AS test_start_date,
-          CAST(
-            test_start_time AS TIME
-          ) AS test_start_time,
-          CAST(
-            test_type AS VARCHAR(25)
-          ) AS test_type,
-          CAST(
-            discipline AS VARCHAR(25)
-          ) AS discipline,
+          CAST(test_start_date AS DATE) AS test_start_date,
+          CAST(test_start_time AS TIME) AS test_start_time,
+          CAST(test_type AS VARCHAR(25)) AS test_type,
+          CAST(discipline AS VARCHAR(25)) AS discipline,
           growth_measure_yn,
-          CAST(
-            norms_reference_data AS INT
-          ) AS norms_reference_data,
-          CAST(
-            percent_correct AS FLOAT
-          ) AS percent_correct,
-          CAST(
-            school_name AS VARCHAR(125)
-          ) AS school_name,
+          CAST(norms_reference_data AS INT) AS norms_reference_data,
+          CAST(percent_correct AS FLOAT) AS percent_correct,
+          CAST(school_name AS VARCHAR(125)) AS school_name,
           fall_to_fall_conditional_growth_index,
           fall_to_fall_conditional_growth_percentile,
           CAST(
@@ -326,48 +306,24 @@ FROM
           fall_to_winter_observed_growth,
           fall_to_winter_observed_growth_se,
           fall_to_winter_projected_growth,
-          CAST(
-            goal_1_adjective AS VARCHAR(25)
-          ) AS goal_1_adjective,
-          CAST(
-            goal_1_name AS VARCHAR(50)
-          ) AS goal_1_name,
-          CAST(
-            goal_1_range AS VARCHAR(25)
-          ) AS goal_1_range,
+          CAST(goal_1_adjective AS VARCHAR(25)) AS goal_1_adjective,
+          CAST(goal_1_name AS VARCHAR(50)) AS goal_1_name,
+          CAST(goal_1_range AS VARCHAR(25)) AS goal_1_range,
           goal_1_rit_score,
           goal_1_std_err,
-          CAST(
-            goal_2_adjective AS VARCHAR(25)
-          ) AS goal_2_adjective,
-          CAST(
-            goal_2_name AS VARCHAR(50)
-          ) AS goal_2_name,
-          CAST(
-            goal_2_range AS VARCHAR(25)
-          ) AS goal_2_range,
+          CAST(goal_2_adjective AS VARCHAR(25)) AS goal_2_adjective,
+          CAST(goal_2_name AS VARCHAR(50)) AS goal_2_name,
+          CAST(goal_2_range AS VARCHAR(25)) AS goal_2_range,
           goal_2_rit_score,
           goal_2_std_err,
-          CAST(
-            goal_3_adjective AS VARCHAR(25)
-          ) AS goal_3_adjective,
-          CAST(
-            goal_3_name AS VARCHAR(50)
-          ) AS goal_3_name,
-          CAST(
-            goal_3_range AS VARCHAR(25)
-          ) AS goal_3_range,
+          CAST(goal_3_adjective AS VARCHAR(25)) AS goal_3_adjective,
+          CAST(goal_3_name AS VARCHAR(50)) AS goal_3_name,
+          CAST(goal_3_range AS VARCHAR(25)) AS goal_3_range,
           goal_3_rit_score,
           goal_3_std_err,
-          CAST(
-            goal_4_adjective AS VARCHAR(25)
-          ) AS goal_4_adjective,
-          CAST(
-            goal_4_name AS VARCHAR(50)
-          ) AS goal_4_name,
-          CAST(
-            goal_4_range AS VARCHAR(25)
-          ) AS goal_4_range,
+          CAST(goal_4_adjective AS VARCHAR(25)) AS goal_4_adjective,
+          CAST(goal_4_name AS VARCHAR(50)) AS goal_4_name,
+          CAST(goal_4_range AS VARCHAR(25)) AS goal_4_range,
           goal_4_rit_score,
           goal_4_std_err,
           CAST(
@@ -388,12 +344,8 @@ FROM
           CAST(
             projected_proficiency_study_3 AS VARCHAR(125)
           ) AS projected_proficiency_study_3,
-          CAST(
-            ritto_reading_max AS VARCHAR(5)
-          ) AS ritto_reading_max,
-          CAST(
-            ritto_reading_min AS VARCHAR(5)
-          ) AS ritto_reading_min,
+          CAST(ritto_reading_max AS VARCHAR(5)) AS ritto_reading_max,
+          CAST(ritto_reading_min AS VARCHAR(5)) AS ritto_reading_min,
           spring_to_spring_conditional_growth_index,
           spring_to_spring_conditional_growth_percentile,
           spring_to_spring_met_projected_growth,
@@ -422,9 +374,7 @@ FROM
           wiprevious_ayspring,
           wiprevious_aywinter,
           wiselected_ayfall,
-          CAST(
-            wiselected_ayspring AS FLOAT
-          ) AS wiselected_ayspring,
+          CAST(wiselected_ayspring AS FLOAT) AS wiselected_ayspring,
           wiselected_aywinter,
           academic_year,
           test_year,

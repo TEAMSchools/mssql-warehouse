@@ -5,13 +5,9 @@ SELECT
   co.state_studentnumber,
   CASE
     WHEN co.grade_level = 0 THEN 'K'
-    ELSE CAST(
-      co.grade_level AS VARCHAR
-    )
+    ELSE CAST(co.grade_level AS VARCHAR)
   END AS grade_level,
-  CAST(
-    co.entrydate AS VARCHAR
-  ) AS entrydate,
+  CAST(co.entrydate AS VARCHAR) AS entrydate,
   co.entrycode,
   co.exitcode,
   co.exitdate,
@@ -41,10 +37,18 @@ SELECT
   s.fedethnicity
 FROM
   kippnewark.powerschool.cohort_identifiers_static AS co
-  LEFT JOIN kippnewark.powerschool.u_studentsuserfields AS suf ON co.students_dcid = suf.studentsdcid
-  LEFT JOIN kippnewark.powerschool.studentcorefields AS scf ON co.students_dcid = scf.studentsdcid
-  LEFT JOIN kippnewark.powerschool.student_contacts_wide_static AS scw ON co.student_number = scw.student_number
-  LEFT JOIN kippnewark.powerschool.students AS s ON co.student_number = s.student_number
+  LEFT JOIN kippnewark.powerschool.u_studentsuserfields AS suf ON (
+    co.students_dcid = suf.studentsdcid
+  )
+  LEFT JOIN kippnewark.powerschool.studentcorefields AS scf ON (
+    co.students_dcid = scf.studentsdcid
+  )
+  LEFT JOIN kippnewark.powerschool.student_contacts_wide_static AS scw ON (
+    co.student_number = scw.student_number
+  )
+  LEFT JOIN kippnewark.powerschool.students AS s ON (
+    co.student_number = s.student_number
+  )
 WHERE
   co.enroll_status IN (0, -1)
   AND co.rn_all = 1

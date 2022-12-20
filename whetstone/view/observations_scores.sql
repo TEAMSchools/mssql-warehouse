@@ -12,10 +12,7 @@ SELECT
   ws.textBoxes AS score_text_boxes_json
 FROM
   [gabby].[whetstone].observations wo
-  CROSS APPLY OPENJSON (
-    wo.observation_scores,
-    '$'
-  )
+  CROSS APPLY OPENJSON (wo.observation_scores, '$')
 WITH
   (
     measurement NVARCHAR(128),

@@ -14,9 +14,7 @@ WITH
       cat.citizenship,
       CASE
         WHEN (
-          CAST(
-            CURRENT_TIMESTAMP AS DATE
-          ) BETWEEN cat.termbin_start_date AND cat.termbin_end_date
+          CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN cat.termbin_start_date AND cat.termbin_end_date
         ) THEN 1
         ELSE 0
       END AS is_curterm,
@@ -38,17 +36,12 @@ WITH
       cat.reporting_term AS rt,
       cat.storecode_type,
       CAST(
-        ROUND(
-          AVG(cat.category_pct),
-          0
-        ) AS DECIMAL(4, 0)
+        ROUND(AVG(cat.category_pct), 0) AS DECIMAL(4, 0)
       ) AS category_pct,
       NULL AS citizenship,
       CASE
         WHEN (
-          CAST(
-            CURRENT_TIMESTAMP AS DATE
-          ) BETWEEN cat.termbin_start_date AND cat.termbin_end_date
+          CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN cat.termbin_start_date AND cat.termbin_end_date
         ) THEN 1
         ELSE 0
       END AS is_curterm,
@@ -88,9 +81,7 @@ WITH
         gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990
       )
       AND (
-        CAST(
-          CURRENT_TIMESTAMP AS DATE
-        ) BETWEEN cat.termbin_start_date AND cat.termbin_end_date
+        CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN cat.termbin_start_date AND cat.termbin_end_date
       )
     UNION ALL
     SELECT
@@ -102,10 +93,7 @@ WITH
       'CUR' AS rt,
       cat.storecode_type,
       CAST(
-        ROUND(
-          AVG(cat.category_pct),
-          0
-        ) AS DECIMAL(4, 0)
+        ROUND(AVG(cat.category_pct), 0) AS DECIMAL(4, 0)
       ) AS category_pct,
       NULL AS citizenship,
       1 AS is_curterm,
@@ -117,9 +105,7 @@ WITH
         gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990
       )
       AND (
-        CAST(
-          CURRENT_TIMESTAMP AS DATE
-        ) BETWEEN cat.termbin_start_date AND cat.termbin_end_date
+        CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN cat.termbin_start_date AND cat.termbin_end_date
       )
     GROUP BY
       cat.studentid,
@@ -153,19 +139,12 @@ WITH
           rt,
           is_curterm,
           storecode_type,
-          CAST(
-            category_pct AS NVARCHAR(4)
-          ) AS category_pct,
-          CAST(
-            citizenship AS NVARCHAR(4)
-          ) AS citizenship
+          CAST(category_pct AS NVARCHAR(4)) AS category_pct,
+          CAST(citizenship AS NVARCHAR(4)) AS citizenship
         FROM
           grades_long
       ) AS sub UNPIVOT (
-        [value] FOR field IN (
-          category_pct,
-          citizenship
-        )
+        [value] FOR field IN (category_pct, citizenship)
       ) AS u
   ),
   grades_repivot AS (
@@ -177,66 +156,26 @@ WITH
       reporting_term,
       is_curterm,
       schoolid,
-      CAST(
-        F_CUR AS DECIMAL(4, 0)
-      ) AS F_CUR,
-      CAST(
-        F_RT1 AS DECIMAL(4, 0)
-      ) AS F_RT1,
-      CAST(
-        F_RT2 AS DECIMAL(4, 0)
-      ) AS F_RT2,
-      CAST(
-        F_RT3 AS DECIMAL(4, 0)
-      ) AS F_RT3,
-      CAST(
-        F_RT4 AS DECIMAL(4, 0)
-      ) AS F_RT4,
-      CAST(
-        S_CUR AS DECIMAL(4, 0)
-      ) AS S_CUR,
-      CAST(
-        S_RT1 AS DECIMAL(4, 0)
-      ) AS S_RT1,
-      CAST(
-        S_RT2 AS DECIMAL(4, 0)
-      ) AS S_RT2,
-      CAST(
-        S_RT3 AS DECIMAL(4, 0)
-      ) AS S_RT3,
-      CAST(
-        S_RT4 AS DECIMAL(4, 0)
-      ) AS S_RT4,
-      CAST(
-        W_CUR AS DECIMAL(4, 0)
-      ) AS W_CUR,
-      CAST(
-        W_RT1 AS DECIMAL(4, 0)
-      ) AS W_RT1,
-      CAST(
-        W_RT2 AS DECIMAL(4, 0)
-      ) AS W_RT2,
-      CAST(
-        W_RT3 AS DECIMAL(4, 0)
-      ) AS W_RT3,
-      CAST(
-        W_RT4 AS DECIMAL(4, 0)
-      ) AS W_RT4,
-      CAST(
-        E_CUR AS DECIMAL(4, 0)
-      ) AS E_CUR,
-      CAST(
-        E_RT1 AS DECIMAL(4, 0)
-      ) AS E_RT1,
-      CAST(
-        E_RT2 AS DECIMAL(4, 0)
-      ) AS E_RT2,
-      CAST(
-        E_RT3 AS DECIMAL(4, 0)
-      ) AS E_RT3,
-      CAST(
-        E_RT4 AS DECIMAL(4, 0)
-      ) AS E_RT4,
+      CAST(F_CUR AS DECIMAL(4, 0)) AS F_CUR,
+      CAST(F_RT1 AS DECIMAL(4, 0)) AS F_RT1,
+      CAST(F_RT2 AS DECIMAL(4, 0)) AS F_RT2,
+      CAST(F_RT3 AS DECIMAL(4, 0)) AS F_RT3,
+      CAST(F_RT4 AS DECIMAL(4, 0)) AS F_RT4,
+      CAST(S_CUR AS DECIMAL(4, 0)) AS S_CUR,
+      CAST(S_RT1 AS DECIMAL(4, 0)) AS S_RT1,
+      CAST(S_RT2 AS DECIMAL(4, 0)) AS S_RT2,
+      CAST(S_RT3 AS DECIMAL(4, 0)) AS S_RT3,
+      CAST(S_RT4 AS DECIMAL(4, 0)) AS S_RT4,
+      CAST(W_CUR AS DECIMAL(4, 0)) AS W_CUR,
+      CAST(W_RT1 AS DECIMAL(4, 0)) AS W_RT1,
+      CAST(W_RT2 AS DECIMAL(4, 0)) AS W_RT2,
+      CAST(W_RT3 AS DECIMAL(4, 0)) AS W_RT3,
+      CAST(W_RT4 AS DECIMAL(4, 0)) AS W_RT4,
+      CAST(E_CUR AS DECIMAL(4, 0)) AS E_CUR,
+      CAST(E_RT1 AS DECIMAL(4, 0)) AS E_RT1,
+      CAST(E_RT2 AS DECIMAL(4, 0)) AS E_RT2,
+      CAST(E_RT3 AS DECIMAL(4, 0)) AS E_RT3,
+      CAST(E_RT4 AS DECIMAL(4, 0)) AS E_RT4,
       CTZ_CUR,
       CTZ_RT1,
       CTZ_RT2,
@@ -252,11 +191,7 @@ WITH
           gr.reporting_term,
           gr.is_curterm,
           gr.[value],
-          CONCAT(
-            gr.storecode_type,
-            '_',
-            gr.rt
-          ) AS pivot_field,
+          CONCAT(gr.storecode_type, '_', gr.rt) AS pivot_field,
           MAX(gr.schoolid) OVER (
             PARTITION BY
               gr.studentid,

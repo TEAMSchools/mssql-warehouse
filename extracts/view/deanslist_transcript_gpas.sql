@@ -5,17 +5,13 @@ SELECT
   academic_year,
   CAST(
     ROUND(
-      (
-        weighted_points / credit_hours
-      ),
+      (weighted_points / credit_hours),
       2
     ) AS DECIMAL(3, 2)
   ) AS [GPA_Y1_weighted],
   CAST(
     ROUND(
-      (
-        unweighted_points / credit_hours
-      ),
+      (unweighted_points / credit_hours),
       2
     ) AS DECIMAL(3, 2)
   ) AS [GPA_Y1_unweighted]
@@ -41,9 +37,7 @@ FROM
           (
             CAST(
               sg.potentialcrhrs AS DECIMAL(5, 2)
-            ) * CAST(
-              sg.gpa_points AS DECIMAL(3, 2)
-            )
+            ) * CAST(sg.gpa_points AS DECIMAL(3, 2))
           ) AS weighted_points,
           (
             CAST(

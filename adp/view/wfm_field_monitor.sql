@@ -52,14 +52,9 @@ WITH
           AND position_status != 'Terminated'
           AND (
             CAST(
-              COALESCE(
-                rehire_date,
-                hire_date
-              ) AS DATE
+              COALESCE(rehire_date, hire_date) AS DATE
             )
-          ) <= CAST(
-            CURRENT_TIMESTAMP AS DATE
-          )
+          ) <= CAST(CURRENT_TIMESTAMP AS DATE)
       ) AS sub
   )
 SELECT

@@ -3,10 +3,7 @@ WITH
     SELECT
       associate_oid,
       CAST(
-        JSON_VALUE(
-          worker_id,
-          '$.idValue'
-        ) AS NVARCHAR(16)
+        JSON_VALUE(worker_id, '$.idValue') AS NVARCHAR(16)
       ) AS worker_id,
       JSON_QUERY(
         custom_field_group,
@@ -39,10 +36,7 @@ WITH
     SELECT
       associate_oid,
       CAST(
-        JSON_VALUE(
-          worker_id,
-          '$.idValue'
-        ) AS NVARCHAR(16)
+        JSON_VALUE(worker_id, '$.idValue') AS NVARCHAR(16)
       ) AS worker_id,
       JSON_QUERY(
         custom_field_group,
@@ -77,21 +71,12 @@ WITH
       w.worker_id,
       'worker' AS parent_object,
       CAST(
-        JSON_VALUE(
-          cfg.[value],
-          '$.itemID'
-        ) AS NVARCHAR(128)
+        JSON_VALUE(cfg.[value], '$.itemID') AS NVARCHAR(128)
       ) AS item_id,
       CAST(
-        JSON_VALUE(
-          cfg.[value],
-          '$.stringValue'
-        ) AS NVARCHAR(128)
+        JSON_VALUE(cfg.[value], '$.stringValue') AS NVARCHAR(128)
       ) AS string_value,
-      JSON_QUERY(
-        cfg.[value],
-        '$.nameCode'
-      ) AS name_code
+      JSON_QUERY(cfg.[value], '$.nameCode') AS name_code
     FROM
       worker_custom_field_group AS w
       CROSS APPLY OPENJSON (w.string_fields, '$') AS cfg
@@ -103,21 +88,12 @@ WITH
       w.worker_id,
       'person' AS parent_object,
       CAST(
-        JSON_VALUE(
-          cfg.[value],
-          '$.itemID'
-        ) AS NVARCHAR(128)
+        JSON_VALUE(cfg.[value], '$.itemID') AS NVARCHAR(128)
       ) AS item_id,
       CAST(
-        JSON_VALUE(
-          cfg.[value],
-          '$.stringValue'
-        ) AS NVARCHAR(128)
+        JSON_VALUE(cfg.[value], '$.stringValue') AS NVARCHAR(128)
       ) AS string_value,
-      JSON_QUERY(
-        cfg.[value],
-        '$.nameCode'
-      ) AS name_code
+      JSON_QUERY(cfg.[value], '$.nameCode') AS name_code
     FROM
       worker_person_custom_field_group AS w
       CROSS APPLY OPENJSON (w.string_fields, '$') AS cfg
@@ -130,21 +106,12 @@ WITH
       w.worker_id,
       'worker' AS parent_object,
       CAST(
-        JSON_VALUE(
-          cfg.[value],
-          '$.itemID'
-        ) AS NVARCHAR(128)
+        JSON_VALUE(cfg.[value], '$.itemID') AS NVARCHAR(128)
       ) AS item_id,
       CAST(
-        JSON_VALUE(
-          cfg.[value],
-          '$.codeValue'
-        ) AS NVARCHAR(128)
+        JSON_VALUE(cfg.[value], '$.codeValue') AS NVARCHAR(128)
       ) AS code_value,
-      JSON_QUERY(
-        cfg.[value],
-        '$.nameCode'
-      ) AS name_code
+      JSON_QUERY(cfg.[value], '$.nameCode') AS name_code
     FROM
       worker_custom_field_group AS w
       CROSS APPLY OPENJSON (w.code_fields, '$') AS cfg
@@ -156,21 +123,12 @@ WITH
       w.worker_id,
       'person' AS parent_object,
       CAST(
-        JSON_VALUE(
-          cfg.[value],
-          '$.itemID'
-        ) AS NVARCHAR(128)
+        JSON_VALUE(cfg.[value], '$.itemID') AS NVARCHAR(128)
       ) AS item_id,
       CAST(
-        JSON_VALUE(
-          cfg.[value],
-          '$.codeValue'
-        ) AS NVARCHAR(128)
+        JSON_VALUE(cfg.[value], '$.codeValue') AS NVARCHAR(128)
       ) AS code_value,
-      JSON_QUERY(
-        cfg.[value],
-        '$.nameCode'
-      ) AS name_code
+      JSON_QUERY(cfg.[value], '$.nameCode') AS name_code
     FROM
       worker_person_custom_field_group AS w
       CROSS APPLY OPENJSON (w.code_fields, '$') AS cfg
@@ -183,21 +141,12 @@ WITH
       w.worker_id,
       'worker' AS parent_object,
       CAST(
-        JSON_VALUE(
-          cfg.[value],
-          '$.itemID'
-        ) AS NVARCHAR(128)
+        JSON_VALUE(cfg.[value], '$.itemID') AS NVARCHAR(128)
       ) AS item_id,
       CAST(
-        JSON_VALUE(
-          cfg.[value],
-          '$.dateValue'
-        ) AS DATE
+        JSON_VALUE(cfg.[value], '$.dateValue') AS DATE
       ) AS date_value,
-      JSON_QUERY(
-        cfg.[value],
-        '$.nameCode'
-      ) AS name_code
+      JSON_QUERY(cfg.[value], '$.nameCode') AS name_code
     FROM
       worker_custom_field_group AS w
       CROSS APPLY OPENJSON (w.date_fields, '$') AS cfg
@@ -209,21 +158,12 @@ WITH
       w.worker_id,
       'person' AS parent_object,
       CAST(
-        JSON_VALUE(
-          cfg.[value],
-          '$.itemID'
-        ) AS NVARCHAR(128)
+        JSON_VALUE(cfg.[value], '$.itemID') AS NVARCHAR(128)
       ) AS item_id,
       CAST(
-        JSON_VALUE(
-          cfg.[value],
-          '$.dateValue'
-        ) AS DATE
+        JSON_VALUE(cfg.[value], '$.dateValue') AS DATE
       ) AS date_value,
-      JSON_QUERY(
-        cfg.[value],
-        '$.nameCode'
-      ) AS name_code
+      JSON_QUERY(cfg.[value], '$.nameCode') AS name_code
     FROM
       worker_person_custom_field_group AS w
       CROSS APPLY OPENJSON (w.date_fields, '$') AS cfg
@@ -236,27 +176,15 @@ WITH
       w.worker_id,
       'worker' AS parent_object,
       CAST(
-        JSON_VALUE(
-          cfg.[value],
-          '$.itemID'
-        ) AS NVARCHAR(128)
+        JSON_VALUE(cfg.[value], '$.itemID') AS NVARCHAR(128)
       ) AS item_id,
       CAST(
-        JSON_VALUE(
-          cfg.[value],
-          '$.indicatorValue'
-        ) AS BIT
+        JSON_VALUE(cfg.[value], '$.indicatorValue') AS BIT
       ) AS indicator_value,
-      JSON_QUERY(
-        cfg.[value],
-        '$.nameCode'
-      ) AS name_code
+      JSON_QUERY(cfg.[value], '$.nameCode') AS name_code
     FROM
       worker_custom_field_group AS w
-      CROSS APPLY OPENJSON (
-        w.indicator_fields,
-        '$'
-      ) AS cfg
+      CROSS APPLY OPENJSON (w.indicator_fields, '$') AS cfg
     WHERE
       w.indicator_fields != '{}'
     UNION ALL
@@ -265,27 +193,15 @@ WITH
       w.worker_id,
       'person' AS parent_object,
       CAST(
-        JSON_VALUE(
-          cfg.[value],
-          '$.itemID'
-        ) AS NVARCHAR(128)
+        JSON_VALUE(cfg.[value], '$.itemID') AS NVARCHAR(128)
       ) AS item_id,
       CAST(
-        JSON_VALUE(
-          cfg.[value],
-          '$.indicatorValue'
-        ) AS BIT
+        JSON_VALUE(cfg.[value], '$.indicatorValue') AS BIT
       ) AS indicator_value,
-      JSON_QUERY(
-        cfg.[value],
-        '$.nameCode'
-      ) AS name_code
+      JSON_QUERY(cfg.[value], '$.nameCode') AS name_code
     FROM
       worker_person_custom_field_group AS w
-      CROSS APPLY OPENJSON (
-        w.indicator_fields,
-        '$'
-      ) AS cfg
+      CROSS APPLY OPENJSON (w.indicator_fields, '$') AS cfg
     WHERE
       w.indicator_fields != '{}'
   ),
@@ -295,21 +211,12 @@ WITH
       w.worker_id,
       'worker' AS parent_object,
       CAST(
-        JSON_VALUE(
-          cfg.[value],
-          '$.itemID'
-        ) AS NVARCHAR(128)
+        JSON_VALUE(cfg.[value], '$.itemID') AS NVARCHAR(128)
       ) AS item_id,
       CAST(
-        JSON_VALUE(
-          cfg.[value],
-          '$.numberValue'
-        ) AS NVARCHAR(128)
+        JSON_VALUE(cfg.[value], '$.numberValue') AS NVARCHAR(128)
       ) AS number_value,
-      JSON_QUERY(
-        cfg.[value],
-        '$.nameCode'
-      ) AS name_code
+      JSON_QUERY(cfg.[value], '$.nameCode') AS name_code
     FROM
       worker_custom_field_group AS w
       CROSS APPLY OPENJSON (w.number_fields, '$') AS cfg
@@ -321,21 +228,12 @@ WITH
       w.worker_id,
       'person' AS parent_object,
       CAST(
-        JSON_VALUE(
-          cfg.[value],
-          '$.itemID'
-        ) AS NVARCHAR(128)
+        JSON_VALUE(cfg.[value], '$.itemID') AS NVARCHAR(128)
       ) AS item_id,
       CAST(
-        JSON_VALUE(
-          cfg.[value],
-          '$.numberValue'
-        ) AS FLOAT
+        JSON_VALUE(cfg.[value], '$.numberValue') AS FLOAT
       ) AS number_value,
-      JSON_QUERY(
-        cfg.[value],
-        '$.nameCode'
-      ) AS name_code
+      JSON_QUERY(cfg.[value], '$.nameCode') AS name_code
     FROM
       worker_person_custom_field_group AS w
       CROSS APPLY OPENJSON (w.number_fields, '$') AS cfg
@@ -348,25 +246,13 @@ WITH
       w.worker_id,
       'worker' AS parent_object,
       CAST(
-        JSON_VALUE(
-          cfg.[value],
-          '$.itemID'
-        ) AS NVARCHAR(128)
+        JSON_VALUE(cfg.[value], '$.itemID') AS NVARCHAR(128)
       ) AS item_id,
-      JSON_QUERY(
-        cfg.[value],
-        '$.codes'
-      ) AS codes,
-      JSON_QUERY(
-        cfg.[value],
-        '$.nameCode'
-      ) AS name_code
+      JSON_QUERY(cfg.[value], '$.codes') AS codes,
+      JSON_QUERY(cfg.[value], '$.nameCode') AS name_code
     FROM
       worker_custom_field_group AS w
-      CROSS APPLY OPENJSON (
-        w.multi_code_fields,
-        '$'
-      ) AS cfg
+      CROSS APPLY OPENJSON (w.multi_code_fields, '$') AS cfg
     WHERE
       w.multi_code_fields != '{}'
     UNION ALL
@@ -375,25 +261,13 @@ WITH
       w.worker_id,
       'person' AS parent_object,
       CAST(
-        JSON_VALUE(
-          cfg.[value],
-          '$.itemID'
-        ) AS NVARCHAR(128)
+        JSON_VALUE(cfg.[value], '$.itemID') AS NVARCHAR(128)
       ) AS item_id,
-      JSON_QUERY(
-        cfg.[value],
-        '$.codes'
-      ) AS codes,
-      JSON_QUERY(
-        cfg.[value],
-        '$.nameCode'
-      ) AS name_code
+      JSON_QUERY(cfg.[value], '$.codes') AS codes,
+      JSON_QUERY(cfg.[value], '$.nameCode') AS name_code
     FROM
       worker_person_custom_field_group AS w
-      CROSS APPLY OPENJSON (
-        w.multi_code_fields,
-        '$'
-      ) AS cfg
+      CROSS APPLY OPENJSON (w.multi_code_fields, '$') AS cfg
     WHERE
       w.multi_code_fields != '{}'
   ),
@@ -404,40 +278,22 @@ WITH
       mcfc.parent_object,
       mcfc.item_id,
       CAST(
-        JSON_VALUE(
-          mcfc.name_code,
-          '$.codeValue'
-        ) AS NVARCHAR(128)
+        JSON_VALUE(mcfc.name_code, '$.codeValue') AS NVARCHAR(128)
       ) AS name_code_value,
       CAST(
-        JSON_VALUE(
-          mcfc.name_code,
-          '$.shortName'
-        ) AS NVARCHAR(128)
+        JSON_VALUE(mcfc.name_code, '$.shortName') AS NVARCHAR(128)
       ) AS name_code_short_name,
       CAST(
-        JSON_VALUE(
-          mcfc.name_code,
-          '$.longName'
-        ) AS NVARCHAR(128)
+        JSON_VALUE(mcfc.name_code, '$.longName') AS NVARCHAR(128)
       ) AS name_code_long_name,
       CAST(
-        JSON_VALUE(
-          cfg.[value],
-          '$.codeValue'
-        ) AS NVARCHAR(128)
+        JSON_VALUE(cfg.[value], '$.codeValue') AS NVARCHAR(128)
       ) AS code_value,
       CAST(
-        JSON_VALUE(
-          cfg.[value],
-          '$.shortName'
-        ) AS NVARCHAR(128)
+        JSON_VALUE(cfg.[value], '$.shortName') AS NVARCHAR(128)
       ) AS code_short_name,
       CAST(
-        JSON_VALUE(
-          cfg.[value],
-          '$.longName'
-        ) AS NVARCHAR(128)
+        JSON_VALUE(cfg.[value], '$.longName') AS NVARCHAR(128)
       ) AS code_long_name
     FROM
       multi_code_fields_codes AS mcfc
@@ -459,22 +315,13 @@ SELECT
     WHEN ISNUMERIC(string_value) = 1 THEN CAST(string_value AS FLOAT)
   END AS number_value,
   CAST(
-    JSON_VALUE(
-      name_code,
-      '$.codeValue'
-    ) AS NVARCHAR(128)
+    JSON_VALUE(name_code, '$.codeValue') AS NVARCHAR(128)
   ) AS name_code_value,
   CAST(
-    JSON_VALUE(
-      name_code,
-      '$.shortName'
-    ) AS NVARCHAR(128)
+    JSON_VALUE(name_code, '$.shortName') AS NVARCHAR(128)
   ) AS name_code_short_name,
   CAST(
-    JSON_VALUE(
-      name_code,
-      '$.longName'
-    ) AS NVARCHAR(128)
+    JSON_VALUE(name_code, '$.longName') AS NVARCHAR(128)
   ) AS name_code_long_name
 FROM
   string_fields
@@ -495,22 +342,13 @@ SELECT
     WHEN ISNUMERIC(code_value) = 1 THEN CAST(code_value AS FLOAT)
   END AS number_value,
   CAST(
-    JSON_VALUE(
-      name_code,
-      '$.codeValue'
-    ) AS NVARCHAR(128)
+    JSON_VALUE(name_code, '$.codeValue') AS NVARCHAR(128)
   ) AS name_code_value,
   CAST(
-    JSON_VALUE(
-      name_code,
-      '$.shortName'
-    ) AS NVARCHAR(128)
+    JSON_VALUE(name_code, '$.shortName') AS NVARCHAR(128)
   ) AS name_code_short_name,
   CAST(
-    JSON_VALUE(
-      name_code,
-      '$.longName'
-    ) AS NVARCHAR(128)
+    JSON_VALUE(name_code, '$.longName') AS NVARCHAR(128)
   ) AS name_code_long_name
 FROM
   code_fields
@@ -529,22 +367,13 @@ SELECT
   NULL AS indicator_value,
   NULL AS number_value,
   CAST(
-    JSON_VALUE(
-      name_code,
-      '$.codeValue'
-    ) AS NVARCHAR(128)
+    JSON_VALUE(name_code, '$.codeValue') AS NVARCHAR(128)
   ) AS name_code_value,
   CAST(
-    JSON_VALUE(
-      name_code,
-      '$.shortName'
-    ) AS NVARCHAR(128)
+    JSON_VALUE(name_code, '$.shortName') AS NVARCHAR(128)
   ) AS name_code_short_name,
   CAST(
-    JSON_VALUE(
-      name_code,
-      '$.longName'
-    ) AS NVARCHAR(128)
+    JSON_VALUE(name_code, '$.longName') AS NVARCHAR(128)
   ) AS name_code_long_name
 FROM
   date_fields
@@ -563,22 +392,13 @@ SELECT
   indicator_value,
   NULL AS number_value,
   CAST(
-    JSON_VALUE(
-      name_code,
-      '$.codeValue'
-    ) AS NVARCHAR(128)
+    JSON_VALUE(name_code, '$.codeValue') AS NVARCHAR(128)
   ) AS name_code_value,
   CAST(
-    JSON_VALUE(
-      name_code,
-      '$.shortName'
-    ) AS NVARCHAR(128)
+    JSON_VALUE(name_code, '$.shortName') AS NVARCHAR(128)
   ) AS name_code_short_name,
   CAST(
-    JSON_VALUE(
-      name_code,
-      '$.longName'
-    ) AS NVARCHAR(128)
+    JSON_VALUE(name_code, '$.longName') AS NVARCHAR(128)
   ) AS name_code_long_name
 FROM
   indicator_fields
@@ -597,22 +417,13 @@ SELECT
   NULL AS indicator_value,
   number_value,
   CAST(
-    JSON_VALUE(
-      name_code,
-      '$.codeValue'
-    ) AS NVARCHAR(128)
+    JSON_VALUE(name_code, '$.codeValue') AS NVARCHAR(128)
   ) AS name_code_value,
   CAST(
-    JSON_VALUE(
-      name_code,
-      '$.shortName'
-    ) AS NVARCHAR(128)
+    JSON_VALUE(name_code, '$.shortName') AS NVARCHAR(128)
   ) AS name_code_short_name,
   CAST(
-    JSON_VALUE(
-      name_code,
-      '$.longName'
-    ) AS NVARCHAR(128)
+    JSON_VALUE(name_code, '$.longName') AS NVARCHAR(128)
   ) AS name_code_long_name
 FROM
   number_fields

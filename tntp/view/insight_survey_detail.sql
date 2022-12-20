@@ -12,10 +12,7 @@ SELECT
   ird.[index],
   ird.variable,
   CAST(ird.value AS FLOAT) AS VALUE,
-  COALESCE(
-    ird.state_cmo,
-    ird.region
-  ) AS state_cmo,
+  COALESCE(ird.state_cmo, ird.region) AS state_cmo,
   CASE
     WHEN school = 'KIPP BOLD Academy' THEN 73258
     WHEN school = 'KIPP Lanning Square Middle School' THEN 179902
@@ -38,14 +35,8 @@ SELECT
   ivm.is_ici,
   CASE
     WHEN ird.value IS NULL THEN NULL
-    WHEN vals.label IN (
-      'Agree',
-      'Strongly Agree'
-    ) THEN 1.0
-    WHEN vals.label NOT IN (
-      'Agree',
-      'Strongly Agree'
-    ) THEN 0.0
+    WHEN vals.label IN ('Agree', 'Strongly Agree') THEN 1.0
+    WHEN vals.label NOT IN ('Agree', 'Strongly Agree') THEN 0.0
   END AS is_agree
 FROM
   gabby.tntp.insight_raw_data AS ird

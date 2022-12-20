@@ -129,10 +129,7 @@ FROM
         c.current_kipp_student_c,
         'Missing from Salesforce'
       ) AS current_kipp_student,
-      COALESCE(
-        c.kipp_hs_class_c,
-        co.cohort
-      ) AS ktc_cohort,
+      COALESCE(c.kipp_hs_class_c, co.cohort) AS ktc_cohort,
       (
         gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
       ) - DATEPART(
@@ -140,17 +137,11 @@ FROM
         c.actual_hs_graduation_date_c
       ) AS years_out_of_hs,
       (
-        COALESCE(
-          c.first_name,
-          co.first_name
-        )
+        COALESCE(c.first_name, co.first_name)
         COLLATE LATIN1_GENERAL_BIN
       ) AS first_name,
       (
-        COALESCE(
-          c.last_name,
-          co.last_name
-        )
+        COALESCE(c.last_name, co.last_name)
         COLLATE LATIN1_GENERAL_BIN
       ) AS last_name,
       (
@@ -161,10 +152,7 @@ FROM
         COLLATE LATIN1_GENERAL_BIN
       ) AS lastfirst,
       CASE
-        WHEN co.enroll_status = 0 THEN CONCAT(
-          co.school_level,
-          co.grade_level
-        )
+        WHEN co.enroll_status = 0 THEN CONCAT(co.school_level, co.grade_level)
         WHEN c.kipp_hs_graduate_c = 1 THEN 'HSG'
         WHEN co.school_level = 'HS'
         AND co.exitcode = 'G1' THEN 'HSG' /* identify HS grads before SF enr update */
@@ -177,20 +165,14 @@ FROM
     FROM
       gabby.powerschool.cohort_identifiers_static AS co
       LEFT JOIN gabby.alumni.contact AS c ON (
-        CAST(
-          co.student_number AS NVARCHAR(8)
-        ) = c.school_specific_id_c
+        CAST(co.student_number AS NVARCHAR(8)) = c.school_specific_id_c
         AND c.is_deleted = 0
       )
-      LEFT JOIN gabby.alumni.record_type AS rt ON (
-        c.record_type_id = rt.id
-      )
+      LEFT JOIN gabby.alumni.record_type AS rt ON (c.record_type_id = rt.id)
       LEFT JOIN gabby.alumni.[user] AS u ON (c.owner_id = u.id)
     WHERE
       co.rn_undergrad = 1
-      AND (
-        co.grade_level BETWEEN 8 AND 12
-      )
+      AND (co.grade_level BETWEEN 8 AND 12)
   ) AS sub
 WHERE
   sub.ktc_status IS NOT NULL

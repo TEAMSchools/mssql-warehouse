@@ -1,19 +1,13 @@
 CREATE OR ALTER VIEW
   extracts.clever_schools AS
 SELECT
-  CAST(
-    school_number AS VARCHAR(25)
-  ) AS [School_id],
+  CAST(school_number AS VARCHAR(25)) AS [School_id],
   [name] AS [School_name],
-  CAST(
-    school_number AS VARCHAR(25)
-  ) AS [School_number],
+  CAST(school_number AS VARCHAR(25)) AS [School_number],
   NULL AS [State_id],
   CASE
     WHEN low_grade = 0 THEN 'Kindergarten'
-    ELSE CAST(
-      low_grade AS VARCHAR(5)
-    )
+    ELSE CAST(low_grade AS VARCHAR(5))
   END AS [Low_grade],
   high_grade AS [High_grade],
   principal AS [Principal],

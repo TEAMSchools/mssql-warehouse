@@ -20,13 +20,9 @@ FROM
       sp.enter_date,
       sp.exit_date,
       CAST(sp.id AS INT) AS id,
-      CAST(
-        sp.exitcode AS VARCHAR(5)
-      ) AS exitcode,
+      CAST(sp.exitcode AS VARCHAR(5)) AS exitcode,
       CAST(sp.programid AS INT) AS programid,
-      CAST(
-        sp.sp_comment AS VARCHAR(125)
-      ) AS sp_comment,
+      CAST(sp.sp_comment AS VARCHAR(125)) AS sp_comment,
       CAST(sp.gradelevel AS INT) AS gradelevel,
       gabby.utilities.DATE_TO_SY (sp.enter_date) AS academic_year,
       gen.[name] AS specprog_name,

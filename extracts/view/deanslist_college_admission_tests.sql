@@ -4,10 +4,7 @@ SELECT
   ktc.student_number,
   st.test_type_c AS test_type,
   CONCAT(
-    LEFT(
-      DATENAME(MONTH, st.date_c),
-      3
-    ),
+    LEFT(DATENAME(MONTH, st.date_c), 3),
     ' ',
     DATENAME(YEAR, st.date_c)
   ) AS test_date,
@@ -34,10 +31,7 @@ SELECT
   ktc.student_number,
   st.test_type_c AS test_type,
   CONCAT(
-    LEFT(
-      DATENAME(MONTH, st.date_c),
-      3
-    ),
+    LEFT(DATENAME(MONTH, st.date_c), 3),
     ' ',
     DATENAME(YEAR, st.date_c)
   ) AS test_date,

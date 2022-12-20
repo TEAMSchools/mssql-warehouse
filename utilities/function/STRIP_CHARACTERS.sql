@@ -10,17 +10,11 @@ WITH
 SET
   @match_expression = '%[' + @match_expression + ']%';
 
-WHILE PATINDEX(
-  @match_expression,
-  @string
-) > 0
+WHILE PATINDEX(@match_expression, @string) > 0
 SET
   @string = STUFF(
     @string,
-    PATINDEX(
-      @match_expression,
-      @string
-    ),
+    PATINDEX(@match_expression, @string),
     1,
     ''
   );

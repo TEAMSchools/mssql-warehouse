@@ -5,11 +5,7 @@ SELECT
   c.family_ident,
   c.person_type,
   c.relationship_type AS person_relationship,
-  CONCAT(
-    c.firstname,
-    ' ',
-    c.lastname
-  ) AS person_name,
+  CONCAT(c.firstname, ' ', c.lastname) AS person_name,
   c.isemergency,
   c.schoolpickupflg,
   pc.contact_category,
@@ -35,7 +31,5 @@ FROM
       pc.contact_category IN ('Address', 'Email')
       AND pc.priority_order = 1
     )
-    OR (
-      pc.contact_category = 'Phone'
-    )
+    OR (pc.contact_category = 'Phone')
   )

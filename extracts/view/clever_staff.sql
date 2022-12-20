@@ -30,14 +30,8 @@ FROM
     AND ccw.is_pathways = 0
   )
 WHERE
-  df.[status] NOT IN (
-    'TERMINATED',
-    'PRESTART'
-  )
-  AND df.primary_on_site_department NOT IN (
-    'Data',
-    'Teaching and Learning'
-  )
+  df.[status] NOT IN ('TERMINATED', 'PRESTART')
+  AND df.primary_on_site_department NOT IN ('Data', 'Teaching and Learning')
   AND COALESCE(
     ccw.ps_school_id,
     df.primary_site_schoolid
@@ -45,9 +39,7 @@ WHERE
 UNION ALL
 /* T&L/EDs/Data to all schools under CMO */
 SELECT
-  CAST(
-    sch.school_number AS VARCHAR(25)
-  ) AS [School_id],
+  CAST(sch.school_number AS VARCHAR(25)) AS [School_id],
   df.ps_teachernumber AS [Staff_id],
   df.userprincipalname AS [Staff_email],
   df.preferred_first_name AS [First_name],
@@ -65,16 +57,10 @@ FROM
     sch.state_excludefromreporting = 0
   )
 WHERE
-  df.[status] NOT IN (
-    'TERMINATED',
-    'PRESTART'
-  )
+  df.[status] NOT IN ('TERMINATED', 'PRESTART')
   AND df.legal_entity_name = 'KIPP TEAM and Family Schools Inc.'
   AND (
-    df.primary_on_site_department IN (
-      'Data',
-      'Teaching and Learning'
-    )
+    df.primary_on_site_department IN ('Data', 'Teaching and Learning')
     OR df.primary_job IN (
       'Executive Director',
       'Managing Director'
@@ -83,9 +69,7 @@ WHERE
 UNION ALL
 /* All region */
 SELECT
-  CAST(
-    sch.school_number AS VARCHAR(25)
-  ) AS [School_id],
+  CAST(sch.school_number AS VARCHAR(25)) AS [School_id],
   df.ps_teachernumber AS [Staff_id],
   df.userprincipalname AS [Staff_email],
   df.preferred_first_name AS [First_name],
@@ -104,10 +88,7 @@ FROM
     AND sch.state_excludefromreporting = 0
   )
 WHERE
-  df.[status] NOT IN (
-    'TERMINATED',
-    'PRESTART'
-  )
+  df.[status] NOT IN ('TERMINATED', 'PRESTART')
   AND (
     df.primary_job IN (
       'Assistant Superintendent',
@@ -121,9 +102,7 @@ WHERE
 UNION ALL
 /* All NJ */
 SELECT
-  CAST(
-    sch.school_number AS VARCHAR(25)
-  ) AS [School_id],
+  CAST(sch.school_number AS VARCHAR(25)) AS [School_id],
   df.ps_teachernumber AS [Staff_id],
   df.userprincipalname AS [Staff_email],
   df.preferred_first_name AS [First_name],
@@ -139,10 +118,7 @@ FROM
   gabby.adsi.group_membership AS adg
   INNER JOIN gabby.people.staff_crosswalk_static AS df ON (
     adg.employee_number = df.df_employee_number
-    AND df.[status] NOT IN (
-      'TERMINATED',
-      'PRESTART'
-    )
+    AND df.[status] NOT IN ('TERMINATED', 'PRESTART')
   )
   INNER JOIN gabby.powerschool.schools AS sch ON (
     sch.schoolstate = 'NJ'
