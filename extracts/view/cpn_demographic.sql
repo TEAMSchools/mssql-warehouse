@@ -17,6 +17,10 @@ SELECT
   co.city AS [City],
   co.[state] AS [State],
   co.zip AS [Zip],
+  co.team AS [Homeroom],
+  co.entrydate AS [Most-Recent Entry Date],
+  co.exitdate AS [Most-Recent Exit Date],
+  co.academic_year AS [School Year],
   CASE
     WHEN scf.homeless_code IS NOT NULL THEN 'Y'
     ELSE 'N'
@@ -32,14 +36,10 @@ SELECT
   CASE
     WHEN co.lunchstatus = 'P' THEN 'N'
     ELSE 'Y'
-  END AS [Low Income],
-  co.team AS [Homeroom],
-  co.entrydate AS [Most-Recent Entry Date],
-  co.exitdate AS [Most-Recent Exit Date],
-  co.academic_year AS [School Year]
+  END AS [Low Income]
 FROM
   kippcamden.powerschool.cohort_identifiers_static AS co
-  LEFT JOIN kippcamden.powerschool.studentcorefields AS scf ON co.students_dcid = scf.studentsdcid
+  LEFT JOIN kippcamden.powerschool.studentcorefields AS scf ON co.students_dcid = scf.studentsdcid /* trunk-ignore(sqlfluff/L016) */
   LEFT JOIN kippcamden.powerschool.students AS s ON co.studentid = s.id
 WHERE
   co.rn_year = 1

@@ -161,13 +161,13 @@ WITH
           ) AS academic_year_exitdate
         FROM
           roster AS r
-          INNER JOIN years AS y ON y.academic_year (
-            BETWEEN r.start_academic_year AND r.end_academic_year
+          INNER JOIN years AS y ON (
+            y.academic_year BETWEEN r.start_academic_year AND r.end_academic_year
           )
       ) AS sub
       LEFT JOIN gabby.people.employment_history_static AS w ON sub.position_id = w.position_id
-      AND sub.effective_date (
-        BETWEEN w.effective_start_date AND w.effective_end_date
+      AND (
+        sub.effective_date BETWEEN w.effective_start_date AND w.effective_end_date
       )
       LEFT JOIN gabby.people.school_crosswalk AS scw ON w.[location] = scw.site_name
       AND scw._fivetran_deleted = 0

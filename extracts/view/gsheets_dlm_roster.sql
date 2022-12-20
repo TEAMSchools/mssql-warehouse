@@ -16,7 +16,7 @@ WITH
       nj.math_state_assessment_name
     FROM
       gabby.powerschool.cohort_identifiers_static AS co
-      INNER JOIN gabby.powerschool.s_nj_stu_x AS nj ON co.students_dcid = nj.studentsdcid
+      INNER JOIN gabby.powerschool.s_nj_stu_x AS nj ON co.students_dcid = nj.studentsdcid /* trunk-ignore(sqlfluff/L016) */
       AND co.[db_name] = nj.[db_name]
       AND (
         nj.state_assessment_name IN (3, 4)
@@ -63,7 +63,7 @@ SELECT
   NULL AS [Remove from Roster]
 FROM
   roster AS r
-  INNER JOIN gabby.powerschool.course_enrollments_current_static AS ce ON r.student_number = ce.student_number
+  INNER JOIN gabby.powerschool.course_enrollments_current_static AS ce ON r.student_number = ce.student_number /* trunk-ignore(sqlfluff/L016) */
   AND r.academic_year = ce.academic_year
   AND ce.course_enroll_status = 0
   AND ce.section_enroll_status = 0
@@ -99,12 +99,12 @@ SELECT
   ) AS [Educator First Name],
   LEFT(
     ce.teacher_name,
-    CHARINDEX(',', ce.teacher_name) -1
+    CHARINDEX(',', ce.teacher_name) - 1
   ) AS [Educator Last Name],
   NULL AS [Remove from Roster]
 FROM
   roster AS r
-  INNER JOIN powerschool.course_enrollments_current_static AS ce ON r.student_number = ce.student_number
+  INNER JOIN powerschool.course_enrollments_current_static AS ce ON r.student_number = ce.student_number /* trunk-ignore(sqlfluff/L016) */
   AND r.academic_year = ce.academic_year
   AND ce.course_enroll_status = 0
   AND ce.section_enroll_status = 0

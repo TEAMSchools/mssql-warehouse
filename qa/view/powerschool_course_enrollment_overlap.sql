@@ -52,13 +52,15 @@ WHERE
     cc.[db_name]
   ) IN (
     SELECT
-      CONCAT(
-        studentid,
-        studyear,
-        course_number,
-        [db_name]
+      (
+        CONCAT(
+          studentid,
+          studyear,
+          course_number,
+          [db_name]
+        )
+        COLLATE LATIN1_GENERAL_BIN
       )
-    COLLATE Latin1_General_BIN
     FROM
       cc_lag
     WHERE

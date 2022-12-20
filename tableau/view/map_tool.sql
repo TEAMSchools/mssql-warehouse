@@ -102,19 +102,27 @@ FROM
   LEFT JOIN map_long ON r.student_number = map_long.student_number
   AND r.academic_year = map_long.academic_year
   LEFT JOIN gabby.nwea.percentile_norms_dense AS pct50 ON r.grade_level = pct50.grade_level
-  AND map_long.term = pct50.term
-COLLATE Latin1_General_BIN
-AND map_long.measurementscale = pct50.measurementscale
-COLLATE Latin1_General_BIN
-AND pct50.testpercentile = 50
-LEFT JOIN gabby.nwea.percentile_norms_dense AS pct75 ON r.grade_level = pct75.grade_level
-AND map_long.term = pct75.term
-COLLATE Latin1_General_BIN
-AND map_long.measurementscale = pct75.measurementscale
-COLLATE Latin1_General_BIN
-AND pct75.testpercentile = 75
-LEFT JOIN gabby.nwea.learning_continuum_goals AS DOMAIN ON r.student_number = DOMAIN.student_number
-AND map_long.test_id = DOMAIN.test_id
+  AND (
+    map_long.term = pct50.term
+    COLLATE LATIN1_GENERAL_BIN
+  )
+  AND (
+    map_long.measurementscale = pct50.measurementscale
+    COLLATE LATIN1_GENERAL_BIN
+  )
+  AND pct50.testpercentile = 50
+  LEFT JOIN gabby.nwea.percentile_norms_dense AS pct75 ON r.grade_level = pct75.grade_level
+  AND (
+    map_long.term = pct75.term
+    COLLATE LATIN1_GENERAL_BIN
+  )
+  AND (
+    map_long.measurementscale = pct75.measurementscale
+    COLLATE LATIN1_GENERAL_BIN
+  )
+  AND pct75.testpercentile = 75
+  LEFT JOIN gabby.nwea.learning_continuum_goals AS DOMAIN ON r.student_number = DOMAIN.student_number
+  AND map_long.test_id = DOMAIN.test_id
 WHERE
   r.rn_year = 1
   AND r.academic_year >= 2008 /* first year of MAP data */

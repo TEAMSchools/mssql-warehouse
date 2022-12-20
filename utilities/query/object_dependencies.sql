@@ -1,20 +1,22 @@
 SELECT
+  (
+    CONCAT(
+      atc.[db_name],
+      '.',
+      atc.[schema_name],
+      '.',
+      atc.table_name
+    )
+    COLLATE LATIN1_GENERAL_BIN
+  ) AS source_object,
+  atc.[type],
   CONCAT(
-    atc.[db_name],
+    DB_NAME(),
     '.',
-    atc.[schema_name],
+    sre.referencing_schema_name,
     '.',
-    atc.table_name
-  )
-COLLATE latin1_general_bin AS source_object,
-atc.[type],
-CONCAT(
-  DB_NAME(),
-  '.',
-  sre.referencing_schema_name,
-  '.',
-  sre.referencing_entity_name
-) AS referencing_object
+    sre.referencing_entity_name
+  ) AS referencing_object
 FROM
   gabby.utilities.all_tables_columns AS atc
   CROSS APPLY [sys].[dm_sql_referencing_entities] (

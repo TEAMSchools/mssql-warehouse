@@ -35,7 +35,7 @@ SELECT
     WHEN df.primary_site_schoolid = 30200802 THEN '/Students/Miami/Liberty Academy'
     WHEN df.primary_site_schoolid = 30200803 THEN '/Students/Miami/Courage'
     WHEN df.primary_site_schoolid = 30200804 THEN '/Students/Miami/Royalty Academy'
-  END AS OU
+  END AS [OU]
 FROM
   gabby.people.staff_crosswalk_static AS df
 WHERE

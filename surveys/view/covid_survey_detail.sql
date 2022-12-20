@@ -108,8 +108,8 @@ SELECT
 FROM
   gabby.surveygizmo.survey_detail AS d
   LEFT JOIN gabby.dayforce.employee_work_assignment AS w ON d.respondent_df_employee_number = w.employee_reference_code
-  AND d.date_submitted (
-    BETWEEN w.work_assignment_effective_start AND COALESCE(
+  AND (
+    d.date_submitted BETWEEN w.work_assignment_effective_start AND COALESCE(
       w.work_assignment_effective_end,
       DATEFROMPARTS((d.campaign_academic_year + 1), 6, 30)
     )

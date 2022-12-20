@@ -12,9 +12,8 @@ WITH
       percent_correct,
       performance_band_number,
       performance_band_set_id,
-      performance_band_label
+      performance_band_label,
       /* if a student takes a replacement assessment, it will be preferred */
-,
       ROW_NUMBER() OVER (
         PARTITION BY
           local_student_id,
@@ -92,9 +91,9 @@ FROM
           al.subject_area,
           al.module_type
       ) AS sub
-      INNER JOIN gabby.illuminate_dna_assessments.performance_band_lookup_static AS pbl ON sub.min_performance_band_set_id = pbl.performance_band_set_id
-      AND sub.avg_percent_correct (
-        BETWEEN pbl.minimum_value AND pbl.maximum_value
+      INNER JOIN gabby.illuminate_dna_assessments.performance_band_lookup_static AS pbl ON sub.min_performance_band_set_id = pbl.performance_band_set_id /* trunk-ignore(sqlfluff/L016) */
+      AND (
+        sub.avg_percent_correct BETWEEN pbl.minimum_value AND pbl.maximum_value
       )
   ) AS sub
 UNION ALL
@@ -124,7 +123,7 @@ FROM
       MIN(a.performance_band_set_id) AS performance_band_set_id
     FROM
       gabby.illuminate_dna_assessments.assessments_identifiers_static AS a
-      INNER JOIN gabby.illuminate_dna_assessments.agg_student_responses AS asr ON a.assessment_id = asr.assessment_id
+      INNER JOIN gabby.illuminate_dna_assessments.agg_student_responses AS asr ON a.assessment_id = asr.assessment_id /* trunk-ignore(sqlfluff/L016) */
       INNER JOIN gabby.illuminate_public.students AS s ON asr.student_id = s.student_id
     WHERE
       a.scope = 'Unit Assessment'
@@ -137,7 +136,7 @@ FROM
       a.subject_area,
       a.term_administered
   ) AS sub
-  INNER JOIN gabby.illuminate_dna_assessments.performance_band_lookup_static AS pbl ON sub.performance_band_set_id = pbl.performance_band_set_id
-  AND sub.avg_pct_correct (
-    BETWEEN pbl.minimum_value AND pbl.maximum_value
+  INNER JOIN gabby.illuminate_dna_assessments.performance_band_lookup_static AS pbl ON sub.performance_band_set_id = pbl.performance_band_set_id /* trunk-ignore(sqlfluff/L016) */
+  AND (
+    sub.avg_pct_correct BETWEEN pbl.minimum_value AND pbl.maximum_value
   )

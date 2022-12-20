@@ -185,8 +185,8 @@ SELECT
   source_system,
   MIN(
     CASE
-      WHEN CAST(CURRENT_TIMESTAMP AS DATE) (
-        BETWEEN status_effective_date AND status_effective_end_date_eoy
+      WHEN (
+        CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN status_effective_date AND status_effective_end_date_eoy
       ) THEN position_status
     END
   ) OVER (

@@ -9,13 +9,12 @@ WITH
       survey_round_open,
       survey_round_close,
       survey_completion_date,
-      survey_id
+      survey_id,
       /*
       Ordering surveys by term (most recent campaign) and
       staff updates by completion date to filter out
       complete staff updates from prior campaigns
        */
-,
       CASE
         WHEN survey_id != '6330385' THEN ROW_NUMBER() OVER (
           PARTITION BY
@@ -31,13 +30,14 @@ WITH
         )
       END AS rn_null
     FROM
-      gabby.surveys.survey_tracking AS t
+      gabby.surveys.survey_tracking
     WHERE
       survey_id = '6330385'
       OR (
         survey_completion_date IS NULL
-        AND CAST(CURRENT_TIMESTAMP AS DATE) (
-          BETWEEN survey_round_open AND survey_round_close
+        AND (
+          /* trunk-ignore(sqlfluff/L016) */
+          CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN survey_round_open AND survey_round_close
         )
       )
   )
@@ -58,7 +58,7 @@ SELECT
   CURRENT_TIMESTAMP AS date_of_extract
 FROM
   incomplete_surveys AS i
-  INNER JOIN gabby.people.staff_crosswalk_static AS c ON i.survey_taker_id = c.df_employee_number
+  INNER JOIN gabby.people.staff_crosswalk_static AS c ON i.survey_taker_id = c.df_employee_number /* trunk-ignore(sqlfluff/L016) */
 WHERE
-  rn_null = 1
-  AND survey_completion_date IS NULL
+  i.rn_null = 1
+  AND i.survey_completion_date IS NULL

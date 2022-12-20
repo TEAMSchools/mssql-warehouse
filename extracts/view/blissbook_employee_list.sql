@@ -3,13 +3,13 @@ CREATE OR ALTER VIEW
 SELECT
   df.df_employee_number AS [Employee ID],
   df.mail AS [Email Address],
+  df.legal_entity_name AS [Groups],
   CONCAT(
     df.preferred_first_name,
     ' ',
     df.preferred_last_name
   ) AS [Name],
-  COALESCE(df.rehire_date, df.original_hire_date) AS [Latest Hire Date],
-  df.legal_entity_name AS [Groups]
+  COALESCE(df.rehire_date, df.original_hire_date) AS [Latest Hire Date]
 FROM
   gabby.people.staff_crosswalk_static AS df
 WHERE

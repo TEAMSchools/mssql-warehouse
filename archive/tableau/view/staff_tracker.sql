@@ -209,8 +209,8 @@ FROM
     cal.insession = 1
     OR cal.[type] = 'PD'
   )
-  AND cal.date_value (
-    BETWEEN DATEFROMPARTS(
+  AND (
+    cal.date_value BETWEEN DATEFROMPARTS(
       gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1,
       7,
       1
@@ -223,21 +223,21 @@ FROM
   AND dt.identifier = 'RT'
   AND dt._fivetran_deleted = 0
   INNER JOIN gabby.people.employment_history AS was ON df.df_employee_number = was.employee_number
-  AND cal.date_value (
-    BETWEEN was.effective_start_date AND was.effective_end_date
+  AND (
+    cal.date_value BETWEEN was.effective_start_date AND was.effective_end_date
   )
   LEFT JOIN emp_att AS pt ON df.df_employee_number = pt.employee_number
   AND cal.date_value = pt.pay_date
   LEFT JOIN tafw AS t ON df.df_employee_number = t.df_employee_number
-  AND cal.date_value (
-    BETWEEN t.tafw_start_date AND t.tafw_end_date
+  AND (
+    cal.date_value BETWEEN t.tafw_start_date AND t.tafw_end_date
   )
   LEFT JOIN gabby.people.staff_attendance_clean_static AS a ON df.df_employee_number = a.df_number
   AND cal.date_value = a.attendance_date
   AND a.rn_curr = 1
   LEFT JOIN leave AS l ON df.df_employee_number = l.df_employee_number
-  AND cal.date_value (
-    BETWEEN l.effective_start AND l.effective_end
+  AND (
+    cal.date_value BETWEEN l.effective_start AND l.effective_end
   )
 WHERE
   COALESCE(df.termination_date, CURRENT_TIMESTAMP) >= DATEFROMPARTS(

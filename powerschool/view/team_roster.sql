@@ -13,21 +13,23 @@ FROM
       enr.student_number,
       enr.academic_year,
       enr.schoolid,
-      CASE
-        WHEN gabby.utilities.STRIP_CHARACTERS (enr.section_number, '0-9') = '' THEN enr.teacher_name
-        ELSE gabby.utilities.STRIP_CHARACTERS (enr.section_number, '0-9')
-      END
-    COLLATE Latin1_General_BIN AS team,
-    ROW_NUMBER() OVER (
-      PARTITION BY
-        enr.student_number,
-        enr.academic_year,
-        enr.schoolid
-      ORDER BY
-        enr.section_enroll_status ASC,
-        enr.dateleft DESC,
-        enr.dateenrolled DESC
-    ) AS rn_year
+      (
+        CASE
+          WHEN gabby.utilities.STRIP_CHARACTERS (enr.section_number, '0-9') = '' THEN enr.teacher_name
+          ELSE gabby.utilities.STRIP_CHARACTERS (enr.section_number, '0-9')
+        END
+        COLLATE LATIN1_GENERAL_BIN
+      ) AS team,
+      ROW_NUMBER() OVER (
+        PARTITION BY
+          enr.student_number,
+          enr.academic_year,
+          enr.schoolid
+        ORDER BY
+          enr.section_enroll_status ASC,
+          enr.dateleft DESC,
+          enr.dateenrolled DESC
+      ) AS rn_year
     FROM
       powerschool.course_enrollments AS enr
     WHERE

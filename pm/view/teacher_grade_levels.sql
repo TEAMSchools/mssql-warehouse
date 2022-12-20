@@ -93,6 +93,8 @@ SELECT
   ) AS employee_number
 FROM
   percentages AS p
-  LEFT JOIN gabby.people.id_crosswalk_powerschool AS idps ON p.teachernumber = idps.ps_teachernumber
-COLLATE LATIN1_GENERAL_BIN
-AND idps.is_master = 1
+  LEFT JOIN gabby.people.id_crosswalk_powerschool AS idps ON (
+    p.teachernumber = idps.ps_teachernumber
+    COLLATE LATIN1_GENERAL_BIN
+  )
+  AND idps.is_master = 1

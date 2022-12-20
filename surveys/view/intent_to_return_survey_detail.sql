@@ -37,8 +37,8 @@ SELECT
 FROM
   gabby.surveygizmo.survey_detail AS d
   LEFT JOIN gabby.people.work_assignment_history_static AS w ON d.respondent_df_employee_number = w.employee_number
-  AND d.date_submitted (
-    BETWEEN w.position_effective_date AND w.position_effective_end_date_eoy
+  AND (
+    d.date_submitted BETWEEN w.position_effective_date AND w.position_effective_end_date_eoy
   )
   LEFT JOIN gabby.people.staff_crosswalk_static AS s ON d.respondent_df_employee_number = s.df_employee_number
 WHERE

@@ -27,7 +27,6 @@ SELECT
     WHEN specialed_classification = 'MD' THEN '310'
     WHEN specialed_classification IN ('AI', 'AUT') THEN '320'
     WHEN specialed_classification = 'TBI' THEN '330'
-    ELSE NULL
   END AS [16 Primary Disability],
   NULL AS [17 Migrant Ed Student ID],
   NULL AS [18 Lep Date],

@@ -39,8 +39,10 @@ FROM
       ) AS rn_year
     FROM
       powerschool.course_enrollments AS enr
-      LEFT JOIN gabby.people.staff_crosswalk_static AS scw ON enr.teachernumber = scw.ps_teachernumber
-    COLLATE Latin1_General_BIN
+      LEFT JOIN gabby.people.staff_crosswalk_static AS scw ON (
+        enr.teachernumber = scw.ps_teachernumber
+        COLLATE LATIN1_GENERAL_BIN
+      )
     WHERE
       enr.course_number = 'HR'
   ) AS sub

@@ -42,8 +42,8 @@ FROM
   LEFT JOIN gabby.powerschool.gradebook_assignments_current_static AS a ON gb.sectionsdcid = a.sectionsdcid
   AND gb.assignmentcategoryid = a.categoryid
   AND gb.[db_name] = a.[db_name]
-  AND a.assign_date (
-    BETWEEN gb.term_start_date AND gb.term_end_date
+  AND (
+    a.assign_date BETWEEN gb.term_start_date AND gb.term_end_date
   )
 WHERE
   gb.term_start_date >= DATEFROMPARTS(

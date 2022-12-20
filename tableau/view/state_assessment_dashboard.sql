@@ -125,44 +125,50 @@ SELECT
   co.ethnicity,
   co.gender,
   'PARCC' AS test_type,
-  parcc.test_code
-COLLATE SQL_Latin1_General_CP1_CI_AS AS test_code,
-parcc.[subject]
-COLLATE SQL_Latin1_General_CP1_CI_AS AS [subject],
-parcc.test_scale_score,
-parcc.test_performance_level,
-parcc.test_reading_csem AS test_standard_error,
-parcc.staff_member_identifier,
-CASE
-  WHEN parcc.[subject] = 'Science'
-  AND parcc.test_performance_level >= 3 THEN 1
-  WHEN parcc.[subject] = 'Science'
-  AND parcc.test_performance_level < 3 THEN 0
-  WHEN parcc.test_performance_level >= 4 THEN 1
-  WHEN parcc.test_performance_level < 4 THEN 0
-END AS is_proficient,
-CASE
-  WHEN parcc.student_with_disabilities IN ('IEP', 'Y', 'B') THEN 'SPED'
-  ELSE 'No IEP'
-END AS iep_status,
-ext.nj AS pct_prof_nj,
-ext.nps AS pct_prof_nps,
-ext.cps AS pct_prof_cps,
-NULL AS pct_prof_parcc,
-promo.attended_es,
-promo.attended_ms,
-ms.ms_attended,
-pu.lastfirst AS teacher_lastfirst
+  (
+    parcc.test_code
+    COLLATE LATIN1_GENERAL_BIN
+  ) AS test_code,
+  (
+    parcc.[subject]
+    COLLATE LATIN1_GENERAL_BIN
+  ) AS [subject],
+  parcc.test_scale_score,
+  parcc.test_performance_level,
+  parcc.test_reading_csem AS test_standard_error,
+  parcc.staff_member_identifier,
+  CASE
+    WHEN parcc.[subject] = 'Science'
+    AND parcc.test_performance_level >= 3 THEN 1
+    WHEN parcc.[subject] = 'Science'
+    AND parcc.test_performance_level < 3 THEN 0
+    WHEN parcc.test_performance_level >= 4 THEN 1
+    WHEN parcc.test_performance_level < 4 THEN 0
+  END AS is_proficient,
+  CASE
+    WHEN parcc.student_with_disabilities IN ('IEP', 'Y', 'B') THEN 'SPED'
+    ELSE 'No IEP'
+  END AS iep_status,
+  ext.nj AS pct_prof_nj,
+  ext.nps AS pct_prof_nps,
+  ext.cps AS pct_prof_cps,
+  NULL AS pct_prof_parcc,
+  promo.attended_es,
+  promo.attended_ms,
+  ms.ms_attended,
+  pu.lastfirst AS teacher_lastfirst
 FROM
   gabby.powerschool.cohort_identifiers_static AS co
   INNER JOIN gabby.parcc.summative_record_file_clean AS parcc ON co.student_number = parcc.local_student_identifier
   AND co.academic_year = parcc.academic_year
   LEFT JOIN external_prof AS ext ON co.academic_year = ext.academic_year
-  AND parcc.test_code = ext.test_code
-COLLATE Latin1_General_BIN
-LEFT JOIN promo ON co.student_number = promo.student_number
-LEFT JOIN ms_grad AS ms ON co.student_number = ms.student_number
-LEFT JOIN ps_users AS pu ON parcc.staff_member_identifier = pu.sif_stateprid
+  AND (
+    parcc.test_code = ext.test_code
+    COLLATE LATIN1_GENERAL_BIN
+  )
+  LEFT JOIN promo ON co.student_number = promo.student_number
+  LEFT JOIN ms_grad AS ms ON co.student_number = ms.student_number
+  LEFT JOIN ps_users AS pu ON parcc.staff_member_identifier = pu.sif_stateprid
 WHERE
   co.rn_year = 1
 UNION ALL

@@ -19,9 +19,9 @@ SELECT
   s.userprincipalname AS user_email,
   s.primary_site,
   s.legal_entity_name,
-  s.manager_df_employee_number
   /*default TNTP assignments based on title/location*/
-,
+  s.manager_df_employee_number,
+  /* default Engagement & Support Survey assignments based on title/location */
   CASE
     WHEN s.primary_site IN (
       'Room 9 - 60 Park Pl',
@@ -36,11 +36,9 @@ SELECT
       'Teacher, ESL',
       'Teacher ESL'
     ) THEN 'Teacher'
-    WHEN s.primary_on_site_department = 'School Leadership' THEN 'School Leadership Team'
+    WHEN s.primary_on_site_department = 'School Leadership' THEN 'School Leadership Team' /* trunk-ignore(sqlfluff/L016) */
     ELSE 'Non-teaching school based staff'
-  END AS tntp_assignment
-  /*default Engagement & Support Survey assignments based on title/location*/
-,
+  END AS tntp_assignment,
   CASE
     WHEN s.primary_job = 'Head of Schools' THEN 'Head of Schools'
     WHEN s.primary_job = 'Assistant Superintendent' THEN 'Head of Schools'
@@ -80,9 +78,8 @@ SELECT
     )
     ELSE s.primary_on_site_department
   END AS department_grade,
-  s.manager_name
-  /*default School Based assignments based on legal entity/location*/
-,
+  /* default School Based assignments based on legal entity/location */
+  s.manager_name,
   CASE
     WHEN s.legal_entity_name != 'KIPP TEAM and Family Schools Inc.'
     AND s.primary_site NOT IN (

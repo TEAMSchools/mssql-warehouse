@@ -68,14 +68,18 @@ WITH
   ),
   current_unpivot AS (
     SELECT
-      school
-    COLLATE Latin1_General_BIN AS school,
-    academic_year,
-    reporting_term
-    COLLATE Latin1_General_BIN AS reporting_term,
-    am_pm,
-    CAST(rubric_strand_field AS VARCHAR(250)) AS rubric_strand_field,
-    pct_of_classrooms_proficient
+      (
+        school
+        COLLATE Latin1_General_BIN
+      ) AS school,
+      academic_year,
+      (
+        reporting_term
+        COLLATE Latin1_General_BIN
+      ) AS reporting_term,
+      am_pm,
+      CAST(rubric_strand_field AS VARCHAR(250)) AS rubric_strand_field,
+      pct_of_classrooms_proficient
     FROM
       gabby.ekg.walkthrough_scores UNPIVOT (
         pct_of_classrooms_proficient FOR rubric_strand_field IN (

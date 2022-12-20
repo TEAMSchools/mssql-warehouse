@@ -23,12 +23,11 @@ SELECT
     WHEN c.call_type = 'SMS' THEN 'Text'
     WHEN c.call_type = 'E' THEN 'Email'
     WHEN c.call_type = 'L' THEN 'Mail (Letter/Postcard)'
-    ELSE NULL
   END AS [Type],
   NULL AS [Category],
   NULL AS [Current Category Ranking]
 FROM
   gabby.alumni.ktc_roster AS ktc
   INNER JOIN gabby.powerschool.students AS s ON ktc.student_number = s.student_number
-  INNER JOIN gabby.deanslist.communication AS c ON c.student_school_id = ktc.student_number
+  INNER JOIN gabby.deanslist.communication AS c ON c.student_school_id = ktc.student_number /* trunk-ignore(sqlfluff/L016) */
   AND c.reason LIKE 'KF:%'

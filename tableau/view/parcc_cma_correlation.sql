@@ -16,10 +16,12 @@ SELECT
   asr.module_type,
   asr.percent_correct,
   asr.performance_band_number,
-  parcc.test_code
-COLLATE SQL_Latin1_General_CP1_CI_AS AS parcc_test_code,
-parcc.test_scale_score AS parcc_test_scale_score,
-parcc.test_performance_level AS parcc_test_performance_level
+  (
+    parcc.test_code
+    COLLATE LATIN1_GENERAL_BIN
+  ) AS parcc_test_code,
+  parcc.test_scale_score AS parcc_test_scale_score,
+  parcc.test_performance_level AS parcc_test_performance_level
 FROM
   gabby.powerschool.cohort_identifiers_static AS co
   INNER JOIN gabby.illuminate_dna_assessments.agg_student_responses_all AS asr ON co.student_number = asr.local_student_id

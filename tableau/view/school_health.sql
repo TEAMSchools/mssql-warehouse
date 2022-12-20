@@ -33,9 +33,11 @@ WITH
         WHEN gm.progress_stretch >= 1 THEN 1
         ELSE 0
       END AS is_str_growth,
-      LOWER(LEFT(gm.[subject], 4))
-    COLLATE Latin1_General_BIN AS iready_subject,
-    'ALL' AS grade_band
+      (
+        LOWER(LEFT(gm.[subject], 4))
+        COLLATE LATIN1_GENERAL_BIN
+      ) AS iready_subject,
+      'ALL' AS grade_band
     FROM
       gabby.powerschool.cohort_identifiers_static AS co
       INNER JOIN gabby.iready.growth_metrics AS gm ON co.student_number = gm.student_number
@@ -787,8 +789,8 @@ FROM
     FROM
       gabby.pm.teacher_goals_lockbox_wide AS lb
       INNER JOIN gabby.people.employment_history_static AS eh ON lb.df_employee_number = eh.employee_number
-      AND DATEFROMPARTS(lb.academic_year + 1, 4, 30) (
-        BETWEEN eh.effective_start_date AND eh.effective_end_date
+      AND (
+        DATEFROMPARTS(lb.academic_year + 1, 4, 30) BETWEEN eh.effective_start_date AND eh.effective_end_date
       )
       AND eh.primary_position = 'Yes'
       INNER JOIN gabby.people.school_crosswalk AS cw ON eh.[location] = cw.site_name
@@ -920,26 +922,28 @@ FROM
               student_number
             FROM
               gabby.surveys.scds AS sc
-              INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON LEFT(
-                sc.email_address,
-                LEN(sc.email_address) - 17
-              ) = co.student_web_id
-            COLLATE Latin1_General_BIN
-            AND co.academic_year = 2021
-            AND co.rn_year = 1 UNPIVOT (
-              response FOR question_text IN (
-                _1_what_best_describes_expectations_for_students_at_your_school_,
-                _2_what_best_describes_the_interactions_between_staff_and_students_,
-                _3_what_best_describes_how_staff_respond_to_student_behavior_,
-                _4_what_best_describes_how_school_handles_activities_for_students_,
-                _5_what_best_describes_how_much_input_students_have_on_school_decisions_,
-                _6_what_best_describes_what_students_are_taught_about_why_school_is_important_,
-                _7_what_best_describes_learning_outcomes_for_students_at_your_school_,
-                _8_what_best_describes_teachers_instructional_practices_at_your_school_,
-                _9_what_best_describes_the_lessons_and_learning_resources_at_your_school_,
-                _10_what_best_describes_family_engagement_at_your_school_
+              INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON (
+                LEFT(
+                  sc.email_address,
+                  LEN(sc.email_address) - 17
+                ) = co.student_web_id
+                COLLATE LATIN1_GENERAL_BIN
               )
-            ) AS u
+              AND co.academic_year = 2021
+              AND co.rn_year = 1 UNPIVOT (
+                response FOR question_text IN (
+                  _1_what_best_describes_expectations_for_students_at_your_school_,
+                  _2_what_best_describes_the_interactions_between_staff_and_students_,
+                  _3_what_best_describes_how_staff_respond_to_student_behavior_,
+                  _4_what_best_describes_how_school_handles_activities_for_students_,
+                  _5_what_best_describes_how_much_input_students_have_on_school_decisions_,
+                  _6_what_best_describes_what_students_are_taught_about_why_school_is_important_,
+                  _7_what_best_describes_learning_outcomes_for_students_at_your_school_,
+                  _8_what_best_describes_teachers_instructional_practices_at_your_school_,
+                  _9_what_best_describes_the_lessons_and_learning_resources_at_your_school_,
+                  _10_what_best_describes_family_engagement_at_your_school_
+                )
+              ) AS u
           ) AS sub
         GROUP BY
           sub.academic_year,
@@ -1058,5 +1062,7 @@ FROM
       sub.[subject]
   ) AS sub
   LEFT JOIN gabby.reporting.school_health_metric_lookup AS ml ON sub.subdomain = ml.subdomain
-  AND sub.grade_band = ml.grade_band
-COLLATE Latin1_General_BIN
+  AND (
+    sub.grade_band = ml.grade_band
+    COLLATE LATIN1_GENERAL_BIN
+  )

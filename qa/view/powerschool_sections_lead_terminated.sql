@@ -12,9 +12,11 @@ FROM
   gabby.powerschool.sections AS sec
   INNER JOIN gabby.powerschool.teachers_static AS t ON sec.teacher = t.id
   AND sec.[db_name] = t.[db_name]
-  INNER JOIN gabby.people.staff_crosswalk_static AS scw ON t.teachernumber = scw.ps_teachernumber
-COLLATE Latin1_General_BIN
-AND scw.[status] = 'TERMINATED'
+  INNER JOIN gabby.people.staff_crosswalk_static AS scw ON (
+    t.teachernumber = scw.ps_teachernumber
+    COLLATE LATIN1_GENERAL_BIN
+  )
+  AND scw.[status] = 'TERMINATED'
 WHERE
   sec.termid >= (
     (

@@ -47,8 +47,8 @@ WITH
       END AS unweighted_grade_points
     FROM
       powerschool.storedgrades AS sg
-      LEFT JOIN powerschool.gradescaleitem_lookup_static AS su ON sg.[percent] (
-        BETWEEN su.min_cutoffpercentage AND su.max_cutoffpercentage
+      LEFT JOIN powerschool.gradescaleitem_lookup_static AS su ON (
+        sg.[percent] BETWEEN su.min_cutoffpercentage AND su.max_cutoffpercentage
       )
       AND gabby.utilities.PS_UNWEIGHTED_GRADESCALE_NAME (
         (CAST(LEFT(sg.termid, 2) AS INT) + 1990),
@@ -86,15 +86,17 @@ WITH
       AND fg.yearid = co.yearid
       AND co.rn_year = 1
       INNER JOIN gabby.reporting.reporting_terms AS rt ON fg.yearid = rt.yearid
-      AND fg.storecode = rt.alt_name
-    COLLATE Latin1_General_BIN
-    AND co.schoolid = rt.schoolid
-    AND rt.identifier = 'RT'
-    AND rt.is_curterm = 1
-    LEFT JOIN powerschool.storedgrades AS sg ON fg.studentid = sg.studentid
-    AND fg.course_number = sg.course_number
-    AND rt.academic_year = (CAST(LEFT(sg.termid, 2) AS INT) + 1990)
-    AND sg.storecode = 'Y1'
+      AND (
+        fg.storecode = rt.alt_name
+        COLLATE LATIN1_GENERAL_BIN
+      )
+      AND co.schoolid = rt.schoolid
+      AND rt.identifier = 'RT'
+      AND rt.is_curterm = 1
+      LEFT JOIN powerschool.storedgrades AS sg ON fg.studentid = sg.studentid
+      AND fg.course_number = sg.course_number
+      AND rt.academic_year = (CAST(LEFT(sg.termid, 2) AS INT) + 1990)
+      AND sg.storecode = 'Y1'
     WHERE
       fg.yearid = (
         gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990

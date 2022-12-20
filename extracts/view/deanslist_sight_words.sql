@@ -4,6 +4,7 @@ SELECT
   swd.local_student_id AS student_number,
   swd.date_administered,
   swd.[label] AS word,
+  rt.alt_name AS term_name,
   CASE
     WHEN swd.[value] = 'yes' THEN 'Mastered'
     WHEN swd.[value] = 'no' THEN 'Not Mastered'
@@ -13,8 +14,7 @@ SELECT
     WHEN swd.[value] = 'yes' THEN 1
     WHEN swd.[value] = 'retested' THEN 1
     WHEN swd.[value] = 'no' THEN 0
-  END AS is_mastery,
-  rt.alt_name AS term_name
+  END AS is_mastery
 FROM
   gabby.illuminate_dna_repositories.sight_words_data_current_static AS swd
   INNER JOIN gabby.reporting.reporting_terms AS rt ON (

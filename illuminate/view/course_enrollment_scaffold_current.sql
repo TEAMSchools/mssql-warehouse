@@ -20,19 +20,21 @@ WITH
       co.grade_level + 1 AS grade_level_id,
       si.credittype,
       ils.student_id,
-      ns.illuminate_subject
-    COLLATE Latin1_General_BIN AS subject_area,
-    CASE
-      WHEN ns.illuminate_subject IN (
-        'Algebra I',
-        'Geometry',
-        'Algebra II',
-        'Algebra IIA',
-        'Algebra IIB',
-        'Pre-Calculus'
-      ) THEN 1
-      ELSE 0
-    END AS is_advanced_math
+      (
+        ns.illuminate_subject
+        COLLATE LATIN1_GENERAL_BIN
+      ) AS subject_area,
+      CASE
+        WHEN ns.illuminate_subject IN (
+          'Algebra I',
+          'Geometry',
+          'Algebra II',
+          'Algebra IIA',
+          'Algebra IIB',
+          'Pre-Calculus'
+        ) THEN 1
+        ELSE 0
+      END AS is_advanced_math
     FROM
       gabby.powerschool.cc
       INNER JOIN gabby.powerschool.sections_identifiers AS si ON ABS(cc.sectionid) = si.sectionid
@@ -42,8 +44,10 @@ WITH
       AND cc.[db_name] = co.[db_name]
       AND co.rn_year = 1
       INNER JOIN gabby.illuminate_public.students AS ils ON co.student_number = ils.local_student_id
-      INNER JOIN gabby.assessments.normed_subjects AS ns ON cc.course_number = ns.course_number
-    COLLATE Latin1_General_BIN
+      INNER JOIN gabby.assessments.normed_subjects AS ns ON (
+        cc.course_number = ns.course_number
+        COLLATE LATIN1_GENERAL_BIN
+      )
     WHERE
       cc.dateenrolled >= DATEFROMPARTS(
         gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
@@ -60,9 +64,11 @@ WITH
       co.grade_level + 1 AS grade_level_id,
       'RHET' AS credittype,
       ils.student_id,
-      'Writing'
-    COLLATE Latin1_General_BIN AS subject_area,
-    0 AS is_advanced_math
+      (
+        'Writing'
+        COLLATE LATIN1_GENERAL_BIN
+      ) AS subject_area,
+      0 AS is_advanced_math
     FROM
       gabby.powerschool.cohort_static AS co
       INNER JOIN gabby.illuminate_public.students AS ils ON co.student_number = ils.local_student_id

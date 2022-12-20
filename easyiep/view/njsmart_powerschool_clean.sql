@@ -3,7 +3,6 @@ CREATE OR ALTER VIEW
 SELECT
   _file,
   _line,
-  COALESCE(state_studentnumber, student_number) AS state_studentnumber,
   student_number,
   academic_year,
   case_manager,
@@ -29,6 +28,7 @@ SELECT
   iepbegin_date,
   iepend_date,
   effective_date AS effective_start_date,
+  COALESCE(state_studentnumber, student_number) AS state_studentnumber,
   CASE
     WHEN special_education = '' THEN NULL
     WHEN special_education IS NULL THEN NULL

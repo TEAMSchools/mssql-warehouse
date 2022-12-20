@@ -162,7 +162,9 @@ FROM
       LEFT JOIN gabby.adsi.user_attributes_static AS ads ON CAST(sr.employee_number AS VARCHAR(25)) = ads.employeenumber
       LEFT JOIN gabby.adsi.user_attributes_static AS adm ON CAST(sr.manager_employee_number AS VARCHAR(25)) = adm.employeenumber
   ) AS sub
-  LEFT JOIN gabby.pm.teacher_grade_levels AS gl ON sub.ps_teachernumber = gl.teachernumber
-COLLATE Latin1_General_BIN
-AND gl.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-AND gl.is_primary_gl = 1
+  LEFT JOIN gabby.pm.teacher_grade_levels AS gl ON (
+    sub.ps_teachernumber = gl.teachernumber
+    COLLATE LATIN1_GENERAL_BIN
+  )
+  AND gl.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+  AND gl.is_primary_gl = 1

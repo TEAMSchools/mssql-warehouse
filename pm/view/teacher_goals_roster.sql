@@ -88,8 +88,8 @@ WITH
       ) AS rn_emp_yr
     FROM
       work_assignment AS wa
-      INNER JOIN academic_years AS ay ON ay.academic_year (
-        BETWEEN wa.start_academic_year AND wa.end_academic_year
+      INNER JOIN academic_years AS ay ON (
+        ay.academic_year BETWEEN wa.start_academic_year AND wa.end_academic_year
       )
   )
 SELECT

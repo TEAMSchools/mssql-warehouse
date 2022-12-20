@@ -2,7 +2,7 @@ CREATE OR ALTER VIEW
   extracts.overgrad_standardized_test_scores AS
 SELECT
   stl.contact_c AS [Student ID],
-  CAST(stl.date_c, 101 AS VARCHAR) AS [Test Date],
+  CONVERT(VARCHAR, stl.date_c, 101) AS [Test Date],
   CONCAT(
     CASE
       WHEN stl.test_type = 'Advanced Placement' THEN 'AP'
@@ -16,7 +16,7 @@ SELECT
       WHEN stl.test_subject IN ('Composite', 'Total') THEN NULL
       WHEN stl.test_subject = 'EBRW' THEN 'Reading and Writing'
       WHEN stl.test_subject = 'Physics 1' THEN 'Physics 1: Algebra-Based'
-      WHEN stl.test_subject = 'Studio Art: 2-D Design Portfolio' THEN 'Studio Art: 2-D Design'
+      WHEN stl.test_subject = 'Studio Art: 2-D Design Portfolio' THEN 'Studio Art: 2-D Design' /* trunk-ignore(sqlfluff/L016) */
       WHEN stl.test_subject = 'Studio Art: Drawing Portfolio' THEN 'Studio Art: Drawing'
       WHEN stl.test_subject = 'United States History' THEN 'US History'
       ELSE stl.test_subject

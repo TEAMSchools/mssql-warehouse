@@ -3,6 +3,8 @@ CREATE OR ALTER VIEW
 SELECT
   pl.student_id,
   pl.[subject],
+  t.term_name,
+  t.term_id,
   CAST(
     SUM(
       CASE
@@ -22,9 +24,7 @@ SELECT
       ) AS FLOAT
     ) / CAST(COUNT(pl.lesson_id) AS FLOAT),
     2
-  ) * 100 AS pct_passed,
-  t.term_name,
-  t.term_id
+  ) * 100 AS pct_passed
 FROM
   gabby.iready.personalized_instruction_by_lesson AS pl
   INNER JOIN gabby.people.school_crosswalk AS sc ON pl.school = sc.site_name

@@ -463,27 +463,31 @@ WITH
     SELECT
       student_id,
       academic_year,
-      term
-    COLLATE Latin1_General_BIN AS test_round,
-    CONCAT(ritto_reading_score, 'L')
-    COLLATE Latin1_General_BIN AS read_lvl,
-    CASE
-      WHEN ritto_reading_score = 0 THEN -1
-      WHEN (ritto_reading_score BETWEEN 0 AND 100) THEN 1
-      WHEN (ritto_reading_score BETWEEN 100 AND 200) THEN 5
-      WHEN (ritto_reading_score BETWEEN 200 AND 300) THEN 10
-      WHEN (ritto_reading_score BETWEEN 300 AND 400) THEN 14
-      WHEN (ritto_reading_score BETWEEN 400 AND 500) THEN 17
-      WHEN (ritto_reading_score BETWEEN 500 AND 600) THEN 20
-      WHEN (ritto_reading_score BETWEEN 600 AND 700) THEN 22
-      WHEN (ritto_reading_score BETWEEN 700 AND 800) THEN 25
-      WHEN (ritto_reading_score BETWEEN 800 AND 900) THEN 27
-      WHEN (ritto_reading_score BETWEEN 900 AND 1000) THEN 28
-      WHEN (ritto_reading_score BETWEEN 1000 AND 1100) THEN 29
-      WHEN (ritto_reading_score BETWEEN 1100 AND 1200) THEN 30
-      WHEN ritto_reading_score >= 1200 THEN 31
-    END AS lvl_num,
-    'ACHIEVED' AS subdomain
+      (
+        term
+        COLLATE LATIN1_GENERAL_BIN
+      ) AS test_round,
+      (
+        CONCAT(ritto_reading_score, 'L')
+        COLLATE LATIN1_GENERAL_BIN
+      ) AS read_lvl,
+      CASE
+        WHEN ritto_reading_score = 0 THEN -1
+        WHEN (ritto_reading_score BETWEEN 0 AND 100) THEN 1
+        WHEN (ritto_reading_score BETWEEN 100 AND 200) THEN 5
+        WHEN (ritto_reading_score BETWEEN 200 AND 300) THEN 10
+        WHEN (ritto_reading_score BETWEEN 300 AND 400) THEN 14
+        WHEN (ritto_reading_score BETWEEN 400 AND 500) THEN 17
+        WHEN (ritto_reading_score BETWEEN 500 AND 600) THEN 20
+        WHEN (ritto_reading_score BETWEEN 600 AND 700) THEN 22
+        WHEN (ritto_reading_score BETWEEN 700 AND 800) THEN 25
+        WHEN (ritto_reading_score BETWEEN 800 AND 900) THEN 27
+        WHEN (ritto_reading_score BETWEEN 900 AND 1000) THEN 28
+        WHEN (ritto_reading_score BETWEEN 1000 AND 1100) THEN 29
+        WHEN (ritto_reading_score BETWEEN 1100 AND 1200) THEN 30
+        WHEN ritto_reading_score >= 1200 THEN 31
+      END AS lvl_num,
+      'ACHIEVED' AS subdomain
     FROM
       gabby.nwea.assessment_result_identifiers
     WHERE
@@ -538,17 +542,19 @@ WITH
       academic_year,
       NULL AS test_date,
       'PARCC' AS test_name,
-      [subject]
-    COLLATE Latin1_General_BIN AS [subject],
-    test_scale_score,
-    test_performance_level,
-    CASE
-      WHEN test_performance_level = 5 THEN 'Exceeded'
-      WHEN test_performance_level = 4 THEN 'Met'
-      WHEN test_performance_level = 3 THEN 'Approached'
-      WHEN test_performance_level = 2 THEN 'Partially Met'
-      WHEN test_performance_level = 1 THEN 'Did Not Meet'
-    END AS performance_level_label
+      (
+        [subject]
+        COLLATE LATIN1_GENERAL_BIN
+      ) AS [subject],
+      test_scale_score,
+      test_performance_level,
+      CASE
+        WHEN test_performance_level = 5 THEN 'Exceeded'
+        WHEN test_performance_level = 4 THEN 'Met'
+        WHEN test_performance_level = 3 THEN 'Approached'
+        WHEN test_performance_level = 2 THEN 'Partially Met'
+        WHEN test_performance_level = 1 THEN 'Did Not Meet'
+      END AS performance_level_label
     FROM
       gabby.parcc.summative_record_file_clean
     UNION ALL
@@ -881,8 +887,10 @@ FROM
   roster AS r
   LEFT JOIN grades AS gr ON r.student_number = gr.student_number
   AND r.academic_year = gr.academic_year
-  AND r.reporting_term
-COLLATE Latin1_General_BIN = gr.reporting_term
+  AND (
+    r.reporting_term
+    COLLATE LATIN1_GENERAL_BIN
+  ) = gr.reporting_term
 UNION ALL
 --*/
 --/*
@@ -906,19 +914,23 @@ SELECT
   att.subdomain,
   NULL AS [subject],
   NULL AS course_name,
-  att.att_code
-COLLATE Latin1_General_BIN AS measure_name,
-att.att_counts AS measure_value,
-NULL AS measure_date,
-NULL AS performance_level,
-NULL AS performance_level_label
+  (
+    att.att_code
+    COLLATE LATIN1_GENERAL_BIN
+  ) AS measure_name,
+  att.att_counts AS measure_value,
+  NULL AS measure_date,
+  NULL AS performance_level,
+  NULL AS performance_level_label
 FROM
   roster AS r
   LEFT JOIN attendance AS att ON r.studentid = att.studentid
   AND r.[db_name] = att.[db_name]
   AND r.academic_year = att.academic_year
-  AND r.reporting_term
-COLLATE Latin1_General_BIN = att.reporting_term
+  AND (
+    r.reporting_term
+    COLLATE LATIN1_GENERAL_BIN
+  ) = att.reporting_term
 UNION ALL
 --*/
 --/*
@@ -940,16 +952,22 @@ SELECT
   r.reporting_term,
   'MODULES' AS DOMAIN,
   cma.subdomain,
-  cma.subject_area
-COLLATE Latin1_General_BIN AS [subject],
-cma.module_type
-COLLATE Latin1_General_BIN AS course_name,
-cma.standards
-COLLATE Latin1_General_BIN AS measure_name,
-cma.percent_correct AS measure_value,
-cma.measure_date,
-cma.assessment_id AS performance_level,
-cma.proficiency_label AS performance_level_label
+  (
+    cma.subject_area
+    COLLATE LATIN1_GENERAL_BIN
+  ) AS [subject],
+  (
+    cma.module_type
+    COLLATE LATIN1_GENERAL_BIN
+  ) AS course_name,
+  (
+    cma.standards
+    COLLATE LATIN1_GENERAL_BIN
+  ) AS measure_name,
+  cma.percent_correct AS measure_value,
+  cma.measure_date,
+  cma.assessment_id AS performance_level,
+  cma.proficiency_label AS performance_level_label
 FROM
   roster AS r
   LEFT JOIN modules AS cma ON r.student_number = cma.student_number
@@ -989,9 +1007,11 @@ FROM
   INNER JOIN gpa ON r.student_number = gpa.student_number
   AND r.schoolid = gpa.schoolid
   AND r.academic_year >= gpa.academic_year
-  AND r.reporting_term
-COLLATE Latin1_General_BIN = gpa.reporting_term
-AND r.term_start_date <= CAST(CURRENT_TIMESTAMP AS DATE)
+  AND (
+    r.reporting_term
+    COLLATE LATIN1_GENERAL_BIN
+  ) = gpa.reporting_term
+  AND r.term_start_date <= CAST(CURRENT_TIMESTAMP AS DATE)
 UNION ALL
 --*/
 --/*
@@ -1080,17 +1100,23 @@ SELECT
   r.term_name,
   r.reporting_term,
   'STANDARDIZED TESTS' AS DOMAIN,
-  std.test_name
-COLLATE Latin1_General_BIN AS subdomain,
-std.[subject]
-COLLATE Latin1_General_BIN AS [subject],
-NULL AS course_name,
-CAST(NEWID() AS VARCHAR(250))
-COLLATE Latin1_General_BIN AS measure_name,
-std.test_scale_score AS measure_value,
-std.test_date AS measure_date,
-std.test_performance_level AS performance_level,
-std.performance_level_label
+  (
+    std.test_name
+    COLLATE LATIN1_GENERAL_BIN
+  ) AS subdomain,
+  (
+    std.[subject]
+    COLLATE LATIN1_GENERAL_BIN
+  ) AS [subject],
+  NULL AS course_name,
+  (
+    CAST(NEWID() AS VARCHAR(250))
+    COLLATE LATIN1_GENERAL_BIN
+  ) AS measure_name,
+  std.test_scale_score AS measure_value,
+  std.test_date AS measure_date,
+  std.test_performance_level AS performance_level,
+  std.performance_level_label
 FROM
   roster AS r
   LEFT JOIN standardized_tests AS std ON r.student_number = std.student_number

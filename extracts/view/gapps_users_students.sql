@@ -21,6 +21,8 @@ FROM
       s.student_number,
       s.first_name,
       s.last_name,
+      saa.student_web_password,
+      saa.student_web_id + '@teamstudents.org' AS email,
       CASE
         WHEN s.grade_level >= 3 THEN 'on'
         ELSE 'off'
@@ -39,8 +41,6 @@ FROM
         WHEN s.[db_name] = 'kippcamden' THEN 'group-students-camden@teamstudents.org'
         WHEN s.[db_name] = 'kippmiami' THEN 'group-students-miami@teamstudents.org'
       END AS group_email,
-      saa.student_web_id + '@teamstudents.org' AS email,
-      saa.student_web_password,
       CASE
         WHEN sp.specprog_name IS NOT NULL THEN 'Out of District'
         WHEN sch.abbreviation = 'KHS' THEN 'KCNHS'
@@ -69,7 +69,7 @@ FROM
       END AS school_name
     FROM
       gabby.powerschool.students AS s
-      INNER JOIN gabby.powerschool.student_access_accounts_static AS saa ON s.student_number = saa.student_number
+      INNER JOIN gabby.powerschool.student_access_accounts_static AS saa ON s.student_number = saa.student_number /* trunk-ignore(sqlfluff/L016) */
       INNER JOIN gabby.powerschool.schools AS sch ON s.schoolid = sch.school_number
       AND s.[db_name] = sch.[db_name]
       LEFT JOIN gabby.powerschool.spenrollments_gen_static AS sp ON s.id = sp.studentid

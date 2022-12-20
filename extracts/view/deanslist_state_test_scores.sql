@@ -29,23 +29,25 @@ FROM
         WHEN parcc.[subject] = 'English Language Arts/Literacy' THEN 'ELA'
         ELSE 'Math'
       END AS [subject],
-      parcc.[subject]
-    COLLATE SQL_Latin1_General_CP1_CI_AS AS test_name,
-    parcc.test_scale_score AS scale_score,
-    CASE
-      WHEN parcc.test_performance_level = 5 THEN 'Exceeded Expectations'
-      WHEN parcc.test_performance_level = 4 THEN 'Met Expectations'
-      WHEN parcc.test_performance_level = 3 THEN 'Approached Expectations'
-      WHEN parcc.test_performance_level = 2 THEN 'Partially Met Expectations'
-      WHEN parcc.test_performance_level = 1 THEN 'Did Not Yet Meet Expectations'
-    END AS proficiency_level,
-    CASE
-      WHEN parcc.test_performance_level >= 4 THEN 1
-      WHEN parcc.test_performance_level < 4 THEN 0
-    END AS is_proficient
+      (
+        parcc.[subject]
+        COLLATE LATIN1_GENERAL_BIN
+      ) AS test_name,
+      parcc.test_scale_score AS scale_score,
+      CASE
+        WHEN parcc.test_performance_level = 5 THEN 'Exceeded Expectations'
+        WHEN parcc.test_performance_level = 4 THEN 'Met Expectations'
+        WHEN parcc.test_performance_level = 3 THEN 'Approached Expectations'
+        WHEN parcc.test_performance_level = 2 THEN 'Partially Met Expectations'
+        WHEN parcc.test_performance_level = 1 THEN 'Did Not Yet Meet Expectations'
+      END AS proficiency_level,
+      CASE
+        WHEN parcc.test_performance_level >= 4 THEN 1
+        WHEN parcc.test_performance_level < 4 THEN 0
+      END AS is_proficient
     FROM
       gabby.powerschool.cohort_identifiers_static AS co
-      INNER JOIN gabby.parcc.summative_record_file_clean AS parcc ON co.state_studentnumber = parcc.state_student_identifier
+      INNER JOIN gabby.parcc.summative_record_file_clean AS parcc ON co.state_studentnumber = parcc.state_student_identifier /* trunk-ignore(sqlfluff/L016) */
       AND co.academic_year = parcc.academic_year
     WHERE
       co.academic_year >= 2014
@@ -65,7 +67,7 @@ FROM
       END AS is_proficient
     FROM
       gabby.powerschool.cohort_identifiers_static AS co
-      INNER JOIN gabby.njsmart.all_state_assessments AS nj ON co.student_number = nj.local_student_id
+      INNER JOIN gabby.njsmart.all_state_assessments AS nj ON co.student_number = nj.local_student_id /* trunk-ignore(sqlfluff/L016) */
       AND co.academic_year = nj.academic_year
     WHERE
       co.rn_year = 1

@@ -47,10 +47,12 @@ WITH
     FROM
       gabby.powerschool.gpa_detail AS gpa
       INNER JOIN gabby.reporting.reporting_terms AS rt ON gpa.academic_year = rt.academic_year
-      AND gpa.reporting_term = rt.time_per_name
-    COLLATE Latin1_General_BIN
-    AND gpa.schoolid = rt.schoolid
-    AND rt.[start_date] <= CAST(SYSDATETIME() AS DATE)
+      AND (
+        gpa.reporting_term = rt.time_per_name
+        COLLATE LATIN1_GENERAL_BIN
+      )
+      AND gpa.schoolid = rt.schoolid
+      AND rt.[start_date] <= CAST(SYSDATETIME() AS DATE)
   ),
   gpa AS (
     SELECT
@@ -357,10 +359,12 @@ WITH
       gpa.academic_year,
       gpa.schoolid,
       gpa.grade_level,
-      gpa.reporting_term
-    COLLATE Latin1_General_BIN AS reporting_term,
-    gpa.metric_name,
-    gpa.metric_value
+      (
+        gpa.reporting_term
+        COLLATE LATIN1_GENERAL_BIN
+      ) AS reporting_term,
+      gpa.metric_name,
+      gpa.metric_value
     FROM
       gpa
     UNION ALL

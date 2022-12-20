@@ -111,9 +111,11 @@ FROM
       LEFT JOIN gabby.nwea.assessment_result_identifiers AS map ON r.student_number = map.student_id
       AND r.academic_year = map.academic_year
       AND r.measurement_scale = map.measurement_scale
-      AND r.term_name = map.term
-    COLLATE Latin1_General_BIN
-    LEFT JOIN gabby.nwea.best_baseline AS base ON r.student_number = base.student_number
-    AND r.academic_year = base.academic_year
-    AND r.measurement_scale = base.measurementscale
+      AND (
+        r.term_name = map.term
+        COLLATE LATIN1_GENERAL_BIN
+      )
+      LEFT JOIN gabby.nwea.best_baseline AS base ON r.student_number = base.student_number
+      AND r.academic_year = base.academic_year
+      AND r.measurement_scale = base.measurementscale
   ) AS sub

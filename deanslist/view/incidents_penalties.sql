@@ -2,37 +2,42 @@ CREATE OR ALTER VIEW
   deanslist.incidents_penalties AS
 SELECT
   CAST(dli.incident_id AS INT) AS incident_id,
-  NULL AS penalties_json,
-  dlip.incidentpenaltyid,
-  dlip.studentid,
-  dlip.schoolid,
-  dlip.penaltyid,
-  dlip.penaltyname,
-  dlip.said,
-  dlip.startdate,
-  dlip.enddate,
-  dlip.numdays,
-  dlip.numperiods,
-  dlip.issuspension,
-  dlip.[print]
+  CAST(
+    JSON_VALUE(dlip.[value], '$.IncidentPenaltyID') AS BIGINT
+  ) AS incident_penalty_id,
+  CAST(
+    JSON_VALUE(dlip.[value], '$.StudentID') AS BIGINT
+  ) AS student_id,
+  CAST(
+    JSON_VALUE(dlip.[value], '$.SchoolID') AS BIGINT
+  ) AS school_id,
+  CAST(
+    JSON_VALUE(dlip.[value], '$.PenaltyID') AS BIGINT
+  ) AS penalty_id,
+  CAST(
+    JSON_VALUE(dlip.[value], '$.PenaltyName') AS NVARCHAR(128)
+  ) AS penalty_name,
+  CAST(
+    JSON_VALUE(dlip.[value], '$.SAID') AS BIGINT
+  ) AS said,
+  CAST(
+    JSON_VALUE(dlip.[value], '$.StartDate') AS DATE
+  ) AS [start_date],
+  CAST(
+    JSON_VALUE(dlip.[value], '$.EndDate') AS DATE
+  ) AS end_date,
+  CAST(
+    JSON_VALUE(dlip.[value], '$.NumDays') AS BIGINT
+  ) AS num_days,
+  CAST(
+    JSON_VALUE(dlip.[value], '$.NumPeriods') AS FLOAT
+  ) AS num_periods,
+  CAST(
+    JSON_VALUE(dlip.[value], '$.IsSuspension') AS BIT
+  ) AS is_suspension,
+  CAST(JSON_VALUE(dlip.[value], '$.Print') AS BIT) AS [print]
 FROM
-  [deanslist].[incidents] dli
-  CROSS APPLY OPENJSON (dli.penalties, N'$')
-WITH
-  (
-    startdate DATE N'$.StartDate',
-    enddate DATE N'$.EndDate',
-    said INT N'$.SAID',
-    numperiods FLOAT N'$.NumPeriods',
-    incidentpenaltyid INT N'$.IncidentPenaltyID',
-    penaltyid INT N'$.PenaltyID',
-    [print] BIT N'$.Print',
-    studentid INT N'$.StudentID',
-    penaltyname VARCHAR(125) N'$.PenaltyName',
-    schoolid INT N'$.SchoolID',
-    issuspension BIT N'$.IsSuspension',
-    incidentid INT N'$.IncidentID',
-    numdays FLOAT N'$.NumDays'
-  ) AS dlip
+  [deanslist].[incidents] AS dli
+  CROSS APPLY OPENJSON (dli.penalties, N'$') AS dlip
 WHERE
   dli.penalties != '[]'

@@ -24,7 +24,7 @@ SELECT
   rd.[date],
   (
     dt.alt_name
-    COLLATE Latin1_General_BIN
+    COLLATE LATIN1_GENERAL_BIN
   ) AS term
 FROM
   powerschool.cohort_identifiers_static AS co

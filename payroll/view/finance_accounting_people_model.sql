@@ -11,8 +11,8 @@ WITH
     FROM
       gabby.utilities.row_generator_smallint
     WHERE
-      n (
-        BETWEEN 2015 AND gabby.utilities.GLOBAL_ACADEMIC_YEAR  ()
+      (
+        n BETWEEN 2015 AND gabby.utilities.GLOBAL_ACADEMIC_YEAR  ()
       )
   ),
   additional_earnings AS (
@@ -90,8 +90,8 @@ SELECT
   ) AS rn_curr
 FROM
   gabby.people.employment_history_static AS eh
-  INNER JOIN years AS y ON y.effective_date (
-    BETWEEN eh.effective_start_date AND eh.effective_end_date
+  INNER JOIN years AS y ON (
+    y.effective_date BETWEEN eh.effective_start_date AND eh.effective_end_date
   )
   INNER JOIN gabby.people.staff_crosswalk_static AS cw ON eh.employee_number = cw.df_employee_number
   AND DATEADD(
@@ -109,11 +109,11 @@ FROM
   AND y.academic_year = tg.academic_year
   AND tg.rn_year_score = 1
   LEFT JOIN gabby.people.employment_history_static AS ly ON cw.df_employee_number = ly.employee_number
-  AND DATEADD(YEAR, -1, y.effective_date) (
-    BETWEEN ly.effective_start_date AND ly.effective_end_date
+  AND (
+    DATEADD(YEAR, -1, y.effective_date) BETWEEN ly.effective_start_date AND ly.effective_end_date
   )
   LEFT JOIN gabby.people.employment_history_static AS ehs ON cw.df_employee_number = ehs.employee_number
-  AND cw.original_hire_date (
-    BETWEEN ehs.effective_start_date AND ehs.effective_end_date
+  AND (
+    cw.original_hire_date BETWEEN ehs.effective_start_date AND ehs.effective_end_date
   )
   AND ehs.position_status = 'Active'

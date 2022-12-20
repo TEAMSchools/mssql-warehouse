@@ -472,7 +472,7 @@ FROM
   LEFT JOIN gabby.payroll.register_code_lookup AS rcl ON u.company_code = rcl.company_code
   AND u.code = rcl.field_name
   INNER JOIN gabby.people.employment_history_static AS eh ON u.position_id = eh.position_id
-  AND u.payroll_date (
-    BETWEEN eh.effective_start_date AND eh.effective_end_date
+  AND (
+    u.payroll_date BETWEEN eh.effective_start_date AND eh.effective_end_date
   )
   INNER JOIN gabby.people.staff_crosswalk_static AS r ON eh.employee_number = r.df_employee_number

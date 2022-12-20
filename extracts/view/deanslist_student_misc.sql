@@ -20,7 +20,7 @@ WITH
       MIN(entrydate) AS school_entrydate,
       MAX(exitdate) AS school_exitdate
     FROM
-      gabby.powerschool.cohort_identifiers_static AS s
+      gabby.powerschool.cohort_identifiers_static
     GROUP BY
       student_number,
       schoolid,
@@ -30,7 +30,6 @@ SELECT
   co.student_number,
   co.state_studentnumber AS [SID],
   co.team,
-  CONVERT(NVARCHAR, co.dob, 101) AS dob,
   co.home_phone,
   co.mother AS parent1_name,
   co.father AS parent2_name,
@@ -41,6 +40,13 @@ SELECT
   co.advisor_name,
   co.advisor_email,
   co.lunch_balance,
+  s.sched_nextyeargrade,
+  ktc.counselor_name AS ktc_counselor_name,
+  ktc.counselor_phone AS ktc_counselor_phone,
+  ktc.counselor_email AS ktc_counselor_email,
+  gpa.[GPA_Y1],
+  gpa.gpa_term,
+  CONVERT(NVARCHAR, co.dob, 101) AS dob,
   CASE
     WHEN co.enroll_status = -1 THEN 'Pre-Registered'
     WHEN co.enroll_status = 0 THEN 'Enrolled'
@@ -60,14 +66,8 @@ SELECT
   co.student_web_id + '@teamstudents.org' AS student_email,
   CONCAT(co.student_web_password, 'kipp') AS student_web_password,
   co.student_web_id + '.fam' AS family_access_id,
-  s.sched_nextyeargrade,
   CONVERT(NVARCHAR, ed.school_entrydate, 101) AS school_entrydate,
-  CONVERT(NVARCHAR, ed.school_exitdate, 101) AS school_exitdate,
-  ktc.counselor_name AS ktc_counselor_name,
-  ktc.counselor_phone AS ktc_counselor_phone,
-  ktc.counselor_email AS ktc_counselor_email,
-  gpa.GPA_Y1,
-  gpa.gpa_term
+  CONVERT(NVARCHAR, ed.school_exitdate, 101) AS school_exitdate
 FROM
   gabby.powerschool.cohort_identifiers_static AS co
   INNER JOIN gabby.powerschool.students AS s ON co.student_number = s.student_number
@@ -81,7 +81,7 @@ FROM
     ELSE co.schoolid
   END = ed.schoolid
   LEFT JOIN gabby.alumni.ktc_roster AS ktc ON co.student_number = ktc.student_number
-  LEFT JOIN gabby.powerschool.gpa_detail AS gpa ON co.student_number = gpa.student_number
+  LEFT JOIN gabby.powerschool.gpa_detail AS gpa ON co.student_number = gpa.student_number /* trunk-ignore(sqlfluff/L016) */
   AND co.academic_year = gpa.academic_year
   AND co.[db_name] = gpa.[db_name]
   AND gpa.is_curterm = 1

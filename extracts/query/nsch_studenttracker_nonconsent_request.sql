@@ -52,18 +52,18 @@ WHERE
   AND cohort <= gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
 UNION ALL
 SELECT
-  'T1',
-  CAST(COUNT(student_number) + 2 AS VARCHAR),
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL
+  'T1' AS cola,
+  CAST(COUNT(student_number) + 2 AS VARCHAR) AS colb,
+  NULL AS colc,
+  NULL AS cold,
+  NULL AS cole,
+  NULL AS colf,
+  NULL AS colg,
+  NULL AS colh,
+  NULL AS coli,
+  NULL AS colj,
+  NULL AS colk,
+  NULL AS coll
 FROM
   gabby.powerschool.cohort_identifiers_static
 WHERE

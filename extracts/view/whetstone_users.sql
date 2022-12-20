@@ -115,24 +115,32 @@ SELECT
     ELSE 'Teachers'
   END AS group_name,
   '[' + CASE
+  /*removing last year roles every August*/
     WHEN CAST(CURRENT_TIMESTAMP AS DATE) = DATEFROMPARTS(
       gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
       8,
       1
-    ) THEN '"' + sub.role_name + '"' /*removing last year roles every August*/
-    WHEN er.role_names IS NULL THEN '"' + sub.role_name + '"' /* no roles = add assigned role */
-    WHEN CHARINDEX(sub.role_name, er.role_names) > 0 THEN er.role_names /* assigned role already exists = use existing */
-    ELSE '"' + sub.role_name + '",' + er.role_names /* add assigned role */
+    ) THEN '"' + sub.role_name + '"'
+    /* no roles = add assigned role */
+    WHEN er.role_names IS NULL THEN '"' + sub.role_name + '"'
+    /* assigned role already exists = use existing */
+    WHEN CHARINDEX(sub.role_name, er.role_names) > 0 THEN er.role_names
+    /* add assigned role */
+    ELSE '"' + sub.role_name + '",' + er.role_names
   END + ']' AS role_names,
   '[' + CASE
+  /*removing last year roles every August*/
     WHEN CAST(CURRENT_TIMESTAMP AS DATE) = DATEFROMPARTS(
       gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
       8,
       1
-    ) THEN '"' + r._id + '"' /*removing last year roles every August*/
-    WHEN er.role_ids IS NULL THEN '"' + r._id + '"' /* no roles = add assigned role */
-    WHEN CHARINDEX(r._id, er.role_ids) > 0 THEN er.role_ids /* assigned role already exists = use existing */
-    ELSE '"' + r._id + '",' + er.role_ids /* add assigned role */
+    ) THEN '"' + r._id + '"'
+    /* no roles = add assigned role */
+    WHEN er.role_ids IS NULL THEN '"' + r._id + '"'
+    /* assigned role already exists = use existing */
+    WHEN CHARINDEX(r._id, er.role_ids) > 0 THEN er.role_ids
+    /* add assigned role */
+    ELSE '"' + r._id + '",' + er.role_ids
   END + ']' AS role_id
 FROM
   (
@@ -234,7 +242,7 @@ FROM
   LEFT JOIN gabby.whetstone.schools AS sch ON sub.school_name = sch.[name]
   LEFT JOIN gabby.whetstone.grades AS gr ON sub.grade_abbreviation = gr.abbreviation
   LEFT JOIN gabby.whetstone.courses AS cou ON sub.course_name = cou.[name]
-  AND cou.archived_at IS NULL
+  AND cou.archived_at IS NULL /* trunk-ignore(sqlfluff/L016) */
   LEFT JOIN gabby.whetstone.roles AS r ON sub.role_name = r.[name]
   LEFT JOIN existing_roles AS er ON u.[user_id] = er.[user_id]
   LEFT JOIN obsv_grp AS og ON u.[user_id] = og.[user_id]

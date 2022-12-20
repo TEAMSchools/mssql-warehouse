@@ -17,7 +17,7 @@ SELECT
   END AS [Grade],
   co.gender AS [Gender],
   co.cohort AS [Graduation_year],
-  CONVERT(VARCHAR, dob, 101) AS [DOB],
+  CONVERT(VARCHAR, co.dob, 101) AS [DOB],
   co.ethnicity AS [Race],
   NULL AS [Hispanic_Latino],
   NULL AS [Home_language],
@@ -56,18 +56,18 @@ SELECT
   NULL AS [Contact_sis_id],
   co.student_web_id AS [Username],
   NULL AS [Password],
-  gpa.cumulative_Y1_gpa AS [Unweighted_gpa],
-  gpa.cumulative_Y1_gpa_unweighted AS [Weighted_gpa]
+  gpa.[cumulative_Y1_gpa] AS [Unweighted_gpa],
+  gpa.[cumulative_Y1_gpa_unweighted] AS [Weighted_gpa]
 FROM
   gabby.powerschool.cohort_identifiers_static AS co
-  LEFT JOIN gabby.powerschool.student_contacts_static AS sc ON co.student_number = sc.student_number
+  LEFT JOIN gabby.powerschool.student_contacts_static AS sc ON co.student_number = sc.student_number -- trunk-ignore(sqlfluff/L016)
   AND co.[db_name] = sc.[db_name]
   AND sc.contact_category = 'Phone'
   AND sc.person_type != 'self'
   LEFT JOIN gabby.powerschool.gpa_cumulative AS gpa ON co.studentid = gpa.studentid
   AND co.schoolid = gpa.schoolid
   AND co.[db_name] = gpa.[db_name]
-  LEFT JOIN gabby.powerschool.u_studentsuserfields AS suf ON co.students_dcid = suf.studentsdcid
+  LEFT JOIN gabby.powerschool.u_studentsuserfields AS suf ON co.students_dcid = suf.studentsdcid -- trunk-ignore(sqlfluff/L016)
   AND co.[db_name] = suf.[db_name]
 WHERE
   co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()

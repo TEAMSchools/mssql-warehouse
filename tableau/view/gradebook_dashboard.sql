@@ -42,8 +42,8 @@ WITH
       fg.need_80,
       fg.need_90,
       CASE
-        WHEN CAST(CURRENT_TIMESTAMP AS DATE) (
-          BETWEEN fg.termbin_start_date AND fg.termbin_end_date
+        WHEN (
+          CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN fg.termbin_start_date AND fg.termbin_end_date
         ) THEN 1
         ELSE 0
       END AS is_curterm,
@@ -394,39 +394,41 @@ SELECT
   CASE
     WHEN sa.studentid IS NOT NULL THEN 1
   END AS is_studentathlete,
-  CONCAT(
-    'TRANSFER',
-    tr.termid,
-    tr.[db_name],
-    tr.dcid
-  )
-COLLATE Latin1_General_BIN AS course_number,
-'Y1' AS term_name,
-'Y1' AS finalgradename,
-tr.excludefromgpa,
-tr.potentialcrhrs AS credit_hours,
-tr.[percent] AS term_grade_percent_adjusted,
-tr.grade AS term_grade_letter_adjusted,
-tr.gpa_points AS term_gpa_points,
-tr.[percent] AS y1_grade_percent_adjusted,
-tr.grade AS y1_grade_letter,
-tr.gpa_points AS y1_gpa_points,
-1 AS is_curterm,
-'TRANSFER' AS credittype,
-tr.course_name,
-tr.earnedcrhrs,
-NULL AS citizenship,
-NULL AS comment_value,
-tr.sectionid,
-tr.termid,
-'TRANSFER' AS teacher_name,
-'TRANSFER' AS section_number,
-NULL AS [period],
-NULL AS external_expression,
-NULL AS need_65,
-NULL AS need_70,
-NULL AS need_80,
-NULL AS need_90
+  (
+    CONCAT(
+      'TRANSFER',
+      tr.termid,
+      tr.[db_name],
+      tr.dcid
+    )
+    COLLATE LATIN1_GENERAL_BIN
+  ) AS course_number,
+  'Y1' AS term_name,
+  'Y1' AS finalgradename,
+  tr.excludefromgpa,
+  tr.potentialcrhrs AS credit_hours,
+  tr.[percent] AS term_grade_percent_adjusted,
+  tr.grade AS term_grade_letter_adjusted,
+  tr.gpa_points AS term_gpa_points,
+  tr.[percent] AS y1_grade_percent_adjusted,
+  tr.grade AS y1_grade_letter,
+  tr.gpa_points AS y1_gpa_points,
+  1 AS is_curterm,
+  'TRANSFER' AS credittype,
+  tr.course_name,
+  tr.earnedcrhrs,
+  NULL AS citizenship,
+  NULL AS comment_value,
+  tr.sectionid,
+  tr.termid,
+  'TRANSFER' AS teacher_name,
+  'TRANSFER' AS section_number,
+  NULL AS [period],
+  NULL AS external_expression,
+  NULL AS need_65,
+  NULL AS need_70,
+  NULL AS need_80,
+  NULL AS need_90
 FROM
   gabby.powerschool.storedgrades AS tr
   LEFT JOIN gabby.powerschool.cohort_identifiers_static AS co ON tr.studentid = co.studentid
@@ -487,8 +489,8 @@ SELECT
   NULL AS y1_grade_letter,
   NULL AS y1_gpa_points,
   CASE
-    WHEN CAST(CURRENT_TIMESTAMP AS DATE) (
-      BETWEEN cg.termbin_start_date AND cg.termbin_end_date
+    WHEN (
+      CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN cg.termbin_start_date AND cg.termbin_end_date
     ) THEN 1
     ELSE 0
   END AS is_curterm,
@@ -588,8 +590,8 @@ FROM
   AND co.yearid = cy.yearid
   AND co.[db_name] = cy.[db_name]
   AND cy.storecode_type != 'Q'
-  AND CAST(CURRENT_TIMESTAMP AS DATE) (
-    BETWEEN cy.termbin_start_date AND cy.termbin_end_date
+  AND (
+    CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN cy.termbin_start_date AND cy.termbin_end_date
   )
   LEFT JOIN section_teacher AS st ON co.studentid = st.studentid
   AND co.yearid = st.yearid

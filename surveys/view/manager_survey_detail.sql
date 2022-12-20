@@ -38,8 +38,8 @@ SELECT
 FROM
   gabby.surveygizmo.survey_detail AS d
   LEFT JOIN gabby.people.employment_history_static AS w ON d.subject_df_employee_number = w.employee_number
-  AND d.date_submitted (
-    BETWEEN w.effective_start_date AND w.effective_end_date
+  AND (
+    d.date_submitted BETWEEN w.effective_start_date AND w.effective_end_date
   )
   AND w.primary_position = 'Yes'
   AND w.position_status != 'Terminated'
@@ -91,8 +91,8 @@ SELECT
 FROM
   surveys.manager_survey_detail_archive AS sda
   LEFT JOIN gabby.people.employment_history_static AS w ON sda.subject_df_employee_number = w.employee_number
-  AND sda.date_submitted (
-    BETWEEN w.effective_start_date AND w.effective_end_date
+  AND (
+    sda.date_submitted BETWEEN w.effective_start_date AND w.effective_end_date
   )
   AND w.primary_position = 'Yes'
   AND w.position_status != 'Terminated'

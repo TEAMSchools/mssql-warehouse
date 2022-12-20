@@ -24,7 +24,7 @@ WITH
           scw.[location],
           scw.home_department,
           scw.job_title,
-          NULL
+          NULL AS egencia_traveler_group
         FROM
           gabby.people.staff_roster AS scw
         WHERE
@@ -41,8 +41,8 @@ WITH
         SELECT DISTINCT
           scw.[location],
           scw.home_department,
-          'Default',
-          NULL
+          'Default' AS job_title,
+          NULL AS egencia_traveler_group
         FROM
           gabby.people.staff_roster AS scw
         WHERE
@@ -58,9 +58,9 @@ WITH
         UNION ALL
         SELECT DISTINCT
           scw.[location],
-          'Default',
-          'Default',
-          NULL
+          'Default' AS home_department,
+          'Default' AS job_title,
+          NULL AS egencia_traveler_group
         FROM
           gabby.people.staff_roster AS scw
         WHERE

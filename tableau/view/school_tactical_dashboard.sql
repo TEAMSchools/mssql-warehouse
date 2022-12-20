@@ -55,8 +55,8 @@ WITH
                 ELSE 0.0
               END AS is_fr_lunch,
               CASE
-                WHEN r.exitdate (
-                  BETWEEN DATEADD(
+                WHEN (
+                  r.exitdate BETWEEN DATEADD(
                     DAY,
                     1 - (DATEPART(WEEKDAY, SYSDATETIME())),
                     CAST(SYSDATETIME() AS DATE)
@@ -262,8 +262,8 @@ WITH
       SUM(CAST(ADA.attendancevalue AS FLOAT)) AS n_present,
       SUM(
         CASE
-          WHEN ADA.calendardate (
-            BETWEEN DATEADD(
+          WHEN (
+            ADA.calendardate BETWEEN DATEADD(
               DAY,
               1 - (DATEPART(WEEKDAY, SYSDATETIME())),
               CAST(SYSDATETIME() AS DATE)
@@ -277,8 +277,8 @@ WITH
       ) AS n_membership_week,
       SUM(
         CASE
-          WHEN ADA.calendardate (
-            BETWEEN DATEADD(
+          WHEN (
+            ADA.calendardate BETWEEN DATEADD(
               DAY,
               1 - (DATEPART(WEEKDAY, SYSDATETIME())),
               CAST(SYSDATETIME() AS DATE)
@@ -320,8 +320,8 @@ WITH
       ) AS is_oss,
       SUM(
         CASE
-          WHEN ADA.calendardate (
-            BETWEEN DATEADD(
+          WHEN (
+            ADA.calendardate BETWEEN DATEADD(
               DAY,
               1 - (DATEPART(WEEKDAY, SYSDATETIME())),
               CAST(SYSDATETIME() AS DATE)
@@ -340,8 +340,8 @@ WITH
       ) AS n_tardy_week,
       SUM(
         CASE
-          WHEN ADA.calendardate (
-            BETWEEN DATEADD(
+          WHEN (
+            ADA.calendardate BETWEEN DATEADD(
               DAY,
               1 - (DATEPART(WEEKDAY, SYSDATETIME())),
               CAST(SYSDATETIME() AS DATE)
@@ -360,8 +360,8 @@ WITH
       ) AS is_iss_week,
       SUM(
         CASE
-          WHEN ADA.calendardate (
-            BETWEEN DATEADD(
+          WHEN (
+            ADA.calendardate BETWEEN DATEADD(
               DAY,
               1 - (DATEPART(WEEKDAY, SYSDATETIME())),
               CAST(SYSDATETIME() AS DATE)
@@ -547,9 +547,13 @@ WITH
   WHEN a.legal_entity_name = 'KIPP Cooper Norcross Academy' THEN 'KCNA'
   WHEN a.legal_entity_name = 'KIPP Miami' THEN 'KMS'
   END AS region,
+  (
   a.primary_site_school_level
-  COLLATE Latin1_General_BIN AS school_level,
-  CAST(a.primary_site_reporting_schoolid AS VARCHAR(25)) AS reporting_schoolid,
+  COLLATE LATIN1_GENERAL_BIN
+  ) AS school_level,
+  CAST(
+  a.primary_site_reporting_schoolid AS VARCHAR(25)
+  ) AS reporting_schoolid,
   NULL AS grade_level,
   CAST(a.is_attrition AS FLOAT) AS is_attrition,
   CAST(
@@ -564,7 +568,8 @@ WITH
   ELSE 0.0
   END AS FLOAT
   ) AS is_attrition_termination
-  FROM gabby.tableau.compliance_staff_attrition AS a
+  FROM
+  gabby.tableau.compliance_staff_attrition AS a
   WHERE
   a.is_denominator = 1
   AND a.primary_site_reporting_schoolid != 0
@@ -759,12 +764,14 @@ WITH
         SELECT
           academic_year,
           reporting_term,
-          subject_legal_entity_name
-        COLLATE Latin1_General_BIN AS subject_legal_entity_name,
-        subject_primary_site_school_level,
-        CAST(subject_primary_site_schoolid AS VARCHAR) AS subject_primary_site_schoolid,
-        subject_username,
-        SUM(total_weighted_response_value) / SUM(total_response_weight) AS avg_survey_weighted_response_value
+          (
+            subject_legal_entity_name
+            COLLATE LATIN1_GENERAL_BIN
+          ) AS subject_legal_entity_name,
+          subject_primary_site_school_level,
+          CAST(subject_primary_site_schoolid AS VARCHAR) AS subject_primary_site_schoolid,
+          subject_username,
+          SUM(total_weighted_response_value) / SUM(total_response_weight) AS avg_survey_weighted_response_value
         FROM
           gabby.surveys.self_and_others_survey_rollup_static
         WHERE
@@ -801,12 +808,14 @@ WITH
         SELECT
           academic_year,
           reporting_term,
-          subject_legal_entity_name
-        COLLATE Latin1_General_BIN AS subject_legal_entity_name,
-        subject_primary_site_school_level,
-        CAST(subject_primary_site_schoolid AS VARCHAR) AS subject_primary_site_schoolid,
-        subject_username,
-        AVG(avg_response_value) AS avg_survey_response_value
+          (
+            subject_legal_entity_name
+            COLLATE LATIN1_GENERAL_BIN
+          ) AS subject_legal_entity_name,
+          subject_primary_site_school_level,
+          CAST(subject_primary_site_schoolid AS VARCHAR) AS subject_primary_site_schoolid,
+          subject_username,
+          AVG(avg_response_value) AS avg_survey_response_value
         FROM
           gabby.surveys.manager_survey_rollup
         WHERE
@@ -846,34 +855,41 @@ UNION ALL
 SELECT
   m.academic_year,
   m.region,
-  m.school_level
-COLLATE Latin1_General_BIN,
-m.reporting_schoolid,
-m.grade_level,
-m.subject_area,
-m.module_number AS term_name,
-'Assessments' AS DOMAIN,
-'Internal Assessments' AS subdomain,
-m.field,
-m.[value]
+  (
+    m.school_level
+    COLLATE LATIN1_GENERAL_BIN
+  ),
+  m.reporting_schoolid,
+  m.grade_level,
+  m.subject_area,
+  m.module_number AS term_name,
+  'Assessments' AS DOMAIN,
+  'Internal Assessments' AS subdomain,
+  m.field,
+  m.[value]
 FROM
   modules AS m
 UNION ALL
 /*
-SELECT p.academic_year
-,p.region
-,p.school_level
-,p.reporting_schoolid
-,p.grade_level
-,p.subject COLLATE Latin1_General_BIN AS subject_area
-,'Y1' AS term_name
-,'Assessments' AS domain
-,'PARCC' AS subdomain
-,p.field
-,p.[value]
-FROM parcc AS p
+SELECT
+p.academic_year,
+p.region,
+p.school_level,
+p.reporting_schoolid,
+p.grade_level,
+(
+p.subject
+COLLATE LATIN1_GENERAL_BIN
+) AS subject_area,
+'Y1' AS term_name,
+'Assessments' AS DOMAIN,
+'PARCC' AS subdomain,
+p.field,
+p.[value]
+FROM
+parcc AS p
 UNION ALL
- */
+--*/
 SELECT
   a.academic_year,
   a.region,

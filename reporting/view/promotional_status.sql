@@ -252,16 +252,18 @@ FROM
           AND rt.alt_name = lit.test_round
           LEFT JOIN failing AS f ON co.studentid = f.studentid
           AND co.yearid = f.yearid
-          AND rt.alt_name = f.storecode
-        COLLATE Latin1_General_BIN
-        LEFT JOIN credits AS cr ON co.studentid = cr.studentid
-        AND co.schoolid = cr.schoolid
-        AND co.[db_name] = cr.[db_name]
-        LEFT JOIN enrolled_credits AS enr ON co.student_number = enr.student_number
-        AND co.academic_year = enr.academic_year
-        LEFT JOIN qas ON co.student_number = qas.local_student_id
-        AND co.academic_year = qas.academic_year
-        AND rt.alt_name = qas.term_administered
+          AND (
+            rt.alt_name = f.storecode
+            COLLATE LATIN1_GENERAL_BIN
+          )
+          LEFT JOIN credits AS cr ON co.studentid = cr.studentid
+          AND co.schoolid = cr.schoolid
+          AND co.[db_name] = cr.[db_name]
+          LEFT JOIN enrolled_credits AS enr ON co.student_number = enr.student_number
+          AND co.academic_year = enr.academic_year
+          LEFT JOIN qas ON co.student_number = qas.local_student_id
+          AND co.academic_year = qas.academic_year
+          AND rt.alt_name = qas.term_administered
         WHERE
           co.rn_year = 1
       ) AS sub

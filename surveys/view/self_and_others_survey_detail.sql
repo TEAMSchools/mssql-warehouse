@@ -178,8 +178,8 @@ SELECT
 FROM
   gabby.surveys.self_and_others_survey_detail_archive AS a
   LEFT JOIN gabby.people.employment_history_static AS w ON a.subject_employee_number = w.employee_number
-  AND a.date_submitted (
-    BETWEEN w.effective_start_date AND w.effective_end_date
+  AND (
+    a.date_submitted BETWEEN w.effective_start_date AND w.effective_end_date
   )
   AND w.primary_position = 'Yes'
   AND w.position_status != 'Terminated'

@@ -607,130 +607,134 @@ WITH
         SELECT
           co.student_number,
           co.academic_year,
-          co.region
-        COLLATE SQL_Latin1_General_CP1_CI_AS AS region,
-        co.school_level
-        COLLATE SQL_Latin1_General_CP1_CI_AS AS school_level,
-        co.reporting_schoolid,
-        co.grade_level,
-        CASE
-          WHEN co.lunchstatus IN ('F', 'R') THEN 1.0
-          ELSE 0.0
-        END AS is_free_or_reduced
-        /* ACT */
+          (
+            co.region
+            COLLATE LATIN1_GENERAL_BIN
+          ) AS region,
+          (
+            co.school_level
+            COLLATE LATIN1_GENERAL_BIN
+          ) AS school_level,
+          co.reporting_schoolid,
+          co.grade_level,
+          CASE
+            WHEN co.lunchstatus IN ('F', 'R') THEN 1.0
+            ELSE 0.0
+          END AS is_free_or_reduced
+          /* ACT */
 ,
-        CASE
-          WHEN co.grade_level = 12 THEN act.composite
-        END AS highest_act_composite_seniors,
-        CASE
-          WHEN co.grade_level = 11 THEN act.composite
-        END AS highest_act_composite_juniors
-        /* PARCC */
+          CASE
+            WHEN co.grade_level = 12 THEN act.composite
+          END AS highest_act_composite_seniors,
+          CASE
+            WHEN co.grade_level = 11 THEN act.composite
+          END AS highest_act_composite_juniors
+          /* PARCC */
 ,
-        CASE
-          WHEN parcc.ela_performance_level >= 4 THEN 1.0
-          WHEN parcc.ela_performance_level < 4 THEN 0.0
-        END AS parcc_ela_proficient,
-        CASE
-          WHEN parcc.math_performance_level >= 4 THEN 1.0
-          WHEN parcc.math_performance_level < 4 THEN 0.0
-        END AS parcc_math_proficient,
-        CASE
-          WHEN parcc.ela_performance_level = 3 THEN 1.0
-          WHEN parcc.ela_performance_level != 3 THEN 0.0
-        END AS parcc_ela_approaching,
-        CASE
-          WHEN parcc.math_performance_level = 3 THEN 1.0
-          WHEN parcc.math_performance_level != 3 THEN 0.0
-        END AS parcc_math_approaching,
-        CASE
-          WHEN parcc.ela_performance_level <= 2 THEN 1.0
-          WHEN parcc.ela_performance_level > 2 THEN 0.0
-        END AS parcc_ela_below,
-        CASE
-          WHEN parcc.math_performance_level <= 2 THEN 1.0
-          WHEN parcc.math_performance_level > 2 THEN 0.0
-        END AS parcc_math_below,
-        CASE
-          WHEN co.iep_status = 'SPED'
-          AND parcc.ela_performance_level >= 4 THEN 1.0
-          WHEN co.iep_status = 'SPED'
-          AND parcc.ela_performance_level < 4 THEN 0.0
-        END AS parcc_ela_proficient_iep,
-        CASE
-          WHEN co.iep_status = 'SPED'
-          AND parcc.math_performance_level >= 4 THEN 1.0
-          WHEN co.iep_status = 'SPED'
-          AND parcc.math_performance_level < 4 THEN 0.0
-        END AS parcc_math_proficient_iep,
-        CASE
-          WHEN co.iep_status = 'SPED'
-          AND parcc.ela_performance_level >= 3 THEN 1.0
-          WHEN co.iep_status = 'SPED'
-          AND parcc.ela_performance_level < 3 THEN 0.0
-        END AS parcc_ela_approaching_iep,
-        CASE
-          WHEN co.iep_status = 'SPED'
-          AND parcc.math_performance_level >= 3 THEN 1.0
-          WHEN co.iep_status = 'SPED'
-          AND parcc.math_performance_level < 3 THEN 0.0
-        END AS parcc_math_approaching_iep
-        /* T&L assessments */
+          CASE
+            WHEN parcc.ela_performance_level >= 4 THEN 1.0
+            WHEN parcc.ela_performance_level < 4 THEN 0.0
+          END AS parcc_ela_proficient,
+          CASE
+            WHEN parcc.math_performance_level >= 4 THEN 1.0
+            WHEN parcc.math_performance_level < 4 THEN 0.0
+          END AS parcc_math_proficient,
+          CASE
+            WHEN parcc.ela_performance_level = 3 THEN 1.0
+            WHEN parcc.ela_performance_level != 3 THEN 0.0
+          END AS parcc_ela_approaching,
+          CASE
+            WHEN parcc.math_performance_level = 3 THEN 1.0
+            WHEN parcc.math_performance_level != 3 THEN 0.0
+          END AS parcc_math_approaching,
+          CASE
+            WHEN parcc.ela_performance_level <= 2 THEN 1.0
+            WHEN parcc.ela_performance_level > 2 THEN 0.0
+          END AS parcc_ela_below,
+          CASE
+            WHEN parcc.math_performance_level <= 2 THEN 1.0
+            WHEN parcc.math_performance_level > 2 THEN 0.0
+          END AS parcc_math_below,
+          CASE
+            WHEN co.iep_status = 'SPED'
+            AND parcc.ela_performance_level >= 4 THEN 1.0
+            WHEN co.iep_status = 'SPED'
+            AND parcc.ela_performance_level < 4 THEN 0.0
+          END AS parcc_ela_proficient_iep,
+          CASE
+            WHEN co.iep_status = 'SPED'
+            AND parcc.math_performance_level >= 4 THEN 1.0
+            WHEN co.iep_status = 'SPED'
+            AND parcc.math_performance_level < 4 THEN 0.0
+          END AS parcc_math_proficient_iep,
+          CASE
+            WHEN co.iep_status = 'SPED'
+            AND parcc.ela_performance_level >= 3 THEN 1.0
+            WHEN co.iep_status = 'SPED'
+            AND parcc.ela_performance_level < 3 THEN 0.0
+          END AS parcc_ela_approaching_iep,
+          CASE
+            WHEN co.iep_status = 'SPED'
+            AND parcc.math_performance_level >= 3 THEN 1.0
+            WHEN co.iep_status = 'SPED'
+            AND parcc.math_performance_level < 3 THEN 0.0
+          END AS parcc_math_approaching_iep
+          /* T&L assessments */
 ,
-        CASE
-          WHEN co.grade_level <= 2 THEN modela.ela_is_mastery
-        END AS module_ela_is_mastery,
-        CASE
-          WHEN co.grade_level > 2 THEN NULL
-          WHEN modela.ela_percent_correct >= 65 THEN 1.0
-          WHEN modela.ela_percent_correct < 65 THEN 0.0
-        END AS module_ela_is_parcc_predictive,
-        CASE
-          WHEN co.grade_level <= 2 THEN modmath.math_is_mastery
-        END AS module_math_is_mastery,
-        CASE
-          WHEN co.grade_level > 2 THEN NULL
-          WHEN modmath.math_percent_correct >= 65 THEN 1.0
-          WHEN modmath.math_percent_correct < 65 THEN 0.0
-        END AS module_math_is_parcc_predictive
-        /*Literacy */
+          CASE
+            WHEN co.grade_level <= 2 THEN modela.ela_is_mastery
+          END AS module_ela_is_mastery,
+          CASE
+            WHEN co.grade_level > 2 THEN NULL
+            WHEN modela.ela_percent_correct >= 65 THEN 1.0
+            WHEN modela.ela_percent_correct < 65 THEN 0.0
+          END AS module_ela_is_parcc_predictive,
+          CASE
+            WHEN co.grade_level <= 2 THEN modmath.math_is_mastery
+          END AS module_math_is_mastery,
+          CASE
+            WHEN co.grade_level > 2 THEN NULL
+            WHEN modmath.math_percent_correct >= 65 THEN 1.0
+            WHEN modmath.math_percent_correct < 65 THEN 0.0
+          END AS module_math_is_parcc_predictive
+          /*Literacy */
 ,
-        CAST(la.met_goal AS FLOAT) AS lit_meeting_goal,
-        lg.is_making_1yr_growth AS lit_making_1yr_growth
-        /* ADA */
+          CAST(la.met_goal AS FLOAT) AS lit_meeting_goal,
+          lg.is_making_1yr_growth AS lit_making_1yr_growth
+          /* ADA */
 ,
-        ADA.n_days_attendance,
-        ADA.n_days_membership,
-        CASE
-          WHEN ADA.ada < 0.9 THEN 1.0
-          ELSE 0.0
-        END AS is_chronically_absent
-        /* Attendance Codes */
+          ADA.n_days_attendance,
+          ADA.n_days_membership,
+          CASE
+            WHEN ADA.ada < 0.9 THEN 1.0
+            ELSE 0.0
+          END AS is_chronically_absent
+          /* Attendance Codes */
 ,
-        sus.n_days_tardy,
-        sus.OSS AS n_oss,
-        sus.ISS AS n_iss,
-        CASE
-          WHEN sus.OSS > 0 THEN 1.0
-          ELSE 0.0
-        END AS is_oss,
-        CASE
-          WHEN sus.ISS > 0 THEN 1.0
-          ELSE 0.0
-        END AS is_iss,
-        CASE
-          WHEN co.iep_status = 'SPED'
-          AND sus.OSS > 0 THEN 1.0
-          ELSE 0.0
-        END AS is_oss_iep,
-        CASE
-          WHEN co.iep_status = 'SPED'
-          AND sus.ISS > 0 THEN 1.0
-          ELSE 0.0
-        END AS is_iss_iep
-        /* Attrition */
+          sus.n_days_tardy,
+          sus.OSS AS n_oss,
+          sus.ISS AS n_iss,
+          CASE
+            WHEN sus.OSS > 0 THEN 1.0
+            ELSE 0.0
+          END AS is_oss,
+          CASE
+            WHEN sus.ISS > 0 THEN 1.0
+            ELSE 0.0
+          END AS is_iss,
+          CASE
+            WHEN co.iep_status = 'SPED'
+            AND sus.OSS > 0 THEN 1.0
+            ELSE 0.0
+          END AS is_oss_iep,
+          CASE
+            WHEN co.iep_status = 'SPED'
+            AND sus.ISS > 0 THEN 1.0
+            ELSE 0.0
+          END AS is_iss_iep
+          /* Attrition */
 ,
-        sa.is_attrition AS is_student_attrition
+          sa.is_attrition AS is_student_attrition
         FROM
           gabby.powerschool.cohort_identifiers_static AS co
           LEFT JOIN act ON co.student_number = act.student_number

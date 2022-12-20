@@ -224,8 +224,8 @@ WITH
           AND te.storecode = fg.finalgradename
           AND te.sectionid = fg.sectionid
           LEFT JOIN powerschool.gradescaleitem_lookup_static AS fgs ON te.gradescaleid = fgs.gradescaleid
-          AND fg.[percent] (
-            BETWEEN fgs.min_cutoffpercentage AND fgs.max_cutoffpercentage
+          AND (
+            fg.[percent] BETWEEN fgs.min_cutoffpercentage AND fgs.max_cutoffpercentage
           )
           LEFT JOIN powerschool.storedgrades AS sg ON te.studentid = sg.studentid
           AND te.course_number = sg.course_number
@@ -233,8 +233,8 @@ WITH
           AND te.termid = sg.termid
           AND te.sectionid = sg.sectionid
           LEFT JOIN powerschool.gradescaleitem_lookup_static AS sgs ON te.gradescaleid = sgs.gradescaleid
-          AND sg.[percent] (
-            BETWEEN sgs.min_cutoffpercentage AND sgs.max_cutoffpercentage
+          AND (
+            sg.[percent] BETWEEN sgs.min_cutoffpercentage AND sgs.max_cutoffpercentage
           )
         WHERE
           te.is_dropped_course < 1.0
@@ -502,10 +502,10 @@ FROM
       y1
   ) AS sub
   LEFT JOIN powerschool.gradescaleitem_lookup_static AS y1gs ON sub.gradescaleid = y1gs.gradescaleid
-  AND sub.y1_grade_percent (
-    BETWEEN y1gs.min_cutoffpercentage AND y1gs.max_cutoffpercentage
+  AND (
+    sub.y1_grade_percent BETWEEN y1gs.min_cutoffpercentage AND y1gs.max_cutoffpercentage
   )
   LEFT JOIN powerschool.gradescaleitem_lookup_static AS y1gsu ON sub.gradescaleid_unweighted = y1gsu.gradescaleid
-  AND sub.y1_grade_percent (
-    BETWEEN y1gsu.min_cutoffpercentage AND y1gsu.max_cutoffpercentage
+  AND (
+    sub.y1_grade_percent BETWEEN y1gsu.min_cutoffpercentage AND y1gsu.max_cutoffpercentage
   )

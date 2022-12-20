@@ -13,8 +13,8 @@ WITH
       cat.category_pct,
       cat.citizenship,
       CASE
-        WHEN CAST(CURRENT_TIMESTAMP AS DATE) (
-          BETWEEN cat.termbin_start_date AND cat.termbin_end_date
+        WHEN (
+          CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN cat.termbin_start_date AND cat.termbin_end_date
         ) THEN 1
         ELSE 0
       END AS is_curterm,
@@ -40,8 +40,8 @@ WITH
       ) AS category_pct,
       NULL AS citizenship,
       CASE
-        WHEN CAST(CURRENT_TIMESTAMP AS DATE) (
-          BETWEEN cat.termbin_start_date AND cat.termbin_end_date
+        WHEN (
+          CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN cat.termbin_start_date AND cat.termbin_end_date
         ) THEN 1
         ELSE 0
       END AS is_curterm,
@@ -80,8 +80,8 @@ WITH
       cat.yearid = (
         gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990
       )
-      AND CAST(CURRENT_TIMESTAMP AS DATE) (
-        BETWEEN cat.termbin_start_date AND cat.termbin_end_date
+      AND (
+        CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN cat.termbin_start_date AND cat.termbin_end_date
       )
     UNION ALL
     SELECT
@@ -104,8 +104,8 @@ WITH
       cat.yearid = (
         gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990
       )
-      AND CAST(CURRENT_TIMESTAMP AS DATE) (
-        BETWEEN cat.termbin_start_date AND cat.termbin_end_date
+      AND (
+        CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN cat.termbin_start_date AND cat.termbin_end_date
       )
     GROUP BY
       cat.studentid,

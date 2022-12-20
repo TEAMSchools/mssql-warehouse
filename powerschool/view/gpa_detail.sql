@@ -26,9 +26,11 @@ WITH
       AND fg.potential_credit_hours > 0
       INNER JOIN gabby.reporting.reporting_terms AS rt ON co.schoolid = rt.schoolid
       AND co.academic_year = rt.academic_year
-      AND fg.storecode = rt.alt_name
-    COLLATE Latin1_General_BIN
-    AND rt.identifier = 'RT'
+      AND (
+        fg.storecode = rt.alt_name
+        COLLATE LATIN1_GENERAL_BIN
+      )
+      AND rt.identifier = 'RT'
     WHERE
       co.rn_year = 1
     UNION ALL

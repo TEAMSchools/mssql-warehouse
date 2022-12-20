@@ -32,17 +32,20 @@ FROM
         ELSE 0
       END AS is_dropped,
       sec.gradescaleid,
-      CASE
-        WHEN terms.alt_name = 'Summer School' THEN 'Q1'
-        ELSE terms.alt_name
-      END
-    COLLATE Latin1_General_BIN AS term_name
+      (
+        CASE
+          WHEN terms.alt_name = 'Summer School' THEN 'Q1'
+          ELSE terms.alt_name
+        END
+        COLLATE LATIN1_GENERAL_BIN
+      ) AS term_name
     FROM
       powerschool.cc
       INNER JOIN powerschool.sections AS sec ON ABS(cc.sectionid) = sec.id
       INNER JOIN gabby.reporting.reporting_terms AS terms ON cc.schoolid = terms.schoolid
-      AND terms.identifier = 'RT' ND cc.dateenrolled (
-        BETWEEN terms.[start_date] AND terms.end_date
+      AND terms.identifier = 'RT'
+      AND (
+        cc.dateenrolled BETWEEN terms.[start_date] AND terms.end_date
       )
     WHERE
       cc.dateenrolled BETWEEN DATEFROMPARTS(

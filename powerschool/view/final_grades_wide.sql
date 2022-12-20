@@ -89,12 +89,14 @@ WITH
           ) AS term_grade_percent_adj
         FROM
           powerschool.final_grades_static AS fg
-          INNER JOIN gabby.reporting.reporting_terms AS rt ON fg.storecode = rt.alt_name
-        COLLATE Latin1_General_BIN
-        AND fg.yearid = rt.yearid
-        AND rt.identifier = 'RT'
-        AND rt.is_curterm = 1
-        AND rt.schoolid = 0
+          INNER JOIN gabby.reporting.reporting_terms AS rt ON (
+            fg.storecode = rt.alt_name
+            COLLATE LATIN1_GENERAL_BIN
+          )
+          AND fg.yearid = rt.yearid
+          AND rt.identifier = 'RT'
+          AND rt.is_curterm = 1
+          AND rt.schoolid = 0
       ) AS sub UNPIVOT (
         [value] FOR field IN (
           term_grade_letter,

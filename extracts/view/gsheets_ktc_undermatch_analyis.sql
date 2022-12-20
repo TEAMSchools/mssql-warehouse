@@ -8,7 +8,7 @@ WITH
       ac.[name] AS school_name,
       ac.[type] AS school_type,
       ac.[description] AS school_description,
-      ac.adjusted_6_year_minority_graduation_rate_c AS adjusted_6_year_minority_graduation_rate,
+      ac.adjusted_6_year_minority_graduation_rate_c,
       rt.[name] AS record_type_name,
       ROW_NUMBER() OVER (
         PARTITION BY
@@ -39,7 +39,8 @@ SELECT
   a.school_name,
   a.school_type,
   a.application_status,
-  a.adjusted_6_year_minority_graduation_rate,
+  /* trunk-ignore(sqlfluff/L016) */
+  a.adjusted_6_year_minority_graduation_rate_c AS adjusted_6_year_minority_graduation_rate,
   a.school_description,
   a.record_type_name
 FROM

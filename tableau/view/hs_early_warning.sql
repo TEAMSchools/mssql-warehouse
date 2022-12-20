@@ -71,8 +71,8 @@ SELECT
   gr.y1_grade_letter,
   gr.need_60 AS need_65,
   CASE
-    WHEN CAST(CURRENT_TIMESTAMP AS DATE) (
-      BETWEEN gr.termbin_start_date AND gr.termbin_end_date
+    WHEN (
+      CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN gr.termbin_start_date AND gr.termbin_end_date
     ) THEN 1
     ELSE 0
   END AS is_curterm,
@@ -100,24 +100,28 @@ FROM
   LEFT JOIN gabby.powerschool.final_grades_static AS gr ON co.studentid = gr.studentid
   AND co.yearid = gr.yearid
   AND co.[db_name] = gr.[db_name]
-  AND dt.alt_name = gr.storecode
-COLLATE Latin1_General_BIN
-AND gr.exclude_from_gpa = 0
-LEFT JOIN gabby.powerschool.sections_identifiers AS si ON gr.sectionid = si.sectionid
-AND gr.[db_name] = si.[db_name]
-LEFT JOIN gabby.powerschool.gpa_detail AS gpa ON co.student_number = gpa.student_number
-AND co.academic_year = gpa.academic_year
-AND co.[db_name] = gpa.[db_name]
-AND dt.time_per_name = gpa.reporting_term
-COLLATE Latin1_General_BIN
-LEFT JOIN gabby.powerschool.gpa_cumulative AS gpc ON co.studentid = gpc.studentid
-AND co.schoolid = gpc.schoolid
-AND co.[db_name] = gpc.[db_name]
-LEFT JOIN attendance AS att ON co.studentid = att.studentid
-AND co.[db_name] = att.[db_name]
-LEFT JOIN suspension AS sus ON co.student_number = sus.student_school_id
-AND co.academic_year = sus.create_academic_year
-AND co.[db_name] = sus.[db_name]
+  AND (
+    dt.alt_name = gr.storecode
+    COLLATE LATIN1_GENERAL_BIN
+  )
+  AND gr.exclude_from_gpa = 0
+  LEFT JOIN gabby.powerschool.sections_identifiers AS si ON gr.sectionid = si.sectionid
+  AND gr.[db_name] = si.[db_name]
+  LEFT JOIN gabby.powerschool.gpa_detail AS gpa ON co.student_number = gpa.student_number
+  AND co.academic_year = gpa.academic_year
+  AND co.[db_name] = gpa.[db_name]
+  AND (
+    dt.time_per_name = gpa.reporting_term
+    COLLATE LATIN1_GENERAL_BIN
+  )
+  LEFT JOIN gabby.powerschool.gpa_cumulative AS gpc ON co.studentid = gpc.studentid
+  AND co.schoolid = gpc.schoolid
+  AND co.[db_name] = gpc.[db_name]
+  LEFT JOIN attendance AS att ON co.studentid = att.studentid
+  AND co.[db_name] = att.[db_name]
+  LEFT JOIN suspension AS sus ON co.student_number = sus.student_school_id
+  AND co.academic_year = sus.create_academic_year
+  AND co.[db_name] = sus.[db_name]
 WHERE
   co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
   AND co.rn_year = 1

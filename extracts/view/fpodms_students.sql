@@ -4,6 +4,7 @@ SELECT
   co.student_number AS [studentIdentifier],
   co.first_name AS [firstName],
   co.last_name AS [lastName],
+  sch.[name] AS [schoolName],
   co.grade_level + 1 AS [gradeId],
   CONVERT(
     VARCHAR,
@@ -14,8 +15,7 @@ SELECT
     VARCHAR,
     CAST(co.exitdate AS DATETIME2),
     126
-  ) AS [classStudentEndDate],
-  sch.[name] AS [schoolName]
+  ) AS [classStudentEndDate]
 FROM
   gabby.powerschool.cohort_identifiers_static AS co
   INNER JOIN gabby.powerschool.schools AS sch ON co.schoolid = sch.school_number

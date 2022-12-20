@@ -26,13 +26,17 @@ WITH
             WHEN att.att_code = 'T10' THEN 'T10'
           END AS att_code,
           CAST(dates.academic_year AS INT) AS academic_year,
-          CAST(dates.time_per_name AS VARCHAR)
-        COLLATE Latin1_General_BIN AS reporting_term,
-        CAST(dates.alt_name AS VARCHAR)
-        COLLATE Latin1_General_BIN AS term_name,
-        dates.start_date,
-        dates.end_date,
-        dates.is_curterm
+          (
+            CAST(dates.time_per_name AS VARCHAR)
+            COLLATE LATIN1_GENERAL_BIN
+          ) AS reporting_term,
+          (
+            CAST(dates.alt_name AS VARCHAR)
+            COLLATE LATIN1_GENERAL_BIN
+          ) AS term_name,
+          dates.start_date,
+          dates.end_date,
+          dates.is_curterm
         FROM
           powerschool.ps_attendance_daily AS att
           INNER JOIN gabby.reporting.reporting_terms AS dates ON att.schoolid = dates.schoolid
@@ -106,8 +110,8 @@ WITH
           )
           AND d.identifier = 'RT'
         WHERE
-          mem.calendardate (
-            BETWEEN DATEFROMPARTS(
+          (
+            mem.calendardate BETWEEN DATEFROMPARTS(
               gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1,
               7,
               1

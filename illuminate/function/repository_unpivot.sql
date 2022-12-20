@@ -15,9 +15,11 @@ SELECT
 FROM
   illuminate_dna_repositories.fields AS f
   INNER JOIN gabby.utilities.all_tables_columns AS atc ON CONCAT('repository_', f.repository_id) = atc.table_name
-  AND f.[name] = atc.column_name
-COLLATE Latin1_General_BIN
-AND atc.[schema_name] = 'illuminate_dna_repositories'
+  AND (
+    f.[name] = atc.column_name
+    COLLATE LATIN1_GENERAL_BIN
+  )
+  AND atc.[schema_name] = 'illuminate_dna_repositories'
 WHERE
   f.repository_id = @repository_id
   AND f.deleted_at IS NULL;

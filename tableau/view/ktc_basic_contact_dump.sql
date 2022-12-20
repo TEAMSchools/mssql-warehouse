@@ -369,8 +369,8 @@ FROM
   LEFT JOIN gpa ON c.sf_contact_id = gpa.student_c
   LEFT JOIN stipends AS s ON c.sf_contact_id = s.student_c
   LEFT JOIN oot_roster AS oot ON c.sf_contact_id = oot.contact_id
-  AND gabby.utilities.GLOBAL_ACADEMIC_YEAR () (
-    BETWEEN oot.missing_academic_year AND oot.found_academic_year
+  AND (
+    gabby.utilities.GLOBAL_ACADEMIC_YEAR () BETWEEN oot.missing_academic_year AND oot.found_academic_year
   )
   AND oot.rn = 1
   LEFT JOIN counselor_changes AS cc ON c.sf_contact_id = cc.contact_id

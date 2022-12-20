@@ -65,8 +65,10 @@ FROM
   INNER JOIN gabby.parcc.summative_record_file AS parcc ON co.student_number = parcc.local_student_identifier
   AND co.academic_year = LEFT(parcc.assessment_year, 4)
   LEFT JOIN external_prof AS ext ON co.academic_year = ext.academic_year
-  AND parcc.test_code = ext.test_code
-COLLATE Latin1_General_BIN
+  AND (
+    parcc.test_code = ext.test_code
+    COLLATE LATIN1_GENERAL_BIN
+  )
 WHERE
   co.rn_year = 1
 UNION ALL
@@ -84,30 +86,36 @@ SELECT
   co.lunchstatus,
   co.ethnicity,
   co.gender,
-  asa.test_type
-COLLATE Latin1_General_BIN AS test_type,
-CONCAT(
-  LEFT(asa.subject, 3),
-  RIGHT(CONCAT('0', co.grade_level), 2)
-)
-COLLATE Latin1_General_BIN AS test_code,
-asa.subject
-COLLATE Latin1_General_BIN AS subject,
-asa.scaled_score,
-CASE
-  WHEN asa.performance_level = 'Advanced Proficient' THEN 5
-  WHEN asa.performance_level = 'Proficient' THEN 4
-  WHEN asa.performance_level = 'Partially Proficient' THEN 1
-END AS performance_level,
-CASE
-  WHEN asa.scaled_score = 0 THEN NULL
-  WHEN asa.scaled_score >= 200 THEN 1
-  WHEN asa.scaled_score < 200 THEN 0
-END AS is_proficient,
-ext.nj AS pct_prof_nj,
-ext.nps AS pct_prof_nps,
-ext.cps AS pct_prof_cps,
-ext.parcc AS pct_prof_parcc
+  (
+    asa.test_type
+    COLLATE LATIN1_GENERAL_BIN
+  ) AS test_type,
+  (
+    CONCAT(
+      LEFT(asa.subject, 3),
+      RIGHT(CONCAT('0', co.grade_level), 2)
+    )
+    COLLATE LATIN1_GENERAL_BIN
+  ) AS test_code,
+  (
+    asa.subject
+    COLLATE LATIN1_GENERAL_BIN
+  ) AS [subject],
+  asa.scaled_score,
+  CASE
+    WHEN asa.performance_level = 'Advanced Proficient' THEN 5
+    WHEN asa.performance_level = 'Proficient' THEN 4
+    WHEN asa.performance_level = 'Partially Proficient' THEN 1
+  END AS performance_level,
+  CASE
+    WHEN asa.scaled_score = 0 THEN NULL
+    WHEN asa.scaled_score >= 200 THEN 1
+    WHEN asa.scaled_score < 200 THEN 0
+  END AS is_proficient,
+  ext.nj AS pct_prof_nj,
+  ext.nps AS pct_prof_nps,
+  ext.cps AS pct_prof_cps,
+  ext.parcc AS pct_prof_parcc
 FROM
   gabby.powerschool.cohort_identifiers_static AS co
   INNER JOIN gabby.njsmart.all_state_assessments AS asa ON co.student_number = asa.local_student_id

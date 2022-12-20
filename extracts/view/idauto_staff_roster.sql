@@ -10,6 +10,7 @@ SELECT
   df.home_department AS [Business Unit Description],
   df.home_department AS [Home Department Description],
   df.job_title AS [Job Title Description],
+  NULL AS [Preferred Name],
   CAST(df.manager_employee_number AS VARCHAR) AS [Business Unit Code],
   CONVERT(VARCHAR, df.rehire_date, 101) AS [Rehire Date],
   CONVERT(VARCHAR, df.termination_date, 101) AS [Termination Date],
@@ -17,8 +18,7 @@ SELECT
   CASE
     WHEN df.position_status = 'Prestart' THEN 'Active'
     ELSE df.position_status
-  END AS [Position Status],
-  NULL AS [Preferred Name]
+  END AS [Position Status]
 FROM
   gabby.people.staff_roster AS df
 WHERE

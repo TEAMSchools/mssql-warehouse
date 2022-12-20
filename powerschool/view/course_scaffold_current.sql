@@ -24,11 +24,13 @@ FROM
       enr.credit_hours,
       enr.excludefromgpa,
       enr.gradescaleid,
-      CAST(terms.alt_name AS VARCHAR(25))
-    COLLATE Latin1_General_BIN AS term_name,
-    terms.[start_date] AS term_start_date,
-    terms.end_date AS term_end_date,
-    terms.is_curterm
+      (
+        CAST(terms.alt_name AS VARCHAR(25))
+        COLLATE LATIN1_GENERAL_BIN
+      ) AS term_name,
+      terms.[start_date] AS term_start_date,
+      terms.end_date AS term_end_date,
+      terms.is_curterm
     FROM
       powerschool.course_enrollments_current_static AS enr
       INNER JOIN powerschool.schools ON enr.schoolid = schools.school_number

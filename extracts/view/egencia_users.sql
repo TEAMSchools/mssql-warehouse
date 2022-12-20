@@ -1,47 +1,49 @@
 CREATE OR ALTER VIEW
   extracts.egencia_users AS
 SELECT
-  CONCAT(sub.employee_number, '@kippnj.org') AS [Username],
   sub.[Email],
   sub.[Single Sign On ID],
   sub.employee_number AS [Employee ID],
+  sub.[First name],
+  sub.[Last name],
+  sub.[location],
+  sub.home_department,
+  sub.job_title,
+  CONCAT(sub.employee_number, '@kippnj.org') AS [Username],
   CASE
     WHEN sub.position_status = 'Terminated' THEN 'Disabled'
     ELSE 'Active'
   END AS [Status],
-  sub.[First name],
-  sub.[Last name],
   CASE
     WHEN sub.employee_number IN (100219, 100412, 100566, 102298) THEN 'Travel Manager'
     ELSE 'Traveler'
   END AS [Role],
+  /* cascading match on location/dept/job */
   COALESCE(
     tg.egencia_traveler_group,
     tg2.egencia_traveler_group,
     tg3.egencia_traveler_group,
     'General Traveler Group'
-  ) AS [Traveler Group] -- cascading match on location/dept/job
-,
-  sub.[location],
-  sub.home_department,
-  sub.job_title
+  ) AS [Traveler Group]
 FROM
   (
     SELECT
       scw.employee_number,
-      scw.first_name AS [First name] /* legal name */,
-      scw.last_name AS [Last name] /* legal name */,
+      /* legal name */
+      scw.first_name AS [First name],
+      /* legal name */
+      scw.last_name AS [Last name],
       scw.position_status,
-      COALESCE(scw.rehire_date, scw.original_hire_date) AS hire_date,
       scw.termination_date,
       scw.[location],
       scw.home_department,
       scw.job_title,
       ad.mail AS [Email],
-      ad.userprincipalname AS [Single Sign On ID]
+      ad.userprincipalname AS [Single Sign On ID],
+      COALESCE(scw.rehire_date, scw.original_hire_date) AS hire_date
     FROM
       gabby.people.staff_roster AS scw
-      INNER JOIN gabby.adsi.user_attributes_static AS ad ON scw.employee_number = ad.employeenumber
+      INNER JOIN gabby.adsi.user_attributes_static AS ad ON scw.employee_number = ad.employeenumber /* trunk-ignore(sqlfluff/L016) */
       AND ISNUMERIC(ad.employeenumber) = 1
     WHERE
       (

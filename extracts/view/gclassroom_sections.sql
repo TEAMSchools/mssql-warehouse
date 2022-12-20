@@ -9,6 +9,8 @@ SELECT
   sec.termid,
   sec.course_number,
   sec.room,
+  sch.[name] AS school_name,
+  scw.google_email AS teacher_gsuite_email,
   CONCAT(
     sec.schoolid,
     '-',
@@ -18,8 +20,6 @@ SELECT
     '-',
     sec.termid
   ) AS class_alias,
-  sch.[name] AS school_name,
-  scw.google_email AS teacher_gsuite_email,
   CONCAT(
     c.course_name,
     ' (' + c.course_number + ') - ',
@@ -37,12 +37,16 @@ FROM
   INNER JOIN gabby.powerschool.teachers_static AS t ON sec.teacher = t.id
   AND sec.schoolid = t.schoolid
   AND sec.[db_name] = t.[db_name]
-  INNER JOIN gabby.people.staff_crosswalk_static AS scw ON t.teachernumber = scw.ps_teachernumber
-COLLATE Latin1_General_BIN
+  INNER JOIN gabby.people.staff_crosswalk_static AS scw ON (
+    t.teachernumber = scw.ps_teachernumber
+    COLLATE LATIN1_GENERAL_BIN
+  )
 WHERE
   sec.termid >= (
     (
-      gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990
+      (
+        gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990
+      )
     ) * 100
   )
   AND sec.no_of_students > 0

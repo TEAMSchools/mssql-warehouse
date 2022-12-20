@@ -1,5 +1,6 @@
 CREATE OR ALTER VIEW
   extracts.illuminate_enrollment AS
+  /* trunk-ignore(sqlfluff/L034) */
 SELECT
   student_number AS [01 Student ID],
   state_studentnumber AS [02 Ssid],

@@ -36,11 +36,15 @@ UNION ALL
 SELECT
   student_identifier AS student_number,
   academic_year_clean AS academic_year,
-  eligibility_name + ' - ' + 'Income Form'
-COLLATE Latin1_General_BIN AS lunch_app_status,
-eligibility_name
-COLLATE Latin1_General_BIN AS lunch_status,
-rn,
-'kippnewark' AS [db_name]
+  (
+    eligibility_name + ' - ' + 'Income Form'
+    COLLATE LATIN1_GENERAL_BIN
+  ) AS lunch_app_status,
+  (
+    eligibility_name
+    COLLATE LATIN1_GENERAL_BIN
+  ) AS lunch_status,
+  rn,
+  'kippnewark' AS [db_name]
 FROM
   kippnewark.titan.income_form_data_clean

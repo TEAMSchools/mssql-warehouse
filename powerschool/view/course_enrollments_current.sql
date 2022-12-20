@@ -140,8 +140,10 @@ FROM
           powerschool.cc
           INNER JOIN powerschool.students AS s ON cc.studentid = s.id
           INNER JOIN powerschool.sections_identifiers AS sec ON ABS(cc.sectionid) = sec.sectionid
-          LEFT JOIN gabby.assessments.normed_subjects AS sj ON cc.course_number = sj.course_number
-        COLLATE Latin1_General_BIN
+          LEFT JOIN gabby.assessments.normed_subjects AS sj ON (
+            cc.course_number = sj.course_number
+            COLLATE LATIN1_GENERAL_BIN
+          )
         WHERE
           cc.dateenrolled >= DATEFROMPARTS(
             gabby.utilities.GLOBAL_ACADEMIC_YEAR (),

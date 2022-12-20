@@ -64,7 +64,7 @@ FROM
   LEFT JOIN etr_pivot AS p ON c.df_employee_number = p.df_employee_number
   AND p.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
   LEFT JOIN elementary_grade AS g ON c.df_employee_number = g.employee_number
-  LEFT JOIN gabby.surveys.intent_to_return_survey_detail AS i ON c.df_employee_number = i.respondent_df_employee_number
+  LEFT JOIN gabby.surveys.intent_to_return_survey_detail AS i ON c.df_employee_number = i.respondent_df_employee_number /* trunk-ignore(sqlfluff/L016) */
   AND i.question_shortname = 'intent_to_return'
   AND i.campaign_academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
 WHERE

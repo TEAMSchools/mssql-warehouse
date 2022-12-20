@@ -5,11 +5,6 @@ SELECT
   associate_oid,
   is_approved,
   is_approved_district
-  --,business_unit_code
-  --,approvaldate
-  --,approved_districtcode
-  --,approved_business_unit_code
-  --,rn_emp
 FROM
   (
     SELECT
@@ -29,19 +24,12 @@ FROM
           approvaldate DESC,
           approved_business_unit_code DESC
       ) AS rn_emp
-      --,business_unit_code
-      --,approvaldate
-      --,approved_districtcode
-      --,approved_business_unit_code
     FROM
       (
         SELECT
           sr.employee_number,
           sr.associate_oid,
-          sr.business_unit_code
-          --,sr.preferred_name
-          --,sr.position_status
-,
+          sr.business_unit_code,
           bg.approvaldate,
           bg.districtcode AS approved_districtcode,
           CASE
@@ -52,14 +40,9 @@ FROM
             WHEN bg.approvaldate IS NOT NULL THEN 1
             ELSE 0
           END AS is_approved
-          --,bg.pcn
-          --,bg.countycode
-          --,bg.schoolcode
-          --,bg.contractorcode
-          --,bg.jobposition
         FROM
           gabby.people.staff_roster AS sr
-          LEFT JOIN gabby.njdoe.background_check_approval_history AS bg ON sr.employee_number = bg.employee_number
+          LEFT JOIN gabby.njdoe.background_check_approval_history AS bg ON sr.employee_number = bg.employee_number /* trunk-ignore(sqlfluff/L016) */
         WHERE
           sr.position_status != 'Terminated'
           AND sr.business_unit != 'KIPP Miami'

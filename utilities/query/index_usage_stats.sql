@@ -1,28 +1,30 @@
 SELECT
   SCHEMA_NAME(t.[schema_id]) AS [schema_name],
   OBJECT_NAME(ix.[object_id]) AS table_name,
-  ix.[name]
-COLLATE latin1_general_bin AS index_name,
-ixus.user_seeks AS numofseeks,
-ixus.user_scans AS numofscans,
-ixus.user_lookups AS numoflookups,
-ixus.user_seeks + ixus.user_scans + ixus.user_lookups AS numofreads,
-ixus.last_user_seek AS lastseek,
-ixus.last_user_scan AS lastscan,
-ixus.last_user_lookup AS lastlookup,
-(
-  SELECT
-    MAX(lastread)
-  FROM
-    (
-      VALUES
-        (ixus.last_user_seek),
-        (ixus.last_user_scan),
-        (ixus.last_user_lookup)
-    ) AS allreads (lastread)
-) AS lastread
--- ,ixus.user_updates AS NumOfUpdates
--- ,ixus.last_user_update AS LastUpdate
+  (
+    ix.[name]
+    COLLATE LATIN1_GENERAL_BIN
+  ) AS index_name,
+  ixus.user_seeks AS numofseeks,
+  ixus.user_scans AS numofscans,
+  ixus.user_lookups AS numoflookups,
+  ixus.user_seeks + ixus.user_scans + ixus.user_lookups AS numofreads,
+  ixus.last_user_seek AS lastseek,
+  ixus.last_user_scan AS lastscan,
+  ixus.last_user_lookup AS lastlookup,
+  (
+    SELECT
+      MAX(lastread)
+    FROM
+      (
+        VALUES
+          (ixus.last_user_seek),
+          (ixus.last_user_scan),
+          (ixus.last_user_lookup)
+      ) AS allreads (lastread)
+  ) AS lastread
+  -- ,ixus.user_updates AS NumOfUpdates
+  -- ,ixus.last_user_update AS LastUpdate
 FROM
   sys.indexes AS ix
   INNER JOIN sys.objects AS t ON ix.[object_id] = t.[object_id]

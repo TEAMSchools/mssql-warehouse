@@ -37,8 +37,8 @@ FROM
       INNER JOIN gabby.illuminate_dna_assessments.agg_student_responses_standard AS asrs ON ast.assessment_id = asrs.assessment_id
       AND ast.standard_id = asrs.standard_id
       INNER JOIN gabby.illuminate_dna_assessments.performance_band_lookup_static AS pbl ON a.performance_band_set_id = pbl.performance_band_set_id
-      AND asrs.percent_correct (
-        BETWEEN pbl.minimum_value AND pbl.maximum_value
+      AND (
+        asrs.percent_correct BETWEEN pbl.minimum_value AND pbl.maximum_value
       )
       INNER JOIN gabby.illuminate_public.students AS s ON asrs.student_id = s.student_id
     WHERE
@@ -87,8 +87,8 @@ FROM
           s.local_student_id
       ) AS sub
       INNER JOIN gabby.illuminate_dna_assessments.performance_band_lookup_static AS pbl ON sub.min_performance_band_set_id = pbl.performance_band_set_id
-      AND sub.avg_percent_correct (
-        BETWEEN pbl.minimum_value AND pbl.maximum_value
+      AND (
+        sub.avg_percent_correct BETWEEN pbl.minimum_value AND pbl.maximum_value
       )
   ) AS sub PIVOT (
     MAX(performance_band_label) FOR module_num IN (

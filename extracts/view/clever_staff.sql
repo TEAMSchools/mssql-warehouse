@@ -101,7 +101,7 @@ SELECT
   END AS [Role]
 FROM
   gabby.adsi.group_membership AS adg
-  INNER JOIN gabby.people.staff_crosswalk_static AS df ON adg.employee_number = df.df_employee_number
+  INNER JOIN gabby.people.staff_crosswalk_static AS df ON adg.employee_number = df.df_employee_number -- trunk-ignore(sqlfluff/L016)
   AND df.[status] NOT IN ('TERMINATED', 'PRESTART')
   INNER JOIN gabby.powerschool.schools AS sch ON sch.schoolstate = 'NJ'
   AND sch.state_excludefromreporting = 0
