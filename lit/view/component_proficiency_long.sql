@@ -14,44 +14,44 @@ WITH
     FROM
       (
         SELECT
-          rs.unique_id,
-          rs.student_number,
-          rs.[status],
-          rs.about_the_text AS fp_comp_about,
-          rs.beyond_the_text AS fp_comp_beyond,
-          rs.within_the_text AS fp_comp_within,
-          rs.accuracy AS fp_accuracy,
-          rs.fluency AS fp_fluency,
-          rs.reading_rate_wpm AS fp_wpmrate,
-          rs.comp_overall AS fp_comp_prof,
+          unique_id,
+          student_number,
+          [status],
+          about_the_text AS fp_comp_about,
+          beyond_the_text AS fp_comp_beyond,
+          within_the_text AS fp_comp_within,
+          accuracy AS fp_accuracy,
+          fluency AS fp_fluency,
+          reading_rate_wpm AS fp_wpmrate,
+          comp_overall AS fp_comp_prof,
           CASE
-            WHEN rs.[status] = 'Did Not Achieve' THEN rs.instr_lvl_num
-            ELSE rs.indep_lvl_num
+            WHEN [status] = 'Did Not Achieve' THEN instr_lvl_num
+            ELSE indep_lvl_num
           END AS lvl_num,
           CASE
-            WHEN rs.[status] = 'Did Not Achieve' THEN rs.instructional_level_tested
-            ELSE rs.achieved_independent_level
+            WHEN [status] = 'Did Not Achieve' THEN instructional_level_tested
+            ELSE achieved_independent_level
           END AS read_lvl,
           3273 AS testid
         FROM
-          gabby.lit.illuminate_test_events AS rs
+          gabby.lit.illuminate_test_events
         UNION ALL
         SELECT
-          rs.unique_id,
-          rs.student_identifier AS student_number,
-          rs.[status],
-          rs.comprehension_about AS fp_comp_about,
-          rs.comprehension_beyond AS fp_comp_beyond,
-          rs.comprehension_within AS fp_comp_within,
-          rs.accuracy_percent AS fp_accuracy,
-          rs.fluency AS fp_fluency,
-          rs.wpm_rate AS fp_wpmrate,
-          rs.comprehension_total AS fp_comp_prof,
-          rs.lvl_num,
-          rs.text_level AS read_lvl,
-          rs.testid
+          unique_id,
+          student_identifier AS student_number,
+          [status],
+          comprehension_about AS fp_comp_about,
+          comprehension_beyond AS fp_comp_beyond,
+          comprehension_within AS fp_comp_within,
+          accuracy_percent AS fp_accuracy,
+          fluency AS fp_fluency,
+          wpm_rate AS fp_wpmrate,
+          comprehension_total AS fp_comp_prof,
+          lvl_num,
+          text_level AS read_lvl,
+          testid
         FROM
-          gabby.lit.fpodms_test_events AS rs
+          gabby.lit.fpodms_test_events
       ) AS sub UNPIVOT (
         score FOR field IN (
           fp_wpmrate,
@@ -66,44 +66,44 @@ WITH
   ),
   all_scores AS (
     SELECT
-      CAST(rs.unique_id AS VARCHAR(25)) AS unique_id,
-      CAST(rs.student_number AS INT) AS student_number,
-      CAST(rs.testid AS INT) AS testid,
+      CAST(unique_id AS VARCHAR(25)) AS unique_id,
+      CAST(student_number AS INT) AS student_number,
+      CAST(testid AS INT) AS testid,
       CASE
-        WHEN rs.[status] != '' THEN CAST(rs.[status] AS VARCHAR(25))
+        WHEN [status] != '' THEN CAST([status] AS VARCHAR(25))
       END AS [status],
-      CAST(rs.field AS VARCHAR(25)) AS field,
-      CAST(rs.score AS FLOAT) AS score,
+      CAST(field AS VARCHAR(25)) AS field,
+      CAST(score AS FLOAT) AS score,
       CASE
-        WHEN rs.read_lvl != '' THEN CAST(rs.read_lvl AS VARCHAR(5))
+        WHEN read_lvl != '' THEN CAST(read_lvl AS VARCHAR(5))
       END AS read_lvl,
-      CAST(rs.lvl_num AS INT) AS lvl_num
+      CAST(lvl_num AS INT) AS lvl_num
     FROM
-      gabby.lit.powerschool_component_scores_archive AS rs
+      gabby.lit.powerschool_component_scores_archive
     UNION ALL
     SELECT
-      rs.unique_id,
-      rs.student_id AS student_number,
-      rs.testid,
-      rs.[status],
-      rs.field,
-      rs.score,
-      rs.read_lvl,
-      rs.lvl_num
+      unique_id,
+      student_id AS student_number,
+      testid,
+      [status],
+      field,
+      score,
+      read_lvl,
+      lvl_num
     FROM
-      gabby.steptool.component_scores_static AS rs
+      gabby.steptool.component_scores_static
     UNION ALL
     SELECT
-      rs.unique_id,
-      rs.student_number,
-      rs.testid,
-      rs.[status],
-      rs.field,
-      rs.score,
-      rs.read_lvl,
-      rs.lvl_num
+      unique_id,
+      student_number,
+      testid,
+      [status],
+      field,
+      score,
+      read_lvl,
+      lvl_num
     FROM
-      illuminate_fp AS rs
+      illuminate_fp
   ),
   prof_clean AS (
     SELECT
@@ -136,35 +136,47 @@ SELECT
   ABS(sub.is_prof - 1) AS is_dna,
   sub.score - sub.benchmark AS margin,
   CASE
-    WHEN sub.testid != 3273
-    AND sub.is_prof = 0 THEN 1
-    WHEN sub.testid = 3273
-    AND sub.domain != 'Comprehension'
-    AND sub.is_prof = 0 THEN 1
-    WHEN sub.testid = 3273
-    AND sub.domain = 'Comprehension'
-    AND MIN(sub.is_prof) OVER (
-      PARTITION BY
-        sub.unique_id,
-        sub.domain
-    ) = 0
-    AND sub.score_order = 1 THEN 1
+    WHEN (
+      sub.testid != 3273
+      AND sub.is_prof = 0
+    ) THEN 1
+    WHEN (
+      sub.testid = 3273
+      AND sub.domain != 'Comprehension'
+      AND sub.is_prof = 0
+    ) THEN 1
+    WHEN (
+      sub.testid = 3273
+      AND sub.domain = 'Comprehension'
+      AND MIN(sub.is_prof) OVER (
+        PARTITION BY
+          sub.unique_id,
+          sub.domain
+      ) = 0
+      AND sub.score_order = 1
+    ) THEN 1
     ELSE 0
   END AS dna_filter,
   CASE
-    WHEN sub.testid != 3273
-    AND sub.is_prof = 0 THEN sub.domain
-    WHEN sub.testid = 3273
-    AND sub.domain != 'Comprehension'
-    AND sub.is_prof = 0 THEN sub.domain
-    WHEN sub.testid = 3273
-    AND sub.domain = 'Comprehension'
-    AND MIN(sub.is_prof) OVER (
-      PARTITION BY
-        sub.unique_id,
-        sub.domain
-    ) = 0
-    AND sub.score_order = 1 THEN sub.strand
+    WHEN (
+      sub.testid != 3273
+      AND sub.is_prof = 0
+    ) THEN sub.domain
+    WHEN (
+      sub.testid = 3273
+      AND sub.domain != 'Comprehension'
+      AND sub.is_prof = 0
+    ) THEN sub.domain
+    WHEN (
+      sub.testid = 3273
+      AND sub.domain = 'Comprehension'
+      AND MIN(sub.is_prof) OVER (
+        PARTITION BY
+          sub.unique_id,
+          sub.domain
+      ) = 0
+      AND sub.score_order = 1
+    ) THEN sub.strand
     ELSE NULL
   END AS dna_reason
 FROM
@@ -183,14 +195,26 @@ FROM
       prof.strand,
       prof.score AS benchmark,
       CASE
-        WHEN prof.strand LIKE '%overall%' THEN ISNULL(prof.domain + ': ', '') + prof.strand
+        WHEN prof.strand LIKE '%overall%' THEN (
+          ISNULL(prof.domain + ': ', '') + prof.strand
+        )
         ELSE ISNULL(prof.subdomain + ': ', '') + prof.strand
       END AS [label],
       CASE
-        WHEN prof.strand LIKE '%overall%'
-        AND ISNULL(prof.subdomain, '') != '' THEN ISNULL(prof.domain + ' (', '') + ISNULL(prof.subdomain + '): ', '') + prof.strand
-        WHEN prof.strand LIKE '%overall%'
-        AND ISNULL(prof.subdomain, '') = '' THEN ISNULL(prof.domain + ': ', '') + prof.strand
+        WHEN (
+          prof.strand LIKE '%overall%'
+          AND ISNULL(prof.subdomain, '') != ''
+        ) THEN (
+          CONCAT(
+            prof.domain + ' (',
+            prof.subdomain + '): ',
+            prof.strand
+          )
+        )
+        WHEN (
+          prof.strand LIKE '%overall%'
+          AND ISNULL(prof.subdomain, '') = ''
+        ) THEN ISNULL(prof.domain + ': ', '') + prof.strand
         ELSE ISNULL(prof.subdomain + ': ', '') + prof.strand
       END AS specific_label,
       CASE
@@ -208,7 +232,9 @@ FROM
       ) AS score_order
     FROM
       all_scores AS rs
-      INNER JOIN prof_clean AS prof ON rs.testid = prof.testid
-      AND rs.field = prof.field_name
-      AND rs.lvl_num = prof.lvl_num
+      INNER JOIN prof_clean AS prof ON (
+        rs.testid = prof.testid
+        AND rs.field = prof.field_name
+        AND rs.lvl_num = prof.lvl_num
+      )
   ) AS sub

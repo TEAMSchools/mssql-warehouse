@@ -40,7 +40,7 @@ FROM
       ) AS position_id
     FROM
       gabby.dayforce.employee_status AS ds
-      INNER JOIN gabby.dayforce.employees AS e ON ds.number = e.df_employee_number
+      INNER JOIN gabby.dayforce.employees AS e ON (ds.number = e.df_employee_number)
   ) AS sub
 WHERE
   sub.effective_start <= DATEADD(

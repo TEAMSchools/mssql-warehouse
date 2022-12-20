@@ -1,13 +1,13 @@
 CREATE OR ALTER VIEW
   extracts.deanslist_iready_diagnostics AS
 SELECT
-  gm.student_number,
-  gm.academic_year,
-  gm.[subject],
-  gm.recent_percentile,
-  gm.progress_typical,
-  gm.progress_stretch
+  student_number,
+  academic_year,
+  [subject],
+  recent_percentile,
+  progress_typical,
+  progress_stretch
 FROM
-  gabby.iready.growth_metrics AS gm
+  gabby.iready.growth_metrics
 WHERE
-  gm.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
+  academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1

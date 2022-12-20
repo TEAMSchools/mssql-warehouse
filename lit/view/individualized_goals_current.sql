@@ -70,10 +70,11 @@ SELECT
   CONVERT(
     INT,
     CASE
-      WHEN gleq.testid = 3273 THEN gleq.fp_lvl_num /* when F&P, use F&P number */
+    /* when F&P, use F&P number */
+      WHEN gleq.testid = 3273 THEN gleq.fp_lvl_num
       ELSE gleq.lvl_num
     END
   ) AS lvl_num
 FROM
   gdoc_long AS g
-  LEFT OUTER JOIN gabby.lit.gleq ON g.goal = gleq.read_lvl
+  LEFT OUTER JOIN gabby.lit.gleq ON (g.goal = gleq.read_lvl)

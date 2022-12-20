@@ -27,11 +27,15 @@ SELECT
   ) AS create_index_sql
 FROM
   gabby.illuminate_dna_repositories.repositories AS r
-  INNER JOIN gabby.illuminate_codes.dna_scopes AS s ON r.code_scope_id = s.code_id
-  AND s.code_translation = 'Sight Words Quiz'
-  LEFT JOIN gabby.utilities.all_tables_columns AS atc ON CONCAT('repository_', r.repository_id) = atc.table_name
-  AND atc.[schema_name] = 'illuminate_dna_repositories'
-  AND atc.column_id > 0
+  INNER JOIN gabby.illuminate_codes.dna_scopes AS s ON (
+    r.code_scope_id = s.code_id
+    AND s.code_translation = 'Sight Words Quiz'
+  )
+  LEFT JOIN gabby.utilities.all_tables_columns AS atc ON (
+    CONCAT('repository_', r.repository_id) = atc.table_name
+    AND atc.[schema_name] = 'illuminate_dna_repositories'
+    AND atc.column_id > 0
+  )
 WHERE
   r.deleted_at IS NULL
   AND r.repository_id IN (

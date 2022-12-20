@@ -16,11 +16,13 @@ WITH
       nj.math_state_assessment_name
     FROM
       gabby.powerschool.cohort_identifiers_static AS co
-      INNER JOIN gabby.powerschool.s_nj_stu_x AS nj ON co.students_dcid = nj.studentsdcid
-      AND co.[db_name] = nj.[db_name]
-      AND (
-        nj.state_assessment_name IN (3, 4)
-        OR nj.math_state_assessment_name = 3
+      INNER JOIN gabby.powerschool.s_nj_stu_x AS nj ON (
+        co.students_dcid = nj.studentsdcid
+        AND co.[db_name] = nj.[db_name]
+        AND (
+          nj.state_assessment_name IN (3, 4)
+          OR nj.math_state_assessment_name = 3
+        )
       )
     WHERE
       co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
@@ -63,11 +65,13 @@ SELECT
   NULL AS [Remove from Roster]
 FROM
   roster AS r
-  INNER JOIN gabby.powerschool.course_enrollments_current_static AS ce ON r.student_number = ce.student_number
-  AND r.academic_year = ce.academic_year
-  AND ce.course_enroll_status = 0
-  AND ce.section_enroll_status = 0
-  AND ce.credittype = 'ENG'
+  INNER JOIN gabby.powerschool.course_enrollments_current_static AS ce ON (
+    r.student_number = ce.student_number
+    AND r.academic_year = ce.academic_year
+    AND ce.course_enroll_status = 0
+    AND ce.section_enroll_status = 0
+    AND ce.credittype = 'ENG'
+  )
 WHERE
   r.state_assessment_name IS NOT NULL
 UNION ALL
@@ -104,10 +108,12 @@ SELECT
   NULL AS [Remove from Roster]
 FROM
   roster AS r
-  INNER JOIN powerschool.course_enrollments_current_static AS ce ON r.student_number = ce.student_number
-  AND r.academic_year = ce.academic_year
-  AND ce.course_enroll_status = 0
-  AND ce.section_enroll_status = 0
-  AND ce.credittype = 'MATH'
+  INNER JOIN powerschool.course_enrollments_current_static AS ce ON (
+    r.student_number = ce.student_number
+    AND r.academic_year = ce.academic_year
+    AND ce.course_enroll_status = 0
+    AND ce.section_enroll_status = 0
+    AND ce.credittype = 'MATH'
+  )
 WHERE
   r.math_state_assessment_name IS NOT NULL

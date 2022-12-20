@@ -136,13 +136,21 @@ SELECT
   ) AS ps_release_5_relation
 FROM
   gabby.alumni.ktc_roster AS r
-  LEFT JOIN enrollments AS enr ON r.sf_contact_id = enr.salesforce_contact_id
-  AND enr.rn = 1
-  LEFT JOIN gabby.powerschool.students AS s ON r.student_number = s.student_number
-  AND r.exit_db_name = s.db_name
-  LEFT JOIN gabby.powerschool.u_studentsuserfields AS suf ON s.dcid = suf.studentsdcid
-  AND s.db_name = suf.db_name
-  LEFT JOIN gabby.powerschool.studentcorefields AS scf ON s.dcid = scf.studentsdcid
-  AND s.db_name = scf.db_name
+  LEFT JOIN enrollments AS enr ON (
+    r.sf_contact_id = enr.salesforce_contact_id
+    AND enr.rn = 1
+  )
+  LEFT JOIN gabby.powerschool.students AS s ON (
+    r.student_number = s.student_number
+    AND r.exit_db_name = s.db_name
+  )
+  LEFT JOIN gabby.powerschool.u_studentsuserfields AS suf ON (
+    s.dcid = suf.studentsdcid
+    AND s.db_name = suf.db_name
+  )
+  LEFT JOIN gabby.powerschool.studentcorefields AS scf ON (
+    s.dcid = scf.studentsdcid
+    AND s.db_name = scf.db_name
+  )
 WHERE
   r.ktc_status IN ('TAF', 'TAFHS')

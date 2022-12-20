@@ -3,22 +3,22 @@ CREATE OR ALTER VIEW
 WITH
   asmts AS (
     SELECT
-      a.assessment_id,
-      a.title,
-      a.administered_at,
-      a.performance_band_set_id,
-      a.academic_year,
-      a.academic_year_clean,
-      a.module_type,
-      a.module_number,
-      a.scope,
-      a.subject_area,
-      a.is_normed_scope
+      assessment_id,
+      title,
+      administered_at,
+      performance_band_set_id,
+      academic_year,
+      academic_year_clean,
+      module_type,
+      module_number,
+      scope,
+      subject_area,
+      is_normed_scope
     FROM
-      gabby.illuminate_dna_assessments.assessments_identifiers_static AS a
+      gabby.illuminate_dna_assessments.assessments_identifiers_static
     WHERE
-      a.deleted_at IS NULL
-      AND a.academic_year_clean = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+      deleted_at IS NULL
+      AND academic_year_clean = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
   )
 SELECT
   sub.assessment_id,
@@ -32,27 +32,33 @@ SELECT
   sub.student_id,
   sub.is_replacement,
   CASE
-    WHEN sub.scope IN (
-      'Cumulative Review Quizzes',
-      'Cold Read Quizzes'
-    )
-    AND sub.grade_level_id IN (1, 2) THEN 'CP'
+    WHEN (
+      sub.scope IN (
+        'Cumulative Review Quizzes',
+        'Cold Read Quizzes'
+      )
+      AND sub.grade_level_id IN (1, 2)
+    ) THEN 'CP'
     ELSE sub.module_type
   END AS module_type,
   CASE
-    WHEN sub.scope IN (
-      'Cumulative Review Quizzes',
-      'Cold Read Quizzes'
-    )
-    AND sub.grade_level_id IN (1, 2) THEN REPLACE(sub.module_number, 'CRQ', 'CP')
+    WHEN (
+      sub.scope IN (
+        'Cumulative Review Quizzes',
+        'Cold Read Quizzes'
+      )
+      AND sub.grade_level_id IN (1, 2)
+    ) THEN REPLACE(sub.module_number, 'CRQ', 'CP')
     ELSE sub.module_number
   END AS module_number,
   CASE
-    WHEN sub.scope IN (
-      'Cumulative Review Quizzes',
-      'Cold Read Quizzes'
-    )
-    AND sub.grade_level_id IN (1, 2) THEN 'Checkpoint'
+    WHEN (
+      sub.scope IN (
+        'Cumulative Review Quizzes',
+        'Cold Read Quizzes'
+      )
+      AND sub.grade_level_id IN (1, 2)
+    ) THEN 'Checkpoint'
     ELSE sub.scope
   END AS scope
 FROM
@@ -74,13 +80,16 @@ FROM
       0 AS is_replacement
     FROM
       asmts AS a
-      INNER JOIN gabby.illuminate_dna_assessments.assessment_grade_levels AS agl ON a.assessment_id = agl.assessment_id
+      INNER JOIN gabby.illuminate_dna_assessments.assessment_grade_levels AS agl ON (
+        a.assessment_id = agl.assessment_id
+      )
       INNER JOIN gabby.illuminate_public.student_session_aff_clean_static AS ssa ON (
         a.academic_year = ssa.academic_year
         AND agl.grade_level_id = ssa.grade_level_id
         AND ssa.rn = 1
       )
-      INNER JOIN gabby.illuminate_dna_assessments.course_enrollment_scaffold_current_static AS ce ON (
+      /* trunk-ignore(sqlfluff/L016) */
+      INNER JOIN illuminate_dna_assessments.course_enrollment_scaffold_current_static AS ce ON (
         ssa.student_id = ce.student_id
         AND (
           a.subject_area = ce.subject_area
@@ -117,8 +126,11 @@ FROM
       0 AS is_replacement
     FROM
       asmts AS a
-      INNER JOIN gabby.illuminate_dna_assessments.assessment_grade_levels AS agl ON a.assessment_id = agl.assessment_id
-      INNER JOIN gabby.illuminate_dna_assessments.course_enrollment_scaffold_current_static AS ce ON (
+      INNER JOIN gabby.illuminate_dna_assessments.assessment_grade_levels AS agl ON (
+        a.assessment_id = agl.assessment_id
+      )
+      /* trunk-ignore(sqlfluff/L016) */
+      INNER JOIN illuminate_dna_assessments.course_enrollment_scaffold_current_static AS ce ON (
         agl.grade_level_id = ce.grade_level_id
         AND (
           a.subject_area = ce.subject_area
@@ -154,8 +166,12 @@ FROM
       1 AS is_replacement
     FROM
       asmts AS a
-      INNER JOIN gabby.illuminate_dna_assessments.assessment_grade_levels AS agl ON a.assessment_id = agl.assessment_id
-      INNER JOIN gabby.illuminate_dna_assessments.students_assessments AS sa ON a.assessment_id = sa.assessment_id
+      INNER JOIN gabby.illuminate_dna_assessments.assessment_grade_levels AS agl ON (
+        a.assessment_id = agl.assessment_id
+      )
+      INNER JOIN gabby.illuminate_dna_assessments.students_assessments AS sa ON (
+        a.assessment_id = sa.assessment_id
+      )
       INNER JOIN gabby.illuminate_public.student_session_aff_clean_static AS ssa ON (
         sa.student_id = ssa.student_id
         AND a.academic_year = ssa.academic_year
@@ -188,7 +204,9 @@ FROM
       0 AS is_replacement
     FROM
       asmts AS a
-      INNER JOIN gabby.illuminate_dna_assessments.students_assessments AS sa ON a.assessment_id = sa.assessment_id
+      INNER JOIN gabby.illuminate_dna_assessments.students_assessments AS sa ON (
+        a.assessment_id = sa.assessment_id
+      )
     WHERE
       a.is_normed_scope = 0
   ) AS sub

@@ -1,36 +1,29 @@
 CREATE OR ALTER VIEW
   extracts.idauto_staff_roster AS
 SELECT
-  df.associate_id AS [Associate ID],
-  df.employee_number AS [Position ID],
-  df.preferred_first_name AS [First Name],
-  df.preferred_last_name AS [Last Name],
-  df.business_unit AS [Company Code],
-  df.[location] AS [Location Description],
-  df.home_department AS [Business Unit Description],
-  df.home_department AS [Home Department Description],
-  df.job_title AS [Job Title Description],
+  associate_id AS [Associate ID],
+  employee_number AS [Position ID],
+  preferred_first_name AS [First Name],
+  preferred_last_name AS [Last Name],
+  business_unit AS [Company Code],
+  [location] AS [Location Description],
+  home_department AS [Business Unit Description],
+  home_department AS [Home Department Description],
+  job_title AS [Job Title Description],
   NULL AS [Preferred Name],
   CAST(
-    df.manager_employee_number AS VARCHAR
+    manager_employee_number AS VARCHAR
   ) AS [Business Unit Code],
-  CONVERT(VARCHAR, df.rehire_date, 101) AS [Rehire Date],
-  CONVERT(
-    VARCHAR,
-    df.termination_date,
-    101
-  ) AS [Termination Date],
-  CONVERT(VARCHAR, df.birth_date, 101) AS [Birth Date],
+  CONVERT(VARCHAR, rehire_date, 101) AS [Rehire Date],
+  CONVERT(VARCHAR, termination_date, 101) AS [Termination Date],
+  CONVERT(VARCHAR, birth_date, 101) AS [Birth Date],
   CASE
-    WHEN df.position_status = 'Prestart' THEN 'Active'
-    ELSE df.position_status
+    WHEN position_status = 'Prestart' THEN 'Active'
+    ELSE position_status
   END AS [Position Status]
 FROM
-  gabby.people.staff_roster AS df
+  gabby.people.staff_roster
 WHERE
-  COALESCE(
-    df.rehire_date,
-    df.original_hire_date
-  ) <= DATEADD(DAY, 10, CURRENT_TIMESTAMP)
-  AND df.business_unit IS NOT NULL
-  AND df.[location] IS NOT NULL
+  COALESCE(rehire_date, original_hire_date) <= DATEADD(DAY, 10, CURRENT_TIMESTAMP)
+  AND business_unit IS NOT NULL
+  AND [location] IS NOT NULL

@@ -232,20 +232,28 @@ WITH
           CONVERT(
             VARCHAR(1),
             CASE
-              WHEN fp.[status] = 'Did Not Achieve'
-              AND fp.instruct_lvl = fp.indep_lvl THEN fp.read_lvl
-              WHEN fp.[status] = 'Achieved'
-              AND fp.instruct_lvl = fp.indep_lvl THEN NULL
+              WHEN (
+                fp.[status] = 'Did Not Achieve'
+                AND fp.instruct_lvl = fp.indep_lvl
+              ) THEN fp.read_lvl
+              WHEN (
+                fp.[status] = 'Achieved'
+                AND fp.instruct_lvl = fp.indep_lvl
+              ) THEN NULL
               ELSE fp.instruct_lvl
             END
           ) AS instruct_lvl,
           CONVERT(
             INT,
             CASE
-              WHEN fp.[status] = 'Did Not Achieve'
-              AND fp.instruct_lvl = fp.indep_lvl THEN fp.lvl_num
-              WHEN fp.[status] = 'Achieved'
-              AND fp.instruct_lvl = fp.indep_lvl THEN (gleq.fp_lvl_num + 1)
+              WHEN (
+                fp.[status] = 'Did Not Achieve'
+                AND fp.instruct_lvl = fp.indep_lvl
+              ) THEN fp.lvl_num
+              WHEN (
+                fp.[status] = 'Achieved'
+                AND fp.instruct_lvl = fp.indep_lvl
+              ) THEN (gleq.fp_lvl_num + 1)
               ELSE COALESCE(
                 fp.instruct_lvl_num,
                 (gleq.fp_lvl_num + 1)
@@ -255,20 +263,28 @@ WITH
           CONVERT(
             VARCHAR(1),
             CASE
-              WHEN fp.[status] = 'Did Not Achieve'
-              AND fp.instruct_lvl = fp.indep_lvl THEN fp.read_lvl
-              WHEN fp.[status] = 'Achieved'
-              AND fp.instruct_lvl = fp.indep_lvl THEN NULL
+              WHEN (
+                fp.[status] = 'Did Not Achieve'
+                AND fp.instruct_lvl = fp.indep_lvl
+              ) THEN fp.read_lvl
+              WHEN (
+                fp.[status] = 'Achieved'
+                AND fp.instruct_lvl = fp.indep_lvl
+              ) THEN NULL
               ELSE fp.instruct_lvl
             END
           ) AS dna_lvl,
           CONVERT(
             INT,
             CASE
-              WHEN fp.[status] = 'Did Not Achieve'
-              AND fp.instruct_lvl = fp.indep_lvl THEN fp.lvl_num
-              WHEN fp.[status] = 'Achieved'
-              AND fp.instruct_lvl = fp.indep_lvl THEN (gleq.fp_lvl_num + 1)
+              WHEN (
+                fp.[status] = 'Did Not Achieve'
+                AND fp.instruct_lvl = fp.indep_lvl
+              ) THEN fp.lvl_num
+              WHEN (
+                fp.[status] = 'Achieved'
+                AND fp.instruct_lvl = fp.indep_lvl
+              ) THEN (gleq.fp_lvl_num + 1)
               ELSE COALESCE(
                 fp.instruct_lvl_num,
                 (gleq.fp_lvl_num + 1)
@@ -287,8 +303,10 @@ WITH
           )
           LEFT JOIN gabby.lit.gleq ON (
             CASE
-              WHEN fp.[status] = 'Achieved'
-              AND fp.indep_lvl IS NULL THEN fp.read_lvl
+              WHEN (
+                fp.[status] = 'Achieved'
+                AND fp.indep_lvl IS NULL
+              ) THEN fp.read_lvl
               ELSE fp.indep_lvl
             END = gleq.read_lvl
             AND gleq.testid = 3273
@@ -588,13 +606,13 @@ FROM
         WHEN (
           sub.fp_read_lvl IS NOT NULL
           AND sub.step_read_lvl IS NOT NULL
-        )
-        AND sub.is_fp = 1 THEN sub.fp_read_lvl
+          AND sub.is_fp = 1
+        ) THEN sub.fp_read_lvl
         WHEN (
           sub.fp_read_lvl IS NOT NULL
           AND sub.step_read_lvl IS NOT NULL
-        )
-        AND sub.is_fp = 0 THEN sub.step_read_lvl
+          AND sub.is_fp = 0
+        ) THEN sub.step_read_lvl
         ELSE COALESCE(
           sub.fp_read_lvl,
           sub.step_read_lvl
@@ -605,13 +623,13 @@ FROM
         WHEN (
           sub.fp_lvl_num IS NOT NULL
           AND sub.step_lvl_num IS NOT NULL
-        )
-        AND sub.is_fp = 1 THEN sub.fp_lvl_num
+          AND sub.is_fp = 1
+        ) THEN sub.fp_lvl_num
         WHEN (
           sub.fp_lvl_num IS NOT NULL
           AND sub.step_lvl_num IS NOT NULL
-        )
-        AND sub.is_fp = 0 THEN sub.step_lvl_num
+          AND sub.is_fp = 0
+        ) THEN sub.step_lvl_num
         ELSE COALESCE(sub.fp_lvl_num, sub.step_lvl_num)
       END AS default_goal_num,
       sub.indiv_goal_lvl,
@@ -647,13 +665,13 @@ FROM
           WHEN (
             sub.fp_read_lvl IS NOT NULL
             AND sub.step_read_lvl IS NOT NULL
-          )
-          AND sub.is_fp = 1 THEN sub.fp_read_lvl
+            AND sub.is_fp = 1
+          ) THEN sub.fp_read_lvl
           WHEN (
             sub.fp_read_lvl IS NOT NULL
             AND sub.step_read_lvl IS NOT NULL
-          )
-          AND sub.is_fp = 0 THEN sub.step_read_lvl
+            AND sub.is_fp = 0
+          ) THEN sub.step_read_lvl
           ELSE COALESCE(
             sub.fp_read_lvl,
             sub.step_read_lvl
@@ -667,13 +685,13 @@ FROM
           WHEN (
             sub.fp_lvl_num IS NOT NULL
             AND sub.step_lvl_num IS NOT NULL
-          )
-          AND sub.is_fp = 1 THEN sub.fp_lvl_num
+            AND sub.is_fp = 1
+          ) THEN sub.fp_lvl_num
           WHEN (
             sub.fp_lvl_num IS NOT NULL
             AND sub.step_lvl_num IS NOT NULL
-          )
-          AND sub.is_fp = 0 THEN sub.step_lvl_num
+            AND sub.is_fp = 0
+          ) THEN sub.step_lvl_num
           ELSE COALESCE(sub.fp_lvl_num, sub.step_lvl_num)
         END
       ) AS goal_num,
@@ -684,13 +702,13 @@ FROM
           WHEN (
             sub.fp_lvl_num IS NOT NULL
             AND sub.step_lvl_num IS NOT NULL
-          )
-          AND sub.is_fp = 1 THEN sub.fp_lvl_num
+            AND sub.is_fp = 1
+          ) THEN sub.fp_lvl_num
           WHEN (
             sub.fp_lvl_num IS NOT NULL
             AND sub.step_lvl_num IS NOT NULL
-          )
-          AND sub.is_fp = 0 THEN sub.step_lvl_num
+            AND sub.is_fp = 0
+          ) THEN sub.step_lvl_num
           ELSE COALESCE(sub.fp_lvl_num, sub.step_lvl_num)
         END
       ) AS levels_behind
@@ -734,10 +752,14 @@ FROM
           CAST(indiv.goal AS VARCHAR(5)) AS indiv_goal_lvl,
           CAST(indiv.lvl_num AS INT) AS indiv_lvl_num,
           CASE
-            WHEN achieved.academic_year = atid.academic_year
-            AND achieved.round_num = atid.round_num THEN 1
-            WHEN achieved.academic_year = dna.academic_year
-            AND achieved.round_num = dna.round_num THEN 1
+            WHEN (
+              achieved.academic_year = atid.academic_year
+              AND achieved.round_num = atid.round_num
+            ) THEN 1
+            WHEN (
+              achieved.academic_year = dna.academic_year
+              AND achieved.round_num = dna.round_num
+            ) THEN 1
             ELSE 0
           END AS is_new_test
         FROM

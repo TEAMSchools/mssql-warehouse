@@ -41,8 +41,9 @@ WITH
       max_raw_score > 0
   )
 SELECT DISTINCT
+  /* UPDATE */
   'ACT1' AS administration_round,
-  scaffold.max_raw_score AS raw_score /* UPDATE */,
+  scaffold.max_raw_score AS raw_score,
   row_generator.n AS grade_level,
   gabby.utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year,
   (

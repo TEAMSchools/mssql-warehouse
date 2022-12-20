@@ -39,9 +39,11 @@ SELECT
   co.[db_name]
 FROM
   gabby.powerschool.cohort_identifiers_static AS co
-  LEFT JOIN gabby.powerschool.district_entry_date AS de ON co.studentid = de.studentid
-  AND co.[db_name] = de.[db_name]
-  AND de.rn_entry = 1
+  LEFT JOIN gabby.powerschool.district_entry_date AS de ON (
+    co.studentid = de.studentid
+    AND co.[db_name] = de.[db_name]
+    AND de.rn_entry = 1
+  )
 WHERE
   co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
   AND co.rn_year = 1

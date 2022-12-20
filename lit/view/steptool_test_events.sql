@@ -68,44 +68,48 @@ FROM
       CAST(gleq.lvl_num AS INT) AS gleq_lvl_num
     FROM
       gabby.steptool.all_steps AS step
-      INNER JOIN gabby.lit.gleq ON step.step = gleq.lvl_num
-      AND gleq.testid != 3273
+      INNER JOIN gabby.lit.gleq ON (
+        step.step = gleq.lvl_num
+        AND gleq.testid != 3273
+      )
     UNION ALL
     /* ACHIEVED PRE DNA */
     SELECT
       CAST(
         CONCAT(
           'UCDNA',
-          gabby.utilities.DATE_TO_SY (step.[date]),
-          step.[_line]
+          gabby.utilities.DATE_TO_SY ([date]),
+          [_line]
         ) AS VARCHAR(25)
       ) AS unique_id,
-      CAST(
-        CAST(step.student_id AS FLOAT) AS INT
-      ) AS student_number,
-      gabby.utilities.DATE_TO_SY (CAST(step.[date] AS DATE)) AS academic_year,
-      CAST(step.[date] AS DATE) AS test_date,
+      CAST(CAST(student_id AS FLOAT) AS INT) AS student_number,
+      gabby.utilities.DATE_TO_SY (CAST([date] AS DATE)) AS academic_year,
+      CAST([date] AS DATE) AS test_date,
       'Pre DNA' AS read_lvl,
       -1 AS lvl_num,
       'Achieved' AS [status],
       3280 AS ps_testid,
-      CAST(step.book AS VARCHAR(25)) AS color,
-      CAST(step.notes AS VARCHAR(1000)) AS notes,
-      CAST(step.recorder AS VARCHAR(125)) AS recorder,
+      CAST(book AS VARCHAR(25)) AS color,
+      CAST(notes AS VARCHAR(1000)) AS notes,
+      CAST(recorder AS VARCHAR(125)) AS recorder,
       -1 AS gleq,
       -1 AS gleq_lvl_num
     FROM
-      gabby.steptool.all_steps AS step
+      gabby.steptool.all_steps
     WHERE
-      step.step = 0
-      AND step.passed = 0
+      step = 0
+      AND passed = 0
   ) AS sub
-  INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON sub.student_number = co.student_number
-  AND sub.academic_year = co.academic_year
-  AND co.rn_year = 1
-  INNER JOIN gabby.reporting.reporting_terms AS dt ON co.schoolid = dt.schoolid
-  AND (
-    sub.test_date BETWEEN dt.[start_date] AND dt.end_date
+  INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON (
+    sub.student_number = co.student_number
+    AND sub.academic_year = co.academic_year
+    AND co.rn_year = 1
   )
-  AND dt.identifier = 'LIT'
-  AND dt._fivetran_deleted = 0
+  INNER JOIN gabby.reporting.reporting_terms AS dt ON (
+    co.schoolid = dt.schoolid
+    AND (
+      sub.test_date BETWEEN dt.[start_date] AND dt.end_date
+    )
+    AND dt.identifier = 'LIT'
+    AND dt._fivetran_deleted = 0
+  )

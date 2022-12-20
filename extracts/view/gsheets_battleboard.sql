@@ -49,8 +49,10 @@ SELECT
   ROUND(p.[PM4], 2) AS [Last Year Final],
   i.answer AS itr_response,
   CASE
-    WHEN c.primary_on_site_department = 'Elementary'
-    AND g.student_grade_level IS NOT NULL THEN CONCAT(
+    WHEN (
+      c.primary_on_site_department = 'Elementary'
+      AND g.student_grade_level IS NOT NULL
+    ) THEN CONCAT(
       c.primary_on_site_department,
       ', Grade ',
       g.student_grade_level
@@ -59,13 +61,21 @@ SELECT
   END AS department_grade
 FROM
   gabby.people.staff_crosswalk_static AS c
-  LEFT JOIN etr_pivot AS e ON c.df_employee_number = e.df_employee_number
-  AND e.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-  LEFT JOIN etr_pivot AS p ON c.df_employee_number = p.df_employee_number
-  AND p.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
-  LEFT JOIN elementary_grade AS g ON c.df_employee_number = g.employee_number
-  LEFT JOIN gabby.surveys.intent_to_return_survey_detail AS i ON c.df_employee_number = i.respondent_df_employee_number
-  AND i.question_shortname = 'intent_to_return'
-  AND i.campaign_academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+  LEFT JOIN etr_pivot AS e ON (
+    c.df_employee_number = e.df_employee_number
+    AND e.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+  )
+  LEFT JOIN etr_pivot AS p ON (
+    c.df_employee_number = p.df_employee_number
+    AND p.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
+  )
+  LEFT JOIN elementary_grade AS g ON (
+    c.df_employee_number = g.employee_number
+  )
+  LEFT JOIN gabby.surveys.intent_to_return_survey_detail AS i ON (
+    c.df_employee_number = i.respondent_df_employee_number
+    AND i.question_shortname = 'intent_to_return'
+    AND i.campaign_academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+  )
 WHERE
   c.[status] NOT IN ('TERMINATED')

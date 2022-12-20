@@ -1,15 +1,15 @@
 CREATE OR ALTER VIEW
   extracts.deanslist_missing_assignments AS
 SELECT
-  a.student_number,
-  a.grade_category,
-  a.assign_name,
-  a.assign_date,
-  a.course_name,
-  a.teacher_name
+  student_number,
+  grade_category,
+  assign_name,
+  assign_date,
+  course_name,
+  teacher_name
 FROM
-  gabby.tableau.gradebook_assignment_detail AS a
+  gabby.tableau.gradebook_assignment_detail
 WHERE
-  a.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-  AND a.ismissing = 1
-  AND a.finalgrade_category = 'Q'
+  academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+  AND ismissing = 1
+  AND finalgrade_category = 'Q'

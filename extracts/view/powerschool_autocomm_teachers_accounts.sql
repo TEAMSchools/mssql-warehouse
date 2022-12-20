@@ -18,18 +18,22 @@ WITH
       sc.region
     FROM
       gabby.people.staff_crosswalk_static AS scw
-      INNER JOIN gabby.people.school_crosswalk AS sc ON scw.primary_site = sc.site_name
-      AND sc._fivetran_deleted = 0
-      INNER JOIN gabby.powerschool.users AS u ON (
-        scw.ps_teachernumber = u.teachernumber
-        COLLATE LATIN1_GENERAL_BIN
+      INNER JOIN gabby.people.school_crosswalk AS sc ON (
+        scw.primary_site = sc.site_name
+        AND sc._fivetran_deleted = 0
       )
-      AND scw.primary_site_schoolid = u.homeschoolid
-      AND CASE
-        WHEN sc.region = 'TEAM Academy Charter School' THEN 'kippnewark'
-        WHEN sc.region = 'KIPP Cooper Norcross Academy' THEN 'kippcamden'
-        WHEN sc.region = 'KIPP Miami' THEN 'kippmiami'
-      END = u.[db_name]
+      INNER JOIN gabby.powerschool.users AS u ON (
+        (
+          scw.ps_teachernumber = u.teachernumber
+          COLLATE LATIN1_GENERAL_BIN
+        )
+        AND scw.primary_site_schoolid = u.homeschoolid
+        AND CASE
+          WHEN sc.region = 'TEAM Academy Charter School' THEN 'kippnewark'
+          WHEN sc.region = 'KIPP Cooper Norcross Academy' THEN 'kippcamden'
+          WHEN sc.region = 'KIPP Miami' THEN 'kippmiami'
+        END = u.[db_name]
+      )
     WHERE
       /* import terminated staff up to a week after termination date */
       DATEDIFF(
@@ -61,17 +65,21 @@ WITH
       sc.region
     FROM
       gabby.people.staff_crosswalk_static AS scw
-      INNER JOIN gabby.people.school_crosswalk AS sc ON scw.primary_site = sc.site_name
-      AND sc._fivetran_deleted = 0
-      LEFT JOIN gabby.powerschool.users AS u ON (
-        scw.ps_teachernumber = u.teachernumber
-        COLLATE LATIN1_GENERAL_BIN
+      INNER JOIN gabby.people.school_crosswalk AS sc ON (
+        scw.primary_site = sc.site_name
+        AND sc._fivetran_deleted = 0
       )
-      AND CASE
-        WHEN sc.region = 'TEAM Academy Charter School' THEN 'kippnewark'
-        WHEN sc.region = 'KIPP Cooper Norcross Academy' THEN 'kippcamden'
-        WHEN sc.region = 'KIPP Miami' THEN 'kippmiami'
-      END = u.[db_name]
+      LEFT JOIN gabby.powerschool.users AS u ON (
+        (
+          scw.ps_teachernumber = u.teachernumber
+          COLLATE LATIN1_GENERAL_BIN
+        )
+        AND CASE
+          WHEN sc.region = 'TEAM Academy Charter School' THEN 'kippnewark'
+          WHEN sc.region = 'KIPP Cooper Norcross Academy' THEN 'kippcamden'
+          WHEN sc.region = 'KIPP Miami' THEN 'kippmiami'
+        END = u.[db_name]
+      )
     WHERE
       /* import terminated staff up to a week after termination date */
       DATEDIFF(

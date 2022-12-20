@@ -23,8 +23,12 @@ FROM
       ) AS total_score
     FROM
       gabby.naviance.sat_scores_clean AS sat
-      LEFT JOIN gabby.collegeboard.sat_old_new_concordance AS onc ON sat.sat_scale = onc.old_sat_scale
-      AND sat.all_tests_total = onc.old_sat_total_score
-      AND sat.is_old_sat = 1
+      LEFT JOIN gabby.collegeboard.sat_old_new_concordance AS onc ON (
+        sat.sat_scale = onc.old_sat_scale
+        AND sat.all_tests_total = onc.old_sat_total_score
+        AND sat.is_old_sat = 1
+      )
   ) AS sub
-  LEFT JOIN gabby.collegeboard.sat_act_concordance AS sac ON sub.total_score = sac.sat_total_score
+  LEFT JOIN gabby.collegeboard.sat_act_concordance AS sac ON (
+    sub.total_score = sac.sat_total_score
+  )

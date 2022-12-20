@@ -17,8 +17,10 @@ SELECT
     ELSE 'Outreach'
   END AS [Status],
   CASE
-    WHEN c.call_type = 'P'
-    OR c.call_type = 'VC' THEN 'Call'
+    WHEN (
+      c.call_type = 'P'
+      OR c.call_type = 'VC'
+    ) THEN 'Call'
     WHEN c.call_type = 'IP' THEN 'In Person'
     WHEN c.call_type = 'SMS' THEN 'Text'
     WHEN c.call_type = 'E' THEN 'Email'
@@ -28,6 +30,10 @@ SELECT
   NULL AS [Current Category Ranking]
 FROM
   gabby.alumni.ktc_roster AS ktc
-  INNER JOIN gabby.powerschool.students AS s ON ktc.student_number = s.student_number
-  INNER JOIN gabby.deanslist.communication AS c ON c.student_school_id = ktc.student_number
-  AND c.reason LIKE 'KF:%'
+  INNER JOIN gabby.powerschool.students AS s ON (
+    ktc.student_number = s.student_number
+  )
+  INNER JOIN gabby.deanslist.communication AS c ON (
+    c.student_school_id = ktc.student_number
+    AND c.reason LIKE 'KF:%'
+  )

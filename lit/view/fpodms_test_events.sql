@@ -3,21 +3,21 @@ CREATE OR ALTER VIEW
 WITH
   classes_dedupe AS (
     SELECT
-      c.school_name,
-      c.school_year,
-      c.[name],
-      c.teacher_first_name,
-      c.teacher_last_name,
+      school_name,
+      school_year,
+      [name],
+      teacher_first_name,
+      teacher_last_name,
       ROW_NUMBER() OVER (
         PARTITION BY
-          c.school_name,
-          c.school_year,
-          c.[name]
+          school_name,
+          school_year,
+          [name]
         ORDER BY
-          c.student_count DESC
+          student_count DESC
       ) AS rn
     FROM
-      gabby.fpodms.bas_classes AS c
+      gabby.fpodms.bas_classes
   ),
   clean_data AS (
     SELECT
@@ -89,7 +89,8 @@ WITH
           fp.fluency,
           fp.wpm_rate,
           fp.writing,
-          fp.self_corrections /* how should this be parsed? */,
+          /* how should this be parsed? */
+          fp.self_corrections,
           CAST(fp.text_level AS VARCHAR(5)) AS text_level,
           CASE
             WHEN fp.benchmark_level = 'Independent' THEN 'Achieved'
@@ -107,88 +108,92 @@ WITH
         FROM
           gabby.fpodms.bas_assessments AS fp
           LEFT JOIN gabby.people.school_crosswalk AS sc ON fp.school_name = sc.site_name
-          LEFT JOIN gabby.powerschool.schools AS sch ON sc.ps_school_id = sch.school_number
-          LEFT JOIN classes_dedupe AS c ON fp.school_name = c.school_name
-          AND fp.year_of_assessment = c.school_year
-          AND fp.class_name = c.[name]
-          AND c.rn = 1
+          LEFT JOIN gabby.powerschool.schools AS sch ON (
+            sc.ps_school_id = sch.school_number
+          )
+          LEFT JOIN classes_dedupe AS c ON (
+            fp.school_name = c.school_name
+            AND fp.year_of_assessment = c.school_year
+            AND fp.class_name = c.[name]
+            AND c.rn = 1
+          )
       ) AS sub
   ),
   predna AS (
     SELECT
-      clean_data.unique_id,
-      clean_data.student_identifier,
-      clean_data.year_of_assessment,
-      clean_data.academic_year,
-      clean_data.assessment_date,
-      clean_data.genre,
-      clean_data.data_type,
-      clean_data.class_name,
-      clean_data.benchmark_level,
-      clean_data.title,
-      clean_data.accuracy_percent,
-      clean_data.comprehension_within,
-      clean_data.comprehension_beyond,
-      clean_data.comprehension_about,
-      clean_data.comprehension_additional,
-      clean_data.comprehension_total,
-      clean_data.comprehension_maximum,
-      clean_data.comprehension_label,
-      clean_data.fluency,
-      clean_data.wpm_rate,
-      clean_data.writing,
-      clean_data.self_corrections,
-      clean_data.text_level,
-      clean_data.[status],
-      clean_data.is_achieved,
-      clean_data.schoolid,
-      clean_data.test_administered_by,
-      clean_data.testid,
-      clean_data.is_fp,
-      clean_data.dna_lvl,
-      clean_data.instruct_lvl,
-      clean_data.indep_lvl
+      unique_id,
+      student_identifier,
+      year_of_assessment,
+      academic_year,
+      assessment_date,
+      genre,
+      data_type,
+      class_name,
+      benchmark_level,
+      title,
+      accuracy_percent,
+      comprehension_within,
+      comprehension_beyond,
+      comprehension_about,
+      comprehension_additional,
+      comprehension_total,
+      comprehension_maximum,
+      comprehension_label,
+      fluency,
+      wpm_rate,
+      writing,
+      self_corrections,
+      text_level,
+      [status],
+      is_achieved,
+      schoolid,
+      test_administered_by,
+      testid,
+      is_fp,
+      dna_lvl,
+      instruct_lvl,
+      indep_lvl
     FROM
       clean_data
     UNION ALL
     SELECT
-      clean_data.unique_id + 'DNA' AS unique_id,
-      clean_data.student_identifier,
-      clean_data.year_of_assessment,
-      clean_data.academic_year,
-      clean_data.assessment_date,
-      clean_data.genre,
-      clean_data.data_type,
-      clean_data.class_name,
+      unique_id + 'DNA' AS unique_id,
+      student_identifier,
+      year_of_assessment,
+      academic_year,
+      assessment_date,
+      genre,
+      data_type,
+      class_name,
       'Independent' AS benchmark_level,
-      clean_data.title,
-      clean_data.accuracy_percent,
-      clean_data.comprehension_within,
-      clean_data.comprehension_beyond,
-      clean_data.comprehension_about,
-      clean_data.comprehension_additional,
-      clean_data.comprehension_total,
-      clean_data.comprehension_maximum,
-      clean_data.comprehension_label,
-      clean_data.fluency,
-      clean_data.wpm_rate,
-      clean_data.writing,
-      clean_data.self_corrections,
+      title,
+      accuracy_percent,
+      comprehension_within,
+      comprehension_beyond,
+      comprehension_about,
+      comprehension_additional,
+      comprehension_total,
+      comprehension_maximum,
+      comprehension_label,
+      fluency,
+      wpm_rate,
+      writing,
+      self_corrections,
       'Pre-A' AS text_level,
       'Achieved' AS [status],
-      clean_data.is_achieved,
-      clean_data.schoolid,
-      clean_data.test_administered_by,
-      clean_data.testid,
-      clean_data.is_fp,
-      clean_data.dna_lvl,
-      clean_data.instruct_lvl,
+      is_achieved,
+      schoolid,
+      test_administered_by,
+      testid,
+      is_fp,
+      dna_lvl,
+      instruct_lvl,
       'Pre-A' AS indep_lvl
     FROM
       clean_data
     WHERE
-      clean_data.text_level = 'A'
-      AND clean_data.[status] IN ('Did Not Achieve', 'DNA - Hard')
+      text_level = 'A'
+      AND [status] IN ('Did Not Achieve', 'DNA - Hard')
   )
 SELECT
   cd.unique_id,
@@ -242,10 +247,12 @@ SELECT
   END AS indep_lvl_num
 FROM
   predna AS cd
-  LEFT JOIN gabby.reporting.reporting_terms AS rt ON cd.schoolid = rt.schoolid
-  AND (
-    cd.assessment_date BETWEEN rt.[start_date] AND rt.end_date
+  LEFT JOIN gabby.reporting.reporting_terms AS rt ON (
+    cd.schoolid = rt.schoolid
+    AND (
+      cd.assessment_date BETWEEN rt.[start_date] AND rt.end_date
+    )
+    AND rt.identifier = 'LIT'
+    AND rt._fivetran_deleted = 0
   )
-  AND rt.identifier = 'LIT'
-  AND rt._fivetran_deleted = 0
-  LEFT JOIN gabby.lit.gleq ON cd.text_level = gleq.read_lvl
+  LEFT JOIN gabby.lit.gleq ON (cd.text_level = gleq.read_lvl)

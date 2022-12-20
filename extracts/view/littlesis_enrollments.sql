@@ -15,4 +15,6 @@ SELECT
   stu.student_gsuite_email
 FROM
   gabby.extracts.gclassroom_sections AS sec
-  LEFT JOIN gabby.extracts.gclassroom_students AS stu ON sec.class_alias = stu.class_alias
+  LEFT JOIN gabby.extracts.gclassroom_students AS stu ON (
+    sec.class_alias = stu.class_alias
+  )

@@ -29,5 +29,5 @@ SELECT
   ) AS code
 FROM
   gabby.coupa.budget_line AS b
-  INNER JOIN gabby.coupa.[period] AS p ON b.period_id = p.id
-  LEFT JOIN gabby.coupa.[user] AS u ON b.owner_id = u.id
+  INNER JOIN gabby.coupa.[period] AS p ON (b.period_id = p.id)
+  LEFT JOIN gabby.coupa.[user] AS u ON (b.owner_id = u.id)

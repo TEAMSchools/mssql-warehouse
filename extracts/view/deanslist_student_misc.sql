@@ -78,21 +78,31 @@ SELECT
   ) AS school_exitdate
 FROM
   gabby.powerschool.cohort_identifiers_static AS co
-  INNER JOIN gabby.powerschool.students AS s ON co.student_number = s.student_number
-  AND co.[db_name] = s.[db_name]
-  INNER JOIN ug_school AS ug ON co.student_number = ug.student_number
-  AND co.[db_name] = ug.[db_name]
-  LEFT JOIN enroll_dates AS ed ON co.student_number = ed.student_number
-  AND co.[db_name] = ed.[db_name]
-  AND CASE
-    WHEN co.schoolid = 999999 THEN ug.schoolid
-    ELSE co.schoolid
-  END = ed.schoolid
-  LEFT JOIN gabby.alumni.ktc_roster AS ktc ON co.student_number = ktc.student_number
-  LEFT JOIN gabby.powerschool.gpa_detail AS gpa ON co.student_number = gpa.student_number
-  AND co.academic_year = gpa.academic_year
-  AND co.[db_name] = gpa.[db_name]
-  AND gpa.is_curterm = 1
+  INNER JOIN gabby.powerschool.students AS s ON (
+    co.student_number = s.student_number
+    AND co.[db_name] = s.[db_name]
+  )
+  INNER JOIN ug_school AS ug ON (
+    co.student_number = ug.student_number
+    AND co.[db_name] = ug.[db_name]
+  )
+  LEFT JOIN enroll_dates AS ed ON (
+    co.student_number = ed.student_number
+    AND co.[db_name] = ed.[db_name]
+    AND CASE
+      WHEN co.schoolid = 999999 THEN ug.schoolid
+      ELSE co.schoolid
+    END = ed.schoolid
+  )
+  LEFT JOIN gabby.alumni.ktc_roster AS ktc ON (
+    co.student_number = ktc.student_number
+  )
+  LEFT JOIN gabby.powerschool.gpa_detail AS gpa ON (
+    co.student_number = gpa.student_number
+    AND co.academic_year = gpa.academic_year
+    AND co.[db_name] = gpa.[db_name]
+    AND gpa.is_curterm = 1
+  )
 WHERE
   co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
   AND co.rn_year = 1

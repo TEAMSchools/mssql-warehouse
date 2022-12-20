@@ -22,7 +22,7 @@ SELECT
   NULL AS sat_essay
 FROM
   gabby.alumni.standardized_test_c AS st
-  LEFT JOIN gabby.alumni.ktc_roster AS ktc ON st.contact_c = ktc.sf_contact_id
+  LEFT JOIN gabby.alumni.ktc_roster AS ktc ON (st.contact_c = ktc.sf_contact_id)
 WHERE
   st.test_type_c = 'ACT'
   AND st.act_composite_c IS NOT NULL
@@ -59,7 +59,7 @@ SELECT
   NULL AS sat_essay
 FROM
   gabby.alumni.standardized_test_c AS st
-  LEFT JOIN gabby.alumni.ktc_roster AS ktc ON st.contact_c = ktc.sf_contact_id
+  LEFT JOIN gabby.alumni.ktc_roster AS ktc ON (st.contact_c = ktc.sf_contact_id)
 WHERE
   st.sat_total_score_c IS NOT NULL
   AND st.test_type_c = 'SAT'

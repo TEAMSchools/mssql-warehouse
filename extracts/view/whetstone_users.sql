@@ -8,11 +8,11 @@ WITH
       gabby.people.staff_crosswalk_static
     UNION
     SELECT
-      s.df_employee_number
+      df_employee_number
     FROM
-      gabby.people.staff_crosswalk_static AS s
+      gabby.people.staff_crosswalk_static
     WHERE
-      s.primary_job IN (
+      primary_job IN (
         'School Leader',
         'Assistant School Leader',
         'Assistant School Leader, SPED',
@@ -38,15 +38,17 @@ WITH
           r.[name] AS role_name
         FROM
           gabby.whetstone.schools_observation_groups_membership AS sogm
-          INNER JOIN gabby.whetstone.roles AS r ON sogm.role_category = r.category
-          AND r.[name] IN ('Teacher', 'Coach')
+          INNER JOIN gabby.whetstone.roles AS r ON (
+            sogm.role_category = r.category
+            AND r.[name] IN ('Teacher', 'Coach')
+          )
         UNION ALL
         SELECT
-          ur.[user_id],
-          ur.role_id,
-          ur.role_name
+          [user_id],
+          role_id,
+          role_name
         FROM
-          gabby.whetstone.users_roles AS ur
+          gabby.whetstone.users_roles
         WHERE
           role_name != 'No Role'
         UNION

@@ -1,5 +1,60 @@
 CREATE OR ALTER VIEW
   naviance.sat_scores_clean AS
+WITH
+  sat AS (
+    SELECT
+      CAST([student_id] AS INT) AS student_id,
+      CAST([hs_student_id] AS INT) AS hs_student_id,
+      CAST(
+        [evidence_based_reading_writing] AS FLOAT
+      ) AS evidence_based_reading_writing,
+      CAST([math] AS FLOAT) AS math,
+      CAST([total] AS FLOAT) AS total,
+      CAST([reading_test] AS FLOAT) AS reading_test,
+      CAST([writing_test] AS FLOAT) AS writing_test,
+      CAST([math_test] AS FLOAT) AS math_test,
+      NULL AS writing,
+      NULL AS essay_subscore,
+      CAST([math_test] AS FLOAT) + CAST([reading_test] AS FLOAT) AS mc_subscore,
+      DATEFROMPARTS(
+        RIGHT(test_date, 4),
+        LEFT(
+          test_date,
+          CHARINDEX('/', test_date) - 1
+        ),
+        1
+      ) AS test_date,
+      1600 AS sat_scale,
+      0 AS is_old_sat
+    FROM
+      gabby.naviance.sat_scores
+    UNION ALL
+    SELECT
+      CAST([studentid] AS INT) AS student_id,
+      CAST([hs_student_id] AS INT) AS hs_student_id,
+      CAST([verbal] AS FLOAT),
+      CAST([math] AS FLOAT),
+      CAST([total] AS FLOAT),
+      NULL AS [reading_test],
+      CAST([essay_subscore] AS FLOAT) AS writing_test,
+      NULL AS [math_test],
+      CAST([writing] AS FLOAT),
+      CAST([essay_subscore] AS FLOAT),
+      CAST([mc_subscore] AS FLOAT),
+      CASE
+        WHEN test_date = '0000-00-00' THEN NULL
+        WHEN RIGHT(test_date, 2) = '00' THEN DATEFROMPARTS(
+          LEFT(test_date, 4),
+          SUBSTRING(test_date, 6, 2),
+          01
+        )
+        ELSE CAST(test_date AS DATE)
+      END AS test_date,
+      2400 AS sat_scale,
+      1 AS is_old_sat
+    FROM
+      gabby.naviance.sat_scores_before_mar_2016
+  )
 SELECT
   sub.nav_studentid,
   sub.student_number,
@@ -94,58 +149,5 @@ FROM
         WHEN total (NOT BETWEEN 400 AND 2400) THEN 1
       END AS total_flag
     FROM
-      (
-        SELECT
-          CAST([student_id] AS INT) AS student_id,
-          CAST([hs_student_id] AS INT) AS hs_student_id,
-          CAST(
-            [evidence_based_reading_writing] AS FLOAT
-          ) AS evidence_based_reading_writing,
-          CAST([math] AS FLOAT) AS math,
-          CAST([total] AS FLOAT) AS total,
-          CAST([reading_test] AS FLOAT) AS reading_test,
-          CAST([writing_test] AS FLOAT) AS writing_test,
-          CAST([math_test] AS FLOAT) AS math_test,
-          NULL AS writing,
-          NULL AS essay_subscore,
-          CAST([math_test] AS FLOAT) + CAST([reading_test] AS FLOAT) AS mc_subscore,
-          DATEFROMPARTS(
-            RIGHT(test_date, 4),
-            LEFT(
-              test_date,
-              CHARINDEX('/', test_date) - 1
-            ),
-            1
-          ) AS test_date,
-          1600 AS sat_scale,
-          0 AS is_old_sat
-        FROM
-          gabby.naviance.sat_scores
-        UNION ALL
-        SELECT
-          CAST([studentid] AS INT) AS student_id,
-          CAST([hs_student_id] AS INT) AS hs_student_id,
-          CAST([verbal] AS FLOAT),
-          CAST([math] AS FLOAT),
-          CAST([total] AS FLOAT),
-          NULL AS [reading_test],
-          CAST([essay_subscore] AS FLOAT) AS writing_test,
-          NULL AS [math_test],
-          CAST([writing] AS FLOAT),
-          CAST([essay_subscore] AS FLOAT),
-          CAST([mc_subscore] AS FLOAT),
-          CASE
-            WHEN test_date = '0000-00-00' THEN NULL
-            WHEN RIGHT(test_date, 2) = '00' THEN DATEFROMPARTS(
-              LEFT(test_date, 4),
-              SUBSTRING(test_date, 6, 2),
-              01
-            )
-            ELSE CAST(test_date AS DATE)
-          END AS test_date,
-          2400 AS sat_scale,
-          1 AS is_old_sat
-        FROM
-          gabby.naviance.sat_scores_before_mar_2016
-      ) sat
+      sat
   ) AS sub

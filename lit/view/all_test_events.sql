@@ -48,34 +48,34 @@ SELECT
 FROM
   (
     SELECT
-      CAST(ps.unique_id AS VARCHAR(25)) AS unique_id,
-      CAST(ps.student_number AS INT) AS student_number,
-      CAST(ps.academic_year AS INT) AS academic_year,
-      CAST(ps.test_round AS VARCHAR(5)) AS test_round,
-      CAST(ps.round_num AS INT) AS round_num,
-      ps.test_date,
-      CONVERT(INT, ps.testid) AS testid,
-      CAST(ps.is_fp AS INT) AS is_fp,
-      CAST(ps.[status] AS VARCHAR(25)) AS [status],
-      CAST(ps.read_lvl AS VARCHAR(25)) AS read_lvl,
-      CAST(ps.lvl_num AS INT) AS lvl_num,
-      CAST(ps.gleq AS INT) AS gleq,
-      CAST(ps.color AS VARCHAR(25)) AS color,
-      CONVERT(VARCHAR(25), ps.genre) AS genre,
-      CAST(ps.dna_lvl AS VARCHAR(5)) AS dna_lvl,
-      CAST(ps.dna_lvl_num AS INT) AS dna_lvl_num,
-      CAST(ps.instruct_lvl AS VARCHAR(5)) AS instruct_lvl,
-      CAST(ps.instruct_lvl_num AS INT) AS instruct_lvl_num,
-      CAST(ps.indep_lvl AS VARCHAR(25)) AS indep_lvl,
-      CAST(ps.indep_lvl_num AS INT) AS indep_lvl_num,
+      CAST(unique_id AS VARCHAR(25)) AS unique_id,
+      CAST(student_number AS INT) AS student_number,
+      CAST(academic_year AS INT) AS academic_year,
+      CAST(test_round AS VARCHAR(5)) AS test_round,
+      CAST(round_num AS INT) AS round_num,
+      test_date,
+      CONVERT(INT, testid) AS testid,
+      CAST(is_fp AS INT) AS is_fp,
+      CAST([status] AS VARCHAR(25)) AS [status],
+      CAST(read_lvl AS VARCHAR(25)) AS read_lvl,
+      CAST(lvl_num AS INT) AS lvl_num,
+      CAST(gleq AS INT) AS gleq,
+      CAST(color AS VARCHAR(25)) AS color,
+      CONVERT(VARCHAR(25), genre) AS genre,
+      CAST(dna_lvl AS VARCHAR(5)) AS dna_lvl,
+      CAST(dna_lvl_num AS INT) AS dna_lvl_num,
+      CAST(instruct_lvl AS VARCHAR(5)) AS instruct_lvl,
+      CAST(instruct_lvl_num AS INT) AS instruct_lvl_num,
+      CAST(indep_lvl AS VARCHAR(25)) AS indep_lvl,
+      CAST(indep_lvl_num AS INT) AS indep_lvl_num,
       NULL AS gleq_lvl_num,
-      CAST(ps.fp_wpmrate AS INT) AS fp_wpmrate,
-      CAST(ps.fp_keylever AS VARCHAR(25)) AS fp_keylever,
-      CAST(ps.coaching_code AS VARCHAR(5)) AS coaching_code,
+      CAST(fp_wpmrate AS INT) AS fp_wpmrate,
+      CAST(fp_keylever AS VARCHAR(25)) AS fp_keylever,
+      CAST(coaching_code AS VARCHAR(5)) AS coaching_code,
       NULL AS test_administered_by,
       NULL AS schoolid
     FROM
-      gabby.lit.powerschool_test_events_archive AS ps
+      gabby.lit.powerschool_test_events_archive
     UNION ALL
     SELECT
       unique_id,
@@ -103,9 +103,9 @@ FROM
       NULL AS fp_keylever,
       NULL AS coaching_code,
       recorder AS test_administered_by,
-      uc.schoolid
+      schoolid
     FROM
-      gabby.lit.steptool_test_events AS uc
+      gabby.lit.steptool_test_events
     UNION ALL
     SELECT
       unique_id,
@@ -141,7 +141,7 @@ FROM
       NULL AS test_administered_by,
       NULL AS schoolid
     FROM
-      gabby.lit.illuminate_test_events AS ill
+      gabby.lit.illuminate_test_events
     UNION ALL
     SELECT
       unique_id,
@@ -171,5 +171,5 @@ FROM
       test_administered_by,
       schoolid
     FROM
-      gabby.lit.fpodms_test_events AS fpodms
-  ) rs
+      gabby.lit.fpodms_test_events
+  ) AS rs

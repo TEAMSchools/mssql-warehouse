@@ -70,20 +70,18 @@ FROM
     SELECT
       es.enrollment_id,
       es.rn_term_asc,
-      --,es.term_year
-      --,es.term_season
       CASE
         WHEN t.term_enrollment_status_c IS NOT NULL THEN 1.0
         ELSE 0.0
       END AS is_enrolled_term
-      --,t.term_enrollment_status_c AS term_enrollment_status
-      --,t.term_verification_status_c AS term_verification_status
     FROM
       enr_scaff AS es
-      LEFT JOIN gabby.alumni.term_c AS t ON es.enrollment_id = t.enrollment_c
-      AND es.term_year = t.year_c
-      AND es.term_season = t.term_season_c
-      AND t.is_deleted = 0
+      LEFT JOIN gabby.alumni.term_c AS t ON (
+        es.enrollment_id = t.enrollment_c
+        AND es.term_year = t.year_c
+        AND es.term_season = t.term_season_c
+        AND t.is_deleted = 0
+      )
   ) AS sub PIVOT (
     MAX(is_enrolled_term) FOR rn_term_asc IN (
       [1],

@@ -20,7 +20,8 @@ SELECT
 FROM
   gabby.powerschool.schools
 WHERE
-  state_excludefromreporting = 0 /* filter out summer school and graduated students */
+  /* filter out summer school and graduated students */
+  state_excludefromreporting = 0
 UNION ALL
 SELECT
   CAST(0 AS VARCHAR(25)) AS [School_id],

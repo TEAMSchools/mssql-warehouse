@@ -38,4 +38,4 @@ SELECT
   stl.test_type AS test_type_filter
 FROM
   gabby.alumni.standardized_test_long AS stl
-  INNER JOIN gabby.alumni.enrollment_identifiers AS ei ON stl.contact_c = ei.student_c
+  INNER JOIN gabby.alumni.enrollment_identifiers AS ei ON (stl.contact_c = ei.student_c)

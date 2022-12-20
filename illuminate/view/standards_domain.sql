@@ -3,19 +3,17 @@ CREATE OR ALTER VIEW
 WITH
   standards_ladder AS (
     SELECT
-      s1.standard_id AS domain_standard_id,
-      s1.custom_code AS domain_custom_code,
-      CAST(
-        s1.[description] AS VARCHAR(2000)
-      ) AS domain_description,
-      s1.[label] AS domain_label,
-      s1.[level] AS domain_level,
-      s1.standard_id,
-      s1.custom_code,
-      s1.parent_standard_id,
-      s1.[level]
+      standard_id AS domain_standard_id,
+      custom_code AS domain_custom_code,
+      CAST([description] AS VARCHAR(2000)) AS domain_description,
+      [label] AS domain_label,
+      [level] AS domain_level,
+      standard_id,
+      custom_code,
+      parent_standard_id,
+      [level]
     FROM
-      gabby.illuminate_standards.standards AS s1
+      gabby.illuminate_standards.standards
     UNION ALL
     SELECT
       s3.domain_standard_id,
@@ -29,17 +27,19 @@ WITH
       s2.[level]
     FROM
       gabby.illuminate_standards.standards AS s2
-      INNER JOIN standards_ladder AS s3 ON s2.parent_standard_id = s3.standard_id
+      INNER JOIN standards_ladder AS s3 ON (
+        s2.parent_standard_id = s3.standard_id
+      )
   )
 SELECT
-  standards_ladder.domain_standard_id,
-  standards_ladder.domain_custom_code,
-  standards_ladder.domain_description,
-  standards_ladder.domain_label,
-  standards_ladder.domain_level,
-  standards_ladder.standard_id,
-  standards_ladder.custom_code,
-  standards_ladder.parent_standard_id,
-  standards_ladder.[level]
+  domain_standard_id,
+  domain_custom_code,
+  domain_description,
+  domain_label,
+  domain_level,
+  standard_id,
+  custom_code,
+  parent_standard_id,
+  [level]
 FROM
   standards_ladder

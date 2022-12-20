@@ -181,17 +181,25 @@ FROM
       END AS module_number_length
     FROM
       gabby.illuminate_dna_assessments.assessments AS a
-      INNER JOIN gabby.illuminate_public.users AS u ON a.[user_id] = u.[user_id]
-      INNER JOIN gabby.illuminate_dna_assessments.performance_band_sets AS pbs ON a.performance_band_set_id = pbs.performance_band_set_id
-      LEFT JOIN gabby.illuminate_codes.dna_scopes AS ds ON a.code_scope_id = ds.code_id
-      LEFT JOIN gabby.illuminate_codes.dna_subject_areas AS dsa ON a.code_subject_area_id = dsa.code_id
-      LEFT JOIN gabby.assessments.normed_scopes AS n ON a.academic_year = (n.academic_year + 1)
-      AND ds.code_translation = n.scope
-      AND n._fivetran_deleted = 0
-      LEFT JOIN gabby.reporting.reporting_terms AS rt ON (
-        a.administered_at BETWEEN rt.[start_date] AND rt.end_date
+      INNER JOIN gabby.illuminate_public.users AS u ON (a.[user_id] = u.[user_id])
+      INNER JOIN gabby.illuminate_dna_assessments.performance_band_sets AS pbs ON (
+        a.performance_band_set_id = pbs.performance_band_set_id
       )
-      AND rt.identifier = 'RT'
-      AND rt.schoolid = 0
-      AND rt._fivetran_deleted = 0
+      LEFT JOIN gabby.illuminate_codes.dna_scopes AS ds ON a.code_scope_id = ds.code_id
+      LEFT JOIN gabby.illuminate_codes.dna_subject_areas AS dsa ON (
+        a.code_subject_area_id = dsa.code_id
+      )
+      LEFT JOIN gabby.assessments.normed_scopes AS n ON (
+        a.academic_year = (n.academic_year + 1)
+        AND ds.code_translation = n.scope
+        AND n._fivetran_deleted = 0
+      )
+      LEFT JOIN gabby.reporting.reporting_terms AS rt ON (
+        (
+          a.administered_at BETWEEN rt.[start_date] AND rt.end_date
+        )
+        AND rt.identifier = 'RT'
+        AND rt.schoolid = 0
+        AND rt._fivetran_deleted = 0
+      )
   ) AS sub

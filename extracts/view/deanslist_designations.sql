@@ -98,54 +98,74 @@ WITH
         WHEN sp.[NCCS] IS NOT NULL THEN 'NCCS'
       END AS is_nccs,
       CASE
-        WHEN sp.[Pathways MS] IS NOT NULL
-        OR sp.[Pathways ES] IS NOT NULL THEN 'Pathways'
+        WHEN (
+          sp.[Pathways MS] IS NOT NULL
+          OR sp.[Pathways ES] IS NOT NULL
+        ) THEN 'Pathways'
       END AS is_pathways,
       CASE
-        WHEN sp.[Home Instruction] IS NOT NULL
-        AND sp.exit_date > CAST(CURRENT_TIMESTAMP AS DATE) THEN 'Home Instruction'
+        WHEN (
+          sp.[Home Instruction] IS NOT NULL
+          AND sp.exit_date > CAST(CURRENT_TIMESTAMP AS DATE)
+        ) THEN 'Home Instruction'
       END AS is_home_instruction,
       CASE
-        WHEN sp.[Hybrid - Cohort A] IS NOT NULL
-        AND sp.exit_date > CAST(CURRENT_TIMESTAMP AS DATE) THEN 'Hybrid - Cohort A'
+        WHEN (
+          sp.[Hybrid - Cohort A] IS NOT NULL
+          AND sp.exit_date > CAST(CURRENT_TIMESTAMP AS DATE)
+        ) THEN 'Hybrid - Cohort A'
       END AS is_hybrid_a,
       CASE
-        WHEN sp.[Hybrid - Cohort B] IS NOT NULL
-        AND sp.exit_date > CAST(CURRENT_TIMESTAMP AS DATE) THEN 'Hybrid - Cohort B'
+        WHEN (
+          sp.[Hybrid - Cohort B] IS NOT NULL
+          AND sp.exit_date > CAST(CURRENT_TIMESTAMP AS DATE)
+        ) THEN 'Hybrid - Cohort B'
       END AS is_hybrid_b,
       CASE
-        WHEN sp.[Remote - Cohort C] IS NOT NULL
-        AND sp.exit_date > CAST(CURRENT_TIMESTAMP AS DATE) THEN 'Remote - Cohort C'
+        WHEN (
+          sp.[Remote - Cohort C] IS NOT NULL
+          AND sp.exit_date > CAST(CURRENT_TIMESTAMP AS DATE)
+        ) THEN 'Remote - Cohort C'
       END AS is_remote_c,
       CASE
-        WHEN sp.[Hybrid (SC) - Cohort D] IS NOT NULL
-        AND sp.exit_date > CAST(CURRENT_TIMESTAMP AS DATE) THEN 'Hybrid (SC) - Cohort D'
+        WHEN (
+          sp.[Hybrid (SC) - Cohort D] IS NOT NULL
+          AND sp.exit_date > CAST(CURRENT_TIMESTAMP AS DATE)
+        ) THEN 'Hybrid (SC) - Cohort D'
       END AS is_hybrid_d,
       CASE
-        WHEN sp.[Remote Instruction] IS NOT NULL
-        AND sp.exit_date > CAST(CURRENT_TIMESTAMP AS DATE) THEN 'Remote Instruction'
+        WHEN (
+          sp.[Remote Instruction] IS NOT NULL
+          AND sp.exit_date > CAST(CURRENT_TIMESTAMP AS DATE)
+        ) THEN 'Remote Instruction'
       END AS is_remote_instruction,
       CASE
-        WHEN sp.[Counseling Services] IS NOT NULL
-        AND sp.exit_date > CAST(CURRENT_TIMESTAMP AS DATE) THEN 'Counseling Services'
+        WHEN (
+          sp.[Counseling Services] IS NOT NULL
+          AND sp.exit_date > CAST(CURRENT_TIMESTAMP AS DATE)
+        ) THEN 'Counseling Services'
       END AS is_counseling,
       CASE
         WHEN att.[ada] < 0.9 THEN 'Chronic Absence'
       END AS is_chronic_absentee
     FROM
       gabby.powerschool.cohort_identifiers_static AS co
-      LEFT JOIN gabby.powerschool.gpa_detail AS gpa ON co.student_number = gpa.student_number
-      AND co.academic_year = gpa.academic_year
-      AND co.[db_name] = gpa.[db_name]
-      AND gpa.is_curterm = 1
+      LEFT JOIN gabby.powerschool.gpa_detail AS gpa ON (
+        co.student_number = gpa.student_number
+        AND co.academic_year = gpa.academic_year
+        AND co.[db_name] = gpa.[db_name]
+        AND gpa.is_curterm = 1
+      )
       LEFT JOIN sp ON (
         co.studentid = sp.studentid
         AND co.academic_year = sp.academic_year
         AND co.[db_name] = sp.[db_name]
       )
-      LEFT JOIN attendance AS att ON co.studentid = att.studentid
-      AND co.yearid = att.yearid
-      AND co.[db_name] = att.[db_name]
+      LEFT JOIN attendance AS att ON (
+        co.studentid = att.studentid
+        AND co.yearid = att.yearid
+        AND co.[db_name] = att.[db_name]
+      )
     WHERE
       co.rn_year = 1
       AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()

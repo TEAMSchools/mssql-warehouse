@@ -35,9 +35,7 @@ FROM
           grade_level_id,
           entry_date,
           leave_date,
-          (
-            gabby.utilities.DATE_TO_SY (entry_date) + 1
-          ) AS academic_year
+          gabby.utilities.DATE_TO_SY (entry_date) + 1 AS academic_year
         FROM
           gabby.illuminate_public.student_session_aff
       ) AS sub

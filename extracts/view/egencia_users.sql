@@ -49,8 +49,10 @@ FROM
       ) AS hire_date
     FROM
       gabby.people.staff_roster AS scw
-      INNER JOIN gabby.adsi.user_attributes_static AS ad ON scw.employee_number = ad.employeenumber
-      AND ISNUMERIC(ad.employeenumber) = 1
+      INNER JOIN gabby.adsi.user_attributes_static AS ad ON (
+        scw.employee_number = ad.employeenumber
+        AND ISNUMERIC(ad.employeenumber) = 1
+      )
     WHERE
       (
         scw.worker_category NOT IN ('Intern', 'Part Time')
@@ -65,12 +67,18 @@ FROM
         1
       )
   ) AS sub
-  LEFT JOIN gabby.egencia.traveler_groups AS tg ON sub.[location] = tg.[location]
-  AND sub.home_department = tg.home_department
-  AND sub.job_title = tg.job_title
-  LEFT JOIN gabby.egencia.traveler_groups AS tg2 ON sub.[location] = tg2.[location]
-  AND sub.home_department = tg2.home_department
-  AND tg2.job_title = 'Default'
-  LEFT JOIN gabby.egencia.traveler_groups AS tg3 ON sub.[location] = tg3.[location]
-  AND tg3.home_department = 'Default'
-  AND tg3.job_title = 'Default'
+  LEFT JOIN gabby.egencia.traveler_groups AS tg ON (
+    sub.[location] = tg.[location]
+    AND sub.home_department = tg.home_department
+    AND sub.job_title = tg.job_title
+  )
+  LEFT JOIN gabby.egencia.traveler_groups AS tg2 ON (
+    sub.[location] = tg2.[location]
+    AND sub.home_department = tg2.home_department
+    AND tg2.job_title = 'Default'
+  )
+  LEFT JOIN gabby.egencia.traveler_groups AS tg3 ON (
+    sub.[location] = tg3.[location]
+    AND tg3.home_department = 'Default'
+    AND tg3.job_title = 'Default'
+  )

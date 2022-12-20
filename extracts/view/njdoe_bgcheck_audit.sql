@@ -13,8 +13,10 @@ FROM
       is_approved,
       CASE
         WHEN business_unit_code = approved_business_unit_code THEN 1
-        WHEN business_unit_code = 'KIPP_TAF'
-        AND is_approved = 1 THEN 1
+        WHEN (
+          business_unit_code = 'KIPP_TAF'
+          AND is_approved = 1
+        ) THEN 1
         ELSE 0
       END AS is_approved_district,
       ROW_NUMBER() OVER (
@@ -42,7 +44,9 @@ FROM
           END AS is_approved
         FROM
           gabby.people.staff_roster AS sr
-          LEFT JOIN gabby.njdoe.background_check_approval_history AS bg ON sr.employee_number = bg.employee_number
+          LEFT JOIN gabby.njdoe.background_check_approval_history AS bg ON (
+            sr.employee_number = bg.employee_number
+          )
         WHERE
           sr.position_status != 'Terminated'
           AND sr.business_unit != 'KIPP Miami'

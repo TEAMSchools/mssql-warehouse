@@ -51,28 +51,40 @@ SELECT
   REPLACE(comm.comment_value, '"', '''') AS comment_value
 FROM
   gabby.powerschool.cohort_static AS co
-  INNER JOIN gabby.powerschool.final_grades_wide_static AS fg ON co.studentid = fg.studentid
-  AND co.yearid = fg.yearid
-  AND co.[db_name] = fg.[db_name]
-  AND fg.reporting_term != 'CUR'
-  INNER JOIN gabby.powerschool.sections_identifiers AS sec ON fg.sectionid = sec.sectionid
-  AND fg.[db_name] = sec.[db_name]
-  LEFT JOIN gabby.powerschool.cc ON fg.studentid = cc.studentid
-  AND fg.sectionid = cc.sectionid
-  AND fg.[db_name] = cc.[db_name]
-  LEFT JOIN gabby.powerschool.category_grades_wide_static AS cat ON co.studentid = cat.studentid
-  AND fg.course_number = cat.course_number
-  AND fg.reporting_term = cat.reporting_term
-  AND fg.[db_name] = cat.[db_name]
-  LEFT JOIN gabby.powerschool.category_grades_wide_static AS kctz ON co.studentid = kctz.studentid
-  AND fg.reporting_term = kctz.reporting_term
-  AND fg.[db_name] = kctz.[db_name]
-  AND kctz.course_number = 'HR'
-  AND sec.section_number LIKE '0%'
-  LEFT JOIN gabby.powerschool.pgfinalgrades AS comm ON fg.studentid = comm.studentid
-  AND fg.sectionid = comm.sectionid
-  AND fg.storecode = comm.finalgradename
-  AND fg.[db_name] = comm.[db_name]
+  INNER JOIN gabby.powerschool.final_grades_wide_static AS fg ON (
+    co.studentid = fg.studentid
+    AND co.yearid = fg.yearid
+    AND co.[db_name] = fg.[db_name]
+    AND fg.reporting_term != 'CUR'
+  )
+  INNER JOIN gabby.powerschool.sections_identifiers AS sec ON (
+    fg.sectionid = sec.sectionid
+    AND fg.[db_name] = sec.[db_name]
+  )
+  LEFT JOIN gabby.powerschool.cc ON (
+    fg.studentid = cc.studentid
+    AND fg.sectionid = cc.sectionid
+    AND fg.[db_name] = cc.[db_name]
+  )
+  LEFT JOIN gabby.powerschool.category_grades_wide_static AS cat ON (
+    co.studentid = cat.studentid
+    AND fg.course_number = cat.course_number
+    AND fg.reporting_term = cat.reporting_term
+    AND fg.[db_name] = cat.[db_name]
+  )
+  LEFT JOIN gabby.powerschool.category_grades_wide_static AS kctz ON (
+    co.studentid = kctz.studentid
+    AND fg.reporting_term = kctz.reporting_term
+    AND fg.[db_name] = kctz.[db_name]
+    AND kctz.course_number = 'HR'
+    AND sec.section_number LIKE '0%'
+  )
+  LEFT JOIN gabby.powerschool.pgfinalgrades AS comm ON (
+    fg.studentid = comm.studentid
+    AND fg.sectionid = comm.sectionid
+    AND fg.storecode = comm.finalgradename
+    AND fg.[db_name] = comm.[db_name]
+  )
 WHERE
   co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
   AND co.rn_year = 1

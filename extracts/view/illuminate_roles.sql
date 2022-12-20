@@ -15,7 +15,9 @@ SELECT
   1 AS [05 Session Type ID]
 FROM
   gabby.people.staff_crosswalk_static AS df
-  INNER JOIN gabby.powerschool.schools AS sch ON sch.state_excludefromreporting = 0
+  INNER JOIN gabby.powerschool.schools AS sch ON (
+    sch.state_excludefromreporting = 0
+  )
 WHERE
   df.[status] != 'TERMINATED'
   AND df.primary_on_site_department IN (
@@ -40,9 +42,11 @@ SELECT
   1 AS [05 Session Type ID]
 FROM
   gabby.people.staff_crosswalk_static AS df
-  INNER JOIN gabby.people.campus_crosswalk AS cc ON df.primary_site = cc.campus_name
-  AND cc.is_pathways = 0
-  AND cc._fivetran_deleted = 0
+  INNER JOIN gabby.people.campus_crosswalk AS cc ON (
+    df.primary_site = cc.campus_name
+    AND cc.is_pathways = 0
+    AND cc._fivetran_deleted = 0
+  )
 WHERE
   df.[status] != 'TERMINATED'
   AND df.primary_on_site_department NOT IN (
@@ -54,8 +58,8 @@ WHERE
 UNION ALL
 /* School-based staff = only respective school */
 SELECT
-  df.ps_teachernumber AS [01 Local User ID],
-  df.primary_site_schoolid AS [02 Site ID],
+  ps_teachernumber AS [01 Local User ID],
+  primary_site_schoolid AS [02 Site ID],
   'School Leadership' AS [03 Role Name],
   CONCAT(
     gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
@@ -66,12 +70,12 @@ SELECT
   ) AS [04 Academic Year],
   1 AS [05 Session Type ID]
 FROM
-  gabby.people.staff_crosswalk_static AS df
+  gabby.people.staff_crosswalk_static
 WHERE
-  df.[status] != 'TERMINATED'
-  AND df.primary_on_site_department NOT IN (
+  [status] != 'TERMINATED'
+  AND primary_on_site_department NOT IN (
     'Teaching and Learning',
     'Data',
     'Executive'
   )
-  AND df.is_campus_staff = 0
+  AND is_campus_staff = 0

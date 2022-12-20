@@ -40,7 +40,9 @@ SELECT
       'Teacher, ESL',
       'Teacher ESL'
     ) THEN 'Teacher'
-    WHEN s.primary_on_site_department = 'School Leadership' THEN 'School Leadership Team'
+    WHEN (
+      s.primary_on_site_department = 'School Leadership'
+    ) THEN 'School Leadership Team'
     ELSE 'Non-teaching school based staff'
   END AS tntp_assignment,
   CASE
@@ -74,8 +76,10 @@ SELECT
     ELSE 'Other'
   END AS engagement_survey_assignment,
   CASE
-    WHEN s.primary_on_site_department = 'Elementary'
-    AND e.student_grade_level IS NOT NULL THEN CONCAT(
+    WHEN (
+      s.primary_on_site_department = 'Elementary'
+      AND e.student_grade_level IS NOT NULL
+    ) THEN CONCAT(
       s.primary_on_site_department,
       ', Grade ',
       e.student_grade_level
@@ -85,16 +89,20 @@ SELECT
   /* default School Based assignments based on legal entity/location */
   s.manager_name,
   CASE
-    WHEN s.legal_entity_name != 'KIPP TEAM and Family Schools Inc.'
-    AND s.primary_site NOT IN (
-      'Room 9 - 60 Park Pl',
-      'Room 10 - 121 Market St',
-      'Room 11 - 1951 NW 7th Ave'
+    WHEN (
+      s.legal_entity_name != 'KIPP TEAM and Family Schools Inc.'
+      AND s.primary_site NOT IN (
+        'Room 9 - 60 Park Pl',
+        'Room 10 - 121 Market St',
+        'Room 11 - 1951 NW 7th Ave'
+      )
     ) THEN 'school-based'
   END AS school_based
 FROM
   gabby.people.staff_crosswalk_static AS s
-  LEFT JOIN elementary_grade AS e ON s.df_employee_number = e.employee_number
+  LEFT JOIN elementary_grade AS e ON (
+    s.df_employee_number = e.employee_number
+  )
 WHERE
   s.[status] = 'ACTIVE'
   AND s.primary_job != 'Intern'

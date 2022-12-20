@@ -27,10 +27,14 @@ SELECT
       DATEFROMPARTS(sub.academic_year, 10, 31) > CAST(CURRENT_TIMESTAMP AS DATE)
     ) THEN NULL
     WHEN e.actual_end_date_c >= DATEFROMPARTS(sub.academic_year, 10, 31) THEN 1
-    WHEN e.actual_end_date_c < DATEFROMPARTS(sub.academic_year, 10, 31)
-    AND e.status_c = 'Graduated' THEN 1
-    WHEN e.actual_end_date_c IS NULL
-    AND ei.ugrad_status IN ('Graduated', 'Attending') THEN 1
+    WHEN (
+      e.actual_end_date_c < DATEFROMPARTS(sub.academic_year, 10, 31)
+      AND e.status_c = 'Graduated'
+    ) THEN 1
+    WHEN (
+      e.actual_end_date_c IS NULL
+      AND eis.ugrad_status IN ('Graduated', 'Attending')
+    ) THEN 1
     ELSE 0
   END AS is_persisting
 FROM
@@ -52,7 +56,7 @@ FROM
       r.ktc_cohort + n.n AS academic_year
     FROM
       gabby.alumni.ktc_roster AS r
-      INNER JOIN gabby.utilities.row_generator AS n ON (n.n <= 5)
+      INNER JOIN gabby.utilities.row_generator AS (n ON (n.n <= 5))
   ) AS sub
   LEFT JOIN gabby.alumni.enrollment_c AS e ON (
     sub.sf_contact_id = e.student_c
@@ -76,4 +80,6 @@ FROM
     AND e.status_c NOT IN ('Did Not Enroll', 'Deferred')
   )
   LEFT JOIN gabby.alumni.account AS a ON (e.school_c = a.id)
-  LEFT JOIN gabby.alumni.enrollment_identifiers AS ei ON (sub.sf_contact_id = ei.student_c)
+  LEFT JOIN gabby.alumni.enrollment_identifiers AS eis ON (
+    sub.sf_contact_id = eis.student_c
+  )

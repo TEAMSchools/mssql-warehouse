@@ -35,9 +35,7 @@ FROM
       CAST(reading_level AS VARCHAR(5)) AS instructional_level_tested,
       CAST(rate_proficiency AS VARCHAR(25)) AS rate_proficiency,
       CAST(key_lever AS VARCHAR(25)) AS key_lever,
-      CAST(fiction_nonfiction AS VARCHAR(5)) AS fiction_nonfiction
-      --,CAST(test_administered_by AS VARCHAR(125)) AS test_administered_by
-,
+      CAST(fiction_nonfiction AS VARCHAR(5)) AS fiction_nonfiction,
       CONCAT(
         'IL',
         repository_id,
@@ -59,24 +57,21 @@ FROM
           194 AS repository_id,
           2017 AS academic_year,
           'Q1' AS test_round,
-          repo.repository_row_id,
-          repo.student_id,
-          repo.field_about_the_text AS about_the_text,
-          repo.field_accuracy AS accuracy,
-          repo.field_beyond_the_text AS beyond_the_text,
-          repo.field_comprehension_1 AS comprehension,
-          repo.field_date_administered AS date_administered,
-          repo.field_fictionnonfiction AS fiction_nonfiction,
-          repo.field_fluency_score AS fluency_score,
-          repo.field_key_lever AS key_lever,
-          repo.field_rate_proficiency AS rate_proficiency,
-          repo.field_reading_level AS reading_level,
-          repo.field_words_per_minute AS reading_rate_wpm,
-          repo.field_status AS status
-          --,repo.field_test_administered_by AS test_administered_by
-,
-          repo.field_comprehension AS within_the_text,
-          repo.field_writing_optional AS writing
+          repository_row_id,
+          student_id,
+          field_about_the_text AS about_the_text,
+          field_accuracy AS accuracy,
+          field_beyond_the_text AS beyond_the_text,
+          field_comprehension_1 AS comprehension,
+          field_date_administered AS date_administered,
+          field_fictionnonfiction AS fiction_nonfiction,
+          field_fluency_score AS fluency_score,
+          field_key_lever AS key_lever,
+          field_rate_proficiency AS rate_proficiency,
+          field_reading_level AS reading_level,
+          field_words_per_minute AS reading_rate_wpm,
+          field_status AS [status] field_comprehension AS within_the_text,
+          field_writing_optional AS writing
         FROM
           [gabby].[illuminate_dna_repositories].[repository_194] repo
         UNION ALL
@@ -84,24 +79,21 @@ FROM
           195 AS repository_id,
           2017 AS academic_year,
           'Q2' AS test_round,
-          repo.repository_row_id,
-          repo.student_id,
-          repo.field_about_the_text AS about_the_text,
-          repo.field_accuracy AS accuracy,
-          repo.field_beyond_the_text AS beyond_the_text,
-          repo.field_comprehension_1 AS comprehension,
-          repo.field_date_administered AS date_administered,
-          repo.field_fictionnonfiction AS fiction_nonfiction,
-          repo.field_fluency_score AS fluency_score,
-          repo.field_key_lever AS key_lever,
-          repo.field_rate_proficiency AS rate_proficiency,
-          repo.field_reading_level AS reading_level,
-          repo.field_words_per_minute AS reading_rate_wpm,
-          repo.field_status AS status
-          --,repo.field_test_administered_by AS test_administered_by
-,
-          repo.field_within_the_text AS within_the_text,
-          repo.field_writing_optional AS writing
+          repository_row_id,
+          student_id,
+          field_about_the_text AS about_the_text,
+          field_accuracy AS accuracy,
+          field_beyond_the_text AS beyond_the_text,
+          field_comprehension_1 AS comprehension,
+          field_date_administered AS date_administered,
+          field_fictionnonfiction AS fiction_nonfiction,
+          field_fluency_score AS fluency_score,
+          field_key_lever AS key_lever,
+          field_rate_proficiency AS rate_proficiency,
+          field_reading_level AS reading_level,
+          field_words_per_minute AS reading_rate_wpm,
+          field_status AS [status] field_within_the_text AS within_the_text,
+          field_writing_optional AS writing
         FROM
           [gabby].[illuminate_dna_repositories].[repository_195] repo
         UNION ALL
@@ -109,24 +101,21 @@ FROM
           196 AS repository_id,
           2017 AS academic_year,
           'Q3' AS test_round,
-          repo.repository_row_id,
-          repo.student_id,
-          repo.field_about_the_text AS about_the_text,
-          repo.field_accuracy AS accuracy,
-          repo.field_beyond_the_text AS beyond_the_text,
-          repo.field_comprehension_2 AS comprehension,
-          repo.field_date_administered AS date_administered,
-          repo.field_fictionnonfiction AS fiction_nonfiction,
-          repo.field_fluency_score AS fluency_score,
-          repo.field_key_lever AS key_lever,
-          repo.field_rate_proficiency AS rate_proficiency,
-          repo.field_reading_level AS reading_level,
-          repo.field_words_per_minute AS reading_rate_wpm,
-          repo.field_status AS status
-          --,repo.field_test_administered_by AS test_administered_by
-,
-          repo.field_within_the_text AS within_the_text,
-          repo.field_writing_optional AS writing
+          repository_row_id,
+          student_id,
+          field_about_the_text AS about_the_text,
+          field_accuracy AS accuracy,
+          field_beyond_the_text AS beyond_the_text,
+          field_comprehension_2 AS comprehension,
+          field_date_administered AS date_administered,
+          field_fictionnonfiction AS fiction_nonfiction,
+          field_fluency_score AS fluency_score,
+          field_key_lever AS key_lever,
+          field_rate_proficiency AS rate_proficiency,
+          field_reading_level AS reading_level,
+          field_words_per_minute AS reading_rate_wpm,
+          field_status AS [status] field_within_the_text AS within_the_text,
+          field_writing_optional AS writing
         FROM
           [gabby].[illuminate_dna_repositories].[repository_196] repo
         UNION ALL
@@ -134,24 +123,21 @@ FROM
           193 AS repository_id,
           2017 AS academic_year,
           'Q4' AS test_round,
-          repo.repository_row_id,
-          repo.student_id,
-          repo.field_about_the_text AS about_the_text,
-          repo.field_accuracy AS accuracy,
-          repo.field_beyond_the_text AS beyond_the_text,
-          repo.field_comprehension_1 AS comprehension,
-          repo.field_date_administered_1 AS date_administered,
-          repo.field_fictionnonfiction AS fiction_nonfiction,
-          repo.field_fluency_score AS fluency_score,
-          repo.field_key_lever AS key_lever,
-          repo.field_rate_proficiency AS rate_proficiency,
-          repo.field_reading_level AS reading_level,
-          repo.field_words_per_minute AS reading_rate_wpm,
-          repo.field_status AS status
-          --,repo.field_test_administered_by AS test_administered_by
-,
-          repo.field_within_the_text AS within_the_text,
-          repo.field_writing_optional AS writing
+          repository_row_id,
+          student_id,
+          field_about_the_text AS about_the_text,
+          field_accuracy AS accuracy,
+          field_beyond_the_text AS beyond_the_text,
+          field_comprehension_1 AS comprehension,
+          field_date_administered_1 AS date_administered,
+          field_fictionnonfiction AS fiction_nonfiction,
+          field_fluency_score AS fluency_score,
+          field_key_lever AS key_lever,
+          field_rate_proficiency AS rate_proficiency,
+          field_reading_level AS reading_level,
+          field_words_per_minute AS reading_rate_wpm,
+          field_status AS [status] field_within_the_text AS within_the_text,
+          field_writing_optional AS writing
         FROM
           [gabby].[illuminate_dna_repositories].[repository_193] repo
       ) AS sub
@@ -171,4 +157,4 @@ FROM
           gabby.illuminate_dna_repositories.repository_row_ids
       )
   ) AS sub
-  INNER JOIN gabby.illuminate_public.students AS s ON sub.student_id = s.student_id
+  INNER JOIN gabby.illuminate_public.students AS s ON (sub.student_id = s.student_id)

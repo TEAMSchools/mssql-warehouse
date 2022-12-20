@@ -154,35 +154,51 @@ SELECT
   bk.d_percent_correct * 100 AS last_book_quiz_pct_correct
 FROM
   gabby.powerschool.cohort_identifiers_static AS co
-  LEFT JOIN gabby.powerschool.course_enrollments_current_static AS enr ON co.student_number = enr.student_number
-  AND co.[db_name] = enr.[db_name]
-  AND enr.credittype = 'ENG'
-  AND (
-    CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN enr.dateenrolled AND enr.dateleft
+  LEFT JOIN gabby.powerschool.course_enrollments_current_static AS enr ON (
+    co.student_number = enr.student_number
+    AND co.[db_name] = enr.[db_name]
+    AND enr.credittype = 'ENG'
+    AND (
+      CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN enr.dateenrolled AND enr.dateleft
+    )
+    AND enr.rn_subject = 1
   )
-  AND enr.rn_subject = 1
-  LEFT JOIN gabby.powerschool.final_grades_static AS gr ON co.studentid = gr.studentid
-  AND co.yearid = gr.yearid
-  AND co.[db_name] = gr.[db_name]
-  AND enr.course_number = gr.course_number
-  AND (
-    CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN gr.termbin_start_date AND gr.termbin_end_date
+  LEFT JOIN gabby.powerschool.final_grades_static AS gr ON (
+    co.studentid = gr.studentid
+    AND co.yearid = gr.yearid
+    AND co.[db_name] = gr.[db_name]
+    AND enr.course_number = gr.course_number
+    AND (
+      /* trunk-ignore(sqlfluff/L016) */
+      CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN gr.termbin_start_date AND gr.termbin_end_date
+    )
   )
-  LEFT JOIN gabby.powerschool.category_grades_static AS ele ON co.studentid = ele.studentid
-  AND co.yearid = ele.yearid
-  AND co.[db_name] = ele.[db_name]
-  AND enr.course_number = ele.course_number
-  AND ele.storecode_type = 'H'
-  AND (
-    CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN ele.termbin_start_date AND ele.termbin_end_date
+  LEFT JOIN gabby.powerschool.category_grades_static AS ele ON (
+    co.studentid = ele.studentid
+    AND co.yearid = ele.yearid
+    AND co.[db_name] = ele.[db_name]
+    AND enr.course_number = ele.course_number
+    AND ele.storecode_type = 'H'
+    AND (
+      /* trunk-ignore(sqlfluff/L016) */
+      CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN ele.termbin_start_date AND ele.termbin_end_date
+    )
   )
-  LEFT JOIN fp AS fp_base ON co.student_number = fp_base.student_number
-  AND fp_base.rn_base = 1
-  LEFT JOIN fp AS fp_curr ON co.student_number = fp_curr.student_number
-  AND fp_curr.rn_curr = 1
-  LEFT JOIN ar_wide ON co.student_number = ar_wide.student_number
-  LEFT JOIN gabby.renaissance.ar_most_recent_quiz_static AS bk ON co.student_number = bk.student_number
-  AND co.academic_year = bk.academic_year
+  LEFT JOIN fp AS fp_base ON (
+    co.student_number = fp_base.student_number
+    AND fp_base.rn_base = 1
+  )
+  LEFT JOIN fp AS fp_curr ON (
+    co.student_number = fp_curr.student_number
+    AND fp_curr.rn_curr = 1
+  )
+  LEFT JOIN ar_wide ON (
+    co.student_number = ar_wide.student_number
+  )
+  LEFT JOIN gabby.renaissance.ar_most_recent_quiz_static AS bk ON (
+    co.student_number = bk.student_number
+    AND co.academic_year = bk.academic_year
+  )
 WHERE
   co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
   /* ad-hoc exception for Seek 4*/

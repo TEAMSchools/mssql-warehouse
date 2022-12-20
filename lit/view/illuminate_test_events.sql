@@ -86,36 +86,63 @@ SELECT
   cd.fiction_nonfiction,
   cd.test_administered_by AS test_administered_by,
   CASE
-    WHEN cd.academic_year <= 2016
-    AND cd.test_round = 'BOY' THEN 1
-    WHEN cd.academic_year <= 2016
-    AND cd.test_round = 'MOY' THEN 2
-    WHEN cd.academic_year <= 2016
-    AND cd.test_round = 'EOY' THEN 3
-    WHEN cd.academic_year <= 2016
-    AND cd.test_round = 'DR' THEN 1
-    WHEN cd.academic_year <= 2016
-    AND cd.test_round = 'Q1' THEN 2
-    WHEN cd.academic_year <= 2016
-    AND cd.test_round = 'Q2' THEN 3
-    WHEN cd.academic_year <= 2016
-    AND cd.test_round = 'Q3' THEN 4
-    WHEN cd.academic_year <= 2016
-    AND cd.test_round = 'Q4' THEN 5
-    WHEN cd.academic_year >= 2017
-    AND cd.test_round = 'Q1' THEN 1
-    WHEN cd.academic_year >= 2017
-    AND cd.test_round = 'Q2' THEN 2
-    WHEN cd.academic_year >= 2017
-    AND cd.test_round = 'Q3' THEN 3
-    WHEN cd.academic_year >= 2017
-    AND cd.test_round = 'Q4' THEN 4
+    WHEN (
+      cd.academic_year <= 2016
+      AND cd.test_round = 'BOY'
+    ) THEN 1
+    WHEN (
+      cd.academic_year <= 2016
+      AND cd.test_round = 'MOY'
+    ) THEN 2
+    WHEN (
+      cd.academic_year <= 2016
+      AND cd.test_round = 'EOY'
+    ) THEN 3
+    WHEN (
+      cd.academic_year <= 2016
+      AND cd.test_round = 'DR'
+    ) THEN 1
+    WHEN (
+      cd.academic_year <= 2016
+      AND cd.test_round = 'Q1'
+    ) THEN 2
+    WHEN (
+      cd.academic_year <= 2016
+      AND cd.test_round = 'Q2'
+    ) THEN 3
+    WHEN (
+      cd.academic_year <= 2016
+      AND cd.test_round = 'Q3'
+    ) THEN 4
+    WHEN (
+      cd.academic_year <= 2016
+      AND cd.test_round = 'Q4'
+    ) THEN 5
+    WHEN (
+      cd.academic_year >= 2017
+      AND cd.test_round = 'Q1'
+    ) THEN 1
+    WHEN (
+      cd.academic_year >= 2017
+      AND cd.test_round = 'Q2'
+    ) THEN 2
+    WHEN (
+      cd.academic_year >= 2017
+      AND cd.test_round = 'Q3'
+    ) THEN 3
+    WHEN (
+      cd.academic_year >= 2017
+      AND cd.test_round = 'Q4'
+    ) THEN 4
   END AS round_num,
   CASE
-    WHEN cd.about_the_text IS NULL
-    AND cd.beyond_the_text IS NULL
-    AND cd.within_the_text IS NULL THEN NULL
-    ELSE ISNULL(cd.within_the_text, 0) + ISNULL(cd.about_the_text, 0) + ISNULL(cd.beyond_the_text, 0)
+    WHEN (
+      cd.about_the_text IS NULL
+      AND cd.beyond_the_text IS NULL
+      AND cd.within_the_text IS NULL
+    ) THEN NULL
+    /* trunk-ignore(sqlfluff/L016) */
+    ELSE (ISNULL(cd.within_the_text, 0) + ISNULL(cd.about_the_text, 0) + ISNULL(cd.beyond_the_text, 0))
   END AS comp_overall,
   achv.gleq,
   CAST(achv.lvl_num AS INT) AS gleq_lvl_num,
@@ -123,5 +150,9 @@ SELECT
   CAST(instr.fp_lvl_num AS INT) AS instr_lvl_num
 FROM
   clean_data AS cd
-  LEFT JOIN gabby.lit.gleq AS achv ON cd.achieved_independent_level = achv.read_lvl
-  LEFT JOIN gabby.lit.gleq AS instr ON cd.instructional_level_tested = instr.read_lvl
+  LEFT JOIN gabby.lit.gleq AS achv ON (
+    cd.achieved_independent_level = achv.read_lvl
+  )
+  LEFT JOIN gabby.lit.gleq AS instr ON (
+    cd.instructional_level_tested = instr.read_lvl
+  )

@@ -10,11 +10,14 @@ SELECT
   sub.first_name AS firstname,
   sub.last_name AS lastname,
   sub.student_web_password AS [password],
-  '/Students/' + CASE
-    WHEN sub.suspended = 'on' THEN 'Disabled'
-    WHEN sub.school_name = 'Out of District' THEN 'Disabled'
-    ELSE sub.region + '/' + sub.school_name
-  END AS org
+  CONCAT(
+    '/Students/',
+    CASE
+      WHEN sub.suspended = 'on' THEN 'Disabled'
+      WHEN sub.school_name = 'Out of District' THEN 'Disabled'
+      ELSE sub.region + '/' + sub.school_name
+    END
+  ) AS org
 FROM
   (
     SELECT
@@ -69,13 +72,19 @@ FROM
       END AS school_name
     FROM
       gabby.powerschool.students AS s
-      INNER JOIN gabby.powerschool.student_access_accounts_static AS saa ON s.student_number = saa.student_number
-      INNER JOIN gabby.powerschool.schools AS sch ON s.schoolid = sch.school_number
-      AND s.[db_name] = sch.[db_name]
-      LEFT JOIN gabby.powerschool.spenrollments_gen_static AS sp ON s.id = sp.studentid
-      AND (
-        s.exitdate BETWEEN sp.enter_date AND sp.exit_date
+      INNER JOIN gabby.powerschool.student_access_accounts_static AS saa ON (
+        s.student_number = saa.student_number
       )
-      AND s.[db_name] = sp.[db_name]
-      AND sp.specprog_name = 'Out of District'
+      INNER JOIN gabby.powerschool.schools AS sch ON (
+        s.schoolid = sch.school_number
+        AND s.[db_name] = sch.[db_name]
+      )
+      LEFT JOIN gabby.powerschool.spenrollments_gen_static AS sp ON (
+        s.id = sp.studentid
+        AND (
+          s.exitdate BETWEEN sp.enter_date AND sp.exit_date
+        )
+        AND s.[db_name] = sp.[db_name]
+        AND sp.specprog_name = 'Out of District'
+      )
   ) AS sub

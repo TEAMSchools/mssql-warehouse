@@ -46,8 +46,10 @@ SELECT
       WHEN s.IsDC = 1 THEN 'F'
       WHEN s.Application_Approval_Result_Description LIKE ('Denied%') THEN 'P'
       WHEN s.Application_Approval_Result_Description IN ('Zero Income') THEN 'F'
-      WHEN s.Application_Approval_Result_Description IS NULL
-      AND s.EligibilityDescription LIKE 'Prior%' THEN 'P'
+      WHEN (
+        s.Application_Approval_Result_Description IS NULL
+        AND s.EligibilityDescription LIKE 'Prior%'
+      ) THEN 'P'
       ELSE LEFT(
         COALESCE(
           s.Application_Approval_Result_Description,
@@ -63,8 +65,9 @@ SELECT
   c.ReimbursableOnlyBalance + c.UnallocatedBalance AS total_balance
 FROM
   [WINSQL06\HAN].Franklin.dbo.VIEW_STUDENT_DATA s
-  LEFT JOIN [WINSQL06\HAN].Newton.dbo.STUDENT_GUID_LINK g ON s.StudentGuid = g.StudentGUID
-  LEFT JOIN [WINSQL06\HAN].Newton.dbo.CUSTOMER c ON g.CustomerID = c.CUSTOMER_RECID
+  /* trunk-ignore(sqlfluff/L016) */
+  LEFT JOIN [WINSQL06\HAN].Newton.dbo.STUDENT_GUID_LINK g ON (s.StudentGuid = g.StudentGUID)
+  LEFT JOIN [WINSQL06\HAN].Newton.dbo.CUSTOMER c ON (g.CustomerID = c.CUSTOMER_RECID)
 WHERE
   ISNUMERIC(s.StudentNumber) = 1;
 
@@ -116,8 +119,10 @@ SELECT
       WHEN s.IsDC = 1 THEN 'F'
       WHEN s.Application_Approval_Result_Description LIKE ('Denied%') THEN 'P'
       WHEN s.Application_Approval_Result_Description IN ('Zero Income') THEN 'F'
-      WHEN s.Application_Approval_Result_Description IS NULL
-      AND s.EligibilityDescription LIKE 'Prior%' THEN 'P'
+      WHEN (
+        s.Application_Approval_Result_Description IS NULL
+        AND s.EligibilityDescription LIKE 'Prior%'
+      ) THEN 'P'
       ELSE LEFT(
         COALESCE(
           s.Application_Approval_Result_Description,
@@ -133,7 +138,8 @@ SELECT
   c.ReimbursableOnlyBalance + c.UnallocatedBalance AS total_balance
 FROM
   [WINSQL06\YODA].Franklin.dbo.VIEW_STUDENT_DATA s
-  LEFT JOIN [WINSQL06\YODA].Newton.dbo.STUDENT_GUID_LINK g ON s.StudentGuid = g.StudentGUID
-  LEFT JOIN [WINSQL06\YODA].Newton.dbo.CUSTOMER c ON g.CustomerID = c.CUSTOMER_RECID
+  /* trunk-ignore(sqlfluff/L016) */
+  LEFT JOIN [WINSQL06\YODA].Newton.dbo.STUDENT_GUID_LINK g ON (s.StudentGuid = g.StudentGUID)
+  LEFT JOIN [WINSQL06\YODA].Newton.dbo.CUSTOMER c ON (g.CustomerID = c.CUSTOMER_RECID)
 WHERE
   ISNUMERIC(s.StudentNumber) = 1;

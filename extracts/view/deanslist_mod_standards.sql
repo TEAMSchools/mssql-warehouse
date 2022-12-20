@@ -3,37 +3,37 @@ CREATE OR ALTER VIEW
 WITH
   std_avg AS (
     SELECT
-      asr.local_student_id,
-      asr.academic_year,
-      asr.term_administered,
-      asr.response_type,
-      asr.performance_band_set_id,
-      asr.standard_description,
+      local_student_id,
+      academic_year,
+      term_administered,
+      response_type,
+      performance_band_set_id,
+      standard_description,
       CASE
-        WHEN asr.subject_area = 'Writing' THEN 'Text Study'
-        ELSE asr.subject_area
+        WHEN subject_area = 'Writing' THEN 'Text Study'
+        ELSE subject_area
       END AS subject_area,
-      ROUND(AVG(asr.percent_correct), 0) AS avg_percent_correct
+      ROUND(AVG(percent_correct), 0) AS avg_percent_correct
     FROM
-      gabby.illuminate_dna_assessments.agg_student_responses_all_current AS asr
+      gabby.illuminate_dna_assessments.agg_student_responses_all_current
     WHERE
-      asr.response_type = 'G'
-      AND asr.is_normed_scope = 1
-      AND asr.subject_area IN (
+      response_type = 'G'
+      AND is_normed_scope = 1
+      AND subject_area IN (
         'Text Study',
         'Mathematics',
         'Writing'
       )
     GROUP BY
-      asr.local_student_id,
-      asr.academic_year,
-      asr.term_administered,
-      asr.response_type,
-      asr.standard_description,
-      asr.performance_band_set_id,
+      local_student_id,
+      academic_year,
+      term_administered,
+      response_type,
+      standard_description,
+      performance_band_set_id,
       CASE
-        WHEN asr.subject_area = 'Writing' THEN 'Text Study'
-        ELSE asr.subject_area
+        WHEN subject_area = 'Writing' THEN 'Text Study'
+        ELSE subject_area
       END
   )
 SELECT
@@ -57,7 +57,9 @@ SELECT
   END AS standard_proficiency
 FROM
   std_avg AS sa
-  INNER JOIN gabby.illuminate_dna_assessments.performance_band_lookup_static AS pbl ON sa.performance_band_set_id = pbl.performance_band_set_id
-  AND (
-    sa.avg_percent_correct BETWEEN pbl.minimum_value AND pbl.maximum_value
+  INNER JOIN gabby.illuminate_dna_assessments.performance_band_lookup_static AS pbl ON (
+    sa.performance_band_set_id = pbl.performance_band_set_id
+    AND (
+      sa.avg_percent_correct BETWEEN pbl.minimum_value AND pbl.maximum_value
+    )
   )

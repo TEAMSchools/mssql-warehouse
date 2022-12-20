@@ -154,13 +154,19 @@ FROM
       CASE
         WHEN co.enroll_status = 0 THEN CONCAT(co.school_level, co.grade_level)
         WHEN c.kipp_hs_graduate_c = 1 THEN 'HSG'
-        WHEN co.school_level = 'HS'
-        AND co.exitcode = 'G1' THEN 'HSG' /* identify HS grads before SF enr update */
-        WHEN c.kipp_ms_graduate_c = 1
-        AND c.kipp_hs_graduate_c = 0
-        AND rt.[name] = 'HS Student' THEN 'TAFHS'
-        WHEN c.kipp_ms_graduate_c = 1
-        AND c.kipp_hs_graduate_c = 0 THEN 'TAF'
+        WHEN (
+          co.school_level = 'HS'
+          AND co.exitcode = 'G1'
+        ) THEN 'HSG' /* identify HS grads before SF enr update */
+        WHEN (
+          c.kipp_ms_graduate_c = 1
+          AND c.kipp_hs_graduate_c = 0
+          AND rt.[name] = 'HS Student'
+        ) THEN 'TAFHS'
+        WHEN (
+          c.kipp_ms_graduate_c = 1
+          AND c.kipp_hs_graduate_c = 0
+        ) THEN 'TAF'
       END AS ktc_status
     FROM
       gabby.powerschool.cohort_identifiers_static AS co

@@ -1,5 +1,6 @@
 WITH
   repos AS (
+    /* F&P */
     SELECT
       r.title,
       dsc.code_translation AS scope,
@@ -25,9 +26,10 @@ WITH
       ) AS select_statement
     FROM
       gabby.illuminate_dna_repositories.repositories AS r
-      INNER JOIN gabby.illuminate_codes.dna_scopes AS dsc ON r.code_scope_id = dsc.code_id
-      INNER JOIN gabby.illuminate_codes.dna_subject_areas AS dsu ON r.code_subject_area_id = dsu.code_id
-      /* F&P */
+      INNER JOIN gabby.illuminate_codes.dna_scopes AS dsc ON (r.code_scope_id = dsc.code_id)
+      INNER JOIN gabby.illuminate_codes.dna_subject_areas AS dsu ON (
+        r.code_subject_area_id = dsu.code_id
+      )
     WHERE
       dsc.code_translation = 'Reporting'
       AND dsu.code_translation = 'F&P'
@@ -59,15 +61,19 @@ FROM
       ) AS pivot_value
     FROM
       gabby.sys.tables AS t
-      INNER JOIN gabby.sys.all_columns AS c ON t.object_id = c.object_id
-      AND c.name NOT LIKE '_fivetran%'
-      INNER JOIN gabby.illuminate_dna_repositories.fields AS f ON c.name = f.name
-      AND SUBSTRING(
-        t.name,
-        CHARINDEX('_', t.name) + 1,
-        LEN(t.name)
-      ) = f.repository_id
-      AND f.deleted_at IS NULL
+      INNER JOIN gabby.sys.all_columns AS (
+        c ON t.object_id = c.object_id
+        AND c.name NOT LIKE '_fivetran%'
+      )
+      INNER JOIN gabby.illuminate_dna_repositories.fields AS f ON (
+        c.name = f.name
+        AND SUBSTRING(
+          t.name,
+          CHARINDEX('_', t.name) + 1,
+          LEN(t.name)
+        ) = f.repository_id
+        AND f.deleted_at IS NULL
+      )
     WHERE
       t.name IN (
         SELECT

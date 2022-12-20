@@ -105,8 +105,10 @@ END;
 ELSE BEGIN
 /* merge temp table into destination table */
 MERGE
-  gabby.adsi.group_membership AS tgt USING [#ad_group_membership] AS src ON tgt.group_adspath = src.group_adspath
-  AND tgt.object_guid = src.object_guid
+  gabby.adsi.group_membership AS tgt USING [#ad_group_membership] AS src ON (
+    tgt.group_adspath = src.group_adspath
+    AND tgt.object_guid = src.object_guid
+  )
 WHEN MATCHED THEN
 UPDATE SET
   tgt.employee_number = src.employee_number,

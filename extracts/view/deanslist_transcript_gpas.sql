@@ -43,21 +43,25 @@ FROM
             CAST(
               sg.potentialcrhrs AS DECIMAL(5, 2)
             ) * CAST(
-              scale_unweighted.grade_points AS DECIMAL(3, 2)
+              suw.grade_points AS DECIMAL(3, 2)
             )
           ) AS unweighted_points
         FROM
           gabby.powerschool.storedgrades AS sg
-          INNER JOIN gabby.powerschool.students AS s ON sg.studentid = s.id
-          AND sg.[db_name] = s.[db_name]
-          LEFT OUTER JOIN gabby.powerschool.gradescaleitem_lookup_static AS scale_unweighted ON sg.[db_name] = scale_unweighted.[db_name]
-          AND (
-            sg.[percent] BETWEEN scale_unweighted.min_cutoffpercentage AND scale_unweighted.max_cutoffpercentage
+          INNER JOIN gabby.powerschool.students AS s ON (
+            sg.studentid = s.id
+            AND sg.[db_name] = s.[db_name]
           )
-          AND gabby.utilities.PS_UNWEIGHTED_GRADESCALE_NAME (
-            sg.academic_year,
-            sg.gradescale_name
-          ) = scale_unweighted.gradescale_name
+          LEFT OUTER JOIN gabby.powerschool.gradescaleitem_lookup_static AS suw ON (
+            sg.[db_name] = suw.[db_name]
+            AND (
+              sg.[percent] BETWEEN suw.min_cutoffpercentage AND suw.max_cutoffpercentage
+            )
+            AND gabby.utilities.PS_UNWEIGHTED_GRADESCALE_NAME (
+              sg.academic_year,
+              sg.gradescale_name
+            ) = suw.gradescale_name
+          )
         WHERE
           sg.storecode = 'Y1'
           AND sg.excludefromgpa = 0
@@ -74,8 +78,10 @@ SELECT
   sg.cumulative_y1_gpa_unweighted AS [GPA_Y1_unweighted]
 FROM
   gabby.powerschool.cohort_identifiers_static AS co
-  INNER JOIN gabby.powerschool.gpa_cumulative AS sg ON co.studentid = sg.studentid
-  AND co.schoolid = sg.schoolid
-  AND co.[db_name] = sg.[db_name]
+  INNER JOIN gabby.powerschool.gpa_cumulative AS sg ON (
+    co.studentid = sg.studentid
+    AND co.schoolid = sg.schoolid
+    AND co.[db_name] = sg.[db_name]
+  )
 WHERE
   co.rn_undergrad = 1

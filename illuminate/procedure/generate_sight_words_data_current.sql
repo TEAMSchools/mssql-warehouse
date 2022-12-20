@@ -1,6 +1,8 @@
 CREATE
 OR ALTER
-PROCEDURE illuminate_dna_repositories.generate_sight_words_data_current AS BEGIN DECLARE @sql NVARCHAR(MAX);
+PROCEDURE illuminate_dna_repositories.generate_sight_words_data_current AS BEGIN
+/**/
+DECLARE @sql NVARCHAR(MAX);
 
 /* reset view */
 SELECT

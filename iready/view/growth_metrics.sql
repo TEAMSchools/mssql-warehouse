@@ -3,34 +3,34 @@ CREATE OR ALTER VIEW
 WITH
   baseline AS (
     SELECT
-      dr.student_id AS student_number,
-      dr.academic_year,
-      dr.[percentile] AS baseline_percentile,
-      CAST(dr.overall_scale_score AS FLOAT) AS baseline_scale,
+      student_id AS student_number,
+      academic_year,
+      [percentile] AS baseline_percentile,
+      CAST(overall_scale_score AS FLOAT) AS baseline_scale,
       CASE
-        WHEN dr._file LIKE '%_ela%' THEN 'Reading'
-        WHEN dr._file LIKE '%_math%' THEN 'Math'
+        WHEN _file LIKE '%_ela%' THEN 'Reading'
+        WHEN _file LIKE '%_math%' THEN 'Math'
       END AS [subject]
     FROM
-      gabby.iready.diagnostic_results AS dr
+      gabby.iready.diagnostic_results
     WHERE
-      dr.diagnostic_used_to_establish_growth_measures_y_n_ = 'Y'
+      diagnostic_used_to_establish_growth_measures_y_n_ = 'Y'
   ),
   recent AS (
     SELECT
-      dr.student_id AS student_number,
-      dr.academic_year,
-      dr.[percentile] AS recent_percentile,
-      CAST(dr.overall_scale_score AS FLOAT) AS recent_scale,
+      student_id AS student_number,
+      academic_year,
+      [percentile] AS recent_percentile,
+      CAST(overall_scale_score AS FLOAT) AS recent_scale,
       CASE
-        WHEN dr._file LIKE '%_ela%' THEN 'Reading'
-        WHEN dr._file LIKE '%_math%' THEN 'Math'
+        WHEN _file LIKE '%_ela%' THEN 'Reading'
+        WHEN _file LIKE '%_math%' THEN 'Math'
       END AS [subject]
     FROM
-      gabby.iready.diagnostic_results AS dr
+      gabby.iready.diagnostic_results
     WHERE
-      dr.diagnostic_used_to_establish_growth_measures_y_n_ = 'N'
-      AND dr.most_recent_diagnostic_y_n_ = 'Y'
+      diagnostic_used_to_establish_growth_measures_y_n_ = 'N'
+      AND most_recent_diagnostic_y_n_ = 'Y'
   )
 SELECT
   bl.student_number,
@@ -44,7 +44,9 @@ SELECT
   LEFT(bl.academic_year, 4) AS academic_year,
   CASE
     WHEN re.recent_scale - bl.baseline_scale < 0 THEN 0
-    WHEN re.recent_scale - bl.baseline_scale >= 0 THEN re.recent_scale - bl.baseline_scale
+    WHEN (
+      re.recent_scale - bl.baseline_scale >= 0
+    ) THEN re.recent_scale - bl.baseline_scale
   END AS diagnostic_gain,
   CASE
     WHEN re.recent_scale - bl.baseline_scale <= 0 THEN 0

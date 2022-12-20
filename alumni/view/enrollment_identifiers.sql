@@ -159,8 +159,10 @@ WITH
               0 AS is_employment
             FROM
               gabby.alumni.enrollment_c AS e
-              INNER JOIN gabby.alumni.contact AS c ON e.student_c = c.id
-              AND c.is_deleted = 0
+              INNER JOIN gabby.alumni.contact AS c ON (
+                e.student_c = c.id
+                AND c.is_deleted = 0
+              )
             WHERE
               e.is_deleted = 0
               AND e.status_c != 'Did Not Enroll'
@@ -356,8 +358,8 @@ FROM
       ecc.of_credits_required_for_graduation_c AS ecc_credits_required_for_graduation,
       ecc.date_last_verified_c AS ecc_date_last_verified,
       ecca.[name] AS ecc_account_name,
-      ecca.adjusted_6_year_minority_graduation_rate_c AS ecc_adjusted_6_year_minority_graduation_rate,
       /* trunk-ignore(sqlfluff/L016) */
+      ecca.adjusted_6_year_minority_graduation_rate_c AS ecc_adjusted_6_year_minority_graduation_rate,
       hs.[name] AS hs_school_name,
       hs.pursuing_degree_type_c AS hs_pursuing_degree_type,
       hs.status_c AS hs_status,
@@ -389,8 +391,8 @@ FROM
       cura.[name] AS cur_school_name,
       cura.billing_state AS cur_billing_state,
       cura.ncesid_c AS cur_ncesid,
-      cura.adjusted_6_year_minority_graduation_rate_c AS cur_adjusted_6_year_minority_graduation_rate,
       /* trunk-ignore(sqlfluff/L016) */
+      cura.adjusted_6_year_minority_graduation_rate_c AS cur_adjusted_6_year_minority_graduation_rate,
       emp.status_c AS emp_status,
       emp.category_c AS emp_category,
       emp.last_verified_date_c AS emp_date_last_verified,
@@ -420,38 +422,68 @@ FROM
       ) AS emp_name
     FROM
       enrollments AS e
-      LEFT JOIN gabby.alumni.enrollment_c AS ba ON e.ba_enrollment_id = ba.id
-      AND ba.is_deleted = 0
-      LEFT JOIN gabby.alumni.account AS baa ON ba.school_c = baa.id
-      AND baa.is_deleted = 0
-      LEFT JOIN gabby.alumni.enrollment_c AS aa ON e.aa_enrollment_id = aa.id
-      AND aa.is_deleted = 0
-      LEFT JOIN gabby.alumni.account AS aaa ON aa.school_c = aaa.id
-      AND aaa.is_deleted = 0
-      LEFT JOIN gabby.alumni.enrollment_c AS ecc ON e.ecc_enrollment_id = ecc.id
-      AND ecc.is_deleted = 0
-      LEFT JOIN gabby.alumni.account AS ecca ON ecc.school_c = ecca.id
-      AND ecca.is_deleted = 0
-      LEFT JOIN gabby.alumni.enrollment_c AS hs ON e.secondary_enrollment_id = hs.id
-      AND hs.is_deleted = 0
-      LEFT JOIN gabby.alumni.account AS hsa ON hs.school_c = hsa.id
-      AND hsa.is_deleted = 0
-      LEFT JOIN gabby.alumni.enrollment_c AS cte ON e.vocational_enrollment_id = cte.id
-      AND cte.is_deleted = 0
-      LEFT JOIN gabby.alumni.account AS ctea ON cte.school_c = ctea.id
-      AND ctea.is_deleted = 0
-      LEFT JOIN gabby.alumni.enrollment_c AS cur ON e.curr_enrollment_id = cur.id
-      AND cur.is_deleted = 0
-      LEFT JOIN gabby.alumni.account AS cura ON cur.school_c = cura.id
-      AND cura.is_deleted = 0
-      LEFT JOIN gabby.alumni.employment_c AS emp ON e.employment_enrollment_id = emp.id
-      AND emp.is_deleted = 0
+      LEFT JOIN gabby.alumni.enrollment_c AS ba ON (
+        e.ba_enrollment_id = ba.id
+        AND ba.is_deleted = 0
+      )
+      LEFT JOIN gabby.alumni.account AS baa ON (
+        ba.school_c = baa.id
+        AND baa.is_deleted = 0
+      )
+      LEFT JOIN gabby.alumni.enrollment_c AS aa ON (
+        e.aa_enrollment_id = aa.id
+        AND aa.is_deleted = 0
+      )
+      LEFT JOIN gabby.alumni.account AS aaa ON (
+        aa.school_c = aaa.id
+        AND aaa.is_deleted = 0
+      )
+      LEFT JOIN gabby.alumni.enrollment_c AS ecc ON (
+        e.ecc_enrollment_id = ecc.id
+        AND ecc.is_deleted = 0
+      )
+      LEFT JOIN gabby.alumni.account AS ecca ON (
+        ecc.school_c = ecca.id
+        AND ecca.is_deleted = 0
+      )
+      LEFT JOIN gabby.alumni.enrollment_c AS hs ON (
+        e.secondary_enrollment_id = hs.id
+        AND hs.is_deleted = 0
+      )
+      LEFT JOIN gabby.alumni.account AS hsa ON (
+        hs.school_c = hsa.id
+        AND hsa.is_deleted = 0
+      )
+      LEFT JOIN gabby.alumni.enrollment_c AS cte ON (
+        e.vocational_enrollment_id = cte.id
+        AND cte.is_deleted = 0
+      )
+      LEFT JOIN gabby.alumni.account AS ctea ON (
+        cte.school_c = ctea.id
+        AND ctea.is_deleted = 0
+      )
+      LEFT JOIN gabby.alumni.enrollment_c AS cur ON (
+        e.curr_enrollment_id = cur.id
+        AND cur.is_deleted = 0
+      )
+      LEFT JOIN gabby.alumni.account AS cura ON (
+        cur.school_c = cura.id
+        AND cura.is_deleted = 0
+      )
+      LEFT JOIN gabby.alumni.employment_c AS emp ON (
+        e.employment_enrollment_id = emp.id
+        AND emp.is_deleted = 0
+      )
       LEFT JOIN gabby.alumni.account AS empa ON (
         emp.employer_organization_look_up_c = empa.id
         AND empa.is_deleted = 0
       )
   ) AS sub
-  LEFT JOIN gabby.alumni.enrollment_c AS ug ON sub.ugrad_enrollment_id = ug.id
-  AND ug.is_deleted = 0
-  LEFT JOIN gabby.alumni.account AS uga ON ug.school_c = uga.id
-  AND uga.is_deleted = 0
+  LEFT JOIN gabby.alumni.enrollment_c AS ug ON (
+    sub.ugrad_enrollment_id = ug.id
+    AND ug.is_deleted = 0
+  )
+  LEFT JOIN gabby.alumni.account AS uga ON (
+    ug.school_c = uga.id
+    AND uga.is_deleted = 0
+  )

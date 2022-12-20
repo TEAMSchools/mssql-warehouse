@@ -68,15 +68,23 @@ WITH
       END AS [Subject]
     FROM
       gabby.powerschool.sections AS sec
-      INNER JOIN gabby.powerschool.sectionteacher AS st ON sec.id = st.sectionid
-      AND sec.[db_name] = st.[db_name]
-      INNER JOIN gabby.powerschool.roledef AS r ON st.roleid = r.id
-      AND st.[db_name] = r.[db_name]
-      INNER JOIN gabby.powerschool.teachers_static AS t ON st.teacherid = t.id
-      AND sec.schoolid = t.schoolid
-      AND sec.[db_name] = t.[db_name]
-      INNER JOIN gabby.powerschool.courses AS c ON sec.course_number = c.course_number
-      AND sec.[db_name] = c.[db_name]
+      INNER JOIN gabby.powerschool.sectionteacher AS st ON (
+        sec.id = st.sectionid
+        AND sec.[db_name] = st.[db_name]
+      )
+      INNER JOIN gabby.powerschool.roledef AS r ON (
+        st.roleid = r.id
+        AND st.[db_name] = r.[db_name]
+      )
+      INNER JOIN gabby.powerschool.teachers_static AS t ON (
+        st.teacherid = t.id
+        AND sec.schoolid = t.schoolid
+        AND sec.[db_name] = t.[db_name]
+      )
+      INNER JOIN gabby.powerschool.courses AS c ON (
+        sec.course_number = c.course_number
+        AND sec.[db_name] = c.[db_name]
+      )
       INNER JOIN gabby.powerschool.terms ON (
         sec.termid = terms.id
         AND sec.schoolid = terms.schoolid
