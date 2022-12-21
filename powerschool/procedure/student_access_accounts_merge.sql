@@ -18,10 +18,12 @@ WITH
       gabby.powerschool.student_access_accounts
   )
 MERGE
-  gabby.powerschool.student_access_accounts_static AS TARGET USING merge_cte AS SOURCE ON SOURCE.student_number = TARGET.student_number
+  gabby.powerschool.student_access_accounts_static AS tgt USING merge_cte AS src ON (
+    src.student_number = tgt.student_number
+  )
 WHEN MATCHED THEN
 UPDATE SET
-  TARGET.student_web_password = SOURCE.student_web_password
+  tgt.student_web_password = src.student_web_password
 WHEN NOT MATCHED THEN
 INSERT
   (

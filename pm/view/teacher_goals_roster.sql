@@ -5,26 +5,23 @@ WITH
     SELECT
       n AS academic_year
     FROM
-      gabby.utilities.row_generator_smallint AS rg
+      gabby.utilities.row_generator_smallint
     WHERE
-      rg.n BETWEEN 2018 AND gabby.utilities.GLOBAL_ACADEMIC_YEAR  () /* 2018 = first year of Teacher Goals */
+      /* 2018 = first year of Teacher Goals */
+      n BETWEEN 2018 AND gabby.utilities.GLOBAL_ACADEMIC_YEAR  ()
   ),
   work_assignment AS (
     SELECT
-      sub.df_employee_number,
-      sub.job_name,
-      sub.is_sped_teacher,
-      sub.site_name_clean,
-      sub.ps_school_id,
-      sub.department_name,
-      sub.legal_entity_name,
-      sub.work_assignment_effective_end,
-      gabby.utilities.DATE_TO_SY (
-        sub.work_assignment_effective_start
-      ) AS start_academic_year,
-      gabby.utilities.DATE_TO_SY (
-        sub.work_assignment_effective_end
-      ) AS end_academic_year
+      df_employee_number,
+      job_name,
+      is_sped_teacher,
+      site_name_clean,
+      ps_school_id,
+      department_name,
+      legal_entity_name,
+      work_assignment_effective_end,
+      gabby.utilities.DATE_TO_SY (work_assignment_effective_start) AS start_academic_year,
+      gabby.utilities.DATE_TO_SY (work_assignment_effective_end) AS end_academic_year
     FROM
       (
         SELECT
@@ -57,8 +54,10 @@ WITH
           sc.site_name_clean
         FROM
           gabby.people.employment_history_static AS wa
-          LEFT JOIN gabby.people.school_crosswalk AS sc ON wa.[location] = sc.site_name
-          AND sc._fivetran_deleted = 0
+          LEFT JOIN gabby.people.school_crosswalk AS sc ON (
+            wa.[location] = sc.site_name
+            AND sc._fivetran_deleted = 0
+          )
         WHERE
           wa.job_title IN (
             'Teacher',
@@ -116,6 +115,8 @@ SELECT
   sr.grades_taught
 FROM
   current_work_assignment AS cwa
-  INNER JOIN gabby.people.staff_crosswalk_static AS sr ON cwa.df_employee_number = sr.df_employee_number
+  INNER JOIN gabby.people.staff_crosswalk_static AS sr ON (
+    cwa.df_employee_number = sr.df_employee_number
+  )
 WHERE
   cwa.rn_emp_yr = 1

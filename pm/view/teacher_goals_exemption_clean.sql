@@ -1,10 +1,10 @@
 CREATE OR ALTER VIEW
   pm.teacher_goals_exemption_clean AS
 SELECT
-  u.df_employee_number,
-  u.academic_year,
-  u.field AS pm_term,
-  u.[value] AS exemption
+  df_employee_number,
+  academic_year,
+  field AS pm_term,
+  [value] AS exemption
 FROM
   (
     SELECT

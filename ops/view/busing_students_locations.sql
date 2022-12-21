@@ -21,8 +21,10 @@ SELECT
   l.address AS location_address
 FROM
   gabby.ops.busing_locations AS l
-  INNER JOIN gabby.ops.busing_students_new AS s ON l.school_level = CASE
-    WHEN s.grade_level <= 4 THEN 'ES'
-    WHEN s.grade_level <= 8 THEN 'MS'
-    WHEN s.grade_level <= 12 THEN 'HS'
-  END
+  INNER JOIN gabby.ops.busing_students_new AS s ON (
+    l.school_level = CASE
+      WHEN s.grade_level <= 4 THEN 'ES'
+      WHEN s.grade_level <= 8 THEN 'MS'
+      WHEN s.grade_level <= 12 THEN 'HS'
+    END
+  )

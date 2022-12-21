@@ -27,8 +27,6 @@ WITH
       N AS grade_level
     FROM
       gabby.utilities.row_generator
-    WITH
-      (NOLOCK)
     WHERE
       (N BETWEEN 0 AND 12)
   ),
@@ -50,18 +48,16 @@ WITH
       ) AS rn
     FROM
       gabby.utilities.row_generator AS u
-    WITH
-      (NOLOCK)
       CROSS JOIN measurementscales AS m
       CROSS JOIN terms AS t
       CROSS JOIN grade_levels AS gr
-      LEFT OUTER JOIN gabby.nwea.percentile_norms AS n
-    WITH
-      (NOLOCK) ON u.n = n.student_percentile
-      AND m.measurementscale = n.measurementscale
-      AND t.term = n.term
-      AND gr.grade_level = n.grade_level
-      AND n.norms_year = 2015
+      LEFT OUTER JOIN gabby.nwea.percentile_norms AS n ON (
+        u.n = n.student_percentile
+        AND m.measurementscale = n.measurementscale
+        AND t.term = n.term
+        AND gr.grade_level = n.grade_level
+        AND n.norms_year = 2015
+      )
     WHERE
       (u.n BETWEEN 1 AND 99)
   ),
@@ -82,53 +78,53 @@ WITH
     FROM
       (
         SELECT
-          s1.measurementscale,
-          s1.term,
-          s1.grade_level,
-          s1.testpercentile,
-          s1.testritscore,
-          LAG(s1.testritscore, 1) OVER (
+          measurementscale,
+          term,
+          grade_level,
+          testpercentile,
+          testritscore,
+          LAG(testritscore, 1) OVER (
             PARTITION BY
-              s1.measurementscale,
-              s1.term,
-              s1.grade_level
+              measurementscale,
+              term,
+              grade_level
             ORDER BY
-              s1.testpercentile ASC
+              testpercentile ASC
           ) AS testritscore_lag1,
-          LAG(s1.testritscore, 2) OVER (
+          LAG(testritscore, 2) OVER (
             PARTITION BY
-              s1.measurementscale,
-              s1.term,
-              s1.grade_level
+              measurementscale,
+              term,
+              grade_level
             ORDER BY
-              s1.testpercentile ASC
+              testpercentile ASC
           ) AS testritscore_lag2,
-          LAG(s1.testritscore, 3) OVER (
+          LAG(testritscore, 3) OVER (
             PARTITION BY
-              s1.measurementscale,
-              s1.term,
-              s1.grade_level
+              measurementscale,
+              term,
+              grade_level
             ORDER BY
-              s1.testpercentile ASC
+              testpercentile ASC
           ) AS testritscore_lag3,
-          LAG(s1.testritscore, 4) OVER (
+          LAG(testritscore, 4) OVER (
             PARTITION BY
-              s1.measurementscale,
-              s1.term,
-              s1.grade_level
+              measurementscale,
+              term,
+              grade_level
             ORDER BY
-              s1.testpercentile ASC
+              testpercentile ASC
           ) AS testritscore_lag4,
-          LAG(s1.testritscore, 5) OVER (
+          LAG(testritscore, 5) OVER (
             PARTITION BY
-              s1.measurementscale,
-              s1.term,
-              s1.grade_level
+              measurementscale,
+              term,
+              grade_level
             ORDER BY
-              s1.testpercentile ASC
+              testpercentile ASC
           ) AS testritscore_lag5
         FROM
-          scaffold AS s1
+          scaffold
         WHERE
           rn = 1
       ) AS sub

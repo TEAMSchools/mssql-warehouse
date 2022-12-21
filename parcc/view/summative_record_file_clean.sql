@@ -119,10 +119,7 @@ SELECT
     administration_directions_clarifiedin_students_native_language,
     administration_directions_clarified_in_students_native_language
   ) AS administration_directions_clarifiedin_students_native_language,
-  administration_directions_read_aloudin_students_native_language
-  --,NULL AS mathematics_response_el
-  --,NULL AS wordto_word_dictionary_english_native_language
-,
+  administration_directions_read_aloudin_students_native_language,
   emergency_accommodation,
   extended_time,
   COALESCE(
@@ -264,9 +261,7 @@ SELECT
   subclaim_3_category,
   subclaim_4_category,
   subclaim_5_category,
-  test_score_complete
-  --,NULL AS word_prediction_for_elal
-,
+  test_score_complete,
   record_type,
   assessment_accommodation_english_learner,
   assessment_accommodation_504,
@@ -417,10 +412,7 @@ SELECT
     administration_directions_clarifiedin_students_native_language,
     administration_directions_clarified_in_students_native_language
   ) AS administration_directions_clarifiedin_students_native_language,
-  administration_directions_read_aloudin_students_native_language
-  --,NULL AS mathematics_response_el
-  --,NULL AS wordto_word_dictionary_english_native_language
-,
+  administration_directions_read_aloudin_students_native_language,
   emergency_accommodation,
   extended_time,
   COALESCE(
@@ -562,9 +554,7 @@ SELECT
   subclaim_3_category,
   subclaim_4_category,
   subclaim_5_category,
-  test_score_complete
-  --,NULL AS word_prediction_for_elal
-,
+  test_score_complete,
   record_type,
   assessment_accommodation_english_learner,
   assessment_accommodation_504,
@@ -681,10 +671,7 @@ SELECT
   NULL AS monitor_test_response,
   word_prediction,
   administration_directions_clarifiedin_students_native_language,
-  administration_directions_read_aloudin_students_native_language
-  --,mathematics_response_el
-  --,wordto_word_dictionary_english_native_language
-,
+  administration_directions_read_aloudin_students_native_language,
   emergency_accommodation,
   extended_time,
   student_test_uuid,
@@ -760,9 +747,7 @@ SELECT
   subclaim_3_category,
   subclaim_4_category,
   subclaim_5_category,
-  test_score_complete
-  --,word_prediction_for_elal
-,
+  test_score_complete,
   NULL AS record_type,
   NULL AS assessment_accommodation_english_learner,
   NULL AS assessment_accommodation_504,

@@ -2,7 +2,9 @@ CREATE
 OR ALTER
 PROCEDURE people.merge_employee_numbers AS
 MERGE INTO
-  gabby.people.employee_numbers AS TARGET USING gabby.adp.employees_all AS SOURCE ON Target.associate_id = Source.associate_id
+  gabby.people.employee_numbers AS tgt USING gabby.adp.employees_all AS src ON (
+    tgt.associate_id = src.associate_id
+  )
 WHEN NOT MATCHED BY TARGET THEN
 INSERT
   (associate_id)

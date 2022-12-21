@@ -68,9 +68,9 @@ SELECT
   test_id,
   test_name,
   goal_number,
-  name,
+  [name],
   CAST(rit_score AS INT) AS ritscore,
-  range,
+  [range],
   adjective
 FROM
   long_data PIVOT (

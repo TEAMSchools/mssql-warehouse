@@ -5,7 +5,9 @@ WITH
     SELECT
       n AS academic_year,
       CASE
-        WHEN n = gabby.utilities.GLOBAL_ACADEMIC_YEAR () THEN CAST(CURRENT_TIMESTAMP AS DATE)
+        WHEN (
+          n = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+        ) THEN CAST(CURRENT_TIMESTAMP AS DATE)
         ELSE DATEFROMPARTS((n + 1), 4, 30)
       END AS effective_date
     FROM
@@ -17,14 +19,14 @@ WITH
   ),
   additional_earnings AS (
     SELECT
-      ae.employee_number,
-      ae.academic_year,
-      SUM(ae.ay_additional_earnings_amount) AS additional_earnings_summed
+      employee_number,
+      academic_year,
+      SUM(ay_additional_earnings_amount) AS additional_earnings_summed
     FROM
-      gabby.payroll.additional_annual_earnings_report AS ae
+      gabby.payroll.additional_annual_earnings_report
     GROUP BY
-      ae.employee_number,
-      ae.academic_year
+      employee_number,
+      academic_year
   ),
   teacher_goals AS (
     SELECT
@@ -33,10 +35,14 @@ WITH
       pm_term,
       overall_tier,
       CASE
-        WHEN academic_year != gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-        AND pm_term = 'PM4' THEN 1
-        WHEN academic_year != gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-        AND pm_term != 'PM4' THEN NULL
+        WHEN (
+          academic_year != gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+          AND pm_term = 'PM4'
+        ) THEN 1
+        WHEN (
+          academic_year != gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+          AND pm_term != 'PM4'
+        ) THEN NULL
         ELSE ROW_NUMBER() OVER (
           PARTITION BY
             df_employee_number,
@@ -75,8 +81,8 @@ SELECT
   eh.position_status,
   eh.annual_salary,
   ae.additional_earnings_summed,
-  tg.overall_tier AS most_recent_pm_score --if year is over, displays PM4 score
-,
+  /* if year is over, displays PM4 score */
+  tg.overall_tier AS most_recent_pm_score,
   ye.years_at_kipp_total AS years_at_kipp_total_current,
   ye.years_teaching_total AS years_teaching_total_current,
   ly.business_unit AS last_year_business_unit,
@@ -93,27 +99,41 @@ FROM
   INNER JOIN years AS y ON (
     y.effective_date BETWEEN eh.effective_start_date AND eh.effective_end_date
   )
-  INNER JOIN gabby.people.staff_crosswalk_static AS cw ON eh.employee_number = cw.df_employee_number
-  AND DATEADD(
-    YEAR,
-    1,
-    COALESCE(
-      cw.termination_date,
-      CAST(CURRENT_TIMESTAMP AS DATE)
+  INNER JOIN gabby.people.staff_crosswalk_static AS cw ON (
+    eh.employee_number = cw.df_employee_number
+    AND DATEADD(
+      YEAR,
+      1,
+      COALESCE(
+        cw.termination_date,
+        CAST(CURRENT_TIMESTAMP AS DATE)
+      )
+    ) > y.effective_date
+  )
+  INNER JOIN gabby.people.years_experience AS ye ON (
+    cw.df_employee_number = ye.employee_number
+  )
+  LEFT JOIN additional_earnings AS ae ON (
+    cw.df_employee_number = ae.employee_number
+    AND y.academic_year = ae.academic_year
+  )
+  LEFT JOIN teacher_goals AS tg ON (
+    eh.employee_number = tg.df_employee_number
+    AND y.academic_year = tg.academic_year
+    AND tg.rn_year_score = 1
+  )
+  LEFT JOIN gabby.people.employment_history_static AS ly ON (
+    cw.df_employee_number = ly.employee_number
+    AND (
+      (
+        DATEADD(YEAR, -1, y.effective_date)
+      ) BETWEEN ly.effective_start_date AND ly.effective_end_date
     )
-  ) > y.effective_date
-  INNER JOIN gabby.people.years_experience AS ye ON cw.df_employee_number = ye.employee_number
-  LEFT JOIN additional_earnings AS ae ON cw.df_employee_number = ae.employee_number
-  AND y.academic_year = ae.academic_year
-  LEFT JOIN teacher_goals AS tg ON eh.employee_number = tg.df_employee_number
-  AND y.academic_year = tg.academic_year
-  AND tg.rn_year_score = 1
-  LEFT JOIN gabby.people.employment_history_static AS ly ON cw.df_employee_number = ly.employee_number
-  AND (
-    DATEADD(YEAR, -1, y.effective_date) BETWEEN ly.effective_start_date AND ly.effective_end_date
   )
-  LEFT JOIN gabby.people.employment_history_static AS ehs ON cw.df_employee_number = ehs.employee_number
-  AND (
-    cw.original_hire_date BETWEEN ehs.effective_start_date AND ehs.effective_end_date
+  LEFT JOIN gabby.people.employment_history_static AS ehs ON (
+    cw.df_employee_number = ehs.employee_number
+    AND (
+      cw.original_hire_date BETWEEN ehs.effective_start_date AND ehs.effective_end_date
+    )
+    AND ehs.position_status = 'Active'
   )
-  AND ehs.position_status = 'Active'

@@ -2,7 +2,10 @@ CREATE OR ALTER VIEW
   payroll.additional_annual_earnings_report AS
 WITH
   annual_additional_earnings AS (
-    /*sum up total additional earnings by year. Current year will add up AS additional earnings are committed to payroll*/
+    /*
+    Sum up total additional earnings by year.
+    Current year will add up AS additional earnings are committed to payroll
+     */
     SELECT
       academic_year,
       position_id,
@@ -55,6 +58,15 @@ SELECT
   ) AS years_at_kipp
 FROM
   annual_additional_earnings AS ade
-  INNER JOIN gabby.people.employment_history_static AS eh ON ade.position_id = eh.position_id
-  AND DATEFROMPARTS((ade.academic_year + 1), 4, 30) BETWEEN eh.effective_start_date AND eh.effective_end_date  /* April 30 is the reporting date */
-  INNER JOIN gabby.people.staff_roster AS sr ON eh.employee_number = sr.employee_number
+  INNER JOIN gabby.people.employment_history_static AS eh ON (
+    ade.position_id = eh.position_id
+    AND (
+      (
+        /* April 30 is the reporting date */
+        DATEFROMPARTS((ade.academic_year + 1), 4, 30)
+      ) BETWEEN eh.effective_start_date AND eh.effective_end_date
+    )
+  )
+  INNER JOIN gabby.people.staff_roster AS sr ON (
+    eh.employee_number = sr.employee_number
+  )

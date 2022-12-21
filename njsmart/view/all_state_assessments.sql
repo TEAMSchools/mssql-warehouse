@@ -7,7 +7,7 @@ WITH
       academic_year,
       test_type,
       field,
-      VALUE
+      [value]
     FROM
       (
         SELECT
@@ -109,7 +109,7 @@ WITH
             END AS VARCHAR(50)
           ) AS void_reason_science
         FROM
-          gabby.njsmart.njbct AS n
+          gabby.njsmart.njbct
         UNION ALL
         SELECT
           CAST(
@@ -190,7 +190,7 @@ WITH
         FROM
           gabby.njsmart.gepa
       ) AS sub UNPIVOT (
-        VALUE FOR field IN (
+        [value] FOR field IN (
           scaled_score_lal,
           performance_level_lal,
           invalid_scale_score_reason_lal,
@@ -211,7 +211,7 @@ WITH
       local_student_id,
       academic_year,
       test_type,
-      CAST(subject AS VARCHAR(250)) AS subject,
+      CAST([subject] AS VARCHAR(250)) AS [subject],
       CAST(scaled_score AS FLOAT) AS scaled_score,
       performance_level,
       invalid_scale_score_reason,
@@ -232,7 +232,7 @@ WITH
                 )
               )
             )
-          ) AS subject,
+          ) AS [subject],
           REVERSE(
             SUBSTRING(
               REVERSE(field),
@@ -257,7 +257,7 @@ SELECT
   local_student_id,
   academic_year,
   test_type,
-  subject,
+  [subject],
   scaled_score,
   performance_level
 FROM
@@ -267,9 +267,9 @@ FROM
       academic_year,
       test_type,
       CASE
-        WHEN subject = 'LAL' THEN 'ELA'
-        ELSE subject
-      END AS subject,
+        WHEN [subject] = 'LAL' THEN 'ELA'
+        ELSE [subject]
+      END AS [subject],
       CASE
         WHEN scaled_score = 0 THEN NULL
         ELSE scaled_score
@@ -284,7 +284,7 @@ FROM
         PARTITION BY
           local_student_id,
           test_type,
-          subject,
+          [subject],
           academic_year
         ORDER BY
           scaled_score DESC
