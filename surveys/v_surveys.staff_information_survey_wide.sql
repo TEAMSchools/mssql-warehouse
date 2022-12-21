@@ -3,6 +3,23 @@ GO
 
 CREATE OR ALTER VIEW surveys.staff_information_survey_wide AS
 
+WITH multi_select_groupings AS (
+  SELECT employee_number
+        ,CASE
+          WHEN question_shortname LIKE 'community_live%' THEN 'community_live'
+          WHEN question_shortname LIKE 'community_work%' THEN 'community_work'
+          WHEN question_shortname LIKE 'language%' THEN 'language'
+          WHEN question_shortname LIKE 'race_ethnicity%' THEN 'race_ethnicity'
+          WHEN question_shortname LIKE 'teacher_prep%' THEN 'teacher_prep'
+          ELSE question_shortname
+         END AS question_shortname
+        ,answer
+  FROM gabby.surveys.staff_information_survey_detail
+  WHERE rn_cur = 1
+		  AND employee_number IS NOT NULL
+				AND answer IS NOT NULL
+		)
+
 SELECT employee_number
       ,community_live
       ,community_work
@@ -20,17 +37,9 @@ SELECT employee_number
 FROM
     (
      SELECT employee_number
-           ,CASE
-             WHEN question_shortname LIKE 'community_live%' THEN 'community_live'
-             WHEN question_shortname LIKE 'community_work%' THEN 'community_work'
-             WHEN question_shortname LIKE 'language%' THEN 'language'
-             WHEN question_shortname LIKE 'race_ethnicity%' THEN 'race_ethnicity'
-             WHEN question_shortname LIKE 'teacher_prep%' THEN 'teacher_prep'
-             ELSE question_shortname
-            END AS question_shortname
+           ,question_shortname
            ,gabby.dbo.GROUP_CONCAT(answer) AS answer
-     FROM gabby.surveys.staff_information_survey_detail
-     WHERE rn_cur = 1
+     FROM multi_select_groupings
      GROUP BY employee_number, question_shortname
     ) sub
 PIVOT(
