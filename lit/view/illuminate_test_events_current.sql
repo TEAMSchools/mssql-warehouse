@@ -89,7 +89,8 @@ WITH
       field_writing_optional AS writing
     FROM
       gabby.illuminate_dna_repositories.repository_193
-  ) repos_clean AS (
+  ),
+  repos_clean AS (
     SELECT
       student_id,
       academic_year,

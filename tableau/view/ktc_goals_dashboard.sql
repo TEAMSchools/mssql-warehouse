@@ -186,33 +186,33 @@ SELECT
   e.cur_billing_state,
   e.cur_ncesid,
   e.cur_adjusted_6_year_minority_graduation_rate,
-  ISNULL(cn.SM1Q1, 0) AS SM1Q1,
-  ISNULL(cn.SM2Q1, 0) AS SM2Q1,
-  ISNULL(cn.SM1Q2, 0) AS SM1Q2,
-  ISNULL(cn.SM2Q2, 0) AS SM2Q2,
-  ISNULL(cn.SM1Q3, 0) AS SM1Q3,
-  ISNULL(cn.SM2Q3, 0) AS SM2Q3,
-  ISNULL(cn.SM1Q4, 0) AS SM1Q4,
-  ISNULL(cn.SM2Q4, 0) AS SM2Q4,
-  ISNULL(cn.MC1, 0) AS MC1,
-  ISNULL(cn.MC2, 0) AS MC2,
-  ISNULL(cn.GPF, 0) AS GPF,
-  ISNULL(cn.GPS, 0) AS GPS,
-  ISNULL(cn.BMF, 0) AS BMF,
-  ISNULL(cn.BMS, 0) AS BMS,
-  ISNULL(cn.BBBF, 0) AS BBBF,
-  ISNULL(cn.BBBS, 0) AS BBBS,
-  ISNULL(cn.PSCF, 0) AS PSCF,
-  ISNULL(cn.PSCS, 0) AS PSCS,
-  ISNULL(cn.AASS, 0) AS AASS,
-  ISNULL(cn.AAS1F, 0) AS AAS1F,
-  ISNULL(cn.AAS2F, 0) AS AAS2F,
-  ISNULL(cn.AAS3F, 0) AS AAS3F,
-  ISNULL(cn.AAS4F, 0) AS AAS4F,
-  ISNULL(cn.AAS1S, 0) AS AAS1S,
-  ISNULL(cn.AAS2S, 0) AS AAS2S,
-  ISNULL(cn.AAS3S, 0) AS AAS3S,
-  ISNULL(cn.AAS4S, 0) AS AAS4S,
+  ISNULL(cn.[SM1Q1], 0) AS [SM1Q1],
+  ISNULL(cn.[SM2Q1], 0) AS [SM2Q1],
+  ISNULL(cn.[SM1Q2], 0) AS [SM1Q2],
+  ISNULL(cn.[SM2Q2], 0) AS [SM2Q2],
+  ISNULL(cn.[SM1Q3], 0) AS [SM1Q3],
+  ISNULL(cn.[SM2Q3], 0) AS [SM2Q3],
+  ISNULL(cn.[SM1Q4], 0) AS [SM1Q4],
+  ISNULL(cn.[SM2Q4], 0) AS [SM2Q4],
+  ISNULL(cn.[MC1], 0) AS [MC1],
+  ISNULL(cn.[MC2], 0) AS [MC2],
+  ISNULL(cn.[GPF], 0) AS [GPF],
+  ISNULL(cn.[GPS], 0) AS [GPS],
+  ISNULL(cn.[BMF], 0) AS [BMF],
+  ISNULL(cn.[BMS], 0) AS [BMS],
+  ISNULL(cn.[BBBF], 0) AS [BBBF],
+  ISNULL(cn.[BBBS], 0) AS [BBBS],
+  ISNULL(cn.[PSCF], 0) AS [PSCF],
+  ISNULL(cn.[PSCS], 0) AS [PSCS],
+  ISNULL(cn.[AASS], 0) AS [AASS],
+  ISNULL(cn.[AAS1F], 0) AS [AAS1F],
+  ISNULL(cn.[AAS2F], 0) AS [AAS2F],
+  ISNULL(cn.[AAS3F], 0) AS [AAS3F],
+  ISNULL(cn.[AAS4F], 0) AS [AAS4F],
+  ISNULL(cn.[AAS1S], 0) AS [AAS1S],
+  ISNULL(cn.[AAS2S], 0) AS [AAS2S],
+  ISNULL(cn.[AAS3S], 0) AS [AAS3S],
+  ISNULL(cn.[AAS4S], 0) AS [AAS4S],
   ISNULL(ap.n_submitted_ltr, 0) AS n_submitted_ltr,
   ISNULL(ap.n_wishlist_ltr, 0) AS n_wishlist_ltr,
   ISNULL(ap.is_eof_applied, 0) AS is_eof_applied,
@@ -228,7 +228,11 @@ SELECT
   gabby.utilities.GLOBAL_ACADEMIC_YEAR () AS current_academic_year
 FROM
   gabby.alumni.ktc_roster AS c
-  LEFT JOIN gabby.alumni.enrollment_identifiers AS e ON c.sf_contact_id = e.student_c
-  LEFT JOIN gabby.alumni.contact_note_rollup AS cn ON c.sf_contact_id = cn.contact_id
-  AND cn.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-  LEFT JOIN app_rollup AS ap ON c.sf_contact_id = ap.sf_contact_id
+  LEFT JOIN gabby.alumni.enrollment_identifiers AS e ON (c.sf_contact_id = e.student_c)
+  LEFT JOIN gabby.alumni.contact_note_rollup AS cn ON (
+    c.sf_contact_id = cn.contact_id
+    AND cn.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+  )
+  LEFT JOIN app_rollup AS ap ON (
+    c.sf_contact_id = ap.sf_contact_id
+  )

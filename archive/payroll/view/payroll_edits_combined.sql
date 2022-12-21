@@ -50,13 +50,17 @@ SELECT
   s.employee_associate_id AS associate_id,
   s.employee_position_id AS position_id,
   s.employee_name AS [name],
-  CAST(s.effective_date_of_change AS DATE) AS effective_date,
+  CAST(
+    s.effective_date_of_change AS DATE
+  ) AS effective_date,
   'Status Change' AS [source],
   CAST(s._new_base_salary_ AS NVARCHAR) AS salary,
   NULL AS leadership_stipend,
   NULL AS relocation_stipend,
   NULL AS other_stipend,
-  CAST(s.bonus_stipend_amount_ AS NVARCHAR) AS total_stipend,
+  CAST(
+    s.bonus_stipend_amount_ AS NVARCHAR
+  ) AS total_stipend,
   CASE
     WHEN s.salary_accounting_line IS NULL THEN s.bonus_stipend_accounting_line
     ELSE s.salary_accounting_line

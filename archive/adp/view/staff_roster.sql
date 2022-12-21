@@ -45,9 +45,16 @@ WITH
       sub.is_race_nhpi,
       sub.is_race_other,
       sub.is_race_white,
-      REPLACE(sub.primary_site_clean, ' - Regional', '') AS primary_site,
+      REPLACE(
+        sub.primary_site_clean,
+        ' - Regional',
+        ''
+      ) AS primary_site,
       COALESCE(sub.common_name, sub.first_name) AS preferred_first_name,
-      COALESCE(sub.preferred_last_name, sub.last_name) AS preferred_last_name,
+      COALESCE(
+        sub.preferred_last_name,
+        sub.last_name
+      ) AS preferred_last_name,
       CASE
         WHEN sub.primary_site_clean LIKE '% - Regional%' THEN 1
         ELSE 0
@@ -72,7 +79,10 @@ WITH
         )
       END AS race_ethnicity_reporting,
       CASE
-        WHEN COALESCE(sub.rehire_date, sub.original_hire_date) > CURRENT_TIMESTAMP
+        WHEN COALESCE(
+          sub.rehire_date,
+          sub.original_hire_date
+        ) > CURRENT_TIMESTAMP
         OR sub.[status] IS NULL THEN 'PRESTART'
         WHEN sub.[status] = 'Leave' THEN 'INACTIVE'
         WHEN sub.termination_date > CURRENT_TIMESTAMP THEN 'ACTIVE'
@@ -108,7 +118,10 @@ WITH
             ', ' + ea.primary_address_address_line_2
           ) AS [address],
           CAST(
-            gabby.utilities.STRIP_CHARACTERS (ea.personal_contact_personal_mobile, '^0-9') AS NVARCHAR(256)
+            gabby.utilities.STRIP_CHARACTERS (
+              ea.personal_contact_personal_mobile,
+              '^0-9'
+            ) AS NVARCHAR(256)
           ) AS mobile_number,
           LEFT(UPPER(ea.gender), 1) AS gender,
           COALESCE(
@@ -142,7 +155,10 @@ WITH
           END AS is_race_black,
           CASE
             WHEN ea.race_description = 'Asian' THEN 1
-            WHEN CHARINDEX('Asian', ea.preferred_race_ethnicity) > 0 THEN 1
+            WHEN CHARINDEX(
+              'Asian',
+              ea.preferred_race_ethnicity
+            ) > 0 THEN 1
             ELSE 0
           END AS is_race_asian,
           CASE
@@ -162,7 +178,10 @@ WITH
           END AS is_race_mideast,
           CASE
             WHEN ea.race_description = 'White' THEN 1
-            WHEN CHARINDEX('White', ea.preferred_race_ethnicity) > 0 THEN 1
+            WHEN CHARINDEX(
+              'White',
+              ea.preferred_race_ethnicity
+            ) > 0 THEN 1
             ELSE 0
           END AS is_race_white,
           CASE
@@ -218,7 +237,9 @@ WITH
           CAST(e.termination_date AS DATE) AS termination_date,
           CAST(e.rehire_date AS DATE) AS rehire_date,
           CAST(e.position_start_date AS DATE) AS position_effective_from_date,
-          CAST(e.position_effective_end_date AS DATE) AS position_effective_to_date,
+          CAST(
+            e.position_effective_end_date AS DATE
+          ) AS position_effective_to_date,
           CAST(e.annual_salary AS MONEY) AS annual_salary,
           UPPER(e.flsa_description) AS flsa_status,
           CASE

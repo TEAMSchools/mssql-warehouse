@@ -1,7 +1,10 @@
 CREATE OR ALTER VIEW
   extracts.swipe_staff AS
 SELECT
-  COALESCE(ccw.ps_school_id, scw.primary_site_schoolid) AS [PS Building ID],
+  COALESCE(
+    ccw.ps_school_id,
+    scw.primary_site_schoolid
+  ) AS [PS Building ID],
   scw.df_employee_number AS [Staff ID],
   scw.preferred_last_name AS [Staff Last Name],
   scw.preferred_first_name AS [Staff First Name],
@@ -14,4 +17,7 @@ FROM
   AND ccw.is_pathways = 0
 WHERE
   scw.[status] != 'TERMINATED'
-  AND COALESCE(ccw.ps_school_id, scw.primary_site_schoolid) != 0
+  AND COALESCE(
+    ccw.ps_school_id,
+    scw.primary_site_schoolid
+  ) != 0

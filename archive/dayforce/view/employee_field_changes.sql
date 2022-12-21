@@ -25,21 +25,31 @@ WITH
             ' ',
             COALESCE(preferred_last_name, last_name)
           ) AS preferred_name,
-          CAST(preferred_last_name AS VARCHAR(MAX)) AS preferred_last_name,
+          CAST(
+            preferred_last_name AS VARCHAR(MAX)
+          ) AS preferred_last_name,
           CAST(common_name AS VARCHAR(MAX)) AS common_name,
           CAST(last_name AS VARCHAR(MAX)) AS last_name,
           CAST(first_name AS VARCHAR(MAX)) AS first_name,
           CAST(birth_date AS VARCHAR(MAX)) AS birth_date,
           CAST(ethnicity AS VARCHAR(MAX)) AS ethnicity,
           CAST(gender AS VARCHAR(MAX)) AS gender,
-          CAST(original_hire_date AS VARCHAR(MAX)) AS original_hire_date,
+          CAST(
+            original_hire_date AS VARCHAR(MAX)
+          ) AS original_hire_date,
           CAST(
             primary_on_site_department_entity_ AS VARCHAR(MAX)
           ) AS primary_on_site_department_entity_,
-          CAST(primary_on_site_department AS VARCHAR(MAX)) AS primary_on_site_department,
-          CAST(primary_site_entity_ AS VARCHAR(MAX)) AS primary_site_entity_,
+          CAST(
+            primary_on_site_department AS VARCHAR(MAX)
+          ) AS primary_on_site_department,
+          CAST(
+            primary_site_entity_ AS VARCHAR(MAX)
+          ) AS primary_site_entity_,
           CAST(primary_site AS VARCHAR(MAX)) AS primary_site,
-          CAST(legal_entity_name AS VARCHAR(MAX)) AS legal_entity_name,
+          CAST(
+            legal_entity_name AS VARCHAR(MAX)
+          ) AS legal_entity_name,
           CAST(primary_job AS VARCHAR(MAX)) AS primary_job,
           CAST(position_title AS VARCHAR(MAX)) AS position_title,
           CAST(
@@ -68,7 +78,9 @@ WITH
           CAST(grades_taught AS VARCHAR(MAX)) AS grades_taught,
           CAST(job_family AS VARCHAR(MAX)) AS job_family,
           CAST(annual_salary AS VARCHAR(MAX)) AS annual_salary,
-          CAST(position_effective_to_date AS VARCHAR(MAX)) AS position_effective_to_date,
+          CAST(
+            position_effective_to_date AS VARCHAR(MAX)
+          ) AS position_effective_to_date,
           CAST(subjects_taught AS VARCHAR(MAX)) AS subjects_taught
         FROM
           gabby.dayforce.employees_archive

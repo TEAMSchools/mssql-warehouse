@@ -12,7 +12,12 @@ WITH
       school,
       UPPER(
         CASE
-          WHEN variable LIKE '%strategies%' THEN STUFF(REPLACE(variable, 't_', 'T'), 4, 1, '')
+          WHEN variable LIKE '%strategies%' THEN STUFF(
+            REPLACE(variable, 't_', 'T'),
+            4,
+            1,
+            ''
+          )
           ELSE REPLACE(variable, 't_', 'T')
         END
       ) AS variable,

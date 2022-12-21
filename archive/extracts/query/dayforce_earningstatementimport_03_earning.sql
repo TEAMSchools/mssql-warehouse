@@ -182,4 +182,12 @@ FROM
 WHERE
   memo_amount != 0
   AND payroll_company_code != 'ZS1'
-  AND memo_code_pay_statements NOT IN ('#', '&', '7', '8', 'X', 'M', 'A')
+  AND memo_code_pay_statements NOT IN (
+    '#',
+    '&',
+    '7',
+    '8',
+    'X',
+    'M',
+    'A'
+  )

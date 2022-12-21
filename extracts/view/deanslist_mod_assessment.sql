@@ -128,7 +128,7 @@ FROM
       INNER JOIN gabby.illuminate_dna_assessments.agg_student_responses AS asr ON (
         a.assessment_id = asr.assessment_id
       )
-      INNER JOIN gabby.illuminate_public.students AS s ON (asr.student_id = s.student_id)
+      INNER JOIN illuminate_public.students AS s ON (asr.student_id = s.student_id)
     WHERE
       a.scope = 'Unit Assessment'
       AND a.subject_area NOT IN ('Text Study', 'Mathematics')

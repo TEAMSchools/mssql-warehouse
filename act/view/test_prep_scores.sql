@@ -242,7 +242,7 @@ FROM
     sub.assessment_id = std.assessment_id
     AND sub.illuminate_student_id = std.student_id
   )
-  LEFT JOIN gabby.illuminate_standards.standards AS s ON (std.standard_id = s.standard_id)
+  LEFT JOIN illuminate_standards.standards AS s ON (std.standard_id = s.standard_id)
   LEFT JOIN gabby.illuminate_standards.standards AS ps ON (
     s.parent_standard_id = ps.standard_id
   )

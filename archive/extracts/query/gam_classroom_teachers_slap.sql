@@ -20,7 +20,10 @@ WITH
       gabby.people.staff_crosswalk_static AS scw
     WHERE
       scw.[status] NOT IN ('TERMINATED', 'PRESTART')
-      AND scw.primary_job IN ('School Leader', 'Assistant School Leader')
+      AND scw.primary_job IN (
+        'School Leader',
+        'Assistant School Leader'
+      )
   )
 SELECT DISTINCT
   CONCAT(

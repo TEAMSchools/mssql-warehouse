@@ -51,7 +51,9 @@ FROM
       sh.position_id,
       sh.position_status,
       CAST(sh.status_effective_date AS DATE) AS status_effective_date,
-      CAST(sh.status_effective_end_date AS DATE) AS status_effective_end_date,
+      CAST(
+        sh.status_effective_end_date AS DATE
+      ) AS status_effective_end_date,
       sh.termination_reason_description,
       sh.leave_reason_description,
       sh.paid_leave_of_absence,
@@ -60,6 +62,8 @@ FROM
       gabby.adp.status_history AS sh
       INNER JOIN gabby.adp.employees_all AS sr ON sh.associate_id = sr.associate_id
     WHERE
-      CAST(sh.status_effective_date AS DATE) < CAST(sh.status_effective_end_date AS DATE)
+      CAST(sh.status_effective_date AS DATE) < CAST(
+        sh.status_effective_end_date AS DATE
+      )
       OR sh.status_effective_end_date IS NULL
   ) AS sub

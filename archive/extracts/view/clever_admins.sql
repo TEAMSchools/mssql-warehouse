@@ -2,7 +2,9 @@ CREATE OR ALTER VIEW
   extracts.clever_admins AS
   /* School staff assigned to primary school only */
 SELECT
-  CAST(df.primary_site_schoolid AS VARCHAR(25)) AS [School_id],
+  CAST(
+    df.primary_site_schoolid AS VARCHAR(25)
+  ) AS [School_id],
   df.ps_teachernumber AS [Staff_id],
   df.userprincipalname AS [Admin_email],
   df.preferred_first_name AS [First_name],

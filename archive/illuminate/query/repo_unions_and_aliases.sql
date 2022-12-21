@@ -54,8 +54,8 @@ FROM
       ) AS pivot_value
     FROM
       gabby.sys.tables AS t
-      INNER JOIN gabby.sys.all_columns AS
-        c ON (t.object_id = c.object_id
+      INNER JOIN gabby.sys.all_columns AS c ON (
+        t.object_id = c.object_id
         AND c.name NOT LIKE '_fivetran%'
       )
       INNER JOIN gabby.illuminate_dna_repositories.fields AS f ON (

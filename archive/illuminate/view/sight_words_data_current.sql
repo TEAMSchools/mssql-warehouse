@@ -191,7 +191,11 @@ FROM
       CAST([value] AS VARCHAR(25)) AS [value]
     FROM
       illuminate_dna_repositories.repository_364 UNPIVOT (
-        [value] FOR field IN (field_want, field_now, field_dont)
+        [value] FOR field IN (
+          field_want,
+          field_now,
+          field_dont
+        )
       ) AS u
     WHERE
       u.repository_row_id IN (

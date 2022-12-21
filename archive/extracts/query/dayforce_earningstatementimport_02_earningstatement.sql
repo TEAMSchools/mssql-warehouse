@@ -17,7 +17,9 @@ SELECT
   'Semi-Monthly' AS payfrequency,
   CASE
     WHEN DATEPART(DAY, period_end_date) >= 16 THEN DATEPART(MONTH, period_end_date) * 2
-    ELSE (DATEPART(MONTH, period_end_date) * 2) - 1
+    ELSE (
+      DATEPART(MONTH, period_end_date) * 2
+    ) - 1
   END AS payperiod,
   CASE
     WHEN period_beginning_date IS NOT NULL THEN period_beginning_date

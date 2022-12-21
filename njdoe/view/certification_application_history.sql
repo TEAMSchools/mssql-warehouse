@@ -1,33 +1,52 @@
 CREATE OR ALTER VIEW
   njdoe.certification_application_history AS
+WITH
+  ah AS (
+    SELECT
+      cc.df_employee_number,
+      CAST(
+        JSON_VALUE(
+          ah.[value],
+          '$.application_number'
+        ) AS INT
+      ) AS application_number,
+      CAST(
+        JSON_VALUE(ah.[value], '$.date_received') AS DATE
+      ) AS date_received,
+      CAST(
+        JSON_VALUE(ah.[value], '$.endorsement') AS NVARCHAR(256)
+      ) AS endorsement,
+      CAST(
+        JSON_VALUE(ah.[value], '$.certificate_type') AS NVARCHAR(256)
+      ) AS certificate_type,
+      CAST(
+        JSON_VALUE(ah.[value], '$.request_type') AS NVARCHAR(256)
+      ) AS request_type,
+      CAST(
+        JSON_VALUE(ah.[value], '$.status') AS NVARCHAR(256)
+      ) AS [status],
+      JSON_QUERY(ah.[value], '$.checklist') AS checklist
+    FROM
+      gabby.njdoe.certification_check AS cc
+      CROSS APPLY OPENJSON (cc.application_history, '$') AS ah
+    WHERE
+      cc.application_history != '[]'
+  )
 SELECT
-  cc.df_employee_number,
+  df_employee_number,
   NULL AS application_history_json,
-  ah.application_number,
-  ah.date_received,
-  ah.endorsement,
+  application_number,
+  date_received,
+  endorsement,
   CASE
-    WHEN ah.certificate_type != '' THEN ah.certificate_type
+    WHEN certificate_type != '' THEN certificate_type
   END AS certificate_type,
   CASE
-    WHEN ah.request_type != '' THEN ah.request_type
+    WHEN request_type != '' THEN request_type
   END AS request_type,
   CASE
-    WHEN ah.[status] != '' THEN ah.[status]
+    WHEN [status] != '' THEN [status]
   END AS [status],
-  ah.checklist
+  checklist
 FROM
-  gabby.njdoe.certification_check AS cc
-  CROSS APPLY OPENJSON (cc.application_history, '$')
-WITH
-  (
-    application_number INT,
-    date_received DATE,
-    endorsement NVARCHAR(256),
-    certificate_type NVARCHAR(256),
-    request_type NVARCHAR(256),
-    [status] NVARCHAR(256),
-    checklist NVARCHAR(MAX) AS JSON
-  ) AS ah
-WHERE
-  cc.application_history != '[]'
+  ah

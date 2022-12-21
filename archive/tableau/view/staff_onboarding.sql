@@ -5,8 +5,12 @@ SELECT
   o.onboarding_task_type,
   o.onboarding_task_name,
   o.onboarding_task_status,
-  CAST(o.onboarding_task_due_date AS DATE) AS onboarding_task_due_date,
-  CAST(o.onboarding_task_completed_date AS DATE) AS onboarding_task_completed_date,
+  CAST(
+    o.onboarding_task_due_date AS DATE
+  ) AS onboarding_task_due_date,
+  CAST(
+    o.onboarding_task_completed_date AS DATE
+  ) AS onboarding_task_completed_date,
   CAST(o.first_day AS DATE) AS first_day,
   r.preferred_first_name AS employee_first_name,
   r.preferred_last_name AS employee_last_name,

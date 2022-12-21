@@ -5,7 +5,9 @@ WITH
     SELECT
       academic_year,
       term_name AS reporting_term,
-      CAST(rubric_strand_field AS VARCHAR(250)) AS rubric_strand_field,
+      CAST(
+        rubric_strand_field AS VARCHAR(250)
+      ) AS rubric_strand_field,
       pct_of_classrooms_proficient,
       LTRIM(RTRIM(school)) AS school
     FROM
@@ -78,7 +80,9 @@ WITH
         COLLATE Latin1_General_BIN
       ) AS reporting_term,
       am_pm,
-      CAST(rubric_strand_field AS VARCHAR(250)) AS rubric_strand_field,
+      CAST(
+        rubric_strand_field AS VARCHAR(250)
+      ) AS rubric_strand_field,
       pct_of_classrooms_proficient
     FROM
       gabby.ekg.walkthrough_scores UNPIVOT (
@@ -194,14 +198,25 @@ FROM
       CASE
         WHEN su.school IN ('TEAM', 'TEAM Academy') THEN 133570965
         WHEN su.school IN ('Rise', 'Rise Academy') THEN 73252
-        WHEN su.school IN ('NCA', 'Newark Collegiate Academy') THEN 73253
+        WHEN su.school IN (
+          'NCA',
+          'Newark Collegiate Academy'
+        ) THEN 73253
         WHEN su.school IN ('SPARK', 'SPARK Academy') THEN 73254
         WHEN su.school IN ('THRIVE', 'THRIVE Academy') THEN 73255
         WHEN su.school IN ('Seek', 'Seek Academy') THEN 73256
         WHEN su.school IN ('Life', 'Life Academy') THEN 73257
         WHEN su.school IN ('BOLD', 'BOLD Academy') THEN 73258
-        WHEN su.school IN ('LSP', 'KSLP', 'Lanning Square Primary') THEN 179901
-        WHEN su.school IN ('LSM', 'KLSM', 'Lanning Square Middle') THEN 179902
+        WHEN su.school IN (
+          'LSP',
+          'KSLP',
+          'Lanning Square Primary'
+        ) THEN 179901
+        WHEN su.school IN (
+          'LSM',
+          'KLSM',
+          'Lanning Square Middle'
+        ) THEN 179902
         WHEN su.school IN ('KWM', 'KIPP Whittier Middle') THEN 179903
         WHEN su.school IN ('WEK') THEN 1799015075
         WHEN su.school = 'KIPP NJ' THEN 0
@@ -272,7 +287,10 @@ FROM
           'KWM',
           'KIPP Whittier Middle'
         ) THEN 'MS'
-        WHEN su.school IN ('NCA', 'Newark Collegiate Academy') THEN 'HS'
+        WHEN su.school IN (
+          'NCA',
+          'Newark Collegiate Academy'
+        ) THEN 'HS'
         WHEN su.school = 'KIPP NJ' THEN 'All'
       END AS school_level,
       map.rubric_domain,

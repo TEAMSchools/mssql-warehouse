@@ -33,7 +33,9 @@ WITH
           (
             SELECT DISTINCT
               CAST(username AS VARCHAR(25)) AS username,
-              gabby.utilities.DATE_TO_SY (CAST(activity_start_time AS DATE)) AS academic_year,
+              gabby.utilities.DATE_TO_SY (
+                CAST(activity_start_time AS DATE)
+              ) AS academic_year,
               CASE
                 WHEN LEFT(grade_label, 1) = 'K' THEN 0
                 ELSE CAST(LEFT(grade_label, 1) AS INT)
@@ -44,7 +46,10 @@ WITH
                   REVERSE(
                     LEFT(
                       REVERSE(grade_level_material),
-                      CHARINDEX(' ', REVERSE(grade_level_material)) - 1
+                      CHARINDEX(
+                        ' ',
+                        REVERSE(grade_level_material)
+                      ) - 1
                     )
                   ),
                   1
@@ -54,14 +59,19 @@ WITH
                     REVERSE(
                       LEFT(
                         REVERSE(grade_level_material),
-                        CHARINDEX(' ', REVERSE(grade_level_material)) - 1
+                        CHARINDEX(
+                          ' ',
+                          REVERSE(grade_level_material)
+                        ) - 1
                       )
                     ),
                     1
                   ) AS INT
                 )
               END AS lexia_grade_level,
-              CAST(REPLACE(levelname, 'Level ', '') AS INT) AS level_number
+              CAST(
+                REPLACE(levelname, 'Level ', '') AS INT
+              ) AS level_number
             FROM
               gabby.lexia.student_progress
           ) AS sub
@@ -76,7 +86,9 @@ WITH
       goals.level,
       CASE
         WHEN goals.grade_level_material = 'PreK' THEN -1
-        ELSE CAST(goals.grade_level_material AS INT)
+        ELSE CAST(
+          goals.grade_level_material AS INT
+        )
       END AS lexia_grade_level,
       SUM(goals.units) AS units_goal
     FROM
@@ -84,7 +96,9 @@ WITH
       LEFT OUTER JOIN gabby.lexia.goals_by_level AS goals ON sub.min_level_number <= goals.level
       AND sub.highest_grade_level >= CASE
         WHEN goals.grade_level_material = 'PreK' THEN -1
-        ELSE CAST(goals.grade_level_material AS INT)
+        ELSE CAST(
+          goals.grade_level_material AS INT
+        )
       END
     GROUP BY
       sub.username,

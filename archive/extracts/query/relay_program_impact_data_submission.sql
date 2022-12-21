@@ -119,5 +119,7 @@ FROM
   WHERE adp.rn_curr = 1
   --*/
 WHERE
-  (academic_year BETWEEN 2014 AND 2016)
+  (
+    academic_year BETWEEN 2014 AND 2016
+  )
   AND illuminate_subject IS NOT NULL

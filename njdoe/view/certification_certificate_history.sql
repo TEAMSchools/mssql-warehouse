@@ -1,15 +1,58 @@
 CREATE OR ALTER VIEW
   njdoe.certification_certificate_history AS
+WITH
+  ch AS (
+    SELECT
+      cc.df_employee_number,
+      CAST(
+        JSON_VALUE(ch.[value], '$.seq_number') AS INT
+      ) AS seq_number,
+      CAST(
+        JSON_VALUE(ch.[value], '$.certificate_type') AS NVARCHAR(256)
+      ) AS certificate_type,
+      CAST(
+        JSON_VALUE(ch.[value], '$.endorsement') AS NVARCHAR(256)
+      ) AS endorsement,
+      CAST(
+        JSON_VALUE(ch.[value], '$.county_code') AS NVARCHAR(256)
+      ) AS county_code,
+      CAST(
+        JSON_VALUE(ch.[value], '$.district_code') AS NVARCHAR(256)
+      ) AS district_code,
+      CAST(
+        JSON_VALUE(ch.[value], '$.basis_code') AS NVARCHAR(256)
+      ) AS basis_code,
+      CAST(
+        JSON_VALUE(
+          ch.[value],
+          '$.month_year_issued'
+        ) AS NVARCHAR(256)
+      ) AS month_year_issued,
+      CAST(
+        JSON_VALUE(
+          ch.[value],
+          '$.month_year_expiration'
+        ) AS NVARCHAR(256)
+      ) AS month_year_expiration,
+      CAST(
+        JSON_VALUE(ch.[value], '$.certificate_id') AS NVARCHAR(256) AS certificate_id
+      )
+    FROM
+      gabby.njdoe.certification_check AS cc
+      CROSS APPLY OPENJSON (cc.certificate_history, '$') AS ch
+    WHERE
+      cc.certificate_history != '[]'
+  )
 SELECT
-  cc.df_employee_number,
-  ch.seq_number,
+  df_employee_number,
+  seq_number,
   CASE
-    WHEN ch.certificate_id != '' THEN ch.certificate_id
+    WHEN certificate_id != '' THEN certificate_id
   END AS certificate_id,
   LTRIM(
     RTRIM(
       LEFT(
-        gabby.utilities.STRIP_CHARACTERS (ch.certificate_type, '^A-Z -'),
+        gabby.utilities.STRIP_CHARACTERS (certificate_type, '^A-Z -'),
         28
       )
     )
@@ -17,34 +60,31 @@ SELECT
   CASE
     WHEN CHARINDEX(
       'Charter School Only',
-      ch.certificate_type
+      certificate_type
     ) > 0 THEN 1
     ELSE 0
   END AS is_charter_school_only,
-  ch.endorsement,
-  ch.county_code,
-  ch.basis_code,
+  endorsement,
+  county_code,
+  basis_code,
   CASE
-    WHEN ch.district_code != '' THEN ch.district_code
+    WHEN district_code != '' THEN district_code
   END AS district_code,
   CASE
-    WHEN ch.month_year_issued != '' THEN ch.month_year_issued
+    WHEN month_year_issued != '' THEN month_year_issued
   END AS month_year_issued,
   CASE
-    WHEN ch.month_year_issued != '' THEN DATEFROMPARTS(
-      CAST(RIGHT(ch.month_year_issued, 4)),
-      CONVERT(
-        INT,
-        LEFT(ch.month_year_issued, 2)
-      ),
+    WHEN month_year_issued != '' THEN DATEFROMPARTS(
+      CAST(RIGHT(month_year_issued, 4)),
+      CONVERT(INT, LEFT(month_year_issued, 2)),
       1 AS INT
     )
   END AS issued_date,
   CASE
-    WHEN ch.month_year_expiration != '' THEN ch.month_year_expiration
+    WHEN month_year_expiration != '' THEN month_year_expiration
   END AS month_year_expiration,
   CASE
-    WHEN ch.month_year_expiration = '' THEN NULL
+    WHEN month_year_expiration = '' THEN NULL
     ELSE DATEADD(
       DAY,
       -1,
@@ -52,12 +92,10 @@ SELECT
         MONTH,
         1,
         DATEFROMPARTS(
-          CAST(
-            RIGHT(ch.month_year_expiration, 4)
-          ),
+          CAST(RIGHT(month_year_expiration, 4)),
           CONVERT(
             INT,
-            LEFT(ch.month_year_expiration, 2)
+            LEFT(month_year_expiration, 2)
           ),
           1
         )
@@ -65,19 +103,4 @@ SELECT
     )
   END AS expiration_date
 FROM
-  gabby.njdoe.certification_check AS cc
-  CROSS APPLY OPENJSON (cc.certificate_history, '$')
-WITH
-  (
-    seq_number INT,
-    certificate_type NVARCHAR(256),
-    endorsement NVARCHAR(256),
-    county_code NVARCHAR(256),
-    district_code NVARCHAR(256),
-    basis_code NVARCHAR(256),
-    month_year_issued NVARCHAR(256),
-    month_year_expiration NVARCHAR(256),
-    certificate_id NVARCHAR(256)
-  ) AS ch
-WHERE
-  cc.certificate_history != '[]'
+  ch

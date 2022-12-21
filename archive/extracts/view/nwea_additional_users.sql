@@ -3,7 +3,9 @@ CREATE OR ALTER VIEW
 SELECT
   CASE
     WHEN sr.primary_site_schoolid = 0 THEN NULL
-    ELSE CAST(sr.primary_site_schoolid AS VARCHAR(25))
+    ELSE CAST(
+      sr.primary_site_schoolid AS VARCHAR(25)
+    )
   END AS [School State Code],
   CASE
     WHEN sr.primary_site_schoolid = 0 THEN NULL

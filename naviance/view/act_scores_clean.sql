@@ -54,12 +54,11 @@ FROM
       gabby.utilities.DATE_TO_SY (test_date) AS academic_year,
       CASE
         WHEN test_date <= CAST(CURRENT_TIMESTAMP AS DATE) THEN test_date
-        ELSE NULL
       END AS test_date,
       CASE
         WHEN composite != ROUND(
           (
-            ISNULL(english, 0) + ISNULL(math, 0) + ISNULL(reading, 0) + ISNULL(science, 0)
+            (ISNULL(english, 0)) + (ISNULL(math, 0)) + (ISNULL(reading, 0)) + (ISNULL(science, 0))
           ) / 4,
           0
         ) THEN 1

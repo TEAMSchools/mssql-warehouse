@@ -2,13 +2,12 @@ CREATE OR ALTER VIEW
   whetstone.users_roles AS
 SELECT
   u._id AS [user_id],
-  r._id AS role_id,
-  r.[name] AS role_name
+  CAST(
+    JSON_VALUE(r.[value], '$._id') AS NVARCHAR(32)
+  ) AS role_id,
+  CAST(
+    JSON_VALUE(r.[value], '$.name') AS NVARCHAR(32)
+  ) AS role_name
 FROM
   gabby.whetstone.users AS u
-  CROSS APPLY OPENJSON (u.roles, '$')
-WITH
-  (
-    _id NVARCHAR(32),
-    [name] NVARCHAR(32)
-  ) AS r
+  CROSS APPLY OPENJSON (u.roles, '$') AS r

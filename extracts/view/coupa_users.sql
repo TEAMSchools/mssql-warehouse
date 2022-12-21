@@ -246,7 +246,7 @@ FROM
       LEFT JOIN gabby.coupa.user_exceptions AS x ON (
         au.employee_number = x.employee_number
       )
-      LEFT JOIN gabby.coupa.address_name_crosswalk AS anc ON (au.[location] = anc.adp_location)
+      LEFT JOIN coupa.address_name_crosswalk AS anc ON au.[location] = anc.adp_location
       LEFT JOIN gabby.coupa.[address] AS a ON (
         anc.coupa_address_name = a.[name]
         AND a.active = 1

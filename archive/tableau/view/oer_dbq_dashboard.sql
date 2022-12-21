@@ -5,7 +5,11 @@ WITH
     SELECT
       enr.student_number,
       enr.academic_year,
-      REPLACE(enr.COURSE_NUMBER, 'ENG11', 'ENG10') AS course_number,
+      REPLACE(
+        enr.COURSE_NUMBER,
+        'ENG11',
+        'ENG10'
+      ) AS course_number,
       enr.course_name,
       enr.expression AS course_period,
       enr.teacher_name,
@@ -225,13 +229,21 @@ FROM
         CHARINDEX(' ', LTRIM(a.title))
       ) AS course_number,
       CASE
-        WHEN a.academic_year_clean <= 2015 THEN SUBSTRING(a.title, PATINDEX('%QE_%', a.title), 3)
+        WHEN a.academic_year_clean <= 2015 THEN SUBSTRING(
+          a.title,
+          PATINDEX('%QE_%', a.title),
+          3
+        )
         WHEN PATINDEX('%DBQ [0-9]%', a.title) > 0 THEN SUBSTRING(
           a.title,
           PATINDEX('%DBQ [0-9]%', a.title),
           5
         )
-        WHEN PATINDEX('%DBQ[0-9]%', a.title) > 0 THEN SUBSTRING(a.title, PATINDEX('%DBQ[0-9]%', a.title), 4)
+        WHEN PATINDEX('%DBQ[0-9]%', a.title) > 0 THEN SUBSTRING(
+          a.title,
+          PATINDEX('%DBQ[0-9]%', a.title),
+          4
+        )
       END AS unit_number,
       std.description AS strand,
       CAST(r.percent_correct AS FLOAT) AS score,

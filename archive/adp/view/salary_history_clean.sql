@@ -13,7 +13,10 @@ SELECT
     DATEADD(
       DAY,
       -1,
-      LEAD(sub.regular_pay_effective_date, 1) OVER (
+      LEAD(
+        sub.regular_pay_effective_date,
+        1
+      ) OVER (
         PARTITION BY
           sub.position_id
         ORDER BY
@@ -26,7 +29,10 @@ SELECT
     DATEADD(
       DAY,
       -1,
-      LEAD(sub.regular_pay_effective_date, 1) OVER (
+      LEAD(
+        sub.regular_pay_effective_date,
+        1
+      ) OVER (
         PARTITION BY
           sub.position_id
         ORDER BY
@@ -35,8 +41,17 @@ SELECT
     ),
     DATEFROMPARTS(
       CASE
-        WHEN DATEPART(YEAR, sub.regular_pay_effective_date) > gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-        AND DATEPART(MONTH, sub.regular_pay_effective_date) >= 7 THEN DATEPART(YEAR, sub.regular_pay_effective_date) + 1
+        WHEN DATEPART(
+          YEAR,
+          sub.regular_pay_effective_date
+        ) > gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+        AND DATEPART(
+          MONTH,
+          sub.regular_pay_effective_date
+        ) >= 7 THEN DATEPART(
+          YEAR,
+          sub.regular_pay_effective_date
+        ) + 1
         ELSE gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
       END,
       6,
@@ -48,10 +63,16 @@ FROM
     SELECT
       sh.associate_id,
       sh.position_id,
-      CAST(sh.regular_pay_effective_date AS DATE) AS regular_pay_effective_date,
-      CAST(sh.regular_pay_effective_end_date AS DATE) AS regular_pay_effective_end_date,
+      CAST(
+        sh.regular_pay_effective_date AS DATE
+      ) AS regular_pay_effective_date,
+      CAST(
+        sh.regular_pay_effective_end_date AS DATE
+      ) AS regular_pay_effective_end_date,
       CAST(sh.annual_salary AS MONEY) AS annual_salary,
-      CAST(sh.regular_pay_rate_amount AS MONEY) AS regular_pay_rate_amount,
+      CAST(
+        sh.regular_pay_rate_amount AS MONEY
+      ) AS regular_pay_rate_amount,
       sh.compensation_change_reason_description,
       sr.file_number AS employee_number
     FROM
@@ -59,7 +80,11 @@ FROM
       INNER JOIN gabby.adp.employees_all AS sr ON sh.associate_id = sr.associate_id
     WHERE
       (
-        CAST(sh.regular_pay_effective_date AS DATE) < CAST(sh.regular_pay_effective_end_date AS DATE)
+        CAST(
+          sh.regular_pay_effective_date AS DATE
+        ) < CAST(
+          sh.regular_pay_effective_end_date AS DATE
+        )
         OR sh.regular_pay_effective_end_date IS NULL
       )
   ) AS sub

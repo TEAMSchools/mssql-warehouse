@@ -19,5 +19,8 @@ SELECT
 FROM
   gabby.payroll.historical_earnings_deductions
 WHERE
-  LEFT(other_deduction_code_pay_statements, 2) IN ('CK', 'SV')
+  LEFT(
+    other_deduction_code_pay_statements,
+    2
+  ) IN ('CK', 'SV')
   AND payroll_company_code != 'ZS1'

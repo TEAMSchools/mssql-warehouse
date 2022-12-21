@@ -64,7 +64,10 @@ SELECT
   s.adp_associate_id,
   s.status,
   s.adp_position_start_date AS position_start_date,
-  COALESCE(s.adp_position_end_date, s.termination_date) AS position_end_date,
+  COALESCE(
+    s.adp_position_end_date,
+    s.termination_date
+  ) AS position_end_date,
   s.annual_salary
 FROM
   gabby.mip.compensation_report AS cr
@@ -72,7 +75,10 @@ FROM
   AND CAST(
     SUBSTRING(
       cr._file,
-      PATINDEX('%[0-9][0-9][0-9][0-9]-%', cr._file),
+      PATINDEX(
+        '%[0-9][0-9][0-9][0-9]-%',
+        cr._file
+      ),
       4
     ) AS INT
   ) = s.year_part

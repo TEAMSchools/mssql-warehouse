@@ -93,10 +93,10 @@ SELECT
 FROM
   (
     SELECT
-      sat.student_id AS nav_studentid,
-      sat.hs_student_id AS student_number,
-      sat.sat_scale,
-      sat.is_old_sat,
+      student_id AS nav_studentid,
+      hs_student_id AS student_number,
+      sat_scale,
+      is_old_sat,
       test_date,
       CASE
         WHEN sat.test_date > CAST(CURRENT_TIMESTAMP AS DATE) THEN 1

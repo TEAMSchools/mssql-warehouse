@@ -4,57 +4,30 @@ WITH
   observation_groups AS (
     SELECT
       s._id AS school_id,
-      ogs._id AS observation_group_id,
-      ogs.[name] AS observation_group_name,
-      ogs.observers AS membership,
-      'observers' AS role_name
+      CAST(
+        JSON_VALUE(ogs.[value], '$._id') AS NVARCHAR(32)
+      ) AS observation_group_id,
+      CAST(
+        JSON_VALUE(ogs.[value], '$.name') AS NVARCHAR(16)
+      ) AS observation_group_name,
+      JSON_QUERY(ogs.[value], '$.observers') AS observers,
+      JSON_QUERY(ogs.[value], '$.observees') AS observees,
+      JSON_QUERY(ogs.[value], '$.admins') AS admins
     FROM
       gabby.whetstone.schools AS s
-      CROSS APPLY OPENJSON (s.observation_groups, '$')
-    WITH
-      (
-        _id NVARCHAR(MAX),
-        [name] NVARCHAR(MAX),
-        observers NVARCHAR(MAX) AS JSON
-      ) AS ogs
-    WHERE
-      ogs.observers != '[]'
-    UNION ALL
+      CROSS APPLY OPENJSON (s.observation_groups, '$') AS ogs
+  ),
+  ogs_unpivot AS (
     SELECT
-      s._id AS school_id,
-      ogs._id AS observation_group_id,
-      ogs.[name] AS observation_group_name,
-      ogs.observees AS membership,
-      'observees' AS role_name
+      school_id,
+      observation_group_id,
+      observation_group_name,
+      membership,
+      role_name
     FROM
-      gabby.whetstone.schools AS s
-      CROSS APPLY OPENJSON (s.observation_groups, '$')
-    WITH
-      (
-        _id NVARCHAR(MAX),
-        [name] NVARCHAR(MAX),
-        observees NVARCHAR(MAX) AS JSON
-      ) AS ogs
-    WHERE
-      ogs.observees != '[]'
-    UNION ALL
-    SELECT
-      s._id AS school_id,
-      ogs._id AS observation_group_id,
-      ogs.[name] AS observation_group_name,
-      ogs.admins AS membership,
-      'admins' AS role_name
-    FROM
-      gabby.whetstone.schools AS s
-      CROSS APPLY OPENJSON (s.observation_groups, '$')
-    WITH
-      (
-        _id NVARCHAR(MAX),
-        [name] NVARCHAR(MAX),
-        admins NVARCHAR(MAX) AS JSON
-      ) AS ogs
-    WHERE
-      ogs.admins != '[]'
+      observation_groups UNPIVOT (
+        membership FOR role_name IN (observers, observees, admins)
+      ) AS u
   )
 SELECT
   og.school_id,
@@ -65,15 +38,15 @@ SELECT
     WHEN og.role_name = 'observees' THEN 'teacher'
     WHEN og.role_name = 'observers' THEN 'coach'
   END AS role_category,
-  m._id AS [user_id],
-  m.email AS user_email,
-  m.[name] AS [user_name]
+  CAST(
+    JSON_VALUE(m.[value], '$._id') AS NVARCHAR(32)
+  ) AS [user_id],
+  CAST(
+    JSON_VALUE(m.[value], '$.email') AS NVARCHAR(64)
+  ) AS user_email,
+  CAST(
+    JSON_VALUE(m.[value], '$.name') AS NVARCHAR(32)
+  ) AS [user_name]
 FROM
-  observation_groups AS og
-  CROSS APPLY OPENJSON (og.membership)
-WITH
-  (
-    _id NVARCHAR(32),
-    email NVARCHAR(64),
-    [name] NVARCHAR(32)
-  ) AS m
+  ogs_unpivot AS og
+  CROSS APPLY OPENJSON (og.membership) AS m

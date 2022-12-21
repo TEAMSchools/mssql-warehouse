@@ -33,8 +33,17 @@ SELECT
     ),
     DATEFROMPARTS(
       CASE
-        WHEN DATEPART(YEAR, sub.reports_to_effective_date) > gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-        AND DATEPART(MONTH, sub.reports_to_effective_date) >= 7 THEN DATEPART(YEAR, sub.reports_to_effective_date) + 1
+        WHEN DATEPART(
+          YEAR,
+          sub.reports_to_effective_date
+        ) > gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+        AND DATEPART(
+          MONTH,
+          sub.reports_to_effective_date
+        ) >= 7 THEN DATEPART(
+          YEAR,
+          sub.reports_to_effective_date
+        ) + 1
         ELSE gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
       END,
       6,
@@ -47,8 +56,12 @@ FROM
       mh.associate_id,
       mh.position_id,
       mh.reports_to_associate_id,
-      CAST(mh.reports_to_effective_date AS DATE) AS reports_to_effective_date,
-      CAST(mh.reports_to_effective_end_date AS DATE) AS reports_to_effective_end_date,
+      CAST(
+        mh.reports_to_effective_date AS DATE
+      ) AS reports_to_effective_date,
+      CAST(
+        mh.reports_to_effective_end_date AS DATE
+      ) AS reports_to_effective_end_date,
       sr.file_number AS employee_number
     FROM
       gabby.adp.manager_history AS mh

@@ -5,35 +5,52 @@ SELECT
   jp.position_name_c AS salesforce_position_name,
   jp.status_c AS status__c,
   CAST(jp.created_date AS VARCHAR) AS createddate,
-  CAST(jp.date_position_filled_c AS VARCHAR) AS date_position_filled__c,
+  CAST(
+    jp.date_position_filled_c AS VARCHAR
+  ) AS date_position_filled__c,
   CASE
-    WHEN ISNULL(CHARINDEX('_', jp.position_name_c), 0) = 0 THEN jp.position_name_c
+    WHEN ISNULL(
+      CHARINDEX('_', jp.position_name_c),
+      0
+    ) = 0 THEN jp.position_name_c
     WHEN ISNULL(
       CHARINDEX(
         '_',
         jp.position_name_c,
-        (CHARINDEX('_', jp.position_name_c) + 1)
-      ) - (CHARINDEX('_', jp.position_name_c) - 1),
+        (
+          CHARINDEX('_', jp.position_name_c) + 1
+        )
+      ) - (
+        CHARINDEX('_', jp.position_name_c) - 1
+      ),
       0
     ) <= 0 THEN SUBSTRING(
       jp.position_name_c,
-      (CHARINDEX('_', jp.position_name_c) + 1),
+      (
+        CHARINDEX('_', jp.position_name_c) + 1
+      ),
       LEN(jp.position_name_c)
     )
     ELSE SUBSTRING(
       jp.position_name_c,
-      (CHARINDEX('_', jp.position_name_c) + 1),
+      (
+        CHARINDEX('_', jp.position_name_c) + 1
+      ),
       (
         CHARINDEX(
           '_',
           jp.position_name_c,
-          (CHARINDEX('_', jp.position_name_c) + 1)
+          (
+            CHARINDEX('_', jp.position_name_c) + 1
+          )
         ) - CHARINDEX('_', jp.position_name_c) - 1
       )
     )
   END AS salesforce_location,
   ja.contact_name_c AS salesforce_contact_name,
-  CAST(ja.hired_status_date_c AS VARCHAR) AS hired_status_date__c,
+  CAST(
+    ja.hired_status_date_c AS VARCHAR
+  ) AS hired_status_date__c,
   CASE
     WHEN ja.selection_status_c = 'Complete' THEN 'Accepted'
     ELSE ja.selection_status_c
@@ -44,7 +61,9 @@ SELECT
   adp.job_title_description AS adp_job_title,
   adp.job_title_custom AS adp_job_title_custom,
   adp.associate_id,
-  CAST(adp.position_start_date AS VARCHAR) AS position_start_date,
+  CAST(
+    adp.position_start_date AS VARCHAR
+  ) AS position_start_date,
   CAST(adp.hire_date AS VARCHAR) AS hire_date,
   CASE
     WHEN adp.associate_id IS NOT NULL THEN 'Y'

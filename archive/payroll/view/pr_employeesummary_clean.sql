@@ -82,8 +82,15 @@ FROM
       s.termination_date,
       s.pay_date,
       LEFT(s.position_id, 3) AS company,
-      RIGHT(s.position_id, LEN(s.position_id) - 3) AS file_,
-      CONCAT(s.preferred_last, ', ', s.preferred_first) AS [name],
+      RIGHT(
+        s.position_id,
+        LEN(s.position_id) - 3
+      ) AS file_,
+      CONCAT(
+        s.preferred_last,
+        ', ',
+        s.preferred_first
+      ) AS [name],
       pr.home_department,
       pr.home_cost_number,
       pr.clock_,

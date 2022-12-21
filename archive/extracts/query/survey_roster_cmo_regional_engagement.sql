@@ -29,7 +29,9 @@ SELECT
       'Teacher ESL'
     ) THEN 'Teacher'
     WHEN primary_job = 'Executive Director' THEN 'Executive Director'
-    WHEN primary_job IN ('Associate Director of School Operations') THEN 'ADSO'
+    WHEN primary_job IN (
+      'Associate Director of School Operations'
+    ) THEN 'ADSO'
     WHEN primary_job IN (
       'Director Campus Operations',
       'Director School Operations',

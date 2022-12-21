@@ -240,7 +240,10 @@ FROM
     cal.date_value BETWEEN l.effective_start AND l.effective_end
   )
 WHERE
-  COALESCE(df.termination_date, CURRENT_TIMESTAMP) >= DATEFROMPARTS(
+  COALESCE(
+    df.termination_date,
+    CURRENT_TIMESTAMP
+  ) >= DATEFROMPARTS(
     gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
     7,
     1

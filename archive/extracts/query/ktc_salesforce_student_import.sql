@@ -48,7 +48,10 @@ SELECT
       CASE
         WHEN CHARINDEX(',', co.mother) = 0
         AND CHARINDEX(' ', co.mother) = 0 THEN co.mother
-        WHEN (CHARINDEX(',', co.mother) - 1) < 0 THEN LEFT(co.mother, (CHARINDEX(' ', co.mother) - 1))
+        WHEN (CHARINDEX(',', co.mother) - 1) < 0 THEN LEFT(
+          co.mother,
+          (CHARINDEX(' ', co.mother) - 1)
+        )
         ELSE SUBSTRING(
           co.mother,
           (CHARINDEX(',', co.mother) + 2),
@@ -67,7 +70,10 @@ SELECT
           (CHARINDEX(' ', co.mother) + 1),
           LEN(co.mother)
         )
-        ELSE LEFT(co.mother, (CHARINDEX(',', co.mother) - 1))
+        ELSE LEFT(
+          co.mother,
+          (CHARINDEX(',', co.mother) - 1)
+        )
       END
     )
   ) AS [Parent 1 Last Name],
@@ -87,7 +93,10 @@ SELECT
       CASE
         WHEN CHARINDEX(',', co.father) = 0
         AND CHARINDEX(' ', co.father) = 0 THEN co.father
-        WHEN (CHARINDEX(',', co.father) - 1) < 0 THEN LEFT(co.father, (CHARINDEX(' ', co.father) - 1))
+        WHEN (CHARINDEX(',', co.father) - 1) < 0 THEN LEFT(
+          co.father,
+          (CHARINDEX(' ', co.father) - 1)
+        )
         ELSE SUBSTRING(
           co.father,
           (CHARINDEX(',', co.father) + 2),
@@ -106,7 +115,10 @@ SELECT
           (CHARINDEX(' ', co.father) + 1),
           LEN(co.father)
         )
-        ELSE LEFT(co.father, (CHARINDEX(',', co.father) - 1))
+        ELSE LEFT(
+          co.father,
+          (CHARINDEX(',', co.father) - 1)
+        )
       END
     )
   ) AS [Parent 2 Last Name],

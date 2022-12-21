@@ -56,7 +56,9 @@ WITH
             u.your_kipp_nj_email_account AS VARCHAR(125)
           ) AS respondent_email_address,
           CAST(u.subject_name AS VARCHAR(125)) AS subject_name,
-          CAST(u.subject_associate_id AS VARCHAR(25)) AS subject_associate_id,
+          CAST(
+            u.subject_associate_id AS VARCHAR(25)
+          ) AS subject_associate_id,
           CAST(u.is_manager AS INT) AS is_manager,
           CAST(u.question_code AS VARCHAR(25)) AS question_code,
           u.response,

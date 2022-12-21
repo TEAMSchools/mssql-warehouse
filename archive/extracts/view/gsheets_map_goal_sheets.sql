@@ -29,7 +29,11 @@ FROM
       team,
       advisor_name,
       VALUE,
-      CONCAT(LOWER(measurementscale), '_', field) AS pivot_field
+      CONCAT(
+        LOWER(measurementscale),
+        '_',
+        field
+      ) AS pivot_field
     FROM
       (
         SELECT

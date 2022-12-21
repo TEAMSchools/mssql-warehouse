@@ -26,7 +26,11 @@ WITH
           [status],
           base_salary,
           CASE
-            WHEN status = 'Terminated' THEN DATEADD(DAY, 1, CAST(effective_start AS DATE)) -- trunk-ignore(sqlfluff/L016)
+            WHEN status = 'Terminated' THEN DATEADD(
+              DAY,
+              1,
+              CAST(effective_start AS DATE)
+            ) -- trunk-ignore(sqlfluff/L016)
             ELSE CAST(effective_start AS DATE)
           END AS effective_start,
           CAST(effective_end AS DATE) AS effective_end
@@ -48,8 +52,17 @@ WITH
         sub.work_assignment_effective_end,
         DATEFROMPARTS(
           CASE
-            WHEN DATEPART(YEAR, sub.work_assignment_effective_start) > gabby.utilities.GLOBAL_ACADEMIC_YEAR () -- trunk-ignore(sqlfluff/L016)
-            AND DATEPART(MONTH, sub.work_assignment_effective_start) >= 7 THEN DATEPART(YEAR, sub.work_assignment_effective_start) + 1 -- trunk-ignore(sqlfluff/L016)
+            WHEN DATEPART(
+              YEAR,
+              sub.work_assignment_effective_start
+            ) > gabby.utilities.GLOBAL_ACADEMIC_YEAR () -- trunk-ignore(sqlfluff/L016)
+            AND DATEPART(
+              MONTH,
+              sub.work_assignment_effective_start
+            ) >= 7 THEN DATEPART(
+              YEAR,
+              sub.work_assignment_effective_start
+            ) + 1 -- trunk-ignore(sqlfluff/L016)
             ELSE gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
           END,
           6,

@@ -25,22 +25,34 @@ WITH
       sub.next_rit,
       sub.next_npr,
       sub.student_N,
-      AVG(CAST(test_duration_minutes AS FLOAT)) OVER (
+      AVG(
+        CAST(test_duration_minutes AS FLOAT)
+      ) OVER (
         PARTITION BY
           grade_level,
           measurement_scale
       ) AS global_mean_testdurationminutes,
-      STDEV(CAST(test_duration_minutes AS FLOAT)) OVER (
+      STDEV(
+        CAST(test_duration_minutes AS FLOAT)
+      ) OVER (
         PARTITION BY
           grade_level,
           measurement_scale
       ) AS global_stdev_testdurationminutes,
-      AVG(CAST(student_testdurationminutes AS FLOAT)) OVER (
+      AVG(
+        CAST(
+          student_testdurationminutes AS FLOAT
+        )
+      ) OVER (
         PARTITION BY
           student_id,
           measurement_scale
       ) AS student_mean_testdurationminutes,
-      STDEV(CAST(student_testdurationminutes AS FLOAT)) OVER (
+      STDEV(
+        CAST(
+          student_testdurationminutes AS FLOAT
+        )
+      ) OVER (
         PARTITION BY
           student_id,
           measurement_scale
@@ -248,11 +260,15 @@ FROM
         WHEN student_stdev_testdurationminutes = 0 THEN NULL
         ELSE student_stdev_testdurationminutes
       END AS student_testdurationminutes_z,
-      (prev_npr_change - mean_prev_npr_change) / CASE
+      (
+        prev_npr_change - mean_prev_npr_change
+      ) / CASE
         WHEN stdev_prev_npr_change = 0 THEN NULL
         ELSE stdev_prev_npr_change
       END AS prev_npr_z,
-      -1 * (next_npr_change - mean_next_npr_change) / CASE
+      -1 * (
+        next_npr_change - mean_next_npr_change
+      ) / CASE
         WHEN stdev_next_npr_change = 0 THEN NULL
         ELSE stdev_next_npr_change
       END AS next_npr_z

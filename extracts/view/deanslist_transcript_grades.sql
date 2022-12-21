@@ -43,6 +43,7 @@ WITH
         AND fg.[db_name] = s.[db_name]
         AND fg.exclude_from_gpa = 0
         AND (
+          /* trunk-ignore(sqlfluff/L016) */
           CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN fg.termbin_start_date AND fg.termbin_end_date
         )
       )

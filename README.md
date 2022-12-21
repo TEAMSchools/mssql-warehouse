@@ -3,11 +3,16 @@
 ## General Rules & Guidelines
 
 - Use `snake_case`
-- Always prefer CTEs to subqueries for transformations and rollups
-- When subqueries are necessary, avoid going more than one level deep
 - Always use uppercase for the reserved keywords (e.g. `SELECT` and `WHERE`)
 - Avoid abbreviated keywords; use the full-length ones where available (e.g `ABSOLUTE` > `ABS`)
 - Prefer ANSI SQL functions over vendor-specific functions for maximum portability
+
+## Selects
+
+- Group columns by source table
+- Order columns from simple columns to more-complex functions and aggregates
+- Always prefer CTEs to subqueries for transformations and rollups
+- When subqueries are necessary, avoid going more than one level deep
 
 ## Joins
 

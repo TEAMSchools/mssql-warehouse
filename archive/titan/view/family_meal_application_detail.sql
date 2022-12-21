@@ -7,7 +7,10 @@ SELECT
   e.eligibility_benefit_type,
   e.eligibility_determination_reason,
   COALESCE(ma.covert_code, e.covert_code) AS covert_code,
-  COALESCE(ma.pricing_level, e.pricing_level) AS pricing_level,
+  COALESCE(
+    ma.pricing_level,
+    e.pricing_level
+  ) AS pricing_level,
   ma.application_source,
   ma.meal_application_identifier,
   ma.application_status AS meal_application_status

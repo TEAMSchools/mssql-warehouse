@@ -5,7 +5,10 @@ WITH
     SELECT
       df.ps_teachernumber
     COLLATE Latin1_General_BIN AS teacher,
-    COALESCE(ccw.ps_school_id, df.primary_site_schoolid) AS schoolid
+    COALESCE(
+      ccw.ps_school_id,
+      df.primary_site_schoolid
+    ) AS schoolid
     FROM
       gabby.people.staff_crosswalk_static AS df
       LEFT JOIN gabby.people.campus_crosswalk AS ccw ON df.primary_site = ccw.campus_name

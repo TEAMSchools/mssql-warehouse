@@ -11,7 +11,11 @@ WITH
         co.grade_level
       ) AS alias,
       co.schoolid,
-      CONCAT(co.school_name, ' Grade ', co.grade_level) AS [name],
+      CONCAT(
+        co.school_name,
+        ' Grade ',
+        co.grade_level
+      ) AS [name],
       'all' AS SECTION,
       saa.student_web_id + '@teamstudents.org' AS email
     FROM

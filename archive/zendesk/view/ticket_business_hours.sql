@@ -25,7 +25,9 @@ WITH
             start_time_utc,
             DATEADD(
               DAY,
-              - (DATEPART(WEEKDAY, CURRENT_TIMESTAMP) - 1),
+              - (
+                DATEPART(WEEKDAY, CURRENT_TIMESTAMP) - 1
+              ),
               CAST(CAST(CURRENT_TIMESTAMP AS DATE))
             ) AS DATETIME2
           ) AS business_hours_start,
@@ -34,7 +36,9 @@ WITH
             end_time_utc,
             DATEADD(
               DAY,
-              - (DATEPART(WEEKDAY, CURRENT_TIMESTAMP) - 1),
+              - (
+                DATEPART(WEEKDAY, CURRENT_TIMESTAMP) - 1
+              ),
               CAST(CAST(CURRENT_TIMESTAMP AS DATE))
             ) AS DATETIME2
           ) AS business_hours_end

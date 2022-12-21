@@ -2,7 +2,10 @@ CREATE OR ALTER VIEW
   extracts.pikmykid_absenteelist AS
 SELECT
   CAST(s.student_number AS VARCHAR) AS [SIS_StudentID],
-  COALESCE(LEFT(ac.presence_status_cd, 1), 'P') AS [Attendance]
+  COALESCE(
+    LEFT(ac.presence_status_cd, 1),
+    'P'
+  ) AS [Attendance]
 FROM
   gabby.powerschool.students AS s
 WITH

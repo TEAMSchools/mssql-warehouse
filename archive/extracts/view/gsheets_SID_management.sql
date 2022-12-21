@@ -121,7 +121,10 @@ SELECT
   nj.countycoderesident AS CountyCodeResident,
   nj.districtcoderesident AS DistrictCodeResident,
   nj.schoolcoderesident AS SchoolCodeResident,
-  CAST(s.districtentrydate, 112 AS VARCHAR) AS DistrictEntryDate,
+  CAST(
+    s.districtentrydate,
+    112 AS VARCHAR
+  ) AS DistrictEntryDate,
   CASE
     WHEN co.region = 'TEAM' THEN '80'
     WHEN co.region = 'KCNA' THEN '07'

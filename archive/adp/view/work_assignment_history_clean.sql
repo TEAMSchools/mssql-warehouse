@@ -39,8 +39,17 @@ SELECT
     ),
     DATEFROMPARTS(
       CASE
-        WHEN DATEPART(YEAR, sub.position_effective_date) > gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-        AND DATEPART(MONTH, sub.position_effective_date) >= 7 THEN DATEPART(YEAR, sub.position_effective_date) + 1
+        WHEN DATEPART(
+          YEAR,
+          sub.position_effective_date
+        ) > gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+        AND DATEPART(
+          MONTH,
+          sub.position_effective_date
+        ) >= 7 THEN DATEPART(
+          YEAR,
+          sub.position_effective_date
+        ) + 1
         ELSE gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
       END,
       6,
@@ -59,13 +68,21 @@ FROM
       wah.job_title_description,
       wah.job_change_reason_code,
       wah.job_change_reason_description,
-      CAST(wah.position_effective_date AS DATE) AS position_effective_date,
-      CAST(wah.position_effective_end_date AS DATE) AS position_effective_end_date,
+      CAST(
+        wah.position_effective_date AS DATE
+      ) AS position_effective_date,
+      CAST(
+        wah.position_effective_end_date AS DATE
+      ) AS position_effective_end_date,
       sr.file_number AS employee_number
     FROM
       gabby.adp.work_assignment_history AS wah
       INNER JOIN gabby.adp.employees_all AS sr ON wah.associate_id = sr.associate_id
     WHERE
-      CAST(wah.position_effective_date AS DATE) < CAST(wah.position_effective_end_date AS DATE)
+      CAST(
+        wah.position_effective_date AS DATE
+      ) < CAST(
+        wah.position_effective_end_date AS DATE
+      )
       OR wah.position_effective_end_date IS NULL
   ) AS sub

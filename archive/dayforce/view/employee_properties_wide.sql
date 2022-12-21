@@ -70,7 +70,9 @@ FROM
     FROM
       (
         SELECT
-          CAST(ep.employee_reference_code AS VARCHAR(25)) AS employee_reference_code,
+          CAST(
+            ep.employee_reference_code AS VARCHAR(25)
+          ) AS employee_reference_code,
           CAST(
             ep.employee_property_value_effective_start AS DATE
           ) AS effective_start_date,
@@ -89,7 +91,11 @@ FROM
             LOWER(
               CASE
                 WHEN ep.employee_property_value_name IN ('Grade Taught', 'Subject') THEN CONCAT(
-                  REPLACE(ep.employee_property_value_name, ' ', '_'),
+                  REPLACE(
+                    ep.employee_property_value_name,
+                    ' ',
+                    '_'
+                  ),
                   '_',
                   REPLACE(ep.property_value, ' ', '_')
                 )
@@ -119,7 +125,11 @@ FROM
                 WHEN ep.employee_property_value_name = 'Undergraduate GPA (type number or N/A)' THEN 'undergrad_gpa'
                 WHEN ep.employee_property_value_name = 'Which Praxis exam(s) have you passed?' THEN 'praxis_passed'
                 WHEN ep.employee_property_value_name = 'Highest Grade Completed' THEN 'highest_education_level'
-                ELSE REPLACE(ep.employee_property_value_name, ' ', '_')
+                ELSE REPLACE(
+                  ep.employee_property_value_name,
+                  ' ',
+                  '_'
+                )
               END
             )
           ) AS property_name,

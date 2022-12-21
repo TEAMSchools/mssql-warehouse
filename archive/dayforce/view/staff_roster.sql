@@ -40,13 +40,20 @@ WITH
       sub.gender,
       sub.is_hispanic,
       CAST(
-        REPLACE(sub.primary_site_clean, ' - Regional', '') AS VARCHAR(125)
+        REPLACE(
+          sub.primary_site_clean,
+          ' - Regional',
+          ''
+        ) AS VARCHAR(125)
       ) AS primary_site,
       CAST(
         COALESCE(sub.common_name, sub.first_name) AS VARCHAR(25)
       ) AS preferred_first_name,
       CAST(
-        COALESCE(sub.preferred_last_name, sub.last_name) AS VARCHAR(25)
+        COALESCE(
+          sub.preferred_last_name,
+          sub.last_name
+        ) AS VARCHAR(25)
       ) AS preferred_last_name,
       CASE
         WHEN sub.ethnicity = 'Hispanic or Latino' THEN 'Hispanic or Latino'
@@ -79,7 +86,9 @@ WITH
           e.annual_salary,
           CAST(e.df_employee_number AS INT) AS df_employee_number,
           CASE
-            WHEN e.adp_associate_id_clean != '' THEN CAST(e.adp_associate_id_clean AS VARCHAR(25)) -- trunk-ignore(sqlfluff/L016)
+            WHEN e.adp_associate_id_clean != '' THEN CAST(
+              e.adp_associate_id_clean AS VARCHAR(25)
+            ) -- trunk-ignore(sqlfluff/L016)
           END AS adp_associate_id,
           CASE
             WHEN e.salesforce_id != '' THEN CAST(e.salesforce_id AS VARCHAR(25))
@@ -94,7 +103,9 @@ WITH
             WHEN e.common_name != '' THEN CAST(e.common_name AS VARCHAR(25))
           END AS common_name,
           CASE
-            WHEN e.preferred_last_name != '' THEN CAST(e.preferred_last_name AS VARCHAR(25)) -- trunk-ignore(sqlfluff/L016)
+            WHEN e.preferred_last_name != '' THEN CAST(
+              e.preferred_last_name AS VARCHAR(25)
+            ) -- trunk-ignore(sqlfluff/L016)
           END AS preferred_last_name,
           CASE
             WHEN e.[address] != '' THEN CAST(e.[address] AS VARCHAR(125))
@@ -126,7 +137,9 @@ WITH
             )
           END AS primary_on_site_department,
           CASE
-            WHEN e.legal_entity_name_clean != '' THEN CAST(e.legal_entity_name_clean AS VARCHAR(125)) -- trunk-ignore(sqlfluff/L016)
+            WHEN e.legal_entity_name_clean != '' THEN CAST(
+              e.legal_entity_name_clean AS VARCHAR(125)
+            ) -- trunk-ignore(sqlfluff/L016)
           END AS legal_entity_name,
           CASE
             WHEN e.job_family != '' THEN CAST(e.job_family AS VARCHAR(25))
@@ -165,7 +178,9 @@ WITH
           CAST(
             primary_on_site_department_entity_ AS VARCHAR(125)
           ) AS primary_on_site_department_entity,
-          CAST(primary_site_entity_ AS VARCHAR(125)) AS primary_site_entity,
+          CAST(
+            primary_site_entity_ AS VARCHAR(125)
+          ) AS primary_site_entity,
           CAST(UPPER(e.gender) AS VARCHAR(1)) AS gender,
           CASE
             WHEN e.ethnicity LIKE '%Hispanic%' THEN 1
