@@ -1,9 +1,9 @@
 CREATE OR ALTER VIEW
   whetstone.users_clean AS
 SELECT
-  _id AS USER_ID,
+  _id AS [user_id],
   internal_id,
-  [name] AS USER_NAME,
+  [name] AS [user_name],
   [first] AS first_name,
   [last] AS last_name,
   email AS user_email,
