@@ -3,55 +3,57 @@ CREATE OR ALTER VIEW
 WITH
   response_pivot AS (
     SELECT
-      p.survey_response_id,
-      p.survey_id,
-      p.date_started,
-      p.salesforce_id,
+      survey_response_id,
+      survey_id,
+      date_started,
+      salesforce_id,
       CAST(
-        p.respondent_adp_associate_id AS VARCHAR(25)
+        respondent_adp_associate_id AS VARCHAR(25)
       ) AS respondent_associate_id,
       CAST(
         LOWER(
           COALESCE(
-            p.respondent_userprincipalname,
-            p.email
+            respondent_userprincipalname,
+            email
           )
         ) AS VARCHAR(125)
       ) AS respondent_userprincipalname,
       CONVERT(
         INT,
         CASE
-          WHEN ISNUMERIC(p.respondent_df_employee_number) = 1 THEN p.respondent_df_employee_number
+          WHEN (
+            ISNUMERIC(respondent_df_employee_number) = 1
+          ) THEN respondent_df_employee_number
           WHEN CHARINDEX(
             '[',
             COALESCE(
-              p.respondent_df_employee_number,
-              p.employee_preferred_name
+              respondent_df_employee_number,
+              employee_preferred_name
             )
           ) = 0 THEN NULL
           ELSE SUBSTRING(
             COALESCE(
-              p.respondent_df_employee_number,
-              p.employee_preferred_name
+              respondent_df_employee_number,
+              employee_preferred_name
             ),
             CHARINDEX(
               '[',
               COALESCE(
-                p.respondent_df_employee_number,
-                p.employee_preferred_name
+                respondent_df_employee_number,
+                employee_preferred_name
               )
             ) + 1,
             CHARINDEX(
               ']',
               COALESCE(
-                p.respondent_df_employee_number,
-                p.employee_preferred_name
+                respondent_df_employee_number,
+                employee_preferred_name
               )
             ) - CHARINDEX(
               '[',
               COALESCE(
-                p.respondent_df_employee_number,
-                p.employee_preferred_name
+                respondent_df_employee_number,
+                employee_preferred_name
               )
             ) - 1
           )
@@ -63,48 +65,47 @@ WITH
           WHEN CHARINDEX(
             '[',
             COALESCE(
-              p.subject_df_employee_number,
-              p.employee_preferred_name
+              subject_df_employee_number,
+              employee_preferred_name
             )
           ) = 0 THEN NULL
           ELSE SUBSTRING(
             COALESCE(
-              p.subject_df_employee_number,
-              p.employee_preferred_name
+              subject_df_employee_number,
+              employee_preferred_name
             ),
             CHARINDEX(
               '[',
               COALESCE(
-                p.subject_df_employee_number,
-                p.employee_preferred_name
+                subject_df_employee_number,
+                employee_preferred_name
               )
             ) + 1,
             CHARINDEX(
               ']',
               COALESCE(
-                p.subject_df_employee_number,
-                p.employee_preferred_name
+                subject_df_employee_number,
+                employee_preferred_name
               )
             ) - CHARINDEX(
               '[',
               COALESCE(
-                p.subject_df_employee_number,
-                p.employee_preferred_name
+                subject_df_employee_number,
+                employee_preferred_name
               )
             ) - 1
           )
         END
       ) AS subject_employee_number,
       CASE
-        WHEN CHARINDEX(
-          '[',
-          p.subject_df_employee_number
-        ) = 0 THEN p.subject_df_employee_number
+        WHEN (
+          CHARINDEX('[', subject_df_employee_number) = 0
+        ) THEN subject_df_employee_number
       END AS subject_preferred_name,
       CASE
-        WHEN p.is_manager = 'Yes - I am their manager.' THEN 1
-        WHEN p.is_manager = 'No - I am their peer.' THEN 0
-        ELSE CAST(p.is_manager AS INT)
+        WHEN is_manager = 'Yes - I am their manager.' THEN 1
+        WHEN is_manager = 'No - I am their peer.' THEN 0
+        ELSE CAST(is_manager AS INT)
       END AS is_manager
     FROM
       (
@@ -116,9 +117,11 @@ WITH
           srd.answer
         FROM
           gabby.surveygizmo.survey_question_clean_static AS sq
-          INNER JOIN gabby.surveygizmo.survey_response_data AS srd ON sq.survey_id = srd.survey_id
-          AND sq.survey_question_id = srd.question_id
-          AND srd.answer IS NOT NULL
+          INNER JOIN gabby.surveygizmo.survey_response_data AS srd ON (
+            sq.survey_id = srd.survey_id
+            AND sq.survey_question_id = srd.question_id
+            AND srd.answer IS NOT NULL
+          )
         WHERE
           sq.is_identifier_question = 1
       ) AS sub PIVOT (
@@ -157,12 +160,20 @@ WITH
       ) AS respondent_employee_number
     FROM
       response_pivot AS rp
-      LEFT JOIN gabby.people.staff_crosswalk_static AS upn ON rp.respondent_userprincipalname = upn.userprincipalname
-      LEFT JOIN gabby.people.staff_crosswalk_static AS adp ON rp.respondent_associate_id = adp.adp_associate_id_legacy
-      LEFT JOIN gabby.people.staff_crosswalk_static AS mail ON rp.respondent_userprincipalname = mail.mail
-      LEFT JOIN gabby.surveys.surveygizmo_abnormal_respondents AS ab ON rp.survey_id = ab.survey_id
-      AND rp.survey_response_id = ab.survey_response_id
-      AND ab._fivetran_deleted = 0
+      LEFT JOIN gabby.people.staff_crosswalk_static AS upn ON (
+        rp.respondent_userprincipalname = upn.userprincipalname
+      )
+      LEFT JOIN gabby.people.staff_crosswalk_static AS adp ON (
+        rp.respondent_associate_id = adp.adp_associate_id_legacy
+      )
+      LEFT JOIN gabby.people.staff_crosswalk_static AS mail ON (
+        rp.respondent_userprincipalname = mail.mail
+      )
+      LEFT JOIN gabby.surveys.surveygizmo_abnormal_respondents AS ab ON (
+        rp.survey_id = ab.survey_id
+        AND rp.survey_response_id = ab.survey_response_id
+        AND ab._fivetran_deleted = 0
+      )
   )
 SELECT
   rc.survey_response_id,
@@ -230,25 +241,43 @@ SELECT
   ) AS rn_respondent_subject
 FROM
   response_clean AS rc
-  INNER JOIN gabby.surveygizmo.survey_response_clean AS sr ON rc.survey_id = sr.survey_id
-  AND rc.survey_response_id = sr.survey_response_id
-  AND sr.[status] = 'Complete'
-  LEFT JOIN gabby.surveygizmo.survey_campaign_clean_static AS sc ON rc.survey_id = sc.survey_id
-  AND (
-    rc.date_started BETWEEN sc.link_open_date AND sc.link_close_date
+  INNER JOIN gabby.surveygizmo.survey_response_clean AS sr ON (
+    rc.survey_id = sr.survey_id
+    AND rc.survey_response_id = sr.survey_response_id
+    AND sr.[status] = 'Complete'
   )
-  AND sc.[status] != 'Deleted'
-  LEFT JOIN gabby.people.staff_crosswalk_static AS resp ON rc.respondent_employee_number = resp.df_employee_number
-  LEFT JOIN gabby.people.employment_history_static AS reh ON resp.position_id = reh.position_id
-  AND (
-    CAST(sc.link_close_date AS DATE) BETWEEN reh.effective_start_date AND reh.effective_end_date
+  LEFT JOIN gabby.surveygizmo.survey_campaign_clean_static AS sc ON (
+    rc.survey_id = sc.survey_id
+    AND (
+      rc.date_started BETWEEN sc.link_open_date AND sc.link_close_date
+    )
+    AND sc.[status] != 'Deleted'
   )
-  LEFT JOIN gabby.people.staff_crosswalk_static AS rmgr ON reh.reports_to_employee_number = rmgr.df_employee_number
-  LEFT JOIN gabby.people.school_crosswalk AS rsch ON reh.[location] = rsch.site_name
-  LEFT JOIN gabby.people.staff_crosswalk_static AS subj ON rc.subject_employee_number = subj.df_employee_number
-  LEFT JOIN gabby.people.employment_history_static AS seh ON subj.position_id = seh.position_id
-  AND (
-    CAST(sc.link_close_date AS DATE) BETWEEN seh.effective_start_date AND seh.effective_end_date
+  LEFT JOIN gabby.people.staff_crosswalk_static AS resp ON (
+    rc.respondent_employee_number = resp.df_employee_number
   )
-  LEFT JOIN gabby.people.staff_crosswalk_static AS smgr ON seh.reports_to_employee_number = smgr.df_employee_number
-  LEFT JOIN gabby.people.school_crosswalk AS ssch ON seh.[location] = ssch.site_name
+  LEFT JOIN gabby.people.employment_history_static AS reh ON (
+    resp.position_id = reh.position_id
+    AND (
+      /* trunk-ignore(sqlfluff/L016) */
+      CAST(sc.link_close_date AS DATE) BETWEEN reh.effective_start_date AND reh.effective_end_date
+    )
+  )
+  LEFT JOIN gabby.people.staff_crosswalk_static AS rmgr ON (
+    reh.reports_to_employee_number = rmgr.df_employee_number
+  )
+  LEFT JOIN gabby.people.school_crosswalk AS rsch ON (reh.[location] = rsch.site_name)
+  LEFT JOIN gabby.people.staff_crosswalk_static AS subj ON (
+    rc.subject_employee_number = subj.df_employee_number
+  )
+  LEFT JOIN gabby.people.employment_history_static AS seh ON (
+    subj.position_id = seh.position_id
+    AND (
+      /* trunk-ignore(sqlfluff/L016) */
+      CAST(sc.link_close_date AS DATE) BETWEEN seh.effective_start_date AND seh.effective_end_date
+    )
+  )
+  LEFT JOIN gabby.people.staff_crosswalk_static AS smgr ON (
+    seh.reports_to_employee_number = smgr.df_employee_number
+  )
+  LEFT JOIN gabby.people.school_crosswalk AS ssch ON (seh.[location] = ssch.site_name)

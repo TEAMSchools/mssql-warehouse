@@ -20,7 +20,7 @@ SELECT
   CASE
     WHEN n = 4 THEN PARSENAME(position_name_splitter, 3)
     ELSE 'Invalid position_name Format'
-  END AS location,
+  END AS [location],
   CASE
     WHEN n = 4 THEN PARSENAME(position_name_splitter, 2)
     ELSE 'Invalid position_name Format'

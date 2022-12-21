@@ -83,7 +83,7 @@ WITH
             ELSE 0
           END AS words_attempted_f,
           CASE
-            WHEN arsp.rn_quiz = 1 THEN fl_lexile_calc
+            WHEN arsp.rn_quiz = 1 THEN arsp.fl_lexile_calc
           END AS lexile_calc,
           CASE
             WHEN arsp.rn_quiz = 1 THEN arsp.ti_book_rating
@@ -144,7 +144,7 @@ WITH
             AND rt.identifier = 'AR'
             AND rt._fivetran_deleted = 0
           )
-          LEFT OUTER JOIN gabby.renaissance.ar_studentpractice_identifiers_static AS arsp ON (
+          LEFT OUTER JOIN renaissance.ar_studentpractice_identifiers_static AS arsp ON (
             co.student_number = arsp.student_number
           )
         WHERE
@@ -227,24 +227,22 @@ SELECT
       CAST(CURRENT_TIMESTAMP AS DATE) NOT BETWEEN pr.[start_date] AND pr.[end_date]
     ) THEN NULL
     /* during term */
-    ELSE CASE
-      WHEN (
-        pr.words IS NULL
-        OR goals.words_goal IS NULL
-      ) THEN NULL
-      WHEN pr.words >= ROUND(
-        (
-          pr.n_days_elapsed / pr.n_days_term
-        ) * goals.words_goal,
-        0
-      ) THEN NULL
-      ELSE ROUND(
-        (
-          pr.n_days_elapsed / pr.n_days_term
-        ) * goals.words_goal,
-        0
-      ) - pr.words
-    END
+    WHEN (
+      pr.words IS NULL
+      OR goals.words_goal IS NULL
+    ) THEN NULL
+    WHEN pr.words >= ROUND(
+      (
+        pr.n_days_elapsed / pr.n_days_term
+      ) * goals.words_goal,
+      0
+    ) THEN NULL
+    ELSE ROUND(
+      (
+        pr.n_days_elapsed / pr.n_days_term
+      ) * goals.words_goal,
+      0
+    ) - pr.words
   END AS words_needed
 FROM
   progress_rollup AS pr

@@ -4,27 +4,40 @@ SELECT
   sr.survey_response_id,
   sr.survey_id,
   sr.date_started,
-  sd.id AS question_id,
-  sd.section_id,
-  sd.[type],
-  sd.question,
-  sd.answer_id,
-  sd.answer,
-  sd.options,
-  sd.options_list,
-  sd.shown
+  CAST(
+    JSON_VALUE(sr.survey_data_json, '$.id') AS INT
+  ) AS question_id,
+  CAST(
+    JSON_VALUE(
+      sr.survey_data_json,
+      '$.section_id'
+    ) AS INT
+  ) AS section_id,
+  CAST(
+    JSON_VALUE(
+      sr.survey_data_json,
+      '$.answer_id'
+    ) VARCHAR(125)
+  ) AS answer_id,
+  CAST(
+    JSON_VALUE(sr.survey_data_json, '$.type') VARCHAR(125)
+  ) AS [type],
+  CAST(
+    JSON_VALUE(
+      sr.survey_data_json,
+      '$.question'
+    ) NVARCHAR(512)
+  ) AS question,
+  CAST(
+    JSON_VALUE(sr.survey_data_json, '$.answer') NVARCHAR(MAX)
+  ) AS answer,
+  CAST(
+    JSON_VALUE(sr.survey_data_json, '$.shown') AS BIT
+  ) AS shown,
+  JSON_QUERY(sr.survey_data_json, '$.options') AS options,
+  JSON_QUERY(
+    sr.survey_data_json,
+    '$.options_list'
+  ) AS options_list
 FROM
   gabby.surveygizmo.survey_response_clean_current_static AS sr
-  CROSS APPLY OPENJSON (sr.survey_data_json, '$')
-WITH
-  (
-    id INT,
-    section_id INT,
-    answer_id VARCHAR(125),
-    [type] VARCHAR(125),
-    question NVARCHAR(512),
-    answer NVARCHAR(MAX),
-    options NVARCHAR(MAX) AS JSON,
-    options_list NVARCHAR(MAX) AS JSON,
-    shown BIT
-  ) AS sd

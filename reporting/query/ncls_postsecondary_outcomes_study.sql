@@ -124,12 +124,12 @@ WITH
                 WHEN LEFT(test_code, 3) = 'GEO' THEN 'GEO'
                 WHEN LEFT(test_code, 3) = 'MAT' THEN 'MATH'
                 ELSE LEFT(test_code, 3)
-              END AS subject,
-              n 'PARCC' AS assessment_type,
+              END AS [subject],
+              'PARCC' AS assessment_type,
               CAST(
                 test_performance_level AS NVARCHAR
-              ),
-              CAST(test_scale_score AS NVARCHAR)
+              ) AS performance_level,
+              CAST(test_scale_score AS NVARCHAR) AS scaled_score
             FROM
               gabby.parcc.summative_record_file_clean
           ) AS sub UNPIVOT (

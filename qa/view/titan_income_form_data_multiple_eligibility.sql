@@ -4,7 +4,7 @@ SELECT
   ti.student_identifier,
   ti.date_signed,
   gabby.dbo.GROUP_CONCAT (ti.reference_code) AS reference_codes,
-  COUNT(DISTINCT ti.eligibility_result) AS N,
+  COUNT(DISTINCT ti.eligibility_result) AS n,
   ROW_NUMBER() OVER (
     PARTITION BY
       ti.student_identifier

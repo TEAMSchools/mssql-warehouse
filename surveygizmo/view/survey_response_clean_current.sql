@@ -100,7 +100,9 @@ FROM
         CONVERT(
           DATETIME2,
           CASE
-            WHEN ISDATE(LEFT(sr.date_submitted, 19)) = 1 THEN LEFT(sr.date_submitted, 19)
+            WHEN (
+              ISDATE(LEFT(sr.date_submitted, 19)) = 1
+            ) THEN LEFT(sr.date_submitted, 19)
           END
         )
       ) AS date_submitted,
@@ -120,13 +122,17 @@ FROM
       ) AS rn
     FROM
       gabby.surveygizmo.survey_response AS sr
-      LEFT JOIN gabby.surveygizmo.survey_response_disqualified AS dq ON sr.id = dq.id
-      AND sr.survey_id = dq.survey_id
+      LEFT JOIN gabby.surveygizmo.survey_response_disqualified AS dq ON (
+        sr.id = dq.id
+        AND sr.survey_id = dq.survey_id
+      )
     WHERE
-      CAST(LEFT(sr.date_started, 19)) >= DATEFROMPARTS(
+      CAST(
+        LEFT(sr.date_started, 19) AS DATETIME2
+      ) >= DATEFROMPARTS(
         gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
         7,
-        1 AS DATETIME2
+        1
       )
   ) AS sub
 WHERE

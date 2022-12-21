@@ -11,7 +11,7 @@ SELECT
   questions_correct AS i_questions_correct,
   questions_presented AS i_questions_presented,
   quiz_number AS i_quiz_number,
-  NULL i_student_practice_id,
+  NULL AS i_student_practice_id,
   NULL AS i_user_id,
   word_count AS i_word_count,
   NULL AS ti_book_rating,

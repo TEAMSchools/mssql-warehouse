@@ -24,7 +24,6 @@ WITH
     SELECT
       student_number,
       state_studentnumber,
-      lastfirst,
       spedlep,
       special_education,
       special_education_code
@@ -34,7 +33,17 @@ WITH
       academic_year = 2021
   )
 SELECT
-  sub.*,
+  ps_sn,
+  ps_lastfirst,
+  enroll_status,
+  schoolid,
+  grade_level,
+  [db_name],
+  ps_spedlep,
+  iep_sn,
+  iep_spedlep,
+  special_education,
+  special_education_code,
   (
     CASE
       WHEN ps_sn IS NULL THEN 'In EasyIEP; Missing from PS'
@@ -58,7 +67,6 @@ FROM
       ps.[db_name],
       ISNULL(ps.spedlep, 'No IEP') AS ps_spedlep,
       iep.student_number AS iep_sn,
-      iep.lastfirst AS iep_lastfirst,
       ISNULL(iep.spedlep, 'No IEP') AS iep_spedlep,
       iep.special_education,
       iep.special_education_code

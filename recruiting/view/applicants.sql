@@ -97,14 +97,16 @@ SELECT
   LEFT(
     RIGHT(
       a.resume_url_c,
-      LEN(a.resume_url_c) -9
+      (LEN(a.resume_url_c) - 9)
     ),
-    LEN(
-      RIGHT(
-        a.resume_url_c,
-        LEN(a.resume_url_c) -9
-      )
-    ) -39
+    (
+      LEN(
+        RIGHT(
+          a.resume_url_c,
+          (LEN(a.resume_url_c) - 9)
+        )
+      ) - 39
+    )
   ) AS resume_url,
   a.last_modified_date,
   j.position_number,
@@ -243,7 +245,7 @@ SELECT
     WHEN j.position_name_splitter IS NULL THEN NULL
     WHEN j.n = 4 THEN PARSENAME(j.position_name_splitter, 3)
     ELSE 'Invalid position_name Format'
-  END AS location,
+  END AS [location],
   CASE
     WHEN j.position_name_splitter IS NULL THEN NULL
     WHEN j.n = 4 THEN PARSENAME(j.position_name_splitter, 2)

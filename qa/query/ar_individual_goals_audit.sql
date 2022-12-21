@@ -1,9 +1,14 @@
 SELECT
-  *
+  student_number,
+  reporting_term,
+  adjusted_goal,
+  adjusted_goal_tbl
 FROM
   (
     SELECT
-      vw.*,
+      vw.student_number,
+      vw.reporting_term,
+      vw.adjusted_goal,
       tbl.adjusted_goal AS adjusted_goal_tbl
     FROM
       gabby.renaissance.ar_individualized_goals_long AS vw

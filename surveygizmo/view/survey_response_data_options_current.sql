@@ -4,17 +4,17 @@ SELECT
   srd.survey_id,
   srd.survey_response_id,
   srd.question_id,
-  ol.id AS option_id,
-  ol.[option] AS option_name,
-  ol.answer
+  CAST(
+    JSON_VALUE(ol.[value], '$.id') AS NVARCHAR(16)
+  ) AS option_id,
+  CAST(
+    JSON_VALUE(ol.[value], '$.option') AS NVARCHAR(128)
+  ) AS option_name,
+  CAST(
+    JSON_VALUE(ol.[value], '$.answer') AS NVARCHAR(128)
+  ) AS answer
 FROM
   gabby.surveygizmo.survey_response_data_current_static AS srd
-  CROSS APPLY OPENJSON (srd.options_list, '$')
-WITH
-  (
-    id NVARCHAR(16),
-    [option] NVARCHAR(128),
-    answer NVARCHAR(128)
-  ) AS ol
+  CROSS APPLY OPENJSON (srd.options_list, '$') AS ol
 WHERE
   srd.options_list IS NOT NULL

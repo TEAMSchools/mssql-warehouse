@@ -154,10 +154,11 @@ FROM
       CASE
         WHEN co.enroll_status = 0 THEN CONCAT(co.school_level, co.grade_level)
         WHEN c.kipp_hs_graduate_c = 1 THEN 'HSG'
+        /* identify HS grads before SF enr update */
         WHEN (
           co.school_level = 'HS'
           AND co.exitcode = 'G1'
-        ) THEN 'HSG' /* identify HS grads before SF enr update */
+        ) THEN 'HSG'
         WHEN (
           c.kipp_ms_graduate_c = 1
           AND c.kipp_hs_graduate_c = 0

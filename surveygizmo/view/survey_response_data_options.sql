@@ -8,7 +8,7 @@ SELECT
   option_name,
   answer
 FROM
-  gabby.surveygizmo.survey_response_data_options_current_static AS
+  gabby.surveygizmo.survey_response_data_options_current_static
 UNION ALL
 SELECT
   survey_id,

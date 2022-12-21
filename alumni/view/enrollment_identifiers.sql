@@ -358,8 +358,9 @@ FROM
       ecc.of_credits_required_for_graduation_c AS ecc_credits_required_for_graduation,
       ecc.date_last_verified_c AS ecc_date_last_verified,
       ecca.[name] AS ecc_account_name,
-      /* trunk-ignore(sqlfluff/L016) */
-      ecca.adjusted_6_year_minority_graduation_rate_c AS ecc_adjusted_6_year_minority_graduation_rate,
+      (
+        ecca.adjusted_6_year_minority_graduation_rate_c
+      ) AS ecc_adjusted_6_year_minority_graduation_rate,
       hs.[name] AS hs_school_name,
       hs.pursuing_degree_type_c AS hs_pursuing_degree_type,
       hs.status_c AS hs_status,
@@ -391,8 +392,9 @@ FROM
       cura.[name] AS cur_school_name,
       cura.billing_state AS cur_billing_state,
       cura.ncesid_c AS cur_ncesid,
-      /* trunk-ignore(sqlfluff/L016) */
-      cura.adjusted_6_year_minority_graduation_rate_c AS cur_adjusted_6_year_minority_graduation_rate,
+      (
+        cura.adjusted_6_year_minority_graduation_rate_c
+      ) AS cur_adjusted_6_year_minority_graduation_rate,
       emp.status_c AS emp_status,
       emp.category_c AS emp_category,
       emp.last_verified_date_c AS emp_date_last_verified,

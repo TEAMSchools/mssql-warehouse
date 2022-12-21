@@ -13,8 +13,12 @@ WITH
           application_state_new_date AS application_date,
           application_state_in_review_date AS review_date,
           application_state_interview_date AS interview_date,
-          application_status_interview_phone_screen_requested_date AS phone_screen_requested,
-          application_status_interview_phone_screen_complete_date AS phone_screen_complete,
+          (
+            application_status_interview_phone_screen_requested_date
+          ) AS phone_screen_requested,
+          (
+            application_status_interview_phone_screen_complete_date
+          ) AS phone_screen_complete,
           application_status_interview_demo_date AS final_interview_demo,
           application_state_offer_date AS offer_date,
           application_state_hired_date AS hired_date
