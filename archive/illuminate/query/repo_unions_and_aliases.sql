@@ -8,24 +8,17 @@ WITH
       CONCAT('repository_', r.repository_id) AS repo_name,
       CONCAT(
         'SELECT ',
-        r.repository_id,
-        ' AS repository_id',
-        CHAR(10),
-        CHAR(13),
-        ',repository_row_id',
-        CHAR(10),
-        CHAR(13),
-        ',student_id',
-        CHAR(10),
-        CHAR(13),
+        r.repository_id + ' AS repository_id, ',
+        'repository_row_id, ',
+        'student_id ',
         'FROM gabby.illuminate_dna_repositories.',
         CONCAT('repository_', r.repository_id),
-        CHAR(10),
-        CHAR(13),
+        CHAR(10) + CHAR(13),
         'UNION ALL '
       ) AS select_statement
     FROM
       gabby.illuminate_dna_repositories.repositories AS r
+      /* trunk-ignore(sqlfluff/L016) */
       INNER JOIN gabby.illuminate_codes.dna_scopes AS dsc ON (r.code_scope_id = dsc.code_id)
       INNER JOIN gabby.illuminate_codes.dna_subject_areas AS dsu ON (
         r.code_subject_area_id = dsu.code_id
@@ -61,8 +54,8 @@ FROM
       ) AS pivot_value
     FROM
       gabby.sys.tables AS t
-      INNER JOIN gabby.sys.all_columns AS (
-        c ON t.object_id = c.object_id
+      INNER JOIN gabby.sys.all_columns AS
+        c ON (t.object_id = c.object_id
         AND c.name NOT LIKE '_fivetran%'
       )
       INNER JOIN gabby.illuminate_dna_repositories.fields AS f ON (

@@ -56,7 +56,7 @@ FROM
       r.ktc_cohort + n.n AS academic_year
     FROM
       gabby.alumni.ktc_roster AS r
-      INNER JOIN gabby.utilities.row_generator AS (n ON (n.n <= 5))
+      INNER JOIN gabby.utilities.row_generator AS n ON (n.n <= 5)
   ) AS sub
   LEFT JOIN gabby.alumni.enrollment_c AS e ON (
     sub.sf_contact_id = e.student_c

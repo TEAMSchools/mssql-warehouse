@@ -1,7 +1,39 @@
-CREATE OR ALTER VIEW
-  njdoe.background_check_approval_history AS
+WITH
+  approval_history AS (
+    SELECT
+      bg.employee_number,
+      CAST(
+        JSON_VALUE(ah.[value], '$.approvaldate') AS DATE
+      ) AS approvaldate,
+      CAST(
+        JSON_VALUE(ah.[value], '$.countycode') AS NVARCHAR(256)
+      ) AS countycode,
+      CAST(
+        JSON_VALUE(ah.[value], '$.districtcode') AS NVARCHAR(256)
+      ) AS districtcode,
+      CAST(
+        JSON_VALUE(ah.[value], '$.schoolcode') AS NVARCHAR(256)
+      ) AS schoolcode,
+      CAST(
+        JSON_VALUE(ah.[value], '$.contractorcode') AS NVARCHAR(256)
+      ) AS contractorcode,
+      CAST(
+        JSON_VALUE(ah.[value], '$.jobposition') AS NVARCHAR(256)
+      ) AS jobposition,
+      CAST(
+        JSON_VALUE(ah.[value], '$.pcn') AS NVARCHAR(256)
+      ) AS pcn,
+      CAST(
+        JSON_VALUE(ah.[value], '$.transferind') AS DATE
+      ) AS transferind
+    FROM
+      gabby.njdoe.background_check AS bg
+      CROSS APPLY OPENJSON (bg.approval_history, '$') AS ah
+    WHERE
+      bg.approval_history != '[]'
+  )
 SELECT
-  bg.employee_number,
+  ah.employee_number,
   ah.approvaldate,
   ah.countycode,
   ah.districtcode,
@@ -31,21 +63,7 @@ SELECT
   s.preferred_name,
   s.userprincipalname
 FROM
-  gabby.njdoe.background_check AS bg
+  approval_history AS ah
   LEFT JOIN gabby.people.staff_crosswalk_static AS s ON (
-    bg.df_employee_number = s.df_employee_number
+    ah.employee_number = s.df_employee_number
   )
-  CROSS APPLY OPENJSON (bg.approval_history, '$')
-WITH
-  (
-    approvaldate DATE,
-    countycode NVARCHAR(256),
-    districtcode NVARCHAR(256),
-    schoolcode NVARCHAR(256),
-    contractorcode NVARCHAR(256),
-    jobposition NVARCHAR(256),
-    pcn NVARCHAR(256),
-    transferind DATE
-  ) AS ah
-WHERE
-  bg.approval_history != '[]'

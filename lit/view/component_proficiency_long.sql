@@ -110,7 +110,7 @@ WITH
       CAST(testid AS INT) AS testid,
       CAST(lvl_num AS INT) AS lvl_num,
       CAST(field_name AS VARCHAR(125)) AS field_name,
-      CAST(DOMAIN AS VARCHAR(25)) AS DOMAIN,
+      CAST([domain] AS VARCHAR(25)) AS [domain],
       CAST(subdomain AS VARCHAR(25)) AS subdomain,
       CAST(strand AS VARCHAR(125)) AS strand,
       CAST(score AS INT) AS score
@@ -177,7 +177,6 @@ SELECT
       ) = 0
       AND sub.score_order = 1
     ) THEN sub.strand
-    ELSE NULL
   END AS dna_reason
 FROM
   (

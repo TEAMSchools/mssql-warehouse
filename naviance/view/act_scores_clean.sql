@@ -121,7 +121,8 @@ FROM
               WHEN ela = 0 THEN NULL
               ELSE ela
             END AS INT
-          ) AS ela CAST(
+          ) AS ela,
+          CAST(
             CASE
               WHEN (writing_sub BETWEEN 2 AND 12) THEN writing_sub
             END AS INT

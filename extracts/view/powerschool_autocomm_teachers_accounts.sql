@@ -156,12 +156,13 @@ SELECT
     WHEN [status] = 1 THEN 1
     ELSE 0
   END AS ptaccess,
-  /* temporarily shut off teacher gradebook access */
-  -- CASE
-  --   WHEN df.legal_entity_name = 'KIPP TEAM and Family Schools Inc.'
-  --   AND df.[status] = 1 THEN 1
-  --   ELSE 0
-  -- END AS ptaccess,
+  /* temporarily shut off teacher gradebook access
+  CASE
+  WHEN df.legal_entity_name = 'KIPP TEAM and Family Schools Inc.'
+  AND df.[status] = 1 THEN 1
+  ELSE 0
+  END AS ptaccess,
+  --*/
   dob,
   legal_entity_name
 FROM
