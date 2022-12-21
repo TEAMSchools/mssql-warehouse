@@ -34,24 +34,24 @@ FROM
   (
     SELECT
       SUBSTRING(
-        a.staff_member,
-        CHARINDEX('(', a.staff_member) + 1,
+        staff_member,
+        CHARINDEX('(', staff_member) + 1,
         6
       ) AS df_number,
       LEFT(
-        a.staff_member,
-        CHARINDEX('(', a.staff_member) - 2
+        staff_member,
+        CHARINDEX('(', staff_member) - 2
       ) AS staff_name,
       RIGHT(
-        a.staff_member,
-        LEN(a.staff_member) - CHARINDEX('-', a.staff_member)
+        staff_member,
+        LEN(staff_member) - CHARINDEX('-', staff_member)
       ) AS attendance_location,
       staff_member AS staff_info_string,
-      a.submitter_apps_account AS submitted_by,
-      a.attendance_status,
-      a.additional_notes,
-      CAST(a.attendance_date AS DATE) AS attendance_date,
-      CAST(a.[timestamp] AS DATETIME) AS submitted_on,
+      submitter_apps_account AS submitted_by,
+      attendance_status,
+      additional_notes,
+      CAST(attendance_date AS DATE) AS attendance_date,
+      CAST([timestamp] AS DATETIME) AS submitted_on,
       CASE
         WHEN attendance_status LIKE '%Sick Day%' THEN 1
         ELSE 0
@@ -81,6 +81,8 @@ FROM
         ELSE 1
       END AS approved
     FROM
-      gabby.people.staff_attendance AS a
-  ) a
-  INNER JOIN gabby.people.staff_crosswalk_static AS c ON a.df_number = c.df_employee_number
+      gabby.people.staff_attendance
+  ) AS a
+  INNER JOIN gabby.people.staff_crosswalk_static AS c ON (
+    a.df_number = c.df_employee_number
+  )

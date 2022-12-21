@@ -58,7 +58,8 @@ FROM
       CASE
         WHEN composite != ROUND(
           (
-            (ISNULL(english, 0)) + (ISNULL(math, 0)) + (ISNULL(reading, 0)) + (ISNULL(science, 0))
+            /* trunk-ignore(sqlfluff/L016) */
+            ISNULL(english, 0) + ISNULL(math, 0) + ISNULL(reading, 0) + ISNULL(science, 0)
           ) / 4,
           0
         ) THEN 1

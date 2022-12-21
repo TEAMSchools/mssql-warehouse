@@ -30,7 +30,7 @@ WITH
       INNER JOIN gabby.illuminate_dna_assessments.agg_student_responses AS asr ON (
         ais.assessment_id = asr.assessment_id
       )
-      INNER JOIN gabby.illuminate_public.students AS s ON (asr.student_id = s.student_id)
+      INNER JOIN illuminate_public.students AS s ON (asr.student_id = s.student_id)
       INNER JOIN gabby.reporting.reporting_terms AS rt ON (
         (
           ais.administered_at BETWEEN rt.start_date AND rt.end_date

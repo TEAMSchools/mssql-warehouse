@@ -8,7 +8,9 @@ WITH
       gabby.utilities.row_generator_smallint
     WHERE
       /* 2018 = first year of Teacher Goals */
-      n BETWEEN 2018 AND gabby.utilities.GLOBAL_ACADEMIC_YEAR  ()
+      n BETWEEN 2018 AND (
+        gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+      )
   ),
   work_assignment AS (
     SELECT
@@ -20,7 +22,9 @@ WITH
       department_name,
       legal_entity_name,
       work_assignment_effective_end,
-      gabby.utilities.DATE_TO_SY (work_assignment_effective_start) AS start_academic_year,
+      (
+        gabby.utilities.DATE_TO_SY (work_assignment_effective_start)
+      ) AS start_academic_year,
       gabby.utilities.DATE_TO_SY (work_assignment_effective_end) AS end_academic_year
     FROM
       (

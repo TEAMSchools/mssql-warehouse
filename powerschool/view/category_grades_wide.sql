@@ -14,6 +14,7 @@ WITH
       cat.citizenship,
       CASE
         WHEN (
+          /* trunk-ignore(sqlfluff/L016) */
           CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN cat.termbin_start_date AND cat.termbin_end_date
         ) THEN 1
         ELSE 0
@@ -41,6 +42,7 @@ WITH
       NULL AS citizenship,
       CASE
         WHEN (
+          /* trunk-ignore(sqlfluff/L016) */
           CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN termbin_start_date AND termbin_end_date
         ) THEN 1
         ELSE 0
@@ -81,6 +83,7 @@ WITH
         gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990
       )
       AND (
+        /* trunk-ignore(sqlfluff/L016) */
         CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN cat.termbin_start_date AND cat.termbin_end_date
       )
     UNION ALL
@@ -99,7 +102,7 @@ WITH
       1 AS is_curterm,
       'ALL' AS credittype
     FROM
-      powerschool.category_grades_static AS cat
+      powerschool.category_grades_static
     WHERE
       yearid = (
         gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990
@@ -156,31 +159,31 @@ WITH
       reporting_term,
       is_curterm,
       schoolid,
-      CAST(F_CUR AS DECIMAL(4, 0)) AS F_CUR,
-      CAST(F_RT1 AS DECIMAL(4, 0)) AS F_RT1,
-      CAST(F_RT2 AS DECIMAL(4, 0)) AS F_RT2,
-      CAST(F_RT3 AS DECIMAL(4, 0)) AS F_RT3,
-      CAST(F_RT4 AS DECIMAL(4, 0)) AS F_RT4,
-      CAST(S_CUR AS DECIMAL(4, 0)) AS S_CUR,
-      CAST(S_RT1 AS DECIMAL(4, 0)) AS S_RT1,
-      CAST(S_RT2 AS DECIMAL(4, 0)) AS S_RT2,
-      CAST(S_RT3 AS DECIMAL(4, 0)) AS S_RT3,
-      CAST(S_RT4 AS DECIMAL(4, 0)) AS S_RT4,
-      CAST(W_CUR AS DECIMAL(4, 0)) AS W_CUR,
-      CAST(W_RT1 AS DECIMAL(4, 0)) AS W_RT1,
-      CAST(W_RT2 AS DECIMAL(4, 0)) AS W_RT2,
-      CAST(W_RT3 AS DECIMAL(4, 0)) AS W_RT3,
-      CAST(W_RT4 AS DECIMAL(4, 0)) AS W_RT4,
-      CAST(E_CUR AS DECIMAL(4, 0)) AS E_CUR,
-      CAST(E_RT1 AS DECIMAL(4, 0)) AS E_RT1,
-      CAST(E_RT2 AS DECIMAL(4, 0)) AS E_RT2,
-      CAST(E_RT3 AS DECIMAL(4, 0)) AS E_RT3,
-      CAST(E_RT4 AS DECIMAL(4, 0)) AS E_RT4,
-      CTZ_CUR,
-      CTZ_RT1,
-      CTZ_RT2,
-      CTZ_RT3,
-      CTZ_RT4
+      CAST([F_CUR] AS DECIMAL(4, 0)) AS [F_CUR],
+      CAST([F_RT1] AS DECIMAL(4, 0)) AS [F_RT1],
+      CAST([F_RT2] AS DECIMAL(4, 0)) AS [F_RT2],
+      CAST([F_RT3] AS DECIMAL(4, 0)) AS [F_RT3],
+      CAST([F_RT4] AS DECIMAL(4, 0)) AS [F_RT4],
+      CAST([S_CUR] AS DECIMAL(4, 0)) AS [S_CUR],
+      CAST([S_RT1] AS DECIMAL(4, 0)) AS [S_RT1],
+      CAST([S_RT2] AS DECIMAL(4, 0)) AS [S_RT2],
+      CAST([S_RT3] AS DECIMAL(4, 0)) AS [S_RT3],
+      CAST([S_RT4] AS DECIMAL(4, 0)) AS [S_RT4],
+      CAST([W_CUR] AS DECIMAL(4, 0)) AS [W_CUR],
+      CAST([W_RT1] AS DECIMAL(4, 0)) AS [W_RT1],
+      CAST([W_RT2] AS DECIMAL(4, 0)) AS [W_RT2],
+      CAST([W_RT3] AS DECIMAL(4, 0)) AS [W_RT3],
+      CAST([W_RT4] AS DECIMAL(4, 0)) AS [W_RT4],
+      CAST([E_CUR] AS DECIMAL(4, 0)) AS [E_CUR],
+      CAST([E_RT1] AS DECIMAL(4, 0)) AS [E_RT1],
+      CAST([E_RT2] AS DECIMAL(4, 0)) AS [E_RT2],
+      CAST([E_RT3] AS DECIMAL(4, 0)) AS [E_RT3],
+      CAST([E_RT4] AS DECIMAL(4, 0)) AS [E_RT4],
+      [CTZ_CUR],
+      [CTZ_RT1],
+      [CTZ_RT2],
+      [CTZ_RT3],
+      [CTZ_RT4]
     FROM
       (
         SELECT
@@ -202,7 +205,7 @@ WITH
               reporting_term ASC
           ) AS schoolid
         FROM
-          grades_unpivot AS gr
+          grades_unpivot
         WHERE
           field = 'category_pct'
         UNION ALL
@@ -225,7 +228,7 @@ WITH
               reporting_term ASC
           ) AS schoolid
         FROM
-          grades_unpivot AS gr
+          grades_unpivot
         WHERE
           field = 'citizenship'
           AND storecode_type = 'Q'
@@ -283,7 +286,7 @@ SELECT
       ),
       0
     ) AS DECIMAL(4, 0)
-  ) AS F_Y1,
+  ) AS [F_Y1],
   CAST(
     ROUND(
       AVG([S_CUR]) OVER (
@@ -296,7 +299,7 @@ SELECT
       ),
       0
     ) AS DECIMAL(4, 0)
-  ) AS S_Y1,
+  ) AS [S_Y1],
   CAST(
     ROUND(
       AVG([W_CUR]) OVER (
@@ -309,7 +312,7 @@ SELECT
       ),
       0
     ) AS DECIMAL(4, 0)
-  ) AS W_Y1,
+  ) AS [W_Y1],
   CAST(
     ROUND(
       AVG([E_CUR]) OVER (
@@ -322,7 +325,7 @@ SELECT
       ),
       0
     ) AS DECIMAL(4, 0)
-  ) AS E_Y1,
+  ) AS [E_Y1],
   CAST(
     MAX([F_RT1]) OVER (
       PARTITION BY
@@ -483,11 +486,11 @@ SELECT
         reporting_term ASC
     ) AS DECIMAL(4, 0)
   ) AS [E_RT4],
-  CTZ_CUR,
-  CTZ_RT1,
-  CTZ_RT2,
-  CTZ_RT3,
-  CTZ_RT4,
+  [CTZ_CUR],
+  [CTZ_RT1],
+  [CTZ_RT2],
+  [CTZ_RT3],
+  [CTZ_RT4],
   ROW_NUMBER() OVER (
     PARTITION BY
       studentid,

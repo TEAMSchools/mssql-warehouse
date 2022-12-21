@@ -1,7 +1,7 @@
 CREATE OR ALTER VIEW
   powerschool.gradebook_setup AS
 WITH
-  gfs AS (
+  sec_gfs AS (
     SELECT
       CAST(sec.dcid AS INT) AS sectionsdcid,
       CAST(sec.schoolid AS INT) AS schoolid,
@@ -36,8 +36,8 @@ WITH
   ),
   cat AS (
     SELECT
-      gfs.sectionsdcid,
-      gfs.gradeformulasetid,
+      sgfs.sectionsdcid,
+      sgfs.gradeformulasetid,
       CAST(gfs.[name] AS VARCHAR(125)) AS grade_formula_set_name,
       CAST(t.abbreviation AS VARCHAR(5)) AS term_abbreviation,
       CAST(tb.storecode AS VARCHAR(5)) AS storecode,
@@ -63,20 +63,20 @@ WITH
       CAST(dtc.defaultscoretype AS INT) AS dtc_defaultscoretype,
       CAST(dtc.isinfinalgrades AS INT) AS dtc_isinfinalgrades
     FROM
-      gfs
+      sec_gfs AS sgfs
       LEFT JOIN powerschool.gradeformulaset AS gfs ON (
-        gfs.gradeformulasetid = gfs.gradeformulasetid
+        sgfs.gradeformulasetid = gfs.gradeformulasetid
       )
       LEFT JOIN powerschool.terms AS t ON (
-        gfs.termid = t.id
-        AND gfs.schoolid = t.schoolid
+        sgfs.termid = t.id
+        AND sgfs.schoolid = t.schoolid
       )
       INNER JOIN powerschool.termbins AS tb ON (
         t.schoolid = tb.schoolid
         AND t.id = tb.termid
       )
       LEFT JOIN powerschool.gradecalculationtype AS gct ON (
-        gfs.gradeformulasetid = gct.gradeformulasetid
+        sgfs.gradeformulasetid = gct.gradeformulasetid
         AND t.abbreviation = gct.abbreviation
         AND tb.storecode = gct.storecode
       )

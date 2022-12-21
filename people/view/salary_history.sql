@@ -27,8 +27,10 @@ WITH
       'ADP' AS source_system
     FROM
       gabby.adp.salary_history AS sh
-      INNER JOIN gabby.people.employee_numbers AS sr ON sh.associate_id = sr.associate_id
-      AND sr.is_active = 1
+      INNER JOIN gabby.people.employee_numbers AS sr ON (
+        sh.associate_id = sr.associate_id
+        AND sr.is_active = 1
+      )
     WHERE
       (
         CAST(
@@ -71,8 +73,10 @@ WITH
       'DF' AS source_system
     FROM
       gabby.dayforce.employee_status_clean AS ds
-      INNER JOIN gabby.people.employee_numbers AS sr ON ds.number = sr.employee_number
-      AND sr.is_active = 1
+      INNER JOIN gabby.people.employee_numbers AS sr ON (
+        ds.number = sr.employee_number
+        AND sr.is_active = 1
+      )
     WHERE
       CAST(ds.effective_start AS DATE) <= '2020-12-31'
   )
@@ -113,13 +117,21 @@ SELECT
     ),
     DATEFROMPARTS(
       CASE
-        WHEN DATEPART(YEAR, regular_pay_effective_date) > gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-        AND DATEPART(
-          MONTH,
-          regular_pay_effective_date
-        ) >= 7 THEN DATEPART(YEAR, regular_pay_effective_date) + 1
-        WHEN DATEPART(YEAR, CURRENT_TIMESTAMP) = gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
-        AND DATEPART(MONTH, CURRENT_TIMESTAMP) >= 7 THEN gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 2
+        WHEN (
+          DATEPART(YEAR, regular_pay_effective_date) > (
+            gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+          )
+          AND DATEPART(
+            MONTH,
+            regular_pay_effective_date
+          ) >= 7
+        ) THEN DATEPART(YEAR, regular_pay_effective_date) + 1
+        WHEN (
+          DATEPART(YEAR, CURRENT_TIMESTAMP) = (
+            gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
+          )
+          AND DATEPART(MONTH, CURRENT_TIMESTAMP) >= 7
+        ) THEN gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 2
         ELSE gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
       END,
       6,

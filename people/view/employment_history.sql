@@ -66,10 +66,18 @@ WITH
         END /* close out DF records */,
         DATEFROMPARTS(
           CASE
-            WHEN DATEPART(YEAR, d.effective_start_date) > gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-            AND DATEPART(MONTH, d.effective_start_date) >= 7 THEN DATEPART(YEAR, d.effective_start_date) + 1
-            WHEN DATEPART(YEAR, CURRENT_TIMESTAMP) = gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
-            AND DATEPART(MONTH, CURRENT_TIMESTAMP) >= 7 THEN gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 2
+            WHEN (
+              (
+                DATEPART(YEAR, d.effective_start_date)
+              ) > gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+              AND DATEPART(MONTH, d.effective_start_date) >= 7
+            ) THEN DATEPART(YEAR, d.effective_start_date) + 1
+            WHEN (
+              (
+                DATEPART(YEAR, CURRENT_TIMESTAMP)
+              ) = gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
+              AND DATEPART(MONTH, CURRENT_TIMESTAMP) >= 7
+            ) THEN gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 2
             ELSE gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
           END,
           6,
@@ -107,6 +115,7 @@ SELECT
   r.effective_end_date,
   CASE
     WHEN (
+      /* trunk-ignore(sqlfluff/L016) */
       CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN r.effective_start_date AND r.effective_end_date
     ) THEN 1
   END AS is_current_record,
@@ -138,21 +147,35 @@ SELECT
   wad.work_assignment_end_date
 FROM
   range_scaffold AS r
-  LEFT JOIN gabby.people.status_history_static AS s ON r.position_id = s.position_id
-  AND (
-    r.effective_start_date BETWEEN s.status_effective_date AND s.status_effective_end_date_eoy
+  LEFT JOIN gabby.people.status_history_static AS s ON (
+    r.position_id = s.position_id
+    AND (
+      /* trunk-ignore(sqlfluff/L016) */
+      r.effective_start_date BETWEEN s.status_effective_date AND s.status_effective_end_date_eoy
+    )
   )
-  LEFT JOIN gabby.people.work_assignment_history_static AS w ON r.position_id = w.position_id
-  AND (
-    r.effective_start_date BETWEEN w.position_effective_date AND w.position_effective_end_date_eoy
+  LEFT JOIN gabby.people.work_assignment_history_static AS w ON (
+    r.position_id = w.position_id
+    AND (
+      /* trunk-ignore(sqlfluff/L016) */
+      r.effective_start_date BETWEEN w.position_effective_date AND w.position_effective_end_date_eoy
+    )
   )
-  LEFT JOIN gabby.people.salary_history_static AS sal ON r.position_id = sal.position_id
-  AND (
-    r.effective_start_date BETWEEN sal.regular_pay_effective_date AND sal.regular_pay_effective_end_date_eoy
+  LEFT JOIN gabby.people.salary_history_static AS sal ON (
+    r.position_id = sal.position_id
+    AND (
+      /* trunk-ignore(sqlfluff/L016) */
+      r.effective_start_date BETWEEN sal.regular_pay_effective_date AND sal.regular_pay_effective_end_date_eoy
+    )
   )
-  LEFT JOIN gabby.people.manager_history_static AS mh ON r.position_id = mh.position_id
-  AND (
-    r.effective_start_date BETWEEN mh.reports_to_effective_date AND mh.reports_to_effective_end_date_eoy
+  LEFT JOIN gabby.people.manager_history_static AS mh ON (
+    r.position_id = mh.position_id
+    AND (
+      /* trunk-ignore(sqlfluff/L016) */
+      r.effective_start_date BETWEEN mh.reports_to_effective_date AND mh.reports_to_effective_end_date_eoy
+    )
   )
-  LEFT JOIN wa_dates AS wad ON r.position_id = wad.position_id
-  AND w.job_title_description = wad.job_title_description
+  LEFT JOIN wa_dates AS wad ON (
+    r.position_id = wad.position_id
+    AND w.job_title_description = wad.job_title_description
+  )

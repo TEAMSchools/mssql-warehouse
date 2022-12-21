@@ -31,8 +31,10 @@ WITH
       'ADP' AS source_system
     FROM
       gabby.adp.work_assignment_history AS wah
-      INNER JOIN gabby.people.employee_numbers AS sr ON wah.associate_id = sr.associate_id
-      AND sr.is_active = 1
+      INNER JOIN gabby.people.employee_numbers AS sr ON (
+        wah.associate_id = sr.associate_id
+        AND sr.is_active = 1
+      )
     WHERE
       '2021-01-01' BETWEEN CAST(
         wah.position_effective_date AS DATE
@@ -57,20 +59,24 @@ WITH
       dwa.physical_location_name AS location_description,
       NULL AS job_title_code,
       dwa.job_name AS job_title_description,
-      NULL job_change_reason_code,
-      NULL job_change_reason_description,
+      NULL AS job_change_reason_code,
+      NULL AS job_change_reason_description,
       'Yes' AS primary_position,
       dwa.work_assignment_effective_start AS position_effective_date,
       CASE
-        WHEN dwa.work_assignment_effective_end < '2020-12-31' THEN dwa.work_assignment_effective_end
+        WHEN (
+          dwa.work_assignment_effective_end < '2020-12-31'
+        ) THEN dwa.work_assignment_effective_end
         ELSE '2020-12-31'
       END AS position_effective_end_date,
       dwa.employee_reference_code AS employee_number,
       'DF' AS source_system
     FROM
       gabby.dayforce.employee_work_assignment_clean AS dwa
-      INNER JOIN gabby.people.employee_numbers AS sr ON dwa.employee_reference_code = sr.employee_number
-      AND sr.is_active = 1
+      INNER JOIN gabby.people.employee_numbers AS sr ON (
+        dwa.employee_reference_code = sr.employee_number
+        AND sr.is_active = 1
+      )
     WHERE
       dwa.work_assignment_effective_start <= '2020-12-31'
   )
@@ -117,10 +123,18 @@ SELECT
     ),
     DATEFROMPARTS(
       CASE
-        WHEN DATEPART(YEAR, position_effective_date) > gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-        AND DATEPART(MONTH, position_effective_date) >= 7 THEN DATEPART(YEAR, position_effective_date) + 1
-        WHEN DATEPART(YEAR, CURRENT_TIMESTAMP) = gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
-        AND DATEPART(MONTH, CURRENT_TIMESTAMP) >= 7 THEN gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 2
+        WHEN (
+          (
+            DATEPART(YEAR, position_effective_date)
+          ) > gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+          AND DATEPART(MONTH, position_effective_date) >= 7
+        ) THEN DATEPART(YEAR, position_effective_date) + 1
+        WHEN (
+          (
+            DATEPART(YEAR, CURRENT_TIMESTAMP)
+          ) = gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
+          AND DATEPART(MONTH, CURRENT_TIMESTAMP) >= 7
+        ) THEN gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 2
         ELSE gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
       END,
       6,

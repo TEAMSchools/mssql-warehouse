@@ -14,7 +14,7 @@ SELECT
       course_number,
       term_name
     ORDER BY
-      is_dropped,
+      is_dropped ASC,
       dateleft DESC,
       sectionid DESC
   ) AS rn_term

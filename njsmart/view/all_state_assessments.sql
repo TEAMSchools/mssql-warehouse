@@ -58,14 +58,14 @@ WITH
           CAST(local_student_id AS INT) AS local_student_id,
           CAST((testing_year - 1) AS INT) AS academic_year,
           'NJASK' AS test_type,
-          NULL,
-          NULL,
-          NULL,
-          NULL,
-          NULL,
-          NULL,
-          NULL,
-          NULL,
+          NULL AS scaled_score_lal,
+          NULL AS performance_level_lal,
+          NULL AS invalid_scale_score_reason_lal,
+          NULL AS void_reason_lal,
+          NULL AS scaled_score_math,
+          NULL AS performance_level_math,
+          NULL AS invalid_scale_score_reason_math,
+          NULL AS void_reason_math,
           CAST(
             science_scale_score AS VARCHAR(50)
           ) AS science_scale_score,
@@ -222,7 +222,7 @@ WITH
           local_student_id,
           academic_year,
           test_type,
-          VALUE,
+          [value],
           UPPER(
             REVERSE(
               LEFT(
@@ -245,7 +245,7 @@ WITH
         FROM
           combined_unpivot
       ) AS sub PIVOT (
-        MAX(VALUE) FOR field IN (
+        MAX([value]) FOR field IN (
           scaled_score,
           performance_level,
           invalid_scale_score_reason,

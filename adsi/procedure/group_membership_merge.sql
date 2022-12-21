@@ -1,6 +1,8 @@
 CREATE
 OR ALTER
-PROCEDURE adsi.group_membership_merge AS BEGIN
+PROCEDURE adsi.group_membership_merge AS
+/**/
+BEGIN
 SET
 ANSI_NULLS ON;
 

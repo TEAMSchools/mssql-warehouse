@@ -24,7 +24,7 @@ FROM
         7,
         1
       )
-  ) ga
+  ) AS ga
   INNER JOIN gabby.reporting.reporting_terms AS rt ON (
     (
       ga.duedate BETWEEN rt.[start_date] AND rt.end_date

@@ -303,13 +303,13 @@ SELECT
   [cur_term_grade_letter_adj] AS [cur_term_grade_letter_adjusted],
   CAST(
     [cur_term_grade_percent] AS DECIMAL(4, 0)
-  ) [cur_term_grade_percent],
+  ) AS [cur_term_grade_percent],
   CAST(
     cur_term_grade_percent_adj AS DECIMAL(4, 0)
   ) AS [cur_term_grade_percent_adjusted],
   NULL AS rn_credittype
 FROM
-  grades_unpivot AS gr PIVOT (
+  grades_unpivot PIVOT (
     MAX([value]) FOR pivot_field IN (
       [rt1_term_grade_letter],
       [rt1_term_grade_letter_adj],

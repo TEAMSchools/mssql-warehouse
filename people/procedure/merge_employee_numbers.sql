@@ -9,4 +9,4 @@ WHEN NOT MATCHED BY TARGET THEN
 INSERT
   (associate_id)
 VALUES
-  (SOURCE.associate_id);
+  (src.associate_id);

@@ -188,7 +188,9 @@ WITH
       CAST(
         earnedcrhrs_projected_s1 AS DECIMAL(5, 2)
       ) AS earnedcrhrs_projected_s1,
-      CAST(potentialcrhrs AS DECIMAL(5, 2)) * CAST(gpa_points AS DECIMAL(3, 2)) AS weighted_points,
+      (
+        CAST(potentialcrhrs AS DECIMAL(5, 2)) * CAST(gpa_points AS DECIMAL(3, 2))
+      ) AS weighted_points,
       CAST(potentialcrhrs AS DECIMAL(5, 2)) * CAST(
         unweighted_grade_points AS DECIMAL(3, 2)
       ) AS unweighted_points,

@@ -19,7 +19,8 @@ WITH
       field_rate_proficiency AS rate_proficiency,
       field_reading_level AS reading_level,
       field_words_per_minute AS reading_rate_wpm,
-      field_status AS [status] field_comprehension AS within_the_text,
+      field_status AS [status],
+      field_comprehension AS within_the_text,
       field_writing_optional AS writing
     FROM
       gabby.illuminate_dna_repositories.repository_194
@@ -41,7 +42,8 @@ WITH
       field_rate_proficiency AS rate_proficiency,
       field_reading_level AS reading_level,
       field_words_per_minute AS reading_rate_wpm,
-      field_status AS [status] field_within_the_text AS within_the_text,
+      field_status AS [status],
+      field_within_the_text AS within_the_text,
       field_writing_optional AS writing
     FROM
       gabby.illuminate_dna_repositories.repository_195
@@ -63,7 +65,8 @@ WITH
       field_rate_proficiency AS rate_proficiency,
       field_reading_level AS reading_level,
       field_words_per_minute AS reading_rate_wpm,
-      field_status AS [status] field_within_the_text AS within_the_text,
+      field_status AS [status],
+      field_within_the_text AS within_the_text,
       field_writing_optional AS writing
     FROM
       gabby.illuminate_dna_repositories.repository_196
@@ -85,7 +88,8 @@ WITH
       field_rate_proficiency AS rate_proficiency,
       field_reading_level AS reading_level,
       field_words_per_minute AS reading_rate_wpm,
-      field_status AS [status] field_within_the_text AS within_the_text,
+      field_status AS [status],
+      field_within_the_text AS within_the_text,
       field_writing_optional AS writing
     FROM
       gabby.illuminate_dna_repositories.repository_193

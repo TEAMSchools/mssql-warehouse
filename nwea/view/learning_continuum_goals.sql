@@ -11,7 +11,7 @@ WITH
       test_name,
       CAST(SUBSTRING(field, 6, 1) AS INT) AS goal_number,
       SUBSTRING(field, 8, 10) AS goal_field,
-      VALUE
+      [value]
     FROM
       (
         SELECT
@@ -40,7 +40,7 @@ WITH
         FROM
           nwea.assessment_result_identifiers
       ) AS sub UNPIVOT (
-        VALUE FOR field IN (
+        [value] FOR field IN (
           goal_1_adjective,
           goal_1_name,
           goal_1_range,
@@ -74,7 +74,7 @@ SELECT
   adjective
 FROM
   long_data PIVOT (
-    MAX(VALUE) FOR goal_field IN (
+    MAX([value]) FOR goal_field IN (
       [name],
       [rit_score],
       [range],

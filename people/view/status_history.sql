@@ -9,7 +9,9 @@ WITH
       sh.file_number,
       sh.position_status,
       CASE
-        WHEN CAST(status_effective_date AS DATE) >= '2021-01-01' THEN CAST(status_effective_date AS DATE)
+        WHEN (
+          CAST(sh.status_effective_date AS DATE) >= '2021-01-01'
+        ) THEN CAST(sh.status_effective_date AS DATE)
         ELSE '2021-01-01'
       END AS status_effective_date,
       CAST(
@@ -22,8 +24,10 @@ WITH
       'ADP' AS source_system
     FROM
       gabby.adp.status_history AS sh
-      INNER JOIN gabby.people.employee_numbers AS sr ON sh.associate_id = sr.associate_id
-      AND sr.is_active = 1
+      INNER JOIN gabby.people.employee_numbers AS sr ON (
+        sh.associate_id = sr.associate_id
+        AND sr.is_active = 1
+      )
     WHERE
       CAST(sh.status_effective_date AS DATE) >= '2021-01-01'
       OR COALESCE(
@@ -59,8 +63,10 @@ WITH
       'DF' AS source_system
     FROM
       gabby.dayforce.employee_status_clean AS ds
-      INNER JOIN gabby.people.employee_numbers AS sr ON ds.number = sr.employee_number
-      AND sr.is_active = 1
+      INNER JOIN gabby.people.employee_numbers AS sr ON (
+        ds.number = sr.employee_number
+        AND sr.is_active = 1
+      )
     WHERE
       ds.effective_start <= '2020-12-31'
   ),
@@ -75,6 +81,7 @@ WITH
       paid_leave_of_absence,
       source_system,
       CAST(status_effective_date AS DATE) AS status_effective_date,
+      /* cover ADP Import status with terminal DF reason */
       CASE
         WHEN termination_reason_description = 'Importcreated Action' THEN LAG(
           termination_reason_description,
@@ -86,7 +93,7 @@ WITH
             status_effective_date
         )
         ELSE termination_reason_description
-      END AS termination_reason_description /* cover ADP Import status with terminal DF reason */,
+      END AS termination_reason_description,
       COALESCE(
         status_effective_end_date,
         DATEADD(
@@ -157,10 +164,18 @@ WITH
           source_system,
           DATEFROMPARTS(
             CASE
-              WHEN DATEPART(YEAR, status_effective_date) > gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-              AND DATEPART(MONTH, status_effective_date) >= 7 THEN DATEPART(YEAR, status_effective_date) + 1
-              WHEN DATEPART(YEAR, CURRENT_TIMESTAMP) = gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
-              AND DATEPART(MONTH, CURRENT_TIMESTAMP) >= 7 THEN gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 2
+              WHEN (
+                (
+                  DATEPART(YEAR, status_effective_date)
+                ) > gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+                AND DATEPART(MONTH, status_effective_date) >= 7
+              ) THEN DATEPART(YEAR, status_effective_date) + 1
+              WHEN (
+                (
+                  DATEPART(YEAR, CURRENT_TIMESTAMP)
+                ) = gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
+                AND DATEPART(MONTH, CURRENT_TIMESTAMP) >= 7
+              ) THEN gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 2
               ELSE gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
             END,
             6,
@@ -198,6 +213,7 @@ SELECT
   MIN(
     CASE
       WHEN (
+        /* trunk-ignore(sqlfluff/L016) */
         CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN status_effective_date AND status_effective_end_date_eoy
       ) THEN position_status
     END

@@ -16,7 +16,6 @@ WITH
       END AS preview_or_final,
       CASE
         WHEN CHARINDEX('PREV', _file) > 0 THEN CAST(SUBSTRING(_file, 39, 1) AS INT)
-        ELSE NULL
       END AS preview_number,
       CAST(SUBSTRING(_file, 23, 10) AS DATE) AS payroll_date,
       CONCAT(
@@ -186,7 +185,6 @@ WITH
             file_nbr,
             preview_or_final
         )
-        ELSE NULL
       END AS max_final_payroll_date
     FROM
       (

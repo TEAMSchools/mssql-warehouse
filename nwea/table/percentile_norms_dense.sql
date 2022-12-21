@@ -24,11 +24,11 @@ WITH
   ),
   grade_levels AS (
     SELECT
-      N AS grade_level
+      n AS grade_level
     FROM
       gabby.utilities.row_generator
     WHERE
-      (N BETWEEN 0 AND 12)
+      (n BETWEEN 0 AND 12)
   ),
   scaffold AS (
     SELECT

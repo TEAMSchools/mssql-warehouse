@@ -34,6 +34,7 @@ WITH
       gabby.people.employment_history_static AS eh
     WHERE
       (
+        /* trunk-ignore(sqlfluff/L016) */
         CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN eh.effective_start_date AND eh.effective_end_date
       )
     UNION ALL
@@ -142,108 +143,108 @@ WITH
   ),
   clean_staff AS (
     SELECT
-      sub.employee_number,
-      sub.associate_id,
-      sub.associate_oid,
-      sub.position_id,
-      sub.file_number,
-      sub.first_name,
-      sub.last_name,
-      sub.position_status,
-      sub.business_unit_code,
-      sub.business_unit,
-      sub.[location],
-      sub.home_department,
-      sub.job_title,
-      sub.is_manager,
-      sub.reports_to_associate_id,
-      sub.annual_salary,
-      sub.primary_position,
-      sub.position_effective_start_date,
-      sub.position_effective_end_date,
-      sub.work_assignment_start_date,
-      sub.original_hire_date,
-      sub.rehire_date,
-      sub.termination_date,
-      sub.termination_reason,
-      sub.job_family,
-      sub.address_street,
-      sub.address_city,
-      sub.address_state,
-      sub.address_zip,
-      sub.birth_date,
-      sub.personal_email,
-      sub.personal_mobile,
-      sub.wfmgr_pay_rule,
-      sub.worker_category,
-      sub.flsa,
-      sub.associate_id_legacy,
-      sub.sex,
-      sub.preferred_gender,
-      sub.gender_reporting,
-      sub.years_teaching_in_any_state,
-      sub.years_teaching_in_nj_or_fl,
-      sub.kipp_alumni_status,
-      sub.years_of_professional_experience_before_joining,
-      sub.life_experience_in_communities_we_serve,
-      sub.teacher_prep_program,
-      sub.professional_experience_in_communities_we_serve,
-      sub.attended_relay,
-      sub.preferred_race_ethnicity,
-      sub.preferred_race_ethnicity AS race,
-      COALESCE(
-        sub.preferred_first_name,
-        sub.first_name
-      ) AS preferred_first_name,
-      COALESCE(
-        sub.preferred_last_name,
-        sub.last_name
-      ) AS preferred_last_name,
+      employee_number,
+      associate_id,
+      associate_oid,
+      position_id,
+      file_number,
+      first_name,
+      last_name,
+      position_status,
+      business_unit_code,
+      business_unit,
+      [location],
+      home_department,
+      job_title,
+      is_manager,
+      reports_to_associate_id,
+      annual_salary,
+      primary_position,
+      position_effective_start_date,
+      position_effective_end_date,
+      work_assignment_start_date,
+      original_hire_date,
+      rehire_date,
+      termination_date,
+      termination_reason,
+      job_family,
+      address_street,
+      address_city,
+      address_state,
+      address_zip,
+      birth_date,
+      personal_email,
+      personal_mobile,
+      wfmgr_pay_rule,
+      worker_category,
+      flsa,
+      associate_id_legacy,
+      sex,
+      preferred_gender,
+      gender_reporting,
+      years_teaching_in_any_state,
+      years_teaching_in_nj_or_fl,
+      kipp_alumni_status,
+      years_of_professional_experience_before_joining,
+      life_experience_in_communities_we_serve,
+      teacher_prep_program,
+      professional_experience_in_communities_we_serve,
+      attended_relay,
+      preferred_race_ethnicity,
+      preferred_race_ethnicity AS race,
+      COALESCE(preferred_first_name, first_name) AS preferred_first_name,
+      COALESCE(preferred_last_name, last_name) AS preferred_last_name,
       CASE
-        WHEN sub.preferred_race_ethnicity LIKE '%Decline to state%' THEN 1
+        WHEN preferred_race_ethnicity LIKE '%Decline to state%' THEN 1
         ELSE 0
       END AS is_race_decline,
       CASE
-        WHEN sub.preferred_race_ethnicity LIKE '%My racial/ethnic identity is not listed%' THEN 1
+        WHEN preferred_race_ethnicity LIKE (
+          '%My racial/ethnic identity is not listed%'
+        ) THEN 1
         ELSE 0
       END AS is_race_other,
       CASE
-        WHEN sub.preferred_race_ethnicity LIKE '%Black/African American%' THEN 1
+        WHEN preferred_race_ethnicity LIKE '%Black/African American%' THEN 1
         ELSE 0
       END AS is_race_black,
       CASE
-        WHEN sub.preferred_race_ethnicity LIKE '%Asian%' THEN 1
+        WHEN preferred_race_ethnicity LIKE '%Asian%' THEN 1
         ELSE 0
       END AS is_race_asian,
       CASE
-        WHEN sub.preferred_race_ethnicity LIKE '%Native Hawaiian or Other Pacific Islander%' THEN 1
+        WHEN preferred_race_ethnicity LIKE (
+          '%Native Hawaiian or Other Pacific Islander%'
+        ) THEN 1
         ELSE 0
       END AS is_race_nhpi,
       CASE
-        WHEN sub.preferred_race_ethnicity LIKE '%Middle Eastern%' THEN 1
+        WHEN preferred_race_ethnicity LIKE '%Middle Eastern%' THEN 1
         ELSE 0
       END AS is_race_mideast,
       CASE
-        WHEN sub.preferred_race_ethnicity LIKE '%White%' THEN 1
+        WHEN preferred_race_ethnicity LIKE '%White%' THEN 1
         ELSE 0
       END AS is_race_white,
       CASE
-        WHEN sub.preferred_race_ethnicity LIKE '%Native American/First Nation%' THEN 1
+        WHEN preferred_race_ethnicity LIKE '%Native American/First Nation%' THEN 1
         ELSE 0
       END AS is_race_nafirstnation,
       CASE
-        WHEN sub.preferred_race_ethnicity LIKE '%Bi/Multiracial%' THEN 1
-        WHEN sub.preferred_race_ethnicity LIKE '%,%' THEN 1
+        WHEN preferred_race_ethnicity LIKE '%Bi/Multiracial%' THEN 1
+        WHEN preferred_race_ethnicity LIKE '%,%' THEN 1
         ELSE 0
       END AS is_race_multi,
       CASE
-        WHEN sub.preferred_race_ethnicity IS NULL THEN NULL
-        WHEN sub.preferred_race_ethnicity LIKE '%Decline to state%' THEN NULL
-        WHEN sub.preferred_race_ethnicity LIKE '%Latinx/Hispanic/Chicana(o)%' THEN 'Hispanic or Latino'
+        WHEN preferred_race_ethnicity IS NULL THEN NULL
+        WHEN preferred_race_ethnicity LIKE '%Decline to state%' THEN NULL
+        WHEN (
+          preferred_race_ethnicity LIKE '%Latinx/Hispanic/Chicana(o)%'
+        ) THEN 'Hispanic or Latino'
         ELSE 'Not Hispanic or Latino'
       END AS ethnicity,
-      sub.education_level,
-      sub.undergrad_university
+      education_level,
+      undergrad_university
     FROM
       (
         SELECT
@@ -264,7 +265,7 @@ WITH
           eh.work_assignment_start_date,
           eh.annual_salary,
           eh.primary_position,
-          CAST(NULL AS NVARCHAR(256)) AS job_family /* on the way */,
+          CAST(NULL AS NVARCHAR(256)) AS job_family,
           CASE
             WHEN eh.associate_id IN (
               SELECT
@@ -273,13 +274,13 @@ WITH
                 gabby.people.manager_history_static
               WHERE
                 (
+                  /* trunk-ignore(sqlfluff/L016) */
                   CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN reports_to_effective_date AND reports_to_effective_end_date_eoy
                 )
             ) THEN 1
             ELSE 0
-          END AS is_manager
+          END AS is_manager,
           /* dedupe positions */
-,
           ROW_NUMBER() OVER (
             PARTITION BY
               eh.associate_id
@@ -333,8 +334,10 @@ WITH
             )
           END AS termination_date,
           CASE
-            WHEN eh.position_status = 'Prestart'
-            AND w.termination_date IS NULL THEN NULL
+            WHEN (
+              eh.position_status = 'Prestart'
+              AND w.termination_date IS NULL
+            ) THEN NULL
             WHEN eh.position_status = 'Prestart' THEN eh.status_effective_start_date
             ELSE rh.rehire_date
           END AS rehire_date,
@@ -351,7 +354,7 @@ WITH
             cf.[KIPP Alumni Status]
           ) AS kipp_alumni_status,
           COALESCE(
-            sdf.professional_experience_before_KIPP,
+            sdf.[professional_experience_before_KIPP],
             cf.[Years of Professional Experience before joining]
           ) AS years_of_professional_experience_before_joining,
           COALESCE(
@@ -386,10 +389,14 @@ WITH
                 COALESCE(
                   sdf.race_ethnicity,
                   cf.[Preferred Race/Ethnicity],
-                  ea.race_description + CASE
-                    WHEN ISNULL(ea.ethnicity, '') IN ('Not Hispanic or Latino', '') THEN ''
-                    ELSE ',Latinx/Hispanic/Chicana(o)'
-                  END
+                  CONCAT(
+                    ea.race_description,
+                    CASE
+                      WHEN (
+                        ea.ethnicity != 'Not Hispanic or Latino'
+                      ) THEN ',Latinx/Hispanic/Chicana(o)'
+                    END
+                  )
                 ),
                 'Black or African American',
                 'Black/African American'
@@ -402,16 +409,29 @@ WITH
           ) AS preferred_race_ethnicity
         FROM
           all_staff AS eh
-          INNER JOIN gabby.adp.employees_all AS ea ON eh.associate_id = ea.associate_id
+          INNER JOIN gabby.adp.employees_all AS ea ON (
+            eh.associate_id = ea.associate_id
+          )
           LEFT JOIN gabby.adp.workers_clean_static AS w ON eh.associate_id = w.worker_id
-          LEFT JOIN hire_dates AS hd ON eh.associate_id = hd.associate_id
-          LEFT JOIN termination_dates AS td ON eh.associate_id = td.associate_id
-          LEFT JOIN rehire_dates AS rh ON eh.associate_id = rh.associate_id
-          LEFT JOIN gabby.adp.workers_custom_field_group_wide_static AS cf ON eh.associate_id = cf.worker_id
-          LEFT JOIN gabby.people.id_crosswalk_adp AS cw ON eh.employee_number = cw.df_employee_number
-          AND cw.rn_curr = 1
-          LEFT JOIN gabby.adp.employees AS p ON eh.position_id = p.position_id
-          LEFT JOIN gabby.surveys.staff_information_survey_wide_static AS sdf ON eh.employee_number = sdf.employee_number
+          LEFT JOIN hire_dates AS hd ON (
+            eh.associate_id = hd.associate_id
+          )
+          LEFT JOIN termination_dates AS td ON (
+            eh.associate_id = td.associate_id
+          )
+          LEFT JOIN rehire_dates AS rh ON (
+            eh.associate_id = rh.associate_id
+          )
+          /* trunk-ignore(sqlfluff/L016) */
+          LEFT JOIN gabby.adp.workers_custom_field_group_wide_static AS cf ON (eh.associate_id = cf.worker_id)
+          LEFT JOIN gabby.people.id_crosswalk_adp AS cw ON (
+            eh.employee_number = cw.df_employee_number
+            AND cw.rn_curr = 1
+          )
+          LEFT JOIN gabby.adp.employees AS p ON (eh.position_id = p.position_id)
+          LEFT JOIN gabby.surveys.staff_information_survey_wide_static AS sdf ON (
+            eh.employee_number = sdf.employee_number
+          )
         WHERE
           eh.employee_number IS NOT NULL
       ) AS sub
@@ -479,7 +499,11 @@ SELECT
   c.professional_experience_in_communities_we_serve,
   c.attended_relay,
   c.preferred_last_name + ', ' + c.preferred_first_name AS preferred_name,
-  SUBSTRING(c.personal_mobile, 1, 3) + '-' + SUBSTRING(c.personal_mobile, 4, 3) + '-' + SUBSTRING(c.personal_mobile, 7, 4) AS personal_mobile,
+  CONCAT(
+    SUBSTRING(c.personal_mobile, 1, 3) + '-',
+    SUBSTRING(c.personal_mobile, 4, 3) + '-',
+    SUBSTRING(c.personal_mobile, 7, 4)
+  ) AS personal_mobile,
   CASE
     WHEN c.business_unit = 'KIPP TEAM and Family Schools Inc.' THEN '9AM'
     WHEN c.business_unit = 'TEAM Academy Charter School' THEN '2Z3'
@@ -518,7 +542,9 @@ SELECT
   m.preferred_last_name + ', ' + m.preferred_first_name AS manager_name,
   m.business_unit AS manager_business_unit,
   y.years_at_kipp_total,
-  y.years_at_kipp_total + c.years_of_professional_experience_before_joining AS total_professional_experience,
+  (
+    y.years_at_kipp_total + c.years_of_professional_experience_before_joining
+  ) AS total_professional_experience,
   y.years_teaching_at_kipp,
   y.years_teaching_at_kipp + c.years_teaching_in_nj_or_fl AS nj_fl_total_years_teaching,
   y.years_teaching_at_kipp + c.years_teaching_in_any_state AS total_years_teaching,
@@ -528,11 +554,21 @@ SELECT
   ads.userprincipalname
 FROM
   clean_staff AS c
-  LEFT JOIN gabby.people.school_crosswalk AS s ON c.[location] = s.site_name
-  AND s._fivetran_deleted = 0
-  LEFT JOIN clean_staff AS m ON c.reports_to_associate_id = m.associate_id
-  LEFT JOIN gabby.people.years_experience AS y ON c.employee_number = y.employee_number
-  LEFT JOIN gabby.pm.teacher_grade_levels AS gl ON c.employee_number = gl.employee_number
-  AND gl.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-  AND gl.is_primary_gl = 1
-  LEFT JOIN gabby.adsi.user_attributes_static AS ads ON CAST(c.employee_number AS VARCHAR(25)) = ads.employeenumber
+  LEFT JOIN gabby.people.school_crosswalk AS s ON (
+    c.[location] = s.site_name
+    AND s._fivetran_deleted = 0
+  )
+  LEFT JOIN clean_staff AS m ON (
+    c.reports_to_associate_id = m.associate_id
+  )
+  LEFT JOIN gabby.people.years_experience AS y ON (
+    c.employee_number = y.employee_number
+  )
+  LEFT JOIN gabby.pm.teacher_grade_levels AS gl ON (
+    c.employee_number = gl.employee_number
+    AND gl.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+    AND gl.is_primary_gl = 1
+  )
+  LEFT JOIN gabby.adsi.user_attributes_static AS ads ON (
+    CAST(c.employee_number AS VARCHAR(25)) = ads.employeenumber
+  )

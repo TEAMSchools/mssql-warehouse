@@ -36,34 +36,28 @@ WITH
           mem.calendardate,
           mem.attendancevalue,
           ISNULL(att.att_code, 'P') AS att_code,
-          CAST(
-            ROW_NUMBER(AS INT) OVER (
-              PARTITION BY
-                mem.studentid,
-                mem.yearid
-              ORDER BY
-                mem.calendardate ASC
-            )
+          ROW_NUMBER() OVER (
+            PARTITION BY
+              mem.studentid,
+              mem.yearid
+            ORDER BY
+              mem.calendardate ASC
           ) AS day_number,
-          CAST(
-            ROW_NUMBER(AS INT) OVER (
-              PARTITION BY
-                mem.studentid,
-                mem.yearid,
-                att.att_code
-              ORDER BY
-                mem.calendardate
-            )
+          ROW_NUMBER() OVER (
+            PARTITION BY
+              mem.studentid,
+              mem.yearid,
+              att.att_code
+            ORDER BY
+              mem.calendardate
           ) AS streak_rn,
-          CAST(
-            ROW_NUMBER(AS INT) OVER (
-              PARTITION BY
-                mem.studentid,
-                mem.yearid,
-                mem.attendancevalue
-              ORDER BY
-                mem.calendardate
-            )
+          ROW_NUMBER() OVER (
+            PARTITION BY
+              mem.studentid,
+              mem.yearid,
+              mem.attendancevalue
+            ORDER BY
+              mem.calendardate
           ) AS streak_att_rn
         FROM
           powerschool.ps_adaadm_daily_ctod AS mem

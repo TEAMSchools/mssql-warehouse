@@ -14,7 +14,9 @@ WITH
       gabby.utilities.row_generator_smallint
     WHERE
       (
-        n BETWEEN 2015 AND gabby.utilities.GLOBAL_ACADEMIC_YEAR  ()
+        n BETWEEN 2015 AND (
+          gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+        )
       )
   ),
   additional_earnings AS (

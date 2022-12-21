@@ -35,8 +35,8 @@ WITH
         ) AS NVARCHAR(256)
       ) AS month_year_expiration,
       CAST(
-        JSON_VALUE(ch.[value], '$.certificate_id') AS NVARCHAR(256) AS certificate_id
-      )
+        JSON_VALUE(ch.[value], '$.certificate_id') AS NVARCHAR(256)
+      ) AS certificate_id
     FROM
       gabby.njdoe.certification_check AS cc
       CROSS APPLY OPENJSON (cc.certificate_history, '$') AS ch
@@ -75,9 +75,9 @@ SELECT
   END AS month_year_issued,
   CASE
     WHEN month_year_issued != '' THEN DATEFROMPARTS(
-      CAST(RIGHT(month_year_issued, 4)),
-      CONVERT(INT, LEFT(month_year_issued, 2)),
-      1 AS INT
+      RIGHT(month_year_issued, 4),
+      LEFT(month_year_issued, 2),
+      1
     )
   END AS issued_date,
   CASE
@@ -92,14 +92,11 @@ SELECT
         MONTH,
         1,
         DATEFROMPARTS(
-          CAST(RIGHT(month_year_expiration, 4)),
-          CONVERT(
-            INT,
-            LEFT(month_year_expiration, 2)
-          ),
+          RIGHT(month_year_expiration, 4),
+          LEFT(month_year_expiration, 2),
           1
         )
-      ) AS INT
+      )
     )
   END AS expiration_date
 FROM

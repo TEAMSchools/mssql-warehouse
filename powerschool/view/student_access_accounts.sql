@@ -46,7 +46,9 @@ WITH
                   s.last_name,
                   CHARINDEX(' I', s.last_name) - 1
                 )
-                WHEN CHARINDEX('-', s.last_name) + CHARINDEX(' ', s.last_name) = 0 THEN REPLACE(s.last_name, ' JR', '')
+                WHEN (
+                  CHARINDEX('-', s.last_name) + CHARINDEX(' ', s.last_name) = 0
+                ) THEN REPLACE(s.last_name, ' JR', '')
                 WHEN (
                   CHARINDEX(' ', s.last_name) > 0
                   AND CHARINDEX('-', s.last_name) > 0
@@ -191,7 +193,7 @@ SELECT
     WHEN (
       au.grade_level <= 2
       AND LEN(
-        CONCAT(last_name_clean, dob_year)
+        CONCAT(au.last_name_clean, au.dob_year)
       ) <= 7
     ) THEN CONCAT(
       au.last_name_clean,

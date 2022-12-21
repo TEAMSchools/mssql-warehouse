@@ -1,28 +1,28 @@
 CREATE OR ALTER VIEW
   people.certification_history AS
 SELECT
-  sub.employee_number,
-  sub.seq_number,
-  sub.certificate_id,
-  sub.certificate_type,
-  sub.is_charter_school_only,
-  sub.endorsement_or_rank,
-  sub.county_code,
-  sub.basis_code,
-  sub.district_code,
-  sub.month_year_issued,
-  sub.academic_year,
-  sub.issued_date,
-  sub.month_year_expiration,
-  sub.expiration_date,
-  sub.cert_status,
-  sub.valid_cert,
-  sub.cert_state,
-  sub.schoolstate,
+  employee_number,
+  seq_number,
+  certificate_id,
+  certificate_type,
+  is_charter_school_only,
+  endorsement_or_rank,
+  county_code,
+  basis_code,
+  district_code,
+  month_year_issued,
+  academic_year,
+  issued_date,
+  month_year_expiration,
+  expiration_date,
+  cert_status,
+  valid_cert,
+  cert_state,
+  schoolstate,
   CASE
-    WHEN sub.schoolstate = sub.cert_state THEN MAX(sub.valid_cert) OVER (
+    WHEN schoolstate = cert_state THEN MAX(valid_cert) OVER (
       PARTITION BY
-        sub.employee_number
+        employee_number
     )
   END AS is_certified
 FROM
@@ -43,8 +43,8 @@ FROM
       c.month_year_expiration,
       c.expiration_date,
       CASE
-        WHEN certificate_type IS NULL THEN 0
-        WHEN certificate_type IN (
+        WHEN c.certificate_type IS NULL THEN 0
+        WHEN c.certificate_type IN (
           'CE - Charter School - Temp',
           'CE - Temp',
           'Provisional - Temp'
@@ -56,7 +56,11 @@ FROM
       'NJ' AS cert_state
     FROM
       gabby.people.staff_crosswalk_static AS s
-      LEFT JOIN gabby.powerschool.schools AS pss ON s.primary_site_schoolid = pss.school_number
-      AND s.[db_name] = pss.[db_name]
-      LEFT JOIN gabby.njdoe.certification_certificate_history_static AS c ON s.df_employee_number = c.df_employee_number
+      LEFT JOIN gabby.powerschool.schools AS pss ON (
+        s.primary_site_schoolid = pss.school_number
+        AND s.[db_name] = pss.[db_name]
+      )
+      LEFT JOIN gabby.njdoe.certification_certificate_history_static AS c ON (
+        s.df_employee_number = c.df_employee_number
+      )
   ) AS sub

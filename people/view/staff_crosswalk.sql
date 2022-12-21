@@ -160,19 +160,27 @@ FROM
       adm.mail AS manager_mail
     FROM
       gabby.people.staff_roster AS sr
-      LEFT JOIN gabby.people.id_crosswalk_powerschool AS idps ON sr.employee_number = idps.df_employee_number
-      AND idps.is_master = 1
-      AND idps._fivetran_deleted = 0
-      LEFT JOIN gabby.adsi.user_attributes_static AS ads ON CAST(
-        sr.employee_number AS VARCHAR(25)
-      ) = ads.employeenumber
-      LEFT JOIN gabby.adsi.user_attributes_static AS adm ON CAST(
-        sr.manager_employee_number AS VARCHAR(25)
-      ) = adm.employeenumber
+      LEFT JOIN gabby.people.id_crosswalk_powerschool AS idps ON (
+        sr.employee_number = idps.df_employee_number
+        AND idps.is_master = 1
+        AND idps._fivetran_deleted = 0
+      )
+      LEFT JOIN gabby.adsi.user_attributes_static AS ads ON (
+        CAST(
+          sr.employee_number AS VARCHAR(25)
+        ) = ads.employeenumber
+      )
+      LEFT JOIN gabby.adsi.user_attributes_static AS adm ON (
+        CAST(
+          sr.manager_employee_number AS VARCHAR(25)
+        ) = adm.employeenumber
+      )
   ) AS sub
   LEFT JOIN gabby.pm.teacher_grade_levels AS gl ON (
-    sub.ps_teachernumber = gl.teachernumber
-    COLLATE LATIN1_GENERAL_BIN
+    (
+      sub.ps_teachernumber = gl.teachernumber
+      COLLATE LATIN1_GENERAL_BIN
+    )
+    AND gl.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+    AND gl.is_primary_gl = 1
   )
-  AND gl.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-  AND gl.is_primary_gl = 1

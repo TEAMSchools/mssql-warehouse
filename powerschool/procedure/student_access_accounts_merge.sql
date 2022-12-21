@@ -1,24 +1,10 @@
 CREATE
 OR ALTER
 PROCEDURE powerschool.student_access_accounts_merge AS
-WITH
-  merge_cte AS (
-    SELECT
-      student_number,
-      schoolid,
-      enroll_status,
-      base_username,
-      alt_username,
-      uses_alt,
-      base_dupe_audit,
-      alt_dupe_audit,
-      student_web_id,
-      student_web_password
-    FROM
-      gabby.powerschool.student_access_accounts
-  )
 MERGE
-  gabby.powerschool.student_access_accounts_static AS tgt USING merge_cte AS src ON (
+  gabby.powerschool.student_access_accounts_static AS tgt
+  /**/
+  USING powerschool.student_access_accounts AS src ON (
     src.student_number = tgt.student_number
   )
 WHEN MATCHED THEN
@@ -40,14 +26,14 @@ INSERT
   )
 VALUES
   (
-    SOURCE.student_number,
-    SOURCE.schoolid,
-    SOURCE.enroll_status,
-    SOURCE.base_username,
-    SOURCE.alt_username,
-    SOURCE.uses_alt,
-    SOURCE.base_dupe_audit,
-    SOURCE.alt_dupe_audit,
-    SOURCE.student_web_id,
-    SOURCE.student_web_password
+    src.student_number,
+    src.schoolid,
+    src.enroll_status,
+    src.base_username,
+    src.alt_username,
+    src.uses_alt,
+    src.base_dupe_audit,
+    src.alt_dupe_audit,
+    src.student_web_id,
+    src.student_web_password
   );

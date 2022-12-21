@@ -43,9 +43,12 @@ WITH
           sec.courses_gradescaleid AS gradescaleid,
           sec.credit_hours AS potential_credit_hours,
           CASE
-            WHEN sec.courses_gradescaleid = 712 THEN 874 /* unweighted 2016-2018 */
-            WHEN sec.courses_gradescaleid = 991 THEN 976 /* unweighted 2019+ */
-            WHEN sec.courses_gradescaleid IS NULL THEN 874 /* MISSING GRADESCALE - default 2016+ */
+          /* unweighted 2016-2018 */
+            WHEN sec.courses_gradescaleid = 712 THEN 874
+            /* unweighted 2019+ */
+            WHEN sec.courses_gradescaleid = 991 THEN 976
+            /* MISSING GRADESCALE - default 2016+ */
+            WHEN sec.courses_gradescaleid IS NULL THEN 874
             ELSE sec.courses_gradescaleid
           END AS gradescaleid_unweighted,
           tb.yearid,
@@ -573,12 +576,14 @@ FROM
   LEFT JOIN powerschool.gradescaleitem_lookup_static AS y1gs ON (
     sub.gradescaleid = y1gs.gradescaleid
     AND (
+      /* trunk-ignore(sqlfluff/L016) */
       sub.y1_grade_percent BETWEEN y1gs.min_cutoffpercentage AND y1gs.max_cutoffpercentage
     )
   )
   LEFT JOIN powerschool.gradescaleitem_lookup_static AS y1gsu ON (
     sub.gradescaleid_unweighted = y1gsu.gradescaleid
     AND (
+      /* trunk-ignore(sqlfluff/L016) */
       sub.y1_grade_percent BETWEEN y1gsu.min_cutoffpercentage AND y1gsu.max_cutoffpercentage
     )
   )

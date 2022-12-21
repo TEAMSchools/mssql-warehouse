@@ -3,7 +3,7 @@ CREATE OR ALTER VIEW
 SELECT
   df_employee_number,
   academic_year,
-  field AS pm_term,
+  UPPER(REPLACE(field, '_', '')) AS pm_term,
   [value] AS exemption
 FROM
   (
@@ -18,14 +18,12 @@ FROM
         ) AS INT
       ) AS df_employee_number,
       academic_year,
-      pm_1 AS PM1,
-      pm_2 AS PM2,
-      pm_3 AS PM3,
-      pm_4 AS PM4
+      pm_1,
+      pm_2,
+      pm_3,
+      pm_4
     FROM
       gabby.pm.teacher_goals_exemption
-    WHERE
-      _fivetran_deleted = 0
   ) AS sub UNPIVOT (
-    VALUE FOR field IN (PM1, PM2, PM3, PM4)
+    [value] FOR field IN (pm_1, pm_2, pm_3, pm_4)
   ) AS u
