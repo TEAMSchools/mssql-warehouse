@@ -28,7 +28,7 @@ SELECT
   CASE
     WHEN passed = 1 THEN 'Achieved'
     WHEN passed = 0 THEN 'Did Not Achieve'
-  END AS status
+  END AS [status]
 FROM
   (
     SELECT

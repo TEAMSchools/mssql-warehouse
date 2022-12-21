@@ -40,10 +40,14 @@ SELECT
   sec.course_name
 FROM
   gabby.powerschool.cc
-  INNER JOIN gabby.powerschool.students AS s ON cc.studentid = s.id
-  AND cc.[db_name] = s.[db_name]
-  INNER JOIN gabby.powerschool.sections_identifiers AS sec ON ABS(cc.sectionid) = sec.sectionid
-  AND cc.[db_name] = sec.[db_name]
+  INNER JOIN gabby.powerschool.students AS s ON (
+    cc.studentid = s.id
+    AND cc.[db_name] = s.[db_name]
+  )
+  INNER JOIN gabby.powerschool.sections_identifiers AS sec ON (
+    ABS(cc.sectionid) = sec.sectionid
+    AND cc.[db_name] = sec.[db_name]
+  )
 WHERE
   CONCAT(
     cc.studentid,

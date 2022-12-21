@@ -9,31 +9,31 @@ SELECT
 FROM
   (
     SELECT
-      enr.studentid,
-      enr.student_number,
-      enr.academic_year,
-      enr.schoolid,
+      studentid,
+      student_number,
+      academic_year,
+      schoolid,
       (
         CASE
-          WHEN gabby.utilities.STRIP_CHARACTERS (enr.section_number, '0-9') = '' THEN enr.teacher_name
-          ELSE gabby.utilities.STRIP_CHARACTERS (enr.section_number, '0-9')
+          WHEN gabby.utilities.STRIP_CHARACTERS (section_number, '0-9') = '' THEN teacher_name
+          ELSE gabby.utilities.STRIP_CHARACTERS (section_number, '0-9')
         END
         COLLATE LATIN1_GENERAL_BIN
       ) AS team,
       ROW_NUMBER() OVER (
         PARTITION BY
-          enr.student_number,
-          enr.academic_year,
-          enr.schoolid
+          student_number,
+          academic_year,
+          schoolid
         ORDER BY
-          enr.section_enroll_status ASC,
-          enr.dateleft DESC,
-          enr.dateenrolled DESC
+          section_enroll_status ASC,
+          dateleft DESC,
+          dateenrolled DESC
       ) AS rn_year
     FROM
-      powerschool.course_enrollments AS enr
+      powerschool.course_enrollments
     WHERE
-      enr.course_number = 'HR'
+      course_number = 'HR'
   ) AS sub
 WHERE
   rn_year = 1

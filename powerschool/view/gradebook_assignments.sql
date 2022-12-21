@@ -7,13 +7,13 @@ SELECT
   assign_date,
   assign_name,
   pointspossible,
-  weight,
+  [weight],
   extracreditpoints,
   isfinalscorecalculated,
   categoryid,
   category_name
 FROM
-  powerschool.gradebook_assignments_current_static AS
+  powerschool.gradebook_assignments_current_static
 UNION ALL
 SELECT
   assignmentsectionid,
@@ -22,7 +22,7 @@ SELECT
   assign_date,
   assign_name,
   pointspossible,
-  weight,
+  [weight],
   extracreditpoints,
   isfinalscorecalculated,
   categoryid,

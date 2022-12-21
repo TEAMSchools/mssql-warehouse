@@ -109,7 +109,9 @@ WITH
           ) AS date_value
         FROM
           gabby.smartrecruiters.report_applicants AS apl
-          INNER JOIN gabby.smartrecruiters.report_applications AS app ON apl.application_id = app.application_id
+          INNER JOIN gabby.smartrecruiters.report_applications AS app ON (
+            apl.application_id = app.application_id
+          )
       ) AS sub UNPIVOT (
         [value] FOR [key] IN (
           candidate_first_name,
@@ -269,61 +271,63 @@ SELECT
   END AS recruiting_year
 FROM
   applicants_repivot AS apl
-  INNER JOIN gabby.smartrecruiters.report_applications AS app ON apl.candidate_id = app.candidate_id
+  INNER JOIN gabby.smartrecruiters.report_applications AS app ON (
+    apl.candidate_id = app.candidate_id
+  )
 UNION ALL
 SELECT
-  COALESCE(a.profile_id, a.jobapp_id) AS candidate_id,
+  COALESCE(profile_id, jobapp_id) AS candidate_id,
   SUBSTRING(
-    a.[name],
+    [name],
     1,
-    CHARINDEX(' ', a.[name])
+    CHARINDEX(' ', [name])
   ) AS candidate_first_name,
   SUBSTRING(
-    a.[name],
-    CHARINDEX(' ', a.[name]) + 1,
-    LEN(a.[name])
+    [name],
+    CHARINDEX(' ', [name]) + 1,
+    LEN([name])
   ) AS candidate_last_name,
-  a.email AS candidate_email,
-  CAST(a.degree_1_gpa AS NVARCHAR) AS undergrad_gpa,
-  CAST(a.degree_2_gpa AS NVARCHAR) AS grad_gpa,
+  email AS candidate_email,
+  CAST(degree_1_gpa AS NVARCHAR) AS undergrad_gpa,
+  CAST(degree_2_gpa AS NVARCHAR) AS grad_gpa,
   NULL AS taf_current_or_former_kipp_employee,
   NULL AS mia_teacher_certification_question,
   NULL AS mia_out_of_state_teaching_certification_details,
   NULL AS nj_teacher_certification_question,
   NULL AS nj_out_of_state_teacher_certification_details,
   NULL AS nj_out_of_state_teacher_certification_sped_credits,
-  a.previous_employer AS current_employer,
+  previous_employer AS current_employer,
   NULL AS taf_affiliated_orgs,
   NULL AS taf_other_orgs,
   NULL AS taf_city_of_interest,
   NULL AS current_or_former_kippnjmiataf_employee,
   NULL AS taf_expected_salary,
-  a.race_ethnicity AS kf_race,
-  a.gender AS kf_gender,
+  race_ethnicity AS kf_race,
+  gender AS kf_gender,
   NULL AS kf_are_you_alumnus,
   NULL AS kf_in_which_regions_alumnus,
   NULL AS candidate_tags_values,
   NULL AS school_shared_with,
-  a.jobapp_id AS application_id,
+  jobapp_id AS application_id,
   NULL AS application_reason_for_rejection,
-  a.selection_stage AS application_state,
-  a.hired_status_date AS application_state_hired_date,
+  selection_stage AS application_state,
+  hired_status_date AS application_state_hired_date,
   NULL AS application_state_in_review_date,
-  a.interview_date AS application_state_interview_date,
+  interview_date AS application_state_interview_date,
   NULL AS application_state_lead_date,
-  a.submitted_date AS application_state_new_date,
-  a.offer_date AS application_state_offer_date,
-  a.rejected_date AS application_state_rejected_date,
-  a.selection_status AS application_status,
+  submitted_date AS application_state_new_date,
+  offer_date AS application_state_offer_date,
+  rejected_date AS application_state_rejected_date,
+  selection_status AS application_status,
   NULL AS application_status_in_review_resume_review_date,
-  a.interview_date AS application_status_interview_demo_date,
-  a.phone_screen_or_contact_date AS application_status_interview_phone_screen_date,
-  a.last_modified_date AS application_status_last_change_date,
-  a.sub_type AS department_internal,
-  a.city AS job_city,
-  a.job_posting AS job_title,
-  a.recruiter AS recruiters,
-  a.applicant_source AS [source],
+  interview_date AS application_status_interview_demo_date,
+  phone_screen_or_contact_date AS application_status_interview_phone_screen_date,
+  last_modified_date AS application_status_last_change_date,
+  sub_type AS department_internal,
+  city AS job_city,
+  job_posting AS job_title,
+  recruiter AS recruiters,
+  applicant_source AS [source],
   NULL AS source_subtype,
   NULL AS source_type,
   NULL AS time_in_application_state_in_review,
@@ -333,8 +337,10 @@ SELECT
   NULL AS time_in_application_state_offered,
   NULL AS time_in_application_status_in_review_resume_review,
   CASE
-    WHEN MONTH(CAST(a.submitted_date AS DATE)) >= 9 THEN YEAR(CAST(a.submitted_date AS DATE)) + 1
-    ELSE YEAR(CAST(a.submitted_date AS DATE))
+    WHEN MONTH(CAST(submitted_date AS DATE)) >= 9 THEN (
+      YEAR(CAST(submitted_date AS DATE)) + 1
+    )
+    ELSE YEAR(CAST(submitted_date AS DATE))
   END AS recruiting_year
 FROM
-  gabby.recruiting.applicants AS a
+  gabby.recruiting.applicants

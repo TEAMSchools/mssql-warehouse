@@ -1,32 +1,32 @@
 CREATE OR ALTER VIEW
   recruiting.positions_clean AS
 SELECT
-  p.position_number,
-  p.position_name,
-  p.city,
-  p.job_type,
-  p.sub_type,
-  p.status,
-  p.new_or_replacement,
-  p.region,
-  p.desired_start_date,
-  p.created_date,
-  p.date_filled,
-  p.position_count,
+  position_number,
+  position_name,
+  city,
+  job_type,
+  sub_type,
+  [status],
+  new_or_replacement,
+  region,
+  desired_start_date,
+  created_date,
+  date_filled,
+  position_count,
   CASE
-    WHEN p.n = 4 THEN PARSENAME(p.position_name_splitter, 4)
+    WHEN n = 4 THEN PARSENAME(position_name_splitter, 4)
     ELSE 'Invalid position_name Format'
   END AS recruiter,
   CASE
-    WHEN p.n = 4 THEN PARSENAME(p.position_name_splitter, 3)
+    WHEN n = 4 THEN PARSENAME(position_name_splitter, 3)
     ELSE 'Invalid position_name Format'
   END AS location,
   CASE
-    WHEN p.n = 4 THEN PARSENAME(p.position_name_splitter, 2)
+    WHEN n = 4 THEN PARSENAME(position_name_splitter, 2)
     ELSE 'Invalid position_name Format'
   END AS role_short,
   CASE
-    WHEN p.n = 4 THEN PARSENAME(p.position_name_splitter, 1)
+    WHEN n = 4 THEN PARSENAME(position_name_splitter, 1)
     ELSE 'Invalid position_name Format'
   END AS recruiing_year
 FROM

@@ -31,15 +31,17 @@ SELECT
     ORDER BY
       de.entrydate DESC
   ) AS rn_entry,
-  MIN(ADA.calendardate) AS district_entry_date
+  MIN(att.calendardate) AS district_entry_date
 FROM
   district_entry AS de
-  INNER JOIN powerschool.ps_adaadm_daily_ctod AS ADA ON de.studentid = ADA.studentid
-  AND (
-    ADA.calendardate BETWEEN de.entrydate AND de.exitdate
+  INNER JOIN powerschool.ps_adaadm_daily_ctod AS att ON (
+    de.studentid = att.studentid
+    AND (
+      att.calendardate BETWEEN de.entrydate AND de.exitdate
+    )
+    AND att.membershipvalue = 1
+    AND att.attendancevalue = 1
   )
-  AND ADA.membershipvalue = 1
-  AND ADA.attendancevalue = 1
 WHERE
   (
     de.exitcode_prev IS NULL

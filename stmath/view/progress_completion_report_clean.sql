@@ -23,27 +23,21 @@ SELECT
   CAST(last_login_date AS DATE) AS last_login_date,
   CASE
     WHEN ISNUMERIC(school_student_id) = 1 THEN school_student_id
-    ELSE NULL
   END AS school_student_id,
   CASE
     WHEN ISNUMERIC(curr_hurdle_num_tries) = 1 THEN curr_hurdle_num_tries
-    ELSE NULL
   END AS curr_hurdle_num_tries,
   CASE
     WHEN ISNUMERIC(fluency_progress) = 1 THEN fluency_progress
-    ELSE NULL
   END AS fluency_progress,
   CASE
     WHEN ISNUMERIC(fluency_mastery) = 1 THEN fluency_mastery
-    ELSE NULL
   END AS fluency_mastery,
   CASE
     WHEN ISNUMERIC(fluency_time_spent) = 1 THEN fluency_time_spent
-    ELSE NULL
   END AS fluency_time_spent,
   CASE
     WHEN ISNUMERIC(minutes_logged_last_week) = 1 THEN minutes_logged_last_week
-    ELSE NULL
   END AS minutes_logged_last_week,
   CASE
     WHEN fluency_path = '\N' THEN NULL
@@ -60,7 +54,9 @@ SELECT
       DAY,
       CAST(dt.start_date AS DATE AS FLOAT),
       CASE
-        WHEN CAST(CURRENT_TIMESTAMP AS DATE) > CAST(dt.end_date AS DATE) THEN CAST(dt.end_date AS DATE)
+        WHEN (
+          CAST(CURRENT_TIMESTAMP AS DATE) > CAST(dt.end_date AS DATE)
+        ) THEN CAST(dt.end_date AS DATE)
         ELSE CAST(CURRENT_TIMESTAMP AS DATE)
       END
     )
@@ -84,6 +80,8 @@ SELECT
   ) AS rn_gcd
 FROM
   gabby.stmath.progress_completion_report AS stm
-  INNER JOIN gabby.reporting.reporting_terms AS dt ON stm.start_year = dt.academic_year
-  AND dt.identifier = 'SY'
-  AND dt.schoolid = 0
+  INNER JOIN gabby.reporting.reporting_terms AS dt ON (
+    stm.start_year = dt.academic_year
+    AND dt.identifier = 'SY'
+    AND dt.schoolid = 0
+  )

@@ -69,13 +69,17 @@ WITH
             WHEN arsp.rn_quiz = 1 THEN arsp.i_word_count
           END AS words_attempted,
           CASE
-            WHEN arsp.rn_quiz = 1
-            AND arsp.ti_passed = 1 THEN arsp.i_word_count
+            WHEN (
+              arsp.rn_quiz = 1
+              AND arsp.ti_passed = 1
+            ) THEN arsp.i_word_count
             ELSE 0
           END AS words_passed,
           CASE
-            WHEN arsp.rn_quiz = 1
-            AND arsp.ch_fiction_non_fiction = 'F' THEN arsp.i_word_count
+            WHEN (
+              arsp.rn_quiz = 1
+              AND arsp.ch_fiction_non_fiction = 'F'
+            ) THEN arsp.i_word_count
             ELSE 0
           END AS words_attempted_f,
           CASE
@@ -91,43 +95,58 @@ WITH
             WHEN arsp.rn_quiz = 1 THEN arsp.i_quiz_number
           END AS is_total,
           CASE
-            WHEN arsp.rn_quiz = 1
-            AND arsp.ch_fiction_non_fiction = 'F' THEN 1
+            WHEN (
+              arsp.rn_quiz = 1
+              AND arsp.ch_fiction_non_fiction = 'F'
+            ) THEN 1
           END AS is_fiction,
           CASE
-            WHEN arsp.rn_quiz = 1
-            AND arsp.ch_fiction_non_fiction = 'NF' THEN 1
+            WHEN (
+              arsp.rn_quiz = 1
+              AND arsp.ch_fiction_non_fiction = 'NF'
+            ) THEN 1
           END AS is_nonfiction,
           CASE
             WHEN arsp.rn_quiz = 1 THEN arsp.i_questions_correct
           END AS questions_correct,
           CASE
-            WHEN arsp.rn_quiz = 1
-            AND arsp.ch_fiction_non_fiction = 'F' THEN arsp.i_questions_correct
+            WHEN (
+              arsp.rn_quiz = 1
+              AND arsp.ch_fiction_non_fiction = 'F'
+            ) THEN arsp.i_questions_correct
           END AS questions_correct_f,
           CASE
-            WHEN arsp.rn_quiz = 1
-            AND arsp.ch_fiction_non_fiction != 'F' THEN arsp.i_questions_correct
+            WHEN (
+              arsp.rn_quiz = 1
+              AND arsp.ch_fiction_non_fiction != 'F'
+            ) THEN arsp.i_questions_correct
           END AS questions_correct_nf,
           CASE
             WHEN arsp.rn_quiz = 1 THEN arsp.i_questions_presented
           END AS questions_presented,
           CASE
-            WHEN arsp.rn_quiz = 1
-            AND arsp.ch_fiction_non_fiction = 'F' THEN arsp.i_questions_presented
+            WHEN (
+              arsp.rn_quiz = 1
+              AND arsp.ch_fiction_non_fiction = 'F'
+            ) THEN arsp.i_questions_presented
           END AS questions_presented_f,
           CASE
-            WHEN arsp.rn_quiz = 1
-            AND arsp.ch_fiction_non_fiction != 'F' THEN arsp.i_questions_presented
+            WHEN (
+              arsp.rn_quiz = 1
+              AND arsp.ch_fiction_non_fiction != 'F'
+            ) THEN arsp.i_questions_presented
           END AS questions_presented_nf
         FROM
           gabby.powerschool.cohort_identifiers_static AS co
-          INNER JOIN gabby.reporting.reporting_terms AS rt ON co.academic_year = rt.academic_year
-          AND co.schoolid = rt.schoolid
-          AND rt.identifier = 'AR'
-          AND rt._fivetran_deleted = 0
-          LEFT OUTER JOIN gabby.renaissance.ar_studentpractice_identifiers_static AS arsp ON co.student_number = arsp.student_number
-          --AND (arsp.dt_taken BETWEEN rt.[start_date] AND rt.end_date)
+          INNER JOIN gabby.reporting.reporting_terms AS rt ON (
+            co.academic_year = rt.academic_year
+            AND co.schoolid = rt.schoolid
+            AND rt.identifier = 'AR'
+            AND rt._fivetran_deleted = 0
+          )
+          LEFT OUTER JOIN gabby.renaissance.ar_studentpractice_identifiers_static AS arsp ON (
+            co.student_number = arsp.student_number
+          )
         WHERE
           co.rn_year = 1
           AND co.grade_level != 99
@@ -184,8 +203,10 @@ SELECT
     ) THEN NULL
     WHEN pr.words >= goals.words_goal THEN 'Met Goal'
     /* after term */
-    WHEN CAST(CURRENT_TIMESTAMP AS DATE) > pr.end_date
-    AND pr.words < goals.words_goal THEN 'Missed Goal'
+    WHEN (
+      CAST(CURRENT_TIMESTAMP AS DATE) > pr.end_date
+      AND pr.words < goals.words_goal
+    ) THEN 'Missed Goal'
     WHEN pr.words >= ROUND(
       (
         pr.n_days_elapsed / pr.n_days_term
@@ -202,8 +223,10 @@ SELECT
   END AS stu_status_words,
   CASE
   /* after term */
-  --WHEN CAST(CURRENT_TIMESTAMP AS DATE) NOT BETWEEN pr.[start_date] AND pr.[end_date] THEN NULL
-  /* during term */
+    WHEN (
+      CAST(CURRENT_TIMESTAMP AS DATE) NOT BETWEEN pr.[start_date] AND pr.[end_date]
+    ) THEN NULL
+    /* during term */
     ELSE CASE
       WHEN (
         pr.words IS NULL
@@ -225,6 +248,8 @@ SELECT
   END AS words_needed
 FROM
   progress_rollup AS pr
-  LEFT OUTER JOIN gabby.renaissance.ar_goals AS goals ON pr.student_number = goals.student_number
-  AND pr.academic_year = goals.academic_year
-  AND pr.reporting_term = goals.reporting_term
+  LEFT OUTER JOIN gabby.renaissance.ar_goals AS goals ON (
+    pr.student_number = goals.student_number
+    AND pr.academic_year = goals.academic_year
+    AND pr.reporting_term = goals.reporting_term
+  )

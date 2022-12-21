@@ -3,74 +3,74 @@ CREATE OR ALTER VIEW
 WITH
   people AS (
     SELECT
-      c.student_number,
-      c.personid,
+      student_number,
+      personid,
       'contact' AS person_type,
-      c.relationship_type,
+      relationship_type,
       CONCAT(
-        LTRIM(RTRIM(c.firstname)),
+        LTRIM(RTRIM(firstname)),
         ' ',
-        LTRIM(RTRIM(c.lastname))
+        LTRIM(RTRIM(lastname))
       ) AS contact_name,
-      c.contactpriorityorder
+      contactpriorityorder
     FROM
-      powerschool.contacts AS c
+      powerschool.contacts
     WHERE
-      c.person_type != 'self'
-      AND c.contactpriorityorder <= 2
+      person_type != 'self'
+      AND contactpriorityorder <= 2
     UNION ALL
     SELECT
-      c.student_number,
-      c.personid,
+      student_number,
+      personid,
       'emerg' AS person_type,
-      c.relationship_type,
+      relationship_type,
       CONCAT(
-        LTRIM(RTRIM(c.firstname)),
+        LTRIM(RTRIM(firstname)),
         ' ',
-        LTRIM(RTRIM(c.lastname))
+        LTRIM(RTRIM(lastname))
       ) AS contact_name,
       ROW_NUMBER() OVER (
         PARTITION BY
-          c.student_number
+          student_number
         ORDER BY
-          c.contactpriorityorder
+          contactpriorityorder
       ) AS contactpriorityorder
     FROM
-      powerschool.contacts AS c
+      powerschool.contacts
     WHERE
-      c.person_type != 'self'
-      AND c.contactpriorityorder > 2
-      AND c.isemergency = 1
+      person_type != 'self'
+      AND contactpriorityorder > 2
+      AND isemergency = 1
     UNION ALL
     SELECT
-      c.student_number,
-      c.personid,
+      student_number,
+      personid,
       'pickup' AS person_type,
-      c.relationship_type,
+      relationship_type,
       CONCAT(
-        LTRIM(RTRIM(c.firstname)),
+        LTRIM(RTRIM(firstname)),
         ' ',
-        LTRIM(RTRIM(c.lastname))
+        LTRIM(RTRIM(lastname))
       ) AS contact_name,
       ROW_NUMBER() OVER (
         PARTITION BY
-          c.student_number
+          student_number
         ORDER BY
-          c.contactpriorityorder
+          contactpriorityorder
       ) AS contactpriorityorder
     FROM
-      powerschool.contacts AS c
+      powerschool.contacts
     WHERE
-      c.person_type != 'self'
-      AND c.contactpriorityorder > 2
-      AND c.schoolpickupflg = 1
-      AND c.isemergency = 0
+      person_type != 'self'
+      AND contactpriorityorder > 2
+      AND schoolpickupflg = 1
+      AND isemergency = 0
   ),
   contacts AS (
     SELECT
-      sub.student_number,
-      sub.person_type + '_' + sub.contact_category_type AS pivot_field,
-      CAST(sub.contact AS VARCHAR(250)) AS pivot_value
+      student_number,
+      person_type + '_' + contact_category_type AS pivot_field,
+      CAST(contact AS VARCHAR(250)) AS pivot_value
     FROM
       (
         SELECT
@@ -80,7 +80,9 @@ WITH
             '_',
             c.contactpriorityorder
           ) AS person_type,
-          LOWER(pc.contact_category) + '_' + LOWER(pc.contact_type) AS contact_category_type,
+          (
+            LOWER(pc.contact_category) + '_' + LOWER(pc.contact_type)
+          ) AS contact_category_type,
           pc.contact,
           ROW_NUMBER() OVER (
             PARTITION BY
@@ -93,7 +95,7 @@ WITH
           ) AS contact_category_type_priority
         FROM
           people AS c
-          INNER JOIN powerschool.person_contacts AS pc ON c.personid = pc.personid
+          INNER JOIN powerschool.person_contacts AS pc ON (c.personid = pc.personid)
         UNION ALL
         SELECT
           c.student_number,
@@ -114,37 +116,39 @@ WITH
           ) AS contact_category_type_priority
         FROM
           people AS c
-          INNER JOIN powerschool.person_contacts AS pc ON c.personid = pc.personid
-          AND pc.contact_category = 'Phone'
+          INNER JOIN powerschool.person_contacts AS pc ON (
+            c.personid = pc.personid
+            AND pc.contact_category = 'Phone'
+          )
         UNION ALL
         SELECT
-          c.student_number,
+          student_number,
           CONCAT(
-            c.person_type,
+            person_type,
             '_',
-            c.contactpriorityorder
+            contactpriorityorder
           ) AS person_type,
           'name' AS contact_category_type,
-          LTRIM(RTRIM(c.contact_name)) AS contact,
+          LTRIM(RTRIM(contact_name)) AS contact,
           1 AS contact_category_type_priority
         FROM
-          people AS c
+          people
         UNION ALL
         SELECT
-          c.student_number,
+          student_number,
           CONCAT(
-            c.person_type,
+            person_type,
             '_',
-            c.contactpriorityorder
+            contactpriorityorder
           ) AS person_type,
           'relationship' AS contact_category_type,
-          c.relationship_type AS contact,
+          relationship_type AS contact,
           1 AS contact_category_type_priority
         FROM
-          people AS c
+          people
       ) AS sub
     WHERE
-      sub.contact_category_type_priority = 1
+      contact_category_type_priority = 1
   )
 SELECT
   student_number,
@@ -221,7 +225,7 @@ SELECT
   pickup_3_email_current,
   pickup_3_phone_primary
 FROM
-  contacts AS c PIVOT (
+  contacts PIVOT (
     MAX(pivot_value) FOR pivot_field IN (
       contact_1_name,
       contact_1_relationship,

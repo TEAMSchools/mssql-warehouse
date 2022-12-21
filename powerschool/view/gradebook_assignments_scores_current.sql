@@ -11,7 +11,9 @@ SELECT
   CAST(asec.sectionsdcid AS INT) AS sectionsdcid
 FROM
   powerschool.assignmentscore AS a
-  INNER JOIN powerschool.assignmentsection AS asec ON a.assignmentsectionid = asec.assignmentsectionid
+  INNER JOIN powerschool.assignmentsection AS asec ON (
+    a.assignmentsectionid = asec.assignmentsectionid
+  )
 WHERE
   a.scoreentrydate >= DATEFROMPARTS(
     gabby.utilities.GLOBAL_ACADEMIC_YEAR (),

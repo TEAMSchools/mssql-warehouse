@@ -41,16 +41,20 @@ FROM
       ) AS term_name
     FROM
       powerschool.cc
-      INNER JOIN powerschool.sections AS sec ON ABS(cc.sectionid) = sec.id
-      INNER JOIN gabby.reporting.reporting_terms AS terms ON cc.schoolid = terms.schoolid
-      AND terms.identifier = 'RT'
-      AND (
-        cc.dateenrolled BETWEEN terms.[start_date] AND terms.end_date
+      INNER JOIN powerschool.sections AS sec ON (ABS(cc.sectionid) = sec.id)
+      INNER JOIN gabby.reporting.reporting_terms AS terms ON (
+        cc.schoolid = terms.schoolid
+        AND terms.identifier = 'RT'
+        AND (
+          cc.dateenrolled BETWEEN terms.[start_date] AND terms.end_date
+        )
       )
     WHERE
-      cc.dateenrolled BETWEEN DATEFROMPARTS(
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
-        7,
-        1
-      ) AND CAST(CURRENT_TIMESTAMP AS DATE)
+      (
+        cc.dateenrolled BETWEEN DATEFROMPARTS(
+          gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+          7,
+          1
+        ) AND CAST(CURRENT_TIMESTAMP AS DATE)
+      )
   ) AS sub

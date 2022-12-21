@@ -7,7 +7,7 @@ WITH
       academic_year,
       reporting_term,
       term_name,
-      start_date,
+      [start_date],
       end_date,
       att_code,
       is_curterm,
@@ -39,11 +39,13 @@ WITH
           dates.is_curterm
         FROM
           powerschool.ps_attendance_daily AS att
-          INNER JOIN gabby.reporting.reporting_terms AS dates ON att.schoolid = dates.schoolid
-          AND (
-            att.att_date BETWEEN dates.start_date AND dates.end_date
+          INNER JOIN gabby.reporting.reporting_terms AS dates ON (
+            att.schoolid = dates.schoolid
+            AND (
+              att.att_date BETWEEN dates.start_date AND dates.end_date
+            )
+            AND dates.identifier = 'RT'
           )
-          AND dates.identifier = 'RT'
         WHERE
           att.att_date >= DATEFROMPARTS(
             gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1,
@@ -76,20 +78,20 @@ WITH
       reporting_term,
       att_code,
       term_name,
-      start_date,
+      [start_date],
       end_date,
       is_curterm
   ),
   mem_counts AS (
     SELECT
-      sub.studentid,
-      sub.academic_year,
-      sub.reporting_term,
-      sub.term_name,
-      sub.start_date,
-      sub.end_date,
-      sub.is_curterm,
-      SUM(sub.membershipvalue) AS count_term,
+      studentid,
+      academic_year,
+      reporting_term,
+      term_name,
+      [start_date],
+      end_date,
+      is_curterm,
+      SUM(membershipvalue) AS count_term,
       'MEM' AS att_code
     FROM
       (
@@ -104,11 +106,13 @@ WITH
           d.is_curterm
         FROM
           powerschool.ps_adaadm_daily_ctod AS mem
-          INNER JOIN gabby.reporting.reporting_terms AS d ON mem.schoolid = d.schoolid
-          AND (
-            mem.calendardate BETWEEN d.start_date AND d.end_date
+          INNER JOIN gabby.reporting.reporting_terms AS d ON (
+            mem.schoolid = d.schoolid
+            AND (
+              mem.calendardate BETWEEN d.start_date AND d.end_date
+            )
+            AND d.identifier = 'RT'
           )
-          AND d.identifier = 'RT'
         WHERE
           (
             mem.calendardate BETWEEN DATEFROMPARTS(
@@ -119,13 +123,13 @@ WITH
           )
       ) AS sub
     GROUP BY
-      sub.studentid,
-      sub.academic_year,
-      sub.reporting_term,
-      sub.term_name,
-      sub.start_date,
-      sub.end_date,
-      sub.is_curterm
+      studentid,
+      academic_year,
+      reporting_term,
+      term_name,
+      [start_date],
+      end_date,
+      is_curterm
   ),
   counts_long AS (
     SELECT
@@ -133,7 +137,7 @@ WITH
       academic_year,
       reporting_term,
       term_name,
-      start_date,
+      [start_date],
       end_date,
       is_curterm,
       CAST(n AS FLOAT) AS n,
@@ -145,7 +149,7 @@ WITH
           academic_year,
           reporting_term,
           term_name,
-          start_date,
+          [start_date],
           end_date,
           att_code,
           count_term,
@@ -156,7 +160,7 @@ WITH
               academic_year,
               att_code
             ORDER BY
-              start_date
+              [start_date]
           ) AS count_y1
         FROM
           att_counts
@@ -166,7 +170,7 @@ WITH
           academic_year,
           reporting_term,
           term_name,
-          start_date,
+          [start_date],
           end_date,
           att_code,
           count_term,
@@ -176,7 +180,7 @@ WITH
               studentid,
               academic_year
             ORDER BY
-              start_date
+              [start_date]
           ) AS count_y1
         FROM
           mem_counts

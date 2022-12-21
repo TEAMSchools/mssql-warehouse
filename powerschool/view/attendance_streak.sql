@@ -3,32 +3,30 @@ CREATE OR ALTER VIEW
 WITH
   streaks AS (
     SELECT
-      sub.studentid,
-      sub.yearid,
-      sub.calendardate,
-      sub.attendancevalue,
-      sub.att_code,
-      sub.day_number,
-      sub.streak_rn,
+      studentid,
+      yearid,
+      calendardate,
+      attendancevalue,
+      att_code,
+      day_number,
+      streak_rn,
       CONCAT(
-        sub.studentid,
+        studentid,
         '_',
-        sub.yearid,
+        yearid,
         '_',
-        sub.att_code,
+        att_code,
         '_',
-        (sub.day_number - sub.streak_rn)
+        (day_number - streak_rn)
       ) AS streak_id,
       CONCAT(
-        sub.studentid,
+        studentid,
         '_',
-        sub.yearid,
+        yearid,
         '_',
-        sub.attendancevalue,
+        attendancevalue,
         '_',
-        (
-          sub.day_number - sub.streak_att_rn
-        )
+        (day_number - streak_att_rn)
       ) AS streak_att_id
     FROM
       (
@@ -69,50 +67,52 @@ WITH
           ) AS streak_att_rn
         FROM
           powerschool.ps_adaadm_daily_ctod AS mem
-          LEFT JOIN powerschool.ps_attendance_daily AS att ON mem.studentid = att.studentid
-          AND mem.calendardate = att.att_date
+          LEFT JOIN powerschool.ps_attendance_daily AS att ON (
+            mem.studentid = att.studentid
+            AND mem.calendardate = att.att_date
+          )
         WHERE
           mem.membershipvalue = 1
       ) AS sub
   )
 SELECT
-  sub.studentid,
-  sub.yearid,
-  sub.att_code,
-  sub.streak_id,
-  MIN(sub.calendardate) AS streak_start,
-  MAX(sub.calendardate) AS streak_end,
+  studentid,
+  yearid,
+  att_code,
+  streak_id,
+  MIN(calendardate) AS streak_start,
+  MAX(calendardate) AS streak_end,
   DATEDIFF(
     DAY,
-    MIN(sub.calendardate),
-    MAX(sub.calendardate)
+    MIN(calendardate),
+    MAX(calendardate)
   ) + 1 AS streak_length_calendar,
-  COUNT(sub.calendardate) AS streak_length_membership
+  COUNT(calendardate) AS streak_length_membership
 FROM
-  streaks AS sub
+  streaks
 GROUP BY
-  sub.studentid,
-  sub.yearid,
-  sub.att_code,
-  sub.streak_id
+  studentid,
+  yearid,
+  att_code,
+  streak_id
 UNION ALL
 SELECT
-  sub.studentid,
-  sub.yearid,
-  CAST(sub.attendancevalue AS VARCHAR) AS att_code,
-  sub.streak_att_id AS streak_id,
-  MIN(sub.calendardate) AS streak_start,
-  MAX(sub.calendardate) AS streak_end,
+  studentid,
+  yearid,
+  CAST(attendancevalue AS VARCHAR) AS att_code,
+  streak_att_id AS streak_id,
+  MIN(calendardate) AS streak_start,
+  MAX(calendardate) AS streak_end,
   DATEDIFF(
     DAY,
-    MIN(sub.calendardate),
-    MAX(sub.calendardate)
+    MIN(calendardate),
+    MAX(calendardate)
   ) + 1 AS streak_length_calendar,
-  COUNT(sub.calendardate) AS streak_length_membership
+  COUNT(calendardate) AS streak_length_membership
 FROM
-  streaks AS sub
+  streaks
 GROUP BY
-  sub.studentid,
-  sub.yearid,
-  sub.attendancevalue,
-  sub.streak_att_id
+  studentid,
+  yearid,
+  attendancevalue,
+  streak_att_id

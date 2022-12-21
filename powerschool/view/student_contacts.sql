@@ -17,19 +17,21 @@ SELECT
   pc.priority_order AS contact_priority_order
 FROM
   powerschool.contacts AS c
-  INNER JOIN powerschool.person_contacts AS pc ON c.personid = pc.personid
-  AND pc.contact_type IN (
-    'Current',
-    'Daytime',
-    'Home',
-    'Mobile',
-    'Not Set',
-    'Work'
-  )
-  AND (
-    (
-      pc.contact_category IN ('Address', 'Email')
-      AND pc.priority_order = 1
+  INNER JOIN powerschool.person_contacts AS pc ON (
+    c.personid = pc.personid
+    AND pc.contact_type IN (
+      'Current',
+      'Daytime',
+      'Home',
+      'Mobile',
+      'Not Set',
+      'Work'
     )
-    OR (pc.contact_category = 'Phone')
+    AND (
+      (
+        pc.contact_category IN ('Address', 'Email')
+        AND pc.priority_order = 1
+      )
+      OR (pc.contact_category = 'Phone')
+    )
   )

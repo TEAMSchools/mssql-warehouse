@@ -21,12 +21,18 @@ SELECT
   sccs.code AS relationship_type
 FROM
   powerschool.students AS s
-  INNER JOIN powerschool.studentcontactassoc AS sca ON s.dcid = sca.studentdcid
-  LEFT JOIN powerschool.originalcontactmap AS ocm ON sca.studentcontactassocid = ocm.studentcontactassocid
-  INNER JOIN powerschool.person AS p ON sca.personid = p.id
-  INNER JOIN powerschool.studentcontactdetail AS scd ON sca.studentcontactassocid = scd.studentcontactassocid
-  AND scd.isactive = 1
-  INNER JOIN powerschool.codeset AS sccs ON scd.relationshiptypecodesetid = sccs.codesetid
+  INNER JOIN powerschool.studentcontactassoc AS sca ON (s.dcid = sca.studentdcid)
+  INNER JOIN powerschool.person AS p ON (sca.personid = p.id)
+  INNER JOIN powerschool.studentcontactdetail AS scd ON (
+    sca.studentcontactassocid = scd.studentcontactassocid
+    AND scd.isactive = 1
+  )
+  INNER JOIN powerschool.codeset AS sccs ON (
+    scd.relationshiptypecodesetid = sccs.codesetid
+  )
+  LEFT JOIN powerschool.originalcontactmap AS ocm ON (
+    sca.studentcontactassocid = ocm.studentcontactassocid
+  )
 UNION ALL
 SELECT
   s.student_number,
@@ -43,5 +49,7 @@ SELECT
   'Self' AS relationship_type
 FROM
   powerschool.students AS s
-  INNER JOIN powerschool.person AS p ON s.person_id = p.id
-  AND p.isactive = 1
+  INNER JOIN powerschool.person AS p ON (
+    s.person_id = p.id
+    AND p.isactive = 1
+  )

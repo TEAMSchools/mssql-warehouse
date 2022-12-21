@@ -3,49 +3,49 @@ CREATE OR ALTER VIEW
 WITH
   position_parse AS (
     SELECT
-      pn.id,
-      pn.[name] AS position_number,
-      pn.position_name_c AS position_name,
-      pn.region_c AS region,
-      pn.city_c AS city,
-      pn.created_date,
-      pn.desired_start_date_c AS desired_start_date,
-      pn.date_position_filled_c AS date_filled,
-      pn.job_type_c AS job_type,
-      pn.job_sub_type_c AS sub_type,
-      pn.status_c AS [status],
-      pn.replacement_or_new_position_c AS new_or_replacement,
-      pn.job_posting_c AS job_posting,
-      LEN(pn.position_name_c) - LEN(
-        REPLACE(pn.position_name_c, '_', '')
+      id,
+      [name] AS position_number,
+      position_name_c AS position_name,
+      region_c AS region,
+      city_c AS city,
+      created_date,
+      desired_start_date_c AS desired_start_date,
+      date_position_filled_c AS date_filled,
+      job_type_c AS job_type,
+      job_sub_type_c AS sub_type,
+      status_c AS [status],
+      replacement_or_new_position_c AS new_or_replacement,
+      job_posting_c AS job_posting,
+      LEN(position_name_c) - LEN(
+        REPLACE(position_name_c, '_', '')
       ) AS n,
       REPLACE(
         LEFT(
-          pn.position_name_c,
-          LEN(pn.position_name_c) - CHARINDEX('_', REVERSE(pn.position_name_c))
+          position_name_c,
+          LEN(position_name_c) - CHARINDEX('_', REVERSE(position_name_c))
         ),
         '_',
         '.'
       ) AS position_name_splitter,
       CASE
-        WHEN CHARINDEX('_', pn.position_name_c) = 0 THEN NULL
+        WHEN CHARINDEX('_', position_name_c) = 0 THEN NULL
         WHEN LEN(
           RIGHT(
-            pn.position_name_c,
-            CHARINDEX('_', REVERSE(pn.position_name_c)) - 1
+            position_name_c,
+            CHARINDEX('_', REVERSE(position_name_c)) - 1
           )
         ) > 3 THEN NULL
         ELSE LEN(
           RIGHT(
-            pn.position_name_c,
-            CHARINDEX('_', REVERSE(pn.position_name_c)) - 1
+            position_name_c,
+            CHARINDEX('_', REVERSE(position_name_c)) - 1
           )
         )
       END AS position_count
     FROM
-      gabby.recruiting.job_position_c AS pn
+      gabby.recruiting.job_position_c
     WHERE
-      pn.is_deleted = 0
+      is_deleted = 0
   )
 SELECT
   pa.id,
@@ -150,15 +150,23 @@ SELECT
   NULL AS next_contact_date
 FROM
   gabby.recruiting.profile_application_c AS pa
-  LEFT JOIN gabby.recruiting.contact AS c ON pa.applicant_c = c.id
-  AND c.is_deleted = 0
-  LEFT JOIN gabby.recruiting.job_application_c AS a ON pa.id = a.profile_application_c
-  AND a.is_deleted = 0
-  LEFT JOIN gabby.recruiting.job_posting_c AS p ON a.job_posting_c = p.id
-  AND p.is_deleted = 0
-  LEFT JOIN gabby.recruiting.contact AS cr ON p.primary_contact_c = cr.id
-  AND cr.is_deleted = 0
-  LEFT JOIN position_parse AS j ON a.job_position_c = j.id
+  LEFT JOIN gabby.recruiting.contact AS c ON (
+    pa.applicant_c = c.id
+    AND c.is_deleted = 0
+  )
+  LEFT JOIN gabby.recruiting.job_application_c AS a ON (
+    pa.id = a.profile_application_c
+    AND a.is_deleted = 0
+  )
+  LEFT JOIN gabby.recruiting.job_posting_c AS p ON (
+    a.job_posting_c = p.id
+    AND p.is_deleted = 0
+  )
+  LEFT JOIN gabby.recruiting.contact AS cr ON (
+    p.primary_contact_c = cr.id
+    AND cr.is_deleted = 0
+  )
+  LEFT JOIN position_parse AS j ON (a.job_position_c = j.id)
 WHERE
   pa.is_deleted = 0
 UNION ALL
@@ -255,13 +263,21 @@ SELECT
   c.next_contact_date_c AS next_contact_date
 FROM
   gabby.recruiting.cultivation_c AS c
-  LEFT JOIN gabby.recruiting.profile_application_c AS pa ON c.contact_c = pa.applicant_c
-  AND pa.is_deleted = 0
-  LEFT JOIN gabby.recruiting.contact AS co ON c.contact_c = co.id
-  AND co.is_deleted = 0
-  LEFT JOIN position_parse AS j ON c.job_position_name_c = j.position_name
-  LEFT JOIN gabby.recruiting.job_posting_c AS p ON j.job_posting = p.id
-  AND p.is_deleted = 0
+  LEFT JOIN gabby.recruiting.profile_application_c AS pa ON (
+    c.contact_c = pa.applicant_c
+    AND pa.is_deleted = 0
+  )
+  LEFT JOIN gabby.recruiting.contact AS co ON (
+    c.contact_c = co.id
+    AND co.is_deleted = 0
+  )
+  LEFT JOIN position_parse AS j ON (
+    c.job_position_name_c = j.position_name
+  )
+  LEFT JOIN gabby.recruiting.job_posting_c AS p ON (
+    j.job_posting = p.id
+    AND p.is_deleted = 0
+  )
 WHERE
   c.is_deleted = 0
   AND p.[name] IS NULL

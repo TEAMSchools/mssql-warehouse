@@ -15,6 +15,12 @@ SELECT
   scs.code AS [state_code]
 FROM
   powerschool.personaddressassoc AS paa
-  INNER JOIN powerschool.codeset AS acs ON paa.addresstypecodesetid = acs.codesetid
-  INNER JOIN powerschool.personaddress AS pa ON paa.personaddressid = pa.personaddressid
-  INNER JOIN powerschool.codeset AS scs ON pa.statescodesetid = scs.codesetid
+  INNER JOIN powerschool.codeset AS acs ON (
+    paa.addresstypecodesetid = acs.codesetid
+  )
+  INNER JOIN powerschool.personaddress AS pa ON (
+    paa.personaddressid = pa.personaddressid
+  )
+  INNER JOIN powerschool.codeset AS scs ON (
+    pa.statescodesetid = scs.codesetid
+  )

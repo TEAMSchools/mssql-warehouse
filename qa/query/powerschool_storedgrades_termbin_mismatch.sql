@@ -9,9 +9,11 @@ SELECT
   sg.course_number
 FROM
   gabby.powerschool.storedgrades AS sg
-  LEFT JOIN gabby.powerschool.termbins AS tb ON sg.schoolid = tb.schoolid
-  AND sg.termid = tb.termid
-  AND sg.storecode = tb.storecode
-  AND sg.[db_name] = tb.[db_name]
+  LEFT JOIN gabby.powerschool.termbins AS tb ON (
+    sg.schoolid = tb.schoolid
+    AND sg.termid = tb.termid
+    AND sg.storecode = tb.storecode
+    AND sg.[db_name] = tb.[db_name]
+  )
 WHERE
   tb.dcid IS NULL

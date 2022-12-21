@@ -1,10 +1,10 @@
 CREATE OR ALTER VIEW
   powerschool.u_clg_et_stu_alt_clean AS
 SELECT
-  sub.id,
-  sub.studentsdcid,
-  sub.exit_date,
-  sub.exit_code
+  id,
+  studentsdcid,
+  exit_date,
+  exit_code
 FROM
   (
     SELECT

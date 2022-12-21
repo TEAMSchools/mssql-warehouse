@@ -1,100 +1,100 @@
 CREATE OR ALTER VIEW
   powerschool.course_enrollments_current AS
 SELECT
-  sub.studentid,
-  sub.schoolid,
-  sub.termid,
-  sub.cc_id,
-  sub.course_number,
-  sub.section_number,
-  sub.dateenrolled,
-  sub.dateleft,
+  studentid,
+  schoolid,
+  termid,
+  cc_id,
+  course_number,
+  section_number,
+  dateenrolled,
+  dateleft,
   NULL AS lastgradeupdate,
-  sub.sectionid,
-  sub.expression,
+  sectionid,
+  expression,
   gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990 AS yearid,
   gabby.utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year,
-  sub.student_number,
-  sub.students_dcid,
-  sub.credittype,
-  sub.course_name,
-  sub.credit_hours,
-  sub.courses_gradescaleid AS gradescaleid,
-  sub.excludefromgpa,
-  sub.excludefromstoredgrades,
-  sub.teachernumber,
-  sub.teacher_lastfirst AS teacher_name,
-  sub.section_enroll_status,
-  sub.map_measurementscale,
-  sub.illuminate_subject,
-  sub.abs_sectionid,
-  sub.abs_termid,
-  sub.course_enroll_status,
-  sub.sections_dcid,
+  student_number,
+  students_dcid,
+  credittype,
+  course_name,
+  credit_hours,
+  courses_gradescaleid AS gradescaleid,
+  excludefromgpa,
+  excludefromstoredgrades,
+  teachernumber,
+  teacher_lastfirst AS teacher_name,
+  section_enroll_status,
+  map_measurementscale,
+  illuminate_subject,
+  abs_sectionid,
+  abs_termid,
+  course_enroll_status,
+  sections_dcid,
   ROW_NUMBER() OVER (
     PARTITION BY
-      sub.student_number,
-      sub.credittype
+      student_number,
+      credittype
     ORDER BY
-      sub.termid DESC,
-      sub.dateenrolled DESC,
-      sub.dateleft DESC
+      termid DESC,
+      dateenrolled DESC,
+      dateleft DESC
   ) AS rn_subject,
   ROW_NUMBER() OVER (
     PARTITION BY
-      sub.student_number,
-      sub.course_number
+      student_number,
+      course_number
     ORDER BY
-      sub.termid DESC,
-      sub.dateenrolled DESC,
-      sub.dateleft DESC
+      termid DESC,
+      dateenrolled DESC,
+      dateleft DESC
   ) AS rn_course_yr,
   ROW_NUMBER() OVER (
     PARTITION BY
-      sub.student_number,
-      sub.illuminate_subject
+      student_number,
+      illuminate_subject
     ORDER BY
-      sub.termid DESC,
-      sub.dateenrolled DESC,
-      sub.dateleft DESC
+      termid DESC,
+      dateenrolled DESC,
+      dateleft DESC
   ) AS rn_illuminate_subject
 FROM
   (
     SELECT
-      sub.studentid,
-      sub.schoolid,
-      sub.termid,
-      sub.cc_id,
-      sub.course_number,
-      sub.section_number,
-      sub.dateenrolled,
-      sub.dateleft,
-      sub.sectionid,
-      sub.expression,
-      sub.student_number,
-      sub.students_dcid,
-      sub.credittype,
-      sub.course_name,
-      sub.credit_hours,
-      sub.excludefromgpa,
-      sub.excludefromstoredgrades,
-      sub.teachernumber,
-      sub.teacher_lastfirst,
-      sub.section_enroll_status,
-      sub.map_measurementscale,
-      sub.illuminate_subject,
-      sub.abs_sectionid,
-      sub.abs_termid,
-      sub.sections_dcid,
-      sub.courses_gradescaleid,
-      SUM(sub.section_enroll_status) OVER (
+      studentid,
+      schoolid,
+      termid,
+      cc_id,
+      course_number,
+      section_number,
+      dateenrolled,
+      dateleft,
+      sectionid,
+      expression,
+      student_number,
+      students_dcid,
+      credittype,
+      course_name,
+      credit_hours,
+      excludefromgpa,
+      excludefromstoredgrades,
+      teachernumber,
+      teacher_lastfirst,
+      section_enroll_status,
+      map_measurementscale,
+      illuminate_subject,
+      abs_sectionid,
+      abs_termid,
+      sections_dcid,
+      courses_gradescaleid,
+      SUM(section_enroll_status) OVER (
         PARTITION BY
-          sub.studentid,
-          sub.course_number
-      ) / COUNT(sub.sectionid) OVER (
+          studentid,
+          course_number
+      ) / COUNT(sectionid) OVER (
         PARTITION BY
-          sub.studentid,
-          sub.course_number
+          studentid,
+          course_number
       ) AS course_enroll_status
     FROM
       (
@@ -112,9 +112,11 @@ FROM
           ABS(cc.termid) AS abs_termid,
           ABS(cc.sectionid) AS abs_sectionid,
           CASE
-            WHEN cc.sectionid < 0
-            AND s.enroll_status = 2
-            AND s.exitdate = cc.dateleft THEN 0
+            WHEN (
+              cc.sectionid < 0
+              AND s.enroll_status = 2
+              AND s.exitdate = cc.dateleft
+            ) THEN 0
             WHEN cc.sectionid < 0 THEN 1
             ELSE 0
           END AS section_enroll_status,
@@ -140,8 +142,10 @@ FROM
           ) AS illuminate_subject
         FROM
           powerschool.cc
-          INNER JOIN powerschool.students AS s ON cc.studentid = s.id
-          INNER JOIN powerschool.sections_identifiers AS sec ON ABS(cc.sectionid) = sec.sectionid
+          INNER JOIN powerschool.students AS s ON (cc.studentid = s.id)
+          INNER JOIN powerschool.sections_identifiers AS sec ON (
+            ABS(cc.sectionid) = sec.sectionid
+          )
           LEFT JOIN gabby.assessments.normed_subjects AS sj ON (
             cc.course_number = sj.course_number
             COLLATE LATIN1_GENERAL_BIN

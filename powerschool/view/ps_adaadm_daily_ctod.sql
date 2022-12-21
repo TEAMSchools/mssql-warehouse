@@ -1,35 +1,35 @@
 CREATE OR ALTER VIEW
   powerschool.ps_adaadm_daily_ctod AS
 SELECT
-  padcc.studentid,
-  padcc.schoolid,
-  padcc.calendardate,
-  padcc.fteid,
-  padcc.attendance_conversion_id,
-  padcc.grade_level,
-  padcc.ontrack,
-  padcc.offtrack,
-  padcc.student_track,
-  padcc.yearid,
-  padcc.attendancevalue,
-  padcc.membershipvalue,
-  padcc.potential_attendancevalue
+  studentid,
+  schoolid,
+  calendardate,
+  fteid,
+  attendance_conversion_id,
+  grade_level,
+  ontrack,
+  offtrack,
+  student_track,
+  yearid,
+  attendancevalue,
+  membershipvalue,
+  potential_attendancevalue
 FROM
-  powerschool.ps_adaadm_daily_ctod_current_static AS padcc
+  powerschool.ps_adaadm_daily_ctod_current_static
 UNION ALL
 SELECT
-  padca.studentid,
-  padca.schoolid,
-  padca.calendardate,
-  padca.fteid,
-  padca.attendance_conversion_id,
-  padca.grade_level,
-  padca.ontrack,
-  padca.offtrack,
-  padca.student_track,
-  padca.yearid,
-  padca.attendancevalue,
-  padca.membershipvalue,
-  padca.potential_attendancevalue
+  studentid,
+  schoolid,
+  calendardate,
+  fteid,
+  attendance_conversion_id,
+  grade_level,
+  ontrack,
+  offtrack,
+  student_track,
+  yearid,
+  attendancevalue,
+  membershipvalue,
+  potential_attendancevalue
 FROM
-  powerschool.ps_adaadm_daily_ctod_archive AS padca
+  powerschool.ps_adaadm_daily_ctod_archive

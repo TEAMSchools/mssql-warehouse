@@ -43,7 +43,7 @@ WITH
       pg.name AS position_job_posting
     FROM
       gabby.recruiting.job_position_c AS pn
-      LEFT JOIN gabby.recruiting.job_posting_c AS pg ON pn.job_posting_c = pg.id
+      LEFT JOIN gabby.recruiting.job_posting_c AS pg ON (pn.job_posting_c = pg.id)
     WHERE
       pn.city_c IN (
         'Newark',
@@ -54,55 +54,55 @@ WITH
   ),
   positions_clean AS (
     SELECT
-      p.position_number,
-      p.position_name,
-      p.city AS position_city,
-      p.job_type AS position_type,
-      p.sub_type AS position_sub_type,
-      p.status AS position_status,
-      p.new_or_replacement,
-      p.region AS position_region,
-      p.desired_start_date AS position_start_date,
-      p.created_date AS position_created,
-      p.date_filled AS position_filled,
-      p.position_count,
+      position_number,
+      position_name,
+      city AS position_city,
+      job_type AS position_type,
+      sub_type AS position_sub_type,
+      [status] AS position_status,
+      new_or_replacement,
+      region AS position_region,
+      desired_start_date AS position_start_date,
+      created_date AS position_created,
+      date_filled AS position_filled,
+      position_count,
       CASE
-        WHEN p.n = 4 THEN PARSENAME(p.position_name_splitter, 4)
+        WHEN n = 4 THEN PARSENAME(position_name_splitter, 4)
         ELSE 'Invalid position_name Format'
       END AS position_recruiter,
       CASE
-        WHEN p.n = 4 THEN PARSENAME(p.position_name_splitter, 3)
+        WHEN n = 4 THEN PARSENAME(position_name_splitter, 3)
         ELSE 'Invalid position_name Format'
       END AS position_location,
       CASE
-        WHEN p.n = 4 THEN PARSENAME(p.position_name_splitter, 2)
+        WHEN n = 4 THEN PARSENAME(position_name_splitter, 2)
         ELSE 'Invalid position_name Format'
       END AS position_role_short,
       CASE
-        WHEN p.n = 4 THEN PARSENAME(p.position_name_splitter, 1)
+        WHEN n = 4 THEN PARSENAME(position_name_splitter, 1)
         ELSE 'Invalid position_name Format'
       END AS position_recruiting_year,
-      p.position_job_posting
+      position_job_posting
     FROM
-      position_setup AS p
+      position_setup
   ),
   postings_clean AS (
     SELECT
-      pg.name AS job_posting_name,
-      pg.created_date AS posting_created_date,
-      pg.city_c AS posting_city,
-      pg.subject_area_c AS posting_subject,
-      pg.grade_c AS posting_grade,
-      pg.grade_level_c AS posting_grade_level,
-      pg.job_type_c AS posting_type,
-      pg.job_sub_type_c AS posting_sub_type,
-      pg.full_time_part_time_c AS full_or_part_time,
-      pg.status_c AS posting_status,
-      pg.publish_start_date_c AS posting_publish_start,
-      pg.publish_end_date_c AS posting_publish_end,
-      pg.start_date_c AS posting_start
+      [name] AS job_posting_name,
+      created_date AS posting_created_date,
+      city_c AS posting_city,
+      subject_area_c AS posting_subject,
+      grade_c AS posting_grade,
+      grade_level_c AS posting_grade_level,
+      job_type_c AS posting_type,
+      job_sub_type_c AS posting_sub_type,
+      full_time_part_time_c AS full_or_part_time,
+      status_c AS posting_status,
+      publish_start_date_c AS posting_publish_start,
+      publish_end_date_c AS posting_publish_end,
+      start_date_c AS posting_start
     FROM
-      gabby.recruiting.job_posting_c AS pg
+      gabby.recruiting.job_posting_c
     WHERE
       city_c IN (
         'Camden',
@@ -143,4 +143,6 @@ SELECT
   pn.position_recruiting_year
 FROM
   postings_clean AS pg
-  LEFT JOIN positions_clean AS pn ON pg.job_posting_name = pn.position_job_posting
+  LEFT JOIN positions_clean AS pn ON (
+    pg.job_posting_name = pn.position_job_posting
+  )

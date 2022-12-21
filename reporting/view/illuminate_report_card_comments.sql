@@ -21,66 +21,66 @@ WITH
         SELECT
           216 AS repository_id,
           'Q1' AS field_term,
-          r.repository_row_id,
-          r.student_id,
-          r.field_math_comment_1,
-          r.field_math_comment_2,
-          r.field_writing_comment_1,
-          r.field_writing_comment_2,
-          r.field_reading_comment_1,
-          r.field_reading_comment_2,
-          r.field_character_comment_1_1 AS field_character_comment_1,
-          r.field_character_comment_2_1 AS field_character_comment_2
+          repository_row_id,
+          student_id,
+          field_math_comment_1,
+          field_math_comment_2,
+          field_writing_comment_1,
+          field_writing_comment_2,
+          field_reading_comment_1,
+          field_reading_comment_2,
+          field_character_comment_1_1 AS field_character_comment_1,
+          field_character_comment_2_1 AS field_character_comment_2
         FROM
-          gabby.illuminate_dna_repositories.repository_216 AS r
+          gabby.illuminate_dna_repositories.repository_216
         UNION ALL
         SELECT
           207 AS repository_id,
           'Q2' AS field_term,
-          r.repository_row_id,
-          r.student_id,
-          r.field_math_comment_1,
-          r.field_math_comment_2,
-          r.field_writing_comment_1,
-          r.field_writing_comment_2,
-          r.field_reading_comment_1,
-          r.field_reading_comment_2,
-          r.field_character_comment_1,
-          r.field_character_comment_2
+          repository_row_id,
+          student_id,
+          field_math_comment_1,
+          field_math_comment_2,
+          field_writing_comment_1,
+          field_writing_comment_2,
+          field_reading_comment_1,
+          field_reading_comment_2,
+          field_character_comment_1,
+          field_character_comment_2
         FROM
-          gabby.illuminate_dna_repositories.repository_207 AS r
+          gabby.illuminate_dna_repositories.repository_207
         UNION ALL
         SELECT
           208 AS repository_id,
           'Q3' AS field_term,
-          r.repository_row_id,
-          r.student_id,
-          r.field_math_comment_1,
-          r.field_math_comment_2,
-          r.field_writing_comment_1,
-          r.field_writing_comment_2,
-          r.field_reading_comment_1,
-          r.field_reading_comment_2,
-          r.field_character_comment_1,
-          r.field_character_comment_2
+          repository_row_id,
+          student_id,
+          field_math_comment_1,
+          field_math_comment_2,
+          field_writing_comment_1,
+          field_writing_comment_2,
+          field_reading_comment_1,
+          field_reading_comment_2,
+          field_character_comment_1,
+          field_character_comment_2
         FROM
-          gabby.illuminate_dna_repositories.repository_208 AS r
+          gabby.illuminate_dna_repositories.repository_208
         UNION ALL
         SELECT
           209 AS repository_id,
           'Q4' AS field_term,
-          r.repository_row_id,
-          r.student_id,
-          r.field_math_comment_1,
-          r.field_math_comment_2,
-          r.field_writing_comment_1,
-          r.field_writing_comment_2,
-          r.field_reading_comment_1,
-          r.field_reading_comment_2,
-          r.field_character_comment_1,
-          r.field_character_comment_2
+          repository_row_id,
+          student_id,
+          field_math_comment_1,
+          field_math_comment_2,
+          field_writing_comment_1,
+          field_writing_comment_2,
+          field_reading_comment_1,
+          field_reading_comment_2,
+          field_character_comment_1,
+          field_character_comment_2
         FROM
-          gabby.illuminate_dna_repositories.repository_209 AS r
+          gabby.illuminate_dna_repositories.repository_209
       ) AS sub
       INNER JOIN gabby.illuminate_public.students AS s ON sub.student_id = s.student_id
     WHERE
@@ -133,5 +133,7 @@ SELECT
   CAST(cb.comment AS VARCHAR(250)) AS comment
 FROM
   comm_unpivot AS cu
-  INNER JOIN gabby.reporting.report_card_comment_bank AS cb ON cu.comment_code = cb.code
-  AND cb._fivetran_deleted = 0
+  INNER JOIN gabby.reporting.report_card_comment_bank AS cb ON (
+    cu.comment_code = cb.code
+    AND cb._fivetran_deleted = 0
+  )

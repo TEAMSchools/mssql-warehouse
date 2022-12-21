@@ -22,15 +22,21 @@ WITH
       x2.exit_code AS exit_code_ts
     FROM
       powerschool.students AS s
-      INNER JOIN powerschool.terms AS terms ON s.schoolid = terms.schoolid
-      AND (
-        s.entrydate BETWEEN terms.firstday AND terms.lastday
+      INNER JOIN powerschool.terms AS terms ON (
+        s.schoolid = terms.schoolid
+        AND (
+          s.entrydate BETWEEN terms.firstday AND terms.lastday
+        )
+        AND terms.isyearrec = 1
       )
-      AND terms.isyearrec = 1
-      LEFT JOIN powerschool.u_clg_et_stu_clean_static AS x1 ON s.dcid = x1.studentsdcid
-      AND s.exitdate = x1.exit_date
-      LEFT JOIN powerschool.u_clg_et_stu_alt_clean_static AS x2 ON s.dcid = x2.studentsdcid
-      AND s.exitdate = x2.exit_date
+      LEFT JOIN powerschool.u_clg_et_stu_clean_static AS x1 ON (
+        s.dcid = x1.studentsdcid
+        AND s.exitdate = x1.exit_date
+      )
+      LEFT JOIN powerschool.u_clg_et_stu_alt_clean_static AS x2 ON (
+        s.dcid = x2.studentsdcid
+        AND s.exitdate = x2.exit_date
+      )
     WHERE
       s.enroll_status IN (-1, 0, 2)
       AND s.exitdate > s.entrydate
@@ -55,9 +61,11 @@ WITH
       NULL AS exit_code_ts
     FROM
       powerschool.students AS s
-      INNER JOIN powerschool.terms AS terms ON s.schoolid = terms.schoolid
-      AND s.entrydate <= terms.firstday
-      AND terms.isyearrec = 1
+      INNER JOIN powerschool.terms AS terms ON (
+        s.schoolid = terms.schoolid
+        AND s.entrydate <= terms.firstday
+        AND terms.isyearrec = 1
+      )
     WHERE
       s.enroll_status = 3
     UNION ALL
@@ -81,16 +89,22 @@ WITH
       x2.exit_code AS exit_code_ts
     FROM
       powerschool.reenrollments AS re
-      INNER JOIN powerschool.students AS s ON re.studentid = s.id
-      INNER JOIN powerschool.terms AS terms ON re.schoolid = terms.schoolid
-      AND (
-        re.entrydate BETWEEN terms.firstday AND terms.lastday
+      INNER JOIN powerschool.students AS s ON (re.studentid = s.id)
+      INNER JOIN powerschool.terms AS terms ON (
+        re.schoolid = terms.schoolid
+        AND (
+          re.entrydate BETWEEN terms.firstday AND terms.lastday
+        )
+        AND terms.isyearrec = 1
       )
-      AND terms.isyearrec = 1
-      LEFT JOIN powerschool.u_clg_et_stu_clean_static AS x1 ON s.dcid = x1.studentsdcid
-      AND re.exitdate = x1.exit_date
-      LEFT JOIN powerschool.u_clg_et_stu_alt_clean_static AS x2 ON s.dcid = x2.studentsdcid
-      AND re.exitdate = x2.exit_date
+      LEFT JOIN powerschool.u_clg_et_stu_clean_static AS x1 ON (
+        s.dcid = x1.studentsdcid
+        AND re.exitdate = x1.exit_date
+      )
+      LEFT JOIN powerschool.u_clg_et_stu_alt_clean_static AS x2 ON (
+        s.dcid = x2.studentsdcid
+        AND re.exitdate = x2.exit_date
+      )
     WHERE
       re.schoolid != 12345 /* filter out summer school */
       AND re.exitdate > re.entrydate
@@ -339,13 +353,15 @@ FROM
           ORDER BY
             yearid ASC
         ) THEN 0
-        WHEN grade_level != 99
-        AND grade_level <= MIN(prev_grade_level) OVER (
-          PARTITION BY
-            studentid,
-            yearid
-          ORDER BY
-            yearid ASC
+        WHEN (
+          grade_level != 99
+          AND grade_level <= MIN(prev_grade_level) OVER (
+            PARTITION BY
+              studentid,
+              yearid
+            ORDER BY
+              yearid ASC
+          )
         ) THEN 1
         ELSE 0
       END AS is_retained_year

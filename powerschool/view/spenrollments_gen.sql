@@ -1,17 +1,17 @@
 CREATE OR ALTER VIEW
   powerschool.spenrollments_gen AS
 SELECT
-  sub.studentid,
-  sub.dcid,
-  sub.enter_date,
-  sub.exit_date,
-  sub.id,
-  sub.exitcode,
-  sub.programid,
-  sub.sp_comment,
-  sub.gradelevel,
-  sub.academic_year,
-  sub.specprog_name
+  studentid,
+  dcid,
+  enter_date,
+  exit_date,
+  id,
+  exitcode,
+  programid,
+  sp_comment,
+  gradelevel,
+  academic_year,
+  specprog_name
 FROM
   (
     SELECT
@@ -36,8 +36,10 @@ FROM
       ) AS rn
     FROM
       powerschool.spenrollments AS sp
-      INNER JOIN powerschool.gen ON sp.programid = gen.id
-      AND gen.cat = 'specprog'
+      INNER JOIN powerschool.gen ON (
+        sp.programid = gen.id
+        AND gen.cat = 'specprog'
+      )
   ) AS sub
 WHERE
   rn = 1

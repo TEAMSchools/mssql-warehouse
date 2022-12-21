@@ -3,22 +3,22 @@ CREATE OR ALTER VIEW
 WITH
   enr AS (
     SELECT
-      sub.studentid,
-      sub.schoolid,
-      sub.yearid,
-      sub.course_number,
-      sub.sectionid,
-      sub.is_dropped_section,
-      sub.storecode_type,
-      sub.storecode,
-      sub.reporting_term,
-      sub.termbin_start_date,
-      sub.termbin_end_date,
-      AVG(sub.is_dropped_section) OVER (
+      studentid,
+      schoolid,
+      yearid,
+      course_number,
+      sectionid,
+      is_dropped_section,
+      storecode_type,
+      storecode,
+      reporting_term,
+      termbin_start_date,
+      termbin_end_date,
+      AVG(is_dropped_section) OVER (
         PARTITION BY
-          sub.yearid,
-          sub.course_number,
-          sub.studentid
+          yearid,
+          course_number,
+          studentid
       ) AS is_dropped_course
     FROM
       (
@@ -41,8 +41,10 @@ WITH
           ) AS reporting_term
         FROM
           powerschool.cc
-          INNER JOIN powerschool.termbins AS tb ON cc.schoolid = tb.schoolid
-          AND ABS(cc.termid) = tb.termid
+          INNER JOIN powerschool.termbins AS tb ON (
+            cc.schoolid = tb.schoolid
+            AND ABS(cc.termid) = tb.termid
+          )
         WHERE
           cc.dateenrolled >= DATEFROMPARTS(
             gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
@@ -52,31 +54,31 @@ WITH
       ) AS sub
   )
 SELECT
-  sub.studentid,
-  sub.schoolid,
-  sub.yearid,
-  sub.course_number,
-  sub.sectionid,
-  sub.is_dropped_section,
-  sub.storecode_type,
-  sub.storecode,
-  sub.reporting_term,
-  sub.termbin_start_date,
-  sub.termbin_end_date,
-  sub.is_dropped_course,
-  sub.category_pct,
-  sub.citizenship,
-  sub.rn_storecode_course,
+  studentid,
+  schoolid,
+  yearid,
+  course_number,
+  sectionid,
+  is_dropped_section,
+  storecode_type,
+  storecode,
+  reporting_term,
+  termbin_start_date,
+  termbin_end_date,
+  is_dropped_course,
+  category_pct,
+  citizenship,
+  rn_storecode_course,
   CAST(
     ROUND(
-      AVG(sub.category_pct) OVER (
+      AVG(category_pct) OVER (
         PARTITION BY
-          sub.studentid,
-          sub.yearid,
-          sub.course_number,
-          sub.storecode_type
+          studentid,
+          yearid,
+          course_number,
+          storecode_type
         ORDER BY
-          sub.termbin_start_date
+          termbin_start_date
       ),
       0
     ) AS DECIMAL(4, 0)
@@ -115,11 +117,13 @@ FROM
       ) AS rn_storecode_course
     FROM
       enr
-      LEFT JOIN powerschool.pgfinalgrades AS pgf ON enr.studentid = pgf.studentid
-      AND enr.sectionid = pgf.sectionid
-      AND enr.storecode = pgf.finalgradename
+      LEFT JOIN powerschool.pgfinalgrades AS pgf ON (
+        enr.studentid = pgf.studentid
+        AND enr.sectionid = pgf.sectionid
+        AND enr.storecode = pgf.finalgradename
+      )
     WHERE
       enr.is_dropped_course < 1.0
   ) AS sub
 WHERE
-  sub.rn_storecode_course = 1
+  rn_storecode_course = 1

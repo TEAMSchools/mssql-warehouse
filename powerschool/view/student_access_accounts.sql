@@ -35,7 +35,9 @@ WITH
           DATEPART(MONTH, s.dob) AS dob_month,
           DATEPART(DAY, s.dob) AS dob_day,
           RIGHT(DATEPART(YEAR, s.dob), 2) AS dob_year,
-          gabby.utilities.STRIP_CHARACTERS (LOWER(s.first_name), '^A-Z') AS first_name_clean,
+          (
+            gabby.utilities.STRIP_CHARACTERS (LOWER(s.first_name), '^A-Z')
+          ) AS first_name_clean,
           gabby.utilities.STRIP_CHARACTERS (
             LOWER(
               CASE
@@ -45,20 +47,26 @@ WITH
                   CHARINDEX(' I', s.last_name) - 1
                 )
                 WHEN CHARINDEX('-', s.last_name) + CHARINDEX(' ', s.last_name) = 0 THEN REPLACE(s.last_name, ' JR', '')
-                WHEN CHARINDEX(' ', s.last_name) > 0
-                AND CHARINDEX('-', s.last_name) > 0
-                AND CHARINDEX(' ', s.last_name) < CHARINDEX('-', s.last_name) THEN LEFT(
+                WHEN (
+                  CHARINDEX(' ', s.last_name) > 0
+                  AND CHARINDEX('-', s.last_name) > 0
+                  AND CHARINDEX(' ', s.last_name) < CHARINDEX('-', s.last_name)
+                ) THEN LEFT(
                   s.last_name,
                   CHARINDEX(' ', s.last_name) - 1
                 )
-                WHEN CHARINDEX('-', s.last_name) > 0
-                AND CHARINDEX(' ', s.last_name) > 0
-                AND CHARINDEX('-', s.last_name) < CHARINDEX(' ', s.last_name) THEN LEFT(
+                WHEN (
+                  CHARINDEX('-', s.last_name) > 0
+                  AND CHARINDEX(' ', s.last_name) > 0
+                  AND CHARINDEX('-', s.last_name) < CHARINDEX(' ', s.last_name)
+                ) THEN LEFT(
                   s.last_name,
                   CHARINDEX('-', s.last_name) - 1
                 )
-                WHEN s.last_name NOT LIKE 'De %'
-                AND CHARINDEX(' ', s.last_name) > 0 THEN LEFT(
+                WHEN (
+                  s.last_name NOT LIKE 'De %'
+                  AND CHARINDEX(' ', s.last_name) > 0
+                ) THEN LEFT(
                   s.last_name,
                   CHARINDEX(' ', s.last_name) - 1
                 )
@@ -74,8 +82,10 @@ WITH
           sch.abbreviation AS school_abbreviation
         FROM
           gabby.powerschool.students AS s
-          INNER JOIN gabby.powerschool.schools AS sch ON s.schoolid = sch.school_number
-          AND s.[db_name] = sch.[db_name]
+          INNER JOIN gabby.powerschool.schools AS sch ON (
+            s.schoolid = sch.school_number
+            AND s.[db_name] = sch.[db_name]
+          )
         WHERE
           s.enroll_status = 0
           AND s.dob IS NOT NULL
@@ -108,8 +118,10 @@ WITH
       END AS base_dupe_audit
     FROM
       clean_names AS cn
-      LEFT JOIN gabby.powerschool.student_access_accounts_static AS sa ON cn.base_username = sa.student_web_id
-      AND cn.student_number != sa.student_number
+      LEFT JOIN gabby.powerschool.student_access_accounts_static AS sa ON (
+        cn.base_username = sa.student_web_id
+        AND cn.student_number != sa.student_number
+      )
   ),
   alt_username AS (
     SELECT
@@ -148,8 +160,10 @@ WITH
       END AS alt_dupe_audit
     FROM
       base_username AS bu
-      LEFT JOIN gabby.powerschool.student_access_accounts_static AS sa ON bu.alt_username = sa.student_web_id
-      AND bu.student_number != sa.student_number
+      LEFT JOIN gabby.powerschool.student_access_accounts_static AS sa ON (
+        bu.alt_username = sa.student_web_id
+        AND bu.student_number != sa.student_number
+      )
   )
 SELECT
   au.student_number,
@@ -174,10 +188,12 @@ SELECT
   END AS student_web_id,
   CASE
     WHEN spo.default_password IS NOT NULL THEN spo.default_password
-    WHEN au.grade_level <= 2
-    AND LEN(
-      CONCAT(last_name_clean, dob_year)
-    ) <= 7 THEN CONCAT(
+    WHEN (
+      au.grade_level <= 2
+      AND LEN(
+        CONCAT(last_name_clean, dob_year)
+      ) <= 7
+    ) THEN CONCAT(
       au.last_name_clean,
       au.dob_year,
       RIGHT(au.student_number, 4)
@@ -186,4 +202,6 @@ SELECT
   END AS student_web_password
 FROM
   alt_username AS au
-  LEFT JOIN gabby.people.student_password_override AS spo ON au.student_number = spo.student_number
+  LEFT JOIN gabby.people.student_password_override AS spo ON (
+    au.student_number = spo.student_number
+  )

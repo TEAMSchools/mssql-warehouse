@@ -28,12 +28,16 @@ SELECT
   ) AS term
 FROM
   powerschool.cohort_identifiers_static AS co
-  INNER JOIN gabby.utilities.reporting_days AS rd ON co.academic_year = rd.academic_year
-  AND co.exitdate >= rd.[date]
-  LEFT JOIN gabby.reporting.reporting_terms AS dt ON co.schoolid = dt.schoolid
-  AND dt.identifier = 'RT'
-  AND (
-    rd.[date] BETWEEN dt.[start_date] AND dt.end_date
+  INNER JOIN gabby.utilities.reporting_days AS rd ON (
+    co.academic_year = rd.academic_year
+    AND co.exitdate >= rd.[date]
+  )
+  LEFT JOIN gabby.reporting.reporting_terms AS dt ON (
+    co.schoolid = dt.schoolid
+    AND dt.identifier = 'RT'
+    AND (
+      rd.[date] BETWEEN dt.[start_date] AND dt.end_date
+    )
   )
 WHERE
   co.rn_year = 1

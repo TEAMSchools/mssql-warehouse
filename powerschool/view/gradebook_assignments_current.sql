@@ -23,9 +23,15 @@ SELECT
   ) AS category_name
 FROM
   powerschool.assignmentsection AS asec
-  LEFT JOIN powerschool.assignmentcategoryassoc AS aca ON asec.assignmentsectionid = aca.assignmentsectionid
-  LEFT JOIN powerschool.teachercategory AS tc ON aca.teachercategoryid = tc.teachercategoryid
-  LEFT JOIN powerschool.districtteachercategory AS dtc ON tc.districtteachercategoryid = dtc.districtteachercategoryid
+  LEFT JOIN powerschool.assignmentcategoryassoc AS aca ON (
+    asec.assignmentsectionid = aca.assignmentsectionid
+  )
+  LEFT JOIN powerschool.teachercategory AS tc ON (
+    aca.teachercategoryid = tc.teachercategoryid
+  )
+  LEFT JOIN powerschool.districtteachercategory AS dtc ON (
+    tc.districtteachercategoryid = dtc.districtteachercategoryid
+  )
 WHERE
   asec.duedate >= DATEFROMPARTS(
     gabby.utilities.GLOBAL_ACADEMIC_YEAR (),

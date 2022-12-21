@@ -2,20 +2,28 @@ CREATE OR ALTER VIEW
   powerschool.person_contacts AS
   /* address */
 SELECT
-  ca.personid,
-  ca.priority_order,
+  personid,
+  priority_order,
   CASE
-    WHEN ca.priority_order = 1 THEN 1
+    WHEN priority_order = 1 THEN 1
     ELSE 0
   END AS is_primary,
   'Address' AS contact_category,
-  ca.address_type AS contact_type,
-  ca.street + CASE
-    WHEN ca.unit != '' THEN ' ' + ca.unit
-    ELSE ''
-  END + ', ' + ca.city + ', ' + ca.state_code + ' ' + ca.postalcode AS contact
+  address_type AS contact_type,
+  CONCAT(
+    street,
+    CASE
+      WHEN unit != '' THEN ' ' + unit
+    END,
+    ', ',
+    city,
+    ', ',
+    state_code,
+    ' ',
+    postalcode
+  ) AS contact
 FROM
-  powerschool.contact_address AS ca
+  powerschool.contact_address
 UNION ALL
 /* phone number */
 SELECT
@@ -24,16 +32,27 @@ SELECT
   ppna.ispreferred AS is_primary,
   'Phone' AS contact_category,
   pncs.code AS contact_type,
-  '(' + LEFT(pn.phonenumber, 3) + ') ' + SUBSTRING(pn.phonenumber, 4, 3) + '-' + SUBSTRING(pn.phonenumber, 7, 4) + CASE
-    WHEN pn.phonenumberext != '' THEN ' x' + CAST(
-      pn.phonenumberext AS NVARCHAR(16)
-    )
-    ELSE ''
-  END AS contact
+  CONCAT(
+    '(',
+    LEFT(pn.phonenumber, 3),
+    ') ',
+    SUBSTRING(pn.phonenumber, 4, 3),
+    '-',
+    SUBSTRING(pn.phonenumber, 7, 4),
+    CASE
+      WHEN pn.phonenumberext != '' THEN ' x' + CAST(
+        pn.phonenumberext AS NVARCHAR(16)
+      )
+    END
+  ) AS contact
 FROM
   powerschool.personphonenumberassoc AS ppna
-  INNER JOIN powerschool.codeset AS pncs ON ppna.phonetypecodesetid = pncs.codesetid
-  INNER JOIN powerschool.phonenumber AS pn ON ppna.phonenumberid = pn.phonenumberid
+  INNER JOIN powerschool.codeset AS pncs ON (
+    ppna.phonetypecodesetid = pncs.codesetid
+  )
+  INNER JOIN powerschool.phonenumber AS pn ON (
+    ppna.phonenumberid = pn.phonenumberid
+  )
 UNION ALL
 /* email */
 SELECT
@@ -48,5 +67,9 @@ SELECT
   ea.emailaddress AS contact
 FROM
   powerschool.personemailaddressassoc AS peaa
-  INNER JOIN powerschool.codeset AS eacs ON peaa.emailtypecodesetid = eacs.codesetid
-  INNER JOIN powerschool.emailaddress AS ea ON peaa.emailaddressid = ea.emailaddressid
+  INNER JOIN powerschool.codeset AS eacs ON (
+    peaa.emailtypecodesetid = eacs.codesetid
+  )
+  INNER JOIN powerschool.emailaddress AS ea ON (
+    peaa.emailaddressid = ea.emailaddressid
+  )

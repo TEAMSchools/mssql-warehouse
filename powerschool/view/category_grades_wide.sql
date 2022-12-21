@@ -28,38 +28,38 @@ WITH
       )
     UNION ALL
     SELECT
-      cat.studentid,
-      cat.schoolid,
-      cat.yearid,
+      studentid,
+      schoolid,
+      yearid,
       'ALL' AS course_number,
-      cat.reporting_term,
-      cat.reporting_term AS rt,
-      cat.storecode_type,
+      reporting_term,
+      reporting_term AS rt,
+      storecode_type,
       CAST(
-        ROUND(AVG(cat.category_pct), 0) AS DECIMAL(4, 0)
+        ROUND(AVG(category_pct), 0) AS DECIMAL(4, 0)
       ) AS category_pct,
       NULL AS citizenship,
       CASE
         WHEN (
-          CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN cat.termbin_start_date AND cat.termbin_end_date
+          CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN termbin_start_date AND termbin_end_date
         ) THEN 1
         ELSE 0
       END AS is_curterm,
       'ALL' AS credittype
     FROM
-      powerschool.category_grades_static AS cat
+      powerschool.category_grades_static
     WHERE
-      cat.yearid = (
+      yearid = (
         gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990
       )
     GROUP BY
-      cat.studentid,
-      cat.schoolid,
-      cat.yearid,
-      cat.reporting_term,
-      cat.storecode_type,
-      cat.termbin_start_date,
-      cat.termbin_end_date
+      studentid,
+      schoolid,
+      yearid,
+      reporting_term,
+      storecode_type,
+      termbin_start_date,
+      termbin_end_date
     UNION ALL
     SELECT
       cat.studentid,
@@ -85,15 +85,15 @@ WITH
       )
     UNION ALL
     SELECT
-      cat.studentid,
-      cat.schoolid,
-      cat.yearid,
+      studentid,
+      schoolid,
+      yearid,
       'ALL' AS course_number,
-      cat.reporting_term,
+      reporting_term,
       'CUR' AS rt,
-      cat.storecode_type,
+      storecode_type,
       CAST(
-        ROUND(AVG(cat.category_pct), 0) AS DECIMAL(4, 0)
+        ROUND(AVG(category_pct), 0) AS DECIMAL(4, 0)
       ) AS category_pct,
       NULL AS citizenship,
       1 AS is_curterm,
@@ -101,18 +101,18 @@ WITH
     FROM
       powerschool.category_grades_static AS cat
     WHERE
-      cat.yearid = (
+      yearid = (
         gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990
       )
       AND (
-        CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN cat.termbin_start_date AND cat.termbin_end_date
+        CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN termbin_start_date AND termbin_end_date
       )
     GROUP BY
-      cat.studentid,
-      cat.schoolid,
-      cat.yearid,
-      cat.reporting_term,
-      cat.storecode_type
+      studentid,
+      schoolid,
+      yearid,
+      reporting_term,
+      storecode_type
   ),
   grades_unpivot AS (
     SELECT
@@ -184,51 +184,51 @@ WITH
     FROM
       (
         SELECT
-          gr.studentid,
-          gr.yearid,
-          gr.credittype,
-          gr.course_number,
-          gr.reporting_term,
-          gr.is_curterm,
-          gr.[value],
-          CONCAT(gr.storecode_type, '_', gr.rt) AS pivot_field,
-          MAX(gr.schoolid) OVER (
+          studentid,
+          yearid,
+          credittype,
+          course_number,
+          reporting_term,
+          is_curterm,
+          [value],
+          CONCAT(storecode_type, '_', rt) AS pivot_field,
+          MAX(schoolid) OVER (
             PARTITION BY
-              gr.studentid,
-              gr.yearid,
-              gr.course_number,
-              gr.reporting_term
+              studentid,
+              yearid,
+              course_number,
+              reporting_term
             ORDER BY
-              gr.reporting_term ASC
+              reporting_term ASC
           ) AS schoolid
         FROM
           grades_unpivot AS gr
         WHERE
-          gr.field = 'category_pct'
+          field = 'category_pct'
         UNION ALL
         SELECT
-          gr.studentid,
-          gr.yearid,
-          gr.credittype,
-          gr.course_number,
-          gr.reporting_term,
-          gr.is_curterm,
-          gr.[value],
-          CONCAT('CTZ_', gr.rt) AS pivot_field,
-          MAX(gr.schoolid) OVER (
+          studentid,
+          yearid,
+          credittype,
+          course_number,
+          reporting_term,
+          is_curterm,
+          [value],
+          CONCAT('CTZ_', rt) AS pivot_field,
+          MAX(schoolid) OVER (
             PARTITION BY
-              gr.studentid,
-              gr.yearid,
-              gr.course_number,
-              gr.reporting_term
+              studentid,
+              yearid,
+              course_number,
+              reporting_term
             ORDER BY
-              gr.reporting_term ASC
+              reporting_term ASC
           ) AS schoolid
         FROM
           grades_unpivot AS gr
         WHERE
-          gr.field = 'citizenship'
-          AND gr.storecode_type = 'Q'
+          field = 'citizenship'
+          AND storecode_type = 'Q'
       ) AS sub PIVOT (
         MAX([value]) FOR pivot_field IN (
           [F_CUR],

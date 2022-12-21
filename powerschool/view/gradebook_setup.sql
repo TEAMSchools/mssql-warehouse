@@ -1,61 +1,43 @@
 CREATE OR ALTER VIEW
   powerschool.gradebook_setup AS
-SELECT
-  sub.sectionsdcid,
-  sub.sectionsdcid AS psm_sectionid,
-  sub.term_abbreviation,
-  sub.term_start_date,
-  sub.term_end_date,
-  sub.storecode,
-  sub.gradeformulasetid,
-  sub.grade_formula_set_name,
-  sub.gradecalculationtypeid,
-  sub.grade_calculation_type,
-  sub.gradecalcformulaweightid,
-  sub.grade_calc_formula_weight_type,
-  sub.[weight],
-  sub.gradeformulasetid AS finalgradesetupid,
-  sub.grade_calculation_type AS finalgradesetuptype,
-  sub.gradecalculationtypeid AS fg_reportingtermid,
-  COALESCE(
-    sub.gradecalculationtypeid,
-    sub.gradecalcformulaweightid,
-    -1
-  ) AS gradingformulaid,
-  COALESCE(
-    sub.grade_calculation_type,
-    sub.grade_calc_formula_weight_type
-  ) AS gradingformulaweightingtype,
-  COALESCE(
-    sub.teachercategoryid,
-    sub.districtteachercategoryid,
-    sub.gradecalculationtypeid,
-    -1
-  ) AS assignmentcategoryid,
-  COALESCE(
-    sub.tc_name,
-    sub.dtc_name,
-    sub.grade_calculation_type
-  ) AS category_name,
-  COALESCE(
-    sub.tc_name,
-    sub.dtc_name,
-    sub.grade_calculation_type
-  ) AS category_abbreviation,
-  COALESCE(
-    sub.tc_defaultscoretype,
-    sub.dtc_defaultscoretype
-  ) AS defaultscoretype,
-  COALESCE(
-    sub.tc_isinfinalgrades,
-    sub.dtc_isinfinalgrades,
-    0
-  ) AS includeinfinalgrades
-FROM
-  (
+WITH
+  gfs AS (
     SELECT
-      sub.sectionsdcid,
-      sub.gradeformulasetid,
+      CAST(sec.dcid AS INT) AS sectionsdcid,
+      CAST(sec.schoolid AS INT) AS schoolid,
+      CAST(sec.termid AS INT) AS termid,
+      gsec.gradeformulasetid AS section_gradeformulasetid,
+      gsfa.gradeformulasetid AS school_gradeformulasetid,
+      CAST(
+        COALESCE(
+          gsec.gradeformulasetid,
+          gsfa.gradeformulasetid,
+          0
+        ) AS INT
+      ) AS gradeformulasetid
+    FROM
+      powerschool.sections AS sec
+      INNER JOIN powerschool.schools AS sch ON (sec.schoolid = sch.school_number)
+      LEFT JOIN powerschool.gradesectionconfig AS gsec ON (
+        sec.dcid = gsec.sectionsdcid
+        AND gsec.[type] = 'Admin'
+      )
+      LEFT JOIN powerschool.gradeschoolconfig AS gsch ON (
+        sch.dcid = gsch.schoolsdcid
+        AND LEFT(sec.termid, 2) = gsch.yearid
+      )
+      LEFT JOIN powerschool.gradeschoolformulaassoc AS gsfa ON (
+        gsch.gradeschoolconfigid = gsfa.gradeschoolconfigid
+        AND gsfa.isdefaultformulaset = 1
+      )
+    WHERE
+      /* PTP */
+      sec.gradebooktype = 2
+  ),
+  cat AS (
+    SELECT
+      gfs.sectionsdcid,
+      gfs.gradeformulasetid,
       CAST(gfs.[name] AS VARCHAR(125)) AS grade_formula_set_name,
       CAST(t.abbreviation AS VARCHAR(5)) AS term_abbreviation,
       CAST(tb.storecode AS VARCHAR(5)) AS storecode,
@@ -81,41 +63,83 @@ FROM
       CAST(dtc.defaultscoretype AS INT) AS dtc_defaultscoretype,
       CAST(dtc.isinfinalgrades AS INT) AS dtc_isinfinalgrades
     FROM
-      (
-        SELECT
-          CAST(sec.dcid AS INT) AS sectionsdcid,
-          CAST(sec.schoolid AS INT) AS schoolid,
-          CAST(sec.termid AS INT) AS termid,
-          gsec.gradeformulasetid AS section_gradeformulasetid,
-          gsfa.gradeformulasetid AS school_gradeformulasetid,
-          CAST(
-            COALESCE(
-              gsec.gradeformulasetid,
-              gsfa.gradeformulasetid,
-              0
-            ) AS INT
-          ) AS gradeformulasetid
-        FROM
-          powerschool.sections AS sec
-          INNER JOIN powerschool.schools AS sch ON sec.schoolid = sch.school_number
-          LEFT JOIN powerschool.gradesectionconfig AS gsec ON sec.dcid = gsec.sectionsdcid
-          AND gsec.[type] = 'Admin'
-          LEFT JOIN powerschool.gradeschoolconfig AS gsch ON sch.dcid = gsch.schoolsdcid
-          AND LEFT(sec.termid, 2) = gsch.yearid
-          LEFT JOIN powerschool.gradeschoolformulaassoc AS gsfa ON gsch.gradeschoolconfigid = gsfa.gradeschoolconfigid
-          AND gsfa.isdefaultformulaset = 1
-        WHERE
-          sec.gradebooktype = 2 /* PTP */
-      ) AS sub
-      LEFT JOIN powerschool.gradeformulaset AS gfs ON sub.gradeformulasetid = gfs.gradeformulasetid
-      LEFT JOIN powerschool.terms AS t ON sub.termid = t.id
-      AND sub.schoolid = t.schoolid
-      INNER JOIN powerschool.termbins AS tb ON t.schoolid = tb.schoolid
-      AND t.id = tb.termid
-      LEFT JOIN powerschool.gradecalculationtype AS gct ON gfs.gradeformulasetid = gct.gradeformulasetid
-      AND t.abbreviation = gct.abbreviation
-      AND tb.storecode = gct.storecode
-      LEFT JOIN powerschool.gradecalcformulaweight AS gcfw ON gct.gradecalculationtypeid = gcfw.gradecalculationtypeid
-      LEFT JOIN powerschool.teachercategory AS tc ON gcfw.teachercategoryid = tc.teachercategoryid
-      LEFT JOIN powerschool.districtteachercategory AS dtc ON gcfw.districtteachercategoryid = dtc.districtteachercategoryid
-  ) AS sub
+      gfs
+      LEFT JOIN powerschool.gradeformulaset AS gfs ON (
+        gfs.gradeformulasetid = gfs.gradeformulasetid
+      )
+      LEFT JOIN powerschool.terms AS t ON (
+        gfs.termid = t.id
+        AND gfs.schoolid = t.schoolid
+      )
+      INNER JOIN powerschool.termbins AS tb ON (
+        t.schoolid = tb.schoolid
+        AND t.id = tb.termid
+      )
+      LEFT JOIN powerschool.gradecalculationtype AS gct ON (
+        gfs.gradeformulasetid = gct.gradeformulasetid
+        AND t.abbreviation = gct.abbreviation
+        AND tb.storecode = gct.storecode
+      )
+      LEFT JOIN powerschool.gradecalcformulaweight AS gcfw ON (
+        gct.gradecalculationtypeid = gcfw.gradecalculationtypeid
+      )
+      LEFT JOIN powerschool.teachercategory AS tc ON (
+        gcfw.teachercategoryid = tc.teachercategoryid
+      )
+      LEFT JOIN powerschool.districtteachercategory AS dtc ON (
+        gcfw.districtteachercategoryid = dtc.districtteachercategoryid
+      )
+  )
+SELECT
+  sectionsdcid,
+  sectionsdcid AS psm_sectionid,
+  term_abbreviation,
+  term_start_date,
+  term_end_date,
+  storecode,
+  gradeformulasetid,
+  grade_formula_set_name,
+  gradecalculationtypeid,
+  grade_calculation_type,
+  gradecalcformulaweightid,
+  grade_calc_formula_weight_type,
+  [weight],
+  gradeformulasetid AS finalgradesetupid,
+  grade_calculation_type AS finalgradesetuptype,
+  gradecalculationtypeid AS fg_reportingtermid,
+  COALESCE(
+    gradecalculationtypeid,
+    gradecalcformulaweightid,
+    -1
+  ) AS gradingformulaid,
+  COALESCE(
+    grade_calculation_type,
+    grade_calc_formula_weight_type
+  ) AS gradingformulaweightingtype,
+  COALESCE(
+    teachercategoryid,
+    districtteachercategoryid,
+    gradecalculationtypeid,
+    -1
+  ) AS assignmentcategoryid,
+  COALESCE(
+    tc_name,
+    dtc_name,
+    grade_calculation_type
+  ) AS category_name,
+  COALESCE(
+    tc_name,
+    dtc_name,
+    grade_calculation_type
+  ) AS category_abbreviation,
+  COALESCE(
+    tc_defaultscoretype,
+    dtc_defaultscoretype
+  ) AS defaultscoretype,
+  COALESCE(
+    tc_isinfinalgrades,
+    dtc_isinfinalgrades,
+    0
+  ) AS includeinfinalgrades
+FROM
+  cat

@@ -28,11 +28,13 @@ WITH
           dts.alt_name AS term_name
         FROM
           gabby.powerschool.cohort_identifiers_static AS co
-          INNER JOIN gabby.reporting.reporting_terms AS dts ON co.schoolid = dts.schoolid
-          AND co.academic_year = dts.academic_year
-          AND dts.identifier = 'AR'
-          AND dts.time_per_name != 'ARY'
-          AND dts._fivetran_deleted = 0
+          INNER JOIN gabby.reporting.reporting_terms AS dts ON (
+            co.schoolid = dts.schoolid
+            AND co.academic_year = dts.academic_year
+            AND dts.identifier = 'AR'
+            AND dts.time_per_name != 'ARY'
+            AND dts._fivetran_deleted = 0
+          )
         WHERE
           co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
           AND (
@@ -62,38 +64,7 @@ WITH
       gabby.renaissance.ar_default_goals UNPIVOT (
         words_goal FOR term_name IN (q_1, q_2, q_3, q_4, y_1)
       ) AS u
-  )
-  /*
-  ,ms_goals AS (
-  SELECT sub.student_number
-  ,sub.term
-  
-  ,CAST(tiers.words_goal AS INT) AS words_goal
-  FROM
-  (
-  SELECT achv.student_number
-  ,COALESCE(s1.[value], s2.[value]) AS term
-  ,COALESCE(COALESCE(achv.indep_lvl_num, achv.lvl_num)
-  ,LAG(COALESCE(achv.indep_lvl_num, achv.lvl_num), 2) OVER(
-  PARTITION BY achv.student_number, achv.academic_year
-  ORDER BY achv.[start_date])
-  ) AS indep_lvl_num /* Q1 & Q2 are set by BOY, carry them forward for setting goals at beginning of year */
-  FROM gabby.lit.achieved_by_round_static AS achv
-  LEFT JOIN STRING_SPLIT('AR1,AR2', ',') s1
-  ON achv.reporting_term = 'LIT1'
-  LEFT JOIN STRING_SPLIT('AR3,AR4', ',') s2
-  ON achv.reporting_term = 'LIT2'
-  WHERE achv.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-  AND achv.reporting_term IN ('LIT1','LIT2')
-  ) AS sub
-  LEFT JOIN gabby.renaissance.ar_goal_criteria AS goal
-  ON sub.indep_lvl_num  BETWEEN goal.[min] AND goal.[max]
-  AND goal.criteria_clean = 'lvl_num'
-  LEFT JOIN gabby.renaissance.ar_tier_goals AS tiers
-  ON goal.tier = tiers.tier
-  )
-   */
-,
+  ),
   term_goals AS (
     SELECT
       student_number,
@@ -130,14 +101,20 @@ WITH
           END AS words_goal
         FROM
           roster AS r
-          LEFT JOIN default_goals AS df ON r.grade_level = df.grade_level
-          AND r.term_name = df.term_name
-          AND df.school_id = 0
-          LEFT JOIN default_goals AS df2 ON r.schoolid = df2.school_id
-          AND r.grade_level = df2.grade_level
-          AND r.term_name = df2.term_name
-          LEFT JOIN gabby.renaissance.ar_individualized_goals_long_static AS g ON r.student_number = g.student_number
-          AND r.reporting_term = g.reporting_term
+          LEFT JOIN default_goals AS df ON (
+            r.grade_level = df.grade_level
+            AND r.term_name = df.term_name
+            AND df.school_id = 0
+          )
+          LEFT JOIN default_goals AS df2 ON (
+            r.schoolid = df2.school_id
+            AND r.grade_level = df2.grade_level
+            AND r.term_name = df2.term_name
+          )
+          LEFT JOIN gabby.renaissance.ar_individualized_goals_long_static AS g ON (
+            r.student_number = g.student_number
+            AND r.reporting_term = g.reporting_term
+          )
       ) AS sub
   )
 SELECT

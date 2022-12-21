@@ -1,14 +1,14 @@
 CREATE OR ALTER VIEW
   powerschool.enrollment_identifiers AS
 SELECT
-  sub.student_number,
-  sub.yearid,
-  MAX(sub.is_enrolled_y1) AS is_enrolled_y1,
-  MAX(sub.is_enrolled_oct01) AS is_enrolled_oct01,
-  MAX(sub.is_enrolled_oct15) AS is_enrolled_oct15,
-  MAX(sub.is_enrolled_recent) AS is_enrolled_recent,
-  MAX(sub.is_enrolled_oct15_week) AS is_enrolled_oct15_week,
-  MAX(sub.is_enrolled_jan15_week) AS is_enrolled_jan15_week
+  student_number,
+  yearid,
+  MAX(is_enrolled_y1) AS is_enrolled_y1,
+  MAX(is_enrolled_oct01) AS is_enrolled_oct01,
+  MAX(is_enrolled_oct15) AS is_enrolled_oct15,
+  MAX(is_enrolled_recent) AS is_enrolled_recent,
+  MAX(is_enrolled_oct15_week) AS is_enrolled_oct15_week,
+  MAX(is_enrolled_jan15_week) AS is_enrolled_jan15_week
 FROM
   (
     SELECT
@@ -32,63 +32,71 @@ FROM
         WHEN (
           CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN co.entrydate AND co.exitdate
         ) THEN 1
-      END AS is_enrolled_recent
+      END AS is_enrolled_recent,
       /* enrolled week of 10/15 */
-,
       CASE
-        WHEN co.entrydate <= DATEADD(
-          DAY,
-          7 - (
-            DATEPART(
-              WEEKDAY,
-              DATEFROMPARTS(co.academic_year, 10, 15)
-            )
-          ),
-          DATEFROMPARTS(co.academic_year, 10, 15)
-        ) /* entered before 10/15 week end */
-        AND co.exitdate >= DATEADD(
-          DAY,
-          0 - (
-            DATEPART(
-              WEEKDAY,
-              DATEFROMPARTS(co.academic_year, 10, 15)
-            ) - 1
-          ),
-          DATEFROMPARTS(co.academic_year, 10, 15)
-        ) /* exited after 10/15 week start */ THEN 1
-      END AS is_enrolled_oct15_week
+        WHEN (
+          /* entered before 10/15 week end */
+          co.entrydate <= DATEADD(
+            DAY,
+            7 - (
+              DATEPART(
+                WEEKDAY,
+                DATEFROMPARTS(co.academic_year, 10, 15)
+              )
+            ),
+            DATEFROMPARTS(co.academic_year, 10, 15)
+          )
+          /* exited after 10/15 week start */
+          AND co.exitdate >= DATEADD(
+            DAY,
+            0 - (
+              DATEPART(
+                WEEKDAY,
+                DATEFROMPARTS(co.academic_year, 10, 15)
+              ) - 1
+            ),
+            DATEFROMPARTS(co.academic_year, 10, 15)
+          )
+        ) THEN 1
+      END AS is_enrolled_oct15_week,
       /* enrolled week of 01/15 */
-,
       CASE
-        WHEN co.entrydate <= DATEADD(
-          DAY,
-          7 - (
-            DATEPART(
-              WEEKDAY,
-              DATEFROMPARTS(co.academic_year + 1, 1, 15)
-            )
-          ),
-          DATEFROMPARTS(co.academic_year + 1, 1, 15)
-        ) /* entered before 01/15 week end */
-        AND co.exitdate >= DATEADD(
-          DAY,
-          0 - (
-            DATEPART(
-              WEEKDAY,
-              DATEFROMPARTS(co.academic_year + 1, 1, 15)
-            ) - 1
-          ),
-          DATEFROMPARTS(co.academic_year + 1, 1, 15)
-        ) /* exited after 01/15 week start */ THEN 1
+      /* entered before 01/15 week end */
+        WHEN (
+          co.entrydate <= DATEADD(
+            DAY,
+            7 - (
+              DATEPART(
+                WEEKDAY,
+                DATEFROMPARTS(co.academic_year + 1, 1, 15)
+              )
+            ),
+            DATEFROMPARTS(co.academic_year + 1, 1, 15)
+          )
+          /* exited after 01/15 week start */
+          AND co.exitdate >= DATEADD(
+            DAY,
+            0 - (
+              DATEPART(
+                WEEKDAY,
+                DATEFROMPARTS(co.academic_year + 1, 1, 15)
+              ) - 1
+            ),
+            DATEFROMPARTS(co.academic_year + 1, 1, 15)
+          )
+        ) THEN 1
       END AS is_enrolled_jan15_week
     FROM
       powerschool.cohort_static AS co
-      LEFT JOIN powerschool.calendar_rollup_static AS c ON co.schoolid = c.schoolid
-      AND co.yearid = c.yearid
-      AND co.track = c.track
+      LEFT JOIN powerschool.calendar_rollup_static AS c ON (
+        co.schoolid = c.schoolid
+        AND co.yearid = c.yearid
+        AND co.track = c.track
+      )
     WHERE
       co.grade_level != 99
   ) AS sub
 GROUP BY
-  sub.student_number,
-  sub.yearid
+  student_number,
+  yearid

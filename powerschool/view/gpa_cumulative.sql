@@ -35,12 +35,16 @@ WITH
         WHEN sg.excludefromgpa = 0 THEN sg.gpa_points
       END AS gpa_points_projected_s1,
       CASE
-        WHEN sg.excludefromgpa = 0
-        AND sg.credit_type IN ('MATH', 'SCI', 'ENG', 'SOC') THEN sg.potentialcrhrs
+        WHEN (
+          sg.excludefromgpa = 0
+          AND sg.credit_type IN ('MATH', 'SCI', 'ENG', 'SOC')
+        ) THEN sg.potentialcrhrs
       END AS potentialcrhrs_core,
       CASE
-        WHEN sg.excludefromgpa = 0
-        AND sg.credit_type IN ('MATH', 'SCI', 'ENG', 'SOC') THEN sg.gpa_points
+        WHEN (
+          sg.excludefromgpa = 0
+          AND sg.credit_type IN ('MATH', 'SCI', 'ENG', 'SOC')
+        ) THEN sg.gpa_points
       END AS gpa_points_core,
       CASE
         WHEN sg.excludefromgpa = 0 THEN su.grade_points
@@ -48,14 +52,16 @@ WITH
     FROM
       powerschool.storedgrades AS sg
       LEFT JOIN powerschool.gradescaleitem_lookup_static AS su ON (
-        sg.[percent] BETWEEN su.min_cutoffpercentage AND su.max_cutoffpercentage
-      )
-      AND gabby.utilities.PS_UNWEIGHTED_GRADESCALE_NAME (
         (
-          CAST(LEFT(sg.termid, 2) AS INT) + 1990
-        ),
-        sg.gradescale_name
-      ) = su.gradescale_name
+          sg.[percent] BETWEEN su.min_cutoffpercentage AND su.max_cutoffpercentage
+        )
+        AND gabby.utilities.PS_UNWEIGHTED_GRADESCALE_NAME (
+          (
+            CAST(LEFT(sg.termid, 2) AS INT) + 1990
+          ),
+          sg.gradescale_name
+        ) = su.gradescale_name
+      )
     WHERE
       sg.storecode = 'Y1'
     UNION ALL
@@ -84,29 +90,36 @@ WITH
       NULL AS unweighted_grade_points
     FROM
       powerschool.final_grades_static AS fg
-      INNER JOIN powerschool.cohort_static AS co ON fg.studentid = co.studentid
-      AND fg.yearid = co.yearid
-      AND co.rn_year = 1
-      INNER JOIN gabby.reporting.reporting_terms AS rt ON fg.yearid = rt.yearid
-      AND (
-        fg.storecode = rt.alt_name
-        COLLATE LATIN1_GENERAL_BIN
+      INNER JOIN powerschool.cohort_static AS co ON (
+        fg.studentid = co.studentid
+        AND fg.yearid = co.yearid
+        AND co.rn_year = 1
       )
-      AND co.schoolid = rt.schoolid
-      AND rt.identifier = 'RT'
-      AND rt.is_curterm = 1
-      LEFT JOIN powerschool.storedgrades AS sg ON fg.studentid = sg.studentid
-      AND fg.course_number = sg.course_number
-      AND rt.academic_year = (
-        CAST(LEFT(sg.termid, 2) AS INT) + 1990
+      INNER JOIN gabby.reporting.reporting_terms AS rt ON (
+        fg.yearid = rt.yearid
+        AND (
+          fg.storecode = rt.alt_name
+          COLLATE LATIN1_GENERAL_BIN
+        )
+        AND co.schoolid = rt.schoolid
+        AND rt.identifier = 'RT'
+        AND rt.is_curterm = 1
       )
-      AND sg.storecode = 'Y1'
+      LEFT JOIN powerschool.storedgrades AS sg ON (
+        fg.studentid = sg.studentid
+        AND fg.course_number = sg.course_number
+        AND rt.academic_year = (
+          CAST(LEFT(sg.termid, 2) AS INT) + 1990
+        )
+        AND sg.storecode = 'Y1'
+      )
     WHERE
       fg.yearid = (
         gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990
       )
       AND fg.exclude_from_gpa = 0
-      AND sg.studentid IS NULL /* ensures already stored grades are excluded */
+      /* ensures already stored grades are excluded */
+      AND sg.studentid IS NULL
     UNION ALL
     SELECT
       fg.studentid,
@@ -130,22 +143,28 @@ WITH
       NULL AS unweighted_grade_points
     FROM
       powerschool.final_grades_static AS fg
-      INNER JOIN powerschool.cohort_static AS co ON fg.studentid = co.studentid
-      AND fg.yearid = co.yearid
-      AND co.rn_year = 1
-      LEFT JOIN powerschool.storedgrades AS sg ON fg.studentid = sg.studentid
-      AND fg.course_number = sg.course_number
-      AND (
-        CAST(LEFT(sg.termid, 2) AS INT) + 1990
-      ) = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-      AND sg.storecode = 'Y1'
+      INNER JOIN powerschool.cohort_static AS co ON (
+        fg.studentid = co.studentid
+        AND fg.yearid = co.yearid
+        AND co.rn_year = 1
+      )
+      LEFT JOIN powerschool.storedgrades AS sg ON (
+        fg.studentid = sg.studentid
+        AND fg.course_number = sg.course_number
+        AND (
+          CAST(LEFT(sg.termid, 2) AS INT) + 1990
+        ) = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+        AND sg.storecode = 'Y1'
+      )
     WHERE
       fg.yearid = (
         gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990
       )
-      AND fg.storecode = 'Q2' /* Y1 AS of Q2 (aka Semester 1) */
+      /* Y1 AS of Q2 (aka Semester 1) */
+      AND fg.storecode = 'Q2'
       AND fg.exclude_from_gpa = 0
-      AND sg.studentid IS NULL /* ensures already stored grades are excluded */
+      /* ensures already stored grades are excluded */
+      AND sg.studentid IS NULL
   ),
   weighted_pts AS (
     SELECT
