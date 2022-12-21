@@ -63,9 +63,9 @@ SELECT sub.subdomain
             WHEN ml.metric_type = 'greater' AND sub.pct_met_goal >= ml.level_2 THEN 2
             WHEN ml.metric_type = 'greater' AND sub.pct_met_goal < ml.level_2 THEN 1
             WHEN ml.metric_type = 'less' AND sub.pct_met_goal > ml.level_2 THEN 1 
-            WHEN ml.metric_type = 'less' AND sub.pct_met_goal <= ml.level_3 THEN 2 
-            WHEN ml.metric_type = 'less' AND sub.pct_met_goal <= ml.level_2 THEN 3
-            WHEN ml.metric_type = 'less' AND sub.pct_met_goal <= ml.level_2 THEN 4
+            WHEN ml.metric_type = 'less' AND sub.pct_met_goal > ml.level_3 THEN 2 
+            WHEN ml.metric_type = 'less' AND sub.pct_met_goal > ml.level_4 THEN 3
+            WHEN ml.metric_type = 'less' AND sub.pct_met_goal <= ml.level_4 THEN 4
          ELSE NULL END AS subdomain_score
        ,ROUND(ml.[absolute] - sub.pct_met_goal, 2) AS diff_from_absolute
       ,ABS(ROUND(sub.pct_met_f - sub.pct_met_m, 2)) AS gender_diff
