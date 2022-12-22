@@ -14,10 +14,7 @@ SELECT
   s.home_phone,
   s.guardianemail,
   s.next_school,
-  CASE
-    WHEN s.sched_nextyeargrade IS NULL THEN 0
-    ELSE s.sched_nextyeargrade
-  END AS sched_nextyeargrade,
+  COALESCE(s.sched_nextyeargrade, 0) AS sched_nextyeargrade,
   CONCAT(
     s.street,
     ', ',
@@ -74,10 +71,14 @@ SELECT
   suf.father_cell
 FROM
   gabby.powerschool.students AS s
-  LEFT JOIN gabby.powerschool.cohort_identifiers_static AS co ON s.student_number = co.student_number
-  AND co.rn_undergrad = 1
-  AND co.grade_level != 99
-  LEFT JOIN powerschool.u_studentsuserfields AS suf ON s.dcid = suf.studentsdcid
-  AND s.[db_name] = suf.[db_name]
+  LEFT JOIN gabby.powerschool.cohort_identifiers_static AS co ON (
+    s.student_number = co.student_number
+    AND co.rn_undergrad = 1
+    AND co.grade_level != 99
+  )
+  LEFT JOIN powerschool.u_studentsuserfields AS suf ON (
+    s.dcid = suf.studentsdcid
+    AND s.[db_name] = suf.[db_name]
+  )
 WHERE
   s.enroll_status IN (0, -1)

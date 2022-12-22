@@ -43,24 +43,28 @@ SELECT
   gpad.total_credit_hours,
   gpad.grade_avg_y1,
   gpad.n_failing_y1,
-  gpac.cumulative_Y1_gpa,
-  gpac.cumulative_Y1_gpa_unweighted,
-  gpac.cumulative_Y1_gpa_projected,
-  gpac.cumulative_Y1_gpa_projected_s1,
+  gpac.cumulative_y1_gpa,
+  gpac.cumulative_y1_gpa_unweighted,
+  gpac.cumulative_y1_gpa_projected,
+  gpac.cumulative_y1_gpa_projected_s1,
   gpac.earned_credits_cum,
   gpac.earned_credits_cum_projected,
   gpac.earned_credits_cum_projected_s1,
   gpac.potential_credits_cum,
-  gpac.core_cumulative_Y1_gpa
+  gpac.core_cumulative_y1_gpa
 FROM
   gabby.powerschool.cohort_identifiers_static AS co
-  LEFT JOIN gabby.powerschool.gpa_detail AS gpad ON co.student_number = gpad.student_number
-  AND co.academic_year = gpad.academic_year
-  AND co.schoolid = gpad.schoolid
-  AND co.[db_name] = gpad.[db_name]
-  LEFT JOIN gabby.powerschool.gpa_cumulative AS gpac ON co.studentid = gpac.studentid
-  AND co.schoolid = gpac.schoolid
-  AND co.[db_name] = gpac.[db_name]
+  LEFT JOIN gabby.powerschool.gpa_detail AS gpad ON (
+    co.student_number = gpad.student_number
+    AND co.academic_year = gpad.academic_year
+    AND co.schoolid = gpad.schoolid
+    AND co.[db_name] = gpad.[db_name]
+  )
+  LEFT JOIN gabby.powerschool.gpa_cumulative AS gpac ON (
+    co.studentid = gpac.studentid
+    AND co.schoolid = gpac.schoolid
+    AND co.[db_name] = gpac.[db_name]
+  )
 WHERE
   co.school_level IN ('MS', 'HS')
   AND co.rn_year = 1

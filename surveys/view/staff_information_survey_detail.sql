@@ -1,40 +1,42 @@
 CREATE OR ALTER VIEW
   surveys.staff_information_survey_detail AS
 SELECT
-  sub.employee_number,
-  sub.survey_id,
-  sub.survey_response_id,
-  sub.campaign_academic_year,
-  sub.campaign_reporting_term,
-  sub.campaign_name,
-  sub.date_started,
-  sub.date_submitted,
-  sub.question_id,
-  sub.answer,
+  employee_number,
+  survey_id,
+  survey_response_id,
+  campaign_academic_year,
+  campaign_reporting_term,
+  campaign_name,
+  date_started,
+  date_submitted,
+  question_id,
+  answer,
   CASE
-    WHEN sub.question_id IN (5, 8, 21, 30) THEN sub.question_shortname + CAST(sub.rn_multiselect AS VARCHAR(2))
-    ELSE sub.question_shortname
+    WHEN question_id IN (5, 8, 21, 30) THEN (
+      question_shortname + CAST(rn_multiselect AS VARCHAR(2))
+    )
+    ELSE question_shortname
   END AS question_shortname,
   ROW_NUMBER() OVER (
     PARTITION BY
-      sub.employee_number,
-      sub.survey_id,
-      sub.campaign_name,
-      sub.question_shortname,
-      sub.rn_multiselect
+      employee_number,
+      survey_id,
+      campaign_name,
+      question_shortname,
+      rn_multiselect
     ORDER BY
-      sub.date_submitted DESC,
-      sub.survey_response_id DESC
+      date_submitted DESC,
+      survey_response_id DESC
   ) AS rn_campaign,
   ROW_NUMBER() OVER (
     PARTITION BY
-      sub.employee_number,
-      sub.survey_id,
-      sub.question_shortname,
-      sub.rn_multiselect
+      employee_number,
+      survey_id,
+      question_shortname,
+      rn_multiselect
     ORDER BY
-      sub.date_submitted DESC,
-      sub.survey_response_id DESC
+      date_submitted DESC,
+      survey_response_id DESC
   ) AS rn_cur
 FROM
   (
@@ -71,15 +73,21 @@ FROM
       ) AS rn_multiselect
     FROM
       gabby.surveygizmo.survey_response_identifiers_static AS sri
-      INNER JOIN gabby.surveygizmo.survey_response_data AS sd ON sri.survey_id = sd.survey_id
-      AND sri.survey_response_id = sd.survey_response_id
-      INNER JOIN gabby.surveygizmo.survey_question_clean_static AS sq ON sd.survey_id = sq.survey_id
-      AND sd.question_id = sq.survey_question_id
-      AND sq.base_type = 'Question'
-      LEFT JOIN gabby.surveygizmo.survey_question_options_static AS qo ON sd.survey_id = qo.survey_id
-      AND sd.question_id = qo.question_id
-      AND qo.option_disabled = 0
-      AND CHARINDEX(qo.option_id, sd.options) > 0
+      INNER JOIN gabby.surveygizmo.survey_response_data AS sd ON (
+        sri.survey_id = sd.survey_id
+        AND sri.survey_response_id = sd.survey_response_id
+      )
+      INNER JOIN gabby.surveygizmo.survey_question_clean_static AS sq ON (
+        sd.survey_id = sq.survey_id
+        AND sd.question_id = sq.survey_question_id
+        AND sq.base_type = 'Question'
+      )
+      LEFT JOIN gabby.surveygizmo.survey_question_options_static AS qo ON (
+        sd.survey_id = qo.survey_id
+        AND sd.question_id = qo.question_id
+        AND qo.option_disabled = 0
+        AND CHARINDEX(qo.option_id, sd.options) > 0
+      )
     WHERE
       sri.survey_id = 6330385
       AND sri.[status] = 'Complete'

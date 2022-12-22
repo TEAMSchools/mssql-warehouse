@@ -28,9 +28,8 @@ SELECT
     ORDER BY
       h.effective_start_date ASC
   ) AS prev_annual_salary,
-  h.is_current_record
+  h.is_current_record,
   /* dedupe positions */
-,
   ROW_NUMBER() OVER (
     PARTITION BY
       h.associate_id
@@ -57,7 +56,9 @@ SELECT
   ) AS rn_curr
 FROM
   gabby.people.employment_history_static AS h
-  INNER JOIN gabby.people.staff_crosswalk_static AS r ON h.associate_id = r.adp_associate_id
+  INNER JOIN gabby.people.staff_crosswalk_static AS r ON (
+    h.associate_id = r.adp_associate_id
+  )
 WHERE
   (
     h.job_title IS NOT NULL

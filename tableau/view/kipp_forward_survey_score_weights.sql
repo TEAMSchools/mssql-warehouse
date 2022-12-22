@@ -33,19 +33,21 @@ WITH
       ) * 10.0 AS item_weight
     FROM
       weight_denominator AS a
-      LEFT JOIN surveygizmo.survey_detail AS s ON a.survey_id = s.survey_id
-      AND s.survey_id = 6734664
-      AND s.question_shortname IN (
-        'imp_1',
-        'imp_2',
-        'imp_3',
-        'imp_4',
-        'imp_5',
-        'imp_6',
-        'imp_7',
-        'imp_8',
-        'imp_9',
-        'imp_10'
+      LEFT JOIN surveygizmo.survey_detail AS s ON (
+        a.survey_id = s.survey_id
+        AND s.survey_id = 6734664
+        AND s.question_shortname IN (
+          'imp_1',
+          'imp_2',
+          'imp_3',
+          'imp_4',
+          'imp_5',
+          'imp_6',
+          'imp_7',
+          'imp_8',
+          'imp_9',
+          'imp_10'
+        )
       )
     GROUP BY
       s.question_shortname,
@@ -93,4 +95,6 @@ SELECT
   w.question_title
 FROM
   avg_scores AS s
-  INNER JOIN score_weights AS w ON s.question_shortname = w.question_shortname
+  INNER JOIN score_weights AS w ON (
+    s.question_shortname = w.question_shortname
+  )

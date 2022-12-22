@@ -21,18 +21,21 @@ WITH
         sur.communication_from_the_accounts_payable_team_is_effective AS VARCHAR(MAX)
       ) AS accounts_payable_communication,
       CAST(
+        /* trunk-ignore(sqlfluff/L016) */
         sur.what_is_one_thing_the_accounts_payable_team_does_that_s_effective_ AS VARCHAR(MAX)
       ) AS accounts_payable_effective_oe,
       CAST(
         sur.i_receive_what_i_expect_from_the_accounts_payable_team_ AS VARCHAR(MAX)
       ) AS accounts_payable_expect,
       CAST(
+        /* trunk-ignore(sqlfluff/L016) */
         sur.have_you_identified_any_gaps_that_could_be_filled_with_cmo_support_or_oversight_ AS VARCHAR(MAX)
       ) AS cmo_gaps_oe,
       CAST(
         sur.the_cmo_is_headed_in_the_right_direction_ AS VARCHAR(MAX)
       ) AS cmo_right_direction,
       CAST(
+        /* trunk-ignore(sqlfluff/L016) */
         sur.i_always_feel_like_cmo_departments_and_my_school_region_are_on_the_same_team_or_working_toward_the_same_big_goals_ AS VARCHAR(MAX)
       ) AS cmo_team_goals,
       CAST(
@@ -63,6 +66,7 @@ WITH
         sur.communication_from_the_employee_relations_team_is_effective AS VARCHAR(MAX)
       ) AS employee_relations_communication,
       CAST(
+        /* trunk-ignore(sqlfluff/L016) */
         sur.what_is_one_thing_the_employee_relations_team_does_that_s_effective_ AS VARCHAR(MAX)
       ) AS employee_relations_effective_oe,
       CAST(

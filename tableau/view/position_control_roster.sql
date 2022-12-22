@@ -51,17 +51,16 @@ SELECT
   CASE
     WHEN sr.worker_category LIKE '%part%' THEN 0.5
     ELSE 1.0
-  END AS fte
-  /*Aliasing CEO/CFO for report terminology */
-,
+  END AS fte,
+  /* Aliasing CEO/CFO for report terminology */
   CASE
     WHEN sr.job_title = 'Chief Financial Officer' THEN 'School Business Administrator'
     WHEN sr.job_title = 'Chief Executive Officer' THEN 'Superintendent'
     ELSE sr.job_title
   END AS report_job_title,
-  pvt.Medical,
-  pvt.Dental,
-  pvt.Vision,
+  pvt.[Medical],
+  pvt.[Dental],
+  pvt.[Vision],
   cn.cost_number,
   cn.grant_number,
   'N/A' AS substitute_teacher,
@@ -70,12 +69,14 @@ SELECT
   'N/A' AS retirement_projection
 FROM
   gabby.people.staff_roster AS sr
-  LEFT JOIN pivot_table AS pvt ON sr.position_id = pvt.position_id
-  LEFT JOIN cost_number AS cn ON sr.associate_id = cn.associate_id
+  LEFT JOIN pivot_table AS pvt ON (sr.position_id = pvt.position_id)
+  LEFT JOIN cost_number AS cn ON (
+    sr.associate_id = cn.associate_id
+  )
 WHERE
   sr.position_status IN ('Active', 'Leave')
   AND (
-    job_title IN (
+    sr.job_title IN (
       'Chief Executive Officer',
       'Chief Financial Officer'
     )

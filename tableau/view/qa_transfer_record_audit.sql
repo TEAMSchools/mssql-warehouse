@@ -87,13 +87,15 @@ SELECT
   'promoted next school - no show' AS audit_type
 FROM
   gabby.powerschool.students AS s
-  INNER JOIN all_enrollments AS t ON s.id = t.studentid
-  AND s.[db_name] = t.[db_name]
+  INNER JOIN all_enrollments AS t ON (
+    s.id = t.studentid
+    AND s.[db_name] = t.[db_name]
+  )
 WHERE
   t.next_gradelevel != 99
   AND t.exitcode != 'G1'
   AND t.next_gradelevel > t.grade_level
-  AND t.next_exitdate <= next_entrydate
+  AND t.next_exitdate <= t.next_entrydate
   AND t.grade_level IN (4, 8)
 UNION ALL
 SELECT
@@ -117,8 +119,10 @@ SELECT
   END AS audit_type
 FROM
   gabby.powerschool.students AS s
-  INNER JOIN all_enrollments AS t ON s.id = t.studentid
-  AND s.[db_name] = t.[db_name]
+  INNER JOIN all_enrollments AS t ON (
+    s.id = t.studentid
+    AND s.[db_name] = t.[db_name]
+  )
 WHERE
   t.grade_level = 99
   AND s.enroll_status != 3
@@ -139,8 +143,10 @@ SELECT
   'no show - merge with previous record' AS audit_type
 FROM
   gabby.powerschool.students AS s
-  INNER JOIN all_enrollments AS t ON s.id = t.studentid
-  AND s.[db_name] = t.[db_name]
+  INNER JOIN all_enrollments AS t ON (
+    s.id = t.studentid
+    AND s.[db_name] = t.[db_name]
+  )
 WHERE
   t.next_entrydate = t.next_exitdate
   AND t.next_gradelevel != 99;

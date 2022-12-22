@@ -10,38 +10,38 @@ WITH
   ),
   t1 (i) AS (
     SELECT
-      0
+      a.i
     FROM
-      t0 AS a,
-      t0 b
+      t0 AS a
+      CROSS JOIN t0
   ),
   t2 (i) AS (
     SELECT
-      0
+      a.i
     FROM
-      t1 AS a,
-      t1 b
+      t1 AS a
+      CROSS JOIN t1
   ),
   t3 (i) AS (
     SELECT
-      0
+      a.i
     FROM
-      t2 AS a,
-      t2 b
+      t2 AS a
+      CROSS JOIN t2
   ),
   t4 (i) AS (
     SELECT
-      0
+      a.i
     FROM
-      t3 AS a,
-      t3 b
+      t3 AS a
+      CROSS JOIN t3
   ),
   t5 (i) AS (
     SELECT
-      0
+      a.i
     FROM
-      t4 AS a,
-      t4 b
+      t4 AS a
+      CROSS JOIN t4
   )
 SELECT
   0 AS n

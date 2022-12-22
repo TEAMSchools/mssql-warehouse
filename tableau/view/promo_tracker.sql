@@ -24,11 +24,13 @@ WITH
       dt.end_date AS term_end_date
     FROM
       gabby.powerschool.cohort_identifiers_static AS co
-      INNER JOIN gabby.reporting.reporting_terms AS dt ON co.academic_year = dt.academic_year
-      AND co.schoolid = dt.schoolid
-      AND dt.identifier = 'RT'
-      AND dt._fivetran_deleted = 0
-      AND dt.alt_name != 'Summer School'
+      INNER JOIN gabby.reporting.reporting_terms AS dt ON (
+        co.academic_year = dt.academic_year
+        AND co.schoolid = dt.schoolid
+        AND dt.identifier = 'RT'
+        AND dt._fivetran_deleted = 0
+        AND dt.alt_name != 'Summer School'
+      )
     WHERE
       co.academic_year IN (
         gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
@@ -60,10 +62,12 @@ WITH
       dt.end_date AS term_end_date
     FROM
       gabby.powerschool.cohort_identifiers_static AS co
-      INNER JOIN gabby.reporting.reporting_terms AS dt ON co.academic_year = dt.academic_year
-      AND dt.schoolid = 0
-      AND dt.identifier = 'SY'
-      AND dt._fivetran_deleted = 0
+      INNER JOIN gabby.reporting.reporting_terms AS dt ON (
+        co.academic_year = dt.academic_year
+        AND dt.schoolid = 0
+        AND dt.identifier = 'SY'
+        AND dt._fivetran_deleted = 0
+      )
     WHERE
       co.academic_year IN (
         gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
@@ -138,8 +142,10 @@ WITH
       END AS finalgradename
     FROM
       gabby.powerschool.storedgrades AS gr
-      INNER JOIN gabby.powerschool.students AS s ON gr.studentid = s.id
-      AND gr.[db_name] = s.[db_name]
+      INNER JOIN gabby.powerschool.students AS s ON (
+        gr.studentid = s.id
+        AND gr.[db_name] = s.[db_name]
+      )
     WHERE
       gr.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
       AND gr.excludefromgpa = 0
@@ -426,8 +432,10 @@ WITH
       'GPA CUMULATIVE' AS subdomain
     FROM
       gabby.powerschool.gpa_cumulative AS gpa
-      INNER JOIN gabby.powerschool.students AS s ON gpa.studentid = s.id
-      AND gpa.[db_name] = s.[db_name]
+      INNER JOIN gabby.powerschool.students AS s ON (
+        gpa.studentid = s.id
+        AND gpa.[db_name] = s.[db_name]
+      )
     UNION ALL
     SELECT
       CAST(s.student_number AS INT) AS student_number,
@@ -438,8 +446,10 @@ WITH
       'CREDITS EARNED' AS subdomain
     FROM
       gabby.powerschool.gpa_cumulative AS gpa
-      INNER JOIN gabby.powerschool.students AS s ON gpa.studentid = s.id
-      AND gpa.[db_name] = s.[db_name]
+      INNER JOIN gabby.powerschool.students AS s ON (
+        gpa.studentid = s.id
+        AND gpa.[db_name] = s.[db_name]
+      )
   ),
   lit AS (
     /* STEP/F&P */
@@ -548,7 +558,9 @@ WITH
       'GOAL' AS subdomain
     FROM
       gabby.nwea.assessment_result_identifiers AS map
-      INNER JOIN gabby.powerschool.students AS s ON map.student_id = s.student_number
+      INNER JOIN gabby.powerschool.students AS s ON (
+        map.student_id = s.student_number
+      )
     WHERE
       map.measurement_scale = 'Reading'
       AND map.school_name = 'Newark Collegiate Academy'
@@ -845,9 +857,11 @@ WITH
           END competitiveness_ranking_int
         FROM
           gabby.naviance.college_applications AS app
-          LEFT JOIN gabby.alumni.account AS a ON app.ceeb_code = CAST(a.ceeb_code_c AS VARCHAR)
-          AND a.record_type_id = '01280000000BQEkAAO'
-          AND a.competitiveness_ranking_c IS NOT NULL
+          LEFT JOIN gabby.alumni.account AS a ON (
+            app.ceeb_code = CAST(a.ceeb_code_c AS VARCHAR)
+            AND a.record_type_id = '01280000000BQEkAAO'
+            AND a.competitiveness_ranking_c IS NOT NULL
+          )
       ) AS sub
   ),
   promo_status AS (
@@ -943,12 +957,14 @@ SELECT
   NULL AS performance_level_label
 FROM
   roster AS r
-  LEFT JOIN grades AS gr ON r.student_number = gr.student_number
-  AND r.academic_year = gr.academic_year
-  AND (
-    r.reporting_term
-    COLLATE LATIN1_GENERAL_BIN
-  ) = gr.reporting_term
+  LEFT JOIN grades AS gr ON (
+    r.student_number = gr.student_number
+    AND r.academic_year = gr.academic_year
+    AND (
+      r.reporting_term
+      COLLATE LATIN1_GENERAL_BIN
+    ) = gr.reporting_term
+  )
 UNION ALL
 --*/
 --/*
@@ -982,13 +998,15 @@ SELECT
   NULL AS performance_level_label
 FROM
   roster AS r
-  LEFT JOIN attendance AS att ON r.studentid = att.studentid
-  AND r.[db_name] = att.[db_name]
-  AND r.academic_year = att.academic_year
-  AND (
-    r.reporting_term
-    COLLATE LATIN1_GENERAL_BIN
-  ) = att.reporting_term
+  LEFT JOIN attendance AS att ON (
+    r.studentid = att.studentid
+    AND r.[db_name] = att.[db_name]
+    AND r.academic_year = att.academic_year
+    AND (
+      r.reporting_term
+      COLLATE LATIN1_GENERAL_BIN
+    ) = att.reporting_term
+  )
 UNION ALL
 --*/
 --/*
@@ -1028,8 +1046,10 @@ SELECT
   cma.proficiency_label AS performance_level_label
 FROM
   roster AS r
-  LEFT JOIN modules AS cma ON r.student_number = cma.student_number
-  AND r.academic_year = cma.academic_year
+  LEFT JOIN modules AS cma ON (
+    r.student_number = cma.student_number
+    AND r.academic_year = cma.academic_year
+  )
 WHERE
   r.term_name = 'Y1'
 UNION ALL
@@ -1062,14 +1082,16 @@ SELECT
   NULL AS performance_level_label
 FROM
   roster AS r
-  INNER JOIN gpa ON r.student_number = gpa.student_number
-  AND r.schoolid = gpa.schoolid
-  AND r.academic_year >= gpa.academic_year
-  AND (
-    r.reporting_term
-    COLLATE LATIN1_GENERAL_BIN
-  ) = gpa.reporting_term
-  AND r.term_start_date <= CAST(CURRENT_TIMESTAMP AS DATE)
+  INNER JOIN gpa ON (
+    r.student_number = gpa.student_number
+    AND r.schoolid = gpa.schoolid
+    AND r.academic_year >= gpa.academic_year
+    AND (
+      r.reporting_term
+      COLLATE LATIN1_GENERAL_BIN
+    ) = gpa.reporting_term
+    AND r.term_start_date <= CAST(CURRENT_TIMESTAMP AS DATE)
+  )
 UNION ALL
 --*/
 --/*
@@ -1100,8 +1122,10 @@ SELECT
   NULL AS performance_level_label
 FROM
   roster AS r
-  LEFT JOIN lit ON r.student_number = lit.student_number
-  AND r.academic_year >= lit.academic_year
+  LEFT JOIN lit ON (
+    r.student_number = lit.student_number
+    AND r.academic_year >= lit.academic_year
+  )
 WHERE
   r.term_name = 'Y1'
 UNION ALL
@@ -1134,7 +1158,9 @@ SELECT
   NULL AS performance_level_label
 FROM
   roster AS r
-  LEFT JOIN map ON r.student_number = map.student_number
+  LEFT JOIN map ON (
+    r.student_number = map.student_number
+  )
 WHERE
   r.term_name = 'Y1'
   AND r.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
@@ -1177,7 +1203,9 @@ SELECT
   std.performance_level_label
 FROM
   roster AS r
-  LEFT JOIN standardized_tests AS std ON r.student_number = std.student_number
+  LEFT JOIN standardized_tests AS std ON (
+    r.student_number = std.student_number
+  )
 WHERE
   r.term_name = 'Y1'
 UNION ALL
@@ -1210,7 +1238,9 @@ SELECT
   apps.[value] AS performance_level_label
 FROM
   roster AS r
-  LEFT JOIN collegeapps AS apps ON r.student_number = apps.student_number
+  LEFT JOIN collegeapps AS apps ON (
+    r.student_number = apps.student_number
+  )
 WHERE
   r.term_name = 'Y1'
 UNION ALL
@@ -1243,8 +1273,10 @@ SELECT
   promo.text_value AS performance_level_label
 FROM
   roster AS r
-  LEFT JOIN promo_status AS promo ON r.student_number = promo.student_number
-  AND r.academic_year = promo.academic_year
+  LEFT JOIN promo_status AS promo ON (
+    r.student_number = promo.student_number
+    AND r.academic_year = promo.academic_year
+  )
 WHERE
   r.term_name = 'Y1'
 UNION ALL
@@ -1277,7 +1309,9 @@ SELECT
   NULL AS performance_level_label
 FROM
   roster AS r
-  LEFT JOIN contact AS c ON r.student_number = c.student_number
+  LEFT JOIN contact AS c ON (
+    r.student_number = c.student_number
+  )
 WHERE
   r.term_name = 'Y1'
 UNION ALL
@@ -1310,9 +1344,11 @@ SELECT
   b.goal_status AS performance_level_label
 FROM
   roster AS r
-  INNER JOIN instructional_tech AS b ON r.student_number = b.student_number
-  AND r.academic_year = b.academic_year
-  AND r.term_name = b.term_name
+  INNER JOIN instructional_tech AS b ON (
+    r.student_number = b.student_number
+    AND r.academic_year = b.academic_year
+    AND r.term_name = b.term_name
+  )
 UNION ALL
 --*/
 --/*

@@ -37,14 +37,20 @@ SELECT
   r.primary_race_ethnicity_reporting AS respondent_race_ethnicity_reporting
 FROM
   gabby.surveygizmo.survey_detail AS d
-  LEFT JOIN gabby.people.employment_history_static AS w ON d.subject_df_employee_number = w.employee_number
-  AND (
-    d.date_submitted BETWEEN w.effective_start_date AND w.effective_end_date
+  LEFT JOIN gabby.people.employment_history_static AS w ON (
+    d.subject_df_employee_number = w.employee_number
+    AND (
+      d.date_submitted BETWEEN w.effective_start_date AND w.effective_end_date
+    )
+    AND w.primary_position = 'Yes'
+    AND w.position_status != 'Terminated'
   )
-  AND w.primary_position = 'Yes'
-  AND w.position_status != 'Terminated'
-  LEFT JOIN gabby.people.staff_crosswalk_static AS s ON d.subject_df_employee_number = s.df_employee_number
-  LEFT JOIN gabby.people.staff_crosswalk_static AS r ON d.respondent_df_employee_number = r.df_employee_number
+  LEFT JOIN gabby.people.staff_crosswalk_static AS s ON (
+    d.subject_df_employee_number = s.df_employee_number
+  )
+  LEFT JOIN gabby.people.staff_crosswalk_static AS r ON (
+    d.respondent_df_employee_number = r.df_employee_number
+  )
 WHERE
   d.survey_title = 'Manager Survey'
   AND d.rn_respondent_subject = 1
@@ -95,12 +101,20 @@ SELECT
   r.primary_race_ethnicity_reporting AS respondent_race_ethnicity_reporting
 FROM
   surveys.manager_survey_detail_archive AS sda
-  LEFT JOIN gabby.people.employment_history_static AS w ON sda.subject_df_employee_number = w.employee_number
-  AND (
-    sda.date_submitted BETWEEN w.effective_start_date AND w.effective_end_date
+  LEFT JOIN gabby.people.employment_history_static AS w ON (
+    sda.subject_df_employee_number = w.employee_number
+    AND (
+      sda.date_submitted BETWEEN w.effective_start_date AND w.effective_end_date
+    )
+    AND w.primary_position = 'Yes'
+    AND w.position_status != 'Terminated'
   )
-  AND w.primary_position = 'Yes'
-  AND w.position_status != 'Terminated'
-  LEFT JOIN gabby.people.staff_crosswalk_static AS sbjt ON sda.subject_df_employee_number = sbjt.df_employee_number
-  LEFT JOIN gabby.people.staff_crosswalk_static AS mgr ON sda.subject_manager_df_employee_number = mgr.df_employee_number
-  LEFT JOIN gabby.people.staff_crosswalk_static AS r ON sda.respondent_email_address = r.samaccountname
+  LEFT JOIN gabby.people.staff_crosswalk_static AS sbjt ON (
+    sda.subject_df_employee_number = sbjt.df_employee_number
+  )
+  LEFT JOIN gabby.people.staff_crosswalk_static AS mgr ON (
+    sda.subject_manager_df_employee_number = mgr.df_employee_number
+  )
+  LEFT JOIN gabby.people.staff_crosswalk_static AS r ON (
+    sda.respondent_email_address = r.samaccountname
+  )

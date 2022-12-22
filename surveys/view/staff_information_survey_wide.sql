@@ -19,8 +19,8 @@ SELECT
     years_teaching_nj_and_fl AS FLOAT
   ) AS years_teaching_nj_and_fl,
   CAST(
-    professional_experience_before_KIPP AS FLOAT
-  ) AS professional_experience_before_KIPP
+    [professional_experience_before_KIPP] AS FLOAT
+  ) AS [professional_experience_before_KIPP]
 FROM
   (
     SELECT
@@ -49,7 +49,7 @@ FROM
       kipp_alumni,
       [language],
       preferred_gender,
-      professional_experience_before_KIPP,
+      [professional_experience_before_KIPP],
       race_ethnicity,
       relay,
       teacher_prep,

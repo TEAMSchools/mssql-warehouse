@@ -36,16 +36,20 @@ SELECT
   s.is_race_white
 FROM
   gabby.surveygizmo.survey_detail AS d
-  LEFT JOIN gabby.people.employment_history_static AS w ON d.respondent_df_employee_number = w.employee_number
-  AND d.date_submitted BETWEEN w.effective_start_date AND COALESCE(
-    w.effective_end_date,
-    DATEFROMPARTS(
-      (d.campaign_academic_year + 1),
-      7,
-      1
+  LEFT JOIN gabby.people.employment_history_static AS w ON (
+    d.respondent_df_employee_number = w.employee_number
+    AND d.date_submitted BETWEEN w.effective_start_date AND COALESCE(
+      w.effective_end_date,
+      DATEFROMPARTS(
+        (d.campaign_academic_year + 1),
+        7,
+        1
+      )
     )
   )
-  LEFT JOIN gabby.people.staff_roster AS s ON d.respondent_df_employee_number = s.employee_number
+  LEFT JOIN gabby.people.staff_roster AS s ON (
+    d.respondent_df_employee_number = s.employee_number
+  )
 WHERE
   d.survey_id = 5300913
   AND d.rn_respondent_subject = 1
@@ -87,4 +91,6 @@ SELECT
   sr.is_race_white
 FROM
   gabby.surveys.cmo_engagement_regional_survey_detail_archive AS d
-  LEFT JOIN gabby.people.staff_roster AS sr ON d.respondent_df_employee_number = sr.employee_number
+  LEFT JOIN gabby.people.staff_roster AS sr ON (
+    d.respondent_df_employee_number = sr.employee_number
+  )

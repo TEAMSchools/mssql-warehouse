@@ -19,4 +19,6 @@ SELECT
   ) AS refresh_timestamp
 FROM
   gabby.people.staff_crosswalk_static AS sc
-  LEFT JOIN gabby.adp.vaccine_records AS vc ON sc.adp_associate_id = vc.associate_id
+  LEFT JOIN gabby.adp.vaccine_records AS vc ON (
+    sc.adp_associate_id = vc.associate_id
+  )

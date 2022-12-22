@@ -19,9 +19,11 @@ WITH
       END AS field_name
     FROM
       gabby.illuminate_dna_repositories.repositories AS r
-      INNER JOIN gabby.illuminate_dna_repositories.fields AS f ON r.repository_id = f.repository_id
-      AND f.deleted_at IS NULL
-      AND f.[name] != 'field_term'
+      INNER JOIN gabby.illuminate_dna_repositories.fields AS f ON (
+        r.repository_id = f.repository_id
+        AND f.deleted_at IS NULL
+        AND f.[name] != 'field_term'
+      )
     WHERE
       r.repository_id IN (216, 207, 208, 209)
   )
@@ -45,10 +47,12 @@ SELECT
 FROM
   gabby.powerschool.cohort_identifiers_static AS co
   CROSS JOIN repo_fields AS rf
-  LEFT JOIN gabby.reporting.illuminate_report_card_comments AS rdu ON co.student_number = rdu.student_number
-  AND co.academic_year = rdu.academic_year
-  AND rf.repository_id = rdu.repository_id
-  AND rf.field_name = rdu.comment_field
+  LEFT JOIN gabby.reporting.illuminate_report_card_comments AS rdu ON (
+    co.student_number = rdu.student_number
+    AND co.academic_year = rdu.academic_year
+    AND rf.repository_id = rdu.repository_id
+    AND rf.field_name = rdu.comment_field
+  )
 WHERE
   co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
   AND co.rn_year = 1

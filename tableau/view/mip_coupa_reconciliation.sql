@@ -89,12 +89,12 @@ WITH
       gabby.coupa.budget_line_clean
   )
 SELECT
-  mip.Fund,
-  mip.Program,
+  mip.[Fund],
+  mip.[Program],
   mip.[Function],
   mip.[Object],
-  mip.School,
-  mip.DeptGroup,
+  mip.[School],
+  mip.[DeptGroup],
   mip.[Subject],
   mip.[Budget Period],
   mip.[Revised Budget] AS revised_budget_mip,
@@ -109,5 +109,7 @@ SELECT
   c.amount - c.remaining AS remaining_budget_coupa
 FROM
   mip
-  LEFT JOIN coupa AS c ON mip.[AcctCode From Valid Segments] = c.code
-  AND mip.[Budget Period] = c.budget_period
+  LEFT JOIN coupa AS c ON (
+    mip.[AcctCode From Valid Segments] = c.code
+    AND mip.[Budget Period] = c.budget_period
+  )

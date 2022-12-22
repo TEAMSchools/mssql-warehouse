@@ -42,7 +42,7 @@ SELECT
   is_ontrack_term,
   is_ontrack_yr
 FROM
-  gabby.tableau.ar_time_series_current_static AS
+  gabby.tableau.ar_time_series_current_static
 UNION ALL
 SELECT
   student_number,

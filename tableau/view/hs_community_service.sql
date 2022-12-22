@@ -31,13 +31,17 @@ SELECT
   ) AS cs_hours
 FROM
   gabby.powerschool.cohort_identifiers_static AS co
-  LEFT JOIN gabby.powerschool.schools AS sch ON co.schoolid = sch.school_number
-  AND co.[db_name] = sch.[db_name]
-  LEFT JOIN gabby.deanslist.behavior AS b ON co.student_number = b.student_school_id
-  AND co.[db_name] = b.[db_name]
-  AND b.behavior_category = 'Community Service'
-  AND (
-    b.behavior_date BETWEEN co.entrydate AND co.exitdate
+  LEFT JOIN gabby.powerschool.schools AS sch ON (
+    co.schoolid = sch.school_number
+    AND co.[db_name] = sch.[db_name]
+  )
+  LEFT JOIN gabby.deanslist.behavior AS b ON (
+    co.student_number = b.student_school_id
+    AND co.[db_name] = b.[db_name]
+    AND b.behavior_category = 'Community Service'
+    AND (
+      b.behavior_date BETWEEN co.entrydate AND co.exitdate
+    )
   )
 WHERE
   co.grade_level >= 9

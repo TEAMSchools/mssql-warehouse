@@ -220,20 +220,28 @@ SELECT
   t.sped_ratio
 FROM
   gabby.powerschool.cohort_identifiers_static AS co
-  LEFT JOIN gabby.powerschool.calendar_rollup_static AS cal ON co.schoolid = cal.schoolid
-  AND co.yearid = cal.yearid
-  AND co.track = cal.track
-  AND co.[db_name] = cal.[db_name]
-  LEFT JOIN att_mem ON co.studentid = att_mem.studentid
-  AND co.yearid = att_mem.yearid
-  AND co.[db_name] = att_mem.[db_name]
-  LEFT JOIN gabby.powerschool.s_nj_stu_x AS nj ON co.students_dcid = nj.studentsdcid
-  AND co.[db_name] = nj.[db_name]
-  AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-  LEFT JOIN targets AS t ON co.academic_year = t.academic_year
-  AND co.reporting_schoolid = t.schoolid
-  AND co.grade_level = t.grade_level
-  AND co.is_pathways = t.is_pathways
-  AND co.[db_name] = t.[db_name]
+  LEFT JOIN gabby.powerschool.calendar_rollup_static AS cal ON (
+    co.schoolid = cal.schoolid
+    AND co.yearid = cal.yearid
+    AND co.track = cal.track
+    AND co.[db_name] = cal.[db_name]
+  )
+  LEFT JOIN att_mem ON (
+    co.studentid = att_mem.studentid
+    AND co.yearid = att_mem.yearid
+    AND co.[db_name] = att_mem.[db_name]
+  )
+  LEFT JOIN gabby.powerschool.s_nj_stu_x AS nj ON (
+    co.students_dcid = nj.studentsdcid
+    AND co.[db_name] = nj.[db_name]
+    AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+  )
+  LEFT JOIN targets AS t ON (
+    co.academic_year = t.academic_year
+    AND co.reporting_schoolid = t.schoolid
+    AND co.grade_level = t.grade_level
+    AND co.is_pathways = t.is_pathways
+    AND co.[db_name] = t.[db_name]
+  )
 WHERE
   co.rn_year = 1

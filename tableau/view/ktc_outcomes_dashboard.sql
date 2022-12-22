@@ -16,16 +16,22 @@ WITH
       ) AS rn
     FROM
       gabby.alumni.contact AS c
-      INNER JOIN gabby.alumni.application_c AS app ON c.id = app.applicant_c
-      AND app.is_deleted = 0
-      AND app.transfer_application_c = 0
-      AND app.matriculation_decision_c = 'Matriculated (Intent to Enroll)'
-      INNER JOIN gabby.alumni.account AS acc ON app.school_c = acc.id
-      AND acc.is_deleted = 0
-      INNER JOIN gabby.alumni.enrollment_c AS enr ON app.applicant_c = enr.student_c
-      AND app.school_c = enr.school_c
-      AND c.kipp_hs_class_c = YEAR(enr.start_date_c)
-      AND enr.is_deleted = 0
+      INNER JOIN gabby.alumni.application_c AS app ON (
+        c.id = app.applicant_c
+        AND app.is_deleted = 0
+        AND app.transfer_application_c = 0
+        AND app.matriculation_decision_c = 'Matriculated (Intent to Enroll)'
+      )
+      INNER JOIN gabby.alumni.account AS acc ON (
+        app.school_c = acc.id
+        AND acc.is_deleted = 0
+      )
+      INNER JOIN gabby.alumni.enrollment_c AS enr ON (
+        app.applicant_c = enr.student_c
+        AND app.school_c = enr.school_c
+        AND c.kipp_hs_class_c = YEAR(enr.start_date_c)
+        AND enr.is_deleted = 0
+      )
     WHERE
       c.is_deleted = 0
   )
@@ -86,7 +92,9 @@ SELECT
 FROM
   gabby.alumni.ktc_roster AS c
   LEFT JOIN gabby.alumni.enrollment_identifiers AS ei ON c.sf_contact_id = ei.student_c
-  LEFT JOIN matric_app AS a ON c.sf_contact_id = a.contact_id
-  AND a.rn = 1
+  LEFT JOIN matric_app AS a ON (
+    c.sf_contact_id = a.contact_id
+    AND a.rn = 1
+  )
 WHERE
   c.sf_contact_id IS NOT NULL

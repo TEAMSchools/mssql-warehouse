@@ -66,9 +66,11 @@ WITH
       e.location AS respondent_primary_site
     FROM
       surveys.r9engagement_survey_detail AS e
-      LEFT JOIN surveys.question_key AS q ON e.academic_year = q.academic_year
-      AND e.question_code = q.question_code
-      AND q.survey_type = 'CMO'
+      LEFT JOIN surveys.question_key AS q ON (
+        e.academic_year = q.academic_year
+        AND e.question_code = q.question_code
+        AND q.survey_type = 'CMO'
+      )
     UNION ALL
     SELECT
       NULL AS survey_id,
@@ -98,9 +100,11 @@ WITH
       oe.location AS respondent_primary_site
     FROM
       surveys.r9engagement_survey_oe AS oe
-      LEFT JOIN surveys.question_key AS q ON oe.academic_year = q.academic_year
-      AND oe.question_code = q.question_code
-      AND q.survey_type = 'CMO'
+      LEFT JOIN surveys.question_key AS q ON (
+        oe.academic_year = q.academic_year
+        AND oe.question_code = q.question_code
+        AND q.survey_type = 'CMO'
+      )
   )
 SELECT
   CAST(h.survey_id AS BIGINT) AS survey_id,

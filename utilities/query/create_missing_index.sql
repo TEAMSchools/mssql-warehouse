@@ -1,5 +1,11 @@
 SELECT
-  *,
+  index_handle,
+  database_id,
+  [object_id],
+  equality_columns,
+  inequality_columns,
+  included_columns,
+  [statement],
   'CREATE NONCLUSTERED INDEX [' + REPLACE(
     REPLACE(
       CASE

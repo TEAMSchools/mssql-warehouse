@@ -35,7 +35,7 @@ WITH
         SELECT
           student_c,
           semester + '_' + field AS pivot_field,
-          VALUE
+          [value]
         FROM
           (
             SELECT
@@ -57,10 +57,10 @@ WITH
                 1
               )
           ) AS sub UNPIVOT (
-            VALUE FOR field IN (semester_gpa, academic_status)
+            [value] FOR field IN (semester_gpa, academic_status)
           ) AS u
       ) AS sub PIVOT (
-        MAX(VALUE) FOR pivot_field IN (
+        MAX([value]) FOR pivot_field IN (
           [fall_semester_gpa],
           [fall_academic_status],
           [spring_semester_gpa],
@@ -84,21 +84,21 @@ WITH
     FROM
       (
         SELECT
-          a.student_c,
-          a.date_c,
+          student_c,
+          date_c,
           CASE
             WHEN (
-              DATEPART(MONTH, a.created_date) BETWEEN 7 AND 12
+              DATEPART(MONTH, created_date) BETWEEN 7 AND 12
             ) THEN 'F'
             ELSE 'S'
           END AS semester
         FROM
-          gabby.alumni.kipp_aid_c AS a
+          gabby.alumni.kipp_aid_c
         WHERE
-          a.type_c = 'College Book Stipend Program'
-          AND a.Status_c = 'Approved'
-          AND a.is_deleted = 0
-          AND a.created_date >= DATEFROMPARTS(
+          type_c = 'College Book Stipend Program'
+          AND status_c = 'Approved'
+          AND is_deleted = 0
+          AND created_date >= DATEFROMPARTS(
             gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
             7,
             1
@@ -161,7 +161,7 @@ WITH
             )
           ) AS n_months_elapsed
         FROM
-          gabby.alumni.contact_note_c AS c
+          gabby.alumni.contact_note_c
         WHERE
           Status_c = 'Successful'
           AND is_deleted = 0
@@ -378,18 +378,28 @@ SELECT
 FROM
   gabby.alumni.ktc_roster AS c
   LEFT JOIN gabby.alumni.enrollment_identifiers AS e ON c.sf_contact_id = e.student_c
-  LEFT JOIN gabby.alumni.contact_note_rollup AS cn ON c.sf_contact_id = cn.contact_id
-  AND cn.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+  LEFT JOIN gabby.alumni.contact_note_rollup AS cn ON (
+    c.sf_contact_id = cn.contact_id
+    AND cn.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+  )
   LEFT JOIN gpa ON c.sf_contact_id = gpa.student_c
   LEFT JOIN stipends AS s ON c.sf_contact_id = s.student_c
-  LEFT JOIN oot_roster AS oot ON c.sf_contact_id = oot.contact_id
-  AND (
-    gabby.utilities.GLOBAL_ACADEMIC_YEAR () BETWEEN oot.missing_academic_year AND oot.found_academic_year
+  LEFT JOIN oot_roster AS oot ON (
+    c.sf_contact_id = oot.contact_id
+    AND (
+      (
+        gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+      ) BETWEEN oot.missing_academic_year AND oot.found_academic_year
+    )
+    AND oot.rn = 1
   )
-  AND oot.rn = 1
-  LEFT JOIN counselor_changes AS cc ON c.sf_contact_id = cc.contact_id
-  AND cc.rn = 1
-  LEFT JOIN transfer_apps AS app ON c.sf_contact_id = app.applicant_c
+  LEFT JOIN counselor_changes AS cc ON (
+    c.sf_contact_id = cc.contact_id
+    AND cc.rn = 1
+  )
+  LEFT JOIN transfer_apps AS app ON (
+    c.sf_contact_id = app.applicant_c
+  )
   LEFT JOIN next_yr_enrollment AS nye ON c.sf_contact_id = nye.student_c
 WHERE
   c.ktc_status IN ('HSG', 'TAF')

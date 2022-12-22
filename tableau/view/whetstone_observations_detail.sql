@@ -46,7 +46,6 @@ SELECT
       WHEN wos.score_value = 1 THEN 'Observed'
       WHEN wos.score_value = 2 THEN 'Co-Led/Planned'
       WHEN wos.score_value = 3 THEN 'Led'
-      ELSE NULL
     END
   ) OVER (
     PARTITION BY
@@ -148,30 +147,36 @@ FROM
       ) AS rn_observation
     FROM
       gabby.people.staff_crosswalk_static AS sr
-      INNER JOIN gabby.whetstone.observations_clean AS wo ON CAST(
-        sr.df_employee_number AS VARCHAR(25)
-      ) = wo.teacher_internal_id
-      AND wo.rubric_name IN (
-        'Development Roadmap',
-        'Shadow Session',
-        'Assistant Principal PM Rubric',
-        'School Leader Moments',
-        'Readiness Reflection',
-        'Monthly Triad Meeting Form',
-        'New Leader Talent Review',
-        'Extraordinary Focus Areas Ratings',
-        'O3 Form',
-        'O3 Form v2',
-        'O3 Form v3',
-        'Extraordinary Focus Areas Ratings v.1'
+      INNER JOIN gabby.whetstone.observations_clean AS wo ON (
+        CAST(
+          sr.df_employee_number AS VARCHAR(25)
+        ) = wo.teacher_internal_id
+        AND wo.rubric_name IN (
+          'Development Roadmap',
+          'Shadow Session',
+          'Assistant Principal PM Rubric',
+          'School Leader Moments',
+          'Readiness Reflection',
+          'Monthly Triad Meeting Form',
+          'New Leader Talent Review',
+          'Extraordinary Focus Areas Ratings',
+          'O3 Form',
+          'O3 Form v2',
+          'O3 Form v3',
+          'Extraordinary Focus Areas Ratings v.1'
+        )
       )
-      LEFT JOIN gabby.people.staff_crosswalk_static AS osr ON wo.observer_internal_id = osr.df_employee_number
+      LEFT JOIN gabby.people.staff_crosswalk_static AS osr ON (
+        wo.observer_internal_id = osr.df_employee_number
+      )
       INNER JOIN gabby.reporting.reporting_terms AS rt ON (
-        wo.observed_at BETWEEN rt.[start_date] AND rt.end_date
+        (
+          wo.observed_at BETWEEN rt.[start_date] AND rt.end_date
+        )
+        AND rt.identifier = 'ETR'
+        AND rt.schoolid = 0
+        AND rt._fivetran_deleted = 0
       )
-      AND rt.identifier = 'ETR'
-      AND rt.schoolid = 0
-      AND rt._fivetran_deleted = 0
     WHERE
       ISNULL(
         sr.termination_date,
@@ -182,7 +187,13 @@ FROM
         1
       )
   ) AS sub
-  LEFT JOIN gabby.whetstone.observations_scores_static AS wos ON sub.observation_id = wos.observation_id
-  LEFT JOIN gabby.whetstone.measurements AS wm ON wos.score_measurement_id = wm._id
-  LEFT JOIN boxes AS b ON sub.observation_id = b.observation_id
-  AND wos.score_measurement_id = b.score_measurement_id
+  LEFT JOIN gabby.whetstone.observations_scores_static AS wos ON (
+    sub.observation_id = wos.observation_id
+  )
+  LEFT JOIN gabby.whetstone.measurements AS wm ON (
+    wos.score_measurement_id = wm._id
+  )
+  LEFT JOIN boxes AS b ON (
+    sub.observation_id = b.observation_id
+    AND wos.score_measurement_id = b.score_measurement_id
+  )

@@ -28,10 +28,12 @@ WITH
       subjects.measurement_scale
     FROM
       gabby.powerschool.cohort_identifiers_static AS co
-      INNER JOIN gabby.reporting.reporting_terms AS terms ON co.academic_year = terms.academic_year
-      AND terms.identifier = 'MAP'
-      AND terms.start_date <= CURRENT_TIMESTAMP
-      AND terms._fivetran_deleted = 0
+      INNER JOIN gabby.reporting.reporting_terms AS terms ON (
+        co.academic_year = terms.academic_year
+        AND terms.identifier = 'MAP'
+        AND terms.start_date <= CURRENT_TIMESTAMP
+        AND terms._fivetran_deleted = 0
+      )
       CROSS JOIN subjects
     WHERE
       co.rn_year = 1
@@ -65,17 +67,25 @@ SELECT
   COALESCE(lexile, base_lexile) AS current_lexile,
   CASE
     WHEN n_tests > 1 THEN 'Multiple test events'
-    WHEN term_name IN ('Winter', 'Spring')
-    AND map_student_id IS NULL THEN 'Missing test'
-    WHEN term_name = 'Fall'
-    AND map_student_id IS NULL
-    AND base_term IS NULL THEN 'Missing test, No baseline'
-    WHEN term_name = 'Fall'
-    AND map_student_id IS NULL
-    AND base_term IS NOT NULL THEN 'Missing test, Has baseline'
-    WHEN term_name = 'Fall'
-    AND map_student_id IS NOT NULL
-    AND base_term IS NOT NULL THEN 'Tested, Has baseline'
+    WHEN (
+      term_name IN ('Winter', 'Spring')
+      AND map_student_id IS NULL
+    ) THEN 'Missing test'
+    WHEN (
+      term_name = 'Fall'
+      AND map_student_id IS NULL
+      AND base_term IS NULL
+    ) THEN 'Missing test, No baseline'
+    WHEN (
+      term_name = 'Fall'
+      AND map_student_id IS NULL
+      AND base_term IS NOT NULL
+    ) THEN 'Missing test, Has baseline'
+    WHEN (
+      term_name = 'Fall'
+      AND map_student_id IS NOT NULL
+      AND base_term IS NOT NULL
+    ) THEN 'Tested, Has baseline'
   END AS test_audit
 FROM
   (
@@ -108,14 +118,18 @@ FROM
       ) AS n_tests
     FROM
       scaffold AS r
-      LEFT JOIN gabby.nwea.assessment_result_identifiers AS map ON r.student_number = map.student_id
-      AND r.academic_year = map.academic_year
-      AND r.measurement_scale = map.measurement_scale
-      AND (
-        r.term_name = map.term
-        COLLATE LATIN1_GENERAL_BIN
+      LEFT JOIN gabby.nwea.assessment_result_identifiers AS map ON (
+        r.student_number = map.student_id
+        AND r.academic_year = map.academic_year
+        AND r.measurement_scale = map.measurement_scale
+        AND (
+          r.term_name = map.term
+          COLLATE LATIN1_GENERAL_BIN
+        )
       )
-      LEFT JOIN gabby.nwea.best_baseline AS base ON r.student_number = base.student_number
-      AND r.academic_year = base.academic_year
-      AND r.measurement_scale = base.measurementscale
+      LEFT JOIN gabby.nwea.best_baseline AS base ON (
+        r.student_number = base.student_number
+        AND r.academic_year = base.academic_year
+        AND r.measurement_scale = base.measurementscale
+      )
   ) AS sub

@@ -20,7 +20,7 @@ WITH
       s.[title]
     FROM
       gabby.surveygizmo.survey_campaign_clean_static AS c
-      INNER JOIN gabby.surveygizmo.survey_clean AS s ON c.survey_id = s.survey_id
+      INNER JOIN gabby.surveygizmo.survey_clean AS s ON (c.survey_id = s.survey_id)
     WHERE
       c.link_type = 'email'
       AND c.survey_id IN (
@@ -60,16 +60,26 @@ WITH
       LOWER(r.samaccountname) AS respondent_samaccountname,
       wcf.[Attended Relay] AS attended_relay,
       wcf.[KIPP Alumni Status] AS kipp_alumni_status,
-      wcf.[Life Experience in Communities We Serve] AS life_experience_in_communities_we_serve,
-      wcf.[Professional Experience in Communities We Serve] AS professional_experience_in_communities_we_serve,
-      wcf.[Years of Professional Experience before joining] AS years_of_professional_experience_before_joining,
+      (
+        wcf.[Life Experience in Communities We Serve]
+      ) AS life_experience_in_communities_we_serve,
+      (
+        wcf.[Professional Experience in Communities We Serve]
+      ) AS professional_experience_in_communities_we_serve,
+      (
+        wcf.[Years of Professional Experience before joining]
+      ) AS years_of_professional_experience_before_joining,
       wcf.[Years Teaching - In any State] AS years_teaching_in_any_state,
       wcf.[Years Teaching - In NJ or FL] AS years_teaching_in_nj_or_fl,
       wcf.[Teacher Prep Program] AS teacher_prep_program
     FROM
       surveys AS s
-      INNER JOIN gabby.people.staff_crosswalk_static AS r ON r.[status] NOT IN ('Terminated', 'Prestart')
-      LEFT JOIN gabby.adp.workers_custom_field_group_wide_static AS wcf ON r.adp_associate_id = wcf.worker_id
+      INNER JOIN gabby.people.staff_crosswalk_static AS r ON (
+        r.[status] NOT IN ('Terminated', 'Prestart')
+      )
+      LEFT JOIN gabby.adp.workers_custom_field_group_wide_static AS wcf ON (
+        r.adp_associate_id = wcf.worker_id
+      )
     WHERE
       s.rn_survey_recent = 1
   ),
@@ -103,11 +113,13 @@ WITH
       i.subject_preferred_name AS subject_name
     FROM
       gabby.surveygizmo.survey_campaign_clean_static AS c
-      INNER JOIN gabby.surveygizmo.survey_response_identifiers_static AS i ON c.survey_id = i.survey_id
-      AND (
-        i.date_started BETWEEN c.link_open_date AND c.link_close_date
+      INNER JOIN gabby.surveygizmo.survey_response_identifiers_static AS i ON (
+        c.survey_id = i.survey_id
+        AND (
+          i.date_started BETWEEN c.link_open_date AND c.link_close_date
+        )
+        AND i.rn_respondent_subject = 1
       )
-      AND i.rn_respondent_subject = 1
     WHERE
       (
         c.survey_id = 6330385
@@ -211,13 +223,17 @@ SELECT
   c.date_submitted AS survey_completion_date
 FROM
   survey_term_staff_scaffold AS st
-  INNER JOIN gabby.surveys.so_assignments_long AS sa ON st.respondent_employee_number = sa.survey_taker_id
-  AND sa.survey_round_status = 'Yes'
-  LEFT JOIN clean_responses AS c ON sa.assignment_employee_id = c.subject_employee_number
-  AND sa.survey_taker_id = c.respondent_employee_number
-  AND st.academic_year = c.academic_year
-  AND st.reporting_term_code = c.reporting_term
-  AND st.survey_id = c.survey_id
+  INNER JOIN gabby.surveys.so_assignments_long AS sa ON (
+    st.respondent_employee_number = sa.survey_taker_id
+    AND sa.survey_round_status = 'Yes'
+  )
+  LEFT JOIN clean_responses AS c ON (
+    sa.assignment_employee_id = c.subject_employee_number
+    AND sa.survey_taker_id = c.respondent_employee_number
+    AND st.academic_year = c.academic_year
+    AND st.reporting_term_code = c.reporting_term
+    AND st.survey_id = c.survey_id
+  )
 WHERE
   st.survey_id = 4561325 /* S&O Survey Code */
   AND (
@@ -314,12 +330,16 @@ SELECT
   c.date_submitted AS survey_completion_date
 FROM
   clean_responses AS c
-  INNER JOIN survey_term_staff_scaffold AS st ON st.respondent_employee_number = c.respondent_employee_number
-  AND st.academic_year = c.academic_year
-  AND st.reporting_term_code = c.reporting_term
-  AND st.survey_id = c.survey_id
-  LEFT JOIN gabby.surveys.so_assignments_long AS s ON c.subject_employee_number = s.assignment_employee_id
-  AND c.respondent_employee_number = s.survey_taker_id
+  INNER JOIN survey_term_staff_scaffold AS st ON (
+    st.respondent_employee_number = c.respondent_employee_number
+    AND st.academic_year = c.academic_year
+    AND st.reporting_term_code = c.reporting_term
+    AND st.survey_id = c.survey_id
+  )
+  LEFT JOIN gabby.surveys.so_assignments_long AS s ON (
+    c.subject_employee_number = s.assignment_employee_id
+    AND c.respondent_employee_number = s.survey_taker_id
+  )
 WHERE
   c.survey_id = 4561325 /* S&O Survey Code */
   AND s.assignment IS NULL
@@ -411,15 +431,19 @@ SELECT
   c.date_submitted AS survey_completion_date
 FROM
   survey_term_staff_scaffold AS st
-  INNER JOIN gabby.pm.assignments AS pm ON st.respondent_employee_number = pm.df_employee_number
-  AND pm.survey_round_status IN (
-    'Yes',
-    'Yes - Manager Survey Only'
+  INNER JOIN gabby.pm.assignments AS pm ON (
+    st.respondent_employee_number = pm.df_employee_number
+    AND pm.survey_round_status IN (
+      'Yes',
+      'Yes - Manager Survey Only'
+    )
   )
-  LEFT JOIN clean_responses AS c ON st.respondent_employee_number = c.respondent_employee_number
-  AND st.academic_year = c.academic_year
-  AND st.reporting_term_code = c.reporting_term
-  AND st.survey_id = c.survey_id
+  LEFT JOIN clean_responses AS c ON (
+    st.respondent_employee_number = c.respondent_employee_number
+    AND st.academic_year = c.academic_year
+    AND st.reporting_term_code = c.reporting_term
+    AND st.survey_id = c.survey_id
+  )
 WHERE
   st.survey_id = 4561288 /* MGR Survey Code */
   AND (
@@ -510,10 +534,12 @@ SELECT
   c.date_submitted AS survey_completion_date
 FROM
   clean_responses AS c
-  LEFT JOIN survey_term_staff_scaffold AS st ON c.respondent_employee_number = st.respondent_employee_number
-  AND c.academic_year = st.academic_year
-  AND c.reporting_term = st.reporting_term_code
-  AND c.survey_id = st.survey_id
+  LEFT JOIN survey_term_staff_scaffold AS st ON (
+    c.respondent_employee_number = st.respondent_employee_number
+    AND c.academic_year = st.academic_year
+    AND c.reporting_term = st.reporting_term_code
+    AND c.survey_id = st.survey_id
+  )
 WHERE
   st.survey_id = 4561288 /* MGR Survey Code */
   AND (
@@ -571,12 +597,18 @@ SELECT
   c.date_submitted AS survey_completion_date
 FROM
   survey_term_staff_scaffold AS st
-  LEFT JOIN clean_responses AS c ON st.respondent_employee_number = c.respondent_employee_number
-  AND st.academic_year = c.academic_year
-  AND st.reporting_term_code = c.reporting_term
-  AND st.survey_id = c.survey_id
-  LEFT JOIN gabby.pm.assignments AS pm ON st.respondent_employee_number = pm.df_employee_number
-  LEFT JOIN gabby.extracts.gsheets_pm_assignment_roster AS pr ON st.respondent_employee_number = pr.df_employee_number
+  LEFT JOIN clean_responses AS c ON (
+    st.respondent_employee_number = c.respondent_employee_number
+    AND st.academic_year = c.academic_year
+    AND st.reporting_term_code = c.reporting_term
+    AND st.survey_id = c.survey_id
+  )
+  LEFT JOIN gabby.pm.assignments AS pm ON (
+    st.respondent_employee_number = pm.df_employee_number
+  )
+  LEFT JOIN gabby.extracts.gsheets_pm_assignment_roster AS pr ON (
+    st.respondent_employee_number = pr.df_employee_number
+  )
 WHERE
   st.survey_id = 5300913 /* R9S Survey Code */
   AND pm.survey_round_status IN (
@@ -627,8 +659,10 @@ SELECT
   c.date_submitted AS survey_completion_date
 FROM
   survey_term_staff_scaffold AS st
-  LEFT JOIN clean_responses AS c ON st.respondent_employee_number = c.respondent_employee_number
-  AND st.survey_id = c.survey_id
+  LEFT JOIN clean_responses AS c ON (
+    st.respondent_employee_number = c.respondent_employee_number
+    AND st.survey_id = c.survey_id
+  )
 WHERE
   st.survey_id = 6330385 /* UP Survey Code */
 UNION ALL
@@ -675,10 +709,12 @@ SELECT
   NULL AS survey_completion_date
 FROM
   survey_term_staff_scaffold AS st
-  LEFT JOIN clean_responses AS c ON st.respondent_employee_number = c.respondent_employee_number
-  AND st.academic_year = c.academic_year
-  AND st.reporting_term_code = c.reporting_term
-  AND st.survey_id = c.survey_id
+  LEFT JOIN clean_responses AS c ON (
+    st.respondent_employee_number = c.respondent_employee_number
+    AND st.academic_year = c.academic_year
+    AND st.reporting_term_code = c.reporting_term
+    AND st.survey_id = c.survey_id
+  )
 WHERE
   st.survey_id = 6330385 /* UP Survey Code */
 UNION ALL
@@ -725,10 +761,12 @@ SELECT
   c.date_submitted AS survey_completion_date
 FROM
   survey_term_staff_scaffold AS st
-  LEFT JOIN clean_responses AS c ON st.respondent_employee_number = c.respondent_employee_number
-  AND st.academic_year = c.academic_year
-  AND st.reporting_term_code = c.reporting_term
-  AND st.survey_id = c.survey_id
+  LEFT JOIN clean_responses AS c ON (
+    st.respondent_employee_number = c.respondent_employee_number
+    AND st.academic_year = c.academic_year
+    AND st.reporting_term_code = c.reporting_term
+    AND st.survey_id = c.survey_id
+  )
 WHERE
   st.survey_id = 6580731 /* ITR Survey Code */
   AND st.respondent_legal_entity_name != 'KIPP TEAM and Family Schools Inc.'

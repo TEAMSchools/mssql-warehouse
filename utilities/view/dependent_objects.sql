@@ -12,10 +12,12 @@ WITH
       c.[name] AS dependentobjectname,
       SCHEMA_NAME(c.[schema_id]) AS dependentschemaname
     FROM
-      [sys].[sysdepends] a
-      INNER JOIN [sys].[objects] b ON a.id = b.[object_id]
-      INNER JOIN [sys].[objects] c ON a.depid = c.[object_id]
-      AND c.[type] IN ('U', 'P', 'V', 'FN')
+      [sys].[sysdepends] AS a
+      INNER JOIN [sys].[objects] AS b ON (a.id = b.[object_id])
+      INNER JOIN [sys].[objects] AS c ON (
+        a.depid = c.[object_id]
+        AND c.[type] IN ('U', 'P', 'V', 'FN')
+      )
     WHERE
       b.[type] IN ('P', 'V', 'FN')
   ),
@@ -31,7 +33,7 @@ WITH
       dependentobjectname,
       1 AS [level]
     FROM
-      dependentobjects AS a
+      dependentobjects
     UNION ALL
     SELECT
       b.usedbyobjectid,
@@ -45,7 +47,9 @@ WITH
       (b.[level] + 1) AS [level]
     FROM
       dependentobjects AS a
-      INNER JOIN dependentobjects2 AS b ON a.usedbyobjectid = b.dependentobjectid
+      INNER JOIN dependentobjects2 AS b ON (
+        a.usedbyobjectid = b.dependentobjectid
+      )
   )
 SELECT DISTINCT
   dependentschemaname AS [schema_name],

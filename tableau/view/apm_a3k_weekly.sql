@@ -42,9 +42,11 @@ SELECT
   ae.pre_test_normal_curve_equivalent
 FROM
   gabby.powerschool.cohort_identifiers_scaffold_current_static AS cis
-  LEFT JOIN gabby.achieve3k.students_english AS ae ON cis.student_number = ae.student_id
-  AND cis.[date] = CAST(
-    LEFT(RIGHT(ae._file, 22), 10) AS DATE
+  LEFT JOIN gabby.achieve3k.students_english AS ae ON (
+    cis.student_number = ae.student_id
+    AND cis.[date] = CAST(
+      LEFT(RIGHT(ae._file, 22), 10) AS DATE
+    )
   )
 WHERE
   cis.grade_level > 8

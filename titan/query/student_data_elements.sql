@@ -5,18 +5,14 @@ SELECT
   s.last_name AS "Last Name",
   s.state_studentnumber AS "State Identifier",
   s.dob AS "Date of Birth",
-  s.gender AS "Gender"
-  --,rc.racecd_agg AS "Race"
-,
+  s.gender AS "Gender",
   s.fedethnicity AS "Ethnicity",
   sch.name AS "School (Site)",
   s.grade_level AS "Grade",
   s.entrydate AS "Start Date",
   s.exitdate AS "Drop Date",
   s.team AS "Homeroom (Teacher Name)",
-  s.family_ident AS "Household ID"
-  --,s.street AS "Home Address (Street)"
-,
+  s.family_ident AS "Household ID",
   s.city AS "City",
   s.state AS "State",
   s.zip AS "Zip",
@@ -34,19 +30,19 @@ SELECT
   c2.emails_emailaddress AS "ContactTwo Email"
 FROM
   students AS s
-  INNER JOIN schools AS sch ON s.schoolid = sch.school_number
-  LEFT JOIN (
-    SELECT
-      studentid AS race_studentid,
-      LISTAGG (racecd, ',') WITHIN GROUP (
-        ORDER BY
-          racecd
-      ) AS racecd_agg
-    FROM
-      studentrace
-    GROUP BY
-      studentid
-  ) rc ON s.id = rc.race_studentid
+  INNER JOIN schools AS sch ON (s.schoolid = sch.school_number)
+  -- LEFT JOIN (
+  --   SELECT
+  --     studentid AS race_studentid,
+  --     LISTAGG (racecd, ',') WITHIN GROUP (
+  --       ORDER BY
+  --         racecd
+  --     ) AS racecd_agg
+  --   FROM
+  --     studentrace
+  --   GROUP BY
+  --     studentid
+  -- ) AS rc ON (s.id = rc.race_studentid)
   LEFT JOIN (
     SELECT
       c.contacts_studentdcid,
@@ -71,9 +67,11 @@ FROM
           ) AS contacts_rn
         FROM
           studentcontactassoc AS sca
-          INNER JOIN person AS p ON sca.personid = p.id
-          AND p.isactive = 1
-      ) c
+          INNER JOIN person AS p ON (
+            sca.personid = p.id
+            AND p.isactive = 1
+          )
+      ) AS c
       LEFT JOIN (
         SELECT
           ppna.personid AS p1_personid,
@@ -87,10 +85,14 @@ FROM
           ) AS p1_filteredpriorityorder
         FROM
           personphonenumberassoc AS ppna
-          INNER JOIN codeset AS c ON ppna.phonetypecodesetid = c.codesetid
-          AND c.code = 'Mobile'
-      ) AS p1 ON c.contacts_personid = p1.p1_personid
-      AND p1.p1_filteredpriorityorder = 1
+          INNER JOIN codeset AS c ON (
+            ppna.phonetypecodesetid = c.codesetid
+            AND c.code = 'Mobile'
+          )
+      ) AS p1 ON (
+        c.contacts_personid = p1.p1_personid
+        AND p1.p1_filteredpriorityorder = 1
+      )
       LEFT JOIN (
         SELECT
           ppna.personid AS p2_personid,
@@ -104,10 +106,14 @@ FROM
           ) AS p2_filteredpriorityorder
         FROM
           personphonenumberassoc AS ppna
-          INNER JOIN codeset AS c ON ppna.phonetypecodesetid = c.codesetid
-          AND c.code = 'Home'
-      ) AS p2 ON c.contacts_personid = p2.p2_personid
-      AND p2.p2_filteredpriorityorder = 1
+          INNER JOIN codeset AS c ON (
+            ppna.phonetypecodesetid = c.codesetid
+            AND c.code = 'Home'
+          )
+      ) AS p2 ON (
+        c.contacts_personid = p2.p2_personid
+        AND p2.p2_filteredpriorityorder = 1
+      )
       LEFT JOIN (
         SELECT
           ppna.personid AS p3_personid,
@@ -121,10 +127,14 @@ FROM
           ) AS p3_filteredpriorityorder
         FROM
           personphonenumberassoc AS ppna
-          INNER JOIN codeset AS c ON ppna.phonetypecodesetid = c.codesetid
-          AND c.code = 'Work'
-      ) AS p3 ON c.contacts_personid = p3.p3_personid
-      AND p3.p3_filteredpriorityorder = 1
+          INNER JOIN codeset AS c ON (
+            ppna.phonetypecodesetid = c.codesetid
+            AND c.code = 'Work'
+          )
+      ) AS p3 ON (
+        c.contacts_personid = p3.p3_personid
+        AND p3.p3_filteredpriorityorder = 1
+      )
       LEFT JOIN (
         SELECT
           peaa.personid AS emails_personid,
@@ -139,14 +149,22 @@ FROM
           ) AS emails_filteredpriorityorder
         FROM
           personemailaddressassoc AS peaa
-          INNER JOIN emailaddress AS e ON peaa.emailaddressid = e.emailaddressid
-          INNER JOIN codeset AS c ON peaa.emailtypecodesetid = c.codesetid
-      ) em ON c.contacts_personid = em.emails_personid
-      AND em.emails_filteredpriorityorder = 1
-      AND em.emailtype = 'Current'
+          INNER JOIN emailaddress AS e ON (
+            peaa.emailaddressid = e.emailaddressid
+          )
+          INNER JOIN codeset AS c ON (
+            peaa.emailtypecodesetid = c.codesetid
+          )
+      ) AS em ON (
+        c.contacts_personid = em.emails_personid
+        AND em.emails_filteredpriorityorder = 1
+        AND em.emailtype = 'Current'
+      )
     WHERE
       c.contacts_rn = 1
-  ) hoh ON s.dcid = hoh.contacts_studentdcid
+  ) AS hoh ON (
+    s.dcid = hoh.contacts_studentdcid
+  )
   LEFT JOIN (
     SELECT
       c.contacts_studentdcid,
@@ -171,9 +189,11 @@ FROM
           ) AS contacts_rn
         FROM
           studentcontactassoc AS sca
-          INNER JOIN person AS p ON sca.personid = p.id
-          AND p.isactive = 1
-      ) c
+          INNER JOIN person AS p ON (
+            sca.personid = p.id
+            AND p.isactive = 1
+          )
+      ) AS c
       LEFT JOIN (
         SELECT
           ppna.personid AS p1_personid,
@@ -187,10 +207,14 @@ FROM
           ) AS p1_filteredpriorityorder
         FROM
           personphonenumberassoc AS ppna
-          INNER JOIN codeset AS c ON ppna.phonetypecodesetid = c.codesetid
-          AND c.code = 'Mobile'
-      ) AS p1 ON c.contacts_personid = p1.p1_personid
-      AND p1.p1_filteredpriorityorder = 1
+          INNER JOIN codeset AS c ON (
+            ppna.phonetypecodesetid = c.codesetid
+            AND c.code = 'Mobile'
+          )
+      ) AS p1 ON (
+        c.contacts_personid = p1.p1_personid
+        AND p1.p1_filteredpriorityorder = 1
+      )
       LEFT JOIN (
         SELECT
           ppna.personid AS p2_personid,
@@ -204,10 +228,14 @@ FROM
           ) AS p2_filteredpriorityorder
         FROM
           personphonenumberassoc AS ppna
-          INNER JOIN codeset AS c ON ppna.phonetypecodesetid = c.codesetid
-          AND c.code = 'Home'
-      ) AS p2 ON c.contacts_personid = p2.p2_personid
-      AND p2.p2_filteredpriorityorder = 1
+          INNER JOIN codeset AS c ON (
+            ppna.phonetypecodesetid = c.codesetid
+            AND c.code = 'Home'
+          )
+      ) AS p2 ON (
+        c.contacts_personid = p2.p2_personid
+        AND p2.p2_filteredpriorityorder = 1
+      )
       LEFT JOIN (
         SELECT
           ppna.personid AS p3_personid,
@@ -221,10 +249,14 @@ FROM
           ) AS p3_filteredpriorityorder
         FROM
           personphonenumberassoc AS ppna
-          INNER JOIN codeset AS c ON ppna.phonetypecodesetid = c.codesetid
-          AND c.code = 'Work'
-      ) AS p3 ON c.contacts_personid = p3.p3_personid
-      AND p3.p3_filteredpriorityorder = 1
+          INNER JOIN codeset AS c ON (
+            ppna.phonetypecodesetid = c.codesetid
+            AND c.code = 'Work'
+          )
+      ) AS p3 ON (
+        c.contacts_personid = p3.p3_personid
+        AND p3.p3_filteredpriorityorder = 1
+      )
       LEFT JOIN (
         SELECT
           peaa.personid AS emails_personid,
@@ -239,13 +271,19 @@ FROM
           ) AS emails_filteredpriorityorder
         FROM
           personemailaddressassoc AS peaa
-          INNER JOIN emailaddress AS e ON peaa.emailaddressid = e.emailaddressid
-          INNER JOIN codeset AS c ON peaa.emailtypecodesetid = c.codesetid
-      ) em ON c.contacts_personid = em.emails_personid
-      AND em.emails_filteredpriorityorder = 1
-      AND em.emailtype = 'Current'
+          INNER JOIN emailaddress AS e ON (
+            peaa.emailaddressid = e.emailaddressid
+          )
+          INNER JOIN codeset AS c ON (
+            peaa.emailtypecodesetid = c.codesetid
+          )
+      ) AS em ON (
+        c.contacts_personid = em.emails_personid
+        AND em.emails_filteredpriorityorder = 1
+        AND em.emailtype = 'Current'
+      )
     WHERE
       c.contacts_rn = 2
-  ) c2 ON s.dcid = c2.contacts_studentdcid
+  ) AS c2 ON (s.dcid = c2.contacts_studentdcid)
 WHERE
   s.enroll_status = 0

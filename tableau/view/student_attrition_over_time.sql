@@ -50,20 +50,33 @@ SELECT
   d.[date],
   y2.entrydate AS y2_entrydate,
   CASE
-    WHEN y1.exitcode = 'G1' THEN 0 /* graduates != attrition */
-    WHEN s.exitdate >= y1.exitdate
-    AND s.exitdate >= d.[date] THEN 0 /* handles re-enrollments during the school year */
-    WHEN y1.exitdate <= d.[date]
-    AND y2.entrydate IS NULL THEN 1 /* was not enrolled on 10/1 next year */
+  /* graduates != attrition */
+    WHEN y1.exitcode = 'G1' THEN 0
+    /* handles re-enrollments during the school year */
+    WHEN (
+      s.exitdate >= y1.exitdate
+      AND s.exitdate >= d.[date]
+    ) THEN 0
+    /* was not enrolled on 10/1 next year */
+    WHEN (
+      y1.exitdate <= d.[date]
+      AND y2.entrydate IS NULL
+    ) THEN 1
     ELSE 0
   END AS is_attrition
 FROM
   enrolled_oct1 AS y1
-  LEFT JOIN gabby.powerschool.students AS s ON y1.student_number = s.student_number
-  INNER JOIN attrition_dates AS d ON y1.academic_year = d.attrition_year
-  AND d.[date] <= CURRENT_TIMESTAMP
-  LEFT JOIN gabby.powerschool.cohort_identifiers_static AS y2 ON y1.student_number = y2.student_number
-  AND y1.academic_year = (y2.academic_year - 1)
-  AND (
-    DATEFROMPARTS(y2.academic_year, 10, 1) BETWEEN y2.entrydate AND y2.exitdate
+  LEFT JOIN gabby.powerschool.students AS s ON (
+    y1.student_number = s.student_number
+  )
+  INNER JOIN attrition_dates AS d ON (
+    y1.academic_year = d.attrition_year
+    AND d.[date] <= CURRENT_TIMESTAMP
+  )
+  LEFT JOIN gabby.powerschool.cohort_identifiers_static AS y2 ON (
+    y1.student_number = y2.student_number
+    AND y1.academic_year = (y2.academic_year - 1)
+    AND (
+      DATEFROMPARTS(y2.academic_year, 10, 1) BETWEEN y2.entrydate AND y2.exitdate
+    )
   )

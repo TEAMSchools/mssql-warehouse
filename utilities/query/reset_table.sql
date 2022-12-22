@@ -16,10 +16,13 @@ SET
   @table_name_old = @table_name + '_OLD';
 
 SET
-  @drop_sql = 'IF OBJECT_ID(N''' + @db_name + '.' + @schema_name + '.' + @table_name_old + ''') IS NOT NULL
-  BEGIN;
-    DROP TABLE ' + @db_name + '.' + @schema_name + '.' + @table_name_old + ';
-  END;';
+  @drop_sql = CONCAT(
+    'IF OBJECT_ID(N''' + @db_name + '.' + @schema_name + '.' + @table_name_old + ''') ',
+    'IS NOT NULL ',
+    'BEGIN ',
+    'DROP TABLE ' + @db_name + '.' + @schema_name + '.' + @table_name_old + '; ',
+    'END;'
+  );
 
 EXEC sp_sqlexec @drop_sql;
 
@@ -31,7 +34,10 @@ EXEC gabby.utilities.cache_view @db_name = @db_name,
 @view_name = @view_name;
 
 SELECT
-  *
+  [schema_name],
+  table_name,
+  column_type_mismatch,
+  query
 FROM
   gabby.utilities.generate_gabby_unions
 WHERE

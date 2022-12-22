@@ -50,34 +50,48 @@ SELECT
   ex.exemption
 FROM
   gabby.people.staff_crosswalk_static AS sr
-  INNER JOIN gabby.whetstone.observations_clean AS wo ON CAST(
-    sr.df_employee_number AS VARCHAR(25)
-  ) = wo.teacher_internal_id
-  AND sr.samaccountname != LEFT(
-    wo.observer_email,
-    CHARINDEX('@', wo.observer_email) - 1
+  INNER JOIN gabby.whetstone.observations_clean AS wo ON (
+    CAST(
+      sr.df_employee_number AS VARCHAR(25)
+    ) = wo.teacher_internal_id
+    AND sr.samaccountname != LEFT(
+      wo.observer_email,
+      CHARINDEX('@', wo.observer_email) - 1
+    )
+    AND wo.rubric_name IN (
+      'Coaching Tool: Coach ETR and Reflection',
+      'Coaching Tool: Coach ETR and Reflection 20-21',
+      'Coaching Tool: Coach ETR and Reflection 19-20'
+    )
   )
-  AND wo.rubric_name IN (
-    'Coaching Tool: Coach ETR and Reflection',
-    'Coaching Tool: Coach ETR and Reflection 20-21',
-    'Coaching Tool: Coach ETR and Reflection 19-20'
-  )
-  LEFT JOIN gabby.people.staff_crosswalk_static AS osr ON wo.observer_internal_id = CAST(
-    osr.df_employee_number AS VARCHAR(25)
-  )
-  LEFT JOIN gabby.whetstone.observations_scores AS wos ON wo.observation_id = wos.observation_id
-  LEFT JOIN gabby.whetstone.measurements AS wm ON wos.score_measurement_id = wm._id
-  LEFT JOIN gabby.whetstone.observations_scores_text_boxes AS tb ON wos.score_measurement_id = tb.score_measurement_id
-  AND wo.observation_id = tb.observation_id
   INNER JOIN gabby.reporting.reporting_terms AS rt ON (
-    wo.observed_at BETWEEN rt.[start_date] AND rt.end_date
+    (
+      wo.observed_at BETWEEN rt.[start_date] AND rt.end_date
+    )
+    AND rt.identifier = 'ETR'
+    AND rt.schoolid = 0
+    AND rt._fivetran_deleted = 0
   )
-  AND rt.identifier = 'ETR'
-  AND rt.schoolid = 0
-  AND rt._fivetran_deleted = 0
-  LEFT JOIN gabby.pm.teacher_goals_exemption_clean_static AS ex ON sr.df_employee_number = ex.df_employee_number
-  AND rt.academic_year = ex.academic_year
-  AND rt.time_per_name = REPLACE(ex.pm_term, 'PM', 'ETR')
+  LEFT JOIN gabby.people.staff_crosswalk_static AS osr ON (
+    wo.observer_internal_id = CAST(
+      osr.df_employee_number AS VARCHAR(25)
+    )
+  )
+  LEFT JOIN gabby.whetstone.observations_scores AS wos ON (
+    wo.observation_id = wos.observation_id
+  )
+  LEFT JOIN gabby.whetstone.measurements AS wm ON (
+    wos.score_measurement_id = wm._id
+  )
+  LEFT JOIN gabby.whetstone.observations_scores_text_boxes AS tb ON (
+    wos.score_measurement_id = tb.score_measurement_id
+    AND wo.observation_id = tb.observation_id
+  )
+  LEFT JOIN gabby.pm.teacher_goals_exemption_clean_static AS ex ON (
+    sr.df_employee_number = ex.df_employee_number
+    AND rt.academic_year = ex.academic_year
+    AND rt.time_per_name = REPLACE(ex.pm_term, 'PM', 'ETR')
+  )
 WHERE
   ISNULL(
     sr.termination_date,

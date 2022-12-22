@@ -15,15 +15,17 @@ WITH
       ) AS rn
     FROM
       gabby.people.employment_history_static AS eh
-      INNER JOIN gabby.people.salary_history_static AS s ON s.employee_number = eh.employee_number
-      AND s.regular_pay_effective_date BETWEEN DATEFROMPARTS(
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1,
-        7,
-        1
-      ) AND DATEFROMPARTS(
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
-        6,
-        30
+      INNER JOIN gabby.people.salary_history_static AS s ON (
+        s.employee_number = eh.employee_number
+        AND s.regular_pay_effective_date BETWEEN DATEFROMPARTS(
+          gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1,
+          7,
+          1
+        ) AND DATEFROMPARTS(
+          gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+          6,
+          30
+        )
       )
     WHERE
       eh.business_unit_code = 'KIPP_MIAMI'
@@ -59,5 +61,7 @@ SELECT
   l.last_year_salary
 FROM
   gabby.people.staff_crosswalk_static AS c
-  INNER JOIN last_year AS l ON l.employee_number = c.df_employee_number
-  AND l.rn = 1
+  INNER JOIN last_year AS l ON (
+    l.employee_number = c.df_employee_number
+    AND l.rn = 1
+  )

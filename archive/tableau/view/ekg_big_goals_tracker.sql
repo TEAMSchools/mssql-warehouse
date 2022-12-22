@@ -73,7 +73,7 @@ WITH
           module_type,
           module_number,
           CONCAT(subject_area, '_', field) AS pivot_field,
-          VALUE
+          [value]
         FROM
           (
             SELECT
@@ -116,7 +116,7 @@ WITH
               )
               AND percent_correct IS NOT NULL
           ) AS sub UNPIVOT (
-            VALUE FOR field IN (
+            [value] FOR field IN (
               percent_correct,
               is_mastery,
               performance_band_number,
@@ -124,7 +124,7 @@ WITH
             )
           ) AS u
       ) AS sub PIVOT (
-        MAX(VALUE) FOR pivot_field IN (
+        MAX([value]) FOR pivot_field IN (
           ela_percent_correct,
           ela_is_mastery,
           ela_performance_band_number,
@@ -209,7 +209,7 @@ WITH
     HAVING
       COUNT(gleq) > 1 /* return only students with > 1 term */
   ),
-  ADA AS (
+  [ada] AS (
     SELECT
       studentid,
       [db_name],
@@ -219,7 +219,7 @@ WITH
       ROUND(
         AVG(CAST(attendancevalue AS FLOAT)),
         2
-      ) AS ADA
+      ) AS [ada]
     FROM
       gabby.powerschool.ps_adaadm_daily_ctod
     WHERE
@@ -253,12 +253,12 @@ WITH
     FROM
       (
         SELECT
-          sub.studentid,
-          sub.yearid,
-          sub.att_code_group,
-          sub.db_name,
+          studentid,
+          yearid,
+          att_code_group,
+          [db_name],
           COUNT(studentid) AS n_streaks,
-          SUM(sub.streak_length_membership) AS n_days
+          SUM(streak_length_membership) AS n_days
         FROM
           (
             SELECT
@@ -323,11 +323,15 @@ WITH
             DATEFROMPARTS(academic_year, 10, 1) BETWEEN entrydate AND exitdate
           )
       ) d
-      LEFT JOIN gabby.powerschool.cohort_identifiers_static AS n ON d.student_number = n.student_number
-      AND d.db_name = n.db_name
-      AND d.academic_year = (n.academic_year - 1)
-      AND (
-        DATEFROMPARTS(n.academic_year, 10, 1) BETWEEN n.entrydate AND n.exitdate
+      LEFT JOIN gabby.powerschool.cohort_identifiers_static AS n ON (
+        d.student_number = n.student_number
+        AND d.db_name = n.db_name
+        AND d.academic_year = (n.academic_year - 1)
+        AND (
+          (
+            DATEFROMPARTS(n.academic_year, 10, 1)
+          ) BETWEEN n.entrydate AND n.exitdate
+        )
       )
   ),
   teacher_attrition AS (
@@ -359,8 +363,12 @@ WITH
           primary_site,
           primary_site_reporting_schoolid AS reporting_schoolid,
           CASE
-            WHEN legal_entity_name = 'TEAM Academy Charter Schools' THEN 'TEAM'
-            WHEN legal_entity_name = 'KIPP Cooper Norcross Academy' THEN 'KCNA'
+            WHEN (
+              legal_entity_name = 'TEAM Academy Charter Schools'
+            ) THEN 'TEAM'
+            WHEN (
+              legal_entity_name = 'KIPP Cooper Norcross Academy'
+            ) THEN 'KCNA'
             WHEN legal_entity_name = 'KIPP Miami' THEN 'KMS'
           END AS region,
           primary_site_school_level AS school_level,
@@ -375,7 +383,9 @@ WITH
             ELSE 0
           END AS is_attrition_resignation,
           CASE
-            WHEN status_reason NOT IN ('Termination', 'Resignation') THEN is_attrition
+            WHEN (
+              status_reason NOT IN ('Termination', 'Resignation')
+            ) THEN is_attrition
             ELSE 0
           END AS is_attrition_other
         FROM
@@ -684,7 +694,7 @@ WITH
       ) AS student_attrition_pct,
       CAST(
         SUM(sub.n_days_attendance) / SUM(sub.n_days_membership) AS FLOAT
-      ) AS ADA,
+      ) AS [ada],
       CAST(
         AVG(sub.is_chronically_absent) AS FLOAT
       ) AS chronically_absent_pct,
@@ -798,12 +808,12 @@ WITH
 ,
           CAST(la.met_goal AS FLOAT) AS lit_meeting_goal,
           lg.is_making_1yr_growth AS lit_making_1yr_growth
-          /* ADA */
+          /* [ada] */
 ,
-          ADA.n_days_attendance,
-          ADA.n_days_membership,
+          [ada].n_days_attendance,
+          [ada].n_days_membership,
           CASE
-            WHEN ADA.ada < 0.9 THEN 1.0
+            WHEN [ada].ada < 0.9 THEN 1.0
             ELSE 0.0
           END AS is_chronically_absent
           /* Attendance Codes */
@@ -852,9 +862,9 @@ WITH
           AND la.rn_most_recent = 1
           LEFT JOIN lit_growth AS lg ON co.student_number = lg.student_number
           AND co.academic_year = lg.academic_year
-          LEFT JOIN ADA ON co.studentid = ADA.studentid
-          AND co.db_name = ADA.db_name
-          AND co.academic_year = ADA.academic_year
+          LEFT JOIN [ada] ON co.studentid = [ada].studentid
+          AND co.db_name = [ada].db_name
+          AND co.academic_year = [ada].academic_year
           LEFT JOIN suspensions AS sus ON co.studentid = sus.studentid
           AND co.yearid = sus.yearid
           AND co.db_name = sus.db_name
@@ -977,7 +987,7 @@ WITH
           lit_meeting_goal_pct,
           lit_making_1yr_growth_pct,
           student_attrition_pct,
-          ADA,
+          [ada],
           n_oss,
           n_iss,
           teacher_attrition_pct,

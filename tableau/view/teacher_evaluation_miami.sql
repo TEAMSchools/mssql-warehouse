@@ -67,12 +67,18 @@ SELECT
   '2332' AS school_number
 FROM
   gabby.people.staff_crosswalk_static AS c
-  LEFT JOIN gabby.adp.workers_custom_field_group_wide_static AS w ON c.df_employee_number = w.[Employee Number]
-  LEFT JOIN gabby.pm.teacher_goals_overall_scores_static AS s ON c.df_employee_number = s.df_employee_number
-  AND s.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
-  AND s.pm_term = 'PM4'
-  LEFT JOIN job_last_year AS j ON c.df_employee_number = j.employee_number
-  AND j.rn_latest = 1
+  LEFT JOIN gabby.adp.workers_custom_field_group_wide_static AS w ON (
+    c.df_employee_number = w.[Employee Number]
+  )
+  LEFT JOIN gabby.pm.teacher_goals_overall_scores_static AS s ON (
+    c.df_employee_number = s.df_employee_number
+    AND s.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
+    AND s.pm_term = 'PM4'
+  )
+  LEFT JOIN job_last_year AS j ON (
+    c.df_employee_number = j.employee_number
+    AND j.rn_latest = 1
+  )
 WHERE
   c.legal_entity_name = 'KIPP Miami'
   AND c.original_hire_date <= DATEFROMPARTS(

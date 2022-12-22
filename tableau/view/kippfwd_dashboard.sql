@@ -6,33 +6,33 @@ WITH
       gabby.utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year
     UNION
     SELECT
-      gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
+      gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1 AS academic_year
   ),
   apps AS (
     SELECT
-      app.sf_contact_id,
-      app.application_id,
-      app.application_name,
-      app.application_account_type,
-      app.transfer_application,
-      app.application_submission_status,
-      app.application_status,
-      app.matriculation_decision,
-      app.honors_special_program_name,
-      app.honors_special_program_status,
-      app.application_enrollment_status,
-      app.application_pursuing_degree_type,
+      sf_contact_id,
+      application_id,
+      application_name,
+      application_account_type,
+      transfer_application,
+      application_submission_status,
+      application_status,
+      matriculation_decision,
+      honors_special_program_name,
+      honors_special_program_status,
+      application_enrollment_status,
+      application_pursuing_degree_type,
       CASE
-        WHEN app.application_submission_status = 'Submitted' THEN 1
+        WHEN application_submission_status = 'Submitted' THEN 1
       END AS is_submitted,
       CASE
-        WHEN app.application_status = 'Accepted' THEN 1
+        WHEN application_status = 'Accepted' THEN 1
       END AS is_accepted,
       CASE
-        WHEN app.type_for_roll_ups = 'College' THEN 1
+        WHEN type_for_roll_ups = 'College' THEN 1
       END AS is_college,
       CASE
-        WHEN app.type_for_roll_ups IN (
+        WHEN type_for_roll_ups IN (
           'Alternative Program',
           'Organization',
           'Other',
@@ -40,30 +40,34 @@ WITH
         ) THEN 1
       END AS is_cert,
       CASE
-        WHEN app.application_account_type = 'Public 2 yr' THEN 1
+        WHEN application_account_type = 'Public 2 yr' THEN 1
       END AS is_2yr,
       CASE
-        WHEN app.application_account_type IN ('Private 4 yr', 'Public 4 yr') THEN 1
+        WHEN application_account_type IN ('Private 4 yr', 'Public 4 yr') THEN 1
       END AS is_4yr,
       CASE
-        WHEN app.matriculation_decision = 'Matriculated (Intent to Enroll)'
-        AND app.transfer_application = 0 THEN 1
+        WHEN (
+          matriculation_decision = 'Matriculated (Intent to Enroll)'
+          AND transfer_application = 0
+        ) THEN 1
       END AS is_matriculated,
       CASE
-        WHEN app.application_submission_status = 'Submitted'
-        AND app.honors_special_program_name = 'EOF/EOP'
-        AND app.honors_special_program_status = 'Accepted' THEN 1
+        WHEN (
+          application_submission_status = 'Submitted'
+          AND honors_special_program_name = 'EOF/EOP'
+          AND honors_special_program_status = 'Accepted'
+        ) THEN 1
       END AS is_eof,
       ROW_NUMBER() OVER (
         PARTITION BY
-          app.sf_contact_id,
-          app.matriculation_decision,
-          app.transfer_application
+          sf_contact_id,
+          matriculation_decision,
+          transfer_application
         ORDER BY
-          app.enrollment_start_date
+          enrollment_start_date
       ) AS rn
     FROM
-      gabby.alumni.application_identifiers AS app
+      gabby.alumni.application_identifiers
   ),
   apps_rollup AS (
     SELECT
@@ -162,8 +166,10 @@ WITH
           END AS semester
         FROM
           gabby.alumni.gpa_c AS gpa
-          INNER JOIN gabby.alumni.record_type AS rt ON gpa.record_type_id = rt.id
-          AND rt.[name] = 'Cumulative College'
+          INNER JOIN gabby.alumni.record_type AS rt ON (
+            gpa.record_type_id = rt.id
+            AND rt.[name] = 'Cumulative College'
+          )
         WHERE
           gpa.is_deleted = 0
       ) AS sub
@@ -235,57 +241,57 @@ WITH
   ),
   latest_note AS (
     SELECT
-      [contact_c],
-      [comments_c],
-      [next_steps_c],
+      contact_c,
+      comments_c,
+      next_steps_c,
       subject_c,
-      gabby.utilities.DATE_TO_SY ([date_c]) AS academic_year,
+      gabby.utilities.DATE_TO_SY (date_c) AS academic_year,
       ROW_NUMBER() OVER (
         PARTITION BY
           contact_c,
-          gabby.utilities.DATE_TO_SY ([date_c])
+          gabby.utilities.DATE_TO_SY (date_c)
         ORDER BY
           date_c DESC
       ) AS rn
     FROM
-      [gabby].[alumni].[contact_note_c]
+      gabby.alumni.contact_note_c
     WHERE
       is_deleted = 0
       AND subject_c LIKE 'AS[0-9]%'
   ),
   tier AS (
     SELECT
-      [contact_c],
+      contact_c,
       subject_c AS tier,
-      gabby.utilities.DATE_TO_SY ([date_c]) AS academic_year,
+      gabby.utilities.DATE_TO_SY (date_c) AS academic_year,
       ROW_NUMBER() OVER (
         PARTITION BY
           contact_c,
-          gabby.utilities.DATE_TO_SY ([date_c])
+          gabby.utilities.DATE_TO_SY (date_c)
         ORDER BY
           date_c DESC
       ) AS rn
     FROM
-      [gabby].[alumni].[contact_note_c]
+      gabby.alumni.contact_note_c
     WHERE
       is_deleted = 0
       AND subject_c LIKE 'Tier [0-9]'
   ),
   matric AS (
     SELECT
-      e.student_c AS contact_id,
-      e.id AS enrollment_id,
+      student_c AS contact_id,
+      id AS enrollment_id,
       ROW_NUMBER() OVER (
         PARTITION BY
-          e.student_c
+          student_c
         ORDER BY
-          e.start_date_c DESC
+          start_date_c DESC
       ) AS rn_matric
     FROM
-      gabby.alumni.enrollment_c AS e
+      gabby.alumni.enrollment_c
     WHERE
-      e.is_deleted = 0
-      AND e.status_c = 'Matriculated'
+      is_deleted = 0
+      AND status_c = 'Matriculated'
   ),
   finaid AS (
     SELECT
@@ -299,9 +305,11 @@ WITH
       ) AS rn_finaid
     FROM
       matric AS e
-      INNER JOIN gabby.alumni.subsequent_financial_aid_award_c AS fa ON e.enrollment_id = fa.enrollment_c
-      AND fa.is_deleted = 0
-      AND fa.status_c = 'Offered'
+      INNER JOIN gabby.alumni.subsequent_financial_aid_award_c AS fa ON (
+        e.enrollment_id = fa.enrollment_c
+        AND fa.is_deleted = 0
+        AND fa.status_c = 'Offered'
+      )
     WHERE
       e.rn_matric = 1
   )
@@ -385,30 +393,30 @@ SELECT
   ar.is_accepted_cert,
   ar.is_eof_applicant,
   ar.is_matriculated,
-  cnr.AS1,
-  cnr.AS2,
-  cnr.AS3,
-  cnr.AS4,
-  cnr.AS5,
-  cnr.AS6,
-  cnr.AS7,
-  cnr.AS8,
-  cnr.AS9,
-  cnr.AS10,
-  cnr.AS11,
-  cnr.AS12,
-  cnr.AS13,
-  cnr.AS14,
-  cnr.AS15,
-  cnr.AS16,
-  cnr.AS17,
-  cnr.AS18,
-  cnr.AS19,
-  cnr.AS20,
-  cnr.AS21,
-  cnr.AS22,
-  cnr.AS23,
-  cnr.AS24,
+  cnr.[AS1],
+  cnr.[AS2],
+  cnr.[AS3],
+  cnr.[AS4],
+  cnr.[AS5],
+  cnr.[AS6],
+  cnr.[AS7],
+  cnr.[AS8],
+  cnr.[AS9],
+  cnr.[AS10],
+  cnr.[AS11],
+  cnr.[AS12],
+  cnr.[AS13],
+  cnr.[AS14],
+  cnr.[AS15],
+  cnr.[AS16],
+  cnr.[AS17],
+  cnr.[AS18],
+  cnr.[AS19],
+  cnr.[AS20],
+  cnr.[AS21],
+  cnr.[AS22],
+  cnr.[AS23],
+  cnr.[AS24],
   cnr.[AS1_date],
   cnr.[AS2_date],
   cnr.[AS3_date],
@@ -433,26 +441,26 @@ SELECT
   cnr.[AS22_date],
   cnr.[AS23_date],
   cnr.[AS24_date],
-  cnr.CCDM,
+  cnr.[CCDM],
   cnr.[HD_P],
   cnr.[HD_NR],
   cnr.[TD_P],
   cnr.[TD_NR],
-  cnr.PSC,
-  cnr.SC,
-  cnr.HV,
-  cnr.DP_2year,
-  cnr.DP_4year,
-  cnr.DP_CTE,
-  cnr.DP_Military,
-  cnr.DP_Workforce,
-  cnr.DP_Unknown,
-  cnr.BGP_2year,
-  cnr.BGP_4year,
-  cnr.BGP_CTE,
-  cnr.BGP_Military,
-  cnr.BGP_Workforce,
-  cnr.BGP_Unknown,
+  cnr.[PSC],
+  cnr.[SC],
+  cnr.[HV],
+  cnr.[DP_2year],
+  cnr.[DP_4year],
+  cnr.[DP_CTE],
+  cnr.[DP_Military],
+  cnr.[DP_Workforce],
+  cnr.[DP_Unknown],
+  cnr.[BGP_2year],
+  cnr.[BGP_4year],
+  cnr.[BGP_CTE],
+  cnr.[BGP_Military],
+  cnr.[BGP_Workforce],
+  cnr.[BGP_Unknown],
   gpa.fall_transcript_date,
   gpa.fall_semester_gpa,
   gpa.fall_cumulative_gpa,
@@ -463,6 +471,7 @@ SELECT
   gpa.spr_semester_credits_earned,
   COALESCE(
     gpa.fall_cumulative_credits_earned,
+    /* prev spring */
     LAG(
       gpa.spr_cumulative_credits_earned,
       1
@@ -471,7 +480,8 @@ SELECT
         c.sf_contact_id
       ORDER BY
         ay.academic_year ASC
-    ) /* prev spring */,
+    ),
+    /* prev fall */
     LAG(
       gpa.fall_cumulative_credits_earned,
       1
@@ -480,11 +490,12 @@ SELECT
         c.sf_contact_id
       ORDER BY
         ay.academic_year ASC
-    ) /* prev fall */
+    )
   ) AS fall_cumulative_credits_earned,
   COALESCE(
     gpa.spr_cumulative_credits_earned,
     gpa.fall_cumulative_credits_earned,
+    /* prev spring */
     LAG(
       gpa.spr_cumulative_credits_earned,
       1
@@ -493,7 +504,8 @@ SELECT
         c.sf_contact_id
       ORDER BY
         ay.academic_year ASC
-    ) /* prev spring */,
+    ),
+    /* prev fall */
     LAG(
       gpa.fall_cumulative_credits_earned,
       1
@@ -502,7 +514,7 @@ SELECT
         c.sf_contact_id
       ORDER BY
         ay.academic_year ASC
-    ) /* prev fall */
+    )
   ) AS spr_cumulative_credits_earned,
   LAG(
     gpa.spr_semester_credits_earned,
@@ -521,23 +533,37 @@ FROM
   gabby.alumni.ktc_roster AS c
   CROSS JOIN academic_years AS ay
   LEFT JOIN gabby.alumni.enrollment_identifiers AS ei ON c.sf_contact_id = ei.student_c
-  LEFT JOIN apps ON c.sf_contact_id = apps.sf_contact_id
-  AND apps.matriculation_decision = 'Matriculated (Intent to Enroll)'
-  AND apps.transfer_application = 0
-  AND apps.rn = 1
-  LEFT JOIN apps_rollup AS ar ON c.sf_contact_id = ar.sf_contact_id
-  LEFT JOIN gabby.alumni.contact_note_rollup AS cnr ON c.sf_contact_id = cnr.contact_id
-  AND ay.academic_year = cnr.academic_year
-  LEFT JOIN semester_gpa_pivot AS gpa ON c.sf_contact_id = gpa.sf_contact_id
-  AND ay.academic_year = gpa.academic_year
-  LEFT JOIN latest_note AS ln ON c.sf_contact_id = ln.contact_c
-  AND ay.academic_year = ln.academic_year
-  AND ln.rn = 1
-  LEFT JOIN finaid AS fa ON c.sf_contact_id = fa.contact_id
-  AND fa.rn_finaid = 1
-  LEFT JOIN tier ON c.sf_contact_id = tier.contact_c
-  AND ay.academic_year = tier.academic_year
-  AND tier.rn = 1
+  LEFT JOIN apps ON (
+    c.sf_contact_id = apps.sf_contact_id
+    AND apps.matriculation_decision = 'Matriculated (Intent to Enroll)'
+    AND apps.transfer_application = 0
+    AND apps.rn = 1
+  )
+  LEFT JOIN apps_rollup AS ar ON (
+    c.sf_contact_id = ar.sf_contact_id
+  )
+  LEFT JOIN gabby.alumni.contact_note_rollup AS cnr ON (
+    c.sf_contact_id = cnr.contact_id
+    AND ay.academic_year = cnr.academic_year
+  )
+  LEFT JOIN semester_gpa_pivot AS gpa ON (
+    c.sf_contact_id = gpa.sf_contact_id
+    AND ay.academic_year = gpa.academic_year
+  )
+  LEFT JOIN latest_note AS ln ON (
+    c.sf_contact_id = ln.contact_c
+    AND ay.academic_year = ln.academic_year
+    AND ln.rn = 1
+  )
+  LEFT JOIN finaid AS fa ON (
+    c.sf_contact_id = fa.contact_id
+    AND fa.rn_finaid = 1
+  )
+  LEFT JOIN tier ON (
+    c.sf_contact_id = tier.contact_c
+    AND ay.academic_year = tier.academic_year
+    AND tier.rn = 1
+  )
 WHERE
   c.ktc_status IN (
     'HS9',

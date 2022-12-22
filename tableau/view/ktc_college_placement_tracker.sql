@@ -133,10 +133,12 @@ WITH
       ) AS rn_highest_presenior
     FROM
       gabby.naviance.act_scores_clean AS a
-      INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON a.student_number = co.student_number
-      AND a.academic_year = co.academic_year
-      AND co.grade_level < 12
-      AND co.rn_year = 1
+      INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON (
+        a.student_number = co.student_number
+        AND a.academic_year = co.academic_year
+        AND co.grade_level < 12
+        AND co.rn_year = 1
+      )
   ),
   college_apps AS (
     SELECT
@@ -176,7 +178,9 @@ WITH
             WHEN a.match_type_c NOT IN ('Likely Plus', 'Target', 'Reach') THEN 0.0
           END AS is_ltr_match,
           CASE
-            WHEN a.application_admission_type_c IN ('Early Action', 'Early Decision') THEN 1.0
+            WHEN (
+              a.application_admission_type_c IN ('Early Action', 'Early Decision')
+            ) THEN 1.0
             ELSE 0.0
           END AS is_eaed_application,
           CASE
@@ -188,8 +192,10 @@ WITH
             ELSE 0.0
           END AS is_efc_entered,
           CASE
-            WHEN a.matriculation_decision_c = 'Matriculated (Intent to Enroll)'
-            AND a.unmet_need_c IS NOT NULL THEN 1.0
+            WHEN (
+              a.matriculation_decision_c = 'Matriculated (Intent to Enroll)'
+              AND a.unmet_need_c IS NOT NULL
+            ) THEN 1.0
             ELSE 0.0
           END AS is_award_information_entered,
           CASE
@@ -197,30 +203,40 @@ WITH
             ELSE 0.0
           END AS is_accepted,
           CASE
-            WHEN a.application_status_c = 'Accepted'
-            AND SUBSTRING(
-              s.type,
-              PATINDEX('%[24] yr%', s.type),
-              1
-            ) = '4' THEN 1.0
+            WHEN (
+              a.application_status_c = 'Accepted'
+              AND SUBSTRING(
+                s.type,
+                PATINDEX('%[24] yr%', s.type),
+                1
+              ) = '4'
+            ) THEN 1.0
             ELSE 0.0
           END AS is_accepted_4yr,
           CASE
             WHEN a.application_status_c != 'Accepted' THEN NULL
-            WHEN a.application_status_c = 'Accepted'
-            AND a.matriculation_decision_c = 'Matriculated (Intent to Enroll)' THEN 1
-            WHEN a.application_status_c = 'Accepted'
-            AND a.matriculation_decision_c != 'Matriculated (Intent to Enroll)'
-            AND a.primary_reason_for_not_attending_c IS NOT NULL THEN 1
-            WHEN a.application_status_c = 'Accepted'
-            AND a.matriculation_decision_c != 'Matriculated (Intent to Enroll)'
-            AND a.primary_reason_for_not_attending_c IS NULL THEN 0
+            WHEN (
+              a.application_status_c = 'Accepted'
+              AND a.matriculation_decision_c = 'Matriculated (Intent to Enroll)'
+            ) THEN 1
+            WHEN (
+              a.application_status_c = 'Accepted'
+              AND a.matriculation_decision_c != 'Matriculated (Intent to Enroll)'
+              AND a.primary_reason_for_not_attending_c IS NOT NULL
+            ) THEN 1
+            WHEN (
+              a.application_status_c = 'Accepted'
+              AND a.matriculation_decision_c != 'Matriculated (Intent to Enroll)'
+              AND a.primary_reason_for_not_attending_c IS NULL
+            ) THEN 0
           END AS accepted_app_closed_with_reason_not_attending,
           s.type
         FROM
           gabby.alumni.application_c AS a
-          INNER JOIN gabby.alumni.account AS s ON a.school_c = s.id
-          AND s.is_deleted = 0
+          INNER JOIN gabby.alumni.account AS s ON (
+            a.school_c = s.id
+            AND s.is_deleted = 0
+          )
         WHERE
           a.is_deleted = 0
       ) AS sub
@@ -246,12 +262,16 @@ SELECT
   co.latest_transcript_date AS latest_transcript_c,
   co.exit_db_name AS [db_name],
   CASE
-    WHEN co.ktc_status = 'TAF'
-    AND co.exit_grade_level = 12 THEN gpa.cumulative_Y1_gpa
-    WHEN co.ktc_status = 'TAF'
-    AND co.exit_grade_level = 11 THEN gpa.cumulative_Y1_gpa_projected
+    WHEN (
+      co.ktc_status = 'TAF'
+      AND co.exit_grade_level = 12
+    ) THEN gpa.cumulative_y1_gpa
+    WHEN (
+      co.ktc_status = 'TAF'
+      AND co.exit_grade_level = 11
+    ) THEN gpa.cumulative_y1_gpa_projected
     WHEN co.ktc_status = 'TAF' THEN co.college_match_display_gpa
-  END cumulative_Y1_gpa,
+  END AS cumulative_y1_gpa,
   ctcs.attended_2018_junior_kickoff,
   ctcs.fafsa_4_caster_complete,
   ctcs.matriculation_checklist_complete_transfer_to_persistence_counselor,
@@ -359,19 +379,33 @@ SELECT
   END AS is_attending_4yr
 FROM
   gabby.alumni.ktc_roster AS co
-  LEFT JOIN gabby.powerschool.gpa_cumulative AS gpa ON co.studentid = gpa.studentid
-  AND co.exit_schoolid = gpa.schoolid
-  AND co.exit_db_name = gpa.[db_name]
-  LEFT JOIN gabby.naviance.current_task_completion_status AS ctcs ON co.student_number = ctcs.student_id
-  LEFT JOIN nav_applications AS na ON co.student_number = na.hs_student_id
-  LEFT JOIN gabby.naviance.act_scores_clean AS act ON co.student_number = act.student_number
-  AND act.rn_highest = 1
-  LEFT JOIN act_presenior AS ap ON co.student_number = ap.student_number
-  AND ap.rn_highest_presenior = 1
-  LEFT JOIN act_month AS am ON co.student_number = am.student_number
-  AND co.exit_academic_year = am.academic_year
-  LEFT JOIN college_apps AS ca ON co.sf_contact_id = ca.applicant_c
-  AND ca.application_submission_status_c = 'Submitted'
+  LEFT JOIN gabby.powerschool.gpa_cumulative AS gpa ON (
+    co.studentid = gpa.studentid
+    AND co.exit_schoolid = gpa.schoolid
+    AND co.exit_db_name = gpa.[db_name]
+  )
+  LEFT JOIN gabby.naviance.current_task_completion_status AS ctcs ON (
+    co.student_number = ctcs.student_id
+  )
+  LEFT JOIN nav_applications AS na ON (
+    co.student_number = na.hs_student_id
+  )
+  LEFT JOIN gabby.naviance.act_scores_clean AS act ON (
+    co.student_number = act.student_number
+    AND act.rn_highest = 1
+  )
+  LEFT JOIN act_presenior AS ap ON (
+    co.student_number = ap.student_number
+    AND ap.rn_highest_presenior = 1
+  )
+  LEFT JOIN act_month AS am ON (
+    co.student_number = am.student_number
+    AND co.exit_academic_year = am.academic_year
+  )
+  LEFT JOIN college_apps AS ca ON (
+    co.sf_contact_id = ca.applicant_c
+    AND ca.application_submission_status_c = 'Submitted'
+  )
   LEFT JOIN gabby.alumni.enrollment_identifiers AS ei ON co.sf_contact_id = ei.student_c
 WHERE
   co.ktc_status IN ('HS11', 'HS12')

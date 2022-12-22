@@ -62,6 +62,8 @@ SELECT
   ) AS row_most_recent
 FROM
   gabby.smartrecruiters.report_applications AS app
-  INNER JOIN gabby.smartrecruiters.report_applicants AS c ON app.application_id = c.application_id
+  INNER JOIN gabby.smartrecruiters.report_applicants AS c ON (
+    app.application_id = c.application_id
+  )
 WHERE
   app.job_title != 'New Jersey - data migrated from Salesforce'

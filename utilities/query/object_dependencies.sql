@@ -26,7 +26,7 @@ FROM
       atc.[table_name]
     ),
     'OBJECT'
-  ) sre
+  ) AS sre
 WHERE
   atc.column_id = -1
 ORDER BY

@@ -35,7 +35,9 @@ SELECT
   d.subject_primary_site_school_level,
   s.manager_df_employee_number AS subject_manager_df_employee_number,
   d.subject_samaccountname,
-  s.manager_preferred_last_name + ', ' + s.manager_preferred_first_name AS subject_manager_name,
+  (
+    s.manager_preferred_last_name + ', ' + s.manager_preferred_first_name
+  ) AS subject_manager_name,
   s.manager_samaccountname AS subject_manager_samaccountname,
   d.subject_primary_job AS subject_role,
   d.subject_department_name,
@@ -120,22 +122,78 @@ SELECT
     ) * d.answer_value
   END AS answer_value_weighted
   /* DEBUG weighted average
-  ,CASE
-  WHEN d.is_open_ended = 'Y' THEN NULL
-  ELSE COUNT(d.survey_response_id) OVER(PARTITION BY d.survey_id, d.campaign_academic_year, d.campaign_name, d.question_shortname, d.subject_df_employee_number)
-  END AS n_total
-  ,SUM(d.is_manager) OVER(PARTITION BY d.survey_id, d.campaign_academic_year, d.campaign_name, d.question_shortname) AS n_managers
-  ,SUM(ABS(d.is_manager - 1)) OVER(PARTITION BY d.survey_id, d.campaign_academic_year, d.campaign_name, d.question_shortname) AS n_peers
-  ,COUNT(d.survey_response_id) OVER(PARTITION BY d.survey_id, d.campaign_academic_year, d.campaign_name, d.question_shortname) * 0.5 AS manager_peer_split
-  ,(COUNT(d.survey_response_id) OVER(PARTITION BY d.survey_id, d.campaign_academic_year, d.campaign_name, d.question_shortname) * 0.5)
-  / SUM(d.is_manager) OVER(PARTITION BY d.survey_id, d.campaign_academic_year, d.campaign_name, d.question_shortname) AS manager_weight
-  ,(COUNT(d.survey_response_id) OVER(PARTITION BY d.survey_id, d.campaign_academic_year, d.campaign_name, d.question_shortname) * 0.5)
-  / SUM(ABS(d.is_manager - 1)) OVER(PARTITION BY d.survey_id, d.campaign_academic_year, d.campaign_name, d.question_shortname) AS peer_weight
+  -- ,
+  --   CASE
+  --     WHEN d.is_open_ended = 'Y' THEN NULL
+  --     ELSE COUNT(d.survey_response_id) OVER (
+  --       PARTITION BY
+  --         d.survey_id,
+  --         d.campaign_academic_year,
+  --         d.campaign_name,
+  --         d.question_shortname,
+  --         d.subject_df_employee_number
+  --     )
+  --   END AS n_total,
+  --   SUM(d.is_manager) OVER (
+  --     PARTITION BY
+  --       d.survey_id,
+  --       d.campaign_academic_year,
+  --       d.campaign_name,
+  --       d.question_shortname
+  --   ) AS n_managers,
+  --   SUM(ABS(d.is_manager - 1)) OVER (
+  --     PARTITION BY
+  --       d.survey_id,
+  --       d.campaign_academic_year,
+  --       d.campaign_name,
+  --       d.question_shortname
+  --   ) AS n_peers,
+  --   COUNT(d.survey_response_id) OVER (
+  --     PARTITION BY
+  --       d.survey_id,
+  --       d.campaign_academic_year,
+  --       d.campaign_name,
+  --       d.question_shortname
+  --   ) * 0.5 AS manager_peer_split,
+  --   (
+  --     COUNT(d.survey_response_id) OVER (
+  --       PARTITION BY
+  --         d.survey_id,
+  --         d.campaign_academic_year,
+  --         d.campaign_name,
+  --         d.question_shortname
+  --     ) * 0.5
+  --   ) / SUM(d.is_manager) OVER (
+  --     PARTITION BY
+  --       d.survey_id,
+  --       d.campaign_academic_year,
+  --       d.campaign_name,
+  --       d.question_shortname
+  --   ) AS manager_weight,
+  --   (
+  --     COUNT(d.survey_response_id) OVER (
+  --       PARTITION BY
+  --         d.survey_id,
+  --         d.campaign_academic_year,
+  --         d.campaign_name,
+  --         d.question_shortname
+  --     ) * 0.5
+  --   ) / SUM(ABS(d.is_manager - 1)) OVER (
+  --     PARTITION BY
+  --       d.survey_id,
+  --       d.campaign_academic_year,
+  --       d.campaign_name,
+  --       d.question_shortname
+  --   ) AS peer_weight
   --*/
 FROM
   gabby.surveygizmo.survey_detail AS d
-  LEFT JOIN gabby.people.staff_crosswalk_static AS s ON d.subject_df_employee_number = s.df_employee_number
-  LEFT JOIN gabby.people.staff_crosswalk_static AS r ON d.respondent_df_employee_number = r.df_employee_number
+  LEFT JOIN gabby.people.staff_crosswalk_static AS s ON (
+    d.subject_df_employee_number = s.df_employee_number
+  )
+  LEFT JOIN gabby.people.staff_crosswalk_static AS r ON (
+    d.respondent_df_employee_number = r.df_employee_number
+  )
 WHERE
   d.survey_title = 'Self and Others'
   AND d.rn_respondent_subject = 1
@@ -149,7 +207,7 @@ SELECT
   a.response_id AS survey_response_id,
   a.academic_year AS campaign_academic_year,
   NULL AS date_started,
-  CAST(a.date_submitted AS DATE),
+  CAST(a.date_submitted AS DATE) AS date_submitted,
   a.reporting_term AS campaign_name,
   a.reporting_term AS campaign_reporting_term,
   a.open_ended AS is_open_ended,
@@ -183,11 +241,17 @@ SELECT
   a.response_value_weighted AS answer_value_weighted
 FROM
   gabby.surveys.self_and_others_survey_detail_archive AS a
-  LEFT JOIN gabby.people.employment_history_static AS w ON a.subject_employee_number = w.employee_number
-  AND (
-    a.date_submitted BETWEEN w.effective_start_date AND w.effective_end_date
+  LEFT JOIN gabby.people.employment_history_static AS w ON (
+    a.subject_employee_number = w.employee_number
+    AND (
+      a.date_submitted BETWEEN w.effective_start_date AND w.effective_end_date
+    )
+    AND w.primary_position = 'Yes'
+    AND w.position_status != 'Terminated'
   )
-  AND w.primary_position = 'Yes'
-  AND w.position_status != 'Terminated'
-  LEFT JOIN gabby.people.staff_crosswalk_static AS s ON a.subject_employee_number = s.df_employee_number
-  LEFT JOIN gabby.people.staff_crosswalk_static AS r ON a.respondent_email_address = r.samaccountname
+  LEFT JOIN gabby.people.staff_crosswalk_static AS s ON (
+    a.subject_employee_number = s.df_employee_number
+  )
+  LEFT JOIN gabby.people.staff_crosswalk_static AS r ON (
+    a.respondent_email_address = r.samaccountname
+  )

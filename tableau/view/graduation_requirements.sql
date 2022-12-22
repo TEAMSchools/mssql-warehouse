@@ -3,16 +3,16 @@ CREATE OR ALTER VIEW
 WITH
   parcc AS (
     SELECT
-      parcc.local_student_identifier,
-      parcc.test_scale_score AS test_score,
+      local_student_identifier,
+      test_scale_score AS test_score,
       (
-        CONCAT('parcc_', LOWER(parcc.test_code))
+        CONCAT('parcc_', LOWER(test_code))
         COLLATE LATIN1_GENERAL_BIN
       ) AS test_type
     FROM
-      gabby.parcc.summative_record_file_clean AS parcc
+      gabby.parcc.summative_record_file_clean
     WHERE
-      parcc.test_code IN (
+      test_code IN (
         'ELA09',
         'ELA10',
         'ELA11',
@@ -23,24 +23,24 @@ WITH
   ),
   sat AS (
     SELECT
-      u.hs_student_id,
-      u.[value] AS test_score,
+      hs_student_id,
+      [value] AS test_score,
       (
-        CONCAT('sat_', u.field)
+        CONCAT('sat_', field)
         COLLATE LATIN1_GENERAL_BIN
       ) AS test_type
     FROM
       (
         SELECT
-          sat.hs_student_id,
+          hs_student_id,
           CAST(
-            sat.evidence_based_reading_writing AS INT
+            evidence_based_reading_writing AS INT
           ) AS evidence_based_reading_writing,
-          CAST(sat.math AS INT) AS math,
-          CAST(sat.reading_test AS INT) AS reading_test,
-          CAST(sat.math_test AS INT) AS math_test
+          CAST(math AS INT) AS math,
+          CAST(reading_test AS INT) AS reading_test,
+          CAST(math_test AS INT) AS math_test
         FROM
-          gabby.naviance.sat_scores AS sat
+          gabby.naviance.sat_scores
       ) AS sub UNPIVOT (
         [value] FOR field IN (
           evidence_based_reading_writing,
@@ -60,30 +60,30 @@ WITH
       ktc.student_number
     FROM
       gabby.alumni.standardized_test_long AS st
-      INNER JOIN gabby.alumni.ktc_roster AS ktc ON st.contact_c = ktc.sf_contact_id
+      INNER JOIN gabby.alumni.ktc_roster AS ktc ON (st.contact_c = ktc.sf_contact_id)
     WHERE
       st.test_type = 'ACT'
       AND st.score_type IN ('act_reading_c', 'act_math_c')
   ),
   all_tests AS (
     SELECT
-      parcc.local_student_identifier,
-      parcc.test_type,
-      parcc.test_score
+      local_student_identifier,
+      test_type,
+      test_score
     FROM
       parcc
     UNION ALL
     SELECT
-      sat.hs_student_id,
-      sat.test_type,
-      sat.test_score
+      hs_student_id,
+      test_type,
+      test_score
     FROM
       sat
     UNION ALL
     SELECT
-      act.student_number,
-      act.test_type,
-      act.test_score
+      student_number,
+      test_type,
+      test_score
     FROM
       act
   )
@@ -102,12 +102,16 @@ SELECT
   a.test_score
 FROM
   gabby.powerschool.cohort_identifiers_static AS co
-  LEFT JOIN all_tests AS a ON co.student_number = a.local_student_identifier
+  LEFT JOIN all_tests AS a ON (
+    co.student_number = a.local_student_identifier
+  )
 WHERE
   co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
   AND co.rn_year = 1
-  AND co.cohort BETWEEN (
-    gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
-  ) AND (
-    gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 5
+  AND (
+    co.cohort BETWEEN (
+      gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
+    ) AND (
+      gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 5
+    )
   )

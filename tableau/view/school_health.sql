@@ -11,7 +11,7 @@ WITH
       ktc.school_specific_id_c AS student_number
     FROM
       gabby.alumni.standardized_test_long AS stl
-      INNER JOIN gabby.alumni.contact AS ktc ON stl.contact_c = ktc.id
+      INNER JOIN gabby.alumni.contact AS ktc ON (stl.contact_c = ktc.id)
     WHERE
       stl.test_type = 'ACT'
       AND stl.score_type = 'act_composite_c'
@@ -40,8 +40,10 @@ WITH
       'ALL' AS grade_band
     FROM
       gabby.powerschool.cohort_identifiers_static AS co
-      INNER JOIN gabby.iready.growth_metrics AS gm ON co.student_number = gm.student_number
-      AND co.academic_year = gm.academic_year
+      INNER JOIN gabby.iready.growth_metrics AS gm ON (
+        co.student_number = gm.student_number
+        AND co.academic_year = gm.academic_year
+      )
     WHERE
       co.rn_year = 1
       AND co.is_enrolled_recent = 1
@@ -147,9 +149,11 @@ FROM
           co.gender
         FROM
           gabby.lit.achieved_by_round_static AS ats
-          LEFT JOIN gabby.powerschool.cohort_identifiers_static AS co ON ats.student_number = co.student_number
-          AND ats.academic_year = co.academic_year
-          AND co.is_enrolled_recent = 1
+          LEFT JOIN gabby.powerschool.cohort_identifiers_static AS co ON (
+            ats.student_number = co.student_number
+            AND ats.academic_year = co.academic_year
+            AND co.is_enrolled_recent = 1
+          )
         WHERE
           ats.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 3
           AND ats.is_curterm = 1
@@ -219,10 +223,12 @@ FROM
           co.school_level AS grade_band
         FROM
           gabby.powerschool.gpa_detail AS gpa
-          INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON gpa.student_number = co.student_number
-          AND gpa.academic_year = co.academic_year
-          AND co.is_enrolled_recent = 1
-          AND co.rn_year = 1
+          INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON (
+            gpa.student_number = co.student_number
+            AND gpa.academic_year = co.academic_year
+            AND co.is_enrolled_recent = 1
+            AND co.rn_year = 1
+          )
         WHERE
           gpa.is_curterm = 1
           AND gpa.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 3
@@ -395,13 +401,17 @@ FROM
           di.diagnostic_overall_relative_placement_most_recent_,
           LOWER(LEFT(di.[subject], 4)) AS iready_subject,
           CASE
-            WHEN di.diagnostic_overall_relative_placement_most_recent_ IN ('On Level', 'Above Level') THEN 1
+            WHEN (
+              di.diagnostic_overall_relative_placement_most_recent_
+            ) IN ('On Level', 'Above Level') THEN 1
             ELSE 0
           END AS is_on_grade
         FROM
           gabby.powerschool.cohort_identifiers_static AS co
-          INNER JOIN gabby.iready.diagnostic_and_instruction AS di ON co.student_number = di.student_id
-          AND co.academic_year = LEFT(di.academic_year, 4)
+          INNER JOIN gabby.iready.diagnostic_and_instruction AS di ON (
+            co.student_number = di.student_id
+            AND co.academic_year = LEFT(di.academic_year, 4)
+          )
         WHERE
           co.rn_year = 1
           AND co.is_enrolled_recent = 1
@@ -463,11 +473,13 @@ FROM
       ) AS pct_met_m
     FROM
       gabby.powerschool.ps_adaadm_daily_ctod AS mem
-      INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON mem.studentid = co.studentid
-      AND mem.yearid = co.yearid
-      AND mem.[db_name] = co.[db_name]
-      AND co.rn_year = 1
-      AND co.is_enrolled_y1 = 1
+      INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON (
+        mem.studentid = co.studentid
+        AND mem.yearid = co.yearid
+        AND mem.[db_name] = co.[db_name]
+        AND co.rn_year = 1
+        AND co.is_enrolled_y1 = 1
+      )
     WHERE
       mem.membershipvalue = 1
       AND mem.calendardate <= CURRENT_TIMESTAMP
@@ -539,12 +551,16 @@ FROM
           'ALL' AS grade_band
         FROM
           gabby.powerschool.cohort_identifiers_static AS co
-          LEFT JOIN gabby.deanslist.incidents_clean_static AS ics ON co.student_number = ics.student_school_id
-          AND co.academic_year = ics.create_academic_year
-          AND co.[db_name] = ics.[db_name]
-          LEFT JOIN gabby.deanslist.incidents_penalties_static AS ips ON ips.incident_id = ics.incident_id
-          AND ips.[db_name] = ics.[db_name]
-          AND ips.issuspension = 1
+          LEFT JOIN gabby.deanslist.incidents_clean_static AS ics ON (
+            co.student_number = ics.student_school_id
+            AND co.academic_year = ics.create_academic_year
+            AND co.[db_name] = ics.[db_name]
+          )
+          LEFT JOIN gabby.deanslist.incidents_penalties_static AS ips ON (
+            ips.incident_id = ics.incident_id
+            AND ips.[db_name] = ics.[db_name]
+            AND ips.issuspension = 1
+          )
         WHERE
           co.rn_year = 1
           AND co.is_enrolled_y1 = 1
@@ -602,7 +618,9 @@ FROM
       ) AS pct_met_m
     FROM
       gabby.powerschool.cohort_identifiers_static AS co
-      LEFT JOIN act_composite AS act ON co.student_number = act.student_number
+      LEFT JOIN act_composite AS act ON (
+        co.student_number = act.student_number
+      )
     WHERE
       co.rn_year = 1
       AND co.is_enrolled_y1 = 1
@@ -694,7 +712,7 @@ FROM
           END AS is_enrolled_next,
           'ALL' AS grade_band
         FROM
-          gabby.powerschool.cohort_identifiers_static AS co
+          gabby.powerschool.cohort_identifiers_static
         WHERE
           co.is_enrolled_oct01 = 1
           AND co.rn_year = 1
@@ -733,9 +751,11 @@ FROM
           sc.ps_school_id AS schoolid
         FROM
           gabby.surveys.cmo_engagement_regional_survey_detail AS cm
-          INNER JOIN gabby.people.school_crosswalk AS sc ON cm.respondent_primary_site = sc.site_name
-          AND sc.ps_school_id != 0
-          AND sc.ps_school_id IS NOT NULL
+          INNER JOIN gabby.people.school_crosswalk AS sc ON (
+            cm.respondent_primary_site = sc.site_name
+            AND sc.ps_school_id != 0
+            AND sc.ps_school_id IS NOT NULL
+          )
         WHERE
           cm.is_open_ended = 'N'
           AND cm.question_shortname LIKE '%Q12%'
@@ -764,8 +784,10 @@ FROM
       NULL AS pct_met_m
     FROM
       gabby.tableau.compliance_staff_attrition AS sa
-      INNER JOIN gabby.people.school_crosswalk AS cw ON sa.primary_site = cw.site_name
-      AND cw.ps_school_id != 0
+      INNER JOIN gabby.people.school_crosswalk AS cw ON (
+        sa.primary_site = cw.site_name
+        AND cw.ps_school_id != 0
+      )
     WHERE
       sa.is_denominator != 0
       AND sa.primary_job != 'Intern'
@@ -791,8 +813,10 @@ FROM
       NULL AS pct_met_m
     FROM
       gabby.tableau.compliance_staff_attrition AS sa
-      INNER JOIN gabby.people.school_crosswalk AS cw ON sa.primary_site = cw.site_name
-      AND cw.ps_school_id != 0
+      INNER JOIN gabby.people.school_crosswalk AS cw ON (
+        sa.primary_site = cw.site_name
+        AND cw.ps_school_id != 0
+      )
     WHERE
       sa.primary_job IN (
         'Co-Teacher',
@@ -834,13 +858,19 @@ FROM
       NULL AS pct_met_m
     FROM
       gabby.pm.teacher_goals_lockbox_wide AS lb
-      INNER JOIN gabby.people.employment_history_static AS eh ON lb.df_employee_number = eh.employee_number
-      AND (
-        DATEFROMPARTS(lb.academic_year + 1, 4, 30) BETWEEN eh.effective_start_date AND eh.effective_end_date
+      INNER JOIN gabby.people.employment_history_static AS eh ON (
+        lb.df_employee_number = eh.employee_number
+        AND (
+          (
+            DATEFROMPARTS(lb.academic_year + 1, 4, 30)
+          ) BETWEEN eh.effective_start_date AND eh.effective_end_date
+        )
+        AND eh.primary_position = 'Yes'
       )
-      AND eh.primary_position = 'Yes'
-      INNER JOIN gabby.people.school_crosswalk AS cw ON eh.[location] = cw.site_name
-      AND cw.ps_school_id != 0
+      INNER JOIN gabby.people.school_crosswalk AS cw ON (
+        eh.[location] = cw.site_name
+        AND cw.ps_school_id != 0
+      )
     WHERE
       lb.metric_name = 'etr_overall_score'
       AND lb.pm_term = 'PM4'
@@ -919,47 +949,47 @@ FROM
                   'School will help students get into a “good” college so they can get a “good” job and make lots of money.',
                   'Staff frequently call students out publicly, use an angry tone with, or even yell at students.',
                   'Staff make all the decisions - students are not involved.',
-                  'Staff often assign detentions and/or remove students from activities/classroom for even minor issues – OR staff ignore student behavior completely.',
-                  'Students are rarely ever allowed to talk or move without staff’s permission or presence.',
+                  'Staff often assign detentions and/or remove students from activities/classroom for even minor issues - OR staff ignore student behavior completely.',
+                  'Students are rarely ever allowed to talk or move without staff''s permission or presence.',
                   'Students must show they can listen and do whatever staff say before being included in activities, like recess, trips, choice time, etc.',
-                  'Students’ performance is only measured by the grades they are getting on tests/quizzes.',
+                  'Students'' performance is only measured by the grades they are getting on tests/quizzes.',
                   'Teachers do not often communicate with families at my school.  Families are not sure who to go to when they want to learn more, have a concern, or need help.',
-                  'Teachers generally do not provide enough individualized support to students.  Students who don’t get the right answer are often left unsure about how to fix their work.',
+                  'Teachers generally do not provide enough individualized support to students.  Students who don''t get the right answer are often left unsure about how to fix their work.',
                   'The lessons, books, and learning resources used at my school that don''t value diversity and inclusion. Students often feel like they cannot relate to what they are learning about.'
                 ) THEN 1
                 WHEN u.response IN (
                   'Families and teachers at my school communicate when they need to.  Families ask questions and/or share concerns, and generally feel supported when they do.',
                   'School will help students go to college OR have a career so they can be “successful” doing whatever they want.',
                   'Some of the lessons, books, and learning resources used at my school show different cultures through photographs and stories. Many students are able to relate to what they are learning about.',
-                  'Staff don’t really listen to students and talk to them without much joy or excitement.',
-                  'Staff sometimes ask students questions to help them make decisions, but don’t always listen.',
+                  'Staff don''t really listen to students and talk to them without much joy or excitement.',
+                  'Staff sometimes ask students questions to help them make decisions, but don''t always listen.',
                   'Staff use the same consequences to address ALL levels of behavior without first working to understand the students or what happened.',
                   'Students are expected to focus mostly on being respectful, follow directions immediately, and rarely question teachers.',
                   'Students must perform and behave well to be included in activities.',
-                  'Students’ performance is measured both by the grades they are getting on tests/quizzes; as well as how much growth they are showing.',
-                  'Teachers plan lessons and use class time similarly each day.  Teachers are clear on which students’ work meets the expectations, and which students'' work do not.'
+                  'Students'' performance is measured both by the grades they are getting on tests/quizzes; as well as how much growth they are showing.',
+                  'Teachers plan lessons and use class time similarly each day.  Teachers are clear on which students'' work meets the expectations, and which students'' work do not.'
                 ) THEN 2
                 WHEN u.response IN (
                   'Families and teachers at my school communicate often about progress, concerns, and updates.  Many families know how to be and are actively involved with student and school-wide events.',
                   'School will help students learn a lot and believe in themselves so they can live a life they choose.',
                   'Staff always listen to and treat students with kindness.',
                   'Staff regularly ask students questions to help them make decisions and listen to what they share.',
-                  'Staff work to understand students before issuing consequences – when consequences are given, they are fair.',
+                  'Staff work to understand students before issuing consequences - when consequences are given, they are fair.',
                   'Students are welcomed to be themselves and bring their full personality to school.',
                   'Students must show effort and growth to be included in activities.',
-                  'Students’ performance is measured through both what grades they are getting and how they are growing. Teachers often meet with students to discuss growth goals and to track progress.',
+                  'Students'' performance is measured through both what grades they are getting and how they are growing. Teachers often meet with students to discuss growth goals and to track progress.',
                   'TeachersCREATE an environment where most students actively participate, and take academic risks to strengthen their own learning.  Teachers find many different and creative ways to make learning engaging for most students.',
                   'The lessons, books, and learning resources used at my school have a diverse representation of cultures and perspectives. Students are able to produce work that reflects and connects their own ideas, thoughts, and opinions.'
                 ) THEN 3
                 WHEN u.response IN (
                   'ALL students are encouraged to participate in any activity they like based on what they enjoy and care about.',
                   'Families and teachers at my school communicate frequently and openly about progress, concerns, and updates.  Families are active members of the school community.',
-                  'School will help students learn a lot, believe in themselves, and understand what it means to be a Person of Color in America – so they can live a life they choose, no matter what challenges they may face.',
+                  'School will help students learn a lot, believe in themselves, and understand what it means to be a Person of Color in America - so they can live a life they choose, no matter what challenges they may face.',
                   'Staff care deeply about every student; staff share their personality and take time to relate to and learn about each student.',
                   'Staff rely mostly on relationships to address student behavior, rarely ever send a student out of class, and take time to make all students feel heard and valued.',
                   'Students are partners with staff and always part of decisions for the school.',
                   'Students are welcomed to be themselves, bring their full personalities AND family culture, and engage with staff about academic and non-academic topics.',
-                  'Students’ performance includes grades earned on tests/quizzes, as well as academic and social goals.  Teachers and students work together to set, communicate, and celebrate all goals.',
+                  'Students'' performance includes grades earned on tests/quizzes, as well as academic and social goals.  Teachers and students work together to set, communicate, and celebrate all goals.',
                   'Teachers are committed to challenging and helping all students learn.  TeachersCREATE an environment where all students are included and can thrive.',
                   'The lessons, books, and learning resources used by students support the development of who they are as people. Students routinely engage in exploring their own and other cultures, and understand the purpose of what they are learning.'
                 ) THEN 4
@@ -974,25 +1004,27 @@ FROM
             FROM
               gabby.surveys.scds AS sc
               INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON (
-                LEFT(
-                  sc.email_address,
-                  LEN(sc.email_address) - 17
-                ) = co.student_web_id
-                COLLATE LATIN1_GENERAL_BIN
-              )
-              AND co.academic_year = 2021
-              AND co.rn_year = 1 UNPIVOT (
-                response FOR question_text IN (
-                  _1_what_best_describes_expectations_for_students_at_your_school_,
-                  _2_what_best_describes_the_interactions_between_staff_and_students_,
-                  _3_what_best_describes_how_staff_respond_to_student_behavior_,
-                  _4_what_best_describes_how_school_handles_activities_for_students_,
-                  _5_what_best_describes_how_much_input_students_have_on_school_decisions_,
-                  _6_what_best_describes_what_students_are_taught_about_why_school_is_important_,
-                  _7_what_best_describes_learning_outcomes_for_students_at_your_school_,
-                  _8_what_best_describes_teachers_instructional_practices_at_your_school_,
-                  _9_what_best_describes_the_lessons_and_learning_resources_at_your_school_,
-                  _10_what_best_describes_family_engagement_at_your_school_
+                (
+                  LEFT(
+                    sc.email_address,
+                    LEN(sc.email_address) - 17
+                  ) = co.student_web_id
+                  COLLATE LATIN1_GENERAL_BIN
+                )
+                AND co.academic_year = 2021
+                AND co.rn_year = 1 UNPIVOT (
+                  response FOR question_text IN (
+                    _1_what_best_describes_expectations_for_students_at_your_school_,
+                    _2_what_best_describes_the_interactions_between_staff_and_students_,
+                    _3_what_best_describes_how_staff_respond_to_student_behavior_,
+                    _4_what_best_describes_how_school_handles_activities_for_students_,
+                    _5_what_best_describes_how_much_input_students_have_on_school_decisions_,
+                    _6_what_best_describes_what_students_are_taught_about_why_school_is_important_,
+                    _7_what_best_describes_learning_outcomes_for_students_at_your_school_,
+                    _8_what_best_describes_teachers_instructional_practices_at_your_school_,
+                    _9_what_best_describes_the_lessons_and_learning_resources_at_your_school_,
+                    _10_what_best_describes_family_engagement_at_your_school_
+                  )
                 )
               ) AS u
           ) AS sub
@@ -1076,12 +1108,14 @@ FROM
           END AS is_proficient
         FROM
           gabby.parcc.summative_record_file_clean AS nj
-          INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON nj.state_student_identifier = co.state_studentnumber
-          AND nj.academic_year = co.academic_year
-          AND nj.[db_name] = co.[db_name]
-          AND co.rn_year = 1
-          AND (co.grade_level BETWEEN 3 AND 8)
-          AND co.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 3
+          INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON (
+            nj.state_student_identifier = co.state_studentnumber
+            AND nj.academic_year = co.academic_year
+            AND nj.[db_name] = co.[db_name]
+            AND co.rn_year = 1
+            AND (co.grade_level BETWEEN 3 AND 8)
+            AND co.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 3
+          )
         UNION ALL
         SELECT
           co.academic_year,
@@ -1102,12 +1136,14 @@ FROM
           END AS is_proficient
         FROM
           kippmiami.fsa.student_scores AS fl
-          INNER JOIN kippmiami.powerschool.u_studentsuserfields AS suf ON fl.fleid = suf.fleid
-          INNER JOIN kippmiami.powerschool.cohort_identifiers_static AS co ON suf.studentsdcid = co.students_dcid
-          AND LEFT(fl.school_year, 2) = RIGHT(co.academic_year, 2)
-          AND co.rn_year = 1
-          AND co.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 3
-          AND (co.grade_level BETWEEN 3 AND 8)
+          INNER JOIN kippmiami.powerschool.u_studentsuserfields AS suf ON (fl.fleid = suf.fleid)
+          INNER JOIN kippmiami.powerschool.cohort_identifiers_static AS co ON (
+            suf.studentsdcid = co.students_dcid
+            AND LEFT(fl.school_year, 2) = RIGHT(co.academic_year, 2)
+            AND co.rn_year = 1
+            AND co.academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 3
+            AND (co.grade_level BETWEEN 3 AND 8)
+          )
       ) AS sub
     GROUP BY
       sub.academic_year,
@@ -1115,8 +1151,10 @@ FROM
       sub.grade_band,
       sub.[subject]
   ) AS sub
-  LEFT JOIN gabby.reporting.school_health_metric_lookup AS ml ON sub.subdomain = ml.subdomain
-  AND (
-    sub.grade_band = ml.grade_band
-    COLLATE LATIN1_GENERAL_BIN
+  LEFT JOIN gabby.reporting.school_health_metric_lookup AS ml ON (
+    sub.subdomain = ml.subdomain
+    AND (
+      sub.grade_band = ml.grade_band
+      COLLATE LATIN1_GENERAL_BIN
+    )
   )

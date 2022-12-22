@@ -30,9 +30,11 @@ WITH
       c.survey_id AS survey_id
     FROM
       gabby.surveys.self_and_others_survey AS s
-      INNER JOIN gabby.surveygizmo.survey_campaign_clean_static AS c ON c.survey_id = 4561325
-      AND (
-        CAST(s._created AS DATETIME2) BETWEEN c.link_open_date AND c.link_close_date
+      INNER JOIN gabby.surveygizmo.survey_campaign_clean_static AS c ON (
+        c.survey_id = 4561325
+        AND (
+          CAST(s._created AS DATETIME2) BETWEEN c.link_open_date AND c.link_close_date
+        )
       )
     WHERE
       gabby.utilities.DATE_TO_SY (s._created) = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
@@ -66,9 +68,11 @@ WITH
       c.survey_id AS survey_id
     FROM
       gabby.surveys.manager_survey AS m
-      INNER JOIN gabby.surveygizmo.survey_campaign_clean_static AS c ON c.survey_id = 4561288
-      AND (
-        CAST(m._created AS DATETIME2) BETWEEN c.link_open_date AND c.link_close_date
+      INNER JOIN gabby.surveygizmo.survey_campaign_clean_static AS c ON (
+        c.survey_id = 4561288
+        AND (
+          CAST(m._created AS DATETIME2) BETWEEN c.link_open_date AND c.link_close_date
+        )
       )
     WHERE
       gabby.utilities.DATE_TO_SY (m._created) = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
@@ -77,7 +81,7 @@ WITH
     UNION ALL
     SELECT
       e._created AS date_created,
-      e._created survey_timestamp,
+      e._created AS survey_timestamp,
       'R9/Engagement' AS subject_name,
       999999 AS subject_df_employee_number,
       LOWER(e.email) AS email,
@@ -93,46 +97,48 @@ WITH
       c.survey_id AS survey_id
     FROM
       gabby.surveys.r_9_engagement_survey AS e
-      INNER JOIN gabby.surveygizmo.survey_campaign_clean_static AS c ON c.survey_id = 5300913
-      AND (
-        CAST(e._created AS DATETIME2) BETWEEN c.link_open_date AND c.link_close_date
+      INNER JOIN gabby.surveygizmo.survey_campaign_clean_static AS c ON (
+        c.survey_id = 5300913
+        AND (
+          CAST(e._created AS DATETIME2) BETWEEN c.link_open_date AND c.link_close_date
+        )
       )
     WHERE
       gabby.utilities.DATE_TO_SY (e._created) = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
   ),
   response_identifiers AS (
     SELECT
-      r.date_submitted AS date_created,
-      r.date_submitted AS survey_timestamp,
+      date_submitted AS date_created,
+      date_submitted AS survey_timestamp,
       CASE
-        WHEN r.survey_id = 5300913 THEN 'R9/Engagement'
+        WHEN survey_id = 5300913 THEN 'R9/Engagement'
         ELSE CONCAT(
-          r.subject_preferred_name,
+          subject_preferred_name,
           ' - ',
-          r.subject_primary_site,
+          subject_primary_site,
           ' [',
-          r.subject_df_employee_number,
+          subject_df_employee_number,
           ']'
         )
       END AS subject_name,
       CASE
-        WHEN r.survey_id = 5300913 THEN 999999
-        ELSE r.subject_df_employee_number
+        WHEN survey_id = 5300913 THEN 999999
+        ELSE subject_df_employee_number
       END AS subject_df_employee_number,
-      LOWER(r.respondent_mail) AS email,
-      r.campaign_academic_year AS academic_year,
-      r.campaign_reporting_term AS reporting_term,
-      r.is_manager AS is_manager,
+      LOWER(respondent_mail) AS email,
+      campaign_academic_year AS academic_year,
+      campaign_reporting_term AS reporting_term,
+      is_manager AS is_manager,
       CASE
-        WHEN r.survey_id = 4561325 THEN 'Self & Others'
-        WHEN r.survey_id = 4561288 THEN 'Manager'
-        WHEN r.survey_id = 5300913 THEN 'R9/Engagement'
+        WHEN survey_id = 4561325 THEN 'Self & Others'
+        WHEN survey_id = 4561288 THEN 'Manager'
+        WHEN survey_id = 5300913 THEN 'R9/Engagement'
       END AS survey_type,
-      r.survey_id AS survey_id
+      survey_id AS survey_id
     FROM
-      gabby.surveygizmo.survey_response_identifiers_static AS r
+      gabby.surveygizmo.survey_response_identifiers_static
     WHERE
-      r.campaign_academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+      campaign_academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
   ),
   survey_feed AS (
     SELECT
@@ -157,10 +163,12 @@ WITH
       COALESCE(r.survey_id, w.survey_id) AS survey_id
     FROM
       response_identifiers AS r
-      FULL JOIN webhook_feed AS w ON r.survey_id = w.survey_id
-      AND r.email = w.email
-      AND r.subject_df_employee_number = w.subject_df_employee_number
-      AND r.reporting_term = w.reporting_term
+      FULL JOIN webhook_feed AS w ON (
+        r.survey_id = w.survey_id
+        AND r.email = w.email
+        AND r.subject_df_employee_number = w.subject_df_employee_number
+        AND r.reporting_term = w.reporting_term
+      )
   ),
   teacher_scaffold AS (
     SELECT
@@ -192,7 +200,7 @@ WITH
       gabby.utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year
     FROM
       gabby.people.staff_crosswalk_static AS sr
-      CROSS JOIN STRING_SPLIT ('SO1,SO2,SO3', ',') ss
+      CROSS JOIN STRING_SPLIT ('SO1,SO2,SO3', ',') AS ss
     WHERE
       sr.[status] NOT IN ('TERMINATED', 'PRESTART')
     UNION ALL
@@ -225,7 +233,7 @@ WITH
       gabby.utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year
     FROM
       gabby.people.staff_crosswalk_static AS sr
-      CROSS JOIN STRING_SPLIT ('R9S1,R9S2,R9S3,R9S4', ',') ss
+      CROSS JOIN STRING_SPLIT ('R9S1,R9S2,R9S3,R9S4', ',') AS ss
     WHERE
       sr.[status] NOT IN ('TERMINATED', 'PRESTART')
     UNION ALL
@@ -258,7 +266,7 @@ WITH
       gabby.utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year
     FROM
       gabby.people.staff_crosswalk_static AS sr
-      CROSS JOIN STRING_SPLIT ('MGR1,MGR2,MGR3,MGR4', ',') ss
+      CROSS JOIN STRING_SPLIT ('MGR1,MGR2,MGR3,MGR4', ',') AS ss
     WHERE
       sr.[status] NOT IN ('TERMINATED', 'PRESTART')
   )
@@ -284,7 +292,7 @@ SELECT
     f1.responder_email,
     f2.responder_email,
     f3.responder_email,
-    email1
+    s.email1
   ) AS responder_email,
   COALESCE(
     f1.subject_name,
@@ -316,15 +324,21 @@ SELECT
   ) AS is_manager
 FROM
   teacher_scaffold AS s
-  LEFT JOIN survey_feed AS f1 ON s.email1 = f1.responder_email
-  AND s.survey_type = f1.survey_type
-  AND s.academic_year = f1.academic_year
-  AND s.reporting_term = f1.reporting_term
-  LEFT JOIN survey_feed AS f2 ON s.email2 = f2.responder_email
-  AND s.survey_type = f2.survey_type
-  AND s.academic_year = f2.academic_year
-  AND s.reporting_term = f2.reporting_term
-  LEFT JOIN survey_feed AS f3 ON s.email3 = f3.responder_email
-  AND s.survey_type = f3.survey_type
-  AND s.academic_year = f3.academic_year
-  AND s.reporting_term = f3.reporting_term
+  LEFT JOIN survey_feed AS f1 ON (
+    s.email1 = f1.responder_email
+    AND s.survey_type = f1.survey_type
+    AND s.academic_year = f1.academic_year
+    AND s.reporting_term = f1.reporting_term
+  )
+  LEFT JOIN survey_feed AS f2 ON (
+    s.email2 = f2.responder_email
+    AND s.survey_type = f2.survey_type
+    AND s.academic_year = f2.academic_year
+    AND s.reporting_term = f2.reporting_term
+  )
+  LEFT JOIN survey_feed AS f3 ON (
+    s.email3 = f3.responder_email
+    AND s.survey_type = f3.survey_type
+    AND s.academic_year = f3.academic_year
+    AND s.reporting_term = f3.reporting_term
+  )

@@ -3,7 +3,7 @@ CREATE OR ALTER VIEW
 WITH
   fp_long AS (
     SELECT
-      fp.student_number student_identifier,
+      fp.student_number AS student_identifier,
       fp.unique_id,
       fp.academic_year AS assessment_academic_year,
       fp.test_round AS assessment_test_round,
@@ -28,9 +28,11 @@ WITH
       ) AS rn
     FROM
       gabby.lit.all_test_events_static AS fp
-      INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON fp.student_number = co.student_number
-      AND fp.academic_year = co.academic_year
-      AND co.rn_year = 1
+      INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON (
+        fp.student_number = co.student_number
+        AND fp.academic_year = co.academic_year
+        AND co.rn_year = 1
+      )
   ),
   fp_recent AS (
     SELECT
@@ -63,8 +65,10 @@ WITH
       ) AS rn
     FROM
       gabby.reporting.reporting_terms AS rt
-      INNER JOIN fp_long AS fp ON rt.schoolid = fp.schoolid
-      AND rt.[start_date] > fp.assessment_date
+      INNER JOIN fp_long AS fp ON (
+        rt.schoolid = fp.schoolid
+        AND rt.[start_date] > fp.assessment_date
+      )
     WHERE
       rt.identifier = 'LIT'
       AND rt._fivetran_deleted = 0
@@ -108,28 +112,38 @@ WITH
       COALESCE(ins.genre, hard.genre) AS instructional_genre
     FROM
       gabby.powerschool.cohort_identifiers_static AS co
-      INNER JOIN gabby.reporting.reporting_terms AS rt ON co.schoolid = rt.schoolid
-      AND co.academic_year = rt.academic_year
-      AND rt.identifier = 'LIT'
-      AND rt._fivetran_deleted = 0
-      INNER JOIN gabby.lit.network_goals AS g ON co.grade_level = g.grade_level
-      AND rt.alt_name = g.test_round
-      AND g.norms_year = 2019
-      LEFT JOIN fp_recent AS ind ON co.student_number = ind.student_identifier
-      AND rt.academic_year = ind.academic_year
-      AND rt.alt_name = ind.test_round
-      AND ind.rn = 1
-      AND ind.benchmark_level = 'Achieved'
-      LEFT JOIN fp_recent AS ins ON co.student_number = ins.student_identifier
-      AND rt.academic_year = ins.academic_year
-      AND rt.alt_name = ins.test_round
-      AND ins.rn = 1
-      AND ins.benchmark_level = 'Did Not Achieve'
-      LEFT JOIN fp_recent AS hard ON co.student_number = hard.student_identifier
-      AND rt.academic_year = hard.academic_year
-      AND rt.alt_name = hard.test_round
-      AND hard.rn = 1
-      AND hard.benchmark_level = 'DNA - Hard'
+      INNER JOIN gabby.reporting.reporting_terms AS rt ON (
+        co.schoolid = rt.schoolid
+        AND co.academic_year = rt.academic_year
+        AND rt.identifier = 'LIT'
+        AND rt._fivetran_deleted = 0
+      )
+      INNER JOIN gabby.lit.network_goals AS g ON (
+        co.grade_level = g.grade_level
+        AND rt.alt_name = g.test_round
+        AND g.norms_year = 2019
+      )
+      LEFT JOIN fp_recent AS ind ON (
+        co.student_number = ind.student_identifier
+        AND rt.academic_year = ind.academic_year
+        AND rt.alt_name = ind.test_round
+        AND ind.rn = 1
+        AND ind.benchmark_level = 'Achieved'
+      )
+      LEFT JOIN fp_recent AS ins ON (
+        co.student_number = ins.student_identifier
+        AND rt.academic_year = ins.academic_year
+        AND rt.alt_name = ins.test_round
+        AND ins.rn = 1
+        AND ins.benchmark_level = 'Did Not Achieve'
+      )
+      LEFT JOIN fp_recent AS hard ON (
+        co.student_number = hard.student_identifier
+        AND rt.academic_year = hard.academic_year
+        AND rt.alt_name = hard.test_round
+        AND hard.rn = 1
+        AND hard.benchmark_level = 'DNA - Hard'
+      )
     WHERE
       co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
       AND co.rn_year = 1
@@ -166,8 +180,12 @@ WITH
         WHEN s.independent_level = 'Z' THEN NULL /* Achieved Z */
         WHEN s.year_in_network = 1 THEN 'New to KIPP NJ'
         WHEN s.instructional_assessment_date IS NULL THEN 'No Instructional Level'
-        WHEN s.academic_year - s.instructional_academic_year > 1 THEN 'More Than 2 Rounds Since Last Test'
-        WHEN s.instructional_test_round NOT IN ('Q3', 'Q4') THEN 'More Than 2 Rounds Since Last Test'
+        WHEN (
+          s.academic_year - s.instructional_academic_year > 1
+        ) THEN 'More Than 2 Rounds Since Last Test'
+        WHEN (
+          s.instructional_test_round NOT IN ('Q3', 'Q4')
+        ) THEN 'More Than 2 Rounds Since Last Test'
       END AS audit_reason
     FROM
       scaffold AS s
@@ -204,8 +222,12 @@ WITH
         WHEN s.entrydate >= s.test_round_start_date THEN 'New to KIPP NJ'
         WHEN s.instructional_assessment_date IS NULL THEN 'No Instructional Level'
         WHEN s.goal_status = 'Far Below' THEN s.goal_status
-        WHEN s.academic_year - s.instructional_academic_year > 1 THEN 'More Than 3 Rounds Since Last Test'
-        WHEN s.instructional_test_round NOT IN ('Q3', 'Q4', 'DR') THEN 'More Than 3 Rounds Since Last Test'
+        WHEN (
+          s.academic_year - s.instructional_academic_year > 1
+        ) THEN 'More Than 3 Rounds Since Last Test'
+        WHEN (
+          s.instructional_test_round NOT IN ('Q3', 'Q4', 'DR')
+        ) THEN 'More Than 3 Rounds Since Last Test'
       END AS audit_reason
     FROM
       scaffold AS s
@@ -361,19 +383,25 @@ SELECT
   ) AS verify_unique_id
 FROM
   audits_long AS al
-  LEFT JOIN fp_long AS ins ON al.student_number = ins.student_identifier
-  AND al.academic_year = ins.assessment_academic_year
-  AND al.test_round = ins.assessment_test_round
-  AND ins.benchmark_level = 'Did Not Achieve'
-  AND ins.rn = 1
-  LEFT JOIN fp_long AS hard ON al.student_number = hard.student_identifier
-  AND al.academic_year = hard.assessment_academic_year
-  AND al.test_round = hard.assessment_test_round
-  AND hard.benchmark_level = 'DNA - Hard'
-  AND hard.rn = 1
-  LEFT JOIN fp_long AS z ON al.student_number = z.student_identifier
-  AND al.academic_year = z.assessment_academic_year
-  AND al.test_round = z.assessment_test_round
-  AND z.benchmark_level = 'Achieved'
-  AND z.text_level = 'Z'
-  AND z.rn = 1
+  LEFT JOIN fp_long AS ins ON (
+    al.student_number = ins.student_identifier
+    AND al.academic_year = ins.assessment_academic_year
+    AND al.test_round = ins.assessment_test_round
+    AND ins.benchmark_level = 'Did Not Achieve'
+    AND ins.rn = 1
+  )
+  LEFT JOIN fp_long AS hard ON (
+    al.student_number = hard.student_identifier
+    AND al.academic_year = hard.assessment_academic_year
+    AND al.test_round = hard.assessment_test_round
+    AND hard.benchmark_level = 'DNA - Hard'
+    AND hard.rn = 1
+  )
+  LEFT JOIN fp_long AS z ON (
+    al.student_number = z.student_identifier
+    AND al.academic_year = z.assessment_academic_year
+    AND al.test_round = z.assessment_test_round
+    AND z.benchmark_level = 'Achieved'
+    AND z.text_level = 'Z'
+    AND z.rn = 1
+  )

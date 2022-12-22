@@ -35,7 +35,7 @@ WITH
       JSON_VALUE(
         teaching_assignment,
         '$.gradeLevel'
-      ) AS teaching_assignment_gradeLevel_id,
+      ) AS teaching_assignment_grade_level_id,
       JSON_VALUE(teaching_assignment, '$.course') AS teaching_assignment_course_id,
       JSON_VALUE(teaching_assignment, '$.period') AS teaching_assignment_period_id
     FROM
@@ -73,7 +73,7 @@ SELECT
   sub.teaching_assignment_id,
   sub.teaching_assignment_school_id,
   sub.teaching_assignment_grade_id,
-  sub.teaching_assignment_gradeLevel_id,
+  sub.teaching_assignment_grade_level_id,
   sub.teaching_assignment_course_id,
   sub.teaching_assignment_period_id,
   t.internal_id AS teacher_internal_id,
@@ -82,5 +82,5 @@ SELECT
   o.user_email AS observer_email
 FROM
   sub
-  LEFT JOIN gabby.whetstone.users_clean AS t ON sub.teacher_id = t.user_id
-  LEFT JOIN gabby.whetstone.users_clean AS o ON sub.observer_id = o.user_id
+  LEFT JOIN gabby.whetstone.users_clean AS t ON (sub.teacher_id = t.user_id)
+  LEFT JOIN gabby.whetstone.users_clean AS o ON (sub.observer_id = o.user_id)

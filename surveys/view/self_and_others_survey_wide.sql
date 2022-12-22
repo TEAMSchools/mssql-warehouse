@@ -9,7 +9,7 @@ WITH
       subject_location,
       subject_manager_name,
       respondent_names,
-      VALUE,
+      [value],
       CONCAT(question_code, '_', field) AS pivot_field
     FROM
       (
@@ -60,7 +60,7 @@ WITH
           subject_location,
           subject_manager_name
       ) AS sub UNPIVOT (
-        VALUE FOR field IN (
+        [value] FOR field IN (
           n_responses,
           avg_response_value_subject,
           avg_response_value_location,
@@ -161,7 +161,7 @@ SELECT
   [q_1_6_oe_response_text]
 FROM
   survey_unpivot PIVOT (
-    MAX(VALUE) FOR pivot_field IN (
+    MAX([value]) FOR pivot_field IN (
       [q_1_1_b_avg_response_value_location],
       [q_1_1_b_avg_response_value_subject],
       [q_1_1_b_n_responses],

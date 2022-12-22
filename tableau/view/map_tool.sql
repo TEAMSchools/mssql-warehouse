@@ -3,20 +3,20 @@ CREATE OR ALTER VIEW
 WITH
   map_long AS (
     SELECT
-      base.student_number,
-      base.academic_year,
+      student_number,
+      academic_year,
       'Baseline' AS term,
-      base.measurementscale,
-      base.test_id,
-      base.test_ritscore AS base_rit,
-      base.testpercentile AS base_pct,
-      base.lexile_score AS base_lexile_score,
-      base.testpercentile AS pct,
-      base.test_ritscore AS rit,
-      base.lexile_score,
+      measurementscale,
+      test_id,
+      test_ritscore AS base_rit,
+      testpercentile AS base_pct,
+      lexile_score AS base_lexile_score,
+      testpercentile AS pct,
+      test_ritscore AS rit,
+      lexile_score,
       NULL AS testdurationminutes
     FROM
-      gabby.nwea.best_baseline AS base
+      gabby.nwea.best_baseline
     UNION ALL
     SELECT
       base.student_number,
@@ -33,10 +33,12 @@ WITH
       map.test_duration_minutes
     FROM
       gabby.nwea.best_baseline AS base
-      LEFT JOIN gabby.nwea.assessment_result_identifiers AS map ON base.student_number = map.student_id
-      AND base.academic_year = map.academic_year
-      AND base.measurementscale = map.measurement_scale
-      AND map.rn_term_subj = 1
+      LEFT JOIN gabby.nwea.assessment_result_identifiers AS map ON (
+        base.student_number = map.student_id
+        AND base.academic_year = map.academic_year
+        AND base.measurementscale = map.measurement_scale
+        AND map.rn_term_subj = 1
+      )
   )
 SELECT
   r.academic_year,
@@ -69,12 +71,12 @@ SELECT
   END AS term_quartile,
   pct50.testritscore AS testritscore_50th_percentile,
   pct75.testritscore AS testritscore_75th_percentile,
-  DOMAIN.test_name AS domain_testname,
-  DOMAIN.name AS domain_name,
-  DOMAIN.ritscore,
-  DOMAIN.range,
-  DOMAIN.adjective,
-  ISNULL(DOMAIN.goal_number, 1) AS goal_number,
+  [domain].test_name AS domain_testname,
+  [domain].name AS domain_name,
+  [domain].ritscore,
+  [domain].range,
+  [domain].adjective,
+  ISNULL([domain].goal_number, 1) AS goal_number,
   PERCENTILE_CONT(0.5) WITHIN GROUP (
     ORDER BY
       map_long.rit
@@ -99,30 +101,38 @@ SELECT
   ) AS median_pct
 FROM
   gabby.powerschool.cohort_identifiers_static AS r
-  LEFT JOIN map_long ON r.student_number = map_long.student_number
-  AND r.academic_year = map_long.academic_year
-  LEFT JOIN gabby.nwea.percentile_norms_dense AS pct50 ON r.grade_level = pct50.grade_level
-  AND (
-    map_long.term = pct50.term
-    COLLATE LATIN1_GENERAL_BIN
+  LEFT JOIN map_long ON (
+    r.student_number = map_long.student_number
+    AND r.academic_year = map_long.academic_year
   )
-  AND (
-    map_long.measurementscale = pct50.measurementscale
-    COLLATE LATIN1_GENERAL_BIN
+  LEFT JOIN gabby.nwea.percentile_norms_dense AS pct50 ON (
+    r.grade_level = pct50.grade_level
+    AND (
+      map_long.term = pct50.term
+      COLLATE LATIN1_GENERAL_BIN
+    )
+    AND (
+      map_long.measurementscale = pct50.measurementscale
+      COLLATE LATIN1_GENERAL_BIN
+    )
+    AND pct50.testpercentile = 50
   )
-  AND pct50.testpercentile = 50
-  LEFT JOIN gabby.nwea.percentile_norms_dense AS pct75 ON r.grade_level = pct75.grade_level
-  AND (
-    map_long.term = pct75.term
-    COLLATE LATIN1_GENERAL_BIN
+  LEFT JOIN gabby.nwea.percentile_norms_dense AS pct75 ON (
+    r.grade_level = pct75.grade_level
+    AND (
+      map_long.term = pct75.term
+      COLLATE LATIN1_GENERAL_BIN
+    )
+    AND (
+      map_long.measurementscale = pct75.measurementscale
+      COLLATE LATIN1_GENERAL_BIN
+    )
+    AND pct75.testpercentile = 75
   )
-  AND (
-    map_long.measurementscale = pct75.measurementscale
-    COLLATE LATIN1_GENERAL_BIN
+  LEFT JOIN gabby.nwea.learning_continuum_goals AS [domain] ON (
+    r.student_number = [domain].student_number
+    AND map_long.test_id = [domain].test_id
   )
-  AND pct75.testpercentile = 75
-  LEFT JOIN gabby.nwea.learning_continuum_goals AS DOMAIN ON r.student_number = DOMAIN.student_number
-  AND map_long.test_id = DOMAIN.test_id
 WHERE
   r.rn_year = 1
   AND r.academic_year >= 2008 /* first year of MAP data */

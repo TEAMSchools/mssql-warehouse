@@ -26,7 +26,7 @@ WITH
       achv.is_curterm,
       achv.read_lvl,
       achv.lvl_num,
-      achv.GLEQ,
+      achv.gleq,
       achv.dna_lvl,
       achv.dna_lvl_num,
       achv.moved_levels,
@@ -75,24 +75,36 @@ WITH
     FROM
       gabby.powerschool.cohort_identifiers_static AS co
       INNER JOIN gabby.reporting.reporting_term_map AS term ON (
-        co.school_level = term.school_level
-        COLLATE LATIN1_GENERAL_BIN
+        (
+          co.school_level = term.school_level
+          COLLATE LATIN1_GENERAL_BIN
+        )
+        AND (
+          co.academic_year BETWEEN term.min_year AND term.max_year
+        )
       )
-      AND (
-        co.academic_year BETWEEN term.min_year AND term.max_year
+      INNER JOIN gabby.lit.achieved_by_round_static AS achv ON (
+        co.student_number = achv.student_number
+        AND co.academic_year = achv.academic_year
+        AND term.lit = achv.test_round
+        AND achv.[start_date] <= CURRENT_TIMESTAMP
       )
-      INNER JOIN gabby.lit.achieved_by_round_static AS achv ON co.student_number = achv.student_number
-      AND co.academic_year = achv.academic_year
-      AND term.lit = achv.test_round
-      AND achv.[start_date] <= CURRENT_TIMESTAMP
-      LEFT JOIN gabby.lit.all_test_events_static AS atid ON achv.achv_unique_id = atid.unique_id
-      LEFT JOIN gabby.lit.all_test_events_static AS dtid ON achv.dna_unique_id = dtid.unique_id
-      LEFT JOIN gabby.lit.all_test_events_static AS htid ON achv.hard_unique_id = htid.unique_id
-      LEFT JOIN gabby.renaissance.ar_progress_to_goals AS ar ON co.student_number = ar.student_number
-      AND co.academic_year = ar.academic_year
-      AND term.ar = ar.reporting_term
-      AND ar.[start_date] <= CURRENT_TIMESTAMP
-      AND ar.n_total > 0
+      LEFT JOIN gabby.lit.all_test_events_static AS atid ON (
+        achv.achv_unique_id = atid.unique_id
+      )
+      LEFT JOIN gabby.lit.all_test_events_static AS dtid ON (
+        achv.dna_unique_id = dtid.unique_id
+      )
+      LEFT JOIN gabby.lit.all_test_events_static AS htid ON (
+        achv.hard_unique_id = htid.unique_id
+      )
+      LEFT JOIN gabby.renaissance.ar_progress_to_goals AS ar ON (
+        co.student_number = ar.student_number
+        AND co.academic_year = ar.academic_year
+        AND term.ar = ar.reporting_term
+        AND ar.[start_date] <= CURRENT_TIMESTAMP
+        AND ar.n_total > 0
+      )
     WHERE
       co.rn_year = 1
       AND co.academic_year >= (
@@ -122,7 +134,7 @@ SELECT
   lr.is_curterm,
   lr.read_lvl,
   lr.lvl_num,
-  lr.GLEQ,
+  lr.gleq,
   lr.dna_lvl,
   lr.dna_lvl_num,
   lr.moved_levels,
@@ -156,9 +168,8 @@ SELECT
       lr.achv_unique_id
     ORDER BY
       lr.achv_unique_id
-  ) AS rn_test
+  ) AS rn_test,
   /* component data */
-,
   long.domain AS component_domain,
   long.[label] AS component_strand,
   long.specific_label AS component_strand_specific,
@@ -169,4 +180,6 @@ SELECT
   long.dna_filter
 FROM
   lit_round AS lr
-  LEFT JOIN gabby.lit.component_proficiency_long_static AS long ON lr.dna_unique_id = long.unique_id
+  LEFT JOIN gabby.lit.component_proficiency_long_static AS long ON (
+    lr.dna_unique_id = long.unique_id
+  )

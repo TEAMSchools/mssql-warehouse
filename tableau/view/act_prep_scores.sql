@@ -20,7 +20,9 @@ WITH
       ) AS rn_highest
     FROM
       gabby.alumni.standardized_test_long AS stl
-      INNER JOIN gabby.alumni.ktc_roster AS ktc ON stl.contact_c = ktc.sf_contact_id
+      INNER JOIN gabby.alumni.ktc_roster AS ktc ON (
+        stl.contact_c = ktc.sf_contact_id
+      )
     WHERE
       stl.score_type = 'act_composite_c'
   ),
@@ -58,7 +60,7 @@ SELECT
   co.enroll_status,
   co.advisor_name,
   co.region,
-  'PREP' AS ACT_type,
+  'PREP' AS act_type,
   act.assessment_id,
   act.assessment_title,
   act.administration_round,
@@ -83,9 +85,13 @@ SELECT
   NULL AS rn_highest
 FROM
   gabby.powerschool.cohort_identifiers_static AS co
-  LEFT JOIN gabby.act.test_prep_scores AS act ON co.student_number = act.student_number
-  AND co.academic_year = act.academic_year
-  LEFT JOIN ms_grad AS ms ON co.student_number = ms.student_number
+  LEFT JOIN gabby.act.test_prep_scores AS act ON (
+    co.student_number = act.student_number
+    AND co.academic_year = act.academic_year
+  )
+  LEFT JOIN ms_grad AS ms ON (
+    co.student_number = ms.student_number
+  )
 WHERE
   co.rn_year = 1
   AND co.school_level = 'HS'
@@ -102,7 +108,7 @@ SELECT
   co.enroll_status,
   co.advisor_name,
   co.region,
-  'REAL' AS ACT_type,
+  'REAL' AS act_type,
   NULL AS assessment_id,
   NULL AS assessment_title,
   CAST(co.cohort AS VARCHAR) AS administration_round,
@@ -127,10 +133,14 @@ SELECT
   r.rn_highest
 FROM
   gabby.powerschool.cohort_identifiers_static AS co
-  INNER JOIN real_tests AS r ON co.student_number = r.student_number
-  AND (
-    r.test_date BETWEEN co.entrydate AND co.exitdate
+  INNER JOIN real_tests AS r ON (
+    co.student_number = r.student_number
+    AND (
+      r.test_date BETWEEN co.entrydate AND co.exitdate
+    )
   )
-  LEFT JOIN ms_grad AS ms ON co.student_number = ms.student_number
+  LEFT JOIN ms_grad AS ms ON (
+    co.student_number = ms.student_number
+  )
 WHERE
   co.rn_year = 1

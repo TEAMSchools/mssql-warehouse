@@ -24,21 +24,25 @@ SELECT
   parcc.test_performance_level AS parcc_test_performance_level
 FROM
   gabby.powerschool.cohort_identifiers_static AS co
-  INNER JOIN gabby.illuminate_dna_assessments.agg_student_responses_all AS asr ON co.student_number = asr.local_student_id
-  AND co.academic_year = asr.academic_year
-  AND asr.scope IN (
-    'CMA - End-of-Module',
-    'CMA - Mid-Module'
+  INNER JOIN gabby.illuminate_dna_assessments.agg_student_responses_all AS asr ON (
+    co.student_number = asr.local_student_id
+    AND co.academic_year = asr.academic_year
+    AND asr.scope IN (
+      'CMA - End-of-Module',
+      'CMA - Mid-Module'
+    )
+    AND asr.subject_area IN ('Text Study', 'Mathematics')
+    AND asr.is_replacement = 0
+    AND asr.response_type = 'O'
   )
-  AND asr.subject_area IN ('Text Study', 'Mathematics')
-  AND asr.is_replacement = 0
-  AND asr.response_type = 'O'
-  INNER JOIN gabby.parcc.summative_record_file_clean AS parcc ON co.student_number = parcc.local_student_identifier
-  AND co.academic_year = parcc.academic_year
-  AND asr.subject_area = CASE
-    WHEN parcc.subject = 'English Language Arts/Literacy' THEN 'Text Study'
-    ELSE 'Mathematics'
-  END
+  INNER JOIN gabby.parcc.summative_record_file_clean AS parcc ON (
+    co.student_number = parcc.local_student_identifier
+    AND co.academic_year = parcc.academic_year
+    AND asr.subject_area = CASE
+      WHEN parcc.subject = 'English Language Arts/Literacy' THEN 'Text Study'
+      ELSE 'Mathematics'
+    END
+  )
 WHERE
   co.rn_year = 1
   AND co.academic_year >= 2015

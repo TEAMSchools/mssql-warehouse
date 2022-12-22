@@ -17,36 +17,38 @@ WITH
       CONCAT(f.c_first, ' ', f.c_last) AS followup_staff_name
     FROM
       gabby.deanslist.communication AS c
-      INNER JOIN gabby.deanslist.users AS u ON c.dluser_id = u.dluser_id
-      AND c.[db_name] = u.[db_name]
-      LEFT JOIN gabby.deanslist.followups AS f ON c.followup_id = f.followup_id
-      AND c.[db_name] = f.[db_name]
+      INNER JOIN gabby.deanslist.users AS u ON (
+        c.dluser_id = u.dluser_id
+        AND c.[db_name] = u.[db_name]
+      )
+      LEFT JOIN gabby.deanslist.followups AS f ON (
+        c.followup_id = f.followup_id
+        AND c.[db_name] = f.[db_name]
+      )
     WHERE
       (
         c.reason LIKE 'Att:%'
         OR c.reason LIKE 'Chronic%'
       )
   ),
-  ADA AS (
+  [ada] AS (
     SELECT
-      psa.studentid,
-      psa.[db_name],
-      psa.yearid,
+      studentid,
+      [db_name],
+      yearid,
       ROUND(
-        AVG(
-          CAST(psa.attendancevalue AS FLOAT)
-        ),
+        AVG(CAST(attendancevalue AS FLOAT)),
         2
-      ) AS ADA
+      ) AS [ada]
     FROM
-      gabby.powerschool.ps_adaadm_daily_ctod_current_static AS psa
+      gabby.powerschool.ps_adaadm_daily_ctod_current_static
     WHERE
-      psa.membershipvalue = 1
-      AND psa.calendardate <= CAST(SYSDATETIME() AS DATE)
+      membershipvalue = 1
+      AND calendardate <= CAST(SYSDATETIME() AS DATE)
     GROUP BY
-      psa.studentid,
-      psa.yearid,
-      psa.[db_name]
+      studentid,
+      yearid,
+      [db_name]
   )
 SELECT
   co.student_number,
@@ -75,7 +77,7 @@ SELECT
   cl.followup_staff_name,
   cl.followup_init_notes,
   cl.followup_close_notes,
-  ADA.ada,
+  [ada].[ada],
   r.read_lvl,
   r.goal_status,
   gpa.gpa_y1,
@@ -89,36 +91,52 @@ SELECT
   ) AS rn_date
 FROM
   gabby.powerschool.attendance_clean_current_static AS att
-  INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON att.studentid = co.studentid
-  AND (
-    att.att_date BETWEEN co.entrydate AND co.exitdate
+  INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON (
+    att.studentid = co.studentid
+    AND (
+      att.att_date BETWEEN co.entrydate AND co.exitdate
+    )
+    AND att.[db_name] = co.[db_name]
   )
-  AND att.[db_name] = co.[db_name]
-  INNER JOIN gabby.powerschool.attendance_code AS ac ON att.attendance_codeid = ac.id
-  AND att.[db_name] = ac.[db_name]
-  AND ac.att_code LIKE 'A%'
-  LEFT JOIN gabby.reporting.reporting_terms AS rt ON co.schoolid = rt.schoolid
-  AND (
-    att.att_date BETWEEN rt.[start_date] AND rt.end_date
+  INNER JOIN gabby.powerschool.attendance_code AS ac ON (
+    att.attendance_codeid = ac.id
+    AND att.[db_name] = ac.[db_name]
+    AND ac.att_code LIKE 'A%'
   )
-  AND rt.identifier = 'RT'
-  LEFT JOIN gabby.powerschool.cc ON att.studentid = cc.studentid
-  AND (
-    att.att_date BETWEEN cc.dateenrolled AND cc.dateleft
+  LEFT JOIN gabby.reporting.reporting_terms AS rt ON (
+    co.schoolid = rt.schoolid
+    AND (
+      att.att_date BETWEEN rt.[start_date] AND rt.end_date
+    )
+    AND rt.identifier = 'RT'
   )
-  AND att.[db_name] = cc.[db_name]
-  AND cc.course_number = 'HR'
-  LEFT JOIN commlog AS cl ON co.student_number = cl.student_school_id
-  AND att.att_date = cl.commlog_date
-  AND co.[db_name] = cl.[db_name]
-  LEFT JOIN ADA ON co.studentid = ADA.studentid
-  AND co.yearid = ADA.yearid
-  AND co.[db_name] = ADA.[db_name]
-  LEFT JOIN gabby.powerschool.gpa_detail AS gpa ON co.student_number = gpa.student_number
-  AND co.academic_year = gpa.academic_year
-  AND gpa.is_curterm = 1
-  LEFT JOIN gabby.lit.achieved_by_round_static AS r ON co.student_number = r.student_number
-  AND co.academic_year = r.academic_year
-  AND r.is_curterm = 1
+  LEFT JOIN gabby.powerschool.cc ON (
+    att.studentid = cc.studentid
+    AND (
+      att.att_date BETWEEN cc.dateenrolled AND cc.dateleft
+    )
+    AND att.[db_name] = cc.[db_name]
+    AND cc.course_number = 'HR'
+  )
+  LEFT JOIN commlog AS cl ON (
+    co.student_number = cl.student_school_id
+    AND att.att_date = cl.commlog_date
+    AND co.[db_name] = cl.[db_name]
+  )
+  LEFT JOIN [ada] ON (
+    co.studentid = [ada].studentid
+    AND co.yearid = [ada].yearid
+    AND co.[db_name] = [ada].[db_name]
+  )
+  LEFT JOIN gabby.powerschool.gpa_detail AS gpa ON (
+    co.student_number = gpa.student_number
+    AND co.academic_year = gpa.academic_year
+    AND gpa.is_curterm = 1
+  )
+  LEFT JOIN gabby.lit.achieved_by_round_static AS r ON (
+    co.student_number = r.student_number
+    AND co.academic_year = r.academic_year
+    AND r.is_curterm = 1
+  )
 WHERE
   att.att_mode_code = 'ATT_ModeDaily'

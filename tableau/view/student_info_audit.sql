@@ -3,14 +3,14 @@ CREATE OR ALTER VIEW
 WITH
   race AS (
     SELECT
-      sr.studentid,
-      sr.[db_name],
+      studentid,
+      [db_name],
       gabby.dbo.GROUP_CONCAT (racecd) AS racecds
     FROM
-      gabby.powerschool.studentrace AS sr
+      gabby.powerschool.studentrace
     GROUP BY
-      sr.studentid,
-      sr.[db_name]
+      studentid,
+      [db_name]
   )
 SELECT
   [db_name],
@@ -84,27 +84,25 @@ WHERE
   AND rn_year = 1
 UNION ALL
 SELECT
-  co.[db_name],
-  co.schoolid,
-  co.school_name,
-  co.student_number,
-  co.region,
-  co.lastfirst,
-  co.grade_level,
-  co.team,
+  [db_name],
+  schoolid,
+  school_name,
+  student_number,
+  region,
+  lastfirst,
+  grade_level,
+  team,
   'Missing SID' AS element,
-  CAST(
-    co.state_studentnumber AS VARCHAR
-  ) AS detail,
+  CAST(state_studentnumber AS VARCHAR) AS detail,
   CASE
-    WHEN co.state_studentnumber IS NULL THEN 1
+    WHEN state_studentnumber IS NULL THEN 1
     ELSE 0
   END AS flag
 FROM
-  gabby.powerschool.cohort_identifiers_static AS co
+  gabby.powerschool.cohort_identifiers_static
 WHERE
-  co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-  AND co.schoolid != 999999
+  academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+  AND schoolid != 999999
   AND rn_year = 1
 UNION ALL
 SELECT
@@ -130,36 +128,38 @@ SELECT
   END AS flag
 FROM
   gabby.powerschool.cohort_identifiers_static AS co
-  INNER JOIN gabby.powerschool.fte ON co.schoolid = fte.schoolid
-  AND co.yearid = fte.yearid
-  AND co.[db_name] = fte.[db_name]
-  AND fte.[name] LIKE 'Full Time Student%'
+  INNER JOIN gabby.powerschool.fte ON (
+    co.schoolid = fte.schoolid
+    AND co.yearid = fte.yearid
+    AND co.[db_name] = fte.[db_name]
+    AND fte.[name] LIKE 'Full Time Student%'
+  )
 WHERE
   co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
   AND co.schoolid != 999999
   AND co.rn_year = 1
 UNION ALL
 SELECT
-  co.[db_name],
-  co.schoolid,
-  co.school_name,
-  co.student_number,
-  co.region,
-  co.lastfirst,
-  co.grade_level,
-  co.team,
+  [db_name],
+  schoolid,
+  school_name,
+  student_number,
+  region,
+  lastfirst,
+  grade_level,
+  team,
   'Missing DOB' AS element,
-  CAST(co.dob AS VARCHAR) AS detail,
+  CAST(dob AS VARCHAR) AS detail,
   CASE
-    WHEN co.dob IS NULL THEN 1
+    WHEN dob IS NULL THEN 1
     ELSE 0
   END AS flag
 FROM
-  gabby.powerschool.cohort_identifiers_static AS co
+  gabby.powerschool.cohort_identifiers_static
 WHERE
-  co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-  AND co.schoolid != 999999
-  AND co.rn_year = 1
+  academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+  AND schoolid != 999999
+  AND rn_year = 1
 UNION ALL
 SELECT
   co.[db_name],
@@ -174,7 +174,6 @@ SELECT
   CASE
     WHEN co.region = 'KMS' THEN co.ethnicity
     WHEN co.region != 'KMS' THEN r.racecds
-    ELSE NULL
   END AS detail,
   CASE
     WHEN co.region = 'KMS'
@@ -188,9 +187,13 @@ SELECT
   END AS flag
 FROM
   gabby.powerschool.cohort_identifiers_static AS co
-  LEFT JOIN gabby.powerschool.students AS s ON co.student_number = s.student_number
-  LEFT JOIN race AS r ON co.studentid = r.studentid
-  AND co.[db_name] = r.[db_name]
+  LEFT JOIN gabby.powerschool.students AS s ON (
+    co.student_number = s.student_number
+  )
+  LEFT JOIN race AS r ON (
+    co.studentid = r.studentid
+    AND co.[db_name] = r.[db_name]
+  )
 WHERE
   co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
   AND co.schoolid != 999999
@@ -222,7 +225,7 @@ SELECT
   1 AS flag
 FROM
   gabby.qa.powerschool_course_enrollment_overlap AS qa
-  INNER JOIN gabby.powerschool.schools AS sch ON qa.schoolid = sch.school_number
+  INNER JOIN gabby.powerschool.schools AS sch ON (qa.schoolid = sch.school_number)
 WHERE
   qa.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
 UNION ALL
@@ -255,11 +258,13 @@ FROM
       COUNT(ce.sectionid) AS total_sections
     FROM
       gabby.powerschool.cohort_identifiers_static AS co
-      LEFT JOIN gabby.powerschool.course_enrollments_current_static AS ce ON ce.student_number = co.student_number
-      AND ce.[db_name] = co.[db_name]
-      AND co.academic_year = ce.academic_year
-      AND ce.course_enroll_status = 0
-      AND ce.section_enroll_status = 0
+      LEFT JOIN gabby.powerschool.course_enrollments_current_static AS ce ON (
+        ce.student_number = co.student_number
+        AND ce.[db_name] = co.[db_name]
+        AND co.academic_year = ce.academic_year
+        AND ce.course_enroll_status = 0
+        AND ce.section_enroll_status = 0
+      )
     WHERE
       co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
       AND co.rn_year = 1

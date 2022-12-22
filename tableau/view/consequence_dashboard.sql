@@ -3,14 +3,14 @@ CREATE OR ALTER VIEW
 WITH
   suspension_att AS (
     SELECT
-      att.studentid,
-      att.[db_name],
-      gabby.utilities.DATE_TO_SY (att.att_date) AS academic_year,
+      studentid,
+      [db_name],
+      gabby.utilities.DATE_TO_SY (att_date) AS academic_year,
       COUNT(*) AS days_suspended_att
     FROM
-      gabby.powerschool.ps_attendance_daily AS att
+      gabby.powerschool.ps_attendance_daily
     WHERE
-      att.att_code IN (
+      att_code IN (
         'OS',
         'OSS',
         'OSSP',
@@ -19,9 +19,9 @@ WITH
         'SHI'
       )
     GROUP BY
-      att.studentid,
-      att.[db_name],
-      gabby.utilities.DATE_TO_SY (att.att_date)
+      studentid,
+      [db_name],
+      gabby.utilities.DATE_TO_SY (att_date)
   )
 SELECT
   co.student_number,
@@ -83,23 +83,35 @@ SELECT
   att.days_suspended_att
 FROM
   gabby.powerschool.cohort_identifiers_static AS co
-  LEFT JOIN gabby.powerschool.students AS s ON co.student_number = s.student_number
-  LEFT JOIN gabby.deanslist.incidents_clean_static AS dli ON co.student_number = dli.student_school_id
-  AND co.academic_year = dli.create_academic_year
-  AND co.[db_name] = dli.[db_name]
-  LEFT JOIN gabby.reporting.reporting_terms AS d ON co.schoolid = d.schoolid
-  AND (
-    CAST(dli.create_ts AS DATE) BETWEEN d.[start_date] AND d.end_date
+  LEFT JOIN gabby.powerschool.students AS s ON (
+    co.student_number = s.student_number
   )
-  AND d.identifier = 'RT'
-  AND d._fivetran_deleted = 0
-  LEFT JOIN deanslist.incidents_penalties_static AS dlp ON dli.incident_id = dlp.incident_id
-  AND dli.[db_name] = dlp.[db_name]
-  LEFT JOIN gabby.deanslist.incidents_custom_fields_wide AS cf ON dli.incident_id = cf.incident_id
-  AND dli.[db_name] = cf.[db_name]
-  LEFT JOIN suspension_att AS att ON co.studentid = att.studentid
-  AND co.academic_year = att.academic_year
-  AND co.[db_name] = att.[db_name]
+  LEFT JOIN gabby.deanslist.incidents_clean_static AS dli ON (
+    co.student_number = dli.student_school_id
+    AND co.academic_year = dli.create_academic_year
+    AND co.[db_name] = dli.[db_name]
+  )
+  LEFT JOIN gabby.reporting.reporting_terms AS d ON (
+    co.schoolid = d.schoolid
+    AND (
+      CAST(dli.create_ts AS DATE) BETWEEN d.[start_date] AND d.end_date
+    )
+    AND d.identifier = 'RT'
+    AND d._fivetran_deleted = 0
+  )
+  LEFT JOIN deanslist.incidents_penalties_static AS dlp ON (
+    dli.incident_id = dlp.incident_id
+    AND dli.[db_name] = dlp.[db_name]
+  )
+  LEFT JOIN gabby.deanslist.incidents_custom_fields_wide AS cf ON (
+    dli.incident_id = cf.incident_id
+    AND dli.[db_name] = cf.[db_name]
+  )
+  LEFT JOIN suspension_att AS att ON (
+    co.studentid = att.studentid
+    AND co.academic_year = att.academic_year
+    AND co.[db_name] = att.[db_name]
+  )
 WHERE
   co.academic_year IN (
     gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
