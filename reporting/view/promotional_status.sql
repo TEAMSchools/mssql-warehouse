@@ -1,3 +1,4 @@
+USE gabby GO
 CREATE OR ALTER VIEW
   reporting.promotional_status AS
 WITH
@@ -14,10 +15,8 @@ WITH
       ) AS n_failing,
       SUM(
         CASE
-          WHEN (
-            fg.y1_grade_letter IN ('F', 'F*')
-            AND c.credittype IN ('MATH', 'ENG', 'SCI', 'SOC')
-          ) THEN 1
+          WHEN fg.y1_grade_letter IN ('F', 'F*')
+          AND c.credittype IN ('MATH', 'ENG', 'SCI', 'SOC') THEN 1
           ELSE 0
         END
       ) AS n_failing_ms_core
@@ -62,19 +61,27 @@ WITH
       local_student_id,
       academic_year,
       term_administered,
-      AVG(performance_band_number) AS avg_performance_band_number
+      avg_performance_band_number
     FROM
-      gabby.illuminate_dna_assessments.agg_student_responses_all
-    WHERE
-      module_type = 'QA'
-      AND subject_area IN ('Mathematics', 'Algebra I')
-      AND response_type = 'O'
-    GROUP BY
-      local_student_id,
-      academic_year,
-      term_administered
+      (
+        SELECT
+          local_student_id,
+          academic_year,
+          term_administered,
+          AVG(performance_band_number) AS avg_performance_band_number
+        FROM
+          gabby.illuminate_dna_assessments.agg_student_responses_all
+        WHERE
+          module_type LIKE 'QA%'
+          AND subject_area IN ('Mathematics', 'Algebra I')
+          AND response_type = 'O'
+        GROUP BY
+          local_student_id,
+          academic_year,
+          term_administered
+      ) AS sub
   ),
-  att AS (
+  [ada] AS (
     SELECT
       studentid,
       [db_name],
@@ -133,6 +140,7 @@ SELECT
         OR is_retained_flag = 1
       )
     ) THEN 'See Teacher'
+    WHEN school_level = 'HS' THEN 'N/A'
     WHEN CONCAT(
       promo_status_attendance,
       promo_status_lit,
@@ -173,7 +181,7 @@ FROM
       CASE
         WHEN ada_y1_running >= 90.1 THEN 'On Track'
         WHEN ada_y1_running < 90.1 THEN 'Off Track'
-        --WHEN ada_y1_running < 80.0 THEN 'At Risk'
+        WHEN ada_y1_running < 80.0 THEN 'At Risk'
         ELSE 'No Data'
       END AS promo_status_attendance,
       CASE
@@ -200,7 +208,7 @@ FROM
           CASE
             WHEN grades_y1_failing_projected = 0 THEN 'On Track'
             WHEN grades_y1_failing_projected >= 1 THEN 'Off Track'
-            --WHEN grades_y1_failing_projected >= 2 THEN 'At Risk'
+            WHEN grades_y1_failing_projected >= 2 THEN 'At Risk'
             ELSE 'No Data'
           END
         )
@@ -231,7 +239,7 @@ FROM
           rt.time_per_name AS reporting_term_name,
           rt.alt_name,
           rt.is_curterm,
-          att.ada_y1_running,
+          [ada].ada_y1_running,
           lit.read_lvl AS fp_independent_level,
           lit.goal_status AS fp_goal_status,
           CASE
@@ -260,10 +268,10 @@ FROM
             AND rt.identifier = 'RT'
             AND rt._fivetran_deleted = 0
           )
-          LEFT JOIN att ON (
-            co.studentid = att.studentid
-            AND co.[db_name] = att.[db_name]
-            AND co.yearid = att.yearid
+          LEFT JOIN [ada] ON (
+            co.studentid = [ada].studentid
+            AND co.[db_name] = [ada].[db_name]
+            AND co.yearid = [ada].yearid
           )
           LEFT JOIN gabby.lit.achieved_by_round_static AS lit ON (
             co.student_number = lit.student_number
@@ -275,7 +283,7 @@ FROM
             AND co.yearid = f.yearid
             AND (
               rt.alt_name = f.storecode
-              COLLATE LATIN1_GENERAL_BIN
+              COLLATE Latin1_General_BIN
             )
           )
           LEFT JOIN credits AS cr ON (

@@ -1,3 +1,4 @@
+USE gabby GO
 CREATE OR ALTER VIEW
   tableau.promo_tracker AS
 WITH
@@ -23,13 +24,13 @@ WITH
       dt.[start_date] AS term_start_date,
       dt.end_date AS term_end_date
     FROM
-      gabby.powerschool.cohort_identifiers_static AS co
-      INNER JOIN gabby.reporting.reporting_terms AS dt ON (
+      gabby.powerschool.cohort_identifiers_static co
+      INNER JOIN gabby.reporting.reporting_terms dt ON (
         co.academic_year = dt.academic_year
         AND co.schoolid = dt.schoolid
         AND dt.identifier = 'RT'
         AND dt._fivetran_deleted = 0
-        AND dt.alt_name != 'Summer School'
+        AND dt.alt_name <> 'Summer School'
       )
     WHERE
       co.academic_year IN (
@@ -38,7 +39,7 @@ WITH
       )
       AND co.rn_year = 1
       AND co.is_enrolled_recent = 1
-      AND co.reporting_schoolid != 5173
+      AND co.reporting_schoolid <> 5173
     UNION ALL
     SELECT
       co.studentid,
@@ -61,8 +62,8 @@ WITH
       dt.[start_date] AS term_start_date,
       dt.end_date AS term_end_date
     FROM
-      gabby.powerschool.cohort_identifiers_static AS co
-      INNER JOIN gabby.reporting.reporting_terms AS dt ON (
+      gabby.powerschool.cohort_identifiers_static co
+      INNER JOIN gabby.reporting.reporting_terms dt ON (
         co.academic_year = dt.academic_year
         AND dt.schoolid = 0
         AND dt.identifier = 'SY'
@@ -75,7 +76,7 @@ WITH
       )
       AND co.rn_year = 1
       AND co.is_enrolled_recent = 1
-      AND co.reporting_schoolid != 5173
+      AND co.reporting_schoolid <> 5173
   ),
   contact AS (
     SELECT
@@ -87,49 +88,49 @@ WITH
       gabby.powerschool.student_contacts_static
   ),
   grades AS (
-    /* term grades */
-    SELECT
-      gr.student_number,
-      gr.academic_year,
-      gr.reporting_term,
-      gr.credittype,
-      gr.course_name,
-      gr.term_grade_percent_adjusted,
-      'TERM' AS subdomain,
-      'Term' AS finalgradename
-    FROM
-      gabby.powerschool.final_grades_static AS gr
-    WHERE
-      gr.yearid >= (
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990
-      ) - 1
-      AND gr.excludefromgpa = 0
-    UNION ALL
-    SELECT
-      gr.student_number,
-      gr.academic_year,
-      'SY1' AS reporting_term,
-      gr.credittype,
-      gr.course_name,
-      gr.y1_grade_percent_adjusted AS term_grade_percent_adjusted,
-      'TERM' AS subdomain,
-      'Y1' AS finalgradename
-    FROM
-      gabby.powerschool.final_grades_static AS gr
-    WHERE
-      gr.academic_year IN (
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
-      )
-      AND gr.is_curterm = 1
-      AND gr.excludefromgpa = 0
-    UNION ALL
+    -- /* term grades */
+    -- SELECT
+    --   gr.student_number,
+    --   gr.academic_year,
+    --   gr.reporting_term,
+    --   gr.credittype,
+    --   gr.course_name,
+    --   gr.term_grade_percent_adjusted,
+    --   'TERM' AS subdomain,
+    --   'Term' AS finalgradename
+    -- FROM
+    --   gabby.powerschool.final_grades_static
+    -- WHERE
+    --   gr.yearid >= (
+    --     gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990
+    --   ) - 1
+    --   AND gr.excludefromgpa = 0
+    -- UNION ALL
+    -- SELECT
+    --   gr.student_number,
+    --   gr.academic_year,
+    --   'SY1' AS reporting_term,
+    --   gr.credittype,
+    --   gr.course_name,
+    --   gr.y1_grade_percent_adjusted AS term_grade_percent_adjusted,
+    --   'TERM' AS subdomain,
+    --   'Y1' AS finalgradename
+    -- FROM
+    --   gabby.powerschool.final_grades_static
+    -- WHERE
+    --   gr.academic_year IN (
+    --     gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+    --     gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
+    --   )
+    --   AND gr.is_curterm = 1
+    --   AND gr.excludefromgpa = 0
+    -- UNION ALL
     /* previous year grades */
     SELECT
       s.student_number,
       gr.academic_year,
       CASE
-        WHEN gr.storecode = 'Y1' THEN 'SY1'
+        WHEN (gr.storecode = 'Y1') THEN 'SY1'
         ELSE REPLACE(gr.storecode, 'Q', 'RT')
       END AS reporting_term,
       gr.credit_type AS credittype,
@@ -137,43 +138,43 @@ WITH
       gr.[percent] AS term_grade_percent_adjusted,
       'TERM' AS subdomain,
       CASE
-        WHEN gr.storecode = 'Y1' THEN 'Y1'
+        WHEN (gr.storecode = 'Y1') THEN 'Y1'
         ELSE 'Term'
       END AS finalgradename
     FROM
-      gabby.powerschool.storedgrades AS gr
-      INNER JOIN gabby.powerschool.students AS s ON (
+      gabby.powerschool.storedgrades gr
+      INNER JOIN gabby.powerschool.students s ON (
         gr.studentid = s.id
         AND gr.[db_name] = s.[db_name]
       )
     WHERE
       gr.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
       AND gr.excludefromgpa = 0
-    UNION ALL
-    /* category grades */
-    SELECT
-      gr.student_number,
-      gr.academic_year,
-      'SY1' AS reporting_term,
-      gr.credittype,
-      gr.course_name,
-      ROUND(AVG(gr.grade_category_pct), 0) AS term_grade_percent_adjusted,
-      'CATEGORY' AS subdomain,
-      gr.grade_category AS finalgradename
-    FROM
-      gabby.powerschool.category_grades_static AS gr
-    WHERE
-      gr.academic_year IN (
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
-      )
-      AND gr.grade_category != 'Q'
-    GROUP BY
-      gr.student_number,
-      gr.academic_year,
-      gr.grade_category,
-      gr.credittype,
-      gr.course_name
+      -- UNION ALL
+      -- /* category grades */
+      -- SELECT
+      --   gr.student_number,
+      --   gr.academic_year,
+      --   'SY1' AS reporting_term,
+      --   gr.credittype,
+      --   gr.course_name,
+      --   ROUND(AVG(gr.grade_category_pct), 0) AS term_grade_percent_adjusted,
+      --   'CATEGORY' AS subdomain,
+      --   gr.grade_category AS finalgradename
+      -- FROM
+      --   gabby.powerschool.category_grades_static gr
+      -- WHERE
+      --   gr.academic_year IN (
+      --     gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+      --     gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
+      --   )
+      --   AND gr.grade_category <> 'Q'
+      -- GROUP BY
+      --   gr.student_number,
+      --   gr.academic_year,
+      --   gr.grade_category,
+      --   gr.credittype,
+      --   gr.course_name
   ),
   attendance AS (
     SELECT
@@ -186,41 +187,41 @@ WITH
       ) AS att_code,
       [value] AS att_counts,
       CASE
-        WHEN field = 'presentpct_term' THEN 'ABSENT'
-        WHEN field = 'ontimepct_term' THEN 'TARDY'
-        WHEN field IN ('attpts_term', 'attptspct_term') THEN 'PROMO'
-        WHEN field LIKE 'A%' THEN 'ABSENT'
-        WHEN field LIKE 'T%' THEN 'TARDY'
-        WHEN field LIKE '%SS%' THEN 'SUSPENSION'
+        WHEN (field = 'presentpct_term') THEN 'ABSENT'
+        WHEN (field = 'ontimepct_term') THEN 'TARDY'
+        WHEN (
+          field IN ('attpts_term', 'attptspct_term')
+        ) THEN 'PROMO'
+        WHEN (field LIKE 'A%') THEN 'ABSENT'
+        WHEN (field LIKE 'T%') THEN 'TARDY'
+        WHEN (field LIKE '%SS%') THEN 'SUSPENSION'
       END AS subdomain
     FROM
       (
         SELECT
-          att.studentid,
-          att.[db_name],
-          att.academic_year,
-          att.reporting_term,
-          att.a_count_term,
-          att.ad_count_term,
-          att.ae_count_term,
-          att.iss_count_term,
-          att.oss_count_term,
-          att.t_count_term,
-          att.t10_count_term,
-          att.abs_unexcused_count_term,
-          att.tdy_all_count_term,
-          att.abs_unexcused_count_term + ROUND(
-            (att.TDY_all_count_term / 3),
-            1,
-            1
+          studentid,
+          [db_name],
+          academic_year,
+          reporting_term,
+          a_count_term,
+          ad_count_term,
+          ae_count_term,
+          iss_count_term,
+          oss_count_term,
+          t_count_term,
+          t10_count_term,
+          abs_unexcused_count_term,
+          tdy_all_count_term,
+          (
+            abs_unexcused_count_term + ROUND((TDY_all_count_term / 3), 1, 1)
           ) AS attpts_term,
           ROUND(
             (
               (
-                att.mem_count_term - att.abs_unexcused_count_term
+                mem_count_term - abs_unexcused_count_term
               ) / CASE
-                WHEN att.mem_count_term = 0 THEN NULL
-                ELSE att.mem_count_term
+                WHEN (mem_count_term = 0) THEN NULL
+                ELSE mem_count_term
               END
             ) * 100,
             0
@@ -228,13 +229,15 @@ WITH
           ROUND(
             (
               (
-                att.mem_count_term - att.abs_unexcused_count_term - att.TDY_all_count_term
+                mem_count_term - abs_unexcused_count_term - TDY_all_count_term
               ) / CASE
                 WHEN (
-                  att.mem_count_term - att.abs_unexcused_count_term
-                ) = 0 THEN NULL
+                  (
+                    mem_count_term - abs_unexcused_count_term
+                  ) = 0
+                ) THEN NULL
                 ELSE (
-                  att.mem_count_term - att.abs_unexcused_count_term
+                  mem_count_term - abs_unexcused_count_term
                 )
               END
             ) * 100,
@@ -243,54 +246,50 @@ WITH
           ROUND(
             (
               (
-                att.mem_count_term - (
-                  att.abs_unexcused_count_term + ROUND(
-                    (att.TDY_all_count_term / 3),
-                    1,
-                    1
-                  )
+                mem_count_term - (
+                  abs_unexcused_count_term + ROUND((TDY_all_count_term / 3), 1, 1)
                 )
               ) / CASE
-                WHEN att.mem_count_term = 0 THEN NULL
-                ELSE att.mem_count_term
+                WHEN (mem_count_term = 0) THEN NULL
+                ELSE mem_count_term
               END
             ) * 100,
             0
           ) AS attptspct_term
         FROM
-          gabby.powerschool.attendance_counts_static AS att
+          gabby.powerschool.attendance_counts_static
         WHERE
-          att.academic_year IN (
+          academic_year IN (
             gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
             gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
           )
-          AND att.mem_count_term > 0
-          AND att.mem_count_term != att.abs_unexcused_count_term
+          AND mem_count_term > 0
+          AND mem_count_term <> abs_unexcused_count_term
         UNION ALL
         SELECT
-          att.studentid,
-          att.[db_name],
-          att.academic_year,
+          studentid,
+          [db_name],
+          academic_year,
           'SY1' AS reporting_term,
-          att.a_count_y1,
-          att.ad_count_y1,
-          att.ae_count_y1,
-          att.iss_count_y1,
-          att.oss_count_y1,
-          att.t_count_y1,
-          att.t10_count_y1,
-          att.abs_unexcused_count_y1,
-          att.tdy_all_count_y1,
-          att.abs_unexcused_count_y1 + ROUND((att.TDY_all_count_y1 / 3), 1, 1) AS attpts_y1,
+          a_count_y1,
+          ad_count_y1,
+          ae_count_y1,
+          iss_count_y1,
+          oss_count_y1,
+          t_count_y1,
+          t10_count_y1,
+          abs_unexcused_count_y1,
+          tdy_all_count_y1,
+          abs_unexcused_count_y1 + ROUND((TDY_all_count_y1 / 3), 1, 1) AS attpts_y1,
           ROUND(
             (
               (
-                att.MEM_count_y1 - (
-                  att.abs_unexcused_count_y1 + ROUND((att.TDY_all_count_y1 / 3), 1, 1)
+                MEM_count_y1 - (
+                  abs_unexcused_count_y1 + ROUND((TDY_all_count_y1 / 3), 1, 1)
                 )
               ) / CASE
-                WHEN att.MEM_count_y1 = 0 THEN NULL
-                ELSE att.MEM_count_y1
+                WHEN (MEM_count_y1 = 0) THEN NULL
+                ELSE MEM_count_y1
               END
             ) * 100,
             0
@@ -298,10 +297,10 @@ WITH
           ROUND(
             (
               (
-                att.MEM_count_y1 - att.abs_unexcused_count_y1
+                MEM_count_y1 - abs_unexcused_count_y1
               ) / CASE
-                WHEN att.MEM_count_y1 = 0 THEN NULL
-                ELSE att.MEM_count_y1
+                WHEN (MEM_count_y1 = 0) THEN NULL
+                ELSE MEM_count_y1
               END
             ) * 100,
             0
@@ -309,28 +308,30 @@ WITH
           ROUND(
             (
               (
-                att.MEM_count_y1 - att.abs_unexcused_count_y1 - att.TDY_all_count_y1
+                MEM_count_y1 - abs_unexcused_count_y1 - TDY_all_count_y1
               ) / CASE
                 WHEN (
-                  att.MEM_count_y1 - att.abs_unexcused_count_y1
-                ) = 0 THEN NULL
+                  (
+                    MEM_count_y1 - abs_unexcused_count_y1
+                  ) = 0
+                ) THEN NULL
                 ELSE (
-                  att.mem_count_y1 - att.abs_unexcused_count_y1
+                  mem_count_y1 - abs_unexcused_count_y1
                 )
               END
             ) * 100,
             0
           ) AS ontimepct_y1
         FROM
-          gabby.powerschool.attendance_counts_static AS att
+          gabby.powerschool.attendance_counts_static
         WHERE
-          att.academic_year IN (
+          academic_year IN (
             gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
             gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
           )
-          AND att.mem_count_y1 > 0
-          AND att.mem_count_y1 != att.abs_unexcused_count_y1
-          AND att.is_curterm = 1
+          AND mem_count_y1 > 0
+          AND mem_count_y1 <> abs_unexcused_count_y1
+          AND is_curterm = 1
       ) AS sub UNPIVOT (
         [value] FOR field IN (
           a_count_term,
@@ -351,42 +352,42 @@ WITH
   ),
   modules AS (
     SELECT
-      a.subject_area,
-      a.module_number,
-      a.academic_year,
-      a.local_student_id AS student_number,
-      a.assessment_id,
-      a.module_type,
-      a.date_taken AS measure_date,
+      subject_area,
+      module_number,
+      academic_year,
+      local_student_id AS student_number,
+      assessment_id,
+      module_type,
+      date_taken AS measure_date,
       CONVERT(
         VARCHAR(250),
         CASE
-          WHEN a.subject_area = 'Writing' THEN a.standard_description
-          ELSE a.standard_code
+          WHEN (subject_area = 'Writing') THEN standard_description
+          ELSE standard_code
         END
       ) AS standards,
       CASE
-        WHEN a.subject_area = 'Writing' THEN a.points
-        ELSE a.percent_correct
+        WHEN (subject_area = 'Writing') THEN points
+        ELSE percent_correct
       END AS percent_correct,
       CASE
-        WHEN a.performance_band_number = 5 THEN 'Above'
-        WHEN a.performance_band_number = 4 THEN 'Target'
-        WHEN a.performance_band_number = 3 THEN 'Near'
-        WHEN a.performance_band_number = 2 THEN 'Below'
-        WHEN a.performance_band_number = 1 THEN 'Far Below'
+        WHEN (performance_band_number = 5) THEN 'Above'
+        WHEN (performance_band_number = 4) THEN 'Target'
+        WHEN (performance_band_number = 3) THEN 'Near'
+        WHEN (performance_band_number = 2) THEN 'Below'
+        WHEN (performance_band_number = 1) THEN 'Far Below'
       END AS proficiency_label,
       CASE
-        WHEN a.subject_area = 'Writing' THEN 'WRITING RUBRIC'
-        WHEN a.response_type = 'O' THEN 'OVERALL'
-        WHEN a.response_type = 'S' THEN 'STANDARDS'
+        WHEN (subject_area = 'Writing') THEN 'WRITING RUBRIC'
+        WHEN (response_type = 'O') THEN 'OVERALL'
+        WHEN (response_type = 'S') THEN 'STANDARDS'
       END AS subdomain
     FROM
-      gabby.illuminate_dna_assessments.agg_student_responses_all AS a
+      gabby.illuminate_dna_assessments.agg_student_responses_all
     WHERE
-      a.module_type IS NOT NULL
-      AND a.response_type IN ('O', 'S')
-      AND a.academic_year IN (
+      module_type IS NOT NULL
+      AND response_type IN ('O', 'S')
+      AND academic_year IN (
         gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
         gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
       )
@@ -431,8 +432,8 @@ WITH
       gpa.cumulative_Y1_gpa AS gpa,
       'GPA CUMULATIVE' AS subdomain
     FROM
-      gabby.powerschool.gpa_cumulative AS gpa
-      INNER JOIN gabby.powerschool.students AS s ON (
+      gabby.powerschool.gpa_cumulative gpa
+      INNER JOIN gabby.powerschool.students s ON (
         gpa.studentid = s.id
         AND gpa.[db_name] = s.[db_name]
       )
@@ -445,8 +446,8 @@ WITH
       gpa.earned_credits_cum AS gpa,
       'CREDITS EARNED' AS subdomain
     FROM
-      gabby.powerschool.gpa_cumulative AS gpa
-      INNER JOIN gabby.powerschool.students AS s ON (
+      gabby.powerschool.gpa_cumulative gpa
+      INNER JOIN gabby.powerschool.students s ON (
         gpa.studentid = s.id
         AND gpa.[db_name] = s.[db_name]
       )
@@ -485,14 +486,14 @@ WITH
       academic_year,
       (
         term
-        COLLATE LATIN1_GENERAL_BIN
+        COLLATE Latin1_General_BIN
       ) AS test_round,
       (
         CONCAT(ritto_reading_score, 'L')
-        COLLATE LATIN1_GENERAL_BIN
+        COLLATE Latin1_General_BIN
       ) AS read_lvl,
       CASE
-        WHEN ritto_reading_score = 0 THEN -1
+        WHEN (ritto_reading_score = 0) THEN -1
         WHEN (
           ritto_reading_score BETWEEN 0 AND 100
         ) THEN 1
@@ -529,7 +530,7 @@ WITH
         WHEN (
           ritto_reading_score BETWEEN 1100 AND 1200
         ) THEN 30
-        WHEN ritto_reading_score >= 1200 THEN 31
+        WHEN (ritto_reading_score >= 1200) THEN 31
       END AS lvl_num,
       'ACHIEVED' AS subdomain
     FROM
@@ -544,21 +545,21 @@ WITH
       map.academic_year,
       map.term AS test_round,
       CASE
-        WHEN s.grade_level = 9 THEN '900L'
-        WHEN s.grade_level = 10 THEN '1000L'
-        WHEN s.grade_level = 11 THEN '1100L'
-        WHEN s.grade_level = 12 THEN '1200L'
+        WHEN (s.grade_level = 9) THEN '900L'
+        WHEN (s.grade_level = 10) THEN '1000L'
+        WHEN (s.grade_level = 11) THEN '1100L'
+        WHEN (s.grade_level = 12) THEN '1200L'
       END AS goal_lvl,
       CASE
-        WHEN s.grade_level = 9 THEN 28
-        WHEN s.grade_level = 10 THEN 29
-        WHEN s.grade_level = 11 THEN 30
-        WHEN s.grade_level = 12 THEN 31
+        WHEN (s.grade_level = 9) THEN 28
+        WHEN (s.grade_level = 10) THEN 29
+        WHEN (s.grade_level = 11) THEN 30
+        WHEN (s.grade_level = 12) THEN 31
       END AS goal_num,
       'GOAL' AS subdomain
     FROM
-      gabby.nwea.assessment_result_identifiers AS map
-      INNER JOIN gabby.powerschool.students AS s ON (
+      gabby.nwea.assessment_result_identifiers map
+      INNER JOIN gabby.powerschool.students s ON (
         map.student_id = s.student_number
       )
     WHERE
@@ -590,16 +591,16 @@ WITH
       'PARCC' AS test_name,
       (
         [subject]
-        COLLATE LATIN1_GENERAL_BIN
+        COLLATE Latin1_General_BIN
       ) AS [subject],
       test_scale_score,
       test_performance_level,
       CASE
-        WHEN test_performance_level = 5 THEN 'Exceeded'
-        WHEN test_performance_level = 4 THEN 'Met'
-        WHEN test_performance_level = 3 THEN 'Approached'
-        WHEN test_performance_level = 2 THEN 'Partially Met'
-        WHEN test_performance_level = 1 THEN 'Did Not Meet'
+        WHEN (test_performance_level = 5) THEN 'Exceeded'
+        WHEN (test_performance_level = 4) THEN 'Met'
+        WHEN (test_performance_level = 3) THEN 'Approached'
+        WHEN (test_performance_level = 2) THEN 'Partially Met'
+        WHEN (test_performance_level = 1) THEN 'Did Not Meet'
       END AS performance_level_label
     FROM
       gabby.parcc.summative_record_file_clean
@@ -613,9 +614,13 @@ WITH
       [subject],
       scaled_score,
       CASE
-        WHEN performance_level = 'Advanced Proficient' THEN 5
-        WHEN performance_level = 'Proficient' THEN 4
-        WHEN performance_level = 'Partially Proficient' THEN 1
+        WHEN (
+          performance_level = 'Advanced Proficient'
+        ) THEN 5
+        WHEN (performance_level = 'Proficient') THEN 4
+        WHEN (
+          performance_level = 'Partially Proficient'
+        ) THEN 1
       END AS performance_level,
       performance_level AS performance_level_label
     FROM
@@ -662,7 +667,7 @@ WITH
       administered_at AS test_date,
       'ACT Prep' AS test_name,
       CASE
-        WHEN subject_area = 'Mathematics' THEN 'Math'
+        WHEN (subject_area = 'Mathematics') THEN 'Math'
         ELSE subject_area
       END AS [subject],
       scale_score,
@@ -717,7 +722,7 @@ WITH
         CONVERT(
           DATE,
           CASE
-            WHEN test_date = '0000-00-00' THEN NULL
+            WHEN (test_date = '0000-00-00') THEN NULL
             ELSE REPLACE(test_date, '-00', '-01')
           END
         )
@@ -725,7 +730,7 @@ WITH
       CONVERT(
         DATE,
         CASE
-          WHEN test_date = '0000-00-00' THEN NULL
+          WHEN (test_date = '0000-00-00') THEN NULL
           ELSE REPLACE(test_date, '-00', '-01')
         END
       ) AS test_date,
@@ -744,7 +749,7 @@ WITH
         CONVERT(
           DATE,
           CASE
-            WHEN test_date = '0000-00-00' THEN NULL
+            WHEN (test_date = '0000-00-00') THEN NULL
             ELSE REPLACE(test_date, '-00', '-01')
           END
         )
@@ -752,7 +757,7 @@ WITH
       CONVERT(
         DATE,
         CASE
-          WHEN test_date = '0000-00-00' THEN NULL
+          WHEN (test_date = '0000-00-00') THEN NULL
           ELSE REPLACE(test_date, '-00', '-01')
         END
       ) AS test_date,
@@ -778,7 +783,7 @@ WITH
         CONVERT(
           DATE,
           CASE
-            WHEN test_date = '0000-00-00' THEN NULL
+            WHEN (test_date = '0000-00-00') THEN NULL
             ELSE REPLACE(test_date, '-00', '-01')
           END
         )
@@ -786,7 +791,7 @@ WITH
       CONVERT(
         DATE,
         CASE
-          WHEN test_date = '0000-00-00' THEN NULL
+          WHEN (test_date = '0000-00-00') THEN NULL
           ELSE REPLACE(test_date, '-00', '-01')
         END
       ) AS test_date,
@@ -807,16 +812,16 @@ WITH
   ),
   collegeapps AS (
     SELECT
-      sub.student_number,
-      sub.collegename,
-      sub.[level],
-      sub.result_code,
-      sub.[value],
+      student_number,
+      collegename,
+      [level],
+      result_code,
+      [value],
       ROW_NUMBER() OVER (
         PARTITION BY
-          sub.student_number
+          student_number
         ORDER BY
-          sub.competitiveness_ranking_int DESC
+          competitiveness_ranking_int DESC
       ) AS competitiveness_ranking
     FROM
       (
@@ -827,8 +832,10 @@ WITH
           CONVERT(
             VARCHAR(125),
             CASE
-              WHEN app.result_code IN ('unknown')
-              OR app.result_code IS NULL THEN app.stage
+              WHEN (
+                app.result_code IN ('unknown')
+                OR app.result_code IS NULL
+              ) THEN app.stage
               ELSE app.result_code
             END
           ) AS result_code,
@@ -847,17 +854,31 @@ WITH
             )
           ) AS [value],
           CASE
-            WHEN a.competitiveness_ranking_c = 'Most Competitive+' THEN 7
-            WHEN a.competitiveness_ranking_c = 'Most Competitive' THEN 6
-            WHEN a.competitiveness_ranking_c = 'Highly Competitive' THEN 5
-            WHEN a.competitiveness_ranking_c = 'Very Competitive' THEN 4
-            WHEN a.competitiveness_ranking_c = 'Noncompetitive' THEN 1
-            WHEN a.competitiveness_ranking_c = 'Competitive' THEN 3
-            WHEN a.competitiveness_ranking_c = 'Less Competitive' THEN 2
+            WHEN (
+              a.competitiveness_ranking_c = 'Most Competitive+'
+            ) THEN 7
+            WHEN (
+              a.competitiveness_ranking_c = 'Most Competitive'
+            ) THEN 6
+            WHEN (
+              a.competitiveness_ranking_c = 'Highly Competitive'
+            ) THEN 5
+            WHEN (
+              a.competitiveness_ranking_c = 'Very Competitive'
+            ) THEN 4
+            WHEN (
+              a.competitiveness_ranking_c = 'Noncompetitive'
+            ) THEN 1
+            WHEN (
+              a.competitiveness_ranking_c = 'Competitive'
+            ) THEN 3
+            WHEN (
+              a.competitiveness_ranking_c = 'Less Competitive'
+            ) THEN 2
           END competitiveness_ranking_int
         FROM
-          gabby.naviance.college_applications AS app
-          LEFT JOIN gabby.alumni.account AS a ON (
+          gabby.naviance.college_applications app
+          LEFT JOIN gabby.alumni.account a ON (
             app.ceeb_code = CAST(a.ceeb_code_c AS VARCHAR)
             AND a.record_type_id = '01280000000BQEkAAO'
             AND a.competitiveness_ranking_c IS NOT NULL
@@ -871,11 +892,11 @@ WITH
       reporting_term_name,
       CAST(field AS VARCHAR) AS subdomain,
       CASE
-        WHEN field LIKE '%status%' THEN [value]
+        WHEN (field LIKE '%status%') THEN [value]
         ELSE NULL
       END AS text_value,
       CASE
-        WHEN field LIKE '%status%' THEN NULL
+        WHEN (field LIKE '%status%') THEN NULL
         ELSE CAST([value] AS FLOAT)
       END AS numeric_value
     FROM
@@ -917,7 +938,7 @@ WITH
       words_goal AS goal,
       stu_status_words AS goal_status,
       CASE
-        WHEN reporting_term = 'ARY' THEN 'Y1'
+        WHEN (reporting_term = 'ARY') THEN 'Y1'
         ELSE REPLACE(reporting_term, 'AR', 'Q')
       END AS term_name,
       'AR' AS subdomain
@@ -956,13 +977,13 @@ SELECT
   NULL AS performance_level,
   NULL AS performance_level_label
 FROM
-  roster AS r
-  LEFT JOIN grades AS gr ON (
+  roster r
+  LEFT JOIN grades gr ON (
     r.student_number = gr.student_number
     AND r.academic_year = gr.academic_year
     AND (
       r.reporting_term
-      COLLATE LATIN1_GENERAL_BIN
+      COLLATE Latin1_General_BIN
     ) = gr.reporting_term
   )
 UNION ALL
@@ -990,21 +1011,21 @@ SELECT
   NULL AS course_name,
   (
     att.att_code
-    COLLATE LATIN1_GENERAL_BIN
+    COLLATE Latin1_General_BIN
   ) AS measure_name,
   att.att_counts AS measure_value,
   NULL AS measure_date,
   NULL AS performance_level,
   NULL AS performance_level_label
 FROM
-  roster AS r
-  LEFT JOIN attendance AS att ON (
+  roster r
+  LEFT JOIN attendance att ON (
     r.studentid = att.studentid
     AND r.[db_name] = att.[db_name]
     AND r.academic_year = att.academic_year
     AND (
       r.reporting_term
-      COLLATE LATIN1_GENERAL_BIN
+      COLLATE Latin1_General_BIN
     ) = att.reporting_term
   )
 UNION ALL
@@ -1030,23 +1051,23 @@ SELECT
   cma.subdomain,
   (
     cma.subject_area
-    COLLATE LATIN1_GENERAL_BIN
+    COLLATE Latin1_General_BIN
   ) AS [subject],
   (
     cma.module_type
-    COLLATE LATIN1_GENERAL_BIN
+    COLLATE Latin1_General_BIN
   ) AS course_name,
   (
     cma.standards
-    COLLATE LATIN1_GENERAL_BIN
+    COLLATE Latin1_General_BIN
   ) AS measure_name,
   cma.percent_correct AS measure_value,
   cma.measure_date,
   cma.assessment_id AS performance_level,
   cma.proficiency_label AS performance_level_label
 FROM
-  roster AS r
-  LEFT JOIN modules AS cma ON (
+  roster r
+  LEFT JOIN modules cma ON (
     r.student_number = cma.student_number
     AND r.academic_year = cma.academic_year
   )
@@ -1081,14 +1102,14 @@ SELECT
   NULL AS performance_level,
   NULL AS performance_level_label
 FROM
-  roster AS r
+  roster r
   INNER JOIN gpa ON (
     r.student_number = gpa.student_number
     AND r.schoolid = gpa.schoolid
     AND r.academic_year >= gpa.academic_year
     AND (
       r.reporting_term
-      COLLATE LATIN1_GENERAL_BIN
+      COLLATE Latin1_General_BIN
     ) = gpa.reporting_term
     AND r.term_start_date <= CAST(CURRENT_TIMESTAMP AS DATE)
   )
@@ -1121,7 +1142,7 @@ SELECT
   NULL AS performance_level,
   NULL AS performance_level_label
 FROM
-  roster AS r
+  roster r
   LEFT JOIN lit ON (
     r.student_number = lit.student_number
     AND r.academic_year >= lit.academic_year
@@ -1157,7 +1178,7 @@ SELECT
   NULL AS performance_level,
   NULL AS performance_level_label
 FROM
-  roster AS r
+  roster r
   LEFT JOIN map ON (
     r.student_number = map.student_number
   )
@@ -1186,24 +1207,24 @@ SELECT
   'STANDARDIZED TESTS' AS DOMAIN,
   (
     std.test_name
-    COLLATE LATIN1_GENERAL_BIN
+    COLLATE Latin1_General_BIN
   ) AS subdomain,
   (
     std.[subject]
-    COLLATE LATIN1_GENERAL_BIN
+    COLLATE Latin1_General_BIN
   ) AS [subject],
   NULL AS course_name,
   (
     CAST(NEWID() AS VARCHAR(250))
-    COLLATE LATIN1_GENERAL_BIN
+    COLLATE Latin1_General_BIN
   ) AS measure_name,
   std.test_scale_score AS measure_value,
   std.test_date AS measure_date,
   std.test_performance_level AS performance_level,
   std.performance_level_label
 FROM
-  roster AS r
-  LEFT JOIN standardized_tests AS std ON (
+  roster r
+  LEFT JOIN standardized_tests std ON (
     r.student_number = std.student_number
   )
 WHERE
@@ -1237,8 +1258,8 @@ SELECT
   apps.competitiveness_ranking AS performance_level,
   apps.[value] AS performance_level_label
 FROM
-  roster AS r
-  LEFT JOIN collegeapps AS apps ON (
+  roster r
+  LEFT JOIN collegeapps apps ON (
     r.student_number = apps.student_number
   )
 WHERE
@@ -1272,8 +1293,8 @@ SELECT
   promo.numeric_value AS performance_level,
   promo.text_value AS performance_level_label
 FROM
-  roster AS r
-  LEFT JOIN promo_status AS promo ON (
+  roster r
+  LEFT JOIN promo_status promo ON (
     r.student_number = promo.student_number
     AND r.academic_year = promo.academic_year
   )
@@ -1308,8 +1329,8 @@ SELECT
   NULL AS performance_level,
   NULL AS performance_level_label
 FROM
-  roster AS r
-  LEFT JOIN contact AS c ON (
+  roster r
+  LEFT JOIN contact c ON (
     r.student_number = c.student_number
   )
 WHERE
@@ -1343,8 +1364,8 @@ SELECT
   b.goal AS performance_level,
   b.goal_status AS performance_level_label
 FROM
-  roster AS r
-  INNER JOIN instructional_tech AS b ON (
+  roster r
+  INNER JOIN instructional_tech b ON (
     r.student_number = b.student_number
     AND r.academic_year = b.academic_year
     AND r.term_name = b.term_name

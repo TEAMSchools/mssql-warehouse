@@ -1,3 +1,4 @@
+USE gabby GO
 CREATE OR ALTER VIEW
   iready.growth_metrics AS
 WITH
@@ -14,7 +15,7 @@ WITH
     FROM
       gabby.iready.diagnostic_results
     WHERE
-      diagnostic_used_to_establish_growth_measures_y_n_ = 'Y'
+      baseline_diagnostic_y_n_ = 'Y'
   ),
   recent AS (
     SELECT
@@ -25,57 +26,31 @@ WITH
       CASE
         WHEN _file LIKE '%_ela%' THEN 'Reading'
         WHEN _file LIKE '%_math%' THEN 'Math'
-      END AS [subject]
+      END AS [subject],
+      percent_progress_to_annual_typical_growth_,
+      percent_progress_to_annual_stretch_growth_,
+      diagnostic_gain,
+      annual_typical_growth_measure,
+      annual_stretch_growth_measure
     FROM
       gabby.iready.diagnostic_results
     WHERE
-      diagnostic_used_to_establish_growth_measures_y_n_ = 'N'
+      baseline_diagnostic_y_n_ = 'N'
       AND most_recent_diagnostic_y_n_ = 'Y'
   )
 SELECT
   bl.student_number,
+  LEFT(bl.academic_year, 4) AS academic_year,
   bl.[subject],
   bl.baseline_scale,
   bl.baseline_percentile,
   re.recent_scale,
   re.recent_percentile,
-  di.annual_typical_growth_measure,
-  di.annual_stretch_growth_measure,
-  LEFT(bl.academic_year, 4) AS academic_year,
-  CASE
-    WHEN re.recent_scale - bl.baseline_scale < 0 THEN 0
-    WHEN (
-      re.recent_scale - bl.baseline_scale >= 0
-    ) THEN re.recent_scale - bl.baseline_scale
-  END AS diagnostic_gain,
-  CASE
-    WHEN re.recent_scale - bl.baseline_scale <= 0 THEN 0
-    WHEN re.recent_scale - bl.baseline_scale > 0 THEN (
-      ROUND(
-        (
-          re.recent_scale - bl.baseline_scale
-        ) / (
-          CAST(
-            di.annual_typical_growth_measure AS FLOAT
-          )
-        ),
-        2
-      )
-    )
-  END AS progress_typical,
-  CASE
-    WHEN re.recent_scale - bl.baseline_scale <= 0 THEN 0
-    WHEN re.recent_scale - bl.baseline_scale > 0 THEN ROUND(
-      (
-        re.recent_scale - bl.baseline_scale
-      ) / (
-        CAST(
-          di.annual_stretch_growth_measure AS FLOAT
-        )
-      ),
-      2
-    )
-  END AS progress_stretch
+  re.annual_typical_growth_measure,
+  re.annual_stretch_growth_measure,
+  re.diagnostic_gain AS diagnostic_gain,
+  re.percent_progress_to_annual_typical_growth_ AS progress_typical,
+  re.percent_progress_to_annual_stretch_growth_ AS progress_stretch
 FROM
   baseline AS bl
   LEFT JOIN recent AS re ON (

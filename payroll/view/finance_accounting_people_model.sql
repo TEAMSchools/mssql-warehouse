@@ -1,3 +1,4 @@
+USE gabby GO
 CREATE OR ALTER VIEW
   payroll.finance_accounting_people_model AS
 WITH
@@ -94,12 +95,15 @@ SELECT
     PARTITION BY
       cw.df_employee_number
     ORDER BY
-      y.academic_year DESC
+      y.academic_year DESC,
+      eh.position_status ASC
   ) AS rn_curr
 FROM
   gabby.people.employment_history_static AS eh
   INNER JOIN years AS y ON (
-    y.effective_date BETWEEN eh.effective_start_date AND eh.effective_end_date
+    (
+      y.effective_date BETWEEN eh.effective_start_date AND eh.effective_end_date
+    )
   )
   INNER JOIN gabby.people.staff_crosswalk_static AS cw ON (
     eh.employee_number = cw.df_employee_number
