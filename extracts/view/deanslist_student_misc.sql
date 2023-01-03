@@ -40,20 +40,10 @@ SELECT
   co.advisor_name,
   co.advisor_email,
   co.lunch_balance,
-  s.sched_nextyeargrade,
-  ktc.counselor_name AS ktc_counselor_name,
-  ktc.counselor_phone AS ktc_counselor_phone,
-  ktc.counselor_email AS ktc_counselor_email,
-  gpa.[GPA_Y1],
-  gpa.gpa_term,
-  CONVERT(NVARCHAR, co.dob, 101) AS dob,
-  CASE
-    WHEN co.enroll_status = -1 THEN 'Pre-Registered'
-    WHEN co.enroll_status = 0 THEN 'Enrolled'
-    WHEN co.enroll_status = 1 THEN 'Inactive'
-    WHEN co.enroll_status = 2 THEN 'Transferred Out'
-    WHEN co.enroll_status = 3 THEN 'Graduated'
-  END AS enroll_status,
+  co.dob,
+  co.student_web_id + '.fam' AS family_access_id,
+  co.student_web_id + '@teamstudents.org' AS student_email,
+  CONCAT(co.student_web_password, 'kipp') AS student_web_password,
   CONCAT(
     co.street,
     ', ',
@@ -63,19 +53,21 @@ SELECT
     ' ',
     co.zip
   ) AS home_address,
-  co.student_web_id + '@teamstudents.org' AS student_email,
-  CONCAT(co.student_web_password, 'kipp') AS student_web_password,
-  co.student_web_id + '.fam' AS family_access_id,
-  CONVERT(
-    NVARCHAR,
-    ed.school_entrydate,
-    101
-  ) AS school_entrydate,
-  CONVERT(
-    NVARCHAR,
-    ed.school_exitdate,
-    101
-  ) AS school_exitdate
+  CASE
+    WHEN co.enroll_status = -1 THEN 'Pre-Registered'
+    WHEN co.enroll_status = 0 THEN 'Enrolled'
+    WHEN co.enroll_status = 1 THEN 'Inactive'
+    WHEN co.enroll_status = 2 THEN 'Transferred Out'
+    WHEN co.enroll_status = 3 THEN 'Graduated'
+  END AS enroll_status,
+  s.sched_nextyeargrade,
+  ed.school_entrydate,
+  ed.school_exitdate,
+  ktc.counselor_name AS ktc_counselor_name,
+  ktc.counselor_phone AS ktc_counselor_phone,
+  ktc.counselor_email AS ktc_counselor_email,
+  gpa.[GPA_Y1],
+  gpa.gpa_term
 FROM
   gabby.powerschool.cohort_identifiers_static AS co
   INNER JOIN gabby.powerschool.students AS s ON (
@@ -89,10 +81,12 @@ FROM
   LEFT JOIN enroll_dates AS ed ON (
     co.student_number = ed.student_number
     AND co.[db_name] = ed.[db_name]
-    AND CASE
-      WHEN co.schoolid = 999999 THEN ug.schoolid
-      ELSE co.schoolid
-    END = ed.schoolid
+    AND (
+      CASE
+        WHEN co.schoolid = 999999 THEN ug.schoolid
+        ELSE co.schoolid
+      END
+    ) = ed.schoolid
   )
   LEFT JOIN gabby.alumni.ktc_roster AS ktc ON (
     co.student_number = ktc.student_number

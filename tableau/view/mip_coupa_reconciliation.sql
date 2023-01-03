@@ -18,7 +18,7 @@ WITH
       [acctcode valid],
       'KCNA' AS entity
     FROM
-      [FINANCE01].[KIPP Cooper Norcross Academy].[dbo].[KCNA_Revised_And_Available_Budget]
+      [FINANCE01].[KIPP Cooper Norcross Academy].[dbo].[KCNA_Revised_And_Available_Budget] -- noqa: L016
     UNION ALL
     SELECT
       fund,
@@ -72,7 +72,7 @@ WITH
       [acctcode valid],
       'TEAM' AS entity
     FROM
-      [FINANCE01].[Team Academy Charter School].[dbo].[TEAM_Revised_And_Available_Budget]
+      [FINANCE01].[Team Academy Charter School].[dbo].[TEAM_Revised_And_Available_Budget] -- noqa: L016
   ),
   coupa AS (
     SELECT

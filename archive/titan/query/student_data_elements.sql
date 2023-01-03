@@ -1,3 +1,4 @@
+-- noqa: disable=L042
 SELECT
   s.student_number AS "Student Identifier",
   s.first_name AS "First Name",

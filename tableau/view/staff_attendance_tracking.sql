@@ -218,14 +218,12 @@ WITH
           [money],
           [days],
           employee_payrule,
+          CAST(transaction_apply_date AS DATE) AS transaction_apply_date,
           CAST(
-            td.transaction_apply_date AS DATE
-          ) AS transaction_apply_date,
-          CAST(
-            td.transaction_start_date_time AS DATETIME2
+            transaction_start_date_time AS DATETIME2
           ) AS transaction_start_date_time,
           CAST(
-            td.transaction_end_date_time AS DATETIME2
+            transaction_end_date_time AS DATETIME2
           ) AS transaction_end_date_time,
           ROW_NUMBER() OVER (
             PARTITION BY

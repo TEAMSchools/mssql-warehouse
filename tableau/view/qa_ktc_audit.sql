@@ -32,7 +32,11 @@ WITH
     FROM
       STRING_SPLIT ('FA,SP', ',') AS ss
       INNER JOIN gabby.utilities.row_generator AS rg ON (
-        rg.n BETWEEN gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 2 AND gabby.utilities.GLOBAL_ACADEMIC_YEAR  () + 1
+        rg.n BETWEEN (
+          gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 2
+        ) AND (
+          gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
+        )
       )
   ),
   valid_documents AS (
@@ -132,128 +136,128 @@ WITH
         WHERE
           a.is_deleted = 0
       ) AS sub
-  ),
-  enr_hist_attmat AS (
-    SELECT
-      eh.parent_id AS enrollment_id,
-      CAST(eh.created_date AS DATE) AS status_change_date,
-      ROW_NUMBER() OVER (
-        PARTITION BY
-          eh.parent_id
-        ORDER BY
-          eh.created_date DESC
-      ) AS rn,
-      e.student_c AS contact_id,
-      u.[name] AS updated_by
-    FROM
-      gabby.alumni.enrollment_history AS eh
-      INNER JOIN gabby.alumni.enrollment_c AS e ON (eh.parent_id = e.id)
-      INNER JOIN gabby.alumni.[user] u ON (eh.created_by_id = u.id)
-    WHERE
-      eh.field = 'Status__c'
-      AND eh.is_deleted = 0
-      AND eh.old_value IN ('Attending', 'Matriculated')
-      AND CONCAT(eh.old_value, eh.new_value) NOT IN (
-        'MatriculatedDid Not Enroll',
-        'MatriculatedAttending'
-      )
-      AND eh.new_value NOT IN ('Graduated')
-  ),
-  enr_hist_grad AS (
-    SELECT
-      eh.parent_id AS enrollment_id,
-      CAST(eh.created_date AS DATE) AS status_change_date,
-      ROW_NUMBER() OVER (
-        PARTITION BY
-          eh.parent_id
-        ORDER BY
-          eh.created_date DESC
-      ) AS rn,
-      e.student_c AS contact_id,
-      u.[name] AS updated_by
-    FROM
-      gabby.alumni.enrollment_history AS eh
-      INNER JOIN gabby.alumni.enrollment_c AS e ON (eh.parent_id = e.id)
-      INNER JOIN gabby.alumni.[user] u ON (eh.created_by_id = u.id)
-    WHERE
-      eh.field = 'Status__c'
-      AND eh.is_deleted = 0
-      AND eh.new_value = 'Graduated'
-  ),
-  enrollment_unpivot AS (
-    SELECT
-      u.enrollment_id,
-      u.enrollment_name,
-      u.field AS audit_name,
-      u.[value] AS audit_value
-    FROM
-      (
-        SELECT
-          e.id AS enrollment_id,
-          e.[name] AS enrollment_name,
-          e.status_c,
-          ISNULL(
-            CAST(
-              e.actual_end_date_c AS NVARCHAR(MAX)
-            ),
-            ''
-          ) AS actual_end_date_c,
-          ISNULL(
-            CAST(
-              e.date_last_verified_c AS NVARCHAR(MAX)
-            ),
-            ''
-          ) AS date_last_verified_c,
-          ISNULL(
-            CAST(
-              e.date_last_verified_c AS NVARCHAR(MAX)
-            ),
-            ''
-          ) AS date_last_verified_ontime,
-          ISNULL(
-            CAST(e.notes_c AS NVARCHAR(MAX)),
-            ''
-          ) AS notes_c,
-          ISNULL(
-            CAST(
-              e.transfer_reason_c AS NVARCHAR(MAX)
-            ),
-            ''
-          ) AS transfer_reason_c,
-          ISNULL(
-            CAST(
-              COALESCE(e.major_c, e.major_area_c)
-            ),
-            '' AS NVARCHAR(MAX)
-          ) AS major_or_area,
-          ISNULL(
-            CAST(
-              e.college_major_declared_c AS NVARCHAR(MAX)
-            ),
-            ''
-          ) AS college_major_declared_c,
-          ISNULL(
-            CAST(c.[description] AS NVARCHAR(MAX)),
-            ''
-          ) AS [description]
-        FROM
-          gabby.alumni.enrollment_c AS e
-          INNER JOIN gabby.alumni.contact AS c ON (e.student_c = c.id)
-        WHERE
-          e.type_c = 'College'
-      ) AS sub UNPIVOT (
-        [value] FOR field IN (
-          actual_end_date_c,
-          date_last_verified_c,
-          date_last_verified_ontime,
-          notes_c,
-          transfer_reason_c,
-          [description],
-          major_or_area,
-          college_major_declared_c
-        )
-      ) AS u
   )
+  -- enr_hist_attmat AS (
+  --   SELECT
+  --     eh.parent_id AS enrollment_id,
+  --     CAST(eh.created_date AS DATE) AS status_change_date,
+  --     ROW_NUMBER() OVER (
+  --       PARTITION BY
+  --         eh.parent_id
+  --       ORDER BY
+  --         eh.created_date DESC
+  --     ) AS rn,
+  --     e.student_c AS contact_id,
+  --     u.[name] AS updated_by
+  --   FROM
+  --     gabby.alumni.enrollment_history AS eh
+  --     INNER JOIN gabby.alumni.enrollment_c AS e ON (eh.parent_id = e.id)
+  --     INNER JOIN gabby.alumni.[user] AS u ON (eh.created_by_id = u.id)
+  --   WHERE
+  --     eh.field = 'Status__c'
+  --     AND eh.is_deleted = 0
+  --     AND eh.old_value IN ('Attending', 'Matriculated')
+  --     AND CONCAT(eh.old_value, eh.new_value) NOT IN (
+  --       'MatriculatedDid Not Enroll',
+  --       'MatriculatedAttending'
+  --     )
+  --     AND eh.new_value NOT IN ('Graduated')
+  -- ),
+  -- enr_hist_grad AS (
+  --   SELECT
+  --     eh.parent_id AS enrollment_id,
+  --     CAST(eh.created_date AS DATE) AS status_change_date,
+  --     ROW_NUMBER() OVER (
+  --       PARTITION BY
+  --         eh.parent_id
+  --       ORDER BY
+  --         eh.created_date DESC
+  --     ) AS rn,
+  --     e.student_c AS contact_id,
+  --     u.[name] AS updated_by
+  --   FROM
+  --     gabby.alumni.enrollment_history AS eh
+  --     INNER JOIN gabby.alumni.enrollment_c AS e ON (eh.parent_id = e.id)
+  --     INNER JOIN gabby.alumni.[user] AS u ON (eh.created_by_id = u.id)
+  --   WHERE
+  --     eh.field = 'Status__c'
+  --     AND eh.is_deleted = 0
+  --     AND eh.new_value = 'Graduated'
+  -- ),
+  -- enrollment_unpivot AS (
+  --   SELECT
+  --     enrollment_id,
+  --     enrollment_name,
+  --     field AS audit_name,
+  --     [value] AS audit_value
+  --   FROM
+  --     (
+  --       SELECT
+  --         e.id AS enrollment_id,
+  --         e.[name] AS enrollment_name,
+  --         e.status_c,
+  --         ISNULL(
+  --           CAST(
+  --             e.actual_end_date_c AS NVARCHAR(MAX)
+  --           ),
+  --           ''
+  --         ) AS actual_end_date_c,
+  --         ISNULL(
+  --           CAST(
+  --             e.date_last_verified_c AS NVARCHAR(MAX)
+  --           ),
+  --           ''
+  --         ) AS date_last_verified_c,
+  --         ISNULL(
+  --           CAST(
+  --             e.date_last_verified_c AS NVARCHAR(MAX)
+  --           ),
+  --           ''
+  --         ) AS date_last_verified_ontime,
+  --         ISNULL(
+  --           CAST(e.notes_c AS NVARCHAR(MAX)),
+  --           ''
+  --         ) AS notes_c,
+  --         ISNULL(
+  --           CAST(
+  --             e.transfer_reason_c AS NVARCHAR(MAX)
+  --           ),
+  --           ''
+  --         ) AS transfer_reason_c,
+  --         ISNULL(
+  --           CAST(
+  --             COALESCE(e.major_c, e.major_area_c) AS NVARCHAR(MAX)
+  --           ),
+  --           ''
+  --         ) AS major_or_area,
+  --         ISNULL(
+  --           CAST(
+  --             e.college_major_declared_c AS NVARCHAR(MAX)
+  --           ),
+  --           ''
+  --         ) AS college_major_declared_c,
+  --         ISNULL(
+  --           CAST(c.[description] AS NVARCHAR(MAX)),
+  --           ''
+  --         ) AS [description]
+  --       FROM
+  --         gabby.alumni.enrollment_c AS e
+  --         INNER JOIN gabby.alumni.contact AS c ON (e.student_c = c.id)
+  --       WHERE
+  --         e.type_c = 'College'
+  --     ) AS sub UNPIVOT (
+  --       [value] FOR field IN (
+  --         actual_end_date_c,
+  --         date_last_verified_c,
+  --         date_last_verified_ontime,
+  --         notes_c,
+  --         transfer_reason_c,
+  --         [description],
+  --         major_or_area,
+  --         college_major_declared_c
+  --       )
+  --     ) AS u
+  -- )
 SELECT
   r.contact_id,
   r.contact_name,

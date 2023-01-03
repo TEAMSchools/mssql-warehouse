@@ -214,7 +214,7 @@ SELECT
     CASE
       WHEN (
         /* trunk-ignore(sqlfluff/L016) */
-        CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN status_effective_date AND status_effective_end_date_eoy
+        CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN status_effective_date AND status_effective_end_date_eoy -- noqa: L016
       ) THEN position_status
     END
   ) OVER (

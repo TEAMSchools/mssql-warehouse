@@ -37,7 +37,7 @@ WITH
         survey_completion_date IS NULL
         AND (
           /* trunk-ignore(sqlfluff/L016) */
-          CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN survey_round_open AND survey_round_close
+          CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN survey_round_open AND survey_round_close -- noqa: L016
         )
       )
   )

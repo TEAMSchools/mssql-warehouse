@@ -170,7 +170,7 @@ FROM
     AND enr.course_number = gr.course_number
     AND (
       /* trunk-ignore(sqlfluff/L016) */
-      CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN gr.termbin_start_date AND gr.termbin_end_date
+      CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN gr.termbin_start_date AND gr.termbin_end_date -- noqa: L016
     )
   )
   LEFT JOIN gabby.powerschool.category_grades_static AS ele ON (
@@ -181,7 +181,7 @@ FROM
     AND ele.storecode_type = 'H'
     AND (
       /* trunk-ignore(sqlfluff/L016) */
-      CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN ele.termbin_start_date AND ele.termbin_end_date
+      CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN ele.termbin_start_date AND ele.termbin_end_date -- noqa: L016
     )
   )
   LEFT JOIN fp AS fp_base ON (

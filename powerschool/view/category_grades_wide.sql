@@ -15,7 +15,7 @@ WITH
       CASE
         WHEN (
           /* trunk-ignore(sqlfluff/L016) */
-          CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN cat.termbin_start_date AND cat.termbin_end_date
+          CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN cat.termbin_start_date AND cat.termbin_end_date -- noqa: L016
         ) THEN 1
         ELSE 0
       END AS is_curterm,
@@ -43,7 +43,7 @@ WITH
       CASE
         WHEN (
           /* trunk-ignore(sqlfluff/L016) */
-          CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN termbin_start_date AND termbin_end_date
+          CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN termbin_start_date AND termbin_end_date -- noqa: L016
         ) THEN 1
         ELSE 0
       END AS is_curterm,
@@ -84,7 +84,7 @@ WITH
       )
       AND (
         /* trunk-ignore(sqlfluff/L016) */
-        CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN cat.termbin_start_date AND cat.termbin_end_date
+        CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN cat.termbin_start_date AND cat.termbin_end_date -- noqa: L016
       )
     UNION ALL
     SELECT

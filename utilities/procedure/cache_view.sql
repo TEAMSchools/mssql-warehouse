@@ -4,8 +4,9 @@ PROCEDURE utilities.cache_view (
   @db_name NVARCHAR(MAX),
   @schema_name NVARCHAR(MAX),
   @view_name NVARCHAR(MAX)
-) AS BEGIN;
-
+) AS
+/**/
+BEGIN
 SET
 ANSI_NULLS ON;
 
@@ -37,8 +38,8 @@ SET
   @destination_table_name = @source_view + N'_static';
 
 /* if source view does not exist, exit */
-IF OBJECT_ID(@source_view, 'V') IS NULL BEGIN;
-
+IF OBJECT_ID(@source_view, 'V') IS NULL BEGIN
+/**/
 RAISERROR ('View does not exist', 0, 1)
 WITH
   NOWAIT;
@@ -48,8 +49,7 @@ RETURN;
 END;
 
 /* if destination table does not exist,CREATE and exit */
-IF OBJECT_ID(@destination_table_name) IS NULL BEGIN;
-
+IF OBJECT_ID(@destination_table_name) IS NULL BEGIN
 SET
   @sql_create = N'
         SELECT *
@@ -57,10 +57,10 @@ SET
         FROM ' + @source_view + N';
       ';
 
-BEGIN TRY;
-
-BEGIN TRANSACTION;
-
+BEGIN TRY
+/**/
+BEGIN TRANSACTION
+/**/
 RAISERROR (@sql_create, 0, 1)
 WITH
   NOWAIT;
@@ -69,8 +69,10 @@ EXEC (@sql_create);
 
 COMMIT;
 
-END TRY BEGIN CATCH;
-
+END TRY
+/**/
+BEGIN CATCH
+/**/
 ROLLBACK;
 
 SET
@@ -90,21 +92,20 @@ END CATCH;
 
 END;
 
-ELSE BEGIN;
-
+ELSE BEGIN
 /* drop temp table, if exists... */
 SET
   @sql_drop1 = N'
         IF OBJECT_ID(N''' + @temp_table_name + N''') IS NOT NULL
-          BEGIN;
+          BEGIN
             DROP TABLE ' + @temp_table_name + N';
           END;
       ';
 
-BEGIN TRY;
-
-BEGIN TRANSACTION;
-
+BEGIN TRY
+/**/
+BEGIN TRANSACTION
+/**/
 RAISERROR (@sql_drop1, 0, 1)
 WITH
   NOWAIT;
@@ -113,8 +114,10 @@ EXEC (@sql_drop1);
 
 COMMIT;
 
-END TRY BEGIN CATCH;
-
+END TRY
+/**/
+BEGIN CATCH
+/**/
 ROLLBACK;
 
 SET
@@ -141,10 +144,10 @@ SET
         OPTION (MAXDOP 1);
       ';
 
-BEGIN TRY;
-
-BEGIN TRANSACTION;
-
+BEGIN TRY
+/**/
+BEGIN TRANSACTION
+/**/
 RAISERROR (@sql_selectinto, 0, 1)
 WITH
   NOWAIT;
@@ -153,8 +156,10 @@ EXEC (@sql_selectinto);
 
 COMMIT;
 
-END TRY BEGIN CATCH;
-
+END TRY
+/**/
+BEGIN CATCH
+/**/
 ROLLBACK;
 
 SET
@@ -175,18 +180,19 @@ END CATCH;
 /* truncate/insert into destination table */
 SET
   @sql_truncateinsert = N'
-        TRUNCATE TABLE ' + @destination_table_name + N';
-        INSERT INTO ' + @destination_table_name + N' WITH(TABLOCKX)
-        SELECT *
-        FROM ' + @temp_table_name + N';
-      ';
+    TRUNCATE TABLE ' + @destination_table_name + N';
+    INSERT INTO ' + @destination_table_name + N' WITH(TABLOCKX)
+    SELECT *
+    FROM ' + @temp_table_name + N';
+  ' -- noqa: L016
+;
 
-IF @@ROWCOUNT > 0 BEGIN;
-
-BEGIN TRY;
-
-BEGIN TRANSACTION;
-
+IF @@ROWCOUNT > 0 BEGIN
+/**/
+BEGIN TRY
+/**/
+BEGIN TRANSACTION
+/**/
 RAISERROR (@sql_truncateinsert, 0, 1)
 WITH
   NOWAIT;
@@ -195,8 +201,10 @@ EXEC (@sql_truncateinsert);
 
 COMMIT;
 
-END TRY BEGIN CATCH;
-
+END TRY
+/**/
+BEGIN CATCH
+/**/
 ROLLBACK;
 
 SET
@@ -220,15 +228,15 @@ END;
 SET
   @sql_drop2 = N'
         IF OBJECT_ID(N''' + @temp_table_name + N''') IS NOT NULL
-          BEGIN;
+          BEGIN
             DROP TABLE ' + @temp_table_name + N';
           END;
       ';
 
-BEGIN TRY;
-
-BEGIN TRANSACTION;
-
+BEGIN TRY
+/**/
+BEGIN TRANSACTION
+/**/
 RAISERROR (@sql_drop2, 0, 1)
 WITH
   NOWAIT;
@@ -237,8 +245,10 @@ EXEC (@sql_drop2);
 
 COMMIT;
 
-END TRY BEGIN CATCH;
-
+END TRY
+/**/
+BEGIN CATCH
+/**/
 ROLLBACK;
 
 SET

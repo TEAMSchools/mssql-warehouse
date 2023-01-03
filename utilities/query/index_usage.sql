@@ -3,19 +3,19 @@ SELECT
   OBJECT_SCHEMA_NAME(ix.[object_id]) AS [schema_name],
   OBJECT_NAME(ix.[object_id]) AS table_name,
   ix.[name] AS index_name,
-  ISNULL(ixus.user_seeks, 0) + ISNULL(ixus.user_scans, 0) + ISNULL(ixus.user_lookups, 0) AS total_reads,
+  ISNULL(ixus.user_seeks, 0) + ISNULL(ixus.user_scans, 0) + ISNULL(ixus.user_lookups, 0) AS total_reads, -- noqa: L016
   ISNULL(ixus.user_updates, 0) AS total_writes,
   CASE
     WHEN (
-      ISNULL(ixus.user_seeks, 0) + ISNULL(ixus.user_scans, 0) + ISNULL(ixus.user_lookups, 0) + ISNULL(ixus.user_updates, 0) = 0
+      ISNULL(ixus.user_seeks, 0) + ISNULL(ixus.user_scans, 0) + ISNULL(ixus.user_lookups, 0) + ISNULL(ixus.user_updates, 0) = 0 -- noqa: L016
     ) THEN 0
     ELSE CAST(
       (
-        ISNULL(ixus.user_seeks, 0) + ISNULL(ixus.user_scans, 0) + ISNULL(ixus.user_lookups, 0)
+        ISNULL(ixus.user_seeks, 0) + ISNULL(ixus.user_scans, 0) + ISNULL(ixus.user_lookups, 0) -- noqa: L016
       ) AS FLOAT
     ) / CAST(
       (
-        ISNULL(ixus.user_seeks, 0) + ISNULL(ixus.user_scans, 0) + ISNULL(ixus.user_lookups, 0) + ISNULL(ixus.user_updates, 0)
+        ISNULL(ixus.user_seeks, 0) + ISNULL(ixus.user_scans, 0) + ISNULL(ixus.user_lookups, 0) + ISNULL(ixus.user_updates, 0) -- noqa: L016
       ) AS FLOAT
     )
   END AS pct_reads,

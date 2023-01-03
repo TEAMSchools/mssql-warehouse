@@ -129,7 +129,7 @@ FROM
   LEFT JOIN kippmiami.powerschool.student_contacts_wide_static AS scw ON (
     s.student_number = scw.student_number
   )
-  LEFT JOIN kippmiami.powerschool.u_studentsuserfields AS suf ON (s.dcid = suf.studentsdcid)
+  LEFT JOIN kippmiami.powerschool.u_studentsuserfields AS suf ON (s.dcid = suf.studentsdcid) -- noqa: L016
   LEFT JOIN kippmiami.powerschool.cc ON (
     s.id = cc.studentid
     AND cc.course_number = 'HR'

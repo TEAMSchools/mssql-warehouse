@@ -127,35 +127,35 @@ WITH
     FROM
       (
         SELECT
-          Contact_c AS contact_id,
-          Date_c AS last_successful_contact_date,
-          DATEADD(MONTH, 12, Date_c) AS missing_start_date,
+          contact_c AS contact_id,
+          date_c AS last_successful_contact_date,
+          DATEADD(MONTH, 12, date_c) AS missing_start_date,
           COALESCE(
-            LEAD(Date_c, 1) OVER (
+            LEAD(date_c, 1) OVER (
               PARTITION BY
-                Contact_c
+                contact_c
               ORDER BY
-                Date_c ASC
+                date_c ASC
             ),
             CURRENT_TIMESTAMP
           ) AS found_date,
           CASE
-            WHEN LEAD(Date_c, 1) OVER (
+            WHEN LEAD(date_c, 1) OVER (
               PARTITION BY
-                Contact_c
+                contact_c
               ORDER BY
-                Date_c ASC
+                date_c ASC
             ) IS NULL THEN 1
           END AS is_still_missing,
           DATEDIFF(
             MONTH,
-            Date_c,
+            date_c,
             COALESCE(
-              LEAD(Date_c, 1) OVER (
+              LEAD(date_c, 1) OVER (
                 PARTITION BY
-                  Contact_c
+                  contact_c
                 ORDER BY
-                  Date_c
+                  date_c
               ),
               CURRENT_TIMESTAMP
             )
@@ -163,7 +163,7 @@ WITH
         FROM
           gabby.alumni.contact_note_c
         WHERE
-          Status_c = 'Successful'
+          status_c = 'Successful'
           AND is_deleted = 0
       ) AS sub
   ),
@@ -180,7 +180,8 @@ WITH
     FROM
       gabby.alumni.contact_history
     WHERE
-      field = 'Owner' ANDcreated_date >= DATEFROMPARTS(
+      field = 'Owner'
+      AND created_date >= DATEFROMPARTS(
         gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
         07,
         01
@@ -217,7 +218,7 @@ WITH
             END,
             'ALL'
           ) AS school_type,
-          COUNT(a.id) AS N
+          COUNT(a.id) AS n
         FROM
           gabby.alumni.application_c AS a
           INNER JOIN gabby.alumni.account AS s ON a.school_c = s.id
@@ -244,7 +245,7 @@ WITH
             END
           )
       ) AS sub PIVOT (
-        MAX(N) FOR school_type IN (
+        MAX(n) FOR school_type IN (
           [4YR],
           [2YR],
           [4YR_T],
@@ -256,9 +257,9 @@ WITH
 SELECT
   c.sf_contact_id AS contact_id,
   c.student_number,
-  CONCAT(c.first_name, ' ', c.last_name) AS Full_Name_c,
-  c.first_name AS FirstName,
-  c.last_name AS LastName,
+  CONCAT(c.first_name, ' ', c.last_name) AS full_name_c,
+  c.first_name AS firstname,
+  c.last_name AS lastname,
   c.ktc_cohort AS kipp_hs_class_c,
   c.years_out_of_hs,
   c.college_status AS college_status_c,
@@ -328,18 +329,18 @@ SELECT
   e.ugrad_billing_state AS billing_state,
   e.ugrad_ncesid AS ncesid_c,
   e.ugrad_date_last_verified AS date_last_verified_c,
-  cn.[AAS1F],
-  cn.[AAS2F],
-  cn.[AAS1S],
-  cn.[AAS2S],
-  cn.[PSCF],
-  cn.[PSCS],
-  cn.[BBBF],
-  cn.[BBBS],
-  cn.[BMF],
-  cn.[BMS],
-  cn.[GPF],
-  cn.[GPS],
+  -- cn.[AAS1F],
+  -- cn.[AAS2F],
+  -- cn.[AAS1S],
+  -- cn.[AAS2S],
+  -- cn.[PSCF],
+  -- cn.[PSCS],
+  -- cn.[BBBF],
+  -- cn.[BBBS],
+  -- cn.[BMF],
+  -- cn.[BMS],
+  -- cn.[GPF],
+  -- cn.[GPS],
   gpa.fall_academic_status,
   gpa.spring_academic_status,
   gpa.prev_spring_academic_status,
@@ -369,11 +370,11 @@ SELECT
   END AS transcript_collected_mp2,
   s.stipend_status_fall,
   s.stipend_status_spr,
-  app.[2YR] AS N_2YR_apps,
-  app.[4YR] AS N_4YR_apps,
-  app.[2YR_T] AS N_2YR_transfer_apps,
-  app.[4YR_T] AS N_4YR_transfer_apps,
-  app.[ALL] AS N_apps_all,
+  app.[2YR] AS n_2yr_apps,
+  app.[4YR] AS n_4yr_apps,
+  app.[2YR_T] AS n_2yr_transfer_apps,
+  app.[4YR_T] AS n_4yr_transfer_apps,
+  app.[ALL] AS n_apps_all,
   nye.pursuing_degree_type_c AS next_year_pursuing_degree_type
 FROM
   gabby.alumni.ktc_roster AS c

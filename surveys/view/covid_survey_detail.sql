@@ -105,7 +105,7 @@ SELECT
   e.is_other,
   CASE
   /* trunk-ignore(sqlfluff/L016) */
-    WHEN e.is_asian + e.is_black + e.is_caucasian + e.is_hispanic + e.is_nativeamerican + e.is_pacificislander + e.is_other > 1 THEN 1
+    WHEN e.is_asian + e.is_black + e.is_caucasian + e.is_hispanic + e.is_nativeamerican + e.is_pacificislander + e.is_other > 1 THEN 1 -- noqa: L016
     ELSE 0
   END AS is_multiracial
 FROM

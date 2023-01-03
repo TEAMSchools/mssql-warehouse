@@ -260,7 +260,7 @@ FROM
     resp.position_id = reh.position_id
     AND (
       /* trunk-ignore(sqlfluff/L016) */
-      CAST(sc.link_close_date AS DATE) BETWEEN reh.effective_start_date AND reh.effective_end_date
+      CAST(sc.link_close_date AS DATE) BETWEEN reh.effective_start_date AND reh.effective_end_date -- noqa: L016
     )
   )
   LEFT JOIN gabby.people.staff_crosswalk_static AS rmgr ON (
@@ -274,7 +274,7 @@ FROM
     subj.position_id = seh.position_id
     AND (
       /* trunk-ignore(sqlfluff/L016) */
-      CAST(sc.link_close_date AS DATE) BETWEEN seh.effective_start_date AND seh.effective_end_date
+      CAST(sc.link_close_date AS DATE) BETWEEN seh.effective_start_date AND seh.effective_end_date -- noqa: L016
     )
   )
   LEFT JOIN gabby.people.staff_crosswalk_static AS smgr ON (

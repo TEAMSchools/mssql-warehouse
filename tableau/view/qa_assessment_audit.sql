@@ -7,7 +7,7 @@ WITH
       gabby.dbo.GROUP_CONCAT_D (s.custom_code, '; ') AS standard_codes
     FROM
       gabby.illuminate_dna_assessments.field_standards AS fs
-      INNER JOIN gabby.illuminate_standards.standards AS s ON (fs.standard_id = s.standard_id)
+      INNER JOIN gabby.illuminate_standards.standards AS s ON (fs.standard_id = s.standard_id) -- noqa: L016
     GROUP BY
       fs.field_id
   )

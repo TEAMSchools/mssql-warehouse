@@ -1,4 +1,4 @@
-CREATE
+CREATE -- noqa: PRS
 OR ALTER
 PROCEDURE adsi.group_membership_merge AS
 /**/

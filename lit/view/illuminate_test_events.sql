@@ -142,7 +142,7 @@ SELECT
       AND cd.within_the_text IS NULL
     ) THEN NULL
     /* trunk-ignore(sqlfluff/L016) */
-    ELSE ISNULL(cd.within_the_text, 0) + ISNULL(cd.about_the_text, 0) + ISNULL(cd.beyond_the_text, 0)
+    ELSE ISNULL(cd.within_the_text, 0) + ISNULL(cd.about_the_text, 0) + ISNULL(cd.beyond_the_text, 0) -- noqa: L016
   END AS comp_overall,
   achv.gleq,
   CAST(achv.lvl_num AS INT) AS gleq_lvl_num,

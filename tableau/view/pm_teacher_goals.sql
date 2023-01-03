@@ -191,11 +191,11 @@ WITH
   ),
   etr AS (
     SELECT
-      etr_long.df_employee_number,
-      etr_long.academic_year,
-      etr_long.time_per_name,
-      etr_long.metric_name,
-      etr_long.metric_value
+      df_employee_number,
+      academic_year,
+      time_per_name,
+      metric_name,
+      metric_value
     FROM
       etr_long
     WHERE
@@ -236,7 +236,9 @@ WITH
       so.reporting_term,
       REPLACE(so.reporting_term, 'SO', 'PM') AS pm_term,
       'so_survey_overall_score' AS metric_name,
-      SUM(so.total_weighted_response_value) / SUM(so.total_response_weight) AS metric_value
+      (
+        SUM(so.total_weighted_response_value) / SUM(so.total_response_weight)
+      ) AS metric_value
     FROM
       gabby.surveys.self_and_others_survey_rollup_static AS so
       LEFT JOIN gabby.pm.teacher_goals_exemption_clean_static AS ex ON (
@@ -290,12 +292,12 @@ WITH
   ),
   act AS (
     SELECT
-      u.academic_year,
-      u.schoolid,
-      u.grade_level,
-      u.reporting_term,
-      u.metric_name,
-      u.metric_value
+      academic_year,
+      schoolid,
+      grade_level,
+      reporting_term,
+      metric_name,
+      metric_value
     FROM
       (
         SELECT
@@ -420,11 +422,11 @@ WITH
       etr
     UNION ALL
     SELECT
-      so.academic_year,
-      so.subject_employee_number AS df_employee_number,
-      so.reporting_term,
-      so.metric_name,
-      so.metric_value
+      academic_year,
+      subject_employee_number AS df_employee_number,
+      reporting_term,
+      metric_name,
+      metric_value
     FROM
       so_survey
   ),

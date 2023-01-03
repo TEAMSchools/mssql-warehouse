@@ -40,7 +40,7 @@ SELECT
   cf.[HI end date]
 FROM
   gabby.deanslist.incidents_clean_static AS dli
-  LEFT JOIN gabby.deanslist.incidents_custom_fields_wide AS cf ON dli.incident_id = cf.incident_id
+  LEFT JOIN gabby.deanslist.incidents_custom_fields_wide AS cf ON dli.incident_id = cf.incident_id -- noqa: L016
   LEFT JOIN gabby.deanslist.users AS u ON (
     u.dluser_id = cf.[Approver name]
     AND u.[db_name] = cf.[db_name]

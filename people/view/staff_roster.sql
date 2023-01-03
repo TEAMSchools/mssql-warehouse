@@ -35,7 +35,7 @@ WITH
     WHERE
       (
         /* trunk-ignore(sqlfluff/L016) */
-        CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN eh.effective_start_date AND eh.effective_end_date
+        CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN eh.effective_start_date AND eh.effective_end_date -- noqa: L016
       )
     UNION ALL
     /* prestart */
@@ -275,7 +275,7 @@ WITH
               WHERE
                 (
                   /* trunk-ignore(sqlfluff/L016) */
-                  CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN reports_to_effective_date AND reports_to_effective_end_date_eoy
+                  CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN reports_to_effective_date AND reports_to_effective_end_date_eoy -- noqa: L016
                 )
             ) THEN 1
             ELSE 0
@@ -423,7 +423,7 @@ WITH
             eh.associate_id = rh.associate_id
           )
           /* trunk-ignore(sqlfluff/L016) */
-          LEFT JOIN gabby.adp.workers_custom_field_group_wide_static AS cf ON (eh.associate_id = cf.worker_id)
+          LEFT JOIN gabby.adp.workers_custom_field_group_wide_static AS cf ON (eh.associate_id = cf.worker_id) -- noqa: L016
           LEFT JOIN gabby.people.id_crosswalk_adp AS cw ON (
             eh.employee_number = cw.df_employee_number
             AND cw.rn_curr = 1

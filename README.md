@@ -44,5 +44,5 @@
 
 ## Troubleshooting Linter Errors
 
-- `L016`
-- `Found unparsable section: ...`
+- `Line is too long [L016]`
+- `Found unparsable section: ... [PRS]`

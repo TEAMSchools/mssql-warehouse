@@ -55,7 +55,7 @@ FROM
     AND d.identifier = 'RT'
     AND d._fivetran_deleted = 0
   )
-  LEFT JOIN gabby.deanslist.incidents_custom_fields_wide AS cf ON (dli.incident_id = cf.incident_id)
+  LEFT JOIN gabby.deanslist.incidents_custom_fields_wide AS cf ON (dli.incident_id = cf.incident_id) -- noqa: L016
 WHERE
   co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
   AND co.rn_year = 1
