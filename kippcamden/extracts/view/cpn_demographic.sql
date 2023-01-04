@@ -38,11 +38,11 @@ SELECT
     ELSE 'Y'
   END AS [Low Income]
 FROM
-  kippcamden.powerschool.cohort_identifiers_static AS co
-  LEFT JOIN kippcamden.powerschool.studentcorefields AS scf ON (
+  powerschool.cohort_identifiers_static AS co
+  LEFT JOIN powerschool.studentcorefields AS scf ON (
     co.students_dcid = scf.studentsdcid
   )
-  LEFT JOIN kippcamden.powerschool.students AS s ON (co.studentid = s.id)
+  LEFT JOIN powerschool.students AS s ON (co.studentid = s.id)
 WHERE
   co.rn_year = 1
   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()

@@ -10,6 +10,6 @@ SELECT
   membershipvalue,
   is_present AS attendancevalue
 FROM
-  kippcamden.tableau.attendance_dashboard
+  tableau.attendance_dashboard
 WHERE
   academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()

@@ -6,7 +6,7 @@ SELECT
   s.grade_level,
   s.lastfirst,
   s.home_phone,
-  'kippmiami' AS [db_name],
+  DB_NAME() AS [db_name],
   scw.contact_1_name AS mother,
   scw.contact_1_phone_mobile AS mother_cell,
   scw.contact_2_name AS father,
@@ -125,12 +125,12 @@ SELECT
   code.att_code,
   SYSDATETIME() AS systimestamp
 FROM
-  kippmiami.powerschool.students AS s
-  LEFT JOIN kippmiami.powerschool.student_contacts_wide_static AS scw ON (
+  powerschool.students AS s
+  LEFT JOIN powerschool.student_contacts_wide_static AS scw ON (
     s.student_number = scw.student_number
   )
-  LEFT JOIN kippmiami.powerschool.u_studentsuserfields AS suf ON (s.dcid = suf.studentsdcid) -- noqa: L016
-  LEFT JOIN kippmiami.powerschool.cc ON (
+  LEFT JOIN powerschool.u_studentsuserfields AS suf ON (s.dcid = suf.studentsdcid)
+  LEFT JOIN powerschool.cc ON (
     s.id = cc.studentid
     AND cc.course_number = 'HR'
     AND (
@@ -142,17 +142,17 @@ FROM
       END BETWEEN cc.dateenrolled AND cc.dateleft
     )
   )
-  LEFT JOIN kippmiami.powerschool.[log] ON (
+  LEFT JOIN powerschool.[log] ON (
     s.id = [log].studentid
     AND [log].logtypeid = 1582
     AND [log].discipline_incidentdate = CAST(CURRENT_TIMESTAMP AS DATE)
   )
-  LEFT JOIN kippmiami.powerschool.attendance_clean_current_static AS att ON (
+  LEFT JOIN powerschool.attendance_clean_current_static AS att ON (
     s.id = att.studentid
     AND att.att_mode_code = 'ATT_ModeDaily'
     AND CAST(att.att_date AS DATE) = CAST(CURRENT_TIMESTAMP AS DATE)
   )
-  LEFT JOIN kippmiami.powerschool.attendance_code AS code ON (
+  LEFT JOIN powerschool.attendance_code AS code ON (
     att.attendance_codeid = code.id
     AND (
       code.att_code LIKE 'A%'
