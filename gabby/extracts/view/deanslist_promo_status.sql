@@ -21,10 +21,7 @@ FROM
   LEFT JOIN gabby.powerschool.gpa_detail AS gpa ON (
     ps.student_number = gpa.student_number
     AND ps.academic_year = gpa.academic_year
-    AND (
-      ps.alt_name = gpa.term_name
-      COLLATE LATIN1_GENERAL_BIN
-    )
+    AND ps.alt_name = gpa.term_name
   )
   LEFT JOIN gabby.powerschool.gpa_cumulative AS cum ON (
     ps.studentid = cum.studentid

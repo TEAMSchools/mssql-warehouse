@@ -3,10 +3,7 @@ CREATE OR ALTER VIEW
 WITH
   dsos AS (
     SELECT
-      (
-        df.ps_teachernumber
-        COLLATE LATIN1_GENERAL_BIN
-      ) AS [Teacher_id],
+      df.ps_teachernumber AS [Teacher_id],
       COALESCE(
         ccw.ps_school_id,
         df.primary_site_schoolid
@@ -109,15 +106,9 @@ WITH
         s.abbreviation,
         r.n
       ) AS [Period],
-      CONCAT(
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990,
-        dsos.[School_id],
-        RIGHT(CONCAT(0, r.n), 2)
-      ) AS [Section_id],
       1 AS sortorder,
       dsos.[Teacher_id],
       'Enroll' AS [Course_name],
-      'Homeroom/advisory' AS [Subject],
       CONCAT(
         RIGHT(
           gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
@@ -129,6 +120,12 @@ WITH
           2
         )
       ) AS [Term_name],
+      NULL AS [Name],
+      CASE
+        WHEN r.n = 0 THEN 'Kindergarten'
+        ELSE CAST(r.n AS VARCHAR(5))
+      END AS [Grade],
+      NULL AS [Course_description],
       CONVERT(
         VARCHAR,
         DATEFROMPARTS(
@@ -147,12 +144,12 @@ WITH
         ),
         101
       ) AS [Term_end],
-      NULL AS [Name],
-      CASE
-        WHEN r.n = 0 THEN 'Kindergarten'
-        ELSE CAST(r.n AS VARCHAR(5))
-      END AS [Grade],
-      NULL AS [Course_description]
+      CONCAT(
+        gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990,
+        dsos.[School_id],
+        RIGHT(CONCAT(0, r.n), 2)
+      ) AS [Section_id],
+      'Homeroom/advisory' AS [Subject]
     FROM
       dsos
       INNER JOIN gabby.powerschool.schools AS s ON (

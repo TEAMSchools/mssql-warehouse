@@ -23,10 +23,7 @@ WITH
         AND sc._fivetran_deleted = 0
       )
       INNER JOIN gabby.powerschool.users AS u ON (
-        (
-          scw.ps_teachernumber = u.teachernumber
-          COLLATE LATIN1_GENERAL_BIN
-        )
+        scw.ps_teachernumber = u.teachernumber
         AND scw.primary_site_schoolid = u.homeschoolid
         AND CASE
           WHEN sc.region = 'TEAM Academy Charter School' THEN 'kippnewark'
@@ -70,10 +67,7 @@ WITH
         AND sc._fivetran_deleted = 0
       )
       LEFT JOIN gabby.powerschool.users AS u ON (
-        (
-          scw.ps_teachernumber = u.teachernumber
-          COLLATE LATIN1_GENERAL_BIN
-        )
+        scw.ps_teachernumber = u.teachernumber
         AND CASE
           WHEN sc.region = 'TEAM Academy Charter School' THEN 'kippnewark'
           WHEN sc.region = 'KIPP Cooper Norcross Academy' THEN 'kippcamden'

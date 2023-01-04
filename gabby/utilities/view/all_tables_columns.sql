@@ -3,15 +3,15 @@ CREATE OR ALTER VIEW
 SELECT
   (
     DB_NAME()
-    COLLATE LATIN1_GENERAL_BIN
+    COLLATE SQL_Latin1_General_CP1_CI_AS
   ) AS [db_name],
   (
     s.[name]
-    COLLATE LATIN1_GENERAL_BIN
+    COLLATE SQL_Latin1_General_CP1_CI_AS
   ) AS [schema_name],
   (
     t.[name]
-    COLLATE LATIN1_GENERAL_BIN
+    COLLATE SQL_Latin1_General_CP1_CI_AS
   ) AS table_name,
   t.[type],
   -1 AS column_id,
@@ -37,12 +37,12 @@ SELECT
   c.column_id,
   (
     c.[name]
-    COLLATE LATIN1_GENERAL_BIN
+    COLLATE SQL_Latin1_General_CP1_CI_AS
   ) AS column_name,
   c.max_length AS column_max_length,
   (
     y.[name]
-    COLLATE LATIN1_GENERAL_BIN
+    COLLATE SQL_Latin1_General_CP1_CI_AS
   ) AS column_type
 FROM
   sys.schemas AS s

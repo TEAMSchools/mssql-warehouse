@@ -136,20 +136,11 @@ FROM
         YEAR,
         c.actual_hs_graduation_date_c
       ) AS years_out_of_hs,
-      (
-        COALESCE(c.first_name, co.first_name)
-        COLLATE LATIN1_GENERAL_BIN
-      ) AS first_name,
-      (
-        COALESCE(c.last_name, co.last_name)
-        COLLATE LATIN1_GENERAL_BIN
-      ) AS last_name,
-      (
-        COALESCE(
-          c.last_name + ', ' + c.first_name,
-          co.lastfirst
-        )
-        COLLATE LATIN1_GENERAL_BIN
+      COALESCE(c.first_name, co.first_name) AS first_name,
+      COALESCE(c.last_name, co.last_name) AS last_name,
+      COALESCE(
+        c.last_name + ', ' + c.first_name,
+        co.lastfirst
       ) AS lastfirst,
       CASE
         WHEN co.enroll_status = 0 THEN CONCAT(co.school_level, co.grade_level)

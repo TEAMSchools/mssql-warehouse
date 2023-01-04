@@ -20,10 +20,7 @@ FROM
   illuminate_dna_repositories.fields AS f
   INNER JOIN gabby.utilities.all_tables_columns AS atc ON (
     CONCAT('repository_', f.repository_id) = atc.table_name
-    AND (
-      f.[name] = atc.column_name
-      COLLATE LATIN1_GENERAL_BIN
-    )
+    AND f.[name] = atc.column_name
     AND atc.[schema_name] = 'illuminate_dna_repositories'
   )
 WHERE

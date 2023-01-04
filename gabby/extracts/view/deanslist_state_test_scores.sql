@@ -33,10 +33,7 @@ FROM
         WHEN parcc.[subject] = 'English Language Arts/Literacy' THEN 'ELA'
         ELSE 'Math'
       END AS [subject],
-      (
-        parcc.[subject]
-        COLLATE LATIN1_GENERAL_BIN
-      ) AS test_name,
+      parcc.[subject] AS test_name,
       parcc.test_scale_score AS scale_score,
       CASE
         WHEN parcc.test_performance_level = 5 THEN 'Exceeded Expectations'

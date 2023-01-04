@@ -46,7 +46,6 @@ FROM
   )
   INNER JOIN gabby.people.staff_crosswalk_static AS scw ON (
     t.teachernumber = scw.ps_teachernumber
-    COLLATE LATIN1_GENERAL_BIN
   )
 WHERE
   sec.no_of_students > 0

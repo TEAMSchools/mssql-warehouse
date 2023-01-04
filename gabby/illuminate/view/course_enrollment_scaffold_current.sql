@@ -20,10 +20,7 @@ WITH
       co.grade_level + 1 AS grade_level_id,
       si.credittype,
       ils.student_id,
-      (
-        ns.illuminate_subject
-        COLLATE LATIN1_GENERAL_BIN
-      ) AS subject_area,
+      ns.illuminate_subject AS subject_area,
       CASE
         WHEN ns.illuminate_subject IN (
           'Algebra I',
@@ -52,7 +49,6 @@ WITH
       )
       INNER JOIN gabby.assessments.normed_subjects AS ns ON (
         cc.course_number = ns.course_number
-        COLLATE LATIN1_GENERAL_BIN
       )
     WHERE
       cc.dateenrolled >= DATEFROMPARTS(
@@ -70,10 +66,7 @@ WITH
       co.grade_level + 1 AS grade_level_id,
       'RHET' AS credittype,
       ils.student_id,
-      (
-        'Writing'
-        COLLATE LATIN1_GENERAL_BIN
-      ) AS subject_area,
+      'Writing' AS subject_area,
       0 AS is_advanced_math
     FROM
       gabby.powerschool.cohort_static AS co

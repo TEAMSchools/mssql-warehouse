@@ -30,7 +30,6 @@ FROM
   )
   INNER JOIN gabby.people.staff_crosswalk_static AS scw ON (
     t.teachernumber = scw.ps_teachernumber
-    COLLATE LATIN1_GENERAL_BIN
   )
   INNER JOIN gabby.powerschool.schools AS sch ON (
     sec.schoolid = sch.school_number
