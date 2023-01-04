@@ -1,6 +1,6 @@
 version: 0.1
 cli:
-  version: 1.3.0
+  version: 1.3.1
 plugins:
   sources:
     - id: trunk
@@ -53,8 +53,9 @@ runtimes:
     - go@1.18.3
     - node@16.14.2
 actions:
+  disabled:
+    - trunk-check-pre-push
   enabled:
     - trunk-announce
-    - trunk-check-pre-push
     - trunk-fmt-pre-commit
     - trunk-upgrade-available
