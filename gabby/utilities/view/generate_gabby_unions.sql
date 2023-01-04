@@ -195,13 +195,28 @@ SELECT
       sub.[schema_name] + '.',
       sub.table_name + ' AS ',
       CASE
-        WHEN (sub.kippnewark_count > 0) THEN sub.kippnewark
+        WHEN sub.kippnewark_count > 0 THEN sub.kippnewark
       END,
       CASE
-        WHEN (sub.kippcamden_count > 0) THEN ' UNION ALL ' + sub.kippcamden
+        WHEN (
+          sub.kippnewark_count > 0
+          AND sub.kippcamden_count > 0
+        ) THEN ' UNION ALL '
       END,
       CASE
-        WHEN (sub.kippmiami_count > 0) THEN ' UNION ALL ' + sub.kippmiami
+        WHEN sub.kippcamden_count > 0 THEN sub.kippcamden
+      END,
+      CASE
+        WHEN (
+          sub.kippmiami_count > 0
+          AND (
+            sub.kippnewark_count > 0
+            OR sub.kippcamden_count > 0
+          )
+        ) THEN ' UNION ALL '
+      END,
+      CASE
+        WHEN sub.kippmiami_count > 0 THEN sub.kippmiami
       END,
       ';'
     )
