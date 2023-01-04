@@ -24,7 +24,6 @@ FROM
   )
   INNER JOIN gabby.people.staff_crosswalk_static AS scw ON (
     enr.teachernumber = scw.ps_teachernumber
-    COLLATE LATIN1_GENERAL_BIN
   )
 WHERE
   enr.course_number = 'HR'

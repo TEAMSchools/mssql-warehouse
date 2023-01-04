@@ -87,14 +87,14 @@ WITH
           'CAST(',
           '[' + column_name + '] ',
           'AS NVARCHAR) ',
-          'COLLATE LATIN1_GENERAL_BIN ',
+          'COLLATE SQL_Latin1_General_CP1_CI_AS ',
           'AS [' + column_name + ']'
         )
         WHEN (
           column_type_concat LIKE '%varchar%'
         ) THEN CONCAT(
           '[' + column_name + '] ',
-          'COLLATE LATIN1_GENERAL_BIN ',
+          'COLLATE SQL_Latin1_General_CP1_CI_AS ',
           'AS [' + column_name + ']'
         )
         WHEN (
@@ -119,14 +119,14 @@ WITH
           'CAST(',
           '[' + column_name + '] ',
           'AS NVARCHAR) ',
-          'COLLATE LATIN1_GENERAL_BIN ',
+          'COLLATE SQL_Latin1_General_CP1_CI_AS ',
           'AS [' + column_name + ']'
         )
         WHEN (
           column_type_concat LIKE '%varchar%'
         ) THEN CONCAT(
           '[' + column_name + '] ',
-          'COLLATE LATIN1_GENERAL_BIN ',
+          'COLLATE SQL_Latin1_General_CP1_CI_AS ',
           'AS [' + column_name + ']'
         )
         WHEN (
@@ -151,14 +151,14 @@ WITH
           'CAST(',
           '[' + column_name + '] ',
           'AS NVARCHAR) ',
-          'COLLATE LATIN1_GENERAL_BIN ',
+          'COLLATE SQL_Latin1_General_CP1_CI_AS ',
           'AS [' + column_name + ']'
         )
         WHEN (
           column_type_concat LIKE '%varchar%'
         ) THEN CONCAT(
           '[' + column_name + '] ',
-          'COLLATE LATIN1_GENERAL_BIN ',
+          'COLLATE SQL_Latin1_General_CP1_CI_AS ',
           'AS [' + column_name + ']'
         )
         WHEN (
