@@ -77,46 +77,58 @@ WITH
       SUM(is_submitted) AS n_submitted,
       MAX(
         CASE
-          WHEN is_submitted = 1
-          AND is_college = 1
-          AND is_2yr = 1 THEN 1
+          WHEN (
+            is_submitted = 1
+            AND is_college = 1
+            AND is_2yr = 1
+          ) THEN 1
         END
       ) AS is_submitted_aa,
       MAX(
         CASE
-          WHEN is_submitted = 1
-          AND is_college = 1
-          AND is_4yr = 1 THEN 1
+          WHEN (
+            is_submitted = 1
+            AND is_college = 1
+            AND is_4yr = 1
+          ) THEN 1
         END
       ) AS is_submitted_ba,
       MAX(
         CASE
-          WHEN is_submitted = 1
-          AND is_cert = 1 THEN 1
+          WHEN (
+            is_submitted = 1
+            AND is_cert = 1
+          ) THEN 1
         END
       ) AS is_submitted_cert,
       SUM(is_accepted) AS n_accepted,
       MAX(
         CASE
-          WHEN is_submitted = 1
-          AND is_college = 1
-          AND is_2yr = 1
-          AND is_accepted = 1 THEN 1
+          WHEN (
+            is_submitted = 1
+            AND is_college = 1
+            AND is_2yr = 1
+            AND is_accepted = 1
+          ) THEN 1
         END
       ) AS is_accepted_aa,
       MAX(
         CASE
-          WHEN is_submitted = 1
-          AND is_college = 1
-          AND is_4yr = 1
-          AND is_accepted = 1 THEN 1
+          WHEN (
+            is_submitted = 1
+            AND is_college = 1
+            AND is_4yr = 1
+            AND is_accepted = 1
+          ) THEN 1
         END
       ) AS is_accepted_ba,
       MAX(
         CASE
-          WHEN is_submitted = 1
-          AND is_cert = 1
-          AND is_accepted = 1 THEN 1
+          WHEN (
+            is_submitted = 1
+            AND is_cert = 1
+            AND is_accepted = 1
+          ) THEN 1
         END
       ) AS is_accepted_cert
     FROM

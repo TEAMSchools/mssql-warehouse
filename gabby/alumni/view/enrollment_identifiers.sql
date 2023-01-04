@@ -6,51 +6,67 @@ WITH
       sub.student_c,
       MAX(
         CASE
-          WHEN sub.pursuing_degree_level = 'BA'
-          AND sub.rn_degree_desc = 1 THEN sub.enrollment_id
+          WHEN (
+            sub.pursuing_degree_level = 'BA'
+            AND sub.rn_degree_desc = 1
+          ) THEN sub.enrollment_id
         END
       ) AS ba_enrollment_id,
       MAX(
         CASE
-          WHEN sub.pursuing_degree_level = 'AA'
-          AND sub.rn_degree_desc = 1 THEN sub.enrollment_id
+          WHEN (
+            sub.pursuing_degree_level = 'AA'
+            AND sub.rn_degree_desc = 1
+          ) THEN sub.enrollment_id
         END
       ) AS aa_enrollment_id,
       MAX(
         CASE
-          WHEN sub.pursuing_degree_level = 'Vocational'
-          AND sub.rn_degree_desc = 1 THEN sub.enrollment_id
+          WHEN (
+            sub.pursuing_degree_level = 'Vocational'
+            AND sub.rn_degree_desc = 1
+          ) THEN sub.enrollment_id
         END
       ) AS vocational_enrollment_id,
       MAX(
         CASE
-          WHEN sub.pursuing_degree_level = 'Secondary'
-          AND sub.rn_degree_desc = 1 THEN sub.enrollment_id
+          WHEN (
+            sub.pursuing_degree_level = 'Secondary'
+            AND sub.rn_degree_desc = 1
+          ) THEN sub.enrollment_id
         END
       ) AS secondary_enrollment_id,
       MAX(
         CASE
-          WHEN sub.pursuing_degree_level = 'Graduate'
-          AND sub.rn_degree_desc = 1 THEN sub.enrollment_id
+          WHEN (
+            sub.pursuing_degree_level = 'Graduate'
+            AND sub.rn_degree_desc = 1
+          ) THEN sub.enrollment_id
         END
       ) AS graduate_enrollment_id,
       MAX(
         CASE
-          WHEN sub.pursuing_degree_level = 'Employment'
-          AND sub.rn_degree_desc = 1 THEN sub.enrollment_id
+          WHEN (
+            sub.pursuing_degree_level = 'Employment'
+            AND sub.rn_degree_desc = 1
+          ) THEN sub.enrollment_id
         END
       ) AS employment_enrollment_id,
       MAX(
         CASE
-          WHEN sub.is_ecc_degree_type = 1
-          AND sub.is_ecc_dated = 1
-          AND sub.rn_ecc_asc = 1 THEN sub.enrollment_id
+          WHEN (
+            sub.is_ecc_degree_type = 1
+            AND sub.is_ecc_dated = 1
+            AND sub.rn_ecc_asc = 1
+          ) THEN sub.enrollment_id
         END
       ) AS ecc_enrollment_id,
       MAX(
         CASE
-          WHEN sub.rn_current = 1
-          AND sub.is_employment = 0 THEN sub.enrollment_id
+          WHEN (
+            sub.rn_current = 1
+            AND sub.is_employment = 0
+          ) THEN sub.enrollment_id
         END
       ) AS curr_enrollment_id
     FROM
@@ -118,11 +134,13 @@ WITH
                   e.pursuing_degree_type_c IN ('High School Diploma', 'GED')
                 ) THEN 'Secondary'
                 WHEN e.pursuing_degree_type_c = 'Elementary Certificate' THEN 'Primary'
-                WHEN e.pursuing_degree_type_c = 'Certificate'
-                AND ISNULL(e.account_type_c, '') NOT IN (
-                  'Traditional Public School',
-                  'Alternative High School',
-                  'KIPP School'
+                WHEN (
+                  e.pursuing_degree_type_c = 'Certificate'
+                  AND ISNULL(e.account_type_c, '') NOT IN (
+                    'Traditional Public School',
+                    'Alternative High School',
+                    'KIPP School'
+                  )
                 ) THEN 'Vocational'
               END AS pursuing_degree_level,
               CASE

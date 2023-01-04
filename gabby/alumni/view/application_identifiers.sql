@@ -25,13 +25,17 @@ SELECT
   sub.application_pursuing_degree_type,
   sub.enrollment_start_date,
   CASE
-    WHEN sub.type_for_roll_ups = 'College'
-    AND sub.application_account_type LIKE '%4 yr' THEN 1
+    WHEN (
+      sub.type_for_roll_ups = 'College'
+      AND sub.application_account_type LIKE '%4 yr'
+    ) THEN 1
     ELSE 0
   END AS is_4yr_college,
   CASE
-    WHEN sub.type_for_roll_ups = 'College'
-    AND sub.application_account_type LIKE '%2 yr' THEN 1
+    WHEN (
+      sub.type_for_roll_ups = 'College'
+      AND sub.application_account_type LIKE '%2 yr'
+    ) THEN 1
     ELSE 0
   END AS is_2yr_college,
   CASE
@@ -67,13 +71,17 @@ SELECT
     ELSE 0
   END AS is_wishlist,
   CASE
-    WHEN sub.honors_special_program_name = 'EOF'
-    AND sub.honors_special_program_status IN ('Applied', 'Accepted') THEN 1
+    WHEN (
+      sub.honors_special_program_name = 'EOF'
+      AND sub.honors_special_program_status IN ('Applied', 'Accepted')
+    ) THEN 1
     ELSE 0
   END AS is_eof_applied,
   CASE
-    WHEN sub.honors_special_program_name = 'EOF'
-    AND sub.honors_special_program_status = 'Accepted' THEN 1
+    WHEN (
+      sub.honors_special_program_name = 'EOF'
+      AND sub.honors_special_program_status = 'Accepted'
+    ) THEN 1
     ELSE 0
   END AS is_eof_accepted
 FROM
