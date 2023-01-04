@@ -1,4 +1,4 @@
-# gabby
+# mssql-warehouse
 
 ## General Rules & Guidelines
 
