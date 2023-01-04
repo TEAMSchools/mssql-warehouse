@@ -1,7 +1,75 @@
 CREATE OR ALTER VIEW
   utilities.generate_gabby_unions AS
 WITH
-  all_tables_columns_pivot AS (
+  atc AS (
+    SELECT
+      [db_name],
+      [schema_name],
+      table_name,
+      column_name,
+      column_type
+    FROM
+      utilities.all_tables_columns
+    WHERE
+      [db_name] IN (
+        'kippnewark',
+        'kippcamden',
+        'kippmiami'
+      )
+      AND column_id > -1
+      AND table_name NOT IN ('all_tables_columns')
+      AND table_name NOT LIKE 'fivetran%'
+      AND [schema_name] != 'fivetran_log'
+  ),
+  atc_pivot AS (
+    SELECT
+      [schema_name],
+      table_name,
+      column_name,
+      kippmiami AS kippmiami_column_type,
+      kippcamden AS kippcamden_column_type,
+      kippnewark AS kippnewark_column_type,
+      CONCAT(
+        kippnewark,
+        kippcamden,
+        kippmiami
+      ) AS column_type_concat,
+      CASE
+        WHEN (
+          (
+            CONCAT(kippcamden, kippnewark) != ''
+            AND CHARINDEX(
+              kippmiami,
+              CONCAT(kippcamden, kippnewark)
+            ) = 0
+          )
+          OR (
+            CONCAT(kippmiami, kippnewark) != ''
+            AND CHARINDEX(
+              kippcamden,
+              CONCAT(kippmiami, kippnewark)
+            ) = 0
+          )
+          OR (
+            CONCAT(kippmiami, kippcamden) != ''
+            AND CHARINDEX(
+              kippnewark,
+              CONCAT(kippmiami, kippcamden)
+            ) = 0
+          )
+        ) THEN 1
+        ELSE 0
+      END AS column_type_mismatch
+    FROM
+      atc PIVOT (
+        MAX(column_type) FOR [db_name] IN (
+          kippnewark,
+          kippcamden,
+          kippmiami
+        )
+      ) AS p
+  ),
+  cols AS (
     SELECT
       [schema_name],
       table_name,
@@ -15,7 +83,20 @@ WITH
         WHEN (
           column_type_mismatch = 1
           AND column_type_concat LIKE '%varchar%'
-        ) THEN 'CAST([' + column_name + '] AS NVARCHAR) AS [' + column_name + ']'
+        ) THEN CONCAT(
+          'CAST(',
+          '[' + column_name + '] ',
+          'AS NVARCHAR) ',
+          'COLLATE LATIN1_GENERAL_BIN ',
+          'AS [' + column_name + ']'
+        )
+        WHEN (
+          column_type_concat LIKE '%varchar%'
+        ) THEN CONCAT(
+          '[' + column_name + '] ',
+          'COLLATE LATIN1_GENERAL_BIN ',
+          'AS [' + column_name + ']'
+        )
         WHEN (
           column_type_mismatch = 1
           AND column_type_concat LIKE '%float%'
@@ -34,7 +115,20 @@ WITH
         WHEN (
           column_type_mismatch = 1
           AND column_type_concat LIKE '%varchar%'
-        ) THEN 'CAST([' + column_name + '] AS NVARCHAR) AS [' + column_name + ']'
+        ) THEN CONCAT(
+          'CAST(',
+          '[' + column_name + '] ',
+          'AS NVARCHAR) ',
+          'COLLATE LATIN1_GENERAL_BIN ',
+          'AS [' + column_name + ']'
+        )
+        WHEN (
+          column_type_concat LIKE '%varchar%'
+        ) THEN CONCAT(
+          '[' + column_name + '] ',
+          'COLLATE LATIN1_GENERAL_BIN ',
+          'AS [' + column_name + ']'
+        )
         WHEN (
           column_type_mismatch = 1
           AND column_type_concat LIKE '%float%'
@@ -53,7 +147,20 @@ WITH
         WHEN (
           column_type_mismatch = 1
           AND column_type_concat LIKE '%varchar%'
-        ) THEN 'CAST([' + column_name + '] AS NVARCHAR) AS [' + column_name + ']'
+        ) THEN CONCAT(
+          'CAST(',
+          '[' + column_name + '] ',
+          'AS NVARCHAR) ',
+          'COLLATE LATIN1_GENERAL_BIN ',
+          'AS [' + column_name + ']'
+        )
+        WHEN (
+          column_type_concat LIKE '%varchar%'
+        ) THEN CONCAT(
+          '[' + column_name + '] ',
+          'COLLATE LATIN1_GENERAL_BIN ',
+          'AS [' + column_name + ']'
+        )
         WHEN (
           column_type_mismatch = 1
           AND column_type_concat LIKE '%float%'
@@ -68,70 +175,7 @@ WITH
         ELSE '[' + column_name + ']'
       END AS kippcamden
     FROM
-      (
-        SELECT
-          [schema_name],
-          table_name,
-          column_name,
-          kippmiami AS kippmiami_column_type,
-          kippcamden AS kippcamden_column_type,
-          kippnewark AS kippnewark_column_type,
-          CONCAT(
-            kippnewark,
-            kippcamden,
-            kippmiami
-          ) AS column_type_concat,
-          CASE
-            WHEN (
-              (
-                CONCAT(kippcamden, kippnewark) != ''
-                AND CHARINDEX(
-                  kippmiami,
-                  CONCAT(kippcamden, kippnewark)
-                ) = 0
-              )
-              OR (
-                CONCAT(kippmiami, kippnewark) != ''
-                AND CHARINDEX(
-                  kippcamden,
-                  CONCAT(kippmiami, kippnewark)
-                ) = 0
-              )
-              OR (
-                CONCAT(kippmiami, kippcamden) != ''
-                AND CHARINDEX(
-                  kippnewark,
-                  CONCAT(kippmiami, kippcamden)
-                ) = 0
-              )
-            ) THEN 1
-            ELSE 0
-          END AS column_type_mismatch
-        FROM
-          (
-            SELECT
-              [db_name],
-              [schema_name],
-              table_name,
-              column_name,
-              column_type
-            FROM
-              gabby.utilities.all_tables_columns
-            WHERE
-              column_id > -1
-              AND [db_name] IN (
-                'kippnewark',
-                'kippcamden',
-                'kippmiami'
-              )
-          ) AS sub PIVOT (
-            MAX(column_type) FOR [db_name] IN (
-              [kippnewark],
-              [kippcamden],
-              [kippmiami]
-            )
-          ) AS p
-      ) AS sub
+      atc_pivot
   ),
   row_gen AS (
     SELECT
@@ -142,7 +186,7 @@ WITH
       (n BETWEEN 1 AND 2)
   )
 SELECT
-  TOP 100000 sub.[schema_name],
+  sub.[schema_name],
   sub.table_name,
   sub.column_type_mismatch,
   CASE
@@ -170,17 +214,17 @@ FROM
       table_name,
       CONCAT(
         'SELECT ''kippnewark'' AS [db_name],',
-        gabby.dbo.GROUP_CONCAT_D (kippnewark + ',', '') + ' ',
+        gabby.dbo.GROUP_CONCAT_D (kippnewark, ',') + ' ',
         'FROM kippnewark.' + [schema_name] + '.' + table_name
       ) AS kippnewark,
       CONCAT(
         'SELECT ''kippcamden'' AS [db_name],',
-        gabby.dbo.GROUP_CONCAT_D (kippcamden + ',', '') + ' ',
+        gabby.dbo.GROUP_CONCAT_D (kippcamden, ',') + ' ',
         'FROM kippcamden.' + [schema_name] + '.' + table_name
       ) AS kippcamden,
       CONCAT(
         'SELECT ''kippmiami'' AS [db_name],',
-        gabby.dbo.GROUP_CONCAT_D (kippmiami + ',', '') + ' ',
+        gabby.dbo.GROUP_CONCAT_D (kippmiami, ',') + ' ',
         'FROM kippmiami.' + [schema_name] + '.' + table_name
       ) AS kippmiami,
       MAX(column_type_mismatch) AS column_type_mismatch,
@@ -200,16 +244,9 @@ FROM
         END
       ) AS kippmiami_count
     FROM
-      all_tables_columns_pivot
-    WHERE
-      table_name NOT LIKE 'fivetran%'
-      AND [schema_name] != 'fivetran_log'
+      cols
     GROUP BY
       table_name,
       [schema_name]
   ) AS sub
   CROSS JOIN row_gen AS t
-ORDER BY
-  sub.[schema_name],
-  sub.table_name,
-  t.n
