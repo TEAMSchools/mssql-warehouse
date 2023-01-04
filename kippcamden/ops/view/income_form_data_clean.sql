@@ -4,8 +4,10 @@ SELECT
   student_number,
   academic_year,
   CASE
-    WHEN [status] IS NULL
-    OR [status] IN ('No Application', 'No') THEN 'No Application'
+    WHEN (
+      [status] IS NULL
+      OR [status] IN ('No Application', 'No')
+    ) THEN 'No Application'
     WHEN [status] IN (
       'Application Received',
       'Jotform'
@@ -30,24 +32,8 @@ SELECT
     ORDER BY
       _row DESC
   ) AS rn,
-  'kippcamden' AS [db_name]
+  DB_NAME() AS [db_name]
 FROM
   gabby.ops.income_form_data
 WHERE
   ISNUMERIC(student_number) = 1
-UNION ALL
-SELECT
-  student_identifier AS student_number,
-  academic_year_clean AS academic_year,
-  (
-    eligibility_name + ' - ' + 'Income Form'
-    COLLATE LATIN1_GENERAL_BIN
-  ) AS lunch_app_status,
-  (
-    eligibility_name
-    COLLATE LATIN1_GENERAL_BIN
-  ) AS lunch_status,
-  rn,
-  'kippnewark' AS [db_name]
-FROM
-  kippnewark.titan.income_form_data_clean

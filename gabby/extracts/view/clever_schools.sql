@@ -31,7 +31,7 @@ SELECT
   'Kindergarten' AS [Low_grade],
   '12' AS [High_grade],
   'Ryan Hill' AS [Principal],
-  'rhill@kippnj.org' AS [Principal_email],
+  'rhill@kippteamandfamily.org' AS [Principal_email],
   '60 Park Place, Suite 802' AS [School_address],
   'Newark' AS [School_city],
   'NJ' AS [School_state],
