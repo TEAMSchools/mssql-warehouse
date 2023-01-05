@@ -20,10 +20,7 @@ WITH
         AND sc._fivetran_deleted = 0
       )
       LEFT JOIN gabby.powerschool.users AS u ON (
-        (
-          scw.ps_teachernumber = u.teachernumber
-          COLLATE LATIN1_GENERAL_BIN
-        )
+        scw.ps_teachernumber = u.teachernumber
         AND (
           CASE
             WHEN sc.region = 'TEAM Academy Charter School' THEN 'kippnewark'

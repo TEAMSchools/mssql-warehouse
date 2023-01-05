@@ -21,10 +21,7 @@ WITH
           cc.course_number
       ) AS is_dropped_course,
       co.student_number,
-      (
-        ns.illuminate_subject
-        COLLATE LATIN1_GENERAL_BIN
-      ) AS subject_area
+      ns.illuminate_subject AS subject_area
     FROM
       gabby.powerschool.cc
       INNER JOIN gabby.powerschool.cohort_static AS co ON (
@@ -35,7 +32,6 @@ WITH
       )
       INNER JOIN gabby.assessments.normed_subjects AS ns ON (
         cc.course_number = ns.course_number
-        COLLATE LATIN1_GENERAL_BIN
       )
   )
 SELECT

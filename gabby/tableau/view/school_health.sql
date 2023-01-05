@@ -33,10 +33,7 @@ WITH
         WHEN (gm.progress_stretch >= 1) THEN 1
         ELSE 0
       END AS is_str_growth,
-      (
-        LOWER(LEFT(gm.[subject], 4))
-        COLLATE Latin1_General_BIN
-      ) AS iready_subject,
+      LOWER(LEFT(gm.[subject], 4)) AS iready_subject,
       'ALL' AS grade_band
     FROM
       gabby.powerschool.cohort_identifiers_static AS co
@@ -927,10 +924,7 @@ WITH
                 LEFT(
                   sc.email_address,
                   LEN(sc.email_address) - 17
-                ) = (
-                  co.student_web_id
-                  COLLATE Latin1_General_BIN
-                )
+                ) = co.student_web_id
                 AND co.academic_year = 2021
                 AND co.rn_year = 1
               ) UNPIVOT (
@@ -1212,9 +1206,6 @@ FROM
   sub
   LEFT JOIN gabby.reporting.school_health_metric_lookup ml ON (
     sub.subdomain = ml.subdomain
-    AND sub.grade_band = (
-      ml.grade_band
-      COLLATE Latin1_General_BIN
-    )
+    AND sub.grade_band = ml.grade_band
   )
   LEFT JOIN gabby.powerschool.schools sch ON (sub.schoolid = sch.school_number)

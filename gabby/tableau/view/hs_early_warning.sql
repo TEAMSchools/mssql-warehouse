@@ -108,10 +108,7 @@ FROM
     co.studentid = gr.studentid
     AND co.yearid = gr.yearid
     AND co.[db_name] = gr.[db_name]
-    AND (
-      dt.alt_name = gr.storecode
-      COLLATE LATIN1_GENERAL_BIN
-    )
+    AND dt.alt_name = gr.storecode
     AND gr.exclude_from_gpa = 0
   )
   LEFT JOIN gabby.powerschool.sections_identifiers AS si ON (
@@ -122,10 +119,7 @@ FROM
     co.student_number = gpa.student_number
     AND co.academic_year = gpa.academic_year
     AND co.[db_name] = gpa.[db_name]
-    AND (
-      dt.time_per_name = gpa.reporting_term
-      COLLATE LATIN1_GENERAL_BIN
-    )
+    AND dt.time_per_name = gpa.reporting_term
   )
   LEFT JOIN gabby.powerschool.gpa_cumulative AS gpc ON (
     co.studentid = gpc.studentid

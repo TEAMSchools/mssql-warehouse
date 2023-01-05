@@ -107,26 +107,14 @@ FROM
   )
   LEFT JOIN gabby.nwea.percentile_norms_dense AS pct50 ON (
     r.grade_level = pct50.grade_level
-    AND (
-      map_long.term = pct50.term
-      COLLATE LATIN1_GENERAL_BIN
-    )
-    AND (
-      map_long.measurementscale = pct50.measurementscale
-      COLLATE LATIN1_GENERAL_BIN
-    )
+    AND map_long.term = pct50.term
+    AND map_long.measurementscale = pct50.measurementscale
     AND pct50.testpercentile = 50
   )
   LEFT JOIN gabby.nwea.percentile_norms_dense AS pct75 ON (
     r.grade_level = pct75.grade_level
-    AND (
-      map_long.term = pct75.term
-      COLLATE LATIN1_GENERAL_BIN
-    )
-    AND (
-      map_long.measurementscale = pct75.measurementscale
-      COLLATE LATIN1_GENERAL_BIN
-    )
+    AND map_long.term = pct75.term
+    AND map_long.measurementscale = pct75.measurementscale
     AND pct75.testpercentile = 75
   )
   LEFT JOIN gabby.nwea.learning_continuum_goals AS [domain] ON (

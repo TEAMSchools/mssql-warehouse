@@ -12,8 +12,9 @@ WITH
       module_type,
       module_number,
       scope,
-      subject_area,
-      is_normed_scope
+      subject_area
+    COLLATE SQL_Latin1_General_CP1_CI_AS AS subject_area,
+    is_normed_scope
     FROM
       gabby.illuminate_dna_assessments.assessments_identifiers_static
     WHERE
@@ -91,10 +92,7 @@ FROM
       /* trunk-ignore(sqlfluff/L016) */
       INNER JOIN illuminate_dna_assessments.course_enrollment_scaffold_current_static AS ce ON ( -- noqa: L016
         ssa.student_id = ce.student_id
-        AND (
-          a.subject_area = ce.subject_area
-          COLLATE LATIN1_GENERAL_BIN
-        )
+        AND a.subject_area = ce.subject_area
         AND (
           a.administered_at BETWEEN ce.entry_date AND ce.leave_date
         )
@@ -132,10 +130,7 @@ FROM
       /* trunk-ignore(sqlfluff/L016) */
       INNER JOIN illuminate_dna_assessments.course_enrollment_scaffold_current_static AS ce ON ( -- noqa: L016
         agl.grade_level_id = ce.grade_level_id
-        AND (
-          a.subject_area = ce.subject_area
-          COLLATE LATIN1_GENERAL_BIN
-        )
+        AND a.subject_area = ce.subject_area
         AND (
           a.administered_at BETWEEN ce.entry_date AND ce.leave_date
         )

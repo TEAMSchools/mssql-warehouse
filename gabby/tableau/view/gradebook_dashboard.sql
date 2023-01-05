@@ -111,7 +111,6 @@ SELECT
   MAX(
     CASE
       WHEN gr.is_curterm = 1 THEN gr.need_60
-      ELSE NULL
     END
   ) OVER (
     PARTITION BY
@@ -122,7 +121,6 @@ SELECT
   MAX(
     CASE
       WHEN gr.is_curterm = 1 THEN gr.need_70
-      ELSE NULL
     END
   ) OVER (
     PARTITION BY
@@ -133,7 +131,6 @@ SELECT
   MAX(
     CASE
       WHEN gr.is_curterm = 1 THEN gr.need_80
-      ELSE NULL
     END
   ) OVER (
     PARTITION BY
@@ -144,7 +141,6 @@ SELECT
   MAX(
     CASE
       WHEN gr.is_curterm = 1 THEN gr.need_90
-      ELSE NULL
     END
   ) OVER (
     PARTITION BY
@@ -239,7 +235,6 @@ SELECT
   MAX(
     CASE
       WHEN gr.is_curterm = 1 THEN gr.need_60
-      ELSE NULL
     END
   ) OVER (
     PARTITION BY
@@ -250,7 +245,6 @@ SELECT
   MAX(
     CASE
       WHEN gr.is_curterm = 1 THEN gr.need_70
-      ELSE NULL
     END
   ) OVER (
     PARTITION BY
@@ -261,7 +255,6 @@ SELECT
   MAX(
     CASE
       WHEN gr.is_curterm = 1 THEN gr.need_80
-      ELSE NULL
     END
   ) OVER (
     PARTITION BY
@@ -272,7 +265,6 @@ SELECT
   MAX(
     CASE
       WHEN gr.is_curterm = 1 THEN gr.need_90
-      ELSE NULL
     END
   ) OVER (
     PARTITION BY
@@ -432,14 +424,11 @@ SELECT
   CASE
     WHEN sa.studentid IS NOT NULL THEN 1
   END AS is_studentathlete,
-  (
-    CONCAT(
-      'TRANSFER',
-      tr.termid,
-      tr.[db_name],
-      tr.dcid
-    )
-    COLLATE LATIN1_GENERAL_BIN
+  CONCAT(
+    'TRANSFER',
+    tr.termid,
+    tr.[db_name],
+    tr.dcid
   ) AS course_number,
   'Y1' AS term_name,
   'Y1' AS finalgradename,

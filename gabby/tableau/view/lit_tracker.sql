@@ -60,9 +60,8 @@ WITH
               (dtid.test_date),
               (htid.test_date)
           ) AS val (v)
-      ) AS test_date
+      ) AS test_date,
       /* AR */
-,
       ar.words,
       ar.mastery,
       ar.pct_fiction,
@@ -75,10 +74,7 @@ WITH
     FROM
       gabby.powerschool.cohort_identifiers_static AS co
       INNER JOIN gabby.reporting.reporting_term_map AS term ON (
-        (
-          co.school_level = term.school_level
-          COLLATE LATIN1_GENERAL_BIN
-        )
+        co.school_level = term.school_level
         AND (
           co.academic_year BETWEEN term.min_year AND term.max_year
         )

@@ -122,10 +122,7 @@ FROM
         r.student_number = map.student_id
         AND r.academic_year = map.academic_year
         AND r.measurement_scale = map.measurement_scale
-        AND (
-          r.term_name = map.term
-          COLLATE LATIN1_GENERAL_BIN
-        )
+        AND r.term_name = map.term
       )
       LEFT JOIN gabby.nwea.best_baseline AS base ON (
         r.student_number = base.student_number

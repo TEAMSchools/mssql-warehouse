@@ -129,14 +129,8 @@ SELECT
   co.ethnicity,
   co.gender,
   'PARCC' AS test_type,
-  (
-    parcc.test_code
-    COLLATE LATIN1_GENERAL_BIN
-  ) AS test_code,
-  (
-    parcc.[subject]
-    COLLATE LATIN1_GENERAL_BIN
-  ) AS [subject],
+  parcc.test_code AS test_code,
+  parcc.[subject] AS [subject],
   parcc.test_scale_score,
   parcc.test_performance_level,
   parcc.test_reading_csem AS test_standard_error,
@@ -173,10 +167,7 @@ FROM
   )
   LEFT JOIN external_prof AS ext ON (
     co.academic_year = ext.academic_year
-    AND (
-      parcc.test_code = ext.test_code
-      COLLATE LATIN1_GENERAL_BIN
-    )
+    AND parcc.test_code = ext.test_code
   )
   LEFT JOIN promo ON (
     co.student_number = promo.student_number

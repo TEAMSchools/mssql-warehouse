@@ -198,16 +198,10 @@ FROM
     AND tg._fivetran_deleted = 0
   )
   INNER JOIN ps_section_teacher AS st ON (
-    (
-      sr.ps_teachernumber = st.teachernumber
-      COLLATE LATIN1_GENERAL_BIN
-    )
+    sr.ps_teachernumber = st.teachernumber
     AND sr.academic_year = st.academic_year
     AND sr.[db_name] = st.[db_name]
-    AND (
-      tg.ps_course_number = st.course_number
-      COLLATE LATIN1_GENERAL_BIN
-    )
+    AND tg.ps_course_number = st.course_number
   )
   INNER JOIN gabby.powerschool.course_enrollments AS enr ON (
     st.sectionid = enr.abs_sectionid
@@ -282,16 +276,10 @@ FROM
     AND tg._fivetran_deleted = 0
   )
   INNER JOIN ps_section_teacher AS st ON (
-    (
-      sr.ps_teachernumber = st.teachernumber
-      COLLATE LATIN1_GENERAL_BIN
-    )
+    sr.ps_teachernumber = st.teachernumber
     AND sr.academic_year = st.academic_year
     AND sr.[db_name] = st.[db_name]
-    AND (
-      tg.ps_course_number = st.course_number
-      COLLATE LATIN1_GENERAL_BIN
-    )
+    AND tg.ps_course_number = st.course_number
   )
   INNER JOIN gabby.powerschool.course_enrollments AS enr ON (
     st.sectionid = enr.abs_sectionid

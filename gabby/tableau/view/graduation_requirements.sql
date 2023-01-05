@@ -5,10 +5,7 @@ WITH
     SELECT
       local_student_identifier,
       test_scale_score AS test_score,
-      (
-        CONCAT('parcc_', LOWER(test_code))
-        COLLATE LATIN1_GENERAL_BIN
-      ) AS test_type
+      CONCAT('parcc_', LOWER(test_code)) AS test_type
     FROM
       gabby.parcc.summative_record_file_clean
     WHERE
@@ -25,10 +22,7 @@ WITH
     SELECT
       hs_student_id,
       [value] AS test_score,
-      (
-        CONCAT('sat_', field)
-        COLLATE LATIN1_GENERAL_BIN
-      ) AS test_type
+      CONCAT('sat_', field) AS test_type
     FROM
       (
         SELECT

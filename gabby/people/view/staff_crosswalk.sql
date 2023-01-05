@@ -177,10 +177,7 @@ FROM
       )
   ) AS sub
   LEFT JOIN gabby.pm.teacher_grade_levels AS gl ON (
-    (
-      sub.ps_teachernumber = gl.teachernumber
-      COLLATE LATIN1_GENERAL_BIN
-    )
+    sub.ps_teachernumber = gl.teachernumber
     AND gl.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
     AND gl.is_primary_gl = 1
   )

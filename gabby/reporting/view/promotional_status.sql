@@ -280,10 +280,7 @@ FROM
           LEFT JOIN failing AS f ON (
             co.studentid = f.studentid
             AND co.yearid = f.yearid
-            AND (
-              rt.alt_name = f.storecode
-              COLLATE Latin1_General_BIN
-            )
+            AND rt.alt_name = f.storecode
           )
           LEFT JOIN credits AS cr ON (
             co.studentid = cr.studentid

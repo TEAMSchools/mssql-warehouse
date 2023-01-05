@@ -68,10 +68,7 @@ FROM
   )
   LEFT JOIN external_prof AS ext ON (
     co.academic_year = ext.academic_year
-    AND (
-      parcc.test_code = ext.test_code
-      COLLATE LATIN1_GENERAL_BIN
-    )
+    AND parcc.test_code = ext.test_code
   )
 WHERE
   co.rn_year = 1
@@ -90,21 +87,12 @@ SELECT
   co.lunchstatus,
   co.ethnicity,
   co.gender,
-  (
-    asa.test_type
-    COLLATE LATIN1_GENERAL_BIN
-  ) AS test_type,
-  (
-    CONCAT(
-      LEFT(asa.subject, 3),
-      RIGHT(CONCAT('0', co.grade_level), 2)
-    )
-    COLLATE LATIN1_GENERAL_BIN
+  asa.test_type,
+  CONCAT(
+    LEFT(asa.subject, 3),
+    RIGHT(CONCAT('0', co.grade_level), 2)
   ) AS test_code,
-  (
-    asa.subject
-    COLLATE LATIN1_GENERAL_BIN
-  ) AS [subject],
+  asa.[subject],
   asa.scaled_score,
   CASE
     WHEN asa.performance_level = 'Advanced Proficient' THEN 5

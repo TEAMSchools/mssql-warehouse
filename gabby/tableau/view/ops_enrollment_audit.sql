@@ -4,24 +4,12 @@ WITH
   residency_verification AS (
     SELECT
       s.student_number,
-      (
-        COALESCE(rv.doc_1, x.residency_proof_1)
-        COLLATE LATIN1_GENERAL_BIN
-      ) AS residency_proof_1,
-      (
-        COALESCE(rv.doc_2, x.residency_proof_2)
-        COLLATE LATIN1_GENERAL_BIN
-      ) AS residency_proof_2,
-      (
-        COALESCE(rv.doc_3, x.residency_proof_3)
-        COLLATE LATIN1_GENERAL_BIN
-      ) AS residency_proof_3,
-      (
-        COALESCE(
-          rv.age,
-          x.birth_certificate_proof
-        )
-        COLLATE LATIN1_GENERAL_BIN
+      COALESCE(rv.doc_1, x.residency_proof_1) AS residency_proof_1,
+      COALESCE(rv.doc_2, x.residency_proof_2) AS residency_proof_2,
+      COALESCE(rv.doc_3, x.residency_proof_3) AS residency_proof_3,
+      COALESCE(
+        rv.age,
+        x.birth_certificate_proof
       ) AS birth_certificate_proof,
       ROW_NUMBER() OVER (
         PARTITION BY
@@ -54,99 +42,63 @@ WITH
       sub.is_pathways,
       sub.entry_status,
       sub.registration_status,
-      (
-        CAST(
-          sub.lunch_app_status AS VARCHAR(500)
-        )
-        COLLATE LATIN1_GENERAL_BIN
+      CAST(
+        sub.lunch_app_status AS VARCHAR(500)
       ) AS lunch_app_status,
-      (
-        CAST(
-          sub.lunch_balance AS VARCHAR(500)
-        )
-        COLLATE LATIN1_GENERAL_BIN
+      CAST(
+        sub.lunch_balance AS VARCHAR(500)
       ) AS lunch_balance,
-      (
-        CAST(
-          sub.iep_registration_followup AS VARCHAR(500)
-        )
-        COLLATE LATIN1_GENERAL_BIN
+      CAST(
+        sub.iep_registration_followup AS VARCHAR(500)
       ) AS iep_registration_followup_required,
-      (
-        CAST(
-          sub.lep_registration_followup AS VARCHAR(500)
-        )
-        COLLATE LATIN1_GENERAL_BIN
+      CAST(
+        sub.lep_registration_followup AS VARCHAR(500)
       ) AS lep_registration_followup_required,
-      (
-        CAST(
-          sub.birth_certificate_proof AS VARCHAR(500)
-        )
-        COLLATE LATIN1_GENERAL_BIN
+      CAST(
+        sub.birth_certificate_proof AS VARCHAR(500)
       ) AS birth_certificate_proof,
-      (
-        CAST(
-          sub.residency_proof_1 AS VARCHAR(500)
-        )
-        COLLATE LATIN1_GENERAL_BIN
+      CAST(
+        sub.residency_proof_1 AS VARCHAR(500)
       ) AS residency_proof_1,
-      (
-        CAST(
-          sub.residency_proof_2 AS VARCHAR(500)
-        )
-        COLLATE LATIN1_GENERAL_BIN
+      CAST(
+        sub.residency_proof_2 AS VARCHAR(500)
       ) AS residency_proof_2,
-      (
-        CAST(
-          sub.residency_proof_3 AS VARCHAR(500)
-        )
-        COLLATE LATIN1_GENERAL_BIN
+      CAST(
+        sub.residency_proof_3 AS VARCHAR(500)
       ) AS residency_proof_3,
-      (
-        CAST(
-          sub.region + sub.city AS VARCHAR(500)
-        )
-        COLLATE LATIN1_GENERAL_BIN
+      CAST(
+        sub.region + sub.city AS VARCHAR(500)
       ) AS region_city,
-      (
-        CONVERT(
-          VARCHAR(500),
-          CASE
-            WHEN sub.iep_registration_followup = '1'
-            AND sub.specialed_classification != '' THEN 'Y'
-            WHEN sub.iep_registration_followup = '1'
-            AND sub.specialed_classification = '' THEN 'N'
-            ELSE ''
-          END
-        )
-        COLLATE LATIN1_GENERAL_BIN
+      CONVERT(
+        VARCHAR(500),
+        CASE
+          WHEN sub.iep_registration_followup = '1'
+          AND sub.specialed_classification != '' THEN 'Y'
+          WHEN sub.iep_registration_followup = '1'
+          AND sub.specialed_classification = '' THEN 'N'
+          ELSE ''
+        END
       ) AS iep_registration_followup_complete,
-      (
-        CONVERT(
-          VARCHAR(500),
-          CASE
-            WHEN sub.lep_registration_followup = '1'
-            AND sub.lep_status != '' THEN 'Y'
-            WHEN sub.lep_registration_followup = '1'
-            AND sub.lep_status = '' THEN 'N'
-            ELSE ''
-          END
-        )
-        COLLATE LATIN1_GENERAL_BIN
+      CONVERT(
+        VARCHAR(500),
+        CASE
+          WHEN sub.lep_registration_followup = '1'
+          AND sub.lep_status != '' THEN 'Y'
+          WHEN sub.lep_registration_followup = '1'
+          AND sub.lep_status = '' THEN 'N'
+          ELSE ''
+        END
       ) AS lep_registration_followup_complete,
-      (
-        CONVERT(
-          VARCHAR(500),
-          CASE
-            WHEN CONCAT(
-              sub.residency_proof_1,
-              sub.residency_proof_2,
-              sub.residency_proof_3
-            ) NOT LIKE '%Missing%' THEN 'Y'
-            ELSE 'N'
-          END
-        )
-        COLLATE LATIN1_GENERAL_BIN
+      CONVERT(
+        VARCHAR(500),
+        CASE
+          WHEN CONCAT(
+            sub.residency_proof_1,
+            sub.residency_proof_2,
+            sub.residency_proof_3
+          ) NOT LIKE '%Missing%' THEN 'Y'
+          ELSE 'N'
+        END
       ) AS residency_proof_all
     FROM
       (

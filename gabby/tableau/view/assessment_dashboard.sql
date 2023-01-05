@@ -50,10 +50,7 @@ FROM
     co.student_number = enr.student_number
     AND co.academic_year = enr.academic_year
     AND co.[db_name] = enr.[db_name]
-    AND (
-      asr.subject_area = enr.illuminate_subject
-      COLLATE LATIN1_GENERAL_BIN
-    )
+    AND asr.subject_area = enr.illuminate_subject
     AND enr.course_enroll_status = 0
     AND enr.section_enroll_status = 0
     AND enr.rn_illuminate_subject = 1

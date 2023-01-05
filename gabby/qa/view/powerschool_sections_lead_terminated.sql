@@ -15,10 +15,7 @@ FROM
     AND sec.[db_name] = t.[db_name]
   )
   INNER JOIN gabby.people.staff_crosswalk_static AS scw ON (
-    (
-      t.teachernumber = scw.ps_teachernumber
-      COLLATE LATIN1_GENERAL_BIN
-    )
+    t.teachernumber = scw.ps_teachernumber
     AND scw.[status] = 'TERMINATED'
   )
 WHERE

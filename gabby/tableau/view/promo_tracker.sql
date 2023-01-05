@@ -89,40 +89,40 @@ WITH
   grades AS (
     -- /* term grades */
     -- SELECT
-    --   gr.student_number,
-    --   gr.academic_year,
-    --   gr.reporting_term,
-    --   gr.credittype,
-    --   gr.course_name,
-    --   gr.term_grade_percent_adjusted,
+    --   student_number,
+    --   academic_year,
+    --   reporting_term,
+    --   credittype,
+    --   course_name,
+    --   term_grade_percent_adjusted,
     --   'TERM' AS subdomain,
     --   'Term' AS finalgradename
     -- FROM
     --   gabby.powerschool.final_grades_static
     -- WHERE
-    --   gr.yearid >= (
+    --   yearid >= (
     --     gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990
     --   ) - 1
-    --   AND gr.excludefromgpa = 0
+    --   AND excludefromgpa = 0
     -- UNION ALL
     -- SELECT
-    --   gr.student_number,
-    --   gr.academic_year,
+    --   student_number,
+    --   academic_year,
     --   'SY1' AS reporting_term,
-    --   gr.credittype,
-    --   gr.course_name,
-    --   gr.y1_grade_percent_adjusted AS term_grade_percent_adjusted,
+    --   credittype,
+    --   course_name,
+    --   y1_grade_percent_adjusted AS term_grade_percent_adjusted,
     --   'TERM' AS subdomain,
     --   'Y1' AS finalgradename
     -- FROM
     --   gabby.powerschool.final_grades_static
     -- WHERE
-    --   gr.academic_year IN (
+    --   academic_year IN (
     --     gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
     --     gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
     --   )
-    --   AND gr.is_curterm = 1
-    --   AND gr.excludefromgpa = 0
+    --   AND is_curterm = 1
+    --   AND excludefromgpa = 0
     -- UNION ALL
     /* previous year grades */
     SELECT
@@ -152,28 +152,28 @@ WITH
       -- UNION ALL
       -- /* category grades */
       -- SELECT
-      --   gr.student_number,
-      --   gr.academic_year,
+      --   student_number,
+      --   academic_year,
       --   'SY1' AS reporting_term,
-      --   gr.credittype,
-      --   gr.course_name,
-      --   ROUND(AVG(gr.grade_category_pct), 0) AS term_grade_percent_adjusted,
+      --   credittype,
+      --   course_name,
+      --   ROUND(AVG(grade_category_pct), 0) AS term_grade_percent_adjusted,
       --   'CATEGORY' AS subdomain,
-      --   gr.grade_category AS finalgradename
+      --   grade_category AS finalgradename
       -- FROM
-      --   gabby.powerschool.category_grades_static gr
+      --   gabby.powerschool.category_grades_static
       -- WHERE
-      --   gr.academic_year IN (
+      --   academic_year IN (
       --     gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
       --     gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
       --   )
-      --   AND gr.grade_category <> 'Q'
+      --   AND grade_category <> 'Q'
       -- GROUP BY
-      --   gr.student_number,
-      --   gr.academic_year,
-      --   gr.grade_category,
-      --   gr.credittype,
-      --   gr.course_name
+      --   student_number,
+      --   academic_year,
+      --   grade_category,
+      --   credittype,
+      --   course_name
   ),
   attendance AS (
     SELECT
@@ -483,14 +483,8 @@ WITH
     SELECT
       student_id,
       academic_year,
-      (
-        term
-        COLLATE Latin1_General_BIN
-      ) AS test_round,
-      (
-        CONCAT(ritto_reading_score, 'L')
-        COLLATE Latin1_General_BIN
-      ) AS read_lvl,
+      term AS test_round,
+      CONCAT(ritto_reading_score, 'L') AS read_lvl,
       CASE
         WHEN (ritto_reading_score = 0) THEN -1
         WHEN (
@@ -588,10 +582,7 @@ WITH
       academic_year,
       NULL AS test_date,
       'PARCC' AS test_name,
-      (
-        [subject]
-        COLLATE Latin1_General_BIN
-      ) AS [subject],
+      [subject],
       test_scale_score,
       test_performance_level,
       CASE
@@ -892,7 +883,6 @@ WITH
       CAST(field AS VARCHAR) AS subdomain,
       CASE
         WHEN (field LIKE '%status%') THEN [value]
-        ELSE NULL
       END AS text_value,
       CASE
         WHEN (field LIKE '%status%') THEN NULL
@@ -980,10 +970,7 @@ FROM
   LEFT JOIN grades gr ON (
     r.student_number = gr.student_number
     AND r.academic_year = gr.academic_year
-    AND (
-      r.reporting_term
-      COLLATE Latin1_General_BIN
-    ) = gr.reporting_term
+    AND r.reporting_term = gr.reporting_term
   )
 UNION ALL
 --*/
@@ -1008,10 +995,7 @@ SELECT
   att.subdomain,
   NULL AS [subject],
   NULL AS course_name,
-  (
-    att.att_code
-    COLLATE Latin1_General_BIN
-  ) AS measure_name,
+  att.att_code AS measure_name,
   att.att_counts AS measure_value,
   NULL AS measure_date,
   NULL AS performance_level,
@@ -1022,10 +1006,7 @@ FROM
     r.studentid = att.studentid
     AND r.[db_name] = att.[db_name]
     AND r.academic_year = att.academic_year
-    AND (
-      r.reporting_term
-      COLLATE Latin1_General_BIN
-    ) = att.reporting_term
+    AND r.reporting_term = att.reporting_term
   )
 UNION ALL
 --*/
@@ -1048,18 +1029,9 @@ SELECT
   r.reporting_term,
   'MODULES' AS DOMAIN,
   cma.subdomain,
-  (
-    cma.subject_area
-    COLLATE Latin1_General_BIN
-  ) AS [subject],
-  (
-    cma.module_type
-    COLLATE Latin1_General_BIN
-  ) AS course_name,
-  (
-    cma.standards
-    COLLATE Latin1_General_BIN
-  ) AS measure_name,
+  cma.subject_area AS [subject],
+  cma.module_type AS course_name,
+  cma.standards AS measure_name,
   cma.percent_correct AS measure_value,
   cma.measure_date,
   cma.assessment_id AS performance_level,
@@ -1106,10 +1078,7 @@ FROM
     r.student_number = gpa.student_number
     AND r.schoolid = gpa.schoolid
     AND r.academic_year >= gpa.academic_year
-    AND (
-      r.reporting_term
-      COLLATE Latin1_General_BIN
-    ) = gpa.reporting_term
+    AND r.reporting_term = gpa.reporting_term
     AND r.term_start_date <= CAST(CURRENT_TIMESTAMP AS DATE)
   )
 UNION ALL
@@ -1204,19 +1173,10 @@ SELECT
   r.term_name,
   r.reporting_term,
   'STANDARDIZED TESTS' AS DOMAIN,
-  (
-    std.test_name
-    COLLATE Latin1_General_BIN
-  ) AS subdomain,
-  (
-    std.[subject]
-    COLLATE Latin1_General_BIN
-  ) AS [subject],
+  std.test_name AS subdomain,
+  std.[subject],
   NULL AS course_name,
-  (
-    CAST(NEWID() AS VARCHAR(250))
-    COLLATE Latin1_General_BIN
-  ) AS measure_name,
+  CAST(NEWID() AS VARCHAR(250)) AS measure_name,
   std.test_scale_score AS measure_value,
   std.test_date AS measure_date,
   std.test_performance_level AS performance_level,

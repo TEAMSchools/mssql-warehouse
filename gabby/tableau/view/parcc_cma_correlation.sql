@@ -16,10 +16,7 @@ SELECT
   asr.module_type,
   asr.percent_correct,
   asr.performance_band_number,
-  (
-    parcc.test_code
-    COLLATE LATIN1_GENERAL_BIN
-  ) AS parcc_test_code,
+  parcc.test_code AS parcc_test_code,
   parcc.test_scale_score AS parcc_test_scale_score,
   parcc.test_performance_level AS parcc_test_performance_level
 FROM

@@ -3,12 +3,12 @@ CREATE OR ALTER VIEW
 WITH
   reading_level AS (
     SELECT
-      sub.academic_year,
-      sub.schoolid,
-      sub.grade_level,
-      sub.reporting_term,
+      academic_year,
+      schoolid,
+      grade_level,
+      reporting_term,
       'pct_met_reading_goal' AS metric_name,
-      AVG(CAST(sub.met_goal AS FLOAT)) AS metric_value
+      AVG(CAST(met_goal AS FLOAT)) AS metric_value
     FROM
       (
         SELECT
@@ -24,10 +24,10 @@ WITH
           [start_date] <= CAST(CURRENT_TIMESTAMP AS DATE)
       ) AS sub
     GROUP BY
-      sub.academic_year,
-      sub.schoolid,
-      sub.grade_level,
-      sub.reporting_term
+      academic_year,
+      schoolid,
+      grade_level,
+      reporting_term
   ),
   gpa_detail AS (
     SELECT
@@ -48,44 +48,41 @@ WITH
       gabby.powerschool.gpa_detail AS gpa
       INNER JOIN gabby.reporting.reporting_terms AS rt ON (
         gpa.academic_year = rt.academic_year
-        AND (
-          gpa.reporting_term = rt.time_per_name
-          COLLATE LATIN1_GENERAL_BIN
-        )
+        AND gpa.reporting_term = rt.time_per_name
         AND gpa.schoolid = rt.schoolid
         AND rt.[start_date] <= CAST(SYSDATETIME() AS DATE)
       )
   ),
   gpa AS (
     SELECT
-      sub.academic_year,
-      sub.schoolid,
-      sub.grade_level,
-      sub.reporting_term,
+      academic_year,
+      schoolid,
+      grade_level,
+      reporting_term,
       'pct_gpa_2plus' AS metric_name,
-      AVG(sub.gpa_is_2plus) AS metric_value
+      AVG(gpa_is_2plus) AS metric_value
     FROM
       gpa_detail AS sub
     GROUP BY
-      sub.academic_year,
-      sub.schoolid,
-      sub.grade_level,
-      sub.reporting_term
+      academic_year,
+      schoolid,
+      grade_level,
+      reporting_term
     UNION ALL
     SELECT
-      sub.academic_year,
-      sub.schoolid,
-      sub.grade_level,
-      sub.reporting_term,
+      academic_year,
+      schoolid,
+      grade_level,
+      reporting_term,
       'pct_gpa_3plus' AS metric_name,
-      AVG(sub.gpa_is_3plus) AS metric_value
+      AVG(gpa_is_3plus) AS metric_value
     FROM
       gpa_detail AS sub
     GROUP BY
-      sub.academic_year,
-      sub.schoolid,
-      sub.grade_level,
-      sub.reporting_term
+      academic_year,
+      schoolid,
+      grade_level,
+      reporting_term
   ),
   assessment_detail AS (
     SELECT
@@ -103,32 +100,28 @@ WITH
     FROM
       (
         SELECT
-          asr.local_student_id,
-          asr.academic_year,
-          asr.subject_area,
-          REPLACE(
-            LOWER(asr.subject_area),
-            ' ',
-            '_'
-          ) AS subject_area_clean,
-          LOWER(asr.module_type) AS module_type,
-          asr.module_number,
-          asr.date_taken,
-          asr.performance_band_number,
-          asr.is_mastery,
-          asr.is_mastery AS is_mastery_iep45,
+          local_student_id,
+          academic_year,
+          subject_area,
+          REPLACE(LOWER(subject_area), ' ', '_') AS subject_area_clean,
+          LOWER(module_type) AS module_type,
+          module_number,
+          date_taken,
+          performance_band_number,
+          is_mastery,
+          is_mastery AS is_mastery_iep45,
           CONVERT(
             BIT,
             CASE
-              WHEN asr.performance_band_number >= 3 THEN 1
-              WHEN asr.performance_band_number < 3 THEN 0
+              WHEN performance_band_number >= 3 THEN 1
+              WHEN performance_band_number < 3 THEN 0
             END
           ) AS is_mastery_iep345
         FROM
           gabby.illuminate_dna_assessments.agg_student_responses_all
         WHERE
-          asr.response_type = 'O'
-          AND asr.subject_area IN (
+          response_type = 'O'
+          AND subject_area IN (
             'Algebra I',
             'Algebra II',
             'English 100',
@@ -139,7 +132,7 @@ WITH
             'Text Study',
             'Science'
           )
-          AND asr.module_type IN ('QA', 'CP')
+          AND module_type IN ('QA', 'CP')
       ) AS sub UNPIVOT (
         [value] FOR field IN (
           is_mastery,
@@ -255,11 +248,11 @@ WITH
   ),
   so_survey AS (
     SELECT
-      so_survey_long.subject_employee_number,
-      so_survey_long.academic_year,
-      so_survey_long.reporting_term,
-      so_survey_long.metric_name,
-      so_survey_long.metric_value
+      subject_employee_number,
+      academic_year,
+      reporting_term,
+      metric_name,
+      metric_value
     FROM
       so_survey_long
     UNION ALL
@@ -301,13 +294,13 @@ WITH
     FROM
       (
         SELECT
-          sub.academic_year,
-          sub.schoolid,
-          sub.grade_level,
-          sub.reporting_term,
-          AVG(sub.is_act_17plus) AS pct_act_17plus,
-          AVG(sub.is_act_19plus) AS pct_act_19plus,
-          AVG(sub.is_act_21plus) AS pct_act_21plus
+          academic_year,
+          schoolid,
+          grade_level,
+          reporting_term,
+          AVG(is_act_17plus) AS pct_act_17plus,
+          AVG(is_act_19plus) AS pct_act_19plus,
+          AVG(is_act_21plus) AS pct_act_21plus
         FROM
           (
             SELECT
@@ -365,10 +358,10 @@ WITH
               act.rn_highest = 1
           ) AS sub
         GROUP BY
-          sub.academic_year,
-          sub.schoolid,
-          sub.grade_level,
-          sub.reporting_term
+          academic_year,
+          schoolid,
+          grade_level,
+          reporting_term
       ) AS sub UNPIVOT (
         metric_value FOR metric_name IN (
           pct_act_17plus,
@@ -379,45 +372,42 @@ WITH
   ),
   glt_goal_data AS (
     SELECT
-      rl.academic_year,
-      rl.schoolid,
-      rl.grade_level,
-      rl.reporting_term,
-      rl.metric_name,
-      rl.metric_value
+      academic_year,
+      schoolid,
+      grade_level,
+      reporting_term,
+      metric_name,
+      metric_value
     FROM
-      reading_level AS rl
+      reading_level
     UNION ALL
     SELECT
-      gpa.academic_year,
-      gpa.schoolid,
-      gpa.grade_level,
-      (
-        gpa.reporting_term
-        COLLATE LATIN1_GENERAL_BIN
-      ) AS reporting_term,
-      gpa.metric_name,
-      gpa.metric_value
+      academic_year,
+      schoolid,
+      grade_level,
+      reporting_term,
+      metric_name,
+      metric_value
     FROM
       gpa
     UNION ALL
     SELECT
-      act.academic_year,
-      act.schoolid,
-      act.grade_level,
-      act.reporting_term,
-      act.metric_name,
-      act.metric_value
+      academic_year,
+      schoolid,
+      grade_level,
+      reporting_term,
+      metric_name,
+      metric_value
     FROM
       act
   ),
   individual_goal_data AS (
     SELECT
-      etr.academic_year,
-      etr.df_employee_number,
-      etr.time_per_name AS reporting_term,
-      etr.metric_name,
-      etr.metric_value
+      academic_year,
+      df_employee_number,
+      time_per_name AS reporting_term,
+      metric_name,
+      metric_value
     FROM
       etr
     UNION ALL
@@ -520,42 +510,42 @@ WITH
     UNION ALL
     /* classroom goals */
     SELECT
-      sub.df_employee_number,
-      sub.preferred_name,
-      sub.primary_site,
-      sub.primary_on_site_department,
-      sub.grades_taught,
-      sub.primary_job,
-      sub.legal_entity_name,
-      sub.is_active,
-      sub.primary_site_schoolid,
-      sub.manager_df_employee_number,
-      sub.manager_name,
-      sub.staff_username,
-      sub.manager_username,
-      sub.academic_year,
-      sub.goal_type,
-      sub.goal_department,
-      sub.is_sped_goal,
-      sub.metric_label,
-      sub.metric_name,
-      sub.tier_1,
-      sub.tier_2,
-      sub.tier_3,
-      sub.tier_4,
-      sub.prior_year_outcome,
-      sub.pm_term,
-      sub.data_type,
-      sub.grade_level,
-      sub.metric_term AS reporting_term,
+      df_employee_number,
+      preferred_name,
+      primary_site,
+      primary_on_site_department,
+      grades_taught,
+      primary_job,
+      legal_entity_name,
+      is_active,
+      primary_site_schoolid,
+      manager_df_employee_number,
+      manager_name,
+      staff_username,
+      manager_username,
+      academic_year,
+      goal_type,
+      goal_department,
+      is_sped_goal,
+      metric_label,
+      metric_name,
+      tier_1,
+      tier_2,
+      tier_3,
+      tier_4,
+      prior_year_outcome,
+      pm_term,
+      data_type,
+      grade_level,
+      metric_term AS reporting_term,
       CASE
-        WHEN sub.metric_label IN (
+        WHEN metric_label IN (
           'Lit Cohort Growth from Last Year',
           'Math Cohort Growth from Last Year'
-        ) THEN AVG(sub.is_mastery) - sub.prior_year_outcome
-        ELSE AVG(sub.is_mastery)
+        ) THEN AVG(is_mastery) - prior_year_outcome
+        ELSE AVG(is_mastery)
       END AS metric_value,
-      COUNT(DISTINCT sub.student_number) AS n_students
+      COUNT(DISTINCT student_number) AS n_students
     FROM
       (
         SELECT
@@ -638,34 +628,34 @@ WITH
           tgs.goal_type = 'Class'
       ) AS sub
     GROUP BY
-      sub.df_employee_number,
-      sub.preferred_name,
-      sub.primary_site,
-      sub.primary_on_site_department,
-      sub.grades_taught,
-      sub.primary_job,
-      sub.legal_entity_name,
-      sub.is_active,
-      sub.primary_site_schoolid,
-      sub.manager_df_employee_number,
-      sub.manager_name,
-      sub.staff_username,
-      sub.manager_username,
-      sub.academic_year,
-      sub.goal_type,
-      sub.goal_department,
-      sub.is_sped_goal,
-      sub.metric_label,
-      sub.metric_name,
-      sub.tier_1,
-      sub.tier_2,
-      sub.tier_3,
-      sub.tier_4,
-      sub.prior_year_outcome,
-      sub.metric_term,
-      sub.grade_level,
-      sub.pm_term,
-      sub.data_type
+      df_employee_number,
+      preferred_name,
+      primary_site,
+      primary_on_site_department,
+      grades_taught,
+      primary_job,
+      legal_entity_name,
+      is_active,
+      primary_site_schoolid,
+      manager_df_employee_number,
+      manager_name,
+      staff_username,
+      manager_username,
+      academic_year,
+      goal_type,
+      goal_department,
+      is_sped_goal,
+      metric_label,
+      metric_name,
+      tier_1,
+      tier_2,
+      tier_3,
+      tier_4,
+      prior_year_outcome,
+      metric_term,
+      grade_level,
+      pm_term,
+      data_type
   )
 SELECT
   d.df_employee_number,
