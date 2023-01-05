@@ -3,6 +3,7 @@
 ## General Rules & Guidelines
 
 - Use `snake_case`
+- Limit line length to 88 characters
 - Always use uppercase for the reserved keywords (e.g. `SELECT` and `WHERE`)
 - Avoid abbreviated keywords; use the full-length ones where available (e.g `ABSOLUTE` > `ABS`)
 - Prefer ANSI SQL functions over vendor-specific functions for maximum portability
@@ -35,16 +36,20 @@
 
 ## Formatting Best Practices
 
-- `x BETWEEN y AND z` clauses **MUST** be put in **(parenthesis)** for successful parsing
-- Complex logical statements should be wrapped in **(parenthesis)** for optimal formatting
-  - e.g. `CASE WHEN (... AND ...) THEN ...`
-- Wrap `COLLATE` statements in **(parenthesis)** for optimal formatting:
-  - e.g. `(tbl.col COLLATE LATIN1_GENERAL_BIN) AS foo,`
+- Complex logical statements should be wrapped in **(parenthesis)**
+  - `CASE WHEN (... AND ...) THEN ...`
+- Wrap `COLLATE` statements in **(parenthesis)**
+  - `(tbl.col COLLATE LATIN1_GENERAL_BIN) AS foo,`
   
 ## Known Issues
-- User-defined functions will add an extra space in-between the function name and the parenthesis
+
+- `BETWEEN` clauses **MUST** be wrapped in **(parenthesis)** for successful parsing
+  - `(x BETWEEN y AND z)`
+- `sql-format` will add an extra space in-between the function name and the parenthesis for user-defined functions
+  - On occasion, it will add multiple spaces, breaking the code. This can be addressed by wrapping the statement in **(parenthesis)**, e.g. `(GLOBAL_ACADEMIC_YEAR () - 1)`
 
 ## Troubleshooting Linter Errors
 
 - `Line is too long [L016]`
+  - Wrap longer expressions in 
 - `Found unparsable section: ... [PRS]`
