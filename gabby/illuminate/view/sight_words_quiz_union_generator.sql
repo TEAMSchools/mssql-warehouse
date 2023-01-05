@@ -3,18 +3,18 @@ CREATE OR ALTER VIEW
 SELECT
   r.repository_id,
   r.title,
-  gabby.illuminate_dna_repositories.repository_unpivot (r.repository_id) AS select_sql,
+  illuminate_dna_repositories.repository_unpivot (r.repository_id) AS select_sql,
   CASE
     WHEN atc.table_name IS NULL THEN 1
     ELSE 0
   END AS is_missing
 FROM
-  gabby.illuminate_dna_repositories.repositories AS r
-  INNER JOIN gabby.illuminate_codes.dna_scopes AS s ON (
+  illuminate_dna_repositories.repositories AS r
+  INNER JOIN illuminate_codes.dna_scopes AS s ON (
     r.code_scope_id = s.code_id
     AND s.code_translation = 'Sight Words Quiz'
   )
-  LEFT JOIN gabby.utilities.all_tables_columns AS atc ON (
+  LEFT JOIN utilities.all_tables_columns AS atc ON (
     CONCAT('repository_', r.repository_id) = atc.table_name
     AND atc.[schema_name] = 'illuminate_dna_repositories'
     AND atc.column_id = -1

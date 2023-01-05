@@ -18,7 +18,7 @@ SELECT
   )
 FROM
   illuminate_dna_repositories.fields AS f
-  INNER JOIN gabby.utilities.all_tables_columns AS atc ON (
+  INNER JOIN utilities.all_tables_columns AS atc ON (
     CONCAT('repository_', f.repository_id) = atc.table_name
     AND f.[name] = atc.column_name
     AND atc.[schema_name] = 'illuminate_dna_repositories'
@@ -30,8 +30,9 @@ WHERE
 IF @field_names IS NOT NULL
 SELECT
   @sql = CONCAT(
-    'SELECT sub.repository_id, sub.repository_row_id, sub.[value], s.local_student_id,',
+    'SELECT sub.repository_id, sub.repository_row_id, sub.[value], ',
     'CAST(f.[label] AS NVARCHAR(32)) AS [label], ',
+    's.local_student_id,',
     'CAST(r.date_administered AS DATE) AS date_administered ',
     'FROM ( ',
     'SELECT repository_id, repository_row_id, student_id, ',
