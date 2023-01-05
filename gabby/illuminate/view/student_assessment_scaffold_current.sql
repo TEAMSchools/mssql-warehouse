@@ -27,11 +27,6 @@ SELECT
   sub.administered_at,
   sub.performance_band_set_id,
   sub.academic_year,
-  sub.subject_area,
-  sub.is_normed_scope,
-  sub.grade_level_id,
-  sub.student_id,
-  sub.is_replacement,
   CASE
     WHEN (
       sub.scope IN (
@@ -61,7 +56,12 @@ SELECT
       AND sub.grade_level_id IN (1, 2)
     ) THEN 'Checkpoint'
     ELSE sub.scope
-  END AS scope
+  END AS scope,
+  sub.subject_area,
+  sub.is_normed_scope,
+  sub.grade_level_id,
+  sub.student_id,
+  sub.is_replacement
 FROM
   (
     /* standard curriculum -- K-8 */
