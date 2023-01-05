@@ -6,16 +6,16 @@ WITH
       n AS academic_year,
       CASE
         WHEN (
-          n = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+          n = utilities.GLOBAL_ACADEMIC_YEAR ()
         ) THEN CAST(CURRENT_TIMESTAMP AS DATE)
         ELSE DATEFROMPARTS((n + 1), 6, 30)
       END AS effective_date
     FROM
-      gabby.utilities.row_generator_smallint
+      utilities.row_generator_smallint
     WHERE
       (
         n BETWEEN 2018 AND (
-          gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+          utilities.GLOBAL_ACADEMIC_YEAR ()
         )
       )
   ),
@@ -25,7 +25,7 @@ WITH
       y.academic_year,
       COUNT(c.certificate_type) AS n_certs
     FROM
-      gabby.people.certification_history AS c
+      people.certification_history AS c
       INNER JOIN years AS y ON (y.effective_date > c.issued_date)
     WHERE
       c.valid_cert = 1
@@ -77,7 +77,7 @@ SELECT
   a.left_early_approved AS ay_approved_left_early,
   a.left_early_unapproved AS ay_unapproved_left_early
 FROM
-  gabby.people.staff_crosswalk_static AS s
+  people.staff_crosswalk_static AS s
   INNER JOIN years AS y ON (
     y.effective_date BETWEEN s.original_hire_date AND COALESCE(
       s.termination_date,
@@ -88,7 +88,7 @@ FROM
     y.academic_year = tm.academic_year
     AND tm.metric_name = 'etr_overall_score'
   )
-  LEFT JOIN gabby.people.employment_history_static AS e ON (
+  LEFT JOIN people.employment_history_static AS e ON (
     s.df_employee_number = e.employee_number
     AND (
       y.effective_date BETWEEN e.effective_start_date AND e.effective_end_date
@@ -100,12 +100,12 @@ FROM
     s.df_employee_number = c.employee_number
     AND y.academic_year = c.academic_year
   )
-  LEFT JOIN gabby.pm.teacher_goals_overall_scores_static AS pm ON (
+  LEFT JOIN pm.teacher_goals_overall_scores_static AS pm ON (
     s.df_employee_number = pm.df_employee_number
     AND y.academic_year = pm.academic_year
     AND tm.pm_term = pm.pm_term
   )
-  LEFT JOIN gabby.people.staff_attendance_rollup AS a ON (
+  LEFT JOIN people.staff_attendance_rollup AS a ON (
     s.df_employee_number = a.df_employee_number
     AND y.academic_year = a.academic_year
   )

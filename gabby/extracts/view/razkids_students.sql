@@ -12,17 +12,17 @@ SELECT
     ELSE RIGHT(CONCAT('0', s.grade_level), 2)
   END AS grade
 FROM
-  gabby.powerschool.course_enrollments_current_static AS enr
-  INNER JOIN gabby.powerschool.student_access_accounts_static AS saa ON (
+  powerschool.course_enrollments_current_static AS enr
+  INNER JOIN powerschool.student_access_accounts_static AS saa ON (
     enr.student_number = saa.student_number
   )
-  INNER JOIN gabby.powerschool.students AS s ON (
+  INNER JOIN powerschool.students AS s ON (
     enr.student_number = s.student_number
     AND enr.[db_name] = s.[db_name]
     AND s.enroll_status = 0
     AND s.grade_level <= 4
   )
-  INNER JOIN gabby.people.staff_crosswalk_static AS scw ON (
+  INNER JOIN people.staff_crosswalk_static AS scw ON (
     enr.teachernumber = scw.ps_teachernumber
   )
 WHERE

@@ -42,7 +42,7 @@ SELECT
   is_ontrack_term,
   is_ontrack_yr
 FROM
-  gabby.tableau.ar_time_series_current_static
+  tableau.ar_time_series_current_static
 UNION ALL
 SELECT
   student_number,
@@ -86,8 +86,8 @@ SELECT
   is_ontrack_term,
   is_ontrack_yr
 FROM
-  gabby.tableau.ar_time_series_archive
+  tableau.ar_time_series_archive
 WHERE
   academic_year = (
-    gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
+    utilities.GLOBAL_ACADEMIC_YEAR () - 1
   )

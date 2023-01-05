@@ -27,7 +27,7 @@ WITH
         JSON_VALUE(ah.[value], '$.transferind') AS DATE
       ) AS transferind
     FROM
-      gabby.njdoe.background_check AS bg
+      njdoe.background_check AS bg
       CROSS APPLY OPENJSON (bg.approval_history, '$') AS ah
     WHERE
       bg.approval_history != '[]'
@@ -64,6 +64,6 @@ SELECT
   s.userprincipalname
 FROM
   approval_history AS ah
-  LEFT JOIN gabby.people.staff_crosswalk_static AS s ON (
+  LEFT JOIN people.staff_crosswalk_static AS s ON (
     ah.employee_number = s.df_employee_number
   )

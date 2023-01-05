@@ -65,27 +65,27 @@ SELECT
   sri.is_manager,
   sri.rn_respondent_subject
 FROM
-  gabby.surveygizmo.survey_clean AS s
-  INNER JOIN gabby.surveygizmo.survey_question_clean_static AS sq ON (
+  surveygizmo.survey_clean AS s
+  INNER JOIN surveygizmo.survey_question_clean_static AS sq ON (
     s.survey_id = sq.survey_id
     AND sq.base_type = 'Question'
     AND sq.is_identifier_question = 0
   )
-  INNER JOIN gabby.surveygizmo.survey_response_data AS srd ON (
+  INNER JOIN surveygizmo.survey_response_data AS srd ON (
     sq.survey_id = srd.survey_id
     AND sq.survey_question_id = srd.question_id
   )
-  LEFT JOIN gabby.surveygizmo.survey_response_data_options AS srdo ON (
+  LEFT JOIN surveygizmo.survey_response_data_options AS srdo ON (
     srd.survey_id = srdo.survey_id
     AND srd.survey_response_id = srdo.survey_response_id
     AND srd.question_id = srdo.question_id
   )
-  LEFT JOIN gabby.surveygizmo.survey_question_options_static AS qo ON (
+  LEFT JOIN surveygizmo.survey_question_options_static AS qo ON (
     srd.survey_id = qo.survey_id
     AND srd.question_id = qo.question_id
     AND COALESCE(srd.answer_id, srdo.option_id) = qo.option_id
   )
-  LEFT JOIN gabby.surveygizmo.survey_response_identifiers_static AS sri ON (
+  LEFT JOIN surveygizmo.survey_response_identifiers_static AS sri ON (
     srd.survey_id = sri.survey_id
     AND srd.survey_response_id = sri.survey_response_id
     AND sri.[status] = 'Complete'

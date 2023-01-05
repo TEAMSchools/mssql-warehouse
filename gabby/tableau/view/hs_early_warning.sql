@@ -10,7 +10,7 @@ WITH
         3
       ) AS [ada]
     FROM
-      gabby.powerschool.ps_adaadm_daily_ctod_current_static
+      powerschool.ps_adaadm_daily_ctod_current_static
     WHERE
       membershipvalue = 1
       AND calendardate <= CURRENT_TIMESTAMP
@@ -26,8 +26,8 @@ WITH
       COUNT(ips.incidentpenaltyid) AS suspension_count,
       SUM(ips.numdays) AS suspension_days
     FROM
-      gabby.deanslist.incidents_clean_static AS ics
-      INNER JOIN gabby.deanslist.incidents_penalties_static AS ips ON (
+      deanslist.incidents_clean_static AS ics
+      INNER JOIN deanslist.incidents_penalties_static AS ips ON (
         ips.incident_id = ics.incident_id
         AND ips.[db_name] = ics.[db_name]
       )
@@ -96,32 +96,32 @@ SELECT
   sus.suspension_count,
   sus.suspension_days
 FROM
-  gabby.powerschool.cohort_identifiers_static AS co
-  INNER JOIN gabby.reporting.reporting_terms AS dt ON (
+  powerschool.cohort_identifiers_static AS co
+  INNER JOIN reporting.reporting_terms AS dt ON (
     co.academic_year = dt.academic_year
     AND co.schoolid = dt.schoolid
     AND dt.identifier = 'RT'
     AND dt._fivetran_deleted = 0
     AND dt.alt_name NOT IN ('Summer School', 'Y1')
   )
-  LEFT JOIN gabby.powerschool.final_grades_static AS gr ON (
+  LEFT JOIN powerschool.final_grades_static AS gr ON (
     co.studentid = gr.studentid
     AND co.yearid = gr.yearid
     AND co.[db_name] = gr.[db_name]
     AND dt.alt_name = gr.storecode
     AND gr.exclude_from_gpa = 0
   )
-  LEFT JOIN gabby.powerschool.sections_identifiers AS si ON (
+  LEFT JOIN powerschool.sections_identifiers AS si ON (
     gr.sectionid = si.sectionid
     AND gr.[db_name] = si.[db_name]
   )
-  LEFT JOIN gabby.powerschool.gpa_detail AS gpa ON (
+  LEFT JOIN powerschool.gpa_detail AS gpa ON (
     co.student_number = gpa.student_number
     AND co.academic_year = gpa.academic_year
     AND co.[db_name] = gpa.[db_name]
     AND dt.time_per_name = gpa.reporting_term
   )
-  LEFT JOIN gabby.powerschool.gpa_cumulative AS gpc ON (
+  LEFT JOIN powerschool.gpa_cumulative AS gpc ON (
     co.studentid = gpc.studentid
     AND co.schoolid = gpc.schoolid
     AND co.[db_name] = gpc.[db_name]
@@ -136,7 +136,7 @@ FROM
     AND co.[db_name] = sus.[db_name]
   )
 WHERE
-  co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+  co.academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
   AND co.rn_year = 1
   AND co.is_enrolled_recent = 1
   AND co.grade_level >= 9

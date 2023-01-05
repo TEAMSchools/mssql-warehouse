@@ -35,15 +35,15 @@ SELECT
   w.home_department_description AS subject_department_name,
   w.job_title_description AS subject_dayforce_role
 FROM
-  gabby.surveygizmo.survey_detail AS d
-  LEFT JOIN gabby.people.work_assignment_history_static AS w ON (
+  surveygizmo.survey_detail AS d
+  LEFT JOIN people.work_assignment_history_static AS w ON (
     d.respondent_df_employee_number = w.employee_number
     AND (
       /* trunk-ignore(sqlfluff/L016) */
       d.date_submitted BETWEEN w.position_effective_date AND w.position_effective_end_date_eoy -- noqa: L016
     )
   )
-  LEFT JOIN gabby.people.staff_crosswalk_static AS s ON (
+  LEFT JOIN people.staff_crosswalk_static AS s ON (
     d.respondent_df_employee_number = s.df_employee_number
   )
 WHERE

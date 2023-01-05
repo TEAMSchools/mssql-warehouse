@@ -26,4 +26,4 @@ SELECT DISTINCT
   NULL AS [23 CTE Funding Provider],
   NULL AS [24 Tech Prep]
 FROM
-  gabby.powerschool.courses;
+  powerschool.courses;

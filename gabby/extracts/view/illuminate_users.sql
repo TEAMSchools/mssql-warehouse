@@ -33,4 +33,4 @@ SELECT
   NULL AS [30 Phone1],
   NULL AS [31 Phone2]
 FROM
-  gabby.people.staff_crosswalk_static
+  people.staff_crosswalk_static

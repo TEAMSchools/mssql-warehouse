@@ -7,7 +7,7 @@ SELECT
   test_name,
   test_date,
   score,
-  gabby.utilities.DATE_TO_SY (test_date) AS academic_year
+  utilities.DATE_TO_SY (test_date) AS academic_year
 FROM
   (
     SELECT
@@ -26,5 +26,5 @@ FROM
         ELSE CAST(test_date AS DATE)
       END AS test_date
     FROM
-      gabby.naviance.sat_2_scores
+      naviance.sat_2_scores
   ) AS sub

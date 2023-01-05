@@ -30,7 +30,7 @@ WITH
         '$.multiCodeFields'
       ) AS multi_code_fields
     FROM
-      gabby.adp.workers
+      adp.workers
   ),
   worker_person_custom_field_group AS (
     SELECT
@@ -63,7 +63,7 @@ WITH
         '$.customFieldGroup.multiCodeFields'
       ) AS multi_code_fields
     FROM
-      gabby.adp.workers
+      adp.workers
   ),
   string_fields AS (
     SELECT

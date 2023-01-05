@@ -38,7 +38,7 @@ SELECT
   NULL AS colaa,
   NULL AS colab
 FROM
-  gabby.powerschool.cohort_identifiers_static
+  powerschool.cohort_identifiers_static
 WHERE
   grade_level = 12
   AND exitcode = 'G1'
@@ -97,7 +97,7 @@ SELECT
   NULL AS colaa,
   'ED' AS colab
 FROM
-  gabby.powerschool.cohort_identifiers_static
+  powerschool.cohort_identifiers_static
 WHERE
   school_level = 'HS'
   AND exitcode = 'G1'
@@ -134,7 +134,7 @@ SELECT
   NULL AS colaa,
   NULL AS colab
 FROM
-  gabby.powerschool.cohort_identifiers_static
+  powerschool.cohort_identifiers_static
 WHERE
   school_level = 'HS'
   AND exitcode = 'G1'

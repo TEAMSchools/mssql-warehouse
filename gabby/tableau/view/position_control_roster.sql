@@ -14,7 +14,7 @@ WITH
           plan_type,
           plan_name
         FROM
-          gabby.adp.comprehensive_benefits_report
+          adp.comprehensive_benefits_report
       ) AS sub PIVOT (
         MAX(plan_name) FOR plan_type IN ([Medical], [Dental], [Vision])
       ) AS p
@@ -22,10 +22,10 @@ WITH
   cost_number AS (
     SELECT
       associate_id,
-      gabby.dbo.GROUP_CONCAT (custom_area_3) AS grant_number,
-      gabby.dbo.GROUP_CONCAT (cost_number) AS cost_number
+      dbo.GROUP_CONCAT (custom_area_3) AS grant_number,
+      dbo.GROUP_CONCAT (cost_number) AS cost_number
     FROM
-      gabby.adp.restricted_grant_coding
+      adp.restricted_grant_coding
     GROUP BY
       associate_id
   )
@@ -68,7 +68,7 @@ SELECT
   'N/A' AS position_tracking,
   'N/A' AS retirement_projection
 FROM
-  gabby.people.staff_roster AS sr
+  people.staff_roster AS sr
   LEFT JOIN pivot_table AS pvt ON (sr.position_id = pvt.position_id)
   LEFT JOIN cost_number AS cn ON (
     sr.associate_id = cn.associate_id

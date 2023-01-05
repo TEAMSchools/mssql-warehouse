@@ -39,19 +39,19 @@ SELECT
   cf.[HI start date],
   cf.[HI end date]
 FROM
-  gabby.deanslist.incidents_clean_static AS dli
-  LEFT JOIN gabby.deanslist.incidents_custom_fields_wide AS cf ON dli.incident_id = cf.incident_id -- noqa: L016
-  LEFT JOIN gabby.deanslist.users AS u ON (
+  deanslist.incidents_clean_static AS dli
+  LEFT JOIN deanslist.incidents_custom_fields_wide AS cf ON dli.incident_id = cf.incident_id -- noqa: L016
+  LEFT JOIN deanslist.users AS u ON (
     u.dluser_id = cf.[Approver name]
     AND u.[db_name] = cf.[db_name]
   )
-  INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON (
+  INNER JOIN powerschool.cohort_identifiers_static AS co ON (
     dli.student_school_id = co.student_number
     AND dli.create_academic_year = co.academic_year
     AND dli.[db_name] = co.[db_name]
     AND co.rn_year = 1
   )
-  INNER JOIN gabby.reporting.reporting_terms AS d ON (
+  INNER JOIN reporting.reporting_terms AS d ON (
     co.schoolid = d.schoolid
     AND (
       CAST(dli.create_ts AS DATE) BETWEEN d.[start_date] AND d.end_date
@@ -60,5 +60,5 @@ FROM
     AND d._fivetran_deleted = 0
   )
 WHERE
-  dli.create_academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+  dli.create_academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
   AND dli.category LIKE 'Home Instruction Request -%'

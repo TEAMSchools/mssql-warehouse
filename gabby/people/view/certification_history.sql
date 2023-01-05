@@ -51,16 +51,16 @@ FROM
         ) THEN 0
         ELSE 1
       END AS valid_cert,
-      gabby.utilities.DATE_TO_SY (c.issued_date) AS academic_year,
+      utilities.DATE_TO_SY (c.issued_date) AS academic_year,
       NULL AS cert_status,
       'NJ' AS cert_state
     FROM
-      gabby.people.staff_crosswalk_static AS s
-      LEFT JOIN gabby.powerschool.schools AS pss ON (
+      people.staff_crosswalk_static AS s
+      LEFT JOIN powerschool.schools AS pss ON (
         s.primary_site_schoolid = pss.school_number
         AND s.[db_name] = pss.[db_name]
       )
-      LEFT JOIN gabby.njdoe.certification_certificate_history_static AS c ON (
+      LEFT JOIN njdoe.certification_certificate_history_static AS c ON (
         s.df_employee_number = c.df_employee_number
       )
   ) AS sub

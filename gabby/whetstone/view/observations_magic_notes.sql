@@ -15,7 +15,7 @@ SELECT
     JSON_VALUE(mn.[value], '$.shared') AS BIT
   ) AS magic_notes_shared
 FROM
-  gabby.whetstone.observations AS wo
+  whetstone.observations AS wo
   CROSS APPLY OPENJSON (wo.magic_notes, '$') AS mn
 WHERE
   wo.magic_notes != '[]'

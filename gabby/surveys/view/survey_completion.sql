@@ -18,7 +18,7 @@ WITH
         END
       ) AS subject_df_employee_number,
       LOWER(s.email) AS email,
-      gabby.utilities.DATE_TO_SY (s._created) AS academic_year,
+      utilities.DATE_TO_SY (s._created) AS academic_year,
       CASE
         WHEN c.[name] LIKE '%SO1%' THEN 'SO1'
         WHEN c.[name] LIKE '%SO2%' THEN 'SO2'
@@ -29,15 +29,15 @@ WITH
       'Self & Others' AS survey_type,
       c.survey_id AS survey_id
     FROM
-      gabby.surveys.self_and_others_survey AS s
-      INNER JOIN gabby.surveygizmo.survey_campaign_clean_static AS c ON (
+      surveys.self_and_others_survey AS s
+      INNER JOIN surveygizmo.survey_campaign_clean_static AS c ON (
         c.survey_id = 4561325
         AND (
           CAST(s._created AS DATETIME2) BETWEEN c.link_open_date AND c.link_close_date
         )
       )
     WHERE
-      gabby.utilities.DATE_TO_SY (s._created) = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+      utilities.DATE_TO_SY (s._created) = utilities.GLOBAL_ACADEMIC_YEAR ()
       AND s.subject_name IS NOT NULL
     UNION ALL
     SELECT
@@ -56,7 +56,7 @@ WITH
         END
       ) AS subject_df_employee_number,
       LOWER(m.responder_name) AS email,
-      gabby.utilities.DATE_TO_SY (m._created) AS academic_year,
+      utilities.DATE_TO_SY (m._created) AS academic_year,
       CASE
         WHEN c.[name] LIKE '%MGR1%' THEN 'MGR1'
         WHEN c.[name] LIKE '%MGR2%' THEN 'MGR2'
@@ -67,15 +67,15 @@ WITH
       'Manager' AS survey_type,
       c.survey_id AS survey_id
     FROM
-      gabby.surveys.manager_survey AS m
-      INNER JOIN gabby.surveygizmo.survey_campaign_clean_static AS c ON (
+      surveys.manager_survey AS m
+      INNER JOIN surveygizmo.survey_campaign_clean_static AS c ON (
         c.survey_id = 4561288
         AND (
           CAST(m._created AS DATETIME2) BETWEEN c.link_open_date AND c.link_close_date
         )
       )
     WHERE
-      gabby.utilities.DATE_TO_SY (m._created) = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+      utilities.DATE_TO_SY (m._created) = utilities.GLOBAL_ACADEMIC_YEAR ()
       AND m.subject_name IS NOT NULL
       AND m.q_1 IS NOT NULL
     UNION ALL
@@ -85,7 +85,7 @@ WITH
       'R9/Engagement' AS subject_name,
       999999 AS subject_df_employee_number,
       LOWER(e.email) AS email,
-      gabby.utilities.DATE_TO_SY (e._created) AS academic_year,
+      utilities.DATE_TO_SY (e._created) AS academic_year,
       CASE
         WHEN c.[name] LIKE '%R9S1%' THEN 'R9S1'
         WHEN c.[name] LIKE '%R9S2%' THEN 'R9S2'
@@ -96,15 +96,15 @@ WITH
       'R9/Engagement' AS survey_type,
       c.survey_id AS survey_id
     FROM
-      gabby.surveys.r_9_engagement_survey AS e
-      INNER JOIN gabby.surveygizmo.survey_campaign_clean_static AS c ON (
+      surveys.r_9_engagement_survey AS e
+      INNER JOIN surveygizmo.survey_campaign_clean_static AS c ON (
         c.survey_id = 5300913
         AND (
           CAST(e._created AS DATETIME2) BETWEEN c.link_open_date AND c.link_close_date
         )
       )
     WHERE
-      gabby.utilities.DATE_TO_SY (e._created) = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+      utilities.DATE_TO_SY (e._created) = utilities.GLOBAL_ACADEMIC_YEAR ()
   ),
   response_identifiers AS (
     SELECT
@@ -136,9 +136,9 @@ WITH
       END AS survey_type,
       survey_id AS survey_id
     FROM
-      gabby.surveygizmo.survey_response_identifiers_static
+      surveygizmo.survey_response_identifiers_static
     WHERE
-      campaign_academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+      campaign_academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
   ),
   survey_feed AS (
     SELECT
@@ -197,9 +197,9 @@ WITH
       END AS email3,
       'Self & Others' AS survey_type,
       ss.[value] AS reporting_term,
-      gabby.utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year
+      utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year
     FROM
-      gabby.people.staff_crosswalk_static AS sr
+      people.staff_crosswalk_static AS sr
       CROSS JOIN STRING_SPLIT ('SO1,SO2,SO3', ',') AS ss
     WHERE
       sr.[status] NOT IN ('TERMINATED', 'PRESTART')
@@ -230,9 +230,9 @@ WITH
       END AS email3,
       'R9/Engagement' AS survey_type,
       ss.[value] AS reporting_term,
-      gabby.utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year
+      utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year
     FROM
-      gabby.people.staff_crosswalk_static AS sr
+      people.staff_crosswalk_static AS sr
       CROSS JOIN STRING_SPLIT ('R9S1,R9S2,R9S3,R9S4', ',') AS ss
     WHERE
       sr.[status] NOT IN ('TERMINATED', 'PRESTART')
@@ -263,9 +263,9 @@ WITH
       END AS email3,
       'Manager' AS survey_type,
       ss.[value] AS reporting_term,
-      gabby.utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year
+      utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year
     FROM
-      gabby.people.staff_crosswalk_static AS sr
+      people.staff_crosswalk_static AS sr
       CROSS JOIN STRING_SPLIT ('MGR1,MGR2,MGR3,MGR4', ',') AS ss
     WHERE
       sr.[status] NOT IN ('TERMINATED', 'PRESTART')

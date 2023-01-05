@@ -66,7 +66,7 @@ FROM
       END AS fiction_non_fiction,
       CAST(LEFT(school_year, 4) AS INT) AS academic_year
     FROM
-      gabby.renaissance.accelerated_reader
+      renaissance.accelerated_reader
     WHERE
       quiz_deleted = 0
       AND quiz_type = 'Reading Practice Quiz'

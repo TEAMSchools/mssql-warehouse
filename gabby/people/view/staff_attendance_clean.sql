@@ -17,7 +17,7 @@ SELECT
   a.approved,
   a.additional_notes,
   a.submitted_on,
-  gabby.utilities.DATE_TO_SY (a.attendance_date) AS academic_year,
+  utilities.DATE_TO_SY (a.attendance_date) AS academic_year,
   c.manager_name,
   c.primary_site AS current_location,
   c.legal_entity_name AS current_legal_entity,
@@ -81,8 +81,8 @@ FROM
         ELSE 1
       END AS approved
     FROM
-      gabby.people.staff_attendance
+      people.staff_attendance
   ) AS a
-  INNER JOIN gabby.people.staff_crosswalk_static AS c ON (
+  INNER JOIN people.staff_crosswalk_static AS c ON (
     a.df_number = c.df_employee_number
   )

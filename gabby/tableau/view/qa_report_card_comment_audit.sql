@@ -18,8 +18,8 @@ WITH
         ELSE f.[name]
       END AS field_name
     FROM
-      gabby.illuminate_dna_repositories.repositories AS r
-      INNER JOIN gabby.illuminate_dna_repositories.fields AS f ON (
+      illuminate_dna_repositories.repositories AS r
+      INNER JOIN illuminate_dna_repositories.fields AS f ON (
         r.repository_id = f.repository_id
         AND f.deleted_at IS NULL
         AND f.[name] != 'field_term'
@@ -45,16 +45,16 @@ SELECT
   rdu.subcategory,
   rdu.comment
 FROM
-  gabby.powerschool.cohort_identifiers_static AS co
+  powerschool.cohort_identifiers_static AS co
   CROSS JOIN repo_fields AS rf
-  LEFT JOIN gabby.reporting.illuminate_report_card_comments AS rdu ON (
+  LEFT JOIN reporting.illuminate_report_card_comments AS rdu ON (
     co.student_number = rdu.student_number
     AND co.academic_year = rdu.academic_year
     AND rf.repository_id = rdu.repository_id
     AND rf.field_name = rdu.comment_field
   )
 WHERE
-  co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+  co.academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
   AND co.rn_year = 1
   AND co.enroll_status = 0
   AND co.grade_level <= 4

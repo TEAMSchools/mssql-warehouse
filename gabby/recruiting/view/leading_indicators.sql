@@ -23,7 +23,7 @@ WITH
           application_state_offer_date AS offer_date,
           application_state_hired_date AS hired_date
         FROM
-          gabby.smartrecruiters.report_applications
+          smartrecruiters.report_applications
       ) AS sub UNPIVOT (
         date_val FOR status_type IN (
           application_date,
@@ -112,8 +112,8 @@ SELECT
   d.last_updated,
   DATENAME(WW, CURRENT_TIMESTAMP) AS current_week
 FROM
-  gabby.smartrecruiters.report_applicants AS p
-  INNER JOIN gabby.smartrecruiters.report_applications AS a ON (
+  smartrecruiters.report_applicants AS p
+  INNER JOIN smartrecruiters.report_applications AS a ON (
     p.application_id = a.application_id
   )
   INNER JOIN latest_update AS d ON (

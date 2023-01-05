@@ -67,4 +67,4 @@ SELECT
     (l_5_percent / 100) * valid_scores
   ) AS proficient_count
 FROM
-  gabby.njdoe.parcc
+  njdoe.parcc

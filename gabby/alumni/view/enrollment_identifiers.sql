@@ -121,7 +121,7 @@ WITH
               COALESCE(
                 e.actual_end_date_c,
                 DATEFROMPARTS(
-                  gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1,
+                  utilities.GLOBAL_ACADEMIC_YEAR () + 1,
                   6,
                   30
                 )
@@ -166,7 +166,7 @@ WITH
                   ) BETWEEN e.start_date_c AND COALESCE(
                     e.actual_end_date_c,
                     DATEFROMPARTS(
-                      gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1,
+                      utilities.GLOBAL_ACADEMIC_YEAR () + 1,
                       6,
                       30
                     )
@@ -176,8 +176,8 @@ WITH
               END AS is_ecc_dated,
               0 AS is_employment
             FROM
-              gabby.alumni.enrollment_c AS e
-              INNER JOIN gabby.alumni.contact AS c ON (
+              alumni.enrollment_c AS e
+              INNER JOIN alumni.contact AS c ON (
                 e.student_c = c.id
                 AND c.is_deleted = 0
               )
@@ -202,7 +202,7 @@ WITH
                   meps_end_date_c
                 ),
                 DATEFROMPARTS(
-                  gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1,
+                  utilities.GLOBAL_ACADEMIC_YEAR () + 1,
                   6,
                   30
                 )
@@ -213,7 +213,7 @@ WITH
               NULL AS is_ecc_dated,
               1 AS is_employment
             FROM
-              gabby.alumni.employment_c AS e
+              alumni.employment_c AS e
             WHERE
               e.is_deleted = 0
           ) AS sub
@@ -442,68 +442,68 @@ FROM
       ) AS emp_name
     FROM
       enrollments AS e
-      LEFT JOIN gabby.alumni.enrollment_c AS ba ON (
+      LEFT JOIN alumni.enrollment_c AS ba ON (
         e.ba_enrollment_id = ba.id
         AND ba.is_deleted = 0
       )
-      LEFT JOIN gabby.alumni.account AS baa ON (
+      LEFT JOIN alumni.account AS baa ON (
         ba.school_c = baa.id
         AND baa.is_deleted = 0
       )
-      LEFT JOIN gabby.alumni.enrollment_c AS aa ON (
+      LEFT JOIN alumni.enrollment_c AS aa ON (
         e.aa_enrollment_id = aa.id
         AND aa.is_deleted = 0
       )
-      LEFT JOIN gabby.alumni.account AS aaa ON (
+      LEFT JOIN alumni.account AS aaa ON (
         aa.school_c = aaa.id
         AND aaa.is_deleted = 0
       )
-      LEFT JOIN gabby.alumni.enrollment_c AS ecc ON (
+      LEFT JOIN alumni.enrollment_c AS ecc ON (
         e.ecc_enrollment_id = ecc.id
         AND ecc.is_deleted = 0
       )
-      LEFT JOIN gabby.alumni.account AS ecca ON (
+      LEFT JOIN alumni.account AS ecca ON (
         ecc.school_c = ecca.id
         AND ecca.is_deleted = 0
       )
-      LEFT JOIN gabby.alumni.enrollment_c AS hs ON (
+      LEFT JOIN alumni.enrollment_c AS hs ON (
         e.secondary_enrollment_id = hs.id
         AND hs.is_deleted = 0
       )
-      LEFT JOIN gabby.alumni.account AS hsa ON (
+      LEFT JOIN alumni.account AS hsa ON (
         hs.school_c = hsa.id
         AND hsa.is_deleted = 0
       )
-      LEFT JOIN gabby.alumni.enrollment_c AS cte ON (
+      LEFT JOIN alumni.enrollment_c AS cte ON (
         e.vocational_enrollment_id = cte.id
         AND cte.is_deleted = 0
       )
-      LEFT JOIN gabby.alumni.account AS ctea ON (
+      LEFT JOIN alumni.account AS ctea ON (
         cte.school_c = ctea.id
         AND ctea.is_deleted = 0
       )
-      LEFT JOIN gabby.alumni.enrollment_c AS cur ON (
+      LEFT JOIN alumni.enrollment_c AS cur ON (
         e.curr_enrollment_id = cur.id
         AND cur.is_deleted = 0
       )
-      LEFT JOIN gabby.alumni.account AS cura ON (
+      LEFT JOIN alumni.account AS cura ON (
         cur.school_c = cura.id
         AND cura.is_deleted = 0
       )
-      LEFT JOIN gabby.alumni.employment_c AS emp ON (
+      LEFT JOIN alumni.employment_c AS emp ON (
         e.employment_enrollment_id = emp.id
         AND emp.is_deleted = 0
       )
-      LEFT JOIN gabby.alumni.account AS empa ON (
+      LEFT JOIN alumni.account AS empa ON (
         emp.employer_organization_look_up_c = empa.id
         AND empa.is_deleted = 0
       )
   ) AS sub
-  LEFT JOIN gabby.alumni.enrollment_c AS ug ON (
+  LEFT JOIN alumni.enrollment_c AS ug ON (
     sub.ugrad_enrollment_id = ug.id
     AND ug.is_deleted = 0
   )
-  LEFT JOIN gabby.alumni.account AS uga ON (
+  LEFT JOIN alumni.account AS uga ON (
     ug.school_c = uga.id
     AND uga.is_deleted = 0
   )

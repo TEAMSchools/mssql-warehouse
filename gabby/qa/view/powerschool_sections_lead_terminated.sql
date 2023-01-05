@@ -9,16 +9,16 @@ SELECT
   t.teachernumber,
   scw.preferred_name
 FROM
-  gabby.powerschool.sections AS sec
-  INNER JOIN gabby.powerschool.teachers_static AS t ON (
+  powerschool.sections AS sec
+  INNER JOIN powerschool.teachers_static AS t ON (
     sec.teacher = t.id
     AND sec.[db_name] = t.[db_name]
   )
-  INNER JOIN gabby.people.staff_crosswalk_static AS scw ON (
+  INNER JOIN people.staff_crosswalk_static AS scw ON (
     t.teachernumber = scw.ps_teachernumber
     AND scw.[status] = 'TERMINATED'
   )
 WHERE
   sec.termid >= (
-    gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990
+    utilities.GLOBAL_ACADEMIC_YEAR () - 1990
   ) * 100

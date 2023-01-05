@@ -11,17 +11,17 @@ WITH
       sec.[db_name],
       t.teachernumber
     FROM
-      gabby.powerschool.sections AS sec
-      INNER JOIN gabby.powerschool.sectionteacher AS st ON (
+      powerschool.sections AS sec
+      INNER JOIN powerschool.sectionteacher AS st ON (
         sec.id = st.sectionid
         AND sec.[db_name] = st.[db_name]
       )
-      INNER JOIN gabby.powerschool.roledef AS rd ON (
+      INNER JOIN powerschool.roledef AS rd ON (
         st.roleid = rd.id
         AND st.[db_name] = rd.[db_name]
         AND rd.[name] IN ('Lead Teacher', 'Co-teacher')
       )
-      INNER JOIN gabby.powerschool.teachers_static AS t ON (
+      INNER JOIN powerschool.teachers_static AS t ON (
         st.teacherid = t.id
         AND st.[db_name] = t.[db_name]
       )
@@ -70,19 +70,19 @@ SELECT
   tm.metric_term,
   tm.pm_term
 FROM
-  gabby.pm.teacher_goals_roster_static AS sr
-  INNER JOIN gabby.pm.teacher_goals AS tg ON (
+  pm.teacher_goals_roster_static AS sr
+  INNER JOIN pm.teacher_goals AS tg ON (
     sr.primary_site = tg.df_primary_site
     AND sr.academic_year = tg.academic_year
     AND tg.goal_type = 'Individual'
     AND tg._fivetran_deleted = 0
   )
-  INNER JOIN gabby.pm.teacher_goals_term_map AS tm ON (
+  INNER JOIN pm.teacher_goals_term_map AS tm ON (
     tg.academic_year = tm.academic_year
     AND tg.metric_name = tm.metric_name
     AND tm._fivetran_deleted = 0
   )
-  LEFT JOIN gabby.pm.teacher_goals_exemption_clean_static AS ex ON (
+  LEFT JOIN pm.teacher_goals_exemption_clean_static AS ex ON (
     sr.df_employee_number = ex.df_employee_number
     AND tg.academic_year = ex.academic_year
     AND tm.pm_term = ex.pm_term
@@ -129,20 +129,20 @@ SELECT
   tm.metric_term,
   tm.pm_term
 FROM
-  gabby.pm.teacher_goals_roster_static AS sr
-  INNER JOIN gabby.pm.teacher_goals AS tg ON (
+  pm.teacher_goals_roster_static AS sr
+  INNER JOIN pm.teacher_goals AS tg ON (
     sr.primary_site = tg.df_primary_site
     AND sr.grades_taught = tg.grade_level
     AND sr.academic_year = tg.academic_year
     AND tg.goal_type = 'Team'
     AND tg._fivetran_deleted = 0
   )
-  INNER JOIN gabby.pm.teacher_goals_term_map AS tm ON (
+  INNER JOIN pm.teacher_goals_term_map AS tm ON (
     tg.academic_year = tm.academic_year
     AND tg.metric_name = tm.metric_name
     AND tm._fivetran_deleted = 0
   )
-  LEFT JOIN gabby.pm.teacher_goals_exemption_clean_static AS ex ON (
+  LEFT JOIN pm.teacher_goals_exemption_clean_static AS ex ON (
     sr.df_employee_number = ex.df_employee_number
     AND tg.academic_year = ex.academic_year
     AND tm.pm_term = ex.pm_term
@@ -189,8 +189,8 @@ SELECT
   tm.metric_term,
   tm.pm_term
 FROM
-  gabby.pm.teacher_goals_roster_static AS sr
-  INNER JOIN gabby.pm.teacher_goals AS tg ON (
+  pm.teacher_goals_roster_static AS sr
+  INNER JOIN pm.teacher_goals AS tg ON (
     sr.primary_site = tg.df_primary_site
     AND sr.academic_year = tg.academic_year
     AND tg.goal_type = 'Class'
@@ -203,23 +203,23 @@ FROM
     AND sr.[db_name] = st.[db_name]
     AND tg.ps_course_number = st.course_number
   )
-  INNER JOIN gabby.powerschool.course_enrollments AS enr ON (
+  INNER JOIN powerschool.course_enrollments AS enr ON (
     st.sectionid = enr.abs_sectionid
     AND st.[db_name] = enr.[db_name]
   )
-  INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON (
+  INNER JOIN powerschool.cohort_identifiers_static AS co ON (
     enr.student_number = co.student_number
     AND enr.academic_year = co.academic_year
     AND enr.[db_name] = co.[db_name]
     AND tg.grade_level = co.grade_level
     AND co.rn_year = 1
   )
-  INNER JOIN gabby.pm.teacher_goals_term_map AS tm ON (
+  INNER JOIN pm.teacher_goals_term_map AS tm ON (
     tg.academic_year = tm.academic_year
     AND tg.metric_name = tm.metric_name
     AND tm._fivetran_deleted = 0
   )
-  LEFT JOIN gabby.pm.teacher_goals_exemption_clean_static AS ex ON (
+  LEFT JOIN pm.teacher_goals_exemption_clean_static AS ex ON (
     sr.df_employee_number = ex.df_employee_number
     AND tg.academic_year = ex.academic_year
     AND tm.pm_term = ex.pm_term
@@ -267,8 +267,8 @@ SELECT
   tm.metric_term,
   tm.pm_term
 FROM
-  gabby.pm.teacher_goals_roster_static AS sr
-  INNER JOIN gabby.pm.teacher_goals AS tg ON (
+  pm.teacher_goals_roster_static AS sr
+  INNER JOIN pm.teacher_goals AS tg ON (
     sr.primary_site = tg.df_primary_site
     AND sr.academic_year = tg.academic_year
     AND tg.goal_type = 'Class'
@@ -281,11 +281,11 @@ FROM
     AND sr.[db_name] = st.[db_name]
     AND tg.ps_course_number = st.course_number
   )
-  INNER JOIN gabby.powerschool.course_enrollments AS enr ON (
+  INNER JOIN powerschool.course_enrollments AS enr ON (
     st.sectionid = enr.abs_sectionid
     AND st.[db_name] = enr.[db_name]
   )
-  INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON (
+  INNER JOIN powerschool.cohort_identifiers_static AS co ON (
     enr.student_number = co.student_number
     AND enr.academic_year = co.academic_year
     AND enr.[db_name] = co.[db_name]
@@ -293,12 +293,12 @@ FROM
     AND co.rn_year = 1
     AND co.iep_status = 'SPED'
   )
-  INNER JOIN gabby.pm.teacher_goals_term_map AS tm ON (
+  INNER JOIN pm.teacher_goals_term_map AS tm ON (
     tg.academic_year = tm.academic_year
     AND tg.metric_name = tm.metric_name
     AND tm._fivetran_deleted = 0
   )
-  LEFT JOIN gabby.pm.teacher_goals_exemption_clean_static AS ex ON (
+  LEFT JOIN pm.teacher_goals_exemption_clean_static AS ex ON (
     sr.df_employee_number = ex.df_employee_number
     AND tg.academic_year = ex.academic_year
     AND tm.pm_term = ex.pm_term

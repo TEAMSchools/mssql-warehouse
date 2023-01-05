@@ -20,8 +20,8 @@ WITH
         END
       ) AS n_failing_ms_core
     FROM
-      gabby.powerschool.final_grades_static AS fg
-      INNER JOIN gabby.powerschool.courses AS c ON (
+      powerschool.final_grades_static AS fg
+      INNER JOIN powerschool.courses AS c ON (
         fg.course_number = c.course_number
         AND fg.[db_name] = c.[db_name]
       )
@@ -38,7 +38,7 @@ WITH
       earned_credits_cum,
       earned_credits_cum_projected
     FROM
-      gabby.powerschool.gpa_cumulative
+      powerschool.gpa_cumulative
   ),
   enrolled_credits AS (
     SELECT
@@ -46,7 +46,7 @@ WITH
       academic_year,
       SUM(credit_hours) AS credit_hours_enrolled
     FROM
-      gabby.powerschool.course_enrollments
+      powerschool.course_enrollments
     WHERE
       course_enroll_status = 0
       AND section_enroll_status = 0
@@ -69,7 +69,7 @@ WITH
           term_administered,
           AVG(performance_band_number) AS avg_performance_band_number
         FROM
-          gabby.illuminate_dna_assessments.agg_student_responses_all
+          illuminate_dna_assessments.agg_student_responses_all
         WHERE
           module_type LIKE 'QA%'
           AND subject_area IN ('Mathematics', 'Algebra I')
@@ -90,7 +90,7 @@ WITH
         1
       ) AS ada_y1_running
     FROM
-      gabby.powerschool.ps_adaadm_daily_ctod
+      powerschool.ps_adaadm_daily_ctod
     WHERE
       membershipvalue > 0
       AND calendardate <= CAST(CURRENT_TIMESTAMP AS DATE)
@@ -257,11 +257,11 @@ FROM
           END AS grades_y1_credits_goal,
           qas.avg_performance_band_number AS qa_avg_performance_band_number
         FROM
-          gabby.powerschool.cohort_identifiers_static AS co
-          INNER JOIN gabby.powerschool.students AS s ON (
+          powerschool.cohort_identifiers_static AS co
+          INNER JOIN powerschool.students AS s ON (
             co.student_number = s.student_number
           )
-          INNER JOIN gabby.reporting.reporting_terms AS rt ON (
+          INNER JOIN reporting.reporting_terms AS rt ON (
             co.schoolid = rt.schoolid
             AND co.academic_year = rt.academic_year
             AND rt.identifier = 'RT'
@@ -272,7 +272,7 @@ FROM
             AND co.[db_name] = [ada].[db_name]
             AND co.yearid = [ada].yearid
           )
-          LEFT JOIN gabby.lit.achieved_by_round_static AS lit ON (
+          LEFT JOIN lit.achieved_by_round_static AS lit ON (
             co.student_number = lit.student_number
             AND co.academic_year = lit.academic_year
             AND rt.alt_name = lit.test_round

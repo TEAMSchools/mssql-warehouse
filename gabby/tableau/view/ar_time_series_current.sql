@@ -47,8 +47,8 @@ WITH
         ELSE bk.vch_content_title
       END AS last_book_title
     FROM
-      gabby.powerschool.cohort_identifiers_scaffold_current_static AS co
-      LEFT JOIN gabby.reporting.reporting_terms AS dts ON (
+      powerschool.cohort_identifiers_scaffold_current_static AS co
+      LEFT JOIN reporting.reporting_terms AS dts ON (
         co.schoolid = dts.schoolid
         AND (
           co.[date] BETWEEN dts.[start_date] AND dts.end_date
@@ -57,14 +57,14 @@ WITH
         AND dts.time_per_name != 'ARY'
         AND dts._fivetran_deleted = 0
       )
-      LEFT JOIN gabby.reporting.reporting_terms AS y1dts ON (
+      LEFT JOIN reporting.reporting_terms AS y1dts ON (
         co.academic_year = y1dts.academic_year
         AND co.schoolid = y1dts.schoolid
         AND y1dts.identifier = 'AR'
         AND y1dts.time_per_name = 'ARY'
         AND y1dts._fivetran_deleted = 0
       )
-      LEFT JOIN gabby.powerschool.course_enrollments_current_static AS enr ON (
+      LEFT JOIN powerschool.course_enrollments_current_static AS enr ON (
         co.student_number = enr.student_number
         AND co.academic_year = enr.academic_year
         AND co.[db_name] = enr.[db_name]
@@ -73,7 +73,7 @@ WITH
         AND enr.section_enroll_status = 0
         AND enr.rn_subject = 1
       )
-      LEFT JOIN gabby.powerschool.course_enrollments_current_static AS hr ON (
+      LEFT JOIN powerschool.course_enrollments_current_static AS hr ON (
         co.student_number = hr.student_number
         AND co.academic_year = hr.academic_year
         AND co.schoolid = hr.schoolid
@@ -83,21 +83,21 @@ WITH
         AND hr.section_enroll_status = 0
         AND hr.rn_course_yr = 1
       )
-      LEFT JOIN gabby.renaissance.ar_goals_current_static AS y1_goal ON (
+      LEFT JOIN renaissance.ar_goals_current_static AS y1_goal ON (
         co.student_number = y1_goal.student_number
         AND co.academic_year = y1_goal.academic_year
         AND y1_goal.reporting_term = 'ARY'
       )
-      LEFT JOIN gabby.renaissance.ar_goals_current_static AS term_goal ON (
+      LEFT JOIN renaissance.ar_goals_current_static AS term_goal ON (
         co.student_number = term_goal.student_number
         AND co.academic_year = term_goal.academic_year
         AND dts.time_per_name = term_goal.reporting_term
       )
-      LEFT JOIN gabby.renaissance.ar_most_recent_quiz_static AS bk ON (
+      LEFT JOIN renaissance.ar_most_recent_quiz_static AS bk ON (
         co.student_number = bk.student_number
         AND co.academic_year = bk.academic_year
       )
-      LEFT JOIN gabby.renaissance.ar_studentpractice_rollup_static AS ar ON (
+      LEFT JOIN renaissance.ar_studentpractice_rollup_static AS ar ON (
         co.student_number = ar.student_number
         AND co.[date] = ar.date_taken
       )

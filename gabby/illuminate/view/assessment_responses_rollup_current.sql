@@ -79,10 +79,10 @@ FROM
         1
       ) AS percent_correct
     FROM
-      gabby.illuminate_dna_assessments.assessment_responses_long
+      illuminate_dna_assessments.assessment_responses_long
     WHERE
       is_normed_scope = 1
-      AND academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+      AND academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
     GROUP BY
       student_id,
       academic_year,

@@ -72,29 +72,29 @@ WITH
         ELSE ar.words_goal
       END AS words_goal
     FROM
-      gabby.powerschool.cohort_identifiers_static AS co
-      INNER JOIN gabby.reporting.reporting_term_map AS term ON (
+      powerschool.cohort_identifiers_static AS co
+      INNER JOIN reporting.reporting_term_map AS term ON (
         co.school_level = term.school_level
         AND (
           co.academic_year BETWEEN term.min_year AND term.max_year
         )
       )
-      INNER JOIN gabby.lit.achieved_by_round_static AS achv ON (
+      INNER JOIN lit.achieved_by_round_static AS achv ON (
         co.student_number = achv.student_number
         AND co.academic_year = achv.academic_year
         AND term.lit = achv.test_round
         AND achv.[start_date] <= CURRENT_TIMESTAMP
       )
-      LEFT JOIN gabby.lit.all_test_events_static AS atid ON (
+      LEFT JOIN lit.all_test_events_static AS atid ON (
         achv.achv_unique_id = atid.unique_id
       )
-      LEFT JOIN gabby.lit.all_test_events_static AS dtid ON (
+      LEFT JOIN lit.all_test_events_static AS dtid ON (
         achv.dna_unique_id = dtid.unique_id
       )
-      LEFT JOIN gabby.lit.all_test_events_static AS htid ON (
+      LEFT JOIN lit.all_test_events_static AS htid ON (
         achv.hard_unique_id = htid.unique_id
       )
-      LEFT JOIN gabby.renaissance.ar_progress_to_goals AS ar ON (
+      LEFT JOIN renaissance.ar_progress_to_goals AS ar ON (
         co.student_number = ar.student_number
         AND co.academic_year = ar.academic_year
         AND term.ar = ar.reporting_term
@@ -104,7 +104,7 @@ WITH
     WHERE
       co.rn_year = 1
       AND co.academic_year >= (
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 3
+        utilities.GLOBAL_ACADEMIC_YEAR () - 3
       )
       AND co.grade_level != 99
       AND co.school_level != 'OD'
@@ -176,6 +176,6 @@ SELECT
   long.dna_filter
 FROM
   lit_round AS lr
-  LEFT JOIN gabby.lit.component_proficiency_long_static AS long ON (
+  LEFT JOIN lit.component_proficiency_long_static AS long ON (
     lr.dna_unique_id = long.unique_id
   )

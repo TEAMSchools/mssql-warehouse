@@ -36,12 +36,12 @@ SELECT
   a.isfinalscorecalculated,
   NULL AS rn_category
 FROM
-  gabby.powerschool.gradebook_setup_static AS gb
-  INNER JOIN gabby.powerschool.course_enrollments_current_static AS enr ON (
+  powerschool.gradebook_setup_static AS gb
+  INNER JOIN powerschool.course_enrollments_current_static AS enr ON (
     gb.sectionsdcid = enr.sections_dcid
     AND gb.[db_name] = enr.[db_name]
   )
-  LEFT JOIN gabby.powerschool.gradebook_assignments_current_static AS a ON (
+  LEFT JOIN powerschool.gradebook_assignments_current_static AS a ON (
     gb.sectionsdcid = a.sectionsdcid
     AND gb.assignmentcategoryid = a.categoryid
     AND gb.[db_name] = a.[db_name]
@@ -51,14 +51,14 @@ FROM
   )
 WHERE
   gb.term_start_date >= DATEFROMPARTS(
-    gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+    utilities.GLOBAL_ACADEMIC_YEAR (),
     7,
     1
   )
 UNION ALL
 SELECT
   NULL AS sectionid,
-  gabby.utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year,
+  utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year,
   NULL AS schoolid,
   NULL AS section_number,
   NULL AS [period],

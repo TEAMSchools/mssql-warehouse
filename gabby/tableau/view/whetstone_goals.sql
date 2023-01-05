@@ -24,19 +24,19 @@ SELECT
   rt.academic_year,
   rt.alt_name AS reporting_term_name
 FROM
-  gabby.whetstone.tags AS t
-  LEFT JOIN gabby.whetstone.assignment_tags AS wt ON (
+  whetstone.tags AS t
+  LEFT JOIN whetstone.assignment_tags AS wt ON (
     t._id = wt.tag_id
     AND wt.assignment_type = 'goal'
   )
-  LEFT JOIN gabby.whetstone.assignments_clean AS wa ON (
+  LEFT JOIN whetstone.assignments_clean AS wa ON (
     wt.assignment_id = wa.assignment_id
   )
-  LEFT JOIN gabby.whetstone.users_clean AS wu ON (wa.[user_id] = wu.[user_id])
-  LEFT JOIN gabby.people.staff_crosswalk_static AS scw ON (
+  LEFT JOIN whetstone.users_clean AS wu ON (wa.[user_id] = wu.[user_id])
+  LEFT JOIN people.staff_crosswalk_static AS scw ON (
     wu.internal_id = scw.df_employee_number
   )
-  INNER JOIN gabby.reporting.reporting_terms AS rt ON (
+  INNER JOIN reporting.reporting_terms AS rt ON (
     (
       CAST(wa.created AS DATE) BETWEEN rt.[start_date] AND rt.end_date
     )

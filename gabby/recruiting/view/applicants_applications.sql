@@ -108,8 +108,8 @@ WITH
             app.application_state_hired_date
           ) AS date_value
         FROM
-          gabby.smartrecruiters.report_applicants AS apl
-          INNER JOIN gabby.smartrecruiters.report_applications AS app ON (
+          smartrecruiters.report_applicants AS apl
+          INNER JOIN smartrecruiters.report_applications AS app ON (
             apl.application_id = app.application_id
           )
       ) AS sub UNPIVOT (
@@ -271,7 +271,7 @@ SELECT
   END AS recruiting_year
 FROM
   applicants_repivot AS apl
-  INNER JOIN gabby.smartrecruiters.report_applications AS app ON (
+  INNER JOIN smartrecruiters.report_applications AS app ON (
     apl.candidate_id = app.candidate_id
   )
 UNION ALL
@@ -343,4 +343,4 @@ SELECT
     ELSE YEAR(CAST(submitted_date AS DATE))
   END AS recruiting_year
 FROM
-  gabby.recruiting.applicants
+  recruiting.applicants

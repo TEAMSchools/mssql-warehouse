@@ -12,7 +12,7 @@ WITH
         WHEN _file LIKE '%_math%' THEN 'Math'
       END AS [subject]
     FROM
-      gabby.iready.diagnostic_results
+      iready.diagnostic_results
     WHERE
       baseline_diagnostic_y_n_ = 'Y'
   ),
@@ -32,7 +32,7 @@ WITH
       annual_typical_growth_measure,
       annual_stretch_growth_measure
     FROM
-      gabby.iready.diagnostic_results
+      iready.diagnostic_results
     WHERE
       baseline_diagnostic_y_n_ = 'N'
       AND most_recent_diagnostic_y_n_ = 'Y'
@@ -57,7 +57,7 @@ FROM
     AND bl.academic_year = re.academic_year
     AND bl.[subject] = re.[subject]
   )
-  LEFT JOIN gabby.iready.diagnostic_and_instruction AS di ON (
+  LEFT JOIN iready.diagnostic_and_instruction AS di ON (
     bl.student_number = di.student_id
     AND bl.[subject] = di.[subject]
     AND bl.academic_year = di.academic_year

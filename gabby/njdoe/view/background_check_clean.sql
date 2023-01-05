@@ -8,4 +8,4 @@ SELECT
     '$.number_of_approvals'
   ) AS number_of_approvals
 FROM
-  gabby.njdoe.background_check
+  njdoe.background_check

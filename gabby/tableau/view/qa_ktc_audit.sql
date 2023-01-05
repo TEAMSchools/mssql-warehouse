@@ -9,15 +9,15 @@ WITH
       c.dep_post_hs_simple_admin_c,
       u.[name] AS ktc_counselor_name
     FROM
-      gabby.alumni.contact AS c
-      INNER JOIN gabby.alumni.record_type AS r ON (
+      alumni.contact AS c
+      INNER JOIN alumni.record_type AS r ON (
         c.record_type_id = r.id
         AND r.[name] IN (
           'College Student',
           'Post-Education'
         )
       )
-      INNER JOIN gabby.alumni.[user] AS u ON (c.owner_id = u.id)
+      INNER JOIN alumni.[user] AS u ON (c.owner_id = u.id)
     WHERE
       c.is_deleted = 0
       AND (
@@ -31,11 +31,11 @@ WITH
       CAST(RIGHT(rg.n + 1, 2) AS VARCHAR(5)) AS [year]
     FROM
       STRING_SPLIT ('FA,SP', ',') AS ss
-      INNER JOIN gabby.utilities.row_generator AS rg ON (
+      INNER JOIN utilities.row_generator AS rg ON (
         rg.n BETWEEN (
-          gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 2
+          utilities.GLOBAL_ACADEMIC_YEAR () - 2
         ) AND (
-          gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
+          utilities.GLOBAL_ACADEMIC_YEAR () + 1
         )
       )
   ),
@@ -132,7 +132,7 @@ WITH
             )
           END AS underscore_3
         FROM
-          gabby.alumni.attachment AS a
+          alumni.attachment AS a
         WHERE
           a.is_deleted = 0
       ) AS sub
@@ -150,9 +150,9 @@ WITH
   --     e.student_c AS contact_id,
   --     u.[name] AS updated_by
   --   FROM
-  --     gabby.alumni.enrollment_history AS eh
-  --     INNER JOIN gabby.alumni.enrollment_c AS e ON (eh.parent_id = e.id)
-  --     INNER JOIN gabby.alumni.[user] AS u ON (eh.created_by_id = u.id)
+  --     alumni.enrollment_history AS eh
+  --     INNER JOIN alumni.enrollment_c AS e ON (eh.parent_id = e.id)
+  --     INNER JOIN alumni.[user] AS u ON (eh.created_by_id = u.id)
   --   WHERE
   --     eh.field = 'Status__c'
   --     AND eh.is_deleted = 0
@@ -176,9 +176,9 @@ WITH
   --     e.student_c AS contact_id,
   --     u.[name] AS updated_by
   --   FROM
-  --     gabby.alumni.enrollment_history AS eh
-  --     INNER JOIN gabby.alumni.enrollment_c AS e ON (eh.parent_id = e.id)
-  --     INNER JOIN gabby.alumni.[user] AS u ON (eh.created_by_id = u.id)
+  --     alumni.enrollment_history AS eh
+  --     INNER JOIN alumni.enrollment_c AS e ON (eh.parent_id = e.id)
+  --     INNER JOIN alumni.[user] AS u ON (eh.created_by_id = u.id)
   --   WHERE
   --     eh.field = 'Status__c'
   --     AND eh.is_deleted = 0
@@ -241,8 +241,8 @@ WITH
   --           ''
   --         ) AS [description]
   --       FROM
-  --         gabby.alumni.enrollment_c AS e
-  --         INNER JOIN gabby.alumni.contact AS c ON (e.student_c = c.id)
+  --         alumni.enrollment_c AS e
+  --         INNER JOIN alumni.contact AS c ON (e.student_c = c.id)
   --       WHERE
   --         e.type_c = 'College'
   --     ) AS sub UNPIVOT (

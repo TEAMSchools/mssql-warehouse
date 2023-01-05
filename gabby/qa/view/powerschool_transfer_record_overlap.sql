@@ -30,12 +30,12 @@ FROM
       ) AS exitdate_prev,
       s.student_number
     FROM
-      gabby.powerschool.ps_enrollment_all AS pea
-      INNER JOIN gabby.powerschool.students AS s ON (
+      powerschool.ps_enrollment_all AS pea
+      INNER JOIN powerschool.students AS s ON (
         pea.studentid = s.id
         AND pea.[db_name] = s.[db_name]
       )
-      INNER JOIN gabby.powerschool.schools AS sch ON (
+      INNER JOIN powerschool.schools AS sch ON (
         pea.schoolid = sch.school_number
         AND pea.[db_name] = sch.[db_name]
         /* exclude grads & ss */

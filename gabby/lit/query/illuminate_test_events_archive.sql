@@ -60,7 +60,7 @@ FROM
       field_test_round AS [Test Round],
       field_within_the_text AS [Within the Text]
     FROM
-      gabby.illuminate_dna_repositories.repository_126
+      illuminate_dna_repositories.repository_126
     UNION ALL
     SELECT
       169 AS repository_id,
@@ -83,7 +83,7 @@ FROM
       field_test_round AS [Test Round],
       field_within_the_text AS [Within the Text]
     FROM
-      gabby.illuminate_dna_repositories.repository_169
+      illuminate_dna_repositories.repository_169
     UNION ALL
     SELECT
       170 AS repository_id,
@@ -106,9 +106,9 @@ FROM
       field_test_round AS [Test Round],
       field_within_the_text AS [Within the Text]
     FROM
-      gabby.illuminate_dna_repositories.repository_170
+      illuminate_dna_repositories.repository_170
   ) AS sub
-  INNER JOIN gabby.illuminate_public.students AS s ON (sub.student_id = s.student_id)
+  INNER JOIN illuminate_public.students AS s ON (sub.student_id = s.student_id)
 WHERE
   CONCAT(
     sub.repository_id,
@@ -122,7 +122,7 @@ WHERE
         repository_row_id
       )
     FROM
-      gabby.illuminate_dna_repositories.repository_row_ids
+      illuminate_dna_repositories.repository_row_ids
   )
 ORDER BY
   sub.unique_id

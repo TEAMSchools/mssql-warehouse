@@ -9,8 +9,8 @@ SELECT
   co.entrydate,
   co.exitdate
 FROM
-  gabby.powerschool.cohort_static AS co
-  LEFT JOIN gabby.powerschool.calendar_rollup_static AS c ON (
+  powerschool.cohort_static AS co
+  LEFT JOIN powerschool.calendar_rollup_static AS c ON (
     co.yearid = c.yearid
     AND co.schoolid = c.schoolid
     AND co.track = c.track

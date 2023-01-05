@@ -25,6 +25,6 @@ SELECT
   df_employee_number AS [Employee Number],
   [Status]
 FROM
-  gabby.people.staff_crosswalk_static
+  people.staff_crosswalk_static
 WHERE
   [status] != 'PRESTART'

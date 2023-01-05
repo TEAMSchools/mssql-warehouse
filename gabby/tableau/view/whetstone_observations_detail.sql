@@ -11,7 +11,7 @@ WITH
       NULL AS checkbox_value,
       'textbox' AS [type]
     FROM
-      gabby.whetstone.observations_scores_text_boxes_static AS tb
+      whetstone.observations_scores_text_boxes_static AS tb
     UNION ALL
     SELECT
       cc.observation_id,
@@ -22,7 +22,7 @@ WITH
       CAST(cc.checkbox_value AS FLOAT) AS checkbox_value,
       'checkbox' AS [type]
     FROM
-      gabby.whetstone.observations_scores_checkboxes_static AS cc
+      whetstone.observations_scores_checkboxes_static AS cc
   )
 SELECT
   sub.*,
@@ -146,8 +146,8 @@ FROM
           wo.observed_at DESC
       ) AS rn_observation
     FROM
-      gabby.people.staff_crosswalk_static AS sr
-      INNER JOIN gabby.whetstone.observations_clean AS wo ON (
+      people.staff_crosswalk_static AS sr
+      INNER JOIN whetstone.observations_clean AS wo ON (
         CAST(
           sr.df_employee_number AS VARCHAR(25)
         ) = wo.teacher_internal_id
@@ -166,10 +166,10 @@ FROM
           'Extraordinary Focus Areas Ratings v.1'
         )
       )
-      LEFT JOIN gabby.people.staff_crosswalk_static AS osr ON (
+      LEFT JOIN people.staff_crosswalk_static AS osr ON (
         wo.observer_internal_id = osr.df_employee_number
       )
-      INNER JOIN gabby.reporting.reporting_terms AS rt ON (
+      INNER JOIN reporting.reporting_terms AS rt ON (
         (
           wo.observed_at BETWEEN rt.[start_date] AND rt.end_date
         )
@@ -182,15 +182,15 @@ FROM
         sr.termination_date,
         CURRENT_TIMESTAMP
       ) >= DATEFROMPARTS(
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+        utilities.GLOBAL_ACADEMIC_YEAR (),
         7,
         1
       )
   ) AS sub
-  LEFT JOIN gabby.whetstone.observations_scores_static AS wos ON (
+  LEFT JOIN whetstone.observations_scores_static AS wos ON (
     sub.observation_id = wos.observation_id
   )
-  LEFT JOIN gabby.whetstone.measurements AS wm ON (
+  LEFT JOIN whetstone.measurements AS wm ON (
     wos.score_measurement_id = wm._id
   )
   LEFT JOIN boxes AS b ON (

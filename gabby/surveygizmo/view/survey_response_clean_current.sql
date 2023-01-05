@@ -121,8 +121,8 @@ FROM
           sr._modified DESC
       ) AS rn
     FROM
-      gabby.surveygizmo.survey_response AS sr
-      LEFT JOIN gabby.surveygizmo.survey_response_disqualified AS dq ON (
+      surveygizmo.survey_response AS sr
+      LEFT JOIN surveygizmo.survey_response_disqualified AS dq ON (
         sr.id = dq.id
         AND sr.survey_id = dq.survey_id
       )
@@ -130,7 +130,7 @@ FROM
       CAST(
         LEFT(sr.date_started, 19) AS DATETIME2
       ) >= DATEFROMPARTS(
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+        utilities.GLOBAL_ACADEMIC_YEAR (),
         7,
         1
       )

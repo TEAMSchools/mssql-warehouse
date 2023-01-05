@@ -46,7 +46,7 @@ WITH
             )
           ) AS row_hash
         FROM
-          gabby.adp.employees_archive
+          adp.employees_archive
         WHERE
           position_id IS NOT NULL
           AND position_status != 'Terminated'
@@ -63,11 +63,11 @@ SELECT
   unpivoted.date_modified,
   unpivoted.prev_value,
   unpivoted.new_value,
-  gabby.adp.workers_clean_static.associate_oid
+  adp.workers_clean_static.associate_oid
 FROM
   unpivoted
-  INNER JOIN gabby.adp.workers_clean_static ON (
-    unpivoted.associate_id = gabby.adp.workers_clean_static.worker_id
+  INNER JOIN adp.workers_clean_static ON (
+    unpivoted.associate_id = adp.workers_clean_static.worker_id
   )
 WHERE
   (

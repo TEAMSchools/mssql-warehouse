@@ -61,8 +61,8 @@ SELECT
       )
   ) AS row_most_recent
 FROM
-  gabby.smartrecruiters.report_applications AS app
-  INNER JOIN gabby.smartrecruiters.report_applicants AS c ON (
+  smartrecruiters.report_applications AS app
+  INNER JOIN smartrecruiters.report_applicants AS c ON (
     app.application_id = c.application_id
   )
 WHERE

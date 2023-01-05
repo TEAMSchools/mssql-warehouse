@@ -23,14 +23,14 @@ WITH
       co.student_number,
       ns.illuminate_subject AS subject_area
     FROM
-      gabby.powerschool.cc
-      INNER JOIN gabby.powerschool.cohort_static AS co ON (
+      powerschool.cc
+      INNER JOIN powerschool.cohort_static AS co ON (
         cc.studentid = co.studentid
         AND cc.studyear = CONCAT(co.studentid, co.yearid)
         AND cc.[db_name] = co.[db_name]
         AND co.rn_year = 1
       )
-      INNER JOIN gabby.assessments.normed_subjects AS ns ON (
+      INNER JOIN assessments.normed_subjects AS ns ON (
         cc.course_number = ns.course_number
       )
   )
@@ -47,11 +47,11 @@ SELECT
   sa.date_taken,
   ils.local_student_id
 FROM
-  gabby.illuminate_dna_assessments.assessments_identifiers_static AS a
-  INNER JOIN gabby.illuminate_dna_assessments.students_assessments AS sa ON (
+  illuminate_dna_assessments.assessments_identifiers_static AS a
+  INNER JOIN illuminate_dna_assessments.students_assessments AS sa ON (
     a.assessment_id = sa.assessment_id
   )
-  INNER JOIN gabby.illuminate_public.students AS ils ON (sa.student_id = ils.student_id)
+  INNER JOIN illuminate_public.students AS ils ON (sa.student_id = ils.student_id)
   LEFT JOIN enr ON (
     ils.local_student_id = enr.student_number
     AND a.subject_area = enr.subject_area

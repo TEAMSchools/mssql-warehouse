@@ -22,7 +22,7 @@ SELECT
     ELSE position_status
   END AS [Position Status]
 FROM
-  gabby.people.staff_roster
+  people.staff_roster
 WHERE
   COALESCE(rehire_date, original_hire_date) <= DATEADD(DAY, 10, CURRENT_TIMESTAMP)
   AND business_unit IS NOT NULL

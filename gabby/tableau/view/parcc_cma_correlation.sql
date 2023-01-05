@@ -20,8 +20,8 @@ SELECT
   parcc.test_scale_score AS parcc_test_scale_score,
   parcc.test_performance_level AS parcc_test_performance_level
 FROM
-  gabby.powerschool.cohort_identifiers_static AS co
-  INNER JOIN gabby.illuminate_dna_assessments.agg_student_responses_all AS asr ON (
+  powerschool.cohort_identifiers_static AS co
+  INNER JOIN illuminate_dna_assessments.agg_student_responses_all AS asr ON (
     co.student_number = asr.local_student_id
     AND co.academic_year = asr.academic_year
     AND asr.scope IN (
@@ -32,7 +32,7 @@ FROM
     AND asr.is_replacement = 0
     AND asr.response_type = 'O'
   )
-  INNER JOIN gabby.parcc.summative_record_file_clean AS parcc ON (
+  INNER JOIN parcc.summative_record_file_clean AS parcc ON (
     co.student_number = parcc.local_student_identifier
     AND co.academic_year = parcc.academic_year
     AND asr.subject_area = CASE

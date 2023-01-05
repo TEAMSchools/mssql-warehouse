@@ -49,8 +49,8 @@ SELECT
   rt.time_per_name AS reporting_term,
   ex.exemption
 FROM
-  gabby.people.staff_crosswalk_static AS sr
-  INNER JOIN gabby.whetstone.observations_clean AS wo ON (
+  people.staff_crosswalk_static AS sr
+  INNER JOIN whetstone.observations_clean AS wo ON (
     CAST(
       sr.df_employee_number AS VARCHAR(25)
     ) = wo.teacher_internal_id
@@ -64,7 +64,7 @@ FROM
       'Coaching Tool: Coach ETR and Reflection 19-20'
     )
   )
-  INNER JOIN gabby.reporting.reporting_terms AS rt ON (
+  INNER JOIN reporting.reporting_terms AS rt ON (
     (
       wo.observed_at BETWEEN rt.[start_date] AND rt.end_date
     )
@@ -72,22 +72,22 @@ FROM
     AND rt.schoolid = 0
     AND rt._fivetran_deleted = 0
   )
-  LEFT JOIN gabby.people.staff_crosswalk_static AS osr ON (
+  LEFT JOIN people.staff_crosswalk_static AS osr ON (
     wo.observer_internal_id = CAST(
       osr.df_employee_number AS VARCHAR(25)
     )
   )
-  LEFT JOIN gabby.whetstone.observations_scores AS wos ON (
+  LEFT JOIN whetstone.observations_scores AS wos ON (
     wo.observation_id = wos.observation_id
   )
-  LEFT JOIN gabby.whetstone.measurements AS wm ON (
+  LEFT JOIN whetstone.measurements AS wm ON (
     wos.score_measurement_id = wm._id
   )
-  LEFT JOIN gabby.whetstone.observations_scores_text_boxes AS tb ON (
+  LEFT JOIN whetstone.observations_scores_text_boxes AS tb ON (
     wos.score_measurement_id = tb.score_measurement_id
     AND wo.observation_id = tb.observation_id
   )
-  LEFT JOIN gabby.pm.teacher_goals_exemption_clean_static AS ex ON (
+  LEFT JOIN pm.teacher_goals_exemption_clean_static AS ex ON (
     sr.df_employee_number = ex.df_employee_number
     AND rt.academic_year = ex.academic_year
     AND rt.time_per_name = REPLACE(ex.pm_term, 'PM', 'ETR')
@@ -97,7 +97,7 @@ WHERE
     sr.termination_date,
     CURRENT_TIMESTAMP
   ) >= DATEFROMPARTS(
-    gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+    utilities.GLOBAL_ACADEMIC_YEAR (),
     7,
     1
   )

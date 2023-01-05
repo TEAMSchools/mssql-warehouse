@@ -35,4 +35,4 @@ SELECT
   external_integrations AS external_integrations_json,
   roles AS roles_json
 FROM
-  gabby.whetstone.users
+  whetstone.users

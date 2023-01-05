@@ -10,7 +10,7 @@ WITH
       source_system,
       status_effective_date AS effective_start_date
     FROM
-      gabby.people.status_history_static
+      people.status_history_static
     UNION
     SELECT
       employee_number,
@@ -20,7 +20,7 @@ WITH
       source_system,
       position_effective_date
     FROM
-      gabby.people.work_assignment_history_static
+      people.work_assignment_history_static
     UNION
     SELECT
       employee_number,
@@ -30,7 +30,7 @@ WITH
       source_system,
       regular_pay_effective_date
     FROM
-      gabby.people.salary_history_static
+      people.salary_history_static
     UNION
     SELECT
       employee_number,
@@ -40,7 +40,7 @@ WITH
       source_system,
       reports_to_effective_date
     FROM
-      gabby.people.manager_history_static
+      people.manager_history_static
   ),
   range_scaffold AS (
     SELECT
@@ -69,16 +69,16 @@ WITH
             WHEN (
               (
                 DATEPART(YEAR, d.effective_start_date)
-              ) > gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+              ) > utilities.GLOBAL_ACADEMIC_YEAR ()
               AND DATEPART(MONTH, d.effective_start_date) >= 7
             ) THEN DATEPART(YEAR, d.effective_start_date) + 1
             WHEN (
               (
                 DATEPART(YEAR, CURRENT_TIMESTAMP)
-              ) = gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
+              ) = utilities.GLOBAL_ACADEMIC_YEAR () + 1
               AND DATEPART(MONTH, CURRENT_TIMESTAMP) >= 7
-            ) THEN gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 2
-            ELSE gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
+            ) THEN utilities.GLOBAL_ACADEMIC_YEAR () + 2
+            ELSE utilities.GLOBAL_ACADEMIC_YEAR () + 1
           END,
           6,
           30
@@ -94,14 +94,14 @@ WITH
       MIN(position_effective_date) AS work_assignment_start_date,
       CASE
         WHEN MAX(position_effective_end_date_eoy) = DATEFROMPARTS(
-          gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1,
+          utilities.GLOBAL_ACADEMIC_YEAR () + 1,
           6,
           30
         ) THEN NULL
         ELSE MAX(position_effective_end_date_eoy)
       END AS work_assignment_end_date
     FROM
-      gabby.people.work_assignment_history_static
+      people.work_assignment_history_static
     GROUP BY
       position_id,
       job_title_description
@@ -147,28 +147,28 @@ SELECT
   wad.work_assignment_end_date
 FROM
   range_scaffold AS r
-  LEFT JOIN gabby.people.status_history_static AS s ON (
+  LEFT JOIN people.status_history_static AS s ON (
     r.position_id = s.position_id
     AND (
       /* trunk-ignore(sqlfluff/L016) */
       r.effective_start_date BETWEEN s.status_effective_date AND s.status_effective_end_date_eoy -- noqa: L016
     )
   )
-  LEFT JOIN gabby.people.work_assignment_history_static AS w ON (
+  LEFT JOIN people.work_assignment_history_static AS w ON (
     r.position_id = w.position_id
     AND (
       /* trunk-ignore(sqlfluff/L016) */
       r.effective_start_date BETWEEN w.position_effective_date AND w.position_effective_end_date_eoy -- noqa: L016
     )
   )
-  LEFT JOIN gabby.people.salary_history_static AS sal ON (
+  LEFT JOIN people.salary_history_static AS sal ON (
     r.position_id = sal.position_id
     AND (
       /* trunk-ignore(sqlfluff/L016) */
       r.effective_start_date BETWEEN sal.regular_pay_effective_date AND sal.regular_pay_effective_end_date_eoy -- noqa: L016
     )
   )
-  LEFT JOIN gabby.people.manager_history_static AS mh ON (
+  LEFT JOIN people.manager_history_static AS mh ON (
     r.position_id = mh.position_id
     AND (
       /* trunk-ignore(sqlfluff/L016) */

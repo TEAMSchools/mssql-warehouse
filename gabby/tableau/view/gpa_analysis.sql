@@ -53,14 +53,14 @@ SELECT
   gpac.potential_credits_cum,
   gpac.core_cumulative_y1_gpa
 FROM
-  gabby.powerschool.cohort_identifiers_static AS co
-  LEFT JOIN gabby.powerschool.gpa_detail AS gpad ON (
+  powerschool.cohort_identifiers_static AS co
+  LEFT JOIN powerschool.gpa_detail AS gpad ON (
     co.student_number = gpad.student_number
     AND co.academic_year = gpad.academic_year
     AND co.schoolid = gpad.schoolid
     AND co.[db_name] = gpad.[db_name]
   )
-  LEFT JOIN gabby.powerschool.gpa_cumulative AS gpac ON (
+  LEFT JOIN powerschool.gpa_cumulative AS gpac ON (
     co.studentid = gpac.studentid
     AND co.schoolid = gpac.schoolid
     AND co.[db_name] = gpac.[db_name]

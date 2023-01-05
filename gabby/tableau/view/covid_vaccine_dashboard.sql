@@ -18,7 +18,7 @@ SELECT
     MAX(vc._modified) OVER () AS DATETIME2
   ) AS refresh_timestamp
 FROM
-  gabby.people.staff_crosswalk_static AS sc
-  LEFT JOIN gabby.adp.vaccine_records AS vc ON (
+  people.staff_crosswalk_static AS sc
+  LEFT JOIN adp.vaccine_records AS vc ON (
     sc.adp_associate_id = vc.associate_id
   )

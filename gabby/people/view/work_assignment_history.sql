@@ -30,8 +30,8 @@ WITH
       sr.employee_number,
       'ADP' AS source_system
     FROM
-      gabby.adp.work_assignment_history AS wah
-      INNER JOIN gabby.people.employee_numbers AS sr ON (
+      adp.work_assignment_history AS wah
+      INNER JOIN people.employee_numbers AS sr ON (
         wah.associate_id = sr.associate_id
         AND sr.is_active = 1
       )
@@ -72,8 +72,8 @@ WITH
       dwa.employee_reference_code AS employee_number,
       'DF' AS source_system
     FROM
-      gabby.dayforce.employee_work_assignment_clean AS dwa
-      INNER JOIN gabby.people.employee_numbers AS sr ON (
+      dayforce.employee_work_assignment_clean AS dwa
+      INNER JOIN people.employee_numbers AS sr ON (
         dwa.employee_reference_code = sr.employee_number
         AND sr.is_active = 1
       )
@@ -126,16 +126,16 @@ SELECT
         WHEN (
           (
             DATEPART(YEAR, position_effective_date)
-          ) > gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+          ) > utilities.GLOBAL_ACADEMIC_YEAR ()
           AND DATEPART(MONTH, position_effective_date) >= 7
         ) THEN DATEPART(YEAR, position_effective_date) + 1
         WHEN (
           (
             DATEPART(YEAR, CURRENT_TIMESTAMP)
-          ) = gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
+          ) = utilities.GLOBAL_ACADEMIC_YEAR () + 1
           AND DATEPART(MONTH, CURRENT_TIMESTAMP) >= 7
-        ) THEN gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 2
-        ELSE gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
+        ) THEN utilities.GLOBAL_ACADEMIC_YEAR () + 2
+        ELSE utilities.GLOBAL_ACADEMIC_YEAR () + 1
       END,
       6,
       30

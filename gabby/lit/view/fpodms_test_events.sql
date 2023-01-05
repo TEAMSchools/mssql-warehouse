@@ -17,7 +17,7 @@ WITH
           student_count DESC
       ) AS rn
     FROM
-      gabby.fpodms.bas_classes
+      fpodms.bas_classes
   ),
   clean_data AS (
     SELECT
@@ -106,9 +106,9 @@ WITH
           3273 AS testid,
           1 AS is_fp
         FROM
-          gabby.fpodms.bas_assessments AS fp
-          LEFT JOIN gabby.people.school_crosswalk AS sc ON fp.school_name = sc.site_name
-          LEFT JOIN gabby.powerschool.schools AS sch ON (
+          fpodms.bas_assessments AS fp
+          LEFT JOIN people.school_crosswalk AS sc ON fp.school_name = sc.site_name
+          LEFT JOIN powerschool.schools AS sch ON (
             sc.ps_school_id = sch.school_number
           )
           LEFT JOIN classes_dedupe AS c ON (
@@ -247,7 +247,7 @@ SELECT
   END AS indep_lvl_num
 FROM
   predna AS cd
-  LEFT JOIN gabby.reporting.reporting_terms AS rt ON (
+  LEFT JOIN reporting.reporting_terms AS rt ON (
     cd.schoolid = rt.schoolid
     AND (
       cd.assessment_date BETWEEN rt.[start_date] AND rt.end_date
@@ -255,4 +255,4 @@ FROM
     AND rt.identifier = 'LIT'
     AND rt._fivetran_deleted = 0
   )
-  LEFT JOIN gabby.lit.gleq ON (cd.text_level = gleq.read_lvl)
+  LEFT JOIN lit.gleq ON (cd.text_level = gleq.read_lvl)

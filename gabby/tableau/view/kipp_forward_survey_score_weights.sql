@@ -6,7 +6,7 @@ WITH
       survey_id,
       SUM(CAST(answer_value AS FLOAT)) AS answer_total
     FROM
-      gabby.surveygizmo.survey_detail
+      surveygizmo.survey_detail
     WHERE
       survey_id = 6734664
       AND question_shortname IN (
@@ -72,7 +72,7 @@ WITH
           AVG(purpose_quality) AS imp_9,
           AVG(power_quality) AS imp_10
         FROM
-          gabby.tableau.kipp_forward_survey
+          tableau.kipp_forward_survey
       ) AS sub UNPIVOT (
         avg_weighted_scores FOR question_shortname IN (
           imp_1,

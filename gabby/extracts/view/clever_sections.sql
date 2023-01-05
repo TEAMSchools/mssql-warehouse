@@ -9,8 +9,8 @@ WITH
         df.primary_site_schoolid
       ) AS [School_id]
     FROM
-      gabby.people.staff_crosswalk_static AS df
-      LEFT JOIN gabby.people.campus_crosswalk AS ccw ON (
+      people.staff_crosswalk_static AS df
+      LEFT JOIN people.campus_crosswalk AS ccw ON (
         df.primary_site = ccw.campus_name
         AND ccw._fivetran_deleted = 0
         AND ccw.is_pathways = 0
@@ -64,25 +64,25 @@ WITH
         WHEN c.credittype = 'WLANG' THEN 'Language'
       END AS [Subject]
     FROM
-      gabby.powerschool.sections AS sec
-      INNER JOIN gabby.powerschool.sectionteacher AS st ON (
+      powerschool.sections AS sec
+      INNER JOIN powerschool.sectionteacher AS st ON (
         sec.id = st.sectionid
         AND sec.[db_name] = st.[db_name]
       )
-      INNER JOIN gabby.powerschool.roledef AS r ON (
+      INNER JOIN powerschool.roledef AS r ON (
         st.roleid = r.id
         AND st.[db_name] = r.[db_name]
       )
-      INNER JOIN gabby.powerschool.teachers_static AS t ON (
+      INNER JOIN powerschool.teachers_static AS t ON (
         st.teacherid = t.id
         AND sec.schoolid = t.schoolid
         AND sec.[db_name] = t.[db_name]
       )
-      INNER JOIN gabby.powerschool.courses AS c ON (
+      INNER JOIN powerschool.courses AS c ON (
         sec.course_number = c.course_number
         AND sec.[db_name] = c.[db_name]
       )
-      INNER JOIN gabby.powerschool.terms ON (
+      INNER JOIN powerschool.terms ON (
         sec.termid = terms.id
         AND sec.schoolid = terms.schoolid
         AND sec.[db_name] = terms.[db_name]
@@ -96,13 +96,13 @@ WITH
     SELECT
       dsos.[School_id],
       CONCAT(
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+        utilities.GLOBAL_ACADEMIC_YEAR (),
         s.abbreviation,
         r.n
       ) AS [Section_number],
       'ENR' AS [Course_number],
       CONCAT(
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+        utilities.GLOBAL_ACADEMIC_YEAR (),
         s.abbreviation,
         r.n
       ) AS [Period],
@@ -111,12 +111,12 @@ WITH
       'Enroll' AS [Course_name],
       CONCAT(
         RIGHT(
-          gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+          utilities.GLOBAL_ACADEMIC_YEAR (),
           2
         ),
         '-',
         RIGHT(
-          gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1,
+          utilities.GLOBAL_ACADEMIC_YEAR () + 1,
           2
         )
       ) AS [Term_name],
@@ -129,7 +129,7 @@ WITH
       CONVERT(
         VARCHAR,
         DATEFROMPARTS(
-          gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+          utilities.GLOBAL_ACADEMIC_YEAR (),
           7,
           1
         ),
@@ -138,24 +138,24 @@ WITH
       CONVERT(
         VARCHAR,
         DATEFROMPARTS(
-          gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1,
+          utilities.GLOBAL_ACADEMIC_YEAR () + 1,
           6,
           30
         ),
         101
       ) AS [Term_end],
       CONCAT(
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990,
+        utilities.GLOBAL_ACADEMIC_YEAR () - 1990,
         dsos.[School_id],
         RIGHT(CONCAT(0, r.n), 2)
       ) AS [Section_id],
       'Homeroom/advisory' AS [Subject]
     FROM
       dsos
-      INNER JOIN gabby.powerschool.schools AS s ON (
+      INNER JOIN powerschool.schools AS s ON (
         dsos.[School_id] = s.school_number
       )
-      INNER JOIN gabby.utilities.row_generator_smallint AS r ON (
+      INNER JOIN utilities.row_generator_smallint AS r ON (
         r.n BETWEEN s.low_grade AND s.high_grade
       )
   ),

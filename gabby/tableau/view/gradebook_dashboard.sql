@@ -15,8 +15,8 @@ WITH
       sec.termid,
       sec.teacher_lastfirst AS teacher_name
     FROM
-      gabby.powerschool.course_section_scaffold AS scaff
-      LEFT JOIN gabby.powerschool.sections_identifiers AS sec ON (
+      powerschool.course_section_scaffold AS scaff
+      LEFT JOIN powerschool.sections_identifiers AS sec ON (
         scaff.sectionid = sec.sectionid
         AND scaff.[db_name] = sec.[db_name]
       )
@@ -45,15 +45,15 @@ WITH
       fg.need_90,
       CASE
         WHEN (
-          CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN fg.termbin_start_date AND fg.termbin_end_date
+          CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN fg.termbin_start_date AND fg.termbin_end_date -- noqa: L016
         ) THEN 1
         ELSE 0
       END AS is_curterm,
       cou.credittype,
       cou.course_name
     FROM
-      gabby.powerschool.final_grades_static AS fg
-      INNER JOIN gabby.powerschool.courses AS cou ON (
+      powerschool.final_grades_static AS fg
+      INNER JOIN powerschool.courses AS cou ON (
         fg.course_number = cou.course_number
         AND fg.[db_name] = cou.[db_name]
       )
@@ -149,13 +149,13 @@ SELECT
       gr.course_number
   ) AS need_90
 FROM
-  gabby.powerschool.cohort_identifiers_static AS co
+  powerschool.cohort_identifiers_static AS co
   LEFT JOIN final_grades AS gr ON (
     co.studentid = gr.studentid
     AND co.yearid = gr.yearid
     AND co.[db_name] = gr.[db_name]
   )
-  LEFT JOIN gabby.powerschool.pgfinalgrades AS pgf ON (
+  LEFT JOIN powerschool.pgfinalgrades AS pgf ON (
     gr.studentid = pgf.studentid
     AND gr.sectionid = pgf.sectionid
     AND gr.storecode = pgf.finalgradename
@@ -167,7 +167,7 @@ FROM
     AND co.[db_name] = st.[db_name]
     AND gr.course_number = st.course_number
   )
-  LEFT JOIN gabby.powerschool.spenrollments_gen_static AS sp ON (
+  LEFT JOIN powerschool.spenrollments_gen_static AS sp ON (
     co.studentid = sp.studentid
     AND (
       CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sp.enter_date AND sp.exit_date
@@ -186,7 +186,7 @@ FROM
 WHERE
   co.rn_year = 1
   AND co.grade_level != 99
-  AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+  AND co.academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
 UNION ALL
 /* current year - Y1 grades */
 SELECT
@@ -273,14 +273,14 @@ SELECT
       gr.course_number
   ) AS need_90
 FROM
-  gabby.powerschool.cohort_identifiers_static AS co
+  powerschool.cohort_identifiers_static AS co
   LEFT JOIN final_grades AS gr ON (
     co.studentid = gr.studentid
     AND co.yearid = gr.yearid
     AND co.[db_name] = gr.[db_name]
     AND gr.is_curterm = 1
   )
-  LEFT JOIN gabby.powerschool.storedgrades AS y1 ON (
+  LEFT JOIN powerschool.storedgrades AS y1 ON (
     co.studentid = y1.studentid
     AND co.academic_year = y1.academic_year
     AND co.[db_name] = y1.[db_name]
@@ -293,7 +293,7 @@ FROM
     AND co.[db_name] = st.[db_name]
     AND gr.course_number = st.course_number
   )
-  LEFT JOIN gabby.powerschool.spenrollments_gen_static AS sp ON (
+  LEFT JOIN powerschool.spenrollments_gen_static AS sp ON (
     co.studentid = sp.studentid
     AND (
       CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sp.enter_date AND sp.exit_date
@@ -312,7 +312,7 @@ FROM
 WHERE
   co.rn_year = 1
   AND co.grade_level != 99
-  AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+  AND co.academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
 UNION ALL
 /* historical grades */
 SELECT
@@ -363,8 +363,8 @@ SELECT
   NULL AS need_80,
   NULL AS need_90
 FROM
-  gabby.powerschool.cohort_identifiers_static AS co
-  LEFT JOIN gabby.powerschool.storedgrades AS sg ON (
+  powerschool.cohort_identifiers_static AS co
+  LEFT JOIN powerschool.storedgrades AS sg ON (
     co.studentid = sg.studentid
     AND co.academic_year = sg.academic_year
     AND co.[db_name] = sg.[db_name]
@@ -377,7 +377,7 @@ FROM
     AND co.[db_name] = st.[db_name]
     AND sg.course_number = st.course_number
   )
-  LEFT JOIN gabby.powerschool.spenrollments_gen_static AS sp ON (
+  LEFT JOIN powerschool.spenrollments_gen_static AS sp ON (
     co.studentid = sp.studentid
     AND (
       CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sp.enter_date AND sp.exit_date
@@ -395,7 +395,7 @@ FROM
   )
 WHERE
   co.rn_year = 1
-  AND co.academic_year != gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+  AND co.academic_year != utilities.GLOBAL_ACADEMIC_YEAR ()
 UNION ALL
 /* transfer grades */
 SELECT
@@ -457,21 +457,21 @@ SELECT
   NULL AS need_80,
   NULL AS need_90
 FROM
-  gabby.powerschool.storedgrades AS tr
-  LEFT JOIN gabby.powerschool.cohort_identifiers_static AS co ON (
+  powerschool.storedgrades AS tr
+  LEFT JOIN powerschool.cohort_identifiers_static AS co ON (
     tr.studentid = co.studentid
     AND tr.schoolid = co.schoolid
     AND tr.[db_name] = co.[db_name]
     AND tr.academic_year = co.academic_year
     AND co.rn_year = 1
   )
-  LEFT JOIN gabby.powerschool.cohort_identifiers_static AS e1 ON (
+  LEFT JOIN powerschool.cohort_identifiers_static AS e1 ON (
     tr.studentid = e1.studentid
     AND tr.schoolid = e1.schoolid
     AND tr.[db_name] = e1.[db_name]
     AND e1.year_in_school = 1
   )
-  LEFT JOIN gabby.powerschool.spenrollments_gen_static AS sp ON (
+  LEFT JOIN powerschool.spenrollments_gen_static AS sp ON (
     co.studentid = sp.studentid
     AND (
       CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sp.enter_date AND sp.exit_date
@@ -525,7 +525,7 @@ SELECT
   NULL AS y1_gpa_points,
   CASE
     WHEN (
-      CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN cg.termbin_start_date AND cg.termbin_end_date
+      CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN cg.termbin_start_date AND cg.termbin_end_date -- noqa: L016
     ) THEN 1
     ELSE 0
   END AS is_curterm,
@@ -545,8 +545,8 @@ SELECT
   NULL AS need_80,
   NULL AS need_90
 FROM
-  gabby.powerschool.cohort_identifiers_static AS co
-  LEFT JOIN gabby.powerschool.category_grades_static AS cg ON (
+  powerschool.cohort_identifiers_static AS co
+  LEFT JOIN powerschool.category_grades_static AS cg ON (
     co.studentid = cg.studentid
     AND co.yearid = cg.yearid
     AND co.[db_name] = cg.[db_name]
@@ -558,7 +558,7 @@ FROM
     AND co.[db_name] = st.[db_name]
     AND cg.course_number = st.course_number
   )
-  LEFT JOIN gabby.powerschool.spenrollments_gen_static AS sp ON (
+  LEFT JOIN powerschool.spenrollments_gen_static AS sp ON (
     co.studentid = sp.studentid
     AND (
       CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sp.enter_date AND sp.exit_date
@@ -577,7 +577,7 @@ FROM
 WHERE
   co.rn_year = 1
   AND co.grade_level != 99
-  AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+  AND co.academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
 UNION ALL
 /* category grades - year */
 SELECT
@@ -628,14 +628,14 @@ SELECT
   NULL AS need_80,
   NULL AS need_90
 FROM
-  gabby.powerschool.cohort_identifiers_static AS co
-  LEFT JOIN gabby.powerschool.category_grades_static AS cy ON (
+  powerschool.cohort_identifiers_static AS co
+  LEFT JOIN powerschool.category_grades_static AS cy ON (
     co.studentid = cy.studentid
     AND co.yearid = cy.yearid
     AND co.[db_name] = cy.[db_name]
     AND cy.storecode_type != 'Q'
     AND (
-      CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN cy.termbin_start_date AND cy.termbin_end_date
+      CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN cy.termbin_start_date AND cy.termbin_end_date -- noqa: L016
     )
   )
   LEFT JOIN section_teacher AS st ON (
@@ -644,7 +644,7 @@ FROM
     AND co.[db_name] = st.[db_name]
     AND cy.course_number = st.course_number
   )
-  LEFT JOIN gabby.powerschool.spenrollments_gen_static AS sp ON (
+  LEFT JOIN powerschool.spenrollments_gen_static AS sp ON (
     co.studentid = sp.studentid
     AND (
       CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sp.enter_date AND sp.exit_date
@@ -663,8 +663,9 @@ FROM
 WHERE
   co.rn_year = 1
   AND co.grade_level != 99
-  AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-  /* current year - HS exam grades
+  AND co.academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
+  -- noqa: disable=L016
+  -- /* current year - HS exam grades
   -- UNION ALL
   -- SELECT
   --   co.student_number,
@@ -717,8 +718,8 @@ WHERE
   --   NULL AS need_80,
   --   NULL AS need_90
   -- FROM
-  --   gabby.powerschool.cohort_identifiers_static AS co
-  --   LEFT JOIN gabby.powerschool.final_grades_static AS ex ON co.student_number = ex.student_number
+  --   powerschool.cohort_identifiers_static AS co
+  --   LEFT JOIN powerschool.final_grades_static AS ex ON co.student_number = ex.student_number
   --   AND co.academic_year = ex.academic_year
   --   AND co.[db_name] = ex.[db_name]
   --   AND (
@@ -729,7 +730,7 @@ WHERE
   --   AND co.yearid = st.yearid
   --   AND co.[db_name] = st.[db_name]
   --   AND ex.course_number = st.course_number
-  --   LEFT JOIN gabby.powerschool.spenrollments_gen_static AS sp ON co.studentid = sp.studentid
+  --   LEFT JOIN powerschool.spenrollments_gen_static AS sp ON co.studentid = sp.studentid
   --   AND (
   --     CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sp.enter_date AND sp.exit_date
   --   )
@@ -738,5 +739,5 @@ WHERE
   -- WHERE
   --   co.rn_year = 1
   --   AND co.school_level = 'HS'
-  --   AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+  --   AND co.academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
   --*/

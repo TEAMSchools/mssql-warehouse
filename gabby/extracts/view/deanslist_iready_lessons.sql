@@ -28,9 +28,9 @@ SELECT
     2
   ) * 100 AS pct_passed
 FROM
-  gabby.iready.personalized_instruction_by_lesson AS pl
-  INNER JOIN gabby.people.school_crosswalk AS sc ON (pl.school = sc.site_name)
-  INNER JOIN gabby.deanslist.terms_clean_static AS t ON (
+  iready.personalized_instruction_by_lesson AS pl
+  INNER JOIN people.school_crosswalk AS sc ON (pl.school = sc.site_name)
+  INNER JOIN deanslist.terms_clean_static AS t ON (
     sc.dl_school_id = t.school_id
     AND (
       CAST(pl.completion_date AS DATE) BETWEEN t.[start_date] AND t.end_date
@@ -39,7 +39,7 @@ FROM
   )
 WHERE
   pl.completion_date >= DATEFROMPARTS(
-    gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+    utilities.GLOBAL_ACADEMIC_YEAR (),
     7,
     1
   )

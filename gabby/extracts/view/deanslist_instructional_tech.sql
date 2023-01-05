@@ -12,6 +12,6 @@ SELECT
     ELSE REPLACE(reporting_term, 'AR', 'Q')
   END AS term
 FROM
-  gabby.renaissance.ar_progress_to_goals
+  renaissance.ar_progress_to_goals
 WHERE
-  academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+  academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()

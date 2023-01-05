@@ -15,12 +15,12 @@ WITH
       f.outstanding,
       CONCAT(f.c_first, ' ', f.c_last) AS followup_staff_name
     FROM
-      gabby.deanslist.communication AS c
-      INNER JOIN gabby.deanslist.users AS u ON (
+      deanslist.communication AS c
+      INNER JOIN deanslist.users AS u ON (
         c.dluser_id = u.dluser_id
         AND c.[db_name] = u.[db_name]
       )
-      LEFT JOIN gabby.deanslist.followups AS f ON (
+      LEFT JOIN deanslist.followups AS f ON (
         c.followup_id = f.followup_id
         AND c.[db_name] = f.[db_name]
       )
@@ -59,12 +59,12 @@ SELECT
   cl.followup_init_notes,
   cl.followup_close_notes
 FROM
-  gabby.powerschool.cohort_identifiers_static AS co
+  powerschool.cohort_identifiers_static AS co
   INNER JOIN commlog AS cl ON (
     co.student_number = cl.student_school_id
     AND co.[db_name] = cl.[db_name]
   )
 WHERE
-  co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+  co.academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
   AND co.rn_year = 1
   AND co.grade_level != 99

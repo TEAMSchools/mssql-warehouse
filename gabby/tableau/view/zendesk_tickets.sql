@@ -7,14 +7,14 @@ WITH
       [name] AS field_value,
       'group_id' AS field_name
     FROM
-      gabby.zendesk.[group]
+      zendesk.[group]
     UNION ALL
     SELECT
       id,
       email AS field_value,
       'assignee_id' AS field_name
     FROM
-      gabby.zendesk.[user]
+      zendesk.[user]
   ),
   original_value AS (
     SELECT
@@ -29,7 +29,7 @@ WITH
           fh.updated ASC
       ) AS field_rn
     FROM
-      gabby.zendesk.ticket_field_history AS fh
+      zendesk.ticket_field_history AS fh
       LEFT JOIN field_crosswalk AS fc ON (
         fh.field_name = fc.field_name
         AND fh.[value] = fc.id
@@ -42,7 +42,7 @@ WITH
       ticket_id,
       MAX(updated) AS group_updated
     FROM
-      gabby.zendesk.ticket_field_history
+      zendesk.ticket_field_history
     WHERE
       field_name = 'group_id'
     GROUP BY
@@ -104,25 +104,25 @@ SELECT
   oad.primary_job AS orig_assignee_job,
   oad.primary_on_site_department AS orig_assignee_dept
 FROM
-  gabby.zendesk.ticket AS t
-  LEFT JOIN gabby.zendesk.[user] AS s ON (t.submitter_id = s.id)
-  LEFT JOIN gabby.zendesk.[user] AS a ON (t.assignee_id = a.id)
-  LEFT JOIN gabby.zendesk.ticket_metrics_clean AS tm ON (t.id = tm.ticket_id)
+  zendesk.ticket AS t
+  LEFT JOIN zendesk.[user] AS s ON (t.submitter_id = s.id)
+  LEFT JOIN zendesk.[user] AS a ON (t.assignee_id = a.id)
+  LEFT JOIN zendesk.ticket_metrics_clean AS tm ON (t.id = tm.ticket_id)
   LEFT JOIN original_value AS og ON (
     t.id = og.ticket_id
     AND og.field_name = 'group_id'
     AND og.field_rn = 1
   )
   LEFT JOIN group_updated AS gu ON (t.id = gu.ticket_id)
-  LEFT JOIN gabby.zendesk.[group] AS g ON (t.group_id = g.id)
-  LEFT JOIN gabby.people.staff_crosswalk_static AS c ON (a.email = c.userprincipalname)
-  LEFT JOIN gabby.people.staff_crosswalk_static AS sx ON s.email = sx.userprincipalname
+  LEFT JOIN zendesk.[group] AS g ON (t.group_id = g.id)
+  LEFT JOIN people.staff_crosswalk_static AS c ON (a.email = c.userprincipalname)
+  LEFT JOIN people.staff_crosswalk_static AS sx ON s.email = sx.userprincipalname
   LEFT JOIN original_value AS oa ON (
     t.id = oa.ticket_id
     AND oa.field_name = 'assignee_id'
     AND oa.field_rn = 1
   )
-  LEFT JOIN gabby.people.staff_crosswalk_static AS oad ON (
+  LEFT JOIN people.staff_crosswalk_static AS oad ON (
     oa.field_value = oad.userprincipalname
   )
 WHERE

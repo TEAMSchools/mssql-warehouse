@@ -62,7 +62,7 @@ WITH
         END
       ) AS left_early_unapproved
     FROM
-      gabby.people.staff_attendance_clean_static
+      people.staff_attendance_clean_static
     WHERE
       rn_curr = 1
     GROUP BY
@@ -90,12 +90,12 @@ SELECT
   COALESCE(a.left_early_approved, 0) AS left_early_approved,
   COALESCE(a.left_early_unapproved, 0) AS left_early_unapproved
 FROM
-  gabby.people.staff_crosswalk_static AS r
-  LEFT JOIN gabby.utilities.row_generator_smallint AS y ON (
-    gabby.utilities.DATE_TO_SY (r.original_hire_date) < y.n
+  people.staff_crosswalk_static AS r
+  LEFT JOIN utilities.row_generator_smallint AS y ON (
+    utilities.DATE_TO_SY (r.original_hire_date) < y.n
     AND (
       y.n BETWEEN 2020 AND (
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+        utilities.GLOBAL_ACADEMIC_YEAR ()
       )
     )
   )

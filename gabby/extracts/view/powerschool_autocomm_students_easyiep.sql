@@ -69,7 +69,7 @@ SELECT
   END AS [S_NJ_STU_X.Determined_Ineligible_YN],
   [db_name]
 FROM
-  gabby.easyiep.njsmart_powerschool_clean_static
+  easyiep.njsmart_powerschool_clean_static
 WHERE
-  academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+  academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
   AND rn_stu_yr = 1

@@ -78,4 +78,4 @@ SELECT
     ) AS INT
   ) AS requester_wait_time_in_minutes_business
 FROM
-  gabby.zendesk.ticket_metrics
+  zendesk.ticket_metrics

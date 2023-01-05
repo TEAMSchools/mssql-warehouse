@@ -4,10 +4,10 @@ WITH
   standards_grouped AS (
     SELECT
       fs.field_id,
-      gabby.dbo.GROUP_CONCAT_D (s.custom_code, '; ') AS standard_codes
+      dbo.GROUP_CONCAT_D (s.custom_code, '; ') AS standard_codes
     FROM
-      gabby.illuminate_dna_assessments.field_standards AS fs
-      INNER JOIN gabby.illuminate_standards.standards AS s ON (fs.standard_id = s.standard_id) -- noqa: L016
+      illuminate_dna_assessments.field_standards AS fs
+      INNER JOIN illuminate_standards.standards AS s ON (fs.standard_id = s.standard_id) -- noqa: L016
     GROUP BY
       fs.field_id
   )
@@ -36,28 +36,28 @@ SELECT
   END AS question_reporting_group,
   sg.standard_codes AS question_standard_codes
 FROM
-  gabby.illuminate_dna_assessments.assessments_identifiers_static AS a
-  LEFT JOIN gabby.illuminate_dna_assessments.performance_band_sets AS pbs ON (
+  illuminate_dna_assessments.assessments_identifiers_static AS a
+  LEFT JOIN illuminate_dna_assessments.performance_band_sets AS pbs ON (
     a.performance_band_set_id = pbs.performance_band_set_id
   )
-  LEFT JOIN gabby.illuminate_dna_assessments.assessment_grade_levels AS agl ON (
+  LEFT JOIN illuminate_dna_assessments.assessment_grade_levels AS agl ON (
     a.assessment_id = agl.assessment_id
   )
-  LEFT JOIN gabby.illuminate_public.grade_levels AS gr ON (
+  LEFT JOIN illuminate_public.grade_levels AS gr ON (
     agl.grade_level_id = gr.grade_level_id
   )
-  INNER JOIN gabby.illuminate_dna_assessments.fields AS f ON (
+  INNER JOIN illuminate_dna_assessments.fields AS f ON (
     a.assessment_id = f.assessment_id
     AND f.deleted_at IS NULL
   )
-  LEFT JOIN gabby.illuminate_dna_assessments.fields_reporting_groups AS frg ON (
+  LEFT JOIN illuminate_dna_assessments.fields_reporting_groups AS frg ON (
     f.field_id = frg.field_id
     AND (
       frg.reporting_group_id IN (
         SELECT
           reporting_group_id
         FROM
-          gabby.illuminate_dna_assessments.reporting_groups
+          illuminate_dna_assessments.reporting_groups
         WHERE
           [label] IN (
             'Multiple Choice',
@@ -72,6 +72,6 @@ FROM
 WHERE
   a.deleted_at IS NULL
   AND a.academic_year_clean IN (
-    gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
-    gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
+    utilities.GLOBAL_ACADEMIC_YEAR (),
+    utilities.GLOBAL_ACADEMIC_YEAR () - 1
   )

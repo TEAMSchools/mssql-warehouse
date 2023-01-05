@@ -26,7 +26,7 @@ SELECT
   NULL AS [15 Session Type ID],
   NULL AS [16 Enrollment Entry Code]
 FROM
-  gabby.powerschool.cohort_identifiers_static
+  powerschool.cohort_identifiers_static
 WHERE
-  academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+  academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
   AND grade_level != 99;

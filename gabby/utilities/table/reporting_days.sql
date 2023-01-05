@@ -30,7 +30,7 @@ FROM
         SELECT
           DATEADD(DAY, [n], '2002-07-01') AS [date]
         FROM
-          gabby.utilities.row_generator
+          utilities.row_generator
         WHERE
           n < (365 * 40)
       ) AS sub

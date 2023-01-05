@@ -9,5 +9,5 @@ SELECT
     JSON_VALUE(r.[value], '$.name') AS NVARCHAR(32)
   ) AS role_name
 FROM
-  gabby.whetstone.users AS u
+  whetstone.users AS u
   CROSS APPLY OPENJSON (u.roles, '$') AS r

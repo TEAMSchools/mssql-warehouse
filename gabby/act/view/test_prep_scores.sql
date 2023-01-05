@@ -26,19 +26,19 @@ WITH
       CAST(rt.time_per_name AS VARCHAR) AS time_per_name,
       CAST(rt.alt_name AS VARCHAR) AS administration_round
     FROM
-      gabby.illuminate_dna_assessments.assessments_identifiers_static AS ais
-      INNER JOIN gabby.illuminate_dna_assessments.agg_student_responses AS asr ON (
+      illuminate_dna_assessments.assessments_identifiers_static AS ais
+      INNER JOIN illuminate_dna_assessments.agg_student_responses AS asr ON (
         ais.assessment_id = asr.assessment_id
       )
       INNER JOIN illuminate_public.students AS s ON (asr.student_id = s.student_id)
-      INNER JOIN gabby.reporting.reporting_terms AS rt ON (
+      INNER JOIN reporting.reporting_terms AS rt ON (
         (
           ais.administered_at BETWEEN rt.start_date AND rt.end_date
         )
         AND rt.identifier = 'ACT'
         AND rt._fivetran_deleted = 0
       )
-      INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON (
+      INNER JOIN powerschool.cohort_identifiers_static AS co ON (
         s.local_student_id = co.student_number
         AND ais.academic_year_clean = co.academic_year
         AND co.rn_year = 1
@@ -75,7 +75,7 @@ WITH
       ) AS rn_highscore
     FROM
       long_data
-      LEFT JOIN gabby.act.scale_score_key AS ssk ON (
+      LEFT JOIN act.scale_score_key AS ssk ON (
         long_data.academic_year = ssk.academic_year
         AND long_data.grade_level = ssk.grade_level
         AND long_data.time_per_name = ssk.administration_round
@@ -238,14 +238,14 @@ FROM
     FROM
       overall_scores
   ) AS sub
-  LEFT JOIN gabby.illuminate_dna_assessments.agg_student_responses_standard AS std ON (
+  LEFT JOIN illuminate_dna_assessments.agg_student_responses_standard AS std ON (
     sub.assessment_id = std.assessment_id
     AND sub.illuminate_student_id = std.student_id
   )
   LEFT JOIN illuminate_standards.standards AS s ON (std.standard_id = s.standard_id)
-  LEFT JOIN gabby.illuminate_standards.standards AS ps ON (
+  LEFT JOIN illuminate_standards.standards AS ps ON (
     s.parent_standard_id = ps.standard_id
   )
-  LEFT JOIN gabby.illuminate_standards.standards AS ps2 ON (
+  LEFT JOIN illuminate_standards.standards AS ps2 ON (
     ps.parent_standard_id = ps2.standard_id
   )

@@ -31,4 +31,4 @@ SELECT
   last_name + ', ' + first_name AS legal_name,
   mobile_number
 FROM
-  gabby.people.staff_crosswalk_static
+  people.staff_crosswalk_static

@@ -3,10 +3,10 @@ CREATE OR ALTER VIEW
 WITH
   academic_years AS (
     SELECT
-      gabby.utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year
+      utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year
     UNION
     SELECT
-      gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1 AS academic_year
+      utilities.GLOBAL_ACADEMIC_YEAR () - 1 AS academic_year
   ),
   apps AS (
     SELECT
@@ -67,7 +67,7 @@ WITH
           enrollment_start_date
       ) AS rn
     FROM
-      gabby.alumni.application_identifiers
+      alumni.application_identifiers
   ),
   apps_rollup AS (
     SELECT
@@ -171,14 +171,14 @@ WITH
           gpa.semester_credits_earned_c AS semester_credits_earned,
           gpa.cumulative_credits_earned_c AS cumulative_credits_earned,
           gpa.credits_required_for_graduation_c AS credits_required_for_graduation,
-          gabby.utilities.DATE_TO_SY (gpa.transcript_date_c) AS academic_year,
+          utilities.DATE_TO_SY (gpa.transcript_date_c) AS academic_year,
           CASE
             WHEN MONTH(gpa.transcript_date_c) = 1 THEN 'fall'
             WHEN MONTH(gpa.transcript_date_c) = 5 THEN 'spr'
           END AS semester
         FROM
-          gabby.alumni.gpa_c AS gpa
-          INNER JOIN gabby.alumni.record_type AS rt ON (
+          alumni.gpa_c AS gpa
+          INNER JOIN alumni.record_type AS rt ON (
             gpa.record_type_id = rt.id
             AND rt.[name] = 'Cumulative College'
           )
@@ -257,16 +257,16 @@ WITH
       comments_c,
       next_steps_c,
       subject_c,
-      gabby.utilities.DATE_TO_SY (date_c) AS academic_year,
+      utilities.DATE_TO_SY (date_c) AS academic_year,
       ROW_NUMBER() OVER (
         PARTITION BY
           contact_c,
-          gabby.utilities.DATE_TO_SY (date_c)
+          utilities.DATE_TO_SY (date_c)
         ORDER BY
           date_c DESC
       ) AS rn
     FROM
-      gabby.alumni.contact_note_c
+      alumni.contact_note_c
     WHERE
       is_deleted = 0
       AND subject_c LIKE 'AS[0-9]%'
@@ -275,16 +275,16 @@ WITH
     SELECT
       contact_c,
       subject_c AS tier,
-      gabby.utilities.DATE_TO_SY (date_c) AS academic_year,
+      utilities.DATE_TO_SY (date_c) AS academic_year,
       ROW_NUMBER() OVER (
         PARTITION BY
           contact_c,
-          gabby.utilities.DATE_TO_SY (date_c)
+          utilities.DATE_TO_SY (date_c)
         ORDER BY
           date_c DESC
       ) AS rn
     FROM
-      gabby.alumni.contact_note_c
+      alumni.contact_note_c
     WHERE
       is_deleted = 0
       AND subject_c LIKE 'Tier [0-9]'
@@ -300,7 +300,7 @@ WITH
           start_date_c DESC
       ) AS rn_matric
     FROM
-      gabby.alumni.enrollment_c
+      alumni.enrollment_c
     WHERE
       is_deleted = 0
       AND status_c = 'Matriculated'
@@ -317,7 +317,7 @@ WITH
       ) AS rn_finaid
     FROM
       matric AS e
-      INNER JOIN gabby.alumni.subsequent_financial_aid_award_c AS fa ON (
+      INNER JOIN alumni.subsequent_financial_aid_award_c AS fa ON (
         e.enrollment_id = fa.enrollment_c
         AND fa.is_deleted = 0
         AND fa.status_c = 'Offered'
@@ -542,9 +542,9 @@ SELECT
   fa.unmet_need_c AS unmet_need,
   tier.tier
 FROM
-  gabby.alumni.ktc_roster AS c
+  alumni.ktc_roster AS c
   CROSS JOIN academic_years AS ay
-  LEFT JOIN gabby.alumni.enrollment_identifiers AS ei ON c.sf_contact_id = ei.student_c
+  LEFT JOIN alumni.enrollment_identifiers AS ei ON c.sf_contact_id = ei.student_c
   LEFT JOIN apps ON (
     c.sf_contact_id = apps.sf_contact_id
     AND apps.matriculation_decision = 'Matriculated (Intent to Enroll)'
@@ -554,7 +554,7 @@ FROM
   LEFT JOIN apps_rollup AS ar ON (
     c.sf_contact_id = ar.sf_contact_id
   )
-  LEFT JOIN gabby.alumni.contact_note_rollup AS cnr ON (
+  LEFT JOIN alumni.contact_note_rollup AS cnr ON (
     c.sf_contact_id = cnr.contact_id
     AND ay.academic_year = cnr.academic_year
   )

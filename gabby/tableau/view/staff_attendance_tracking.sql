@@ -19,20 +19,20 @@ WITH
             )
           ) AS school_name
         FROM
-          gabby.adp.wfm_time_details
+          adp.wfm_time_details
         WHERE
           td.[location] LIKE '%KIPP%'
         GROUP BY
           td.[location]
       ) AS sub
-      LEFT JOIN gabby.people.school_crosswalk AS cw ON (sub.school_name = cw.site_name)
+      LEFT JOIN people.school_crosswalk AS cw ON (sub.school_name = cw.site_name)
   ),
   school_leaders AS (
     SELECT
       primary_site AS sl_primary_site,
       samaccountname AS sl_samaccountname
     FROM
-      gabby.people.staff_crosswalk_static
+      people.staff_crosswalk_static
     WHERE
       primary_job = 'School Leader'
       AND [status] != 'Terminated'
@@ -43,7 +43,7 @@ WITH
       transaction_apply_date,
       transaction_type AS holiday_status
     FROM
-      gabby.adp.wfm_time_details
+      adp.wfm_time_details
     WHERE
       transaction_type = 'Worked Holiday Edit'
     GROUP BY
@@ -59,8 +59,8 @@ WITH
       cal.[type],
       sch.[name] AS school
     FROM
-      gabby.powerschool.calendar_day AS cal
-      LEFT JOIN gabby.powerschool.schools AS sch ON (
+      powerschool.calendar_day AS cal
+      LEFT JOIN powerschool.schools AS sch ON (
         cal.schoolid = sch.school_number
         AND cal.[db_name] = sch.[db_name]
       )
@@ -89,7 +89,7 @@ WITH
               accrual_code
           ) AS max_last_updated
         FROM
-          gabby.adp.wfm_accrual_reporting_period_summary
+          adp.wfm_accrual_reporting_period_summary
       ) AS sub
     WHERE
       last_updated = max_last_updated
@@ -169,7 +169,7 @@ WITH
         END
       ) AS transaction_out_exceptions
     FROM
-      gabby.adp.wfm_time_details
+      adp.wfm_time_details
     WHERE
       (
         transaction_in_exceptions = 'Missed In Punch'
@@ -233,7 +233,7 @@ WITH
               _modified DESC
           ) AS rn_adj
         FROM
-          gabby.adp.wfm_time_details
+          adp.wfm_time_details
         WHERE
           transaction_type != 'Historical Correction'
       ) AS sub
@@ -255,7 +255,7 @@ SELECT
   td.transaction_apply_date AS work_date,
   td.transaction_start_date_time AS transaction_start_date_time,
   td.transaction_end_date_time AS transaction_end_date_time,
-  gabby.utilities.DATE_TO_SY (td.transaction_apply_date) AS academic_year,
+  utilities.DATE_TO_SY (td.transaction_apply_date) AS academic_year,
   SUBSTRING(
     td.employee_name,
     (LEN(td.employee_name) - 9),
@@ -336,7 +336,7 @@ FROM
     sd.schoolid = id.ps_school_id
     AND sd.date_value = td.transaction_apply_date
   )
-  LEFT JOIN gabby.people.staff_crosswalk_static AS cw ON (
+  LEFT JOIN people.staff_crosswalk_static AS cw ON (
     SUBSTRING(
       td.employee_name,
       LEN(td.employee_name) - 9,
@@ -358,7 +358,7 @@ WHERE
     (
       cw.legal_entity_name != 'KIPP Miami'
       AND td.transaction_apply_date >= DATEFROMPARTS(
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+        utilities.GLOBAL_ACADEMIC_YEAR (),
         8,
         15
       )
@@ -366,7 +366,7 @@ WHERE
     OR (
       cw.legal_entity_name = 'KIPP Miami'
       AND td.transaction_apply_date >= DATEFROMPARTS(
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+        utilities.GLOBAL_ACADEMIC_YEAR (),
         10,
         31
       )

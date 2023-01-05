@@ -8,7 +8,7 @@ DECLARE @sql NVARCHAR(MAX);
 SELECT
   @sql = CONCAT(
     'CREATE OR ALTER VIEW illuminate_dna_repositories.sight_words_data_current AS ',
-    gabby.dbo.GROUP_CONCAT_D (select_sql, '')
+    dbo.GROUP_CONCAT_D (select_sql, '')
   )
 FROM
   (
@@ -24,7 +24,7 @@ FROM
         END
       ) AS select_sql
     FROM
-      gabby.illuminate_dna_repositories.sight_words_quiz_union_generator
+      illuminate_dna_repositories.sight_words_quiz_union_generator
     WHERE
       select_sql IS NOT NULL
       AND is_missing = 0
@@ -36,7 +36,7 @@ FROM
 BEGIN TRY;
 
 SELECT
-  @sql = gabby.dbo.GROUP_CONCAT_D (drop_index_sql, ' ')
+  @sql = dbo.GROUP_CONCAT_D (drop_index_sql, ' ')
 FROM
   illuminate_dna_repositories.sight_words_quiz_index_generator;
 
@@ -50,7 +50,7 @@ END CATCH;
 
 /* reset indexes */
 SELECT
-  @sql = gabby.dbo.GROUP_CONCAT_D (create_index_sql, ' ')
+  @sql = dbo.GROUP_CONCAT_D (create_index_sql, ' ')
 FROM
   illuminate_dna_repositories.sight_words_quiz_index_generator;
 

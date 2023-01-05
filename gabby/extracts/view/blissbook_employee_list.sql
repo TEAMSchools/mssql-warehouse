@@ -14,7 +14,7 @@ SELECT
     df.original_hire_date
   ) AS [Latest Hire Date]
 FROM
-  gabby.people.staff_crosswalk_static AS df
+  people.staff_crosswalk_static AS df
 WHERE
   df.[status] != 'TERMINATED'
   AND df.mail IS NOT NULL

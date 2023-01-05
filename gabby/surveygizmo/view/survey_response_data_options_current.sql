@@ -14,7 +14,7 @@ SELECT
     JSON_VALUE(ol.[value], '$.answer') AS NVARCHAR(128)
   ) AS answer
 FROM
-  gabby.surveygizmo.survey_response_data_current_static AS srd
+  surveygizmo.survey_response_data_current_static AS srd
   CROSS APPLY OPENJSON (srd.options_list, '$') AS ol
 WHERE
   srd.options_list IS NOT NULL

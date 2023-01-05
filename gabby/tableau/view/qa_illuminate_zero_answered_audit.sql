@@ -22,18 +22,18 @@ SELECT
   dt.end_date,
   att.att_code
 FROM
-  gabby.illuminate_dna_assessments.agg_student_responses AS ovr
-  INNER JOIN gabby.illuminate_public.students AS s ON (ovr.student_id = s.student_id)
-  INNER JOIN gabby.illuminate_dna_assessments.assessments_identifiers AS a ON (
+  illuminate_dna_assessments.agg_student_responses AS ovr
+  INNER JOIN illuminate_public.students AS s ON (ovr.student_id = s.student_id)
+  INNER JOIN illuminate_dna_assessments.assessments_identifiers AS a ON (
     ovr.assessment_id = a.assessment_id
   )
-  INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON (
+  INNER JOIN powerschool.cohort_identifiers_static AS co ON (
     s.local_student_id = co.student_number
     AND a.academic_year_clean = co.academic_year
     AND co.rn_year = 1
     AND co.enroll_status = 0
   )
-  LEFT JOIN gabby.reporting.reporting_terms AS dt ON (
+  LEFT JOIN reporting.reporting_terms AS dt ON (
     co.schoolid = dt.schoolid
     AND (
       a.administered_at BETWEEN dt.start_date AND dt.end_date
@@ -41,7 +41,7 @@ FROM
     AND dt.identifier = 'RT'
     AND dt._fivetran_deleted = 0
   )
-  LEFT JOIN gabby.powerschool.ps_attendance_daily AS att ON (
+  LEFT JOIN powerschool.ps_attendance_daily AS att ON (
     co.studentid = att.studentid
     AND co.db_name = att.db_name
     AND ovr.date_taken = att.att_date
@@ -50,7 +50,7 @@ FROM
 WHERE
   ovr.answered = 0
   AND ovr.date_taken >= DATEFROMPARTS(
-    gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+    utilities.GLOBAL_ACADEMIC_YEAR (),
     7,
     1
   )

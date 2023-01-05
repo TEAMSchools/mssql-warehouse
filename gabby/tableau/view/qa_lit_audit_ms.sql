@@ -27,8 +27,8 @@ WITH
           fp.lvl_num DESC
       ) AS rn
     FROM
-      gabby.lit.all_test_events_static AS fp
-      INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON (
+      lit.all_test_events_static AS fp
+      INNER JOIN powerschool.cohort_identifiers_static AS co ON (
         fp.student_number = co.student_number
         AND fp.academic_year = co.academic_year
         AND co.rn_year = 1
@@ -64,7 +64,7 @@ WITH
           fp.lvl_num DESC
       ) AS rn
     FROM
-      gabby.reporting.reporting_terms AS rt
+      reporting.reporting_terms AS rt
       INNER JOIN fp_long AS fp ON (
         rt.schoolid = fp.schoolid
         AND rt.[start_date] > fp.assessment_date
@@ -111,14 +111,14 @@ WITH
       COALESCE(ins.text_level, hard.text_level) AS instructional_level,
       COALESCE(ins.genre, hard.genre) AS instructional_genre
     FROM
-      gabby.powerschool.cohort_identifiers_static AS co
-      INNER JOIN gabby.reporting.reporting_terms AS rt ON (
+      powerschool.cohort_identifiers_static AS co
+      INNER JOIN reporting.reporting_terms AS rt ON (
         co.schoolid = rt.schoolid
         AND co.academic_year = rt.academic_year
         AND rt.identifier = 'LIT'
         AND rt._fivetran_deleted = 0
       )
-      INNER JOIN gabby.lit.network_goals AS g ON (
+      INNER JOIN lit.network_goals AS g ON (
         co.grade_level = g.grade_level
         AND rt.alt_name = g.test_round
         AND g.norms_year = 2019
@@ -145,7 +145,7 @@ WITH
         AND hard.benchmark_level = 'DNA - Hard'
       )
     WHERE
-      co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+      co.academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
       AND co.rn_year = 1
       AND co.enroll_status = 0
       AND co.school_level = 'MS'

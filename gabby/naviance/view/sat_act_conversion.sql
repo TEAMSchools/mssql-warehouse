@@ -13,7 +13,7 @@ FROM
   (
     SELECT
       sat.student_number,
-      gabby.utilities.DATE_TO_SY (sat.test_date) AS academic_year,
+      utilities.DATE_TO_SY (sat.test_date) AS academic_year,
       sat.test_date,
       CAST(
         COALESCE(
@@ -22,13 +22,13 @@ FROM
         ) AS INT
       ) AS total_score
     FROM
-      gabby.naviance.sat_scores_clean AS sat
-      LEFT JOIN gabby.collegeboard.sat_old_new_concordance AS onc ON (
+      naviance.sat_scores_clean AS sat
+      LEFT JOIN collegeboard.sat_old_new_concordance AS onc ON (
         sat.sat_scale = onc.old_sat_scale
         AND sat.all_tests_total = onc.old_sat_total_score
         AND sat.is_old_sat = 1
       )
   ) AS sub
-  LEFT JOIN gabby.collegeboard.sat_act_concordance AS sac ON (
+  LEFT JOIN collegeboard.sat_act_concordance AS sac ON (
     sub.total_score = sac.sat_total_score
   )

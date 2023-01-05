@@ -15,7 +15,7 @@ SELECT
   student_id,
   is_replacement
 FROM
-  gabby.illuminate_dna_assessments.student_assessment_scaffold_current_static
+  illuminate_dna_assessments.student_assessment_scaffold_current_static
 UNION ALL
 SELECT
   assessment_id,
@@ -32,4 +32,4 @@ SELECT
   student_id,
   is_replacement
 FROM
-  gabby.illuminate_dna_assessments.student_assessment_scaffold_archive
+  illuminate_dna_assessments.student_assessment_scaffold_archive

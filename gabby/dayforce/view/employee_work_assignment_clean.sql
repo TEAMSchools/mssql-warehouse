@@ -59,8 +59,8 @@ FROM
           )
       ) AS work_assignment_effective_start_next
     FROM
-      gabby.dayforce.employee_work_assignment AS ewa
-      INNER JOIN gabby.dayforce.employees AS e ON (
+      dayforce.employee_work_assignment AS ewa
+      INNER JOIN dayforce.employees AS e ON (
         ewa.employee_reference_code = e.df_employee_number
       )
     WHERE

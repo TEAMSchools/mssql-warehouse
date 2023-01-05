@@ -25,18 +25,18 @@ SELECT
   'N/A' AS [Contribution504B],
   'B' AS [BasicLifePlan]
 FROM
-  gabby.people.staff_crosswalk_static AS s
-  LEFT JOIN gabby.adp.workers_custom_field_group_wide_static AS cf ON (
+  people.staff_crosswalk_static AS s
+  LEFT JOIN adp.workers_custom_field_group_wide_static AS cf ON (
     s.adp_associate_id = cf.worker_id
   )
-  LEFT JOIN gabby.surveys.staff_information_survey_wide_static AS e ON (
+  LEFT JOIN surveys.staff_information_survey_wide_static AS e ON (
     s.df_employee_number = e.employee_number
   )
 WHERE
   s.legal_entity_name = 'KIPP Miami'
   AND (
     s.termination_date >= DATEFROMPARTS(
-      gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+      utilities.GLOBAL_ACADEMIC_YEAR (),
       07,
       01
     )

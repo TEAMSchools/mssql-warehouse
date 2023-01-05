@@ -10,11 +10,11 @@ SELECT
   s.schoolid,
   s.grade_level
 FROM
-  gabby.renaissance.ar_studentpractice_identifiers_static AS ar
-  INNER JOIN gabby.powerschool.students AS s ON (
+  renaissance.ar_studentpractice_identifiers_static AS ar
+  INNER JOIN powerschool.students AS s ON (
     ar.student_number = s.student_number
   )
 WHERE
   ar.rn_quiz > 1
   AND ar.ti_passed = 1
-  AND ar.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
+  AND ar.academic_year = utilities.GLOBAL_ACADEMIC_YEAR () - 1

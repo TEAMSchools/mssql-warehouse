@@ -10,8 +10,8 @@ WITH
       s.[db_name],
       scf.spedlep
     FROM
-      gabby.powerschool.students AS s
-      LEFT JOIN gabby.powerschool.studentcorefields AS scf ON (
+      powerschool.students AS s
+      LEFT JOIN powerschool.studentcorefields AS scf ON (
         s.dcid = scf.studentsdcid
         AND s.[db_name] = scf.[db_name]
       )
@@ -28,7 +28,7 @@ WITH
       special_education,
       special_education_code
     FROM
-      gabby.easyiep.njsmart_powerschool_clean
+      easyiep.njsmart_powerschool_clean
     WHERE
       academic_year = 2021
   )

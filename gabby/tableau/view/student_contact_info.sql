@@ -43,8 +43,8 @@ SELECT
   NULL AS release_5_name,
   NULL AS release_5_phone
 FROM
-  gabby.powerschool.cohort_identifiers_static
+  powerschool.cohort_identifiers_static
 WHERE
   enroll_status = 0
-  AND academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+  AND academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
   AND rn_year = 1

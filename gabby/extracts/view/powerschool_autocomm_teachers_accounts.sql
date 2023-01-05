@@ -17,12 +17,12 @@ WITH
       scw.[status],
       sc.region
     FROM
-      gabby.people.staff_crosswalk_static AS scw
-      INNER JOIN gabby.people.school_crosswalk AS sc ON (
+      people.staff_crosswalk_static AS scw
+      INNER JOIN people.school_crosswalk AS sc ON (
         scw.primary_site = sc.site_name
         AND sc._fivetran_deleted = 0
       )
-      INNER JOIN gabby.powerschool.users AS u ON (
+      INNER JOIN powerschool.users AS u ON (
         scw.ps_teachernumber = u.teachernumber
         AND scw.primary_site_schoolid = u.homeschoolid
         AND CASE
@@ -61,12 +61,12 @@ WITH
       scw.[status],
       sc.region
     FROM
-      gabby.people.staff_crosswalk_static AS scw
-      INNER JOIN gabby.people.school_crosswalk AS sc ON (
+      people.staff_crosswalk_static AS scw
+      INNER JOIN people.school_crosswalk AS sc ON (
         scw.primary_site = sc.site_name
         AND sc._fivetran_deleted = 0
       )
-      LEFT JOIN gabby.powerschool.users AS u ON (
+      LEFT JOIN powerschool.users AS u ON (
         scw.ps_teachernumber = u.teachernumber
         AND CASE
           WHEN sc.region = 'TEAM Academy Charter School' THEN 'kippnewark'

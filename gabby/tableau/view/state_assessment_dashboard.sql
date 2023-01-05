@@ -19,7 +19,7 @@ WITH
           school_level,
           grade_level
         FROM
-          gabby.powerschool.cohort_identifiers_static
+          powerschool.cohort_identifiers_static
         WHERE
           rn_school = 1
       ) AS sub PIVOT (
@@ -55,7 +55,7 @@ WITH
                 WHEN district_name = 'NEWARK CITY' THEN 'NPS'
               END AS entity
             FROM
-              gabby.njdoe.parcc_clean
+              njdoe.parcc_clean
             WHERE
               subgroup = 'TOTAL'
               AND school_code IS NULL
@@ -91,7 +91,7 @@ WITH
               exitdate DESC
           ) AS rn
         FROM
-          gabby.powerschool.cohort_identifiers_static
+          powerschool.cohort_identifiers_static
         WHERE
           school_level = 'MS'
       ) AS sub
@@ -103,8 +103,8 @@ WITH
       u.sif_stateprid,
       u.lastfirst
     FROM
-      gabby.powerschool.users AS u
-      INNER JOIN gabby.powerschool.schools AS sch ON (
+      powerschool.users AS u
+      INNER JOIN powerschool.schools AS sch ON (
         u.homeschoolid = sch.school_number
         AND u.[db_name] = sch.[db_name]
       )
@@ -160,8 +160,8 @@ SELECT
   ms.ms_attended,
   pu.lastfirst AS teacher_lastfirst
 FROM
-  gabby.powerschool.cohort_identifiers_static AS co
-  INNER JOIN gabby.parcc.summative_record_file_clean AS parcc ON (
+  powerschool.cohort_identifiers_static AS co
+  INNER JOIN parcc.summative_record_file_clean AS parcc ON (
     co.student_number = parcc.local_student_identifier
     AND co.academic_year = parcc.academic_year
   )
@@ -227,8 +227,8 @@ SELECT
   ms.ms_attended,
   NULL AS teacher_lastfirst
 FROM
-  gabby.powerschool.cohort_identifiers_static AS co
-  INNER JOIN gabby.njsmart.all_state_assessments AS asa ON (
+  powerschool.cohort_identifiers_static AS co
+  INNER JOIN njsmart.all_state_assessments AS asa ON (
     co.student_number = asa.local_student_id
     AND co.academic_year = asa.academic_year
   )

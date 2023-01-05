@@ -21,12 +21,12 @@ WITH
           [start_date] DESC
       ) AS rn_curr
     FROM
-      gabby.lit.achieved_by_round_static
+      lit.achieved_by_round_static
     WHERE
       read_lvl IS NOT NULL
       AND (
         [start_date] BETWEEN DATEFROMPARTS(
-          gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+          utilities.GLOBAL_ACADEMIC_YEAR (),
           7,
           1
         ) AND CURRENT_TIMESTAMP
@@ -80,7 +80,7 @@ WITH
                 END
               ) AS words_needed
             FROM
-              gabby.renaissance.ar_progress_to_goals
+              renaissance.ar_progress_to_goals
             WHERE
               words_goal > 0
               AND (
@@ -153,8 +153,8 @@ SELECT
   CAST(bk.dt_taken AS VARCHAR) AS last_book_quiz_date,
   bk.d_percent_correct * 100 AS last_book_quiz_pct_correct
 FROM
-  gabby.powerschool.cohort_identifiers_static AS co
-  LEFT JOIN gabby.powerschool.course_enrollments_current_static AS enr ON (
+  powerschool.cohort_identifiers_static AS co
+  LEFT JOIN powerschool.course_enrollments_current_static AS enr ON (
     co.student_number = enr.student_number
     AND co.[db_name] = enr.[db_name]
     AND enr.credittype = 'ENG'
@@ -163,7 +163,7 @@ FROM
     )
     AND enr.rn_subject = 1
   )
-  LEFT JOIN gabby.powerschool.final_grades_static AS gr ON (
+  LEFT JOIN powerschool.final_grades_static AS gr ON (
     co.studentid = gr.studentid
     AND co.yearid = gr.yearid
     AND co.[db_name] = gr.[db_name]
@@ -173,7 +173,7 @@ FROM
       CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN gr.termbin_start_date AND gr.termbin_end_date -- noqa: L016
     )
   )
-  LEFT JOIN gabby.powerschool.category_grades_static AS ele ON (
+  LEFT JOIN powerschool.category_grades_static AS ele ON (
     co.studentid = ele.studentid
     AND co.yearid = ele.yearid
     AND co.[db_name] = ele.[db_name]
@@ -195,12 +195,12 @@ FROM
   LEFT JOIN ar_wide ON (
     co.student_number = ar_wide.student_number
   )
-  LEFT JOIN gabby.renaissance.ar_most_recent_quiz_static AS bk ON (
+  LEFT JOIN renaissance.ar_most_recent_quiz_static AS bk ON (
     co.student_number = bk.student_number
     AND co.academic_year = bk.academic_year
   )
 WHERE
-  co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+  co.academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
   /* ad-hoc exception for Seek 4*/
   AND (
     co.school_level = 'MS'

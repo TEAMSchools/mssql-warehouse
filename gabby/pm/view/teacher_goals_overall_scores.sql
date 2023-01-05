@@ -64,8 +64,8 @@ FROM
           r.original_hire_date AS hire_date,
           r.business_unit
         FROM
-          gabby.tableau.pm_teacher_goals AS tg
-          LEFT JOIN gabby.people.staff_roster AS r ON (
+          tableau.pm_teacher_goals AS tg
+          LEFT JOIN people.staff_roster AS r ON (
             tg.df_employee_number = r.employee_number
           )
         WHERE

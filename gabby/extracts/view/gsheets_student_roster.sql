@@ -20,8 +20,8 @@ SELECT
   ethnicity,
   lep_status
 FROM
-  gabby.powerschool.cohort_identifiers_static
+  powerschool.cohort_identifiers_static
 WHERE
-  academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+  academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
   AND rn_year = 1
   AND grade_level != 99

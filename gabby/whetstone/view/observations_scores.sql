@@ -23,7 +23,7 @@ SELECT
   JSON_QUERY(ws.[value], '$.checkboxes') AS score_checkboxes_json,
   JSON_QUERY(ws.[value], '$.textBoxes') AS score_text_boxes_json
 FROM
-  gabby.whetstone.observations AS wo
+  whetstone.observations AS wo
   CROSS APPLY OPENJSON (wo.observation_scores, '$') AS ws
 WHERE
   wo.observation_scores != '[]'

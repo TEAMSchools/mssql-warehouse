@@ -32,8 +32,8 @@ SELECT
   ) AS [14 Academic Year],
   NULL AS [15 Session Type ID]
 FROM
-  gabby.powerschool.course_enrollments_current_static AS enr
-  INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON (
+  powerschool.course_enrollments_current_static AS enr
+  INNER JOIN powerschool.cohort_identifiers_static AS co ON (
     enr.student_number = co.student_number
     AND enr.academic_year = co.academic_year
     AND enr.[db_name] = co.[db_name]

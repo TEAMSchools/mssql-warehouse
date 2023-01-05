@@ -96,9 +96,9 @@ CLOSE group_cursor;
 
 DEALLOCATE group_cursor;
 
-IF OBJECT_ID(N'gabby.adsi.group_membership') IS NULL BEGIN
+IF OBJECT_ID(N'adsi.group_membership') IS NULL BEGIN
 SELECT
-  * INTO gabby.adsi.group_membership
+  * INTO adsi.group_membership
 FROM
   [#ad_group_membership];
 
@@ -107,7 +107,7 @@ END;
 ELSE BEGIN
 /* merge temp table into destination table */
 MERGE
-  gabby.adsi.group_membership AS tgt USING [#ad_group_membership] AS src ON (
+  adsi.group_membership AS tgt USING [#ad_group_membership] AS src ON (
     tgt.group_adspath = src.group_adspath
     AND tgt.object_guid = src.object_guid
   )

@@ -23,7 +23,7 @@ WITH
       field_comprehension AS within_the_text,
       field_writing_optional AS writing
     FROM
-      gabby.illuminate_dna_repositories.repository_194
+      illuminate_dna_repositories.repository_194
     UNION ALL
     SELECT
       195 AS repository_id,
@@ -46,7 +46,7 @@ WITH
       field_within_the_text AS within_the_text,
       field_writing_optional AS writing
     FROM
-      gabby.illuminate_dna_repositories.repository_195
+      illuminate_dna_repositories.repository_195
     UNION ALL
     SELECT
       196 AS repository_id,
@@ -69,7 +69,7 @@ WITH
       field_within_the_text AS within_the_text,
       field_writing_optional AS writing
     FROM
-      gabby.illuminate_dna_repositories.repository_196
+      illuminate_dna_repositories.repository_196
     UNION ALL
     SELECT
       193 AS repository_id,
@@ -92,7 +92,7 @@ WITH
       field_within_the_text AS within_the_text,
       field_writing_optional AS writing
     FROM
-      gabby.illuminate_dna_repositories.repository_193
+      illuminate_dna_repositories.repository_193
   ),
   repos_clean AS (
     SELECT
@@ -140,7 +140,7 @@ WITH
             repository_row_id
           )
         FROM
-          gabby.illuminate_dna_repositories.repository_row_ids
+          illuminate_dna_repositories.repository_row_ids
       )
   )
 SELECT
@@ -164,4 +164,4 @@ SELECT
   rc.achieved_independent_level
 FROM
   repos_clean AS rc
-  INNER JOIN gabby.illuminate_public.students AS s ON (rc.student_id = s.student_id)
+  INNER JOIN illuminate_public.students AS s ON (rc.student_id = s.student_id)

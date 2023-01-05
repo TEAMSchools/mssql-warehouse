@@ -10,7 +10,7 @@ SELECT
   sas.student_web_id + '@teamstudents.org' AS student_gsuite_email
 FROM
   extracts.gclassroom_sections AS sec
-  INNER JOIN gabby.powerschool.cc ON (
+  INNER JOIN powerschool.cc ON (
     sec.sectionid = cc.sectionid
     AND sec.[db_name] = cc.[db_name]
     AND cc.sectionid > 0

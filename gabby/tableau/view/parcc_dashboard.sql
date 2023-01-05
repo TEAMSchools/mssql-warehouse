@@ -19,7 +19,7 @@ WITH
           entity,
           pct_proficient
         FROM
-          gabby.parcc.external_proficiency_rates
+          parcc.external_proficiency_rates
         WHERE
           (
             test_code IN ('ALG01', 'ALG02', 'GEO01')
@@ -61,8 +61,8 @@ SELECT
   ext.cps AS pct_prof_cps,
   ext.parcc AS pct_prof_parcc
 FROM
-  gabby.powerschool.cohort_identifiers_static AS co
-  INNER JOIN gabby.parcc.summative_record_file AS parcc ON (
+  powerschool.cohort_identifiers_static AS co
+  INNER JOIN parcc.summative_record_file AS parcc ON (
     co.student_number = parcc.local_student_identifier
     AND co.academic_year = LEFT(parcc.assessment_year, 4)
   )
@@ -109,8 +109,8 @@ SELECT
   ext.cps AS pct_prof_cps,
   ext.parcc AS pct_prof_parcc
 FROM
-  gabby.powerschool.cohort_identifiers_static AS co
-  INNER JOIN gabby.njsmart.all_state_assessments AS asa ON (
+  powerschool.cohort_identifiers_static AS co
+  INNER JOIN njsmart.all_state_assessments AS asa ON (
     co.student_number = asa.local_student_id
     AND co.academic_year = asa.academic_year
   )

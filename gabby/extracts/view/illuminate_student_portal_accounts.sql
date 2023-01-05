@@ -7,8 +7,8 @@ SELECT
   1 AS [04 Enable portal],
   saa.student_web_password AS [05 Temporary password]
 FROM
-  gabby.powerschool.students AS s
-  INNER JOIN gabby.powerschool.student_access_accounts_static AS saa ON (
+  powerschool.students AS s
+  INNER JOIN powerschool.student_access_accounts_static AS saa ON (
     s.student_number = saa.student_number
   )
 WHERE

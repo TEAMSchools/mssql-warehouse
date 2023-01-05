@@ -11,7 +11,7 @@ WITH
         2
       ) AS [ada]
     FROM
-      gabby.powerschool.ps_adaadm_daily_ctod_current_static
+      powerschool.ps_adaadm_daily_ctod_current_static
     WHERE
       membershipvalue = 1
       AND calendardate <= CAST(SYSDATETIME() AS DATE)
@@ -51,9 +51,9 @@ WITH
           exit_date,
           1 AS n
         FROM
-          gabby.powerschool.spenrollments_gen_static
+          powerschool.spenrollments_gen_static
         WHERE
-          academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+          academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
       ) AS sub PIVOT (
         MAX(n) FOR specprog_name IN (
           [Pathways ES],
@@ -149,8 +149,8 @@ WITH
         WHEN att.[ada] < 0.9 THEN 'Chronic Absence'
       END AS is_chronic_absentee
     FROM
-      gabby.powerschool.cohort_identifiers_static AS co
-      LEFT JOIN gabby.powerschool.gpa_detail AS gpa ON (
+      powerschool.cohort_identifiers_static AS co
+      LEFT JOIN powerschool.gpa_detail AS gpa ON (
         co.student_number = gpa.student_number
         AND co.academic_year = gpa.academic_year
         AND co.[db_name] = gpa.[db_name]
@@ -168,7 +168,7 @@ WITH
       )
     WHERE
       co.rn_year = 1
-      AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+      AND co.academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
   )
 SELECT
   student_number,

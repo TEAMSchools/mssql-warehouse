@@ -56,7 +56,7 @@ WITH
           payroll_date
       ) AS prev_payroll_date
     FROM
-      gabby.payroll.payroll_audit_scaffold
+      payroll.payroll_audit_scaffold
     WHERE
       preview_or_final = 'Final'
   ),
@@ -230,7 +230,7 @@ WITH
         ELSE pas.audit_type
       END AS audit_type
     FROM
-      gabby.payroll.payroll_audit_scaffold AS pas
+      payroll.payroll_audit_scaffold AS pas
       LEFT JOIN final_data AS fd ON (
         fd.employee_number = pas.employee_number
         AND fd.code = pas.code

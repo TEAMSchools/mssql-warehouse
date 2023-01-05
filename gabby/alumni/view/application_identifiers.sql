@@ -114,13 +114,13 @@ FROM
         app.application_status_c
       ) AS starting_application_status
     FROM
-      gabby.alumni.application_c AS app
-      INNER JOIN gabby.alumni.account AS acc ON (
+      alumni.application_c AS app
+      INNER JOIN alumni.account AS acc ON (
         app.school_c = acc.id
         AND acc.is_deleted = 0
       )
-      INNER JOIN gabby.alumni.contact AS c ON (app.applicant_c = c.id)
-      LEFT JOIN gabby.alumni.enrollment_c AS enr ON (
+      INNER JOIN alumni.contact AS c ON (app.applicant_c = c.id)
+      LEFT JOIN alumni.enrollment_c AS enr ON (
         app.applicant_c = enr.student_c
         AND app.school_c = enr.school_c
         AND c.kipp_hs_class_c = YEAR(enr.start_date_c)

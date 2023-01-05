@@ -27,9 +27,9 @@ SELECT
   is_mastery,
   is_normed_scope
 FROM
-  gabby.illuminate_dna_assessments.agg_student_responses_all_current
+  illuminate_dna_assessments.agg_student_responses_all_current
 WHERE
-  academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+  academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
 UNION ALL
 SELECT
   assessment_id,
@@ -60,4 +60,4 @@ SELECT
   is_mastery,
   is_normed_scope
 FROM
-  gabby.illuminate_dna_assessments.agg_student_responses_all_archive
+  illuminate_dna_assessments.agg_student_responses_all_archive

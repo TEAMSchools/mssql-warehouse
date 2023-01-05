@@ -26,7 +26,7 @@ SELECT
   ) AS avg_weighted_response_value,
   NULL AS avg_response_value_location
 FROM
-  gabby.surveys.self_and_others_survey_detail
+  surveys.self_and_others_survey_detail
 WHERE
   is_open_ended = 'N'
 GROUP BY

@@ -18,7 +18,7 @@ WITH
           job_title,
           egencia_traveler_group
         FROM
-          gabby.egencia.traveler_groups
+          egencia.traveler_groups
         UNION ALL
         SELECT DISTINCT
           scw.[location],
@@ -26,7 +26,7 @@ WITH
           scw.job_title,
           NULL AS egencia_traveler_group
         FROM
-          gabby.people.staff_roster AS scw
+          people.staff_roster AS scw
         WHERE
           (
             scw.worker_category NOT IN ('Intern', 'Part Time')
@@ -36,7 +36,7 @@ WITH
             scw.termination_date,
             CURRENT_TIMESTAMP
           ) >= DATEFROMPARTS(
-            gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+            utilities.GLOBAL_ACADEMIC_YEAR (),
             7,
             1
           )
@@ -47,7 +47,7 @@ WITH
           'Default' AS job_title,
           NULL AS egencia_traveler_group
         FROM
-          gabby.people.staff_roster AS scw
+          people.staff_roster AS scw
         WHERE
           (
             scw.worker_category NOT IN ('Intern', 'Part Time')
@@ -57,7 +57,7 @@ WITH
             scw.termination_date,
             CURRENT_TIMESTAMP
           ) >= DATEFROMPARTS(
-            gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+            utilities.GLOBAL_ACADEMIC_YEAR (),
             7,
             1
           )
@@ -68,7 +68,7 @@ WITH
           'Default' AS job_title,
           NULL AS egencia_traveler_group
         FROM
-          gabby.people.staff_roster AS scw
+          people.staff_roster AS scw
         WHERE
           (
             scw.worker_category NOT IN ('Intern', 'Part Time')
@@ -78,7 +78,7 @@ WITH
             scw.termination_date,
             CURRENT_TIMESTAMP
           ) >= DATEFROMPARTS(
-            gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+            utilities.GLOBAL_ACADEMIC_YEAR (),
             7,
             1
           )

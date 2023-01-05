@@ -20,7 +20,7 @@ WITH
               (CHARINDEX(']', [name])) - (CHARINDEX('[', [name]) + 1)
             )
           ) AS student_number,
-          gabby.utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year,
+          utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year,
           SUBSTRING(
             [diagnostic_goal],
             CHARINDEX(' ', [diagnostic_goal]) + 1,
@@ -47,7 +47,7 @@ WITH
             LEN([q_4_goal])
           ) AS q4_goal
         FROM
-          gabby.lit.individualized_goal_entry
+          lit.individualized_goal_entry
         WHERE
           _fivetran_deleted = 0
       ) AS sub UNPIVOT (
@@ -77,4 +77,4 @@ SELECT
   ) AS lvl_num
 FROM
   gdoc_long AS g
-  LEFT OUTER JOIN gabby.lit.gleq ON (g.goal = gleq.read_lvl)
+  LEFT OUTER JOIN lit.gleq ON (g.goal = gleq.read_lvl)

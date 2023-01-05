@@ -8,8 +8,8 @@ SELECT
   course_name,
   teacher_name
 FROM
-  gabby.tableau.gradebook_assignment_detail
+  tableau.gradebook_assignment_detail
 WHERE
-  academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+  academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
   AND ismissing = 1
   AND finalgrade_category = 'Q'

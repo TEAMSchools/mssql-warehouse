@@ -22,7 +22,7 @@ FROM
 WHERE
   r.deleted_at IS NULL
   AND r.date_administered >= DATEFROMPARTS(
-    gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+    utilities.GLOBAL_ACADEMIC_YEAR (),
     7,
     1
   )

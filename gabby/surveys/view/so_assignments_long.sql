@@ -18,7 +18,7 @@ WITH
       CAST([so_9] AS BIGINT) AS so_9,
       CAST([so_10] AS BIGINT) AS so_10
     FROM
-      gabby.pm.assignments
+      pm.assignments
   ),
   assignment_unpivot AS (
     SELECT
@@ -60,7 +60,7 @@ SELECT
   'Self & Others - Peer Feedback' AS assignment_type
 FROM
   assignment_unpivot AS a
-  INNER JOIN gabby.people.staff_crosswalk_static AS c ON (
+  INNER JOIN people.staff_crosswalk_static AS c ON (
     a.assignment = c.df_employee_number
   )
 WHERE
@@ -84,11 +84,11 @@ SELECT
   c.[status] AS assignment_adp_status,
   'Self & Others - Manager Feedback' AS assignment_type
 FROM
-  gabby.people.staff_crosswalk_static AS c
-  INNER JOIN gabby.pm.assignments AS s ON (
+  people.staff_crosswalk_static AS c
+  INNER JOIN pm.assignments AS s ON (
     c.df_employee_number = s.df_employee_number
   )
-  INNER JOIN gabby.pm.assignments AS m ON (
+  INNER JOIN pm.assignments AS m ON (
     c.manager_df_employee_number = m.df_employee_number
   )
 WHERE

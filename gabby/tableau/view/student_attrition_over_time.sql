@@ -15,13 +15,13 @@ WITH
       exitcomment,
       [db_name]
     FROM
-      gabby.powerschool.cohort_identifiers_static
+      powerschool.cohort_identifiers_static
     WHERE
       (
         DATEFROMPARTS(academic_year, 10, 1) BETWEEN entrydate AND exitdate
       )
       AND academic_year >= (
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 2
+        utilities.GLOBAL_ACADEMIC_YEAR () - 2
       )
   ),
   attrition_dates AS (
@@ -32,7 +32,7 @@ WITH
         ELSE DATEPART(YEAR, [date]) - 1
       END AS attrition_year
     FROM
-      gabby.utilities.reporting_days
+      utilities.reporting_days
   )
 SELECT
   y1.student_number,
@@ -66,14 +66,14 @@ SELECT
   END AS is_attrition
 FROM
   enrolled_oct1 AS y1
-  LEFT JOIN gabby.powerschool.students AS s ON (
+  LEFT JOIN powerschool.students AS s ON (
     y1.student_number = s.student_number
   )
   INNER JOIN attrition_dates AS d ON (
     y1.academic_year = d.attrition_year
     AND d.[date] <= CURRENT_TIMESTAMP
   )
-  LEFT JOIN gabby.powerschool.cohort_identifiers_static AS y2 ON (
+  LEFT JOIN powerschool.cohort_identifiers_static AS y2 ON (
     y1.student_number = y2.student_number
     AND y1.academic_year = (y2.academic_year - 1)
     AND (

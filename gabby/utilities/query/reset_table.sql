@@ -29,7 +29,7 @@ EXEC sp_sqlexec @drop_sql;
 EXEC sp_rename @objname = @objname,
 @newname = @table_name_old;
 
-EXEC gabby.utilities.cache_view @db_name = @db_name,
+EXEC utilities.cache_view @db_name = @db_name,
 @schema_name = @schema_name,
 @view_name = @view_name;
 
@@ -39,7 +39,7 @@ SELECT
   column_type_mismatch,
   query
 FROM
-  gabby.utilities.generate_gabby_unions
+  utilities.generate_gabby_unions
 WHERE
   [schema_name] = @schema_name
   AND table_name IN (

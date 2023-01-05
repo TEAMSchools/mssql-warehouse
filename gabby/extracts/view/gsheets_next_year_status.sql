@@ -18,4 +18,4 @@ SELECT
   NULL AS promo_status,
   gmaps_address
 FROM
-  gabby.tableau.next_year_status
+  tableau.next_year_status

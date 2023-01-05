@@ -30,8 +30,8 @@ WITH
       c.gender_c,
       c.ethnicity_c
     FROM
-      gabby.alumni.enrollment_c AS e
-      INNER JOIN gabby.alumni.contact AS c ON (e.student_c = c.id)
+      alumni.enrollment_c AS e
+      INNER JOIN alumni.contact AS c ON (e.student_c = c.id)
     WHERE
       e.status_c = 'Graduated'
       AND e.is_deleted = 0
@@ -78,7 +78,7 @@ WITH
           survey_response_id,
           survey_id
         FROM
-          gabby.surveygizmo.survey_detail
+          surveygizmo.survey_detail
         WHERE
           survey_id = 6734664
       ) AS sub PIVOT (
@@ -115,7 +115,7 @@ WITH
       survey_id,
       SUM(CAST(answer_value AS FLOAT)) AS answer_total
     FROM
-      gabby.surveygizmo.survey_detail
+      surveygizmo.survey_detail
     WHERE
       survey_id = 6734664
       AND question_shortname IN (

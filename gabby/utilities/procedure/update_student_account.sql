@@ -18,7 +18,7 @@ IF EXISTS (
   SELECT
     1
   FROM
-    gabby.powerschool.student_access_accounts_static
+    powerschool.student_access_accounts_static
   WHERE
     student_web_id = @username_new
 ) BEGIN;
@@ -43,7 +43,7 @@ RAISERROR (
 WITH
   NOWAIT;
 
-UPDATE gabby.powerschool.student_access_accounts_static
+UPDATE powerschool.student_access_accounts_static
 SET
   student_web_id = @username_new,
   manual_override = 1

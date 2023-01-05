@@ -52,7 +52,7 @@ WITH
             void_reason_science AS VARCHAR(50)
           ) AS void_reason_science
         FROM
-          gabby.njsmart.njask_archive
+          njsmart.njask_archive
         UNION ALL
         SELECT
           CAST(local_student_id AS INT) AS local_student_id,
@@ -85,7 +85,7 @@ WITH
             END AS VARCHAR(50)
           ) AS void_reason_science
         FROM
-          gabby.njsmart.njask
+          njsmart.njask
         UNION ALL
         SELECT
           CAST(local_student_id AS INT) AS local_student_id,
@@ -109,7 +109,7 @@ WITH
             END AS VARCHAR(50)
           ) AS void_reason_science
         FROM
-          gabby.njsmart.njbct
+          njsmart.njbct
         UNION ALL
         SELECT
           CAST(
@@ -150,7 +150,7 @@ WITH
           NULL AS invalid_scale_score_reason_science,
           NULL AS void_reason_science
         FROM
-          gabby.njsmart.hspa
+          njsmart.hspa
         UNION ALL
         SELECT
           CAST(local_student_id AS INT) AS local_student_id,
@@ -188,7 +188,7 @@ WITH
             void_reason_science AS VARCHAR(50)
           ) AS void_reason_science
         FROM
-          gabby.njsmart.gepa
+          njsmart.gepa
       ) AS sub UNPIVOT (
         [value] FOR field IN (
           scaled_score_lal,

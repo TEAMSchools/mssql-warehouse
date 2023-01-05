@@ -70,8 +70,8 @@ SELECT
   suf.mother_cell,
   suf.father_cell
 FROM
-  gabby.powerschool.students AS s
-  LEFT JOIN gabby.powerschool.cohort_identifiers_static AS co ON (
+  powerschool.students AS s
+  LEFT JOIN powerschool.cohort_identifiers_static AS co ON (
     s.student_number = co.student_number
     AND co.rn_undergrad = 1
     AND co.grade_level != 99

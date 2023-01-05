@@ -18,7 +18,7 @@ SELECT
   schoolzip AS [School_zip],
   NULL AS [School_phone]
 FROM
-  gabby.powerschool.schools
+  powerschool.schools
 WHERE
   /* filter out summer school and graduated students */
   state_excludefromreporting = 0

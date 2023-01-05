@@ -9,8 +9,8 @@ WITH
       x.google_email AS first_approver_google,
       m.google_email AS second_approver_google
     FROM
-      gabby.people.staff_crosswalk_static AS x
-      LEFT JOIN gabby.people.staff_crosswalk_static AS m ON (
+      people.staff_crosswalk_static AS x
+      LEFT JOIN people.staff_crosswalk_static AS m ON (
         x.manager_df_employee_number = m.df_employee_number
       )
     WHERE
@@ -26,11 +26,11 @@ WITH
       gm.google_email AS second_approver_google,
       gm.userprincipalname AS second_approver_email
     FROM
-      gabby.people.staff_crosswalk_static AS x
-      LEFT JOIN gabby.people.staff_crosswalk_static AS m ON (
+      people.staff_crosswalk_static AS x
+      LEFT JOIN people.staff_crosswalk_static AS m ON (
         x.manager_df_employee_number = m.df_employee_number
       )
-      LEFT JOIN gabby.people.staff_crosswalk_static AS gm ON (
+      LEFT JOIN people.staff_crosswalk_static AS gm ON (
         m.manager_df_employee_number = gm.df_employee_number
       )
     WHERE
@@ -67,7 +67,7 @@ SELECT
     k.second_approver_email
   ) AS second_approver_email
 FROM
-  gabby.people.staff_crosswalk_static AS x
+  people.staff_crosswalk_static AS x
   LEFT JOIN school_approvers AS s ON (x.primary_site = s.primary_site)
   LEFT JOIN ktaf_approvers AS k ON (
     x.df_employee_number = k.df_employee_number

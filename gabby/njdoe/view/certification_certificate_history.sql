@@ -38,7 +38,7 @@ WITH
         JSON_VALUE(ch.[value], '$.certificate_id') AS NVARCHAR(256)
       ) AS certificate_id
     FROM
-      gabby.njdoe.certification_check AS cc
+      njdoe.certification_check AS cc
       CROSS APPLY OPENJSON (cc.certificate_history, '$') AS ch
     WHERE
       cc.certificate_history != '[]'
@@ -52,7 +52,7 @@ SELECT
   LTRIM(
     RTRIM(
       LEFT(
-        gabby.utilities.STRIP_CHARACTERS (certificate_type, '^A-Z -'),
+        utilities.STRIP_CHARACTERS (certificate_type, '^A-Z -'),
         28
       )
     )

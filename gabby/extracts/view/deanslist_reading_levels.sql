@@ -40,8 +40,8 @@ FROM
           [start_date] ASC
       ) AS rn_round_asc
     FROM
-      gabby.lit.achieved_by_round_static
+      lit.achieved_by_round_static
     WHERE
-      academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+      academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
       AND achv_unique_id LIKE 'FPBAS%'
   ) AS sub

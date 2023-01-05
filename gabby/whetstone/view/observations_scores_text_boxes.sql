@@ -13,7 +13,7 @@ SELECT
     JSON_VALUE(tb.[value], '$.value') AS NVARCHAR(4000)
   ) AS text_box_text
 FROM
-  gabby.whetstone.observations_scores_static AS wos
+  whetstone.observations_scores_static AS wos
   CROSS APPLY OPENJSON (wos.score_text_boxes_json, '$') AS tb
 WHERE
   wos.score_text_boxes_json != '[{"key":"0","value":""}]'

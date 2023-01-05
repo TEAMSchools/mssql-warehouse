@@ -13,7 +13,7 @@ WITH
       parent_standard_id,
       [level]
     FROM
-      gabby.illuminate_standards.standards
+      illuminate_standards.standards
     UNION ALL
     SELECT
       s3.domain_standard_id,
@@ -26,7 +26,7 @@ WITH
       s2.parent_standard_id,
       s2.[level]
     FROM
-      gabby.illuminate_standards.standards AS s2
+      illuminate_standards.standards AS s2
       INNER JOIN standards_ladder AS s3 ON (
         s2.parent_standard_id = s3.standard_id
       )

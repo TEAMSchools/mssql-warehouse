@@ -16,4 +16,4 @@ SELECT
   JSON_VALUE([statistics], '$.Complete') AS complete,
   JSON_VALUE([statistics], '$.TestData') AS test_data
 FROM
-  gabby.surveygizmo.survey
+  surveygizmo.survey

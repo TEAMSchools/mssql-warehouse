@@ -14,7 +14,7 @@ WITH
         ELSE CAST(raw_score AS INT)
       END AS raw_score
     FROM
-      gabby.act.key_cleanup UNPIVOT (
+      act.key_cleanup UNPIVOT (
         raw_score FOR [subject] IN (
           english,
           mathematics,
@@ -45,7 +45,7 @@ SELECT DISTINCT
   'ACT1' AS administration_round,
   scaffold.max_raw_score AS raw_score,
   row_generator.n AS grade_level,
-  gabby.utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year,
+  utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year,
   (
     UPPER(LEFT(scaffold.subject, 1)) + (
       SUBSTRING(
@@ -67,6 +67,6 @@ FROM
     scaffold.subject = key_clean.subject
     AND scaffold.max_raw_score = key_clean.raw_score
   )
-  INNER JOIN gabby.utilities.row_generator ON (
-    gabby.utilities.row_generator.n BETWEEN 9 AND 11
+  INNER JOIN utilities.row_generator ON (
+    utilities.row_generator.n BETWEEN 9 AND 11
   )

@@ -7,7 +7,7 @@ WITH
       test_scale_score AS test_score,
       CONCAT('parcc_', LOWER(test_code)) AS test_type
     FROM
-      gabby.parcc.summative_record_file_clean
+      parcc.summative_record_file_clean
     WHERE
       test_code IN (
         'ELA09',
@@ -34,7 +34,7 @@ WITH
           CAST(reading_test AS INT) AS reading_test,
           CAST(math_test AS INT) AS math_test
         FROM
-          gabby.naviance.sat_scores
+          naviance.sat_scores
       ) AS sub UNPIVOT (
         [value] FOR field IN (
           evidence_based_reading_writing,
@@ -53,8 +53,8 @@ WITH
       ) AS test_type,
       ktc.student_number
     FROM
-      gabby.alumni.standardized_test_long AS st
-      INNER JOIN gabby.alumni.ktc_roster AS ktc ON (st.contact_c = ktc.sf_contact_id)
+      alumni.standardized_test_long AS st
+      INNER JOIN alumni.ktc_roster AS ktc ON (st.contact_c = ktc.sf_contact_id)
     WHERE
       st.test_type = 'ACT'
       AND st.score_type IN ('act_reading_c', 'act_math_c')
@@ -95,17 +95,17 @@ SELECT
   a.test_type,
   a.test_score
 FROM
-  gabby.powerschool.cohort_identifiers_static AS co
+  powerschool.cohort_identifiers_static AS co
   LEFT JOIN all_tests AS a ON (
     co.student_number = a.local_student_identifier
   )
 WHERE
-  co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+  co.academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
   AND co.rn_year = 1
   AND (
     co.cohort BETWEEN (
-      gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
+      utilities.GLOBAL_ACADEMIC_YEAR () - 1
     ) AND (
-      gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 5
+      utilities.GLOBAL_ACADEMIC_YEAR () + 5
     )
   )

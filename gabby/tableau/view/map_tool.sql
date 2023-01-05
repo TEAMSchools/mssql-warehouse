@@ -16,7 +16,7 @@ WITH
       lexile_score,
       NULL AS testdurationminutes
     FROM
-      gabby.nwea.best_baseline
+      nwea.best_baseline
     UNION ALL
     SELECT
       base.student_number,
@@ -32,8 +32,8 @@ WITH
       map.ritto_reading_score AS lexile_score,
       map.test_duration_minutes
     FROM
-      gabby.nwea.best_baseline AS base
-      LEFT JOIN gabby.nwea.assessment_result_identifiers AS map ON (
+      nwea.best_baseline AS base
+      LEFT JOIN nwea.assessment_result_identifiers AS map ON (
         base.student_number = map.student_id
         AND base.academic_year = map.academic_year
         AND base.measurementscale = map.measurement_scale
@@ -100,24 +100,24 @@ SELECT
       map_long.measurementscale
   ) AS median_pct
 FROM
-  gabby.powerschool.cohort_identifiers_static AS r
+  powerschool.cohort_identifiers_static AS r
   LEFT JOIN map_long ON (
     r.student_number = map_long.student_number
     AND r.academic_year = map_long.academic_year
   )
-  LEFT JOIN gabby.nwea.percentile_norms_dense AS pct50 ON (
+  LEFT JOIN nwea.percentile_norms_dense AS pct50 ON (
     r.grade_level = pct50.grade_level
     AND map_long.term = pct50.term
     AND map_long.measurementscale = pct50.measurementscale
     AND pct50.testpercentile = 50
   )
-  LEFT JOIN gabby.nwea.percentile_norms_dense AS pct75 ON (
+  LEFT JOIN nwea.percentile_norms_dense AS pct75 ON (
     r.grade_level = pct75.grade_level
     AND map_long.term = pct75.term
     AND map_long.measurementscale = pct75.measurementscale
     AND pct75.testpercentile = 75
   )
-  LEFT JOIN gabby.nwea.learning_continuum_goals AS [domain] ON (
+  LEFT JOIN nwea.learning_continuum_goals AS [domain] ON (
     r.student_number = [domain].student_number
     AND map_long.test_id = [domain].test_id
   )

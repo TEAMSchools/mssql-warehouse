@@ -65,4 +65,4 @@ SELECT
   ps_release_5_phone,
   ps_release_5_relation
 FROM
-  gabby.alumni.taf_roster
+  alumni.taf_roster

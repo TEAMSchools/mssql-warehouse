@@ -15,12 +15,12 @@ WITH
       f.outstanding AS followup_outstanding,
       CONCAT(f.c_first, ' ', f.c_last) AS followup_staff_name
     FROM
-      gabby.deanslist.communication AS c
-      INNER JOIN gabby.deanslist.users AS u ON (
+      deanslist.communication AS c
+      INNER JOIN deanslist.users AS u ON (
         c.dluser_id = u.dluser_id
         AND c.[db_name] = u.[db_name]
       )
-      LEFT JOIN gabby.deanslist.followups AS f ON (
+      LEFT JOIN deanslist.followups AS f ON (
         c.followup_id = f.followup_id
         AND c.[db_name] = f.[db_name]
       )
@@ -60,13 +60,13 @@ FROM
       END AS homeroom,
       COUNT(att.id) AS n_absences
     FROM
-      gabby.powerschool.attendance_clean_current_static AS att
-      INNER JOIN gabby.powerschool.attendance_code AS ac ON (
+      powerschool.attendance_clean_current_static AS att
+      INNER JOIN powerschool.attendance_code AS ac ON (
         att.attendance_codeid = ac.id
         AND att.[db_name] = ac.[db_name]
         AND ac.att_code IN ('A', 'AD')
       )
-      LEFT JOIN gabby.powerschool.cc ON (
+      LEFT JOIN powerschool.cc ON (
         att.studentid = cc.studentid
         AND att.[db_name] = cc.[db_name]
         AND (
@@ -74,7 +74,7 @@ FROM
         )
         AND cc.course_number = 'HR'
       )
-      INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON (
+      INNER JOIN powerschool.cohort_identifiers_static AS co ON (
         att.studentid = co.studentid
         AND att.[db_name] = co.[db_name]
         AND (

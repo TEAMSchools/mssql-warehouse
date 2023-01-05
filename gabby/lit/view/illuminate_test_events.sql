@@ -22,9 +22,9 @@ WITH
       [status],
       achieved_independent_level
     FROM
-      gabby.lit.illuminate_test_events_current
+      lit.illuminate_test_events_current
     WHERE
-      academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+      academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
     UNION ALL
     SELECT
       CAST(student_number AS INT) AS student_number,
@@ -64,7 +64,7 @@ WITH
         )
       END AS achieved_independent_level
     FROM
-      gabby.lit.illuminate_test_events_archive
+      lit.illuminate_test_events_archive
   )
 SELECT
   cd.unique_id,
@@ -150,9 +150,9 @@ SELECT
   CAST(instr.fp_lvl_num AS INT) AS instr_lvl_num
 FROM
   clean_data AS cd
-  LEFT JOIN gabby.lit.gleq AS achv ON (
+  LEFT JOIN lit.gleq AS achv ON (
     cd.achieved_independent_level = achv.read_lvl
   )
-  LEFT JOIN gabby.lit.gleq AS instr ON (
+  LEFT JOIN lit.gleq AS instr ON (
     cd.instructional_level_tested = instr.read_lvl
   )

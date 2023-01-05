@@ -123,7 +123,7 @@ FROM
       u.email AS counselor_email,
       u.mobile_phone AS counselor_phone,
       (
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR () - co.academic_year
+        utilities.GLOBAL_ACADEMIC_YEAR () - co.academic_year
       ) + co.grade_level AS current_grade_level_projection,
       COALESCE(
         c.current_kipp_student_c,
@@ -131,7 +131,7 @@ FROM
       ) AS current_kipp_student,
       COALESCE(c.kipp_hs_class_c, co.cohort) AS ktc_cohort,
       (
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
+        utilities.GLOBAL_ACADEMIC_YEAR () + 1
       ) - DATEPART(
         YEAR,
         c.actual_hs_graduation_date_c
@@ -161,13 +161,13 @@ FROM
         ) THEN 'TAF'
       END AS ktc_status
     FROM
-      gabby.powerschool.cohort_identifiers_static AS co
-      LEFT JOIN gabby.alumni.contact AS c ON (
+      powerschool.cohort_identifiers_static AS co
+      LEFT JOIN alumni.contact AS c ON (
         CAST(co.student_number AS NVARCHAR(8)) = c.school_specific_id_c
         AND c.is_deleted = 0
       )
-      LEFT JOIN gabby.alumni.record_type AS rt ON (c.record_type_id = rt.id)
-      LEFT JOIN gabby.alumni.[user] AS u ON (c.owner_id = u.id)
+      LEFT JOIN alumni.record_type AS rt ON (c.record_type_id = rt.id)
+      LEFT JOIN alumni.[user] AS u ON (c.owner_id = u.id)
     WHERE
       co.rn_undergrad = 1
       AND (co.grade_level BETWEEN 8 AND 12)

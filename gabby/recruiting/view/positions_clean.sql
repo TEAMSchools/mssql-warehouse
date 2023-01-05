@@ -70,7 +70,7 @@ FROM
         )
       END AS position_count
     FROM
-      gabby.recruiting.job_position_c AS pn
+      recruiting.job_position_c AS pn
     WHERE
       pn.city_c IN (
         'Newark',

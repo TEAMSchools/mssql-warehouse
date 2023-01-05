@@ -85,5 +85,5 @@ FROM
       ) AS termination_date,
       JSON_VALUE(worker_dates, '$.rehireDate') AS rehire_date
     FROM
-      gabby.adp.workers
+      adp.workers
   ) AS sub

@@ -19,8 +19,8 @@ WITH
           stl.score DESC
       ) AS rn_highest
     FROM
-      gabby.alumni.standardized_test_long AS stl
-      INNER JOIN gabby.alumni.ktc_roster AS ktc ON (
+      alumni.standardized_test_long AS stl
+      INNER JOIN alumni.ktc_roster AS ktc ON (
         stl.contact_c = ktc.sf_contact_id
       )
     WHERE
@@ -42,7 +42,7 @@ WITH
               exitdate DESC
           ) AS rn
         FROM
-          gabby.powerschool.cohort_identifiers_static
+          powerschool.cohort_identifiers_static
         WHERE
           school_level = 'MS'
       ) AS sub
@@ -84,8 +84,8 @@ SELECT
   1 AS rn_assessment_standard /* 1 row per student, per test (by standard) */,
   NULL AS rn_highest
 FROM
-  gabby.powerschool.cohort_identifiers_static AS co
-  LEFT JOIN gabby.act.test_prep_scores AS act ON (
+  powerschool.cohort_identifiers_static AS co
+  LEFT JOIN act.test_prep_scores AS act ON (
     co.student_number = act.student_number
     AND co.academic_year = act.academic_year
   )
@@ -132,7 +132,7 @@ SELECT
   1 AS rn_assessment_standard,
   r.rn_highest
 FROM
-  gabby.powerschool.cohort_identifiers_static AS co
+  powerschool.cohort_identifiers_static AS co
   INNER JOIN real_tests AS r ON (
     co.student_number = r.student_number
     AND (

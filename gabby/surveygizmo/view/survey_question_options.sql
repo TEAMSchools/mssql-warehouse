@@ -14,7 +14,7 @@ WITH
       JSON_QUERY(o.[value], '$.title') AS title,
       JSON_QUERY(o.[value], '$.properties') AS properties
     FROM
-      gabby.surveygizmo.survey_question AS q
+      surveygizmo.survey_question AS q
       CROSS APPLY OPENJSON (q.options, '$') AS o
     WHERE
       q.options != '[]'

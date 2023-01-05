@@ -31,7 +31,7 @@ WITH
         eh.position_effective_start_date
       ) AS work_assignment_start_date
     FROM
-      gabby.people.employment_history_static AS eh
+      people.employment_history_static AS eh
     WHERE
       (
         /* trunk-ignore(sqlfluff/L016) */
@@ -64,7 +64,7 @@ WITH
         ps.position_effective_start_date
       ) AS work_assignment_start_date
     FROM
-      gabby.people.employment_history_static AS ps
+      people.employment_history_static AS ps
     WHERE
       ps.status_effective_start_date > CAST(CURRENT_TIMESTAMP AS DATE)
       AND ps.position_status = 'Active'
@@ -87,7 +87,7 @@ WITH
         END
       ) AS termination_date
     FROM
-      gabby.people.status_history_static
+      people.status_history_static
     GROUP BY
       associate_id
   ),
@@ -108,7 +108,7 @@ WITH
               status_effective_date
           ) AS position_status_prev
         FROM
-          gabby.people.status_history_static
+          people.status_history_static
       ) AS sub
     WHERE
       position_status_prev != 'Terminated'
@@ -133,7 +133,7 @@ WITH
               status_effective_date
           ) AS position_status_prev
         FROM
-          gabby.people.status_history_static
+          people.status_history_static
       ) AS sub
     WHERE
       position_status_prev = 'Terminated'
@@ -271,7 +271,7 @@ WITH
               SELECT
                 reports_to_associate_id
               FROM
-                gabby.people.manager_history_static
+                people.manager_history_static
               WHERE
                 (
                   /* trunk-ignore(sqlfluff/L016) */
@@ -308,7 +308,7 @@ WITH
             )
           END AS address_street,
           CAST(
-            gabby.utilities.STRIP_CHARACTERS (
+            utilities.STRIP_CHARACTERS (
               ea.personal_contact_personal_mobile,
               '^0-9'
             ) AS NVARCHAR(256)
@@ -409,10 +409,10 @@ WITH
           ) AS preferred_race_ethnicity
         FROM
           all_staff AS eh
-          INNER JOIN gabby.adp.employees_all AS ea ON (
+          INNER JOIN adp.employees_all AS ea ON (
             eh.associate_id = ea.associate_id
           )
-          LEFT JOIN gabby.adp.workers_clean_static AS w ON eh.associate_id = w.worker_id
+          LEFT JOIN adp.workers_clean_static AS w ON eh.associate_id = w.worker_id
           LEFT JOIN hire_dates AS hd ON (
             eh.associate_id = hd.associate_id
           )
@@ -423,13 +423,13 @@ WITH
             eh.associate_id = rh.associate_id
           )
           /* trunk-ignore(sqlfluff/L016) */
-          LEFT JOIN gabby.adp.workers_custom_field_group_wide_static AS cf ON (eh.associate_id = cf.worker_id) -- noqa: L016
-          LEFT JOIN gabby.people.id_crosswalk_adp AS cw ON (
+          LEFT JOIN adp.workers_custom_field_group_wide_static AS cf ON (eh.associate_id = cf.worker_id) -- noqa: L016
+          LEFT JOIN people.id_crosswalk_adp AS cw ON (
             eh.employee_number = cw.df_employee_number
             AND cw.rn_curr = 1
           )
-          LEFT JOIN gabby.adp.employees AS p ON (eh.position_id = p.position_id)
-          LEFT JOIN gabby.surveys.staff_information_survey_wide_static AS sdf ON (
+          LEFT JOIN adp.employees AS p ON (eh.position_id = p.position_id)
+          LEFT JOIN surveys.staff_information_survey_wide_static AS sdf ON (
             eh.employee_number = sdf.employee_number
           )
         WHERE
@@ -554,21 +554,21 @@ SELECT
   ads.userprincipalname
 FROM
   clean_staff AS c
-  LEFT JOIN gabby.people.school_crosswalk AS s ON (
+  LEFT JOIN people.school_crosswalk AS s ON (
     c.[location] = s.site_name
     AND s._fivetran_deleted = 0
   )
   LEFT JOIN clean_staff AS m ON (
     c.reports_to_associate_id = m.associate_id
   )
-  LEFT JOIN gabby.people.years_experience AS y ON (
+  LEFT JOIN people.years_experience AS y ON (
     c.employee_number = y.employee_number
   )
-  LEFT JOIN gabby.pm.teacher_grade_levels AS gl ON (
+  LEFT JOIN pm.teacher_grade_levels AS gl ON (
     c.employee_number = gl.employee_number
-    AND gl.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+    AND gl.academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
     AND gl.is_primary_gl = 1
   )
-  LEFT JOIN gabby.adsi.user_attributes_static AS ads ON (
+  LEFT JOIN adsi.user_attributes_static AS ads ON (
     CAST(c.employee_number AS VARCHAR(25)) = ads.employeenumber
   )

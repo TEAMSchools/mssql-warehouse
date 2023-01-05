@@ -36,7 +36,7 @@ SELECT
     ELSE subject_c
   END AS test_subject
 FROM
-  gabby.alumni.standardized_test_c UNPIVOT (
+  alumni.standardized_test_c UNPIVOT (
     score FOR score_type IN (
       ap_c,
       act_composite_c,

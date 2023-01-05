@@ -7,7 +7,7 @@ SELECT
   google_email AS email,
   primary_site AS school_organization
 FROM
-  gabby.people.staff_crosswalk_static
+  people.staff_crosswalk_static
 WHERE
   (
     primary_site_school_level = 'ES'

@@ -24,7 +24,7 @@ FROM
       i_word_count,
       rn_quiz,
       CASE
-        WHEN academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR () THEN DATEDIFF(
+        WHEN academic_year < utilities.GLOBAL_ACADEMIC_YEAR () THEN DATEDIFF(
           DAY,
           dt_taken,
           DATEFROMPARTS((academic_year + 1), 6, 30)
@@ -39,7 +39,7 @@ FROM
           dt_taken DESC
       ) AS rn_recent_year
     FROM
-      gabby.renaissance.ar_studentpractice_identifiers_static
+      renaissance.ar_studentpractice_identifiers_static
   ) AS sub
 WHERE
   rn_recent_year = 1

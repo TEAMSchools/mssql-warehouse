@@ -26,7 +26,7 @@ WITH
     SELECT
       n AS grade_level
     FROM
-      gabby.utilities.row_generator
+      utilities.row_generator
     WHERE
       (n BETWEEN 0 AND 12)
   ),
@@ -47,11 +47,11 @@ WITH
           n.testritscore ASC
       ) AS rn
     FROM
-      gabby.utilities.row_generator AS u
+      utilities.row_generator AS u
       CROSS JOIN measurementscales AS m
       CROSS JOIN terms AS t
       CROSS JOIN grade_levels AS gr
-      LEFT OUTER JOIN gabby.nwea.percentile_norms AS n ON (
+      LEFT OUTER JOIN nwea.percentile_norms AS n ON (
         u.n = n.student_percentile
         AND m.measurementscale = n.measurementscale
         AND t.term = n.term

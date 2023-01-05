@@ -10,7 +10,7 @@ SELECT
     JSON_VALUE(sc.[value], '$.value') AS BIT
   ) AS checkbox_value
 FROM
-  gabby.whetstone.observations_scores_static AS os
+  whetstone.observations_scores_static AS os
   CROSS APPLY OPENJSON (os.score_checkboxes_json, '$') AS sc
 WHERE
   os.score_checkboxes_json != '[]'

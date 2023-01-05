@@ -8,7 +8,7 @@ SELECT
   expression,
   teacher_name
 FROM
-  gabby.powerschool.course_enrollments_current_static
+  powerschool.course_enrollments_current_static
 WHERE
   course_enroll_status = 0
   AND section_enroll_status = 0

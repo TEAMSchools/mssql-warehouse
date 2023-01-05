@@ -30,7 +30,7 @@ WITH
         )
       END AS rn_null
     FROM
-      gabby.surveys.survey_tracking
+      surveys.survey_tracking
     WHERE
       survey_id = '6330385'
       OR (
@@ -58,7 +58,7 @@ SELECT
   CURRENT_TIMESTAMP AS date_of_extract
 FROM
   incomplete_surveys AS i
-  INNER JOIN gabby.people.staff_crosswalk_static AS c ON (
+  INNER JOIN people.staff_crosswalk_static AS c ON (
     i.survey_taker_id = c.df_employee_number
   )
 WHERE

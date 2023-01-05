@@ -16,10 +16,10 @@ WITH
     COLLATE SQL_Latin1_General_CP1_CI_AS AS subject_area,
     is_normed_scope
     FROM
-      gabby.illuminate_dna_assessments.assessments_identifiers_static
+      illuminate_dna_assessments.assessments_identifiers_static
     WHERE
       deleted_at IS NULL
-      AND academic_year_clean = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+      AND academic_year_clean = utilities.GLOBAL_ACADEMIC_YEAR ()
   )
 SELECT
   sub.assessment_id,
@@ -81,10 +81,10 @@ FROM
       0 AS is_replacement
     FROM
       asmts AS a
-      INNER JOIN gabby.illuminate_dna_assessments.assessment_grade_levels AS agl ON (
+      INNER JOIN illuminate_dna_assessments.assessment_grade_levels AS agl ON (
         a.assessment_id = agl.assessment_id
       )
-      INNER JOIN gabby.illuminate_public.student_session_aff_clean_static AS ssa ON (
+      INNER JOIN illuminate_public.student_session_aff_clean_static AS ssa ON (
         a.academic_year = ssa.academic_year
         AND agl.grade_level_id = ssa.grade_level_id
         AND ssa.rn = 1
@@ -124,7 +124,7 @@ FROM
       0 AS is_replacement
     FROM
       asmts AS a
-      INNER JOIN gabby.illuminate_dna_assessments.assessment_grade_levels AS agl ON (
+      INNER JOIN illuminate_dna_assessments.assessment_grade_levels AS agl ON (
         a.assessment_id = agl.assessment_id
       )
       /* trunk-ignore(sqlfluff/L016) */
@@ -161,13 +161,13 @@ FROM
       1 AS is_replacement
     FROM
       asmts AS a
-      INNER JOIN gabby.illuminate_dna_assessments.assessment_grade_levels AS agl ON (
+      INNER JOIN illuminate_dna_assessments.assessment_grade_levels AS agl ON (
         a.assessment_id = agl.assessment_id
       )
-      INNER JOIN gabby.illuminate_dna_assessments.students_assessments AS sa ON (
+      INNER JOIN illuminate_dna_assessments.students_assessments AS sa ON (
         a.assessment_id = sa.assessment_id
       )
-      INNER JOIN gabby.illuminate_public.student_session_aff_clean_static AS ssa ON (
+      INNER JOIN illuminate_public.student_session_aff_clean_static AS ssa ON (
         sa.student_id = ssa.student_id
         AND a.academic_year = ssa.academic_year
         AND ssa.rn = 1
@@ -199,7 +199,7 @@ FROM
       0 AS is_replacement
     FROM
       asmts AS a
-      INNER JOIN gabby.illuminate_dna_assessments.students_assessments AS sa ON (
+      INNER JOIN illuminate_dna_assessments.students_assessments AS sa ON (
         a.assessment_id = sa.assessment_id
       )
     WHERE

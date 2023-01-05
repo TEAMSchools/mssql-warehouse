@@ -6,7 +6,7 @@ WITH
       student_c,
       pursuing_degree_type_c
     FROM
-      gabby.alumni.enrollment_c
+      alumni.enrollment_c
     WHERE
       type_c = 'College'
       AND pursuing_degree_type_c IN (
@@ -14,7 +14,7 @@ WITH
         'Bachelor''s (4-year)'
       )
       AND start_date_c >= DATEFROMPARTS(
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1,
+        utilities.GLOBAL_ACADEMIC_YEAR () + 1,
         1,
         1
       )
@@ -49,10 +49,10 @@ WITH
               CAST(semester_gpa_c AS VARCHAR) AS semester_gpa,
               CAST(academic_status_c AS VARCHAR) AS academic_status
             FROM
-              gabby.alumni.gpa_c
+              alumni.gpa_c
             WHERE
               transcript_date_c >= DATEFROMPARTS(
-                gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1,
+                utilities.GLOBAL_ACADEMIC_YEAR () - 1,
                 7,
                 1
               )
@@ -93,13 +93,13 @@ WITH
             ELSE 'S'
           END AS semester
         FROM
-          gabby.alumni.kipp_aid_c
+          alumni.kipp_aid_c
         WHERE
           type_c = 'College Book Stipend Program'
           AND status_c = 'Approved'
           AND is_deleted = 0
           AND created_date >= DATEFROMPARTS(
-            gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+            utilities.GLOBAL_ACADEMIC_YEAR (),
             7,
             1
           )
@@ -115,12 +115,12 @@ WITH
       found_date,
       is_still_missing,
       n_months_elapsed,
-      gabby.utilities.DATE_TO_SY (missing_start_date) AS missing_academic_year,
-      gabby.utilities.DATE_TO_SY (found_date) AS found_academic_year,
+      utilities.DATE_TO_SY (missing_start_date) AS missing_academic_year,
+      utilities.DATE_TO_SY (found_date) AS found_academic_year,
       ROW_NUMBER() OVER (
         PARTITION BY
           contact_id,
-          gabby.utilities.DATE_TO_SY (missing_start_date)
+          utilities.DATE_TO_SY (missing_start_date)
         ORDER BY
           last_successful_contact_date DESC
       ) AS rn
@@ -161,7 +161,7 @@ WITH
             )
           ) AS n_months_elapsed
         FROM
-          gabby.alumni.contact_note_c
+          alumni.contact_note_c
         WHERE
           status_c = 'Successful'
           AND is_deleted = 0
@@ -178,11 +178,11 @@ WITH
           created_date DESC
       ) AS rn
     FROM
-      gabby.alumni.contact_history
+      alumni.contact_history
     WHERE
       field = 'Owner'
       AND created_date >= DATEFROMPARTS(
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+        utilities.GLOBAL_ACADEMIC_YEAR (),
         07,
         01
       )
@@ -220,12 +220,12 @@ WITH
           ) AS school_type,
           COUNT(a.id) AS n
         FROM
-          gabby.alumni.application_c AS a
-          INNER JOIN gabby.alumni.account AS s ON a.school_c = s.id
+          alumni.application_c AS a
+          INNER JOIN alumni.account AS s ON a.school_c = s.id
         WHERE
           a.application_submission_status_c = 'Submitted'
           AND a.created_date >= DATEFROMPARTS(
-            gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+            utilities.GLOBAL_ACADEMIC_YEAR (),
             07,
             01
           )
@@ -377,11 +377,11 @@ SELECT
   app.[ALL] AS n_apps_all,
   nye.pursuing_degree_type_c AS next_year_pursuing_degree_type
 FROM
-  gabby.alumni.ktc_roster AS c
-  LEFT JOIN gabby.alumni.enrollment_identifiers AS e ON c.sf_contact_id = e.student_c
-  LEFT JOIN gabby.alumni.contact_note_rollup AS cn ON (
+  alumni.ktc_roster AS c
+  LEFT JOIN alumni.enrollment_identifiers AS e ON c.sf_contact_id = e.student_c
+  LEFT JOIN alumni.contact_note_rollup AS cn ON (
     c.sf_contact_id = cn.contact_id
-    AND cn.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+    AND cn.academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
   )
   LEFT JOIN gpa ON c.sf_contact_id = gpa.student_c
   LEFT JOIN stipends AS s ON c.sf_contact_id = s.student_c
@@ -389,7 +389,7 @@ FROM
     c.sf_contact_id = oot.contact_id
     AND (
       (
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+        utilities.GLOBAL_ACADEMIC_YEAR ()
       ) BETWEEN oot.missing_academic_year AND oot.found_academic_year
     )
     AND oot.rn = 1

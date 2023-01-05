@@ -27,7 +27,7 @@ WITH
       1600 AS sat_scale,
       0 AS is_old_sat
     FROM
-      gabby.naviance.sat_scores
+      naviance.sat_scores
     UNION ALL
     SELECT
       CAST(studentid AS INT) AS student_id,
@@ -53,7 +53,7 @@ WITH
       2400 AS sat_scale,
       1 AS is_old_sat
     FROM
-      gabby.naviance.sat_scores_before_mar_2016
+      naviance.sat_scores_before_mar_2016
   ),
   sat_clean AS (
     SELECT
@@ -128,7 +128,7 @@ SELECT
   all_tests_total,
   test_date_flag,
   total_flag,
-  gabby.utilities.DATE_TO_SY (test_date) AS academic_year,
+  utilities.DATE_TO_SY (test_date) AS academic_year,
   ROW_NUMBER() OVER (
     PARTITION BY
       student_number

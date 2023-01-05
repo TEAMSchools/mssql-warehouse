@@ -6,16 +6,16 @@ WITH
       n AS academic_year,
       CASE
         WHEN (
-          n = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+          n = utilities.GLOBAL_ACADEMIC_YEAR ()
         ) THEN CAST(CURRENT_TIMESTAMP AS DATE)
         ELSE DATEFROMPARTS((n + 1), 4, 30)
       END AS effective_date
     FROM
-      gabby.utilities.row_generator_smallint
+      utilities.row_generator_smallint
     WHERE
       (
         n BETWEEN 2015 AND (
-          gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+          utilities.GLOBAL_ACADEMIC_YEAR ()
         )
       )
   ),
@@ -25,7 +25,7 @@ WITH
       academic_year,
       SUM(ay_additional_earnings_amount) AS additional_earnings_summed
     FROM
-      gabby.payroll.additional_annual_earnings_report
+      payroll.additional_annual_earnings_report
     GROUP BY
       employee_number,
       academic_year
@@ -38,11 +38,11 @@ WITH
       overall_tier,
       CASE
         WHEN (
-          academic_year != gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+          academic_year != utilities.GLOBAL_ACADEMIC_YEAR ()
           AND pm_term = 'PM4'
         ) THEN 1
         WHEN (
-          academic_year != gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+          academic_year != utilities.GLOBAL_ACADEMIC_YEAR ()
           AND pm_term != 'PM4'
         ) THEN NULL
         ELSE ROW_NUMBER() OVER (
@@ -54,7 +54,7 @@ WITH
         )
       END AS rn_year_score
     FROM
-      gabby.pm.teacher_goals_overall_scores_static
+      pm.teacher_goals_overall_scores_static
   )
 SELECT
   cw.df_employee_number AS employee_number,
@@ -98,13 +98,13 @@ SELECT
       eh.position_status ASC
   ) AS rn_curr
 FROM
-  gabby.people.employment_history_static AS eh
+  people.employment_history_static AS eh
   INNER JOIN years AS y ON (
     (
       y.effective_date BETWEEN eh.effective_start_date AND eh.effective_end_date
     )
   )
-  INNER JOIN gabby.people.staff_crosswalk_static AS cw ON (
+  INNER JOIN people.staff_crosswalk_static AS cw ON (
     eh.employee_number = cw.df_employee_number
     AND DATEADD(
       YEAR,
@@ -115,7 +115,7 @@ FROM
       )
     ) > y.effective_date
   )
-  INNER JOIN gabby.people.years_experience AS ye ON (
+  INNER JOIN people.years_experience AS ye ON (
     cw.df_employee_number = ye.employee_number
   )
   LEFT JOIN additional_earnings AS ae ON (
@@ -127,7 +127,7 @@ FROM
     AND y.academic_year = tg.academic_year
     AND tg.rn_year_score = 1
   )
-  LEFT JOIN gabby.people.employment_history_static AS ly ON (
+  LEFT JOIN people.employment_history_static AS ly ON (
     cw.df_employee_number = ly.employee_number
     AND (
       (
@@ -135,7 +135,7 @@ FROM
       ) BETWEEN ly.effective_start_date AND ly.effective_end_date
     )
   )
-  LEFT JOIN gabby.people.employment_history_static AS ehs ON (
+  LEFT JOIN people.employment_history_static AS ehs ON (
     cw.df_employee_number = ehs.employee_number
     AND (
       cw.original_hire_date BETWEEN ehs.effective_start_date AND ehs.effective_end_date

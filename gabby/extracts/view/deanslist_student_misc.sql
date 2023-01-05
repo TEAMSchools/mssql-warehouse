@@ -7,7 +7,7 @@ WITH
       schoolid,
       [db_name]
     FROM
-      gabby.powerschool.cohort_identifiers_static
+      powerschool.cohort_identifiers_static
     WHERE
       rn_undergrad = 1
       AND grade_level != 99
@@ -20,7 +20,7 @@ WITH
       MIN(entrydate) AS school_entrydate,
       MAX(exitdate) AS school_exitdate
     FROM
-      gabby.powerschool.cohort_identifiers_static
+      powerschool.cohort_identifiers_static
     GROUP BY
       student_number,
       schoolid,
@@ -69,8 +69,8 @@ SELECT
   gpa.[GPA_Y1],
   gpa.gpa_term
 FROM
-  gabby.powerschool.cohort_identifiers_static AS co
-  INNER JOIN gabby.powerschool.students AS s ON (
+  powerschool.cohort_identifiers_static AS co
+  INNER JOIN powerschool.students AS s ON (
     co.student_number = s.student_number
     AND co.[db_name] = s.[db_name]
   )
@@ -88,15 +88,15 @@ FROM
       END
     ) = ed.schoolid
   )
-  LEFT JOIN gabby.alumni.ktc_roster AS ktc ON (
+  LEFT JOIN alumni.ktc_roster AS ktc ON (
     co.student_number = ktc.student_number
   )
-  LEFT JOIN gabby.powerschool.gpa_detail AS gpa ON (
+  LEFT JOIN powerschool.gpa_detail AS gpa ON (
     co.student_number = gpa.student_number
     AND co.academic_year = gpa.academic_year
     AND co.[db_name] = gpa.[db_name]
     AND gpa.is_curterm = 1
   )
 WHERE
-  co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+  co.academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
   AND co.rn_year = 1

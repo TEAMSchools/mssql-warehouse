@@ -19,8 +19,8 @@ WITH
       s.default_link AS survey_default_link,
       s.[title]
     FROM
-      gabby.surveygizmo.survey_campaign_clean_static AS c
-      INNER JOIN gabby.surveygizmo.survey_clean AS s ON (c.survey_id = s.survey_id)
+      surveygizmo.survey_campaign_clean_static AS c
+      INNER JOIN surveygizmo.survey_clean AS s ON (c.survey_id = s.survey_id)
     WHERE
       c.link_type = 'email'
       AND c.survey_id IN (
@@ -74,10 +74,10 @@ WITH
       wcf.[Teacher Prep Program] AS teacher_prep_program
     FROM
       surveys AS s
-      INNER JOIN gabby.people.staff_crosswalk_static AS r ON (
+      INNER JOIN people.staff_crosswalk_static AS r ON (
         r.[status] NOT IN ('Terminated', 'Prestart')
       )
-      LEFT JOIN gabby.adp.workers_custom_field_group_wide_static AS wcf ON (
+      LEFT JOIN adp.workers_custom_field_group_wide_static AS wcf ON (
         r.adp_associate_id = wcf.worker_id
       )
     WHERE
@@ -112,8 +112,8 @@ WITH
       i.subject_df_employee_number AS subject_employee_number,
       i.subject_preferred_name AS subject_name
     FROM
-      gabby.surveygizmo.survey_campaign_clean_static AS c
-      INNER JOIN gabby.surveygizmo.survey_response_identifiers_static AS i ON (
+      surveygizmo.survey_campaign_clean_static AS c
+      INNER JOIN surveygizmo.survey_response_identifiers_static AS i ON (
         c.survey_id = i.survey_id
         AND (
           i.date_started BETWEEN c.link_open_date AND c.link_close_date
@@ -124,7 +124,7 @@ WITH
       (
         c.survey_id = 6330385
         OR (
-          c.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+          c.academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
           AND c.survey_id IN (
             4561325,
             4561288,
@@ -223,7 +223,7 @@ SELECT
   c.date_submitted AS survey_completion_date
 FROM
   survey_term_staff_scaffold AS st
-  INNER JOIN gabby.surveys.so_assignments_long AS sa ON (
+  INNER JOIN surveys.so_assignments_long AS sa ON (
     st.respondent_employee_number = sa.survey_taker_id
     AND sa.survey_round_status = 'Yes'
   )
@@ -336,7 +336,7 @@ FROM
     AND st.reporting_term_code = c.reporting_term
     AND st.survey_id = c.survey_id
   )
-  LEFT JOIN gabby.surveys.so_assignments_long AS s ON (
+  LEFT JOIN surveys.so_assignments_long AS s ON (
     c.subject_employee_number = s.assignment_employee_id
     AND c.respondent_employee_number = s.survey_taker_id
   )
@@ -431,7 +431,7 @@ SELECT
   c.date_submitted AS survey_completion_date
 FROM
   survey_term_staff_scaffold AS st
-  INNER JOIN gabby.pm.assignments AS pm ON (
+  INNER JOIN pm.assignments AS pm ON (
     st.respondent_employee_number = pm.df_employee_number
     AND pm.survey_round_status IN (
       'Yes',
@@ -603,10 +603,10 @@ FROM
     AND st.reporting_term_code = c.reporting_term
     AND st.survey_id = c.survey_id
   )
-  LEFT JOIN gabby.pm.assignments AS pm ON (
+  LEFT JOIN pm.assignments AS pm ON (
     st.respondent_employee_number = pm.df_employee_number
   )
-  LEFT JOIN gabby.extracts.gsheets_pm_assignment_roster AS pr ON (
+  LEFT JOIN extracts.gsheets_pm_assignment_roster AS pr ON (
     st.respondent_employee_number = pr.df_employee_number
   )
 WHERE

@@ -19,24 +19,24 @@ SELECT
   ) AS [CLASS_NAME],
   scw.google_email AS [EXTERNAL_ID]
 FROM
-  gabby.powerschool.sections AS sec
-  INNER JOIN gabby.powerschool.sectionteacher AS st ON (
+  powerschool.sections AS sec
+  INNER JOIN powerschool.sectionteacher AS st ON (
     sec.id = st.sectionid
     AND sec.[db_name] = st.[db_name]
   )
-  INNER JOIN gabby.powerschool.teachers_static AS t ON (
+  INNER JOIN powerschool.teachers_static AS t ON (
     st.teacherid = t.id
     AND st.[db_name] = t.[db_name]
   )
-  INNER JOIN gabby.people.staff_crosswalk_static AS scw ON (
+  INNER JOIN people.staff_crosswalk_static AS scw ON (
     t.teachernumber = scw.ps_teachernumber
   )
-  INNER JOIN gabby.powerschool.schools AS sch ON (
+  INNER JOIN powerschool.schools AS sch ON (
     sec.schoolid = sch.school_number
     AND sec.[db_name] = sch.[db_name]
   )
 WHERE
   sec.course_number IN ('ELA01068G1', 'MAT02999G1')
   AND sec.termid >= (
-    gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990
+    utilities.GLOBAL_ACADEMIC_YEAR () - 1990
   ) * 100

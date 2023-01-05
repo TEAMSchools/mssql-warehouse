@@ -28,14 +28,14 @@ FROM
       CAST(
         CONCAT(
           'UC',
-          gabby.utilities.DATE_TO_SY (step.[date]),
+          utilities.DATE_TO_SY (step.[date]),
           step.[_line]
         ) AS VARCHAR(25)
       ) AS unique_id,
       CAST(
         CAST(step.student_id AS FLOAT) AS INT
       ) AS student_number,
-      gabby.utilities.DATE_TO_SY (CAST(step.[date] AS DATE)) AS academic_year,
+      utilities.DATE_TO_SY (CAST(step.[date] AS DATE)) AS academic_year,
       CAST(step.[date] AS DATE) AS test_date,
       CASE
         WHEN step.step = 0 THEN 'Pre'
@@ -67,8 +67,8 @@ FROM
       gleq.gleq,
       CAST(gleq.lvl_num AS INT) AS gleq_lvl_num
     FROM
-      gabby.steptool.all_steps AS step
-      INNER JOIN gabby.lit.gleq ON (
+      steptool.all_steps AS step
+      INNER JOIN lit.gleq ON (
         step.step = gleq.lvl_num
         AND gleq.testid != 3273
       )
@@ -78,12 +78,12 @@ FROM
       CAST(
         CONCAT(
           'UCDNA',
-          gabby.utilities.DATE_TO_SY ([date]),
+          utilities.DATE_TO_SY ([date]),
           [_line]
         ) AS VARCHAR(25)
       ) AS unique_id,
       CAST(CAST(student_id AS FLOAT) AS INT) AS student_number,
-      gabby.utilities.DATE_TO_SY (CAST([date] AS DATE)) AS academic_year,
+      utilities.DATE_TO_SY (CAST([date] AS DATE)) AS academic_year,
       CAST([date] AS DATE) AS test_date,
       'Pre DNA' AS read_lvl,
       -1 AS lvl_num,
@@ -95,17 +95,17 @@ FROM
       -1 AS gleq,
       -1 AS gleq_lvl_num
     FROM
-      gabby.steptool.all_steps
+      steptool.all_steps
     WHERE
       step = 0
       AND passed = 0
   ) AS sub
-  INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON (
+  INNER JOIN powerschool.cohort_identifiers_static AS co ON (
     sub.student_number = co.student_number
     AND sub.academic_year = co.academic_year
     AND co.rn_year = 1
   )
-  INNER JOIN gabby.reporting.reporting_terms AS dt ON (
+  INNER JOIN reporting.reporting_terms AS dt ON (
     co.schoolid = dt.schoolid
     AND (
       sub.test_date BETWEEN dt.[start_date] AND dt.end_date

@@ -19,9 +19,9 @@ WITH
       enroll_status,
       [db_name]
     FROM
-      gabby.powerschool.cohort_identifiers_static
+      powerschool.cohort_identifiers_static
     WHERE
-      academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+      academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
       AND rn_year = 1
       AND grade_level != 99
   ),
@@ -245,7 +245,7 @@ WITH
   --             END AS is_below_iep
   --           FROM
   --             roster AS r
-  --             INNER JOIN gabby.parcc.summative_record_file_clean AS p ON (
+  --             INNER JOIN parcc.summative_record_file_clean AS p ON (
   --               r.student_number = p.local_student_identifier
   --               AND r.academic_year = p.academic_year
   --             )
@@ -445,14 +445,14 @@ WITH
       ) AS is_oss_iep
     FROM
       roster AS r
-      INNER JOIN gabby.powerschool.ps_adaadm_daily_ctod_current_static AS [ada] ON (
+      INNER JOIN powerschool.ps_adaadm_daily_ctod_current_static AS [ada] ON (
         r.studentid = [ada].studentid
         AND r.yearid = [ada].yearid
         AND r.[db_name] = [ada].[db_name]
         AND [ada].membershipvalue = 1
         AND [ada].calendardate < CAST(SYSDATETIME() AS DATE)
       )
-      LEFT JOIN gabby.powerschool.ps_attendance_daily_current_static AS att ON (
+      LEFT JOIN powerschool.ps_attendance_daily_current_static AS att ON (
         r.studentid = att.studentid
         AND r.[db_name] = att.[db_name]
         AND [ada].calendardate = att.att_date
@@ -613,12 +613,12 @@ WITH
   --               END AS FLOAT
   --             ) AS is_attrition_termination
   --           FROM
-  --             gabby.tableau.compliance_staff_attrition
+  --             tableau.compliance_staff_attrition
   --           WHERE
   --             is_denominator = 1
   --             AND primary_site_reporting_schoolid != 0
   --             AND legal_entity_name != 'KIPP New Jersey'
-  --             AND academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+  --             AND academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
   --         ) AS sub
   --       GROUP BY
   --         academic_year,
@@ -663,24 +663,24 @@ WITH
             ) THEN 0.0
             /* was not enrolled on 10/1 next year */
             WHEN (
-              y1.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+              y1.academic_year < utilities.GLOBAL_ACADEMIC_YEAR ()
               AND y1.exitdate <= SYSDATETIME()
               AND y2.entrydate IS NULL
             ) THEN 1.0
             /* left after 10/1 this year */
             WHEN (
-              y1.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+              y1.academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
               AND s.exitdate <= SYSDATETIME()
             ) THEN 1.0
             ELSE 0.0
           END AS is_attrition
         FROM
-          gabby.powerschool.cohort_identifiers_static AS y1
-          LEFT JOIN gabby.powerschool.students AS s ON (
+          powerschool.cohort_identifiers_static AS y1
+          LEFT JOIN powerschool.students AS s ON (
             y1.student_number = s.student_number
             AND y1.[db_name] = s.[db_name]
           )
-          LEFT JOIN gabby.powerschool.cohort_identifiers_static AS y2 ON (
+          LEFT JOIN powerschool.cohort_identifiers_static AS y2 ON (
             y1.student_number = y2.student_number
             AND y1.[db_name] = y2.[db_name]
             AND y1.academic_year = (y2.academic_year - 1)
@@ -736,7 +736,7 @@ WITH
               END AS gpa_ge_2
             FROM
               roster AS r
-              INNER JOIN gabby.powerschool.gpa_detail AS gpa ON (
+              INNER JOIN powerschool.gpa_detail AS gpa ON (
                 r.student_number = gpa.student_number
                 AND r.academic_year = gpa.academic_year
                 AND r.reporting_schoolid = gpa.schoolid
@@ -790,7 +790,7 @@ WITH
               END AS moved_reading_level
             FROM
               roster AS r
-              INNER JOIN gabby.lit.achieved_by_round_static AS achv ON (
+              INNER JOIN lit.achieved_by_round_static AS achv ON (
                 r.student_number = achv.student_number
                 AND r.academic_year = achv.academic_year
                 AND achv.achv_unique_id LIKE 'FPBAS%'
@@ -840,7 +840,7 @@ WITH
           subject_username,
           SUM(total_weighted_response_value) / SUM(total_response_weight) AS avg_survey_weighted_response_value
         FROM
-          gabby.surveys.self_and_others_survey_rollup_static
+          surveys.self_and_others_survey_rollup_static
         WHERE
           subject_primary_site_school_level IS NOT NULL
         GROUP BY
@@ -891,7 +891,7 @@ WITH
           subject_username,
           AVG(avg_response_value) AS avg_survey_response_value
         FROM
-          gabby.surveys.manager_survey_rollup
+          surveys.manager_survey_rollup
         WHERE
           subject_primary_site_school_level IS NOT NULL
         GROUP BY

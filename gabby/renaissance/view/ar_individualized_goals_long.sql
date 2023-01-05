@@ -21,7 +21,7 @@ FROM
           _row DESC
       ) AS rn
     FROM
-      gabby.renaissance.ar_individualized_goals
+      renaissance.ar_individualized_goals
     WHERE
       student_number IS NOT NULL
   ) AS sub UNPIVOT (

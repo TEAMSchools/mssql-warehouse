@@ -23,8 +23,8 @@ WITH
       dt.[start_date] AS term_start_date,
       dt.end_date AS term_end_date
     FROM
-      gabby.powerschool.cohort_identifiers_static co
-      INNER JOIN gabby.reporting.reporting_terms dt ON (
+      powerschool.cohort_identifiers_static co
+      INNER JOIN reporting.reporting_terms dt ON (
         co.academic_year = dt.academic_year
         AND co.schoolid = dt.schoolid
         AND dt.identifier = 'RT'
@@ -33,8 +33,8 @@ WITH
       )
     WHERE
       co.academic_year IN (
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
+        utilities.GLOBAL_ACADEMIC_YEAR (),
+        utilities.GLOBAL_ACADEMIC_YEAR () - 1
       )
       AND co.rn_year = 1
       AND co.is_enrolled_recent = 1
@@ -61,8 +61,8 @@ WITH
       dt.[start_date] AS term_start_date,
       dt.end_date AS term_end_date
     FROM
-      gabby.powerschool.cohort_identifiers_static co
-      INNER JOIN gabby.reporting.reporting_terms dt ON (
+      powerschool.cohort_identifiers_static co
+      INNER JOIN reporting.reporting_terms dt ON (
         co.academic_year = dt.academic_year
         AND dt.schoolid = 0
         AND dt.identifier = 'SY'
@@ -70,8 +70,8 @@ WITH
       )
     WHERE
       co.academic_year IN (
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
+        utilities.GLOBAL_ACADEMIC_YEAR (),
+        utilities.GLOBAL_ACADEMIC_YEAR () - 1
       )
       AND co.rn_year = 1
       AND co.is_enrolled_recent = 1
@@ -84,7 +84,7 @@ WITH
       contact_type AS [type],
       contact AS [value]
     FROM
-      gabby.powerschool.student_contacts_static
+      powerschool.student_contacts_static
   ),
   grades AS (
     -- /* term grades */
@@ -98,10 +98,10 @@ WITH
     --   'TERM' AS subdomain,
     --   'Term' AS finalgradename
     -- FROM
-    --   gabby.powerschool.final_grades_static
+    --   powerschool.final_grades_static
     -- WHERE
     --   yearid >= (
-    --     gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990
+    --     utilities.GLOBAL_ACADEMIC_YEAR () - 1990
     --   ) - 1
     --   AND excludefromgpa = 0
     -- UNION ALL
@@ -115,11 +115,11 @@ WITH
     --   'TERM' AS subdomain,
     --   'Y1' AS finalgradename
     -- FROM
-    --   gabby.powerschool.final_grades_static
+    --   powerschool.final_grades_static
     -- WHERE
     --   academic_year IN (
-    --     gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
-    --     gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
+    --     utilities.GLOBAL_ACADEMIC_YEAR (),
+    --     utilities.GLOBAL_ACADEMIC_YEAR () - 1
     --   )
     --   AND is_curterm = 1
     --   AND excludefromgpa = 0
@@ -141,13 +141,13 @@ WITH
         ELSE 'Term'
       END AS finalgradename
     FROM
-      gabby.powerschool.storedgrades gr
-      INNER JOIN gabby.powerschool.students s ON (
+      powerschool.storedgrades gr
+      INNER JOIN powerschool.students s ON (
         gr.studentid = s.id
         AND gr.[db_name] = s.[db_name]
       )
     WHERE
-      gr.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
+      gr.academic_year = utilities.GLOBAL_ACADEMIC_YEAR () - 1
       AND gr.excludefromgpa = 0
       -- UNION ALL
       -- /* category grades */
@@ -161,11 +161,11 @@ WITH
       --   'CATEGORY' AS subdomain,
       --   grade_category AS finalgradename
       -- FROM
-      --   gabby.powerschool.category_grades_static
+      --   powerschool.category_grades_static
       -- WHERE
       --   academic_year IN (
-      --     gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
-      --     gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
+      --     utilities.GLOBAL_ACADEMIC_YEAR (),
+      --     utilities.GLOBAL_ACADEMIC_YEAR () - 1
       --   )
       --   AND grade_category <> 'Q'
       -- GROUP BY
@@ -256,11 +256,11 @@ WITH
             0
           ) AS attptspct_term
         FROM
-          gabby.powerschool.attendance_counts_static
+          powerschool.attendance_counts_static
         WHERE
           academic_year IN (
-            gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
-            gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
+            utilities.GLOBAL_ACADEMIC_YEAR (),
+            utilities.GLOBAL_ACADEMIC_YEAR () - 1
           )
           AND mem_count_term > 0
           AND mem_count_term <> abs_unexcused_count_term
@@ -322,11 +322,11 @@ WITH
             0
           ) AS ontimepct_y1
         FROM
-          gabby.powerschool.attendance_counts_static
+          powerschool.attendance_counts_static
         WHERE
           academic_year IN (
-            gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
-            gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
+            utilities.GLOBAL_ACADEMIC_YEAR (),
+            utilities.GLOBAL_ACADEMIC_YEAR () - 1
           )
           AND mem_count_y1 > 0
           AND mem_count_y1 <> abs_unexcused_count_y1
@@ -382,13 +382,13 @@ WITH
         WHEN (response_type = 'S') THEN 'STANDARDS'
       END AS subdomain
     FROM
-      gabby.illuminate_dna_assessments.agg_student_responses_all
+      illuminate_dna_assessments.agg_student_responses_all
     WHERE
       module_type IS NOT NULL
       AND response_type IN ('O', 'S')
       AND academic_year IN (
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
+        utilities.GLOBAL_ACADEMIC_YEAR (),
+        utilities.GLOBAL_ACADEMIC_YEAR () - 1
       )
   ),
   gpa AS (
@@ -400,11 +400,11 @@ WITH
       gpa_y1 AS gpa,
       'GPA Y1 - TERM' AS subdomain
     FROM
-      gabby.powerschool.gpa_detail
+      powerschool.gpa_detail
     WHERE
       academic_year IN (
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
+        utilities.GLOBAL_ACADEMIC_YEAR (),
+        utilities.GLOBAL_ACADEMIC_YEAR () - 1
       )
     UNION ALL
     SELECT
@@ -415,38 +415,38 @@ WITH
       gpa_y1 AS GPA,
       'GPA Y1' AS subdomain
     FROM
-      gabby.powerschool.gpa_detail
+      powerschool.gpa_detail
     WHERE
       academic_year IN (
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
+        utilities.GLOBAL_ACADEMIC_YEAR (),
+        utilities.GLOBAL_ACADEMIC_YEAR () - 1
       )
       AND is_curterm = 1
     UNION ALL
     SELECT
       CAST(s.student_number AS INT) AS student_number,
-      gabby.utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year,
+      utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year,
       'SY1' AS reporting_Term,
       gpa.schoolid,
       gpa.cumulative_Y1_gpa AS gpa,
       'GPA CUMULATIVE' AS subdomain
     FROM
-      gabby.powerschool.gpa_cumulative gpa
-      INNER JOIN gabby.powerschool.students s ON (
+      powerschool.gpa_cumulative gpa
+      INNER JOIN powerschool.students s ON (
         gpa.studentid = s.id
         AND gpa.[db_name] = s.[db_name]
       )
     UNION ALL
     SELECT
       CAST(s.student_number AS INT) AS student_number,
-      gabby.utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year,
+      utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year,
       'SY1' AS reporting_Term,
       gpa.schoolid,
       gpa.earned_credits_cum AS gpa,
       'CREDITS EARNED' AS subdomain
     FROM
-      gabby.powerschool.gpa_cumulative gpa
-      INNER JOIN gabby.powerschool.students s ON (
+      powerschool.gpa_cumulative gpa
+      INNER JOIN powerschool.students s ON (
         gpa.studentid = s.id
         AND gpa.[db_name] = s.[db_name]
       )
@@ -461,7 +461,7 @@ WITH
       lvl_num,
       'ACHIEVED' AS subdomain
     FROM
-      gabby.lit.achieved_by_round_static
+      lit.achieved_by_round_static
     WHERE
       read_lvl IS NOT NULL
       AND [start_date] <= CAST(CURRENT_TIMESTAMP AS DATE)
@@ -474,7 +474,7 @@ WITH
       goal_num,
       'GOAL' AS subdomain
     FROM
-      gabby.lit.achieved_by_round_static
+      lit.achieved_by_round_static
     WHERE
       goal_lvl IS NOT NULL
       AND [start_date] <= CAST(CURRENT_TIMESTAMP AS DATE)
@@ -527,7 +527,7 @@ WITH
       END AS lvl_num,
       'ACHIEVED' AS subdomain
     FROM
-      gabby.nwea.assessment_result_identifiers
+      nwea.assessment_result_identifiers
     WHERE
       measurement_scale = 'Reading'
       AND school_name = 'Newark Collegiate Academy'
@@ -551,8 +551,8 @@ WITH
       END AS goal_num,
       'GOAL' AS subdomain
     FROM
-      gabby.nwea.assessment_result_identifiers map
-      INNER JOIN gabby.powerschool.students s ON (
+      nwea.assessment_result_identifiers map
+      INNER JOIN powerschool.students s ON (
         map.student_id = s.student_number
       )
     WHERE
@@ -571,7 +571,7 @@ WITH
       percentile_2015_norms AS testpercentile,
       NULL AS subdomain
     FROM
-      gabby.nwea.assessment_result_identifiers
+      nwea.assessment_result_identifiers
     WHERE
       rn_term_subj = 1
   ),
@@ -593,7 +593,7 @@ WITH
         WHEN (test_performance_level = 1) THEN 'Did Not Meet'
       END AS performance_level_label
     FROM
-      gabby.parcc.summative_record_file_clean
+      parcc.summative_record_file_clean
     UNION ALL
     /* NJASK & HSPA */
     SELECT
@@ -614,7 +614,7 @@ WITH
       END AS performance_level,
       performance_level AS performance_level_label
     FROM
-      gabby.njsmart.all_state_assessments
+      njsmart.all_state_assessments
     UNION ALL
     /* ACT */
     SELECT
@@ -639,7 +639,7 @@ WITH
           CAST(reading AS INT) AS reading,
           CAST(science AS INT) AS science
         FROM
-          gabby.naviance.act_scores_clean
+          naviance.act_scores_clean
       ) AS sub UNPIVOT (
         scale_score FOR [subject] IN (
           composite,
@@ -664,11 +664,11 @@ WITH
       overall_performance_band AS performance_level,
       NULL AS performance_level_label
     FROM
-      gabby.act.test_prep_scores
+      act.test_prep_scores
     WHERE
       academic_year IN (
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
+        utilities.GLOBAL_ACADEMIC_YEAR (),
+        utilities.GLOBAL_ACADEMIC_YEAR () - 1
       )
       AND rn_dupe = 1
     UNION ALL
@@ -683,7 +683,7 @@ WITH
       NULL AS performance_level,
       NULL AS performance_level_label
     FROM
-      gabby.naviance.sat_scores_clean UNPIVOT (
+      naviance.sat_scores_clean UNPIVOT (
         scale_score FOR [subject] IN (
           all_tests_total,
           math,
@@ -703,12 +703,12 @@ WITH
       NULL AS performance_level,
       NULL AS performance_level_label
     FROM
-      gabby.naviance.sat_2_scores_clean
+      naviance.sat_2_scores_clean
     UNION ALL
     /* AP */
     SELECT
       CAST(hs_student_id AS INT) AS student_number,
-      gabby.utilities.DATE_TO_SY (
+      utilities.DATE_TO_SY (
         CONVERT(
           DATE,
           CASE
@@ -730,12 +730,12 @@ WITH
       NULL AS performance_level,
       NULL AS performance_level_label
     FROM
-      gabby.naviance.ap_scores
+      naviance.ap_scores
     UNION ALL
     /* EXPLORE */
     SELECT
       CAST(hs_student_id AS INT) AS hs_student_id,
-      gabby.utilities.DATE_TO_SY (
+      utilities.DATE_TO_SY (
         CONVERT(
           DATE,
           CASE
@@ -757,7 +757,7 @@ WITH
       NULL AS performance_level,
       NULL AS performance_level_label
     FROM
-      gabby.naviance.explore_scores UNPIVOT (
+      naviance.explore_scores UNPIVOT (
         scale_score FOR [subject] IN (
           english,
           math,
@@ -769,7 +769,7 @@ WITH
     UNION ALL
     SELECT
       CAST(hs_student_id AS INT) AS student_number,
-      gabby.utilities.DATE_TO_SY (
+      utilities.DATE_TO_SY (
         CONVERT(
           DATE,
           CASE
@@ -791,7 +791,7 @@ WITH
       NULL AS performance_level,
       NULL AS performance_level_label
     FROM
-      gabby.naviance.psat_scores UNPIVOT (
+      naviance.psat_scores UNPIVOT (
         scale_score FOR [subject] IN (
           critical_reading,
           math,
@@ -867,8 +867,8 @@ WITH
             ) THEN 2
           END competitiveness_ranking_int
         FROM
-          gabby.naviance.college_applications app
-          LEFT JOIN gabby.alumni.account a ON (
+          naviance.college_applications app
+          LEFT JOIN alumni.account a ON (
             app.ceeb_code = CAST(a.ceeb_code_c AS VARCHAR)
             AND a.record_type_id = '01280000000BQEkAAO'
             AND a.competitiveness_ranking_c IS NOT NULL
@@ -902,11 +902,11 @@ WITH
           CAST(promo_status_grades AS VARCHAR) AS promo_status_grades,
           CAST(promo_status_qa_math AS VARCHAR) AS promo_status_qa_math
         FROM
-          gabby.reporting.promotional_status
+          reporting.promotional_status
         WHERE
           academic_year IN (
-            gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
-            gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
+            utilities.GLOBAL_ACADEMIC_YEAR (),
+            utilities.GLOBAL_ACADEMIC_YEAR () - 1
           )
           AND is_curterm = 1
       ) AS sub UNPIVOT (
@@ -932,11 +932,11 @@ WITH
       END AS term_name,
       'AR' AS subdomain
     FROM
-      gabby.renaissance.ar_progress_to_goals
+      renaissance.ar_progress_to_goals
     WHERE
       academic_year IN (
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
+        utilities.GLOBAL_ACADEMIC_YEAR (),
+        utilities.GLOBAL_ACADEMIC_YEAR () - 1
       )
   )
   --/*
@@ -1152,7 +1152,7 @@ FROM
   )
 WHERE
   r.term_name = 'Y1'
-  AND r.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+  AND r.academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
 UNION ALL
 --*/
 --/*

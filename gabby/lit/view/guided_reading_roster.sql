@@ -8,7 +8,7 @@ SELECT
       (CHARINDEX(']', student_name)) - (CHARINDEX('[', student_name) + 1)
     ) AS INT
   ) AS student_number,
-  gabby.utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year,
+  utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year,
   CAST(
     CONCAT(
       'LIT',
@@ -38,7 +38,7 @@ SELECT
   ) AS round_num,
   CAST(gr_teacher AS VARCHAR(125)) AS gr_teacher
 FROM
-  gabby.lit.guided_reading_groups UNPIVOT (
+  lit.guided_reading_groups UNPIVOT (
     gr_teacher FOR field IN (
       round_1_gr_teacher,
       round_2_gr_teacher,

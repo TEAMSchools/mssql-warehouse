@@ -86,7 +86,7 @@ WITH
       ) AS remaining,
       LEFT(period_name, 4) AS budget_period
     FROM
-      gabby.coupa.budget_line_clean
+      coupa.budget_line_clean
   )
 SELECT
   mip.[Fund],

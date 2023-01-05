@@ -17,7 +17,7 @@ WITH
         END
       ) AS is_acceptance_letter_collected
     FROM
-      gabby.naviance.college_applications
+      naviance.college_applications
     WHERE
       stage != 'cancelled'
     GROUP BY
@@ -67,7 +67,7 @@ WITH
           ) AS test_month,
           composite
         FROM
-          gabby.naviance.act_scores_clean
+          naviance.act_scores_clean
         UNION ALL
         SELECT
           student_number,
@@ -77,7 +77,7 @@ WITH
           ) AS test_month,
           all_tests_total
         FROM
-          gabby.naviance.sat_scores_clean
+          naviance.sat_scores_clean
         UNION ALL
         SELECT
           student_number,
@@ -85,7 +85,7 @@ WITH
           'sat2_' + LOWER(test_code) AS test_month,
           score
         FROM
-          gabby.naviance.sat_2_scores_clean
+          naviance.sat_2_scores_clean
       ) AS sub PIVOT (
         MAX(composite) FOR test_month IN (
           [act_jan],
@@ -132,8 +132,8 @@ WITH
           a.composite DESC
       ) AS rn_highest_presenior
     FROM
-      gabby.naviance.act_scores_clean AS a
-      INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON (
+      naviance.act_scores_clean AS a
+      INNER JOIN powerschool.cohort_identifiers_static AS co ON (
         a.student_number = co.student_number
         AND a.academic_year = co.academic_year
         AND co.grade_level < 12
@@ -232,8 +232,8 @@ WITH
           END AS accepted_app_closed_with_reason_not_attending,
           s.type
         FROM
-          gabby.alumni.application_c AS a
-          INNER JOIN gabby.alumni.account AS s ON (
+          alumni.application_c AS a
+          INNER JOIN alumni.account AS s ON (
             a.school_c = s.id
             AND s.is_deleted = 0
           )
@@ -378,19 +378,19 @@ SELECT
     ELSE 0.0
   END AS is_attending_4yr
 FROM
-  gabby.alumni.ktc_roster AS co
-  LEFT JOIN gabby.powerschool.gpa_cumulative AS gpa ON (
+  alumni.ktc_roster AS co
+  LEFT JOIN powerschool.gpa_cumulative AS gpa ON (
     co.studentid = gpa.studentid
     AND co.exit_schoolid = gpa.schoolid
     AND co.exit_db_name = gpa.[db_name]
   )
-  LEFT JOIN gabby.naviance.current_task_completion_status AS ctcs ON (
+  LEFT JOIN naviance.current_task_completion_status AS ctcs ON (
     co.student_number = ctcs.student_id
   )
   LEFT JOIN nav_applications AS na ON (
     co.student_number = na.hs_student_id
   )
-  LEFT JOIN gabby.naviance.act_scores_clean AS act ON (
+  LEFT JOIN naviance.act_scores_clean AS act ON (
     co.student_number = act.student_number
     AND act.rn_highest = 1
   )
@@ -406,6 +406,6 @@ FROM
     co.sf_contact_id = ca.applicant_c
     AND ca.application_submission_status_c = 'Submitted'
   )
-  LEFT JOIN gabby.alumni.enrollment_identifiers AS ei ON co.sf_contact_id = ei.student_c
+  LEFT JOIN alumni.enrollment_identifiers AS ei ON co.sf_contact_id = ei.student_c
 WHERE
   co.ktc_status IN ('HS11', 'HS12')

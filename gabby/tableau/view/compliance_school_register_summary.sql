@@ -14,7 +14,7 @@ WITH
         END
       ) AS n_mem_ytd
     FROM
-      gabby.powerschool.ps_adaadm_daily_ctod
+      powerschool.ps_adaadm_daily_ctod
     WHERE
       membershipvalue = 1
     GROUP BY
@@ -44,8 +44,8 @@ SELECT
   nj.programtypecode,
   iep.nj_se_placement AS special_education_placement
 FROM
-  gabby.powerschool.cohort_identifiers_static AS co
-  INNER JOIN gabby.powerschool.calendar_rollup_static AS d ON (
+  powerschool.cohort_identifiers_static AS co
+  INNER JOIN powerschool.calendar_rollup_static AS d ON (
     co.schoolid = d.schoolid
     AND co.yearid = d.yearid
     AND co.track = d.track
@@ -56,11 +56,11 @@ FROM
     AND co.yearid = sub.yearid
     AND co.[db_name] = sub.[db_name]
   )
-  LEFT JOIN gabby.powerschool.s_nj_stu_x AS nj ON (
+  LEFT JOIN powerschool.s_nj_stu_x AS nj ON (
     co.students_dcid = nj.studentsdcid
     AND co.[db_name] = nj.[db_name]
   )
-  LEFT JOIN gabby.easyiep.njsmart_powerschool_clean_static AS iep ON (
+  LEFT JOIN easyiep.njsmart_powerschool_clean_static AS iep ON (
     co.student_number = iep.student_number
     AND co.academic_year = iep.academic_year
     AND co.[db_name] = iep.[db_name]

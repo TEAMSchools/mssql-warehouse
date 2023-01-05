@@ -32,7 +32,7 @@ SELECT
   cur.data_quality_json,
   cur.survey_data_json
 FROM
-  gabby.surveygizmo.survey_response_clean_current_static AS cur
+  surveygizmo.survey_response_clean_current_static AS cur
 UNION ALL
 SELECT
   rcv.survey_response_id,
@@ -66,4 +66,4 @@ SELECT
   rcv.data_quality_json,
   rcv.survey_data_json
 FROM
-  gabby.surveygizmo.survey_response_clean_archive AS rcv
+  surveygizmo.survey_response_clean_archive AS rcv

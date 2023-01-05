@@ -4,21 +4,21 @@ WITH
   roles AS (
     SELECT
       [user_id],
-      gabby.dbo.GROUP_CONCAT (role_name) AS roles
+      dbo.GROUP_CONCAT (role_name) AS roles
     FROM
       (
         SELECT
           urm.[user_id],
           r.[name] AS role_name
         FROM
-          gabby.coupa.user_role_mapping AS urm
-          INNER JOIN gabby.coupa.[role] AS r ON (urm.role_id = r.id)
+          coupa.user_role_mapping AS urm
+          INNER JOIN coupa.[role] AS r ON (urm.role_id = r.id)
         UNION
         SELECT
           u.id AS [user_id],
           'Expense User' AS role_name
         FROM
-          gabby.coupa.[user] AS u
+          coupa.[user] AS u
       ) AS sub
     GROUP BY
       [user_id]
@@ -26,10 +26,10 @@ WITH
   business_groups AS (
     SELECT
       ubgm.[user_id],
-      gabby.dbo.GROUP_CONCAT_D (bg.[name], ', ') AS business_group_names
+      dbo.GROUP_CONCAT_D (bg.[name], ', ') AS business_group_names
     FROM
-      gabby.coupa.user_business_group_mapping AS ubgm
-      INNER JOIN gabby.coupa.business_group AS bg ON (ubgm.business_group_id = bg.id)
+      coupa.user_business_group_mapping AS ubgm
+      INNER JOIN coupa.business_group AS bg ON (ubgm.business_group_id = bg.id)
     GROUP BY
       ubgm.[user_id]
   ),
@@ -54,8 +54,8 @@ WITH
       r.roles,
       bg.business_group_names AS content_groups
     FROM
-      gabby.people.staff_roster AS sr
-      INNER JOIN gabby.coupa.[user] AS cu ON (
+      people.staff_roster AS sr
+      INNER JOIN coupa.[user] AS cu ON (
         sr.employee_number = cu.employee_number
       )
       INNER JOIN roles AS r ON (cu.id = r.[user_id])
@@ -66,7 +66,7 @@ WITH
         sr.termination_date,
         CAST(CURRENT_TIMESTAMP AS DATE)
       ) >= DATEFROMPARTS(
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1,
+        utilities.GLOBAL_ACADEMIC_YEAR () - 1,
         7,
         1
       )
@@ -90,8 +90,8 @@ WITH
       'Expense User' AS roles,
       NULL AS content_groups
     FROM
-      gabby.people.staff_roster AS sr
-      LEFT JOIN gabby.coupa.[user] AS cu ON (
+      people.staff_roster AS sr
+      LEFT JOIN coupa.[user] AS cu ON (
         sr.employee_number = cu.employee_number
       )
     WHERE
@@ -147,7 +147,7 @@ SELECT
     CASE
       WHEN sub.position_status = 'Terminated' THEN 'X'
     END,
-    gabby.utilities.STRIP_CHARACTERS (
+    utilities.STRIP_CHARACTERS (
       CONCAT(sub.first_name, sub.last_name),
       '^A-Z'
     ),
@@ -229,29 +229,29 @@ FROM
       ) AS coupa_school_name
     FROM
       all_users AS au
-      INNER JOIN gabby.adsi.user_attributes_static AS ad ON (
+      INNER JOIN adsi.user_attributes_static AS ad ON (
         au.employee_number = ad.employeenumber
         AND ISNUMERIC(ad.employeenumber) = 1
       )
-      LEFT JOIN gabby.coupa.school_name_lookup AS sn ON (
+      LEFT JOIN coupa.school_name_lookup AS sn ON (
         au.business_unit_code = sn.business_unit_code
         AND au.home_department = sn.home_department
         AND au.job_title = sn.job_title
       )
-      LEFT JOIN gabby.coupa.school_name_lookup AS sn2 ON (
+      LEFT JOIN coupa.school_name_lookup AS sn2 ON (
         au.business_unit_code = sn2.business_unit_code
         AND au.home_department = sn2.home_department
         AND sn2.job_title = 'Default'
       )
-      LEFT JOIN gabby.coupa.user_exceptions AS x ON (
+      LEFT JOIN coupa.user_exceptions AS x ON (
         au.employee_number = x.employee_number
       )
       LEFT JOIN coupa.address_name_crosswalk AS anc ON au.[location] = anc.adp_location
-      LEFT JOIN gabby.coupa.[address] AS a ON (
+      LEFT JOIN coupa.[address] AS a ON (
         anc.coupa_address_name = a.[name]
         AND a.active = 1
       )
   ) AS sub
-  LEFT JOIN gabby.coupa.school_name_aliases AS sna ON (
+  LEFT JOIN coupa.school_name_aliases AS sna ON (
     sub.coupa_school_name = sna.physical_delivery_office_name
   )

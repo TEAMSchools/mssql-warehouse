@@ -17,13 +17,13 @@ SELECT
     126
   ) AS [classStudentEndDate]
 FROM
-  gabby.powerschool.cohort_identifiers_static AS co
-  INNER JOIN gabby.powerschool.schools AS sch ON (
+  powerschool.cohort_identifiers_static AS co
+  INNER JOIN powerschool.schools AS sch ON (
     co.schoolid = sch.school_number
     AND co.[db_name] = sch.[db_name]
   )
 WHERE
-  co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+  co.academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
   AND co.is_enrolled_recent = 1
   AND co.rn_year = 1
   AND co.grade_level <= 4

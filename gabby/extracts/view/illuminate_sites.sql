@@ -31,6 +31,6 @@ SELECT
   NULL AS [14 Annual Number of Weeks of Instruction],
   NULL AS [15 Parent Site ID]
 FROM
-  gabby.powerschool.schools
+  powerschool.schools
 WHERE
   state_excludefromreporting = 0;

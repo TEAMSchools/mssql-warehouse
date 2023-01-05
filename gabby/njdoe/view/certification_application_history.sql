@@ -27,7 +27,7 @@ WITH
       ) AS [status],
       JSON_QUERY(ah.[value], '$.checklist') AS checklist
     FROM
-      gabby.njdoe.certification_check AS cc
+      njdoe.certification_check AS cc
       CROSS APPLY OPENJSON (cc.application_history, '$') AS ah
     WHERE
       cc.application_history != '[]'

@@ -108,7 +108,7 @@ WITH
             asmt_extended_time_math AS VARCHAR(25)
           ) AS asmt_extended_time_math
         FROM
-          gabby.powerschool.s_nj_stu_x
+          powerschool.s_nj_stu_x
       ) AS sub UNPIVOT (
         accommodation_value FOR accommodation IN (
           parcc_ell_paper_accom,
@@ -172,8 +172,8 @@ SELECT
   ac.accommodation,
   ac.accommodation_value
 FROM
-  gabby.powerschool.cohort_identifiers_static AS co
-  LEFT JOIN gabby.powerschool.s_nj_stu_x AS nj ON (
+  powerschool.cohort_identifiers_static AS co
+  LEFT JOIN powerschool.s_nj_stu_x AS nj ON (
     co.students_dcid = nj.studentsdcid
     AND co.[db_name] = nj.[db_name]
   )
@@ -182,7 +182,7 @@ FROM
     AND co.[db_name] = ac.[db_name]
   )
 WHERE
-  co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+  co.academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
   AND co.rn_year = 1
   AND co.enroll_status = 0
   AND co.region IN ('TEAM', 'KCNA')

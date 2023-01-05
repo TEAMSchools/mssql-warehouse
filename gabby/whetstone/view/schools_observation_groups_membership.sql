@@ -14,7 +14,7 @@ WITH
       JSON_QUERY(ogs.[value], '$.observees') AS observees,
       JSON_QUERY(ogs.[value], '$.admins') AS admins
     FROM
-      gabby.whetstone.schools AS s
+      whetstone.schools AS s
       CROSS APPLY OPENJSON (s.observation_groups, '$') AS ogs
   ),
   ogs_unpivot AS (

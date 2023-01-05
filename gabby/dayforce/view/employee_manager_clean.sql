@@ -53,8 +53,8 @@ FROM
             em.employee_reference_code
           ) AS position_id
         FROM
-          gabby.dayforce.employee_manager AS em
-          INNER JOIN gabby.dayforce.employees AS e ON (
+          dayforce.employee_manager AS em
+          INNER JOIN dayforce.employees AS e ON (
             em.employee_reference_code = e.df_employee_number
           )
         WHERE

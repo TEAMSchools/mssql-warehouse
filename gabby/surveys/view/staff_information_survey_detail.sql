@@ -72,17 +72,17 @@ FROM
           qo.option_value
       ) AS rn_multiselect
     FROM
-      gabby.surveygizmo.survey_response_identifiers_static AS sri
-      INNER JOIN gabby.surveygizmo.survey_response_data AS sd ON (
+      surveygizmo.survey_response_identifiers_static AS sri
+      INNER JOIN surveygizmo.survey_response_data AS sd ON (
         sri.survey_id = sd.survey_id
         AND sri.survey_response_id = sd.survey_response_id
       )
-      INNER JOIN gabby.surveygizmo.survey_question_clean_static AS sq ON (
+      INNER JOIN surveygizmo.survey_question_clean_static AS sq ON (
         sd.survey_id = sq.survey_id
         AND sd.question_id = sq.survey_question_id
         AND sq.base_type = 'Question'
       )
-      LEFT JOIN gabby.surveygizmo.survey_question_options_static AS qo ON (
+      LEFT JOIN surveygizmo.survey_question_options_static AS qo ON (
         sd.survey_id = qo.survey_id
         AND sd.question_id = qo.question_id
         AND qo.option_disabled = 0

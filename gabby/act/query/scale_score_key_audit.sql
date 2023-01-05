@@ -11,7 +11,7 @@ FROM
       MAX(scale_score) AS max_scale_score,
       COUNT([subject]) AS n_records
     FROM
-      gabby.act.scale_score_key
+      act.scale_score_key
     GROUP BY
       academic_year,
       grade_level,

@@ -22,7 +22,7 @@ SELECT
   cn.status_c,
   cn.type_c
 FROM
-  gabby.alumni.contact_note_c AS cn
-  INNER JOIN gabby.alumni.ktc_roster AS ktc ON (cn.contact_c = ktc.sf_contact_id)
+  alumni.contact_note_c AS cn
+  INNER JOIN alumni.ktc_roster AS ktc ON (cn.contact_c = ktc.sf_contact_id)
 WHERE
   cn.is_deleted = 0

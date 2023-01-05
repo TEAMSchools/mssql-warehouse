@@ -5,7 +5,7 @@ WITH
     SELECT DISTINCT
       associate_id
     FROM
-      gabby.adp.wfm_field_monitor
+      adp.wfm_field_monitor
     WHERE
       (
         CAST(date_modified AS DATE) BETWEEN DATEADD(
@@ -30,9 +30,9 @@ SELECT
     )
   END AS wfm_trigger
 FROM
-  gabby.people.staff_roster AS scw
-  INNER JOIN gabby.adp.workers_clean_static AS w ON (scw.associate_id = w.worker_id)
-  LEFT JOIN gabby.adsi.user_attributes_static AS ads ON (
+  people.staff_roster AS scw
+  INNER JOIN adp.workers_clean_static AS w ON (scw.associate_id = w.worker_id)
+  LEFT JOIN adsi.user_attributes_static AS ads ON (
     CAST(
       scw.employee_number AS VARCHAR(25)
     ) = ads.employeenumber

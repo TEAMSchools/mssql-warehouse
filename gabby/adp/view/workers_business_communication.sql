@@ -9,7 +9,7 @@ WITH
       JSON_VALUE(bc.[value], '$.emailUri') AS email_uri,
       JSON_QUERY(bc.[value], '$.nameCode') AS namecode
     FROM
-      gabby.adp.workers AS w
+      adp.workers AS w
       CROSS APPLY OPENJSON (
         w.business_communication,
         '$.emails'

@@ -15,7 +15,7 @@ WITH
       sub.field_character_comment_1,
       sub.field_character_comment_2,
       CAST(s.local_student_id AS INT) AS local_student_id,
-      gabby.utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year
+      utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year
     FROM
       (
         SELECT
@@ -32,7 +32,7 @@ WITH
           field_character_comment_1_1 AS field_character_comment_1,
           field_character_comment_2_1 AS field_character_comment_2
         FROM
-          gabby.illuminate_dna_repositories.repository_216
+          illuminate_dna_repositories.repository_216
         UNION ALL
         SELECT
           207 AS repository_id,
@@ -48,7 +48,7 @@ WITH
           field_character_comment_1,
           field_character_comment_2
         FROM
-          gabby.illuminate_dna_repositories.repository_207
+          illuminate_dna_repositories.repository_207
         UNION ALL
         SELECT
           208 AS repository_id,
@@ -64,7 +64,7 @@ WITH
           field_character_comment_1,
           field_character_comment_2
         FROM
-          gabby.illuminate_dna_repositories.repository_208
+          illuminate_dna_repositories.repository_208
         UNION ALL
         SELECT
           209 AS repository_id,
@@ -80,9 +80,9 @@ WITH
           field_character_comment_1,
           field_character_comment_2
         FROM
-          gabby.illuminate_dna_repositories.repository_209
+          illuminate_dna_repositories.repository_209
       ) AS sub
-      INNER JOIN gabby.illuminate_public.students AS s ON sub.student_id = s.student_id
+      INNER JOIN illuminate_public.students AS s ON sub.student_id = s.student_id
     WHERE
       CONCAT(
         sub.repository_id,
@@ -92,7 +92,7 @@ WITH
         SELECT
           row_hash
         FROM
-          gabby.illuminate_dna_repositories.repository_row_ids
+          illuminate_dna_repositories.repository_row_ids
       )
   ),
   comm_unpivot AS (
@@ -133,7 +133,7 @@ SELECT
   CAST(cb.comment AS VARCHAR(250)) AS comment
 FROM
   comm_unpivot AS cu
-  INNER JOIN gabby.reporting.report_card_comment_bank AS cb ON (
+  INNER JOIN reporting.report_card_comment_bank AS cb ON (
     cu.comment_code = cb.code
     AND cb._fivetran_deleted = 0
   )

@@ -2,7 +2,7 @@ CREATE
 OR ALTER
 PROCEDURE powerschool.student_access_accounts_merge AS
 MERGE
-  gabby.powerschool.student_access_accounts_static AS tgt
+  powerschool.student_access_accounts_static AS tgt
   /**/
   USING powerschool.student_access_accounts AS src ON (
     src.student_number = tgt.student_number

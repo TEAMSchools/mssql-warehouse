@@ -25,7 +25,7 @@ WITH
             END
           ) AS [days]
         FROM
-          gabby.people.employment_history_static
+          people.employment_history_static
         WHERE
           position_status NOT IN ('Terminated', 'Pre-Start')
           AND job_title != 'Intern'
@@ -44,7 +44,7 @@ WITH
         )
       ) AS days_as_teacher
     FROM
-      gabby.people.employment_history_static
+      people.employment_history_static
     WHERE
       position_status NOT IN ('Terminated', 'Pre-Start')
       AND job_title IN (
@@ -81,6 +81,6 @@ FROM
   LEFT JOIN years_teaching_at_kipp AS y ON (
     d.employee_number = y.employee_number
   )
-  LEFT JOIN gabby.surveys.staff_information_survey_wide_static AS sdf ON (
+  LEFT JOIN surveys.staff_information_survey_wide_static AS sdf ON (
     d.employee_number = sdf.employee_number
   )

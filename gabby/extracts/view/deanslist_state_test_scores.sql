@@ -47,8 +47,8 @@ FROM
         WHEN parcc.test_performance_level < 4 THEN 0
       END AS is_proficient
     FROM
-      gabby.powerschool.cohort_identifiers_static AS co
-      INNER JOIN gabby.parcc.summative_record_file_clean AS parcc ON (
+      powerschool.cohort_identifiers_static AS co
+      INNER JOIN parcc.summative_record_file_clean AS parcc ON (
         co.state_studentnumber = parcc.state_student_identifier
         AND co.academic_year = parcc.academic_year
       )
@@ -69,8 +69,8 @@ FROM
         WHEN nj.scaled_score < 200 THEN 0
       END AS is_proficient
     FROM
-      gabby.powerschool.cohort_identifiers_static AS co
-      INNER JOIN gabby.njsmart.all_state_assessments AS nj ON (
+      powerschool.cohort_identifiers_static AS co
+      INNER JOIN njsmart.all_state_assessments AS nj ON (
         co.student_number = nj.local_student_id
         AND co.academic_year = nj.academic_year
       )

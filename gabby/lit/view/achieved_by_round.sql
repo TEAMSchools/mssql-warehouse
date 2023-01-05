@@ -16,8 +16,8 @@ WITH
         RIGHT(terms.time_per_name, 1) AS INT
       ) AS round_num
     FROM
-      gabby.powerschool.cohort_identifiers_static AS r
-      INNER JOIN gabby.reporting.reporting_terms AS terms ON (
+      powerschool.cohort_identifiers_static AS r
+      INNER JOIN reporting.reporting_terms AS terms ON (
         r.academic_year = terms.academic_year
         AND r.schoolid = terms.schoolid
         AND terms.identifier = 'LIT'
@@ -109,28 +109,28 @@ WITH
           hard.lvl_num AS hard_lvl_num
         FROM
           roster_scaffold AS r
-          LEFT JOIN gabby.lit.all_test_events_static AS ps ON (
+          LEFT JOIN lit.all_test_events_static AS ps ON (
             r.student_number = ps.student_number
             AND r.academic_year = ps.academic_year
             AND r.test_round = ps.test_round
             AND ps.[status] = 'Mixed'
             AND ps.curr_round = 1
           )
-          LEFT JOIN gabby.lit.all_test_events_static AS achv ON (
+          LEFT JOIN lit.all_test_events_static AS achv ON (
             r.student_number = achv.student_number
             AND r.academic_year = achv.academic_year
             AND r.test_round = achv.test_round
             AND achv.[status] = 'Achieved'
             AND achv.curr_round = 1
           )
-          LEFT JOIN gabby.lit.all_test_events_static AS dna ON (
+          LEFT JOIN lit.all_test_events_static AS dna ON (
             r.student_number = dna.student_number
             AND r.academic_year = dna.academic_year
             AND r.test_round = dna.test_round
             AND dna.[status] = 'Did Not Achieve'
             AND dna.curr_round = 1
           )
-          LEFT JOIN gabby.lit.all_test_events_static AS hard ON (
+          LEFT JOIN lit.all_test_events_static AS hard ON (
             r.student_number = hard.student_number
             AND r.academic_year = hard.academic_year
             AND r.test_round = hard.test_round
@@ -172,14 +172,14 @@ WITH
           NULL AS hard_lvl_num
         FROM
           roster_scaffold AS r
-          LEFT JOIN gabby.lit.all_test_events_static AS achv ON (
+          LEFT JOIN lit.all_test_events_static AS achv ON (
             r.student_number = achv.student_number
             AND r.academic_year = achv.academic_year
             AND r.test_round = achv.test_round
             AND achv.[status] = 'Achieved'
             AND achv.curr_round = 1
           )
-          LEFT JOIN gabby.lit.all_test_events_static AS dna ON (
+          LEFT JOIN lit.all_test_events_static AS dna ON (
             r.student_number = dna.student_number
             AND r.academic_year = dna.academic_year
             AND r.test_round = dna.test_round
@@ -296,12 +296,12 @@ WITH
           NULL AS hard_lvl_num
         FROM
           roster_scaffold AS r
-          INNER JOIN gabby.lit.all_test_events_static AS fp ON (
+          INNER JOIN lit.all_test_events_static AS fp ON (
             r.student_number = fp.student_number
             AND r.academic_year = fp.academic_year
             AND fp.recent_yr = 1
           )
-          LEFT JOIN gabby.lit.gleq ON (
+          LEFT JOIN lit.gleq ON (
             CASE
               WHEN (
                 fp.[status] = 'Achieved'
@@ -764,7 +764,7 @@ FROM
           END AS is_new_test
         FROM
           achieved
-          LEFT JOIN gabby.lit.all_test_events_static AS atid ON (
+          LEFT JOIN lit.all_test_events_static AS atid ON (
             achieved.achv_unique_id = atid.unique_id
             AND atid.[status] = 'Achieved'
           )
@@ -780,12 +780,12 @@ FROM
             AND achieved.round_num = hard.round_num
             AND hard.rn = 1
           )
-          LEFT JOIN gabby.lit.network_goals AS goals ON (
+          LEFT JOIN lit.network_goals AS goals ON (
             achieved.grade_level = goals.grade_level
             AND achieved.test_round = goals.test_round
             AND goals.norms_year = 2021
           )
-          LEFT JOIN gabby.lit.individualized_goals AS indiv ON (
+          LEFT JOIN lit.individualized_goals AS indiv ON (
             achieved.student_number = indiv.student_number
             AND achieved.test_round = indiv.test_round
             AND achieved.academic_year = indiv.academic_year

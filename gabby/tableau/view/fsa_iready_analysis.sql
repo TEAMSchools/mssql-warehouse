@@ -19,8 +19,8 @@ WITH
     SELECT
       tw.[date]
     FROM
-      gabby.utilities.reporting_days AS td
-      INNER JOIN gabby.utilities.reporting_days AS tw ON (
+      utilities.reporting_days AS td
+      INNER JOIN utilities.reporting_days AS tw ON (
         td.week_part = tw.week_part
         AND td.year_part = tw.year_part
       )
@@ -52,7 +52,7 @@ WITH
         2
       ) AS pct_passed
     FROM
-      gabby.iready.personalized_instruction_by_lesson
+      iready.personalized_instruction_by_lesson
     WHERE
       completion_date IN (
         SELECT
@@ -171,7 +171,7 @@ FROM
     AND ce.section_enroll_status = 0
     AND ce.rn_subject = 1
   )
-  LEFT JOIN gabby.iready.diagnostic_and_instruction AS di ON (
+  LEFT JOIN iready.diagnostic_and_instruction AS di ON (
     di.student_id = co.student_number
     AND LEFT(di.academic_year, 4) = co.academic_year
     AND di.[subject] = subj.iready_subject
@@ -185,14 +185,14 @@ FROM
     AND co.academic_year = fsp.fsa_year
     AND subj.iready_subject = fsp.iready_subject
   )
-  LEFT JOIN gabby.assessments.fsa_iready_crosswalk AS cw1 ON (
+  LEFT JOIN assessments.fsa_iready_crosswalk AS cw1 ON (
     cw1.test_name = fsp.test_name
     AND (
       fsp.fsa_scale BETWEEN cw1.scale_low AND cw1.scale_high
     )
     AND cw1.source_system = 'FSA'
   )
-  LEFT JOIN gabby.assessments.fsa_iready_crosswalk AS cw2 ON (
+  LEFT JOIN assessments.fsa_iready_crosswalk AS cw2 ON (
     co.grade_level = cw2.grade_level
     AND di.[subject] = cw2.test_name
     AND (
@@ -202,13 +202,13 @@ FROM
     )
     AND cw2.source_system = 'i-Ready'
   )
-  LEFT JOIN gabby.assessments.fsa_iready_crosswalk AS cw3 ON (
+  LEFT JOIN assessments.fsa_iready_crosswalk AS cw3 ON (
     co.grade_level = cw3.grade_level
     AND di.[subject] = cw3.test_name
     AND cw3.source_system = 'i-Ready'
     AND cw3.sublevel_name = 'Level 3'
   )
-  LEFT JOIN gabby.assessments.fsa_iready_crosswalk AS cw4 ON (
+  LEFT JOIN assessments.fsa_iready_crosswalk AS cw4 ON (
     cw4.test_name = CONCAT(
       subj.fsa_subject,
       ' ',
@@ -217,7 +217,7 @@ FROM
     AND (cw1.sublevel_number + 1) = cw4.sublevel_number
     AND cw4.source_system = 'FSA'
   )
-  LEFT JOIN gabby.assessments.fsa_iready_crosswalk AS cw5 ON (
+  LEFT JOIN assessments.fsa_iready_crosswalk AS cw5 ON (
     cw5.test_name = CONCAT(
       subj.fsa_subject,
       ' ',
@@ -226,14 +226,14 @@ FROM
     AND cw5.sublevel_name = 'Level 3'
     AND cw5.source_system = 'FSA'
   )
-  LEFT JOIN gabby.assessments.fsa_iready_crosswalk AS cw6 ON (
+  LEFT JOIN assessments.fsa_iready_crosswalk AS cw6 ON (
     cw6.test_name = subj.iready_subject
     AND cw1.sublevel_number + 1 = cw6.sublevel_number
     AND cw6.grade_level = co.grade_level
     AND cw6.source_system = 'i-Ready'
   )
 WHERE
-  co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+  co.academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
   AND co.rn_year = 1
   AND co.enroll_status = 0
   AND co.grade_level >= 3

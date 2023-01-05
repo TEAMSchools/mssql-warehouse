@@ -51,4 +51,4 @@ SELECT
   LOWER(userprincipalname) AS userprincipalname,
   LOWER(manager_mail) AS manager_mail
 FROM
-  gabby.people.staff_crosswalk_static
+  people.staff_crosswalk_static

@@ -6,9 +6,9 @@ WITH
       associate_oid,
       worker_id,
       name_code_value,
-      gabby.dbo.GROUP_CONCAT (item_value) AS item_value
+      dbo.GROUP_CONCAT (item_value) AS item_value
     FROM
-      gabby.adp.workers_custom_field_group
+      adp.workers_custom_field_group
     GROUP BY
       associate_oid,
       worker_id,

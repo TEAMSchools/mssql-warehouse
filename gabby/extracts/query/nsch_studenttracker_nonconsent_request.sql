@@ -48,12 +48,12 @@ SELECT
   /* requestor return field */
   CAST(student_number AS VARCHAR) AS coll
 FROM
-  gabby.powerschool.cohort_identifiers_static
+  powerschool.cohort_identifiers_static
 WHERE
   rn_undergrad = 1
   AND exitcode = 'G1'
   AND grade_level != 99
-  AND cohort <= gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+  AND cohort <= utilities.GLOBAL_ACADEMIC_YEAR ()
 UNION ALL
 SELECT
   'T1' AS cola,
@@ -71,9 +71,9 @@ SELECT
   NULL AS colk,
   NULL AS coll
 FROM
-  gabby.powerschool.cohort_identifiers_static
+  powerschool.cohort_identifiers_static
 WHERE
   rn_undergrad = 1
   AND exitcode = 'G1'
   AND grade_level != 99
-  AND cohort <= gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+  AND cohort <= utilities.GLOBAL_ACADEMIC_YEAR ()

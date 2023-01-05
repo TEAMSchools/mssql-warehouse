@@ -42,8 +42,8 @@ WITH
       END AS position_count,
       pg.name AS position_job_posting
     FROM
-      gabby.recruiting.job_position_c AS pn
-      LEFT JOIN gabby.recruiting.job_posting_c AS pg ON (pn.job_posting_c = pg.id)
+      recruiting.job_position_c AS pn
+      LEFT JOIN recruiting.job_posting_c AS pg ON (pn.job_posting_c = pg.id)
     WHERE
       pn.city_c IN (
         'Newark',
@@ -102,7 +102,7 @@ WITH
       publish_end_date_c AS posting_publish_end,
       start_date_c AS posting_start
     FROM
-      gabby.recruiting.job_posting_c
+      recruiting.job_posting_c
     WHERE
       city_c IN (
         'Camden',

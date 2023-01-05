@@ -14,7 +14,7 @@ WITH
       [home],
       daytime AS [day]
     FROM
-      gabby.powerschool.student_contacts_static PIVOT (
+      powerschool.student_contacts_static PIVOT (
         MAX(contact) FOR contact_type IN ([mobile], [home], [daytime])
       ) AS p
   ),
@@ -24,9 +24,9 @@ WITH
       person,
       [name],
       [db_name],
-      gabby.dbo.GROUP_CONCAT_D (DISTINCT cell, CHAR(10)) AS cell,
-      gabby.dbo.GROUP_CONCAT_D (DISTINCT home, CHAR(10)) AS home,
-      gabby.dbo.GROUP_CONCAT_D (DISTINCT [day], CHAR(10)) AS [day]
+      dbo.GROUP_CONCAT_D (DISTINCT cell, CHAR(10)) AS cell,
+      dbo.GROUP_CONCAT_D (DISTINCT home, CHAR(10)) AS home,
+      dbo.GROUP_CONCAT_D (DISTINCT [day], CHAR(10)) AS [day]
     FROM
       contacts_repivot
     WHERE
@@ -66,12 +66,12 @@ SELECT
   cg.[day] AS contact_day_phone,
   co.guardianemail AS contact_email
 FROM
-  gabby.powerschool.cohort_identifiers_static AS co
-  LEFT JOIN gabby.powerschool.students AS s ON (
+  powerschool.cohort_identifiers_static AS co
+  LEFT JOIN powerschool.students AS s ON (
     co.student_number = s.student_number
     AND co.[db_name] = s.[db_name]
   )
-  LEFT JOIN gabby.powerschool.u_studentsuserfields AS suf ON (
+  LEFT JOIN powerschool.u_studentsuserfields AS suf ON (
     s.dcid = suf.studentsdcid
     AND s.[db_name] = suf.[db_name]
   )
@@ -86,5 +86,5 @@ FROM
     AND c.[name] = cg.[name]
   )
 WHERE
-  co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+  co.academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
   AND co.rn_year = 1

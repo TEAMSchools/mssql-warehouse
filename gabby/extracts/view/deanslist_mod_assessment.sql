@@ -24,7 +24,7 @@ WITH
           percent_correct DESC
       ) AS rn_subj_modnum
     FROM
-      gabby.illuminate_dna_assessments.agg_student_responses_all_current
+      illuminate_dna_assessments.agg_student_responses_all_current
     WHERE
       response_type = 'O'
       AND subject_area IN ('Text Study', 'Mathematics')
@@ -124,15 +124,15 @@ FROM
       ROUND(AVG(asr.percent_correct), 0) AS avg_pct_correct,
       MIN(a.performance_band_set_id) AS performance_band_set_id
     FROM
-      gabby.illuminate_dna_assessments.assessments_identifiers_static AS a
-      INNER JOIN gabby.illuminate_dna_assessments.agg_student_responses AS asr ON (
+      illuminate_dna_assessments.assessments_identifiers_static AS a
+      INNER JOIN illuminate_dna_assessments.agg_student_responses AS asr ON (
         a.assessment_id = asr.assessment_id
       )
       INNER JOIN illuminate_public.students AS s ON (asr.student_id = s.student_id)
     WHERE
       a.scope = 'Unit Assessment'
       AND a.subject_area NOT IN ('Text Study', 'Mathematics')
-      AND a.academic_year_clean = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+      AND a.academic_year_clean = utilities.GLOBAL_ACADEMIC_YEAR ()
       AND a.deleted_at IS NULL
     GROUP BY
       s.local_student_id,
@@ -140,7 +140,7 @@ FROM
       a.subject_area,
       a.term_administered
   ) AS sub
-  INNER JOIN gabby.illuminate_dna_assessments.performance_band_lookup_static AS pbl ON (
+  INNER JOIN illuminate_dna_assessments.performance_band_lookup_static AS pbl ON (
     sub.performance_band_set_id = pbl.performance_band_set_id
     AND (
       sub.avg_pct_correct BETWEEN pbl.minimum_value AND pbl.maximum_value

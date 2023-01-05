@@ -41,12 +41,12 @@ SELECT
   enr.expression,
   enr.section_number
 FROM
-  gabby.powerschool.cohort_identifiers_static AS co
+  powerschool.cohort_identifiers_static AS co
   INNER JOIN illuminate_dna_assessments.agg_student_responses_all AS asr ON (
     co.student_number = asr.local_student_id
     AND co.academic_year = asr.academic_year
   )
-  LEFT JOIN gabby.powerschool.course_enrollments AS enr ON (
+  LEFT JOIN powerschool.course_enrollments AS enr ON (
     co.student_number = enr.student_number
     AND co.academic_year = enr.academic_year
     AND co.[db_name] = enr.[db_name]
@@ -55,7 +55,7 @@ FROM
     AND enr.section_enroll_status = 0
     AND enr.rn_illuminate_subject = 1
   )
-  LEFT JOIN gabby.powerschool.course_enrollments AS hr ON (
+  LEFT JOIN powerschool.course_enrollments AS hr ON (
     co.student_number = hr.student_number
     AND co.academic_year = hr.academic_year
     AND co.[db_name] = hr.[db_name]
@@ -67,8 +67,8 @@ FROM
   )
 WHERE
   co.academic_year IN (
-    gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
-    gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
+    utilities.GLOBAL_ACADEMIC_YEAR (),
+    utilities.GLOBAL_ACADEMIC_YEAR () - 1
   )
   AND co.rn_year = 1
   AND co.grade_level != 99

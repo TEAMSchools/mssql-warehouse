@@ -16,8 +16,8 @@ SELECT
     WHEN swd.[value] = 'no' THEN 0
   END AS is_mastery
 FROM
-  gabby.illuminate_dna_repositories.sight_words_data_current_static AS swd
-  INNER JOIN gabby.reporting.reporting_terms AS rt ON (
+  illuminate_dna_repositories.sight_words_data_current_static AS swd
+  INNER JOIN reporting.reporting_terms AS rt ON (
     (
       swd.date_administered BETWEEN rt.[start_date] AND rt.end_date
     )

@@ -11,8 +11,8 @@ DECLARE @field_names NVARCHAR(MAX) = '',
 @sql NVARCHAR(MAX) = '';
 
 SELECT
-  @field_names = gabby.dbo.GROUP_CONCAT_D (f.[name], ', '),
-  @field_names_converted = gabby.dbo.GROUP_CONCAT_D (
+  @field_names = dbo.GROUP_CONCAT_D (f.[name], ', '),
+  @field_names_converted = dbo.GROUP_CONCAT_D (
     'CAST(' + f.[name] + ' AS NVARCHAR(256)) AS ' + f.[name],
     ', '
   )

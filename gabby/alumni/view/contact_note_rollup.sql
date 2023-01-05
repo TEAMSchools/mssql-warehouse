@@ -108,12 +108,12 @@ FROM
             WHEN subject_c LIKE 'Q%SM%' THEN 'SM' + SUBSTRING(subject_c, 7, 1)
             WHEN subject_c LIKE '%HV' THEN 'HV'
             WHEN subject_c LIKE 'DP%' THEN REPLACE(
-              gabby.utilities.STRIP_CHARACTERS (subject_c, ':-'),
+              utilities.STRIP_CHARACTERS (subject_c, ':-'),
               ' ',
               '_'
             )
             WHEN subject_c LIKE 'BGP%' THEN REPLACE(
-              gabby.utilities.STRIP_CHARACTERS (subject_c, ':-'),
+              utilities.STRIP_CHARACTERS (subject_c, ':-'),
               ' ',
               '_'
             )
@@ -127,9 +127,9 @@ FROM
             WHEN subject_c LIKE 'Q[0-9]%' THEN 'Q' + SUBSTRING(subject_c, 2, 1)
             ELSE ''
           END AS contact_term,
-          gabby.utilities.DATE_TO_SY (date_c) AS academic_year
+          utilities.DATE_TO_SY (date_c) AS academic_year
         FROM
-          gabby.alumni.contact_note_c
+          alumni.contact_note_c
         WHERE
           is_deleted = 0
         UNION ALL
@@ -138,9 +138,9 @@ FROM
           benchmark_date_c AS contact_date,
           'BM' AS contact_subject,
           '' AS contact_term,
-          gabby.utilities.DATE_TO_SY (benchmark_date_c) AS academic_year
+          utilities.DATE_TO_SY (benchmark_date_c) AS academic_year
         FROM
-          gabby.alumni.college_persistence_c
+          alumni.college_persistence_c
         WHERE
           benchmark_status_c = 'Complete'
           AND benchmark_period_c != 'Pre-College'

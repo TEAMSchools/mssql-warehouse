@@ -5,11 +5,11 @@ WITH
     SELECT
       n AS academic_year
     FROM
-      gabby.utilities.row_generator_smallint
+      utilities.row_generator_smallint
     WHERE
       /* 2018 = first year of Teacher Goals */
       n BETWEEN 2018 AND (
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+        utilities.GLOBAL_ACADEMIC_YEAR ()
       )
   ),
   work_assignment AS (
@@ -23,9 +23,9 @@ WITH
       legal_entity_name,
       work_assignment_effective_end,
       (
-        gabby.utilities.DATE_TO_SY (work_assignment_effective_start)
+        utilities.DATE_TO_SY (work_assignment_effective_start)
       ) AS start_academic_year,
-      gabby.utilities.DATE_TO_SY (work_assignment_effective_end) AS end_academic_year
+      utilities.DATE_TO_SY (work_assignment_effective_end) AS end_academic_year
     FROM
       (
         SELECT
@@ -48,7 +48,7 @@ WITH
             COALESCE(
               wa.effective_end_date,
               DATEFROMPARTS(
-                gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1,
+                utilities.GLOBAL_ACADEMIC_YEAR () + 1,
                 6,
                 30
               )
@@ -57,8 +57,8 @@ WITH
           sc.ps_school_id,
           sc.site_name_clean
         FROM
-          gabby.people.employment_history_static AS wa
-          LEFT JOIN gabby.people.school_crosswalk AS sc ON (
+          people.employment_history_static AS wa
+          LEFT JOIN people.school_crosswalk AS sc ON (
             wa.[location] = sc.site_name
             AND sc._fivetran_deleted = 0
           )
@@ -119,7 +119,7 @@ SELECT
   sr.grades_taught
 FROM
   current_work_assignment AS cwa
-  INNER JOIN gabby.people.staff_crosswalk_static AS sr ON (
+  INNER JOIN people.staff_crosswalk_static AS sr ON (
     cwa.df_employee_number = sr.df_employee_number
   )
 WHERE

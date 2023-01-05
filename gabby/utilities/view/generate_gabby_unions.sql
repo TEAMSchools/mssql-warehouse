@@ -181,7 +181,7 @@ WITH
     SELECT
       n
     FROM
-      gabby.utilities.row_generator
+      utilities.row_generator
     WHERE
       (n BETWEEN 1 AND 2)
   )
@@ -229,17 +229,17 @@ FROM
       table_name,
       CONCAT(
         'SELECT ''kippnewark'' AS [db_name],',
-        gabby.dbo.GROUP_CONCAT_D (kippnewark, ',') + ' ',
+        dbo.GROUP_CONCAT_D (kippnewark, ',') + ' ',
         'FROM kippnewark.' + [schema_name] + '.' + table_name
       ) AS kippnewark,
       CONCAT(
         'SELECT ''kippcamden'' AS [db_name],',
-        gabby.dbo.GROUP_CONCAT_D (kippcamden, ',') + ' ',
+        dbo.GROUP_CONCAT_D (kippcamden, ',') + ' ',
         'FROM kippcamden.' + [schema_name] + '.' + table_name
       ) AS kippcamden,
       CONCAT(
         'SELECT ''kippmiami'' AS [db_name],',
-        gabby.dbo.GROUP_CONCAT_D (kippmiami, ',') + ' ',
+        dbo.GROUP_CONCAT_D (kippmiami, ',') + ' ',
         'FROM kippmiami.' + [schema_name] + '.' + table_name
       ) AS kippmiami,
       MAX(column_type_mismatch) AS column_type_mismatch,

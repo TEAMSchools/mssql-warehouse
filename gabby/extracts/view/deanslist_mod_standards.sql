@@ -15,7 +15,7 @@ WITH
       END AS subject_area,
       ROUND(AVG(percent_correct), 0) AS avg_percent_correct
     FROM
-      gabby.illuminate_dna_assessments.agg_student_responses_all_current
+      illuminate_dna_assessments.agg_student_responses_all_current
     WHERE
       response_type = 'G'
       AND is_normed_scope = 1
@@ -57,7 +57,7 @@ SELECT
   END AS standard_proficiency
 FROM
   std_avg AS sa
-  INNER JOIN gabby.illuminate_dna_assessments.performance_band_lookup_static AS pbl ON (
+  INNER JOIN illuminate_dna_assessments.performance_band_lookup_static AS pbl ON (
     sa.performance_band_set_id = pbl.performance_band_set_id
     AND (
       sa.avg_percent_correct BETWEEN pbl.minimum_value AND pbl.maximum_value

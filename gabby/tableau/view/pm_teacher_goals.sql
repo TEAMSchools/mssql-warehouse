@@ -19,7 +19,7 @@ WITH
           reporting_term,
           met_goal
         FROM
-          gabby.lit.achieved_by_round_static
+          lit.achieved_by_round_static
         WHERE
           [start_date] <= CAST(CURRENT_TIMESTAMP AS DATE)
       ) AS sub
@@ -45,8 +45,8 @@ WITH
         WHEN gpa.gpa_y1 < 3.0 THEN 0.0
       END AS gpa_is_3plus
     FROM
-      gabby.powerschool.gpa_detail AS gpa
-      INNER JOIN gabby.reporting.reporting_terms AS rt ON (
+      powerschool.gpa_detail AS gpa
+      INNER JOIN reporting.reporting_terms AS rt ON (
         gpa.academic_year = rt.academic_year
         AND gpa.reporting_term = rt.time_per_name
         AND gpa.schoolid = rt.schoolid
@@ -118,7 +118,7 @@ WITH
             END
           ) AS is_mastery_iep345
         FROM
-          gabby.illuminate_dna_assessments.agg_student_responses_all
+          illuminate_dna_assessments.agg_student_responses_all
         WHERE
           response_type = 'O'
           AND subject_area IN (
@@ -158,8 +158,8 @@ WITH
           wo.observed_at DESC
       ) AS rn
     FROM
-      gabby.whetstone.observations_clean AS wo
-      INNER JOIN gabby.reporting.reporting_terms AS rt ON (
+      whetstone.observations_clean AS wo
+      INNER JOIN reporting.reporting_terms AS rt ON (
         (
           wo.observed_at BETWEEN rt.[start_date] AND rt.end_date
         )
@@ -167,7 +167,7 @@ WITH
         AND rt.schoolid = 0
         AND rt._fivetran_deleted = 0
       )
-      LEFT JOIN gabby.pm.teacher_goals_exemption_clean_static AS ex ON (
+      LEFT JOIN pm.teacher_goals_exemption_clean_static AS ex ON (
         wo.teacher_internal_id = ex.df_employee_number
         AND rt.academic_year = ex.academic_year
         AND rt.time_per_name = REPLACE(ex.pm_term, 'PM', 'ETR')
@@ -207,7 +207,7 @@ WITH
       ) AS metric_value
     FROM
       etr_long AS e
-      LEFT JOIN gabby.pm.teacher_goals_lockbox AS lb ON (
+      LEFT JOIN pm.teacher_goals_lockbox AS lb ON (
         e.df_employee_number = lb.df_employee_number
         AND e.metric_name = lb.metric_name
         AND e.academic_year = lb.academic_year
@@ -233,8 +233,8 @@ WITH
         SUM(so.total_weighted_response_value) / SUM(so.total_response_weight)
       ) AS metric_value
     FROM
-      gabby.surveys.self_and_others_survey_rollup_static AS so
-      LEFT JOIN gabby.pm.teacher_goals_exemption_clean_static AS ex ON (
+      surveys.self_and_others_survey_rollup_static AS so
+      LEFT JOIN pm.teacher_goals_exemption_clean_static AS ex ON (
         so.subject_employee_number = ex.df_employee_number
         AND so.academic_year = ex.academic_year
         AND so.reporting_term = REPLACE(ex.pm_term, 'PM', 'SO')
@@ -269,7 +269,7 @@ WITH
       ) AS metric_value
     FROM
       so_survey_long AS s
-      LEFT JOIN gabby.pm.teacher_goals_lockbox AS lb ON (
+      LEFT JOIN pm.teacher_goals_lockbox AS lb ON (
         s.subject_employee_number = lb.df_employee_number
         AND s.metric_name = lb.metric_name
         AND s.academic_year = lb.academic_year
@@ -323,7 +323,7 @@ WITH
               grade_level,
               schoolid
             FROM
-              gabby.act.test_prep_scores
+              act.test_prep_scores
             WHERE
               subject_area = 'Composite'
               AND scale_score IS NOT NULL
@@ -348,8 +348,8 @@ WITH
               co.grade_level,
               co.schoolid
             FROM
-              gabby.naviance.act_scores_clean AS act
-              INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON (
+              naviance.act_scores_clean AS act
+              INNER JOIN powerschool.cohort_identifiers_static AS co ON (
                 act.student_number = co.student_number
                 AND co.rn_undergrad = 1
                 AND co.grade_level != 99
@@ -454,7 +454,7 @@ WITH
       ig.metric_value,
       NULL AS n_students
     FROM
-      gabby.pm.teacher_goal_scaffold_static AS tgs
+      pm.teacher_goal_scaffold_static AS tgs
       LEFT JOIN individual_goal_data AS ig ON (
         tgs.academic_year = ig.academic_year
         AND tgs.metric_name = ig.metric_name
@@ -497,7 +497,7 @@ WITH
       glt.metric_value,
       NULL AS n_students
     FROM
-      gabby.pm.teacher_goal_scaffold_static AS tgs
+      pm.teacher_goal_scaffold_static AS tgs
       LEFT JOIN glt_goal_data AS glt ON (
         tgs.academic_year = glt.academic_year
         AND tgs.metric_name = glt.metric_name
@@ -614,7 +614,7 @@ WITH
             ) THEN 0.0
           END AS is_mastery
         FROM
-          gabby.pm.teacher_goal_scaffold_static AS tgs
+          pm.teacher_goal_scaffold_static AS tgs
           LEFT JOIN assessment_detail AS am ON (
             tgs.academic_year = am.academic_year
             AND tgs.metric_name = am.metric_name
@@ -695,7 +695,7 @@ SELECT
   lb.bucket_score AS bucket_score_stored
 FROM
   all_data AS d
-  LEFT JOIN gabby.pm.teacher_goals_lockbox_wide AS lb ON (
+  LEFT JOIN pm.teacher_goals_lockbox_wide AS lb ON (
     d.df_employee_number = lb.df_employee_number
     AND d.academic_year = lb.academic_year
     AND d.pm_term = lb.pm_term

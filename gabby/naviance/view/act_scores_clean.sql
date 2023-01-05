@@ -51,7 +51,7 @@ FROM
       comb_eng_write,
       ela,
       stem,
-      gabby.utilities.DATE_TO_SY (test_date) AS academic_year,
+      utilities.DATE_TO_SY (test_date) AS academic_year,
       CASE
         WHEN test_date <= CAST(CURRENT_TIMESTAMP AS DATE) THEN test_date
       END AS test_date,
@@ -140,7 +140,7 @@ FROM
             END AS INT
           ) AS stem
         FROM
-          gabby.naviance.act_scores
+          naviance.act_scores
         WHERE
           test_type IN ('ACT (Legacy)', 'ACT')
       ) AS sub

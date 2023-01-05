@@ -36,9 +36,9 @@ WITH
           DATEPART(DAY, s.dob) AS dob_day,
           RIGHT(DATEPART(YEAR, s.dob), 2) AS dob_year,
           (
-            gabby.utilities.STRIP_CHARACTERS (LOWER(s.first_name), '^A-Z')
+            utilities.STRIP_CHARACTERS (LOWER(s.first_name), '^A-Z')
           ) AS first_name_clean,
-          gabby.utilities.STRIP_CHARACTERS (
+          utilities.STRIP_CHARACTERS (
             LOWER(
               CASE
                 WHEN s.last_name LIKE 'St[. ]%' THEN s.last_name
@@ -83,8 +83,8 @@ WITH
           ) AS last_name_clean,
           sch.abbreviation AS school_abbreviation
         FROM
-          gabby.powerschool.students AS s
-          INNER JOIN gabby.powerschool.schools AS sch ON (
+          powerschool.students AS s
+          INNER JOIN powerschool.schools AS sch ON (
             s.schoolid = sch.school_number
             AND s.[db_name] = sch.[db_name]
           )
@@ -120,7 +120,7 @@ WITH
       END AS base_dupe_audit
     FROM
       clean_names AS cn
-      LEFT JOIN gabby.powerschool.student_access_accounts_static AS sa ON (
+      LEFT JOIN powerschool.student_access_accounts_static AS sa ON (
         cn.base_username = sa.student_web_id
         AND cn.student_number != sa.student_number
       )
@@ -162,7 +162,7 @@ WITH
       END AS alt_dupe_audit
     FROM
       base_username AS bu
-      LEFT JOIN gabby.powerschool.student_access_accounts_static AS sa ON (
+      LEFT JOIN powerschool.student_access_accounts_static AS sa ON (
         bu.alt_username = sa.student_web_id
         AND bu.student_number != sa.student_number
       )
@@ -204,6 +204,6 @@ SELECT
   END AS student_web_password
 FROM
   alt_username AS au
-  LEFT JOIN gabby.people.student_password_override AS spo ON (
+  LEFT JOIN people.student_password_override AS spo ON (
     au.student_number = spo.student_number
   )

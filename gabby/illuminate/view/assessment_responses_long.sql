@@ -26,8 +26,8 @@ WITH
           sa.student_assessment_id DESC
       ) AS rn
     FROM
-      gabby.illuminate_dna_assessments.student_assessment_scaffold_current_static AS a
-      LEFT JOIN gabby.illuminate_dna_assessments.students_assessments AS sa ON (
+      illuminate_dna_assessments.student_assessment_scaffold_current_static AS a
+      LEFT JOIN illuminate_dna_assessments.students_assessments AS sa ON (
         a.student_id = sa.student_id
         AND a.assessment_id = sa.assessment_id
       )
@@ -57,7 +57,7 @@ SELECT
   NULL AS domain_description
 FROM
   asmts AS a
-  LEFT JOIN gabby.illuminate_dna_assessments.agg_student_responses AS asr ON (
+  LEFT JOIN illuminate_dna_assessments.agg_student_responses AS asr ON (
     a.student_assessment_id = asr.student_assessment_id
     AND asr.points_possible > 0
   )
@@ -95,14 +95,14 @@ FROM
     a.student_assessment_id = asrs.student_assessment_id
     AND asrs.points_possible > 0
   )
-  INNER JOIN gabby.illuminate_dna_assessments.assessment_standards AS astd ON (
+  INNER JOIN illuminate_dna_assessments.assessment_standards AS astd ON (
     asrs.assessment_id = astd.assessment_id
     AND asrs.standard_id = astd.standard_id
   )
-  INNER JOIN gabby.illuminate_standards.standards AS std ON (
+  INNER JOIN illuminate_standards.standards AS std ON (
     asrs.standard_id = std.standard_id
   )
-  LEFT JOIN gabby.illuminate_standards.standards_domain_static AS dom ON (
+  LEFT JOIN illuminate_standards.standards_domain_static AS dom ON (
     asrs.standard_id = dom.standard_id
     AND dom.domain_level = 1
     AND dom.domain_label NOT IN ('', 'Standard')
@@ -135,15 +135,15 @@ SELECT
   NULL AS domain_description
 FROM
   asmts AS a
-  INNER JOIN gabby.illuminate_dna_assessments.agg_student_responses_group AS asrg ON (
+  INNER JOIN illuminate_dna_assessments.agg_student_responses_group AS asrg ON (
     a.student_assessment_id = asrg.student_assessment_id
     AND asrg.points_possible > 0
   )
-  INNER JOIN gabby.illuminate_dna_assessments.assessments_reporting_groups AS arg ON (
+  INNER JOIN illuminate_dna_assessments.assessments_reporting_groups AS arg ON (
     asrg.assessment_id = arg.assessment_id
     AND asrg.reporting_group_id = arg.reporting_group_id
   )
-  INNER JOIN gabby.illuminate_dna_assessments.reporting_groups AS rg ON (
+  INNER JOIN illuminate_dna_assessments.reporting_groups AS rg ON (
     asrg.reporting_group_id = rg.reporting_group_id
   )
 WHERE

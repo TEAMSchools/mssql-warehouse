@@ -18,6 +18,6 @@ SELECT
   community_application_last_update_date,
   brand_org_field_value
 FROM
-  gabby.smartrecruiters.report_prospects
+  smartrecruiters.report_prospects
 WHERE
   community_name LIKE 'New Jami%'

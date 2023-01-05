@@ -19,7 +19,7 @@ FROM
       variable,
       AVG(is_agree) AS pct_agree
     FROM
-      gabby.tntp.insight_survey_detail
+      tntp.insight_survey_detail
     WHERE
       survey_type = 'Teacher'
       AND is_ici = 1

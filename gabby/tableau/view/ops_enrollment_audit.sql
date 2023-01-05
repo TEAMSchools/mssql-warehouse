@@ -18,15 +18,15 @@ WITH
           rv.[timestamp] DESC
       ) AS rn
     FROM
-      gabby.powerschool.u_def_ext_students AS x
-      INNER JOIN gabby.powerschool.students AS s ON (
+      powerschool.u_def_ext_students AS x
+      INNER JOIN powerschool.students AS s ON (
         x.studentsdcid = s.dcid
         AND x.[db_name] = s.[db_name]
         AND s.enroll_status = 0
       )
-      LEFT JOIN gabby.enrollment.residency_verification AS rv ON (
+      LEFT JOIN enrollment.residency_verification AS rv ON (
         s.student_number = rv.id
-        AND rv.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+        AND rv.academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
         AND rv._fivetran_deleted = 0
       )
   ),
@@ -154,19 +154,19 @@ WITH
             ) THEN ISNULL(rv.residency_proof_3, 'Missing')
           END AS residency_proof_3,
           ISNULL(rv.birth_certificate_proof, 'N') AS birth_certificate_proof,
-          gabby.utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year
+          utilities.GLOBAL_ACADEMIC_YEAR () AS academic_year
         FROM
-          gabby.powerschool.students AS s
-          LEFT JOIN gabby.powerschool.cohort_identifiers_static AS co ON (
+          powerschool.students AS s
+          LEFT JOIN powerschool.cohort_identifiers_static AS co ON (
             s.student_number = co.student_number
             AND s.[db_name] = co.[db_name]
             AND co.rn_undergrad = 1
           )
-          LEFT JOIN gabby.powerschool.u_studentsuserfields AS suf ON (
+          LEFT JOIN powerschool.u_studentsuserfields AS suf ON (
             s.dcid = suf.studentsdcid
             AND s.[db_name] = suf.[db_name]
           )
-          LEFT JOIN gabby.powerschool.u_def_ext_students AS uxs ON (
+          LEFT JOIN powerschool.u_def_ext_students AS uxs ON (
             s.dcid = uxs.studentsdcid
             AND s.[db_name] = uxs.[db_name]
           )

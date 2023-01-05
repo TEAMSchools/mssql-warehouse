@@ -31,4 +31,4 @@ SELECT
     '$.options_list'
   ) AS options_list
 FROM
-  gabby.surveygizmo.survey_response_clean_current_static
+  surveygizmo.survey_response_clean_current_static

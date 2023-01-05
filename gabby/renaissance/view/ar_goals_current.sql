@@ -27,8 +27,8 @@ WITH
           dts.time_per_name AS reporting_term,
           dts.alt_name AS term_name
         FROM
-          gabby.powerschool.cohort_identifiers_static AS co
-          INNER JOIN gabby.reporting.reporting_terms AS dts ON (
+          powerschool.cohort_identifiers_static AS co
+          INNER JOIN reporting.reporting_terms AS dts ON (
             co.schoolid = dts.schoolid
             AND co.academic_year = dts.academic_year
             AND dts.identifier = 'AR'
@@ -36,7 +36,7 @@ WITH
             AND dts._fivetran_deleted = 0
           )
         WHERE
-          co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+          co.academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
           AND (
             co.school_level = 'MS'
             OR (
@@ -61,7 +61,7 @@ WITH
       CAST(words_goal AS INT) AS words_goal,
       UPPER(REPLACE(term_name, '_', '')) AS term_name
     FROM
-      gabby.renaissance.ar_default_goals UNPIVOT (
+      renaissance.ar_default_goals UNPIVOT (
         words_goal FOR term_name IN (q_1, q_2, q_3, q_4, y_1)
       ) AS u
   ),
@@ -111,7 +111,7 @@ WITH
             AND r.grade_level = df2.grade_level
             AND r.term_name = df2.term_name
           )
-          LEFT JOIN gabby.renaissance.ar_individualized_goals_long_static AS g ON (
+          LEFT JOIN renaissance.ar_individualized_goals_long_static AS g ON (
             r.student_number = g.student_number
             AND r.reporting_term = g.reporting_term
           )

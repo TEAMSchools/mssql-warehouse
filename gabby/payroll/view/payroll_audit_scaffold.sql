@@ -22,12 +22,12 @@ WITH
         SUBSTRING(_file, 19, 3),
         file_nbr
       ) AS position_id,
-      gabby.dbo.GROUP_CONCAT (DISTINCT fli_code) AS fli_code,
-      gabby.dbo.GROUP_CONCAT (DISTINCT rt) AS rt,
-      gabby.dbo.GROUP_CONCAT (DISTINCT state_cd_1) AS state_cd_1,
-      gabby.dbo.GROUP_CONCAT (DISTINCT state_cd_2) AS state_cd_2,
-      gabby.dbo.GROUP_CONCAT (DISTINCT sui_sdi_code) AS sui_sdi_code,
-      gabby.dbo.GROUP_CONCAT (DISTINCT void_ind) AS void_ind,
+      dbo.GROUP_CONCAT (DISTINCT fli_code) AS fli_code,
+      dbo.GROUP_CONCAT (DISTINCT rt) AS rt,
+      dbo.GROUP_CONCAT (DISTINCT state_cd_1) AS state_cd_1,
+      dbo.GROUP_CONCAT (DISTINCT state_cd_2) AS state_cd_2,
+      dbo.GROUP_CONCAT (DISTINCT sui_sdi_code) AS sui_sdi_code,
+      dbo.GROUP_CONCAT (DISTINCT void_ind) AS void_ind,
       SUM(ded_cd_3) AS ded_cd_3,
       SUM(ded_cd_4) AS ded_cd_4,
       SUM(ded_cd_403) AS ded_cd_403,
@@ -150,7 +150,7 @@ WITH
         COALESCE(ded_cd_ck_1, 0) + COALESCE(ded_cd_ck_2, 0) + COALESCE(ded_cd_ck_3, 0) + COALESCE(ded_cd_ck_4, 0) + COALESCE(ded_cd_sv_1, 0) + COALESCE(ded_cd_sv_2, 0) + COALESCE(ded_cd_sv_3, 0) + COALESCE(ded_cd_sv_4, 0) + COALESCE(net_pay, 0) -- noqa: L016
       ) AS take_home_pay
     FROM
-      gabby.adp.payroll_register
+      adp.payroll_register
     GROUP BY
       _file,
       file_nbr,
@@ -471,16 +471,16 @@ SELECT
   r.[status] AS status_curr
 FROM
   payroll_unpivot AS u
-  LEFT JOIN gabby.payroll.register_code_lookup AS rcl ON (
+  LEFT JOIN payroll.register_code_lookup AS rcl ON (
     u.company_code = rcl.company_code
     AND u.code = rcl.field_name
   )
-  INNER JOIN gabby.people.employment_history_static AS eh ON (
+  INNER JOIN people.employment_history_static AS eh ON (
     u.position_id = eh.position_id
     AND (
       u.payroll_date BETWEEN eh.effective_start_date AND eh.effective_end_date
     )
   )
-  INNER JOIN gabby.people.staff_crosswalk_static AS r ON (
+  INNER JOIN people.staff_crosswalk_static AS r ON (
     eh.employee_number = r.df_employee_number
   )

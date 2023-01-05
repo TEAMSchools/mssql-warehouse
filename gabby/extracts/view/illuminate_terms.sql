@@ -18,8 +18,8 @@ SELECT
   ) AS [08 Academic Year],
   t.dcid AS [09 Local Term ID]
 FROM
-  gabby.powerschool.terms AS t
-  INNER JOIN gabby.powerschool.schools AS s ON (
+  powerschool.terms AS t
+  INNER JOIN powerschool.schools AS s ON (
     t.schoolid = s.school_number
     AND t.[db_name] = s.[db_name]
     AND s.state_excludefromreporting = 0

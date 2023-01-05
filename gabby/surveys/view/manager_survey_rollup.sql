@@ -19,7 +19,7 @@ SELECT
   AVG(answer_value) AS avg_response_value,
   NULL AS avg_response_value_location
 FROM
-  gabby.surveys.manager_survey_detail
+  surveys.manager_survey_detail
 WHERE
   is_open_ended = 'N'
 GROUP BY

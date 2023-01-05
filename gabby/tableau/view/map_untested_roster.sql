@@ -27,8 +27,8 @@ WITH
       terms.start_date AS term_start_date,
       subjects.measurement_scale
     FROM
-      gabby.powerschool.cohort_identifiers_static AS co
-      INNER JOIN gabby.reporting.reporting_terms AS terms ON (
+      powerschool.cohort_identifiers_static AS co
+      INNER JOIN reporting.reporting_terms AS terms ON (
         co.academic_year = terms.academic_year
         AND terms.identifier = 'MAP'
         AND terms.start_date <= CURRENT_TIMESTAMP
@@ -39,7 +39,7 @@ WITH
       co.rn_year = 1
       AND co.grade_level != 99
       AND co.enroll_status = 0
-      AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+      AND co.academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
   )
 SELECT
   student_number,
@@ -118,13 +118,13 @@ FROM
       ) AS n_tests
     FROM
       scaffold AS r
-      LEFT JOIN gabby.nwea.assessment_result_identifiers AS map ON (
+      LEFT JOIN nwea.assessment_result_identifiers AS map ON (
         r.student_number = map.student_id
         AND r.academic_year = map.academic_year
         AND r.measurement_scale = map.measurement_scale
         AND r.term_name = map.term
       )
-      LEFT JOIN gabby.nwea.best_baseline AS base ON (
+      LEFT JOIN nwea.best_baseline AS base ON (
         r.student_number = base.student_number
         AND r.academic_year = base.academic_year
         AND r.measurement_scale = base.measurementscale

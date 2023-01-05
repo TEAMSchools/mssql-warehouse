@@ -8,4 +8,4 @@ SELECT
   application_history,
   certificate_history
 FROM
-  gabby.njdoe.certification_check
+  njdoe.certification_check

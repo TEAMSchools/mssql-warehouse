@@ -34,7 +34,7 @@ WITH
           END AS read_lvl,
           3273 AS testid
         FROM
-          gabby.lit.illuminate_test_events
+          lit.illuminate_test_events
         UNION ALL
         SELECT
           unique_id,
@@ -51,7 +51,7 @@ WITH
           text_level AS read_lvl,
           testid
         FROM
-          gabby.lit.fpodms_test_events
+          lit.fpodms_test_events
       ) AS sub UNPIVOT (
         score FOR field IN (
           fp_wpmrate,
@@ -79,7 +79,7 @@ WITH
       END AS read_lvl,
       CAST(lvl_num AS INT) AS lvl_num
     FROM
-      gabby.lit.powerschool_component_scores_archive
+      lit.powerschool_component_scores_archive
     UNION ALL
     SELECT
       unique_id,
@@ -91,7 +91,7 @@ WITH
       read_lvl,
       lvl_num
     FROM
-      gabby.steptool.component_scores_static
+      steptool.component_scores_static
     UNION ALL
     SELECT
       unique_id,
@@ -115,7 +115,7 @@ WITH
       CAST(strand AS VARCHAR(125)) AS strand,
       CAST(score AS INT) AS score
     FROM
-      gabby.lit.component_proficiency_targets
+      lit.component_proficiency_targets
   )
 SELECT
   sub.unique_id,

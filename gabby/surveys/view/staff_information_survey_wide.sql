@@ -33,9 +33,9 @@ FROM
         WHEN question_shortname LIKE 'teacher_prep%' THEN 'teacher_prep'
         ELSE question_shortname
       END AS question_shortname,
-      gabby.dbo.GROUP_CONCAT (answer) AS answer
+      dbo.GROUP_CONCAT (answer) AS answer
     FROM
-      gabby.surveys.staff_information_survey_detail
+      surveys.staff_information_survey_detail
     WHERE
       rn_cur = 1
     GROUP BY

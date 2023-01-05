@@ -35,7 +35,7 @@ FROM
       CAST(
         CONCAT(
           'UC',
-          gabby.utilities.DATE_TO_SY (DATE),
+          utilities.DATE_TO_SY (DATE),
           [_line]
         ) AS VARCHAR(125)
       ) AS unique_id,
@@ -677,7 +677,7 @@ FROM
         written_comprehension_inferential_9_ AS VARCHAR(25)
       ) AS written_comprehension_inferential_9_
     FROM
-      gabby.steptool.all_steps
+      steptool.all_steps
     WHERE
       student_id IS NOT NULL
   ) AS sub UNPIVOT (

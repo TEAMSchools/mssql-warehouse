@@ -54,9 +54,9 @@ WITH
           exitdate,
           exitcode,
           [db_name],
-          gabby.utilities.DATE_TO_SY (entrydate) AS academic_year
+          utilities.DATE_TO_SY (entrydate) AS academic_year
         FROM
-          gabby.powerschool.students
+          powerschool.students
         UNION ALL
         SELECT
           studentid,
@@ -66,9 +66,9 @@ WITH
           exitdate,
           exitcode,
           [db_name],
-          gabby.utilities.DATE_TO_SY (entrydate) AS academic_year
+          utilities.DATE_TO_SY (entrydate) AS academic_year
         FROM
-          gabby.powerschool.reenrollments
+          powerschool.reenrollments
       ) AS sub
   )
 SELECT
@@ -86,7 +86,7 @@ SELECT
   t.prev_exitcode,
   'promoted next school - no show' AS audit_type
 FROM
-  gabby.powerschool.students AS s
+  powerschool.students AS s
   INNER JOIN all_enrollments AS t ON (
     s.id = t.studentid
     AND s.[db_name] = t.[db_name]
@@ -118,7 +118,7 @@ SELECT
     WHEN t.next_gradelevel IS NOT NULL THEN 'graduated - re-enrolled'
   END AS audit_type
 FROM
-  gabby.powerschool.students AS s
+  powerschool.students AS s
   INNER JOIN all_enrollments AS t ON (
     s.id = t.studentid
     AND s.[db_name] = t.[db_name]
@@ -142,7 +142,7 @@ SELECT
   t.prev_exitcode,
   'no show - merge with previous record' AS audit_type
 FROM
-  gabby.powerschool.students AS s
+  powerschool.students AS s
   INNER JOIN all_enrollments AS t ON (
     s.id = t.studentid
     AND s.[db_name] = t.[db_name]

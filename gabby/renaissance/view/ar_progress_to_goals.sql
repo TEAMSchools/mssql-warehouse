@@ -137,8 +137,8 @@ WITH
             ) THEN arsp.i_questions_presented
           END AS questions_presented_nf
         FROM
-          gabby.powerschool.cohort_identifiers_static AS co
-          INNER JOIN gabby.reporting.reporting_terms AS rt ON (
+          powerschool.cohort_identifiers_static AS co
+          INNER JOIN reporting.reporting_terms AS rt ON (
             co.academic_year = rt.academic_year
             AND co.schoolid = rt.schoolid
             AND rt.identifier = 'AR'
@@ -246,7 +246,7 @@ SELECT
   END AS words_needed
 FROM
   progress_rollup AS pr
-  LEFT OUTER JOIN gabby.renaissance.ar_goals AS goals ON (
+  LEFT OUTER JOIN renaissance.ar_goals AS goals ON (
     pr.student_number = goals.student_number
     AND pr.academic_year = goals.academic_year
     AND pr.reporting_term = goals.reporting_term

@@ -12,8 +12,8 @@ SELECT
   student_web_id + '@teamstudents.org' AS student_email,
   region
 FROM
-  gabby.powerschool.cohort_identifiers_static
+  powerschool.cohort_identifiers_static
 WHERE
-  academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+  academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
   AND rn_year = 1
   AND enroll_status = 0

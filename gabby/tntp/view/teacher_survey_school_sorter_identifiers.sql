@@ -124,7 +124,7 @@ FROM
       field,
       [value]
     FROM
-      gabby.tntp.teacher_survey_school_sorter
+      tntp.teacher_survey_school_sorter
     UNION ALL
     SELECT
       school,
@@ -149,5 +149,5 @@ FROM
           field
       ) AS [value]
     FROM
-      gabby.tntp.teacher_survey_school_sorter
+      tntp.teacher_survey_school_sorter
   ) AS sub

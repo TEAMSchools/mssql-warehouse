@@ -24,10 +24,10 @@ SELECT
     c.course_name,
     ' (' + c.course_number + ') - ',
     sec.section_number + ' - ',
-    gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+    utilities.GLOBAL_ACADEMIC_YEAR (),
     '-',
     RIGHT(
-      gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+      utilities.GLOBAL_ACADEMIC_YEAR (),
       2
     ) + 1
   ) AS class_name

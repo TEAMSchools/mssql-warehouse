@@ -79,7 +79,7 @@ WITH
         END
       ) AS is_accepted_eaed_4yr
     FROM
-      gabby.alumni.application_identifiers
+      alumni.application_identifiers
     GROUP BY
       sf_contact_id
   )
@@ -225,13 +225,13 @@ SELECT
   ISNULL(ap.is_submitted_4yr, 0) AS is_submitted_4yr,
   ISNULL(ap.is_submitted_2yr, 0) AS is_submitted_2yr,
   ISNULL(ap.is_submitted_cte, 0) AS is_submitted_cte,
-  gabby.utilities.GLOBAL_ACADEMIC_YEAR () AS current_academic_year
+  utilities.GLOBAL_ACADEMIC_YEAR () AS current_academic_year
 FROM
-  gabby.alumni.ktc_roster AS c
-  LEFT JOIN gabby.alumni.enrollment_identifiers AS e ON (c.sf_contact_id = e.student_c)
-  LEFT JOIN gabby.alumni.contact_note_rollup AS cn ON (
+  alumni.ktc_roster AS c
+  LEFT JOIN alumni.enrollment_identifiers AS e ON (c.sf_contact_id = e.student_c)
+  LEFT JOIN alumni.contact_note_rollup AS cn ON (
     c.sf_contact_id = cn.contact_id
-    AND cn.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+    AND cn.academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
   )
   LEFT JOIN app_rollup AS ap ON (
     c.sf_contact_id = ap.sf_contact_id

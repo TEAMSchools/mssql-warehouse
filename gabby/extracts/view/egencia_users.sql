@@ -48,8 +48,8 @@ FROM
         scw.original_hire_date
       ) AS hire_date
     FROM
-      gabby.people.staff_roster AS scw
-      INNER JOIN gabby.adsi.user_attributes_static AS ad ON (
+      people.staff_roster AS scw
+      INNER JOIN adsi.user_attributes_static AS ad ON (
         scw.employee_number = ad.employeenumber
         AND ISNUMERIC(ad.employeenumber) = 1
       )
@@ -62,22 +62,22 @@ FROM
         scw.termination_date,
         CURRENT_TIMESTAMP
       ) >= DATEFROMPARTS(
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+        utilities.GLOBAL_ACADEMIC_YEAR (),
         7,
         1
       )
   ) AS sub
-  LEFT JOIN gabby.egencia.traveler_groups AS tg ON (
+  LEFT JOIN egencia.traveler_groups AS tg ON (
     sub.[location] = tg.[location]
     AND sub.home_department = tg.home_department
     AND sub.job_title = tg.job_title
   )
-  LEFT JOIN gabby.egencia.traveler_groups AS tg2 ON (
+  LEFT JOIN egencia.traveler_groups AS tg2 ON (
     sub.[location] = tg2.[location]
     AND sub.home_department = tg2.home_department
     AND tg2.job_title = 'Default'
   )
-  LEFT JOIN gabby.egencia.traveler_groups AS tg3 ON (
+  LEFT JOIN egencia.traveler_groups AS tg3 ON (
     sub.[location] = tg3.[location]
     AND tg3.home_department = 'Default'
     AND tg3.job_title = 'Default'

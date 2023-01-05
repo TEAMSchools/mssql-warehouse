@@ -87,7 +87,7 @@ WITH
           CAST(rr_prof AS VARCHAR) AS rr_prof,
           CAST(devsp_prof AS VARCHAR) AS devsp_prof
         FROM
-          gabby.lit.powerschool_readingscores_archive
+          lit.powerschool_readingscores_archive
       ) AS sub UNPIVOT (
         score FOR field IN (
           name_ass,
@@ -162,7 +162,7 @@ SELECT
   END AS lvl_num
 FROM
   ps_scores_long AS rs
-  LEFT OUTER JOIN gabby.lit.gleq ON (
+  LEFT OUTER JOIN lit.gleq ON (
     rs.testid = gleq.testid
     AND rs.read_lvl = gleq.read_lvl
   )

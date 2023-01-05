@@ -14,7 +14,7 @@ SELECT
   cur.options_list,
   cur.shown
 FROM
-  gabby.surveygizmo.survey_response_data_current_static AS cur
+  surveygizmo.survey_response_data_current_static AS cur
 UNION ALL
 SELECT
   rcv.survey_response_id,
@@ -30,4 +30,4 @@ SELECT
   rcv.options_list,
   rcv.shown
 FROM
-  gabby.surveygizmo.survey_response_data_archive AS rcv
+  surveygizmo.survey_response_data_archive AS rcv

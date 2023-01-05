@@ -22,14 +22,14 @@ SELECT
   enr.teacher_name,
   hr.teacher_name AS homeroom_teacher
 FROM
-  gabby.powerschool.cohort_identifiers_static AS co
-  INNER JOIN gabby.renaissance.ar_studentpractice_identifiers_static AS ar ON (
+  powerschool.cohort_identifiers_static AS co
+  INNER JOIN renaissance.ar_studentpractice_identifiers_static AS ar ON (
     co.student_number = ar.student_number
     AND co.academic_year = ar.academic_year
     AND ar.ti_passed = 1
     AND ar.rn_quiz > 1
   )
-  LEFT JOIN gabby.reporting.reporting_terms AS dts ON (
+  LEFT JOIN reporting.reporting_terms AS dts ON (
     co.schoolid = dts.schoolid
     AND (
       ar.dt_taken BETWEEN dts.[start_date] AND dts.end_date
@@ -38,7 +38,7 @@ FROM
     AND dts.time_per_name != 'ARY'
     AND dts._fivetran_deleted = 0
   )
-  LEFT JOIN gabby.powerschool.course_enrollments_current_static AS enr ON (
+  LEFT JOIN powerschool.course_enrollments_current_static AS enr ON (
     co.student_number = enr.student_number
     AND co.academic_year = enr.academic_year
     AND co.[db_name] = enr.[db_name]
@@ -46,7 +46,7 @@ FROM
     AND enr.section_enroll_status = 0
     AND enr.rn_subject = 1
   )
-  LEFT JOIN gabby.powerschool.course_enrollments_current_static AS hr ON (
+  LEFT JOIN powerschool.course_enrollments_current_static AS hr ON (
     co.student_number = hr.student_number
     AND co.academic_year = hr.academic_year
     AND co.schoolid = hr.schoolid
@@ -56,6 +56,6 @@ FROM
     AND hr.rn_course_yr = 1
   )
 WHERE
-  co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+  co.academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
   AND co.grade_level != 99
   AND co.enroll_status = 0

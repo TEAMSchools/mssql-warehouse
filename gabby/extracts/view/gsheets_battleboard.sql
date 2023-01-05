@@ -6,7 +6,7 @@ WITH
       employee_number,
       MAX(student_grade_level) AS student_grade_level
     FROM
-      gabby.pm.teacher_grade_levels
+      pm.teacher_grade_levels
     GROUP BY
       employee_number
   ),
@@ -26,9 +26,9 @@ WITH
           pm_term,
           metric_value
         FROM
-          gabby.pm.teacher_goals_lockbox_wide
+          pm.teacher_goals_lockbox_wide
         WHERE
-          academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
+          academic_year >= utilities.GLOBAL_ACADEMIC_YEAR () - 1
       ) AS sub PIVOT (
         MAX(metric_value) FOR pm_term IN ([PM1], [PM2], [PM3], [PM4])
       ) AS p
@@ -60,22 +60,22 @@ SELECT
     ELSE c.primary_on_site_department
   END AS department_grade
 FROM
-  gabby.people.staff_crosswalk_static AS c
+  people.staff_crosswalk_static AS c
   LEFT JOIN etr_pivot AS e ON (
     c.df_employee_number = e.df_employee_number
-    AND e.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+    AND e.academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
   )
   LEFT JOIN etr_pivot AS p ON (
     c.df_employee_number = p.df_employee_number
-    AND p.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
+    AND p.academic_year = utilities.GLOBAL_ACADEMIC_YEAR () - 1
   )
   LEFT JOIN elementary_grade AS g ON (
     c.df_employee_number = g.employee_number
   )
-  LEFT JOIN gabby.surveys.intent_to_return_survey_detail AS i ON (
+  LEFT JOIN surveys.intent_to_return_survey_detail AS i ON (
     c.df_employee_number = i.respondent_df_employee_number
     AND i.question_shortname = 'intent_to_return'
-    AND i.campaign_academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+    AND i.campaign_academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
   )
 WHERE
   c.[status] NOT IN ('TERMINATED')

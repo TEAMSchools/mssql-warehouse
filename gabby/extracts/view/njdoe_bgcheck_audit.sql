@@ -43,8 +43,8 @@ FROM
             ELSE 0
           END AS is_approved
         FROM
-          gabby.people.staff_roster AS sr
-          LEFT JOIN gabby.njdoe.background_check_approval_history AS bg ON (
+          people.staff_roster AS sr
+          LEFT JOIN njdoe.background_check_approval_history AS bg ON (
             sr.employee_number = bg.employee_number
           )
         WHERE

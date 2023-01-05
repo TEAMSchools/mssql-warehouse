@@ -8,6 +8,6 @@ SELECT
   progress_typical,
   progress_stretch
 FROM
-  gabby.iready.growth_metrics
+  iready.growth_metrics
 WHERE
-  academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
+  academic_year >= utilities.GLOBAL_ACADEMIC_YEAR () - 1

@@ -187,18 +187,18 @@ SELECT
   --   ) AS peer_weight
   --*/
 FROM
-  gabby.surveygizmo.survey_detail AS d
-  LEFT JOIN gabby.people.staff_crosswalk_static AS s ON (
+  surveygizmo.survey_detail AS d
+  LEFT JOIN people.staff_crosswalk_static AS s ON (
     d.subject_df_employee_number = s.df_employee_number
   )
-  LEFT JOIN gabby.people.staff_crosswalk_static AS r ON (
+  LEFT JOIN people.staff_crosswalk_static AS r ON (
     d.respondent_df_employee_number = r.df_employee_number
   )
 WHERE
   d.survey_title = 'Self and Others'
   AND d.rn_respondent_subject = 1
   AND d.campaign_academic_year >= (
-    gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
+    utilities.GLOBAL_ACADEMIC_YEAR () - 1
   )
 UNION ALL
 SELECT
@@ -240,8 +240,8 @@ SELECT
   a.response_weight,
   a.response_value_weighted AS answer_value_weighted
 FROM
-  gabby.surveys.self_and_others_survey_detail_archive AS a
-  LEFT JOIN gabby.people.employment_history_static AS w ON (
+  surveys.self_and_others_survey_detail_archive AS a
+  LEFT JOIN people.employment_history_static AS w ON (
     a.subject_employee_number = w.employee_number
     AND (
       a.date_submitted BETWEEN w.effective_start_date AND w.effective_end_date
@@ -249,9 +249,9 @@ FROM
     AND w.primary_position = 'Yes'
     AND w.position_status != 'Terminated'
   )
-  LEFT JOIN gabby.people.staff_crosswalk_static AS s ON (
+  LEFT JOIN people.staff_crosswalk_static AS s ON (
     a.subject_employee_number = s.df_employee_number
   )
-  LEFT JOIN gabby.people.staff_crosswalk_static AS r ON (
+  LEFT JOIN people.staff_crosswalk_static AS r ON (
     a.respondent_email_address = r.samaccountname
   )

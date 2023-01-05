@@ -14,12 +14,12 @@ WITH
       u.dcid AS users_dcid,
       u.homeschoolid
     FROM
-      gabby.people.staff_crosswalk_static AS scw
-      LEFT JOIN gabby.people.school_crosswalk AS sc ON (
+      people.staff_crosswalk_static AS scw
+      LEFT JOIN people.school_crosswalk AS sc ON (
         scw.primary_site = sc.site_name
         AND sc._fivetran_deleted = 0
       )
-      LEFT JOIN gabby.powerschool.users AS u ON (
+      LEFT JOIN powerschool.users AS u ON (
         scw.ps_teachernumber = u.teachernumber
         AND (
           CASE

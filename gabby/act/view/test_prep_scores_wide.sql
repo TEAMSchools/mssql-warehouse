@@ -34,7 +34,7 @@ FROM
       subject_area,
       scale_score
     FROM
-      gabby.act.test_prep_scores
+      act.test_prep_scores
     WHERE
       rn_dupe = 1
   ) AS sub PIVOT (

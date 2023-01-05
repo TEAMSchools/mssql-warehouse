@@ -37,7 +37,7 @@ SELECT
       )
     )
   ) AS reporting_term_code,
-  gabby.utilities.DATE_TO_SY (
+  utilities.DATE_TO_SY (
     CAST(
       CASE
         WHEN link_open_date = '0000-00-00 00:00:00' THEN NULL
@@ -46,4 +46,4 @@ SELECT
     )
   ) AS academic_year
 FROM
-  gabby.surveygizmo.survey_campaign
+  surveygizmo.survey_campaign

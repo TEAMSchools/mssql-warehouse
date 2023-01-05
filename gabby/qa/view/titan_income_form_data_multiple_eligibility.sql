@@ -3,7 +3,7 @@ CREATE OR ALTER VIEW
 SELECT
   ti.student_identifier,
   ti.date_signed,
-  gabby.dbo.GROUP_CONCAT (ti.reference_code) AS reference_codes,
+  dbo.GROUP_CONCAT (ti.reference_code) AS reference_codes,
   COUNT(DISTINCT ti.eligibility_result) AS n,
   ROW_NUMBER() OVER (
     PARTITION BY
@@ -16,8 +16,8 @@ SELECT
   s.grade_level,
   s.enroll_status
 FROM
-  gabby.titan.income_form_data_clean AS ti
-  INNER JOIN gabby.powerschool.students AS s ON (
+  titan.income_form_data_clean AS ti
+  INNER JOIN powerschool.students AS s ON (
     ti.student_identifier = s.student_number
     AND ti.[db_name] = s.[db_name]
   )

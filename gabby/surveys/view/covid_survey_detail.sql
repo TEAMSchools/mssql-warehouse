@@ -13,12 +13,12 @@ WITH
           question_shortname,
           answer
         FROM
-          gabby.surveygizmo.survey_detail
+          surveygizmo.survey_detail
         WHERE
           survey_id = 5560557
           AND rn_respondent_subject = 1
           AND campaign_academic_year >= (
-            gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
+            utilities.GLOBAL_ACADEMIC_YEAR () - 1
           )
       ) AS sub PIVOT (
         MAX(answer) FOR question_shortname IN (covid_living, gender)
@@ -60,7 +60,7 @@ WITH
         ELSE 0
       END AS is_other
     FROM
-      gabby.surveygizmo.survey_response_data
+      surveygizmo.survey_response_data
     WHERE
       survey_id = 5560557
       AND question_id = 325
@@ -109,8 +109,8 @@ SELECT
     ELSE 0
   END AS is_multiracial
 FROM
-  gabby.surveygizmo.survey_detail AS d
-  LEFT JOIN gabby.dayforce.employee_work_assignment AS w ON (
+  surveygizmo.survey_detail AS d
+  LEFT JOIN dayforce.employee_work_assignment AS w ON (
     d.respondent_df_employee_number = w.employee_reference_code
     AND (
       d.date_submitted BETWEEN w.work_assignment_effective_start AND COALESCE(
@@ -134,5 +134,5 @@ WHERE
   d.survey_id = 5560557
   AND d.rn_respondent_subject = 1
   AND d.campaign_academic_year >= (
-    gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
+    utilities.GLOBAL_ACADEMIC_YEAR () - 1
   )

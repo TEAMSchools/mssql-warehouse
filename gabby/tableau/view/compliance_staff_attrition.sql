@@ -28,7 +28,7 @@ WITH
               status_effective_date
           ) AS prev_end_date
         FROM
-          gabby.people.status_history_static
+          people.status_history_static
         WHERE
           position_status = 'Terminated'
       ) AS sub
@@ -65,7 +65,7 @@ WITH
           WHEN MONTH(sub.termination_date) >= 9 THEN YEAR(sub.termination_date)
           WHEN MONTH(sub.termination_date) < 9 THEN YEAR(sub.termination_date) - 1
         END,
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
+        utilities.GLOBAL_ACADEMIC_YEAR () + 1
       ) AS end_academic_year
     FROM
       (
@@ -95,7 +95,7 @@ WITH
             r.termination_reason
           ) AS status_reason
         FROM
-          gabby.people.staff_roster AS r
+          people.staff_roster AS r
           /* final termination record */
           LEFT JOIN term AS t ON (
             r.position_id = t.position_id
@@ -108,10 +108,10 @@ WITH
       n AS academic_year,
       DATEFROMPARTS((n + 1), 4, 30) AS effective_date
     FROM
-      gabby.utilities.row_generator_smallint
+      utilities.row_generator_smallint
     WHERE
       n BETWEEN 2002 AND (
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
+        utilities.GLOBAL_ACADEMIC_YEAR () + 1
       )
   ),
   scaffold AS (
@@ -182,13 +182,13 @@ WITH
             y.academic_year BETWEEN r.start_academic_year AND r.end_academic_year
           )
       ) AS sub
-      LEFT JOIN gabby.people.employment_history_static AS w ON (
+      LEFT JOIN people.employment_history_static AS w ON (
         sub.position_id = w.position_id
         AND (
           sub.effective_date BETWEEN w.effective_start_date AND w.effective_end_date
         )
       )
-      LEFT JOIN gabby.people.school_crosswalk AS scw ON (
+      LEFT JOIN people.school_crosswalk AS scw ON (
         w.[location] = scw.site_name
         AND scw._fivetran_deleted = 0
       )

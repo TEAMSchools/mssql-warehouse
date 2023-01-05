@@ -5,12 +5,12 @@ WITH
     SELECT DISTINCT
       manager_df_employee_number
     FROM
-      gabby.people.staff_crosswalk_static
+      people.staff_crosswalk_static
     UNION
     SELECT
       df_employee_number
     FROM
-      gabby.people.staff_crosswalk_static
+      people.staff_crosswalk_static
     WHERE
       primary_job IN (
         'School Leader',
@@ -22,11 +22,11 @@ WITH
   existing_roles AS (
     SELECT
       sub.[user_id],
-      gabby.dbo.GROUP_CONCAT_S (
+      dbo.GROUP_CONCAT_S (
         DISTINCT '"' + sub.role_id + '"',
         1
       ) AS role_ids,
-      gabby.dbo.GROUP_CONCAT_S (
+      dbo.GROUP_CONCAT_S (
         DISTINCT '"' + sub.role_name + '"',
         1
       ) AS role_names
@@ -37,8 +37,8 @@ WITH
           r._id AS role_id,
           r.[name] AS role_name
         FROM
-          gabby.whetstone.schools_observation_groups_membership AS sogm
-          INNER JOIN gabby.whetstone.roles AS r ON (
+          whetstone.schools_observation_groups_membership AS sogm
+          INNER JOIN whetstone.roles AS r ON (
             sogm.role_category = r.category
             AND r.[name] IN ('Teacher', 'Coach')
           )
@@ -48,7 +48,7 @@ WITH
           role_id,
           role_name
         FROM
-          gabby.whetstone.users_roles
+          whetstone.users_roles
         WHERE
           role_name != 'No Role'
         UNION
@@ -57,11 +57,11 @@ WITH
           r._id AS role_id,
           r.[name] AS role_name
         FROM
-          gabby.people.staff_crosswalk_static AS s
-          INNER JOIN gabby.whetstone.users_clean AS u ON (
+          people.staff_crosswalk_static AS s
+          INNER JOIN whetstone.users_clean AS u ON (
             s.df_employee_number = u.internal_id
           )
-          INNER JOIN gabby.whetstone.roles AS r ON (r.[name] = 'School Admin')
+          INNER JOIN whetstone.roles AS r ON (r.[name] = 'School Admin')
         WHERE
           s.primary_job = 'School Leader'
       ) AS sub
@@ -73,9 +73,9 @@ WITH
       [user_id],
       school_id,
       observation_group_name,
-      gabby.dbo.GROUP_CONCAT_DS (role_name, ';', 1) AS role_names
+      dbo.GROUP_CONCAT_DS (role_name, ';', 1) AS role_names
     FROM
-      gabby.whetstone.schools_observation_groups_membership
+      whetstone.schools_observation_groups_membership
     WHERE
       observation_group_name = 'Teachers'
     GROUP BY
@@ -107,7 +107,7 @@ SELECT
     WHEN (
       er.role_names LIKE '%Admin%'
       AND CAST(CURRENT_TIMESTAMP AS DATE) != DATEFROMPARTS(
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+        utilities.GLOBAL_ACADEMIC_YEAR (),
         8,
         1
       )
@@ -120,7 +120,7 @@ SELECT
     WHEN (
       er.role_names LIKE '%Admin%'
       AND CAST(CURRENT_TIMESTAMP AS DATE) != DATEFROMPARTS(
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+        utilities.GLOBAL_ACADEMIC_YEAR (),
         8,
         1
       )
@@ -132,7 +132,7 @@ SELECT
     CASE
     /*removing last year roles every August*/
       WHEN CAST(CURRENT_TIMESTAMP AS DATE) = DATEFROMPARTS(
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+        utilities.GLOBAL_ACADEMIC_YEAR (),
         8,
         1
       ) THEN '"' + sub.role_name + '"'
@@ -148,7 +148,7 @@ SELECT
     CASE
     /*removing last year roles every August*/
       WHEN CAST(CURRENT_TIMESTAMP AS DATE) = DATEFROMPARTS(
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR (),
+        utilities.GLOBAL_ACADEMIC_YEAR (),
         8,
         1
       ) THEN '"' + r._id + '"'
@@ -252,7 +252,7 @@ FROM
         ELSE 'No Role'
       END AS role_name
     FROM
-      gabby.people.staff_crosswalk_static AS scw
+      people.staff_crosswalk_static AS scw
       LEFT JOIN managers AS m ON (
         scw.df_employee_number = m.manager_df_employee_number
       )
@@ -262,27 +262,27 @@ FROM
         scw.termination_date,
         CURRENT_TIMESTAMP
       ) >= DATEFROMPARTS(
-        gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1,
+        utilities.GLOBAL_ACADEMIC_YEAR () - 1,
         7,
         1
       )
       AND scw.primary_on_site_department != 'Data'
   ) AS sub
-  LEFT JOIN gabby.whetstone.users_clean AS u ON (
+  LEFT JOIN whetstone.users_clean AS u ON (
     sub.user_internal_id = u.internal_id
   )
-  LEFT JOIN gabby.whetstone.users_clean AS um ON (
+  LEFT JOIN whetstone.users_clean AS um ON (
     sub.manager_internal_id = um.internal_id
   )
-  LEFT JOIN gabby.whetstone.schools AS sch ON (sub.school_name = sch.[name])
-  LEFT JOIN gabby.whetstone.grades AS gr ON (
+  LEFT JOIN whetstone.schools AS sch ON (sub.school_name = sch.[name])
+  LEFT JOIN whetstone.grades AS gr ON (
     sub.grade_abbreviation = gr.abbreviation
   )
-  LEFT JOIN gabby.whetstone.courses AS cou ON (
+  LEFT JOIN whetstone.courses AS cou ON (
     sub.course_name = cou.[name]
     AND cou.archived_at IS NULL
   )
-  LEFT JOIN gabby.whetstone.roles AS r ON (sub.role_name = r.[name])
+  LEFT JOIN whetstone.roles AS r ON (sub.role_name = r.[name])
   LEFT JOIN existing_roles AS er ON (u.[user_id] = er.[user_id])
   LEFT JOIN obsv_grp AS og ON (
     u.[user_id] = og.[user_id]

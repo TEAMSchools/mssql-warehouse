@@ -37,13 +37,13 @@ WITH
             MAX(avg_response_value_location) AS NVARCHAR(MAX)
           ) AS avg_response_value_location,
           CAST(
-            gabby.dbo.GROUP_CONCAT_D (
+            dbo.GROUP_CONCAT_D (
               DISTINCT respondent_name,
               CHAR(10)
             ) AS NVARCHAR(MAX)
           ) AS respondent_names,
           CAST(
-            gabby.dbo.GROUP_CONCAT_D (
+            dbo.GROUP_CONCAT_D (
               CASE
                 WHEN open_ended = 'Y' THEN response
               END,
@@ -51,7 +51,7 @@ WITH
             ) AS NVARCHAR(MAX)
           ) AS response_text
         FROM
-          gabby.surveys.manager_survey_detail
+          surveys.manager_survey_detail
         GROUP BY
           academic_year,
           term_name,

@@ -6,7 +6,7 @@ WITH
       employee_number,
       MAX(student_grade_level) AS student_grade_level
     FROM
-      gabby.pm.teacher_grade_levels
+      pm.teacher_grade_levels
     GROUP BY
       employee_number
   )
@@ -99,7 +99,7 @@ SELECT
     ) THEN 'school-based'
   END AS school_based
 FROM
-  gabby.people.staff_crosswalk_static AS s
+  people.staff_crosswalk_static AS s
   LEFT JOIN elementary_grade AS e ON (
     s.df_employee_number = e.employee_number
   )

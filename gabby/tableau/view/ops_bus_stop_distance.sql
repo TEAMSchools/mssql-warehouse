@@ -18,4 +18,4 @@ SELECT
       distance ASC
   ) AS distance_rank_unique
 FROM
-  gabby.ops.bus_stop_distance
+  ops.bus_stop_distance

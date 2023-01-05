@@ -9,7 +9,7 @@ WITH
       SUM(attendancevalue) AS n_attendance,
       SUM(membershipvalue) AS n_membership
     FROM
-      gabby.powerschool.ps_adaadm_daily_ctod
+      powerschool.ps_adaadm_daily_ctod
     WHERE
       membershipvalue = 1
     GROUP BY
@@ -52,7 +52,7 @@ WITH
             WHEN LEFT(schoolid, 1) = '3' THEN 'kippmiami'
           END AS [db_name]
         FROM
-          gabby.finance.enrollment_targets
+          finance.enrollment_targets
         UNION ALL
         /* Newark/Miami SC & OOD students */
         SELECT
@@ -69,7 +69,7 @@ WITH
           NULL AS sped_ratio,
           [db_name]
         FROM
-          gabby.powerschool.cohort_identifiers_static
+          powerschool.cohort_identifiers_static
         WHERE
           (
             is_pathways = 1
@@ -219,8 +219,8 @@ SELECT
   t.lep_only_ratio,
   t.sped_ratio
 FROM
-  gabby.powerschool.cohort_identifiers_static AS co
-  LEFT JOIN gabby.powerschool.calendar_rollup_static AS cal ON (
+  powerschool.cohort_identifiers_static AS co
+  LEFT JOIN powerschool.calendar_rollup_static AS cal ON (
     co.schoolid = cal.schoolid
     AND co.yearid = cal.yearid
     AND co.track = cal.track
@@ -231,10 +231,10 @@ FROM
     AND co.yearid = att_mem.yearid
     AND co.[db_name] = att_mem.[db_name]
   )
-  LEFT JOIN gabby.powerschool.s_nj_stu_x AS nj ON (
+  LEFT JOIN powerschool.s_nj_stu_x AS nj ON (
     co.students_dcid = nj.studentsdcid
     AND co.[db_name] = nj.[db_name]
-    AND co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+    AND co.academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
   )
   LEFT JOIN targets AS t ON (
     co.academic_year = t.academic_year
