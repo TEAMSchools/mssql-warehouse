@@ -35,12 +35,14 @@
 
 ## Formatting Best Practices
 
-- `x BETWEEN y AND z` clauses must be put in **(parenthesis)** for successful parsing
-- User-defined functions will add an extra space in-between the function name and the parenthesis
+- `x BETWEEN y AND z` clauses **MUST** be put in **(parenthesis)** for successful parsing
 - Complex logical statements should be wrapped in **(parenthesis)** for optimal formatting
   - e.g. `CASE WHEN (... AND ...) THEN ...`
-- Wrap `COLLATE` statements in **(parenthesis)** to avoid `sql-formatter` confusion:
+- Wrap `COLLATE` statements in **(parenthesis)** for optimal formatting:
   - e.g. `(tbl.col COLLATE LATIN1_GENERAL_BIN) AS foo,`
+  
+## Known Issues
+- User-defined functions will add an extra space in-between the function name and the parenthesis
 
 ## Troubleshooting Linter Errors
 
