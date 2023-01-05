@@ -22,7 +22,13 @@ SELECT
   co.entrydate,
   co.exitdate,
   rd.[date],
-  dt.alt_name AS term
+  dt.alt_name AS term,
+  CASE
+    WHEN (
+      CAST(rd.[date] AS DATE) BETWEEN co.entrydate AND co.exitdate
+    ) THEN 1
+    ELSE 0
+  END AS is_enrolled
 FROM
   powerschool.cohort_identifiers_static AS co
   INNER JOIN gabby.utilities.reporting_days AS rd ON (

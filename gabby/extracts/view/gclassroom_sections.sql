@@ -32,23 +32,23 @@ SELECT
     ) + 1
   ) AS class_name
 FROM
-  gabby.powerschool.sections AS sec
-  INNER JOIN gabby.powerschool.schools AS sch ON (sec.schoolid = sch.school_number)
-  INNER JOIN gabby.powerschool.courses AS c ON (
+  powerschool.sections AS sec
+  INNER JOIN powerschool.schools AS sch ON (sec.schoolid = sch.school_number)
+  INNER JOIN powerschool.courses AS c ON (
     sec.course_number = c.course_number
     AND sec.[db_name] = c.[db_name]
     AND c.credittype != 'LOG'
   )
-  INNER JOIN gabby.powerschool.teachers_static AS t ON (
+  INNER JOIN powerschool.teachers_static AS t ON (
     sec.teacher = t.id
     AND sec.schoolid = t.schoolid
     AND sec.[db_name] = t.[db_name]
   )
-  INNER JOIN gabby.people.staff_crosswalk_static AS scw ON (
+  INNER JOIN people.staff_crosswalk_static AS scw ON (
     t.teachernumber = scw.ps_teachernumber
   )
 WHERE
   sec.no_of_students > 0
   AND sec.termid >= (
-    gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990
+    utilities.GLOBAL_ACADEMIC_YEAR () - 1990
   ) * 100

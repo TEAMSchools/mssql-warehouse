@@ -62,7 +62,7 @@ WITH
       'pct_gpa_2plus' AS metric_name,
       AVG(gpa_is_2plus) AS metric_value
     FROM
-      gpa_detail AS sub
+      gpa_detail
     GROUP BY
       academic_year,
       schoolid,
@@ -77,7 +77,7 @@ WITH
       'pct_gpa_3plus' AS metric_name,
       AVG(gpa_is_3plus) AS metric_value
     FROM
-      gpa_detail AS sub
+      gpa_detail
     GROUP BY
       academic_year,
       schoolid,
