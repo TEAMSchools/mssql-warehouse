@@ -1,6 +1,6 @@
-# Pull Request 
+# Pull Request
 
-## If approved, this pull request will:
+## If approved, this pull request will
 
 - <feature/fix #1>
 - <feature/fix #2>
