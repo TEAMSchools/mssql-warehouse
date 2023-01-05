@@ -148,7 +148,7 @@ FROM
           )
           LEFT JOIN gabby.assessments.normed_subjects AS sj ON (
             cc.course_number = sj.course_number
-            COLLATE LATIN1_GENERAL_BIN
+            COLLATE SQL_Latin1_General_CP1_CI_AS
           )
         WHERE
           cc.dateenrolled >= DATEFROMPARTS(

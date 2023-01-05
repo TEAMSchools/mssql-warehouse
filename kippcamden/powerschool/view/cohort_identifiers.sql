@@ -52,14 +52,8 @@ SELECT
   sch.abbreviation AS school_abbreviation,
   t.team,
   adv.advisor_name,
-  (
-    adv.advisor_phone
-    COLLATE LATIN1_GENERAL_BIN
-  ) AS advisor_phone,
-  (
-    adv.advisor_email
-    COLLATE LATIN1_GENERAL_BIN
-  ) AS advisor_email,
+  adv.advisor_phone AS advisor_phone,
+  adv.advisor_email AS advisor_email,
   suf.newark_enrollment_number,
   suf.c_504_status,
   saa.student_web_id,
@@ -105,78 +99,52 @@ SELECT
     WHEN sch.high_grade = 8 THEN 'MS'
     WHEN sch.high_grade = 4 THEN 'ES'
   END AS school_level,
-  ISNULL(
-    CASE
-      WHEN DB_NAME() = 'kippmiami' THEN scf.spedlep
-      WHEN DB_NAME() IN ('kippnewark', 'kippcamden') THEN sped.spedlep
-    END,
-    'No IEP'
-  ) AS iep_status,
+  ISNULL(sped.spedlep, 'No IEP') AS iep_status,
+  sped.special_education_code AS specialed_classification,
   CASE
-    WHEN DB_NAME() = 'kippmiami' THEN scf.spedlep
-    WHEN DB_NAME() IN ('kippnewark', 'kippcamden') THEN sped.special_education_code
-  END AS specialed_classification,
-  CASE
-    WHEN (
-      DB_NAME() = 'kippmiami'
-      AND scf.lep_status = 'Y'
-    ) THEN 1
     WHEN nj.lepbegindate IS NULL THEN 0
     WHEN nj.lependdate < co.entrydate THEN 0
     WHEN nj.lepbegindate <= co.exitdate THEN 1
     ELSE 0
   END AS lep_status,
-  (
-    UPPER(
-      CASE
-        WHEN (
-          co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-          AND co.rn_year = 1
-        ) THEN CASE
-          WHEN DB_NAME() = 'kippmiami' THEN (
-            CASE
-              WHEN s.lunchstatus = 'NoD' THEN NULL
-              ELSE s.lunchstatus
-            END
-          )
-          WHEN tp.is_directly_certified = 1 THEN 'F'
-          ELSE ifc.lunch_status
-        END
-        WHEN (
-          co.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
-          AND co.entrydate = s.entrydate
-        ) THEN (
-          CASE
-            WHEN s.lunchstatus = 'NoD' THEN NULL
-            ELSE s.lunchstatus
-          END
-        )
-        ELSE co.lunchstatus
-      END
-    )
-    COLLATE LATIN1_GENERAL_BIN
-  ) AS lunchstatus,
-  (
+  UPPER(
     CASE
       WHEN (
         co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
         AND co.rn_year = 1
-      ) THEN (
-        CASE
-          WHEN DB_NAME() = 'kippmiami' THEN s.lunchstatus
-          WHEN tp.is_directly_certified = 1 THEN 'Direct Certification'
-          WHEN ifc.lunch_app_status IS NULL THEN 'No Application'
-          ELSE ifc.lunch_app_status
-        END
-      )
+      ) THEN CASE
+        WHEN tp.is_directly_certified = 1 THEN 'F'
+        ELSE ifc.lunch_status
+      END
       WHEN (
         co.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
         AND co.entrydate = s.entrydate
-      ) THEN s.lunchstatus
+      ) THEN (
+        CASE
+          WHEN s.lunchstatus = 'NoD' THEN NULL
+          ELSE s.lunchstatus
+        END
+      )
       ELSE co.lunchstatus
     END
-    COLLATE LATIN1_GENERAL_BIN
-  ) AS lunch_app_status
+  ) AS lunchstatus,
+  CASE
+    WHEN (
+      co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+      AND co.rn_year = 1
+    ) THEN (
+      CASE
+        WHEN tp.is_directly_certified = 1 THEN 'Direct Certification'
+        WHEN ifc.lunch_app_status IS NULL THEN 'No Application'
+        ELSE ifc.lunch_app_status
+      END
+    )
+    WHEN (
+      co.academic_year < gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+      AND co.entrydate = s.entrydate
+    ) THEN s.lunchstatus
+    ELSE co.lunchstatus
+  END AS lunch_app_status
 FROM
   powerschool.cohort_static AS co
   INNER JOIN powerschool.students AS s ON (co.studentid = s.id)

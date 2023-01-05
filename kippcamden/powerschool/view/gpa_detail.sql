@@ -41,7 +41,7 @@ WITH
         AND co.academic_year = rt.academic_year
         AND (
           fg.storecode = rt.alt_name
-          COLLATE LATIN1_GENERAL_BIN
+          COLLATE SQL_Latin1_General_CP1_CI_AS
         )
         AND rt.identifier = 'RT'
       )

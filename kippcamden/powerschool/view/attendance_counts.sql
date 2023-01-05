@@ -26,14 +26,8 @@ WITH
             WHEN att.att_code = 'T10' THEN 'T10'
           END AS att_code,
           CAST(dates.academic_year AS INT) AS academic_year,
-          (
-            CAST(dates.time_per_name AS VARCHAR)
-            COLLATE LATIN1_GENERAL_BIN
-          ) AS reporting_term,
-          (
-            CAST(dates.alt_name AS VARCHAR)
-            COLLATE LATIN1_GENERAL_BIN
-          ) AS term_name,
+          CAST(dates.time_per_name AS VARCHAR) AS reporting_term,
+          CAST(dates.alt_name AS VARCHAR) AS term_name,
           dates.start_date,
           dates.end_date,
           dates.is_curterm

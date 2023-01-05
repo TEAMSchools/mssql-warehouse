@@ -244,41 +244,23 @@ WITH
       )
       LEFT JOIN gabby.nwea.percentile_norms AS norms_2008 ON (
         co.grade_level = norms_2008.grade_level
-        AND (
-          sub.measurement_scale = norms_2008.measurementscale_clean
-          COLLATE LATIN1_GENERAL_BIN
-        )
+        AND sub.measurement_scale = norms_2008.measurementscale_clean
         AND sub.test_ritscore = norms_2008.testritscore
-        AND (
-          sub.term = norms_2008.term_clean
-          COLLATE LATIN1_GENERAL_BIN
-        )
+        AND sub.term = norms_2008.term_clean
         AND norms_2008.norms_year = 2008
       )
       LEFT JOIN gabby.nwea.percentile_norms AS norms_2011 ON (
         co.grade_level = norms_2011.grade_level
-        AND (
-          sub.measurement_scale = norms_2011.measurementscale_clean
-          COLLATE LATIN1_GENERAL_BIN
-        )
+        AND sub.measurement_scale = norms_2011.measurementscale_clean
         AND sub.test_ritscore = norms_2011.testritscore
-        AND (
-          sub.term = norms_2011.term_clean
-          COLLATE LATIN1_GENERAL_BIN
-        )
+        AND sub.term = norms_2011.term_clean
         AND norms_2011.norms_year = 2011
       )
       LEFT JOIN gabby.nwea.percentile_norms AS norms_2015 ON (
         co.grade_level = norms_2015.grade_level
-        AND (
-          sub.measurement_scale = norms_2015.measurementscale_clean
-          COLLATE LATIN1_GENERAL_BIN
-        )
+        AND sub.measurement_scale = norms_2015.measurementscale_clean
         AND sub.test_ritscore = norms_2015.testritscore
-        AND (
-          sub.term = norms_2015.term_clean
-          COLLATE LATIN1_GENERAL_BIN
-        )
+        AND sub.term = norms_2015.term_clean
         AND norms_2015.norms_year = 2015
       )
   )

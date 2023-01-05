@@ -110,7 +110,7 @@ WITH
           INNER JOIN gabby.reporting.reporting_terms AS rt ON (
             (
               fg.storecode = rt.alt_name
-              COLLATE LATIN1_GENERAL_BIN
+              COLLATE SQL_Latin1_General_CP1_CI_AS
             )
             AND fg.yearid = rt.yearid
             AND rt.identifier = 'RT'

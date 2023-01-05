@@ -32,13 +32,10 @@ FROM
         ELSE 0
       END AS is_dropped,
       sec.gradescaleid,
-      (
-        CASE
-          WHEN terms.alt_name = 'Summer School' THEN 'Q1'
-          ELSE terms.alt_name
-        END
-        COLLATE LATIN1_GENERAL_BIN
-      ) AS term_name
+      CASE
+        WHEN terms.alt_name = 'Summer School' THEN 'Q1'
+        ELSE terms.alt_name
+      END AS term_name
     FROM
       powerschool.cc
       INNER JOIN powerschool.sections AS sec ON (ABS(cc.sectionid) = sec.id)

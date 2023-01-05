@@ -245,11 +245,7 @@ SELECT
     PARTITION BY
       studentid
   ) AS entry_grade_level,
-  CASE
-    WHEN DB_NAME() = 'kippcamden' THEN 'KCNA'
-    WHEN DB_NAME() = 'kippnewark' THEN 'TEAM'
-    WHEN DB_NAME() = 'kippmiami' THEN 'KMS'
-  END AS region,
+  'KCNA' AS region,
   CASE
     WHEN grade_level = 99 THEN MAX(
       CASE

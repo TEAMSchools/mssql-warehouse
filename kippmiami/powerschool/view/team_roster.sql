@@ -16,11 +16,13 @@ FROM
       (
         CASE
           WHEN (
-            gabby.utilities.STRIP_CHARACTERS (section_number, '0-9') = ''
+            gabby.utilities.STRIP_CHARACTERS (section_number, '0-9') = (
+              ''
+              COLLATE SQL_Latin1_General_CP1_CI_AS
+            )
           ) THEN teacher_name
           ELSE gabby.utilities.STRIP_CHARACTERS (section_number, '0-9')
         END
-        COLLATE LATIN1_GENERAL_BIN
       ) AS team,
       ROW_NUMBER() OVER (
         PARTITION BY

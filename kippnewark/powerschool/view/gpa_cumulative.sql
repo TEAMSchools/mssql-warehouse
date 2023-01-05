@@ -99,7 +99,7 @@ WITH
         fg.yearid = rt.yearid
         AND (
           fg.storecode = rt.alt_name
-          COLLATE LATIN1_GENERAL_BIN
+          COLLATE SQL_Latin1_General_CP1_CI_AS
         )
         AND co.schoolid = rt.schoolid
         AND rt.identifier = 'RT'

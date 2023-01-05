@@ -22,10 +22,7 @@ SELECT
   co.entrydate,
   co.exitdate,
   rd.[date],
-  (
-    dt.alt_name
-    COLLATE LATIN1_GENERAL_BIN
-  ) AS term
+  dt.alt_name AS term
 FROM
   powerschool.cohort_identifiers_static AS co
   INNER JOIN gabby.utilities.reporting_days AS rd ON (
