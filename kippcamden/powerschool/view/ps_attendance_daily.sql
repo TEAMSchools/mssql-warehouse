@@ -1,0 +1,53 @@
+CREATE OR ALTER VIEW
+  powerschool.ps_attendance_daily AS
+SELECT
+  id,
+  studentid,
+  schoolid,
+  att_date,
+  attendance_codeid,
+  att_mode_code,
+  calendar_dayid,
+  programid,
+  total_minutes,
+  att_code,
+  count_for_ada,
+  presence_status_cd,
+  count_for_adm,
+  a,
+  b,
+  c,
+  d,
+  e,
+  f,
+  insession,
+  cycle_day_id,
+  abbreviation
+FROM
+  powerschool.ps_attendance_daily_current_static
+UNION ALL
+SELECT
+  id,
+  studentid,
+  schoolid,
+  att_date,
+  attendance_codeid,
+  att_mode_code,
+  calendar_dayid,
+  programid,
+  total_minutes,
+  att_code,
+  count_for_ada,
+  presence_status_cd,
+  count_for_adm,
+  a,
+  b,
+  c,
+  d,
+  e,
+  f,
+  insession,
+  cycle_day_id,
+  abbreviation
+FROM
+  powerschool.ps_attendance_daily_archive

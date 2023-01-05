@@ -1,0 +1,57 @@
+CREATE OR ALTER VIEW
+  powerschool.ps_membership_reg AS
+SELECT
+  studentid,
+  schoolid,
+  student_track,
+  fteid,
+  dflt_att_mode_code,
+  dflt_conversion_mode_code,
+  att_calccntpresentabsent,
+  att_intervalduration,
+  grade_level,
+  yearid,
+  calendardate,
+  a,
+  b,
+  c,
+  d,
+  e,
+  f,
+  bell_schedule_id,
+  cycle_day_id,
+  attendance_conversion_id,
+  studentmembership,
+  calendarmembership,
+  ontrack,
+  offtrack
+FROM
+  powerschool.ps_membership_reg_current_static
+UNION ALL
+SELECT
+  studentid,
+  schoolid,
+  student_track,
+  fteid,
+  dflt_att_mode_code,
+  dflt_conversion_mode_code,
+  att_calccntpresentabsent,
+  att_intervalduration,
+  grade_level,
+  yearid,
+  calendardate,
+  a,
+  b,
+  c,
+  d,
+  e,
+  f,
+  bell_schedule_id,
+  cycle_day_id,
+  attendance_conversion_id,
+  studentmembership,
+  calendarmembership,
+  ontrack,
+  offtrack
+FROM
+  powerschool.ps_membership_reg_archive
