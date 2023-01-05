@@ -5,7 +5,6 @@ WITH
     SELECT
       cc.dateenrolled AS entry_date,
       cc.dateleft AS leave_date,
-      cc.course_number,
       CASE
         WHEN cc.sectionid < 0 THEN 1.0
         ELSE 0.0
@@ -33,6 +32,24 @@ WITH
       INNER JOIN assessments.normed_subjects AS ns ON (
         cc.course_number = ns.course_number
       )
+    UNION ALL
+    /* ES Writing */
+    SELECT
+      co.entrydate AS entry_date,
+      co.exitdate AS leave_date,
+      0.0 AS is_dropped_section,
+      0.0 AS is_dropped_course,
+      co.student_number,      
+      'Writing' AS subject_area
+    FROM
+      powerschool.cohort_static AS co
+      INNER JOIN illuminate_public.students AS ils ON (
+        co.student_number = ils.local_student_id
+      )
+    WHERE
+      co.academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
+      AND co.grade_level <= 4
+      AND co.[db_name] != 'kippmiami'
   )
 SELECT
   a.assessment_id,
