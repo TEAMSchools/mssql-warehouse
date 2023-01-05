@@ -16,9 +16,9 @@ SELECT
   END AS grade_level,
   co.team,
   co.advisor_name,
-  co.entrydate,
+  CONVERT(NVARCHAR, co.entrydate, 101) AS entrydate,
   co.boy_status,
-  co.dob,
+  CONVERT(NVARCHAR, co.dob, 101) AS dob,
   co.gender,
   co.lunchstatus,
   CASE
