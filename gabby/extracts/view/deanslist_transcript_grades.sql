@@ -11,7 +11,12 @@ WITH
       sg.earnedcrhrs AS credit_hours,
       sg.[percent] AS y1_grade_percent,
       sg.grade AS y1_grade_letter,
-      sg.schoolname,
+      CASE
+        WHEN (
+          sg.schoolname = 'KIPP Newark Collegiate Academy'
+        ) THEN 'Newark Collegiate Academy'
+        ELSE sg.schoolname
+      END AS schoolname,
       sg.storecode,
       1 AS is_stored
     FROM
