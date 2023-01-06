@@ -1,5 +1,8 @@
 # mssql-warehouse
 
+Formatting via [sql-formatter](https://github.com/sql-formatter-org/sql-formatter)
+Linting via SQLFluff: [Rules Reference](https://docs.sqlfluff.com/en/stable/rules.html)
+
 ## General Rules & Guidelines
 
 - Use `snake_case`
@@ -40,7 +43,7 @@
   - `CASE WHEN (... AND ...) THEN ...`
 - Wrap `COLLATE` statements in **(parenthesis)**
   - `(tbl.col COLLATE LATIN1_GENERAL_BIN) AS foo,`
-  
+
 ## Known Issues
 
 - `BETWEEN` clauses **MUST** be wrapped in **(parenthesis)** for successful parsing
@@ -50,6 +53,6 @@
 
 ## Troubleshooting Linter Errors
 
-- `Line is too long [L016]`
-  - Wrap longer expressions in 
-- `Found unparsable section: ... [PRS]`
+- `L016`: Line is too long
+  - Surround longer expressions in **(parenthesis)**. All expressions > 33 characters will be automatically wrapped to the next lines.
+- `PRS`: Found unparsable section: ...
