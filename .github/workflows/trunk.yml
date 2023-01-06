@@ -14,7 +14,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      # https://github.com/trunk-io/trunk-action
       - name: Trunk Check
-        uses: trunk-io/trunk-action@v1.0.4
+        uses: trunk-io/trunk-action@v1.0.5
         with:
-          arguments: --fix
+          arguments: --fix --no-progress
