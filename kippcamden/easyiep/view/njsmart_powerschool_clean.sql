@@ -123,7 +123,7 @@ FROM
       CAST(ti_serv_other AS VARCHAR(1)) AS ti_serv_other,
       CAST(
         TRY_PARSE(
-          CAST(student_number AS VARCHAR(32)) AS INT
+          CAST(student_number AS VARCHAR(32)) AS BIGINT
         ) AS BIGINT
       ) AS student_number,
       RIGHT(

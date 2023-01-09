@@ -73,3 +73,4 @@ FROM
 WHERE
   academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
   AND rn_stu_yr = 1
+  AND student_number IS NOT NULL
