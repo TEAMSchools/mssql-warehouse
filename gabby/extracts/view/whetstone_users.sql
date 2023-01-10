@@ -105,27 +105,24 @@ SELECT
   og.role_names AS group_type_ws,
   CASE
     WHEN (
-      er.role_names LIKE '%Admin%'
-      AND CAST(CURRENT_TIMESTAMP AS DATE) != DATEFROMPARTS(
+      CAST(CURRENT_TIMESTAMP AS DATE) = DATEFROMPARTS(
         utilities.GLOBAL_ACADEMIC_YEAR (),
         8,
         1
       )
     ) THEN NULL
-    WHEN sub.role_name LIKE '%Admin%' THEN NULL
     WHEN sub.role_name = 'Coach' THEN 'observees;observers'
+    WHEN sub.role_name LIKE '%Admin%' THEN 'observers'
     ELSE 'observees'
   END AS group_type,
   CASE
     WHEN (
-      er.role_names LIKE '%Admin%'
-      AND CAST(CURRENT_TIMESTAMP AS DATE) != DATEFROMPARTS(
+      CAST(CURRENT_TIMESTAMP AS DATE) = DATEFROMPARTS(
         utilities.GLOBAL_ACADEMIC_YEAR (),
         8,
         1
       )
     ) THEN NULL
-    WHEN sub.role_name LIKE '%Admin%' THEN NULL
     ELSE 'Teachers'
   END AS group_name,
   '[' + (
