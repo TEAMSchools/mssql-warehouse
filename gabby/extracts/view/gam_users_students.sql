@@ -1,5 +1,5 @@
 CREATE OR ALTER VIEW
-  extracts.gapps_users_students AS
+  extracts.gam_users_students AS
 SELECT
   sub.student_number,
   sub.suspended,

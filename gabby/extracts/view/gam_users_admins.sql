@@ -1,5 +1,5 @@
 CREATE OR ALTER VIEW
-  extracts.gapps_users_admins AS
+  extracts.gam_users_admins AS
 SELECT
   df.google_email AS [user],
   df.primary_site_schoolid,
