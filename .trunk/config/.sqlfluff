@@ -7,6 +7,7 @@ exclude_rules = L003, L022, L017, L031, L059, L067, L041, L036, L034
 max_line_length = 88
 capitalisation_policy = upper
 extended_capitalisation_policy = upper
+indent_unit = space
 
 [sqlfluff:rules:L036]
 wildcard_policy = multiple
