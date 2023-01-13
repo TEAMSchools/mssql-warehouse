@@ -64,7 +64,7 @@ SELECT
       date_submitted DESC,
       survey_response_id DESC
   ) AS rn_campaign,
-		rn_cur
+		r.rn_cur
 
 FROM
   (
