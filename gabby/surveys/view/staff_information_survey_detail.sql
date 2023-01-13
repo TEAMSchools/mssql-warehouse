@@ -37,34 +37,34 @@ WITH
 		)
 
 SELECT
-  employee_number,
-  survey_id,
-  survey_response_id,
-  campaign_academic_year,
-  campaign_reporting_term,
-  campaign_name,
-  date_started,
-  date_submitted,
-  question_id,
-  answer,
+  sub.employee_number,
+  sub.survey_id,
+  sub.survey_response_id,
+  sub.campaign_academic_year,
+  sub.campaign_reporting_term,
+  sub.campaign_name,
+  sub.date_started,
+  sub.date_submitted,
+  sub.question_id,
+  sub.answer,
   CASE
-    WHEN question_id IN (5, 8, 21, 30) THEN (
-      question_shortname + CAST(rn_multiselect AS VARCHAR(2))
+    WHEN sub.question_id IN (5, 8, 21, 30) THEN (
+      sub.question_shortname + CAST(sub.rn_multiselect AS VARCHAR(2))
     )
-    ELSE question_shortname
+    ELSE sub.question_shortname
   END AS question_shortname,
   ROW_NUMBER() OVER (
     PARTITION BY
-      employee_number,
-      survey_id,
-      campaign_name,
-      question_shortname,
-      rn_multiselect
+      sub.employee_number,
+      sub.survey_id,
+      sub.campaign_name,
+      sub.question_shortname,
+      sub.rn_multiselect
     ORDER BY
-      date_submitted DESC,
-      survey_response_id DESC
+      sub.date_submitted DESC,
+      sub.survey_response_id DESC
   ) AS rn_campaign,
-		r.rn_cur
+		sub.rn_cur
 
 FROM
   (
@@ -100,7 +100,7 @@ FROM
         ORDER BY
           qo.option_value
       ) AS rn_multiselect,
-						rn_cur
+						r.rn_cur
     FROM
       responses AS r
       INNER JOIN surveygizmo.survey_question_clean_static AS sq ON (
