@@ -96,7 +96,8 @@ SELECT
     ORDER BY
       y.academic_year DESC,
       eh.position_status ASC
-  ) AS rn_curr
+  ) AS rn_curr,
+  ce.is_certified AS is_currently_certified_nj_only
 FROM
   people.employment_history_static AS eh
   INNER JOIN years AS y ON (
@@ -142,3 +143,6 @@ FROM
     )
     AND ehs.position_status = 'Active'
   )
+  LEFT JOIN njdoe.cert_export AS ce ON (
+    cw.df_employee_number = ce.employee_id
+    )
