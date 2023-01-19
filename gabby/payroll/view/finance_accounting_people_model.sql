@@ -145,4 +145,4 @@ FROM
   )
   LEFT JOIN njdoe.cert_export AS ce ON (
     cw.df_employee_number = ce.employee_id
-    )
+  )
