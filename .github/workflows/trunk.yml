@@ -14,17 +14,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      # https://github.com/trunk-io/trunk-action/blob/main/locate_trunk.sh
-      - name: Locate trunk
-        shell: bash
-        run: |
-          ${GITHUB_ACTION_PATH}/locate_trunk.sh
-
-      - name: Trunk fmt
-        shell: bash
-        run: |
-          "${TRUNK_PATH}" check --no-progress
-
       # https://github.com/trunk-io/trunk-action
       - name: Trunk check
         uses: trunk-io/trunk-action@v1.0.5
