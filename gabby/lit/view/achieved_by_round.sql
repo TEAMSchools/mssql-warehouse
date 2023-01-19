@@ -536,7 +536,7 @@ SELECT
     PARTITION BY
       sub.student_number,
       sub.academic_year
-  ) AS n_levels_moved_ytd,  
+  ) AS n_levels_moved_ytd,
   MAX(
     CASE
       WHEN sub.reporting_term = sub.max_reporting_term_ytd THEN sub.gleq
