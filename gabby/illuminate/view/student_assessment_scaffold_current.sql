@@ -12,7 +12,8 @@ WITH
       module_type,
       module_number,
       scope,
-      subject_area (
+      (
+        subject_area
         COLLATE SQL_Latin1_General_CP1_CI_AS
       ) AS subject_area,
       is_normed_scope
