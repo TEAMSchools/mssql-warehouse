@@ -16,6 +16,6 @@ jobs:
 
       # https://github.com/trunk-io/trunk-action
       - name: Trunk check
-        uses: trunk-io/trunk-action@v1.0.5
+        uses: trunk-io/trunk-action@v1.0.6
         with:
           arguments: --fix --no-progress
