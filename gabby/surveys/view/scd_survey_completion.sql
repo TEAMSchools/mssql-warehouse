@@ -1,4 +1,4 @@
-CREATE OR ALTER VIEW scd_survey_completion AS
+--CREATE OR ALTER VIEW scd_survey_completion AS
 
 WITH student_responses AS (
 SELECT email_address
@@ -8,7 +8,7 @@ GROUP BY email_address,timestamp
 )
 
 ,family_responses AS (
-SELECT student_emaiL
+SELECT student_email
       ,gabby.utilities.DATE_TO_SY(date_submitted) AS survey_academic_year 
 FROM 
 	(
@@ -37,11 +37,11 @@ SELECT
     ,CASE WHEN s.survey_academic_year IS NOT NULL THEN 1 ELSE 0 END AS student_completion
     ,CASE WHEN f.survey_academic_year IS NOT NULL THEN 1 ELSE 0 END AS family_completion
     
-FROM gabby.powerschool.cohort_identifiers_static c
-LEFT JOIN student_responses s
+FROM gabby.powerschool.cohort_identifiers_static AS c
+LEFT JOIN student_responses AS s
   ON (CONCAT(c.student_web_id,'@teamstudents.org') = s.email_address)
  AND c.academic_year = s.survey_academic_year
-LEFT JOIN family_responses f
+LEFT JOIN family_responses AS f
   ON (CONCAT(c.student_web_id,'@teamstudents.org') = f.student_email)
 WHERE c.enroll_status = 0
 AND c.rn_year = 1

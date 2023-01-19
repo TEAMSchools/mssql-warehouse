@@ -7,7 +7,7 @@ SELECT
     ,c.reporting_school_name
     ,c.academic_year
     
-FROM gabby.powerschool.cohort_identifiers_static c
+FROM gabby.powerschool.cohort_identifiers_static AS c
 WHERE c.enroll_status = 0
 AND c.rn_year = 1
 AND c.academic_year = 2022
