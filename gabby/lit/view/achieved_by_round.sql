@@ -528,6 +528,15 @@ SELECT
       sub.student_number,
       sub.academic_year
   ) AS n_levels_moved_y1,
+  sub.lvl_num - MAX(
+    CASE
+      WHEN sub.reporting_term = sub.min_reporting_term_ytd THEN sub.lvl_num
+    END
+  ) OVER (
+    PARTITION BY
+      sub.student_number,
+      sub.academic_year
+  ) AS n_levels_moved_ytd,  
   MAX(
     CASE
       WHEN sub.reporting_term = sub.max_reporting_term_ytd THEN sub.gleq
@@ -545,6 +554,15 @@ SELECT
       sub.student_number,
       sub.academic_year
   ) AS gleq_growth_y1,
+  sub.gleq - MAX(
+    CASE
+      WHEN sub.reporting_term = sub.min_reporting_term_ytd THEN sub.gleq
+    END
+  ) OVER (
+    PARTITION BY
+      sub.student_number,
+      sub.academic_year
+  ) AS gleq_growth_ytd,
   ROW_NUMBER() OVER (
     PARTITION BY
       student_number,
