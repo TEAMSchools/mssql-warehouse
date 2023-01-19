@@ -1,10 +1,10 @@
---CREATE OR ALTER VIEW scd_survey_completion AS
+CREATE OR ALTER VIEW scd_survey_completion AS
 
 WITH student_responses AS (
 SELECT email_address
       ,gabby.utilities.DATE_TO_SY([timestamp]) AS survey_academic_year
 FROM gabby.surveys.scds_responses
-GROUP BY email_address,timestamp
+GROUP BY email_address, [timestamp]
 )
 
 ,family_responses AS (
