@@ -12,9 +12,10 @@ WITH
       module_type,
       module_number,
       scope,
-      subject_area
-    COLLATE SQL_Latin1_General_CP1_CI_AS AS subject_area,
-    is_normed_scope
+      subject_area (
+        COLLATE SQL_Latin1_General_CP1_CI_AS
+      ) AS subject_area,
+      is_normed_scope
     FROM
       illuminate_dna_assessments.assessments_identifiers_static
     WHERE

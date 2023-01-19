@@ -21,17 +21,8 @@ WITH
       si.credittype,
       ils.student_id,
       ns.illuminate_subject AS subject_area,
-      CASE
-        WHEN ns.illuminate_subject IN (
-          'Algebra I',
-          'Geometry',
-          'Algebra II',
-          'Algebra IIA',
-          'Algebra IIB',
-          'Pre-Calculus'
-        ) THEN 1
-        ELSE 0
-      END AS is_advanced_math
+      ns.is_advanced_math,
+      ns.is_foundations
     FROM
       powerschool.cc
       INNER JOIN powerschool.sections_identifiers AS si ON (
@@ -67,7 +58,8 @@ WITH
       'RHET' AS credittype,
       ils.student_id,
       'Writing' AS subject_area,
-      0 AS is_advanced_math
+      0 AS is_advanced_math,
+      0 AS is_foundations
     FROM
       powerschool.cohort_static AS co
       INNER JOIN illuminate_public.students AS ils ON (
@@ -76,7 +68,7 @@ WITH
     WHERE
       co.academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
       AND co.grade_level <= 4
-      AND co.[db_name] != 'kippmiami'
+      AND co.[db_name] IN ('kippnewark', 'kippcamden')
   )
 SELECT
   student_id,
@@ -86,7 +78,8 @@ SELECT
   grade_level_id,
   credittype,
   subject_area,
-  is_advanced_math_student
+  is_advanced_math_student,
+  is_foundations
 FROM
   (
     SELECT
@@ -97,6 +90,7 @@ FROM
       credittype,
       subject_area,
       leave_date,
+      is_foundations,
       MAX(is_advanced_math) OVER (
         PARTITION BY
           student_id,
