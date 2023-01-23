@@ -92,7 +92,8 @@ WHERE
   AND (
     df.primary_job IN (
       'Assistant Superintendent',
-      'Head of Schools'
+      'Head of Schools',
+      'Head of Schools in Residence'
     )
     OR (
       df.primary_on_site_department = 'Special Education'
