@@ -12,11 +12,11 @@ lint:
     - sqlfmt
   enabled:
     - sqlfluff@1.4.5
-    - sql-formatter@12.0.5
+    - sql-formatter@12.0.6
     - prettier@2.8.3
     - actionlint@1.6.23
     - shellcheck@0.9.0
-    - gitleaks@8.15.2
+    - gitleaks@8.15.3
     - markdownlint@0.33.0
     - git-diff-check
     - shfmt@3.5.0
