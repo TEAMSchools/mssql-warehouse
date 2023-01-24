@@ -30,7 +30,7 @@ FROM
         ELSE 'PARCC'
       END AS test_type,
       CASE
-        WHEN parcc.[subject] = 'English Language Arts/Literacy' THEN 'ELA'
+        WHEN parcc.[subject] LIKE 'English Language Arts%' THEN 'ELA'
         ELSE 'Math'
       END AS [subject],
       parcc.[subject] AS test_name,
