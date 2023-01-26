@@ -165,6 +165,10 @@ WITH
               sg.grade IS NULL
               AND fg.grade IS NULL
             ) THEN NULL
+            WHEN (
+              te.is_dropped_section = 1.0
+              AND sg.[percent] IS NULL
+            ) THEN NULL
             WHEN sg.grade IS NOT NULL THEN te.term_weighted_pts_poss
             WHEN fg.grade = '--' THEN NULL
             ELSE te.term_weighted_pts_poss
@@ -197,7 +201,7 @@ WITH
           CAST(
             CASE
               WHEN (
-                te.is_dropped_section = 1
+                te.is_dropped_section = 1.0
                 AND sg.[percent] IS NULL
               ) THEN NULL
               WHEN fg.grade = '--' THEN NULL
@@ -208,7 +212,7 @@ WITH
           CAST(
             CASE
               WHEN (
-                te.is_dropped_section = 1
+                te.is_dropped_section = 1.0
                 AND sg.[percent] IS NULL
               ) THEN NULL
               WHEN fg.grade = '--' THEN NULL
