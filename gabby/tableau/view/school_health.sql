@@ -611,27 +611,27 @@ WITH
     FROM
       (
         SELECT
-          co.schoolid,
-          co.academic_year,
-          co.iep_status,
-          co.gender,
+          schoolid,
+          academic_year,
+          iep_status,
+          gender,
           CASE
-            WHEN (co.exitcode = 'G1') THEN NULL
-            WHEN (co.exitcode IS NULL) THEN NULL
-            ELSE LEAD(co.is_enrolled_oct01, 1, 0) OVER (
+            WHEN (exitcode = 'G1') THEN NULL
+            WHEN (exitcode IS NULL) THEN NULL
+            ELSE LEAD(is_enrolled_oct01, 1, 0) OVER (
               PARTITION BY
-                co.student_number
+                student_number
               ORDER BY
-                co.academic_year
+                academic_year
             )
           END AS is_enrolled_next,
           'ALL' AS grade_band
         FROM
           powerschool.cohort_identifiers_static
         WHERE
-          co.is_enrolled_oct01 = 1
-          AND co.rn_year = 1
-          AND co.academic_year >= utilities.GLOBAL_ACADEMIC_YEAR () - 3
+          is_enrolled_oct01 = 1
+          AND rn_year = 1
+          AND academic_year >= utilities.GLOBAL_ACADEMIC_YEAR () - 3
       ) sub
     GROUP BY
       academic_year,
@@ -856,7 +856,7 @@ WITH
               email_address,
               CASE
                 WHEN (
-                  u.response IN (
+                  response IN (
                     'School will help students get into a "good” college so they can get a "good” job and make lots of money.',
                     'Staff frequently call students out publicly, use an angry tone with, or even yell at students.',
                     'Staff make all the decisions - students are not involved.',
@@ -870,7 +870,7 @@ WITH
                   )
                 ) THEN 1
                 WHEN (
-                  u.response IN (
+                  response IN (
                     'Families and teachers at my school communicate WHEN ( they need to.  Families ask questions and/or share concerns, and generally feel supported WHEN ( they do.',
                     'School will help students go to college OR have a career so they can be "successful” doing whatever they want.',
                     'Some of the lessons, books, and learning resources used at my school show different cultures through photographs and stories. Many students are able to relate to what they are learning about.',
@@ -884,7 +884,7 @@ WITH
                   )
                 ) THEN 2
                 WHEN (
-                  u.response IN (
+                  response IN (
                     'Families and teachers at my school communicate often about progress, concerns, and updates.  Many families know how to be and are actively involved with student and school-wide events.',
                     'School will help students learn a lot and believe in themselves so they can live a life they choose.',
                     'Staff always listen to and treat students with kindness.',
@@ -898,7 +898,7 @@ WITH
                   )
                 ) THEN 3
                 WHEN (
-                  u.response IN (
+                  response IN (
                     'ALL students are encouraged to participate in any activity they like based on what they enjoy and care about.',
                     'Families and teachers at my school communicate frequently and openly about progress, concerns, and updates.  Families are active members of the school community.',
                     'School will help students learn a lot, believe in themselves, and understand what it means to be a Person of Color in America - so they can live a life they choose, no matter what challenges they may face.',
@@ -1025,8 +1025,8 @@ WITH
             WHEN (nj.test_performance_level < 4) THEN 0
           END AS is_proficient
         FROM
-          parcc.summative_record_file_clean nj
-          INNER JOIN powerschool.cohort_identifiers_static co ON (
+          gabby.parcc.summative_record_file_clean nj
+          INNER JOIN gabby.powerschool.cohort_identifiers_static co ON (
             nj.state_student_identifier = co.state_studentnumber
             AND nj.academic_year = co.academic_year
             AND nj.[db_name] = co.[db_name]
@@ -1039,13 +1039,22 @@ WITH
           co.academic_year,
           co.schoolid,
           co.grade_level AS grade_band,
-          co.iep_status,
-          co.gender,
-          CASE
-            WHEN (fl.test_name LIKE '%MATH%') THEN 'math'
-            WHEN (fl.test_name LIKE '%ELA%') THEN 'ela'
-            WHEN (fl.test_name LIKE '%SCIENCE%') THEN 'science'
-          END AS [subject],
+          (
+            co.iep_status
+            COLLATE SQL_Latin1_General_CP1_CI_AS
+          ) AS iep_status,
+          (
+            co.gender
+            COLLATE SQL_Latin1_General_CP1_CI_AS
+          ) AS gender,
+          (
+            CASE
+              WHEN (fl.test_name LIKE '%MATH%') THEN 'math'
+              WHEN (fl.test_name LIKE '%ELA%') THEN 'ela'
+              WHEN (fl.test_name LIKE '%SCIENCE%') THEN 'science'
+            END
+            COLLATE SQL_Latin1_General_CP1_CI_AS
+          ) AS [subject],
           CASE
             WHEN (fl.performance_level >= 3) THEN 1
             WHEN (fl.performance_level < 3) THEN 0
