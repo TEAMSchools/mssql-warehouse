@@ -32,71 +32,170 @@ WITH
       _4_data_analysis_and_probability_performance,
       _4_geometric_reasoning_measurement_and_data_analysis_and_probability_performance,
       _4_geometric_reasoning_performance,
-      fast_grade_3_ela_reading_achievement_level,
-      fast_grade_3_mathematics_achievement_level,
-      fast_grade_4_ela_reading_achievement_level,
-      fast_grade_4_mathematics_achievement_level,
-      fast_grade_5_ela_reading_achievement_level,
-      fast_grade_5_mathematics_achievement_level,
-      fast_grade_6_ela_reading_achievement_level,
-      fast_grade_6_mathematics_achievement_level,
-      fast_grade_7_ela_reading_achievement_level,
-      fast_grade_7_mathematics_achievement_level,
-      fast_grade_8_ela_reading_achievement_level,
-      fast_grade_8_mathematics_achievement_level,
-      CAST(
-        fast_grade_8_mathematics_scale_score AS NVARCHAR
-      ) AS fast_grade_8_mathematics_scale_score,
-      CAST(
-        fast_grade_8_ela_reading_scale_score AS NVARCHAR
-      ) AS fast_grade_8_ela_reading_scale_score,
-      CAST(
-        fast_grade_7_mathematics_scale_score AS NVARCHAR
-      ) AS fast_grade_7_mathematics_scale_score,
-      CAST(
-        fast_grade_7_ela_reading_scale_score AS NVARCHAR
-      ) AS fast_grade_7_ela_reading_scale_score,
-      CAST(
-        fast_grade_6_mathematics_scale_score AS NVARCHAR
-      ) AS fast_grade_6_mathematics_scale_score,
-      CAST(
-        fast_grade_6_ela_reading_scale_score AS NVARCHAR
-      ) AS fast_grade_6_ela_reading_scale_score,
-      CAST(
-        fast_grade_5_mathematics_scale_score AS NVARCHAR
-      ) AS fast_grade_5_mathematics_scale_score,
-      CAST(
-        fast_grade_5_ela_reading_scale_score AS NVARCHAR
-      ) AS fast_grade_5_ela_reading_scale_score,
-      CAST(
-        fast_grade_4_mathematics_scale_score AS NVARCHAR
-      ) AS fast_grade_4_mathematics_scale_score,
-      CAST(
-        fast_grade_4_ela_reading_scale_score AS NVARCHAR
-      ) AS fast_grade_4_ela_reading_scale_score,
-      CAST(
-        fast_grade_3_mathematics_scale_score AS NVARCHAR
-      ) AS fast_grade_3_mathematics_scale_score,
-      CAST(
-        fast_grade_3_ela_reading_scale_score AS NVARCHAR
+      COALESCE(
+        fast_grade_3_ela_reading_achievement_level,
+        grade_3_fast_ela_reading_achievement_level
+      ) AS fast_grade_3_ela_reading_achievement_level,
+      COALESCE(
+        fast_grade_3_mathematics_achievement_level,
+        grade_3_fast_mathematics_achievement_level
+      ) AS fast_grade_3_mathematics_achievement_level,
+      COALESCE(
+        fast_grade_4_ela_reading_achievement_level,
+        grade_4_fast_ela_reading_achievement_level
+      ) AS fast_grade_4_ela_reading_achievement_level,
+      COALESCE(
+        fast_grade_4_mathematics_achievement_level,
+        grade_4_fast_mathematics_achievement_level
+      ) AS fast_grade_4_mathematics_achievement_level,
+      COALESCE(
+        fast_grade_5_ela_reading_achievement_level,
+        grade_5_fast_ela_reading_achievement_level
+      ) AS fast_grade_5_ela_reading_achievement_level,
+      COALESCE(
+        fast_grade_5_mathematics_achievement_level,
+        grade_5_fast_mathematics_achievement_level
+      ) AS fast_grade_5_mathematics_achievement_level,
+      COALESCE(
+        fast_grade_6_ela_reading_achievement_level,
+        grade_6_fast_ela_reading_achievement_level
+      ) AS fast_grade_6_ela_reading_achievement_level,
+      COALESCE(
+        fast_grade_6_mathematics_achievement_level,
+        grade_6_fast_mathematics_achievement_level
+      ) AS fast_grade_6_mathematics_achievement_level,
+      COALESCE(
+        fast_grade_7_ela_reading_achievement_level,
+        grade_7_fast_ela_reading_achievement_level
+      ) AS fast_grade_7_ela_reading_achievement_level,
+      COALESCE(
+        fast_grade_7_mathematics_achievement_level,
+        grade_7_fast_mathematics_achievement_level
+      ) AS fast_grade_7_mathematics_achievement_level,
+      COALESCE(
+        fast_grade_8_ela_reading_achievement_level,
+        grade_8_fast_ela_reading_achievement_level
+      ) AS fast_grade_8_ela_reading_achievement_level,
+      COALESCE(
+        fast_grade_8_mathematics_achievement_level,
+        grade_8_fast_mathematics_achievement_level
+      ) AS fast_grade_8_mathematics_achievement_level,
+      COALESCE(
+        CAST(
+          fast_grade_3_ela_reading_scale_score AS NVARCHAR
+        ),
+        CAST(
+          grade_3_fast_ela_reading_scale_score AS NVARCHAR
+        )
       ) AS fast_grade_3_ela_reading_scale_score,
+      COALESCE(
+        CAST(
+          fast_grade_3_mathematics_scale_score AS NVARCHAR
+        ),
+        CAST(
+          grade_3_fast_mathematics_scale_score AS NVARCHAR
+        )
+      ) AS fast_grade_3_mathematics_scale_score,
+      COALESCE(
+        CAST(
+          fast_grade_4_ela_reading_scale_score AS NVARCHAR
+        ),
+        CAST(
+          grade_4_fast_ela_reading_scale_score AS NVARCHAR
+        )
+      ) AS fast_grade_4_ela_reading_scale_score,
+      COALESCE(
+        CAST(
+          fast_grade_4_mathematics_scale_score AS NVARCHAR
+        ),
+        CAST(
+          grade_4_fast_mathematics_scale_score AS NVARCHAR
+        )
+      ) AS fast_grade_4_mathematics_scale_score,
+      COALESCE(
+        CAST(
+          fast_grade_5_ela_reading_scale_score AS NVARCHAR
+        ),
+        CAST(
+          grade_5_fast_ela_reading_scale_score AS NVARCHAR
+        )
+      ) AS fast_grade_5_ela_reading_scale_score,
+      COALESCE(
+        CAST(
+          fast_grade_5_mathematics_scale_score AS NVARCHAR
+        ),
+        CAST(
+          grade_5_fast_mathematics_scale_score AS NVARCHAR
+        )
+      ) AS fast_grade_5_mathematics_scale_score,
+      COALESCE(
+        CAST(
+          fast_grade_6_ela_reading_scale_score AS NVARCHAR
+        ),
+        CAST(
+          grade_6_fast_ela_reading_scale_score AS NVARCHAR
+        )
+      ) AS fast_grade_6_ela_reading_scale_score,
+      COALESCE(
+        CAST(
+          fast_grade_6_mathematics_scale_score AS NVARCHAR
+        ),
+        CAST(
+          grade_6_fast_mathematics_scale_score AS NVARCHAR
+        )
+      ) AS fast_grade_6_mathematics_scale_score,
+      COALESCE(
+        CAST(
+          fast_grade_7_ela_reading_scale_score AS NVARCHAR
+        ),
+        CAST(
+          grade_7_fast_ela_reading_scale_score AS NVARCHAR
+        )
+      ) AS fast_grade_7_ela_reading_scale_score,
+      COALESCE(
+        CAST(
+          fast_grade_7_mathematics_scale_score AS NVARCHAR
+        ),
+        CAST(
+          grade_7_fast_mathematics_scale_score AS NVARCHAR
+        )
+      ) AS fast_grade_7_mathematics_scale_score,
+      COALESCE(
+        CAST(
+          fast_grade_8_ela_reading_scale_score AS NVARCHAR
+        ),
+        CAST(
+          grade_8_fast_ela_reading_scale_score AS NVARCHAR
+        )
+      ) AS fast_grade_8_ela_reading_scale_score,
+      COALESCE(
+        CAST(
+          fast_grade_8_mathematics_scale_score AS NVARCHAR
+        ),
+        CAST(
+          grade_8_fast_mathematics_scale_score AS NVARCHAR
+        )
+      ) AS fast_grade_8_mathematics_scale_score,
       gabby.utilities.DATE_TO_SY (test_completion_date) AS academic_year,
-      CASE
-        WHEN CHARINDEX('ELAReading', _file) > 0 THEN 'ELA ' + CAST(
-          SUBSTRING(
-            _file,
-            CHARINDEX('FASTGrade', _file) + 9,
-            1
-          ) AS VARCHAR(10)
-        )
-        WHEN CHARINDEX('Math', _file) > 0 THEN 'MATH ' + CAST(
-          SUBSTRING(
-            _file,
-            CHARINDEX('FASTGrade', _file) + 9,
-            1
-          ) AS VARCHAR(10)
-        )
-      END AS fast_test,
+      (
+        CASE
+          WHEN CHARINDEX('ELAReading', _file) > 0 THEN 'ELA'
+          WHEN CHARINDEX('Mathematics', _file) > 0 THEN 'MATH'
+          ELSE ''
+        END
+      ) + ' ' + CAST(
+        (
+          CASE
+            WHEN CHARINDEX('Grade3', _file) > 0 THEN 3
+            WHEN CHARINDEX('Grade4', _file) > 0 THEN 4
+            WHEN CHARINDEX('Grade5', _file) > 0 THEN 5
+            WHEN CHARINDEX('Grade6', _file) > 0 THEN 6
+            WHEN CHARINDEX('Grade7', _file) > 0 THEN 7
+            WHEN CHARINDEX('Grade8', _file) > 0 THEN 8
+            ELSE 0
+          END
+        ) AS VARCHAR(10)
+      ) AS fast_test,
       CASE
         WHEN CHARINDEX('ELAReading', _file) > 0 THEN 'Reading'
         WHEN CHARINDEX('Math', _file) > 0 THEN 'Math'
@@ -207,6 +306,7 @@ SELECT
   sd.fast_test,
   sd.fast_subject,
   sd.enrolled_grade,
+  dm.standard_domain,
   dm.mastery_indicator,
   ss.scale_score,
   al.achievement_level,
