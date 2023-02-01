@@ -8,8 +8,8 @@ CREATE LOGIN [' + @username + ']
     WITH 
         PASSWORD = ''' + @password + ''', 
         DEFAULT_DATABASE = [gabby], 
-        CHECK_POLICY = OFF
-        CHECK_EXPIRATION = OFF, 
+        CHECK_POLICY = OFF,
+        CHECK_EXPIRATION = OFF
 GO
 
 USE [gabby]
@@ -48,7 +48,7 @@ CREATE USER [' + @username + '] FOR LOGIN [' + @username + ']
 GO
 ALTER ROLE [db_datareader] ADD MEMBER [' + @username + ']
 GO
-';
+' -- trunk-ignore(sqlfluff/L016)
+;
 
--- noqa: L016
 RAISERROR (@sql, 0, 0);
