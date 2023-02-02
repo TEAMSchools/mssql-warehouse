@@ -13,20 +13,26 @@ WITH
   ),
   family_responses AS (
     SELECT
-      student_email,
-      gabby.utilities.DATE_TO_SY (date_submitted) AS survey_academic_year
+      email,
+      gabby.utilities.DATE_TO_SY (date_started) AS survey_academic_year
     FROM
       (
         SELECT
-          question_shortname,
-          answer,
-          date_submitted
+          rd.survey_response_id,
+          rd.survey_id,
+          rd.date_started,
+          qc.shortname,
+          rd.answer
         FROM
-          gabby.surveygizmo.survey_detail
+          gabby.surveygizmo.survey_response_data AS rd
+          LEFT JOIN gabby.surveygizmo.survey_question_clean_static AS qc ON (
+            rd.survey_id = qc.survey_id
+            AND rd.question_id = qc.survey_question_id
+          )
         WHERE
-          survey_id = 6829997
+          rd.survey_id = 6829997
       ) AS sub PIVOT (
-        MAX(answer) FOR question_shortname IN ([student_email])
+        MAX(answer) FOR [shortname] IN ([email])
       ) AS p
   )
 SELECT
@@ -58,7 +64,8 @@ FROM
     CONCAT(
       c.student_web_id,
       '@teamstudents.org'
-    ) = f.student_email
+    ) = f.email
+    AND c.academic_year = f.survey_academic_year
   )
 WHERE
   c.enroll_status = 0
