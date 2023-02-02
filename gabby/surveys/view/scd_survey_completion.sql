@@ -24,8 +24,8 @@ WITH
           qc.shortname,
           rd.answer
         FROM
-          surveygizmo.survey_response_data rd
-          JOIN surveygizmo.survey_question_clean_static qc ON (rd.survey_id = qc.survey_id)
+          gabby.surveygizmo.survey_response_data AS rd
+          JOIN gabby.surveygizmo.survey_question_clean_static AS qc ON (rd.survey_id = qc.survey_id)
           AND (
             rd.question_id = qc.survey_question_id
           )
