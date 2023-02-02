@@ -1,5 +1,5 @@
---CREATE OR ALTER VIEW
--- scd_survey_completion AS
+CREATE OR ALTER VIEW
+ scd_survey_completion AS
 WITH
   student_responses AS (
     SELECT
