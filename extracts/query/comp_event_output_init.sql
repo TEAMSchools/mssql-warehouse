@@ -3,7 +3,6 @@ WITH school_leader_hos AS (
         ,x.userprincipalname AS first_approver_email
         ,x.manager_userprincipalname AS second_approver_email
         ,x.google_email AS first_approver_google
-        
         ,m.google_email AS second_approver_google
         
   FROM gabby.people.staff_crosswalk_static x
@@ -17,7 +16,7 @@ WITH school_leader_hos AS (
 
 mdso_mdo AS (
 SELECT   x.df_employee_number
-        ,x.userprincipalname AS submitter
+        ,x.userprincipalname AS notify
         ,x.primary_site
         ,x.manager_userprincipalname AS first_approver_email
         ,m.manager_userprincipalname AS second_approver_email
@@ -69,10 +68,26 @@ UNION ALL
 -- Manager and Manager of Manager for non-school-based staff
 
 SELECT x.df_employee_number
-      ,m.userprincipalname AS first_approver_email
-      ,gm.userprincipalname AS second_approver_email
-      ,m.google_email AS first_approver_google
-      ,gm.google_email AS second_approver_google
+      ,CASE 
+       WHEN m.userprincipalname ='rhill@kippteamandfamily.org'
+       THEN 'ssmall@kippteamandfamily.org'
+       ELSE m.userprincipalname
+       END AS first_approver_email
+      ,CASE
+       WHEN gm.userprincipalname = 'rhill@kippteamandfamily.org'
+       THEN 'ssmall@kippteamandfamily.org'
+       ELSE gm.userprincipalname 
+       END AS second_approver_email
+      ,CASE
+       WHEN m.google_email= 'rhill@apps.teamschools.org'
+       THEN 'ssmall@apps.teamschools.org'
+       ELSE m.google_email  
+       END AS first_approver_google
+      ,CASE
+       WHEN gm.google_email= 'rhill@apps.teamschools.org'
+       THEN 'ssmall@apps.teamschools.org'
+       ELSE gm.google_email  
+       END AS second_approver_google
       ,'Non-School Based' AS approval_loop
 
 FROM gabby.people.staff_crosswalk_static x
@@ -91,19 +106,21 @@ SELECT
       ,x.df_employee_number
       ,x.adp_associate_id
       ,x.file_number
+,x.primary_job
+,x.primary_site
       ,'' AS stipend_type
       ,'' AS pay_code
       ,'' AS amount
       ,'' AS payment_date
       ,'' AS description
-      ,'Pending' AS first_approval
-      ,'Pending' AS second_approval
+      ,'N/A' AS first_approval
+      ,'N/A' AS second_approval
 
       ,l.first_approver_email
       ,l.second_approver_email
       ,l.first_approver_google
       ,l.second_approver_google
-      ,o.submitter AS submitter --note this is pre-filled as the DSO/DCO, THRIVE has two
+      ,COALESCE(o.notify, l.first_approver_email) AS notify --note this is pre-filled as the DSO/DCO or Manager, THRIVE has two
       ,'' AS edited_by
       ,'' AS edited_at
 
