@@ -89,6 +89,7 @@ SELECT
   ye.years_teaching_total AS years_teaching_total_current,
   ly.business_unit AS last_year_business_unit,
   ly.job_title AS last_year_job_title,
+  ly.annual_salary AS last_year_salary
   ehs.annual_salary AS original_salary_upon_hire,
   ROW_NUMBER() OVER (
     PARTITION BY
