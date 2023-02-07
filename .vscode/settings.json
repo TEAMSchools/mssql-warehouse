@@ -1,6 +1,7 @@
 {
   "editor.inlineSuggest.enabled": true,
   "editor.renderControlCharacters": true,
+  "editor.renderWhitespace": "all",
   "editor.wordWrap": "bounded",
   "editor.wordWrapColumn": 88,
   "files.associations": {
