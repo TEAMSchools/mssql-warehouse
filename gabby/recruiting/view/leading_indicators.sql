@@ -8,7 +8,7 @@ SELECT
       date_val,
       job_city,
       recruiters,
-      department_internal
+      department_internal,
       job_title
     FROM
       (
@@ -60,7 +60,7 @@ SELECT a.application_id,
        b.candidate_tags_values,
        COALESCE(b.nj_undergrad_gpa,b.mia_undergrad_gpa) AS undergrad_gpa,
        COALESCE(b.nj_grad_gpa,b.mia_grad_gpa) AS grad_gpa,
-       COALESCE(b.nj_teacher_certification_question,B.mia_teacher_certification_question) AS certification_instate,
+       COALESCE(b.nj_teacher_certification_question,b.mia_teacher_certification_question) AS certification_instate,
        COALESCE(b.nj_out_of_state_teacher_certification_details,b.mia_out_of_state_teaching_certification_details) AS certification_outstate,
 b.nj_out_of_state_teacher_certification_sped_credits AS nj_sped_credits
 ,b.taf_affiliated_orgs
