@@ -1,15 +1,23 @@
-CREATE OR ALTER VIEW
-  recruiting.leading_indicators AS
-WITH
-  app_unpivot AS (
-    SELECT
+CREATE OR ALTER VIEW 
+recruiting.leading_indicators AS
+
+WITH applications AS (
+SELECT
       application_id,
       status_type,
-      date_val
+      date_val,
+      job_city,
+      recruiters,
+      department_internal
+      job_title
     FROM
       (
         SELECT
           application_id,
+          job_city,
+          recruiters,
+          department_internal,
+          job_title,
           application_state_new_date AS application_date,
           application_state_in_review_date AS review_date,
           application_state_interview_date AS interview_date,
@@ -23,9 +31,9 @@ WITH
           application_state_offer_date AS offer_date,
           application_state_hired_date AS hired_date
         FROM
-          smartrecruiters.report_applications
+          gabby.smartrecruiters.report_applications
       ) AS sub UNPIVOT (
-        date_val FOR status_type IN (
+          date_val FOR status_type IN (
           application_date,
           review_date,
           interview_date,
@@ -36,86 +44,35 @@ WITH
           hired_date
         )
       ) AS u
-  ),
-  latest_update AS (
-    SELECT
-      application_id,
-      MAX(date_val) AS last_updated
-    FROM
-      app_unpivot
-    GROUP BY
-      application_id
-  )
-SELECT
-  a.application_id,
-  a.application_state_new_date AS application_date,
-  a.application_state_in_review_date AS review_date,
-  a.application_state_interview_date AS interview_date,
-  a.application_status_interview_phone_screen_requested_date AS phone_screen_requested,
-  a.application_status_interview_phone_screen_complete_date AS phone_screen_completed,
-  a.application_status_interview_demo_date AS final_interview_demo,
-  a.application_state_offer_date AS offer_made,
-  a.application_state_hired_date AS offer_accepted,
-  a.application_state_rejected_date AS rejected_date,
-  a.application_state_withdrawn_date AS withdrawn_date,
-  a.application_status,
-  a.department_internal,
-  a.job_city,
-  a.job_title,
-  a.recruiters,
-  a.[source],
-  a.source_type,
-  a.source_subtype,
-  a.application_status_before_rejection,
-  a.application_reason_for_rejection,
-  a.application_status_before_withdrawal,
-  a.application_reason_for_withdrawal,
-  DATEDIFF(
-    DAY,
-    a.application_state_new_date,
-    a.application_state_hired_date
-  ) AS days_to_hire,
-  DATEDIFF(
-    DAY,
-    a.application_state_offer_date,
-    a.application_state_hired_date
-  ) AS days_offer_to_acceptance,
-  DATEDIFF(
-    DAY,
-    a.application_status_interview_demo_date,
-    a.application_state_hired_date
-  ) AS days_demo_to_hire,
-  /*List of titles tracked by Recruiting Team include these words*/
-  CASE
-    WHEN (
-      a.job_title LIKE '%Teacher%'
-      OR a.job_title LIKE '%Teacher in Residence%'
-      OR a.job_title LIKE '%Learning Specialist%'
-      OR a.job_title LIKE '%Paraprofessional%'
-      OR a.job_title LIKE '%Speech Language Pathologist%'
-      OR a.job_title LIKE '%Social Worker%'
-      OR a.job_title LIKE '%Behavior Analyst%'
-      OR a.job_title LIKE '%Behavior Specialist%'
-      OR a.job_title LIKE '%Assistant Dean%'
-      OR a.job_title LIKE '%Dean%'
-      OR a.job_title LIKE '%Dean of Students%'
-    ) THEN 1
-    ELSE 0
-  END AS included_title,
-  p.candidate_id,
-  p.candidate_email,
-  p.candidate_first_name,
-  p.candidate_last_name,
-  p.kf_race,
-  p.kf_gender,
-  p.kf_are_you_alumnus,
-  d.last_updated,
-  DATENAME(WW, CURRENT_TIMESTAMP) AS current_week
-FROM
-  smartrecruiters.report_applicants AS p
-  INNER JOIN smartrecruiters.report_applications AS a ON (
-    p.application_id = a.application_id
-  )
-  INNER JOIN latest_update AS d ON (
-    p.application_id = d.application_id
-  )
+)
+
+SELECT a.application_id,
+       a.status_type,
+       a.date_val,
+       a.job_city,
+       a.recruiters,
+       a.job_title,
+       
+       b.candidate_id,
+       CONCAT(b.candidate_last_name,', ',b.candidate_first_name) AS candidate_last_first,
+       b.candidate_email,
+       b.current_employer,
+       b.candidate_tags_values,
+       COALESCE(b.nj_undergrad_gpa,b.mia_undergrad_gpa) AS undergrad_gpa,
+       COALESCE(b.nj_grad_gpa,b.mia_grad_gpa) AS grad_gpa,
+       COALESCE(b.nj_teacher_certification_question,B.mia_teacher_certification_question) AS certification_instate,
+       COALESCE(b.nj_out_of_state_teacher_certification_details,b.mia_out_of_state_teaching_certification_details) AS certification_outstate,
+b.nj_out_of_state_teacher_certification_sped_credits AS nj_sped_credits
+,b.taf_affiliated_orgs
+,b.taf_other_orgs
+,b.taf_current_or_former_kipp_employee
+,COALESCE(b.taf_current_or_former_kipp_nj_mia_employee,b.taf_current_or_former_kipp_njmia_employee) AS former_kippnjmia
+,b.taf_expected_salary
+,b.kf_race
+,b.kf_gender
+,b.kf_are_you_alumnus
+,b.kf_in_which_regions_alumnus
+
+FROM applications AS a
+LEFT JOIN gabby.smartrecruiters.report_applicants AS b 
+  ON (a.application_id = b.application_id)
