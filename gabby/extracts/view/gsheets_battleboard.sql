@@ -28,7 +28,7 @@ WITH
         FROM
           gabby.pm.teacher_goals_overall_scores_static
         WHERE
-          academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR () -1
+          academic_year >= gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1
       ) AS sub PIVOT (
         AVG(overall_score) FOR pm_term IN ([PM1], [PM2], [PM3], [PM4])
       ) AS p
