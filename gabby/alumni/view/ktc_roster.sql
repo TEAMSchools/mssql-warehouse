@@ -1,5 +1,5 @@
-CREATE OR ALTER VIEW
-  alumni.ktc_roster AS
+--CREATE OR ALTER VIEW
+--  alumni.ktc_roster AS
 SELECT
   sub.student_number,
   sub.studentid,
