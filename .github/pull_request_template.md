@@ -3,7 +3,6 @@
 ## If approved, this pull request will
 
 - <feature/fix #1>
-- <feature/fix #2>
 - ...
 
 ## Protocol
