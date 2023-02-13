@@ -31,6 +31,7 @@ SELECT
   co.reporting_schoolid,
   co.schoolid,
   co.school_name,
+  co.school_abbreviation,
   co.grade_level,
   co.team,
   co.advisor_name,
