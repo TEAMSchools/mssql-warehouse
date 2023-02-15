@@ -28,7 +28,19 @@ FROM
       is_sped_goal,
       measure_names,
       measure_values,
-      ROW_NUMBER() OVER(PARTITION BY academic_year,pm_term,df_employee_number,metric_name, metric_label, grade_level,is_sped_goal, measure_names ORDER BY _modified DESC) AS rn_curr
+      ROW_NUMBER() OVER (
+        PARTITION BY
+          academic_year,
+          pm_term,
+          df_employee_number,
+          metric_name,
+          metric_label,
+          grade_level,
+          is_sped_goal,
+          measure_names
+        ORDER BY
+          _modified DESC
+      ) AS rn_curr
     FROM
       pm.teacher_goals_lockbox
   ) AS sub PIVOT (
@@ -41,5 +53,5 @@ FROM
       [Bucket Weight]
     )
   ) AS p
-
-  WHERE rn_curr = 1
+WHERE
+  rn_curr = 1
