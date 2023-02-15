@@ -393,6 +393,7 @@ SELECT
   ei.aa_actual_end_date,
   ei.cte_status,
   ei.cte_actual_end_date,
+  ei.hs_account_name,
   apps.application_name,
   apps.application_account_type,
   ar.n_submitted,
