@@ -12,7 +12,7 @@ lint:
     - sqlfmt
   enabled:
     - sqlfluff@1.4.5
-    - sql-formatter@12.1.0
+    - sql-formatter@12.1.2
     - prettier@2.8.4
     - actionlint@1.6.23
     - shellcheck@0.9.0
