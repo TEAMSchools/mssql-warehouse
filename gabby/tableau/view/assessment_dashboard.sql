@@ -34,6 +34,11 @@ SELECT
   asr.performance_band_label,
   asr.is_replacement,
   asr.is_normed_scope,
+  CASE
+    WHEN ps.standard_code IS NOT NULL THEN 1
+    ELSE NULL
+  END AS is_power,
+  ps.goal AS power_goal,
   hr.teachernumber AS hr_teachernumber,
   enr.teachernumber AS enr_teachernumber,
   enr.teacher_name,
@@ -64,6 +69,12 @@ FROM
     AND hr.course_enroll_status = 0
     AND hr.section_enroll_status = 0
     AND hr.rn_course_yr = 1
+  )
+  LEFT JOIN assessments.power_standards AS ps ON (
+    asr.assessment_id = ps.assessment_id
+    AND asr.standard_code = ps.standard_code
+    AND co.reporting_schoolid = ps.schoolid
+    AND co.academic_year = ps.academic_year
   )
 WHERE
   co.academic_year IN (
