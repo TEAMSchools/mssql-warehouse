@@ -34,16 +34,17 @@ SELECT
   asr.performance_band_label,
   asr.is_replacement,
   asr.is_normed_scope,
-  CASE
-    WHEN ps.standard_code IS NOT NULL THEN 1
-  END AS is_power_standard,
-  ps.goal AS power_standard_goal,
   hr.teachernumber AS hr_teachernumber,
   enr.teachernumber AS enr_teachernumber,
   enr.teacher_name,
   enr.course_name,
   enr.expression,
-  enr.section_number
+  enr.section_number,
+  ns.is_foundations,
+  ps.goal AS power_standard_goal,
+  CASE
+    WHEN ps.standard_code IS NOT NULL THEN 1
+  END AS is_power_standard
 FROM
   powerschool.cohort_identifiers_static AS co
   INNER JOIN illuminate_dna_assessments.agg_student_responses_all AS asr ON (
@@ -68,6 +69,9 @@ FROM
     AND hr.course_enroll_status = 0
     AND hr.section_enroll_status = 0
     AND hr.rn_course_yr = 1
+  )
+  LEFT JOIN assessments.normed_subjects AS ns ON (
+    enr.course_number = ns.course_number
   )
   LEFT JOIN assessments.power_standards AS ps ON (
     asr.assessment_id = ps.assessment_id
