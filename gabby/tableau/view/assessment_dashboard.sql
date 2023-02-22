@@ -36,9 +36,8 @@ SELECT
   asr.is_normed_scope,
   CASE
     WHEN ps.standard_code IS NOT NULL THEN 1
-    ELSE NULL
-  END AS is_power,
-  ps.goal AS power_goal,
+  END AS is_power_standard,
+  ps.goal AS power_standard_goal,
   hr.teachernumber AS hr_teachernumber,
   enr.teachernumber AS enr_teachernumber,
   enr.teacher_name,
