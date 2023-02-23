@@ -199,7 +199,10 @@ SELECT
   sc.reporting_term_code AS campaign_reporting_term,
   resp.preferred_name AS respondent_preferred_name,
   resp.adp_associate_id AS respondent_adp_associate_id,
-  COALESCE(resp.userprincipalname,rc.nonstaff_email) AS respondent_userprincipalname,
+  COALESCE(
+    resp.userprincipalname,
+    rc.nonstaff_email
+  ) AS respondent_userprincipalname,
   resp.mail AS respondent_mail,
   resp.samaccountname AS respondent_samaccountname,
   reh.business_unit AS respondent_legal_entity_name,
