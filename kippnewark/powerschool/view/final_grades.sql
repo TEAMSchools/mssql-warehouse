@@ -43,10 +43,10 @@ WITH
           sec.courses_gradescaleid AS gradescaleid,
           sec.credit_hours AS potential_credit_hours,
           CASE
-          /* unweighted 2016-2018 */
-            WHEN sec.courses_gradescaleid = 712 THEN 874
-            /* unweighted 2019+ */
+          /* unweighted 2019+ */
             WHEN sec.courses_gradescaleid = 991 THEN 976
+            /* unweighted 2016-2018 */
+            WHEN sec.courses_gradescaleid = 712 THEN 874
             /* MISSING GRADESCALE - default 2016+ */
             WHEN sec.courses_gradescaleid IS NULL THEN 874
             ELSE sec.courses_gradescaleid
@@ -517,7 +517,7 @@ FROM
       - minus y1 points earned to-date
       - minus current term points
       - divided by current term weight
-       */
+      */
       CAST(
         (
           (

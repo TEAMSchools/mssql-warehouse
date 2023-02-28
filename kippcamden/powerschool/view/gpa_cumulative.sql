@@ -35,6 +35,9 @@ WITH
         WHEN sg.excludefromgpa = 0 THEN sg.gpa_points
       END AS gpa_points_projected_s1,
       CASE
+        WHEN sg.excludefromgpa = 0 THEN sg.gpa_points
+      END AS gpa_points_projected_s1_unweighted,
+      CASE
         WHEN (
           sg.excludefromgpa = 0
           AND sg.credit_type IN ('MATH', 'SCI', 'ENG', 'SOC')
@@ -85,6 +88,7 @@ WITH
       NULL AS potentialcrhrs_projected_s1,
       NULL AS earnedcrhrs_projected_s1,
       NULL AS gpa_points_projected_s1,
+      NULL AS gpa_points_projected_s1_unweighted,
       NULL AS potentialcrhrs_core,
       NULL AS gpa_points_core,
       NULL AS unweighted_grade_points
@@ -121,6 +125,7 @@ WITH
       /* ensures already stored grades are excluded */
       AND sg.studentid IS NULL
     UNION ALL
+    /* Y1 AS of Q2 (aka Semester 1) */
     SELECT
       fg.studentid,
       co.schoolid,
@@ -138,6 +143,7 @@ WITH
         ELSE 0
       END AS earnedcrhrs_projected_s1,
       fg.y1_grade_pts AS gpa_points_projected_s1,
+      fg.y1_grade_pts_unweighted AS gpa_points_projected_s1_unweighted,
       NULL AS potentialcrhrs_core,
       NULL AS gpa_points_core,
       NULL AS unweighted_grade_points
@@ -160,7 +166,6 @@ WITH
       fg.yearid = (
         gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990
       )
-      /* Y1 AS of Q2 (aka Semester 1) */
       AND fg.storecode = 'Q2'
       AND fg.exclude_from_gpa = 0
       /* ensures already stored grades are excluded */
@@ -206,7 +211,12 @@ WITH
         potentialcrhrs_projected_s1 AS DECIMAL(5, 2)
       ) * CAST(
         gpa_points_projected_s1 AS DECIMAL(3, 2)
-      ) AS weighted_points_projected_s1
+      ) AS weighted_points_projected_s1,
+      CAST(
+        potentialcrhrs_projected_s1 AS DECIMAL(5, 2)
+      ) * CAST(
+        gpa_points_projected_s1_unweighted AS DECIMAL(3, 2)
+      ) AS weighted_points_projected_s1_unweighted
     FROM
       grades_union
   ),
@@ -218,6 +228,9 @@ WITH
       SUM(weighted_points_core) AS weighted_points_core,
       SUM(weighted_points_projected) AS weighted_points_projected,
       SUM(weighted_points_projected_s1) AS weighted_points_projected_s1,
+      SUM(
+        weighted_points_projected_s1_unweighted
+      ) AS weighted_points_projected_s1_unweighted,
       SUM(unweighted_points) AS unweighted_points,
       SUM(earnedcrhrs) AS earned_credits_cum,
       SUM(earnedcrhrs_projected) AS earned_credits_cum_projected,
@@ -283,6 +296,14 @@ SELECT
       2
     ) AS DECIMAL(3, 2)
   ) AS cumulative_y1_gpa_projected_s1,
+  CAST(
+    ROUND(
+      (
+        weighted_points_projected_s1_unweighted / potentialcrhrs_projected_s1
+      ),
+      2
+    ) AS DECIMAL(3, 2)
+  ) AS cumulative_y1_gpa_projected_s1_unweighted,
   CAST(
     ROUND(
       (

@@ -44,6 +44,8 @@ RETURN CASE
       OR @gradescale_name = 'NULL'
     )
   ) THEN 'KIPP NJ 2016 (5-12)'
+  /* return original grade scale */
+  ELSE @gradescale_name
 END;
 
 END;
