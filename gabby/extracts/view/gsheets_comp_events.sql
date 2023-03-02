@@ -18,9 +18,9 @@ WITH
           primary_job,
           df_employee_number
         FROM
-          gabby.people.staff_crosswalk_static x
+          people.staff_crosswalk_static
         WHERE
-          status <> 'TERMINATED'
+          status != 'TERMINATED'
       ) AS sub PIVOT (
         MAX(df_employee_number) FOR primary_job IN (
           [School Leader],
@@ -57,18 +57,28 @@ WITH
       f.google_email AS coo_google
     FROM
       approval_pivot AS l
-      --School Leaders
-      LEFT JOIN gabby.people.staff_crosswalk_static AS a ON l.school_leader = a.df_employee_number
-      --School Leader Managers (HsOS)
-      LEFT JOIN gabby.people.staff_crosswalk_static AS b ON a.manager_df_employee_number = b.df_employee_number
-      --HOS Managers (Executive Directors)
-      LEFT JOIN gabby.people.staff_crosswalk_static AS c ON b.manager_df_employee_number = c.df_employee_number
-      --DSO/DCO
-      LEFT JOIN gabby.people.staff_crosswalk_static AS d ON l.dso_dco = d.df_employee_number
-      --DSO/DCO Managers (MDSOs)
-      LEFT JOIN gabby.people.staff_crosswalk_static AS e ON d.manager_df_employee_number = e.df_employee_number
-      --MDSO Managers (COOs)
-      LEFT JOIN gabby.people.staff_crosswalk_static AS f ON e.manager_df_employee_number = f.df_employee_number
+      /*School Leaders*/
+      LEFT JOIN people.staff_crosswalk_static AS a ON (
+        l.school_leader = a.df_employee_number
+      )
+      /*School Leader Managers (HsOS)*/
+      LEFT JOIN people.staff_crosswalk_static AS b ON (
+        a.manager_df_employee_number = b.df_employee_number
+      )
+      /*HOS Managers (Executive Directors)*/
+      LEFT JOIN people.staff_crosswalk_static AS c ON (
+        b.manager_df_employee_number = c.df_employee_number
+      )
+      /*DSO/DCO*/
+      LEFT JOIN people.staff_crosswalk_static AS d ON (l.dso_dco = d.df_employee_number)
+      /*DSO/DCO Managers (MDSOs)*/
+      LEFT JOIN people.staff_crosswalk_static AS e ON (
+        d.manager_df_employee_number = e.df_employee_number
+      )
+      /*MDSO Managers (COOs)*/
+      LEFT JOIN people.staff_crosswalk_static AS f ON (
+        e.manager_df_employee_number = f.df_employee_number
+      )
   )
 SELECT
   x.df_employee_number,
@@ -97,11 +107,10 @@ SELECT
     WHEN x.primary_job IN ('School Leader', 'DSO') THEN l.ed_google
     WHEN x.primary_on_site_department != 'Operations' THEN l.hos_ed_google
     WHEN x.primary_on_site_department = 'Operations' THEN l.coo_google
-  END AS second_approver_email,
-  l.dso_email AS notify,
+  END AS second_approver_google,
   l.dso_email AS notify
 FROM
-  gabby.people.staff_crosswalk_static AS x
+  people.staff_crosswalk_static AS x
   JOIN school_approval_loops AS l ON x.primary_site = l.primary_site
 WHERE
   x.primary_site NOT IN (
