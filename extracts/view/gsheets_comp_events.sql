@@ -84,40 +84,27 @@ SELECT x.df_employee_number
       ,x.primary_job
       ,x.primary_site
       ,x.primary_on_site_department
-      ,CASE
-       WHEN primary_job IN ('School Leader','DSO')
-       THEN l.hos_ed_email
-       WHEN primary_on_site_department <> 'Operations'
-       THEN l.sl_email
-       WHEN primary_on_site_department = 'Operations'
-       THEN l.mdso_email 
-       ELSE NULL
-       END AS first_approver_email
-      ,CASE
-       WHEN primary_job IN ('School Leader','DSO')
-       THEN l.hos_ed_google
-       WHEN primary_on_site_department <> 'Operations'
-       THEN l.sl_google
-       WHEN primary_on_site_department = 'Operations'
-       THEN l.mdso_google
-       ELSE NULL 
-       END AS first_approver_google 
-      ,CASE
-       WHEN primary_job IN ('School Leader','DSO') 
-       THEN l.ed_email
-       WHEN primary_on_site_department <> 'Operations' 
-       THEN l.hos_ed_email
-       WHEN primary_on_site_department = 'Operations' THEN l.coo_email
-       ELSE NULL
-       END AS second_approver_email
-      ,CASE
-       WHEN primary_job IN ('School Leader','DSO')
-       THEN l.ed_google
-       WHEN primary_on_site_department <> 'Operations'
-       THEN l.hos_ed_google
-       WHEN primary_on_site_department = 'Operations' THEN l.coo_google
-       ELSE NULL
-       END AS second_approver_email
+      ,  CASE
+    WHEN x.primary_job IN ('School Leader', 'DSO') THEN l.hos_ed_email
+    WHEN x.primary_on_site_department != 'Operations' THEN l.sl_email
+    WHEN x.primary_on_site_department = 'Operations' THEN l.mdso_email
+  END AS first_approver_email,
+  CASE
+    WHEN x.primary_job IN ('School Leader', 'DSO') THEN l.hos_ed_google
+    WHEN x.primary_on_site_department != 'Operations' THEN l.sl_google
+    WHEN x.primary_on_site_department = 'Operations' THEN l.mdso_google
+  END AS first_approver_google,
+  CASE
+    WHEN x.primary_job IN ('School Leader', 'DSO') THEN l.ed_email
+    WHEN x.primary_on_site_department != 'Operations' THEN l.hos_ed_email
+    WHEN x.primary_on_site_department = 'Operations' THEN l.coo_email
+  END AS second_approver_email,
+  CASE
+    WHEN x.primary_job IN ('School Leader', 'DSO') THEN l.ed_google
+    WHEN x.primary_on_site_department != 'Operations' THEN l.hos_ed_google
+    WHEN x.primary_on_site_department = 'Operations' THEN l.coo_google
+  END AS second_approver_email,
+  l.dso_email AS notify
       ,l.dso_email AS notify
 FROM gabby.people.staff_crosswalk_static x
 JOIN school_approval_loops l
