@@ -111,7 +111,7 @@ SELECT
   l.dso_email AS notify
 FROM
   people.staff_crosswalk_static AS x
-  JOIN school_approval_loops AS l ON x.primary_site = l.primary_site
+  LEFT JOIN school_approval_loops AS l ON x.primary_site = l.primary_site
 WHERE
   x.primary_site NOT IN (
     'Room 9 - 60 Park Pl',
