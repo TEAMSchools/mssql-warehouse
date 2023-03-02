@@ -1,76 +1,121 @@
 CREATE OR ALTER VIEW
-  extracts.gsheets_comp_events AS
+  gsheets_comp_events AS
 WITH
-  school_approvers AS (
+  approval_pivot AS (
     SELECT
-      x.primary_site,
-      x.userprincipalname AS first_approver_email,
-      x.manager_userprincipalname AS second_approver_email,
-      x.google_email AS first_approver_google,
-      m.google_email AS second_approver_google
+      primary_site,
+      legal_entity_name,
+      [School Leader] AS school_leader,
+      COALESCE(
+        [Director School Operations],
+        [Director Campus Operations]
+      ) AS dso_dco
     FROM
-      people.staff_crosswalk_static AS x
-      LEFT JOIN people.staff_crosswalk_static AS m ON (
-        x.manager_df_employee_number = m.df_employee_number
-      )
-    WHERE
-      x.primary_job = 'School Leader'
-      AND x.status != 'TERMINATED'
+      (
+        SELECT
+          primary_site,
+          legal_entity_name,
+          primary_job,
+          df_employee_number
+        FROM
+          people.staff_crosswalk_static
+        WHERE
+          status != 'TERMINATED'
+      ) AS sub PIVOT (
+        MAX(df_employee_number) FOR primary_job IN (
+          [School Leader],
+          [Director School Operations],
+          [Director Campus Operations]
+        )
+      ) AS p
   ),
-  ktaf_approvers AS (
+  school_approval_loops AS (
     SELECT
-      x.df_employee_number,
-      x.manager_df_employee_number,
-      m.google_email AS first_approver_google,
-      m.userprincipalname AS first_approver_email,
-      gm.google_email AS second_approver_google,
-      gm.userprincipalname AS second_approver_email
+      l.primary_site,
+      l.legal_entity_name,
+      l.school_leader,
+      l.dso_dco,
+      a.userprincipalname AS sl_email,
+      a.google_email AS sl_google,
+      b.df_employee_number AS hos_ed,
+      b.preferred_name AS hos_ed_name,
+      b.userprincipalname AS hos_ed_email,
+      b.google_email AS hos_ed_google,
+      c.df_employee_number AS ed,
+      c.preferred_name AS ed_name,
+      c.userprincipalname AS ed_email,
+      c.google_email AS ed_google,
+      d.userprincipalname AS dso_email,
+      d.google_email AS dso_google,
+      e.df_employee_number AS mdso,
+      e.preferred_name AS mdso_name,
+      e.userprincipalname AS mdso_email,
+      e.google_email AS mdso_google,
+      f.df_employee_number AS coo,
+      f.preferred_name AS coo_name,
+      f.userprincipalname AS coo_email,
+      f.google_email AS coo_google
     FROM
-      people.staff_crosswalk_static AS x
-      LEFT JOIN people.staff_crosswalk_static AS m ON (
-        x.manager_df_employee_number = m.df_employee_number
+      approval_pivot AS l
+      /*School Leaders*/
+      LEFT JOIN people.staff_crosswalk_static AS a ON (
+        l.school_leader = a.df_employee_number
       )
-      LEFT JOIN people.staff_crosswalk_static AS gm ON (
-        m.manager_df_employee_number = gm.df_employee_number
+      /*School Leader Managers (HsOS)*/
+      LEFT JOIN people.staff_crosswalk_static AS b ON (
+        a.manager_df_employee_number = b.df_employee_number
       )
-    WHERE
-      x.primary_job != 'School Leader'
+      /*HOS Managers (Executive Directors)*/
+      LEFT JOIN people.staff_crosswalk_static AS c ON (
+        b.manager_df_employee_number = c.df_employee_number
+      )
+      /*DSO/DCO*/
+      LEFT JOIN people.staff_crosswalk_static AS d ON (l.dso_dco = d.df_employee_number)
+      /*DSO/DCO Managers (MDSOs)*/
+      LEFT JOIN people.staff_crosswalk_static AS e ON (
+        d.manager_df_employee_number = e.df_employee_number
+      )
+      /*MDSO Managers (COOs)*/
+      LEFT JOIN people.staff_crosswalk_static AS f ON (
+        e.manager_df_employee_number = f.df_employee_number
+      )
   )
 SELECT
+  x.df_employee_number,
   x.payroll_company_code,
-  x.legal_entity_name,
-  CONCAT(
-    x.preferred_name,
-    ' - ',
-    x.primary_site
-  ) AS preferred_name,
+  x.adp_associate_id,
   x.file_number,
+  x.primary_job,
   x.primary_site,
   x.primary_on_site_department,
-  x.primary_job,
-  x.google_email,
-  x.userprincipalname,
-  COALESCE(
-    s.first_approver_google,
-    k.first_approver_google
-  ) AS first_approver,
-  COALESCE(
-    s.second_approver_google,
-    k.second_approver_google
-  ) AS second_approver,
-  COALESCE(
-    s.first_approver_email,
-    k.first_approver_email
-  ) AS first_approver_email,
-  COALESCE(
-    s.second_approver_email,
-    k.second_approver_email
-  ) AS second_approver_email
+  CASE
+    WHEN x.primary_job IN ('School Leader', 'DSO') THEN l.hos_ed_email
+    WHEN x.primary_on_site_department != 'Operations' THEN l.sl_email
+    WHEN x.primary_on_site_department = 'Operations' THEN l.mdso_email
+  END AS first_approver_email,
+  CASE
+    WHEN x.primary_job IN ('School Leader', 'DSO') THEN l.hos_ed_google
+    WHEN x.primary_on_site_department != 'Operations' THEN l.sl_google
+    WHEN x.primary_on_site_department = 'Operations' THEN l.mdso_google
+  END AS first_approver_google,
+  CASE
+    WHEN x.primary_job IN ('School Leader', 'DSO') THEN l.ed_email
+    WHEN x.primary_on_site_department != 'Operations' THEN l.hos_ed_email
+    WHEN x.primary_on_site_department = 'Operations' THEN l.coo_email
+  END AS second_approver_email,
+  CASE
+    WHEN x.primary_job IN ('School Leader', 'DSO') THEN l.ed_google
+    WHEN x.primary_on_site_department != 'Operations' THEN l.hos_ed_google
+    WHEN x.primary_on_site_department = 'Operations' THEN l.coo_google
+  END AS second_approver_google,
+  l.dso_email AS notify
 FROM
   people.staff_crosswalk_static AS x
-  LEFT JOIN school_approvers AS s ON (x.primary_site = s.primary_site)
-  LEFT JOIN ktaf_approvers AS k ON (
-    x.df_employee_number = k.df_employee_number
-  )
+  LEFT JOIN school_approval_loops AS l ON x.primary_site = l.primary_site
 WHERE
-  x.status != 'TERMINATED'
+  x.primary_site NOT IN (
+    'Room 9 - 60 Park Pl',
+    'Room 10 - 121 Market St',
+    'Room 11 - 1951 NW 7th Ave'
+  )
+  AND x.status != 'TERMINATED'
