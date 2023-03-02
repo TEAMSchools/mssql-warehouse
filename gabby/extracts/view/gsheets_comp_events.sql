@@ -56,19 +56,19 @@ WITH
       f.userprincipalname AS coo_email,
       f.google_email AS coo_google
     FROM
-      approval_pivot l
+      approval_pivot AS l
       --School Leaders
-      LEFT JOIN gabby.people.staff_crosswalk_static a ON l.school_leader = a.df_employee_number
+      LEFT JOIN gabby.people.staff_crosswalk_static AS a ON l.school_leader = a.df_employee_number
       --School Leader Managers (HsOS)
-      LEFT JOIN gabby.people.staff_crosswalk_static b ON a.manager_df_employee_number = b.df_employee_number
+      LEFT JOIN gabby.people.staff_crosswalk_static AS b ON a.manager_df_employee_number = b.df_employee_number
       --HOS Managers (Executive Directors)
-      LEFT JOIN gabby.people.staff_crosswalk_static c ON b.manager_df_employee_number = c.df_employee_number
+      LEFT JOIN gabby.people.staff_crosswalk_static AS c ON b.manager_df_employee_number = c.df_employee_number
       --DSO/DCO
-      LEFT JOIN gabby.people.staff_crosswalk_static d ON l.dso_dco = d.df_employee_number
+      LEFT JOIN gabby.people.staff_crosswalk_static AS d ON l.dso_dco = d.df_employee_number
       --DSO/DCO Managers (MDSOs)
-      LEFT JOIN gabby.people.staff_crosswalk_static e ON d.manager_df_employee_number = e.df_employee_number
+      LEFT JOIN gabby.people.staff_crosswalk_static AS e ON d.manager_df_employee_number = e.df_employee_number
       --MDSO Managers (COOs)
-      LEFT JOIN gabby.people.staff_crosswalk_static f ON e.manager_df_employee_number = f.df_employee_number
+      LEFT JOIN gabby.people.staff_crosswalk_static AS f ON e.manager_df_employee_number = f.df_employee_number
   )
 SELECT
   x.df_employee_number,
@@ -101,12 +101,12 @@ SELECT
   l.dso_email AS notify,
   l.dso_email AS notify
 FROM
-  gabby.people.staff_crosswalk_static x
-  JOIN school_approval_loops l ON x.primary_site = l.primary_site
+  gabby.people.staff_crosswalk_static AS x
+  JOIN school_approval_loops AS l ON x.primary_site = l.primary_site
 WHERE
   x.primary_site NOT IN (
     'Room 9 - 60 Park Pl',
     'Room 10 - 121 Market St',
     'Room 11 - 1951 NW 7th Ave'
   )
-  AND x.status <> 'TERMINATED'
+  AND x.status != 'TERMINATED'
