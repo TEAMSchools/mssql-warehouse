@@ -25,7 +25,7 @@ SELECT
   kr.currently_enrolled_school AS [Currently Enrolled School],
   kr.counselor_name AS [Contact Owner],
   kr.ktc_cohort AS [KIPP HS Class],
-  ei.ugrad_date_last_verified AS [EV Status],
+  CAST(ei.ugrad_date_last_verified AS NVARCHAR) AS [EV Status],
   t.tier AS [Tier]
 FROM
   alumni.ktc_roster AS kr
