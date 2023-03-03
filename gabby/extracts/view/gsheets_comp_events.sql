@@ -1,5 +1,4 @@
-CREATE OR ALTER VIEW
-  gsheets_comp_events AS
+--CREATE OR ALTER VIEW gsheets_comp_events AS
 WITH
   approval_pivot AS (
     SELECT
@@ -80,7 +79,7 @@ WITH
         e.manager_df_employee_number = f.df_employee_number
       )
   )
-SELECT
+SELECT DISTINCT
   x.df_employee_number,
   x.payroll_company_code,
   x.adp_associate_id,
@@ -88,6 +87,10 @@ SELECT
   x.primary_job,
   x.primary_site,
   x.primary_on_site_department,
+  x.preferred_name,
+  x.userprincipalname,
+  x.google_email,
+  x.status,
   CASE
     WHEN x.primary_job IN ('School Leader', 'DSO') THEN l.hos_ed_email
     WHEN x.primary_on_site_department != 'Operations' THEN l.sl_email
@@ -113,9 +116,4 @@ FROM
   people.staff_crosswalk_static AS x
   LEFT JOIN school_approval_loops AS l ON x.primary_site = l.primary_site
 WHERE
-  x.primary_site NOT IN (
-    'Room 9 - 60 Park Pl',
-    'Room 10 - 121 Market St',
-    'Room 11 - 1951 NW 7th Ave'
-  )
-  AND x.status != 'TERMINATED'
+  x.status != 'TERMINATED'
