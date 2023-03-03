@@ -13,9 +13,6 @@ SELECT
   standard_code,
   standard_description,
   domain_description,
-  date_taken,
-  points,
-  percent_correct,
   CASE
     WHEN is_replacement = 0 THEN MIN(title) OVER (
       PARTITION BY
@@ -65,7 +62,10 @@ SELECT
         is_replacement
     )
     ELSE performance_band_set_id
-  END AS performance_band_set_id
+  END AS performance_band_set_id,
+  date_taken,
+  points,
+  percent_correct
 FROM
   (
     SELECT
