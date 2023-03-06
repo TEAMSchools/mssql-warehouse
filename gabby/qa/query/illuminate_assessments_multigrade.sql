@@ -2,6 +2,7 @@ WITH
   asmts AS (
     SELECT
       assessment_id,
+      academic_year,
       title,
       module_type,
       module_number,
@@ -16,6 +17,7 @@ WITH
   )
 SELECT
   assessment_id,
+  academic_year,
   title,
   scope,
   subject_area,
@@ -25,6 +27,7 @@ FROM
   (
     SELECT
       a.assessment_id,
+      a.academic_year,
       a.title,
       a.scope,
       a.subject_area,
@@ -38,8 +41,11 @@ FROM
     WHERE
       a.is_normed_scope = 1
   ) AS sub
+WHERE scope <> 'HS Unit Quiz'
+
 GROUP BY
   assessment_id,
+  academic_year,
   title,
   scope,
   subject_area,
