@@ -1,4 +1,5 @@
---CREATE OR ALTER VIEW gsheets_comp_events AS
+CREATE OR ALTER VIEW
+  gsheets_comp_events AS
 WITH
   approval_pivot AS (
     SELECT
@@ -100,7 +101,34 @@ SELECT DISTINCT
       'KIPP Liberty Academy'
     ) THEN 'Miami'
     ELSE 'NJ'
-  END AS region CASE
+  END AS region,
+  CASE
+    WHEN x.primary_site IN (
+      'Room 11 - 1951 NW 7th Ave',
+      'KIPP Sunrise Academy',
+      'KIPP Royalty Academy',
+      'KIPP Courage Academy',
+      'KIPP Liberty Academy'
+    ) THEN 'Miami North Campus'
+    WHEN x.primary_site IN (
+      'KIPP Newark Community Prep',
+      'KIPP Newark Lab High School',
+      'KIPP Justice Academy',
+      'Norfolk St Campus'
+    ) THEN 'Norfolk St Campus'
+    WHEN x.primary_site IN (
+      'KIPP BOLD Academy',
+      'KIPP THRIVE Academy',
+      '18th Ave Campus'
+    ) THEN '18th Ave Campus'
+    WHEN x.primary_site IN (
+      'KIPP Lanning Square Primary',
+      'KIPP Lanning Square Middle',
+      'KIPP Lanning Sq Campus'
+    ) THEN 'KIPP Lanning Sq Campus'
+    ELSE x.primary_site
+  END AS site_campus,
+  CASE
     WHEN x.primary_job IN ('School Leader', 'DSO') THEN l.hos_ed_email
     WHEN x.primary_on_site_department != 'Operations' THEN l.sl_email
     WHEN x.primary_on_site_department = 'Operations' THEN l.mdso_email

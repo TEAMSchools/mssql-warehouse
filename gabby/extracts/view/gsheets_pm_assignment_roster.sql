@@ -23,9 +23,9 @@ SELECT
   s.userprincipalname AS user_email,
   s.primary_site,
   s.legal_entity_name,
-  /*default TNTP assignments based on title/location*/
   s.manager_df_employee_number,
-  /* default Engagement & Support Survey assignments based on title/location */
+  s.manager_name,
+  /*default TNTP assignments based on title/location*/
   CASE
     WHEN s.primary_site IN (
       'Room 9 - 60 Park Pl',
@@ -45,6 +45,7 @@ SELECT
     ) THEN 'School Leadership Team'
     ELSE 'Non-teaching school based staff'
   END AS tntp_assignment,
+  /* default Engagement & Support Survey assignments based on title/location */
   CASE
     WHEN s.primary_job = 'Head of Schools' THEN 'Head of Schools'
     WHEN s.primary_job = 'Assistant Superintendent' THEN 'Head of Schools'
@@ -87,7 +88,6 @@ SELECT
     ELSE s.primary_on_site_department
   END AS department_grade,
   /* default School Based assignments based on legal entity/location */
-  s.manager_name,
   CASE
     WHEN (
       s.legal_entity_name != 'KIPP TEAM and Family Schools Inc.'
@@ -97,7 +97,33 @@ SELECT
         'Room 11 - 1951 NW 7th Ave'
       )
     ) THEN 'school-based'
-  END AS school_based
+  END AS school_based,
+  CASE
+    WHEN s.primary_site IN (
+      'Room 11 - 1951 NW 7th Ave',
+      'KIPP Sunrise Academy',
+      'KIPP Royalty Academy',
+      'KIPP Courage Academy',
+      'KIPP Liberty Academy'
+    ) THEN 'Miami North Campus'
+    WHEN s.primary_site IN (
+      'KIPP Newark Community Prep',
+      'KIPP Newark Lab High School',
+      'KIPP Justice Academy',
+      'Norfolk St Campus'
+    ) THEN 'Norfolk St Campus'
+    WHEN s.primary_site IN (
+      'KIPP BOLD Academy',
+      'KIPP THRIVE Academy',
+      '18th Ave Campus'
+    ) THEN '18th Ave Campus'
+    WHEN s.primary_site IN (
+      'KIPP Lanning Square Primary',
+      'KIPP Lanning Square Middle',
+      'KIPP Lanning Sq Campus'
+    ) THEN 'KIPP Lanning Sq Campus'
+    ELSE s.primary_site
+  END AS site_campus
 FROM
   people.staff_crosswalk_static AS s
   LEFT JOIN elementary_grade AS e ON (
