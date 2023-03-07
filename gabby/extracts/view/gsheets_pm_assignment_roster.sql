@@ -25,6 +25,8 @@ SELECT
   s.legal_entity_name,
   s.manager_df_employee_number,
   s.manager_name,
+  x.region,
+  COALESCE(c.campus_name, s.primary_site) AS site_campus,
   /*default TNTP assignments based on title/location*/
   CASE
     WHEN s.primary_site IN (
@@ -97,38 +99,14 @@ SELECT
         'Room 11 - 1951 NW 7th Ave'
       )
     ) THEN 'school-based'
-  END AS school_based,
-  CASE
-    WHEN s.primary_site IN (
-      'Room 11 - 1951 NW 7th Ave',
-      'KIPP Sunrise Academy',
-      'KIPP Royalty Academy',
-      'KIPP Courage Academy',
-      'KIPP Liberty Academy'
-    ) THEN 'Miami North Campus'
-    WHEN s.primary_site IN (
-      'KIPP Newark Community Prep',
-      'KIPP Newark Lab High School',
-      'KIPP Justice Academy',
-      'Norfolk St Campus'
-    ) THEN 'Norfolk St Campus'
-    WHEN s.primary_site IN (
-      'KIPP BOLD Academy',
-      'KIPP THRIVE Academy',
-      '18th Ave Campus'
-    ) THEN '18th Ave Campus'
-    WHEN s.primary_site IN (
-      'KIPP Lanning Square Primary',
-      'KIPP Lanning Square Middle',
-      'KIPP Lanning Sq Campus'
-    ) THEN 'KIPP Lanning Sq Campus'
-    ELSE s.primary_site
-  END AS site_campus
+  END AS school_based
 FROM
   people.staff_crosswalk_static AS s
   LEFT JOIN elementary_grade AS e ON (
     s.df_employee_number = e.employee_number
   )
+  LEFT JOIN people.school_crosswalk AS x ON s.primary_site = x.site_name
+  LEFT JOIN people.campus_crosswalk AS c ON s.primary_site = c.site_name
 WHERE
   s.[status] = 'ACTIVE'
   AND s.primary_job != 'Intern'

@@ -1,5 +1,4 @@
-CREATE OR ALTER VIEW
-  gsheets_comp_events AS
+--CREATE OR ALTER VIEW gsheets_comp_events AS
 WITH
   approval_pivot AS (
     SELECT
@@ -92,42 +91,8 @@ SELECT DISTINCT
   x.userprincipalname,
   x.google_email,
   x.status,
-  CASE
-    WHEN x.primary_site IN (
-      'Room 11 - 1951 NW 7th Ave',
-      'KIPP Sunrise Academy',
-      'KIPP Royalty Academy',
-      'KIPP Courage Academy',
-      'KIPP Liberty Academy'
-    ) THEN 'Miami'
-    ELSE 'NJ'
-  END AS region,
-  CASE
-    WHEN x.primary_site IN (
-      'Room 11 - 1951 NW 7th Ave',
-      'KIPP Sunrise Academy',
-      'KIPP Royalty Academy',
-      'KIPP Courage Academy',
-      'KIPP Liberty Academy'
-    ) THEN 'Miami North Campus'
-    WHEN x.primary_site IN (
-      'KIPP Newark Community Prep',
-      'KIPP Newark Lab High School',
-      'KIPP Justice Academy',
-      'Norfolk St Campus'
-    ) THEN 'Norfolk St Campus'
-    WHEN x.primary_site IN (
-      'KIPP BOLD Academy',
-      'KIPP THRIVE Academy',
-      '18th Ave Campus'
-    ) THEN '18th Ave Campus'
-    WHEN x.primary_site IN (
-      'KIPP Lanning Square Primary',
-      'KIPP Lanning Square Middle',
-      'KIPP Lanning Sq Campus'
-    ) THEN 'KIPP Lanning Sq Campus'
-    ELSE x.primary_site
-  END AS site_campus,
+  s.region,
+  COALESCE(c.campus_name, x.primary_site) AS site_campus,
   CASE
     WHEN x.primary_job IN ('School Leader', 'DSO') THEN l.hos_ed_email
     WHEN x.primary_on_site_department != 'Operations' THEN l.sl_email
@@ -152,5 +117,7 @@ SELECT DISTINCT
 FROM
   people.staff_crosswalk_static AS x
   LEFT JOIN school_approval_loops AS l ON x.primary_site = l.primary_site
+  LEFT JOIN people.school_crosswalk AS s ON x.primary_site = s.site_name
+  LEFT JOIN people.campus_crosswalk AS c ON x.primary_site = c.site_name
 WHERE
   x.status != 'TERMINATED'
