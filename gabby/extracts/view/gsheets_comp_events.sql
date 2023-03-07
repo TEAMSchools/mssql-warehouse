@@ -92,6 +92,15 @@ SELECT DISTINCT
   x.google_email,
   x.status,
   CASE
+    WHEN x.primary_site IN (
+      'Room 11 - 1951 NW 7th Ave',
+      'KIPP Sunrise Academy',
+      'KIPP Royalty Academy',
+      'KIPP Courage Academy',
+      'KIPP Liberty Academy'
+    ) THEN 'Miami'
+    ELSE 'NJ'
+  END AS region CASE
     WHEN x.primary_job IN ('School Leader', 'DSO') THEN l.hos_ed_email
     WHEN x.primary_on_site_department != 'Operations' THEN l.sl_email
     WHEN x.primary_on_site_department = 'Operations' THEN l.mdso_email
