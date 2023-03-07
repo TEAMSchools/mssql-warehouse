@@ -9,7 +9,11 @@ WITH
       job_city,
       recruiters,
       department_internal,
-      job_title
+      job_title,
+      application_state,
+      source,
+      source_type,
+      source_subtype
     FROM
       (
         SELECT
@@ -18,6 +22,10 @@ WITH
           recruiters,
           department_internal,
           job_title,
+          application_state,
+          source,
+          source_type,
+          source_subtype,
           application_state_new_date AS application_date,
           application_state_in_review_date AS review_date,
           application_state_interview_date AS interview_date,
@@ -52,6 +60,10 @@ SELECT
   a.job_city,
   a.recruiters,
   a.job_title,
+  a.application_state,
+  a.source,
+  a.source_type,
+  a.source_subtype,
   b.candidate_id,
   CONCAT(
     b.candidate_last_name,
