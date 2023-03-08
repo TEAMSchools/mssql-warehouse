@@ -13,7 +13,6 @@ WITH
       illuminate_dna_assessments.assessments_identifiers_static
     WHERE
       deleted_at IS NULL
-      AND academic_year_clean = utilities.GLOBAL_ACADEMIC_YEAR ()
   )
 SELECT
   assessment_id,
@@ -41,8 +40,6 @@ FROM
     WHERE
       a.is_normed_scope = 1
   ) AS sub
-WHERE scope <> 'HS Unit Quiz'
-
 GROUP BY
   assessment_id,
   academic_year,
