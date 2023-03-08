@@ -207,8 +207,8 @@ SELECT
   s.linkedin,
   s.linkedin_link,
   s.debt_binary,
-  CAST(s.debt_amount AS MONEY) AS debt_amount,
-  CAST(s.annual_income AS MONEY) AS annual_income,
+  s.debt_amount,
+  s.annual_income AS annual_income,
   /*weighted satisfaction scores based on relative importance of each*/
   s.cur_1 * p.imp_1 AS level_pay_quality,
   s.cur_2 * p.imp_2 AS stable_pay_quality,
@@ -221,7 +221,7 @@ SELECT
   s.cur_9 * p.imp_9 AS purpose_quality,
   s.cur_10 * p.imp_10 AS power_quality,
   (
-    s.cur_1 * p.imp_1 + s.cur_2 * p.imp_2 + s.cur_3 * p.imp_3 + s.cur_4 * p.imp_4 + s.cur_5 * p.imp_5 + s.cur_6 * p.imp_6 + s.cur_7 * p.imp_7 + s.cur_8 * p.imp_8 + s.cur_9 * p.imp_9 + s.cur_10 * p.imp_10 -- noqa: L016
+    s.cur_1 * p.imp_1 + s.cur_2 * p.imp_2 + s.cur_3 * p.imp_3 + s.cur_4 * p.imp_4 + s.cur_5 * p.imp_5 + s.cur_6 * p.imp_6 + s.cur_7 * p.imp_7 + s.cur_8 * p.imp_8 + s.cur_9 * p.imp_9 + s.cur_10 * p.imp_10
   ) / 10.0 AS overall_quality,
   a.[name],
   a.kipp_ms_graduate_c,
