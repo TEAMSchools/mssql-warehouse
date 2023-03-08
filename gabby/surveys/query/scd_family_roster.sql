@@ -2,7 +2,7 @@ SELECT
   CONCAT(
     c.student_web_id,
     '@teamstudents.org'
-  ) AS student_email,
+  ) AS student_identifier,
   c.cohort,
   c.lastfirst,
   c.grade_level,
@@ -17,7 +17,7 @@ WHERE
   AND c.academic_year = 2022
 UNION ALL
 SELECT
-  c.student_web_id AS student_email,
+  c.student_web_id AS student_identifier,
   c.cohort,
   c.lastfirst,
   c.grade_level,
@@ -32,19 +32,7 @@ WHERE
   AND c.academic_year = 2022
 UNION ALL
 SELECT
-  CONCAT(
-    UPPER(
-      SUBSTRING(c.student_web_id, 1, 1)
-    ),
-    LOWER(
-      SUBSTRING(
-        c.student_web_id,
-        2,
-        LEN(c.student_web_id)
-      )
-    )
-  ) AS student_email,
-  c.cohort,
+  c.student_number AS student_identifier c.cohort,
   c.lastfirst,
   c.grade_level,
   c.region,
