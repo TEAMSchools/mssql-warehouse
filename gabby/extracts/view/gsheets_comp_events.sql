@@ -1,4 +1,5 @@
---CREATE OR ALTER VIEW gsheets_comp_events AS
+CREATE OR ALTER VIEW
+  gsheets_comp_events AS
 WITH
   approval_pivot AS (
     SELECT
