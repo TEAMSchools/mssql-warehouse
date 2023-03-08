@@ -13,7 +13,6 @@ WITH
       illuminate_dna_assessments.assessments_identifiers_static
     WHERE
       deleted_at IS NULL
-      AND academic_year_clean = utilities.GLOBAL_ACADEMIC_YEAR ()
   )
 SELECT
   assessment_id,
@@ -35,14 +34,12 @@ FROM
       agl.grade_level_id
     FROM
       asmts AS a
-      INNER JOIN illuminate_dna_assessments.assessment_grade_levels AS agl ON (
+      LEFT JOIN illuminate_dna_assessments.assessment_grade_levels AS agl ON (
         a.assessment_id = agl.assessment_id
       )
     WHERE
       a.is_normed_scope = 1
   ) AS sub
-WHERE scope <> 'HS Unit Quiz'
-
 GROUP BY
   assessment_id,
   academic_year,
