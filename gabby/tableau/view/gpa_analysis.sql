@@ -2,6 +2,7 @@ CREATE OR ALTER VIEW
   tableau.gpa_analysis AS
 SELECT
   co.student_number,
+  kt.sf_contact_id AS salesforce_id,
   co.lastfirst,
   co.gender,
   co.ethnicity,
@@ -51,7 +52,8 @@ SELECT
   gpac.earned_credits_cum_projected,
   gpac.earned_credits_cum_projected_s1,
   gpac.potential_credits_cum,
-  gpac.core_cumulative_y1_gpa
+  gpac.core_cumulative_y1_gpa,
+  gpac.cumulative_y1_gpa_unweighted
 FROM
   powerschool.cohort_identifiers_static AS co
   LEFT JOIN powerschool.gpa_detail AS gpad ON (
@@ -64,6 +66,9 @@ FROM
     co.studentid = gpac.studentid
     AND co.schoolid = gpac.schoolid
     AND co.[db_name] = gpac.[db_name]
+  )
+  LEFT JOIN gabby.alumni.ktc_roster AS kt ON (
+    kt.student_number = co.student_number
   )
 WHERE
   co.school_level IN ('MS', 'HS')

@@ -2,6 +2,7 @@ WITH
   asmts AS (
     SELECT
       assessment_id,
+      academic_year,
       title,
       module_type,
       module_number,
@@ -12,10 +13,10 @@ WITH
       illuminate_dna_assessments.assessments_identifiers_static
     WHERE
       deleted_at IS NULL
-      AND academic_year_clean = utilities.GLOBAL_ACADEMIC_YEAR ()
   )
 SELECT
   assessment_id,
+  academic_year,
   title,
   scope,
   subject_area,
@@ -25,6 +26,7 @@ FROM
   (
     SELECT
       a.assessment_id,
+      a.academic_year,
       a.title,
       a.scope,
       a.subject_area,
@@ -40,6 +42,7 @@ FROM
   ) AS sub
 GROUP BY
   assessment_id,
+  academic_year,
   title,
   scope,
   subject_area,
