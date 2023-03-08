@@ -53,7 +53,7 @@ SELECT
   gpac.earned_credits_cum_projected_s1,
   gpac.potential_credits_cum,
   gpac.core_cumulative_y1_gpa,
-  gpac.cumulative_y1_gpa_unweighted
+  gpac.cumulative_y1_gpa_projected_s1_unweighted
 FROM
   powerschool.cohort_identifiers_static AS co
   LEFT JOIN powerschool.gpa_detail AS gpad ON (
