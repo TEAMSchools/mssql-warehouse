@@ -21,6 +21,11 @@ WITH
           people.staff_crosswalk_static
         WHERE
           status != 'TERMINATED'
+          AND primary_site NOT IN (
+            'Room 11 - 1951 NW 7th Ave',
+            'Room 10 - 121 Market St',
+            'Room 9 - 60 Park Pl'
+          )
       ) AS sub PIVOT (
         MAX(df_employee_number) FOR primary_job IN (
           [School Leader],
@@ -80,7 +85,7 @@ WITH
         e.manager_df_employee_number = f.df_employee_number
       )
   )
-SELECT DISTINCT
+SELECT
   x.df_employee_number,
   x.payroll_company_code,
   x.adp_associate_id,
