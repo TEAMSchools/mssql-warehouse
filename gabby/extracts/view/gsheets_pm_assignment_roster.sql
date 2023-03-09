@@ -23,9 +23,11 @@ SELECT
   s.userprincipalname AS user_email,
   s.primary_site,
   s.legal_entity_name,
-  /*default TNTP assignments based on title/location*/
   s.manager_df_employee_number,
-  /* default Engagement & Support Survey assignments based on title/location */
+  s.manager_name,
+  x.region,
+  COALESCE(c.campus_name, s.primary_site) AS site_campus,
+  /*default TNTP assignments based on title/location*/
   CASE
     WHEN s.primary_site IN (
       'Room 9 - 60 Park Pl',
@@ -45,6 +47,7 @@ SELECT
     ) THEN 'School Leadership Team'
     ELSE 'Non-teaching school based staff'
   END AS tntp_assignment,
+  /* default Engagement & Support Survey assignments based on title/location */
   CASE
     WHEN s.primary_job = 'Head of Schools' THEN 'Head of Schools'
     WHEN s.primary_job = 'Assistant Superintendent' THEN 'Head of Schools'
@@ -87,7 +90,6 @@ SELECT
     ELSE s.primary_on_site_department
   END AS department_grade,
   /* default School Based assignments based on legal entity/location */
-  s.manager_name,
   CASE
     WHEN (
       s.legal_entity_name != 'KIPP TEAM and Family Schools Inc.'
@@ -103,6 +105,8 @@ FROM
   LEFT JOIN elementary_grade AS e ON (
     s.df_employee_number = e.employee_number
   )
+  LEFT JOIN people.school_crosswalk AS x ON s.primary_site = x.site_name
+  LEFT JOIN people.campus_crosswalk AS c ON s.primary_site = c.site_name
 WHERE
   s.[status] = 'ACTIVE'
   AND s.primary_job != 'Intern'

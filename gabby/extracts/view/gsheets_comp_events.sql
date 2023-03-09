@@ -21,6 +21,11 @@ WITH
           people.staff_crosswalk_static
         WHERE
           status != 'TERMINATED'
+          AND primary_site NOT IN (
+            'Room 11 - 1951 NW 7th Ave',
+            'Room 10 - 121 Market St',
+            'Room 9 - 60 Park Pl'
+          )
       ) AS sub PIVOT (
         MAX(df_employee_number) FOR primary_job IN (
           [School Leader],
@@ -88,6 +93,12 @@ SELECT
   x.primary_job,
   x.primary_site,
   x.primary_on_site_department,
+  x.preferred_name,
+  x.userprincipalname,
+  x.google_email,
+  x.status,
+  s.region,
+  COALESCE(c.campus_name, x.primary_site) AS site_campus,
   CASE
     WHEN x.primary_job IN ('School Leader', 'DSO') THEN l.hos_ed_email
     WHEN x.primary_on_site_department != 'Operations' THEN l.sl_email
@@ -112,10 +123,7 @@ SELECT
 FROM
   people.staff_crosswalk_static AS x
   LEFT JOIN school_approval_loops AS l ON (x.primary_site = l.primary_site)
+  LEFT JOIN people.school_crosswalk AS s ON (x.primary_site = s.site_name)
+  LEFT JOIN people.campus_crosswalk AS c ON (x.primary_site = c.site_name)
 WHERE
-  x.primary_site NOT IN (
-    'Room 9 - 60 Park Pl',
-    'Room 10 - 121 Market St',
-    'Room 11 - 1951 NW 7th Ave'
-  )
-  AND x.status != 'TERMINATED'
+  x.status != 'TERMINATED'
