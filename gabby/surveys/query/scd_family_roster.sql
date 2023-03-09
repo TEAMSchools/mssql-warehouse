@@ -1,46 +1,47 @@
 SELECT
   CONCAT(
-    c.student_web_id,
+    student_web_id,
     '@teamstudents.org'
   ) AS student_identifier,
-  c.cohort,
-  c.lastfirst,
-  c.grade_level,
-  c.region,
-  c.reporting_school_name,
-  c.academic_year
+  cohort,
+  lastfirst,
+  grade_level,
+  region,
+  reporting_school_name,
+  academic_year
 FROM
-  gabby.powerschool.cohort_identifiers_static AS c
+  gabby.powerschool.cohort_identifiers_static
 WHERE
-  c.enroll_status = 0
-  AND c.rn_year = 1
-  AND c.academic_year = 2022
+  enroll_status = 0
+  AND rn_year = 1
+  AND academic_year = 2022
 UNION ALL
 SELECT
-  c.student_web_id AS student_identifier,
-  c.cohort,
-  c.lastfirst,
-  c.grade_level,
-  c.region,
-  c.reporting_school_name,
-  c.academic_year
+  student_web_id AS student_identifier,
+  cohort,
+  lastfirst,
+  grade_level,
+  region,
+  reporting_school_name,
+  academic_year
 FROM
-  gabby.powerschool.cohort_identifiers_static AS c
+  gabby.powerschool.cohort_identifiers_static
 WHERE
-  c.enroll_status = 0
-  AND c.rn_year = 1
-  AND c.academic_year = 2022
+  enroll_status = 0
+  AND rn_year = 1
+  AND academic_year = 2022
 UNION ALL
 SELECT
-  c.student_number AS student_identifier c.cohort,
-  c.lastfirst,
-  c.grade_level,
-  c.region,
-  c.reporting_school_name,
-  c.academic_year
+  student_number AS student_identifier,
+  cohort,
+  lastfirst,
+  grade_level,
+  region,
+  reporting_school_name,
+  academic_year
 FROM
-  gabby.powerschool.cohort_identifiers_static AS c
+  gabby.powerschool.cohort_identifiers_static
 WHERE
-  c.enroll_status = 0
-  AND c.rn_year = 1
-  AND c.academic_year = 2022
+  enroll_status = 0
+  AND rn_year = 1
+  AND academic_year = 2022

@@ -105,8 +105,8 @@ FROM
   LEFT JOIN elementary_grade AS e ON (
     s.df_employee_number = e.employee_number
   )
-  LEFT JOIN people.school_crosswalk AS x ON s.primary_site = x.site_name
-  LEFT JOIN people.campus_crosswalk AS c ON s.primary_site = c.site_name
+  LEFT JOIN people.school_crosswalk AS x ON (s.primary_site = x.site_name)
+  LEFT JOIN people.campus_crosswalk AS c ON (s.primary_site = c.site_name)
 WHERE
   s.[status] = 'ACTIVE'
   AND s.primary_job != 'Intern'
