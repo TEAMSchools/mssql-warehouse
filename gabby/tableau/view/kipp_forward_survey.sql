@@ -207,8 +207,8 @@ SELECT
   s.linkedin,
   s.linkedin_link,
   s.debt_binary,
-  CAST(s.debt_amount AS MONEY) AS debt_amount,
-  CAST(s.annual_income AS MONEY) AS annual_income,
+  s.debt_amount,
+  s.annual_income,
   /*weighted satisfaction scores based on relative importance of each*/
   s.cur_1 * p.imp_1 AS level_pay_quality,
   s.cur_2 * p.imp_2 AS stable_pay_quality,
