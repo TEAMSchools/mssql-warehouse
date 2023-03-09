@@ -1,5 +1,5 @@
 CREATE OR ALTER VIEW
-  gsheets_comp_events AS
+  extracts.gsheets_comp_events AS
 WITH
   approval_pivot AS (
     SELECT
@@ -122,8 +122,8 @@ SELECT
   l.dso_email AS notify
 FROM
   people.staff_crosswalk_static AS x
-  LEFT JOIN school_approval_loops AS l ON x.primary_site = l.primary_site
-  LEFT JOIN people.school_crosswalk AS s ON x.primary_site = s.site_name
-  LEFT JOIN people.campus_crosswalk AS c ON x.primary_site = c.site_name
+  LEFT JOIN school_approval_loops AS l ON (x.primary_site = l.primary_site)
+  LEFT JOIN people.school_crosswalk AS s ON (x.primary_site = s.site_name)
+  LEFT JOIN people.campus_crosswalk AS c ON (x.primary_site = c.site_name)
 WHERE
   x.status != 'TERMINATED'

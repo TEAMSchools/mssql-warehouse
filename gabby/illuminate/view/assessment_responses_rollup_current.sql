@@ -1,55 +1,71 @@
 CREATE OR ALTER VIEW
   illuminate_dna_assessments.assessment_responses_rollup_current AS
 SELECT
-  sub.student_id,
-  sub.academic_year,
-  sub.scope,
-  sub.subject_area,
-  sub.module_type,
-  sub.module_number,
-  sub.is_replacement,
-  sub.response_type,
-  sub.standard_id,
-  sub.standard_code,
-  sub.standard_description,
-  sub.domain_description,
-  sub.date_taken,
-  sub.points,
-  sub.percent_correct,
-  MIN(sub.title) OVER (
-    PARTITION BY
-      sub.academic_year,
-      sub.scope,
-      sub.subject_area,
-      sub.module_number,
-      sub.grade_level_id
-  ) AS title,
-  MIN(sub.assessment_id) OVER (
-    PARTITION BY
-      sub.academic_year,
-      sub.scope,
-      sub.subject_area,
-      sub.module_number,
-      sub.grade_level_id
-  ) AS assessment_id,
-  MIN(sub.administered_at) OVER (
-    PARTITION BY
-      sub.academic_year,
-      sub.scope,
-      sub.subject_area,
-      sub.module_number,
-      sub.grade_level_id
-  ) AS administered_at,
-  MIN(sub.performance_band_set_id) OVER (
-    PARTITION BY
-      sub.academic_year,
-      sub.scope,
-      sub.subject_area,
-      sub.module_number,
-      sub.grade_level_id,
-      sub.response_type,
-      sub.standard_id
-  ) AS performance_band_set_id
+  student_id,
+  academic_year,
+  scope,
+  subject_area,
+  module_type,
+  module_number,
+  is_replacement,
+  response_type,
+  standard_id,
+  standard_code,
+  standard_description,
+  domain_description,
+  CASE
+    WHEN is_replacement = 0 THEN MIN(title) OVER (
+      PARTITION BY
+        academic_year,
+        scope,
+        subject_area,
+        module_number,
+        grade_level_id,
+        is_replacement
+    )
+    ELSE title
+  END AS title,
+  CASE
+    WHEN is_replacement = 0 THEN MIN(assessment_id) OVER (
+      PARTITION BY
+        academic_year,
+        scope,
+        subject_area,
+        module_number,
+        grade_level_id,
+        is_replacement
+    )
+    ELSE assessment_id
+  END AS assessment_id,
+  CASE
+    WHEN is_replacement = 0 THEN MIN(administered_at) OVER (
+      PARTITION BY
+        academic_year,
+        scope,
+        subject_area,
+        module_number,
+        grade_level_id,
+        is_replacement
+    )
+    ELSE administered_at
+  END AS administered_at,
+  CASE
+    WHEN is_replacement = 0 THEN MIN(performance_band_set_id) OVER (
+      PARTITION BY
+        academic_year,
+        scope,
+        subject_area,
+        module_number,
+        grade_level_id,
+        response_type,
+        standard_id,
+        is_replacement
+    )
+    ELSE performance_band_set_id
+  END AS performance_band_set_id,
+  date_taken,
+  points,
+  percent_correct
 FROM
   (
     SELECT
