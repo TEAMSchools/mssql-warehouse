@@ -29,7 +29,7 @@ SELECT eh.employee_number,
          WHEN (cw.primary_job = 'Security') THEN 'DO NOT SURVEY'
         END AS survey_override
 FROM people.employment_history_static AS eh
-INNER JOIN people.staff_crosswalk_static cw
+INNER JOIN people.staff_crosswalk_static AS cw
   ON (eh.employee_number = cw.df_employee_number
   AND (CONVERT(DATE, '2023-03-01') BETWEEN 
            eh.position_effective_start_date 
