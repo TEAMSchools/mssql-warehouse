@@ -21,7 +21,6 @@ WITH fsa_scores AS(
                         fs.scale_score,
                         ')'
                     )
-                    ELSE NULL
                 END AS fsa_score
             FROM
                 kippmiami.fsa.student_scores AS fs
@@ -39,25 +38,25 @@ fast_scores AS(
     SELECT
         fleid,
         academic_year,
-        [PM1_Reading],
-        [PM1_Math],
-        [PM2_Reading],
-        [PM2_Math]
+        [pm1_reading],
+        [pm1_math],
+        [pm2_reading],
+        [pm2_math]
     FROM
         (
             SELECT
                 fa.fleid,
                 fa.academic_year,
-                LEFT(fa.pm_round, 3) + '_' + fa.fast_subject AS fast_round,
+                LOWER(LEFT(fa.pm_round, 3) + '_' + fa.fast_subject) AS fast_round,
                 fa.achievement_level + ' (' + fa.scale_score + ')' AS fast_score
             FROM
                 kippmiami.fast.student_data_long AS fa
         ) AS sub PIVOT (
             MAX(fast_score) FOR fast_round IN (
-                [PM1_Reading],
-                [PM1_Math],
-                [PM2_Reading],
-                [PM2_Math]
+                [pm1_reading],
+                [pm1_math],
+                [pm2_reading],
+                [pm2_math]
             )
         ) AS p
 )
@@ -71,10 +70,10 @@ SELECT
     co.team,
     fs.fsa_ela,
     fs.fsa_math,
-    fa.PM1_Reading,
-    fa.PM2_Reading,
-    fa.PM1_Math,
-    fa.PM2_Math
+    fa.pm1_reading,
+    fa.pm2_reading,
+    fa.pm1_math,
+    fa.pm2_math
 FROM
     kippmiami.powerschool.cohort_identifiers_static AS co
     LEFT JOIN kippmiami.powerschool.u_studentsuserfields AS suf ON (co.students_dcid = suf.studentsdcid)
