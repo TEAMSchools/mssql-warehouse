@@ -27,11 +27,11 @@ WITH
           x.df_employee_number,
           c.campus_name
         FROM
-          people.staff_crosswalk_static x
-          LEFT JOIN people.campus_crosswalk c ON x.primary_site = c.site_name
+          people.staff_crosswalk_static AS x
+          LEFT JOIN people.campus_crosswalk AS c ON x.primary_site = c.site_name
         WHERE
-          status != 'TERMINATED'
-          AND primary_site NOT IN (
+          x.status != 'TERMINATED'
+          AND x.primary_site NOT IN (
             'Room 11 - 1951 NW 7th Ave',
             'Room 10 - 121 Market St',
             'Room 9 - 60 Park Pl'
@@ -69,7 +69,7 @@ WITH
             x.primary_site = s.site_name_clean
           )
         WHERE
-          status != 'TERMINATED'
+          x.status != 'TERMINATED'
       ) AS sub PIVOT (
         MAX(df_employee_number) FOR primary_job IN (
           [Managing Director of Operations],
