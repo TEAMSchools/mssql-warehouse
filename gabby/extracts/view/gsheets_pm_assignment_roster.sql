@@ -7,6 +7,8 @@ WITH
       MAX(student_grade_level) AS student_grade_level
     FROM
       pm.teacher_grade_levels
+    WHERE academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR()
+    AND student_grade_level BETWEEN 0 AND 4
     GROUP BY
       employee_number
   )
@@ -79,14 +81,8 @@ SELECT
     ELSE 'Other'
   END AS engagement_survey_assignment,
   CASE
-    WHEN (
-      s.primary_on_site_department = 'Elementary'
-      AND e.student_grade_level IS NOT NULL
-    ) THEN CONCAT(
-      s.primary_on_site_department,
-      ', Grade ',
-      e.student_grade_level
-    )
+    WHEN e.student_grade_level = 0 THEN 'Grade K'
+    WHEN e.student_grade_level BETWEEN 1 AND 4 THEN CONCAT('Grade ',e.student_grade_level)
     ELSE s.primary_on_site_department
   END AS department_grade,
   /* default School Based assignments based on legal entity/location */
