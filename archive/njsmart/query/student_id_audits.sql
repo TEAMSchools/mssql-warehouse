@@ -236,7 +236,7 @@ WITH
   LEFT OUTER JOIN gabby.powerschool.students AS s
   ON n.local_student_id = s.student_number
   WHERE s.student_number IS NULL
-   */
+  */
   /* final SN check on njask
   SELECT n.sid
   ,n.local_student_id
@@ -253,4 +253,4 @@ WITH
   LEFT OUTER JOIN gabby.powerschool.students AS sn
   ON n.local_student_id = sn.student_number
   WHERE sn.lastfirst IS NULL
-   */
+  */

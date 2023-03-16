@@ -1,19 +1,27 @@
 [sqlfluff]
 dialect = tsql
 processes = -1
-exclude_rules = L003, L022, L017, L031, L059, L067, L041, L036, L034
-
-[sqlfluff:rules]
 max_line_length = 88
-capitalisation_policy = upper
-extended_capitalisation_policy = upper
+exclude_rules = LT02, LT08, LT06, AL07, RF06, CV11, LT10, LT09, ST06, LT01
+
+[sqlfluff:indentation]
 indent_unit = space
 
-[sqlfluff:rules:L036]
-wildcard_policy = multiple
+[sqlfluff:rules:capitalisation.keywords]
+# Keywords
+capitalisation_policy = upper
 
-[sqlfluff:rules:L057]
+[sqlfluff:rules:capitalisation.identifiers]
+# Unquoted identifiers
+extended_capitalisation_policy = lower
+
+[sqlfluff:rules:capitalisation.functions]
+# Function names
+extended_capitalisation_policy = upper
+
+[sqlfluff:rules:capitalisation.types]
+# Data Types
+extended_capitalisation_policy = upper
+
+[sqlfluff:rules:references.special_chars]
 quoted_identifiers_policy = none
-
-[sqlfluff:rules:L059]
-ignore_words = subject, value, name, type, start_date

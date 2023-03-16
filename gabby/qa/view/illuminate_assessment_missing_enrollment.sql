@@ -39,7 +39,7 @@ WITH
       co.exitdate AS leave_date,
       0.0 AS is_dropped_section,
       0.0 AS is_dropped_course,
-      co.student_number,      
+      co.student_number,
       'Writing' AS subject_area
     FROM
       powerschool.cohort_static AS co

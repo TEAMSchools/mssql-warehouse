@@ -3,7 +3,7 @@ CREATE OR ALTER VIEW
   /*
   School staff assigned to primary school only
   Campus staff assigned to all schools at campus
-   */
+  */
 SELECT
   CAST(
     COALESCE(

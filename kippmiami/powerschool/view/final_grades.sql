@@ -517,7 +517,7 @@ FROM
       - minus y1 points earned to-date
       - minus current term points
       - divided by current term weight
-       */
+      */
       CAST(
         (
           (

@@ -10,7 +10,7 @@ QUOTED_IDENTIFIER ON;
 /*
 SET NOCOUNT ON added to prevent extra result sets
 from interfering with SELECT statements
- */
+*/
 SET
 NOCOUNT ON;
 
@@ -36,7 +36,7 @@ SET
 Declare the cursor FOR the set of records it will loop over
 Cursor name MUST be within schema
 Only use tables updated in past 24 hrs
- */
+*/
 DECLARE repository_cursor CURSOR FOR
 SELECT
   repository_id
@@ -76,7 +76,7 @@ FROM
 /*
 here's the beef: the cursor is going to iterate over each repo ID
 and INSERT INTO the temp table
- */
+*/
 SET
   @query = N'
           INSERT INTO [#repository_row_ids]
@@ -107,7 +107,7 @@ DEALLOCATE repository_cursor;
 /*
 UPSERT: matching on repo, row number, studentid, and field name
 DELETE if on TARGET but not MATCHED by SOURCE
- */
+*/
 IF OBJECT_ID(
   N'illuminate_dna_repositories.repository_row_ids'
 ) IS NULL BEGIN

@@ -146,4 +146,4 @@ TRUNCATE TABLE powerschool.ps_attendance_daily_current_static;
 TRUNCATE TABLE powerschool.ps_membership_reg_current_static;
 TRUNCATE TABLE tableau.attendance_dashboard_current_static;
 TRUNCATE TABLE powerschool.course_enrollments_current_static;
- */
+*/

@@ -211,7 +211,7 @@ FROM
       override
       > lookup table (content group/department/job)
       > lookup table (content group/department)
-       */
+      */
       COALESCE(
         x.coupa_school_name,
         CASE

@@ -5,7 +5,7 @@ WITH
     /*
     Sum up total additional earnings by year.
     Current year will add up AS additional earnings are committed to payroll
-     */
+    */
     SELECT
       academic_year,
       position_id,

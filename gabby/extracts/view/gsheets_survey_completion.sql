@@ -14,7 +14,7 @@ WITH
       Ordering surveys by term (most recent campaign) and
       staff updates by completion date to filter out
       complete staff updates from prior campaigns
-       */
+      */
       CASE
         WHEN survey_id != '6330385' THEN ROW_NUMBER() OVER (
           PARTITION BY
