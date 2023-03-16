@@ -1,47 +1,65 @@
 SELECT
   CONCAT(
-    student_web_id,
+    c.student_web_id,
     '@teamstudents.org'
-  ) AS student_identifier,
-  cohort,
-  lastfirst,
-  grade_level,
-  region,
-  reporting_school_name,
-  academic_year
+  ) AS password,
+  c.student_web_id,
+  c.student_number,
+  CONCAT(
+    c.student_web_id,
+    '@teamstudents.org'
+  ) AS student_email,
+  c.cohort,
+  c.lastfirst,
+  c.grade_level,
+  c.region,
+  c.reporting_school_name,
+  c.academic_year
 FROM
-  gabby.powerschool.cohort_identifiers_static
+  gabby.powerschool.cohort_identifiers_static AS c
 WHERE
-  enroll_status = 0
-  AND rn_year = 1
-  AND academic_year = 2022
+  c.enroll_status = 0
+  AND c.rn_year = 1
+  AND c.academic_year = 2022
 UNION ALL
 SELECT
-  student_web_id AS student_identifier,
-  cohort,
-  lastfirst,
-  grade_level,
-  region,
-  reporting_school_name,
-  academic_year
+  c.student_web_id AS password,
+  c.student_web_id,
+  c.student_number,
+  CONCAT(
+    c.student_web_id,
+    '@teamstudents.org'
+  ) AS student_email,
+  c.cohort,
+  c.lastfirst,
+  c.grade_level,
+  c.region,
+  c.reporting_school_name,
+  c.academic_year
 FROM
-  gabby.powerschool.cohort_identifiers_static
+  gabby.powerschool.cohort_identifiers_static AS c
 WHERE
-  enroll_status = 0
-  AND rn_year = 1
-  AND academic_year = 2022
+  c.enroll_status = 0
+  AND c.rn_year = 1
+  AND c.academic_year = 2022
 UNION ALL
 SELECT
-  student_number AS student_identifier,
-  cohort,
-  lastfirst,
-  grade_level,
-  region,
-  reporting_school_name,
-  academic_year
+  CONVERT(NVARCHAR, c.student_number) AS password,
+  c.student_web_id,
+  c.student_number,
+  CONCAT(
+    c.student_web_id,
+    '@teamstudents.org'
+  ) AS student_email,
+  c.cohort,
+  c.lastfirst,
+  c.grade_level,
+  c.region,
+  c.reporting_school_name,
+  c.academic_year
 FROM
-  gabby.powerschool.cohort_identifiers_static
+  gabby.powerschool.cohort_identifiers_static AS c
 WHERE
-  enroll_status = 0
-  AND rn_year = 1
-  AND academic_year = 2022
+  c.enroll_status = 0
+  AND c.rn_year = 1
+  AND c.academic_year = 2022
