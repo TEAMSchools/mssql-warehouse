@@ -31,14 +31,18 @@ SELECT
   END AS [HESAA Complete],
   c.efc_from_fafsa_c AS [EFC Actual]
 FROM
-  gabby.alumni.contact AS c
-  LEFT JOIN gabby.alumni.[user] AS u ON c.owner_id = u.id
-  LEFT JOIN gabby.powerschool.student_contacts_wide_static AS sc ON CAST(sc.student_number AS NVARCHAR) = CAST(
-    c.school_specific_id_c AS NVARCHAR
+  alumni.contact AS c
+  LEFT JOIN alumni.[user] AS u ON c.owner_id = u.id
+  LEFT JOIN powerschool.student_contacts_wide_static AS sc ON (
+    CAST(sc.student_number AS NVARCHAR) = CAST(
+      c.school_specific_id_c AS NVARCHAR
+    )
   )
-  LEFT JOIN gabby.powerschool.cohort_identifiers_static AS co ON CAST(co.student_number AS NVARCHAR) = CAST(
-    c.school_specific_id_c AS NVARCHAR
+  LEFT JOIN powerschool.cohort_identifiers_static AS co ON (
+    CAST(co.student_number AS NVARCHAR) = CAST(
+      c.school_specific_id_c AS NVARCHAR
+    )
+    AND co.rn_undergrad = 1
   )
-  AND co.rn_undergrad = 1
 WHERE
-  c.kipp_hs_class_c = gabby.utilities.GLOBAL_ACADEMIC_YEAR () + 1
+  c.kipp_hs_class_c = utilities.GLOBAL_ACADEMIC_YEAR () + 1
