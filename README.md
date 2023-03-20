@@ -1,6 +1,7 @@
 # mssql-warehouse
 
 Formatting via [sql-formatter](https://github.com/sql-formatter-org/sql-formatter)
+
 Linting via SQLFluff: [Rules Reference](https://docs.sqlfluff.com/en/stable/rules.html)
 
 ## General Rules & Guidelines
