@@ -20,6 +20,7 @@ WHERE
   AND co.rn_year = 1
   AND (co.grade_level BETWEEN 9 AND 12)
   AND co.enroll_status = 0
+  AND gpa.cumulative_y1_gpa_projected_s1_unweighted IS NOT NULL
 ORDER BY
   co.school_name,
   co.grade_level,
