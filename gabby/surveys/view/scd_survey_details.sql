@@ -1,4 +1,4 @@
-CREATE OR ALTER VIEW scd_survey_details AS
+--CREATE OR ALTER VIEW scd_survey_details AS
 
 WITH student_responses AS (
 SELECT email_address
@@ -22,16 +22,19 @@ UNPIVOT (answer FOR question_shortname IN (
               ) u
 )
 
-SELECT c.student_web_id
+SELECT c.student_number
+      ,c.student_web_id
       ,c.lastfirst
       ,c.academic_year
       ,c.cohort
-
+      ,c.gender
+      ,c.grade_level
+      ,c.iep_status
+      
       ,s.email_address
       ,s.answer
       ,s.question_shortname
       ,s.audience
-
       
 FROM powerschool.cohort_identifiers_static c
 LEFT JOIN student_responses s
