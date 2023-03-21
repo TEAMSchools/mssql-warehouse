@@ -1,4 +1,4 @@
---CREATE OR ALTER VIEW surveys.miami_enrollment AS
+CREATE OR ALTER VIEW surveys.miami_enrollment AS
 
 WITH survey_pivot AS (
     SELECT
