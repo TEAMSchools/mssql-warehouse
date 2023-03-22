@@ -27,5 +27,6 @@
   },
   "[yaml]": {
     "editor.defaultFormatter": "trunk.io"
-  }
+  },
+  "githubPullRequests.ignoredPullRequestBranches": ["main"]
 }
