@@ -44,39 +44,6 @@ WITH
         )
       ) AS p
   ),
-  ops_pivot AS (
-    SELECT
-      CASE
-        WHEN region IN (
-          'TEAM Academy Charter School',
-          'KIPP Cooper Norcross Academy'
-        ) THEN 'KIPP NJ'
-        ELSE region
-      END AS region,
-      COALESCE(
-        [Managing Director of Operations],
-        [Managing Director of Growth]
-      ) AS mdo
-    FROM
-      (
-        SELECT
-          x.primary_job,
-          x.df_employee_number,
-          s.region
-        FROM
-          people.staff_crosswalk_static AS x
-          LEFT JOIN people.school_crosswalk AS s ON (
-            x.primary_site = s.site_name_clean
-          )
-        WHERE
-          x.status != 'TERMINATED'
-      ) AS sub PIVOT (
-        MAX(df_employee_number) FOR primary_job IN (
-          [Managing Director of Operations],
-          [Managing Director of Growth]
-        )
-      ) AS p
-  ),
   school_approval_loops AS (
     SELECT
       l.primary_site,
@@ -84,7 +51,7 @@ WITH
       l.school_leader,
       l.dso_dco,
       COALESCE(l.campus_name, l.primary_site) AS site_campus,
-      o.region,
+      l.legal_entity_name AS region,
       a.userprincipalname AS sl_email,
       a.google_email AS sl_google,
       b.df_employee_number AS hos_ed,
@@ -100,15 +67,10 @@ WITH
       e.df_employee_number AS mdso,
       e.preferred_name AS mdso_name,
       e.userprincipalname AS mdso_email,
-      e.google_email AS mdso_google,
-      f.df_employee_number AS coo,
-      f.preferred_name AS mdo_name,
-      f.userprincipalname AS mdo_email,
-      f.google_email AS mdo_google
+      e.google_email AS mdso_google
     FROM
       approval_pivot AS l
       /*School Leaders*/
-      LEFT JOIN ops_pivot AS o ON (l.region = o.region)
       LEFT JOIN people.staff_crosswalk_static AS a ON (
         l.school_leader = a.df_employee_number
       )
@@ -126,10 +88,6 @@ WITH
       LEFT JOIN people.staff_crosswalk_static AS e ON (
         d.manager_df_employee_number = e.df_employee_number
       )
-      /*MDOs*/
-      LEFT JOIN people.staff_crosswalk_static AS f ON (o.mdo = f.df_employee_number)
-    WHERE
-      o.mdo IS NOT NULL
   )
 SELECT
   x.df_employee_number,
@@ -143,35 +101,34 @@ SELECT
   x.userprincipalname,
   x.google_email,
   x.status,
+  x.legal_entity_name,
   l.site_campus,
   l.dso_email AS notify,
   CASE
     WHEN x.primary_job IN ('School Leader', 'DSO') THEN l.hos_ed_email
     WHEN x.primary_on_site_department != 'Operations' THEN l.sl_email
-    WHEN x.primary_on_site_department = 'Operations' THEN l.mdso_email
+    WHEN x.primary_on_site_department = 'Operations' THEN 'Approved'
   END AS first_approver_email,
   CASE
     WHEN x.primary_job IN ('School Leader', 'DSO') THEN l.hos_ed_google
     WHEN x.primary_on_site_department != 'Operations' THEN l.sl_google
-    WHEN x.primary_on_site_department = 'Operations' THEN l.mdso_google
+    WHEN x.primary_on_site_department = 'Operations' THEN 'Approved'
   END AS first_approver_google,
   CASE
     WHEN x.primary_job IN ('School Leader', 'DSO') THEN l.ed_email
     WHEN x.primary_on_site_department != 'Operations' THEN l.hos_ed_email
-    WHEN x.primary_on_site_department = 'Operations' THEN l.mdo_email
+    WHEN l.mdso_email = 'apoole@kippnj.org' THEN 'acorona@kippnj.org'
+    WHEN x.primary_on_site_department = 'Operations' THEN l.mdso_email
   END AS second_approver_email,
   CASE
     WHEN x.primary_job IN ('School Leader', 'DSO') THEN l.ed_google
     WHEN x.primary_on_site_department != 'Operations' THEN l.hos_ed_google
-    WHEN x.primary_on_site_department = 'Operations' THEN l.mdo_google
+    WHEN l.mdso_google = 'apoole@apps.teamschools.org' THEN 'acorona@apps.teamschools.org'
+    WHEN x.primary_on_site_department = 'Operations' THEN l.mdso_google
   END AS second_approver_google
 FROM
   people.staff_crosswalk_static AS x
   LEFT JOIN school_approval_loops AS l ON (x.primary_site = l.primary_site)
 WHERE
   x.status != 'TERMINATED'
-  AND x.primary_site NOT IN (
-    'Room 11 - 1951 NW 7th Ave',
-    'Room 10 - 121 Market St',
-    'Room 9 - 60 Park Pl'
-  )
+  AND x.payroll_company_code != '9AM'
