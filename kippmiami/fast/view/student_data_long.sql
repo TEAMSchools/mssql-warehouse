@@ -225,12 +225,14 @@ WITH
       student_data UNPIVOT (
         mastery_indicator FOR standard_domain IN (
           _4_geometric_reasoning_performance,
-          _4_geometric_reasoning_measurement_and_data_analysis_and_probability_performance, -- noqa: L016
+          -- trunk-ignore(sqlfluff/LT05)
+          _4_geometric_reasoning_measurement_and_data_analysis_and_probability_performance,
           _4_data_analysis_and_probability_performance,
           _3_reading_across_genres_vocabulary_performance,
           _3_linear_relationships_data_analysis_and_functions_performance,
           _3_geometric_reasoning_performance,
-          _3_geometric_reasoning_measurement_and_data_analysis_and_probability_performance, -- noqa: L016
+          -- trunk-ignore(sqlfluff/LT05)
+          _3_geometric_reasoning_measurement_and_data_analysis_and_probability_performance,
           _3_geometric_reasoning_data_analysis_and_probability_performance,
           _3_fractional_reasoning_performance,
           _3_algebraic_reasoning_performance,

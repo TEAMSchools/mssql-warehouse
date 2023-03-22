@@ -184,8 +184,7 @@ SET
     INSERT INTO ' + @destination_table_name + N' WITH(TABLOCKX)
     SELECT *
     FROM ' + @temp_table_name + N';
-  ' -- noqa: L016
-;
+  ';
 
 IF @@ROWCOUNT > 0 BEGIN
 /**/

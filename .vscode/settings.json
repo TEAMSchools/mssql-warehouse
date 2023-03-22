@@ -9,7 +9,8 @@
     "*.env": "shellscript"
   },
   "files.exclude": {
-    "**/.trunk/*out": true
+    "**/.trunk/*out": true,
+    "**/.git": false
   },
   "files.watcherExclude": {
     "**/.trunk/*out": true

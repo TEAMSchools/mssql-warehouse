@@ -10,8 +10,8 @@ lint:
   enabled:
     - yamllint@1.29.0
     - sqlfluff@2.0.1
-    - sql-formatter@12.1.3
-    - prettier@2.8.4
+    - sql-formatter@12.1.4
+    - prettier@2.8.6
     - actionlint@1.6.23
     - shellcheck@0.9.0
     - gitleaks@8.16.1

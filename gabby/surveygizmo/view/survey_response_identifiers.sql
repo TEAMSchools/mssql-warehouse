@@ -263,8 +263,8 @@ FROM
   LEFT JOIN people.employment_history_static AS reh ON (
     resp.position_id = reh.position_id
     AND (
-      /* trunk-ignore(sqlfluff/L016) */
-      CAST(sc.link_close_date AS DATE) BETWEEN reh.effective_start_date AND reh.effective_end_date -- noqa: L016
+      -- trunk-ignore(sqlfluff/LT05)
+      CAST(sc.link_close_date AS DATE) BETWEEN reh.effective_start_date AND reh.effective_end_date
     )
   )
   LEFT JOIN people.staff_crosswalk_static AS rmgr ON (
@@ -277,8 +277,8 @@ FROM
   LEFT JOIN people.employment_history_static AS seh ON (
     subj.position_id = seh.position_id
     AND (
-      /* trunk-ignore(sqlfluff/L016) */
-      CAST(sc.link_close_date AS DATE) BETWEEN seh.effective_start_date AND seh.effective_end_date -- noqa: L016
+      -- trunk-ignore(sqlfluff/LT05)
+      CAST(sc.link_close_date AS DATE) BETWEEN seh.effective_start_date AND seh.effective_end_date
     )
   )
   LEFT JOIN people.staff_crosswalk_static AS smgr ON (

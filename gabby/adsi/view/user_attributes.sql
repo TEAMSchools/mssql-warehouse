@@ -60,7 +60,8 @@ SELECT
     WHEN distinguishedname LIKE '%OU=Student%' THEN 1
     ELSE 0
   END AS is_student
-FROM -- noqa: PRS
+  -- trunk-ignore(sqlfluff/PRS)
+FROM
   OPENQUERY (
     ADSI,
     '

@@ -580,14 +580,14 @@ FROM
   LEFT JOIN powerschool.gradescaleitem_lookup_static AS y1gs ON (
     sub.gradescaleid = y1gs.gradescaleid
     AND (
-      /* trunk-ignore(sqlfluff/L016) */
-      sub.y1_grade_percent BETWEEN y1gs.min_cutoffpercentage AND y1gs.max_cutoffpercentage -- noqa: L016
+      -- trunk-ignore(sqlfluff/LT05)
+      sub.y1_grade_percent BETWEEN y1gs.min_cutoffpercentage AND y1gs.max_cutoffpercentage
     )
   )
   LEFT JOIN powerschool.gradescaleitem_lookup_static AS y1gsu ON (
     sub.gradescaleid_unweighted = y1gsu.gradescaleid
     AND (
-      /* trunk-ignore(sqlfluff/L016) */
-      sub.y1_grade_percent BETWEEN y1gsu.min_cutoffpercentage AND y1gsu.max_cutoffpercentage -- noqa: L016
+      -- trunk-ignore(sqlfluff/LT05)
+      sub.y1_grade_percent BETWEEN y1gsu.min_cutoffpercentage AND y1gsu.max_cutoffpercentage
     )
   )

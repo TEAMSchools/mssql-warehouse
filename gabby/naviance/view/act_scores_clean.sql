@@ -58,8 +58,8 @@ FROM
       CASE
         WHEN composite != ROUND(
           (
-            /* trunk-ignore(sqlfluff/L016) */
-            ISNULL(english, 0) + ISNULL(math, 0) + ISNULL(reading, 0) + ISNULL(science, 0) -- noqa: L016
+            -- trunk-ignore(sqlfluff/LT05)
+            ISNULL(english, 0) + ISNULL(math, 0) + ISNULL(reading, 0) + ISNULL(science, 0)
           ) / 4,
           0
         ) THEN 1

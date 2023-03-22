@@ -1,7 +1,8 @@
 EXEC sp_generate_merge @table_name = 'agg_student_responses_all_current',
 @target_table = 'agg_student_responses_all_archive',
 @schema = 'illuminate_dna_assessments',
-@cols_to_join_on = "'assessment_id','standard_id','local_student_id','is_replacement','response_type'", -- noqa: L016
+-- trunk-ignore(sqlfluff/LT05)
+@cols_to_join_on = "'assessment_id','standard_id','local_student_id','is_replacement','response_type'",
 @include_values = 0,
 @delete_if_not_matched = 0;
 

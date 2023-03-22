@@ -91,8 +91,8 @@ FROM
         AND agl.grade_level_id = ssa.grade_level_id
         AND ssa.rn = 1
       )
-      /* trunk-ignore(sqlfluff/L016) */
-      INNER JOIN illuminate_dna_assessments.course_enrollment_scaffold_current_static AS ce ON ( -- noqa: L016
+      -- trunk-ignore(sqlfluff/LT05)
+      INNER JOIN illuminate_dna_assessments.course_enrollment_scaffold_current_static AS ce ON (
         ssa.student_id = ce.student_id
         AND a.subject_area = ce.subject_area
         AND (
@@ -129,8 +129,8 @@ FROM
       INNER JOIN illuminate_dna_assessments.assessment_grade_levels AS agl ON (
         a.assessment_id = agl.assessment_id
       )
-      /* trunk-ignore(sqlfluff/L016) */
-      INNER JOIN illuminate_dna_assessments.course_enrollment_scaffold_current_static AS ce ON ( -- noqa: L016
+      -- trunk-ignore(sqlfluff/LT05)
+      INNER JOIN illuminate_dna_assessments.course_enrollment_scaffold_current_static AS ce ON (
         agl.grade_level_id = ce.grade_level_id
         AND a.subject_area = ce.subject_area
         AND (

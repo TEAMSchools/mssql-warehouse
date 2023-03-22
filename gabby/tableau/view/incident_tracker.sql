@@ -55,7 +55,8 @@ FROM
     AND d.identifier = 'RT'
     AND d._fivetran_deleted = 0
   )
-  LEFT JOIN deanslist.incidents_custom_fields_wide AS cf ON (dli.incident_id = cf.incident_id) -- noqa: L016
+  -- trunk-ignore(sqlfluff/LT05)
+  LEFT JOIN deanslist.incidents_custom_fields_wide AS cf ON (dli.incident_id = cf.incident_id)
 WHERE
   co.academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
   AND co.rn_year = 1

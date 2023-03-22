@@ -45,7 +45,8 @@ WITH
       fg.need_90,
       CASE
         WHEN (
-          CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN fg.termbin_start_date AND fg.termbin_end_date -- noqa: L016
+          -- trunk-ignore(sqlfluff/LT05)
+          CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN fg.termbin_start_date AND fg.termbin_end_date
         ) THEN 1
         ELSE 0
       END AS is_curterm,
@@ -525,7 +526,8 @@ SELECT
   NULL AS y1_gpa_points,
   CASE
     WHEN (
-      CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN cg.termbin_start_date AND cg.termbin_end_date -- noqa: L016
+      -- trunk-ignore(sqlfluff/LT05)
+      CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN cg.termbin_start_date AND cg.termbin_end_date
     ) THEN 1
     ELSE 0
   END AS is_curterm,
@@ -635,7 +637,8 @@ FROM
     AND co.[db_name] = cy.[db_name]
     AND cy.storecode_type != 'Q'
     AND (
-      CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN cy.termbin_start_date AND cy.termbin_end_date -- noqa: L016
+      -- trunk-ignore(sqlfluff/LT05)
+      CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN cy.termbin_start_date AND cy.termbin_end_date
     )
   )
   LEFT JOIN section_teacher AS st ON (
@@ -664,7 +667,6 @@ WHERE
   co.rn_year = 1
   AND co.grade_level != 99
   AND co.academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
-  -- noqa: disable=L016
   -- /* current year - HS exam grades
   -- UNION ALL
   -- SELECT
@@ -719,6 +721,7 @@ WHERE
   --   NULL AS need_90
   -- FROM
   --   powerschool.cohort_identifiers_static AS co
+  -- trunk-ignore(sqlfluff/LT05)
   --   LEFT JOIN powerschool.final_grades_static AS ex ON co.student_number = ex.student_number
   --   AND co.academic_year = ex.academic_year
   --   AND co.[db_name] = ex.[db_name]
@@ -730,6 +733,7 @@ WHERE
   --   AND co.yearid = st.yearid
   --   AND co.[db_name] = st.[db_name]
   --   AND ex.course_number = st.course_number
+  -- trunk-ignore(sqlfluff/LT05)
   --   LEFT JOIN powerschool.spenrollments_gen_static AS sp ON co.studentid = sp.studentid
   --   AND (
   --     CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN sp.enter_date AND sp.exit_date

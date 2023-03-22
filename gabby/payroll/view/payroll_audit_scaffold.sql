@@ -146,8 +146,8 @@ WITH
       SUM(ern_4_ssc) AS ern_4_ssc,
       SUM(1) AS n_records,
       SUM(
-        /* trunk-ignore(sqlfluff/L016) */
-        COALESCE(ded_cd_ck_1, 0) + COALESCE(ded_cd_ck_2, 0) + COALESCE(ded_cd_ck_3, 0) + COALESCE(ded_cd_ck_4, 0) + COALESCE(ded_cd_sv_1, 0) + COALESCE(ded_cd_sv_2, 0) + COALESCE(ded_cd_sv_3, 0) + COALESCE(ded_cd_sv_4, 0) + COALESCE(net_pay, 0) -- noqa: L016
+        -- trunk-ignore(sqlfluff/LT05)
+        COALESCE(ded_cd_ck_1, 0) + COALESCE(ded_cd_ck_2, 0) + COALESCE(ded_cd_ck_3, 0) + COALESCE(ded_cd_ck_4, 0) + COALESCE(ded_cd_sv_1, 0) + COALESCE(ded_cd_sv_2, 0) + COALESCE(ded_cd_sv_3, 0) + COALESCE(ded_cd_sv_4, 0) + COALESCE(net_pay, 0)
       ) AS take_home_pay
     FROM
       adp.payroll_register

@@ -15,7 +15,8 @@ EXEC sp_generate_merge @table_name = 'cohort_identifiers_scaffold_current_static
 EXEC sp_generate_merge @table_name = 'course_section_scaffold_current_static',
 @target_table = 'course_section_scaffold_archive',
 @schema = 'powerschool',
-@cols_to_join_on = "'studentid','yearid','sectionid','term_name','course_number','gradescaleid'", -- noqa: L016
+-- trunk-ignore(sqlfluff/LT05)
+@cols_to_join_on = "'studentid','yearid','sectionid','term_name','course_number','gradescaleid'",
 @include_values = 0,
 @delete_if_not_matched = 0;
 

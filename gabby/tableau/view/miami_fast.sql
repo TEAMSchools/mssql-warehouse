@@ -85,7 +85,8 @@ WITH
           INNER JOIN gabby.illuminate_dna_assessments.agg_student_responses AS asr ON (
             a.assessment_id = asr.assessment_id
           )
-          INNER JOIN gabby.illuminate_public.students AS s ON (asr.student_id = s.student_id) -- noqa: L016
+          -- trunk-ignore(sqlfluff/LT05)
+          INNER JOIN gabby.illuminate_public.students AS s ON (asr.student_id = s.student_id)
         WHERE
           a.module_type = 'QAF'
       ) AS sub PIVOT (

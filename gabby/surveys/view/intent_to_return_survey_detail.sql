@@ -39,8 +39,8 @@ FROM
   LEFT JOIN people.work_assignment_history_static AS w ON (
     d.respondent_df_employee_number = w.employee_number
     AND (
-      /* trunk-ignore(sqlfluff/L016) */
-      d.date_submitted BETWEEN w.position_effective_date AND w.position_effective_end_date_eoy -- noqa: L016
+      -- trunk-ignore(sqlfluff/LT05)
+      d.date_submitted BETWEEN w.position_effective_date AND w.position_effective_end_date_eoy
     )
   )
   LEFT JOIN people.staff_crosswalk_static AS s ON (

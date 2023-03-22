@@ -1,4 +1,5 @@
-CREATE -- noqa: PRS
+-- trunk-ignore(sqlfluff/PRS)
+CREATE
 OR ALTER
 PROCEDURE adsi.group_membership_merge AS
 /**/

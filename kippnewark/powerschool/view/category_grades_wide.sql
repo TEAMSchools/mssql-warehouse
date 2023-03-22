@@ -14,8 +14,8 @@ WITH
       cat.citizenship,
       CASE
         WHEN (
-          /* trunk-ignore(sqlfluff/L016) */
-          CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN cat.termbin_start_date AND cat.termbin_end_date -- noqa: L016
+          -- trunk-ignore(sqlfluff/LT05)
+          CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN cat.termbin_start_date AND cat.termbin_end_date
         ) THEN 1
         ELSE 0
       END AS is_curterm,
@@ -42,8 +42,8 @@ WITH
       NULL AS citizenship,
       CASE
         WHEN (
-          /* trunk-ignore(sqlfluff/L016) */
-          CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN termbin_start_date AND termbin_end_date -- noqa: L016
+          -- trunk-ignore(sqlfluff/LT05)
+          CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN termbin_start_date AND termbin_end_date
         ) THEN 1
         ELSE 0
       END AS is_curterm,
@@ -83,8 +83,8 @@ WITH
         gabby.utilities.GLOBAL_ACADEMIC_YEAR () - 1990
       )
       AND (
-        /* trunk-ignore(sqlfluff/L016) */
-        CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN cat.termbin_start_date AND cat.termbin_end_date -- noqa: L016
+        -- trunk-ignore(sqlfluff/LT05)
+        CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN cat.termbin_start_date AND cat.termbin_end_date
       )
     UNION ALL
     SELECT

@@ -20,6 +20,7 @@ FROM
   )
 WHERE
   (
-    CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN iep.effective_start_date AND iep.effective_end_date -- noqa: L016
+    -- trunk-ignore(sqlfluff/LT05)
+    CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN iep.effective_start_date AND iep.effective_end_date
   )
   AND s.student_number IS NULL

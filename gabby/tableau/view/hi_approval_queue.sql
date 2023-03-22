@@ -40,7 +40,8 @@ SELECT
   cf.[HI end date]
 FROM
   deanslist.incidents_clean_static AS dli
-  LEFT JOIN deanslist.incidents_custom_fields_wide AS cf ON dli.incident_id = cf.incident_id -- noqa: L016
+  -- trunk-ignore(sqlfluff/LT05)
+  LEFT JOIN deanslist.incidents_custom_fields_wide AS cf ON dli.incident_id = cf.incident_id
   LEFT JOIN deanslist.users AS u ON (
     u.dluser_id = cf.[Approver name]
     AND u.[db_name] = cf.[db_name]

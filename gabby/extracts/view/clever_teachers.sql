@@ -1,4 +1,3 @@
-/* trunk-ignore(sqlfluff/L034) */
 CREATE OR ALTER VIEW
   extracts.clever_teachers AS
 SELECT

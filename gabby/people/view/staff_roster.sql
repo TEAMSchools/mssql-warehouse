@@ -34,8 +34,8 @@ WITH
       people.employment_history_static AS eh
     WHERE
       (
-        /* trunk-ignore(sqlfluff/L016) */
-        CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN eh.effective_start_date AND eh.effective_end_date -- noqa: L016
+        -- trunk-ignore(sqlfluff/LT05)
+        CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN eh.effective_start_date AND eh.effective_end_date
       )
     UNION ALL
     /* prestart */
@@ -274,8 +274,8 @@ WITH
                 people.manager_history_static
               WHERE
                 (
-                  /* trunk-ignore(sqlfluff/L016) */
-                  CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN reports_to_effective_date AND reports_to_effective_end_date_eoy -- noqa: L016
+                  -- trunk-ignore(sqlfluff/LT05)
+                  CAST(CURRENT_TIMESTAMP AS DATE) BETWEEN reports_to_effective_date AND reports_to_effective_end_date_eoy
                 )
             ) THEN 1
             ELSE 0
@@ -422,8 +422,8 @@ WITH
           LEFT JOIN rehire_dates AS rh ON (
             eh.associate_id = rh.associate_id
           )
-          /* trunk-ignore(sqlfluff/L016) */
-          LEFT JOIN adp.workers_custom_field_group_wide_static AS cf ON (eh.associate_id = cf.worker_id) -- noqa: L016
+          -- trunk-ignore(sqlfluff/LT05)
+          LEFT JOIN adp.workers_custom_field_group_wide_static AS cf ON (eh.associate_id = cf.worker_id)
           LEFT JOIN people.id_crosswalk_adp AS cw ON (
             eh.employee_number = cw.df_employee_number
             AND cw.rn_curr = 1

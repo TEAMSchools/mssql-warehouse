@@ -34,7 +34,8 @@ SELECT
   END + ') ' + CASE
     WHEN included_columns IS NOT NULL THEN 'INCLUDE (' + included_columns + ') '
     ELSE ''
-  END + 'WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY];' AS create_index_script -- noqa: L016
+    -- trunk-ignore(sqlfluff/LT05)
+  END + 'WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY];' AS create_index_script
 FROM
   sys.dm_db_missing_index_details
 WHERE
