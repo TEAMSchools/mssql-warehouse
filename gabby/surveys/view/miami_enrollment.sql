@@ -84,9 +84,9 @@ SELECT
   p.gender,
   p.ethnicity
 FROM
-  survey_pivot s
+  survey_pivot AS s
   /*JOIN to student data for school, cohort, IEP, gender, race, other*/
-  LEFT JOIN powerschool.cohort_identifiers_static p ON s.student_number = p.student_number
+  LEFT JOIN powerschool.cohort_identifiers_static AS p ON s.student_number = p.student_number
 WHERE
   s.region = 'KMS'
   AND p.enroll_status = 0
