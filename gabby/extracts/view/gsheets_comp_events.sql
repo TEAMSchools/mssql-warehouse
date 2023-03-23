@@ -123,6 +123,7 @@ SELECT
   CASE
     WHEN x.primary_job IN ('School Leader', 'DSO') THEN l.ed_google
     WHEN x.primary_on_site_department != 'Operations' THEN l.hos_ed_google
+    -- trunk-ignore(sqlfluff/LT05)
     WHEN l.mdso_google = 'apoole@apps.teamschools.org' THEN 'acorona@apps.teamschools.org'
     WHEN x.primary_on_site_department = 'Operations' THEN l.mdso_google
   END AS second_approver_google
