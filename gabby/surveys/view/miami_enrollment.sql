@@ -50,6 +50,75 @@ WITH
           [miami_address]
         )
       ) p
+  ),
+  bus_pivot AS (
+    SELECT
+      survey_id,
+      survey_response_id,
+      survey_question_id,
+      CONCAT([11453], ' - ', [11454]) AS miami_bus_stop
+    FROM
+      (
+        SELECT
+          s.survey_id,
+          s.survey_response_id,
+          s.question_type,
+          s.survey_question_id,
+          d.option_id,
+          d.answer
+        FROM
+          gabby.surveygizmo.survey_detail AS s
+          LEFT JOIN surveygizmo.survey_response_data_options_current_static AS d ON (
+            s.survey_response_id = d.survey_response_id
+            AND s.survey_question_id = d.question_id
+          )
+        WHERE
+          s.survey_id = 6829997
+          AND s.survey_question_id = 433
+      ) AS sub PIVOT (
+        MAX(answer) FOR option_id IN ([11453], [11454])
+      ) p
+  ),
+  address_pivot AS (
+    SELECT
+      survey_id,
+      survey_response_id,
+      survey_question_id,
+      CONCAT(
+        [11414],
+        ' ',
+        [11415],
+        ' ',
+        [11416],
+        ' ',
+        [11417]
+      ) AS miami_address
+    FROM
+      (
+        SELECT
+          s.survey_id,
+          s.survey_response_id,
+          s.question_type,
+          s.survey_question_id,
+          d.option_id,
+          d.answer
+        FROM
+          gabby.surveygizmo.survey_detail AS s
+          LEFT JOIN surveygizmo.survey_response_data_options_current_static AS d ON (
+            s.survey_response_id = d.survey_response_id
+            AND s.survey_question_id = d.question_id
+          )
+        WHERE
+          s.survey_id = 6829997
+          AND s.survey_question_id = 430
+      ) AS sub PIVOT (
+        MAX(answer) FOR option_id IN (
+          [11414],
+          [11415],
+          [11416],
+          [11417]
+        )
+      ) p
   )
 SELECT
   s.region,
@@ -60,13 +129,10 @@ SELECT
   s.miami_last,
   s.miami_phone,
   s.miami_email,
-  s.miami_address,
   s.miami_bus,
-  s.miami_bus_stop,
   s.miami_transport_consent,
   s.miami_shirt,
   s.student_number,
-  p.student_number,
   s.survey_id,
   s.survey_response_id,
   s.date_submitted,
@@ -82,11 +148,18 @@ SELECT
   p.school_level,
   p.iep_status,
   p.gender,
-  p.ethnicity
+  p.ethnicity,
+  CASE
+    WHEN s.miami_address = 'Zip Code' THEN a.miami_address
+    ELSE s.miami_address
+  END AS miami_address,
+  b.miami_bus_stop
 FROM
   survey_pivot AS s
-  /*JOIN to student data for school, cohort, IEP, gender, race, other*/
+  -- trunk-ignore(sqlfluff/LT05)
   LEFT JOIN powerschool.cohort_identifiers_static AS p ON s.student_number = p.student_number
+  LEFT JOIN bus_pivot AS b ON s.survey_response_id = b.survey_response_id
+  LEFT JOIN address_pivot AS a ON s.survey_response_id = a.survey_response_id
 WHERE
   s.region = 'KMS'
   AND p.enroll_status = 0
