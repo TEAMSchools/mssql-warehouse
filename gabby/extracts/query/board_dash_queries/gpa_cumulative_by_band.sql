@@ -32,12 +32,12 @@ SELECT
   END AS gpa_band
 FROM
   gabby.powerschool.cohort_identifiers_static AS co
-  JOIN gpa_unpivot AS gpa ON (
+  INNER JOIN gpa_unpivot AS gpa ON (
     co.studentid = gpa.studentid
     AND co.schoolid = gpa.schoolid
     AND co.[db_name] = gpa.[db_name]
   )
 WHERE
   co.rn_undergrad = 1
-  AND co.grade_level <> 99
+  AND co.grade_level != 99
   AND co.school_level = 'HS'
