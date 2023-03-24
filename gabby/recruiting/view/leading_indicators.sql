@@ -64,7 +64,10 @@ SELECT
   a.source,
   a.source_type,
   a.source_subtype,
+  a.department_internal,
   b.candidate_id,
+  b.candidate_last_name,
+  b.candidate_first_name,
   CONCAT(
     b.candidate_last_name,
     ', ',

@@ -1,0 +1,121 @@
+WITH act_pivot AS (
+    SELECT
+        contact_c,
+        [act_english_c] AS max_english,
+        [act_math_c] AS max_math,
+        [act_reading_c] AS max_reading,
+        [act_science_c] AS max_science,
+        [act_composite_c] AS max_composite,
+        ROUND(
+            (
+                [act_english_c] + [act_math_c] + [act_reading_c] + [act_science_c]
+            ) / 4,
+            0
+        ) AS act_superscore
+    FROM
+        (
+            SELECT
+                st.contact_c,
+                st.score_type,
+                MAX(st.score) AS max_score
+            FROM
+                gabby.alumni.standardized_test_long AS st
+            WHERE
+                st.test_type = 'ACT'
+                AND st.score_type IN (
+                    'act_english_c',
+                    'act_math_c',
+                    'act_reading_c',
+                    'act_science_c',
+                    'act_composite_c'
+                )
+            GROUP BY
+                st.contact_c,
+                st.score_type
+        ) AS sub PIVOT (
+            MAX(max_score) FOR score_type IN (
+                [act_english_c],
+                [act_math_c],
+                [act_reading_c],
+                [act_science_c],
+                [act_composite_c]
+            )
+        ) AS p
+)
+SELECT
+    co.student_number,
+    co.cohort,
+    kt.ktc_status,
+    co.grade_level,
+    co.enroll_status,
+    co.region,
+    co.school_abbreviation,
+    st.score_type,
+    MAX(st.score) AS max_score,
+    CASE
+        WHEN MAX(st.score) < 16 THEN '<16'
+        WHEN MAX(st.score) BETWEEN 16
+        AND 18 THEN '16-18'
+        WHEN MAX(st.score) BETWEEN 19
+        AND 20 THEN '19-20'
+        WHEN MAX(st.score) >= 21 THEN '21+'
+    END AS act_bands
+FROM
+    gabby.powerschool.cohort_identifiers_static AS co
+    JOIN gabby.alumni.ktc_roster AS kt ON (co.student_number = kt.student_number)
+    AND kt.ktc_status NOT LIKE 'TAF%'
+    JOIN gabby.alumni.standardized_test_long AS st ON (kt.sf_contact_id = st.contact_c)
+WHERE
+    st.test_type = 'ACT'
+    AND st.score_type IN (
+        'act_english_c',
+        'act_math_c',
+        'act_reading_c',
+        'act_science_c',
+        'act_composite_c'
+    )
+    AND co.rn_undergrad = 1
+    AND co.grade_level != 99
+GROUP BY
+    co.student_number,
+    co.cohort,
+    kt.ktc_status,
+    co.grade_level,
+    co.enroll_status,
+    co.region,
+    co.school_abbreviation,
+    st.score_type
+UNION
+ALL
+SELECT
+    co.student_number,
+    co.cohort,
+    kt.ktc_status,
+    co.grade_level,
+    co.enroll_status,
+    co.region,
+    co.school_abbreviation,
+    'act_superscore_c' AS score_type,
+    act.act_superscore AS max_score,
+    CASE
+        WHEN act.act_superscore < 16 THEN '<16'
+        WHEN (
+            act.act_superscore BETWEEN 16
+            AND 18
+        ) THEN '16-18'
+        WHEN (
+            act.act_superscore BETWEEN 19
+            AND 20
+        ) THEN '19-20'
+        WHEN act.act_superscore >= 21 THEN '21+'
+    END AS act_bands
+FROM
+    gabby.powerschool.cohort_identifiers_static AS co
+    JOIN gabby.alumni.ktc_roster AS kt ON (
+        co.student_number = kt.student_number
+        AND kt.ktc_status NOT LIKE 'TAF%'
+    )
+    JOIN act_pivot AS act ON (act.contact_c = kt.sf_contact_id)
+WHERE
+    co.rn_undergrad = 1
+    AND co.grade_level != 99
