@@ -5,11 +5,17 @@ FROM
         SELECT
             LEFT(dr.academic_year, 4) AS academic_year,
             dr.student_id,
+            CASE 
+                WHEN co.region IN ('TEAM', 'KCNA') THEN 'NJ'
+                WHEN co.region = 'KMS' THEN 'Miami'
+            END AS region,
             co.school_abbreviation,
             co.grade_level,
-            CASE 
-                WHEN co.grade_level BETWEEN 0 AND 4 THEN 'K-4'
-                WHEN co.grade_level BETWEEN 5 AND 8 THEN '5-8'
+            CASE
+                WHEN co.grade_level BETWEEN 0
+                AND 4 THEN 'K-4'
+                WHEN co.grade_level BETWEEN 5
+                AND 8 THEN '5-8'
             END AS grade_band,
             co.cohort,
             CASE
@@ -27,12 +33,23 @@ FROM
                 WHEN rt.alt_name = 'BOY' THEN 'September ' + LEFT(dr.academic_year, 4)
                 WHEN rt.alt_name = 'MOY' THEN 'January ' + RIGHT(dr.academic_year, 4)
                 WHEN rt.alt_name = 'EOY' THEN 'May ' + RIGHT(dr.academic_year, 4)
-            END AS test_round_date, 
+            END AS test_round_date,
             dr.baseline_diagnostic_y_n_,
             dr.most_recent_diagnostic_y_n_,
             dr.overall_scale_score,
             dr.[percentile],
             dr.overall_relative_placement,
+            CASE
+                WHEN dr.overall_relative_placement IN (
+                    'Early On Grade Level',
+                    'Mid or Above Grade Level'
+                ) THEN 'On or Above Grade Level'
+                WHEN dr.overall_relative_placement = '1 Grade Level Below' THEN dr.overall_relative_placement
+                WHEN dr.overall_relative_placement IN (
+                    '2 Grade Levels Below',
+                    '3 or More Grade Levels Below'
+                ) THEN 'Two or More Grade Levels Below'
+            END AS placement_3_level,
             dr.percent_progress_to_annual_typical_growth_,
             dr.percent_progress_to_annual_stretch_growth_,
             dr.diagnostic_gain,
@@ -57,8 +74,7 @@ FROM
                 AND rt.identifier = 'IR'
                 AND sc.region = rt.region
             )
-            JOIN gabby.powerschool.cohort_identifiers_static AS co 
-            ON co.academic_year = LEFT(dr.academic_year, 4)
+            JOIN gabby.powerschool.cohort_identifiers_static AS co ON co.academic_year = LEFT(dr.academic_year, 4)
             AND co.student_number = dr.student_id
             AND co.rn_year = 1
     ) AS sub
