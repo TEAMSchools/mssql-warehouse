@@ -13,7 +13,12 @@ SELECT
   CASE
     WHEN sr.test_performance_level >= 4 THEN 1
     WHEN sr.test_performance_level < 4 THEN 0
-  END AS is_proficient
+  END AS is_proficient,
+  CASE
+    WHEN sr.test_performance_level <= 2 THEN 'Not Proficient (1-2)'
+    WHEN sr.test_performance_level = 3 THEN 'Bubble (3)'
+    WHEN sr.test_performance_level >= 4 THEN 'Proficient (4-5)'
+  END AS proficiency_bands
 FROM
   gabby.parcc.summative_record_file_clean AS sr
   LEFT JOIN gabby.powerschool.cohort_identifiers_static AS co ON (
