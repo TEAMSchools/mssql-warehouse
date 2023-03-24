@@ -5,7 +5,7 @@ FROM
         SELECT
             LEFT(dr.academic_year, 4) AS academic_year,
             dr.student_id,
-            CASE 
+            CASE
                 WHEN co.region IN ('TEAM', 'KCNA') THEN 'NJ'
                 WHEN co.region = 'KMS' THEN 'Miami'
             END AS region,
@@ -85,3 +85,4 @@ ORDER BY
     sub.[subject] ASC,
     sub.academic_year ASC,
     sub.round_number ASC
+    
