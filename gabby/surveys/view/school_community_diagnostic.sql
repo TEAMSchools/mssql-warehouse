@@ -1,5 +1,5 @@
--- CREATE OR ALTER VIEW
---   school_community_diagnostic AS
+CREATE OR ALTER VIEW
+  school_community_diagnostic AS
 WITH
   student_responses AS (
     SELECT
@@ -58,6 +58,17 @@ WITH
       survey_id = 6829997
       AND question_shortname LIKE '%scd_%'
       AND answer IS NOT NULL
+  ),
+  grade AS (
+    SELECT
+      employee_number,
+      MAX(student_grade_level) AS student_grade_level
+    FROM
+      pm.teacher_grade_levels
+    WHERE
+      academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+    GROUP BY
+      employee_number
   )
 SELECT
   c.student_number,
@@ -126,3 +137,33 @@ WHERE
   c.enroll_status = 0
   AND c.rn_year = 1
   AND c.academic_year >= 2021
+UNION ALL
+SELECT
+  NULL AS student_number,
+  NULL AS student_web_id,
+  d.respondent_preferred_name AS lastfirst,
+  d.campaign_academic_year AS academic_year,
+  NULL AS cohort,
+  x.gender AS gender,
+  g.student_grade_level AS grade_level,
+  NULL AS iep_status,
+  d.respondent_primary_site,
+  x.primary_site_school_level AS school_level,
+  d.respondent_userprincipalname,
+  d.answer_value,
+  d.question_shortname,
+  'Staff' AS audience,
+  d.question_title,
+  d.answer AS answer_text,
+  x.legal_entity_name
+FROM
+  surveygizmo.survey_detail AS d
+  LEFT JOIN people.staff_crosswalk_static AS x ON (
+    d.respondent_df_employee_number = x.df_employee_number
+  )
+  LEFT JOIN grade AS g ON (
+    x.df_employee_number = g.employee_number
+  )
+WHERE
+  d.question_shortname LIKE '%scd%'
+  AND d.campaign_academic_year >= 2021
