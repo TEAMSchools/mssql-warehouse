@@ -40,6 +40,13 @@ FROM
             dr.[percentile],
             dr.overall_relative_placement,
             CASE
+                WHEN dr.overall_relative_placement = '3 or More Grade Levels Below' THEN 'Lvl 1'
+                WHEN dr.overall_relative_placement = '2 Grade Levels Below' THEN 'Lvl 2'
+                WHEN dr.overall_relative_placement = '1 Grade Level Below' THEN 'Lvl 3'
+                WHEN dr.overall_relative_placement = 'Early On Grade Level' THEN 'Lvl 4'
+                WHEN dr.overall_relative_placement = 'Mid or Above Grade Level' THEN 'Lvl 5'
+            END AS orp_short,
+            CASE
                 WHEN dr.overall_relative_placement IN (
                     'Early On Grade Level',
                     'Mid or Above Grade Level'
@@ -85,4 +92,3 @@ ORDER BY
     sub.[subject] ASC,
     sub.academic_year ASC,
     sub.round_number ASC
-    
