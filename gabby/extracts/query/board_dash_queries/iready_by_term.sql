@@ -1,5 +1,30 @@
 SELECT
-    *
+    sub.academic_year,
+    sub.student_id,
+    sub.region,
+    sub.school_abbreviation,
+    sub.grade_level,
+    sub.grade_band,
+    sub.cohort,
+    sub.[subject],
+    sub.start_date,
+    sub.completion_date,
+    sub.round_number,
+    sub.test_round,
+    sub.test_round_date,
+    sub.baseline_diagnostic_y_n_,
+    sub.most_recent_diagnostic_y_n_,
+    sub.overall_scale_score,
+    sub.[percentile],
+    sub.overall_relative_placement,
+    sub.orp_short,
+    sub.placement_3_level,
+    sub.percent_progress_to_annual_typical_growth_,
+    sub.percent_progress_to_annual_stretch_growth_,
+    sub.diagnostic_gain,
+    sub.annual_typical_growth_measure,
+    sub.annual_stretch_growth_measure,
+    sub.rn_round
 FROM
     (
         SELECT
@@ -25,10 +50,7 @@ FROM
             dr.start_date,
             dr.completion_date,
             RIGHT(rt.time_per_name, 1) AS round_number,
-            CASE
-                WHEN rt.alt_name IS NULL THEN 'Outside Round'
-                ELSE rt.alt_name
-            END AS test_round,
+            COALESCE(rt.alt_name, 'Outside Round') AS test_round,
             CASE
                 WHEN rt.alt_name = 'BOY' THEN 'September ' + LEFT(dr.academic_year, 4)
                 WHEN rt.alt_name = 'MOY' THEN 'January ' + RIGHT(dr.academic_year, 4)
@@ -81,9 +103,11 @@ FROM
                 AND rt.identifier = 'IR'
                 AND sc.region = rt.region
             )
-            JOIN gabby.powerschool.cohort_identifiers_static AS co ON co.academic_year = LEFT(dr.academic_year, 4)
-            AND co.student_number = dr.student_id
-            AND co.rn_year = 1
+            INNER JOIN gabby.powerschool.cohort_identifiers_static AS co ON (
+                co.academic_year = LEFT(dr.academic_year, 4)
+                AND co.student_number = dr.student_id
+                AND co.rn_year = 1
+            )
     ) AS sub
 WHERE
     sub.rn_round = 1
