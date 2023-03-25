@@ -11,7 +11,12 @@ SELECT
   CASE
     WHEN RIGHT(fs.achievement_level, 1) >= 3 THEN 1
     WHEN RIGHT(fs.achievement_level, 1) < 3 THEN 0
-  END AS is_proficient
+  END AS is_proficient,
+  CASE
+    WHEN RIGHT(fs.achievement_level, 1) >= 3 THEN 'Proficient (3-5)'
+    WHEN RIGHT(fs.achievement_level, 1) = 2 THEN 'Bubble (2)'
+    WHEN RIGHT(fs.achievement_level, 1) < 2 THEN 'Not Proficient (1)'
+  END AS proficiency_bands
 FROM
   kippmiami.fast.student_data_long AS fs
   LEFT JOIN kippmiami.powerschool.u_studentsuserfields AS suf ON (fs.fleid = suf.fleid)
