@@ -34,3 +34,7 @@ models:
     # Config indicated by + and applies to all files under models/example/
     example:
       +materialized: view
+
+dispatch:
+  - macro_namespace: dbt_utils
+    search_order: [tsql_utils, dbt_utils]

@@ -1,4 +1,3 @@
-{# DELETE FROM illuminate_dna_assessments.assessments_reporting_groups #}
 select *
 from {{ source("illuminate_dna_assessments", "assessments_reporting_groups") }}
 where

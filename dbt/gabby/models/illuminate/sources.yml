@@ -6,7 +6,7 @@ sources:
       - name: agg_student_responses
       - name: agg_student_responses_group
       - name: agg_student_responses_standard
-      - name: assessment_grade_level
+      - name: assessment_grade_levels
       - name: assessment_standards
       - name: assessments_reporting_groups
       - name: fields
