@@ -7,6 +7,11 @@ sudo apt-get -qq -y update --no-install-recommends &&
 	sudo apt-get -qq autoremove -y &&
 	sudo apt-get -qq clean -y
 
-# install Trunk
-curl https://get.trunk.io -fsSL | bash -s -- -y
-trunk init --yes-to-all --nocheck-sample
+# update pip
+python -m pip install --no-cache-dir --upgrade pip
+
+# install pdm dependencies
+pdm config strategy.update eager
+
+# git config
+git config pull.rebase false
