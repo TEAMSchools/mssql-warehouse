@@ -104,6 +104,6 @@ FROM
     s.df_employee_number = e.employee_number
   )
 WHERE
-  s.[status] = 'ACTIVE'
+  s.[status] != 'TERMINATED'
   AND s.primary_job != 'Intern'
   AND s.primary_job NOT LIKE '%Temp%'
