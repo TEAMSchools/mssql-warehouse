@@ -8,6 +8,7 @@ plugins:
       uri: https://github.com/trunk-io/plugins
 lint:
   enabled:
+    - sqlfmt@0.17.0
     - taplo@0.7.0
     - yamllint@1.30.0
     - sqlfluff@2.0.2
@@ -20,9 +21,17 @@ lint:
     - git-diff-check
     - shfmt@3.5.0
   ignore:
-    - linters: [sqlfluff]
+    - linters: [sqlfluff, sql-formatter]
       paths:
         - archive/**
+        - dbt/**
+    - linters: [sqlfmt]
+      paths:
+        - gabby/**
+        - kippnewark/**
+        - kippcamden/**
+        - kippmiami/**
+        - kipptaf/**
   definitions:
     - name: sql-formatter
       commands:

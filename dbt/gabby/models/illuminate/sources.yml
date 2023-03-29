@@ -1,0 +1,21 @@
+version: 2
+
+sources:
+  - name: illuminate_dna_assessments
+    tables:
+      - name: agg_student_responses
+      - name: agg_student_responses_group
+      - name: agg_student_responses_standard
+      - name: assessment_grade_level
+      - name: assessment_standards
+      - name: assessments_reporting_groups
+      - name: fields
+      - name: performance_bands
+      - name: students_assessments
+  - name: illuminate_dna_repositories
+    tables:
+      - name: repository_grade_levels
+  - name: illuminate_public
+    tables:
+      - name: student_session_aff
+      - name: users

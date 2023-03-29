@@ -8,7 +8,9 @@
   "editor.wordWrapColumn": 88,
   "files.associations": {
     "*.toml": "toml",
-    "*.env": "shellscript"
+    "*.env": "shellscript",
+    "**/gabby/**/*.sql": "sql",
+    "**/dbt/**/*.sql": "jinja-sql"
   },
   "files.exclude": {
     "**/.trunk/*out": true,
