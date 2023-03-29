@@ -1,0 +1,12 @@
+[tool.pdm]
+
+[project]
+name = ""
+version = ""
+description = ""
+authors = [
+  { name = "Charlie Bini", email = "5003326+cbini@users.noreply.github.com" },
+]
+dependencies = []
+requires-python = ">=3.9"
+license = { text = "GPL-3.0-or-later" }

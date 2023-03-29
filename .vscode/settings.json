@@ -1,4 +1,6 @@
 {
+  "editor.defaultFormatter": "trunk.io",
+  "editor.formatOnSave": true,
   "editor.inlineSuggest.enabled": true,
   "editor.renderControlCharacters": true,
   "editor.renderWhitespace": "all",
@@ -14,19 +16,6 @@
   },
   "files.watcherExclude": {
     "**/.trunk/*out": true
-  },
-  "[json]": {
-    "editor.defaultFormatter": "trunk.io"
-  },
-  "[jsonc]": {
-    "editor.defaultFormatter": "trunk.io"
-  },
-  "[python]": {
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "trunk.io"
-  },
-  "[yaml]": {
-    "editor.defaultFormatter": "trunk.io"
   },
   "githubPullRequests.ignoredPullRequestBranches": ["main"]
 }

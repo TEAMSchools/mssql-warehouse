@@ -8,6 +8,7 @@ plugins:
       uri: https://github.com/trunk-io/plugins
 lint:
   enabled:
+    - taplo@0.7.0
     - yamllint@1.30.0
     - sqlfluff@2.0.2
     - sql-formatter@12.2.0
