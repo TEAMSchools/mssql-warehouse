@@ -7,19 +7,19 @@ SELECT
       CAST(sub.is_accepted_ba AS FLOAT)
     ),
     2
-  ) pct_enrolled_ba,
+  ) pct_accept_ba,
   ROUND(
     AVG(
       CAST(sub.is_accepted_aa AS FLOAT)
     ),
     2
-  ) pct_enrolled_aa,
+  ) pct_accept_aa,
   ROUND(
     AVG(
       CAST(sub.is_accepted_cert AS FLOAT)
     ),
     2
-  ) pct_enrolled_cte
+  ) pct_accept_cte
 FROM
   (
     SELECT
