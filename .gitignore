@@ -1,5 +1,11 @@
-# Created by https://www.toptal.com/developers/gitignore/api/linux,macos,windows,python
-# Edit at https://www.toptal.com/developers/gitignore?templates=linux,macos,windows,python
+# Created by https://www.toptal.com/developers/gitignore/api/linux,macos,python,windows,dbt
+# Edit at https://www.toptal.com/developers/gitignore?templates=linux,macos,python,windows,dbt
+
+### dbt ###
+target/
+dbt_modules/
+dbt_packages/
+logs/
 
 ### Linux ###
 *~
@@ -246,4 +252,4 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# End of https://www.toptal.com/developers/gitignore/api/linux,macos,windows,python,dbt
+# End of https://www.toptal.com/developers/gitignore/api/linux,macos,python,windows,dbt

@@ -4,3 +4,4 @@ sources:
   - name: adp
     tables:
       - name: employees_all
+      - name: employees_archive
