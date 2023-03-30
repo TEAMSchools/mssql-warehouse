@@ -4,9 +4,9 @@ WITH
   student_responses AS (
     SELECT
       email_address,
-      gabby.utilities.DATE_TO_SY ([timestamp]) AS survey_academic_year
+      utilities.DATE_TO_SY ([timestamp]) AS survey_academic_year
     FROM
-      gabby.surveys.scds_responses
+      surveys.scds_responses
     GROUP BY
       email_address,
       [timestamp]
@@ -14,7 +14,7 @@ WITH
   family_responses AS (
     SELECT
       email,
-      gabby.utilities.DATE_TO_SY (date_started) AS survey_academic_year
+      utilities.DATE_TO_SY (date_started) AS survey_academic_year
     FROM
       (
         SELECT
@@ -24,8 +24,8 @@ WITH
           qc.shortname,
           rd.answer
         FROM
-          gabby.surveygizmo.survey_response_data AS rd
-          LEFT JOIN gabby.surveygizmo.survey_question_clean_static AS qc ON (
+          surveygizmo.survey_response_data AS rd
+          LEFT JOIN surveygizmo.survey_question_clean_static AS qc ON (
             rd.survey_id = qc.survey_id
             AND rd.question_id = qc.survey_question_id
           )
@@ -53,7 +53,7 @@ SELECT
     ELSE 0
   END AS family_completion
 FROM
-  gabby.powerschool.cohort_identifiers_static AS c
+  powerschool.cohort_identifiers_static AS c
   LEFT JOIN student_responses AS s ON (
     CONCAT(
       c.student_web_id,

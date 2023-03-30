@@ -8,7 +8,7 @@ WITH
     FROM
       pm.teacher_grade_levels
     WHERE
-      academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
+      academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
       AND (
         student_grade_level BETWEEN 0 AND 4
       )
