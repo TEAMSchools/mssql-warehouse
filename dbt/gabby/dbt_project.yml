@@ -37,12 +37,7 @@ models:
       adp:
         +schema: adp
       illuminate:
-        dna_assessments:
-          +schema: illuminate_dna_assessments
-        dna_repositories:
-          +schema: illuminate_dna_repositories
-        public:
-          +schema: illuminate_public
+        +schema: illuminate
       people:
         +schema: people
       whetstone:

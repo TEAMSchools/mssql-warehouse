@@ -23,6 +23,7 @@ end
 
 {%- endmacro %}
 
+
 {% macro create_nonclustered_index(columns, includes=False) %}
 
 {{ log("Creating nonclustered index...") }}
