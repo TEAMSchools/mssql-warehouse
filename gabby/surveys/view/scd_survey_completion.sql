@@ -37,6 +37,7 @@ WITH
   )
 SELECT
   c.student_web_id,
+  c.student_number,
   c.cohort,
   c.lastfirst,
   c.grade_level,
