@@ -1,7 +1,0 @@
-version: 2
-
-sources:
-  - name: coupa
-    tables:
-      - name: users
-      - name: budget_line_list

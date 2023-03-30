@@ -1,7 +1,0 @@
-version: 2
-
-sources:
-  - name: whetstone
-    tables:
-      - name: assignments
-      - name: observations

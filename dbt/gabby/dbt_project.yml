@@ -29,11 +29,26 @@ clean-targets: # directories to be removed by `dbt clean`
 # In this example config, we tell dbt to build all models in the example/
 # directory as views. These settings can be overridden in the individual model
 # files using the `{{ config(...) }}` macro.
-# models:
-#   gabby:
-#     # Config indicated by + and applies to all files under models/example/
-#     example:
-#       +materialized: view
+models:
+  gabby:
+    +materialized: table
+    +as_columnstore: False
+    staging:
+      adp:
+        +schema: adp
+      illuminate:
+        dna_assessments:
+          +schema: illuminate_dna_assessments
+        dna_repositories:
+          +schema: illuminate_dna_repositories
+        public:
+          +schema: illuminate_public
+      people:
+        +schema: people
+      whetstone:
+        +schema: whetstone
+      zendesk:
+        +schema: zendesk
 
 dispatch:
   - macro_namespace: dbt_utils
