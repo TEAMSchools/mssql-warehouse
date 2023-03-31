@@ -1,3 +1,12 @@
+{{-
+    config(
+        alias="stg_",
+        post_hook=[
+            "{{ create_clustered_index(columns=[''associate_id', 'employee_number', 'is_active'], unique=True) }}",
+        ],
+    )
+-}}
+
 {%- set unique_key = "associate_id" -%}
 
 {{-
