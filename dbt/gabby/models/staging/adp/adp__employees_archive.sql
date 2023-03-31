@@ -1,9 +1,9 @@
+{# "{{ create_nonclustered_index(columns=['position_id', 'position_status'], includes=['associate_id', '_modified', 'business_unit_description', 'location_description', 'home_department_description', 'job_title_description', 'reports_to_associate_id', 'annual_salary', 'flsa_description', 'wfmgr_pay_rule', 'wfmgr_accrual_profile', 'wfmgr_ee_type', 'wfmgr_badge_number']) }}", #}
 {{-
     config(
         alias="stg_employees_archive",
         post_hook=[
             "{{ create_clustered_index(columns=['position_id', '_modified'], unique=True) }}",
-            "{{ create_nonclustered_index(columns=['position_id', 'position_status'], includes=['associate_id', '_modified', 'business_unit_description', 'location_description', 'home_department_description', 'job_title_description', 'reports_to_associate_id', 'annual_salary', 'flsa_description', 'wfmgr_pay_rule', 'wfmgr_accrual_profile', 'wfmgr_ee_type', 'wfmgr_badge_number']) }}",
         ],
     )
 -}}

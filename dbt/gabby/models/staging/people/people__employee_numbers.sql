@@ -1,3 +1,4 @@
+{# "{{ create_clustered_index(columns=['associate_id', 'employee_number', 'is_active'], unique=True) }}", #}
 {%- set unique_key = "associate_id" -%}
 
 {{-
@@ -7,9 +8,7 @@
         unique_key=unique_key,
         merge_update_columns=[unique_key],
         alias="stg_employee_numbers",
-        post_hook=[
-            "{{ create_clustered_index(columns=['associate_id', 'employee_number', 'is_active'], unique=True) }}",
-        ],
+        post_hook=[],
     )
 -}}
 

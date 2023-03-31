@@ -1,9 +1,9 @@
+{# "{{ create_nonclustered_index(columns=['student_assessment_id', 'reporting_group_id', 'points_possible'], includes=['points', 'percent_correct', 'assessment_id']) }}", #}
 {{-
     config(
         alias="stg_agg_student_responses_group",
         post_hook=[
             "{{ create_clustered_index(columns=['student_assessment_id', 'reporting_group_id'], unique=True) }}",
-            "{{ create_nonclustered_index(columns=['student_assessment_id', 'reporting_group_id', 'points_possible'], includes=['points', 'percent_correct', 'assessment_id']) }}",
         ],
     )
 -}}
