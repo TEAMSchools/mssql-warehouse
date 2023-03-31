@@ -24,7 +24,7 @@ WITH
       'ADP' AS source_system
     FROM
       adp.status_history AS sh
-      INNER JOIN people.employee_numbers AS sr ON (
+      INNER JOIN people.stg_employee_numbers AS sr ON (
         sh.associate_id = sr.associate_id
         AND sr.is_active = 1
       )
@@ -63,7 +63,7 @@ WITH
       'DF' AS source_system
     FROM
       dayforce.employee_status_clean AS ds
-      INNER JOIN people.employee_numbers AS sr ON (
+      INNER JOIN people.stg_employee_numbers AS sr ON (
         ds.number = sr.employee_number
         AND sr.is_active = 1
       )

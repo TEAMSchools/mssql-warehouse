@@ -24,11 +24,11 @@ WITH
       'ADP' AS source_system
     FROM
       adp.manager_history AS mh
-      INNER JOIN people.employee_numbers AS sre ON (
+      INNER JOIN people.stg_employee_numbers AS sre ON (
         mh.associate_id = sre.associate_id
         AND sre.is_active = 1
       )
-      INNER JOIN people.employee_numbers AS srm ON (
+      INNER JOIN people.stg_employee_numbers AS srm ON (
         mh.reports_to_associate_id = srm.associate_id
         AND srm.is_active = 1
       )
@@ -61,11 +61,11 @@ WITH
       'DF' AS source_system
     FROM
       dayforce.employee_manager_clean AS dm
-      INNER JOIN people.employee_numbers AS sre ON (
+      INNER JOIN people.stg_employee_numbers AS sre ON (
         dm.employee_reference_code = sre.employee_number
         AND sre.is_active = 1
       )
-      INNER JOIN people.employee_numbers AS srm ON (
+      INNER JOIN people.stg_employee_numbers AS srm ON (
         dm.manager_employee_number = srm.employee_number
         AND srm.is_active = 1
       )

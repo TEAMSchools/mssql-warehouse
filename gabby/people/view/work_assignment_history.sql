@@ -31,7 +31,7 @@ WITH
       'ADP' AS source_system
     FROM
       adp.work_assignment_history AS wah
-      INNER JOIN people.employee_numbers AS sr ON (
+      INNER JOIN people.stg_employee_numbers AS sr ON (
         wah.associate_id = sr.associate_id
         AND sr.is_active = 1
       )
@@ -73,7 +73,7 @@ WITH
       'DF' AS source_system
     FROM
       dayforce.employee_work_assignment_clean AS dwa
-      INNER JOIN people.employee_numbers AS sr ON (
+      INNER JOIN people.stg_employee_numbers AS sr ON (
         dwa.employee_reference_code = sr.employee_number
         AND sr.is_active = 1
       )
