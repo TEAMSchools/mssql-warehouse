@@ -5,6 +5,9 @@ sources:
     tables:
       - name: employees_all
       - name: employees_archive
+  - name: people
+    tables:
+      - name: employee_numbers
   - name: zendesk
     tables:
       - name: ticket_metrics

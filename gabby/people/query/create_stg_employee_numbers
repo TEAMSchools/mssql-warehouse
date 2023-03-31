@@ -1,0 +1,19 @@
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[people].[stg_employee_numbers]') AND type in (N'U'))
+DROP TABLE [people].[stg_employee_numbers]
+GO
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [people].[stg_employee_numbers](
+	[associate_id] [nvarchar](256) NULL,
+	[associate_id_legacy] [nvarchar](256) NULL,
+	[employee_number] [int] NOT NULL,
+	[is_active] [bit] NULL
+) ON [PRIMARY]
+GO
+
+INSERT INTO  [people].[stg_employee_numbers] (associate_id, associate_id_legacy, employee_number, is_active)
+SELECT associate_id, associate_id_legacy, employee_number, is_active
+FROM people.employee_numbers

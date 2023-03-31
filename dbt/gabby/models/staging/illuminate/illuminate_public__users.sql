@@ -2,9 +2,9 @@
     config(
         alias="stg_users",
         post_hook=[
-            "{{ create_clustered_index(columns=[''user_id'], unique=True) }}",
-            "{{ create_nonclustered_index(columns=[''state_id'], includes=[''user_id']) }}",
-            "{{ create_nonclustered_index(columns=[''user_id'], includes=[''local_user_id', 'username', 'email1', 'first_name', 'last_name']) }}",
+            "{{ create_clustered_index(columns=['user_id'], unique=True) }}",
+            "{{ create_nonclustered_index(columns=['state_id'], includes=['user_id']) }}",
+            "{{ create_nonclustered_index(columns=['user_id'], includes=['local_user_id', 'username', 'email1', 'first_name', 'last_name']) }}",
         ],
     )
 -}}

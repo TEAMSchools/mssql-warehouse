@@ -2,8 +2,8 @@
     config(
         alias="stg_student_session_aff",
         post_hook=[
-            "{{ create_clustered_index(columns=[''stu_sess_id'], unique=True) }}",
-            "{{ create_nonclustered_index(columns=[''student_id', 'grade_level_id', 'entry_date', 'leave_date'], includes=[']) }}",
+            "{{ create_clustered_index(columns=['stu_sess_id'], unique=True) }}",
+            "{{ create_nonclustered_index(columns=['student_id', 'grade_level_id', 'entry_date', 'leave_date']) }}",
         ],
     )
 -}}
