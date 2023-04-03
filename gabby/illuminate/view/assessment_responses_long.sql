@@ -27,7 +27,7 @@ WITH
       ) AS rn
     FROM
       illuminate_dna_assessments.student_assessment_scaffold_current_static AS a
-      LEFT JOIN illuminate_dna_assessments.students_assessments AS sa ON (
+      LEFT JOIN illuminate.stg_students_assessments AS sa ON (
         a.student_id = sa.student_id
         AND a.assessment_id = sa.assessment_id
       )
@@ -57,7 +57,7 @@ SELECT
   NULL AS domain_description
 FROM
   asmts AS a
-  LEFT JOIN illuminate_dna_assessments.agg_student_responses AS asr ON (
+  LEFT JOIN illuminate.stg_agg_student_responses AS asr ON (
     a.student_assessment_id = asr.student_assessment_id
     AND asr.points_possible > 0
   )
@@ -91,11 +91,11 @@ SELECT
   dom.domain_description
 FROM
   asmts AS a
-  INNER JOIN illuminate_dna_assessments.agg_student_responses_standard AS asrs ON (
+  INNER JOIN illuminate.stg_agg_student_responses_standard AS asrs ON (
     a.student_assessment_id = asrs.student_assessment_id
     AND asrs.points_possible > 0
   )
-  INNER JOIN illuminate_dna_assessments.assessment_standards AS astd ON (
+  INNER JOIN illuminate.stg_assessment_standards AS astd ON (
     asrs.assessment_id = astd.assessment_id
     AND asrs.standard_id = astd.standard_id
   )
@@ -135,11 +135,11 @@ SELECT
   NULL AS domain_description
 FROM
   asmts AS a
-  INNER JOIN illuminate_dna_assessments.agg_student_responses_group AS asrg ON (
+  INNER JOIN illuminate.stg_agg_student_responses_group AS asrg ON (
     a.student_assessment_id = asrg.student_assessment_id
     AND asrg.points_possible > 0
   )
-  INNER JOIN illuminate_dna_assessments.assessments_reporting_groups AS arg ON (
+  INNER JOIN illuminate.stg_assessments_reporting_groups AS arg ON (
     asrg.assessment_id = arg.assessment_id
     AND asrg.reporting_group_id = arg.reporting_group_id
   )

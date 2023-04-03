@@ -40,13 +40,13 @@ FROM
   LEFT JOIN illuminate_dna_assessments.performance_band_sets AS pbs ON (
     a.performance_band_set_id = pbs.performance_band_set_id
   )
-  LEFT JOIN illuminate_dna_assessments.assessment_grade_levels AS agl ON (
+  LEFT JOIN illuminate.stg_assessment_grade_levels AS agl ON (
     a.assessment_id = agl.assessment_id
   )
   LEFT JOIN illuminate_public.grade_levels AS gr ON (
     agl.grade_level_id = gr.grade_level_id
   )
-  INNER JOIN illuminate_dna_assessments.fields AS f ON (
+  INNER JOIN illuminate.stg_fields AS f ON (
     a.assessment_id = f.assessment_id
     AND f.deleted_at IS NULL
   )

@@ -181,7 +181,7 @@ FROM
       END AS module_number_length
     FROM
       illuminate_dna_assessments.assessments AS a
-      INNER JOIN illuminate_public.users AS u ON (a.[user_id] = u.[user_id])
+      INNER JOIN illuminate.stg_users AS u ON (a.[user_id] = u.[user_id])
       INNER JOIN illuminate_dna_assessments.performance_band_sets AS pbs ON (
         a.performance_band_set_id = pbs.performance_band_set_id
       )

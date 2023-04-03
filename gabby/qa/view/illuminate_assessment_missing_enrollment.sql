@@ -65,7 +65,7 @@ SELECT
   ils.local_student_id
 FROM
   illuminate_dna_assessments.assessments_identifiers_static AS a
-  INNER JOIN illuminate_dna_assessments.students_assessments AS sa ON (
+  INNER JOIN illuminate.stg_students_assessments AS sa ON (
     a.assessment_id = sa.assessment_id
   )
   INNER JOIN illuminate_public.students AS ils ON (sa.student_id = ils.student_id)

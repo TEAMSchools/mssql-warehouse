@@ -27,7 +27,7 @@ WITH
       CAST(rt.alt_name AS VARCHAR) AS administration_round
     FROM
       illuminate_dna_assessments.assessments_identifiers_static AS ais
-      INNER JOIN illuminate_dna_assessments.agg_student_responses AS asr ON (
+      INNER JOIN illuminate.stg_agg_student_responses AS asr ON (
         ais.assessment_id = asr.assessment_id
       )
       INNER JOIN illuminate_public.students AS s ON (asr.student_id = s.student_id)
@@ -238,7 +238,7 @@ FROM
     FROM
       overall_scores
   ) AS sub
-  LEFT JOIN illuminate_dna_assessments.agg_student_responses_standard AS std ON (
+  LEFT JOIN illuminate.stg_agg_student_responses_standard AS std ON (
     sub.assessment_id = std.assessment_id
     AND sub.illuminate_student_id = std.student_id
   )

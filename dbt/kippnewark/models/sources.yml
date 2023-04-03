@@ -1,0 +1,20 @@
+version: 2
+
+sources:
+  - name: deanslist
+    tables:
+      - name: behavior
+      - name: communication
+      - name: homework
+      - name: incidents
+  - name: easyiep
+    tables:
+      - name: njsmart_powerschool
+  - name: powerschool
+    tables:
+      - name: assignmentcategoryassoc
+      - name: assignmentscore
+      - name: assignmentsection
+  - name: titan
+    tables:
+      - name: person_data

@@ -21,7 +21,7 @@ SELECT
 FROM
   illuminate_dna_assessments.student_assessment_scaffold_current_static AS saa
   INNER JOIN illuminate_public.students AS s ON (saa.student_id = s.student_id)
-  LEFT JOIN illuminate_dna_assessments.agg_student_responses AS o ON (
+  LEFT JOIN illuminate.stg_agg_student_responses AS o ON (
     saa.student_id = o.student_id
     AND saa.assessment_id = o.assessment_id
   )

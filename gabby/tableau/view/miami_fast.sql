@@ -82,7 +82,7 @@ WITH
           s.local_student_id
         FROM
           gabby.illuminate_dna_assessments.assessments_identifiers_static AS a
-          INNER JOIN gabby.illuminate_dna_assessments.agg_student_responses AS asr ON (
+          INNER JOIN gabby.illuminate.stg_agg_student_responses AS asr ON (
             a.assessment_id = asr.assessment_id
           )
           -- trunk-ignore(sqlfluff/LT05)

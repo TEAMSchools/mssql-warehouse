@@ -37,7 +37,7 @@ FROM
           leave_date,
           utilities.DATE_TO_SY (entry_date) + 1 AS academic_year
         FROM
-          illuminate_public.student_session_aff
+          illuminate.stg_student_session_aff
       ) AS sub
   ) AS sub
 WHERE

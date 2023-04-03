@@ -31,9 +31,9 @@ clean-targets: # directories to be removed by `dbt clean`
 # files using the `{{ config(...) }}` macro.
 models:
   gabby:
-    +materialized: table
-    +as_columnstore: False
     staging:
+      +materialized: table
+      +as_columnstore: False
       adp:
         +schema: adp
       illuminate:

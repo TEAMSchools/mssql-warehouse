@@ -83,7 +83,7 @@ FROM
       0 AS is_replacement
     FROM
       asmts AS a
-      INNER JOIN illuminate_dna_assessments.assessment_grade_levels AS agl ON (
+      INNER JOIN illuminate.stg_assessment_grade_levels AS agl ON (
         a.assessment_id = agl.assessment_id
       )
       INNER JOIN illuminate_public.student_session_aff_clean_static AS ssa ON (
@@ -126,7 +126,7 @@ FROM
       0 AS is_replacement
     FROM
       asmts AS a
-      INNER JOIN illuminate_dna_assessments.assessment_grade_levels AS agl ON (
+      INNER JOIN illuminate.stg_assessment_grade_levels AS agl ON (
         a.assessment_id = agl.assessment_id
       )
       -- trunk-ignore(sqlfluff/LT05)
@@ -163,10 +163,10 @@ FROM
       1 AS is_replacement
     FROM
       asmts AS a
-      INNER JOIN illuminate_dna_assessments.assessment_grade_levels AS agl ON (
+      INNER JOIN illuminate.stg_assessment_grade_levels AS agl ON (
         a.assessment_id = agl.assessment_id
       )
-      INNER JOIN illuminate_dna_assessments.students_assessments AS sa ON (
+      INNER JOIN illuminate.stg_students_assessments AS sa ON (
         a.assessment_id = sa.assessment_id
       )
       INNER JOIN illuminate_public.student_session_aff_clean_static AS ssa ON (
@@ -201,7 +201,7 @@ FROM
       0 AS is_replacement
     FROM
       asmts AS a
-      INNER JOIN illuminate_dna_assessments.students_assessments AS sa ON (
+      INNER JOIN illuminate.stg_students_assessments AS sa ON (
         a.assessment_id = sa.assessment_id
       )
     WHERE

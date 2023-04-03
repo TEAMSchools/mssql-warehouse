@@ -38,7 +38,7 @@ FROM
     r.repository_id = f.repository_id
     AND f.deleted_at IS NULL
   )
-  INNER JOIN illuminate_dna_repositories.repository_grade_levels AS g ON (
+  INNER JOIN illuminate.stg_repository_grade_levels AS g ON (
     r.repository_id = g.repository_id
   )
   INNER JOIN powerschool.cohort_identifiers_static AS co ON (
@@ -93,7 +93,7 @@ FROM
     r.repository_id = f.repository_id
     AND f.deleted_at IS NULL
   )
-  INNER JOIN illuminate_dna_repositories.repository_grade_levels AS g ON (
+  INNER JOIN illuminate.stg_repository_grade_levels AS g ON (
     r.repository_id = g.repository_id
   )
   INNER JOIN powerschool.cohort_identifiers_static AS co ON (

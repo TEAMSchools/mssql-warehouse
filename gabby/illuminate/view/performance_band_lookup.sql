@@ -20,10 +20,8 @@ FROM
       pb.[label],
       pb.label_number,
       pb.is_mastery,
-      CAST(
-        pbs.[description] AS VARCHAR(125)
-      ) AS [description],
-      CAST(pb.minimum_value AS FLOAT) AS minimum_value,
+      pbs.[description],
+      pb.minimum_value,
       ROW_NUMBER() OVER (
         PARTITION BY
           pbs.performance_band_set_id,
@@ -33,7 +31,7 @@ FROM
       ) AS rn
     FROM
       illuminate_dna_assessments.performance_band_sets AS pbs
-      INNER JOIN illuminate_dna_assessments.performance_bands AS pb ON (
+      INNER JOIN illuminate.stg_performance_bands AS pb ON (
         pbs.performance_band_set_id = pb.performance_band_set_id
       )
     WHERE

@@ -22,7 +22,7 @@ SELECT
   dt.end_date,
   att.att_code
 FROM
-  illuminate_dna_assessments.agg_student_responses AS ovr
+  illuminate.stg_agg_student_responses AS ovr
   INNER JOIN illuminate_public.students AS s ON (ovr.student_id = s.student_id)
   INNER JOIN illuminate_dna_assessments.assessments_identifiers AS a ON (
     ovr.assessment_id = a.assessment_id

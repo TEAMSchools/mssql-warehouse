@@ -18,5 +18,6 @@
   "files.watcherExclude": {
     "**/.trunk/*out": true
   },
-  "githubPullRequests.ignoredPullRequestBranches": ["main"]
+  "githubPullRequests.ignoredPullRequestBranches": ["main"],
+  "dbt.queryLimit": 500
 }

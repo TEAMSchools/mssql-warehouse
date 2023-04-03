@@ -125,7 +125,7 @@ FROM
       MIN(a.performance_band_set_id) AS performance_band_set_id
     FROM
       illuminate_dna_assessments.assessments_identifiers_static AS a
-      INNER JOIN illuminate_dna_assessments.agg_student_responses AS asr ON (
+      INNER JOIN illuminate.stg_agg_student_responses AS asr ON (
         a.assessment_id = asr.assessment_id
       )
       INNER JOIN illuminate_public.students AS s ON (asr.student_id = s.student_id)

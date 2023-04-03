@@ -31,19 +31,13 @@ clean-targets: # directories to be removed by `dbt clean`
 # files using the `{{ config(...) }}` macro.
 models:
   kippmiami:
-    +materialized: table
-    +as_columnstore: False
     staging:
-      # adp:
-      #   +schema: adp
-      # illuminate:
-      #   +schema: illuminate
-      # people:
-      #   +schema: people
-      # whetstone:
-      #   +schema: whetstone
-      # zendesk:
-      #   +schema: zendesk
+      +materialized: table
+      +as_columnstore: False
+      deanslist:
+        +schema: deanslist
+      powerschool:
+        +schema: powerschool
 
 dispatch:
   - macro_namespace: dbt_utils

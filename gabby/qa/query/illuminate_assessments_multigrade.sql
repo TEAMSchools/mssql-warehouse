@@ -34,7 +34,7 @@ FROM
       agl.grade_level_id
     FROM
       asmts AS a
-      LEFT JOIN illuminate_dna_assessments.assessment_grade_levels AS agl ON (
+      LEFT JOIN illuminate.stg_assessment_grade_levels AS agl ON (
         a.assessment_id = agl.assessment_id
       )
     WHERE
