@@ -13,8 +13,8 @@ FROM
       asec.[db_name],
       aca.assignmentcategoryassocid
     FROM
-      powerschool.assignmentsection AS asec
-      LEFT JOIN powerschool.assignmentcategoryassoc AS aca ON (
+      powerschool.stg_assignmentsection AS asec
+      LEFT JOIN powerschool.stg_assignmentcategoryassoc AS aca ON (
         asec.assignmentsectionid = aca.assignmentsectionid
         AND asec.[db_name] = aca.[db_name]
       )

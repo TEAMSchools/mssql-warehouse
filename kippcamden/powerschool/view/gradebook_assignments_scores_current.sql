@@ -10,8 +10,8 @@ SELECT
   CAST(asec.assignmentid AS INT) AS assignmentid,
   CAST(asec.sectionsdcid AS INT) AS sectionsdcid
 FROM
-  powerschool.assignmentscore AS a
-  INNER JOIN powerschool.assignmentsection AS asec ON (
+  powerschool.stg_assignmentscore AS a
+  INNER JOIN powerschool.stg_assignmentsection AS asec ON (
     a.assignmentsectionid = asec.assignmentsectionid
   )
 WHERE

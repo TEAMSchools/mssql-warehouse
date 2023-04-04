@@ -22,8 +22,8 @@ SELECT
     COALESCE(dtc.[name], tc.[name]) AS VARCHAR(125)
   ) AS category_name
 FROM
-  powerschool.assignmentsection AS asec
-  LEFT JOIN powerschool.assignmentcategoryassoc AS aca ON (
+  powerschool.stg_assignmentsection AS asec
+  LEFT JOIN powerschool.stg_assignmentcategoryassoc AS aca ON (
     asec.assignmentsectionid = aca.assignmentsectionid
   )
   LEFT JOIN powerschool.teachercategory AS tc ON (

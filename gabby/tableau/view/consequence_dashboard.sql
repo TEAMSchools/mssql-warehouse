@@ -87,7 +87,7 @@ FROM
   LEFT JOIN powerschool.students AS s ON (
     co.student_number = s.student_number
   )
-  LEFT JOIN deanslist.incidents_clean_static AS dli ON (
+  LEFT JOIN deanslist.stg_incidents AS dli ON (
     co.student_number = dli.student_school_id
     AND co.academic_year = dli.create_academic_year
     AND co.[db_name] = dli.[db_name]

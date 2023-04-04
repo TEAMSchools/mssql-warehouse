@@ -1,5 +1,6 @@
 {{-
     config(
+        schema="powerschool",
         alias="stg_assignmentsection",
         post_hook=[],
     )

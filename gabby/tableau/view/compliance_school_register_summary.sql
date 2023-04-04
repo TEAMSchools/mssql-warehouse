@@ -60,7 +60,7 @@ FROM
     co.students_dcid = nj.studentsdcid
     AND co.[db_name] = nj.[db_name]
   )
-  LEFT JOIN easyiep.njsmart_powerschool_clean_static AS iep ON (
+  LEFT JOIN easyiep.stg_njsmart_powerschool AS iep ON (
     co.student_number = iep.student_number
     AND co.academic_year = iep.academic_year
     AND co.[db_name] = iep.[db_name]

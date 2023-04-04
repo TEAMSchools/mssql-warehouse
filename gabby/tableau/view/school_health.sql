@@ -476,7 +476,7 @@ WITH
           'ALL' AS grade_band
         FROM
           powerschool.cohort_identifiers_static co
-          LEFT JOIN deanslist.incidents_clean_static ics ON (
+          LEFT JOIN deanslist.stg_incidents ics ON (
             co.student_number = ics.student_school_id
             AND co.academic_year = ics.create_academic_year
             AND co.[db_name] = ics.[db_name]

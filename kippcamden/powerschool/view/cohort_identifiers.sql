@@ -165,7 +165,7 @@ FROM
   LEFT JOIN gabby.powerschool.student_access_accounts_static AS saa ON (
     co.student_number = saa.student_number
   )
-  LEFT JOIN titan.person_data_clean AS tp ON (
+  LEFT JOIN titan.stg_person_data AS tp ON (
     co.student_number = tp.person_identifier
     AND co.academic_year = tp.application_academic_school_year_clean
   )
@@ -195,7 +195,7 @@ FROM
   LEFT JOIN powerschool.s_nj_stu_x AS nj ON (
     co.studentsdcid = nj.studentsdcid
   )
-  LEFT JOIN easyiep.njsmart_powerschool_clean_static AS sped ON (
+  LEFT JOIN easyiep.stg_njsmart_powerschool AS sped ON (
     co.student_number = sped.student_number
     AND co.academic_year = sped.academic_year
     AND sped.rn_stu_yr = 1

@@ -39,7 +39,7 @@ SELECT
   cf.[HI start date],
   cf.[HI end date]
 FROM
-  deanslist.incidents_clean_static AS dli
+  deanslist.stg_incidents AS dli
   -- trunk-ignore(sqlfluff/LT05)
   LEFT JOIN deanslist.incidents_custom_fields_wide AS cf ON dli.incident_id = cf.incident_id
   LEFT JOIN deanslist.users AS u ON (

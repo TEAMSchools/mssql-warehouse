@@ -15,7 +15,7 @@ SELECT
     JSON_QUERY(dlia.[value], '$.SourceID') AS INT
   ) AS source_id
 FROM
-  deanslist.incidents AS dli
+  deanslist.stg_incidents AS dli
   CROSS APPLY OPENJSON (dli.actions, N'$') AS dlia
 WHERE
   dli.actions != '[]'

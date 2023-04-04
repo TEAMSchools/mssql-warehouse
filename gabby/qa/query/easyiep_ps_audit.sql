@@ -28,7 +28,7 @@ WITH
       special_education,
       special_education_code
     FROM
-      easyiep.njsmart_powerschool_clean
+      easyiep.stg_njsmart_powerschool
     WHERE
       academic_year = 2021
   )

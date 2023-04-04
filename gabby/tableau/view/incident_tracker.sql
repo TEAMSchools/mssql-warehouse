@@ -43,7 +43,7 @@ SELECT
   cf.[SSDS Incident ID]
 FROM
   powerschool.cohort_identifiers_static AS co
-  INNER JOIN deanslist.incidents_clean_static AS dli ON (
+  INNER JOIN deanslist.stg_incidents AS dli ON (
     co.student_number = dli.student_school_id
     AND co.academic_year = dli.create_academic_year
   )
@@ -105,7 +105,7 @@ SELECT
   NULL AS [SSDS Incident ID]
 FROM
   powerschool.cohort_identifiers_static AS co
-  INNER JOIN deanslist.incidents_clean_static AS dli ON (
+  INNER JOIN deanslist.stg_incidents AS dli ON (
     co.student_number = dli.student_school_id
     AND co.academic_year = dli.create_academic_year
   )
@@ -174,7 +174,7 @@ SELECT
   NULL AS [Restraint Used],
   NULL AS [SSDS Incident ID]
 FROM
-  deanslist.behavior AS dlb
+  deanslist.stg_behavior AS dlb
   INNER JOIN powerschool.cohort_identifiers_static AS co ON (
     co.student_number = dlb.student_school_id
     AND (

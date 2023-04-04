@@ -15,7 +15,7 @@ WITH
       f.outstanding AS followup_outstanding,
       CONCAT(f.c_first, ' ', f.c_last) AS followup_staff_name
     FROM
-      deanslist.communication AS c
+      deanslist.stg_communication AS c
       INNER JOIN deanslist.users AS u ON (
         c.dluser_id = u.dluser_id
         AND c.[db_name] = u.[db_name]

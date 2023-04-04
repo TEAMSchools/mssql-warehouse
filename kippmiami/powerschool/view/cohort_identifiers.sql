@@ -58,7 +58,7 @@ SELECT
   suf.c_504_status,
   saa.student_web_id,
   saa.student_web_password,
-  tp.total_balance AS lunch_balance,
+  NULL AS lunch_balance,
   ISNULL(enr.is_enrolled_y1, 0) AS is_enrolled_y1,
   ISNULL(enr.is_enrolled_oct01, 0) AS is_enrolled_oct01,
   ISNULL(enr.is_enrolled_oct15, 0) AS is_enrolled_oct15,
@@ -159,10 +159,6 @@ FROM
   LEFT JOIN gabby.powerschool.student_access_accounts_static AS saa ON (
     co.student_number = saa.student_number
   )
-  LEFT JOIN titan.person_data_clean AS tp ON (
-    co.student_number = tp.person_identifier
-    AND co.academic_year = tp.application_academic_school_year_clean
-  )
   LEFT JOIN powerschool.enrollment_identifiers_static AS enr ON (
     co.student_number = enr.student_number
     AND co.yearid = enr.yearid
@@ -188,11 +184,6 @@ FROM
   )
   LEFT JOIN powerschool.s_nj_stu_x AS nj ON (
     co.studentsdcid = nj.studentsdcid
-  )
-  LEFT JOIN easyiep.njsmart_powerschool_clean_static AS sped ON (
-    co.student_number = sped.student_number
-    AND co.academic_year = sped.academic_year
-    AND sped.rn_stu_yr = 1
   )
   LEFT JOIN gabby.ops.income_form_data_clean AS ifc ON (
     co.student_number = ifc.student_number

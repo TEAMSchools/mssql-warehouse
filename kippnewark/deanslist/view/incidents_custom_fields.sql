@@ -55,7 +55,7 @@ SELECT
     )
   END AS [value]
 FROM
-  deanslist.incidents AS dli
+  deanslist.stg_incidents AS dli
   CROSS APPLY OPENJSON (dli.custom_fields, '$') AS cf
 WHERE
   dli.custom_fields != '[]'

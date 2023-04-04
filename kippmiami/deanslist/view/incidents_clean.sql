@@ -71,4 +71,4 @@ SELECT
     )
   ) AS create_academic_year
 FROM
-  deanslist.incidents
+  deanslist.stg_incidents

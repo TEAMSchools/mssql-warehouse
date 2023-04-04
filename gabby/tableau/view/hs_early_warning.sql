@@ -26,7 +26,7 @@ WITH
       COUNT(ips.incidentpenaltyid) AS suspension_count,
       SUM(ips.numdays) AS suspension_days
     FROM
-      deanslist.incidents_clean_static AS ics
+      deanslist.stg_incidents AS ics
       INNER JOIN deanslist.incidents_penalties_static AS ips ON (
         ips.incident_id = ics.incident_id
         AND ips.[db_name] = ics.[db_name]

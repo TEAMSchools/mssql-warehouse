@@ -33,7 +33,7 @@ FROM
   INNER JOIN powerschool.students AS s ON (
     ktc.student_number = s.student_number
   )
-  INNER JOIN deanslist.communication AS c ON (
+  INNER JOIN deanslist.stg_communication AS c ON (
     c.student_school_id = ktc.student_number
     AND c.reason LIKE 'KF:%'
   )
