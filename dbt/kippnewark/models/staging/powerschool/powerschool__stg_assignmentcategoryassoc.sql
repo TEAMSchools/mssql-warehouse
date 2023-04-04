@@ -1,7 +1,9 @@
 {{-
     config(
         alias="stg_assignmentcategoryassoc",
-        post_hook=[],
+        post_hook=[
+            "{{ create_clustered_index(columns=['assignmentcategoryassocid'], unique=True) }}"
+        ],
     )
 -}}
 

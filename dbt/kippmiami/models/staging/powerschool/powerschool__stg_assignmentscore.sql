@@ -1,7 +1,9 @@
 {{-
     config(
         alias="stg_assignmentscore",
-        post_hook=[],
+        post_hook=[
+            "{{ create_clustered_index(columns=['assignmentscoreid'], unique=True) }}"
+        ],
     )
 -}}
 

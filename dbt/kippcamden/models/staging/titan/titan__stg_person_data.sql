@@ -1,7 +1,9 @@
 {{-
     config(
         alias="stg_person_data",
-        post_hook=[],
+        post_hook=[
+            "{{ create_clustered_index(columns=['person_identifier'], unique=True) }}"
+        ],
     )
 -}}
 

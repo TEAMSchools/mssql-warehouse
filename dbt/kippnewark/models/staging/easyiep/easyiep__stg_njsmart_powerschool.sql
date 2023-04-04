@@ -55,7 +55,7 @@ with
             end as effective_date
         from {{ source("easyiep", "njsmart_powerschool") }}
         {% if is_incremental() %}
-        where _modified >= dateadd(day, -7, current_timestamp)
+        where _modified >= datefromparts(gabby.utilities.global_academic_year(), 7, 1)
         {% endif %}
     ),
 
@@ -228,6 +228,3 @@ select
         partition by student_number, academic_year order by effective_date desc
     ) as rn_stu_yr
 from deduplicate
-{% if is_incremental() %}
-where row_hash not in (select row_hash from {{ this }})
-{% endif %}

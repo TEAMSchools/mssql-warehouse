@@ -1,7 +1,9 @@
 {{-
     config(
         alias="stg_communication",
-        post_hook=[],
+        post_hook=[
+            "{{ create_clustered_index(columns=['dlcall_log_id'], unique=True) }}"
+        ],
     )
 -}}
 
