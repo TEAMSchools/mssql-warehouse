@@ -54,7 +54,7 @@ SET
   @sql_create = N'
         SELECT *
         INTO ' + @destination_table_name + N'
-        FROM ' + @source_view + N';
+        FROM ' + @source_view + N' WITH(NOLOCK);
       ';
 
 BEGIN TRY

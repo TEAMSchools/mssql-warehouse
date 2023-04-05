@@ -28,11 +28,11 @@ FROM
     SELECT
       incident_id,
       field_name,
-      [Value]
+      [value]
     FROM
       deanslist.incidents_custom_fields
   ) AS sub PIVOT (
-    MAX([Value]) FOR field_name IN (
+    MAX([value]) FOR field_name IN (
       [Approver Name],
       [Behavior Category],
       [Board Approval Date],
