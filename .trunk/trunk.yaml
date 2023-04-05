@@ -14,7 +14,7 @@ lint:
     - sqlfluff@2.0.2
     - sql-formatter@12.2.0
     - prettier@2.8.7
-    - actionlint@1.6.23
+    - actionlint@1.6.24
     - shellcheck@0.9.0
     - gitleaks@8.16.2
     - markdownlint@0.33.0
