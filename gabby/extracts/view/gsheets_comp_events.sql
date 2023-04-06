@@ -46,14 +46,14 @@ WITH
   ),
   campus_approval AS (
     SELECT
-      campus_name,
-      region,
+      p.campus_name,
+      p.region,
       s.manager_df_employee_number AS mdso
     FROM
       approval_pivot AS p
       JOIN people.staff_crosswalk_static AS s ON p.dso_dco = s.df_employee_number
     WHERE
-      campus_name IS NOT NULL
+      p.campus_name IS NOT NULL
   ),
   school_approval_loops AS (
     SELECT
