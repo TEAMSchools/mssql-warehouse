@@ -51,7 +51,7 @@ WITH
       s.manager_df_employee_number AS mdso
     FROM
       approval_pivot AS p
-      JOIN people.staff_crosswalk_static AS s ON p.dso_dco = s.df_employee_number
+      LEFT JOIN people.staff_crosswalk_static AS s ON p.dso_dco = s.df_employee_number
     WHERE
       p.campus_name IS NOT NULL
   ),
