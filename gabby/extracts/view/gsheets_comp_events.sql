@@ -48,7 +48,7 @@ WITH
     SELECT
       p.campus_name,
       p.region,
-      s.manager_df_employee_number AS mdso
+      s.manager_df_employee_number AS mdso_employee_number
     FROM
       approval_pivot AS p
       LEFT JOIN people.staff_crosswalk_static AS s ON p.dso_dco = s.df_employee_number
