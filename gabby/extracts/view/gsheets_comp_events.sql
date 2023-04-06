@@ -75,10 +75,19 @@ WITH
       c.google_email AS ed_google,
       d.userprincipalname AS dso_email,
       d.google_email AS dso_google,
-      e.df_employee_number AS mdso,
-      e.preferred_name AS mdso_name,
-      e.userprincipalname AS mdso_email,
-      e.google_email AS mdso_google
+      COALESCE(
+        e.df_employee_number,
+        f.df_employee_number
+      ) AS mdso,
+      COALESCE(
+        e.preferred_name,
+        f.preferred_name
+      ) AS mdso_name,
+      COALESCE(
+        e.userprincipalname,
+        f.userprincipalname
+      ) AS mdso_email,
+      COALESCE(e.google_email, f.google_email) AS mdso_google
     FROM
       approval_pivot AS l
       /*School Leaders*/
@@ -99,8 +108,8 @@ WITH
       /*DSO/DCO Managers (MDSOs)*/
       LEFT JOIN people.staff_crosswalk_static AS e ON (
         d.manager_df_employee_number = e.df_employee_number
-        OR ca.mdso = e.df_employee_number
       )
+      LEFT JOIN people.staff_crosswalk_static AS f ON (ca.mdso = f.df_employee_number)
   )
 SELECT
   x.df_employee_number,
