@@ -44,6 +44,17 @@ WITH
         )
       ) AS p
   ),
+  campus_approval AS (
+    SELECT
+      campus_name,
+      region,
+      s.manager_df_employee_number AS mdso
+    FROM
+      approval_pivot AS p
+      JOIN people.staff_crosswalk_static AS s ON p.dso_dco = s.df_employee_number
+    WHERE
+      campus_name IS NOT NULL
+  ),
   school_approval_loops AS (
     SELECT
       l.primary_site,
@@ -84,9 +95,11 @@ WITH
       )
       /*DSO/DCO*/
       LEFT JOIN people.staff_crosswalk_static AS d ON (l.dso_dco = d.df_employee_number)
+      LEFT JOIN campus_approval AS ca ON (l.primary_site = ca.campus_name)
       /*DSO/DCO Managers (MDSOs)*/
       LEFT JOIN people.staff_crosswalk_static AS e ON (
         d.manager_df_employee_number = e.df_employee_number
+        OR ca.mdso = e.df_employee_number
       )
   )
 SELECT
