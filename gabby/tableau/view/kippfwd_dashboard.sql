@@ -339,7 +339,7 @@ WITH
       gabby.alumni.contact_note_c AS c
       LEFT JOIN gabby.alumni.ktc_roster AS kt ON kt.sf_contact_id = c.contact_c
     WHERE
-      subject_c LIKE 'Grad Plan FY%'
+      c.subject_c LIKE 'Grad Plan FY%'
   )
 SELECT
   c.sf_contact_id,
