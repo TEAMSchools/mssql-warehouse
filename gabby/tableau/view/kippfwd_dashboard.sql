@@ -331,9 +331,9 @@ WITH
       c.subject_c AS grad_plan_year,
       ROW_NUMBER() OVER (
         PARTITION BY
-          contact_c
+          kt.sf_contact_id
         ORDER BY
-          date_c DESC
+          c.date_c DESC
       ) AS rn
     FROM
       gabby.alumni.contact_note_c AS c
