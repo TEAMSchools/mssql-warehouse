@@ -109,7 +109,9 @@ WITH
       LEFT JOIN people.staff_crosswalk_static AS e ON (
         d.manager_df_employee_number = e.df_employee_number
       )
-      LEFT JOIN people.staff_crosswalk_static AS f ON (ca.mdso = f.df_employee_number)
+      LEFT JOIN people.staff_crosswalk_static AS f ON (
+        ca.mdso_employee_number = f.df_employee_number
+      )
   )
 SELECT
   x.df_employee_number,
