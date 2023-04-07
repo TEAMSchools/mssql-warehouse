@@ -324,6 +324,22 @@ WITH
       )
     WHERE
       e.rn_matric = 1
+  ),
+  grad_plan AS (
+    SELECT
+      kt.sf_contact_id,
+      c.subject_c AS grad_plan_year,
+      ROW_NUMBER() OVER (
+        PARTITION BY
+          contact_c
+        ORDER BY
+          date_c DESC
+      ) AS rn
+    FROM
+      gabby.alumni.contact_note_c AS c
+      LEFT JOIN gabby.alumni.ktc_roster AS kt ON kt.sf_contact_id = c.contact_c
+    WHERE
+      subject_c LIKE 'Grad Plan FY%'
   )
 SELECT
   c.sf_contact_id,
@@ -541,7 +557,8 @@ SELECT
   ln.comments_c AS latest_as_comments,
   ln.next_steps_c AS latest_as_next_steps,
   fa.unmet_need_c AS unmet_need,
-  tier.tier
+  tier.tier,
+  gp.most_recent_grad_plan
 FROM
   alumni.ktc_roster AS c
   CROSS JOIN academic_years AS ay
@@ -576,6 +593,10 @@ FROM
     c.sf_contact_id = tier.contact_c
     AND ay.academic_year = tier.academic_year
     AND tier.rn = 1
+  )
+  LEFT JOIN grad_plan AS gp ON (
+    c.sf_contact_id = gp.sf_contact_id
+    AND gp.rn = 1
   )
 WHERE
   c.ktc_status IN (
