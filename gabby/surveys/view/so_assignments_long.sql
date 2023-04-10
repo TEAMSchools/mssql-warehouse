@@ -65,7 +65,10 @@ FROM
   )
 WHERE
   a.assignment != 0
+  AND a.survey_round_status = 'Yes'
   AND c.[status] != 'Terminated'
+ORDER BY
+  survey_taker_id
 UNION ALL
 SELECT
   c.manager_df_employee_number AS survey_taker_id,
