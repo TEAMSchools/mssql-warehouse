@@ -65,6 +65,7 @@ FROM
   )
 WHERE
   a.assignment != 0
+  AND a.survey_round_status = 'Yes'
   AND c.[status] != 'Terminated'
 UNION ALL
 SELECT

@@ -769,4 +769,58 @@ FROM
   )
 WHERE
   st.survey_id = 6580731 /* ITR Survey Code */
-  AND st.respondent_legal_entity_name != 'KIPP TEAM and Family Schools Inc.'
+  AND st.reporting_term_code = 'ITR1'
+UNION ALL
+SELECT
+  st.respondent_employee_number AS survey_taker_id,
+  st.respondent_name AS survey_taker_name,
+  st.respondent_legal_entity_name AS survey_taker_legal_entity_name,
+  st.respondent_location AS survey_taker_location,
+  st.respondent_department AS survey_taker_department,
+  st.respondent_primary_job AS survey_taker_primary_job,
+  st.respondent_is_manager AS is_manager,
+  st.respondent_position_status AS survey_taker_adp_status,
+  st.respondent_samaccountname AS survey_taker_samaccount,
+  st.academic_year,
+  st.reporting_term_code AS reporting_term,
+  st.respondent_manager_employee_number AS manager_df_employee_number,
+  st.respondent_manager_name AS manager_name,
+  st.respondent_manager_legal_entity_name AS manager_legal_entity_name,
+  st.respondent_worker_category AS worker_category,
+  st.attended_relay,
+  st.kipp_alumni_status,
+  st.life_experience_in_communities_we_serve,
+  st.respondent_gender AS preferred_gender,
+  st.respondent_race_ethnicity AS preferred_race_ethnicity,
+  st.professional_experience_in_communities_we_serve,
+  st.years_of_professional_experience_before_joining,
+  st.years_teaching_in_any_state,
+  st.years_teaching_in_nj_or_fl,
+  st.teacher_prep_program,
+  st.respondent_userprincipalname AS userprincipalname,
+  st.survey_round_open_minus_fifteen,
+  st.survey_round_open,
+  st.survey_round_close,
+  st.survey_default_link,
+  st.survey_id,
+  'Yes' AS survey_round_status,
+  'Intent to Return' AS assignment,
+  NULL AS assignment_employee_id,
+  NULL AS assignment_preferred_name,
+  NULL AS assignment_location,
+  NULL AS assignment_adp_status,
+  'Intent to Return' AS assignment_type,
+  c.subject_name AS completed_survey_subject_name,
+  c.date_submitted AS survey_completion_date
+FROM
+  survey_term_staff_scaffold AS st
+  LEFT JOIN clean_responses AS c ON (
+    st.respondent_employee_number = c.respondent_employee_number
+    AND st.academic_year = c.academic_year
+    AND st.reporting_term_code = c.reporting_term
+    AND st.survey_id = c.survey_id
+  )
+WHERE
+  st.survey_id = 6580731 /* ITR Survey Code */
+  AND st.reporting_term_code = 'ITR2'
+  AND st.respondent_legal_entity_name = 'KIPP Miami'
