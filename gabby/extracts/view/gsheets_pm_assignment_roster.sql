@@ -102,7 +102,22 @@ SELECT
         'Room 11 - 1951 NW 7th Ave'
       )
     ) THEN 'school-based'
-  END AS school_based
+  END AS school_based,
+  CASE
+    WHEN s.primary_job IN (
+      'Head of Schools',
+      'School Leader',
+      'School Leader in Residence',
+      'Assistant School Leader',
+      'Assistant School Leader, SPED',
+      'Managing Director of School Operations',
+      'Managing Director of Operations',
+      'Managing Director of Growth',
+      'Director School Operations',
+      'Director Campus Operations'
+    ) THEN 'Leadership'
+    WHEN s.primary_job = 'Teacher in Residence' THEN 'Teacher Development'
+  END AS feedback_group
 FROM
   people.staff_crosswalk_static AS m
   LEFT JOIN people.staff_crosswalk_static AS s ON (
