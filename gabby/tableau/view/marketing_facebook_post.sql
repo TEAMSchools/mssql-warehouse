@@ -1,3 +1,4 @@
+CREATE OR ALTER VIEW tableau.marketing_facebook_post AS
 SELECT
 	ph.id,
 	CAST(ph.updated_time AS DATE) AS updated_date,
