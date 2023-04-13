@@ -1,4 +1,4 @@
-CREATE OR ALTER VIEW tableau.marketin_instagram_page AS 
+CREATE OR ALTER VIEW tableau.marketing_instagram_page AS 
 WITH user_history AS (
     SELECT
         id,
