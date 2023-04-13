@@ -132,5 +132,3 @@ WHERE
   s.[status] != 'TERMINATED'
   AND s.primary_job != 'Intern'
   AND s.primary_job NOT LIKE '%Temp%'
-ORDER BY
-  s.df_employee_number
