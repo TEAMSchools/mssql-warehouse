@@ -24,11 +24,8 @@ SELECT
        PARTITION BY ph.id
          ORDER BY ph.updated_time DESC) AS row_recent
 FROM kipptaf.facebook_pages.post_history AS ph
-JOIN kipptaf.facebook_pages.lifetime_post_metrics_total AS pm
+INNER JOIN kipptaf.facebook_pages.lifetime_post_metrics_total AS pm
   ON (ph.id = pm.post_id)
-
---WHERE ph.page_id != '11676778731' 
-
 GROUP BY  
      ph.id,
 	ph.updated_time,
