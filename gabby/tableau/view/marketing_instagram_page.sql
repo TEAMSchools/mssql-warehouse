@@ -40,8 +40,8 @@ SELECT
     uh.followers_count,
     uh.media_count
 FROM
-    kipptaf.instagram_business.user_insights ui
-    LEFT JOIN user_history uh ON ui.id = uh.id
+    kipptaf.instagram_business.user_insights AS ui
+    LEFT JOIN user_history AS uh ON ui.id = uh.id
     AND ui.[date] >= uh._fivetran_synced_date_prev
     AND ui.[date] < uh._fivetran_synced_date
 ORDER BY
