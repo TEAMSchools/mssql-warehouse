@@ -14,7 +14,8 @@ SELECT
   cw.primary_site,
   cw.primary_on_site_department,
   cw.primary_job,
-  cw.legal_entity_name
+  cw.legal_entity_name,
+  cw.[status] AS position_status
 
 FROM gabby.adp.pension_and_benefits_enrollments AS pb
 INNER JOIN gabby.people.staff_crosswalk_static AS cw ON (
