@@ -486,11 +486,46 @@ SELECT
         reporting_term ASC
     ) AS DECIMAL(4, 0)
   ) AS [E_RT4],
-  [CTZ_CUR],
-  [CTZ_RT1],
-  [CTZ_RT2],
-  [CTZ_RT3],
-  [CTZ_RT4],
+  MAX([CTZ_CUR]) OVER (
+    PARTITION BY
+      studentid,
+      yearid,
+      course_number
+    ORDER BY
+      reporting_term ASC
+  ) AS [CTZ_CUR],
+  MAX([CTZ_RT1]) OVER (
+    PARTITION BY
+      studentid,
+      yearid,
+      course_number
+    ORDER BY
+      reporting_term ASC
+  ) AS [CTZ_RT1],
+  MAX([CTZ_RT2]) OVER (
+    PARTITION BY
+      studentid,
+      yearid,
+      course_number
+    ORDER BY
+      reporting_term ASC
+  ) AS [CTZ_RT2],
+  MAX([CTZ_RT3]) OVER (
+    PARTITION BY
+      studentid,
+      yearid,
+      course_number
+    ORDER BY
+      reporting_term ASC
+  ) AS [CTZ_RT3],
+  MAX([CTZ_RT4]) OVER (
+    PARTITION BY
+      studentid,
+      yearid,
+      course_number
+    ORDER BY
+      reporting_term ASC
+  ) AS [CTZ_RT4],
   ROW_NUMBER() OVER (
     PARTITION BY
       studentid,
