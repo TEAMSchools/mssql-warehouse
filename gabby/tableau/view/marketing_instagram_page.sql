@@ -52,5 +52,3 @@ FROM
     AND ui.[date] >= uh._fivetran_synced_date_prev
     AND ui.[date] < uh._fivetran_synced_date
   )
-ORDER BY
-  ui.[date]
