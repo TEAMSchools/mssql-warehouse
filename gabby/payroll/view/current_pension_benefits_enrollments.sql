@@ -1,13 +1,11 @@
 CREATE OR ALTER VIEW
   payroll.current_pension_benefits_enrollments AS
-
-SELECT 
+SELECT
   pb.employee_number,
   pb.plan_type,
   pb.plan_name,
   pb.coverage_level,
   pb.effective_date,
-
   cw.preferred_name,
   cw.primary_race_ethnicity_reporting,
   cw.gender,
@@ -16,8 +14,8 @@ SELECT
   cw.primary_job,
   cw.legal_entity_name,
   cw.[status] AS position_status
-
-FROM gabby.adp.pension_and_benefits_enrollments AS pb
-INNER JOIN gabby.people.staff_crosswalk_static AS cw ON (
-  pb.employee_number = cw.df_employee_number
+FROM
+  adp.pension_and_benefits_enrollments AS pb
+  INNER JOIN people.staff_crosswalk_static AS cw ON (
+    pb.employee_number = cw.df_employee_number
   )
