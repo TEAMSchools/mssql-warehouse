@@ -3,7 +3,16 @@ SELECT
   co.region,
   co.school_abbreviation,
   co.student_number,
-  co.iep_status,
+  CASE
+    WHEN co.lep_status = 1 THEN 'LEP'
+    ELSE 'Not LEP'
+  END AS lep_status,
+  CASE
+    WHEN co.iep_status LIKE 'SPED%' THEN 'Has IEP'
+    ELSE 'No IEP'
+  END AS iep_status,
+  co.ethnicity,
+  co.gender,
   CASE
     WHEN sr.[subject] LIKE 'English%' THEN 'ELA'
     ELSE sr.[subject]
