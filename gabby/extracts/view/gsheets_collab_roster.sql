@@ -29,7 +29,8 @@ SELECT
     WHEN c.latest_state_financial_aid_app_date_c IS NOT NULL THEN 'Yes'
     ELSE 'No'
   END AS [HESAA Complete],
-  c.efc_from_fafsa_c AS [EFC Actual]
+  c.efc_from_fafsa_c AS [EFC Actual],
+  c.expected_hs_graduation_c
 FROM
   alumni.contact AS c
   LEFT JOIN alumni.[user] AS u ON c.owner_id = u.id
@@ -44,5 +45,3 @@ FROM
     )
     AND co.rn_undergrad = 1
   )
-WHERE
-  c.kipp_hs_class_c = utilities.GLOBAL_ACADEMIC_YEAR () + 1
