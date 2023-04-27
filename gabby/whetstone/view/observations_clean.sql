@@ -39,7 +39,7 @@ WITH
       JSON_VALUE(teaching_assignment, '$.course') AS teaching_assignment_course_id,
       JSON_VALUE(teaching_assignment, '$.period') AS teaching_assignment_period_id
     FROM
-      whetstone.observations
+      whetstone.stg_observations
     WHERE
       archived_at IS NULL
   )

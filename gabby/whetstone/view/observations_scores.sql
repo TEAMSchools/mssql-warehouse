@@ -15,7 +15,7 @@ SELECT
     JSON_VALUE(ws.[value], '$.valueText') AS NVARCHAR(128)
   ) AS score_value_text,
   CAST(
-    JSON_VALUE(ws.[value], '$.[percentage]') AS FLOAT
+    JSON_VALUE(ws.[value], '$.percentage') AS FLOAT
   ) AS score_percentage,
   CAST(
     JSON_VALUE(ws.[value], '$.lastModified') AS DATETIME2
@@ -23,7 +23,7 @@ SELECT
   JSON_QUERY(ws.[value], '$.checkboxes') AS score_checkboxes_json,
   JSON_QUERY(ws.[value], '$.textBoxes') AS score_text_boxes_json
 FROM
-  whetstone.observations AS wo
+  whetstone.stg_observations AS wo
   CROSS APPLY OPENJSON (wo.observation_scores, '$') AS ws
 WHERE
   wo.observation_scores != '[]'

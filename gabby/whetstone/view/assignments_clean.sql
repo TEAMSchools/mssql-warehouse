@@ -34,4 +34,4 @@ SELECT
 ,
   [tags]
 FROM
-  [gabby].[whetstone].[assignments]
+  whetstone.stg_assignments

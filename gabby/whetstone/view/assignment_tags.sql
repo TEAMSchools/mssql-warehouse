@@ -13,7 +13,7 @@ SELECT
     JSON_VALUE(wt.[value], '$.url') AS VARCHAR(125)
   ) AS tag_url
 FROM
-  whetstone.assignments AS wa
+  whetstone.stg_assignments AS wa
   CROSS APPLY OPENJSON (wa.tags, '$') AS wt
 WHERE
   wa.tags != '[]'
