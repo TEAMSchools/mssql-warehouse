@@ -1,5 +1,5 @@
-CREATE OR ALTER VIEW
-  tableau.pm_teacher_goals AS
+-- CREATE OR ALTER VIEW
+--   tableau.pm_teacher_goals AS
 WITH
   reading_level AS (
     SELECT
@@ -200,19 +200,16 @@ WITH
       'ETRY1' AS time_per_name,
       e.metric_name,
       AVG(
-        COALESCE(
-          lb.measure_values,
-          e.metric_value
-        )
+        COALESCE(lb.metric_value, e.metric_value)
       ) AS metric_value
     FROM
       etr_long AS e
-      LEFT JOIN pm.teacher_goals_lockbox AS lb ON (
+      LEFT JOIN pm.teacher_goals_lockbox_wide AS lb ON (
         e.df_employee_number = lb.df_employee_number
         AND e.metric_name = lb.metric_name
         AND e.academic_year = lb.academic_year
         AND e.pm_term = lb.pm_term
-        AND lb.measure_names = 'Metric Value'
+        --AND lb.measure_names = 'Metric Value'
       )
     WHERE
       e.rn = 1
