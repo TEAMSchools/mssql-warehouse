@@ -26,7 +26,8 @@ FROM
           ap.sf_contact_id
         ORDER BY
           ap.application_id ASC
-      ) AS row_count
+      ) AS row_count,
+      kt.expected_hs_graduation_date
     FROM
       alumni.ktc_roster AS kt
       LEFT JOIN alumni.application_identifiers AS ap ON (
@@ -38,8 +39,6 @@ FROM
         AND cn.is_deleted = 0
       )
     WHERE
-      kt.ktc_cohort = utilities.GLOBAL_ACADEMIC_YEAR () + 1
-      AND ap.matriculation_decision = 'Matriculated (Intent to Enroll)'
+      ap.matriculation_decision = 'Matriculated (Intent to Enroll)'
+      AND ap.application_enrollment_status = 'Matriculated'
   ) AS sub
-WHERE
-  row_count = 1
