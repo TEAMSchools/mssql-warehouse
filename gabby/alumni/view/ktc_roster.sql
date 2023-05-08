@@ -63,7 +63,8 @@ SELECT
   sub.counselor_name,
   sub.counselor_email,
   sub.counselor_phone,
-  sub.ktc_status
+  sub.ktc_status,
+  sub.advising_provider
 FROM
   (
     SELECT
@@ -159,7 +160,11 @@ FROM
           c.kipp_ms_graduate_c = 1
           AND c.kipp_hs_graduate_c = 0
         ) THEN 'TAF'
-      END AS ktc_status
+      END AS ktc_status,
+      CASE
+        WHEN c.advising_provider_c = 'KIPP NYC' THEN 'KNYC'
+        ELSE 'KTAF'
+      END AS advising_provider
     FROM
       powerschool.cohort_identifiers_static AS co
       LEFT JOIN alumni.contact AS c ON (

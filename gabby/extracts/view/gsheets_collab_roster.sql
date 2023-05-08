@@ -15,11 +15,23 @@ SELECT
     )
     ELSE c.email
   END AS [Personal Email Address],
-  sc.contact_1_name AS [Primary Parent Name],
-  sc.contact_1_phone_mobile AS [Primary Parent Cell Phone],
+  CASE
+    WHEN kt.ktc_status LIKE 'TAF%' THEN NULL
+    ELSE sc.contact_1_name
+  END AS [Primary Parent Name],
+  CASE
+    WHEN kt.ktc_status LIKE 'TAF%' THEN kt.sf_home_phone
+    ELSE sc.contact_1_phone_mobile
+  END AS [Primary Parent Cell Phone],
   sc.contact_1_phone_primary AS [Primary Phone],
-  sc.contact_1_email_current AS [Primary Parent Email],
-  co.street + ' ' + co.city + ', ' + co.[state] + ' ' + co.zip AS [Mailing Address],
+  CASE
+    WHEN kt.ktc_status LIKE 'TAF%' THEN c.secondary_email_c
+    ELSE sc.contact_1_email_current
+  END AS [Primary Parent Email],
+  CASE
+    WHEN kt.ktc_status LIKE 'TAF%' THEN c.mailing_street + ' ' + c.mailing_city + ', ' + c.mailing_state + ' ' + c.mailing_postal_code
+    ELSE co.street + ' ' + co.city + ', ' + co.[state] + ' ' + co.zip
+  END AS [Mailing Address],
   CASE
     WHEN c.most_recent_iep_date_c IS NOT NULL THEN 1
   END AS [IEP],
@@ -30,7 +42,9 @@ SELECT
     ELSE 'No'
   END AS [HESAA Complete],
   c.efc_from_fafsa_c AS [EFC Actual],
-  c.expected_hs_graduation_c
+  CAST(
+    c.expected_hs_graduation_c AS NVARCHAR
+  ) AS expected_hs_grad_date
 FROM
   alumni.contact AS c
   LEFT JOIN alumni.[user] AS u ON c.owner_id = u.id
@@ -45,3 +59,4 @@ FROM
     )
     AND co.rn_undergrad = 1
   )
+  LEFT JOIN gabby.alumni.ktc_roster AS kt ON kt.sf_contact_id = c.id

@@ -558,7 +558,8 @@ SELECT
   ln.next_steps_c AS latest_as_next_steps,
   fa.unmet_need_c AS unmet_need,
   tier.tier,
-  gp.grad_plan_year AS most_recent_grad_plan_year
+  gp.grad_plan_year AS most_recent_grad_plan_year,
+  c.advising_provider
 FROM
   alumni.ktc_roster AS c
   CROSS JOIN academic_years AS ay
