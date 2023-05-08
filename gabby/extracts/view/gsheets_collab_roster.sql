@@ -29,7 +29,10 @@ SELECT
     ELSE sc.contact_1_email_current
   END AS [Primary Parent Email],
   CASE
-    WHEN kt.ktc_status LIKE 'TAF%' THEN c.mailing_street + ' ' + c.mailing_city + ', ' + c.mailing_state + ' ' + c.mailing_postal_code
+    WHEN kt.ktc_status LIKE 'TAF%' THEN (
+      -- trunk-ignore(sqlfluff/LT05)
+      c.mailing_street + ' ' + c.mailing_city + ', ' + c.mailing_state + ' ' + c.mailing_postal_code
+    )
     ELSE co.street + ' ' + co.city + ', ' + co.[state] + ' ' + co.zip
   END AS [Mailing Address],
   CASE
