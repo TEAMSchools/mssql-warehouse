@@ -130,6 +130,14 @@ SELECT
   s.miami_phone,
   s.miami_email,
   s.miami_bus,
+  COALESCE(
+    s.miami_bus_stop,
+    b.miami_bus_stop
+  ) AS miami_bus_stop,
+  CASE
+    WHEN s.miami_address = 'Zip Code' THEN a.miami_address
+    ELSE s.miami_address
+  END AS miami_address,
   s.miami_transport_consent,
   s.miami_shirt,
   s.student_number,
@@ -148,12 +156,7 @@ SELECT
   p.school_level,
   p.iep_status,
   p.gender,
-  p.ethnicity,
-  CASE
-    WHEN s.miami_address = 'Zip Code' THEN a.miami_address
-    ELSE s.miami_address
-  END AS miami_address,
-  b.miami_bus_stop
+  p.ethnicity
 FROM
   survey_pivot AS s
   -- trunk-ignore(sqlfluff/LT05)
