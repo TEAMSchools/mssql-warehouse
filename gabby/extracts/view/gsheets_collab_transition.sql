@@ -1,13 +1,16 @@
 CREATE OR ALTER VIEW
   extracts.gsheets_collab_transition AS
 SELECT
-  sf_contact_id,
-  last_name,
-  first_name,
-  application_id,
-  application_name,
-  matriculation_decision,
-  [CCDM Complete]
+  sub.sf_contact_id,
+  sub.last_name,
+  sub.first_name,
+  sub.application_id,
+  sub.application_name,
+  sub.matriculation_decision,
+  sub.[CCDM Complete],
+  CAST(
+    sub.expected_hs_graduation_date AS NVARCHAR
+  ) AS expected_hs_graduation_date
 FROM
   (
     SELECT
