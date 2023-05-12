@@ -43,5 +43,4 @@ FROM
       )
     WHERE
       ap.matriculation_decision = 'Matriculated (Intent to Enroll)'
-      AND ap.application_enrollment_status = 'Matriculated'
   ) AS sub
