@@ -112,6 +112,7 @@ WITH
       LEFT JOIN people.staff_crosswalk_static AS f ON (
         ca.mdso_employee_number = f.df_employee_number
       )
+      -- trunk-ignore(sqlfluff/LT05)
       /*limiting for school-based people with KTAF entities so that one site = one entity*/
     WHERE
       l.legal_entity_name != 'KIPP TEAM and Family Schools Inc.'
