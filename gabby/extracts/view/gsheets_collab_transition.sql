@@ -10,7 +10,11 @@ SELECT
   sub.[CCDM Complete],
   CAST(
     sub.expected_hs_graduation_date AS NVARCHAR
-  ) AS expected_hs_graduation_date
+  ) AS expected_hs_graduation_date,
+  sub.college_match_display_gpa,
+  sub.highest_act_score,
+  sub.application_account_type,
+  sub.currently_enrolled_school
 FROM
   (
     SELECT
@@ -30,7 +34,11 @@ FROM
         ORDER BY
           ap.application_id ASC
       ) AS row_count,
-      kt.expected_hs_graduation_date
+      kt.expected_hs_graduation_date,
+      kt.college_match_display_gpa,
+      kt.highest_act_score,
+      ap.application_account_type,
+      kt.currently_enrolled_school
     FROM
       alumni.ktc_roster AS kt
       LEFT JOIN alumni.application_identifiers AS ap ON (
