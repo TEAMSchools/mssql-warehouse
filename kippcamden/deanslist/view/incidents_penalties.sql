@@ -29,9 +29,7 @@ SELECT
   CAST(
     JSON_VALUE(dlip.[value], '$.EndDate') AS DATE
   ) AS end_date,
-  CAST(
-    JSON_VALUE(dlip.[value], '$.NumDays') AS BIGINT
-  ) AS num_days,
+  JSON_VALUE(dlip.[value], '$.NumDays') AS num_days,
   CAST(
     JSON_VALUE(dlip.[value], '$.NumPeriods') AS FLOAT
   ) AS num_periods,
@@ -42,7 +40,7 @@ SELECT
     JSON_VALUE(dlip.[value], '$.Print') AS BIT
   ) AS [print]
 FROM
-  [deanslist].[incidents] AS dli
+  deanslist.stg_incidents AS dli
   CROSS APPLY OPENJSON (dli.penalties, N'$') AS dlip
 WHERE
   dli.penalties != '[]'
