@@ -2,40 +2,41 @@ CREATE OR ALTER VIEW
   deanslist.incidents_penalties AS
 SELECT
   CAST(dli.incident_id AS INT) AS incident_id,
+  NULL AS penalties_json,
   CAST(
     JSON_VALUE(
       dlip.[value],
       '$.IncidentPenaltyID'
     ) AS BIGINT
-  ) AS incident_penalty_id,
+  ) AS incidentpenaltyid,
   CAST(
     JSON_VALUE(dlip.[value], '$.StudentID') AS BIGINT
-  ) AS student_id,
+  ) AS studentid,
   CAST(
     JSON_VALUE(dlip.[value], '$.SchoolID') AS BIGINT
-  ) AS school_id,
+  ) AS schoolid,
   CAST(
     JSON_VALUE(dlip.[value], '$.PenaltyID') AS BIGINT
-  ) AS penalty_id,
+  ) AS penaltyid,
   CAST(
     JSON_VALUE(dlip.[value], '$.PenaltyName') AS NVARCHAR(128)
-  ) AS penalty_name,
+  ) AS penaltyname,
   CAST(
     JSON_VALUE(dlip.[value], '$.SAID') AS BIGINT
   ) AS said,
   CAST(
     JSON_VALUE(dlip.[value], '$.StartDate') AS DATE
-  ) AS [start_date],
+  ) AS startdate,
   CAST(
     JSON_VALUE(dlip.[value], '$.EndDate') AS DATE
-  ) AS end_date,
-  JSON_VALUE(dlip.[value], '$.NumDays') AS num_days,
+  ) AS enddate,
+  JSON_VALUE(dlip.[value], '$.NumDays') AS numdays,
   CAST(
     JSON_VALUE(dlip.[value], '$.NumPeriods') AS FLOAT
-  ) AS num_periods,
+  ) AS numperiods,
   CAST(
     JSON_VALUE(dlip.[value], '$.IsSuspension') AS BIT
-  ) AS is_suspension,
+  ) AS issuspension,
   CAST(
     JSON_VALUE(dlip.[value], '$.Print') AS BIT
   ) AS [print]
