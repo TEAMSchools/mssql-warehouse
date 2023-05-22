@@ -28,7 +28,7 @@ WITH
           c.campus_name
         FROM
           people.staff_crosswalk_static AS x
-          LEFT JOIN people.campus_crosswalk AS c ON x.primary_site = c.site_name
+          LEFT JOIN people.campus_crosswalk AS c ON (x.primary_site = c.site_name)
         WHERE
           x.status != 'TERMINATED'
           AND x.primary_site NOT IN (
@@ -112,6 +112,10 @@ WITH
       LEFT JOIN people.staff_crosswalk_static AS f ON (
         ca.mdso_employee_number = f.df_employee_number
       )
+      -- trunk-ignore(sqlfluff/LT05)
+      /*limiting for school-based people with KTAF entities so that one site = one entity*/
+    WHERE
+      l.legal_entity_name != 'KIPP TEAM and Family Schools Inc.'
   )
 SELECT
   x.df_employee_number,
