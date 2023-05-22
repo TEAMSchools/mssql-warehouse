@@ -12,7 +12,7 @@ lint:
     - taplo@0.7.0
     - yamllint@1.31.0
     - sqlfluff@2.1.0
-    - sql-formatter@12.2.0
+    - sql-formatter@12.2.1
     - prettier@2.8.8
     - actionlint@1.6.24
     - shellcheck@0.9.0
