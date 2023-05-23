@@ -1,5 +1,5 @@
-CREATE
-OR ALTER VIEW extracts.gsheets_collab_transition AS
+CREATE OR ALTER VIEW
+  extracts.gsheets_collab_transition AS
 SELECT
   sf_contact_id,
   last_name,
@@ -8,7 +8,9 @@ SELECT
   application_name,
   matriculation_decision,
   [CCDM Complete],
-  CAST(expected_hs_graduation_date AS NVARCHAR) AS expected_hs_graduation_date,
+  CAST(
+    expected_hs_graduation_date AS NVARCHAR
+  ) AS expected_hs_graduation_date,
   college_match_display_gpa,
   highest_act_score,
   application_account_type,
@@ -35,7 +37,8 @@ FROM
         ELSE 'Yes'
       END AS 'CCDM Complete',
       COUNT(*) OVER (
-        PARTITION BY ap.sf_contact_id
+        PARTITION BY
+          ap.sf_contact_id
         ORDER BY
           ap.application_id ASC
       ) AS row_count,
@@ -55,8 +58,9 @@ FROM
         ELSE 0
       END AS minor_grad_rate_under50,
       CASE
-        WHEN kt.college_match_display_gpa BETWEEN 2.5
-        AND 2.9 THEN 1
+        WHEN (
+          kt.college_match_display_gpa BETWEEN 2.5 AND 2.9
+        ) THEN 1
         ELSE 0
       END AS gpa_between_25_29,
       CASE
@@ -64,14 +68,19 @@ FROM
         ELSE 0
       END AS minor_grad_rate_under40,
       CASE
-        WHEN kt.college_match_display_gpa >= 3.0
-        AND ac.x_6_yr_minority_completion_rate_c < 50 THEN 1
+        WHEN (
+          kt.college_match_display_gpa >= 3.0
+          AND ac.x_6_yr_minority_completion_rate_c < 50
+        ) THEN 1
         ELSE 0
       END AS undermatch_3gpa,
       CASE
-        WHEN kt.college_match_display_gpa BETWEEN 2.5
-        AND 2.9
-        AND ac.x_6_yr_minority_completion_rate_c < 40 THEN 1
+        WHEN (
+          (
+            kt.college_match_display_gpa BETWEEN 2.5 AND 2.9
+          )
+          AND ac.x_6_yr_minority_completion_rate_c < 40
+        ) THEN 1
         ELSE 0
       END AS undermatch_25_29gpa
     FROM
@@ -84,7 +93,8 @@ FROM
         AND cn.subject_c = 'CCDM'
         AND cn.is_deleted = 0
       )
-      LEFT JOIN gabby.alumni.enrollment_identifiers AS ei ON ei.student_c = kt.sf_contact_id
+      -- trunk-ignore(sqlfluff/LT05)
+      LEFT JOIN gabby.alumni.enrollment_identifiers AS ei ON (ei.student_c = kt.sf_contact_id)
       LEFT JOIN gabby.alumni.account AS ac ON ac.ncesid_c = ei.ugrad_ncesid
     WHERE
       ap.matriculation_decision = 'Matriculated (Intent to Enroll)'

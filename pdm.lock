@@ -142,7 +142,7 @@ summary = "A tool to analyze and extract information from Jinja used in dbt proj
 
 [[package]]
 name = "dbt-sqlserver"
-version = "1.4.1"
+version = "1.4.3"
 summary = "A Microsoft SQL Server adapter plugin for dbt"
 dependencies = [
     "azure-identity>=1.12.0",
@@ -426,7 +426,7 @@ summary = "YAML parser and emitter for Python"
 
 [[package]]
 name = "requests"
-version = "2.30.0"
+version = "2.31.0"
 requires_python = ">=3.7"
 summary = "Python HTTP for Humans."
 dependencies = [
@@ -460,7 +460,7 @@ summary = "The most basic Text::Unidecode port"
 
 [[package]]
 name = "typing-extensions"
-version = "4.5.0"
+version = "4.6.0"
 requires_python = ">=3.7"
 summary = "Backported and Experimental Type Hints for Python 3.7+"
 
@@ -707,9 +707,9 @@ content_hash = "sha256:785ad246c87a898988ba39cec1f2b2400018f0aad5d20d76ae22ba799
     {url = "https://files.pythonhosted.org/packages/d6/4b/00a5bd94051bb83ca78a4937c6be61cd09aa1038379d9ed98eadab992ba8/dbt_extractor-0.4.1-cp36-abi3-macosx_10_9_x86_64.macosx_11_0_arm64.macosx_10_9_universal2.whl", hash = "sha256:bc9e0050e3a2f4ea9fe58e8794bc808e6709a0c688ed710fc7c5b6ef3e5623ec"},
     {url = "https://files.pythonhosted.org/packages/fd/e7/1f26ec7ffd95d9892a0a4184650682eb91c121e36ea48dfa29ca3db4b0d3/dbt_extractor-0.4.1-cp36-abi3-manylinux_2_17_ppc64.manylinux2014_ppc64.whl", hash = "sha256:7c291f9f483eae4f60dd5859097d7ba51d5cb6c4725f08973ebd18cdea89d758"},
 ]
-"dbt-sqlserver 1.4.1" = [
-    {url = "https://files.pythonhosted.org/packages/db/7c/45d889858b8536eae65415f31427c25a7d0ea782e1312102884a4b88a7e2/dbt-sqlserver-1.4.1.tar.gz", hash = "sha256:d99bb8b9d1dc854e3ee57ba9ce80e6be4030478111670b2a0187cf0479272881"},
-    {url = "https://files.pythonhosted.org/packages/ef/78/5783d717c0662d148898687adcfe05e083a807a6072087756dd939c5d57d/dbt_sqlserver-1.4.1-py3-none-any.whl", hash = "sha256:749f948e87b347caf91b52625de619d581b37e8da5345eb6a92743fe33e26eb3"},
+"dbt-sqlserver 1.4.3" = [
+    {url = "https://files.pythonhosted.org/packages/1e/4b/08a695278caa6a1f9fae76e40ca64368e629834fd11763c0b5e1efbf9975/dbt-sqlserver-1.4.3.tar.gz", hash = "sha256:215f856c9cd4af4c376e4d99d24e409062eedb786ade4efcad9f4b445a0103d9"},
+    {url = "https://files.pythonhosted.org/packages/2f/87/b76c59494f566e042e8a23863c93a778446e2d9f4075ce43c16e453cb156/dbt_sqlserver-1.4.3-py3-none-any.whl", hash = "sha256:bd07d56b5b84aaa86c89b3ade89a31154023e4eefc1d714120bd42bcd9bf6e71"},
 ]
 "future 0.18.3" = [
     {url = "https://files.pythonhosted.org/packages/8f/2e/cf6accf7415237d6faeeebdc7832023c90e0282aa16fd3263db0eb4715ec/future-0.18.3.tar.gz", hash = "sha256:34a17436ed1e96697a86f9de3d15a3b0be01d8bc8de9c1dffd59fb8234ed5307"},
@@ -1144,9 +1144,9 @@ content_hash = "sha256:785ad246c87a898988ba39cec1f2b2400018f0aad5d20d76ae22ba799
     {url = "https://files.pythonhosted.org/packages/f8/54/799b059314b13e1063473f76e908f44106014d18f54b16c83a16edccd5ec/PyYAML-6.0-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:d4b0ba9512519522b118090257be113b9468d804b19d63c71dbcf4a48fa32358"},
     {url = "https://files.pythonhosted.org/packages/fc/48/531ecd926fe0a374346dd811bf1eda59a95583595bb80eadad511f3269b8/PyYAML-6.0-cp311-cp311-win32.whl", hash = "sha256:bfaef573a63ba8923503d27530362590ff4f576c626d86a9fed95822a8255fd7"},
 ]
-"requests 2.30.0" = [
-    {url = "https://files.pythonhosted.org/packages/96/80/034ffeca15c0f4e01b7b9c6ad0fb704b44e190cde4e757edbd60be404c41/requests-2.30.0-py3-none-any.whl", hash = "sha256:10e94cc4f3121ee6da529d358cdaeaff2f1c409cd377dbc72b825852f2f7e294"},
-    {url = "https://files.pythonhosted.org/packages/e0/69/122171604bcef06825fa1c05bd9e9b1d43bc9feb8c6c0717c42c92cc6f3c/requests-2.30.0.tar.gz", hash = "sha256:239d7d4458afcb28a692cdd298d87542235f4ca8d36d03a15bfc128a6559a2f4"},
+"requests 2.31.0" = [
+    {url = "https://files.pythonhosted.org/packages/70/8e/0e2d847013cb52cd35b38c009bb167a1a26b2ce6cd6965bf26b47bc0bf44/requests-2.31.0-py3-none-any.whl", hash = "sha256:58cd2187c01e70e6e26505bca751777aa9f2ee0b7f4300988b709f44e013003f"},
+    {url = "https://files.pythonhosted.org/packages/9d/be/10918a2eac4ae9f02f6cfe6414b7a155ccd8f7f9d4380d62fd5b955065c3/requests-2.31.0.tar.gz", hash = "sha256:942c5a758f98d790eaed1a29cb6eefc7ffb0d1cf7af05c3d2791656dbd6ad1e1"},
 ]
 "six 1.16.0" = [
     {url = "https://files.pythonhosted.org/packages/71/39/171f1c67cd00715f190ba0b100d606d440a28c93c7714febeca8b79af85e/six-1.16.0.tar.gz", hash = "sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926"},
@@ -1163,9 +1163,9 @@ content_hash = "sha256:785ad246c87a898988ba39cec1f2b2400018f0aad5d20d76ae22ba799
     {url = "https://files.pythonhosted.org/packages/a6/a5/c0b6468d3824fe3fde30dbb5e1f687b291608f9473681bbf7dabbf5a87d7/text_unidecode-1.3-py2.py3-none-any.whl", hash = "sha256:1311f10e8b895935241623731c2ba64f4c455287888b18189350b67134a822e8"},
     {url = "https://files.pythonhosted.org/packages/ab/e2/e9a00f0ccb71718418230718b3d900e71a5d16e701a3dae079a21e9cd8f8/text-unidecode-1.3.tar.gz", hash = "sha256:bad6603bb14d279193107714b288be206cac565dfa49aa5b105294dd5c4aab93"},
 ]
-"typing-extensions 4.5.0" = [
-    {url = "https://files.pythonhosted.org/packages/31/25/5abcd82372d3d4a3932e1fa8c3dbf9efac10cc7c0d16e78467460571b404/typing_extensions-4.5.0-py3-none-any.whl", hash = "sha256:fb33085c39dd998ac16d1431ebc293a8b3eedd00fd4a32de0ff79002c19511b4"},
-    {url = "https://files.pythonhosted.org/packages/d3/20/06270dac7316220643c32ae61694e451c98f8caf4c8eab3aa80a2bedf0df/typing_extensions-4.5.0.tar.gz", hash = "sha256:5cb5f4a79139d699607b3ef622a1dedafa84e115ab0024e0d9c044a9479ca7cb"},
+"typing-extensions 4.6.0" = [
+    {url = "https://files.pythonhosted.org/packages/85/d2/949d324c348014f0fd2e8e6d8efd3c0adefdcecd28990d4144f2cfc8105e/typing_extensions-4.6.0-py3-none-any.whl", hash = "sha256:6ad00b63f849b7dcc313b70b6b304ed67b2b2963b3098a33efe18056b1a9a223"},
+    {url = "https://files.pythonhosted.org/packages/e4/03/4670b4c206e1dc869f2f0120c3d0a2b17d42526ab2b5a8f66d4cd8642ef3/typing_extensions-4.6.0.tar.gz", hash = "sha256:ff6b238610c747e44c268aa4bb23c8c735d665a63726df3f9431ce707f2aa768"},
 ]
 "urllib3 2.0.2" = [
     {url = "https://files.pythonhosted.org/packages/4b/1d/f8383ef593114755429c307449e7717b87044b3bcd5f7860b89b1f759e34/urllib3-2.0.2-py3-none-any.whl", hash = "sha256:d055c2f9d38dc53c808f6fdc8eab7360b6fdbbde02340ed25cfbcd817c62469e"},
