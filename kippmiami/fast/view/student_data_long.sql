@@ -300,37 +300,61 @@ WITH
       ) AS u
   )
 SELECT
-  sd.student_id AS fleid,
-  sd.test_reason AS pm_round,
-  sd.academic_year,
-  sd.date_taken,
-  sd.test_completion_date,
-  sd.fast_test,
-  sd.fast_subject,
-  sd.enrolled_grade,
+  sub.fleid,
+  sub.pm_round,
+  sub.academic_year,
+  sub.date_taken,
+  sub.test_completion_date,
+  sub.fast_test,
+  sub.fast_subject,
+  sub.enrolled_grade,
+  sub.scale_score,
+  sub.scale_score_prev,
+  al.achievement_level,
   dm.standard_domain,
   dm.mastery_indicator,
-  ss.scale_score,
-  al.achievement_level,
   ROW_NUMBER() OVER (
     PARTITION BY
-      sd.student_id,
-      sd.test_reason,
-      sd.fast_test
+      sub.fleid,
+      sub.pm_round,
+      sub.fast_test
     ORDER BY
       dm.standard_domain
   ) AS rn_test
 FROM
-  student_data AS sd
-  LEFT JOIN domain_mastery AS dm ON (
-    sd._file = dm._file
-    AND sd._line = dm._line
-  )
-  LEFT JOIN scale_scores AS ss ON (
-    sd._file = ss._file
-    AND sd._line = ss._line
-  )
+  (
+    SELECT
+      sd._file,
+      sd._line,
+      sd.student_id AS fleid,
+      sd.test_reason AS pm_round,
+      sd.academic_year,
+      sd.date_taken,
+      sd.test_completion_date,
+      sd.fast_test,
+      sd.fast_subject,
+      sd.enrolled_grade,
+      ss.scale_score,
+      LAG(ss.scale_score, 1) OVER (
+        PARTITION BY
+          sd.student_id,
+          sd.academic_year,
+          sd.fast_subject
+        ORDER BY
+          sd.test_reason ASC
+      ) AS scale_score_prev
+    FROM
+      student_data AS sd
+      LEFT JOIN scale_scores AS ss ON (
+        sd._file = ss._file
+        AND sd._line = ss._line
+      )
+  ) AS sub
   LEFT JOIN achievement_levels AS al ON (
-    sd._file = al._file
-    AND sd._line = al._line
+    sub._file = al._file
+    AND sub._line = al._line
+  )
+  LEFT JOIN domain_mastery AS dm ON (
+    sub._file = dm._file
+    AND sub._line = dm._line
   )

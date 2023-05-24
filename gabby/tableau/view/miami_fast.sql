@@ -109,43 +109,31 @@ SELECT
   co.lep_status,
   co.lunchstatus,
   co.is_retained_year,
-  CASE
-    WHEN (
-      co.is_retained_year != 1
-      AND RIGHT(ft.achievement_level, 1) < 2
-      AND subj.fsa_subject = 'ELA'
-      AND co.grade_level = 3
-    ) THEN 1
-    ELSE 0
-  END AS gr3_retention_flag,
-  subj.fsa_subject,
   suf.fleid,
+  subj.fsa_subject,
+  subj.iready_subject,
   ce.course_number,
   ce.course_name,
   ce.section_number,
   ce.teacher_name,
-  CASE
-    WHEN dr1._file LIKE '%ela%' THEN 'Reading'
-    WHEN dr1._file LIKE '%math%' THEN 'Math'
-  END AS iready_subject,
+  ir.total_lessons,
+  ir.lessons_passed,
+  ir.pct_passed,
+  ia.[QAF1],
+  ia.[QAF2],
+  ia.[QAF3],
+  ia.[QAF4],
   dr1.overall_scale_score AS diagnostic_scale,
   dr1.overall_relative_placement AS diagnostic_overall_relative_placement,
+  dr1.annual_typical_growth_measure,
+  dr1.annual_stretch_growth_measure,
   dr2.overall_scale_score AS recent_scale,
   dr2.overall_relative_placement AS recent_overall_relative_placement,
   dr2.overall_placement AS recent_overall_placement,
   dr2.diagnostic_gain,
-  dr1.annual_typical_growth_measure,
-  dr1.annual_stretch_growth_measure,
   dr2.lexile_measure AS lexile_recent,
   dr2.lexile_range AS lexile_range_recent,
   dr2.rush_flag,
-  cw1.sublevel_name AS projected_sublevel,
-  cw1.sublevel_number AS projected_sublevel_number,
-  cw2.scale_low AS scale_for_proficiency,
-  CASE
-    WHEN cw2.scale_low - dr2.overall_scale_score <= 0 THEN 0
-    ELSE cw2.scale_low - dr2.overall_scale_score
-  END AS scale_points_to_proficiency,
   ROUND(
     CAST(dr2.diagnostic_gain AS FLOAT) / CAST(
       dr1.annual_typical_growth_measure AS FLOAT
@@ -158,47 +146,55 @@ SELECT
     ),
     2
   ) AS progress_to_stretch,
-  LEFT(ft.pm_round, 3) AS pm_round,
-  ft.achievement_level,
+  cw1.sublevel_name AS projected_sublevel,
+  cw1.sublevel_number AS projected_sublevel_number,
+  cw2.scale_low AS scale_for_proficiency,
+  CASE
+    WHEN cw2.scale_low - dr2.overall_scale_score <= 0 THEN 0
+    ELSE cw2.scale_low - dr2.overall_scale_score
+  END AS scale_points_to_proficiency,
   ft.scale_score,
-  LAG(ft.scale_score, 1) OVER (
-    PARTITION BY
-      ft.standard_domain,
-      subj.fsa_subject,
-      co.academic_year,
-      co.student_number
-    ORDER BY
-      ft.pm_round ASC
-  ) AS scale_score_prev,
-  cw3.sublevel_name AS fast_sublevel_name,
-  cw3.sublevel_number AS fast_sublevel_number,
-  ft.standard_domain,
+  ft.scale_score_prev,
+  ft.achievement_level,
   ft.mastery_indicator,
+  ft.standard_domain,
+  ft.rn_test AS rn_test_fast,
+  LEFT(ft.pm_round, 3) AS pm_round,
   CASE
     WHEN ft.mastery_indicator = 'n/a' THEN NULL
     WHEN ft.mastery_indicator = 'Below the Standard' THEN 1
     WHEN ft.mastery_indicator = 'At/Near the Standard' THEN 2
     WHEN ft.mastery_indicator = 'Above the Standard' THEN 3
   END AS mastery_number,
-  ft.rn_test AS rn_test_fast,
-  ir.total_lessons,
-  ir.lessons_passed,
-  ir.pct_passed,
-  ia.[QAF1],
-  ia.[QAF2],
-  ia.[QAF3],
-  ia.[QAF4]
+  cw3.sublevel_name AS fast_sublevel_name,
+  cw3.sublevel_number AS fast_sublevel_number,
+  CASE
+    WHEN (
+      co.is_retained_year != 1
+      AND RIGHT(ft.achievement_level, 1) < 2
+      AND subj.fsa_subject = 'ELA'
+      AND co.grade_level = 3
+    ) THEN 1
+    ELSE 0
+  END AS gr3_retention_flag
 FROM
   kippmiami.powerschool.cohort_identifiers_static AS co
-  CROSS JOIN subjects AS subj
   LEFT JOIN kippmiami.powerschool.u_studentsuserfields AS suf ON (
     co.students_dcid = suf.studentsdcid
   )
+  CROSS JOIN subjects AS subj
   LEFT JOIN kippmiami.powerschool.course_enrollments_current_static AS ce ON (
     ce.student_number = co.student_number
     AND ce.credittype = subj.credittype
     AND ce.section_enroll_status = 0
     AND ce.rn_subject = 1
+  )
+  LEFT JOIN iready_lessons AS ir ON (
+    co.student_number = ir.student_id
+    AND subj.iready_subject = ir.[subject]
+  )
+  LEFT JOIN qaf_pct_correct AS ia ON (
+    co.student_number = ia.local_student_id
   )
   LEFT JOIN gabby.iready.diagnostic_results AS dr1 ON (
     dr1.student_id = co.student_number
@@ -215,15 +211,6 @@ FROM
     dr1.student_id = dr2.student_id
     AND dr1._file = dr2._file
     AND dr2.most_recent_diagnostic_y_n_ = 'Y'
-  )
-  LEFT JOIN iready_lessons AS ir ON (
-    co.student_number = ir.student_id
-    AND subj.iready_subject = ir.[subject]
-  )
-  LEFT JOIN kippmiami.fast.student_data_long AS ft ON (
-    ft.fleid = suf.fleid
-    AND ft.fast_subject = subj.iready_subject
-    AND LEN(ft.scale_score) = 3
   )
   LEFT JOIN assessments.fsa_iready_crosswalk AS cw1 ON (
     co.grade_level = cw1.grade_level
@@ -251,16 +238,19 @@ FROM
     AND cw2.destination_system = 'FL'
     AND cw2.sublevel_name = 'Level 3'
   )
+  LEFT JOIN kippmiami.fast.student_data_long AS ft ON (
+    ft.fleid = suf.fleid
+    AND ft.fast_subject = subj.iready_subject
+    AND ISNUMERIC(ft.scale_score) = 1
+  )
   LEFT JOIN assessments.fsa_iready_crosswalk AS cw3 ON (
     cw3.test_name = ft.fast_test
+    -- trunk-ignore(sqlfluff/CP02,sqlfluff/RF02)
     COLLATE SQL_Latin1_General_CP1_CI_AS
     AND (
       ft.scale_score BETWEEN cw3.scale_low AND cw3.scale_high
     )
     AND cw3.source_system = 'FSA'
-  )
-  LEFT JOIN qaf_pct_correct AS ia ON (
-    co.student_number = ia.local_student_id
   )
 WHERE
   co.academic_year = gabby.utilities.GLOBAL_ACADEMIC_YEAR ()
