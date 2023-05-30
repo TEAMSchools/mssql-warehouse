@@ -150,12 +150,12 @@ SELECT
   d.respondent_preferred_name AS lastfirst,
   d.campaign_academic_year AS academic_year,
   NULL AS cohort,
-  f.[Preferred Gender] AS gender,
+  x.gender AS gender,
   g.student_grade_level AS grade_level,
   NULL AS iep_status,
   d.respondent_primary_site,
   x.primary_site_school_level AS school_level,
-  f.[Preferred Race/Ethnicity],
+  x.primary_race_ethnicity_reporting,
   d.respondent_userprincipalname,
   d.answer_value,
   d.question_shortname,
@@ -172,9 +172,6 @@ FROM
   )
   LEFT JOIN grade AS g ON (
     x.df_employee_number = g.employee_number
-  )
-  LEFT JOIN adp.workers_custom_field_group_wide_static AS f ON (
-    d.respondent_df_employee_number = f.[Employee Number]
   )
 WHERE
   d.question_shortname LIKE '%scd%'
