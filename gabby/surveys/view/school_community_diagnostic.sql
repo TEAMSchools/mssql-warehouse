@@ -1,5 +1,5 @@
-CREATE OR ALTER VIEW
-  surveys.school_community_diagnostic AS
+-- CREATE OR ALTER VIEW
+--   surveys.school_community_diagnostic AS
 WITH
   student_responses AS (
     SELECT
@@ -81,13 +81,16 @@ SELECT
   c.iep_status,
   c.school_name,
   c.school_level,
+  c.ethnicity,
   s.email_address,
   s.answer AS answer_value,
   s.question_shortname,
   s.audience,
   sh.question_title,
   sh.answer AS answer_text,
-  x.region
+  x.region,
+  NULL AS survey_response_id,
+  NULL AS survey_id
 FROM
   student_responses AS s
   LEFT JOIN powerschool.cohort_identifiers_static AS c ON CONCAT(
@@ -117,13 +120,16 @@ SELECT
   c.iep_status,
   c.school_name,
   c.school_level,
+  c.ethnicity,
   d.respondent_userprincipalname,
   d.answer_value,
   d.question_shortname,
   'Family' AS audience,
   d.question_title,
   d.answer AS answer_text,
-  x.region
+  x.region,
+  r.survey_response_id,
+  r.survey_id
 FROM
   surveygizmo.survey_detail AS d
   LEFT JOIN response_id_crosswalk AS r ON (
@@ -144,18 +150,21 @@ SELECT
   d.respondent_preferred_name AS lastfirst,
   d.campaign_academic_year AS academic_year,
   NULL AS cohort,
-  x.gender AS gender,
+  f.[Preferred Gender] AS gender,
   g.student_grade_level AS grade_level,
   NULL AS iep_status,
   d.respondent_primary_site,
   x.primary_site_school_level AS school_level,
+  f.[Preferred Race/Ethnicity],
   d.respondent_userprincipalname,
   d.answer_value,
   d.question_shortname,
   'Staff' AS audience,
   d.question_title,
   d.answer AS answer_text,
-  x.legal_entity_name
+  x.legal_entity_name,
+  d.survey_response_id,
+  d.survey_id
 FROM
   surveygizmo.survey_detail AS d
   LEFT JOIN people.staff_crosswalk_static AS x ON (
@@ -163,6 +172,9 @@ FROM
   )
   LEFT JOIN grade AS g ON (
     x.df_employee_number = g.employee_number
+  )
+  LEFT JOIN adp.workers_custom_field_group_wide_static AS f ON (
+    d.respondent_df_employee_number = f.[Employee Number]
   )
 WHERE
   d.question_shortname LIKE '%scd%'
