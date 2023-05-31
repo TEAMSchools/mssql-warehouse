@@ -1,5 +1,5 @@
--- CREATE OR ALTER VIEW
---   surveys.school_community_diagnostic AS
+CREATE OR ALTER VIEW
+  surveys.school_community_diagnostic AS
 WITH
   student_responses AS (
     SELECT
