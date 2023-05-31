@@ -81,13 +81,16 @@ SELECT
   c.iep_status,
   c.school_name,
   c.school_level,
+  c.ethnicity,
   s.email_address,
   s.answer AS answer_value,
   s.question_shortname,
   s.audience,
   sh.question_title,
   sh.answer AS answer_text,
-  x.region
+  x.region,
+  NULL AS survey_response_id,
+  NULL AS survey_id
 FROM
   student_responses AS s
   LEFT JOIN powerschool.cohort_identifiers_static AS c ON CONCAT(
@@ -117,13 +120,16 @@ SELECT
   c.iep_status,
   c.school_name,
   c.school_level,
+  c.ethnicity,
   d.respondent_userprincipalname,
   d.answer_value,
   d.question_shortname,
   'Family' AS audience,
   d.question_title,
   d.answer AS answer_text,
-  x.region
+  x.region,
+  r.survey_response_id,
+  r.survey_id
 FROM
   surveygizmo.survey_detail AS d
   LEFT JOIN response_id_crosswalk AS r ON (
@@ -149,13 +155,16 @@ SELECT
   NULL AS iep_status,
   d.respondent_primary_site,
   x.primary_site_school_level AS school_level,
+  x.primary_race_ethnicity_reporting,
   d.respondent_userprincipalname,
   d.answer_value,
   d.question_shortname,
   'Staff' AS audience,
   d.question_title,
   d.answer AS answer_text,
-  x.legal_entity_name
+  x.legal_entity_name,
+  d.survey_response_id,
+  d.survey_id
 FROM
   surveygizmo.survey_detail AS d
   LEFT JOIN people.staff_crosswalk_static AS x ON (
