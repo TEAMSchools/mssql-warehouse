@@ -63,3 +63,5 @@ FROM
     AND co.rn_undergrad = 1
   )
   LEFT JOIN gabby.alumni.ktc_roster AS kt ON kt.sf_contact_id = c.id
+WHERE
+  c.is_deleted = 0
