@@ -47,7 +47,9 @@ SELECT
   c.efc_from_fafsa_c AS [EFC Actual],
   CAST(
     c.expected_hs_graduation_c AS NVARCHAR
-  ) AS expected_hs_grad_date
+  ) AS expected_hs_grad_date,
+  kt.college_match_display_gpa,
+  kt.highest_act_score
 FROM
   alumni.contact AS c
   LEFT JOIN alumni.[user] AS u ON c.owner_id = u.id
