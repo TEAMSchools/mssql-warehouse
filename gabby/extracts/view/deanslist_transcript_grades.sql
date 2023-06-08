@@ -38,7 +38,12 @@ WITH
       fg.potential_credit_hours AS credit_hours,
       fg.y1_grade_percent_adj AS y1_grade_percent,
       fg.y1_grade_letter,
-      sch.[name] AS schoolname,
+      CASE
+        WHEN (
+          sch.[name] = 'KIPP Newark Collegiate Academy'
+        ) THEN 'Newark Collegiate Academy'
+        ELSE sch.[name]
+      END AS schoolname,
       'Y1' AS storecode,
       0 AS is_stored
     FROM
