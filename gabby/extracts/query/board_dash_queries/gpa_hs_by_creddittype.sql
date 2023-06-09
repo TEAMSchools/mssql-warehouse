@@ -21,10 +21,10 @@ WITH
       sg.grade,
       sg.gpa_points,
       sg.gradescale_name,
-      'Stored' AS source
+      'Stored' AS [source]
     FROM
-      gabby.powerschool.storedgrades sg
-      LEFT JOIN gabby.powerschool.students s ON sg.studentid = s.id
+      gabby.powerschool.storedgrades AS sg
+      LEFT JOIN gabby.powerschool.students AS s ON sg.studentid = s.id
       AND sg.[db_name] = s.[db_name]
     WHERE
       sg.schoolid = 73253
@@ -56,7 +56,7 @@ WITH
       fgs.y1_grade_letter AS grade,
       fgs.y1_grade_pts AS gpa_points,
       STR(fgs.gradescaleid) AS gradescale_name,
-      'Current' AS source
+      'Current' AS [source]
     FROM
       gabby.powerschool.final_grades_static AS fgs
       LEFT JOIN gabby.powerschool.courses AS c ON fgs.course_number = c.course_number
