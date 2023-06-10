@@ -37,7 +37,8 @@ WITH
         WHEN dr.overall_relative_placement IN (
           'Early On Grade Level',
           'Mid or Above Grade Level'
-        ) THEN 'On or Above Grade Level'
+        ) THEN 'On or Above Grade Level' -- trunk-ignore(sqlfluff/LT05)
+        -- trunk-ignore(sqlfluff/LT05)
         WHEN dr.overall_relative_placement = '1 Grade Level Below' THEN dr.overall_relative_placement
         WHEN dr.overall_relative_placement IN (
           '2 Grade Levels Below',
@@ -131,6 +132,7 @@ FROM
     END = cwo.destination_system
   )
   LEFT JOIN gabby.assessments.fsa_iready_crosswalk AS cwt ON (
+    -- trunk-ignore(sqlfluff/LT05)
     ir.overall_scale_score + ir.annual_typical_growth_measure BETWEEN cwt.scale_low AND cwt.scale_high
     AND ir.[subject] = cwt.test_name
     AND ir.grade_level = cwt.grade_level
@@ -141,6 +143,7 @@ FROM
     END = cwt.destination_system
   )
   LEFT JOIN gabby.assessments.fsa_iready_crosswalk AS cws ON (
+    -- trunk-ignore(sqlfluff/LT05)
     ir.overall_scale_score + ir.annual_stretch_growth_measure BETWEEN cws.scale_low AND cws.scale_high
     AND ir.[subject] = cws.test_name
     AND ir.grade_level = cws.grade_level
