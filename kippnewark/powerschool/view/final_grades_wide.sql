@@ -1,6 +1,97 @@
 CREATE OR ALTER VIEW
   powerschool.final_grades_wide AS
 WITH
+  grades_union AS (
+    SELECT
+      studentid,
+      yearid,
+      course_number,
+      sectionid,
+      storecode,
+      y1_grade_percent_adj,
+      y1_grade_letter,
+      need_90,
+      need_80,
+      need_70,
+      need_60,
+      REPLACE(storecode, 'Q', 'RT') AS reporting_term,
+      /* empty strings preserve storecode structure when there aren't any grades */
+      ISNULL(
+        CAST(
+          term_grade_letter AS NVARCHAR(16)
+        ),
+        ''
+      ) AS term_grade_letter,
+      ISNULL(
+        CAST(
+          term_grade_percent AS NVARCHAR(16)
+        ),
+        ''
+      ) AS term_grade_percent,
+      ISNULL(
+        CAST(
+          term_grade_letter_adj AS NVARCHAR(16)
+        ),
+        ''
+      ) AS term_grade_letter_adj,
+      ISNULL(
+        CAST(
+          term_grade_percent_adj AS NVARCHAR(16)
+        ),
+        ''
+      ) AS term_grade_percent_adj
+    FROM
+      powerschool.final_grades_static
+    UNION ALL
+    SELECT
+      fg.studentid,
+      fg.yearid,
+      fg.course_number,
+      fg.sectionid,
+      fg.storecode,
+      fg.y1_grade_percent_adj,
+      fg.y1_grade_letter,
+      fg.need_90,
+      fg.need_80,
+      fg.need_70,
+      fg.need_60,
+      'CUR' AS reporting_term,
+      /* empty strings preserve storecode structure when there aren't any grades */
+      ISNULL(
+        CAST(
+          fg.term_grade_letter AS NVARCHAR(16)
+        ),
+        ''
+      ) AS term_grade_letter,
+      ISNULL(
+        CAST(
+          fg.term_grade_percent AS NVARCHAR(16)
+        ),
+        ''
+      ) AS term_grade_percent,
+      ISNULL(
+        CAST(
+          fg.term_grade_letter_adj AS NVARCHAR(16)
+        ),
+        ''
+      ) AS term_grade_letter_adj,
+      ISNULL(
+        CAST(
+          fg.term_grade_percent_adj AS NVARCHAR(16)
+        ),
+        ''
+      ) AS term_grade_percent_adj
+    FROM
+      powerschool.final_grades_static AS fg
+      INNER JOIN gabby.reporting.reporting_terms AS rt ON (
+        fg.storecode = rt.alt_name
+        COLLATE SQL_Latin1_General_CP1_CI_AS
+        AND fg.yearid = rt.yearid
+        AND rt.identifier = 'RT'
+        AND rt.is_curterm = 1
+        AND rt.schoolid = 0
+      )
+  ),
   grades_unpivot AS (
     SELECT
       studentid,
@@ -25,99 +116,7 @@ WITH
         ELSE [value]
       END AS [value]
     FROM
-      (
-        SELECT
-          studentid,
-          yearid,
-          course_number,
-          sectionid,
-          storecode,
-          y1_grade_percent_adj,
-          y1_grade_letter,
-          need_90,
-          need_80,
-          need_70,
-          need_60,
-          REPLACE(storecode, 'Q', 'RT') AS reporting_term,
-          /* empty strings preserve storecode structure when there aren't any grades */
-          ISNULL(
-            CAST(
-              term_grade_letter AS NVARCHAR(16)
-            ),
-            ''
-          ) AS term_grade_letter,
-          ISNULL(
-            CAST(
-              term_grade_percent AS NVARCHAR(16)
-            ),
-            ''
-          ) AS term_grade_percent,
-          ISNULL(
-            CAST(
-              term_grade_letter_adj AS NVARCHAR(16)
-            ),
-            ''
-          ) AS term_grade_letter_adj,
-          ISNULL(
-            CAST(
-              term_grade_percent_adj AS NVARCHAR(16)
-            ),
-            ''
-          ) AS term_grade_percent_adj
-        FROM
-          powerschool.final_grades_static
-        UNION ALL
-        SELECT
-          fg.studentid,
-          fg.yearid,
-          fg.course_number,
-          fg.sectionid,
-          fg.storecode,
-          fg.y1_grade_percent_adj,
-          fg.y1_grade_letter,
-          fg.need_90,
-          fg.need_80,
-          fg.need_70,
-          fg.need_60,
-          'CUR' AS reporting_term,
-          /* empty strings preserve storecode structure when there aren't any grades */
-          ISNULL(
-            CAST(
-              fg.term_grade_letter AS NVARCHAR(16)
-            ),
-            ''
-          ) AS term_grade_letter,
-          ISNULL(
-            CAST(
-              fg.term_grade_percent AS NVARCHAR(16)
-            ),
-            ''
-          ) AS term_grade_percent,
-          ISNULL(
-            CAST(
-              fg.term_grade_letter_adj AS NVARCHAR(16)
-            ),
-            ''
-          ) AS term_grade_letter_adj,
-          ISNULL(
-            CAST(
-              fg.term_grade_percent_adj AS NVARCHAR(16)
-            ),
-            ''
-          ) AS term_grade_percent_adj
-        FROM
-          powerschool.final_grades_static AS fg
-          INNER JOIN gabby.reporting.reporting_terms AS rt ON (
-            (
-              fg.storecode = rt.alt_name
-              COLLATE SQL_Latin1_General_CP1_CI_AS
-            )
-            AND fg.yearid = rt.yearid
-            AND rt.identifier = 'RT'
-            AND rt.is_curterm = 1
-            AND rt.schoolid = 0
-          )
-      ) AS sub UNPIVOT (
+      grades_union UNPIVOT (
         [value] FOR field IN (
           term_grade_letter,
           term_grade_percent,

@@ -14,8 +14,11 @@ SELECT
   fg.rt3_term_grade_letter_adjusted AS [Q3_letter],
   fg.rt4_term_grade_percent_adjusted AS [Q4_pct],
   fg.rt4_term_grade_letter_adjusted AS [Q4_letter],
-  fg.y1_grade_percent_adj AS y1_pct,
-  fg.y1_grade_letter AS y1_letter,
+  COALESCE(
+    sgy1.[percent],
+    fg.y1_grade_percent_adj
+  ) AS y1_pct,
+  COALESCE(sgy1.grade, fg.y1_grade_letter) AS y1_letter,
   sec.dcid AS sections_dcid,
   sec.section_number,
   sec.teacher_lastfirst AS teacher_name,
@@ -84,6 +87,14 @@ FROM
     AND fg.sectionid = comm.sectionid
     AND fg.storecode = comm.finalgradename
     AND fg.[db_name] = comm.[db_name]
+  )
+  LEFT JOIN powerschool.storedgrades AS sgy1 ON (
+    co.studentid = sgy1.studentid
+    AND co.academic_year = sgy1.academic_year
+    AND co.[db_name] = sgy1.[db_name]
+    AND fg.course_number = sgy1.course_number
+    AND fg.storecode = 'Q4'
+    AND sgy1.storecode = 'Y1'
   )
 WHERE
   co.academic_year = utilities.GLOBAL_ACADEMIC_YEAR ()
