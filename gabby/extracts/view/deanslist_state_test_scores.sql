@@ -31,6 +31,7 @@ FROM
       END AS test_type,
       CASE
         WHEN parcc.[subject] LIKE 'English Language Arts%' THEN 'ELA'
+        WHEN parcc.[subject] = 'Science' THEN 'Science'
         ELSE 'Math'
       END AS [subject],
       parcc.[subject] AS test_name,
