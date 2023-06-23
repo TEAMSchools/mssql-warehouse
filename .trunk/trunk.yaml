@@ -1,10 +1,10 @@
 version: 0.1
 cli:
-  version: 1.11.0
+  version: 1.11.1
 plugins:
   sources:
     - id: trunk
-      ref: v0.0.17
+      ref: v0.0.20
       uri: https://github.com/trunk-io/plugins
 lint:
   enabled:
@@ -19,7 +19,7 @@ lint:
     - gitleaks@8.17.0
     - markdownlint@0.35.0
     - git-diff-check
-    - shfmt@3.5.0
+    - shfmt@3.6.0
   ignore:
     - linters: [sqlfluff, sql-formatter]
       paths:
