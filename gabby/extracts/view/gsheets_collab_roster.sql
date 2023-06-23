@@ -1,5 +1,5 @@
---CREATE
---OR ALTER VIEW extracts.gsheets_collab_roster AS
+CREATE OR ALTER VIEW
+  extracts.gsheets_collab_roster AS
 WITH
   transition AS (
     SELECT
