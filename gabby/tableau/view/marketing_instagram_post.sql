@@ -38,7 +38,7 @@ SELECT
     WHEN h.username = 'kippnj' THEN '17841401733578100'
     WHEN h.username = 'kippmiami' THEN '17841407132914300'
   END AS [IG_Account_ID],
-  h.created_time,
+  CAST(h.created_time AS DATE) AS created_time,
   h.permalink,
   h.is_story,
   h.media_type,
