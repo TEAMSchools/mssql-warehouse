@@ -132,6 +132,7 @@ WITH
         AND cn.subject_c = 'CCDM'
         AND cn.is_deleted = 0
       )
+      -- trunk-ignore(sqlfluff/LT05)
       LEFT JOIN gabby.alumni.enrollment_identifiers AS ei ON (ei.student_c = kt.sf_contact_id)
       LEFT JOIN gabby.alumni.account AS ac ON ac.ncesid_c = ei.ugrad_ncesid
     WHERE
