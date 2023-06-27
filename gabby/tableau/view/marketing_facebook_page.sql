@@ -1,7 +1,7 @@
 CREATE OR ALTER VIEW
   tableau.marketing_facebook_page AS
 SELECT
-  [date],
+  CAST([date] AS DATE) AS [date],
   page_id,
   page_fans,
   page_fan_adds,
