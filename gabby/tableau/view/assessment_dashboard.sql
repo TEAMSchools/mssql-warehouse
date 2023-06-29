@@ -1,5 +1,19 @@
 CREATE OR ALTER VIEW
   tableau.assessment_dashboard AS
+WITH
+  sd_dupe_remove AS (
+    SELECT
+      st.standard_code,
+      st.standard_domain,
+      ROW_NUMBER() OVER (
+        PARTITION BY
+          st.standard_code
+        ORDER BY
+          st.standard_domain ASC
+      ) AS rn_standard
+    FROM
+      assessments.standards_translation AS st
+  )
 SELECT
   co.student_number,
   co.lastfirst,
@@ -44,7 +58,8 @@ SELECT
   ps.goal AS power_standard_goal,
   CASE
     WHEN ps.standard_code IS NOT NULL THEN 1
-  END AS is_power_standard
+  END AS is_power_standard,
+  sd.standard_domain
 FROM
   powerschool.cohort_identifiers_static AS co
   INNER JOIN illuminate_dna_assessments.agg_student_responses_all AS asr ON (
@@ -78,6 +93,10 @@ FROM
     AND asr.standard_code = ps.standard_code
     AND co.reporting_schoolid = ps.schoolid
     AND co.academic_year = ps.academic_year
+  )
+  LEFT JOIN sd_dupe_remove AS sd ON (
+    asr.standard_code = sd.standard_code
+    AND sd.rn_standard = 1
   )
 WHERE
   co.academic_year IN (
