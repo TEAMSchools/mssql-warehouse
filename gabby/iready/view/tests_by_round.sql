@@ -6,6 +6,10 @@ WITH
       LEFT(dr.academic_year, 4) AS academic_year,
       dr.student_id,
       co.region,
+      CASE
+        WHEN co.region IN ('KCNA', 'TEAM') THEN 'NJSLA'
+        WHEN co.region = 'KMS' THEN 'FL'
+      END AS destination_system,
       co.school_abbreviation,
       co.grade_level,
       CASE
@@ -37,8 +41,7 @@ WITH
         WHEN dr.overall_relative_placement IN (
           'Early On Grade Level',
           'Mid or Above Grade Level'
-        ) THEN 'On or Above Grade Level' -- trunk-ignore(sqlfluff/LT05)
-        -- trunk-ignore(sqlfluff/LT05)
+        ) THEN 'On or Above Grade Level'
         WHEN dr.overall_relative_placement = '1 Grade Level Below' THEN dr.overall_relative_placement
         WHEN dr.overall_relative_placement IN (
           '2 Grade Levels Below',
@@ -46,6 +49,12 @@ WITH
         ) THEN 'Two or More Grade Levels Below'
       END AS placement_3_level,
       dr.rush_flag,
+      (
+        dr.overall_scale_score + dr.annual_typical_growth_measure
+      ) AS scale_plus_typical,
+      (
+        dr.overall_scale_score + dr.annual_typical_growth_measure
+      ) AS scale_plus_stretch,
       dr.mid_on_grade_level_scale_score,
       dr.percent_progress_to_annual_typical_growth_,
       dr.percent_progress_to_annual_stretch_growth_,
@@ -126,30 +135,19 @@ FROM
     AND ir.[subject] = cwo.test_name
     AND ir.grade_level = cwo.grade_level
     AND cwo.source_system = 'i-Ready'
-    AND CASE
-      WHEN ir.region IN ('KCNA', 'TEAM') THEN 'NJSLA'
-      WHEN ir.region = 'KMS' THEN 'FL'
-    END = cwo.destination_system
+    AND ir.destination_system = cwo.destination_system
   )
   LEFT JOIN gabby.assessments.fsa_iready_crosswalk AS cwt ON (
-    -- trunk-ignore(sqlfluff/LT05)
-    ir.overall_scale_score + ir.annual_typical_growth_measure BETWEEN cwt.scale_low AND cwt.scale_high
+    ir.scale_plus_typical BETWEEN cwt.scale_low AND cwt.scale_high
     AND ir.[subject] = cwt.test_name
     AND ir.grade_level = cwt.grade_level
     AND cwt.source_system = 'i-Ready'
-    AND CASE
-      WHEN ir.region IN ('KCNA', 'TEAM') THEN 'NJSLA'
-      WHEN ir.region = 'KMS' THEN 'FL'
-    END = cwt.destination_system
+    AND ir.destination_system = cwt.destination_system
   )
   LEFT JOIN gabby.assessments.fsa_iready_crosswalk AS cws ON (
-    -- trunk-ignore(sqlfluff/LT05)
-    ir.overall_scale_score + ir.annual_stretch_growth_measure BETWEEN cws.scale_low AND cws.scale_high
+    ir.scale_plus_stretch BETWEEN cws.scale_low AND cws.scale_high
     AND ir.[subject] = cws.test_name
     AND ir.grade_level = cws.grade_level
     AND cws.source_system = 'i-Ready'
-    AND CASE
-      WHEN ir.region IN ('KCNA', 'TEAM') THEN 'NJSLA'
-      WHEN ir.region = 'KMS' THEN 'FL'
-    END = cws.destination_system
+    AND ir.destination_system = cws.destination_system
   )
