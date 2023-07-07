@@ -1,0 +1,46 @@
+CREATE
+OR ALTER VIEW extracts.deanslist_mod_standard_domains AS
+SELECT
+    sr.local_student_id,
+    sr.academic_year,
+    sr.term_administered,
+    CASE
+        WHEN sr.subject_area = 'Writing' THEN 'Text Study'
+        ELSE sr.subject_area
+    END AS subject_area,
+    st.standard_domain,
+    ROUND(AVG(sr.percent_correct), 0) AS avg_percent_correct,
+    CASE
+        WHEN ROUND(AVG(sr.percent_correct), 0) >= 85 THEN 'Exceeds Expectations'
+        WHEN ROUND(AVG(sr.percent_correct), 0) >= 70 THEN 'Met Expectations'
+        WHEN ROUND(AVG(sr.percent_correct), 0) >= 50 THEN 'Approaching Expectations'
+        WHEN ROUND(AVG(sr.percent_correct), 0) >= 30 THEN 'Below Expectations'
+        WHEN ROUND(AVG(sr.percent_correct), 0) >= 0 THEN 'Far Below Expectations'
+    END AS performance_level
+FROM
+    illuminate_dna_assessments.agg_student_responses_all_current AS sr
+    INNER JOIN gabby.assessments.standards_translation AS st ON (sr.standard_code = st.standard_code)
+    INNER JOIN gabby.powerschool.students AS s ON (
+        sr.local_student_id = s.student_number
+        AND s.grade_level < 5
+        AND s.[db_name] != 'kippmiami'
+    )
+WHERE
+    sr.response_type = 'S'
+    AND sr.is_normed_scope = 1
+    AND sr.module_type IN ('QA', 'MQQ')
+    AND sr.subject_area IN (
+        'Text Study',
+        'Mathematics',
+        'Writing'
+    )
+GROUP BY
+    sr.local_student_id,
+    sr.academic_year,
+    sr.term_administered,
+    st.standard_domain,
+    sr.performance_band_set_id,
+    CASE
+        WHEN sr.subject_area = 'Writing' THEN 'Text Study'
+        ELSE sr.subject_area
+    END
