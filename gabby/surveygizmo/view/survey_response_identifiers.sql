@@ -14,7 +14,8 @@ WITH
         LOWER(
           COALESCE(
             respondent_userprincipalname,
-            email
+            email,
+            alumni_email
           )
         ) AS VARCHAR(125)
       ) AS respondent_userprincipalname,
@@ -133,6 +134,7 @@ WITH
           is_manager,
           employee_number,
           email,
+          alumni_email,
           employee_preferred_name,
           salesforce_id
         )
