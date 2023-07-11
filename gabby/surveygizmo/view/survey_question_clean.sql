@@ -23,7 +23,7 @@ SELECT
       'subject_df_employee_number',
       'is_manager',
       'employee_number',
-      'email',
+      'alumni_email',
       'employee_preferred_name',
       'salesforce_id'
     ) THEN 1
